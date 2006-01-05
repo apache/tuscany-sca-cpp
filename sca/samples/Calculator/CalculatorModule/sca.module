@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<module xmlns="http://www.osoa.org/xmlns/sca/0.9" 
+	xmlns:v="http://www.osoa.org/xmlns/sca/values/0.9" 
+	name="CalculatorModule">
+
+	<component name="CalculatorServiceComponent">
+		<implementation.cpp dll="CalculatorModule.dll" header="CalculatorImpl.h"></implementation.cpp>
+                <properties> </properties>
+		<references> </references>
+	</component>
+</module>
