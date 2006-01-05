@@ -1,0 +1,39 @@
+<html>
+
+<head>
+<title>Design documentation for org\apache\tuscany\sca\cpp\tools\common</title>
+</head>
+
+<body lang=EN-GB>
+
+<div class=Section1>
+
+<h1>Overview</h1>
+
+This package can be used to reflect across C++ source code. It can produce
+a network of descriptive objects describing C++ Headers, Signatures, Parameters and so
+on that it finds in a given location of the file system.
+Each of the descriptive objects has a set of getters that return either 
+the descriptive child objects, or for primitives, the string that represents the actual
+value such as "int" or "myFunction".
+<p>
+There are also various utility methods that help with navigating the information, for example the Signature
+class has an isConstructor method. The API Javadoc contains further details of these. 
+<p>
+The package can scan a directory using a file mask to identify what types
+of files are to be scanned. In this application we are interested only 
+in the function prototypes in the C++ header files. 
+<p>
+The implementation was originated using some java code that was also 
+contributed to the Apache org.apache.axis.tools.common package. Care
+has been taken that the original code was not sourced via Apache. If
+this project is adopted by Apache then it is very possible that this 
+package could be merged with or made obsolete by org.apache.axis.tools.common
+and because of this the design and interfaces have been preserved from
+the original code as much as possible.
+
+<p>
+</div>
+</body>
+
+</html>

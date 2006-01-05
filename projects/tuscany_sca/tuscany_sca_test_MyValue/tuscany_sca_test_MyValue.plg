@@ -1,0 +1,47 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: tuscany_sca_test_MyValue - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1766.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/core/src" /I "C:\incubator\tuscany\cpp\sdo/include" /I "../../../runtime/core/test/CustomerInfo" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_TEST_MYVALUE_EXPORTS" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\incubator\tuscany\cpp\sca\runtime\core\test\MyValue\MyValueImpl.cpp"
+"C:\incubator\tuscany\cpp\sca\runtime\core\test\MyValue\MyValueImpl_customerInfo_Proxy.cpp"
+"C:\incubator\tuscany\cpp\sca\runtime\core\test\MyValue\MyValueImpl_MyValueService_Proxy.cpp"
+"C:\incubator\tuscany\cpp\sca\runtime\core\test\MyValue\MyValueImpl_MyValueService_Wrapper.cpp"
+"C:\incubator\tuscany\cpp\sca\runtime\core\test\MyValue\MyValueImpl_stockQuote_Proxy.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1766.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1767.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"Debug/MyValue.pdb" /debug /machine:I386 /out:"Debug/MyValue.dll" /implib:"Debug/MyValue.lib" /pdbtype:sept /libpath:"..\..\..\lib" /libpath:"C:\incubator\tuscany\cpp\sdo\lib" 
+.\Debug\MyValueImpl.obj
+.\Debug\MyValueImpl_customerInfo_Proxy.obj
+.\Debug\MyValueImpl_MyValueService_Proxy.obj
+.\Debug\MyValueImpl_MyValueService_Wrapper.obj
+.\Debug\MyValueImpl_stockQuote_Proxy.obj
+\incubator\tuscany\cpp\sca\projects\tuscany_sca\tuscany_sca\Debug\tuscany_sca.lib
+]
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1767.tmp"
+<h3>Output Window</h3>
+Compiling...
+MyValueImpl.cpp
+MyValueImpl_customerInfo_Proxy.cpp
+MyValueImpl_MyValueService_Proxy.cpp
+MyValueImpl_MyValueService_Wrapper.cpp
+MyValueImpl_stockQuote_Proxy.cpp
+Generating Code...
+Linking...
+   Creating library Debug/MyValue.lib and object Debug/MyValue.exp
+
+
+
+<h3>Results</h3>
+MyValue.dll - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
