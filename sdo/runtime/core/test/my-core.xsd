@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.commonj.org/xmlns/sca/v0.0.1/"
+    xmlns:sca="http://www.commonj.org/xmlns/sca/v0.0.1/"
+    xmlns:sdo="commonj.sdo/XML"
+    elementFormDefault="qualified">
+
+
+ 
+  <complexType name="Component">
+    <sequence>
+      <element minOccurs="1" maxOccurs="1" ref="sca:implementation"/>
+    </sequence>
+   </complexType>
+ 
+  <element name="implementation" type="sca:Implementation"/>
+  <complexType name="Implementation"/>
+
+ 
+ 
+</schema>

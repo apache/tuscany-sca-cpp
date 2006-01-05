@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.commonj.org/xmlns/sca/v0.0.1/"
+        xmlns:sca="http://www.commonj.org/xmlns/sca/v0.0.1/"
+		xmlns:sdo="commonj.sdo/XML"
+        elementFormDefault="qualified">
+
+    <include schemaLocation="sca-core.xsd"/>
+
+    <element name="interface.java" type="sca:JavaInterface" substitutionGroup="sca:interface" sdo:name="interfaceJava"/>
+    <complexType name="JavaInterface">
+        <complexContent>
+            <extension base="sca:Interface">
+                <sequence>
+                    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+                <attribute name="interface" type="NCName" use="required"/>
+                <attribute name="callbackInterface" type="NCName" use="optional"/>
+                <anyAttribute namespace="##any" processContents="lax"/>
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>
+

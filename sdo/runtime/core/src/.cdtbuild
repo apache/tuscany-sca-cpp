@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?fileVersion 3.0.0?>
+
+<ManagedProjectBuildInfo>
+<project id="tuscany_sdo.cdt.managedbuild.target.gnu.so.1649887895" name="Shared Library (Gnu)" projectType="cdt.managedbuild.target.gnu.so">
+<configuration artifactExtension="so" artifactName="tuscany_sdo" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.so.debug.804736841" name="Debug" parent="cdt.managedbuild.config.gnu.so.debug">
+<toolChain id="cdt.managedbuild.toolchain.gnu.so.debug.853581152" name="GCC Tool Chain" superClass="cdt.managedbuild.toolchain.gnu.so.debug">
+<tool command="gcc" id="cdt.managedbuild.tool.gnu.c.compiler.so.debug.1430134894" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug"/>
+<tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug.1021362517" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.debug">
+<option id="gnu.cpp.compiler.option.preprocessor.def.2069673202" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+<listOptionValue builtIn="false" value="_DEBUG"/>
+</option>
+<option id="gnu.cpp.compiler.option.include.paths.1923756814" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="${SDO4CPP_HOME}/runtime/core/src"/>
+<listOptionValue builtIn="false" value="/usr/include/libxml2"/>
+</option>
+<option id="gnu.cpp.compiler.option.warnings.allwarn.1941506556" superClass="gnu.cpp.compiler.option.warnings.allwarn" value="false" valueType="boolean"/>
+</tool>
+<tool command="gcc" id="cdt.managedbuild.tool.gnu.c.linker.so.debug.1367539588" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.so.debug"/>
+<tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.linker.so.debug.2094383123" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.debug"/>
+<tool command="as" id="cdt.managedbuild.tool.gnu.assembler.so.debug.662724583" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.so.debug"/>
+<macros/>
+</toolChain>
+</configuration>
+<configuration artifactExtension="so" artifactName="tuscany_sdo" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.so.release.1588435275" name="Release" parent="cdt.managedbuild.config.gnu.so.release">
+<toolChain id="cdt.managedbuild.toolchain.gnu.so.release.1916451262" name="GCC Tool Chain" superClass="cdt.managedbuild.toolchain.gnu.so.release">
+<tool command="gcc" id="cdt.managedbuild.tool.gnu.c.compiler.so.release.994589200" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release"/>
+<tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.so.release.1429553177" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.release">
+<option id="gnu.cpp.compiler.option.include.paths.1557660473" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="${SDO4CPP_HOME}/runtime/core/src"/>
+<listOptionValue builtIn="false" value="/usr/include/libxml2"/>
+</option>
+<option id="gnu.cpp.compiler.option.warnings.allwarn.687619026" superClass="gnu.cpp.compiler.option.warnings.allwarn" value="false" valueType="boolean"/>
+</tool>
+<tool command="gcc" id="cdt.managedbuild.tool.gnu.c.linker.so.release.316500641" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.so.release"/>
+<tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.linker.so.release.1432920590" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.release"/>
+<tool command="as" id="cdt.managedbuild.tool.gnu.assembler.so.release.1095309957" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.so.release"/>
+<macros/>
+</toolChain>
+</configuration>
+<macros/>
+</project>
+</ManagedProjectBuildInfo>

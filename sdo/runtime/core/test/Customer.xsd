@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+ xmlns:cust="customerNS" targetNamespace="customerNS">
+  <element name="customer" type="cust:CustomerType">
+    <complexType name="CustomerType">
+      <sequence>
+        <element name="customerId" type="ID"/>
+        <element name="name" type="string"/>
+        <element name="shipping" type="cust:AddressType">
+          <complexType name="AddressType">
+            <element name="street" type="string"/>
+            <element name="city" type="string"/>
+            <element name="state" type="string"/>
+            <element name="zip" type="string"/>
+          </complexType>
+        </element>
+        <element name="payment" type="cust:PaymentType">
+          <complexType name="PaymentType">
+            <element name="accountNo" type="string"/>
+            <element name="bank" type="string"/>
+            <element name="securityCode" type="string"/>
+            <element name="amount" type="float"/>
+          </complexType>
+        </element>
+      </sequence>
+    </complexType>
+  </element>
+</schema>

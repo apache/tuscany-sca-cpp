@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.commonj.org/xmlns/sca/v0.0.1/"
+    xmlns:sdo="commonj.sdo/XML"
+    xmlns:sca="http://www.commonj.org/xmlns/sca/v0.0.1/"
+    elementFormDefault="qualified">
+
+  <include schemaLocation="sca-core.xsd"/>
+
+  <element name="property.xsd" type="sca:XSDProperty" substitutionGroup="sca:property" sdo:name="propertyXsd"/>
+  <complexType name="XSDProperty">
+    <complexContent>
+      <extension base="sca:Property">
+        <sequence>
+          <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="type" type="anyURI" use="required"/>
+        <anyAttribute namespace="##any" processContents="lax"/>
+      </extension>
+    </complexContent>
+  </complexType>
+</schema>

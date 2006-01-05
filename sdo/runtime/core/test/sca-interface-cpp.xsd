@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+		targetNamespace="http://www.commonj.org/xmlns/sca/v0.0.1/" 
+		xmlns:sca="http://www.commonj.org/xmlns/sca/v0.0.1/"
+		xmlns:sdo="commonj.sdo/XML"
+		elementFormDefault="qualified">
+
+	<include schemaLocation="sca-core.xsd"/>
+
+	<element name="interface.cpp" type="sca:CPPInterface" substitutionGroup="sca:interface"
+	sdo:name="interfaceCpp"/>
+	<complexType name="CPPInterface">
+		<complexContent>
+			<extension base="sca:Interface">
+				<sequence>
+					<element minOccurs="1" name="operation" type="sca:Operation"/>
+				</sequence>
+				<anyAttribute namespace="##any" processContents="lax"/>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<!-- C++ operation declaration -->
+	<complexType name="Operation">
+		<complexContent>
+			<sequence>
+				<element minOccurs="1" maxOccurs="1" name="return" type="sca:ReturnType"/>
+				<element minOccurs="0" name="parameter" type="sca:ParameterType"/>
+			</sequence>
+			<attribute name="name" type="string" use="required"/>
+		</complexContent>
+	</complexType>
+
+	<simpleType name="ReturnType">
+		<restriction base="string">
+			<enumeration value="float"/>
+			<enumeration value="void"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="ParameterType">
+		<restriction base="string">
+			<enumeration value="float"/>
+			<enumeration value="const char *"/>
+		</restriction>
+	</simpleType>	
+
+
+</schema>

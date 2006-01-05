@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<companyType xmlns="companyNS" xsi:type="CompanyType" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="MegaCorp" employeeOfTheMonth="#/CEO">
+<departments name="Shoe">
+<employees name="Sarah Jones"/>
+</departments>
+<CEO name="Fred Smith"/>
+</companyType>

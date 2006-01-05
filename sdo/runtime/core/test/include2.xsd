@@ -1,0 +1,17 @@
+    <xsd:schema  
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ 	xmlns:sdo="commonj.sdo"
+ 	xmlns:sdoxml="commonj.sdo/xml"
+	xmlns:company="companyNS"
+	targetNamespace="companyNS">
+
+      <xsd:complexType name="DepartmentType">
+        <xsd:sequence>
+          <xsd:element name="employees" type="company:EmployeeType"  maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="location" type="xsd:string"/>
+        <xsd:attribute name="number" type="xsd:int"/>
+      </xsd:complexType>
+     </xsd:schema>
+
