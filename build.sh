@@ -19,8 +19,8 @@ BIN_DIR="$APFULLDIR/bin"
 LIB_DIR="$APFULLDIR/lib"
 INCLUDE_DIR="$APFULLDIR/include"
 
-SCA4CPP_HOME="$APFULLDIR"
-SCA4CPP="$APFULLDIR"
+export SCA4CPP_HOME="$APFULLDIR"
+export SCA4CPP="$APFULLDIR"
 
 if [ x$AXISCPP_DEPLOY = x ]; then
 echo AXISCPP_DEPLOY not set
@@ -29,7 +29,7 @@ fi
 echo "Using Axis C++ installed at $AXISCPP_DEPLOY"
 
 if [ x$SDO4CPP = x ]; then
-SDO4CPP="$SCA4CPP/../sdo"
+export SDO4CPP="$SCA4CPP/../sdo"
 fi
 echo "Using SDO installed at $SDO4CPP"
 
