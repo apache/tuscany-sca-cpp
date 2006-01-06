@@ -20,8 +20,8 @@ LIB_DIR="$APFULLDIR/lib"
 INCLUDE_DIR="$APFULLDIR/include"
 DEFAULT_DIR="/usr/local/apache2"
 
-SDO4CPP_HOME="$APFULLDIR"
-SDO4CPP="$APFULLDIR"
+export SDO4CPP_HOME="$APFULLDIR"
+export SDO4CPP="$APFULLDIR"
 
 cd $SDO4CPP_HOME/runtime/core/src/Debug
 make clean
