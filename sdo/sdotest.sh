@@ -15,9 +15,9 @@
 #  limitations under the License.
 
 APFULLDIR=`pwd`
-SDO4CPP_HOME="$APFULLDIR"
+export SDO4CPP_HOME="$APFULLDIR"
 if [ x$SDO4CPP = x ]; then
-SDO4CPP="$SDO4CPP_HOME"
+export SDO4CPP="$SDO4CPP_HOME"
 fi
 
 echo "Using SDO installed at $SDO4CPP"
