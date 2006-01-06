@@ -17,9 +17,9 @@
 
 APFULLDIR=`pwd`
 
-SCA4CPP_HOME="$APFULLDIR"
+export SCA4CPP_HOME="$APFULLDIR"
 if [ x$SCA4CPP = x ]; then
-SCA4CPP="$SCA4CPP_HOME"
+export SCA4CPP="$SCA4CPP_HOME"
 fi
 echo "Using SCA installed at $SCA4CPP"
 
@@ -37,7 +37,7 @@ echo "Using Xerces C++ installed at $XERCES_DEPLOY"
 
 if [ x$SDO4CPP = x ]; then
 echo "SDO4CPP not set"
-exit;
+export SDO4CPP=$SCA4CPP_HOME/../sdo
 fi
 echo "Using SDO installed at $SDO4CPP"
 
