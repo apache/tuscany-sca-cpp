@@ -80,30 +80,79 @@ public class Options {
     }
 
     static boolean isOptionSet(String key) {
-        return values.contains(key);
+        return values.contains(key) || null!=pairs.get(key);
     }
 
+    /**
+     * This option will cause scagen to print out messages
+     * about the artefacts it is processing
+     * @return
+     */
     public static boolean verbose() {
         return isOptionSet("-verbose");
     }
 
+    /**
+     * This option will cause scagen to print out some
+     * basic internal log type messages 
+     * @return
+     */
     public static boolean debug() {
         return isOptionSet("-debug");
     }
 
+    /**
+     * This option will cause scagen to print out some
+     * text that can be used or pasted into a command
+     * file to copy all the relevant artefacts from
+     * where they are found or generated to a specific
+     * deployment location
+     * 
+     * @return
+     */
     public static boolean deploy() {
         return isOptionSet("-deploy");
     }
 
+    /**
+     * This option will prevent scagen from actually writing out
+     * the generated files. It is useful if used in conjunction
+     * with the "-deploy" option. 
+     * @return
+     */
     public static boolean noGenerate() {
         return isOptionSet("-nogenerate");
     }
 
+    /**
+     * This option is useful only when used in conjunction with
+     * the "-deploy" option. It changes the output to be more like the
+     * source code of a command script to copy the files to a 
+     * specific place. 
+     * @return
+     */
     public static boolean outputCommand() {
         return isOptionSet("-outputCommand");
     }
 
+    /**
+     * This option is useful only when used in conjunction with
+     * the "-deploy" option. It changes the output to be a simple
+     * list of artefacts. It has no effect if the "-outputCommand"
+     * option is set. 
+     * 
+     * @return
+     */
+    public static boolean list() {
+        return isOptionSet("-list");
+    }
 
+    /**
+     * This option is maintained for compatibility with the
+     * original package source. It is not used by new scagen code. 
+     * 
+     * @return
+     */
     public static boolean quiet() {
         return isOptionSet("-quiet");
     }

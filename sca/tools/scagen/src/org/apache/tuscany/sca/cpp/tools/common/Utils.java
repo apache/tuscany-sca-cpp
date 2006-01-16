@@ -392,7 +392,6 @@ public final class Utils {
            //                           "outputDir c:\bob"
            //                           "input c:\fred\sca.module"
            //                           "output c:\bob\proxy.h" type output
-           boolean outputCommand = Options.outputCommand();
            String command = null;
 
            try {
@@ -410,7 +409,7 @@ public final class Utils {
                command = "copy";
            }
 
-           if (outputCommand) {
+            if (Options.outputCommand()) {
 
                String tail = message;
                switch (eventType) {
@@ -421,7 +420,8 @@ public final class Utils {
 
                    String dest = joinPathElements(newModuleRoot, tail);
 
-                   System.out.println(command + " " + platformSlashes(message) + " " + platformSlashes(dest));
+                    System.out.println(command + " " + platformSlashes(message)
+                            + " " + platformSlashes(dest));
                    break;
 
                case DEPLOYMENT_ARTEFACT_GENERATED:
@@ -430,7 +430,8 @@ public final class Utils {
                    }
 
                    dest = joinPathElements(newModuleRoot, tail);
-                   System.out.println(command + " " + platformSlashes(message) + " " + platformSlashes(dest));
+                    System.out.println(command + " " + platformSlashes(message)
+                            + " " + platformSlashes(dest));
                    break;
                case DEPLOYMENT_INPUT_DIRECTORY:
                    scagenInputDir = message;
@@ -445,26 +446,39 @@ public final class Utils {
                }
 
            } else {
+
+                if (Options.list()) {
+                    switch (eventType) {
+                    case DEPLOYMENT_ARTEFACT_ENCOUNTERED:
+                    case DEPLOYMENT_ARTEFACT_GENERATED:
+                        System.out.println(platformSlashes(message));
+                        break;
+                    case DEPLOYMENT_INPUT_DIRECTORY:
+                    case DEPLOYMENT_OUTPUT_DIRECTORY:
+                    default:
+                        break;
+                    }
+                } else {
                switch (eventType) {
                case DEPLOYMENT_ARTEFACT_ENCOUNTERED:
                    //TODO make efficient
                    System.out.println("$sourceDir1"
-                           + message.substring(scagenInputDir.length()));
+                                + platformSlashes(message.substring(scagenInputDir.length())));
                    break;
                case DEPLOYMENT_ARTEFACT_GENERATED:
                    //TODO make efficient
                    System.out.println(generatedDirName
-                           + message.substring(scagenOutputDir.length()));
+                                + platformSlashes(message.substring(scagenOutputDir.length())));
                    break;
                case DEPLOYMENT_INPUT_DIRECTORY:
-                   scagenInputDir = message;
-                   System.out.println("sourceDir1=" + message);
+                        scagenInputDir = platformSlashes(message);
+                        System.out.println("sourceDir1=" + scagenInputDir);
                    break;
                case DEPLOYMENT_OUTPUT_DIRECTORY:
-                   scagenOutputDir = message;
+                        scagenOutputDir = platformSlashes(message);
                    if (!scagenInputDir.equals(scagenOutputDir)) {
                        generatedDirName = "$sourceDir2";
-                       System.out.println("sourceDir2=" + message);
+                            System.out.println("sourceDir2=" + scagenOutputDir);
                    } else {
                        //generatedDirName = "sourceDir1";
                    }
@@ -475,6 +489,7 @@ public final class Utils {
            }
        }
    }
+    }
 
    /**
     * @param tail

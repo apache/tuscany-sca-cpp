@@ -157,10 +157,11 @@ public class Scagen extends CParsingTool {
         System.out
                 .println("       [-command <copy_cmd>]: a string that is injected into the deploy text");
         System.out
+                .println("       [-list]: change the deploy output text to a simple list of artefacts");
+        System.out
                 .println("       [-outputCommand]: change the deploy output text to command text format");
         System.out
                 .println("                       output is of form \"copy_cmd <dir>file1 <deploy_dir>file1\"");
-
         System.out
                 .println("       [-nogenerate]: do not generate proxies and wrappers");
 
