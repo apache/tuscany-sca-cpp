@@ -20,27 +20,27 @@
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <!-- Part of the org.apache.tuscany.sca.cpp.tools.services packages
-  - 
-  -  This stylesheet creates the CPP implementation of the 
-  -  proxy body for a given SCA service
+   
+     This stylesheet creates the CPP implementation of the 
+     proxy body for a given SCA service
   --> 
 <xsl:output method="text"/>
  
-<!-- Delete cppScopes -->
+<!-- We do not generate output sourced from cppScopes -->
 <xsl:template match="cppScope"></xsl:template>
 
-<!-- Delete private methods cppScopes -->
+<!-- We do not generate output sourced from private scaOperations -->
 <xsl:template match="scaOperation[@cppScope='private']">
 </xsl:template>
 
-<!-- Delete private methods cppScopes -->
+<!-- We do not generate output sourced from the operation return types -->
 <xsl:template match="scaOperationReturnType">
 </xsl:template>
 
 
-<!-- -->
-<!-- CPP Header/Root -->
-<!-- -->
+<!--
+    CPP Header/Root
+-->
 <xsl:template match="cppHeader">/*
  *  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
  *
@@ -63,7 +63,7 @@
 using namespace osoa::sca;
 using namespace tuscany::sca;<!-- thats the prologue over nad done with
      now continue with the scaServiceElement -->
-<xsl:apply-templates/> <!-- should go on to generic scaService -->
+<xsl:apply-templates/> <!-- should go on to generic scaService below -->
 </xsl:template>
   
 <!-- -->
@@ -111,7 +111,11 @@ extern "C"
 {
     if (target)
         delete target;
-}
+}<!--
+OK we have done the stuff that is not specific to any function in the service
+now we can do another apply-templates to pick up on the 0, 1 or more scaOperation
+DOM nodes that each relate to a function in the service
+ -->
 <xsl:apply-templates/>
 <!-- Always make sure we have a (visible) final newline -->
 <xsl:text>
@@ -119,6 +123,9 @@ extern "C"
 </xsl:text>
 </xsl:template>  
 
+<!--  This template is just a small function that will generate the 
+      #include that pulls in the correct C++ header
+ -->
 <xsl:template match="scaService" mode="include_header">
 <xsl:variable name="clazz">
    <xsl:value-of select="../@implClass"/>
