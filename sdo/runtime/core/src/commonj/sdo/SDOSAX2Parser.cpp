@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/06 14:32:34 $ */
 
 #include "commonj/sdo/SDOSAX2Parser.h"
 
@@ -1037,6 +1037,18 @@ namespace commonj
                                 currentPropertySetting.dataObject->
                                 setCString((const char*)"value", currentPropertySetting.value );
                             }
+                            if (dataObjectStack.size() == 0 || rootDataObject == dataObjectStack.top())
+                            {
+                                currentDataObject = 0;
+                                currentDataObjectType = 0;
+                            }
+                            else
+                            {
+                                dataObjectStack.pop();
+                                currentDataObject = dataObjectStack.top();
+                                currentDataObjectType = &(currentDataObject->getType());
+                            }
+
                         }
                         else
                         {

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/06 09:55:37 $ */
 
 #ifndef _SDOXMLWRITER_H_
 #define _SDOXMLWRITER_H_
@@ -30,6 +30,7 @@
 #include "commonj/sdo/XSDPropertyInfo.h"
 #include <stack>
 #include "commonj/sdo/SAX2Namespaces.h"
+#include "commonj/sdo/DataObjectImpl.h"
 
 
 namespace commonj
@@ -80,23 +81,27 @@ namespace commonj
                 const SDOXMLString& elementName,
                 ChangeSummaryPtr cs);
 
-
+            void addToNamespaces(DataObjectImpl* dob);
+ 
             int writeDO(
                 DataObjectPtr dataObject,
                 const SDOXMLString& elementURI,
                 const SDOXMLString& elementName,
-                bool writeXSIType = false);
+                bool writeXSIType = false,
+                bool isRoot = false);
 
             SchemaInfo* schemaInfo;
             DataFactoryPtr    dataFactory;
 
             XSDPropertyInfo* getPropertyInfo(const Type& type, const Property& property);
             
-            std::stack<SDOXMLString>    namespaceUriStack;
-
-            SAX2Namespaces namespaces;
-            std::stack<SAX2Namespaces>    namespaceStack;
-            
+            //std::stack<SDOXMLString>    namespaceUriStack;
+            //SAX2Namespaces namespaces;
+            //std::stack<SAX2Namespaces>    namespaceStack;
+            int spacescount;
+            std::map<SDOXMLString,SDOXMLString> namespaceMap;
+            SDOXMLString tnsURI;
+           
 
             void writeReference(
                 DataObjectPtr dataObject, 

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/05 13:13:23 $ */
 
 #ifndef _DATAOBJECTIMPL_H_
 #define _DATAOBJECTIMPL_H_
@@ -540,17 +540,18 @@ class DataObjectImpl : public DataObject
         const char* typeURI, const char* typeName );
     virtual const PropertyImpl* defineList(const char* propname);
     virtual void  undefineProperty(unsigned int index);
+    virtual const TypeImpl& getTypeImpl();
 
 private:
 
     void validateIndex(unsigned int index);
-     void checkType(    const Property& prop,
+     virtual void checkFactory(DataObjectPtr dob);
+     virtual void checkType(    const Property& prop,
                     const Type& objectType);
      
     virtual bool remove(DataObjectImpl* indol);
     virtual bool isSet(const Property& prop, unsigned int propertyIndex);
 
-    virtual const TypeImpl& getTypeImpl();
 
     virtual DataObjectImpl* getDataObjectImpl(const char* path); 
     virtual DataObjectImpl* getDataObjectImpl(unsigned int propertyIndex); 

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/06 09:55:37 $ */
 
 #include "commonj/sdo/SDOXMLWriter.h"
 #include "commonj/sdo/SDOXMLString.h"
@@ -79,10 +79,11 @@ namespace commonj
             
             int rc = 0;
             
-            namespaceUriStack.empty();
-            namespaceUriStack.push(SDOXMLString());
-            namespaces.empty();
-            namespaceStack.push(namespaces);
+            //namespaceUriStack.empty();
+            //namespaceUriStack.push(SDOXMLString());
+            //namespaces.empty();
+            //namespaceStack.push(namespaces);
+            namespaceMap.empty();
             
             //xmlTextWriterSetIndent(writer, 1);
             //xmlTextWriterSetIndentString(writer, SDOXMLString("  "));
@@ -113,7 +114,7 @@ namespace commonj
                     writeXSIType = true;
                 }
                 
-                writeDO(root, elementURI, elementName, true);
+                writeDO(root, elementURI, elementName, true, true);
             }
             rc = xmlTextWriterEndDocument(writer);
             if (rc < 0) {
@@ -518,6 +519,78 @@ namespace commonj
         }
         
         //////////////////////////////////////////////////////////////////////////
+        // Add to namespaces
+        //////////////////////////////////////////////////////////////////////////
+        
+        void  SDOXMLWriter::addToNamespaces(DataObjectImpl* dob)
+        {
+            std::map<SDOXMLString,SDOXMLString>::iterator it;
+            SDOXMLString uri = dob->getType().getURI();
+    
+            it = namespaceMap.find(uri);
+            if (it == namespaceMap.end())
+            {
+                char buf[20];
+                sprintf(buf,"%d",++spacescount);
+                SDOXMLString s = SDOXMLString("tns") + buf;
+                namespaceMap.insert(make_pair(uri,s));
+            }
+
+            PropertyList pl = dob->getInstanceProperties();
+            for (int i = 0; i < pl.size(); i++)
+            {
+                if (!dob->isSet(pl[i]))continue;
+
+                if  (pl[i].isMany())
+                {
+                    if (!pl[i].getType().isDataType())
+                    {
+                        DataObjectList& dl = dob->getList(pl[i]);
+                        for (int k=0;k< dl.size() ;k++)
+                        {
+                            DataObjectImpl* d = (DataObjectImpl*)(DataObject*)dl[k];
+                            if (d != 0)addToNamespaces(d);
+                        }
+                    }
+                }
+                else
+                {
+                    if (!pl[i].getType().isDataType())
+                    {
+                        DataObjectImpl* d = (DataObjectImpl*)(DataObject*)dob->getDataObject(pl[i]);
+                        if (d != 0)addToNamespaces(d);
+                    }
+                    else
+                    {                    
+                        XSDPropertyInfo* pi = getPropertyInfo(dob->getType(), pl[i]);
+                        if (pi)
+                        {
+                            PropertyDefinition propdef;
+                            propdef = pi->getPropertyDefinition();
+                            if (propdef.isElement)continue;
+                            if (!propdef.isQName)continue;
+                 
+                            SDOXMLString propertyValue = (dob->getCString(pl[i]));
+                            XMLQName qname(propertyValue);
+                            
+                            it = namespaceMap.find(qname.getURI());
+                            if (it == namespaceMap.end())
+                            {
+                                char buf[20];
+                                sprintf(buf,"%d",++spacescount);
+                                SDOXMLString s = SDOXMLString("tns") + buf;
+                                namespaceMap.insert(make_pair(qname.getURI(),s));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+            
+
+        
+        
+        //////////////////////////////////////////////////////////////////////////
         // Write a DatObject tree
         //////////////////////////////////////////////////////////////////////////
         
@@ -525,7 +598,8 @@ namespace commonj
             DataObjectPtr dataObject,
             const SDOXMLString& elementURI,
             const SDOXMLString& elementName,
-            bool writeXSIType)
+            bool writeXSIType,
+            bool isRoot)
         {
 
             int rc;
@@ -533,12 +607,13 @@ namespace commonj
             if (dataObject == 0)
                 return 0;
 
-            SDOXMLString uri;
-            if (!elementURI.equals(namespaceUriStack.top()))
-            {
-                uri = elementURI;
-                namespaceUriStack.push(elementURI);
-            }
+
+            //SDOXMLString uri;
+            //if (!elementURI.equals(namespaceUriStack.top()))
+            //{
+            //    uri = elementURI;
+            //    namespaceUriStack.push(elementURI);
+            //}
 
             const Type& dataObjectType = dataObject->getType();
 
@@ -550,7 +625,7 @@ namespace commonj
                 if (dataObject->isNull(""))
                 {
                     rc = xmlTextWriterStartElementNS(writer, 
-                        NULL, elementName, uri);
+                        NULL, elementName, elementURI);
                     if (rc < 0) 
                     {
                         SDO_THROW_EXCEPTION("writeDO", 
@@ -571,34 +646,127 @@ namespace commonj
                 }
 
                 // need to pop stacks before returning
-                if (!uri.isNull())
-                {
-                    namespaceUriStack.pop();
-                }
+                //if (!uri.isNull())
+                //{
+                //    namespaceUriStack.pop();
+                //}
                 return 0;
 
             }
             
-			namespaceStack.push(namespaces);
 
-            //xmlTextWriterWriteString(writer,SDOXMLString("\n"));
-            rc = xmlTextWriterStartElementNS(writer, NULL, elementName, uri);
-            if (rc < 0) {
-                SDO_THROW_EXCEPTION("writeDO", SDOXMLParserException, "xmlTextWriterStartElementNS failed");
-            }                
+			//namespaceStack.push(namespaces);
+
+
+            if (isRoot)
+            {
+                tnsURI=elementURI;
+                rc = xmlTextWriterStartElementNS(writer, NULL, elementName, elementURI);
+                if (rc < 0) {
+                    SDO_THROW_EXCEPTION("writeDO", SDOXMLParserException, "xmlTextWriterStartElementNS failed");
+                }
+            }
+            else
+            {
+                //xmlTextWriterWriteString(writer,SDOXMLString("\n"));
+
+                SDOXMLString theName=elementName;
+
+                if (!elementURI.isNull() && !elementURI.equals(tnsURI))
+                {
+                    std::map<SDOXMLString,SDOXMLString>::iterator it = namespaceMap.find(elementURI);
+                    if (it != namespaceMap.end())
+                    {
+                        theName = (*it).second;
+                        theName += ":";
+                        theName += elementName;
+                    }
+                }
+
+                rc = xmlTextWriterStartElementNS(writer, NULL, theName, NULL);
+                if (rc < 0) {
+                    SDO_THROW_EXCEPTION("writeDO", SDOXMLParserException, "xmlTextWriterStartElementNS failed");
+                }   
+            }
             
 
             if (writeXSIType)
             {
                 rc = xmlTextWriterWriteAttributeNS(writer, 
                     SDOXMLString("xsi"), SDOXMLString("type"), 
-                    SDOXMLString("http://www.w3.org/2001/XMLSchema-instance"), 
+                    NULL,
+                    /*SDOXMLString("http://www.w3.org/2001/XMLSchema-instance"),*/ 
                     SDOXMLString(dataObject->getType().getName()));
+                if (isRoot)
+                {
+                    namespaceMap.insert(make_pair(
+                        SDOXMLString("http://www.w3.org/2001/XMLSchema-instance"),
+                        SDOXMLString("xsi")));
+ 
+                }
+            }
+
+
+            if (isRoot)
+            {
+                std::map<SDOXMLString,SDOXMLString>::iterator it = namespaceMap.find(elementURI);
+                if (it == namespaceMap.end())
+                {
+                    SDOXMLString s = SDOXMLString("tns");
+                    namespaceMap.insert(make_pair(elementURI,s));
+                }
+                DataObjectImpl* d = (DataObjectImpl*)(DataObject*)dataObject;
+                spacescount = 1;
+                addToNamespaces(d);
+                
+/////////////////////////////////////////////////////////////////////////////////////
+//                // build the namespace map, and write the items out at the
+//                // top of the tree.
+//                int spacecount = 0;
+//                DataObjectImpl* d = (DataObjectImpl*)(DataObject*)dataObject;
+//                if (d != 0)
+//                {
+//                    TypeList types = (d->getDataFactory())->getTypes();
+//                    std::map<SDOXMLString,SDOXMLString>::iterator it;
+//            
+//                    for (int i = 0; i<types.size(); i++)
+//                    {
+//                        SDOXMLString uri = types[i].getURI();
+//                        if (uri.equals(Type::SDOTypeNamespaceURI)) continue;
+//                        std::map<SDOXMLString,SDOXMLString>::iterator it = namespaceMap.find(uri);
+//                        if (it == namespaceMap.end())
+//                        {
+//                            char buf[4];
+//                            if (!elementURI.isNull()) 
+//                            {
+//                                if (elementURI.equals(uri))
+//                                {
+//                                   SDOXMLString s = SDOXMLString("tns");
+//                                    namespaceMap.insert(make_pair(uri,s));
+//                                }
+//                                else
+//                                {
+//                                    sprintf(buf,"%d",++spacecount);
+//                                    SDOXMLString s = SDOXMLString("tns") + buf;
+//                                    namespaceMap.insert(make_pair(uri,s));
+//                                }
+//                            }
+//                        }
+//                    }
+////////////////////////////////////////////////////////////////////////////////////
+                    
+                for (it = namespaceMap.begin();it != namespaceMap.end(); ++it)
+                {
+                    SDOXMLString space = SDOXMLString("xmlns:") + (*it).second;
+                    rc = xmlTextWriterWriteAttribute(writer,
+                     space, (*it).first);
+                }
             }
 
 
             //////////////////////////////////////////////////////////////////////////
             // write out the type if the xsi:type if the containing type is open
+            // and the property is not one of the declared properties
              //////////////////////////////////////////////////////////////////////////
             DataObject* dob = dataObject;
             DataObjectImpl* cont = 
@@ -619,10 +787,12 @@ namespace commonj
                     //}
                     //else
                     //{
+                    if (cont->getTypeImpl().getPropertyImpl(elementName) == 0)
+                    {
                         rc = xmlTextWriterWriteAttribute(writer, 
                         (const unsigned char*)"xsi:type", 
                         (const unsigned char*)dataObject->getType().getName());
-                    //}
+                    }
                 }
             }
 
@@ -639,6 +809,7 @@ namespace commonj
             // Iterate over all the properties to find attributes
             //////////////////////////////////////////////////////////////////////////
             int i;
+            int j = 1;
             PropertyList pl = dataObject->getInstanceProperties();
             for (i = 0; i < pl.size(); i++)
             {
@@ -675,27 +846,35 @@ namespace commonj
                         if (pi && pi->getPropertyDefinition().isQName)
                         {
                             XMLQName qname(propertyValue);
-                            const SDOXMLString* prefix = namespaces.findPrefix(qname.getURI());
-                            if (prefix == 0)
-                            {
-                                char buffer[100];
-                                SDOXMLString pref = "tns";
-                                sprintf(buffer, "%d", i);
-                                pref += buffer;
-                                namespaces.add(pref, qname.getURI());
-                                prefix = namespaces.findPrefix(qname.getURI());
-                            }
+                             
+                            //{
+                            //const SDOXMLString* prefix = namespaces.findPrefix(qname.getURI());
+                            //if (prefix == 0)
+                            //{
+                            //    char buffer[100];
+                            //    SDOXMLString pref = "tns";
+                            //    sprintf(buffer, "%d", i);
+                            //    pref += buffer;
+                            //    namespaces.add(pref, qname.getURI());
+                            //    prefix = namespaces.findPrefix(qname.getURI());
+                            //}
 
-							if (prefix != 0 && !(*prefix).equals(""))
+							//if (prefix != 0 && !(*prefix).equals(""))
+
+                            std::map<SDOXMLString,SDOXMLString>::iterator it = namespaceMap.find(qname.getURI());
+                            if (it != namespaceMap.end())
                             {
-                                rc = xmlTextWriterWriteAttributeNS(writer, 
-									SDOXMLString("xmlns"), *prefix, NULL, qname.getURI());
-								
-								propertyValue = *prefix + ":" + qname.getLocalName();
+								propertyValue = (*it).second + ":" + qname.getLocalName();
 							}
                             else 
                             {
-                                propertyValue = qname.getLocalName();
+                                char buffer[20];
+                                SDOXMLString pref = "tnss";
+                                sprintf(buffer, "%d", j++);
+                                pref += buffer;
+                                rc = xmlTextWriterWriteAttributeNS(writer, 
+									SDOXMLString("xmlns"), pref, NULL, qname.getURI());
+                                propertyValue = pref + ":" + qname.getLocalName();
                             }
                             
                         }
@@ -871,7 +1050,7 @@ namespace commonj
                                     if (dataObject->isNull(propertyName))
                                     {
                                         rc = xmlTextWriterStartElementNS(writer, 
-                                        NULL, elementName, uri);
+                                        NULL, elementName, elementURI);
                                         if (rc < 0) 
                                         {
                                             SDO_THROW_EXCEPTION("writeDO", 
@@ -899,12 +1078,12 @@ namespace commonj
             rc = xmlTextWriterEndElement(writer);
             return rc;
 
-			namespaces = namespaceStack.top();
-			namespaceStack.pop();
-            if (!uri.isNull())
-            {
-                namespaceUriStack.pop();
-            }
+			//namespaces = namespaceStack.top();
+			//namespaceStack.pop();
+            //if (!uri.isNull())
+            //{
+            //    namespaceUriStack.pop();
+            //}
         }
         
         XSDPropertyInfo* SDOXMLWriter::getPropertyInfo(const Type& type, const Property& property)

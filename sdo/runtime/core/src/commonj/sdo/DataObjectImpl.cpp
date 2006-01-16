@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date: 2006/01/03 15:45:14 $ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/DataObjectImpl.h"
@@ -2048,6 +2048,26 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
         }
     }
 
+    void DataObjectImpl::checkFactory(DataObjectPtr dob)
+    {
+        
+        DataObjectImpl* d = (DataObjectImpl*)(DataObject*)dob;
+
+        if (d->getDataFactory() == getDataFactory()) return;
+        
+        string msg("Insertion from incompatible factory ");
+        const Type& t = d->getType();
+        msg += t.getURI();
+        msg += "#";
+        msg += t.getName();
+        msg += " into data object ";
+        msg += getType().getURI();
+        msg += "#";
+        msg += getType().getName();
+        SDO_THROW_EXCEPTION("checkFactory", SDOInvalidConversionException,
+            msg.c_str());
+    }
+
 
     void DataObjectImpl::checkType(    const Property& prop,
                                     const Type& objectType)
@@ -2059,31 +2079,37 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
 
         const TypeImpl* ti = ((DataFactoryImpl*)df)->findTypeImpl
             (objectType.getURI(),objectType.getName());
-        
-        do 
+        if (ti != 0)
         {
-            ti = (const TypeImpl*)ti->getBaseType();
-            if (ti == 0) break;
-            if (propType.equals(*ti)) return;
-        } while (ti != 0);
-
-        // allow types of any substitutes
-        const PropertyImpl* pi = 
-                getPropertyImpl(getPropertyIndex(prop));
-        if (pi != 0) 
-        {
-            unsigned int subcount = pi->getSubstitutionCount();
-            for (int i=0;i<subcount;i++)
+            do 
             {
-                const Type* tsub = pi->getSubstitutionType(i);
-                if (tsub != 0 && tsub->equals(objectType)) return;
+                ti = (const TypeImpl*)ti->getBaseType();
+                if (ti == 0) break;
+                if (propType.equals(*ti)) return;
+            } while (ti != 0);
+
+            // allow types of any substitutes
+            const PropertyImpl* pi = 
+                getPropertyImpl(getPropertyIndex(prop));
+            if (pi != 0) 
+            {
+                unsigned int subcount = pi->getSubstitutionCount();
+                for (int i=0;i<subcount;i++)
+                {
+                    const Type* tsub = pi->getSubstitutionType(i);
+                    if (tsub != 0 && tsub->equals(objectType)) return;
+                }
             }
         }
 
         // no match..
         string msg("Insertion of object of incompatible type ");
+        msg += objectType.getURI();
+        msg += "#";
         msg += objectType.getName();
         msg += " into property of type ";
+        msg += propType.getURI();
+        msg += "#";
         msg += propType.getName();
         SDO_THROW_EXCEPTION("TypeCheck", SDOInvalidConversionException,
             msg.c_str());
@@ -2098,7 +2124,12 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
     {
         unsigned int propertyIndex = getPropertyIndex(prop);
 
-        if (value != 0)checkType(prop,value->getType());
+       
+        if (value != 0)
+        {
+            checkFactory(value);
+            checkType(prop,value->getType());
+        }
 
         validateIndex(propertyIndex);
 
@@ -2313,13 +2344,24 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
                 const Property& p = d->getProperty(prop);
                 if (p.isMany())
                 {
-                    if (strchr(prop,'[') || strchr(prop,'.'))
+                    char *c;
+                    if ((c = strchr(prop,'[')) != 0)
                     {
+                        char *c1 = strchr(c,']');
+                        if (c1 != 0)*c1 = 0;
+                        unsigned int i = atoi(++c);
+                        DataObjectList& li = d->getList(p);
+                        li.remove(i);
                         delete prop;
-                        string msg("Cannot unset a member of a list:");
-                        msg += path;
-                        SDO_THROW_EXCEPTION("unset", SDOUnsupportedOperationException,
-                        msg.c_str());
+                        return;
+                    }
+                    if ((c = strchr(prop,'.')) != 0)
+                    {
+                        unsigned int i = atoi(++c);
+                        DataObjectList& li = d->getList(p);
+                        li.remove(i);
+                        delete prop;
+                        return;
                     }
                 }
                 delete prop;

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/04 14:21:08 $ */
 
 #include "commonj/sdo/Logger.h"
 
@@ -1729,7 +1729,23 @@ namespace sdo{
 #if defined(WIN32)  || defined (_WINDOWS)    
                 swprintf((wchar_t*)outval,fmt,*(long double*)value);
 #else
+#if defined(NO_SWPRINTF)
+                {
+                int k;
+                char *tmpbuf = new char[50];
+                wchar_t *tmpw = (wchar_t*)outval;
+                sprintf(tmpbuf,"%.3e",*(long double*)value);
+                for (k=0;k<strlen(tmpbuf);k++)
+                {
+                    *(tmpw++) = (wchar_t)(tmpbuf[k]);
+                }
+                *tmpw = 0;
+                delete tmpbuf;
+                }
+
+#else
                 swprintf((wchar_t*)outval, wcslen((wchar_t*)outval), fmt, *(long double*)value);
+#endif
 #endif
                 delete fmt;
 
@@ -1748,7 +1764,22 @@ namespace sdo{
 #if defined(WIN32)  || defined (_WINDOWS)
                 swprintf(outval,fmt,*(float*)value);
 #else
+#if defined(NO_SWPRINTF)
+                {
+                int k;
+                char *tmpbuf = new char[50];
+                wchar_t *tmpw = (wchar_t*)outval;
+                sprintf(tmpbuf,"%.3e",*(float*)value);
+                for (k=0;k<strlen(tmpbuf);k++)
+                {
+                    *(tmpw++) = (wchar_t)(tmpbuf[k]);
+                }
+                *tmpw = 0;
+                delete tmpbuf;
+                }
+#else
                 swprintf(outval, wcslen(outval), fmt, *(float*)value);
+#endif
 #endif
                 delete fmt;
 

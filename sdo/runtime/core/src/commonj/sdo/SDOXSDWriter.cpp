@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/04 14:11:37 $ */
 
 #include "commonj/sdo/SDOXSDWriter.h"
 #include "iostream"
@@ -209,16 +209,12 @@ namespace commonj
                 {
                     char buf[4];
                     if (!targetNamespaceURI.isNull() 
-                        && targetNamespaceURI.equals(uri))
+                        && !targetNamespaceURI.equals(uri))
                     {
-                        sprintf(buf,"tns");
+                        sprintf(buf,"%d",++spacecount);
+                        SDOXMLString s = SDOXMLString("tns") + buf;
+                        namespaceMap.insert(make_pair(uri,s));
                     }
-                    else
-                    {
-                        sprintf(buf,"%03d",++spacecount);
-                    }
-                    SDOXMLString s = SDOXMLString("namespace") + buf;
-                    namespaceMap.insert(make_pair(uri,s));
                 }
             }
      

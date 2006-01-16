@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/05 08:34:35 $ */
 
 #include "commonj/sdo/SDOXMLFileWriter.h"   // Include first to avoid libxml compile problems!
 #include "commonj/sdo/SDOXMLStreamWriter.h" // Include first to avoid libxml compile problems!
@@ -151,8 +151,10 @@ namespace commonj
             {
                 const char* typeUri =  prop.substituteUri.isNull() ?
                                  ty.uri : prop.substituteUri;  
-                const Type& rootType = dataFactory->getType(typeUri, "RootType");
-                PropertyList pl = rootType.getProperties();
+                DataFactoryImpl* df = (DataFactoryImpl*)(DataFactory*)dataFactory;
+                const Type* rootType = df->findType(typeUri,"RootType");
+                if (rootType == 0) return;
+                PropertyList pl = rootType->getProperties();
                 for (int j = 0; j < pl.size(); j++)
                 {
                     XSDPropertyInfo* pi = (XSDPropertyInfo*)
