@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/03 15:45:14 $ */
+/* $Rev$ $Date: 2006/01/17 14:55:15 $ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/DataObjectImpl.h"
@@ -2350,8 +2350,11 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
                         char *c1 = strchr(c,']');
                         if (c1 != 0)*c1 = 0;
                         unsigned int i = atoi(++c);
-                        DataObjectList& li = d->getList(p);
-                        li.remove(i);
+                        if (i > 0){
+                            i--;
+                            DataObjectList& li = d->getList(p);
+                            li.remove(i);
+                        }
                         delete prop;
                         return;
                     }
