@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/06 09:55:37 $ */
+/* $Rev$ $Date: 2006/01/17 21:35:03 $ */
 
 #include "commonj/sdo/SDOXMLWriter.h"
 #include "commonj/sdo/SDOXMLString.h"
@@ -661,7 +661,13 @@ namespace commonj
             if (isRoot)
             {
                 tnsURI=elementURI;
-                rc = xmlTextWriterStartElementNS(writer, NULL, elementName, elementURI);
+                if (elementURI.equals("")) {
+                    rc = xmlTextWriterStartElementNS(writer, NULL, elementName, NULL);
+                }
+                else
+                {
+                    rc = xmlTextWriterStartElementNS(writer, NULL, elementName, elementURI);
+                }
                 if (rc < 0) {
                     SDO_THROW_EXCEPTION("writeDO", SDOXMLParserException, "xmlTextWriterStartElementNS failed");
                 }
@@ -672,7 +678,7 @@ namespace commonj
 
                 SDOXMLString theName=elementName;
 
-                if (!elementURI.isNull() && !elementURI.equals(tnsURI))
+                if (!elementURI.isNull() && !elementURI.equals(tnsURI) && !elementURI.equals(""))
                 {
                     std::map<SDOXMLString,SDOXMLString>::iterator it = namespaceMap.find(elementURI);
                     if (it != namespaceMap.end())
@@ -757,6 +763,7 @@ namespace commonj
                     
                 for (it = namespaceMap.begin();it != namespaceMap.end(); ++it)
                 {
+                    if ((*it).first.equals("")) continue;
                     SDOXMLString space = SDOXMLString("xmlns:") + (*it).second;
                     rc = xmlTextWriterWriteAttribute(writer,
                      space, (*it).first);

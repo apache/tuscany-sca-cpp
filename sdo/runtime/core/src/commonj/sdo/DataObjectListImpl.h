@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/17 21:35:03 $ */
 
 #ifndef _DATAOBJECTLISTIMPL_H_
 #define _DATAOBJECTLISTIMPL_H_
@@ -140,6 +140,7 @@ public:
     
     virtual DataObjectPtr  remove (unsigned int index);
 
+    virtual void checkFactory(DataObjectPtr dob);
     virtual void checkType(const Type& listType, const Type& objectType);
     virtual void setType(const char* uri, const char* name);    
 
