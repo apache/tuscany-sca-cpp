@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/06 14:32:34 $ */
+/* $Rev$ $Date: 2006/01/23 10:23:20 $ */
 
 #include "commonj/sdo/SDOSAX2Parser.h"
 
@@ -833,7 +833,17 @@ namespace commonj
                                 ignoreTag.uri = URI;
                                 ignoreTag.prefix = prefix;
                                 ignoreTag.tagCount = 0;
-                            }
+                                if (setter != 0)
+                                {
+                                    char *msg = new char[strlen((const char*)localname) + 32];
+                                    if (msg) {
+                                        sprintf(msg,"Parser found unknown element %s",
+                                            (const char*)localname);
+                                        setter->setError( msg );
+                                        delete msg;
+                                    }
+                                }
+                             }
                             LOGEXIT(INFO,"SDOSAX2Parser: startElementNs - exit5");
                             return;
                         }
@@ -904,6 +914,16 @@ namespace commonj
                             ignoreTag.uri = URI;
                             ignoreTag.prefix = prefix;
                             ignoreTag.tagCount = 0;
+                            if (setter != 0)
+                            {
+                                char *msg = new char[strlen((const char*)localname) + 32];
+                                if (msg) {
+                                    sprintf(msg,"Parser found unknown element %s",
+                                    (const char*)localname);
+                                    setter->setError( msg );
+                                    delete msg;
+                                }
+                            }
                             LOGEXIT(INFO,"SDOSAX2Parser: startElementNs - exit6");
                             return;
                         }
@@ -922,6 +942,16 @@ namespace commonj
                     ignoreTag.uri = URI;
                     ignoreTag.prefix = prefix;
                     ignoreTag.tagCount = 0;
+                    if (setter != 0)
+                    {
+                        char *msg = new char[strlen((const char*)localname) + 32];
+                        if (msg) {
+                            sprintf(msg,"Parser found unknown element %s",
+                            (const char*)localname);
+                            setter->setError( msg );
+                            delete msg;
+                        }
+                    }
                     LOGEXIT(INFO,"SDOSAX2Parser: startElementNs - exit7");
                     return;
                 }
@@ -942,6 +972,17 @@ namespace commonj
                     ignoreTag.uri = URI;
                     ignoreTag.prefix = prefix;
                     ignoreTag.tagCount = 0;
+                    if (setter != 0)
+                    {
+                        char *msg = new char[strlen((const char*)localname) + 32];
+                        if (msg)
+                        {
+                            sprintf(msg,"Parser found unknown element %s",
+                                 (const char*)localname);
+                            setter->setError( msg );
+                            delete msg;
+                        }
+                    }
                     LOGEXIT(INFO,"SDOSAX2Parser: startElementNs - exit8");
                     return;
                 }

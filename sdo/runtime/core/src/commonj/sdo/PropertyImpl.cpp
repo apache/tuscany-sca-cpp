@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/23 09:19:14 $ */
  
 #include <iostream>
 using namespace std;
@@ -147,8 +147,8 @@ namespace sdo{
     
     PropertyImpl::~PropertyImpl()
     {
-        if (name != 0) delete name;
-        if (defvalue != 0) delete defvalue;
+        if (name != 0) delete (char*)name;
+        if (defvalue != 0) delete (char*)defvalue;
         if (stringdef != 0) delete stringdef;
         for (int i = 0; i < aliases.size();i++)
          {
