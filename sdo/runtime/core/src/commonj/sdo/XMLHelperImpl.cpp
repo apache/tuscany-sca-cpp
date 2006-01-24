@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/24 10:53:23 $ */
+/* $Rev$ $Date: 2006/01/24 11:07:23 $ */
 
 #include "commonj/sdo/SDOXMLFileWriter.h"   // Include first to avoid libxml compile problems!
 #include "commonj/sdo/SDOXMLStreamWriter.h" // Include first to avoid libxml compile problems!
@@ -107,7 +107,7 @@ namespace commonj
                 }
                 else
                 {
-                    TypeList& tl = dp->getTypes();
+                    const TypeList& tl = dp->getTypes();
                     for (int i=0;i<tl.size();i++)
                     {
                         if (!strcmp("RootType",tl[i].getName()))
