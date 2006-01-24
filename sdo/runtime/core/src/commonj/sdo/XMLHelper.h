@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/24 10:53:23 $ */
 
 #ifndef _XMLHELPER_H_
 #define _XMLHELPER_H_
@@ -45,7 +45,10 @@ namespace commonj
              * Returns a pointer to the root data object
              */
 
-            SDO_API virtual XMLDocumentPtr loadFile(
+           SDO_API virtual XMLDocumentPtr createDocument(
+               const char* rootElementURI=0) = 0;
+
+           SDO_API virtual XMLDocumentPtr loadFile(
                 const char* xmlFile,
                 const char* targetNamespaceURI=0) = 0;
             SDO_API virtual XMLDocumentPtr load(

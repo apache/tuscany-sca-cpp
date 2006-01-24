@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/24 10:53:23 $ */
 
 #include "commonj/sdo/SDOXMLFileWriter.h"   // Include first to avoid libxml compile problems!
 #include "commonj/sdo/SDOXMLStreamWriter.h" // Include first to avoid libxml compile problems!
@@ -91,6 +91,43 @@ namespace commonj
             }
 
             return new XMLDocumentImpl(dataObject, rootElementURI, rootElementName);
+        }
+
+
+        XMLDocumentPtr XMLHelperImpl::createDocument(const char* rootElementURI)
+        {
+            DataFactory* dp = (DataFactory*)getDataFactory();
+            if (dp != 0)
+            {
+                const TypeImpl* rType;
+                if (rootElementURI  != 0)
+                {
+                    rType = ((DataFactoryImpl*)dp)->findTypeImpl
+                        (rootElementURI, "RootType");
+                }
+                else
+                {
+                    TypeList& tl = dp->getTypes();
+                    for (int i=0;i<tl.size();i++)
+                    {
+                        if (!strcmp("RootType",tl[i].getName()))
+                        {
+                            rType = ((DataFactoryImpl*)dp)->findTypeImpl
+                                (tl[i].getURI(), "RootType");
+                            // could continue and check for other roots
+                            // here if duplicates become a problem
+                            break;
+                        }
+                    }
+                }
+                if (rType != 0)
+                {
+                    DataObjectPtr dob = dp->create(*rType);
+                    return new XMLDocumentImpl(dob,
+                        rType->getURI(), rType->getName());
+                }
+            }
+            return 0;
         }
 
         XMLDocumentPtr XMLHelperImpl::createDocument(

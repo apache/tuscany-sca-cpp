@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/16 15:41:28 $ */
 
 
 #include "commonj/sdo/XMLHelper.h"
