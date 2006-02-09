@@ -14,17 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-APFULLDIR=`pwd`
-BIN_DIR="$APFULLDIR/bin"
-LIB_DIR="$APFULLDIR/lib"
-INCLUDE_DIR="$APFULLDIR/include"
-DEFAULT_DIR="/usr/local/apache2"
-
-export SDO4CPP_HOME="$APFULLDIR"
-export SDO4CPP="$APFULLDIR"
-
-cd $SDO4CPP_HOME/runtime/core/src/Debug
-make clean
+./autogen.sh
+./configure
 make
-cp ../commonj/sdo/*.h $SDO4CPP/include/commonj/sdo
-cp libtuscany_sdo.so $SDO4CPP/lib
+make install
