@@ -10,11 +10,7 @@ LIBXML2_LIB=/usr/lib
 LIBXML2_INCLUDE=/usr/include/libxml2
 
 3. Build the source
-This can be done using the following command sequence:
-        autogen.sh
-        ./configure
-        make
-        make install
+	./build.sh
 
 4. Run the test
         cd to runtime/core/test
