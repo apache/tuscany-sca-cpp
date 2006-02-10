@@ -15,6 +15,7 @@
 #  limitations under the License.
 
 ./autogen.sh
-./configure
+TUSCANY_SDOCPP_HOME=`pwd`
+./configure --prefix=${TUSCANY_SDOCPP_HOME}
 make
 make install

@@ -1,1 +1,0 @@
-An empty file so CVS creates the directory
