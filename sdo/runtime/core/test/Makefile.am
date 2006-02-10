@@ -1,4 +1,4 @@
-prgbindir=$(prefix)/bin/system_test
+prgbindir=$(prefix)/bin/test
 prgbin_PROGRAMS = tuscany_sdo_test
 SUBDIRS =
 AM_CPPFLAGS = $(CPPFLAGS)
