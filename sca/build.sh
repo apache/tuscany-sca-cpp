@@ -19,3 +19,7 @@ TUSCANY_SCACPP_HOME=`pwd`
 ./configure --prefix=${TUSCANY_SCACPP_HOME}
 make
 make install
+
+cd $TUSCANY_SCACPP_HOME/tools/scagen
+ant
+chmod a+x $TUSCANY_SCACPP_HOME/bin/scagen.sh
