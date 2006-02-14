@@ -6,7 +6,7 @@
         <property name="temp.folder" value="${basedir}/tmp" />
         <property name="junit.jar.folder" value="${basedir}/lib" />
         <property name="tool.name" value="scagen" />
-        <property name="bin.dir" value="../../../sca/bin" />
+        <property name="bin.dir" value="${basedir}/../../bin" />
     </target>
 
     <!-- Add "test" to the depends list below to add auto-testing to the build -->
