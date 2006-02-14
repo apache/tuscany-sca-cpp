@@ -14,53 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-APFULLDIR=`pwd`
-BIN_DIR="$APFULLDIR/bin"
-LIB_DIR="$APFULLDIR/lib"
-INCLUDE_DIR="$APFULLDIR/include"
-
-export SCA4CPP_HOME="$APFULLDIR"
-export SCA4CPP="$APFULLDIR"
-
-if [ x$AXISCPP_DEPLOY = x ]; then
-echo AXISCPP_DEPLOY not set
-exit;
-fi
-echo "Using Axis C++ installed at $AXISCPP_DEPLOY"
-
-if [ x$SDO4CPP = x ]; then
-export SDO4CPP="$SCA4CPP/../sdo"
-fi
-echo "Using SDO installed at $SDO4CPP"
-
-cd $SCA4CPP_HOME/runtime/core/src
-cd Debug
-make clean
+./autogen.sh
+TUSCANY_SCACPP_HOME=`pwd`
+./configure --prefix=${TUSCANY_SCACPP_HOME}
 make
-
-cp libtuscany_sca.so $SCA4CPP/lib
-
-cd ..
-
-cp osoa/sca/*.h $SCA4CPP/include/osoa/sca
-cp tuscany/sca/core/*.h $SCA4CPP/include/tuscany/sca/core
-cp tuscany/sca/util/*.h $SCA4CPP/include/tuscany/sca/util
-cp tuscany/sca/model/*.h $SCA4CPP/include/tuscany/sca/model
-cp tuscany/sca/ws/*.h $SCA4CPP/include/tuscany/sca/ws
-
-cd $SCA4CPP_HOME/runtime/axis_binding/handler/src
-cd Debug
-make clean
-make
-cp libtuscany_sca_axis_handler.so $SCA4CPP/lib
-
-cd $SCA4CPP_HOME/runtime/axis_binding/wrapper/src
-cd Debug
-make clean
-make
-cp libtuscany_sca_axis_wrapper.so $SCA4CPP/lib
-
-
-cd $SCA4CPP_HOME/tools/scagen
-ant
-chmod a+x $SCA4CPP/bin/scagen.sh
+make install
