@@ -1,1 +1,1 @@
-SUBDIRS = core
+SUBDIRS = core axis_binding
