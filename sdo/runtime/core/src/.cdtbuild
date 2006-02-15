@@ -11,8 +11,8 @@
 <listOptionValue builtIn="false" value="_DEBUG"/>
 </option>
 <option id="gnu.cpp.compiler.option.include.paths.1923756814" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="${SDO4CPP_HOME}/runtime/core/src"/>
-<listOptionValue builtIn="false" value="/usr/include/libxml2"/>
+<listOptionValue builtIn="false" value="${project_loc}"/>
+<listOptionValue builtIn="false" value="${LIBXML2_INCLUDE}"/>
 </option>
 <option id="gnu.cpp.compiler.option.warnings.allwarn.1941506556" superClass="gnu.cpp.compiler.option.warnings.allwarn" value="false" valueType="boolean"/>
 </tool>
@@ -27,7 +27,7 @@
 <tool command="gcc" id="cdt.managedbuild.tool.gnu.c.compiler.so.release.994589200" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release"/>
 <tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.so.release.1429553177" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.release">
 <option id="gnu.cpp.compiler.option.include.paths.1557660473" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="${SDO4CPP_HOME}/runtime/core/src"/>
+<listOptionValue builtIn="false" value="${project_loc}"/>
 <listOptionValue builtIn="false" value="/usr/include/libxml2"/>
 </option>
 <option id="gnu.cpp.compiler.option.warnings.allwarn.687619026" superClass="gnu.cpp.compiler.option.warnings.allwarn" value="false" valueType="boolean"/>
