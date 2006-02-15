@@ -48,5 +48,5 @@ export LD_LIBRARY_PATH=$SCA4CPP/lib:$SDO4CPP/lib:$LD_LIBRARY_PATH:$AXISCPP_DEPLO
 export SCA4CPP_SYSTEM_ROOT=$SCA4CPP_HOME/runtime/core/test/testSCASystem
 export SCA4CPP_DEFAULT_MODULE=SubSystem1
 
-cd $TEST_ROOT/src
-./tuscany_sca_test
+cd $SCA4CPP/bin
+test/tuscany_sca_test
