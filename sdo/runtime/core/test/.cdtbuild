@@ -11,8 +11,8 @@
 <listOptionValue builtIn="false" value="_DEBUG"/>
 </option>
 <option id="gnu.cpp.compiler.option.include.paths.1537573101" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="${SDO4CPP_HOME}/runtime/core/test"/>
-<listOptionValue builtIn="false" value="${SDO4CPP}/include"/>
+<listOptionValue builtIn="false" value="${project_loc}"/>
+<listOptionValue builtIn="false" value="${project_loc}/../src"/>
 </option>
 </tool>
 <tool command="gcc" id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1017750405" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
@@ -22,7 +22,8 @@
 <listOptionValue builtIn="false" value="xml2"/>
 </option>
 <option id="gnu.cpp.link.option.paths.507838253" superClass="gnu.cpp.link.option.paths" valueType="stringList">
-<listOptionValue builtIn="false" value="${SDO4CPP}/lib"/>
+<listOptionValue builtIn="false" value="${project_loc}/../src/Debug"/>
+<listOptionValue builtIn="false" value="${LIBXML2_LIB}"/>
 </option>
 </tool>
 <tool command="as" id="cdt.managedbuild.tool.gnu.assembler.exe.debug.680127870" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug"/>
@@ -34,8 +35,8 @@
 <tool command="gcc" id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.1386443308" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release"/>
 <tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.666703052" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release">
 <option id="gnu.cpp.compiler.option.include.paths.1488475926" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="${SDO4CPP_HOME}/runtime/core/test"/>
-<listOptionValue builtIn="false" value="${SDO4CPP}/include"/>
+<listOptionValue builtIn="false" value="${project_loc}/../src"/>
+<listOptionValue builtIn="false" value="${project_loc}"/>
 </option>
 </tool>
 <tool command="gcc" id="cdt.managedbuild.tool.gnu.c.linker.exe.release.87016949" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
@@ -45,7 +46,8 @@
 <listOptionValue builtIn="false" value="tuscany_sdo"/>
 </option>
 <option id="gnu.cpp.link.option.paths.984022714" superClass="gnu.cpp.link.option.paths" valueType="stringList">
-<listOptionValue builtIn="false" value="${SDO4CPP}/lib"/>
+<listOptionValue builtIn="false" value="${project_loc}/../src/Debug"/>
+<listOptionValue builtIn="false" value="${LIBXML2_LIB}"/>
 </option>
 </tool>
 <tool command="as" id="cdt.managedbuild.tool.gnu.assembler.exe.release.937369355" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.release"/>
