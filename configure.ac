@@ -42,6 +42,10 @@ AC_CONFIG_FILES([Makefile
                  runtime/axis_binding/handler/src/Makefile
                  runtime/axis_binding/wrapper/Makefile
                  runtime/axis_binding/wrapper/src/Makefile
+                 runtime/core/test/Makefile
+                 runtime/core/test/CustomerInfo/Makefile
+                 runtime/core/test/MyValue/Makefile
+                 runtime/core/test/src/Makefile
                  ])
 AC_OUTPUT
 

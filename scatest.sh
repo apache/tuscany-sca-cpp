@@ -43,34 +43,10 @@ echo "Using SDO installed at $SDO4CPP"
 
 TEST_ROOT=$SCA4CPP_HOME/runtime/core/test
 
-cp $TEST_ROOT/MyValue/MyValue.h $TEST_ROOT/testSCASystem/modules/MyValueServiceModule
-cp $TEST_ROOT/MyValue/MyValueImpl.h $TEST_ROOT/testSCASystem/modules/MyValueServiceModule
-cp $TEST_ROOT/MyValue/StockQuoteService.h $TEST_ROOT/testSCASystem/modules/MyValueServiceModule
-cp $TEST_ROOT/CustomerInfo/CustomerInfo.h $TEST_ROOT/testSCASystem/modules/MyValueServiceModule
-cp $TEST_ROOT/CustomerInfo/CustomerInfoImpl.h $TEST_ROOT/testSCASystem/modules/MyValueServiceModule
-
-cd $SCA4CPP/bin
-./scagen.sh -dir $TEST_ROOT/testSCASystem/modules/MyValueServiceModule -output $TEST_ROOT/tmp
-cp $TEST_ROOT/tmp/MyValueImpl*.* $TEST_ROOT/MyValue
-cp $TEST_ROOT/tmp/CustomerInfoImpl*.* $TEST_ROOT/CustomerInfo
-
-cd $TEST_ROOT/CustomerInfo/Debug
-make clean
-make
-cd $TEST_ROOT/MyValue/Debug
-make clean
-make
-cd $TEST_ROOT/src/Debug
-make clean
-make
-
-cp $TEST_ROOT/MyValue/Debug/libMyValue.so $TEST_ROOT/testSCASystem/modules/MyValueServiceModule
-cp $TEST_ROOT/CustomerInfo/Debug/libCustomerInfo.so $TEST_ROOT/testSCASystem/modules/MyValueServiceModule
-
 export LD_LIBRARY_PATH=$SCA4CPP/lib:$SDO4CPP/lib:$LD_LIBRARY_PATH:$AXISCPP_DEPLOY/lib:$XERCES_DEPLOY/lib
 
 export SCA4CPP_SYSTEM_ROOT=$SCA4CPP_HOME/runtime/core/test/testSCASystem
 export SCA4CPP_DEFAULT_MODULE=SubSystem1
 
 cd $TEST_ROOT/src
-Debug/tuscany_sca_test
+./tuscany_sca_test
