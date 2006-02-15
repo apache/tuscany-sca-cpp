@@ -14,12 +14,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-./autogen.sh
 TUSCANY_SCACPP_HOME=`pwd`
-./configure --prefix=${TUSCANY_SCACPP_HOME}
-make
-make install
 
+# Build tools first as they will be used to generate cpp code
 cd $TUSCANY_SCACPP_HOME/tools/scagen
 ant
 chmod a+x $TUSCANY_SCACPP_HOME/bin/scagen.sh
+
+cd $TUSCANY_SCACPP_HOME
+./autogen.sh
+./configure --prefix=${TUSCANY_SCACPP_HOME}
+make
+make install
