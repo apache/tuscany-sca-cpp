@@ -11,8 +11,8 @@
 <listOptionValue builtIn="false" value="_DEBUG"/>
 </option>
 <option id="gnu.cpp.compiler.option.include.paths.1415031933" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="${SCA4CPP_HOME}/runtime/core/src"/>
-<listOptionValue builtIn="false" value="${SDO4CPP}/include"/>
+<listOptionValue builtIn="false" value="${project_loc}/../../../core/src"/>
+<listOptionValue builtIn="false" value="${TUSCANY_SDOCPP}/include"/>
 <listOptionValue builtIn="false" value="${AXISCPP_DEPLOY}/include"/>
 </option>
 </tool>
@@ -27,8 +27,8 @@
 <tool command="gcc" id="cdt.managedbuild.tool.gnu.c.compiler.so.release.1306716781" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release"/>
 <tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.so.release.1788615220" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.release">
 <option id="gnu.cpp.compiler.option.include.paths.425019187" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-<listOptionValue builtIn="false" value="${SCA4CPP_HOME}/runtime/core/src"/>
-<listOptionValue builtIn="false" value="${SDO4CPP}/include"/>
+<listOptionValue builtIn="false" value="${project_loc}/../../../core/src"/>
+<listOptionValue builtIn="false" value="${TUSCANY_SDOCPP}/include"/>
 <listOptionValue builtIn="false" value="${AXISCPP_DEPLOY}/include"/>
 </option>
 </tool>
