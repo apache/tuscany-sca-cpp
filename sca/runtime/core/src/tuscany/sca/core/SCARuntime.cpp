@@ -35,7 +35,14 @@ namespace tuscany
 {
     namespace sca
     {
-
+        /** 
+         * Environment variable names
+         */
+        static const char* TUSCANY_SCACPP = "TUSCANY_SCACPP";
+        static const char* TUSCANY_SCACPP_SYSTEM_ROOT = "TUSCANY_SCACPP_SYSTEM_ROOT";
+        static const char* TUSCANY_SCACPP_DEFAULT_MODULE = "TUSCANY_SCACPP_DEFAULT_MODULE";
+            
+ 
         // ==========================================================
         // Initialize static class member to not pointing at anything
         // ==========================================================
@@ -52,10 +59,12 @@ namespace tuscany
             
             // Locate the SCA install root
             char*  root = 0;
-            root = getenv("SCA4CPP");
+            root = getenv(TUSCANY_SCACPP);
             if (root == 0)
             {
-                throw SystemConfigurationException("SCA4CPP environment variable not set");
+            	string msg = TUSCANY_SCACPP;
+            	msg += " environment variable not set";
+                throw SystemConfigurationException(msg.c_str());
             }
             else
             {
@@ -78,11 +87,13 @@ namespace tuscany
                 instance = new SCARuntime();
                 
                 // Load the runtime
-                // Get root from environment variable SCA4CPP_SYSTEM_ROOT
-                char* systemRoot = getenv("SCA4CPP_SYSTEM_ROOT");
+                // Get root from environment variable TUSCANY_SCACPP_SYSTEM_ROOT
+                char* systemRoot = getenv(TUSCANY_SCACPP_SYSTEM_ROOT);
                 if (systemRoot == 0)
                 {
-                    throw SystemConfigurationException("SCA4CPP_SYSTEM_ROOT environment variable not set");
+                	string msg = TUSCANY_SCACPP_SYSTEM_ROOT;
+                	msg += " environment variable not set";
+                    throw SystemConfigurationException(msg.c_str());
                 }
                 instance->load(systemRoot);
             }
@@ -223,10 +234,12 @@ namespace tuscany
                 // -------------------------------------------
                 // Get the default module from the environment
                 // -------------------------------------------
-                const char* defMod = getenv("SCA4CPP_DEFAULT_MODULE");
+                const char* defMod = getenv(TUSCANY_SCACPP_DEFAULT_MODULE);
                 if (!defMod)
                 {
-                    throw SystemConfigurationException("SCA4CPP_DEFAULT_MODULE environment variable not set");
+                	message = TUSCANY_SCACPP_DEFAULT_MODULE;
+                	message += " environment variable not set";
+                    throw SystemConfigurationException(message.c_str());
                 }
 
                 string subsystemName, moduleName;

@@ -19,9 +19,9 @@ APFULLDIR=`pwd`
 
 export SCA4CPP_HOME="$APFULLDIR"
 if [ x$SCA4CPP = x ]; then
-export SCA4CPP="$SCA4CPP_HOME"
+export TUSCANY_SCACPP="$SCA4CPP_HOME"
 fi
-echo "Using SCA installed at $SCA4CPP"
+echo "Using SCA installed at $SCA4CPP_HOME"
 
 if [ x$AXISCPP_DEPLOY = x ]; then
 echo "AXISCPP_DEPLOY not set"
@@ -35,18 +35,17 @@ exit;
 fi
 echo "Using Xerces C++ installed at $XERCES_DEPLOY"
 
-if [ x$SDO4CPP = x ]; then
-echo "SDO4CPP not set"
-export SDO4CPP=$SCA4CPP_HOME/../sdo
+if [ x$TUSCANY_SDOCPP = x ]; then
+echo "TUSCANY_SDOCPP not set"exit;
 fi
-echo "Using SDO installed at $SDO4CPP"
+echo "Using SDO installed at $TUSCANY_SDOCPP"
 
 TEST_ROOT=$SCA4CPP_HOME/runtime/core/test
 
-export LD_LIBRARY_PATH=$SCA4CPP/lib:$SDO4CPP/lib:$LD_LIBRARY_PATH:$AXISCPP_DEPLOY/lib:$XERCES_DEPLOY/lib
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH:$AXISCPP_DEPLOY/lib:$XERCES_DEPLOY/lib
 
-export SCA4CPP_SYSTEM_ROOT=$SCA4CPP_HOME/runtime/core/test/testSCASystem
-export SCA4CPP_DEFAULT_MODULE=SubSystem1
+export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_ROOT/testSCASystem
+export TUSCANY_SCACPP_DEFAULT_MODULE=SubSystem1
 
-cd $SCA4CPP/bin
-test/tuscany_sca_test
+cd $TUSCANY_SCACPP/bin/test
+./tuscany_sca_test

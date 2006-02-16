@@ -41,45 +41,28 @@ Environment:
 
 If  <root_dir> is the directory that tuscany_cpp.tar.gz is untarred into. 
 
-- export SDO4CPP=<root_dir>/tuscany/cpp/sdo
-- export SCA4CPP=<root_dir>/tuscany/cpp/sca
-- export SCA4CPP_HOME=<root_dir>/tuscany/cpp/sca
+- export TUSCANY_SDOCPP=<root_dir>/tuscany/cpp/sdo
 
 Build:
-- cd $SCA4CPP_HOME/runtime/core/src/Debug
-- make
+- cd <root_dir>tuscany/cpp/sca
+- ./build.sh
 
 Install:
-- copy headers: cp $SCA4CPP_HOME/runtime/core/src/osoa/sca/*.h $SCA4CPP/include
-- copy lib:     cp libtuscany_sca.so $SCA4CPP/lib 
+- installed in <root_dir>tuscany/cpp/sca by build step
 
 SCA For C++ Build Verification Test
 ----------------------------------- 
 
-Build:
-- cd $SCA4CPP_HOME/runtime/core/test/CustomerInfo/Debug
-- make
-- cd $SCA4CPP_HOME/runtime/core/test/MyValue/Debug
-- make
-- cd $SCA4CPP_HOME/runtime/core/test/src/Debug
-- make
-
-Deploy:
-- cp $SCA4CPP_HOME/runtime/core/test/MyValue/Debug/libMyValue.so $SCA4CPP_HOME/runtime/core/test/testSCASystem/modules/MyValueServiceModule
-- cp $SCA4CPP_HOME/runtime/core/test/CustomerInfo/Debug/libCustomerInfo.so $SCA4CPP_HOME/runtime/core/test/testSCASystem/modules/MyValueServiceModule
-
-Environment:
-- export LD_LIBRARY_PATH=$SCA4CPP/lib:$LD_LIBRARY_PATH:<xerces_deploy>/lib
-- export SCA4CPP_SYSTEM_ROOT=$SCA4CPP_HOME/runtime/core/test/testSCASystem
-- export SCA4CPP_DEFAULT_MODULE=SubSystem1
+Built and inastalled by build step above
 
 Run:
-- cd $SCA4CPP_HOME/runtime/core/test/src
-- Debug/tuscany_sca_test
+- ./scatest.sh
 
 
 Building the tools
 ------------------
+
+NOTE: this is built and installed by the build step above.
 
 Currently, there is only one tool: "scagen". It can be built using the
 ant build script at \tuscany\cpp\sca\tools\scagen\build.xml. 
