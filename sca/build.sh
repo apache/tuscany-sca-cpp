@@ -16,6 +16,18 @@
 
 TUSCANY_SCACPP_HOME=`pwd`
 
+if [ x$AXISCPP_DEPLOY = x ]; then
+echo "AXISCPP_DEPLOY not set"
+exit;
+fi
+echo "Using Axis C++ installed at $AXISCPP_DEPLOY"
+
+if [ x$TUSCANY_SDOCPP = x ]; then
+echo "TUSCANY_SDOCPP not set"
+exit;
+fi
+echo "Using SDO installed at $TUSCANY_SDOCPP"
+
 # Build tools first as they will be used to generate cpp code
 cd $TUSCANY_SCACPP_HOME/tools/scagen
 ant
