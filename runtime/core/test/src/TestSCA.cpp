@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
                 custid = "fred";
                 const string& csname = myService->getCustnamecs(custid);
                 cout << "Returned string: " << csname.c_str() << " custid now: " << custid.c_str() <<endl;
-                value = myService->getMyValue("999");
+                //value = myService->getMyValue("999");
                 cout << "My value is: " << value << endl;
             }
             catch (char* x)
