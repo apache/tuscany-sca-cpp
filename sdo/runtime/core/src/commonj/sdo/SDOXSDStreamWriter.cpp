@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
 
 #include "commonj/sdo/SDOXSDStreamWriter.h"
 #include <sstream>
@@ -38,9 +38,9 @@ namespace commonj
         }
         
         int SDOXSDStreamWriter::write(const TypeList& types, const SDOXMLString& targetNamespaceURI,
-            const propertyMap& openprops)
+            const propertyMap& openprops, int indent)
         {
-            int rc = SDOXSDBufferWriter::write(types, targetNamespaceURI, openprops);
+            int rc = SDOXSDBufferWriter::write(types, targetNamespaceURI, openprops, indent);
 
             // Now stream the buffer
             outXmlStream << getBuffer();

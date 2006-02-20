@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/17 16:01:05 $ */
 
 #ifndef _SEQUENCEIMPL_H_
 #define _SEQUENCEIMPL_H_
@@ -34,7 +34,7 @@ namespace commonj{
 namespace sdo{
 
 class Property; /* forward declaration */
-class DataObject;
+class DataObjectImpl;
 
 /**  SequenceImpl implements the abstract class Sequence.
  *
@@ -56,6 +56,12 @@ class SequenceImpl : public Sequence
     // Returns the property for the given entry index.
     ///////////////////////////////////////////////////////////////////////////
     virtual const Property& getProperty(unsigned int index);
+
+    /**
+     * Return the data object associated with this sequence
+     */
+
+    SDO_API virtual const DataObjectPtr getDataObject();
 
     ///////////////////////////////////////////////////////////////////////////
     // Returns the property for the given entry index.
@@ -294,7 +300,7 @@ class SequenceImpl : public Sequence
 
     SequenceImpl();
 
-    DataObject* the_do;
+    DataObjectImpl* the_do;
 
     class seq_item {
        public:

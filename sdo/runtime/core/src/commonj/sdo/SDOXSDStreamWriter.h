@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
 
 #ifndef _SDOXSDSTREAMWRITER_H_
 #define _SDOXSDSTREAMWRITER_H_
@@ -43,7 +43,7 @@ namespace commonj
             virtual ~SDOXSDStreamWriter();
             
             int write(const TypeList& types, const SDOXMLString& targetNamespaceURI,
-                const propertyMap& openprops);
+                const propertyMap& openprops, int indent = -1);
         private:
             std::ostream& outXmlStream;
             

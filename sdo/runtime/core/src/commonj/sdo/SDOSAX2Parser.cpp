@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/23 10:23:20 $ */
+/* $Rev$ $Date: 2006/02/08 14:43:56 $ */
 
 #include "commonj/sdo/SDOSAX2Parser.h"
 
@@ -775,22 +775,31 @@ namespace commonj
                         
                         // NOTE: always creating DO doesn't cater for DataType as top element
 
-                        newDO = dataFactory->create(typeURI, typeName);
-
-                        // set the property setting if the root is an extended primitive
                         const Type& tp = dataFactory->getType(typeURI,typeName);
-                        // get the type definition, and see if its an extended primitive.
-
-                        XSDTypeInfo* typeInfo = (XSDTypeInfo*)
-                            ((DASType*)&tp)->getDASValue("XMLDAS::TypeInfo");
-                        if (typeInfo)
+                        if (tp.isDataType())
                         {
-                            const TypeDefinition& typeDefinition = typeInfo->getTypeDefinition();
-                            if (typeDefinition.isExtendedPrimitive)
+                            newDO = dataFactory->create(tns, "RootType");
+                            currentPropertySetting = PropertySetting(newDO, localname,
+                            bToBeNull);
+                        }
+                        else
+                        {
+
+                            newDO = dataFactory->create(typeURI, typeName);
+
+                            // get the type definition, and see if its an extended primitive.
+
+                            XSDTypeInfo* typeInfo = (XSDTypeInfo*)
+                              ((DASType*)&tp)->getDASValue("XMLDAS::TypeInfo");
+                            if (typeInfo)
                             {
-                                // The name of this element is the name of a property on the current DO
-                                currentPropertySetting = PropertySetting(newDO, localname,
-                                bToBeNull);
+                                const TypeDefinition& typeDefinition = typeInfo->getTypeDefinition();
+                                if (typeDefinition.isExtendedPrimitive)
+                                {
+                                    // The name of this element is the name of a property on the current DO
+                                    currentPropertySetting = PropertySetting(newDO, localname,
+                                    bToBeNull);
+                                }
                             }
                         }
                         

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/17 21:35:03 $ */
+/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
 
 #include "commonj/sdo/DataObjectListImpl.h"
 
@@ -29,6 +29,8 @@
 #include "commonj/sdo/DataFactory.h"
 #include "commonj/sdo/DataObjectImpl.h"
 #include "commonj/sdo/DataFactoryImpl.h"
+
+#include <stdio.h>
 
 namespace commonj{
 namespace sdo {
@@ -159,6 +161,30 @@ int DataObjectListImpl::size () const
 DATAOBJECT_VECTOR DataObjectListImpl::getVec() const
 {
     return plist;
+}
+
+
+
+const Type& DataObjectListImpl::getType()
+{
+    if (typeUnset)
+    {
+        string msg("The list property is open, and the type of the contents has not bee determined yet.");
+        SDO_THROW_EXCEPTION("Get Type", SDOTypeNotFoundException,
+            msg.c_str());
+    }
+    return theFactory->getType(typeURI, typeName);
+}
+
+
+const Type::Types DataObjectListImpl::getTypeEnum()
+{
+    if (typeUnset)
+    {
+        return Type::UndefinedOpenPropertyType;
+
+    }
+    return theFactory->getType(typeURI, typeName).getTypeEnum();
 }
 
 

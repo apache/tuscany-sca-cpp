@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
 
 #ifndef _SDO_TYPE_H_
 #define _SDO_TYPE_H_
@@ -73,6 +73,7 @@ public:
     DataObjectType,
     ChangeSummaryType,
     TextType,
+    UndefinedOpenPropertyType,
     num_types
    };
 

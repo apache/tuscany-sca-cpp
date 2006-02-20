@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date: 2006/02/08 14:43:56 $ */
 
 //////////////////////////////////////////////////////////////////////
 // DataFactoryImpl.cpp: implementation of the DataFactory class.
@@ -32,6 +32,7 @@
 #include "commonj/sdo/PropertyList.h"
 
 #include <iostream>
+#include <stdio.h>
 
 
 using namespace std;
@@ -357,9 +358,9 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
     if(typeIter == types.end())
     {
         string msg("Type not found: ");
-        msg += uri;
+        if (uri != 0)msg += uri;
         msg += " ";
-        msg += inTypeName;
+        if (inTypeName != 0)msg += inTypeName;
         SDO_THROW_EXCEPTION("addPropertyToType",
         SDOTypeNotFoundException, msg.c_str());
 
@@ -380,9 +381,9 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
     if (typeIter2 == types.end())
     {
         string msg("Type not found: ");
-        msg += propTypeUri;
+        if (propTypeUri != 0)msg += propTypeUri;
         msg += " ";
-        msg += propTypeName;
+        if (propTypeName != 0)msg += propTypeName;
         SDO_THROW_EXCEPTION("addPropertyToType",
         SDOTypeNotFoundException, msg.c_str());
     }
@@ -901,9 +902,9 @@ const TypeImpl& DataFactoryImpl::getTypeImpl(const char* uri, const char* inType
     if (type == 0)
     {
         string msg("Type not found :");
-        msg += uri;
+        if (uri != 0)msg += uri;
         msg += " ";
-        msg += inTypeName;
+        if (inTypeName != 0)msg += inTypeName;
         SDO_THROW_EXCEPTION("getTypeImpl" ,
         SDOTypeNotFoundException, msg.c_str());
     }
@@ -1058,7 +1059,7 @@ RefCountingPointer<DataObject> DataFactoryImpl::create(const char* uri, const ch
         string msg("Instantiation of unknown type :");
         if (uri != 0) msg += uri;
         msg += " ";
-        msg += typeName;
+        if (typeName != 0)msg += typeName;
         SDO_THROW_EXCEPTION("create" ,
         SDOTypeNotFoundException, msg.c_str());
     }
@@ -1066,9 +1067,9 @@ RefCountingPointer<DataObject> DataFactoryImpl::create(const char* uri, const ch
     if (ti->isAbstractType())
     {
         string msg("Instantiation of abstract type :");
-        msg += uri;
+        if (uri != 0)msg += uri;
         msg += " ";
-        msg += typeName;
+        if (typeName != 0)msg += typeName;
         SDO_THROW_EXCEPTION("create" ,
         SDOUnsupportedOperationException, msg.c_str());
     }

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/24 11:07:23 $ */
+/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
 
 #include "commonj/sdo/SDOXMLFileWriter.h"   // Include first to avoid libxml compile problems!
 #include "commonj/sdo/SDOXMLStreamWriter.h" // Include first to avoid libxml compile problems!
@@ -94,12 +94,13 @@ namespace commonj
         }
 
 
-        XMLDocumentPtr XMLHelperImpl::createDocument(const char* rootElementURI)
+        XMLDocumentPtr XMLHelperImpl::createDocument(const char* elementname,
+                                                     const char* rootElementURI)
         {
             DataFactory* dp = (DataFactory*)getDataFactory();
             if (dp != 0)
             {
-                const TypeImpl* rType;
+                const TypeImpl* rType = NULL;
                 if (rootElementURI  != 0)
                 {
                     rType = ((DataFactoryImpl*)dp)->findTypeImpl
@@ -114,17 +115,49 @@ namespace commonj
                         {
                             rType = ((DataFactoryImpl*)dp)->findTypeImpl
                                 (tl[i].getURI(), "RootType");
-                            // could continue and check for other roots
-                            // here if duplicates become a problem
                             break;
                         }
                     }
                 }
-                if (rType != 0)
+                if (rType)
                 {
-                    DataObjectPtr dob = dp->create(*rType);
-                    return new XMLDocumentImpl(dob,
-                        rType->getURI(), rType->getName());
+                    if (elementname && strlen(elementname) != 0)
+                    {
+                        PropertyImpl* pl = rType->getPropertyImpl(elementname);
+                        if (pl != 0)
+                        {
+                            const Type& tp = pl->getType();
+                            DataObjectPtr dob = dp->create(tp);
+                            return new XMLDocumentImpl(dob,
+                                 tp.getURI(), /*tp.getName()*/ elementname);
+                        }
+                        else
+                        {
+                            string msg("createDocument - cannot find element ");
+                            msg += elementname;
+                            SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+                            msg.c_str());
+                        }
+                    }
+                    else
+                    {
+                        const Property& pl = rType->getProperty((unsigned int)0);
+                        const Type& tp = pl.getType();
+                        DataObjectPtr dob = dp->create(tp);
+                           return new XMLDocumentImpl(dob,
+                                  tp.getURI(), /*tp.getName()*/ pl.getName());
+                    }
+                }
+                else
+                {
+                     string msg("createDocument - unable to find root type in namespace ");
+                     if (rootElementURI != 0) 
+                         msg += rootElementURI;
+                     else
+                         msg += " NULL";
+                     
+                     SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+                     msg.c_str());
                 }
             }
             return 0;
@@ -174,42 +207,47 @@ namespace commonj
             return load(str, targetNamespaceURI);
         }
         
-        void XMLHelperImpl::save(XMLDocumentPtr doc, const char* xmlFile)
+        void XMLHelperImpl::save(XMLDocumentPtr doc, const char* xmlFile, int indent)
         {
             SDOXMLFileWriter writer(xmlFile, dataFactory);
-            writer.write(doc);
+            writer.write(doc, indent);
         }
         
         void XMLHelperImpl::save(
             DataObjectPtr dataObject,
             const char* rootElementURI,
             const char* rootElementName,
-            const char* xmlFile)
+            const char* xmlFile,
+            int indent)
         {
-            save(createDocument(dataObject,rootElementURI, rootElementName), xmlFile);
+            save(createDocument(dataObject,rootElementURI, rootElementName), xmlFile,
+                indent);
         }
         
         
         // Serializes the datagraph to a stream
-        void XMLHelperImpl::save(XMLDocumentPtr doc, std::ostream& outXml)
+        void XMLHelperImpl::save(XMLDocumentPtr doc, std::ostream& outXml,
+            int indent)
         {
             SDOXMLStreamWriter writer(outXml, dataFactory);
-            writer.write(doc);                
+            writer.write(doc, indent);                
         }
         void XMLHelperImpl::save(
             DataObjectPtr dataObject,
             const char* rootElementURI,
             const char* rootElementName,
-            std::ostream& outXml)
+            std::ostream& outXml,
+            int indent )
         {
-            save(createDocument(dataObject,rootElementURI, rootElementName), outXml);
+            save(createDocument(dataObject,rootElementURI, rootElementName), outXml, indent);
         }
         
         // Serializes the datagraph to a string
-        char* XMLHelperImpl::save(XMLDocumentPtr doc)
+        char* XMLHelperImpl::save(XMLDocumentPtr doc,
+            int indent)
         {
             SDOXMLBufferWriter writer(dataFactory);
-            writer.write(doc);
+            writer.write(doc, indent);
             SDOXMLString ret = writer.getBuffer();
             char* retString = new char[strlen(ret) +1];
             strcpy(retString, ret);
@@ -218,9 +256,11 @@ namespace commonj
         char* XMLHelperImpl::save(
             DataObjectPtr dataObject,
             const char* rootElementURI,
-            const char* rootElementName)
+            const char* rootElementName,
+            int indent)
         {
-            return save(createDocument(dataObject,rootElementURI, rootElementName));
+            return save(createDocument(dataObject,rootElementURI, rootElementName),
+                indent);
         }
 
         int XMLHelperImpl::getErrorCount() const

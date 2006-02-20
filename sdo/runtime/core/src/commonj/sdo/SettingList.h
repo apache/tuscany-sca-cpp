@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/17 16:01:05 $ */
 
 #ifndef SETTINGLIST_H
 #define SETTINGLIST_H
@@ -28,7 +28,7 @@
 namespace commonj{
 namespace sdo{
 
-typedef std::vector<Setting> SETTING_VECTOR;
+typedef std::vector< Setting*> SETTING_VECTOR;
 
 /**  SettingList is a list of settings returned by a change summary
  */
@@ -37,7 +37,7 @@ class SettingList
 {
 
 public:
-    SettingList(SETTING_VECTOR sl);
+    //SettingList(SETTING_VECTOR sl);
     SettingList();
 
     virtual ~SettingList();
@@ -47,7 +47,7 @@ public:
      * This gives access to elements of the list
      */
 
-    virtual Setting& operator[] (int pos) const;
+    SDO_API virtual Setting& operator[] (int pos) const;
 
     /**  size() returns the number of settings
      *
@@ -55,16 +55,16 @@ public:
      * These may be creations, deletions or changes.
      */
 
-    virtual int size () const;
+    SDO_API virtual int size () const;
     
-    virtual void insert (unsigned int index, const Setting& d);
-    virtual void append (const Setting& d);
+    virtual void insert (unsigned int index,  Setting* d);
+    virtual void append ( Setting* d);
     virtual void remove (unsigned int index);
+    virtual Setting* get (int pos);
 
 
 private: 
     SETTING_VECTOR slist;
-    SETTING_VECTOR getVec() const;
 
     void validateIndex(int index) const;
 };

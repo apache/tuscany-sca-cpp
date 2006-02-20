@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
 
 #ifndef _SEQUENCE_H_
 #define _SEQUENCE_H_
@@ -65,6 +65,12 @@ class Sequence : public RefCountingObject
      */
 
     SDO_API virtual const Property& getProperty(unsigned int index) = 0;
+
+    /**
+     * Return the data object associated with this sequence
+     */
+
+    SDO_API virtual const DataObjectPtr getDataObject() = 0;
 
     /**
      *

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
 
 #ifndef _DATAOBJECTLIST_H_
 #define _DATAOBJECTLIST_H_
@@ -166,6 +166,25 @@ public:
      */
 
     virtual SDO_API DataObjectPtr  remove (unsigned int index) = 0;
+
+    /*  getType returns type
+     *
+     * Returns the type.
+     * May throw SDOTYpeNotFoundException for unset open types
+     */
+
+
+   virtual SDO_API const Type& getType() = 0;
+
+    /*  getTypeEnum returns an enumerator for the type
+     *
+     * Returns an enumerator for the type for easy switching on basic types.
+     * The enumerator is part of the Type class
+     * May throw SDOTypeNotFoundException for open types
+     */
+
+    virtual SDO_API const Type::Types getTypeEnum() = 0;
+
 };
 };
 };

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date: 2006/02/17 16:01:05 $ */
 
 #include "commonj/sdo/ChangeSummaryImpl.h"
 
@@ -191,11 +191,11 @@ namespace sdo{
 
                 for (int j=0 ; j < slist.size();j++)
                 {
-                    if (!strcmp(slist[j].getProperty().getName(),
+                    if (!strcmp(slist.get(j)->getProperty().getName(),
                                     prop.getName())
                                    
                                    
-                        && slist[j].getIndex() == 
+                        && slist.get(j)->getIndex() == 
                               index)
                     {
                         // these are settings of the same prop/index, we
@@ -271,7 +271,7 @@ namespace sdo{
 
             if (!ob->isSet(pl[i]))
             { 
-                sl.append(Setting(false,false, 0,0,pl[i],0));
+                sl.append(new Setting(false,false, 0,0,pl[i],0));
                 continue;
             }
             if (pl[i].isMany())
@@ -283,18 +283,18 @@ namespace sdo{
                     // needs to be the data object in cases where...
                     if (pl[i].getType().isDataType()) {
                         setPropValue(&value,&len,ob,pl[j]);
-                        sl.append(Setting(true,false,value,len,pl[i],j));
+                        sl.append(new Setting(true,false,value,len,pl[i],j));
                     }
                     else {
                         value = (void*)dol[j];
-                        sl.append(Setting(true,false,value,0,pl[i],j));
+                        sl.append(new Setting(true,false,value,0,pl[i],j));
                     }
                 }
             }
             else 
             {
                 setPropValue(&value,&len,ob,pl[i]);
-                sl.append(Setting(true,ob->isNull(pl[i]),value,len,pl[i],0));
+                sl.append(new Setting(true,ob->isNull(pl[i]),value,len,pl[i],0));
             }
 
         }
@@ -315,17 +315,18 @@ namespace sdo{
             {
                 for (int i=0;i<sl.size();i++)
                 {
-                    if (!strcmp(slist[j].getProperty().getName(),
-                                   sl[i].getProperty().getName())
+                    if (!strcmp(slist.get(j)->getProperty().getName(),
+                                   sl.get(i)->getProperty().getName())
                                    
                                    
-                        && slist[j].getIndex() == 
-                              sl[i].getIndex())
+                        && slist.get(j)->getIndex() == 
+                              sl.get(i)->getIndex())
                     {
                     // these are settings of the same prop/index, we
                     // need the old value to get transferred.
                         sl.remove(i);
-                        sl.insert(i,slist[j]);
+                        sl.insert(i,new Setting(*(slist.get(j))));
+                  
                     }
                 }
             }
@@ -801,7 +802,7 @@ namespace sdo{
 
         for (int i=0;i<slist.size();i++)
         {
-            if (!strcmp(slist[i].getProperty().getName(),prop.getName()))
+            if (!strcmp(slist.get(i)->getProperty().getName(),prop.getName()))
             {
                 LOGINFO(INFO,"ChangeSummary: Change of a property which was already changed - ignore");
                 return;
@@ -814,7 +815,7 @@ namespace sdo{
 
         if (!ob->isSet(prop))
         { 
-            slist.append(Setting(false,false,0,0,prop,0));
+            slist.append(new Setting(false,false,0,0,prop,0));
             return;
         }
 
@@ -828,7 +829,7 @@ namespace sdo{
             DataObjectList& dol = ob->getList(prop);
             if (dol.size() == 0)
             {
-                slist.append(Setting(false,false,0,0,prop,0));
+                slist.append(new Setting(false,false,0,0,prop,0));
                 return;
             }
             for (int i=0;i< dol.size(); i++)
@@ -837,18 +838,18 @@ namespace sdo{
                 if (prop.getType().isDataType()) {
                     setManyPropValue(&value, &len, (DataObjectImpl*)ob,
                         (DataObjectImpl*)dob, prop);
-                    slist.append(Setting(true,false,value,len,prop,i));
+                    slist.append(new Setting(true,false,value,len,prop,i));
                 }
                 else{
                     value = (void*)dob;
-                    slist.append(Setting(true,false,value,0,prop,i));
+                    slist.append(new Setting(true,false,value,0,prop,i));
                 }
             }
         }
         else 
         {
             setPropValue(&value,&len,ob,prop);
-            slist.append(Setting(true,ob->isNull(prop),value,len,prop,0));
+            slist.append(new Setting(true,ob->isNull(prop),value,len,prop,0));
         }
 
         return;
@@ -1130,8 +1131,8 @@ namespace sdo{
             for (int i=0;i < sl.size(); i++)
             {
                 if (!strcmp(property.getName(),
-                    sl[i].getProperty().getName()))
-                    return (sl[i]);
+                    sl.get(i)->getProperty().getName()))
+                    return (*sl.get(i));
             }
         }
 
@@ -1142,8 +1143,8 @@ namespace sdo{
             for (int i=0;i < sl.size(); i++)
             {
                 if (!strcmp(property.getName(),
-                    sl[i].getProperty().getName()))
-                    return (sl[i]);
+                    sl.get(i)->getProperty().getName()))
+                    return (*sl.get(i));
             }
         }
 
@@ -1347,7 +1348,7 @@ namespace sdo{
 
         unsigned int len = stringConvert(&datavalue, (const char*)value , p);
 
-        slist.append(Setting(true,false,datavalue,len,p,index));
+        slist.append(new Setting(true,false,datavalue,len,p,index));
         
         // The datavalue will be freed by the deletion of the setting later
      }
@@ -1388,7 +1389,7 @@ namespace sdo{
         // against existing settings
 
 
-        slist.append(Setting(true,false,(void*)indob,0,p,index));
+        slist.append(new Setting(true,false,(void*)indob,0,p,index));
     
      }
 

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/06 09:55:37 $ */
+/* $Rev$ $Date: 2006/02/01 12:53:49 $ */
 
 #ifndef _SDOXMLWRITER_H_
 #define _SDOXMLWRITER_H_
@@ -50,7 +50,7 @@ namespace commonj
             
             virtual ~SDOXMLWriter();
             
-            int write(XMLDocumentPtr doc);
+            int write(XMLDocumentPtr doc, int indent=-1);
 
         protected:
             void setWriter(xmlTextWriterPtr textWriter);

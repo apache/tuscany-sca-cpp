@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/17 14:55:15 $ */
+/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/DataObjectImpl.h"
@@ -40,6 +40,7 @@
 #include "commonj/sdo/DataFactoryImpl.h"
 
 #include <string>
+#include <stdio.h>
 using std::string;
 
 
@@ -1227,9 +1228,26 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
                     d->setNull();
                 }
                 else {
-                    const Property& p = d->getProperty(prop);
+                    const PropertyImpl* p = d->getPropertyImpl(prop);
+                    if (p == 0)
+                    {
+                        if(d->getType().isOpenType())
+                        {
+                            string msg("Cannot set unassigned open property to null:");
+                            msg += prop;
+                            SDO_THROW_EXCEPTION("setNull", SDOUnsupportedOperationException,
+                            msg.c_str());
+                        }
+                        else
+                        {
+                            string msg("Property Not Found:");
+                            msg += prop;
+                            SDO_THROW_EXCEPTION("setNull", SDOPropertyNotFoundException,
+                            msg.c_str());
+                        }
+                    }
                     delete prop;
-                    d->setNull(p);
+                    d->setNull((Property&)*p);
                     return;
                 }
             }
@@ -1396,6 +1414,18 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
         }
         return (Property&)*pi;
     }
+
+    /**
+     * See if the property currently exists
+     */
+
+    bool DataObjectImpl::hasProperty(const char* name)
+    {
+        PropertyImpl* pi = getPropertyImpl(name);
+        if (pi == 0) return false;
+        return true;
+    }
+
 
     PropertyImpl* DataObjectImpl::getPropertyImpl(unsigned int index)
     {

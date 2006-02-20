@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/17 21:35:03 $ */
+/* $Rev$ $Date: 2006/02/17 16:01:05 $ */
 
 #include "commonj/sdo/SDOXMLWriter.h"
 #include "commonj/sdo/SDOXMLString.h"
@@ -64,7 +64,7 @@ namespace commonj
             }
         }
         
-        int SDOXMLWriter::write(XMLDocumentPtr doc)
+        int SDOXMLWriter::write(XMLDocumentPtr doc, int indent)
         {
             if (!doc)
             {
@@ -85,8 +85,22 @@ namespace commonj
             //namespaceStack.push(namespaces);
             namespaceMap.empty();
             
-            //xmlTextWriterSetIndent(writer, 1);
-            //xmlTextWriterSetIndentString(writer, SDOXMLString("  "));
+            if (indent >= 0)
+            {
+                xmlTextWriterSetIndent(writer, 1);
+                if (indent > 0)
+                {
+                    char * chars = new char[indent+1];
+                    for (int i=0;i<indent;i++)chars[i] = ' ';
+                    chars[indent] = 0;
+                    xmlTextWriterSetIndentString(writer, SDOXMLString(chars));
+                    delete chars;
+                }
+                else
+                {
+                    xmlTextWriterSetIndentString(writer, SDOXMLString(""));
+                }
+            }
             
             if (doc->getXMLDeclaration())
             {
@@ -148,41 +162,41 @@ namespace commonj
             {
                 try {
 
-                    if (sl[j].getProperty().isMany()) 
+                    if (sl.get(j)->getProperty().isMany()) 
                     {
                         // manys are elements
                         continue;
                     }
         
-                    if (sl[j].getProperty().getType().isDataType())
+                    if (sl.get(j)->getProperty().getType().isDataType())
                     {
                         // data types are OK
                         rc = xmlTextWriterWriteAttribute(writer, 
-                            SDOXMLString(sl[j].getProperty().getName()),
-                            SDOXMLString(sl[j].getCStringValue()));
+                            SDOXMLString(sl.get(j)->getProperty().getName()),
+                            SDOXMLString(sl.get(j)->getCStringValue()));
                     }
                     else 
                     {
-                        DataObjectPtr dob = sl[j].getDataObjectValue();
+                        DataObjectPtr dob = sl.get(j)->getDataObjectValue();
                         if (dob) 
                         {
                             if (cs->isDeleted(dob))
                             {
                             rc = xmlTextWriterWriteAttribute(writer, 
-                                SDOXMLString(sl[j].getProperty().getName()),
+                                SDOXMLString(sl.get(j)->getProperty().getName()),
                                 SDOXMLString(cs->getOldXpath(dob)));
                             }
                             else 
                             {
                             rc = xmlTextWriterWriteAttribute(writer, 
-                                SDOXMLString(sl[j].getProperty().getName()),
+                                SDOXMLString(sl.get(j)->getProperty().getName()),
                                 SDOXMLString(dob->objectToXPath()));
                             }
                         }
                         else
                         {
                             rc = xmlTextWriterWriteAttribute(writer, 
-                                SDOXMLString(sl[j].getProperty().getName()),
+                                SDOXMLString(sl.get(j)->getProperty().getName()),
                                 SDOXMLString(""));
                         }
                     }
@@ -218,33 +232,33 @@ namespace commonj
                 {
 
                     // single values will have been covered by the attributes.
-                    if (!sl[j].getProperty().isMany()) continue;
+                    if (!sl.get(j)->getProperty().isMany()) continue;
         
-                    if (sl[j].getProperty().getType().isDataType())
+                    if (sl.get(j)->getProperty().getType().isDataType())
                     {
 
                         rc = xmlTextWriterWriteElement(
                             writer,
-                            SDOXMLString(sl[j].getProperty().getName()),
-                            SDOXMLString(sl[j].getCStringValue()));
+                            SDOXMLString(sl.get(j)->getProperty().getName()),
+                            SDOXMLString(sl.get(j)->getCStringValue()));
                             
                     } // if datatype
                     else
                     {
-                        DataObjectPtr dob2 = sl[j].getDataObjectValue();
+                        DataObjectPtr dob2 = sl.get(j)->getDataObjectValue();
                         if (!dob2) 
                         {
                             continue;
                         }
                         if (cs->isDeleted(dob2))
                         {
-                            handleChangeSummaryDeletedObject(sl[j].getProperty().getName(), cs,dob2);
+                            handleChangeSummaryDeletedObject(sl.get(j)->getProperty().getName(), cs,dob2);
                         }
                         else
                         {
                             rc = xmlTextWriterStartElement(
                                 writer,
-                                SDOXMLString(sl[j].getProperty().getName()));
+                                SDOXMLString(sl.get(j)->getProperty().getName()));
                             rc = xmlTextWriterWriteAttribute(
                                 writer,
                                 SDOXMLString("sdo:ref"),
@@ -296,26 +310,26 @@ namespace commonj
         
                 for (int j=0;j< sl.size(); j++)
                 {
-                    //if (!sl[j].isSet()) 
+                    //if (!sl.get(j)->isSet()) 
                     //{
                     //    // unset properties dont need recording - ah but they do!
                     //
                     //    continue;
                     //}
-                    if ( sl[j].getProperty().isMany()) 
+                    if ( sl.get(j)->getProperty().isMany()) 
                     {
                         // manys are elements
                         continue;
                     }
-                    if (!sl[j].getProperty().getType().isDataType())
+                    if (!sl.get(j)->getProperty().getType().isDataType())
                     {
                         // data objects are element in a deleted data object.
                         continue;
                     }
 
                     rc = xmlTextWriterWriteAttribute(writer, 
-                        SDOXMLString(sl[j].getProperty().getName()),
-                        SDOXMLString(sl[j].getCStringValue()));
+                        SDOXMLString(sl.get(j)->getProperty().getName()),
+                        SDOXMLString(sl.get(j)->getCStringValue()));
 
                 } // for attributes
         
@@ -329,14 +343,14 @@ namespace commonj
                 for (k=sl.size()-1;k>=0; k--)
                 {
 
-                     if ( !sl[k].getProperty().getType().isDataType() &&
-                          sl[k].getProperty().isMany()) 
+                     if ( !sl.get(k)->getProperty().getType().isDataType() &&
+                          sl.get(k)->getProperty().isMany()) 
                     {
                         // its a dataobject type
-                        DataObjectPtr dob2 = sl[k].getDataObjectValue();
+                        DataObjectPtr dob2 = sl.get(k)->getDataObjectValue();
                         if (!dob2) continue;
                         if (!cs->isDeleted(dob2)) continue;
-                        handleChangeSummaryDeletedObject(sl[k].
+                        handleChangeSummaryDeletedObject(sl.get(k)->
                                    getProperty().getName(),cs,dob2);
                     }
                 } // for attributes
@@ -344,27 +358,27 @@ namespace commonj
                 for (k=0;k< sl.size(); k++)
                 {
 
-                     if ( !sl[k].getProperty().getType().isDataType())
+                     if ( !sl.get(k)->getProperty().getType().isDataType())
                     {
-                        if (sl[k].getProperty().isMany()) continue; 
+                        if (sl.get(k)->getProperty().isMany()) continue; 
                         // its a single valued dataobject type
 
-                        DataObjectPtr dob2 = sl[k].getDataObjectValue();
+                        DataObjectPtr dob2 = sl.get(k)->getDataObjectValue();
                         if (!dob2) continue;
                         if (!cs->isDeleted(dob2)) continue;
-                        handleChangeSummaryDeletedObject(sl[k].
+                        handleChangeSummaryDeletedObject(sl.get(k)->
                                    getProperty().getName(),cs,dob2);
 
                     }
                     else 
                     {
-                        if ( !sl[k].getProperty().isMany()) continue; 
+                        if ( !sl.get(k)->getProperty().isMany()) continue; 
                         
                         // could only be many valued data type
         
                         rc = xmlTextWriterWriteElement(writer, 
-                            SDOXMLString(sl[k].getProperty().getName()),
-                            SDOXMLString(sl[k].getCStringValue()));
+                            SDOXMLString(sl.get(k)->getProperty().getName()),
+                            SDOXMLString(sl.get(k)->getCStringValue()));
                     }
                 } // for attributes
             }

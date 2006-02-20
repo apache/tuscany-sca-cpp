@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/01 12:53:49 $ */
 
 #ifndef _SDOXSDWRITER_H_
 #define _SDOXSDWRITER_H_
@@ -48,7 +48,7 @@ namespace commonj
             virtual ~SDOXSDWriter();
 
             int write(const TypeList& types, const SDOXMLString& targetNamespaceURI,
-                const propertyMap& openprops);
+                const propertyMap& openprops, int indent = -1);
 
         protected:
             void setWriter(xmlTextWriterPtr textWriter);

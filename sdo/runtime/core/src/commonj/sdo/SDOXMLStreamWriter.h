@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
 
 #ifndef _SDOXMLSTREAMWRITER_H_
 #define _SDOXMLSTREAMWRITER_H_
@@ -42,7 +42,7 @@ namespace commonj
             SDOXMLStreamWriter(std::ostream& outXML, DataFactoryPtr dataFactory = NULL);                
             virtual ~SDOXMLStreamWriter();
             
-            int write(XMLDocumentPtr doc);
+            int write(XMLDocumentPtr doc, int indent = -1);
         private:
             std::ostream& outXmlStream;
             

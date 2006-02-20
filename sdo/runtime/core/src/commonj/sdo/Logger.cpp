@@ -15,12 +15,13 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/01/23 16:39:24 $ */
 
 #include "commonj/sdo/Logger.h"
 #include <iostream>
 #include <stdarg.h>
 #include "commonj/sdo/DefaultLogWriter.h"
+#include <stdio.h>
 
 using namespace std;
 

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/05 13:13:23 $ */
+/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
 
 #ifndef _DATAOBJECTIMPL_H_
 #define _DATAOBJECTIMPL_H_
@@ -389,6 +389,11 @@ class DataObjectImpl : public DataObject
     virtual DataObjectPtr createDataObject(const Property& property);
 
 
+    /**
+     * See if the property currently exists
+     */
+
+    virtual bool hasProperty(const char* name);
 
 
     virtual void detach();
@@ -552,7 +557,7 @@ private:
     virtual bool remove(DataObjectImpl* indol);
     virtual bool isSet(const Property& prop, unsigned int propertyIndex);
 
-
+   
     virtual DataObjectImpl* getDataObjectImpl(const char* path); 
     virtual DataObjectImpl* getDataObjectImpl(unsigned int propertyIndex); 
     virtual DataObjectImpl* getDataObjectImpl(const Property& property); 

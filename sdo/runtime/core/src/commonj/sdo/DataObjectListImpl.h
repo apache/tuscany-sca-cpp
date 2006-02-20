@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/17 21:35:03 $ */
+/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
 
 #ifndef _DATAOBJECTLISTIMPL_H_
 #define _DATAOBJECTLISTIMPL_H_
@@ -144,6 +144,23 @@ public:
     virtual void checkType(const Type& listType, const Type& objectType);
     virtual void setType(const char* uri, const char* name);    
 
+   /*  getType returns type
+     *
+     * Returns the type.
+     * May throw SDOTYpeNotFoundException for unset open types
+     */
+
+
+   virtual const Type& getType();
+
+    /*  getTypeEnum returns an enumerator for the type
+     *
+     * Returns an enumerator for the type for easy switching on basic types.
+     * The enumerator is part of the Type class
+     * May throw SDOTypeNotFoundException for open types
+     */
+
+    virtual const Type::Types getTypeEnum();
 
 
 private: 

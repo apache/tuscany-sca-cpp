@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
 
 #include "commonj/sdo/SDOXMLStreamWriter.h"
 #include <sstream>
@@ -37,9 +37,9 @@ namespace commonj
         {    
         }
         
-        int SDOXMLStreamWriter::write(XMLDocumentPtr doc)
+        int SDOXMLStreamWriter::write(XMLDocumentPtr doc, int indent)
         {
-            int rc = SDOXMLBufferWriter::write(doc);
+            int rc = SDOXMLBufferWriter::write(doc, indent);
 
             // Now stream the buffer
             outXmlStream << getBuffer();

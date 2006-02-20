@@ -15,7 +15,11 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/04 14:21:08 $ */
+/* $Rev$ $Date: 2006/01/25 15:51:00 $ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "commonj/sdo/Logger.h"
 
@@ -23,6 +27,8 @@
 #include "commonj/sdo/TypeImpl.h"
 
 #include <iostream>
+#include <wchar.h>
+#include <stdio.h>
 using namespace std;
 
 #include <list>

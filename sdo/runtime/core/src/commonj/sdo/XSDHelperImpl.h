@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
 
 #ifndef _XSDHELPERIMPL_H_
 #define _XSDHELPERIMPL_H_
@@ -94,17 +94,20 @@ namespace commonj
 
             virtual char* generate(
                 const TypeList& types,
-                const char* targetNamespaceURI = ""
+                const char* targetNamespaceURI = "",
+                int indent = -1
                 );
             void generate(
                 const TypeList& types,
                 std::ostream& outXsd,
-                const char* targetNamespaceURI = ""
+                const char* targetNamespaceURI = "", 
+                int indent = -1
                 );
             virtual void generateFile(
                 const TypeList& types,
                 const char* fileName,
-                const char* targetNamespaceURI = "");
+                const char* targetNamespaceURI = "", 
+                int indent = -1);
             
             virtual DataFactoryPtr getDataFactory();
             
