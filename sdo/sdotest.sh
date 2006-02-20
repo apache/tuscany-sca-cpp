@@ -23,4 +23,5 @@ fi
 echo "Using SDO installed at $SDO4CPP"
 
 export LD_LIBRARY_PATH=$SDO4CPP/lib:$LD_LIBRARY_PATH
+cd $SDO4CPP_HOME/runtime/core/test
 ./tuscany_sdo_test
