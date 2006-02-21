@@ -194,8 +194,10 @@ namespace tuscany
                         string filename = entry->d_name;
                 
                         if ((exactMatch && filename == pattern) ||
-                            (!exactMatch && ((filename.find(token1) == 0)
-                             && (filename.rfind(token2) == filename.length() - token2.length()))))
+                            (!exactMatch &&
+                             ((filename.find(token1) == 0)
+                             && (filename.length() >= token2.length())
+                             && (filename.rfind(token2) == (filename.length() - token2.length())) )))
                         {
                             // Add the file to our list
                             files.push_back(File(rootDir, filename));
