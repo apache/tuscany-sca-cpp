@@ -167,7 +167,7 @@ namespace tuscany
                 WRAPPERFACTORY wrapperFactory = (WRAPPERFACTORY)wrapperLib->getSymbol(wrapperFactoryName);
                 if (!wrapperFactory)
                 {
-                    LOGERROR_2(1, "ComponentContextImpl::getServiceWrapper: Unable to locate %s in library %s",
+                    LOGERROR_2(1, "ComponentServiceWrapper::createServiceWrapper: Unable to locate %s in library %s",
                         wrapperFactoryName.c_str(), fullDllName.c_str());
                     msg = "Unable to locate " + wrapperFactoryName + " in library " + fullDllName;
                     throw ServiceNotFoundException(msg.c_str());
@@ -179,7 +179,7 @@ namespace tuscany
                 serviceWrapper = wrapperFactory(service);
                 if (!serviceWrapper)
                 {
-                    LOGERROR_2(1, "ComponentContextImpl::getServiceWrapper: Factory method %s in library %s returned null",
+                    LOGERROR_2(1, "ComponentServiceWrapper::createServiceWrapper: Factory method %s in library %s returned null",
                         wrapperFactoryName.c_str(), fullDllName.c_str());
                     msg = "Factory method " + wrapperFactoryName + " in library " + fullDllName + " returned null";
                     throw ServiceNotFoundException(msg.c_str());
