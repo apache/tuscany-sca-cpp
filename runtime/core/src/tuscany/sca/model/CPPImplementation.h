@@ -79,6 +79,12 @@ namespace tuscany
                 const string& getHeaderStub() {return headerStub;}
 
                 /**
+                 * Get the header path.
+                 * @return The pathe element of the header.
+                 */
+                const string& getHeaderPath() {return headerPath;}
+
+                /**
                  * Get the name of the class.
                  * @return The class name if specified.
                  */
@@ -98,6 +104,11 @@ namespace tuscany
                  * Name of the header file without the extension.
                  */
                 string headerStub;
+
+                /**
+                 * Path element of the header.
+                 */
+                string headerPath;
 
                 /**
                  * Name of the class in the header file declaring the implementation.
