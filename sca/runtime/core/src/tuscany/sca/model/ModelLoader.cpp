@@ -323,6 +323,7 @@ namespace tuscany
                 }
                 // Determine the type
                 string componentTypeName;
+                string componentTypePath;
                 string implType = impl->getType().getName();
                 if (implType == "CPPImplementation")
                 {
@@ -330,6 +331,7 @@ namespace tuscany
                     string header = impl->getCString("header");
                     string className = impl->getCString("class");
                     CPPImplementation* cppImpl = new CPPImplementation(dll, header, className);
+                    componentTypePath = cppImpl->getHeaderPath();
                     componentTypeName = cppImpl->getHeaderStub();
                     component->setImplementation(cppImpl);
                     
@@ -341,7 +343,7 @@ namespace tuscany
                 // -----------------------
                 // Load the .componentType
                 // -----------------------
-                string typeFileName = module->getRoot() + "/" + componentTypeName + ".componentType";
+                string typeFileName = module->getRoot() + "/" + componentTypePath + componentTypeName + ".componentType";
                 try 
                 {
                     XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());

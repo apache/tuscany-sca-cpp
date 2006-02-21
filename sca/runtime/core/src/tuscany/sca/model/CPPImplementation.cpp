@@ -19,6 +19,7 @@
 
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/model/CPPImplementation.h"
+#include "tuscany/sca/util/Utils.h"
 
 namespace tuscany
 {
@@ -32,15 +33,16 @@ namespace tuscany
             CPPImplementation::CPPImplementation(const string& dllName, const string& head, const string& classN)
                 : dll(dllName), header(head), className(classN)
             {
-                string::size_type dot = header.rfind(".h"); // this will also find .hpp
-                if (dot != string::npos)
-                {
-                    headerStub = header.substr(0, dot);
-                }
-                else
-                {
-                    headerStub = header;
-                }
+             	// Separate any path element
+            	Utils::rTokeniseString("/", head, headerPath, headerStub);
+            	if (headerPath != "")
+            	{
+            		headerPath += "/";
+            	}
+            	
+            	// Determine the header stub name
+            	string tmp;           	
+            	Utils::rTokeniseString(".h", headerStub, headerStub, tmp);
             }
 
             CPPImplementation::~CPPImplementation()
