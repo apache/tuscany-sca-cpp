@@ -22,6 +22,12 @@ exit;
 fi
 echo "Using Axis C++ installed at $AXISCPP_DEPLOY"
 
+if [ x$XERCES_DEPLOY = x ]; then
+echo "XERCES_DEPLOY not set"
+exit;
+fi
+echo "Using Xerces C++ installed at $XERCES_DEPLOY"
+
 if [ x$TUSCANY_SDOCPP = x ]; then
 echo "TUSCANY_SDOCPP not set"
 exit;
