@@ -14,7 +14,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-TOPDIR='pwd'
+TOPDIR=`pwd`
+
+
+if [ x$AXISCPP_DEPLOY = x ]; then
+echo "AXISCPP_DEPLOY not set"
+exit;
+fi
+if [ x$XERCES_DEPLOY = x ]; then
+echo "XERCES_DEPLOY not set"
+exit;
+fi
+
+if [ x$LIBXML2_INCLUDE = x ]; then
+echo "LIBXML2_INCLUDE not set"
+exit;
+fi
+if [ x$LIBXML2_LIB = x ]; then
+echo "LIBXML2_LIB not set"
+exit;
+fi
+
 # Build SDO
 cd sdo
 ./build.sh

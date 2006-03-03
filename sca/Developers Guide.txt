@@ -2,62 +2,12 @@ Tuscany SCA For C++ Developers Guide
 ====================================
 
 Contents: 
-	Download instructions
-	Build instructions
 	Developing Services in C++
 	Running C++ Services
 	
 
-Syncing With the Tuscany Subversion Repository
-==============================================
-
-The Tuscany subversion repository can be found at: 
-https://svn.apache.org/repos/asf/incubator/tuscany
-
-Downloading Tuscany SCA For C++ Initial Source
-==============================================
-
-Download the file tuscany_cpp.tar.gz
-from http://issues.apache.org/jira/browse/INCUBATOR-8
-(http://issues.apache.org/jira/secure/attachment/12321056/tuscany_cpp.tar.gz)
-and unpack it with the gzip and tar tools or Winzip. 
-This will produce a directory structure identical to the subversion
-repository file tree. 
-
-Building Tuscany SCA For C++
-============================
-
-Building the runtime
---------------------
-
-Prereqs:
-- Tuscany SDO as built according to the SDO Development Guide.
-- Axis C++ (tested with version 1.5.0) installed at <axis_deploy> ($AXISCPP_DEPLOY)
-- Xerces C++ (tested with version 2.2.0) installed at <xerces_deploy>
-- A C Compiler - tested with Microsoft Visual C (version 6.0) on Windows or the GNU gcc
-compiler on linux (tested with version 3.2.2)
-
-Environment:
-
-If  <root_dir> is the directory that tuscany_cpp.tar.gz is untarred into. 
-
-- export TUSCANY_SDOCPP=<root_dir>/tuscany/cpp/sdo
-
-Build:
-- cd <root_dir>tuscany/cpp/sca
-- ./build.sh
-
-Install:
-- installed in <root_dir>tuscany/cpp/sca by build step
-
-SCA For C++ Build Verification Test
------------------------------------ 
-
-Built and inastalled by build step above
-
-Run:
-- ./scatest.sh
-
+See cpp/build.txt in the parent directory or the cpp/sca/INSTALL file 
+for build instructions.
 
 Building the tools
 ------------------

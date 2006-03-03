@@ -14,6 +14,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
+if [ x$LIBXML2_INCLUDE = x ]; then
+echo "LIBXML2_INCLUDE not set"
+exit;
+fi
+if [ x$LIBXML2_LIB = x ]; then
+echo "LIBXML2_LIB not set"
+exit;
+fi
+
 ./autogen.sh
 TUSCANY_SDOCPP_HOME=`pwd`
 ./configure --prefix=${TUSCANY_SDOCPP_HOME}

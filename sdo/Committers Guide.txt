@@ -1,29 +1,5 @@
-Tuscany SDO Build Instructions
-===============================
-
-The project is dependent on libxml 
-(available here: http://www.zlatkovic.com/libxml.en.html) 
-
-The versions required are these:
-	Hydra.sdo.build\libxml2-2.6.19.win32
-	Hydra.sdo.build\iconv-1.9.1.win32
-	Hydra.sdo.build\zlib-1.2.2.win32
-
-These need to be unzipped such that they live under tuscany\cpp\sdo\lib.
-
-Open the build workspace tuscany\cpp\sdo\runtime\projects\tuscany_sdo\tuscany_sdo.dsw
-
-Build->Set Active Configuration->sdo_runtime - Win32 Release
-
-Build->Rebuild All
-
-The output of the build will be in runtime\core\Release.
-
-The executable ,required headers and lib are copied to tuscany\cpp\sdo\bin, include and lib.
-
-
-Note: The copy at the end of the debug build also writes to the bin directory, so the output
-tuscany_sdo.dll will overwrite the release version.
+Tuscany SDO Committers Guide
+============================
 
 All classes should be in the commonj/sdo namespace.
 
