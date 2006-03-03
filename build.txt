@@ -1,82 +1,46 @@
-Tuscany Build Instructions
-==========================
+Tuscany C++ Build Instructions
+==============================
 
-untar tuscany_cpp.tar.gz into desired directory <root_dir>
+Download the source from http://svn.apache.org/repos/asf/incubator/tuscany/cpp
+The download location is <tuscany_cpp_root>
 
-SDO Build
-=========
+Linux
+=====
 
 Prereqs:
+ for SDO
 - libxml2 (tested with version 2.6.19)
+ for SCA
+- Axis C++ (tested with version 1.5.0) installed at <axis_deploy> ($AXISCPP_DEPLOY)
+- Xerces C++ (tested with version 2.2.0) installed at <xerces_deploy> ($XERCES_DEPLOY)
 
 Environment:
-- export SDO4CPP_HOME=<root_dir>/tuscany/cpp/sdo
-- export SDO4CPP=<root_dir>/tuscany/cpp/sdo
+- export LIBXML2_INCLUDE=<path to libxml2 headers. e.g. /usr/include/libxml2> 
+- export LIBXML2_LIB=<path to libxml2 libraries. e.g. /usr/lib> 
+- export AXISCPP_DPELOY=<axis_deploy> 
+- export XERCES_DEPLOY=<xerces_deploy>
+
 
 Build:
-- cd $SDO4CPP_HOME/runtime/core/src/Debug
-- make
+- cd <tuscany_cpp_root>
+- ./build.sh
 
-Install:
-- copy headers: cp ../commonj/sdo/*.h $SDO4CPP/include/commonj/sdo
-- copy lib:     cp libtuscany_sdo.so $SDO4CPP/lib 
+This first builds the SDO subproject then SCA. The results are installed in
+ <tuscany_cpp_root>/sdo/lib <tuscany_cpp_root>/sdo/include <tuscany_cpp_root>/sdo/bin
+ <tuscany_cpp_root>/sca/lib <tuscany_cpp_root>/sca/include <tuscany_cpp_root>/sca/bin
 
 SDO Test
 ========
 
-Build:
-- cd $SDO4CPP_HOME/runtime/core/test/Debug
-- make
-
-Environment:
-- export LD_LIBRARY_PATH=$SDO4CPP/lib:$LD_LIBRARY_PATH
-
 Run:
-- cd $SDO4CPP_HOME/runtime/core/test
-- Debug/tuscany_sdo_test
+- cd <tuscany_cpp_root>/sdo
+- ./sdotest.sh
 
-
-SCA Build
-=========
-Prereqs:
-- Tuscany SDO as built above
-- Axis C++ (tested with version 1.5.0) installed at <axis_deploy> ($AXISCPP_DEPLOY)
-- Xerces C++ (tested with version 2.2.0) installed at <xerces_deploy>
-
-Environment:
-- export SDO4CPP=<root_dir>/tuscany/cpp/sdo
-- export SCA4CPP=<root_dir>/tuscany/cpp/sca
-- export SCA4CPP_HOME=<root_dir>/tuscany/cpp/sca
-
-Build:
-- cd $SCA4CPP_HOME/runtime/core/src/Debug
-- make
-
-Install:
-- copy headers: cp $SCA4CPP_HOME/runtime/core/src/osoa/sca/*.h $SCA4CPP/include
-- copy lib:     cp libtuscany_sca.so $SCA4CPP/lib 
 
 SCA Test
 ========
 
-Build:
-- cd $SCA4CPP_HOME/runtime/core/test/CustomerInfo/Debug
-- make
-- cd $SCA4CPP_HOME/runtime/core/test/MyValue/Debug
-- make
-- cd $SCA4CPP_HOME/runtime/core/test/src/Debug
-- make
-
-Deploy:
-- cp $SCA4CPP_HOME/runtime/core/test/MyValue/Debug/libMyValue.so $SCA4CPP_HOME/runtime/core/test/testSCASystem/modules/MyValueServiceModule
-- cp $SCA4CPP_HOME/runtime/core/test/CustomerInfo/Debug/libCustomerInfo.so $SCA4CPP_HOME/runtime/core/test/testSCASystem/modules/MyValueServiceModule
-
-Environment:
-- export LD_LIBRARY_PATH=$SCA4CPP/lib:$LD_LIBRARY_PATH:<xerces_deploy>/lib
-- export SCA4CPP_SYSTEM_ROOT=$SCA4CPP_HOME/runtime/core/test/testSCASystem
-- export SCA4CPP_DEFAULT_MODULE=SubSystem1
-
 Run:
-- cd $SCA4CPP_HOME/runtime/core/test/src
-- Debug/tuscany_sca_test
+- cd <tuscany_cpp_root>/sca
+- ./scatest.sh
 
