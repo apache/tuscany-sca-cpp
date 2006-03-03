@@ -67,8 +67,9 @@ cp $TEST_ROOT/CalculatorSubsystem/sca.subsystem $TEST_SYSTEM/subsystems/Calculat
 
 export LD_LIBRARY_PATH=$SCA4CPP/lib:$SDO4CPP/lib:$LD_LIBRARY_PATH:$AXISCPP_DEPLOY/lib:$XERCES_DEPLOY/lib
 
-export SCA4CPP_SYSTEM_ROOT=$TEST_SYSTEM
-export SCA4CPP_DEFAULT_MODULE=CalculatorSubsystem
+export TUSCANY_SCACPP=$SCA4CPP
+export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
+export TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
 
 cd $TEST_ROOT/Client
 Debug/CalculatorClient add 4 9
