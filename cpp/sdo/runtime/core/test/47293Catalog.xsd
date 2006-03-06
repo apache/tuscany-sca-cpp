@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+ xmlns:cat="catalogNS" xmlns:ord="orderNS" targetNamespace="catalogNS">
+  
+  <include schemaLocation="Order.xsd"/>  
+
+  <element name="catalog" type="cat:CatalogType"/>
+
+  <complexType name="CatalogType">
+    <sequence>
+      <element maxOccurs="unbounded" ref="ord:item"/>
+    </sequence>
+  </complexType>
+       
+</schema>

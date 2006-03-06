@@ -1,0 +1,8 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:sdo="commonj.sdo" xmlns:sdoxml="commonj.sdo/xml" 
+xmlns:tns="teapot" targetNamespace="teapot">
+<xsd:attribute name="openboolean" type="xsd:boolean"/>
+<xsd:element name="openintlist" type="xsd:short" minOccurs="0" maxOccurs="unbounded"/>
+<xsd:attribute name="openstring" type="xsd:hexBinary"/>
+</xsd:schema>
+

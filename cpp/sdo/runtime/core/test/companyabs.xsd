@@ -1,0 +1,44 @@
+    <xsd:schema  
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ 	xmlns:sdo="commonj.sdo"
+ 	xmlns:sdoxml="commonj.sdo/xml"
+	xmlns:company="companyNS"
+	targetNamespace="companyNS">
+      <xsd:element name="company" type="company:CompanyType"/>
+      <xsd:complexType name="CompanyType">
+      <xsd:sequence>
+          <xsd:element name="departments" type="company:DepartmentType" maxOccurs="unbounded"/>
+          <xsd:element name="Publication" type="company:PublicationType" maxOccurs="1"/>
+       </xsd:sequence>
+       <xsd:attribute name="name" type="xsd:string"/>
+       <xsd:attribute name="cs" type="sdo:ChangeSummaryType"/>
+       <xsd:attribute name="employeeOfTheMonth" type="xsd:IDREF" sdoxml:propertyType="company:EmployeeType"/>
+      </xsd:complexType>
+      <xsd:complexType name="DepartmentType">
+        <xsd:sequence>
+          <xsd:element name="employees" type="company:EmployeeType"  maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="location" type="xsd:string"/>
+        <xsd:attribute name="number" type="xsd:int"/>
+      </xsd:complexType>
+      <xsd:complexType name="EmployeeType">
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="SN" type="xsd:ID"/>
+        <xsd:attribute name="manager" type="xsd:boolean"/>
+      </xsd:complexType>
+      <xsd:complexType name="BookType">
+	  <xsd:restriction base="company:PublicationType" />
+          <xsd:element name="author" type="xsd:string" maxOccurs="1"/>
+      </xsd:complexType>
+      <xsd:complexType name="MagazineType">
+	  <xsd:restriction base="company:PublicationType" />
+          <xsd:element name="editor" type="xsd:string" maxOccurs="1"/>
+      </xsd:complexType>
+      <xsd:complexType name="PublicationType" abstract="true" >
+          <xsd:element name="title" type="xsd:string" maxOccurs="1"/>
+      </xsd:complexType>
+      <xsd:element name="Book" type="company:BookType" substitutionGroup="Publication" />
+      <xsd:element name="Magazine" type="company:MagazineType" substitutionGroup="company:Publication" />
+    </xsd:schema>
+

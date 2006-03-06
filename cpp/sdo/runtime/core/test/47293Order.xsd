@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+xmlns:ord="orderNS" xmlns:cust="customerNS" targetNamespace="orderNS">
+
+  <include schemaLocation="./Customer.xsd"/>
+
+  <element name="orders" type="ord:OrdersType">
+	<complexType name="OrdersType">
+	  <sequence>
+	    <element name="order" maxOccurs="unbounded" type="ord:OrderType"/>
+	  </sequence>
+	</complexType>
+  </element>
+  
+  <element name="order" type="ord:OrderType">
+    <complexType name="OrderType">
+      <sequence>
+        <element name="orderId" type="ID"/>
+        <element name="status" type="ord:OrderStatus"/>
+        <element name="item" maxOccurs="unbounded" ref="ord:item"/>
+        <element ref="cust:customer"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="item">
+    <complexType>
+      <element name="itemId" type="integer"/>
+      <element name="description" type="string"/>
+      <element name="price" type="string"/>
+      <element name="quantity" type="integer"/>
+      <element name="warehouseId" type="integer"/>
+    </complexType>
+  </element>
+
+  <simpleType name="OrderStatus">
+    <restriction base="string">
+      <enumeration value="NONE"/>
+      <enumeration value="RECEIVED"/>
+      <enumeration value="INVOICED"/>
+      <enumeration value="DISPATCHED"/>
+      <enumeration value="COMPLETED"/>
+      <enumeration value="CANCELLED"/>
+    </restriction>
+  </simpleType>   
+     
+</schema>

@@ -1,0 +1,69 @@
+Tuscany SDO Committers Guide
+============================
+
+All classes should be in the commonj/sdo namespace.
+
+The Tuscany SDO codebase consists of a number of abstract classes representing the SDO API. These
+are accompanied by a set of classes whose names end in Impl, which are the implementations of the
+API. For example the DataObject API is represented by the DataObject class, and implemented by
+the DataObjectImpl class. 
+
+When pointers to classes are handed out by the library, they are really pointing at instances of
+the Impl class, but the application must not make that assumption.
+
+DataObjects and DataFactories inherit from a base class which maintains a reference count on 
+itself (RefCountingObject). The pointers handed out are really classes holding a pointer to
+the object, such that they can contribute to the reference count when copied. These RefCountingPointers
+must not be deleted, they dispose of the underlying object when the reference count drops to
+zero.
+
+There is trace commented out of RefCountingObject, which can count and report the references. It is
+particularly useful to check that all instances are cleared at the end of a program run.
+
+The API for metadata consists of the DataFactory, Property and Type classes. All Properties and Types
+handed out to the client are const, so setting up the modifying the types is done using APIS of the
+data factory.
+
+The process of creating types is usually done by loading them from XSD, but can also be performed 
+by using the data factory. Properties and Types may both be defined, but the data factory 'locks'
+itself as soon as the first DataObject is created. It does this because at that point it needs to 
+resolve the type hierarchy, and perform validation. For consistency a Type may not be modified once
+an instance has been created.
+
+A data object contains properties, which are of a particular Type, however the API allows access to
+all properties using any of the methods. getString() may be called on a Boolean property etc. The
+conversion is attempted by the Type class, and either throws an exception or passes back a converted
+value according to the tables in the specification.
+
+The get/set APIs of DataObject are supplied by a set of macros in DataObjectImpl.cpp. These are 
+duplicated for string and non-string, and also make it hard to debug effectively. They will be 
+removed and replaced by methods in the future. For now, the easiest way to debug them is to be 
+aware that each eventually calls the private no-params method, so for example all the getString(...)
+methods eventually call getString().
+
+The internal string handling is partially working with the SDOXMLString class, and partially still uses
+allocated char* buffers, these will be replaced by SDOXMLStrings in the future.
+
+The parsers for XML are absed on the SAX2Parser class, but the bulk of the processing is done by the
+startElementNS and similar methods in the SDOSchemaSAX2parser and SDOSAX2Parser classes. These are called
+back by the libxml2 library, and build a picture of the information which it then decoded by the XSDhelper
+or XMLHelper class into metadata or data.
+
+There are easy targets for improvements of performance, particularly in DataObject and parsing of XSD
+input, here is a list of a few that I can think of:
+
+DataObject frequently maps from Property to index, and this could be re-organized to avoid most of these.
+
+The allocation of space for property values could in most cases be dropped - its usually s fixed size
+element.
+
+The use of DataObject as a means of storing lists of primitives is not optimal, and should be replaced.
+
+The ChangeSummary class holds the previous value of any property when it is changed. At present, for many-
+valued properties, it holds the entire list as it was before an addition. This could just keep a record of
+the changes, and only save the old list when serializing.
+
+Parsing the XSD loops though types checking that all substitutes are covered, it would be good to
+replace this.
+
+  

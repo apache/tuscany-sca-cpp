@@ -1,0 +1,10 @@
+Tuscanny SCA Build Instructions
+===============================
+
+1) Set the environment variable SDO4CPP to the path of an SDO driver
+
+2) Set the environment variable AXISCPP to the path of Axis for C++
+
+3) Build->Rebuild All
+
+The output for the build will be in tuscany/cpp/sca/include, lib and bin

@@ -1,0 +1,83 @@
+Tuscany C++ Build Instructions
+==============================
+
+Download the source from http://svn.apache.org/repos/asf/incubator/tuscany/cpp
+The download location is <tuscany_cpp_root>
+
+Linux Build
+===========
+
+Prereqs:
+ for SDO
+- libxml2 (tested with version 2.6.19)
+ for SCA
+- Axis C++ (tested with version 1.5.0) installed at <axis_deploy> ($AXISCPP_DEPLOY)
+- Xerces C++ (tested with version 2.2.0) installed at <xerces_deploy> ($XERCES_DEPLOY)
+
+Environment:
+- export LIBXML2_INCLUDE=<path to libxml2 headers. e.g. /usr/include/libxml2> 
+- export LIBXML2_LIB=<path to libxml2 libraries. e.g. /usr/lib> 
+- export AXISCPP_DPELOY=<axis_deploy> 
+- export XERCES_DEPLOY=<xerces_deploy>
+
+
+Build:
+- cd <tuscany_cpp_root>
+- ./build.sh
+
+This first builds the SDO subproject then SCA. The results are installed in
+ <tuscany_cpp_root>/sdo/lib <tuscany_cpp_root>/sdo/include <tuscany_cpp_root>/sdo/bin
+ <tuscany_cpp_root>/sca/lib <tuscany_cpp_root>/sca/include <tuscany_cpp_root>/sca/bin
+
+SDO Test
+--------
+
+Run:
+- cd <tuscany_cpp_root>/sdo
+- ./sdotest.sh
+
+
+SCA Test
+--------
+
+Run:
+- cd <tuscany_cpp_root>/sca
+- ./scatest.sh
+
+Windows Build
+=============
+
+Microsoft Visual Studio projects are provided for building on Windows.
+
+SDO
+---
+
+The project is dependent on libxml 
+(available here: http://www.zlatkovic.com/libxml.en.html) 
+
+The versions required are these:
+	libxml2-2.6.19.win32
+	iconv-1.9.1.win32
+	zlib-1.2.2.win32
+
+These need to be unzipped such that they live under tuscany\cpp\sdo\lib.
+
+Open the build workspace tuscany\cpp\sdo\runtime\projects\tuscany_sdo\tuscany_sdo.dsw
+
+Build->Set Active Configuration->sdo_runtime - Win32 Release
+
+Build->Rebuild All
+
+The output of the build will be in runtime\core\Release.
+
+The executable ,required headers and lib are copied to tuscany\cpp\sdo\bin, include and lib.
+
+
+Note: The copy at the end of the debug build also writes to the bin directory, so the output
+tuscany_sdo.dll will overwrite the release version.
+
+SCA
+---
+
+Open the build workspace tuscany\cpp\sca\projects\tuscany_sca\tuscany_sca.dsw 
+and follow the instructions.
