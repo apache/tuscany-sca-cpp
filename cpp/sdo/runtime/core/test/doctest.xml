@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?> 
-<company targetNameSpace="hghgh" xmlns="companyNS" name="MegaCorp" employeeOfTheMonth="#/departments.0/employees.1">
-<departments name="Advanced Technologies" location="NY" number="123">
-<employees name="John Jones" SN="E0001" /> 
-<employees name="Jane Doe" SN="E0003" /> 
-<employees name="Al Smith" SN="E0004" manager="true" /> 
-</departments>
-</company>

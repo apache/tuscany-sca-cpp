@@ -1,1 +1,0 @@
-copy c:\workspaces\wid60-no-core\Hydra.sca.tools\scagen.jar .
