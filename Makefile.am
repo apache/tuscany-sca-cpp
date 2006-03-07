@@ -1,1 +1,1 @@
-SUBDIRS = runtime
+SUBDIRS = runtime samples
