@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- The Entity, wspath in the following internal subset allows setting a path for the webservices location -->
+<!--<!DOCTYPE vars [ <!ENTITY wspath "/Apache2.0.54/Apache2/Axis/webservices/"> ]>-->
+
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:C="http://xml.apache.org/axis/wsdd/providers/C" xmlns:CPP="http://xml.apache.org/axis/wsdd/providers/CPP">
+	<globalConfiguration>
+	</globalConfiguration>
+
+    <service name="MyValueService" provider="CPP:DOCUMENT" description="MyValueService">
+        <requestFlow>
+             <handler name="SCAWSHandler" type="C:\Apache2.0.54\Apache2\Axis\handlers\tuscany_sca_axis_handler.dll">
+                  <parameter name="targetNamespace" value="http://www.myvalue.org/MyValueService/"/>
+                  <parameter name="scaEntryPoint" value="MyValueSubsystem/MyValue/MyValueService"/>
+              </handler>
+         </requestFlow>
+         
+        <parameter name="className" value="C:\Apache2.0.54\Apache2\Axis\webservices\tuscany_sca_axis_wrapper.dll"/>
+        <parameter name="allowedMethods" value="getMyValue "/>
+	</service>
+        
+</deployment>
