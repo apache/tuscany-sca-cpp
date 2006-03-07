@@ -22,6 +22,7 @@
 
 #include "tuscany/sca/util/Logger.h"
 #include "tuscany/sca/util/DefaultLogWriter.h"
+#include "tuscany/sca/util/FileLogWriter.h"
 
 using namespace std;
 
@@ -42,14 +43,20 @@ namespace tuscany
 
         void Logger::setLogWriter(LogWriter* writer)
         {
-            if (logWriter != writer)
+            if (logWriter != writer
+            	&& logWriter != 0)
             {
                 delete logWriter;
             }
 
             if (writer == 0)
             {
-                logWriter = new DefaultLogWriter;
+                char*  loggingVar = 0;
+                loggingVar = getenv("TUSCANY_SCACPP_LOG");
+                if (loggingVar == 0)
+                    logWriter = new DefaultLogWriter;
+                else
+                    logWriter = new FileLogWriter(loggingVar);
             }
             else
             {
@@ -62,7 +69,7 @@ namespace tuscany
         int Logger::setLogging()
         {
             char*  loggingVar = 0;
-            loggingVar = getenv("SCA4CPP_LOGGING");
+            loggingVar = getenv("TUSCANY_SCACPP_LOGGING");
             if (loggingVar == 0)
                 return 0;
             else

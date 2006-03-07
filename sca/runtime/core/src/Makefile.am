@@ -38,6 +38,7 @@ tuscany/sca/model/WsdlOperation.h \
 tuscany/sca/util/DefaultLogWriter.h \
 tuscany/sca/util/Exceptions.h \
 tuscany/sca/util/File.h \
+tuscany/sca/util/FileLogWriter.h \
 tuscany/sca/util/Library.h \
 tuscany/sca/util/Logger.h \
 tuscany/sca/util/Logging.h \
@@ -57,6 +58,7 @@ osoa/sca/ServiceList.cpp \
 osoa/sca/ServiceRuntimeException.cpp \
 tuscany/sca/util/DefaultLogWriter.cpp \
 tuscany/sca/util/File.cpp \
+tuscany/sca/util/FileLogWriter.cpp \
 tuscany/sca/util/Library.cpp \
 tuscany/sca/util/Logger.cpp \
 tuscany/sca/util/LogWriter.cpp \
@@ -91,6 +93,8 @@ tuscany/sca/ws/SDOStub.cpp \
 tuscany/sca/ws/WSServiceWrapper.cpp
 
 libtuscany_sca_la_LIBADD = -lstdc++ -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo
+
+AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
