@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/07 11:05:20 $ */
+/* $Rev$ $Date: 2006/03/08 09:49:49 $ */
 
 //////////////////////////////////////////////////////////////////////
 // DataFactoryImpl.cpp: implementation of the DataFactory class.
@@ -1351,7 +1351,7 @@ bool DataFactoryImpl::generateInterface(const char* fileroot, const char* factor
 
         int nscount;
 
-        TypeList& tl = getTypes();
+        TypeList tl = getTypes();
 
         // forward declarations and smart pointers
 
@@ -1359,7 +1359,8 @@ bool DataFactoryImpl::generateInterface(const char* fileroot, const char* factor
         fprintf(header," * Forward declarations and smart pointers *\n");
         fprintf(header," *******************************************/\n\n\n");
 
-        for (int i=0;i<tl.size();i++)
+        int i;
+        for (i=0;i<tl.size();i++)
         {
             nscount = 0;
 
@@ -1530,7 +1531,7 @@ bool DataFactoryImpl::generateInterface(const char* fileroot, const char* factor
 
 
 
-            PropertyList& pl = tl[i].getProperties();
+            PropertyList pl = tl[i].getProperties();
             for (int j=0;j<pl.size();j++)
             {
                 const char* pname = pl[j].getName();
