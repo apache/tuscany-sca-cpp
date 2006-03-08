@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/08 15:53:52 $ */
+/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
 
 #include "commonj/sdo/SDOSchemaSAX2Parser.h"
 #include "commonj/sdo/XSDPropertyInfo.h"
@@ -35,6 +35,8 @@ namespace commonj
             : schemaInfo(schemaInf) ,SAX2Parser(insetter)
         {
             bInSchema = false;
+            bInvalidElement = false;
+            bInInvalidContent = false;
         }
         
         SDOSchemaSAX2Parser::~SDOSchemaSAX2Parser()
@@ -111,17 +113,17 @@ namespace commonj
                 ///////////////////////////////////////////////////////////////////////
                 else if (localname.equalsIgnoreCase("element"))
                 {
-                    startElement(localname, prefix, URI, namespaces, attributes);
+                    if (!bInInvalidContent) startElement(localname, prefix, URI, namespaces, attributes);
                 }
                 else if (localname.equalsIgnoreCase("attribute"))
                 {
-                    startAttribute(localname, prefix, URI, namespaces, attributes);
+                    if (!bInInvalidContent) startAttribute(localname, prefix, URI, namespaces, attributes);
                 }
                 else if (localname.equalsIgnoreCase("any")
                         || localname.equalsIgnoreCase("anyAttribute"))
                 {
                     // the type containing this is to be created as open
-                    currentType.isOpen = true;
+                    if (!bInInvalidContent) currentType.isOpen = true;
                 }
                 
                 
@@ -131,14 +133,14 @@ namespace commonj
                 ///////////////////////////////////////////////////////////////////////
                 else if (localname.equalsIgnoreCase("complexType"))
                 {
-                    startComplexType(localname, prefix, URI, namespaces, attributes);
+                    if (!bInInvalidContent) startComplexType(localname, prefix, URI, namespaces, attributes);
                 } // end complexType handling
                 
                 else if (localname.equalsIgnoreCase("choice") 
                     || localname.equalsIgnoreCase("sequence")
                     || localname.equalsIgnoreCase("all"))
                 {
-                    startGroup(localname, prefix, URI, namespaces, attributes);
+                    if (!bInInvalidContent) startGroup(localname, prefix, URI, namespaces, attributes);
                 } // end Group handling
                 
                 else if (localname.equalsIgnoreCase("group") 
@@ -146,26 +148,47 @@ namespace commonj
                 {
                     if (setter)
                     {
-                        setter->setError("Schema contains group or attributeGroup which are not yet implemented");
+                        setter->setError("Schema contains a group or attributeGroup which are not yet implemented");
+                        
                     }
                 }
-                ///////////////////////////////////////////////////////////////////////
+               else if (localname.equalsIgnoreCase("list") 
+                       )
+                {
+                    if (setter)
+                    {
+                        setter->setError("Schema contains a list which is not yet implemented");
+                        
+                    }
+                }
+
+               ///////////////////////////////////////////////////////////////////////
                 // Handle simpleType
                 // These become new types
                 ///////////////////////////////////////////////////////////////////////
                 else if (localname.equalsIgnoreCase("simpleType"))
                 {
-                    startSimpleType(localname, prefix, URI, namespaces, attributes);
+                    if (!bInInvalidContent) startSimpleType(localname, prefix, URI, namespaces, attributes);
                 } // end complexType handling
                 
                 else if (localname.equalsIgnoreCase("restriction"))
                 {
-                    startRestriction(localname, prefix, URI, namespaces, attributes);
+                    if (!bInInvalidContent) startRestriction(localname, prefix, URI, namespaces, attributes);
                 }
                 
                 else if (localname.equalsIgnoreCase("extension"))
                 {
-                    startExtension(localname, prefix, URI, namespaces, attributes);
+                    if (!bInInvalidContent) startExtension(localname, prefix, URI, namespaces, attributes);
+                }
+                // Handle <import> of other schema
+                else if (localname.equalsIgnoreCase("union"))
+                {
+                    // TODO - unions not yet supported
+                    bInInvalidContent = true;
+                    if (setter)
+                    {
+                        setter->setError("Schema contains a union which is not yet implemented");
+                    }
                 }
             }
             else // not in schema - check for any extra namespaces
@@ -197,34 +220,49 @@ namespace commonj
                 // Handle complexType
                 // Pop the Type off our stack
                 ///////////////////////////////////////////////////////////////////////
-                if (localname.equalsIgnoreCase("complexType"))
+
+                // We do not support unions, so all inside a union, plus the containing 
+                // element are invalid for now.
+                //
+                if (!bInInvalidContent)
                 {
-                    defineType();
-                } // end complexType handling
-                else if (localname.equalsIgnoreCase("simpleType"))
-                {
-                    defineType();
-                }
+                    if (localname.equalsIgnoreCase("complexType"))
+                    {
+                        if (!bInvalidElement) defineType();
+                    } // end complexType handling
+                    else if (localname.equalsIgnoreCase("simpleType"))
+                    {
+                        if (!bInvalidElement) defineType();
+                    } 
                 
-                else if (localname.equalsIgnoreCase("schema"))
-                {
-                    defineType();
-                } // end complexType handling
+                    else if (localname.equalsIgnoreCase("schema"))
+                    {
+                        if (!bInvalidElement) defineType();
+                    } // end complexType handling
                 
-                else if (localname.equalsIgnoreCase("element")
-                    || localname.equalsIgnoreCase("attribute"))
+                    else if (localname.equalsIgnoreCase("element")
+                        || localname.equalsIgnoreCase("attribute"))
+                    {
+                        // PropertyDefinition should now be complete
+                         if (!bInvalidElement) defineProperty();
+                    } 
+                    else if (localname.equalsIgnoreCase("choice") 
+                        || localname.equalsIgnoreCase("sequence")
+                        || localname.equalsIgnoreCase("all"))
+                    {
+                        if (!bInvalidElement) currentType.isMany = false;
+                    }
+                    bInvalidElement = false;
+    
+                } // bInUnsupportedContent
+                if (localname.equalsIgnoreCase("union"))
                 {
-                    // PropertyDefinition should now be complete
-                    defineProperty();
+                    bInInvalidContent = false;
+                    // the enclosing element is not useful
+                    bInvalidElement = true; 
                 }
-                else if (localname.equalsIgnoreCase("choice") 
-                    || localname.equalsIgnoreCase("sequence")
-                    || localname.equalsIgnoreCase("all"))
-                {
-                    currentType.isMany = false;
-                }
-                
-            }
+            } 
+
         }
         
         
@@ -558,6 +596,8 @@ namespace commonj
                     currentType.parentTypeUri,
                     currentType.parentTypeName);
 
+                currentType.isRestriction=true;
+
 
                 if(qname.getLocalName().equals("QName"))
                 {
@@ -595,6 +635,7 @@ namespace commonj
                 // If extending a simple type (an SDO DataType) we create a 
                 // Property named "value" of this type rather than set the
                 // simple type as a base
+                currentType.isRestriction=false;
                 
                 // ?? Does this only apply within a <simpleContent> tag??
                 if (typeUri.equalsIgnoreCase(Type::SDOTypeNamespaceURI))

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
+/* $Rev$ $Date: 2006/03/03 14:34:26 $ */
 
 #include "commonj/sdo/DataObjectListImpl.h"
 
@@ -269,24 +269,64 @@ void DataObjectListImpl::insert (unsigned int index, DataObjectPtr d)
 
 }
 
+
+
   void DataObjectListImpl::checkFactory(DataObjectPtr dob)
     {
         
         DataObjectImpl* d = (DataObjectImpl*)(DataObject*)dob;
 
         if (d->getDataFactory() == theFactory) return;
+
+        // temporary experiment with allowing data objects
+        // to move from factory to factory if the type is 
+        // nominally present, and the type systems match
+
+        DataFactoryImpl* f = (DataFactoryImpl*)theFactory;
+
+
+        if (d->getContainer() != 0)
+        {
+           string msg("Insertion of object into list from another factory is only allowed if the parent is null: ");
         
-        string msg("Insertion from incompatible factory ");
+            const Type& t = d->getType();
+            msg += t.getURI();
+            msg += "#";
+            msg += t.getName();
+            msg += " into property  ";
+            msg += container->getProperty(pindex).getName();
+            msg += " of type ";
+            msg += typeURI;
+            msg += "#";
+            msg += typeName;
+            SDO_THROW_EXCEPTION("checkFactory", SDOInvalidConversionException,
+            msg.c_str());
+        }
+
+        if (f->isCompatible(d->getDataFactory(),d))
+        {
+            d->setDataFactory(theFactory);
+            // we will also need to transfer any children - assuming they
+            // are ok in the new factory!!
+            d->transferChildren(d,theFactory);
+            return;
+        }
+
+        string msg("Insertion into list fromm incompatible factory:");
+        
         const Type& t = d->getType();
         msg += t.getURI();
         msg += "#";
         msg += t.getName();
-        msg += " into list ";
+        msg += " into property  ";
+        msg += container->getProperty(pindex).getName();
+        msg += " of type ";
         msg += typeURI;
         msg += "#";
         msg += typeName;
         SDO_THROW_EXCEPTION("checkFactory", SDOInvalidConversionException,
             msg.c_str());
+
     }
 
 

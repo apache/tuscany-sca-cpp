@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/17 16:01:05 $ */
+/* $Rev$ $Date: 2006/03/07 15:35:56 $ */
 
 #include "commonj/sdo/SDOXMLWriter.h"
 #include "commonj/sdo/SDOXMLString.h"
@@ -465,13 +465,18 @@ namespace commonj
             int rc; 
 
             ChangedDataObjectList& changedDOs =  cs->getChangedDataObjects();
+            rc = xmlTextWriterStartElementNS(writer,
+                    SDOXMLString("sdo"), SDOXMLString("changeSummary"), SDOXMLString(Type::SDOTypeNamespaceURI));
+            if (rc != 0) return;
+            if (cs->isLogging())
+            {
+                rc = xmlTextWriterWriteAttribute(writer, 
+                    SDOXMLString("logging"),
+                    SDOXMLString("true"));
+            }
+
             if (changedDOs.size() > 0)
             {
-                rc = xmlTextWriterStartElementNS(writer,
-                        SDOXMLString("sdo"), SDOXMLString("changeSummary"), SDOXMLString(Type::SDOTypeNamespaceURI));
-
-                // Fall at the first hurdle - dont write anything.
-                if (rc != 0) return;
 
                 // write the creates/deletes in the order they
                 // happened, as elements.
@@ -511,13 +516,6 @@ namespace commonj
                     }
                 }
 
-                if (cs->isLogging())
-                {
-                    rc = xmlTextWriterWriteAttribute(writer, 
-                        SDOXMLString("logging"),
-                        SDOXMLString("true"));
-                }
-                        
             
                 for (i=0;i< changedDOs.size();i++)
                 {
@@ -526,10 +524,9 @@ namespace commonj
                         handleSummaryChange(elementName, cs, changedDOs[i]);
                     }
                 }
-
-                rc = xmlTextWriterEndElement(writer);
                         
-                }
+            }
+            rc = xmlTextWriterEndElement(writer);
         }
         
         //////////////////////////////////////////////////////////////////////////

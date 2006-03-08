@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
 
 #ifndef _DASTYPE_H_
 #define _DASTYPE_H_
@@ -43,7 +43,7 @@ class DASType : public Type, public DASValues
     
     virtual void setOpen(bool set) = 0;
     virtual void setSequenced( bool set) = 0;
-    virtual void setBaseType( const Type* type) = 0;
+    virtual void setBaseType( const Type* type, bool isRestriction=false) = 0;
 
  
 

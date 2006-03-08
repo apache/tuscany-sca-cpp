@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date: 2006/03/07 11:05:20 $ */
 
 #ifndef _DataFactoryIMPL_H_
 #define _DataFactoryIMPL_H_
@@ -120,12 +120,14 @@ public:
 
 
     virtual void setBaseType( const Type& type,
-                              const Type& base);
+                              const Type& base,
+                              bool isRestriction = false);
 
     virtual void setBaseType( const char* typeuri,
                               const char* typenam,
                               const char* baseuri,
-                              const char* basename);
+                              const char* basename,
+                              bool isRestriction = false);
 
     virtual const Type& getType(const char* uri, const char* inTypeName) const;
 
@@ -357,11 +359,17 @@ public:
     virtual const TypeImpl& getTypeImpl(const char* uri, const char* inTypeName) const;
     virtual const char* getRootElementName() const;
     virtual void setRootElementName(const char* ren);
+    virtual bool checkType(const Type& t);
+    virtual bool isCompatible(DataFactory* df, DataObject* d);
+    virtual bool compareTypes(const TypeImpl* t1, const Type& t2);
 
+   virtual bool generateInterface(const char* fileroot, const char* factoryname);
 
 private:
     typedef map<string, TypeImpl*> TYPES_MAP;
     TYPES_MAP    types;
+
+    std::vector<DataFactory*> compatibleFactories;
 
     char * rootElementName;
 

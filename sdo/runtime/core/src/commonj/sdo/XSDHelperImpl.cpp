@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
+/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
 
 #include "commonj/sdo/SDOXMLFileWriter.h"   // Include first to avoid libxml compile problems!
 #include "commonj/sdo/SDOXMLStreamWriter.h" // Include first to avoid libxml compile problems!
@@ -298,7 +298,8 @@ namespace commonj
                             ty.uri,
                             ty.name,
                             ty.parentTypeUri,
-                            ty.parentTypeName);
+                            ty.parentTypeName,
+                            ty.isRestriction);
                     }        
                     catch (SDORuntimeException& e)
                     {

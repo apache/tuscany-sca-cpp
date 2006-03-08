@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date: 2006/03/07 11:05:20 $ */
 
 #ifndef _DATAFACTORY_H_
 #define _DATAFACTORY_H_
@@ -142,13 +142,25 @@ class DataFactory : public RefCountingObject
 
         virtual SDO_API void setBaseType( 
             const Type& type,
-            const Type& base) = 0;
+            const Type& base,
+            bool isRestriction = false) = 0;
         
         virtual SDO_API void setBaseType( 
             const char* typeuri,
             const char* typenam,
             const char* baseuri,
-            const char* basename) = 0;
+            const char* basename,
+            bool isRestriction = false) = 0;
+
+
+        /**
+         * Generate a typesafe interface for a given data factory
+         * test code.
+         */
+
+        virtual SDO_API bool generateInterface(const char* fileroot,
+                              const char *factoryname) = 0;
+
 
         /**
          *  DataFactory::setAlias sets an alternative name

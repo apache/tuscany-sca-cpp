@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
+/* $Rev$ $Date: 2006/03/03 14:34:26 $ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/DataObjectImpl.h"
@@ -2078,19 +2078,96 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
         }
     }
 
-    void DataObjectImpl::checkFactory(DataObjectPtr dob)
+    void DataObjectImpl::transferChildren(DataObject* d, DataFactory* f)
+    {
+        PropertyList pl = d->getInstanceProperties();
+        for (int i=0;i<pl.size();i++)
+        {
+            if (pl[i].getType().isDataType())
+            {
+                 continue;
+            }
+            if (!d->isSet(pl[i]) || d->isNull(pl[i]))
+            {
+                continue;
+            }
+            if (pl[i].isMany())
+            {
+                DataObjectList& dl = d->getList(pl[i]);
+                for (int j=0;j<dl.size();j++)
+                {
+                    
+                    DataObject* d2 = dl[j];
+                    if (d2) {
+                        ((DataObjectImpl*)d2)->setDataFactory(f);
+                        transferChildren(d2,f);
+                    }
+                }
+            }
+            else
+            {
+                DataObject* d3 = d->getDataObject(pl[i]);
+                if (d3)
+                { 
+                    ((DataObjectImpl*)d3)->setDataFactory(f);
+                    transferChildren(d3,f);
+                }
+            }
+        }
+    }
+
+
+
+    void DataObjectImpl::checkFactory(DataObjectPtr dob,
+        unsigned int propertyIndex)
     {
         
         DataObjectImpl* d = (DataObjectImpl*)(DataObject*)dob;
 
         if (d->getDataFactory() == getDataFactory()) return;
+
+        // Temporary alteration to test the feasibility and
+        // problems associated with allowing data object 'migration'
+        // lets move this one and all its children to the factory of the
+        // new parent if the factories are compatible.
+        
+        DataFactoryImpl* f = (DataFactoryImpl*)getDataFactory();
+
+        if (d->getContainer() != 0)
+        {
+            string msg("Insertion of object from another factory is only allowed if the parent is null: ");
+            const Type& t = d->getType();
+            msg += t.getURI();
+            msg += "#";
+            msg += t.getName();
+            msg += " into property ";
+            msg += getProperty(propertyIndex).getName();
+            msg += " of ";
+            msg += getType().getURI();
+            msg += "#";
+            msg += getType().getName();
+            SDO_THROW_EXCEPTION("checkFactory", SDOInvalidConversionException,
+                msg.c_str());
+        }
+
+        if (f->isCompatible(d->getDataFactory(),d))
+        {
+            d->setDataFactory(getDataFactory());
+            transferChildren(d,getDataFactory());
+            return;
+        }
+
+
+        // This is the default position....
         
         string msg("Insertion from incompatible factory ");
         const Type& t = d->getType();
         msg += t.getURI();
         msg += "#";
         msg += t.getName();
-        msg += " into data object ";
+        msg += " into property ";
+        msg += getProperty(propertyIndex).getName();
+        msg += " of ";
         msg += getType().getURI();
         msg += "#";
         msg += getType().getName();
@@ -2157,7 +2234,7 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
        
         if (value != 0)
         {
-            checkFactory(value);
+            checkFactory(value, propertyIndex);
             checkType(prop,value->getType());
         }
 

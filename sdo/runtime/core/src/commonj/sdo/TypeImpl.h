@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
 
 #ifndef _TYPEIMPL_H_
 #define _TYPEIMPL_H_
@@ -197,7 +197,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////
     // Set the base type for inherited types
     ///////////////////////////////////////////////////////////////////////////
-    void setBaseType(const Type* tb);
+    void setBaseType(const Type* tb, bool isRestriction = false);
     const Type* getBaseType() const;
 
 
@@ -254,7 +254,8 @@ private:
         bool isSeq = false, 
         bool isOp = false,
         bool isAbs = false,
-        bool isData = false); 
+        bool isData = false,
+        bool isRest = false); 
 
     void init(const char* uri, const char* inname, 
          bool isSeq,
@@ -296,6 +297,8 @@ private:
 
     // type inheritance
     TypeImpl* baseType;
+    bool brestriction; /* if this is a restriction of the base type
+                            rather than an extension.*/
     // says how many of the props are really in this data object type.
     unsigned int localPropsSize;
 

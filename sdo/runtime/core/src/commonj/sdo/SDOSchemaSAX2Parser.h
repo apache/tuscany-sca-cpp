@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/02/27 12:26:31 $ */
 
 #ifndef _SDOSCHEMASAX2PARSER_H_
 #define _SDOSCHEMASAX2PARSER_H_
@@ -75,6 +75,8 @@ namespace commonj
 
             const char* currentFile;
             bool bInSchema; // only parse when within a schema
+            bool bInvalidElement; // where element content is not valid
+            bool bInInvalidContent; // actually inside invalid content.
 
         
             virtual void startInclude(

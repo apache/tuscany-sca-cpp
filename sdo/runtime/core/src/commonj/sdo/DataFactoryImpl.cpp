@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/08 14:43:56 $ */
+/* $Rev$ $Date: 2006/03/07 11:05:20 $ */
 
 //////////////////////////////////////////////////////////////////////
 // DataFactoryImpl.cpp: implementation of the DataFactory class.
@@ -608,9 +608,10 @@ const Type& DataFactoryImpl::getType(const char* uri, const char* inTypeName) co
 // ===================================================================
 
 void DataFactoryImpl::setBaseType( const Type& type,
-                  const Type& base) 
+                  const Type& base, bool isRestriction) 
 {
-    setBaseType(type.getURI(),type.getName(),base.getURI(), base.getName());
+    setBaseType(type.getURI(),type.getName(),base.getURI(), base.getName(),
+        isRestriction);
 }
 
 // ===================================================================
@@ -620,7 +621,8 @@ void DataFactoryImpl::setBaseType( const Type& type,
 void DataFactoryImpl::setBaseType( const char* typeuri,
                   const char* typenam,
                   const char* baseuri,
-                     const char* basename)
+                     const char* basename,
+                     bool isRestriction )
 {
     const TypeImpl* base = findTypeImpl(baseuri, basename);
     if (base == 0)
@@ -649,7 +651,7 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         SDOTypeNotFoundException, msg.c_str());
     }
 
-    (typeIter->second)->setBaseType(base);
+    (typeIter->second)->setBaseType(base, isRestriction);
 }
 
 
@@ -1229,6 +1231,529 @@ DASValue* DataFactoryImpl::getDASValue(
     }
 
     return NULL;    
+}
+
+
+bool DataFactoryImpl::compareTypes(const TypeImpl* t1, const Type& t2)
+{
+    PropertyList pl = t2.getProperties();
+    for (int i=0;i<pl.size();i++)
+    {
+        PropertyImpl* p = t1->getPropertyImpl(i);
+        if (p == 0) return false;
+        if (p->isMany() != pl[i].isMany()) return false;
+        if (p->isContainment() != pl[i].isContainment()) return false;
+        if (strcmp(   p->getType().getURI(),
+                   pl[i].getType().getURI())) return false;
+        if (strcmp(   p->getType().getName(),
+                   pl[i].getType().getName())) return false;
+    }
+    return true;
+
+}
+bool DataFactoryImpl::checkType(const Type& t)
+{
+    const TypeImpl* t2 = findTypeImpl(t.getURI(),
+                                     t.getName());
+ 
+    if (t2 == 0) return false;
+ 
+    if (!compareTypes(t2,t)) return false;
+
+    PropertyList pl = t.getProperties();
+    for (int i=0;i<pl.size();i++)
+    {
+        if (pl[i].getType().isDataObjectType())
+        {
+            if (!checkType(pl[i].getType())) return false;
+        }
+    }
+    return true;
+}
+ 
+
+// only checks the tree dirctly descended from this object if the
+// object is specified, otherwise validates the whole factory
+
+bool DataFactoryImpl::isCompatible(DataFactory* df, DataObject* d)
+{
+    if (d == 0)
+    {
+        TypeList tl = df->getTypes();
+        for (int j=0;j<tl.size();j++)
+        {
+            const TypeImpl* t = findTypeImpl(tl[j].getURI(),
+                                        tl[j].getName());
+ 
+            if (t == 0) return false;
+            if (!compareTypes(t,tl[j]))return false;
+        }
+        return true;
+    }
+    else
+    {
+        return checkType(d->getType());
+    }
+}
+
+bool DataFactoryImpl::generateInterface(const char* fileroot, const char* factoryname)
+{
+
+    FILE* header;
+    FILE* body;
+    
+    if ((fileroot == 0) || (strlen(fileroot) == 0)) return false;
+
+    if (factoryname == 0 || (strlen(factoryname) == 0)) return false;
+    
+
+    char *headername = new char[strlen(fileroot) + 5];
+    char *bodyname   = new char[strlen(fileroot) + 5];
+    strcpy(headername,fileroot);
+    strcpy(bodyname,fileroot);
+    strcat(headername,".h");
+    strcat(bodyname,".cpp");
+
+    // here we should check the files - and if they are present with
+    // contents we should read them, and merge the new generated code
+    // I think the way to do that is to allow sections in between comment
+    // pairs in three locations:
+    // a) outside any method in the CPP file.
+    // b) in the header file anywhere.
+    // c) inside method definitions in cpp, either before, or after the
+    // entire generated contents.
+    //
+    // 
+
+    header = fopen(headername,"w+");
+    if (header == 0) return false;
+
+    body = fopen(bodyname,"w+");
+    if (body == 0) return false;
+
+ 
+    fprintf(header,"/*******************************************\n");
+    fprintf(header," * Generated Typesafe Interface Header     *\n");
+    fprintf(header," *******************************************/\n\n\n");
+    fprintf(header,"#include \"commonj/sdo/SDO.h\"\n");
+    fprintf(header,"using namespace commonj::sdo;\n\n\n");
+
+    fprintf(body,"/*******************************************\n");
+    fprintf(body," * Generated Typesafe Interface Body       *\n");
+    fprintf(body," *******************************************/\n\n\n");
+    fprintf(body,"#include \"%s\"\n",headername);
+    fprintf(body,"using namespace commonj::sdo;\n\n\n");
+
+    delete headername;
+    delete bodyname;
+   
+    try {
+
+        int nscount;
+
+        TypeList& tl = getTypes();
+
+        // forward declarations and smart pointers
+
+        fprintf(header,"/*******************************************\n");
+        fprintf(header," * Forward declarations and smart pointers *\n");
+        fprintf(header," *******************************************/\n\n\n");
+
+        for (int i=0;i<tl.size();i++)
+        {
+            nscount = 0;
+
+            if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
+
+            const char *uri = tl[i].getURI();
+            char *c = strchr(uri,'.');
+
+            if (c == 0)
+            {
+                fprintf(header,"namespace %s{\n",uri);
+                nscount = 1;
+            }
+            else
+            {
+                char* buf = new char[strlen(uri) + 1];
+                strcpy(buf, uri);
+                c = buf;
+                char* c1;
+                do {
+                    c1 = strchr(c,'.');
+                    if (c1) *c1 = 0;
+                    fprintf(header,"namespace %s{\n", c);
+                    nscount++;
+                    if (c1) c = c1+1;
+                } while (c1 != 0);
+                delete buf;
+            }
+
+            const char* name = tl[i].getName();
+
+            fprintf(header,"    class %s;\n",name);
+            fprintf(header,"    typedef RefCountingPointer<%s> %sPtr;\n",
+                name, name);
+
+            for (int i=0;i<nscount;i++)
+            {
+                fprintf(header,"}\n");
+            }
+        }
+        fprintf(header,"\n\n");
+        fprintf(header,"/*******************************************\n");
+        fprintf(header," * The Data factory                        *\n");
+        fprintf(header," *******************************************/\n\n\n");
+
+        fprintf(header,"class %sDataFactory {\n", factoryname);
+        fprintf(header,"    public:\n");
+        fprintf(header,"    static %sDataFactory* get%sDataFactory();\n",
+            factoryname, factoryname);
+
+        for (i=0;i<tl.size();i++)
+        {        
+
+            if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
+
+            const char *uri = tl[i].getURI();
+            const char *name = tl[i].getName();
+            char* the_uri = strchr(uri,'.');
+
+            if (the_uri == 0)
+            {
+                the_uri = new char[strlen(uri) + 1];
+                strcpy(the_uri,uri);
+            }
+            else
+            {
+                the_uri = new char[2 * strlen(uri) + 1];
+                int jj=0;
+                for (int ii=0;ii<strlen(uri);ii++)
+                {
+                    if (uri[ii] == '.')
+                    {
+                        the_uri[jj++]=':';
+                        the_uri[jj++]=':';
+                    }
+                    else
+                    {
+                        the_uri[jj++] = uri[ii];
+                    }
+                }
+                the_uri[jj] = 0;
+            }
+
+            fprintf(header,"    %s::%sPtr create%s();\n", the_uri, name, name);
+
+            fprintf(body,"%s::%sPtr %sDataFactory::create%s()\n",the_uri, name, factoryname, name);
+            fprintf(body,"{\n");
+            fprintf(body,"    DataObjectPtr dob = the_factory->create(\"%s\",\"%s\");\n",
+                tl[i].getURI(),name);
+            fprintf(body,"    %s::%s* the_ob = new %s::%s(dob);\n",the_uri,name,the_uri,name);
+            fprintf(body,"    return the_ob;\n");
+            fprintf(body,"}\n\n");
+
+            delete the_uri;
+
+        }
+
+        fprintf(header,"    DataFactory* getDataFactory()\n");
+        fprintf(header,"    {\n");
+        fprintf(header,"        return (DataFactory*)the_factory;\n");
+        fprintf(header,"    }\n");
+        fprintf(header,"    private:\n");
+        fprintf(header,"    DataFactoryPtr the_factory;\n");
+        fprintf(header,"};\n");
+    
+        fprintf(header,"\n\n");
+
+        fprintf(body,"%sDataFactory* %sDataFactory::get%sDataFactory()\n",
+            factoryname,factoryname,factoryname);
+        fprintf(body,"{\n");
+        fprintf(body,"    %sDataFactory* t = new %sDataFactory();\n",
+            factoryname, factoryname);
+        fprintf(body,"    t->the_factory = DataFactory::getDataFactory();\n");
+        fprintf(body,"    return t;\n");
+        fprintf(body,"}\n\n");
+
+
+        fprintf(header,"/*******************************************\n");
+        fprintf(header," * DataObject Type definitions             *\n");
+        fprintf(header," *******************************************/\n\n\n");
+
+
+        for (i=0;i<tl.size();i++)
+        {
+            nscount = 0;
+
+            if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
+            const char *uri = tl[i].getURI();
+            char *c = strchr(uri,'.');
+
+            if (c == 0)
+            {
+                fprintf(header,"namespace %s{\n",uri);
+                fprintf(body,  "namespace %s{\n",uri);
+                nscount = 1;
+            }
+            else
+            {
+                char* buf = new char[strlen(uri) + 1];
+                strcpy(buf, uri);
+                c = buf;
+                char* c1;
+                do {
+                    c1 = strchr(c,'.');
+                    if (c1) *c1 = 0;
+                    fprintf(header,"namespace %s{\n", c);
+                    fprintf(body,  "namespace %s{\n", c);
+                    nscount++;
+                    if (c1) c = c1+1;
+                } while (c1 != 0);
+                delete buf;
+            }
+
+
+            const char* name = tl[i].getName();
+
+            fprintf(header,"    class %s :public RefCountingObject {\n", name);
+            fprintf(header,"    public:\n");
+            fprintf(header,"    %s(DataObject* d);",name);
+
+            // construction from a data object
+
+            fprintf(body,"%s::%s(DataObject* d)\n",name,name);
+            fprintf(body,"{\n");
+            fprintf(body,"    the_object = d;\n");
+            fprintf(body,"    the_object->setUserData((void*)this);\n");
+            fprintf(body,"}\n\n\n");
+
+
+
+            PropertyList& pl = tl[i].getProperties();
+            for (int j=0;j<pl.size();j++)
+            {
+                const char* pname = pl[j].getName();
+
+                if (pl[j].isMany())
+                {
+                    fprintf(header,"    DataObjectList& get%s();\n",pname);
+                    fprintf(body,  "DataObjectList& %s::get%s\n{\n",name,pname);
+                    fprintf(body,  "    return the_object->getList(\"%s\");\n",pname);
+                    fprintf(body,  "}\n\n");
+                }
+                else 
+                {
+                    if (pl[j].getType().isDataType())
+                    {
+                        switch (pl[j].getTypeEnum())
+                        {
+                        case Type::BooleanType:
+                            fprintf(header,"    bool get%s();\n",pname);
+                            fprintf(body,  "bool %s::get%s\n(){\n",name, pname);
+                            fprintf(body,  "    return the_object->getBoolean(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(bool b);\n",pname);
+                            fprintf(body,  "void %s::set%s(bool b)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setBoolean(\"%s\",b);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+
+                        break;
+     
+                        case Type::ByteType:
+                         
+                            fprintf(header,"    char get%s();\n",pname);
+                            fprintf(body,  "char %s::get%s\n{\n",name, pname);
+                            fprintf(body,  "    return the_object->getByte(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(char c);\n",pname);
+                            fprintf(body,  "void %s::set%s(char c)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setByte(\"%s\",c);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+     
+                        break;
+     
+                        case Type::BytesType:
+     
+                            fprintf(header,"    unsigned int get%s(char *buf, unsigned int len);\n",pname);
+                            fprintf(body,  "unsigned int %s::get%s(char *buf, unsigned int len)\n{\n",name,
+                            pname);
+                            fprintf(body,  "    return the_object->getBytes(\"%s\", buf,len);\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(char *buf,unsigned int len);\n",pname);
+                            fprintf(body,  "void %s::set%s(char *buf, unsigned int len)\n{\n",name,
+                            pname);
+                            fprintf(body,  "    the_object->setBytes(\"%s\", buf,len);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+
+                        break;
+                         
+                        case Type::CharacterType:
+     
+                            fprintf(header,"    wchar_t get%s();\n",pname);
+                            fprintf(body,  "wchar_t %s::get%s\n{\n",name, pname);
+                            fprintf(body,  "    return the_object->getCharacter(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(wchar_t c);\n",pname);
+                            fprintf(body,  "void %s::set%s(wchar_t c)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setCharacter(\"%s\",c);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+     
+                        break;
+     
+                        case Type::DateType:
+                         
+                            fprintf(header,"    SDODate get%s();\n",pname);
+                            fprintf(body,  "SDODate %s::get%s\n{\n",name, pname);
+                            fprintf(body,  "    return the_object->getDate(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(const SDODate c);\n",pname);
+                            fprintf(body,  "void %s::set%s(const SDODate c)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setDate(\"%s\",c);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+
+                        break;
+     
+                        case Type::DoubleType:
+                         
+                            fprintf(header,"    long double get%s();\n",pname);
+                            fprintf(body,  "long double %s::get%s\n{\n",name, pname);
+                            fprintf(body,  "    return the_object->getDouble(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(long double c);\n",pname);
+                            fprintf(body,  "void %s::set%s(long double c)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setDouble(\"%s\",c);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+                                
+                        break;
+                         
+                        case Type::FloatType:
+     
+                            fprintf(header,"    float get%s();\n",pname);
+                            fprintf(body,  "float %s::get%s\n{\n",name, pname);
+                            fprintf(body,  "    return the_object->getFloat(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(float c);\n",pname);
+                            fprintf(body,  "void %s::set%s(float c)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setFloat(\"%s\",c);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+                          
+                        break;
+     
+                        case Type::IntegerType:
+     
+                            fprintf(header,"    long get%s();\n",pname);
+                            fprintf(body,  "long %s::get%s\n{\n",name, pname);
+                            fprintf(body,  "    return the_object->getInteger(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(long c);\n",pname);
+                            fprintf(body,  "void %s::set%s(long c)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setInteger(\"%s\",c);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+     
+                        break;
+                         
+                        case Type::LongType:
+     
+                            fprintf(header,"    int64_t get%s();\n",pname);
+                            fprintf(body,  "int64_t %s::get%s\n{\n",name, pname);
+                            fprintf(body,  "    return the_object->getLong(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(int64_t c);\n",pname);
+                            fprintf(body,  "void %s::set%s(int64_t c)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setLong(\"%s\",c);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+     
+                        break;
+     
+                        case Type::ShortType:
+     
+                            fprintf(header,"    short get%s();\n",pname);
+                            fprintf(body,  "short %s::get%s\n{\n",name, pname);
+                            fprintf(body,  "    return the_object->getShort(\"%s\");\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(short c);\n",pname);
+                            fprintf(body,  "void %s::set%s(short c)\n{\n",name, pname);
+                            fprintf(body,  "    the_object->setShort(\"%s\",c);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+                         
+                        break;
+                          
+                        case Type::StringType:
+                        case Type::UriType:
+     
+                            fprintf(header,"    unsigned int get%s(wchar_t *buf, unsigned int len);\n",pname);
+                            fprintf(body,  "unsigned int %s::get%s(wchar_t *buf, unsigned int len)\n{\n",name,
+                            pname);
+                            fprintf(body,  "    return the_object->getString(\"%s\", buf,len);\n",pname);
+                            fprintf(body,  "}\n\n");
+                            fprintf(header,"    void set%s(wchar_t *buf,unsigned int len);\n",pname);
+                            fprintf(body,  "void %s::set%s(wchar_t *buf, unsigned int len)\n{\n",name,
+                            pname);
+                            fprintf(body,  "    the_object->setString(\"%s\", buf,len);\nreturn;\n",pname);
+                            fprintf(body,  "}\n\n");
+                            
+                        break;
+                    
+                        default:
+                           fprintf(header,"/* unknown primitive:%s */\n",pname);
+                        break;
+                        }
+                    }
+                    else
+
+                    {
+                        const char* ttname = pl[j].getType().getName();
+
+                        fprintf(header,"    %sPtr get%s();\n",ttname, pname);
+
+                        fprintf(body,  "%sPtr %s::get%s()\n{\n",
+                                                        ttname,
+                                                        name,
+                                                        pname);
+                        fprintf(body,  "DataObjectPtr dob = the_object->getDataObject(\"%s\");\n",pname);
+                        fprintf(body, "DataObject* d = (DataObject*)dob;\n");
+                        fprintf(body,"%s* value = (%s*)(d->getUserData());\n",ttname, ttname);
+                        fprintf(body,  "    return (%s*)value;\n", ttname);
+                        fprintf(body,  "}\n\n");
+                        fprintf(header,"    void set%s(%sPtr dob);\n",pname, ttname);
+                        fprintf(body,  "void %s::set%s(%sPtr dob)\n{\n",
+                                name,pname,ttname);
+                        fprintf(body,"%s* ptr = dob;\n", ttname);
+                        fprintf(body,"DataObject* the_obj = ptr->getDataObject();\n");
+                        fprintf(body,"the_object->setDataObject(\"%s\", the_obj);\nreturn;\n",
+                            pname);
+                        fprintf(body,  "}\n\n");
+
+                    }
+                }
+            } // for
+
+            // now print the contained data object
+
+            fprintf(header,"    DataObject* getDataObject()\n");
+            fprintf(header,"    {\n");
+            fprintf(header,"        return (DataObject*)the_object;\n");
+            fprintf(header,"    }\n");
+            fprintf(header,"    private:\n");
+            fprintf(header,"    DataObjectPtr the_object;\n");
+
+            fprintf(header,"};\n");
+            for (int i=0;i<nscount;i++)
+            {
+                fprintf(header,"}\n");
+                fprintf(body,"}\n");
+            }
+        }
+        fclose (header);
+        fclose (body);
+    }
+    catch (SDORuntimeException e)
+    {
+        cout << "Exception in code Generation" << endl;
+        cout << e << endl;
+    }
+    return true;
 }
 
 

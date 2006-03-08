@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/25 15:51:00 $ */
+/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -94,6 +94,7 @@ namespace sdo{
     {
         isResolving = false;
         isResolved = false;
+        brestriction = false;
     }
 
      TypeImpl::TypeImpl(const Type* base, const char* uri, 
@@ -101,10 +102,12 @@ namespace sdo{
          bool isSeq,
          bool isOp,
          bool isAbs,
-         bool isData) 
+         bool isData,
+         bool isRestriction) 
      {
         init(uri,inname,isSeq,isOp, isAbs, isData);
         baseType = (TypeImpl*)base;
+        brestriction = isRestriction;
      }
 
      TypeImpl::TypeImpl(const char* uri, const char* inname, 
@@ -116,6 +119,7 @@ namespace sdo{
      {
         init(uri,inname,isSeq,isOp,isAbs, isData);
         baseType = 0;
+        brestriction = false;
      }
 
      void TypeImpl::init(const char* uri, const char* inname, 
@@ -218,9 +222,10 @@ namespace sdo{
     // Sets a data type as open.
     ///////////////////////////////////////////////////////////////////////////
 
-    void TypeImpl::setBaseType(const Type* bt) 
+    void TypeImpl::setBaseType(const Type* bt, bool isRestriction) 
     {
         baseType = (TypeImpl*)bt;
+        brestriction = isRestriction;
         
         // DataType and Sequenced must be the same as the base Type
         isPrimitive = baseType->isPrimitive;
@@ -370,8 +375,35 @@ namespace sdo{
         {
             baseType->initCompoundProperties();
             PROPERTY_LIST pl = baseType->getCompoundProperties();
-            localPropsSize = props.size(); 
+            localPropsSize = props.size();
+
+            // spec says the properties which are common are taken from
+            // the superclass. I imagine this will change , and only the
+            // ones taken from the subclass will be used.
+
+            if (brestriction)
+            {
+                // restrict the properties to only those which 
+                // appear in the parent
+                std::list<PropertyImpl*>::iterator p1,p;
+                for (p=pl.begin();p!=pl.end();++p)
+                {
+                    for (p1=props.begin();p1!=props.end();++p1)
+                    {
+                        if (!strcmp((*p1)->getName(),
+                            (*p)->getName()))
+                        {
+                            props.erase(p1);
+                            localPropsSize = props.size(); 
+                            break;
+                        }
+                    }
+                }
+
+            }
+
             props.insert(props.begin(),pl.begin(), pl.end());
+ 
             isPrimitive = !(baseType->isDataObjectType());
         }
         if (isPrimitive && (props.size() > 0))

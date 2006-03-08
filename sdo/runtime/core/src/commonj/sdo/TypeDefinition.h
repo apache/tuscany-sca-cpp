@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
 
 #ifndef _TYPEDEFINITION_H_
 #define _TYPEDEFINITION_H_
@@ -53,6 +53,7 @@ namespace commonj
 
             SDOXMLString parentTypeUri;
             SDOXMLString parentTypeName;
+            bool isRestriction;
 
             SDOXMLString IDPropertyName;
 

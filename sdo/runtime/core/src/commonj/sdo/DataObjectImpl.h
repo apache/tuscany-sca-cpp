@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
+/* $Rev$ $Date: 2006/03/07 11:05:20 $ */
 
 #ifndef _DATAOBJECTIMPL_H_
 #define _DATAOBJECTIMPL_H_
@@ -546,12 +546,14 @@ class DataObjectImpl : public DataObject
     virtual const PropertyImpl* defineList(const char* propname);
     virtual void  undefineProperty(unsigned int index);
     virtual const TypeImpl& getTypeImpl();
+    virtual void transferChildren(DataObject* d, DataFactory* f);
+    virtual void setDataFactory(DataFactory *df);
 
 private:
 
-    void validateIndex(unsigned int index);
-     virtual void checkFactory(DataObjectPtr dob);
-     virtual void checkType(    const Property& prop,
+    virtual void validateIndex(unsigned int index);
+    virtual void checkFactory(DataObjectPtr dob, unsigned int propertyIndex);
+    virtual void checkType(    const Property& prop,
                     const Type& objectType);
      
     virtual bool remove(DataObjectImpl* indol);
@@ -601,8 +603,7 @@ private:
     // The data object holds a counted reference to the data factory.
     DataFactoryPtr factory;
 
-    void setDataFactory(DataFactory *df);
-
+ 
     // Support for open types
     int openBase;
     std::list<PropertyImpl> openProperties;
