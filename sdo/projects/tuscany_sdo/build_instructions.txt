@@ -5,15 +5,13 @@ The project is dependent on libxml
 (available here: http://www.zlatkovic.com/libxml.en.html) 
 
 The versions required are these:
-	Hydra.sdo.build\libxml2-2.6.19.win32
-	Hydra.sdo.build\iconv-1.9.1.win32
-	Hydra.sdo.build\zlib-1.2.2.win32
+	libxml2-2.6.19.win32
+	iconv-1.9.1.win32
+	zlib-1.2.2.win32
 
-By default, the projects are set up to look for these in a directory
-called  tuscany\cpp\sdo\dependencies, but you can put them anywhere you
-like if you alter the project settings for extra includes and link input. 
-You would also have to alter the final copy which copies the dlls out to bin.
-or the projects need to be altered to look whereever you put these files..
+By default, the projects are set up to look for these in directories located by the 
+environment variables: LIBXML2_HOME, ICONV_HOME and ZLIB_HOME. These need to be set 
+before launching Visual Studio.
 
 Open the build workspace tuscany\cpp\sdo\runtime\projects\tuscany_sdo\tuscany_sdo.dsw
 
@@ -23,7 +21,7 @@ Build->Rebuild All
 
 The output of the build will be in runtime\core\Release.
 
-The executable ,required headers and lib are copied to tuscany\cpp\sdo\bin, include and lib.
+The executable, required headers and lib are copied to tuscany\cpp\sdo\bin, include and lib.
 
 
 

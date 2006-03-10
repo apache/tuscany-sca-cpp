@@ -6,147 +6,203 @@
 --------------------Configuration: sdo_runtime - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP2E.tmp" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP108.tmp" with contents
 [
-/nologo /MTd /W3 /Gm /GX /ZI /Od /I "..\..\..\runtime\core\src" /I "..\..\..\dependencies\libxml2-2.6.19.win32\include" /I "..\..\..\dependencies\iconv-1.9.1.win32\include" /I "..\..\..\dependencies\zlib-1.2.2.win32\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /Fp"..\..\..\runtime\core\Debug/sdo_runtime.pch" /YX /Fo"..\..\..\runtime\core\Debug/" /Fd"..\..\..\runtime\core\Debug/" /FD /GZ /c 
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\ChangedDataObjectListImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\ChangeSummaryBuilder.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\ChangeSummaryImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\CopyHelper.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\DataFactory.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\DataFactoryImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\DataGraphImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\DataObjectImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\DataObjectListImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\HelperProvider.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\PropertyDefinition.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\PropertyImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\PropertySetting.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SAX2Attribute.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SAX2Attributes.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SAX2Namespaces.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SAX2Parser.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SchemaInfo.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOSAX2Parser.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOSchemaSAX2Parser.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLBufferWriter.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLFileWriter.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLStreamWriter.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLString.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLWriter.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXSDBufferWriter.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXSDFileWriter.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXSDStreamWriter.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SDOXSDWriter.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\SequenceImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\TypeDefinition.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\TypeDefinitions.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\XMLDocumentImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\XMLHelperImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\XMLQName.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\XSDHelperImpl.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\XSDPropertyInfo.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\src\commonj\sdo\XSDTypeInfo.cpp"
+/nologo /MTd /W3 /Gm /GX /ZI /Od /I "..\..\..\runtime\core\src" /I "D:\deps\libxml2-2.6.19.win32\include" /I "D:\deps\iconv-1.9.1.win32\include" /I "D:\deps\zlib-1.2.2.win32\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /Fp"..\..\..\runtime\core\Debug/sdo_runtime.pch" /YX /Fo"..\..\..\runtime\core\Debug/" /Fd"..\..\..\runtime\core\Debug/" /FD /GZ /c 
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\ChangedDataObjectListImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\ChangeSummary.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\ChangeSummaryBuilder.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\ChangeSummaryImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\CopyHelper.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DASProperty.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DASType.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DASValue.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DASValues.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataFactory.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataFactoryImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataGraph.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataGraphImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataObject.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataObjectImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataObjectInstance.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataObjectList.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DataObjectListImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\DefaultLogWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\EqualityHelper.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\HelperProvider.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\Logger.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\LogWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\ParserErrorSetter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\Property.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\PropertyDefinition.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\PropertyImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\PropertyList.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\PropertySetting.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\RefCountingObject.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\RefCountingPointer.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SAX2Attribute.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SAX2Attributes.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SAX2Namespaces.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SAX2Parser.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SchemaInfo.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SdoCheck.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDODate.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SdoRuntime.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDORuntimeException.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOSAX2Parser.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOSchemaSAX2Parser.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOUtils.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLBufferWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLFileWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLStreamWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLString.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXMLWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXSDBufferWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXSDFileWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXSDStreamWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SDOXSDWriter.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\Sequence.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SequenceImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\Setting.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\SettingList.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\Type.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\TypeDefinition.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\TypeDefinitions.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\TypeImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\TypeList.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XMLDocument.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XMLDocumentImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XMLHelper.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XMLHelperImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XMLQName.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XpathHelper.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XSDHelper.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XSDHelperImpl.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XSDPropertyInfo.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\src\commonj\sdo\XSDTypeInfo.cpp"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP2E.tmp" 
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP2F.tmp" with contents
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP108.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP109.tmp" with contents
 [
-kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib libxml2.lib /nologo /dll /incremental:yes /pdb:"..\..\..\runtime\core\Debug/tuscany_sdo.pdb" /debug /machine:I386 /out:"..\..\..\runtime\core\Debug\tuscany_sdo.dll" /implib:"..\..\..\runtime\core\Debug/tuscany_sdo.lib" /pdbtype:sept /libpath:"..\..\..\dependencies\libxml2-2.6.19.win32\lib" 
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\ChangedDataObjectListImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\ChangeSummary.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\ChangeSummaryBuilder.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\ChangeSummaryImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\CopyHelper.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DASProperty.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DASType.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DASValue.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DASValues.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataFactory.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataFactoryImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataGraph.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataGraphImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataObject.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataObjectImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataObjectInstance.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataObjectList.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DataObjectListImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\DefaultLogWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\EqualityHelper.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\HelperProvider.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\Logger.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\LogWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\ParserErrorSetter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\Property.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\PropertyDefinition.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\PropertyImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\PropertyList.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\PropertySetting.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\RefCountingObject.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\RefCountingPointer.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SAX2Attribute.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SAX2Attributes.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SAX2Namespaces.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SAX2Parser.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SchemaInfo.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SdoCheck.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDODate.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SdoRuntime.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDORuntimeException.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOSAX2Parser.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOSchemaSAX2Parser.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOUtils.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXMLBufferWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXMLFileWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXMLStreamWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXMLString.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXMLWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXSDBufferWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXSDFileWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXSDStreamWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SDOXSDWriter.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\Sequence.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SequenceImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\Setting.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\SettingList.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\Type.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\TypeDefinition.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\TypeDefinitions.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\TypeImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\TypeList.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XMLDocument.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XMLDocumentImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XMLHelper.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XMLHelperImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XMLQName.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XpathHelper.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XSDHelper.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XSDHelperImpl.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XSDPropertyInfo.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\XSDTypeInfo.obj
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib libxml2.lib /nologo /dll /incremental:yes /pdb:"..\..\..\runtime\core\Debug/tuscany_sdo.pdb" /debug /machine:I386 /out:"..\..\..\runtime\core\Debug\tuscany_sdo.dll" /implib:"..\..\..\runtime\core\Debug/tuscany_sdo.lib" /pdbtype:sept /libpath:"D:\deps\libxml2-2.6.19.win32\lib" 
+\tuscanysvn\cpp\sdo\runtime\core\Debug\ChangedDataObjectListImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\ChangeSummary.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\ChangeSummaryBuilder.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\ChangeSummaryImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\CopyHelper.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DASProperty.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DASType.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DASValue.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DASValues.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataFactory.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataFactoryImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataGraph.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataGraphImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataObject.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataObjectImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataObjectInstance.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataObjectList.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DataObjectListImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\DefaultLogWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\EqualityHelper.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\HelperProvider.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\Logger.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\LogWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\ParserErrorSetter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\Property.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\PropertyDefinition.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\PropertyImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\PropertyList.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\PropertySetting.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\RefCountingObject.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\RefCountingPointer.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SAX2Attribute.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SAX2Attributes.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SAX2Namespaces.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SAX2Parser.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SchemaInfo.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SdoCheck.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDODate.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SdoRuntime.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDORuntimeException.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOSAX2Parser.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOSchemaSAX2Parser.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOUtils.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXMLBufferWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXMLFileWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXMLStreamWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXMLString.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXMLWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXSDBufferWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXSDFileWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXSDStreamWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SDOXSDWriter.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\Sequence.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SequenceImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\Setting.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\SettingList.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\Type.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\TypeDefinition.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\TypeDefinitions.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\TypeImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\TypeList.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XMLDocument.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XMLDocumentImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XMLHelper.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XMLHelperImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XMLQName.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XpathHelper.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XSDHelper.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XSDHelperImpl.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XSDPropertyInfo.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\XSDTypeInfo.obj
 ]
-Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP2F.tmp"
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP109.tmp"
 <h3>Output Window</h3>
 Compiling...
 ChangedDataObjectListImpl.cpp
+ChangeSummary.cpp
 ChangeSummaryBuilder.cpp
 ChangeSummaryImpl.cpp
 CopyHelper.cpp
+DASProperty.cpp
+DASType.cpp
+DASValue.cpp
+DASValues.cpp
 DataFactory.cpp
 DataFactoryImpl.cpp
+DataGraph.cpp
 DataGraphImpl.cpp
+DataObject.cpp
 DataObjectImpl.cpp
+DataObjectInstance.cpp
+DataObjectList.cpp
 DataObjectListImpl.cpp
+DefaultLogWriter.cpp
+EqualityHelper.cpp
 HelperProvider.cpp
+Logger.cpp
+LogWriter.cpp
+ParserErrorSetter.cpp
+Property.cpp
 PropertyDefinition.cpp
 PropertyImpl.cpp
+PropertyList.cpp
 PropertySetting.cpp
+RefCountingObject.cpp
+RefCountingPointer.cpp
 SAX2Attribute.cpp
 SAX2Attributes.cpp
 SAX2Namespaces.cpp
 SAX2Parser.cpp
 SchemaInfo.cpp
+SdoCheck.cpp
+SDODate.cpp
+SdoRuntime.cpp
+SDORuntimeException.cpp
 SDOSAX2Parser.cpp
 SDOSchemaSAX2Parser.cpp
+SDOUtils.cpp
 SDOXMLBufferWriter.cpp
 SDOXMLFileWriter.cpp
 SDOXMLStreamWriter.cpp
@@ -156,18 +212,28 @@ SDOXSDBufferWriter.cpp
 SDOXSDFileWriter.cpp
 SDOXSDStreamWriter.cpp
 SDOXSDWriter.cpp
+Sequence.cpp
 SequenceImpl.cpp
+Setting.cpp
+SettingList.cpp
+Type.cpp
 TypeDefinition.cpp
 TypeDefinitions.cpp
+TypeImpl.cpp
+TypeList.cpp
+XMLDocument.cpp
 XMLDocumentImpl.cpp
+XMLHelper.cpp
 XMLHelperImpl.cpp
 XMLQName.cpp
+XpathHelper.cpp
+XSDHelper.cpp
 XSDHelperImpl.cpp
 XSDPropertyInfo.cpp
 XSDTypeInfo.cpp
 Linking...
    Creating library ..\..\..\runtime\core\Debug/tuscany_sdo.lib and object ..\..\..\runtime\core\Debug/tuscany_sdo.exp
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP33.bat" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP10D.bat" with contents
 [
 @echo off
 copy ..\..\..\runtime\core\Debug\tuscany_sdo.dll ..\..\..\bin
@@ -184,7 +250,7 @@ copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectList.h ..\..\..\include\com
 copy ..\..\..\runtime\core\src\commonj\sdo\DefaultLogWriter.h  ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\EqualityHelper.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\export.h ..\..\..\include\commonj\sdo
-copy       ..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h ..\..\..\include\commonj\sdo
+copy         ..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\Logger.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\Logging.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\LogWriter.h ..\..\..\include\commonj\sdo
@@ -198,7 +264,7 @@ copy ..\..\..\runtime\core\src\commonj\sdo\SDOUtils.h ..\..\..\include\commonj\s
 copy ..\..\..\runtime\core\src\commonj\sdo\Sequence.h  ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\Setting.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\SettingList.h ..\..\..\include\commonj\sdo
-copy       ..\..\..\runtime\core\src\commonj\sdo\Type.h ..\..\..\include\commonj\sdo
+copy         ..\..\..\runtime\core\src\commonj\sdo\Type.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\TypeList.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\XMLDocument.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\XMLHelper.h ..\..\..\include\commonj\sdo
@@ -209,15 +275,9 @@ copy ..\..\..\runtime\core\src\commonj\sdo\DASValue.h ..\..\..\include\commonj\s
 copy ..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\src\commonj\sdo\TypeImpl.h ..\..\..\include\commonj\sdo
 copy ..\..\..\runtime\core\Debug\tuscany_sdo.pdb ..\..\..\bin
-copy ..\..\..\dependencies\libxml2-2.6.19.win32\bin\libxml2.dll  ..\..\..\bin
-copy  ..\..\..\dependencies\iconv-1.9.1.win32\bin\iconv.dll  ..\..\..\bin
-copy ..\..\..\dependencies\zlib-1.2.2.win32\bin\zlib1.dll  ..\..\..\bin
 ]
-Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP33.bat"
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP10D.bat"
 copyout
-        1 file(s) copied.
-        1 file(s) copied.
-        1 file(s) copied.
         1 file(s) copied.
         1 file(s) copied.
         1 file(s) copied.
@@ -261,27 +321,27 @@ copyout
 --------------------Configuration: sdo_test - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP34.tmp" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP10E.tmp" with contents
 [
 /nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\..\..\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"..\..\..\runtime\core\test\Debug/sdo_test.pch" /YX /Fo"..\..\..\runtime\core\test\Debug/" /Fd"..\..\..\runtime\core\test\Debug/" /FD /GZ /Zm200 /c 
-"C:\incubator\tuscany\cpp\sdo\runtime\core\test\sdotest.cpp"
-"C:\incubator\tuscany\cpp\sdo\runtime\core\test\sdotest2.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\test\sdotest.cpp"
+"D:\tuscanysvn\cpp\sdo\runtime\core\test\sdotest2.cpp"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP34.tmp" 
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP35.tmp" with contents
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP10E.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP10F.tmp" with contents
 [
-kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib /nologo /subsystem:console /incremental:yes /pdb:"..\..\..\runtime\core\test\Debug/sdo_test.pdb" /debug /machine:I386 /out:"..\..\..\runtime\core\test\Debug/sdo_test.exe" /pdbtype:sept /libpath:"..\..\..\lib" 
-\incubator\tuscany\cpp\sdo\runtime\core\test\Debug\sdotest.obj
-\incubator\tuscany\cpp\sdo\runtime\core\test\Debug\sdotest2.obj
-\incubator\tuscany\cpp\sdo\runtime\core\Debug\tuscany_sdo.lib
+tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"..\..\..\runtime\core\test\Debug/sdo_test.pdb" /debug /machine:I386 /out:"..\..\..\runtime\core\test\Debug/sdo_test.exe" /pdbtype:sept /libpath:"..\..\..\lib" 
+\tuscanysvn\cpp\sdo\runtime\core\test\Debug\sdotest.obj
+\tuscanysvn\cpp\sdo\runtime\core\test\Debug\sdotest2.obj
+\tuscanysvn\cpp\sdo\runtime\core\Debug\tuscany_sdo.lib
 ]
-Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP35.tmp"
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP10F.tmp"
 <h3>Output Window</h3>
 Compiling...
 sdotest.cpp
 sdotest2.cpp
 Linking...
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP37.bat" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP111.bat" with contents
 [
 @echo off
 copy ..\..\..\runtime\core\test\*.xsd ..\..\..\runtime\core\test\Debug
@@ -290,7 +350,7 @@ copy ..\..\..\bin\*.dll ..\..\..\runtime\core\test\Debug
 copy ..\..\..\bin\*.pdb ..\..\..\runtime\core\test\Debug
 copy ..\..\..\runtime\core\test\*.wsdl ..\..\..\runtime\core\test\Debug
 ]
-Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP37.bat"
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP111.bat"
 
 ..\..\..\runtime\core\test\47293Catalog.xsd
 ..\..\..\runtime\core\test\47293Customer.xsd
@@ -347,11 +407,8 @@ Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP37.bat"
 ..\..\..\runtime\core\test\partial.xml
 ..\..\..\runtime\core\test\testopen3.xml
        10 file(s) copied.
-..\..\..\bin\iconv.dll
-..\..\..\bin\libxml2.dll
 ..\..\..\bin\tuscany_sdo.dll
-..\..\..\bin\zlib1.dll
-        4 file(s) copied.
+        1 file(s) copied.
 ..\..\..\bin\tuscany_sdo.pdb
         1 file(s) copied.
 ..\..\..\runtime\core\test\StockQuoteService.wsdl
