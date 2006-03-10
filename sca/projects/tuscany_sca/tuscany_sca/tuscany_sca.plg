@@ -6,55 +6,97 @@
 --------------------Configuration: tuscany_sca - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24.tmp" with contents
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP120.tmp" with contents
 [
-/nologo /MDd /W3 /Gm /GX /ZI /Od /I "." /I "../../../runtime/core/src" /I "C:\incubator\tuscany\cpp\sdo/include" /I "C:\axis-c-1-5-win32/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SCA_EXPORTS" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\osoa\sca\ComponentContext.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\osoa\sca\ComponentContextImpl.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\osoa\sca\ModuleContext.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\osoa\sca\ModuleContextImpl.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\osoa\sca\SCA.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\osoa\sca\ServiceList.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\osoa\sca\ServiceRuntimeException.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\core\Operation.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\core\SCAEntryPoint.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\core\SCARuntime.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\core\ServiceProxy.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\core\ServiceWrapper.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Binding.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Component.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\CPPImplementation.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\CPPInterface.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\EntryPoint.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\ExternalService.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Implementation.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Interface.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\ModelLoader.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Module.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Service.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\ServiceReference.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Subsystem.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\System.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Wire.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\WireTarget.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\WSBinding.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\Wsdl.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\model\WsdlOperation.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\util\DefaultLogWriter.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\util\File.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\util\Library.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\util\Logger.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\util\LogWriter.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\util\Utils.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\ws\SDOStub.cpp"
-"C:\incubator\tuscany\cpp\sca\runtime\core\src\tuscany\sca\ws\WSServiceWrapper.cpp"
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/core/src" /I "/include" /I "C:\Program Files\Apache Group\Apache2\Axis/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SCA_EXPORTS" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\ComponentContext.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\ComponentContextImpl.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\ModuleContext.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\ModuleContextImpl.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\SCA.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\ServiceList.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\ServiceRuntimeException.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\core\Operation.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\core\SCAEntryPoint.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\core\SCARuntime.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\core\ServiceProxy.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\core\ServiceWrapper.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Binding.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Component.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\CPPImplementation.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\CPPInterface.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\EntryPoint.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\ExternalService.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Implementation.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Interface.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\ModelLoader.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Module.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Service.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\ServiceReference.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Subsystem.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\System.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Wire.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\WireTarget.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\WSBinding.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\Wsdl.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\WsdlOperation.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\DefaultLogWriter.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\File.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\Library.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\Logger.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\LogWriter.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\Utils.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\ws\SDOStub.cpp"
+"D:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\ws\WSServiceWrapper.cpp"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP24.tmp" 
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP25.tmp" with contents
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP120.tmp" 
+warning: unresolved Environment Variable  "$(TUSCANY_SDOCPP)"
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP121.tmp" with contents
 [
-kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib AxisClient.lib /nologo /dll /incremental:yes /pdb:"Debug/tuscany_sca.pdb" /debug /machine:I386 /out:"Debug/tuscany_sca.dll" /implib:"Debug/tuscany_sca.lib" /pdbtype:sept /libpath:"C:\incubator\tuscany\cpp\sdo\lib" /libpath:"C:\axis-c-1-5-win32\lib\axis" 
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib AxisClient.lib /nologo /dll /incremental:yes /pdb:"Debug/tuscany_sca.pdb" /debug /machine:I386 /out:"Debug/tuscany_sca.dll" /implib:"Debug/tuscany_sca.lib" /pdbtype:sept /libpath:"\lib" /libpath:"C:\Program Files\Apache Group\Apache2\Axis\lib\axis" 
 .\Debug\ComponentContext.obj
 .\Debug\ComponentContextImpl.obj
 .\Debug\ModuleContext.obj
@@ -97,26 +139,40 @@ kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32
 .\Debug\SDOStub.obj
 .\Debug\WSServiceWrapper.obj
 ]
-Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP25.tmp"
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP121.tmp"
 <h3>Output Window</h3>
 Compiling...
 ComponentContext.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\componentcontext.h(25) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 ComponentContextImpl.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\component.h(32) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 ModuleContext.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\module.h(31) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 ModuleContextImpl.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\component.h(32) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 SCA.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\componentcontext.h(25) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 ServiceList.cpp
 ServiceRuntimeException.cpp
 ComponentServiceWrapper.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\component.h(32) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 ExternalServiceWrapper.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\componentcontext.h(25) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Operation.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\componentcontext.h(25) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 SCAEntryPoint.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\module.h(31) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 SCARuntime.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\componentcontext.h(25) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 ServiceProxy.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\component.h(32) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 ServiceWrapper.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\componentcontext.h(25) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Binding.cpp
 Component.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 CPPImplementation.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 CPPInterface.cpp
 EntryPoint.cpp
 ExternalService.cpp
@@ -125,102 +181,45 @@ Compiling...
 Implementation.cpp
 Interface.cpp
 ModelLoader.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Module.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Service.cpp
 ServiceReference.cpp
 Subsystem.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\module.h(31) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 System.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\model\module.h(31) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Wire.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 WireTarget.cpp
 WSBinding.cpp
 Wsdl.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 WsdlOperation.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 DefaultLogWriter.cpp
 File.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Library.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Logger.cpp
 LogWriter.cpp
 Utils.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\util\utils.h(24) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 SDOStub.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\tuscany\sca\ws\sdostub.h(28) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Generating Code...
 Compiling...
 WSServiceWrapper.cpp
+d:\tuscanysvn\cpp\sca\runtime\core\src\osoa\sca\componentcontext.h(25) : fatal error C1083: Cannot open include file: 'commonj/sdo/SDO.h': No such file or directory
 Generating Code...
-Linking...
-   Creating library Debug/tuscany_sca.lib and object Debug/tuscany_sca.exp
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP29.bat" with contents
-[
-@echo off
-del ..\..\..\bin\tuscany_sca.*
-del ..\..\..\lib\*.lib
-copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\include\osoa\sca
-copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\include\tuscany\sca\core
-copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\include\tuscany\sca\model
-copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\include\tuscany\sca\util
-copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\include\tuscany\sca\ws
-copy Debug\tuscany_sca.dll ..\..\..\bin
-copy Debug\tuscany_sca.pdb ..\..\..\bin
-copy Debug\tuscany_sca.lib ..\..\..\lib
-]
-Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP29.bat"
-
-..\..\..\runtime\core\src\osoa\sca\ComponentContext.h
-..\..\..\runtime\core\src\osoa\sca\ComponentContextImpl.h
-..\..\..\runtime\core\src\osoa\sca\export.h
-..\..\..\runtime\core\src\osoa\sca\ModuleContext.h
-..\..\..\runtime\core\src\osoa\sca\ModuleContextImpl.h
-..\..\..\runtime\core\src\osoa\sca\sca.h
-..\..\..\runtime\core\src\osoa\sca\ServiceList.h
-..\..\..\runtime\core\src\osoa\sca\ServiceRuntimeException.h
-        8 file(s) copied.
-..\..\..\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.h
-..\..\..\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.h
-..\..\..\runtime\core\src\tuscany\sca\core\Operation.h
-..\..\..\runtime\core\src\tuscany\sca\core\SCAEntryPoint.h
-..\..\..\runtime\core\src\tuscany\sca\core\SCARuntime.h
-..\..\..\runtime\core\src\tuscany\sca\core\ServiceProxy.h
-..\..\..\runtime\core\src\tuscany\sca\core\ServiceWrapper.h
-        7 file(s) copied.
-..\..\..\runtime\core\src\tuscany\sca\model\Binding.h
-..\..\..\runtime\core\src\tuscany\sca\model\Component.h
-..\..\..\runtime\core\src\tuscany\sca\model\CPPImplementation.h
-..\..\..\runtime\core\src\tuscany\sca\model\CPPInterface.h
-..\..\..\runtime\core\src\tuscany\sca\model\EntryPoint.h
-..\..\..\runtime\core\src\tuscany\sca\model\ExternalService.h
-..\..\..\runtime\core\src\tuscany\sca\model\Implementation.h
-..\..\..\runtime\core\src\tuscany\sca\model\Interface.h
-..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.h
-..\..\..\runtime\core\src\tuscany\sca\model\Module.h
-..\..\..\runtime\core\src\tuscany\sca\model\Service.h
-..\..\..\runtime\core\src\tuscany\sca\model\ServiceReference.h
-..\..\..\runtime\core\src\tuscany\sca\model\Subsystem.h
-..\..\..\runtime\core\src\tuscany\sca\model\System.h
-..\..\..\runtime\core\src\tuscany\sca\model\Wire.h
-..\..\..\runtime\core\src\tuscany\sca\model\WireTarget.h
-..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.h
-..\..\..\runtime\core\src\tuscany\sca\model\Wsdl.h
-..\..\..\runtime\core\src\tuscany\sca\model\WsdlOperation.h
-       19 file(s) copied.
-..\..\..\runtime\core\src\tuscany\sca\util\DefaultLogWriter.h
-..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.h
-..\..\..\runtime\core\src\tuscany\sca\util\File.h
-..\..\..\runtime\core\src\tuscany\sca\util\Library.h
-..\..\..\runtime\core\src\tuscany\sca\util\Logger.h
-..\..\..\runtime\core\src\tuscany\sca\util\Logging.h
-..\..\..\runtime\core\src\tuscany\sca\util\LogWriter.h
-..\..\..\runtime\core\src\tuscany\sca\util\Utils.h
-        8 file(s) copied.
-..\..\..\runtime\core\src\tuscany\sca\ws\SDOStub.h
-..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceWrapper.h
-        2 file(s) copied.
-        1 file(s) copied.
-        1 file(s) copied.
-        1 file(s) copied.
+Error executing cl.exe.
 
 
 
 <h3>Results</h3>
-tuscany_sca.dll - 0 error(s), 0 warning(s)
+tuscany_sca.dll - 26 error(s), 0 warning(s)
 </pre>
 </body>
 </html>

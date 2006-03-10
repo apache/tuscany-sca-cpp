@@ -3,38 +3,28 @@
 <pre>
 <h1>Build Log</h1>
 <h3>
---------------------Configuration: tuscany_sca_axis_wrapper - Win32 Debug--------------------
+--------------------Configuration: tuscany_sca_axis_wrapper - Win32 Release--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP175B.tmp" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP157.tmp" with contents
 [
-/nologo /MTd /W3 /Gm /GX /ZI /Od /I "../../../runtime/core/src" /I "C:\incubator\tuscany\cpp\sdo/include" /I "C:\axis-c-1-5-win32/include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_AXIS_SCA_EXPORTS" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"C:\incubator\tuscany\cpp\sca\runtime\axis_binding\wrapper\src\SCAWSWrapper.cpp"
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib AxisClient.lib /nologo /dll /incremental:no /pdb:"Release/tuscany_sca_axis_wrapper.pdb" /machine:I386 /out:"Release/tuscany_sca_axis_wrapper.dll" /implib:"Release/tuscany_sca_axis_wrapper.lib" /libpath:".\..\..\lib" /libpath:"D:\tuscanysvn\cpp\sdo\lib" /libpath:"C:\axis-c-1-5-win32\lib\axis" /libpath:"..\..\..\lib" 
+.\Release\SCAWSWrapper.obj
+\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca\Release\tuscany_sca.lib
+\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_axis_handler\Release\tuscany_sca_axis_handler.lib
 ]
-Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP175B.tmp" 
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP175C.tmp" with contents
-[
-kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib AxisClient.lib /nologo /dll /incremental:yes /pdb:"Debug/tuscany_sca_axis_wrapper.pdb" /debug /machine:I386 /out:"Debug/tuscany_sca_axis_wrapper.dll" /implib:"Debug/tuscany_sca_axis_wrapper.lib" /pdbtype:sept /libpath:"..\..\..\lib" /libpath:"C:\incubator\tuscany\cpp\sdo\lib" /libpath:"C:\axis-c-1-5-win32\lib\axis" 
-.\Debug\SCAWSWrapper.obj
-\incubator\tuscany\cpp\sca\projects\tuscany_sca\tuscany_sca\Debug\tuscany_sca.lib
-\incubator\tuscany\cpp\sca\projects\tuscany_sca\tuscany_sca_axis_handler\Debug\tuscany_sca_axis_handler.lib
-]
-Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP175C.tmp"
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP157.tmp"
 <h3>Output Window</h3>
-Compiling...
-SCAWSWrapper.cpp
 Linking...
-   Creating library Debug/tuscany_sca_axis_wrapper.lib and object Debug/tuscany_sca_axis_wrapper.exp
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1760.bat" with contents
+   Creating library Release/tuscany_sca_axis_wrapper.lib and object Release/tuscany_sca_axis_wrapper.exp
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP15B.bat" with contents
 [
 @echo off
-copy Debug\tuscany_sca_axis_wrapper.dll ..\..\..\bin
-copy Debug\tuscany_sca_axis_wrapper.pdb ..\..\..\bin
-copy Debug\tuscany_sca_axis_wrapper.lib ..\..\..\lib
+copy Release\tuscany_sca_axis_wrapper.dll ..\..\..\bin
+copy Release\tuscany_sca_axis_wrapper.lib ..\..\..\lib
 ]
-Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1760.bat"
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP15B.bat"
 
-        1 file(s) copied.
         1 file(s) copied.
         1 file(s) copied.
 
