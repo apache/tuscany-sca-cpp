@@ -1,0 +1,3 @@
+Open Type string value: Value Of Open String
+Open Sequenced string value: Value of sequenced string
+Open Sequenced string value from seq: Value of sequenced string

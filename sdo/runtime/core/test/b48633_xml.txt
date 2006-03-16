@@ -1,0 +1,10 @@
+===== DataObject contents =====
+first:string:John
+
+middle:string:Fitzgerald
+
+last:string:Doe
+
+title:string:Mr.
+
+===== End DataObject =====

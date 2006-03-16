@@ -1,0 +1,15 @@
+Boolean default is : 0
+Boolean default as a string is false
+Byte default is : 0
+Byte default as a string is 0
+Character default is : 0
+Character default as a string is 0
+Short default is : 0
+Integer default is : 0
+Integer many default is : 0
+Long default is : 0
+Float default is : 0.000
+Double default is : 0.000
+Date default is : 0
+String default is zero length
+Bytes default is zero length

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+  xmlns:template="http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/"
+  targetNamespace="http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/">
+  
+  <element name="template" type="template:TemplateType">
+    <complexType name="TemplateType">
+    <sequence>
+      <element name="displayName" type="string"/>
+	  <element name="templateType" type="string"/>
+      <element name="description" type="string"/>
+      <element name="expert" type="string"/>
+      <element name="icon" type="string"/>
+      <element name="verifiers" minOccurs="0" maxOccurs="unbounded" type="string"/>
+      <element name="globalHelperArguments" minOccurs="0" maxOccurs="unbounded" type="string"/>
+      <element name="unboundTemplateParameters" minOccurs="0" maxOccurs="unbounded" ref="template:unboundTemplateParameter"/>
+      <attribute name="name" type="string"/>
+      <attribute name="version" type="string"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <element name="unboundTemplateParameter">
+   <complexType>
+	 <element name="description" minOccurs="0" maxOccurs="1" ref="template:description"/>
+     <element name="verifiers" minOccurs="0" maxOccurs="unbounded" type="string"/>
+     <element name="constraints" minOccurs="0" maxOccurs="unbounded" ref="template:value"/>
+     <element name="factory" minOccurs="0" maxOccurs="1" ref="template:factory"/>
+     <element name="defaults" minOccurs="0" maxOccurs="unbounded" ref="template:value"/>
+     <attribute name="name" type="string"/>
+     <attribute name="expert" type="string"/>
+     <attribute name="multiplicity" type="string"/>
+   </complexType>
+  </element>
+  
+  <element name="description">
+    <complexType>
+	   <element name="description" type="string"/>
+       <element name="displayName" type="string"/>
+   </complexType>
+  </element>
+    
+  <element name="factory">
+    <complexType>
+     <attribute name="kind" type="string"/>
+     <attribute name="name" type="string"/>
+    </complexType>
+  </element>
+
+  <element name="valueprovider">
+    <complexType>
+        <element name="values" minOccurs="0" maxOccurs="unbounded" ref="template:value"/>
+    </complexType>
+  </element>
+     
+  <element name="value">
+    <complexType>
+	    <element name="description" type="string"/>
+        <element name="displayName" type="string"/>
+        <element name="data" type="string"/>
+    </complexType>
+  </element>
+     
+</schema>

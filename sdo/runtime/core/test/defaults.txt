@@ -1,0 +1,10 @@
+Boolean default is true: 1
+Byte default is d: 100
+Character default is e: 101
+Short default is 300: 300
+Long default is 400: 400
+Expected index out of range OK
+Float default is 600: 600.000
+LongDouble default is 700: 700.000
+String default is HELP: HELP
+Bytes default is HELP: HELP

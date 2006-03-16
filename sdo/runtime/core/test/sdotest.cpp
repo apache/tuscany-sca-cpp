@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
+ *  Copyright 2005 International Business Machines Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,24 +15,29 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:31 $ */
+/* $Id: sdotest.cpp,v 1.22 2006/03/16 12:53:57 slattery Exp $ */
 
 #include <stdio.h>
 
 #pragma warning(disable:4786)
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
-// #include "TypeImpl.h"
+
 
 #include "sdotest.h"
 
 
 
+
+
 using namespace commonj::sdo;
 
-// very basic print of a data graph
+
+
+/* USED IN RCPTEST */
 
 typedef struct {
     //zend_object         zo;            /* The standard zend_object */
@@ -41,22 +46,77 @@ typedef struct {
 } sdo_doimpl_object;
 
 
-void  sdotest::rcptest()
+int  sdotest::rcptest()
 {
-    DataFactoryPtr mdg;
-    sdo_doimpl_object* ptr;
 
-    cout << "RCPtest" << endl;
+    try {
+        DataFactoryPtr mdg;
+        sdo_doimpl_object* ptr;
 
-    mdg  = DataFactory::getDataFactory();
-    mdg = 0;
-    mdg  = DataFactory::getDataFactory();
-    mdg = NULL;    
-    mdg  = DataFactory::getDataFactory();
+        mdg  = DataFactory::getDataFactory();
+        mdg = 0;
+        mdg  = DataFactory::getDataFactory();
+        mdg = NULL;    
+        mdg  = DataFactory::getDataFactory();
 
-    cout << "RCPtest 2" << endl;
+        mdg->addType("myspace","Root");
 
+        mdg->addType("myspace","Company");
+
+        mdg->addPropertyToType("myspace","Company","name",
+                           "commonj.sdo","String", false, false, false);
+    
+        mdg->addPropertyToType("myspace","Company","id",
+                           "commonj.sdo","String", false, false, false);
+
+        mdg->addPropertyToType("myspace","Root","companies",
+                           "myspace","Company", true, false, true);
+
+        const Type& tcc = mdg->getType("myspace","Root");
+
+
+        ptr = new sdo_doimpl_object;
+    
+        ptr->dop = mdg->create((Type&)tcc);
+
+        ptr->dop = 0; // null ;
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent) cout << "RefCountingPointer test failed" << endl;
+        return 0;
+    }
+}
+
+
+
+int sdotest::changesummarytest()
+{
+    if (scenario5() == 0) return 0;
+    if (scenario1() == 0) return 0;
+    if (scenario2() == 0) return 0;
+    if (scenario3() == 0) return 0;
+    if (scenario4() == 0) return 0;
+    return 1;
+}
+
+
+int sdotest::scenario1()
+{
+    // scenario 1
+    // create root type - root has cs
+    // create a company type. and containment ref from root, many valued.
+    // props on comp id, name both strings single v.
+    // create root object
+    // begin logging
+    // create a company obj. name=acme id=123
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
     mdg->addType("myspace","Root");
+    mdg->addPropertyToType("myspace","Root","whatever",
+                           "commonj.sdo","ChangeSummary", false, false, false);
 
     mdg->addType("myspace","Company");
 
@@ -70,408 +130,6 @@ void  sdotest::rcptest()
                            "myspace","Company", true, false, true);
 
     const Type& tcc = mdg->getType("myspace","Root");
-
-
-    ptr = new sdo_doimpl_object;
-    
-
-    ptr->dop = mdg->create((Type&)tcc);
-
-
-    //delete ptr->dop;
-
-
-    ptr->dop = 0; // null ;
-
-}
-
-
-
-void printDataStructure(DataFactory* dd)
-{
-    TypeList tt = dd->getTypes();
-    cout << "Printing Types\n";
-    for (int i = 0; i < tt.size(); ++i)
-    {
-        cout << "Type "  << tt[i].getName() << "\n";
-        PropertyList pl = tt[i].getProperties();
-        for (int j = 0; j < pl.size() ; j++)
-        {
-            cout << "Has Property " << pl[j].getName() << 
-                " of type ";
-            cout << pl[j].getType().getName() << "\n";
-        }
-    }
-}
-
-
-void sdotest::changesummarytest()
-{
-    scenario5();
-    scenario1();
-    scenario2();
-    scenario3();
-    scenario4();
-
-}
-
-
-
-
-void sdotest::printOldValues(ChangeSummaryPtr cs, DataObjectPtr dol)
-{
-    cout << "===== Old Property Values Begin=====================================" << endl;
-    SettingList& sl = cs->getOldValues(dol);
-    if (sl.size() == 0) 
-    {
-        cout << "No Settings found" << endl;
-    }
-    else 
-    {
-        for (int j=0;j< sl.size(); j++)
-        {
-            cout << "Property " << sl[j].getProperty().getName();
-            // this could be a many-valued property, and could be one which is
-            // a data object or a data type...
-            if (sl[j].getProperty().isMany()) 
-            {
-                cout << "[" << sl[j].getIndex() << "]" ;
-            }
-            if (!sl[j].isSet())
-            {
-                cout << "(UNSET)";
-            }
-            if (sl[j].isNull())
-            {
-                cout << "(ISNULL)";
-            }
-
-            cout << " of type " ;
-            switch (sl[j].getProperty().getTypeEnum())
-            {
-                case Type::BooleanType:
-                    cout << "Boolean:" << sl[j].getBooleanValue();
-                break;
-                case Type::ByteType:
-                    cout << "Byte:" << sl[j].getByteValue();
-                break;
-                case Type::CharacterType:
-                    cout << "Character:" << sl[j].getCharacterValue();
-                break;
-                case Type::IntegerType: 
-                    cout << "Integer:" << sl[j].getIntegerValue();
-                break;
-                case Type::ShortType:
-                    cout << "Short:" << sl[j].getShortValue();
-                break;
-                case Type::DoubleType:
-                    cout << "Double:" << sl[j].getDoubleValue();
-                break;
-                case Type::FloatType:
-                    cout << "Float:" << sl[j].getFloatValue();
-                break;
-                case Type::LongType:
-                    cout << "Long:" << sl[j].getIntegerValue();
-                break;
-                case Type::DateType:
-                    cout << "Date:" << sl[j].getDateValue().getTime();
-                break;
-                case Type::BigDecimalType: 
-                case Type::BigIntegerType: 
-                case Type::StringType: 
-                case Type::UriType:
-                    cout << "String:" << sl[j].getCStringValue();
-                    break;
-                case Type::BytesType:
-                    cout << "Bytes:" << sl[j].getCStringValue();
-                break;
-                case Type::OtherTypes:
-                case Type::DataObjectType:
-                case Type::ChangeSummaryType:
-                {
-                    cout << "DataObject " ;
-                    DataObjectPtr dob = sl[j].getDataObjectValue();
-                    if (!dob) 
-                    {
-                        cout << " - object null or unset" ;
-                    }
-                    else 
-                    {
-                        DataObjectPtr mydo = sl[j].getDataObjectValue();
-                        if (cs->isDeleted(mydo))
-                        {
-                            cout << " - object deleted " << endl;
-                            printOldValues(cs,mydo);
-                        }
-                        else 
-                        {
-                            cout << " object still exists " << endl;
-                            //printDataObject(mydo);
-                        }
-                    }
-                }
-                break;
-                default:
-                {
-                        cout << "Unknown object type";
-                }
-                break;
-            }
-            cout << endl;
-        }
-    }
-    cout << "===== Old Property Values End ======================================" << endl;
-}
-
-
-void sdotest::printValue(DataObjectPtr dp, const Property& p)
-{
-    switch (p.getTypeEnum())
-    {
-        case Type::BooleanType:
-            cout << "boolean:" << dp->getBoolean(p);
-        break;
-        case Type::ByteType:
-            cout << "Byte:" << dp->getByte(p);
-        break;
-        case Type::CharacterType:
-            cout << "character:" << dp->getCharacter(p);
-        break;
-        case Type::IntegerType: 
-            cout << "integer:" << dp->getInteger(p);
-        break;
-        case Type::ShortType:
-            cout << "short:" << dp->getShort(p);
-        break;
-        case Type::DoubleType:
-            cout << "double:" << dp->getDouble(p);
-        break;
-        case Type::FloatType:
-            cout << "float:" << dp->getFloat(p);
-        break;
-        case Type::LongType:
-            cout << "long:" << "cheat"  << dp->getInteger(p);
-        break;
-        case Type::DateType:
-            cout << "date:" << dp->getDate(p).getTime();
-        break;
-        case Type::BigDecimalType: 
-        case Type::BigIntegerType: 
-        case Type::StringType: 
-        case Type::UriType:
-            cout << "string:" << dp->getCString(p);
-            break;
-        case Type::BytesType:
-            cout << "bytes:" << dp->getCString(p);
-        break;
-        case Type::DataObjectType:
-        {
-            cout << "dataObject" ;
-            DataObjectPtr dob = dp->getDataObject(p);
-            if (!dob) 
-            {
-                cout << " - null or unset" ;
-            }
-            else 
-            {
-                cout << endl;
-                printDataObject(dob);
-            }
-        }
-        break;
-        case Type::OtherTypes:
-        case Type::ChangeSummaryType:
-        default:
-        {
-            cout << "Unknown object type";
-        }
-        break;
-    }
-    cout << endl;
-}
-
-void sdotest::printList(DataObjectPtr dp, const Property& p)
-{
-    DataObjectList& dobl = dp->getList(p);
-    cout << " list ";
-    
-    if (dobl.size() ==0) {
-        cout << "(empty)" << endl;
-        return;
-    }
-
-    for (int i=0;i<dobl.size();i++) {
-
-    switch (p.getTypeEnum())
-    {
-        case Type::BooleanType:
-            cout << "boolean[" << i << "]=" << dobl.getBoolean(i);
-        break;
-        case Type::ByteType:
-            cout << "byte[" << i << "]=" << dobl.getByte(i);
-        break;
-        case Type::CharacterType:
-            cout << "character[" << i << "]=" << dobl.getCharacter(i);
-        break;
-        case Type::IntegerType: 
-            cout << "integer[" << i << "]=" << dobl.getInteger(i);
-        break;
-        case Type::ShortType:
-            cout << "short[" << i << "]=" << dobl.getShort(i);
-        break;
-        case Type::DoubleType:
-            cout << "double[" << i << "]=" << dobl.getDouble(i);
-        break;
-        case Type::FloatType:
-            cout << "float[" << i << "]=" << dobl.getFloat(i);
-        break;
-        case Type::LongType:
-            cout << "long:" << i << "]=" << "cheat"  << dobl.getInteger(i);
-        break;
-        case Type::DateType:
-            cout << "date[" << i << "]=" << dobl.getDate(i).getTime();
-        break;
-        case Type::BigDecimalType: 
-        case Type::BigIntegerType: 
-        case Type::StringType: 
-        case Type::UriType:
-            cout << "string:" << i << "]=" << dobl.getCString(i);
-            break;
-        case Type::BytesType:
-            cout << "bytes[" << i << "]=" << dobl.getCString(i);
-        break;
-        case Type::DataObjectType:
-        {
-            cout << "dataObject["<< i << "]="  ;
-            DataObjectPtr dob = dobl[i];
-            if (!dob) 
-            {
-                cout << " null or unset" ;
-            }
-            else 
-            {
-                cout << endl;
-                printDataObject(dob);
-            }
-        }
-        break;
-        case Type::OtherTypes:
-        case Type::ChangeSummaryType:
-        default:
-        {
-            cout << "Unknown object type";
-        }
-        break;
-    }
-    cout << endl;
-    }
-}
-
-void sdotest::printDataObject(DataObjectPtr dol)
-{
-    cout << "DataObject Current Values ==========================================" << endl;
-    PropertyList pl = dol->getInstanceProperties();
-
-    for (int j=0;j< pl.size(); j++)
-    {
-        cout << "Property " << pl[j].getName() << " of type ";
-        // this could be a many-valued property, and could be one which is
-        // a data object or a data type...
-        if (pl[j].isMany()) 
-        {
-            printList(dol,pl[j]);
-        }
-        else {
-            printValue(dol,pl[j]);
-        }
-    }
-    cout << "End DataObject Current Values ======================================" << endl;
-}
-
-
-void sdotest::dumpchangesummary(ChangeSummaryPtr cs)
-{
-    ChangedDataObjectList& cdol = cs->getChangedDataObjects();
-
-    // the changed data object list contains only the objects whose properties have
-    // been changed. 
-    // a changed and subsequently deleted object will not appear, but necessarily its
-    // container will appear, so we can rebuild it.
-
-    for (int i=0;i< cdol.size();i++)
-    {
-        if (cs->isCreated(cdol[i]))
-        {
-            cout << "Created object in changed list: " << cdol[i] << endl;
-            // So its in the created list, it must exist in the tree...
-            cout << "The object is " << cdol[i]->getType().getURI()  
-                 << "#" << cdol[i]->getType().getName() << endl;
-        }
-        if (cs->isModified(cdol[i]))
-        {
-            cout <<"===== Modified Object Starts " << cdol[i] << " ==============================" <<endl;
-            // hack to get to a DAS data object...
-            DataObject* temp = cdol[i];
-            cout << "XPATH:" << ((DataObject*)temp)->objectToXPath() << endl;
-            // end hack
-
-            if (cs->isDeleted(cdol[i]))
-            {
-                cout << "PROBLEM: DELETED OBJECT IN CHANGED LIST: " << cdol[i] << endl;
-                // As the item is in the deleted list - its still present..
-                cout << "The type is " << cdol[i]->getType().getURI()  
-                     << "#" << cdol[i]->getType().getName() << endl;
-            }
-            else {
-                cout << "The modified objects type is " << cdol[i]->getType().getURI()  
-                 << "#" << cdol[i]->getType().getName() << endl;
-
-                printOldValues(cs, cdol[i]);
-                //printDataObject(cdol[i]);
-            }
-            cout <<"=====Modified Object Ends " << cdol[i] << " =================================" <<endl;
-        }
-        if (cs->isDeleted(cdol[i]))
-        {
-            cout <<"=====Deleted Object Starts " << cdol[i] << " =================================" <<endl;
-            printOldValues(cs, cdol[i]);
-            cout <<"=====Deleted Object Ends " << cdol[i] << " =================================" <<endl;
-        }
-    }
-}
-
-
-
-
-
-void sdotest::scenario1()
-{
-    // scenario 1
-    // create root type - root has cs
-    // create a company type. and containment ref from root, many valued.
-    // props on comp id, name both strings single v.
-    // create root object
-    // begin logging
-    // create a company obj. name=acme id=123
-
-    DataFactoryPtr mdg  = DataFactory::getDataFactory();
-    
-    mdg->addType("myspace","RootOfAllEvil");
-    mdg->addPropertyToType("myspace","RootOfAllEvil","whatever",
-                           "commonj.sdo","ChangeSummary", false, false, false);
-
-    mdg->addType("myspace","Company");
-
-    mdg->addPropertyToType("myspace","Company","name",
-                           "commonj.sdo","String", false, false, false);
-    
-    mdg->addPropertyToType("myspace","Company","id",
-                           "commonj.sdo","String", false, false, false);
-
-    mdg->addPropertyToType("myspace","RootOfAllEvil","companies",
-                           "myspace","Company", true, false, true);
-
-    const Type& tcc = mdg->getType("myspace","RootOfAllEvil");
     DataObjectPtr dor = mdg->create((Type&)tcc);
     
     ChangeSummaryPtr cs = dor->getChangeSummary();
@@ -481,19 +139,28 @@ void sdotest::scenario1()
     com->setCString("name","acme");
     com->setCString("id","123");
 
-    dumpchangesummary(cs);
+    FILE *f = fopen("scenario1.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open secnario1.dat" << endl;
+        return 0;
+    }
+
+    dumpchangesummary(f, cs);
+    
+    fclose(f);
 
     cs->endLogging();
 
     //expect cdo:
     //root - isChanged
     //comp - isCreated
-
-
+    
+    return comparefiles("scenario1.dat","scenario1.txt");
 }
 
 
-void sdotest::testui()
+int sdotest::testui()
 {
 
     try {
@@ -519,19 +186,23 @@ void sdotest::testui()
     DataObjectList& dol2 = main->getList("int");
     DataObjectList& dol3 = main->getList((unsigned int)0);
     DataObjectList& dol4 = main->getList(1);
+
+    return 1;
     }
 
     catch (SDORuntimeException e)
     {
-        cout << "Unsigned int failed" << endl << e << endl;
+        if (!silent) cout << "Unsigned integer test failed" << endl << e << endl;
+        return 0;
     }
+    
 }
 
 
 
-void sdotest::scenario5()
+int sdotest::scenario5()
 {
-    // scenario 1
+    // scenario 5
     // create root type - root has cs
     // create a company type. and containment ref from root, many valued.
     // props on comp id, name both strings single v.
@@ -541,8 +212,8 @@ void sdotest::scenario5()
 
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     
-    mdg->addType("myspace","RootOfAllEvil");
-    mdg->addPropertyToType("myspace","RootOfAllEvil","whatever",
+    mdg->addType("myspace","Root");
+    mdg->addPropertyToType("myspace","Root","whatever",
                            "commonj.sdo","ChangeSummary", false, false, false);
 
     mdg->addType("myspace","Company");
@@ -563,10 +234,10 @@ void sdotest::scenario5()
     mdg->addPropertyToType("myspace","Company","employees",
                            "myspace","Employee", true, false, true);
 
-    mdg->addPropertyToType("myspace","RootOfAllEvil","companies",
+    mdg->addPropertyToType("myspace","Root","companies",
                            "myspace","Company", true, false, true);
 
-    const Type& tcc = mdg->getType("myspace","RootOfAllEvil");
+    const Type& tcc = mdg->getType("myspace","Root");
     DataObjectPtr dor = mdg->create((Type&)tcc);
     
     ChangeSummaryPtr cs = dor->getChangeSummary();
@@ -590,15 +261,26 @@ void sdotest::scenario5()
 
     com->unset("eotm");
 
-    dumpchangesummary(cs);
+    FILE *f = fopen("scenario5.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open scenario5.dat" << endl;
+        return 0;
+    }
+
+    dumpchangesummary(f, cs);
+
+    fclose(f);
 
     cs->endLogging();
+
+    return comparefiles("scenario5.dat","scenario5.txt");
 
     //expect com to have change record, nothing for eotm:
 
 }
 
-void sdotest::scenario2()
+int sdotest::scenario2()
 {
     // create root type - root has cs
     // create a company type. and containment ref from root, many valued.
@@ -610,8 +292,8 @@ void sdotest::scenario2()
 
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     
-    mdg->addType("myspace","RootOfAllEvil");
-    mdg->addPropertyToType("myspace","RootOfAllEvil","whatever",
+    mdg->addType("myspace","Root");
+    mdg->addPropertyToType("myspace","Root","whatever",
                            "commonj.sdo","ChangeSummary", false, false, false);
 
     mdg->addType("myspace","Company");
@@ -622,10 +304,10 @@ void sdotest::scenario2()
     mdg->addPropertyToType("myspace","Company","id",
                            "commonj.sdo","String", false, false, false);
 
-    mdg->addPropertyToType("myspace","RootOfAllEvil","companies",
+    mdg->addPropertyToType("myspace","Root","companies",
                            "myspace","Company", true, false, true);
 
-    const Type& tcc = mdg->getType("myspace","RootOfAllEvil");
+    const Type& tcc = mdg->getType("myspace","Root");
     DataObjectPtr dor = mdg->create((Type&)tcc);
 
     DataObjectPtr com = dor->createDataObject("companies");
@@ -637,7 +319,16 @@ void sdotest::scenario2()
 
     com->setCString("name","megacorp");
 
-    dumpchangesummary(cs);
+    FILE *f = fopen("scenario2.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open scenario2.dat" << endl;
+        return 0;
+    }
+
+    dumpchangesummary(f, cs);
+
+    fclose(f);
 
     cs->endLogging();
 
@@ -646,9 +337,11 @@ void sdotest::scenario2()
     // company- isChanged
     //setting prop=name, value="acme"
 
+    return comparefiles("scenario2.dat","scenario2.txt");
+
 }
 
-void sdotest::scenario3()
+int sdotest::scenario3()
 {
 
     //create root type - root has cs
@@ -661,8 +354,8 @@ void sdotest::scenario3()
 
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     
-    mdg->addType("myspace","RootOfAllEvil");
-    mdg->addPropertyToType("myspace","RootOfAllEvil","whatever",
+    mdg->addType("myspace","Root");
+    mdg->addPropertyToType("myspace","Root","whatever",
                            "commonj.sdo","ChangeSummary", false, false, false);
 
     mdg->addType("myspace","Company");
@@ -673,10 +366,10 @@ void sdotest::scenario3()
     mdg->addPropertyToType("myspace","Company","id",
                            "commonj.sdo","String", false, false, false);
     
-    mdg->addPropertyToType("myspace","RootOfAllEvil","companies",
+    mdg->addPropertyToType("myspace","Root","companies",
                            "myspace","Company", true, false, true);
 
-    const Type& tcc = mdg->getType("myspace","RootOfAllEvil");
+    const Type& tcc = mdg->getType("myspace","Root");
     DataObjectPtr dor = mdg->create((Type&)tcc);
 
     DataObjectPtr com = dor->createDataObject("companies");
@@ -688,17 +381,28 @@ void sdotest::scenario3()
 
     com->detach();
 
-    dumpchangesummary(cs);
+    FILE *f = fopen("scenario3.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open scenario3.dat" << endl;
+        return 0;
+    }
+
+    dumpchangesummary(f, cs);
 
     cs->endLogging();
+
+    fclose(f);
 
     // expect cdo
     // root - changed
     // company - deleted
 
+    return comparefiles("scenario3.dat","scenario3.txt");
+
 }
 
-void sdotest::scenario4()
+int sdotest::scenario4()
 {
     //create root type - root has cs
     //create a company type. and containment ref from root, many valued.
@@ -721,8 +425,8 @@ void sdotest::scenario4()
 
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     
-    mdg->addType("myspace","RootOfAllEvil");
-    mdg->addPropertyToType("myspace","RootOfAllEvil","whatever",
+    mdg->addType("myspace","Root");
+    mdg->addPropertyToType("myspace","Root","whatever",
                            "commonj.sdo","ChangeSummary", false, false, false);
 
     mdg->addType("myspace","Company");
@@ -746,7 +450,7 @@ void sdotest::scenario4()
     mdg->addPropertyToType("myspace","Employee","id",
                            "commonj.sdo","String", false, false, false);
 
-    mdg->addPropertyToType("myspace","RootOfAllEvil","companies",
+    mdg->addPropertyToType("myspace","Root","companies",
                            "myspace","Company", true, false, true);
 
     mdg->addPropertyToType("myspace","Company","departments",
@@ -755,7 +459,7 @@ void sdotest::scenario4()
     mdg->addPropertyToType("myspace","Department","employees",
                            "myspace","Employee", true, false, true);
 
-    const Type& tcc = mdg->getType("myspace","RootOfAllEvil");
+    const Type& tcc = mdg->getType("myspace","Root");
     DataObjectPtr dor = mdg->create((Type&)tcc);
 
     DataObjectPtr com = dor->createDataObject("companies");
@@ -816,68 +520,46 @@ void sdotest::scenario4()
     emp->setCString("name","Helen Highwater");
     emp->setCString("id","2");
  
-    cout << "-----------------------------------" << endl;
-    cout << com->getCString("name") << endl;
     DataObjectList& deps = com->getList("departments");
-    cout << "Depts[0]:" << deps[0]->getCString("name") << endl;
     DataObjectList& emps = deps[0]->getList("employees");
-    cout << "Emps[0]:" << emps[0]->getCString("name") << endl;
-    cout << "Emps[1]:" << emps[1]->getCString("name") << endl;
-    cout << "Depts[1]:" << deps[1]->getCString("name") << endl;
     DataObjectList& emps2 = deps[1]->getList("employees");
-    cout << "Emps[0]:" << emps2[0]->getCString("name") << endl;
-    cout << "Emps[1]:" << emps2[1]->getCString("name") << endl;
-    cout << "-----------------------------------" << endl;
-    cout << com2->getCString("name") << endl;
     DataObjectList& deps2 = com2->getList("departments");
-    cout << "Depts[0]:" << deps2[0]->getCString("name") << endl;
     DataObjectList& emps3 = deps2[0]->getList("employees");
-    cout << "Emps[0]:" << emps3[0]->getCString("name") << endl;
-    cout << "Emps[1]:" << emps3[1]->getCString("name") << endl;
-    cout << "Depts[1]:" << deps2[1]->getCString("name") << endl;
     DataObjectList& emps4 = deps2[1]->getList("employees");
-    cout << "Emps[0]:" << emps4[0]->getCString("name") << endl;
-    cout << "Emps[1]:" << emps4[1]->getCString("name") << endl;
-    cout << "-----------------------------------" << endl;
 
     // should be able to get the change summary property, but it
     // should be zero. 
     // should be able to find out if the type is a change summary type
 
-    if (dor->getType().isChangeSummaryType())
+    if (! dor->getType().isChangeSummaryType())
     {
-        cout << "The root object has a change summary" << endl;
-    }
-    else {
-        cout << "The root object DOESNT HAVE a change summary !!!" << endl;
+        if (!silent) cout << "The root object DOESNT HAVE a change summary !!!" << endl;
+        return 0;
     }
 
     try {
         DataObjectPtr csptr = dor->getDataObject("whatever");
 
         if (!csptr) {
-            cout << "CS property was zero - should be invisible!!!!" << endl;
+            if (!silent) cout << "CS property was zero - should be invisible!!!!" << endl;
+            return 0;
         }
         else {
-            cout << "CS property was NOT zero !!" << endl;
+            if (!silent) cout << "CS property was NOT zero !!" << endl;
+            return 0;
         } 
     }
     catch (SDOPropertyNotFoundException e)
     {
-        cout << "No property shows - this is correct" << endl;
+        // cout << "No property shows - this is correct" << endl;
     }
     
 
     if (com->getType().isChangeSummaryType())
     {
-        cout << "The company object has a change summary !!!!" << endl;
+        if (!silent) cout << "The company object has a change summary !!!!" << endl;
+        return 0;
     }
-    else {
-        cout << "The company object is OK" << endl;
-    }
-
-
-
 
     ChangeSummaryPtr cs = dor->getChangeSummary();
     cs->beginLogging();
@@ -897,9 +579,18 @@ void sdotest::scenario4()
 
     depsout2[0]->detach();
 
-    dumpchangesummary(cs);
+    FILE *f = fopen("scenario4.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open secnario4.dat" << endl;
+        return 0;
+    }
+
+    dumpchangesummary(f, cs);
 
     cs->endLogging();
+
+    fclose(f);
 
     // expect:
     // company acme, department widgets changed.
@@ -910,10 +601,12 @@ void sdotest::scenario4()
     // deletion for emp 1 of windows - showing original value for name (Ivor Payne)
     // deletion for emp 2 of windows.
 
+    return comparefiles("scenario4.dat","scenario4.txt");
+
         
 }
 
-void sdotest::seqtest()
+int sdotest::seqtest()
 {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     // company is sequenced.
@@ -937,108 +630,61 @@ void sdotest::seqtest()
     const Property& sprop = dor->getType().getProperty("string");
     SequencePtr sptr = dor->getSequence();
 
-    printseq(sptr);
+    FILE *f = fopen("sequence.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Cannot open sequence.dat" << endl;
+        return 0;
+    }
+
+    printseq(f, sptr);
 
     sptr->addCString(sprop,"I am Item 1 of string");
     
-    printseq(sptr);
+    printseq(f, sptr);
 
     sptr->addText("I am the first free text");
     
-    printseq(sptr);
+    printseq(f, sptr);
 
     sptr->addCString(sprop,"I am Item 2 of string");
     
-    printseq(sptr);
+    printseq(f, sptr);
 
     sptr->setCStringValue(1,"I am free text which has been modified");
 
     DataObjectPtr dep1 = dor->createDataObject("departments");
 
-    printseq(sptr);
+    printseq(f, sptr);
 
     dep1->setCString("name","department1");
 
-    printseq(sptr);
+    printseq(f, sptr);
 
     DataObjectList& dol = dor->getList("departments");
 
     const Type& tcd = mdg->getType("myspace","Department");
     DataObjectPtr dep2 = mdg->create(tcd);
 
-    printseq(sptr);
+    printseq(f, sptr);
 
     dep2->setCString("name","department2");
 
-    printseq(sptr);
+    printseq(f, sptr);
 
     dol.append(dep2);
     
-    printseq(sptr);
+    printseq(f, sptr);
+
+    fclose(f);
+
+    return comparefiles("sequence.dat","sequence.txt");
+
 
 }
 
-void sdotest::printseq(SequencePtr sptr)
-{
-    cout << "======================================" <<endl;
-    for (int i=0;i< sptr->size();i++)
-    {
-        try {
-            if (!sptr->isText(i)) 
-            {
-                const Property& prp = sptr->getProperty(i);
-                if (!strcmp(prp.getType().getName(),"Department"))
-                {
-                    DataObjectPtr pdep = sptr->getDataObjectValue(i);
-                    if (pdep != 0)
-                    {
-                        const char * cs = pdep->getCString("name");
-                        if (cs != 0)
-                        {
-                            cout << cs << endl;
-                        }
-                        else
-                        {
-                            cout << " is empty " << endl;
-                        }
-                    }
-                }
-                else 
-                {
-                    const char* stx = sptr->getCStringValue(i);
-                    if (stx != 0)
-                    {
-                        cout << stx << endl;
-                    }
-                    else
-                    {
-                        cout << " is empty " << endl;
-                    }
-                }
-            }
-            else 
-            {
-                const char* st = sptr->getCStringValue(i);
-                if (st != 0)
-                {
-                    cout << st << endl;
-                }
-                else
-                {
-                    cout << " is empty " << endl;
-                }
-            }
-        }
-        catch (SDOPropertyNotSetException)
-        {
-            cout << "WRONG - got a property not set exception!!!" << endl;
-            continue;
-        }
-    }
-    cout << "======================================" << endl;
-}
 
-void sdotest::boolbug()
+int sdotest::boolbug()
 {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     mdg->addType("myspace","Company");
@@ -1047,36 +693,47 @@ void sdotest::boolbug()
     DataObjectPtr dor = mdg->create((Type&)tcc);
     try {
         bool b = dor->getBoolean("bool");
-        cout << "bool:" << b << endl;
+        return 1;
     }
     catch (SDOPropertyNotSetException)
     {
-        cout << "WRONG not set exception" << endl;
+        if (!silent) cout << "WRONG not set exception" << endl;
+        return 0;
     }
 }
 
-void sdotest::scope1()
+int sdotest::scope1()
 {
-    cout << "SCOPE1 - Data Factory" << endl;
-
-    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    try 
+    {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        return 1;
+    }
+    catch(SDORuntimeException e)
+    {
+        return 0;
+    }
 }
 
-void sdotest::scope2()
+int sdotest::scope2()
 {
-    cout << "SCOPE2 - Create Data Object" << endl;
-
+    try {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     mdg->addType("myspace","Company");
     mdg->addPropertyToType("myspace","Company","csumm","commonj.sdo","ChangeSummary");
     const Type& tcc = mdg->getType("myspace","Company");
     DataObjectPtr dor = mdg->create((Type&)tcc);
+    return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        return 0;
+    }
 }
 
-void sdotest::scope3()
+int sdotest::scope3()
 {
-    cout << "SCOPE3 - Lists" << endl;
-
+    try {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     mdg->addType("myspace","Main");
     mdg->addType("myspace","Subs");
@@ -1092,268 +749,352 @@ void sdotest::scope3()
 
     sub = dor->createDataObject("subs");
     sub->setCString("name", "sub2");
-    
+    return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        return 0;
+    }
 
 }
 
-void sdotest::testGetters(DataObjectPtr dor)
+int sdotest::testGetters(DataObjectPtr dor)
 {
-    testGetter(dor,"boolean");
-    testGetter(dor,"byte");
-    testGetter(dor,"character");
-    testGetter(dor,"short");
-    testGetter(dor,"integer");
-    testGetter(dor,"long");
-    testGetter(dor,"double");
-    testGetter(dor,"float");
-    testGetter(dor,"date");
-    testGetter(dor,"string");
-    testGetter(dor,"bytes");
-    testGetter(dor,"dataobject");
+    if (!testGetter(dor,"boolean")) return 0;
+    if (!testGetter(dor,"byte")) return 0;
+    if (!testGetter(dor,"character")) return 0;
+    if (!testGetter(dor,"short")) return 0;
+    if (!testGetter(dor,"integer")) return 0;
+    if (!testGetter(dor,"long")) return 0;
+    if (!testGetter(dor,"double")) return 0;
+    if (!testGetter(dor,"float")) return 0;
+    if (!testGetter(dor,"date")) return 0;
+    if (!testGetter(dor,"string")) return 0;
+    if (!testGetter(dor,"bytes")) return 0;
+    if (!testGetter(dor,"dataobject")) return 0;
+    return 1;
 }
 
-void sdotest::testGetter(DataObjectPtr dor, char* str)
+int sdotest::testGetter(DataObjectPtr dor, char* str)
 {
 
     try {
-        cout << "Boolean from " << str;
         bool b = dor->getBoolean(str);
-        cout << " was " << b << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "Byte from " << str;
         char by = dor->getByte(str);
-        cout << " was " << by <<endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG  unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG  unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "Character from " << str;
         wchar_t cy = dor->getCharacter(str);
-        cout << " was " << cy << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG  unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG  unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "Short from " << str;
         short s = dor->getShort(str);
-        cout << " was " << s << endl;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      if (!strcmp(str,"bytes")) return 1;
+      return 0;
+
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG  unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG  unset and undefaulted" << endl; 
+        return 0;
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "Int from " << str;
         int i = dor->getInteger(str);
-        cout << " was " << i << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "Long from " << str;
         long l = dor->getLong(str);
-        cout << " was " << l << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "LongLong from " << str;
         int64_t ll = dor->getLong(str);
-        cout << " was got OK" << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG  unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG  unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "Float from " << str;
         float f = dor->getFloat(str);
-        cout << " was " << f << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "Double from " << str;
         long double d = dor->getDouble(str);
-        cout << " was " << d << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     unsigned int len;
 
     try {
-        cout << "Length of " << str;
         len = dor->getLength(str);
-        cout << " was " << len << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG  unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG  unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     if (len > 0) {
         try  {
-            cout << "String from " << str;
             wchar_t * buf = new wchar_t[len];
             unsigned int gotlen = dor->getString(str,buf,len);
-            cout << " size ";
-            cout << gotlen << endl;
-            for (int jj=0;jj<gotlen;jj++)
-            {
-                cout << buf[jj] << ":";
-            }
-            cout << endl;
         }
         catch (SDOPropertyNotSetException pe)
         {
-            cout << "WRONG  unset and undefaulted" << endl; 
+            if (!silent) cout << "WRONG  unset and undefaulted" << endl; 
+            return 0;
+        }
+        catch (SDOInvalidConversionException ec)
+        {
+            if (!strcmp(str,"dataobject")) return 1;
+             return 0;
+
         }
         catch (SDORuntimeException e)
         {
-            cout << e.getEClassName() << endl; 
+            if (!silent) cout << e.getEClassName() << endl; 
+            return 0;
         }
         try {
-            cout << "Bytes from " << str;
             char * cbuf = new char[len];
             unsigned int gotlen = dor->getBytes(str,cbuf,len);
-            cout << " size " << gotlen << endl;
-            for (int jj=0;jj<gotlen;jj++)
-            {
-                cout << cbuf[jj]  << ":";
-            }
-            cout << endl;
         }
         catch (SDOPropertyNotSetException pe)
         {
-            cout << "WRONG  unset and undefaulted" << endl; 
+            if (!silent) cout << "WRONG  unset and undefaulted" << endl; 
+            return 0;
+        }
+        catch (SDOInvalidConversionException ec)
+        {
+            if (!strcmp(str,"dataobject")) return 1;
+            return 0;
+
         }
         catch (SDORuntimeException e)
         {
-            cout << e.getEClassName() << endl; 
+            if (!silent) cout << e.getEClassName() << endl; 
+            return 0;
         }
     }
 
     try {
-        cout << "Date from " << str;
         SDODate t = dor->getDate(str);
-        cout << " was " << t.getTime() << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << " WRONG unset and undefaulted" << endl; 
+        if (!silent) cout << " WRONG unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+       if (!strcmp(str,"boolean")) return 1;
+       if (!strcmp(str,"boolean")) return 1;
+       if (!strcmp(str,"string")) return 1;
+       if (!strcmp(str,"dataobject")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "CString from " << str; 
         const char * string = dor->getCString(str);
-        if ( string != 0) cout << " was " << string << endl;
-        else cout << " was empty " << endl;
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG -  unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG -  unset and undefaulted" << endl; 
+        return 0;
+    }
+    catch (SDOInvalidConversionException ec)
+    {
+      if (!strcmp(str,"dataobject")) return 1;
+      if (!strcmp(str,"date")) return 1;
+      return 0;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
 
     try {
-        cout << "DataObject from " << str; 
         DataObjectPtr dob = dor->getDataObject(str);
-        if (dob != 0)
-        {
-            cout << " was " << dob << endl;
-        }
-        else
-        {
-            cout << " was empty" << endl;
-        }
     }
     catch (SDOPropertyNotSetException pe)
     {
-        cout << "WRONG  unset and undefaulted" << endl; 
+        if (!silent) cout << "WRONG  unset and undefaulted" << endl; 
+        return 0;
+    }
+
+    catch (SDOInvalidConversionException ec)
+    {
+        if (!strcmp(str,"dataobject")) return 0;
+        return 1;
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << endl; 
+        if (!silent) cout << e.getEClassName() << endl; 
+        return 0;
     }
+    return 1;
 
 }
 
-void sdotest::conversiontest()
+int sdotest::conversiontest()
 {
-    cout << "Conversion tests" << endl;
+    //cout << "Conversion tests" << endl;
 
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     mdg->addType("myspace","Container");
@@ -1379,11 +1120,11 @@ void sdotest::conversiontest()
 
     // phase 1 - all unset.......
 
-    cout << "+++++++++++++++PROPERTY VALUES UNSET ++++++++++++++++++" << endl;
+    // cout << "+++++++++++++++PROPERTY VALUES UNSET ++++++++++++++++++" << endl;
 
-    testGetters(dor);
+    if (!testGetters(dor)) return 0;
 
-    cout << "+++++++++++++++PROPERTY VALUES SET ++++++++++++++++++++" << endl;
+    // cout << "+++++++++++++++PROPERTY VALUES SET ++++++++++++++++++++" << endl;
 
     DataObjectPtr sub = dor->createDataObject("dataobject");
     dor->setBoolean("boolean", true);
@@ -1404,16 +1145,15 @@ void sdotest::conversiontest()
     dor->setBytes("bytes",tchars, 50);
 
 
-    testGetters(dor);
+    if (!testGetters(dor)) return 0;
 
-    cout << "+++++++++++++++END OF TEST ++++++++++++++++++++++++++++" << endl;
+    // cout << "+++++++++++++++END OF TEST ++++++++++++++++++++++++++++" << endl;
 
-    // phase 2 all set.....
-
+    return 1;
 }
 
 
-void sdotest::usertest()
+int sdotest::usertest()
 {
     try {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
@@ -1445,67 +1185,83 @@ void sdotest::usertest()
 
     test->setBoolean("boolean", true);
 
-    void* value = (void*)0xFACC0FF;
+    FILE *f = fopen ("userdata.dat","w+");
+
+    if (f == 0) {
+        if (!silent) cout << "Unable to open userdata.dat" << endl;
+        return 0;
+    }
+
+    void* value = (void*)0xF1F1F1F1;
 
     test->setUserData(value);
 
-    cout << "I wanted 0xFACC0FF " << test->getUserData() << endl;
+    fprintf(f,"Expected 0xF1F1F1F1 %p\n",test->getUserData());
 
     root->setUserData("usertest",value);
 
-    cout << "I wanted 0xFACC0FF and got " << root->getUserData("usertest") << endl;
+    fprintf(f,"Expected 0xF1F1F1F1 %p\n",root->getUserData("usertest"));
     
     root->setUserData((unsigned int)0,(void*)0x20);
 
-    cout << "I wanted 0x20 and got " << root->getUserData((unsigned int)0) << endl;
+    fprintf(f,"Expected 0x20 %p\n" ,root->getUserData((unsigned int)0));
 
     const Property& prop = root->getType().getProperty("usertest");
+
     root->setUserData(prop,(void*)0x40020);
 
-    cout << "I wanted 0x40020 and got " << root->getUserData(prop) << endl;
+    fprintf(f,"Expected 0x40020 %p\n", root->getUserData(prop));
     
     test->setUserData("boolean", (void*)0x120);
 
-    cout << "I wanted (graceful)0 and got " << test->getUserData("boolean") << endl;
+    fprintf(f,"Expected 0 %p\n",test->getUserData("boolean"));
 
     test->setUserData("unsetboolean", (void*)0x340);
 
-    cout << "I wanted (graceful)0 and got " << test->getUserData("boolean") << endl;
+    fprintf(f,"Expected 0 %p\n", test->getUserData("boolean"));
 
     test->setUserData("object", (void*)0x120);
 
-    cout << "I wanted 120 and got " << test->getUserData("object") << endl;
+    fprintf(f,"Expected 120 %p\n",test->getUserData("object"));
 
     test->setUserData("unsetobject", (void*)0x540);
 
-    cout << "I wanted (graceful)0 and got " << test->getUserData("unsetobject") << endl;
+    fprintf(f,"Expected 0 %p\n",test->getUserData("unsetobject"));
 
     test->setUserData("objects", (void*)0x640);
 
     // TODO might be dodgy - this allows setting of user data on a base of a list
-    cout << "I wanted 640 and got " << test->getUserData("objects") << endl;
+    fprintf(f,"Expected 640 %p\n",test->getUserData("objects"));
 
     test->setUserData("objects[1]", (void*)0x740);
 
-    cout << "I wanted 0x740 and got " << test->getUserData("objects[1]") << endl;
+    fprintf(f,"Expected 0x740 %p\n",test->getUserData("objects[1]"));
+
+    fclose (f);
+
+    return comparefiles("userdata.dat","userdata.txt");
+
     }
     catch (SDORuntimeException e)
     {
-        cout << "Exception in user test - unexpected" << endl;
+        if (!silent) cout << "Exception in user test - unexpected" << endl;
+        return 0;
     }
-
 }
 
-void sdotest::versiontest()
+int sdotest::versiontest()
 {
-    cout << "The SDO version is :" <<    SdoRuntime::getVersion() << endl;
-    cout << "The Major version is: " << SdoRuntime::getMajor() << endl;
-    cout << "The Minor version is: " << SdoRuntime::getMinor() << endl;
-    cout << "The Fix level     is: " << SdoRuntime::getFix() << endl;
+    if (!silent) cout << "The SDO version is :" <<    SdoRuntime::getVersion() << endl;
+    if (!silent) cout << "The Major version is: " << SdoRuntime::getMajor() << endl;
+    if (!silent) cout << "The Minor version is: " << SdoRuntime::getMinor() << endl;
+    if (!silent) cout << "The Fix level     is: " << SdoRuntime::getFix() << endl;
+    return 1;
 }
 
-void sdotest::noncontest()
+int sdotest::noncontest()
 {
+
+    try {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
     mdg->addType("myspace","Company"); 
@@ -1540,15 +1296,17 @@ void sdotest::noncontest()
         //emp1->setCString("name", "Gill");
         comp->setDataObject("eom", emp3);
     }
-
-
-
+    return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent) cout << "Failed in containment" << e << endl;
+        return 0;
+    }
 }
 
 
-
-
-void sdotest::defaulttest()
+int sdotest::defaulttest()
 {
     try{ 
 
@@ -1628,67 +1386,76 @@ void sdotest::defaulttest()
 
     DataObjectPtr test = mdg->create((Type&)tm);
 
-    cout << "Boolean default is true: " << test->getBoolean("boolean") << endl;
+    FILE *f = fopen("defaults.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open file defaults.dat" << endl;
+        return 0;
+    }
 
-    cout << "Byte default is d: " << test->getByte("byte") << endl;
+
+    fprintf(f, "Boolean default is true: %d\n",test->getBoolean("boolean"));
+
+    fprintf(f, "Byte default is d: %d\n",test->getByte("byte"));
     
-    cout << "Character default is e: " << test->getCharacter("character") << endl;
+    fprintf(f, "Character default is e: %d\n",test->getCharacter("character"));
 
-    cout << "Short default is 300: " << test->getShort("short") << endl;
+    fprintf(f, "Short default is 300: %d\n",test->getShort("short"));
 
-    cout << "Long default is 400: " << test->getInteger("long") << endl;
+    fprintf(f, "Long default is 400: %d\n",test->getInteger("long"));
 
     try {
-    cout << "Longs default is 800: " << test->getInteger("longs[1]") << endl;
+    fprintf(f, "Longs default is 800: %d\n" ,test->getInteger("longs[1]"));
     }
     catch (SDOIndexOutOfRangeException ex)
     {
-        cout << "Expected index out of range OK" << endl;
+        fprintf(f,"Expected index out of range OK\n");
     }
 
-    cout << "Float default is 600: " << test->getFloat("float") << endl;
+    fprintf(f,"Float default is 600: %.3f\n",test->getFloat("float"));
 
-    cout << "LongDouble default is 700: " << test->getDouble("longdouble") << endl;
+    fprintf(f, "LongDouble default is 700: %.3f\n",test->getDouble("longdouble"));
 
-    cout << "String default is HELP: ";
+    fprintf(f, "String default is HELP: ");
     unsigned int lenw = test->getLength("string");
     if (lenw > 0) {
         char* tw = new char[lenw];
         test->getBytes("string",tw,lenw);
         for (int i=0;i<lenw;i++)
         {
-            cout << tw[i];
+            fprintf(f,"%c",tw[i]);
         }
-        cout << endl;
+        fprintf(f,"\n");
     }
 
-    cout << "Bytes default is HELP: ";
+    fprintf(f,"Bytes default is HELP: ");
     unsigned int len = test->getLength("bytes");
     if (len > 0) {
         char* tc = new char[len];
         test->getBytes("bytes",tc,len);
         for (int i=0;i<len;i++)
         {
-            cout << tc[i];
+            fprintf(f,"%c", tc[i]);
         }
-        cout << endl;
+        fprintf(f,"\n");
     }
+    fclose (f);
+    return comparefiles("defaults.dat","defaults.txt");
+
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << " in "; 
-        cout << e.getFileName() << " at line ";
-        cout << e.getLineNumber() << endl;
-        cout << e.getFunctionName() << " ";
-        cout << e.getMessageText() << endl;
+        if (!silent)cout << e.getEClassName() << " in "; 
+        if (!silent)cout << e.getFileName() << " at line ";
+        if (!silent)cout << e.getLineNumber() << endl;
+        if (!silent)cout << e.getFunctionName() << " ";
+        if (!silent)cout << e.getMessageText() << endl;
+        return 0;
     }
-
-
-
 }
 
 
-void sdotest::showdefault(const Type& tm)
+int sdotest::showdefault(FILE *f, const Type& tm)
 {
     const Property& pboolean = tm.getProperty("boolean");
     const Property& pbyte = tm.getProperty("byte");
@@ -1707,50 +1474,60 @@ void sdotest::showdefault(const Type& tm)
     // first see what we get for the default when there is none
 
     bool bb = pboolean.getBooleanDefault();
-    cout << "Boolean default is : " << bb << endl;
+    const char* bs = pboolean.getCStringDefault();
+
+    fprintf(f, "Boolean default is : %d\n",bb);
+    fprintf(f, "Boolean default as a string is %s\n",bs);
 
     char cc = pbyte.getByteDefault();
-    cout << "Byte default is : " << cc << endl;
+    const char* cs = pbyte.getCStringDefault();
+    fprintf(f, "Byte default is : %d\n",cc);
+    fprintf(f, "Byte default as a string is %s\n",cs);
 
     wchar_t wc = pcharacter.getCharacterDefault();
-    cout << "Character default is : " << wc << endl;
+    const char* ws = pcharacter.getCStringDefault();
+    fprintf(f, "Character default is : %d\n",wc);
+    fprintf(f, "Character default as a string is %s\n",ws);
 
     short ss = pshort.getShortDefault();
-    cout << "Short default is : " << ss << endl;
+    fprintf(f, "Short default is : %d\n",ss);
 
     long ll = plong.getIntegerDefault();
-    cout << "Integer default is : " << ll << endl;
+    fprintf(f, "Integer default is : %d\n",ll);
     long ll2 = plongs.getLongDefault();
-    cout << "Integer many default is : " << ll2 << endl;
+    fprintf(f, "Integer many default is : %d\n",ll2);
 
     int64_t llll = plonglong.getLongDefault();
-    cout << "Long default is : " << (long)llll << endl;
+    fprintf(f, "Long default is : %ld\n",(long)llll);
 
     float ff = pfloat.getFloatDefault();
-    cout << "Float default is : " << ff << endl;
+    fprintf(f, "Float default is : %.3f\n",ff);
     
     long double  dd = plongdouble.getDoubleDefault();
-    cout << "Double default is : " << dd << endl;
+    fprintf(f, "Double default is : %.3f\n",dd);
 
     const SDODate& sd = pdate.getDateDefault();
-    cout << "Date default is : " << sd.getTime() << endl;
+    fprintf(f, "Date default is : %d\n",sd.getTime());
 
     unsigned int l = pstring.getDefaultLength();
     if (l > 0)
     {
         wchar_t * buf = new wchar_t[l+1];
         l = pstring.getStringDefault(buf,l);
-        cout << "String default length is" << l << endl;
+        fprintf(f, "String default length is %d\n", l);
         for (int i=0;i<l;i++)
         {
-            cout << buf[i];
+            fprintf(f, "%c",buf[i]);
         }
-        cout << endl;
+        fprintf(f, "\n");
         delete buf;
+        const char* wws = pstring.getCStringDefault();
+        fprintf(f, "String default as a string is %s\n", wws);
+
     }
     else
     {
-        cout << "String default is zero length" << endl; 
+        fprintf(f, "String default is zero length\n"); 
     }
 
     l = pbytes.getDefaultLength();
@@ -1758,22 +1535,23 @@ void sdotest::showdefault(const Type& tm)
     {
         char * buf = new char[l+1];
         l = pbytes.getBytesDefault(buf,l);
-        cout << "Bytes default length is" << l << endl;
+        fprintf(f, "Bytes default length is %d\n",l);
         for (int i=0;i<l;i++)
         {
-            cout << buf[i];
+            fprintf(f, "%c", buf[i]);
         }
-        cout << endl;
+        fprintf(f, "\n");
         delete buf;
     }
     else
     {
-        cout << "Bytes default is zero length" << endl; 
+        fprintf(f, "Bytes default is zero length\n"); 
     }
+    return 1;
 }
 
 
-void sdotest::propdefaulttest()
+int sdotest::propdefaulttest()
 {
     try{ 
 
@@ -1799,11 +1577,24 @@ void sdotest::propdefaulttest()
     mdg->addPropertyToType(tm,"bytes",      "commonj.sdo","Bytes");
     mdg->addPropertyToType(tm,"object"  ,    "myspace","AnObject");
 
-    cout << "Testing unset defaults....." << endl;
+    //cout << "Testing unset defaults....." << endl;
 
-    showdefault(tm);
+    FILE *f;
 
-    
+    f = fopen("showdefault1.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open showdefault1.dat" << endl;
+        return 0;
+    }
+    showdefault(f, tm);
+
+    fclose (f);
+    if (!comparefiles("showdefault1.dat","showdefault1.txt"))
+    {
+        return 0;
+    }
+
     //now set all the defaults....    
 
     mdg->setDefault("myspace","DefaultTest","boolean", true);
@@ -1841,24 +1632,41 @@ void sdotest::propdefaulttest()
 
     // and have another go at getting them....
 
-    cout << "Testing set defaults....." << endl;
+    f = fopen("showdefault2.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open showdefault2.dat" << endl;
+        return 0;
+    }
+    showdefault(f, tm);
 
-    showdefault(tm);
+    fclose (f);
+    if (!comparefiles("showdefault2.dat","showdefault2.txt"))
+    {
+        return 0;
+    }
 
+    return 1;
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << " in "; 
-        cout << e.getFileName() << " at line ";
-        cout << e.getLineNumber() << endl;
-        cout << e.getFunctionName() << " ";
-        cout << e.getMessageText() << endl;
+        if (!silent)cout << e.getEClassName() << " in "; 
+        if (!silent)cout << e.getFileName() << " at line ";
+        if (!silent)cout << e.getLineNumber() << endl;
+        if (!silent)cout << e.getFunctionName() << " ";
+        if (!silent)cout << e.getMessageText() << endl;
+        return 0;
     }
 
 }
 
-void sdotest::nulltest()
+int sdotest::nulltest()
 {
+
+    FILE *f = 0;
+     
+    try {
+
     int i;
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
@@ -1889,6 +1697,14 @@ void sdotest::nulltest()
     DataObjectPtr ob2 = mdg->create((Type&)to);
     DataObjectPtr ob3 = mdg->create((Type&)to);
 
+
+    f = fopen("nulltest.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open file nulltest.dat" << endl;
+        return 0;
+    }
+
     // first check all props are unset
 
     ChangeSummaryPtr cs = test->getChangeSummary();
@@ -1897,40 +1713,40 @@ void sdotest::nulltest()
 
     PropertyList pl = test->getInstanceProperties();
 
-    cout << "Initially - all properties unset, and default values..." << endl;
+    fprintf(f, "Initially - all properties unset, and default values...\n");
     for (i=0;i<pl.size(); i++)
     {
         if (pl[i].isMany())continue;
         try {
         if (pl[i].getType().isDataType()) {
-            cout << pl[i].getName() << " set:" << test->isSet(pl[i]) << " value:";
+            fprintf(f, "%s set:%d value ",pl[i].getName(),test->isSet(pl[i]));
             const char *xx = test->getCString(pl[i]);
             if (xx != 0)
             {
-                cout << xx << endl;
+                fprintf(f, "%s\n",xx);
             }
             else
             {
-                cout << " is empty " << endl;
+                fprintf(f, " is empty \n");
             }
         }
         else {
-            cout << pl[i].getName() << " set:" << test->isSet(pl[i]) << " value:";
+            fprintf(f,"%s set: %d value:", pl[i].getName(),test->isSet(pl[i]));
             DataObjectPtr xy = test->getDataObject(pl[i]);
             if (xy != 0)
             {
-                cout << xy << endl;
+                fprintf(f, "%s\n",xy);
             }
             else
             {
-                cout << " is empty " << endl;
+                fprintf(f, " is empty \n");
             }
         }
         }
         catch (SDOPropertyNotSetException)
         {
-            cout << " WRONG - got not set exception!!!";
-            continue;
+            if (!silent) cout <<  " WRONG - got not set exception" << endl;
+            return 0;
         }
     }
     test->setBoolean("boolean", false);
@@ -1948,15 +1764,15 @@ void sdotest::nulltest()
     
 
 
-    cout << "Should now have all properties set, and zero values..." << endl;
+    fprintf(f, "Should now have all properties set, and zero values...\n");
     for (i=0;i<pl.size(); i++)
     {
         if (pl[i].isMany())continue;
         if (pl[i].getType().isDataType()) {
-            cout << pl[i].getName() << " set:" << test->isSet(pl[i]) << " value:" << test->getCString(pl[i]) << endl;
+            fprintf(f, "%s set:%d value:%s\n", pl[i].getName(),test->isSet(pl[i]),test->getCString(pl[i]));
         }
         else {
-            cout << pl[i].getName() <<" set:" << test->isSet(pl[i]) << " value:" << test->getDataObject(pl[i]) << endl;
+            fprintf(f,"%s set:%d dataobject\n", pl[i].getName(),test->isSet(pl[i]));
         }
 
     }
@@ -1965,41 +1781,41 @@ void sdotest::nulltest()
     {
         test->unset(pl[i]);
     }
-    cout << "Should be back to having properties unset, and default values..." << endl;
+    fprintf(f, "Should be back to having properties unset, and default values...\n");
     for (i=0;i<pl.size(); i++)
     {
 
         try {
         if (pl[i].isMany())continue;
         if (pl[i].getType().isDataType()) {
-            cout << pl[i].getName() << " set:" << test->isSet(pl[i]) << " value:";
+            fprintf(f, "%s set:%d value:",pl[i].getName(),test->isSet(pl[i]));
             const char *xx = test->getCString(pl[i]);
             if (xx != 0)
             {
-                cout << xx << endl;
+                fprintf(f, "%s\n", xx);
             }
             else
             {
-                cout << " is empty " << endl;
+                fprintf(f, " is empty \n");
             }
         }
         else {
-            cout << pl[i].getName() << " set:" << test->isSet(pl[i]) << " value:";
+            fprintf(f, "%s set: %d dataobject", pl[i].getName(),test->isSet(pl[i]));
             DataObjectPtr dp = test->getDataObject(pl[i]);
             if (dp != 0)
             {
-                cout << dp << endl;
+                fprintf(f, "\n");
             }
             else
             {
-                cout << " is empty " << endl;
+                fprintf(f, " is empty \n");
             }
         }
         }
         catch (SDOPropertyNotSetException)
         {
-            cout << "WRONG  - not set exception" << endl;
-            continue;
+            if (!silent) cout << "WRONG  - not set exception" << endl;
+            return 0;
         }
     }
 
@@ -2023,47 +1839,47 @@ void sdotest::nulltest()
         try {
         if (pl[i].isMany())continue;
         if (pl[i].getType().isDataType()) {
-            cout << pl[i].getName() << " set:" << test->isSet(pl[i]) << " value:";
+            fprintf(f, "%s set:%d value:", pl[i].getName(),test->isSet(pl[i]));
             const char*  xx = test->getCString(pl[i]);
             if ( xx != 0)
             {
-                cout << xx << endl;    
+                fprintf(f, "%s\n", xx);    
             }
             else
             {
-                cout << " is empty " << endl;
+                fprintf(f, " is empty \n");
             }
         }
         else {
-            cout << pl[i].getName() << " set:" << test->isSet(pl[i]) << " value:";
+            fprintf(f, "%s set:%d dataobject", pl[i].getName(),test->isSet(pl[i]));
             DataObjectPtr db = test->getDataObject(pl[i]);
             if (db != 0)
             {
-                cout << db << endl;
+                fprintf(f, "\n");
             }
             else
             {
-                cout << " is empty " << endl;
+                fprintf(f, " is empty \n");
             }
         }
         }
         catch (SDOPropertyNotSetException)
         {
-            cout << "WRONG - not set exception " << endl;
-            continue;
+            if (!silent) cout <<  "WRONG - not set exception " << endl;
+            return 0;
         }
     }
     ChangedDataObjectList& cl = cs->getChangedDataObjects();
     for ( i =0; i< cl.size() ; i++) 
     {
         if (cs->isCreated(cl[i])) {
-            cout << "Created:" << cl[i] << endl;
+            fprintf(f, "Created dataobject\n");
         }
         if (cs->isDeleted(cl[i])) {
-            cout << "Deleted:" << cl[i] << endl;
+            fprintf(f, "Deleted dataobject\n");
         }
         if (cs->isModified(cl[i])) {
-            cout << "Modified:" << cl[i] << endl;
+            fprintf(f, "Modified dataobject\n");
         }
     }
 
@@ -2081,20 +1897,22 @@ void sdotest::nulltest()
         }
     }
 
-    cout << "Should all be null, and default values..." << endl;
+    fprintf(f, "Should all be null, and default values...\n");
     for (i=0;i<pl.size(); i++)
     {
         if (pl[i].isMany())continue;
         if (pl[i].getType().isDataType()) {
             // check for a null first!!
-            cout << pl[i].getName() << "isNull:" << test->isNull(i) <<" set:" << test->isSet(pl[i]) << " value:";
-            if (test->getCString(pl[i])  == 0) cout << endl;
-            else cout << test->getCString(pl[i]) << endl;
+            fprintf(f, "%s isNull:%d set:%d value:",pl[i].getName(),
+                                         test->isNull(i),test->isSet(pl[i]));
+            if (test->getCString(pl[i])  == 0) fprintf(f, "\n");
+            else fprintf(f, "%s\n", test->getCString(pl[i]));
         }
         else {
-            cout << pl[i].getName() << "isNull:" << test->isNull(i) <<" set:" << test->isSet(pl[i]) << " value:";
-            if (test->getDataObject(pl[i]) == 0) cout << endl;
-            else cout << test->getDataObject(pl[i]) << endl;
+            fprintf(f, "%s isNull:%d set:%d value",pl[i].getName(),
+                   test->isNull(i),test->isSet(pl[i]));
+            if (test->getDataObject(pl[i]) == 0) fprintf(f, " empty\n");
+            else fprintf(f, " dataobject\n");
         }
     }
 
@@ -2118,21 +1936,23 @@ void sdotest::nulltest()
     s->addBytes(10/*"bytes"*/,"hello",5) ;
     s->addDataObject(11/*"object"*/,ob) ;
 
-    cout << "Should all have values, and not be null.." << endl;
+    fprintf(f, "Should all have values, and not be null..\n");
     for (i=0;i<pl.size(); i++)
     {
         
         if (pl[i].isMany())continue;
         if (pl[i].getType().isDataType()) {
-            cout << pl[i].getName() << "isNull:" << test->isNull(i) <<" set:" << test->isSet(pl[i]) << " value:";
-            if (test->getCString(pl[i]) == 0) cout << endl;
-            else cout << test->getCString(pl[i]) << endl;
+            fprintf(f, "%s isNull:%d set:%d value:",pl[i].getName(),
+                test->isNull(i),test->isSet(pl[i]));
+            if (test->getCString(pl[i]) == 0) fprintf(f, "\n");
+            else fprintf(f, "%s\n", test->getCString(pl[i]));
 
         }
         else {
-            cout << pl[i].getName() << "isNull:" << test->isNull(i) <<" set:" << test->isSet(pl[i]) << " value:";
-            if (test->getDataObject(pl[i]) == 0) cout << endl;
-            else cout <<  test->getDataObject(pl[i]) << endl;
+            fprintf(f, "%s isNull%d set:%d value:", pl[i].getName(),
+                test->isNull(i),test->isSet(pl[i]));
+            if (test->getDataObject(pl[i]) == 0) fprintf(f, " empty\n");
+            else fprintf(f,  " dataobject\n");
         }
     }
 
@@ -2144,46 +1964,67 @@ void sdotest::nulltest()
         }
     }
 
-    cout << "Should all be null, and default values..." << endl;
+    fprintf(f, "Should all be null, and default values...\n");
     for (i=0;i<pl.size(); i++)
     {
         
         try {
         if (pl[i].isMany())continue;
         if (pl[i].getType().isDataType()) {
-            cout << pl[i].getName() << "isNull:" << test->isNull(i) <<" set:" << test->isSet(pl[i]) << " value:";
-            if (test->getCString(pl[i]) == 0) cout << endl;
-            else cout << test->getCString(pl[i]) << endl;
+            fprintf(f, "%s isNull:%d set:%d value:",pl[i].getName(),
+                test->isNull(i),test->isSet(pl[i]));
+            if (test->getCString(pl[i]) == 0) fprintf(f, "\n");
+            else fprintf(f, "%s\n",test->getCString(pl[i]));
 
         }
         else {
-            cout << pl[i].getName() << "isNull:" << test->isNull(i) <<" set:" << test->isSet(pl[i]) << " value:";
-            if (test->getDataObject(pl[i]) == 0) cout  << endl;
-            else cout << test->getDataObject(pl[i]) << endl;
+            fprintf(f, "%s isNull;%d set:%d value:", pl[i].getName(),
+                test->isNull(i),test->isSet(pl[i]));
+            if (test->getDataObject(pl[i]) == 0) fprintf(f," empty\n");
+            else fprintf(f, " dataobject\n");
         }
         }
         catch (SDOPropertyNotSetException)
         {
-            cout << " WRONG - not set exception" << endl;
-            continue;
+            if (!silent) cout << " WRONG - not set exception" << endl;
+            return 0;
         }
     }
 
     cs->endLogging();
+    fclose(f);
+
+    return comparefiles("nulltest.dat","nulltest.txt");
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent) cout << "Nulltest failed " << e << endl;
+        if (f) fclose(f);
+        return 0;
+    }
 }
 
-int sdotest::main(int argc, char** argv)
+int sdotest::maintest()
 {
 
     int i;
 
-    printf("Test Program starting to create types ...\n");
+    FILE *f;
 
-    /* First create a DataFactory , then add some types and props...*/
+    try{
 
-    /* This is dms creation of metadata */
+        f = fopen("maintest.dat","w+");
+        if (f == 0)
+        {   
+            if (!silent) cout << "Failed to open maintest.dat" << endl;
+        }
 
-    try {
+        fprintf(f,"Test Program starting to create types ...\n");
+
+        /* First create a DataFactory , then add some types and props...*/
+
+        /* This is dms creation of metadata */
+
 
 
         DataFactoryPtr mdg  = DataFactory::getDataFactory();
@@ -2211,7 +2052,7 @@ int sdotest::main(int argc, char** argv)
         const Type& tf = mdg->getType("commonj.sdo","Float");
         const Type& tm = mdg->getType("myspace","Manager");
 
-        cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+        fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
 
         const Type& td = mdg->getType("myspace","Department");
         const Type& te = mdg->getType("myspace","Employee");
@@ -2219,7 +2060,7 @@ int sdotest::main(int argc, char** argv)
         const Type& tds= mdg->getType("myspace","DerivedString");
         const Type& tsd= mdg->getType("myspace","SubDepartment");
 
-        cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+        fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
 
 
 
@@ -2248,7 +2089,7 @@ int sdotest::main(int argc, char** argv)
 
         mdg->addPropertyToType(tc,"pdg", tm);
 
-        cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+        fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
 
         mdg->addPropertyToType(td,"name", ts);
         
@@ -2266,9 +2107,9 @@ int sdotest::main(int argc, char** argv)
 
         // emps and managers are both people (in theory).
         mdg->setBaseType(te,tp);
-        cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+        fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
         mdg->setBaseType(tm,tp);
-        cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+        fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
         mdg->addPropertyToType(tp,"haircolour", ts);
         mdg->addPropertyToType(tp,"name", ts);
         mdg->addPropertyToType(tm,"officeid", ts);
@@ -2325,7 +2166,7 @@ int sdotest::main(int argc, char** argv)
         /* Now add a primitive type test to the manager */
         mdg->addPropertyToType(tm,"string",ts);
 
-         cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+         fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
 
         mdg->addPropertyToType(tm,"boolean",    "commonj.sdo","Boolean");
         mdg->addPropertyToType(tm,"byte",        "commonj.sdo","Byte");
@@ -2341,7 +2182,7 @@ int sdotest::main(int argc, char** argv)
         mdg->addPropertyToType(tm,"bytes",       "commonj.sdo","Bytes");
 
 
-        cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+        fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
 
         // create a few aliases
 
@@ -2352,39 +2193,25 @@ int sdotest::main(int argc, char** argv)
 
         const Type& tlf = mdg->getType("myspace","TheBigFirm");
 
-        cout << "I hope this says Company :" << tlf.getName() << endl;
+        fprintf(f, "Should be Company :%s\n",  tlf.getName());
 
-        cout << "I hope this says 3 : " << tlf.getAliasCount() << endl;
+        fprintf(f, "Should be 3: %d\n", tlf.getAliasCount());
 
         for (int ai = 0; ai < tlf.getAliasCount(); ai++)
         {
-            cout << "AKA : " << tlf.getAlias(ai) << endl;
+            fprintf(f, "Alias: %s\n",tlf.getAlias(ai));
         }
 
-        // just for a laugh - how about finding the TheDepartments?
-
-
-
-
-    /* 
-     * create an empty datagraph with a type system starting from
-     * company
-     */
-
-    /* 
-     *
-     * start of dms getting datagraph 
-     */
 
         // Change summary test begins
         mdg->addPropertyToType(tc,"csumm","commonj.sdo","ChangeSummary");
         // should log an error - but not fail
         mdg->addPropertyToType(td,"csumm","commonj.sdo","ChangeSummary");
 
-        cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+        fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
  
-        cout << "BEFORE RESOLUTION" << endl;
-        printDataStructure(mdg);
+        fprintf(f, "BEFORE RESOLUTION\n");
+        printDataStructure(f, mdg);
 
           /* Now create some objects in the dg */
     
@@ -2393,20 +2220,20 @@ int sdotest::main(int argc, char** argv)
         const Type& tcc = mdg->getType("myspace","Company");
         DataObjectPtr dor = mdg->create((Type&)tcc);
 
-        cout << "AFTER RESOLUTION" << endl;
-        printDataStructure(mdg);
+        fprintf(f, "AFTER RESOLUTION\n");
+        printDataStructure(f, mdg);
 
-        cout << "Manager is sequenced?" << tm.isSequencedType() << endl;
+        fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
 
         dor->setCString("substring","This is the sub string - its primitive, but not a string");
         
         const char* subby = dor->getCString("substring");
 
-        cout << subby << endl;
+        fprintf(f, "%s\n", subby);
 
         dor->setCString("name","acmecorp");
         const char* chnam = dor->getCString("name");
-        cout << chnam << endl;
+        fprintf(f, "%s\n", chnam);
 
         dor->unset("name");
 
@@ -2433,7 +2260,7 @@ int sdotest::main(int argc, char** argv)
 
         const char* sname = dor->getCString("name");
 
-        cout << sname << endl;
+        fprintf(f, "%s\n", sname);
 
         // This should put a created entry in the cs.
 
@@ -2446,27 +2273,29 @@ int sdotest::main(int argc, char** argv)
          dor->setDataObject("pdg",pdg);
 
 
-        // try getting the boolean as a string - should be defalted to false:
+        // try getting the boolean as a string - should be defaulted to false:
         const char *bol;
         try{
             bol = pdg->getCString("boolean");
             if (bol != 0)
             {
-                cout << "Expected default boolean (false) : " << bol << endl;
+                fprintf(f, "Expected default boolean (false) : %s\n",bol);
             }
             else
             {
-                cout << " is empty " << endl;
+                fprintf(f, " is empty \n");
             }
         }
         catch (SDOPropertyNotSetException)
         {
-            cout << "WRONG handled notset exception " << endl;
+            if (!silent)cout << "WRONG handled notset exception " << endl;
+            fclose(f);
+            return 0;
         }
 
         pdg->setBoolean("boolean", true);
         bol = pdg->getCString("boolean");
-        cout << "Expected  boolean (true) : " << bol << endl;
+        fprintf(f, "Expected  boolean (true) : %s\n",bol);
 
         // and the widechars?
         const char* wdc;
@@ -2474,16 +2303,18 @@ int sdotest::main(int argc, char** argv)
             wdc = pdg->getCString("string");
             if (wdc != 0)
             {
-                cout << "Expected default string (0) : " << bol << endl;
+                fprintf(f, "Expected default string (0) : ",wdc);
             }
             else
             {
-                cout << " is empty " << endl;
+                fprintf(f, " is empty \n");
             }
         }
         catch (SDOPropertyNotSetException)
         {
-            cout << "WRONG handled notset exception" << endl;
+            if (!silent) cout << "WRONG handled notset exception" <<endl;
+            fclose (f);
+            return 0;
         }
 
 
@@ -2500,7 +2331,7 @@ int sdotest::main(int argc, char** argv)
         pdg->setCString("name","Jacques LePlace");
         
         // This should modify the property, and add an item to the sequence.
-        sq->addCString("name", "Jacques LeWrongPlace");
+        sq->addCString("name", "Jacques LePlagne");
 
 
         // The creation entry should be removed from the change summary
@@ -2510,7 +2341,7 @@ int sdotest::main(int argc, char** argv)
         pdg = dor->getDataObject("pdg");
 
 
-        cout << " A deleted data object should be zero: " << pdg << endl;
+        fprintf(f, " A deleted data object should be zero: %d\n", pdg);
 
         pdg = mdg->create((Type&)tcd);
 
@@ -2518,36 +2349,36 @@ int sdotest::main(int argc, char** argv)
         dor->setDataObject("pdg",pdg);
 
         // No modification as the object is created
-        pdg->setCString("name", "Mr Horace the snail");
+        pdg->setCString("name", "Mr Horace Walker");
 
         sq = pdg->getSequence();
 
         try {
         // element 0 is the first setting - which we just deleted!
-            sq->setCStringValue(0,"Eric the half a bee");
+            sq->setCStringValue(0,"Unable to set");
         }
         catch (SDOIndexOutOfRangeException)
         {
             // thats OK
-            sq->addCString("name","Eric the quarter bee");
+            sq->addCString("name","Now able to set");
         }
 
 
-        sq->addText(" - only a quarter was expected \r\n");
+        sq->addText(" - should say now able to set\n");
 
         for (int ii=0;ii<sq->size();ii++)
         {
-            cout << sq->getCStringValue(ii);
+            fprintf(f, "%s\n", sq->getCStringValue(ii));
         }
 
         try {
             const char* n = pdg->getCString("name");
-            cout << " Name from deleted item: " << n << endl;
+            fprintf(f, " Name from deleted item: %s\n",n);
         }
         catch (SDOPropertyNotFoundException e)
         {
         // thats ok
-            cout << "caught prop not found" << endl;
+            fprintf(f, "Correctly caught prop not found\n");
         }
 
 
@@ -2579,24 +2410,23 @@ int sdotest::main(int argc, char** argv)
 
         // try reading the longlong as a string 
         const char *lls = pdg->getCString("longlong");
-        cout << "0xffffffffffffffff = : " << lls << endl;
+        fprintf(f, "0xffffffffffffffff = : %s\n", lls);
 
         pdg->setLong("longlong",0x7FFFFFFFFFFFFFFF);
 
         lls = pdg->getCString("longlong");
-        cout << "0x7fffffffffffffff =  " << lls << endl;
+        fprintf(f, "0x7fffffffffffffff =  %s\n",lls);
 
         pdg->setLong("longlong",0x7FFFFFFF);
         lls = pdg->getCString("longlong");
-        cout << "0x7fffffff =  " << lls << endl;
+        fprintf(f, "0x7fffffff =  %s\n",lls);
 
         pdg->setLong("longlong",0x80000000);
         lls = pdg->getCString("longlong");
-        cout << "0x80000000 =  " << lls << endl;
+        fprintf(f, "0x80000000 =  %s\n",lls);
 
         pdg->setLong("longlong",78);
 
-        // pdg->setCharPtr("charptr","Hello I am a char star");
 
         wchar_t* wide = new wchar_t[4];
         wide[0] = 'W';
@@ -2608,7 +2438,7 @@ int sdotest::main(int argc, char** argv)
 
         // and as a string?
         wdc = pdg->getCString("string");
-        cout << " Expected Wide (fat chance) - got : " << wdc << endl;
+        fprintf(f, " Expected Wide - got : %s\n",wdc);
 
         delete wide;
 
@@ -2620,41 +2450,41 @@ int sdotest::main(int argc, char** argv)
 
         pdg->setBytes("bytes",thin,4);
 
+        const char* dc = pdg->getCString("bytes");
+        fprintf(f, " Expected Thin - got : %s\n",dc);
+
         delete thin;
 
-
         const char* ps = pdg->getCString("string");
-        cout << "Expecting string, got " << ps << endl;
+        fprintf(f, "Expecting string, got %s\n", ps);
     
         bool pb = pdg->getBoolean("boolean");
-        cout << "Expected bool true, got " << pb << endl;
+        fprintf(f, "Expected bool true, got %d\n",pb);
 
         char pc = pdg->getByte("byte");
-        cout << "Expected char 23, got " << pc << endl;
+        fprintf(f, "Expected char 23, got %d\n",pc);
 
         wchar_t pw = pdg->getCharacter("character");
-        cout << "expected wchar 45, got " << pw << endl;
+        fprintf(f, "expected wchar 45, got %d",pw);
 
         short pss = pdg->getShort("short");
-        cout << "Expected short 34, got " << pss << endl;
+        fprintf(f, "Expected short 34, got %d\n",pss);
 
         long pl = pdg->getLong("long");
-        cout << "Expected long 56 , got " <<pl << endl;
+        fprintf(f, "Expected long 56 , got %ld\n",pl);
 
-        int64_t pi = pdg->getLong("longlong");
-        cout << "Expected long long 78, got " << (long)pi << endl;
+        __int64 pi = pdg->getLong("longlong");
+        fprintf(f, "Expected long long 78, got %ld\n",(long)pi);
 
         long double ld = pdg->getDouble("longdouble");
-        cout << "Expected long double 89, got " << ld << endl;
+        fprintf(f, "Expected long double 89, got %.3f\n",ld);
 
         float pf = pdg->getFloat("float");
-        cout << "Expected float 90, got " << pf << endl;
+        fprintf(f, "Expected float 90, got %.3f\n",pf);
 
         SDODate  pt = pdg->getDate("date");
-        cout << "Expected time_t 200, got " << pt.getTime() << endl;
+        fprintf(f, "Expected time_t 200, got %d\n",pt.getTime());
 
-        //const char * pcs = pdg->getCharPtr("charptr");
-        //cout <<"Expected charptr, got " << pcs << endl;
 
         wchar_t* result;
         // get the length to allocate:
@@ -2664,7 +2494,7 @@ int sdotest::main(int argc, char** argv)
             widelen = pdg->getString("string",result,widelen);
             for ( i=0;i<widelen;i++)
             {
-                cout << "Wide[" << i << "]=" << result[i] << endl;
+                fprintf(f, "Wide[%d]=%d\n",i,result[i]);
             }
             delete result;
         }
@@ -2678,16 +2508,14 @@ int sdotest::main(int argc, char** argv)
             thinlen = pdg->getBytes("bytes",thinresult,thinlen);
             for ( i=0;i<thinlen;i++)
             {
-                cout << "Thin[" << i << "]=" << thinresult[i] << endl;
+                fprintf(f, "Thin[%d]=%d\n",i,thinresult[i]);
             }
             delete thinresult;
         }
 
 
-        //cout <<"Expected charptr, got " << pcs << endl;
-
         // add two more departments - the first should provoke the
-        // saving of a list in a chanaeg summary
+        // saving of a list in a change summary
 
         DataObjectPtr dep3 = dor->createDataObject("departments");
         dep3->setCString("name","Architecture");
@@ -2700,7 +2528,7 @@ int sdotest::main(int argc, char** argv)
 
         // create another one using tha alias
         DataObjectPtr dep5= dor->createDataObject("TheDepartments");
-        dep5->setCString("name","WibbleSmodging");
+        dep5->setCString("name","Accounts");
 
         DataObjectPtr emp1 = dep1->createDataObject("employees");
         emp1->setCString("name","Eric");
@@ -2721,89 +2549,79 @@ int sdotest::main(int argc, char** argv)
         // values will get change summarised.
 
         dolist = dor->getList("floatlist");
-        //float f = dolist[0]->getFloat("");
-        float f = dolist.getFloat(0);
+        float f1 = dolist.getFloat(0);
 
-        cout << f;
+        fprintf(f, "%.3f",f1);
 
         dolist.setFloat(0,(float)567.7);
 
-        f = dolist.getFloat(0);
+        f1 = dolist.getFloat(0);
 
-        cout << f;
+        fprintf(f, "%.3f",f1);
 
         dolist.insert(0,(float)34.56);
 
-
-
-
-    //    cs->DebugPrint();
-
-//    const char* ch = dor->getString("departments[1]/employees[2]/name");
 
         DataObjectPtr ddd = dor->getDataObject("departments[1]/employees[2]");
 
         const char* ch = ddd->getCString("name");
 
-        cout << "Are you Bill?:" << ch << endl;
+        fprintf(f, "Should be Bill:%s\n",ch);
 
-        // just for a laugh - how about finding the TheDepartments?
-
+ 
         DataObjectPtr ddd2 = dor->getDataObject("TheDepartments[1]/employees[2]");
 
         const char* ch2 = ddd2->getCString("name");
 
-        cout << "Are you still Bill?:" << ch2 << endl;
-
+        fprintf(f, "Should be Bill:%s\n",ch2);
 
 
         DataObjectPtr dempofm = dor->getDataObject("employee of the month");
 
         const char* chh = dempofm->getCString("name");
 
-        cout << "The employee of the month is " << chh << endl;
+        fprintf(f, "The employee of the month is %s\n",chh);
 
-        // Suppose we delete bill - I wonder what happens?
+        // Suppose we delete bill 
 
-        // doesnt work - why not??dor->unSet("departments[1]/employees[2]");
         DataObjectList& dlo = dor->getList("departments[1]/employees");
         DataObjectPtr fred = dlo.remove(1);
-        //delete fred;
+
+        const char* chh2 = fred->getCString("name");
 
         dempofm = dor->getDataObject("employee of the month");
 
-        cout << "Hopefully emp of month is now zero : " << dempofm << endl;
+        // uncertain bahaviour - should the reference be zeroed 
+        // becuase the item is removed from a list or not? 
+        // Right now it doesnt get done, as the assumption is that
+        // the object will be put somewhere else, or dropped.
+        // fprintf(f, "Emp of month is now zero : %p",dempofm);
+
 
     /* "The client would create a data mediator and get graph which 
-    would return the root data object " says colin*/
+    would return the root data object " */
 
         const char* boss = dor->getCString("pdg/name");
     
-        cout << boss << endl;
+        fprintf(f, "%s\n", boss);
 
         DataObjectPtr mypdg = dor->getDataObject("pdg");
 
         Type::Types t = mypdg->getTypeEnum();
     
         if (t != Type::OtherTypes) {
-            cout << "MY pdg is not something!" << endl;
+            fprintf(f, "pdg correctly identified\n");
         }
 
         const char* boss2 = mypdg->getCString("name");
 
-        cout << boss2 << endl;
+        fprintf(f, "%s\n", boss2);
 
-    /* TODO1 ref or pointer to dol. 
-       Manip done by methods of the
-       list, reflected directly in the dg 
-       need methods to create /insert dataobjects in lists*/
-
-
-    /* getPrimitiveArrayListVectorThingy() */
+        /* getPrimitiveArrayListVectorThingy() */
 
         DataObjectList& deps = dor->getList("departments");
     
-        cout << "size of list " << deps.size() << endl;
+        fprintf(f, "size of list %d\n",deps.size());
 
         DataObjectPtr dout = deps[0];
 
@@ -2811,41 +2629,41 @@ int sdotest::main(int argc, char** argv)
 
         const char* snew = dout->getCString("name");
 
-        cout << snew << endl;
+        fprintf(f, "%s\n", snew);
 
         string snew2 = dor->getCString("departments[1 ] /name");
 
-        cout << snew2 << endl;
+        fprintf(f, "%s\n", snew2.c_str());
 
         for (int lx = 0; lx < deps.size(); lx++)
         {
-            cout << "Department: " << deps[lx]->getCString("name") << endl;
+            fprintf(f, "Department: %s\n",deps[lx]->getCString("name"));
         }
 
         cs->endLogging();
 
 
         try {
-            // should fail - if localtype not setstd::
+            // should fail - if localtype not set
             dor->setCString("departments","department label");
             const char* slabel = dor->getCString("departments");
-            cout << "String in list type:" << slabel << endl;
+            fprintf(f, "String in list type:%s\n", slabel);
+            return 0;
         }
         catch (SDORuntimeException e)
         {
-            cout << "Normal expected exception in test case" << endl;
+            fprintf(f, "Normal expected exception\n");
         }
 
         try 
         {
-    // The exception for path is caught by the SDO library - perhaps we should
-    // pass it up?
             const char* snew3 = dor->getCString(" ]awep50wi4,0qw9q]45]#        q2345        -t        -v3lt6o        -56o        56=-o7nl        ewv/;sdl        f[vxddglh]px        dfju/    g#k./jh#.k./");
-            cout << snew3 << endl;
+            fprintf(f, "%s\n", snew3);
+            return 0;
         }
         catch (SDOPropertyNotFoundException e)
         {
-            cout << "Normal Invalid path exception" << endl;
+            fprintf(f, "Normal Invalid path exception\n");
         }
 
         try 
@@ -2853,31 +2671,41 @@ int sdotest::main(int argc, char** argv)
 
         // catch a and a property not found 
             const Property& pp = dor->getType().getProperty("notaproperty");
+            return 0;
         }
         catch (SDOPropertyNotFoundException e)
         {
-            cout << "Normal SDOPropertyNotFound exception" << endl;
+            fprintf(f, "Normal SDOPropertyNotFound exception\n");
         }
+        fclose(f);
+        return comparefiles("maintest.dat","maintest.txt");
 
     }
 
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << " in "; 
-        cout << e.getFileName() << " at line ";
-        cout << e.getLineNumber() << endl;
-        cout << e.getFunctionName() << " ";
-        cout << e.getSeverity() << " "; 
-        cout << e.getMessageText() << endl;
+        if (!silent) cout << e.getEClassName() << " in "; 
+        if (!silent) cout << e.getFileName() << " at line ";
+        if (!silent) cout << e.getLineNumber() << endl;
+        if (!silent) cout << e.getFunctionName() << " ";
+        if (!silent) cout << e.getSeverity() << " "; 
+        if (!silent) cout << e.getMessageText() << endl;
+        return 0;
     }
-
-
-    return 0;
 }
 
-void sdotest::getproptest()
+int sdotest::getproptest()
 {
     // should be able to get a property by xpath...
+
+    FILE *f;
+
+    f = fopen("getproptest.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open getproptest.dat" << endl;
+        return 0;
+    }
 
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
@@ -2925,68 +2753,81 @@ void sdotest::getproptest()
     // department name, id, manager
     // employee name
 
+
     const Type& tcc = mdg->getType("myspace","Company");
     DataObjectPtr dor = mdg->create((Type&)tcc);
 
-    try 
-    {
 
     const Property& p = dor->getType().getProperty("name");
-    cout << "Companys name property is:" << p.getName() << endl;
+    fprintf(f, "Companys name property is: %s\n",p.getName());
 
     const Property& p1 = dor->getType().getProperty("departments");
-    cout << "Companys dept property is:" << p1.getName() << endl;
+    fprintf(f, "Companys dept property is:%s\n",p1.getName());
 
     // now try some xpaths...
 
+    try {
+
     const Property& p2 = dor->getType().getProperty("departments/employees");
-    cout << "Departments empl property is:" << p2.getName() << endl;
+    fprintf(f,"Departments empl property is:%s\n",p2.getName());
 
     const Property& p3 = dor->getType().getProperty("departments[456]/employees[123]");
-    cout << "Departments empl property is:" << p3.getName() << endl;
+    fprintf(f,"Departments empl property is:%s\n", p3.getName());
 
     const Property& p4 = dor->getType().getProperty("departments.34/employees.123/name");
-    cout << "Employees name property is:" << p4.getName() << endl;
+    fprintf(f,"Employees name property is:%s\n", p4.getName());
 
     }
     catch (SDORuntimeException e)
     {
-        cout <<"Exceptions - xpath didnt work" << endl;
+        if (!silent) cout <<"Exceptions - xpath didnt work" << endl;
+        return 0;
     }
     try {
-    cout << "before p5" << endl;
     const Property& p5 = dor->getType().getProperty("departments.34/[]/name");
-    cout << "after p5" << endl;
-    cout << "Employees name property is:" << p5.getName() << endl;
-    cout << "Expected error - didnt get one" << endl;
+    fprintf(f,"Employees name property is:%s\n",p5.getName());
+    return 0;
     }
     catch (SDORuntimeException e)
     {
+        fprintf(f,"Normal exception caught\n");
     }
 
     try {
     const Property& p6 = dor->getType().getProperty("deptartments");
-    cout << "Deptartments property is:" << p6.getName() << endl;
-    cout << "Expected error - didnt get one" << endl;
+    fprintf(f,"Deptartments property is:%s\n",p6.getName());
+    return 0;
     }
     catch (SDORuntimeException e)
     {
+        fprintf(f,"Normal exception caught\n");
     }
 
     try {
     const Property& p7 = dor->getType().getProperty("../company");
-    cout << "Company property is:" << p7.getName() << endl;
-    cout << "Expected error - didnt get one" << endl;
+    fprintf(f,"Company property is:%s\n",p7.getName());
+    return 0;
     }
     catch (SDORuntimeException e)
     {
+        fprintf(f,"Normal exception caught\n");
     }
+    fclose (f);
+    return comparefiles("getproptest.dat","getproptest.txt");
+
 }
 
-void sdotest::querytest()
+int sdotest::querytest()
 {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
+    FILE *f = fopen("querytest.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open querytest.dat" << endl;
+        return 0;
+    }
+
     mdg->addType("myspace","Company");
     mdg->addType("myspace","Department");
     // manager is a sequenced type...
@@ -3139,90 +2980,98 @@ void sdotest::querytest()
 
     emp3->setString("string",mbytes3,5);
 
+
+    
     try {
         DataObjectPtr dob1 = dor->getDataObject("departments[1]/employees[bool=false]");
-        cout << "Expected employee3: got " << dob1->getCString("name") << endl;
+        fprintf(f,  "Expected employee3: got %s\n",dob1->getCString("name"));
 
         DataObjectPtr dob2 = dor->getDataObject("departments[1]/employees[bool=true]");
-        cout << "Expected employee1: got " << dob2->getCString("name") << endl;
+        fprintf(f, "Expected employee1: got %s\n",dob2->getCString("name"));
 
         DataObjectPtr dob3 = dor->getDataObject("departments[1]/employees[byte=2]");
-        cout << "Expected employee2: got " << dob3->getCString("name") << endl;
+        fprintf(f, "Expected employee2: got %s\n",dob3->getCString("name"));
 
         DataObjectPtr dob4 = dor->getDataObject("departments[1]/employees[byte=1]");
-        cout << "Expected employee1: got " << dob4->getCString("name") << endl;
+        fprintf(f, "Expected employee1: got %s\n",dob4->getCString("name"));
 
         DataObjectPtr dob5 = dor->getDataObject("departments[1]/employees[bytes=hello]");
-        cout << "Expected employee1: got " << dob5->getCString("name") << endl;
+        fprintf(f, "Expected employee1: got %s\n",dob5->getCString("name"));
 
         DataObjectPtr dob5a = dor->getDataObject("departments[1]/employees[bytes=\"hello\"]");
-        cout << "Expected employee1: got " << dob5a->getCString("name") << endl;
+        fprintf(f, "Expected employee1: got %s\n",dob5a->getCString("name"));
         
         DataObjectPtr dob5b = dor->getDataObject("departments[1]/employees[bytes='hello']");
-        cout << "Expected employee1: got " << dob5b->getCString("name") << endl;
+        fprintf(f, "Expected employee1: got %s\n",dob5b->getCString("name"));
 
         DataObjectPtr dob6 = dor->getDataObject("departments[1]/employees[bytes=womp!]");
-        cout << "Expected employee3: got " << dob6->getCString("name") << endl;
+        fprintf(f, "Expected employee3: got %s\n",dob6->getCString("name"));
 
         DataObjectPtr dob7 = dor->getDataObject("departments[1]/employees[double=200.0]");
-        cout << "Expected employee2: got " << dob7->getCString("name") << endl;
+        fprintf(f, "Expected employee2: got %s\n",dob7->getCString("name"));
 
         DataObjectPtr dob8 = dor->getDataObject("departments[1]/employees[string=help!]");
-        cout << "Expected employee2: got " << dob8->getCString("name") << endl;
+        fprintf(f, "Expected employee2: got %s\n",dob8->getCString("name"));
 
         DataObjectPtr dob8a = dor->getDataObject("departments[1]/employees[string=\"help!\"]");
-        cout << "Expected employee2: got " << dob8a->getCString("name") << endl;
+        fprintf(f, "Expected employee2: got %s\n",dob8a->getCString("name"));
 
         DataObjectPtr dob8b = dor->getDataObject("departments[1]/employees[string= 'help!']");
-        cout << "Expected employee2: got " << dob8b->getCString("name") << endl;
+        fprintf(f, "Expected employee2: got %s\n",dob8b->getCString("name"));
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << " in "; 
-        cout << e.getFileName() << " at line ";
-        cout << e.getLineNumber() << endl;
-        cout << e.getFunctionName() << " ";
-        cout << e.getMessageText() << endl;
+        if (!silent)cout << e.getEClassName() << " in "; 
+        if (!silent)cout << e.getFileName() << " at line ";
+        if (!silent)cout << e.getLineNumber() << endl;
+        if (!silent)cout << e.getFunctionName() << " ";
+        if (!silent)cout << e.getMessageText() << endl;
+        return 0;
     }
     try {
         DataObjectPtr dob1 = dor->getDataObject("departments[1]/employees[bool=doughnut]");
-        cout << "Expected to fail!" << endl;
+        return 0;
     }
     catch (SDORuntimeException e)
     {
+        fprintf(f, "Normal exception caught\n");
     }
 
     try {
         DataObjectPtr dob1 = dor->getDataObject("departments[4]/employees[bool=true]");
-        cout << "Expected to fail!" << endl;
+        return 0;
     }
     catch (SDORuntimeException e)
     {
+        fprintf(f, "Normal exception caught\n");
     }
 
     try {
         DataObjectPtr dob1 = dor->getDataObject("departments[1]/employees[bytes=whoomp!]");
-        cout << "Expected to fail!" << endl;
+        return 0;
     }
     catch (SDORuntimeException e)
     {
+        fprintf(f, "Normal exception caught\n");
     }
 
     try {
         DataObjectPtr dob1 = dor->getDataObject("departments[1]/blmployees[bool=true]");
-        cout << "Expected to fail!" << endl;
+        return 0;
     }
     catch (SDORuntimeException e)
     {
+        fprintf(f, "Normal exception caught\n");
     }
 
     try {
         DataObjectPtr dob1 = dor->getDataObject("departments[teapot]/employees[bool=true]");
-        cout << "Expected to fail!" << endl;
+        return 0;
     }
 
     catch (SDORuntimeException e)
     {
+        fprintf(f, "Normal exception caught\n");
     }
 
     delete bytes;
@@ -3231,10 +3080,21 @@ void sdotest::querytest()
     delete mbytes;
     delete mbytes2;
     delete mbytes3;
+
+    fclose (f);
+    return comparefiles("querytest.dat","querytest.txt");
 }
 
-void sdotest::setmany()
+int sdotest::setmany()
 {
+
+    FILE *f;
+    f = fopen("setmany.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open setmany.dat" << endl;
+    }
+
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
     mdg->addType("myspace","School");
@@ -3302,7 +3162,7 @@ void sdotest::setmany()
     class2->setCString("name","Secondary");
 
     class1->setCString("teacher/name","Mr Philbert Chloroform");
-    class2->setCString("teacher/name","Mr Brian Onastick");
+    class2->setCString("teacher/name","Mr Brian Onasis");
 
     kid1->setCString("name", "Witherspoon Jnr");
     kid2->setCString("name", "Snape");
@@ -3318,92 +3178,95 @@ void sdotest::setmany()
     kid5->setInteger("number", 5);
     kid6->setInteger("number", 6);
 
-    cout <<" School  :" << school->getCString("name") << endl;
+    fprintf(f," School  :%s\n", school->getCString("name"));
 
-    cout <<" Address1:" << school->getCString("address/lines.0") << endl;
-    cout <<" Address2:" << school->getCString("address/lines.1") << endl;
-    cout <<" Address3:" << school->getCString("address/lines.2") << endl;
-    cout <<" Address4:" << school->getCString("address/lines.3") << endl;
+    fprintf(f," Address1:%s\n",school->getCString("address/lines.0"));
+    fprintf(f," Address2:%s\n",school->getCString("address/lines.1"));
+    fprintf(f," Address3:%s\n",school->getCString("address/lines.2"));
+    fprintf(f," Address4:%s\n",school->getCString("address/lines.3"));
 
-    cout <<" Class   :" << class1->getCString("name") << endl;
-    cout <<" Teacher :" << class1->getCString("teacher/name") << endl;
-    cout <<" Pupil1  :" << class1->getCString("children.0/name") << endl;
-    cout <<" Pupil2  :" << class1->getCString("children[number=2]/name") << endl;
-    cout <<" Pupil3  :" << class1->getCString("children[3]/name") << endl;
+    fprintf(f," Class   :%s\n",class1->getCString("name")); 
+    fprintf(f," Teacher :%s\n",class1->getCString("teacher/name")); 
+    fprintf(f," Pupil1  :%s\n",class1->getCString("children.0/name"));
+    fprintf(f," Pupil2  :%s\n",class1->getCString("children[number=2]/name"));
+    fprintf(f," Pupil3  :%s\n",class1->getCString("children[3]/name"));
 
-    cout <<" Class   :" << class2->getCString("name") << endl;
-    cout <<" Teacher :" << class2->getCString("teacher/name") << endl;
-    cout <<" Pupil1  :" << class2->getCString("children[1]/name") << endl;
-    cout <<" Pupil2  :" << class2->getCString("children.1/name") << endl;
-    cout <<" Pupil3  :" << class2->getCString("children[number=6]/name") << endl;
+    fprintf(f," Class   :%s\n",class2->getCString("name"));
+    fprintf(f," Teacher :%s\n",class2->getCString("teacher/name"));
+    fprintf(f," Pupil1  :%s\n",class2->getCString("children[1]/name"));
+    fprintf(f," Pupil2  :%s\n",class2->getCString("children.1/name"));
+    fprintf(f," Pupil3  :%s\n",class2->getCString("children[number=6]/name"));
 
     try {
-        cout <<" Pupil3  :" << class2->getCString("children[4]/name") << endl;
-        cout << "That should have failed with a path not found" << endl;
+        fprintf(f," Pupil3  :%s\n",class2->getCString("children[4]/name"));
+        return 0;
     }
     catch (SDOPathNotFoundException e)
     {
-
+        fprintf(f,"Expected path not found exception caught\n");
     }
     if (XpathHelper::isIndexed("abc[2]")) {
-        cout << "Indexed as expected" << endl;
+        fprintf(f, "Indexed as expected\n");
     }
     else {
-        cout << "Bad - not indexed" << endl;
+        fprintf(f, "Bad - not indexed\n");
     }
 
     if (XpathHelper::isIndexed("wibble/[2]")) {
-        cout << "Indexed as expected" << endl;
+        fprintf(f, "Indexed as expected\n");
     }
     else {
-        cout << "Bad - not indexed" << endl;
+        fprintf(f, "Bad - not indexed\n");
     }
 
     if (XpathHelper::isIndexed("wibble/wobble[2]")) {
-        cout << "Indexed as expected" << endl;
+        fprintf(f, "Indexed as expected\n");
     }
     else {
-        cout << "Bad - not indexed" << endl;
+        fprintf(f, "Bad - not indexed\n");
     }
 
     if (XpathHelper::isIndexed("wibble/wobble.2")) {
-        cout << "Indexed as expected" << endl;
+        fprintf(f, "Indexed as expected\n");
     }
     else {
-        cout << "Bad - not indexed" << endl;
+        fprintf(f, "Bad - not indexed\n");
     }
 
     if (XpathHelper::isIndexed("wibble/wobble.2")) {
-        cout << "Indexed as expected" << endl;
+        fprintf(f, "Indexed as expected\n");
     }
     else {
-        cout << "Bad - not indexed" << endl;
+        fprintf(f, "Bad - not indexed\n");
     }
 
     try {
-        cout <<" Address5  :" << school->getCString("address/lines[5]") << endl;
-        cout << "Address5 should have failed with an index out of range" << endl;
+        fprintf(f," Address5  :%s\n",school->getCString("address/lines[5]"));
+        return 0;
     }
     catch (SDOIndexOutOfRangeException e)
     {
-
+        fprintf(f,"Normal index out of range caught\n");
     }
 
     try {
         school->setCString("address/lines[6]","PostCode");
-        cout << "Debatable behaviour - appended" << endl;
-        cout <<" Address4  :" << school->getCString("address/lines[5]") << endl;
+        fprintf(f, "Debatable behaviour - appended\n");
+        fprintf(f," Address4  :%s\n",school->getCString("address/lines[5]"));
     }
     catch (SDORuntimeException e)
     {
-        cout <<"Unexpected exception"<< endl;
+        if (!silent)cout <<"Unexpected exception"<< endl;
+        return 0;
     }
 
-
+    fclose(f);
+    return comparefiles("setmany.dat","setmany.txt");
 }
 
-void sdotest::carotest2()
+int sdotest::carotest2()
 {
+    try {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
     mdg->addType("myspace","root");
@@ -3414,11 +3277,17 @@ void sdotest::carotest2()
     const Type& troot = mdg->getType("myspace","root");
 
     DataObjectPtr root = mdg->create((Type&)troot);
-
+    return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        return 0;
+    }
 }
 
-void sdotest::adddeletetest()
+int sdotest::adddeletetest()
 {
+    try {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
     mdg->addType("myspace","root");
@@ -3438,10 +3307,15 @@ void sdotest::adddeletetest()
     cs->beginLogging();
     DataObjectPtr dob = root->createDataObject("bill");
     root->unset("bill");
-
+    return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        return 0;
+    }
 }
 
-void sdotest::carotest()
+int sdotest::carotest()
 {
 
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
@@ -3489,19 +3363,30 @@ void sdotest::carotest()
 
     comp->setCString("name","Acme");
 
-    cout << "name of the company is " << comp->getCString("name") << endl;
+    //cout << "name of the company is " << comp->getCString("name") << endl;
     try {
             root->unset("companies[0]");
+            return 1;
     }
     catch (SDOUnsupportedOperationException e)
     {
-        cout << "Normal unsupported operation for unset of many valued item" << endl;
+        if (!silent)cout <<  "Abnormal unsupported operation for unset of many valued item" << endl;
+        return 0;
     }
 }
 
 
-void sdotest::bug2()
+int sdotest::bug2()
 {
+
+    FILE *f;
+
+    f = fopen("bug2.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open bug2.dat" << endl;
+        return 0;
+    }
 
     try  {
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
@@ -3533,39 +3418,43 @@ void sdotest::bug2()
 
     comp->setCString("name","Acme");
 
-    dumpproperties(root);
+    dumpproperties(f,root);
 
     DataObjectList& dl = root->getList("companies");
     dl.remove(0);
 
-    dumpproperties(root);
+    dumpproperties(f,root);
 
 
-    cout << "Change summary should have no entries..." << endl;
+    fprintf(f, "Change summary should have no entries...\n");
 
-    dumpchangesummary(cs);
+    dumpchangesummary(f,cs);
 
-    dumpproperties(root);
+    dumpproperties(f,root);
 
-    cout << "Change summary should have no entries..." << endl;
+    fprintf(f, "Change summary should have no entries...\n");
 
-    dumpchangesummary(cs);
+    dumpchangesummary(f,cs);
+
+    fclose(f);
+    return comparefiles("bug2.dat","bug2.txt");
 
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << " in "; 
-        cout << e.getFileName() << " at line ";
-        cout << e.getLineNumber() << endl;
-        cout << e.getFunctionName() << " ";
-        cout << e.getMessageText() << endl;
+        if (!silent) cout << e.getEClassName() << " in "; 
+        if (!silent) cout << e.getFileName() << " at line ";
+        if (!silent) cout << e.getLineNumber() << endl;
+        if (!silent) cout << e.getFunctionName() << " ";
+        if (!silent) cout << e.getMessageText() << endl;
+        return 0;
     }
 }
 
 
-void sdotest::dumpproperties(DataObjectPtr root)
+int sdotest::dumpproperties(FILE *f, DataObjectPtr root)
 {
-    PropertyList pl = root->getInstanceProperties();
+    PropertyList& pl = root->getInstanceProperties();
     for (int i=0;i<pl.size();i++)
     {
         if (pl[i].isMany())
@@ -3578,20 +3467,21 @@ void sdotest::dumpproperties(DataObjectPtr root)
                 {
 
                     sprintf(buf,"%02d",j);
-                    cout << "MProperty:" << pl[i].getName() << "[" << buf << "]:" << dl.getCString(j) << endl;
+                    fprintf(f,"MProperty:%s[%s]:%s\n",
+                        pl[i].getName(),buf,dl.getCString(j));
                 }
             }
             else
             {
-                cout << "MObject Property" << pl[i].getName() << endl;
+                fprintf(f,"MObject Property %s\n",pl[i].getName());
                 for (int j=0;j<dl.size();j++)
                 {
                     if (dl[j] != 0)
                     {
-                        dumpproperties(dl[j]);
+                        dumpproperties(f, dl[j]);
                     }
                 }
-                cout << "End of MObject Property " << pl[i].getName() << endl;
+                fprintf(f,"End of MObject Property %s\n",pl[i].getName());
             }
         }
 
@@ -3599,31 +3489,39 @@ void sdotest::dumpproperties(DataObjectPtr root)
         {
             if (pl[i].getType().isDataType())
             {
-                cout << "Property:" << pl[i].getName() << ":" << root->getCString(pl[i]) << endl;
+                fprintf(f,"Property:%s:%s\n",pl[i].getName(),root->getCString(pl[i]));
             }
             else
             {
-                cout << "Object Property:" << pl[i].getName() << endl;
+                fprintf(f,"Object Property%s\n:",pl[i].getName());
                 DataObjectPtr d = root->getDataObject(pl[i]);
                 if (d != 0)
                 {
-                    dumpproperties(d);
+                    dumpproperties(f, d);
                 }
                 else
                 {
-                    cout << "  Value was not set or null" << endl;
+                    fprintf(f,"  Value was not set or null\n");
                 }
-                cout << "End of Object Property " << pl[i].getName() << endl;
+                fprintf(f,"End of Object Property %s\n",pl[i].getName());
             }
         }
     }
+    return 1;
 }
 
 
-void sdotest::datetest()
+int sdotest::datetest()
 {
 
     try  {
+
+    FILE *f = fopen("datetest.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open datetest.dat" << endl;
+        return 0;
+    }
 
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
@@ -3661,45 +3559,53 @@ void sdotest::datetest()
 
     comp->setCString("name","DateTest");
 
-    cout << "name of the company is " << comp->getCString("name") << endl;
-
-    // cannot get undefaulted properties
-    //cout << "unset start of the company is " << comp->getDate("startupdate").getTime() << endl;
+    fprintf(f,"Name of the company is %s\n",comp->getCString("name"));
 
     comp->setDate("startupdate",SDODate( 1000 ));
 
-    cout << "set  start of the company is " << comp->getDate("startupdate").getTime() << endl;
+    fprintf(f,"Set start of the company is %d\n",comp->getDate("startupdate").getTime());
     
     DataObjectList& dol = comp->getList("reviewdates");
-
     
     dol.append(SDODate(2000));
     dol.append(SDODate(4000));
 
     for (int i=0;i < dol.size(); i++)
     {
-        cout << "Review number:" << i << " was:" << dol.getDate(i).getTime()  << endl;
-        cout << "Formatted:" << i << " was:" << dol.getDate(i).ascTime()  << endl;
+        fprintf(f,"Review number:%d was:%d\n", i,dol.getDate(i).getTime());
+        fprintf(f,"Formatted:%d was:%s\n",i,dol.getDate(i).ascTime());
     }
 
     cs->endLogging();
+
+    fclose(f);
+
+    return comparefiles("datetest.dat","datetest.txt"); 
     }
 
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << " in "; 
-        cout << e.getFileName() << " at line ";
-        cout << e.getLineNumber() << endl;
-        cout << e.getFunctionName() << " ";
-        cout << e.getMessageText() << endl;
+        if (!silent)cout << e.getEClassName() << " in "; 
+        if (!silent)cout << e.getFileName() << " at line ";
+        if (!silent)cout << e.getLineNumber() << endl;
+        if (!silent)cout << e.getFunctionName() << " ";
+        if (!silent)cout << e.getMessageText() << endl;
+        return 0;
     }
 
 }
 
-void sdotest::matttest1()
+int sdotest::matttest1()
 {
 
     try  {
+    FILE *f = fopen("matttest1.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open matttest1.dat" << endl;
+        return 0;
+    }
+
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
  
     mdg->addType("myspace","root");
@@ -3769,10 +3675,8 @@ void sdotest::matttest1()
 
     if (cont != 0) 
     {
-        cout << "Container of Billy should be zero, but is :" << cont->getCString("name") << endl;
-    }
-    else {
-        cout << "OK, - Billy is not contained." << endl;
+        if (!silent)cout << "Container of Billy should be zero, but is :" << cont->getCString("name") << endl;
+        return 0;
     }
 
     DataObjectList& li1 = dept1->getList("employees");
@@ -3784,10 +3688,11 @@ void sdotest::matttest1()
 
     if (cont2 != 0) 
     {
-        cout << "Container of Billy should be dept1, and is :" << cont2->getCString("name") << endl;
+        fprintf(f,"Container of Billy should be dept1, and is :%s\n", cont2->getCString("name"));
     }
     else {
-        cout << "Problem - Billy is not contained." << endl;
+        if (!silent)cout << "Problem - Billy is not contained." << endl;
+        return 0;
     }
 
     li1.remove(0);
@@ -3797,12 +3702,9 @@ void sdotest::matttest1()
 
     if (cont3 != 0) 
     {
-        cout << "Container of Billy should be zero, but is :" << cont3->getCString("name") << endl;
+        if (!silent)cout << "Container of Billy should be zero, but is :" << cont3->getCString("name") << endl;
+        return 0;
     }
-    else {
-        cout << "OK, - Billy is not contained." << endl;
-    }
-
 
     li1.append(sue);
     li2.append(billy);
@@ -3811,28 +3713,41 @@ void sdotest::matttest1()
 
     if (cont4 != 0) 
     {
-        cout << "Container of Billy should be dept2, and is :" << cont4->getCString("name") << endl;
+        fprintf(f,"Container of Billy should be dept2, and is :%s\n", cont4->getCString("name"));
     }
     else {
-        cout << "Problem - Billy is not contained." << endl;
+        if (!silent)cout << "Problem - Billy is not contained." << endl;
+        return 0;
     }
+
+    fclose(f);
+
+    return comparefiles("matttest1.dat","matttest1.txt");
 
     }
     catch (SDORuntimeException e)
     {
-        cout << e.getEClassName() << " in "; 
-        cout << e.getFileName() << " at line ";
-        cout << e.getLineNumber() << endl;
-        cout << e.getFunctionName() << " ";
-        cout << e.getMessageText() << endl;
+        if (!silent)cout << e.getEClassName() << " in "; 
+        if (!silent)cout << e.getFileName() << " at line ";
+        if (!silent)cout << e.getLineNumber() << endl;
+        if (!silent)cout << e.getFunctionName() << " ";
+        if (!silent)cout << e.getMessageText() << endl;
+        return 0;
     }
 }
 
-void sdotest::carotest3()
+int sdotest::carotest3()
 {
     // sequence new APIs 
     // data object list, new getLength(unsigned int)
 
+
+    FILE *f = fopen("carotest3.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open carotest3.dat" << endl;
+        return 0;
+    }
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     // company is sequenced.
     mdg->addType("myspace","Company",true,false);
@@ -3863,37 +3778,41 @@ void sdotest::carotest3()
 
     SequencePtr sptr = dor->getSequence();
 
-    printseq(sptr);
+    printseq(f,sptr);
 
     sptr->addCString(sprop,"I am Item 1 of string");
     
-    printseq(sptr);
+    printseq(f,sptr);
 
     sptr->addText("I am the first free text");
     
-    printseq(sptr);
+    printseq(f,sptr);
 
     sptr->addCString(sprop,"I am Item 2 of string");
     
-    printseq(sptr);
+    printseq(f,sptr);
 
     sptr->setText(1,"I am free text which has been modified");
 
-    printseq(sptr);
+    printseq(f,sptr);
 
     DataObjectPtr dep1 = dor->createDataObject("departments");
 
-    printseq(sptr);
+    printseq(f,sptr);
 
     dep1->setCString("name","department1");
 
-    printseq(sptr);
+    printseq(f,sptr);
 
     DataObjectList& dol = dor->getList("departments");
 
     unsigned int ii = dol.getLength(0);
 
-    cout << "Length of a data object should be zero:" << ii << endl;
+    if (ii != 0)
+    {
+        if (!silent)cout << "Length of a data object should be zero:" << ii << endl;
+        return 0;
+    }
 
     DataObjectList& strl = dor->getList("strings");
 
@@ -3910,119 +3829,4814 @@ void sdotest::carotest3()
     strl.append(buf,4);
     strl.append(buf,5);
 
-    cout << "Element zero, length 1: " << strl.getLength(0) << endl;
-    cout << "Element one,  length 2: " << strl.getLength(1) << endl;
-    cout << "Element two,  length 3: " << strl.getLength(2) << endl;
-    cout << "Element three,length 4: " << strl.getLength(3) << endl;
-    cout << "Element four, length 5: " << strl.getLength(4) << endl;
+    fprintf(f,"Element zero, length 1: %d\n",strl.getLength(0));
+    fprintf(f,"Element one,  length 2: %d\n",strl.getLength(1));
+    fprintf(f,"Element two,  length 3: %d\n",strl.getLength(2));
+    fprintf(f,"Element three,length 4: %d\n",strl.getLength(3));
+    fprintf(f,"Element four, length 5: %d\n",strl.getLength(4));
 
     try {
-        cout << "Element five doesnt exist: " << strl.getLength(5);
+        int xx = strl.getLength(5);
+        if (!silent)cout << "problem - element 5 should not exist" << endl;
+        return 0;
     }
     catch (SDOIndexOutOfRangeException e)
     {
-        cout << "Normal out of range exception in test" << endl;
+        if (!silent)cout << "Normal out of range exception in test" << endl;
     }
 
     DataObjectList& numl = dor->getList("integers");
 
     try {
-        cout << "On an empty list? " << numl.getLength(0);
+        int xx2 = numl.getLength(0);
+        if (!silent)cout << "problem - element 0 should not exist" << endl;
+        return 0;
     }
     catch (SDOIndexOutOfRangeException e)
     {
-        cout << "Normal out of range exception in test" << endl;
+        if (!silent)cout << "Normal out of range exception in test" << endl;
+    }
+    fclose(f);
+    return comparefiles("carotest3.dat","carotest3.txt");
+}
+
+
+int sdotest::eqhelpertest()
+{
+
+    // copy and equality helpers
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+ 
+    mdg->addType("myspace","Assembly");
+    mdg->addType("myspace","SubAssembly");
+    mdg->addType("myspace","Part");
+
+    /* Now add the properties to the types...*/
+
+    
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tint     = mdg->getType("commonj.sdo","Integer");
+    const Type& tassy    = mdg->getType("myspace","Assembly");
+    const Type& tsubassy =  mdg->getType("myspace","SubAssembly");
+    const Type& tpart    = mdg->getType("myspace","Part");
+
+    
+    mdg->addPropertyToType(tassy,"name",tstring);
+    mdg->addPropertyToType(tsubassy,"name",tstring);
+    mdg->addPropertyToType(tpart,"name",tstring);
+
+    mdg->addPropertyToType(tassy,"number",tint);
+    mdg->addPropertyToType(tsubassy,"number",tint);
+    mdg->addPropertyToType(tpart,"number",tint);
+
+    mdg->addPropertyToType(tassy,"subassemblies", tsubassy,true);
+    mdg->addPropertyToType(tsubassy,"parts", tpart,true);
+
+
+    // assy 1 
+
+    DataObjectPtr assy1 = mdg->create((Type&)tassy);
+
+    DataObjectPtr subassy1 = assy1->createDataObject("subassemblies");
+    DataObjectPtr subassy2 = assy1->createDataObject("subassemblies");
+
+    DataObjectPtr part1 = subassy1->createDataObject("parts");
+    DataObjectPtr part2 = subassy1->createDataObject("parts");
+    DataObjectPtr part3 = subassy1->createDataObject("parts");
+
+    DataObjectPtr part4 = subassy2->createDataObject("parts");
+    DataObjectPtr part5 = subassy2->createDataObject("parts");
+    DataObjectPtr part6 = subassy2->createDataObject("parts");
+
+
+    assy1->setCString("name","MicroFrame");
+    assy1->setInteger("number",32768);
+
+    subassy1->setCString("name","Legs");
+    subassy2->setCString("name","Body");
+    subassy1->setInteger("number",1);
+    subassy2->setInteger("number",2);
+
+    part1->setCString("name","Leg1");
+    part2->setCString("name","Leg2");
+    part3->setCString("name","Leg3");
+    part1->setInteger("number",10001);
+    part2->setInteger("number",10002);
+    part3->setInteger("number",10003);
+
+
+    part4->setCString("name","MainStrut");
+    part5->setCString("name","Brace1");
+    part6->setCString("name","Brace2");
+    part4->setInteger("number",20001);
+    part5->setInteger("number",20002);
+    part6->setInteger("number",20003);
+
+    // assy2 - shallow equal to assy, but not deep equal
+
+    DataObjectPtr assy2 = mdg->create((Type&)tassy);
+
+    DataObjectPtr subassy3 = assy2->createDataObject("subassemblies");
+    DataObjectPtr subassy4 = assy2->createDataObject("subassemblies");
+
+    DataObjectPtr part7 = subassy3->createDataObject("parts");
+    DataObjectPtr part8 = subassy3->createDataObject("parts");
+    DataObjectPtr part9 = subassy3->createDataObject("parts");
+
+    DataObjectPtr part10 = subassy4->createDataObject("parts");
+    DataObjectPtr part11 = subassy4->createDataObject("parts");
+    DataObjectPtr part12 = subassy4->createDataObject("parts");
+
+
+    assy2->setCString("name","MicroFrame");
+    assy2->setInteger("number",32768);
+
+    subassy3->setCString("name","Legs");
+    subassy4->setCString("name","Body");
+    subassy3->setInteger("number",1);
+    subassy4->setInteger("number",2);
+
+    part7->setCString("name","Leg1");
+    part8->setCString("name","Leg2");
+    part9->setCString("name","Leg3");
+    part7->setInteger("number",10001);
+    part8->setInteger("number",10002);
+    part9->setInteger("number",10003);
+
+
+    part10->setCString("name","MainStrut");
+    part11->setCString("name","Brace1");
+    part12->setCString("name","OddBrace2");
+    part10->setInteger("number",20001);
+    part11->setInteger("number",20002);
+    part12->setInteger("number",20003);
+
+    if (!EqualityHelper::equalShallow(assy1, assy2))
+    {
+        if (!silent) cout << "EQUALITY HELPER TEST - failure at first test" << endl;
+        return 0;
+    }
+    if (EqualityHelper::equal(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at second test" << endl;
+        return 0;
+    }
+
+    // Now alter assy2 to be deep equal...
+
+
+    part12->setCString("name","Brace2");
+
+    if (!EqualityHelper::equalShallow(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at third test" << endl;
+        return 0;
+    }
+    if (!EqualityHelper::equal(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at fourth test" << endl;
+        return 0;
+    }
+ 
+    // now add a part, so its not deep equal again
+    DataObjectPtr part13 = subassy4->createDataObject("parts");
+
+    if (!EqualityHelper::equalShallow(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at fifth test" << endl;
+        return 0;
+    }
+    if (EqualityHelper::equal(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at sixth test" << endl;
+        return 0;
+    }
+    
+    // now remove that part again...
+    DataObjectList& dl = subassy4->getList("parts");
+    dl.remove(3);
+
+    // should be deep equal again...
+
+    if (!EqualityHelper::equalShallow(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at seventh test" << endl;
+        return 0;
+    }
+    if (!EqualityHelper::equal(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at eighth test" << endl;
+        return 0;
+    }
+    // now make them not shallow equal
+    assy2->setInteger("number",32767);
+
+    if (EqualityHelper::equalShallow(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at nineth test" << endl;
+        return 0;
+    }
+    if (EqualityHelper::equal(assy1, assy2))
+    {
+        if (!silent)cout << "EQUALITY HELPER TEST - failure at tenth test" << endl;
+        return 0;
+    }
+    return 1;
+}
+
+int sdotest::cohelpertest()
+{
+
+    // copy and equality helpers
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+ 
+    mdg->addType("myspace","Assembly");
+    mdg->addType("myspace","SubAssembly");
+    mdg->addType("myspace","Part");
+
+    /* Now add the properties to the types...*/
+
+    
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tint     = mdg->getType("commonj.sdo","Integer");
+    const Type& tassy    = mdg->getType("myspace","Assembly");
+    const Type& tsubassy =  mdg->getType("myspace","SubAssembly");
+    const Type& tpart    = mdg->getType("myspace","Part");
+
+    
+    mdg->addPropertyToType(tassy,"name",tstring);
+    mdg->addPropertyToType(tsubassy,"name",tstring);
+    mdg->addPropertyToType(tpart,"name",tstring);
+
+    mdg->addPropertyToType(tassy,"number",tint);
+    mdg->addPropertyToType(tsubassy,"number",tint);
+    mdg->addPropertyToType(tpart,"number",tint);
+
+    mdg->addPropertyToType(tassy,"subassemblies", tsubassy,true);
+    mdg->addPropertyToType(tsubassy,"parts", tpart,true);
+
+
+    // assy 1 
+
+    DataObjectPtr assy1 = mdg->create((Type&)tassy);
+
+    DataObjectPtr subassy1 = assy1->createDataObject("subassemblies");
+    DataObjectPtr subassy2 = assy1->createDataObject("subassemblies");
+
+    DataObjectPtr part1 = subassy1->createDataObject("parts");
+    DataObjectPtr part2 = subassy1->createDataObject("parts");
+    DataObjectPtr part3 = subassy1->createDataObject("parts");
+
+    DataObjectPtr part4 = subassy2->createDataObject("parts");
+    DataObjectPtr part5 = subassy2->createDataObject("parts");
+    DataObjectPtr part6 = subassy2->createDataObject("parts");
+
+
+    assy1->setCString("name","MicroFrame");
+    assy1->setInteger("number",32768);
+
+    subassy1->setCString("name","Legs");
+    subassy2->setCString("name","Body");
+    subassy1->setInteger("number",1);
+    subassy2->setInteger("number",2);
+
+    part1->setCString("name","Leg1");
+    part2->setCString("name","Leg2");
+    part3->setCString("name","Leg3");
+    part1->setInteger("number",10001);
+    part2->setInteger("number",10002);
+    part3->setInteger("number",10003);
+
+
+    part4->setCString("name","MainStrut");
+    part5->setCString("name","Brace1");
+    part6->setCString("name","Brace2");
+    part4->setInteger("number",20001);
+    part5->setInteger("number",20002);
+    part6->setInteger("number",20003);
+
+    // first lets shallow copy assy1:
+
+    DataObjectPtr assy2 = CopyHelper::copyShallow(assy1);
+
+    if (strcmp(assy2->getCString("name"),"MicroFrame"))
+    {
+        if (!silent)cout << "COPYHELPER shallow copy failed(1)" << endl;
+        return 0;
+    }
+    else if (assy2->getInteger("number") != 32768)
+    {
+        if (!silent)cout << "COPYHELPER shallow copy 1 failed(2)" << endl;
+        return 0;
+    }
+    else if (assy2->getList("subassemblies").size()  != 0)
+    {
+        if (!silent)cout << "COPYHELPER shallow copy 1 failed(3)" << endl;
+        return 0;
+    }
+    else if (assy2->getContainer() != 0)
+    {
+        if (!silent)cout << "COPYHELPER shallow copy failed(4)" << endl;
+        return 0;
+    }
+
+    // now deep copy it
+
+    DataObjectPtr assy3 = CopyHelper::copy(assy1);
+
+    if (!EqualityHelper::equal(assy1, assy3))
+    {
+        if (!silent)cout << "COPYHELPER deep copy failed(1)" << endl;
+        return 0;
+    }
+    else if (assy3->getContainer() != 0)
+    {
+        if (!silent)cout << "COPYHELPER deep copy failed(2)" << endl;
+        return 0;
+    }
+    return 1;
+}
+
+
+int sdotest::cssave()
+{
+
+    try {
+
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    xsh->defineFile("company.xsd");
+
+    //mdg->addType("companyNS","CompanyType");
+    //mdg->addType("companyNS","EmployeeType");
+    //mdg->addType("companyNS","DepartmentType");
+
+    /* Now add the properties to the types...*/
+
+    
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+    const Type& tdept    = mdg->getType("companyNS","DepartmentType");
+    const Type& temp     = mdg->getType("companyNS","EmployeeType");
+
+    
+    //mdg->addPropertyToType(tcomp,"name",tstring);
+    // not containment...
+    //mdg->addPropertyToType(tcomp,"employeeOfTheMonth",temp, false,false,false);
+    //mdg->addPropertyToType(tcomp,"departments",tdept, true);
+    //mdg->addPropertyToType(tcomp,"cs",tcs);
+
+    //mdg->addPropertyToType(tdept,"name",tstring);
+    //mdg->addPropertyToType(tdept,"location",tstring);
+    //mdg->addPropertyToType(tdept,"number",tstring);
+    //mdg->addPropertyToType(tdept,"employees",temp,true);
+    
+    //mdg->addPropertyToType(temp, "name",tstring);
+    //mdg->addPropertyToType(temp, "SN",  tstring);
+    //mdg->addPropertyToType(temp, "manager",  tbool);
+
+
+    // create a graph, then save it
+
+    DataObjectPtr comp = mdg->create((Type&)tcomp);
+    comp->setCString("name","ACME");
+
+    DataObjectPtr dept = mdg->create((Type&)tdept);
+    DataObjectList& dol = comp->getList("departments");
+    dol.append(dept);
+
+    dept->setCString("name","Advanced Technologies");
+    dept->setCString("location","NY");
+    dept->setCString("number","123");
+
+    DataObjectPtr emp1 = mdg->create(temp);
+    DataObjectPtr emp2 = mdg->create(temp);
+    DataObjectPtr emp3 = mdg->create(temp);
+
+    emp1->setCString("name","John Jones");
+    emp1->setCString("SN","E0001");
+
+    emp2->setCString("name","Mary Smith");
+    emp2->setCString("SN","E0002");
+    emp2->setBoolean("manager",true);
+
+    emp3->setCString("name","Jane Doe");
+    emp3->setCString("SN","E0003");
+
+    DataObjectList& dol2 = dept->getList("employees");
+    dol2.append(emp1);
+    dol2.append(emp2);
+    dol2.append(emp3);
+
+    comp->setDataObject("employeeOfTheMonth",emp2);
+
+    ChangeSummaryPtr cs = comp->getChangeSummary();
+
+    cs->beginLogging();
+
+    DataObjectPtr emp4 = mdg->create(temp);
+    emp4->setCString("name","Al Smith");
+    emp4->setCString("SN","E0004");
+    emp4->setBoolean("manager",true);
+
+    // first change - create employee 4
+    dol2.append(emp4);
+
+    dol2.remove(1); // element 1  is Mary
+
+    DataObjectPtr emp5 = mdg->create(temp);
+    emp5->setCString("name","Bill Withers");
+    emp5->setCString("SN","E0005");
+
+    dol2.append(emp5);
+
+
+    comp->setCString("name","MegaCorp");
+    comp->setDataObject("employeeOfTheMonth",emp4);
+
+    // silly test - add mary back again
+    dol2.append(emp2);
+
+
+
+
+    cs->endLogging();
+
+
+    XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr doc = xmh->createDocument(comp,"companyNS","company");
+    xmh->save(doc,"cssave-output.xml");
+    return comparefiles("cssave-output.xml","cssave-output.txt");
+
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "CSSAVE FAILED" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::cssave2()
+{
+
+    try {
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    xsh->defineFile("company.xsd");
+
+   
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+    const Type& tdept    = mdg->getType("companyNS","DepartmentType");
+    const Type& temp     = mdg->getType("companyNS","EmployeeType");
+
+    
+    // create a graph, then save it
+
+    DataObjectPtr comp = mdg->create((Type&)tcomp);
+    comp->setCString("name","Eastleigh Borough Council");
+
+    DataObjectPtr dept = mdg->create((Type&)tdept);
+    DataObjectList& dol = comp->getList("departments");
+    dol.append(dept);
+
+    dept->setCString("name","Waste Disposal");
+    dept->setCString("location","Botley");
+    dept->setCString("number","123");
+
+    DataObjectPtr emp1 = mdg->create(temp);
+    DataObjectPtr emp2 = mdg->create(temp);
+    DataObjectPtr emp3 = mdg->create(temp);
+    DataObjectPtr emp4 = mdg->create(temp);
+    DataObjectPtr emp5 = mdg->create(temp);
+
+    emp1->setCString("name","Alphonse Dodet");
+    emp1->setCString("SN","E0001");
+
+    emp2->setCString("name","Bridget Jones");
+    emp2->setCString("SN","E0002");
+    emp2->setBoolean("manager",true);
+
+    emp3->setCString("name","Colin Thorne");
+    emp3->setCString("SN","E0003");
+
+    emp4->setCString("name","Donald Trump");
+    emp4->setCString("SN","E0004");
+    
+    emp5->setCString("name","Eddy the eagle");
+    emp5->setCString("SN","E0005");
+
+    DataObjectList& dol2 = dept->getList("employees");
+    dol2.append(emp1);
+    dol2.append(emp2);
+    dol2.append(emp3);
+    dol2.append(emp4);
+    dol2.append(emp5);
+
+    //comp->setDataObject("employeeOfTheMonth",emp2);
+
+    DataObjectPtr dept2 = mdg->create((Type&)tdept);
+    dol.append(dept2);
+
+    dept2->setCString("name","Tax Collection");
+    dept2->setCString("location","Winchester");
+    dept2->setCString("number","666");
+
+    DataObjectPtr empb1 = mdg->create(temp);
+    DataObjectPtr empb2 = mdg->create(temp);
+    DataObjectPtr empb3 = mdg->create(temp);
+    DataObjectPtr empb4 = mdg->create(temp);
+    DataObjectPtr empb5 = mdg->create(temp);
+
+    empb1->setCString("name","Arch Meanie");
+    empb1->setCString("SN","D0001");
+
+    empb2->setCString("name","Boris the Spider");
+    empb2->setCString("SN","D0002");
+    empb2->setBoolean("manager",true);
+
+    empb3->setCString("name","Cash Hoarder");
+    empb3->setCString("SN","D0003");
+
+    empb4->setCString("name","Dean Giyatoss");
+    empb4->setCString("SN","D0004");
+    
+    empb5->setCString("name","Ebenezer Scrooge");
+    empb5->setCString("SN","D0005");
+
+    DataObjectList& dol3 = dept2->getList("employees");
+    dol3.append(empb1);
+    dol3.append(empb2);
+    dol3.append(empb3);
+    dol3.append(empb4);
+    dol3.append(empb5);
+
+    ChangeSummaryPtr cs = comp->getChangeSummary();
+
+    cs->beginLogging();
+
+    // start by deleting a few employees from dept 1
+
+    dol2.remove(1); // B 
+    dol2.remove(1); // C
+    dol2.remove(1); // D
+
+    // Now delete the tax collectors as a whole
+
+    dol.remove(1);
+
+    // now perhaps add back one of the employees
+
+    dol2.append(emp3); // C
+
+    comp->setCString("name","MegaCorp");
+    
+    try {
+        comp->setDataObject("employeeOfTheMonth",emp4);
+        if (!silent)cout << "emp4 was not in the tree" << endl;
+        return 0;
+    }
+    catch (SDORuntimeException e)
+    {
+    }
+
+    comp->setDataObject("employeeOfTheMonth",emp5);
+
+    cs->endLogging();
+
+
+    XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr doc = xmh->createDocument(comp,"companyNS","company");
+    xmh->save(doc,"cssave2-output.xml");
+    return comparefiles("cssave2-output.xml","cssave2-output.txt");
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout <<  "CSSAVE FAILED" << e << endl;
+        return 0;
     }
 }
 
 
-int main (int argc, char** argv)
+
+
+
+int sdotest::b45933()
 {
-    Logger::setLogging(20);
 
-    sdotest::b47293();
+    try {
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
 
 
-    sdotest::propdefaulttest();
-    sdotest::graham5();
-    sdotest::graham4();
+    mdg->addType("companyNS","CompanyType");
+    mdg->addType("companyNS","WombatType");
 
-    sdotest::detachtest();
-    sdotest::includetest();
-    sdotest::testLoad();
-    sdotest::leak();
-    sdotest::twolists();
-    sdotest::b46633();
+    /* Now add the properties to the types...*/
 
-    sdotest::testUtil();
+   
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+    const Type& twom     = mdg->getType("companyNS","WombatType");
+
     
-    sdotest::clonetest();
-
-    sdotest::b46693();
-    Logger::setLogging(0);
-//    sdotest::b46734();
-    sdotest::notfound();
-    sdotest::testErrors();
-
-    sdotest::b46634();
-    sdotest::loadManyOpen();
-
-    sdotest::doctest();
-    sdotest::b46617b();
-    sdotest::b46617();
-    sdotest::b46613();
-
-    sdotest::graham3();
-    sdotest::graham1();
-    sdotest::graham2();
+    mdg->addPropertyToType(tcomp,"name",tstring);
+    mdg->addPropertyToType(tcomp,"bools",tbool, true);
+    mdg->addPropertyToType(tcomp,"woms",twom, true);
+    mdg->addPropertyToType(tcomp,"cs",tcs);
 
 
-    sdotest::merle1();
-    sdotest::loadOpenNS();
+    // create a graph, then save it
 
-    sdotest::saveOpen();
-    sdotest::loadOpen();
-    sdotest::testui();
-    sdotest::testOpen();
-    sdotest::testSCA();
-    sdotest::testabstract();
+    DataObjectPtr comp = mdg->create((Type&)tcomp);
+    comp->setCString("name","Bug45933");
 
-    sdotest::testsubsload();
-    sdotest::testsubs();
-    sdotest::bug45933();
-    sdotest::setnull();
-    sdotest::bug2();
-    sdotest::cssave2();
-    sdotest::csload2();
-    sdotest::cssave();
-    sdotest::csload();
-    sdotest::eqhelpertest();
-    sdotest::cohelpertest();
-    sdotest::datetest();
-    sdotest::carotest3();
-    sdotest::matttest1();
-    sdotest::adddeletetest();
-    sdotest::carotest2();
-    sdotest::carotest();
-    sdotest::setmany();
-    sdotest::noncontest();
-    sdotest::versiontest();
-    sdotest::defaulttest();
-    sdotest::nulltest();
-    sdotest::usertest();
-    sdotest::querytest();
-    sdotest::getproptest();
-    sdotest::rcptest();
-    sdotest::seqtest();
-    sdotest::changesummarytest();
-    sdotest::conversiontest();
-    sdotest::boolbug();
-    sdotest::scope1();
-    sdotest::scope2();
-    sdotest::scope3();
-    return sdotest::main(argc, argv);
-    /* All objects freed ? */
-return 0;
+    ChangeSummaryPtr cs = comp->getChangeSummary();
+
+    cs->beginLogging();
+
+    DataObjectList& dol = comp->getList("bools");
+    dol.append(false);
+    dol.remove(0);
+    DataObjectPtr awom = mdg->create((Type&)twom);
+    DataObjectList& dol2 = comp->getList("woms");
+    dol2.append(awom);
+    dol2.remove(0);
+
+    cs->endLogging();
+
+    //dumpchangesummary(cs);
+
+    XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr doc = xmh->createDocument(comp,"companyNS","company");
+    xmh->save(doc,"bug45933-output.xml");
+    return comparefiles("bug45933-output.xml","bug45933-output.txt");
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "BUG45933 FAILED" << endl << e << endl;
+        return 0;
+    }
 }
+
+int sdotest::b46617()
+{
+
+    try {
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    //XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    //xsh->defineFile("b46617.xsd");
+    mdg->addType("companyNS","CompanyType");
+    mdg->addType("companyNS","DepartmentType");
+    mdg->addType("companyNS","EmployeeType");
+
+
+   
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+    const Type& tdept    = mdg->getType("companyNS","DepartmentType");
+    const Type& temp     = mdg->getType("companyNS","EmployeeType");
+
+    mdg->addPropertyToType(tcomp,"name",tstring);
+    mdg->addPropertyToType(tcomp,"departments",tdept,true,false,true);
+    mdg->addPropertyToType(tcomp,"employeeOfTheMonth",temp,false,false,false);
+    mdg->addPropertyToType(tcomp,"CEO",temp,false,false,true);
+
+    mdg->addPropertyToType(tdept,"employees",temp,true,false,true);
+    mdg->addPropertyToType(tdept,"name",tstring,false,false,true);
+    mdg->addPropertyToType(tdept,"location",tstring,false,false,true);
+    mdg->addPropertyToType(tdept,"number",tstring,false,false,true);
+
+    mdg->addPropertyToType(temp,"name",tstring,false,false,true);
+    mdg->addPropertyToType(temp,"SN",tstring,false,false,true);
+    mdg->addPropertyToType(temp,"manager",tbool,false,false,true);
+
+    // create a graph, then save it
+
+    DataObjectPtr comp = mdg->create((Type&)tcomp);
+    comp->setCString("name","Eastleigh Borough Council");
+
+    DataObjectPtr dept = mdg->create((Type&)tdept);
+    DataObjectList& dol = comp->getList("departments");
+    dol.append(dept);
+
+    dept->setCString("name","Waste Disposal");
+    dept->setCString("location","Botley");
+    dept->setCString("number","123");
+
+    DataObjectPtr emp1 = mdg->create(temp);
+    DataObjectPtr emp2 = mdg->create(temp);
+    DataObjectPtr emp3 = mdg->create(temp);
+
+    emp1->setCString("name","Alphonse Dodet");
+    emp1->setCString("SN","E0001");
+
+    emp2->setCString("name","Bridget Jones");
+    emp2->setCString("SN","E0002");
+    emp2->setBoolean("manager",true);
+
+    emp3->setCString("name","Carl Marx");
+    emp3->setCString("SN","E0003");
+
+    comp->setDataObject("CEO",emp2);
+
+    DataObjectList& dol2 = dept->getList("employees");
+    dol2.append(emp1);
+    //dol2.append(emp2);
+    dol2.append(emp3);
+
+    comp->setDataObject("employeeOfTheMonth",emp2);
+
+    XSDHelperPtr xmd = HelperProvider::getXSDHelper(mdg);
+    xmd->generateFile(mdg->getTypes(),
+                "b46617.xsd","companyNS");
+
+
+    XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr doc = xmh->createDocument(comp,"companyNS","company");
+    xmh->save(doc,"b46617.xml");
+
+    // now try loading the xml, using the same schema, and see if we get the
+    // same answer
+
+    XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("b46617.xml", "companyNS");
+    DataObjectPtr newdob = myXMLDocument->getRootDataObject();
+    
+
+    if (strcmp(newdob->getDataObject("employeeOfTheMonth")->getCString("name"),
+        "Bridget Jones"))
+    {
+        if (!silent)cout << "Employee of the month name has changed" << endl;
+        return 0;
+    }
+     
+    return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "b46617 failed" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::b46617b()
+{
+
+    try {
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    xsh->defineFile("b46617b.xsd");
+
+    XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("b46617b.xml", "companyNS");
+    DataObjectPtr newdob = myXMLDocument->getRootDataObject();
+    
+    if (strcmp(newdob->getDataObject("employeeOfTheMonth")->getCString("name"),
+        "Fred Smith"))
+    {
+        if (!silent)cout << "Employee of the month name has changed" << endl;
+        return 0;
+    }
+    
+    return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "b46617b failed" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::notfound()
+{
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    try {
+
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    xsh->defineFile("not_present.xsd");
+    }
+    catch (SDOFileNotFoundException e)
+    {
+        //cout << "NotFound threw correct exception " << endl;
+    }
+
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "NOTFOUND THREW THE WRONG EXCEPTION" << e << endl;
+        return 0;
+    }
+
+    try {
+    XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("not-present.xml", "companyNS");
+
+    }
+    catch (SDOFileNotFoundException ee)
+    {
+        //cout << "NotFound threw the correct exception" << endl;
+    }
+
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "NOTFOUND THREW THE WRONG EXCEPTION" << e << endl;
+        return 0;
+    }
+    return 1;
+}
+
+int sdotest::csload()
+{
+    try 
+    {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("company.xsd");
+
+        //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
+
+        //TypeList& tl = mdg->getTypes();
+        //for (int i=0;i< tl.size(); i++)
+        //{
+        //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
+        //}
+
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("cssave-output.xml", "companyNS");
+        //myXMLDocument->setRootElementName("company");
+        //myXMLHelper->save(myXMLDocument,"csload-output.xml");
+        myXMLHelper->save(myXMLDocument->getRootDataObject(),
+                          0, "company", "csload-output.xml");
+
+        return comparefiles("csload-output.xml","csload-output.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "CSLOAD FAILED" << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::testsubsload()
+{
+    try 
+    {
+        FILE *f = fopen("testsubsload.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open testsubsload.dat" << endl;
+            return 0;
+        }
+
+        fprintf(f,"TEST: TestSubsLoad ==========================================\n");
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("companysubs.xsd");
+
+        //cout << "TYPES LOADED FROM COMPANYSUBS XSD" << endl;
+
+        //TypeList& tl = mdg->getTypes();
+        //for (int i=0;i< tl.size(); i++)
+        //{
+        //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
+        //}
+
+        // so now we should be able to put book or a magazine into
+        // the publication under company...
+
+        const Type& tstring  = mdg->getType("commonj.sdo","String");
+        const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+        const Type& book     = mdg->getType("companyNS","BookType");
+        const Type& mag      = mdg->getType("companyNS","MagazineType");
+        const Type& pub      = mdg->getType("companyNS","PublicationType");
+
+    
+        // create a graph, then save it
+
+        DataObjectPtr comp = mdg->create((Type&)tcomp);
+        comp->setCString("name","Puflet Publishing");
+
+
+        DataObjectPtr book1 = mdg->create(book);
+        book1->setCString("author","Mr P B Writer");
+        // inherted from publication
+        book1->setCString("title","Nowhere Man");
+        
+        DataObjectPtr mag1 = mdg->create(mag);
+        mag1->setCString("editor","Mr B Picky");
+        // inherited from publication
+        mag1->setCString("title","Bionicle Weekly");
+    
+        DataObjectPtr pub1 = mdg->create(pub);
+        pub1->setCString("title","Noddy In Toyland");
+
+
+        // publication should accept any of them...
+
+        comp->setDataObject("Publication",pub1);
+        const Type& tpub1 = comp->getDataObject("Publication")->getType();
+        fprintf(f,"Publication is of type %s\n",tpub1.getName());
+
+        comp->setDataObject("Publication",book1);
+        const Type& tpub2 = comp->getDataObject("Publication")->getType();
+        fprintf(f,"Publication is of type %s\n",tpub2.getName());
+
+        comp->setDataObject("Publication",mag1);
+        const Type& tpub3 = comp->getDataObject("Publication")->getType();
+        fprintf(f,"Publication is of type %s\n",tpub3.getName());
+
+        // should be able to address publication as book or magazine
+
+        comp->setDataObject("Book",book1);
+        const Type& tpub4 = comp->getDataObject("Book")->getType();
+        fprintf(f, "Book is of type %s\n",tpub4.getName());
+
+        comp->setDataObject("Magazine",mag1);
+        const Type& tpub5 = comp->getDataObject("Magazine")->getType();
+        fprintf(f,"Magazine is of type %s\n",tpub5.getName());
+        fprintf(f,"END TEST: TestSubsLoad ======================================\n");
+        fclose(f);
+        return comparefiles("testsubsload.dat","testsubsload.txt");
+    
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "ERROR in TeseSubsLoad" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::testSCA()
+{
+    try 
+    {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("sca.xsd");
+        return 1;
+    
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "ERROR in TeseSCA" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::testabstract()
+{
+    try 
+    {
+
+        FILE *f = fopen("testabstract.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open testabstract.dat" << endl;
+            return 0;
+        }
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("companyabs.xsd");
+
+        //cout << "TYPES LOADED FROM COMPANYABS XSD" << endl;
+
+        //TypeList& tl = mdg->getTypes();
+        //for (int i=0;i< tl.size(); i++)
+        //{
+        //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
+        //}
+
+        // so now we should be able to put book or a magazine into
+        // the publication under company...
+
+        const Type& tstring  = mdg->getType("commonj.sdo","String");
+        const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+        const Type& book     = mdg->getType("companyNS","BookType");
+        const Type& mag      = mdg->getType("companyNS","MagazineType");
+        const Type& pub      = mdg->getType("companyNS","PublicationType");
+
+    
+        // create a graph, then save it
+
+        DataObjectPtr comp = mdg->create((Type&)tcomp);
+        comp->setCString("name","Puflet Publishing");
+
+        // should be allowed...
+        DataObjectPtr book1 = mdg->create(book);
+        book1->setCString("author","Mr P B Writer");
+        // inherted from publication
+        book1->setCString("title","Nowhere Man");
+        
+        DataObjectPtr mag1 = mdg->create(mag);
+        mag1->setCString("editor","Mr B Picky");
+        // inherited from publication
+        mag1->setCString("title","Bionicle Weekly");
+    
+        try {
+            DataObjectPtr pub1 = mdg->create(pub);
+            pub1->setCString("title","Noddy In Toyland");
+        }
+        catch (SDOUnsupportedOperationException e)
+        {
+            fprintf(f,"Normal unsupportedoperation for creation of abstract type\n");
+        }
+
+
+        // publication should accept books and magazines...
+
+        comp->setDataObject("Publication",book1);
+        const Type& tpub2 = comp->getDataObject("Publication")->getType();
+        fprintf(f,"Publication is of type %s\n",tpub2.getName());
+
+        comp->setDataObject("Publication",mag1);
+        const Type& tpub3 = comp->getDataObject("Publication")->getType();
+        fprintf(f,"Publication is of type %s\n",tpub3.getName());
+
+        // should be able to address publication as book or magazine
+
+        comp->setDataObject("Book",book1);
+        const Type& tpub4 = comp->getDataObject("Book")->getType();
+        fprintf(f,"Book is of type %s\n",tpub4.getName());
+
+        comp->setDataObject("Magazine",mag1);
+        const Type& tpub5 = comp->getDataObject("Magazine")->getType();
+        fprintf(f,"Magazine is of type %s\n",tpub5.getName());
+
+        fclose(f);
+        return comparefiles("testabstract.dat","testabstract.txt");
+    
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "ERROR in TestAbstract" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::testOpen()
+{
+    try 
+    {
+
+    FILE *f = fopen("testopen.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open testopen.dat" << endl;
+        return 0;
+    }
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+
+    mdg->addType("companyNS","CompanyType");
+    // employee will be an open type...
+    mdg->addType("companyNS","EmployeeType", /*seq*/false, 
+                                             /*open*/true, 
+                                             /*abs */ false, 
+                                             /*data*/ false);
+
+    mdg->addType("companyNS","DepartmentType");
+
+    /* Now add the properties to the types...*/
+
+    
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+    const Type& tdept    = mdg->getType("companyNS","DepartmentType");
+    const Type& temp     = mdg->getType("companyNS","EmployeeType");
+
+    
+    mdg->addPropertyToType(tcomp,"name",tstring);
+    // not containment...
+    mdg->addPropertyToType(tcomp,"employeeOfTheMonth",temp, false,false,false);
+    mdg->addPropertyToType(tcomp,"departments",tdept, true);
+    mdg->addPropertyToType(tcomp,"cs",tcs);
+
+    mdg->addPropertyToType(tdept,"name",tstring);
+    mdg->addPropertyToType(tdept,"location",tstring);
+    mdg->addPropertyToType(tdept,"number",tstring);
+    mdg->addPropertyToType(tdept,"employees",temp,true);
+    
+    mdg->addPropertyToType(temp, "name",tstring);
+    mdg->addPropertyToType(temp, "SN",  tstring);
+    mdg->addPropertyToType(temp, "manager",  tbool);
+
+
+
+    DataObjectPtr comp = mdg->create((Type&)tcomp);
+    comp->setCString("name","ACME");
+
+    DataObjectPtr dept = mdg->create((Type&)tdept);
+    DataObjectList& dol = comp->getList("departments");
+    dol.append(dept);
+
+    dept->setCString("name","Advanced Technologies");
+    dept->setCString("location","NY");
+    dept->setCString("number","123");
+
+    DataObjectPtr emp1 = mdg->create(temp);
+    DataObjectPtr emp2 = mdg->create(temp);
+    DataObjectPtr emp3 = mdg->create(temp);
+
+    emp1->setCString("name","Albert");
+    emp1->setCString("SN","E0001");
+
+    emp2->setCString("name","Boris");
+    emp2->setCString("SN","E0002");
+    emp2->setBoolean("manager",true);
+
+    emp3->setCString("name","Carl");
+    emp3->setCString("SN","E0003");
+
+    // now we should be able to add extra properties to employees,
+    // and get them back again...
+
+    try {
+        emp1->setNull("openstring");
+        return 0;
+    }
+    catch (SDOUnsupportedOperationException e)
+    {
+        fprintf(f,"Normal exception for setting null on undefined prop\n");
+    }
+
+    emp1->setCString("openstring","Value Of Open String");
+    emp1->setBoolean("openboolean",true);
+
+    const char* c = emp1->getCString("openstring");
+
+    fprintf(f,"Open Type string value: %s\n",c);
+
+    bool b = emp1->getBoolean("openboolean");
+
+    fprintf(f,"Open Type boolean value: %d\n", b);
+
+    // unknown list type at present..
+    DataObjectList& dl = emp1->getList("opentypelist");
+    
+    int i = 45;
+    dl.append((short)i); // now the list must be primitive
+
+    // we should now have instance properties 
+    PropertyList pl = emp1->getType().getProperties();
+
+    for (i=0;i<pl.size();i++)
+    {
+        fprintf(f,"EMP1 type property: %s ( many? %d) of type %s\n" ,pl[i].getName()
+            , pl[i].isMany(),
+            pl[i].getType().getName());
+    }
+
+    PropertyList pli = emp1->getInstanceProperties();
+
+    for (i=0;i<pli.size();i++)
+    {
+        fprintf(f, "EMP1 inst property: %s (many? %d) of type %s\n",
+            pli[i].getName(), pli[i].isMany(), pli[i].getType().getName());
+    }
+
+
+    // now we try to set the string to null..
+    
+    emp1->setNull("openstring");
+
+    emp1->setCString("openstring","New Value Of Open String");
+
+
+    // now unset them and see them disappear - what happens to the indices?
+
+    emp1->unset("openstring");
+
+    PropertyList plk = emp1->getInstanceProperties();
+
+    for (i=0;i<plk.size();i++)
+    {
+        fprintf(f,"EMP1 inst property: %s (many? %d) of type %s\n",
+            plk[i].getName(), plk[i].isMany(), plk[i].getType().getName());
+    }
+
+    emp1->unset("openboolean");
+
+    dl.remove(0); // so is this list gone, or empty - I vote for still there.
+
+    PropertyList pll = emp1->getInstanceProperties();
+    for (i=0;i<pll.size();i++)
+    {
+        fprintf(f,"EMP1 inst property: %s (many? %d) of type %s\n",
+            pll[i].getName(), pll[i].isMany(),pll[i].getType().getName());
+    }
+
+    emp1->unset("opentypelist");
+
+    // now I vote for gone...
+
+    PropertyList plm = emp1->getInstanceProperties();
+    for (i=0;i<plm.size();i++)
+    {
+        fprintf(f,"EMP1 inst property: %s (many? %d) of type %s\n", plm[i].getName()
+            , plm[i].isMany() , plm[i].getType().getName());
+    }
+
+    fclose(f);
+    return comparefiles("testopen.dat","testopen.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "ERROR in TestOpen" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::saveOpen()
+{
+    try 
+    {
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+
+    mdg->addType("companyNS","CompanyType");
+    // employee will be an open type...
+    mdg->addType("companyNS","EmployeeType", /*seq*/false, 
+                                             /*open*/true, 
+                                             /*abs */ false, 
+                                             /*data*/ false);
+
+    mdg->addType("companyNS","DepartmentType");
+
+    mdg->addType("companyNS","OpenType");
+
+    /* Now add the properties to the types...*/
+
+    
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+    const Type& tdept    = mdg->getType("companyNS","DepartmentType");
+    const Type& temp     = mdg->getType("companyNS","EmployeeType");
+    const Type& topen    = mdg->getType("companyNS","OpenType");
+
+    
+    mdg->addPropertyToType(tcomp,"name",tstring);
+    // not containment...
+    mdg->addPropertyToType(tcomp,"employeeOfTheMonth",temp, false,false,false);
+    mdg->addPropertyToType(tcomp,"departments",tdept, true);
+    mdg->addPropertyToType(tcomp,"cs",tcs);
+
+    mdg->addPropertyToType(tdept,"name",tstring);
+    mdg->addPropertyToType(tdept,"location",tstring);
+    mdg->addPropertyToType(tdept,"number",tstring);
+    mdg->addPropertyToType(tdept,"employees",temp,true);
+    
+    mdg->addPropertyToType(temp, "name",tstring);
+    mdg->addPropertyToType(temp, "SN",  tstring);
+    mdg->addPropertyToType(temp, "manager",  tbool);
+
+    mdg->setAlias("companyNS","CompanyType","TheFirm");
+    mdg->setAlias("companyNS","CompanyType","departments","TheDepartments");
+    mdg->setAlias("companyNS","CompanyType","departments","MYDepartments");
+    mdg->setAlias("companyNS","CompanyType","TheBigFirm");
+
+    mdg->addPropertyToType(topen,"name",tstring);
+
+    DataObjectPtr comp = mdg->create((Type&)tcomp);
+    comp->setCString("name","ACME");
+
+    DataObjectPtr dept = mdg->create((Type&)tdept);
+    DataObjectList& dol = comp->getList("departments");
+    dol.append(dept);
+
+    ChangeSummaryPtr cs = comp->getChangeSummary();
+
+    cs->beginLogging();
+
+    dept->setCString("name","Advanced Technologies");
+    dept->setCString("location","NY");
+    dept->setCString("number","123");
+
+    DataObjectList& emps = dept->getList("employees");
+
+    DataObjectPtr emp1 = mdg->create(temp);
+    DataObjectPtr emp2 = mdg->create(temp);
+    DataObjectPtr emp3 = mdg->create(temp);
+
+    emps.append(emp1);
+    emps.append(emp2);
+    emps.append(emp3);
+
+    emp1->setCString("name","Albert");
+    emp1->setCString("SN","E0001");
+
+    emp2->setCString("name","Boris");
+    emp2->setCString("SN","E0002");
+    emp2->setBoolean("manager",true);
+
+    emp3->setCString("name","Carl");
+    emp3->setCString("SN","E0003");
+
+    // now we should be able to add extra properties to employees,
+    // and get them back again...
+
+
+    emp1->setCString("openstring","Value Of Open String");
+    emp1->setBoolean("openboolean",true);
+
+    const char* c = emp1->getCString("openstring");
+
+    //cout << "Open Type string value: " << c << endl;
+
+    bool b = emp1->getBoolean("openboolean");
+
+    //cout << "Open Type boolean value: " << b << endl;
+
+    // unknown list type at present..
+    DataObjectList& dl = emp1->getList("openintlist");
+    
+    int i = 45;
+    dl.append((short)i); // now the list must be primitive and short!!
+
+    // unknown list type at present..
+    DataObjectList& dl2 = emp1->getList("opendataobjectlist");
+    
+    DataObjectPtr myopen = mdg->create("companyNS","OpenType");
+    myopen->setCString("name","MyOpenName");
+    dl2.append(myopen); // now the list must be of data objects
+    
+
+    // now a single valued data object - should have an xsi:type
+    emp1->setDataObject("opendataobject", myopen);
+
+
+    cs->endLogging();
+
+    //dumpchangesummary(cs);
+
+    XSDHelperPtr xdh = HelperProvider::getXSDHelper(mdg);
+
+    xdh->generateFile(mdg->getTypes(),
+                "saveopen-output.xsd","companyNS");
+
+    XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr doc = xmh->createDocument(comp,"companyNS","company");
+    xmh->save(doc,"saveopen-output.xml");
+
+    return comparefiles("saveopen-output.xml","saveopen-output.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "ERROR in SaveOpen" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::loadOpen()
+{
+    try 
+    {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("saveopen-output.xsd");
+
+
+        //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
+        //int i;
+        //TypeList& tl = mdg->getTypes();
+        //for (i=0;i< tl.size(); i++)
+        //{
+        //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
+        //}
+
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+
+        
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("partial.xml", "companyNS");
+        
+        
+
+        // so, we now expect that the openboolean and openstring props will
+        // be of type boolean and Bytes, and the openlist will be a list of integers.
+        // The dataobjectlist an dataobject will be of the correct OpenType
+
+        // we need a test for data objects, and that we are writing out xsi:type
+        // correctly.
+        DataObjectPtr comp = myXMLDocument->getRootDataObject();
+        DataObjectList& dl = comp->getList("departments");
+        DataObjectPtr dept = dl[0];
+        DataObjectList& dl2 = dept->getList("employees");
+        DataObjectPtr emp = dl2[0];
+
+        if (strcmp(emp->getProperty("openboolean").getType().getName(),
+            "Boolean"))
+        {
+            if (!silent)cout << "OpenLoad failure - bool property not boolean" << endl;
+            return 0;
+
+        }
+        if (emp->getBoolean("openboolean") != true)
+        {
+            if (!silent)cout << "OpenLoad failure - bool property not true" << endl;
+            return 0;
+        }
+
+        if (strcmp(emp->getProperty("openstring").getType().getName(),
+            "Bytes"))
+        {
+            if (!silent)cout << "OpenLoad failure - bytes property not bytes" << endl;
+            return 0;
+
+        }
+        if (strcmp(emp->getCString("openstring"),"Value Of Open String"))
+        {
+            if (!silent)cout << "OpenLoad failure - string value is" << 
+                emp->getCString("openstring") << endl;
+            return 0;
+        }
+
+
+        DataObjectList& dl3 = emp->getList("openintlist");
+
+        if (strcmp(emp->getProperty("openintlist").getType().getName(),
+            "Short"))
+        {
+            if (!silent)cout << "OpenLoad failure - IntegerList not Short " <<
+                emp->getProperty("openintlist").getType().getName() << endl;
+            return 0;
+        }
+
+        if (dl3.getInteger(0) != 45)
+        {
+            if (!silent)cout << "OpenLoad failure - Integer value is" << 
+                dl.getInteger(0) << endl;
+            return 0;
+        }
+
+        if (strcmp(emp->getProperty("opendataobjectlist").getType().getName(),
+            "OpenType"))
+        {
+            if (!silent)cout << "OpenLoad failure - OpenTypeList not OpenType" << endl;
+            return 0;
+        }
+
+        DataObjectList& dl4 = emp->getList("opendataobjectlist");
+
+        if (strcmp(dl4[0]->getCString("name"),"MyOpenName"))
+        {
+            if (!silent)cout << "OpenLoad failure - list element name is " <<
+                dl4[0]->getCString("name") << endl;
+            return 0;
+        }
+
+        if (strcmp(emp->getProperty("opendataobject").getType().getName(),
+            "OpenType"))
+        {
+            if (!silent)cout << "OpenLoad failure - OpenType not OpenType" << endl;
+            return 0;
+        }
+
+        DataObjectPtr dob2 = emp->getDataObject("opendataobject");
+
+        if (strcmp(dob2->getCString("name"),"MyOpenName"))
+        {
+            if (!silent)cout << "OpenLoad failure - open value name is " <<
+                dob2->getCString("name") << endl;
+            return 0;
+        }
+
+        
+        myXMLHelper->save(myXMLDocument->getRootDataObject(),
+                          0, "company", "loadload-output.xml");
+        return comparefiles("loadload-output.xml","loadload-output.txt");
+
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "LoadOpen FAILED" << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::loadOpenNS()
+{
+    try 
+    {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("openloadNS.xsd");
+        xsh->defineFile("openloadNS2.xsd");
+
+
+        //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
+        //int i;
+        //TypeList& tl = mdg->getTypes();
+        //for (i=0;i< tl.size(); i++)
+        //{
+        //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
+        //}
+
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+
+        
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("openloadNS.xml", "companyNS");
+        
+        
+
+        // so, we now expect that the openboolean and openstring props will
+        // be of type boolean and Bytes, and the openlist will be a list of integers.
+        // The dataobjectlist an dataobject will be of the correct OpenType
+
+        // we need a test for data objects, and that we are writing out xsi:type
+        // correctly.
+        DataObjectPtr comp = myXMLDocument->getRootDataObject();
+        DataObjectList& dl = comp->getList("departments");
+        DataObjectPtr dept = dl[0];
+        DataObjectList& dl2 = dept->getList("employees");
+        DataObjectPtr emp = dl2[0];
+
+        if (strcmp(emp->getProperty("openboolean").getType().getName(),
+            "Boolean"))
+        {
+            if (!silent)cout << "OpenLoadNS failure - bool property not boolean" << endl;
+            return 0;
+
+        }
+        if (emp->getBoolean("openboolean") != true)
+        {
+            if (!silent)cout << "OpenLoadNS failure - bool property not true" << endl;
+            return 0;
+        }
+
+        if (strcmp(emp->getProperty("openstring").getType().getName(),
+            "Bytes"))
+        {
+            if (!silent)cout << "OpenLoadNS failure - bytes property not bytes" << endl;
+            return 0;
+
+        }
+        if (strcmp(emp->getCString("openstring"),"Value Of Open String"))
+        {
+            if (!silent)cout << "OpenLoadNS failure - string value is" << 
+                emp->getCString("openstring") << endl;
+            return 0;
+        }
+
+
+        DataObjectList& dl3 = emp->getList("openintlist");
+
+        if (strcmp(emp->getProperty("openintlist").getType().getName(),
+            "Short"))
+        {
+            if (!silent)cout << "OpenLoadNS failure - IntegerList not Short " <<
+                emp->getProperty("openintlist").getType().getName() << endl;
+            return 0;
+        }
+
+        if (dl3.getInteger(0) != 45)
+        {
+            if (!silent)cout << "OpenLoadNS failure - Integer value is" << 
+                dl.getInteger(0) << endl;
+            return 0;
+        }
+
+
+        
+        myXMLHelper->save(myXMLDocument->getRootDataObject(),
+                          0, "company", "openloadNSout.xml");
+
+        if (!comparefiles("openloadNSout.xml","openloadNSout.txt"))return 0;
+
+
+        // now try exactly the same, but with NS which doesnt exist
+        XMLDocumentPtr myXMLDocument2 = myXMLHelper->loadFile("openloadNS2.xml", "companyNS");
+        
+        
+
+        // so, we now expect that the openboolean and openstring props will
+        // be of type boolean and Bytes, and the openlist will be a list of integers.
+        // The dataobjectlist an dataobject will be of the correct OpenType
+
+        // we need a test for data objects, and that we are writing out xsi:type
+        // correctly.
+        DataObjectPtr comp2 = myXMLDocument2->getRootDataObject();
+        DataObjectList& dld = comp2->getList("departments");
+        DataObjectPtr dept2 = dld[0];
+        DataObjectList& dl22 = dept2->getList("employees");
+        DataObjectPtr emp2 = dl22[0];
+
+        if (strcmp(emp2->getProperty("openboolean").getType().getName(),
+            "Bytes"))
+        {
+            if (!silent)cout << "OpenLoadNS2 failure - bool property not bytes" << endl;
+            return 0;
+
+        }
+        if (emp2->getBoolean("openboolean") != true)
+        {
+            if (!silent)cout << "OpenLoadNS2 failure - bool property not true" << endl;
+            return 0;
+        }
+
+        if (strcmp(emp2->getProperty("openstring").getType().getName(),
+            "Bytes"))
+        {
+            if (!silent)cout << "OpenLoadNS2 failure - bytes property not bytes" << endl;
+            return 0;
+
+        }
+        if (strcmp(emp2->getCString("openstring"),"Value Of Open String"))
+        {
+            if (!silent)cout << "OpenLoadNS failure - string value is" << 
+                emp2->getCString("openstring") << endl;
+            return 0;
+        }
+
+
+        DataObjectList& dl32 = emp2->getList("openintlist");
+
+        if (strcmp(emp2->getProperty("openintlist").getType().getName(),
+            "Bytes"))
+        {
+            if (!silent)cout << "OpenLoadNS2 failure - IntegerList not Bytes " <<
+                emp2->getProperty("openintlist").getType().getName() << endl;
+            return 0;
+        }
+
+        if (dl32.getInteger(0) != 45)
+        {
+            if (!silent)cout << "OpenLoadNS2 failure - Integer value is" << 
+                dl32.getInteger(0) << endl;
+            return 0;
+        }
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "LoadOpenNS FAILED" << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::loadManyOpen()
+{
+    try 
+    {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("many.xsd");
+
+
+        //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
+        //int i;
+        //TypeList& tl = mdg->getTypes();
+        //for (i=0;i< tl.size(); i++)
+        //{
+        //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
+        //}
+
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+
+        
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("many.xml", "companyNS");
+        
+        
+
+        // so, we now expect that the openboolean and openstring props will
+        // be of type boolean and Bytes, and the openlist will be a list of integers.
+        // The dataobjectlist an dataobject will be of the correct OpenType
+
+        // we need a test for data objects, and that we are writing out xsi:type
+        // correctly.
+        DataObjectPtr comp = myXMLDocument->getRootDataObject();
+        DataObjectList& dl = comp->getList("departments");
+        DataObjectPtr dept = dl[0];
+        DataObjectList& dl2 = dept->getList("employees");
+        DataObjectPtr emp = dl2[0];
+
+
+        DataObjectList& dl3 = emp->getList("openlist");
+
+        if (strcmp(emp->getProperty("openlist").getType().getName(),
+            "Bytes"))
+        {
+            if (!silent)cout << "OpenManyLoad failure - BytesList not Bytes " <<
+                emp->getProperty("openlist").getType().getName() << endl;
+            return 0;
+        }
+
+        if (dl3.size() != 3)
+        {
+            if (!silent)cout << "OpenManyLoad failure - size is " << 
+                dl3.size() << endl;
+            return 0;
+        }
+
+        if (strcmp(dl3.getCString(0),"Three member")) return 0;
+        if (strcmp(dl3.getCString(1),"Open bytes")) return 0;
+        if (strcmp(dl3.getCString(2),"List is complete")) return 0;
+
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "LoadOpen FAILED" << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::csload2()
+{
+    //cout << "TEST: CSLoad2 ===============================================" << endl;
+    try 
+    {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("company.xsd");
+
+        //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
+
+        //TypeList& tl = mdg->getTypes();
+        //for (int i=0;i< tl.size(); i++)
+        //{
+        //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
+        //}
+
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("cssave2-output.xml", "companyNS");
+        myXMLHelper->save(myXMLDocument->getRootDataObject(),
+                          0, "company", "csload2-output.xml");
+
+        if (!comparefiles("csload2-output.xml","csload2-output.txt")) return 0;
+
+        XMLDocumentPtr myXMLDocument2 = myXMLHelper->loadFile("csload2-output.xml", "companyNS");
+        myXMLHelper->save(myXMLDocument2->getRootDataObject(),
+                          0, "company", "csload3-output.xml");
+
+        return comparefiles("csload3-output.xml","csload3-output.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "ERROR in CsLoad2" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::bug1()
+{
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    try {
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    xsh->defineFile("bugs\\1\\company.xsd");
+
+    //TypeList& tl = mdg->getTypes();
+    //for (int i=0;i< tl.size(); i++)
+    //{
+    //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
+    //}
+
+
+    XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+    XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("bugs\\1\\company.xml", 
+    "http://www.mycompanyinc.com");
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "ERROR in Bug1" << e << endl;
+        return 0;
+    }
+    return 1;
+}
+
+int sdotest::setnull()
+{
+
+    try {
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    mdg->addType("NullNS","NullMainType");
+    mdg->addType("NullNS","NullSubType");
+
+    /* Now add the properties to the types...*/
+   
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tint     = mdg->getType("commonj.sdo","Integer");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tmain    = mdg->getType("NullNS","NullMainType");
+    const Type& tsub     = mdg->getType("NullNS","NullSubType");
+ 
+    
+    mdg->addPropertyToType(tmain,"name",tstring);
+    mdg->addPropertyToType(tmain,"subs",tsub, true);  // many
+    mdg->addPropertyToType(tmain,"asub",tsub, false); // single
+    mdg->addPropertyToType(tmain,"bsub",tsub, false); // single
+
+    mdg->addPropertyToType(tmain,"cs",tcs); // change summary
+
+    mdg->addPropertyToType(tsub,"name",tstring);
+    mdg->addPropertyToType(tsub,"number",tint);
+    mdg->addPropertyToType(tsub,"bool",tbool);
+
+
+    // create a graph, then save it
+
+    DataObjectPtr main1 = mdg->create((Type&)tmain);
+    main1->setCString("name","MainObject");
+
+    // asub is initially set
+    DataObjectPtr sub0 = main1->createDataObject("asub");
+    // bsub is not set.
+
+    DataObjectPtr sub1 = mdg->create((Type&)tsub);
+    DataObjectPtr sub2 = mdg->create((Type&)tsub);
+    DataObjectPtr sub3 = mdg->create((Type&)tsub);
+
+    DataObjectList& dol = main1->getList("subs");
+
+    dol.append(sub1);
+    dol.append(sub2);
+    dol.append(sub3);
+
+    // sub1 has all values set initially
+
+    sub1->setCString("name","All Initially set");
+    sub1->setInteger("number",100);
+    sub1->setBoolean("bool",false);
+
+    // sub2 has no values set at all
+
+
+    // sub3 has all values set to null
+    sub3->setNull("name");
+    sub3->setNull("number");
+    sub3->setNull("bool");
+
+
+    // report
+    
+    if (main1->isNull("asub")) return 0;
+
+    if (!main1->isSet("asub")) return 0;
+    
+    if (main1->isNull("bsub")) return 0;
+    
+    if (main1->isSet("bsub")) return 0;
+
+// dol0 is set, not null
+
+    if (dol[0]->isNull("name")) return 0;
+
+    if (dol[0]->isNull("number")) return 0;
+
+    if (dol[0]->isNull("bool")) return 0;
+
+    if (!dol[0]->isSet("name")) return 0;
+
+    if (!dol[0]->isSet("number")) return 0;
+
+    if (!dol[0]->isSet("bool")) return 0;
+
+// dol1 is all unset , so no nulls
+    
+    if (dol[1]->isNull("name")) return 0;
+
+    if (dol[1]->isNull("number")) return 0;
+
+    if (dol[1]->isNull("bool")) return 0;
+
+    if (dol[1]->isSet("name")) return 0;
+    
+    if (dol[1]->isSet("number")) return 0;
+
+    if (dol[1]->isSet("bool")) return 0;
+
+// dol2 is all nulls, so all set
+    
+    if (!dol[2]->isNull("name")) return 0;
+
+    if (!dol[2]->isNull("number")) return 0;
+
+    if (!dol[2]->isNull("bool")) return 0;
+
+    if (!dol[2]->isSet("name")) return 0;
+
+    if (!dol[2]->isSet("number")) return 0;
+
+    if (!dol[2]->isSet("bool")) return 0;
+    
+    ChangeSummaryPtr cs = main1->getChangeSummary();
+
+    cs->beginLogging();
+
+    main1->setNull("asub");
+    main1->setNull("bsub");
+
+    dol[0]->setNull("name");
+    dol[0]->setNull("number");
+    dol[0]->setNull("bool");
+
+    dol[1]->setNull("bool");
+
+    dol[2]->setCString("name","NewName");
+    dol[2]->setInteger("number",100);
+    dol[2]->setBoolean("bool",true);
+
+
+    cs->endLogging();
+
+    // what would we expect from the change summary?
+
+    //cout << "==============Expected in Change Summary=================" << endl;
+    //cout << "change to main1 - object asub set to null, oldvalue asub (set)" << endl;
+    //cout << "change to main1 - object bsub set to null, oldvalue null (unset)" << endl;
+    //cout << "change to sub1  - name asub set to null, oldvalue \"All Initially Set\" (set)" << endl;
+    //cout << "change to sub1  - number asub set to null, oldvalue 100 (set)" << endl;
+    //cout << "change to sub1  - bool asub set to null, oldvalue false (set)" << endl;
+    //cout << "change to sub2  - bool asub set to null, oldvalue false (unset)" << endl;
+    //cout << "change to sub3  - name asub set to \"NewName\", oldvalue null, set" << endl;
+    //cout << "change to sub3  - number asub set to 100, oldvalue null, set" << endl;
+    //cout << "change to sub3  - bool asub set to true, oldvalue null, set" << endl;
+    //cout << "==============End Expected in Change Summary=============" << endl;
+
+    FILE* f = fopen("setnull.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open setnull.dat" << endl;
+        return 0;
+    }
+
+    dumpchangesummary(f, cs);
+
+    fclose(f);
+
+    if (!comparefiles("setnull.dat","setnull.txt")) return 0;
+    
+    // report
+
+    if (!main1->isNull("asub")) return 0;
+
+    if (!main1->isSet("asub")) return 0;
+
+    if (!main1->isNull("bsub")) return 0;
+
+    if (!main1->isSet("bsub")) return 0;
+
+// dol0 is set to null
+
+    if (!dol[0]->isNull("name")) return 0;
+
+    if (!dol[0]->isNull("number")) return 0;
+
+    if (!dol[0]->isNull("bool")) return 0;
+
+    if (!dol[0]->isSet("name")) return 0;
+
+    if (!dol[0]->isSet("number")) return 0;
+
+    if (!dol[0]->isSet("bool")) return 0;
+
+// dol1 is all unset except bool which is null 
+    
+    if (dol[1]->isNull("name")) return 0;
+
+    if (dol[1]->isNull("number")) return 0;
+
+    if (!dol[1]->isNull("bool")) return 0;
+
+    if (dol[1]->isSet("name")) return 0;
+
+    if (dol[1]->isSet("number")) return 0;
+
+    if (!dol[1]->isSet("bool")) return 0;
+
+// dol2 is all set non-null, so all set
+    
+        if (dol[2]->isNull("name")) return 0;
+
+        if (dol[2]->isNull("number")) return 0;
+
+        if (dol[2]->isNull("bool")) return 0;
+
+        if (!dol[2]->isSet("name")) return 0;
+
+        if (!dol[2]->isSet("number")) return 0;
+
+        if (!dol[2]->isSet("bool")) return 0;
+
+
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Exception in setnull" << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::testsubs()
+{
+
+    try {
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    mdg->addType("companyNS","MainType");
+
+    mdg->addType("companyNS","SubType");
+    mdg->addType("companyNS","SuperType");
+    mdg->addType("companyNS","SubstituteType");
+    mdg->addType("companyNS","UnrelatedType");
+
+    /* Now add the properties to the types...*/
+
+   
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tmain    = mdg->getType("companyNS","MainType");
+    const Type& sub      = mdg->getType("companyNS","SubType");
+    const Type& super    = mdg->getType("companyNS","SuperType");
+    const Type& subst    = mdg->getType("companyNS","SubstituteType");
+    const Type& unrel    = mdg->getType("companyNS","UnrelatedType");
+
+    
+    mdg->addPropertyToType(tmain,"name",tstring);
+    mdg->addPropertyToType(tmain,"sub",super, false);
+    mdg->addPropertyToType(tmain,"subs",super, true);
+
+
+    mdg->setPropertySubstitute(tmain, "sub","wilbur", subst);
+    mdg->setPropertySubstitute(tmain, "subs","wilburs", subst);
+
+    mdg->setBaseType(sub,super);
+
+    //now sub and subs should accept all the three types
+
+    DataObjectPtr main = mdg->create((Type&)tmain);
+    main->setCString("name","SubstituteTest");
+
+    DataObjectList& dol = main->getList("subs");
+
+    DataObjectPtr sub1 = mdg->create(sub);
+    DataObjectPtr super1 = mdg->create(super);
+    DataObjectPtr subst1 = mdg->create(subst);
+    DataObjectPtr unrel1 = mdg->create(unrel);
+
+    dol.append(sub1);
+    dol.append(super1);
+    dol.append(subst1);
+    try 
+    {
+        dol.append(unrel1);
+        return 0;
+    }
+    catch (SDOInvalidConversionException e)
+    {
+        //cout << "Normal failure to append wrong type" << endl;
+    }
+
+    dol.remove(0);
+    dol.remove(0);
+    dol.remove(0);
+
+    DataObjectList& dol2 = main->getList("wilburs");
+
+    dol2.append(sub1);
+    dol2.append(super1);
+    dol2.append(subst1);
+    try 
+    {
+        dol2.append(unrel1);
+        return 0;
+    }
+    catch (SDOInvalidConversionException e)
+    {
+        //cout << "Normal failure to append wrong type" << endl;
+    }
+
+    main->setDataObject("sub",sub1);
+    main->setDataObject("sub",super1);
+    main->setDataObject("sub",subst1);
+
+    main->setDataObject("wilbur",sub1);
+    main->setDataObject("wilbur",super1);
+    main->setDataObject("wilbur",subst1);
+
+    try 
+    {
+        main->setDataObject("sub", unrel1);
+        return 0;
+    }
+    catch (SDOInvalidConversionException e)
+    {
+        //cout << "Normal failure to set wrong type" << endl;
+    }
+    return 1;
+    }
+
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Substitute test failed" << endl << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::merle1()
+{
+
+    try {
+
+        // Dynamic setup of the metadata 
+
+        FILE *f = fopen("merle1.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open merle1.dat" << endl;
+            return 0;
+        }
+
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("axis.xsd");
+
+        // or dynamically create, but that would get attributes for the strings, not elements
+        //mdg->addType("axis","ItemSearch",true); // sequenced
+        //mdg->addType("axis","ItemSearchRequest",true); // sequenced
+    
+        const Type& tstring  = mdg->getType("commonj.sdo","String");
+        const Type& tsearch  = mdg->getType("axis","ItemSearch");
+        const Type& treq     = mdg->getType("axis","ItemSearchRequest");
+    
+        //mdg->addPropertyToType(tsearch,"SubscriptionId",tstring);
+        //mdg->addPropertyToType(tsearch,"AssociateTag",tstring);
+        //mdg->addPropertyToType(tsearch,"XMLEscaping",tstring);
+        //mdg->addPropertyToType(tsearch,"Validate",tstring);
+        //mdg->addPropertyToType(tsearch,"Shared",treq, false, false, true);
+        //mdg->addPropertyToType(tsearch,"Request",treq, true, false, true);
+
+        //mdg->addPropertyToType(treq,"Keywords",tstring);
+        //mdg->addPropertyToType(treq,"SearchIndex",tstring);
+
+        // dynamic creation of the data 
+
+        DataObjectPtr search = mdg->create((Type&)tsearch);
+    
+        search->setCString("SubscriptionId","I am the subscription ID string");
+        search->setCString("AssociateTag","I am the associate Tag string");
+        search->setCString("XMLEscaping","I am the XML escaping string");
+        search->setCString("Validate","I am the Validate string");
+
+        DataObjectPtr shared = search->createDataObject("Shared");
+        shared->setCString("Keywords","SharedKeywordsString");
+        shared->setCString("SearchIndex","SearchIndexString");
+
+        DataObjectList& requests = search->getList("Request");
+        DataObjectPtr request1 = mdg->create(treq);
+        requests.append(request1);
+        request1->setCString("Keywords","RequestKeywords");
+        request1->setCString("SearchIndex","RequestSearchIndex");
+
+        // Read the data and put it into XML:
+
+        PropertyList properties = search->getInstanceProperties();
+
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+
+        for (int i=0;i<properties.size();i++)
+        {
+            Property& prop = properties[i];
+            switch (prop.getTypeEnum())
+            {
+
+                case Type::StringType:
+                    fprintf(f,"<%s>%s</%s>\n",prop.getName(), search->getCString(prop),
+                        prop.getName());
+                break;
+
+                case Type::DataObjectType:
+                    if (prop.isMany())
+                    {
+                        // many valued property, such as Requests , so get the list
+                        DataObjectList& rq = search->getList(prop);
+                        for (int j=0;j<rq.size();j++)
+                        {
+                            DataObjectPtr dob = rq[j];
+                            if (dob != 0)
+                            {
+                                XMLDocumentPtr doc = myXMLHelper->createDocument(dob,
+                                "axis", prop.getName());
+                                doc->setXMLDeclaration(false);
+                                char* dobXML = myXMLHelper->save(doc);
+                                fprintf(f,"DataObject \"%s\" as XML:\n",prop.getName()); 
+                                fprintf(f,"%s\n", dobXML);
+                            } // if dob
+                        } // for 
+                    } // if many
+                    else
+                    {
+                        DataObjectPtr dob = search->getDataObject(prop);
+                        if (dob != 0)
+                        {
+                            XMLDocumentPtr doc = myXMLHelper->createDocument(dob,
+                                "axis", prop.getName());
+                            doc->setXMLDeclaration(false);
+                            char* dobXML = myXMLHelper->save(doc);
+                            fprintf(f,"DataObject \"%s\" as XML:\n",prop.getName());
+                            fprintf(f, "%s\n", dobXML);
+                        } // if
+                    } // else
+                break;
+
+                default:
+                break;
+
+            } // switch
+        } // for
+        fclose(f);
+        return comparefiles("merle1.dat","merle1.txt");
+    } // try
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Merle 1 failed" << endl << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::graham3()
+{
+    try {
+
+        // Dynamic setup of the metadata 
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("graham3.xsd");
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Graham1 failed " << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::graham1()
+{
+    try {
+
+        // Dynamic setup of the metadata 
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("graham1.xsd");
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Graham1 failed " << e << endl;
+        return 0;
+    }
+}
+int sdotest::graham2()
+{
+    try {
+
+        // Dynamic setup of the metadata 
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("graham2.xsd");
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Graham2 failed " << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::b46613()
+{
+    try {
+
+        // Dynamic setup of the metadata 
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        mdg->create("rubbish","MyObject");
+
+        return 0;
+
+    }
+    catch (SDOTypeNotFoundException e)
+    {
+        //cout << "b46613 gave the correct exception" << endl;
+        return 1;
+    }
+}
+
+int sdotest::doctest()
+{
+    try {
+
+        FILE *f = fopen("doctest.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open doctest.dat" << endl;
+            return 0;
+        }
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("doctest.xsd");
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("doctest.xml", 
+        "companyNS");
+        fprintf(f,"RootURI=%s\n",myXMLDocument->getRootElementURI());
+        fprintf(f,"RootName=%s\n",myXMLDocument->getRootElementName());
+        fclose(f);
+        return comparefiles("doctest.dat","doctest.txt");
+    }
+    catch (SDOTypeNotFoundException e)
+    {
+        if (!silent)cout << "doctest failed" << endl;
+        return 0;
+    }
+
+}
+
+
+int sdotest::b46634()
+{
+    try {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("company_with_nillable_SN.xsd");
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("company_with_nillable_SN.xml", 
+        "companyNS");
+
+        DataObjectPtr dob = myXMLDocument->getRootDataObject();
+        DataObjectList& dol = dob->getList("departments");
+        DataObjectPtr dept = dol[0];
+        DataObjectList& dol2 = dept->getList("employees");
+        DataObjectPtr emp = dol2[0];
+
+        if (!emp->isSet("SN"))
+        {
+            if (!silent)cout << "B46634 WRONG - isSet should be true" << endl;
+            return 0;
+        }
+        if (!emp->isNull("SN"))
+        {
+            if (!silent)cout << "B46634 WRONG - isNull should be true" << endl;
+            return 0;
+        }
+
+        // now write out the nill value and check its still nil
+        myXMLHelper->save(myXMLDocument->getRootDataObject(),
+                          0, "company", "b46634_out.xml");
+        return comparefiles("b46634_out.xml","b46634_out.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "b46634 failed" << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::testErrors()
+{
+    try {
+
+        int i,j;
+
+        FILE *f = fopen("testerrors.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open testerrors.dat" << endl;
+            return 0;
+        }
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("error1.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            fprintf(f,"XSD reported some errors:\n");
+            for (j=0;j<i;j++)
+            {
+                const char* m = xsh->getErrorMessage(j);
+                if (m != 0) fprintf(f,"%s\n", m);
+            }
+        }
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("error1.xml", 
+        "companyNS");
+
+        if ((i = myXMLHelper->getErrorCount()) > 0)
+        {
+            fprintf(f,"XML reported some errors:\n");
+            for (j=0;j<i;j++)
+            {
+                const char *m = myXMLHelper->getErrorMessage(j);
+                if (m != 0) fprintf(f,"%s\n",m);
+            }
+        }
+
+        fclose(f);
+        return comparefiles("testerrors.dat","testerrors.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "testErrors  failed" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::b46734()
+{
+    try {
+
+        int i,j;
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("wsdl.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "WSDL XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+        xsh->defineFile("wsdl-soap.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent) 
+            {
+                cout << "WSDL SOAP XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char* m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+        xsh->defineFile("wsdl-http.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "WSDL HTTP XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char* m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("StockQuoteService.wsdl"
+            );
+
+        if ((i = myXMLHelper->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "XML reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char * m = myXMLHelper->getErrorMessage(j);
+                    if (m != 0)cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+        return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "b46734 failed" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::b46693()
+{
+    try {
+
+        int i,j;
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("b46693.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "b46693 XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char* m = xsh->getErrorMessage(j);
+                    if (m != 0)cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+    //    XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+    //    XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("b46693.xsd"
+    //        );
+
+    //    if ((i = myXMLHelper->getErrorCount()) > 0)
+    //    {
+    //        cout << "b46693 reported some errors:" << endl;
+    //        for (j=0;j<i;j++)
+    //        {
+    //            const char* m = myXMLHelper->getErrorMessage(j);
+    //            if (m != 0)cout << m;
+    //          cout << endl;
+    //        }
+    //    }
+        return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "b46693 failed" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::clonetest()
+{
+    try {
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    mdg->addType("companyNS","CompanyType");
+    mdg->addType("companyNS","DepartmentType");
+    mdg->addType("companyNS","EmployeeType");
+
+   
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+    const Type& tdept    = mdg->getType("companyNS","DepartmentType");
+    const Type& temp     = mdg->getType("companyNS","EmployeeType");
+
+    mdg->addPropertyToType(tcomp,"name",tstring);
+    mdg->addPropertyToType(tcomp,"departments",tdept,true,false,true);
+    mdg->addPropertyToType(tcomp,"employeeOfTheMonth",temp,false,false,false);
+    mdg->addPropertyToType(tcomp,"CEO",temp,false,false,true);
+
+    mdg->addPropertyToType(tdept,"employees",temp,true,false,true);
+    mdg->addPropertyToType(tdept,"name",tstring,false,false,true);
+    mdg->addPropertyToType(tdept,"location",tstring,false,false,true);
+    mdg->addPropertyToType(tdept,"number",tstring,false,false,true);
+
+    mdg->addPropertyToType(temp,"name",tstring,false,false,true);
+    mdg->addPropertyToType(temp,"SN",tstring,false,false,true);
+    mdg->addPropertyToType(temp,"manager",tbool,false,false,true);
+
+
+    DataObjectPtr comp = mdg->create((Type&)tcomp);
+    comp->setCString("name","The Company");
+
+    DataObjectPtr dept = mdg->create((Type&)tdept);
+
+    DataObjectList& dol = comp->getList("departments");
+    dol.append(dept);
+
+    dept->setCString("name","The Department");
+    dept->setCString("location","Botley");
+    dept->setCString("number","123");
+
+
+    // now clone the data factory, and add more types
+
+    DataFactoryPtr df2 = mdg->clone();
+
+    df2->addType("otherNS","DataSet");
+
+    df2->addPropertyToType("companyNS","DepartmentType","dataset",
+        "otherNS","DataSet", false, false, true);
+
+    const Type& tstring2  = df2->getType("commonj.sdo","String");
+    const Type& tbool2    = df2->getType("commonj.sdo","Boolean");
+    const Type& tcs2      = df2->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp2   = df2->getType("companyNS","CompanyType");
+    const Type& tdept2    = df2->getType("companyNS","DepartmentType");
+    const Type& temp2     = df2->getType("companyNS","EmployeeType");
+
+    DataObjectPtr comp2 = df2->create((Type&)tcomp2);
+    comp->setCString("name","The Company");
+
+    DataObjectPtr dept2 = df2->create((Type&)tdept2);
+
+    DataObjectList& dol2 = comp2->getList("departments");
+    dol2.append(dept2);
+
+    dept2->setCString("name","The Other Department");
+    dept2->setCString("location","Not Botley");
+    dept2->setCString("number","321");
+
+    return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "clone failed " << e << endl;
+        return 0;
+    }
+
+
+}
+
+int sdotest::testUtil()
+{
+    try {
+
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+
+    mdg->addType("companyNS","CompanyType");
+    // employee will be an open type...
+    mdg->addType("companyNS","EmployeeType", /*seq*/false, 
+                                             /*open*/true, 
+                                             /*abs */ false, 
+                                             /*data*/ false);
+
+    mdg->addType("companyNS","DepartmentType");
+
+    mdg->addType("companyNS","OpenType");
+
+    /* Now add the properties to the types...*/
+
+    
+    const Type& tstring  = mdg->getType("commonj.sdo","String");
+    const Type& tbool    = mdg->getType("commonj.sdo","Boolean");
+    const Type& tcs      = mdg->getType("commonj.sdo","ChangeSummary");
+    const Type& tcomp    = mdg->getType("companyNS","CompanyType");
+    const Type& tdept    = mdg->getType("companyNS","DepartmentType");
+    const Type& temp     = mdg->getType("companyNS","EmployeeType");
+    const Type& topen    = mdg->getType("companyNS","OpenType");
+
+    
+    mdg->addPropertyToType(tcomp,"name",tstring);
+    // not containment...
+    mdg->addPropertyToType(tcomp,"employeeOfTheMonth",temp, false,false,false);
+    mdg->addPropertyToType(tcomp,"departments",tdept, true);
+    mdg->addPropertyToType(tcomp,"cs",tcs);
+
+    mdg->addPropertyToType(tdept,"name",tstring);
+    mdg->addPropertyToType(tdept,"location",tstring);
+    mdg->addPropertyToType(tdept,"number",tstring);
+    mdg->addPropertyToType(tdept,"employees",temp,true);
+    
+    mdg->addPropertyToType(temp, "name",tstring);
+    mdg->addPropertyToType(temp, "SN",  tstring);
+    mdg->addPropertyToType(temp, "manager",  tbool);
+
+    mdg->addPropertyToType(topen,"name",tstring);
+
+    DataObjectPtr comp = mdg->create((Type&)tcomp);
+    comp->setCString("name","ACME");
+
+    DataObjectPtr dept = mdg->create((Type&)tdept);
+    DataObjectList& dol = comp->getList("departments");
+    dol.append(dept);
+
+    dept->setCString("name","Advanced Technologies");
+    dept->setCString("location","NY");
+    dept->setCString("number","123");
+
+    DataObjectList& emps = dept->getList("employees");
+
+    DataObjectPtr emp1 = mdg->create(temp);
+    DataObjectPtr emp2 = mdg->create(temp);
+    DataObjectPtr emp3 = mdg->create(temp);
+
+    emps.append(emp1);
+    emps.append(emp2);
+    emps.append(emp3);
+
+    emp1->setCString("name","Albert");
+    emp1->setCString("SN","E0001");
+
+    emp2->setCString("name","Boris");
+    emp2->setCString("SN","E0002");
+    emp2->setBoolean("manager",true);
+
+    emp3->setCString("name","Carl");
+    emp3->setCString("SN","E0003");
+
+    emp1->setCString("openstring","Value Of Open String");
+    emp1->setBoolean("openboolean",true);
+
+    const char* c = emp1->getCString("openstring");
+
+    bool b = emp1->getBoolean("openboolean");
+
+    // unknown list type at present..
+    DataObjectList& dl = emp1->getList("openintlist");
+    
+    int i = 45;
+    dl.append((short)i); // now the list must be primitive and short!!
+
+    // unknown list type at present..
+    DataObjectList& dl2 = emp1->getList("opendataobjectlist");
+    
+    DataObjectPtr myopen = mdg->create("companyNS","OpenType");
+    myopen->setCString("name","MyOpenName");
+    dl2.append(myopen); // now the list must be of data objects
+    
+    emp1->setDataObject("opendataobject", myopen);
+    
+    filebuf fb;
+    fb.open ("testutils.dat",ios::out);
+    ostream os(&fb);
+    SDOUtils::printDataObject(os, comp);
+    fb.close();
+    return comparefiles("testutils.dat","testutils.txt");
+    
+ 
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "ERROR in UTILS test" << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::printset(FILE *f, ChangeSummaryPtr cs)
+{
+    ChangedDataObjectList& cdl = cs->getChangedDataObjects();
+
+    // here there should be a creation of Ed, and a change to dept, which has a
+    // bool previously unset, and a int list previuously unset and an employees list
+    // previously unset
+    
+    for (int i=0;i< cdl.size();i++)
+    {
+        if (cs->isModified(cdl[i]))
+        {
+
+            fprintf(f,"A modified of type %s#%s\n",cdl[i]->getType().getURI()  
+                 ,cdl[i]->getType().getName());
+
+            SettingList& sl = cs->getOldValues(cdl[i]);
+            if (sl.size() == 0) 
+            {
+                fprintf(f,"No Settings found\n");
+            }
+            else 
+            {
+                for (int j=0;j< sl.size(); j++)
+                {
+                    fprintf(f,"Property %s",sl[j].getProperty().getName());
+                    // this could be a many-valued property, and could be one which is
+                    // a data object or a data type...
+                    if (sl[j].getProperty().isMany()) 
+                    {
+                        fprintf(f,"[%s]",sl[j].getIndex());
+                    }
+                    if (!sl[j].isSet())
+                    {
+                        fprintf(f," was unset before the change\n");
+                    }
+                    else
+                    {
+                        fprintf(f," was set before the change !!\n");
+                    }
+                }
+            }
+        }
+    }
+    return 1;
+}
+    
+
+int sdotest::b46633()
+{
+    try {
+
+        FILE *f = fopen("b46633.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open b46633.dat" << endl;
+            return 0;
+        }
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        mdg->addType("myspace","Root");
+        mdg->addPropertyToType("myspace","Root","cs",
+                           "commonj.sdo","ChangeSummary", false, false, false);
+
+        mdg->addType("myspace","Company");
+        mdg->addType("myspace","Department");
+        mdg->addType("myspace","Manager");
+        mdg->addType("myspace","Employee");
+
+
+        mdg->addPropertyToType("myspace","Company","name",
+                           "commonj.sdo","String", false, false, false);
+    
+
+        mdg->addPropertyToType("myspace","Root","company",
+                           "myspace","Company", false, false, true);
+
+        mdg->addPropertyToType("myspace","Company","departments",
+                           "myspace","Department", true, false, true);
+
+
+        mdg->addPropertyToType("myspace","Department","name",
+                           "commonj.sdo","String", false, false, false);
+
+        mdg->addPropertyToType("myspace","Department","ints",
+                           "commonj.sdo","Integer", true, false, false);
+
+
+        mdg->addPropertyToType("myspace","Department","bool",
+                           "commonj.sdo","Boolean", false, false, false);
+
+        mdg->addPropertyToType("myspace","Department","manager",
+                           "myspace","Manager", false, false, true);
+
+        mdg->addPropertyToType("myspace","Department","employees",
+                           "myspace","Employee", true, false, true);
+
+        mdg->addPropertyToType("myspace","Manager","name",
+                           "commonj.sdo","String", false, false, false);
+    
+        mdg->addPropertyToType("myspace","Employee","name",
+                            "commonj.sdo","String", false, false, false);
+
+        const Type& tcc = mdg->getType("myspace","Root");
+
+        DataObjectPtr dor = mdg->create((Type&)tcc);
+    
+        ChangeSummaryPtr cs = dor->getChangeSummary();
+
+        DataObjectPtr com = dor->createDataObject("company");
+        com->setCString("name","IBM");
+
+        DataObjectPtr dept = com->createDataObject("departments");
+        dept->setCString("name","JTC");
+
+        // employees initally unset
+
+        cs->beginLogging();
+
+        DataObjectPtr emp = dept->createDataObject("employees");
+        emp->setCString("name","Ed");
+
+
+
+        DataObjectList& dl = dept->getList("ints");
+        dl.append((long)400);
+    
+        dept->setBoolean("bool", true);
+
+        printset(f,cs);
+
+        cs->endLogging();
+
+        // unset them all , restart logging, and get the same results
+    
+        dept->unset("bool");
+        dept->unset("ints");
+        dept->unset("employees");
+
+        cs->beginLogging();
+
+        DataObjectPtr emp2 = dept->createDataObject("employees");
+        emp2->setCString("name","Ed2");
+
+        dl.append((long)600);
+    
+        dept->setBoolean("bool", true);
+
+        printset(f, cs);
+
+        cs->endLogging();
+
+        fclose(f);
+
+        return comparefiles("b46633.dat","b46633.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "b46633 failed " << e << endl;
+        return 0;
+    }
+
+}
+
+
+
+int sdotest::testLoad()
+{
+    try 
+    {
+        int i,j;
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        FILE* f = fopen("company_with_nillable_SN.xsd","r+");
+        char* buffer = new char[4000];
+        j = 0;
+        while ((i = fgetc(f)) != EOF)
+        {
+            buffer[j++] = (char)i;
+        }
+        buffer[j] = 0;
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->define(buffer);
+
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent) {
+                cout << "XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        FILE* f2 = fopen("company_with_nillable_SN.xml","r+");
+        j = 0;
+        while ((i = fgetc(f2)) != EOF)
+        {
+            buffer[j++] = (char)i;
+        }
+        buffer[j] = 0;
+
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr myXMLDocument = myXMLHelper->load(buffer);
+        return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Exception in testDAS " << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::includetest()
+{
+    try 
+    {
+        int i,j;
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("include.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "INCLUDE XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        xsh->defineFile("../test/includeother.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "INCLUDE XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Exception in include test" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::detachtest()
+{
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        mdg->addType("myspace","Root");
+
+        mdg->addType("myspace","Company");
+        mdg->addType("myspace","Department");
+        mdg->addType("myspace","Manager");
+        mdg->addType("myspace","Employee");
+
+
+        mdg->addPropertyToType("myspace","Company","name",
+                           "commonj.sdo","String", false, false, false);
+    
+
+        mdg->addPropertyToType("myspace","Root","company",
+                           "myspace","Company", false, false, true);
+
+        mdg->addPropertyToType("myspace","Company","departments",
+                           "myspace","Department", true, false, true);
+
+
+        mdg->addPropertyToType("myspace","Department","name",
+                           "commonj.sdo","String", false, false, false);
+
+
+        mdg->addPropertyToType("myspace","Department","manager",
+                           "myspace","Manager", false, false, true);
+
+        mdg->addPropertyToType("myspace","Department","employees",
+                           "myspace","Employee", true, false, true);
+
+        mdg->addPropertyToType("myspace","Manager","name",
+                           "commonj.sdo","String", false, false, false);
+    
+        mdg->addPropertyToType("myspace","Employee","name",
+                            "commonj.sdo","String", false, false, false);
+
+        const Type& tcc = mdg->getType("myspace","Root");
+
+        DataObjectPtr dor = mdg->create((Type&)tcc);
+    
+        DataObjectPtr com = dor->createDataObject("company");
+        com->setCString("name","IBM");
+
+        DataObjectPtr dept = com->createDataObject("departments");
+
+        dept->setCString("name","JTC");
+
+
+        DataObjectPtr emp = dept->createDataObject("employees");
+        emp->setCString("name","Ed");
+
+        DataObjectPtr emp2 = dept->createDataObject("employees");
+        emp2->setCString("name","Tom");
+        
+        DataObjectList& dol = dept->getList("employees");
+
+        DataObjectPtr e = dol[0];
+        e->detach();
+
+        DataObjectPtr cont = emp->getContainer();
+
+        if (cont != 0)
+        {
+            if (!silent)cout << "EMP STILL ATTACHED - problem" << endl;
+            return 0;
+        }
+
+        DataObjectPtr cont2 = dol[0]->getContainer();
+
+        if (cont2 == 0)
+        {
+            if (!silent)cout << "SECOND DETACHED - problem" << endl;
+            return 0;
+        }
+
+        return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "detach failed " << e << endl;
+        return 0;
+    }
+
+}
+
+
+int sdotest::leak()
+{
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        mdg->addType("myspace","Root");
+
+
+        mdg->addPropertyToType("myspace","Root","ints",
+                           "commonj.sdo","Integer", true, false, false);
+
+
+        const Type& tcc = mdg->getType("myspace","Root");
+
+        DataObjectPtr dor = mdg->create((Type&)tcc);
+    
+
+        if (dor->isSet("ints")) return 0;
+
+        DataObjectList& dl = dor->getList("ints");
+        
+        if (dor->isSet("ints")) return 0;
+
+        dl.append((long)400);
+    
+        if (!dor->isSet("ints")) return 0;
+
+        dl.remove(0);
+    
+        if (dor->isSet("ints")) return 0;
+
+        dl.append((long)400);
+
+        if (!dor->isSet("ints")) return 0;
+
+        dor->unset("ints");
+
+        if (dor->isSet("ints")) return 0;
+
+        dl.append((long)600);
+    
+        if (!dor->isSet("ints")) return 0;
+
+        return 1;
+
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "leak failed " << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::twolists()
+{
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        mdg->addType("myspace","Root");
+
+        mdg->addPropertyToType("myspace","Root","ints",
+                           "commonj.sdo","Integer", true, false, false);
+
+        mdg->addPropertyToType("myspace","Root","ints2",
+                           "commonj.sdo","Integer", true, false, false);
+
+
+        const Type& tcc = mdg->getType("myspace","Root");
+
+        DataObjectPtr dor = mdg->create((Type&)tcc);
+    
+        DataObjectList& dl2 = dor->getList("ints2");
+        dl2.append((long)400);
+
+
+        DataObjectList& dl = dor->getList("ints");
+        dl.append((long)400);
+        return 1;
+        
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "twolists failed " << e << endl;
+        return 0;
+    }
+
+}
+
+
+int sdotest::graham4()
+{
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        mdg->addType("myspace","Root");
+        mdg->addType("myspace","ListItem");
+
+
+        mdg->addPropertyToType("myspace","ListItem","name",
+                           "commonj.sdo","String", false, false, false);
+    
+
+        mdg->addPropertyToType("myspace","Root","ints",
+                           "commonj.sdo","Integer", true, false, false);
+
+        mdg->addPropertyToType("myspace","Root","items",
+                           "myspace","ListItem", true, false, true);
+
+
+        const Type& tcc = mdg->getType("myspace","Root");
+
+        DataObjectPtr dor = mdg->create((Type&)tcc);
+    
+
+        // first try with no elements in lists
+
+        try {
+            DataObjectPtr pitem = dor->getDataObject("items[name=\"hello\"]");
+            return 0;
+        }
+        catch (SDOIndexOutOfRangeException e)
+        {
+            //cout << "Normal exception in Graham4" << endl;
+        }
+
+        try {
+            int inty = dor->getInteger("ints[1]");
+            return 0;
+        }
+        catch (SDOIndexOutOfRangeException e)
+        {
+            //cout << "Normal exception in Graham4" << endl;
+        }
+
+        // now populate them
+
+        DataObjectPtr myitem = dor->createDataObject("items");
+        myitem->setCString("name","not hello");
+
+        try {
+            DataObjectPtr pitem2 = dor->getDataObject("items[name=\"hello\"]");
+            return 0;
+        }
+        catch (SDOIndexOutOfRangeException e)
+        {
+            //cout << "Normal exception in Graham4" << endl;
+        }
+
+        DataObjectList& dl = dor->getList("ints");
+        dl.append((long)100);
+
+        try {
+            int inty2 = dor->getInteger("ints[2]");
+            return 0;
+        }
+        catch (SDOIndexOutOfRangeException e)
+        {
+            //cout << "Normal exception in Graham4" << endl;
+        }
+
+        try 
+        {
+            DataObjectPtr pitem2 = dor->getDataObject("items[name=\"not hello\"]");
+            if (!silent)cout << "item name is " << pitem2->getCString("name") << endl;
+        }
+        catch (SDORuntimeException e)
+        {
+            if (!silent)cout << "ABNORMAL exception in Graham4" << endl;
+            return 0;
+        }
+
+        try {
+            int inty2 = dor->getInteger("ints[1]");
+            //cout << "Integer is " << inty2 << endl;
+            return 1;
+        }
+        catch (SDOIndexOutOfRangeException e)
+        {
+
+            if (!silent)cout << "ABNORMAL exception in Graham4" << endl;
+            return 0;
+        }
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "twolists failed " << e << endl;
+        return 0;
+    }
+
+}
+
+
+int sdotest::graham5()
+{
+    try 
+    {
+        int i,j;
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("Order.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "INCLUDE XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+        return 1;
+    }
+    catch (SDORuntimeException r)
+    {
+        if (!silent)cout << "Graham5 failed " << r << endl;
+        return 0;
+    }
+}
+
+int sdotest::graham6()
+{
+    try 
+    {
+        int i,j;
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("g/Order.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "INCLUDE XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr doc = xmh->loadFile("g/order.xml", "orderNS");
+
+        char* str = xmh->save(doc);
+        FILE* f = fopen("g/string-output.xml","w+");
+        if (f != 0)
+        {
+            fputs(str,f);
+            fclose(f);
+        }
+
+        xmh->save(doc,"g/graham6-output.xml");
+
+        // now get the root and try that 
+        DataObjectPtr dob = doc->getRootDataObject();
+        char* str2 = xmh->save(dob,"orderNS","order");
+        FILE* f2 = fopen("g/string-output-2.xml","w+");
+        if (f2 != 0)
+        {
+            fputs(str2,f2);
+            fclose(f2);
+        }
+
+        xmh->save(dob,"orderNS","order", "g/graham6-output-2.xml");
+
+        if (!comparefiles("g/string-output.xml","g/string-output.txt"))return 0;
+        if (!comparefiles("g/graham6-output.xml","g/graham6-output.txt")) return 0;
+        if (!comparefiles("g/string-output-2.xml","g/string-output-2.txt")) return 0;
+        return 1;
+
+    }
+    catch (SDORuntimeException r)
+    {
+        if (!silent)cout << "Graham6 failed " << r << endl;
+        return 0;
+    }
+}
+
+int sdotest::b47137()
+{
+
+    try 
+    {
+        FILE *f = fopen("b47137.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout <<  "Unable to open b47137.dat" << endl;
+        }
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("b47137.xsd");
+
+        DataObjectPtr dob = mdg->create("","guid");
+
+        const Type& t = dob->getType();
+
+        PropertyList& pl = t.getProperties();
+
+        for (int i=0;i<pl.size();i++)
+        {
+            fprintf(f,"Property:%s\n", pl[i].getName());
+        }
+
+        dob->setCString("value","Hello");
+        dob->setBoolean("isPermaLink",true);
+
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+
+        xmh->save(dob,"","fluid","b47137_out.xml");
+
+        // now try to read back the file ..
+
+        XMLDocumentPtr doc = xmh->loadFile("b47137_out.xml", "");
+
+        DataObjectPtr dob2 = doc->getRootDataObject();
+
+        const Type& t2 = dob2->getType();
+
+        PropertyList& pl2 = t2.getProperties();
+
+        for (int j=0;j<pl2.size();j++)
+        {
+            fprintf(f,"Property:%s\n",pl2[j].getName());
+            fprintf(f, "Value:%s\n", dob2->getCString(pl2[j]));
+        }
+
+        fclose(f);
+        return comparefiles("b47137.dat","b47137.txt");
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "B47137 failed " << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::b47137b()
+{
+    int i,j;
+    try 
+    {
+
+        FILE *f = fopen("b47137b.dat","w+");
+        if (f == 0)
+        {
+            if (!silent) cout << "Unable to open b47137b.dat" << endl;
+            return 0;
+        }
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("b47137b.xsd");
+
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "INCLUDE XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        TypeList tl = mdg->getTypes();
+        for (int k=0;k<tl.size();k++)
+        {
+            fprintf(f,"Type:%s#%s\n",tl[k].getURI(),tl[k].getName());
+        }
+
+        DataObjectPtr dob = mdg->create("companyNS","CompanyType");
+
+        const Type& t = dob->getType();
+
+        PropertyList& pl = t.getProperties();
+
+        for (int i=0;i<pl.size();i++)
+        {
+            fprintf(f, "Property:%s\n",pl[i].getName());
+        }
+
+        DataObjectPtr dobguid = dob->createDataObject("guid");
+
+        dobguid->setCString("value","Wilbur");
+        dobguid->setBoolean("isPermaLink",true);
+
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+
+        xmh->save(dob,"","company","b47137b_out.xml");
+
+        // now try to read back the file ..
+
+        XMLDocumentPtr doc = xmh->loadFile("b47137b_out.xml", "");
+
+        DataObjectPtr dob2 = doc->getRootDataObject();
+
+        const Type& t2 = dob2->getType();
+
+        PropertyList& pl2 = t2.getProperties();
+
+        for (int j=0;j<pl2.size();j++)
+        {
+
+            fprintf(f,"Property:%s\n",pl2[j].getName());
+            if (!strcmp(pl2[j].getName(),"guid"))
+            {
+                DataObjectPtr dobguid2 = dob2->getDataObject("guid");
+                if (dobguid2 != 0)
+                {
+                    fprintf(f,"guid Value:%s\n",dobguid2->getCString("value"));
+                    fprintf(f,"guid isPermaLink:",dobguid2->getCString("isPermaLink"));
+                }
+                else
+                {
+                    fprintf(f,"GUID is empty\n");
+                }
+            }
+        }
+        fclose(f);
+        return comparefiles("b47137b.dat","b47137b.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "B47137b failed " << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::b47293()
+{
+    int i,j,k;
+    try 
+    {
+        FILE *f = fopen("b47293.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open b47293.dat" << endl;
+            return 0;
+        }
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("47293Catalog.xsd");
+
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent) 
+            {
+                cout << "47293 XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                 const char *m = xsh->getErrorMessage(j);
+                     if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        TypeList tl = mdg->getTypes();
+        for ( k=0;k<tl.size();k++)
+        {
+            fprintf(f,"Type:%s#%s",tl[k].getURI(),tl[k].getName());
+        }
+
+        xsh->generateFile(tl,"47293Catalog-out.xsd","catalogNS",0);
+
+        DataFactoryPtr mdg2  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh2 = HelperProvider::getXSDHelper(mdg2);
+        
+        xsh2->defineFile("47293Catalog-out.xsd");
+
+        if ((i = xsh2->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "47293-out XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh2->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        TypeList tl2 = mdg2->getTypes();
+        for (k=0;k<tl2.size();k++)
+        {
+            fprintf(f,"Type:%s#%s\n",tl2[k].getURI(),tl2[k].getName());
+        }
+        fclose(f);
+        return comparefiles("b47293.dat","b47293.txt");
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "B47137b failed " << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::b47802()
+{
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        mdg->addType("myspace","Root");
+        mdg->addType("myspace","ListItem");
+
+        mdg->addPropertyToType("myspace","Root","ints",
+                           "commonj.sdo","Integer", true, false, false);
+
+        mdg->addPropertyToType("myspace","Root","items",
+                           "myspace","ListItem", true, false, true);
+
+
+        const Type& tcc = mdg->getType("myspace","Root");
+        const Type& tcl = mdg->getType("myspace","ListItem");
+
+        DataObjectPtr dor = mdg->create((Type&)tcc);
+
+        DataObjectList& dol1 = dor->getList("ints");
+
+        DataObjectList& dol2 = dor->getList("items");
+    
+
+        dol1.append((long)34);
+        dol1.append((long)56);
+
+        DataObjectPtr li1 = mdg->create(tcl);
+        DataObjectPtr li2 = mdg->create(tcl);
+
+        dol2.append(li1);
+        dol2.append(li2);
+
+        dor->unset("ints[1]"); // should work
+        dor->unset("items.0"); // should work
+
+        try {
+
+            dor->unset("ints[2]"); // should  not work
+            return 0;
+        }
+        catch (SDOIndexOutOfRangeException e)
+        {
+            //cout << "Normal index oor in 47802" << endl;
+        }
+
+        try {
+            dor->unset("items.1"); // should not work
+            return 0;
+        }    
+        catch (SDOIndexOutOfRangeException e)
+        {
+            // cout << "Normal index oor in 47802" << endl;
+        }
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Problem in b47802" << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::b47663()
+{
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        DataFactoryPtr mdg2  = DataFactory::getDataFactory();
+    
+        mdg->addType("myspace","Root");
+        mdg->addType("myspace","ListItem");
+        mdg->addType("myspace","Item");
+
+        mdg->addPropertyToType("myspace","Root","itemref",
+                           "myspace","Item", false, false, false);
+
+        mdg->addPropertyToType("myspace","Root","itemcont",
+                           "myspace","Item", false, false, true);
+
+        mdg->addPropertyToType("myspace","Root","items",
+                           "myspace","ListItem", true, false, true);
+
+        mdg2->addType("myspace","Root");
+        mdg2->addType("myspace","ListItem");
+        mdg2->addType("myspace","Item");
+
+        mdg2->addPropertyToType("myspace","Root","itemref",
+                           "myspace","Item", false, false, false);
+
+        mdg2->addPropertyToType("myspace","Root","itemcont",
+                           "myspace","Item", false, false, true);
+
+        mdg2->addPropertyToType("myspace","Root","items",
+                           "myspace","ListItem", true, false, true);
+
+
+
+        const Type& tcc = mdg->getType("myspace","Root");
+        const Type& tcl = mdg->getType("myspace","ListItem");
+        const Type& tci = mdg->getType("myspace","Item");
+
+        DataObjectPtr dor = mdg->create((Type&)tcc);
+        DataObjectPtr it1 = mdg->create((Type&)tci);
+        DataObjectList& dol1 = dor->getList("items");
+        DataObjectPtr li11 = mdg->create(tcl);
+        DataObjectPtr li12 = mdg->create(tcl);
+
+        
+        const Type& tcc2 = mdg2->getType("myspace","Root");
+        const Type& tcl2 = mdg2->getType("myspace","ListItem");
+        const Type& tci2 = mdg2->getType("myspace","Item");
+        DataObjectPtr dor2 = mdg2->create((Type&)tcc2);
+        DataObjectPtr it2 = mdg2->create((Type&)tci2);
+        DataObjectList& dol2 = dor2->getList("items");
+        DataObjectPtr li21 = mdg2->create(tcl2);
+        DataObjectPtr li22 = mdg2->create(tcl2);
+
+
+        try 
+        {
+            // append from wrong factory to list
+            dol1.append(li21);
+            //cout << "ERROR - 47764 should not append from wrong factory" << endl;
+            //cout << "Updated test case: Correctly used data object from compatible factory" <<
+            //    endl;
+        }
+        catch (SDOInvalidConversionException e)
+        {
+            if (!silent)cout << "ERROR: Incorrect invalid conversion exception" << e << endl;
+            return 0;
+        }
+
+        try 
+        {
+            // add object from wrong factory to reference.
+            dor2->setDataObject("itemref",it1);
+            return 0;
+        }
+        catch (SDOUnsupportedOperationException e)
+        {
+            // expected ,as a reference cannot be outside the graph
+        }
+
+        try 
+        {
+            // add object from wrong factory to reference.
+            dor2->setDataObject("itemcont",it1);
+        }
+        catch (SDORuntimeException e)
+        {
+            if (!silent)cout << "Add contained object from second factory not OK" << endl;
+            return 0;
+        }
+
+
+        dol2.append(li22); // OK
+
+        try 
+        {
+            dol2.insert(0,li11);
+            //cout << "Updated test case: Correctly used data object from compatible factory" <<
+            //    endl;
+            //cout << "ERROR - 47764 should not insert from wrong factory" << endl;
+        }
+        catch (SDOInvalidConversionException e)
+        {
+            if (!silent)cout << "Incorrect invalid conversion exception" << e << endl;
+            return 0;
+        }
+
+       try 
+        {
+            dol2.setDataObject(0,li12);
+            //cout << "Updated test case: Correctly used data object from compatible factory" <<
+            //    endl;
+            // cout << "ERROR - 47764 should not set in list from wrong factory" << endl;
+        }
+        catch (SDOInvalidConversionException e)
+        {
+            if (!silent)cout << "Incorrect invalid conversion exception" << e << endl;
+            return 0;
+        }
+        return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Problem in b47663" << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::bunique()
+{
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        mdg->addType("test","Root");
+        mdg->addType("test","Duplicate");
+        mdg->addType("nottest","Duplicate");
+        mdg->addType("test","Unique");
+        mdg->addType("test","Object");
+
+        mdg->addPropertyToType("test","Root","duplicate",
+                           "test","Duplicate", false, false, true);
+
+        mdg->addPropertyToType("test","Root","duplicate2",
+                           "nottest","Duplicate", false, false, true);
+ 
+        mdg->addPropertyToType("test","Root","unique",
+                            "test","Unique", false, false, true);
+
+        mdg->addPropertyToType("test","Root","duplicatelist",
+                           "test","Duplicate", true, false, true);
+
+        mdg->addPropertyToType("test","Root","duplicatelist2",
+                           "nottest","Duplicate", true, false, true);
+
+        mdg->addPropertyToType("test","Root","uniquelist",
+                           "test","Unique", true, false, true);
+
+        mdg->addPropertyToType("test","Duplicate","id",
+                           "commonj.sdo","Integer", false, false, false);
+ 
+        mdg->addPropertyToType("nottest","Duplicate","id",
+                           "commonj.sdo","Integer", false, false, false);
+ 
+        mdg->addPropertyToType("test","Unique","id",
+                           "commonj.sdo","Integer", false, false, false);
+
+        mdg->addPropertyToType("test","Duplicate","ob",
+                           "test","Object", false, false, true);
+ 
+        mdg->addPropertyToType("nottest","Duplicate","ob",
+                           "test","Object", false, false, true);
+ 
+        mdg->addPropertyToType("test","Unique","ob",
+                           "test","Object", false, false, true);
+
+        const Type& troot = mdg->getType("test","Root");
+        const Type& tdup1 = mdg->getType("test","Duplicate");
+        const Type& tdup2 = mdg->getType("nottest","Duplicate");
+        const Type& tuniq = mdg->getType("test","Unique");
+        const Type& tob   = mdg->getType("test","Object");
+
+        DataObjectPtr rooty = mdg->create(troot);
+
+        DataObjectPtr dup1 = mdg->create(tdup1);
+        dup1->setInteger("id",1);
+        DataObjectPtr dup2 = mdg->create(tdup1);
+        dup2->setInteger("id",2);
+        DataObjectPtr dup3 = mdg->create(tdup2);
+        dup3->setInteger("id",3);
+        DataObjectPtr dup4 = mdg->create(tdup2);
+        dup4->setInteger("id",4);
+        DataObjectPtr uni1 = mdg->create(tuniq);
+        uni1->setInteger("id",5);
+        DataObjectPtr uni2 = mdg->create(tuniq);
+        uni2->setInteger("id",6);
+
+        DataObjectPtr ob1 = mdg->create(tob);
+        dup1->setDataObject("ob",ob1);
+        DataObjectPtr ob2 = mdg->create(tob);
+        dup2->setDataObject("ob",ob2);
+        DataObjectPtr ob3 = mdg->create(tob);
+        uni1->setDataObject("ob",ob3);
+ 
+        DataObjectList& dl1 = rooty->getList("duplicatelist");
+        DataObjectList& dl2 = rooty->getList("duplicatelist2");
+        DataObjectList& dl3 = rooty->getList("uniquelist");
+
+        rooty->setDataObject("duplicate",dup1);
+        dl1.append(dup2);
+
+        rooty->setDataObject("duplicate2",dup3);
+        dl2.append(dup4);
+        
+        rooty->setDataObject("unique",uni1);
+
+        dl3.append(uni2);
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        TypeList tl = mdg->getTypes();
+
+        xsh->generateFile(tl,"bunique-out.xsd","test");
+
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+
+        xmh->save(rooty,"","rooty","bunique-out.xml");
+
+        if (!comparefiles("bunique-out.xsd","bunique-out.txt")) return 0;
+        if (!comparefiles("bunique-out.xml","bunique-outxml.txt")) return 0;
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Problem in bunique" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::buniqueread()
+{
+    try {
+
+        int i,j,k;
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("bunique-out.xsd");
+
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "47293 XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+                return 0;
+            }
+        }
+
+        TypeList tl = mdg->getTypes();
+        for ( k=0;k<tl.size();k++)
+        {
+            //cout << "Type:" << tl[k].getURI() << "#" << tl[k].getName() << endl;
+        }
+
+
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+
+        XMLDocumentPtr doc = xmh->loadFile("bunique-out.xml", "rooty");
+
+        DataObjectPtr rooty = doc->getRootDataObject();
+ 
+        xsh->generateFile(tl,"buniqueread-out.xsd","test");
+
+        xmh->save(rooty,"","rooty","buniqueread-out.xml");
+
+        return comparefiles("buniqueread-out.xml","buniqueread-out.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Problem in buniqueread" << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::testwsdl()
+{
+    try {
+
+        int i,j;
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("wsdl.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "WSDL XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+
+            }
+            return 0;
+        }
+        xsh->defineFile("wsdl-soap.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "WSDL SOAP XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char* m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+
+            }
+            return 0;
+        }
+        xsh->defineFile("wsdl-http.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "WSDL HTTP XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char* m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        TypeList& tl = mdg->getTypes();
+
+        for (i=0;i<tl.size();i++)
+        {
+            //cout << "TYPE:" << tl[i].getURI() << "#" << tl[i].getName() << endl;
+        }
+
+        DataObjectPtr root = mdg->create("http://schemas.xmlsoap.org/wsdl/","tDefinitions");
+
+        
+        DataObjectPtr mess = mdg->create("http://schemas.xmlsoap.org/wsdl/","tMessage");
+        mess->setCString("name","testRequest");
+
+        DataObjectPtr part = mdg->create("http://schemas.xmlsoap.org/wsdl/","tPart");
+        part->setCString("name","name");
+        part->setCString("type","http://www.w3.org/2001/XMLSchema-instance#string");
+
+        DataObjectPtr part2 = mdg->create("http://schemas.xmlsoap.org/wsdl/","tPart");
+        part2->setCString("name","name");
+        part2->setCString("type","http://I want/this/added/to/the/urls#string");
+
+ 
+        DataObjectList& dol = root->getList("message");
+
+        dol.append(mess);
+
+        DataObjectList& dol2 = mess->getList("part");
+
+        dol2.append(part);
+        dol2.append(part2);
+ 
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+
+        xmh->save(root,"","definitions","testwsdl.xml");
+
+        return comparefiles("testwsdl.xml","testwsdl.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "testwsdl failed" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+
+
+int sdotest::travel()
+{
+    try {
+
+        int i,j;
+
+        FILE *f = fopen("travel.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open travel.dat" << endl;
+            return 0;
+        }
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("TravelBookingSchema.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "WSDL XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+ 
+        TypeList& tl = mdg->getTypes();
+
+        fprintf(f, "*******************************TYPES**********************\n");
+
+        for (i=0;i<tl.size();i++)
+        {
+            fprintf(f,"TYPE:%s#%s\n",tl[i].getURI(),tl[i].getName());
+        }
+        fprintf(f, "*******************************END TYPES******************\n");
+
+ 
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+ 
+        XMLDocumentPtr doc = xmh->loadFile("TravelBookingUsingSchema.xml");
+
+        DataObjectPtr rooty = doc->getRootDataObject();
+
+        fprintf(f, "*******************************DATA**********************\n");
+        printDataObject(f, rooty);
+        fprintf(f,"***************************END DATA**********************\n");
+       
+        fclose(f);
+        return comparefiles("travel.dat","travel.txt");
+ 
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "travel failed" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+
+int sdotest::oddchars()
+{
+    try {
+
+        int i,j;
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("OddChars.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "ODDCHARS XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+ 
+ 
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+ 
+        XMLDocumentPtr doc = xmh->loadFile("OddChars.xml");
+
+        if ((i = xmh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "OddChars reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xmh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        DataObjectPtr rooty = doc->getRootDataObject();
+
+        FILE *f = fopen ("oddchars.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open oddchars.dat" << endl;
+            return 0;
+        }
+        printDataObject(f, rooty);
+ 
+        fclose(f);
+        return comparefiles("oddchars.dat","oddchars.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "oddchars failed" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::unsetlist()
+{
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+    
+        mdg->addType("test","Root");
+        mdg->addType("test","ListItem");
+
+        mdg->addPropertyToType("test","Root","list",
+                           "test","ListItem", true, false, true);
+
+        const Type& troot = mdg->getType("test","Root");
+        const Type& tlist = mdg->getType("test","ListItem");
+
+        DataObjectPtr rooty = mdg->create(troot);
+
+        DataObjectList& dl = rooty->getList("list");
+
+
+        DataObjectPtr li1 = mdg->create(tlist);
+        DataObjectPtr li2 = mdg->create(tlist);
+        DataObjectPtr li3 = mdg->create(tlist);
+
+        
+        dl.append(li1);
+        dl.append(li2);
+        dl.append(li3);
+
+        rooty->unset("list[3]");
+
+        dl.append(li3);
+
+        rooty->unset("list.2");
+       
+        return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Problem in unsetlist" << e << endl;
+        return 0;
+    }
+}
+
+
+int sdotest::notns()
+{
+    try {
+
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+
+        mdg->addType("","Root");
+        mdg->addType("","ListItem");
+
+        mdg->addPropertyToType("","Root","list",
+                           "","ListItem", true, false, true);
+
+        const Type& troot = mdg->getType("","Root");
+        const Type& tlist = mdg->getType("","ListItem");
+
+        DataObjectPtr rooty = mdg->create(troot);
+
+        DataObjectList& dl = rooty->getList("list");
+
+
+        DataObjectPtr li1 = mdg->create(tlist);
+        DataObjectPtr li2 = mdg->create(tlist);
+        DataObjectPtr li3 = mdg->create(tlist);
+
+        
+        dl.append(li1);
+        dl.append(li2);
+        dl.append(li3);
+
+ 
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+
+        xmh->save(rooty,"","root","notns.xml");
+
+        return comparefiles("notns.xml","notns.txt");
+
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "notns" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+int sdotest::badelement()
+{
+    try {
+
+        int i,j;
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        xsh->defineFile("BadElement.xsd");
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            if (!silent)
+            {
+                cout << "PROBLEM: BADELEMENT XSD reported some errors:" << endl;
+                for (j=0;j<i;j++)
+                {
+                    const char *m = xsh->getErrorMessage(j);
+                    if (m != 0) cout << m;
+                    cout << endl;
+                }
+            }
+            return 0;
+        }
+
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+ 
+        XMLDocumentPtr doc = xmh->loadFile("BadElement.xml");
+
+        if ((i = xmh->getErrorCount()) > 0)
+        {
+            FILE *f = fopen("badelement.dat","w+");
+            if (f == 0)
+            {
+                if (!silent)cout << "Unable to open badelement.dat" << endl;
+                return 0;
+            }
+            fprintf(f,"BADELEMENT correctly found errors:\n");
+            for (j=0;j<i;j++)
+            {
+                const char *m = xmh->getErrorMessage(j);
+                if (m != 0) fprintf(f,"%s\n", m);
+            }
+            fclose (f);
+            return comparefiles("badelement.dat","badelement.txt");
+        }
+        else
+        {
+            if (!silent)cout << "Expected errors, got none" << endl;
+            return 0;
+        }
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "badelement" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+
+int sdotest::testastyle(FILE *f, const char* style)
+{
+
+    int i,j;
+
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    
+    xsh->defineFile(style);
+
+    if ((i = xsh->getErrorCount()) > 0)
+    {
+        if (!silent)
+        {
+            cout << "PROBLEM: TESTSTYLES XSD reported some errors:" << endl;
+            for (j=0;j<i;j++)
+            {
+                const char *m = xsh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+        }
+        return 0;
+    }
+
+    TypeList& tl = mdg->getTypes();
+
+    fprintf(f,"*****STYLE %s\n",style);
+
+    for (i=0;i<tl.size();i++)
+    {
+        fprintf(f,"Type: %s#%s\n", tl[i].getURI(),tl[i].getName());
+        if (!strcmp(tl[i].getName(),"library"))
+        {
+            PropertyList& pl = tl[i].getProperties();
+            for (int j=0;j<pl.size();j++)
+            {
+                fprintf(f,"Property:%s\n",pl[j].getName());
+            }
+        }
+    }
+
+    fprintf(f, "*************\n");
+
+    // now try creating elements...
+
+    XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+ 
+    XMLDocumentPtr doc = xmh->createDocument(); // with no name, URI - uses first in schema
+
+    DataObjectPtr root = doc->getRootDataObject();
+
+    fprintf(f,"Root is:%s#%s\n",root->getType().getURI(),
+        root->getType().getName());
+
+
+    XMLDocumentPtr doc1 = xmh->createDocument("library"); // with no URI - uses first in schema
+
+    DataObjectPtr root1 = doc1->getRootDataObject();
+
+    fprintf(f,"Root is:%s#%s\n",root1->getType().getURI(), 
+        root1->getType().getName());
+
+    XMLDocumentPtr doc2 = xmh->createDocument("library","libraryNS"); // with URI 
+
+    DataObjectPtr root2 = doc2->getRootDataObject();
+
+    fprintf(f, "Root is:%s#%s\n",root2->getType().getURI(), 
+        root2->getType().getName());
+    return 1;
+
+
+}
+
+int sdotest::teststyles()
+{
+    try 
+    {
+
+        FILE *f = fopen("teststyles.dat","w+");
+        if (f == 0)
+        {
+            if (!silent)cout << "Unable to open teststyles.dat" << endl;
+            return 0;
+        }
+        testastyle(f,"Style1.xsd");
+        testastyle(f,"Style2.xsd");
+        testastyle(f,"Style3.xsd");
+        //testastyle("Style4.xsd"); = groups not supported yet.
+        fclose(f);
+        return comparefiles("teststyles.dat","teststyles.txt");
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "teststyles" << endl << e << endl;
+        return 0;
+    }
+
+}
+
+
+int sdotest::testinc2(const char* inc, const char* name1, const char* name2)
+{
+
+
+    int i,j;
+
+    try {
+
+    FILE *f = fopen(name1,"w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open " << name1 << endl;
+        return 0;
+    }
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    
+    xsh->defineFile(inc);
+
+    if ((i = xsh->getErrorCount()) > 0)
+    {
+        if (!silent)
+        {
+            cout << "PROBLEM: TestInc2 XSD reported some errors:" << endl;
+            for (j=0;j<i;j++)
+            {
+                const char *m = xsh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+        }
+        return 0;
+    }
+
+    TypeList& tl = mdg->getTypes();
+
+    //cout << "***** CALCULATOR ***************************************" << endl;
+
+    for (i=0;i<tl.size();i++)
+    {
+        fprintf(f, "Type:%s#%s\n", tl[i].getURI(),tl[i].getName());
+        PropertyList& pl = tl[i].getProperties();
+        for (int j=0;j<pl.size();j++)
+        {
+            fprintf(f,"Property:%s\n",pl[j].getName());
+        }
+    }
+
+    //cout << "*******************************END TYPES******************" << endl;
+    fclose(f);
+    return comparefiles((char*)name1, (char*)name2);
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Exception in testinc2" << endl;
+        return 0;
+    }
+
+}
+
+
+
+int sdotest::b48300()
+{
+    return testany("bug48300.xsd",0,"bug48300.xml",0);
+}
+
+
+int sdotest::testOrder(const char* x1, const char* x2, const char* name1,
+                       const char* name2)
+{
+
+    int i,j;
+
+    try {
+
+    FILE *f = fopen(name1,"w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open " << name1 << endl;
+        return 0;
+    }
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    
+    xsh->defineFile(x1);
+
+    if ((i = xsh->getErrorCount()) > 0)
+    {
+        if (!silent)
+        {
+            cout << "PROBLEM: Order XSD1 reported some errors:" << endl;
+            for (j=0;j<i;j++)
+            {
+                const char *m = xsh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+        }
+        fclose(f);
+        return 0;
+    }
+
+   xsh->defineFile(x2);
+
+    if ((i = xsh->getErrorCount()) > 0)
+    {
+        if (!silent)
+        {
+            cout << "PROBLEM: Order XSD2 reported some errors:" << endl;
+            for (j=0;j<i;j++)
+            {
+                const char *m = xsh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+        }
+        fclose(f);
+        return 0;
+    }
+
+    TypeList& tl = mdg->getTypes();
+
+    //cout << "***** TESTORDER ****************************************" << endl;
+
+    for (i=0;i<tl.size();i++)
+    {
+        if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
+        fprintf(f,"Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
+        PropertyList& pl = tl[i].getProperties();
+        for (int j=0;j<pl.size();j++)
+        {
+            fprintf(f,"Property:%s\n", pl[j].getName());
+        }
+    }
+
+    //cout << "*******************************END TYPES******************" << endl;
+    
+    fclose(f);
+    return comparefiles((char*)name1, (char*)name2);
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Exception in TestOrder" << e << endl;
+        return 0;
+    }
+}
+
+int sdotest::simple()
+{
+
+
+    int i,j;
+
+    try {
+
+    FILE *f = fopen("simple.dat","w+");
+    if (f == 0)
+    {
+        if (!silent)cout << "Unable to open simple.dat" << endl;
+        return 0;
+    }
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    
+    xsh->defineFile("simple.xsd");
+
+    if ((i = xsh->getErrorCount()) > 0)
+    {
+        if (!silent)
+        {
+            cout << "PROBLEM: Order simple.xsd reported some errors:" << endl;
+            for (j=0;j<i;j++)
+            {
+                const char *m = xsh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+        }
+        return 0;
+    }
+
+
+    TypeList& tl = mdg->getTypes();
+
+    //cout << "***** SIMPLE ****************************************" << endl;
+
+    for (i=0;i<tl.size();i++)
+    {
+        if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
+        fprintf(f, "Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
+        PropertyList& pl = tl[i].getProperties();
+        for (int j=0;j<pl.size();j++)
+        {
+            fprintf(f,"Property:%s\n",pl[j].getName());
+            fprintf(f, "Type of property:%s\n",pl[j].getType().getName());
+            fprintf(f, "IsMany?%d\n",pl[j].isMany());
+        }
+    }
+
+    //cout << "*******************************SIMPLE******************" << endl;
+    
+    XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+ 
+    XMLDocumentPtr doc = xmh->loadFile("simple.xml");
+
+    if ((i = xmh->getErrorCount()) > 0)
+    {
+        if (!silent)
+        {
+            cout << "Simple found errors:" << endl;
+            for (j=0;j<i;j++)
+            {
+                const char *m = xmh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+        }
+        return 0;
+    }
+
+    DataObjectPtr dob = doc->getRootDataObject();
+
+    printDataObject(f, dob);
+
+    fclose(f);
+    return comparefiles("simple.dat","simple.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Exception in TestAny" << e << endl;
+        return 0;
+    }
+}
+
+
+
 
 

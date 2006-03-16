@@ -1,0 +1,57 @@
+***** TYPES BEFORE RESOLVE **********************************
+Type:commonj.sdo#BigDecimal
+Type:commonj.sdo#BigInteger
+Type:commonj.sdo#Boolean
+Type:commonj.sdo#Byte
+Type:commonj.sdo#Bytes
+Type:commonj.sdo#ChangeSummary
+Type:commonj.sdo#Character
+Type:commonj.sdo#DataObject
+Type:commonj.sdo#Date
+Type:commonj.sdo#Double
+Type:commonj.sdo#Float
+Type:commonj.sdo#Integer
+Type:commonj.sdo#Long
+Type:commonj.sdo#Short
+Type:commonj.sdo#String
+Type:commonj.sdo#URI
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#RootType
+Property:template  of type TemplateType
+Property:unboundTemplateParameter  of type unboundTemplateParameter
+Property:description  of type description
+Property:factory  of type factory
+Property:valueprovider  of type valueprovider
+Property:value  of type value
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#TemplateType
+Property:displayName  of type String
+Property:templateType  of type String
+Property:description  of type String
+Property:expert  of type String
+Property:icon  of type String
+Property:verifiers (many)  of type String
+Property:globalHelperArguments (many)  of type String
+Property:unboundTemplateParameters (many)  of type unboundTemplateParameter
+Property:name  of type String
+Property:version  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#description
+Property:description  of type String
+Property:displayName  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#factory
+Property:kind  of type String
+Property:name  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#unboundTemplateParameter
+Property:description  of type description
+Property:verifiers (many)  of type String
+Property:constraints (many)  of type value
+Property:factory  of type factory
+Property:defaults (many)  of type value
+Property:name  of type String
+Property:expert  of type String
+Property:multiplicity  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#value
+Property:description  of type String
+Property:displayName  of type String
+Property:data  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#valueprovider
+Property:values (many)  of type value
+*******************************END TYPES******************

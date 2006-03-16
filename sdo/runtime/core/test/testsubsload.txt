@@ -1,0 +1,7 @@
+TEST: TestSubsLoad ==========================================
+Publication is of type PublicationType
+Publication is of type BookType
+Publication is of type MagazineType
+Book is of type BookType
+Magazine is of type MagazineType
+END TEST: TestSubsLoad ======================================

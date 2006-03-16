@@ -1,0 +1,24 @@
+Normal exception for setting null on undefined prop
+Open Type string value: Value Of Open String
+Open Type boolean value: 1
+EMP1 type property: name ( many? 0) of type String
+EMP1 type property: SN ( many? 0) of type String
+EMP1 type property: manager ( many? 0) of type Boolean
+EMP1 inst property: name (many? 0) of type String
+EMP1 inst property: SN (many? 0) of type String
+EMP1 inst property: manager (many? 0) of type Boolean
+EMP1 inst property: openstring (many? 0) of type Bytes
+EMP1 inst property: openboolean (many? 0) of type Boolean
+EMP1 inst property: opentypelist (many? 1) of type Short
+EMP1 inst property: name (many? 0) of type String
+EMP1 inst property: SN (many? 0) of type String
+EMP1 inst property: manager (many? 0) of type Boolean
+EMP1 inst property: openboolean (many? 0) of type Boolean
+EMP1 inst property: opentypelist (many? 1) of type Short
+EMP1 inst property: name (many? 0) of type String
+EMP1 inst property: SN (many? 0) of type String
+EMP1 inst property: manager (many? 0) of type Boolean
+EMP1 inst property: opentypelist (many? 1) of type Short
+EMP1 inst property: name (many? 0) of type String
+EMP1 inst property: SN (many? 0) of type String
+EMP1 inst property: manager (many? 0) of type Boolean

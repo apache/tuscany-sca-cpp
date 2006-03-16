@@ -1,0 +1,8 @@
+Companys name property is: name
+Companys dept property is:departments
+Departments empl property is:employees
+Departments empl property is:employees
+Employees name property is:name
+Normal exception caught
+Normal exception caught
+Normal exception caught

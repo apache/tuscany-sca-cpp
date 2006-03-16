@@ -1,0 +1,9 @@
+MObject Property companies
+Property:name:Acme
+End of MObject Property companies
+MObject Property companies
+End of MObject Property companies
+Change summary should have no entries...
+MObject Property companies
+End of MObject Property companies
+Change summary should have no entries...

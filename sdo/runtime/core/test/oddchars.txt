@@ -1,0 +1,22 @@
+===== DataObject contents =====
+Flight: list dataObject[0]=
+===== DataObject contents =====
+Departure:string:ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤ÁÂÀ©╣║╗╝¢¥┐└┴┬├─┼ãÃ╚╔╔╩╦╠═╬¤ðÐÊËÈıÍÎÎÏ┘┌█▄¦Ì▀ÓßÔÒõÕµþÞÚÛÙýÝ¯´­±‗¾¶§÷¸°¨·¹³²■ 
+
+Arrival:string:Pound:£ Dollar:$ Euro:Ç or █
+
+flightNo:string:BA243
+
+===== End DataObject =====
+
+Hotel: list (empty)
+Excursion:dataObject
+ - null or unset
+
+Client:dataObject
+ - null or unset
+
+Party:dataObject
+ - null or unset
+
+===== End DataObject =====

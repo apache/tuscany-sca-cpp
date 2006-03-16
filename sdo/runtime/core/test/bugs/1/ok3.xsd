@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.mycompanyinc.com"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:mci="http://www.mycompanyinc.com" elementFormDefault="qualified"
+  version="0.0.1">
+
+  <xsd:complexType name="ok3">
+    <xsd:sequence>
+      <xsd:element name="id" type="xsd:string" />
+      <xsd:element name="name" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

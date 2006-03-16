@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rooty xmlns="test" xsi:type="Root" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns2="nottest" xmlns:tns="test"><duplicate id="1"><ob/></duplicate><tns2:duplicate2 id="3"/><unique id="5"><ob/></unique><duplicatelist id="2"><ob/></duplicatelist><tns2:duplicatelist2 id="4"/><uniquelist id="6"/></rooty>

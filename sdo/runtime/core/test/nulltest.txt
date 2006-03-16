@@ -1,0 +1,91 @@
+Initially - all properties unset, and default values...
+boolean set:0 value false
+byte set:0 value 0
+character set:0 value 0
+short set:0 value 0
+long set:0 value 0
+longlong set:0 value 
+float set:0 value 
+longdouble set:0 value 
+date set:0 value 
+string set:0 value 
+bytes set:0 value 
+object set: 0 value: is empty 
+Should now have all properties set, and zero values...
+boolean set:1 value:false
+byte set:1 value:0
+character set:1 value:0
+short set:1 value:0
+long set:1 value:0
+longlong set:1 value:0
+float set:1 value:0.000e+000
+longdouble set:1 value:0.000e+000
+date set:1 value:0
+string set:1 value:
+bytes set:1 value:
+object set:1 dataobject
+Should be back to having properties unset, and default values...
+boolean set:0 value:false
+byte set:0 value:0
+character set:0 value:0
+short set:0 value:0
+long set:0 value:0
+longlong set:0 value:
+float set:0 value:
+longdouble set:0 value:
+date set:0 value:
+string set:0 value:
+bytes set:0 value:
+object set: 0 dataobject is empty 
+boolean set:1 value:false
+byte set:1 value:0
+character set:1 value:0
+short set:1 value:0
+long set:1 value:0
+longlong set:1 value:0
+float set:1 value:0.000e+000
+longdouble set:1 value:0.000e+000
+date set:0 value:
+string set:1 value:
+bytes set:1 value:
+object set:1 dataobject is empty 
+Modified dataobject
+Should all be null, and default values...
+boolean isNull:1 set:1 value:
+byte isNull:1 set:1 value:
+character isNull:1 set:1 value:
+short isNull:1 set:1 value:
+long isNull:1 set:1 value:
+longlong isNull:1 set:1 value:
+float isNull:1 set:1 value:
+longdouble isNull:1 set:1 value:
+date isNull:1 set:1 value:
+string isNull:1 set:1 value:
+bytes isNull:1 set:1 value:
+object isNull:1 set:1 value empty
+Should all have values, and not be null..
+boolean isNull:0 set:1 value:true
+byte isNull:0 set:1 value:1
+character isNull:0 set:1 value:1
+short isNull:0 set:1 value:1
+long isNull:0 set:1 value:1
+longlong isNull:0 set:1 value:1
+float isNull:0 set:1 value:1.000e+000
+longdouble isNull:0 set:1 value:1.000e+000
+date isNull:1 set:1 value:
+string isNull:0 set:1 value:hello
+bytes isNull:0 set:1 value:hello
+object isNull0 set:1 value: dataobject
+Should all be null, and default values...
+boolean isNull:1 set:1 value:
+byte isNull:1 set:1 value:
+character isNull:1 set:1 value:
+short isNull:1 set:1 value:
+long isNull:1 set:1 value:
+longlong isNull:1 set:1 value:
+float isNull:1 set:1 value:
+longdouble isNull:1 set:1 value:
+date isNull:1 set:1 value:
+string isNull:1 set:1 value:
+bytes isNull:1 set:1 value:
+object isNull;1 set:1 value: empty

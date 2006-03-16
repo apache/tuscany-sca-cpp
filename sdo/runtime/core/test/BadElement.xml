@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Holiday xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:noNamespaceSchemaLocation="TravelBookingSchema.xsd">
+	<Flight flightNo="BA243">
+		<Departure>NCE</Departure>
+		<Arrival>PAR</Arrival>
+		<ThisJustAintPartOfTheSchema>DATA</ThisJustAintPartOfTheSchema>
+	</Flight>
+</Holiday>

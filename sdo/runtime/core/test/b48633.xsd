@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.wrox.com/name" 
+        xmlns:tns="http://www.wrox.com/name"
+        elementFormDefault="qualified">
+
+        <element name="first"  type="string"/>
+        <element name="middle" type="string"/>
+        <element name="last"   type="string"/>
+
+        <complexType name="NameType">
+          <sequence>
+            <element ref="tns:first"/>
+            <element ref="tns:middle"/>
+            <element ref="tns:last"/>
+          </sequence>
+          <attribute name="title"  type="string"/>
+        </complexType>
+            
+        <element name="name" type="tns:NameType"/>
+</schema>
+

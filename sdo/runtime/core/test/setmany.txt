@@ -1,0 +1,24 @@
+ School  :King Norberts
+ Address1:The Place
+ Address2:1 The Avenue
+ Address3:Murchester
+ Address4:England
+ Class   :Primary
+ Teacher :Mr Philbert Chloroform
+ Pupil1  :Witherspoon Jnr
+ Pupil2  :Snape
+ Pupil3  :Thannet
+ Class   :Secondary
+ Teacher :Mr Brian Onasis
+ Pupil1  :Grimbling
+ Pupil2  :Snagget Minor
+ Pupil3  :Van Den Bograt
+Expected path not found exception caught
+Indexed as expected
+Indexed as expected
+Indexed as expected
+Indexed as expected
+Indexed as expected
+Normal index out of range caught
+Debatable behaviour - appended
+ Address4  :PostCode

@@ -1,0 +1,18 @@
+Boolean default is : 1
+Boolean default as a string is true
+Byte default is : 100
+Byte default as a string is 100
+Character default is : 101
+Character default as a string is 101
+Short default is : 300
+Integer default is : 400
+Integer many default is : 800
+Long default is : 500
+Float default is : 600.000
+Double default is : 700.000
+Date default is : 900
+String default length is 4
+HELP
+String default as a string is HELP
+Bytes default length is 4
+HELP

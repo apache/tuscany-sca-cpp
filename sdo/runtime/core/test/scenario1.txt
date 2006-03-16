@@ -1,0 +1,10 @@
+Created object in changed list
+The object is myspace#Company
+===== Modified Object Starts
+Xpath:#/
+The modified objects type is myspace#Root
+===== Old Property Values Begin
+Property companies[0](UNSET) of type DataObject  - object null or unset
+
+===== Old Property Values End 
+=====Modified Object Ends 

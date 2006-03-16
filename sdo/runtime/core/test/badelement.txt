@@ -1,0 +1,2 @@
+BADELEMENT correctly found errors:
+Parser found unknown element ThisJustAintPartOfTheSchema

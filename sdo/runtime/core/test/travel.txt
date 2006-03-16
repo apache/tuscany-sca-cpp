@@ -1,0 +1,145 @@
+*******************************TYPES**********************
+TYPE:#Client
+TYPE:#Excursion
+TYPE:#Flight
+TYPE:#Holiday
+TYPE:#Hotel
+TYPE:#Party
+TYPE:#Person
+TYPE:#Room
+TYPE:#RootType
+TYPE:commonj.sdo#BigDecimal
+TYPE:commonj.sdo#BigInteger
+TYPE:commonj.sdo#Boolean
+TYPE:commonj.sdo#Byte
+TYPE:commonj.sdo#Bytes
+TYPE:commonj.sdo#ChangeSummary
+TYPE:commonj.sdo#Character
+TYPE:commonj.sdo#DataObject
+TYPE:commonj.sdo#Date
+TYPE:commonj.sdo#Double
+TYPE:commonj.sdo#Float
+TYPE:commonj.sdo#Integer
+TYPE:commonj.sdo#Long
+TYPE:commonj.sdo#Short
+TYPE:commonj.sdo#String
+TYPE:commonj.sdo#URI
+*******************************END TYPES******************
+*******************************DATA**********************
+===== DataObject contents =====
+Flight: list dataObject[0]=
+===== DataObject contents =====
+Departure:string:LHR
+
+Arrival:string:SNG
+
+flightNo:string:BA243
+
+===== End DataObject =====
+
+dataObject[1]=
+===== DataObject contents =====
+Departure:string:SNG
+
+Arrival:string:LHR
+
+flightNo:string:SG561
+
+===== End DataObject =====
+
+Hotel: list dataObject[0]=
+===== DataObject contents =====
+Name:string:Excelsior
+
+Phone:string:222-3333
+
+Room:dataObject
+===== DataObject contents =====
+value:string:303
+
+booked:boolean:1
+
+===== End DataObject =====
+
+cardsAccepted:boolean:1
+
+===== End DataObject =====
+
+dataObject[1]=
+===== DataObject contents =====
+Name:string:Seedy Lodge
+
+Phone:string:888-9999
+
+Room:dataObject
+===== DataObject contents =====
+value:string:14
+
+booked:boolean:1
+
+===== End DataObject =====
+
+cardsAccepted:boolean:0
+
+===== End DataObject =====
+
+dataObject[2]=
+===== DataObject contents =====
+Name:string:Hilton
+
+Phone:string:444-5555
+
+Room:dataObject
+===== DataObject contents =====
+value:string:456
+
+booked:boolean:0
+
+===== End DataObject =====
+
+cardsAccepted:boolean:1
+
+===== End DataObject =====
+
+Excursion:dataObject
+===== DataObject contents =====
+Title:string:Bird Baths of Singapore
+
+Cost:string:50
+
+===== End DataObject =====
+
+Client:dataObject
+===== DataObject contents =====
+Name:string:Steve
+
+Address:string:134 Shirley Road
+
+CreditCard:string:1234-8908-6543-900
+
+===== End DataObject =====
+
+Party:dataObject
+===== DataObject contents =====
+Person: list dataObject[0]=
+===== DataObject contents =====
+Name:string:John
+
+===== End DataObject =====
+
+dataObject[1]=
+===== DataObject contents =====
+Name:string:Jane
+
+===== End DataObject =====
+
+dataObject[2]=
+===== DataObject contents =====
+Name:string:Bill
+
+===== End DataObject =====
+
+===== End DataObject =====
+
+===== End DataObject =====
+***************************END DATA**********************

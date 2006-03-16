@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.wrox.com/name" 
+        xmlns:tns="http://www.wrox.com/name">
+
+        <element name="name">
+          <complexType>
+            <sequence>
+              <element name="first"  type="string"/>
+              <element name="middle" type="string"/>
+              <element name="last"   type="string"/>
+              <element name="ages">
+                <simpleType>
+                  <list itemType="positiveInteger"/>
+                </simpleType>
+              </element>
+            </sequence>
+          </complexType>
+        </element>
+            
+   
+</schema>

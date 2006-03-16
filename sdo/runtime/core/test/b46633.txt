@@ -1,0 +1,8 @@
+A modified of type myspace#Department
+Property employees[(null)] was unset before the change
+Property ints[(null)] was unset before the change
+Property bool was unset before the change
+A modified of type myspace#Department
+Property employees[(null)] was unset before the change
+Property ints[(null)] was unset before the change
+Property bool was unset before the change

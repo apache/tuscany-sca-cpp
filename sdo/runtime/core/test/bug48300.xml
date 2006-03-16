@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template:template xmlns:template="http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/" name="CTShop" version="1.0.0">
+  <description>This is my online shop</description>
+  <displayName>The CT Shop</displayName>
+  <templateType>php</templateType>
+  <verifiers/>
+  <globalHelperArguments>
+  </globalHelperArguments>
+    <unboundTemplateParameters name="name" expert="false" multiplicity="1..1">
+      <description>
+        <description>Name for the shop</description>
+        <displayName>Shop Name</displayName>
+      </description>
+      <verifiers>
+	  </verifiers>
+	  <constraints>
+	  </constraints>
+     <defaults>
+            <description></description>
+            <displayName>CT Shop</displayName>
+            <data>CT Shop</data>
+  	 </defaults>
+    </unboundTemplateParameters>
+    <unboundTemplateParameters name="branding" expert="false" multiplicity="1..1">
+      <description>
+        <description>Colour of background for Shop</description>
+        <displayName>Branding</displayName>
+      </description>
+      <verifiers>
+	  </verifiers>
+	  <constraints>
+             <description></description>
+            <displayName>Olive</displayName>
+            <data>Olive</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>Lime</displayName>
+            <data>Lime</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>Gray</displayName>
+            <data>Gray</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>Teal</displayName>
+            <data>Teal</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>Silver</displayName>
+            <data>Silver</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>White</displayName>
+            <data>White</data>
+          </constraints>
+     <defaults>
+            <description></description>
+            <displayName>Olive</displayName>
+            <data>Olive</data>
+	 </defaults>
+    </unboundTemplateParameters>
+    <unboundTemplateParameters name="catalog" expert="false" multiplicity="1..1">
+      <description>
+        <description>Product Catalog for the shop</description>
+        <displayName>Product Catalog</displayName>
+      </description>
+      <verifiers>
+	  </verifiers>
+	  <constraints>
+	  </constraints>
+      <factory kind="php" name="CatalogFactory">
+      </factory>
+     <defaults>
+            <description></description>
+            <displayName>Catalog</displayName>
+            <data>Catalog</data>
+	 </defaults>
+    </unboundTemplateParameters>
+    <unboundTemplateParameters name="cart" expert="false" multiplicity="1..1">
+      <description>
+        <description>Shopping cart for the shop</description>
+        <displayName>Shopping Cart</displayName>
+      </description>
+      <verifiers>
+	  </verifiers>
+	  <constraints>
+            <description></description>
+            <displayName>Cart</displayName>
+            <data>Cart</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>GCCart</displayName>
+            <data>GCCart</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>MyCart</displayName>
+            <data>MyCart</data>
+          </constraints>
+      <factory kind="php" name="CartFactory">
+      </factory>
+     <defaults>
+            <description></description>
+            <displayName>Cart</displayName>
+            <data>Cart</data>
+	 </defaults>
+    </unboundTemplateParameters>
+    <unboundTemplateParameters name="payment" expert="false" multiplicity="1..1">
+      <description>
+        <description>Payment Modules for the shop</description>
+        <displayName>Payment Module</displayName>
+      </description>
+      <verifiers>
+	  </verifiers>
+	  <constraints>
+            <description></description>
+            <displayName>MyPayPal</displayName>
+            <data>MyPayPal</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>PayPal</displayName>
+            <data>PayPal</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>USPayPal</displayName>
+            <data>USPayPal</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>MyStormPay</displayName>
+            <data>MyStormPay</data>
+          </constraints>
+          <constraints>
+            <description></description>
+            <displayName>StormPay</displayName>
+            <data>StormPay</data>
+       </constraints>
+      <factory kind="php" name="PaymentFactory">
+      </factory>
+     <defaults>
+            <description></description>
+            <displayName>PayPal</displayName>
+            <data>PayPal</data>
+      </defaults>
+    </unboundTemplateParameters>
+ </template:template>

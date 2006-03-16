@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+xmlns:lib="libraryNS"  targetNamespace="libraryNS">
+
+  <group name="bookGroup">
+    <sequence>
+      <element name="book">
+  <complexType  >
+    <sequence>
+      <element ref="isbn"/>
+      <element ref="title"/>
+      <element ref="author" minOccurs="0" maxOccurs="unbounded"/>
+      <element ref="character" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute ref="id"/>
+    <attribute ref="available"/>
+  </complexType>
+      </element>
+    </sequence>
+  </group>
+  
+      
+  <element name="character">
+    <complexType>
+      <element name="name" type="string"/>
+    </complexType>
+  </element>
+  
+  <element name="author">
+    <complexType>
+      <element name="name" type="string"/>
+    </complexType>
+  </element>
+  
+  <element name="isbn">
+    <complexType>
+      <element name="value" type="string"/>
+    </complexType>
+  </element>
+  
+  <element name="title">
+    <complexType>
+      <element name="value" type="string"/>
+    </complexType>
+  </element>
+  
+  <element name="available">
+    <complexType>
+      <element name="isInPrint" type="boolean"/>
+    </complexType>
+  </element>
+  
+  <element name="library">
+    <complexType >
+        <sequence>
+        <group ref="lib:bookGroup" maxOccurs="unbounded"/>
+        </sequence>
+        </complexType>
+  </element>
+</schema>

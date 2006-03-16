@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company xmlns="companyNS" xsi:type="CompanyType" xmlns:tns="companyNS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="ACME" employeeOfTheMonth="E0002"><sdo:changeSummary xmlns:sdo="commonj.sdo"/><departments name="Advanced Technologies" location="NY" number="123"><employees name="John Jones" SN="E0001"/><employees name="Mary Smith" SN="E0002" manager="true"/><employees name="Jane Doe" SN="E0003"/></departments></company>

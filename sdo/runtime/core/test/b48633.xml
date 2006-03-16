@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<name
+  xmlns="http://www.wrox.com/name"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-Instance"
+  xsi:schemaLocation="http://www.wrox.com/name name.xsd"
+    title="Mr.">
+    <first>John</first>
+    <middle>Fitzgerald</middle>
+    <last>Doe</last>
+</name>

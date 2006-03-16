@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema version="1.1.0" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="guid" minOccurs="0" maxOccurs="1">
+    <xs:complexType>
+      <xs:extension base="xs:string">
+        <xs:attribute name="isPermaLink" use="optional" type="xs:boolean">
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

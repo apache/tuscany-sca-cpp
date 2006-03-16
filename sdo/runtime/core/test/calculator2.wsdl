@@ -1,0 +1,70 @@
+<?xml version ="1.0" encoding ="UTF-8" ?> 
+<definitions name="Calculator" 
+  targetNamespace="http://example.org/Calculator" 
+  xmlns:calc="http://example.org/CalculatorTypes" 
+  xmlns:tns="http://example.org/Calculator" 
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns="http://schemas.xmlsoap.org/wsdl/"> 
+
+<!-- This is how it's done with an import -->
+<types>
+  <xsd:schema targetNamespace="http://example.org/Calculator">
+    <xsd:import namespace="http://example.org/CalculatorTypes" schemaLocation="calculator.xsd"/>
+  </xsd:schema>
+</types>
+
+ 
+<!-- This is how it's done without an import
+<types>
+ <xsd:schema attributeFormDefault="qualified" elementFormDefault="qualified"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://example.org/Calculator">
+  <xsd:complexType name="AddArguments">
+   <xsd:sequence>
+    <xsd:element name="a" type="xsd:float"/>
+    <xsd:element name="b" type="xsd:float"/>
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:schema>
+</types>
+-->
+
+<message name="getCalculatorRequest"> 
+  <part name="arguments" type="calc:AddArguments"/> 
+</message> 
+<message name="getCalculatorResponse"> 
+  <part name="result" type="xsd:float"/> 
+</message> 
+
+<portType name="CalculatorPortType"> 
+  <operation name="add2"> 
+    <input message="tns:getCalculatorRequest"/> 
+    <output message="tns:getCalculatorResponse"/> 
+  </operation> 
+</portType> 
+
+<binding name="CalculatorBinding" type="tns:CalculatorPortType"> 
+  <soap:binding style="rpc" 
+    transport="http://schemas.xmlsoap.org/soap/http"/> 
+  <operation name="add2"> 
+    <soap:operation soapAction="urn:example-org-calculator#add2"/> 
+    <input> 
+      <soap:body use="encoded" namespace="urn:example-org-calculator" 
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/> 
+    </input> 
+    <output> 
+      <soap:body use="encoded" namespace="urn:example-org-calculator" 
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/> 
+    </output> 
+  </operation> 
+</binding> 
+
+<service name="CalculatorService"> 
+  <port name="CalculatorPort" binding="CalculatorBinding"> 
+    <soap:address location="http://localhost/PHP%20Playground/SoapExtension/ComplexCalculator/calculator_server.php"/> 
+  </port> 
+</service> 
+</definitions> 

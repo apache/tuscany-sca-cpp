@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="TNS" 
+        xmlns:tns="TNS">
+        
+        <complexType name="FormalNameType">
+          <complexContent>
+            <restriction base="tns:NameType">
+              <sequence>
+                <element ref="tns:last"/>
+              </sequence>
+            </restriction>
+          </complexContent>
+        </complexType>
+              
+
+          <complexType name="NameType">
+            <sequence>
+              <element name="first"  type="string"/>
+              <element name="middle" type="string"/>
+              <element name="last"   type="string"/>
+            </sequence>
+            <attribute name="title"  type="string"/>
+          </complexType>
+        
+        <element name="formalname" type="tns:FormalNameType"/>
+        <element name="last"   type="string"/>
+               
+</schema>
+

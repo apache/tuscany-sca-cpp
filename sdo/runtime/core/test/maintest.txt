@@ -1,0 +1,187 @@
+Test Program starting to create types ...
+Manager is sequenced?1
+Manager is sequenced?1
+Manager is sequenced?1
+Manager is sequenced?1
+Manager is sequenced?1
+Manager is sequenced?1
+Manager is sequenced?1
+Should be Company :Company
+Should be 3: 3
+Alias: TheFirm
+Alias: TheBigFirm
+Alias: TheLittleFirm
+Manager is sequenced?1
+BEFORE RESOLUTION
+Printing Types
+Type BigDecimal
+Type BigInteger
+Type Boolean
+Type Byte
+Type Bytes
+Type ChangeSummary
+Type Character
+Type DataObject
+Type Date
+Type Double
+Type Float
+Type Integer
+Type Long
+Type Short
+Type String
+Type URI
+Type Company
+Has Property name of type String
+Has Property address of type String
+Has Property departments of type Department
+Has Property employee of the month of type Employee
+Has Property floatlist of type Float
+Has Property pdg of type Manager
+Has Property shareholder of type Person
+Has Property substring of type DerivedString
+Has Property subdepartments of type SubDepartment
+Type Department
+Has Property name of type String
+Has Property id of type Integer
+Has Property manager of type Manager
+Has Property employees of type Employee
+Type DerivedString
+Type Employee
+Has Property name of type String
+Has Property cubelocation of type String
+Type Manager
+Has Property name of type String
+Has Property officeid of type String
+Has Property string of type String
+Has Property boolean of type Boolean
+Has Property byte of type Byte
+Has Property character of type Character
+Has Property short of type Short
+Has Property long of type Integer
+Has Property longlong of type Long
+Has Property float of type Float
+Has Property longdouble of type Double
+Has Property date of type Date
+Has Property string of type String
+Has Property bytes of type Bytes
+Type Person
+Has Property haircolour of type String
+Has Property name of type String
+Type SubDepartment
+Has Property subname of type String
+AFTER RESOLUTION
+Printing Types
+Type BigDecimal
+Type BigInteger
+Type Boolean
+Type Byte
+Type Bytes
+Type ChangeSummary
+Type Character
+Type DataObject
+Type Date
+Type Double
+Type Float
+Type Integer
+Type Long
+Type Short
+Type String
+Type URI
+Type Company
+Has Property name of type String
+Has Property address of type String
+Has Property departments of type Department
+Has Property employee of the month of type Employee
+Has Property floatlist of type Float
+Has Property pdg of type Manager
+Has Property shareholder of type Person
+Has Property substring of type DerivedString
+Has Property subdepartments of type SubDepartment
+Type Department
+Has Property name of type String
+Has Property id of type Integer
+Has Property manager of type Manager
+Has Property employees of type Employee
+Type DerivedString
+Type Employee
+Has Property haircolour of type String
+Has Property name of type String
+Has Property name of type String
+Has Property cubelocation of type String
+Type Manager
+Has Property haircolour of type String
+Has Property name of type String
+Has Property name of type String
+Has Property officeid of type String
+Has Property string of type String
+Has Property boolean of type Boolean
+Has Property byte of type Byte
+Has Property character of type Character
+Has Property short of type Short
+Has Property long of type Integer
+Has Property longlong of type Long
+Has Property float of type Float
+Has Property longdouble of type Double
+Has Property date of type Date
+Has Property string of type String
+Has Property bytes of type Bytes
+Type Person
+Has Property haircolour of type String
+Has Property name of type String
+Type SubDepartment
+Has Property name of type String
+Has Property id of type Integer
+Has Property manager of type Manager
+Has Property employees of type Employee
+Has Property subname of type String
+Manager is sequenced?1
+This is the sub string - its primitive, but not a string
+acmecorp
+acmecorp
+Expected default boolean (false) : false
+Expected  boolean (true) : true
+Expected default string (0) :  A deleted data object should be zero: 0
+Now able to set
+ - should say now able to set
+
+ Name from deleted item: Now able to set
+0xffffffffffffffff = : -1
+0x7fffffffffffffff =  9223372036854775807
+0x7fffffff =  2147483647
+0x80000000 =  2147483648
+ Expected Wide - got : Wide
+ Expected Thin - got : Thin
+Expecting string, got Wide
+Expected bool true, got 1
+Expected char 23, got 23
+expected wchar 45, got 45Expected short 34, got 34
+Expected long 56 , got 56
+Expected long long 78, got 78
+Expected long double 89, got 89.000
+Expected float 90, got 90.000
+Expected time_t 200, got 200
+Wide[0]=87
+Wide[1]=105
+Wide[2]=100
+Wide[3]=101
+Thin[0]=84
+Thin[1]=104
+Thin[2]=105
+Thin[3]=110
+1.400567.700Should be Bill:Bill
+Should be Bill:Bill
+The employee of the month is Bill
+Now able to set
+pdg correctly identified
+Now able to set
+size of list 5
+Research And Development
+Research And Development
+Department: Research And Development
+Department: Marketing
+Department: Architecture
+Department: Pyrotechnics
+Department: Accounts
+Normal expected exception
+Normal Invalid path exception
+Normal SDOPropertyNotFound exception

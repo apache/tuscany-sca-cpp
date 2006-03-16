@@ -1,0 +1,100 @@
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO
+DataObject type: companyNS#CompanyType
+  Property: name
+  Property Type: commonj.sdo#String
+  Property Value: ACME
+  Property: employeeOfTheMonth
+  Property Type: companyNS#EmployeeType
+  Property Value: not set
+  Property: departments
+  Property Type: companyNS#DepartmentType
+    Value 0
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO
+      DataObject type: companyNS#DepartmentType
+        Property: name
+        Property Type: commonj.sdo#String
+        Property Value: Advanced Technologies
+        Property: location
+        Property Type: commonj.sdo#String
+        Property Value: NY
+        Property: number
+        Property Type: commonj.sdo#String
+        Property Value: 123
+        Property: employees
+        Property Type: companyNS#EmployeeType
+          Value 0
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO
+            DataObject type: companyNS#EmployeeType
+              Property: name
+              Property Type: commonj.sdo#String
+              Property Value: Albert
+              Property: SN
+              Property Type: commonj.sdo#String
+              Property Value: E0001
+              Property: manager
+              Property Type: commonj.sdo#Boolean
+              Property Value: not set
+              Property: openstring
+              Property Type: commonj.sdo#Bytes
+              Property Value: Value Of Open String
+              Property: openboolean
+              Property Type: commonj.sdo#Boolean
+              Property Value: true
+              Property: openintlist
+              Property Type: commonj.sdo#Short
+                Value 0
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO
+                  DataObject type: commonj.sdo#Short
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do
+
+              Property: opendataobjectlist
+              Property Type: companyNS#OpenType
+                Value 0
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO
+                  DataObject type: companyNS#OpenType
+                    Property: name
+                    Property Type: commonj.sdo#String
+                    Property Value: MyOpenName
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do
+
+              Property: opendataobject
+              Property Type: companyNS#OpenType
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO
+                DataObject type: companyNS#OpenType
+                  Property: name
+                  Property Type: commonj.sdo#String
+                  Property Value: MyOpenName
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do
+
+          Value 1
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO
+            DataObject type: companyNS#EmployeeType
+              Property: name
+              Property Type: commonj.sdo#String
+              Property Value: Boris
+              Property: SN
+              Property Type: commonj.sdo#String
+              Property Value: E0002
+              Property: manager
+              Property Type: commonj.sdo#Boolean
+              Property Value: true
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do
+
+          Value 2
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO
+            DataObject type: companyNS#EmployeeType
+              Property: name
+              Property Type: commonj.sdo#String
+              Property Value: Carl
+              Property: SN
+              Property Type: commonj.sdo#String
+              Property Value: E0003
+              Property: manager
+              Property Type: commonj.sdo#Boolean
+              Property Value: not set
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do

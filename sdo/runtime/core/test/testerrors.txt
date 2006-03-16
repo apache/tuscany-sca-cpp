@@ -1,0 +1,7 @@
+XSD reported some errors:
+Opening and ending tag mismatch: complexType line 24 and schema
+
+Premature end of data in tag schema line 2
+
+XML reported some errors:
+Parser found unknown element company

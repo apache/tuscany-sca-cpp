@@ -1,0 +1,108 @@
+Created object in changed list
+The object is myspace#Employee
+===== Modified Object Starts
+Xpath:#/companies.0/departments.0
+The modified objects type is myspace#Department
+===== Old Property Values Begin
+Property employees[0] of type DataObject  object still exists 
+
+Property employees[1] of type DataObject  object still exists 
+
+===== Old Property Values End 
+=====Modified Object Ends 
+===== Modified Object Starts
+Xpath:#/companies.0/departments.1
+The modified objects type is myspace#Department
+===== Old Property Values Begin
+Property employees[0] of type DataObject  - object deleted 
+===== Old Property Values Begin
+Property name of type String:Ed Memoire
+
+Property id of type String:1
+
+===== Old Property Values End 
+
+Property employees[1] of type DataObject  object still exists 
+
+===== Old Property Values End 
+=====Modified Object Ends 
+=====Deleted Object Starts 
+===== Old Property Values Begin
+Property name of type String:Ed Memoire
+
+Property id of type String:1
+
+===== Old Property Values End 
+=====Deleted Object Ends 
+=====Deleted Object Starts 
+===== Old Property Values Begin
+Property name of type String:Ivor Payne
+
+Property id of type String:1
+
+===== Old Property Values End 
+=====Deleted Object Ends 
+=====Deleted Object Starts 
+===== Old Property Values Begin
+Property name of type String:Colin Poisson
+
+Property id of type String:2
+
+===== Old Property Values End 
+=====Deleted Object Ends 
+=====Deleted Object Starts 
+===== Old Property Values Begin
+Property name of type String:windows
+
+Property id of type String:1
+
+Property employees[1] of type DataObject  - object deleted 
+===== Old Property Values Begin
+Property name of type String:Colin Poisson
+
+Property id of type String:2
+
+===== Old Property Values End 
+
+Property employees[0] of type DataObject  - object deleted 
+===== Old Property Values Begin
+Property name of type String:Ivor Payne
+
+Property id of type String:1
+
+===== Old Property Values End 
+
+===== Old Property Values End 
+=====Deleted Object Ends 
+===== Modified Object Starts
+Xpath:#/companies.1
+The modified objects type is myspace#Company
+===== Old Property Values Begin
+Property departments[0] of type DataObject  - object deleted 
+===== Old Property Values Begin
+Property name of type String:windows
+
+Property id of type String:1
+
+Property employees[1] of type DataObject  - object deleted 
+===== Old Property Values Begin
+Property name of type String:Colin Poisson
+
+Property id of type String:2
+
+===== Old Property Values End 
+
+Property employees[0] of type DataObject  - object deleted 
+===== Old Property Values Begin
+Property name of type String:Ivor Payne
+
+Property id of type String:1
+
+===== Old Property Values End 
+
+===== Old Property Values End 
+
+Property departments[1] of type DataObject  object still exists 
+
+===== Old Property Values End 
+=====Modified Object Ends 

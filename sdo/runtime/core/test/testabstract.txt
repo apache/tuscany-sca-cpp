@@ -1,0 +1,5 @@
+Normal unsupportedoperation for creation of abstract type
+Publication is of type BookType
+Publication is of type MagazineType
+Book is of type BookType
+Magazine is of type MagazineType

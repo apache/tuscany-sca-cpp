@@ -1,0 +1,47 @@
+<Holiday xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:noNamespaceSchemaLocation="TravelBookingSchema.xsd">
+	<Flight flightNo="BA243">
+		<Departure>LHR</Departure>
+		<Arrival>SNG</Arrival>
+	</Flight>
+	<Flight flightNo="SG561">
+		<Departure>SNG</Departure>
+		<Arrival>LHR</Arrival>
+	</Flight>
+	<Hotel cardsAccepted="true">
+		<Name>Excelsior</Name>
+		<Phone>222-3333</Phone>
+		<Room booked="true">303</Room>
+	</Hotel>
+	<Hotel>
+		<Name>Seedy Lodge</Name>
+		<Phone>888-9999</Phone>
+		<Room booked="true">14</Room>
+	</Hotel>
+	<Hotel cardsAccepted="true">
+		<Name>Hilton</Name>
+		<Phone>444-5555</Phone>
+		<Room booked="false">456</Room>
+		<foo>foo</foo>
+	</Hotel>
+	<Excursion>
+		<Title>Bird Baths of Singapore</Title>
+		<Cost>50</Cost>
+	</Excursion>
+	<Client>
+		<Name>Steve</Name>
+		<Address>134 Shirley Road</Address>
+		<CreditCard>1234-8908-6543-900</CreditCard>
+	</Client>
+	<Party>
+		<Person>
+			<Name>John</Name>
+		</Person>
+		<Person>
+			<Name>Jane</Name>
+		</Person>
+		<Person>
+			<Name>Bill</Name>
+		</Person>
+	</Party>
+</Holiday>

@@ -1,0 +1,22 @@
+=====Deleted Object Starts 
+===== Old Property Values Begin
+Property name of type String:acme
+
+Property id of type String:123
+
+===== Old Property Values End 
+=====Deleted Object Ends 
+===== Modified Object Starts
+Xpath:#/
+The modified objects type is myspace#Root
+===== Old Property Values Begin
+Property companies[0] of type DataObject  - object deleted 
+===== Old Property Values Begin
+Property name of type String:acme
+
+Property id of type String:123
+
+===== Old Property Values End 
+
+===== Old Property Values End 
+=====Modified Object Ends 

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="Holiday">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Flight" maxOccurs="unbounded" minOccurs="1"/>
+                <xsd:element ref="Hotel" maxOccurs="unbounded" minOccurs="1"/>
+                <xsd:element ref="Excursion"/>
+                <xsd:element ref="Client"/>
+                <xsd:element ref="Party"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="Flight">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Departure" type="xsd:string"/>
+                <xsd:element name="Arrival" type="xsd:string"/>
+            </xsd:sequence>
+            <xsd:attribute name="flightNo" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="Hotel">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Name"/>
+                <xsd:element name="Phone" type="xsd:string"/>
+                <xsd:element ref="Room"/>
+            </xsd:sequence>
+            <xsd:attribute name="cardsAccepted" default="false" type="xsd:boolean"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="Room">
+        <xsd:complexType>
+            <xsd:simpleContent>
+                <xsd:extension base="xsd:string">
+                    <xsd:attribute name="booked" use="required" type="xsd:boolean"/>
+                </xsd:extension>
+            </xsd:simpleContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="Party">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Person" maxOccurs="unbounded" minOccurs="1"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+  
+    <xsd:element name="Person">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Name"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+  
+    <xsd:element name="Client">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="Name"/>
+                <xsd:element name="Address" type="xsd:string"/>
+                <xsd:element name="CreditCard" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="Excursion">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Title" type="xsd:string"/>
+                <xsd:element name="Cost" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="Name" type="xsd:string"/>    
+</xsd:schema>

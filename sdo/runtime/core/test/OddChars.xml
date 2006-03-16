@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Holiday xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:noNamespaceSchemaLocation="TravelBookingSchema.xsd">
+	<Flight flightNo="BA243">
+		<Departure>ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤ÁÂÀ©╣║╗╝¢¥┐└┴┬├─┼ãÃ╚╔╔╩╦╠═╬¤ðÐÊËÈıÍÎÎÏ┘┌█▄¦Ì▀ÓßÔÒõÕµþÞÚÛÙýÝ¯´­±‗¾¶§÷¸°¨·¹³²■ </Departure>
+		<Arrival>Pound:£ Dollar:$ Euro:Ç or █</Arrival>
+	</Flight>
+</Holiday>

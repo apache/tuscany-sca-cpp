@@ -1,0 +1,8 @@
+Type:#RootType
+Property:person
+Type of property:String
+IsMany?0
+===== DataObject contents =====
+person:string:someone
+
+===== End DataObject =====

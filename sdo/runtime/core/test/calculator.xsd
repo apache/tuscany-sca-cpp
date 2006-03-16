@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+ <xsd:schema 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:calc="http://example.org/CalculatorTypes"
+  targetNamespace="http://example.org/CalculatorTypes">
+  <xsd:complexType name="AddArguments">
+   <xsd:sequence>
+    <xsd:element name="a" type="xsd:float"/>
+    <xsd:element name="b" type="xsd:float"/>
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:schema>

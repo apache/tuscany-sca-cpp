@@ -1,0 +1,8 @@
+===== Modified Object Starts
+Xpath:#/companies.0
+The modified objects type is myspace#Company
+===== Old Property Values Begin
+Property eotm of type DataObject  object still exists 
+
+===== Old Property Values End 
+=====Modified Object Ends 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mci:company xmlns:mci="http://www.mycompanyinc.com"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.mycompanyinc.com company.xsd"
+  version="0.0.1">
+  <mci:employees>
+    <mci:employee>
+      <mci:id>1</mci:id>
+      <mci:name>Mary Kay</mci:name>
+    </mci:employee>
+  </mci:employees>
+  <mci:departments>
+    <mci:department>
+      <mci:id>3</mci:id>
+      <mci:name>Sales</mci:name>
+      <mci:employeesList>
+        <mci:ids>1</mci:ids>
+      </mci:employeesList>
+    </mci:department>
+  </mci:departments>
+</mci:company>

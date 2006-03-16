@@ -1,0 +1,38 @@
+<!-- 
+ This example simplified version of W3C XML schema primer
+ with added UK postcode
+ http://www.w3.org/TR/xmlschema-0/#DerivExt
+ -->
+     
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="" >
+
+  <complexType name="Address">
+    <sequence>
+      <element name="name"   type="string"/>
+      <element name="street" type="string"/>
+      <element name="city"   type="string"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="USAddress">
+    <complexContent>
+      <extension base="Address">
+        <sequence>
+          <element name="zip"   type="positiveInteger"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+
+  <complexType name="UKAddress">
+    <complexContent>
+      <extension base="Address">
+        <sequence>
+          <element name="postcode" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+
+</schema>

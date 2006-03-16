@@ -1,0 +1,42 @@
+===== Modified Object Starts
+Xpath:#/
+The modified objects type is NullNS#NullMainType
+===== Old Property Values Begin
+Property asub of type DataObject  object still exists 
+
+Property bsub(UNSET) of type DataObject  - object null or unset
+
+===== Old Property Values End 
+=====Modified Object Ends 
+===== Modified Object Starts
+Xpath:#/subs.0
+The modified objects type is NullNS#NullSubType
+===== Old Property Values Begin
+Property name of type String:All Initially set
+
+Property number of type Integer:100
+
+Property bool of type Boolean:0
+
+===== Old Property Values End 
+=====Modified Object Ends 
+===== Modified Object Starts
+Xpath:#/subs.1
+The modified objects type is NullNS#NullSubType
+===== Old Property Values Begin
+Property bool(UNSET) of type Boolean:0
+
+===== Old Property Values End 
+=====Modified Object Ends 
+===== Modified Object Starts
+Xpath:#/subs.2
+The modified objects type is NullNS#NullSubType
+===== Old Property Values Begin
+Property name(ISNULL) of type String:
+
+Property number(ISNULL) of type Integer:0
+
+Property bool(ISNULL) of type Boolean:0
+
+===== Old Property Values End 
+=====Modified Object Ends 

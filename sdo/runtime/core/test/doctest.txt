@@ -1,0 +1,2 @@
+RootURI=companyNS
+RootName=company

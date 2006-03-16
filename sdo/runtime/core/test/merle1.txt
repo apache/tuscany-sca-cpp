@@ -1,0 +1,10 @@
+<SubscriptionId>I am the subscription ID string</SubscriptionId>
+<AssociateTag>I am the associate Tag string</AssociateTag>
+<XMLEscaping>I am the XML escaping string</XMLEscaping>
+<Validate>I am the Validate string</Validate>
+DataObject "Shared" as XML:
+<Shared xmlns="axis" xsi:type="ItemSearchRequest" xmlns:tns="axis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Keywords>SharedKeywordsString</Keywords><SearchIndex>SearchIndexString</SearchIndex></Shared>
+
+DataObject "Request" as XML:
+<Request xmlns="axis" xsi:type="ItemSearchRequest" xmlns:tns="axis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><Keywords>RequestKeywords</Keywords><SearchIndex>RequestSearchIndex</SearchIndex></Request>
+

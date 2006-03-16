@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
+ *  Copyright 2005 International Business Machines Corporation
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,32 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:31 $ */
+/* $Id: sdotest.h,v 1.21 2006/03/16 12:21:04 slattery Exp $ */
 
 #include "commonj/sdo/SDO.h"
 using namespace commonj::sdo;
 
+
+// test
+
 class sdotest {
     public:
+
+        static bool silent;
+        static bool ramping;
+
+        /* utilities */
+
+        static int  printseq(FILE *f, SequencePtr sptr);
+        static void printDataStructure(FILE *f,DataFactory* dd);
+        static void printDataObject(FILE *f, DataObjectPtr dol);
+        static void printValue(FILE *f, DataObjectPtr dob, const Property& prop);
+        static void printList(FILE *f, DataObjectPtr dob, const Property& prop);
+        static void printOldValues(FILE *f, ChangeSummaryPtr cs, DataObjectPtr dob);
+        static void dumpchangesummary(FILE *f, ChangeSummaryPtr cs);
+        static int  comparefiles(char* fn1, char*fn2);
+        static int dumpproperties(FILE *f, DataObjectPtr root);
+        static int printset(FILE *f, ChangeSummaryPtr cs);
 
 
         static void changeSummaryHeader(ChangeSummaryPtr cs);
@@ -31,93 +50,133 @@ class sdotest {
         static void changeSummaryElements(int indent, ChangeSummaryPtr cs, DataObjectPtr dob);
         static void changeSummarySetting(Setting& s);
         static bool changeSummaryAttributes(ChangeSummaryPtr cs, DataObjectPtr dol);
+        static char* convert(const char* uri);
 
-        static void b47293();
-        static void propdefaulttest();
-        static void showdefault(const Type& tm);
-        static void graham5();
-        static void graham4();
-        static void leak();
-        static void twolists();
-        static void printset(ChangeSummaryPtr cs);
-        static void detachtest();
-        static void includetest();
-        static void testLoad();
-        static void b46633();
-        static void clonetest();
-        static void testUtil();
-        static void testErrors();
-        static void b46734();
-        static void b46693();
-        static void b46634();
-        static void b46613();
-        static void b46617();
-        static void b46617b();
-        static void doctest();
-        static void notfound();
+        /* work in progress - generation of structures */
 
+        static void generate(DataFactoryPtr fac);
+ 
+        /* tests */
 
-        static void serializeChangeSummary(ChangeSummaryPtr cs);
-        static void cssave();
-        static void csload();
-        static void cssave2();
-        static void csload2();
-        static void bug2();
-        static void setnull();
-        static void bug45933();
-        static void testsubsload();
-        static void testabstract();
-        static void testsubs();
-        static void testSCA();
-        static void testOpen();
-        static void saveOpen();
-        static void loadOpen();
-        static void testui();
-        static void merle1();
-        static void graham1();
-        static void graham2();
-        static void graham3();
-        static void loadManyOpen();
-        static void loadOpenNS();
+        static int testgenerate(const char* xsd, const char* output);
+        static int emptycs();
+        static int compatiblefactory();
+        static int transferto(DataObjectPtr d, DataFactoryPtr f, bool expecterror);
+        static int openseq();
+        static int testanytwo(const char* xsd, 
+        const char* xsd2, const char* xml);
+        static int testany(const char* xsd,
+            const char* acceptedxsderror, 
+            const char* xml,
+            const char* acceptedxmlerror);
+        static int testOrder(const char* x1, const char* x2,
+            const char* name1, const char* name2);
+        static int simple();
+        static int testinc2(const char* inc, const char* name1,
+            const char* name2);
+        static int testastyle(FILE *f, const char* style);
+        static int teststyles();
+        static int badelement();
+        static int oddchars();
+        static int notns();
+        static int unsetlist();
+        static int travel();
+        static int testwsdl();
+        static int bunique();
+        static int buniqueread();
+        static int propdefaulttest();
+        static int showdefault(FILE *f, const Type& tm);
+        static int graham6();
+        static int graham5();
+        static int graham4();
+        static int leak();
+        static int twolists();
+         static int detachtest();
+        static int includetest();
+        static int testLoad();
+        static int clonetest();
+        static int testUtil();
+        static int testErrors();
+        static int doctest();
+        static int notfound();
+        static int serializeChangeSummary(ChangeSummaryPtr cs);
+        static int cssave();
+        static int csload();
+        static int cssave2();
+        static int csload2();
+        static int bug1();
+        static int bug2();
+        static int setnull();
+        static int testsubsload();
+        static int testabstract();
+        static int testsubs();
+        static int testSCA();
+        static int testOpen();
+        static int saveOpen();
+        static int loadOpen();
+        static int testui();
+        static int merle1();
+        static int graham1();
+        static int graham2();
+        static int graham3();
+        static int loadManyOpen();
+        static int loadOpenNS();
         
         
-        static  void eqhelpertest();
-        static  void cohelpertest();
-        static  void datetest();
-        static  void matttest1();
-        static  void adddeletetest();
-        static  void carotest3();
-        static  void carotest2();
-        static  void carotest();
-        static  void setmany();
-        static  void noncontest();
-        static  void versiontest();
-        static  void defaulttest();
-        static void querytest();
-        static void getproptest();
-        static void nulltest();
-        static void usertest();
-        static void rcptest();
-        static void boolbug();
-        static void scope1();
-        static void scope2();
-        static void scope3();
-        static void conversiontest();
-        static void changesummarytest();
-        static void scenario1();
-        static void scenario2();
-        static void scenario3();
-        static void scenario4();
-        static void scenario5();
-        static void printseq(SequencePtr sptr);
-        static void seqtest();
-        static void printDataObject(DataObjectPtr dol);
-        static void printValue(DataObjectPtr dob, const Property& prop);
-        static void printList(DataObjectPtr dob, const Property& prop);
-        static void printOldValues(ChangeSummaryPtr cs, DataObjectPtr dob);
-        static void dumpchangesummary(ChangeSummaryPtr cs);
-        static void dumpproperties(DataObjectPtr root);
-        static void testGetters(DataObjectPtr dor);
-        static void testGetter(DataObjectPtr dor, char* str);
-        static int main(int argc, char** argv);
+        static int eqhelpertest();
+        static int cohelpertest();
+        static int datetest();
+        static int matttest1();
+        static int adddeletetest();
+        static int carotest3();
+        static int carotest2();
+        static int carotest();
+        static int setmany();
+        static int noncontest();
+        static int versiontest();
+        static int defaulttest();
+        static int querytest();
+        static int getproptest();
+        static int nulltest();
+        static int usertest();
+        static int rcptest();
+        static int boolbug();
+        static int scope1();
+        static int scope2();
+        static int scope3();
+        static int conversiontest();
+        static int changesummarytest();
+        static int scenario1();
+        static int scenario2();
+        static int scenario3();
+        static int scenario4();
+        static int scenario5();
+        static int seqtest();
+        static int printDataObject(DataObjectPtr dol);
+        static int printValue(DataObjectPtr dob, const Property& prop);
+        static int printList(DataObjectPtr dob, const Property& prop);
+        static int printOldValues(ChangeSummaryPtr cs, DataObjectPtr dob);
+        static int testGetters(DataObjectPtr dor);
+        static int testGetter(DataObjectPtr dor, char* str);
+        static int maintest();
+        
+        static int b48602();
+        static int b48736();
+        static int b48686();
+        static int b48601();
+        static int b48300();
+        static int b47663();
+        static int b47764();
+        static int b47802();
+        static int b47293();
+        static int b47137();
+        static int b47137b();
+        static int b46633();
+        static int b46734();
+        static int b46693();
+        static int b46634();
+        static int b46613();
+        static int b46617();
+        static int b46617b();
+        static int b45933();
 };
