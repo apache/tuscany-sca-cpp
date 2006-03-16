@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/03/16 12:21:39 $ */
 
 #include "commonj/sdo/SDOUtils.h"
 
@@ -34,11 +34,11 @@ namespace commonj {
 // Print Tabs
 //////////////////////////////////////////////////////////////////////////
 
-        void SDOUtils::printTabs(unsigned int incr)
+        void SDOUtils::printTabs(ostream& out, unsigned int incr)
         {
             for (int ind=0; ind < incr; ind++)
             {
-                cout << "  ";
+                out << "  ";
             }
         }
 
@@ -46,24 +46,24 @@ namespace commonj {
 // Print a DatObject tree
 //////////////////////////////////////////////////////////////////////////
 
-        void SDOUtils::printDataObject(DataObjectPtr dataObject)
+        void SDOUtils::printDataObject(ostream& out, DataObjectPtr dataObject)
         {
-            printDataObject(dataObject,0);
+            printDataObject(out, dataObject,0);
         }
 
 
-        void SDOUtils::printDataObject(DataObjectPtr dataObject,
+        void SDOUtils::printDataObject(ostream& out ,DataObjectPtr dataObject,
             unsigned int incr)
         {
     
-            cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO" 
+            out << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start of DO" 
                  << endl;
     
             if (!dataObject)return;
 
             const Type& dataObjectType = dataObject->getType();
-            printTabs(incr);
-            cout << "DataObject type: " 
+            printTabs(out, incr);
+            out << "DataObject type: " 
                  << dataObjectType.getURI() 
                  << "#" << dataObjectType.getName() << endl;
     
@@ -75,14 +75,14 @@ namespace commonj {
             PropertyList pl = dataObject->getInstanceProperties();
             for (int i = 0; i < pl.size(); i++)
             {
-                printTabs(incr);
-                cout << "Property: " << pl[i].getName() << endl;
+                printTabs(out, incr);
+                out << "Property: " << pl[i].getName() << endl;
         
                 const Type& propertyType = pl[i].getType();
         
-                printTabs(incr);
+                printTabs(out, incr);
 
-                cout << "Property Type: " 
+                out << "Property Type: " 
                      << propertyType.getURI() 
                      << "#" << propertyType.getName() << endl;
         
@@ -96,14 +96,20 @@ namespace commonj {
                     {
                         incr++;
                         DataObjectList& dol = dataObject->getList(pl[i]);
+                        char cc[20];
                         for (int j = 0; j <dol.size(); j++)
                         {
-                            printTabs(incr);
-                            cout << "Value " << j <<endl;
+                            printTabs(out, incr);
+                            // seems to be a bug in ostream? Will not print j 
+                            // as an integer.
+                            out << "Value ";
+                            sprintf(cc,"%d",j);
+                            out << cc;
+                            out << endl;
                             incr++;
-                            printDataObject(dol[j],incr);
+                            printDataObject(out, dol[j],incr);
                             incr--;
-                            cout << endl;
+                            out << endl;
                         }
                         incr--;
                     } // end IsMany
@@ -113,8 +119,8 @@ namespace commonj {
                     //////////////////////////////////////////////////////////////////////
                     else if (propertyType.isDataType())
                     {
-                        printTabs(incr);
-                        cout<< "Property Value: " 
+                        printTabs(out, incr);
+                        out<< "Property Value: " 
                             << dataObject->getCString(pl[i]) <<endl ; 
                     }
             
@@ -124,19 +130,19 @@ namespace commonj {
                     else
                     {
                         incr++;
-                        printDataObject(dataObject->getDataObject(pl[i]),incr);
+                        printDataObject(out, dataObject->getDataObject(pl[i]),incr);
                         incr--;
                     }
                 }
                 else
                 {
-                    printTabs(incr);
-                    cout << "Property Value: not set" <<endl ; 
+                    printTabs(out, incr);
+                    out << "Property Value: not set" <<endl ; 
                 }
         
             }
             incr--;
-            cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do" << endl;
+            out << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do" << endl;
         }
     };
 };

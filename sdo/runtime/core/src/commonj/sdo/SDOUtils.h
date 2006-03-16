@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/03/16 12:21:39 $ */
 
 #ifndef _SDOUTILS_H_
 #define _SDOUTILS_H_
@@ -38,11 +38,11 @@ namespace commonj
             
         public:
             
-            static SDO_API void printDataObject(DataObjectPtr d);                
+            static SDO_API void printDataObject(ostream& out, DataObjectPtr d);                
             
         private:
-            static void printDataObject(DataObjectPtr d, unsigned int incr);                
-            static void printTabs(unsigned int incr);
+            static void printDataObject(ostream& out, DataObjectPtr d, unsigned int incr);                
+            static void printTabs(ostream& out, unsigned int incr);
         };
     } // End - namespace sdo
 } // End - namespace commonj
