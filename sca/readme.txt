@@ -25,13 +25,11 @@ Known restrictions
   * Subsystem wiring, entry points and external services are not supported.
   * Remotable services that will be bound to the web service binding must have
     an interface with a single input parameter which is an SDO DataObjectPtr,
-	and a single return typer which is an SDO DataObjectPtr.
+	and a single return type which is an SDO DataObjectPtr.
   * Local service interfaces cannot use overloaded operations (the SCA
     specification limits remote service interfaces to not using overloaded
 	operations).
   * Only component properties with simple types are supported.
-  * No optimization for subsystem communication when subsystems are located in
-    the same system.
   * Each WSDL definition for a web service binding must be in a single WSDL
     document.
   * No load time validation of the deployed SCA application (run time validation
