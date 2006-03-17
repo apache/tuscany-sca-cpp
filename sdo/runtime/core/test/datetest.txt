@@ -1,8 +1,4 @@
 Name of the company is DateTest
 Set start of the company is 1000
 Review number:0 was:2000
-Formatted:0 was:Thu Jan 01 00:33:20 1970
-
 Review number:1 was:4000
-Formatted:1 was:Thu Jan 01 01:06:40 1970
-

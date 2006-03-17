@@ -3573,7 +3573,11 @@ int sdotest::datetest()
     for (int i=0;i < dol.size(); i++)
     {
         fprintf(f,"Review number:%d was:%d\n", i,dol.getDate(i).getTime());
-        fprintf(f,"Formatted:%d was:%s\n",i,dol.getDate(i).ascTime());
+
+        // ascTime gives different values on windows and linux,
+        // so comparison of the output is not a valid test.
+
+        //fprintf(f,"Formatted:%d was:%s\n",i,dol.getDate(i).ascTime());
     }
 
     cs->endLogging();
