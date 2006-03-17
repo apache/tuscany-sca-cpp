@@ -76,7 +76,7 @@ void sdotest::printOldValues(FILE *f, ChangeSummaryPtr cs, DataObjectPtr dol)
                     fprintf(f,"Short:%d\n",sl[j].getShortValue());
                 break;
                 case Type::DoubleType:
-                    fprintf(f,"Double:%.3f\n",sl[j].getDoubleValue());
+                    fprintf(f,"Double:%.3f\n",(float)sl[j].getDoubleValue());
                 break;
                 case Type::FloatType:
                     fprintf(f,"Float:%.3f\n",sl[j].getFloatValue());
@@ -172,7 +172,7 @@ void sdotest::printValue(FILE *f, DataObjectPtr dp, const Property& p)
             fprintf(f,"short:%d\n",dp->getShort(p));
         break;
         case Type::DoubleType:
-            fprintf(f,"double:%.3f\n",dp->getDouble(p));
+            fprintf(f,"double:%.3f\n",(float)dp->getDouble(p));
         break;
         case Type::FloatType:
             fprintf(f,"float:%.3f\n", dp->getFloat(p));
@@ -247,7 +247,7 @@ void sdotest::printList(FILE *f, DataObjectPtr dp, const Property& p)
             fprintf(f,"short[%d]=%d",i, dobl.getShort(i));
         break;
         case Type::DoubleType:
-            fprintf(f,"double[%d]=%.3f\n",i,dobl.getDouble(i));
+            fprintf(f,"double[%d]=%.3f\n",i,(float)dobl.getDouble(i));
         break;
         case Type::FloatType:
             fprintf(f,"float[%d]=%.3f\n",i,dobl.getFloat(i));

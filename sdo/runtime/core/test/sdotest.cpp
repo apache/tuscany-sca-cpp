@@ -1414,7 +1414,7 @@ int sdotest::defaulttest()
 
     fprintf(f,"Float default is 600: %.3f\n",test->getFloat("float"));
 
-    fprintf(f, "LongDouble default is 700: %.3f\n",test->getDouble("longdouble"));
+    fprintf(f, "LongDouble default is 700: %.3f\n",(float)test->getDouble("longdouble"));
 
     fprintf(f, "String default is HELP: ");
     unsigned int lenw = test->getLength("string");
@@ -1504,7 +1504,7 @@ int sdotest::showdefault(FILE *f, const Type& tm)
     fprintf(f, "Float default is : %.3f\n",ff);
     
     long double  dd = plongdouble.getDoubleDefault();
-    fprintf(f, "Double default is : %.3f\n",dd);
+    fprintf(f, "Double default is : %.3f\n",(float)dd);
 
     const SDODate& sd = pdate.getDateDefault();
     fprintf(f, "Date default is : %d\n",sd.getTime());
@@ -2477,7 +2477,7 @@ int sdotest::maintest()
         fprintf(f, "Expected long long 78, got %ld\n",(long)pi);
 
         long double ld = pdg->getDouble("longdouble");
-        fprintf(f, "Expected long double 89, got %.3f\n",ld);
+        fprintf(f, "Expected long double 89, got %.3f\n",(float)ld);
 
         float pf = pdg->getFloat("float");
         fprintf(f, "Expected float 90, got %.3f\n",pf);
