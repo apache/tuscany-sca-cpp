@@ -140,8 +140,7 @@ acmecorp
 acmecorp
 Expected default boolean (false) : false
 Expected  boolean (true) : true
-Expected default string (0) :  A deleted data object should be zero: 0
-Now able to set
+Expected default string (0) : Now able to set
  - should say now able to set
 
  Name from deleted item: Now able to set

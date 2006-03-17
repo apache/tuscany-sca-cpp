@@ -2343,8 +2343,10 @@ int sdotest::maintest()
 
         pdg = dor->getDataObject("pdg");
 
-
-        fprintf(f, " A deleted data object should be zero: %d\n", pdg);
+        if (pdg != 0)
+        {
+            fprintf(f, " A deleted data object should be zero and was not\n");
+        }
 
         pdg = mdg->create((Type&)tcd);
 
