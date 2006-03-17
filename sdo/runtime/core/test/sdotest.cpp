@@ -5622,7 +5622,7 @@ int sdotest::bug1()
     DataFactoryPtr mdg  = DataFactory::getDataFactory();
     try {
     XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
-    xsh->defineFile("bugs\\1\\company.xsd");
+    xsh->defineFile("bugs/1/company.xsd");
 
     //TypeList tl = mdg->getTypes();
     //for (int i=0;i< tl.size(); i++)
@@ -5632,7 +5632,7 @@ int sdotest::bug1()
 
 
     XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
-    XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("bugs\\1\\company.xml", 
+    XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("bugs/1/company.xml", 
     "http://www.mycompanyinc.com");
     }
     catch (SDORuntimeException e)
