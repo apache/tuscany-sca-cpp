@@ -28,7 +28,7 @@ using namespace std;
 
 extern "C"{
 
-int cdecl main (int argc, char** argv)
+int main (int argc, char** argv)
 {
     //Logger::setLogging(20);
 

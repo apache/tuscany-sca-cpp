@@ -2473,7 +2473,7 @@ int sdotest::maintest()
         long pl = pdg->getLong("long");
         fprintf(f, "Expected long 56 , got %ld\n",pl);
 
-        __int64 pi = pdg->getLong("longlong");
+        int64_t pi = pdg->getLong("longlong");
         fprintf(f, "Expected long long 78, got %ld\n",(long)pi);
 
         long double ld = pdg->getDouble("longdouble");

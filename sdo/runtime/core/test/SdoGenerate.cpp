@@ -59,7 +59,7 @@ void sdotest::generate(DataFactoryPtr fac)
 {
     try {
 
-        TypeList& tl = fac->getTypes();
+        TypeList tl = fac->getTypes();
 
        
         cout << "// Generated structures " << endl;
@@ -78,7 +78,7 @@ void sdotest::generate(DataFactoryPtr fac)
             cout << "{" << endl;
 
 
-            PropertyList& pl = tl[i].getProperties();
+            PropertyList pl = tl[i].getProperties();
             for (int j=0;j<pl.size();j++)
             {
                 if (pl[j].isMany())
