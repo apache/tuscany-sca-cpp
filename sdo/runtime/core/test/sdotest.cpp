@@ -3454,7 +3454,7 @@ int sdotest::bug2()
 
 int sdotest::dumpproperties(FILE *f, DataObjectPtr root)
 {
-    PropertyList& pl = root->getInstanceProperties();
+    PropertyList pl = root->getInstanceProperties();
     for (int i=0;i<pl.size();i++)
     {
         if (pl[i].isMany())
@@ -4674,7 +4674,7 @@ int sdotest::csload()
 
         //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
 
-        //TypeList& tl = mdg->getTypes();
+        //TypeList tl = mdg->getTypes();
         //for (int i=0;i< tl.size(); i++)
         //{
         //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
@@ -4716,7 +4716,7 @@ int sdotest::testsubsload()
 
         //cout << "TYPES LOADED FROM COMPANYSUBS XSD" << endl;
 
-        //TypeList& tl = mdg->getTypes();
+        //TypeList tl = mdg->getTypes();
         //for (int i=0;i< tl.size(); i++)
         //{
         //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
@@ -4823,7 +4823,7 @@ int sdotest::testabstract()
 
         //cout << "TYPES LOADED FROM COMPANYABS XSD" << endl;
 
-        //TypeList& tl = mdg->getTypes();
+        //TypeList tl = mdg->getTypes();
         //for (int i=0;i< tl.size(); i++)
         //{
         //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
@@ -5229,7 +5229,7 @@ int sdotest::loadOpen()
 
         //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
         //int i;
-        //TypeList& tl = mdg->getTypes();
+        //TypeList tl = mdg->getTypes();
         //for (i=0;i< tl.size(); i++)
         //{
         //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
@@ -5359,7 +5359,7 @@ int sdotest::loadOpenNS()
 
         //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
         //int i;
-        //TypeList& tl = mdg->getTypes();
+        //TypeList tl = mdg->getTypes();
         //for (i=0;i< tl.size(); i++)
         //{
         //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
@@ -5520,7 +5520,7 @@ int sdotest::loadManyOpen()
 
         //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
         //int i;
-        //TypeList& tl = mdg->getTypes();
+        //TypeList tl = mdg->getTypes();
         //for (i=0;i< tl.size(); i++)
         //{
         //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
@@ -5589,7 +5589,7 @@ int sdotest::csload2()
 
         //cout << "TYPES LOADED FROM COMPANY XSD" << endl;
 
-        //TypeList& tl = mdg->getTypes();
+        //TypeList tl = mdg->getTypes();
         //for (int i=0;i< tl.size(); i++)
         //{
         //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
@@ -5624,7 +5624,7 @@ int sdotest::bug1()
     XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
     xsh->defineFile("bugs\\1\\company.xsd");
 
-    //TypeList& tl = mdg->getTypes();
+    //TypeList tl = mdg->getTypes();
     //for (int i=0;i< tl.size(); i++)
     //{
     //    cout << tl[i].getURI() << ":" << tl[i].getName() << endl;
@@ -7315,7 +7315,7 @@ int sdotest::b47137()
 
         const Type& t = dob->getType();
 
-        PropertyList& pl = t.getProperties();
+        PropertyList pl = t.getProperties();
 
         for (int i=0;i<pl.size();i++)
         {
@@ -7337,7 +7337,7 @@ int sdotest::b47137()
 
         const Type& t2 = dob2->getType();
 
-        PropertyList& pl2 = t2.getProperties();
+        PropertyList pl2 = t2.getProperties();
 
         for (int j=0;j<pl2.size();j++)
         {
@@ -7399,7 +7399,7 @@ int sdotest::b47137b()
 
         const Type& t = dob->getType();
 
-        PropertyList& pl = t.getProperties();
+        PropertyList pl = t.getProperties();
 
         for (int i=0;i<pl.size();i++)
         {
@@ -7423,7 +7423,7 @@ int sdotest::b47137b()
 
         const Type& t2 = dob2->getType();
 
-        PropertyList& pl2 = t2.getProperties();
+        PropertyList pl2 = t2.getProperties();
 
         for (int j=0;j<pl2.size();j++)
         {
@@ -7950,7 +7950,7 @@ int sdotest::testwsdl()
             return 0;
         }
 
-        TypeList& tl = mdg->getTypes();
+        TypeList tl = mdg->getTypes();
 
         for (i=0;i<tl.size();i++)
         {
@@ -8031,7 +8031,7 @@ int sdotest::travel()
             return 0;
         }
  
-        TypeList& tl = mdg->getTypes();
+        TypeList tl = mdg->getTypes();
 
         fprintf(f, "*******************************TYPES**********************\n");
 
@@ -8316,7 +8316,7 @@ int sdotest::testastyle(FILE *f, const char* style)
         return 0;
     }
 
-    TypeList& tl = mdg->getTypes();
+    TypeList tl = mdg->getTypes();
 
     fprintf(f,"*****STYLE %s\n",style);
 
@@ -8325,7 +8325,7 @@ int sdotest::testastyle(FILE *f, const char* style)
         fprintf(f,"Type: %s#%s\n", tl[i].getURI(),tl[i].getName());
         if (!strcmp(tl[i].getName(),"library"))
         {
-            PropertyList& pl = tl[i].getProperties();
+            PropertyList pl = tl[i].getProperties();
             for (int j=0;j<pl.size();j++)
             {
                 fprintf(f,"Property:%s\n",pl[j].getName());
@@ -8428,14 +8428,14 @@ int sdotest::testinc2(const char* inc, const char* name1, const char* name2)
         return 0;
     }
 
-    TypeList& tl = mdg->getTypes();
+    TypeList tl = mdg->getTypes();
 
     //cout << "***** CALCULATOR ***************************************" << endl;
 
     for (i=0;i<tl.size();i++)
     {
         fprintf(f, "Type:%s#%s\n", tl[i].getURI(),tl[i].getName());
-        PropertyList& pl = tl[i].getProperties();
+        PropertyList pl = tl[i].getProperties();
         for (int j=0;j<pl.size();j++)
         {
             fprintf(f,"Property:%s\n",pl[j].getName());
@@ -8518,7 +8518,7 @@ int sdotest::testOrder(const char* x1, const char* x2, const char* name1,
         return 0;
     }
 
-    TypeList& tl = mdg->getTypes();
+    TypeList tl = mdg->getTypes();
 
     //cout << "***** TESTORDER ****************************************" << endl;
 
@@ -8526,7 +8526,7 @@ int sdotest::testOrder(const char* x1, const char* x2, const char* name1,
     {
         if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
         fprintf(f,"Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
-        PropertyList& pl = tl[i].getProperties();
+        PropertyList pl = tl[i].getProperties();
         for (int j=0;j<pl.size();j++)
         {
             fprintf(f,"Property:%s\n", pl[j].getName());
@@ -8583,7 +8583,7 @@ int sdotest::simple()
     }
 
 
-    TypeList& tl = mdg->getTypes();
+    TypeList tl = mdg->getTypes();
 
     //cout << "***** SIMPLE ****************************************" << endl;
 
@@ -8591,7 +8591,7 @@ int sdotest::simple()
     {
         if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
         fprintf(f, "Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
-        PropertyList& pl = tl[i].getProperties();
+        PropertyList pl = tl[i].getProperties();
         for (int j=0;j<pl.size();j++)
         {
             fprintf(f,"Property:%s\n",pl[j].getName());

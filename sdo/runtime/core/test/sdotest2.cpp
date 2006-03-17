@@ -534,14 +534,14 @@ int sdotest::testany(const char* xsd,
             }
 
 
-            TypeList& tl = mdg->getTypes();
+            TypeList tl = mdg->getTypes();
 
             fprintf(f1, "***** TYPES BEFORE RESOLVE **********************************\n");
 
             for (i=0;i<tl.size();i++)
             {
                 fprintf(f1,"Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
-                PropertyList& pl = tl[i].getProperties();
+                PropertyList pl = tl[i].getProperties();
                 for (int j=0;j<pl.size();j++)
                 {
                     fprintf(f1,"Property:%s ",pl[j].getName());
@@ -621,14 +621,14 @@ int sdotest::testany(const char* xsd,
         }
 
         else {
-            TypeList& tl = mdg->getTypes();
+            TypeList tl = mdg->getTypes();
 
             fprintf(f2, "***** TYPES AFTER RESOLVE*********************************\n");
 
             for (i=0;i<tl.size();i++)
             {
                 fprintf(f2,"Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
-                PropertyList& pl = tl[i].getProperties();
+                PropertyList pl = tl[i].getProperties();
                 for (int j=0;j<pl.size();j++)
                 {
                     fprintf(f2, "Property:%s ",pl[j].getName());
@@ -746,14 +746,14 @@ int sdotest::testanytwo(const char* xsd, const char* xsd2,
             return 0;
         }
 
-        TypeList& tl = mdg->getTypes();
+        TypeList tl = mdg->getTypes();
 
         fprintf(f1,"***** TESTANY ******************************************\n");
 
         for (i=0;i<tl.size();i++)
         {
             fprintf(f1,"Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
-            PropertyList& pl = tl[i].getProperties();
+            PropertyList pl = tl[i].getProperties();
             for (int j=0;j<pl.size();j++)
             {
                 fprintf(f1,"Property:%s ",pl[j].getName());

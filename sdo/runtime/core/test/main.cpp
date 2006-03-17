@@ -26,6 +26,8 @@ using namespace std;
 
 #include "sdotest.h"
 
+extern "C"{
+
 int cdecl main (int argc, char** argv)
 {
     //Logger::setLogging(20);
@@ -141,4 +143,5 @@ int cdecl main (int argc, char** argv)
     cout << "Total tests:" << totaltests << " Tests passed:" << testspassed;
 
 return 0;
+}
 }
