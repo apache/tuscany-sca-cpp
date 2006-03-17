@@ -1772,7 +1772,7 @@ namespace sdo{
                 int k;
                 char *tmpbuf = new char[50];
                 wchar_t *tmpw = (wchar_t*)outval;
-                sprintf(tmpbuf,"%.3e",*(long double*)value);
+                sprintf(tmpbuf,"%.3Le",*(long double*)value);
                 for (k=0;k<strlen(tmpbuf);k++)
                 {
                     *(tmpw++) = (wchar_t)(tmpbuf[k]);
@@ -1946,7 +1946,7 @@ namespace sdo{
         case DoubleType:
                 if (value == 0) return 0;
                 if (max < MAX_DOUBLE_SIZE) return 0;
-                sprintf(outval,"%.3e",*(long double*)value);
+                sprintf(outval,"%.3Le",*(long double*)value);
                 return strlen(outval);
 
         case FloatType:
@@ -2038,7 +2038,7 @@ namespace sdo{
                 (*asstringbuf)[0] = 0;
                 return *asstringbuf;
             }
-            sprintf(*asstringbuf,"%.3e",*(long double*)value);
+            sprintf(*asstringbuf,"%.3Le",*(long double*)value);
             return *asstringbuf;
 
         case FloatType:
