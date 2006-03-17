@@ -1185,61 +1185,53 @@ int sdotest::usertest()
 
     test->setBoolean("boolean", true);
 
-    FILE *f = fopen ("userdata.dat","w+");
-
-    if (f == 0) {
-        if (!silent) cout << "Unable to open userdata.dat" << endl;
-        return 0;
-    }
 
     void* value = (void*)0xF1F1F1F1;
 
     test->setUserData(value);
 
-    fprintf(f,"Expected 0xF1F1F1F1 %p\n",test->getUserData());
+    if (test->getUserData() != (void*)0xf1f1f1f1) return 0;
 
     root->setUserData("usertest",value);
 
-    fprintf(f,"Expected 0xF1F1F1F1 %p\n",root->getUserData("usertest"));
+    if (root->getUserData("usertest") != (void*)0xf1f1f1f1) return 0;
     
     root->setUserData((unsigned int)0,(void*)0x20);
 
-    fprintf(f,"Expected 0x20 %p\n" ,root->getUserData((unsigned int)0));
+    if (root->getUserData((unsigned int)0) != (void*)0x20) return 0;
 
     const Property& prop = root->getType().getProperty("usertest");
 
     root->setUserData(prop,(void*)0x40020);
 
-    fprintf(f,"Expected 0x40020 %p\n", root->getUserData(prop));
+    if (root->getUserData(prop) != (void*)0x40020) return 0;;
     
     test->setUserData("boolean", (void*)0x120);
 
-    fprintf(f,"Expected 0 %p\n",test->getUserData("boolean"));
+ 
+    if (test->getUserData("boolean") != (void*)0) return 0;
 
     test->setUserData("unsetboolean", (void*)0x340);
 
-    fprintf(f,"Expected 0 %p\n", test->getUserData("boolean"));
+    if (test->getUserData("unsetboolean") != (void*)0) return 0;
 
     test->setUserData("object", (void*)0x120);
 
-    fprintf(f,"Expected 120 %p\n",test->getUserData("object"));
+    if (test->getUserData("object") != (void*)0x120) return 0;
 
     test->setUserData("unsetobject", (void*)0x540);
 
-    fprintf(f,"Expected 0 %p\n",test->getUserData("unsetobject"));
+    if (test->getUserData("unsetobject") != (void*)0) return 0;
 
     test->setUserData("objects", (void*)0x640);
 
-    // TODO might be dodgy - this allows setting of user data on a base of a list
-    fprintf(f,"Expected 640 %p\n",test->getUserData("objects"));
+    if (test->getUserData("objects") != (void*)0x640) return 0;
 
     test->setUserData("objects[1]", (void*)0x740);
 
-    fprintf(f,"Expected 0x740 %p\n",test->getUserData("objects[1]"));
+    if (test->getUserData("objects[1]") != (void*)0x740) return 0;
 
-    fclose (f);
-
-    return comparefiles("userdata.dat","userdata.txt");
+    return 1;
 
     }
     catch (SDORuntimeException e)
