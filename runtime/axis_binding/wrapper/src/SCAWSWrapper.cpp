@@ -23,6 +23,9 @@
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/core/SCAEntryPoint.h"
 
+#include "axis/GDefine.h"
+#include "AxisServiceException.h"
+
 
 using namespace std;
 using namespace commonj::sdo;
@@ -205,11 +208,22 @@ int SCAWSWrapper::invokeService(IMessageData *pIMsg,
     }
     catch(ServiceRuntimeException e)
     {
-        axisReturn = AXIS_FAIL;
+    	
+        // Throw a useful fault
+        string faultCode = string("Server.TuscanySCA.") + string(e.getEClassName());
+        string faultString = string(e.getEClassName()) + string(":") + string (e.getMessageText());
+        
+        pIWSSZ->createSoapFault("ServiceRuntimeException","tempURI", faultCode.c_str(), faultString.c_str());
+        throw AxisServiceException();
     }
     catch(SDORuntimeException e)
     {
-        axisReturn = AXIS_FAIL;
+    	// Throw a useful fault
+        string faultCode = string("Server.TuscanySDO.") + string(e.getEClassName());
+        string faultString = string(e.getEClassName()) + string(":") + string (e.getMessageText());
+        
+        pIWSSZ->createSoapFault("SDORuntimeException","tempURI", faultCode.c_str(), faultString.c_str());
+        throw AxisServiceException();
     }
 
 
