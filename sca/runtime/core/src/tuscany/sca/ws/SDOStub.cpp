@@ -169,6 +169,8 @@ namespace sca
          */
         DataObjectPtr SDOStub::invoke(DataObjectPtr requestDO, DataFactoryPtr dataFactory)
         {
+        	LOGENTRY(2, "SDOStub::invoke");
+        	
             // SDO return object
             DataObjectPtr pReturn;
 
@@ -213,10 +215,7 @@ namespace sca
                                               m_strOperationName.c_str());
                 requestDoc->setXMLDeclaration(false);
                 char *requestXML = xmlHelper->save(requestDoc);
-                cout << "SDOStub::invoke: Request XML= " << endl;
-                cout << requestXML << endl;
-                cout << endl;
-                // DEBUG
+                LOGINFO_1(2, "SDOStub::invoke: Request XML=%s", requestXML);
 
                 // Loop through the top level data object, serializing individual properties.
                 // We cannot simply serialize the request DataObject to an XML string and add 
@@ -274,12 +273,6 @@ namespace sca
                                             doc->setXMLDeclaration(false);
                                             dobXML = xmlHelper->save(doc);
 
-                                            // DEBUG
-                                            cout << "SDOStub::invoke: DataObject \"" << propertyName << "\" as XML:" << endl;
-                                            cout << dobXML << endl;
-                                            cout << endl;
-                                            // DEBUG
-
                                             // Add the XML to the call as an AnyType.
                                             AnyType* pAny = new AnyType();
                                             pAny->_size = 1;
@@ -302,12 +295,6 @@ namespace sca
                                                                         propertyName);
                                         doc->setXMLDeclaration(false);
                                         dobXML = xmlHelper->save(doc);
-
-                                        // DEBUG
-                                        cout << "SDOStub::invoke: DataObject \"" << propertyName << "\" as XML:" << endl;
-                                        cout  << dobXML << endl;
-                                        cout << endl;
-                                        // DEBUG
 
                                         // Add the XML to the call as an AnyType.
                                         AnyType* pAny = new AnyType();
@@ -334,38 +321,24 @@ namespace sca
                     if (AXIS_SUCCESS == m_pCall->checkMessage(m_strOperationResponseName.c_str(), 
                                                               m_strTargetNamespace.c_str()))
                     {
-                        cout << "SDOStub::invoke: Successful call..." << endl;
-
+                        LOGINFO(2, "SDOStub::invoke: invoke returned AXIS_SUCCESS");
+                        
                         // Deserialize the soap response.
                         string strResponse = getSoapResponse();
                         
-                        // DEBUG
-                        cout << "SDOStub::invoke: Response XML= " << endl;
-                        cout << strResponse.c_str() << endl;
-                        cout << endl;
-                        // DEBUG
-
                         // Create an XMLDocument from the soap reponse
                         XMLDocumentPtr returnDoc = 
                             xmlHelper->load(strResponse.c_str(), m_strTargetNamespace.c_str());
                         // Get the root DataObject to return as the result.
                         pReturn = returnDoc->getRootDataObject();
-                        // DEBUG
-                        cout << "SDOStub::invoke: Response DataObject= " << endl;
-                        Utils::printDO(pReturn);
-                        cout << endl;
-                        // DEBUG
+                        
                     }
                 }
                 else
                 {
-                    cout << "SDOStub::invoke: checkMessage failed:" << endl;
-                    cout << "SDOStub::invoke: Expected \'" 
-                         << m_strOperationResponseName.c_str() 
-                         << "\' element with namespace \'" 
-                         << m_strTargetNamespace.c_str()
-                         << "\'."
-                         << endl;
+                    LOGINFO_2(2, "SDOStub::invoke: checkMessage failed. Expected: %s \' element with namespace \' %s \'.",  
+                              m_strOperationResponseName.c_str(),
+                              m_strTargetNamespace.c_str());
                 }
 
 
@@ -377,11 +350,11 @@ namespace sca
             {
                 // Get the exception code.
                 int iExceptionCode = e.getExceptionCode();
-
+                LOGINFO_2(0, "SDOStub::invoke Caught AxisException: %d code: %s", iExceptionCode, e.what());
                 if (AXISC_NODE_VALUE_MISMATCH_EXCEPTION != iExceptionCode)
                 {
                     m_pCall->unInitialize();
-                    throw ServiceRuntimeException("AxisException", ServiceRuntimeException::Error, e.what());
+                     throw ServiceRuntimeException("AxisException", ServiceRuntimeException::Error, e.what());
                 }
 
                 // Get the details of the SoapFault.
@@ -428,11 +401,10 @@ namespace sca
             }
             catch(SDORuntimeException sdoE)
             {
-                cout << "SDOStub::invoke: SDORuntimeException: " << endl;
-                sdoE.PrintSelf(cout);
+                throw ServiceRuntimeException("SDORuntimeException", ServiceRuntimeException::Error, sdoE.getMessageText());
             }
 
-
+        	LOGEXIT(2, "SDOStub::invoke");
             return pReturn;
 
         }
