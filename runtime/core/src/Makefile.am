@@ -92,7 +92,8 @@ tuscany/sca/core/ServiceWrapper.cpp \
 tuscany/sca/ws/SDOStub.cpp \
 tuscany/sca/ws/WSServiceWrapper.cpp
 
-libtuscany_sca_la_LIBADD = -lstdc++ -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo
+libtuscany_sca_la_LIBADD = -lstdc++ -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
+	-L${AXISCPP_DEPLOY}/lib -laxis_client
 
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
 
