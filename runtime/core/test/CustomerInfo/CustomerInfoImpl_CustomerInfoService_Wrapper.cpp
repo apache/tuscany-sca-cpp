@@ -58,7 +58,7 @@ void CustomerInfoImpl_CustomerInfoService_Wrapper::invokeService(Operation& oper
 
     if (operationName == "getCustomerInformation")
     {
-        const char* p0 = (const char*)operation.getParameter(0);
+        const char* p0 = *(const char**)operation.getParameterValue(0);
 
         operation.setReturnValue((void*) impl->getCustomerInformation(p0));
         return;
