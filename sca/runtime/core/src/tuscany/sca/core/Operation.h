@@ -20,7 +20,7 @@
 #ifndef tuscany_sca_core_operation_h
 #define tuscany_sca_core_operation_h
 #include "osoa/sca/export.h"
-#include "commonj/sdo/sdo.h"
+#include "commonj/sdo/SDO.h"
 using commonj::sdo::DataObjectPtr;
 #include <string>
 using std::string;
