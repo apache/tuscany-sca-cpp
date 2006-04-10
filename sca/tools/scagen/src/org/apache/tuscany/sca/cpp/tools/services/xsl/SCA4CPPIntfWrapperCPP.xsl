@@ -196,25 +196,25 @@ void </xsl:text><xsl:value-of select="$class"/><xsl:text>::invokeService(Operati
                 <xsl:value-of select="substring-before($type, '&amp;')"/>
             </xsl:variable>
             <xsl:value-of select="$type"/><xsl:text> p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = *(</xsl:text><xsl:value-of select="$type_no_amp"/>
-             <xsl:text>*)operation.getParameter(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);
+             <xsl:text>*)operation.getParameterValue(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);
 </xsl:text>
         </xsl:when>
         <xsl:when test="contains($type, '*')"><!-- pointer -->
             <xsl:if test="contains($isConst,'true')">const </xsl:if>
-            <xsl:value-of select="."/><xsl:text> p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = (</xsl:text>
+            <xsl:value-of select="."/><xsl:text> p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = *(</xsl:text>
              <xsl:if test="contains($isConst,'true')">const</xsl:if><xsl:text> </xsl:text>
               <xsl:value-of select="$type"/>
-             <xsl:text>)operation.getParameter(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);
+             <xsl:text>*)operation.getParameterValue(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);
 </xsl:text>
         </xsl:when>
         <xsl:when test="contains($type, 'DataObjectPtr')"><!-- DataObjectPtr -->
-            <xsl:text>DataObjectPtr&amp; p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = *(DataObjectPtr*)operation.getParameter(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);</xsl:text>
+            <xsl:text>DataObjectPtr&amp; p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = *(DataObjectPtr*)operation.getParameterValue(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);</xsl:text>
         </xsl:when>
         <xsl:otherwise><!-- simple type -->
     <xsl:if test="contains($isConst,'true')">const </xsl:if><xsl:value-of select="$type"/><xsl:text>&amp; p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = *(</xsl:text>
     <xsl:if test="contains($isConst,'true')">const</xsl:if><xsl:text> </xsl:text>
           <xsl:value-of select="$type"/>
-     <xsl:text>*)operation.getParameter(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);
+     <xsl:text>*)operation.getParameterValue(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);
 </xsl:text>
 
         </xsl:otherwise>
