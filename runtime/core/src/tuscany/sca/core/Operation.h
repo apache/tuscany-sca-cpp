@@ -20,7 +20,8 @@
 #ifndef tuscany_sca_core_operation_h
 #define tuscany_sca_core_operation_h
 #include "osoa/sca/export.h"
-
+#include "commonj/sdo/sdo.h"
+using commonj::sdo::DataObjectPtr;
 #include <string>
 using std::string;
 
@@ -42,7 +43,7 @@ namespace tuscany
              * @param operationName The method name of the business method to be invoked.
              * @param numParameters The number of parameters to be passed.
              */
-            SCA_API Operation(const char* operationName, unsigned int numParameters);
+            SCA_API Operation(const char* operationName = 0);
 
             /**
              * Destructor.
@@ -53,14 +54,72 @@ namespace tuscany
              * Return the operation name.
              * @return The name of the operation.
              */
-            SCA_API const char* getName() {return name;}
+            SCA_API const string& getName() {return name;}
+
+
+            enum ParameterType
+            {
+                VOID_TYPE = 0,
+                BOOL,
+                SHORT,
+                LONG,
+                USHORT,
+                ULONG,
+                FLOAT,
+                DOUBLE,
+                LONGDOUBLE,
+                CHARS,
+                STRING,
+                DATAOBJECT
+            };
+
+            class Parameter
+            {
+                public:
+                    SCA_API Parameter(void* value, ParameterType type);
+                    SCA_API void* getValue() {return value;}
+                    SCA_API ParameterType getType() {return type;}
+
+                private:
+                    void* value;
+                    ParameterType type;
+            };
 
             /**
              * Set a parameter on the operation.
              * @param pos The position of the parameter in the parameter list.
              * @param parm Pointer to the parameter to be passed.
              */
-            SCA_API void setParameter(unsigned int pos, void* parm);
+            SCA_API void addParameter(const void *parm);
+            SCA_API void addParameter(const bool *parm);
+            SCA_API void addParameter(const short *parm);
+            SCA_API void addParameter(const long *parm);
+            SCA_API void addParameter(const unsigned short *parm);
+            SCA_API void addParameter(const unsigned long *parm);
+            SCA_API void addParameter(const float *parm);
+            SCA_API void addParameter(const double *parm);
+            SCA_API void addParameter(const long double *parm);
+            SCA_API void addParameter(const char* *parm);
+            SCA_API void addParameter(const string *parm);
+            SCA_API void addParameter(const DataObjectPtr *parm);
+
+
+            
+            /**
+             * Get a parameter from the operation.
+             * @param pos The position of the parameter in the parameter list.
+             * @return Pointer to the paramter at the given postion. Should be
+             * cast to the appropriate type.
+             */
+            SCA_API Parameter getParameter(unsigned int pos);
+
+            /**
+             * Get a parameter type from the operation.
+             * @param pos The position of the parameter in the parameter list.
+             * @return Pointer to the paramter at the given postion. Should be
+             * cast to the appropriate type.
+             */
+            SCA_API ParameterType getParameterType(unsigned int pos);
 
             /**
              * Get a parameter from the operation.
@@ -68,7 +127,7 @@ namespace tuscany
              * @return Pointer to the paramter at the given postion. Should be
              * cast to the appropriate type.
              */
-            SCA_API void* getParameter(unsigned int pos);
+            SCA_API void* getParameterValue(unsigned int pos);
 
             /**
              * Get the return value on the operation.
@@ -77,7 +136,7 @@ namespace tuscany
              * return value pointer and set the return value.
              * @return Pointer to the return type.
              */
-            SCA_API void* getReturnValue() {return returnType;}
+            SCA_API void* getReturnValue() {return returnValue;}
 
             /**
              * Set the return value on the operation.
@@ -92,22 +151,19 @@ namespace tuscany
             /**
              * Operation name (method name).
              */ 
-            const char* name;
+            string name;
 
             /**
-             * Number of paramaters passed for this operation.
-             */ 
-            unsigned int nparms;
-
-            /**
-             * Pointer to the array of parameters.
+             * Array of parameters.
              */
-            void** parameters;
+            typedef vector<Parameter> PARAMETER_VECTOR;
+            
+            PARAMETER_VECTOR parameters;
 
             /**
              * The return value.
              */ 
-            void* returnType;
+            void* returnValue;
         };
     } // End namespace sca
 } // End namespace tuscany

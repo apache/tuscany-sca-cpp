@@ -161,8 +161,8 @@ namespace tuscany
             // -------------------
             // Invoke each target
             // -------------------
-            Operation operation(operationName, 1);
-            operation.setParameter(0, &inDataObject);
+            Operation operation(operationName);
+            operation.addParameter(&inDataObject);
             DataObjectPtr ret;
             operation.setReturnValue((void *)&ret);
 
