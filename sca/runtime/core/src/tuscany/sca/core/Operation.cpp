@@ -85,73 +85,73 @@ namespace tuscany
         // ===========================================
         void Operation::addParameter(const void *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(void*)");
+            LOGINFO(4, "Operation::addParameter(void*)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, VOID_TYPE));
          }
 
         void Operation::addParameter(const bool *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(bool)");
+            LOGINFO(4, "Operation::addParameter(bool)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, BOOL));
         }
 
         void Operation::addParameter(const short *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(short)");
+            LOGINFO(4, "Operation::addParameter(short)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, SHORT));
         }
 
         void Operation::addParameter(const long *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(long)");
+            LOGINFO(4, "Operation::addParameter(long)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, LONG));
         }
 
         void Operation::addParameter(const unsigned short *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(unsigned short)");
+            LOGINFO(4, "Operation::addParameter(unsigned short)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, USHORT));
         }
 
         void Operation::addParameter(const unsigned long *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(unsigned long)");
+            LOGINFO(4, "Operation::addParameter(unsigned long)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, ULONG));
         }
 
        void Operation::addParameter(const float *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(float)");
+            LOGINFO(4, "Operation::addParameter(float)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, FLOAT));
         }
 
        void Operation::addParameter(const double *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(double)");
+            LOGINFO(4, "Operation::addParameter(double)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, DOUBLE));
         }
 
        void Operation::addParameter(const long double *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(long double)");
+            LOGINFO(4, "Operation::addParameter(long double)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, LONGDOUBLE));
         }
 
         void Operation::addParameter(const char* *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(char*)");
+            LOGINFO(4, "Operation::addParameter(char*)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, CHARS));
         }
 
         void Operation::addParameter(const string *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(string)");
+            LOGINFO(4, "Operation::addParameter(string)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, STRING));
         }
 
         void Operation::addParameter(const DataObjectPtr *parm)
         {
-            LOGENTRY(1, "Operation::addParameter(DataObjectPtr)");
+            LOGINFO(4, "Operation::addParameter(DataObjectPtr)");
             parameters.insert(parameters.begin(), Parameter((void*)parm, DATAOBJECT));
         }
 
@@ -164,7 +164,7 @@ namespace tuscany
         }
 
         Operation::Parameter::Parameter(void* val, Operation::ParameterType typ)
-            : value(val), type(type)
+            : value(val), type(typ)
         {
         }
  

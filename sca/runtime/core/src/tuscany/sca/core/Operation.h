@@ -102,9 +102,8 @@ namespace tuscany
             SCA_API void addParameter(const char* *parm);
             SCA_API void addParameter(const string *parm);
             SCA_API void addParameter(const DataObjectPtr *parm);
-
-
             
+            SCA_API unsigned int getNParms() {return parameters.size();} 
             /**
              * Get a parameter from the operation.
              * @param pos The position of the parameter in the parameter list.
