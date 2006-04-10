@@ -225,9 +225,11 @@ DOM nodes that each relate to a function in the service
 <xsl:text>
     Operation operation("</xsl:text>
     <xsl:value-of select="../@operationNameAttr"/>
+<!--
     <xsl:text>", </xsl:text>
     <xsl:value-of select="$noOfParms"/>
-    <xsl:text>);</xsl:text>
+-->
+    <xsl:text>");</xsl:text>
     <xsl:if test="$noOfParms!=0">
     <xsl:for-each select="../scaOperationParameter">
         <xsl:call-template name="proxy_method_body_set_parameter"/>
@@ -249,9 +251,11 @@ DOM nodes that each relate to a function in the service
 <xsl:text>
     Operation operation("</xsl:text>
     <xsl:value-of select="@operationNameAttr"/>
+<!--
     <xsl:text>", </xsl:text>
     <xsl:value-of select="$noOfParms"/>
-    <xsl:text>);
+-->
+    <xsl:text>");
  </xsl:text>
     <xsl:call-template name="proxy_method_body_prepare_return_var_no_parms"/>
     <xsl:text>
@@ -389,10 +393,9 @@ DOM nodes that each relate to a function in the service
     <xsl:variable name="type">
         <xsl:value-of select="."/>
     </xsl:variable>
-    operation.setParameter(<xsl:value-of select="position()-1"/><xsl:text>, (void*)</xsl:text>
-<xsl:if test="not(contains($type, '*'))">&amp;</xsl:if>
-<xsl:value-of select="$scaOperationParameterNameAttrInner"/>
-<xsl:text>);
+<!--    operation.setParameter(<xsl:value-of select="position()-1"/><xsl:text>, (void*)</xsl:text> 
+<xsl:if test="not(contains($type, '*'))">&amp;</xsl:if> -->
+    operation.addParameter(&amp;<xsl:value-of select="$scaOperationParameterNameAttrInner"/><xsl:text>);
 </xsl:text>
 </xsl:template>
 </xsl:stylesheet>
