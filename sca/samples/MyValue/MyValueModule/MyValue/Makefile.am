@@ -12,7 +12,6 @@ libMyValue_la_LIBADD = -L$(top_builddir)/runtime/core/src -ltuscany_sca \
 
 INCLUDES = -I.. \
            -I$(top_builddir)/runtime/core/src \
-           -I${TUSCANY_SDOCPP}/include \
-           -I${AXISCPP_DEPLOY}/include
+           -I${TUSCANY_SDOCPP}/include
                    
 install:

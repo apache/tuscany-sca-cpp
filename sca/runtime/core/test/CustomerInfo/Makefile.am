@@ -8,7 +8,6 @@ CustomerInfoImpl_CustomerInfoService_Wrapper.cpp
 libCustomerInfo_la_LIBADD =
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
-           -I${TUSCANY_SDOCPP}/include \
-           -I${AXISCPP_DEPLOY}/include
+           -I${TUSCANY_SDOCPP}/include
                       
 install:
