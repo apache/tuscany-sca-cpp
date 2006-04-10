@@ -101,7 +101,7 @@ void WSServiceWrapper::invoke(Operation& operation)
         
     
         // Call the service via the SDOStub
-        *(DataObjectPtr *)operation.getReturnValue() = wsStub.invoke(*((DataObjectPtr*)operation.getParameter(0)),
+        *(DataObjectPtr *)operation.getReturnValue() = wsStub.invoke(*((DataObjectPtr*)operation.getParameterValue(0)),
             externalService->getContainingModule()->getDataFactory());
 
     }
