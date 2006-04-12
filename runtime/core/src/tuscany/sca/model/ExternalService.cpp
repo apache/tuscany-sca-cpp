@@ -34,7 +34,7 @@ namespace tuscany
                 : WireTarget(serviceName), containingModule(module)
             {
                 LOGENTRY(1, "ExternalService::constructor");
-                LOGERROR_1(0, "ExternalService::constructor: ExternalService name: %s", getName().c_str());
+                LOGINFO_1(2, "ExternalService::constructor: ExternalService name: %s", getName().c_str());
                 LOGEXIT(1, "ExternalService::constructor");
             }
 
