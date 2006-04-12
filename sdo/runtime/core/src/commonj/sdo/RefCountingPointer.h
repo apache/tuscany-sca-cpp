@@ -43,14 +43,14 @@ namespace sdo{
 template <class T>
 class RefCountingPointer {
     public:
-        SDO_API RefCountingPointer(T* realPtr = 0);
-        SDO_API RefCountingPointer(const RefCountingPointer& rhs);
-        SDO_API ~RefCountingPointer();
-        SDO_API RefCountingPointer& operator=(const RefCountingPointer& rhs);
-        SDO_API bool operator==(RefCountingPointer& test) const;
-        SDO_API T* operator->() const;
-        SDO_API T& operator*() const;
-        SDO_API bool operator!() const;
+        /*SDO_API*/ RefCountingPointer(T* realPtr = 0);
+        /*SDO_API*/ RefCountingPointer(const RefCountingPointer& rhs);
+        /*SDO_API*/ ~RefCountingPointer();
+        /*SDO_API*/ RefCountingPointer& operator=(const RefCountingPointer& rhs);
+        /*SDO_API*/ bool operator==(RefCountingPointer& test) const;
+        /*SDO_API*/ T* operator->() const;
+        /*SDO_API*/ T& operator*() const;
+        /*SDO_API*/ bool operator!() const;
 
 #ifdef MFT
         // MFT == member function templates
@@ -100,27 +100,27 @@ void RefCountingPointer<T>::init()
 }
 
 template<class T>
-SDO_API RefCountingPointer<T>::RefCountingPointer(T* realPtr)
+/*SDO_API*/ RefCountingPointer<T>::RefCountingPointer(T* realPtr)
 :pointee(realPtr)
 {
     init();
 }
 
 template<class T>
-SDO_API RefCountingPointer<T>::RefCountingPointer(const RefCountingPointer& rhs)
+/*SDO_API*/ RefCountingPointer<T>::RefCountingPointer(const RefCountingPointer& rhs)
 : pointee(rhs.pointee)
 {
     init();
 }
 
 template<class T>
-SDO_API RefCountingPointer<T>::~RefCountingPointer()
+/*SDO_API*/ RefCountingPointer<T>::~RefCountingPointer()
 {
     if (pointee)pointee->releaseRef();
 }
 
 template<class T>
-SDO_API RefCountingPointer<T>& RefCountingPointer<T>::operator=(const RefCountingPointer& rhs)
+/*SDO_API*/ RefCountingPointer<T>& RefCountingPointer<T>::operator=(const RefCountingPointer& rhs)
 {
     if (pointee != rhs.pointee)
     {
@@ -133,25 +133,25 @@ SDO_API RefCountingPointer<T>& RefCountingPointer<T>::operator=(const RefCountin
 }
 
 template<class T>
-SDO_API bool RefCountingPointer<T>::operator!() const
+/*SDO_API*/ bool RefCountingPointer<T>::operator!() const
 {
     return (pointee == 0);
 }
 
 template<class T>
-SDO_API bool RefCountingPointer<T>::operator==(RefCountingPointer& test) const
+/*SDO_API*/ bool RefCountingPointer<T>::operator==(RefCountingPointer& test) const
 {
     return (pointee == test.pointee);
 }
 
 template<class T>
-SDO_API T* RefCountingPointer<T>::operator->() const 
+/*SDO_API*/ T* RefCountingPointer<T>::operator->() const 
 {
     return pointee;
 }
 
 template<class T>
-SDO_API T& RefCountingPointer<T>::operator*() const
+/*SDO_API*/ T& RefCountingPointer<T>::operator*() const
 {
     return *pointee;
 }
