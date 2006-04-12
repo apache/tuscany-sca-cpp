@@ -47,7 +47,7 @@ Run:
 Windows Build
 =============
 
-Microsoft Visual Studio projects are provided for building on Windows.
+Microsoft Visual Studio 6.x projects are provided for building on Windows.
 
 SDO
 ---
@@ -74,6 +74,16 @@ Build->Rebuild All
 The output of the build will be in runtime\core\Release.
 
 The executable, required headers and lib are copied to tuscany\cpp\sdo\bin, include and lib.
+
+Note for users of Microsoft Visual Studio 7.x
+---------------------------------------------
+You can convert the projects supplied to a solution for Studio 7 by opening them in VS 7.x and selecting to convert. There are a number of small differences between VC6 and VC7 which may require additional changes to get the SDO code to compile, link and run.
+
+All the projects must be built multi-threaded: Project Properties/Configuration properties/C/C++/Code Generation/Runtime Library - select MultiThreaded Debug DLL /MDd  (for debug build).
+
+The test project runs in the projects directory, where in C6 it ran in the Debug directory, so all the
+test comparison files are in the wrong place. You can copy the entire contents of runtime/core/test/Debug to projects/tuscany_sdo/sdo_test
+
 
 
 SCA
