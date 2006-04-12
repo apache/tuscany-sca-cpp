@@ -35,7 +35,7 @@ namespace tuscany
                 : name(epName)
             {
                 LOGENTRY(1, "EntryPoint::constructor");
-                LOGERROR_1(0, "EntryPoint::constructor: EntryPoint name: %s", name.c_str());
+                LOGINFO_1(2, "EntryPoint::constructor: EntryPoint name: %s", name.c_str());
                 LOGEXIT(1, "EntryPoint::constructor");
             }
 
