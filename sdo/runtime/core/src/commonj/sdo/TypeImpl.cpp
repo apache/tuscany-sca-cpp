@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
+/* $Rev$ $Date: 2006/04/18 13:47:39 $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -118,7 +118,7 @@ namespace sdo{
         init(uri,inname,isSeq,isOp, isAbs, isData);
         baseType = (TypeImpl*)base;
         brestriction = isRestriction;
-        bFromList = isFromList;
+        bFromList = false;
      }
 
      TypeImpl::TypeImpl(const char* uri, const char* inname, 
