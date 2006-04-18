@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/08 14:43:56 $ */
+/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
 
 #include "commonj/sdo/SDOSAX2Parser.h"
 
@@ -1065,8 +1065,12 @@ namespace commonj
                             setNull((const char*)currentPropertySetting.name);
 
                 }
-                else if (!currentPropertySetting.value.isNull())
-                {
+                else 
+                {    
+                    if (currentPropertySetting.value.isNull())
+                    {
+                        currentPropertySetting.value = SDOXMLString("");
+                    }
                     try
                     {
                         const Type& tp = currentPropertySetting.dataObject->getType();
@@ -1179,8 +1183,9 @@ namespace commonj
             }
             LOGEXIT(INFO,"SDOSAX2Parser: endElementNs - exit4");
         }
-        
-        
+
+
+         
         void SDOSAX2Parser::characters(const SDOXMLString& chars)
         {
             if (dealingWithChangeSummary)
@@ -1196,26 +1201,60 @@ namespace commonj
 
             if (ignoreEvents)
                 return;
-            
-            // If currentPropertySetting is set (name is not null)
-            // then we need to accumulate the value
+
             if (!currentPropertySetting.name.isNull())
             {
                 currentPropertySetting.value = currentPropertySetting.value + chars;    
+                return;
             }
-            else
+
+            
+            DataObject* dob = currentDataObject;
+            if (((DataObjectImpl*)dob)->getTypeImpl().isFromList())
             {
-                // If the current DataObject is a sequenced Type
-                // then add this as text to the sequence
-                if (currentDataObject && currentDataObjectType->isSequencedType())
+                // this is a list,so we need to split it up
+                DataObjectList& dl = currentDataObject->getList(
+                       (const char *)"values");
+
+                const char* str = (const char*)chars;
+                char* buf = new char[strlen(str)+1];
+                if (!buf) return;
+
+                strcpy(buf,str);
+
+                int start_point = 0;
+                int end_point;
+                int final = strlen(buf);
+
+                do {
+                   if (start_point >= final)break;
+                   while (buf[start_point] == (char)0x20 || buf[start_point] == (char)0x09
+                       || buf[start_point] == (char)0x0A || buf[start_point] == (char)0x0D )start_point++;
+                   end_point = start_point;
+                   while (buf[end_point] != (char)0x20 && buf[end_point] != (char)0x09 &&
+                          buf[end_point] != (char)0x0A && buf[end_point] != (char)0x0D &&
+                                                                        buf[end_point] != 0x0)end_point++;
+                   if (end_point == start_point)break; 
+                   *(buf+end_point) = 0;
+                   dl.append((const char*)(buf+start_point));
+                   start_point = end_point + 1;
+                } while(1);
+
+                delete buf;
+                return;
+            }
+
+            
+            // If the current DataObject is a sequenced Type
+            // then add this as text to the sequence
+            if (currentDataObject && currentDataObjectType->isSequencedType())
+            {
+                SequencePtr seq = currentDataObject->getSequence();
+                if (seq)
                 {
-                    SequencePtr seq = currentDataObject->getSequence();
-                    if (seq)
-                    {
-                        seq->addText(chars);
-                    }
+                    seq->addText(chars);
                 }
-            }                
+            }
         }
         
         

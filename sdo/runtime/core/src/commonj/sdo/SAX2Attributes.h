@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/04/07 13:35:33 $ */
 
 #ifndef _SAX2ATTRIBUTES_H_
 #define _SAX2ATTRIBUTES_H_
@@ -39,6 +39,8 @@ namespace commonj
         {
             
         public:
+
+            SAX2Attributes();
             
             SAX2Attributes(
                 int nb_attributes,

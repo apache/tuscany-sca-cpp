@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
+/* $Rev$ $Date: 2006/04/06 12:58:18 $ */
 
 #ifndef _DATAOBJECTLIST_H_
 #define _DATAOBJECTLIST_H_
@@ -145,8 +145,10 @@ public:
     virtual SDO_API void insert (unsigned int index, const SDODate d) = 0;
     virtual SDO_API void append (const SDODate d) = 0;
 
+#if __WORDSIZE !=64
     virtual SDO_API void insert (unsigned int index, long d) = 0;
     virtual SDO_API void append (long d) = 0;
+#endif
 
     virtual SDO_API void insert (unsigned int index, int64_t d) = 0;
     virtual SDO_API void append (int64_t d) = 0;

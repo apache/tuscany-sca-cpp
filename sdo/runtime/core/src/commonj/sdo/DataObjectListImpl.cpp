@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/03 14:34:26 $ */
+/* $Rev$ $Date: 2006/04/07 13:35:33 $ */
 
 #include "commonj/sdo/DataObjectListImpl.h"
 
@@ -640,6 +640,8 @@ void DataObjectListImpl::append (short d)
     append( dol);
 }
 
+
+#if __WORDSIZE !=64
 void DataObjectListImpl::insert (unsigned int index, long d)
 {
     if (theFactory == 0) return;
@@ -663,7 +665,7 @@ void DataObjectListImpl::append (long d)
     ((DataObjectImpl*)dob)->setInteger(d);
     append( dol);
 }
-
+#endif
 
 void DataObjectListImpl::insert (unsigned int index, const SDODate d)
 {

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/08 09:49:49 $ */
+/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
 
 //////////////////////////////////////////////////////////////////////
 // DataFactoryImpl.cpp: implementation of the DataFactory class.
@@ -235,6 +235,18 @@ void DataFactoryImpl::addType(const char* uri, const char* inTypeName,
                                 bool isAbs,
                                 bool isData)
 {
+    addType(uri,inTypeName,isSeq,isOp,isAbs,isData,false);
+}
+
+void DataFactoryImpl::addType(const char* uri, const char* inTypeName, 
+                                bool isSeq,
+                                bool isOp,
+                                bool isAbs,
+                                bool isData,
+                                bool isFromList)
+{
+
+
     if (isResolved)
     {
     SDO_THROW_EXCEPTION("DataFactory::addType",
@@ -251,7 +263,7 @@ void DataFactoryImpl::addType(const char* uri, const char* inTypeName,
     if (findType(uri, inTypeName) == 0) 
     {
         char* fullTypeName = getFullTypeName(uri, inTypeName);
-        types[fullTypeName] = new TypeImpl(uri, inTypeName, isSeq, isOp, isAbs, isData);
+        types[fullTypeName] = new TypeImpl(uri, inTypeName, isSeq, isOp, isAbs, isData, isFromList);
         if (fullTypeName)delete fullTypeName;
 
     }
@@ -733,11 +745,13 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         setDefault(t.getURI(), t.getName(), propname, s);
     }
 
+#if __WORDSIZE !=64
     void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , long l) 
     {
         setDefault(t.getURI(), t.getName(), propname, l);
     }
+#endif
 
     void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , int64_t i) 
@@ -821,6 +835,7 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         if (pi != 0)pi->setDefault(s);
     }
 
+#if __WORDSIZE !=64
     void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 
         const char* propname , long l) 
@@ -829,6 +844,7 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         PropertyImpl* pi = ti->getPropertyImpl(propname);
         if (pi != 0)pi->setDefault(l);
     }
+#endif
 
     void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 

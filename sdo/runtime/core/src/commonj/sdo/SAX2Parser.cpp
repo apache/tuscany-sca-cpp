@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
 
 #include "commonj/sdo/SAX2Parser.h"
 #include "libxml/SAX2.h"
@@ -304,7 +304,18 @@ namespace commonj
             return currentFile;
         }
 
-        int SAX2Parser::parse(const char* filename)
+
+        void SAX2Parser::setCurrentFile(const char* filename)
+        {
+            if (currentFile != 0)
+            {
+                delete currentFile;
+            }
+            currentFile = new char[strlen(filename)+1];
+            strcpy(currentFile,filename);
+        }
+
+         int SAX2Parser::parse(const char* filename)
         {
             
             parserError = false;
@@ -316,6 +327,7 @@ namespace commonj
             }
             currentFile = new char[strlen(filename)+1];
             strcpy(currentFile,filename);
+
 
             int rc = xmlSAXUserParseFile(handler, this, filename);
             if (rc == -1)
@@ -375,13 +387,14 @@ namespace commonj
             if (setter != 0)setter->setError(messageBuffer);
         }
 
+ 
         void SAX2Parser::stream(std::istream& input)
         {
             char buffer[100];
-            parserError = false;
             xmlSAXHandlerPtr handler = &SDOSAX2HandlerStruct;
+            parserError = false;
             xmlParserCtxtPtr ctxt;
-            
+
             input.read(buffer,4);
             ctxt = xmlCreatePushParserCtxt(handler, this,
                 buffer, input.gcount(), NULL);
@@ -402,7 +415,95 @@ namespace commonj
             
         }
 
-        
+        int SAX2Parser::parse_twice(const char* filename)
+        {
+            parserError = false;
+            xmlSAXHandlerPtr handler = &SDOSAX2HandlerStruct;
+
+            setCurrentFile(filename);
+
+            int rc = xmlSAXUserParseFile(handler, this, filename);
+            if (rc == -1)
+            {
+                sdo_error(this, "xmlSAXUserParseFile returned an error %d", rc);
+                SDO_THROW_EXCEPTION("parse", SDOFileNotFoundException,messageBuffer);
+            }
+
+            // parse twice - first was for groups
+
+            if (setter)setter->clearErrors();
+
+            rc = xmlSAXUserParseFile(handler, this, filename);
+            if (rc == -1)
+            {
+                sdo_error(this, "xmlSAXUserParseFile returned an error %d", rc);
+                SDO_THROW_EXCEPTION("parse", SDOFileNotFoundException,messageBuffer);
+            }
+            return rc;
+        }
+
+        void SAX2Parser::stream_twice(std::istream& input)
+        {
+
+            std::vector<parse_buf_element> buffer_vec;
+            int count = 0;
+            parserError = false;
+
+            xmlSAXHandlerPtr handler = &SDOSAX2HandlerStruct;
+            xmlParserCtxtPtr ctxt;
+
+            char bctx[5];
+            input.read(bctx,4);
+            int bcount = input.gcount();
+
+
+            ctxt = xmlCreatePushParserCtxt(handler, this,
+                bctx, bcount, NULL);
+
+            buffer_vec.push_back(parse_buf_element());
+
+            while (input.read(buffer_vec[count].buf,1000))
+            {
+                buffer_vec[count].len = input.gcount();
+                xmlParseChunk(ctxt, buffer_vec[count].buf, 
+                                    buffer_vec[count].len, 0);
+                buffer_vec.push_back(parse_buf_element());
+                count++;
+                
+            }
+            
+            buffer_vec[count].len = input.gcount();
+            xmlParseChunk(ctxt, buffer_vec[count].buf,
+                                buffer_vec[count].len, 1);
+            xmlFreeParserCtxt(ctxt);
+
+            if (parserError)
+            {
+               SDO_THROW_EXCEPTION("stream", SDOXMLParserException,messageBuffer);
+            }
+            
+            if (setter)setter->clearErrors();
+
+            ctxt = xmlCreatePushParserCtxt(handler, this,
+                bctx, bcount, NULL);
+            
+            for (int i=0;i<buffer_vec.size();i++)
+            {
+                if (buffer_vec[i].len > 0)
+                {
+                    xmlParseChunk(ctxt, buffer_vec[i].buf, 
+                                    buffer_vec[i].len, 0);
+                }
+            }
+
+            if (parserError)
+            {
+               SDO_THROW_EXCEPTION("stream", SDOXMLParserException,messageBuffer);
+            }
+            
+        }
+
+
         std::istream& operator>>(std::istream& input, SAX2Parser& parser)
         {
             parser.stream(input);                            

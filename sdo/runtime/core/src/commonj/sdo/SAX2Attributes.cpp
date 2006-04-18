@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/04/07 13:35:33 $ */
 
 #include "commonj/sdo/SAX2Attributes.h"
 
@@ -38,7 +38,11 @@ namespace commonj
             }
         }
         
-        SAX2Attributes::~SAX2Attributes()
+        SAX2Attributes::SAX2Attributes()
+        {    
+        }
+
+       SAX2Attributes::~SAX2Attributes()
         {    
         }
         

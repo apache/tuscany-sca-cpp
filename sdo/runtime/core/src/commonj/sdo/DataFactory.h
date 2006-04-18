@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/07 11:05:20 $ */
+/* $Rev$ $Date: 2006/04/07 13:35:33 $ */
 
 #ifndef _DATAFACTORY_H_
 #define _DATAFACTORY_H_
@@ -344,10 +344,13 @@ class DataFactory : public RefCountingObject
             const char* propname , 
             short s) = 0;
 
+
+#if __WORDSIZE !=64
         virtual SDO_API void setDefault(
             const Type& t, 
             const char* propname , 
             long l) = 0;
+#endif
 
         virtual SDO_API void setDefault(
             const Type& t, 
@@ -412,11 +415,14 @@ class DataFactory : public RefCountingObject
             const char* propname , 
             short s) = 0;
 
+
+#if __WORDSIZE !=64
         virtual SDO_API void setDefault(
             const char* typuri, 
             const char* typnam, 
             const char* propname ,
             long l) = 0;
+#endif
 
         virtual SDO_API void setDefault(
             const char* typuri, 

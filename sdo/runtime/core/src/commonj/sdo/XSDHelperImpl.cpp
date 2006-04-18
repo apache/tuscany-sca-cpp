@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
+/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
 
 #include "commonj/sdo/SDOXMLFileWriter.h"   // Include first to avoid libxml compile problems!
 #include "commonj/sdo/SDOXMLStreamWriter.h" // Include first to avoid libxml compile problems!
@@ -88,7 +88,7 @@ namespace commonj
         {
             SDOSchemaSAX2Parser schemaParser(schemaInfo, this);
             clearErrors();
-            schema >> schemaParser;
+            schema  >> schemaParser;
             defineTypes(schemaParser.getTypeDefinitions());
             return schemaInfo.getTargetNamespaceURI();
         }
@@ -96,6 +96,11 @@ namespace commonj
         const char*  XSDHelperImpl::define(const char* schema)
         {
             istringstream str(schema);
+            SDOSchemaSAX2Parser schemaParser(schemaInfo, this);
+            clearErrors();
+            str  >> schemaParser;
+            defineTypes(schemaParser.getTypeDefinitions());
+            return schemaInfo.getTargetNamespaceURI();
             return define(str);
         }
         
@@ -194,6 +199,8 @@ namespace commonj
             {
                 dataFactory = DataFactory::getDataFactory();
             }
+
+            DataFactoryImpl* df = (DataFactoryImpl*)(DataFactory*)dataFactory;
             
             XMLDAS_TypeDefs types = typedefs.types;
             XMLDAS_TypeDefs::iterator iter;
@@ -226,9 +233,9 @@ namespace commonj
                     cout << addTypeCode.c_str() <<endl;
                     */
 
-                    dataFactory->addType(ty.uri, ty.name, ty.isSequenced, 
-                                         ty.isOpen, ty.isAbstract);
-                    dataFactory->setDASValue(
+                    df->addType(ty.uri, ty.name, ty.isSequenced, 
+                                         ty.isOpen, ty.isAbstract, ty.dataType, ty.isFromList);
+                    df->setDASValue(
                         ty.uri, ty.name,
                         "XMLDAS::TypeInfo",
                         new XSDTypeInfo(ty));
@@ -254,7 +261,7 @@ namespace commonj
                             }
                             if (!al1.isNull() && !al1.equals(""))
                             {
-                                dataFactory->setAlias(
+                                df->setAlias(
                                     ty.uri,
                                     ty.name,
                                     (const char*)al1);
@@ -294,7 +301,7 @@ namespace commonj
                         cout << addTypeCode.c_str() <<endl;
                         */
 
-                       dataFactory->setBaseType(
+                       df->setBaseType(
                             ty.uri,
                             ty.name,
                             ty.parentTypeUri,
@@ -400,36 +407,8 @@ namespace commonj
 
                     try 
                     {
-                        /*
-                        string isManyCode = "false";
-                        if (prop.isMany)
-                            isManyCode = "true";
-                        string isReadOnlyCode = "false";
-                        if (prop.isReadOnly)
-                            isReadOnlyCode = "true";
-                        string isContainmentCode = "false";
-                        if (prop.isContainment)
-                            isContainmentCode = "true";
-                        string uriCode = "0";
-                        if (!ty.uri.isNull())
-                        {
-                            uriCode = "\"" + string(ty.uri) + "\"";
-                        }
-                        string propUriCode = "0";
-                        if (!ty.uri.isNull())
-                        {
-                            propUriCode = "\"" + string(prop.typeUri) + "\"";
-                        }
-                        
-                        string addTypeCode = "dataFactory->addPropertyToType(\n"
-                            +  uriCode + ", \"" + string(ty.name) + "\", \n"
-                            + "\"" + string(prop.name) + "\", \n"
-                            + propUriCode + ", \"" + string(prop.typeName) + "\", \n"
-                            + isManyCode + ", " + isReadOnlyCode + ", " + isContainmentCode +");";
-                        cout << prop.isQName << addTypeCode.c_str() << endl;
-                        */
 
-                        dataFactory->addPropertyToType(ty.uri, ty.name,
+                        df->addPropertyToType(ty.uri, ty.name,
                             prop.name,
                             prop.typeUri,
                             prop.typeName,
@@ -459,7 +438,7 @@ namespace commonj
                                 }
                                 if (!al1.isNull() && !al1.equals(""))
                                 {
-                                    dataFactory->setAlias(
+                                    df->setAlias(
                                     (const char*)ty.uri,
                                     (const char*)ty.name,
                                     (const char*)prop.name,
@@ -485,7 +464,7 @@ namespace commonj
                         if (!(prop.typeUri.equals(Type::SDOTypeNamespaceURI)
                             && prop.typeName.equals("ChangeSummary")))
                         {
-                            dataFactory->setDASValue(
+                            df->setDASValue(
                                 ty.uri, ty.name,
                                 prop.name,
                                 "XMLDAS::PropertyInfo",

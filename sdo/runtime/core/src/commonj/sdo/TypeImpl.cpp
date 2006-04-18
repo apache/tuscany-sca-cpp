@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
+/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -77,6 +77,15 @@ namespace sdo{
         return changeSummaryType;
     }
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    bool TypeImpl::isFromList() const
+    {
+        return bFromList;
+    }
     ///////////////////////////////////////////////////////////////////////////
     //
     ///////////////////////////////////////////////////////////////////////////
@@ -94,7 +103,8 @@ namespace sdo{
     {
         isResolving = false;
         isResolved = false;
-        brestriction = false;
+        brestriction = t.brestriction;
+        bFromList = t.bFromList;
     }
 
      TypeImpl::TypeImpl(const Type* base, const char* uri, 
@@ -108,18 +118,22 @@ namespace sdo{
         init(uri,inname,isSeq,isOp, isAbs, isData);
         baseType = (TypeImpl*)base;
         brestriction = isRestriction;
+        bFromList = isFromList;
      }
 
      TypeImpl::TypeImpl(const char* uri, const char* inname, 
          bool isSeq,
          bool isOp,
          bool isAbs,
-         bool isData) 
+         bool isData,
+         bool isFromList) 
          
      {
         init(uri,inname,isSeq,isOp,isAbs, isData);
         baseType = 0;
         brestriction = false;
+        bFromList= false;
+        bFromList = isFromList;
      }
 
      void TypeImpl::init(const char* uri, const char* inname, 
@@ -860,12 +874,20 @@ namespace sdo{
 
     unsigned int TypeImpl::convert(void** value,const char c) const
     {
+#if __WORDSIZE ==64
+        return convert(value,(int64_t)c);
+#else
         return convert(value,(long)c);
+#endif
     }
 
     unsigned int TypeImpl::convert(void** value,const wchar_t c) const
     {
+#if __WORDSIZE ==64
+        return convert(value,(int64_t)c);
+#else
         return convert(value,(long)c);
+#endif
     }
 
     // This is set CString...
@@ -1198,7 +1220,11 @@ namespace sdo{
     
     unsigned int TypeImpl::convert(void** value,const short s) const
     {
+#if __WORDSIZE ==64
+        return convert(value,(int64_t)s);
+#else
         return convert(value,(long)s);
+#endif
     }
 
 /*    unsigned int TypeImpl::convert(void** value,const int i) const
@@ -1219,10 +1245,15 @@ namespace sdo{
             break;
             }
         default:
+#if __WORDSIZE ==64
+            return convert(value, (int64_t)(i.getTime()));
+#else
             return convert(value, (long)(i.getTime()));
+#endif
         }
     }
 
+#if __WORDSIZE !=64
     // setInteger
     unsigned int TypeImpl::convert(void** value,const long i) const
     {
@@ -1313,6 +1344,8 @@ namespace sdo{
             }
         }
     }
+
+#endif
 
     // setLongLong
 

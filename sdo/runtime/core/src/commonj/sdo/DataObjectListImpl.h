@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
+/* $Rev$ $Date: 2006/04/06 12:58:18 $ */
 
 #ifndef _DATAOBJECTLISTIMPL_H_
 #define _DATAOBJECTLISTIMPL_H_
@@ -125,8 +125,10 @@ public:
     virtual  void insert (unsigned int index, const SDODate d) ;
     virtual  void append (const SDODate d) ;
 
+#if __WORDSIZE !=64
     virtual  void insert (unsigned int index, long d) ;
     virtual  void append (long d) ;
+#endif
 
     virtual  void insert (unsigned int index, int64_t d) ;
     virtual  void append (int64_t d) ;

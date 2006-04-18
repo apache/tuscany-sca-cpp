@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
+/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
 
 #include "commonj/sdo/SDOSchemaSAX2Parser.h"
 #include "commonj/sdo/XSDPropertyInfo.h"
@@ -24,6 +24,10 @@
 #include "commonj/sdo/Logging.h"
 
 #include <stdio.h>
+
+extern "C" {
+    void sdo_error(void *ctx, const char *msg, ...);
+}
 
 namespace commonj
 {
@@ -37,6 +41,9 @@ namespace commonj
             bInSchema = false;
             bInvalidElement = false;
             bInInvalidContent = false;
+            bInvalidList = false;
+            inGroup  = 0;
+            preParsing = true;
         }
         
         SDOSchemaSAX2Parser::~SDOSchemaSAX2Parser()
@@ -44,6 +51,108 @@ namespace commonj
         }
         
         
+        void SDOSchemaSAX2Parser::storeStartElementEvent(
+                                const SDOXMLString& localname,
+                                const SDOXMLString& prefix,
+                                const SDOXMLString& URI,
+                                const SAX2Namespaces& namespaces,
+                                const SAX2Attributes& attributes)
+        {
+            // copy the event to as list for replay.
+            if (currentGroup)
+            {
+                currentGroup->events.insert( currentGroup->events.end(),
+                    GroupEvent(
+                    localname,prefix,URI,namespaces,attributes));
+            }
+
+        }
+
+        void SDOSchemaSAX2Parser::storeEndElementEvent(
+                                const SDOXMLString& localname,
+                                const SDOXMLString& prefix,
+                                const SDOXMLString& URI)
+        {
+            // copy the event to as list for replay.
+            if (currentGroup)
+            {
+                 currentGroup->events.insert(currentGroup->events.end(),
+                     GroupEvent(localname,prefix,URI));
+            }
+
+        }
+
+        void SDOSchemaSAX2Parser::replayEvents(
+            const SDOXMLString& uri,
+            const SDOXMLString& name,
+            bool isGroup)
+        {
+            for (int i=0;i< groupList.size(); i++)
+            {
+                if (groupList[i].isAttributeGroup != isGroup)
+                {
+                    if (
+                       (!name.isNull() && name.equals(groupList[i].name))
+                       && 
+                       (
+                       (uri.isNull() && groupList[i].uri.isNull())
+                       || uri.equals(groupList[i].uri))
+                       )
+                    {
+                        for (int j=0;j< groupList[i].events.size();j++)
+                        {
+                            if (groupList[i].events[j].isStartEvent)
+                            {
+                                startElementNs(
+                                 (const SDOXMLString&)
+                                 groupList[i].events[j].localname,
+                                 (const SDOXMLString&) 
+                                 groupList[i].events[j].prefix,
+                                 (const SDOXMLString&) 
+                                 groupList[i].events[j].URI,
+                                 (const SAX2Namespaces&) 
+                                 groupList[i].events[j].namespaces,
+                                 (const SAX2Attributes&) 
+                                 groupList[i].events[j].attributes);
+                            }
+                            else
+                            {
+                                endElementNs(
+                                 (const SDOXMLString&)
+                                 groupList[i].events[j].localname,
+                                 (const SDOXMLString&) 
+                                 groupList[i].events[j].prefix,
+                                 (const SDOXMLString&) 
+                                 groupList[i].events[j].URI);
+                            }
+                        }
+                        return;
+                    }
+                }
+            }
+            // no group found
+            if (setter)
+            {
+                char *msg = new char[strlen((const char*)name) + 32];
+                if (msg) 
+                {
+                    sprintf(msg,"Use of undefined group %s",
+                                            (const char*)name);
+                    setter->setError( msg );
+                    delete msg;
+                }
+            }
+         }
+
+        // ============================================================================
+        // endDocument
+        // ============================================================================
+        void SDOSchemaSAX2Parser::endDocument()
+        {
+            preParsing=!preParsing;
+            schemaInfo.getSchemaNamespaces().empty();
+        }
+
 
         // ============================================================================
         // startElementNS
@@ -89,105 +198,194 @@ namespace commonj
                     currentType.uri = schemaInfo.getTargetNamespaceURI();
                     currentType.name = "RootType";
                     currentType.localname="RootType";
+                    return;
                     
                 } // end schema handling
+                if (preParsing)
+                {
+                    // we are now pre-parsing groups so that we can allow them to be
+                    // defined after use.
 
-                // Handle <import> of other schema
-                else if (localname.equalsIgnoreCase("import"))
-                {
-                    // TODO - import and include treated equally for now - need to
-                    // separate out the namespace info for import 
-                    startInclude(localname, prefix, URI, namespaces, attributes);
-                }
-
-                // Handle <include> of other schema
-                else if (localname.equalsIgnoreCase("include"))
-                {
-                    startInclude(localname, prefix, URI, namespaces, attributes);
-                }
-                
-                ///////////////////////////////////////////////////////////////////////
-                // Handle elements and attributes
-                // These become Properties of the current Type
-                // ?? Any special handling of global elements???
-                ///////////////////////////////////////////////////////////////////////
-                else if (localname.equalsIgnoreCase("element"))
-                {
-                    if (!bInInvalidContent) startElement(localname, prefix, URI, namespaces, attributes);
-                }
-                else if (localname.equalsIgnoreCase("attribute"))
-                {
-                    if (!bInInvalidContent) startAttribute(localname, prefix, URI, namespaces, attributes);
-                }
-                else if (localname.equalsIgnoreCase("any")
-                        || localname.equalsIgnoreCase("anyAttribute"))
-                {
-                    // the type containing this is to be created as open
-                    if (!bInInvalidContent) currentType.isOpen = true;
-                }
-                
-                
-                ///////////////////////////////////////////////////////////////////////
-                // Handle complexType
-                // These become new types
-                ///////////////////////////////////////////////////////////////////////
-                else if (localname.equalsIgnoreCase("complexType"))
-                {
-                    if (!bInInvalidContent) startComplexType(localname, prefix, URI, namespaces, attributes);
-                } // end complexType handling
-                
-                else if (localname.equalsIgnoreCase("choice") 
-                    || localname.equalsIgnoreCase("sequence")
-                    || localname.equalsIgnoreCase("all"))
-                {
-                    if (!bInInvalidContent) startGroup(localname, prefix, URI, namespaces, attributes);
-                } // end Group handling
-                
-                else if (localname.equalsIgnoreCase("group") 
-                      || localname.equalsIgnoreCase("attributeGroup"))
-                {
-                    if (setter)
+                    if (inGroup > 0)
                     {
-                        setter->setError("Schema contains a group or attributeGroup which are not yet implemented");
-                        
+                        if (   localname.equalsIgnoreCase("group")
+                        ||  localname.equalsIgnoreCase("attributeGroup"))
+                        {
+                            inGroup++;
+                        }
+                        // check for a group reference first
+                        // we are inside a group....
+                         storeStartElementEvent(
+                                localname,
+                                prefix,
+                                URI,
+                                namespaces,
+                                attributes);
+                         return;
                     }
-                }
-               else if (localname.equalsIgnoreCase("list") 
-                       )
-                {
-                    if (setter)
-                    {
-                        setter->setError("Schema contains a list which is not yet implemented");
-                        
-                    }
-                }
 
-               ///////////////////////////////////////////////////////////////////////
-                // Handle simpleType
-                // These become new types
-                ///////////////////////////////////////////////////////////////////////
-                else if (localname.equalsIgnoreCase("simpleType"))
-                {
-                    if (!bInInvalidContent) startSimpleType(localname, prefix, URI, namespaces, attributes);
-                } // end complexType handling
-                
-                else if (localname.equalsIgnoreCase("restriction"))
-                {
-                    if (!bInInvalidContent) startRestriction(localname, prefix, URI, namespaces, attributes);
-                }
-                
-                else if (localname.equalsIgnoreCase("extension"))
-                {
-                    if (!bInInvalidContent) startExtension(localname, prefix, URI, namespaces, attributes);
-                }
-                // Handle <import> of other schema
-                else if (localname.equalsIgnoreCase("union"))
-                {
-                    // TODO - unions not yet supported
-                    bInInvalidContent = true;
-                    if (setter)
+                    if (   localname.equalsIgnoreCase("group")
+                        ||  localname.equalsIgnoreCase("attributeGroup"))
                     {
-                        setter->setError("Schema contains a union which is not yet implemented");
+                        inGroup++;
+                        int i;
+                        for (i=0; i < attributes.size(); i++)
+                        {
+                            if (attributes[i].getName().equalsIgnoreCase("ref"))
+                            {
+                                // dont store references.
+                                return;
+                            }                        
+                        }
+
+                        groupList.insert(groupList.begin(),GroupDefinition());
+                        currentGroup = &groupList[0];
+
+                        if (localname.equalsIgnoreCase("group"))
+                             currentGroup->isAttributeGroup = false;
+                        else currentGroup->isAttributeGroup = true;
+
+                        for (i=0; i < attributes.size(); i++)
+                        {
+                            if (attributes[i].getName().equalsIgnoreCase("name"))
+                            {
+                                XMLQName qname(attributes[i].getValue(), 
+                                schemaInfo.getSchemaNamespaces(),
+                                namespaces);
+                                if (qname.getURI().isNull())
+                                {
+                                    currentGroup->uri = schemaInfo.getTargetNamespaceURI();
+                                }
+                                else
+                                {
+                                    currentGroup->uri = qname.getURI();
+                                }
+                                currentGroup->name = qname.getLocalName();
+                            }                        
+                        }
+                    } 
+                } // end of preParsing groups.
+                else 
+                {
+                    if (inGroup == 0)
+                    {
+                        // Handle <import> of other schema
+                        if (localname.equalsIgnoreCase("import"))
+                        {
+                        // TODO - import and include treated equally for now - need to
+                        // separate out the namespace info for import 
+                        startInclude(localname, prefix, URI, namespaces, attributes);
+                        }
+
+                        // Handle <include> of other schema
+                        else if (localname.equalsIgnoreCase("include"))
+                        {
+                        startInclude(localname, prefix, URI, namespaces, attributes);
+                        }
+                
+                        ///////////////////////////////////////////////////////////////////////
+                        // Handle elements and attributes
+                        // These become Properties of the current Type
+                        // ?? Any special handling of global elements???
+                        ///////////////////////////////////////////////////////////////////////
+                        else if (localname.equalsIgnoreCase("element"))
+                        {
+                            if (!bInInvalidContent) startElement(localname, prefix, URI, namespaces, attributes);
+                        }
+                        else if (localname.equalsIgnoreCase("attribute"))
+                        {
+                            if (!bInInvalidContent) startAttribute(localname, prefix, URI, namespaces, attributes);
+                        }
+                        else if (localname.equalsIgnoreCase("any")
+                            || localname.equalsIgnoreCase("anyAttribute"))
+                        {
+                            // the type containing this is to be created as open
+                            if (!bInInvalidContent) currentType.isOpen = true;
+                        }
+                
+                
+                        ///////////////////////////////////////////////////////////////////////
+                        // Handle complexType
+                        // These become new types
+                        ///////////////////////////////////////////////////////////////////////
+                        else if (localname.equalsIgnoreCase("complexType"))
+                        {
+                            if (!bInInvalidContent) startComplexType(localname, prefix, URI, namespaces, attributes);
+                        } // end complexType handling
+                
+                        else if (localname.equalsIgnoreCase("choice") 
+                            || localname.equalsIgnoreCase("sequence")
+                            || localname.equalsIgnoreCase("all"))
+                        {
+                            if (!bInInvalidContent) startGroup(localname, prefix, URI, namespaces, attributes);
+                        } // end Group handling
+                
+                        else if (   localname.equalsIgnoreCase("group")
+                            ||  localname.equalsIgnoreCase("attributeGroup"))
+                        {
+
+                            int i;
+                            for (i=0; i < attributes.size(); i++)
+                            {
+                                if (attributes[i].getName().equalsIgnoreCase("ref"))
+                                {
+                                    XMLQName qname(attributes[i].getValue(), 
+                                    schemaInfo.getSchemaNamespaces(),
+                                    namespaces);
+                                    if (qname.getURI().isNull())
+                                    {
+                                        replayEvents(schemaInfo.getTargetNamespaceURI(), qname.getLocalName(),
+                                        localname.equalsIgnoreCase("group"));
+                                    }
+                                    else
+                                    {
+                                        replayEvents(qname.getURI(), qname.getLocalName(),
+                                            localname.equalsIgnoreCase("group"));
+                                    }
+                                }                        
+                            }
+                            inGroup++;
+                            // if theres no 'ref' then its a group definition, and we 
+                            // already pre-parsed it.
+                        }
+                        else if (localname.equalsIgnoreCase("list"))
+                        {
+                             startList(
+                                localname,
+                                prefix,
+                                URI,
+                                namespaces,
+                                attributes);
+                        }
+
+                        ///////////////////////////////////////////////////////////////////////
+                        // Handle simpleType
+                        // These become new types
+                        ///////////////////////////////////////////////////////////////////////
+                        else if (localname.equalsIgnoreCase("simpleType"))
+                        {
+                            if (!bInInvalidContent) startSimpleType(localname, prefix, URI, namespaces, attributes);
+                        } // end complexType handling
+                
+                        else if (localname.equalsIgnoreCase("restriction"))
+                        {
+                            if (!bInInvalidContent) startRestriction(localname, prefix, URI, namespaces, attributes);
+                        }
+                
+                        else if (localname.equalsIgnoreCase("extension"))
+                        {
+                            if (!bInInvalidContent) startExtension(localname, prefix, URI, namespaces, attributes);
+                        }
+                        // Handle <import> of other schema
+                        else if (localname.equalsIgnoreCase("union"))
+                        {
+                            // TODO - unions not yet supported
+                            bInInvalidContent = true;
+                            if (setter)
+                            {
+                                setter->setError("Schema contains a union which is not yet implemented");
+                            }
+                        }
                     }
                 }
             }
@@ -226,33 +424,69 @@ namespace commonj
                 //
                 if (!bInInvalidContent)
                 {
-                    if (localname.equalsIgnoreCase("complexType"))
+                    if (preParsing)
                     {
-                        if (!bInvalidElement) defineType();
-                    } // end complexType handling
-                    else if (localname.equalsIgnoreCase("simpleType"))
-                    {
-                        if (!bInvalidElement) defineType();
-                    } 
-                
-                    else if (localname.equalsIgnoreCase("schema"))
-                    {
-                        if (!bInvalidElement) defineType();
-                    } // end complexType handling
-                
-                    else if (localname.equalsIgnoreCase("element")
-                        || localname.equalsIgnoreCase("attribute"))
-                    {
-                        // PropertyDefinition should now be complete
-                         if (!bInvalidElement) defineProperty();
-                    } 
-                    else if (localname.equalsIgnoreCase("choice") 
-                        || localname.equalsIgnoreCase("sequence")
-                        || localname.equalsIgnoreCase("all"))
-                    {
-                        if (!bInvalidElement) currentType.isMany = false;
+                        if (inGroup > 0)
+                        {
+                            if (localname.equalsIgnoreCase("group")
+                            || localname.equalsIgnoreCase("attributeGroup"))
+                            {
+                                inGroup--;
+                                if (inGroup < 0)inGroup = 0; // should never happen.
+                            }
+                            if (inGroup > 0)  // still need to store end of group ref
+                            {
+                                storeEndElementEvent(
+                                        localname,
+                                        prefix,
+                                        URI);
+                            }
+                        }
                     }
-                    bInvalidElement = false;
+                    else
+                    {
+                        if (localname.equalsIgnoreCase("group")
+                             || localname.equalsIgnoreCase("attributeGroup"))
+                        {
+                            inGroup--;
+                            if (inGroup < 0) inGroup = 0;
+                        // outside of preparse, dont need to do anything.
+                        }
+                        else if (inGroup == 0)
+                        {
+                            if (localname.equalsIgnoreCase("complexType"))
+                            {
+                                if (!bInvalidElement) defineType();
+                            } // end complexType handling
+                            else if (localname.equalsIgnoreCase("simpleType"))
+                            {
+                                if (!bInvalidElement) defineType();
+                            } 
+                            else if (localname.equalsIgnoreCase("schema"))
+                            {   
+                                if (!bInvalidElement) defineType();
+                            } // end complexType handling
+                            else if (localname.equalsIgnoreCase("element")
+                            || localname.equalsIgnoreCase("attribute"))
+                            {
+                                // PropertyDefinition should now be complete
+                                if (!bInvalidElement) defineProperty();
+                            } 
+                            else if (localname.equalsIgnoreCase("choice") 
+                                || localname.equalsIgnoreCase("sequence")
+                                || localname.equalsIgnoreCase("all"))
+                            {
+                                if (!bInvalidElement) currentType.isMany = false;
+                            }
+                            else if (localname.equalsIgnoreCase("list"))
+                            {
+                                // PropertyDefinition should now be complete
+                                if (!bInvalidList) defineProperty();
+                                bInvalidList = false;
+                            }
+                            bInvalidElement = false;
+                        }
+                    }
     
                 } // bInUnsupportedContent
                 if (localname.equalsIgnoreCase("union"))
@@ -390,6 +624,59 @@ namespace commonj
         }
 
         
+        // ============================================================================
+        // startList
+        // ============================================================================
+        void SDOSchemaSAX2Parser::startList(
+            const SDOXMLString& localname,
+            const SDOXMLString& prefix,
+            const SDOXMLString& URI,
+            const SAX2Namespaces& namespaces,
+            const SAX2Attributes& attributes)
+        {
+
+            LOGINFO_1( INFO,"SchemaParser:startList:%s",(const char*)localname);
+
+            if (!bInSchema) return;
+
+            // invent a property called "values" to hold the list
+            
+            SDOXMLString typeName = attributes.getValue("itemType");
+
+            if (typeName.isNull())
+            {
+                // we do not support lists with no item type (yet).
+                if (setter)
+                {
+                    setter->setError("Schema contains a list with no type - not supported");
+                }
+                bInvalidList = true;
+                return;
+            }
+
+            currentType.dataType = false;    
+            currentType.isFromList = true;
+
+            // attribute to set the list type
+            // define an internal property to hold the list
+            PropertyDefinition thisProperty;
+            thisProperty.name = "values";
+            thisProperty.localname = "values";
+            thisProperty.isContainment = false;
+            thisProperty.isElement=true;
+            thisProperty.isMany = true;
+ 
+            XMLQName qname = resolveTypeName(
+                typeName,
+                namespaces,
+                thisProperty.typeUri,
+                thisProperty.typeName);
+            thisProperty.fullTypeName = typeName; 
+
+            setCurrentProperty(thisProperty);
+           
+        }
+
         // ============================================================================
         // startElement
         // ============================================================================
@@ -972,6 +1259,21 @@ namespace commonj
             
             return input;
         }
+
+        void SDOSchemaSAX2Parser::stream(std::istream& input)
+        {
+           // override to parse twice for groups
+
+            stream_twice(input);
+        }
+
+
+        int SDOSchemaSAX2Parser::parse(const char* filename)
+        {
+            return parse_twice(filename);
+        }
+         
+        
 
         // ============================================================================
         // resolveTypeName

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/07 11:05:20 $ */
+/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
 
 #ifndef _DataFactoryIMPL_H_
 #define _DataFactoryIMPL_H_
@@ -58,8 +58,15 @@ public:
         bool isSeqenced = false, 
         bool isOpen = false,
         bool isAbstract = false,
-        bool isDataType = false);
+        bool isDataType = false
+        );
 
+    virtual void addType(const char* uri, const char* inTypeName,
+        bool isSeqenced , 
+        bool isOpen ,
+        bool isAbstract ,
+        bool isDataType ,
+        bool isFromList );
 
     virtual void addPropertyToType(const char* uri, 
                                    const char* inTypeName,
@@ -193,10 +200,14 @@ public:
         const char* propname , 
         short s) ;
 
+
+
+#if __WORDSIZE !=64
     virtual void setDefault(
         const Type& t, 
         const char* propname , 
         long l) ;
+#endif
 
     virtual void setDefault(
         const Type& t, 
@@ -260,11 +271,13 @@ public:
         const char* propname , 
         short s) ;
 
+#if __WORDSIZE !=64
     virtual void setDefault(
         const char* typuri, 
         const char* typnam, 
         const char* propname , 
         long l) ;
+#endif
 
     virtual void setDefault(
         const char* typuri, 

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
 
 #ifndef _SAX2PARSER_H_
 #define _SAX2PARSER_H_
@@ -34,6 +34,14 @@ namespace commonj
 {
     namespace sdo
     {
+
+        class parse_buf_element 
+        {
+            
+        public:
+            char buf[1000];
+            int len;
+        };
         
 /**
  * SAX2Parser holds the methods which will be called back.
@@ -56,7 +64,8 @@ namespace commonj
             virtual ~SAX2Parser();
             
             virtual int parse (const char* filename);
-            
+            virtual int parse_twice (const char* filename);
+           
             virtual void startDocument();
             virtual void endDocument();
 
@@ -81,8 +90,9 @@ namespace commonj
             virtual void error(const char* msg, va_list args);
 
             virtual void stream(std::istream& input);
+            virtual void stream_twice(std::istream& input);
             
-            friend std::istream& operator>>(std::istream& input, SAX2Parser& parser);
+             friend std::istream& operator>>(std::istream& input, SAX2Parser& parser);
             
             ParserErrorSetter* setter;
             bool parserError;
@@ -90,7 +100,9 @@ namespace commonj
             char messageBuffer[1024];
 
             virtual const char* getCurrentFile() const;
-        private:
+            virtual void setCurrentFile(const char* filename);
+
+       private:
 
             char* currentFile;
 

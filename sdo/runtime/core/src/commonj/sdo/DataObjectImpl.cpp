@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/03 14:34:26 $ */
+/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/DataObjectImpl.h"
@@ -87,14 +87,14 @@ namespace sdo {
         PropertyImpl* p = getPropertyImpl(propertyIndex);\
         if (p != 0 ) \
         {\
-            if (p->isMany())\
+            if (p->isMany() || p->getTypeImpl()->isFromList())\
             {\
                 string msg("Get value not available on many valued property:");\
                 msg += p->getName();\
                 SDO_THROW_EXCEPTION("get value", SDOUnsupportedOperationException,\
                     msg.c_str());\
             }\
-              DataObjectImpl* d = getDataObjectImpl(propertyIndex);\
+             DataObjectImpl* d = getDataObjectImpl(propertyIndex);\
             if (d != 0) \
             {\
                 if (d->isNull())return (retval)0;\
@@ -118,7 +118,7 @@ namespace sdo {
           PropertyImpl* p = getPropertyImpl(propertyIndex);\
         if (p != 0) \
         {\
-            if (p->isMany())\
+            if (p->isMany()|| p->getTypeImpl()->isFromList())\
             {\
                 string msg("Get value not available on many valued property:");\
                 msg += p->getName();\
@@ -150,7 +150,7 @@ namespace sdo {
         PropertyImpl* pl = getPropertyImpl(propertyIndex);\
         if (pl != 0) \
         {\
-            if (pl->isMany())\
+            if (pl->isMany()|| pl->getTypeImpl()->isFromList())\
             {\
                 string msg("Set value not available on many valued property:");\
                 msg += pl->getName();\
@@ -192,7 +192,7 @@ namespace sdo {
         PropertyImpl* pl = getPropertyImpl(propertyIndex);\
         if (pl != 0) \
         {\
-            if (pl->isMany())\
+            if (pl->isMany()|| pl->getTypeImpl()->isFromList())\
             {\
                 string msg("Set value not available on many valued property:");\
                 msg += pl->getName();\
@@ -248,7 +248,7 @@ namespace sdo {
                     PropertyImpl* p = d->getPropertyImpl(prop);\
                     if (p != 0) \
                     {\
-                        if (p->isMany())\
+                        if (p->isMany()|| p->getTypeImpl()->isFromList())\
                         {\
                             long l;\
                             DataObjectImpl* doi = d->findDataObject(prop,&l);\
@@ -316,7 +316,7 @@ namespace sdo {
                     PropertyImpl* p = d->getPropertyImpl(prop);\
                     if (p != 0)\
                     {\
-                        if (p->isMany())\
+                        if (p->isMany() || p->getTypeImpl()->isFromList())\
                         {\
                             long l;\
                             DataObjectImpl* doi = d->findDataObject(prop,&l);\
@@ -363,7 +363,7 @@ namespace sdo {
  * A macro for the setting of primitive values in a data object by path
  */
 
-#define setPrimitiveFromPath(primval,setval)\
+#define setPrimitiveFromPath(primval,setval,platval)\
     void DataObjectImpl::set ##primval (const char* path, setval value)\
     {\
         DataObjectImpl *d;\
@@ -387,7 +387,7 @@ namespace sdo {
                     {\
                         p = d->define ##primval (prop);\
                     }\
-                    if (p->isMany())\
+                    if (p->isMany()|| p->getTypeImpl()->isFromList())\
                     {\
                         long l;\
                         DataObjectList& dol = d->getList((Property&)*p);\
@@ -398,7 +398,7 @@ namespace sdo {
                             doi->set ## primval (value);\
                         }\
                         else {\
-                            dol.append(value);\
+                            dol.append(( platval) value);\
                         }\
                     }\
                     else {\
@@ -449,7 +449,7 @@ namespace sdo {
                     {\
                         p = d->define ##primval (prop);\
                     }\
-                    if (p->isMany())\
+                    if (p->isMany()|| p->getTypeImpl()->isFromList())\
                     {\
                         long l;\
                         DataObjectList& dol = d->getList((Property&)*p);\
@@ -698,15 +698,19 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
     getPrimitiveFromPath(Date,const SDODate,0);
 
 
-    setPrimitiveFromPath(Boolean,bool);
-    setPrimitiveFromPath(Byte,char);
-    setPrimitiveFromPath(Character,wchar_t);
-    setPrimitiveFromPath(Short,short);
-    setPrimitiveFromPath(Integer,long);
-    setPrimitiveFromPath(Long,int64_t);
-    setPrimitiveFromPath(Float,float);
-    setPrimitiveFromPath(Double,long double);
-    setPrimitiveFromPath(Date,const SDODate);
+    setPrimitiveFromPath(Boolean,bool, bool);
+    setPrimitiveFromPath(Byte,char, char);
+    setPrimitiveFromPath(Character,wchar_t, wchar_t);
+    setPrimitiveFromPath(Short,short, short);
+#if __WORDSIZE ==64
+    setPrimitiveFromPath(Integer,long, int64_t);
+#else
+    setPrimitiveFromPath(Integer,long, long);
+#endif
+    setPrimitiveFromPath(Long,int64_t, int64_t);
+    setPrimitiveFromPath(Float,float, float);
+    setPrimitiveFromPath(Double,long double, long double);
+    setPrimitiveFromPath(Date,const SDODate, const SDODate);
 
 
     getPrimitiveFromProperty(Boolean,bool);
@@ -899,8 +903,10 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
     const char* DataObjectImpl::getCString(unsigned int propertyIndex)
     {
         validateIndex(propertyIndex);
-        if ((getProperty(propertyIndex).isMany()))
+        if ((getProperty(propertyIndex).isMany())
+            || getPropertyImpl(propertyIndex)->getTypeImpl()->isFromList())
         {
+
             string msg("Get value not available on many valued property:");
             msg += getProperty(propertyIndex).getName();
             SDO_THROW_EXCEPTION("getCString", SDOUnsupportedOperationException,
@@ -932,7 +938,8 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
     {
         validateIndex(propertyIndex);
         PropertyValueMap::iterator i;
-        if ((getProperty(propertyIndex).isMany()))
+        if ((getProperty(propertyIndex).isMany())
+            || getPropertyImpl(propertyIndex)->getTypeImpl()->isFromList())
         {
             string msg("Set value not available on many valued property:");
             msg += getProperty(propertyIndex).getName();
@@ -980,7 +987,7 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
                     PropertyImpl* p  = d->getPropertyImpl(prop);
                     if (p != 0) 
                     {
-                        if (p->isMany())
+                        if (p->isMany()|| p->getTypeImpl()->isFromList())
                         {
                             long l;
                             DataObjectImpl* doi = d->findDataObject(prop,&l);
@@ -1053,7 +1060,7 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
                     }
                     if (p != 0)
                     {
-                        if (p->isMany()) {
+                        if (p->isMany()|| p->getTypeImpl()->isFromList()) {
                             long l;
                             DataObjectList& dol = d->getList((Property&)*p);
                             DataObjectImpl* doi = d->findDataObject(prop,&l);
@@ -1306,10 +1313,13 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
     {
         if (!(getProperty(propIndex).isMany()))
         {
-        string msg("Get list not available on single valued property:");
-        msg += getProperty(propIndex).getName();
-        SDO_THROW_EXCEPTION("getList", SDOUnsupportedOperationException,
-            msg.c_str());
+            if (!getPropertyImpl(propIndex)->getTypeImpl()->isFromList())
+            {
+                string msg("Get list not available on single valued property:");
+                msg += getProperty(propIndex).getName();
+                SDO_THROW_EXCEPTION("getList", SDOUnsupportedOperationException,
+                    msg.c_str());
+            }
         }
         DataObjectImpl* d = getDataObjectImpl(propIndex);
         if (d == 0)
@@ -1326,10 +1336,14 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
     {
         if (!p.isMany())
         {
-            string msg("Get list not available on single valued property:");
-            msg += p.getName();
-            SDO_THROW_EXCEPTION("getList", SDOUnsupportedOperationException,
-            msg.c_str());
+            PropertyImpl* pi = (PropertyImpl*)&p;
+            if (!pi->getTypeImpl()->isFromList())
+            {
+                string msg("Get list not available on single valued property:");
+                msg += p.getName();
+                SDO_THROW_EXCEPTION("getList", SDOUnsupportedOperationException,
+                msg.c_str());
+            }
         }
 
         int propIndex = getPropertyIndex(p);
@@ -1355,11 +1369,20 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
 
     DataObjectList& DataObjectImpl::getList()
     {
+        if (getTypeImpl().isFromList())
+        {
+            return getList("values");
+        }
         return *listValue;
     }
 
     DataObjectListImpl* DataObjectImpl::getListImpl()
     {
+        if (getTypeImpl().isFromList())
+        {
+            DataObjectList& dl = getList("values");
+            return (DataObjectListImpl*)&dl;
+        }
         return listValue;
     }
 
@@ -3122,11 +3145,16 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
         return;
     }
 
-    void DataObjectImpl::setInteger(long invalue) 
+   void DataObjectImpl::setInteger(long invalue) 
     {
+#if __WORDSIZE ==64
+        valuelength = getTypeImpl().convert(&value,(int64_t)invalue);
+#else
         valuelength = getTypeImpl().convert(&value,invalue);
+#endif
         return;
     }
+
 
     void DataObjectImpl::setDouble(long double invalue)
     {

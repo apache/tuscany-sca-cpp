@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
+/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
 
 #ifndef _TYPEDEFINITION_H_
 #define _TYPEDEFINITION_H_
@@ -65,6 +65,9 @@ namespace commonj
             bool isAbstract;
 
             bool isExtendedPrimitive;
+            
+            bool isFromList;
+
 
             bool isMany;
             int groupElementCount;

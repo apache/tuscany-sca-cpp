@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
+/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
 
 #ifndef _TYPEIMPL_H_
 #define _TYPEIMPL_H_
@@ -83,8 +83,10 @@ public:
      unsigned int convert(            void ** value,const bool b) const; 
      unsigned int convert(            void ** value,const char c) const; 
      unsigned int convert(            void ** value,const wchar_t c) const; 
-     unsigned int convert(            void ** value,const short s) const; 
+     unsigned int convert(            void ** value,const short s) const;
+#if __WORDSIZE !=64
      unsigned int convert(            void ** value,const long i) const; 
+#endif
      unsigned int convert(            void ** value,const int64_t l) const; 
      unsigned int convert(            void ** value,const float f) const; 
      unsigned int convert(            void ** value,const long double d) const; 
@@ -233,10 +235,15 @@ public:
 
     virtual bool equals(const Type& tother) const;
 
+    virtual bool isFromList() const;
+
+
 private:
     friend class DataFactoryImpl;
 
     bool changeSummaryType;
+
+    bool bFromList;
 
     void* newValue(void* v, int size) const;
 
@@ -248,7 +255,8 @@ private:
         bool isSeq= false, 
         bool isOp = false,
         bool isAbs = false, 
-        bool isData = false);
+        bool isData = false,
+        bool isFromList = false);
     
     TypeImpl(const Type* base, const char* uri,const char* name, 
         bool isSeq = false, 

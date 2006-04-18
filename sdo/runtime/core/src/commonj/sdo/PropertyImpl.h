@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/04/06 12:58:18 $ */
 
 #ifndef _PROPERTYIMPL_H_
 #define _PROPERTYIMPL_H_
@@ -117,7 +117,9 @@ class PropertyImpl :public DASProperty
     virtual SDO_API void setDefault(wchar_t c);
     virtual SDO_API void setDefault(char* c);
     virtual SDO_API void setDefault(short s);
+#if __WORDSIZE !=64
     virtual SDO_API void setDefault(long l);
+#endif
     virtual SDO_API void setDefault(int64_t i);
     virtual SDO_API void setDefault(float f);
     virtual SDO_API void setDefault(long double d);

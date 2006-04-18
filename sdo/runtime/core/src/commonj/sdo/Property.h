@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/04/06 12:58:18 $ */
 
 #ifndef _PROPERTY_H_
 #define _PROPERTY_H_
@@ -155,7 +155,9 @@ class Property
     virtual SDO_API void setDefault(wchar_t c) = 0;
     virtual SDO_API void setDefault(char* c) = 0;
     virtual SDO_API void setDefault(short s) = 0;
+#if __WORDSIZE !=64
     virtual SDO_API void setDefault(long l) = 0;
+#endif
     virtual SDO_API void setDefault(int64_t i) = 0;
     virtual SDO_API void setDefault(float f) = 0;
     virtual SDO_API void setDefault(long double d) = 0;

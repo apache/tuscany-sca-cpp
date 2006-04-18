@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/23 09:19:14 $ */
+/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
  
 #include <iostream>
 using namespace std;
@@ -215,10 +215,12 @@ namespace sdo{
     {
         setDefaultShort(s);
     }
+#if __WORDSIZE !=64
     void PropertyImpl::setDefault(long i )
     {
         setDefaultInteger(i);
     }
+#endif
     void PropertyImpl::setDefault(int64_t i )
     {
         setDefaultLong(i);
@@ -347,6 +349,7 @@ namespace sdo{
     ///////////////////////////////////////////////////////////////////////////
     bool PropertyImpl::isMany() const
     {
+          if(getTypeImpl()->isFromList())return true; 
           return bisMany;
     }
   
@@ -497,7 +500,11 @@ namespace sdo{
     void PropertyImpl::setDefaultInteger( const long i    )
     {
         bDefaulted=true;
+#if __WORDSIZE ==64
+        defvaluelength = getTypeImpl()->convert(&defvalue,(int64_t)i); 
+#else
         defvaluelength = getTypeImpl()->convert(&defvalue,i); 
+#endif
     }
     void PropertyImpl::setDefaultLong(const int64_t l)
     {

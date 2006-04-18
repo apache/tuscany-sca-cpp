@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
 
 #ifndef _PARSER_ERROR_SETTER_H_
 #define _PARSER_ERROR_SETTER_H_
@@ -41,6 +41,7 @@ class ParserErrorSetter
 public:
     virtual ~ParserErrorSetter();
     virtual void setError(const char* message) = 0;
+    virtual void clearErrors() = 0;
 };
 };
 };

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/17 16:01:05 $ */
+/* $Rev$ $Date: 2006/04/07 08:25:11 $ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/Property.h"
@@ -491,7 +491,7 @@ ObjectGetter(RefCountingPointer<DataObject> , DataObject, 0);
     }
 
 
-#define adder(primtype,primval)\
+#define adder(primtype,primval, platval)\
     bool SequenceImpl::add##primtype(const char* propertyName, primval v)\
     {\
         const PropertyImpl* p = the_do->getPropertyImpl(propertyName);\
@@ -520,7 +520,7 @@ ObjectGetter(RefCountingPointer<DataObject> , DataObject, 0);
         if (p.isMany())\
         {\
             DataObjectList& dol = the_do->getList(p);\
-            dol.append((primval)v);\
+            dol.append((platval)v);\
             /* the_list.push_back(seq_item(&p,dol.size()-1));*/\
             return true;\
         }\
@@ -539,17 +539,21 @@ ObjectGetter(RefCountingPointer<DataObject> , DataObject, 0);
         return true;\
     }
 
-adder( CString , const char* );
-adder( Boolean, bool);
-adder( Byte, char );
-adder(Character, wchar_t);
-adder(Short, short);
-adder(Integer, long);
-adder(Long, int64_t);
-adder(Float, float);
-adder(Double, long double);
-adder(Date, const SDODate);
-doadder(DataObject, RefCountingPointer<DataObject>);
+adder( CString , const char* , const char* );
+adder( Boolean, bool, bool);
+adder( Byte, char , char );
+adder(Character, wchar_t, wchar_t);
+adder(Short, short, short);
+#if __WORDSIZE ==64
+adder(Integer, long, int64_t);
+#else
+adder(Integer, long, long);
+#endif
+adder(Long, int64_t, int64_t);
+adder(Float, float, float);
+adder(Double, long double, long double);
+adder(Date, const SDODate, const SDODate);
+doadder(DataObject, RefCountingPointer<DataObject> );
 
 
 #define charAdder(primtype,primval)\
@@ -605,7 +609,7 @@ charAdder ( String, const wchar_t* );
 charAdder ( Bytes , const char* );
 
 
-#define inserter(primtype,primval)\
+#define inserter(primtype,primval, platval)\
     bool SequenceImpl::add##primtype(unsigned int index, const char* propertyName, primval v)\
     {\
         const PropertyImpl* p = the_do->getPropertyImpl(propertyName);\
@@ -640,7 +644,7 @@ charAdder ( Bytes , const char* );
         if (p.isMany())\
         {\
             DataObjectList& dol = the_do->getList(p);\
-            dol.append((primval)v);\
+            dol.append((platval)v);\
             j = 0;\
             for (i=the_list.begin();(j < index) && (i != the_list.end());++i) {\
                 j++;\
@@ -729,16 +733,20 @@ charAdder ( Bytes , const char* );
         return true;\
     }
 
-inserter( CString , const char* );
-inserter( Boolean, bool);
-inserter( Byte, char );
-inserter(Character, wchar_t);
-inserter(Short, short);
-inserter(Integer, long);
-inserter(Long, int64_t);
-inserter(Float, float);
-inserter(Double, long double);
-inserter(Date, const SDODate);
+inserter( CString , const char* , const char* );
+inserter( Boolean, bool, bool);
+inserter( Byte, char , char );
+inserter(Character, wchar_t, wchar_t );
+inserter(Short, short, short );
+#if __WORDSIZE ==64
+inserter(Integer, long, int64_t );
+#else
+inserter(Integer, long, long );
+#endif
+inserter(Long, int64_t, int64_t);
+inserter(Float, float, float );
+inserter(Double, long double, long double);
+inserter(Date, const SDODate, const SDODate);
 doinserter(DataObject, RefCountingPointer<DataObject>);
 
 

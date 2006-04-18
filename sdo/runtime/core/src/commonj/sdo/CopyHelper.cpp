@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date: 2006/04/07 08:25:11 $ */
 
 #include "commonj/sdo/Property.h"
 #include "commonj/sdo/Type.h"
@@ -116,9 +116,15 @@ namespace sdo{
             case Type::CharacterType:
                 to.append(from.getCharacter(i));
                 break;
+#if __WORDSIZE ==64
+            case Type::IntegerType: 
+                to.append((int64_t)(from.getInteger(i)));
+                break;
+#else
             case Type::IntegerType: 
                 to.append(from.getInteger(i));
                 break;
+#endif
             case Type::ShortType:
                 to.append(from.getShort(i));
                 break;

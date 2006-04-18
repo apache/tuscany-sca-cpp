@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
 
 #include "commonj/sdo/TypeDefinition.h"
 namespace commonj
@@ -30,7 +30,8 @@ namespace commonj
               isQName(false),
               isAbstract(false),
               groupElementCount(0),
-              isExtendedPrimitive(false)
+              isExtendedPrimitive(false),
+              isFromList(false)
         {
         }
         
