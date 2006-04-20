@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
+/* $Rev$ $Date: 2006/04/20 14:24:42 $ */
 
 #include "commonj/sdo/SDOSAX2Parser.h"
 
@@ -1210,7 +1210,7 @@ namespace commonj
 
             
             DataObject* dob = currentDataObject;
-            if (((DataObjectImpl*)dob)->getTypeImpl().isFromList())
+            if ((dob != 0)  && ((DataObjectImpl*)dob)->getTypeImpl().isFromList())
             {
                 // this is a list,so we need to split it up
                 DataObjectList& dl = currentDataObject->getList(
