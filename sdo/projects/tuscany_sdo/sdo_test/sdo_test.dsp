@@ -78,7 +78,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\..\runtime\core\test\*.xsd ..\..\..\runtime\core\test\Debug	copy ..\..\..\runtime\core\test\*.xml ..\..\..\runtime\core\test\Debug	copy ..\..\..\bin\*.dll ..\..\..\runtime\core\test\Debug	copy ..\..\..\bin\*.pdb ..\..\..\runtime\core\test\Debug	copy ..\..\..\runtime\core\test\*.wsdl ..\..\..\runtime\core\test\Debug
+PostBuild_Cmds=copy ..\..\..\runtime\core\test\*.xsd ..\..\..\runtime\core\test\Debug	copy ..\..\..\runtime\core\test\*.xml ..\..\..\runtime\core\test\Debug	copy ..\..\..\bin\*.dll ..\..\..\runtime\core\test\Debug	copy ..\..\..\bin\*.pdb ..\..\..\runtime\core\test\Debug	copy ..\..\..\runtime\core\test\*.wsdl ..\..\..\runtime\core\test\Debug	copy ..\..\..\runtime\core\test\*.txt ..\..\..\runtime\core\test\Debug
 # End Special Build Tool
 
 !ENDIF 
@@ -92,11 +92,23 @@ PostBuild_Cmds=copy ..\..\..\runtime\core\test\*.xsd ..\..\..\runtime\core\test\
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\..\runtime\core\test\main.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\test\SdoGenerate.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\core\test\sdotest.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\runtime\core\test\sdotest2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\test\utils.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
