@@ -78,7 +78,7 @@ void MyValueImpl_MyValueService_Wrapper::invokeService(Operation& operation)
     {
         string& p0 = *( string*)operation.getParameterValue(0);
         const string& ret = impl->getCustnamecs(p0);
-        operation.setReturnValue((void*)&ret);
+        operation.setReturnValue(&ret);
         return;
     }
         

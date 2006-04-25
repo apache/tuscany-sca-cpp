@@ -68,7 +68,7 @@ const char* CustomerInfoImpl::getCustomerInformation(const char* customerID)
     
     if (!strcmp("12345", customerID))
     {
-        return "IBM";
+        return "xzderg";
     }
     else
     {
