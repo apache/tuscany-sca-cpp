@@ -76,7 +76,7 @@ namespace tuscany
             class Parameter
             {
                 public:
-                    SCA_API Parameter(void* value, ParameterType type);
+                    SCA_API Parameter(void* value = NULL, ParameterType type = VOID_TYPE);
                     SCA_API void* getValue() {return value;}
                     SCA_API ParameterType getType() {return type;}
 
@@ -84,6 +84,23 @@ namespace tuscany
                     void* value;
                     ParameterType type;
             };
+
+            /**
+             * Set a return value for the operation.
+             * @param retVal Pointer to the return value.
+             */
+            SCA_API void setReturnValue(const void *retVal);
+            SCA_API void setReturnValue(const bool *retVal);
+            SCA_API void setReturnValue(const short *retVal);
+            SCA_API void setReturnValue(const long *retVal);
+            SCA_API void setReturnValue(const unsigned short *retVal);
+            SCA_API void setReturnValue(const unsigned long *retVal);
+            SCA_API void setReturnValue(const float *retVal);
+            SCA_API void setReturnValue(const double *retVal);
+            SCA_API void setReturnValue(const long double *retVal);
+            SCA_API void setReturnValue(const char* *retVal);
+            SCA_API void setReturnValue(const string *retVal);
+            SCA_API void setReturnValue(const DataObjectPtr *retVal);
 
             /**
              * Set a parameter on the operation.
@@ -103,7 +120,8 @@ namespace tuscany
             SCA_API void addParameter(const string *parm);
             SCA_API void addParameter(const DataObjectPtr *parm);
             
-            SCA_API unsigned int getNParms() {return parameters.size();} 
+            SCA_API unsigned int getNParms() {return parameters.size();}
+
             /**
              * Get a parameter from the operation.
              * @param pos The position of the parameter in the parameter list.
@@ -128,23 +146,8 @@ namespace tuscany
              */
             SCA_API void* getParameterValue(unsigned int pos);
 
-            /**
-             * Get the return value on the operation.
-             * Normally the client
-             * would set the return value and the service will get this
-             * return value pointer and set the return value.
-             * @return Pointer to the return type.
-             */
-            SCA_API void* getReturnValue() {return returnValue;}
-
-            /**
-             * Set the return value on the operation.
-             * Normally the client
-             * would set the return value pointer so that the service can 
-             * return a value
-             * @param valPtr Pointer to the return type.
-             */
-            SCA_API void setReturnValue(void* valPtr);
+            SCA_API ParameterType getReturnType() {return returnValue.getType();}
+            SCA_API void* getReturnValue() {return returnValue.getValue();}
 
         private:
             /**
@@ -159,10 +162,8 @@ namespace tuscany
             
             PARAMETER_VECTOR parameters;
 
-            /**
-             * The return value.
-             */ 
-            void* returnValue;
+            Parameter returnValue;
+
         };
     } // End namespace sca
 } // End namespace tuscany

@@ -86,87 +86,143 @@ namespace tuscany
         void Operation::addParameter(const void *parm)
         {
             LOGINFO(4, "Operation::addParameter(void*)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, VOID_TYPE));
+            parameters.insert(parameters.end(), Parameter((void*)parm, VOID_TYPE));
          }
 
         void Operation::addParameter(const bool *parm)
         {
             LOGINFO(4, "Operation::addParameter(bool)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, BOOL));
+            parameters.insert(parameters.end(), Parameter((void*)parm, BOOL));
         }
 
         void Operation::addParameter(const short *parm)
         {
             LOGINFO(4, "Operation::addParameter(short)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, SHORT));
+            parameters.insert(parameters.end(), Parameter((void*)parm, SHORT));
         }
 
         void Operation::addParameter(const long *parm)
         {
             LOGINFO(4, "Operation::addParameter(long)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, LONG));
+            parameters.insert(parameters.end(), Parameter((void*)parm, LONG));
         }
 
         void Operation::addParameter(const unsigned short *parm)
         {
             LOGINFO(4, "Operation::addParameter(unsigned short)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, USHORT));
+            parameters.insert(parameters.end(), Parameter((void*)parm, USHORT));
         }
 
         void Operation::addParameter(const unsigned long *parm)
         {
             LOGINFO(4, "Operation::addParameter(unsigned long)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, ULONG));
+            parameters.insert(parameters.end(), Parameter((void*)parm, ULONG));
         }
 
        void Operation::addParameter(const float *parm)
         {
             LOGINFO(4, "Operation::addParameter(float)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, FLOAT));
+            parameters.insert(parameters.end(), Parameter((void*)parm, FLOAT));
         }
 
        void Operation::addParameter(const double *parm)
         {
             LOGINFO(4, "Operation::addParameter(double)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, DOUBLE));
+            parameters.insert(parameters.end(), Parameter((void*)parm, DOUBLE));
         }
 
        void Operation::addParameter(const long double *parm)
         {
             LOGINFO(4, "Operation::addParameter(long double)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, LONGDOUBLE));
+            parameters.insert(parameters.end(), Parameter((void*)parm, LONGDOUBLE));
         }
 
         void Operation::addParameter(const char* *parm)
         {
             LOGINFO(4, "Operation::addParameter(char*)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, CHARS));
+            parameters.insert(parameters.end(), Parameter((void*)parm, CHARS));
         }
 
         void Operation::addParameter(const string *parm)
         {
             LOGINFO(4, "Operation::addParameter(string)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, STRING));
+            parameters.insert(parameters.end(), Parameter((void*)parm, STRING));
         }
 
         void Operation::addParameter(const DataObjectPtr *parm)
         {
             LOGINFO(4, "Operation::addParameter(DataObjectPtr)");
-            parameters.insert(parameters.begin(), Parameter((void*)parm, DATAOBJECT));
-        }
-
-        // ====================================
-        // setReturnValue: set the return value
-        // ====================================
-        void Operation::setReturnValue(void* val)
-        {
-            returnValue = val;
+            parameters.insert(parameters.end(), Parameter((void*)parm, DATAOBJECT));
         }
 
         Operation::Parameter::Parameter(void* val, Operation::ParameterType typ)
             : value(val), type(typ)
         {
         }
+
+        // ===========================================
+        // setReturnValue
+        // ===========================================
+        void Operation::setReturnValue(const void *parm)
+        {
+            returnValue = Parameter((void*)parm, VOID_TYPE);
+        }
+
+        void Operation::setReturnValue(const bool *parm)
+        {
+            returnValue = Parameter((void*)parm, BOOL);
+        }
+
+        void Operation::setReturnValue(const short *parm)
+        {
+            returnValue = Parameter((void*)parm, SHORT);
+        }
+
+        void Operation::setReturnValue(const long *parm)
+        {
+           returnValue = Parameter((void*)parm, LONG);
+        }
+
+        void Operation::setReturnValue(const unsigned short *parm)
+        {
+           returnValue = Parameter((void*)parm, USHORT);
+        }
+
+        void Operation::setReturnValue(const unsigned long *parm)
+        {
+           returnValue = Parameter((void*)parm, ULONG);
+        }
+
+       void Operation::setReturnValue(const float *parm)
+        {
+           returnValue = Parameter((void*)parm, FLOAT);
+        }
+
+       void Operation::setReturnValue(const double *parm)
+        {
+           returnValue = Parameter((void*)parm, DOUBLE);
+        }
+
+       void Operation::setReturnValue(const long double *parm)
+        {
+           returnValue = Parameter((void*)parm, LONGDOUBLE);
+        }
+
+        void Operation::setReturnValue(const char* *parm)
+        {
+           returnValue = Parameter((void*)parm, CHARS);
+        }
+
+        void Operation::setReturnValue(const string *parm)
+        {
+           returnValue = Parameter((void*)parm, STRING);
+        }
+
+        void Operation::setReturnValue(const DataObjectPtr *parm)
+        {
+           returnValue = Parameter((void*)parm, DATAOBJECT);
+        }
+
  
     } // End namespace sca
 } // End namespace tuscany

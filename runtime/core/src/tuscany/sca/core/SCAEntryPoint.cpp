@@ -164,7 +164,7 @@ namespace tuscany
             Operation operation(operationName);
             operation.addParameter(&inDataObject);
             DataObjectPtr ret;
-            operation.setReturnValue((void *)&ret);
+            operation.setReturnValue(&ret);
 
             for (SERVICES::iterator iter = services.begin(); iter < services.end(); iter++)
             {                
