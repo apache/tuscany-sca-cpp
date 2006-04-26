@@ -86,7 +86,6 @@ const string& MyValueImpl_MyValueService_Proxy::getCustnamecs( string arg0)
     operation.addParameter(&arg0);
     target->invoke(operation);
     return *(const string*)operation.getReturnValue();
-
 }
 
 

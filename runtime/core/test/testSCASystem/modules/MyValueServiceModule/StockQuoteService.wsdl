@@ -141,7 +141,7 @@
 	<service name="StockQuotes">
 		<port name="StockQuotesSoap" binding="s0:StockQuotesSoap">
 			<soap:address
-				location="http://www.swanandmokashi.com/HomePage/WebServices/StockQuotes.asmx" />
+				location="http://localhost:8080/HomePage/WebServices/StockQuotes.asmx" />
 		</port>
 		<port name="StockQuotesHttpGet"
 			binding="s0:StockQuotesHttpGet">

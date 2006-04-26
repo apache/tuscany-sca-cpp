@@ -58,7 +58,6 @@ const char* CustomerInfoImpl_CustomerInfoService_Proxy::getCustomerInformation(c
     operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 
