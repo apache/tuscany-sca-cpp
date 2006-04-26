@@ -234,23 +234,16 @@ void </xsl:text><xsl:value-of select="$class"/><xsl:text>::invokeService(Operati
         <xsl:when test="contains($type, '&amp;')"><!-- reference -->
         <xsl:text>        </xsl:text><xsl:value-of select="$type"/><xsl:text> ret = </xsl:text><xsl:call-template name="impl_arrow_op_brackets_and_parms"/><xsl:text>;</xsl:text>
         <xsl:text>
-        operation.setReturnValue((void*)&amp;ret);</xsl:text>
-        </xsl:when>
-        <xsl:when test="contains($type, '*')"><!-- pointer -->
-        <xsl:text>
-        operation.setReturnValue((void*) </xsl:text><xsl:call-template name="impl_arrow_op_brackets_and_parms"/><xsl:text>);</xsl:text>
-        </xsl:when>
-        <xsl:when test="contains($type, 'DataObjectPtr')"><!-- DataObjectPtr -->
-        <xsl:text>        *(DataObjectPtr*)operation.getReturnValue() = </xsl:text><xsl:call-template name="impl_arrow_op_brackets_and_parms"/><xsl:text>;</xsl:text>
+        operation.setReturnValue(&amp;ret);</xsl:text>
         </xsl:when>
         <xsl:otherwise><!-- simple type -->
-            <xml:text>        *(</xml:text><xsl:value-of select="$type"/><xsl:text>*)operation.getReturnValue() = </xsl:text><xsl:call-template name="impl_arrow_op_brackets_and_parms"/><xsl:text>;</xsl:text>
+            <xsl:text>        *(</xsl:text><xsl:value-of select="$type"/><xsl:text>*)operation.getReturnValue() = </xsl:text><xsl:call-template name="impl_arrow_op_brackets_and_parms"/><xsl:text>;</xsl:text>
         </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
 
 <xsl:template name="impl_arrow_op_brackets_and_parms"><!-- context is "scaOperation" -->
-        <xml:text>impl-></xml:text><xsl:value-of select="./@operationNameAttr"/><xml:text>(</xml:text>
+        <xsl:text>impl-></xsl:text><xsl:value-of select="./@operationNameAttr"/><xsl:text>(</xsl:text>
 <xsl:if test="./scaOperationParameter/text() != 'void' ">
   <xsl:if test="./scaOperationParameter/text() != '' ">
     <xsl:if test="normalize-space(./scaOperationParameter/text()) != ' ' ">
