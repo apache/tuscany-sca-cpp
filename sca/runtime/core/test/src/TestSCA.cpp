@@ -27,7 +27,7 @@ using namespace tuscany::sca;
 
 int main(int argc, char* argv[])
 {
-    tuscany::sca::Logger::setLogging(3);
+    tuscany::sca::Logger::setLogging(4);
     commonj::sdo::Logger::setLogging(20);
     cout << "Start of SCA test" << endl;
 

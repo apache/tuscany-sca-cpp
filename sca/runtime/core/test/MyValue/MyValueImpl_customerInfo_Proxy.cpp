@@ -58,7 +58,6 @@ const char* MyValueImpl_customerInfo_Proxy::getCustomerInformation(const char* a
     operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 
