@@ -151,6 +151,7 @@ DOM nodes that each relate to a function in the service
    <xsl:text>_Proxy</xsl:text>
 </xsl:variable>
 
+<!-- ignore the constructor and destructor -->
 <xsl:if test="@operationNameAttr != $clazz
              and @operationNameAttr != concat('~', $clazz)" >
 <xsl:text>
@@ -159,26 +160,7 @@ DOM nodes that each relate to a function in the service
 <xsl:text> </xsl:text>
 <xsl:value-of select="$clazz"/><xsl:text>::</xsl:text>
 <xsl:value-of select="@operationNameAttr"/><xsl:text>(</xsl:text>
-<xsl:if test="count(scaOperationParameter)=0">
-<xsl:text>)
-{</xsl:text>
-<xsl:call-template name="proxy_method_body_no_parms"/>
-<xsl:text>
-}
-</xsl:text> 
-</xsl:if>
-
 <xsl:for-each select="scaOperationParameter">
-
-<xsl:if test=".='void'"> 
-<xsl:text>)
-{</xsl:text>
-<xsl:call-template name="proxy_method_body"/>
-<xsl:text>
-}
-</xsl:text>
-</xsl:if>
-
 <xsl:if test=".!='void'"> 
     <xsl:variable name="scaOperationParameterNameAttr">
                 <xsl:value-of select="concat('arg', position()-1 )"/>
@@ -190,25 +172,24 @@ DOM nodes that each relate to a function in the service
     <xsl:value-of select="."/> <!-- get the actual type -->
     <xsl:text> </xsl:text>
     <xsl:value-of select="$scaOperationParameterNameAttr"/>
-  <xsl:choose>
-     <xsl:when test="position()=last()"><xsl:text>)
+    <xsl:choose>
+       <xsl:when test="position()=last()"> 
+       </xsl:when>
+       <xsl:otherwise>
+          <xsl:text>, </xsl:text>
+       </xsl:otherwise>
+    </xsl:choose>
+</xsl:if> <!-- test=".!='void'" -->
+
+</xsl:for-each>
+<xsl:text>)
 {</xsl:text>
 <xsl:call-template name="proxy_method_body"/>
 <xsl:text>
 }
-</xsl:text> 
-</xsl:when>
-     <xsl:otherwise>
-        <xsl:text>, </xsl:text>
-     </xsl:otherwise>
-  </xsl:choose>
-</xsl:if>
-
-</xsl:for-each>      
+</xsl:text>      
 </xsl:if>
 </xsl:template>
-
-
 
 
 <xsl:template name="proxy_method_body">
@@ -224,141 +205,45 @@ DOM nodes that each relate to a function in the service
     </xsl:variable>
 <xsl:text>
     Operation operation("</xsl:text>
-    <xsl:value-of select="../@operationNameAttr"/>
-<!--
-    <xsl:text>", </xsl:text>
-    <xsl:value-of select="$noOfParms"/>
--->
+    <xsl:value-of select="@operationNameAttr"/>
     <xsl:text>");</xsl:text>
     <xsl:if test="$noOfParms!=0">
-    <xsl:for-each select="../scaOperationParameter">
+    <xsl:for-each select="scaOperationParameter">
         <xsl:call-template name="proxy_method_body_set_parameter"/>
     </xsl:for-each>
     </xsl:if>
-<xsl:text>
- </xsl:text>
     <xsl:call-template name="proxy_method_body_prepare_return_var"/>
     <xsl:text>
-    target-&gt;invoke(operation);
-</xsl:text>
+    target-&gt;invoke(operation);</xsl:text>
     <xsl:call-template name="proxy_method_body_return"/>
-</xsl:template>
-
-<xsl:template name="proxy_method_body_no_parms">
-   <xsl:variable name="noOfParms">
-       <xsl:value-of select="0"/>
-    </xsl:variable>
-<xsl:text>
-    Operation operation("</xsl:text>
-    <xsl:value-of select="@operationNameAttr"/>
-<!--
-    <xsl:text>", </xsl:text>
-    <xsl:value-of select="$noOfParms"/>
--->
-    <xsl:text>");
- </xsl:text>
-    <xsl:call-template name="proxy_method_body_prepare_return_var_no_parms"/>
-    <xsl:text>
-    target-&gt;invoke(operation);
-</xsl:text>
-    <xsl:call-template name="proxy_method_body_return_no_parms"/>
 </xsl:template>
 
 
 <xsl:template name="proxy_method_body_return">
     <xsl:variable name="type">
-        <xsl:value-of select="../scaOperationReturnType/text()"/>
-    </xsl:variable>
-    <xsl:choose>
-        <xsl:when test="$type='void'"><!-- nothing -->
-            <xsl:text>    return;
-</xsl:text>
-        </xsl:when>
-        <xsl:when test="contains($type, '&amp;')"><!-- reference -->
-            <xsl:variable name="type_no_amp">
-                <xsl:value-of select="substring-before($type, '&amp;')"/>
-            </xsl:variable>
-            <xsl:text>    return *(</xsl:text><xsl:value-of select="$type_no_amp"/><xsl:text>*)operation.getReturnValue();
-</xsl:text>
-        </xsl:when>
-        <xsl:when test="contains($type, '*')"><!-- pointer -->
-            <xsl:text>    return (</xsl:text><xsl:value-of select="$type"/><xsl:text>)operation.getReturnValue();
-</xsl:text>
-        </xsl:when>
-        <xsl:when test="contains($type, 'DataObjectPtr')"><!-- DataObjectPtr -->
-        <xsl:text>    return ret; 
-</xsl:text>
-        </xsl:when>
-        <xsl:otherwise><!-- simple type -->
-        <xsl:text>    return ret;
-</xsl:text>
-        </xsl:otherwise>
-    </xsl:choose>
-</xsl:template>
-
-<xsl:template name="proxy_method_body_return_no_parms">
-    <xsl:variable name="type">
         <xsl:value-of select="scaOperationReturnType/text()"/>
     </xsl:variable>
     <xsl:choose>
         <xsl:when test="$type='void'"><!-- nothing -->
-            <xsl:text>    return;
-</xsl:text>
+            <xsl:text>
+    return;</xsl:text>
         </xsl:when>
         <xsl:when test="contains($type, '&amp;')"><!-- reference -->
             <xsl:variable name="type_no_amp">
                 <xsl:value-of select="substring-before($type, '&amp;')"/>
             </xsl:variable>
-            <xsl:text>    return *(</xsl:text><xsl:value-of select="$type_no_amp"/><xsl:text>*)operation.getReturnValue();
-</xsl:text>
-        </xsl:when>
-        <xsl:when test="contains($type, '*')"><!-- pointer -->
-            <xsl:text>    return (</xsl:text><xsl:value-of select="$type"/><xsl:text>)operation.getReturnValue();
-</xsl:text>
-        </xsl:when>
-        <xsl:when test="contains($type, 'DataObjectPtr')"><!-- DataObjectPtr -->
-        <xsl:text>    return ret; 
-</xsl:text>
+            <xsl:text>
+    return *(</xsl:text><xsl:value-of select="$type_no_amp"/><xsl:text>*)operation.getReturnValue();</xsl:text>
         </xsl:when>
         <xsl:otherwise><!-- simple type -->
-        <xsl:text>    return ret;
-</xsl:text>
+        <xsl:text>
+    return ret;</xsl:text>
         </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
-
 
 <xsl:template name="proxy_method_body_prepare_return_var">
     <xsl:variable name="type">
-        <xsl:value-of select="../scaOperationReturnType/text()"/>
-    </xsl:variable>
-    <xsl:choose>
-        <xsl:when test="$type='void'"><!-- nothing -->
-        <!--  nothing -->
-        </xsl:when>
-        <xsl:when test="contains($type, '&amp;')"><!-- reference -->
-        </xsl:when>
-        <xsl:when test="contains($type, '*')"><!-- pointer -->
-        <!-- nothing to do -->
-        </xsl:when>
-        <xsl:when test="contains($type, 'DataObjectPtr')"><!-- DataObjectPtr -->
-        <xsl:text>    commonj::sdo::DataObjectPtr ret = 0;
-    operation.setReturnValue((void*)&amp;ret);
-</xsl:text>
-        </xsl:when>
-        <xsl:otherwise><!-- simple type - for some reason the inital tab does not appear -->
-<xml:text>
-    </xml:text><xml:text>
-    </xml:text><xsl:value-of select="$type"/><xsl:text> ret;
-</xsl:text>
-<xsl:text>    operation.setReturnValue((void*)&amp;ret);</xsl:text>
-        </xsl:otherwise>
-    </xsl:choose>
-
-</xsl:template>
- 
-<xsl:template name="proxy_method_body_prepare_return_var_no_parms">
-    <xsl:variable name="type">
         <xsl:value-of select="scaOperationReturnType/text()"/>
     </xsl:variable>
     <xsl:choose>
@@ -367,25 +252,16 @@ DOM nodes that each relate to a function in the service
         </xsl:when>
         <xsl:when test="contains($type, '&amp;')"><!-- reference -->
         </xsl:when>
-        <xsl:when test="contains($type, '*')"><!-- pointer -->
-        <!-- nothing to do -->
-        </xsl:when>
-        <xsl:when test="contains($type, 'DataObjectPtr')"><!-- DataObjectPtr -->
-        <xsl:text>    commonj::sdo::DataObjectPtr ret = 0;
-    operation.setReturnValue((void*)&amp;ret);
-</xsl:text>
-        </xsl:when>
-        <xsl:otherwise><!-- simple type - for some reason the inital tab does not appear -->
-<xml:text>
-    </xml:text><xml:text>
-    </xml:text><xsl:value-of select="$type"/><xsl:text> ret;
-</xsl:text>
-<xsl:text>    operation.setReturnValue((void*)&amp;ret);</xsl:text>
+        <xsl:otherwise>
+<xsl:text>
+    </xsl:text>    <xsl:value-of select="$type"/><xsl:text> ret;
+    operation.setReturnValue(&amp;ret);</xsl:text>
         </xsl:otherwise>
     </xsl:choose>
 
 </xsl:template>
 
+ 
 <xsl:template name="proxy_method_body_set_parameter">
     <xsl:variable name="scaOperationParameterNameAttrInner">
                 <xsl:value-of select="concat('arg', position()-1 )"/>
@@ -393,9 +269,6 @@ DOM nodes that each relate to a function in the service
     <xsl:variable name="type">
         <xsl:value-of select="."/>
     </xsl:variable>
-<!--    operation.setParameter(<xsl:value-of select="position()-1"/><xsl:text>, (void*)</xsl:text> 
-<xsl:if test="not(contains($type, '*'))">&amp;</xsl:if> -->
-    operation.addParameter(&amp;<xsl:value-of select="$scaOperationParameterNameAttrInner"/><xsl:text>);
-</xsl:text>
+    operation.addParameter(&amp;<xsl:value-of select="$scaOperationParameterNameAttrInner"/><xsl:text>);</xsl:text>
 </xsl:template>
 </xsl:stylesheet>
