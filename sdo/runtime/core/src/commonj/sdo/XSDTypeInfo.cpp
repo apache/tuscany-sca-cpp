@@ -35,7 +35,7 @@ namespace commonj
         {
         }
 
-        XSDTypeInfo::XSDTypeInfo(const TypeDefinition& typeDef)
+        XSDTypeInfo::XSDTypeInfo(const TypeDefinitionImpl& typeDef)
             : typeDefinition(typeDef)
         {
         }

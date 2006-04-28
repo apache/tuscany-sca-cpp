@@ -27,7 +27,7 @@
 #include "commonj/sdo/SDOXMLString.h"
 #include "commonj/sdo/SAX2Namespaces.h"
 #include "commonj/sdo/SchemaInfo.h"
-#include "commonj/sdo/TypeDefinitions.h"
+#include "commonj/sdo/TypeDefinitionsImpl.h"
 #include "commonj/sdo/ParserErrorSetter.h"
 
 namespace commonj
@@ -116,17 +116,19 @@ namespace commonj
             {
                 return schemaInfo.getTargetNamespaceURI();
             }
-            
+ 
+            virtual void defineTypes(TypeDefinitions& types);
+
         private:
             virtual void clearErrors();
 
             void newSubstitute(const char* entryName,
-                               PropertyDefinition& prop);
+                               PropertyDefinitionImpl& prop);
 
-            void addSubstitutes(PropertyDefinition& prop,
-                                TypeDefinition& ty);
+            void addSubstitutes(PropertyDefinitionImpl& prop,
+                                TypeDefinitionImpl& ty);
 
-            void defineTypes(TypeDefinitions& types);
+            void defineTypes(TypeDefinitionsImpl& types);
             int     parse(const char* source);
             
             // Instance variables

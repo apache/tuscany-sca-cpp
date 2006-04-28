@@ -434,7 +434,7 @@ namespace commonj
                                 ((DASProperty*)&prop)->getDASValue("XMLDAS::PropertyInfo");
                             if (pi)
                             {
-                                PropertyDefinition propdef = pi->getPropertyDefinition();
+                                PropertyDefinitionImpl propdef = pi->getPropertyDefinition();
                                 if (propdef.isElement)
                                     isElement=true;
                                 if (propdef.isQName)

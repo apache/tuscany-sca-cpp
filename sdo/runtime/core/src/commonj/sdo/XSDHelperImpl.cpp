@@ -105,7 +105,7 @@ namespace commonj
         }
         
         void XSDHelperImpl::newSubstitute(const char* entryName,
-                                          PropertyDefinition& prop)
+                                          PropertyDefinitionImpl& prop)
         {
             try 
             {
@@ -134,7 +134,7 @@ namespace commonj
                             ((DASProperty*)&pl[j])->getDASValue("XMLDAS::PropertyInfo");
                             if (pi)
                             {
-                                PropertyDefinition& propdef = (PropertyDefinition&)pi->getPropertyDefinition();
+                                PropertyDefinitionImpl& propdef = (PropertyDefinitionImpl&)pi->getPropertyDefinition();
                                 propdef.substituteNames.push_back(prop.name);
                                 propdef.substituteLocalNames.push_back(prop.localname);
                             }
@@ -149,8 +149,8 @@ namespace commonj
             }
         }
 
-        void XSDHelperImpl::addSubstitutes(PropertyDefinition& prop,
-                                            TypeDefinition& ty)
+        void XSDHelperImpl::addSubstitutes(PropertyDefinitionImpl& prop,
+                                            TypeDefinitionImpl& ty)
         {
             try 
             {
@@ -166,7 +166,7 @@ namespace commonj
                     ((DASProperty*)&pl[j])->getDASValue("XMLDAS::PropertyInfo");
                     if (pi)
                     {
-                        PropertyDefinition& propdef = (PropertyDefinition&)pi->getPropertyDefinition();
+                        PropertyDefinitionImpl& propdef = (PropertyDefinitionImpl&)pi->getPropertyDefinition();
                         if (propdef.isSubstitute && propdef.substituteName.equals(prop.name))
                         {
 
@@ -186,6 +186,19 @@ namespace commonj
             {
             }
         }
+
+
+        /**  defineTypes
+         *
+         * This method works through all the data gathered during parsing
+         * and defines all the types using the data factory.
+         */
+
+        void XSDHelperImpl::defineTypes(TypeDefinitions& types)
+        {
+            defineTypes(types.getTypeDefinitions());
+        }
+
         
         /**  defineTypes
          *
@@ -193,7 +206,7 @@ namespace commonj
          * and defines all the types using the data factory.
          */
 
-        void XSDHelperImpl::defineTypes(TypeDefinitions& typedefs) 
+        void XSDHelperImpl::defineTypes(TypeDefinitionsImpl& typedefs) 
         {
             if (!dataFactory) 
             {
@@ -208,7 +221,7 @@ namespace commonj
 
             for (iter=types.begin(); iter != types.end(); iter++)
             {
-                TypeDefinition& ty = iter->second;
+                TypeDefinitionImpl& ty = iter->second;
                 try
                 {
                     /*
@@ -277,7 +290,7 @@ namespace commonj
             }
             for (iter=types.begin(); iter != types.end(); iter++)
             {
-                TypeDefinition& ty = iter->second;
+                TypeDefinitionImpl& ty = iter->second;
                 if (!ty.parentTypeName.isNull())
                 {
                     try 
@@ -317,7 +330,7 @@ namespace commonj
                 XmlDasPropertyDefs::iterator propsIter;
                 for (propsIter = ty.properties.begin(); propsIter != ty.properties.end(); propsIter++)
                 {
-                    PropertyDefinition& prop = *propsIter;
+                    PropertyDefinitionImpl& prop = *propsIter;
                     
                     // For a refence we need to determine the type from the
                     // global element declaration
@@ -331,11 +344,11 @@ namespace commonj
 
                         
                         XMLDAS_TypeDefs::iterator refTypeIter = 
-                            types.find(TypeDefinitions::getTypeQName(prop.typeUri, "RootType"));
+                            types.find(TypeDefinitionsImpl::getTypeQName(prop.typeUri, "RootType"));
                         if(refTypeIter != types.end())
                         {
 
-                            TypeDefinition rootTy = refTypeIter->second;
+                            TypeDefinitionImpl rootTy = refTypeIter->second;
                             
                             // find the property on the root type
                             XmlDasPropertyDefs::iterator refPropsIter;
@@ -370,7 +383,7 @@ namespace commonj
                                     if (prop.typeName.equals(pl[j].getName())
                                         || (pi && prop.typeName.equals(pi->getPropertyDefinition().localname)))
                                     {
-                                        const PropertyDefinition& propdef = pi->getPropertyDefinition();
+                                        const PropertyDefinitionImpl& propdef = pi->getPropertyDefinition();
                                         if (propdef.localname.equals(prop.typeName))
                                         {
                                             prop.typeUri = pl[j].getType().getURI();
@@ -399,7 +412,7 @@ namespace commonj
                         continue;
                     }
                     XMLDAS_TypeDefs::iterator propTypeIter = 
-                        types.find(TypeDefinitions::getTypeQName(prop.typeUri, prop.typeName));
+                        types.find(TypeDefinitionsImpl::getTypeQName(prop.typeUri, prop.typeName));
                     if(propTypeIter != types.end())
                     {
                         prop.typeName = propTypeIter->second.name;

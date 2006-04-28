@@ -28,6 +28,8 @@ namespace commonj
         XSDHelper::~XSDHelper()
         {
         }
+
+
         
     } // End - namespace sdo
 } // End - namespace commonj

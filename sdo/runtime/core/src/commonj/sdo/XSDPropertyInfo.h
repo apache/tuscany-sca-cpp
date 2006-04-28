@@ -23,7 +23,7 @@
 #include "commonj/sdo/disable_warn.h"
 
 #include "commonj/sdo/DASValue.h"
-#include "commonj/sdo/PropertyDefinition.h"
+#include "commonj/sdo/PropertyDefinitionImpl.h"
 #include "commonj/sdo/SDOXMLString.h"
 
 namespace commonj
@@ -44,15 +44,15 @@ namespace commonj
         public:
             
             XSDPropertyInfo();
-            XSDPropertyInfo(const PropertyDefinition& prop);
+            XSDPropertyInfo(const PropertyDefinitionImpl& prop);
             
             virtual ~XSDPropertyInfo();
             
-            const PropertyDefinition& getPropertyDefinition() {return property;}
+            const PropertyDefinitionImpl& getPropertyDefinition() {return property;}
             
             
         private:
-            PropertyDefinition property;                
+            PropertyDefinitionImpl property;                
         };
     }
 }

@@ -17,12 +17,11 @@
 
 /* $Rev$ $Date: 2005/12/22 16:54:15 $ */
 
-#ifndef _PROPERTYDEFINITION_H_
-#define _PROPERTYDEFINITION_H_
+#ifndef _PROPERTYDefinition_H_
+#define _PROPERTYDefinition_H_
 
-#include "commonj/sdo/disable_warn.h"
+#include "export.h"
 
-#include "commonj/sdo/SDOXMLString.h"
 #include <vector>
 using namespace std;
 
@@ -32,57 +31,89 @@ namespace commonj
 {
     namespace sdo
     {
-        
+     
+        class PropertyDefinitionImpl;
         
 /**
- * PropertyDefinition holds a property as defined by an XSD.
+ * PropertyDefinitionImpl holds a property as defined by an XSD.
  * The XSD holds more information than does the SDO Property.
  * This class holds the extra information found as the XSD is
  * parsed.
  */
-        class PropertyDefinition
+        class SDO_API PropertyDefinition
         {
             
         public:
-            PropertyDefinition();
-            virtual ~PropertyDefinition();
-            
+
+
+            /*SDO_API*/ PropertyDefinition();
+            /*SDO_API*/ virtual ~PropertyDefinition();
+
+            PropertyDefinitionImpl* getPropertyDefinition();
+
+
+                       
             // where this property is to be substituted for another
-            SDOXMLString substituteName;
-            SDOXMLString substituteUri;
+            /*SDO_API*/ void setSubstituteName(const char * name);
+            /*SDO_API*/ const char* getSubstituteName() const;
+
+            /*SDO_API*/ void setSubstituteUri(const char* name);
+            /*SDO_API*/ const char* getSubstituteUri() const;
 
             // where there are substitute names for this property.
-            std::vector<SDOXMLString> substituteNames;
-            std::vector<SDOXMLString> substituteLocalNames;
+            /*SDO_API*/ void addSubstitute(const char* name,
+                const char* localname);
+            /*SDO_API*/ int getSubstituteCount() const;
+            /*SDO_API*/ const char* getSubstituteNames(int index) const;
+            /*SDO_API*/ const char* getSubstituteLocalNames(int index) const;
 
-            SDOXMLString aliases;
-
-            SDOXMLString name;
-            SDOXMLString localname;
             
-            SDOXMLString typeUri;
-            SDOXMLString typeName;
-            SDOXMLString fullTypeName;
+            /*SDO_API*/ void setAliases(const char* aliases);
+            /*SDO_API*/ const char* getAliases() const;
 
-            SDOXMLString fullLocalTypeName;
+            /*SDO_API*/ void setName(const char* name);
+            /*SDO_API*/ const char* getName() const;
+            
+            /*SDO_API*/ void setLocalName(const char* name);
+            /*SDO_API*/ const char* getLocalName() const;
+            
+            /*SDO_API*/ void setType(const char* uri, const char* name);
+            /*SDO_API*/ const char * getTypeName() const;
+            /*SDO_API*/ const char * getTypeUri() const;
+            /*SDO_API*/ const char * getTypeFullName() const;
+            /*SDO_API*/ const char * getTypeFullLocalName() const ;
+            
+            /*SDO_API*/ void setTypeFullLocalName(const char* name);
 
-            SDOXMLString defaultValue;
+            /*SDO_API*/ void setDefaultValue(const char* value);
+            /*SDO_API*/ const char* getDefaultValue() const;
 
-            bool isMany;
-            bool isContainment;
-            bool isReadOnly;
+            /*SDO_API*/ bool getIsMany() const;
+            /*SDO_API*/ bool getIsContainment() const;
+            /*SDO_API*/ bool getIsReadOnly() const;
+            /*SDO_API*/ bool getIsID() const;
+            /*SDO_API*/ bool getIsIDREF() const;
+            /*SDO_API*/ bool getIsReference() const;
+            /*SDO_API*/ bool getIsElement() const;
+            /*SDO_API*/ bool getIsQName() const;
+            /*SDO_API*/ bool getIsSubstitute() const;
 
-            bool isID;
-            bool isIDREF;
-            bool isReference;
-            bool isElement;
-                        
-            bool isQName;
+            /*SDO_API*/ void setIsMany(bool value);
+            /*SDO_API*/ void setIsContainment(bool value);
+            /*SDO_API*/ void setIsReadOnly(bool value);
+            /*SDO_API*/ void setIsID(bool value);
+            /*SDO_API*/ void setIsIDREF(bool value);
+            /*SDO_API*/ void setIsReference(bool value);
+            /*SDO_API*/ void setIsElement(bool value);
+            /*SDO_API*/ void setIsQName(bool value);
+            /*SDO_API*/ void setIsSubstitute(bool value);
 
-            bool isSubstitute;
+
+        private:
+            PropertyDefinitionImpl* propertydefinition;
         };
     } // End - namespace sdo
 } // End - namespace commonj
 
 
-#endif //_PROPERTYDEFINITION_H_
+#endif //_PROPERTYDefinitionImpl_H_

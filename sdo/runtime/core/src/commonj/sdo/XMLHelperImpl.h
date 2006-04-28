@@ -27,7 +27,7 @@
 #include "commonj/sdo/SDOXMLString.h"
 #include "commonj/sdo/SAX2Namespaces.h"
 #include "commonj/sdo/SchemaInfo.h"
-#include "commonj/sdo/TypeDefinitions.h"
+#include "commonj/sdo/TypeDefinitionsImpl.h"
 #include "commonj/sdo/ParserErrorSetter.h"
 
 namespace commonj

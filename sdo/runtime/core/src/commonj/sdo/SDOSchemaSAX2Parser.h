@@ -25,7 +25,7 @@
 #include "commonj/sdo/SAX2Parser.h"
 #include "commonj/sdo/SchemaInfo.h"
 #include "stack"
-#include "commonj/sdo/TypeDefinitions.h"
+#include "commonj/sdo/TypeDefinitionsImpl.h"
 #include "commonj/sdo/GroupDefinition.h"
 #include "commonj/sdo/XMLQName.h"
 #include "commonj/sdo/ParserErrorSetter.h"
@@ -76,7 +76,7 @@ namespace commonj
             
             const SDOXMLString& getTargetNamespaceURI() const {return schemaInfo.getTargetNamespaceURI();}
             
-            TypeDefinitions& getTypeDefinitions() {return typeDefinitions;}
+            TypeDefinitionsImpl& getTypeDefinitions() {return typeDefinitions;}
             
             friend std::istream& operator>>(std::istream& input, SDOSchemaSAX2Parser& parser);
             friend std::istringstream& operator>>(std::istringstream& input, SDOSchemaSAX2Parser& parser);
@@ -191,34 +191,34 @@ namespace commonj
                 );
             
             void setType(
-                PropertyDefinition& property,
+                PropertyDefinitionImpl& property,
                 const SAX2Attributes& attributes,
                 const SAX2Namespaces& namespaces);
             
             void setTypeName(
-                TypeDefinition& type,
+                TypeDefinitionImpl& type,
                 const SAX2Attributes& attributes,
                 const SAX2Namespaces& namespaces);
             
             void setDefault(
-                PropertyDefinition& thisProperty,
+                PropertyDefinitionImpl& thisProperty,
                 const SAX2Attributes& attributes);
             
             
             SchemaInfo& schemaInfo;
             
             
-            PropertyDefinition currentProperty;
-            std::stack<PropertyDefinition>    propertyStack;
-            void             setCurrentProperty(const PropertyDefinition& property);
+            PropertyDefinitionImpl currentProperty;
+            std::stack<PropertyDefinitionImpl>    propertyStack;
+            void             setCurrentProperty(const PropertyDefinitionImpl& property);
             void             defineProperty();
             
-            TypeDefinition   currentType;
-            std::stack<TypeDefinition>    typeStack;
-            void             setCurrentType(const TypeDefinition& type);
+            TypeDefinitionImpl   currentType;
+            std::stack<TypeDefinitionImpl>    typeStack;
+            void             setCurrentType(const TypeDefinitionImpl& type);
             void             defineType();
             
-            TypeDefinitions typeDefinitions;
+            TypeDefinitionsImpl typeDefinitions;
 
             
         };

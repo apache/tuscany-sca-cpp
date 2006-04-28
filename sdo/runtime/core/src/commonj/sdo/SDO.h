@@ -50,6 +50,10 @@
 #include "commonj/sdo/XMLDocument.h"
 #include "commonj/sdo/DASValue.h"
 #include "commonj/sdo/XpathHelper.h"
+#include "commonj/sdo/TypeDefinition.h"
+#include "commonj/sdo/TypeDefinitions.h"
+#include "commonj/sdo/PropertyDefinition.h"
+
 
 
 

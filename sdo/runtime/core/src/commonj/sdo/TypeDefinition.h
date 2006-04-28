@@ -17,10 +17,11 @@
 
 /* $Rev$ $Date: 2006/04/13 08:35:04 $ */
 
-#ifndef _TYPEDEFINITION_H_
-#define _TYPEDEFINITION_H_
+#ifndef _TYPEDefinition_H_
+#define _TYPEDefinition_H_
 
-#include "commonj/sdo/disable_warn.h"
+#include "export.h"
+
 
 #include "commonj/sdo/PropertyDefinition.h"
 #include "list"
@@ -31,51 +32,73 @@ namespace commonj
     namespace sdo
     {
         
-        typedef std::list<PropertyDefinition> XmlDasPropertyDefs;
-        
+        class TypeDefinitionImpl;
+
+       
 /**
- * TypeDefinition holds information gathered from parsing the
+ * TypeDefinitionImpl holds information gathered from parsing the
  * XSD and used for creating Types
  */
-        class TypeDefinition
+        class SDO_API TypeDefinition
         {
             
         public:
-            TypeDefinition();
-            virtual ~TypeDefinition();
+
+
+            /*SDO_API*/ TypeDefinition();
+            /*SDO_API*/ virtual ~TypeDefinition();
+
+            TypeDefinitionImpl* getTypeDefinition();       
         
-    
-            SDOXMLString uri;
-            SDOXMLString name;
-            SDOXMLString localname;
+            /*SDO_API*/ void setUri(const char * inuri) ;
+            /*SDO_API*/ const char * getUri() const;
 
-            SDOXMLString aliases;
+            /*SDO_API*/ void setName(const char * inname) ;
+            /*SDO_API*/ const char * getName() const;
 
-            SDOXMLString parentTypeUri;
-            SDOXMLString parentTypeName;
-            bool isRestriction;
+            /*SDO_API*/ void setLocalName(const char * inname) ;
+            /*SDO_API*/ const char * getLocalName() const;
 
-            SDOXMLString IDPropertyName;
+            /*SDO_API*/ void setAliases(const char * inaliases) ;
+            /*SDO_API*/ const char * getAliases() const;
 
-            bool dataType;
-            XmlDasPropertyDefs properties;
+      
+            /*SDO_API*/ void setParentType(const char* uri, const char* name,
+                bool isrestriction);
+            /*SDO_API*/ const char * getParentTypeUri() const;
+            /*SDO_API*/ const char * getParentTypeName() const;
 
-            bool isOpen;
-            bool isSequenced;
-            bool isAbstract;
+            /*SDO_API*/ void setIDPropertyName(const char * idpropname) ;
+            /*SDO_API*/ const char * getIDPropertyName() const;
 
-            bool isExtendedPrimitive;
+
+            /*SDO_API*/ void addPropertyDefinition(PropertyDefinition& p);
+
+            /*SDO_API*/ bool getIsDataType() const;
+            /*SDO_API*/ bool getIsOpen() const;
+            /*SDO_API*/ bool getIsSequenced() const;
+            /*SDO_API*/ bool getIsAbstract() const;
+            /*SDO_API*/ bool getIsExtendedPrimitive() const;
+            /*SDO_API*/ bool getIsFromList() const;
+            /*SDO_API*/ bool getIsQName() const;
+            /*SDO_API*/ bool getIsMany() const;
             
-            bool isFromList;
+            /*SDO_API*/ void setIsDataType(bool value);
+            /*SDO_API*/ void setIsOpen(bool value);
+            /*SDO_API*/ void setIsSequenced(bool value);
+            /*SDO_API*/ void setIsAbstract(bool value);
+            /*SDO_API*/ void setIsExtendedPrimitive(bool value);
+            /*SDO_API*/ void setIsFromList(bool value);
+            /*SDO_API*/ void setIsQName(bool value);
+            /*SDO_API*/ void setIsMany(bool value);
 
+            /*SDO_API*/ int getGroupElementCount() const;
 
-            bool isMany;
-            int groupElementCount;
-
-            bool isQName;
+        private :
+            TypeDefinitionImpl *typedefinition;
         };
     } // End - namespace sdo
 } // End - namespace commonj
 
 
-#endif //_TYPEDEFINITION_H_
+#endif //_TYPEDefinition_H_

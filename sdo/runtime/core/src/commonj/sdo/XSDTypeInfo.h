@@ -23,7 +23,7 @@
 #include "commonj/sdo/disable_warn.h"
 
 #include "commonj/sdo/DASValue.h"
-#include "commonj/sdo/TypeDefinition.h"
+#include "commonj/sdo/TypeDefinitionImpl.h"
 
 namespace commonj
 {
@@ -40,12 +40,12 @@ namespace commonj
         {
         public:
             XSDTypeInfo();
-            XSDTypeInfo(const TypeDefinition& typeDef);
+            XSDTypeInfo(const TypeDefinitionImpl& typeDef);
             virtual ~XSDTypeInfo();
-            const TypeDefinition& getTypeDefinition() {return typeDefinition;}
+            const TypeDefinitionImpl& getTypeDefinition() {return typeDefinition;}
 
         private:
-            TypeDefinition typeDefinition;            
+            TypeDefinitionImpl typeDefinition;            
         };
     }
 }

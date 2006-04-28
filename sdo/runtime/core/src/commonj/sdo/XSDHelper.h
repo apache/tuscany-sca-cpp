@@ -24,6 +24,7 @@
 #include "commonj/sdo/export.h"
 #include "commonj/sdo/RefCountingObject.h"
 #include "commonj/sdo/DataFactory.h"
+#include "commonj/sdo/TypeDefinitions.h"
 
 namespace commonj
 {
@@ -113,6 +114,15 @@ namespace commonj
              */
 
             virtual const char* getErrorMessage(int errnum) const = 0;
+
+            /**
+             *
+             * used for defining types from type definitions
+             */
+
+            SDO_API virtual void defineTypes(TypeDefinitions& types) = 0;
+
+
         };
     }//End - namespace sdo
 } // End - namespace commonj

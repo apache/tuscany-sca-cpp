@@ -574,7 +574,7 @@ namespace commonj
                 }
 
 
-                TypeDefinitions& typedefs = schemaParser.getTypeDefinitions();
+                TypeDefinitionsImpl& typedefs = schemaParser.getTypeDefinitions();
                 XMLDAS_TypeDefs types = typedefs.types;
                 XMLDAS_TypeDefs::iterator iter;
                 for (iter=types.begin(); iter != types.end(); iter++)
@@ -589,8 +589,8 @@ namespace commonj
                         XMLDAS_TypeDefs::iterator find = typeDefinitions.types.find(
                                 (*iter).first);
 
-                        std::list<PropertyDefinition>::iterator propit;
-                        std::list<PropertyDefinition>::iterator currpropit;
+                        std::list<PropertyDefinitionImpl>::iterator propit;
+                        std::list<PropertyDefinitionImpl>::iterator currpropit;
                         bool found;
 
                         for (propit = (*iter).second.properties.begin() ; 
@@ -659,7 +659,7 @@ namespace commonj
 
             // attribute to set the list type
             // define an internal property to hold the list
-            PropertyDefinition thisProperty;
+            PropertyDefinitionImpl thisProperty;
             thisProperty.name = "values";
             thisProperty.localname = "values";
             thisProperty.isContainment = false;
@@ -690,7 +690,7 @@ namespace commonj
 
             if (!bInSchema) return;
 
-            PropertyDefinition thisProperty;
+            PropertyDefinitionImpl thisProperty;
 
             LOGINFO_1( INFO,"SchemaParser:startElement:%s",(const char*)localname);
 
@@ -755,7 +755,7 @@ namespace commonj
 
             if (!bInSchema) return;
 
-            PropertyDefinition thisProperty;
+            PropertyDefinitionImpl thisProperty;
             
             thisProperty.isElement =  false;
             
@@ -782,7 +782,7 @@ namespace commonj
 
             if (!bInSchema) return;
 
-            TypeDefinition thisType; // set defaults
+            TypeDefinitionImpl thisType; // set defaults
             thisType.uri=schemaInfo.getTargetNamespaceURI();
             
             setTypeName(thisType, attributes,namespaces);
@@ -832,7 +832,7 @@ namespace commonj
 
             if (!bInSchema) return;
 
-            TypeDefinition thisType; // set defaults
+            TypeDefinitionImpl thisType; // set defaults
             thisType.uri=schemaInfo.getTargetNamespaceURI();
             thisType.dataType = true;
             
@@ -933,7 +933,7 @@ namespace commonj
                     // value=abc
 
 
-                    PropertyDefinition thisProperty;
+                    PropertyDefinitionImpl thisProperty;
                     thisProperty.name = "value";
                     thisProperty.localname = "value";
                     thisProperty.typeUri = typeUri; 
@@ -987,7 +987,7 @@ namespace commonj
         // ============================================================================
         // setCurrentType
         // ============================================================================
-        void SDOSchemaSAX2Parser::setCurrentType(const TypeDefinition& type)
+        void SDOSchemaSAX2Parser::setCurrentType(const TypeDefinitionImpl& type)
         {                
             typeStack.push(currentType);
             currentType = type;
@@ -1004,7 +1004,7 @@ namespace commonj
                 currentType.isSequenced = true;
             }
             
-            SDOXMLString typeQname = TypeDefinitions::getTypeQName(currentType.uri, currentType.localname);
+            SDOXMLString typeQname = TypeDefinitionsImpl::getTypeQName(currentType.uri, currentType.localname);
             typeDefinitions.types[typeQname] = currentType;
             
             if (currentProperty.typeName.isNull())
@@ -1021,14 +1021,14 @@ namespace commonj
             }
             else
             {
-                currentType = TypeDefinition();
+                currentType = TypeDefinitionImpl();
             }
         }
         
         // ============================================================================
         // setCurrentProperty
         // ============================================================================
-        void SDOSchemaSAX2Parser::setCurrentProperty(const PropertyDefinition& prop)
+        void SDOSchemaSAX2Parser::setCurrentProperty(const PropertyDefinitionImpl& prop)
         {                
             propertyStack.push(currentProperty);
             currentProperty = prop;
@@ -1064,7 +1064,7 @@ namespace commonj
                 propertyStack.pop();
             }
             else
-                currentProperty = PropertyDefinition();
+                currentProperty = PropertyDefinitionImpl();
 
         }
         
@@ -1072,7 +1072,7 @@ namespace commonj
         // setDefault
         // ============================================================================
         void SDOSchemaSAX2Parser::setDefault(
-            PropertyDefinition& thisProperty,
+            PropertyDefinitionImpl& thisProperty,
             const SAX2Attributes& attributes)
         {
             thisProperty.defaultValue = attributes.getValue("fixed");
@@ -1127,7 +1127,7 @@ namespace commonj
         // setType 
         // ============================================================================
         void SDOSchemaSAX2Parser::setType(
-            PropertyDefinition& property,
+            PropertyDefinitionImpl& property,
             const SAX2Attributes& attributes,
             const SAX2Namespaces& namespaces)
         {
@@ -1199,7 +1199,7 @@ namespace commonj
         // setTypeName
         // ============================================================================
         void SDOSchemaSAX2Parser::setTypeName(
-            TypeDefinition& type,
+            TypeDefinitionImpl& type,
             const SAX2Attributes& attributes,
             const SAX2Namespaces& namespaces)
         {

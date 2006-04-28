@@ -387,6 +387,12 @@ namespace sdo {
                     {\
                         p = d->define ##primval (prop);\
                     }\
+                    if (p == 0)\
+                    {\
+                         string msg("Set value  - path not found");\
+                         SDO_THROW_EXCEPTION("setter", SDOPathNotFoundException,\
+                         msg.c_str());\
+                    }\
                     if (p->isMany()|| p->getTypeImpl()->isFromList())\
                     {\
                         long l;\
@@ -395,7 +401,7 @@ namespace sdo {
                         delete prop;\
                         prop = 0;\
                         if (doi != 0)    {\
-                            doi->set ## primval (value);\
+                             doi->set ## primval (value);\
                         }\
                         else {\
                             dol.append(( platval) value);\
@@ -448,6 +454,12 @@ namespace sdo {
                     if (p == 0 && d->getType().isOpenType())\
                     {\
                         p = d->define ##primval (prop);\
+                    }\
+                    if (p == 0)\
+                    {\
+                         string msg("Set value  - path not found");\
+                         SDO_THROW_EXCEPTION("setter", SDOPathNotFoundException,\
+                         msg.c_str());\
                     }\
                     if (p->isMany()|| p->getTypeImpl()->isFromList())\
                     {\

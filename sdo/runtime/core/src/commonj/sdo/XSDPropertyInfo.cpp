@@ -35,7 +35,7 @@ namespace commonj
         {
         }
         
-        XSDPropertyInfo::XSDPropertyInfo(const PropertyDefinition& prop)
+        XSDPropertyInfo::XSDPropertyInfo(const PropertyDefinitionImpl& prop)
             : property(prop)
         {
         }

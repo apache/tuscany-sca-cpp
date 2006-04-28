@@ -576,7 +576,7 @@ namespace commonj
                         XSDPropertyInfo* pi = getPropertyInfo(dob->getType(), pl[i]);
                         if (pi)
                         {
-                            PropertyDefinition propdef;
+                            PropertyDefinitionImpl propdef;
                             propdef = pi->getPropertyDefinition();
                             if (propdef.isElement)continue;
                             if (!propdef.isQName)continue;
@@ -835,7 +835,7 @@ namespace commonj
                 {                    
                     SDOXMLString propertyName(pl[i].getName());
                     XSDPropertyInfo* pi = getPropertyInfo(dataObjectType, pl[i]);
-                    PropertyDefinition propdef;
+                    PropertyDefinitionImpl propdef;
                     if (pi)
                     {
                         propdef = pi->getPropertyDefinition();
@@ -1135,7 +1135,7 @@ namespace commonj
                 getDASValue("XMLDAS::TypeInfo");
             if (ti)
             {
-                TypeDefinition typeDef = ti->getTypeDefinition();
+                TypeDefinitionImpl typeDef = ti->getTypeDefinition();
                 if (!typeDef.IDPropertyName.isNull())
                 {
                     refValue = reffedObject->getCString(typeDef.IDPropertyName);

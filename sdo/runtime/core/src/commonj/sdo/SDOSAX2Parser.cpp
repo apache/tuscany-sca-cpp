@@ -793,7 +793,7 @@ namespace commonj
                               ((DASType*)&tp)->getDASValue("XMLDAS::TypeInfo");
                             if (typeInfo)
                             {
-                                const TypeDefinition& typeDefinition = typeInfo->getTypeDefinition();
+                                const TypeDefinitionImpl& typeDefinition = typeInfo->getTypeDefinition();
                                 if (typeDefinition.isExtendedPrimitive)
                                 {
                                     // The name of this element is the name of a property on the current DO
@@ -1275,11 +1275,11 @@ namespace commonj
 /*            XSDTypeInfo* typeInfo = (XSDTypeInfo*)((DASType*)&type)->getDASValue("XMLDAS::TypeInfo");
             if (typeInfo)
             {
-                const TypeDefinition& typeDefinition = typeInfo->getTypeDefinition();
+                const TypeDefinitionImpl& typeDefinition = typeInfo->getTypeDefinition();
                 XmlDasPropertyDefs::const_iterator propsIter;
                 for (propsIter = typeDefinition.properties.begin(); propsIter != typeDefinition.properties.end(); propsIter++)
                 {
-                    const PropertyDefinition& prop = *propsIter;
+                    const PropertyDefinitionImpl& prop = *propsIter;
                     if (prop.localname.equals(localName))
                     {
                         return prop.name;
@@ -1302,7 +1302,7 @@ namespace commonj
                 XSDPropertyInfo* pi = (XSDPropertyInfo*)((DASProperty*)&pl[i])->getDASValue("XMLDAS::PropertyInfo");
                 if (pi)
                 {
-                    const PropertyDefinition&  propdef = pi->getPropertyDefinition();
+                    const PropertyDefinitionImpl&  propdef = pi->getPropertyDefinition();
                     if (localName .equals(propdef.localname))
                         return propdef.name;
 

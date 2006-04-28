@@ -15,44 +15,29 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date$ */
 
-#ifndef _TYPEDefinitions_H_
-#define _TYPEDefinitions_H_
-
-
-#include "commonj/sdo/TypeDefinition.h"
-#include "map"
-
+#include "commonj/sdo/TypeDefinitionImpl.h"
 namespace commonj
 {
     namespace sdo
     {
-        
-    class TypeDefinitionsImpl;
-    
-/**
- * TypeDefinitionsImpl holds a list information gathered from parsing the
- * XSD and used for creating Types
- */
-        class SDO_API TypeDefinitions
+        TypeDefinitionImpl::TypeDefinitionImpl()
+            : dataType(false),
+              isOpen(false),
+              isSequenced(false),
+              isMany(false),
+              isQName(false),
+              isAbstract(false),
+              groupElementCount(0),
+              isExtendedPrimitive(false),
+              isFromList(false)
         {
-            
-        public:
-            /*SDO_API*/ TypeDefinitions();
-            /*SDO_API*/ virtual ~TypeDefinitions();
-
-            /*SDO_API*/ void addTypeDefinition(TypeDefinition& t);
-
-            TypeDefinitionsImpl& getTypeDefinitions();
- 
-        private:
-            TypeDefinitionsImpl* typedefinitions;
-
-            
-        };
+        }
+        
+        TypeDefinitionImpl::~TypeDefinitionImpl()
+        {
+        }
+        
     } // End - namespace sdo
 } // End - namespace commonj
-
-
-#endif //_TYPEDefinitions_H_
