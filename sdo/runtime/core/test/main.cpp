@@ -37,13 +37,15 @@ int main (int argc, char** argv)
 
     /* general tests */
 
+    totaltests++;testspassed += sdotest::definetest();
+
     totaltests++;testspassed += sdotest::emptycs();
     totaltests++;testspassed += sdotest::openseq();
     totaltests++;testspassed += sdotest::testanytwo("b48633b.xsd","b48633.xsd","b48633.xml");
     totaltests++;testspassed += sdotest::testany("b48686.xsd",
-        "Schema contains a list which is not yet implemented", "b48686.xml", 0);
+        0, "b48686.xml", 0);
     totaltests++;testspassed += sdotest::testany("b48636.xsd",
-        "Schema contains a group or attributeGroup which are not yet implemented","b48636.xml", 0);
+        "Use of undefined group NameGroup","b48636.xml", 0);
     totaltests++;testspassed += sdotest::b48602();
     totaltests++;testspassed += sdotest::compatiblefactory();
     totaltests++;testspassed += sdotest::simple();

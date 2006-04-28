@@ -57,6 +57,7 @@ class sdotest {
         static void generate(DataFactoryPtr fac);
  
         /* tests */
+        static int definetest();
 
         static int testgenerate(const char* xsd, const char* output);
         static int emptycs();

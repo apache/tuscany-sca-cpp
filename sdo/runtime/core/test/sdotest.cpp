@@ -1727,7 +1727,7 @@ int sdotest::nulltest()
             DataObjectPtr xy = test->getDataObject(pl[i]);
             if (xy != 0)
             {
-                fprintf(f, "%s\n",xy);
+                fprintf(f, " is not empty\n");
             }
             else
             {
@@ -1796,7 +1796,7 @@ int sdotest::nulltest()
             DataObjectPtr dp = test->getDataObject(pl[i]);
             if (dp != 0)
             {
-                fprintf(f, "\n");
+                fprintf(f, " is not empty\n");
             }
             else
             {
@@ -7177,7 +7177,6 @@ int sdotest::graham4()
         try 
         {
             DataObjectPtr pitem2 = dor->getDataObject("items[name=\"not hello\"]");
-            if (!silent)cout << "item name is " << pitem2->getCString("name") << endl;
         }
         catch (SDORuntimeException e)
         {

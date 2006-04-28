@@ -1056,5 +1056,86 @@ try {
 }
 
 
+int sdotest::definetest()
+{
+    try {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        
+        TypeDefinitions* ts = new TypeDefinitions();
+        if (ts) delete ts;
+        ts = new TypeDefinitions();
+
+
+        TypeDefinition* td = new TypeDefinition();
+
+        td->setName("MySmallObject");
+        td->setUri("MyNameSpace");
+        td->setIsDataType(false);
+
+        TypeDefinition* td2 = new TypeDefinition();
+        td2->setName("MyOtherObject");
+        td2->setUri("MyNameSpace");
+        td2->setIsDataType(false);
+
+
+        PropertyDefinition* pd = new PropertyDefinition();
+        pd->setName("MyIntegerProperty");
+        pd->setType("commonj.sdo","Integer");
+
+        PropertyDefinition* pd2 = new PropertyDefinition();
+        pd2->setName("MyObjectProperty");
+        pd2->setType("MyNameSpace","MyOtherObject");
+        pd2->setIsMany(true);
+
+        td->addPropertyDefinition(*pd);
+
+        td->addPropertyDefinition(*pd2); 
+
+        ts->addTypeDefinition(*td);
+        ts->addTypeDefinition(*td2);
+
+        // should have an object of type MySmallObject, containing
+        // a single integer called MyIntegerProperty, and a list of
+        // objects called MyObjectProperty - of type MyOtherObject
+
+        xsh->defineTypes(*ts);
+
+        delete td;
+        delete td2;
+        delete ts;
+        delete pd;
+        delete pd2;
+
+        DataObjectPtr dob = mdg->create("MyNameSpace","MySmallObject");
+        dob->setInteger("MyIntegerProperty",43);
+
+        dob->createDataObject("MyObjectProperty");
+        dob->createDataObject("MyObjectProperty");
+        DataObjectList& dl = dob->getList("MyObjectProperty");
+
+        if (dl.size() != 2)
+        {
+            if (!silent) cout << "Define test list size is wrong" << endl;
+            return 0;
+        }
+        int value = dob->getInteger("MyIntegerProperty");
+        if (value != 43)
+        {
+            if (!silent) cout << "Define test integer value is wrong" << endl;
+            return 0;
+        }
+
+        return 1;
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "define test failed" << endl << e << endl;
+        return 0;
+    }
+
+}
 
 
