@@ -22,12 +22,15 @@ libtuscany_sdo_la_SOURCES = \
 	DataObjectListImpl.cpp \
 	DefaultLogWriter.cpp \
 	EqualityHelper.cpp \
+	GroupDefinition.cpp \
+	GroupEvent.cpp \
 	HelperProvider.cpp \
 	Logger.cpp \
 	LogWriter.cpp \
 	ParserErrorSetter.cpp \
 	Property.cpp \
 	PropertyDefinition.cpp \
+	PropertyDefinitionImpl.cpp \
 	PropertyImpl.cpp \
 	PropertyList.cpp \
 	PropertySetting.cpp \
@@ -61,6 +64,8 @@ libtuscany_sdo_la_SOURCES = \
 	Type.cpp \
 	TypeDefinition.cpp \
 	TypeDefinitions.cpp \
+	TypeDefinitionImpl.cpp \
+	TypeDefinitionsImpl.cpp \
 	TypeImpl.cpp \
 	TypeList.cpp \
 	XMLDocument.cpp \

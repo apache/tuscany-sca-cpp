@@ -30,6 +30,7 @@ commonj/sdo/Logging.h \
 commonj/sdo/LogWriter.h \
 commonj/sdo/ParserErrorSetter.h \
 commonj/sdo/PropertyDefinition.h \
+commonj/sdo/PropertyDefinitionImpl.h \
 commonj/sdo/Property.h \
 commonj/sdo/PropertyImpl.h \
 commonj/sdo/PropertyList.h \
@@ -65,6 +66,8 @@ commonj/sdo/Setting.h \
 commonj/sdo/SettingList.h \
 commonj/sdo/TypeDefinition.h \
 commonj/sdo/TypeDefinitions.h \
+commonj/sdo/TypeDefinitionImpl.h \
+commonj/sdo/TypeDefinitionsImpl.h \
 commonj/sdo/Type.h \
 commonj/sdo/TypeImpl.h \
 commonj/sdo/TypeList.h \
