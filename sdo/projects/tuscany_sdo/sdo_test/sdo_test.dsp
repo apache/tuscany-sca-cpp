@@ -52,6 +52,10 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib /nologo /subsystem:console /machine:I386 /libpath:"..\..\..\lib"
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Cmds=copy ..\..\..\bin\*.dll ..\..\..\runtime\core\test\Release
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
 
@@ -78,7 +82,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\..\runtime\core\test\*.xsd ..\..\..\runtime\core\test\Debug	copy ..\..\..\runtime\core\test\*.xml ..\..\..\runtime\core\test\Debug	copy ..\..\..\bin\*.dll ..\..\..\runtime\core\test\Debug	copy ..\..\..\bin\*.pdb ..\..\..\runtime\core\test\Debug	copy ..\..\..\runtime\core\test\*.wsdl ..\..\..\runtime\core\test\Debug	copy ..\..\..\runtime\core\test\*.txt ..\..\..\runtime\core\test\Debug
+PostBuild_Cmds=copy ..\..\..\bin\*.dll ..\..\..\runtime\core\test\Debug	copy ..\..\..\bin\*.pdb ..\..\..\runtime\core\test\Debug
 # End Special Build Tool
 
 !ENDIF 

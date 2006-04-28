@@ -6896,7 +6896,7 @@ int sdotest::includetest()
             return 0;
         }
 
-        xsh->defineFile("../test/includeother.xsd");
+        xsh->defineFile("../test/test/includeother.xsd");
         if ((i = xsh->getErrorCount()) > 0)
         {
             if (!silent)
