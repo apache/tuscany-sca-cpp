@@ -81,7 +81,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /out:"..\..\..\runtime\core\samples\Debug/samples.exe" /pdbtype:sept /libpath:"..\..\..\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\..\runtime\core\samples\*.xsd ..\..\..\runtime\core\samples\Debug	copy ..\..\..\runtime\core\samples\*.xml ..\..\..\runtime\core\samples\Debug	copy ..\..\..\runtime\core\samples\*.wsdl ..\..\..\runtime\core\samples\Debug	copy ..\..\..\bin\*.dll ..\..\..\runtime\core\samples\Debug	copy ..\..\..\bin\*.pdb ..\..\..\runtime\core\samples\Debug
+PostBuild_Cmds=copy ..\..\..\runtime\core\samples\*.xsd ..\..\..\runtime\core\samples\Debug	copy ..\..\..\runtime\core\samples\*.xml ..\..\..\runtime\core\samples\Debug	copy ..\..\..\bin\*.dll ..\..\..\runtime\core\samples\Debug	copy ..\..\..\bin\*.pdb ..\..\..\runtime\core\samples\Debug
 # End Special Build Tool
 
 !ENDIF 

@@ -58,8 +58,8 @@ LINK32=link.exe
 SOURCE="$(InputPath)"
 PostBuild_Desc=copyout
 PostBuild_Cmds=copy ..\..\..\runtime\core\Release\tuscany_sdo.dll ..\..\..\bin	copy ..\..\..\runtime\core\Release\tuscany_sdo.lib ..\..\..\lib	copy ..\..\..\runtime\core\src\commonj\sdo\Property.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\ChangeSummary.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\CopyHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataFactory.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataGraph.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataObject.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectInstance.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DefaultLogWriter.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\EqualityHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\export.h ..\..\..\include\commonj\sdo	copy\
-          ..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Logger.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Logging.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\LogWriter.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\PropertyList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingPointer.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDOCheck.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDODate.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntime.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntimeException.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDOUtils.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Sequence.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Setting.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SettingList.h ..\..\..\include\commonj\sdo	copy\
-          ..\..\..\runtime\core\src\commonj\sdo\Type.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XMLDocument.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XMLHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XSDHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDO.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingObject.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DASValue.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeImpl.h ..\..\..\include\commonj\sdo
+            ..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Logger.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Logging.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\LogWriter.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\PropertyList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingPointer.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDOCheck.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDODate.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntime.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntimeException.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDOUtils.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Sequence.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Setting.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SettingList.h ..\..\..\include\commonj\sdo	copy\
+            ..\..\..\runtime\core\src\commonj\sdo\Type.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XMLDocument.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XMLHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XSDHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDO.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingObject.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DASValue.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeImpl.h ..\..\..\include\commonj\sdo
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "sdo_runtime - Win32 Debug"
@@ -76,7 +76,8 @@ PostBuild_Cmds=copy ..\..\..\runtime\core\Release\tuscany_sdo.dll ..\..\..\bin	c
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_RUNTIME_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "..\..\..\runtime\core\src" /I "$(LIBXML2_HOME)\include" /I "$(ICONV_HOME)\include" /I "$(ZLIB_HOME)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "..\..\..\runtime\core\src" /I "..\..\..\dependencies\libxml2-2.6.19.win32\include" /I "..\..\..\dependencies\iconv-1.9.1.win32\include" /I "..\..\..\dependencies\zlib-1.2.2.win32\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /YX /FD /GZ /c
+# SUBTRACT CPP /X
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
@@ -86,14 +87,14 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib libxml2.lib /nologo /dll /debug /machine:I386 /out:"..\..\..\runtime\core\Debug\tuscany_sdo.dll" /pdbtype:sept /libpath:"$(LIBXML2_HOME)\lib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib libxml2.lib /nologo /dll /debug /machine:I386 /out:"..\..\..\runtime\core\Debug\tuscany_sdo.dll" /pdbtype:sept /libpath:"..\..\..\dependencies\libxml2-2.6.19.win32\lib"
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=copyout
 PostBuild_Cmds=copy ..\..\..\runtime\core\Debug\tuscany_sdo.dll ..\..\..\bin	copy ..\..\..\runtime\core\Debug\tuscany_sdo.lib ..\..\..\lib	copy ..\..\..\runtime\core\src\commonj\sdo\Property.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\ChangeSummary.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\CopyHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataFactory.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataGraph.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataObject.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectInstance.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DefaultLogWriter.h  ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\EqualityHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\export.h ..\..\..\include\commonj\sdo	copy\
-         ..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Logger.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Logging.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\LogWriter.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\PropertyList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingPointer.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDOCheck.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDODate.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntime.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntimeException.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDOUtils.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Sequence.h  ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Setting.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SettingList.h ..\..\..\include\commonj\sdo	copy\
-         ..\..\..\runtime\core\src\commonj\sdo\Type.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XMLDocument.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XMLHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XSDHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDO.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingObject.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DASValue.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeImpl.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\Debug\tuscany_sdo.pdb ..\..\..\bin
+           ..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Logger.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Logging.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\LogWriter.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\PropertyList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingPointer.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDOCheck.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDODate.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntime.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntimeException.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDOUtils.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Sequence.h  ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\Setting.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SettingList.h ..\..\..\include\commonj\sdo	copy\
+           ..\..\..\runtime\core\src\commonj\sdo\Type.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeList.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XMLDocument.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XMLHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XSDHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\SDO.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingObject.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\DASValue.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeImpl.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\Debug\tuscany_sdo.pdb ..\..\..\bin	copy ..\..\..\runtime\core\src\commonj\sdo\TypeDefinition.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\PropertyDefinition.h ..\..\..\include\commonj\sdo	copy ..\..\..\runtime\core\src\commonj\sdo\TypeDefinitions.h ..\..\..\include\commonj\sdo
 # End Special Build Tool
 
 !ENDIF 
@@ -216,6 +217,10 @@ SOURCE=..\..\..\runtime\core\src\commonj\sdo\Property.cpp
 # Begin Source File
 
 SOURCE=..\..\..\runtime\core\src\commonj\sdo\PropertyDefinition.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\commonj\sdo\PropertyDefinitionImpl.cpp
 # End Source File
 # Begin Source File
 
@@ -347,7 +352,15 @@ SOURCE=..\..\..\runtime\core\src\commonj\sdo\TypeDefinition.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\core\src\commonj\sdo\TypeDefinitionImpl.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\core\src\commonj\sdo\TypeDefinitions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\commonj\sdo\TypeDefinitionsImpl.cpp
 # End Source File
 # Begin Source File
 
@@ -531,6 +544,10 @@ SOURCE=..\..\..\runtime\core\src\commonj\sdo\PropertyDefinition.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\core\src\commonj\sdo\PropertyDefinitionImpl.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\core\src\commonj\sdo\PropertyImpl.h
 # End Source File
 # Begin Source File
@@ -667,7 +684,15 @@ SOURCE=..\..\..\runtime\core\src\commonj\sdo\TypeDefinition.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\core\src\commonj\sdo\TypeDefinitionImpl.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\core\src\commonj\sdo\TypeDefinitions.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\commonj\sdo\TypeDefinitionsImpl.h
 # End Source File
 # Begin Source File
 
