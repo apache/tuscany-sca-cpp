@@ -47,6 +47,9 @@ namespace commonj
 
 
             /*SDO_API*/ PropertyDefinition();
+            PropertyDefinition(const PropertyDefinition& pd);
+            PropertyDefinition& operator=(const PropertyDefinition& pd);
+
             /*SDO_API*/ virtual ~PropertyDefinition();
 
             PropertyDefinitionImpl* getPropertyDefinition();
@@ -111,6 +114,7 @@ namespace commonj
 
         private:
             PropertyDefinitionImpl* propertydefinition;
+            void copy(const PropertyDefinition& pd);
         };
     } // End - namespace sdo
 } // End - namespace commonj

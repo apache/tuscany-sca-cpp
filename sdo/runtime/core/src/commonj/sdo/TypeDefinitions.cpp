@@ -36,6 +36,26 @@ namespace commonj
             if (typedefinitions != 0) delete typedefinitions;
         }
 
+        void TypeDefinitions::copy (const TypeDefinitions& tds)
+        {
+            if (typedefinitions != 0) delete typedefinitions;
+            typedefinitions = new TypeDefinitionsImpl(*(tds.typedefinitions));
+        }
+ 
+        TypeDefinitions::TypeDefinitions(const TypeDefinitions& tds)
+        {
+            copy(tds);
+        }
+        
+        TypeDefinitions& TypeDefinitions::operator=(const TypeDefinitions& tds)
+        {
+            if (this != &tds)
+            {
+                copy(tds);
+            }
+            return *this;
+        }
+
         void TypeDefinitions::addTypeDefinition(TypeDefinition& t)
         {
             if (typedefinitions == 0)

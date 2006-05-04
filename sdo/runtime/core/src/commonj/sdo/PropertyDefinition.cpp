@@ -26,7 +26,6 @@ namespace commonj
     {
 
         PropertyDefinition::PropertyDefinition()
-
         {
             propertydefinition = new PropertyDefinitionImpl();
         }
@@ -36,6 +35,26 @@ namespace commonj
             if (propertydefinition) delete propertydefinition;
         }
  
+        void PropertyDefinition::copy (const PropertyDefinition& pd)
+        {
+            if (propertydefinition != 0) delete propertydefinition;
+            propertydefinition = new PropertyDefinitionImpl(*(pd.propertydefinition));
+        }
+ 
+        PropertyDefinition::PropertyDefinition(const PropertyDefinition& pd)
+        {
+            copy(pd);
+        }
+        
+        PropertyDefinition& PropertyDefinition::operator=(const PropertyDefinition& pd)
+        {
+            if (this != &pd)
+            {
+                copy(pd);
+            }
+            return *this;
+        }
+
         PropertyDefinitionImpl* PropertyDefinition::getPropertyDefinition()
         {
             return propertydefinition;

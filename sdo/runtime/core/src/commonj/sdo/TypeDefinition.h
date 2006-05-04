@@ -46,7 +46,11 @@ namespace commonj
 
 
             /*SDO_API*/ TypeDefinition();
+            TypeDefinition(const TypeDefinition& td);
+            TypeDefinition& operator=(const TypeDefinition& td);
+
             /*SDO_API*/ virtual ~TypeDefinition();
+
 
             TypeDefinitionImpl* getTypeDefinition();       
         
@@ -96,6 +100,7 @@ namespace commonj
 
         private :
             TypeDefinitionImpl *typedefinition;
+            void copy(const TypeDefinition& td);
         };
     } // End - namespace sdo
 } // End - namespace commonj
