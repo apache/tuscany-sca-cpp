@@ -2106,6 +2106,7 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
                     return;
                 }
             }
+
             string msg("Index of property out of range:");
             msg += index;
             SDO_THROW_EXCEPTION("Index Validation", SDOIndexOutOfRangeException,

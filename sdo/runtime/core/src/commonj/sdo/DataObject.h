@@ -124,6 +124,11 @@ class DataObject : public RefCountingObject
     virtual const Property& getProperty(const char* prop) = 0;
  
  
+    /**
+     * return the data factory which created this object
+     */
+
+    virtual SDO_API DataFactory* getDataFactory() = 0;
 
     /**  getContainer get the containing object
      *
