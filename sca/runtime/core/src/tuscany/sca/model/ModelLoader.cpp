@@ -26,6 +26,7 @@
 #include "tuscany/sca/model/CPPInterface.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/WSBinding.h"
+#include "commonj/sdo/TypeDefinitions.h"
 
 
 using namespace commonj::sdo;
@@ -669,6 +670,7 @@ namespace tuscany
 
                     if (doc->getRootDataObject()!=0) 
                     {
+                        Utils::printDO(doc->getRootDataObject());
                         MODULE_LIST moduleList = system->findModules(moduleName);
                         MODULE_LIST::iterator moduleIter;
                         
@@ -722,11 +724,10 @@ namespace tuscany
                         // Tuscany specific xsd for config files
                         filename = root + "/xsd/tuscany.xsd";
                         myXSDHelper->defineFile(filename.c_str());
+                     
+                        loadWSDLTypes(myXSDHelper);
  
-                        // Load types derived from WSDL schema
-                        loadWSDLTypes(myXSDHelper->getDataFactory());
- 
-                        //Utils::printTypes(myXSDHelper->getDataFactory());
+                        Utils::printTypes(myXSDHelper->getDataFactory());
                         
                     } catch (SDOTypeNotFoundException ex)
                     {
@@ -755,8 +756,10 @@ namespace tuscany
                 return myXMLHelper;
             }
             
-            void ModelLoader::loadWSDLTypes(DataFactoryPtr dataFactory)
+            void ModelLoader::loadWSDLTypes(XSDHelperPtr xsdHelper)
             {
+                DataFactoryPtr dataFactory = xsdHelper->getDataFactory();
+ 
                 dataFactory->addType(
                     "http://schemas.xmlsoap.org/wsdl/", "RootType",
                     false, false, false);
@@ -805,9 +808,35 @@ namespace tuscany
                 dataFactory->addType(
                     "http://schemas.xmlsoap.org/wsdl/", "tParam",
                     false, false, false);
-                dataFactory->addType(
+
+
+                TypeDefinition tpart;
+                tpart.setUri("http://schemas.xmlsoap.org/wsdl/");
+                tpart.setName("tPart");
+                tpart.setParentType("http://schemas.xmlsoap.org/wsdl/",
+                                    "tExtensibleAttributesDocumented", false);
+                PropertyDefinition propdef;
+                propdef.setName("name");
+                propdef.setLocalName("name");
+                propdef.setType("commonj.sdo", "String");
+                propdef.setIsContainment(true);
+                tpart.addPropertyDefinition(propdef);
+                propdef.setName("element");
+                propdef.setLocalName("element");
+                propdef.setIsQName(true);
+                tpart.addPropertyDefinition(propdef);
+                propdef.setName("type");
+                propdef.setLocalName("type");
+                tpart.addPropertyDefinition(propdef);
+                TypeDefinitions typedefs;
+                typedefs.addTypeDefinition(tpart);
+                xsdHelper->defineTypes(typedefs);
+
+                //Utils::printTypes(dataFactory);
+                /*dataFactory->addType(
                     "http://schemas.xmlsoap.org/wsdl/", "tPart",
-                    false, false, false);
+                    false, false, false);*/
+
                 dataFactory->addType(
                     "http://schemas.xmlsoap.org/wsdl/", "tPort",
                     false, false, false);
@@ -1091,21 +1120,21 @@ namespace tuscany
                 dataFactory->setBaseType(
                     "http://schemas.xmlsoap.org/wsdl/", "tPart",
                     "http://schemas.xmlsoap.org/wsdl/", "tExtensibleAttributesDocumented");
-                dataFactory->addPropertyToType(
+                /*dataFactory->addPropertyToType(
                     "http://schemas.xmlsoap.org/wsdl/", "tPart",
                     "name",
                     "commonj.sdo", "String",
                     false, false, true);
-                dataFactory->addPropertyToType(
+                  dataFactory->addPropertyToType(
                     "http://schemas.xmlsoap.org/wsdl/", "tPart",
                     "element",
                     "commonj.sdo", "URI",
-                    false, false, true);
+                    false, false, true); 
                 dataFactory->addPropertyToType(
                     "http://schemas.xmlsoap.org/wsdl/", "tPart",
                     "type",
                     "commonj.sdo", "URI",
-                    false, false, true);
+                    false, false, true);*/
                 dataFactory->setBaseType(
                     "http://schemas.xmlsoap.org/wsdl/", "tPort",
                     "http://schemas.xmlsoap.org/wsdl/", "tExtensibleDocumented");
@@ -1547,6 +1576,7 @@ namespace tuscany
                     "name",
                     "commonj.sdo", "String",
                     false, false, true);
+                
             }
             
             

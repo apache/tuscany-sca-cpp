@@ -24,6 +24,7 @@
 #include "commonj/sdo/SDO.h"
 using commonj::sdo::DataObjectPtr;
 using commonj::sdo::DataFactoryPtr;
+using commonj::sdo::XSDHelperPtr;
 
 #include "tuscany/sca/model/System.h"
 #include "tuscany/sca/model/Subsystem.h"
@@ -90,7 +91,7 @@ namespace tuscany
                 void loadTypes(const char *fileName, const string &moduleName);
                 void loadWsdl(const char *fileName, const string &moduleName);
 
-                void loadWSDLTypes(DataFactoryPtr dataFactory);
+                void loadWSDLTypes(XSDHelperPtr xsdHelper);
     
                 Interface* getInterface(DataObjectPtr obj);
 
