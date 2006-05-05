@@ -38,8 +38,16 @@ All the projects must be built multi-threaded: Project Properties/Configuration
 properties/C/C++/Code Generation/Runtime Library - select MultiThreaded Debug DLL /MDd  
 (for debug build).
 
-The test project runs in the projects directory, where in C6 it ran in the Debug directory, 
-so all the test comparison files are in the wrong place. You can copy the entire contents 
-of runtime/core/test/Debug to projects/tuscany_sdo/sdo_test
+The sdo_test project runs in
 
+tuscany\cpp\projects\tuscany_sdo\sdo_runtime
+
+whereas in Visual Studio 6 it ran in
+
+tuscany\cpp\sdo\runtime\core\test\Debug
+
+so all the test comparison files are in the wrong place.
+You can remedy this by copying the entire contents of
+
+runtime\core\test\Debug to projects\tuscany_sdo\sdo_test.
 
