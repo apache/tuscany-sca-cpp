@@ -47,10 +47,12 @@ namespace tuscany
                  * @param endpoint The endpoint address of the operation.
                  * @param responseName The name of the response message.
                  */
-                 WsdlOperation(const string& operation,
+                 WsdlOperation(
+                    const string& operationName,
                     const string& soapAction, 
                     const string& endpoint,
-                    const string& responseName);
+                    DataObjectPtr inputMessage,
+                    DataObjectPtr outputMessage);
 
                 /**
                  * Destructor.
@@ -69,7 +71,7 @@ namespace tuscany
                  * incoming message.
                  * @return The name of the element in the response message.
                  */
-                const string& getResponseName() {return responseName;};
+                string getResponseName();
 
                 /**
                  * The soap action string for this operation.
@@ -83,6 +85,8 @@ namespace tuscany
                  */
                 const string& getEndpoint() {return endpoint;};
 
+                DataObjectPtr getInputMessage() {return inputMessage;}
+                DataObjectPtr getOutputMessage() {return outputMessage;}
 
                 
             private:
@@ -92,13 +96,7 @@ namespace tuscany
                  */ 
                 string operationName;
 
-                /**
-                 * The name of the response for use when deserializing an
-                 * incoming message.
-                 */
-                string responseName;
-
-                /**
+                 /**
                  * The soap action string for this operation.
                  */
                 string soapAction;
@@ -107,6 +105,9 @@ namespace tuscany
                  * The endpoint address of the target web service.
                  */
                 string endpoint;
+
+                DataObjectPtr inputMessage;
+                DataObjectPtr outputMessage;
             };
 
          } // End namespace model

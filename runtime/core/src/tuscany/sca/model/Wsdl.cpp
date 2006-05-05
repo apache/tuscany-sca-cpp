@@ -41,7 +41,7 @@ namespace tuscany
                 LOGENTRY(1, "Wsdl::constructor");
 
                 // Trace
-                Utils::printDO(wsdlModel);
+                //Utils::printDO(wsdlModel);
 
 
                 
@@ -124,7 +124,7 @@ namespace tuscany
                                 throw SystemConfigurationException(message.c_str());
                             }
 
-                            Utils::printDO(wsPortType);
+                            //Utils::printDO(wsPortType);
                             
                             // Found the portType, find the operation
                             DataObjectList& operationList = wsPortType->getList("operation");
@@ -150,8 +150,9 @@ namespace tuscany
                                     string requestType(wsMessageIn->getList("part")[0]->getCString("element"));
                                     string requestTypeName;
                                     string requestTypeUri;
-                                    // Utils::tokeniseQName(requestType, requestTypeUri, requestTypeName); 
-                                    Utils::rTokeniseString(":", requestType, requestTypeUri, requestTypeName); 
+                                     Utils::tokeniseQName(requestType, requestTypeUri, requestTypeName); 
+                                    //Utils::rTokeniseString(":", requestType, requestTypeUri, requestTypeName); 
+                                    cout << "inputMessage:" <<requestTypeUri<<"#"<< requestTypeName<<endl;
 
                                     // Find the type of the response message
                                     string outputMessageType =  string(operationList[k]->getCString("output/message"));
@@ -168,13 +169,15 @@ namespace tuscany
                                     string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
                                     string responseTypeName;
                                     string responseTypeUri;
-                                    // Utils::tokeniseQName(responseType, responseTypeUri, responseTypeName); 
-                                    Utils::rTokeniseString(":", responseType, responseTypeUri, responseTypeName);
+                                    Utils::tokeniseQName(responseType, responseTypeUri, responseTypeName); 
+                                    //Utils::rTokeniseString(":", responseType, responseTypeUri, responseTypeName);
+                                   cout << "ouputMessage:" <<responseTypeUri<<"#"<< responseTypeName<<endl;
 
                                     return WsdlOperation(requestTypeName, 
                                         soapAction, 
-                                        targetAddress, 
-                                        responseTypeName);
+                                        targetAddress,
+                                        wsMessageIn,
+                                        wsMessageOut);
                                 }
                                 
                             }
