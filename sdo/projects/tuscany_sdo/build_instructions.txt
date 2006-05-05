@@ -13,6 +13,10 @@ By default, the projects are set up to look for these in directories located by 
 environment variables: LIBXML2_HOME, ICONV_HOME and ZLIB_HOME. These need to be set 
 before launching Visual Studio.
 
+The two projects sdo_axiom and sdo_axiom_test are dependent on AXIS2C, and require that
+an environment variable AXIS2C_HOME be set to where axis2c is installed. Axis2c can be 
+located at http://ws.apache.org/axis2/c/.
+
 Open the build workspace tuscany\cpp\sdo\runtime\projects\tuscany_sdo\tuscany_sdo.dsw
 
 Build->Set Active Configuration->sdo_runtime - Win32 Release

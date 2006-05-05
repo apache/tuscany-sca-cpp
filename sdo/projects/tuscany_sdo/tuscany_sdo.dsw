@@ -3,6 +3,30 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
+Project: "sdo_axiom"=.\sdo_axiom\sdo_axiom.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "sdo_axiom_test"=.\sdo_axiom_test\sdo_axiom_test.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "sdo_runtime"=.\sdo_runtime\sdo_runtime.dsp - Package Owner=<4>
 
 Package=<5>
