@@ -670,7 +670,7 @@ namespace tuscany
 
                     if (doc->getRootDataObject()!=0) 
                     {
-                        Utils::printDO(doc->getRootDataObject());
+                        //Utils::printDO(doc->getRootDataObject());
                         MODULE_LIST moduleList = system->findModules(moduleName);
                         MODULE_LIST::iterator moduleIter;
                         
@@ -726,9 +726,7 @@ namespace tuscany
                         myXSDHelper->defineFile(filename.c_str());
                      
                         loadWSDLTypes(myXSDHelper);
- 
-                        Utils::printTypes(myXSDHelper->getDataFactory());
-                        
+                     
                     } catch (SDOTypeNotFoundException ex)
                     {
                         LOGERROR_1(0, "ModuleLoader: Exception caught: %s", ex.getMessageText());
