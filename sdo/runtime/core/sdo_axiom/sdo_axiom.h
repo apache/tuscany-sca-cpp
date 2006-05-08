@@ -29,6 +29,8 @@
 
 #include "commonj/sdo/SDO.h"
 
+using namespace commonj::sdo;
+
 namespace commonj
 {
     namespace sdo_axiom
@@ -51,6 +53,8 @@ namespace commonj
             SDO_AXIOM_API static void releaseHelper(AxiomHelper* ax);
 
             SDO_AXIOM_API axis2_om_document_t*  toAxiom(DataObjectPtr dob);
+
+            SDO_AXIOM_API DataObjectPtr  toSdo(axis2_om_document_t* doc,DataFactoryPtr factory);
 
             SDO_AXIOM_API void output(axis2_om_document_t* document);
 

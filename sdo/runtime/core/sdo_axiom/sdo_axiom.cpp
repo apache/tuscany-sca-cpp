@@ -135,7 +135,47 @@ namespace commonj
         }
 
 
-        void AxiomHelper::output(axis2_om_document_t* document)
+        DataObjectPtr AxiomHelper::toSdo(axis2_om_document_t* document,
+            DataFactoryPtr factory)
+        {
+        
+            if (!the_env)
+            {
+                cout << "No Axis Environment" << endl;
+                return 0;
+            }
+
+            XMLHelperPtr helper = HelperProvider::getXMLHelper(factory);
+
+            axis2_xml_writer_t* writer = axis2_xml_writer_create_for_memory(
+                &the_env, NULL, AXIS2_TRUE, 0);
+    
+            axis2_om_output_t* output = axis2_om_output_create(&the_env, writer);
+    
+            axis2_om_node_t* root_node = 
+                AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(document, &the_env);
+ 
+            if (!root_node)
+            {
+                cout << "No Root Element in the document" << endl;
+                AXIS2_OM_OUTPUT_FREE(output, &the_env);
+                return 0;
+            }
+
+            AXIS2_OM_NODE_SERIALIZE(root_node, &the_env, output);
+    
+            axis2_char_t* buffer = AXIS2_XML_WRITER_GET_XML(writer, &the_env);
+
+            XMLDocumentPtr theXMLDocument = helper->load(buffer);
+
+            if (theXMLDocument != 0)
+            {
+                return theXMLDocument->getRootDataObject();
+            }
+            return 0;
+        }
+ 
+       void AxiomHelper::output(axis2_om_document_t* document)
         {
         
             if (!the_env)
