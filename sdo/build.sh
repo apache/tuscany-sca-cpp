@@ -24,8 +24,14 @@ echo "LIBXML2_LIB not set"
 exit;
 fi
 
+if [ x$AXIS2C_HOME = x ]; then
+echo "AXIS2C_HOME not set"
+exit;
+fi
+echo "Using Axis2C installed at $AXIS2C_HOME"
+
 ./autogen.sh
 TUSCANY_SDOCPP_HOME=`pwd`
-./configure --prefix=${TUSCANY_SDOCPP_HOME}
+./configure --prefix=${TUSCANY_SDOCPP_HOME} --enable-static=no
 make
 make install

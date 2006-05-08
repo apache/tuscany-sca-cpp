@@ -37,6 +37,8 @@ AC_CONFIG_FILES([Makefile
                  runtime/core/src/Makefile
                  runtime/core/src/commonj/Makefile
                  runtime/core/src/commonj/sdo/Makefile
-                 runtime/core/test/Makefile])
+                 runtime/core/test/Makefile
+                 runtime/core/sdo_axiom/Makefile
+                 runtime/core/sdo_axiom_test/Makefile])
 AC_OUTPUT
 
