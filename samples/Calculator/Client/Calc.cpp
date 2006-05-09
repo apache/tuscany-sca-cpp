@@ -133,11 +133,25 @@ void usage()
 bool IsNumber (const char *p)
 {
     int len = strlen(p);
-    for (int i = 0; i < len; i++)
+    int pointcount = 0;
+
+    if (!isdigit (p[0]) && p[0] != '-' && p[0] != '+')
+    {
+        return false;
+    }
+    for (int i = 1; i < len; i++)
     {
 	   if (!isdigit (p[i]))
        {
-           return false;
+           if (p[i] == '.')
+           {
+               if (pointcount > 0) return false;
+               pointcount++;
+           }
+           else
+           {
+                return false;
+           }
        }
     }
     return true;
