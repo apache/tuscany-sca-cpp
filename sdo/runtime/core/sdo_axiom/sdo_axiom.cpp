@@ -68,7 +68,35 @@ namespace commonj
             deleteEnv();
         }
 
-        axis2_om_document_t* AxiomHelper::toAxiom(DataObjectPtr dob)
+
+        axis2_env_t** AxiomHelper::getEnv()
+        {
+            return &the_env;
+        }
+
+        axis2_om_node_t* AxiomHelper::toAxiomNode(DataObjectPtr dob)
+        {
+
+            axis2_om_document_t* doc = toAxiomDoc(dob);
+
+            if (!doc)
+            {
+                return 0;
+            }
+    
+            axis2_om_node_t* root_node = 
+                AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(doc, &the_env);
+            if (!root_node)
+            {
+                cout << "No Root Element in the document" << endl;
+                return 0;
+            }
+            
+
+            return root_node;
+        }
+
+        axis2_om_document_t* AxiomHelper::toAxiomDoc(DataObjectPtr dob)
         {
 
             DataFactory* df = dob->getDataFactory();
@@ -133,7 +161,6 @@ namespace commonj
 
             return document;
         }
-
 
         DataObjectPtr AxiomHelper::toSdo(axis2_om_document_t* document,
             DataFactoryPtr factory)

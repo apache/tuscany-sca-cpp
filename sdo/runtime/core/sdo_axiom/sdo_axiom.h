@@ -52,10 +52,13 @@ namespace commonj
 
             SDO_AXIOM_API static void releaseHelper(AxiomHelper* ax);
 
-            SDO_AXIOM_API axis2_om_document_t*  toAxiom(DataObjectPtr dob);
+            SDO_AXIOM_API axis2_om_document_t*  toAxiomDoc(DataObjectPtr dob);
+            SDO_AXIOM_API axis2_om_node_t*      toAxiomNode(DataObjectPtr dob);
 
             SDO_AXIOM_API DataObjectPtr  toSdo(axis2_om_document_t* doc,DataFactoryPtr factory);
             SDO_AXIOM_API DataObjectPtr  toSdo(axis2_om_node* root_node,DataFactoryPtr factory);
+
+            SDO_AXIOM_API axis2_env_t** getEnv();
 
             SDO_AXIOM_API void output(axis2_om_document_t* document);
 

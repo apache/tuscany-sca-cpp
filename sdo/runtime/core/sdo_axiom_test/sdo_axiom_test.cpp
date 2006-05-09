@@ -84,8 +84,37 @@ void axiomtest::axiom_test()
 
     if (ax)
     {
-        axis2_om_document_t* doc = ax->toAxiom(company);
-        ax->output(doc);
+        axis2_om_document_t* doc = ax->toAxiomDoc(company);
+
+        if (doc)
+        {
+            ax->output(doc);
+
+            DataObjectPtr newdob = ax->toSdo(doc,mdg);
+             
+            if (newdob)
+            {
+                cout << "Printing first data object..." << endl;
+                SDOUtils::printDataObject(cout,newdob);
+                cout << "Finished" << endl;
+            }
+
+            axis2_om_node_t* node = 
+                            AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(doc, ax->getEnv());
+ 
+
+            DataObjectPtr newdob2 = ax->toSdo(node,mdg);
+
+            if (newdob2)
+            {
+                cout << "Printing second data object..." << endl;
+                SDOUtils::printDataObject(cout,newdob2);
+                cout << "Finished" << endl;
+            }
+
+
+        }
+
     }
 
     return;
