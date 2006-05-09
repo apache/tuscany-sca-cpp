@@ -19,6 +19,17 @@ There are three sub projects in this workspace:
 Build instructions
 ------------------
 
+Notes:
+
+The projects are set up to locate SCA and SDO libraries using the environment variables
+TUSCANY_SCACPP and TUSCANY_SDOCPP. These must be set before building.
+
+scagan is a code generation tool written in java. This will need to be built before you 
+can run it. To build scagen, you must go to the tools/scagen directory, and type "ant".
+(You must have apache ant installed, and have a valid java virtual machine installed - 
+upwards of version 1.4.2).  Once scagen has successfully built, it can be run from the 
+sca/bin directory.
+
 1) Build the SCA module.
     - Set CalculatorModule project as the active project.
       Right click->Set as active project
