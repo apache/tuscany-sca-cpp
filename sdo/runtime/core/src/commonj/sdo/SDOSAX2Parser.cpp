@@ -1125,19 +1125,20 @@ namespace commonj
 
                                 // It might be a single setting for a many-valued property.
                                 // may throw SDOPropertyNotFoundException
-
-                                const Property& p = currentPropertySetting.dataObject->getProperty(
+                                else {
+                                    const Property& p = currentPropertySetting.dataObject->getProperty(
                                     currentPropertySetting.name);
-                                if (p.isMany())
-                                {
-                                    DataObjectList& dl = currentPropertySetting.dataObject->
-                                    getList((const char*)currentPropertySetting.name);
-                                    dl.append((const char*)currentPropertySetting.value);
-                                }
-                                else
-                                {
-                                    currentPropertySetting.dataObject->
-                                    setCString((const char*)currentPropertySetting.name, currentPropertySetting.value );
+                                    if (p.isMany())
+                                    {
+                                        DataObjectList& dl = currentPropertySetting.dataObject->
+                                        getList((const char*)currentPropertySetting.name);
+                                        dl.append((const char*)currentPropertySetting.value);
+                                    }
+                                    else
+                                    {
+                                        currentPropertySetting.dataObject->
+                                        setCString((const char*)currentPropertySetting.name, currentPropertySetting.value );
+                                    }
                                 }
                             }
                         }
