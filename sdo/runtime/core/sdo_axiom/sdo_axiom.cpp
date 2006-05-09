@@ -145,6 +145,22 @@ namespace commonj
                 return 0;
             }
 
+            axis2_om_node_t* root_node = 
+                AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(document, &the_env);
+
+            return toSdo(root_node,factory);
+        }
+ 
+        DataObjectPtr AxiomHelper::toSdo(axis2_om_node* root_node,
+                                DataFactoryPtr factory)
+        {
+        
+            if (!the_env)
+            {
+                cout << "No Axis Environment" << endl;
+                return 0;
+            }
+
             XMLHelperPtr helper = HelperProvider::getXMLHelper(factory);
 
             axis2_xml_writer_t* writer = axis2_xml_writer_create_for_memory(
@@ -152,9 +168,7 @@ namespace commonj
     
             axis2_om_output_t* output = axis2_om_output_create(&the_env, writer);
     
-            axis2_om_node_t* root_node = 
-                AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(document, &the_env);
- 
+
             if (!root_node)
             {
                 cout << "No Root Element in the document" << endl;
@@ -172,10 +186,11 @@ namespace commonj
             {
                 return theXMLDocument->getRootDataObject();
             }
+            cout << "The XML document returned from load was zero" << endl;
             return 0;
         }
  
-       void AxiomHelper::output(axis2_om_document_t* document)
+        void AxiomHelper::output(axis2_om_document_t* document)
         {
         
             if (!the_env)
