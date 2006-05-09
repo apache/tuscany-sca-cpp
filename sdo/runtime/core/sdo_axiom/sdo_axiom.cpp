@@ -178,7 +178,7 @@ namespace commonj
             return toSdo(root_node,factory);
         }
  
-        DataObjectPtr AxiomHelper::toSdo(axis2_om_node* root_node,
+        DataObjectPtr AxiomHelper::toSdo(axis2_om_node_t* root_node,
                                 DataFactoryPtr factory)
         {
         

@@ -56,7 +56,7 @@ namespace commonj
             SDO_AXIOM_API axis2_om_node_t*      toAxiomNode(DataObjectPtr dob);
 
             SDO_AXIOM_API DataObjectPtr  toSdo(axis2_om_document_t* doc,DataFactoryPtr factory);
-            SDO_AXIOM_API DataObjectPtr  toSdo(axis2_om_node* root_node,DataFactoryPtr factory);
+            SDO_AXIOM_API DataObjectPtr  toSdo(axis2_om_node_t* root_node,DataFactoryPtr factory);
 
             SDO_AXIOM_API axis2_env_t** getEnv();
 
