@@ -5494,14 +5494,14 @@ int sdotest::loadOpenNS()
         DataObjectList& dl32 = emp2->getList("openintlist");
 
         if (strcmp(emp2->getProperty("openintlist").getType().getName(),
-            "Bytes"))
+            "OpenDataObject"))
         {
-            if (!silent)cout << "OpenLoadNS2 failure - IntegerList not Bytes " <<
+            if (!silent)cout << "OpenLoadNS2 failure - IntegerList not OpenDataObject " <<
                 emp2->getProperty("openintlist").getType().getName() << endl;
             return 0;
         }
 
-        if (dl32.getInteger(0) != 45)
+        if (atoi(dl32.getDataObject(0)->getSequence()->getCStringValue(0)) != 45)
         {
             if (!silent)cout << "OpenLoadNS2 failure - Integer value is" << 
                 dl32.getInteger(0) << endl;
@@ -5557,10 +5557,13 @@ int sdotest::loadManyOpen()
 
         DataObjectList& dl3 = emp->getList("openlist");
 
+        // change to match spec - now an open data object
+        // the list should contain a single data object with a sequence of three text elements
+
         if (strcmp(emp->getProperty("openlist").getType().getName(),
-            "Bytes"))
+            "OpenDataObject"))
         {
-            if (!silent)cout << "OpenManyLoad failure - BytesList not Bytes " <<
+            if (!silent)cout << "OpenManyLoad failure - BytesList not OpenDataObject " <<
                 emp->getProperty("openlist").getType().getName() << endl;
             return 0;
         }
@@ -5572,9 +5575,14 @@ int sdotest::loadManyOpen()
             return 0;
         }
 
-        if (strcmp(dl3.getCString(0),"Three member")) return 0;
-        if (strcmp(dl3.getCString(1),"Open bytes")) return 0;
-        if (strcmp(dl3.getCString(2),"List is complete")) return 0;
+        SequencePtr sq = dl3[0]->getSequence();
+        if (strcmp(sq->getCStringValue(0),"Three member")) return 0;
+
+        SequencePtr sq2 = dl3[1]->getSequence();
+        if (strcmp(sq2->getCStringValue(0),"Open bytes")) return 0;
+
+        SequencePtr sq3 = dl3[2]->getSequence();
+        if (strcmp(sq3->getCStringValue(0),"List is complete")) return 0;
 
         return 1;
     }

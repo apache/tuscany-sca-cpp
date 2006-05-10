@@ -297,23 +297,78 @@ void sdotest::printList(FILE *f, DataObjectPtr dp, const Property& p)
 
 void sdotest::printDataObject(FILE *f, DataObjectPtr dol)
 {
-    fprintf(f,"===== DataObject contents =====\n");
-    PropertyList pl = dol->getInstanceProperties();
+    if (dol == 0) return;
 
-    for (int j=0;j< pl.size(); j++)
+    if (dol->getType().isSequencedType())
     {
-        fprintf(f,"%s:",pl[j].getName());
-        // this could be a many-valued property, and could be one which is
-        // a data object or a data type...
-        if (pl[j].isMany()) 
+        fprintf(f,"===== Sequenced DataObject contents =====\n");
+        SequencePtr sq = dol->getSequence();
+        if (sq != 0)
         {
-            printList(f, dol,pl[j]);
+            for (unsigned int k=0;k<sq->size();k++)
+            {
+                if (sq->isText(k))
+                {
+                    fprintf(f,"TEXT ELEMENT:%s\n",sq->getCStringValue(k));
+                }
+                else
+                {
+                    const Property& p = sq->getProperty(k);
+                    if (p.isMany())
+                    {
+                        unsigned int index = sq->getListIndex(k);
+                        DataObjectList& dl = dol->getList(p);
+                        if (p.getType().isDataType())
+                        {
+                            fprintf(f,"Setting of property %s[%d]=%s\n",
+                                p.getName(),index,dl.getCString(index));
+                        }
+                        else
+                        {
+                            fprintf(f,"Setting of DO property %s[%d]=\n",
+                                p.getName(),index);
+                            printDataObject(f,dl.getDataObject(index));
+                        }
+                    }
+                    else
+                    {
+                        if (p.getType().isDataType())
+                        {
+                            fprintf(f,"Setting of property %s=%s\n",
+                                p.getName(),dol->getCString(p));
+                        }
+                        else
+                        {
+                            fprintf(f,"Setting of DO property %s=\n",
+                                p.getName());
+                            printDataObject(f,dol->getDataObject(p));
+                        }
+                    }
+                }
+            }
         }
-        else {
-            printValue(f, dol,pl[j]);
-        }
+        fprintf(f,"===== End Sequenced DataObject contents =\n");
     }
-    fprintf(f,"===== End DataObject =====\n");
+    else
+    {
+        fprintf(f,"===== DataObject contents =====\n");
+        PropertyList pl = dol->getInstanceProperties();
+
+        for (int j=0;j< pl.size(); j++)
+        {
+            fprintf(f,"%s:",pl[j].getName());
+            // this could be a many-valued property, and could be one which is
+            // a data object or a data type...
+            if (pl[j].isMany()) 
+            {
+                printList(f, dol,pl[j]);
+            }
+            else {
+                printValue(f, dol,pl[j]);
+            }
+        }
+        fprintf(f,"===== End DataObject =====\n");
+    }
 }
 
 

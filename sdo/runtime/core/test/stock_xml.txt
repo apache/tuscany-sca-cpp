@@ -47,49 +47,81 @@ Property:GetECNQuotesResponse  of type GetECNQuotesResponse
 *******************************END TYPES******************
 ===== DataObject contents =====
 GetQuotesResult:dataObject
-===== DataObject contents =====
-StockQuotes: list dataObject[0]=
-===== DataObject contents =====
-StockQuote: list dataObject[0]=
-===== DataObject contents =====
-Symbol: list bytes[0]=IBM
-
-Price: list bytes[0]=<big><b>82.72</b></big>
-
-Time: list bytes[0]=11:41AM ET
-
-Change: list bytes[0]=<img width="10" height="14" border="0" src="http://us.i1.yimg.com/us.yimg.com/i/us/fi/03rd/down_r.gif" alt="Down">&nbsp;<b style="color:#cc0000;">0.17 (0.21%)</b>
-
-PrevClose: list bytes[0]=82.89
-
-Open: list bytes[0]=82.49
-
-Bid: list bytes[0]=N/A
-
-Ask: list bytes[0]=N/A
-
-YearTarget: list bytes[0]=95.94
-
-DayRange: list bytes[0]=82.40 - 82.80
-
-YearRange: list bytes[0]=72.50 - 89.94
-
-Volume: list bytes[0]=1,568,200
-
-AvgVol: list bytes[0]=5,301,380
-
-MarketCap: list bytes[0]=128.25B
-
-PE: list bytes[0]=16.15
-
-EPS: list bytes[0]=5.12
-
-DivYield: list bytes[0]=1.20 (1.40%)
-
-===== End DataObject =====
-
-===== End DataObject =====
-
-===== End DataObject =====
+===== Sequenced DataObject contents =====
+Setting of DO property StockQuotes[0]=
+===== Sequenced DataObject contents =====
+Setting of DO property StockQuote[0]=
+===== Sequenced DataObject contents =====
+Setting of DO property Symbol[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:IBM
+===== End Sequenced DataObject contents =
+Setting of DO property Price[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:<big><b>82.72</b></big>
+===== End Sequenced DataObject contents =
+Setting of DO property Time[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:11:41AM ET
+===== End Sequenced DataObject contents =
+Setting of DO property Change[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:<img width="10" height="14" border="0" src="http://us.i1.yimg.com/us.yimg.com/i/us/fi/03rd/down_r.gif" alt="Down">&nbsp;<b style="color:#cc0000;">0.17 (0.21%)</b>
+===== End Sequenced DataObject contents =
+Setting of DO property PrevClose[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:82.89
+===== End Sequenced DataObject contents =
+Setting of DO property Open[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:82.49
+===== End Sequenced DataObject contents =
+Setting of DO property Bid[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:N/A
+===== End Sequenced DataObject contents =
+Setting of DO property Ask[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:N/A
+===== End Sequenced DataObject contents =
+Setting of DO property YearTarget[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:95.94
+===== End Sequenced DataObject contents =
+Setting of DO property DayRange[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:82.40 - 82.80
+===== End Sequenced DataObject contents =
+Setting of DO property YearRange[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:72.50 - 89.94
+===== End Sequenced DataObject contents =
+Setting of DO property Volume[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:1,568,200
+===== End Sequenced DataObject contents =
+Setting of DO property AvgVol[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:5,301,380
+===== End Sequenced DataObject contents =
+Setting of DO property MarketCap[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:128.25B
+===== End Sequenced DataObject contents =
+Setting of DO property PE[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:16.15
+===== End Sequenced DataObject contents =
+Setting of DO property EPS[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:5.12
+===== End Sequenced DataObject contents =
+Setting of DO property DivYield[0]=
+===== Sequenced DataObject contents =====
+TEXT ELEMENT:1.20 (1.40%)
+===== End Sequenced DataObject contents =
+===== End Sequenced DataObject contents =
+===== End Sequenced DataObject contents =
+===== End Sequenced DataObject contents =
 
 ===== End DataObject =====

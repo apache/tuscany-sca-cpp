@@ -61,6 +61,7 @@ namespace commonj
                 targetNamespaceURI = "";
             }
             rootDataObject = 0;
+            newSequence = true;
         }
         
         SDOSAX2Parser::~SDOSAX2Parser()
@@ -180,7 +181,7 @@ namespace commonj
                 }
 
                 const Property& property = (Property&)*pprop;
-                const Type& propertyType = ((TypeImpl&)type).getRealPropertyType(propertyName);
+                //const Type& propertyType = ((TypeImpl&)type).getRealPropertyType(propertyName);
                 if (currentDataObject->getType().isSequencedType())
                 {
                     SequencePtr seq = currentDataObject->getSequence();
@@ -525,24 +526,23 @@ namespace commonj
                     // as many valued
                     // could be data object or primitive. All primitives will appear
                     // as bytes.
+                    // UPDATE: Spec says that all elements will appear as DataObjects which 
+                    // are sequenced - the text will come out as text elements in the sequence
+
                     if (!xsitypeName.isNull())
                     {
                         // it has a type from xsi:type
-                        pprop = ((DataObjectImpl*)dob)->defineList(propertyName);
                         newDO = dataFactory->create(xsitypeURI, xsitypeName);
-                        DataObjectList& dol = dob->getList(propertyName);
-                        dol.append(newDO);
-                        setCurrentDataObject(newDO);
-                        setAttributes(tns,namespaces,attributes);
                     }
                     else
                     {
-                        pprop = ((DataObjectImpl*)dob)->defineList(propertyName);
-                        currentPropertySetting = PropertySetting(currentDataObject, propertyName,
-                            bToBeNull);
-                        currentPropertySetting.pendingUnknownType = true;
-                        
+                        newDO = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
                     }
+                    pprop = ((DataObjectImpl*)dob)->defineList(propertyName);
+                    DataObjectList& dol = dob->getList(propertyName);
+                    dol.append(newDO);
+                    setCurrentDataObject(newDO);
+                    setAttributes(tns,namespaces,attributes);
                 }
                 return pprop;
             }
@@ -564,7 +564,9 @@ namespace commonj
             LOGENTRY(INFO,"SDOSAX2Parser: startElementNs");
 
             LOGINFO_1(INFO,"SDOSAX2Parser: startElementNs:%s",
-                           (const char*)localname);
+                (const char*)localname);
+
+            newSequence = true;
 
             bool bToBeNull = false;
             // Save the namespace information from the first element
@@ -602,26 +604,7 @@ namespace commonj
                 return;
             }
 
-            // special case - we may have created an open type, but not been able
-            // to decide on the type. If we find a start element within the open 
-            // type - then we can assume its a data object. We dont have a type,
-            // so create it as an open type data object
-            if (currentPropertySetting.pendingUnknownType)
-            {
-                if (currentDataObject != 0)
-                {
-                    DataObjectPtr newDO = dataFactory->create(
-                    Type::SDOTypeNamespaceURI, "OpenDataObject");
-
-                    DataObjectList& dol = currentDataObject->getList
-                        (currentPropertySetting.name);
-                    dol.append(newDO);
-                    setCurrentDataObject(newDO);
-                    currentPropertySetting = PropertySetting();
-                }
-            }
  
-
             
             if (dealingWithChangeSummary)
             {
@@ -1033,6 +1016,8 @@ namespace commonj
 
             LOGENTRY(INFO,"SDOSAX2Parser: endElementNs");
 
+            newSequence = true;
+
             if (localname.equals("changeSummary"))
             {
                 // end of change summary
@@ -1211,6 +1196,15 @@ namespace commonj
          
         void SDOSAX2Parser::characters(const SDOXMLString& chars)
         {
+            if (chars.isNull()) return;
+
+            if (!strcmp((const char*)chars,"\r") ||
+                !strcmp((const char*)chars,"\n"))
+            {
+                newSequence = true;
+                return;
+            }
+
             if (dealingWithChangeSummary)
             {
                 if (csbuilder == 0)
@@ -1231,6 +1225,47 @@ namespace commonj
                 return;
             }
 
+            // If the current DataObject is a sequenced Type
+            // then add this as text to the sequence
+            if (currentDataObject && currentDataObjectType->isSequencedType())
+            {
+                SequencePtr seq = currentDataObject->getSequence();
+                if (seq)
+                {
+                    if (newSequence == true)
+                    {
+                        seq->addText(chars);
+                        newSequence = false;
+                    }
+                    else
+                    {
+                        for (int k= (int)(seq->size())-1; k>=0 ; k --)
+                        {
+                            if (seq->isText(k))
+                            {
+                                const char * s = seq->getCStringValue(k);
+                               
+                                if (s)
+                                {
+                                    char *combi = 
+                                        new char[strlen(s)+strlen(chars) + 2];
+                                    strcpy(combi,s);
+                                    strcat(combi,chars);
+                                    seq->setText(k,(const char*)combi);
+                                    delete combi;
+                                }
+                                else
+                                {
+                                    seq->setText(k,chars);
+                                }
+                                return;
+                            }
+                        }
+                        seq->addText(chars);
+                    }
+                    return;
+                }
+            }
             
             DataObject* dob = currentDataObject;
             if ((dob != 0)  && ((DataObjectImpl*)dob)->getTypeImpl().isFromList())
@@ -1266,18 +1301,7 @@ namespace commonj
                 delete buf;
                 return;
             }
-
-            
-            // If the current DataObject is a sequenced Type
-            // then add this as text to the sequence
-            if (currentDataObject && currentDataObjectType->isSequencedType())
-            {
-                SequencePtr seq = currentDataObject->getSequence();
-                if (seq)
-                {
-                    seq->addText(chars);
-                }
-            }
+           
         }
         
         

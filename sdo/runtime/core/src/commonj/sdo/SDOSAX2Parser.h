@@ -115,6 +115,7 @@ namespace commonj
             
             DataObjectPtr    currentDataObject;
             bool            isDataGraph;
+            bool            newSequence;
             
             void            setCurrentDataObject(DataObjectPtr currentDO);
             const Type*        currentDataObjectType;
