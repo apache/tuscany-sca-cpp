@@ -1,0 +1,424 @@
+***** TYPES AFTER RESOLVE*********************************
+Type:commonj.sdo#BigDecimal
+Type:commonj.sdo#BigInteger
+Type:commonj.sdo#Boolean
+Type:commonj.sdo#Byte
+Type:commonj.sdo#Bytes
+Type:commonj.sdo#ChangeSummary
+Type:commonj.sdo#Character
+Type:commonj.sdo#DataObject
+Type:commonj.sdo#Date
+Type:commonj.sdo#Double
+Type:commonj.sdo#Float
+Type:commonj.sdo#Integer
+Type:commonj.sdo#Long
+Type:commonj.sdo#OpenDataObject
+Type:commonj.sdo#Short
+Type:commonj.sdo#String
+Type:commonj.sdo#URI
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#RootType
+Property:template  of type TemplateType
+Property:unboundTemplateParameter  of type unboundTemplateParameter
+Property:description  of type description
+Property:factory  of type factory
+Property:valueprovider  of type valueprovider
+Property:value  of type value
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#TemplateType
+Property:displayName  of type String
+Property:templateType  of type String
+Property:description  of type String
+Property:expert  of type String
+Property:icon  of type String
+Property:verifiers (many)  of type String
+Property:globalHelperArguments (many)  of type String
+Property:unboundTemplateParameters (many)  of type unboundTemplateParameter
+Property:name  of type String
+Property:version  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#description
+Property:description  of type String
+Property:displayName  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#factory
+Property:kind  of type String
+Property:name  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#unboundTemplateParameter
+Property:description  of type description
+Property:verifiers (many)  of type String
+Property:constraints (many)  of type value
+Property:factory  of type factory
+Property:defaults (many)  of type value
+Property:name  of type String
+Property:expert  of type String
+Property:multiplicity  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#value
+Property:description  of type String
+Property:displayName  of type String
+Property:data  of type String
+Type:http://www.ibm.com/xmlns/prod/ct/ctdl-template/v1.0.0/#valueprovider
+Property:values (many)  of type value
+*******************************END TYPES******************
+===== DataObject contents =====
+displayName:string:The CT Shop
+
+templateType:string:php
+
+description:string:This is my online shop
+
+expert:string:
+
+icon:string:
+
+verifiers: list string[0]=
+
+globalHelperArguments: list string[0]=
+  
+
+unboundTemplateParameters: list dataObject[0]=
+===== DataObject contents =====
+description:dataObject
+===== DataObject contents =====
+description:string:Name for the shop
+
+displayName:string:Shop Name
+
+===== End DataObject =====
+
+verifiers: list string[0]=
+	  
+
+constraints: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:
+
+data:string:
+
+===== End DataObject =====
+
+factory:dataObject
+ - null or unset
+
+defaults: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:CT Shop
+
+data:string:CT Shop
+
+===== End DataObject =====
+
+name:string:name
+
+expert:string:false
+
+multiplicity:string:1..1
+
+===== End DataObject =====
+
+dataObject[1]=
+===== DataObject contents =====
+description:dataObject
+===== DataObject contents =====
+description:string:Colour of background for Shop
+
+displayName:string:Branding
+
+===== End DataObject =====
+
+verifiers: list string[0]=
+	  
+
+constraints: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Olive
+
+data:string:Olive
+
+===== End DataObject =====
+
+dataObject[1]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Lime
+
+data:string:Lime
+
+===== End DataObject =====
+
+dataObject[2]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Gray
+
+data:string:Gray
+
+===== End DataObject =====
+
+dataObject[3]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Teal
+
+data:string:Teal
+
+===== End DataObject =====
+
+dataObject[4]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Silver
+
+data:string:Silver
+
+===== End DataObject =====
+
+dataObject[5]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:White
+
+data:string:White
+
+===== End DataObject =====
+
+factory:dataObject
+ - null or unset
+
+defaults: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Olive
+
+data:string:Olive
+
+===== End DataObject =====
+
+name:string:branding
+
+expert:string:false
+
+multiplicity:string:1..1
+
+===== End DataObject =====
+
+dataObject[2]=
+===== DataObject contents =====
+description:dataObject
+===== DataObject contents =====
+description:string:Product Catalog for the shop
+
+displayName:string:Product Catalog
+
+===== End DataObject =====
+
+verifiers: list string[0]=
+	  
+
+constraints: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:
+
+data:string:
+
+===== End DataObject =====
+
+factory:dataObject
+===== DataObject contents =====
+kind:string:php
+
+name:string:CatalogFactory
+
+===== End DataObject =====
+
+defaults: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Catalog
+
+data:string:Catalog
+
+===== End DataObject =====
+
+name:string:catalog
+
+expert:string:false
+
+multiplicity:string:1..1
+
+===== End DataObject =====
+
+dataObject[3]=
+===== DataObject contents =====
+description:dataObject
+===== DataObject contents =====
+description:string:Shopping cart for the shop
+
+displayName:string:Shopping Cart
+
+===== End DataObject =====
+
+verifiers: list string[0]=
+	  
+
+constraints: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Cart
+
+data:string:Cart
+
+===== End DataObject =====
+
+dataObject[1]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:GCCart
+
+data:string:GCCart
+
+===== End DataObject =====
+
+dataObject[2]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:MyCart
+
+data:string:MyCart
+
+===== End DataObject =====
+
+factory:dataObject
+===== DataObject contents =====
+kind:string:php
+
+name:string:CartFactory
+
+===== End DataObject =====
+
+defaults: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:Cart
+
+data:string:Cart
+
+===== End DataObject =====
+
+name:string:cart
+
+expert:string:false
+
+multiplicity:string:1..1
+
+===== End DataObject =====
+
+dataObject[4]=
+===== DataObject contents =====
+description:dataObject
+===== DataObject contents =====
+description:string:Payment Modules for the shop
+
+displayName:string:Payment Module
+
+===== End DataObject =====
+
+verifiers: list string[0]=
+	  
+
+constraints: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:MyPayPal
+
+data:string:MyPayPal
+
+===== End DataObject =====
+
+dataObject[1]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:PayPal
+
+data:string:PayPal
+
+===== End DataObject =====
+
+dataObject[2]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:USPayPal
+
+data:string:USPayPal
+
+===== End DataObject =====
+
+dataObject[3]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:MyStormPay
+
+data:string:MyStormPay
+
+===== End DataObject =====
+
+dataObject[4]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:StormPay
+
+data:string:StormPay
+
+===== End DataObject =====
+
+factory:dataObject
+===== DataObject contents =====
+kind:string:php
+
+name:string:PaymentFactory
+
+===== End DataObject =====
+
+defaults: list dataObject[0]=
+===== DataObject contents =====
+description:string:
+
+displayName:string:PayPal
+
+data:string:PayPal
+
+===== End DataObject =====
+
+name:string:payment
+
+expert:string:false
+
+multiplicity:string:1..1
+
+===== End DataObject =====
+
+name:string:CTShop
+
+version:string:1.0.0
+
+===== End DataObject =====

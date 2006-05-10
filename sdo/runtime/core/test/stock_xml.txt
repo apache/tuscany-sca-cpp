@@ -1,0 +1,95 @@
+***** TYPES AFTER RESOLVE*********************************
+Type:commonj.sdo#BigDecimal
+Type:commonj.sdo#BigInteger
+Type:commonj.sdo#Boolean
+Type:commonj.sdo#Byte
+Type:commonj.sdo#Bytes
+Type:commonj.sdo#ChangeSummary
+Type:commonj.sdo#Character
+Type:commonj.sdo#DataObject
+Type:commonj.sdo#Date
+Type:commonj.sdo#Double
+Type:commonj.sdo#Float
+Type:commonj.sdo#Integer
+Type:commonj.sdo#Long
+Type:commonj.sdo#OpenDataObject
+Type:commonj.sdo#Short
+Type:commonj.sdo#String
+Type:commonj.sdo#URI
+Type:http://ws.invesbot.com/#GetECNQuotes
+Property:symbols  of type String
+Type:http://ws.invesbot.com/#GetECNQuotesResponse
+Property:GetECNQuotesResult  of type GetECNQuotesResult
+Type:http://ws.invesbot.com/#GetECNQuotesResult
+Type:http://ws.invesbot.com/#GetMarketIndex
+Type:http://ws.invesbot.com/#GetMarketIndexResponse
+Property:GetMarketIndexResult  of type GetMarketIndexResult
+Type:http://ws.invesbot.com/#GetMarketIndexResult
+Type:http://ws.invesbot.com/#GetQuote
+Property:symbol  of type String
+Type:http://ws.invesbot.com/#GetQuoteResponse
+Property:GetQuoteResult  of type GetQuoteResult
+Type:http://ws.invesbot.com/#GetQuoteResult
+Type:http://ws.invesbot.com/#GetQuotes
+Property:symbols  of type String
+Type:http://ws.invesbot.com/#GetQuotesResponse
+Property:GetQuotesResult  of type GetQuotesResult
+Type:http://ws.invesbot.com/#GetQuotesResult
+Type:http://ws.invesbot.com/#RootType
+Property:GetQuotes  of type GetQuotes
+Property:GetQuotesResponse  of type GetQuotesResponse
+Property:GetQuote  of type GetQuote
+Property:GetQuoteResponse  of type GetQuoteResponse
+Property:GetMarketIndex  of type GetMarketIndex
+Property:GetMarketIndexResponse  of type GetMarketIndexResponse
+Property:GetECNQuotes  of type GetECNQuotes
+Property:GetECNQuotesResponse  of type GetECNQuotesResponse
+*******************************END TYPES******************
+===== DataObject contents =====
+GetQuotesResult:dataObject
+===== DataObject contents =====
+StockQuotes: list dataObject[0]=
+===== DataObject contents =====
+StockQuote: list dataObject[0]=
+===== DataObject contents =====
+Symbol: list bytes[0]=IBM
+
+Price: list bytes[0]=<big><b>82.72</b></big>
+
+Time: list bytes[0]=11:41AM ET
+
+Change: list bytes[0]=<img width="10" height="14" border="0" src="http://us.i1.yimg.com/us.yimg.com/i/us/fi/03rd/down_r.gif" alt="Down">&nbsp;<b style="color:#cc0000;">0.17 (0.21%)</b>
+
+PrevClose: list bytes[0]=82.89
+
+Open: list bytes[0]=82.49
+
+Bid: list bytes[0]=N/A
+
+Ask: list bytes[0]=N/A
+
+YearTarget: list bytes[0]=95.94
+
+DayRange: list bytes[0]=82.40 - 82.80
+
+YearRange: list bytes[0]=72.50 - 89.94
+
+Volume: list bytes[0]=1,568,200
+
+AvgVol: list bytes[0]=5,301,380
+
+MarketCap: list bytes[0]=128.25B
+
+PE: list bytes[0]=16.15
+
+EPS: list bytes[0]=5.12
+
+DivYield: list bytes[0]=1.20 (1.40%)
+
+===== End DataObject =====
+
+===== End DataObject =====
+
+===== End DataObject =====
+
+===== End DataObject =====

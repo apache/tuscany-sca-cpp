@@ -1,0 +1,25 @@
+<GetQuotesResponse xmlns="http://ws.invesbot.com/">
+<GetQuotesResult>
+<StockQuotes>
+<StockQuote>
+<Symbol>IBM</Symbol>
+<Price>&lt;big&gt;&lt;b&gt;82.72&lt;/b&gt;&lt;/big&gt;</Price>
+<Time>11:41AM ET</Time>
+<Change>&lt;img width=&quot;10&quot; height=&quot;14&quot; border=&quot;0&quot; src=&quot;http://us.i1.yimg.com/us.yimg.com/i/us/fi/03rd/down_r.gif&quot; alt=&quot;Down&quot;&gt;&amp;nbsp;&lt;b style=&quot;color:#cc0000;&quot;&gt;0.17 (0.21%)&lt;/b&gt;</Change>
+<PrevClose>82.89</PrevClose>
+<Open>82.49</Open>
+<Bid>N/A</Bid>
+<Ask>N/A</Ask>
+<YearTarget>95.94</YearTarget>
+<DayRange>82.40 - 82.80</DayRange>
+<YearRange>72.50 - 89.94</YearRange>
+<Volume>1,568,200</Volume>
+<AvgVol>5,301,380</AvgVol>
+<MarketCap>128.25B</MarketCap>
+<PE>16.15</PE>
+<EPS>5.12</EPS>
+<DivYield>1.20 (1.40%)</DivYield>
+</StockQuote>
+</StockQuotes>
+</GetQuotesResult>
+</GetQuotesResponse>

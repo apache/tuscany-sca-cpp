@@ -1,0 +1,47 @@
+***** TYPES BEFORE RESOLVE **********************************
+Type:commonj.sdo#BigDecimal
+Type:commonj.sdo#BigInteger
+Type:commonj.sdo#Boolean
+Type:commonj.sdo#Byte
+Type:commonj.sdo#Bytes
+Type:commonj.sdo#ChangeSummary
+Type:commonj.sdo#Character
+Type:commonj.sdo#DataObject
+Type:commonj.sdo#Date
+Type:commonj.sdo#Double
+Type:commonj.sdo#Float
+Type:commonj.sdo#Integer
+Type:commonj.sdo#Long
+Type:commonj.sdo#OpenDataObject
+Type:commonj.sdo#Short
+Type:commonj.sdo#String
+Type:commonj.sdo#URI
+Type:http://ws.invesbot.com/#GetECNQuotes
+Property:symbols  of type String
+Type:http://ws.invesbot.com/#GetECNQuotesResponse
+Property:GetECNQuotesResult  of type GetECNQuotesResult
+Type:http://ws.invesbot.com/#GetECNQuotesResult
+Type:http://ws.invesbot.com/#GetMarketIndex
+Type:http://ws.invesbot.com/#GetMarketIndexResponse
+Property:GetMarketIndexResult  of type GetMarketIndexResult
+Type:http://ws.invesbot.com/#GetMarketIndexResult
+Type:http://ws.invesbot.com/#GetQuote
+Property:symbol  of type String
+Type:http://ws.invesbot.com/#GetQuoteResponse
+Property:GetQuoteResult  of type GetQuoteResult
+Type:http://ws.invesbot.com/#GetQuoteResult
+Type:http://ws.invesbot.com/#GetQuotes
+Property:symbols  of type String
+Type:http://ws.invesbot.com/#GetQuotesResponse
+Property:GetQuotesResult  of type GetQuotesResult
+Type:http://ws.invesbot.com/#GetQuotesResult
+Type:http://ws.invesbot.com/#RootType
+Property:GetQuotes  of type GetQuotes
+Property:GetQuotesResponse  of type GetQuotesResponse
+Property:GetQuote  of type GetQuote
+Property:GetQuoteResponse  of type GetQuoteResponse
+Property:GetMarketIndex  of type GetMarketIndex
+Property:GetMarketIndexResponse  of type GetMarketIndexResponse
+Property:GetECNQuotes  of type GetECNQuotes
+Property:GetECNQuotesResponse  of type GetECNQuotesResponse
+*******************************END TYPES******************
