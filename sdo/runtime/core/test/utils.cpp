@@ -26,7 +26,7 @@ using namespace std;
 
 #include "sdotest.h"
 
-bool sdotest::silent = false;
+bool sdotest::silent = true;
 bool sdotest::ramping = false;
 
 void sdotest::printOldValues(FILE *f, ChangeSummaryPtr cs, DataObjectPtr dol)
@@ -192,6 +192,7 @@ void sdotest::printValue(FILE *f, DataObjectPtr dp, const Property& p)
         case Type::BytesType:
             fprintf(f,"bytes:%s\n",dp->getCString(p));
         break;
+        case Type::OpenDataObjectType:
         case Type::DataObjectType:
         {
             fprintf(f,"dataObject\n" );
@@ -267,6 +268,7 @@ void sdotest::printList(FILE *f, DataObjectPtr dp, const Property& p)
         case Type::BytesType:
             fprintf(f,"bytes[%d]=%s\n",i,dobl.getCString(i));
         break;
+        case Type::OpenDataObjectType:
         case Type::DataObjectType:
         {
             fprintf(f,"dataObject[%d]=\n",i);

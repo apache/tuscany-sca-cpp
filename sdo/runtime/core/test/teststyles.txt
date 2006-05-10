@@ -12,6 +12,7 @@ Type: commonj.sdo#Double
 Type: commonj.sdo#Float
 Type: commonj.sdo#Integer
 Type: commonj.sdo#Long
+Type: commonj.sdo#OpenDataObject
 Type: commonj.sdo#Short
 Type: commonj.sdo#String
 Type: commonj.sdo#URI
@@ -42,6 +43,7 @@ Type: commonj.sdo#Double
 Type: commonj.sdo#Float
 Type: commonj.sdo#Integer
 Type: commonj.sdo#Long
+Type: commonj.sdo#OpenDataObject
 Type: commonj.sdo#Short
 Type: commonj.sdo#String
 Type: commonj.sdo#URI
@@ -72,6 +74,7 @@ Type: commonj.sdo#Double
 Type: commonj.sdo#Float
 Type: commonj.sdo#Integer
 Type: commonj.sdo#Long
+Type: commonj.sdo#OpenDataObject
 Type: commonj.sdo#Short
 Type: commonj.sdo#String
 Type: commonj.sdo#URI

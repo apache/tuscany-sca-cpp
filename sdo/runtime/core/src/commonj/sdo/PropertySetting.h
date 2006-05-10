@@ -51,6 +51,7 @@ namespace commonj
             DataObjectPtr dataObject;
             bool isIDREF;
             bool isNULL;
+            bool pendingUnknownType;
                         
         };
     } // End - namespace sdo

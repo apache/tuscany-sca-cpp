@@ -21,6 +21,7 @@ TYPE:commonj.sdo#Double
 TYPE:commonj.sdo#Float
 TYPE:commonj.sdo#Integer
 TYPE:commonj.sdo#Long
+TYPE:commonj.sdo#OpenDataObject
 TYPE:commonj.sdo#Short
 TYPE:commonj.sdo#String
 TYPE:commonj.sdo#URI

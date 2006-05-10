@@ -60,6 +60,7 @@ DataFactoryImpl::DataFactoryImpl()
 
     addType(Type::SDOTypeNamespaceURI,"String");
     addType(Type::SDOTypeNamespaceURI,"DataObject");
+    addType(Type::SDOTypeNamespaceURI,"OpenDataObject", false, true, false, false);
     addType(Type::SDOTypeNamespaceURI,"Date");
     addType(Type::SDOTypeNamespaceURI,"Double");
     addType(Type::SDOTypeNamespaceURI,"Float");

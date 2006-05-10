@@ -27,6 +27,7 @@ Type Double
 Type Float
 Type Integer
 Type Long
+Type OpenDataObject
 Type Short
 Type String
 Type URI
@@ -84,6 +85,7 @@ Type Double
 Type Float
 Type Integer
 Type Long
+Type OpenDataObject
 Type Short
 Type String
 Type URI

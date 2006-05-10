@@ -181,7 +181,7 @@ const Type::Types DataObjectListImpl::getTypeEnum()
 {
     if (typeUnset)
     {
-        return Type::UndefinedOpenPropertyType;
+        return Type::OpenDataObjectType;
 
     }
     return theFactory->getType(typeURI, typeName).getTypeEnum();

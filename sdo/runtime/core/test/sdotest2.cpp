@@ -561,7 +561,7 @@ int sdotest::testany(const char* xsd,
             delete name1;
             delete name3;
             
-            return rc;
+            if (rc == 0)return rc;
     
         }
 
@@ -1139,3 +1139,83 @@ int sdotest::definetest()
 }
 
 
+int sdotest::stocktest()
+{
+    return sdotest::testany("stock.wsdl",0,"stock.xml",0);
+}
+
+
+/******************************************************
+int sdotest::stocktest()
+{
+    int i,j;
+
+    try {
+
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+    
+        xsh->defineFile("stock.wsdl");
+
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            cout << "PROBLEM: Testany XSD reported some errors:" << endl;
+            for (j=0;j<i;j++)
+            {
+                const char *m = xsh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+        }
+ 
+        TypeList tl = mdg->getTypes();
+
+        printf("***** TYPES BEFORE RESOLVE **********************************\n");
+
+        for (i=0;i<tl.size();i++)
+        {
+            printf("Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
+            PropertyList pl = tl[i].getProperties();
+            for (int j=0;j<pl.size();j++)
+            {
+                printf("Property:%s ",pl[j].getName());
+                if (pl[j].isMany())
+                     printf("(many) ");
+                printf(" of type %s\n",pl[j].getType().getName());
+            }
+        }
+
+        printf("*******************************END TYPES******************\n");
+
+ 
+        
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+ 
+        XMLDocumentPtr doc = xmh->loadFile("stock.xml");
+
+        if ((i = xmh->getErrorCount()) > 0)
+        {
+            cout << "TestAny XML found errors:" << endl;
+            for (j=0;j<i;j++)
+            {
+                const char *m = xmh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+        }
+   
+
+        DataObjectPtr dob = doc->getRootDataObject();
+        printDataObject(stdout, dob);
+
+        return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << "Exception in TestAny" << e << endl;
+        return 0;
+    }
+}
+**************************************************/

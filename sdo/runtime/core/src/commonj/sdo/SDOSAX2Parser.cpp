@@ -540,6 +540,8 @@ namespace commonj
                         pprop = ((DataObjectImpl*)dob)->defineList(propertyName);
                         currentPropertySetting = PropertySetting(currentDataObject, propertyName,
                             bToBeNull);
+                        currentPropertySetting.pendingUnknownType = true;
+                        
                     }
                 }
                 return pprop;
@@ -599,6 +601,26 @@ namespace commonj
                 ignoreTag.tagCount = 0;
                 return;
             }
+
+            // special case - we may have created an open type, but not been able
+            // to decide on the type. If we find a start element within the open 
+            // type - then we can assume its a data object. We dont have a type,
+            // so create it as an open type data object
+            if (currentPropertySetting.pendingUnknownType)
+            {
+                if (currentDataObject != 0)
+                {
+                    DataObjectPtr newDO = dataFactory->create(
+                    Type::SDOTypeNamespaceURI, "OpenDataObject");
+
+                    DataObjectList& dol = currentDataObject->getList
+                        (currentPropertySetting.name);
+                    dol.append(newDO);
+                    setCurrentDataObject(newDO);
+                    currentPropertySetting = PropertySetting();
+                }
+            }
+ 
 
             
             if (dealingWithChangeSummary)

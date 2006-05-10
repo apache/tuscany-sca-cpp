@@ -59,7 +59,8 @@ namespace sdo{
     "URI"        ,
     "DataObject",
     "ChangeSummary",
-    "Text"
+    "Text",
+    "OpenDataObject"
      };
 
 
