@@ -1,1 +1,1 @@
-SUBDIRS = MyValue
+SUBDIRS =
