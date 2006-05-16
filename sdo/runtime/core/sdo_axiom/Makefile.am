@@ -14,6 +14,7 @@ libtuscany_sdo_axiom_la_LIBADD = \
                     -L$(AXIS2C_HOME)/lib \
 					-laxis2_util \
                     -laxis2_om \
+                    -laxis2_attachments \
                     -laxis2_parser
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
