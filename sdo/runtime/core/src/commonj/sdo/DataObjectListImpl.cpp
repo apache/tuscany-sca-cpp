@@ -102,7 +102,7 @@ DataObjectListImpl::DataObjectListImpl(DataFactory* df,
     if (container->getType().isOpenType())
     {
         if (!strcmp(intypeURI,Type::SDOTypeNamespaceURI) &&
-            !strcmp(intypeName,"DataObject"))
+            !strcmp(intypeName,"OpenDataObject"))
         {
             typeUnset = true;
         }
