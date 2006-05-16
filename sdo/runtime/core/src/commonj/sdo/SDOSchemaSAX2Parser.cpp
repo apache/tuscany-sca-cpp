@@ -16,7 +16,7 @@
  */
 
 /* $Rev$ $Date: 2006/04/18 12:33:33 $ */
-
+#include "libxml/uri.h"
 #include "commonj/sdo/SDOSchemaSAX2Parser.h"
 #include "commonj/sdo/XSDPropertyInfo.h"
 #include "commonj/sdo/XSDTypeInfo.h"
@@ -499,7 +499,70 @@ namespace commonj
 
         }
         
-        
+        // ============================================================================
+        // used by startInclude to try to locate the file 
+        // ============================================================================
+
+        int SDOSchemaSAX2Parser::startSecondaryParse(
+                                SDOSchemaSAX2Parser& schemaParser,
+                                SDOXMLString& schemaLocation)
+        {
+            int i,j,k;
+            SDOXMLString sl = getCurrentFile();
+          
+            i = sl.lastIndexOf('/');
+            j = sl.lastIndexOf('\\');
+            if ((j > i) || (i < 0))i=j;
+            if (i>=0)
+            {
+                sl = sl.substring(0,i+1) + schemaLocation;
+                try {
+                     if (-1 != schemaParser.parse((const char *)sl))
+                         return 1;
+                }
+                catch (SDORuntimeException e)
+                {
+                }
+                k = schemaLocation.lastIndexOf('/');
+                j = schemaLocation.lastIndexOf('\\');
+                if ((j > k) || (k < 0))k=j;
+                if (k>=0)
+                {
+                    sl = sl.substring(0,i+1) + schemaLocation.substring(0,k+1);
+                    try {
+                        if (-1 != schemaParser.parse((const char *)sl))
+                             return 1;
+                    }
+                    catch (SDORuntimeException e)
+                    {
+                    }
+                }
+            }
+            try {
+                if (-1 != schemaParser.parse((const char *)schemaLocation))
+                    return 1;
+            }
+            catch (SDORuntimeException e)
+            {
+            }
+            k = schemaLocation.lastIndexOf('/');
+            j = schemaLocation.lastIndexOf('\\');
+            if ((j > k) || (k < 0))k=j;
+            if (k>=0)
+            {
+                sl = schemaLocation.substring(0,k+1);
+                try {
+                    if (-1 != schemaParser.parse((const char *)sl))
+                        return 1;
+                }
+                catch (SDORuntimeException e)
+                {
+                }
+            }
+            return 0;
+        }
+
+
         // ============================================================================
         // startInclude
         // ============================================================================
@@ -520,56 +583,10 @@ namespace commonj
                 SchemaInfo schemaInf;
                 SDOSchemaSAX2Parser schemaParser(schemaInf, (ParserErrorSetter*)setter);
 
-                try 
+                if (startSecondaryParse(schemaParser,schemaLocation) == 0)
                 {
-                    SDOXMLString sl = getCurrentFile();
-                    FILE *f;
-                    bool bprocessed = false;
-
-                    if (!sl.isNull()) 
-                    {
-                        int i = sl.lastIndexOf('/');
-                        if (i < 0)i = sl.lastIndexOf('\\');
-                        if (i >= 0)
-                        {
-                            sl = sl.substring(0,i+1) + schemaLocation;
-                            // first attempt, relative path plus the location
-                            f = fopen(sl,"r+");
-                            if (f != NULL)
-                            {
-                                fclose(f);
-                                schemaParser.parse(sl);
-                                bprocessed = true;
-                            }
-                            else // didnt find the file  
-                            {
-                                int j = schemaLocation.lastIndexOf('/');
-                                if (j < 0)j = schemaLocation.lastIndexOf('\\');
-                                if (j >= 0) 
-                                {
-                                    sl = sl.substring(0,i+1) + 
-                                     schemaLocation.substring(0,j+1);
-                                    f = fopen(sl,"r+");
-                                    if (f != NULL)
-                                    {
-                                        fclose(f);
-                                        schemaParser.parse(sl);
-                                        bprocessed = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (!bprocessed)
-                    {
-                        schemaParser.parse(schemaLocation);
-                    }
-                }
-
-                catch (SDOFileNotFoundException e)
-                {
-                    // finally give up - its not in the current path, or
-                    // in the path specified
+                    //
+                    // we were not able to start the parse
                     return;
                 }
 

@@ -114,6 +114,9 @@ namespace commonj
                                 const SDOXMLString& URI
                                 );
 
+            virtual int    startSecondaryParse(
+                                SDOSchemaSAX2Parser& schemaParser,
+                                SDOXMLString& schemaLocation);
 
             virtual void startInclude(
                 const SDOXMLString& localname,

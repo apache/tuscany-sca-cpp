@@ -116,10 +116,15 @@ namespace commonj
             // if (str) cout << str << endl;
 
             axis2_xml_reader_t * reader =  
-            axis2_xml_reader_create_for_buffer(&the_env,
-                                  (const axis2_char_t *)str,
+ //           axis2_xml_reader_create_for_buffer(&the_env,
+ //                                 (const axis2_char_t *)str,
+ //                                 strlen(str),
+ //                                 (const axis2_char_t *)"UTF-8");
+            axis2_xml_reader_create_for_memory(&the_env,
+                                  (void*)str,
                                   strlen(str),
-                                  (const axis2_char_t *)"UTF-8");
+                                  (const axis2_char_t *)"UTF-8",
+                                  AXIS2_XML_PARSER_TYPE_BUFFER);
         
             if (!reader)
             {
@@ -191,7 +196,8 @@ namespace commonj
             XMLHelperPtr helper = HelperProvider::getXMLHelper(factory);
 
             axis2_xml_writer_t* writer = axis2_xml_writer_create_for_memory(
-                &the_env, NULL, AXIS2_TRUE, 0);
+                &the_env, NULL, AXIS2_TRUE, 0,
+                AXIS2_XML_PARSER_TYPE_BUFFER);
     
             axis2_om_output_t* output = axis2_om_output_create(&the_env, writer);
     
@@ -205,7 +211,7 @@ namespace commonj
 
             AXIS2_OM_NODE_SERIALIZE(root_node, &the_env, output);
     
-            axis2_char_t* buffer = AXIS2_XML_WRITER_GET_XML(writer, &the_env);
+            axis2_char_t* buffer = (axis2_char_t*)AXIS2_XML_WRITER_GET_XML(writer, &the_env);
 
             XMLDocumentPtr theXMLDocument = helper->load(buffer);
 
@@ -227,7 +233,8 @@ namespace commonj
             }
 
             axis2_xml_writer_t* writer = axis2_xml_writer_create_for_memory(
-                &the_env, NULL, AXIS2_TRUE, 0);
+                &the_env, NULL, AXIS2_TRUE, 0,
+                AXIS2_XML_PARSER_TYPE_BUFFER);
     
             axis2_om_output_t* output = axis2_om_output_create(&the_env, writer);
     
@@ -243,7 +250,7 @@ namespace commonj
 
             AXIS2_OM_NODE_SERIALIZE(root_node, &the_env, output);
     
-            axis2_char_t* buffer = AXIS2_XML_WRITER_GET_XML(writer, &the_env);
+            axis2_char_t* buffer = (axis2_char_t*)AXIS2_XML_WRITER_GET_XML(writer, &the_env);
 
             printf("Output XML:n %s ", buffer);
 
