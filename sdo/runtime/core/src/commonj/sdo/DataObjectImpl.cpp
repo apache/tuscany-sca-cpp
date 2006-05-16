@@ -820,7 +820,7 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
 
     const PropertyImpl* DataObjectImpl::defineList(const char* propname)
     {
-        const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "DataObject");
+        const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "OpenDataObject");
         openProperties.insert(
             openProperties.end(), PropertyImpl(getType(),propname,
             (TypeImpl&)t, true, false, true));
