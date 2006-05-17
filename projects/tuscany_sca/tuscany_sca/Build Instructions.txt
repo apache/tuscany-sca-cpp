@@ -1,5 +1,5 @@
-Tuscanny SCA Build Instructions
-===============================
+Tuscany SCA Build Instructions
+==============================
 
 1) Set the environment variable TUSCANY_SDOCPP to the path of an SDO driver
 
