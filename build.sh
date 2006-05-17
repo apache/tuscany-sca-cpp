@@ -17,14 +17,14 @@
 TOPDIR=`pwd`
 
 
-if [ x$AXISCPP_DEPLOY = x ]; then
-echo "AXISCPP_DEPLOY not set"
-exit;
-fi
-if [ x$XERCES_DEPLOY = x ]; then
-echo "XERCES_DEPLOY not set"
-exit;
-fi
+#if [ x$AXISCPP_DEPLOY = x ]; then
+#echo "AXISCPP_DEPLOY not set"
+#exit;
+#fi
+#if [ x$XERCES_DEPLOY = x ]; then
+#echo "XERCES_DEPLOY not set"
+#exit;
+#fi
 
 if [ x$LIBXML2_INCLUDE = x ]; then
 echo "LIBXML2_INCLUDE not set"
@@ -34,6 +34,12 @@ if [ x$LIBXML2_LIB = x ]; then
 echo "LIBXML2_LIB not set"
 exit;
 fi
+
+if [ x$AXIS2C_HOME = x ]; then
+echo "AXIS2C_HOME not set"
+exit;
+fi
+echo "Using Axis2C installed at $AXIS2C_HOME"
 
 # Build SDO
 cd sdo
