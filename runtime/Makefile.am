@@ -1,1 +1,1 @@
-SUBDIRS = core axis_binding
+SUBDIRS = ws_reference core

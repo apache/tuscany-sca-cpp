@@ -39,7 +39,7 @@
 
 	<externalService name="StockQuoteService">
 		<interface.cpp header="StockQuoteService.h"/>
-		<binding.ws port="http://swanandmokashi.com#wsdl.endpoint(StockQuotes/StockQuotesSoap)"/>
+		<binding.ws port="http://ws.invesbot.com/#wsdl.endpoint(StockQuotes/StockQuotesSoap)"/>
 	</externalService>
 
 	<!--wire>

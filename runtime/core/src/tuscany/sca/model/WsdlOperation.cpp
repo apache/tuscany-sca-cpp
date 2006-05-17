@@ -30,18 +30,7 @@ namespace tuscany
             
             
             // Constructor
-            WsdlOperation::WsdlOperation(
-                const string& operationNam, 
-                const string& soapAct, 
-                const string& endpointAddress,
-                DataObjectPtr inMsg,
-                DataObjectPtr outMsg) 
-                :
-                operationName(operationNam),
-                soapAction(soapAct),  
-                endpoint(endpointAddress),
-                inputMessage(inMsg),
-                outputMessage(outMsg)
+            WsdlOperation::WsdlOperation() 
             {
                 LOGENTRY(1, "WsdlOperation::constructor");                
                 LOGEXIT(1, "WsdlOperation::constructor");
@@ -51,16 +40,17 @@ namespace tuscany
             {
             }
 
-            string WsdlOperation::getResponseName()
+
+            void WsdlOperation::setInputType(const string& inputType)
             {
-                string responseType(outputMessage->getList("part")[0]->getCString("element"));
-                string responseTypeName;
-                string responseTypeUri;
-                Utils::tokeniseQName(responseType, responseTypeUri, responseTypeName); 
-                return responseTypeName; 
+            	Utils::tokeniseQName(inputType, inputTypeUri, inputTypeName); 
             }
 
-            
-        } // End namespace model
+            void WsdlOperation::setOutputType(const string& outputType)
+            {
+            	Utils::tokeniseQName(outputType, outputTypeUri, outputTypeName); 
+            }
+
+       } // End namespace model
     } // End namespace sca
 } // End namespace tuscany

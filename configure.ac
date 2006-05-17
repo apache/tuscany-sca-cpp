@@ -35,13 +35,11 @@ AC_CHECK_FUNCS([getcwd putenv strdup])
 
 AC_CONFIG_FILES([Makefile
                  runtime/Makefile
+                 runtime/ws_reference/Makefile
+                 runtime/ws_reference/axis2c/Makefile
+                 runtime/ws_reference/axis2c/src/Makefile
                  runtime/core/Makefile
                  runtime/core/src/Makefile
-                 runtime/axis_binding/Makefile
-                 runtime/axis_binding/handler/Makefile
-                 runtime/axis_binding/handler/src/Makefile
-                 runtime/axis_binding/wrapper/Makefile
-                 runtime/axis_binding/wrapper/src/Makefile
                  runtime/core/test/Makefile
                  runtime/core/test/CustomerInfo/Makefile
                  runtime/core/test/MyValue/Makefile

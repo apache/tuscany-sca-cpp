@@ -47,13 +47,8 @@ namespace tuscany
                  * @param endpoint The endpoint address of the operation.
                  * @param responseName The name of the response message.
                  */
-                 WsdlOperation(
-                    const string& operationName,
-                    const string& soapAction, 
-                    const string& endpoint,
-                    DataObjectPtr inputMessage,
-                    DataObjectPtr outputMessage);
-
+                 WsdlOperation();
+                 
                 /**
                  * Destructor.
                  */ 
@@ -64,30 +59,45 @@ namespace tuscany
                  * outgoing message.
                  * @return The name of the element in the request message.
                  */ 
-                const string& getOperationName() {return operationName;};
-
-                /**
-                 * Return the name of the response for use when deserializing an
-                 * incoming message.
-                 * @return The name of the element in the response message.
-                 */
-                string getResponseName();
+                const string& getOperationName() const {return operationName;}
+                void setOperationName(const string& opName) {operationName = opName;}
 
                 /**
                  * The soap action string for this operation.
                  * @return The soap action.
                  */
-                const string& getSoapAction() {return soapAction;};
+                const string& getSoapAction() const {return soapAction;}
+                void setSoapAction(const string& soapAct) {soapAction = soapAct;}
 
                 /**
                  * Return the endpoint address for the target web service.
                  * @return The endpoint address.
                  */
-                const string& getEndpoint() {return endpoint;};
+                const string& getEndpoint() const {return endpoint;}
+                void setEndpoint(const string& ep) {endpoint = ep;}
 
-                DataObjectPtr getInputMessage() {return inputMessage;}
-                DataObjectPtr getOutputMessage() {return outputMessage;}
+                enum soapVersion
+                {
+                	SOAP11,
+                	SOAP12
+                };
+                
+                void setSoapVersion(soapVersion ver) {soapVer = ver;}
+                soapVersion getSoapVersion() const {return soapVer;}
+                
+                void setDocumentStyle(bool docStyle) {documentStyle = docStyle;}
+                bool isDocumentStyle() const {return documentStyle;}
 
+                void setEncoded(bool enc) {encoded = enc;}
+                bool isEncoded() const {return encoded;}
+
+                
+                void setInputType(const string& inputType);
+                const string& getInputTypeUri() const {return inputTypeUri;}
+                const string& getInputTypeName() const {return inputTypeName;}
+                void setOutputType(const string& outputType);
+                const string& getOutputTypeUri() const {return outputTypeUri;}
+                const string& getOutputTypeName() const {return outputTypeName;}
                 
             private:
                 /**
@@ -106,6 +116,16 @@ namespace tuscany
                  */
                 string endpoint;
 
+				bool documentStyle;
+				bool encoded;
+				soapVersion soapVer;
+				
+				string inputTypeUri;
+				string inputTypeName;
+				
+				string outputTypeUri;
+				string outputTypeName;
+				
                 DataObjectPtr inputMessage;
                 DataObjectPtr outputMessage;
             };

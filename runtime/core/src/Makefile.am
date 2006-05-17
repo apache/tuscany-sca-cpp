@@ -44,7 +44,6 @@ tuscany/sca/util/Logger.h \
 tuscany/sca/util/Logging.h \
 tuscany/sca/util/LogWriter.h \
 tuscany/sca/util/Utils.h \
-tuscany/sca/ws/SDOStub.h \
 tuscany/sca/ws/WSServiceWrapper.h
 
 
@@ -88,16 +87,13 @@ tuscany/sca/core/Operation.cpp \
 tuscany/sca/core/SCAEntryPoint.cpp \
 tuscany/sca/core/SCARuntime.cpp \
 tuscany/sca/core/ServiceProxy.cpp \
-tuscany/sca/core/ServiceWrapper.cpp \
-tuscany/sca/ws/SDOStub.cpp \
-tuscany/sca/ws/WSServiceWrapper.cpp
+tuscany/sca/core/ServiceWrapper.cpp
 
 libtuscany_sca_la_LIBADD = -lstdc++ -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
-	-L${AXISCPP_DEPLOY}/lib -laxis_client
+    -L$(top_builddir)/runtime/ws_reference/axis2c/src -ltuscany_sca_ws_reference
 
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
-           -I${TUSCANY_SDOCPP}/include \
-           -I${AXISCPP_DEPLOY}/include
+           -I${TUSCANY_SDOCPP}/include
                    

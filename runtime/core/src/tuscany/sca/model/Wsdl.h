@@ -28,6 +28,8 @@ using std::string;
 #include "commonj/sdo/SDO.h"
 using commonj::sdo::DataObjectPtr;
 
+#include <map>
+using std::map;
 
 namespace tuscany
 {
@@ -70,7 +72,7 @@ namespace tuscany
                  * @param operationName The name of the operation to find.
                  * @return The operation if found. Exception thrown if not found.
                  */
-                WsdlOperation findOperation(const string& serviceName, 
+                const WsdlOperation& findOperation(const string& serviceName, 
                                         const string& portName, 
                                         const string& operationName);
                 
@@ -122,6 +124,9 @@ namespace tuscany
                  * The data object representation of the WSDL document.
                  */
                 DataObjectPtr wsdlModel;
+                
+                typedef map<string, WsdlOperation> OperationMap;
+                OperationMap operationMap;
             };
 
          } // End namespace model
