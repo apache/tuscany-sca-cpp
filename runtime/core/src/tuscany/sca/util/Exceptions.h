@@ -31,7 +31,7 @@ namespace tuscany
          * Indicates a problem in the consistency of the SCA model provided to the
          * Tuscany runtime.
          */
-        class SystemConfigurationException: public ServiceRuntimeException
+        class SCA_API SystemConfigurationException: public ServiceRuntimeException
         {
         public:
             SystemConfigurationException(const char* msg)

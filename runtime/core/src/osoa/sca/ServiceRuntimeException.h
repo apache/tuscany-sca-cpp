@@ -187,7 +187,7 @@ namespace osoa
          * The target of a wire cannot be found, or the reference has not been
          * configured.
          */
-        class ServiceNotFoundException: public ServiceRuntimeException
+        class SCA_API ServiceNotFoundException: public ServiceRuntimeException
         {
         public:
             ServiceNotFoundException(const char* msg)
@@ -203,7 +203,7 @@ namespace osoa
          * There is no current component (for example, if a non-SCA component
          * tries to get the current ComponentContext).
          */
-        class ComponentContextException: public ServiceRuntimeException
+        class SCA_API ComponentContextException: public ServiceRuntimeException
         {
         public:
             ComponentContextException(const char* msg)
@@ -217,7 +217,7 @@ namespace osoa
         /**
          * Unable to find the specified entry point in the module.
          */
-        class EntryPointNotFoundException: public ServiceRuntimeException
+        class SCA_API EntryPointNotFoundException: public ServiceRuntimeException
         {
         public:
             EntryPointNotFoundException(const char* msg)
