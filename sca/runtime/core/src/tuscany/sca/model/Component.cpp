@@ -265,20 +265,22 @@ namespace tuscany
                     {
                         const Property& propProperty = props->getProperty(pl[i].getName());
                         const Type& propType = propProperty.getType();
-
+ 
                         DataObjectList& proplist = values->getList(pl[i]);
                         for (int proplistI=0; proplistI<proplist.size(); proplistI++)
                         {
+                            // Get the property value
+                            string propValue = proplist.getDataObject(proplistI)->getSequence()->getCStringValue(0);
                             if (propType.isDataType())
                             {
                                 if (propProperty.isMany())
                                 {
-                                    DataObjectList& dol = props->getList(pl[i]);
-                                    dol.append(proplist.getCString(proplistI));
+                                    DataObjectList& dol = props->getList(propProperty);
+                                    dol.append(propValue.c_str());
                                 }
                                 else
                                 {
-                                    props->setCString(pl[i], proplist.getCString(proplistI));
+                                    props->setCString(propProperty, propValue.c_str());
                                 }
                             }
                             else

@@ -393,11 +393,14 @@ namespace tuscany
                         }
                         
                         string src = component->getName() + "/" + refName;
+
+                        // The reflist below is a list of open data objects
                         DataObjectList& reflist = refs->getList(pl[refI]);
                         for (int refslistI=0; refslistI<reflist.size(); refslistI++)
                         {
-                            string targ = reflist.getCString(refslistI);
-                            module->addWire(src, targ);
+                            // Get the reference value
+                            string refValue = reflist.getDataObject(refslistI)->getSequence()->getCStringValue(0);
+                            module->addWire(src, refValue);
                         }
                     }
                 }
