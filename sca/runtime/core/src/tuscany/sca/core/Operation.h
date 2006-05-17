@@ -59,7 +59,8 @@ namespace tuscany
 
             enum ParameterType
             {
-                VOID_TYPE = 0,
+            	UNSET = 0,
+                VOID_TYPE,
                 BOOL,
                 SHORT,
                 LONG,
@@ -128,7 +129,7 @@ namespace tuscany
              * @return Pointer to the paramter at the given postion. Should be
              * cast to the appropriate type.
              */
-            SCA_API Parameter getParameter(unsigned int pos);
+            SCA_API Parameter& getParameter(unsigned int pos);
 
             /**
              * Get a parameter type from the operation.

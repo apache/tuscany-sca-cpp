@@ -23,17 +23,11 @@ export TUSCANY_SCACPP="$SCA4CPP_HOME"
 fi
 echo "Using SCA installed at $SCA4CPP_HOME"
 
-if [ x$AXISCPP_DEPLOY = x ]; then
-echo "AXISCPP_DEPLOY not set"
+if [ x$AXIS2C_HOME = x ]; then
+echo "AXIS2C_HOME not set"
 exit;
 fi
-echo "Using Axis C++ installed at $AXISCPP_DEPLOY"
-
-if [ x$XERCES_DEPLOY = x ]; then
-echo "XERCES_DEPLOY not set"
-exit;
-fi
-echo "Using Xerces C++ installed at $XERCES_DEPLOY"
+echo "Using Axis2C installed at $AXIS2C_HOME"
 
 if [ x$TUSCANY_SDOCPP = x ]; then
 echo "TUSCANY_SDOCPP not set"exit;
@@ -42,7 +36,7 @@ echo "Using SDO installed at $TUSCANY_SDOCPP"
 
 TEST_ROOT=$SCA4CPP_HOME/runtime/core/test
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH:$AXISCPP_DEPLOY/lib:$XERCES_DEPLOY/lib
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH:$AXIS2C_HOME/lib:$AXISCPP_DEPLOY/lib:$XERCES_DEPLOY/lib
 
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_ROOT
 export TUSCANY_SCACPP_DEFAULT_MODULE=SubSystem1

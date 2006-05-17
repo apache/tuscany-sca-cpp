@@ -1,6 +1,6 @@
 #!/bin/bash
   
-for i in libtoolize aclocal autoconf autoheader
+for i in "libtoolize --force" aclocal autoconf autoheader
 do
     echo -n "Running $i..."
     $i || exit 1

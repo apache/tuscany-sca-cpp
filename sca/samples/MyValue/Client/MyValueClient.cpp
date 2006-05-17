@@ -22,7 +22,6 @@
 #include "osoa/sca/sca.h"
 #include "tuscany/sca/util/Logger.h"
 #include "tuscany/sca/util/Utils.h"
-#include "tuscany/sca/ws/SDOStub.h"
 #include <iostream>
 
 using namespace std;

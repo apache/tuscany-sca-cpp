@@ -95,22 +95,14 @@ float MyValueImpl::getMyValue(const char *customerID)
     // Create a data object representing the requests (use dynamic API until static is available)
     DataObjectPtr requestDO;
 
-    try {
-        DataFactoryPtr factory = myContext.getDataFactory();
-        requestDO = factory->create("http://swanandmokashi.com", "GetQuotes");
-        requestDO->setCString("QuoteTicker", stock);
-    } catch (SDORuntimeException e)
-    {
-        cout << e;
-    }
 
     // Invoke the service
-    DataObjectPtr result = stockQuoteService->GetStockQuotes(requestDO);
+    DataObjectPtr result = stockQuoteService->GetQuotes("IBM");
 
     float stockPrice = 0.2f;
 
     try {
-        float stockPrice = result->getDataObject("GetQuotesResult")->getList("Quote")[0]->getFloat("StockQuote");
+        float stockPrice = result->getDataObject("StockQuotes")->getList("StockQuote")[0]->getFloat("PrevClose");
         //dataobjectlist& dlist = result->getdataobject("getquotesresult")->getlist("quote");
         //DataObjectList& dlist = result->getDataObject("GetQuotesResult")->getList((unsigned int)0);
         //float stockPrice = result->getDataObject("GetQuotesResult")->getList(0u)[0]->getFloat("StockQuote");

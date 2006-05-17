@@ -1,157 +1,431 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
-	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-	xmlns:s="http://www.w3.org/2001/XMLSchema"
-	xmlns:s0="http://swanandmokashi.com"
-	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-	xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"
-	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
-	targetNamespace="http://swanandmokashi.com"
-	xmlns="http://schemas.xmlsoap.org/wsdl/">
-	<types>
-		<s:schema elementFormDefault="qualified"
-			targetNamespace="http://swanandmokashi.com"
-			xmlns:s="http://www.w3.org/2001/XMLSchema">
-			<s:element name="GetQuotes">
-				<s:complexType>
-					<s:sequence>
-						<s:element minOccurs="0" maxOccurs="1"
-							name="QuoteTicker" type="s:string" />
-					</s:sequence>
-				</s:complexType>
-			</s:element>
-			<s:element name="GetQuotesResponse">
-				<s:complexType>
-					<s:sequence>
-						<s:element minOccurs="0" maxOccurs="1"
-							name="GetQuotesResult" type="s0:ArrayOfQuote" />
-					</s:sequence>
-				</s:complexType>
-			</s:element>
-			<s:complexType name="ArrayOfQuote">
-				<s:sequence>
-					<s:element minOccurs="0" maxOccurs="unbounded"
-						name="Quote" type="s0:Quote" />
-				</s:sequence>
-			</s:complexType>
-			<s:complexType name="Quote">
-				<s:sequence>
-					<s:element minOccurs="0" maxOccurs="1"
-						name="CompanyName" type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1"
-						name="StockTicker" type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1"
-						name="StockQuote" type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1"
-						name="LastUpdated" type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1" name="Change"
-						type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1"
-						name="OpenPrice" type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1"
-						name="DayHighPrice" type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1"
-						name="DayLowPrice" type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1" name="Volume"
-						type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1"
-						name="MarketCap" type="s:string" />
-					<s:element minOccurs="0" maxOccurs="1"
-						name="YearRange" type="s:string" />
-				</s:sequence>
-			</s:complexType>
-			<s:element name="ArrayOfQuote" nillable="true"
-				type="s0:ArrayOfQuote" />
-		</s:schema>
-	</types>
-	<message name="GetQuotesSoapIn">
-		<part name="parameters" element="s0:GetQuotes" />
-	</message>
-	<message name="GetQuotesSoapOut">
-		<part name="parameters" element="s0:GetQuotesResponse" />
-	</message>
-	<message name="GetQuotesHttpGetIn">
-		<part name="QuoteTicker" type="s:string" />
-	</message>
-	<message name="GetQuotesHttpGetOut">
-		<part name="Body" element="s0:ArrayOfQuote" />
-	</message>
-	<message name="GetQuotesHttpPostIn">
-		<part name="QuoteTicker" type="s:string" />
-	</message>
-	<message name="GetQuotesHttpPostOut">
-		<part name="Body" element="s0:ArrayOfQuote" />
-	</message>
-	<portType name="StockQuotesSoap">
-		<operation name="GetStockQuotes">
-			<input name="GetQuotes" message="s0:GetQuotesSoapIn" />
-			<output name="GetQuotes" message="s0:GetQuotesSoapOut" />
-		</operation>
-	</portType>
-	<portType name="StockQuotesHttpGet">
-		<operation name="GetStockQuotes">
-			<input name="GetQuotes" message="s0:GetQuotesHttpGetIn" />
-			<output name="GetQuotes" message="s0:GetQuotesHttpGetOut" />
-		</operation>
-	</portType>
-	<portType name="StockQuotesHttpPost">
-		<operation name="GetStockQuotes">
-			<input name="GetQuotes" message="s0:GetQuotesHttpPostIn" />
-			<output name="GetQuotes" message="s0:GetQuotesHttpPostOut" />
-		</operation>
-	</portType>
-	<binding name="StockQuotesSoap" type="s0:StockQuotesSoap">
-		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"
-			style="document" />
-		<operation name="GetStockQuotes">
-			<soap:operation
-				soapAction="http://swanandmokashi.com/GetQuotes" style="document" />
-			<input name="GetQuotes">
-				<soap:body use="literal" />
-			</input>
-			<output name="GetQuotes">
-				<soap:body use="literal" />
-			</output>
-		</operation>
-	</binding>
-	<binding name="StockQuotesHttpGet" type="s0:StockQuotesHttpGet">
-		<http:binding verb="GET" />
-		<operation name="GetStockQuotes">
-			<http:operation location="/GetQuotes" />
-			<input name="GetQuotes">
-				<http:urlEncoded />
-			</input>
-			<output name="GetQuotes">
-				<mime:mimeXml part="Body" />
-			</output>
-		</operation>
-	</binding>
-	<binding name="StockQuotesHttpPost" type="s0:StockQuotesHttpPost">
-		<http:binding verb="POST" />
-		<operation name="GetStockQuotes">
-			<http:operation location="/GetQuotes" />
-			<input name="GetQuotes">
-				<mime:content type="application/x-www-form-urlencoded" />
-			</input>
-			<output name="GetQuotes">
-				<mime:mimeXml part="Body" />
-			</output>
-		</operation>
-	</binding>
-	<service name="StockQuotes">
-		<port name="StockQuotesSoap" binding="s0:StockQuotesSoap">
-			<soap:address
-				location="http://localhost:8080/HomePage/WebServices/StockQuotes.asmx" />
-		</port>
-		<port name="StockQuotesHttpGet"
-			binding="s0:StockQuotesHttpGet">
-			<http:address
-				location="http://www.swanandmokashi.com/HomePage/WebServices/StockQuotes.asmx" />
-		</port>
-		<port name="StockQuotesHttpPost"
-			binding="s0:StockQuotesHttpPost">
-			<http:address
-				location="http://www.swanandmokashi.com/HomePage/WebServices/StockQuotes.asmx" />
-		</port>
-	</service>
-</definitions>
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://ws.invesbot.com/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://ws.invesbot.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://ws.invesbot.com/">
+      <s:element name="GetQuotes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="symbols" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+
+      </s:element>
+      <s:element name="GetQuotesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetQuotesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetQuote">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="symbol" type="s:string" />
+
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetQuoteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetQuoteResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMarketIndex">
+        <s:complexType />
+
+      </s:element>
+      <s:element name="GetMarketIndexResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMarketIndexResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+                  <s:any />
+                </s:sequence>
+
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetECNQuotes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="symbols" type="s:string" />
+
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetECNQuotesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetECNQuotesResult">
+              <s:complexType mixed="true">
+                <s:sequence>
+
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+
+  <wsdl:message name="GetQuotesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetQuotes" />
+  </wsdl:message>
+  <wsdl:message name="GetQuotesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetQuotesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetQuoteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetQuote" />
+  </wsdl:message>
+
+  <wsdl:message name="GetQuoteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetQuoteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetMarketIndexSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMarketIndex" />
+  </wsdl:message>
+  <wsdl:message name="GetMarketIndexSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMarketIndexResponse" />
+  </wsdl:message>
+
+  <wsdl:message name="GetECNQuotesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetECNQuotes" />
+  </wsdl:message>
+  <wsdl:message name="GetECNQuotesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetECNQuotesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetQuotesHttpGetIn">
+    <wsdl:part name="symbols" type="s:string" />
+  </wsdl:message>
+
+  <wsdl:message name="GetQuotesHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetQuoteHttpGetIn">
+    <wsdl:part name="symbol" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetQuoteHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+
+  <wsdl:message name="GetMarketIndexHttpGetIn" />
+  <wsdl:message name="GetMarketIndexHttpGetOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetECNQuotesHttpGetIn">
+    <wsdl:part name="symbols" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetECNQuotesHttpGetOut">
+    <wsdl:part name="Body" />
+
+  </wsdl:message>
+  <wsdl:message name="GetQuotesHttpPostIn">
+    <wsdl:part name="symbols" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetQuotesHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetQuoteHttpPostIn">
+    <wsdl:part name="symbol" type="s:string" />
+
+  </wsdl:message>
+  <wsdl:message name="GetQuoteHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetMarketIndexHttpPostIn" />
+  <wsdl:message name="GetMarketIndexHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:message name="GetECNQuotesHttpPostIn">
+
+    <wsdl:part name="symbols" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetECNQuotesHttpPostOut">
+    <wsdl:part name="Body" />
+  </wsdl:message>
+  <wsdl:portType name="StockQuotesSoap">
+    <wsdl:operation name="GetQuotes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter symbols, seperated by space, Quotes delayed in 20 minutes.</wsdl:documentation>
+
+      <wsdl:input message="tns:GetQuotesSoapIn" />
+      <wsdl:output message="tns:GetQuotesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetQuote">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter one symbol, quote delayed in 20 minutes.</wsdl:documentation>
+      <wsdl:input message="tns:GetQuoteSoapIn" />
+      <wsdl:output message="tns:GetQuoteSoapOut" />
+    </wsdl:operation>
+
+    <wsdl:operation name="GetMarketIndex">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get Dow, Nasdaq, S&amp;P500 index.</wsdl:documentation>
+      <wsdl:input message="tns:GetMarketIndexSoapIn" />
+      <wsdl:output message="tns:GetMarketIndexSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetECNQuotes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter symbols, seperated by space, Real-Time ECN quote.</wsdl:documentation>
+
+      <wsdl:input message="tns:GetECNQuotesSoapIn" />
+      <wsdl:output message="tns:GetECNQuotesSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="StockQuotesHttpGet">
+    <wsdl:operation name="GetQuotes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter symbols, seperated by space, Quotes delayed in 20 minutes.</wsdl:documentation>
+      <wsdl:input message="tns:GetQuotesHttpGetIn" />
+
+      <wsdl:output message="tns:GetQuotesHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetQuote">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter one symbol, quote delayed in 20 minutes.</wsdl:documentation>
+      <wsdl:input message="tns:GetQuoteHttpGetIn" />
+      <wsdl:output message="tns:GetQuoteHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMarketIndex">
+
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get Dow, Nasdaq, S&amp;P500 index.</wsdl:documentation>
+      <wsdl:input message="tns:GetMarketIndexHttpGetIn" />
+      <wsdl:output message="tns:GetMarketIndexHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetECNQuotes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter symbols, seperated by space, Real-Time ECN quote.</wsdl:documentation>
+      <wsdl:input message="tns:GetECNQuotesHttpGetIn" />
+
+      <wsdl:output message="tns:GetECNQuotesHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="StockQuotesHttpPost">
+    <wsdl:operation name="GetQuotes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter symbols, seperated by space, Quotes delayed in 20 minutes.</wsdl:documentation>
+      <wsdl:input message="tns:GetQuotesHttpPostIn" />
+      <wsdl:output message="tns:GetQuotesHttpPostOut" />
+
+    </wsdl:operation>
+    <wsdl:operation name="GetQuote">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter one symbol, quote delayed in 20 minutes.</wsdl:documentation>
+      <wsdl:input message="tns:GetQuoteHttpPostIn" />
+      <wsdl:output message="tns:GetQuoteHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMarketIndex">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get Dow, Nasdaq, S&amp;P500 index.</wsdl:documentation>
+
+      <wsdl:input message="tns:GetMarketIndexHttpPostIn" />
+      <wsdl:output message="tns:GetMarketIndexHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetECNQuotes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enter symbols, seperated by space, Real-Time ECN quote.</wsdl:documentation>
+      <wsdl:input message="tns:GetECNQuotesHttpPostIn" />
+      <wsdl:output message="tns:GetECNQuotesHttpPostOut" />
+    </wsdl:operation>
+
+  </wsdl:portType>
+  <wsdl:binding name="StockQuotesSoap" type="tns:StockQuotesSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetQuotes">
+      <soap:operation soapAction="http://ws.invesbot.com/GetQuotes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetQuote">
+      <soap:operation soapAction="http://ws.invesbot.com/GetQuote" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMarketIndex">
+      <soap:operation soapAction="http://ws.invesbot.com/GetMarketIndex" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetECNQuotes">
+      <soap:operation soapAction="http://ws.invesbot.com/GetECNQuotes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="StockQuotesSoap12" type="tns:StockQuotesSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetQuotes">
+      <soap12:operation soapAction="http://ws.invesbot.com/GetQuotes" style="document" />
+      <wsdl:input>
+
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetQuote">
+      <soap12:operation soapAction="http://ws.invesbot.com/GetQuote" style="document" />
+      <wsdl:input>
+
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMarketIndex">
+      <soap12:operation soapAction="http://ws.invesbot.com/GetMarketIndex" style="document" />
+      <wsdl:input>
+
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetECNQuotes">
+      <soap12:operation soapAction="http://ws.invesbot.com/GetECNQuotes" style="document" />
+      <wsdl:input>
+
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="StockQuotesHttpGet" type="tns:StockQuotesHttpGet">
+    <http:binding verb="GET" />
+
+    <wsdl:operation name="GetQuotes">
+      <http:operation location="/GetQuotes" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="GetQuote">
+      <http:operation location="/GetQuote" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="GetMarketIndex">
+      <http:operation location="/GetMarketIndex" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="GetECNQuotes">
+      <http:operation location="/GetECNQuotes" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+
+  </wsdl:binding>
+  <wsdl:binding name="StockQuotesHttpPost" type="tns:StockQuotesHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="GetQuotes">
+      <http:operation location="/GetQuotes" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetQuote">
+      <http:operation location="/GetQuote" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMarketIndex">
+      <http:operation location="/GetMarketIndex" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetECNQuotes">
+      <http:operation location="/GetECNQuotes" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+
+        <mime:content part="Body" type="text/xml" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="StockQuotes">
+    <wsdl:port name="StockQuotesSoap" binding="tns:StockQuotesSoap">
+      <soap:address location="http://ws.invesbot.com/stockquotes.asmx" />
+    </wsdl:port>
+    <wsdl:port name="StockQuotesSoap12" binding="tns:StockQuotesSoap12">
+
+      <soap12:address location="http://ws.invesbot.com/stockquotes.asmx" />
+    </wsdl:port>
+    <wsdl:port name="StockQuotesHttpGet" binding="tns:StockQuotesHttpGet">
+      <http:address location="http://ws.invesbot.com/stockquotes.asmx" />
+    </wsdl:port>
+    <wsdl:port name="StockQuotesHttpPost" binding="tns:StockQuotesHttpPost">
+      <http:address location="http://ws.invesbot.com/stockquotes.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

@@ -68,6 +68,20 @@ namespace tuscany
         }
 
         // ==============================================
+        // getParameter: return of parameter
+        // ==============================================
+        Operation::Parameter& Operation::getParameter(unsigned int pos)
+        {
+            if (pos < parameters.size())
+            {
+                return parameters[pos];
+            }
+            
+            throw "index out of range";
+        }
+
+
+        // ==============================================
         // getParameterType: return type of parameter
         // ==============================================
         Operation::ParameterType Operation::getParameterType(unsigned int pos)

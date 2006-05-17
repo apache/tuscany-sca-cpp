@@ -50,9 +50,9 @@ MyValueImpl_stockQuote_Proxy::~MyValueImpl_stockQuote_Proxy()
         delete target;
 }
 
-commonj::sdo::DataObjectPtr MyValueImpl_stockQuote_Proxy::GetStockQuotes( commonj::sdo::DataObjectPtr arg0)
+commonj::sdo::DataObjectPtr MyValueImpl_stockQuote_Proxy::GetQuotes(const char* arg0)
 {
-    Operation operation("GetStockQuotes");
+    Operation operation("GetQuotes");
     operation.addParameter(&arg0);
     commonj::sdo::DataObjectPtr ret;
     operation.setReturnValue(&ret);
