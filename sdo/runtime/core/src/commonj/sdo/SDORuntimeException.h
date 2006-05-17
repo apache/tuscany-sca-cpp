@@ -260,6 +260,24 @@ class SDOOutOfMemoryException: public SDORuntimeException
   private:
 }; // End SDOOutOfMemory class definition
 
+/** 
+ ***************************************************************************
+ *
+ * SDONullPointerException - Exception for no-storage
+ *
+ * ***************************************************************************
+ */
+
+class SDONullPointerException: public SDORuntimeException
+{
+  public:
+    SDONullPointerException(const char* param)
+      : SDORuntimeException("SDONullPointerException", Warning,
+                     "The referenced object is null ")
+    {
+    }
+  private:
+}; // End SDOOutOfMemory class definition
 /**
 ***************************************************************************
 *

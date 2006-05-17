@@ -22,6 +22,7 @@
 
 
 #include "commonj/sdo/export.h"
+#include "commonj/sdo/SDORuntimeException.h"
 
 #include <iostream>
 using namespace std;
@@ -147,6 +148,8 @@ template<class T>
 template<class T>
 /*SDO_API*/ T* RefCountingPointer<T>::operator->() const 
 {
+    if (pointee == 0)
+        SDO_THROW_EXCEPTION("Pointer",SDONullPointerException, "");
     return pointee;
 }
 
