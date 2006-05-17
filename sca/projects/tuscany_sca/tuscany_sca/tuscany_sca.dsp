@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXISCPP)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SCA_EXPORTS" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SCA_EXPORTS" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -54,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib AxisClient.lib /nologo /dll /machine:I386 /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXISCPP)\lib\axis"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axis2_om.lib axis2_engine.lib tuscany_sdo_axiom.lib /nologo /dll /machine:I386 /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=del ..\..\..\bin\tuscany_sca.*	del ..\..\..\lib\*.lib	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\include\osoa\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\include\tuscany\sca\util	copy Release\tuscany_sca.dll ..\..\..\bin	copy Release\tuscany_sca.lib ..\..\..\lib	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\include\tuscany\sca\ws
@@ -74,7 +74,8 @@ PostBuild_Cmds=del ..\..\..\bin\tuscany_sca.*	del ..\..\..\lib\*.lib	copy ..\..\
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXISCPP)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SCA_EXPORTS" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SCA_EXPORTS" /FD /GZ /c
+# SUBTRACT CPP /X
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
@@ -84,7 +85,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib AxisClient.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXISCPP)\lib\axis"
+# ADD LINK32 axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axis2_om.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=del ..\..\..\bin\tuscany_sca.*	del ..\..\..\lib\*.lib	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\include\osoa\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\include\tuscany\sca\util	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\include\tuscany\sca\ws	copy Debug\tuscany_sca.dll ..\..\..\bin	copy Debug\tuscany_sca.pdb ..\..\..\bin	copy Debug\tuscany_sca.lib ..\..\..\lib
@@ -452,15 +453,15 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\Utils.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\SDOStub.cpp
+SOURCE=..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\SDOStub.h
+SOURCE=..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceWrapper.cpp
+SOURCE=..\..\..\runtime\ws_reference\axis2c\src\WSServiceWrapper.cpp
 # End Source File
 # Begin Source File
 
