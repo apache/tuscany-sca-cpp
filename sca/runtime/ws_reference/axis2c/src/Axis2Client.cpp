@@ -13,19 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "Axis2Client.h"
-
-
-#include "osoa/sca/sca.h"
-using namespace osoa::sca;
-#include "tuscany/sca/core/SCARuntime.h"
-#include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/model/WSBinding.h"
-#include "tuscany/sca/util/Utils.h"
-#include "tuscany/sca/util/Exceptions.h"
-
-using namespace tuscany::sca::ws;
-
 #include <axis2_client.h>
 
 #include <axis2_error_default.h>
@@ -35,6 +22,20 @@ using namespace tuscany::sca::ws;
 #include <platforms/axis2_platform_auto_sense.h>
 
 #include <sdo_axiom.h>
+#include "Axis2Client.h"
+
+
+#include <osoa/sca/sca.h>
+using namespace osoa::sca;
+#include "tuscany/sca/core/SCARuntime.h"
+#include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/model/WSBinding.h"
+#include "tuscany/sca/util/Utils.h"
+#include "tuscany/sca/util/Exceptions.h"
+
+using namespace tuscany::sca::ws;
+
+
 using namespace commonj::sdo;
 using namespace commonj::sdo_axiom;
 

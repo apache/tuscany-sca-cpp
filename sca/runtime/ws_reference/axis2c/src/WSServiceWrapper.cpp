@@ -17,12 +17,12 @@
 
 /* $Rev$ $Date$ */
 
+#include "Axis2Client.h"
 #include "tuscany/sca/ws/WSServiceWrapper.h"
 
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
 
-#include "Axis2Client.h"
 #include "tuscany/sca/util/Logging.h"
 using namespace tuscany::sca;
 using namespace tuscany::sca::ws;
