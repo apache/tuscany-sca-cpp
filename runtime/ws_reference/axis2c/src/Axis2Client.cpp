@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include "osoa/sca/export.h"
 #include <axis2_client.h>
 
 #include <axis2_error_default.h>

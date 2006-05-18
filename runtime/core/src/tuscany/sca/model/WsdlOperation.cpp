@@ -17,9 +17,9 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
+#include "tuscany/sca/model/WsdlOperation.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
-#include "tuscany/sca/model/Wsdl.h"
 
 namespace tuscany
 {
