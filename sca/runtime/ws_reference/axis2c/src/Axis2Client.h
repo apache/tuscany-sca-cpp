@@ -18,6 +18,8 @@
 #ifndef tuscany_sca_ws_axis2client_h
 #define tuscany_sca_ws_axis2client_h
 
+#include "osoa/sca/export.h"
+
 #include <axis2_om_node.h>
 
 #include <osoa/sca/export.h>

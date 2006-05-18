@@ -20,6 +20,7 @@
 #ifndef tuscany_sca_model_wsdl_h
 #define tuscany_sca_model_wsdl_h
 
+#include "osoa/sca/export.h"
 #include <string>
 using std::string;
 
