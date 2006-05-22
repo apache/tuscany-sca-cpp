@@ -34,16 +34,15 @@ int main(int argc, char* argv[])
 
     // Set default module
 
+    TuscanyRuntime runtime("", "SubSystem1");
     try
     {
-        TuscanyRuntime runtime("", "SubSystem1");
         runtime.start();
 
         // Locate a service
         ModuleContext myContext = ModuleContext::getCurrent();
         ModuleContext myContext2 = myContext;
-
-        
+       
         MyValue* myService = (MyValue*) myContext.locateService("MyValueServiceComponent");
         if (myService == 0)
         {
@@ -79,5 +78,7 @@ int main(int argc, char* argv[])
     {
         cout << ex << endl;
     }
+
+    runtime.stop();
     return 0;
 }

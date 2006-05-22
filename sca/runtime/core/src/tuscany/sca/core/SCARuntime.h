@@ -56,7 +56,11 @@ namespace tuscany
              */
             SCA_API static SCARuntime* getInstance();
 
-            
+            /**
+             * Release the single instance.
+             */
+            SCA_API static void releaseInstance();
+          
             /**
              * Set the system root
              * @param root The path to the deployed system.
@@ -116,6 +120,8 @@ namespace tuscany
              * Default constructor is private to prevent more than one instance.
              */
             SCARuntime();            
+
+            virtual ~SCARuntime();            
 
             /**
              * Load the SCA configuration from the scdl files (sca.module, 
