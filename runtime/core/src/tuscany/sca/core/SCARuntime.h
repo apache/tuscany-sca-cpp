@@ -56,6 +56,19 @@ namespace tuscany
              */
             SCA_API static SCARuntime* getInstance();
 
+            
+            /**
+             * Set the system root
+             * @param root The path to the deployed system.
+             */
+            static void setSystemRoot(const string& root);
+
+            /**
+             * Set the default ModuleComponent for the system
+             * @param moduleComponent The name of the default moduleComponent.
+             */
+            static void setDefaultModuleComponent(const string& moduleComponent);
+
             /**
              * Set the current component for the current thread.
              * @param component The current component.
@@ -113,7 +126,7 @@ namespace tuscany
              * SCA runtime. Under this root will be the subsystems and modules
              * directories.
              */
-            void load(const char* configurationRoot);
+            void load(const string& configurationRoot);
 
             /**
              * The single instance of this class.
@@ -129,6 +142,16 @@ namespace tuscany
              * The installed path of the Tuscany runtime.
              */
             string SCARoot;
+ 
+            /**
+             * The path to the system root
+             */
+            static string systemRoot;
+
+            /**
+             * The default ModuleComponent.
+             */
+            static string defaultModuleName;
 
             /**
              * Get the default module set for this runtime.

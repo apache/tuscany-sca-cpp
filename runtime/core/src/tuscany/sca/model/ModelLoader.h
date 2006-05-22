@@ -58,7 +58,7 @@ namespace tuscany
                  * @param configurationRoot The location of the deployed SCA
                  * modules and subsystems.
                  */
-                void load(const char *configurationRoot);
+                void load(const string& configurationRoot);
                 
             private:
                 System* system;
@@ -70,11 +70,11 @@ namespace tuscany
                 const commonj::sdo::XSDHelperPtr getXSDHelper(void);
                 const commonj::sdo::XMLHelperPtr getXMLHelper(void);
                 
-                void loadSubsystems(const char *configurationRoot);
+                void loadSubsystems(const string& configurationRoot);
                 void loadSubsystemFile(const File& file);
                 void mapSubsystem(commonj::sdo::DataObjectPtr rootDO);
                 
-                void loadModules(const char *configurationRoot);
+                void loadModules(const string& configurationRoot);
                 void loadModuleFile(const File& file);
                 void mapModule(const string& moduleName, commonj::sdo::DataObjectPtr rootDO, std::string moduleRootDir);
 

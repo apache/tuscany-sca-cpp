@@ -223,6 +223,14 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ServiceWrapper.cpp
 
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ServiceWrapper.h
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\TuscanyRuntime.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\TuscanyRuntime.h
+# End Source File
 # End Group
 # Begin Group "model"
 
