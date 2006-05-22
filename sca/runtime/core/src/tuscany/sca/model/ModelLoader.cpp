@@ -62,10 +62,10 @@ namespace tuscany
             // This class has the responsibility for translating from
             // the SCA scdl files to the SCA runtime's in memory model.
             // =========================================================
-            void ModelLoader::load(const char* configurationRoot)
+            void ModelLoader::load(const string& configurationRoot)
             {
                 LOGENTRY(1, "ModelLoader::load");
-                LOGINFO_1(2,"configuration root: %s", configurationRoot);
+                LOGINFO_1(2,"configuration root: %s", configurationRoot.c_str());
                 
                 // The configuration root path will point to a directory structure:
                 //   root/
@@ -86,7 +86,7 @@ namespace tuscany
             // Load all the subsystems from any directory below the configuration root.
             // Translate the subsystem information to the runtime information
             // ========================================================================
-            void ModelLoader::loadSubsystems(const char* configurationRoot)
+            void ModelLoader::loadSubsystems(const string& configurationRoot)
             {
                 // Get all the sca.subsystem files in the module
                 LOGENTRY(1, "ModelLoader::loadSubsystems");
@@ -166,7 +166,7 @@ namespace tuscany
             // Load all the modules from any directory below the configuration root.
             // Translate the module information to the runtime information
             // =====================================================================
-            void ModelLoader::loadModules(const char* configurationRoot)
+            void ModelLoader::loadModules(const string& configurationRoot)
             {
                 // Get all the sca.module files in the module
                 LOGENTRY(1, "ModelLoader::loadModules");

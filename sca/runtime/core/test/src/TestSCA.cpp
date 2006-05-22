@@ -22,6 +22,7 @@
 #include "osoa/sca/sca.h"
 #include <iostream>
 using namespace osoa::sca;
+#include "tuscany/sca/core/TuscanyRuntime.h"
 using namespace tuscany::sca;
 #include "MyValue.h"
 
@@ -31,8 +32,13 @@ int main(int argc, char* argv[])
     commonj::sdo::Logger::setLogging(20);
     cout << "Start of SCA test" << endl;
 
+    // Set default module
+
     try
     {
+        TuscanyRuntime runtime("", "SubSystem1");
+        runtime.start();
+
         // Locate a service
         ModuleContext myContext = ModuleContext::getCurrent();
         ModuleContext myContext2 = myContext;

@@ -47,7 +47,31 @@ namespace tuscany
         // Initialize static class member to not pointing at anything
         // ==========================================================
         SCARuntime* SCARuntime::instance = 0;
+        string SCARuntime::systemRoot = "";
+        string SCARuntime::defaultModuleName = "";
         
+
+        // ==========================================================
+        // Set the system configuration root
+        // ==========================================================
+        void SCARuntime::setSystemRoot(const string& root)
+        {
+            LOGENTRY(1, "SCARuntime::");
+            systemRoot = root;
+            LOGINFO_1(3, "SCARuntime::setSystemRoot - set to %s", root.c_str());
+            LOGEXIT(1, "SCARuntime::setSystemRoot");
+        }
+
+        // ==========================================================
+        // Set the default ModuleComponent name
+        // ==========================================================
+        void SCARuntime::setDefaultModuleComponent(const string& moduleComponent)
+        {
+            LOGENTRY(1, "SCARuntime::setDefaultModuleComponent");
+            defaultModuleName = moduleComponent;
+            LOGINFO_1(3, "SCARuntime::setDefaultModuleComponent - set to %s", moduleComponent.c_str());
+            LOGEXIT(1, "SCARuntime::setDefaultModuleComponent");
+        }
 
         // ===================================================================
         // Constructor for the SCARuntime class. This will be a singleton that
@@ -85,16 +109,23 @@ namespace tuscany
             if (instance == NULL) 
             {
                 instance = new SCARuntime();
-                
-                // Load the runtime
-                // Get root from environment variable TUSCANY_SCACPP_SYSTEM_ROOT
-                char* systemRoot = getenv(TUSCANY_SCACPP_SYSTEM_ROOT);
-                if (systemRoot == 0)
+
+                if (systemRoot == "")
                 {
-                	string msg = TUSCANY_SCACPP_SYSTEM_ROOT;
-                	msg += " environment variable not set";
-                    throw SystemConfigurationException(msg.c_str());
+                    
+                    // Load the runtime
+                    // Get root from environment variable TUSCANY_SCACPP_SYSTEM_ROOT
+                    char* systemRootEnv = getenv(TUSCANY_SCACPP_SYSTEM_ROOT);
+                    if (systemRootEnv == 0)
+                    {
+                        string msg = TUSCANY_SCACPP_SYSTEM_ROOT;
+                        msg += " environment variable not set";
+                        throw SystemConfigurationException(msg.c_str());
+                    } 
+
+                    systemRoot = systemRootEnv;
                 }
+
                 instance->load(systemRoot);
             }
             
@@ -107,12 +138,11 @@ namespace tuscany
         // ======================================
         // Load up all the details of the runtime
         // ======================================
-        void SCARuntime::load(const char *configurationRoot)
+        void SCARuntime::load(const string& configurationRoot)
         {
             LOGENTRY(1, "SCARuntime::load");
-            std::string root = configurationRoot;
             
-            LOGINFO_1(2,"configuration root: %s", configurationRoot);
+            LOGINFO_1(2,"configuration root: %s", configurationRoot.c_str());
             
             ModelLoader loader(system);
             // Load details of the module
@@ -234,16 +264,19 @@ namespace tuscany
                 // -------------------------------------------
                 // Get the default module from the environment
                 // -------------------------------------------
-                const char* defMod = getenv(TUSCANY_SCACPP_DEFAULT_MODULE);
-                if (!defMod)
+                if (defaultModuleName == "")
                 {
-                	message = TUSCANY_SCACPP_DEFAULT_MODULE;
-                	message += " environment variable not set";
-                    throw SystemConfigurationException(message.c_str());
+                    const char* defMod = getenv(TUSCANY_SCACPP_DEFAULT_MODULE);
+                    if (!defMod)
+                    {
+                        message = TUSCANY_SCACPP_DEFAULT_MODULE;
+                        message += " environment variable not set";
+                        throw SystemConfigurationException(message.c_str());
+                    }
+                    defaultModuleName = defMod;
                 }
-
                 string subsystemName, moduleName;
-                Utils::tokeniseUri(defMod, subsystemName, moduleName);
+                Utils::tokeniseUri(defaultModuleName, subsystemName, moduleName);
 
                 // ---------------------------
                 // Subsystem must be specified
