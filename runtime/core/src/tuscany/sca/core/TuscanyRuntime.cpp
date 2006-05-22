@@ -89,7 +89,8 @@ namespace tuscany
         // ===================================================================
         void TuscanyRuntime::stop()
         { 
-            LOGENTRY(1, "TuscanyRuntime::stop");          
+            LOGENTRY(1, "TuscanyRuntime::stop");
+            SCARuntime::releaseInstance();
             LOGEXIT(1, "TuscanyRuntime::stop");
         }
 

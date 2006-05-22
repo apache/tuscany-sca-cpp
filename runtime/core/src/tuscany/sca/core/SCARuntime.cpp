@@ -98,6 +98,21 @@ namespace tuscany
             LOGEXIT(1, "SCARuntime::constructor");
         }
 
+        // ===================================================================
+        // Destructor for the SCARuntime class. 
+        // ===================================================================
+        SCARuntime::~SCARuntime()
+        { 
+            LOGENTRY(1, "SCARuntime::destructor");
+
+            if (system)
+            {
+                delete system;
+            }
+            
+            LOGEXIT(1, "SCARuntime::destructor");
+        }
+
         // =============================================================
         // Get the instance of the runtime, creates it if does not exist
         // static method
@@ -133,6 +148,25 @@ namespace tuscany
             
             return instance;
             
+        }
+
+
+        // =============================================================
+        // Release the instance of the runtime.
+        // =============================================================
+        void SCARuntime::releaseInstance()
+        {
+            LOGENTRY(1, "SCARuntime::releaseInstance");
+            
+            if (instance) 
+            {
+                delete instance;
+                instance = 0;
+                systemRoot = "";
+                defaultModuleName = "";        
+            }
+            
+            LOGEXIT(1, "SCARuntime::releaseInstance");           
         }
 
         // ======================================
