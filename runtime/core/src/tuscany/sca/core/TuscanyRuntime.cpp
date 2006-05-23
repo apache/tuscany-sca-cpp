@@ -55,7 +55,7 @@ namespace tuscany
         // ===================================================================
         // Constructor for the TuscanyRuntime class. 
         // ===================================================================
-        TuscanyRuntime::TuscanyRuntime(const string& root, const string& moduleComponent)
+        TuscanyRuntime::TuscanyRuntime(const string& moduleComponent, const string& root)
         { 
             LOGENTRY(1, "TuscanyRuntime::constructor");
             setSystemRoot(root);
