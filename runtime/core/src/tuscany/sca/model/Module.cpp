@@ -79,7 +79,7 @@ namespace tuscany
                 Utils::tokeniseUri(name, componentName, serviceName);
                 
                 // Locate the component
-                Component* foundComponent = components[name];
+                Component* foundComponent = components[componentName];
                 if (foundComponent)
                 {
                     // Locate the service
