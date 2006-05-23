@@ -38,7 +38,7 @@ namespace tuscany
             /**
             * Default constructor
             */
-            TuscanyRuntime(const string& root = "", const string& moduleComponent = "");            
+            TuscanyRuntime(const string& moduleComponent = "", const string& root = "");            
             
             /**
             * Destructor
@@ -47,7 +47,7 @@ namespace tuscany
             
             
             /**
-            * Set the system rool
+            * Set the system root
             * @param root The path to the deployed system.
             */
             void setSystemRoot(const string& root);

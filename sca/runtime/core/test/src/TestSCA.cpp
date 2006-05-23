@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
     // Set default module
 
-    TuscanyRuntime runtime("", "SubSystem1");
+    TuscanyRuntime runtime("SubSystem1");
     try
     {
         runtime.start();
