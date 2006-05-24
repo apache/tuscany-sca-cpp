@@ -383,14 +383,10 @@ namespace commonj
                                     if (prop.typeName.equals(pl[j].getName())
                                         || (pi && prop.typeName.equals(pi->getPropertyDefinition().localname)))
                                     {
-                                        const PropertyDefinitionImpl& propdef = pi->getPropertyDefinition();
-                                        if (propdef.localname.equals(prop.typeName))
-                                        {
-                                            prop.typeUri = pl[j].getType().getURI();
-                                            prop.typeName = pl[j].getType().getName();
-                                            refFound = true;
-                                            break;
-                                        }
+                                        prop.typeUri = pl[j].getType().getURI();
+                                        prop.typeName = pl[j].getType().getName();
+                                        refFound = true;
+                                        break;
                                     }
                                 }
                             }
