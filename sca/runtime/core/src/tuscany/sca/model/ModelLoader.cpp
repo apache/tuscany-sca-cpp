@@ -1577,7 +1577,77 @@ namespace tuscany
                     "name",
                     "commonj.sdo", "String",
                     false, false, true);
+
                 
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "RootType",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tAddress",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tBinding",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tBody",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tExtensibilityElementOpenAttrs",
+                    false, true, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tFault",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tFaultRes",
+                    false, false, true);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tHeader",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tHeaderFault",
+                    false, true, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tOperation",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tParts",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tStyleChoice",
+                    false, false, false);
+                dataFactory->addType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "useChoice",
+                    false, false, false);
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tAddress",
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tExtensibilityElementOpenAttrs");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tBinding",
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tExtensibilityElementOpenAttrs");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tBody",
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tExtensibilityElementOpenAttrs");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tExtensibilityElementOpenAttrs",
+                    "http://schemas.xmlsoap.org/wsdl/", "tExtensibilityElement");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tFault",
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tFaultRes");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tFaultRes",
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tBody");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tHeader",
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tExtensibilityElementOpenAttrs");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tOperation",
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tExtensibilityElementOpenAttrs");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "tStyleChoice",
+                    "commonj.sdo", "String");
+                dataFactory->setBaseType(
+                    "http://schemas.xmlsoap.org/wsdl/soap12/", "useChoice",
+                    "commonj.sdo", "String");  
             }
             
             

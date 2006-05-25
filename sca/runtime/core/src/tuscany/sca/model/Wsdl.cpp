@@ -99,7 +99,6 @@ namespace tuscany
                         string portListName(portList[j]->getCString("name"));
                         if (portListName.compare(portName) == 0)
                         {
-                            
                             // found port
                             // Add address at this point
                             string targetAddress(portList[j]->getCString("address/location"));
@@ -115,10 +114,52 @@ namespace tuscany
                                 message = message + " in the WSDL definition";
                                 throw SystemConfigurationException(message.c_str());
                             }
-
-                            // Get the soapAction
-                            string soapAction = getSoapAction(wsBinding, operationName);
                             
+
+                            string soapAction;
+                            bool documentStyle = false;
+                            bool useEncoded = false;
+                            WsdlOperation::soapVersion soapVer = WsdlOperation::SOAP11;
+
+                            // Find the binding operation
+                            DataObjectList& bindingOperationList = wsBinding->getList("operation");
+                            for (int i=0; i<bindingOperationList.size(); i++)
+                            {
+                                string name(bindingOperationList[i]->getCString("name"));
+                                
+                                if (name.compare(operationName) == 0)
+                                {
+                                    DataObjectPtr op = bindingOperationList[i]->getDataObject("operation");
+                                    string opType = op->getType().getURI();
+                                    if (opType == "http://schemas.xmlsoap.org/wsdl/soap12/")
+                                    {
+                                        soapVer = WsdlOperation::SOAP12;
+                                    }
+                                    // Get the soapAction
+                                    soapAction = bindingOperationList[i]->getCString("operation/soapAction");
+                                    
+                                    // Get the style
+                                    string style = bindingOperationList[i]->getCString("operation/style");
+                                    if (style == "")
+                                    {
+                                        style = wsBinding->getCString("binding/style");
+                                    }
+                                    if (style == "document")
+                                    {
+                                        documentStyle = true;
+                                    }
+ 
+                                    // get the use
+                                    string use = bindingOperationList[i]->getCString("input/body/use");
+                                    if (style == "encoded")
+                                    {
+                                        useEncoded = true;
+                                    }
+                                }
+                            }
+
+                            
+                            // TODO - get the style from the binding or operation????
                             
                             // Found the binding, get the portType
                             string wsPortTypeName(wsBinding->getCString("type"));
@@ -169,17 +210,17 @@ namespace tuscany
                                     }
 
                                     string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
-                                   
-                                   WsdlOperation& wsdlOp = operationMap[operationKey];
-                                   wsdlOp.setOperationName(operationName);
-                                   wsdlOp.setSoapAction(soapAction);
-                                   wsdlOp.setEndpoint(targetAddress);
-                                   wsdlOp.setSoapVersion(WsdlOperation::SOAP11);
-                                   wsdlOp.setDocumentStyle(true);
-                                   wsdlOp.setEncoded(false);
-                                   wsdlOp.setInputType(requestType);
-                                   wsdlOp.setOutputType(responseType);
-                                   return wsdlOp;
+                                    
+                                    WsdlOperation& wsdlOp = operationMap[operationKey];
+                                    wsdlOp.setOperationName(operationName);
+                                    wsdlOp.setSoapAction(soapAction);
+                                    wsdlOp.setEndpoint(targetAddress);
+                                    wsdlOp.setSoapVersion(soapVer);
+                                    wsdlOp.setDocumentStyle(documentStyle);
+                                    wsdlOp.setEncoded(useEncoded);
+                                    wsdlOp.setInputType(requestType);
+                                    wsdlOp.setOutputType(responseType);
+                                    return wsdlOp;
                                 }
                                 
                             }
@@ -187,16 +228,8 @@ namespace tuscany
                             message = "Unable to find Operation ";
                             message = message + operationName;
                             message = message + " in the WSDL definition";
-                            throw SystemConfigurationException(message.c_str());
-                            
-                            
-                            
-                            
+                            throw SystemConfigurationException(message.c_str());                           
                         }
-                        
-                        
-                        
-                        
                     }
                     // cannot find the port
                     message = "Unable to find port ";
@@ -207,8 +240,6 @@ namespace tuscany
                 
             }
             
-        
-
             ///
             /// Find a service
             ///
@@ -319,31 +350,6 @@ namespace tuscany
 
                 return message;
             }
-
-            ///
-            /// Get the soap action
-            ///
-            string Wsdl::getSoapAction(DataObjectPtr binding, const string& operationName)
-            {
-                
-        
-                // Find the binding operation
-                DataObjectList& bindingOperationList = binding->getList("operation");
-                for (int i=0; i<bindingOperationList.size(); i++)
-                {
-                    string name(bindingOperationList[i]->getCString("name"));
-
-                    if (name.compare(operationName) == 0)
-                    {
-                        // Found the binding operation, return the soap action
-                        string soapAction(bindingOperationList[i]->getCString("operation/soapAction"));
-                        return soapAction;
-                    }
-                }
-
-                return string("");
-            }
-
             
         } // End namespace model
     } // End namespace sca

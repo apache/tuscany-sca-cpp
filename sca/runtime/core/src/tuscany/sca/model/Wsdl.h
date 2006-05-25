@@ -111,15 +111,6 @@ namespace tuscany
                  */
                 DataObjectPtr findMessage(const string& messageName);
 
-                /**
-                 * The the details of the soap action setting for an operation
-                 * on a soap binding.
-                 * @param binding The data object describing the binding.
-                 * @param operationName The name of the operation.
-                 * @return The soap action setting from the WSDL.
-                 */
-                string getSoapAction(DataObjectPtr binding, const string& operationName);
-
 
                 /**
                  * The data object representation of the WSDL document.
