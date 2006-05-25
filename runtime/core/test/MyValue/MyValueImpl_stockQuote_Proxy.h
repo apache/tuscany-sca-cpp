@@ -25,7 +25,7 @@ class MyValueImpl_stockQuote_Proxy : public StockQuoteService
 public:
     MyValueImpl_stockQuote_Proxy(tuscany::sca::ServiceWrapper*);
     virtual ~MyValueImpl_stockQuote_Proxy();
-    virtual commonj::sdo::DataObjectPtr GetQuotes(const char* request);
+    virtual string GetQuote(const char* request);
 private:
     tuscany::sca::ServiceWrapper* target;
 };

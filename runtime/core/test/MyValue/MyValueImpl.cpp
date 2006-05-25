@@ -25,6 +25,7 @@ using namespace std;
 
 #include "osoa/sca/sca.h"
 #include "commonj/sdo/SDO.h"
+#include <tuscany/sca/util/Utils.h>
 using namespace osoa::sca;
 using namespace commonj::sdo;
 
@@ -97,19 +98,20 @@ float MyValueImpl::getMyValue(const char *customerID)
 
 
     // Invoke the service
-    DataObjectPtr result = stockQuoteService->GetQuotes("IBM");
+    string result = stockQuoteService->GetQuote("IBM");
 
+    cout << result<<endl;
     float stockPrice = 0.2f;
 
-    try {
-        float stockPrice = result->getDataObject("StockQuotes")->getList("StockQuote")[0]->getFloat("PrevClose");
-        //dataobjectlist& dlist = result->getdataobject("getquotesresult")->getlist("quote");
-        //DataObjectList& dlist = result->getDataObject("GetQuotesResult")->getList((unsigned int)0);
-        //float stockPrice = result->getDataObject("GetQuotesResult")->getList(0u)[0]->getFloat("StockQuote");
-        cout << "My stock price is " << stockPrice << endl;
-        //float stockPrice=((DataObject)result.getDataObject("GetQuotesResult").getList(0).get(0)).getFloat("StockQuote");
-        //        System.out.println("    [getMyValue] stock quote = "+stockPrice);
-        } catch (SDORuntimeException e)
+    try
+    {
+    	XMLHelperPtr xmlHelper = HelperProvider::getXMLHelper();
+    	XMLDocumentPtr stockDoc = xmlHelper->load(result.c_str());
+    	cout << result.c_str() <<endl;
+    	if (stockDoc->getRootDataObject() == 0) cout << "duff doc" <<endl;
+    	tuscany::sca::Utils::printDO(stockDoc->getRootDataObject());
+    }
+    catch (SDORuntimeException e)
     {
         cout << e;
     }
