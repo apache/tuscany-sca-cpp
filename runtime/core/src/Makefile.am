@@ -16,6 +16,7 @@ tuscany/sca/core/SCAEntryPoint.h \
 tuscany/sca/core/SCARuntime.h \
 tuscany/sca/core/ServiceProxy.h \
 tuscany/sca/core/ServiceWrapper.h \
+tuscany/sca/core/TuscanyRuntime.h \
 tuscany/sca/model/Binding.h \
 tuscany/sca/model/Component.h \
 tuscany/sca/model/CPPImplementation.h \
@@ -87,7 +88,8 @@ tuscany/sca/core/Operation.cpp \
 tuscany/sca/core/SCAEntryPoint.cpp \
 tuscany/sca/core/SCARuntime.cpp \
 tuscany/sca/core/ServiceProxy.cpp \
-tuscany/sca/core/ServiceWrapper.cpp
+tuscany/sca/core/ServiceWrapper.cpp \
+tuscany/sca/core/TuscanyRuntime.cpp
 
 libtuscany_sca_la_LIBADD = -lstdc++ -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
     -L$(top_builddir)/runtime/ws_reference/axis2c/src -ltuscany_sca_ws_reference
