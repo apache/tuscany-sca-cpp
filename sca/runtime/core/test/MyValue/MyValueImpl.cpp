@@ -101,15 +101,18 @@ float MyValueImpl::getMyValue(const char *customerID)
     string result = stockQuoteService->GetQuote("IBM");
 
     cout << result<<endl;
-    float stockPrice = 0.2f;
+    float stockPrice = 0.0f;
 
     try
     {
-    	XMLHelperPtr xmlHelper = HelperProvider::getXMLHelper();
-    	XMLDocumentPtr stockDoc = xmlHelper->load(result.c_str());
-    	cout << result.c_str() <<endl;
-    	if (stockDoc->getRootDataObject() == 0) cout << "duff doc" <<endl;
-    	tuscany::sca::Utils::printDO(stockDoc->getRootDataObject());
+    	XMLHelperPtr xmlHelper = HelperProvider::getXMLHelper(myContext.getDataFactory());
+     	XMLDocumentPtr stockDoc = xmlHelper->load(result.c_str());
+        if (stockDoc->getRootDataObject())
+        {
+            tuscany::sca::Utils::printDO(stockDoc->getRootDataObject());
+            stockPrice=stockDoc->getRootDataObject()->getFloat("Stock.0/Last");
+        }
+
     }
     catch (SDORuntimeException e)
     {
@@ -117,16 +120,6 @@ float MyValueImpl::getMyValue(const char *customerID)
     }
 
     return stockPrice;
-
-    /*
-    // Dummy method
-
-    if (!strcmp(stock, "IBM"))
-        return 99.999f;
-    else
-        return 31.05f;
-    */
-
 }
 
 float MyValueImpl::getMyValueS(const string& customerID) 
