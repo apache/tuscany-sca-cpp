@@ -25,7 +25,7 @@ using std::string;
 class StockQuoteService  
 {
 public:
-    virtual commonj::sdo::DataObjectPtr GetQuotes(const char* request) = 0;
+    virtual string GetQuote(const char* request) = 0;
 
 };
 
