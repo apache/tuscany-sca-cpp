@@ -19,14 +19,9 @@ To run the test from a command prompt:
 2) Add %TUSCANY_SCACPP%\lib and %TUSCANY_SDOCPP%\lib to the PATH
    (ensure required libraries for SDO are also on the path. e.g. libxml2)
 
-3) Set the environment variable TUSCANY_SCACPP_SYSTEM_ROOT to the test system folder
-   (%TUSCANY_SCACPP%\projects\tuscany_sca\tuscany_sca_test\testSCASystem)
+3) cd %TUSCANY_SCACPP%\projects\tuscany_sca\tuscany_sca_test\Debug
 
-4) Set the environment variable TUSCANY_SCACPP_DEFAULT_MODULE=SubSystem1
-
-5) cd %TUSCANY_SCACPP%\projects\tuscany_sca\tuscany_sca_test\Debug
-
-6) tuscany_sca_test
+4) tuscany_sca_test
 
 NOTE: To run the test from the workspace the environment variables must be set 
       BEFORE launching Visual Studio

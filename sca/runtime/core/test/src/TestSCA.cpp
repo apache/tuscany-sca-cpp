@@ -33,8 +33,17 @@ int main(int argc, char* argv[])
     cout << "Start of SCA test" << endl;
 
     // Set default module
+    string systemRoot = getenv("TUSCANY_SCACPP");
+    if (systemRoot  == "")
+    {
+        cout << "TUSCANY_SCACPP environment variable not set" <<endl;
+        return -1;
+    }
+    
+    systemRoot += "/projects/tuscany_sca/tuscany_sca_test/testSCASystem";        
 
-    TuscanyRuntime runtime("SubSystem1");
+    TuscanyRuntime runtime("SubSystem1", systemRoot);
+
     try
     {
         runtime.start();
@@ -42,7 +51,7 @@ int main(int argc, char* argv[])
         // Locate a service
         ModuleContext myContext = ModuleContext::getCurrent();
         ModuleContext myContext2 = myContext;
-       
+
         MyValue* myService = (MyValue*) myContext.locateService("MyValueServiceComponent");
         if (myService == 0)
         {

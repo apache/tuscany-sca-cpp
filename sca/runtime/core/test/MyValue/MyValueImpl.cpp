@@ -25,7 +25,7 @@ using namespace std;
 
 #include "osoa/sca/sca.h"
 #include "commonj/sdo/SDO.h"
-#include <tuscany/sca/util/Utils.h>
+
 using namespace osoa::sca;
 using namespace commonj::sdo;
 
@@ -109,7 +109,6 @@ float MyValueImpl::getMyValue(const char *customerID)
      	XMLDocumentPtr stockDoc = xmlHelper->load(result.c_str());
         if (stockDoc->getRootDataObject())
         {
-            tuscany::sca::Utils::printDO(stockDoc->getRootDataObject());
             stockPrice=stockDoc->getRootDataObject()->getFloat("Stock.0/Last");
         }
 
@@ -117,6 +116,7 @@ float MyValueImpl::getMyValue(const char *customerID)
     catch (SDORuntimeException e)
     {
         cout << e;
+        throw;
     }
 
     return stockPrice;
