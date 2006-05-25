@@ -607,8 +607,7 @@ namespace tuscany
                             // Load a xsd file -> set the types in the moduleComponents data factory file
                             string xsdName = moduleRootDir + "/" +xsds[i]->getCString("name");
                             loadTypes(xsdName.c_str(), moduleName);
-                            
-                            
+
                         }
                         
                         DataObjectList& wsdls = moduleConfigFile->getRootDataObject()->getList("wsdl/file");
