@@ -266,7 +266,7 @@ namespace sdo {
                         {\
                             delete prop;\
                             prop = 0;\
-                            if (!isSet(*p)) {\
+                            if (!d->isSet(*p)) {\
                                     return p->get ##primval ##Default();\
                             }\
                             return d->get ##primval (*p);\
@@ -333,7 +333,7 @@ namespace sdo {
                         else { \
                             delete prop;\
                             prop = 0;\
-                            if (!isSet(*p)) {\
+                            if (!d->isSet(*p)) {\
                                 return p->get ##primval ##Default( valptr , max );\
                             }\
                             return d->get ##primval (*p, valptr , max);\
