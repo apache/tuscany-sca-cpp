@@ -39,9 +39,12 @@ int main(int argc, char* argv[])
         cout << "TUSCANY_SCACPP environment variable not set" <<endl;
         return -1;
     }
-    
-    systemRoot += "/projects/tuscany_sca/tuscany_sca_test/testSCASystem";        
 
+#if defined(WIN32)  || defined (_WINDOWS)
+    systemRoot += "/projects/tuscany_sca/tuscany_sca_test/testSCASystem";
+#else
+    systemRoot += "/runtime/core/test/testSCASystem";
+#endif
     TuscanyRuntime runtime("SubSystem1", systemRoot);
 
     try

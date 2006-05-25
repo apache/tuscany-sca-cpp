@@ -28,7 +28,7 @@
 	</entryPoint>
 
 	<component name="MyValueServiceComponent">
-		<implementation.cpp dll="MyValue.dll" header="MyValueImpl.h"></implementation.cpp>
+		<implementation.cpp dll="libMyValue.so" header="MyValueImpl.h"></implementation.cpp>
 		<properties>
 		</properties>
 		<references>
