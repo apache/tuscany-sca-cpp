@@ -32,7 +32,6 @@
 		<properties>
 		</properties>
 		<references>
-			<customerInfo>CustomerInfoComponent</customerInfo>
 			<stockQuote>StockQuoteService</stockQuote>
 		</references>
 	</component>
@@ -42,10 +41,10 @@
 		<binding.ws port="http://www.webserviceX.NET/#wsdl.endpoint(StockQuote/StockQuoteSoap)"/>
 	</externalService>
 
-	<!--wire>
+	<wire>
 		<source.uri>MyValueServiceComponent/customerInfo</source.uri>
 		<target.uri>CustomerInfoComponent</target.uri>
-	</wire-->
+	</wire>
 
 </module>
 	
