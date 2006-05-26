@@ -50,6 +50,7 @@ commonj/sdo/SdoRuntime.h \
 commonj/sdo/SDOSAX2Parser.h \
 commonj/sdo/SDOSchemaSAX2Parser.h \
 commonj/sdo/SDOSPI.h \
+commonj/sdo/SDOString.h \
 commonj/sdo/SDOUtils.h \
 commonj/sdo/SDOXMLBufferWriter.h \
 commonj/sdo/SDOXMLFileWriter.h \
