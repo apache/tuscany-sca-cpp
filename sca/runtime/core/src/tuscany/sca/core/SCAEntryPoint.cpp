@@ -145,7 +145,7 @@ namespace tuscany
         // ======================================================================
         // invoke: 
         // ======================================================================
-        SCA_API DataObjectPtr SCAEntryPoint::invoke(const char* operationName, DataObjectPtr inDataObject)
+        SCA_API void SCAEntryPoint::invoke(Operation& operation)
         {
             string message;
 
@@ -161,18 +161,11 @@ namespace tuscany
             // -------------------
             // Invoke each target
             // -------------------
-            Operation operation(operationName);
-            operation.addParameter(&inDataObject);
-            DataObjectPtr ret;
-            operation.setReturnValue(&ret);
-
             for (SERVICES::iterator iter = services.begin(); iter < services.end(); iter++)
             {                
                 (*iter)->invoke(operation);
             }
-
-            return ret;
-        }
+       }
 
 
         // ======================================================================
