@@ -60,6 +60,7 @@ class sdotest {
         static int definetest();
         static int stocktest();
 
+        static int pete();
         static int testgenerate(const char* xsd, const char* output);
         static int emptycs();
         static int compatiblefactory();

@@ -1219,3 +1219,81 @@ int sdotest::stocktest()
     }
 }
 **************************************************/
+
+
+int sdotest::pete()
+{
+
+
+    int i,j;
+
+    try {
+
+ 
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+ 
+        xsh->defineFile("pete.xsd");
+
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            for (j=0;j<i;j++)
+            {
+                const char *m = xsh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+            return 0;
+        }
+
+
+
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+ 
+        XMLDocumentPtr doc = xmh->loadFile("pete.xml");
+
+        if ((i = xmh->getErrorCount()) > 0)
+        {
+            for (j=0;j<i;j++)
+            {
+                const char *m = xmh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+            return 0;
+        }
+
+        TypeList tl = mdg->getTypes();
+
+        //printf("***** TYPES **********************************************\n");
+
+        for (i=0;i<tl.size();i++)
+        {
+            //printf("Type:%s#%s\n",tl[i].getURI(),tl[i].getName());
+            PropertyList pl = tl[i].getProperties();
+            for (int j=0;j<pl.size();j++)
+            {
+                //printf("Property:%s ",pl[j].getName());
+                //if (pl[j].isMany())
+                    //printf( "(many) ");
+                //printf( " of type %s\n",pl[j].getType().getName());
+            }
+        }
+
+        //printf( "*******************************END TYPES******************\n");
+    
+
+        DataObjectPtr dob = doc->getRootDataObject();
+        float f = dob->getFloat("Stock[1]/Last");
+        //printf("Float is %2.3f \r\n",f);
+        return 1;
+
+    }
+    catch (SDORuntimeException e)
+    {
+        cout << "Exception in Pete" << e << endl;
+        return 0;
+    }
+}
+

@@ -44,8 +44,24 @@ int main (int argc, char** argv)
     int totaltests=0;
     int value = 0;
 
-    /* general tests */
+    /* groups now supported*/
+    TEST ( sdotest::testany("list1.xsd",0,"list1.xml", 0) );
+    TEST ( sdotest::testany("b48636.xsd",0,"b48636.xml", 0) );
+    TEST ( sdotest::testany("groupwithprefix.xsd", 0, 0, 0) );
+    TEST ( sdotest::testany("groupwrongname.xsd","Use of undefined group NameGroup", 0, 0) );
 
+    // late definition of group now supported
+    TEST ( sdotest::testany("grouptoolate.xsd",0 , 0, 0) );
+
+    // group definition within group now ignored
+
+    TEST ( sdotest::testany("groupingroup.xsd","Use of undefined group NameGroup2",0, 0) );
+    TEST ( sdotest::testany("grouprefingroup.xsd",0,0, 0) );
+    TEST ( sdotest::testany("bothgroups.xsd",0,0, 0) );
+    TEST ( sdotest::testany("bothgroupssamename.xsd",0,0, 0) );
+
+    /* general tests */
+    TEST (  sdotest::pete() );
     TEST (  sdotest::stocktest() );
     TEST (  sdotest::definetest() );
     TEST (  sdotest::emptycs() );

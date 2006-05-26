@@ -1,0 +1,20 @@
+<StockQuotes>
+<Stock>
+<Symbol>IBM</Symbol>
+<Last>79.78</Last>
+<Date>5/24/2006</Date>
+<Time>4:01pm</Time>
+<Change>0.00</Change>
+<Open>N/A</Open>
+<High>N/A</High>
+<Low>N/A</Low>
+<Volume>900</Volume>
+<MktCap>123.7B</MktCap>
+<PreviousClose>79.78</PreviousClose>
+<PercentageChange>0.00</PercentageChange>
+<AnnRange>73.45 - 89.94</AnnRange>
+<Earns>5.121</Earns>
+<P-E>15.58</P-E>
+<Name>INTL BUSINESS MAC</Name>
+</Stock>
+</StockQuotes>

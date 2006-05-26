@@ -8,10 +8,17 @@ xmlns:target="http://www.wrox.com/name" elementFormDefault="qualified">
       <element name="last" type="string"/>
     </sequence>
   </group>
+   <attributeGroup name="NameGroup">
+      <attribute name="firstattribute" type="string"/>
+      <attribute name="secondattribute" type="string"/>
+      <attribute name="thirdattribute" type="string"/>
+  </attributeGroup>
   <element name="name">
     <complexType>
       <group ref="NameGroup"/>
       <attribute name="title" type="string"/>
+	  <attributeGroup ref="NameGroup"/>
     </complexType>
   </element>
+
 </schema>

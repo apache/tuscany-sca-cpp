@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.wrox.com/name" 
+        xmlns:tns="http://www.wrox.com/name">
+
+<xs:element name="listtest" type="listTestType"/>
+<xs:complexType name="listTestType">
+  <xs:element name="integers" type="intListType"/>
+  <xs:element name="strings" type="stringListType"/>
+</xs:complexType>
+
+<xs:simpleType name="intListType">
+    <xs:list itemType="xs:integer"/>
+</xs:simpleType>
+ 
+<xs:simpleType name="stringListType">
+   <xs:list itemType="xs:string"/>
+</xs:simpleType>
+
+</xs:schema>

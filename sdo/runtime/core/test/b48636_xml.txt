@@ -1,0 +1,36 @@
+***** TYPES AFTER RESOLVE*********************************
+Type:commonj.sdo#BigDecimal
+Type:commonj.sdo#BigInteger
+Type:commonj.sdo#Boolean
+Type:commonj.sdo#Byte
+Type:commonj.sdo#Bytes
+Type:commonj.sdo#ChangeSummary
+Type:commonj.sdo#Character
+Type:commonj.sdo#DataObject
+Type:commonj.sdo#Date
+Type:commonj.sdo#Double
+Type:commonj.sdo#Float
+Type:commonj.sdo#Integer
+Type:commonj.sdo#Long
+Type:commonj.sdo#OpenDataObject
+Type:commonj.sdo#Short
+Type:commonj.sdo#String
+Type:commonj.sdo#URI
+Type:http://www.wrox.com/name#RootType
+Property:name  of type name
+Type:http://www.wrox.com/name#name
+Property:first  of type String
+Property:middle  of type String
+Property:last  of type String
+Property:title  of type String
+*******************************END TYPES******************
+===== DataObject contents =====
+first:string:John
+
+middle:string:Fitzgerald
+
+last:string:Doe
+
+title:string:Mr.
+
+===== End DataObject =====

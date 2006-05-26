@@ -1,0 +1,28 @@
+***** TYPES BEFORE RESOLVE **********************************
+Type:commonj.sdo#BigDecimal
+Type:commonj.sdo#BigInteger
+Type:commonj.sdo#Boolean
+Type:commonj.sdo#Byte
+Type:commonj.sdo#Bytes
+Type:commonj.sdo#ChangeSummary
+Type:commonj.sdo#Character
+Type:commonj.sdo#DataObject
+Type:commonj.sdo#Date
+Type:commonj.sdo#Double
+Type:commonj.sdo#Float
+Type:commonj.sdo#Integer
+Type:commonj.sdo#Long
+Type:commonj.sdo#OpenDataObject
+Type:commonj.sdo#Short
+Type:commonj.sdo#String
+Type:commonj.sdo#URI
+Type:http://www.wrox.com/name#RootType
+Property:listtest  of type listTestType
+Type:http://www.wrox.com/name#intListType
+Property:values (many)  of type Integer
+Type:http://www.wrox.com/name#listTestType
+Property:integers (many)  of type intListType
+Property:strings (many)  of type stringListType
+Type:http://www.wrox.com/name#stringListType
+Property:values (many)  of type String
+*******************************END TYPES******************

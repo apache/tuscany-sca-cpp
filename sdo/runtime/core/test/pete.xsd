@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="StockQuotes">
+  <xs:complexType >
+    <xs:sequence>
+      <xs:element name="Stock" minOccurs="0" maxOccurs="unbounded">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Symbol"     type="xs:string"/>
+      <xs:element minOccurs="0" maxOccurs="1" name="Last"       type="xs:float"/>
+     <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <anyAttribute namespace="##any" processContents="lax"/>
+  </xs:complexType>
+</xs:element>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="##any" processContents="lax"/>
+  </xs:complexType>
+  </xs:element>
+
+</xs:schema>

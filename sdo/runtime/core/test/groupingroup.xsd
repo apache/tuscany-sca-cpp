@@ -6,12 +6,21 @@ xmlns:target="http://www.wrox.com/name" elementFormDefault="qualified">
       <element name="first" type="string"/>
       <element name="middle" type="string"/>
       <element name="last" type="string"/>
+	  <group name="NameGroup2">
+		<sequence>
+		<element name="first2" type="string"/>
+		<element name="middle2" type="string"/>
+		<element name="last2" type="string"/>
+		</sequence>
+	  </group>
     </sequence>
   </group>
   <element name="name">
     <complexType>
       <group ref="NameGroup"/>
+      <group ref="NameGroup2"/>
       <attribute name="title" type="string"/>
     </complexType>
   </element>
+
 </schema>
