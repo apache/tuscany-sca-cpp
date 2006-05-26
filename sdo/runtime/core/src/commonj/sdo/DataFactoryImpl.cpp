@@ -240,6 +240,15 @@ void DataFactoryImpl::addType(const char* uri, const char* inTypeName,
     addType(uri,inTypeName,isSeq,isOp,isAbs,isData,false);
 }
 
+void DataFactoryImpl::addType(const SDOString& uri, const SDOString& inTypeName, 
+                                bool isSeq,
+                                bool isOp,
+                                bool isAbs,
+                                bool isData)
+{
+    addType(uri.c_str(),inTypeName.c_str(),isSeq,isOp,isAbs,isData,false);
+}
+
 void DataFactoryImpl::addType(const char* uri, const char* inTypeName, 
                                 bool isSeq,
                                 bool isOp,
@@ -269,6 +278,16 @@ void DataFactoryImpl::addType(const char* uri, const char* inTypeName,
         if (fullTypeName)delete fullTypeName;
 
     }
+}
+
+void DataFactoryImpl::addType(const SDOString& uri, const SDOString& inTypeName, 
+                                bool isSeq,
+                                bool isOp,
+                                bool isAbs,
+                                bool isData,
+                                bool isFromList)
+{
+	addType(uri.c_str(), inTypeName.c_str(), isSeq, isOp, isAbs, isData, isFromList);
 }
 
 // ===================================================================
@@ -346,6 +365,16 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
                                   false,
                                   !(typeIter->second)->isDataType());
     }
+}
+
+void DataFactoryImpl::addPropertyToType(const SDOString& uri,
+                                        const SDOString& inTypeName,
+                                        const SDOString& propname,
+                                        const SDOString& propTypeUri,
+                                        const SDOString& propTypeName,
+                                        bool many)
+{
+  addPropertyToType(uri.c_str(), inTypeName.c_str(), propname.c_str(), propTypeUri.c_str(), propTypeName.c_str(), many);
 }
 
 void DataFactoryImpl::addPropertyToType(const char* uri, 
@@ -445,6 +474,25 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
     return;
 }
 
+void DataFactoryImpl::addPropertyToType(const SDOString& uri,
+                                        const SDOString& inTypeName,
+                                        const SDOString& propname,
+                                        const SDOString& propTypeUri,
+                                        const SDOString& propTypeName,
+                                        bool many,
+                                        bool rdonly,
+                                        bool cont)
+{
+  addPropertyToType(uri.c_str(),
+                           inTypeName.c_str(),
+                           propname.c_str(),
+                           propTypeUri.c_str(),
+                           propTypeName.c_str(),
+                           many,
+                           rdonly,
+                           cont);
+}
+
 // ===================================================================
 // addPropertyToType - adds a Property to an existing Type
 // ===================================================================
@@ -464,6 +512,20 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
                     !tprop.isDataType());
 }
 
+void DataFactoryImpl::addPropertyToType(const SDOString& uri, 
+                                        const SDOString& inTypeName, 
+                                        const SDOString& propname,
+                                        const Type& tprop,
+                                        bool many)
+{
+  addPropertyToType(uri.c_str(), 
+                    inTypeName.c_str(), 
+                    propname.c_str(),
+                    tprop,
+                    many,
+                    false,
+                    !tprop.isDataType());
+}
 
 void DataFactoryImpl::addPropertyToType(const char* uri, 
                                       const char* inTypeName, 
@@ -480,6 +542,24 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
                       tprop.getName(),
                       many,
                       rdonly, cont);
+}
+
+void DataFactoryImpl::addPropertyToType(const SDOString& uri, 
+                                        const SDOString& inTypeName, 
+                                        const SDOString& propname,
+                                        const Type& tprop,
+                                        bool many,
+                                        bool rdonly,
+                                        bool cont)
+{
+  addPropertyToType(uri.c_str(), 
+                    inTypeName.c_str(),
+                    propname.c_str(),
+                    tprop.getURI(),
+                    tprop.getName(),
+                    many,
+                    rdonly,
+                    cont);
 }
 
 // ===================================================================
@@ -500,6 +580,20 @@ void DataFactoryImpl::addPropertyToType(const Type& cont,
 }
 
 void DataFactoryImpl::addPropertyToType(const Type& cont,
+                                        const SDOString& propname,
+                                        const SDOString& propTypeUri,
+                                        const SDOString& propTypeName,
+                                        bool many)
+{
+  addPropertyToType(cont.getURI(),
+                    cont.getName(),
+                    propname.c_str(),
+                    propTypeUri.c_str(),
+                    propTypeName.c_str(),
+                    many);
+}
+
+void DataFactoryImpl::addPropertyToType(const Type& cont,
                                       const char* propname,
                                       const char* propTypeUri,
                                       const char* propTypeName,
@@ -512,6 +606,24 @@ void DataFactoryImpl::addPropertyToType(const Type& cont,
                       propname,
                       propTypeUri,
                       propTypeName,
+                      many,
+                      rdonly,
+                      contain);
+}
+
+void DataFactoryImpl::addPropertyToType(const Type& cont,
+                                      const SDOString& propname,
+                                      const SDOString& propTypeUri,
+                                      const SDOString& propTypeName,
+                                      bool many,
+                                      bool rdonly,
+                                      bool contain)
+{
+    addPropertyToType(cont.getURI(),
+                      cont.getName(),
+                      propname.c_str(),
+                      propTypeUri.c_str(),
+                      propTypeName.c_str(),
                       many,
                       rdonly,
                       contain);
@@ -534,6 +646,19 @@ void DataFactoryImpl::addPropertyToType(const Type& tp,
 }
 
 void DataFactoryImpl::addPropertyToType(const Type& tp,
+                                        const SDOString& propname,
+                                        const Type& tprop,
+                                        bool many)
+{
+  addPropertyToType(tp.getURI(),
+                    tp.getName(),
+                    propname.c_str(),
+                    tprop.getURI(),
+                    tprop.getName(),
+                    many);
+}
+
+void DataFactoryImpl::addPropertyToType(const Type& tp,
                                       const char* propname,
                                       const Type& tprop,
                                       bool  many,
@@ -548,6 +673,23 @@ void DataFactoryImpl::addPropertyToType(const Type& tp,
                       many,
                       rdonly,
                       cont);
+}
+
+void DataFactoryImpl::addPropertyToType(const Type& tp,
+                                        const SDOString& propname,
+                                        const Type& tprop,
+                                        bool many,
+                                        bool rdonly,
+                                        bool cont)
+{
+  addPropertyToType(tp.getURI(),
+                    tp.getName(),
+                    propname.c_str(),
+                    tprop.getURI(),
+                    tprop.getName(),
+                    many,
+                    rdonly,
+                    cont);
 }
 
 // ===================================================================
@@ -617,6 +759,11 @@ const Type& DataFactoryImpl::getType(const char* uri, const char* inTypeName) co
     return *type;
 }
 
+const Type& DataFactoryImpl::getType(const SDOString& uri, const SDOString& inTypeName) const
+{
+	return getType(uri.c_str(), inTypeName.c_str());
+}
+
 // ===================================================================
 // setBaseType - sets the type from which this type inherits properties
 // ===================================================================
@@ -668,6 +815,19 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     (typeIter->second)->setBaseType(base, isRestriction);
 }
 
+void DataFactoryImpl::setBaseType(const SDOString& typeuri,
+								  const SDOString& typenam,
+								  const SDOString& baseuri,
+								  const SDOString& basename,
+								  bool isRestriction)
+{
+	setBaseType(typeuri.c_str(),
+		typenam.c_str(),
+		baseuri.c_str(),
+		basename.c_str(),
+		isRestriction);
+}
+
 
 // ===================================================================
 // setPropertySubstitute - additional type for a property
@@ -697,7 +857,21 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         if (pi != 0)pi->setSubstitution(this,subname,tsub);
     }
 
-    
+    void DataFactoryImpl::setPropertySubstitute(
+            const SDOString& uri, 
+            const SDOString& inTypeName,
+            const SDOString& propname,
+            const SDOString& subname,
+            const SDOString& subTypeUri, 
+            const SDOString& subTypeName)
+    {
+      setPropertySubstitute(uri.c_str(),
+                            inTypeName.c_str(),
+                            propname.c_str(),
+                            subname.c_str(),
+                            subTypeUri.c_str(),
+                            subTypeName.c_str());
+    }
 
     void DataFactoryImpl::setPropertySubstitute(
             const Type& containertype,
@@ -712,6 +886,14 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
             subtype.getURI(),subtype.getName());
     }
 
+    void DataFactoryImpl::setPropertySubstitute(
+            const Type& containertype,
+            const SDOString& propname,
+            const SDOString& subname,
+            const Type& subtype)
+    {
+      setPropertySubstitute(containertype, propname.c_str(), subname.c_str(), subtype);
+    }
 // ===================================================================
 // setDefault - sets the default value for a property of a type
 // ===================================================================
@@ -723,10 +905,23 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname, bool b ) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), b);
+    }
+
+    void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , char c) 
         
     {
         setDefault(t.getURI(), t.getName(), propname, c);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , char c) 
+        
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), c);
     }
 
     void DataFactoryImpl::setDefault(
@@ -736,15 +931,34 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , wchar_t c) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), c);
+    }
+
+    void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , char* c) 
     {
         setDefault(t.getURI(), t.getName(), propname, c);
     }
 
+// #pragma message( "GMW: Unimplemented method, writable string parameter" )
+//     void DataFactoryImpl::setDefault(
+//         const Type& t, const SDOString& propname , SDOString& c) 
+//     {
+//         setDefault(t.getURI(), t.getName(), propname.c_str(), c.c_str());
+//     }
+
     void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , short s) 
     {
         setDefault(t.getURI(), t.getName(), propname, s);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , short s) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), s);
     }
 
 #if __WORDSIZE !=64
@@ -753,6 +967,13 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     {
         setDefault(t.getURI(), t.getName(), propname, l);
     }
+
+    void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , long l) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), l);
+    }
+
 #endif
 
     void DataFactoryImpl::setDefault(
@@ -762,9 +983,21 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , int64_t i) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), i);
+    }
+
+    void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , float f) 
     {
         setDefault(t.getURI(), t.getName(), propname, f);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , float f) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), f);
     }
 
     void DataFactoryImpl::setDefault(
@@ -774,9 +1007,21 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , long double d) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), d);
+    }
+
+    void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , const SDODate d) 
     {
         setDefault(t.getURI(), t.getName(), propname, d);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , const SDODate d) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), d);
     }
 
     void DataFactoryImpl::setDefault(
@@ -786,11 +1031,22 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , const wchar_t* c, unsigned int len) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), c, len);
+    }
+
+    void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , const char* c, unsigned int len) 
     {
         setDefault(t.getURI(), t.getName(), propname, c, len);
     }
 
+    void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , const SDOString& c, unsigned int len) 
+    {
+        setDefault(t.getURI(), t.getName(), propname.c_str(), c.c_str(), len);
+    }
 
     void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 
@@ -799,6 +1055,13 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         const TypeImpl* ti = findTypeImpl(typuri,typnam);
         PropertyImpl* pi = ti->getPropertyImpl(propname);
         if (pi != 0)pi->setDefault(b);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname, bool b ) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), b);
     }
 
     void DataFactoryImpl::setDefault(
@@ -811,12 +1074,26 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , char c) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), c);
+    }
+
+    void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 
         const char* propname , wchar_t c) 
     {
         const TypeImpl* ti = findTypeImpl(typuri,typnam);
         PropertyImpl* pi = ti->getPropertyImpl(propname);
         if (pi != 0)pi->setDefault(c);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , wchar_t c) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), c);
     }
 
     void DataFactoryImpl::setDefault(
@@ -828,6 +1105,14 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         if (pi != 0)pi->setDefault(c);
     }
 
+// #pragma message( "GMW: Unimplemented method, writable string parameter" )
+//     void DataFactoryImpl::setDefault(
+//         const SDOString& typuri, const SDOString& typnam, 
+//         const SDOString& propname , SDOString& c) 
+//     {
+//       setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), c.c_str());
+//     }
+
     void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 
         const char* propname , short s) 
@@ -835,6 +1120,13 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         const TypeImpl* ti = findTypeImpl(typuri,typnam);
         PropertyImpl* pi = ti->getPropertyImpl(propname);
         if (pi != 0)pi->setDefault(s);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , short s) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), s);
     }
 
 #if __WORDSIZE !=64
@@ -846,6 +1138,14 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
         PropertyImpl* pi = ti->getPropertyImpl(propname);
         if (pi != 0)pi->setDefault(l);
     }
+
+    void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , long l) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), l);
+    }
+
 #endif
 
     void DataFactoryImpl::setDefault(
@@ -858,12 +1158,26 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , int64_t i) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), i);
+    }
+
+    void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 
         const char* propname , float f) 
     {
         const TypeImpl* ti = findTypeImpl(typuri,typnam);
         PropertyImpl* pi = ti->getPropertyImpl(propname);
         if (pi != 0)pi->setDefault(f);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , float f) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), f);
     }
 
     void DataFactoryImpl::setDefault(
@@ -876,12 +1190,26 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , long double d) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), d);
+    }
+
+    void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 
         const char* propname , const SDODate d) 
     {
         const TypeImpl* ti = findTypeImpl(typuri,typnam);
         PropertyImpl* pi = ti->getPropertyImpl(propname);
         if (pi != 0)pi->setDefault(d);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , const SDODate d) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), d);
     }
 
     void DataFactoryImpl::setDefault(
@@ -894,12 +1222,26 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     }
 
     void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , const wchar_t* c, unsigned int len) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), c, len);
+    }
+
+    void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 
         const char* propname , const char* c, unsigned int len) 
     {
         const TypeImpl* ti = findTypeImpl(typuri,typnam);
         PropertyImpl* pi = ti->getPropertyImpl(propname);
         if (pi != 0)pi->setDefault(c,len);
+    }
+
+    void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , const SDOString& c, unsigned int len) 
+    {
+      setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), c.c_str(), len);
     }
 
     void DataFactoryImpl::setOpposite(
@@ -910,6 +1252,15 @@ void DataFactoryImpl::setBaseType( const char* typeuri,
     {
         SDO_THROW_EXCEPTION("setOpposite" ,
         SDOUnsupportedOperationException, " Not implemented");
+    }
+
+    void DataFactoryImpl::setOpposite(
+        const Type& typ, 
+        const SDOString& propnam, 
+        const Type& opptyp,
+        const SDOString& opppropnam) 
+    {
+      setOpposite(typ, propnam.c_str(), opptyp, opppropnam.c_str());
     }
 
 // ===================================================================
@@ -991,6 +1342,13 @@ void DataFactoryImpl::setAlias(const char* typeuri,
 
 }
 
+void DataFactoryImpl::setAlias(const SDOString& typeuri,
+                              const SDOString& typenam,
+                              const SDOString& alias)
+{
+	setAlias(typeuri.c_str(), typenam.c_str(), alias.c_str());
+}
+
 // ===================================================================
 // setAlias - sets a new alias for this type
 // ===================================================================
@@ -1004,6 +1362,14 @@ void DataFactoryImpl::setAlias(const char* typeuri,
     PropertyImpl* p  = t.getPropertyImpl(propname); 
     if (p != 0)p->setAlias(alias);
 
+}
+
+void DataFactoryImpl::setAlias(const SDOString& typeuri, 
+                              const SDOString& typenam, 
+                              const SDOString& propname,
+                              const SDOString& alias)
+{
+	setAlias(typeuri.c_str(), typenam.c_str(), propname.c_str(), alias.c_str());
 }
 
 // ===================================================================
@@ -1099,6 +1465,18 @@ RefCountingPointer<DataObject> DataFactoryImpl::create(const char* uri, const ch
 }
 
 // ===================================================================
+//  create - creates a data object from the types available.
+//  This first resolves the type hierarchy, and thus no further changes
+//  to the type hierarchy are allowed.
+// ===================================================================
+
+
+RefCountingPointer<DataObject> DataFactoryImpl::create(const SDOString& uri, const SDOString& typeName) 
+{
+    return create(uri.c_str(), typeName.c_str());
+}
+
+// ===================================================================
 // The openProperties map is a list of the curently present open
 // properties as used by this factory. It will cause the 
 // open properties to be written out as attributes and elements
@@ -1153,6 +1531,12 @@ void DataFactoryImpl::setDASValue(const Type& type,
     setDASValue(type.getURI(), type.getName(), name, value);
 }
 
+void DataFactoryImpl::setDASValue(const Type& type,
+                                        const SDOString& name, 
+                                        DASValue* value)
+{
+    setDASValue(type.getURI(), type.getName(), name.c_str(), value);
+}
 
 void DataFactoryImpl::setDASValue(const char* typeuri,
                                         const char* typenam, 
@@ -1166,6 +1550,14 @@ void DataFactoryImpl::setDASValue(const char* typeuri,
     }
 }
 
+void DataFactoryImpl::setDASValue(const SDOString& typeuri,
+                                        const SDOString& typenam, 
+                                        const SDOString& name, 
+                                        DASValue* value)
+{
+    setDASValue(typeuri.c_str(), typenam.c_str(), name.c_str(), value);
+}
+
 // ===================================================================
 //  getDASValue - retrieve a value from a Type
 // ===================================================================
@@ -1174,6 +1566,12 @@ DASValue* DataFactoryImpl::getDASValue(const Type& type,
                                                 const char* name) const
 {
     return getDASValue(type.getURI(), type.getName(), name);
+}
+
+DASValue* DataFactoryImpl::getDASValue(const Type& type,
+                                       const SDOString& name) const
+{
+    return getDASValue(type.getURI(), type.getName(), name.c_str());
 }
 
 DASValue* DataFactoryImpl::getDASValue(const char* typeuri,
@@ -1189,6 +1587,13 @@ DASValue* DataFactoryImpl::getDASValue(const char* typeuri,
     return NULL;    
 }
 
+DASValue* DataFactoryImpl::getDASValue(const SDOString& typeuri,
+                                       const SDOString& typenam,
+                                       const SDOString& name) const
+{
+    return getDASValue(typeuri.c_str(), typenam.c_str(), name.c_str());
+}
+
 // ===================================================================
 //  setDASValue - Set a value on a Property
 // ===================================================================
@@ -1201,6 +1606,14 @@ void DataFactoryImpl::setDASValue(
     setDASValue(type.getURI(), type.getName(), propertyName, name, value);
 }
 
+void DataFactoryImpl::setDASValue( 
+                const Type& type,
+                const SDOString& propertyName,
+                const SDOString& name,
+                DASValue* value)
+{
+    setDASValue(type.getURI(), type.getName(), propertyName.c_str(), name.c_str(), value);
+}
 
 void DataFactoryImpl::setDASValue( 
                 const char* typeuri,
@@ -1217,6 +1630,16 @@ void DataFactoryImpl::setDASValue(
     }
 }
 
+void DataFactoryImpl::setDASValue( 
+                const SDOString& typeuri,
+                const SDOString& typenam,
+                const SDOString& propertyName,
+                const SDOString& name,
+                DASValue* value)
+{
+    setDASValue(typeuri.c_str(), typenam.c_str(), propertyName.c_str(), name.c_str(), value);
+}
+
 // ===================================================================
 //  getDASValue - retrieve a value from a Property
 // ===================================================================
@@ -1226,6 +1649,14 @@ DASValue* DataFactoryImpl::getDASValue(
                 const char* name) const
 {
     return getDASValue(type.getURI(), type.getName(), propertyName, name);
+}
+
+DASValue* DataFactoryImpl::getDASValue( 
+                const Type& type,
+                const SDOString& propertyName,
+                const SDOString& name) const
+{
+    return getDASValue(type.getURI(), type.getName(), propertyName.c_str(), name.c_str());
 }
 
 DASValue* DataFactoryImpl::getDASValue(
@@ -1251,6 +1682,14 @@ DASValue* DataFactoryImpl::getDASValue(
     return NULL;    
 }
 
+DASValue* DataFactoryImpl::getDASValue(
+                const SDOString& typeuri,
+                const SDOString& typenam,
+                const SDOString& propertyName, 
+                const SDOString& name) const
+{
+    return getDASValue(typeuri.c_str(), typenam.c_str(), propertyName.c_str(), name.c_str());
+}
 
 bool DataFactoryImpl::compareTypes(const TypeImpl* t1, const Type& t2)
 {
@@ -1775,6 +2214,10 @@ bool DataFactoryImpl::generateInterface(const char* fileroot, const char* factor
     return true;
 }
 
+bool DataFactoryImpl::generateInterface(const SDOString& fileroot, const SDOString& factoryname)
+{
+	return generateInterface(fileroot.c_str(), factoryname.c_str());
+}
 
 };
 };

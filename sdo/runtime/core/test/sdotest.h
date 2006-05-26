@@ -138,6 +138,7 @@ class sdotest {
         static int noncontest();
         static int versiontest();
         static int defaulttest();
+        static int defaulttest_strobj();
         static int querytest();
         static int getproptest();
         static int nulltest();

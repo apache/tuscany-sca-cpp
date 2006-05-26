@@ -131,6 +131,7 @@ int main (int argc, char** argv)
     TEST (  sdotest::noncontest() );
     TEST (  sdotest::versiontest() );
     TEST (  sdotest::defaulttest() );
+    TEST (  sdotest::defaulttest_strobj() );
     TEST (  sdotest::nulltest() );
     TEST (  sdotest::usertest() );
     TEST (  sdotest::querytest() );
@@ -163,7 +164,7 @@ int main (int argc, char** argv)
     TEST (  sdotest::b46613() );
     TEST (  sdotest::b45933() );
 
-    cout << "Total tests:" << totaltests << " Tests passed:" << testspassed;
+    cout << "Total tests:" << totaltests << " Tests passed:" << testspassed << endl;
 
 return 0;
 }

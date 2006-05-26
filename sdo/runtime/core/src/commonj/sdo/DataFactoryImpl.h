@@ -61,7 +61,21 @@ public:
         bool isDataType = false
         );
 
+    virtual void addType(const SDOString& uri, const SDOString& inTypeName,
+        bool isSeqenced = false, 
+        bool isOpen = false,
+        bool isAbstract = false,
+        bool isDataType = false
+        );
+
     virtual void addType(const char* uri, const char* inTypeName,
+        bool isSeqenced , 
+        bool isOpen ,
+        bool isAbstract ,
+        bool isDataType ,
+        bool isFromList );
+
+    virtual void addType(const SDOString& uri, const SDOString& inTypeName,
         bool isSeqenced , 
         bool isOpen ,
         bool isAbstract ,
@@ -75,10 +89,22 @@ public:
                                    const char* propTypeName,
                                    bool isMany = false);
 
+    virtual void addPropertyToType(const SDOString& uri, 
+                                   const SDOString& inTypeName,
+                                   const SDOString& propname,
+                                   const SDOString& propTypeUri, 
+                                   const SDOString& propTypeName,
+                                   bool isMany = false);
 
     virtual void addPropertyToType(const char* uri, 
                                    const char* inTypeName,
                                    const char* propname,
+                                   const Type& propType,
+                                   bool isMany = false);
+
+    virtual void addPropertyToType(const SDOString& uri, 
+                                   const SDOString& inTypeName,
+                                   const SDOString& propname,
                                    const Type& propType,
                                    bool isMany = false);
 
@@ -88,9 +114,20 @@ public:
                                    bool isMany = false);
     
     virtual void addPropertyToType(const Type& type, 
+                                   const SDOString& propname,
+                                   const Type& propType,
+                                   bool isMany = false);
+
+    virtual void addPropertyToType(const Type& type, 
                                    const char* propname,
                                    const char* propTypeUri, 
                                    const char* propTypeName,
+                                   bool isMany = false);
+
+    virtual void addPropertyToType(const Type& type, 
+                                   const SDOString& propname,
+                                   const SDOString& propTypeUri, 
+                                   const SDOString& propTypeName,
                                    bool isMany = false);
 
     virtual void addPropertyToType(const char* uri, 
@@ -102,6 +139,15 @@ public:
                                    bool  isReadOnly,
                                    bool  isContainment);
 
+    virtual void addPropertyToType(const SDOString& uri, 
+                                   const SDOString& inTypeName,
+                                   const SDOString& propname,
+                                   const SDOString& propTypeUri, 
+                                   const SDOString& propTypeName,
+                                   bool isMany ,
+                                   bool  isReadOnly,
+                                   bool  isContainment);
+
     virtual void addPropertyToType(const char* uri, 
                                    const char* inTypeName,
                                    const char* propname,
@@ -110,8 +156,23 @@ public:
                                    bool  isReadOnly,
                                    bool  isContainment);
     
+    virtual void addPropertyToType(const SDOString& uri, 
+                                   const SDOString& inTypeName,
+                                   const SDOString& propname,
+                                   const Type& propType,
+                                   bool  isMany,
+                                   bool  isReadOnly,
+                                   bool  isContainment);
+
     virtual void addPropertyToType(const Type& type, 
                                    const char* propname,
+                                   const Type& propType,
+                                   bool  isMany,
+                                   bool  isReadOnly,
+                                   bool  isContainment);
+
+    virtual void addPropertyToType(const Type& type, 
+                                   const SDOString& propname,
                                    const Type& propType,
                                    bool  isMany,
                                    bool  isReadOnly,
@@ -121,6 +182,14 @@ public:
                                    const char* propname,
                                    const char* propTypeUri, 
                                    const char* propTypeName,
+                                   bool  isMany,
+                                   bool  isReadOnly,
+                                   bool  isContainment);
+
+    virtual void addPropertyToType(const Type& type, 
+                                   const SDOString& propname,
+                                   const SDOString& propTypeUri, 
+                                   const SDOString& propTypeName,
                                    bool  isMany,
                                    bool  isReadOnly,
                                    bool  isContainment);
@@ -136,11 +205,21 @@ public:
                               const char* basename,
                               bool isRestriction = false);
 
+    virtual void setBaseType( const SDOString& typeuri,
+                              const SDOString& typenam,
+                              const SDOString& baseuri,
+                              const SDOString& basename,
+                              bool isRestriction = false);
+
     virtual const Type& getType(const char* uri, const char* inTypeName) const;
+
+    virtual const Type& getType(const SDOString& uri, const SDOString& inTypeName) const;
 
     virtual TypeList getTypes() const;
 
     virtual DataObjectPtr create(const char* uri, const char* typeName) ;
+
+    virtual DataObjectPtr create(const SDOString& uri, const SDOString& typeName) ;
 
     virtual DataObjectPtr create(const Type& type) ;
 
@@ -148,18 +227,32 @@ public:
                                   const char* typenam,
                                   const char* alias) ;
 
+    virtual void setAlias(const SDOString& typeuri,
+                                  const SDOString& typenam,
+                                  const SDOString& alias) ;
+
     virtual void setAlias(const char* typeuri, 
                                   const char* typname, 
                                   const char* propname,
                                   const char* alias) ;
+
+	virtual void setAlias(const SDOString& typeuri, 
+                                  const SDOString& typname, 
+                                  const SDOString& propname,
+                                  const SDOString& alias) ;
 
     virtual void setOpposite (const Type& type,
                                   const char* propname,
                               const Type& opptype,
                               const char* opppropname) ;
 
+    virtual void setOpposite (const Type& type,
+                              const SDOString& propname,
+                              const Type& opptype,
+                              const SDOString& opppropname) ;
 
-    virtual void setPropertySubstitute(
+
+  virtual void setPropertySubstitute(
             const char* uri, 
             const char* inTypeName,
             const char* propname,
@@ -167,11 +260,24 @@ public:
             const char* subTypeUri, 
             const char* subTypeName);
         
+  virtual void setPropertySubstitute(
+            const SDOString& uri, 
+            const SDOString& inTypeName,
+            const SDOString& propname,
+            const SDOString& subname,
+            const SDOString& subTypeUri, 
+            const SDOString& subTypeName);
 
     virtual void setPropertySubstitute(
             const Type& containertype,
             const char* propname,
             const char* subname,
+            const Type& subtype);
+
+    virtual void setPropertySubstitute(
+            const Type& containertype,
+            const SDOString& propname,
+            const SDOString& subname,
             const Type& subtype);
 
     ////////////////////////////////////////////////////////
@@ -182,7 +288,17 @@ public:
 
     virtual void setDefault(
         const Type& t, 
+        const SDOString& propname, 
+        bool b ) ;
+
+    virtual void setDefault(
+        const Type& t, 
         const char* propname , 
+        char c) ;
+
+    virtual void setDefault(
+        const Type& t, 
+        const SDOString& propname , 
         char c) ;
 
     virtual void setDefault(
@@ -192,12 +308,28 @@ public:
 
     virtual void setDefault(
         const Type& t, 
-        const char* propname , 
-        char* c) ;
+        const SDOString& propname , 
+        wchar_t c) ;
 
     virtual void setDefault(
         const Type& t, 
         const char* propname , 
+        char* c) ;
+
+// #pragma message( "GMW: Unimplemented method, writable string parameter" )
+//     virtual void setDefault(
+//         const Type& t, 
+//         const SDOString& propname , 
+//         SDOString& c) ;
+
+    virtual void setDefault(
+        const Type& t, 
+        const char* propname , 
+        short s) ;
+
+    virtual void setDefault(
+        const Type& t, 
+        const SDOString& propname , 
         short s) ;
 
 
@@ -207,6 +339,12 @@ public:
         const Type& t, 
         const char* propname , 
         long l) ;
+
+    virtual void setDefault(
+        const Type& t, 
+        const SDOString& propname , 
+        long l) ;
+
 #endif
 
     virtual void setDefault(
@@ -216,7 +354,17 @@ public:
 
     virtual void setDefault(
         const Type& t, 
+        const SDOString& propname , 
+        int64_t i) ;
+
+    virtual void setDefault(
+        const Type& t, 
         const char* propname , 
+        float f) ;
+
+    virtual void setDefault(
+        const Type& t, 
+        const SDOString& propname , 
         float f) ;
 
     virtual void setDefault(
@@ -226,7 +374,17 @@ public:
 
     virtual void setDefault(
         const Type& t, 
+        const SDOString& propname ,
+        long double d) ;
+
+    virtual void setDefault(
+        const Type& t, 
         const char* propname , 
+        const SDODate d) ;
+
+    virtual void setDefault(
+        const Type& t, 
+        const SDOString& propname , 
         const SDODate d) ;
 
     virtual void setDefault(
@@ -237,8 +395,20 @@ public:
 
     virtual void setDefault(
         const Type& t, 
+        const SDOString& propname , 
+        const wchar_t* c, 
+        unsigned int len) ;
+
+    virtual void setDefault(
+        const Type& t, 
         const char* propname , 
         const char* c, 
+        unsigned int len) ;
+
+    virtual void setDefault(
+        const Type& t, 
+        const SDOString& propname , 
+        const SDOString& c, 
         unsigned int len) ;
 
     virtual void setDefault(
@@ -248,9 +418,21 @@ public:
         bool b ) ;
 
     virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname, 
+        bool b ) ;
+
+    virtual void setDefault(
         const char* typuri, 
         const char* typnam, 
         const char* propname , 
+        char c) ;
+
+    virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
         char c) ;
 
     virtual void setDefault(
@@ -260,15 +442,34 @@ public:
         wchar_t c) ;
 
     virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
+        wchar_t c) ;
+
+    virtual void setDefault(
         const char* typuri, 
         const char* typnam, 
         const char* propname ,
         char* c) ;
 
+// #pragma message( "GMW: Unimplemented method, writable string parameter" )
+//     virtual void setDefault(
+//         const SDOString& typuri, 
+//         const SDOString& typnam, 
+//         const SDOString& propname ,
+//         SDOString& c) ;
+
     virtual void setDefault(
         const char* typuri, 
         const char* typnam, 
         const char* propname , 
+        short s) ;
+
+    virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
         short s) ;
 
 #if __WORDSIZE !=64
@@ -277,6 +478,13 @@ public:
         const char* typnam, 
         const char* propname , 
         long l) ;
+
+    virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
+        long l) ;
+
 #endif
 
     virtual void setDefault(
@@ -286,9 +494,21 @@ public:
         int64_t i) ;
 
     virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname ,
+        int64_t i) ;
+
+    virtual void setDefault(
         const char* typuri, 
         const char* typnam, 
         const char* propname , 
+        float f) ;
+
+    virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
         float f) ;
 
     virtual void setDefault(
@@ -298,9 +518,21 @@ public:
         long double d) ;
 
     virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
+        long double d) ;
+
+    virtual void setDefault(
         const char* typuri, 
         const char* typnam, 
         const char* propname , 
+        const SDODate d) ;
+
+    virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
         const SDODate d) ;
 
     virtual void setDefault(
@@ -311,10 +543,24 @@ public:
         unsigned int len) ;
 
     virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
+        const wchar_t* c, 
+        unsigned int len) ;
+
+    virtual void setDefault(
         const char* typuri, 
         const char* typnam, 
         const char* propname , 
         const char* c, 
+        unsigned int len) ;
+
+    virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname , 
+        const SDOString& c, 
         unsigned int len) ;
 
     virtual void setDASValue( 
@@ -322,20 +568,40 @@ public:
                 const char* name,
                 DASValue* value);
 
+    virtual void setDASValue( 
+            const Type& type,
+            const SDOString& name,
+            DASValue* value);
+
     virtual void setDASValue(
                 const char* typeuri,
                 const char* typenam,
                 const char* name,
                 DASValue* value);
 
+    virtual void setDASValue(
+                const SDOString& typeuri,
+                const SDOString& typenam,
+                const SDOString& name,
+                DASValue* value);
+
     virtual DASValue* getDASValue(
                 const Type& type,
                 const char* name) const;
 
     virtual DASValue* getDASValue(
+                const Type& type,
+                const SDOString& name) const;
+
+    virtual DASValue* getDASValue(
                 const char* typeuri,
                 const char* typenam, 
                 const char* name) const;
+
+    virtual DASValue* getDASValue(
+                const SDOString& typeuri,
+                const SDOString& typenam, 
+                const SDOString& name) const;
 
     virtual void setDASValue( 
                 const Type& type,
@@ -344,10 +610,23 @@ public:
                 DASValue* value);
 
     virtual void setDASValue( 
+                const Type& type,
+                const SDOString& propertyName,
+                const SDOString& name,
+                DASValue* value);
+
+    virtual void setDASValue( 
                 const char* typeuri,
                 const char* typenam,
                 const char* propertyName,
                 const char* name,
+                DASValue* value);
+
+    virtual void setDASValue( 
+                const SDOString& typeuri,
+                const SDOString& typenam,
+                const SDOString& propertyName,
+                const SDOString& name,
                 DASValue* value);
 
     virtual DASValue* getDASValue( 
@@ -355,11 +634,22 @@ public:
                 const char* propertyName,
                 const char* name) const;
 
+    virtual DASValue* getDASValue( 
+                const Type& type,
+                const SDOString& propertyName,
+                const SDOString& name) const;
+
     virtual DASValue* getDASValue(
                 const char* typeuri,
                 const char* typenam,
                 const char* propertyName, 
                 const char* name) const;
+
+    virtual DASValue* getDASValue(
+                const SDOString& typeuri,
+                const SDOString& typenam,
+                const SDOString& propertyName, 
+                const SDOString& name) const;
 
     virtual    void resolve();
 
@@ -377,6 +667,8 @@ public:
     virtual bool compareTypes(const TypeImpl* t1, const Type& t2);
 
    virtual bool generateInterface(const char* fileroot, const char* factoryname);
+
+   virtual bool generateInterface(const SDOString& fileroot, const SDOString& factoryname);
 
 private:
     typedef map<string, TypeImpl*> TYPES_MAP;

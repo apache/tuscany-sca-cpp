@@ -28,6 +28,7 @@
 #include "commonj/sdo/RefCountingPointer.h"
 #include "commonj/sdo/SDODate.h"
 #include "commonj/sdo/DASValue.h"
+#include "commonj/sdo/SDOString.h"
 
 
 namespace commonj{
@@ -81,6 +82,8 @@ class DataFactory : public RefCountingObject
 
         SDO_API virtual DataObjectPtr create(const char* uri, const char* typeName)  = 0;
 
+        SDO_API virtual DataObjectPtr create(const SDOString& uri, const SDOString& typeName)  = 0;
+
         SDO_API virtual DataObjectPtr create(const Type& type)  = 0;
 
         /**
@@ -91,6 +94,8 @@ class DataFactory : public RefCountingObject
          */
 
         virtual const Type& getType(const char* uri, const char* inTypeName) const = 0;
+
+        virtual const Type& getType(const SDOString& uri, const SDOString& inTypeName) const = 0;
 
 
         /**
@@ -124,6 +129,12 @@ class DataFactory : public RefCountingObject
             bool isOpen      = false,
             bool isAbstract  = false,
             bool isDataType  = false) = 0;
+
+		virtual SDO_API void addType(const SDOString& uri, const SDOString& inTypeName,
+            bool isSequenced = false, 
+            bool isOpen      = false,
+            bool isAbstract  = false,
+            bool isDataType  = false) = 0;
         
 
         /**
@@ -152,6 +163,13 @@ class DataFactory : public RefCountingObject
             const char* basename,
             bool isRestriction = false) = 0;
 
+        virtual SDO_API void setBaseType( 
+            const SDOString& typeuri,
+            const SDOString& typenam,
+            const SDOString& baseuri,
+            const SDOString& basename,
+            bool isRestriction = false) = 0;
+
 
         /**
          * Generate a typesafe interface for a given data factory
@@ -160,6 +178,10 @@ class DataFactory : public RefCountingObject
 
         virtual SDO_API bool generateInterface(const char* fileroot,
                               const char *factoryname) = 0;
+
+        virtual SDO_API bool generateInterface(const SDOString& fileroot,
+                              const SDOString& factoryname) = 0;
+
 
 
         /**
@@ -173,6 +195,10 @@ class DataFactory : public RefCountingObject
         virtual SDO_API void setAlias(const char* typeuri,
             const char* typenam,
             const char* alias) = 0;
+
+        virtual SDO_API void setAlias(const SDOString& typeuri,
+            const SDOString& typenam,
+            const SDOString& alias) = 0;
 
         /**
          *  DataFactory::addPropertyToType adds properties
@@ -196,15 +222,24 @@ class DataFactory : public RefCountingObject
          */
 
 
-        virtual SDO_API void addPropertyToType(const char* uri, 
+        virtual SDO_API void addPropertyToType(const char* uri,
             const char* inTypeName,
             const char* propname,
-            const char* propTypeUri, 
+            const char* propTypeUri,
             const char* propTypeName,
+            bool isMany,
+            bool isReadOnly ,
+            bool isContainment ) = 0;
+
+        virtual SDO_API void addPropertyToType(const SDOString& uri,
+            const SDOString& inTypeName,
+            const SDOString& propname,
+            const SDOString& propTypeUri,
+            const SDOString& propTypeName,
             bool  isMany  ,
             bool  isReadOnly ,
             bool  isContainment ) = 0;
-        
+
         virtual SDO_API void addPropertyToType(const char* uri, 
             const char* inTypeName,
             const char* propname,
@@ -213,6 +248,14 @@ class DataFactory : public RefCountingObject
             bool  isReadOnly ,
             bool  isContainment ) = 0;
         
+        virtual SDO_API void addPropertyToType(const SDOString& uri, 
+            const SDOString& inTypeName,
+            const SDOString& propname,
+            const Type& propType,
+            bool  isMany   ,
+            bool  isReadOnly ,
+            bool  isContainment ) = 0;
+
         virtual SDO_API void addPropertyToType(const Type& type, 
             const char* propname,
             const Type& propType,
@@ -221,14 +264,28 @@ class DataFactory : public RefCountingObject
             bool  isContainment ) = 0;
         
         virtual SDO_API void addPropertyToType(const Type& type, 
+            const SDOString& propname,
+            const Type& propType,
+            bool  isMany   ,
+            bool  isReadOnly ,
+            bool  isContainment ) = 0;
+
+        virtual SDO_API void addPropertyToType(const Type& type, 
             const char* propname,
             const char* propTypeUri, 
             const char* propTypeName,
             bool  isMany   ,
             bool  isReadOnly ,
             bool  isContainment ) = 0;
-        
-        
+
+        virtual SDO_API void addPropertyToType(const Type& type, 
+            const SDOString& propname,
+            const SDOString& propTypeUri, 
+            const SDOString& propTypeName,
+            bool  isMany   ,
+            bool  isReadOnly ,
+            bool  isContainment ) = 0;
+
         virtual SDO_API void addPropertyToType(const char* uri, 
             const char* inTypeName,
             const char* propname,
@@ -236,21 +293,45 @@ class DataFactory : public RefCountingObject
             const char* propTypeName,
             bool  isMany   = false) =0;
         
+        virtual SDO_API void addPropertyToType(const SDOString& uri, 
+            const SDOString& inTypeName,
+            const SDOString& propname,
+            const SDOString& propTypeUri, 
+            const SDOString& propTypeName,
+            bool  isMany   = false) =0;
+
         virtual SDO_API void addPropertyToType(const char* uri, 
             const char* inTypeName,
             const char* propname,
             const Type& propType,
             bool  isMany   = false) =0;
         
+        virtual SDO_API void addPropertyToType(const SDOString& uri, 
+            const SDOString& inTypeName,
+            const SDOString& propname,
+            const Type& propType,
+            bool  isMany   = false) =0;
+
         virtual SDO_API void addPropertyToType(const Type& type, 
             const char* propname,
             const Type& propType,
             bool  isMany   = false) =0;
         
         virtual SDO_API void addPropertyToType(const Type& type, 
+            const SDOString& propname,
+            const Type& propType,
+            bool  isMany   = false) =0;
+
+        virtual SDO_API void addPropertyToType(const Type& type, 
             const char* propname,
             const char* propTypeUri, 
             const char* propTypeName,
+            bool  isMany   = false) =0;
+
+        virtual SDO_API void addPropertyToType(const Type& type, 
+            const SDOString& propname,
+            const SDOString& propTypeUri, 
+            const SDOString& propTypeName,
             bool  isMany   = false) =0;
 
         /**
@@ -266,6 +347,11 @@ class DataFactory : public RefCountingObject
             const Type& oppositetype,
             const char* oppositePropName) = 0;
         
+        virtual SDO_API void setOpposite( 
+            const Type& type,
+            const SDOString& propName,
+            const Type& oppositetype,
+            const SDOString& oppositePropName) = 0;
         
         /**
          *  DataFactory::setAlias sets a property alias name
@@ -278,6 +364,11 @@ class DataFactory : public RefCountingObject
             const char* typname, 
             const char* propname,
             const char* alias) = 0;
+
+        virtual SDO_API void setAlias(const SDOString& typeuri, 
+            const SDOString& typname, 
+            const SDOString& propname,
+            const SDOString& alias) = 0;
 
         /**
          *  DataFactory::setPropertySubstitute sets a substitute for a property
@@ -297,12 +388,25 @@ class DataFactory : public RefCountingObject
             const char* subname,
             const char* subTypeUri, 
             const char* subTypeName) = 0;
-        
+
+        virtual SDO_API void setPropertySubstitute(
+            const SDOString& uri, 
+            const SDOString& inTypeName,
+            const SDOString& propname,
+            const SDOString& subname,
+            const SDOString& subTypeUri, 
+            const SDOString& subTypeName) = 0;
 
         virtual SDO_API void setPropertySubstitute(
             const Type& containertype,
             const char* propname,
             const char* subname,
+            const Type& subtype) = 0;
+
+        virtual SDO_API void setPropertySubstitute(
+            const Type& containertype,
+            const SDOString& propname,
+            const SDOString& subname,
             const Type& subtype) = 0;
 
 
@@ -326,7 +430,17 @@ class DataFactory : public RefCountingObject
 
         virtual SDO_API void setDefault(
             const Type& t, 
+            const SDOString& propname, 
+            bool b ) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
             const char* propname , 
+            char c) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
+            const SDOString& propname , 
             char c) = 0;
 
         virtual SDO_API void setDefault(
@@ -336,12 +450,28 @@ class DataFactory : public RefCountingObject
 
         virtual SDO_API void setDefault(
             const Type& t, 
-            const char* propname , 
-            char* c) = 0;
+            const SDOString& propname , 
+            wchar_t c) = 0;
 
         virtual SDO_API void setDefault(
             const Type& t, 
             const char* propname , 
+            char* c) = 0;
+
+// #pragma message( "GMW: Unimplemented method, writable string parameter" )
+//         virtual SDO_API void setDefault(
+//             const Type& t, 
+//             const SDOString& propname , 
+//             SDOString& c) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
+            const char* propname , 
+            short s) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
+            const SDOString& propname , 
             short s) = 0;
 
 
@@ -349,6 +479,11 @@ class DataFactory : public RefCountingObject
         virtual SDO_API void setDefault(
             const Type& t, 
             const char* propname , 
+            long l) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
+            const SDOString& propname , 
             long l) = 0;
 #endif
 
@@ -359,12 +494,27 @@ class DataFactory : public RefCountingObject
 
         virtual SDO_API void setDefault(
             const Type& t, 
+            const SDOString& propname , 
+            int64_t i) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
             const char* propname , 
             float f) = 0;
 
         virtual SDO_API void setDefault(
             const Type& t, 
+            const SDOString& propname , 
+            float f) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
             const char* propname , 
+            long double d) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
+            const SDOString& propname , 
             long double d) = 0;
 
         virtual SDO_API void setDefault(
@@ -375,14 +525,31 @@ class DataFactory : public RefCountingObject
 
         virtual SDO_API void setDefault(
             const Type& t, 
+            const SDOString& propname , 
+            const wchar_t* c, 
+            unsigned int len) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
             const char* propname , 
             const char* c, 
+            unsigned int len) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
+            const SDOString& propname , 
+            const SDOString& c, 
             unsigned int len) = 0;
 
 
         virtual SDO_API void setDefault(
             const Type& t, 
             const char* propname , 
+            const SDODate dat) = 0;
+
+        virtual SDO_API void setDefault(
+            const Type& t, 
+            const SDOString& propname , 
             const SDODate dat) = 0;
 
         virtual SDO_API void setDefault(
@@ -392,9 +559,21 @@ class DataFactory : public RefCountingObject
             bool b ) = 0;
 
         virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname, 
+            bool b ) = 0;
+
+        virtual SDO_API void setDefault(
             const char* typuri, 
             const char* typnam, 
             const char* propname , 
+            char c) = 0;
+
+        virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname , 
             char c) = 0;
 
         virtual SDO_API void setDefault(
@@ -404,15 +583,34 @@ class DataFactory : public RefCountingObject
             wchar_t c) = 0;
 
         virtual SDO_API void setDefault(
-            const char* typuri, 
-            const char* typnam, 
-            const char* propname , 
-            char* c) = 0;
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname ,
+            wchar_t c) = 0;
 
         virtual SDO_API void setDefault(
             const char* typuri, 
             const char* typnam, 
             const char* propname , 
+            char* c) = 0;
+
+// #pragma message( "GMW: Unimplemented method, writable string parameter" )
+//         virtual SDO_API void setDefault(
+//             const SDOString& typuri, 
+//             const SDOString& typnam, 
+//             const SDOString& propname , 
+//             SDOString& c) = 0;
+
+        virtual SDO_API void setDefault(
+            const char* typuri, 
+            const char* typnam, 
+            const char* propname , 
+            short s) = 0;
+
+        virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname , 
             short s) = 0;
 
 
@@ -422,6 +620,13 @@ class DataFactory : public RefCountingObject
             const char* typnam, 
             const char* propname ,
             long l) = 0;
+
+        virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname ,
+            long l) = 0;
+
 #endif
 
         virtual SDO_API void setDefault(
@@ -431,9 +636,21 @@ class DataFactory : public RefCountingObject
             int64_t i) = 0;
 
         virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname , 
+            int64_t i) = 0;
+
+        virtual SDO_API void setDefault(
             const char* typuri, 
             const char* typnam, 
             const char* propname , 
+            float f) = 0;
+
+        virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname , 
             float f) = 0;
 
         virtual SDO_API void setDefault(
@@ -443,9 +660,22 @@ class DataFactory : public RefCountingObject
             long double d) = 0;
 
         virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname , 
+            long double d) = 0;
+
+        virtual SDO_API void setDefault(
             const char* typuri, 
             const char* typnam, 
             const char* propname ,
+            const wchar_t* c, 
+            unsigned int len) = 0;
+
+        virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname ,
             const wchar_t* c, 
             unsigned int len) = 0;
 
@@ -457,11 +687,24 @@ class DataFactory : public RefCountingObject
             unsigned int len) = 0;
 
         virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname , 
+            const SDOString& c, 
+            unsigned int len) = 0;
+
+        virtual SDO_API void setDefault(
             const char* typuri, 
             const char* typnam, 
             const char* propname , 
             const SDODate dat) = 0;
-        
+
+        virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname , 
+            const SDODate dat) = 0;
+
 
         /**
          * DAS values are used by a DAS implementation
@@ -472,21 +715,41 @@ class DataFactory : public RefCountingObject
             const char* name,
             DASValue* value) = 0;
 
+        virtual SDO_API void setDASValue( 
+            const Type& type,
+            const SDOString& name,
+            DASValue* value) = 0;
+
         virtual SDO_API void setDASValue(
             const char* typeuri,
             const char* typenam,
             const char* name,
             DASValue* value) = 0;
 
+        virtual SDO_API void setDASValue(
+            const SDOString& typeuri,
+            const SDOString& typenam,
+            const SDOString& name,
+            DASValue* value) = 0;
+
         virtual SDO_API DASValue* getDASValue( 
             const Type& type,
             const char* name) const = 0;
+
+        virtual SDO_API DASValue* getDASValue( 
+            const Type& type,
+            const SDOString& name) const = 0;
 
         virtual SDO_API DASValue* getDASValue(
             const char* typeuri,
             const char* typenam, 
             const char* name) const = 0;
 
+        virtual SDO_API DASValue* getDASValue(
+            const SDOString& typeuri,
+            const SDOString& typenam, 
+            const SDOString& name) const = 0;
+
         virtual SDO_API void setDASValue( 
             const Type& type,
             const char* propertyName,
@@ -494,10 +757,23 @@ class DataFactory : public RefCountingObject
             DASValue* value) = 0;
 
         virtual SDO_API void setDASValue( 
+            const Type& type,
+            const SDOString& propertyName,
+            const SDOString& name,
+            DASValue* value) = 0;
+
+        virtual SDO_API void setDASValue( 
             const char* typeuri,
             const char* typenam,
             const char* propertyName,
             const char* name,
+            DASValue* value) = 0;
+
+        virtual SDO_API void setDASValue( 
+            const SDOString& typeuri,
+            const SDOString& typenam,
+            const SDOString& propertyName,
+            const SDOString& name,
             DASValue* value) = 0;
 
         virtual SDO_API DASValue* getDASValue( 
@@ -505,11 +781,22 @@ class DataFactory : public RefCountingObject
             const char* propertyName,
             const char* name) const = 0;
 
+        virtual SDO_API DASValue* getDASValue( 
+            const Type& type,
+            const SDOString& propertyName,
+            const SDOString& name) const = 0;
+
         virtual SDO_API DASValue* getDASValue(
             const char* typeuri,
             const char* typenam,
             const char* propertyName, 
             const char* name) const = 0;
+
+        virtual SDO_API DASValue* getDASValue(
+            const SDOString& typeuri,
+            const SDOString& typenam,
+            const SDOString& propertyName, 
+            const SDOString& name) const = 0;
 
         virtual void resolve() = 0;
 

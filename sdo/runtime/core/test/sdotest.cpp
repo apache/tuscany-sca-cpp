@@ -1446,6 +1446,161 @@ int sdotest::defaulttest()
     }
 }
 
+// Re-write of defaulttest to use methods taking SDOString parameters 
+int sdotest::defaulttest_strobj()
+{
+
+  SDOString ns1("myspace");
+  SDOString testName("DefaultTest");
+  SDOString objectName("AnObject");
+  SDOString propName("commonj.sdo");
+
+    try{ 
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+ 
+    mdg->addType(ns1, testName); 
+    mdg->addType(ns1, objectName);
+    
+    const Type& tm = mdg->getType(ns1, testName);
+    const Type& to = mdg->getType(ns1, objectName);
+
+    mdg->addPropertyToType(tm, "boolean", propName, "Boolean");
+
+    mdg->setDefault(ns1, testName, "boolean", true);
+
+    mdg->addPropertyToType(tm, "byte", propName, "Byte");
+    
+    mdg->setDefault(ns1, testName, "byte", (char)'d');
+
+    mdg->addPropertyToType(tm, "character", propName, "Character");
+
+    mdg->setDefault(ns1, testName, "character", (wchar_t)'e');
+
+    mdg->addPropertyToType(tm, "short", propName, "Short");
+
+    mdg->setDefault(ns1, testName, "short", (short)300);
+
+    mdg->addPropertyToType(tm, "long", propName, "Integer");
+
+    mdg->setDefault(ns1, testName, "long", (long)400);
+
+    mdg->addPropertyToType(tm, "longs", propName, "Integer", true);
+
+    mdg->setDefault(ns1, testName, "longs", (long)800);
+
+    mdg->addPropertyToType(tm, "longlong", propName, "Long");
+
+    mdg->setDefault(ns1, testName, "longlong", (int64_t)500);
+
+    mdg->addPropertyToType(tm, "float", propName, "Float");
+
+    mdg->setDefault(ns1, testName, "float", (float)600.0);
+
+    mdg->addPropertyToType(tm, "longdouble", propName, "Double");
+
+    mdg->setDefault(ns1, testName, "longdouble", (long double)700.0);
+
+    mdg->addPropertyToType(tm, "date", propName, "Date");
+
+    mdg->setDefault(ns1, testName, "date", (long)900);
+
+    mdg->addPropertyToType(tm, "string", propName, "String");
+
+    wchar_t* help = new wchar_t[4];
+    help[0] = 'H';
+    help[1] = 'E';
+    help[2] = 'L';
+    help[3] = 'P';
+
+    mdg->setDefault(ns1, testName, "string", help, 4);
+
+    delete help;
+
+    char* help2 = new char[4];
+    help2[0] = 'H';
+    help2[1] = 'E';
+    help2[2] = 'L';
+    help2[3] = 'P';
+
+    mdg->addPropertyToType(tm, "bytes", propName, "Bytes");
+
+    mdg->setDefault(ns1, testName, "bytes", help2, 4);
+
+    delete help2;
+
+    mdg->addPropertyToType(tm, "object", ns1, objectName);
+
+    DataObjectPtr test = mdg->create((Type&)tm);
+
+    FILE *f = fopen("defaults.dat","w+");
+    if (f == 0)
+    {
+        if (!silent) cout << "Unable to open file defaults.dat" << endl;
+        return 0;
+    }
+
+
+    fprintf(f, "Boolean default is true: %d\n",test->getBoolean("boolean"));
+
+    fprintf(f, "Byte default is d: %d\n",test->getByte("byte"));
+    
+    fprintf(f, "Character default is e: %d\n",test->getCharacter("character"));
+
+    fprintf(f, "Short default is 300: %d\n",test->getShort("short"));
+
+    fprintf(f, "Long default is 400: %d\n",test->getInteger("long"));
+
+    try {
+    fprintf(f, "Longs default is 800: %d\n" ,test->getInteger("longs[1]"));
+    }
+    catch (SDOIndexOutOfRangeException ex)
+    {
+        fprintf(f,"Expected index out of range OK\n");
+    }
+
+    fprintf(f,"Float default is 600: %.3f\n",test->getFloat("float"));
+
+    fprintf(f, "LongDouble default is 700: %.3f\n",(float)test->getDouble("longdouble"));
+
+    fprintf(f, "String default is HELP: ");
+    unsigned int lenw = test->getLength("string");
+    if (lenw > 0) {
+        char* tw = new char[lenw];
+        test->getBytes("string",tw,lenw);
+        for (int i=0;i<lenw;i++)
+        {
+            fprintf(f,"%c",tw[i]);
+        }
+        fprintf(f,"\n");
+    }
+
+    fprintf(f,"Bytes default is HELP: ");
+    unsigned int len = test->getLength("bytes");
+    if (len > 0) {
+        char* tc = new char[len];
+        test->getBytes("bytes",tc,len);
+        for (int i=0;i<len;i++)
+        {
+            fprintf(f,"%c", tc[i]);
+        }
+        fprintf(f,"\n");
+    }
+    fclose (f);
+    return comparefiles("defaults.dat","defaults.txt");
+
+    }
+    catch (SDORuntimeException e)
+    {
+        if (!silent)cout << e.getEClassName() << " in "; 
+        if (!silent)cout << e.getFileName() << " at line ";
+        if (!silent)cout << e.getLineNumber() << endl;
+        if (!silent)cout << e.getFunctionName() << " ";
+        if (!silent)cout << e.getMessageText() << endl;
+        return 0;
+    }
+}
+
 
 int sdotest::showdefault(FILE *f, const Type& tm)
 {
