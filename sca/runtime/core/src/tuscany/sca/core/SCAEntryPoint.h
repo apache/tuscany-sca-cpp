@@ -66,13 +66,9 @@ namespace tuscany
             /**
              * Invokes an operation on the component to which the SCA entry point
              * is wired in the SCA module.
-             * Note that the operation must take a single data object as a parameter, and
-             * the return is a single data object.
-             * @param operationName Name of the operation.
-             * @param inDataObject The parameter for the operation.
-             * @return The data object which holds the result of the operation.
+             * @param operation. The operation request
              */
-            SCA_API virtual DataObjectPtr invoke(const char* operationName, DataObjectPtr inDataObject);
+            SCA_API virtual void invoke(Operation& operation);
 
             /**
              * Returns a SDO data factory from which all the types associated with the entry point
