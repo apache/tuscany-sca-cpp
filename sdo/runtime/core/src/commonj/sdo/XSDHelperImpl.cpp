@@ -54,6 +54,10 @@ namespace commonj
         XSDHelperImpl::XSDHelperImpl(DataFactoryPtr df)
         {
             dataFactory = (DataFactory*)df;
+            if (!dataFactory) 
+            {
+                dataFactory = DataFactory::getDataFactory();
+            }
         }
         
         XSDHelperImpl::~XSDHelperImpl()
@@ -208,11 +212,6 @@ namespace commonj
 
         void XSDHelperImpl::defineTypes(TypeDefinitionsImpl& typedefs) 
         {
-            if (!dataFactory) 
-            {
-                dataFactory = DataFactory::getDataFactory();
-            }
-
             DataFactoryImpl* df = (DataFactoryImpl*)(DataFactory*)dataFactory;
             
             XMLDAS_TypeDefs types = typedefs.types;

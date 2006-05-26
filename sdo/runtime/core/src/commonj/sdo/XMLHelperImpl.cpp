@@ -45,6 +45,10 @@ namespace commonj
         XMLHelperImpl::XMLHelperImpl(DataFactoryPtr df)
         {
             dataFactory = (DataFactory*)df;
+            if (!dataFactory) 
+            {
+                dataFactory = DataFactory::getDataFactory();
+            }
         }
         
         XMLHelperImpl::~XMLHelperImpl()
