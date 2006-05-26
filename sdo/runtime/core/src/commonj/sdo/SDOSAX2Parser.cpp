@@ -1224,6 +1224,41 @@ namespace commonj
                 currentPropertySetting.value = currentPropertySetting.value + chars;    
                 return;
             }
+            DataObject* dob = currentDataObject;
+            if ((dob != 0)  && ((DataObjectImpl*)dob)->getTypeImpl().isFromList())
+            {
+                // this is a list,so we need to split it up
+                DataObjectList& dl = currentDataObject->getList(
+                       (const char *)"values");
+
+                const char* str = (const char*)chars;
+                char* buf = new char[strlen(str)+1];
+                if (!buf) return;
+
+                strcpy(buf,str);
+
+                int start_point = 0;
+                int end_point;
+                int final = strlen(buf);
+
+                do {
+                   if (start_point >= final)break;
+                   while (buf[start_point] == (char)0x20 || buf[start_point] == (char)0x09
+                       || buf[start_point] == (char)0x0A || buf[start_point] == (char)0x0D )start_point++;
+                   end_point = start_point;
+                   while (buf[end_point] != (char)0x20 && buf[end_point] != (char)0x09 &&
+                          buf[end_point] != (char)0x0A && buf[end_point] != (char)0x0D &&
+                                                                        buf[end_point] != 0x0)end_point++;
+                   if (end_point == start_point)break; 
+                   *(buf+end_point) = 0;
+                   dl.append((const char*)(buf+start_point));
+                   start_point = end_point + 1;
+                } while(1);
+
+                delete buf;
+                return;
+            }
+
 
             // If the current DataObject is a sequenced Type
             // then add this as text to the sequence
@@ -1265,41 +1300,6 @@ namespace commonj
                     }
                     return;
                 }
-            }
-            
-            DataObject* dob = currentDataObject;
-            if ((dob != 0)  && ((DataObjectImpl*)dob)->getTypeImpl().isFromList())
-            {
-                // this is a list,so we need to split it up
-                DataObjectList& dl = currentDataObject->getList(
-                       (const char *)"values");
-
-                const char* str = (const char*)chars;
-                char* buf = new char[strlen(str)+1];
-                if (!buf) return;
-
-                strcpy(buf,str);
-
-                int start_point = 0;
-                int end_point;
-                int final = strlen(buf);
-
-                do {
-                   if (start_point >= final)break;
-                   while (buf[start_point] == (char)0x20 || buf[start_point] == (char)0x09
-                       || buf[start_point] == (char)0x0A || buf[start_point] == (char)0x0D )start_point++;
-                   end_point = start_point;
-                   while (buf[end_point] != (char)0x20 && buf[end_point] != (char)0x09 &&
-                          buf[end_point] != (char)0x0A && buf[end_point] != (char)0x0D &&
-                                                                        buf[end_point] != 0x0)end_point++;
-                   if (end_point == start_point)break; 
-                   *(buf+end_point) = 0;
-                   dl.append((const char*)(buf+start_point));
-                   start_point = end_point + 1;
-                } while(1);
-
-                delete buf;
-                return;
             }
            
         }
