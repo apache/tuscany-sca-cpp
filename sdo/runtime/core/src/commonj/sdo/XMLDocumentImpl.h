@@ -25,6 +25,7 @@
 #include "commonj/sdo/XMLDocument.h"
 #include "commonj/sdo/DataObject.h"
 #include "commonj/sdo/SDOXMLString.h"
+#include "commonj/sdo/SDOString.h"
 
 
 namespace commonj
@@ -58,7 +59,7 @@ namespace commonj
             
             virtual DataObjectPtr getRootDataObject() const {return dataObject;}
             virtual const char* getRootElementURI() const {return rootElementURI;}
-            virtual const char* getRootElementName() const {return rootElementName;}
+			virtual const char* getRootElementName() const {return rootElementName;}
             virtual const char* getEncoding() const {return encoding;}
             virtual void setEncoding(const char* enc);
 
@@ -77,7 +78,7 @@ namespace commonj
             
             friend std::istream& operator>>(std::istream& input, XMLDocumentImpl& doc);
         private:
-            DataObjectPtr    dataObject;
+            DataObjectPtr   dataObject;
             SDOXMLString    rootElementURI;
             SDOXMLString    rootElementName;
             SDOXMLString    encoding;

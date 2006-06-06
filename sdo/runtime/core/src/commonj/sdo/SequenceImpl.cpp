@@ -37,7 +37,7 @@
             SDO_THROW_EXCEPTION("Sequence API", SDOIndexOutOfRangeException,\
             msg.c_str());\
         }\
-        int j = 0;\
+        unsigned int j = 0;\
         for (i = the_list.begin(); (j < index) && (i != the_list.end()); ++i)\
         {\
             j++;\

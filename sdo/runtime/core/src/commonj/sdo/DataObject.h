@@ -114,6 +114,7 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API bool hasProperty(const char* name) = 0;
+    virtual SDO_API bool hasProperty(const SDOString& name) = 0;
     /**
      * These are just like getType().getProperty(), but may return
      * values other than the property list for open types.
@@ -122,6 +123,7 @@ class DataObject : public RefCountingObject
      virtual const Property& getProperty(unsigned int index) = 0;
     
     virtual const Property& getProperty(const char* prop) = 0;
+    virtual const Property& getProperty(const SDOString& prop) = 0;
  
  
     /**
@@ -172,6 +174,7 @@ class DataObject : public RefCountingObject
      * reachable from it, as identified by the specified path.
      */
 
+    virtual SDO_API DataObjectPtr getDataObject(const SDOString& path) = 0;
     virtual SDO_API DataObjectPtr getDataObject(const char* path) = 0; 
     virtual SDO_API DataObjectPtr getDataObject(unsigned int propertyIndex) = 0; 
     virtual SDO_API DataObjectPtr getDataObject(const Property& property) = 0; 
@@ -185,6 +188,7 @@ class DataObject : public RefCountingObject
 
     
     virtual SDO_API void setDataObject(const char* path, DataObjectPtr value) = 0; 
+    virtual SDO_API void setDataObject(const SDOString& path, DataObjectPtr value) = 0; 
     virtual SDO_API void setDataObject(unsigned int propertyIndex, DataObjectPtr value) = 0; 
     virtual SDO_API void setDataObject(const Property& property, DataObjectPtr value) = 0; 
 
@@ -195,6 +199,7 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API bool getBoolean(const char* path) = 0;
+    virtual SDO_API bool getBoolean(const SDOString& path) = 0;
     virtual SDO_API bool getBoolean(unsigned int propindex) = 0;
     virtual SDO_API bool getBoolean(const Property& p) = 0;
     

@@ -120,7 +120,7 @@ namespace commonj
                 for (int j = 0; j < pl.size(); j++)
                 {
                     if (!pl[j].getType().isDataType()
-                        && strcmp(pl[j].getType().getURI(),Type::SDOTypeNamespaceURI))
+                        && strcmp(pl[j].getType().getURI(),Type::SDOTypeNamespaceURI.c_str()))
                     {
                         // recurse the tree..
                         newSubstitute(pl[j].getType().getName(),
@@ -469,7 +469,7 @@ namespace commonj
                         }
                         
                         // Do not add DASValue to ChangeSummary
-                        if (!(prop.typeUri.equals(Type::SDOTypeNamespaceURI)
+                        if (!(prop.typeUri.equals(Type::SDOTypeNamespaceURI.c_str())
                             && prop.typeName.equals("ChangeSummary")))
                         {
                             df->setDASValue(

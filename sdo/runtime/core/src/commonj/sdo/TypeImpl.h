@@ -78,8 +78,10 @@ public:
      
      unsigned int convertDate(        void ** value, const SDODate i) const;
      unsigned int convert(    void ** value,const char* s) const; 
+     unsigned int convert(void ** value, const SDOString& s) const;
      unsigned int convert(    void ** value,const wchar_t* s, unsigned int len) const; 
      unsigned int convert(    void ** value,const char* s, unsigned int len) const; 
+     unsigned int convert(void ** value, const SDOString& s, unsigned int len) const; 
      unsigned int convert(            void ** value,const bool b) const; 
      unsigned int convert(            void ** value,const char c) const; 
      unsigned int convert(            void ** value,const wchar_t c) const; 
@@ -98,6 +100,8 @@ public:
      unsigned int         convertToString( void* value , wchar_t* val, unsigned int len,
                             unsigned int max) const; 
      unsigned int         convertToBytes(     void* value , char* val, unsigned int len,
+                            unsigned int max) const; 
+     unsigned int         convertToBytes(     const void* value , SDOString& val, unsigned int len,
                             unsigned int max) const; 
      const wchar_t        convertToCharacter(  void* value ,unsigned int len) const; 
      const short          convertToShort(     void* value ,unsigned int len) const; 
@@ -150,9 +154,11 @@ public:
     // Returns the property with the specified name.
     ///////////////////////////////////////////////////////////////////////////
     const Property& getProperty(const char* propertyName) const ;
+    const Property& getProperty(const SDOString& propertyName) const ;
     const Property& getProperty(unsigned int index)  const ;
 
     PropertyImpl* getPropertyImpl(const char* propertyName) const ;
+    PropertyImpl* getPropertyImpl(const SDOString& propertyName) const ;
     PropertyImpl* getPropertyImpl(unsigned int index)  const ;
     
 
@@ -169,6 +175,7 @@ public:
 
 
     unsigned int getPropertyIndex(const char* propertyName)  const ;
+    unsigned int getPropertyIndex(const SDOString& propertyName) const ;
 
     unsigned int getPropertiesSize() const;
     ///////////////////////////////////////////////////////////////////////////

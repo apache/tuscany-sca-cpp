@@ -942,7 +942,7 @@ namespace commonj
                 currentType.isRestriction=false;
                 
                 // ?? Does this only apply within a <simpleContent> tag??
-                if (typeUri.equalsIgnoreCase(Type::SDOTypeNamespaceURI))
+                if (typeUri.equalsIgnoreCase(Type::SDOTypeNamespaceURI.c_str()))
                 {
                     // here the type needs to be flagged so that 
                     // we know to serialize this property as an element with
@@ -1060,7 +1060,7 @@ namespace commonj
             if (currentProperty.typeName.isNull())
             {
                 // Set the type of this property to default (sdo:String)
-                currentProperty.typeUri = Type::SDOTypeNamespaceURI;
+                currentProperty.typeUri = Type::SDOTypeNamespaceURI.c_str();
                 currentProperty.typeName = "String";
             }
 
@@ -1313,7 +1313,7 @@ namespace commonj
             ///////////////////////////////////////////////////////////////////////
             if (qname.getURI().equalsIgnoreCase("http://www.w3.org/2001/XMLSchema"))
             {
-                uri = Type::SDOTypeNamespaceURI;
+                uri = Type::SDOTypeNamespaceURI.c_str();
                 if (qname.getLocalName().equalsIgnoreCase("ID"))
                 {
                     name = "String";
@@ -1418,7 +1418,7 @@ namespace commonj
             }
             
             // Temporary hack: ChangeSummaryType is ChangeSummary in core
-            else if (qname.getURI().equalsIgnoreCase(Type::SDOTypeNamespaceURI))
+            else if (qname.getURI().equalsIgnoreCase(Type::SDOTypeNamespaceURI.c_str()))
             {
                 if (qname.getLocalName().equalsIgnoreCase("ChangeSummaryType"))
                 {

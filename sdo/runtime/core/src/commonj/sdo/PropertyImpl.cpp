@@ -38,67 +38,54 @@ using namespace std;
 #include "commonj/sdo/SDORuntimeException.h"
 
 namespace commonj{
-namespace sdo{
-    
-
-    Substitution::Substitution()
-    {
-        name = 0;
-        type = 0;
-    }
-
-    Substitution::Substitution(DataFactoryPtr mdg, const char* inname, 
-                                                   const Type& intype)
-    {
-        DataFactory* f = (DataFactory*)mdg;
+    namespace sdo{
 
 
-        if (inname != 0)
+        Substitution::Substitution() : name(), type(0)
         {
-            name = new char[strlen(inname) + 1];
-            strcpy(name,inname);
-        }
-        else
-        {
-            name = 0;
         }
 
-        type = ((DataFactoryImpl*)f)->findType(intype.getURI(),intype.getName());
-    }
-
-    Substitution::Substitution(const Substitution& s)
-    {
-        type = s.type;
-        if (s.name != 0)
+        // Standard Constructor
+        Substitution::Substitution(DataFactoryPtr mdg,
+            const SDOString& inname,
+            const Type& intype) : name(inname)
         {
-            name = new char[strlen(s.name)+1];
-            strcpy(name,s.name);
-        }
-        else
-        {
-            name = 0;
-        }
-    }
+            DataFactory* f = (DataFactory*)mdg;
 
-    Substitution::~Substitution()
-    {
-        if (name != 0) delete (char*)name;
-    }
+            type = ((DataFactoryImpl*)f)->findType(intype.getURI(),intype.getName());
+        }
+
+        // Copy constructor
+        Substitution::Substitution(const Substitution& s) : name(s.name), type(s.type)
+        {
+        }
+
+        Substitution::~Substitution()
+        {
+        }
 
 
     ///////////////////////////////////////////////////////////////////////////
     // construction by DAS 
     ///////////////////////////////////////////////////////////////////////////
     
-    PropertyImpl::PropertyImpl(    const Type& cont, 
+    PropertyImpl::PropertyImpl(const Type& cont, 
                         const char* inname, 
                         const TypeImpl& intype, 
                         bool many ,    
                         bool ro ,
                         bool contain) : containertype(cont), type (intype)
     {
-        name = new char[strlen(inname)+1];
-        strcpy(name,inname);
+        // name = new char[strlen(inname)+1];
+        // strcpy(name,inname);
+		if (inname != 0)
+		{
+			name = inname;
+		}
+		else
+		{
+			name.erase();
+		}
         defvalue = 0;
         defvaluelength = 0;
         opposite = 0;
@@ -117,24 +104,25 @@ namespace sdo{
         }
     }
 
-
-    PropertyImpl::PropertyImpl(const PropertyImpl& p) : 
-                                       type((*(p.getTypeImpl()))),
-                                       containertype (p.getContainingType())
-        
-                       
+    PropertyImpl::PropertyImpl(const Type& cont,
+        const SDOString& inname,
+        const TypeImpl& intype,
+        bool many,
+        bool ro,
+        bool contain) :
+    containertype(cont),
+        name(inname),
+        type(intype),
+        bisMany(many),
+        bisReadOnly(ro),
+        bisContainer(contain),
+        bDefaulted(false),
+        opposite(0),
+        stringdef(0),
+        defvalue(0),
+        defvaluelength(0)
     {
-        name = new char[strlen(p.getName())+1];
-        strcpy(name,p.getName());
-        defvalue = 0;
-        defvaluelength = 0;
-        stringdef = 0;
-        opposite = 0;
-        bisMany = p.bisMany;
-        bisReadOnly = p.bisReadOnly;
-        bisContainer = p.bisContainer;
-        bDefaulted=false;
-        if (bisContainer == false && type.isDataObjectType())
+        if (contain == false && intype.isDataObjectType())
         {
             bisReference = true;
         }
@@ -144,17 +132,33 @@ namespace sdo{
         }
     }
 
-    
+      PropertyImpl::PropertyImpl(const PropertyImpl& p) :
+        type((*(p.getTypeImpl()))),
+        containertype(p.getContainingType()),
+        name(p.name),
+        bisMany(p.bisMany),
+        bisReadOnly(p.bisReadOnly),
+        bisContainer(p.bisContainer),
+        bDefaulted(false),
+        opposite(0),
+        defvalue(0),
+        defvaluelength(0),
+        stringdef(0)
+      {
+        if (bisContainer == false && type.isDataObjectType())
+          {
+            bisReference = true;
+          }
+        else 
+          {
+            bisReference = false;
+          }
+      }
+
     PropertyImpl::~PropertyImpl()
     {
-        if (name != 0) delete (char*)name;
         if (defvalue != 0) delete (char*)defvalue;
         if (stringdef != 0) delete stringdef;
-        for (int i = 0; i < aliases.size();i++)
-         {
-             delete ((char*)aliases[i]);
-         }
-
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -211,6 +215,10 @@ namespace sdo{
     {
         setDefaultCString(c);
     }
+    void PropertyImpl::setDefault(const SDOString& c)
+    {
+        setDefaultCString(c);
+    }
     void PropertyImpl::setDefault(short s )
     {
         setDefaultShort(s);
@@ -241,6 +249,10 @@ namespace sdo{
     {
         setDefaultBytes(c, len);
     }
+    void PropertyImpl::setDefault(const SDOString& c , unsigned int len)
+    {
+        setDefaultBytes(c, len);
+    }
 
     void PropertyImpl::setDefault(const wchar_t* c, unsigned int len )
     {
@@ -254,7 +266,7 @@ namespace sdo{
     {
         for (int i=0;i<substitutions.size();i++)
         {
-            if (!strcmp(inname, substitutions[i].name))
+            if (!strcmp(inname, substitutions[i].name.c_str()))
             {
                 return substitutions[i].type;
             }
@@ -266,7 +278,7 @@ namespace sdo{
     {
         if (index < getSubstitutionCount())
         {
-            return (substitutions[index].name);
+            return (substitutions[index].name.c_str());
         }
         SDO_THROW_EXCEPTION("getSubstitutionName", SDOIndexOutOfRangeException,
             "index out of range");
@@ -298,8 +310,13 @@ namespace sdo{
        ///////////////////////////////////////////////////////////////////////////
     const char* PropertyImpl::getName() const
     {
-          return name;
+          return name.c_str();
     }
+
+//     const SDOString& PropertyImpl::getName() const
+//     {
+//           return name;
+//     }
 
     void PropertyImpl::setAlias(const char* alias)
     {
@@ -308,13 +325,18 @@ namespace sdo{
         aliases.push_back(tmp); 
     }
 
+      void PropertyImpl::setAlias(const SDOString& alias)
+      {
+        aliases.push_back(alias);
+      }
+
     const char* PropertyImpl::getAlias(unsigned int index) const
     {
         if (index < aliases.size())
         {
-            return aliases[index];
+            return aliases[index].c_str();
         }
-        return name;
+        return name.c_str();
     }
 
     unsigned int PropertyImpl::getAliasCount() const
@@ -453,6 +475,12 @@ namespace sdo{
         return getTypeImpl()->convertToBytes(defvalue, val, defvaluelength, max);
     }
 
+    unsigned int PropertyImpl::getBytesDefault(SDOString& val, unsigned int max) const
+    {
+        if (max == 0) return defvaluelength; 
+        return getTypeImpl()->convertToBytes(defvalue, val, defvaluelength, max);
+    }
+
     unsigned int PropertyImpl::getDefaultLength() const
     {
         return defvaluelength;
@@ -467,12 +495,22 @@ namespace sdo{
         bDefaulted=true;
         defvaluelength = getTypeImpl()->convert(&defvalue,s); 
     }
+    void PropertyImpl::setDefaultCString(const SDOString& s) 
+    {
+        bDefaulted=true;
+        defvaluelength = getTypeImpl()->convert(&defvalue, s); 
+    }
     void PropertyImpl::setDefaultString(    const wchar_t* c , unsigned int len )
     {
         bDefaulted=true;
         defvaluelength = getTypeImpl()->convert(&defvalue,c, len); 
     }
     void PropertyImpl::setDefaultBytes(    const char* c , unsigned int len )
+    {
+        bDefaulted=true;
+        defvaluelength = getTypeImpl()->convert(&defvalue,c, len); 
+    }
+    void PropertyImpl::setDefaultBytes(const SDOString& c , unsigned int len)
     {
         bDefaulted=true;
         defvaluelength = getTypeImpl()->convert(&defvalue,c, len); 

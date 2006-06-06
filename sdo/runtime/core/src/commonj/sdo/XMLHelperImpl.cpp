@@ -87,7 +87,7 @@ namespace commonj
                     {
                         DataFactory* df = dataFactory;
                         rootElementURI = dataObject->getType().getURI();
-                        rootElementName = ((DataFactoryImpl*)df)->getRootElementName();
+                        rootElementName = ((DataFactoryImpl*)df)->getRootElementName().c_str();
                     }
                 }
                 catch (SDOPropertyNotFoundException&)

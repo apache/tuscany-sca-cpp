@@ -19,6 +19,7 @@
 
 #include "commonj/sdo/SDOXMLWriter.h"
 #include "commonj/sdo/SDOXMLString.h"
+#include "commonj/sdo/SDOString.h"
 #include "iostream"
 using namespace::std;
 #include "commonj/sdo/DASProperty.h"
@@ -120,15 +121,15 @@ namespace commonj
                 {
                     elementURI = root->getType().getURI();
                 }
-                SDOXMLString elementName = doc->getRootElementName();
-                if (elementName.isNull() || elementName.equals(""))
+                SDOString elementName = doc->getRootElementName();
+                if (elementName.empty())
                 {
                     elementName = root->getType().getName();
                     elementName = elementName.toLower(0,1);
                     writeXSIType = true;
                 }
                 
-                writeDO(root, elementURI, elementName, true, true);
+                writeDO(root, elementURI, elementName.c_str(), true, true);
             }
             rc = xmlTextWriterEndDocument(writer);
             if (rc < 0) {
@@ -466,7 +467,7 @@ namespace commonj
 
             ChangedDataObjectList& changedDOs =  cs->getChangedDataObjects();
             rc = xmlTextWriterStartElementNS(writer,
-                    SDOXMLString("sdo"), SDOXMLString("changeSummary"), SDOXMLString(Type::SDOTypeNamespaceURI));
+                    SDOXMLString("sdo"), SDOXMLString("changeSummary"), SDOXMLString(Type::SDOTypeNamespaceURI.c_str()));
             if (rc != 0) return;
             if (cs->isLogging())
             {

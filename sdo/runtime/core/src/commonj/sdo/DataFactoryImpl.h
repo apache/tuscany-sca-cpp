@@ -653,15 +653,26 @@ public:
 
     virtual    void resolve();
 
+// TODO: Remove char* form of method since it is not exposed to users
     const Type*    findType  (const char* uri, const char* inTypeName) const;
+    const Type* findType(const SDOString uri, const SDOString inTypeName) const;
+
+// TODO: Remove char* form of method since it is not exposed to users
     const TypeImpl*    findTypeImpl  (const char* uri, const char* inTypeName) const;
+    const TypeImpl* findTypeImpl(const SDOString& uri, const SDOString& inTypeName) const;
 
     void addOpenProperty(const PropertyImpl& prop);
+// TODO: Remove char* form of method since it is not exposed to users
     void removeOpenProperty(const char* name);
+    void removeOpenProperty(const SDOString& name);
     const propertyMap& getOpenProperties();
+// TODO: Remove char* form of method since it is not exposed to users
     virtual const TypeImpl& getTypeImpl(const char* uri, const char* inTypeName) const;
-    virtual const char* getRootElementName() const;
+    virtual const TypeImpl& getTypeImpl(const SDOString& uri, const SDOString& inTypeName) const;
+    virtual const SDOString& getRootElementName() const;
+// TODO: Remove char* form of method since it is not exposed to users
     virtual void setRootElementName(const char* ren);
+    virtual void setRootElementName(const SDOString& ren);
     virtual bool checkType(const Type& t);
     virtual bool isCompatible(DataFactory* df, DataObject* d);
     virtual bool compareTypes(const TypeImpl* t1, const Type& t2);
@@ -676,7 +687,7 @@ private:
 
     std::vector<DataFactory*> compatibleFactories;
 
-    char * rootElementName;
+	SDOString rootElementName;
 
     propertyMap openProperties;
 
@@ -691,8 +702,12 @@ private:
     typedef vector<TypeImpl*> TYPES_VECTOR;
     TYPES_VECTOR cstypes;
     
+// TODO: Remove char* form of method since it is not exposed to users
     char*        getFullTypeName(const char* uri, const char* inTypeName) const;
+    char*        getFullTypeName(const SDOString& uri, const SDOString& inTypeName) const;
+// TODO: Remove char* form of method since it is not exposed to users
     char*        getAliasTypeName(const char* uri, const char* inTypeName) const;
+    char*        getAliasTypeName(const SDOString& uri, const SDOString& inTypeName) const;
 
     void        copyTypes(const DataFactoryImpl& inmdg);
 };

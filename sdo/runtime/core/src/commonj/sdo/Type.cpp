@@ -27,7 +27,7 @@ namespace sdo{
      {
      }
 
-     const char* Type::SDOTypeNamespaceURI = "commonj.sdo";
+     const SDOString Type::SDOTypeNamespaceURI = "commonj.sdo";
 
 };
 };

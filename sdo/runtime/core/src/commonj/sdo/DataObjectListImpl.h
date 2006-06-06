@@ -145,6 +145,7 @@ public:
     virtual void checkFactory(DataObjectPtr dob);
     virtual void checkType(const Type& listType, const Type& objectType);
     virtual void setType(const char* uri, const char* name);    
+    virtual void setType(const SDOString& uri, const SDOString& name);    
 
    /*  getType returns type
      *
@@ -187,6 +188,19 @@ private:
     bool isReference;
 
     void validateIndex(int index) const;
+
+    static const SDOString BooleanLiteral;
+    static const SDOString ByteLiteral;
+    static const SDOString CharacterLiteral;
+    static const SDOString BytesLiteral;
+	static const SDOString StringLiteral;
+	static const SDOString IntegerLiteral;
+	static const SDOString ShortLiteral;
+	static const SDOString DateLiteral;
+	static const SDOString LongLiteral;
+	static const SDOString FloatLiteral;
+	static const SDOString DoubleLiteral;
+
 };
 };
 };

@@ -72,7 +72,7 @@ DataFactoryImpl::DataFactoryImpl()
     // abstract
     addType(Type::SDOTypeNamespaceURI,"ChangeSummary");
 
-    rootElementName = 0;
+    rootElementName.erase();
 
  
 
@@ -92,20 +92,18 @@ DataFactoryImpl::~DataFactoryImpl()
             delete typeIter->second;
         }
     }
-    if (rootElementName != 0)
-    {
-        delete rootElementName;
-        rootElementName = 0;
-    }
+
+	rootElementName.erase();
 
 }
 
 // ===================================================================
 // get the root element name 
 // ===================================================================
-const char* DataFactoryImpl::getRootElementName() const
+// const char* DataFactoryImpl::getRootElementName() const
+const SDOString& DataFactoryImpl::getRootElementName() const
 {
-    return (const char*)rootElementName;
+    return rootElementName;
 }
 
 // ===================================================================
@@ -113,16 +111,24 @@ const char* DataFactoryImpl::getRootElementName() const
 // ===================================================================
 void DataFactoryImpl::setRootElementName(const char* ren)
 {
-    if (rootElementName != 0)
-    {
-        delete rootElementName;
-        rootElementName = 0;
-    }
-    if (ren != 0 && (strlen(ren) != 0)) 
-    {
-        rootElementName = new char[strlen(ren) +1];
-        strcpy(rootElementName, ren);
-    }
+
+	// If the incoming string is meaningful then use it to reset the stored
+	// value. Otherwise, just erase what we have.
+
+    if (ren != 0 && (strlen(ren) != 0))
+	{
+		rootElementName = ren;
+	}
+	else
+	{
+		rootElementName.erase();
+	}
+
+}
+
+void DataFactoryImpl::setRootElementName(const SDOString& ren)
+{
+  rootElementName = ren;
 }
 
 // ===================================================================
@@ -131,7 +137,6 @@ void DataFactoryImpl::setRootElementName(const char* ren)
 DataFactoryImpl::DataFactoryImpl(const DataFactoryImpl& inmdg)
 {
     isResolved = false;
-    rootElementName = 0;
     setRootElementName(inmdg.getRootElementName());
     copyTypes(inmdg);
 }
@@ -143,7 +148,6 @@ DataFactoryImpl& DataFactoryImpl::operator=(const DataFactoryImpl& inmdg)
 {
     if (this != &inmdg)
     {
-        rootElementName = 0;
         copyTypes(inmdg);
         setRootElementName(inmdg.getRootElementName());
     }
@@ -432,7 +436,7 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
     }
     
     // Check if its a ChangeSummary
-    if (propTypeUri != 0 && !strcmp(propTypeUri,Type::SDOTypeNamespaceURI) &&
+    if (propTypeUri != 0 && !strcmp(propTypeUri,Type::SDOTypeNamespaceURI.c_str()) &&
         !strcmp(propTypeName,"ChangeSummary") )
     {
         if (checkForValidChangeSummary(typeIter->second)) 
@@ -715,6 +719,11 @@ char* DataFactoryImpl::getFullTypeName(const char* uri, const char* inTypeName) 
     return c;
 }
 
+char* DataFactoryImpl::getFullTypeName(const SDOString& uri, const SDOString& inTypeName) const
+{
+  return getFullTypeName(uri.c_str(), inTypeName.c_str());
+}
+
 // ===================================================================
 // getFullTypeName - return the name used as a key in the types map
 // ===================================================================
@@ -736,6 +745,11 @@ char* DataFactoryImpl::getAliasTypeName(const char* uri, const char* inTypeName)
     c = new char[strlen(inTypeName) + 9];
     sprintf(c,"ALIAS::#%s",inTypeName);
     return c;
+}
+
+char* DataFactoryImpl::getAliasTypeName(const SDOString& uri, const SDOString& inTypeName) const
+{
+  return getAliasTypeName(uri.c_str(), inTypeName.c_str());
 }
 
 // ===================================================================
@@ -1283,6 +1297,11 @@ const TypeImpl& DataFactoryImpl::getTypeImpl(const char* uri, const char* inType
     return *type;
 }
 
+const TypeImpl& DataFactoryImpl::getTypeImpl(const SDOString& uri, const SDOString& inTypeName) const
+{
+  return getTypeImpl(uri.c_str(), inTypeName.c_str());
+}
+
 // ===================================================================
 // findType
 // ===================================================================
@@ -1292,9 +1311,19 @@ const Type* DataFactoryImpl::findType(const char* uri, const char* inTypeName) c
     return (Type*)findTypeImpl(uri,inTypeName);
 }
 
+const Type* DataFactoryImpl::findType(const SDOString uri, const SDOString inTypeName) const
+{
+    return (Type*) findTypeImpl(uri.c_str(), inTypeName.c_str());
+}
+
 // ===================================================================
 // findTypeImpl
 // ===================================================================
+
+const TypeImpl* DataFactoryImpl::findTypeImpl(const SDOString& uri, const SDOString& inTypeName) const
+{
+    return findTypeImpl(uri.c_str(), inTypeName.c_str());
+}
 
 const TypeImpl* DataFactoryImpl::findTypeImpl(const char* uri, const char* inTypeName) const
 {
@@ -1429,7 +1458,7 @@ RefCountingPointer<DataObject> DataFactoryImpl::create(const char* uri, const ch
     if (!isResolved)
     {
         // Allow creation of types and properties before resolve.
-        if (uri != 0 && !strcmp(uri,Type::SDOTypeNamespaceURI)) {
+        if (uri != 0 && !strcmp(uri,Type::SDOTypeNamespaceURI.c_str())) {
             if (!strcmp(typeName,"Type") || !strcmp(typeName,"Property"))
             {
                 DataObject* dob = (DataObject*)(new DataObjectImpl(this, getTypeImpl(uri, typeName)));
@@ -1498,6 +1527,10 @@ RefCountingPointer<DataObject> DataFactoryImpl::create(const SDOString& uri, con
         openProperties.insert(make_pair(prop.getName(),prop));
     }
 
+    void DataFactoryImpl::removeOpenProperty(const SDOString& name)
+    {
+      removeOpenProperty(name.c_str());
+    }
     void DataFactoryImpl::removeOpenProperty(const char* name)
     {
         propertyMap::iterator i = 

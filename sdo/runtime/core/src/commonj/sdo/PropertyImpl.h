@@ -22,9 +22,6 @@
 
 #include "commonj/sdo/disable_warn.h"
 
-#include <string>
-using namespace std;
-
 #include "commonj/sdo/DASProperty.h"
 #include "commonj/sdo/SDODate.h"
 #include "commonj/sdo/DataFactory.h"
@@ -43,18 +40,19 @@ class DataObject;
  * data object in place of a property of another type.
  */
 
-
 class Substitution
 {
 public:
     Substitution();
-    Substitution(DataFactoryPtr mdg, const char* inname, 
+    Substitution(DataFactoryPtr mdg, const SDOString& inname, 
                                      const Type& intype);
     Substitution(const Substitution& s);
     virtual ~Substitution();
     const Type* type;
-    char* name;
+    SDOString name;
 };
+
+
 
 /**  PropertyImpl implements the abstract class Property.
  *
@@ -78,9 +76,16 @@ class PropertyImpl :public DASProperty
                    bool ro = false,
                  bool contain = false);
 
+  SDO_API PropertyImpl(const Type& cont,
+                       const SDOString& name,  
+                       const TypeImpl& type, 
+                       bool many = false, 
+                       bool ro = false,
+                       bool contain = false);
 
 
-    virtual SDO_API ~PropertyImpl();
+
+  virtual SDO_API ~PropertyImpl();
 
     /**
      * A Data access service may set the features of this property instead of
@@ -116,6 +121,7 @@ class PropertyImpl :public DASProperty
     virtual SDO_API void setDefault(char c);
     virtual SDO_API void setDefault(wchar_t c);
     virtual SDO_API void setDefault(char* c);
+    virtual SDO_API void setDefault(const SDOString& c);
     virtual SDO_API void setDefault(short s);
 #if __WORDSIZE !=64
     virtual SDO_API void setDefault(long l);
@@ -126,6 +132,7 @@ class PropertyImpl :public DASProperty
     virtual SDO_API void setDefault(const SDODate d);
     virtual SDO_API void setDefault(const wchar_t* c, unsigned int len);
     virtual SDO_API void setDefault(const char* c, unsigned int len);
+    virtual SDO_API void setDefault(const SDOString& c, unsigned int len);
 
 
 
@@ -147,6 +154,7 @@ class PropertyImpl :public DASProperty
     virtual const char* getAlias(unsigned int index = 0) const ;
     virtual unsigned int getAliasCount() const ;
     virtual void setAlias(const char* alias) ;
+    virtual void setAlias(const SDOString& alias) ;
 
     /**
      *
@@ -206,8 +214,10 @@ class PropertyImpl :public DASProperty
      */
 
     SDO_API void setDefaultCString(  const char* s);
+    SDO_API void setDefaultCString(const SDOString& s);
     SDO_API void setDefaultString( const wchar_t* c , unsigned int len  );
     SDO_API void setDefaultBytes( const char* c , unsigned int len  );
+    SDO_API void setDefaultBytes(const SDOString& c , unsigned int len);
     SDO_API void setDefaultBoolean( const bool b   );
     SDO_API void setDefaultByte(    const char c   );
     SDO_API void setDefaultCharacter(   const wchar_t c);
@@ -221,6 +231,7 @@ class PropertyImpl :public DASProperty
     SDO_API const char*        getCStringDefault() const;
     SDO_API unsigned int     getStringDefault(wchar_t* val, unsigned int max) const;
     SDO_API unsigned int    getBytesDefault(char* val, unsigned int max) const;
+    SDO_API unsigned int    getBytesDefault(SDOString& val, unsigned int max) const;
     SDO_API bool        getBooleanDefault() const;
     SDO_API char        getByteDefault() const;
     SDO_API wchar_t     getCharacterDefault() const;
@@ -256,7 +267,7 @@ class PropertyImpl :public DASProperty
     const TypeImpl& type;
     const Type& containertype;
     const Property* opposite;
-    char* name;
+    SDOString name;
     char* stringdef;
 
     void* defvalue;
@@ -264,7 +275,8 @@ class PropertyImpl :public DASProperty
     unsigned int defvaluelength;
 
     // alias support
-    std::vector<char*> aliases;
+    // std::vector<char*> aliases;
+    std::vector<SDOString> aliases;
 
     std::vector<Substitution> substitutions;
 

@@ -625,7 +625,7 @@ namespace commonj
             }
 
 
-            if (URI.equalsIgnoreCase(Type::SDOTypeNamespaceURI))
+            if (URI.equalsIgnoreCase(Type::SDOTypeNamespaceURI.c_str()))
             {
                 ///////////////////////////////////////////////////////////////////////
                 // Handle datagraph

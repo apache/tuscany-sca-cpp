@@ -24,6 +24,8 @@
 #include "commonj/sdo/export.h"
 
 #include "commonj/sdo/PropertyList.h"
+#include "commonj/sdo/SDOString.h"
+
 
 namespace commonj{
 namespace sdo{
@@ -138,6 +140,7 @@ public:
      */
 
     virtual SDO_API const Property& getProperty(const char* propertyName)  const = 0;
+    virtual SDO_API const Property& getProperty(const SDOString& propertyName) const = 0;
     virtual SDO_API const Property& getProperty(unsigned int index)  const = 0;
 
     /**  getPropertyIndex returns an index 
@@ -146,6 +149,7 @@ public:
      */
 
     virtual SDO_API unsigned int getPropertyIndex(const char* propertyName) const  = 0;
+    virtual SDO_API unsigned int getPropertyIndex(const SDOString& propertyName) const = 0;
  
     /**  isDataObjectType true if not a DataType 
      *
@@ -217,7 +221,7 @@ public:
 
     virtual SDO_API bool equals(const Type& tother) const = 0;
 
-    static SDO_API const char* SDOTypeNamespaceURI;
+    static SDO_API const SDOString SDOTypeNamespaceURI;
 };
 
 };

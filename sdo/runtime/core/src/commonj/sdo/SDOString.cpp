@@ -21,155 +21,65 @@
 
 #include "commonj/sdo/SDOString.h"
 #include <iostream>
-#include "libxml/globals.h"
+// #include "libxml/globals.h"
 
 #include <ctype.h>
 #include <string>
+
+// C6 duff compilation - see http://www.codecomments.com/message294418.html
+using std::string;
+#define std_string string
 
 namespace commonj
 {
   namespace sdo
   {
-
-    SDOString::SDOString()
-      : characters()
+    inline SDOString::SDOString(const std::string& str)
+      : std_string(str)
     {
     }
 
-    SDOString::SDOString(const char* localString)
+    inline SDOString::~SDOString()
     {
-      characters = localString;
+
     }
 
-    SDOString::SDOString(const std::string& str)
-      : characters(str)
+    inline SDOString SDOString::substr(size_t i, size_t n) const
     {
+      return SDOString(substr(i, n));
     }
 
-    SDOString::SDOString(const SDOString& str)
-    {
-      characters = str.characters;
-    }
-        
-    SDOString& SDOString::operator=(const SDOString& str)
-    {
-      if (this != &str)
-      {
-        characters = str.characters;
-      }
-      return *this;
-    }
+//     inline SDOString::SDOString(const std::string& str, size_t pos)
+//       : std_string(str, pos)
+//     {
+//     }
 
-    SDOString SDOString::operator+(const SDOString& str) const
-    {
-      std::string temp1 = characters;
-      temp1 += str.characters;
-      SDOString returnString = temp1.c_str();
-
-      return returnString;
-    }
-
-    SDOString& SDOString::operator+=(const SDOString& str)
-    {
-      characters += str.characters;
-      return *this;
-    }
-        
-    SDOString::~SDOString()
+    inline SDOString::SDOString(const std::string& str, size_t pos, size_t n)
+      : std_string(str, pos, n)
     {
     }
 
-    bool SDOString::operator< (const SDOString& str) const
+    inline SDOString::SDOString(const char* str)
+      : std_string(str)
     {
-      if (characters.compare(str.characters) < 0)
-        return true;
-      else
-        return false;
     }
 
-    bool SDOString::operator==(const SDOString& str) const
+    inline SDOString::SDOString()
+      : std_string()
     {
-      if (characters.compare(str.characters) == 0)
-        return true;
-      else
-        return false;
-    }
-
-    bool SDOString::equals(const SDOString& str) const
-    {
-      //      return (characters.equals(str.characters));
-      return (characters == str.characters);
-    }
-        
-    bool SDOString::equals(const char* localString) const
-    {
-      return equals(SDOString(localString));
-    }
-
-//         bool SDOString::equalsIgnoreCase(const SDOString& str) const
-//         {
-//             return equalsIgnoreCase(str.xmlForm);
-//         }
-
-//         bool SDOString::equalsIgnoreCase(const char* localString) const
-//         {
-//             return equalsIgnoreCase(SDOString(localString));
-//         }
-
-    std::ostream& operator<<(std::ostream& output, const SDOString& str)
-    {
-      if (!str.characters.empty())
-        output << str.characters;
-      return output;
-    }
-
-    bool SDOString::isNull() const
-    {
-      return (characters.empty());
     }
 
     SDOString SDOString::toLower(unsigned int start, unsigned int length)
     {
       std::string result_string;
-      result_string.reserve(characters.length());
+      result_string.reserve(size());
 
-      for (unsigned int i = start; (i < characters.length() && i < length); i++)
-      {
-        result_string[i] = tolower(characters[i]);
-      }
+      for (unsigned int i = start; (i < size() && i < length); i++)
+        {
+          result_string[i] = tolower((*this)[i]);
+        }
 
       return SDOString(result_string);
     }
-
-    int SDOString::firstIndexOf(const char ch) const
-    {
-      return int(characters.find_first_of(ch));
-    }
-
-    int SDOString::lastIndexOf(const char ch) const
-    {
-      return int(characters.find_last_of(ch));
-    }
-
-    SDOString SDOString::substring(int start, int length) const
-    {
-      if (characters.length() > 0)
-        {
-          return SDOString(characters.substr(start, length));
-        }
-      else
-        return SDOString();
-    }
-
-    SDOString SDOString::substring(int start) const
-    {
-      return substring(start, (characters.length() - start));
-    }
-
-	SDO_SPI const char* SDOString::c_str() const
-	{
-	  return characters.c_str();
-	}
-
   } // End - namespace sdo
 } // End - namespace commonj

@@ -47,7 +47,9 @@ class Property
      * Returns the name of the property.
      */
 
+  // TODO: We would like the returned value to be an SDOString but not until the internals are ready
      virtual const SDO_API char* getName() const = 0;
+  // virtual const SDO_API SDOString& getName() const = 0;
   
     /**  getAlias returns the n'th alias
      *
@@ -56,7 +58,10 @@ class Property
      * discover the size of the list.
      */
 
+  // TODO: We would lke to convert the returned value to an SDOString but that means a rename for the method.
     virtual SDO_API const char* getAlias(unsigned int index = 0) const = 0;
+
+  // virtual SDO_API const SDOString& getAlias(unsigned int index = 0) const = 0;
     
     /**  getAliasCount  returns the number of aliases
      *
@@ -154,6 +159,7 @@ class Property
     virtual SDO_API void setDefault(char c) = 0;
     virtual SDO_API void setDefault(wchar_t c) = 0;
     virtual SDO_API void setDefault(char* c) = 0;
+    virtual SDO_API void setDefault(const SDOString& c) = 0;
     virtual SDO_API void setDefault(short s) = 0;
 #if __WORDSIZE !=64
     virtual SDO_API void setDefault(long l) = 0;
@@ -164,6 +170,7 @@ class Property
     virtual SDO_API void setDefault(const SDODate d) = 0;
     virtual SDO_API void setDefault(const wchar_t* c, unsigned int len) = 0;
     virtual SDO_API void setDefault(const char* c, unsigned int len) = 0;
+    virtual SDO_API void setDefault(const SDOString& c, unsigned int len) = 0;
 
     /**  getDefault gets the right sort of default.
      *
@@ -173,6 +180,7 @@ class Property
 
     virtual SDO_API unsigned int     getStringDefault(wchar_t* val, unsigned int max) const = 0;
     virtual SDO_API unsigned int    getBytesDefault(char* val, unsigned int max) const = 0;
+    virtual SDO_API unsigned int    getBytesDefault(SDOString& val, unsigned int max) const = 0;
     virtual SDO_API bool        getBooleanDefault() const = 0;
     virtual SDO_API char        getByteDefault() const = 0;
     virtual SDO_API wchar_t     getCharacterDefault() const = 0;
@@ -183,6 +191,8 @@ class Property
     virtual SDO_API long double getDoubleDefault() const = 0;
     virtual SDO_API const SDODate  getDateDefault() const = 0;
     virtual SDO_API const char*   getCStringDefault() const = 0;
+  // TODO: Can't overload return types.
+  // virtual SDO_API const SDOString& getSDOStringDefault() const = 0;
     virtual SDO_API unsigned int getDefaultLength() const = 0;
 
 

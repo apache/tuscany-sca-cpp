@@ -138,10 +138,12 @@ class DataObjectImpl : public DataObject
      */
 
     virtual const Property& getProperty(unsigned int index);
-    
+
     virtual const Property& getProperty(const char* prop);
-    
+    virtual const Property& getProperty(const SDOString& prop);
+
     virtual PropertyImpl* getPropertyImpl(const char* prop);
+    virtual PropertyImpl* getPropertyImpl(const SDOString& prop);
     
     virtual PropertyImpl* getPropertyImpl(unsigned int index);
 
@@ -201,6 +203,7 @@ class DataObjectImpl : public DataObject
      * reachable from it, as identified by the specified path.
      */
 
+    virtual DataObjectPtr getDataObject(const SDOString& path);
     virtual DataObjectPtr getDataObject(const char* path); 
     virtual DataObjectPtr getDataObject(unsigned int propertyIndex); 
     virtual DataObjectPtr getDataObject(const Property& property); 
@@ -213,6 +216,7 @@ class DataObjectImpl : public DataObject
      */
     
     virtual void setDataObject(const char* path, DataObjectPtr value); 
+    virtual void setDataObject(const SDOString& path, DataObjectPtr value); 
     virtual void setDataObject(unsigned int propertyIndex, DataObjectPtr value); 
     virtual void setDataObject(const Property& property, DataObjectPtr value); 
 
@@ -223,6 +227,7 @@ class DataObjectImpl : public DataObject
      */
 
     virtual bool getBoolean(const char* path);
+    virtual bool getBoolean(const SDOString& path);
     virtual bool getBoolean(unsigned int propindex);
     virtual bool getBoolean(const Property& p);
     
@@ -394,6 +399,7 @@ class DataObjectImpl : public DataObject
      */
 
     virtual bool hasProperty(const char* name);
+    virtual bool hasProperty(const SDOString& name);
 
 
     virtual void detach();
@@ -526,6 +532,8 @@ class DataObjectImpl : public DataObject
 
     virtual const PropertyImpl* defineProperty(const char* propname, 
                  const Type& t);
+    virtual const PropertyImpl* defineProperty(const SDOString& propname, 
+                 const Type& t);
 
     virtual const PropertyImpl* defineBoolean(const char* propname);
     virtual const PropertyImpl* defineByte(const char* propname);
@@ -540,6 +548,8 @@ class DataObjectImpl : public DataObject
     virtual const PropertyImpl* defineDate(const char* propname);
     virtual const PropertyImpl* defineCString(const char* propname);
     virtual const PropertyImpl* defineDataObject(const char* propname,
+        const Type&t );
+    virtual const PropertyImpl* defineDataObject(const SDOString& propname,
         const Type&t );
     virtual const PropertyImpl* defineDataObject(const char* propname,
         const char* typeURI, const char* typeName );
@@ -560,6 +570,7 @@ private:
     virtual bool isSet(const Property& prop, unsigned int propertyIndex);
 
    
+    virtual DataObjectImpl* getDataObjectImpl(const SDOString& path); 
     virtual DataObjectImpl* getDataObjectImpl(const char* path); 
     virtual DataObjectImpl* getDataObjectImpl(unsigned int propertyIndex); 
     virtual DataObjectImpl* getDataObjectImpl(const Property& property); 
@@ -570,9 +581,12 @@ private:
         const char* typeName);
 
     DataObjectImpl* findDataObject(char* token, long* index);
+    DataObjectImpl* findDataObject(const SDOString& token, long* index);
      const Property*   findInProperties(DataObject* ob);
     char* findPropertyContainer(const char* path, DataObjectImpl** din);
+    SDOString findPropertyContainer(const SDOString& path, DataObjectImpl** din);
      char* stripPath(const char* path);
+  void stripPath(const SDOString& path, SDOString& result);
 
 
     // Does not keep a reference counted pointer to the container.

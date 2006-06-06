@@ -192,7 +192,7 @@ namespace commonj
             // --------------------------------------------------------------
             SDOXMLString tns;
             SDOXMLString xsd("xsd");
-            SDOXMLString sdoURI(Type::SDOTypeNamespaceURI);
+            SDOXMLString sdoURI(Type::SDOTypeNamespaceURI.c_str());
             
             SDOXMLString schemaURI = "http://www.w3.org/2001/XMLSchema";
             rc = xmlTextWriterStartElementNS(writer, xsd, SDOXMLString("schema"), schemaURI);
@@ -219,7 +219,7 @@ namespace commonj
             for (i = 0; i<types.size(); i++)
             {
                 SDOXMLString uri = types[i].getURI();
-                if (uri.equals(Type::SDOTypeNamespaceURI)) continue;
+                if (uri.equals(Type::SDOTypeNamespaceURI.c_str())) continue;
                 std::map<SDOXMLString,SDOXMLString>::iterator it = namespaceMap.find(uri);
                 if (it == namespaceMap.end())
                 {
@@ -267,7 +267,7 @@ namespace commonj
                 
                 // Do not define SDO DataTypes
                 SDOXMLString uri = type.getURI();
-                if (uri.equals(Type::SDOTypeNamespaceURI))
+                if (uri.equals(Type::SDOTypeNamespaceURI.c_str()))
                     continue;
                 
                 // Do not define the RootType
@@ -701,7 +701,7 @@ namespace commonj
         SDOXMLString  SDOXSDWriter::resolveName(const SDOXMLString& uri, const SDOXMLString& name, const SDOXMLString& targetNamespaceURI)
         {
             SDOXMLString resolvedName = name;
-            if (uri.equals(Type::SDOTypeNamespaceURI))
+            if (uri.equals(Type::SDOTypeNamespaceURI.c_str()))
             {
                 resolvedName = "xsd:";
                 if (name.equalsIgnoreCase("Boolean"))
