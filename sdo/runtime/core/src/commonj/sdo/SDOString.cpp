@@ -1,6 +1,6 @@
 /*
  *
- *  *** GMW *** Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
+ *  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* *** GMW *** $Rev$ $Date$ */
+/* $Rev$ $Date$ */
 
 // This class probably needs to inherit from RefCountingObject to ensure that objects of this type get cleaned up correctly.
 
@@ -34,41 +34,6 @@ namespace commonj
 {
   namespace sdo
   {
-    inline SDOString::SDOString(const std::string& str)
-      : std_string(str)
-    {
-    }
-
-    inline SDOString::~SDOString()
-    {
-
-    }
-
-    inline SDOString SDOString::substr(size_t i, size_t n) const
-    {
-      return SDOString(substr(i, n));
-    }
-
-//     inline SDOString::SDOString(const std::string& str, size_t pos)
-//       : std_string(str, pos)
-//     {
-//     }
-
-    inline SDOString::SDOString(const std::string& str, size_t pos, size_t n)
-      : std_string(str, pos, n)
-    {
-    }
-
-    inline SDOString::SDOString(const char* str)
-      : std_string(str)
-    {
-    }
-
-    inline SDOString::SDOString()
-      : std_string()
-    {
-    }
-
     SDOString SDOString::toLower(unsigned int start, unsigned int length)
     {
       std::string result_string;
