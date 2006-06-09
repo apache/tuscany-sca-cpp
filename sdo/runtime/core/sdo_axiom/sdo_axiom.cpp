@@ -17,9 +17,14 @@
 
 /* $Rev$ $Date$ */
 
+#if defined(WIN32)  || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif
+
 #include "sdo_axiom.h"
 
 using namespace commonj::sdo;
+using namespace std;
 
 
 namespace commonj

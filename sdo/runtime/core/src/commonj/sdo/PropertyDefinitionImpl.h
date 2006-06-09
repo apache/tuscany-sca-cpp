@@ -24,7 +24,6 @@
 
 #include "commonj/sdo/SDOXMLString.h"
 #include <vector>
-using namespace std;
 
 
 

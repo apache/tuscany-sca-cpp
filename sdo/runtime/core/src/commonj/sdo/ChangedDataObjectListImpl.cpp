@@ -233,7 +233,7 @@ namespace sdo {
     {
         if ((index < 0) || (index >= size()))
         {
-            string msg("Invalid index : ");
+            std::string msg("Invalid index : ");
             msg += index;
             SDO_THROW_EXCEPTION("(ChangeSummary)validateIndex", SDOIndexOutOfRangeException,
                 msg.c_str());

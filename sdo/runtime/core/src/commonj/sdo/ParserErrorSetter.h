@@ -25,7 +25,6 @@
 #include "commonj/sdo/disable_warn.h"
 
 #include <vector>
-using namespace std;
 
 namespace commonj{
 namespace sdo{

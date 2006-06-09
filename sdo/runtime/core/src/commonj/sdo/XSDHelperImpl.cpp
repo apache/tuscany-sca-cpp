@@ -99,7 +99,7 @@ namespace commonj
         
         const char*  XSDHelperImpl::define(const char* schema)
         {
-            istringstream str(schema);
+            std::istringstream str(schema);
             SDOSchemaSAX2Parser schemaParser(schemaInfo, this);
             clearErrors();
             str  >> schemaParser;

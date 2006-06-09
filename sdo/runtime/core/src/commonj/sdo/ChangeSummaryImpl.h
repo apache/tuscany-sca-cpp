@@ -31,7 +31,6 @@
 
 #include <map>
 
-using namespace std;
 namespace commonj{
 namespace sdo {
 

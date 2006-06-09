@@ -30,13 +30,13 @@
 
 
 #include <map>
-using namespace std;
+
 
 
 namespace commonj{
 namespace sdo{
 
-typedef map<string, PropertyImpl> propertyMap;
+    typedef std::map<std::string, PropertyImpl> propertyMap;
 
 /**  
  *    DataFactoryImpl implements the abstract class DataFactory.
@@ -682,7 +682,7 @@ public:
    virtual bool generateInterface(const SDOString& fileroot, const SDOString& factoryname);
 
 private:
-    typedef map<string, TypeImpl*> TYPES_MAP;
+    typedef std::map<std::string, TypeImpl*> TYPES_MAP;
     TYPES_MAP    types;
 
     std::vector<DataFactory*> compatibleFactories;
@@ -699,7 +699,7 @@ private:
     bool recursiveCheck(TypeImpl* cs, TypeImpl* t);
     bool checkForValidChangeSummary(TypeImpl* t);
 
-    typedef vector<TypeImpl*> TYPES_VECTOR;
+    typedef std::vector<TypeImpl*> TYPES_VECTOR;
     TYPES_VECTOR cstypes;
     
 // TODO: Remove char* form of method since it is not exposed to users

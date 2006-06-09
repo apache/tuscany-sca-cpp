@@ -99,7 +99,7 @@ void SettingList::validateIndex(int index) const
 {
     if ((index < 0) || (index > size()))
     {
-        string msg("Index out of range:");
+        std::string msg("Index out of range:");
         msg += index;
         SDO_THROW_EXCEPTION("ValidateIndex", SDOIndexOutOfRangeException,
             msg.c_str());

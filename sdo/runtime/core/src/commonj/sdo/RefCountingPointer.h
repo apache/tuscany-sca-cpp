@@ -25,7 +25,6 @@
 #include "commonj/sdo/SDORuntimeException.h"
 
 #include <iostream>
-using namespace std;
 
 namespace commonj{
 namespace sdo{

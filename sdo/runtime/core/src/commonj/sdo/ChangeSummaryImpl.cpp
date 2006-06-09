@@ -255,7 +255,7 @@ namespace sdo{
 
          // build a Setting list for the set properties
 
-        deletedMap.insert(make_pair(ob,deleteLogItem(
+        deletedMap.insert(std::make_pair(ob,deleteLogItem(
             (DataObject*)ob, prop,ob->getSequence(),
             oldpath,
             container)));
@@ -421,7 +421,7 @@ namespace sdo{
         // deleted or created.
         changedDataObjects.append(ob, ChangedDataObjectList::Create);
 
-        createdMap.insert(make_pair(ob,createLogItem(ob->getType(),prop,container)));
+        createdMap.insert(std::make_pair(ob,createLogItem(ob->getType(),prop,container)));
         return;
     }
 
@@ -780,7 +780,7 @@ namespace sdo{
         if (changeLogIter == changedMap.end())
         {
             LOGINFO(INFO,"ChangeSummary: A change to an object which was not previously changed");
-            changedMap.insert(make_pair(ob, changeLogItem(ob->getType(),prop, 
+            changedMap.insert(std::make_pair(ob, changeLogItem(ob->getType(),prop, 
                               ob->getSequence(), ob)));
             changedDataObjects.append(ob, ChangedDataObjectList::Change);
         }
@@ -1297,7 +1297,7 @@ namespace sdo{
         case Type::ChangeSummaryType:
         default:
             {
-            string msg("Cannot set CString on object of type:");
+            std::string msg("Cannot set CString on object of type:");
             msg += p.getType().getName();
             SDO_THROW_EXCEPTION("setString" ,
               SDOInvalidConversionException, msg.c_str());
@@ -1323,7 +1323,7 @@ namespace sdo{
 
             LOGINFO(INFO,"ChangeSummary: A change to an object which was not previously changed");
             
-            changedMap.insert(make_pair((DataObjectImpl*)pdob, 
+            changedMap.insert(std::make_pair((DataObjectImpl*)pdob, 
                               changeLogItem(dob->getType(),p, 
                               dob->getSequence(), (DataObjectImpl*)pdob)));
             changedDataObjects.append((DataObjectImpl*)pdob, 
@@ -1368,7 +1368,7 @@ namespace sdo{
         {
             LOGINFO(INFO,"ChangeSummary: A change to an object which was not previously changed");
             
-            changedMap.insert(make_pair((DataObjectImpl*)pdob, 
+            changedMap.insert(std::make_pair((DataObjectImpl*)pdob, 
                               changeLogItem(dob->getType(),p, 
                               dob->getSequence(), (DataObjectImpl*)pdob)));
             changedDataObjects.append((DataObjectImpl*)pdob, 

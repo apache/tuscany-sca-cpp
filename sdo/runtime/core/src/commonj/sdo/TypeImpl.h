@@ -37,7 +37,7 @@
 #define CHAR_SIZE 1
 #define BYTE_SIZE 1
 
-using namespace std;
+
 
 namespace commonj{
 namespace sdo{

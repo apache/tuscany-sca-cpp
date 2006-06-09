@@ -44,6 +44,8 @@ int main (int argc, char** argv)
     int totaltests=0;
     int value = 0;
 
+    TEST ( sdotest::xsdtosdo() );
+
     /* groups now supported*/
     TEST ( sdotest::testany("list1.xsd",0,"list1.xml", 0) );
     TEST ( sdotest::testany("b48636.xsd",0,"b48636.xml", 0) );

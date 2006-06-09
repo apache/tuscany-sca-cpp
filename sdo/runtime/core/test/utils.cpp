@@ -26,7 +26,7 @@ using namespace std;
 
 #include "sdotest.h"
 
-bool sdotest::silent = false;
+bool sdotest::silent = true;
 bool sdotest::ramping = false;
 
 void sdotest::printOldValues(FILE *f, ChangeSummaryPtr cs, DataObjectPtr dol)

@@ -33,6 +33,54 @@ using namespace std;
 using namespace commonj::sdo;
 
 
+int sdotest::xsdtosdo()
+{
+const char* value;
+
+value = SDOUtils::XSDToSDO("string");
+if (!silent)cout << "XSDToSDO(string)=" << value << endl;
+if (strcmp(value,"String")) return 0;
+
+value = SDOUtils::XSDToSDO("int");
+if (!silent)cout << "XSDToSDO(int)="<< value << endl;
+if (strcmp(value,"Integer")) return 0;
+
+value = SDOUtils::XSDToSDO("notinlist");
+if (!silent)cout << "XSDToSDO(notinlist)="<< value << endl;
+if (strcmp(value,"String")) return 0;
+
+value = SDOUtils::XSDToSDO("");
+if (!silent)cout << "XSDToSDO(\"\")="<< value << endl;
+if (strcmp(value,"String")) return 0;
+
+value = SDOUtils::XSDToSDO(0);
+if (!silent)cout << "XSDToSDO(0)="<< value << endl;
+if (strcmp(value,"String")) return 0;
+
+value = SDOUtils::SDOToXSD("String");
+if (!silent)cout << "SDOToXSD(String)="<< value << endl;
+if (strcmp(value,"string")) return 0;
+
+value = SDOUtils::SDOToXSD("Long");
+if (!silent)cout << "SDOToXSD(Long)="<< value << endl;
+if (strcmp(value,"unsignedLong")) return 0;
+
+value = SDOUtils::SDOToXSD("notinlist");
+if (!silent)cout << "SDOToXSD(notinlist)="<< value << endl;
+if (strcmp(value,"string")) return 0;
+
+value = SDOUtils::SDOToXSD("");
+if (!silent)cout << "SDOToXSD(\"\")="<< value << endl;
+if (strcmp(value,"string")) return 0;
+
+value = SDOUtils::SDOToXSD(0);
+if (!silent)cout << "SDOToXSD(0)="<< value << endl;
+if (strcmp(value,"string")) return 0;
+
+return 1;
+
+}
+
 int sdotest::compatiblefactory()
 {
     DataFactoryPtr f1 = DataFactory::getDataFactory();

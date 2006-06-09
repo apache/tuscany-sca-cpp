@@ -42,6 +42,7 @@ class sdotest {
         static int dumpproperties(FILE *f, DataObjectPtr root);
         static int printset(FILE *f, ChangeSummaryPtr cs);
 
+        static int xsdtosdo();
 
         static void changeSummaryHeader(ChangeSummaryPtr cs);
         static void changeSummaryFooter();

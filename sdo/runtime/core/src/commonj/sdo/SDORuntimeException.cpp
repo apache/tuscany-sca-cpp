@@ -190,28 +190,28 @@ void SDORuntimeException :: trace(const char* text)
 // ========================================================================
 // print self
 // ========================================================================
-ostream& SDORuntimeException :: PrintSelf(ostream &os) const
+std::ostream& SDORuntimeException :: PrintSelf(std::ostream &os) const
 { 
   char lineNumber[100];
   sprintf(lineNumber, "%d",locations[0].line);
 
-  os << "Exception object :" << endl;
-  os << " class:           " << class_name << endl;
-  os << " file name:       " << locations[0].file << endl;
-  os << " line number:     " << lineNumber << endl;
-  os << " function:        " << locations[0].function << endl;
-  os << " description:     " << message_text << endl;
-  os << " location history:" << endl;
+  os << "Exception object :" << std::endl;
+  os << " class:           " << class_name << std::endl;
+  os << " file name:       " << locations[0].file << std::endl;
+  os << " line number:     " << lineNumber << std::endl;
+  os << " function:        " << locations[0].function << std::endl;
+  os << " description:     " << message_text << std::endl;
+  os << " location history:" << std::endl;
 
   // TODO - commented out - a two-location rethrow causes an access
   // violation here.
   //int i=1;
   //while (i < location_set)
   //{
-  //  os << "  " <<  i << ")" << endl;
-  //  os << "   file:          " << locations[i].file << endl;
-  //  os << "   line:          " << locations[i].line << endl;
-  //  os << "   function:      " << locations[i].function << endl;
+  //  os << "  " <<  i << ")" << std::endl;
+  //  os << "   file:          " << locations[i].file << std::endl;
+  //  os << "   line:          " << locations[i].line << std::endl;
+  //  os << "   function:      " << locations[i].function << std::endl;
   //  i++;
   //}
   return os;
@@ -220,7 +220,7 @@ ostream& SDORuntimeException :: PrintSelf(ostream &os) const
 // ========================================================================
 // ostream operator <<
 // ========================================================================
-SDO_API ostream& operator<< (ostream &os, const SDORuntimeException &except)
+SDO_API std::ostream& operator<< (std::ostream &os, const SDORuntimeException &except)
 {
   return except.PrintSelf(os);
 } // end ostream operator <<

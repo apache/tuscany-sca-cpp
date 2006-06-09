@@ -26,7 +26,6 @@
 #include <string>
 #include <iostream>
 
-using namespace std;
 
 
 /** SDORuntimeException - Exception base class.
@@ -202,14 +201,14 @@ class  SDORuntimeException
 
     SDO_API void trace(const char* text="%1:\n  %3 %4 %2");
 
-    SDO_API virtual ostream& PrintSelf(ostream &os) const;
+    SDO_API virtual std::ostream& PrintSelf(std::ostream &os) const;
 
     /**  operator << to write the exception
      *
      * ostream operator <<
      */
 
-    SDO_API friend ostream& operator<< (ostream &os, const SDORuntimeException &except);
+    SDO_API friend std::ostream& operator<< (std::ostream &os, const SDORuntimeException &except);
  
   protected:
 

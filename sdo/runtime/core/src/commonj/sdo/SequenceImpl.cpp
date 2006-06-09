@@ -32,7 +32,7 @@
 
 #define CHECK_RANGE\
         if (index >= the_list.size()){\
-            string msg("Index out of range:");\
+            std::string msg("Index out of range:");\
             msg += index;\
             SDO_THROW_EXCEPTION("Sequence API", SDOIndexOutOfRangeException,\
             msg.c_str());\
@@ -85,7 +85,7 @@ namespace sdo{
 
         if (isText(index))
         {
-            string msg("Cannot get property of a text item");
+            std::string msg("Cannot get property of a text item");
             msg += index;
             SDO_THROW_EXCEPTION("getProperty", SDOUnsupportedOperationException,
             msg.c_str());
@@ -97,7 +97,7 @@ namespace sdo{
         if (i != the_list.end()) {
             return *((*i).getProp()); 
         }
-        string msg("Index out of range:");
+        std::string msg("Index out of range:");
         msg += index;
         SDO_THROW_EXCEPTION("getProperty", SDOIndexOutOfRangeException,
         msg.c_str());
@@ -117,7 +117,7 @@ namespace sdo{
             }
             return (*i).getProp()->getTypeEnum(); 
         }
-        string msg("Index out of range:");
+        std::string msg("Index out of range:");
         msg += index;
         SDO_THROW_EXCEPTION("getTypeEnum", SDOIndexOutOfRangeException,
         msg.c_str());
@@ -132,7 +132,7 @@ namespace sdo{
         if (i != the_list.end()) {
             if ((*i).getProp() == 0) 
             {
-                string msg("Get list index on text property");
+                std::string msg("Get list index on text property");
                 SDO_THROW_EXCEPTION("getListIndex", SDOUnsupportedOperationException,
                 msg.c_str());
             }
@@ -142,12 +142,12 @@ namespace sdo{
             }
             else 
             {
-                string msg("Get list index on text single valued property");
+                std::string msg("Get list index on text single valued property");
                 SDO_THROW_EXCEPTION("getListIndex", SDOUnsupportedOperationException,
                 msg.c_str());
             }
         }
-        string msg("Index out of range:");
+        std::string msg("Index out of range:");
         msg += index;
         SDO_THROW_EXCEPTION("getListIndex", SDOIndexOutOfRangeException,
         msg.c_str());
@@ -454,7 +454,7 @@ ObjectGetter(RefCountingPointer<DataObject> , DataObject, 0);
             }\
             if (p == 0)\
             {\
-                string msg("Cannot find property:");\
+                std::string msg("Cannot find property:");\
                 msg += propertyName;\
                 SDO_THROW_EXCEPTION("getProperty", SDOPropertyNotFoundException,\
                 msg.c_str());\
@@ -503,7 +503,7 @@ ObjectGetter(RefCountingPointer<DataObject> , DataObject, 0);
             }\
             if (p == 0)\
             {\
-                string msg("Cannot find property:");\
+                std::string msg("Cannot find property:");\
                 msg += propertyName;\
                 SDO_THROW_EXCEPTION("getProperty", SDOPropertyNotFoundException,\
                 msg.c_str());\
@@ -568,7 +568,7 @@ doadder(DataObject, RefCountingPointer<DataObject> );
             }\
             if (p == 0)\
             {\
-                string msg("Cannot find property:");\
+                std::string msg("Cannot find property:");\
                 msg += propertyName;\
                 SDO_THROW_EXCEPTION("getProperty", SDOPropertyNotFoundException,\
                 msg.c_str());\
@@ -621,7 +621,7 @@ charAdder ( Bytes , const char* );
             }\
             if (p == 0)\
             {\
-                string msg("Cannot find property:");\
+                std::string msg("Cannot find property:");\
                 msg += propertyName;\
                 SDO_THROW_EXCEPTION("getProperty", SDOPropertyNotFoundException,\
                 msg.c_str());\
@@ -683,7 +683,7 @@ charAdder ( Bytes , const char* );
             }\
             if (p == 0)\
             {\
-                string msg("Cannot find property:");\
+                std::string msg("Cannot find property:");\
                 msg += propertyName;\
                 SDO_THROW_EXCEPTION("getProperty", SDOPropertyNotFoundException,\
                 msg.c_str());\
@@ -763,7 +763,7 @@ doinserter(DataObject, RefCountingPointer<DataObject>);
             }\
             if (p == 0)\
             {\
-                string msg("Cannot find property:");\
+                std::string msg("Cannot find property:");\
                 msg += propertyName;\
                 SDO_THROW_EXCEPTION("getProperty", SDOPropertyNotFoundException,\
                 msg.c_str());\
@@ -829,7 +829,7 @@ charInserter (Bytes , const char* );
     void SequenceImpl::remove(unsigned int index)
     {
         if (index >= the_list.size()) {
-            string msg("Index out of range:");
+            std::string msg("Index out of range:");
             msg += index;
             SDO_THROW_EXCEPTION("Sequence remove", SDOIndexOutOfRangeException,
             msg.c_str());
@@ -869,7 +869,7 @@ charInserter (Bytes , const char* );
     void SequenceImpl::move(unsigned int toIndex, unsigned int fromIndex)
     {
         if (fromIndex >= the_list.size()) {
-            string msg("Index out of range:");
+            std::string msg("Index out of range:");
             msg += fromIndex;
             SDO_THROW_EXCEPTION("Sequence Move", SDOIndexOutOfRangeException,
             msg.c_str());

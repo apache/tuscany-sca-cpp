@@ -22,6 +22,8 @@
 #include "commonj/sdo/XSDTypeInfo.h"
 #include "commonj/sdo/SDORuntimeException.h"
 #include "commonj/sdo/Logging.h"
+#include "commonj/sdo/SDOUtils.h"
+
 
 #include <stdio.h>
 
@@ -1314,107 +1316,12 @@ namespace commonj
             if (qname.getURI().equalsIgnoreCase("http://www.w3.org/2001/XMLSchema"))
             {
                 uri = Type::SDOTypeNamespaceURI.c_str();
-                if (qname.getLocalName().equalsIgnoreCase("ID"))
+                name = SDOUtils::XSDToSDO((const char*)(qname.getLocalName()));
+                if (name.isNull())
                 {
                     name = "String";
                 }
-                if (qname.getLocalName().equalsIgnoreCase("NCName"))
-                {
-                    name = "String";
-                }
-                if (qname.getLocalName().equalsIgnoreCase("string"))
-                {
-                    name = "String";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("anyType"))
-                {
-                    name = "DataObject";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("int"))
-                {
-                    name = "Integer";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("integer"))
-                {
-                    name = "Integer";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("negativeInteger"))
-                {
-                    name = "Integer";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("nonNegativeInteger"))
-                {
-                    name = "Integer";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("positiveInteger"))
-                {
-                    name = "Integer";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("nonPositiveInteger"))
-                {
-                    name = "Integer";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("unsignedLong"))
-                {
-                    name = "Integer";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("unsignedShort"))
-                {
-                    name = "Integer";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("unsignedInt"))
-                {
-                    name = "Long";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("long"))
-                {
-                    name = "Long";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("double"))
-                {
-                    name = "Double";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("short"))
-                {
-                    name = "Short";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("unsignedByte"))
-                {
-                    name = "Short";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("float"))
-                {
-                    name = "Float";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("boolean"))
-                {
-                    name = "Boolean";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("byte"))
-                {
-                    name = "Byte";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("base64Binary"))
-                {
-                    name = "Bytes";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("hexBinary"))
-                {
-                    name = "Bytes";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("anyURI"))
-                {
-                    name = "URI";
-                }
-                else if (qname.getLocalName().equalsIgnoreCase("QName"))
-                {
-                    name = "URI";
-                }
-                else
-                {
-                    // Default unknown xs: types to string??
-                    name = "String";
-                }
+
             }
             
             // Temporary hack: ChangeSummaryType is ChangeSummary in core

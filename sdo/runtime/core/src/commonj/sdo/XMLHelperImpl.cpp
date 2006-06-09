@@ -137,7 +137,7 @@ namespace commonj
                         }
                         else
                         {
-                            string msg("createDocument - cannot find element ");
+                            std::string msg("createDocument - cannot find element ");
                             msg += elementname;
                             SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
                             msg.c_str());
@@ -154,7 +154,7 @@ namespace commonj
                 }
                 else
                 {
-                     string msg("createDocument - unable to find root type in namespace ");
+                     std::string msg("createDocument - unable to find root type in namespace ");
                      if (rootElementURI != 0) 
                          msg += rootElementURI;
                      else
@@ -192,7 +192,7 @@ namespace commonj
 
         
         XMLDocumentPtr XMLHelperImpl::load(
-            istream& inXml,
+            std::istream& inXml,
             const char* targetNamespaceURI)
         {
             DataObjectPtr rootDataObject;
@@ -207,7 +207,7 @@ namespace commonj
             const char* inXml,
             const char* targetNamespaceURI)
         {
-            istringstream str(inXml);
+            std::istringstream str(inXml);
             return load(str, targetNamespaceURI);
         }
         
@@ -246,7 +246,7 @@ namespace commonj
             save(createDocument(dataObject,rootElementURI, rootElementName), outXml, indent);
         }
         
-        // Serializes the datagraph to a string
+        // Serializes the datagraph to a std::string
         char* XMLHelperImpl::save(XMLDocumentPtr doc,
             int indent)
         {

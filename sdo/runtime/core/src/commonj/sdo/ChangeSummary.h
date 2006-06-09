@@ -26,7 +26,6 @@
 #include "commonj/sdo/ChangedDataObjectList.h"
 
 
-using namespace std;
 namespace commonj{
 namespace sdo {
 

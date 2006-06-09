@@ -71,7 +71,7 @@ namespace commonj
                 const char* xmlFile,
                 const char* targetNamespaceURI = 0);
             virtual XMLDocumentPtr load(
-                istream& inXml,
+                std::istream& inXml,
                 const char* targetNamespaceURI = 0);
             virtual XMLDocumentPtr load(
                 const char* inXml,

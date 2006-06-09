@@ -169,7 +169,7 @@ const Type& DataObjectListImpl::getType()
 {
     if (typeUnset)
     {
-        string msg("The list property is open, and the type of the contents has not bee determined yet.");
+        std::string msg("The list property is open, and the type of the contents has not bee determined yet.");
         SDO_THROW_EXCEPTION("Get Type", SDOTypeNotFoundException,
             msg.c_str());
     }
@@ -205,7 +205,7 @@ void DataObjectListImpl::insert (unsigned int index, DataObjectPtr d)
     {
         if (plist[i] == d)
         {
-        string msg("Insertion of object which already exists in the list:");
+        std::string msg("Insertion of object which already exists in the list:");
         msg += typeURI;
         msg += " ";
         msg += typeName;
@@ -217,7 +217,7 @@ void DataObjectListImpl::insert (unsigned int index, DataObjectPtr d)
         || 
         strcmp(typeName,d->getType().getName()))
     {
-        string msg("Insertion of object of the wrong type to a list:");
+        std::string msg("Insertion of object of the wrong type to a list:");
         msg += typeURI;
         msg += " ";
         msg += typeName;
@@ -238,7 +238,7 @@ void DataObjectListImpl::insert (unsigned int index, DataObjectPtr d)
             if (con != container)
             {
                 /* this data object is already contained somewhere else */
-                string msg("Insertion of object to list, object is already contained:");
+                std::string msg("Insertion of object to list, object is already contained:");
                 msg += d->getType().getURI();
                 msg += " ";
                 msg += d->getType().getName();
@@ -287,7 +287,7 @@ void DataObjectListImpl::insert (unsigned int index, DataObjectPtr d)
 
         if (d->getContainer() != 0)
         {
-           string msg("Insertion of object into list from another factory is only allowed if the parent is null: ");
+            std::string msg("Insertion of object into list from another factory is only allowed if the parent is null: ");
         
             const Type& t = d->getType();
             msg += t.getURI();
@@ -312,7 +312,7 @@ void DataObjectListImpl::insert (unsigned int index, DataObjectPtr d)
             return;
         }
 
-        string msg("Insertion into list fromm incompatible factory:");
+        std::string msg("Insertion into list fromm incompatible factory:");
         
         const Type& t = d->getType();
         msg += t.getURI();
@@ -363,7 +363,7 @@ void DataObjectListImpl::checkType(const Type& listType, const Type& objectType)
         }
 
         // no match..
-        string msg("Insertion of object of incompatible type ");
+        std::string msg("Insertion of object of incompatible type ");
         msg += objectType.getURI();
         msg += "#";
         msg += objectType.getName();
@@ -440,7 +440,7 @@ void DataObjectListImpl::append (DataObjectPtr d)
     {
         if (plist[i] == d)
         {
-        string msg("Append of object which already exists in the list:");
+        std::string msg("Append of object which already exists in the list:");
         msg += typeURI;
         msg += " ";
         msg += typeName;
@@ -464,7 +464,7 @@ void DataObjectListImpl::append (DataObjectPtr d)
             if (con != container)
             {
                 /* this data object is already contained somewhere else */
-                string msg("Append of object to list, object is already contained:");
+                std::string msg("Append of object to list, object is already contained:");
                 msg += d->getType().getURI();
                 msg += " ";
                 msg += d->getType().getName();
@@ -821,7 +821,7 @@ void DataObjectListImpl::validateIndex(int index) const
     if ((index < 0) || (index >= size()))
     {
         char val[32];
-        string msg("Index out of range:");
+        std::string msg("Index out of range:");
         sprintf(val,"%d",index);
         msg += val;
         SDO_THROW_EXCEPTION("validateIndex", SDOIndexOutOfRangeException,

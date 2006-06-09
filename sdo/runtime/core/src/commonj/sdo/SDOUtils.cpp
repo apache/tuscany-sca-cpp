@@ -28,7 +28,87 @@ using namespace std;
 namespace commonj {
     namespace sdo {
 
+//////////////////////////////////////////////////////////////////////////
+// Conversions
+//////////////////////////////////////////////////////////////////////////
 
+
+        std::map<std::string,std::string> SDOUtils::SdoToXsd;
+
+        std::map<std::string,std::string> SDOUtils::XsdToSdo;
+
+        bool SDOUtils::populated = false;
+
+        bool SDOUtils::populate()
+        {
+            SDOUtils::XsdToSdo["ID"]     = "String";
+            SDOUtils::XsdToSdo["NCName"] = "String";
+            SDOUtils::XsdToSdo["string"] = "String";
+            SDOUtils::XsdToSdo["anyType"] = "DataObject";
+            SDOUtils::XsdToSdo["int"] = "Integer";
+            SDOUtils::XsdToSdo["integer"] = "Integer";
+            SDOUtils::XsdToSdo["negativeInteger"] = "Integer";
+            SDOUtils::XsdToSdo["nonNegativeInteger"] = "Integer";
+            SDOUtils::XsdToSdo["positiveInteger"] = "Integer";
+            SDOUtils::XsdToSdo["nonpositiveInteger"] = "Integer";
+            SDOUtils::XsdToSdo["unsignedShort"] = "Integer";
+            SDOUtils::XsdToSdo["unsignedInt"] = "Integer";
+            SDOUtils::XsdToSdo["unsignedLong"] = "Long";
+            SDOUtils::XsdToSdo["double"] = "Double";
+            SDOUtils::XsdToSdo["short"] = "Short";
+            SDOUtils::XsdToSdo["unsignedByte"] = "Short";
+            SDOUtils::XsdToSdo["float"] = "Float";
+            SDOUtils::XsdToSdo["boolean"] = "Boolean";
+            SDOUtils::XsdToSdo["byte"] = "Byte";
+            SDOUtils::XsdToSdo["base64Binary"] = "Bytes";
+            SDOUtils::XsdToSdo["hexBinary"] = "Bytes";
+            SDOUtils::XsdToSdo["anyURI"] = "URI";
+            SDOUtils::XsdToSdo["QName"] = "URI";
+
+            SDOUtils::SdoToXsd["String"]     = "string";
+            SDOUtils::SdoToXsd["DataObject"] = "anyType";
+            SDOUtils::SdoToXsd["Integer"] = "integer";
+            SDOUtils::SdoToXsd["Long"] = "unsignedLong";
+            SDOUtils::SdoToXsd["Double"] = "double";
+            SDOUtils::SdoToXsd["Short"] = "short";
+            SDOUtils::SdoToXsd["Float"] = "float";
+            SDOUtils::SdoToXsd["Boolean"] = "boolean";
+            SDOUtils::SdoToXsd["Byte"] = "byte";
+            SDOUtils::SdoToXsd["Bytes"] = "base64Binary";
+            SDOUtils::SdoToXsd["URI"] = "anyURI";
+
+            SDOUtils::populated = true;
+            return true;
+        }
+
+        const char* SDOUtils::SDOToXSD(const char* sdoname)
+        {
+            if (sdoname == 0)
+            {
+                return SDOUtils::SdoToXsd["String"].c_str();
+            }
+            if (!SDOUtils::populated) SDOUtils::populate();
+            string& s =  SDOUtils::SdoToXsd[sdoname];
+            if (s.empty())
+            {
+                return SDOUtils::SdoToXsd["String"].c_str();
+            }
+            return s.c_str();
+        }
+
+
+        const char* SDOUtils::XSDToSDO(const char* xsdname)
+        {
+            if (xsdname == 0)
+            {
+                return SDOUtils::XsdToSdo["string"].c_str();
+            }
+            if (!SDOUtils::populated) SDOUtils::populate();
+            string& s = SDOUtils::XsdToSdo[xsdname];
+            if (s.empty())
+                return SDOUtils::XsdToSdo["string"].c_str();
+            return s.c_str();
+        }
 
 //////////////////////////////////////////////////////////////////////////
 // Print Tabs

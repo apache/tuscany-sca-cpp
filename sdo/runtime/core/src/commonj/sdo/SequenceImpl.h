@@ -23,7 +23,7 @@
 #include "commonj/sdo/disable_warn.h"
 
 #include <vector>
-using namespace std;
+
 
 #include "commonj/sdo/Sequence.h"
 #include "commonj/sdo/SDODate.h"

@@ -21,6 +21,8 @@
 #define _SDOUTILS_H_
 
 #include "commonj/sdo/DataObject.h"
+#include <map>
+#include <string>
 
 namespace commonj
 {
@@ -38,11 +40,21 @@ namespace commonj
             
         public:
             
-            static SDO_API void printDataObject(ostream& out, DataObjectPtr d);                
+            static SDO_API void printDataObject(std::ostream& out, DataObjectPtr d);                
+            static SDO_API const char* SDOToXSD(const char* sdoname);
+            static SDO_API const char*  XSDToSDO(const char* xsdname);
             
         private:
-            static void printDataObject(ostream& out, DataObjectPtr d, unsigned int incr);                
-            static void printTabs(ostream& out, unsigned int incr);
+
+            static bool populate();
+            static bool populated;
+
+            static void printDataObject(std::ostream& out, DataObjectPtr d, unsigned int incr);                
+            static void printTabs(std::ostream& out, unsigned int incr);
+
+            static std::map<std::string,std::string> XsdToSdo;
+            static std::map<std::string,std::string> SdoToXsd;
+
         };
     } // End - namespace sdo
 } // End - namespace commonj
