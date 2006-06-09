@@ -252,10 +252,9 @@ axis2_om_node_t* Axis2Client::createPayload(Operation& operation,
     AXIS2_OM_NODE_SERIALIZE(requestOM, env, om_output);
     axis2_char_t* buffer = (axis2_char_t*)AXIS2_XML_WRITER_GET_XML(xml_writer, env);         
     LOGINFO_1(3, "Sending this OM node in XML : %s \n",  buffer); 
-    // Logging end
-
     AXIS2_OM_OUTPUT_FREE(om_output, env);
     AXIS2_FREE((*env)->allocator, buffer);
+    // Logging end
 
     return requestOM;
     
@@ -276,75 +275,84 @@ void Axis2Client::setReturn(axis2_om_node_t* ret_node,
     AXIS2_OM_NODE_SERIALIZE (ret_node, env, om_output);
     axis2_char_t* buffer = (axis2_char_t*)AXIS2_XML_WRITER_GET_XML(writer, env);
     LOGINFO_1(3,"Received OM node in XML : %s\n", buffer);
-    // Logging end
-    
     AXIS2_OM_OUTPUT_FREE(om_output, env);
     AXIS2_FREE((*env)->allocator, buffer);
-    	
-    DataFactoryPtr dataFactory = externalService->getContainingModule()->getDataFactory();
-    AxiomHelper myHelper;
-    DataObjectPtr returnDO = myHelper.toSdo(ret_node, dataFactory);
-
-    unsigned int index = 0;
-    switch(operation.getReturnType())
-	{
-		case Operation::BOOL: 
-		{
-			*(bool*)operation.getReturnValue() = returnDO->getBoolean(index);
-			break;
-		}
-		case Operation::SHORT: 
-		{
-			*(short*)operation.getReturnValue() = returnDO->getShort(index);
-			break;
-		}
-		case Operation::LONG: 
-		{
-			*(long*)operation.getReturnValue() = returnDO->getLong(index);
-			break;
-		}
-		case Operation::USHORT: 
-		{
-			*(unsigned short*)operation.getReturnValue() = (unsigned short)returnDO->getInteger(index);
-			break;
-		}
-		case Operation::ULONG: 
-		{
-			*(unsigned long*)operation.getReturnValue() = (unsigned long)returnDO->getInteger(index);
-			break;
-		}
-		case Operation::FLOAT: 
-		{
-			*(float*)operation.getReturnValue() = returnDO->getFloat(index);
-			break;
-		}
-		case Operation::DOUBLE: 
-		{
-			*(double*)operation.getReturnValue() = returnDO->getDouble(index);
-			break;
-		}
-		case Operation::LONGDOUBLE: 
-		{
-			*(long double*)operation.getReturnValue() = returnDO->getDouble(index);
-			break;
-		}
-		case Operation::CHARS: 
-		{
-			*(char**)operation.getReturnValue() = strdup(returnDO->getCString(index));
-			break;
-		}
-		case Operation::STRING: 
-		{
-			*(string*)operation.getReturnValue() = returnDO->getCString(index);
-			break;
-		}
-		case Operation::DATAOBJECT: 
-		{
-			*(DataObjectPtr*)operation.getReturnValue() = returnDO->getDataObject(index);
-			break;
-		}
-		default:;
-	}
+    // Logging end
+    
+    
+    if (wsdlOp.isDocumentStyle())
+    {
+        // Document style 
+        
+        DataFactoryPtr dataFactory = externalService->getContainingModule()->getDataFactory();
+        AxiomHelper myHelper;
+        DataObjectPtr returnDO = myHelper.toSdo(ret_node, dataFactory);
+        
+        unsigned int index = 0;
+        switch(operation.getReturnType())
+        {
+        case Operation::BOOL: 
+            {
+                *(bool*)operation.getReturnValue() = returnDO->getBoolean(index);
+                break;
+            }
+        case Operation::SHORT: 
+            {
+                *(short*)operation.getReturnValue() = returnDO->getShort(index);
+                break;
+            }
+        case Operation::LONG: 
+            {
+                *(long*)operation.getReturnValue() = returnDO->getLong(index);
+                break;
+            }
+        case Operation::USHORT: 
+            {
+                *(unsigned short*)operation.getReturnValue() = (unsigned short)returnDO->getInteger(index);
+                break;
+            }
+        case Operation::ULONG: 
+            {
+                *(unsigned long*)operation.getReturnValue() = (unsigned long)returnDO->getInteger(index);
+                break;
+            }
+        case Operation::FLOAT: 
+            {
+                *(float*)operation.getReturnValue() = returnDO->getFloat(index);
+                break;
+            }
+        case Operation::DOUBLE: 
+            {
+                *(double*)operation.getReturnValue() = returnDO->getDouble(index);
+                break;
+            }
+        case Operation::LONGDOUBLE: 
+            {
+                *(long double*)operation.getReturnValue() = returnDO->getDouble(index);
+                break;
+            }
+        case Operation::CHARS: 
+            {
+                *(char**)operation.getReturnValue() = strdup(returnDO->getCString(index));
+                break;
+            }
+        case Operation::STRING: 
+            {
+                *(string*)operation.getReturnValue() = returnDO->getCString(index);
+                break;
+            }
+        case Operation::DATAOBJECT: 
+            {
+                *(DataObjectPtr*)operation.getReturnValue() = returnDO->getDataObject(index);
+                break;
+            }
+        default:;
+        }
+    }
+    else
+    {
+        // RPC
+    }
     LOGEXIT(1, "Axis2Client::setReturn");
 }
 

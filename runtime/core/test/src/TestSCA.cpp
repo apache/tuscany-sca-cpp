@@ -21,6 +21,8 @@
 #include "commonj/sdo/Logger.h"
 #include "osoa/sca/sca.h"
 #include <iostream>
+using namespace std;
+
 using namespace osoa::sca;
 #include "tuscany/sca/core/TuscanyRuntime.h"
 using namespace tuscany::sca;
