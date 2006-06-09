@@ -24,6 +24,8 @@
 using commonj::sdo::DataObjectPtr;
 #include <string>
 using std::string;
+#include <vector>
+using std::vector;
 
 namespace tuscany
 {

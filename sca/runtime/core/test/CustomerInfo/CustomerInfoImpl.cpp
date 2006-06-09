@@ -24,6 +24,7 @@
 #include "commonj/sdo/DataObjectInstance.h"
 using namespace osoa::sca;
 using namespace commonj::sdo;
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
