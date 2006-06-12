@@ -5,6 +5,7 @@ AC_INIT(tuscany_sdo, 1.0.0)
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+AC_PREFIX_DEFAULT(/usr/local/tuscany/sdo)
 
 # Checks for programs.
 AC_PROG_CXX
