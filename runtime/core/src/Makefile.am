@@ -45,7 +45,8 @@ tuscany/sca/util/Logger.h \
 tuscany/sca/util/Logging.h \
 tuscany/sca/util/LogWriter.h \
 tuscany/sca/util/Utils.h \
-tuscany/sca/ws/WSServiceWrapper.h
+tuscany/sca/ws/WSServiceWrapper.h \
+tuscany/sca/ws/EntryPointProxy.h
 
 
 libtuscany_sca_la_SOURCES = \
@@ -89,7 +90,8 @@ tuscany/sca/core/SCAEntryPoint.cpp \
 tuscany/sca/core/SCARuntime.cpp \
 tuscany/sca/core/ServiceProxy.cpp \
 tuscany/sca/core/ServiceWrapper.cpp \
-tuscany/sca/core/TuscanyRuntime.cpp
+tuscany/sca/core/TuscanyRuntime.cpp \
+tuscany/sca/ws/EntryPointProxy.cpp
 
 libtuscany_sca_la_LIBADD = -lstdc++ -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
     -L$(top_builddir)/runtime/ws_reference/axis2c/src -ltuscany_sca_ws_reference

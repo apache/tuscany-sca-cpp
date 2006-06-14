@@ -50,7 +50,7 @@ namespace tuscany
              * @param level The log level of this message.
              * @param msg The message to be logged.
              */
-            static void log(int level, const char* msg);
+            SCA_API static void log(int level, const char* msg);
 
             /**
              * Log a message with variable arguments.
@@ -59,12 +59,12 @@ namespace tuscany
              * characters as described in printf.
              * @param ... Variable arguments.
              */
-            static void logArgs(int level, const char* msg, ...);
+            SCA_API static void logArgs(int level, const char* msg, ...);
 
             /**
              * The currently set logging level
              */
-            static int loggingLevel;
+            SCA_API static int loggingLevel;
 
         private:
             /** 

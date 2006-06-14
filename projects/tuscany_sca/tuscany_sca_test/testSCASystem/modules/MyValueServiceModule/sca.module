@@ -22,8 +22,8 @@
 
 	<!-- Expose as a web service -->
 	<entryPoint name="MyValueServiceExport" multiplicity="1..1">
-		<interface.wsdl interface="" callbackInterface=""></interface.wsdl>
-		<binding.ws port="mvs:MyValueServiceSOAP"></binding.ws>
+		<interface.wsdl interface="MyValueService.wsdl" callbackInterface=""></interface.wsdl>
+		<binding.ws port="http://www.myvalue.org/MyValueService/#wsdl.endpoint(MyValueService/MyValueServicePort)"></binding.ws>
 		<reference>MyValueServiceComponent</reference>
 	</entryPoint>
 

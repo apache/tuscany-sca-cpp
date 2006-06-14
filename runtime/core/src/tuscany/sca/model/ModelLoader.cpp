@@ -512,6 +512,8 @@ namespace tuscany
             // ===============================================
             void ModelLoader::addEntryPoint(Module* module, DataObjectPtr entryPointDO)
             {
+				string message;
+
                 //Utils::printDO(entryPointDO);
                 EntryPoint* entryPoint = module->addEntryPoint(entryPointDO->getCString("name"));    
 
@@ -532,6 +534,37 @@ namespace tuscany
                     // ----------------------------------------------------------
                     string targ = refs.getCString(i);
                     module->addWire(entryPoint->getName(), targ);
+                }
+
+                // Get binding, it will be the first and only binding
+                DataObjectPtr binding = entryPointDO->getList("binding")[0];
+                if (!binding)
+                {
+                    message = "No binding for entryPoint: ";
+                    message = message + entryPointDO->getCString("name");
+                    throw SystemConfigurationException(message.c_str());
+                }
+                
+                Utils::printDO(binding);
+                
+                string uri = binding->getCString("uri");
+                
+                // Determine the binding type
+                string bindingType = binding->getType().getName();
+                if (bindingType == "WebServiceBinding")
+                {
+                    string port = binding->getCString("port");
+                    
+                    WSBinding* wsBinding = new WSBinding(uri,port);
+                    
+                    entryPoint->setBinding(wsBinding);
+                    
+                }
+                else if (bindingType == "SCABinding")
+                {
+                    message = "SCA binding not yet implemented. Binding is for entryPoint: ";
+                    message = message + entryPointDO->getCString("name");
+                    throw SystemConfigurationException(message.c_str());
                 }
             }
             
@@ -635,8 +668,8 @@ namespace tuscany
             ///
             void ModelLoader::loadTypes(const char *fileName, const string &moduleName)
             {
-                
-                    
+                LOGENTRY(1, "ModelLoader::loadTypes");
+                                   
                 // Load a xsd file -> set the types in the moduleComponents data factory file
 
                 MODULE_LIST moduleList = system->findModules(moduleName);
@@ -656,7 +689,7 @@ namespace tuscany
                         throw ex;
                     }
                 }
-                            
+                LOGEXIT(1, "ModelLoader::loadTypes");                            
             }
 
             ///
@@ -664,13 +697,13 @@ namespace tuscany
             ///
             void ModelLoader::loadWsdl(const char *fileName, const string &moduleName)
             {
+                LOGENTRY(1, "ModelLoader::loadWsdl");
 
                 try {
                     // Load the wsdl file
                     XMLDocumentPtr doc = getXMLHelper()->loadFile(fileName);
 
-
-                    if (doc->getRootDataObject()!=0) 
+                    if (doc!=0 && doc->getRootDataObject()!=0) 
                     {
                         //Utils::printDO(doc->getRootDataObject());
                         MODULE_LIST moduleList = system->findModules(moduleName);
@@ -688,16 +721,20 @@ namespace tuscany
                     }
                     else
                     {
-                        LOGERROR_1(0, "ModuleLoader: Unable to load %s", fileName);
+                        LOGERROR_1(0, "ModuleLoader: Unable to load or parse WSDL %s", fileName);
                     }
                     
                 } catch (SDOTypeNotFoundException ex)
                 {
-                    LOGERROR_1(0, "ModuleLoader: Exception caught: %s", ex.getMessageText());
+                    LOGERROR_1(0, "ModelLoader: SDOTypeNotFoundException caught: %s", ex.getMessageText());
                     throw ex;
                 }
-                
-                
+                catch (SDONullPointerException ex)
+                {
+                    LOGERROR_1(0, "ModelLoader: SDONullPointerException caught: %s", ex.getMessageText());
+                    throw ex;
+                }
+                LOGEXIT(1, "ModelLoader::loadWsdl");                                            
                 
             }
             

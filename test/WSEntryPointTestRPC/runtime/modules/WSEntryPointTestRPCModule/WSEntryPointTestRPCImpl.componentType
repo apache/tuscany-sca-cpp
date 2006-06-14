@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<componentType xmlns="http://www.osoa.org/xmlns/sca/0.9"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<service name="WSEntryPointTestRPCService">
+		<interface.cpp header="WSEntryPointTestRPC.h">
+		</interface.cpp>
+	</service>
+
+</componentType>
