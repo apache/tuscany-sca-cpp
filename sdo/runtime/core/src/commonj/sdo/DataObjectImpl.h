@@ -598,7 +598,7 @@ private:
 
     PropertyValueMap PropertyValues;
     
-    const TypeImpl& ObjectType;
+    TypeImpl* ObjectType;
 
     DataObjectListImpl* listValue;
     

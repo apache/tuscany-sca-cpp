@@ -60,7 +60,7 @@ void RefCountingObject::addRef()
 {
     
     ++refCount;
-    LOGINFO_2(HIGHVOLUME,"RCO:ADDREF:%p:%ld",this,refCount);
+     LOGINFO_2(HIGHVOLUME,"RCO:ADDREF:%p:%ld",this,refCount);
 }
 
 void RefCountingObject::releaseRef()

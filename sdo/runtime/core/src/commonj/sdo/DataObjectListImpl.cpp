@@ -312,7 +312,7 @@ void DataObjectListImpl::insert (unsigned int index, DataObjectPtr d)
             return;
         }
 
-        std::string msg("Insertion into list fromm incompatible factory:");
+        std::string msg("Insertion into list from incompatible factory:");
         
         const Type& t = d->getType();
         msg += t.getURI();

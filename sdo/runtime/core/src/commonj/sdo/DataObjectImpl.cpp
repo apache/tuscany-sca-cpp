@@ -2583,13 +2583,16 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
 
     void DataObjectImpl::transferChildren(DataObject* d, DataFactory* f)
     {
+        bool isData = false;
         PropertyList pl = d->getInstanceProperties();
         for (int i=0;i<pl.size();i++)
         {
+            // even primitives need their DF fixed up
             if (pl[i].getType().isDataType())
             {
-                 continue;
+                 isData = true;
             }
+
             if (!d->isSet(pl[i]) || d->isNull(pl[i]))
             {
                 continue;
@@ -2603,7 +2606,7 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
                     DataObject* d2 = dl[j];
                     if (d2) {
                         ((DataObjectImpl*)d2)->setDataFactory(f);
-                        transferChildren(d2,f);
+                        if (!isData)transferChildren(d2,f);
                     }
                 }
             }
@@ -2613,7 +2616,7 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
                 if (d3)
                 { 
                     ((DataObjectImpl*)d3)->setDataFactory(f);
-                    transferChildren(d3,f);
+                    if (!isData)transferChildren(d3,f);
                 }
             }
         }
@@ -3492,17 +3495,17 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
 
     const Type& DataObjectImpl::getType()
     {
-          return ObjectType;
+          return (const Type&)(*ObjectType);
     }
 
     const Type::Types DataObjectImpl::getTypeEnum()
     {
-           return ObjectType.getTypeEnum();
+           return ObjectType->getTypeEnum();
     }
 
     const TypeImpl& DataObjectImpl::getTypeImpl()
     {
-          return ObjectType;
+          return (const TypeImpl&)*ObjectType;
     }
 
 
@@ -3581,6 +3584,8 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
 
     void DataObjectImpl::setDataFactory(DataFactory* df)
     {
+        ObjectType = (TypeImpl*)&(df->getType(ObjectType->getURI(),
+                        ObjectType->getName()));
         factory = df;
     }
 
@@ -3781,8 +3786,9 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
     }
 
 
-    DataObjectImpl::DataObjectImpl(const TypeImpl& t) : ObjectType(t)
+    DataObjectImpl::DataObjectImpl(const TypeImpl& t) 
     {
+        ObjectType = (TypeImpl*)&t;
         container = 0;
         value = 0; /* Will be initialized when used */
         valuelength = 0;
@@ -3812,7 +3818,7 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
 
 
 
-    DataObjectImpl::DataObjectImpl(DataFactory* df, const Type& t) : ObjectType((TypeImpl&)t),
+    DataObjectImpl::DataObjectImpl(DataFactory* df, const Type& t) : ObjectType((TypeImpl*)&t),
         factory(df)
     {
         container = 0;
@@ -3823,11 +3829,11 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
         isnull = false;
 
         // open type support
-        openBase = ObjectType.getPropertiesSize() ;
+        openBase = ObjectType->getPropertiesSize() ;
 
         userdata = (void*)0xFFFFFFFF;
 
-        if (ObjectType.isChangeSummaryType())
+        if (ObjectType->isChangeSummaryType())
         {
             changesummaryobject = 0;
             localCS = new ChangeSummaryImpl();
