@@ -31,7 +31,10 @@ fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
 ./autogen.sh
-TUSCANY_SDOCPP_HOME=`pwd`
+if [ x$TUSCANY_SDOCPP_HOME = x ]; then
+TUSCANY_SDOCPP_HOME=`pwd`/deploy
+fi
+
 ./configure --prefix=${TUSCANY_SDOCPP_HOME} --enable-static=no
 make
 make install
