@@ -147,6 +147,7 @@ namespace tuscany
         // ======================================================================
         SCA_API void SCAEntryPoint::invoke(Operation& operation)
         {
+            LOGENTRY(1,"SCAEntryPoint::invoke");
             string message;
 
             // --------------------
@@ -165,7 +166,8 @@ namespace tuscany
             {                
                 (*iter)->invoke(operation);
             }
-       }
+            LOGEXIT(1,"SCAEntryPoint::invoke");
+        }
 
 
         // ======================================================================

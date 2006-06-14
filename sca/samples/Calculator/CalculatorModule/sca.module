@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="ASCII"?>
 <module xmlns="http://www.osoa.org/xmlns/sca/0.9" 
-	xmlns:v="http://www.osoa.org/xmlns/sca/values/0.9" 
+	xmlns:v="http://www.osoa.org/xmlns/sca/values/0.9"
+    xmlns:cs="http://ws.apache.org/axis2/c/samplesmath/"
 	name="CalculatorModule">
+
+	<!-- Expose as a web service -->
+	<entryPoint name="WSCalculatorEntrypoint" multiplicity="1..1">
+		<interface.wsdl interface="Calculator.wsdl" callbackInterface=""></interface.wsdl>
+		<binding.ws port="http://ws.apache.org/axis2/c/samplesmath#wsdl.endpoint(CalculatorService/CalculatorServicePort)"></binding.ws>
+		<reference>CalculatorServiceComponent</reference>
+	</entryPoint>
+
 
 	<component name="CalculatorServiceComponent">
 		<implementation.cpp dll="CalculatorModule.dll" header="CalculatorImpl.h"></implementation.cpp>
                 <properties> </properties>
 		<references> </references>
 	</component>
+        
+
+
 </module>

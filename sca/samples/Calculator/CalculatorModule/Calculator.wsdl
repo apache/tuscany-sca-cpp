@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+             xmlns:tns="http://ws.apache.org/axis2/c/samplesmath"
+             targetNamespace="http://ws.apache.org/axis2/c/samplesmath">
+    <types>
+		<xs:schema targetNamespace="http://ws.apache.org/axis2/c/samplesmath" 
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:tns="http://ws.apache.org/axis2/c/samplesmath"
+                   elementFormDefault="qualified">
+        
+		<xs:element name="add">
+			<xs:complexType>
+				<xs:sequence>
+    				<xs:element name="param1" type="xs:float" minOccurs="1"/>
+                    <xs:element name="param2" type="xs:float" minOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="sub">
+			<xs:complexType>
+				<xs:sequence>
+    				<xs:element name="param1" type="xs:float" minOccurs="1"/>
+                    <xs:element name="param2" type="xs:float" minOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="mul">
+			<xs:complexType>
+				<xs:sequence>
+    				<xs:element name="param1" type="xs:float" minOccurs="1"/>
+                    <xs:element name="param2" type="xs:float" minOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="div">
+			<xs:complexType>
+				<xs:sequence>
+    				<xs:element name="param1" type="xs:float" minOccurs="1"/>
+                    <xs:element name="param2" type="xs:float" minOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+
+<!--         The data that axis2c math client expects to be returned.    -->
+<!--         SDOCPP currently doesn't support this XML. Jira TUSCANY-xxx -->
+<!--         <xs:element name="result">                                  -->
+<!--           <xs:simpleType>                                           -->
+<!--             <xs:restriction base="xs:float"/>                       -->
+<!--           </xs:simpleType>                                          -->
+<!--         </xs:element>                                               -->
+        <xs:element name="result">
+          <xs:complexType>
+              <xs:sequence>
+                  <xs:element name="data" type="xs:float" minOccurs="1"/>
+              </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        
+        </xs:schema>
+   </types>
+           
+    <message name="addRequestMsg">
+	<part name="body" element="tns:add"/>
+    </message>
+    <message name="subRequestMsg">
+    <part name="body" element="tns:sub"/>
+    </message>
+    <message name="mulRequestMsg">
+    <part name="body" element="tns:mul"/>
+    </message>
+    <message name="divRequestMsg">
+    <part name="body" element="tns:div"/>
+    </message>
+	    
+    <message name="calculatorResponseMsg">
+	<part name="body" element="tns:result"/>
+    </message>
+    
+    <portType name="CalculatorServicePortType">
+	<operation name="add">
+	    <input message="tns:addRequestMsg"/>
+	    <output message="tns:calculatorResponseMsg"/>
+	</operation>
+    <operation name="sub">
+        <input message="tns:subRequestMsg"/>
+        <output message="tns:calculatorResponseMsg"/>
+    </operation>
+    <operation name="mul">
+        <input message="tns:mulRequestMsg"/>
+        <output message="tns:calculatorResponseMsg"/>
+    </operation>
+    <operation name="div">
+        <input message="tns:divRequestMsg"/>
+        <output message="tns:calculatorResponseMsg"/>
+    </operation>
+    </portType>
+    
+    <binding name="CalculatorServiceBinding" type="tns:CalculatorServicePortType">
+	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+	<operation name="add">
+	    <soap:operation soapAction="CalculatorService#add"/>
+	    <input>
+		<soap:body use="literal"/>
+	    </input>
+	    <output>
+		<soap:body use="literal"/>
+	    </output>
+	</operation>
+    <operation name="sub">
+        <soap:operation soapAction="CalculatorService#sub"/>
+        <input>
+        <soap:body use="literal"/>
+        </input>
+        <output>
+        <soap:body use="literal"/>
+        </output>
+    </operation>
+    <operation name="mul">
+        <soap:operation soapAction="CalculatorService#nul"/>
+        <input>
+        <soap:body use="literal"/>
+        </input>
+        <output>
+        <soap:body use="literal"/>
+        </output>
+    </operation>
+    <operation name="div">
+        <soap:operation soapAction="CalculatorService#div"/>
+        <input>
+        <soap:body use="literal"/>
+        </input>
+        <output>
+        <soap:body use="literal"/>
+        </output>
+    </operation>
+    </binding>
+    
+    <service name="CalculatorService">
+	<port name="CalculatorServicePort" binding="tns:CalculatorServiceBinding">
+	    <soap:address location="http://localhost/axis/CalculatorService"/>
+	</port>
+    </service>
+</definitions>

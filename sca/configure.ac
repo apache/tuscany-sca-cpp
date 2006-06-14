@@ -39,6 +39,9 @@ AC_CONFIG_FILES([Makefile
                  runtime/ws_reference/Makefile
                  runtime/ws_reference/axis2c/Makefile
                  runtime/ws_reference/axis2c/src/Makefile
+                 runtime/ws_service/Makefile
+                 runtime/ws_service/axis2c/Makefile
+                 runtime/ws_service/axis2c/src/Makefile
                  runtime/core/Makefile
                  runtime/core/src/Makefile
                  runtime/core/test/Makefile

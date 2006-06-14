@@ -85,9 +85,14 @@ namespace tuscany
                 }
             }
             
-             void EntryPoint::setInterface(Interface* interf)
+            void EntryPoint::setInterface(Interface* interf)
             {
                 iface = interf;
+            }
+
+            void EntryPoint::setBinding(Binding* bind)
+            {
+                binding = bind;
             }
 
         } // End namespace model

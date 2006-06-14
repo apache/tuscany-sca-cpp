@@ -18,6 +18,7 @@
 */
 
 #include "CalculatorImpl.h"
+#include <stdio.h>
 
 CalculatorImpl::CalculatorImpl()
 {
@@ -31,24 +32,29 @@ CalculatorImpl::~CalculatorImpl()
 float CalculatorImpl::add(float arg1, float arg2)
 {
     float result = arg1 + arg2;
+
+    printf("CalculatorImpl::add %f + %f = %f\n", arg1, arg2, result);
     return result;
 }
 
 float CalculatorImpl::sub(float arg1, float arg2)
 {
     float result = arg1 - arg2;
+    printf("CalculatorImpl::sub %f - %f = %f\n", arg1, arg2, result);
     return result;
 }
 
 float CalculatorImpl::mul(float arg1, float arg2)
 {
     float result = arg1 * arg2;
+    printf("CalculatorImpl::mul %f * %f = %f\n", arg1, arg2, result);
     return result;
 }
 
 float CalculatorImpl::div(float arg1, float arg2)
 {
     float result = arg1 / arg2;
+    printf("CalculatorImpl::div %f / %f = %f\n", arg1, arg2, result);
     return result;
 }
 	

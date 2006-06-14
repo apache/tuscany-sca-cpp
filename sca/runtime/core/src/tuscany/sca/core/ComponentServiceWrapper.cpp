@@ -103,6 +103,7 @@ namespace tuscany
         // ======================================================================
         void ComponentServiceWrapper::invoke(Operation& operation)
         {
+            LOGENTRY(1,"ComponentServiceWrapper::invoke");
 
             SCARuntime* runtime = SCARuntime::getInstance();
             runtime->setCurrentComponent(component);
@@ -117,6 +118,7 @@ namespace tuscany
                 throw;
             }
             runtime->unsetCurrentComponent();
+            LOGEXIT(1,"ComponentServiceWrapper::invoke");
             
         }
         

@@ -1,0 +1,14 @@
+<service name="WSEntryPointTestRPC">
+    <parameter name="ServiceClass" locked="xsd:false">tuscany_sca</parameter>
+    <parameter name="TuscanySystemRoot" locked="xsd:false">D:/tuscany/cpp/sca/test/WSEntryPointTestRPC/runtime</parameter>
+    <parameter name="TuscanyEntryPoint" locked="xsd:false">WSEntryPointTestRPCSubsystem/WSEntryPointTestRPCService/WSEntryPointTestRPCEntrypoint</parameter>
+
+   <description>
+        This is a testing service , to test the system is working or not
+   </description>
+
+    <operation name="doString">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+
+</service>

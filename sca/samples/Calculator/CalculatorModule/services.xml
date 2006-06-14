@@ -1,0 +1,26 @@
+<service name="MathWebService">
+    <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
+    <parameter name="TuscanySystemRoot" locked="xsd:false">D:/tuscany/cpp/sca/samples/runtime</parameter>
+    <parameter name="TuscanyEntryPoint" locked="xsd:false">CalculatorSubsystem/CalculatorService/WSCalculatorEntrypoint</parameter>
+
+   <description>
+        This is a testing service, named 'math' to test multiple operations in the same service
+   </description>
+
+    <operation name="add">
+            <!--messageReceiver class="axis2_receivers" /-->
+    </operation>
+
+    <operation name="sub">
+            <!--messageReceiver class="axis2_receivers" /-->
+    </operation>
+
+    <operation name="mul">
+            <!--messageReceiver class="axis2_receivers" /-->
+    </operation>
+
+    <operation name="div">
+            <!--messageReceiver class="axis2_receivers" /-->
+    </operation>
+
+</service>

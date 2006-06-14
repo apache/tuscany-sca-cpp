@@ -1,0 +1,43 @@
+<service name="WSEntryPointTest">
+    <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
+    <parameter name="TuscanySystemRoot" locked="xsd:false">D:/tuscany/cpp/sca/test/WSEntryPointTest/runtime</parameter>
+    <parameter name="TuscanyEntryPoint" locked="xsd:false">WSEntryPointTestSubsystem/WSEntryPointTestService/WSEntryPointTestEntrypoint</parameter>
+
+   <description>
+        This is a testing service , to test the system is working or not
+   </description>
+
+    <operation name="doDataObject">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doChars">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doLong">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doInt">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doFloat">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doLongDouble">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doDouble">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doBool">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doShort">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doBytes">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doMixed">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+</service>

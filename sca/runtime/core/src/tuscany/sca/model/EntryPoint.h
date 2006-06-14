@@ -26,6 +26,7 @@ using std::string;
 using std::vector;
 
 #include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/model/Binding.h"
 #include "tuscany/sca/model/WireTarget.h"
 
 namespace tuscany
@@ -96,6 +97,20 @@ namespace tuscany
                  */
                 Interface* getInterface() {return iface;}
 
+				/**
+                 * Set the binding connecting this entry point.
+                 * @param binding The Binding.
+                 */
+                void setBinding(Binding* binding);
+
+                /**
+                 * Get the binding connecting this entry point. Use
+                 * Binding#getType to find out the type of binding 
+                 * connecting this entry point.
+                 * @return binding The binding.
+                 */
+                Binding* getBinding() {return binding;}
+
                 /**
                  * Add a target to the entry point.
                  * @param target Add a target (derived from a wire) to
@@ -118,6 +133,11 @@ namespace tuscany
                  * The interface describing this entry point.
                  */
                 Interface* iface;
+
+                /**
+                 * The binding connecting this entry point.
+                 */
+                Binding* binding;
 
                 /**
                  * The multiplicity of this entry point..

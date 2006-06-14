@@ -16,16 +16,6 @@
 
 TOPDIR=`pwd`
 
-
-#if [ x$AXISCPP_DEPLOY = x ]; then
-#echo "AXISCPP_DEPLOY not set"
-#exit;
-#fi
-#if [ x$XERCES_DEPLOY = x ]; then
-#echo "XERCES_DEPLOY not set"
-#exit;
-#fi
-
 if [ x$LIBXML2_INCLUDE = x ]; then
 echo "LIBXML2_INCLUDE not set"
 exit;

@@ -179,62 +179,74 @@ namespace tuscany
         // ===========================================
         void Operation::setReturnValue(const void *parm)
         {
+            LOGINFO(4, "Operation::setReturnValue(void*)");
             returnValue = Parameter((void*)parm, VOID_TYPE);
         }
 
         void Operation::setReturnValue(const bool *parm)
         {
+            LOGINFO(4, "Operation::setReturnValue(bool*)");
             returnValue = Parameter((void*)parm, BOOL);
         }
 
         void Operation::setReturnValue(const short *parm)
         {
+            LOGINFO(4, "Operation::setReturnValue(short*)");
             returnValue = Parameter((void*)parm, SHORT);
         }
 
         void Operation::setReturnValue(const long *parm)
         {
-           returnValue = Parameter((void*)parm, LONG);
+            LOGINFO(4, "Operation::setReturnValue(long*)");
+            returnValue = Parameter((void*)parm, LONG);
         }
 
         void Operation::setReturnValue(const unsigned short *parm)
         {
-           returnValue = Parameter((void*)parm, USHORT);
+            LOGINFO(4, "Operation::setReturnValue(unsigned short*)");
+            returnValue = Parameter((void*)parm, USHORT);
         }
 
         void Operation::setReturnValue(const unsigned long *parm)
         {
-           returnValue = Parameter((void*)parm, ULONG);
+            LOGINFO(4, "Operation::setReturnValue(unsigned long*)");
+            returnValue = Parameter((void*)parm, ULONG);
         }
 
        void Operation::setReturnValue(const float *parm)
         {
-           returnValue = Parameter((void*)parm, FLOAT);
+            LOGINFO(4, "Operation::setReturnValue(float*)");
+            returnValue = Parameter((void*)parm, FLOAT);
         }
 
        void Operation::setReturnValue(const double *parm)
         {
-           returnValue = Parameter((void*)parm, DOUBLE);
+            LOGINFO(4, "Operation::setReturnValue(double*)");
+            returnValue = Parameter((void*)parm, DOUBLE);
         }
 
        void Operation::setReturnValue(const long double *parm)
         {
-           returnValue = Parameter((void*)parm, LONGDOUBLE);
+            LOGINFO(4, "Operation::setReturnValue(long double*)");
+            returnValue = Parameter((void*)parm, LONGDOUBLE);
         }
 
         void Operation::setReturnValue(const char* *parm)
         {
-           returnValue = Parameter((void*)parm, CHARS);
+            LOGINFO(4, "Operation::setReturnValue(char*)");
+            returnValue = Parameter((void*)parm, CHARS);
         }
 
         void Operation::setReturnValue(const string *parm)
         {
-           returnValue = Parameter((void*)parm, STRING);
+            LOGINFO(4, "Operation::setReturnValue(string*)");
+            returnValue = Parameter((void*)parm, STRING);
         }
 
         void Operation::setReturnValue(const DataObjectPtr *parm)
         {
-           returnValue = Parameter((void*)parm, DATAOBJECT);
+            LOGINFO(4, "Operation::setReturnValue(DataObjectPtr*)");
+            returnValue = Parameter((void*)parm, DATAOBJECT);
         }
 
  
