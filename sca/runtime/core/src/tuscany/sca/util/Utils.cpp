@@ -16,6 +16,9 @@
  */
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
+#if defined(WIN32)  || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif
 
 #include "tuscany/sca/util/Utils.h"
 
