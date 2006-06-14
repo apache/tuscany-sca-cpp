@@ -47,7 +47,11 @@ cd sdo
 cd $TOPDIR
 
 # Build SCA
-export TUSCANY_SDOCPP=$TOPDIR/sdo
+
+if [ x$TUSCANY_SDOCPP = x ]; then
+  export TUSCANY_SDOCPP=$TOPDIR/sdo/deploy
+fi
+
 cd sca
 ./build.sh
 cd $TOPDIR
