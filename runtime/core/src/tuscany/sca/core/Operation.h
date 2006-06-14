@@ -161,7 +161,7 @@ namespace tuscany
             /**
              * Array of parameters.
              */
-            typedef vector<Parameter> PARAMETER_VECTOR;
+            typedef std::vector<Parameter> PARAMETER_VECTOR;
             
             PARAMETER_VECTOR parameters;
 
