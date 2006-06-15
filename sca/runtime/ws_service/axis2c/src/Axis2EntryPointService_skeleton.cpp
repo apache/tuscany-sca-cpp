@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#if defined(WIN32)  || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#pragma warning(disable: 4091)
+#endif
+
 #include <axis2_svc_skeleton.h>
 #include <axis2_array_list.h>
 #include <axis2_log_default.h>

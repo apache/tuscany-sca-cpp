@@ -18,6 +18,8 @@
 #ifndef tuscany_sca_ws_entrypointproxy_h
 #define tuscany_sca_ws_entrypointproxy_h
 
+#include "osoa/sca/export.h"
+
 #include "commonj/sdo/SDO.h"
 using commonj::sdo::DataObjectPtr;
 

@@ -1,0 +1,151 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: tuscany_sca - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP4C2.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/core/src" /I "D:\tuscanysvn\cpp\sdo\deploy/include" /I "D:\axis2c-bin-0.91-win32/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SCA_EXPORTS" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\tuscanysvn\cpp\sca\runtime\ws_reference\axis2c\src\WSServiceWrapper.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP4C2.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP4C3.tmp" with contents
+[
+axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axis2_om.lib /nologo /dll /incremental:yes /pdb:"Debug/tuscany_sca.pdb" /debug /machine:I386 /out:"Debug/tuscany_sca.dll" /implib:"Debug/tuscany_sca.lib" /pdbtype:sept /libpath:"D:\tuscanysvn\cpp\sdo\deploy\lib" /libpath:"D:\axis2c-bin-0.91-win32\lib" 
+.\Debug\ComponentContext.obj
+.\Debug\ComponentContextImpl.obj
+.\Debug\ModuleContext.obj
+.\Debug\ModuleContextImpl.obj
+.\Debug\SCA.obj
+.\Debug\ServiceList.obj
+.\Debug\ServiceRuntimeException.obj
+.\Debug\ComponentServiceWrapper.obj
+.\Debug\ExternalServiceWrapper.obj
+.\Debug\Operation.obj
+.\Debug\SCAEntryPoint.obj
+.\Debug\SCARuntime.obj
+.\Debug\ServiceProxy.obj
+.\Debug\ServiceWrapper.obj
+.\Debug\TuscanyRuntime.obj
+.\Debug\Binding.obj
+.\Debug\Component.obj
+.\Debug\CPPImplementation.obj
+.\Debug\CPPInterface.obj
+.\Debug\EntryPoint.obj
+.\Debug\ExternalService.obj
+.\Debug\Implementation.obj
+.\Debug\Interface.obj
+.\Debug\ModelLoader.obj
+.\Debug\Module.obj
+.\Debug\Service.obj
+.\Debug\ServiceReference.obj
+.\Debug\Subsystem.obj
+.\Debug\System.obj
+.\Debug\Wire.obj
+.\Debug\WireTarget.obj
+.\Debug\WSBinding.obj
+.\Debug\Wsdl.obj
+.\Debug\WsdlOperation.obj
+.\Debug\DefaultLogWriter.obj
+.\Debug\File.obj
+.\Debug\FileLogWriter.obj
+.\Debug\Library.obj
+.\Debug\Logger.obj
+.\Debug\LogWriter.obj
+.\Debug\Utils.obj
+.\Debug\Axis2Client.obj
+.\Debug\WSServiceWrapper.obj
+.\Debug\EntryPointProxy.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP4C3.tmp"
+<h3>Output Window</h3>
+Compiling...
+WSServiceWrapper.cpp
+d:\axis2c-bin-0.91-win32\include\axis2_thread_pool.h(91) : warning C4091: '__declspec(dllimport ) ' : ignored on left of 'struct axis2_thread_pool_ops' when no variable is declared
+d:\axis2c-bin-0.91-win32\include\axis2_thread_pool.h(100) : warning C4091: '__declspec(dllimport ) ' : ignored on left of 'struct axis2_thread_pool' when no variable is declared
+Linking...
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP4C4.bat" with contents
+[
+@echo off
+del ..\..\..\bin\tuscany_sca.*
+del ..\..\..\lib\*.lib
+copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\include\osoa\sca
+copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\include\tuscany\sca\core
+copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\include\tuscany\sca\model
+copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\include\tuscany\sca\util
+copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\include\tuscany\sca\ws
+copy Debug\tuscany_sca.dll ..\..\..\bin
+copy Debug\tuscany_sca.pdb ..\..\..\bin
+copy Debug\tuscany_sca.lib ..\..\..\lib
+]
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP4C4.bat"
+
+..\..\..\runtime\core\src\osoa\sca\ComponentContext.h
+..\..\..\runtime\core\src\osoa\sca\ComponentContextImpl.h
+..\..\..\runtime\core\src\osoa\sca\export.h
+..\..\..\runtime\core\src\osoa\sca\ModuleContext.h
+..\..\..\runtime\core\src\osoa\sca\ModuleContextImpl.h
+..\..\..\runtime\core\src\osoa\sca\sca.h
+..\..\..\runtime\core\src\osoa\sca\ServiceList.h
+..\..\..\runtime\core\src\osoa\sca\ServiceRuntimeException.h
+        8 file(s) copied.
+..\..\..\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.h
+..\..\..\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.h
+..\..\..\runtime\core\src\tuscany\sca\core\Operation.h
+..\..\..\runtime\core\src\tuscany\sca\core\SCAEntryPoint.h
+..\..\..\runtime\core\src\tuscany\sca\core\SCARuntime.h
+..\..\..\runtime\core\src\tuscany\sca\core\ServiceProxy.h
+..\..\..\runtime\core\src\tuscany\sca\core\ServiceWrapper.h
+..\..\..\runtime\core\src\tuscany\sca\core\TuscanyRuntime.h
+        8 file(s) copied.
+..\..\..\runtime\core\src\tuscany\sca\model\Binding.h
+..\..\..\runtime\core\src\tuscany\sca\model\Component.h
+..\..\..\runtime\core\src\tuscany\sca\model\CPPImplementation.h
+..\..\..\runtime\core\src\tuscany\sca\model\CPPInterface.h
+..\..\..\runtime\core\src\tuscany\sca\model\EntryPoint.h
+..\..\..\runtime\core\src\tuscany\sca\model\ExternalService.h
+..\..\..\runtime\core\src\tuscany\sca\model\Implementation.h
+..\..\..\runtime\core\src\tuscany\sca\model\Interface.h
+..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.h
+..\..\..\runtime\core\src\tuscany\sca\model\Module.h
+..\..\..\runtime\core\src\tuscany\sca\model\Service.h
+..\..\..\runtime\core\src\tuscany\sca\model\ServiceReference.h
+..\..\..\runtime\core\src\tuscany\sca\model\Subsystem.h
+..\..\..\runtime\core\src\tuscany\sca\model\System.h
+..\..\..\runtime\core\src\tuscany\sca\model\Wire.h
+..\..\..\runtime\core\src\tuscany\sca\model\WireTarget.h
+..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.h
+..\..\..\runtime\core\src\tuscany\sca\model\Wsdl.h
+..\..\..\runtime\core\src\tuscany\sca\model\WsdlOperation.h
+       19 file(s) copied.
+..\..\..\runtime\core\src\tuscany\sca\util\DefaultLogWriter.h
+..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.h
+..\..\..\runtime\core\src\tuscany\sca\util\File.h
+..\..\..\runtime\core\src\tuscany\sca\util\FileLogWriter.h
+..\..\..\runtime\core\src\tuscany\sca\util\Library.h
+..\..\..\runtime\core\src\tuscany\sca\util\Logger.h
+..\..\..\runtime\core\src\tuscany\sca\util\Logging.h
+..\..\..\runtime\core\src\tuscany\sca\util\LogWriter.h
+..\..\..\runtime\core\src\tuscany\sca\util\Utils.h
+        9 file(s) copied.
+..\..\..\runtime\core\src\tuscany\sca\ws\EntryPointProxy.h
+..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceWrapper.h
+        2 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+<h3>
+--------------------Configuration: tuscany_sca_ws_service - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+
+
+
+<h3>Results</h3>
+tuscany_sca_ws_service.dll - 0 error(s), 2 warning(s)
+</pre>
+</body>
+</html>

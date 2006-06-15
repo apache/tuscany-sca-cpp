@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#if defined(WIN32)  || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#pragma warning(disable: 4091)
+#endif
 #include "Axis2Utils.h"
 
-#include "osoa/sca/export.h"
 #include <axis2_svc_ctx.h>
 #include <axis2_defines.h>
 

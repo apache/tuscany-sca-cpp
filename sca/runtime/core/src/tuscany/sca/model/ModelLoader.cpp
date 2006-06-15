@@ -545,7 +545,7 @@ namespace tuscany
                     throw SystemConfigurationException(message.c_str());
                 }
                 
-                Utils::printDO(binding);
+                // Utils::printDO(binding);
                 
                 string uri = binding->getCString("uri");
                 

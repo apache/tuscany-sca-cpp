@@ -16,9 +16,13 @@
  */
 
 /* $Rev$ $Date$ */
+#if defined(WIN32)  || defined (_WINDOWS)
+#pragma warning(disable: 4091)
+#endif
+
+#include "tuscany/sca/ws/WSServiceWrapper.h"
 
 #include "Axis2Client.h"
-#include "tuscany/sca/ws/WSServiceWrapper.h"
 
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;

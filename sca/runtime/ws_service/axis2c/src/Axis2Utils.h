@@ -18,8 +18,6 @@
 #ifndef tuscany_sca_ws_axis2utils_h
 #define tuscany_sca_ws_axis2utils_h
 
-#include "osoa/sca/export.h"
-
 #include <axis2_env.h>
 #include <axis2_msg_ctx.h>
 
@@ -31,7 +29,7 @@ namespace tuscany
         namespace ws
         {
         
-            class SCA_API Axis2Utils
+            class Axis2Utils
             {
             public:
                 static char* getAxisServiceParameterValue(axis2_env_t **env, axis2_msg_ctx_t *msg_ctx, char* parameterName);                

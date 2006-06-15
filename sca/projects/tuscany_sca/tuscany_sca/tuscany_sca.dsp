@@ -469,6 +469,14 @@ SOURCE=..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\EntryPointProxy.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\EntryPointProxy.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\ws_reference\axis2c\src\WSServiceWrapper.cpp
 # End Source File
 # Begin Source File
