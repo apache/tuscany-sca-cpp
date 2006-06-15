@@ -15,6 +15,10 @@
  */
 
 #include "osoa/sca/export.h"
+#if defined(WIN32)  || defined (_WINDOWS)
+#pragma warning(disable: 4091)
+#endif
+
 #include <axis2_client.h>
 
 #include <axis2_error_default.h>
