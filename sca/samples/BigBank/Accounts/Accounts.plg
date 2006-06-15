@@ -1,0 +1,66 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Accounts - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB36.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "c:\apache\apache_checkout\cpp\sca\include" /I "c:\apache\apache_checkout\cpp\sdo\deploy\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ACCOUNTS_EXPORTS" /Fp"Debug/Accounts.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\AccountDataServiceImpl.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\AccountDataServiceImpl_AccountDataService_Proxy.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\AccountDataServiceImpl_AccountDataService_Wrapper.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\AccountServiceImpl.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\AccountServiceImpl_AccountDataService_Proxy.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\AccountServiceImpl_AccountService_Proxy.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\AccountServiceImpl_AccountService_Wrapper.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\AccountServiceImpl_stockQuote_Proxy.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\StockQuoteServiceImpl.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\StockQuoteServiceImpl_StockQuoteExternal_Proxy.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\StockQuoteServiceImpl_StockQuoteService_Proxy.cpp"
+"C:\apache\apache_checkout\cpp\sca\samples\BigBank\Accounts\StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB36.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB37.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"Debug/Accounts.pdb" /debug /machine:I386 /out:"Debug/Accounts.dll" /implib:"Debug/Accounts.lib" /pdbtype:sept /libpath:"c:\apache\apache_checkout\cpp\sca/lib" /libpath:"c:\apache\apache_checkout\cpp\sdo\deploy/lib" 
+.\Debug\AccountDataServiceImpl.obj
+.\Debug\AccountDataServiceImpl_AccountDataService_Proxy.obj
+.\Debug\AccountDataServiceImpl_AccountDataService_Wrapper.obj
+.\Debug\AccountServiceImpl.obj
+.\Debug\AccountServiceImpl_AccountDataService_Proxy.obj
+.\Debug\AccountServiceImpl_AccountService_Proxy.obj
+.\Debug\AccountServiceImpl_AccountService_Wrapper.obj
+.\Debug\AccountServiceImpl_stockQuote_Proxy.obj
+.\Debug\StockQuoteServiceImpl.obj
+.\Debug\StockQuoteServiceImpl_StockQuoteExternal_Proxy.obj
+.\Debug\StockQuoteServiceImpl_StockQuoteService_Proxy.obj
+.\Debug\StockQuoteServiceImpl_StockQuoteService_Wrapper.obj
+]
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB37.tmp"
+<h3>Output Window</h3>
+Compiling...
+AccountDataServiceImpl.cpp
+AccountDataServiceImpl_AccountDataService_Proxy.cpp
+AccountDataServiceImpl_AccountDataService_Wrapper.cpp
+AccountServiceImpl.cpp
+AccountServiceImpl_AccountDataService_Proxy.cpp
+AccountServiceImpl_AccountService_Proxy.cpp
+AccountServiceImpl_AccountService_Wrapper.cpp
+AccountServiceImpl_stockQuote_Proxy.cpp
+StockQuoteServiceImpl.cpp
+StockQuoteServiceImpl_StockQuoteExternal_Proxy.cpp
+StockQuoteServiceImpl_StockQuoteService_Proxy.cpp
+StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp
+Linking...
+   Creating library Debug/Accounts.lib and object Debug/Accounts.exp
+
+
+
+<h3>Results</h3>
+Accounts.dll - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
