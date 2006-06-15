@@ -1,0 +1,16 @@
+copy Accounts\Debug\Accounts.dll Deploy\modules\Accounts
+copy Accounts\Debug\Accounts.pdb Deploy\modules\Accounts
+copy Accounts\AccountServiceImpl.h Deploy\modules\Accounts
+copy Accounts\AccountService.h Deploy\modules\Accounts
+copy Accounts\AccountDataServiceImpl.h Deploy\modules\Accounts
+copy Accounts\AccountDataService.h Deploy\modules\Accounts
+copy Accounts\StockQuoteService.h Deploy\modules\Accounts
+copy Accounts\StockQuoteServiceImpl.h Deploy\modules\Accounts
+copy Accounts\StockQuoteExternalService.h Deploy\modules\Accounts
+copy AccountClient\Debug\AccountClient.exe Deploy\modules\Accounts
+copy AccountClient\Debug\AccountClient.pdb Deploy\modules\Accounts
+copy Accounts\sca.module Deploy\modules\Accounts
+copy Accounts\sca.subsystem Deploy\subsystems\Accounts
+copy Accounts\AccountServiceImpl.componentType Deploy\modules\Accounts
+copy Accounts\AccountDataServiceImpl.componentType Deploy\modules\Accounts
+copy Accounts\StockQuoteServiceImpl.componentType Deploy\modules\Accounts

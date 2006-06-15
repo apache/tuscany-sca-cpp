@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wsdl:definitions 
+ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:tns="http://www.quickstockquote.com/StockQuoteService/"
+ xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ targetNamespace="http://www.quickstockquote.com/StockQuoteService/"
+ name="StockQuoteService"> 
+
+ <wsdl:types>
+  <xsd:schema 
+   targetNamespace="http://www.quickstockquote.com/StockQuoteService/"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"> 
+  
+  <xsd:element name="getQuote"> 
+   <xsd:complexType> 
+    <xsd:sequence> 
+	 <xsd:element name="symbol" type="xsd:string"/>
+	</xsd:sequence> 
+   </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="getQuoteResponse">
+   <xsd:complexType>
+    <xsd:sequence>
+	 <xsd:element name="quote" type="xsd:float"/>
+	</xsd:sequence>
+   </xsd:complexType> 
+  </xsd:element> 
+
+  </xsd:schema>
+   </wsdl:types>
+    <wsdl:message name="getQuote">
+     <wsdl:part element="tns:getQuote" name="getQuote" />
+    </wsdl:message>
+   <wsdl:message name="getQuoteResponse">
+  <wsdl:part element="tns:getQuoteResponse" name="getQuoteResponse" />
+ </wsdl:message>
+
+ <wsdl:portType name="StockQuoteService">
+  <wsdl:operation name="getQuote">
+   <wsdl:input message="tns:getQuote" />
+   <wsdl:output message="tns:getQuoteResponse" />
+  </wsdl:operation>
+ </wsdl:portType>
+
+ <wsdl:binding name="StockQuoteServiceSOAP"
+   type="tns:StockQuoteService">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+  <wsdl:operation name="getQuote">
+   <soap:operation
+     soapAction="http://www.quickstockquote.com/StockQuoteService/getQuote" />
+    <wsdl:input> 
+     <soap:body use="literal" />
+    </wsdl:input>
+    <wsdl:output>
+     <soap:body use="literal" />
+    </wsdl:output>
+   </wsdl:operation>
+  </wsdl:binding>
+ <wsdl:service name="StockQuoteService">
+  <wsdl:port binding="tns:StockQuoteServiceSOAP"  
+   name="StockQuoteServiceSOAP"> 
+   <soap:address location="http://www.quickstockquote.com/services/StockQuoteService"/>
+  </wsdl:port>
+ </wsdl:service> 
+</wsdl:definitions> 

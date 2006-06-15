@@ -1,0 +1,89 @@
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+xmlns:tns="http://www.bigbank.com/AccountService/"
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://www.bigbank.com/AccountService/"
+name="AccountService" > 
+
+<wsdl:types>
+ <xsd:schema 
+  targetNamespace="http://www.bigbank.com/AccountService/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"> 
+  
+  <xsd:element name="customerID" type="xsd:string" />
+  
+  <xsd:element name="getAcountReportResponse" type="tns:AccountReport" />
+
+  <xsd:complexType name="AccountReport"> 
+   <xsd:sequence>
+    <xsd:element name="checking" type="tns:CheckingAccount" 
+	  maxOccurs="unbounded"/>
+    <xsd:element name="savings" type="tns:SavingsAccount" 
+	  maxOccurs="unbounded"/>
+    <xsd:element name="stocks" type="tns:StockAccount" 
+	  maxOccurs="unbounded"/>
+   </xsd:sequence>
+   </xsd:complexType>
+  
+  <xsd:complexType name="StockAccount">
+   <xsd:sequence>
+    <xsd:element name="accountNumber" type="xsd:string"/>
+	<xsd:element name="symbol" type="xsd:string"/>
+	<xsd:element name="quantity" type="xsd:integer"/>
+	<xsd:element name="balance" type="xsd:float"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CheckingAccount">
+   <xsd:sequence>
+    <xsd:element name="accountNumber" type="xsd:string"/>
+	<xsd:element name="balance" type="xsd:float"/>
+   </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SavingsAccount">
+   <xsd:sequence>
+    <xsd:element name="accountNumber" type="xsd:string"/>
+	<xsd:element name="balance" type="xsd:float"/>
+   </xsd:sequence>
+  </xsd:complexType>
+ </xsd:schema>
+</wsdl:types>
+
+<wsdl:message name="getAcountReportRequest">
+ <wsdl:part element="tns:customerID" name="getAcountReportRequest" />
+</wsdl:message>
+
+<wsdl:message name="getAcountReportResponse">
+ <wsdl:part element="tns:getAcountReportResponse" 
+   name="getAcountReportResponse" />
+</wsdl:message> 
+
+<wsdl:portType name="AccountService"> 
+  SCA Sample Application 16 November 2005 
+ <wsdl:operation name="getAcountReport">
+  <wsdl:input message="tns:getAcountReportRequest" />
+  <wsdl:output message="tns:getAcountReportResponse" />
+ </wsdl:operation>
+</wsdl:portType>
+
+<wsdl:binding name="AccountServiceSOAP" type="tns:AccountService">
+ <soap:binding style="document"
+  transport="http://schemas.xmlsoap.org/soap/http" />
+ <wsdl:operation name="getAcountReport">
+ <soap:operation
+   soapAction="http://www.bigbank.com/AccountService/getAcountReport" />
+  <wsdl:input> 
+   <soap:body use="literal" />
+  </wsdl:input>
+  <wsdl:output>
+   <soap:body use="literal" />
+  </wsdl:output>
+ </wsdl:operation>
+</wsdl:binding>
+
+<wsdl:service name="AccountService">
+ <wsdl:port binding="tns:AccountServiceSOAP" 
+   name="AccountServiceSOAP"> 
+  <soap:address location="" />
+ </wsdl:port>
+</wsdl:service>
+</wsdl:definitions> 
