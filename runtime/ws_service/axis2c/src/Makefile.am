@@ -2,6 +2,8 @@ lib_LTLIBRARIES = libtuscany_sca_ws_service.la
 
 libtuscany_sca_ws_service_la_SOURCES = Axis2EntryPointService_skeleton.cpp Axis2Utils.cpp
 
+noinst_HEADERS = *.h
+
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
 
 libtuscany_sca_ws_service_la_LIBADD = \

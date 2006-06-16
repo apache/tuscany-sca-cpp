@@ -31,10 +31,10 @@ echo "Using SDO installed at $TUSCANY_SDOCPP"
 # Build tools first as they will be used to generate cpp code
 cd $TUSCANY_SCACPP_HOME/tools/scagen
 ant
-chmod a+x $TUSCANY_SCACPP_HOME/bin/scagen.sh
+chmod a+x $TUSCANY_SCACPP_HOME/deploy/bin/scagen.sh
 
 cd $TUSCANY_SCACPP_HOME
 ./autogen.sh
-./configure --prefix=${TUSCANY_SCACPP_HOME} --enable-static=no
+./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no
 make
 make install

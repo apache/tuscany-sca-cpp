@@ -8,8 +8,7 @@ scagen:
 	cp ./MyValue/StockQuoteService.h ./testSCASystem/modules/MyValueServiceModule
 	cp ./CustomerInfo/CustomerInfo.h ./testSCASystem/modules/MyValueServiceModule
 	cp ./CustomerInfo/CustomerInfoImpl.h ./testSCASystem/modules/MyValueServiceModule
-	cd $(top_builddir)/bin && \
-	./scagen.sh -dir ../runtime/core/test/testSCASystem/modules/MyValueServiceModule -output ../runtime/core/test/tmp
+	java -jar $(prefix)/bin/scagen.jar -dir testSCASystem/modules/MyValueServiceModule -output tmp
 	cp tmp/CustomerInfoImpl*.* CustomerInfo
 	cp tmp/MyValueImpl*.* MyValue
 	
