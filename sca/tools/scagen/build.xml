@@ -11,7 +11,7 @@
 
     <!-- Add "test" to the depends list below to add auto-testing to the build -->
     <!-- a junit.jar is needed at ${junit.jar.folder}/junit.jar though         -->
-    <target name="all" depends="init,jars,doc,scripts,zip.all,tobin">
+    <target name="all" depends="init,jars,doc,scripts,zip.all">
     </target>
 
     <target name="test" depends="init,jars,test.jar">
@@ -105,7 +105,7 @@
 <delete dir="${temp.folder}/scagen.jar.bin" />
 </target>
 
-<target name="tobin" depends="jars" description="move the desired stuff to bin">
+<target name="tobin" depends="jars, scripts" description="move the desired stuff to bin">
     <move file="${build.result.folder}/scagen.cmd" todir="${bin.dir}" />
     <move file="${build.result.folder}/scagen.sh" todir="${bin.dir}" />
     <move file="${build.result.folder}/scagen.jar" todir="${bin.dir}" />

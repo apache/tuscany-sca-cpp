@@ -1,4 +1,4 @@
-SUBDIRS = runtime samples
+SUBDIRS = tools runtime samples
 datadir=$(prefix)
 
 data_DATA = INSTALL README LICENSE COPYING
