@@ -35,6 +35,8 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([getcwd putenv strdup])
 
 AC_CONFIG_FILES([Makefile
+                 tools/Makefile
+                 tools/scagen/Makefile
                  runtime/Makefile
                  runtime/ws_reference/Makefile
                  runtime/ws_reference/axis2c/Makefile
