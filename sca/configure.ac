@@ -49,11 +49,6 @@ AC_CONFIG_FILES([Makefile
                  runtime/core/test/MyValue/Makefile
                  runtime/core/test/src/Makefile
                  samples/Makefile
-                 samples/MyValue/Makefile
-                 samples/MyValue/MyValueModule/Makefile
-                 samples/MyValue/MyValueModule/CustomerInfo/Makefile
-                 samples/MyValue/MyValueModule/MyValue/Makefile
-                 samples/MyValue/Client/Makefile
                  ])
 AC_OUTPUT
 
