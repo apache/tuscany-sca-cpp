@@ -1066,7 +1066,7 @@ namespace commonj
                                 }
                                 else
                                 {
-                                    if (dataObject->isNull(propertyName))
+                                    if (dataObject->isNull(pl[i]))
                                     {
                                         rc = xmlTextWriterStartElementNS(writer, 
                                         NULL, elementName, elementURI);
