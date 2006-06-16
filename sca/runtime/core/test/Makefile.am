@@ -1,5 +1,14 @@
 SUBDIRS = CustomerInfo MyValue src
 
+EXTRA_DIST = testSCASystem/subsystems \
+testSCASystem/modules/MyValueServiceModule/sca.module \
+testSCASystem/modules/MyValueServiceModule/*.fragment \
+testSCASystem/modules/MyValueServiceModule/*.componentType \
+testSCASystem/modules/MyValueServiceModule/*.wsdl \
+testSCASystem/modules/MyValueServiceModule/*.xsd \
+testSCASystem/modules/MyValueServiceModule/*.config
+
+
 BUILT_SOURCES = scagen
 
 scagen:
