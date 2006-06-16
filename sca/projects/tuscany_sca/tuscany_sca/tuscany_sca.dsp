@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axis2_om.lib axis2_engine.lib tuscany_sdo_axiom.lib /nologo /dll /machine:I386 /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=del ..\..\..\bin\tuscany_sca.*	del ..\..\..\lib\*.lib	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\include\osoa\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\include\tuscany\sca\util	copy Release\tuscany_sca.dll ..\..\..\bin	copy Release\tuscany_sca.lib ..\..\..\lib	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\include\tuscany\sca\ws
+PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.lib	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util	copy Release\tuscany_sca.dll ..\..\..\deploy\bin	copy Release\tuscany_sca.lib ..\..\..\deploy\lib	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axis2_om.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=del ..\..\..\bin\tuscany_sca.*	del ..\..\..\lib\*.lib	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\include\osoa\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\include\tuscany\sca\util	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\include\tuscany\sca\ws	copy Debug\tuscany_sca.dll ..\..\..\bin	copy Debug\tuscany_sca.pdb ..\..\..\bin	copy Debug\tuscany_sca.lib ..\..\..\lib
+PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.lib	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws	copy Debug\tuscany_sca.dll ..\..\..\deploy\bin	copy Debug\tuscany_sca.pdb ..\..\..\deploy\bin	copy Debug\tuscany_sca.lib ..\..\..\deploy\lib	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 # End Special Build Tool
 
 !ENDIF 

@@ -43,9 +43,9 @@ int main(int argc, char* argv[])
     }
 
 #if defined(WIN32)  || defined (_WINDOWS)
-    systemRoot += "/projects/tuscany_sca/tuscany_sca_test/testSCASystem";
+    systemRoot += "/../projects/tuscany_sca/tuscany_sca_test/testSCASystem";
 #else
-    systemRoot += "/runtime/core/test/testSCASystem";
+    systemRoot += "/../runtime/core/test/testSCASystem";
 #endif
     TuscanyRuntime runtime("SubSystem1", systemRoot);
 
