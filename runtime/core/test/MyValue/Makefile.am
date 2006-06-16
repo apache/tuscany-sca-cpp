@@ -1,5 +1,7 @@
 lib_LTLIBRARIES = libMyValue.la
 
+noinst_HEADERS = *.h
+
 libMyValue_la_SOURCES = \
 MyValueImpl.cpp \
 MyValueImpl_customerInfo_Proxy.cpp \
