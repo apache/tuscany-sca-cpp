@@ -11,9 +11,9 @@ tuscany_sdo_axiom_test_LDADD   =  -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src/commonj/sdo -lxml2 -lstdc++ \
 	-L$(AXIS2C_HOME)/lib \
 					-laxis2_util \
-                    -laxis2_om \
+                    -laxis2_axiom \
                     -laxis2_parser \
-                    -laxis2_unix
+                    -laxis2_minizip
 
 INCLUDES = -I$(top_builddir)/runtime/core/sdo_axiom_test \
            -I$(top_builddir)/runtime/core/src \
