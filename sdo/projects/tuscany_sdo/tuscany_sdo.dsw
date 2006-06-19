@@ -29,6 +29,12 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name sdo_axiom
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name sdo_runtime
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name sdo_test
+    End Project Dependency
 }}}
 
 ###############################################################################

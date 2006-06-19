@@ -76,7 +76,7 @@ axis2_Axis2EntryPointService_create(axis2_env_t *env)
 
 int AXIS2_CALL
 Axis2EntryPointService_init(axis2_svc_skeleton_t *svc_skeleton,
-                        axis2_env_t *env)
+                        const axis2_env_t *env)
 {
     // This method never seems to be called - an old Axis2C artifact?
 
@@ -86,7 +86,7 @@ Axis2EntryPointService_init(axis2_svc_skeleton_t *svc_skeleton,
 
 int AXIS2_CALL
 Axis2EntryPointService_free(axis2_svc_skeleton_t *svc_skeleton,
-            axis2_env_t *env)
+            const axis2_env_t *env)
 {
     /*if(svc_skeleton->func_array)
     {
@@ -113,7 +113,7 @@ Axis2EntryPointService_free(axis2_svc_skeleton_t *svc_skeleton,
  */
 axiom_node_t* AXIS2_CALL
 Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
-            axis2_env_t *env,
+            const axis2_env_t *env,
             axiom_node_t *node,
             axis2_msg_ctx_t *msg_ctx)
 {
