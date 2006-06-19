@@ -19,7 +19,7 @@ APFULLDIR=`pwd`
 
 export SCA4CPP_HOME="$APFULLDIR"
 if [ x$SCA4CPP = x ]; then
-export TUSCANY_SCACPP="$SCA4CPP_HOME"
+export TUSCANY_SCACPP="$SCA4CPP_HOME"/deploy
 fi
 echo "Using SCA installed at $SCA4CPP_HOME"
 

@@ -20,7 +20,7 @@
 
 #include "osoa/sca/export.h"
 
-#include <axis2_om_node.h>
+#include <axiom.h>
 
 #include <osoa/sca/export.h>
 
@@ -51,14 +51,14 @@ namespace tuscany
             private:
                 tuscany::sca::model::ExternalService* externalService;
                               
-                axis2_om_node_t* createPayload(Operation& operation, 
+                axiom_node_t* createPayload(Operation& operation, 
                                                const WsdlOperation& wsdlOp,
-                                               axis2_env_t** env);
+                                               axis2_env_t* env);
                                                  
-                void setReturn(axis2_om_node_t* returnNode,
+                void setReturn(axiom_node_t* returnNode,
                                Operation& operation, 
                                const WsdlOperation& wsdlOp,
-                               axis2_env_t** env);
+                               axis2_env_t* env);
                 
             };
         } // End namespace ws
