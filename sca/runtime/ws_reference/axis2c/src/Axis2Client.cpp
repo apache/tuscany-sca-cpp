@@ -24,7 +24,7 @@
 #include <axis2_error_default.h>
 #include <axis2_log_default.h>
 #include <axis2_defines.h>
-#include <axis2_soap.h>
+#include <axiom_soap_const.h>
 #include <platforms/axis2_platform_auto_sense.h>
 
 #include <sdo_axiom.h>
@@ -95,22 +95,22 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
     axis2_char_t* serviceName = (axis2_char_t*)binding->getServiceName().c_str();
     
     // create OM from Operation and wsdlOperation
-    axis2_om_node_t* payload = createPayload(operation, wsdlOperation, &env);
+    axiom_node_t* payload = createPayload(operation, wsdlOperation, env);
 
     /* Create EPR with given address */
-    axis2_endpoint_ref_t* endpoint_ref = axis2_endpoint_ref_create(&env, address);
+    axis2_endpoint_ref_t* endpoint_ref = axis2_endpoint_ref_create(env, address);
     
     /* Setup options */
-    axis2_options_t* options = axis2_options_create(&env);
-    AXIS2_OPTIONS_SET_TO(options, &env, endpoint_ref);
-    int soap_version = AXIS2_SOAP11;
+    axis2_options_t* options = axis2_options_create(env);
+    AXIS2_OPTIONS_SET_TO(options, env, endpoint_ref);
+    int soap_version = AXIOM_SOAP11;
     if (wsdlOperation.getSoapVersion() == WsdlOperation::SOAP12)
     {
-    	soap_version = AXIS2_SOAP12;
+    	soap_version = AXIOM_SOAP12;
     }
     
-    AXIS2_OPTIONS_SET_SOAP_VERSION(options, &env, soap_version);
-    AXIS2_OPTIONS_SET_ACTION(options, &env, soap_action);
+    AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, soap_version);
+    AXIS2_OPTIONS_SET_ACTION(options, env, soap_action);
 
     /* Create service client */
     
@@ -119,7 +119,7 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
     {
       	throw SystemConfigurationException("Environment error: AXIS2C_HOME not set");
     }
-    axis2_svc_client_t* svc_client = axis2_svc_client_create(&env, client_home);
+    axis2_svc_client_t* svc_client = axis2_svc_client_create(env, client_home);
     if (!svc_client)
     {
         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "invoke FAILED: Error code:"
@@ -130,13 +130,13 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
     }
 
     /* Set service client options */
-    AXIS2_SVC_CLIENT_SET_OPTIONS(svc_client, &env, options);    
+    AXIS2_SVC_CLIENT_SET_OPTIONS(svc_client, env, options);    
     
     /* Send request */
-    axis2_om_node_t* ret_node = AXIS2_SVC_CLIENT_SEND_RECEIVE(svc_client, &env, payload);
+    axiom_node_t* ret_node = AXIS2_SVC_CLIENT_SEND_RECEIVE(svc_client, env, payload);
     if(ret_node)
     {
-    	setReturn(ret_node, operation, wsdlOperation, &env);
+    	setReturn(ret_node, operation, wsdlOperation, env);
     }
     else
     {
@@ -148,19 +148,19 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
     
     if (svc_client)
     {
-        AXIS2_SVC_CLIENT_FREE(svc_client, &env);
+        AXIS2_SVC_CLIENT_FREE(svc_client, env);
         svc_client = NULL;
     } 
 
     LOGEXIT(1, "Axis2Client::invoke");
 }
 
-axis2_om_node_t* Axis2Client::createPayload(Operation& operation, 
+axiom_node_t* Axis2Client::createPayload(Operation& operation, 
                                             const WsdlOperation& wsdlOp,
-                                            axis2_env_t** env)
+                                            axis2_env_t* env)
 {	
     LOGENTRY(1, "Axis2Client::createPayload");
-    axis2_om_node_t* requestOM = NULL;
+    axiom_node_t* requestOM = NULL;
     
     // map the operation request to the wsdl
     if (wsdlOp.isDocumentStyle())
@@ -170,7 +170,7 @@ axis2_om_node_t* Axis2Client::createPayload(Operation& operation,
     	
     	// Build up the payload as an SDO
 
-        // Get the data factory for the module (it will already have the types loaded for the xsds)
+        // Get the data factory for the module (it will already have the typecreates loaded for the xsds)
       	DataFactoryPtr dataFactory = externalService->getContainingModule()->getDataFactory();
     	DataObjectPtr requestDO = dataFactory->create(wsdlOp.getInputTypeUri().c_str(), 
     	                                              wsdlOp.getInputTypeName().c_str());
@@ -250,14 +250,14 @@ axis2_om_node_t* Axis2Client::createPayload(Operation& operation,
     }
     
     // Logging start
-    axis2_xml_writer_t* xml_writer = axis2_xml_writer_create_for_memory(env, NULL, AXIS2_FALSE, AXIS2_FALSE, AXIS2_XML_PARSER_TYPE_BUFFER);
-    axis2_om_output_t* om_output = axis2_om_output_create( env, xml_writer);
+    axiom_xml_writer_t* xml_writer = axiom_xml_writer_create_for_memory(env, NULL, AXIS2_FALSE, AXIS2_FALSE, AXIS2_XML_PARSER_TYPE_BUFFER);
+    axiom_output_t* om_output = axiom_output_create( env, xml_writer);
     
-    AXIS2_OM_NODE_SERIALIZE(requestOM, env, om_output);
-    axis2_char_t* buffer = (axis2_char_t*)AXIS2_XML_WRITER_GET_XML(xml_writer, env);         
+    AXIOM_NODE_SERIALIZE(requestOM, env, om_output);
+    axis2_char_t* buffer = (axis2_char_t*)AXIOM_XML_WRITER_GET_XML(xml_writer, env);         
     LOGINFO_1(3, "Sending this OM node in XML : %s \n",  buffer); 
-    AXIS2_OM_OUTPUT_FREE(om_output, env);
-    AXIS2_FREE((*env)->allocator, buffer);
+    AXIOM_OUTPUT_FREE(om_output, env);
+    AXIS2_FREE((env)->allocator, buffer);
     // Logging end
 
     return requestOM;
@@ -265,22 +265,22 @@ axis2_om_node_t* Axis2Client::createPayload(Operation& operation,
     LOGEXIT(1, "Axis2Client::createPayload");
 }
 
-void Axis2Client::setReturn(axis2_om_node_t* ret_node,
+void Axis2Client::setReturn(axiom_node_t* ret_node,
                             Operation& operation, 
                             const WsdlOperation& wsdlOp,
-                            axis2_env_t** env)
+                            axis2_env_t* env)
 {	
     LOGENTRY(1, "Axis2Client::setReturn");
     /* Get the response value from the SOAP message */
     
     // logging start
-    axis2_xml_writer_t* writer = axis2_xml_writer_create_for_memory(env, NULL, AXIS2_TRUE, 0, AXIS2_XML_PARSER_TYPE_BUFFER);
-    axis2_om_output_t* om_output = axis2_om_output_create (env, writer);
-    AXIS2_OM_NODE_SERIALIZE (ret_node, env, om_output);
-    axis2_char_t* buffer = (axis2_char_t*)AXIS2_XML_WRITER_GET_XML(writer, env);
+    axiom_xml_writer_t* writer = axiom_xml_writer_create_for_memory(env, NULL, AXIS2_TRUE, 0, AXIS2_XML_PARSER_TYPE_BUFFER);
+    axiom_output_t* om_output = axiom_output_create (env, writer);
+    AXIOM_NODE_SERIALIZE (ret_node, env, om_output);
+    axis2_char_t* buffer = (axis2_char_t*)AXIOM_XML_WRITER_GET_XML(writer, env);
     LOGINFO_1(3,"Received OM node in XML : %s\n", buffer);
-    AXIS2_OM_OUTPUT_FREE(om_output, env);
-    AXIS2_FREE((*env)->allocator, buffer);
+    AXIOM_OUTPUT_FREE(om_output, env);
+    AXIS2_FREE((env)->allocator, buffer);
     // Logging end
     
     
