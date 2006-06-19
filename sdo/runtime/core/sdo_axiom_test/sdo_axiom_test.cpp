@@ -84,7 +84,7 @@ void axiomtest::axiom_test()
 
     if (ax)
     {
-        axis2_om_document_t* doc = ax->toAxiomDoc(company);
+        axiom_document_t* doc = ax->toAxiomDoc(company);
 
         if (doc)
         {
@@ -99,8 +99,8 @@ void axiomtest::axiom_test()
                 cout << "Finished" << endl;
             }
 
-            axis2_om_node_t* node = 
-                            AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(doc, ax->getEnv());
+            axiom_node_t* node = 
+                            AXIOM_DOCUMENT_GET_ROOT_ELEMENT(doc, ax->getEnv());
  
 
             DataObjectPtr newdob2 = ax->toSdo(node,mdg);

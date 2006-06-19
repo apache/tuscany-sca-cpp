@@ -74,23 +74,23 @@ namespace commonj
         }
 
 
-        axis2_env_t** AxiomHelper::getEnv()
+        axis2_env_t* AxiomHelper::getEnv()
         {
-            return &the_env;
+            return the_env;
         }
 
-        axis2_om_node_t* AxiomHelper::toAxiomNode(DataObjectPtr dob)
+        axiom_node_t* AxiomHelper::toAxiomNode(DataObjectPtr dob)
         {
 
-            axis2_om_document_t* doc = toAxiomDoc(dob);
+            axiom_document_t* doc = toAxiomDoc(dob);
 
             if (!doc)
             {
                 return 0;
             }
     
-            axis2_om_node_t* root_node = 
-                AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(doc, &the_env);
+            axiom_node_t* root_node = 
+                AXIOM_DOCUMENT_GET_ROOT_ELEMENT(doc, the_env);
             if (!root_node)
             {
                 cout << "No Root Element in the document" << endl;
@@ -101,7 +101,7 @@ namespace commonj
             return root_node;
         }
 
-        axis2_om_document_t* AxiomHelper::toAxiomDoc(DataObjectPtr dob)
+        axiom_document_t* AxiomHelper::toAxiomDoc(DataObjectPtr dob)
         {
 
             DataFactory* df = dob->getDataFactory();
@@ -120,12 +120,8 @@ namespace commonj
 
             // if (str) cout << str << endl;
 
-            axis2_xml_reader_t * reader =  
- //           axis2_xml_reader_create_for_buffer(&the_env,
- //                                 (const axis2_char_t *)str,
- //                                 strlen(str),
- //                                 (const axis2_char_t *)"UTF-8");
-            axis2_xml_reader_create_for_memory(&the_env,
+            axiom_xml_reader_t * reader =  
+            axiom_xml_reader_create_for_memory(the_env,
                                   (void*)str,
                                   strlen(str),
                                   (const axis2_char_t *)"UTF-8",
@@ -137,42 +133,42 @@ namespace commonj
                 return 0;
             }
 
-            axis2_om_stax_builder_t* builder = 
-                axis2_om_stax_builder_create(&the_env, reader);
+            axiom_stax_builder_t* builder = 
+                axiom_stax_builder_create(the_env, reader);
         
             if (!builder)
             {
                 cout << "No Axis Builder" << endl;
-                AXIS2_XML_READER_FREE(reader, &the_env);
+                AXIOM_XML_READER_FREE(reader, the_env);
                 return 0;
             }
         
-            axis2_om_document_t* document = 
-                AXIS2_OM_STAX_BUILDER_GET_DOCUMENT(builder, &the_env);
+            axiom_document_t* document = 
+                AXIOM_STAX_BUILDER_GET_DOCUMENT(builder, the_env);
         
             if (!document)
             {
                 cout << "No Axis Document" << endl;
-                AXIS2_OM_STAX_BUILDER_FREE(builder, &the_env);
+                AXIOM_STAX_BUILDER_FREE(builder, the_env);
                 return 0;
             }
     
-            axis2_om_node_t* root_node = 
-                AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(document, &the_env);
+            axiom_node_t* root_node = 
+                AXIOM_DOCUMENT_GET_ROOT_ELEMENT(document, the_env);
             if (!root_node)
             {
                 cout << "No Root Element in the document" << endl;
-                AXIS2_OM_STAX_BUILDER_FREE(builder, &the_env);
+                AXIOM_STAX_BUILDER_FREE(builder, the_env);
                 return 0;
             }
             
 
-            AXIS2_OM_DOCUMENT_BUILD_ALL(document, &the_env);
+            AXIOM_DOCUMENT_BUILD_ALL(document, the_env);
 
             return document;
         }
 
-        DataObjectPtr AxiomHelper::toSdo(axis2_om_document_t* document,
+        DataObjectPtr AxiomHelper::toSdo(axiom_document_t* document,
             DataFactoryPtr factory)
         {
         
@@ -182,13 +178,13 @@ namespace commonj
                 return 0;
             }
 
-            axis2_om_node_t* root_node = 
-                AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(document, &the_env);
+            axiom_node_t* root_node = 
+                AXIOM_DOCUMENT_GET_ROOT_ELEMENT(document, the_env);
 
             return toSdo(root_node,factory);
         }
  
-        DataObjectPtr AxiomHelper::toSdo(axis2_om_node_t* root_node,
+        DataObjectPtr AxiomHelper::toSdo(axiom_node_t* root_node,
                                 DataFactoryPtr factory)
         {
         
@@ -200,23 +196,23 @@ namespace commonj
 
             XMLHelperPtr helper = HelperProvider::getXMLHelper(factory);
 
-            axis2_xml_writer_t* writer = axis2_xml_writer_create_for_memory(
-                &the_env, NULL, AXIS2_TRUE, 0,
+            axiom_xml_writer_t* writer = axiom_xml_writer_create_for_memory(
+                the_env, NULL, AXIS2_TRUE, 0,
                 AXIS2_XML_PARSER_TYPE_BUFFER);
     
-            axis2_om_output_t* output = axis2_om_output_create(&the_env, writer);
+            axiom_output_t* output = axiom_output_create(the_env, writer);
     
 
             if (!root_node)
             {
                 cout << "No Root Element in the document" << endl;
-                AXIS2_OM_OUTPUT_FREE(output, &the_env);
+                AXIOM_OUTPUT_FREE(output, the_env);
                 return 0;
             }
 
-            AXIS2_OM_NODE_SERIALIZE(root_node, &the_env, output);
+            AXIOM_NODE_SERIALIZE(root_node, the_env, output);
     
-            axis2_char_t* buffer = (axis2_char_t*)AXIS2_XML_WRITER_GET_XML(writer, &the_env);
+            axis2_char_t* buffer = (axis2_char_t*)AXIOM_XML_WRITER_GET_XML(writer, the_env);
 
             XMLDocumentPtr theXMLDocument = helper->load(buffer);
 
@@ -228,7 +224,7 @@ namespace commonj
             return 0;
         }
  
-        void AxiomHelper::output(axis2_om_document_t* document)
+        void AxiomHelper::output(axiom_document_t* document)
         {
         
             if (!the_env)
@@ -237,29 +233,29 @@ namespace commonj
                 return;
             }
 
-            axis2_xml_writer_t* writer = axis2_xml_writer_create_for_memory(
-                &the_env, NULL, AXIS2_TRUE, 0,
+            axiom_xml_writer_t* writer = axiom_xml_writer_create_for_memory(
+                the_env, NULL, AXIS2_TRUE, 0,
                 AXIS2_XML_PARSER_TYPE_BUFFER);
     
-            axis2_om_output_t* output = axis2_om_output_create(&the_env, writer);
+            axiom_output_t* output = axiom_output_create(the_env, writer);
     
-            axis2_om_node_t* root_node = 
-                AXIS2_OM_DOCUMENT_GET_ROOT_ELEMENT(document, &the_env);
+            axiom_node_t* root_node = 
+                AXIOM_DOCUMENT_GET_ROOT_ELEMENT(document, the_env);
  
             if (!root_node)
             {
                 cout << "No Root Element in the document" << endl;
-                AXIS2_OM_OUTPUT_FREE(output, &the_env);
+                AXIOM_OUTPUT_FREE(output, the_env);
                 return;
             }
 
-            AXIS2_OM_NODE_SERIALIZE(root_node, &the_env, output);
+            AXIOM_NODE_SERIALIZE(root_node, the_env, output);
     
-            axis2_char_t* buffer = (axis2_char_t*)AXIS2_XML_WRITER_GET_XML(writer, &the_env);
+            axis2_char_t* buffer = (axis2_char_t*)AXIOM_XML_WRITER_GET_XML(writer, the_env);
 
             printf("Output XML:n %s ", buffer);
 
-            AXIS2_OM_OUTPUT_FREE(output, &the_env);
+            AXIOM_OUTPUT_FREE(output, the_env);
        
             return;          
         }

@@ -44,6 +44,7 @@ int main (int argc, char** argv)
     int totaltests=0;
     int value = 0;
 
+    TEST ( sdotest::scopetest() );
     TEST ( sdotest::xsdtosdo() );
 
     /* groups now supported*/

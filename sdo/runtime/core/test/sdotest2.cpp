@@ -32,6 +32,41 @@ using namespace std;
 
 using namespace commonj::sdo;
 
+DataObjectPtr sdotest::scopetest2()
+{
+
+    DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+    mdg->addType("myspace","Root");
+
+    mdg->addType("myspace","Company");
+
+    mdg->addPropertyToType("myspace","Company","name",
+                       "commonj.sdo","String", false, false, false);
+
+    mdg->addPropertyToType("myspace","Company","id",
+                       "commonj.sdo","String", false, false, false);
+
+    mdg->addPropertyToType("myspace","Root","company",
+                       "myspace","Company", false, false, true);
+
+    const Type& tcc = mdg->getType("myspace","Root");
+
+    DataObjectPtr dop = mdg->create((Type&)tcc);
+
+    DataObjectPtr co = dop->createDataObject("company");
+
+    return dop;
+}
+
+int sdotest::scopetest()
+{
+    DataObjectPtr dob;
+    dob = scopetest2();
+
+    // fails on close?
+    return 1;
+}
 
 int sdotest::xsdtosdo()
 {
