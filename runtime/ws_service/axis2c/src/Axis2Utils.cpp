@@ -32,7 +32,7 @@ using namespace tuscany::sca::ws;
  * Get an odd linking error if this method (or the header's it requires) are in
  * a different class.
  */
-char* Axis2Utils::getAxisServiceParameterValue(axis2_env_t *env, axis2_msg_ctx_t *msg_ctx, char* parameterName)
+char* Axis2Utils::getAxisServiceParameterValue(const axis2_env_t *env, axis2_msg_ctx_t *msg_ctx, char* parameterName)
 {
     struct axis2_svc *svc = NULL;
     struct axis2_op_ctx *op_ctx = NULL;

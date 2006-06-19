@@ -32,7 +32,7 @@ namespace tuscany
             class Axis2Utils
             {
             public:
-                static char* getAxisServiceParameterValue(axis2_env_t *env, axis2_msg_ctx_t *msg_ctx, char* parameterName);                
+                static char* getAxisServiceParameterValue(const axis2_env_t *env, axis2_msg_ctx_t *msg_ctx, char* parameterName);                
             };
         } // End namespace ws
     } // End namespace sca
