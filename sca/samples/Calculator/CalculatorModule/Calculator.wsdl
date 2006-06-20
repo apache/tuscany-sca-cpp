@@ -2,12 +2,12 @@
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-             xmlns:tns="http://ws.apache.org/axis2/c/samplesmath"
-             targetNamespace="http://ws.apache.org/axis2/c/samplesmath">
+             xmlns:tns="tuscany/c/Calculator"
+             targetNamespace="tuscany/c/Calculator">
     <types>
-		<xs:schema targetNamespace="http://ws.apache.org/axis2/c/samplesmath" 
+		<xs:schema targetNamespace="tuscany/c/Calculator" 
                    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                   xmlns:tns="http://ws.apache.org/axis2/c/samplesmath"
+                   xmlns:tns="tuscany/c/Calculator"
                    elementFormDefault="qualified">
         
 		<xs:element name="add">
