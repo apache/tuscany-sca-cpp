@@ -36,7 +36,7 @@ sca/bin directory.
 
     - Run the SCA generation tool to create the proxy and wrapper classes.
       Either Tools->SCA Gen if you have added SCA Gen as an external tool
-   dir Hello   Or run from the command line: 
+      Or run from the command line: 
         scagen -dir <projectDirectory> -output <projectDirectory> 
       where the projectDirectory is the directory with the sca.module file.
 

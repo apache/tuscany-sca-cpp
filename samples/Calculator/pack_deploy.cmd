@@ -4,7 +4,7 @@ rem SCA sample.
 setlocal
 set sourcePath=%~d0%~p0
 if . == %1. (
-set destinationPath=%sourcePath%..\runtime
+set destinationPath=%sourcePath%\deploy
 ) ELSE (
 set destinationPath=%1
 )
@@ -15,13 +15,22 @@ copy %sourcePath%\CalculatorModule\*.componentType %destinationPath%\modules\Cal
 copy %sourcePath%\CalculatorModule\sca.module %destinationPath%\modules\CalculatorModule
 copy %sourcePath%\CalculatorModule\Calculator.h %destinationPath%\modules\CalculatorModule
 copy %sourcePath%\CalculatorModule\CalculatorImpl.h %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorModule\Tuscany-model.config %destinationPath%\modules\CalculatorModule
 
 copy %sourcePath%\CalculatorModule\debug\CalculatorModule.dll %destinationPath%\modules\CalculatorModule
+
+copy %sourcePath%\Client\Debug\Calc.exe %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\Client\Debug\Calc.pdb %destinationPath%\modules\CalculatorModule
 
 
 mkdir %destinationPath%\subsystems
 mkdir %destinationPath%\subsystems\CalculatorSubsystem
 copy %sourcePath%\CalculatorSubsystem\sca.subsystem %destinationPath%\subsystems\CalculatorSubsystem
 
+mkdir %AXIS2C_HOME%\services\Calculator
+set axisPath=%AXIS2C_HOME%\services\Calculator
+copy %sourcePath%\CalculatorModule\services.xml %axisPath%
+copy %TUSCANY_SCACPP%\bin\tuscany_sca_ws_service.dll %axisPath%
+copy %TUSCANY_SCACPP%\bin\tuscany_sca_ws_service.pdb %axisPath%
 
 endlocal
