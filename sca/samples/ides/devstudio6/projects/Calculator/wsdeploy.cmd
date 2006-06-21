@@ -12,7 +12,7 @@ set destinationPath=%1
 )
 
 if not exist %destinationPath%\modules mkdir %destinationPath%\modules 
-if not exist %destinationPath%\modules mkdir %destinationPath%\modules\Calculator 
+if not exist %destinationPath%\modules\Calculator mkdir %destinationPath%\modules\Calculator 
 
 copy %sourcePath%\CalculatorModule\*.componentType %destinationPath%\modules\Calculator
 copy %sourcePath%\CalculatorModule\sca.module %destinationPath%\modules\Calculator
