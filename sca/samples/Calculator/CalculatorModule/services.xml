@@ -1,6 +1,6 @@
 <service name="Calculator">
     <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
-    <parameter name="TuscanySystemRoot" locked="xsd:false">c:/apache/test_checkout/sca/samples/Calculator/deploy</parameter>
+    <parameter name="TuscanySystemRoot" locked="xsd:false">c:/apache/apache_checkout/cpp/sca/samples/Calculator/deploy</parameter>
     <parameter name="TuscanyEntryPoint" locked="xsd:false">CalculatorSubsystem/CalculatorService/WSCalculatorEntrypoint</parameter>
 
    <description>

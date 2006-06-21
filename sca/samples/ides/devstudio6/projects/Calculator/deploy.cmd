@@ -19,7 +19,7 @@ copy %sourcePath%\CalculatorModule\sca.module %destinationPath%\modules\Calculat
 copy %sourcePath%\CalculatorModule\Calculator.h %destinationPath%\modules\Calculator
 copy %sourcePath%\CalculatorModule\CalculatorImpl.h %destinationPath%\modules\Calculator
 copy %sourcePath%\CalculatorModule\Tuscany-model.config %destinationPath%\modules\Calculator
-
+copy %sourcePath%\CalculatorModule\Calculator.wsdl %destinationPath%\modules\Calculator
 copy %currentPath%\Calculator\debug\Calculator.dll %destinationPath%\modules\Calculator
 
 copy %currentPath%\Client\Debug\Calc.exe %destinationPath%\modules\Calculator
