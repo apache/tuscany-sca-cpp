@@ -51,10 +51,12 @@ EntryPointProxy::EntryPointProxy(const char* systemRoot, const char* fullEntryPo
 	catch(SystemConfigurationException &ex)
 	{	
 		LOGERROR_1(0, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
+        scaEntryPoint = 0;
 	}
 	catch(ServiceRuntimeException &ex)
 	{	
         LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
+        scaEntryPoint = 0;
 	}  
     LOGEXIT(1,"EntryPointProxy::constructor");
 }
@@ -68,6 +70,7 @@ EntryPointProxy::~EntryPointProxy()
 
 DataFactoryPtr EntryPointProxy::getDataFactory()
 {
+    if (scaEntryPoint == 0) return 0;
     return scaEntryPoint->getDataFactory();
 }
 
@@ -77,6 +80,12 @@ DataFactoryPtr EntryPointProxy::getDataFactory()
 DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr inputDataObject)
 {
     LOGENTRY(1,"EntryPointProxy::invoke");
+
+    if (scaEntryPoint == 0)
+    {
+        LOGINFO(4, "EntryPointProxy has not got an sca EntryPoint\n");
+        return NULL;
+    }
 
     DataFactoryPtr dataFactoryPtr = scaEntryPoint->getDataFactory();
 						
@@ -106,6 +115,11 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         //printf("EntryPointProxy has got WS Binding with NamespaceURL: %s Port: %s Service: %s\n", wsdlNamespace.c_str(), wsdlPort.c_str(), wsdlService.c_str());
 
         Wsdl* wsdl = module->findWsdl(wsdlNamespace);
+        if (wsdl == 0)
+        {
+            LOGINFO_1(0, "WSDL description %s not found\n", wsdlNamespace);
+            return NULL;
+        }
 
         WsdlOperation operation = wsdl->findOperation(wsdlService, wsdlPort, operationName);
 

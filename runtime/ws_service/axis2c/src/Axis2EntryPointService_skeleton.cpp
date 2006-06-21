@@ -145,7 +145,11 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     //Utils::printTypes(entryPointProxy.getDataFactory());
 
                     AxiomHelper* axiomHelper = AxiomHelper::getHelper();
-
+                    if (entryPointProxy.getDataFactory() == 0)
+                    {
+                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: EntryPoint has no SCA implementation");
+                        return 0;
+                    }
                     //char* om_str = NULL;
                     //om_str = AXIOM_NODE_TO_STRING(node, env);
                     //if (om_str)
@@ -167,7 +171,7 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                 		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: Failure whilst invoking EntryPoint");
                         //LOGERROR(0, "Axis2EntryPointService_invoke: Failure whilst invoking EntryPoint");
                         /** TODO: return a SOAP fault here */
-                        return node;
+                        return 0;
                     }
 
 					returnNode = axiomHelper->toAxiomNode(outputDataObject);
