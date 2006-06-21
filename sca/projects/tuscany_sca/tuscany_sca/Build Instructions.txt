@@ -3,7 +3,7 @@ Tuscany SCA Build Instructions
 
 1) Set the environment variable TUSCANY_SDOCPP to the path of an SDO driver
 
-2) Set the environment variable AXIS2_HOME to the path of Axis2C (Version 0.92)
+2) Set the environment variable AXIS2C_HOME to the path of Axis2C (Version 0.92)
 
 NOTE: The environment variables must be set BEFORE launching Visual Studio
 

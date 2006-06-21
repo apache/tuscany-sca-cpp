@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib axis2_util.lib axis2_om.lib /nologo /dll /machine:I386 /libpath:"..\..\..\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Release\tuscany_sca_ws_service.lib ..\..\..\lib	copy Release\tuscany_sca_ws_service.dll ..\..\..\bin
+PostBuild_Cmds=copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\lib	copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\bin
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_ws_service - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Debug\tuscany_sca_ws_service.dll ..\..\..\bin	copy Debug\tuscany_sca_ws_service.pdb ..\..\..\bin	copy Debug\tuscany_sca_ws_service.lib ..\..\..\lib
+PostBuild_Cmds=copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\bin	copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\bin	copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\lib
 # End Special Build Tool
 
 !ENDIF 
