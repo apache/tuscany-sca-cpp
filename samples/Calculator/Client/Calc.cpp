@@ -19,11 +19,15 @@
 
 #include "Calculator.h"
 #include "osoa/sca/sca.h"
-#include <iostream>
-#include <stdlib.h>
-
 using namespace osoa::sca;
 using namespace std;
+#include "tuscany/sca/core/TuscanyRuntime.h"
+using namespace tuscany::sca;
+
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
+
 
 void usage();
 bool IsNumber(const char *p);
@@ -67,8 +71,13 @@ int main(int argc, char* argv[])
 	{
 		
 		// Set the default module environment variable: <subsystem>/<moduleName>
-		//char *defaultModule = "SCA4CPP_DEFAULT_MODULE=SubSystem2/CalculatorServiceModule";
-		//putenv(defaultModule);
+		char *root = "c:\\apache\\test_checkout\\sca\\samples\\Calculator\\deploy";
+		char *defaultModule = "CalculatorSubsystem/CalculatorService";
+
+        TuscanyRuntime rt;
+        rt.setSystemRoot(root);
+        rt.setDefaultModuleComponent(defaultModule);
+        rt.start();
 
         // Locate a service
 		ModuleContext myContext = ModuleContext::getCurrent();

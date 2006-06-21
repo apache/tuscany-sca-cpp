@@ -13,7 +13,7 @@
 
 
 	<component name="CalculatorServiceComponent">
-		<implementation.cpp dll="CalculatorModule.dll" header="CalculatorImpl.h"></implementation.cpp>
+		<implementation.cpp dll="Calculator.dll" header="CalculatorImpl.h"></implementation.cpp>
                 <properties> </properties>
 		<references> </references>
 	</component>
