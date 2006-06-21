@@ -1,0 +1,33 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Client - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1D9.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /I "c:\apache\apache_checkout\cpp\sdo\deploy/include" /I "c:\apache\apache_checkout\cpp\sca/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/Client.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ  /c 
+"C:\apache\test_checkout\sca\samples\Calculator\Client\Calc.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1D9.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1DA.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/Client.pdb" /debug /machine:I386 /out:"Debug/Calc.exe" /pdbtype:sept /libpath:"c:\apache\apache_checkout\cpp\sdo\deploy/lib" /libpath:"c:\apache\apache_checkout\cpp\sca/lib" 
+.\Debug\Calc.obj
+\APACHE\TEST_CHECKOUT\SCA\SAMPLES\IDES\DEVSTUDIO6\PROJECTS\Calculator\Calculator\Debug\Calculator.lib
+]
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1DA.tmp"
+<h3>Output Window</h3>
+Compiling...
+Calc.cpp
+Linking...
+
+
+
+<h3>Results</h3>
+Calc.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
