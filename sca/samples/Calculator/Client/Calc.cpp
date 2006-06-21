@@ -67,15 +67,21 @@ int main(int argc, char* argv[])
         usage();
     }
 
-	try
-	{
-		
-		// Set the default module environment variable: <subsystem>/<moduleName>
-		char *root = "c:\\apache\\test_checkout\\sca\\samples\\Calculator\\deploy";
-		char *defaultModule = "CalculatorSubsystem/CalculatorService";
-
+    try
+    {
+        // Set the default module environment variable: <subsystem>/<moduleName>
+        string systemRoot = getenv("TUSCANY_SCACPP");
+        if (systemRoot  == "")
+        {
+            cout << "TUSCANY_SCACPP environment variable not set" <<endl;
+            return -1;
+        }
+        systemRoot += "/../samples/Calculator/deploy";
+        
+        char *defaultModule = "CalculatorSubsystem/CalculatorService";
+        
         TuscanyRuntime rt;
-        rt.setSystemRoot(root);
+        rt.setSystemRoot(systemRoot);
         rt.setDefaultModuleComponent(defaultModule);
         rt.start();
 
