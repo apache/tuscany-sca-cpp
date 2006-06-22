@@ -396,7 +396,13 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
         SDOUnsupportedOperationException, "Adding Properties after data graph completed");
     }
 
+
+
     TYPES_MAP::iterator typeIter, typeIter2;
+    
+    //cout << "Adding property " << propname << "(" << propTypeUri << "#" << propTypeName
+    //    << ") to type " << uri << "#" << inTypeName << endl;
+
 
     char* fullTypeName = getFullTypeName(uri, inTypeName);
     typeIter = types.find(fullTypeName);
@@ -415,8 +421,16 @@ void DataFactoryImpl::addPropertyToType(const char* uri,
 
     if ((typeIter->second)->isDataType())
     {
-        string msg("Cannot add a properties to data types: ");
-        msg += (typeIter->second)->getName();
+        string msg("Cannot add property ");
+        msg += propname;
+        msg += " of type ";
+        msg += propTypeUri;
+        msg += "#";
+        msg += propTypeName;
+        msg += " to this data type ";
+        msg += uri;
+        msg += "#";
+        msg += inTypeName;
         SDO_THROW_EXCEPTION("addPropertyToType",
         SDOIllegalArgumentException, msg.c_str());
     }
