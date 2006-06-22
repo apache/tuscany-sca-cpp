@@ -221,24 +221,24 @@ SOURCE=..\..\..\..\..\Calculator\Client\Calc.cpp
 !IF  "$(CFG)" == "Client - Win32 Release"
 
 "Calculator - Win32 Release" : 
-   cd "\apache\apache_checkout\cpp\sca\samples\ides\devstudio6\projects\Calculator\Calculator"
+   cd "..\Calculator"
    $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Release" 
    cd "..\Client"
 
 "Calculator - Win32 ReleaseCLEAN" : 
-   cd "\apache\apache_checkout\cpp\sca\samples\ides\devstudio6\projects\Calculator\Calculator"
+   cd "..\Calculator"
    $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Release" RECURSE=1 CLEAN 
    cd "..\Client"
 
 !ELSEIF  "$(CFG)" == "Client - Win32 Debug"
 
 "Calculator - Win32 Debug" : 
-   cd "\apache\apache_checkout\cpp\sca\samples\ides\devstudio6\projects\Calculator\Calculator"
+   cd "..\Calculator"
    $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Debug" 
    cd "..\Client"
 
 "Calculator - Win32 DebugCLEAN" : 
-   cd "\apache\apache_checkout\cpp\sca\samples\ides\devstudio6\projects\Calculator\Calculator"
+   cd "..\Calculator"
    $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\Client"
 
