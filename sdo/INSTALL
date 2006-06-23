@@ -1,20 +1,46 @@
-Building Tuscany SDO on Linux.
-==============================
+The release comes in two forms, source and binary. 
 
-1. Extract the source to a folder. 
-2. You need to set the following two environment variables to point to libxml2. 
-        LIBXML2_INCLUDE
-        LIBXML2_LIB
-If you are using the default installation of libxml2, usually those are
-LIBXML2_LIB=/usr/lib
-LIBXML2_INCLUDE=/usr/include/libxml2
+Table of Contents
+=================
+1. Prereqs
+2. Getting Tuscany SDO working with the binary release on Linux
+3. Getting Tuscany SDO working with the source release on Linux
 
-3. Set the environment variable AXIS2C_HOME to the location of an installed Axis2C
-   Verion 0.92
+1. Prereqs
+==========
+
+libxml2: available from http://xmlsoft.org/downloads.html
+(NOTE: most Linux systems has libxml2 by default. On Windows you need to download and install libxml2)
+
+Axis2C: Verion 0.92 available from http://ws.apache.org/axis2/c/download.cgi
+
+
+2. Getting Tuscany SDO working with the binary release on Linux
+===============================================================
+a. Extract the binary tar package to a folder. 
+
+
+3. Getting Tuscany SDO working with the source release on Linux
+===============================================================
+a. Extract the source tar package to a folder <tuscany_sdo> 
+b. The following environment variables are required:
+     LIBXML2_INCLUDE=<path to libxml2 includes>
+     LIBXML2_LIB=<path to libxml2 lib>
+        Note: If you are using the default installation of libxml2 these are usually:
+          LIBXML2_LIB=/usr/lib
+          LIBXML2_INCLUDE=/usr/include/libxml2
+
+     AXIS2C_HOME=<path to axis2c verion 0.92>
    
-3. Build the source
-	./build.sh
+c. Build the source
+	 ./configure
+	 make
+	 make install
 
-4. Run the test
-    cd to runtime/core/test
-    ./tuscany_sdo_test
+     NOTE: If you don't provide a --prefix configure option, it will by default install into
+     /usr/local/tuscany/sdo 
+     
+d. Run the test
+     cd to <tuscany_sdo>/runtime/core/test
+     ./tuscany_sdo_test
+     
