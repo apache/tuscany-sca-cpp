@@ -15,39 +15,24 @@
 #  limitations under the License.
 
 APFULLDIR=`pwd`
-export SCA4CPP_HOME="$APFULLDIR/../../"
 
-if [ x$SCA4CPP = x ]; then
-export SCA4CPP="$SCA4CPP_HOME"
-fi
-echo "Using SCA installed at $SCA4CPP"
-
-if [ x$AXISCPP_DEPLOY = x ]; then
-echo "AXISCPP_DEPLOY not set"
+if [ x$TUSCANY_SCACPP = x ]; then
+echo "TUSCANY_SCACPP not set"
 exit;
 fi
-echo "Using Axis C++ installed at $AXISCPP_DEPLOY"
+echo "Using SCA installed at $TUSCANY_SCACPP"
 
-if [ x$XERCES_DEPLOY = x ]; then
-echo "XERCES_DEPLOY not set"
+if [ x$TUSCANY_SDOCPP = x ]; then
+echo "TUSCANY_SDOCPP not set"
 exit;
 fi
-echo "Using Xerces C++ installed at $XERCES_DEPLOY"
+echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-if [ x$SDO4CPP = x ]; then
-echo "SDO4CPP not set"
-export SDO4CPP=$SCA4CPP_HOME/../sdo
-fi
-echo "Using SDO installed at $SDO4CPP"
+TEST_SYSTEM=$APFULLDIR/../
 
-TEST_ROOT=$APFULLDIR
-TEST_SYSTEM=$TEST_ROOT/../runtime
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
-export LD_LIBRARY_PATH=$SCA4CPP/lib:$SDO4CPP/lib:$LD_LIBRARY_PATH:$AXISCPP_DEPLOY/lib:$XERCES_DEPLOY/lib
-
-export TUSCANY_SCACPP=$SCA4CPP
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
 export TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
 
-cd $TEST_ROOT/Client
-Debug/CalculatorClient add 4 9
+./calculator_client add 4 9
