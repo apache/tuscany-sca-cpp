@@ -1,5 +1,5 @@
-Tuscany C++ Build Instructions
-==============================
+Tuscany C++ Build Instructions for Developers
+=============================================
 
 Download the source from http://svn.apache.org/repos/asf/incubator/tuscany/cpp
 The download location is <tuscany_cpp_root>
@@ -8,17 +8,13 @@ Linux Build
 ===========
 
 Prereqs:
- for SDO
 - libxml2 (tested with version 2.6.19)
- for SCA
-- Axis C++ (tested with version 1.5.0) installed at <axis_deploy> ($AXISCPP_DEPLOY)
-- Xerces C++ (tested with version 2.2.0) installed at <xerces_deploy> ($XERCES_DEPLOY)
+- Axis2C (version 0.92)
 
 Environment:
 - export LIBXML2_INCLUDE=<path to libxml2 headers. e.g. /usr/include/libxml2> 
 - export LIBXML2_LIB=<path to libxml2 libraries. e.g. /usr/lib> 
-- export AXISCPP_DPELOY=<axis_deploy> 
-- export XERCES_DEPLOY=<xerces_deploy>
+- export AXIS2C_HOME=<axis2c_deploy>
 
 
 Build:
@@ -26,8 +22,8 @@ Build:
 - ./build.sh
 
 This first builds the SDO subproject then SCA. The results are installed in
- <tuscany_cpp_root>/sdo/lib <tuscany_cpp_root>/sdo/include <tuscany_cpp_root>/sdo/bin
- <tuscany_cpp_root>/sca/lib <tuscany_cpp_root>/sca/include <tuscany_cpp_root>/sca/bin
+ <tuscany_cpp_root>/sdo/deploy
+ <tuscany_cpp_root>/sca/deploy
 
 SDO Test
 --------
@@ -52,28 +48,18 @@ Microsoft Visual Studio 6.x projects are provided for building on Windows.
 SDO
 ---
 
-The project is dependent on libxml 
-(available here: http://www.zlatkovic.com/libxml.en.html) 
+Prereqs:
 
-The versions required are these:
-	libxml2-2.6.19.win32
-	iconv-1.9.1.win32
-	zlib-1.2.2.win32
+- libxml2 (tested with version 2.6.19)
+- Axis2C (version 0.92)
 
 Set the following environment variables to point to the location of the dependencies:
-        LIBXML2_HOME=<libxml2 location>
-        ICONV_HOME=<iconv location>
-        ZLIB_HOME=<zlib location>
+        LIBXML2_INCLUDE=<libxml2 include location>
+        LIBXML2_LIB=<libxml2 lib location>
+        AXIS2C_HOME=<axis2c_deploy>
 
 Open the build workspace tuscany\cpp\sdo\runtime\projects\tuscany_sdo\tuscany_sdo.dsw
-
-Build->Set Active Configuration->sdo_runtime - Win32 Release
-
-Build->Rebuild All
-
-The output of the build will be in runtime\core\Release.
-
-The executable, required headers and lib are copied to tuscany\cpp\sdo\bin, include and lib.
+and follow the build instructions.
 
 Note for users of Microsoft Visual Studio 7.x
 ---------------------------------------------
@@ -89,35 +75,7 @@ test comparison files are in the wrong place. You can copy the entire contents o
 SCA
 ---
 
+Set the environment variable TUSCANY_SDOCPP to the path of an SDO build
 
-1) Set the environment variable TUSCANY_SDOCPP to the path of an SDO build
-
-2) Set the environment variable AXISCPP to the path of Axis for C++
-   (tested with version 1.5.0) 
-
-3) Open the build workspace tuscany\cpp\sca\projects\tuscany_sca\tuscany_sca.dsw 
+Open the build workspace tuscany\cpp\sca\projects\tuscany_sca\tuscany_sca.dsw 
 and follow the instructions.
-
-The output for the build will be in tuscany\cpp\sca\include, lib and bin
-
-To run the test from a command prompt:
-
-1) Set the environment variable TUSCANY_SCACPP to the location of the built SCA
-   (...tuscany\cpp\sca)
-
-2) Add %TUSCANY_SCACPP%\lib and %TUSCANY_SDOCPP%\lib to the PATH
-   (ensure required libraries for SDO are also on the path. e.g. libxml2)
-
-3) Set the environment variable TUSCANY_SCACPP_SYSTEM_ROOT to the test system folder
-   (%TUSCANY_SCACPP%\projects\tuscany_sca\tuscany_sca_test\testSCASystem)
-
-4) Set the environment variable TUSCANY_SCACPP_DEFAULT_MODULE=SubSystem1
-
-5) cd %TUSCANY_SCACPP%\projects\tuscany_sca\tuscany_sca_test\Debug
-
-6) tuscany_sca_test
-
-NOTE: To run the test from the workspace the environment variables must be set BEFORE launching
-      Visual Studio
-
-
