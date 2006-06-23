@@ -8,7 +8,7 @@ CalculatorImpl_CalculatorService_Proxy.cpp:
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
 module_LTLIBRARIES = libCalculatorModule.la
-module_DATA = sca.module.lin Tuscany-model.config *.componentType
+module_DATA = sca.module.lin Tuscany-model.config *.componentType *.wsdl
 EXTRA_DIST = sca.module.lin Tuscany-model.config *.componentType *.wsdl services.xml
 
 libCalculatorModule_la_SOURCES = \
@@ -16,8 +16,7 @@ CalculatorImpl.cpp \
 CalculatorImpl_CalculatorService_Proxy.cpp \
 CalculatorImpl_CalculatorService_Wrapper.cpp
 
-libCalculatorModule_la_LIBADD = -L$(TUSCANY_SCACPP)/lib -ltuscany_sca \
-	-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo
+libCalculatorModule_la_LIBADD =
 
 INCLUDES = \
            -I$(TUSCANY_SCACPP)/include \
