@@ -1,13 +1,46 @@
-Building Tuscany SCA on Linux.
-==============================
+The release comes in two forms, source and binary. 
 
-1. Extract the source to a folder. 
+Table of Contents
+=================
+1. Prereqs
+2. Getting Tuscany SCA working with the binary release on Linux
+3. Getting Tuscany SCA working with the source release on Linux
+4. Working with the samples on Linux
 
-2. You need to set the following environment variable to point to tuscany sdo 
-        TUSCANY_SDOCPP
 
-3. You need to set the following environment variable to point to Axis-c installation: 
-        AXISCPP_DEPLOY
+1. Prereqs
+==========
 
-4. Build the source
-	./build.sh
+Tuscany SDO: Download and install 
+Axis2C: Verion 0.92 available from http://ws.apache.org/axis2/c/download.cgi
+
+
+2. Getting Tuscany SCA working with the binary release on Linux
+===============================================================
+
+a. Extract the binary tar package to a folder. 
+
+
+3. Getting Tuscany SCA working with the source release on Linux
+===============================================================
+
+a. Extract the source tar package to a folder <tuscany_sca> 
+
+b. The following environment variables are required:
+     TUSCANY_SDOCPP=<path to installed Tuscany SDO>
+     AXIS2C_HOME=<path to axis2c verion 0.92>
+   
+c. Build the source
+	 ./configure
+	 make
+	 make install
+
+     NOTE: If you don't provide a --prefix configure option, it will by default install into
+     /usr/local/tuscany/sca 
+
+
+4. Working with the samples on Linux
+====================================
+
+The samples are installed in <install_prefix>/samples. To build and run the sample see the INSTALL
+documentation in the samples folder.
