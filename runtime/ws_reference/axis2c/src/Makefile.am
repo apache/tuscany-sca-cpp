@@ -7,7 +7,7 @@ noinst_HEADERS = *.h
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
 
 libtuscany_sca_ws_reference_la_LIBADD = \
-	-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -ltuscany_sdo_axiom -lxml2 -lstdc++ \
+	-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -ltuscany_sdo_axiom \
 	                    -L$(AXIS2C_HOME)/lib \
 					-laxis2_util \
                     -laxis2_axiom \
