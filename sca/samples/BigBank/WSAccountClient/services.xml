@@ -1,0 +1,14 @@
+<service name="BigBank">
+    <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
+    <parameter name="TuscanySystemRoot" locked="xsd:false">c:/apache/apache_checkout/cpp/sca/samples/BigBank/deploy</parameter>
+    <parameter name="TuscanyEntryPoint" locked="xsd:false">AccountSubsystem/Account/WSAccountEntrypoint</parameter>
+
+   <description>
+        This is a testing service, named 'BigBank' to test multiple operations in the same service
+   </description>
+
+    <operation name="getAccountReport">
+            <!--messageReceiver class="axis2_receivers" /-->
+    </operation>
+ 
+</service>

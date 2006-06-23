@@ -17,13 +17,6 @@
 <module xmlns="http://www.osoa.org/xmlns/sca/0.9" xmlns:v="http://www.osoa.org/xmlns/sca/values/0.9"
         name="AccountModule">
 
-	<entryPoint name="AccountService">
-		<interface.cpp header="AccountService.h"/>
-		<binding.ws port="http://www.bigbank.com/AccountService#wsdl.
-		  endpoint(AccountService/AccountServiceSOAP)"/>
-         <reference>AccountServiceComponent</reference>
-	</entryPoint>
-
 	<component name="AccountServiceComponent">
 		<implementation.cpp dll="Accounts.dll" header="AccountServiceImpl.h"/>
 		<references>
@@ -50,5 +43,11 @@
 		<interface.cpp header="StockQuoteExternalService.h"/>
 		<binding.ws port="http://www.webserviceX.NET/#wsdl.endpoint(StockQuote/StockQuoteSoap)"/>
 	</externalService>
+
+	<entryPoint name="WSAccountEntrypoint" multiplicity="1..1">
+		<interface.wsdl interface="AccountService.wsdl" callbackInterface=""></interface.wsdl>
+		<binding.ws port="http://www.bigbank.com/AccountService#wsdl.endpoint(AccountService/AccountServiceSOAP)"></binding.ws>
+		<reference>AccountServiceComponent</reference>
+	</entryPoint>
      
 </module>
