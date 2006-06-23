@@ -80,7 +80,7 @@ libtuscany_sdo_la_SOURCES = \
 	XSDPropertyInfo.cpp \
 	XSDTypeInfo.cpp
 
-libtuscany_sdo_la_LIBADD = -lstdc++
+libtuscany_sdo_la_LIBADD =
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${LIBXML2_INCLUDE}

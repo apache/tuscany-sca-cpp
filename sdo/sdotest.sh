@@ -16,12 +16,12 @@
 
 APFULLDIR=`pwd`
 export SDO4CPP_HOME="$APFULLDIR"
-if [ x$SDO4CPP = x ]; then
-export SDO4CPP="$SDO4CPP_HOME"
+if [ x$TUSCANY_SDOCPP = x ]; then
+export TUSCANY_SDOCPP="$SDO4CPP_HOME"
 fi
 
-echo "Using SDO installed at $SDO4CPP"
+echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-export LD_LIBRARY_PATH=$SDO4CPP/lib:$LD_LIBRARY_PATH
-cd $SDO4CPP_HOME/runtime/core/test
+export LD_LIBRARY_PATH=$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH
+cd runtime/core/test
 ./tuscany_sdo_test
