@@ -14,13 +14,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-TUSCANY_SCACPP_HOME=`pwd`
 
-if [ x$AXIS2C_HOME = x ]; then
-echo "AXIS2C_HOME not set"
+if [ x$TUSCANY_SCACPP = x ]; then
+echo "TUSCANY_SCACPP not set"
 exit;
 fi
-echo "Using Axis2C installed at $AXIS2C_HOME"
+echo "Using SCA installed at $TUSCANY_SCACPP"
 
 if [ x$TUSCANY_SDOCPP = x ]; then
 echo "TUSCANY_SDOCPP not set"
@@ -28,13 +27,13 @@ exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-cd ${TUSCANY_SCACPP_HOME}/samples
-./autogen.sh
+if [ x$AXIS2C_HOME = x ]; then
+echo "AXIS2C_HOME not set"
+exit;
+fi
+echo "Using Axis2C installed at $AXIS2C_HOME"
 
-cd $TUSCANY_SCACPP_HOME
-./autogen.sh
-
-./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no
+./configure --prefix=${TUSCANY_SCACPP} --enable-static=no
 make
 make install
 

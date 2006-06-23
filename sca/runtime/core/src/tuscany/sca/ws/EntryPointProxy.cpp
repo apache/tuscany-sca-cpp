@@ -117,7 +117,7 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         Wsdl* wsdl = module->findWsdl(wsdlNamespace);
         if (wsdl == 0)
         {
-            LOGINFO_1(0, "WSDL description %s not found\n", wsdlNamespace);
+            LOGINFO_1(0, "WSDL description %s not found\n", wsdlNamespace.c_str());
             return NULL;
         }
 
