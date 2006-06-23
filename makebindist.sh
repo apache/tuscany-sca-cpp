@@ -28,13 +28,13 @@ exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-cd ${TUSCANY_SCACPP_HOME}/samples
-./autogen.sh
-
 cd $TUSCANY_SCACPP_HOME
-./autogen.sh
-
 ./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no
 make
 make install
 
+cd ${TUSCANY_SCACPP_HOME}/samples
+export TUSCANY_SCACPP=${TUSCANY_SCACPP_HOME}/deploy
+./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no
+make
+make install

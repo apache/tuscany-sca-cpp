@@ -33,7 +33,7 @@ AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_STAT
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([getcwd putenv strdup])
-
+# AC_CONFIG_SUBDIRS([samples])
 AC_CONFIG_FILES([Makefile
                  tools/Makefile
                  tools/scagen/Makefile
@@ -50,7 +50,6 @@ AC_CONFIG_FILES([Makefile
                  runtime/core/test/CustomerInfo/Makefile
                  runtime/core/test/MyValue/Makefile
                  runtime/core/test/src/Makefile
-                 samples/Makefile
                  ])
 AC_OUTPUT
 
