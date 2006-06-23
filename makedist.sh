@@ -28,8 +28,6 @@ exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-chmod a+x $TUSCANY_SCACPP_HOME/deploy/bin/scagen.sh
-
 cd ${TUSCANY_SCACPP_HOME}/samples
 ./autogen.sh
 ./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no
