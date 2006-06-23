@@ -14,8 +14,7 @@ bindist: dist
 	gzip ${PACKAGE}-${PACKAGE_VERSION}.tar
 	cd ${PACKAGE}-${PACKAGE_VERSION} \
 	&&	sh ../makebindist.sh
+	rm -rf ${PACKAGE}-bin-${PACKAGE_VERSION}
 	mkdir ${PACKAGE}-bin-${PACKAGE_VERSION}
 	cp -r ${PACKAGE}-${PACKAGE_VERSION}/deploy/* ${PACKAGE}-bin-${PACKAGE_VERSION}
 	tar -cf - ${PACKAGE}-bin-${PACKAGE_VERSION} | gzip -c > ${PACKAGE}-bin-${PACKAGE_VERSION}.tar.gz
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}
-	rm -rf ${PACKAGE}-bin-${PACKAGE_VERSION}
