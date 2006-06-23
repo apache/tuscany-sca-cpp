@@ -9,9 +9,12 @@ If you are using the default installation of libxml2, usually those are
 LIBXML2_LIB=/usr/lib
 LIBXML2_INCLUDE=/usr/include/libxml2
 
+3. Set the environment variable AXIS2C_HOME to the location of an installed Axis2C
+   Verion 0.92
+   
 3. Build the source
 	./build.sh
 
 4. Run the test
-        cd to runtime/core/test
-        ./tuscany_sdo_test
+    cd to runtime/core/test
+    ./tuscany_sdo_test
