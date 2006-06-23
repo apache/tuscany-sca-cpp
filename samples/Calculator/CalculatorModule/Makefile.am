@@ -7,16 +7,16 @@ noinst_HEADERS = *.h
 CalculatorImpl_CalculatorService_Proxy.cpp:
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
-module_LTLIBRARIES = libCalculator.la
+module_LTLIBRARIES = libCalculatorModule.la
 module_DATA = sca.module.lin Tuscany-model.config *.componentType
 EXTRA_DIST = sca.module.lin Tuscany-model.config *.componentType *.wsdl services.xml
 
-libCalculator_la_SOURCES = \
+libCalculatorModule_la_SOURCES = \
 CalculatorImpl.cpp \
 CalculatorImpl_CalculatorService_Proxy.cpp \
 CalculatorImpl_CalculatorService_Wrapper.cpp
 
-libCalculator_la_LIBADD = -L$(TUSCANY_SCACPP)/lib -ltuscany_sca \
+libCalculatorModule_la_LIBADD = -L$(TUSCANY_SCACPP)/lib -ltuscany_sca \
 	-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo
 
 INCLUDES = \

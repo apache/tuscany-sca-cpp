@@ -80,10 +80,10 @@ int main(int argc, char* argv[])
         
         char *defaultModule = "CalculatorSubsystem/CalculatorService";
         
-        TuscanyRuntime rt;
-        rt.setSystemRoot(systemRoot);
-        rt.setDefaultModuleComponent(defaultModule);
-        rt.start();
+//        TuscanyRuntime rt;
+//        rt.setSystemRoot(systemRoot);
+//        rt.setDefaultModuleComponent(defaultModule);
+//        rt.start();
 
         // Locate a service
 		ModuleContext myContext = ModuleContext::getCurrent();
