@@ -13,9 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 #if defined(WIN32)  || defined (_WINDOWS)
 #pragma warning(disable: 4786)
 #endif
+
 #include "AccountServiceImpl_stockQuote_Proxy.h"
 
 #include "osoa/sca/sca.h"

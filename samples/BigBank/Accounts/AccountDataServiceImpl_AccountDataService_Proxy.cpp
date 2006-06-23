@@ -16,6 +16,7 @@
 #if defined(WIN32)  || defined (_WINDOWS)
 #pragma warning(disable: 4786)
 #endif
+
 #include "AccountDataServiceImpl_AccountDataService_Proxy.h"
 
 #include "osoa/sca/sca.h"

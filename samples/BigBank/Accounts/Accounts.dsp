@@ -209,6 +209,14 @@ SOURCE=.\StockQuoteServiceImpl_StockQuoteService_Wrapper.h
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=..\WSAccountClient\services.xml
+# End Source File
+# Begin Source File
+
+SOURCE="..\WSAccountClient\Tuscany-model.config"
+# End Source File
 # End Group
 # Begin Source File
 
