@@ -38,3 +38,10 @@ export TUSCANY_SCACPP=${TUSCANY_SCACPP_HOME}/deploy
 ./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no
 make
 make install
+
+cd ${TUSCANY_SCACPP_HOME}/deploy
+for i in `find . -name "*.la"`
+do
+	rm $i
+done
+
