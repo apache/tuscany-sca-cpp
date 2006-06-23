@@ -9,7 +9,7 @@ CalculatorImpl_CalculatorService_Proxy.cpp:
 
 module_LTLIBRARIES = libCalculator.la
 module_DATA = sca.module.lin Tuscany-model.config *.componentType
-EXTRA_DIST = sca.module.lin Tuscany-model.config *.componentType
+EXTRA_DIST = sca.module.lin Tuscany-model.config *.componentType *.wsdl services.xml
 
 libCalculator_la_SOURCES = \
 CalculatorImpl.cpp \
