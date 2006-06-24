@@ -7,6 +7,7 @@ EXTRA_DIST = runwsclient.sh
 
 AM_CPPFLAGS = $(CPPFLAGS)
 calculator_wsclient_SOURCES = axis2_Calculator_stub.cpp Calculator_Client.cpp
+noinst_HEADERS = *.h
 
 calculator_wsclient_LDADD   =  -L$(AXIS2C_HOME)/lib \
 					-laxis2_util \
