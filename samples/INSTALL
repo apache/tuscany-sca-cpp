@@ -18,11 +18,11 @@ If using the binary distribution the samples are built and installed in
      NOTE: If you don't provide a --prefix configure option, it will by default install into
      /usr/local/tuscany/sca
 
-Running the samples
-===================
+Running the samples on Linux
+============================
 
-Calculator
-----------
+Calculator with basic client
+----------------------------
 
 1. The following environment variables are required:
      TUSCANY_SCACPP=<path to installed Tuscany SCA>
@@ -32,3 +32,28 @@ Calculator
 2. cd <samples_install_dir>/Calculator/deploy/bin
 
 3. ./runclient.sh
+
+
+Calculator with WS client
+-------------------------
+
+1. Deploy the Calculator as an axis2c service
+   a) Create a new service folder in axis2:
+      <AXIS2C_HOME>/services/Calculator
+   b) Copy the <TUSCANY_SCACPP>/samples/Calculator/CalculatorModule/services.xml to
+      <AXIS2C_HOME>/services/Calculator/services.xml
+   c) Edit the services xml to set the TuscanySystemRoot parameter to
+      <parameter name="TuscanySystemRoot" locked="xsd:false">@TUSCANY_SCACPP@/samples/Calculator/deploy</parameter>
+      where >@TUSCANY_SCACPP@ is the path to the installed Tuscany SCA
+
+2. Start Axis2C simple http server
+   a) cd <AXIS2C_HOM>/bin
+   b) export TUSCANY_SCACPP=<path to installed Tuscany SCA>
+   c) add <TUSCANY_SCACPP>/lib and <TUSCANY_SDOCPP>/lib to LD_LIBRARY_PATH environment variable
+   d) ./axis2_http_server
+      
+3. Run the client
+   a) export AXIS2C_HOME=<path to axis2c verion 0.92>
+   b) cd <samples_install_dir>/Calculator/deploy/bin
+   c) ./runwsclient.sh
+   
