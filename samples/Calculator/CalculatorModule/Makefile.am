@@ -16,7 +16,7 @@ CalculatorImpl.cpp \
 CalculatorImpl_CalculatorService_Proxy.cpp \
 CalculatorImpl_CalculatorService_Wrapper.cpp
 
-libCalculatorModule_la_LIBADD =
+libCalculatorModule_la_LIBADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca
 
 INCLUDES = \
            -I$(TUSCANY_SCACPP)/include \
