@@ -1,8 +1,8 @@
 SUBDIRS = runtime
 datadir=$(prefix)
 
-data_DATA = INSTALL README LICENSE COPYING
-EXTRA_DIST = LICENSE COPYING INSTALL README sdotest.sh
+data_DATA = INSTALL README LICENSE COPYING readme.txt
+EXTRA_DIST = LICENSE COPYING INSTALL README sdotest.sh readme.txt
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`
 	rm -rf `find $(distdir)/ -type d -name .deps`
