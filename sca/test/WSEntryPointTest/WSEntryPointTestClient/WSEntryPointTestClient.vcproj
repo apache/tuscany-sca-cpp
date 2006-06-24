@@ -33,7 +33,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="axis2_om.lib axis2_engine.lib axis2_parser.lib axis2_util.lib"
+				AdditionalDependencies="axiom.lib axis2_engine.lib axis2_parser.lib axis2_util.lib"
 				OutputFile="$(OutDir)/WSEntryPointTestClient.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(AXIS2C_HOME)/lib"

@@ -105,14 +105,11 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
     }
     else if(binding->getBindingType() == Binding::WS)
     {
-        //printf("EntryPointProxy has got WS binding: %s\n", binding->getUri().c_str());
         WSBinding* wsBinding = (WSBinding*) binding;
 
         string wsdlNamespace = wsBinding->getWSDLNamespaceURL();
         string wsdlPort  = wsBinding->getPortName();
         string wsdlService = wsBinding->getServiceName();
-
-        //printf("EntryPointProxy has got WS Binding with NamespaceURL: %s Port: %s Service: %s\n", wsdlNamespace.c_str(), wsdlPort.c_str(), wsdlService.c_str());
 
         Wsdl* wsdl = module->findWsdl(wsdlNamespace);
         if (wsdl == 0)
@@ -121,7 +118,16 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
             return NULL;
         }
 
-        WsdlOperation operation = wsdl->findOperation(wsdlService, wsdlPort, operationName);
+        WsdlOperation operation;
+        try
+        {
+            operation = wsdl->findOperation(wsdlService, wsdlPort, operationName);
+        }
+	    catch(SystemConfigurationException &ex)
+	    {	
+		    LOGERROR_1(0, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
+            return NULL;
+        }
 
         LOGINFO_2(4, "EntryPointProxy has got WsdlOperation with inputType: %s#%s",
             operation.getInputTypeUri().c_str(), 
@@ -137,6 +143,9 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         {
             // Document style
             outputDataObject = dataFactoryPtr->create(operation.getOutputTypeUri().c_str(), operation.getOutputTypeName().c_str());
+
+            //printf("outputDataObject %s#%s\n", outputDataObject->getType().getURI(), outputDataObject->getType().getName());
+            //Utils::printDO(outputDataObject);
         }
         else
         {
@@ -241,10 +250,28 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
             }
             break;
         case Type::DataObjectType:
-            {                
-                //printf("inputDataObject has DataObjectType named %s\n", name);
+            {
                 DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
+                //printf("inputDataObject has DataObjectType named %s\n", name);
                 operation.addParameter(&dataObjectData);
+            }
+            break;
+        case Type::OpenDataObjectType:
+            {         
+                /*
+                 * This code deals with xsd:any element parameters
+                 * Get each element as a DataObject and add in to the parameter list
+                 */
+
+                //printf("inputDataObject has OpenDataObjectType named %s\n", name);
+                DataObjectList& dataObjectList = inputDataObject->getList(pl[i]);
+                
+                for(int j=0; j<dataObjectList.size(); j++)
+                {
+                    DataObjectPtr dataObjectData = dataObjectList[j];
+                    operation.addParameter(&dataObjectData);
+                    //Utils::printDO(dataObjectData);
+                }
             }
             break;
         case Type::DateType:
@@ -279,6 +306,25 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
     if(pl.size() > 1)
     {
         LOGINFO(4, "More than one return value is defined in the WSDL, just defining the first");
+    }
+    else if(pl.size() == 0)
+    {
+        if(outputDataObject->getType().isOpenType() && outputDataObject->getType().isDataObjectType())
+        {
+            /*
+             * This code deals with returning xsd:any elements
+             * Return as a DataObject set within the outputDataObject
+             */
+           
+            // An OpenDataObject for the data to return in
+            DataObjectPtr dataObjectData;
+            operation.setReturnValue(&dataObjectData);            
+        }
+        else
+        {
+            LOGINFO(4, "No return values are defined in the WSDL");
+        }
+
     }
 
     if(pl.size() > 0)
@@ -346,8 +392,8 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
             break;
         case Type::DataObjectType:
             {
-                //printf("outputDataObject has DataObjectType named %s\n", name);
-                DataObjectPtr dataObjectData = dataFactoryPtr->create(pl[0].getType());
+                // printf("outputDataObject has DataObjectType named %s with type %s # %s\n", name, pl[0].getType().getURI(), pl[0].getType().getName());
+                DataObjectPtr dataObjectData;// = dataFactoryPtr->create(pl[0].getType());
                 operation.setReturnValue(&dataObjectData);
             }
             break;
@@ -372,11 +418,18 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         }         
     }
 
-    // Call into the wired module
-    scaEntryPoint->invoke(operation);
+    try
+    {
+        // Call into the wired module
+        scaEntryPoint->invoke(operation);
 
-    // Set the data in the outputDataObject to be returned
-    setOutputData(operation, outputDataObject);                            
+        // Set the data in the outputDataObject to be returned
+        setOutputData(operation, outputDataObject);                            
+    }
+	catch(ServiceRuntimeException &ex)
+	{	
+        LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
+	}  
 
     LOGEXIT(1,"EntryPointProxy::invoke");
 
@@ -389,7 +442,40 @@ void EntryPointProxy::setOutputData(Operation operation, DataObjectPtr outputDat
     // Go through data object to set the return value
     PropertyList pl = outputDataObject->getInstanceProperties();
 
-    // Should only be one return value.. This goes through all return
+    if(pl.size() == 0)
+    {
+        if(outputDataObject->getType().isOpenType() && outputDataObject->getType().isDataObjectType())
+        {
+            /*
+             * This code deals with returning xsd:any elements
+             * Return as a DataObject set within the outputDataObject
+             */
+            
+            DataObjectPtr* dataObjectData = (DataObjectPtr*) operation.getReturnValue();
+            //Utils::printDO(*dataObjectData);
+
+            // Need to provide a name for the dataobject being returned, use the containment property name if there is one.
+            const char* rootName = "OpenDataObject";
+            try
+            {
+                const Property& prop = (*dataObjectData)->getContainmentProperty();
+                rootName = prop.getName();
+                (*dataObjectData)->detach();
+            }
+            catch(SDOPropertyNotFoundException &ex)
+            {
+                // DataObject has no containment property - use default rootName
+            }
+            outputDataObject->setDataObject(rootName, *dataObjectData);
+        }
+        else
+        {
+            LOGINFO(4, "No return values are defined in the WSDL");
+        }
+
+    }
+
+    // Should only be one return value.. This goes through all return values
     for(int i=0; i<pl.size(); i++)
     {
         const char* name = pl[i].getName();
@@ -406,7 +492,7 @@ void EntryPointProxy::setOutputData(Operation operation, DataObjectPtr outputDat
         case Type::ByteType:
             {
                 char* byteData = (char*) operation.getReturnValue();
-                //printf("outputDataObject has ByteType named %s with value %s\n", name, byteData);
+                //printf("outputDataObject has ByteType named %s with value %c (#%d)\n", name, *byteData, *byteData);
                 outputDataObject->setByte(pl[i], *byteData);
             }
             break;

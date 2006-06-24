@@ -22,7 +22,9 @@
 #include <tuscany/sca/util/Utils.h>
 using namespace tuscany::sca;
 #include <commonj/sdo/SDO.h>
+#include <sdo_axiom.h>
 using namespace commonj::sdo;
+using namespace commonj::sdo_axiom;
 
 WSEntryPointTestImpl::WSEntryPointTestImpl()
 {
@@ -33,13 +35,6 @@ WSEntryPointTestImpl::~WSEntryPointTestImpl()
 }
 
 // WSEntryPointTest interface
-DataObjectPtr WSEntryPointTestImpl::doDataObject(DataObjectPtr arg1)
-{
-    printf("WSEntryPointTestImpl::doDataObject %s\n", arg1->getType().getURI());
-    Utils::printDO(arg1);
-    return arg1;
-}
-
 char* WSEntryPointTestImpl::doChars(char* arg1)
 {
     printf("WSEntryPointTestImpl::doChars %s\n", arg1);
@@ -61,19 +56,19 @@ int WSEntryPointTestImpl::doInt(int arg1)
 
 float WSEntryPointTestImpl::doFloat(float arg1)
 {
-    printf("WSEntryPointTestImpl::doFloat %d\n", arg1);
+    printf("WSEntryPointTestImpl::doFloat %f\n", arg1);
     return arg1;
 }
 
 long double WSEntryPointTestImpl::doLongDouble(long double arg1)
 {
-    printf("WSEntryPointTestImpl::doLongDouble %d\n", arg1);
+    printf("WSEntryPointTestImpl::doLongDouble %f\n", arg1);
     return arg1;
 }
 
 double WSEntryPointTestImpl::doDouble(double arg1)
 {
-    printf("WSEntryPointTestImpl::doDouble %d\n", arg1);
+    printf("WSEntryPointTestImpl::doDouble %f\n", arg1);
     return arg1;
 }
 
@@ -96,6 +91,12 @@ char* WSEntryPointTestImpl::doBytes(char* arg1)
     return arg1;
 }
 
+char WSEntryPointTestImpl::doByte(char arg1)
+{
+    printf("WSEntryPointTestImpl::doByte %c\n", arg1);
+    return arg1;
+}
+
 DataObjectPtr WSEntryPointTestImpl::doMixed(char* arg1, long arg2, DataObjectPtr arg3, bool arg4, double arg5)
 {
     printf("WSEntryPointTestImpl::doMixed %s %d %s %d %d\n", arg1, arg2, arg3->getType().getURI(), arg4, arg5);
@@ -103,6 +104,30 @@ DataObjectPtr WSEntryPointTestImpl::doMixed(char* arg1, long arg2, DataObjectPtr
     return arg3;
 }
 
+DataObjectPtr WSEntryPointTestImpl::doDataObject(DataObjectPtr arg1)
+{
+    printf("WSEntryPointTestImpl::doDataObject %s\n", arg1->getType().getURI());
+    Utils::printDO(arg1);
+    return arg1;
+}
+
+DataObjectPtr WSEntryPointTestImpl::doAny(DataObjectPtr arg1)
+{
+    printf("WSEntryPointTestImpl::doAny %s#%s\n", arg1->getType().getURI(), arg1->getType().getName());
+    Utils::printDO(arg1);
+    //return arg1;
+
+    DataFactoryPtr factory = arg1->getDataFactory();
+    DataObjectPtr data = factory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+    data->setCString("stringData", "Here is some string data");
+    data->setBoolean("boolData", true);
+    DataObjectList& list = data->getList("intDataList");
+    list.append((long)123456789);
+    list.append((long)111111111);
+    list.append((long)222222222);
+    Utils::printDO(data);
+    return data;
+}
 
 //int[] WSEntryPointTestImpl::doIntArray(int[] arg1, int arg2)
 //{

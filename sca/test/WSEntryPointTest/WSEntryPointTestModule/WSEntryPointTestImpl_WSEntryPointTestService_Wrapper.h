@@ -17,6 +17,10 @@
 #ifndef WSEntryPointTestImpl_WSEntryPointTestService_Wrapper_h
 #define WSEntryPointTestImpl_WSEntryPointTestService_Wrapper_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "WSEntryPointTestImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 

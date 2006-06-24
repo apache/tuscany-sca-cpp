@@ -7,9 +7,6 @@
         This is a testing service , to test the system is working or not
    </description>
 
-    <operation name="doDataObject">
-            <!--messageReceiver class="axis2_receivers" /-->            
-    </operation>
     <operation name="doChars">
             <!--messageReceiver class="axis2_receivers" /-->            
     </operation>
@@ -38,6 +35,12 @@
             <!--messageReceiver class="axis2_receivers" /-->            
     </operation>
     <operation name="doMixed">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doDataObject">
+            <!--messageReceiver class="axis2_receivers" /-->            
+    </operation>
+    <operation name="doAny">
             <!--messageReceiver class="axis2_receivers" /-->            
     </operation>
 </service>

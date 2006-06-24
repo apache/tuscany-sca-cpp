@@ -29,24 +29,27 @@ public:
     virtual ~WSEntryPointTestImpl();
 
     // WSEntryPointTest interface
-	virtual DataObjectPtr doDataObject(DataObjectPtr arg1);
     virtual char* doChars(char* arg1);
     virtual long doLong(long arg1);
     virtual int doInt(int arg1);
-    virtual int64_t doInt64(int64_t arg1);
     virtual float doFloat(float arg1);
     virtual long double doLongDouble(long double arg1);
     virtual double doDouble(double arg1);
     virtual bool doBool(bool arg1);
     virtual short doShort(short arg1);
     virtual char* doBytes(char* arg1);
+    virtual char doByte(char arg1);
 	virtual DataObjectPtr doMixed(char* arg1, long arg2, DataObjectPtr arg3, bool arg4, double arg5);
+	virtual DataObjectPtr doDataObject(DataObjectPtr arg1);
+	virtual DataObjectPtr doAny(DataObjectPtr arg1);
 
 // These don't work because they are passing pointers around
 //    virtual int[] doIntArray(int[] arg1, int arg2);
 //    virtual string doString(string arg1);
 // This doesn't work because there is no mapping from XSD types to SDO CharacterType     
 //    virtual wchar_t doWChar(wchar_t arg1);
+// This doesn't work because Operation does not support int64_t yet
+//    virtual int64_t doInt64(int64_t arg1);
 
 };
 

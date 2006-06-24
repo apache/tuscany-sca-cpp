@@ -15,13 +15,13 @@
  */
 
 #include <stdio.h>
-#include <axis2_om.h>
+#include <axiom.h>
 #include <axis2_util.h>
-#include <axis2_soap.h>
+#include <axiom_soap.h>
 #include <axis2_client.h>
 
-axis2_om_node_t *
-build_om_payload_for_WSEntryPointTestRPC_svc(axis2_env_t **env);
+axiom_node_t *
+build_om_payload_for_WSEntryPointTestRPC_svc(axis2_env_t *env);
 
 
 int main(int argc, char** argv)
@@ -32,8 +32,8 @@ int main(int argc, char** argv)
     axis2_options_t *options = NULL;
     axis2_char_t *client_home = NULL;
     axis2_svc_client_t* svc_client = NULL;
-    axis2_om_node_t *payload = NULL;
-    axis2_om_node_t *ret_node = NULL;
+    axiom_node_t *payload = NULL;
+    axiom_node_t *ret_node = NULL;
    
     /* Set up the envioronment */
     env = axis2_env_create_all("wsentrypointtestrpc.log", AXIS2_LOG_LEVEL_TRACE);
@@ -51,12 +51,12 @@ int main(int argc, char** argv)
     printf ("Using endpoint : %s\n", address);
     
     /* Create EPR with given address */
-    endpoint_ref = axis2_endpoint_ref_create(&env, address);
+    endpoint_ref = axis2_endpoint_ref_create(env, address);
 
     /* Setup options */
-    options = axis2_options_create(&env);
-    AXIS2_OPTIONS_SET_TO(options, &env, endpoint_ref);
-    AXIS2_OPTIONS_SET_ACTION(options, &env,
+    options = axis2_options_create(env);
+    AXIS2_OPTIONS_SET_TO(options, env, endpoint_ref);
+    AXIS2_OPTIONS_SET_ACTION(options, env,
         "http://www.WSEntryPointTest.org/WSEntryPointTestRPC/doString");
 
     /* Set up deploy folder. It is from the deploy folder, the configuration is picked up 
@@ -74,7 +74,7 @@ int main(int argc, char** argv)
     }
 
     /* Create service client */
-    svc_client = axis2_svc_client_create(&env, client_home);
+    svc_client = axis2_svc_client_create(env, client_home);
     if (!svc_client)
     {
         printf("Error creating service client\n");
@@ -90,15 +90,15 @@ int main(int argc, char** argv)
     AXIS2_SVC_CLIENT_ENGAGE_MODULE(svc_client, &env, AXIS2_MODULE_ADDRESSING);
     
     /* Build the SOAP request message payload using OM API.*/
-    payload = build_om_payload_for_WSEntryPointTestRPC_svc(&env);
+    payload = build_om_payload_for_WSEntryPointTestRPC_svc(env);
     
     /* Send request */
-    ret_node = AXIS2_SVC_CLIENT_SEND_RECEIVE(svc_client, &env, payload);
+    ret_node = AXIS2_SVC_CLIENT_SEND_RECEIVE(svc_client, env, payload);
     
     if(ret_node)
     {
         axis2_char_t *om_str = NULL;
-        om_str = AXIS2_OM_NODE_TO_STRING(ret_node, &env);
+        om_str = AXIOM_NODE_TO_STRING(ret_node, env);
         if (om_str)
             printf("\nReceived OM : %s\n", om_str);
         printf("\nWSEntryPointTestRPC client invoke SUCCESSFUL!\n");
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
     
     if (svc_client)
     {
-        AXIS2_SVC_CLIENT_FREE(svc_client, &env);
+        AXIS2_SVC_CLIENT_FREE(svc_client, env);
         svc_client = NULL;
     }
     if (endpoint_ref)
@@ -125,22 +125,22 @@ int main(int argc, char** argv)
 }
 
 /* build SOAP request message content using OM */
-axis2_om_node_t *
-build_om_payload_for_WSEntryPointTestRPC_svc(axis2_env_t **env)
+axiom_node_t *
+build_om_payload_for_WSEntryPointTestRPC_svc(axis2_env_t *env)
 {
-    axis2_om_node_t* req_om_node = NULL;
-    axis2_om_element_t* req_om_elem = NULL;
-    axis2_om_node_t* param_om_node = NULL;
-    axis2_om_element_t* param_om_elem = NULL;
-    axis2_om_namespace_t *ns1 = NULL;
+    axiom_node_t* req_om_node = NULL;
+    axiom_element_t* req_om_elem = NULL;
+    axiom_node_t* param_om_node = NULL;
+    axiom_element_t* param_om_elem = NULL;
+    axiom_namespace_t *ns1 = NULL;
     axis2_char_t *om_str = NULL;
     
-    ns1 = axis2_om_namespace_create (env, "http://www.WSEntryPointTest.org/WSEntryPointTestRPC/", "ns1");
-    req_om_elem = axis2_om_element_create(env, NULL, "doString", ns1, &req_om_node);
-    param_om_elem = axis2_om_element_create(env, req_om_node, "doStringRequest", ns1, &param_om_node);
-    AXIS2_OM_ELEMENT_SET_TEXT(param_om_elem, env, "WSEntryPointTestRPC Client Call", param_om_node);
+    ns1 = axiom_namespace_create (env, "http://www.WSEntryPointTest.org/WSEntryPointTestRPC/", "ns1");
+    req_om_elem = axiom_element_create(env, NULL, "doString", ns1, &req_om_node);
+    param_om_elem = axiom_element_create(env, req_om_node, "doStringRequest", ns1, &param_om_node);
+    AXIOM_ELEMENT_SET_TEXT(param_om_elem, env, "WSEntryPointTestRPC Client Call", param_om_node);
     
-    om_str = AXIS2_OM_NODE_TO_STRING(req_om_node, env);
+    om_str = AXIOM_NODE_TO_STRING(req_om_node, env);
     if (om_str)
         printf("\nSending OM : %s\n", om_str);
 

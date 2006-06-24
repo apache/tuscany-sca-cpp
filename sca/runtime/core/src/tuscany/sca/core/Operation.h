@@ -72,6 +72,7 @@ namespace tuscany
                 DOUBLE,
                 LONGDOUBLE,
                 CHARS,
+                CHAR,
                 STRING,
                 DATAOBJECT
             };
@@ -101,6 +102,7 @@ namespace tuscany
             SCA_API void setReturnValue(const float *retVal);
             SCA_API void setReturnValue(const double *retVal);
             SCA_API void setReturnValue(const long double *retVal);
+            SCA_API void setReturnValue(const char *retVal);
             SCA_API void setReturnValue(const char* *retVal);
             SCA_API void setReturnValue(const string *retVal);
             SCA_API void setReturnValue(const DataObjectPtr *retVal);
@@ -119,6 +121,7 @@ namespace tuscany
             SCA_API void addParameter(const float *parm);
             SCA_API void addParameter(const double *parm);
             SCA_API void addParameter(const long double *parm);
+            SCA_API void addParameter(const char *parm);
             SCA_API void addParameter(const char* *parm);
             SCA_API void addParameter(const string *parm);
             SCA_API void addParameter(const DataObjectPtr *parm);
