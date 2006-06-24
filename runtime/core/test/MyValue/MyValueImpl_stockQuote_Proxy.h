@@ -17,6 +17,10 @@
 #ifndef MyValueImpl_stockQuote_Proxy_h
 #define MyValueImpl_stockQuote_Proxy_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "StockQuoteService.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
