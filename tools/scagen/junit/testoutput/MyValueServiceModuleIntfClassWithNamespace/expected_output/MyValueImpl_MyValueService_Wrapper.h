@@ -17,6 +17,10 @@
 #ifndef MyValueImpl_MyValueService_Wrapper_h
 #define MyValueImpl_MyValueService_Wrapper_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "MyValueImpl.hpp"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 

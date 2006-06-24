@@ -17,6 +17,10 @@
 #ifndef CustomerInfoImpl_CustomerInfoService_Wrapper_h
 #define CustomerInfoImpl_CustomerInfoService_Wrapper_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "CustomerInfoImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 
@@ -29,7 +33,7 @@ public:
     virtual void* newImplementation();
     virtual void deleteImplementation();
 private:
-    CustomerInfoImpl* impl;
+    Other::CustomerInfoImpl* impl;
 };
 
 #endif // CustomerInfoImpl_CustomerInfoService_Wrapper_h

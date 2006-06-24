@@ -52,15 +52,12 @@ MyValueImpl_stockQuote_Proxy::~MyValueImpl_stockQuote_Proxy()
 
 commonj::sdo::DataObjectPtr MyValueImpl_stockQuote_Proxy::GetStockQuotes( commonj::sdo::DataObjectPtr arg0)
 {
-    Operation operation("GetStockQuotes", 1);
-    operation.setParameter(0, (void*)&arg0);
-
-     commonj::sdo::DataObjectPtr ret = 0;
-    operation.setReturnValue((void*)&ret);
-
+    Operation operation("GetStockQuotes");
+    operation.addParameter(&arg0);
+    commonj::sdo::DataObjectPtr ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
-    return ret; 
-
+    return ret;
 }
 
 

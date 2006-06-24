@@ -182,7 +182,7 @@ public class ComponentDomNodeHandler extends GenericDomNodeHandler {
 
         if (-1 != namespaceEnd) {
             namespace = implClass.substring(0, namespaceEnd);
-            ctParser.setParameter("namespace", namespace);
+            ctParser.setParameter("implNamespace", namespace);
             implClass = implClass.substring(namespaceEnd + 2);
         }
 
@@ -279,9 +279,17 @@ public class ComponentDomNodeHandler extends GenericDomNodeHandler {
                 return implementationCppClass;
             }
         } else {
-            // Implementation class is null so we return the classname of the
+            // Implementation class is null so we return the fully qualified classname of the
             // first service method
-            return ((Signature) methods.get(0)).getTrimClassName();
+            Signature s = (Signature) methods.get(0); 
+            String className = s.getTrimClassName();
+            String namespace = s.getNamespace();
+            if( namespace != null && namespace.length() > 0)
+            {
+                className = namespace + "::" + className;
+            }
+            
+            return className;
         }
     }
 

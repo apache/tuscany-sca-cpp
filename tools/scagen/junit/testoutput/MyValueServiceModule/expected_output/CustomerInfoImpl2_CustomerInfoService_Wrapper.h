@@ -17,6 +17,10 @@
 #ifndef CustomerInfoImpl2_CustomerInfoService_Wrapper_h
 #define CustomerInfoImpl2_CustomerInfoService_Wrapper_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "CustomerInfoImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 

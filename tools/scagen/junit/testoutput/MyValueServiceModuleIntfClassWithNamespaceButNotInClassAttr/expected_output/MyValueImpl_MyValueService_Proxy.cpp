@@ -52,49 +52,40 @@ MyValueImpl_MyValueService_Proxy::~MyValueImpl_MyValueService_Proxy()
 
 float MyValueImpl_MyValueService_Proxy::getMyValueOther(const char* arg0)
 {
-    Operation operation("getMyValueOther", 1);
-    operation.setParameter(0, (void*)arg0);
-
- float ret;
-    operation.setReturnValue((void*)&ret);
+    Operation operation("getMyValueOther");
+    operation.addParameter(&arg0);
+    float ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 float MyValueImpl_MyValueService_Proxy::getMyValueSOther(const string& arg0)
 {
-    Operation operation("getMyValueSOther", 1);
-    operation.setParameter(0, (void*)&arg0);
-
- float ret;
-    operation.setReturnValue((void*)&ret);
+    Operation operation("getMyValueSOther");
+    operation.addParameter(&arg0);
+    float ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 string MyValueImpl_MyValueService_Proxy::getCustnameOther( string& arg0)
 {
-    Operation operation("getCustnameOther", 1);
-    operation.setParameter(0, (void*)&arg0);
-
- string ret;
-    operation.setReturnValue((void*)&ret);
+    Operation operation("getCustnameOther");
+    operation.addParameter(&arg0);
+    string ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 const string& MyValueImpl_MyValueService_Proxy::getCustnamecsOther( string arg0)
 {
-    Operation operation("getCustnamecsOther", 1);
-    operation.setParameter(0, (void*)&arg0);
-
- 
+    Operation operation("getCustnamecsOther");
+    operation.addParameter(&arg0);
     target->invoke(operation);
     return *(const string*)operation.getReturnValue();
-
 }
 
 

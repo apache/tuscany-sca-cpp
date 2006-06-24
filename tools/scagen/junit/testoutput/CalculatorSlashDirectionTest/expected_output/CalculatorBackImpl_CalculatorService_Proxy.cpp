@@ -52,30 +52,24 @@ CalculatorBackImpl_CalculatorService_Proxy::~CalculatorBackImpl_CalculatorServic
 
 long CalculatorBackImpl_CalculatorService_Proxy::subtractBack( long arg0,  long arg1)
 {
-    Operation operation("subtractBack", 2);
-    operation.setParameter(0, (void*)&arg0);
-
-    operation.setParameter(1, (void*)&arg1);
-
- long ret;
-    operation.setReturnValue((void*)&ret);
+    Operation operation("subtractBack");
+    operation.addParameter(&arg0);
+    operation.addParameter(&arg1);
+    long ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 long CalculatorBackImpl_CalculatorService_Proxy::addBack( long arg0,  long arg1)
 {
-    Operation operation("addBack", 2);
-    operation.setParameter(0, (void*)&arg0);
-
-    operation.setParameter(1, (void*)&arg1);
-
- long ret;
-    operation.setReturnValue((void*)&ret);
+    Operation operation("addBack");
+    operation.addParameter(&arg0);
+    operation.addParameter(&arg1);
+    long ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 

@@ -166,7 +166,15 @@ public class InputCppSourceCode {
                         }
 
                     }
-                    currentNamespace = word;
+                    
+                    if(currentNamespace == null)
+                    {
+                        currentNamespace = word;
+                    }
+                    else
+                    {
+                        currentNamespace += "::" + word;
+                    }
                     //We have not got to the class yet
                     //so will need ot deal with the namespace
                     //when we do

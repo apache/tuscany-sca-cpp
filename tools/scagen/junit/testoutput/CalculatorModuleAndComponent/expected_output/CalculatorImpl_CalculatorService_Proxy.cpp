@@ -52,16 +52,13 @@ CalculatorImpl_CalculatorService_Proxy::~CalculatorImpl_CalculatorService_Proxy(
 
 long CalculatorImpl_CalculatorService_Proxy::subtract( long arg0,  long arg1)
 {
-    Operation operation("subtract", 2);
-    operation.setParameter(0, (void*)&arg0);
-
-    operation.setParameter(1, (void*)&arg1);
-
- long ret;
-    operation.setReturnValue((void*)&ret);
+    Operation operation("subtract");
+    operation.addParameter(&arg0);
+    operation.addParameter(&arg1);
+    long ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 

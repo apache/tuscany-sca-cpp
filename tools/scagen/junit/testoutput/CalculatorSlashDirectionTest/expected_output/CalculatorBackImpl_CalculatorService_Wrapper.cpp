@@ -20,6 +20,8 @@
 using namespace osoa::sca;
 using namespace tuscany::sca;
 
+
+
 extern "C"
 {
 
@@ -58,15 +60,15 @@ void CalculatorBackImpl_CalculatorService_Wrapper::invokeService(Operation& oper
 
     if (operationName == "subtractBack")
     {
-        long& p0 = *( long*)operation.getParameter(0);
-        long& p1 = *( long*)operation.getParameter(1);
+        long& p0 = *( long*)operation.getParameterValue(0);
+        long& p1 = *( long*)operation.getParameterValue(1);
         *(long*)operation.getReturnValue() = impl->subtractBack(p0, p1);
         return;
     }
     if (operationName == "addBack")
     {
-        long& p0 = *( long*)operation.getParameter(0);
-        long& p1 = *( long*)operation.getParameter(1);
+        long& p0 = *( long*)operation.getParameterValue(0);
+        long& p1 = *( long*)operation.getParameterValue(1);
         *(long*)operation.getReturnValue() = impl->addBack(p0, p1);
         return;
     }

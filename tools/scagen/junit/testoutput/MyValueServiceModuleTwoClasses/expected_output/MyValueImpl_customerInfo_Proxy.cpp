@@ -52,13 +52,12 @@ MyValueImpl_customerInfo_Proxy::~MyValueImpl_customerInfo_Proxy()
 
 const char* MyValueImpl_customerInfo_Proxy::getCustomerInformation(const char* arg0)
 {
-    Operation operation("getCustomerInformation", 1);
-    operation.setParameter(0, (void*)arg0);
-
- 
+    Operation operation("getCustomerInformation");
+    operation.addParameter(&arg0);
+    const char* ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
-    return (const char*)operation.getReturnValue();
-
+    return ret;
 }
 
 

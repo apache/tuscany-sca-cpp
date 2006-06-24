@@ -99,6 +99,13 @@
 <xsl:text>
 
 </xsl:text>
+		<xsl:text>#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif </xsl:text>
+<!-- newline -->
+<xsl:text>
+
+</xsl:text>
     </xsl:template>
 
     <xsl:template name="include_headers">

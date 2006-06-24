@@ -58,6 +58,11 @@
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
 using namespace tuscany::sca;
+
+<xsl:if test="not(@implNamespace = '')">using <xsl:value-of select="@implNamespace"/><xsl:value-of select="@implClass"/>;</xsl:if>
+<xsl:text><!-- newline -->
+
+</xsl:text>
 <!-- thats the prologue over and done with
      now continue with the scaServiceElement -->
 <xsl:apply-templates/> <!-- will be applied to scaService -->

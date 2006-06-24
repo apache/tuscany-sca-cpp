@@ -231,8 +231,19 @@ public class ServicesGenerator extends CParsingTool {
             }
 
             String implClassNameAttrFromModuleFile = (String) parameters
-                    .get("implClass");
-
+            	.get("implClass");
+            String implClassNamespaceAttrFromModuleFile = (String) parameters
+            	.get("implNamespace");
+            
+            if(implClassNamespaceAttrFromModuleFile == null || implClassNamespaceAttrFromModuleFile.length() == 0)
+            {
+                implClassNamespaceAttrFromModuleFile = "";
+            }
+            else
+            {
+                implClassNamespaceAttrFromModuleFile += "::";
+            }
+            
             String interfaceClassNameAttrFromComponentTypeFile;
             if (forReference) {
                 interfaceClassNameAttrFromComponentTypeFile = (String) parameters
@@ -243,7 +254,7 @@ public class ServicesGenerator extends CParsingTool {
             }
 
             List methods = headers.getAllMethods();
-
+            
             // Pull out one of the methods' namespace attributes.
             String intfNamespace = null;
             if (methods.size() > 0) {
@@ -271,8 +282,16 @@ public class ServicesGenerator extends CParsingTool {
                     componentTypeFileHeaderName, moduleXmlFileHeader,
                     moduleXmlFileHeaderNoExt, intfNamespace,
                     interfaceClassNameAttrFromComponentTypeFile,
-                    implClassNameAttrFromModuleFile);
-
+                    implClassNameAttrFromModuleFile, implClassNamespaceAttrFromModuleFile);
+           
+//            // Print out the generated DOM
+//            StringWriter sw = new StringWriter();
+//            OutputFormat outputFormat = new OutputFormat("xml", "UTF-8", true);
+//            XMLSerializer serializer = new XMLSerializer(sw, outputFormat);
+//            serializer.serialize(dom);
+//            System.out.println("DOM:\n"+sw.toString()); 
+            
+            
             createProxyCPPFromDom(outputDir, dom);
             createProxyHeaderFromDom(outputDir, dom);
 
@@ -648,7 +667,7 @@ public class ServicesGenerator extends CParsingTool {
             String componentTypeXmlFileIntfHeaderNameWithPathAndExt,
             String moduleXmlFileImplHeaderNameWithPathAndExt,
             String moduleXmlFileHeaderNoExtorPath, String intfNamespace,
-            String intfClass, String implClass) {
+            String intfClass, String implClass, String implNamespace) {
 
         if (methods == null) {
             return null;
@@ -750,6 +769,10 @@ public class ServicesGenerator extends CParsingTool {
                 root.setAttribute("implClass", implClass);
             } else {
                 root.setAttribute("implClass", moduleXmlFileHeaderNoExtorPath);
+            }
+
+            if (implClass != null) {
+                root.setAttribute("implNamespace", implNamespace);
             }
 
             // default class name to the name of the header...

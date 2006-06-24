@@ -17,6 +17,10 @@
 #ifndef CalculatorForwardImpl_CalculatorService_Wrapper_h
 #define CalculatorForwardImpl_CalculatorService_Wrapper_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "subFolder/CalculatorForwardImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 

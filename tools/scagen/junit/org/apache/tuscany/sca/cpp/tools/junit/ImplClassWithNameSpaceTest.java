@@ -16,8 +16,6 @@
 */
 package org.apache.tuscany.sca.cpp.tools.junit;
 
-import org.apache.tuscany.sca.cpp.tools.services.Scagen;
-
 /**
  * This is a "run this first" testcase that just tests some simple operations of
  * the scagen tools it uses the

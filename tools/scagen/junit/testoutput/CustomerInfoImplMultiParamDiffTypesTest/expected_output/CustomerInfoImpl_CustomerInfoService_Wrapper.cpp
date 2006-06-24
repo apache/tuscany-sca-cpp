@@ -20,6 +20,8 @@
 using namespace osoa::sca;
 using namespace tuscany::sca;
 
+
+
 extern "C"
 {
 
@@ -58,315 +60,277 @@ void CustomerInfoImpl_CustomerInfoService_Wrapper::invokeService(Operation& oper
 
     if (operationName == "getCustomerInformationChar")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        const char* p1 = (const char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInformationChar(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        const char* p1 = *(const char**)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInformationChar(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoAChar")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        const char* p1 = (const char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoAChar(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        const char* p1 = *(const char**)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoAChar(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoBChar")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        char* p1 = ( char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoBChar(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        char* p1 = *( char**)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoBChar(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoCChar")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        char& p1 = *( char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoCChar(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        char& p1 = *( char*)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoCChar(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoDChar")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        char& p1 = *( char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoDChar(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        char& p1 = *( char*)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoDChar(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoEChar")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        char* p1 = ( char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoEChar(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        char* p1 = *( char**)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoEChar(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoFChar")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        char* p1 = ( char*)operation.getParameter(1);
-        char* p2 = ( char*)operation.getParameter(2);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoFChar(p0, p1, p2));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        char* p1 = *( char**)operation.getParameterValue(1);
+        char* p2 = *( char**)operation.getParameterValue(2);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoFChar(p0, p1, p2);
         return;
     }
     if (operationName == "getCustomerInfoGChar")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        char* p1 = ( char*)operation.getParameter(1);
-        char* p2 = ( char*)operation.getParameter(2);
-        signed char* p3 = ( signed char*)operation.getParameter(3);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoGChar(p0, p1, p2, p3));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        char* p1 = *( char**)operation.getParameterValue(1);
+        char* p2 = *( char**)operation.getParameterValue(2);
+        signed char* p3 = *( signed char**)operation.getParameterValue(3);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoGChar(p0, p1, p2, p3);
         return;
     }
     if (operationName == "getCustomerInfoHChar")
     {
-        unsigned char* p0 = ( unsigned char*)operation.getParameter(0);
-        const char& p1 = *(const char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoHChar(p0, p1));
+        unsigned char* p0 = *( unsigned char**)operation.getParameterValue(0);
+        const char& p1 = *(const char*)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoHChar(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoHChar")
     {
-        unsigned char* p0 = ( unsigned char*)operation.getParameter(0);
-        const char* p1 = (const char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoHChar(p0, p1));
+        unsigned char* p0 = *( unsigned char**)operation.getParameterValue(0);
+        const char* p1 = *(const char**)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoHChar(p0, p1);
         return;
     }
     if (operationName == "getCustomerInformationLong")
     {
-        const long* p0 = (const long*)operation.getParameter(0);
-        const long* p1 = (const long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInformationLong(p0, p1));
+        const long* p0 = *(const long**)operation.getParameterValue(0);
+        const long* p1 = *(const long**)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInformationLong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoALong")
     {
-        const long* p0 = (const long*)operation.getParameter(0);
-        const long* p1 = (const long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoALong(p0, p1));
+        const long* p0 = *(const long**)operation.getParameterValue(0);
+        const long* p1 = *(const long**)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInfoALong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoBLong")
     {
-        long* p0 = ( long*)operation.getParameter(0);
-        long* p1 = ( long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoBLong(p0, p1));
+        long* p0 = *( long**)operation.getParameterValue(0);
+        long* p1 = *( long**)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInfoBLong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoCLong")
     {
-        long& p0 = *( long*)operation.getParameter(0);
-        long& p1 = *( long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoCLong(p0, p1));
+        long& p0 = *( long*)operation.getParameterValue(0);
+        long& p1 = *( long*)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInfoCLong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoDLong")
     {
-        long& p0 = *( long*)operation.getParameter(0);
-        long& p1 = *( long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoDLong(p0, p1));
+        long& p0 = *( long*)operation.getParameterValue(0);
+        long& p1 = *( long*)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInfoDLong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoELong")
     {
-        long* p0 = ( long*)operation.getParameter(0);
-        long* p1 = ( long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoELong(p0, p1));
+        long* p0 = *( long**)operation.getParameterValue(0);
+        long* p1 = *( long**)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInfoELong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoFLong")
     {
-        long* p0 = ( long*)operation.getParameter(0);
-        long* p1 = ( long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoFLong(p0, p1));
+        long* p0 = *( long**)operation.getParameterValue(0);
+        long* p1 = *( long**)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInfoFLong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoGLong")
     {
-        signed long* p0 = ( signed long*)operation.getParameter(0);
-        signed long* p1 = ( signed long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoGLong(p0, p1));
+        signed long* p0 = *( signed long**)operation.getParameterValue(0);
+        signed long* p1 = *( signed long**)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInfoGLong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoHLong")
     {
-        signed long* p0 = ( signed long*)operation.getParameter(0);
-        signed long* p1 = ( signed long*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoHLong(p0, p1));
+        signed long* p0 = *( signed long**)operation.getParameterValue(0);
+        signed long* p1 = *( signed long**)operation.getParameterValue(1);
+        *(const long**)operation.getReturnValue() = impl->getCustomerInfoHLong(p0, p1);
         return;
     }
     if (operationName == "getCustomerInformationInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        const int* p1 = (const int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInformationInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        const int* p1 = *(const int**)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInformationInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoAInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        const int* p1 = (const int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoAInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        const int* p1 = *(const int**)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInfoAInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoBInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        int* p1 = ( int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoBInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        int* p1 = *( int**)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInfoBInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoCInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        int& p1 = *( int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoCInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        int& p1 = *( int*)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInfoCInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoDInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        int& p1 = *( int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoDInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        int& p1 = *( int*)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInfoDInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoEInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        int* p1 = ( int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoEInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        int* p1 = *( int**)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInfoEInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoFInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        int* p1 = ( int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoFInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        int* p1 = *( int**)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInfoFInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoGInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        signed int* p1 = ( signed int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoGInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        signed int* p1 = *( signed int**)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInfoGInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoHInt")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        unsigned int* p1 = ( unsigned int*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoHInt(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        unsigned int* p1 = *( unsigned int**)operation.getParameterValue(1);
+        *(const int**)operation.getReturnValue() = impl->getCustomerInfoHInt(p0, p1);
         return;
     }
     if (operationName == "getCustomerInformationint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        const __int64* p1 = (const __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInformationint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        const __int64* p1 = *(const __int64**)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInformationint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoAint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        const __int64* p1 = (const __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoAint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        const __int64* p1 = *(const __int64**)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInfoAint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoBint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        __int64* p1 = ( __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoBint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        __int64* p1 = *( __int64**)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInfoBint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoCint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        __int64& p1 = *( __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoCint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        __int64& p1 = *( __int64*)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInfoCint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoDint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        __int64& p1 = *( __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoDint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        __int64& p1 = *( __int64*)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInfoDint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoEint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        __int64* p1 = ( __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoEint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        __int64* p1 = *( __int64**)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInfoEint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoFint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        __int64* p1 = ( __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoFint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        __int64* p1 = *( __int64**)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInfoFint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoGint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        signed __int64* p1 = ( signed __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoGint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        signed __int64* p1 = *( signed __int64**)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInfoGint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoHint64")
     {
-        Diamond& p0 = *(Diamond*)operation.getParameter(0);
-        unsigned int64* p1 = ( unsigned int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoHint64(p0, p1));
+        Diamond& p0 = *(Diamond*)operation.getParameterValue(0);
+        unsigned int64* p1 = *( unsigned int64**)operation.getParameterValue(1);
+        *(const __int64**)operation.getReturnValue() = impl->getCustomerInfoHint64(p0, p1);
         return;
     }
     if (operationName == "getCustomerInformationVoid")
     {
-        float& p0 = *(float*)operation.getParameter(0);
-        const __int64* p1 = (const __int64*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInformationVoid(p0, p1));
+        float& p0 = *(float*)operation.getParameterValue(0);
+        const __int64* p1 = *(const __int64**)operation.getParameterValue(1);
+        *(const void**)operation.getReturnValue() = impl->getCustomerInformationVoid(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoAVoid")
     {
-        float& p0 = *(float*)operation.getParameter(0);
-        const __int64* p1 = (const __int64*)operation.getParameter(1);
+        float& p0 = *(float*)operation.getParameterValue(0);
+        const __int64* p1 = *(const __int64**)operation.getParameterValue(1);
             impl->getCustomerInfoAVoid(p0, p1);
         return;
     }
@@ -402,42 +366,40 @@ void CustomerInfoImpl_CustomerInfoService_Wrapper::invokeService(Operation& oper
     }
     if (operationName == "getCustomerInfoAInline")
     {
-        int& p0 = *( int*)operation.getParameter(0);
-        int& p1 = *( int*)operation.getParameter(1);
-        int& p2 = *( int*)operation.getParameter(2);
-        int& p3 = *( int*)operation.getParameter(3);
-        char* customer p4 = ( char* customer)operation.getParameter(4);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoAInline(p0, p1, p2, p3, p4));
+        int& p0 = *( int*)operation.getParameterValue(0);
+        int& p1 = *( int*)operation.getParameterValue(1);
+        int& p2 = *( int*)operation.getParameterValue(2);
+        int& p3 = *( int*)operation.getParameterValue(3);
+        char* customer p4 = *( char* customer*)operation.getParameterValue(4);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoAInline(p0, p1, p2, p3, p4);
         return;
     }
     if (operationName == "getCustomerInfoBInline")
     {
-        int* p0 = ( int*)operation.getParameter(0);
-        int* p1 = ( int*)operation.getParameter(1);
-        int* p2 = ( int*)operation.getParameter(2);
-        char* customer p3 = ( char* customer)operation.getParameter(3);
+        int* p0 = *( int**)operation.getParameterValue(0);
+        int* p1 = *( int**)operation.getParameterValue(1);
+        int* p2 = *( int**)operation.getParameterValue(2);
+        char* customer p3 = *( char* customer*)operation.getParameterValue(3);
         *(int*)operation.getReturnValue() = impl->getCustomerInfoBInline(p0, p1, p2, p3);
         return;
     }
     if (operationName == "getCustomerInfoCInline")
     {
-        char* customer p0 = ( char* customer)operation.getParameter(0);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoCInline(p0));
+        char* customer p0 = *( char* customer*)operation.getParameterValue(0);
+        *(friend const unsigned int**)operation.getReturnValue() = impl->getCustomerInfoCInline(p0);
         return;
     }
     if (operationName == "getCustomerInfoTrickyA")
     {
-        const char& p0 = *(const char*)operation.getParameter(0);
-        const char& p1 = *(const char*)operation.getParameter(1);
+        const char& p0 = *(const char*)operation.getParameterValue(0);
+        const char& p1 = *(const char*)operation.getParameterValue(1);
         *(int*)operation.getReturnValue() = impl->getCustomerInfoTrickyA(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoTrickyB")
     {
-        int& p0 = *( int*)operation.getParameter(0);
-        int& p1 = *( int*)operation.getParameter(1);
+        int& p0 = *( int*)operation.getParameterValue(0);
+        int& p1 = *( int*)operation.getParameterValue(1);
         *(int*)operation.getReturnValue() = impl->getCustomerInfoTrickyB(p0, p1);
         return;
     }

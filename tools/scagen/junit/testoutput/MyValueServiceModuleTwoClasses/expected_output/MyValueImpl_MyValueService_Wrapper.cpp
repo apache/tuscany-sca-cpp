@@ -58,27 +58,27 @@ void MyValueImpl_MyValueService_Wrapper::invokeService(Operation& operation)
 
     if (operationName == "getMyValue")
     {
-        const char* p0 = (const char*)operation.getParameter(0);
+        const char* p0 = *(const char**)operation.getParameterValue(0);
         *(float*)operation.getReturnValue() = impl->getMyValue(p0);
         return;
     }
     if (operationName == "getMyValueS")
     {
-        string& p0 = *(string*)operation.getParameter(0);
+        string& p0 = *(string*)operation.getParameterValue(0);
         *(float*)operation.getReturnValue() = impl->getMyValueS(p0);
         return;
     }
     if (operationName == "getCustname")
     {
-        string& p0 = *(string*)operation.getParameter(0);
+        string& p0 = *(string*)operation.getParameterValue(0);
         *(string*)operation.getReturnValue() = impl->getCustname(p0);
         return;
     }
     if (operationName == "getCustnamecs")
     {
-        string& p0 = *( string*)operation.getParameter(0);
+        string& p0 = *( string*)operation.getParameterValue(0);
         const string& ret = impl->getCustnamecs(p0);
-        operation.setReturnValue((void*)&ret);
+        operation.setReturnValue(&ret);
         return;
     }
         
