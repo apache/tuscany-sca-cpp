@@ -50,16 +50,6 @@ WSEntryPointTestImpl_WSEntryPointTestService_Proxy::~WSEntryPointTestImpl_WSEntr
         delete target;
 }
 
-DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doDataObject( DataObjectPtr arg0)
-{
-    Operation operation("doDataObject");
-    operation.addParameter(&arg0);
-    DataObjectPtr ret;
-    operation.setReturnValue(&ret);
-    target->invoke(operation);
-    return ret;
-}
-
 char* WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doChars( char* arg0)
 {
     Operation operation("doChars");
@@ -150,6 +140,16 @@ char* WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doBytes( char* arg0)
     return ret;
 }
 
+char WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doByte( char arg0)
+{
+    Operation operation("doByte");
+    operation.addParameter(&arg0);
+    char ret;
+    operation.setReturnValue(&ret);
+    target->invoke(operation);
+    return ret;
+}
+
 DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doMixed( char* arg0,  long arg1,  DataObjectPtr arg2,  bool arg3,  double arg4)
 {
     Operation operation("doMixed");
@@ -158,6 +158,26 @@ DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doMixed( char*
     operation.addParameter(&arg2);
     operation.addParameter(&arg3);
     operation.addParameter(&arg4);
+    DataObjectPtr ret;
+    operation.setReturnValue(&ret);
+    target->invoke(operation);
+    return ret;
+}
+
+DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doDataObject( DataObjectPtr arg0)
+{
+    Operation operation("doDataObject");
+    operation.addParameter(&arg0);
+    DataObjectPtr ret;
+    operation.setReturnValue(&ret);
+    target->invoke(operation);
+    return ret;
+}
+
+DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doAny( DataObjectPtr arg0)
+{
+    Operation operation("doAny");
+    operation.addParameter(&arg0);
     DataObjectPtr ret;
     operation.setReturnValue(&ret);
     target->invoke(operation);

@@ -2,37 +2,6 @@
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.WSEntryPointTest.org/WSEntryPointTest/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="WSEntryPointTest" targetNamespace="http://www.WSEntryPointTest.org/WSEntryPointTest/">
   <wsdl:types>
     <xsd:schema targetNamespace="http://www.WSEntryPointTest.org/WSEntryPointTest/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-		<xsd:element name="doDataObject">
-			<xsd:complexType>
-				<xsd:sequence>
-    				<xsd:element name="someData" type="dataObjectData" minOccurs="1"/>
-				</xsd:sequence>
-			</xsd:complexType>
-		</xsd:element>
-        
-		<xsd:element name="doDataObjectResponse">
-			<xsd:complexType>
-				<xsd:sequence>
-					<xsd:element name="someData" type="dataObjectData" minOccurs="1"/>
-				</xsd:sequence>
-			</xsd:complexType>
-		</xsd:element>    
-		
-		<xsd:complexType name="dataObjectData">
-			<xsd:sequence>
-				<xsd:element name="someStringData" type="xsd:string" minOccurs="1"/>
-				<xsd:element name="someIntData" type="xsd:int" minOccurs="1"/>
-				<xsd:element name="someFloatData" type="xsd:float" minOccurs="1"/>
-				<xsd:element name="someDateData" type="xsd:date" minOccurs="1"/>
-				<xsd:element name="someListData" type="listData" minOccurs="1"/>
-			</xsd:sequence>
-		</xsd:complexType>
-		
-		<xsd:complexType name="listData">
-			<xsd:sequence>
-				<xsd:element name="listItem" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
-			</xsd:sequence>
-		</xsd:complexType>	
 		
 		<xsd:element name="doChars">
 			<xsd:complexType>
@@ -176,6 +145,23 @@
 				</xsd:sequence>
 			</xsd:complexType>
 		</xsd:element>
+
+		<xsd:element name="doByte">
+			<xsd:complexType>
+				<xsd:sequence>
+    				<xsd:element name="someData" type="xsd:byte" minOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:element>
+		<xsd:element name="doByteResponse">
+			<xsd:complexType>
+				<xsd:sequence>
+    				<xsd:element name="someData" type="xsd:byte" minOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:element>
+
+
 		
 		<xsd:element name="doMixed">
 			<xsd:complexType>
@@ -196,7 +182,55 @@
 				</xsd:sequence>
 			</xsd:complexType>
 		</xsd:element>   
-    	
+
+		<xsd:element name="doDataObject">
+			<xsd:complexType>
+				<xsd:sequence>
+    				<xsd:element name="someData" type="dataObjectData" minOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:element>
+        
+		<xsd:element name="doDataObjectResponse">
+			<xsd:complexType>
+				<xsd:sequence>
+					<xsd:element name="someData" type="dataObjectData" minOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:element>    
+		
+		<xsd:complexType name="dataObjectData">
+			<xsd:sequence>
+				<xsd:element name="someStringData" type="xsd:string" minOccurs="1"/>
+				<xsd:element name="someIntData" type="xsd:int" minOccurs="1"/>
+				<xsd:element name="someFloatData" type="xsd:float" minOccurs="1"/>
+				<xsd:element name="someDateData" type="xsd:date" minOccurs="1"/>
+				<xsd:element name="someListData" type="tns:listData" minOccurs="1"/>
+			</xsd:sequence>
+		</xsd:complexType>
+		
+		<xsd:complexType name="listData">
+			<xsd:sequence>
+				<xsd:element name="listItem" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>	
+
+		<xsd:element name="doAny">
+			<xsd:complexType>
+				<xsd:sequence>
+    				<xsd:any minOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:element>
+        
+		<xsd:element name="doAnyResponse">
+			<xsd:complexType>
+				<xsd:sequence>
+    				<xsd:any minOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:element>    
+		
     	<!-- Can't do wchar - no mapping from XSD type to SDO:Character type 
 		
 		<xsd:element name="doWChar">
@@ -325,11 +359,25 @@
     <wsdl:part element="tns:doBytesResponse" name="doBytesResponsePart"/>
   </wsdl:message>
 
+  <wsdl:message name="doByteRequestMsg">
+    <wsdl:part element="tns:doByte" name="doByteRequestPart"/>
+  </wsdl:message>
+  <wsdl:message name="doByteResponseMsg">
+    <wsdl:part element="tns:doByteResponse" name="doByteResponsePart"/>
+  </wsdl:message>
+
   <wsdl:message name="doMixedRequestMsg">
     <wsdl:part element="tns:doMixed" name="doMixedRequestPart"/>
   </wsdl:message>
   <wsdl:message name="doMixedResponseMsg">
     <wsdl:part element="tns:doMixedResponse" name="doMixedResponsePart"/>
+  </wsdl:message>
+
+  <wsdl:message name="doAnyRequestMsg">
+    <wsdl:part element="tns:doAny" name="doAnyRequestPart"/>
+  </wsdl:message>
+  <wsdl:message name="doAnyResponseMsg">
+    <wsdl:part element="tns:doAnyResponse" name="doAnyResponsePart"/>
   </wsdl:message>
 
 
@@ -378,9 +426,17 @@
       <wsdl:input message="tns:doBytesRequestMsg"/>
       <wsdl:output message="tns:doBytesResponseMsg"/>
     </wsdl:operation>
+    <wsdl:operation name="doByte">
+      <wsdl:input message="tns:doByteRequestMsg"/>
+      <wsdl:output message="tns:doByteResponseMsg"/>
+    </wsdl:operation>
     <wsdl:operation name="doMixed">
       <wsdl:input message="tns:doMixedRequestMsg"/>
       <wsdl:output message="tns:doMixedResponseMsg"/>
+    </wsdl:operation>
+    <wsdl:operation name="doAny">
+      <wsdl:input message="tns:doAnyRequestMsg"/>
+      <wsdl:output message="tns:doAnyResponseMsg"/>
     </wsdl:operation>
   </wsdl:portType>
 
@@ -446,8 +502,18 @@
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="doByte">
+      <soap:operation soapAction="WSEntryPointTest/doByte"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="doMixed">
       <soap:operation soapAction="WSEntryPointTest/doMixed"/>
+      <wsdl:input><soap:body use="literal"/></wsdl:input>
+      <wsdl:output><soap:body use="literal"/></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="doAny">
+      <soap:operation soapAction="WSEntryPointTest/doAny"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>

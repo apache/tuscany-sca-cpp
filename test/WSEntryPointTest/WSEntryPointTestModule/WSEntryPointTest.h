@@ -26,7 +26,6 @@
 class WSEntryPointTest  
 {
 public:
-	virtual DataObjectPtr doDataObject(DataObjectPtr arg1) = 0;
     virtual char* doChars(char* arg1) = 0;
     virtual long doLong(long arg1) = 0;
     virtual int doInt(int arg1) = 0;
@@ -36,7 +35,10 @@ public:
     virtual bool doBool(bool arg1) = 0;
     virtual short doShort(short arg1) = 0;
     virtual char* doBytes(char* arg1) = 0;
+    virtual char doByte(char arg1) = 0;
 	virtual DataObjectPtr doMixed(char* arg1, long arg2, DataObjectPtr arg3, bool arg4, double arg5) = 0;
+	virtual DataObjectPtr doDataObject(DataObjectPtr arg1) = 0;
+	virtual DataObjectPtr doAny(DataObjectPtr arg1) = 0;
 // These don't work because they are passing pointers around
 //    virtual int[] doIntArray(int[] arg1, int arg2);
 //    virtual string doString(string arg1);

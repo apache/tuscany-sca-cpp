@@ -20,6 +20,8 @@
 using namespace osoa::sca;
 using namespace tuscany::sca;
 
+
+
 extern "C"
 {
 
@@ -56,11 +58,6 @@ void WSEntryPointTestImpl_WSEntryPointTestService_Wrapper::invokeService(Operati
 {
     const string& operationName = operation.getName();
 
-    if (operationName == "doDataObject")
-    {
-        DataObjectPtr& p0 = *(DataObjectPtr*)operation.getParameterValue(0);        *(DataObjectPtr*)operation.getReturnValue() = impl->doDataObject(p0);
-        return;
-    }
     if (operationName == "doChars")
     {
         char* p0 = *( char**)operation.getParameterValue(0);
@@ -115,6 +112,12 @@ void WSEntryPointTestImpl_WSEntryPointTestService_Wrapper::invokeService(Operati
         *(char**)operation.getReturnValue() = impl->doBytes(p0);
         return;
     }
+    if (operationName == "doByte")
+    {
+        char& p0 = *( char*)operation.getParameterValue(0);
+        *(char*)operation.getReturnValue() = impl->doByte(p0);
+        return;
+    }
     if (operationName == "doMixed")
     {
         char* p0 = *( char**)operation.getParameterValue(0);
@@ -122,6 +125,16 @@ void WSEntryPointTestImpl_WSEntryPointTestService_Wrapper::invokeService(Operati
         DataObjectPtr& p2 = *(DataObjectPtr*)operation.getParameterValue(2);        bool& p3 = *( bool*)operation.getParameterValue(3);
         double& p4 = *( double*)operation.getParameterValue(4);
         *(DataObjectPtr*)operation.getReturnValue() = impl->doMixed(p0, p1, p2, p3, p4);
+        return;
+    }
+    if (operationName == "doDataObject")
+    {
+        DataObjectPtr& p0 = *(DataObjectPtr*)operation.getParameterValue(0);        *(DataObjectPtr*)operation.getReturnValue() = impl->doDataObject(p0);
+        return;
+    }
+    if (operationName == "doAny")
+    {
+        DataObjectPtr& p0 = *(DataObjectPtr*)operation.getParameterValue(0);        *(DataObjectPtr*)operation.getReturnValue() = impl->doAny(p0);
         return;
     }
         

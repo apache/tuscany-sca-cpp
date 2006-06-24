@@ -17,6 +17,10 @@
 #ifndef WSEntryPointTestImpl_WSEntryPointTestService_Proxy_h
 #define WSEntryPointTestImpl_WSEntryPointTestService_Proxy_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "WSEntryPointTest.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
@@ -25,7 +29,6 @@ class WSEntryPointTestImpl_WSEntryPointTestService_Proxy : public WSEntryPointTe
 public:
     WSEntryPointTestImpl_WSEntryPointTestService_Proxy(tuscany::sca::ServiceWrapper*);
     virtual ~WSEntryPointTestImpl_WSEntryPointTestService_Proxy();
-    virtual DataObjectPtr doDataObject( DataObjectPtr arg1);
     virtual char* doChars( char* arg1);
     virtual long doLong( long arg1);
     virtual int doInt( int arg1);
@@ -35,7 +38,10 @@ public:
     virtual bool doBool( bool arg1);
     virtual short doShort( short arg1);
     virtual char* doBytes( char* arg1);
+    virtual char doByte( char arg1);
     virtual DataObjectPtr doMixed( char* arg1,  long arg2,  DataObjectPtr arg3,  bool arg4,  double arg5);
+    virtual DataObjectPtr doDataObject( DataObjectPtr arg1);
+    virtual DataObjectPtr doAny( DataObjectPtr arg1);
 private:
     tuscany::sca::ServiceWrapper* target;
 };

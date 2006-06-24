@@ -38,8 +38,10 @@ public:
     virtual bool doBool(bool arg1);
     virtual short doShort(short arg1);
     virtual char* doBytes(char* arg1);
+    virtual char doByte(char arg1);
 	virtual DataObjectPtr doMixed(char* arg1, long arg2, DataObjectPtr arg3, bool arg4, double arg5);
 	virtual DataObjectPtr doDataObject(DataObjectPtr arg1);
+	virtual DataObjectPtr doAny(DataObjectPtr arg1);
 
 // These don't work because they are passing pointers around
 //    virtual int[] doIntArray(int[] arg1, int arg2);

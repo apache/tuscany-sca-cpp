@@ -157,6 +157,12 @@ namespace tuscany
             parameters.insert(parameters.end(), Parameter((void*)parm, CHARS));
         }
 
+        void Operation::addParameter(const char *parm)
+        {
+            LOGINFO(4, "Operation::addParameter(char)");
+            parameters.insert(parameters.end(), Parameter((void*)parm, CHAR));
+        }
+
         void Operation::addParameter(const string *parm)
         {
             LOGINFO(4, "Operation::addParameter(string)");
@@ -229,6 +235,12 @@ namespace tuscany
         {
             LOGINFO(4, "Operation::setReturnValue(long double*)");
             returnValue = Parameter((void*)parm, LONGDOUBLE);
+        }
+
+        void Operation::setReturnValue(const char *parm)
+        {
+            LOGINFO(4, "Operation::setReturnValue(char)");
+            returnValue = Parameter((void*)parm, CHAR);
         }
 
         void Operation::setReturnValue(const char* *parm)
