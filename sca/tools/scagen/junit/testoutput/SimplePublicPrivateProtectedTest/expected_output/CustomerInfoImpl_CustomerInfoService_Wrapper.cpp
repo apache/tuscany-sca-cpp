@@ -20,6 +20,8 @@
 using namespace osoa::sca;
 using namespace tuscany::sca;
 
+
+
 extern "C"
 {
 
@@ -58,26 +60,23 @@ void CustomerInfoImpl_CustomerInfoService_Wrapper::invokeService(Operation& oper
 
     if (operationName == "getCustomerInformationCharPublic")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        const char* p1 = (const char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInformationCharPublic(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        const char* p1 = *(const char**)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInformationCharPublic(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoACharPublic")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        const char* p1 = (const char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoACharPublic(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        const char* p1 = *(const char**)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoACharPublic(p0, p1);
         return;
     }
     if (operationName == "getCustomerInfoBCharPublic")
     {
-        char* p0 = ( char*)operation.getParameter(0);
-        char* p1 = ( char*)operation.getParameter(1);
-
-        operation.setReturnValue((void*) impl->getCustomerInfoBCharPublic(p0, p1));
+        char* p0 = *( char**)operation.getParameterValue(0);
+        char* p1 = *( char**)operation.getParameterValue(1);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInfoBCharPublic(p0, p1);
         return;
     }
         

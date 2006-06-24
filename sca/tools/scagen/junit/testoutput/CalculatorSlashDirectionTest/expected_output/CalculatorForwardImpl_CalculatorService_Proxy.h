@@ -17,6 +17,10 @@
 #ifndef CalculatorForwardImpl_CalculatorService_Proxy_h
 #define CalculatorForwardImpl_CalculatorService_Proxy_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "otherSubFolder/CalculatorForward.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 

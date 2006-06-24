@@ -33,7 +33,7 @@ import org.apache.tuscany.sca.cpp.tools.services.Scagen;
  */
 public class TuscanyTestCase extends TestCase {
 
-    public static String root = "cpp\\sca\\tools\\scagen\\junit\\";
+    public static String root = "d:\\tuscany\\cpp\\sca\\tools\\scagen\\junit\\";
 
     public static String junit_modules = root + "testinput\\modules\\";
 
@@ -162,15 +162,20 @@ public class TuscanyTestCase extends TestCase {
             for (int i = 0; i < files.length; i++) {
                 File child = new File(dir, files[i]);
                 if (child.isDirectory()) {
-                    if (!child.getName().equals("expected_output")) {
+                    if (!(child.getName().equals("expected_output") || child.getName().equals(".svn"))) {
                         clearDirButNotExpectedOutputSubDir(dir
                                 .getAbsolutePath()
                                 + File.separator + files[i]);
                     }
                 }
-                child.delete();
+                else
+                {                    
+	                if( !child.delete() )
+	                {
+	                    System.out.println("File "+outputDir+"/"+child.getName()+" could not be deleted");
+	                }
+                }
             }
-
         }
 
     }

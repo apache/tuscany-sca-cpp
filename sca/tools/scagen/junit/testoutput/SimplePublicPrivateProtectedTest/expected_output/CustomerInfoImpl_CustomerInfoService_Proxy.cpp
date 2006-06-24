@@ -52,41 +52,35 @@ CustomerInfoImpl_CustomerInfoService_Proxy::~CustomerInfoImpl_CustomerInfoServic
 
 const char* CustomerInfoImpl_CustomerInfoService_Proxy::getCustomerInformationCharPublic( char* arg0, const char* arg1)
 {
-    Operation operation("getCustomerInformationCharPublic", 2);
-    operation.setParameter(0, (void*)arg0);
-
-    operation.setParameter(1, (void*)arg1);
-
- 
+    Operation operation("getCustomerInformationCharPublic");
+    operation.addParameter(&arg0);
+    operation.addParameter(&arg1);
+    const char* ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
-    return (const char*)operation.getReturnValue();
-
+    return ret;
 }
 
 const char* CustomerInfoImpl_CustomerInfoService_Proxy::getCustomerInfoACharPublic( char* arg0, const char* arg1)
 {
-    Operation operation("getCustomerInfoACharPublic", 2);
-    operation.setParameter(0, (void*)arg0);
-
-    operation.setParameter(1, (void*)arg1);
-
- 
+    Operation operation("getCustomerInfoACharPublic");
+    operation.addParameter(&arg0);
+    operation.addParameter(&arg1);
+    const char* ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
-    return (const char*)operation.getReturnValue();
-
+    return ret;
 }
 
 const char* CustomerInfoImpl_CustomerInfoService_Proxy::getCustomerInfoBCharPublic( char* arg0,  char* arg1)
 {
-    Operation operation("getCustomerInfoBCharPublic", 2);
-    operation.setParameter(0, (void*)arg0);
-
-    operation.setParameter(1, (void*)arg1);
-
- 
+    Operation operation("getCustomerInfoBCharPublic");
+    operation.addParameter(&arg0);
+    operation.addParameter(&arg1);
+    const char* ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
-    return (const char*)operation.getReturnValue();
-
+    return ret;
 }
 
 

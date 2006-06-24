@@ -34,6 +34,7 @@ public class TestAllModulesTest extends TuscanyTestCase {
         super(arg0);
         excludes.add("MyValueServiceModuleMissingScaModule");
         excludes.add("CVS");
+        excludes.add(".svn");
     }
 
     

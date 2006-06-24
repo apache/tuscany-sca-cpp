@@ -20,6 +20,8 @@
 using namespace osoa::sca;
 using namespace tuscany::sca;
 
+
+
 extern "C"
 {
 
@@ -58,9 +60,8 @@ void CustomerInfoImpl2_CustomerInfoService_Wrapper::invokeService(Operation& ope
 
     if (operationName == "getCustomerInformation")
     {
-        const char* p0 = (const char*)operation.getParameter(0);
-
-        operation.setReturnValue((void*) impl->getCustomerInformation(p0));
+        const char* p0 = *(const char**)operation.getParameterValue(0);
+        *(const char**)operation.getReturnValue() = impl->getCustomerInformation(p0);
         return;
     }
         

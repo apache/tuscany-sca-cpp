@@ -52,30 +52,24 @@ CalculatorForwardImpl_CalculatorService_Proxy::~CalculatorForwardImpl_Calculator
 
 long CalculatorForwardImpl_CalculatorService_Proxy::subtractForward( long arg0,  long arg1)
 {
-    Operation operation("subtractForward", 2);
-    operation.setParameter(0, (void*)&arg0);
-
-    operation.setParameter(1, (void*)&arg1);
-
- long ret;
-    operation.setReturnValue((void*)&ret);
+    Operation operation("subtractForward");
+    operation.addParameter(&arg0);
+    operation.addParameter(&arg1);
+    long ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 long CalculatorForwardImpl_CalculatorService_Proxy::addForward( long arg0,  long arg1)
 {
-    Operation operation("addForward", 2);
-    operation.setParameter(0, (void*)&arg0);
-
-    operation.setParameter(1, (void*)&arg1);
-
- long ret;
-    operation.setReturnValue((void*)&ret);
+    Operation operation("addForward");
+    operation.addParameter(&arg0);
+    operation.addParameter(&arg1);
+    long ret;
+    operation.setReturnValue(&ret);
     target->invoke(operation);
     return ret;
-
 }
 
 

@@ -20,6 +20,8 @@
 using namespace osoa::sca;
 using namespace tuscany::sca;
 
+
+
 extern "C"
 {
 
@@ -58,27 +60,27 @@ void MyValueImpl_MyValueService_Wrapper::invokeService(Operation& operation)
 
     if (operationName == "getMyValueOther")
     {
-        const char* p0 = (const char*)operation.getParameter(0);
+        const char* p0 = *(const char**)operation.getParameterValue(0);
         *(float*)operation.getReturnValue() = impl->getMyValueOther(p0);
         return;
     }
     if (operationName == "getMyValueSOther")
     {
-        string& p0 = *(string*)operation.getParameter(0);
+        string& p0 = *(string*)operation.getParameterValue(0);
         *(float*)operation.getReturnValue() = impl->getMyValueSOther(p0);
         return;
     }
     if (operationName == "getCustnameOther")
     {
-        string& p0 = *(string*)operation.getParameter(0);
+        string& p0 = *(string*)operation.getParameterValue(0);
         *(string*)operation.getReturnValue() = impl->getCustnameOther(p0);
         return;
     }
     if (operationName == "getCustnamecsOther")
     {
-        string& p0 = *( string*)operation.getParameter(0);
+        string& p0 = *( string*)operation.getParameterValue(0);
         const string& ret = impl->getCustnamecsOther(p0);
-        operation.setReturnValue((void*)&ret);
+        operation.setReturnValue(&ret);
         return;
     }
         

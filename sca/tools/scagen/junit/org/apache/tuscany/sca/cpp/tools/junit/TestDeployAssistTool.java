@@ -18,9 +18,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.tuscany.sca.cpp.tools.common.Utils;
-import org.apache.tuscany.sca.cpp.tools.junit.TuscanyTestCase;
-
 /**
  * This test case will test all the modules placed in the "modules" directory
  * against the results in their repectice "expected_results" folders.

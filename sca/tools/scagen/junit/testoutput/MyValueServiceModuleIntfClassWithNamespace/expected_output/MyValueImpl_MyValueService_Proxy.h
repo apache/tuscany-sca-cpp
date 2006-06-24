@@ -17,6 +17,10 @@
 #ifndef MyValueImpl_MyValueService_Proxy_h
 #define MyValueImpl_MyValueService_Proxy_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "MyValue.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 

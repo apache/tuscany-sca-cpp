@@ -17,6 +17,10 @@
 #ifndef CalculatorImpl_CalculatorService_Proxy_h
 #define CalculatorImpl_CalculatorService_Proxy_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "Calculator.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
