@@ -27,7 +27,7 @@ namespace com
                     helper->defineFile("AccountService.wsdl");
 
                     DataObjectPtr newaccount = 
-                        factory->create("http://www.bigbank.com/AccountService/","CheckingAccount");
+                        factory->create("http://www.bigbank.com/AccountService","CheckingAccount");
 
                     char* name = new char[strlen(id) + 10];
                     strcpy(name,id);
@@ -62,7 +62,7 @@ namespace com
                     helper->defineFile("AccountService.wsdl");
 
                     DataObjectPtr newaccount = 
-                        factory->create("http://www.bigbank.com/AccountService/","SavingsAccount");
+                        factory->create("http://www.bigbank.com/AccountService","SavingsAccount");
 
                     char* name = new char[strlen(id) + 10];
                     strcpy(name,id);
@@ -96,7 +96,7 @@ namespace com
                     helper->defineFile("AccountService.wsdl");
 
                     DataObjectPtr newaccount = 
-                        factory->create("http://www.bigbank.com/AccountService/","StockAccount");
+                        factory->create("http://www.bigbank.com/AccountService","StockAccount");
 
                     char* name = new char[strlen(id) + 10];
                     strcpy(name,id);

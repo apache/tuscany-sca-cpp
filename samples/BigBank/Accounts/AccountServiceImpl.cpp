@@ -72,7 +72,7 @@ namespace com
             }
 
             DataObjectPtr /*AccountReport**/ 
-                AccountServiceImpl::getAccountReport(const char* id)
+                AccountServiceImpl::getAccountReport(DataObjectPtr cid)
             {
                 try {
 
@@ -84,8 +84,10 @@ namespace com
     
                     helper->defineFile("AccountService.wsdl");
 
+                    const char* id = cid->getCString("customerID");
+
                     commonj::sdo::DataObjectPtr newReport = 
-                        factory->create("http://www.bigbank.com/AccountService/","AccountReport");
+                        factory->create("http://www.bigbank.com/AccountService","AccountReport");
                      
                     ComponentContext theContext = ComponentContext::getCurrent();
     

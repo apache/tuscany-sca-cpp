@@ -138,6 +138,8 @@ build_om_programatically(const axis2_env_t *env,
     axiom_element_t* Account_om_ele = NULL;
     axiom_node_t* text_om_node = NULL;
     axiom_element_t * text_om_ele = NULL;
+    axiom_node_t* first_om_node = NULL;
+    axiom_element_t * first_om_ele = NULL;
     axiom_namespace_t *ns1 = NULL;
     
 
@@ -148,8 +150,11 @@ build_om_programatically(const axis2_env_t *env,
     ns1 = axiom_namespace_create (env, "http://www.bigbank.com/AccountService", "ns1");
 
     Account_om_ele = axiom_element_create(env, NULL, operation, ns1, &Account_om_node);
+
+    first_om_ele = axiom_element_create(env, Account_om_node, "customerID", NULL, &first_om_node);
     
-    text_om_ele = axiom_element_create(env, Account_om_node, "param1", NULL, &text_om_node);
+    text_om_ele = axiom_element_create(env, first_om_node, "customerID", NULL, &text_om_node);
+
     AXIOM_ELEMENT_SET_TEXT(text_om_ele, env, param1, text_om_node);
     
     xml_writer = axiom_xml_writer_create_for_memory(env, NULL, AXIS2_FALSE, AXIS2_FALSE,

@@ -25,7 +25,7 @@ class AccountServiceImpl_AccountService_Proxy : public com::bigbank::account::Ac
 public:
     AccountServiceImpl_AccountService_Proxy(tuscany::sca::ServiceWrapper*);
     virtual ~AccountServiceImpl_AccountService_Proxy();
-    virtual commonj::sdo::DataObjectPtr getAccountReport(const char* id);
+    virtual commonj::sdo::DataObjectPtr getAccountReport( DataObjectPtr cid);
 private:
     tuscany::sca::ServiceWrapper* target;
 };

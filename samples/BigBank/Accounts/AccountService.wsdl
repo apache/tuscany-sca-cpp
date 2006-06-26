@@ -10,8 +10,14 @@ name="AccountService" >
   targetNamespace="http://www.bigbank.com/AccountService"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"> 
   
-  <xsd:element name="customerID" type="xsd:string" />
-  
+  <xsd:complexType name="cid">
+   <xsd:sequence>
+    <xsd:element name="customerID" type="xsd:string" />
+   </xsd:sequence>
+   </xsd:complexType>
+
+  <xsd:element name="customerID" type="tns:cid" />
+    
   <xsd:element name="getAccountReportResponse" type="tns:AccountReport" />
 
   <xsd:complexType name="AccountReport"> 

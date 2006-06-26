@@ -63,9 +63,11 @@ int main(int argc, char* argv[])
     
                 xsh->defineFile("AccountService.wsdl");
 
+                DataObjectPtr in = mdg->create("http://www.bigbank.com/AccountService","cid");
+                in->setCString("customerID",argv[1]);
 
                 DataObjectPtr report = 
-                    accountService->getAccountReport(argv[1]);
+                    accountService->getAccountReport(in);
 
                 if (report != 0)
                 {
