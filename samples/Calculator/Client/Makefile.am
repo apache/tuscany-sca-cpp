@@ -8,7 +8,7 @@ EXTRA_DIST = runclient.sh
 AM_CPPFLAGS = $(CPPFLAGS)
 calculator_client_SOURCES = Calc.cpp
 
-calculator_client_LDADD   =  -L${TUSCANY_SCACPP}/lib -ltuscany_sca \
+calculator_client_LDADD   =  -L${TUSCANY_SCACPP}/lib -ltuscany_sca -ltuscany_sca_ws_reference \
 		-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -ltuscany_sdo_axiom \
          -L$(AXIS2C_HOME)/lib \
 					-laxis2_util \
