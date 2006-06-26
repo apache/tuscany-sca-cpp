@@ -30,7 +30,7 @@ namespace com
                 // Float balance.
 
                  virtual commonj::sdo::DataObjectPtr /*AccountReport*/
-                     getAccountReport(const char* id) = 0;
+                     getAccountReport(DataObjectPtr cid) = 0;
          
         
             };

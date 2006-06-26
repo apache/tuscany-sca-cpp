@@ -14,6 +14,10 @@
  *  limitations under the License.
  */
 
+#if defined(WIN32)  || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif
+
 #ifndef AccountServiceImpl_AccountDataService_Proxy_h
 #define AccountServiceImpl_AccountDataService_Proxy_h
 

@@ -37,7 +37,7 @@ class AccountServiceImpl:  public AccountService
     // public API
 
     virtual DataObjectPtr /*AccountReport*/
-        getAccountReport(const char* id);
+        getAccountReport(DataObjectPtr cid);
 
 
     //virtual void lazyGetDependencies();

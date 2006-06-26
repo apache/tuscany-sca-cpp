@@ -62,8 +62,7 @@ void AccountServiceImpl_AccountService_Wrapper::invokeService(Operation& operati
 
     if (operationName == "getAccountReport")
     {
-        const char* p0 = *(const char**)operation.getParameterValue(0);
-        *(commonj::sdo::DataObjectPtr*)operation.getReturnValue() = impl->getAccountReport(p0);
+        DataObjectPtr& p0 = *(DataObjectPtr*)operation.getParameterValue(0);        *(commonj::sdo::DataObjectPtr*)operation.getReturnValue() = impl->getAccountReport(p0);
         return;
     }
         

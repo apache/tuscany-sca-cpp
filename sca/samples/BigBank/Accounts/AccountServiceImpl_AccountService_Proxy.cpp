@@ -54,7 +54,7 @@ AccountServiceImpl_AccountService_Proxy::~AccountServiceImpl_AccountService_Prox
         delete target;
 }
 
-commonj::sdo::DataObjectPtr AccountServiceImpl_AccountService_Proxy::getAccountReport(const char* arg0)
+commonj::sdo::DataObjectPtr AccountServiceImpl_AccountService_Proxy::getAccountReport( DataObjectPtr arg0)
 {
     Operation operation("getAccountReport");
     operation.addParameter(&arg0);
