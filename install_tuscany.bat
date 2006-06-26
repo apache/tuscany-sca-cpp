@@ -127,12 +127,16 @@ if not exist c:\install\sca\samples\Calculator mkdir c:\install\tuscany_sca-bin-
 xcopy/s c:\apache\checkout_rc1\sca\samples\ides c:\install\tuscany_sca-bin-0.1.incubating-M1\samples\ides
 xcopy/s c:\apache\checkout_rc1\sca\samples\Calculator c:\install\tuscany_sca-bin-0.1.incubating-M1\samples\Calculator
  
-set TUSCANY_SCACPP_SYSTEM_ROOT=c:\install\tuscany_sca-bin-0.1.incubating-M1
-set TUSCANY_SCACPP_DEAFAULT_MODULE=CalculatorSubsystem/CalculatorService
+set TUSCANY_SCACPP_SYSTEM_ROOT=c:\install\tuscany_sca-bin-0.1.incubating-M1\samples\Calculator\deploy
+set TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem/CalculatorService
 
 cd c:\install\tuscany_sca-bin-0.1.incubating-M1\samples\Calculator\deploy\modules\Calculator
 
 set PATH=%TUSCANY_SDOCPP%\bin;%TUSCANY_SCACPP%\bin;%PATH%
+
+echo %TUSCANY_SDOCPP%
+echo %TUSCANY_SCACPP%
+echo %TUSCANY_SCACPP_SYSTEM_ROOT%
 
 echo Testing SCA...
 
