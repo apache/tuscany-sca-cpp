@@ -15,9 +15,7 @@
 #  limitations under the License.
 
 
-APFULLDIR=`pwd`
-
-export SCA4CPP_HOME="$APFULLDIR"
+SCA4CPP_HOME=`pwd`
 
 if [ x$TUSCANY_SCACPP = x ]; then
 echo "TUSCANY_SCACPP not set"
@@ -38,6 +36,8 @@ fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
 TEST_ROOT=$SCA4CPP_HOME/runtime/core/test
+
+export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_ROOT
 
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
