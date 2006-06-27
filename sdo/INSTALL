@@ -5,6 +5,8 @@ Table of Contents
 1. Prereqs
 2. Getting Tuscany SDO working with the binary release on Linux
 3. Getting Tuscany SDO working with the source release on Linux
+4. Getting Tuscany SDO working with the binary release on Windows
+5. Getting Tuscany SDO working with the source release on Windows
 
 1. Prereqs
 ==========
@@ -43,4 +45,32 @@ c. Build the source
 d. Run the test
      cd to <tuscany_sdo>/runtime/core/test
      ./tuscany_sdo_test
+
+
+4. Getting Tuscany SDO working with the binary release on Windows
+=================================================================
+a. Unzip the supplid zip file. 
+b. Set the environment variable TUSCANY_SDOCPP to the 'deploy' directory within the tree that
+you have unzipped.
+
+
+5. Getting Tuscany SDO working with the source release on Windows
+=================================================================
+a. Unzip the source supplied zip file.
+ 
+b. The following environment variables are required:
+     LIBXML2_INCLUDE=<path to libxml2 includes>
+     LIBXML2_LIB=<path to libxml2 lib>
+
+     AXIS2C_HOME=<path to axis2c verion 0.92>
+   
+c. Build the source
+     There is a build.cmd file in the projects/tuscany_sdo directory. This will build all the projects
+     and put the required output into the 'deploy' directory.
+
+Alternatively, open the workspace tuscany_sdo.dsw in Visual Studio 6 - you can build projects individually
+or build the test project to build all its dependencies. Running the test project should give a list of
+tests passed - this is currently 111 tests, no failures.
+
+
      
