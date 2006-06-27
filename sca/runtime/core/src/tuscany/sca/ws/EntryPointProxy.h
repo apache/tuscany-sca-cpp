@@ -26,6 +26,9 @@ using commonj::sdo::DataObjectPtr;
 #include "tuscany/sca/core/SCAEntryPoint.h"
 using tuscany::sca::SCAEntryPoint;
 
+#include "tuscany/sca/core/TuscanyRuntime.h"
+using tuscany::sca::TuscanyRuntime;
+
 #include <string>
 using std::string;
 
@@ -38,14 +41,20 @@ namespace tuscany
             class SCA_API EntryPointProxy
             {
             public:
-                EntryPointProxy(const char* systemRoot, const char* entryPointName);
+                static EntryPointProxy* getInstance();
                 virtual ~EntryPointProxy();
+                virtual void init(const char* systemRoot, const char* entryPointName);
                 virtual DataFactoryPtr getDataFactory(void);
                 virtual DataObjectPtr invoke(const char* operationName, DataObjectPtr inputDataObject);    
             private:
+                EntryPointProxy();
+                static EntryPointProxy* entryPointProxyInstance;
                 virtual void setOutputData(Operation operation, DataObjectPtr outputDataObject);
                 string entryPointName;
+                string systemRoot;
+                string moduleComponent;
                 SCAEntryPoint* scaEntryPoint;
+                TuscanyRuntime* tuscanyRuntime;
             };
         } // End namespace ws
     } // End namespace sca

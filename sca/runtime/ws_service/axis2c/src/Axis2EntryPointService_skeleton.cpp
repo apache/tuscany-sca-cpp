@@ -53,6 +53,8 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
 int AXIS2_CALL Axis2EntryPointService_init(axis2_svc_skeleton_t *svc_skeleton,
                         const axis2_env_t *env);
 
+EntryPointProxy* entryPointProxy = NULL;
+
 axis2_svc_skeleton_t *
 axis2_Axis2EntryPointService_create(axis2_env_t *env)
 {
@@ -70,6 +72,11 @@ axis2_Axis2EntryPointService_create(axis2_env_t *env)
     svc_skeleton->ops->init = Axis2EntryPointService_init;
     svc_skeleton->ops->invoke = Axis2EntryPointService_invoke;
     /*svc_skeleton->ops->on_fault = Axis2Service_on_fault;*/
+
+    if(entryPointProxy == NULL)
+    {
+        entryPointProxy = EntryPointProxy::getInstance();
+    }
 
     return svc_skeleton;
 }
@@ -93,7 +100,7 @@ Axis2EntryPointService_free(axis2_svc_skeleton_t *svc_skeleton,
         AXIS2_ARRAY_LIST_FREE(svc_skeleton->func_array, env);
         svc_skeleton->func_array = NULL;
     }*/
-    
+
     if(svc_skeleton->ops)
     {
         AXIS2_FREE((env)->allocator, svc_skeleton->ops);
@@ -130,6 +137,7 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
             element = (axiom_element_t *)AXIOM_NODE_GET_DATA_ELEMENT(node, env);
             if (element)
             {
+                // This gets the operation name from the root element name - this is correct for DocLit Wrapped style
                 axis2_char_t *op_name = AXIOM_ELEMENT_GET_LOCALNAME(element, env);
                 if (op_name)
 				{
@@ -140,12 +148,12 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
 
                     //LOGINFO_2(4, "Axis2EntryPointService invoke called with system root: %s and entrypoint name: %s", systemRoot, fullEntryPointName);
                     //LOGINFO_1(4, "Axis2EntryPointService invoke called with operation", op_name);
-                    EntryPointProxy entryPointProxy(systemRoot, fullEntryPointName);
+                    entryPointProxy->init(systemRoot, fullEntryPointName);
 
                     //Utils::printTypes(entryPointProxy.getDataFactory());
 
                     AxiomHelper* axiomHelper = AxiomHelper::getHelper();
-                    if (entryPointProxy.getDataFactory() == 0)
+                    if (entryPointProxy->getDataFactory() == 0)
                     {
                 		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: EntryPoint has no SCA implementation");
                         return 0;
@@ -155,13 +163,13 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     //if (om_str)
                     //    printf("Axis2EntryPoint Request OM : %s\n", om_str);
 
-                    DataObjectPtr inputDataObject = axiomHelper->toSdo(node, entryPointProxy.getDataFactory());
+                    DataObjectPtr inputDataObject = axiomHelper->toSdo(node, entryPointProxy->getDataFactory());
 
                     //printf("Axis2EntryPoint inputDataObject: %d\n", inputDataObject);
                     //Utils::printDO(inputDataObject);			
 
                     
-                    DataObjectPtr outputDataObject = entryPointProxy.invoke(op_name, inputDataObject);
+                    DataObjectPtr outputDataObject = entryPointProxy->invoke(op_name, inputDataObject);
 
                     //printf("Axis2EntryPoint outputDataObject: %d\n", outputDataObject);
                     //Utils::printDO(outputDataObject);			
