@@ -251,18 +251,8 @@ namespace commonj
                         {
                             if (attributes[i].getName().equalsIgnoreCase("name"))
                             {
-                                XMLQName qname(attributes[i].getValue(), 
-                                schemaInfo.getSchemaNamespaces(),
-                                namespaces);
-                                if (qname.getURI().isNull())
-                                {
-                                    currentGroup->uri = schemaInfo.getTargetNamespaceURI();
-                                }
-                                else
-                                {
-                                    currentGroup->uri = qname.getURI();
-                                }
-                                currentGroup->name = qname.getLocalName();
+                                currentGroup->uri = schemaInfo.getTargetNamespaceURI();
+                                currentGroup->name = attributes[i].getValue();
                             }                        
                         }
                     } 
