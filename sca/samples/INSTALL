@@ -47,7 +47,7 @@ Calculator with WS client
       where >@TUSCANY_SCACPP@ is the path to the installed Tuscany SCA
 
 2. Start Axis2C simple http server
-   a) cd <AXIS2C_HOM>/bin
+   a) cd <AXIS2C_HOME>/bin
    b) export TUSCANY_SCACPP=<path to installed Tuscany SCA>
    c) add <TUSCANY_SCACPP>/lib and <TUSCANY_SDOCPP>/lib to LD_LIBRARY_PATH environment variable
    d) ./axis2_http_server
