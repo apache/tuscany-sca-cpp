@@ -35,19 +35,7 @@ int main(int argc, char* argv[])
     cout << "Start of SCA test" << endl;
 
     // Set default module
-    string systemRoot = getenv("SCA4CPP_HOME");
-    if (systemRoot  == "")
-    {
-        cout << "SCA4CPP_HOME environment variable not set" <<endl;
-        return -1;
-    }
-
-#if defined(WIN32)  || defined (_WINDOWS)
-    systemRoot += "/projects/tuscany_sca/tuscany_sca_test/testSCASystem";
-#else
-    systemRoot += "/runtime/core/test/testSCASystem";
-#endif
-    TuscanyRuntime runtime("SubSystem1", systemRoot);
+    TuscanyRuntime runtime("SubSystem1");
 
     try
     {
