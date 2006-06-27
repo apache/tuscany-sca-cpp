@@ -462,7 +462,7 @@ void EntryPointProxy::setOutputData(Operation operation, DataObjectPtr outputDat
                 rootName = prop.getName();
                 (*dataObjectData)->detach();
             }
-            catch(SDOPropertyNotFoundException &ex)
+            catch(SDOPropertyNotFoundException&)
             {
                 // DataObject has no containment property - use default rootName
             }
