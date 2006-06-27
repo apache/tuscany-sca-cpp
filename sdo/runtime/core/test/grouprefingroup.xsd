@@ -13,12 +13,12 @@ xmlns:target="http://www.wrox.com/name" elementFormDefault="qualified">
       <element name="first" type="string"/>
       <element name="middle" type="string"/>
       <element name="last" type="string"/>
-      <group ref="NameGroup2"/>
+      <group ref="target:NameGroup2"/>
     </sequence>
   </group>
   <element name="name">
     <complexType>
-      <group ref="NameGroup"/>
+      <group ref="target:NameGroup"/>
       <attribute name="title" type="string"/>
     </complexType>
   </element>

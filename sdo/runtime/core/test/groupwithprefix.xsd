@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.wrox.com/name"
 xmlns:target="http://www.wrox.com/name" elementFormDefault="qualified">
-  <group name="target:NameGroup">
+  <group name="NameGroup">
     <sequence>
       <element name="first" type="string"/>
       <element name="middle" type="string"/>

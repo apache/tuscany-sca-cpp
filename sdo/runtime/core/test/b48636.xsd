@@ -10,7 +10,7 @@ xmlns:target="http://www.wrox.com/name" elementFormDefault="qualified">
   </group>
   <element name="name">
     <complexType>
-      <group ref="NameGroup"/>
+      <group ref="target:NameGroup"/>
       <attribute name="title" type="string"/>
     </complexType>
   </element>
