@@ -6,6 +6,9 @@ Table of Contents
 2. Getting Tuscany SCA working with the binary release on Linux
 3. Getting Tuscany SCA working with the source release on Linux
 4. Working with the samples on Linux
+5. Getting Tuscany SCA working with the binary release on Windows
+6. Getting Tuscany SCA working with the source release on Windows
+7. Working with the samples on Windows
 
 
 1. Prereqs
@@ -41,6 +44,35 @@ c. Build the source
 
 4. Working with the samples on Linux
 ====================================
+
+The samples are installed in <install_prefix>/samples. To build and run the sample see the INSTALL
+documentation in the samples folder.
+
+5. Getting Tuscany SCA working with the binary release on Windows
+=================================================================
+
+a. Unzip the supplied zip file.
+set the TUSCANY_SCACPP variable to point to the 'deploy' directory in the unzipped directory tree. 
+
+
+6. Getting Tuscany SCA working with the source release on Windows
+=================================================================
+
+a. Unzip the supplied zip file 
+
+b. The following environment variables are required:
+     TUSCANY_SDOCPP=<path to installed Tuscany SDO>
+     AXIS2C_HOME=<path to axis2c verion 0.92>
+   
+c. Build the source
+   The build.cmd file in the projects/tuscany_sca will build and install the sca code to the 'deploy' directory.
+   Note that it assumes the SDO installation is identified already by the TUSCANY_SDOCPP variable.
+
+Alternatively - open the tuscany_sca workspace in Visual Studio 6. You can build projects individually or build the samples to rebuild all the projects.
+
+
+7. Working with the samples on Windows
+======================================
 
 The samples are installed in <install_prefix>/samples. To build and run the sample see the INSTALL
 documentation in the samples folder.
