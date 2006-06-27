@@ -40,6 +40,32 @@ Run:
 - cd <tuscany_cpp_root>/sca
 - ./scatest.sh
 
+Linux distribution build
+========================
+To build the distro zips for linux:
+
+1. Download the source from http://svn.apache.org/repos/asf/incubator/tuscany/cpp
+The download location is <tuscany_cpp_root>
+
+2. cd <tuscany_cpp_root>/sdo
+
+3. set the environment
+   - export LIBXML2_INCLUDE=<path to libxml2 headers. e.g. /usr/include/libxml2> 
+   - export LIBXML2_LIB=<path to libxml2 libraries. e.g. /usr/lib> 
+   - export AXIS2C_HOME=<axis2c_deploy>
+
+4. ./makedist.sh
+   This produces a src and bin zip for Tuscany SDO
+
+5. cd <tuscany_cpp_root>/sca
+
+6. set the environment
+   - export TUSCANY_SDOCPP=<tuscany_cpp_root>/sdo/tucany_sdo-bin-${PACKAGE-VERSION}
+   
+7. ./makedist.sh
+   This produces a src and bin zip for Tuscany SCA
+   
+
 Windows Build
 =============
 
