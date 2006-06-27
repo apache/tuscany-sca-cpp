@@ -23,6 +23,8 @@ copy %sourcePath%\CalculatorModule\Calculator.wsdl %destinationPath%\modules\Cal
 
 copy %currentPath%\Calculator\debug\Calculator.dll %destinationPath%\modules\Calculator
 
+copy %currentPath%\WSClient\Debug\WSClient.exe %destinationPath%\modules\Calculator
+copy %currentPath%\WSClient\Debug\WSClient.pdb %destinationPath%\modules\Calculator
 
 if not exist %destinationPath%\subsystems mkdir %destinationPath%\subsystems
 if not exist %destinationPath%\subsystems\Calculator mkdir %destinationPath%\subsystems\Calculator
