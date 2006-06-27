@@ -29,24 +29,108 @@ using namespace commonj::sdo;
 
 using namespace tuscany::sca::ws;
 
-EntryPointProxy::EntryPointProxy(const char* systemRoot, const char* fullEntryPointName)
+
+// Singleton pattern
+EntryPointProxy* EntryPointProxy::entryPointProxyInstance = new EntryPointProxy();
+
+EntryPointProxy* EntryPointProxy::getInstance()
+{
+    return entryPointProxyInstance;
+}
+
+EntryPointProxy::EntryPointProxy()
 {
     LOGENTRY(1,"EntryPointProxy::constructor");
+    tuscanyRuntime = NULL;
+    scaEntryPoint = NULL;
+    entryPointName = "";
+    systemRoot = "";
+    moduleComponent = "";
+    LOGEXIT(1,"EntryPointProxy::constructor");
+}
+
+EntryPointProxy::~EntryPointProxy()
+{
+    LOGENTRY(1,"EntryPointProxy::destructor");
+
+    if(tuscanyRuntime != NULL)
+    {
+        tuscanyRuntime->stop();
+        delete tuscanyRuntime;
+        tuscanyRuntime = NULL;
+    }
+    if(scaEntryPoint != NULL)
+    {
+        delete scaEntryPoint;
+    }
+    LOGEXIT(1,"EntryPointProxy::destructor");
+}
+
+void EntryPointProxy::init(const char* systemRootPath, const char* fullEntryPointName)
+{
+    LOGENTRY(1,"EntryPointProxy::init");
 
     try
 	{
-        SCARuntime::setSystemRoot(systemRoot);
 
 		// fullEntryPointName is of the form "subsystem name"/"module component name"/"entry point name"
 		// Get the "subsystem name"/"module component name" part for setDefaultModuleComponent
         // Keep the "entry point name" part for use in invoke
-		string subsystemAndComponentName;
-		Utils::rTokeniseString("/", fullEntryPointName, subsystemAndComponentName, entryPointName);
+		string subsystemAndComponentName, epName;
+		Utils::rTokeniseString("/", fullEntryPointName, subsystemAndComponentName, epName);
 
-        //printf("EntryPointProxy tokenised URI: %s -> %s and %s\n", fullEntryPointName, subsystemAndComponentName.c_str(), entryPointName.c_str());
-		SCARuntime::setDefaultModuleComponent(subsystemAndComponentName);
+        bool newInitParams = false;
 
-        scaEntryPoint = new SCAEntryPoint(fullEntryPointName);
+        if(systemRoot.length() != 0 && systemRoot != systemRootPath)
+        {
+            systemRoot = systemRootPath;
+            newInitParams = true;
+        }
+
+        if(moduleComponent.length() != 0 && moduleComponent != subsystemAndComponentName)
+        {
+            moduleComponent = subsystemAndComponentName;
+            newInitParams = true;
+        }
+
+        if(entryPointName.length() != 0 && entryPointName != epName)
+        {
+            entryPointName = epName;
+            newInitParams = true;
+        }
+
+
+        if(tuscanyRuntime == NULL)
+        {
+            LOGINFO(4, "Creating new TuscanyRuntime");
+            moduleComponent = subsystemAndComponentName;
+            systemRoot = systemRootPath;
+            entryPointName = epName;
+            tuscanyRuntime = new TuscanyRuntime(moduleComponent, systemRoot);
+            tuscanyRuntime->start();
+        }
+        else if(tuscanyRuntime != NULL && newInitParams)
+        {
+            LOGINFO(4, "Restarting TuscanyRuntime with new SystemRoot or DefaultModule");
+            tuscanyRuntime->stop();
+            tuscanyRuntime->setDefaultModuleComponent(moduleComponent);
+            tuscanyRuntime->setSystemRoot(systemRoot);
+            tuscanyRuntime->start();
+        }
+
+        if(scaEntryPoint == NULL)
+        {
+            scaEntryPoint = new SCAEntryPoint(fullEntryPointName);
+        }
+        else
+        {
+            if(newInitParams)
+            {
+                delete scaEntryPoint;
+                scaEntryPoint = NULL;
+                scaEntryPoint = new SCAEntryPoint(fullEntryPointName);
+            }
+        }
 	}
 	catch(SystemConfigurationException &ex)
 	{	
@@ -58,14 +142,7 @@ EntryPointProxy::EntryPointProxy(const char* systemRoot, const char* fullEntryPo
         LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
         scaEntryPoint = 0;
 	}  
-    LOGEXIT(1,"EntryPointProxy::constructor");
-}
-
-EntryPointProxy::~EntryPointProxy()
-{
-    LOGENTRY(1,"EntryPointProxy::destructor");
-    delete scaEntryPoint;
-    LOGEXIT(1,"EntryPointProxy::destructor");
+    LOGEXIT(1,"EntryPointProxy::init");
 }
 
 DataFactoryPtr EntryPointProxy::getDataFactory()
