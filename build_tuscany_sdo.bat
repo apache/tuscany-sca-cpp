@@ -1,52 +1,58 @@
 
 @echo off
+setlocal
+if "%LIBXML2_HOME%" == "" (
+echo "LIBXML2_HOME not set"
+goto end
+)
+echo using LIBXML2: %LIBXML2_HOME%
+
+if "%ICONV_HOME%" == "" (
+echo "ICONV_HOME not set"
+goto end
+)
+echo using ICONV: %ICONV_HOME%"
+
+if "%AXIS2C_HOME%" == "" (
+echo "AXIS2C_HOME not set"
+goto end
+)
+ 
+echo using AXIS2C: %AXIS2C_HOME%
 
 call vcvars32
 
 echo Build of SDO started....
+set PACKAGE=tuscany_sdo_cpp
+set VERSION=0.1.incubating-M1
+set SRC_PACKAGE=%PACKAGE%-%VERSION%-src
+set BIN_PACKAGE=%PACKAGE%-%VERSION%-bin
 
-set FROM_DIR=c:\apache\checkout_rc1
+set FROM_DIR=%cd%
+set TO_SRC=%FROM_DIR%
 
-set TO_SRC=c:\installsrc
+set TO_BIN=%FROM_DIR%
 
-set TO_BIN=c:\installbin
-
-echo Copying SDO source...
+echo Copying SDO source... %TO_SRC%\%SRC_PACKAGE%
 
 if not exist %TO_SRC% mkdir %TO_SRC%
-if not exist %TO_SRC%\tuscany_sdo-0.1.incubating-M1 mkdir %TO_SRC%\tuscany_sdo-0.1.incubating-M1 
-if not exist %TO_SRC%\tuscany_sca-0.1.incubating-M1\projects mkdir %TO_SRC%\tuscany_sca-0.1.incubating-M1\projects 
-
-echo Copying SDO source...
-
-if not exist %TO_SRC%\tuscany_sdo-0.1.incubating-M1\runtime mkdir %TO_SRC%\tuscany_sdo-0.1.incubating-M1\runtime
+rmdir /S /Q %TO_SRC%\%SRC_PACKAGE%
+if not exist %TO_SRC%\%SRC_PACKAGE% mkdir %TO_SRC%\%SRC_PACKAGE%
+if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projects 
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime mkdir %TO_SRC%\%SRC_PACKAGE%\runtime
  
-xcopy/s %FROM_DIR%\sdo\runtime %TO_SRC%\tuscany_sdo-0.1.incubating-M1\runtime 
+xcopy/s %FROM_DIR%\sdo\runtime %TO_SRC%\%SRC_PACKAGE%\runtime 
 
-if not exist %TO_SRC%\tuscany_sdo-0.1.incubating-M1\projects mkdir %TO_SRC%\tuscany_sdo-0.1.incubating-M1\projects
+if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projects
  
-xcopy/s %FROM_DIR%\sdo\projects %TO_SRC%\tuscany_sdo-0.1.incubating-M1\projects
-
-copy %FROM_DIR%\sca\INSTALL   %TO_SRC%\tuscany_sca-0.1.incubating-M1
-copy %FROM_DIR%\sca\LICENSE   %TO_SRC%\tuscany_sca-0.1.incubating-M1
-copy %FROM_DIR%\sca\COPYING   %TO_SRC%\tuscany_sca-0.1.incubating-M1
-
-copy %FROM_DIR%\sdo\INSTALL   %TO_SRC%\tuscany_sdo-0.1.incubating-M1
-copy %FROM_DIR%\sdo\LICENSE   %TO_SRC%\tuscany_sdo-0.1.incubating-M1
-copy %FROM_DIR%\sdo\COPYING   %TO_SRC%\tuscany_sdo-0.1.incubating-M1
-
-rem install libxml2 to c:\apache\libs
-set LIBXML2_HOME=c:\apache\libs\libxml2-2.6.19.win32
-
-rem install iconv to c:\apache\libs
-set ICONV_HOME=c:\apache\libs\iconv-1.9.1.win32
-
-rem install axis2c
-set AXIS2C_HOME=c:\axis\axis2c_92\axis2c-bin-0.92-win32
+xcopy/s %FROM_DIR%\sdo\projects %TO_SRC%\%SRC_PACKAGE%\projects
+copy %FROM_DIR%\sdo\INSTALL   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\LICENSE   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\COPYING   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\NOTICE    %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\README    %TO_SRC%\%SRC_PACKAGE%
 
 echo Building SDO....
-
-set TUSCANY_SDOCPP=%FROM_DIR%\sdo\deploy
 
 cd %FROM_DIR%\sdo\projects\tuscany_sdo
 
@@ -55,14 +61,16 @@ call build
 echo Installing SDO....
 
 if not exist %TO_BIN% mkdir %TO_BIN%
-if not exist %TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1 mkdir %TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1 
-if not exist %TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1\deploy mkdir %TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1\deploy 
+rmdir /S /Q %TO_BIN%\%BIN_PACKAGE%
+if not exist %TO_BIN%\%BIN_PACKAGE% mkdir %TO_BIN%\%BIN_PACKAGE%
 
-xcopy/s %FROM_DIR%\sdo\deploy %TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1\deploy
-copy %FROM_DIR%\sdo\INSTALL   %TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1
-copy %FROM_DIR%\sdo\LICENSE   %TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1
-copy %FROM_DIR%\sdo\COPYING   %TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1
+xcopy/s %FROM_DIR%\sdo\deploy %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\sdo\INSTALL   %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\sdo\LICENSE   %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\sdo\COPYING   %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\sdo\NOTICE    %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\sdo\README    %TO_BIN%\%BIN_PACKAGE%
 
-set TUSCANY_SDOCPP=%TO_BIN%\tuscany_sdo-bin-0.1.incubating-M1\deploy
-
+:end
 echo SDO Build complete.
+endlocal
