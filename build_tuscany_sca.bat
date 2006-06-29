@@ -64,7 +64,11 @@ if not exist %TO_SRC%\%SRC_PACKAGE%\samples\ides mkdir %TO_SRC%\%SRC_PACKAGE%\sa
 
 xcopy/s %FROM_DIR%\sca\samples\Calculator %TO_SRC%\%SRC_PACKAGE%\samples\Calculator
 xcopy/s %FROM_DIR%\sca\samples\ides %TO_SRC%\%SRC_PACKAGE%\samples\ides
-
+copy %FROM_DIR%\sca\samples\INSTALL   %TO_SRC%\%SRC_PACKAGE%\samples
+copy %FROM_DIR%\sca\samples\LICENSE   %TO_SRC%\%SRC_PACKAGE%\samples
+copy %FROM_DIR%\sca\samples\COPYING   %TO_SRC%\%SRC_PACKAGE%\samples
+copy %FROM_DIR%\sca\samples\NOTICE    %TO_SRC%\%SRC_PACKAGE%\samples
+copy %FROM_DIR%\sca\samples\README    %TO_SRC%\%SRC_PACKAGE%\samples
 if not exist %TO_SRC%\%SRC_PACKAGE%\xsd mkdir %TO_SRC%\%SRC_PACKAGE%\xsd 
 
 xcopy/s %FROM_DIR%\sca\xsd %TO_SRC%\%SRC_PACKAGE%\xsd
@@ -111,6 +115,11 @@ if not exist %TO_BIN%\%BIN_PACKAGE%\samples\Calculator mkdir %TO_BIN%\%BIN_PACKA
 
 xcopy/s %FROM_DIR%\sca\samples\ides %TO_BIN%\%BIN_PACKAGE%\samples\ides
 xcopy/s %FROM_DIR%\sca\samples\Calculator %TO_BIN%\%BIN_PACKAGE%\samples\Calculator
+copy %FROM_DIR%\sca\samples\INSTALL   %TO_BIN%\%BIN_PACKAGE%\samples
+copy %FROM_DIR%\sca\samples\LICENSE   %TO_BIN%\%BIN_PACKAGE%\samples
+copy %FROM_DIR%\sca\samples\COPYING   %TO_BIN%\%BIN_PACKAGE%\samples
+copy %FROM_DIR%\sca\samples\NOTICE    %TO_BIN%\%BIN_PACKAGE%\samples
+copy %FROM_DIR%\sca\samples\README    %TO_BIN%\%BIN_PACKAGE%\samples
 
 :end
 echo SCA Build complete.
