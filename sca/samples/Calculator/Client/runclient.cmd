@@ -28,6 +28,8 @@ rem there is only one moduleComponent in the subsystem - it is a very simple sam
 set TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
 
 rem Run the client
+
+set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%PATH%
 Calc.exe %*
 
 endlocal
