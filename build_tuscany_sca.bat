@@ -99,6 +99,7 @@ copy %FROM_DIR%\sca\README    %TO_BIN%\%BIN_PACKAGE%
 
 echo Building calculator....
 
+set TUSCANY_SCACPP=%FROM_DIR%\sca\deploy
 cd %FROM_DIR%\sca\samples\ides\devstudio6\projects\Calculator
 
 call build
