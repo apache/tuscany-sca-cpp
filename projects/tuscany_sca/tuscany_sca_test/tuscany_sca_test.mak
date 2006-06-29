@@ -222,8 +222,6 @@ $(DS_POSTBUILD_DEP) : "tuscany_sca_ws_service - Win32 Debug" "tuscany_sca_test_M
 	copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.pdb testSCASystem\modules\MyValueServiceModule
 	copy..\tuscany_sca\Debug\*.dll Debug
 	copy..\tuscany_sca\Debug\*.pdb Debug
-	copy D:\tuscanysvn\cpp\sdo\deploy\bin\*.dll Debug
-	copy D:\tuscanysvn\cpp\sdo\deploy\bin\*.pdb Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
