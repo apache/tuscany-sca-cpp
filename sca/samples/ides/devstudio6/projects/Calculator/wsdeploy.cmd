@@ -35,10 +35,4 @@ if not exist %destinationPath%\subsystems\CalculatorSubsystem mkdir %destination
 copy %sourcePath%\CalculatorSubsystem\sca.subsystem %destinationPath%\subsystems\CalculatorSubsystem
 
 
-if not exist %AXIS2C_HOME%\services\Calculator mkdir %AXIS2C_HOME%\services\Calculator
-set axisPath=%AXIS2C_HOME%\services\Calculator
-copy %sourcePath%\CalculatorModule\services.xml %axisPath%
-copy %TUSCANY_SCACPP%\bin\tuscany_sca_ws_service.dll %axisPath%
-copy %TUSCANY_SCACPP%\bin\tuscany_sca_ws_service.pdb %axisPath%
-
 endlocal
