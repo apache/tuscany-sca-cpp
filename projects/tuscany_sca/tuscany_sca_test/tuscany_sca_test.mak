@@ -248,24 +248,24 @@ SOURCE=..\..\..\runtime\core\test\src\TestSCA.cpp
 !IF  "$(CFG)" == "tuscany_sca_test - Win32 Release"
 
 "tuscany_sca - Win32 Release" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca"
+   cd "..\tuscany_sca"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Release" 
    cd "..\tuscany_sca_test"
 
 "tuscany_sca - Win32 ReleaseCLEAN" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca"
+   cd "..\tuscany_sca"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Release" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_test"
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_test - Win32 Debug"
 
 "tuscany_sca - Win32 Debug" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca"
+   cd "..\tuscany_sca"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Debug" 
    cd "..\tuscany_sca_test"
 
 "tuscany_sca - Win32 DebugCLEAN" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca"
+   cd "..\tuscany_sca"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_test"
 
@@ -274,24 +274,24 @@ SOURCE=..\..\..\runtime\core\test\src\TestSCA.cpp
 !IF  "$(CFG)" == "tuscany_sca_test - Win32 Release"
 
 "tuscany_sca_test_CustomerInfo - Win32 Release" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_test_CustomerInfo"
+   cd "..\tuscany_sca_test_CustomerInfo"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_test_CustomerInfo.mak CFG="tuscany_sca_test_CustomerInfo - Win32 Release" 
    cd "..\tuscany_sca_test"
 
 "tuscany_sca_test_CustomerInfo - Win32 ReleaseCLEAN" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_test_CustomerInfo"
+   cd "..\tuscany_sca_test_CustomerInfo"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_test_CustomerInfo.mak CFG="tuscany_sca_test_CustomerInfo - Win32 Release" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_test"
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_test - Win32 Debug"
 
 "tuscany_sca_test_CustomerInfo - Win32 Debug" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_test_CustomerInfo"
+   cd "..\tuscany_sca_test_CustomerInfo"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_test_CustomerInfo.mak CFG="tuscany_sca_test_CustomerInfo - Win32 Debug" 
    cd "..\tuscany_sca_test"
 
 "tuscany_sca_test_CustomerInfo - Win32 DebugCLEAN" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_test_CustomerInfo"
+   cd "..\tuscany_sca_test_CustomerInfo"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_test_CustomerInfo.mak CFG="tuscany_sca_test_CustomerInfo - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_test"
 
@@ -300,24 +300,24 @@ SOURCE=..\..\..\runtime\core\test\src\TestSCA.cpp
 !IF  "$(CFG)" == "tuscany_sca_test - Win32 Release"
 
 "tuscany_sca_test_MyValue - Win32 Release" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_test_MyValue"
+   cd "..\tuscany_sca_test_MyValue"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_test_MyValue.mak CFG="tuscany_sca_test_MyValue - Win32 Release" 
    cd "..\tuscany_sca_test"
 
 "tuscany_sca_test_MyValue - Win32 ReleaseCLEAN" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_test_MyValue"
+   cd "..\tuscany_sca_test_MyValue"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_test_MyValue.mak CFG="tuscany_sca_test_MyValue - Win32 Release" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_test"
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_test - Win32 Debug"
 
 "tuscany_sca_test_MyValue - Win32 Debug" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_test_MyValue"
+   cd "..\tuscany_sca_test_MyValue"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_test_MyValue.mak CFG="tuscany_sca_test_MyValue - Win32 Debug" 
    cd "..\tuscany_sca_test"
 
 "tuscany_sca_test_MyValue - Win32 DebugCLEAN" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_test_MyValue"
+   cd "..\tuscany_sca_test_MyValue"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_test_MyValue.mak CFG="tuscany_sca_test_MyValue - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_test"
 
@@ -326,24 +326,24 @@ SOURCE=..\..\..\runtime\core\test\src\TestSCA.cpp
 !IF  "$(CFG)" == "tuscany_sca_test - Win32 Release"
 
 "tuscany_sca_ws_service - Win32 Release" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_ws_service"
+   cd "..\tuscany_sca_ws_service"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_service.mak CFG="tuscany_sca_ws_service - Win32 Release" 
    cd "..\tuscany_sca_test"
 
 "tuscany_sca_ws_service - Win32 ReleaseCLEAN" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_ws_service"
+   cd "..\tuscany_sca_ws_service"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_service.mak CFG="tuscany_sca_ws_service - Win32 Release" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_test"
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_test - Win32 Debug"
 
 "tuscany_sca_ws_service - Win32 Debug" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_ws_service"
+   cd "..\tuscany_sca_ws_service"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_service.mak CFG="tuscany_sca_ws_service - Win32 Debug" 
    cd "..\tuscany_sca_test"
 
 "tuscany_sca_ws_service - Win32 DebugCLEAN" : 
-   cd "\tuscanysvn\cpp\sca\projects\tuscany_sca\tuscany_sca_ws_service"
+   cd "..\tuscany_sca_ws_service"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_service.mak CFG="tuscany_sca_ws_service - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_test"
 
