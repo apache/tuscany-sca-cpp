@@ -58,6 +58,7 @@ class sdotest {
         static void generate(DataFactoryPtr fac);
  
         /* tests */
+        static int xhtml1();
         static int definetest();
         static int stocktest();
 

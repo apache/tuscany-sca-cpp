@@ -33,6 +33,7 @@ using namespace std;
 
 #include <list>
 #include <vector>
+using namespace std;
 
 #include "commonj/sdo/SDORuntimeException.h"
 

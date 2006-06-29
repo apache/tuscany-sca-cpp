@@ -22,6 +22,7 @@
 #pragma warning(disable:4786)
 
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 
@@ -1380,3 +1381,65 @@ int sdotest::pete()
     }
 }
 
+int sdotest::xhtml1()
+{
+
+
+    int i,j;
+
+    try {
+
+ 
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+ 
+        xsh->defineFile("Atom1.0.xsd");
+
+        if ((i = xsh->getErrorCount()) > 0)
+        {
+            for (j=0;j<i;j++)
+            {
+                const char *m = xsh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+            return 0;
+        }
+
+
+
+        XMLHelperPtr xmh = HelperProvider::getXMLHelper(mdg);
+ 
+        XMLDocumentPtr doc = xmh->loadFile("xhtml_in.xml");
+
+        if ((i = xmh->getErrorCount()) > 0)
+        {
+           for (j=0;j<i;j++)
+            {
+                const char *m = xmh->getErrorMessage(j);
+                if (m != 0) cout << m;
+                cout << endl;
+            }
+            return 0;
+        }
+
+ 
+        //DataObjectPtr dob = doc->getRootDataObject();
+
+        //ofstream myout("myfile");
+
+        //if (dob)SDOUtils::printDataObject(myout , dob);
+
+        xmh->save(doc,"xhtml_out.xml");
+
+        return comparefiles("xhtml_out.xml" ,"xhtml_out.txt");
+
+
+    }
+    catch (SDORuntimeException e)
+    {
+        cout << "Exception in xhtml1" << e << endl;
+        return 0;
+    }
+}

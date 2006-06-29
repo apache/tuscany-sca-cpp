@@ -27,7 +27,7 @@
 #include "commonj/sdo/DataObject.h"
 #include "commonj/sdo/DataObjectImpl.h"
 #include "commonj/sdo/SDORuntimeException.h"
-
+using namespace std;
 
 
 #define CHECK_RANGE\

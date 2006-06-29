@@ -30,6 +30,7 @@
 #include "commonj/sdo/TypeImpl.h"
 #include "commonj/sdo/DataObjectImpl.h"
 #include "commonj/sdo/DataFactoryImpl.h"
+using namespace std;
 
 namespace commonj
 {
@@ -237,7 +238,16 @@ namespace commonj
             
                 if (prop == 0)
                 {
-                    currentDataObject->setCString(propname,value);
+                    // need to use the sequence interface if it exists
+                    if (currentDataObject->getType().isSequencedType())
+                    {
+                        SequencePtr seq = currentDataObject->getSequence();
+                        seq->addCString(propname, value);
+                    }
+                    else
+                    {
+                        currentDataObject->setCString(propname,value);
+                    }
                     return;
                 }
 
@@ -283,7 +293,16 @@ namespace commonj
                 // regardless of what type the property now is, we can set CString , and the
                 // right conversion will happen
 
-                currentDataObject->setCString(propname,value);
+                // need to use the sequence interface if it exists.
+                if (currentDataObject->getType().isSequencedType())
+                {
+                    SequencePtr seq = currentDataObject->getSequence();
+                    seq->addCString(propname, value);
+                }
+                else
+                {
+                    currentDataObject->setCString(propname,value);
+                }
             }
             catch (SDORuntimeException)
             {
@@ -439,8 +458,17 @@ namespace commonj
                             newDO = dataFactory->create(
                                 prop->getType().getURI(),
                                 prop->getType().getName());
-                            DataObjectList& dol = dob->getList(propertyName);
-                            dol.append(newDO);
+                            // here we need to use the sequence interface if it exists.
+                            if (dob->getType().isSequencedType())
+                            {
+                                SequencePtr seq = currentPropertySetting.dataObject->getSequence();
+                                seq->addDataObject(propertyName,newDO);
+                            }
+                            else
+                            {
+                                DataObjectList& dol = dob->getList(propertyName);
+                                dol.append(newDO);
+                            }
                             setCurrentDataObject(newDO);
                             setAttributes(tns, namespaces,attributes);
                         }
@@ -511,7 +539,16 @@ namespace commonj
                                 newDO = dataFactory->create(
                                     prop->getType().getURI(),
                                     prop->getType().getName());
-                                dob->setDataObject(propertyName, newDO);
+                                // here we need to use the sequence interface if it exists.
+                                if (dob->getType().isSequencedType())
+                                {
+                                    SequencePtr seq = dob->getSequence();
+                                    seq->addDataObject(propertyName, newDO);
+                                }
+                                else
+                                {
+                                    dob->setDataObject(propertyName, newDO);
+                                }
                                 setCurrentDataObject(newDO);
                                 setAttributes(tns,namespaces,attributes);
                                 break;
@@ -539,8 +576,17 @@ namespace commonj
                         newDO = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
                     }
                     pprop = ((DataObjectImpl*)dob)->defineList(propertyName);
-                    DataObjectList& dol = dob->getList(propertyName);
-                    dol.append(newDO);
+                   // here we need to use the sequence interface if it exists.
+                    if (dob->getType().isSequencedType())
+                    {
+                        SequencePtr seq = dob->getSequence();
+                        seq->addDataObject(propertyName, newDO);
+                    }
+                    else
+                    {
+                        DataObjectList& dol = dob->getList(propertyName);
+                        dol.append(newDO);
+                    }
                     setCurrentDataObject(newDO);
                     setAttributes(tns,namespaces,attributes);
                 }
@@ -786,6 +832,28 @@ namespace commonj
                             newDO = dataFactory->create(tns, "RootType");
                             currentPropertySetting = PropertySetting(newDO, localname,
                             bToBeNull);
+
+                            // TODO - need instead to record the fact that its a primitive, not
+                            // a real DO - and then present it as the root.
+                           // newDO = dataFactory->create(tns, "RootType");
+                           // const Type& tpr = dataFactory->getType(tns,"RootType");
+                           // XSDTypeInfo* typeInfo = (XSDTypeInfo*)
+                           //   ((DASType*)&tpr)->getDASValue("XMLDAS::TypeInfo");
+                           // if (typeInfo)
+                           // {
+                           //     TypeDefinitionImpl* td;
+                           //     td = (TypeDefinitionImpl*)&(typeInfo->getTypeDefinition());
+                           //     if (td)td->isExtendedPrimitive = true;
+                           //     currentPropertySetting = PropertySetting(newDO, "value" /*localname*/,
+                           //     bToBeNull);
+
+                           // }
+                           // else
+                           // {
+                           //     currentPropertySetting = PropertySetting(newDO, localname,
+                           //     bToBeNull);
+                           // }
+
                         }
                         else
                         {
@@ -1089,14 +1157,33 @@ namespace commonj
                                 "value");
                             if (p.isMany())
                             {
-                                DataObjectList& dl = currentPropertySetting.dataObject->
-                                getList((const char*)"value");
-                                dl.append((const char*)currentPropertySetting.value);
+                                // use the sequence interface if it exists.
+                                if (currentPropertySetting.dataObject->getType().isSequencedType())
+                                {
+                                    SequencePtr seq = currentPropertySetting.dataObject->getSequence();
+                                    seq->addCString("value", currentPropertySetting.value);
+                                }
+                                else
+                                {
+                                    DataObjectList& dl = currentPropertySetting.dataObject->
+                                    getList((const char*)"value");
+                                    dl.append((const char*)currentPropertySetting.value);
+                                }
+
                             }
                             else
                             {
-                                currentPropertySetting.dataObject->
-                                setCString((const char*)"value", currentPropertySetting.value );
+                                // use the sequence interface if it exists
+                                if (currentPropertySetting.dataObject->getType().isSequencedType())
+                                {
+                                    SequencePtr seq = currentPropertySetting.dataObject->getSequence();
+                                    seq->addCString("value", currentPropertySetting.value);
+                                }
+                                else
+                                {
+                                    currentPropertySetting.dataObject->
+                                    setCString((const char*)"value", currentPropertySetting.value );
+                                }
                             }
                             if (dataObjectStack.size() == 0 || rootDataObject == dataObjectStack.top())
                             {

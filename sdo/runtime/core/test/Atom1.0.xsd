@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema targetNamespace="http://www.w3.org/2005/Atom"
+  xmlns="http://www.w3.org/2005/Atom" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
+	<xs:import namespace="http://www.w3.org/1999/xhtml" schemaLocation="xhtml1.xsd" />
+
+	<xs:element name="feed" type="feedType"/>	
+	<xs:element name="entry" type="entryType"/>
+	
+	<xs:complexType name="feedType">
+		<xs:complexContent>
+			<xs:extension base="sourceType">
+				<xs:sequence>
+					<xs:element name="entry" type="entryType" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attributeGroup ref="commonAttributes" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="entryType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="author" type="personConstruct" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="category" type="categoryType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="content" type="contentType"  minOccurs="0" />
+			<xs:element name="contributor" type="personConstruct" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="id" type="idType" />
+			<xs:element name="link" type="linkType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="published" type="dateConstruct" minOccurs="0" />
+			<xs:element name="rights" type="textConstruct" minOccurs="0" />
+			<xs:element name="source" type="sourceType" minOccurs="0" />
+			<xs:element name="summary" type="textConstruct" maxOccurs="0" />
+			<xs:element name="title" type="textConstruct" />
+			<xs:element name="updated" type="dateConstruct" />
+			<xs:element name="extension" type="extensionType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:choice>
+		<xs:attributeGroup ref="commonAttributes"/>
+	</xs:complexType>
+	
+	<xs:complexType name="sourceType">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="author" type="personConstruct" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="category" type="categoryType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="contributor" type="personConstruct" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="generator" type="generatorType" minOccurs="0" />
+			<xs:element name="icon" type="iconType"  minOccurs="0" />
+			<xs:element name="id" type="idType" />
+			<xs:element name="link" type="linkType" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="logo" type="logoType"  minOccurs="0" />
+			<xs:element name="rights" type="textConstruct"  minOccurs="0" />
+			<xs:element name="subtitle" type="textConstruct"  minOccurs="0" />
+			<xs:element name="title" type="textConstruct" />
+			<xs:element name="updated" type="dateConstruct" />
+			<xs:element name="extension" type="extensionType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="personConstruct">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="uri" type="uriType" minOccurs="0" />
+			<xs:element name="email" type="emailType" minOccurs="0" />
+			<xs:element name="extension" type="extensionType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:choice>
+	</xs:complexType>
+	
+	<xs:complexType name="categoryType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="term" type="xs:string" use="required" />
+				<xs:attribute name="scheme" type="uriType" />
+				<xs:attribute name="label" type="xs:string" />
+				<xs:attributeGroup ref="commonAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+		<!-- TODO: undefinedContent - beyond string?  -->		
+	</xs:complexType>
+	
+	<xs:complexType name="generatorType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="uri" type="uriType" />
+				<xs:attribute name="version" type="xs:string" />
+				<xs:attributeGroup ref="commonAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="iconType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attributeGroup ref="commonAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="idType">
+		<xs:simpleContent>
+			<xs:extension base="uriType">
+				<xs:attributeGroup ref="commonAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="logoType">
+		<xs:simpleContent>
+			<xs:extension base="uriType">
+				<xs:attributeGroup ref="commonAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="contentType" mixed="true">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="type" type="xs:string" />
+		<xs:attribute name="src" type="uriType" minOccurs="0" />
+		<xs:attributeGroup ref="commonAttributes"/>
+	</xs:complexType>
+
+	<xs:complexType name="linkType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="href" type="uriType" use="required" />
+				<xs:attribute name="rel" type="uriType" /> <!-- { atomNCName | atomUri }? -->
+				<xs:attribute name="type" type="mediaType" />
+				<xs:attribute name="hreflang" type="languageTagType" />
+				<xs:attribute name="title" type="xs:string" />
+				<xs:attribute name="length" type="xs:string" />
+				<xs:attributeGroup ref="commonAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:simpleType name="languageTagType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="mediaType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value=".+/.+" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="emailType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value=".+@.+" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="textConstruct" mixed="true">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="type" type="xs:string" />
+		<xs:attributeGroup ref="commonAttributes"/>
+	</xs:complexType>
+
+	<xs:complexType name="dateConstruct">
+		<xs:simpleContent>
+			<xs:extension base="xs:dateTime">
+				<xs:attributeGroup ref="commonAttributes"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:simpleType name="uriType" type="xs:string" />
+
+	<xs:complexType name="extensionType" mixed="true">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute />
+	</xs:complexType>	
+	
+	<xs:attributeGroup name="commonAttributes">
+		<xs:attribute ref="xml:base" />
+		<xs:attribute ref="xml:lang" />
+		<xs:anyAttribute/>
+	</xs:attributeGroup>  
+
+</xs:schema>

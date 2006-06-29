@@ -274,7 +274,7 @@ void DataFactoryImpl::addType(const char* uri, const char* inTypeName,
         SDOIllegalArgumentException, " Type has empty name");
     }
 
-    
+
     if (findType(uri, inTypeName) == 0) 
     {
         char* fullTypeName = getFullTypeName(uri, inTypeName);
