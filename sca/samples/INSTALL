@@ -45,6 +45,7 @@ Calculator with WS client
    c) Edit the services xml to set the TuscanySystemRoot parameter to
       <parameter name="TuscanySystemRoot" locked="xsd:false">@TUSCANY_SCACPP@/samples/Calculator/deploy</parameter>
       where >@TUSCANY_SCACPP@ is the path to the installed Tuscany SCA
+   d) copy the @TUSCANY_SCACPP@/lib/libtuscany_sca_ws_service.so into <AXIS2C_HOME>/services/Calculator
 
 2. Start Axis2C simple http server
    a) cd <AXIS2C_HOME>/bin
@@ -62,7 +63,7 @@ Building Tuscany SCA samples on Windows
 =======================================
 
 If using the binary distribution the samples are built and installed in
-<tuscany_sca_install_dir>/samples
+<tuscany_sca_install_dir>\samples
 
 1. The following environment variables are required:
      TUSCANY_SCACPP=<path to installed Tuscany SCA>
@@ -84,11 +85,11 @@ Calculator with basic client
      AXIS2C_HOME=<path to axis2c verion 0.92>
      set TUSCANY_SCACPP_SYSTEM_ROOT=<samples_install_dir>/Calculator/deploy
 
-     set PATH=%TUSCANY_SCACPP%/bin;%TUSCANY_SDOCPP%/bin;%PATH%
+     set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%PATH%
 
-2. cd <samples_install_dir>/Calculator/deploy/modules/Calculator
+2. cd <samples_install_dir>\Calculator\deploy\bin
 
-3. Calc add 5 6
+3. runclient add 5 6
 (use also sub, div, mul).
 
 
@@ -98,23 +99,23 @@ Calculator with WS client
 
 1. Deploy the Calculator as an axis2c service
    a) Create a new service folder in axis2:
-      <AXIS2C_HOME>/services/Calculator
-   b) Copy the <TUSCANY_SCACPP>/samples/Calculator/CalculatorModule/services.xml to
-      <AXIS2C_HOME>/services/Calculator/services.xml
+      <AXIS2C_HOME>\services\Calculator
+   b) Copy the <TUSCANY_SCACPP>\samples\Calculator\CalculatorModule\services.xml to
+      <AXIS2C_HOME>\services\Calculator\services.xml
    c) Edit the services xml to set the TuscanySystemRoot parameter to
       <parameter name="TuscanySystemRoot" locked="xsd:false">@TUSCANY_SCACPP@/samples/Calculator/deploy</parameter>
       where >@TUSCANY_SCACPP@ is the path to the installed Tuscany SCA
-   d) copy the tuscany_sca_ws_service.dll (and pdb) file(s) to the new services/Calculator directory from the
-   <TUSCANY_SCACPP>/deploy/bin directory.
+   d) copy the tuscany_sca_ws_service.dll (and pdb) file(s) to the new services\Calculator directory from the
+   <TUSCANY_SCACPP>\bin directory.
 
 2. Start Axis2C simple http server
-   a) cd <AXIS2C_HOME>/bin
+   a) cd <AXIS2C_HOME>\bin
    b) set TUSCANY_SCACPP=<path to installed Tuscany SCA>
-   c) add <TUSCANY_SCACPP>/bin and <TUSCANY_SDOCPP>/bin to PATH environment variable
-   d) ./axis2_http_server
+   c) add <TUSCANY_SCACPP>\bin and <TUSCANY_SDOCPP>\bin to PATH environment variable
+   d) axis2_http_server
       
 3. Run the client
    a) export AXIS2C_HOME=<path to axis2c verion 0.92>
-   b) cd <samples_install_dir>/Calculator/deploy/bin
-   c) ./runwsclient.sh
+   b) cd <samples_install_dir>\Calculator\deploy\bin
+   c) runwsclient
    
