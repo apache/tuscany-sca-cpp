@@ -28,6 +28,6 @@ rem there is only one moduleComponent in the subsystem - it is a very simple sam
 set TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
 
 rem Run the client
-Client.exe %*
+Calc.exe %*
 
 endlocal
