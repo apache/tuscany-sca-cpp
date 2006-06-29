@@ -9,12 +9,14 @@ dist-hook:
 	
 bindist: dist
 	rm -rf ${PACKAGE}-${PACKAGE_VERSION}
+	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-src
+	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
 	gunzip -f ${PACKAGE}-${PACKAGE_VERSION}.tar.gz
 	tar -xf ${PACKAGE}-${PACKAGE_VERSION}.tar
-	gzip ${PACKAGE}-${PACKAGE_VERSION}.tar
-	cd ${PACKAGE}-${PACKAGE_VERSION} \
+	mv ${PACKAGE}-${PACKAGE_VERSION} ${PACKAGE}-${PACKAGE_VERSION}-src
+	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-src | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-src.tar.gz
+	cd ${PACKAGE}-${PACKAGE_VERSION}-src \
 	&&	sh ../makebindist.sh
-	rm -rf ${PACKAGE}-bin-${PACKAGE_VERSION}
-	mkdir ${PACKAGE}-bin-${PACKAGE_VERSION}
-	cp -r ${PACKAGE}-${PACKAGE_VERSION}/deploy/* ${PACKAGE}-bin-${PACKAGE_VERSION}
-	tar -cf - ${PACKAGE}-bin-${PACKAGE_VERSION} | gzip -c > ${PACKAGE}-bin-${PACKAGE_VERSION}.tar.gz
+	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
+	cp -r ${PACKAGE}-${PACKAGE_VERSION}-src/deploy/* ${PACKAGE}-${PACKAGE_VERSION}-bin
+	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz
