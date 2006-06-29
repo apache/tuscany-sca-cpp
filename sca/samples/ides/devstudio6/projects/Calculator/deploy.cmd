@@ -12,23 +12,25 @@ set destinationPath=%1
 )
 
 if not exist %destinationPath%\modules mkdir %destinationPath%\modules 
-if not exist %destinationPath%\modules\Calculator mkdir %destinationPath%\modules\Calculator 
+if not exist %destinationPath%\modules\CalculatorModule mkdir %destinationPath%\modules\CalculatorModule
 
-copy %sourcePath%\CalculatorModule\*.componentType %destinationPath%\modules\Calculator
-copy %sourcePath%\CalculatorModule\sca.module %destinationPath%\modules\Calculator
-copy %sourcePath%\CalculatorModule\Calculator.h %destinationPath%\modules\Calculator
-copy %sourcePath%\CalculatorModule\CalculatorImpl.h %destinationPath%\modules\Calculator
-copy %sourcePath%\CalculatorModule\Tuscany-model.config %destinationPath%\modules\Calculator
-copy %sourcePath%\CalculatorModule\Calculator.wsdl %destinationPath%\modules\Calculator
-copy %currentPath%\Calculator\debug\Calculator.dll %destinationPath%\modules\Calculator
+copy %sourcePath%\CalculatorModule\*.componentType %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorModule\sca.module %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorModule\Calculator.h %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorModule\CalculatorImpl.h %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorModule\Tuscany-model.config %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorModule\Calculator.wsdl %destinationPath%\modules\CalculatorModule
+copy %currentPath%\Calculator\debug\Calculator.dll %destinationPath%\modules\CalculatorModule
 
-copy %currentPath%\Client\Debug\Calc.exe %destinationPath%\modules\Calculator
-copy %currentPath%\Client\Debug\Calc.pdb %destinationPath%\modules\Calculator
+if not exist %destinationPath%\bin mkdir %destinationPath%\bin
+copy %currentPath%\Client\Debug\Calc.exe %destinationPath%\bin
+copy %currentPath%\Client\Debug\Calc.pdb %destinationPath%\bin
+copy %sourcePath%\Client\runclient.cmd   %destinationPath%\bin
 
 
 if not exist %destinationPath%\subsystems mkdir %destinationPath%\subsystems
-if not exist %destinationPath%\subsystems\Calculator mkdir %destinationPath%\subsystems\Calculator
+if not exist %destinationPath%\subsystems\CalculatorSubsystem mkdir %destinationPath%\subsystems\CalculatorSubsystem
 
-copy %sourcePath%\CalculatorSubsystem\sca.subsystem %destinationPath%\subsystems\Calculator
+copy %sourcePath%\CalculatorSubsystem\sca.subsystem %destinationPath%\subsystems\CalculatorSubsystem
 
 endlocal
