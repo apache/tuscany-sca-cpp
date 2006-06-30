@@ -329,7 +329,12 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         case Type::DataObjectType:
             {
                 DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
-                //printf("inputDataObject has DataObjectType named %s\n", name);
+                //printf("inputDataObject has DataObjectType named %s (#%d)\n", name, dataObjectData);
+
+                if(!dataObjectData)
+                {
+                    LOGINFO_1(4, "SDO DataObject parameter named %s was null", name);
+                }
                 operation.addParameter(&dataObjectData);
             }
             break;
@@ -346,6 +351,10 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
                 for(int j=0; j<dataObjectList.size(); j++)
                 {
                     DataObjectPtr dataObjectData = dataObjectList[j];
+                    if(!dataObjectData)
+                    {
+                        LOGINFO_2(4, "SDO OpenDataObject parameter named %s[%d] was null", name, j);
+                    }
                     operation.addParameter(&dataObjectData);
                     //Utils::printDO(dataObjectData);
                 }
@@ -503,9 +512,17 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         // Set the data in the outputDataObject to be returned
         setOutputData(operation, outputDataObject);                            
     }
+	catch(SDORuntimeException &ex)
+	{	
+        // TODO: Return more error information than just a null DataObject
+        LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
+        return NULL;
+	}  
 	catch(ServiceRuntimeException &ex)
 	{	
+        // TODO: Return more error information than just a null DataObject
         LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
+        return NULL;
 	}  
 
     LOGEXIT(1,"EntryPointProxy::invoke");

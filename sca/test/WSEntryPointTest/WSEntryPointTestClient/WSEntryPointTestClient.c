@@ -24,6 +24,9 @@ axiom_node_t *
 build_om_payload_for_doDataObject(axis2_env_t *env);
 
 axiom_node_t *
+build_om_payload_for_doDataObject_Failure(axis2_env_t *env);
+
+axiom_node_t *
 build_om_payload_for_doAny(axis2_env_t *env);
 
 axiom_node_t *
@@ -32,7 +35,7 @@ build_om_payload_for_doMixed(axis2_env_t *env);
 axiom_node_t *
 build_om_payload_for_doSingleData(axis2_env_t *env, char* name, char* data);
 
-void runCall(axis2_env_t* env, char* endpoint, char* opName, axiom_node_t* payload);
+void runCall(axis2_env_t* env, char* endpoint, char* opName, axiom_node_t* payload, int expectFailure);
 
 int main(int argc, char** argv)
 {
@@ -62,36 +65,40 @@ int main(int argc, char** argv)
 
 
     /* do all the single data types */
-    //payload = build_om_payload_for_doSingleData(env, "doChars", "Here is some char* data");
-    //runCall(env, address, "doChars", payload);
-    //payload = build_om_payload_for_doSingleData(env, "doLong", "123456789");
-    //runCall(env, address, "doLong", payload);
-    //payload = build_om_payload_for_doSingleData(env, "doInt", "123456789");
-    //runCall(env, address, "doInt", payload);
-    //payload = build_om_payload_for_doSingleData(env, "doFloat", "123.45");
-    //runCall(env, address, "doFloat", payload);
-    //payload = build_om_payload_for_doSingleData(env, "doLongDouble", "12345.67891");
-    //runCall(env, address, "doLongDouble", payload);
-    //payload = build_om_payload_for_doSingleData(env, "doDouble", "1234.4567");
-    //runCall(env, address, "doDouble", payload);
-    //payload = build_om_payload_for_doSingleData(env, "doBool", "true");
-    //runCall(env, address, "doBool", payload);
-    //payload = build_om_payload_for_doSingleData(env, "doShort", "12345");
-    //runCall(env, address, "doShort", payload);
-    //payload = build_om_payload_for_doSingleData(env, "doBytes", "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
-    //runCall(env, address, "doBytes", payload);
-    payload = build_om_payload_for_doSingleData(env, "doByte", "-66");
-    runCall(env, address, "doByte", payload);
-    //payload = build_om_payload_for_doDataObject(env);
-    //runCall(env, address, "doDataObject", payload);
-    //payload = build_om_payload_for_doMixed(env);
-    //runCall(env, address, "doMixed", payload);
-    //payload = build_om_payload_for_doAny(env);
-    //runCall(env, address, "doAny", payload);
+    payload = build_om_payload_for_doSingleData(env, "doChars", "Here is some char* data");
+    runCall(env, address, "doChars", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doLong", "123456789");
+    runCall(env, address, "doLong", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doInt", "123456789");
+    runCall(env, address, "doInt", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doFloat", "123.45");
+    runCall(env, address, "doFloat", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doLongDouble", "12345.67891");
+    runCall(env, address, "doLongDouble", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doDouble", "1234.4567");
+    runCall(env, address, "doDouble", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doBool", "true");
+    runCall(env, address, "doBool", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doShort", "12345");
+    runCall(env, address, "doShort", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doBytes", "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
+    runCall(env, address, "doBytes", payload, 0);
+    payload = build_om_payload_for_doSingleData(env, "doByte", "66");
+    runCall(env, address, "doByte", payload, 0);
+    payload = build_om_payload_for_doDataObject(env);
+    runCall(env, address, "doDataObject", payload, 0);
+    payload = build_om_payload_for_doMixed(env);
+    runCall(env, address, "doMixed", payload, 0);
+    payload = build_om_payload_for_doAny(env);
+    runCall(env, address, "doAny", payload, 0);
+
+    payload = build_om_payload_for_doDataObject_Failure(env);
+    runCall(env, address, "doDataObject", payload, 1);
+
     return 0;
 }
 
-void runCall(axis2_env_t *env, char* endpoint, char* opName, axiom_node_t* payload)
+void runCall(axis2_env_t *env, char* endpoint, char* opName, axiom_node_t* payload, int expectFailure)
 {
     axis2_char_t *address = endpoint;
     axis2_endpoint_ref_t* endpoint_ref = NULL;
@@ -143,10 +150,17 @@ void runCall(axis2_env_t *env, char* endpoint, char* opName, axiom_node_t* paylo
     }
     else
     {
-		AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Stub invoke FAILED: Error code:"
-						" %d :: %s", env->error->error_number,
-                        AXIS2_ERROR_GET_MESSAGE(env->error));
-        printf("WSEntryPointTest %s invoke FAILED!\n", opName);
+        if(expectFailure)
+        {
+            printf("\nWSEntryPointTest %s failure as expected: SUCCESSFUL!\n", opName);
+        }
+        else
+        {
+		    AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Stub invoke FAILED: Error code:"
+						    " %d :: %s", env->error->error_number,
+                            AXIS2_ERROR_GET_MESSAGE(env->error));
+            printf("WSEntryPointTest %s invoke FAILED!\n", opName);
+        }
     }
 
     if (svc_client)
@@ -209,6 +223,58 @@ build_om_payload_for_doDataObject(axis2_env_t *env)
 
     return req_om_node;
 }
+
+/* build SOAP request message content using OM */
+axiom_node_t *
+build_om_payload_for_doDataObject_Failure(axis2_env_t *env)
+{
+    axiom_node_t* req_om_node = NULL;
+    axiom_element_t* req_om_elem = NULL;
+    axiom_node_t* someData_om_node = NULL;
+    axiom_element_t* someData_om_elem = NULL;
+    axiom_node_t* someStringData_om_node = NULL;
+    axiom_element_t* someStringData_om_elem = NULL;
+    axiom_node_t* someIntData_om_node = NULL;
+    axiom_element_t* someIntData_om_elem = NULL;
+    axiom_node_t* someFloatData_om_node = NULL;
+    axiom_element_t* someFloatData_om_elem = NULL;
+    axiom_node_t* someDateData_om_node = NULL;
+    axiom_element_t* someDateData_om_elem = NULL;
+    axiom_node_t* someListData_om_node = NULL;
+    axiom_element_t* someListData_om_elem = NULL;
+    axiom_node_t* listItem1_om_node = NULL;
+    axiom_element_t* listItem1_om_elem = NULL;
+    axiom_node_t* listItem2_om_node = NULL;
+    axiom_element_t* listItem2_om_elem = NULL;
+    axiom_namespace_t *ns1 = NULL;
+    axis2_char_t *om_str = NULL;
+
+    // Create bad Axiom doc
+    ns1 = axiom_namespace_create (env, "http://www.WSEntryPointTest.org/WSEntryPointTest/", "ns1");
+    req_om_elem = axiom_element_create(env, NULL, "doDataObject", ns1, &req_om_node);
+    someData_om_elem = axiom_element_create(env, req_om_node, "someUnknownData", ns1, &someData_om_node);
+    someStringData_om_elem = axiom_element_create(env, someData_om_node, "someStringData", ns1, &someStringData_om_node);
+    AXIOM_ELEMENT_SET_TEXT(someStringData_om_elem, env, "Here is some string data", someStringData_om_node);
+    someIntData_om_elem = axiom_element_create(env, someData_om_node, "someIntData", ns1, &someIntData_om_node);
+    AXIOM_ELEMENT_SET_TEXT(someIntData_om_elem, env, "12345678", someIntData_om_node);
+    someFloatData_om_elem = axiom_element_create(env, someData_om_node, "someFloatData", ns1, &someFloatData_om_node);
+    AXIOM_ELEMENT_SET_TEXT(someFloatData_om_elem, env, "1234.5678", someFloatData_om_node);
+    someDateData_om_elem = axiom_element_create(env, someData_om_node, "someDateData", ns1, &someDateData_om_node);
+    AXIOM_ELEMENT_SET_TEXT(someDateData_om_elem, env, "1977-06-27", someDateData_om_node);
+    someListData_om_elem = axiom_element_create(env, someData_om_node, "someListData", ns1, &someListData_om_node);
+    listItem1_om_elem = axiom_element_create(env, someListData_om_node, "listItem", ns1, &listItem1_om_node);
+    AXIOM_ELEMENT_SET_TEXT(listItem1_om_elem, env, "Here is list item 1", listItem1_om_node);
+    listItem2_om_elem = axiom_element_create(env, someListData_om_node, "listItem", ns1, &listItem2_om_node);
+    AXIOM_ELEMENT_SET_TEXT(listItem2_om_elem, env, "Here is list item 2", listItem2_om_node);
+    
+    om_str = AXIOM_NODE_TO_STRING(req_om_node, env);
+    if (om_str)
+        printf("\nSending OM : %s\n", om_str);
+
+    return req_om_node;
+}
+
+
 
 /* build SOAP request message content using OM */
 axiom_node_t *

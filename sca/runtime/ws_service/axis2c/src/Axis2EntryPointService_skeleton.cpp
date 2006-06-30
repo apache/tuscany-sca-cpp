@@ -150,7 +150,7 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     //LOGINFO_1(4, "Axis2EntryPointService invoke called with operation", op_name);
                     entryPointProxy->init(systemRoot, fullEntryPointName);
 
-                    //Utils::printTypes(entryPointProxy.getDataFactory());
+                    //Utils::printTypes(entryPointProxy->getDataFactory());
 
                     AxiomHelper* axiomHelper = AxiomHelper::getHelper();
                     if (entryPointProxy->getDataFactory() == 0)
@@ -165,9 +165,16 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
 
                     DataObjectPtr inputDataObject = axiomHelper->toSdo(node, entryPointProxy->getDataFactory());
 
-                    //printf("Axis2EntryPoint inputDataObject: %d\n", inputDataObject);
-                    //Utils::printDO(inputDataObject);			
+                    //printf("Axis2EntryPoint inputDataObject: (%d)\n", inputDataObject);
 
+                    if(!inputDataObject)
+                    {
+                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: Could not convert received Axiom node to SDO");
+                        //LOGERROR(0, "Axis2EntryPointService_invoke: Failure whilst invoking EntryPoint");
+                        /** TODO: return a SOAP fault here */
+                        return 0;
+                    }                    
+                    //Utils::printDO(inputDataObject);			
                     
                     DataObjectPtr outputDataObject = entryPointProxy->invoke(op_name, inputDataObject);
 
