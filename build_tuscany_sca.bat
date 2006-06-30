@@ -45,7 +45,12 @@ if not exist %TO_SRC% mkdir %TO_SRC%
 
 rmdir /S /Q %TO_SRC%\%SRC_PACKAGE%
 if not exist %TO_SRC%\%SRC_PACKAGE% mkdir %TO_SRC%\%SRC_PACKAGE% 
-
+copy %FROM_DIR%\sdo\INSTALL   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\LICENSE   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\COPYING   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\NOTICE    %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\README    %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\readme.txt  %TO_SRC%\%SRC_PACKAGE%
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
 xcopy /t /e  %FROM_DIR%\sdo\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
@@ -70,7 +75,6 @@ copy %FROM_DIR%\sca\samples\LICENSE   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\sca\samples\COPYING   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\sca\samples\NOTICE    %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\sca\samples\README    %TO_SRC%\%SRC_PACKAGE%\samples
-copy %FROM_DIR%\sca\samples\readme.txt   %TO_SRC%\%SRC_PACKAGE%\samples
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\xsd mkdir %TO_SRC%\%SRC_PACKAGE%\xsd 
 xcopy/s %FROM_DIR%\sca\xsd %TO_SRC%\%SRC_PACKAGE%\xsd
