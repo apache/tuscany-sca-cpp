@@ -70,8 +70,9 @@ copy %FROM_DIR%\sca\samples\LICENSE   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\sca\samples\COPYING   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\sca\samples\NOTICE    %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\sca\samples\README    %TO_SRC%\%SRC_PACKAGE%\samples
-if not exist %TO_SRC%\%SRC_PACKAGE%\xsd mkdir %TO_SRC%\%SRC_PACKAGE%\xsd 
+copy %FROM_DIR%\sca\samples\readme.txt   %TO_SRC%\%SRC_PACKAGE%\samples
 
+if not exist %TO_SRC%\%SRC_PACKAGE%\xsd mkdir %TO_SRC%\%SRC_PACKAGE%\xsd 
 xcopy/s %FROM_DIR%\sca\xsd %TO_SRC%\%SRC_PACKAGE%\xsd
 
 
@@ -102,6 +103,7 @@ copy %FROM_DIR%\sca\LICENSE   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\sca\COPYING   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\sca\NOTICE    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\sca\README    %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\sca\readme.txt   %TO_BIN%\%BIN_PACKAGE%
 
 echo Building calculator....
 

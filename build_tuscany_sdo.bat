@@ -51,6 +51,7 @@ copy %FROM_DIR%\sdo\LICENSE   %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\sdo\COPYING   %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\sdo\NOTICE    %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\sdo\README    %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\sdo\readme.txt  %TO_SRC%\%SRC_PACKAGE%
 
 echo Building SDO....
 
@@ -70,6 +71,7 @@ copy %FROM_DIR%\sdo\LICENSE   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\sdo\COPYING   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\sdo\NOTICE    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\sdo\README    %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\sdo\readme.txt   %TO_BIN%\%BIN_PACKAGE%
 
 :end
 echo SDO Build complete.
