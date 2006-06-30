@@ -633,28 +633,38 @@ namespace tuscany
                     {    
                         LOGINFO_2(2, "ModelLoader::loadModuleConfig: Loading module config for: %s, root Dir: %s", moduleName.c_str(), moduleRootDir.c_str());
 
-                        DataObjectList& xsds = moduleConfigFile->getRootDataObject()->getList("xsd/file");
-                        for (int i=0; i<xsds.size(); i++)
+                        if(moduleConfigFile->getRootDataObject()->isSet("xsd"))
                         {
-                            
-                            // Load a xsd file -> set the types in the moduleComponents data factory file
-                            string xsdName = moduleRootDir + "/" +xsds[i]->getCString("name");
-                            loadTypes(xsdName.c_str(), moduleName);
+                            DataObjectList& xsds = moduleConfigFile->getRootDataObject()->getList("xsd/file");
 
+                            for (int i=0; i<xsds.size(); i++)
+                            {
+                                if(xsds[i]->isSet("name"))
+                                {
+                                    // Load a xsd file -> set the types in the moduleComponents data factory file
+                                    string xsdName = moduleRootDir + "/" +xsds[i]->getCString("name");
+                                    loadTypes(xsdName.c_str(), moduleName);
+                                }
+                            }
                         }
                         
-                        DataObjectList& wsdls = moduleConfigFile->getRootDataObject()->getList("wsdl/file");
-                        for (int j=0; j<wsdls.size(); j++)
-                        {
-                            string wsdlName = moduleRootDir + "/" +wsdls[j]->getCString("name");
-                            // Load a wsdl file -> get the types, then the contents of the wsdl
-                            loadTypes(wsdlName.c_str(), moduleName);
-                            
-                            // Load the contents of the wsdl files
-                            loadWsdl(wsdlName.c_str(), moduleName);
 
-                        }
-                            
+                        if( moduleConfigFile->getRootDataObject()->isSet("wsdl"))
+                        {
+                            DataObjectList& wsdls = moduleConfigFile->getRootDataObject()->getList("wsdl/file");
+                            for (int j=0; j<wsdls.size(); j++)
+                            {
+                                if(wsdls[i]->isSet("name"))
+                                { 
+                                    string wsdlName = moduleRootDir + "/" +wsdls[j]->getCString("name");
+                                    // Load a wsdl file -> get the types, then the contents of the wsdl
+                                    loadTypes(wsdlName.c_str(), moduleName);
+                                    
+                                    // Load the contents of the wsdl files
+                                    loadWsdl(wsdlName.c_str(), moduleName);
+                                }
+                            }
+                        }                            
                     }
                 }
             
