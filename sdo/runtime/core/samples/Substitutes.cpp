@@ -18,6 +18,7 @@
 /* $Rev$ $Date: 2005/12/22 16:54:14 $ */
 
 #include "samples.h"
+using namespace std;
 
 void Substitutes::sample()
 {
