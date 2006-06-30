@@ -40,11 +40,11 @@ rmdir /S /Q %TO_SRC%\%SRC_PACKAGE%
 if not exist %TO_SRC%\%SRC_PACKAGE% mkdir %TO_SRC%\%SRC_PACKAGE%
 if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projects 
 if not exist %TO_SRC%\%SRC_PACKAGE%\runtime mkdir %TO_SRC%\%SRC_PACKAGE%\runtime
+if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
  
+xcopy /t /e  %FROM_DIR%\sdo\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
 xcopy/s %FROM_DIR%\sdo\runtime %TO_SRC%\%SRC_PACKAGE%\runtime 
 
-if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projects
- 
 xcopy/s %FROM_DIR%\sdo\projects %TO_SRC%\%SRC_PACKAGE%\projects
 copy %FROM_DIR%\sdo\INSTALL   %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\sdo\LICENSE   %TO_SRC%\%SRC_PACKAGE%

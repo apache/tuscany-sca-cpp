@@ -46,16 +46,17 @@ if not exist %TO_SRC% mkdir %TO_SRC%
 rmdir /S /Q %TO_SRC%\%SRC_PACKAGE%
 if not exist %TO_SRC%\%SRC_PACKAGE% mkdir %TO_SRC%\%SRC_PACKAGE% 
 
-if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projects 
 
+if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
+xcopy /t /e  %FROM_DIR%\sdo\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
+
+if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projects 
 xcopy/s %FROM_DIR%\sca\projects %TO_SRC%\%SRC_PACKAGE%\projects
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\runtime mkdir %TO_SRC%\%SRC_PACKAGE%\runtime 
-
 xcopy/s %FROM_DIR%\sca\runtime %TO_SRC%\%SRC_PACKAGE%\runtime
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\tools mkdir %TO_SRC%\%SRC_PACKAGE%\tools 
-
 xcopy/s %FROM_DIR%\sca\tools %TO_SRC%\%SRC_PACKAGE%\tools
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples mkdir %TO_SRC%\%SRC_PACKAGE%\samples 
