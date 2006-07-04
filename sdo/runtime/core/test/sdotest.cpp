@@ -1126,13 +1126,23 @@ int sdotest::conversiontest()
 
     // cout << "+++++++++++++++PROPERTY VALUES SET ++++++++++++++++++++" << endl;
 
+    // RHEL 4 has problems processing 64 bit integer constants, so we'll do it the hard way
+    // This is overkill but gives the option to vary the value a bit.
+
+    int64_t largeInt = 0xFFFF;
+    for (int j = 0; j < 2; j++)
+    {
+        largeInt <<= 16;
+        largeInt += 0xFFFF;
+    }
+
     DataObjectPtr sub = dor->createDataObject("dataobject");
     dor->setBoolean("boolean", true);
     dor->setByte("byte",20);
     dor->setCharacter("character", 1000);
     dor->setShort("short", (short)12345678);
     dor->setInteger("integer", 87654321);
-    dor->setLong("long", 0xFFFFFFFFFFFF);
+    dor->setLong("long", largeInt);
     dor->setFloat("float", (float)12345.678);
     dor->setDouble("double", 1234567.891);
     dor->setDate("date", 37575);
@@ -2564,15 +2574,27 @@ int sdotest::maintest()
         pdg->setDouble("longdouble",89.0);
         pdg->setFloat("float",90.0);
         pdg->setDate("date",(time_t)200);
-        
 
-          pdg->setLong("longlong",0xFFFFFFFFFFFFFFFF);
+        // RHEL 4 has problems processing 64 bit integer constants, so we'll do it the hard way
+        // This is overkill but gives the option to vary the value a bit.
+
+        int64_t largeInt1 = 0xFFFF;
+        int64_t largeInt2 = 0x7FFF;
+        for (int j = 0; j < 3; j++)
+        {
+            largeInt1 <<= 16;
+            largeInt1 += 0xFFFF;
+            largeInt2 <<= 16;
+            largeInt2 += 0xFFFF;
+        }
+
+        pdg->setLong("longlong", largeInt1);
 
         // try reading the longlong as a string 
         const char *lls = pdg->getCString("longlong");
         fprintf(f, "0xffffffffffffffff = : %s\n", lls);
 
-        pdg->setLong("longlong",0x7FFFFFFFFFFFFFFF);
+        pdg->setLong("longlong", largeInt2);
 
         lls = pdg->getCString("longlong");
         fprintf(f, "0x7fffffffffffffff =  %s\n",lls);
