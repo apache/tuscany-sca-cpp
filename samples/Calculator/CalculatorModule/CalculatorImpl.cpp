@@ -18,6 +18,10 @@
 #include "CalculatorImpl.h"
 #include <stdio.h>
 
+#include "DivideService.h"
+#include "osoa/sca/ComponentContext.h"
+#include "osoa/sca/ServiceRuntimeException.h"
+
 CalculatorImpl::CalculatorImpl()
 {
 }
@@ -51,8 +55,30 @@ float CalculatorImpl::mul(float arg1, float arg2)
 
 float CalculatorImpl::div(float arg1, float arg2)
 {
-    float result = arg1 / arg2;
-    printf("CalculatorImpl::div %f / %f = %f\n", arg1, arg2, result);
+    float result = 0;
+
+    // This method shows how to invoke a service on a different component from within a component
+
+    // First, get the current ComponentContext
+    osoa::sca::ComponentContext myContext = osoa::sca::ComponentContext::getCurrent();
+
+    try
+    {
+        // Find the required service, as referenced in CalculatorImpl.componentType
+        DivideService* divideService = (DivideService*)myContext.getService("CalculatorDivideService");
+
+        // Finally, invoke the service
+        result = divideService->divide(arg1, arg2);
+
+        printf("CalculatorImpl::div DivideService returned result: %f\n", result);
+
+    }
+    catch (osoa::sca::ServiceRuntimeException& e)
+    {
+        // Print out error message and carry on
+        printf("CalculatorImpl::div Error whilst invoking DivideService: %s", e.getMessageText());
+    }
+
     return result;
 }
 	

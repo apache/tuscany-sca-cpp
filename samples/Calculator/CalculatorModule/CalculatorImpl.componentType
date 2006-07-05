@@ -3,8 +3,12 @@
                xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<service name="CalculatorService">
-		<interface.cpp header="Calculator.h">
-		</interface.cpp>
+		<interface.cpp header="Calculator.h"/>
 	</service>
+
+    <reference name="CalculatorDivideService">
+		<interface.cpp header="DivideService.h"/>
+	</reference>
+
 
 </componentType>

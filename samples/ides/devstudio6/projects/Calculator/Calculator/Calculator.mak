@@ -40,6 +40,10 @@ CLEAN :
 	-@erase "$(INTDIR)\CalculatorImpl.obj"
 	-@erase "$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj"
 	-@erase "$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj"
+	-@erase "$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj"
+	-@erase "$(INTDIR)\DivideServiceImpl.obj"
+	-@erase "$(INTDIR)\DivideServiceImpl_DivideService_Proxy.obj"
+	-@erase "$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(OUTDIR)\Calculator.dll"
 	-@erase "$(OUTDIR)\Calculator.exp"
@@ -93,7 +97,11 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi3
 LINK32_OBJS= \
 	"$(INTDIR)\CalculatorImpl.obj" \
 	"$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj" \
-	"$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj"
+	"$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj" \
+	"$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj" \
+	"$(INTDIR)\DivideServiceImpl.obj" \
+	"$(INTDIR)\DivideServiceImpl_DivideService_Proxy.obj" \
+	"$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj"
 
 "$(OUTDIR)\Calculator.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -115,6 +123,10 @@ CLEAN :
 	-@erase "$(INTDIR)\CalculatorImpl.obj"
 	-@erase "$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj"
 	-@erase "$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj"
+	-@erase "$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj"
+	-@erase "$(INTDIR)\DivideServiceImpl.obj"
+	-@erase "$(INTDIR)\DivideServiceImpl_DivideService_Proxy.obj"
+	-@erase "$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
 	-@erase "$(OUTDIR)\Calculator.dll"
@@ -171,7 +183,11 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi3
 LINK32_OBJS= \
 	"$(INTDIR)\CalculatorImpl.obj" \
 	"$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj" \
-	"$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj"
+	"$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj" \
+	"$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj" \
+	"$(INTDIR)\DivideServiceImpl.obj" \
+	"$(INTDIR)\DivideServiceImpl_DivideService_Proxy.obj" \
+	"$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj"
 
 "$(OUTDIR)\Calculator.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -206,6 +222,26 @@ SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorServi
 SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.cpp
 
 "$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.cpp
+
+"$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.cpp
+
+"$(INTDIR)\DivideServiceImpl.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.cpp
+
+"$(INTDIR)\DivideServiceImpl_DivideService_Proxy.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.cpp
+
+"$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 

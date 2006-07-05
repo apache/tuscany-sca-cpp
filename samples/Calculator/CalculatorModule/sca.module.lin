@@ -13,6 +13,14 @@
 	<component name="CalculatorServiceComponent">
 		<implementation.cpp dll="libCalculatorModule.so" header="CalculatorImpl.h"></implementation.cpp>
                 <properties> </properties>
+		<references>
+	               <v:CalculatorDivideService>DivideServiceComponent/DivideService</v:CalculatorDivideService>
+	        </references>
+	</component>
+        
+	<component name="DivideServiceComponent">
+		<implementation.cpp dll="libCalculatorModule.so" header="DivideServiceImpl.h"></implementation.cpp>
+                <properties> </properties>
 		<references> </references>
 	</component>
 </module>
