@@ -41,15 +41,15 @@ Known restrictions
 Web Services EntryPoint
 =======================
 
-This document describes the use of the Web Service EntryPoint (WS EntryPoint) 
-support in the Apache Tuscany SCA C++ runtime.
+This section of the document describes the use of the Web Service EntryPoint 
+(WS EntryPoint) support in the Apache Tuscany SCA C++ runtime.
 
 The WS EntryPoint code is based on Apache Axis2C version 0.92 
 (http://ws.apache.org/axis2/c) and allows SCA components to be invoked via Web 
 Service calls.
 
-WS EntryPoint currently supports Document Literal style Web Services only. 
-There are also restrictions about the parameter and return types of the 
+WS EntryPoint currently supports Document/literal Wrapped style Web Services 
+only. There are also restrictions about the parameter and return types of the 
 operations in SCA components that can be exposed as Web Services, see below 
 for more details.
 
@@ -68,8 +68,8 @@ Pre-requisites:
    sca.subsystem files must also be available and working
 
 1. Create the WSDL that defines the interface of your SCA component. See the 
-table "XML Schema Type to C++ Type Mapping" and "WS EntryPoint Notes" below for 
-mapping the parameters and return types of the component operations to XML 
+table "XML Schema Type to C++ Type Mapping" and "Notes on creating WSDL" below 
+for mapping the parameters and return types of the component operations to XML 
 schema types in the WSDL. This file needs to be accessible from the component, 
 so place it in the same directory as the component or in a subdirectory.
 
@@ -89,7 +89,7 @@ E.g. for the Calculator component, based on the Calculator.wsdl file:
 <!-- Expose as a web service -->
 <entryPoint name="WSCalculatorEntrypoint" multiplicity="1..1">
     <interface.wsdl interface="Calculator.wsdl" />
-    <binding.ws port="http://ws.apache.org/axis2/c/samplesmath#wsdl.endpoint(CalculatorService/CalculatorServicePort)"/>
+    <binding.ws port="tuscany/c/Calculator#wsdl.endpoint(CalculatorService/CalculatorServicePort)"/>
     <reference>CalculatorServiceComponent</reference>
 </entryPoint>
 
@@ -178,7 +178,22 @@ set AXIS2C_HOME=C:/path_to_axis2c0.92
 set PATH=%PATH%;C:/path_to_tuscany/sca/deploy/bin;C:/path_to_tuscany/sdo/deploy/bin;C:/path_to_axis2c0.92/lib
 
 
-8. Start the Simple Axis server, or your Apache HTTP server if you have 
+8. Optionally, enable logging in Tuscany by setting the TUSCANY_SCACPP_LOGGING 
+environment variable with the level you wish to log at (0 for minimal 
+logging, up to 9 for more detailed logging) and the TUSCANY_SCACPP_LOG 
+environment variable to define the file to log to (if this is not set, logging 
+will go to the console)
+
+E.g. on Windows run the following commands:
+set TUSCANY_SCACPP_LOGGING=5
+set TUSCANY_SCACPP_LOG=C:/tuscany/mylogfile.txt
+
+Additionally, Axis2C automatically writes logging files to the Axis2C logs 
+directory (e.g. C:/path_to_axis2c0.92/logs). In particular the Axis2.log file 
+may contain useful information about your service.
+
+
+9. Start the Simple Axis server, or your Apache HTTP server if you have 
 deployed Axis2C to Apache.
 
 E.g. on Windows run the following commands:
@@ -201,6 +216,12 @@ XML Schema Type to C++ Type Mapping
 To help define the WSDL that describes the interface of your component, the 
 table below lists how incoming XML data in Web Service messages is mapped to 
 C++ types used in the parameters and return types of your component operations.
+
+This lists the only C++ types that can currently be used on the operations of a 
+component exposed as a Web Service. For other types, use an SDO DataObject to 
+wrap the data, and define that wrapping as a complexType in the WSDL. See the 
+SDO specifications (available from the Tuscany website) for the C++ types that 
+SDO supports.
 
 
  XML Schema Type  | C++ Type          
@@ -232,16 +253,21 @@ C++ types used in the parameters and return types of your component operations.
 
 
 
-WS EntryPoint Notes
-===================
+Notes on creating WSDL 
+======================
 
- o Currently only Document Literal style Web Services are supported by WS 
-   EntryPoint, support for RPC style Web Services is planned for future 
+ o Currently only Document/literal Wrapped style Web Services are supported by 
+   WS EntryPoint, support for RPC style Web Services is planned for future 
    releases.
+
+   See the article at http://www.ibm.com/developerworks/webservices/library/ws-whichwsdl/
+   for an explanation of Document/literal Wrapped style WSDL and Web Services
 
  o Operation parameter and return messages that are defined in the WSDL must be 
    XML Schema elements containing a complexType - there is currently no 
-   support for simpleTypes or single-level elements. 
+   support for simpleTypes or single-level elements. Also, Document/literal 
+   Wrapped services require that the operation name is used as the name of the 
+   incoming element that wraps the operation parameters.
 
    For example, a component operation defined in C++ as:
    
