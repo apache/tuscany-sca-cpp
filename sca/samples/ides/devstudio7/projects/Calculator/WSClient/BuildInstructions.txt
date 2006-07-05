@@ -1,0 +1,95 @@
+
+These sample projects will build:
+
+A basic calculator SCA service.
+A client to test that service.
+A WSClient to test the service as exposed by AXIS2C as a web service.
+
+The sample depdends on the current versions of Tuscany SDO and Tuscany SCA, which in turn
+depend on axis2c version 0.92, and libxml2. See the SCA and SDO project installation 
+details.
+
+The sample already has the pre-generated proxy and wrapper code in it, but should
+you need to regenerate these, you will need the command line tool "scagen" which is
+part of the Tuscany SCA project.
+
+The projects expect to following environment variables to be set:
+TUSCANY_SCACPP:
+The directory in which the sca runtime is deployed - probably something ending in sca/deploy.
+
+TUSCANY_SDOCPP:
+The directory where the sdo runtime is deployed - probably something ending in sdo/deploy.
+
+TUSCANY_SCACPP_DEFAULT_MODULE:
+This is the default module to be loaded by SCA. It consists of <subsystem>/<component>.
+In the case of this sample - its set programatically by the client - thats easier when
+using visual studio.
+
+TUSCANY_SCACPP_SYSTEM_ROOT
+This is the point from which SCA will start looking for modules to load. Again this is
+set programmatically by the sample.
+
+AXIS2C_HOME:
+This is where axis2c is deployed- this is only required by the WSClient project.
+
+The Calculator project contains a simple calculator service, and the descriptive files
+which help the runtime to find the service.
+
+
+Rebuilding the proxy and wrapper classes
+========================================
+
+If required, go to the Calculator sample main directory, and
+type:
+"scagen -dir CalculatorModule -output CalculatorModule" 
+
+The generated code is put into the CalculatorModule subdirectory.
+
+Building the Client project
+===========================
+
+Set the active project to be "Client", and then build all.
+This will re-build Calculator, then rebuild the Client, 
+The final step of the build will call a batch file "deploy.cmd",
+which copies all the required files to the directory samples/Calculator/deploy
+
+Use Project..Settings..Debug and check the path to the executable, check also the
+path to the working directory. Alter these to match your configuration.
+
+Run the project, and your SCA service should be called.
+
+Building the WSClient project
+=============================
+
+Modify the services.xml file, and make the SCA system root defined
+within it comply with your SCA system root.
+
+Set the active project to WSClient and build all. 
+
+The last step of the build will run a wsdeploy script, which 
+tries to use the environment variable AXIS2C_HOME, to create 
+a services/Calculator directory, and deploy the services.xml file.
+The dll which resolves SCA services is called 
+tuscany_sca_ws_service.dll - this will be copied to the axis
+tree by the same script file.
+
+To run the axis2 http server, go to the %AXIS2C_HOME%/bin
+directory, and launch the executable.
+
+Now verify that the path to the WSClient executable makes sense
+in your project settings, and run the project.
+
+
+Note
+====
+
+It can be quite hard to debug services which are invoked through axis, as the 
+dll including the service is loaded on call.	One useful technique is to
+load the axis http server in visual studio (create an empty project and make
+the executable path point to axis2_http_server.exe).
+Now use the Project..Settings..Debug..Addition DLLs option and add 
+services/Calculator/tuscany_sca_ws_service.dll.
+You will now be able to set breakpoints in the dll (Axis2EntryPointService_invoke
+is a good place - in Axis2EntryPointService_skeleton.cpp).
+Run your WSclient from another debugger, and the server debugger will break 
+on the service code. 
