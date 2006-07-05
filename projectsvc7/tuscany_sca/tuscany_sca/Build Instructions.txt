@@ -1,0 +1,30 @@
+Tuscany SCA Build Instructions
+==============================
+
+1) Set the environment variable TUSCANY_SDOCPP to the path of an SDO driver
+
+2) Set the environment variable AXIS2C_HOME to the path of Axis2C (Version 0.92)
+
+NOTE: The environment variables must be set BEFORE launching Visual Studio
+
+3) Rebuild Solution
+
+The output for the build will be in deploy\include, lib and bin
+
+To run the test from a command prompt:
+
+1) Set the environment variable TUSCANY_SCACPP to the location of the built SCA
+   (...tuscany\cpp\sca\deploy)
+
+2) Set the environment variable TUSCANY_SCACPP_SYSTEM_ROOT to the location of the test system
+   ...tuscany\cpp\sca\projects\tuscany_sca\tuscany_sca_test\testSCASystem
+
+3) Add %TUSCANY_SCACPP%\lib and %TUSCANY_SDOCPP%\lib to the PATH
+   (ensure required libraries for SDO are also on the path. e.g. libxml2)
+
+4) cd %TUSCANY_SCACPP%\..\projects\tuscany_sca\tuscany_sca_test\Debug
+
+5) tuscany_sca_test
+
+NOTE: To run the test from the workspace the environment variables must be set 
+      BEFORE launching Visual Studio
