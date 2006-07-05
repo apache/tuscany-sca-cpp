@@ -1,7 +1,12 @@
 deploydir=$(prefix)/samples/Calculator/deploy
 moduledir=$(deploydir)/modules/CalculatorModule
 
-BUILT_SOURCES = CalculatorImpl_CalculatorService_Proxy.cpp CalculatorImpl_CalculatorService_Wrapper.cpp
+BUILT_SOURCES = CalculatorImpl_CalculatorService_Proxy.cpp \
+CalculatorImpl_CalculatorService_Wrapper.cpp \
+CalculatorImpl_CalculatorDivideService_Proxy.cpp \
+DivideServiceImpl_DivideService_Proxy.cpp \
+DivideServiceImpl_DivideService_Wrapper.cpp
+
 noinst_HEADERS = *.h
 
 CalculatorImpl_CalculatorService_Proxy.cpp:
@@ -14,7 +19,11 @@ EXTRA_DIST = sca.module.lin Tuscany-model.config *.componentType *.wsdl services
 libCalculatorModule_la_SOURCES = \
 CalculatorImpl.cpp \
 CalculatorImpl_CalculatorService_Proxy.cpp \
-CalculatorImpl_CalculatorService_Wrapper.cpp
+CalculatorImpl_CalculatorService_Wrapper.cpp \
+CalculatorImpl_CalculatorDivideService_Proxy.cpp \
+DivideServiceImpl.cpp \
+DivideServiceImpl_DivideService_Proxy.cpp \
+DivideServiceImpl_DivideService_Wrapper.cpp
 
 libCalculatorModule_la_LIBADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca
 

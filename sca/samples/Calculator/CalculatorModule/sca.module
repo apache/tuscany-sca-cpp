@@ -14,7 +14,15 @@
 
 	<component name="CalculatorServiceComponent">
 		<implementation.cpp dll="Calculator.dll" header="CalculatorImpl.h"></implementation.cpp>
-                <properties> </properties>
+        <properties> </properties>
+		<references>
+	        <v:CalculatorDivideService>DivideServiceComponent/DivideService</v:CalculatorDivideService>
+	    </references>
+	</component>
+        
+	<component name="DivideServiceComponent">
+		<implementation.cpp dll="Calculator.dll" header="DivideServiceImpl.h"></implementation.cpp>
+        <properties> </properties>
 		<references> </references>
 	</component>
         

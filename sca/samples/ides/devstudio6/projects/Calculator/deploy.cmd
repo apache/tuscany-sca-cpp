@@ -18,6 +18,8 @@ copy %sourcePath%\CalculatorModule\*.componentType %destinationPath%\modules\Cal
 copy %sourcePath%\CalculatorModule\sca.module %destinationPath%\modules\CalculatorModule
 copy %sourcePath%\CalculatorModule\Calculator.h %destinationPath%\modules\CalculatorModule
 copy %sourcePath%\CalculatorModule\CalculatorImpl.h %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorModule\DivideService.h %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorModule\DivideServiceImpl.h %destinationPath%\modules\CalculatorModule
 copy %sourcePath%\CalculatorModule\Tuscany-model.config %destinationPath%\modules\CalculatorModule
 copy %sourcePath%\CalculatorModule\Calculator.wsdl %destinationPath%\modules\CalculatorModule
 copy %currentPath%\Calculator\debug\Calculator.dll %destinationPath%\modules\CalculatorModule
