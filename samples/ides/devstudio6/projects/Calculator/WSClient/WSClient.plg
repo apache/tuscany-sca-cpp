@@ -6,61 +6,88 @@
 --------------------Configuration: Calculator - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP94.tmp" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPAE.tmp" with contents
 [
-/nologo /MTd /W3 /Gm /GX /ZI /Od /I "c:\apache\apache_checkout\cpp\sdo\deploy/include" /I "c:\apache\apache_checkout\cpp\sca\deploy/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "CALCULATOR_EXPORTS" /Fp"Debug/Calculator.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"C:\apache\apache_checkout\cpp\sca\samples\Calculator\CalculatorModule\CalculatorImpl.cpp"
-"C:\apache\apache_checkout\cpp\sca\samples\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Proxy.cpp"
-"C:\apache\apache_checkout\cpp\sca\samples\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.cpp"
+/nologo /MTd /W3 /Gm /GX /ZI /Od /I "D:\tuscanysvn\cpp\sdo\deploy/include" /I "d:\tuscanysvn\cpp\sca\deploy/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "CALCULATOR_EXPORTS" /Fp"Debug/Calculator.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\tuscanysvn\cpp\sca\samples\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.cpp"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP94.tmp" 
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP95.tmp" with contents
+Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPAE.tmp" 
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPAF.tmp" with contents
 [
-kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"Debug/Calculator.pdb" /debug /machine:I386 /out:"Debug/Calculator.dll" /implib:"Debug/Calculator.lib" /pdbtype:sept /libpath:"c:\apache\apache_checkout\cpp\sdo\deploy/lib" /libpath:"c:\apache\apache_checkout\cpp\sca\deploy/lib" 
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"Debug/Calculator.pdb" /debug /machine:I386 /out:"Debug/Calculator.dll" /implib:"Debug/Calculator.lib" /pdbtype:sept /libpath:"D:\tuscanysvn\cpp\sdo\deploy/lib" /libpath:"d:\tuscanysvn\cpp\sca\deploy/lib" 
 .\Debug\CalculatorImpl.obj
 .\Debug\CalculatorImpl_CalculatorService_Proxy.obj
 .\Debug\CalculatorImpl_CalculatorService_Wrapper.obj
+.\Debug\DivideServiceImpl.obj
+.\Debug\DivideServiceImpl_DivideService_Proxy.obj
+.\Debug\DivideServiceImpl_DivideService_Wrapper.obj
+.\Debug\CalculatorImpl_CalculatorDivideService_Proxy.obj
 ]
-Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP95.tmp"
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPAF.tmp"
 <h3>Output Window</h3>
 Compiling...
-CalculatorImpl.cpp
-CalculatorImpl_CalculatorService_Proxy.cpp
-CalculatorImpl_CalculatorService_Wrapper.cpp
+CalculatorImpl_CalculatorDivideService_Proxy.cpp
 Linking...
    Creating library Debug/Calculator.lib and object Debug/Calculator.exp
+<h3>
+--------------------Configuration: Client - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB3.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/Calc.pdb" /debug /machine:I386 /out:"Debug/Calc.exe" /pdbtype:sept /libpath:"D:\tuscanysvn\cpp\sdo\deploy/lib" /libpath:"d:\tuscanysvn\cpp\sca\deploy/lib" 
+.\Debug\Calc.obj
+\tuscanysvn\cpp\sca\samples\ides\devstudio6\projects\Calculator\Calculator\Debug\Calculator.lib
+]
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB3.tmp"
+<h3>Output Window</h3>
+Linking...
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB4.bat" with contents
+[
+@echo off
+..\deploy.cmd
+]
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB4.bat"
+
+D:\tuscanysvn\cpp\sca\samples\ides\devstudio6\projects\Calculator\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.componentType
+D:\tuscanysvn\cpp\sca\samples\ides\devstudio6\projects\Calculator\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.componentType
+        2 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
 <h3>
 --------------------Configuration: WSClient - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP99.tmp" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB5.tmp" with contents
 [
-/nologo /MLd /W3 /Gm /GX /ZI /Od /I "c:\apache\apache_checkout\cpp\sdo\deploy/include" /I "c:\axis\axis2c_92\axis2c-bin-0.92-win32/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/WSClient.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"C:\apache\apache_checkout\cpp\sca\samples\Calculator\WSClient\axis2_Calculator_stub.cpp"
-"C:\apache\apache_checkout\cpp\sca\samples\Calculator\WSClient\Calculator_Client.cpp"
-]
-Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP99.tmp" 
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP9A.tmp" with contents
-[
-kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/WSClient.pdb" /debug /machine:I386 /out:"Debug/WSClient.exe" /pdbtype:sept /libpath:"c:\apache\apache_checkout\cpp\sca\deploy\lib" /libpath:"c:\apache\apache_checkout\cpp\sdo\deploy\lib" /libpath:"c:\axis\axis2c_92\axis2c-bin-0.92-win32\lib" 
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/WSClient.pdb" /debug /machine:I386 /out:"Debug/WSClient.exe" /pdbtype:sept /libpath:"d:\tuscanysvn\cpp\sca\deploy\lib" /libpath:"D:\tuscanysvn\cpp\sdo\deploy\lib" /libpath:"D:\axis2c-bin-0.92-win32\lib" 
 .\Debug\axis2_Calculator_stub.obj
 .\Debug\Calculator_Client.obj
-\apache\apache_checkout\cpp\sca\samples\ides\devstudio6\projects\Calculator\Calculator\Debug\Calculator.lib
+\tuscanysvn\cpp\sca\samples\ides\devstudio6\projects\Calculator\Calculator\Debug\Calculator.lib
 ]
-Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP9A.tmp"
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB5.tmp"
 <h3>Output Window</h3>
-Compiling...
-axis2_Calculator_stub.cpp
-Calculator_Client.cpp
 Linking...
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP9C.bat" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB6.bat" with contents
 [
 @echo off
 ..\wsdeploy.cmd
 ]
-Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP9C.bat"
+Creating command line "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSPB6.bat"
 
-C:\apache\apache_checkout\cpp\sca\samples\ides\devstudio6\projects\Calculator\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.componentType
+D:\tuscanysvn\cpp\sca\samples\ides\devstudio6\projects\Calculator\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.componentType
+D:\tuscanysvn\cpp\sca\samples\ides\devstudio6\projects\Calculator\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.componentType
+        2 file(s) copied.
         1 file(s) copied.
         1 file(s) copied.
         1 file(s) copied.
@@ -70,8 +97,9 @@ C:\apache\apache_checkout\cpp\sca\samples\ides\devstudio6\projects\Calculator\..
         1 file(s) copied.
         1 file(s) copied.
         1 file(s) copied.
-The system cannot find the file specified.
-The system cannot find the file specified.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
 
 
 
