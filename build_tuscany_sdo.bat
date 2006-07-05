@@ -28,34 +28,35 @@ set VERSION=0.1.incubating-M1
 set SRC_PACKAGE=%PACKAGE%-%VERSION%-src
 set BIN_PACKAGE=%PACKAGE%-%VERSION%-bin
 
-set FROM_DIR=%cd%
-set TO_SRC=%FROM_DIR%
-
-set TO_BIN=%FROM_DIR%
+set FROM_DIR=%cd%\sdo
+set TO_SRC=%cd%
+set TO_BIN=%cd%
 
 echo Copying SDO source... %TO_SRC%\%SRC_PACKAGE%
 
 if not exist %TO_SRC% mkdir %TO_SRC%
 rmdir /S /Q %TO_SRC%\%SRC_PACKAGE%
 if not exist %TO_SRC%\%SRC_PACKAGE% mkdir %TO_SRC%\%SRC_PACKAGE%
-if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projects 
+if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projects
+if not exist %TO_SRC%\%SRC_PACKAGE%\projectsvc7 mkdir %TO_SRC%\%SRC_PACKAGE%\projectsvc7 
 if not exist %TO_SRC%\%SRC_PACKAGE%\runtime mkdir %TO_SRC%\%SRC_PACKAGE%\runtime
 if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
  
-xcopy /t /e  %FROM_DIR%\sdo\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
-xcopy/s %FROM_DIR%\sdo\runtime %TO_SRC%\%SRC_PACKAGE%\runtime 
+xcopy /t /e  %FROM_DIR%\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
+xcopy/s %FROM_DIR%\runtime %TO_SRC%\%SRC_PACKAGE%\runtime 
+xcopy/s %FROM_DIR%\projectsvc7 %TO_SRC%\%SRC_PACKAGE%\projectsvc7
 
-xcopy/s %FROM_DIR%\sdo\projects %TO_SRC%\%SRC_PACKAGE%\projects
-copy %FROM_DIR%\sdo\INSTALL   %TO_SRC%\%SRC_PACKAGE%
-copy %FROM_DIR%\sdo\LICENSE   %TO_SRC%\%SRC_PACKAGE%
-copy %FROM_DIR%\sdo\COPYING   %TO_SRC%\%SRC_PACKAGE%
-copy %FROM_DIR%\sdo\NOTICE    %TO_SRC%\%SRC_PACKAGE%
-copy %FROM_DIR%\sdo\README    %TO_SRC%\%SRC_PACKAGE%
-copy %FROM_DIR%\sdo\readme.txt  %TO_SRC%\%SRC_PACKAGE%
+xcopy/s %FROM_DIR%\projects %TO_SRC%\%SRC_PACKAGE%\projects
+copy %FROM_DIR%\INSTALL   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\LICENSE   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\COPYING   %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\NOTICE    %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\README    %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\readme.txt  %TO_SRC%\%SRC_PACKAGE%
 
 echo Building SDO....
 
-cd %FROM_DIR%\sdo\projects\tuscany_sdo
+cd %FROM_DIR%\projects\tuscany_sdo
 
 call build
 
@@ -65,13 +66,13 @@ if not exist %TO_BIN% mkdir %TO_BIN%
 rmdir /S /Q %TO_BIN%\%BIN_PACKAGE%
 if not exist %TO_BIN%\%BIN_PACKAGE% mkdir %TO_BIN%\%BIN_PACKAGE%
 
-xcopy/s %FROM_DIR%\sdo\deploy %TO_BIN%\%BIN_PACKAGE%
-copy %FROM_DIR%\sdo\INSTALL   %TO_BIN%\%BIN_PACKAGE%
-copy %FROM_DIR%\sdo\LICENSE   %TO_BIN%\%BIN_PACKAGE%
-copy %FROM_DIR%\sdo\COPYING   %TO_BIN%\%BIN_PACKAGE%
-copy %FROM_DIR%\sdo\NOTICE    %TO_BIN%\%BIN_PACKAGE%
-copy %FROM_DIR%\sdo\README    %TO_BIN%\%BIN_PACKAGE%
-copy %FROM_DIR%\sdo\readme.txt   %TO_BIN%\%BIN_PACKAGE%
+xcopy/s %FROM_DIR%\deploy %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\INSTALL   %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\LICENSE   %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\COPYING   %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\NOTICE    %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\README    %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\readme.txt   %TO_BIN%\%BIN_PACKAGE%
 
 :end
 echo SDO Build complete.
