@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.00"
+	Name="sdo_samples"
+	SccProjectName=""
+	SccLocalPath="">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\..\..\..\runtime\core\samples\Debug"
+			IntermediateDirectory=".\..\..\..\runtime\core\samples\Debug"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\..\..\deploy\include"
+				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				PrecompiledHeaderFile=".\..\..\..\runtime\core\samples\Debug/sdo_samples.pch"
+				AssemblerListingLocation=".\..\..\..\runtime\core\samples\Debug/"
+				ObjectFile=".\..\..\..\runtime\core\samples\Debug/"
+				ProgramDataBaseFileName=".\..\..\..\runtime\core\samples\Debug/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="tuscany_sdo.lib odbc32.lib odbccp32.lib"
+				OutputFile="..\..\..\runtime\core\samples\Debug/samples.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile=".\..\..\..\runtime\core\samples\Debug/samples.pdb"
+				SubSystem="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\..\..\..\runtime\core\samples\Debug/sdo_samples.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="copy ..\..\..\runtime\core\samples\*.xsd ..\..\..\runtime\core\samples\Debug
+copy ..\..\..\runtime\core\samples\*.xml ..\..\..\runtime\core\samples\Debug
+copy ..\..\..\deploy\bin\*.dll ..\..\..\runtime\core\samples\Debug
+copy ..\..\..\deploy\bin\*.pdb ..\..\..\runtime\core\samples\Debug
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\..\..\..\runtime\core\samples\Release"
+			IntermediateDirectory=".\..\..\..\runtime\core\samples\Release"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\..\include"
+				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE"
+				StringPooling="TRUE"
+				RuntimeLibrary="4"
+				EnableFunctionLevelLinking="TRUE"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\..\..\..\runtime\core\samples\Release/sdo_samples.pch"
+				AssemblerListingLocation=".\..\..\..\runtime\core\samples\Release/"
+				ObjectFile=".\..\..\..\runtime\core\samples\Release/"
+				ProgramDataBaseFileName=".\..\..\..\runtime\core\samples\Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib"
+				OutputFile=".\..\..\..\runtime\core\samples\Release/sdo_samples.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\lib"
+				ProgramDatabaseFile=".\..\..\..\runtime\core\samples\Release/sdo_samples.pdb"
+				SubSystem="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\..\..\..\runtime\core\samples\Release/sdo_samples.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="copy ..\..\..\runtime\core\samples\*.xsd ..\..\..\runtime\core\samples\Release
+copy ..\..\..\runtime\core\samples\*.xml ..\..\..\runtime\core\samples\Release
+copy ..\..\..\runtime\core\samples\*.wsdl ..\..\..\runtime\core\samples\Release
+copy ..\..\..\bin\*.dll ..\..\..\runtime\core\samples\Release
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			<File
+				RelativePath="..\..\..\runtime\core\samples\ChangeSummarySave.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\samples\ObjectCreation.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\samples\Query.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\samples\Substitutes.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\samples\XSDLoading.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\samples\samples.cpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl">
+			<File
+				RelativePath="..\..\..\runtime\core\samples\samples.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
