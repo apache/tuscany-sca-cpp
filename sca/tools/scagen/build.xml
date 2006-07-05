@@ -96,6 +96,11 @@
 <copy todir="${temp.folder}/scagen.jar.bin" failonerror="true">
     <fileset dir="src/" excludes="**/*.java" />
 </copy>
+	
+<copy todir="${temp.folder}/scagen.jar.bin/META-INF" failonerror="true">
+    <fileset dir="META-INF/"/>
+</copy>
+	
 <mkdir dir="${build.result.folder}" />
 <jar jarfile="${build.result.folder}/scagen.jar" basedir="${temp.folder}/scagen.jar.bin">
     <manifest>
