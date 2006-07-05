@@ -33,7 +33,7 @@
                 <![CDATA[<h1>SCA for C++ Tools</h1>]]>
             </doctitle>
         <bottom>
-            <![CDATA[<i>Copyright 2005 The Apache Software Foundation and Copyright IBM Corp. 2005 All Rights Reserved</i>]]></bottom>
+            <![CDATA[<i>Copyright 2005 The Apache Software Foundation or its licensors, as applicable.</i>]]></bottom>
     <group title="C++ Parser" packages="org.apache.tuscany.sca.cpp.tools.common" />
     <group title="SCA Services Generator" packages="org.apache.tuscany.sca.cpp.tools.services" />
     <link offline="true" href="http://java.sun.com/products/jdk/1.2/docs/api/" packagelistLoc="C:\tmp" />
