@@ -103,6 +103,10 @@ SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Proxy.cpp
 # End Source File
 # Begin Source File
@@ -117,10 +121,42 @@ SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorServi
 
 SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.h
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideService.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.h
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.h
+# End Source File
 # End Group
 # Begin Group "Resource Files"
 

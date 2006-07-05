@@ -39,12 +39,12 @@ ALL : "$(OUTDIR)\WSClient.exe"
 
 !ELSE 
 
-ALL : "Calculator - Win32 Release" "$(OUTDIR)\WSClient.exe"
+ALL : "Client - Win32 Release" "Calculator - Win32 Release" "$(OUTDIR)\WSClient.exe"
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"Calculator - Win32 ReleaseCLEAN" 
+CLEAN :"Calculator - Win32 ReleaseCLEAN" "Client - Win32 ReleaseCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
@@ -120,12 +120,12 @@ ALL : "$(OUTDIR)\WSClient.exe"
 
 !ELSE 
 
-ALL : "Calculator - Win32 Debug" "$(OUTDIR)\WSClient.exe"
+ALL : "Client - Win32 Debug" "Calculator - Win32 Debug" "$(OUTDIR)\WSClient.exe"
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"Calculator - Win32 DebugCLEAN" 
+CLEAN :"Calculator - Win32 DebugCLEAN" "Client - Win32 DebugCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
@@ -199,7 +199,7 @@ ALL : $(DS_POSTBUILD_DEP)
 OutDir=.\Debug
 # End Custom Macros
 
-$(DS_POSTBUILD_DEP) : "Calculator - Win32 Debug" "$(OUTDIR)\WSClient.exe"
+$(DS_POSTBUILD_DEP) : "Client - Win32 Debug" "Calculator - Win32 Debug" "$(OUTDIR)\WSClient.exe"
    ..\wsdeploy.cmd
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
@@ -250,6 +250,32 @@ SOURCE=..\..\..\..\..\Calculator\WSClient\Calculator_Client.cpp
 "Calculator - Win32 DebugCLEAN" : 
    cd "..\Calculator"
    $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Debug" RECURSE=1 CLEAN 
+   cd "..\WSClient"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "WSClient - Win32 Release"
+
+"Client - Win32 Release" : 
+   cd "..\Client"
+   $(MAKE) /$(MAKEFLAGS) /F .\Client.mak CFG="Client - Win32 Release" 
+   cd "..\WSClient"
+
+"Client - Win32 ReleaseCLEAN" : 
+   cd "..\Client"
+   $(MAKE) /$(MAKEFLAGS) /F .\Client.mak CFG="Client - Win32 Release" RECURSE=1 CLEAN 
+   cd "..\WSClient"
+
+!ELSEIF  "$(CFG)" == "WSClient - Win32 Debug"
+
+"Client - Win32 Debug" : 
+   cd "..\Client"
+   $(MAKE) /$(MAKEFLAGS) /F .\Client.mak CFG="Client - Win32 Debug" 
+   cd "..\WSClient"
+
+"Client - Win32 DebugCLEAN" : 
+   cd "..\Client"
+   $(MAKE) /$(MAKEFLAGS) /F .\Client.mak CFG="Client - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\WSClient"
 
 !ENDIF 
