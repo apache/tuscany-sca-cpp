@@ -131,6 +131,9 @@ namespace commonj
 
             XMLDocumentPtr createDocument(DataObjectPtr dataObject);
 
+            const TypeImpl* findRoot(DataFactory* df,
+			                                        const char* rootElementURI);
+
             DataFactoryPtr getDataFactory();
         };
         

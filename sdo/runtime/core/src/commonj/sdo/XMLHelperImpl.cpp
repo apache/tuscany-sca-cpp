@@ -98,73 +98,74 @@ namespace commonj
         }
 
 
+        const TypeImpl* XMLHelperImpl::findRoot(DataFactory* df,
+			                                        const char* rootElementURI)
+		{
+            if (rootElementURI  != 0)
+            {
+                return ((DataFactoryImpl*)df)->findTypeImpl
+                    (rootElementURI, "RootType");
+            }
+
+			const TypeList& tl = df->getTypes();
+            for (int i=0;i<tl.size();i++)
+            {
+                if (!strcmp("RootType",tl[i].getName()))
+                {
+                    return ((DataFactoryImpl*)df)->findTypeImpl
+                            (tl[i].getURI(), "RootType");
+                }
+            }
+			return 0;
+		}
+
         XMLDocumentPtr XMLHelperImpl::createDocument(const char* elementname,
                                                      const char* rootElementURI)
         {
             DataFactory* dp = (DataFactory*)getDataFactory();
-            if (dp != 0)
+            if (dp == 0) return 0;
+
+			const TypeImpl* rType = findRoot(dp,rootElementURI);
+            if (rType == 0)
             {
-                const TypeImpl* rType = NULL;
-                if (rootElementURI  != 0)
+				std::string msg("createDocument - cannot find element ");
+                if (elementname != 0) msg += elementname;
+                SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+                msg.c_str());
+			}
+
+            if ((elementname != 0) && (strlen(elementname) != 0))
+            {
+                PropertyImpl* pl = rType->getPropertyImpl(elementname);
+                if (pl == 0)
                 {
-                    rType = ((DataFactoryImpl*)dp)->findTypeImpl
-                        (rootElementURI, "RootType");
-                }
-                else
-                {
-                    const TypeList& tl = dp->getTypes();
-                    for (int i=0;i<tl.size();i++)
-                    {
-                        if (!strcmp("RootType",tl[i].getName()))
-                        {
-                            rType = ((DataFactoryImpl*)dp)->findTypeImpl
-                                (tl[i].getURI(), "RootType");
-                            break;
-                        }
-                    }
-                }
-                if (rType)
-                {
-                    if (elementname && strlen(elementname) != 0)
-                    {
-                        PropertyImpl* pl = rType->getPropertyImpl(elementname);
-                        if (pl != 0)
-                        {
-                            const Type& tp = pl->getType();
-                            DataObjectPtr dob = dp->create(tp);
-                            return new XMLDocumentImpl(dob,
-                                 tp.getURI(), /*tp.getName()*/ elementname);
-                        }
-                        else
-                        {
-                            std::string msg("createDocument - cannot find element ");
-                            msg += elementname;
-                            SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
-                            msg.c_str());
-                        }
-                    }
-                    else
-                    {
-                        const Property& pl = rType->getProperty((unsigned int)0);
-                        const Type& tp = pl.getType();
-                        DataObjectPtr dob = dp->create(tp);
-                           return new XMLDocumentImpl(dob,
-                                  tp.getURI(), /*tp.getName()*/ pl.getName());
-                    }
-                }
-                else
-                {
-                     std::string msg("createDocument - unable to find root type in namespace ");
-                     if (rootElementURI != 0) 
-                         msg += rootElementURI;
-                     else
-                         msg += " NULL";
-                     
+                     std::string msg("createDocument - cannot find element ");
+                     msg += elementname;
                      SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
                      msg.c_str());
-                }
+				}
+
+                const Type& tp = pl->getType();
+                DataObjectPtr dob = dp->create(tp);
+                return new XMLDocumentImpl(dob,
+                     tp.getURI(), /*tp.getName()*/ elementname);
             }
-            return 0;
+            else
+            {
+                const Property& pl = rType->getProperty((unsigned int)0);
+                const Type& tp = pl.getType();
+                DataObjectPtr dob = dp->create(tp);
+                return new XMLDocumentImpl(dob,
+                    tp.getURI(), /*tp.getName()*/ pl.getName());
+            }
+
+			std::string msg("createDocument - unable to find root type in namespace ");
+            if (rootElementURI != 0) 
+                 msg += rootElementURI;
+            else
+                 msg += " NULL";
+            SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+            msg.c_str());
         }
 
         XMLDocumentPtr XMLHelperImpl::createDocument(
