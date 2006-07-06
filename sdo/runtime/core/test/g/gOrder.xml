@@ -1,2 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+
 <order xmlns="orderNS" xsi:type="OrderType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><orderId>1132323800</orderId><status>NONE</status><item><itemId>12</itemId><description>Drummers drumming</description><price>12.99</price><quantity>1</quantity><warehouseId>1</warehouseId></item><item><itemId>3</itemId><description>French Hens</description><price>3.99</price><quantity>2</quantity><warehouseId>1</warehouseId></item><customer xmlns="customerNS"><customerId>1</customerId><name>Graham Charters</name><shipping><street>24 Big Street</street><city>Big City</city><state>Big State</state><zip>Up Your Coat</zip></shipping><payment><accountNo>234234234243</accountNo><bank>Big</bank><securityCode>234</securityCode><amount>2.097e+001</amount></payment></customer></order>
