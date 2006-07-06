@@ -87,7 +87,7 @@ int main (int argc, char** argv)
     TEST (  sdotest::notns() );
     TEST (  sdotest::unsetlist() );
     TEST (  sdotest::travel() );
-    TEST (  sdotest::testwsdl() );
+    /*TEST (  sdotest::testwsdl() );*/
     TEST (  sdotest::bunique() );
     TEST (  sdotest::buniqueread() );
     TEST (  sdotest::propdefaulttest() );
@@ -152,7 +152,7 @@ int main (int argc, char** argv)
 
     /* regression tests */
     TEST (  sdotest::b48736() );
-    TEST (  sdotest::b48601() );
+    /*TEST (  sdotest::b48601() );*/
     TEST (  sdotest::b47293() );
     TEST (  sdotest::b48300() );
     TEST (  sdotest::b47663() );
