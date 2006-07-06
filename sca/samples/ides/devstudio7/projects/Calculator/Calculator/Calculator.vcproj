@@ -139,6 +139,12 @@
 				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.h">
 			</File>
 			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.h">
+			</File>
+			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Proxy.cpp">
 			</File>
 			<File
@@ -149,6 +155,27 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideService.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.h">
 			</File>
 		</Filter>
 		<Filter
