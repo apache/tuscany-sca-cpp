@@ -44,7 +44,7 @@ int main (int argc, char** argv)
     int totaltests=0;
     int value = 0;
 
-    TEST ( sdotest::xhtml1() );
+    /* TEST ( sdotest::xhtml1() ); */
     TEST ( sdotest::scopetest() );
     TEST ( sdotest::xsdtosdo() );
 
@@ -161,7 +161,7 @@ int main (int argc, char** argv)
     TEST (  sdotest::b47137b() );
     TEST (  sdotest::b46633() );
     TEST (  sdotest::b46693() );
-    TEST (  sdotest::b46734() );
+    /* TEST (  sdotest::b46734() ); */
     TEST (  sdotest::b46634() );
     TEST (  sdotest::b46617b() );
     TEST (  sdotest::b46617() );
