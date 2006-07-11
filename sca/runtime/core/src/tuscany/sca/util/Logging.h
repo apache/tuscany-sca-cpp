@@ -22,7 +22,6 @@
 
 #include "tuscany/sca/util/Logger.h"
 
-#ifdef _DEBUG
 #define LOGENTRY(level, methodName) \
 if (Logger::loggingLevel >= level) \
 Logger::log(level, "Entering: " methodName);
@@ -42,20 +41,6 @@ Logger::logArgs(level, message, arg1);
 #define LOGINFO_2(level, message, arg1, arg2) \
 if (Logger::loggingLevel >= level) \
 Logger::logArgs(level, message, arg1, arg2);
-
-#else // Not DEBUG
-
-#define LOGENTRY(level, methodName)
-
-#define LOGEXIT(level, methodName)
-
-#define LOGINFO(level, message)
-
-#define LOGINFO_1(level, message, arg1)
-
-#define LOGINFO_2(level, message, arg1, arg2)
-#endif
-
 
 #define LOGERROR(level, message) \
 if (Logger::loggingLevel >= level) \
