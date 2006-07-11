@@ -41,10 +41,12 @@ if not exist %TO_SRC%\%SRC_PACKAGE%\projects mkdir %TO_SRC%\%SRC_PACKAGE%\projec
 if not exist %TO_SRC%\%SRC_PACKAGE%\projectsvc7 mkdir %TO_SRC%\%SRC_PACKAGE%\projectsvc7 
 if not exist %TO_SRC%\%SRC_PACKAGE%\runtime mkdir %TO_SRC%\%SRC_PACKAGE%\runtime
 if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
+if not exist %TO_SRC%\%SRC_PACKAGE%\doc mkdir %TO_SRC%\%SRC_PACKAGE%\doc
  
 xcopy /t /e  %FROM_DIR%\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
 xcopy/s %FROM_DIR%\runtime %TO_SRC%\%SRC_PACKAGE%\runtime 
 xcopy/s %FROM_DIR%\projectsvc7 %TO_SRC%\%SRC_PACKAGE%\projectsvc7
+xcopy/s %FROM_DIR%\doc %TO_SRC%\%SRC_PACKAGE%\doc
 
 xcopy/s %FROM_DIR%\projects %TO_SRC%\%SRC_PACKAGE%\projects
 copy %FROM_DIR%\INSTALL   %TO_SRC%\%SRC_PACKAGE%
@@ -52,7 +54,7 @@ copy %FROM_DIR%\LICENSE   %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\COPYING   %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\NOTICE    %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\README    %TO_SRC%\%SRC_PACKAGE%
-copy %FROM_DIR%\readme.txt  %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\GettingStarted.html  %TO_SRC%\%SRC_PACKAGE%
 
 echo Building SDO....
 
@@ -65,14 +67,16 @@ echo Installing SDO....
 if not exist %TO_BIN% mkdir %TO_BIN%
 rmdir /S /Q %TO_BIN%\%BIN_PACKAGE%
 if not exist %TO_BIN%\%BIN_PACKAGE% mkdir %TO_BIN%\%BIN_PACKAGE%
+if not exist %TO_BIN%\%BIN_PACKAGE%\doc mkdir %TO_BIN%\%BIN_PACKAGE%\doc
 
 xcopy/s %FROM_DIR%\deploy %TO_BIN%\%BIN_PACKAGE%
+xcopy/s %FROM_DIR%\doc %TO_BIN%\%BIN_PACKAGE%\doc
 copy %FROM_DIR%\INSTALL   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\LICENSE   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\COPYING   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\NOTICE    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\README    %TO_BIN%\%BIN_PACKAGE%
-copy %FROM_DIR%\readme.txt   %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\GettingStarted.html   %TO_BIN%\%BIN_PACKAGE%
 
 :end
 echo SDO Build complete.

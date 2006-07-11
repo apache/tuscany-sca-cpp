@@ -1,10 +1,10 @@
 SUBDIRS = tools runtime
-DIST_SUBDIRS = tools runtime samples
+DIST_SUBDIRS = tools runtime samples doc
 datadir=$(prefix)
 
-data_DATA = INSTALL README LICENSE COPYING NOTICE readme.txt
+data_DATA = INSTALL README LICENSE COPYING NOTICE GettingStarted.html
 nobase_data_DATA = xsd/*.*
-EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE readme.txt scatest.sh xsd
+EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE GettingStarted.html scatest.sh xsd
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`
 	rm -rf `find $(distdir)/ -type d -name .deps`
@@ -14,6 +14,10 @@ install-data-hook:
 	cp -r samples $(prefix)
 	rm -rf `find $(prefix)/samples -type d -name .svn`
 	rm -rf `find $(prefix)/samples -type d -name .deps`
+	rm -rf $(prefix)/doc
+	cp -r doc $(prefix)
+	rm -rf `find $(prefix)/doc -type d -name .svn`
+	rm -rf `find $(prefix)/doc -type d -name .deps`
 	
 	
 bindist: dist

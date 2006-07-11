@@ -14,8 +14,21 @@ Table of Contents
 1. Prereqs
 ==========
 
-Tuscany SDO: Download and install 
-Axis2C: Verion 0.92 available from http://ws.apache.org/axis2/c/download.cgi
+Tuscany SDO: Download and follow the installation instructions
+
+Axis2C: Version 0.92 available from http://ws.apache.org/axis2/c/download.cgi
+Download and follow the installation instructions. Ensure you can run the
+Axis2C samples
+
+Java SDK: Version 1.4 or later available from http://java.sun.com/javase/downloads/index.jsp
+Download and follow the installation instructions. This is required for 
+building and running the SCAGEN code generation tool, which is used when 
+developing Tuscany SCA C++ components
+
+Apache Ant: Version 1.6 or later available from http://ant.apache.org
+Download and follow the installation instructions. This is required for
+building the SCAGEN code generation tool, which is used when developing Tuscany 
+SCA C++ components
 
 
 2. Getting Tuscany SCA working with the binary release on Linux
@@ -38,21 +51,24 @@ c. Build the source
 	 make
 	 make install
 
-     NOTE: If you don't provide a --prefix configure option, it will by default install into
-     /usr/local/tuscany/sca 
+   NOTE: If you don't provide a --prefix configure option, it will by default 
+   install into /usr/local/tuscany/sca 
 
 
 4. Working with the samples on Linux
 ====================================
 
-The samples are installed in <install_prefix>/samples. To build and run the sample see the INSTALL
-documentation in the samples folder.
+The samples are installed in <install_prefix>/samples. To build and run the 
+sample see the INSTALL documentation in the samples folder.
+
 
 5. Getting Tuscany SCA working with the binary release on Windows
 =================================================================
 
 a. Unzip the supplied zip file.
-set the TUSCANY_SCACPP variable to point to the 'deploy' directory in the unzipped directory tree. 
+
+b. Set the TUSCANY_SCACPP environment variable to point to the 
+   tuscany_sca_cpp-0.1.incubating-M1-bin directory that was just unzipped. 
 
 
 6. Getting Tuscany SCA working with the source release on Windows
@@ -65,14 +81,17 @@ b. The following environment variables are required:
      AXIS2C_HOME=<path to axis2c verion 0.92>
    
 c. Build the source
-   The build.cmd file in the projects/tuscany_sca will build and install the sca code to the 'deploy' directory.
-   Note that it assumes the SDO installation is identified already by the TUSCANY_SDOCPP variable.
+   The build.cmd file in the projects/tuscany_sca will build and install the 
+   sca code to the 'deploy' directory.
+   Note that it assumes the SDO installation is identified already by the 
+   TUSCANY_SDOCPP variable.
 
-Alternatively - open the tuscany_sca workspace in Visual Studio 6. You can build projects individually or build the samples to rebuild all the projects.
+Alternatively - open the tuscany_sca workspace in Visual Studio 6. You can 
+build projects individually or build the samples to rebuild all the projects.
 
 
 7. Working with the samples on Windows
 ======================================
 
-The samples are installed in <install_prefix>/samples. To build and run the sample see the INSTALL
-documentation in the samples folder.
+The samples are installed in <install_prefix>/samples. To build and run the 
+sample see the INSTALL documentation in the samples folder.

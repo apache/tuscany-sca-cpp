@@ -11,10 +11,13 @@ Table of Contents
 1. Prereqs
 ==========
 
-libxml2: available from http://xmlsoft.org/downloads.html
-(NOTE: most Linux systems has libxml2 by default. On Windows you need to download and install libxml2)
+Axis2C: Version 0.92 available from http://ws.apache.org/axis2/c/download.cgi
+Download and follow the installation instructions. Ensure you can run the Axis2C samples
 
-Axis2C: Verion 0.92 available from http://ws.apache.org/axis2/c/download.cgi
+libxml2: available from http://xmlsoft.org/downloads.html
+(NOTE: most Linux systems have libxml2 by default. On Windows you need to 
+download and install libxml2. Axis2C 0.92 specifies version 2.6.20, and problems
+have been seen with earlier versions, so we recommend this version)
 
 
 2. Getting Tuscany SDO working with the binary release on Linux
@@ -29,10 +32,10 @@ b. The following environment variables are required:
      LIBXML2_INCLUDE=<path to libxml2 includes>
      LIBXML2_LIB=<path to libxml2 lib>
         Note: If you are using the default installation of libxml2 these are usually:
-          LIBXML2_LIB=/usr/lib
-          LIBXML2_INCLUDE=/usr/include/libxml2
+        LIBXML2_LIB=/usr/lib
+        LIBXML2_INCLUDE=/usr/include/libxml2
 
-     AXIS2C_HOME=<path to axis2c verion 0.92>
+     AXIS2C_HOME=<path to axis2c version 0.92>
    
 c. Build the source
 	 ./configure

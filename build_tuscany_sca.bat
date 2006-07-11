@@ -51,7 +51,7 @@ copy %FROM_DIR%\LICENSE   %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\COPYING   %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\NOTICE    %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\README    %TO_SRC%\%SRC_PACKAGE%
-copy %FROM_DIR%\readme.txt  %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\GettingStarted.html  %TO_SRC%\%SRC_PACKAGE%
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
 xcopy /t /e  %FROM_DIR%\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
@@ -67,6 +67,9 @@ xcopy/s %FROM_DIR%\runtime %TO_SRC%\%SRC_PACKAGE%\runtime
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\tools mkdir %TO_SRC%\%SRC_PACKAGE%\tools 
 xcopy/s %FROM_DIR%\tools %TO_SRC%\%SRC_PACKAGE%\tools
+
+if not exist %TO_SRC%\%SRC_PACKAGE%\doc mkdir %TO_SRC%\%SRC_PACKAGE%\doc 
+xcopy/s %FROM_DIR%\doc %TO_SRC%\%SRC_PACKAGE%\doc
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples mkdir %TO_SRC%\%SRC_PACKAGE%\samples 
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\Calculator mkdir %TO_SRC%\%SRC_PACKAGE%\samples\Calculator
@@ -104,14 +107,16 @@ echo Installing SCA....
 if not exist %TO_BIN% mkdir %TO_BIN%
 rmdir /S /Q %TO_BIN%\%BIN_PACKAGE%
 if not exist %TO_BIN%\%BIN_PACKAGE% mkdir %TO_BIN%\%BIN_PACKAGE%
+if not exist %TO_BIN%\%BIN_PACKAGE%\doc mkdir %TO_BIN%\%BIN_PACKAGE%\doc
 
 xcopy/s %FROM_DIR%\deploy %TO_BIN%\%BIN_PACKAGE%
+xcopy/s %FROM_DIR%\doc %TO_BIN%\%BIN_PACKAGE%\doc
 copy %FROM_DIR%\INSTALL   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\LICENSE   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\COPYING   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\NOTICE    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\README    %TO_BIN%\%BIN_PACKAGE%
-copy %FROM_DIR%\readme.txt   %TO_BIN%\%BIN_PACKAGE%
+copy %FROM_DIR%\GettingStarted.html   %TO_BIN%\%BIN_PACKAGE%
 
 echo Building calculator....
 
