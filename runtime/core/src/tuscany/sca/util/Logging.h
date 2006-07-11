@@ -54,6 +54,8 @@ Logger::logArgs(level, message, arg1, arg2);
 #define LOGINFO_1(level, message, arg1)
 
 #define LOGINFO_2(level, message, arg1, arg2)
+#endif
+
 
 #define LOGERROR(level, message) \
 if (Logger::loggingLevel >= level) \
@@ -66,5 +68,5 @@ Logger::logArgs(level, message, arg1);
 #define LOGERROR_2(level, message, arg1, arg2) \
 if (Logger::loggingLevel >= level) \
 Logger::logArgs(level, message, arg1, arg2);
-#endif
+
 #endif // tuscany_sca_util_logging_h
