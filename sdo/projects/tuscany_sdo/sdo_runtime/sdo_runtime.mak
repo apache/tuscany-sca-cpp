@@ -27,10 +27,10 @@ NULL=nul
 
 !IF  "$(CFG)" == "sdo_runtime - Win32 Release"
 
-OUTDIR=.\..\..\..\runtime\core\Release
-INTDIR=.\..\..\..\runtime\core\Release
+OUTDIR=.\Release
+INTDIR=.\Release
 # Begin Custom Macros
-OutDir=.\..\..\..\runtime\core\Release
+OutDir=.\Release
 # End Custom Macros
 
 ALL : "$(OUTDIR)\tuscany_sdo.dll"
@@ -123,7 +123,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MT /W3 /GX /O2 /I "..\..\..\runtime\core\src" /I "$(LIBXML2_HOME)\include" /I "$(ICONV_HOME)\include" /I "$(ZLIB_HOME)\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /Fp"$(INTDIR)\sdo_runtime.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "..\..\..\runtime\core\src" /I "$(LIBXML2_HOME)\include" /I "$(ICONV_HOME)\include" /I "$(ZLIB_HOME)\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -255,60 +255,21 @@ DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
 ALL : $(DS_POSTBUILD_DEP)
 
 # Begin Custom Macros
-OutDir=.\..\..\..\runtime\core\Release
+OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sdo.dll"
-   copy ..\..\..\runtime\core\Release\tuscany_sdo.dll ..\..\..\bin
-	copy ..\..\..\runtime\core\Release\tuscany_sdo.lib ..\..\..\lib
-	copy ..\..\..\runtime\core\src\commonj\sdo\Property.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectList.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\ChangeSummary.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\CopyHelper.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\DataFactory.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\DataGraph.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\DataObject.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectInstance.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectList.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\DefaultLogWriter.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\EqualityHelper.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\export.h ..\..\..\include\commonj\sdo
-	copy                     ..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\Logger.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\Logging.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\LogWriter.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\PropertyList.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingPointer.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\SDOCheck.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\SDODate.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntime.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntimeException.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\SDOUtils.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\Sequence.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\Setting.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\SettingList.h ..\..\..\include\commonj\sdo
-	copy                     ..\..\..\runtime\core\src\commonj\sdo\Type.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\TypeList.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\XMLDocument.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\XMLHelper.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\XSDHelper.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\SDO.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingObject.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\DASValue.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\TypeImpl.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\TypeDefinitions.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\TypeDefinition.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\PropertyDefinition.h ..\..\..\include\commonj\sdo
-	copy ..\..\..\runtime\core\src\commonj\sdo\SDOString.h ..\..\..\include\commonj\sdo
+   copy Release\tuscany_sdo.dll ..\..\..\deploy\bin
+	copy Release\tuscany_sdo.lib ..\..\..\deploy\lib
+	copy ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_runtime - Win32 Debug"
 
-OUTDIR=.\..\..\..\runtime\core\Debug
-INTDIR=.\..\..\..\runtime\core\Debug
+OUTDIR=.\Debug
+INTDIR=.\Debug
 # Begin Custom Macros
-OutDir=.\..\..\..\runtime\core\Debug
+OutDir=.\Debug
 # End Custom Macros
 
 ALL : "$(OUTDIR)\tuscany_sdo.dll"
@@ -536,14 +497,14 @@ DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
 ALL : $(DS_POSTBUILD_DEP)
 
 # Begin Custom Macros
-OutDir=.\..\..\..\runtime\core\Debug
+OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sdo.dll"
-   copy ..\..\..\runtime\core\Debug\tuscany_sdo.dll ..\..\..\deploy\bin
-	copy ..\..\..\runtime\core\Debug\tuscany_sdo.lib ..\..\..\deploy\lib
+   copy Debug\tuscany_sdo.dll ..\..\..\deploy\bin
+	copy Debug\tuscany_sdo.lib ..\..\..\deploy\lib
 	copy ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
-	copy ..\..\..\runtime\core\Debug\tuscany_sdo.pdb ..\..\..\deploy\bin
+	copy Debug\tuscany_sdo.pdb ..\..\..\deploy\bin
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 

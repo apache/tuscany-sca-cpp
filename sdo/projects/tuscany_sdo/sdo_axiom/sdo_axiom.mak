@@ -35,11 +35,11 @@ OutDir=.\Release
 
 !IF "$(RECURSE)" == "0" 
 
-ALL : "$(OUTDIR)\sdo_axiom.dll"
+ALL : "$(OUTDIR)\tuscany_sdo_axiom.dll"
 
 !ELSE 
 
-ALL : "sdo_runtime - Win32 Release" "$(OUTDIR)\sdo_axiom.dll"
+ALL : "sdo_runtime - Win32 Release" "$(OUTDIR)\tuscany_sdo_axiom.dll"
 
 !ENDIF 
 
@@ -50,15 +50,15 @@ CLEAN :
 !ENDIF 
 	-@erase "$(INTDIR)\sdo_axiom.obj"
 	-@erase "$(INTDIR)\vc60.idb"
-	-@erase "$(OUTDIR)\sdo_axiom.dll"
-	-@erase "$(OUTDIR)\sdo_axiom.exp"
-	-@erase "$(OUTDIR)\sdo_axiom.lib"
+	-@erase "$(OUTDIR)\tuscany_sdo_axiom.dll"
+	-@erase "$(OUTDIR)\tuscany_sdo_axiom.exp"
+	-@erase "$(OUTDIR)\tuscany_sdo_axiom.lib"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_AXIOM_EXPORTS" /Fp"$(INTDIR)\sdo_axiom.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "..\..\..\deploy\include" /I "$(AXIS2C_HOME)\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_AXIOM_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -98,15 +98,31 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_axiom.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\sdo_axiom.pdb" /machine:I386 /out:"$(OUTDIR)\sdo_axiom.dll" /implib:"$(OUTDIR)\sdo_axiom.lib" 
+LINK32_FLAGS=axis2_parser.lib axis2_util.lib axiom.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\tuscany_sdo_axiom.pdb" /machine:I386 /out:"$(OUTDIR)\tuscany_sdo_axiom.dll" /implib:"$(OUTDIR)\tuscany_sdo_axiom.lib" /libpath:"..\..\..\deploy\lib" /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\sdo_axiom.obj" \
-	"..\..\..\runtime\core\Release\tuscany_sdo.lib"
+	"..\sdo_runtime\Release\tuscany_sdo.lib"
 
-"$(OUTDIR)\sdo_axiom.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+"$(OUTDIR)\tuscany_sdo_axiom.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
+
+SOURCE="$(InputPath)"
+DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
+
+ALL : $(DS_POSTBUILD_DEP)
+
+# Begin Custom Macros
+OutDir=.\Release
+# End Custom Macros
+
+$(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Release" "$(OUTDIR)\tuscany_sdo_axiom.dll"
+   copy       Release\tuscany_sdo_axiom.dll           ..\..\..\deploy\bin
+	copy        Release\tuscany_sdo_axiom.lib           ..\..\..\deploy\lib
+	copy           ..\..\..\runtime\core\sdo_axiom\sdo_axiom.h           ..\..\..\deploy\include
+	copy           ..\..\..\runtime\core\sdo_axiom\sdo_axiom_export.h           ..\..\..\deploy\include
+	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_axiom - Win32 Debug"
 
@@ -144,7 +160,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MTd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /I "$(AXIS2C_HOME)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_AXIOM_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /I "$(AXIS2C_HOME)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_AXIOM_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -187,7 +203,7 @@ LINK32=link.exe
 LINK32_FLAGS=axis2_parser.lib axis2_util.lib axiom.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\tuscany_sdo_axiom.pdb" /debug /machine:I386 /out:"$(OUTDIR)\tuscany_sdo_axiom.dll" /implib:"$(OUTDIR)\tuscany_sdo_axiom.lib" /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\sdo_axiom.obj" \
-	"..\..\..\runtime\core\Debug\tuscany_sdo.lib"
+	"..\sdo_runtime\Debug\tuscany_sdo.lib"
 
 "$(OUTDIR)\tuscany_sdo_axiom.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -204,11 +220,12 @@ OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\tuscany_sdo_axiom.dll"
-   copy       Debug\tuscany_sdo_axiom.dll       ..\..\..\deploy\bin
-	copy       Debug\tuscany_sdo_axiom.pdb       ..\..\..\deploy\bin
-	copy       Debug\tuscany_sdo_axiom.lib       ..\..\..\deploy\lib
-	copy       ..\..\..\runtime\core\sdo_axiom\sdo_axiom.h       ..\..\..\deploy\include
-	copy       ..\..\..\runtime\core\sdo_axiom\sdo_axiom_export.h       ..\..\..\deploy\include
+   copy           Debug\tuscany_sdo_axiom.dll           ..\..\..\deploy\bin
+	copy           Debug\tuscany_sdo_axiom.pdb           ..\..\..\deploy\bin
+	copy           Debug\tuscany_sdo_axiom.lib           ..\..\..\deploy\lib
+	copy           ..\..\..\runtime\core\sdo_axiom\sdo_axiom.h           ..\..\..\deploy\include
+	copy           ..\..\..\runtime\core\sdo_axiom\sdo_axiom_export.h           ..\..\..\deploy\include
+	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
 

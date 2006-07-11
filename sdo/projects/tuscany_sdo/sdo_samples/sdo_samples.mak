@@ -27,10 +27,10 @@ NULL=nul
 
 !IF  "$(CFG)" == "sdo_samples - Win32 Release"
 
-OUTDIR=.\..\..\..\runtime\core\samples\Release
-INTDIR=.\..\..\..\runtime\core\samples\Release
+OUTDIR=.\Release
+INTDIR=.\Release
 # Begin Custom Macros
-OutDir=.\..\..\..\runtime\core\samples\Release
+OutDir=.\Release
 # End Custom Macros
 
 !IF "$(RECURSE)" == "0" 
@@ -61,7 +61,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\..\..\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"$(INTDIR)\sdo_samples.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /I "..\..\..\deploy\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -99,7 +99,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_samples.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\sdo_samples.pdb" /machine:I386 /out:"$(OUTDIR)\sdo_samples.exe" /libpath:"..\..\..\lib" 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\sdo_samples.pdb" /machine:I386 /out:"$(OUTDIR)\sdo_samples.exe" /libpath:"..\..\..\deploy\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\ChangeSummarySave.obj" \
 	"$(INTDIR)\ObjectCreation.obj" \
@@ -107,7 +107,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\samples.obj" \
 	"$(INTDIR)\Substitutes.obj" \
 	"$(INTDIR)\XSDLoading.obj" \
-	"..\..\..\runtime\core\Release\tuscany_sdo.lib"
+	"..\sdo_runtime\Release\tuscany_sdo.lib"
 
 "$(OUTDIR)\sdo_samples.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -120,22 +120,22 @@ DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
 ALL : $(DS_POSTBUILD_DEP)
 
 # Begin Custom Macros
-OutDir=.\..\..\..\runtime\core\samples\Release
+OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Release" "$(OUTDIR)\sdo_samples.exe"
    copy ..\..\..\runtime\core\samples\*.xsd ..\..\..\runtime\core\samples\Release
 	copy ..\..\..\runtime\core\samples\*.xml ..\..\..\runtime\core\samples\Release
 	copy ..\..\..\runtime\core\samples\*.wsdl ..\..\..\runtime\core\samples\Release
-	copy ..\..\..\bin\*.dll ..\..\..\runtime\core\samples\Release
+	copy ..\..\..\deploy\bin\*.dll ..\..\..\runtime\core\samples\Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_samples - Win32 Debug"
 
-OUTDIR=.\..\..\..\runtime\core\samples\Debug
-INTDIR=.\..\..\..\runtime\core\samples\Debug
+OUTDIR=.\Debug
+INTDIR=.\Debug
 # Begin Custom Macros
-OutDir=.\..\..\..\runtime\core\samples\Debug
+OutDir=.\Debug
 # End Custom Macros
 
 !IF "$(RECURSE)" == "0" 
@@ -169,7 +169,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -215,7 +215,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\samples.obj" \
 	"$(INTDIR)\Substitutes.obj" \
 	"$(INTDIR)\XSDLoading.obj" \
-	"..\..\..\runtime\core\Debug\tuscany_sdo.lib"
+	"..\sdo_runtime\Debug\tuscany_sdo.lib"
 
 "$(OUTDIR)\samples.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -228,7 +228,7 @@ DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
 ALL : $(DS_POSTBUILD_DEP)
 
 # Begin Custom Macros
-OutDir=.\..\..\..\runtime\core\samples\Debug
+OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\samples.exe"
@@ -236,6 +236,7 @@ $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\samples.exe"
 	copy ..\..\..\runtime\core\samples\*.xml ..\..\..\runtime\core\samples\Debug
 	copy ..\..\..\deploy\bin\*.dll ..\..\..\runtime\core\samples\Debug
 	copy ..\..\..\deploy\bin\*.pdb ..\..\..\runtime\core\samples\Debug
+	copy ..\..\..\runtime\core\samples\*.wsdl ..\..\..\runtime\core\samples\Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
@@ -290,24 +291,24 @@ SOURCE=..\..\..\runtime\core\samples\XSDLoading.cpp
 !IF  "$(CFG)" == "sdo_samples - Win32 Release"
 
 "sdo_runtime - Win32 Release" : 
-   cd "\apache\apache_checkout\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
+   cd "..\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Release" 
    cd "..\sdo_samples"
 
 "sdo_runtime - Win32 ReleaseCLEAN" : 
-   cd "\apache\apache_checkout\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
+   cd "..\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Release" RECURSE=1 CLEAN 
    cd "..\sdo_samples"
 
 !ELSEIF  "$(CFG)" == "sdo_samples - Win32 Debug"
 
 "sdo_runtime - Win32 Debug" : 
-   cd "\apache\apache_checkout\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
+   cd "..\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Debug" 
    cd "..\sdo_samples"
 
 "sdo_runtime - Win32 DebugCLEAN" : 
-   cd "\apache\apache_checkout\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
+   cd "..\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\sdo_samples"
 
