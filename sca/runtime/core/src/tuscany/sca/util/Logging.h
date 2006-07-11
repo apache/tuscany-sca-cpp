@@ -43,6 +43,18 @@ Logger::logArgs(level, message, arg1);
 if (Logger::loggingLevel >= level) \
 Logger::logArgs(level, message, arg1, arg2);
 
+#else // Not DEBUG
+
+#define LOGENTRY(level, methodName)
+
+#define LOGEXIT(level, methodName)
+
+#define LOGINFO(level, message)
+
+#define LOGINFO_1(level, message, arg1)
+
+#define LOGINFO_2(level, message, arg1, arg2)
+
 #define LOGERROR(level, message) \
 if (Logger::loggingLevel >= level) \
 Logger::log(level, message);
@@ -54,19 +66,5 @@ Logger::logArgs(level, message, arg1);
 #define LOGERROR_2(level, message, arg1, arg2) \
 if (Logger::loggingLevel >= level) \
 Logger::logArgs(level, message, arg1, arg2);
-#else // Not DEBUG
-#define LOGENTRY(level, methodName)
-
-#define LOGEXIT(level, methodName)
-
-#define LOGINFO(level, message)
-
-#define LOGINFO_1(level, message, arg1)
-
-#define LOGINFO_2(level, message, arg1, arg2)
-#define LOGERROR(level, message)
-#define LOGERROR_1(level, message, arg1)
-#define LOGERROR_2(level, message, arg1, arg2)
-
 #endif
 #endif // tuscany_sca_util_logging_h

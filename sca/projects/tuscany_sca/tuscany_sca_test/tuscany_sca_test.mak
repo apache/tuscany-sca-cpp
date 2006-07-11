@@ -119,6 +119,7 @@ OutDir=.\Release
 $(DS_POSTBUILD_DEP) : "tuscany_sca_ws_service - Win32 Release" "tuscany_sca_test_MyValue - Win32 Release" "tuscany_sca_test_CustomerInfo - Win32 Release" "tuscany_sca - Win32 Release" "$(OUTDIR)\tuscany_sca_test.exe"
    copy ..\tuscany_sca_test_MyValue\Release\MyValue.dll testSCASystem\modules\MyValueServiceModule
 	copy ..\tuscany_sca_test_CustomerInfo\Release\CustomerInfo.dll testSCASystem\modules\MyValueServiceModule
+	copy..\tuscany_sca\Release\*.dll Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_test - Win32 Debug"
