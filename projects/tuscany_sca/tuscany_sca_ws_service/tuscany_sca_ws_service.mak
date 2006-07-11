@@ -99,7 +99,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\tuscany_sca_ws_service.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib axis2_util.lib axis2_om.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\tuscany_sca_ws_service.pdb" /machine:I386 /out:"$(OUTDIR)\tuscany_sca_ws_service.dll" /implib:"$(OUTDIR)\tuscany_sca_ws_service.lib" /libpath:"..\..\..\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
+LINK32_FLAGS=axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\tuscany_sca_ws_service.pdb" /machine:I386 /out:"$(OUTDIR)\tuscany_sca_ws_service.dll" /implib:"$(OUTDIR)\tuscany_sca_ws_service.lib" /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\Axis2EntryPointService_skeleton.obj" \
 	"$(INTDIR)\Axis2Utils.obj" \

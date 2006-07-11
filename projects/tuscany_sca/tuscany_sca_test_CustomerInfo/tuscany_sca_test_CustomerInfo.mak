@@ -100,7 +100,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\tuscany_sca_test_CustomerInfo.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\CustomerInfo.pdb" /machine:I386 /out:"$(OUTDIR)\CustomerInfo.dll" /implib:"$(OUTDIR)\CustomerInfo.lib" /libpath:"..\..\..\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\CustomerInfo.pdb" /machine:I386 /out:"$(OUTDIR)\CustomerInfo.dll" /implib:"$(OUTDIR)\CustomerInfo.lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"..\..\..\deploy\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\CustomerInfoImpl.obj" \
 	"$(INTDIR)\CustomerInfoImpl_CustomerInfoService_Proxy.obj" \
