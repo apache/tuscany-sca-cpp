@@ -16,12 +16,46 @@ endorsed by the ASF.
 
 
 Getting Started
----------------
+===============
 
-Please read the INSTALL information.
+Please read the GettingStarted.html file or go straight to the installation 
+instructions found in the INSTALL file.
 
-Please also read the readme.txt for information on current features supported
-and restrictions in the current implementation.
+
+About Tuscany SCA C++
+=====================
+
+Tuscany SCA C++ provides a runtime implementation for the Service Component
+Architecture 0.9 specification, written in C++ and will currently support C++
+component implementation types. This is not yet a complete implementation and
+known restrictions are described below.
+
+Supported SCA Assembly Model features
+  *  All features are supported unless listed under the known restrictions
+     below. See SCA Assembly Model specification.
+
+Supported language bindings
+  * Component implementations written in C++. See SCA Client and
+    Implementation Model specification.
+  * Component interfaces described by C++ classes. See SCA Client and
+    Implementation Model specification.
+
+Supported external service and entry point bindings
+  * The web service binding is supported. This implementation will support
+    web services which using document literal SOAP bindings conforming to the
+    WS-I basic profile (rpc/encoded is not yet supported).
+
+Known restrictions
+  * Subsystem wiring, entry points and external services are not supported.
+  * Local service interfaces cannot use overloaded operations (the SCA
+    specification limits remote service interfaces to not using overloaded
+	operations).
+  * Each WSDL definition for a web service binding must be in a single WSDL
+    document.
+  * No load time validation of the deployed SCA application (run time validation
+    only).
+  * No metadata API.
+
 
 
 
