@@ -121,15 +121,15 @@ namespace commonj
                 {
                     elementURI = root->getType().getURI();
                 }
-                SDOString elementName = doc->getRootElementName();
-                if (elementName.empty())
+                SDOXMLString elementName = doc->getRootElementName();
+                if (elementName.isNull() || elementName.equals(""))
                 {
                     elementName = root->getType().getName();
                     elementName = elementName.toLower(0,1);
                     writeXSIType = true;
                 }
                 
-                writeDO(root, elementURI, elementName.c_str(), true, true);
+                writeDO(root, elementURI, elementName, true, true);
             }
             rc = xmlTextWriterEndDocument(writer);
             if (rc < 0) {
