@@ -27,7 +27,7 @@ namespace sdo{
 
 const unsigned int  SdoRuntime::major = 0;
 const unsigned int  SdoRuntime::minor = 9;
-const unsigned int  SdoRuntime::fix =3;
+const unsigned int  SdoRuntime::fix =4;
 char* SdoRuntime::version = 0;
 
 
