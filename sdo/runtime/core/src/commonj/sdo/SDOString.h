@@ -41,7 +41,7 @@ namespace commonj
       public:
         SDO_API SDOString substr(size_t i = 0, size_t n = std::string::npos) const
         {
-            return SDOString(substr(i, n));
+            return SDOString(string::substr(i, n));
         }
 
         SDO_API SDOString toLower(unsigned int start = 0,
