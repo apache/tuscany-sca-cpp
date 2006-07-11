@@ -198,9 +198,10 @@ $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sca.dll"
 	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core
 	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model
 	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util
+	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws
 	copy Release\tuscany_sca.dll ..\..\..\deploy\bin
 	copy Release\tuscany_sca.lib ..\..\..\deploy\lib
-	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws
+	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "tuscany_sca - Win32 Debug"
