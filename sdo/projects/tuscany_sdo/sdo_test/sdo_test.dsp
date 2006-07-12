@@ -54,7 +54,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\..\deploy\bin\*.dll ..\..\..\runtime\core\test\Release
+PostBuild_Cmds=copy ..\..\..\deploy\bin\*.dll Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
@@ -83,7 +83,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\..\deploy\bin\*.dll ..\..\..\runtime\core\test\Debug	copy ..\..\..\deploy\bin\*.pdb ..\..\..\runtime\core\test\Debug
+PostBuild_Cmds=copy ..\..\..\deploy\bin\*.dll Debug	copy ..\..\..\deploy\bin\*.pdb Debug
 # End Special Build Tool
 
 !ENDIF 
