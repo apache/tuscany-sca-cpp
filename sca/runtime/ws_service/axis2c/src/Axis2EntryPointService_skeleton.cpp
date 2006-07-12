@@ -158,10 +158,13 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                 		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: EntryPoint has no SCA implementation");
                         return 0;
                     }
-                    //char* om_str = NULL;
-                    //om_str = AXIOM_NODE_TO_STRING(node, env);
-                    //if (om_str)
-                    //    printf("Axis2EntryPoint Request OM : %s\n", om_str);
+
+                    char* om_str = NULL;
+                    om_str = AXIOM_NODE_TO_STRING(node, env);
+                    if (om_str)
+                    {
+                        AXIS2_LOG_INFO((env)->log, "Axis2EntryPointService invoke has request OM: %s\n", om_str);
+                    }
 
                     DataObjectPtr inputDataObject = axiomHelper->toSdo(node, entryPointProxy->getDataFactory());
 
@@ -191,10 +194,12 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
 
 					returnNode = axiomHelper->toAxiomNode(outputDataObject);
 						
-                    //om_str = NULL;
-                    //om_str = AXIOM_NODE_TO_STRING(returnNode, env);
-                    //if (om_str)
-                    //    printf("Axis2EntryPoint Response OM : %s\n", om_str);									
+                    om_str = NULL;
+                    om_str = AXIOM_NODE_TO_STRING(returnNode, env);
+                    if (om_str)
+                    {
+                        AXIS2_LOG_INFO((env)->log, "Axis2EntryPointService invoke has response OM : %s\n", om_str);
+                    }
                         
 					AxiomHelper::releaseHelper(axiomHelper);												
 
