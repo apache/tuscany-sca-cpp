@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
+				AdditionalIncludeDirectories="$(TUSCANY_SCACPP),$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -77,6 +77,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="$(TUSCANY_SCACPP),$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="4"
@@ -93,10 +94,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib"
 				OutputFile=".\Release/WSClient.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)\lib,$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
 				ProgramDatabaseFile=".\Release/WSClient.pdb"
 				SubSystem="1"/>
 			<Tool

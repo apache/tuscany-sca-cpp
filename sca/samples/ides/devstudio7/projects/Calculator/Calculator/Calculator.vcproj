@@ -80,9 +80,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;CALCULATOR_EXPORTS"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Release/Calculator.pch"
@@ -96,10 +97,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib"
 				OutputFile=".\Release/Calculator.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
 				ProgramDatabaseFile=".\Release/Calculator.pdb"
 				ImportLibrary=".\Release/Calculator.lib"/>
 			<Tool
@@ -185,6 +187,11 @@
 				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\Calculator.wsdl">
 				<FileConfiguration
 					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
 					<Tool
 						Name="VCCustomBuildTool"/>
 				</FileConfiguration>

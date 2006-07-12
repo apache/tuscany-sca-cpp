@@ -75,10 +75,12 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="1"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Release/Client.pch"
@@ -92,10 +94,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib"
 				OutputFile=".\Release/Client.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
 				ProgramDatabaseFile=".\Release/Client.pdb"
 				SubSystem="1"/>
 			<Tool
