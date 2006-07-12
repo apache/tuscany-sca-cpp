@@ -80,10 +80,9 @@ b. The following environment variables are required:
      AXIS2C_HOME=<path to axis2c verion 0.92>
    
 c. Build the source
-   The build.cmd file in the projects/tuscany_sca will build and install the 
-   sca code to the 'deploy' directory.
-   Note that it assumes the SDO installation is identified already by the 
-   TUSCANY_SDOCPP variable.
+   > cd <to where you unzipped the source>
+   > build
+  This will build all the projects and put the required output into the 'deploy' directory.
 
 Alternatively - open the tuscany_sca workspace in Visual Studio 6. You can 
 build projects individually or build the samples to rebuild all the projects.
