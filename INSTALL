@@ -78,8 +78,12 @@ a. Unzip the supplied zip file
 b. The following environment variables are required:
      TUSCANY_SDOCPP=<path to installed Tuscany SDO>
      AXIS2C_HOME=<path to axis2c verion 0.92>
-   
-c. Build the source
+     
+c. You must have set up the environment for Microsoft Visual C++ tools. The build command 
+   will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
+   This will be where you installed the compiler.
+      
+d. Build the source
    > cd <to where you unzipped the source>
    > build
   This will build all the projects and put the required output into the 'deploy' directory.
