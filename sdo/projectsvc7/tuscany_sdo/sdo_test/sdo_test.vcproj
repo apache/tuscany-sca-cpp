@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\..\runtime\core\test\Release"
-			IntermediateDirectory=".\..\..\..\runtime\core\test\Release"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -21,15 +21,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\include"
+				AdditionalIncludeDirectories="..\..\..\deploy\include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
-				PrecompiledHeaderFile=".\..\..\..\runtime\core\test\Release/sdo_test.pch"
-				AssemblerListingLocation=".\..\..\..\runtime\core\test\Release/"
-				ObjectFile=".\..\..\..\runtime\core\test\Release/"
-				ProgramDataBaseFileName=".\..\..\..\runtime\core\test\Release/"
+				PrecompiledHeaderFile=".\Release/sdo_test.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
@@ -39,18 +39,18 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib"
-				OutputFile=".\..\..\..\runtime\core\test\Release/sdo_test.exe"
+				OutputFile=".\Release/sdo_test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib"
-				ProgramDatabaseFile=".\..\..\..\runtime\core\test\Release/sdo_test.pdb"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib"
+				ProgramDatabaseFile=".\Release/sdo_test.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
 				TypeLibraryName=".\..\..\..\runtime\core\test\Release/sdo_test.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\bin\*.dll ..\..\..\runtime\core\test\Release"/>
+				CommandLine="copy ..\..\..\deploy\bin\*.dll Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -66,8 +66,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\..\runtime\core\test\Debug"
-			IntermediateDirectory=".\..\..\..\runtime\core\test\Debug"
+			OutputDirectory=".\Debug"
+			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -80,10 +80,10 @@
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\..\..\runtime\core\test\Debug/sdo_test.pch"
-				AssemblerListingLocation=".\..\..\..\runtime\core\test\Debug/"
-				ObjectFile=".\..\..\..\runtime\core\test\Debug/"
-				ProgramDataBaseFileName=".\..\..\..\runtime\core\test\Debug/"
+				PrecompiledHeaderFile=".\Debug/sdo_test.pch"
+				AssemblerListingLocation=".\Debug/"
+				ObjectFile=".\Debug/"
+				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"
@@ -94,20 +94,20 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="tuscany_sdo.lib odbc32.lib odbccp32.lib"
-				OutputFile=".\..\..\..\runtime\core\test\Debug/sdo_test.exe"
+				OutputFile=".\Debug/sdo_test.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="..\..\..\deploy\lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\..\..\..\runtime\core\test\Debug/sdo_test.pdb"
+				ProgramDatabaseFile=".\Debug/sdo_test.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
 				TypeLibraryName=".\..\..\..\runtime\core\test\Debug/sdo_test.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\deploy\bin\*.dll ..\..\..\runtime\core\test\Debug
-copy ..\..\..\deploy\bin\*.pdb ..\..\..\runtime\core\test\Debug
+				CommandLine="copy ..\..\..\deploy\bin\*.dll Debug
+copy ..\..\..\deploy\bin\*.pdb Debug
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

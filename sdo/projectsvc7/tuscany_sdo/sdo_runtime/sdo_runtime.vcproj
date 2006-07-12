@@ -25,10 +25,10 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SDO_EXPORTS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\..\..\..\runtime\core\Debug/sdo_runtime.pch"
-				AssemblerListingLocation=".\..\..\..\runtime\core\Debug/"
-				ObjectFile=".\..\..\..\runtime\core\Debug/"
-				ProgramDataBaseFileName=".\..\..\..\runtime\core\Debug/"
+				PrecompiledHeaderFile=".\Debug/sdo_runtime.pch"
+				AssemblerListingLocation=".\Debug/"
+				ObjectFile=".\Debug/"
+				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"
@@ -39,13 +39,13 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib libxml2.lib"
-				OutputFile="..\..\..\runtime\core\Debug\tuscany_sdo.dll"
+				OutputFile=".\Debug\tuscany_sdo.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(LIBXML2_HOME)\lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\..\..\..\runtime\core\Debug/tuscany_sdo.pdb"
-				ImportLibrary=".\..\..\..\runtime\core\Debug/tuscany_sdo.lib"/>
+				ProgramDatabaseFile=".\Debug/tuscany_sdo.pdb"
+				ImportLibrary=".\Debug/tuscany_sdo.lib"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="_DEBUG"
@@ -63,10 +63,11 @@ if not exist ..\..\..\deploy\include mkdir ..\..\..\deploy\include
 if not exist ..\..\..\deploy\include\commonj  mkdir ..\..\..\deploy\include\commonj
 if not exist ..\..\..\deploy\include\commonj\sdo mkdir ..\..\..\deploy\include\commonj\sdo
 
-copy ..\..\..\runtime\core\Debug\tuscany_sdo.dll ..\..\..\deploy\bin
-copy ..\..\..\runtime\core\Debug\tuscany_sdo.lib ..\..\..\deploy\lib
+copy .\Debug\tuscany_sdo.dll ..\..\..\deploy\bin
+copy .\Debug\tuscany_sdo.lib ..\..\..\deploy\lib
 copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
-copy ..\..\..\runtime\core\Debug\tuscany_sdo.pdb ..\..\..\deploy\bin"/>
+copy .\Debug\tuscany_sdo.pdb ..\..\..\deploy\bin
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -94,13 +95,13 @@ copy ..\..\..\runtime\core\Debug\tuscany_sdo.pdb ..\..\..\deploy\bin"/>
 				AdditionalIncludeDirectories="..\..\..\runtime\core\src,$(LIBXML2_HOME)\include,$(ICONV_HOME)\include,$(ZLIB_HOME)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SDO_EXPORTS"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\..\..\..\runtime\core\Release/sdo_runtime.pch"
-				AssemblerListingLocation=".\..\..\..\runtime\core\Release/"
-				ObjectFile=".\..\..\..\runtime\core\Release/"
-				ProgramDataBaseFileName=".\..\..\..\runtime\core\Release/"
+				PrecompiledHeaderFile=".\Release/sdo_runtime.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
@@ -126,48 +127,16 @@ copy ..\..\..\runtime\core\Debug\tuscany_sdo.pdb ..\..\..\deploy\bin"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="copyout"
-				CommandLine="copy ..\..\..\runtime\core\Release\tuscany_sdo.dll ..\..\..\bin
-copy ..\..\..\runtime\core\Release\tuscany_sdo.lib ..\..\..\lib
-copy ..\..\..\runtime\core\src\commonj\sdo\Property.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectList.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\ChangeSummary.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\CopyHelper.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\DataFactory.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\DataGraph.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\DataObject.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectInstance.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\DataObjectList.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\DefaultLogWriter.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\EqualityHelper.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\export.h ..\..\..\include\commonj\sdo
-copy                     ..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\Logger.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\Logging.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\LogWriter.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\PropertyList.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingPointer.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\SDOCheck.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\SDODate.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntime.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\SDORuntimeException.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\SDOUtils.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\Sequence.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\Setting.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\SettingList.h ..\..\..\include\commonj\sdo
-copy                     ..\..\..\runtime\core\src\commonj\sdo\Type.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\TypeList.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\XMLDocument.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\XMLHelper.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\XSDHelper.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\SDO.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\RefCountingObject.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\DASValue.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\TypeImpl.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\TypeDefinitions.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\TypeDefinition.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\PropertyDefinition.h ..\..\..\include\commonj\sdo
-copy ..\..\..\runtime\core\src\commonj\sdo\SDOString.h ..\..\..\include\commonj\sdo
+				CommandLine="if not exist ..\..\..\deploy mkdir ..\..\..\deploy
+if not exist ..\..\..\deploy\bin mkdir ..\..\..\deploy\bin
+if not exist ..\..\..\deploy\lib mkdir ..\..\..\deploy\lib
+if not exist ..\..\..\deploy\include mkdir ..\..\..\deploy\include
+if not exist ..\..\..\deploy\include\commonj  mkdir ..\..\..\deploy\include\commonj
+if not exist ..\..\..\deploy\include\commonj\sdo mkdir ..\..\..\deploy\include\commonj\sdo
+
+copy .\Release\tuscany_sdo.dll ..\..\..\deploy\bin
+copy .\Release\tuscany_sdo.lib ..\..\..\deploy\lib
+copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

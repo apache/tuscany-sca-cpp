@@ -21,9 +21,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\..\deploy\include,$(AXIS2C_HOME)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SDO_AXIOM_EXPORTS"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Release/sdo_axiom.pch"
@@ -37,10 +38,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				AdditionalDependencies="axis2_parser.lib axis2_util.lib axiom.lib tuscany_sdo.lib odbc32.lib odbccp32.lib"
 				OutputFile=".\Release/sdo_axiom.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib,$(AXIS2C_HOME)\lib"
 				ProgramDatabaseFile=".\Release/sdo_axiom.pdb"
 				ImportLibrary=".\Release/sdo_axiom.lib"/>
 			<Tool

@@ -71,8 +71,8 @@ copy ..\..\..\deploy\bin\*.pdb ..\..\..\runtime\core\samples\Debug
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\..\runtime\core\samples\Release"
-			IntermediateDirectory=".\..\..\..\runtime\core\samples\Release"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -80,16 +80,16 @@ copy ..\..\..\deploy\bin\*.pdb ..\..\..\runtime\core\samples\Debug
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\include"
+				AdditionalIncludeDirectories="..\..\..\deploy\include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\..\..\..\runtime\core\samples\Release/sdo_samples.pch"
-				AssemblerListingLocation=".\..\..\..\runtime\core\samples\Release/"
-				ObjectFile=".\..\..\..\runtime\core\samples\Release/"
-				ProgramDataBaseFileName=".\..\..\..\runtime\core\samples\Release/"
+				PrecompiledHeaderFile=".\Release/sdo_samples.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
@@ -99,21 +99,21 @@ copy ..\..\..\deploy\bin\*.pdb ..\..\..\runtime\core\samples\Debug
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib"
-				OutputFile=".\..\..\..\runtime\core\samples\Release/sdo_samples.exe"
+				OutputFile=".\Release/sdo_samples.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib"
-				ProgramDatabaseFile=".\..\..\..\runtime\core\samples\Release/sdo_samples.pdb"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib"
+				ProgramDatabaseFile=".\Release/sdo_samples.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
 				TypeLibraryName=".\..\..\..\runtime\core\samples\Release/sdo_samples.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\runtime\core\samples\*.xsd ..\..\..\runtime\core\samples\Release
-copy ..\..\..\runtime\core\samples\*.xml ..\..\..\runtime\core\samples\Release
-copy ..\..\..\runtime\core\samples\*.wsdl ..\..\..\runtime\core\samples\Release
-copy ..\..\..\bin\*.dll ..\..\..\runtime\core\samples\Release
+				CommandLine="copy ..\..\..\runtime\core\samples\*.xsd .s\Release
+copy ..\..\..\runtime\core\samples\*.xml .\Release
+copy ..\..\..\runtime\core\samples\*.wsdl .\Release
+copy ..\..\..\deploy\bin\*.dll .\Release
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
