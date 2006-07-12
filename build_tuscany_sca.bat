@@ -68,6 +68,7 @@ copy %FROM_DIR%\NOTICE    %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\README    %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\GettingStarted.html  %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\build.bat  %TO_SRC%\%SRC_PACKAGE%
+copy %FROM_DIR%\scatest.bat  %TO_SRC%\%SRC_PACKAGE%
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
 xcopy /t /e  %FROM_DIR%\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
