@@ -68,8 +68,10 @@ b. The following environment variables are required:
      AXIS2C_HOME=<path to axis2c verion 0.92>
    
 c. Build the source
-     There is a build.cmd file in the projects/tuscany_sdo directory. This will build all the projects
-     and put the required output into the 'deploy' directory.
+   > cd <to where you unzipped the source>
+   > build
+  This will build all the projects and put the required output into the 'deploy' directory.
+
 
 Alternatively, open the workspace tuscany_sdo.dsw in Visual Studio 6 - you can build projects individually
 or build the test project to build all its dependencies. Running the test project should give a list of
