@@ -54,15 +54,32 @@
 				TypeLibraryName=".\Release/tuscany_sca.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="del ..\..\..\deploy\bin\tuscany_sca.*
+				CommandLine="if not exist ..\..\..\deploy mkdir ..\..\..\deploy
+if not exist ..\..\..\deploy\bin mkdir ..\..\..\deploy\bin
+if not exist ..\..\..\deploy\lib mkdir ..\..\..\deploy\lib
+if not exist ..\..\..\deploy\include mkdir ..\..\..\deploy\include
+if not exist ..\..\..\deploy\include\osoa mkdir ..\..\..\deploy\include\osoa
+if not exist ..\..\..\deploy\include\osoa\sca  mkdir ..\..\..\deploy\include\osoa\sca
+if not exist ..\..\..\deploy\include\tuscany mkdir ..\..\..\deploy\include\tuscany
+if not exist ..\..\..\deploy\include\tuscany\sca mkdir ..\..\..\deploy\include\tuscany\sca
+if not exist ..\..\..\deploy\include\tuscany\sca\core mkdir ..\..\..\deploy\include\tuscany\sca\core
+if not exist ..\..\..\deploy\include\tuscany\sca\model mkdir ..\..\..\deploy\include\tuscany\sca\model
+if not exist ..\..\..\deploy\include\tuscany\sca\util mkdir ..\..\..\deploy\include\tuscany\sca\util
+if not exist ..\..\..\deploy\include\tuscany\sca\ws mkdir ..\..\..\deploy\include\tuscany\sca\ws
+if not exist ..\..\..\deploy\xsd mkdir ..\..\..\deploy\xsd
+
+del ..\..\..\deploy\bin\tuscany_sca.*
 del ..\..\..\deploy\lib\*.lib
 copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca
 copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core
 copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model
 copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util
-copy Release\tuscany_sca.dll ..\..\..\deploy\bin
-copy Release\tuscany_sca.lib ..\..\..\deploy\lib
 copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws
+copy Release\tuscany_sca.dll ..\..\..\deploy\bin
+copy Release\tuscany_sca.pdb ..\..\..\deploy\bin
+copy Release\tuscany_sca.lib ..\..\..\deploy\lib
+copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
+
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>

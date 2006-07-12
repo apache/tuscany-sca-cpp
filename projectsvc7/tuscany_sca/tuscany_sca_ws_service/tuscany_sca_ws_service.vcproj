@@ -38,11 +38,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib axis2_util.lib axis2_om.lib"
+				AdditionalDependencies="axis2_util.lib axiom.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib"
 				OutputFile=".\Release/tuscany_sca_ws_service.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib,$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib,$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
 				ProgramDatabaseFile=".\Release/tuscany_sca_ws_service.pdb"
 				ImportLibrary=".\Release/tuscany_sca_ws_service.lib"/>
 			<Tool
