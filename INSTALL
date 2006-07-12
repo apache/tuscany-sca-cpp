@@ -44,7 +44,7 @@ a. Extract the source tar package to a folder <tuscany_sca>
 
 b. The following environment variables are required:
      TUSCANY_SDOCPP=<path to installed Tuscany SDO>
-     AXIS2C_HOME=<path to axis2c verion 0.92>
+     AXIS2C_HOME=<path to axis2c version 0.92>
    
 c. Build the source
 	 ./configure
@@ -67,8 +67,7 @@ sample see the INSTALL documentation in the samples folder.
 
 a. Unzip the supplied zip file.
 
-b. Set the TUSCANY_SCACPP environment variable to point to the 
-   tuscany_sca_cpp-0.1.incubating-M1-bin directory that was just unzipped. 
+b. Set the TUSCANY_SCACPP environment variable to point to the directory that was just unzipped. 
 
 
 6. Getting Tuscany SCA working with the source release on Windows
