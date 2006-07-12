@@ -52,9 +52,9 @@ d. Run the test
 
 4. Getting Tuscany SDO working with the binary release on Windows
 =================================================================
-a. Unzip the supplid zip file. 
-b. Set the environment variable TUSCANY_SDOCPP to the 'deploy' directory within the tree that
-you have unzipped.
+a. Unzip the supplied zip file.
+
+b. Set the TUSCANY_SDOCPP environment variable to point to the directory that was just unzipped. 
 
 
 5. Getting Tuscany SDO working with the source release on Windows
