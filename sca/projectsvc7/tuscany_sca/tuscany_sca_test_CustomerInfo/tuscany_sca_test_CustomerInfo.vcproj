@@ -100,7 +100,7 @@
 				OutputFile="Release/CustomerInfo.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="..\..\..\lib,$(TUSCANY_SDOCPP)\lib"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib,$(TUSCANY_SDOCPP)\lib"
 				ProgramDatabaseFile=".\Release/CustomerInfo.pdb"
 				ImportLibrary=".\Release/CustomerInfo.lib"/>
 			<Tool
