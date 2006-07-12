@@ -388,6 +388,18 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
     // Now go through outputDataObject to set the return value
     pl = outputDataObject->getInstanceProperties();
 
+    // Set up the possible return value pointers
+    bool boolData = 0;
+    char byteData = 0;
+    wchar_t charData = 0;
+    long double doubleData = 0;
+    float floatData = 0;
+    long intData = 0;
+    short shortData = 0;
+    const char* stringData;
+    DataObjectPtr dataObjectData;
+
+
     // There should only be one return value, but go through any list anyway?
     if(pl.size() > 1)
     {
@@ -403,7 +415,6 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
              */
            
             // An OpenDataObject for the data to return in
-            DataObjectPtr dataObjectData;
             operation.setReturnValue(&dataObjectData);            
         }
         else
@@ -422,49 +433,42 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         case Type::BooleanType:
             {
                 //printf("outputDataObject has BooleanType named %s\n", name);
-                bool boolData = 0;
                 operation.setReturnValue(&boolData);
             }
             break;
         case Type::ByteType:
             {
                 //printf("outputDataObject has ByteType named %s\n", name);
-                char byteData = 0;
                 operation.setReturnValue(&byteData);
             }
             break;
         case Type::CharacterType:
             {
                 //printf("outputDataObject has CharacterType named %s\n", name);
-                wchar_t charData = 0;
                 operation.setReturnValue(&charData);
             }
             break;
         case Type::DoubleType:
             {
                 //printf("outputDataObject has DoubleType named %s\n", name);
-                long double doubleData = 0;
                 operation.setReturnValue((long double*) &doubleData);
             }
             break;
         case Type::FloatType:
             {
                 //printf("outputDataObject has FloatType named %s\n", name);
-                float floatData = 0;
                 operation.setReturnValue(&floatData);
             }
             break;
         case Type::IntegerType:
             {
                 //printf("outputDataObject has IntegerType named %s\n", name);
-                long intData = 0;
                 operation.setReturnValue(&intData);
             }
             break;
         case Type::ShortType:
             {
                 //printf("outputDataObject has ShortType named %s\n", name);
-                short shortData = 0;
                 operation.setReturnValue(&shortData);
             }
             break;
@@ -472,14 +476,12 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         case Type::BytesType:
              {
                 //printf("outputDataObject has StringType or BytesType named %s\n", name);
-                const char* stringData;
                 operation.setReturnValue((const char**) &stringData);
             }
             break;
         case Type::DataObjectType:
             {
                 // printf("outputDataObject has DataObjectType named %s with type %s # %s\n", name, pl[0].getType().getURI(), pl[0].getType().getName());
-                DataObjectPtr dataObjectData;// = dataFactoryPtr->create(pl[0].getType());
                 operation.setReturnValue(&dataObjectData);
             }
             break;
@@ -620,7 +622,7 @@ void EntryPointProxy::setOutputData(Operation operation, DataObjectPtr outputDat
         case Type::FloatType:
             {
                 float* floatData = (float*) operation.getReturnValue();
-                //printf("outputDataObject has FloatType named %s with value %f\n", name, *floatData);
+                //printf("outputDataObject has FloatType named %s with value %f \n", name, *floatData);
                 outputDataObject->setFloat(pl[i], *floatData);
             }
             break;
