@@ -34,13 +34,6 @@ goto end
 )
 echo using Axis2C: %AXIS2C_HOME%"
 
-if "%TUSCANY_SDOCPP%" == "" (
-echo "TUSCANY_SDOCPP not set"
-set TUSCANY_SDOCPP=%cd%\sdo
-)
- 
-echo using TUSCANY_SDOCPP: %TUSCANY_SDOCPP%
-
 call vcvars32
 
 echo Build of SCA started....
@@ -48,6 +41,13 @@ set PACKAGE=tuscany_sca_cpp
 set VERSION=0.1.incubating-M1
 set SRC_PACKAGE=%PACKAGE%-%VERSION%-src
 set BIN_PACKAGE=%PACKAGE%-%VERSION%-bin
+
+if "%TUSCANY_SDOCPP%" == "" (
+echo "TUSCANY_SDOCPP not set"
+set TUSCANY_SDOCPP=%CD%\tuscany_sdo_cpp-%VERSION%-bin
+)
+ 
+echo using TUSCANY_SDOCPP: %TUSCANY_SDOCPP%
 
 set FROM_DIR=%cd%\sca
 set TO_SRC=%cd%
