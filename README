@@ -27,8 +27,11 @@ About Tuscany SCA C++
 
 Tuscany SCA C++ provides a runtime implementation for the Service Component
 Architecture 0.9 specification, written in C++ and will currently support C++
-component implementation types. This is not yet a complete implementation and
-known restrictions are described below.
+component implementation types. 
+
+It is possible to interoperate with Tuscany SCA Java via the Web Service bindings
+for EntryPoint/ExternalService but restrictions apply. This is not yet a complete
+implementation and known restrictions are described below.
 
 Supported SCA Assembly Model features
   *  All features are supported unless listed under the known restrictions
@@ -55,7 +58,9 @@ Known restrictions
   * No load time validation of the deployed SCA application (run time validation
     only).
   * No metadata API.
-
+  * A Web Service EntryPoint that is wired (via zero or more components) to a 
+    Web Service ExternalService will fail when attempting to send the final 
+    response to the originating client. 
 
 
 
