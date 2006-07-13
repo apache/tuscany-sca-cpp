@@ -53,7 +53,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "CALCULATOR_EXPORTS" /Fp"$(INTDIR)\Calculator.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MT /W3 /GX /O2 /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "CALCULATOR_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -93,15 +93,15 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\Calculator.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\Calculator.pdb" /machine:I386 /out:"$(OUTDIR)\Calculator.dll" /implib:"$(OUTDIR)\Calculator.lib" 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\Calculator.pdb" /machine:I386 /out:"$(OUTDIR)\Calculator.dll" /implib:"$(OUTDIR)\Calculator.lib" /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\CalculatorImpl.obj" \
+	"$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj" \
 	"$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj" \
 	"$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj" \
 	"$(INTDIR)\DivideServiceImpl.obj" \
 	"$(INTDIR)\DivideServiceImpl_DivideService_Proxy.obj" \
-	"$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj" \
-	"$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj"
+	"$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj"
 
 "$(OUTDIR)\Calculator.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -139,7 +139,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MTd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "CALCULATOR_EXPORTS" /Fp"$(INTDIR)\Calculator.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MTd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "CALCULATOR_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -182,12 +182,12 @@ LINK32=link.exe
 LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\Calculator.pdb" /debug /machine:I386 /out:"$(OUTDIR)\Calculator.dll" /implib:"$(OUTDIR)\Calculator.lib" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\CalculatorImpl.obj" \
+	"$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj" \
 	"$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj" \
 	"$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj" \
 	"$(INTDIR)\DivideServiceImpl.obj" \
 	"$(INTDIR)\DivideServiceImpl_DivideService_Proxy.obj" \
-	"$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj" \
-	"$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj"
+	"$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj"
 
 "$(OUTDIR)\Calculator.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
