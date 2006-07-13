@@ -37,7 +37,6 @@ echo using Axis2C: %AXIS2C_HOME%"
 if "%TUSCANY_SDOCPP%" == "" (
 echo "TUSCANY_SDOCPP not set"
 set TUSCANY_SDOCPP=%cd%\sdo
-goto end
 )
  
 echo using TUSCANY_SDOCPP: %TUSCANY_SDOCPP%
