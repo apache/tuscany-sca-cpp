@@ -275,24 +275,24 @@ SOURCE=..\..\..\runtime\core\test\utils.cpp
 !IF  "$(CFG)" == "sdo_test - Win32 Release"
 
 "sdo_runtime - Win32 Release" : 
-   cd "\distro\sdo\projects\tuscany_sdo\sdo_runtime"
+   cd "..\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Release" 
    cd "..\sdo_test"
 
 "sdo_runtime - Win32 ReleaseCLEAN" : 
-   cd "\distro\sdo\projects\tuscany_sdo\sdo_runtime"
+   cd "..\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Release" RECURSE=1 CLEAN 
    cd "..\sdo_test"
 
 !ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
 
 "sdo_runtime - Win32 Debug" : 
-   cd "\distro\sdo\projects\tuscany_sdo\sdo_runtime"
+   cd "..\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Debug" 
    cd "..\sdo_test"
 
 "sdo_runtime - Win32 DebugCLEAN" : 
-   cd "\distro\sdo\projects\tuscany_sdo\sdo_runtime"
+   cd "..\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\sdo_test"
 
