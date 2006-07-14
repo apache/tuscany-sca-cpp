@@ -23,7 +23,7 @@ if "%AXIS2C_HOME%" == "" (
 echo "AXIS2C_HOME not set"
 goto end
 )
-echo using Axis2C: %AXIS2C_HOME%"
+echo using Axis2C: %AXIS2C_HOME%
 
 if "%TUSCANY_SDOCPP%" == "" (
 echo "TUSCANY_SDOCPP not set"
@@ -45,7 +45,7 @@ set TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
 
 rem Run the client
 
-set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%PATH%
+set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 Calc.exe %*
 
 endlocal

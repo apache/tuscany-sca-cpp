@@ -19,20 +19,32 @@
       <DIV CLASS="section"> 
          <H2>Tuscany - Getting Started - SDO C++ Milestone release 1</H2> 
 
-         <P>This page describes what is needed to install Tuscany
-         SDO for C++.<BR/>If you haven't already done so, the first
+         <P>Tuscany SDO C++ is an implementation of the Service Data Objects 2.0 specification for C++ developers.
+          This page describes what is needed to install Tuscany SDO for C++.<BR/>If you haven't already done so, the first
          step is to download the SDO C++ Milestone release 1 of Apache Tuscany from our
          <A HREF="http://incubator.apache.org/tuscany/download.html" target='_blank'>download page</A>.<BR/>
-          Also, see the <A HREF="README">README</A> for information on current features supported
-          and restrictions in the current implementation.
-
          </P>
       </DIV>
       <DIV CLASS="section"> 
-         <H2>System Requirements</H2> 
+         <H2>Contents</H2> 
+         <OL>
+            <LI><A HREF="#requirements">System Requirements</A></LI>
+            <LI><A HREF="#install">Installing Tuscany SDO..</A>
+                <UL>
+                    <LI><A HREF="#linuxbin">..from the binary release on Linux</A></LI>
+                    <LI><A HREF="#linuxsrc">..from the source release on Linux</A></LI>
+                    <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
+                    <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
+                </UL></LI>
+            <LI><A HREF="#samples">Samples</A></LI>
+            <LI><A HREF="#help">Getting Help</A></LI>
+         </OL>
+      </DIV>
 
-         <P>In order to use Tuscany SDO there are some
-         minimum requirements:</P> 
+      <DIV CLASS="section"> 
+         <A NAME="requirements"><H2>System Requirements</H2></A>
+
+         <P>In order to use Tuscany SDO there are some minimum requirements:</P> 
          <TABLE CLASS="bodyTable">
 
             <TBODY>
@@ -43,7 +55,6 @@
             <TR CLASS="b">
                <TD>Operating systems: 
                   <UL>
-
                      <LI>Windows XP SP2</LI> 
                      <LI>Linux</LI> 
                   </UL>
@@ -75,12 +86,75 @@
          </TABLE>
       </DIV> 
       <DIV CLASS="section"> 
-         <H2>Building and Installing Tuscany SDO for C++</H2> 
+         <A NAME="install"><H2>Installing Tuscany SDO for C++</H2></A>
+         <A NAME="linuxbin"><H3>Getting Tuscany SDO for C++ working with the binary release on Linux</H3></A>
+          <OL>
+              <LI>Extract the binary tar package to a folder</LI>
+              <LI>Set the TUSCANY_SDOCPP environment variable to point to the directory that was just extracted</LI>
+          </OL>
+         <A NAME="linuxsrc"><H3>Getting Tuscany SDO for C++ working with the source release on Linux</H3></A>
+          <OL>
+              <LI>Extract the source tar package to a folder &lt;tuscany_sdo&gt;</LI>
+              <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>LIBXML2_INCLUDE=&lt;path to libxml2 includes&gt;                                      
+                  <LI>LIBXML2_LIB=&lt;path to libxml2 lib&gt;<BR/>
+                   Note: If you are using the default installation of libxml2 these are usually:<BR/>
+                   LIBXML2_LIB=/usr/lib<BR/>
+                   LIBXML2_INCLUDE=/usr/include/libxml2<BR/></LI>
+                                                                                                
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                </UL></LI>
+              <LI>Build the source with the following command sequence:
+                  <UL>
+                      <LI>./configure</LI>
+                      <LI>make</LI>
+                      <LI>make install</LI>
+                  </UL>
+	              NOTE: If you don't provide a --prefix configure option, it will by default install into
+                  /usr/local/tuscany/sdo</LI>
+              <LI>Run the test:
+                  <UL>
+                      <LI>cd to &lt;tuscany_sdo&gt;/runtime/core/test</LI>
+                      <LI>./tuscany_sdo_test</LI>
+                  </UL></LI>
+          </OL>
+           
+        <A NAME="winbin"><H3>Getting Tuscany SDO for C++ working with the binary release on Windows</H3></A>
+          <OL>
+              <LI>Unzip the supplied zip file to a folder</LI>
+              <LI>Set the TUSCANY_SDOCPP environment variable to point to the directory that was just unzipped</LI>
+          </OL>
+        <A NAME="winsrc"><H3>Getting Tuscany SDO for C++ working with the source release on Windows</H3></A>
+           <OL>   
+              <LI>Unzip the supplied source zip file</LI>
+              <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>LIBXML2_INCLUDE=&lt;path to libxml2 includes&gt;                                      
+                  <LI>LIBXML2_LIB=&lt;path to libxml2 lib&gt;<BR/>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                </UL></LI>
+              <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
+                  will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
+                  This will be where you installed the compiler.</LI>
+              <LI>Build the source:
+                  <UL>
+                      <LI>cd &lt;to where you unzipped the source&gt;</LI>
+                      <LI>build</LI>                      
+                  </UL>
+	              This will build all the projects and put the required output into the 'deploy' directory<BR/><BR/>
+                  Alternatively, open the workspace tuscany_sdo.dsw in Visual Studio 6 - you can build projects individually
+                  or build the test project to build all its dependencies. Running the test project should give a list of
+                  tests passed - this is currently 111 tests, no failures.</LI>
+              <LI>Set the TUSCANY_SDOCPP environment variable to point to the 'deploy' directory that was just created</LI>
+          </OL>
+      </DIV>
 
-         <P>Follow the instructions in the <A HREF="INSTALL">INSTALL</A> file to build and install Tuscany SDO</P>
+      <DIV CLASS="section"> 
+         <A NAME="samples"><H2>Samples</H2></A>
       </DIV>
       <DIV CLASS="section"> 
-         <H2>Getting Help</H2> 
+         <A NAME="help"><H2>Getting Help</H2></A>
 
          <P>First place to look is at the Tuscany FAQ at 
          <A HREF="http://incubator.apache.org/tuscany/faq.html"
