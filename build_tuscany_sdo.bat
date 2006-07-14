@@ -73,6 +73,13 @@ copy %FROM_DIR%\GettingStarted.html  %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\build.bat  %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\sdotest.bat  %TO_SRC%\%SRC_PACKAGE%
 
+
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples mkdir %TO_SRC%\%SRC_PACKAGE%\samples 
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\misc mkdir %TO_SRC%\%SRC_PACKAGE%\samples\misc
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\ides mkdir %TO_SRC%\%SRC_PACKAGE%\samples\ides
+
+xcopy/s %FROM_DIR%\samples\misc %TO_SRC%\%SRC_PACKAGE%\samples\misc
+xcopy/s %FROM_DIR%\samples\ides %TO_SRC%\%SRC_PACKAGE%\samples\ides
 echo Building SDO....
 
 cd %FROM_DIR%
@@ -93,6 +100,21 @@ copy %FROM_DIR%\COPYING   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\NOTICE    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\README    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\GettingStarted.html   %TO_BIN%\%BIN_PACKAGE%
+
+
+echo Building samples
+
+set TUSCANY_SDOCPP=%FROM_DIR%\deploy
+cd %FROM_DIR%\samples\ides\devstudio6\projects\misc
+
+call build
+
+if not exist %TO_BIN%\%BIN_PACKAGE%\samples mkdir %TO_BIN%\%BIN_PACKAGE%\samples
+if not exist %TO_BIN%\%BIN_PACKAGE%\samples\ides mkdir %TO_BIN%\%BIN_PACKAGE%\samples\ides
+if not exist %TO_BIN%\%BIN_PACKAGE%\samples\Calculator mkdir %TO_BIN%\%BIN_PACKAGE%\samples\misc
+
+xcopy/s %FROM_DIR%\samples\ides %TO_BIN%\%BIN_PACKAGE%\samples\ides
+xcopy/s %FROM_DIR%\samples\misc %TO_BIN%\%BIN_PACKAGE%\samples\misc
 
 :end
 echo SDO Build complete.
