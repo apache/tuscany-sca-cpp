@@ -14,7 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-TUSCANY_SDOCPP_HOME=`pwd`
+if [ x$TUSCANY_SDOCPP = x ]; then
+echo "TUSCANY_SDOCPP not set"
+exit;
+fi
+echo "Using SDO installed at $TUSCANY_SDOCPP"
 
 if [ x$AXIS2C_HOME = x ]; then
 echo "AXIS2C_HOME not set"
@@ -22,18 +26,7 @@ exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
-
-cd ${TUSCANY_SDOCPP_HOME}/samples
-./autogen.sh
-./configure --prefix=${TUSCANY_SDOCPP_HOME}/deploy --enable-static=no
-
-cd ${TUSCANY_SDOCPP_HOME}
-./configure --prefix=${TUSCANY_SDOCPP_HOME}/deploy --enable-static=no
+./configure --prefix=${TUSCANY_SDOCPP} --enable-static=no
 make
 make install
 
-cd ${TUSCANY_SDOCPP_HOME}/deploy
-for i in `find . -name "*.la"`
-do
-	rm $i
-done
