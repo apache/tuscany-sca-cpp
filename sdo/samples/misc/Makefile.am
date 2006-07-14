@@ -14,6 +14,9 @@ Query.cpp \
 Substitutes.cpp \
 XSDLoading.cpp 
 
+
+noinst_HEADERS = *.h
+
 sdo_misc_LDADD   = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -lxml2
 	
 

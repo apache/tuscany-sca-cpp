@@ -22,14 +22,13 @@ exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
-
-cd ${TUSCANY_SDOCPP_HOME}/samples
-./autogen.sh
+cd ${TUSCANY_SDOCPP_HOME}
 ./configure --prefix=${TUSCANY_SDOCPP_HOME}/deploy --enable-static=no
 make
 make install
 
-cd ${TUSCANY_SDOCPP_HOME}
+cd ${TUSCANY_SDOCPP_HOME}/samples
+export TUSCANY_SDOCPP=${TUSCANY_SDOCPP_HOME}/deploy
 ./configure --prefix=${TUSCANY_SDOCPP_HOME}/deploy --enable-static=no
 make
 make install
