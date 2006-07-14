@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<HTML>
+<HEAD>
+   <META CONTENT="text/html; charset=iso-8859-1" HTTP-EQUIV="Content-Type">
+   <META CONTENT="text/css" HTTP-EQUIV="Content-Style-Type">
+   <STYLE MEDIA="all" TYPE="text/css">
+@import url("../doc/css/maven-base.css");
+@import url("../doc/css/maven-theme.css");
+   </STYLE> 
+
+    <LINK HREF="../doc/css/maven-theme.css" MEDIA="print" REL="stylesheet"
+         TYPE="text/css">
+   <TITLE>Tuscany SCA C++ Samples - Getting Started</TITLE>
+</HEAD>
+
+<BODY>
+<DIV ID="bodyColumn"> 
+   <DIV ID="contentBox"> 
+      <DIV CLASS="section"> 
+         <H2>Tuscany Samples - Getting Started - SCA C++ Milestone release 1</H2> 
+
+         <P>Tuscany SCA C++ includes a simple technology sample that demonstrates some of the functionality of
+         the Tuscany SCA C++ runtime. This page describes what is needed to install and run the sample.
+         </P>
+      </DIV>
+
+      <DIV CLASS="section"> 
+         <H2>Contents</H2> 
+         <OL>
+            <LI><A HREF="#linuxbld">Building the samples on Linux</A></LI>
+            <LI><A HREF="#linuxrun">Running the samples on Linux:</A></LI>
+               <UL>
+                  <LI><A HREF="#linuxcalcbasic">Calculator with basic client</A></LI>
+                  <LI><A HREF="#linuxcalcws">Calculator with Web Service client</A></LI>
+               </UL>
+            <LI><A HREF="#winbld">Building the samples on Windows</A></LI>
+            <LI><A HREF="#winrun">Running the samples on Windows:</A></LI>
+               <UL>
+                  <LI><A HREF="#wincalcbasic">Calculator with basic client</A></LI>
+                  <LI><A HREF="#wincalcws">Calculator with Web Service client</A></LI>
+               </UL>
+         </OL>
+      </DIV>
+
+
+       <DIV CLASS="section"> 
+         <A NAME="linuxbld"><H2>Building the samples on Linux</H2></A>
+         <P>If using the binary distribution the samples are built and installed in
+            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux</A>.</P>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                </UL></LI>
+             </LI>
+             <LI>Build the source with the following command sequence:
+                  <UL>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/Calculator</LI>
+                      <LI>./configure</LI>
+                      <LI>make</LI>
+                      <LI>make install</LI>
+                  </UL>
+	              NOTE: If you don't provide a --prefix configure option, it will by default install into
+                  /usr/local/tuscany/sca/samples/Calculator</LI>
+         </OL>                                                  
+        </DIV>
+
+       <DIV CLASS="section"> 
+         <A NAME="linuxrun"><H2>Running the samples on Linux</H2></A>
+         <A NAME="linuxcalcbasic"><H3>Calculator with basic client</H3></A>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                </UL>
+             </LI>
+             <LI>Run the sample with the following commands:
+                <UL>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/Calculator/deploy/bin</LI>
+                   <LI>./runclient.sh</LI>
+                </UL>
+             </LI>
+         </OL>                                                  
+         <A NAME="linuxcalcws"><H3>Calculator with Web Service client</H3></A>
+         <OL>
+             <LI>Deploy the Calculator as an Axis2C service:                                 
+                <OL>
+                  <LI>Create a new service folder in axis2:<BR/>                                      
+                      &lt;AXIS2C_HOME&gt;/services/Calculator</LI>
+                  <LI>Copy the &lt;TUSCANY_SCACPP&gt;/samples/Calculator/CalculatorModule/services.xml                                       
+                      to &lt;AXIS2C_HOME&gt;/services/Calculator/services.xml</LI>
+                  <LI>Edit the &lt;AXIS2C_HOME&gt;/services/Calculator/services.xml file to set the TuscanySystemRoot parameter to<BR/>
+                      &lt;parameter name="TuscanySystemRoot" locked="xsd:false"&gt;&lt;tuscany_sca_install_dir&gt;/samples/Calculator/deploy&lt;/parameter&gt;<BR/>
+                      replacing &lt;tuscany_sca_install_dir&gt; with the install path of Tuscany SCA</LI>                                      
+                  <LI>Copy the &lt;TUSCANY_SCACPP&gt;/lib/libtuscany_sca_ws_service.so library into &lt;AXIS2C_HOME&gt;/services/Calculator</LI>
+                </UL>
+             </LI>
+             <LI>Start the Axis2C simple http server:
+                <OL>
+                   <LI>cd &lt;AXIS2C_HOME&gt;/bin</LI>
+                   <LI>The following environment variables are required:                                 
+                      <UL>
+                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
+                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
+                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                      </UL>
+                   </LI>
+                   <LI>Add &lt;TUSCANY_SCACPP&gt;/lib, &lt;TUSCANY_SDOCPP&gt;/lib and &lt;AXIS2C_HOME&gt;/lib 
+                       to the LD_LIBRARY_PATH environment variable
+                   </LI>
+                   <LI>./axis2_http_server</LI>
+                </OL>
+             </LI>
+             <LI>Run the client:
+                <OL>
+                   <LI>The following environment variable is required:                                 
+                      <UL>
+                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                      </UL>
+                   </LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/Calculator/deploy/bin</LI>
+                   <LI>./runwsclient.sh</LI>
+                </OL>
+             </LI>
+         </OL>                                                  
+        </DIV>
+
+        <DIV CLASS="section">
+         <A NAME="winbld"><H2>Building the samples on Windows</H2></A>
+         <P>If using the binary distribution the samples are built and installed in
+            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                </UL></LI>
+             </LI>
+             <LI>Build the source, either via the Visual Studio 6 or 7 projects under 
+                 &lt;tuscany_sca_install_dir&gt;\samples\ides or via the command-line build file
+                 found at &lt;tuscany_sca_install_dir&gt;\samples\ides\devstudio6\projects\Calculator\build.cmd
+                 which will build and deploy the samples.
+             </LI>
+         </OL>                                                  
+        </DIV>
+
+       <DIV CLASS="section"> 
+         <A NAME="winrun"><H2>Running the samples on Windows</H2></A>
+         <A NAME="wincalcbasic"><H3>Calculator with basic client</H3></A>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                </UL>
+             </LI>
+             <LI>Run the sample with the following commands:
+                <UL>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/Calculator/deploy/bin</LI>
+                   <LI>runclient add 5 6<BR/>
+                       (can also use sub, div, mul).</LI>
+                </UL>
+             </LI>
+         </OL>                                                  
+         <A NAME="wincalcws"><H3>Calculator with Web Service client</H3></A>
+         <OL>
+             <LI>Deploy the Calculator as an Axis2C service:                                 
+                <OL>
+                  <LI>Create a new service folder in axis2:<BR/>                                      
+                      &lt;AXIS2C_HOME&gt;/services/Calculator</LI>
+                  <LI>Copy the &lt;TUSCANY_SCACPP&gt;/samples/Calculator/CalculatorModule/services.xml                                       
+                      to &lt;AXIS2C_HOME&gt;/services/Calculator/services.xml</LI>
+                  <LI>Edit the &lt;AXIS2C_HOME&gt;/services/Calculator/services.xml file to set the TuscanySystemRoot parameter to<BR/>
+                      &lt;parameter name="TuscanySystemRoot" locked="xsd:false"&gt;&lt;TUSCANY_SCACPP&gt;/samples/Calculator/deploy&lt;/parameter&gt;<BR/>
+                      replacing &lt;TUSCANY_SCACPP&gt; with the install path of Tuscany SCA</LI>                                      
+                  <LI>Copy the &lt;TUSCANY_SCACPP&gt;/lib/tuscany_sca_ws_service.dll (and .pdb if debugging) file(s) 
+                      into &lt;AXIS2C_HOME&gt;/services/Calculator</LI>
+                </UL>
+             </LI>
+             <LI>Start the Axis2C simple http server:
+                <OL>
+                   <LI>cd &lt;AXIS2C_HOME&gt;/bin</LI>
+                   <LI>The following environment variables are required:                                 
+                      <UL>
+                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
+                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
+                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                      </UL>
+                   </LI>
+                   <LI>Add &lt;TUSCANY_SCACPP&gt;\bin, &lt;TUSCANY_SDOCPP&gt;\bin and &lt;AXIS2C_HOME&gt;/lib 
+                       to the PATH environment variable
+                   </LI>
+                   <LI>axis2_http_server</LI>
+                </OL>
+             </LI>
+             <LI>Run the client:
+                <OL>
+                   <LI>The following environment variable is required:                                 
+                      <UL>
+                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                      </UL>
+                   </LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/Calculator/deploy/bin</LI>
+                   <LI>runwsclient</LI>
+                </OL>
+             </LI>
+         </OL>                                                  
+      </DIV>
+
+              
+      <DIV CLASS="section"> 
+         <A NAME="help"><H2>Getting Help</H2></A>
+
+         <P>First place to look is at the Tuscany FAQ at 
+         <A HREF="http://incubator.apache.org/tuscany/faq.html"
+            TARGET="_blank">http://incubator.apache.org/tuscany/faq.html</A> </P>
+
+         <P>Any problem with this release can be reported to the Tuscany 
+         <A HREF="http://incubator.apache.org/tuscany/mail-lists.html"
+            TARGET="_blank">mailing lists</A> or create a JIRA issue at&nbsp;<A HREF="http://issues.apache.org/jira/browse/Tuscany"
+                                                                                TARGET="_blank">http://issues.apache.org/jira/browse/Tuscany</A>.</P>
+         
+
+         <P>&nbsp;</P> 
+
+         <P>&nbsp;</P> 
+
+         <P>&nbsp;</P> 
+         <TABLE CLASS="bodyTable">
+            <TBODY>
+            <TR CLASS="a">
+               <TD> 
+
+                  <P>Thank you for your interest in Tuscany.</P> <STRONG><EM>-The
+                  Tuscany Development Team</EM></STRONG> 
+
+                  <P></P>
+
+               </TD>
+            </TR>
+            </TBODY>
+         </TABLE>
+
+         <P></P>
+      </DIV>
+   </DIV>
+</DIV>
+</BODY>
+
+</HTML>
