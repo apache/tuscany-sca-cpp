@@ -9,7 +9,10 @@ deploy_DATA = *.xsd *.xml
 AM_CPPFLAGS = $(CPPFLAGS)
 sdo_misc_SOURCES = samples.cpp \
 ChangeSummarySave.cpp \
-
+ObjectCreation.cpp \
+Query.cpp \
+Substitutes.cpp \
+XSDLoading.cpp 
 
 sdo_misc_LDADD   = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -lxml2
 	
