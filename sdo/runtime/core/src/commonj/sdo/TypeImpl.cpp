@@ -537,9 +537,9 @@ namespace sdo{
 
         if (propertyName == 0 || strlen(propertyName) == 0) return 0;
 
-        char*    tokenend    = strchr(propertyName,'/');
-        char *    bracket        = strchr(propertyName,'[');
-        char*    dot            = strchr(propertyName,'.');
+        char*    tokenend    = (char*) strchr(propertyName,'/');
+        char *    bracket        =  (char*) strchr(propertyName,'[');
+        char*    dot            =  (char*) strchr(propertyName,'.');
         char*   copy;
         
 

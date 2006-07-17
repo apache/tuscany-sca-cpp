@@ -1313,7 +1313,7 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
                         DataObjectImpl* cont = d->getContainerImpl();
                         if (cont != 0)
                         {
-                            pc = strrchr(path,'/');
+                            pc = (char*) strrchr(path,'/');
                             if (pc != 0)pc++;
                         }
                         const Property& pcont = cont->getProperty(pc);
@@ -2108,7 +2108,7 @@ DataObjectImpl* DataObjectImpl::findDataObject(const SDOString& token, long* ind
         }
 
         DataObjectImpl* d;
-        char*  i = strchr(path,'/');
+        char*  i = (char*) strchr(path,'/');
         char* remaining = 0;
         char* token     = 0;
 

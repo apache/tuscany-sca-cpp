@@ -1871,7 +1871,7 @@ bool DataFactoryImpl::generateInterface(const char* fileroot, const char* factor
             if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
 
             const char *uri = tl[i].getURI();
-            char *c = strchr(uri,'.');
+            char *c = (char*)strchr(uri,'.');
 
             if (c == 0)
             {
@@ -1922,7 +1922,7 @@ bool DataFactoryImpl::generateInterface(const char* fileroot, const char* factor
 
             const char *uri = tl[i].getURI();
             const char *name = tl[i].getName();
-            char* the_uri = strchr(uri,'.');
+            char* the_uri = (char*) strchr(uri,'.');
 
             if (the_uri == 0)
             {
@@ -1993,7 +1993,7 @@ bool DataFactoryImpl::generateInterface(const char* fileroot, const char* factor
 
             if (!strcmp(tl[i].getURI(),"commonj.sdo")) continue;
             const char *uri = tl[i].getURI();
-            char *c = strchr(uri,'.');
+            char *c = (char*) strchr(uri,'.');
 
             if (c == 0)
             {
