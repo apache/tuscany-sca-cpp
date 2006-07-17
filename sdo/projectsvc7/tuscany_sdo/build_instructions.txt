@@ -5,7 +5,7 @@ The project is dependent on libxml
 (available here: http://www.zlatkovic.com/libxml.en.html) 
 
 The versions required are these:
-	libxml2-2.6.19.win32
+	libxml2-2.6.20.win32
 	iconv-1.9.1.win32
 	zlib-1.2.2.win32
 

@@ -8,8 +8,8 @@ Linux Build
 ===========
 
 Prereqs:
-- libxml2 (tested with version 2.6.19)
 - Axis2C (version 0.92)
+- libxml2 (version 2.6.20 or whichever version is prereq'd by axis2c)
 
 Environment:
 - export LIBXML2_INCLUDE=<path to libxml2 headers. e.g. /usr/include/libxml2> 
