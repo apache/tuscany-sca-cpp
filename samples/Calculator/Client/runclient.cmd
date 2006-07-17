@@ -46,6 +46,6 @@ set TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
 rem Run the client
 
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
-Calc.exe %*
+Client.exe %*
 
 endlocal
