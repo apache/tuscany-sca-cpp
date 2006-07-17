@@ -77,9 +77,9 @@
                <TD> 
                   <A HREF="http://xmlsoft.org/downloads.html"
                      TARGET="_blank">http://xmlsoft.org/downloads.html</A><BR/>
-                  Most Linux systems have libxml2 by default. On Windows you need to 
-                  download and install libxml2. Axis2C 0.92 specifies version 2.6.20, and problems
-                  have been seen with earlier versions, so we recommend this version.
+                  Most Linux systems have libxml2 by default. On Windows you need to download and install libxml2 from <A HREF="http://www.zlatkovic.com/libxml.en.html" TARGET="_blank">http://www.zlatkovic.com/libxml.en.html</A><BR/>
+                  Please read the installation notes for libxml2 particularly regarding it's pre-req's iconv and zlib on Windows. <BR/>
+                  These libraries will need to be on the PATH in order to run Tuscany SDO.
                </TD>
             </TR>
             </TBODY>
@@ -90,7 +90,7 @@
          <A NAME="linuxbin"><H3>Getting Tuscany SDO for C++ working with the binary release on Linux</H3></A>
           <OL>
               <LI>Extract the binary tar package to a folder</LI>
-              <LI>Set the TUSCANY_SDOCPP environment variable to point to the directory that was just extracted</LI>
+              <LI>Add the *install_dir*/lib directory to the LD_LIBRARY_PATH environment variable</LI>
           </OL>
          <A NAME="linuxsrc"><H3>Getting Tuscany SDO for C++ working with the source release on Linux</H3></A>
           <OL>
@@ -123,7 +123,7 @@
         <A NAME="winbin"><H3>Getting Tuscany SDO for C++ working with the binary release on Windows</H3></A>
           <OL>
               <LI>Unzip the supplied zip file to a folder</LI>
-              <LI>Set the TUSCANY_SDOCPP environment variable to point to the directory that was just unzipped</LI>
+              <LI>Add the *install_dir*\bin directory to the PATH environment variable</LI>
           </OL>
         <A NAME="winsrc"><H3>Getting Tuscany SDO for C++ working with the source release on Windows</H3></A>
            <OL>   
@@ -145,8 +145,8 @@
 	              This will build all the projects and put the required output into the 'deploy' directory<BR/><BR/>
                   Alternatively, open the workspace tuscany_sdo.dsw in Visual Studio 6 - you can build projects individually
                   or build the test project to build all its dependencies. Running the test project should give a list of
-                  tests passed - this is currently 111 tests, no failures.</LI>
-              <LI>Set the TUSCANY_SDOCPP environment variable to point to the 'deploy' directory that was just created</LI>
+                  tests passed - this is currently 108 tests, no failures.</LI>
+              <LI>Add the 'deploy'\bin directory PATH environment variable</LI>
           </OL>
       </DIV>
 
