@@ -38,10 +38,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				AdditionalDependencies="tuscany_sdo.lib tuscany_sdo_axiom.lib odbc32.lib odbccp32.lib"
 				OutputFile=".\Release/sdo_axiom_test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib"
 				ProgramDatabaseFile=".\Release/sdo_axiom_test.pdb"
 				SubSystem="1"/>
 			<Tool
