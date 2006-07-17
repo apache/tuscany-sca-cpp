@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\..\..\runtime\core\Debug"
-			IntermediateDirectory=".\..\..\..\runtime\core\Debug"
+			OutputDirectory=".\Debug"
+			IntermediateDirectory=".\Debug"
 			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -83,8 +83,8 @@ copy .\Debug\tuscany_sdo.pdb ..\..\..\deploy\bin
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\..\..\runtime\core\Release"
-			IntermediateDirectory=".\..\..\..\runtime\core\Release"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
 			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -111,12 +111,12 @@ copy .\Debug\tuscany_sdo.pdb ..\..\..\deploy\bin
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib libxml2.lib"
-				OutputFile="..\..\..\runtime\core\Release\tuscany_sdo.dll"
+				OutputFile=".\Release\tuscany_sdo.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(LIBXML2_HOME)\lib"
-				ProgramDatabaseFile=".\..\..\..\runtime\core\Release/tuscany_sdo.pdb"
-				ImportLibrary=".\..\..\..\runtime\core\Release/tuscany_sdo.lib"/>
+				ProgramDatabaseFile=".\Release/tuscany_sdo.pdb"
+				ImportLibrary=".\Release/tuscany_sdo.lib"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"

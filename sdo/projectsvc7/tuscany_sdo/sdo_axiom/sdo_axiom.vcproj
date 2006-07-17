@@ -53,7 +53,12 @@
 				TargetEnvironment="1"
 				TypeLibraryName=".\Release/sdo_axiom.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="copy      Release\tuscany_sdo_axiom.dll       ..\..\..\deploy\bin
+copy       Release\tuscany_sdo_axiom.lib       ..\..\..\deploy\lib
+copy       ..\..\..\runtime\core\sdo_axiom\sdo_axiom.h       ..\..\..\deploy\include\
+copy       ..\..\..\runtime\core\sdo_axiom\sdo_axiom_export.h       ..\..\..\deploy\include\
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
