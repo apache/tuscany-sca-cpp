@@ -14,6 +14,9 @@
 @REM  See the License for the specific language governing permissions and
 @REM  limitations under the License.
 setlocal
+if not exist ..\..\..\..\misc\deploy mkdir ..\..\..\..\misc\deploy
+if not exist ..\..\..\..\misc\deploy\bin mkdir ..\..\..\..\misc\deploy\bin
+call vcvars32
 cd sdo_misc
 nmake -f sdo_misc.mak CFG="sdo_misc - Win32 Release"
 cd ..

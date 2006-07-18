@@ -84,7 +84,7 @@ copy %FROM_DIR%\samples\NOTICE    %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\README    %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\GettingStarted.html    %TO_SRC%\%SRC_PACKAGE%\samples
 
-xcopy/s %FROM_DIR%\samples\misc %TO_SRC%\%SRC_PACKAGE%\samples\misc
+xcopy /s /e %FROM_DIR%\samples\misc %TO_SRC%\%SRC_PACKAGE%\samples\misc
 xcopy/s %FROM_DIR%\samples\ides %TO_SRC%\%SRC_PACKAGE%\samples\ides
 echo Building SDO....
 
