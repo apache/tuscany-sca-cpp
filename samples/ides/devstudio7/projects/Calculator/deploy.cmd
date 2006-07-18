@@ -20,10 +20,16 @@ setlocal
 set currentPath=%~d0%~p0
 set sourcePath=%currentPath%..\..\..\..\Calculator
 
-if . == %1. (
+set buildMode=Release
+if .Debug == %1. (
+set buildMode=Debug
+)
+
+
+if . == %2. (
 set destinationPath=%sourcePath%\deploy
 ) ELSE (
-set destinationPath=%1
+set destinationPath=%2
 )
 
 if not exist %destinationPath%\modules mkdir %destinationPath%\modules 
@@ -37,11 +43,13 @@ copy %sourcePath%\CalculatorModule\DivideService.h %destinationPath%\modules\Cal
 copy %sourcePath%\CalculatorModule\DivideServiceImpl.h %destinationPath%\modules\CalculatorModule
 copy %sourcePath%\CalculatorModule\Tuscany-model.config %destinationPath%\modules\CalculatorModule
 copy %sourcePath%\CalculatorModule\Calculator.wsdl %destinationPath%\modules\CalculatorModule
-copy %currentPath%\Calculator\debug\Calculator.dll %destinationPath%\modules\CalculatorModule
+copy %currentPath%\Calculator\%buildMode%\Calculator.dll %destinationPath%\modules\CalculatorModule
 
 if not exist %destinationPath%\bin mkdir %destinationPath%\bin
-copy %currentPath%\Client\Debug\Calc.exe %destinationPath%\bin
-copy %currentPath%\Client\Debug\Calc.pdb %destinationPath%\bin
+copy %currentPath%\Client\%buildMode%\Client.exe %destinationPath%\bin
+if %buildMode% == Debug (
+copy %currentPath%\Client\%buildMode%\Client.pdb %destinationPath%\bin
+)
 copy %sourcePath%\Client\runclient.cmd   %destinationPath%\bin
 
 
