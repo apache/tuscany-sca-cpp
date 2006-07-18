@@ -24,5 +24,5 @@ echo using Axis2C: %AXIS2C_HOME%"
 
 rem Run the client
 WSClient.exe %*
-
+:end
 endlocal

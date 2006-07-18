@@ -109,12 +109,6 @@ echo Building SCA....
 cd %FROM_DIR%
 call build
 
-echo Building scagen...
-
-cd %FROM_DIR%\tools\scagen
-
-call ant
-
 copy %FROM_DIR%\tools\scagen\bld\scagen.jar  %FROM_DIR%\deploy\bin
 copy %FROM_DIR%\tools\scagen\bld\scagen.cmd  %FROM_DIR%\deploy\bin
 
