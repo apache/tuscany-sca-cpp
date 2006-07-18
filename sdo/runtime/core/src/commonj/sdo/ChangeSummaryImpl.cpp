@@ -429,6 +429,7 @@ namespace sdo{
     void ChangeSummaryImpl::setPropValue(void** value, unsigned int* len, DataObjectImpl* ob, const Property& prop)
     {
 
+		*len = 0;
         switch (prop.getTypeEnum())
         {
             case Type::BooleanType:
