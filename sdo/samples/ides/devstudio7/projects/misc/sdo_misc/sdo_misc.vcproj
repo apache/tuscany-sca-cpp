@@ -47,7 +47,9 @@
 				TypeLibraryName=".\Release/sdo_misc.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy
+				CommandLine="if not exist ..\..\..\..\..\misc\deploy mkdir ..\..\..\..\..\misc\deploy
+if not exist ..\..\..\..\..\misc\deploy\bin  mkdir ..\..\..\..\..\misc\deploy\bin
+copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy
 copy ..\..\..\..\..\misc\*.xml ..\..\..\..\..\misc\deploy
 copy Release\*.exe ..\..\..\..\..\misc\deploy\bin
 "/>
@@ -105,7 +107,9 @@ copy Release\*.exe ..\..\..\..\..\misc\deploy\bin
 				TypeLibraryName=".\Debug/sdo_misc.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy
+				CommandLine="if not exist ..\..\..\..\..\misc\deploy mkdir ..\..\..\..\..\misc\deploy
+if not exist ..\..\..\..\..\misc\deploy\bin  mkdir ..\..\..\..\..\misc\deploy\bin
+copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy
 copy ..\..\..\..\..\misc\*.xml ..\..\..\..\..\misc\deploy
 copy Debug\*.exe ..\..\..\..\..\misc\deploy\bin
 "/>
