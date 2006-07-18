@@ -595,6 +595,7 @@ namespace sdo{
                                                 DataObjectImpl* listob, const Property& prop)
     {
 
+		*len = 0;
         switch (prop.getTypeEnum())
         {
             case Type::BooleanType:
