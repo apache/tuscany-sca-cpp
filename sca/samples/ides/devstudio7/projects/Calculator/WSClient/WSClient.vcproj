@@ -52,7 +52,7 @@
 				TypeLibraryName=".\Debug/WSClient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\wsdeploy.cmd"/>
+				CommandLine="..\wsdeploy.cmd Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -106,7 +106,7 @@
 				TypeLibraryName=".\Release/WSClient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\wsdeploy.cmd"/>
+				CommandLine="..\wsdeploy.cmd Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
