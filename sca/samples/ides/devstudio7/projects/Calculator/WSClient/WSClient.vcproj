@@ -105,7 +105,8 @@
 				Name="VCMIDLTool"
 				TypeLibraryName=".\Release/WSClient.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="..\wsdeploy.cmd"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
