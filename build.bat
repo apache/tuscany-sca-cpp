@@ -18,8 +18,13 @@
 
 @setlocal
 
+echo building Java code
+cd tools\scagen 
+call ant
+
+echo building C++ code
 call vcvars32
-cd projects\tuscany_sca
+cd ..\..\projects\tuscany_sca
 build.cmd
 
 @endlocal
