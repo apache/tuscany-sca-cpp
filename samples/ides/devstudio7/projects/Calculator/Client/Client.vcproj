@@ -105,7 +105,8 @@
 				Name="VCMIDLTool"
 				TypeLibraryName=".\Release/Client.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="..\deploy.cmd"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
