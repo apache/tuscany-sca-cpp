@@ -14,6 +14,7 @@
 @REM  See the License for the specific language governing permissions and
 @REM  limitations under the License.
 setlocal
+call vcvars32
 cd WSClient
 nmake -f WSClient.mak CFG="WSClient - Win32 Release"
 cd ..
