@@ -127,11 +127,11 @@ OutDir=.\Debug
 
 !IF "$(RECURSE)" == "0" 
 
-ALL : "$(OUTDIR)\Calc.exe"
+ALL : "$(OUTDIR)\Client.exe"
 
 !ELSE 
 
-ALL : "Calculator - Win32 Debug" "$(OUTDIR)\Calc.exe"
+ALL : "Calculator - Win32 Debug" "$(OUTDIR)\Client.exe"
 
 !ENDIF 
 
@@ -143,9 +143,9 @@ CLEAN :
 	-@erase "$(INTDIR)\Calc.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
-	-@erase "$(OUTDIR)\Calc.exe"
-	-@erase "$(OUTDIR)\Calc.ilk"
-	-@erase "$(OUTDIR)\Calc.pdb"
+	-@erase "$(OUTDIR)\Client.exe"
+	-@erase "$(OUTDIR)\Client.ilk"
+	-@erase "$(OUTDIR)\Client.pdb"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -189,12 +189,12 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\Client.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\Calc.pdb" /debug /machine:I386 /out:"$(OUTDIR)\Calc.exe" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\Client.pdb" /debug /machine:I386 /out:"$(OUTDIR)\Client.exe" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\Calc.obj" \
 	"..\Calculator\Debug\Calculator.lib"
 
-"$(OUTDIR)\Calc.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+"$(OUTDIR)\Client.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -208,7 +208,7 @@ ALL : $(DS_POSTBUILD_DEP)
 OutDir=.\Debug
 # End Custom Macros
 
-$(DS_POSTBUILD_DEP) : "Calculator - Win32 Debug" "$(OUTDIR)\Calc.exe"
+$(DS_POSTBUILD_DEP) : "Calculator - Win32 Debug" "$(OUTDIR)\Client.exe"
    ..\deploy.cmd Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
