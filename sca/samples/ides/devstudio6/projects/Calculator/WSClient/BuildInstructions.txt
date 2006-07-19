@@ -20,10 +20,8 @@ The directory in which the sca runtime is deployed - probably something ending i
 TUSCANY_SDOCPP:
 The directory where the sdo runtime is deployed - probably something ending in sdo/deploy.
 
-TUSCANY_SCACPP_DEFAULT_MODULE:
-This is the default module to be loaded by SCA. It consists of <subsystem>/<component>.
-In the case of this sample - its set programatically by the client - thats easier when
-using visual studio.
+TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
+This is the default module to be loaded by SCA. It consists of <subsystem>/<component>
 
 TUSCANY_SCACPP_SYSTEM_ROOT
 This is the point from which SCA will start looking for modules to load. Again this is
