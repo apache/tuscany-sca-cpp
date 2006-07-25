@@ -17,6 +17,10 @@
 #ifndef StockQuoteServiceImpl_StockQuoteService_Wrapper_h
 #define StockQuoteServiceImpl_StockQuoteService_Wrapper_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "StockQuoteServiceImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 
@@ -29,7 +33,7 @@ public:
     virtual void* newImplementation();
     virtual void deleteImplementation();
 private:
-    StockQuoteServiceImpl* impl;
+    com::bigbank::stockquote::StockQuoteServiceImpl* impl;
 };
 
 #endif // StockQuoteServiceImpl_StockQuoteService_Wrapper_h
