@@ -17,6 +17,10 @@
 #ifndef AccountDataServiceImpl_AccountDataService_Wrapper_h
 #define AccountDataServiceImpl_AccountDataService_Wrapper_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "AccountDataServiceImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 

@@ -17,6 +17,10 @@
 #ifndef AccountServiceImpl_AccountService_Wrapper_h
 #define AccountServiceImpl_AccountService_Wrapper_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "AccountServiceImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 
@@ -29,7 +33,7 @@ public:
     virtual void* newImplementation();
     virtual void deleteImplementation();
 private:
-    AccountServiceImpl* impl;
+    com::bigbank::account::AccountServiceImpl* impl;
 };
 
 #endif // AccountServiceImpl_AccountService_Wrapper_h

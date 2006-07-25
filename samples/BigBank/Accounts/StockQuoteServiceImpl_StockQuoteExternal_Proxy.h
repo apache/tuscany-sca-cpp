@@ -17,6 +17,10 @@
 #ifndef StockQuoteServiceImpl_StockQuoteExternal_Proxy_h
 #define StockQuoteServiceImpl_StockQuoteExternal_Proxy_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "StockQuoteExternalService.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 

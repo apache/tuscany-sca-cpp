@@ -19,7 +19,7 @@
 #pragma warning(disable: 4786)
 #endif
 
-#include "..\Accounts\AccountService.h"
+#include "AccountService.h"
 #include "osoa/sca/sca.h"
 #include <iostream>
 #include <stdlib.h>

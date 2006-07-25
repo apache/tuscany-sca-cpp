@@ -17,6 +17,10 @@
 #ifndef AccountDataServiceImpl_AccountDataService_Proxy_h
 #define AccountDataServiceImpl_AccountDataService_Proxy_h
 
+#if defined(WIN32) || defined (_WINDOWS)
+#pragma warning(disable: 4786)
+#endif 
+
 #include "AccountDataService.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
