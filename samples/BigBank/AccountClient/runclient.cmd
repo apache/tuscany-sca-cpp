@@ -16,7 +16,7 @@
 @REM  limitations under the License.
 
 rem Runs the client after setting the SCA environment variables to use the
-rem CalculatorSubsystem
+rem AccountSubsystem
 setlocal
 
 if "%AXIS2C_HOME%" == "" (
@@ -37,15 +37,19 @@ goto end
 )
 echo using TUSCANY_SCACPP: %TUSCANY_SCACPP%
 
+set APFULLDIR=%~d0%~p0
 set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
 
 rem Only need to specify the subsystem (and not the moduleComponent as well) because
 rem there is only one moduleComponent in the subsystem - it is a very simple sample.
-set TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
+set TUSCANY_SCACPP_DEFAULT_MODULE=AccountSubsystem
 
 rem Run the client
 
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
-AccountClient.exe %*
+
+cd "%TUSCANY_SCACPP_SYSTEM_ROOT%/modules/Accounts"
+"%APFULLDIR%/AccountClient.exe" 1234
+
 :end
 endlocal

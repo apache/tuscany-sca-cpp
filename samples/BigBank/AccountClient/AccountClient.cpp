@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 	
     if (argc != 2)
     {
-        cout << "AccountClient.exe: Argument must be the name of the account" << endl;
+        cout << "AccountClient: Argument must be the name of the account" << endl;
     	return 0;
     }
 	try
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
             (AccountService*) myContext.locateService("AccountServiceComponent");
 		if (accountService == 0)
 		{
-			cout << "AccountClient.exe: Unable to find Account service" << endl;
+			cout << "AccountClient: Unable to find Account service" << endl;
 		}
 		else
 		{
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
             }
 			catch (char* x)
 			{
-				cout << "AccountService.exe: exception caught: " << x << endl;
+				cout << "AccountService: exception caught: " << x << endl;
 			}
 		}
 		
