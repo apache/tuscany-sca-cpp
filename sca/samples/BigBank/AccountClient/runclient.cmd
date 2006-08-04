@@ -42,7 +42,7 @@ set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
 
 rem Only need to specify the subsystem (and not the moduleComponent as well) because
 rem there is only one moduleComponent in the subsystem - it is a very simple sample.
-set TUSCANY_SCACPP_DEFAULT_MODULE=AccountSubsystem
+set TUSCANY_SCACPP_DEFAULT_MODULE=BigBankSubsystem
 
 rem Run the client
 

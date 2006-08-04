@@ -15,7 +15,7 @@
   limitations under the License.
  -->
 <module xmlns="http://www.osoa.org/xmlns/sca/0.9" xmlns:v="http://www.osoa.org/xmlns/sca/values/0.9"
-        name="AccountModule">
+        name="Accounts">
 
 	<component name="AccountServiceComponent">
 		<implementation.cpp dll="Accounts.dll" header="AccountServiceImpl.h"/>

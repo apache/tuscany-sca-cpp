@@ -17,10 +17,10 @@
 <service name="BigBank">
     <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
     <parameter name="TuscanySystemRoot" locked="xsd:false">PATH-TO-THE-SYSTEM-ROOT</parameter>
-    <parameter name="TuscanyEntryPoint" locked="xsd:false">AccountSubsystem/Account/WSAccountEntrypoint</parameter>
+    <parameter name="TuscanyEntryPoint" locked="xsd:false">BigBankSubsystem/Accounts/WSAccountEntrypoint</parameter>
 
    <description>
-        This is a testing service, named 'BigBank' to test multiple operations in the same service
+        This is a testing service, named 'BigBank'
    </description>
 
     <operation name="getAccountReport">
