@@ -21,6 +21,10 @@ AC_CONFIG_FILES([Makefile
                  Calculator/CalculatorModule/Makefile
                  Calculator/Client/Makefile
                  Calculator/WSClient/Makefile
+                 BigBank/Makefile
+                 BigBank/Accounts/Makefile
+                 BigBank/WSAccountClient/Makefile
+                 BigBank/AccountClient/Makefile
                  ])
 AC_OUTPUT
 
