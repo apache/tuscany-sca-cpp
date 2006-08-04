@@ -17,9 +17,9 @@
 
 <subsystem xmlns="http://www.osoa.org/xmlns/sca/0.9"
  
-	name="AccountSubsystem">
+	name="BigBankSubsystem">
 	
-	<moduleComponent name="Account" module="AccountModule">
+	<moduleComponent name="AccountsService" module="Accounts">
 		
 	</moduleComponent>
 
