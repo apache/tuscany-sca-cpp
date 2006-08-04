@@ -13,12 +13,12 @@ StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp
 
 noinst_HEADERS = *.h
 
-AccountDataServiceImpl_AccountDataService_Proxy.cpp:
+${BUILT_SOURCES}: sca.module
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
 module_LTLIBRARIES = libAccounts.la
-module_DATA = sca.module.lin Tuscany-model.config *.componentType *.wsdl services.xml
-EXTRA_DIST = sca.module.lin Tuscany-model.config *.componentType *.wsdl services.xml
+module_DATA = sca.module.lin Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
+EXTRA_DIST = sca.module.lin Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
 
 libAccounts_la_SOURCES = \
 AccountDataServiceImpl.cpp \
