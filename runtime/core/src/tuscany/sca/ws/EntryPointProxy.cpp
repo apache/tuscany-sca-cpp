@@ -321,9 +321,10 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
             break;
         case Type::StringType:
             {
-                const char* stringData = inputDataObject->getCString(pl[i]);
+                const char** stringData = new const char*; 
+                *stringData = inputDataObject->getCString(pl[i]);
                 //printf("inputDataObject has StringType named %s with value %s\n", name, stringData);
-                operation.addParameter(&stringData);
+                operation.addParameter(stringData);
             }
             break;
         case Type::DataObjectType:
