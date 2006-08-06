@@ -41,6 +41,5 @@ export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
 export TUSCANY_SCACPP_DEFAULT_MODULE=BigBankSubsystem
 
-cd $TEST_SYSTEM/modules/Accounts
-$APFULLDIR/account_client 1234
+./account_client 1234
 

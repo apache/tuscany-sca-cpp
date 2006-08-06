@@ -10,16 +10,22 @@ name="AccountService" >
   targetNamespace="http://www.bigbank.com/AccountService"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"> 
   
-  <xsd:element name="getAccountReport" type="tns:CustomerID" />
-    
-  <xsd:complexType name="CustomerID">
+  <xsd:element name="getAccountReport">
+  <xsd:complexType>
    <xsd:sequence>
     <xsd:element name="customerID" type="xsd:string" />
    </xsd:sequence>
    </xsd:complexType>
+  </xsd:element>
 
-  <xsd:element name="getAccountReportResponse" type="tns:AccountReport" />
-
+  <xsd:element name="getAccountReportResponse">
+  <xsd:complexType> 
+   <xsd:sequence>
+    <xsd:element name="result" type="tns:AccountReport"/>
+    </xsd:sequence>
+   </xsd:complexType>
+   </xsd:element>
+  
   <xsd:complexType name="AccountReport"> 
    <xsd:sequence>
     <xsd:element name="checking" type="tns:CheckingAccount" 
@@ -28,9 +34,9 @@ name="AccountService" >
 	  maxOccurs="unbounded"/>
     <xsd:element name="stocks" type="tns:StockAccount" 
 	  maxOccurs="unbounded"/>
-   </xsd:sequence>
-   </xsd:complexType>
-  
+    </xsd:sequence>
+  </xsd:complexType>
+   
   <xsd:complexType name="StockAccount">
    <xsd:sequence>
     <xsd:element name="accountNumber" type="xsd:string"/>
