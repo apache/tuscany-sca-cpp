@@ -20,10 +20,12 @@
 #endif
 
 #include "commonj/sdo/SDO.h"
+#include "osoa/sca/sca.h"
 
 #include "AccountDataServiceImpl.h"
 
 using namespace commonj::sdo;
+using namespace osoa::sca;
 
 namespace com
 {
@@ -37,11 +39,7 @@ namespace com
             {
                 try {
 
-                    DataFactoryPtr factory  = DataFactory::getDataFactory();
-
-                    XSDHelperPtr helper = HelperProvider::getXSDHelper(factory);
-    
-                    helper->defineFile("AccountService.wsdl");
+                    DataFactoryPtr factory  = ComponentContext::getCurrent().getDataFactory();
 
                     DataObjectPtr newaccount = 
                         factory->create("http://www.bigbank.com/AccountService","CheckingAccount");
@@ -72,11 +70,7 @@ namespace com
             {
                 try {
 
-                    DataFactoryPtr factory  = DataFactory::getDataFactory();
-
-                    XSDHelperPtr helper = HelperProvider::getXSDHelper(factory);
-    
-                    helper->defineFile("AccountService.wsdl");
+                    DataFactoryPtr factory  = ComponentContext::getCurrent().getDataFactory();
 
                     DataObjectPtr newaccount = 
                         factory->create("http://www.bigbank.com/AccountService","SavingsAccount");
@@ -106,11 +100,7 @@ namespace com
             {
                 try {
 
-                    DataFactoryPtr factory  = DataFactory::getDataFactory();
-
-                    XSDHelperPtr helper = HelperProvider::getXSDHelper(factory);
-    
-                    helper->defineFile("AccountService.wsdl");
+                    DataFactoryPtr factory  = ComponentContext::getCurrent().getDataFactory();
 
                     DataObjectPtr newaccount = 
                         factory->create("http://www.bigbank.com/AccountService","StockAccount");

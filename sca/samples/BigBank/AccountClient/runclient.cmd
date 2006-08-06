@@ -48,8 +48,7 @@ rem Run the client
 
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
-cd "%TUSCANY_SCACPP_SYSTEM_ROOT%/modules/Accounts"
-"%APFULLDIR%/AccountClient.exe" 1234
+.\AccountClient.exe 1234
 
 :end
 endlocal

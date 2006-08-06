@@ -54,17 +54,8 @@ int main(int argc, char* argv[])
 			{
                 // exercise the account service
 
-                DataFactoryPtr mdg  = DataFactory::getDataFactory();
-
-                XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
-    
-                xsh->defineFile("AccountService.wsdl");
-
-                DataObjectPtr in = mdg->create("http://www.bigbank.com/AccountService","CustomerID");
-                in->setCString("customerID",argv[1]);
-
                 DataObjectPtr report = 
-                    accountService->getAccountReport(in);
+                    accountService->getAccountReport(argv[1]);
 
                 if (report != 0)
                 {

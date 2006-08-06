@@ -72,25 +72,17 @@ namespace com
             }
 
             DataObjectPtr /*AccountReport**/ 
-                AccountServiceImpl::getAccountReport(DataObjectPtr cid)
+                AccountServiceImpl::getAccountReport(const char* customerID)
             {
                 try {
 
-                    commonj::sdo::DataFactoryPtr factory = 
-                        commonj::sdo::DataFactory::getDataFactory();
- 
-                    commonj::sdo::XSDHelperPtr helper = 
-                        commonj::sdo::HelperProvider::getXSDHelper(factory);
+                    ComponentContext theContext = ComponentContext::getCurrent();
     
-                    helper->defineFile("AccountService.wsdl");
-
-                    const char* id = cid->getCString("customerID");
-
+                    commonj::sdo::DataFactoryPtr factory = theContext.getDataFactory();
+ 
                     commonj::sdo::DataObjectPtr newReport = 
                         factory->create("http://www.bigbank.com/AccountService","AccountReport");
                      
-                    ComponentContext theContext = ComponentContext::getCurrent();
-    
                     com::bigbank::account::AccountDataService *dataService = 
                        (com::bigbank::account::AccountDataService*)theContext.getService("AccountDataService");
         
@@ -104,7 +96,7 @@ namespace com
                     // gets the first of each.
 
                     commonj::sdo::DataObjectPtr checking =                     
-                        dataService->getCheckingAccount(id);
+                        dataService->getCheckingAccount(customerID);
 
                     if (checking != 0)
                     {
@@ -114,7 +106,7 @@ namespace com
                         dl.append(checking);
                     }
 
-                    commonj::sdo::DataObjectPtr savings = dataService->getSavingsAccount(id);
+                    commonj::sdo::DataObjectPtr savings = dataService->getSavingsAccount(customerID);
 
                     if (savings != 0)
                     {
@@ -133,7 +125,7 @@ namespace com
                         return newReport;
                     }
 
-                    commonj::sdo::DataObjectPtr stocks = dataService->getStockAccount(id);
+                    commonj::sdo::DataObjectPtr stocks = dataService->getStockAccount(customerID);
 
                     if (stocks != 0)
                     {
