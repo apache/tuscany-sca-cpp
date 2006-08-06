@@ -21,6 +21,7 @@
 #define osoa_sca_modulecontext_h
 
 #include "osoa/sca/export.h"
+#include "commonj/sdo/SDO.h"
 
 namespace osoa
 {
@@ -51,6 +52,15 @@ namespace osoa
              * business interface of the target service.
              */
             void* locateService(const char* serviceName);
+
+            /** 
+             * Get an SDO data factory which will allow the component to 
+             * create data objects for all the types configured for this
+             * component.
+             * @return A data factory to be used by the component to create
+             * new data objects.
+             */
+            commonj::sdo::DataFactoryPtr getDataFactory();
 
             /**
              * Destructor.

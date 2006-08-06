@@ -88,6 +88,17 @@ namespace osoa
             return sp;
         }
 
+        // =============
+        // getDataFactory
+        // =============
+        DataFactoryPtr ModuleContext::getDataFactory()
+        {
+            LOGENTRY(1, "ModuleContext::getDataFactory");
+            DataFactoryPtr df = impl->getDataFactory();
+            LOGEXIT(1, "ModuleContext::getDataFactory");
+            return df;
+        }
+
         
     } // End namespace sca
 } // End namespace osoa

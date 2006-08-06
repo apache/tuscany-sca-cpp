@@ -96,6 +96,18 @@ namespace osoa
 
         }
         
+        // ==============================================
+        // getDataFactory: return the data factory for the current module
+        // ==============================================
+        DataFactoryPtr ModuleContextImpl::getDataFactory()
+        {
+            LOGENTRY(1, "ModuleContextImpl::getDataFactory");
+            DataFactoryPtr dataFactory = module->getDataFactory();
+            
+            LOGEXIT(1, "ModuleContextImpl::getDataFactory");
+            return dataFactory;
+        }
+        
         
         
     } // End namespace sca
