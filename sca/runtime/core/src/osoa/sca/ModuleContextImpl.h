@@ -44,6 +44,11 @@ namespace osoa
              */
             void* locateService(const char* serviceName);
             
+            /** 
+             * See ModuleContext.
+             */
+            commonj::sdo::DataFactoryPtr getDataFactory();
+
             /**
              * Destructor.
              */
