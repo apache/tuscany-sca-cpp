@@ -1,4 +1,3 @@
-
 <!--
   Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
 
@@ -17,7 +16,7 @@
 <service name="BigBank">
     <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
     <parameter name="TuscanySystemRoot" locked="xsd:false">PATH-TO-THE-SYSTEM-ROOT</parameter>
-    <parameter name="TuscanyEntryPoint" locked="xsd:false">BigBankSubsystem/Accounts/WSAccountEntrypoint</parameter>
+    <parameter name="TuscanyEntryPoint" locked="xsd:false">BigBankSubsystem/AccountsService/WSAccountEntrypoint</parameter>
 
    <description>
         This is a testing service, named 'BigBank'
