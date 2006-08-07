@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.osoa.org/xmlns/sca/1.0"
+    xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
+    elementFormDefault="qualified">
+    
+    <include schemaLocation="sca-core.xsd" />
+    
+    <element name="composite" type="sca:Composite" />
+    <complexType name="Composite">
+        <sequence>
+            <element minOccurs="0" maxOccurs="unbounded" name="include" type="anyURI" />
+            <element minOccurs="0" maxOccurs="unbounded" name="service" type="sca:CompositeServiceType" />
+            <element minOccurs="0" maxOccurs="unbounded" name="property" type="sca:PropertyType" />
+            <element minOccurs="0" maxOccurs="unbounded" name="component" type="sca:Component" />
+            <element minOccurs="0" maxOccurs="unbounded" name="reference" type="sca:CompositeReferenceType" />
+            <element minOccurs="0" maxOccurs="unbounded" name="wire" type="sca:Wire" />
+            <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="name" type="NCName" use="required" />
+        <anyAttribute namespace="##any" processContents="lax" />
+    </complexType>
+    
+    <complexType name="CompositeServiceType">
+        <complexContent>
+            <extension base="sca:Contract">
+                <sequence>
+                    <element name="reference" minOccurs="0" maxOccurs="unbounded" type="anyURI" />
+                    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+                <attribute name="multiplicity" type="sca:Multiplicity" use="optional" default="1..1" />
+                <anyAttribute namespace="##any" processContents="lax" />
+           </extension>
+       </complexContent>
+    </complexType>
+
+    <complexType name="CompositeReferenceType">
+        <complexContent>
+            <extension base="sca:Contract">
+                <sequence>
+                    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+                <attribute name="multiplicity" type="sca:Multiplicity" use="optional" default="1..1" />
+                <attribute name="override" type="sca:OverrideOptions" default="may" use="optional" />
+                <anyAttribute namespace="##any" processContents="lax" />
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Wire">
+        <sequence>
+            <element name="source" type="anyURI" minOccurs="1" maxOccurs="1" />
+            <element name="target" type="anyURI" minOccurs="1" maxOccurs="1" />
+            <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+        <anyAttribute namespace="##any" processContents="lax" />
+    </complexType>
+
+</schema>
