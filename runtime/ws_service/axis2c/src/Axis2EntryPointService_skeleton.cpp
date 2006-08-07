@@ -177,15 +177,16 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }                    
-                    std::cout << "Axis2EntryPoint inputDataObject:" << inputDataObject;
-                    Utils::printDO(inputDataObject);			
-                    std::cout << "Axis2EntryPoint inputDataObject printed\n";
+                    //std::cout << "Axis2EntryPoint inputDataObject:" << inputDataObject;
+                    //Utils::printDO(inputDataObject);			
+                    //std::cout << "Axis2EntryPoint inputDataObject printed\n";
                     
                     DataObjectPtr outputDataObject = entryPointProxy->invoke(op_name, inputDataObject);
 
-                    std::cout << "Axis2EntryPoint outputDataObject:" << outputDataObject;
-                    Utils::printDO(outputDataObject);			
-                    std::cout << "Axis2EntryPoint outputDataObject printed\n";
+                    //std::cout << "Axis2EntryPoint outputDataObject:" << outputDataObject;
+                    //Utils::printDO(outputDataObject);			
+                    //std::cout << "Axis2EntryPoint outputDataObject printed\n";
+                    
                     if(!outputDataObject)
                     {
                 		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: Failure whilst invoking EntryPoint");
