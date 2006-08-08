@@ -232,7 +232,7 @@ SOURCE=.\AccountServiceImpl.componenttype
 # End Source File
 # Begin Source File
 
-SOURCE=.\sca.module
+SOURCE=.\sca.composite
 # End Source File
 # Begin Source File
 

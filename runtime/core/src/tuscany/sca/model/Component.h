@@ -40,7 +40,7 @@ namespace tuscany
         namespace model
         {
 
-            class Module;
+            class Composite;
 
             /**
              * Information about an SCA component.
@@ -51,9 +51,9 @@ namespace tuscany
                 /**
                  * Constructor
                  * @param name The name of the component.
-                 * @param module The module containing this component.
+                 * @param composite The composite containing this component.
                  */
-                Component(const std::string& name, Module* module);
+                Component(const std::string& name, Composite* composite);
 
                 /**
                  * Destructor.
@@ -67,10 +67,10 @@ namespace tuscany
                 const string& getName() {return name;}
 
                 /** 
-                 * Get the module containing this component.
-                 * @return The containing module.
+                 * Get the composite containing this component.
+                 * @return The containing composite.
                  */
-                Module* getModule() {return containingModule;}
+                Composite* getComposite() {return containingComposite;}
 
                 /**
                  * Add a new service to this component.
@@ -133,7 +133,7 @@ namespace tuscany
     
                 /**
                  * Add the property values to the properties defined on this 
-                 * component. The values will come from the sca.module file.
+                 * component. The values will come from the sca.composite file.
                  * @param properties A data object representing all the values set
                  * for this component.
                  */
@@ -152,9 +152,9 @@ namespace tuscany
                 string name;
 
                 /**
-                 * Module containing this component for navigating up the tree.
+                 * Composite containing this component for navigating up the tree.
                  */
-                Module* containingModule;
+                Composite* containingComposite;
 
                 /**
                  * Information about the implementation of this component.

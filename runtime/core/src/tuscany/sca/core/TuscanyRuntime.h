@@ -38,7 +38,7 @@ namespace tuscany
             /**
             * Default constructor
             */
-            TuscanyRuntime(const string& moduleComponent = "", const string& root = "");            
+            TuscanyRuntime(const string& compositeComponent = "", const string& root = "");            
             
             /**
             * Destructor
@@ -53,10 +53,10 @@ namespace tuscany
             void setSystemRoot(const string& root);
             
             /**
-            * Set the default ModuleComponent for the system
-            * @param moduleComponent The name of the default moduleComponent.
+            * Set the default CompositeComponent for the system
+            * @param compositeComponent The name of the default compositeComponent.
             */
-            void setDefaultModuleComponent(const string& moduleComponent);
+            void setDefaultCompositeComponent(const string& compositeComponent);
             
             /**
             * start the runtime
@@ -71,7 +71,7 @@ namespace tuscany
             
         private:
             string systemRoot;
-            string defaultModuleComponent;
+            string defaultCompositeComponent;
         };
 
         

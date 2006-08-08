@@ -63,8 +63,8 @@ int main(int argc, char** argv)
      * using the axis2.xml file.
      * In this sample client_home points to the Axis2/C default deploy folder. The client_home can 
      * be different from this folder on your system. For example, you may have a different folder 
-     * (say, my_client_folder) with its own axis2.xml file. my_client_folder/modules will have the 
-     * modules that the client uses
+     * (say, my_client_folder) with its own axis2.xml file. my_client_folder/composites will have the 
+     * composites that the client uses
      */
     client_home = AXIS2_GETENV("AXIS2C_HOME");
     if (!client_home)
@@ -86,8 +86,8 @@ int main(int argc, char** argv)
     /* Set service client options */
     AXIS2_SVC_CLIENT_SET_OPTIONS(svc_client, &env, options);    
     
-    /* Engage addressing module */
-    AXIS2_SVC_CLIENT_ENGAGE_MODULE(svc_client, &env, AXIS2_MODULE_ADDRESSING);
+    /* Engage addressing composite */
+    AXIS2_SVC_CLIENT_ENGAGE_COMPOSITE(svc_client, &env, AXIS2_COMPOSITE_ADDRESSING);
     
     /* Build the SOAP request message payload using OM API.*/
     payload = build_om_payload_for_WSEntryPointTestRPC_svc(env);

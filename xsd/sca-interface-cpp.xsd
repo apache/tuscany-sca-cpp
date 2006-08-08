@@ -43,7 +43,7 @@
   <simpleType name="CPPScope">
     <restriction base="string">
       <enumeration value="stateless"/>
-      <enumeration value="module"/>
+      <enumeration value="composite"/>
     </restriction>
   </simpleType>
 

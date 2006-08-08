@@ -64,9 +64,9 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
 
     string portNamespace = binding->getWSDLNamespaceURL();
 
-    // Lookup the wsdl model from the module, keyed on the namespace 
+    // Lookup the wsdl model from the composite, keyed on the namespace 
     // (the wsdl will have been loaded at startup, based on the information in the config file)
-    Wsdl* wsdlDefinition = externalService->getContainingModule()->findWsdl(portNamespace);
+    Wsdl* wsdlDefinition = externalService->getContainingComposite()->findWsdl(portNamespace);
     if (wsdlDefinition == 0)
     {
     	string msg = "WSDL not found for " + portNamespace;
@@ -170,8 +170,8 @@ axiom_node_t* Axis2Client::createPayload(Operation& operation,
     	
     	// Build up the payload as an SDO
 
-        // Get the data factory for the module (it will already have the typecreates loaded for the xsds)
-      	DataFactoryPtr dataFactory = externalService->getContainingModule()->getDataFactory();
+        // Get the data factory for the composite (it will already have the typecreates loaded for the xsds)
+      	DataFactoryPtr dataFactory = externalService->getContainingComposite()->getDataFactory();
     	DataObjectPtr requestDO = dataFactory->create(wsdlOp.getInputTypeUri().c_str(), 
     	                                              wsdlOp.getInputTypeName().c_str());
     	
@@ -288,7 +288,7 @@ void Axis2Client::setReturn(axiom_node_t* ret_node,
     {
         // Document style 
         
-        DataFactoryPtr dataFactory = externalService->getContainingModule()->getDataFactory();
+        DataFactoryPtr dataFactory = externalService->getContainingComposite()->getDataFactory();
         AxiomHelper myHelper;
         DataObjectPtr returnDO = myHelper.toSdo(ret_node, dataFactory);
         

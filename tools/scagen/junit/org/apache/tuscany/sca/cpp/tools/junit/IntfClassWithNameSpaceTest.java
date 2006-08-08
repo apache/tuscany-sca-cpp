@@ -19,7 +19,7 @@ package org.apache.tuscany.sca.cpp.tools.junit;
 /**
  * This is a "run this first" testcase that just tests some simple operations of
  * the scagen tools it uses the
- * Hydra.sca.core\test\testSCASystem\modules\MyValueServiceModule SCA module as
+ * Hydra.sca.core\test\testSCASystem\composites\MyValueServiceComposite SCA composite as
  * input data.
  */
 public class IntfClassWithNameSpaceTest extends TuscanyTestCase {
@@ -34,11 +34,11 @@ public class IntfClassWithNameSpaceTest extends TuscanyTestCase {
     }
 
     /**
-     * Test the Hydra.sca.core\test\testSCASystem\modules\MyValueServiceModule
+     * Test the Hydra.sca.core\test\testSCASystem\composites\MyValueServiceComposite
      * proxy and wrapper generation.
      */
     public void testEnvHandler() {
-        testModule("MyValueServiceModuleIntfClassWithNamespace", check_results);
+        testComposite("MyValueServiceCompositeIntfClassWithNamespace", check_results);
     }
 
 }

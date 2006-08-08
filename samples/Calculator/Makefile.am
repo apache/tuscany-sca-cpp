@@ -1,4 +1,4 @@
 deploydir=$(prefix)/samples/Calculator/deploy/subsystems/CalculatorSubsystem
-SUBDIRS = CalculatorModule Client WSClient
+SUBDIRS = CalculatorComposite Client WSClient
 EXTRA_DIST = CalculatorSubsystem
 deploy_DATA = CalculatorSubsystem/sca.subsystem

@@ -35,7 +35,7 @@ namespace tuscany
         // Constructor
         // ===========
         SCAEntryPoint::SCAEntryPoint(const char* epName)
-            : subsystem(0), entrypoint(0), module(0)
+            : subsystem(0), entrypoint(0), composite(0)
         {
             LOGENTRY(1,"SCAEntryPoint::constructor");
             string message;
@@ -69,15 +69,15 @@ namespace tuscany
             else
             {
                 // -----------------------------------
-                // locate the EntryPoint in the Module
+                // locate the EntryPoint in the Composite
                 // -----------------------------------
-                string moduleComponentName;
-                Utils::tokeniseUri(entrypointName, moduleComponentName, entrypointName);
-                module = subsystem->findModuleByComponentName(moduleComponentName);
-                if (module)
+                string compositeComponentName;
+                Utils::tokeniseUri(entrypointName, compositeComponentName, entrypointName);
+                composite = subsystem->findCompositeByComponentName(compositeComponentName);
+                if (composite)
                 {
-                    dataFactory = module->getDataFactory();
-                    entrypoint = module->findEntryPoint(entrypointName);
+                    dataFactory = composite->getDataFactory();
+                    entrypoint = composite->findEntryPoint(entrypointName);
                 }
             }
     

@@ -17,7 +17,7 @@
 
 <subsystem xmlns="http://www.osoa.org/xmlns/sca/0.9" name="WSEntryPointTestSubsystem">
 	
-        <moduleComponent name="WSEntryPointTestService" module="WSEntryPointTestModule" />
+        <compositeComponent name="WSEntryPointTestService" composite="WSEntryPointTestComposite" />
 
 </subsystem>
 	

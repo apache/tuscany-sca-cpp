@@ -45,7 +45,7 @@ EntryPointProxy::EntryPointProxy()
     scaEntryPoint = NULL;
     entryPointName = "";
     systemRoot = "";
-    moduleComponent = "";
+    compositeComponent = "";
     LOGEXIT(1,"EntryPointProxy::constructor");
 }
 
@@ -73,8 +73,8 @@ void EntryPointProxy::init(const char* systemRootPath, const char* fullEntryPoin
     try
 	{
 
-		// fullEntryPointName is of the form "subsystem name"/"module component name"/"entry point name"
-		// Get the "subsystem name"/"module component name" part for setDefaultModuleComponent
+		// fullEntryPointName is of the form "subsystem name"/"composite component name"/"entry point name"
+		// Get the "subsystem name"/"composite component name" part for setDefaultCompositeComponent
         // Keep the "entry point name" part for use in invoke
 		string subsystemAndComponentName, epName;
 		Utils::rTokeniseString("/", fullEntryPointName, subsystemAndComponentName, epName);
@@ -87,9 +87,9 @@ void EntryPointProxy::init(const char* systemRootPath, const char* fullEntryPoin
             newInitParams = true;
         }
 
-        if(moduleComponent.length() != 0 && moduleComponent != subsystemAndComponentName)
+        if(compositeComponent.length() != 0 && compositeComponent != subsystemAndComponentName)
         {
-            moduleComponent = subsystemAndComponentName;
+            compositeComponent = subsystemAndComponentName;
             newInitParams = true;
         }
 
@@ -103,17 +103,17 @@ void EntryPointProxy::init(const char* systemRootPath, const char* fullEntryPoin
         if(tuscanyRuntime == NULL)
         {
             LOGINFO(4, "Creating new TuscanyRuntime");
-            moduleComponent = subsystemAndComponentName;
+            compositeComponent = subsystemAndComponentName;
             systemRoot = systemRootPath;
             entryPointName = epName;
-            tuscanyRuntime = new TuscanyRuntime(moduleComponent, systemRoot);
+            tuscanyRuntime = new TuscanyRuntime(compositeComponent, systemRoot);
             tuscanyRuntime->start();
         }
         else if(tuscanyRuntime != NULL && newInitParams)
         {
-            LOGINFO(4, "Restarting TuscanyRuntime with new SystemRoot or DefaultModule");
+            LOGINFO(4, "Restarting TuscanyRuntime with new SystemRoot or DefaultComposite");
             tuscanyRuntime->stop();
-            tuscanyRuntime->setDefaultModuleComponent(moduleComponent);
+            tuscanyRuntime->setDefaultCompositeComponent(compositeComponent);
             tuscanyRuntime->setSystemRoot(systemRoot);
             tuscanyRuntime->start();
         }
@@ -169,9 +169,9 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
     DataObjectPtr outputDataObject = NULL;
     SCARuntime* runtime = SCARuntime::getInstance();
     
-	Module* module = runtime->getCurrentModule();
+	Composite* composite = runtime->getCurrentComposite();
 
-	EntryPoint* entryPoint = module->findEntryPoint(entryPointName);
+	EntryPoint* entryPoint = composite->findEntryPoint(entryPointName);
 
     Binding* binding = entryPoint->getBinding();
     if(binding->getBindingType() == Binding::SCA)
@@ -188,7 +188,7 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         string wsdlPort  = wsBinding->getPortName();
         string wsdlService = wsBinding->getServiceName();
 
-        Wsdl* wsdl = module->findWsdl(wsdlNamespace);
+        Wsdl* wsdl = composite->findWsdl(wsdlNamespace);
         if (wsdl == 0)
         {
             LOGINFO_1(0, "WSDL description %s not found\n", wsdlNamespace.c_str());
@@ -509,7 +509,7 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
 
     try
     {
-        // Call into the wired module
+        // Call into the wired composite
         scaEntryPoint->invoke(operation);
 
         // Set the data in the outputDataObject to be returned

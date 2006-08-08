@@ -31,7 +31,7 @@
     </target>
 
     <target name="test" depends="init,jars,test.jar">
-        <java classname="org.apache.tuscany.sca.cpp.tools.junit.TestAllModulesTest">
+        <java classname="org.apache.tuscany.sca.cpp.tools.junit.TestAllCompositesTest">
             <classpath>
                 <pathelement location="${build.result.folder}/test.jar" />
                 <pathelement location="${junit.jar.folder}/junit.jar" />

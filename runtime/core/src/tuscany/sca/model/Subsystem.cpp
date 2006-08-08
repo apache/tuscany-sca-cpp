@@ -41,47 +41,47 @@ namespace tuscany
             }
 
             ///
-            /// Add a new module component
+            /// Add a new composite component
             ///
-            Module* Subsystem::addModuleComponent(const std::string& name, const std::string& moduleName)
+            Composite* Subsystem::addCompositeComponent(const std::string& name, const std::string& compositeName)
             {
-                LOGENTRY(1, "Subsystem::addModuleComponent");
+                LOGENTRY(1, "Subsystem::addCompositeComponent");
                 
-                Module* newModule = new Module(moduleName);
+                Composite* newComposite = new Composite(compositeName);
                 
                 // TODO: Should check for duplicates and throw exception
-                moduleComponents[name] = newModule;
+                compositeComponents[name] = newComposite;
                 
-                LOGEXIT(1, "Subsystem::addModuleComponent");
+                LOGEXIT(1, "Subsystem::addCompositeComponent");
                 
-                return newModule;
+                return newComposite;
             }
             
-            Module* Subsystem::findModule(const std::string& moduleName)
+            Composite* Subsystem::findComposite(const std::string& compositeName)
             {
-                for (MODULECOMPONENT_MAP::iterator moduleComponentIter = moduleComponents.begin();
-                moduleComponentIter != moduleComponents.end();
-                moduleComponentIter++)
+                for (COMPOSITECOMPONENT_MAP::iterator compositeComponentIter = compositeComponents.begin();
+                compositeComponentIter != compositeComponents.end();
+                compositeComponentIter++)
                 {
-                    if (moduleName == moduleComponentIter->second->getName())
+                    if (compositeName == compositeComponentIter->second->getName())
                     {
-                        return (Module*)moduleComponentIter->second;
+                        return (Composite*)compositeComponentIter->second;
                     } 
                 }
                 return 0;
             }
             
-            Module* Subsystem::findModuleByComponentName(const std::string& moduleComponentName)
+            Composite* Subsystem::findCompositeByComponentName(const std::string& compositeComponentName)
             {
-                return moduleComponents[moduleComponentName];
+                return compositeComponents[compositeComponentName];
             }
             
-            Module* Subsystem::getDefaultModule()
+            Composite* Subsystem::getDefaultComposite()
             {
-                if (moduleComponents.size() == 1)
+                if (compositeComponents.size() == 1)
                 {
-                    MODULECOMPONENT_MAP::iterator moduleComponentIter = moduleComponents.begin();
-                    return moduleComponentIter->second;
+                    COMPOSITECOMPONENT_MAP::iterator compositeComponentIter = compositeComponents.begin();
+                    return compositeComponentIter->second;
                 }
                 return 0;
             }
@@ -106,11 +106,11 @@ namespace tuscany
 
             void Subsystem::resolveWires()
             {
-                for (MODULECOMPONENT_MAP::iterator moduleComponentIter = moduleComponents.begin();
-                moduleComponentIter != moduleComponents.end();
-                moduleComponentIter++)
+                for (COMPOSITECOMPONENT_MAP::iterator compositeComponentIter = compositeComponents.begin();
+                compositeComponentIter != compositeComponents.end();
+                compositeComponentIter++)
                 {
-                    moduleComponentIter->second->resolveWires();
+                    compositeComponentIter->second->resolveWires();
                 }
 
                 // Resolve EntryPoint wires

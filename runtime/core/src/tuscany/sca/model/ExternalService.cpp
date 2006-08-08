@@ -30,8 +30,8 @@ namespace tuscany
         {
 
             // Constructor
-            ExternalService::ExternalService(const std::string& serviceName, Module *module)
-                : WireTarget(serviceName), containingModule(module)
+            ExternalService::ExternalService(const std::string& serviceName, Composite *composite)
+                : WireTarget(serviceName), containingComposite(composite)
             {
                 LOGENTRY(1, "ExternalService::constructor");
                 LOGINFO_1(2, "ExternalService::constructor: ExternalService name: %s", getName().c_str());

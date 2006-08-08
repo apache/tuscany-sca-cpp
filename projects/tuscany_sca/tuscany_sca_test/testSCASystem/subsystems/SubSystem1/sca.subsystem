@@ -19,9 +19,9 @@
  
 	name="SubSystem1">
 	
-	<moduleComponent name="MyValue" module="MyValueServiceModule">
+	<compositeComponent name="MyValue" composite="MyValueServiceComposite">
 		
-	</moduleComponent>
+	</compositeComponent>
 
 </subsystem>
 	

@@ -122,19 +122,19 @@ SOURCE=..\..\..\runtime\core\src\osoa\sca\export.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ModuleContext.cpp
+SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContext.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ModuleContext.h
+SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContext.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ModuleContextImpl.cpp
+SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ModuleContextImpl.h
+SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.h
 # End Source File
 # Begin Source File
 
@@ -309,11 +309,11 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Module.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Module.h
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.h
 # End Source File
 # Begin Source File
 

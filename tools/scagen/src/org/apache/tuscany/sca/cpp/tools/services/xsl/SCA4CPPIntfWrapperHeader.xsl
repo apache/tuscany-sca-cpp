@@ -65,7 +65,7 @@
 
         <xsl:call-template name="include_headers">
             <xsl:with-param name="header" 
-                            select="@moduleXmlFileHeader"/>
+                            select="@compositeXmlFileHeader"/>
         </xsl:call-template>
 
         <xsl:apply-templates select="scaService" mode="class_body"/>

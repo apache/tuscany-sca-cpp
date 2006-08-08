@@ -57,8 +57,8 @@ public abstract class XMLFileActor implements FileActor {
      *      and kick off the processing (using the handler map that has been set
      *      up by the concrete subclass).
      * 
-     * @param moduleXML
-     *            the sca.module or fragment file
+     * @param compositeXML
+     *            the sca.composite or fragment file
      * @param target
      *            the target directory
      * @param depth
@@ -66,21 +66,21 @@ public abstract class XMLFileActor implements FileActor {
      * @see FileActor#actOnFile(File, File, int) interface to allow for
      *      recursive diving into a directory structure.
      */
-    public void actOnFile(File moduleXML, File target, int depth)
+    public void actOnFile(File compositeXML, File target, int depth)
             throws Exception {
 
-        if (null == moduleXML || null == target) {
+        if (null == compositeXML || null == target) {
             return;
         }
 
         filesActedOn++;
         
-        parameters.put("sourceFile", moduleXML);
+        parameters.put("sourceFile", compositeXML);
         parameters.put("targetFile", target);
 
         if (transformerFactory.getFeature(DOMSource.FEATURE)
                 && transformerFactory.getFeature(DOMResult.FEATURE)) {
-            Document dom = createDomFromXMLFile(moduleXML);
+            Document dom = createDomFromXMLFile(compositeXML);
             if (dom != null) {
                 parameters.put("targetDirectoryFile", target);
                 DomHandler.handleDom(dom, handlers, parameters);

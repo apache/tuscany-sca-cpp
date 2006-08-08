@@ -17,7 +17,7 @@
 
 <subsystem xmlns="http://www.osoa.org/xmlns/sca/0.9" name="WSEntryPointTestRPCSubsystem">
 	
-        <moduleComponent name="WSEntryPointTestRPCService" module="WSEntryPointTestRPCModule" />
+        <compositeComponent name="WSEntryPointTestRPCService" composite="WSEntryPointTestRPCComposite" />
 
 </subsystem>
 	

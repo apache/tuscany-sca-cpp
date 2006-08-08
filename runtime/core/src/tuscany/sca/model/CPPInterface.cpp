@@ -47,9 +47,9 @@ namespace tuscany
                     headerStub = header;
                 }
 
-                if (scop == "module")
+                if (scop == "composite")
                 {
-                    scope = MODULE;
+                    scope = COMPOSITE;
                 }
                 else
                 {

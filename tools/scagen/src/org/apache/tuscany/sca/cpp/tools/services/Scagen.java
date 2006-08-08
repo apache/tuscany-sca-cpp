@@ -27,13 +27,13 @@ import org.apache.tuscany.sca.cpp.tools.common.Utils;
 
 /**
  * This is the main top level class. Its purpose is to create a
- * Module/FragmentFile handler visitor and pass it to a DirectoryScanner for
+ * Composite/FragmentFile handler visitor and pass it to a DirectoryScanner for
  * processing.
  */
 public class Scagen extends CParsingTool {
 
-    public static Set MODULE_EXTENSIONS = new HashSet(Arrays
-            .asList(new Object[] { "module", "fragment" }));
+    public static Set COMPOSITE_EXTENSIONS = new HashSet(Arrays
+            .asList(new Object[] { "composite", "fragment" }));
 
     /**
      * @throws Exception
@@ -45,7 +45,7 @@ public class Scagen extends CParsingTool {
 
     /**
      * Take a directory scanning class and create a vistor that knows how to
-     * handle any sca.module or .fragment that the scanner comes across.
+     * handle any sca.composite or .fragment that the scanner comes across.
      * 
      * @param args
      *            standard main args. THe values we expect in this class are
@@ -56,20 +56,20 @@ public class Scagen extends CParsingTool {
         boolean failed = false;
         try {
             Scagen env = new Scagen(args);
-            ModuleOrFragmentFileHandler module_handler = new ModuleOrFragmentFileHandler();
+            CompositeOrFragmentFileHandler composite_handler = new CompositeOrFragmentFileHandler();
 
-            // Check and access the input SCA module directory
+            // Check and access the input SCA composite directory
             String name = (String) Options.getOption("-dir");
             if (null == name) {
                 Utils
-                        .screenMessage("Please provide a SCA module directory name as a \"-dir\" option.");
+                        .screenMessage("Please provide a SCA composite directory name as a \"-dir\" option.");
                 env.printUsage();
                 System.exit(-1);
             }
             File source = new File(name);
             if (!source.isFile() && !source.isDirectory()) {
                 Utils
-                        .screenMessage("The SCA module directory provided as the \"-dir\" option cannot be accessed,");
+                        .screenMessage("The SCA composite directory provided as the \"-dir\" option cannot be accessed,");
                 Utils.screenMessage("the option given was: " + source);
                 env.printUsage();
                 System.exit(-1);
@@ -113,17 +113,17 @@ public class Scagen extends CParsingTool {
             Utils.postEvent(Utils.DEPLOYMENT_OUTPUT_DIRECTORY, outputDir
                     .getAbsolutePath());
 
-            DirectoryScanner scanner = new DirectoryScanner(module_handler,
-                    MODULE_EXTENSIONS);
+            DirectoryScanner scanner = new DirectoryScanner(composite_handler,
+                    COMPOSITE_EXTENSIONS);
             scanner.walkTree(source, outputDir, 1);
 
-            if (0 == module_handler.getFilesActedOn()) {
+            if (0 == composite_handler.getFilesActedOn()) {
                 Utils
-                        .screenMessage("No SCA module or fragment files were found in: "
+                        .screenMessage("No SCA composite or fragment files were found in: "
                                 + source);
             }
 
-            failed = module_handler.failed;
+            failed = composite_handler.failed;
 
         } catch (Exception exception) {
             Utils
@@ -134,7 +134,7 @@ public class Scagen extends CParsingTool {
 
         if (failed) {
             Utils
-                    .outputDebugString("Finished! (but encountered problems parsing modules)");
+                    .outputDebugString("Finished! (but encountered problems parsing composites)");
             System.exit(-2);
         }
 
@@ -148,12 +148,12 @@ public class Scagen extends CParsingTool {
         System.out
                 .println("usage: Java Scagen -dir <input_directory> -output <output_directory> [-verbose] [-deploy <deploy_dir>] [-nogenerate] [-outputCommand] [-command <copy_cmd>]");
         System.out
-                .println("       -dir <input_directory>: the SCA module root directory");
+                .println("       -dir <input_directory>: the SCA composite root directory");
         System.out
                 .println("       -output <output_directory>: a directory to put the generated output into");
         System.out.println("       [-verbose]: report on what scagen is doing");
         System.out
-                .println("       [-deploy <deploy_dir>]: output text to help in deploying the module's artefacts");
+                .println("       [-deploy <deploy_dir>]: output text to help in deploying the composite's artefacts");
         System.out
                 .println("       [-command <copy_cmd>]: a string that is injected into the deploy text");
         System.out

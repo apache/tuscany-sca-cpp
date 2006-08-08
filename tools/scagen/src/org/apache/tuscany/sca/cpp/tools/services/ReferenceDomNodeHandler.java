@@ -48,7 +48,7 @@ public class ReferenceDomNodeHandler extends GenericDomNodeHandler {
 
     /**
      * This method is really just an adapter that adapts the -dir Option to a
-     * value int he parameters map for "module_root"
+     * value int he parameters map for "composite_root"
      * 
      * @param parameters
      *            the map of name-value parameters.
@@ -56,7 +56,7 @@ public class ReferenceDomNodeHandler extends GenericDomNodeHandler {
     private void createProxyForReference(Map parameters) {
         try {
             String mr = (String) Options.getOption("-dir");
-            parameters.put("module_root", mr);
+            parameters.put("composite_root", mr);
             ServicesGenerator.handleInterfaceHeader(parameters, true);
 
         } catch (Exception e) {

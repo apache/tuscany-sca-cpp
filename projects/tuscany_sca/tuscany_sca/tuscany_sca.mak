@@ -58,9 +58,9 @@ CLEAN :
 	-@erase "$(INTDIR)\Logger.obj"
 	-@erase "$(INTDIR)\LogWriter.obj"
 	-@erase "$(INTDIR)\ModelLoader.obj"
-	-@erase "$(INTDIR)\Module.obj"
-	-@erase "$(INTDIR)\ModuleContext.obj"
-	-@erase "$(INTDIR)\ModuleContextImpl.obj"
+	-@erase "$(INTDIR)\Composite.obj"
+	-@erase "$(INTDIR)\CompositeContext.obj"
+	-@erase "$(INTDIR)\CompositeContextImpl.obj"
 	-@erase "$(INTDIR)\Operation.obj"
 	-@erase "$(INTDIR)\SCA.obj"
 	-@erase "$(INTDIR)\SCAEntryPoint.obj"
@@ -134,8 +134,8 @@ LINK32_FLAGS=axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi3
 LINK32_OBJS= \
 	"$(INTDIR)\ComponentContext.obj" \
 	"$(INTDIR)\ComponentContextImpl.obj" \
-	"$(INTDIR)\ModuleContext.obj" \
-	"$(INTDIR)\ModuleContextImpl.obj" \
+	"$(INTDIR)\CompositeContext.obj" \
+	"$(INTDIR)\CompositeContextImpl.obj" \
 	"$(INTDIR)\SCA.obj" \
 	"$(INTDIR)\ServiceList.obj" \
 	"$(INTDIR)\ServiceRuntimeException.obj" \
@@ -156,7 +156,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\Implementation.obj" \
 	"$(INTDIR)\Interface.obj" \
 	"$(INTDIR)\ModelLoader.obj" \
-	"$(INTDIR)\Module.obj" \
+	"$(INTDIR)\Composite.obj" \
 	"$(INTDIR)\Service.obj" \
 	"$(INTDIR)\ServiceReference.obj" \
 	"$(INTDIR)\Subsystem.obj" \
@@ -237,9 +237,9 @@ CLEAN :
 	-@erase "$(INTDIR)\Logger.obj"
 	-@erase "$(INTDIR)\LogWriter.obj"
 	-@erase "$(INTDIR)\ModelLoader.obj"
-	-@erase "$(INTDIR)\Module.obj"
-	-@erase "$(INTDIR)\ModuleContext.obj"
-	-@erase "$(INTDIR)\ModuleContextImpl.obj"
+	-@erase "$(INTDIR)\Composite.obj"
+	-@erase "$(INTDIR)\CompositeContext.obj"
+	-@erase "$(INTDIR)\CompositeContextImpl.obj"
 	-@erase "$(INTDIR)\Operation.obj"
 	-@erase "$(INTDIR)\SCA.obj"
 	-@erase "$(INTDIR)\SCAEntryPoint.obj"
@@ -316,8 +316,8 @@ LINK32_FLAGS=axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi3
 LINK32_OBJS= \
 	"$(INTDIR)\ComponentContext.obj" \
 	"$(INTDIR)\ComponentContextImpl.obj" \
-	"$(INTDIR)\ModuleContext.obj" \
-	"$(INTDIR)\ModuleContextImpl.obj" \
+	"$(INTDIR)\CompositeContext.obj" \
+	"$(INTDIR)\CompositeContextImpl.obj" \
 	"$(INTDIR)\SCA.obj" \
 	"$(INTDIR)\ServiceList.obj" \
 	"$(INTDIR)\ServiceRuntimeException.obj" \
@@ -338,7 +338,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\Implementation.obj" \
 	"$(INTDIR)\Interface.obj" \
 	"$(INTDIR)\ModelLoader.obj" \
-	"$(INTDIR)\Module.obj" \
+	"$(INTDIR)\Composite.obj" \
 	"$(INTDIR)\Service.obj" \
 	"$(INTDIR)\ServiceReference.obj" \
 	"$(INTDIR)\Subsystem.obj" \
@@ -412,15 +412,15 @@ SOURCE=..\..\..\runtime\core\src\osoa\sca\ComponentContextImpl.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ModuleContext.cpp
+SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContext.cpp
 
-"$(INTDIR)\ModuleContext.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\CompositeContext.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ModuleContextImpl.cpp
+SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.cpp
 
-"$(INTDIR)\ModuleContextImpl.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\CompositeContextImpl.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -544,9 +544,9 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Module.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp
 
-"$(INTDIR)\Module.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\Composite.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 

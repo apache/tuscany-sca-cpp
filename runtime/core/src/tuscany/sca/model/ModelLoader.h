@@ -56,13 +56,13 @@ namespace tuscany
                 /**
                  * Load the model from the configuration information.
                  * @param configurationRoot The location of the deployed SCA
-                 * modules and subsystems.
+                 * composites and subsystems.
                  */
                 void load(const string& configurationRoot);
                 
             private:
                 System* system;
-                void loadModule(const char *moduleRoot);
+                void loadComposite(const char *compositeRoot);
                 
                 
                 commonj::sdo::XMLHelperPtr myXMLHelper;    // Used to load scdl files
@@ -74,22 +74,22 @@ namespace tuscany
                 void loadSubsystemFile(const File& file);
                 void mapSubsystem(commonj::sdo::DataObjectPtr rootDO);
                 
-                void loadModules(const string& configurationRoot);
-                void loadModuleFile(const File& file);
-                void mapModule(const string& moduleName, commonj::sdo::DataObjectPtr rootDO, std::string moduleRootDir);
+                void loadComposites(const string& configurationRoot);
+                void loadCompositeFile(const File& file);
+                void mapComposite(const string& compositeName, commonj::sdo::DataObjectPtr rootDO, std::string compositeRootDir);
 
-                void addComponent(Module* module, DataObjectPtr componentDO);
-                void addEntryPoint(Module* module, DataObjectPtr entryPointDO);
-                void addExternalService(Module* module, DataObjectPtr externalServiceDO);
+                void addComponent(Composite* composite, DataObjectPtr componentDO);
+                void addEntryPoint(Composite* composite, DataObjectPtr entryPointDO);
+                void addExternalService(Composite* composite, DataObjectPtr externalServiceDO);
 
                 void addServices(Component* component, DataObjectPtr componentType);
                 void addReferences(Component* component, DataObjectPtr componentType);
                 void addProperties(Component* component, DataObjectPtr componentType);
 
 
-                void loadModuleConfig(const string &moduleRootDir, const string &moduleName);
-                void loadTypes(const char *fileName, const string &moduleName);
-                void loadWsdl(const char *fileName, const string &moduleName);
+                void loadCompositeConfig(const string &compositeRootDir, const string &compositeName);
+                void loadTypes(const char *fileName, const string &compositeName);
+                void loadWsdl(const char *fileName, const string &compositeName);
 
                 void loadWSDLTypes(XSDHelperPtr xsdHelper);
     

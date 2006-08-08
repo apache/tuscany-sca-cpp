@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	{
 
         // Locate a service
-		ModuleContext myContext = ModuleContext::getCurrent();
+		CompositeContext myContext = CompositeContext::getCurrent();
 		AccountService *accountService = 
             (AccountService*) myContext.locateService("AccountServiceComponent");
 		if (accountService == 0)

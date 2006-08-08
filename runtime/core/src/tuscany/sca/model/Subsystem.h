@@ -25,7 +25,7 @@ using std::string;
 #include <map>
 using std::map;
 
-#include "tuscany/sca/model/Module.h"
+#include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/EntryPoint.h"
 
 namespace tuscany
@@ -51,33 +51,33 @@ namespace tuscany
                 virtual ~Subsystem();
 
                 /**
-                 * Add a new module component to the subsystem.
-                 * @param name The name of the module component.
-                 * @param moduleName The name of the module.
-                 * @return The new Module added to the subsystem.
+                 * Add a new composite component to the subsystem.
+                 * @param name The name of the composite component.
+                 * @param compositeName The name of the composite.
+                 * @return The new Composite added to the subsystem.
                  */
-                Module* addModuleComponent(const std::string& name, const std::string& moduleName);
+                Composite* addCompositeComponent(const std::string& name, const std::string& compositeName);
 
                 /**
-                 * Find a module by module name.
-                 * @param moduleName The name of the module to be found.
-                 * @return The Module that was found, or 0 if not found.
+                 * Find a composite by composite name.
+                 * @param compositeName The name of the composite to be found.
+                 * @return The Composite that was found, or 0 if not found.
                  */
-                Module* findModule(const std::string& moduleName);
+                Composite* findComposite(const std::string& compositeName);
 
                 /**
-                 * Find a module by the module component name.
-                 * @param moduleComponentName The module component name to be used to find
-                 * the module.
-                 * @return The Module that was found, or 0 if not found.
+                 * Find a composite by the composite component name.
+                 * @param compositeComponentName The composite component name to be used to find
+                 * the composite.
+                 * @return The Composite that was found, or 0 if not found.
                  */
-                Module* findModuleByComponentName(const std::string& moduleComponentName);
+                Composite* findCompositeByComponentName(const std::string& compositeComponentName);
 
                 /**
-                 * Get the default module set for this subsystem.
-                 * @return The default module.
+                 * Get the default composite set for this subsystem.
+                 * @return The default composite.
                  */
-                Module* getDefaultModule();
+                Composite* getDefaultComposite();
                 
                 /**
                  * Add an new entry point to the subsystem.
@@ -100,7 +100,7 @@ namespace tuscany
                 const std::string& getName() {return name;}
 
                 /**
-                 * Resolve all the wires configured in all the modules in this
+                 * Resolve all the wires configured in all the composites in this
                  * subsystem.
                  */
                 void resolveWires();
@@ -111,11 +111,11 @@ namespace tuscany
                  */
                 std::string name;
 
-                typedef std::map<std::string, Module*> MODULECOMPONENT_MAP;
+                typedef std::map<std::string, Composite*> COMPOSITECOMPONENT_MAP;
                 /**
-                 * A map by module component name of modules.
+                 * A map by composite component name of composites.
                  */
-                MODULECOMPONENT_MAP moduleComponents; 
+                COMPOSITECOMPONENT_MAP compositeComponents; 
 
                 typedef map<string, EntryPoint*> ENTRYPOINT_MAP;
                 /**

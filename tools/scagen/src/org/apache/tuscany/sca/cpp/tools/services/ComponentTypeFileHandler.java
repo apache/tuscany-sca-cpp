@@ -67,8 +67,8 @@ public class ComponentTypeFileHandler extends XMLFileActor {
      *      and kick off the processing (using the handler map that has been set
      *      up by the concrete subclass).
      * 
-     * @param moduleXML
-     *            the sca.module or fragment file
+     * @param compositeXML
+     *            the sca.composite or fragment file
      * @param target
      *            the target directory
      * @param depth
@@ -97,24 +97,24 @@ public class ComponentTypeFileHandler extends XMLFileActor {
      */
     protected String getContextMessage() {
 
-        String module = ((File) parameters.get("moduleOrFragmentFile")).getPath();
-        if (null == module) {
-            module = "unknown";
+        String composite = ((File) parameters.get("compositeOrFragmentFile")).getPath();
+        if (null == composite) {
+            composite = "unknown";
         }
 
-        String component = (String) parameters.get("/module/component/@name");
+        String component = (String) parameters.get("/composite/component/@name");
         if (null == component) {
             component = (String) parameters
-                    .get("/moduleFragment/component/@name");
+                    .get("/compositeFragment/component/@name");
         }
         if (null == component) {
-            module = "unknown";
+            composite = "unknown";
         }
 
-        String msg = "when processing module " + module;
+        String msg = "when processing composite " + composite;
 
         msg = msg
-                + "\nin this module file, the component \""
+                + "\nin this composite file, the component \""
                 + component
                 + "\" has an implementation.cpp element with a header attribute \nwhere the C++ header can be found but it has no matching .componentType file present in\nthe same directory as the header.";
 

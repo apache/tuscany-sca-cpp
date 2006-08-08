@@ -18,7 +18,7 @@ proxies for C++ implementations of SCA services. </p>
 <h2>What the package does</h2>
 
 <p>The Scagen class main method will take in an input and
-output directory name. The input directory is taken to be the SCA module root
+output directory name. The input directory is taken to be the SCA composite root
 directory.  The tool will generate the wrapper and proxy headers and methods
 bodies in the output directory. </p>
 
@@ -36,7 +36,7 @@ function in the C++ implementation. </p>
 <h2>The Input Data Used</h2>
 
 <p>The input directory passed to the Scagen method is taken to
-be the SCA module root directory. All the sca.module and .fragment files in
+be the SCA composite root directory. All the sca.composite and .fragment files in
 that directory are inspected to resolve all the &lt;component/&gt; elements
 within them. </p>
 

@@ -33,8 +33,8 @@ namespace tuscany
         namespace model
         {
            // Constructor
-            Component::Component(const std::string& componentName, Module* module) 
-                : name(componentName), containingModule(module), implementation(0)
+            Component::Component(const std::string& componentName, Composite* composite) 
+                : name(componentName), containingComposite(composite), implementation(0)
             {
                 LOGENTRY(1, "Component::constructor");
                 LOGINFO_1(3, "Component::constructor: Component name: %s", name.c_str());

@@ -31,7 +31,7 @@ namespace tuscany
     {
             
         // ==========================================================
-        // Set the default ModuleComponent name
+        // Set the default CompositeComponent name
         // ==========================================================
         void TuscanyRuntime::setSystemRoot(const string& root)
         {
@@ -42,24 +42,24 @@ namespace tuscany
         }
 
         // ==========================================================
-        // Set the default ModuleComponent name
+        // Set the default CompositeComponent name
         // ==========================================================
-        void TuscanyRuntime::setDefaultModuleComponent(const string& moduleComponent)
+        void TuscanyRuntime::setDefaultCompositeComponent(const string& compositeComponent)
         {
-            LOGENTRY(1, "TuscanyRuntime::setDefaultModuleComponent");
-            defaultModuleComponent = moduleComponent;
-            LOGINFO_1(3, "TuscanyRuntime::setDefaultModuleComponent - set to %s", moduleComponent.c_str());
-            LOGEXIT(1, "TuscanyRuntime::setDefaultModuleComponent");
+            LOGENTRY(1, "TuscanyRuntime::setDefaultCompositeComponent");
+            defaultCompositeComponent = compositeComponent;
+            LOGINFO_1(3, "TuscanyRuntime::setDefaultCompositeComponent - set to %s", compositeComponent.c_str());
+            LOGEXIT(1, "TuscanyRuntime::setDefaultCompositeComponent");
         }
 
         // ===================================================================
         // Constructor for the TuscanyRuntime class. 
         // ===================================================================
-        TuscanyRuntime::TuscanyRuntime(const string& moduleComponent, const string& root)
+        TuscanyRuntime::TuscanyRuntime(const string& compositeComponent, const string& root)
         { 
             LOGENTRY(1, "TuscanyRuntime::constructor");
             setSystemRoot(root);
-            setDefaultModuleComponent(moduleComponent);           
+            setDefaultCompositeComponent(compositeComponent);           
             LOGEXIT(1, "TuscanyRuntime::constructor");
         }
 
@@ -79,7 +79,7 @@ namespace tuscany
         { 
             LOGENTRY(1, "TuscanyRuntime::start");
             SCARuntime::setSystemRoot(systemRoot);
-            SCARuntime::setDefaultModuleComponent(defaultModuleComponent);
+            SCARuntime::setDefaultCompositeComponent(defaultCompositeComponent);
             SCARuntime::getInstance();
             LOGEXIT(1, "TuscanyRuntime::start");
         }

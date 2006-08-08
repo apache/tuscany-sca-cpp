@@ -132,59 +132,59 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\Calculator.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\Calculator.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.cpp">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorDivideService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorDivideService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Proxy.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.cpp">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideService.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideService.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.cpp">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.cpp">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.h">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\Calculator.wsdl">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\Calculator.wsdl">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -197,16 +197,16 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\Tuscany-model.config">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\Tuscany-model.config">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\sca.module">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\sca.composite">
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorSubsystem\sca.subsystem">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorModule\services.xml">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\services.xml">
 			</File>
 		</Filter>
 		<Filter

@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        // Set the default module environment variable: <subsystem>/<moduleName>
+        // Set the default  environment variable: <subsystem>/<Name>
         string systemRoot = getenv("TUSCANY_SCACPP");
         if (systemRoot  == "")
         {
@@ -77,15 +77,15 @@ int main(int argc, char* argv[])
         }
         systemRoot += "/../samples/Calculator/deploy";
         
-        char *defaultModule = "CalculatorSubsystem/CalculatorService";
+        char *defaultComposite = "CalculatorSubsystem/CalculatorService";
         
 //        TuscanyRuntime rt;
 //        rt.setSystemRoot(systemRoot);
-//        rt.setDefaultModuleComponent(defaultModule);
+//        rt.setDefaultCompositeComponent(defaultComposite);
 //        rt.start();
 
         // Locate a service
-		ModuleContext myContext = ModuleContext::getCurrent();
+		CompositeContext myContext = CompositeContext::getCurrent();
 		Calculator *calcService = (Calculator*) myContext.locateService("CalculatorServiceComponent");
 		if (calcService == 0)
 		{

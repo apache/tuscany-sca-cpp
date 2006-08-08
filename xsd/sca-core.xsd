@@ -67,23 +67,23 @@
   </complexType>
 
 
-  <element name="moduleFragment" type="sca:ModuleFragment"/>
-  <complexType name="ModuleFragment">
+  <element name="compositeFragment" type="sca:CompositeFragment"/>
+  <complexType name="CompositeFragment">
     <sequence>
       <element minOccurs="0" maxOccurs="unbounded" name="entryPoint" type="sca:EntryPoint"/>
       <element minOccurs="0" maxOccurs="unbounded" name="component" type="sca:Component"/>
       <element minOccurs="0" maxOccurs="unbounded" name="externalService" type="sca:ExternalService"/>
-      <element minOccurs="0" maxOccurs="unbounded" name="wire" type="sca:ModuleWire"/>
+      <element minOccurs="0" maxOccurs="unbounded" name="wire" type="sca:CompositeWire"/>
       <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </sequence>
     <attribute name="name" type="NCName" use="required"/>
     <anyAttribute namespace="##any" processContents="lax"/>
   </complexType>
 
-  <element name="module" type="sca:Module"/>
-  <complexType name="Module">
+  <element name="composite" type="sca:Composite"/>
+  <complexType name="Composite">
     <complexContent>
-      <extension base="sca:ModuleFragment"/>
+      <extension base="sca:CompositeFragment"/>
     </complexContent>
   </complexType>
 
@@ -166,7 +166,7 @@ StockQuoteComponent
 
 	
 
-  <complexType name="ModuleWire">
+  <complexType name="CompositeWire">
     <sequence>
       <element minOccurs="1" maxOccurs="1" ref="sca:source.uri" sdo:name="sourceUri"/>
       <element minOccurs="1" maxOccurs="1" ref="sca:target.uri" sdo:name="targetUri"/>
@@ -186,7 +186,7 @@ StockQuoteComponent
   <complexType name="Subsystem">
     <sequence>
       <element minOccurs="0" maxOccurs="unbounded" name="entryPoint" type="sca:EntryPoint"/>
-      <element minOccurs="0" maxOccurs="unbounded" name="moduleComponent" type="sca:ModuleComponent"/>
+      <element minOccurs="0" maxOccurs="unbounded" name="compositeComponent" type="sca:CompositeComponent"/>
       <element minOccurs="0" maxOccurs="unbounded" name="externalService" type="sca:ExternalService"/>
       <element minOccurs="0" maxOccurs="unbounded" name="wire" type="sca:SystemWire"/>
       <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -197,14 +197,14 @@ StockQuoteComponent
   </complexType>
 	
 
-  <complexType name="ModuleComponent">
+  <complexType name="CompositeComponent">
     <sequence>
       <element minOccurs="0" maxOccurs="1" name="properties" type="sca:PropertyValues"/>
       <element minOccurs="0" maxOccurs="1" name="references" type="sca:ReferenceValues"/>
       <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </sequence>
     <attribute name="name" type="NCName" use="required"/>
-    <attribute name="module" type="NCName" use="required"/>
+    <attribute name="composite" type="NCName" use="required"/>
     <attribute name="uri" type="anyURI" use="optional"/>
     <anyAttribute namespace="##any" processContents="lax"/>
   </complexType>

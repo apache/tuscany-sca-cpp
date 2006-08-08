@@ -113,7 +113,7 @@ namespace tuscany
 
         private:
             /**
-             * Holds an implementation instance if the scope is set to module.
+             * Holds an implementation instance if the scope is set to composite.
              */
             static void* staticImpl;
 

@@ -215,7 +215,7 @@ namespace osoa
         }; // End ComponentContextException class definition
 
         /**
-         * Unable to find the specified entry point in the module.
+         * Unable to find the specified entry point in the composite.
          */
         class SCA_API EntryPointNotFoundException: public ServiceRuntimeException
         {

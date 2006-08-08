@@ -135,8 +135,8 @@ void runCall(axis2_env_t *env, char* endpoint, char* opName, axiom_node_t* paylo
     /* Set service client options */
     AXIS2_SVC_CLIENT_SET_OPTIONS(svc_client, env, options);    
 
-    /* Engage addressing module */
-    AXIS2_SVC_CLIENT_ENGAGE_MODULE(svc_client, env, AXIS2_MODULE_ADDRESSING);
+    /* Engage addressing composite */
+    AXIS2_SVC_CLIENT_ENGAGE_COMPOSITE(svc_client, env, AXIS2_COMPOSITE_ADDRESSING);
     
     /* Send request */
     ret_node = AXIS2_SVC_CLIENT_SEND_RECEIVE(svc_client, env, payload);

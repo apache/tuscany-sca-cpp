@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
 
 /**
  * This class will do the required processing for the <component>element of a
- * sca module or fragment file.
+ * sca composite file.
  */
 public class ComponentDomNodeHandler extends GenericDomNodeHandler {
 
@@ -84,15 +84,15 @@ public class ComponentDomNodeHandler extends GenericDomNodeHandler {
         String implClass = (String) parameters.get(contextXPath
                 + "/implementation.cpp/@class");
 
-        File moduleOrFragmentFile = (File) parameters
-                .get("moduleOrFragmentFile");
+        File compositeOrFragmentFile = (File) parameters
+                .get("compositeOrFragmentFile");
         File implHeaderFile = null;
-        if (null != moduleOrFragmentFile) {
-            File dir = moduleOrFragmentFile.getParentFile();
+        if (null != compositeOrFragmentFile) {
+            File dir = compositeOrFragmentFile.getParentFile();
             implHeaderFile = new File(dir, implHeader);
         } else {
             throw new InternalError(
-                    "Internal error: sca.module or fragment file not present in interal parameters");
+                    "Internal error: sca.composite or fragment file not present in interal parameters");
         }
 
         try {
@@ -127,12 +127,12 @@ public class ComponentDomNodeHandler extends GenericDomNodeHandler {
             }
         } catch (Exception e) {
             String compName = (String) parameters
-                    .get("/moduleFragment/component/@name");
+                    .get("/compositeFragment/component/@name");
             Utils
                     .screenMessage("Problem interpreting header or class attributes in "
                             + compName
                             + " component, in "
-                            + moduleOrFragmentFile.getPath() + " file");
+                            + compositeOrFragmentFile.getPath() + " file");
             System.exit(-2);
         }
 

@@ -1,23 +1,23 @@
-SUBDIRS = MyValueModule Client
+SUBDIRS = MyValueComposite Client
 
 deploy_dir = $(top_builddir)/samples/runtime
-deploy_module = $(deploy_dir)/modules/MyValueModule
+deploy_composite = $(deploy_dir)/composites/MyValueComposite
                    
 install-exec-local:
 	cp MyValueSubsystem/sca.subsystem $(deploy_dir)/subsystems/MyValueSubsystem
-	cp MyValueModule/sca.module $(deploy_module)
-	cp MyValueModule/CustomerInfo.fragment $(deploy_module)
-	cp MyValueModule/Tuscany-model.config $(deploy_module)
-	cp MyValueModule/CustomerInfo/CustomerInfoImpl.componentType $(deploy_module)/CustomerInfo
-	cp MyValueModule/CustomerInfo/.libs/libCustomerInfo.so $(deploy_module)/CustomerInfo
-	cp MyValueModule/CustomerInfo/CustomerInfo.h $(deploy_module)/CustomerInfo
-	cp MyValueModule/CustomerInfo/CustomerInfoImpl.h $(deploy_module)/CustomerInfo
-	cp MyValueModule/MyValue/MyValueImpl.componentType $(deploy_module)/MyValue
-	cp MyValueModule/MyValue/MyValue.h $(deploy_module)/MyValue
-	cp MyValueModule/MyValue/MyValueImpl.h $(deploy_module)/MyValue
-	cp MyValueModule/MyValue/MyValueService.wsdl $(deploy_module)/MyValue
-	cp MyValueModule/MyValue/.libs/libMyValue.so $(deploy_module)/MyValue
-	cp MyValueModule/StockQuoteService/StockQuoteService.h $(deploy_module)/StockQuoteService
-	cp MyValueModule/StockQuoteService/StockQuoteService.wsdl $(deploy_module)/StockQuoteService
+	cp MyValueComposite/sca.composite $(deploy_composite)
+	cp MyValueComposite/CustomerInfo.fragment $(deploy_composite)
+	cp MyValueComposite/Tuscany-model.config $(deploy_composite)
+	cp MyValueComposite/CustomerInfo/CustomerInfoImpl.componentType $(deploy_composite)/CustomerInfo
+	cp MyValueComposite/CustomerInfo/.libs/libCustomerInfo.so $(deploy_composite)/CustomerInfo
+	cp MyValueComposite/CustomerInfo/CustomerInfo.h $(deploy_composite)/CustomerInfo
+	cp MyValueComposite/CustomerInfo/CustomerInfoImpl.h $(deploy_composite)/CustomerInfo
+	cp MyValueComposite/MyValue/MyValueImpl.componentType $(deploy_composite)/MyValue
+	cp MyValueComposite/MyValue/MyValue.h $(deploy_composite)/MyValue
+	cp MyValueComposite/MyValue/MyValueImpl.h $(deploy_composite)/MyValue
+	cp MyValueComposite/MyValue/MyValueService.wsdl $(deploy_composite)/MyValue
+	cp MyValueComposite/MyValue/.libs/libMyValue.so $(deploy_composite)/MyValue
+	cp MyValueComposite/StockQuoteService/StockQuoteService.h $(deploy_composite)/StockQuoteService
+	cp MyValueComposite/StockQuoteService/StockQuoteService.wsdl $(deploy_composite)/StockQuoteService
 	
 

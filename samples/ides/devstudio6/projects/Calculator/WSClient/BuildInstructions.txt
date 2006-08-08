@@ -20,11 +20,11 @@ The directory in which the sca runtime is deployed - probably something ending i
 TUSCANY_SDOCPP:
 The directory where the sdo runtime is deployed - probably something ending in sdo/deploy.
 
-TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
-This is the default module to be loaded by SCA. It consists of <subsystem>/<component>
+TUSCANY_SCACPP_DEFAULT_COMPOSITE=CalculatorSubsystem
+This is the default composite to be loaded by SCA. It consists of <subsystem>/<component>
 
 TUSCANY_SCACPP_SYSTEM_ROOT
-This is the point from which SCA will start looking for modules to load. Again this is
+This is the point from which SCA will start looking for composites to load. Again this is
 set programmatically by the sample.
 
 AXIS2C_HOME:
@@ -39,9 +39,9 @@ Rebuilding the proxy and wrapper classes
 
 If required, go to the Calculator sample main directory, and
 type:
-"scagen -dir CalculatorModule -output CalculatorModule" 
+"scagen -dir CalculatorComposite -output CalculatorComposite" 
 
-The generated code is put into the CalculatorModule subdirectory.
+The generated code is put into the CalculatorComposite subdirectory.
 
 Building the Client project
 ===========================

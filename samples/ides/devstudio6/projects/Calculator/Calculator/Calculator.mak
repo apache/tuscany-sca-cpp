@@ -207,43 +207,43 @@ LINK32_OBJS= \
 
 
 !IF "$(CFG)" == "Calculator - Win32 Release" || "$(CFG)" == "Calculator - Win32 Debug"
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.cpp
 
 "$(INTDIR)\CalculatorImpl.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorDivideService_Proxy.cpp
 
 "$(INTDIR)\CalculatorImpl_CalculatorDivideService_Proxy.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Proxy.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.cpp
 
 "$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.cpp
 
 "$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.cpp
 
 "$(INTDIR)\DivideServiceImpl.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.cpp
 
 "$(INTDIR)\DivideServiceImpl_DivideService_Proxy.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.cpp
 
 "$(INTDIR)\DivideServiceImpl_DivideService_Wrapper.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)

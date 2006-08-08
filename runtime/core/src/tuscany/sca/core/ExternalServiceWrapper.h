@@ -42,7 +42,7 @@ namespace tuscany
         public:
             /**
              * Factory method to create a new ExternaServiceWrapper for a given
-             * external service described in the SCA module.
+             * external service described in the SCA composite.
              */
             static ExternalServiceWrapper* createServiceWrapper(ExternalService* service);
 

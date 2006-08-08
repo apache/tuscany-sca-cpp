@@ -39,9 +39,9 @@ echo using TUSCANY_SCACPP: %TUSCANY_SCACPP%
 
 set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
 
-rem Only need to specify the subsystem (and not the moduleComponent as well) because
-rem there is only one moduleComponent in the subsystem - it is a very simple sample.
-set TUSCANY_SCACPP_DEFAULT_MODULE=CalculatorSubsystem
+rem Only need to specify the subsystem (and not the compositeComponent as well) because
+rem there is only one compositeComponent in the subsystem - it is a very simple sample.
+set TUSCANY_SCACPP_DEFAULT_COMPOSITE=CalculatorSubsystem
 
 rem Run the client
 

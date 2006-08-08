@@ -19,18 +19,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This test case will test all the modules placed in the "modules" directory
+ * This test case will test all the composites placed in the "composites" directory
  * against the results in their repectice "expected_results" folders.
  */
 public class TestDeployAssistTool extends TuscanyTestCase {
 
-    String testsDir = TuscanyTestCase.junit_modules;
+    String testsDir = TuscanyTestCase.junit_composites;
 
     Set excludes = new HashSet();
 
     public TestDeployAssistTool(String arg0) {
         super(arg0);
-        excludes.add("MyValueServiceModuleMissingScaModule");
+        excludes.add("MyValueServiceCompositeMissingScaComposite");
         excludes.add("CVS");
     }
 
@@ -46,19 +46,19 @@ public class TestDeployAssistTool extends TuscanyTestCase {
 
     public void testDeployTool() {
         //Utils.setReportArtefacts(true);
-        TestAllModulesTest t = new TestAllModulesTest("");
+        TestAllCompositesTest t = new TestAllCompositesTest("");
         File dir = new File(testsDir);
 
         if (dir.isDirectory()) {
-            String[] test_modules = dir.list();
+            String[] test_composites = dir.list();
 
-            for (int i = 0; i < test_modules.length; i++) {
-                File test_module = new File(testsDir, test_modules[i]);
-                String module_name = null;
-                if (test_module.isDirectory()) {
-                    module_name = test_module.getName();
-                    if (!excludes.contains(module_name.intern())) {
-                        t.testModuleDeploy(module_name, create_results, "c:\\colin", "cp");
+            for (int i = 0; i < test_composites.length; i++) {
+                File test_composite = new File(testsDir, test_composites[i]);
+                String composite_name = null;
+                if (test_composite.isDirectory()) {
+                    composite_name = test_composite.getName();
+                    if (!excludes.contains(composite_name.intern())) {
+                        t.testCompositeDeploy(composite_name, create_results, "c:\\colin", "cp");
                     }
                 }
                 System.out.println("");
@@ -68,19 +68,19 @@ public class TestDeployAssistTool extends TuscanyTestCase {
     
     public void testDeployToolNullParms() {
         //Utils.setReportArtefacts(true);
-        TestAllModulesTest t = new TestAllModulesTest("");
+        TestAllCompositesTest t = new TestAllCompositesTest("");
         File dir = new File(testsDir);
 
         if (dir.isDirectory()) {
-            String[] test_modules = dir.list();
+            String[] test_composites = dir.list();
 
-            for (int i = 0; i < test_modules.length; i++) {
-                File test_module = new File(testsDir, test_modules[i]);
-                String module_name = null;
-                if (test_module.isDirectory()) {
-                    module_name = test_module.getName();
-                    if (!excludes.contains(module_name.intern())) {
-                        t.testModuleDeploy(module_name, create_results, null, null);
+            for (int i = 0; i < test_composites.length; i++) {
+                File test_composite = new File(testsDir, test_composites[i]);
+                String composite_name = null;
+                if (test_composite.isDirectory()) {
+                    composite_name = test_composite.getName();
+                    if (!excludes.contains(composite_name.intern())) {
+                        t.testCompositeDeploy(composite_name, create_results, null, null);
                     }
                 }
                 System.out.println("");

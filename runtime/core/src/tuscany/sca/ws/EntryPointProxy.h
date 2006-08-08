@@ -52,7 +52,7 @@ namespace tuscany
                 virtual void setOutputData(Operation operation, DataObjectPtr outputDataObject);
                 string entryPointName;
                 string systemRoot;
-                string moduleComponent;
+                string compositeComponent;
                 SCAEntryPoint* scaEntryPoint;
                 TuscanyRuntime* tuscanyRuntime;
             };
