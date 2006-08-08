@@ -250,6 +250,8 @@ namespace sdo{
             typeEnum = baseType->typeEnum;
         }
 
+        // Removing the following and allowing "sequenced" to be inherited from base type
+        /*
         if (isSequenced && !baseType->isSequenced)
         {
             // Its an error to be sequenced and inherit from a
@@ -262,10 +264,11 @@ namespace sdo{
             SDOUnsupportedOperationException, 
             msg.c_str());
         }
+        */
 
         isSequenced = baseType->isSequenced; 
-        // if the base is open then this type must be open too.
 
+        // if the base is open then this type must be open too.
         if (baseType->isOpenType())
         {
             isOpen = true;
