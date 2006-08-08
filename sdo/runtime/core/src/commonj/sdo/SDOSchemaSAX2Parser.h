@@ -99,7 +99,8 @@ namespace commonj
             virtual void replayEvents(
                 const SDOXMLString& uri,
                 const SDOXMLString& name,
-                bool isGroup);
+                bool isGroup,
+                const SAX2Attributes& groupAttributes);
 
             virtual void storeStartElementEvent(
                                 const SDOXMLString& localname,

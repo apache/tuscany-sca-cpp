@@ -56,7 +56,37 @@ namespace commonj
             return attributes.size();
         }
         
-        
+
+        const SAX2Attribute* SAX2Attributes::getAttribute(const SDOXMLString& attributeName) const
+        {
+            for (int i=0; i < attributes.size(); i++)
+            {
+                if (attributes[i].getName().equalsIgnoreCase(attributeName))
+                {
+                    return &attributes[i];
+                }
+            }
+            return NULL;
+        }
+
+        void SAX2Attributes::addAttribute(const SAX2Attribute& attr)
+        {
+            for (int i=0; i < attributes.size(); i++)
+            {
+                if (attributes[i].getUri().equals(attr.getUri()))
+                {                    
+                    if (attributes[i].getName().equals(attr.getName()))
+                    {
+                        // oeverwrite this attribute
+                        attributes[i] = attr;
+                        return;
+                    }
+                }
+            }           
+            attributes.insert(attributes.end(), attr);
+        }
+
+
         const SDOXMLString SAX2Attributes::nullValue;
         
         const SDOXMLString& SAX2Attributes::getValue(

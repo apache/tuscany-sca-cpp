@@ -87,7 +87,8 @@ namespace commonj
         void SDOSchemaSAX2Parser::replayEvents(
             const SDOXMLString& uri,
             const SDOXMLString& name,
-            bool isGroup)
+            bool isGroup,
+            const SAX2Attributes& groupAttributes)
         {
             for (int i=0;i< groupList.size(); i++)
             {
@@ -101,10 +102,33 @@ namespace commonj
                        || uri.equals(groupList[i].uri))
                        )
                     {
+                        // Determine the maxOccurs value from the <group ref=... definition
+                        bool isMany = false;
+                        const SAX2Attribute* groupMaxOccurrs = groupAttributes.getAttribute("maxOccurs");
+                        if  (groupMaxOccurrs != 0 &&
+                            !groupMaxOccurrs->getValue().equalsIgnoreCase("1"))
+                        {
+                            isMany = true;
+                        }
+
+                        int level = 0;
+
                         for (int j=0;j< groupList[i].events.size();j++)
                         {
                             if (groupList[i].events[j].isStartEvent)
                             {
+                                // For top level <choice> or <sequence> we need to add the maxOccurrs
+                                // attribute from the group definition if it was "many"
+                                if ((level == 0) && isMany)
+                                {
+                                    if (groupList[i].events[j].localname.equalsIgnoreCase("choice") 
+                                        || groupList[i].events[j].localname.equalsIgnoreCase("sequence"))
+                                    {
+                                        // Add maxOccurs attribute to list
+                                        groupList[i].events[j].attributes.addAttribute(*groupMaxOccurrs);
+                                    }
+                                }
+
                                 startElementNs(
                                  (const SDOXMLString&)
                                  groupList[i].events[j].localname,
@@ -116,6 +140,8 @@ namespace commonj
                                  groupList[i].events[j].namespaces,
                                  (const SAX2Attributes&) 
                                  groupList[i].events[j].attributes);
+
+                                level++;
                             }
                             else
                             {
@@ -126,6 +152,8 @@ namespace commonj
                                  groupList[i].events[j].prefix,
                                  (const SDOXMLString&) 
                                  groupList[i].events[j].URI);
+
+                                level--;
                             }
                         }
                         return;
@@ -327,12 +355,12 @@ namespace commonj
                                     if (qname.getURI().isNull())
                                     {
                                         replayEvents(schemaInfo.getTargetNamespaceURI(), qname.getLocalName(),
-                                        localname.equalsIgnoreCase("group"));
+                                        localname.equalsIgnoreCase("group"), attributes);
                                     }
                                     else
                                     {
                                         replayEvents(qname.getURI(), qname.getLocalName(),
-                                            localname.equalsIgnoreCase("group"));
+                                            localname.equalsIgnoreCase("group"), attributes);
                                     }
                                 }                        
                             }
