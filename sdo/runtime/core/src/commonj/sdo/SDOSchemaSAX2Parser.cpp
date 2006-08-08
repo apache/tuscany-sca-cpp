@@ -711,13 +711,22 @@ namespace commonj
 
             
             setType(thisProperty, attributes, namespaces);
-            
-            SDOXMLString maxOccurs = attributes.getValue("maxOccurs");
-            if (!maxOccurs.isNull())
+
+            // Set isMany. currentType.isMany = true indicates we are in a 
+            // group definition (sequence/choice) with maxOccurs>1
+            if (currentType.isMany)
             {
-                if (!maxOccurs.equalsIgnoreCase("1"))
+                thisProperty.isMany = true;
+            }
+            else
+            {
+                SDOXMLString maxOccurs = attributes.getValue("maxOccurs");
+                if (!maxOccurs.isNull())
                 {
-                    thisProperty.isMany = true;
+                    if (!maxOccurs.equalsIgnoreCase("1"))
+                    {
+                        thisProperty.isMany = true;
+                    }
                 }
             }
 

@@ -17,28 +17,30 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 xmlns:sdo="commonj.sdo" xmlns:sdoxml="commonj.sdo/xml" 
 xmlns:tns="companyNS" targetNamespace="companyNS">
+
 <xsd:element name="employeeType" type="tns:EmployeeType"/>
 <xsd:complexType name="EmployeeType">
 <xsd:sequence>
-<xsd:element name="name" type="xsd:String" minOccurs="0"/>
 <xsd:element name="SN" type="xsd:String" minOccurs="0"/>
 <xsd:element name="manager" type="xsd:boolean" minOccurs="0"/>
 </xsd:sequence>
+<xsd:attribute name="name" type="xsd:String"/>
 </xsd:complexType>
+
 <xsd:element name="departmentType" type="tns:DepartmentType"/>
 <xsd:complexType name="DepartmentType">
-<xsd:sequence><xsd:element name="name" type="xsd:String" minOccurs="0"/>
+<xsd:sequence>
 <xsd:element name="location" type="xsd:String" minOccurs="0"/>
 <xsd:element name="number" type="xsd:integer" minOccurs="0"/>
 <xsd:element name="employees" type="tns:EmployeeType" minOccurs="0" maxOccurs="unbounded"/>
 </xsd:sequence>
+<xsd:attribute name="name" type="xsd:String"/>
 </xsd:complexType>
+
 <xsd:element name="companyType" type="tns:CompanyType"/>
 <xsd:complexType name="CompanyType" mixed="true">
 <xsd:choice maxOccurs="unbounded">
-<xsd:element name="name" type="xsd:String" minOccurs="0"/>
 <xsd:element name="departments" type="tns:DepartmentType" minOccurs="0" maxOccurs="unbounded"/>
-<xsd:element name="CEO" type="tns:EmployeeType" minOccurs="0"/>
 <xsd:element name="string" type="xsd:String" minOccurs="0"/>
 <xsd:element name="bool" type="xsd:boolean" minOccurs="0"/>
 <xsd:element name="byte" type="xsd:byte" minOccurs="0"/>
@@ -64,7 +66,10 @@ xmlns:tns="companyNS" targetNamespace="companyNS">
 <xsd:element name="Mshort" type="xsd:short" minOccurs="0" maxOccurs="unbounded"/>
 <xsd:element name="Muri" type="xsd:anyURI" minOccurs="0" maxOccurs="unbounded"/>
 </xsd:choice>
+
+<xsd:element name="CEO" type="tns:EmployeeType" minOccurs="0"/>
 <xsd:element name="changeSummary" type="sdo:ChangeSummaryType"/>
+<xsd:attribute name="name" type="xsd:String"/>
 <xsd:attribute name="employeeOfTheMonth" sdoxml:propertyType="tns:EmployeeType" type="xsd:IDREF"/>
 </xsd:complexType>
 </xsd:schema> 
