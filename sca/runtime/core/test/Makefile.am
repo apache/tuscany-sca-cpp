@@ -7,10 +7,21 @@ testSCASystem/composites/MyValueServiceComposite/*.wsdl \
 testSCASystem/composites/MyValueServiceComposite/*.xsd \
 testSCASystem/composites/MyValueServiceComposite/*.config
 
+BUILT_SOURCES = CustomerInfo/CustomerInfoImpl_CustomerInfoService_Proxy.cpp \
+CustomerInfo/CustomerInfoImpl_CustomerInfoService_Proxy.h \
+CustomerInfo/CustomerInfoImpl_CustomerInfoService_Wrapper.cpp \
+CustomerInfo/CustomerInfoImpl_CustomerInfoService_Wrapper.h \
+MyValue/MyValueImpl_customerInfo_Proxy.cpp \
+MyValue/MyValueImpl_customerInfo_Proxy.h \
+MyValue/MyValueImpl_MyValueService_Proxy.cpp \
+MyValue/MyValueImpl_MyValueService_Proxy.h \
+MyValue/MyValueImpl_MyValueService_Wrapper.cpp \
+MyValue/MyValueImpl_MyValueService_Wrapper.h \
+MyValue/MyValueImpl_stockQuote_Proxy.cpp \
+MyValue/MyValueImpl_stockQuote_Proxy.h
 
-BUILT_SOURCES = scagen
 
-scagen:
+${BUILT_SOURCES}: ./testSCASystem/composites/MyValueServiceComposite/sca.composite
 	cp ./MyValue/MyValue.h ./testSCASystem/composites/MyValueServiceComposite
 	cp ./MyValue/MyValueImpl.h ./testSCASystem/composites/MyValueServiceComposite
 	cp ./MyValue/StockQuoteService.h ./testSCASystem/composites/MyValueServiceComposite
