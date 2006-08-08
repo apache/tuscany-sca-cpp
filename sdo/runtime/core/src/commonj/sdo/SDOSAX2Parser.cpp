@@ -356,6 +356,14 @@ namespace commonj
                             SDOXMLString propValue;
                             
                             XSDPropertyInfo* pi = (XSDPropertyInfo*)((DASProperty*)&prop)->getDASValue("XMLDAS::PropertyInfo");
+                            if (pi && pi->getPropertyDefinition().isElement)
+                            {
+                                // xml instance is trying to set an attribute when schema defines property as element
+                                LOGERROR_1(WARNING,"SDOSAX2Parser: Attribute %s should be an element. Attribute ignored",
+                                 (const char*)(attributes[i].getName()));        
+                                continue;
+                            }
+
                             if (pi && pi->getPropertyDefinition().isQName)
                             {
                                 XMLQName qname(attributes[i].getValue(),
