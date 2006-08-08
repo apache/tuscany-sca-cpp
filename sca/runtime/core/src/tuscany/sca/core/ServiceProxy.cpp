@@ -57,7 +57,7 @@ namespace tuscany
                 string dllName = ((CPPImplementation*)impl)->getDll();
                 string headerStub = ((CPPImplementation*)impl)->getHeaderStub();
 
-                string fullDllName = component->getModule()->getRoot() + "/" + dllName;
+                string fullDllName = component->getComposite()->getRoot() + "/" + dllName;
                 string proxyFactoryName = headerStub + "_" + name + "_Proxy_Factory";
                 string proxyDestructorName = headerStub + "_" + name + "_Proxy_Destructor";        
                 typedef void* (* PROXYFACTORY) (ServiceWrapper*);

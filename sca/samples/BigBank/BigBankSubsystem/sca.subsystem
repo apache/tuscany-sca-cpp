@@ -19,9 +19,9 @@
  
 	name="BigBankSubsystem">
 	
-	<moduleComponent name="AccountsService" module="Accounts">
+	<compositeComponent name="AccountsService" composite="Accounts">
 		
-	</moduleComponent>
+	</compositeComponent>
 
 </subsystem>
 	

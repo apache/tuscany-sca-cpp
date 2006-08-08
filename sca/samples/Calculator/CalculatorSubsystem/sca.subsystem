@@ -17,7 +17,7 @@
 
 <subsystem xmlns="http://www.osoa.org/xmlns/sca/0.9" name="CalculatorSubsystem">
 	
-        <moduleComponent name="CalculatorService" module="CalculatorModule" />
+        <compositeComponent name="CalculatorService" composite="CalculatorComposite" />
 
 </subsystem>
 	

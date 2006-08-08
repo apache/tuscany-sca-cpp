@@ -72,7 +72,7 @@ namespace tuscany
         void* ComponentServiceWrapper::getImplementation()
         {
             CPPInterface::SCOPE scope = interf->getScope();
-            if (scope == CPPInterface::MODULE)
+            if (scope == CPPInterface::COMPOSITE)
             {
                 if (!staticImpl)
                 {
@@ -159,7 +159,7 @@ namespace tuscany
                 // ------------
                 // Load the dll
                 // ------------
-                string fullDllName = targetComponent->getModule()->getRoot() + "/" + dllName;
+                string fullDllName = targetComponent->getComposite()->getRoot() + "/" + dllName;
                 typedef ComponentServiceWrapper* (* WRAPPERFACTORY) (Service*);                
                 Library* wrapperLib = new Library(fullDllName);
                 

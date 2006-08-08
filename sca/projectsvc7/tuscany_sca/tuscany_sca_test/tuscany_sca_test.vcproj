@@ -50,8 +50,8 @@
 				TypeLibraryName=".\Release/tuscany_sca_test.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\tuscany_sca_test_MyValue\Release\MyValue.dll testSCASystem\modules\MyValueServiceModule
-copy ..\tuscany_sca_test_CustomerInfo\Release\CustomerInfo.dll testSCASystem\modules\MyValueServiceModule
+				CommandLine="copy ..\tuscany_sca_test_MyValue\Release\MyValue.dll testSCASystem\composites\MyValueServiceComposite
+copy ..\tuscany_sca_test_CustomerInfo\Release\CustomerInfo.dll testSCASystem\composites\MyValueServiceComposite
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -107,10 +107,10 @@ copy ..\tuscany_sca_test_CustomerInfo\Release\CustomerInfo.dll testSCASystem\mod
 				TypeLibraryName=".\Debug/tuscany_sca_test.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\tuscany_sca_test_MyValue\Debug\MyValue.dll testSCASystem\modules\MyValueServiceModule
-copy ..\tuscany_sca_test_MyValue\Debug\MyValue.pdb testSCASystem\modules\MyValueServiceModule
-copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.dll testSCASystem\modules\MyValueServiceModule
-copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.pdb testSCASystem\modules\MyValueServiceModule
+				CommandLine="copy ..\tuscany_sca_test_MyValue\Debug\MyValue.dll testSCASystem\composites\MyValueServiceComposite
+copy ..\tuscany_sca_test_MyValue\Debug\MyValue.pdb testSCASystem\composites\MyValueServiceComposite
+copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.dll testSCASystem\composites\MyValueServiceComposite
+copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.pdb testSCASystem\composites\MyValueServiceComposite
 copy..\tuscany_sca\Debug\*.dll Debug
 copy..\tuscany_sca\Debug\*.pdb Debug
 "/>

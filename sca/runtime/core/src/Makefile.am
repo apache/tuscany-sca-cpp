@@ -4,8 +4,8 @@ nobase_include_HEADERS = \
 osoa/sca/ComponentContext.h \
 osoa/sca/ComponentContextImpl.h \
 osoa/sca/export.h \
-osoa/sca/ModuleContext.h \
-osoa/sca/ModuleContextImpl.h \
+osoa/sca/CompositeContext.h \
+osoa/sca/CompositeContextImpl.h \
 osoa/sca/sca.h \
 osoa/sca/ServiceList.h \
 osoa/sca/ServiceRuntimeException.h \
@@ -26,7 +26,7 @@ tuscany/sca/model/ExternalService.h \
 tuscany/sca/model/Implementation.h \
 tuscany/sca/model/Interface.h \
 tuscany/sca/model/ModelLoader.h \
-tuscany/sca/model/Module.h \
+tuscany/sca/model/Composite.h \
 tuscany/sca/model/Service.h \
 tuscany/sca/model/ServiceReference.h \
 tuscany/sca/model/Subsystem.h \
@@ -52,8 +52,8 @@ tuscany/sca/ws/EntryPointProxy.h
 libtuscany_sca_la_SOURCES = \
 osoa/sca/ComponentContext.cpp \
 osoa/sca/ComponentContextImpl.cpp \
-osoa/sca/ModuleContext.cpp \
-osoa/sca/ModuleContextImpl.cpp \
+osoa/sca/CompositeContext.cpp \
+osoa/sca/CompositeContextImpl.cpp \
 osoa/sca/SCA.cpp \
 osoa/sca/ServiceList.cpp \
 osoa/sca/ServiceRuntimeException.cpp \
@@ -73,7 +73,7 @@ tuscany/sca/model/ExternalService.cpp \
 tuscany/sca/model/Implementation.cpp \
 tuscany/sca/model/Interface.cpp \
 tuscany/sca/model/ModelLoader.cpp \
-tuscany/sca/model/Module.cpp \
+tuscany/sca/model/Composite.cpp \
 tuscany/sca/model/Service.cpp \
 tuscany/sca/model/ServiceReference.cpp \
 tuscany/sca/model/Subsystem.cpp \

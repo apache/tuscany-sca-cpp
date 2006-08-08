@@ -51,7 +51,7 @@ public class ServiceDomNodeHandler extends GenericDomNodeHandler {
 
         try {
             String mr = (String) Options.getOption("-dir");
-            parameters.put("module_root", mr);
+            parameters.put("composite_root", mr);
             ServicesGenerator.handleInterfaceHeader(parameters, false);
 
         } catch (Exception e) {

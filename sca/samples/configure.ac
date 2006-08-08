@@ -18,7 +18,7 @@ AC_PROG_LIBTOOL
 
 AC_CONFIG_FILES([Makefile
                  Calculator/Makefile
-                 Calculator/CalculatorModule/Makefile
+                 Calculator/CalculatorComposite/Makefile
                  Calculator/Client/Makefile
                  Calculator/WSClient/Makefile
                  BigBank/Makefile

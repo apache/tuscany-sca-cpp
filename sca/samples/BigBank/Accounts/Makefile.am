@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/BigBank/deploy
-moduledir=$(deploydir)/modules/Accounts
+compositedir=$(deploydir)/composites/Accounts
 
 BUILT_SOURCES = AccountDataServiceImpl_AccountDataService_Proxy.cpp \
 AccountDataServiceImpl_AccountDataService_Wrapper.cpp \
@@ -13,12 +13,12 @@ StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp
 
 noinst_HEADERS = *.h
 
-${BUILT_SOURCES}: sca.module
+${BUILT_SOURCES}: sca.composite
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
-module_LTLIBRARIES = libAccounts.la
-module_DATA = sca.module.lin Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
-EXTRA_DIST = sca.module.lin Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
+composite_LTLIBRARIES = libAccounts.la
+composite_DATA = sca.composite.lin Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
+EXTRA_DIST = sca.composite.lin Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
 
 libAccounts_la_SOURCES = \
 AccountDataServiceImpl.cpp \
@@ -41,4 +41,4 @@ INCLUDES = \
            -I${TUSCANY_SDOCPP}/include
 
 install-data-hook:
-	mv $(moduledir)/sca.module.lin $(moduledir)/sca.module
+	mv $(compositedir)/sca.composite.lin $(compositedir)/sca.composite

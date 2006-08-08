@@ -35,12 +35,12 @@ public class DirectoryScanner {
     /**
      * 
      * @param source
-     *            The module root directory
+     *            The composite root directory
      * @param target
      *            The directory that will hold the generated output
      * @param depth
      *            The depth from the initial starting point, not significant for
-     *            the Scagen tool as we are only interested in the module root
+     *            the Scagen tool as we are only interested in the composite root
      *            directory but present due to the FileActor actOnFile interface
      *            method. This code is pulled from the code in the CParsingTool
      *            class and further work is needed to remove the duplication.
@@ -78,7 +78,7 @@ public class DirectoryScanner {
                 }
             }
         } else {
-            return; // Do not act on single files for now we expect a module
+            return; // Do not act on single files for now we expect a composite
             // root directory
             // and the "main" class checks its parameters to ensure this is so.
         }

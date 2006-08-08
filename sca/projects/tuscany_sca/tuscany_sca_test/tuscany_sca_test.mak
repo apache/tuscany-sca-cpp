@@ -117,8 +117,8 @@ OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "tuscany_sca_ws_service - Win32 Release" "tuscany_sca_test_MyValue - Win32 Release" "tuscany_sca_test_CustomerInfo - Win32 Release" "tuscany_sca - Win32 Release" "$(OUTDIR)\tuscany_sca_test.exe"
-   copy ..\tuscany_sca_test_MyValue\Release\MyValue.dll testSCASystem\modules\MyValueServiceModule
-	copy ..\tuscany_sca_test_CustomerInfo\Release\CustomerInfo.dll testSCASystem\modules\MyValueServiceModule
+   copy ..\tuscany_sca_test_MyValue\Release\MyValue.dll testSCASystem\composites\MyValueServiceComposite
+	copy ..\tuscany_sca_test_CustomerInfo\Release\CustomerInfo.dll testSCASystem\composites\MyValueServiceComposite
 	copy..\tuscany_sca\Release\*.dll Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
@@ -217,10 +217,10 @@ OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "tuscany_sca_ws_service - Win32 Debug" "tuscany_sca_test_MyValue - Win32 Debug" "tuscany_sca_test_CustomerInfo - Win32 Debug" "tuscany_sca - Win32 Debug" "$(OUTDIR)\tuscany_sca_test.exe"
-   copy ..\tuscany_sca_test_MyValue\Debug\MyValue.dll testSCASystem\modules\MyValueServiceModule
-	copy ..\tuscany_sca_test_MyValue\Debug\MyValue.pdb testSCASystem\modules\MyValueServiceModule
-	copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.dll testSCASystem\modules\MyValueServiceModule
-	copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.pdb testSCASystem\modules\MyValueServiceModule
+   copy ..\tuscany_sca_test_MyValue\Debug\MyValue.dll testSCASystem\composites\MyValueServiceComposite
+	copy ..\tuscany_sca_test_MyValue\Debug\MyValue.pdb testSCASystem\composites\MyValueServiceComposite
+	copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.dll testSCASystem\composites\MyValueServiceComposite
+	copy ..\tuscany_sca_test_CustomerInfo\Debug\CustomerInfo.pdb testSCASystem\composites\MyValueServiceComposite
 	copy..\tuscany_sca\Debug\*.dll Debug
 	copy..\tuscany_sca\Debug\*.pdb Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"

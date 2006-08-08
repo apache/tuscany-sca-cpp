@@ -126,26 +126,26 @@ public class ServicesGenerator extends CParsingTool {
 
         String componentTypeFileHeaderName = interfaceHeaderFilename;
 
-        String sca_module_root =  (String) Options.getOption("-dir");
-        parameters.put("module_root", sca_module_root);
+        String sca_composite_root =  (String) Options.getOption("-dir");
+        parameters.put("composite_root", sca_composite_root);
 
-        if (sca_module_root != null && interfaceHeaderFilename != null
+        if (sca_composite_root != null && interfaceHeaderFilename != null
                 && interfaceHeaderFilename.length() > 0) {
             String separator;
             // Stick in a "/" (File.separator) if required.
-            if ((interfaceHeaderFilename.substring(0, 1).equals("/") || sca_module_root
-                    .substring(sca_module_root.length() - 1,
-                            sca_module_root.length()).equals("/"))
-                    || (interfaceHeaderFilename.substring(0, 1).equals("\\") || sca_module_root
-                            .substring(sca_module_root.length() - 1,
-                                    sca_module_root.length()).equals("\\"))
+            if ((interfaceHeaderFilename.substring(0, 1).equals("/") || sca_composite_root
+                    .substring(sca_composite_root.length() - 1,
+                            sca_composite_root.length()).equals("/"))
+                    || (interfaceHeaderFilename.substring(0, 1).equals("\\") || sca_composite_root
+                            .substring(sca_composite_root.length() - 1,
+                                    sca_composite_root.length()).equals("\\"))
 
             ) {
                 separator = "";
             } else {
                 separator = File.separator;
             }
-            interfaceHeaderFilename = sca_module_root + separator
+            interfaceHeaderFilename = sca_composite_root + separator
                     + interfaceHeaderFilename;
         }
 
@@ -210,38 +210,38 @@ public class ServicesGenerator extends CParsingTool {
                 }
             }
 
-            String moduleXmlFileHeader = null;
-            String moduleXmlFileHeaderNoExt = null;
-            Object moduleh = parameters
-                    .get("/module/component/implementation.cpp/@header");
+            String compositeXmlFileHeader = null;
+            String compositeXmlFileHeaderNoExt = null;
+            Object compositeh = parameters
+                    .get("/composite/component/implementation.cpp/@header");
 
-            if (moduleh == null) {
-                moduleh = parameters
-                        .get("/moduleFragment/component/implementation.cpp/@header");
+            if (compositeh == null) {
+                compositeh = parameters
+                        .get("/compositeFragment/component/implementation.cpp/@header");
             }
 
-            if (moduleh instanceof String) {
-                File f = new File((String) moduleh);
-                moduleXmlFileHeader = (String) moduleh;
+            if (compositeh instanceof String) {
+                File f = new File((String) compositeh);
+                compositeXmlFileHeader = (String) compositeh;
 
                 String fname = f.getName();
-                moduleXmlFileHeaderNoExt = fname.substring(0, fname
+                compositeXmlFileHeaderNoExt = fname.substring(0, fname
                         .lastIndexOf('.'));
 
             }
 
-            String implClassNameAttrFromModuleFile = (String) parameters
+            String implClassNameAttrFromCompositeFile = (String) parameters
             	.get("implClass");
-            String implClassNamespaceAttrFromModuleFile = (String) parameters
+            String implClassNamespaceAttrFromCompositeFile = (String) parameters
             	.get("implNamespace");
             
-            if(implClassNamespaceAttrFromModuleFile == null || implClassNamespaceAttrFromModuleFile.length() == 0)
+            if(implClassNamespaceAttrFromCompositeFile == null || implClassNamespaceAttrFromCompositeFile.length() == 0)
             {
-                implClassNamespaceAttrFromModuleFile = "";
+                implClassNamespaceAttrFromCompositeFile = "";
             }
             else
             {
-                implClassNamespaceAttrFromModuleFile += "::";
+                implClassNamespaceAttrFromCompositeFile += "::";
             }
             
             String interfaceClassNameAttrFromComponentTypeFile;
@@ -279,10 +279,10 @@ public class ServicesGenerator extends CParsingTool {
 
             Document dom = createDOMofMethods(methods, source, serviceName,
                     referenceName, nameOfSorR, null,
-                    componentTypeFileHeaderName, moduleXmlFileHeader,
-                    moduleXmlFileHeaderNoExt, intfNamespace,
+                    componentTypeFileHeaderName, compositeXmlFileHeader,
+                    compositeXmlFileHeaderNoExt, intfNamespace,
                     interfaceClassNameAttrFromComponentTypeFile,
-                    implClassNameAttrFromModuleFile, implClassNamespaceAttrFromModuleFile);
+                    implClassNameAttrFromCompositeFile, implClassNamespaceAttrFromCompositeFile);
            
 //            // Print out the generated DOM
 //            StringWriter sw = new StringWriter();
@@ -372,7 +372,7 @@ public class ServicesGenerator extends CParsingTool {
 
         String serviceOrReferenceName = "noSorRNameDefined";
 
-        String implClass = "nomoduleXmlFileHeaderDefined";
+        String implClass = "nocompositeXmlFileHeaderDefined";
 
         Element topNode = dom.getDocumentElement();
         if (null != topNode) {
@@ -423,7 +423,7 @@ public class ServicesGenerator extends CParsingTool {
 
         String serviceName = "noServiceDefined";
 
-        String implClass = "nomoduleXmlFileHeaderDefined";
+        String implClass = "nocompositeXmlFileHeaderDefined";
 
         Element topNode = dom.getDocumentElement();
         if (null != topNode) {
@@ -525,7 +525,7 @@ public class ServicesGenerator extends CParsingTool {
 
         String serviceName = "noServiceDefined";
 
-        String implClass = "nomoduleXmlFileHeaderDefined";
+        String implClass = "nocompositeXmlFileHeaderDefined";
 
         Element topNode = dom.getDocumentElement();
         if (null != topNode) {
@@ -651,9 +651,9 @@ public class ServicesGenerator extends CParsingTool {
      * @referenceName the name of the reference
      * @nameOfSorR the non null one of the two parameters above
      * @headerClassName the name of the header class
-     * @param moduleXmlFileImplHeaderNameWithPathAndExt
+     * @param compositeXmlFileImplHeaderNameWithPathAndExt
      *            the source filename
-     * @param moduleXmlFileHeaderNoExtorPath
+     * @param compositeXmlFileHeaderNoExtorPath
      *            the shortname of the source file
      * @param implClass
      *            the implementation class
@@ -665,8 +665,8 @@ public class ServicesGenerator extends CParsingTool {
             String serviceName, String referenceName, String nameOfSorR,
             String headerClassName,
             String componentTypeXmlFileIntfHeaderNameWithPathAndExt,
-            String moduleXmlFileImplHeaderNameWithPathAndExt,
-            String moduleXmlFileHeaderNoExtorPath, String intfNamespace,
+            String compositeXmlFileImplHeaderNameWithPathAndExt,
+            String compositeXmlFileHeaderNoExtorPath, String intfNamespace,
             String intfClass, String implClass, String implNamespace) {
 
         if (methods == null) {
@@ -768,7 +768,7 @@ public class ServicesGenerator extends CParsingTool {
             if (implClass != null) {
                 root.setAttribute("implClass", implClass);
             } else {
-                root.setAttribute("implClass", moduleXmlFileHeaderNoExtorPath);
+                root.setAttribute("implClass", compositeXmlFileHeaderNoExtorPath);
             }
 
             if (implClass != null) {
@@ -801,17 +801,17 @@ public class ServicesGenerator extends CParsingTool {
             root.setAttribute("componentTypeHeader",
                     componentTypeXmlFileIntfHeaderNameWithPathAndExt);
 
-            if (moduleXmlFileImplHeaderNameWithPathAndExt == null) {
-                moduleXmlFileImplHeaderNameWithPathAndExt = "moduleXmlFileImplHeader";
+            if (compositeXmlFileImplHeaderNameWithPathAndExt == null) {
+                compositeXmlFileImplHeaderNameWithPathAndExt = "compositeXmlFileImplHeader";
             }
-            root.setAttribute("moduleXmlFileHeader",
-                    moduleXmlFileImplHeaderNameWithPathAndExt);
+            root.setAttribute("compositeXmlFileHeader",
+                    compositeXmlFileImplHeaderNameWithPathAndExt);
 
-            if (moduleXmlFileHeaderNoExtorPath == null) {
-                moduleXmlFileHeaderNoExtorPath = "moduleXmlFileHeaderNoExt";
+            if (compositeXmlFileHeaderNoExtorPath == null) {
+                compositeXmlFileHeaderNoExtorPath = "compositeXmlFileHeaderNoExt";
             }
-            root.setAttribute("moduleXmlFileHeaderNoExt",
-                    moduleXmlFileHeaderNoExtorPath);
+            root.setAttribute("compositeXmlFileHeaderNoExt",
+                    compositeXmlFileHeaderNoExtorPath);
 
         } catch (ParserConfigurationException pce) {
             // Parser with specified options can't be built

@@ -94,63 +94,63 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\Calculator.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\Calculator.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorDivideService_Proxy.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Proxy.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Proxy.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorService_Wrapper.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideService.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideService.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Proxy.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.cpp
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideService_Wrapper.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.h
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -158,7 +158,7 @@ SOURCE=..\..\..\..\..\Calculator\CalculatorModule\DivideServiceImpl_DivideServic
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivideService_Proxy.h
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorDivideService_Proxy.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
@@ -166,11 +166,11 @@ SOURCE=..\..\..\..\..\Calculator\CalculatorModule\CalculatorImpl_CalculatorDivid
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\Calculator.wsdl
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\Calculator.wsdl
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\sca.module
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\sca.composite
 # End Source File
 # Begin Source File
 
@@ -178,11 +178,11 @@ SOURCE=..\..\..\..\..\Calculator\CalculatorSubsystem\sca.subsystem
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorModule\services.xml
+SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\services.xml
 # End Source File
 # Begin Source File
 
-SOURCE="..\..\..\..\..\Calculator\CalculatorModule\Tuscany-model.config"
+SOURCE="..\..\..\..\..\Calculator\CalculatorComposite\Tuscany-model.config"
 # End Source File
 # End Group
 # End Target

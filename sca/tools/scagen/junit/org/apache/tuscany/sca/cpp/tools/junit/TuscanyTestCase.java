@@ -35,7 +35,7 @@ public class TuscanyTestCase extends TestCase {
 
     public static String root = "d:\\tuscany\\cpp\\sca\\tools\\scagen\\junit\\";
 
-    public static String junit_modules = root + "testinput\\modules\\";
+    public static String junit_composites = root + "testinput\\composites\\";
 
     public static String junit_output = root + "testoutput\\";
 
@@ -47,7 +47,7 @@ public class TuscanyTestCase extends TestCase {
 
     /**
      * Check the resulting files with the contents of the expected_results
-     * folder in the testModule method
+     * folder in the testComposite method
      */
     public final static boolean check_results = true;
 
@@ -180,10 +180,10 @@ public class TuscanyTestCase extends TestCase {
 
     }
 
-    public void testModule(String module, boolean check) {
+    public void testComposite(String composite, boolean check) {
 
         Options.reset();
-        setTestcase(module);
+        setTestcase(composite);
         clearDirButNotExpectedOutputSubDir(output);
 
         String[] commandLine = new String[] { "-dir", input, "-output", output };
@@ -198,11 +198,11 @@ public class TuscanyTestCase extends TestCase {
         }
     }
 
-    public void testModuleDeploy(String module, boolean check,
+    public void testCompositeDeploy(String composite, boolean check,
             String deployDir, String command) {
 
         Options.reset();
-        setTestcase(module);
+        setTestcase(composite);
         clearDirButNotExpectedOutputSubDir(output);
 
         String[] commandLine;
@@ -323,7 +323,7 @@ public class TuscanyTestCase extends TestCase {
      */
     void setTestcase(String testcase) {
         this.testcase = testcase;
-        input = TuscanyTestCase.junit_modules + testcase;
+        input = TuscanyTestCase.junit_composites + testcase;
         output = TuscanyTestCase.junit_output + testcase;
     }
 

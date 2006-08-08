@@ -28,7 +28,7 @@ using std::vector;
 #include "tuscany/sca/model/WireTarget.h"
 #include "tuscany/sca/model/Subsystem.h"
 #include "tuscany/sca/model/EntryPoint.h"
-#include "tuscany/sca/model/Module.h"
+#include "tuscany/sca/model/Composite.h"
 using namespace tuscany::sca::model;
 #include "commonj/sdo/SDO.h"
 using commonj::sdo::DataObjectPtr;
@@ -41,7 +41,7 @@ namespace tuscany
         /**
          * A runtime class which is used by external bindings to provide the entry
          * point into the SCA runtime. An entry point will be defined in an SCA
-         * module, and a binding class will be provided to service the
+         * composite, and a binding class will be provided to service the
          * communication between the external binding (e.g. for web services the
          * SOAP/HTTP communication) and the SCA runtime. The binding class will
          * use SCAEntryPoint to call into the SCA runtime.
@@ -51,10 +51,10 @@ namespace tuscany
         public:
             /**
              * Constructor to create a new instance which will be associated with
-             * a given entry point in an SCA module.
+             * a given entry point in an SCA composite.
              * @param entryPointName The qualified name of the entry point in an 
-             * SCA module. It is of the form 
-             * "subsystem name"/"module component name"/"entry point name".
+             * SCA composite. It is of the form 
+             * "subsystem name"/"composite component name"/"entry point name".
              */
             SCA_API SCAEntryPoint(const char* entryPointName);
 
@@ -65,14 +65,14 @@ namespace tuscany
 
             /**
              * Invokes an operation on the component to which the SCA entry point
-             * is wired in the SCA module.
+             * is wired in the SCA composite.
              * @param operation. The operation request
              */
             SCA_API virtual void invoke(Operation& operation);
 
             /**
              * Returns a SDO data factory from which all the types associated with the entry point
-             * and module can be created.
+             * and composite can be created.
              */
             SCA_API DataFactoryPtr getDataFactory() {return dataFactory;}
 
@@ -85,17 +85,17 @@ namespace tuscany
             Subsystem* subsystem;
 
             /**
-             * The entry point in the module.
+             * The entry point in the composite.
              */
             EntryPoint* entrypoint;
 
             /**
-             * The module component in the subsystem.
+             * The composite component in the subsystem.
              */
-            Module* module;
+            Composite* composite;
 
             /**
-             * Cached data factory which has all the types defined for the module in which
+             * Cached data factory which has all the types defined for the composite in which
              * this entry point is found.
              */
             DataFactoryPtr dataFactory;

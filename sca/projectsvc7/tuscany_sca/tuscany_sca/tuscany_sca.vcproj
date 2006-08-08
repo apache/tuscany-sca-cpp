@@ -196,16 +196,16 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				RelativePath="..\..\..\runtime\core\src\osoa\sca\ComponentContextImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ModuleContext.cpp">
+				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContext.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ModuleContext.h">
+				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContext.h">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ModuleContextImpl.cpp">
+				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ModuleContextImpl.h">
+				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\osoa\sca\SCA.cpp">
@@ -342,10 +342,10 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Module.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Module.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Composite.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Service.cpp">

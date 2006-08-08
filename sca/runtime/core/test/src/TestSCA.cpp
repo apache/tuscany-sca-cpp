@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     commonj::sdo::Logger::setLogging(20);
     cout << "Start of SCA test" << endl;
 
-    // Set default module
+    // Set default composite
     TuscanyRuntime runtime("SubSystem1");
 
     try
@@ -42,8 +42,8 @@ int main(int argc, char* argv[])
         runtime.start();
 
         // Locate a service
-        ModuleContext myContext = ModuleContext::getCurrent();
-        ModuleContext myContext2 = myContext;
+        CompositeContext myContext = CompositeContext::getCurrent();
+        CompositeContext myContext2 = myContext;
 
         MyValue* myService = (MyValue*) myContext.locateService("MyValueServiceComponent");
         if (myService == 0)

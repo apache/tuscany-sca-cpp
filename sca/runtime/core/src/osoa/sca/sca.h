@@ -21,7 +21,7 @@
 #define osoa_sca_sca_h
 
 #include "osoa/sca/export.h"
-#include "osoa/sca/ModuleContext.h"
+#include "osoa/sca/CompositeContext.h"
 #include "osoa/sca/ComponentContext.h"
 #include "osoa/sca/ServiceList.h"
 #include "osoa/sca/ServiceRuntimeException.h"

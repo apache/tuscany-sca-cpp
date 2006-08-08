@@ -23,7 +23,7 @@ import org.apache.tuscany.sca.cpp.tools.junit.TuscanyTestCase;
  */
 public class CalculatorTest extends TuscanyTestCase {
 
-    public void testCalculatorModuleAndComponent() {
-        testModule("CalculatorModuleAndComponent", check_results);
+    public void testCalculatorCompositeAndComponent() {
+        testComposite("CalculatorCompositeAndComponent", check_results);
     }
 }

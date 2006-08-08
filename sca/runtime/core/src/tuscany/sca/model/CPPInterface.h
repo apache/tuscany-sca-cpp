@@ -48,7 +48,7 @@ namespace tuscany
                  * describes the interface.
                  * @param className Name of the class in the header file that 
                  * describes the interface. 
-                 * @param scope The scope of the interface (stateless or module).
+                 * @param scope The scope of the interface (stateless or composite).
                  * @param remotable True if the interface is remotable.
                  */
                 CPPInterface(
@@ -92,7 +92,7 @@ namespace tuscany
                  */
                 enum SCOPE
                 {
-                    MODULE,
+                    COMPOSITE,
                     STATELESS
                 };
 

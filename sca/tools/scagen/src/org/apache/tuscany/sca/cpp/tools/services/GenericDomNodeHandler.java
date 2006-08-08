@@ -60,9 +60,9 @@ public class GenericDomNodeHandler implements DomNodeHandler {
 
                 // Report the dll name to the deployment tool if required.
                 if ("dll".equals(attr.getNodeName())) {
-                    //This is a path relative to the module root.
+                    //This is a path relative to the composite root.
                     //so we need to add it in.
-                    File mod = (File) parameters.get("moduleOrFragmentFile");
+                    File mod = (File) parameters.get("compositeOrFragmentFile");
                     if (null != mod) {
                         String separatorForRegex = File.separator.replaceAll(
                                 "\\\\", "\\\\\\\\");
@@ -187,11 +187,11 @@ public class GenericDomNodeHandler implements DomNodeHandler {
             return;
         }
 
-        // We want to clear both /moduleFragment and /module
+        // We want to clear both /compositeFragment and /composite
         // subtrees when we come across the root of either..
-        if (contextXPath.equals("/moduleFragment")) {
-            //clear both this and "module"
-            contextXPath = "/module";
+        if (contextXPath.equals("/compositeFragment")) {
+            //clear both this and "composite"
+            contextXPath = "/composite";
         }
 
         Set parms = parameters.entrySet();

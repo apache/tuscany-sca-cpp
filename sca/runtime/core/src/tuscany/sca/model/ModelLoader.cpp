@@ -73,9 +73,9 @@ namespace tuscany
                 // structure.
                 loadSubsystems(configurationRoot);
                 
-                // sca.module files represent the root of a module, and can occur anywhere
+                // sca.composite files represent the root of a composite, and can occur anywhere
                 // under the directory structure
-                loadModules(configurationRoot);
+                loadComposites(configurationRoot);
                 
                 system->resolveWires();
                 LOGEXIT(1, "ModelLoader::load");
@@ -88,7 +88,7 @@ namespace tuscany
             // ========================================================================
             void ModelLoader::loadSubsystems(const string& configurationRoot)
             {
-                // Get all the sca.subsystem files in the module
+                // Get all the sca.subsystem files in the composite
                 LOGENTRY(1, "ModelLoader::loadSubsystems");
                 Files files(configurationRoot, "sca.subsystem", true);
                 for (unsigned int i=0; i < files.size(); i++)
@@ -101,7 +101,7 @@ namespace tuscany
             
             // =====================================================================
             // loadSubsystemFile:
-            // This method is called for each sca.subsystem file found in the module 
+            // This method is called for each sca.subsystem file found in the composite 
             // folder structure
             // =====================================================================
             void ModelLoader::loadSubsystemFile(const File& file)
@@ -142,15 +142,15 @@ namespace tuscany
                 Subsystem* subsystem;
                 subsystem = system->addSubsystem(root->getCString("name"));
                 
-                DataObjectList& Modules = root->getList("moduleComponent");
-                LOGINFO_1(2, "ModelLoader::mapSubsystem: number of module components: %d", Modules.size());
+                DataObjectList& Composites = root->getList("compositeComponent");
+                LOGINFO_1(2, "ModelLoader::mapSubsystem: number of composite components: %d", Composites.size());
                 
-                // Iterate over module components
-                for (int i=0; i<Modules.size(); i++)
+                // Iterate over composite components
+                for (int i=0; i<Composites.size(); i++)
                 {
-                    // Add each module component to the subsystem
-                    Module* Module;
-                    Module = subsystem->addModuleComponent(Modules[i]->getCString("name"), Modules[i]->getCString("module"));
+                    // Add each composite component to the subsystem
+                    Composite* Composite;
+                    Composite = subsystem->addCompositeComponent(Composites[i]->getCString("name"), Composites[i]->getCString("composite"));
                 }
                 
                 
@@ -162,110 +162,110 @@ namespace tuscany
             
             
             // =====================================================================
-            // loadModules:
-            // Load all the modules from any directory below the configuration root.
-            // Translate the module information to the runtime information
+            // loadComposites:
+            // Load all the composites from any directory below the configuration root.
+            // Translate the composite information to the runtime information
             // =====================================================================
-            void ModelLoader::loadModules(const string& configurationRoot)
+            void ModelLoader::loadComposites(const string& configurationRoot)
             {
-                // Get all the sca.module files in the module
-                LOGENTRY(1, "ModelLoader::loadModules");
-                Files files(configurationRoot, "sca.module", true);
+                // Get all the sca.composite files in the composite
+                LOGENTRY(1, "ModelLoader::loadComposites");
+                Files files(configurationRoot, "sca.composite", true);
                 for (unsigned int i=0; i < files.size(); i++)
                 {
-                    loadModuleFile(files[i]);
+                    loadCompositeFile(files[i]);
                 }
-                LOGEXIT(1, "ModelLoader::loadModules");
+                LOGEXIT(1, "ModelLoader::loadComposites");
             }
             
             
             // ====================================================================
-            // loadModuleFile:
-            // This method is called for each sca.module file found in the module 
+            // loadCompositeFile:
+            // This method is called for each sca.composite file found in the composite 
             // folder structure
-            // The location of this module file will indicate the root of a module
+            // The location of this composite file will indicate the root of a composite
             // ====================================================================
-            void ModelLoader::loadModuleFile(const File& file)
+            void ModelLoader::loadCompositeFile(const File& file)
             {
-                LOGENTRY(1, "ModelLoader::loadModuleFile");
-                LOGINFO_1(2, "module filename: %s", file.getFileName().c_str());
+                LOGENTRY(1, "ModelLoader::loadCompositeFile");
+                LOGINFO_1(2, "composite filename: %s", file.getFileName().c_str());
                 
                 try 
                 {
                     string filename = file.getDirectory() + "/" + file.getFileName();
                     
-                    XMLDocumentPtr moduleFile = getXMLHelper()->loadFile(filename.c_str());
-                    if (moduleFile->getRootDataObject() == 0)
+                    XMLDocumentPtr compositeFile = getXMLHelper()->loadFile(filename.c_str());
+                    if (compositeFile->getRootDataObject() == 0)
                     {
-                        LOGERROR_1(0, "ModelLoader::loadModuleFile: Unable to load file: %s", filename.c_str());
+                        LOGERROR_1(0, "ModelLoader::loadCompositeFile: Unable to load file: %s", filename.c_str());
                     }
                     else
                     {
-                        string moduleName = moduleFile->getRootDataObject()->getCString("name");
-                        mapModule(moduleName, moduleFile->getRootDataObject(), file.getDirectory());                        
+                        string compositeName = compositeFile->getRootDataObject()->getCString("name");
+                        mapComposite(compositeName, compositeFile->getRootDataObject(), file.getDirectory());                        
                         
                         // --------------------------------------------------------------
-                        // Load any module Fragments in the same folder as the sca.module
+                        // Load any composite Fragments in the same folder as the sca.composite
                         // --------------------------------------------------------------
                         Files files(file.getDirectory(), "*.fragment", false);
                         for (unsigned int i=0; i < files.size(); i++)
                         {
                             filename = file.getDirectory() + "/" + files[i].getFileName();
-                            moduleFile = getXMLHelper()->loadFile(filename.c_str());
-                            if (moduleFile->getRootDataObject() == 0)
+                            compositeFile = getXMLHelper()->loadFile(filename.c_str());
+                            if (compositeFile->getRootDataObject() == 0)
                             {
-                                LOGERROR_1(0, "ModelLoader::loadModuleFile: Unable to load file: %s", filename.c_str());
+                                LOGERROR_1(0, "ModelLoader::loadCompositeFile: Unable to load file: %s", filename.c_str());
                             }
                             else
                             {    
-                                mapModule(moduleName, moduleFile->getRootDataObject(), file.getDirectory());                        
+                                mapComposite(compositeName, compositeFile->getRootDataObject(), file.getDirectory());                        
                             }
                         }
 
-                        // Load the xsd types and wsdl files in the module
-                        loadModuleConfig(file.getDirectory(), moduleName);
+                        // Load the xsd types and wsdl files in the composite
+                        loadCompositeConfig(file.getDirectory(), compositeName);
                     }
                     
                 } catch (SDORuntimeException ex) 
                 {
-                    LOGERROR_1(0, "ModelLoader::loadModuleFile: Exception caught: %s", ex.getMessageText());
+                    LOGERROR_1(0, "ModelLoader::loadCompositeFile: Exception caught: %s", ex.getMessageText());
                 }    
                 
-                LOGEXIT(1, "ModelLoader::loadModuleFile");
+                LOGEXIT(1, "ModelLoader::loadCompositeFile");
             }
             
             // ===========
-            // mapModule
+            // mapComposite
             // ===========
-            void ModelLoader::mapModule(const string& moduleName, DataObjectPtr root, string moduleRootDir)
+            void ModelLoader::mapComposite(const string& compositeName, DataObjectPtr root, string compositeRootDir)
             {
-                LOGENTRY(1, "ModelLoader::mapModule");
+                LOGENTRY(1, "ModelLoader::mapComposite");
                 
-                LOGINFO_2(2, "ModelLoader::mapModule: Loading module: %s, root Dir: %s", moduleName.c_str(), moduleRootDir.c_str());
+                LOGINFO_2(2, "ModelLoader::mapComposite: Loading composite: %s, root Dir: %s", compositeName.c_str(), compositeRootDir.c_str());
                 
-                // Find the ModuleComponent(s) that refer to this module. If a ModuleComponent does not refer to this
-                // module then ignore it
-                MODULE_LIST moduleList = system->findModules(moduleName);
-                MODULE_LIST::iterator moduleIter;
+                // Find the CompositeComponent(s) that refer to this composite. If a CompositeComponent does not refer to this
+                // composite then ignore it
+                COMPOSITE_LIST compositeList = system->findComposites(compositeName);
+                COMPOSITE_LIST::iterator compositeIter;
                 
-                for (moduleIter = moduleList.begin();
-                moduleIter != moduleList.end();
-                moduleIter++ )
+                for (compositeIter = compositeList.begin();
+                compositeIter != compositeList.end();
+                compositeIter++ )
                 {
-                    LOGINFO_1(2, "ModelLoader::mapModule: Loading module details for module component: %s", (*moduleIter)->getName().c_str());
+                    LOGINFO_1(2, "ModelLoader::mapComposite: Loading composite details for composite component: %s", (*compositeIter)->getName().c_str());
                     
                     string message; // for exceptions
-                    // Set module root
-                    (*moduleIter)->setRoot(moduleRootDir);
+                    // Set composite root
+                    (*compositeIter)->setRoot(compositeRootDir);
                     
                     // ----------------------------
-                    // Add components to the module
+                    // Add components to the composite
                     // ----------------------------
                     DataObjectList& componentList = root->getList("component");
                     int i;
                     for (i=0; i < componentList.size(); i++)
                     {
-                        addComponent(*moduleIter, componentList[i]);                        
+                        addComponent(*compositeIter, componentList[i]);                        
                     }
 
                     // ------------
@@ -274,7 +274,7 @@ namespace tuscany
                     DataObjectList& entryPointList = root->getList("entryPoint");
                     for (i=0; i < entryPointList.size(); i++)
                     {
-                        addEntryPoint(*moduleIter, entryPointList[i]);                        
+                        addEntryPoint(*compositeIter, entryPointList[i]);                        
                     }
                     
                     
@@ -284,7 +284,7 @@ namespace tuscany
                     DataObjectList& externalServiceList = root->getList("externalService");
                     for (i=0; i < externalServiceList.size(); i++)
                     {
-                        addExternalService(*moduleIter, externalServiceList[i]);
+                        addExternalService(*compositeIter, externalServiceList[i]);
                     }
 
                     // -----
@@ -295,20 +295,20 @@ namespace tuscany
                     {
                         string source = wireList[l]->getCString("sourceUri");
                         string target = wireList[l]->getCString("targetUri");
-                        (*moduleIter)->addWire(source, target);
+                        (*compositeIter)->addWire(source, target);
                     }
                     
                 }
                                 
-                LOGEXIT(1, "ModelLoader::mapModule");
+                LOGEXIT(1, "ModelLoader::mapComposite");
             }
 
             // =================================
             // addComponent:
             // =================================
-            void ModelLoader::addComponent(Module* module, DataObjectPtr componentDO)
+            void ModelLoader::addComponent(Composite* composite, DataObjectPtr componentDO)
             {
-                Component* component = module->addComponent(componentDO->getCString("name"));                
+                Component* component = composite->addComponent(componentDO->getCString("name"));                
                 
                 string message;
 
@@ -344,13 +344,13 @@ namespace tuscany
                 // -----------------------
                 // Load the .componentType
                 // -----------------------
-                string typeFileName = module->getRoot() + "/" + componentTypePath + componentTypeName + ".componentType";
+                string typeFileName = composite->getRoot() + "/" + componentTypePath + componentTypeName + ".componentType";
                 try 
                 {
                     XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
                     if (componentTypeFile->getRootDataObject() == 0)
                     {
-                        LOGERROR_1(0, "ModelLoader::mapModule: Unable to load file: %s", typeFileName.c_str());
+                        LOGERROR_1(0, "ModelLoader::mapComposite: Unable to load file: %s", typeFileName.c_str());
                     }
                     else
                     {                                            
@@ -362,7 +362,7 @@ namespace tuscany
                     }
                 } catch (SDORuntimeException& ex) 
                 {
-                    LOGERROR_1(0, "ModelLoader::mapModule: Exception caught: %s", ex.getMessageText());
+                    LOGERROR_1(0, "ModelLoader::mapComposite: Exception caught: %s", ex.getMessageText());
                     throw SystemConfigurationException(ex.getMessageText());
                 }    
                 
@@ -382,7 +382,7 @@ namespace tuscany
                     for (int refI=0; refI < pl.size(); refI++)
                     {
                         // ----------------------------------------------------------
-                        // Add the reference to the module wires to be resolved later
+                        // Add the reference to the composite wires to be resolved later
                         // ----------------------------------------------------------
                         string refName = pl[refI].getName();
                         if (!component->findReference(pl[refI].getName()))
@@ -400,7 +400,7 @@ namespace tuscany
                         {
                             // Get the reference value
                             string refValue = reflist.getDataObject(refslistI)->getSequence()->getCStringValue(0);
-                            module->addWire(src, refValue);
+                            composite->addWire(src, refValue);
                         }
                     }
                 }
@@ -508,14 +508,14 @@ namespace tuscany
             }
             
             // ===============================================
-            // addEntryPoint: add an EntryPoint to the module
+            // addEntryPoint: add an EntryPoint to the composite
             // ===============================================
-            void ModelLoader::addEntryPoint(Module* module, DataObjectPtr entryPointDO)
+            void ModelLoader::addEntryPoint(Composite* composite, DataObjectPtr entryPointDO)
             {
 				string message;
 
                 //Utils::printDO(entryPointDO);
-                EntryPoint* entryPoint = module->addEntryPoint(entryPointDO->getCString("name"));    
+                EntryPoint* entryPoint = composite->addEntryPoint(entryPointDO->getCString("name"));    
 
                 string multiplicity = "1..1";
                 if (entryPointDO->isSet("multiplicity"))
@@ -530,10 +530,10 @@ namespace tuscany
                 for (int i=0; i<refs.size(); i++)
                 {
                     // ----------------------------------------------------------
-                    // Add the reference to the module wires to be resolved later
+                    // Add the reference to the composite wires to be resolved later
                     // ----------------------------------------------------------
                     string targ = refs.getCString(i);
-                    module->addWire(entryPoint->getName(), targ);
+                    composite->addWire(entryPoint->getName(), targ);
                 }
 
                 // Get binding, it will be the first and only binding
@@ -570,13 +570,13 @@ namespace tuscany
             
             
             // =========================================================
-            // addExternalService: add an ExternalService to the module
+            // addExternalService: add an ExternalService to the composite
             // =========================================================
-            void ModelLoader::addExternalService(Module* module, DataObjectPtr externalServiceDO)
+            void ModelLoader::addExternalService(Composite* composite, DataObjectPtr externalServiceDO)
             {
                 string message;
 
-                ExternalService* externalService = module->addExternalService(externalServiceDO->getCString("name"));    
+                ExternalService* externalService = composite->addExternalService(externalServiceDO->getCString("name"));    
                 // Add the interface
                 externalService->setInterface(getInterface(externalServiceDO));
                 
@@ -612,56 +612,56 @@ namespace tuscany
             
             
             ///
-            /// Use the Tuscany-model.config file in the module root directory to
+            /// Use the Tuscany-model.config file in the composite root directory to
             /// determine which xsds and wsdls to load into a dataFactory.
             ///
-            void ModelLoader::loadModuleConfig(const string &moduleRootDir, const string &moduleName)
+            void ModelLoader::loadCompositeConfig(const string &compositeRootDir, const string &compositeName)
             {
-                LOGENTRY(1, "ModelLoader::loadModuleConfig");
+                LOGENTRY(1, "ModelLoader::loadCompositeConfig");
 
                 // Load the "Tuscany-model.config" file, if it exists
-                Files files(moduleRootDir, "Tuscany-model.config", false);
+                Files files(compositeRootDir, "Tuscany-model.config", false);
                 for (unsigned int i=0; i < files.size(); i++)
                 {
-                    string filename = moduleRootDir + "/" + files[i].getFileName();
-                    XMLDocumentPtr moduleConfigFile = getXMLHelper()->loadFile(filename.c_str());
-                    if (moduleConfigFile->getRootDataObject() == 0)
+                    string filename = compositeRootDir + "/" + files[i].getFileName();
+                    XMLDocumentPtr compositeConfigFile = getXMLHelper()->loadFile(filename.c_str());
+                    if (compositeConfigFile->getRootDataObject() == 0)
                     {
-                        LOGERROR_1(0, "ModelLoader::loadModuleConfig: Unable to load file: %s", filename.c_str());
+                        LOGERROR_1(0, "ModelLoader::loadCompositeConfig: Unable to load file: %s", filename.c_str());
                     }
                     else
                     {    
-                        LOGINFO_2(2, "ModelLoader::loadModuleConfig: Loading module config for: %s, root Dir: %s", moduleName.c_str(), moduleRootDir.c_str());
+                        LOGINFO_2(2, "ModelLoader::loadCompositeConfig: Loading composite config for: %s, root Dir: %s", compositeName.c_str(), compositeRootDir.c_str());
 
-                        if(moduleConfigFile->getRootDataObject()->isSet("xsd"))
+                        if(compositeConfigFile->getRootDataObject()->isSet("xsd"))
                         {
-                            DataObjectList& xsds = moduleConfigFile->getRootDataObject()->getList("xsd/file");
+                            DataObjectList& xsds = compositeConfigFile->getRootDataObject()->getList("xsd/file");
 
                             for (int i=0; i<xsds.size(); i++)
                             {
                                 if(xsds[i]->isSet("name"))
                                 {
-                                    // Load a xsd file -> set the types in the moduleComponents data factory file
-                                    string xsdName = moduleRootDir + "/" +xsds[i]->getCString("name");
-                                    loadTypes(xsdName.c_str(), moduleName);
+                                    // Load a xsd file -> set the types in the compositeComponents data factory file
+                                    string xsdName = compositeRootDir + "/" +xsds[i]->getCString("name");
+                                    loadTypes(xsdName.c_str(), compositeName);
                                 }
                             }
                         }
                         
 
-                        if( moduleConfigFile->getRootDataObject()->isSet("wsdl"))
+                        if( compositeConfigFile->getRootDataObject()->isSet("wsdl"))
                         {
-                            DataObjectList& wsdls = moduleConfigFile->getRootDataObject()->getList("wsdl/file");
+                            DataObjectList& wsdls = compositeConfigFile->getRootDataObject()->getList("wsdl/file");
                             for (int j=0; j<wsdls.size(); j++)
                             {
                                 if(wsdls[i]->isSet("name"))
                                 { 
-                                    string wsdlName = moduleRootDir + "/" +wsdls[j]->getCString("name");
+                                    string wsdlName = compositeRootDir + "/" +wsdls[j]->getCString("name");
                                     // Load a wsdl file -> get the types, then the contents of the wsdl
-                                    loadTypes(wsdlName.c_str(), moduleName);
+                                    loadTypes(wsdlName.c_str(), compositeName);
                                     
                                     // Load the contents of the wsdl files
-                                    loadWsdl(wsdlName.c_str(), moduleName);
+                                    loadWsdl(wsdlName.c_str(), compositeName);
                                 }
                             }
                         }                            
@@ -669,33 +669,33 @@ namespace tuscany
                 }
             
                 
-                LOGEXIT(1, "ModelLoader::loadModuleConfig");
+                LOGEXIT(1, "ModelLoader::loadCompositeConfig");
             }
             
             
             ///
             /// Use the types from an xsd or wsdl file
             ///
-            void ModelLoader::loadTypes(const char *fileName, const string &moduleName)
+            void ModelLoader::loadTypes(const char *fileName, const string &compositeName)
             {
                 LOGENTRY(1, "ModelLoader::loadTypes");
                                    
-                // Load a xsd file -> set the types in the moduleComponents data factory file
+                // Load a xsd file -> set the types in the compositeComponents data factory file
 
-                MODULE_LIST moduleList = system->findModules(moduleName);
-                MODULE_LIST::iterator moduleIter;
+                COMPOSITE_LIST compositeList = system->findComposites(compositeName);
+                COMPOSITE_LIST::iterator compositeIter;
                 
-                for (moduleIter = moduleList.begin();    
-                moduleIter != moduleList.end();    
-                moduleIter++ )
+                for (compositeIter = compositeList.begin();    
+                compositeIter != compositeList.end();    
+                compositeIter++ )
                 {
                     try {
-                        (*moduleIter)->getXSDHelper()->defineFile(fileName);                        
-                        //Utils::printTypes((*moduleIter)->getXSDHelper()->getDataFactory());
+                        (*compositeIter)->getXSDHelper()->defineFile(fileName);                        
+                        //Utils::printTypes((*compositeIter)->getXSDHelper()->getDataFactory());
                         
                     } catch (SDOTypeNotFoundException ex)
                     {
-                        LOGERROR_1(0, "ModuleLoader: Exception caught: %s", ex.getMessageText());
+                        LOGERROR_1(0, "CompositeLoader: Exception caught: %s", ex.getMessageText());
                         throw ex;
                     }
                 }
@@ -705,7 +705,7 @@ namespace tuscany
             ///
             /// Load the web services definition from a wsdl
             ///
-            void ModelLoader::loadWsdl(const char *fileName, const string &moduleName)
+            void ModelLoader::loadWsdl(const char *fileName, const string &compositeName)
             {
                 LOGENTRY(1, "ModelLoader::loadWsdl");
 
@@ -716,22 +716,22 @@ namespace tuscany
                     if (doc!=0 && doc->getRootDataObject()!=0) 
                     {
                         //Utils::printDO(doc->getRootDataObject());
-                        MODULE_LIST moduleList = system->findModules(moduleName);
-                        MODULE_LIST::iterator moduleIter;
+                        COMPOSITE_LIST compositeList = system->findComposites(compositeName);
+                        COMPOSITE_LIST::iterator compositeIter;
                         
-                        for (moduleIter = moduleList.begin();    
-                        moduleIter != moduleList.end();    
-                        moduleIter++ )
+                        for (compositeIter = compositeList.begin();    
+                        compositeIter != compositeList.end();    
+                        compositeIter++ )
                         {
-                            // Add the root object to the module
-                            (*moduleIter)->addWsdl(doc->getRootDataObject());            
+                            // Add the root object to the composite
+                            (*compositeIter)->addWsdl(doc->getRootDataObject());            
                             
                         }
                         
                     }
                     else
                     {
-                        LOGERROR_1(0, "ModuleLoader: Unable to load or parse WSDL %s", fileName);
+                        LOGERROR_1(0, "CompositeLoader: Unable to load or parse WSDL %s", fileName);
                     }
                     
                 } catch (SDOTypeNotFoundException ex)
@@ -778,7 +778,7 @@ namespace tuscany
                      
                     } catch (SDOTypeNotFoundException ex)
                     {
-                        LOGERROR_1(0, "ModuleLoader: Exception caught: %s", ex.getMessageText());
+                        LOGERROR_1(0, "CompositeLoader: Exception caught: %s", ex.getMessageText());
                         throw ex;
                     }
                 }

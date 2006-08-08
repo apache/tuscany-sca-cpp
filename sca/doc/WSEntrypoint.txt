@@ -14,7 +14,7 @@ operations in SCA components that can be exposed as Web Services, see below
 for more details.
 
 
-Defining and deploying an SCA Module with a WS EntryPoint
+Defining and deploying an SCA Composite with a WS EntryPoint
 =========================================================
 
 In this section we will use the Calculator sample as a worked example. 
@@ -22,9 +22,9 @@ The Calculator code and files can be found at sca/samples/Calculator.
 
 Pre-requisites:
 
- o A working component within a module and subsystem, with SCAGEN generated 
+ o A working component within a composite and subsystem, with SCAGEN generated 
    Proxy and Wrapper classes and a DLL or SO library compiled from these and 
-   the component class files. The sca.module, *.componentType, *.fragment and 
+   the component class files. The sca.composite, *.componentType, *.fragment and 
    sca.subsystem files must also be available and working
 
 1. Create the WSDL that defines the interface of your SCA component. See the 
@@ -33,11 +33,11 @@ for mapping the parameters and return types of the component operations to XML
 schema types in the WSDL. This file needs to be accessible from the component, 
 so place it in the same directory as the component or in a subdirectory.
 
-See the sca/samples/Calculator/CalculatorModule/Calculator.wsdl file as an 
+See the sca/samples/Calculator/CalculatorComposite/Calculator.wsdl file as an 
 example.
 
 
-2. Add an EntryPoint definition to the sca.module file, setting the 
+2. Add an EntryPoint definition to the sca.composite file, setting the 
 interface.wsdl interface attribute to the WSDL file defined above, the 
 reference element to the name of the component to be invoked and the binding.ws 
 port attribute to the namespace, service and port name specified in the 
@@ -56,7 +56,7 @@ E.g. for the Calculator component, based on the Calculator.wsdl file:
 
 3. Create a file named Tuscany-model.config in the same directory as your 
 component. This file defines which WSDL and XML Schema files to include in the 
-Tuscany runtime environment for this module. Set the contents of the file 
+Tuscany runtime environment for this composite. Set the contents of the file 
 using the example below and use the path and name of the WSDL file created 
 above.
 
@@ -89,13 +89,13 @@ Tuscany specific parameters to identify the Tuscany System Root directory and
 the EntryPoint that will be invoked. 
 
 The TuscanySystemRoot parameter requires the full path to your system root 
-directory - this is the directory that contains the "modules" and "subsystem" 
-directories; which in turn contain your modules and subsystems.
+directory - this is the directory that contains the "composites" and "subsystem" 
+directories; which in turn contain your composites and subsystems.
 
 The TuscanyEntryPoint parameter is of the form 
 "<subsystem-name>/<service-name>/<entrypoint-name>", with the subsystem and 
 service names defined in your sca.subsystem file and the EntryPoint name 
-defined in the EntryPoint definition you added to your sca.module file above.
+defined in the EntryPoint definition you added to your sca.composite file above.
 
 Set the ServiceClass parameter to "tuscany_sca_ws_service" as this library 
 (tuscany_sca_ws_service.dll on Windows and libtuscany_sca_ws_service.so on 

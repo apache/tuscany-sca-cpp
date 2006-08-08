@@ -22,6 +22,6 @@ calculator_client_LDADD   =  -L${TUSCANY_SCACPP}/lib -ltuscany_sca -ltuscany_sca
                     -laxis2_http_receiver
 	
 
-INCLUDES =  -I$(top_builddir)/Calculator/CalculatorModule \
+INCLUDES =  -I$(top_builddir)/Calculator/CalculatorComposite \
             -I${TUSCANY_SCACPP}/include \
             -I${TUSCANY_SDOCPP}/include

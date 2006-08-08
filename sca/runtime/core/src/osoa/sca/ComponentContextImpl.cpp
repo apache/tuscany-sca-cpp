@@ -24,7 +24,7 @@
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 #include "tuscany/sca/core/ExternalServiceWrapper.h"
 #include "tuscany/sca/model/CPPImplementation.h"
-#include "tuscany/sca/model/Module.h"
+#include "tuscany/sca/model/Composite.h"
 
 using namespace tuscany::sca;
 using namespace tuscany::sca::model;
@@ -253,13 +253,13 @@ namespace osoa
         }
 
         // ==============================================
-        // getDataFactory: return the data factory for the module in which
+        // getDataFactory: return the data factory for the composite in which
         // this component resides
         // ==============================================
         DataFactoryPtr ComponentContextImpl::getDataFactory()
         {
             LOGENTRY(1, "ComponentContextImpl::getProperties");
-            DataFactoryPtr dataFactory = component->getModule()->getDataFactory();
+            DataFactoryPtr dataFactory = component->getComposite()->getDataFactory();
             
             LOGEXIT(1, "ComponentContextImpl::getDataFactory");
             return dataFactory;

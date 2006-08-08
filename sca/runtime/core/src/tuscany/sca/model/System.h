@@ -32,7 +32,7 @@ namespace tuscany
     {
         namespace model
         {
-            typedef std::vector<Module*> MODULE_LIST;
+            typedef std::vector<Composite*> COMPOSITE_LIST;
 
             /**
              * The root of the runtime model supported by a Tuscany runtime.
@@ -56,16 +56,16 @@ namespace tuscany
                  */
                 Subsystem* findSubsystem(const std::string& subsystemName);
 
-                typedef std::vector<Module*> MODULE_LIST;
+                typedef std::vector<Composite*> COMPOSITE_LIST;
 
                 /**
-                 * Return a vector of all the modules with a given module name.
-                 * @param moduleName The name of the module to find
-                 * @return A vector of all the times the module appears in the 
-                 * system. It can be more than once because the same module name
-                 * is used by more than one module component.
+                 * Return a vector of all the composites with a given composite name.
+                 * @param compositeName The name of the composite to find
+                 * @return A vector of all the times the composite appears in the 
+                 * system. It can be more than once because the same composite name
+                 * is used by more than one composite component.
                  */
-                MODULE_LIST findModules(const std::string& moduleName);
+                COMPOSITE_LIST findComposites(const std::string& compositeName);
 
                 /**
                  * Resolve all the wires defined in the system.

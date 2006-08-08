@@ -67,34 +67,34 @@ namespace tuscany
             }
             
             // ====================================================================
-            // Get a map of all the moduleComponents that use a particular module
+            // Get a map of all the compositeComponents that use a particular composite
             // ====================================================================
-            MODULE_LIST System::findModules(const std::string& name)
+            COMPOSITE_LIST System::findComposites(const std::string& name)
             {
-                LOGENTRY(1, "System::findModules");
-                MODULE_LIST foundModules;
+                LOGENTRY(1, "System::findComposites");
+                COMPOSITE_LIST foundComposites;
                 
                 SUBSYSTEM_MAP::iterator subsystemsIter;
                 for (subsystemsIter = subsystemMap.begin(); 
                 subsystemsIter != subsystemMap.end(); subsystemsIter++ ) {
-                    LOGINFO_1(2, "System::findModules: Found subsystem: %s", subsystemsIter->second->getName().c_str());
-                    // In each subsystem, find module components with this module defined
+                    LOGINFO_1(2, "System::findComposites: Found subsystem: %s", subsystemsIter->second->getName().c_str());
+                    // In each subsystem, find composite components with this composite defined
                     
-                    Module* module = subsystemsIter->second->findModule(name);
-                    if (module)
+                    Composite* composite = subsystemsIter->second->findComposite(name);
+                    if (composite)
                     {
-                        LOGINFO_1(2, "System::findModules: Found module: %s", module->getName().c_str());
-                        foundModules.push_back(module);
+                        LOGINFO_1(2, "System::findComposites: Found composite: %s", composite->getName().c_str());
+                        foundComposites.push_back(composite);
                     }
                 }   
-                LOGEXIT(1, "System::findModules");
+                LOGEXIT(1, "System::findComposites");
                 
-                return foundModules;
+                return foundComposites;
             }
 
             
             // ====================================================================
-            // Get a map of all the moduleComponents that use a particular module
+            // Get a map of all the compositeComponents that use a particular composite
             // ====================================================================
             Subsystem* System::findSubsystem(const std::string& subsystem)
             {

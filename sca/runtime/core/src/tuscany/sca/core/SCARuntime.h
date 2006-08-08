@@ -68,10 +68,10 @@ namespace tuscany
             static void setSystemRoot(const string& root);
 
             /**
-             * Set the default ModuleComponent for the system
-             * @param moduleComponent The name of the default moduleComponent.
+             * Set the default CompositeComponent for the system
+             * @param compositeComponent The name of the default compositeComponent.
              */
-            static void setDefaultModuleComponent(const string& moduleComponent);
+            static void setDefaultCompositeComponent(const string& compositeComponent);
 
             /**
              * Set the current component for the current thread.
@@ -107,13 +107,13 @@ namespace tuscany
             Component* getCurrentComponent();
 
             /**
-             * Get the current module. The current module will either
-             * be the module in which the current component for this thread
-             * is defined, or it will be the default module if there is no current
+             * Get the current composite. The current composite will either
+             * be the composite in which the current component for this thread
+             * is defined, or it will be the default composite if there is no current
              * component. There will not be a current component if a client of
              * the SCA runtime is making a call into the SCA runtime.
              */
-            Module* getCurrentModule();
+            Composite* getCurrentComposite();
 
         private:
             /**
@@ -124,12 +124,12 @@ namespace tuscany
             virtual ~SCARuntime();            
 
             /**
-             * Load the SCA configuration from the scdl files (sca.module, 
+             * Load the SCA configuration from the scdl files (sca.composite, 
              * *.fragment, etc).
              * This will create the runtime model from which the SCA runtime
              * will operate.
              * @param configurationRoot The path to the configuration of the 
-             * SCA runtime. Under this root will be the subsystems and modules
+             * SCA runtime. Under this root will be the subsystems and composites
              * directories.
              */
             void load(const string& configurationRoot);
@@ -155,20 +155,20 @@ namespace tuscany
             static string systemRoot;
 
             /**
-             * The default ModuleComponent.
+             * The default CompositeComponent.
              */
-            static string defaultModuleName;
+            static string defaultCompositeName;
 
             /**
-             * Get the default module set for this runtime.
-             * @return The default module.
+             * Get the default composite set for this runtime.
+             * @return The default composite.
              */
-            Module* getDefaultModule() {return defaultModule;}
+            Composite* getDefaultComposite() {return defaultComposite;}
 
             /**
-             * The default module set for this runtime.
+             * The default composite set for this runtime.
              */
-            Module* defaultModule;
+            Composite* defaultComposite;
             
             
             typedef stack<Component*> COMPONENT_STACK; 

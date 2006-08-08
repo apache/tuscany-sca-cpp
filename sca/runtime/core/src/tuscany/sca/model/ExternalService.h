@@ -32,7 +32,7 @@ namespace tuscany
 
         namespace model
         {
-            class Module;
+            class Composite;
 
             /**
              * Information about an external service.
@@ -43,9 +43,9 @@ namespace tuscany
                 /**
                  * Constructor.
                  * @param name The name of the external service.
-                 * @param module The module containing this external service.
+                 * @param composite The composite containing this external service.
                  */
-                ExternalService(const std::string& name, Module *module);
+                ExternalService(const std::string& name, Composite *composite);
 
                 /**
                  * Destructor.
@@ -71,10 +71,10 @@ namespace tuscany
                 virtual Binding* getBinding() {return binding;};
 
                 /**
-                 * Get the module containing this external service.
-                 * @return The containing module.
+                 * Get the composite containing this external service.
+                 * @return The containing composite.
                  */
-                Module* getContainingModule() {return containingModule;};
+                Composite* getContainingComposite() {return containingComposite;};
 
             private:
                 /**
@@ -83,9 +83,9 @@ namespace tuscany
                 Binding* binding;
 
                 /**
-                 * The module containing this external service.
+                 * The composite containing this external service.
                  */
-                Module* containingModule;
+                Composite* containingComposite;
 
 
             };

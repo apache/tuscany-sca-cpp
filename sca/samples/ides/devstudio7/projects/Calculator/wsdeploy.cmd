@@ -33,18 +33,18 @@ set destinationPath=%2
 )
 
 
-if not exist %destinationPath%\modules mkdir %destinationPath%\modules 
-if not exist %destinationPath%\modules\CalculatorModule mkdir %destinationPath%\modules\CalculatorModule
+if not exist %destinationPath%\composites mkdir %destinationPath%\composites 
+if not exist %destinationPath%\composites\CalculatorComposite mkdir %destinationPath%\composites\CalculatorComposite
 
-copy %sourcePath%\CalculatorModule\*.componentType %destinationPath%\modules\CalculatorModule
-copy %sourcePath%\CalculatorModule\sca.module %destinationPath%\modules\CalculatorModule
-copy %sourcePath%\CalculatorModule\Calculator.h %destinationPath%\modules\CalculatorModule
-copy %sourcePath%\CalculatorModule\CalculatorImpl.h %destinationPath%\modules\CalculatorModule
-copy %sourcePath%\CalculatorModule\DivideService.h %destinationPath%\modules\CalculatorModule
-copy %sourcePath%\CalculatorModule\DivideServiceImpl.h %destinationPath%\modules\CalculatorModule
-copy %sourcePath%\CalculatorModule\Tuscany-model.config %destinationPath%\modules\CalculatorModule
-copy %sourcePath%\CalculatorModule\Calculator.wsdl %destinationPath%\modules\CalculatorModule
-copy %currentPath%\Calculator\%buildMode%\Calculator.dll %destinationPath%\modules\CalculatorModule
+copy %sourcePath%\CalculatorComposite\*.componentType %destinationPath%\composites\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\sca.composite %destinationPath%\composites\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\Calculator.h %destinationPath%\composites\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\CalculatorImpl.h %destinationPath%\composites\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\DivideService.h %destinationPath%\composites\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\DivideServiceImpl.h %destinationPath%\composites\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\Tuscany-model.config %destinationPath%\composites\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\Calculator.wsdl %destinationPath%\composites\CalculatorComposite
+copy %currentPath%\Calculator\%buildMode%\Calculator.dll %destinationPath%\composites\CalculatorComposite
 
 if not exist %destinationPath%\bin mkdir       %destinationPath%\bin
 copy %currentPath%\WSClient\%buildMode%\WSClient.exe %destinationPath%\bin

@@ -19,26 +19,26 @@ package org.apache.tuscany.sca.cpp.tools.junit;
 /**
  * This is a "run this first" testcase that just tests some simple operations of
  * the scagen tools it uses the
- * Hydra.sca.core\test\testSCASystem\modules\MyValueServiceModule SCA module as
+ * Hydra.sca.core\test\testSCASystem\composites\MyValueServiceComposite SCA composite as
  * input data.
  */
-public class MissingModuleAndFragmentTest extends TuscanyTestCase {
+public class MissingCompositeAndFragmentTest extends TuscanyTestCase {
 
     /**
      * Constructor for CustomerInfoTestOLD.
      * 
      * @param arg0
      */
-    public MissingModuleAndFragmentTest(String arg0) {
+    public MissingCompositeAndFragmentTest(String arg0) {
         super(arg0);
     }
 
     /**
-     * Test the Hydra.sca.core\test\testSCASystem\modules\MyValueServiceModule
+     * Test the Hydra.sca.core\test\testSCASystem\composites\MyValueServiceComposite
      * proxy and wrapper generation.
      */
     public void testEnvHandler() {
-        testModule("MyValueServiceModuleMissingScaModule",check_results);
+        testComposite("MyValueServiceCompositeMissingScaComposite",check_results);
     }
 
 }

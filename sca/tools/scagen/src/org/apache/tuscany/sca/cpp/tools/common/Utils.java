@@ -363,19 +363,19 @@ public final class Utils {
     *            The user message
     * @param eventType
     *            The type of event (input or output). This is used to determine
-    *            if the path name of the file starts with the MODULE_ROOT
+    *            if the path name of the file starts with the COMPOSITE_ROOT
     *            directory or the given output directory as the one of these
     *            prefixes is removed from the path name in order to give the
-    *            new (destination) path relative to the new module root
+    *            new (destination) path relative to the new composite root
     * 
     *  
     */
 
-   static String scagenInputDir = "MODULE_ROOT";
+   static String scagenInputDir = "COMPOSITE_ROOT";
 
    static String scagenOutputDir = "SCAGEN_OUTPUT";
 
-   static String newModuleRoot = "NEW_MODULE_ROOT";
+   static String newCompositeRoot = "NEW_COMPOSITE_ROOT";
 
    static String generatedDirName = "$sourceDir1";
 
@@ -386,23 +386,23 @@ public final class Utils {
            // Changing the value of the variable below will alter the output of
            // the
            // deploy assist strings:
-           //    true will result in a "copy source NEW_MODULE_ROOT\dest" output
+           //    true will result in a "copy source NEW_COMPOSITE_ROOT\dest" output
            // and
            //    false will result in a "inputDir c:\fred"
            //                           "outputDir c:\bob"
-           //                           "input c:\fred\sca.module"
+           //                           "input c:\fred\sca.composite"
            //                           "output c:\bob\proxy.h" type output
            String command = null;
 
            try {
-               newModuleRoot = (String) Options.getOption("-deploy");
+               newCompositeRoot = (String) Options.getOption("-deploy");
                command = (String) Options.getOption("-command");
            } catch (Exception e) {
                // let it default
            }
 
-           if (null == newModuleRoot) {
-               newModuleRoot = "DEPLOY_MODULE_ROOT";
+           if (null == newCompositeRoot) {
+               newCompositeRoot = "DEPLOY_COMPOSITE_ROOT";
            }
 
            if (null == command) {
@@ -418,7 +418,7 @@ public final class Utils {
                        tail = message.substring(scagenInputDir.length());
                    }
 
-                   String dest = joinPathElements(newModuleRoot, tail);
+                   String dest = joinPathElements(newCompositeRoot, tail);
 
                     System.out.println(command + " " + platformSlashes(message)
                             + " " + platformSlashes(dest));
@@ -429,7 +429,7 @@ public final class Utils {
                        tail = message.substring(scagenOutputDir.length());
                    }
 
-                   dest = joinPathElements(newModuleRoot, tail);
+                   dest = joinPathElements(newCompositeRoot, tail);
                     System.out.println(command + " " + platformSlashes(message)
                             + " " + platformSlashes(dest));
                    break;
@@ -499,7 +499,7 @@ public final class Utils {
    public static String joinPathElements(String root, String tail) {
        String separator;
        // Stick in a "/" (File.separator) if required.
-       if ((tail.substring(0, 1).equals("/") || newModuleRoot.substring(
+       if ((tail.substring(0, 1).equals("/") || newCompositeRoot.substring(
                root.length() - 1, root.length()).equals("/"))
                || (tail.substring(0, 1).equals("\\") || root.substring(
                        root.length() - 1, root.length()).equals("\\"))
@@ -509,7 +509,7 @@ public final class Utils {
        } else {
            separator = File.separator;
        }
-       String dest = newModuleRoot + separator + tail;
+       String dest = newCompositeRoot + separator + tail;
        return dest;
    }
 

@@ -37,18 +37,18 @@ The scagen tool user interface is quite basic in this initial release.
 It can be run from the scagen.jar file using "java -jar scagen.jar" 
 or from small scripts - scagen.cmd for Windows and scagen.sh for Unix. 
 The parameters are: 
- -dir <the path to the sca module root directory>
+ -dir <the path to the sca composite root directory>
  -output <the path to an output directory where the generated file will be placed>
 
 e.g.
-	scagen -dir c:\mymodules\module1 -output c:\mymodules\bld\module1
+	scagen -dir c:\mycomposites\composite1 -output c:\mycomposites\bld\composite1
 	
 What scagen does
 ----------------
 
 The input directory passed to the scagen tools as
 the -dir parameter method is taken to be the SCA 
-module root directory. All the sca.module and .fragment 
+composite root directory. All the sca.composite and .fragment 
 files in that directory are inspected to resolve all 
 the <component/> elements within them. 
 
@@ -100,7 +100,7 @@ Here are the tasks listed, below is a paragraph for each one:
 
    o (Overall structure of the code)
    o Walking the input directory
-   o Scanning the .module and .fragment files
+   o Scanning the .composite and .fragment files
    o finding the C++ implementation headers
    o finding/checking the classname in the C++ implementation headers
    o find the matching .componentTemplate files
@@ -134,28 +134,28 @@ provides two functions - 1) the ability to go into a directory (see DirectoryTre
 and process files that fit a particular filter (e.g. "*.hpp") by passing them to
 implementer of the FileActor Interface (see the classes "Headers" for the 
 actor that processes C++ headers and "XMLFileActor" for the file actor that
-processes the .componentType and sca.module/fragment files.)
+processes the .componentType and sca.composite/fragment files.)
 
 The ...services package contains the majority of code written afresh for the
 scagen tool including the subclasses of XMLFileActor (see ComponentTypeFileHandler.java
-and ModuleOrFragmentFileHandler.java) that are the classes that tie this
+and CompositeOrFragmentFileHandler.java) that are the classes that tie this
 package to the ...common package and which are called by the 
 DirectoryTree walker.
 
-Walking the module root input directory
+Walking the composite root input directory
 ---------------------------------------
 
 The main method of the scagen class creates an instance of 
 "DirectoryScanner" and registers with it a file handler of 
-type "ModuleOrFragmentFileHandler" for all files that end 
-in ".module" or ".fragment". On calling the "walkTree" method
+type "CompositeOrFragmentFileHandler" for all files that end 
+in ".composite" or ".fragment". On calling the "walkTree" method
 on the scanner it will in turn call the actOnFile method on the
-ModuleOrFragmentFileHandler for appropriate files. 
+CompositeOrFragmentFileHandler for appropriate files. 
 
-Scanning the .module and .fragment files
+Scanning the .composite and .fragment files
 ----------------------------------------
 
-The scanning of these files by the respective  "ModuleOrFragmentFileHandler"
+The scanning of these files by the respective  "CompositeOrFragmentFileHandler"
 and "ComponentTypeFileHandler" is mostly handled by the superclass
 "XMLFileActor". This class will recursively goes through the whole
 XML file and considers the name of the XML element it finds. 
@@ -196,12 +196,12 @@ overlay its data over the same keys as the first component.
 Finding the C++ implementation headers
 --------------------------------------
 
-The "/module/component/implementation.cpp/@header" and 
+The "/composite/component/implementation.cpp/@header" and 
 is used to key into the name of the implementation header
 and this is opened directly and passed to the 
 actOnFileMethod of a Headers object from the ...common package
 bypassing the DirectoryScanner code. The path is relative to
-the given (-dir option) module root directory.
+the given (-dir option) composite root directory.
 
 Finding/checking the classname in the C++ implementation headers
 -----------------------------------------------------------------
@@ -232,7 +232,7 @@ Go into the componentType files to extract the interface header filenames
 -----------------------------------------------------------------------------
 
 We open up the .componentTemplateFiles with exactly the same 
-mechanism as we read the sca.module/fragment file (by creating
+mechanism as we read the sca.composite/fragment file (by creating
 a DOM and descending through it this time using a ComponentTypeFileHandler that it
 has had various data values ( e.g. the implementation class and namespace used later)
 poked into it. The ComponentTypeFileHandler itself has individual 
@@ -324,11 +324,11 @@ Unit Testing Scagen Code Changes
 
 The junit unit test 
    /tuscany/cpp/sca/tools/scagen/
-   junit/org/apache/tuscany/sca/cpp/tools/junit/TestAllModulesTest.java
+   junit/org/apache/tuscany/sca/cpp/tools/junit/TestAllCompositesTest.java
 
 will dynamically look for all the subdirectores of the directory
-path given by TuscanyTestCase.junit_modules and run the scagen
-tool on them as if they were modules roots. 
+path given by TuscanyTestCase.junit_composites and run the scagen
+tool on them as if they were composites roots. 
 
 By convention an "expected_output" directory is located
 (see the CVS tree or the test program) and the actual
@@ -336,11 +336,11 @@ and expected results compared. This testcase is thus a
 good first/basic regression test for any changes.
 
 New test cases can thus be added without having to write
-any new junit java code by by creating new SCA modules and
+any new junit java code by by creating new SCA composites and
 the associated expected Scagen output - perhaps by using the tool
 initially and checking the output is satisfactory before copying
 it to the expected output directory at:
 
-/tuscany/cpp/sca/tools/scagen/junit/testoutput/<module>/expected_output
+/tuscany/cpp/sca/tools/scagen/junit/testoutput/<composite>/expected_output
 where input data is taken from
-/tuscany/cpp/sca/tools/scagen/junit/testinput/modules/<module>
+/tuscany/cpp/sca/tools/scagen/junit/testinput/composites/<composite>
