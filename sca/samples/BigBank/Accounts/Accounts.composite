@@ -17,12 +17,6 @@
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
 	name="Accounts">
 
-	<service name="WSAccountEntrypoint" multiplicity="1..1">
-		<interface.wsdl interface="AccountService.wsdl"/>
-		<binding.ws port="http://www.bigbank.com/AccountService#wsdl.endpoint(AccountService/AccountServiceSOAP)"/>
-		<reference>AccountServiceComponent</reference>
-	</service>
-     
 	<component name="AccountServiceComponent">
 		<implementation.cpp library="Accounts" header="AccountServiceImpl.h"/>
 		<reference name="accountData">AccountDataServiceComponent</reference>
@@ -32,12 +26,18 @@
 
 	<component name="AccountDataServiceComponent">
 		<implementation.cpp library="Accounts" header="AccountDataServiceImpl.h"/>
-	</component>  
+	</component>
 
 	<component name="StockQuoteServiceComponent">
 		<implementation.cpp library="Accounts" header="StockQuoteServiceImpl.h"/>
 		<reference name="webService">StockQuoteWebService</reference>
 	</component>  
+
+	<service name="WSAccountEntrypoint" multiplicity="1..1">
+		<interface.wsdl interface="AccountService.wsdl"/>
+		<binding.ws port="http://www.bigbank.com/AccountService#wsdl.endpoint(AccountService/AccountServiceSOAP)"/>
+		<reference>AccountServiceComponent</reference>
+	</service>
 
 	<reference name="StockQuoteWebService">
 		<interface.cpp header="StockQuoteWebService.h"/>

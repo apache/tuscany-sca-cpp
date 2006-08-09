@@ -13,12 +13,12 @@ StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp
 
 noinst_HEADERS = *.h
 
-${BUILT_SOURCES}: sca.composite
+${BUILT_SOURCES}: Accounts.composite
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
 composite_LTLIBRARIES = libAccounts.la
-composite_DATA = sca.composite.lin Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
-EXTRA_DIST = sca.composite.lin Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
+composite_DATA = *.composite Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
+EXTRA_DIST = *.composite Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
 
 libAccounts_la_SOURCES = \
 AccountDataServiceImpl.cpp \
@@ -39,6 +39,3 @@ libAccounts_la_LIBADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca
 INCLUDES = \
            -I$(TUSCANY_SCACPP)/include \
            -I${TUSCANY_SDOCPP}/include
-
-install-data-hook:
-	mv $(compositedir)/sca.composite.lin $(compositedir)/sca.composite
