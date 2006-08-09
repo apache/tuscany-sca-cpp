@@ -399,12 +399,19 @@ namespace commonj
                         // Handle <import> of other schema
                         else if (localname.equalsIgnoreCase("union"))
                         {
-                            // TODO - unions not yet supported
+                            // TODO - unions not yet properly supported - for now, whatever the
+                            // enclosing thing is, we will make it an extended primitive based on
+                            // String.
                             bInInvalidContent = true;
-                            if (setter)
-                            {
-                                setter->setError("Schema contains a union which is not yet implemented");
-                            }
+                            //if (setter)
+                            //{
+                            //    setter->setError("Schema contains a union which is not yet implemented");
+                            //}
+
+                            currentType.parentTypeUri = "commonj.sdo";
+                            currentType.parentTypeName = "String";
+                            currentType.isRestriction = true;
+
                         }
                     }
                 }
@@ -513,7 +520,9 @@ namespace commonj
                 {
                     bInInvalidContent = false;
                     // the enclosing element is not useful
-                    bInvalidElement = true; 
+                    // TODO - Instead of making the union invalid, we make it an
+                    // extended primitive based on string - so its no longer invalid.
+                    //bInvalidElement = true; 
                 }
             } 
 
