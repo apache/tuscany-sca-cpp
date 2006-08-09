@@ -429,6 +429,8 @@ namespace tuscany
 
                     // Get the reference value
                     //Utils::printDO(refs[i], 0);
+                    //TODO this works but probably not the correct way to get
+                    // the simple content value of an element...
                     string refValue = refs[i]->getCString("value");
                     
                     composite->addWire(src, refValue);
@@ -524,9 +526,11 @@ namespace tuscany
                     }
 
                     const char* defaultValue = 0;
-                    if (props[i]->isSet("default"))
+                    if (props[i]->getSequence() != 0)
                     {
-                        defaultValue = props[i]->getCString("default");
+                        //TODO this works but probably not the correct way to get
+                        // the open content...
+                        defaultValue = props[i]->getSequence()->getCStringValue(0);
                     }
                     
                     component->addProperty(name, type, many, defaultValue);

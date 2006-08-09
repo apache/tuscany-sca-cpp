@@ -30,7 +30,7 @@
 		<interface.cpp header="StockQuoteService.h"/>
 	</reference>
 
-	<property name="currency" type="xs:string"/>
+	<property name="currency" type="xs:string">USD</property>
 
 </componentType>
 	
