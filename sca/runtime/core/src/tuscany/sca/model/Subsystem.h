@@ -26,7 +26,7 @@ using std::string;
 using std::map;
 
 #include "tuscany/sca/model/Composite.h"
-#include "tuscany/sca/model/EntryPoint.h"
+#include "tuscany/sca/model/CompositeServiceType.h"
 
 namespace tuscany
 {
@@ -82,16 +82,16 @@ namespace tuscany
                 /**
                  * Add an new entry point to the subsystem.
                  * @param name The name of the entry point.
-                 * @return The new EntryPoint added to the subsystem.
+                 * @return The new CompositeServiceType added to the subsystem.
                  */
-                EntryPoint* addEntryPoint(const std::string& name);
+                CompositeServiceType* addCompositeServiceType(const std::string& name);
 
                 /**
                  * Find an entry point by name.
                  * @param name The name of the entry point to be found.
-                 * @return The EntryPoint that was found, or 0 if not found.
+                 * @return The CompositeServiceType that was found, or 0 if not found.
                  */
-                EntryPoint* findEntryPoint(const std::string& name);
+                CompositeServiceType* findCompositeServiceType(const std::string& name);
 
                 /**
                  * Return the name of the subsystem.
@@ -117,11 +117,11 @@ namespace tuscany
                  */
                 COMPOSITECOMPONENT_MAP compositeComponents; 
 
-                typedef map<string, EntryPoint*> ENTRYPOINT_MAP;
+                typedef map<string, CompositeServiceType*> ENTRYPOINT_MAP;
                 /**
                  * A map of entry points defined in this subsystem.
                  */
-                ENTRYPOINT_MAP entryPoints;
+                ENTRYPOINT_MAP compositeServices;
             };
         } // End namespace model
     } // End namespace sca

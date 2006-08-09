@@ -18,18 +18,17 @@
     targetNamespace="http://www.osoa.org/xmlns/sca/1.0"
     xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
     elementFormDefault="qualified">
-
+    
     <include schemaLocation="sca-core.xsd" />
     
-    <element name="interface.wsdl" type="sca:WSDLPortType" substitutionGroup="sca:interface" />
-    <complexType name="WSDLPortType">
+    <element name="implementation.composite" type="sca:SCAImplementation" substitutionGroup="sca:implementation"/>
+    <complexType name="SCAImplementation">
         <complexContent>
-            <extension base="sca:Interface">
+            <extension base="sca:Implementation">
                 <sequence>
                     <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
-                <attribute name="interface" type="anyURI" use="required" />
-                <attribute name="callbackInterface" type="anyURI" use="optional" />
+                <attribute name="name" type="NCName" use="required" />
                 <anyAttribute namespace="##any" processContents="lax" />
             </extension>
         </complexContent>

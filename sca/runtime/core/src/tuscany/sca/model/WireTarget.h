@@ -44,7 +44,7 @@ namespace tuscany
                 enum Type
                 {
                     ComponentServiceType,
-                    ExternalServiceType
+                    CompositeReferenceTypeType
                 };
                 
                 /**

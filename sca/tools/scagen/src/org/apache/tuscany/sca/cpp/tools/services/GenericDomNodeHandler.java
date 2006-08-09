@@ -58,8 +58,8 @@ public class GenericDomNodeHandler implements DomNodeHandler {
                 parameters.put(contextPath + "/" + "@" + attr.getNodeName(),
                         attr.getNodeValue());
 
-                // Report the dll name to the deployment tool if required.
-                if ("dll".equals(attr.getNodeName())) {
+                // Report the library name to the deployment tool if required.
+                if ("library".equals(attr.getNodeName())) {
                     //This is a path relative to the composite root.
                     //so we need to add it in.
                     File mod = (File) parameters.get("compositeOrFragmentFile");

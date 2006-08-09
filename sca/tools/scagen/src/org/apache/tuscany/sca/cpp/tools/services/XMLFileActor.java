@@ -58,7 +58,7 @@ public abstract class XMLFileActor implements FileActor {
      *      up by the concrete subclass).
      * 
      * @param compositeXML
-     *            the sca.composite or fragment file
+     *            the composite or fragment file
      * @param target
      *            the target directory
      * @param depth

@@ -18,7 +18,7 @@
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/model/EntryPoint.h"
+#include "tuscany/sca/model/CompositeServiceType.h"
 #include "tuscany/sca/util/Exceptions.h"
 
 
@@ -31,19 +31,19 @@ namespace tuscany
         {
 
             // Constructor
-            EntryPoint::EntryPoint(const std::string& epName) 
+            CompositeServiceType::CompositeServiceType(const std::string& epName) 
                 : name(epName)
             {
-                LOGENTRY(1, "EntryPoint::constructor");
-                LOGINFO_1(2, "EntryPoint::constructor: EntryPoint name: %s", name.c_str());
-                LOGEXIT(1, "EntryPoint::constructor");
+                LOGENTRY(1, "CompositeServiceType::constructor");
+                LOGINFO_1(2, "CompositeServiceType::constructor: CompositeServiceType name: %s", name.c_str());
+                LOGEXIT(1, "CompositeServiceType::constructor");
             }
 
-            EntryPoint::~EntryPoint()
+            CompositeServiceType::~CompositeServiceType()
             {
             }
 
-            void EntryPoint::addTarget(WireTarget* targ)
+            void CompositeServiceType::addTarget(WireTarget* targ)
             {
                 if (multiplicity == ONE_ONE || multiplicity == ZERO_ONE)
                 {
@@ -60,7 +60,7 @@ namespace tuscany
                 targets.push_back(targ);
             }
             
-            void EntryPoint::setMultiplicity(const std::string& multip)
+            void CompositeServiceType::setMultiplicity(const std::string& multip)
             {
                 if (multip == "0..1")
                 {
@@ -85,12 +85,12 @@ namespace tuscany
                 }
             }
             
-            void EntryPoint::setInterface(Interface* interf)
+            void CompositeServiceType::setInterface(Interface* interf)
             {
                 iface = interf;
             }
 
-            void EntryPoint::setBinding(Binding* bind)
+            void CompositeServiceType::setBinding(Binding* bind)
             {
                 binding = bind;
             }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "tuscany/sca/ws/EntryPointProxy.h"
+#include "tuscany/sca/ws/WSServiceProxy.h"
 
 using namespace tuscany::sca;
 
@@ -31,27 +31,27 @@ using namespace tuscany::sca::ws;
 
 
 // Singleton pattern
-EntryPointProxy* EntryPointProxy::entryPointProxyInstance = new EntryPointProxy();
+WSServiceProxy* WSServiceProxy::compositeServiceProxyInstance = new WSServiceProxy();
 
-EntryPointProxy* EntryPointProxy::getInstance()
+WSServiceProxy* WSServiceProxy::getInstance()
 {
-    return entryPointProxyInstance;
+    return compositeServiceProxyInstance;
 }
 
-EntryPointProxy::EntryPointProxy()
+WSServiceProxy::WSServiceProxy()
 {
-    LOGENTRY(1,"EntryPointProxy::constructor");
+    LOGENTRY(1,"WSServiceProxy::constructor");
     tuscanyRuntime = NULL;
-    scaEntryPoint = NULL;
-    entryPointName = "";
+    scaCompositeServiceType = NULL;
+    compositeServiceName = "";
     systemRoot = "";
     compositeComponent = "";
-    LOGEXIT(1,"EntryPointProxy::constructor");
+    LOGEXIT(1,"WSServiceProxy::constructor");
 }
 
-EntryPointProxy::~EntryPointProxy()
+WSServiceProxy::~WSServiceProxy()
 {
-    LOGENTRY(1,"EntryPointProxy::destructor");
+    LOGENTRY(1,"WSServiceProxy::destructor");
 
     if(tuscanyRuntime != NULL)
     {
@@ -59,25 +59,25 @@ EntryPointProxy::~EntryPointProxy()
         delete tuscanyRuntime;
         tuscanyRuntime = NULL;
     }
-    if(scaEntryPoint != NULL)
+    if(scaCompositeServiceType != NULL)
     {
-        delete scaEntryPoint;
+        delete scaCompositeServiceType;
     }
-    LOGEXIT(1,"EntryPointProxy::destructor");
+    LOGEXIT(1,"WSServiceProxy::destructor");
 }
 
-void EntryPointProxy::init(const char* systemRootPath, const char* fullEntryPointName)
+void WSServiceProxy::init(const char* systemRootPath, const char* fullCompositeServiceTypeName)
 {
-    LOGENTRY(1,"EntryPointProxy::init");
+    LOGENTRY(1,"WSServiceProxy::init");
 
     try
 	{
 
-		// fullEntryPointName is of the form "subsystem name"/"composite component name"/"entry point name"
+		// fullCompositeServiceTypeName is of the form "subsystem name"/"composite component name"/"entry point name"
 		// Get the "subsystem name"/"composite component name" part for setDefaultCompositeComponent
         // Keep the "entry point name" part for use in invoke
 		string subsystemAndComponentName, epName;
-		Utils::rTokeniseString("/", fullEntryPointName, subsystemAndComponentName, epName);
+		Utils::rTokeniseString("/", fullCompositeServiceTypeName, subsystemAndComponentName, epName);
 
         bool newInitParams = false;
 
@@ -93,9 +93,9 @@ void EntryPointProxy::init(const char* systemRootPath, const char* fullEntryPoin
             newInitParams = true;
         }
 
-        if(entryPointName.length() != 0 && entryPointName != epName)
+        if(compositeServiceName.length() != 0 && compositeServiceName != epName)
         {
-            entryPointName = epName;
+            compositeServiceName = epName;
             newInitParams = true;
         }
 
@@ -105,7 +105,7 @@ void EntryPointProxy::init(const char* systemRootPath, const char* fullEntryPoin
             LOGINFO(4, "Creating new TuscanyRuntime");
             compositeComponent = subsystemAndComponentName;
             systemRoot = systemRootPath;
-            entryPointName = epName;
+            compositeServiceName = epName;
             tuscanyRuntime = new TuscanyRuntime(compositeComponent, systemRoot);
             tuscanyRuntime->start();
         }
@@ -118,66 +118,66 @@ void EntryPointProxy::init(const char* systemRootPath, const char* fullEntryPoin
             tuscanyRuntime->start();
         }
 
-        if(scaEntryPoint == NULL)
+        if(scaCompositeServiceType == NULL)
         {
-            scaEntryPoint = new SCAEntryPoint(fullEntryPointName);
+            scaCompositeServiceType = new CompositeService(fullCompositeServiceTypeName);
         }
         else
         {
             if(newInitParams)
             {
-                delete scaEntryPoint;
-                scaEntryPoint = NULL;
-                scaEntryPoint = new SCAEntryPoint(fullEntryPointName);
+                delete scaCompositeServiceType;
+                scaCompositeServiceType = NULL;
+                scaCompositeServiceType = new CompositeService(fullCompositeServiceTypeName);
             }
         }
 	}
 	catch(SystemConfigurationException &ex)
 	{	
 		LOGERROR_1(0, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
-        scaEntryPoint = 0;
+        scaCompositeServiceType = 0;
 	}
 	catch(ServiceRuntimeException &ex)
 	{	
         LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
-        scaEntryPoint = 0;
+        scaCompositeServiceType = 0;
 	}  
-    LOGEXIT(1,"EntryPointProxy::init");
+    LOGEXIT(1,"WSServiceProxy::init");
 }
 
-DataFactoryPtr EntryPointProxy::getDataFactory()
+DataFactoryPtr WSServiceProxy::getDataFactory()
 {
-    if (scaEntryPoint == 0) return 0;
-    return scaEntryPoint->getDataFactory();
+    if (scaCompositeServiceType == 0) return 0;
+    return scaCompositeServiceType->getDataFactory();
 }
 
 ///
-/// This method will be called when an EntryPoint needs to be invoked.
+/// This method will be called when an CompositeServiceType needs to be invoked.
 ///
-DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr inputDataObject)
+DataObjectPtr WSServiceProxy::invoke(const char* operationName, DataObjectPtr inputDataObject)
 {
-    LOGENTRY(1,"EntryPointProxy::invoke");
+    LOGENTRY(1,"WSServiceProxy::invoke");
 
-    if (scaEntryPoint == 0)
+    if (scaCompositeServiceType == 0)
     {
-        LOGINFO(4, "EntryPointProxy has not got an sca EntryPoint\n");
+        LOGINFO(4, "WSServiceProxy has not got an sca CompositeServiceType\n");
         return NULL;
     }
 
-    DataFactoryPtr dataFactoryPtr = scaEntryPoint->getDataFactory();
+    DataFactoryPtr dataFactoryPtr = scaCompositeServiceType->getDataFactory();
 						
     DataObjectPtr outputDataObject = NULL;
     SCARuntime* runtime = SCARuntime::getInstance();
     
 	Composite* composite = runtime->getCurrentComposite();
 
-	EntryPoint* entryPoint = composite->findEntryPoint(entryPointName);
+	CompositeServiceType* compositeService = composite->findCompositeServiceType(compositeServiceName);
 
-    Binding* binding = entryPoint->getBinding();
+    Binding* binding = compositeService->getBinding();
     if(binding->getBindingType() == Binding::SCA)
     {
-        LOGINFO_1(4, "EntryPointProxy has got SCA binding: %s\n", binding->getUri().c_str());
-        LOGERROR(0, "EntryPoints with SCA bindings are not yet supported");
+        LOGINFO_1(4, "WSServiceProxy has got SCA binding: %s\n", binding->getUri().c_str());
+        LOGERROR(0, "CompositeServiceTypes with SCA bindings are not yet supported");
         return NULL;
     }
     else if(binding->getBindingType() == Binding::WS)
@@ -206,13 +206,13 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
             return NULL;
         }
 
-        LOGINFO_2(4, "EntryPointProxy has got WsdlOperation with inputType: %s#%s",
+        LOGINFO_2(4, "WSServiceProxy has got WsdlOperation with inputType: %s#%s",
             operation.getInputTypeUri().c_str(), 
             operation.getInputTypeName().c_str());
-        LOGINFO_2(4, "EntryPointProxy has got WsdlOperation with outputType: %s#%s",
+        LOGINFO_2(4, "WSServiceProxy has got WsdlOperation with outputType: %s#%s",
             operation.getOutputTypeUri().c_str(), 
             operation.getOutputTypeName().c_str());
-        LOGINFO_2(4, "EntryPointProxy has got WsdlOperation with documentStyle=%d and encoded=%d",        
+        LOGINFO_2(4, "WSServiceProxy has got WsdlOperation with documentStyle=%d and encoded=%d",        
             operation.isDocumentStyle(),
             operation.isEncoded());
         
@@ -227,7 +227,7 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         else
         {
             // RPC style
-            LOGERROR(0, "EntryPoints with RPC style WSDL Operations are not yet supported");
+            LOGERROR(0, "CompositeServiceTypes with RPC style WSDL Operations are not yet supported");
             return NULL;
         }
     }
@@ -510,7 +510,7 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
     try
     {
         // Call into the wired composite
-        scaEntryPoint->invoke(operation);
+        scaCompositeServiceType->invoke(operation);
 
         // Set the data in the outputDataObject to be returned
         setOutputData(operation, outputDataObject);                            
@@ -528,13 +528,13 @@ DataObjectPtr EntryPointProxy::invoke(const char* operationName, DataObjectPtr i
         return NULL;
 	}  
 
-    LOGEXIT(1,"EntryPointProxy::invoke");
+    LOGEXIT(1,"WSServiceProxy::invoke");
 
     return outputDataObject;
 }
 
 
-void EntryPointProxy::setOutputData(Operation operation, DataObjectPtr outputDataObject)
+void WSServiceProxy::setOutputData(Operation operation, DataObjectPtr outputDataObject)
 {    
     // Go through data object to set the return value
     PropertyList pl = outputDataObject->getInstanceProperties();

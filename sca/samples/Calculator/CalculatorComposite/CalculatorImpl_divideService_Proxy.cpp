@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-#include "CalculatorImpl_CalculatorDivideService_Proxy.h"
+#include "CalculatorImpl_divideService_Proxy.h"
 
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
@@ -26,31 +26,31 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    CalculatorImpl_CalculatorDivideService_Proxy* CalculatorImpl_CalculatorDivideService_Proxy_Factory(ServiceWrapper* target)
+    CalculatorImpl_divideService_Proxy* CalculatorImpl_divideService_Proxy_Factory(ServiceWrapper* target)
     {
-        return new CalculatorImpl_CalculatorDivideService_Proxy(target);
+        return new CalculatorImpl_divideService_Proxy(target);
     }
 
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    void CalculatorImpl_CalculatorDivideService_Proxy_Destructor(void* proxy)
+    void CalculatorImpl_divideService_Proxy_Destructor(void* proxy)
     {
-        delete (CalculatorImpl_CalculatorDivideService_Proxy*)proxy;
+        delete (CalculatorImpl_divideService_Proxy*)proxy;
     }
 }
 
-CalculatorImpl_CalculatorDivideService_Proxy::CalculatorImpl_CalculatorDivideService_Proxy(ServiceWrapper* targ) : target(targ)
+CalculatorImpl_divideService_Proxy::CalculatorImpl_divideService_Proxy(ServiceWrapper* targ) : target(targ)
 {
 }
 
-CalculatorImpl_CalculatorDivideService_Proxy::~CalculatorImpl_CalculatorDivideService_Proxy()
+CalculatorImpl_divideService_Proxy::~CalculatorImpl_divideService_Proxy()
 {
     if (target)
         delete target;
 }
 
-float CalculatorImpl_CalculatorDivideService_Proxy::divide( float arg0,  float arg1)
+float CalculatorImpl_divideService_Proxy::divide( float arg0,  float arg1)
 {
     Operation operation("divide");
     operation.addParameter(&arg0);

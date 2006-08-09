@@ -76,9 +76,36 @@ namespace tuscany
             LOGINFO_1(3, "Library::load : %s", name.c_str()); 
             string msg;
 #if defined(WIN32)  || defined (_WINDOWS)
-            hDLL = LoadLibrary(name.c_str());
+            int l = name.length();
+            if (l>=4 && name.substr(l-4, 4)==".dll")
+            {
+                hDLL = LoadLibrary(name.c_str());
+            }
+            else
+            {
+                hDLL = LoadLibrary((name+".dll").c_str());
+            }
 #else
-            hDLL = dlopen(name.c_str(), RTLD_NOW);
+            int l = name.length();
+            if (l>=3 && name.substr(l-3, 3)==".so")
+            {
+                hDLL = dlopen(name.c_str(), RTLD_NOW);
+            }
+            else
+            {
+                string soName;
+                int s = name.rfind("/");
+                if (s == name.length())
+                {
+                    soName = name + ".so";
+                }
+                else
+                {
+                    s++;
+                    soName = name.substr(0, s) + "lib" + name.substr(s, name.length()-s) + ".so";
+                }
+                hDLL = dlopen(soName.c_str(), RTLD_NOW);
+            }
 #endif
             if (hDLL == NULL)
             {

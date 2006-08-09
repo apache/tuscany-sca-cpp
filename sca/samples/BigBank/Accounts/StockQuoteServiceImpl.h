@@ -10,7 +10,7 @@ namespace com
         {
 
     /*
-     *  AccountsService C interface
+     *  StockQuote interface
      */
 
             class StockQuoteServiceImpl : public StockQuoteService {

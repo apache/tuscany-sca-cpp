@@ -32,31 +32,31 @@ using namespace commonj::sdo_axiom;
 #include "tuscany/sca/util/Utils.h"
 using namespace tuscany::sca;
 
-#include "tuscany/sca/ws/EntryPointProxy.h"
+#include "tuscany/sca/ws/WSServiceProxy.h"
 #include "Axis2Utils.h"
 using namespace tuscany::sca::ws;
 
 
 int AXIS2_CALL
-Axis2EntryPointService_free(axis2_svc_skeleton_t *svc_skeleton,
+Axis2Service_free(axis2_svc_skeleton_t *svc_skeleton,
           const axis2_env_t *env);
 
 /*
  * This method invokes the right service method 
  */
 axiom_node_t* AXIS2_CALL 
-Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
+Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
             const axis2_env_t *env,
             axiom_node_t *node,
             axis2_msg_ctx_t *msg_ctx);
 
-int AXIS2_CALL Axis2EntryPointService_init(axis2_svc_skeleton_t *svc_skeleton,
+int AXIS2_CALL Axis2Service_init(axis2_svc_skeleton_t *svc_skeleton,
                         const axis2_env_t *env);
 
-EntryPointProxy* entryPointProxy = NULL;
+WSServiceProxy* compositeServiceProxy = NULL;
 
 axis2_svc_skeleton_t *
-axis2_Axis2EntryPointService_create(axis2_env_t *env)
+axis2_Axis2Service_create(axis2_env_t *env)
 {
     axis2_svc_skeleton_t *svc_skeleton = NULL;
     svc_skeleton = (axis2_svc_skeleton_t *) AXIS2_MALLOC((env)->allocator, 
@@ -68,21 +68,21 @@ axis2_Axis2EntryPointService_create(axis2_env_t *env)
 
     svc_skeleton->func_array = NULL;
 
-    svc_skeleton->ops->free = Axis2EntryPointService_free;
-    svc_skeleton->ops->init = Axis2EntryPointService_init;
-    svc_skeleton->ops->invoke = Axis2EntryPointService_invoke;
+    svc_skeleton->ops->free = Axis2Service_free;
+    svc_skeleton->ops->init = Axis2Service_init;
+    svc_skeleton->ops->invoke = Axis2Service_invoke;
     /*svc_skeleton->ops->on_fault = Axis2Service_on_fault;*/
 
-    if(entryPointProxy == NULL)
+    if(compositeServiceProxy == NULL)
     {
-        entryPointProxy = EntryPointProxy::getInstance();
+        compositeServiceProxy = WSServiceProxy::getInstance();
     }
 
     return svc_skeleton;
 }
 
 int AXIS2_CALL
-Axis2EntryPointService_init(axis2_svc_skeleton_t *svc_skeleton,
+Axis2Service_init(axis2_svc_skeleton_t *svc_skeleton,
                         const axis2_env_t *env)
 {
     // This method never seems to be called - an old Axis2C artifact?
@@ -92,7 +92,7 @@ Axis2EntryPointService_init(axis2_svc_skeleton_t *svc_skeleton,
 }
 
 int AXIS2_CALL
-Axis2EntryPointService_free(axis2_svc_skeleton_t *svc_skeleton,
+Axis2Service_free(axis2_svc_skeleton_t *svc_skeleton,
             const axis2_env_t *env)
 {
     /*if(svc_skeleton->func_array)
@@ -119,7 +119,7 @@ Axis2EntryPointService_free(axis2_svc_skeleton_t *svc_skeleton,
  * This method invokes the right service method 
  */
 axiom_node_t* AXIS2_CALL
-Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
+Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
             const axis2_env_t *env,
             axiom_node_t *node,
             axis2_msg_ctx_t *msg_ctx)
@@ -142,20 +142,20 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                 if (op_name)
 				{
                     char* systemRoot = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanySystemRoot");
-                    char* fullEntryPointName = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyEntryPoint");
+                    char* fullCompositeServiceTypeName = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyCompositeServiceType");
 
-                    AXIS2_LOG_INFO((env)->log, "Axis2EntryPointService invoke called with system root: %s entrypoint name: %s operation name: %s", systemRoot, fullEntryPointName, op_name);
+                    AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s entrypoint name: %s operation name: %s", systemRoot, fullCompositeServiceTypeName, op_name);
 
-                    //LOGINFO_2(4, "Axis2EntryPointService invoke called with system root: %s and entrypoint name: %s", systemRoot, fullEntryPointName);
-                    //LOGINFO_1(4, "Axis2EntryPointService invoke called with operation", op_name);
-                    entryPointProxy->init(systemRoot, fullEntryPointName);
+                    //LOGINFO_2(4, "Axis2Service invoke called with system root: %s and entrypoint name: %s", systemRoot, fullCompositeServiceTypeName);
+                    //LOGINFO_1(4, "Axis2Service invoke called with operation", op_name);
+                    compositeServiceProxy->init(systemRoot, fullCompositeServiceTypeName);
 
-                    //Utils::printTypes(entryPointProxy->getDataFactory());
+                    //Utils::printTypes(compositeServiceProxy->getDataFactory());
 
                     AxiomHelper* axiomHelper = AxiomHelper::getHelper();
-                    if (entryPointProxy->getDataFactory() == 0)
+                    if (compositeServiceProxy->getDataFactory() == 0)
                     {
-                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: EntryPoint has no SCA implementation");
+                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: CompositeServiceType has no SCA implementation");
                         return 0;
                     }
 
@@ -163,34 +163,34 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     om_str = AXIOM_NODE_TO_STRING(node, env);
                     if (om_str)
                     {
-                        AXIS2_LOG_INFO((env)->log, "Axis2EntryPointService invoke has request OM: %s\n", om_str);
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has request OM: %s\n", om_str);
                     }
 
-                    DataObjectPtr inputDataObject = axiomHelper->toSdo(node, entryPointProxy->getDataFactory());
+                    DataObjectPtr inputDataObject = axiomHelper->toSdo(node, compositeServiceProxy->getDataFactory());
 
-                    //printf("Axis2EntryPoint inputDataObject: (%d)\n", inputDataObject);
+                    //printf("Axis2ServiceType inputDataObject: (%d)\n", inputDataObject);
 
                     if(!inputDataObject)
                     {
-                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: Could not convert received Axiom node to SDO");
-                        //LOGERROR(0, "Axis2EntryPointService_invoke: Failure whilst invoking EntryPoint");
+                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Could not convert received Axiom node to SDO");
+                        //LOGERROR(0, "Axis2Service_invoke: Failure whilst invoking CompositeServiceType");
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }                    
-                    //std::cout << "Axis2EntryPoint inputDataObject:" << inputDataObject;
+                    //std::cout << "Axis2ServiceType inputDataObject:" << inputDataObject;
                     //Utils::printDO(inputDataObject);			
-                    //std::cout << "Axis2EntryPoint inputDataObject printed\n";
+                    //std::cout << "Axis2ServiceType inputDataObject printed\n";
                     
-                    DataObjectPtr outputDataObject = entryPointProxy->invoke(op_name, inputDataObject);
+                    DataObjectPtr outputDataObject = compositeServiceProxy->invoke(op_name, inputDataObject);
 
-                    //std::cout << "Axis2EntryPoint outputDataObject:" << outputDataObject;
+                    //std::cout << "Axis2ServiceType outputDataObject:" << outputDataObject;
                     //Utils::printDO(outputDataObject);			
-                    //std::cout << "Axis2EntryPoint outputDataObject printed\n";
+                    //std::cout << "Axis2ServiceType outputDataObject printed\n";
                     
                     if(!outputDataObject)
                     {
-                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: Failure whilst invoking EntryPoint");
-                        //LOGERROR(0, "Axis2EntryPointService_invoke: Failure whilst invoking EntryPoint");
+                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Failure whilst invoking CompositeServiceType");
+                        //LOGERROR(0, "Axis2Service_invoke: Failure whilst invoking CompositeServiceType");
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }
@@ -201,19 +201,19 @@ Axis2EntryPointService_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     om_str = AXIOM_NODE_TO_STRING(returnNode, env);
                     if (om_str)
                     {
-                        AXIS2_LOG_INFO((env)->log, "Axis2EntryPointService invoke has response OM : %s\n", om_str);
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has response OM : %s\n", om_str);
                     }
                         
 					AxiomHelper::releaseHelper(axiomHelper);												
 
-                	//LOGEXIT(1, "Axis2EntryPointService_invoke");						
+                	//LOGEXIT(1, "Axis2Service_invoke");						
 					return returnNode;
                 }
             }
         }
     }
     
-	AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2EntryPointService_invoke: invalid OM parameters in request");
+	AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: invalid OM parameters in request");
     //LOGERROR(0, "Axis2Service service ERROR: invalid OM parameters in request\n");
     
     /** TODO: return a SOAP fault here */
@@ -230,7 +230,7 @@ extern "C"
 AXIS2_EXPORT int axis2_get_instance(axis2_svc_skeleton **inst,
                         axis2_env_t *env)
 {
-    *inst = axis2_Axis2EntryPointService_create(env);
+    *inst = axis2_Axis2Service_create(env);
     /*if(NULL != *inst)
     {
         status = *inst->init();

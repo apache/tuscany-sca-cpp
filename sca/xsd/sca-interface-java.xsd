@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,26 +14,24 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  -->
-
-<schema	xmlns="http://www.w3.org/2001/XMLSchema" 
-		targetNamespace="http://www.osoa.org/xmlns/sca/0.9" 
-		xmlns:sca="http://www.osoa.org/xmlns/sca/0.9"
-		xmlns:sdo="commonj.sdo/XML"
-		elementFormDefault="qualified">
-
-	<include schemaLocation="sca-core.xsd"/>
-
-	<element name="interface.java" type="sca:JavaInterface" substitutionGroup="sca:interface" sdo:name="interfaceJava"/>
-	<complexType name="JavaInterface">
-		<complexContent>
-			<extension base="sca:Interface">
-				<sequence>
-					<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-				</sequence>
-				<attribute name="interface" type="NCName" use="required"/>
-				<attribute name="callbackInterface" type="NCName" use="optional"/>
-				<anyAttribute namespace="##any" processContents="lax"/>
-			</extension>
-		</complexContent>
-	</complexType>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.osoa.org/xmlns/sca/1.0"
+    xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
+    elementFormDefault="qualified">
+    
+    <include schemaLocation="sca-core.xsd" />
+    
+    <element name="interface.java" type="sca:JavaInterface" substitutionGroup="sca:interface"/>
+    <complexType name="JavaInterface">
+        <complexContent>
+            <extension base="sca:Interface">
+                <sequence>
+                    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+                <attribute name="interface" type="NCName" use="required" />
+                <attribute name="callbackInterface" type="NCName" use="optional" />
+                <anyAttribute namespace="##any" processContents="lax" />
+            </extension>
+        </complexContent>
+    </complexType>
 </schema>

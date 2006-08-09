@@ -121,14 +121,12 @@ namespace tuscany
                  * @param name The name of the property.
                  * @param type The full name of the type (including uri and local name).
                  * @param many True if this is a many valued property.
-                 * @param required True if this property must have a value set.
                  * @param defaultValue The default value if the property does not have a
                  * value set.
                  */
                 void addProperty(const string& name,
                     const string& type,
                     bool many,
-                    bool required,
                     const char* defaultValue = 0);
     
                 /**

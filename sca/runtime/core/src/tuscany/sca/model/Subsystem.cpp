@@ -89,19 +89,19 @@ namespace tuscany
             ///
             /// Add a new entrypoint 
             ///
-            EntryPoint* Subsystem::addEntryPoint(const std::string& name)
+            CompositeServiceType* Subsystem::addCompositeServiceType(const std::string& name)
             {
-                LOGENTRY(1, "Subsystem::addEntryPoint");
+                LOGENTRY(1, "Subsystem::addCompositeServiceType");
                 
-                EntryPoint* newEntryPoint = new EntryPoint(name);
-                entryPoints[name] = newEntryPoint;
-                LOGEXIT(1, "Subsystem::addEntryPoint");
-                return findEntryPoint(name);
+                CompositeServiceType* newCompositeServiceType = new CompositeServiceType(name);
+                compositeServices[name] = newCompositeServiceType;
+                LOGEXIT(1, "Subsystem::addCompositeServiceType");
+                return findCompositeServiceType(name);
            }
             
-            EntryPoint* Subsystem::findEntryPoint(const std::string& name)
+            CompositeServiceType* Subsystem::findCompositeServiceType(const std::string& name)
             {
-                return entryPoints[name];
+                return compositeServices[name];
             }
 
             void Subsystem::resolveWires()
@@ -113,7 +113,7 @@ namespace tuscany
                     compositeComponentIter->second->resolveWires();
                 }
 
-                // Resolve EntryPoint wires
+                // Resolve CompositeServiceType wires
             }
 
         } // End namespace model

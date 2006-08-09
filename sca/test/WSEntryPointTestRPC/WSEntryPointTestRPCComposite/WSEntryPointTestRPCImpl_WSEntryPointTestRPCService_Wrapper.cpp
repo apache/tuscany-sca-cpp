@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-#include "WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper.h"
+#include "WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper.h"
 
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
@@ -26,33 +26,33 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper* WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper_Factory(tuscany::sca::model::Service* target)
+    WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper* WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper_Factory(tuscany::sca::model::Service* target)
     {
-        return new WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper(target);
+        return new WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper(target);
     }
 }
 
-WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper::WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper(Service* target) : ComponentServiceWrapper(target)
+WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper::WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper(Service* target) : ComponentServiceWrapper(target)
 {
-    impl = (WSEntryPointTestRPCImpl*)getImplementation();
+    impl = (WSCompositeServiceTypeTestRPCImpl*)getImplementation();
 }
 
-WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper::~WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper()
+WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper::~WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper()
 {
     releaseImplementation();
 }
 
-void* WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper::newImplementation()
+void* WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper::newImplementation()
 {
-    return new WSEntryPointTestRPCImpl;
+    return new WSCompositeServiceTypeTestRPCImpl;
 }
 
-void WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper::deleteImplementation()
+void WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper::deleteImplementation()
 {
     delete impl;
 }
 
-void WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper::invokeService(Operation& operation)
+void WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper::invokeService(Operation& operation)
 {
     const string& operationName = operation.getName();
 

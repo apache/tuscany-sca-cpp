@@ -14,17 +14,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  -->
-
-<componentType xmlns="http://www.osoa.org/xmlns/sca/0.9"
-               xmlns:xs="http://www.w3.org/2001/XMLSchema">
+ 
+<componentType xmlns="http://www.osoa.org/xmlns/sca/1.0">
 
 	<service name="CalculatorService">
 		<interface.cpp header="Calculator.h"/>
 	</service>
 
-    <reference name="CalculatorDivideService">
+    <reference name="divideService">
 		<interface.cpp header="DivideService.h"/>
 	</reference>
-
 
 </componentType>

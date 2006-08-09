@@ -14,27 +14,27 @@
  *  limitations under the License.
  */
 
-#ifndef WSEntryPointTestImpl_WSEntryPointTestService_Wrapper_h
-#define WSEntryPointTestImpl_WSEntryPointTestService_Wrapper_h
+#ifndef WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper_h
+#define WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper_h
 
 #if defined(WIN32) || defined (_WINDOWS)
 #pragma warning(disable: 4786)
 #endif 
 
-#include "WSEntryPointTestImpl.h"
+#include "WSCompositeServiceTypeTestImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 
-class WSEntryPointTestImpl_WSEntryPointTestService_Wrapper : public tuscany::sca::ComponentServiceWrapper
+class WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper : public tuscany::sca::ComponentServiceWrapper
 {
 public:
-    WSEntryPointTestImpl_WSEntryPointTestService_Wrapper(tuscany::sca::model::Service* target);
-    virtual ~WSEntryPointTestImpl_WSEntryPointTestService_Wrapper();
+    WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper(tuscany::sca::model::Service* target);
+    virtual ~WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper();
     virtual void invokeService(tuscany::sca::Operation& operation);
     virtual void* newImplementation();
     virtual void deleteImplementation();
 private:
-    WSEntryPointTestImpl* impl;
+    WSCompositeServiceTypeTestImpl* impl;
 };
 
-#endif // WSEntryPointTestImpl_WSEntryPointTestService_Wrapper_h
+#endif // WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper_h
 

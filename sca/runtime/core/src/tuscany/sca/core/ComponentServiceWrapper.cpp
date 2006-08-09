@@ -21,6 +21,7 @@
 
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/CPPImplementation.h"
 using namespace osoa::sca;
@@ -41,6 +42,9 @@ namespace tuscany
             : ServiceWrapper(target), service(target)
         {
             LOGENTRY(1,"ComponentServiceWrapper::constructor");
+
+            Utils::breakpoint();
+            
             if (target->getServiceType() != WireTarget::ComponentServiceType)
             {
                 throw ServiceRuntimeException("ComponentServiceWrapper: target is not a component service");

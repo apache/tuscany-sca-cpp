@@ -15,33 +15,22 @@
   limitations under the License.
  -->
 
-<composite xmlns="http://www.osoa.org/xmlns/sca/0.9" 
-	xmlns:v="http://www.osoa.org/xmlns/sca/values/0.9"
-    xmlns:cs="tuscany/c/Calculator/"
+<composite xmlns="http://www.osoa.org/xmlns/sca/1.0" 
 	name="CalculatorComposite">
 
-	<!-- Expose as a web service -->
-	<entryPoint name="WSCalculatorEntrypoint" multiplicity="1..1">
-		<interface.wsdl interface="Calculator.wsdl" callbackInterface=""></interface.wsdl>
-		<binding.ws port="tuscany/c/Calculator#wsdl.endpoint(CalculatorService/CalculatorServicePort)"></binding.ws>
+	<service name="WSCalculatorService" multiplicity="1..1">
+		<interface.wsdl interface="Calculator.wsdl"/>
+		<binding.ws port="tuscany/c/Calculator#wsdl.endpoint(CalculatorService/CalculatorServicePort)"/>
 		<reference>CalculatorServiceComponent</reference>
-	</entryPoint>
-
+	</service>
 
 	<component name="CalculatorServiceComponent">
-		<implementation.cpp dll="Calculator.dll" header="CalculatorImpl.h"></implementation.cpp>
-        <properties> </properties>
-		<references>
-	        <v:CalculatorDivideService>DivideServiceComponent/DivideService</v:CalculatorDivideService>
-	    </references>
+		<implementation.cpp library="CalculatorComposite" header="CalculatorImpl.h"/>
+	    <reference name="divideService">DivideServiceComponent/DivideService</reference>
 	</component>
         
 	<component name="DivideServiceComponent">
-		<implementation.cpp dll="Calculator.dll" header="DivideServiceImpl.h"></implementation.cpp>
-        <properties> </properties>
-		<references> </references>
+		<implementation.cpp library="CalculatorComposite" header="DivideServiceImpl.h"/>
 	</component>
-        
-
 
 </composite>

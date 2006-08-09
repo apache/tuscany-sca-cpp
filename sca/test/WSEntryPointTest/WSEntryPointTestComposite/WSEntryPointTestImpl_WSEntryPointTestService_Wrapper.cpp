@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-#include "WSEntryPointTestImpl_WSEntryPointTestService_Wrapper.h"
+#include "WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper.h"
 
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
@@ -28,33 +28,33 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    WSEntryPointTestImpl_WSEntryPointTestService_Wrapper* WSEntryPointTestImpl_WSEntryPointTestService_Wrapper_Factory(tuscany::sca::model::Service* target)
+    WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper* WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper_Factory(tuscany::sca::model::Service* target)
     {
-        return new WSEntryPointTestImpl_WSEntryPointTestService_Wrapper(target);
+        return new WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper(target);
     }
 }
 
-WSEntryPointTestImpl_WSEntryPointTestService_Wrapper::WSEntryPointTestImpl_WSEntryPointTestService_Wrapper(Service* target) : ComponentServiceWrapper(target)
+WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper(Service* target) : ComponentServiceWrapper(target)
 {
-    impl = (WSEntryPointTestImpl*)getImplementation();
+    impl = (WSCompositeServiceTypeTestImpl*)getImplementation();
 }
 
-WSEntryPointTestImpl_WSEntryPointTestService_Wrapper::~WSEntryPointTestImpl_WSEntryPointTestService_Wrapper()
+WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::~WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper()
 {
     releaseImplementation();
 }
 
-void* WSEntryPointTestImpl_WSEntryPointTestService_Wrapper::newImplementation()
+void* WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::newImplementation()
 {
-    return new WSEntryPointTestImpl;
+    return new WSCompositeServiceTypeTestImpl;
 }
 
-void WSEntryPointTestImpl_WSEntryPointTestService_Wrapper::deleteImplementation()
+void WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::deleteImplementation()
 {
     delete impl;
 }
 
-void WSEntryPointTestImpl_WSEntryPointTestService_Wrapper::invokeService(Operation& operation)
+void WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::invokeService(Operation& operation)
 {
     const string& operationName = operation.getName();
 

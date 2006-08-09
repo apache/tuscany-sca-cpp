@@ -15,18 +15,15 @@
   limitations under the License.
  -->
 
-<componentType xmlns="http://www.osoa.org/xmlns/sca/0.9">
+<componentType xmlns="http://www.osoa.org/xmlns/sca/1.0">
 
 	<service name="StockQuoteService">
-		<interface.cpp header="StockQuoteService.h">
-		</interface.cpp>
+		<interface.cpp header="StockQuoteService.h"/>
 	</service>
 
-	<reference name="StockQuoteExternal">
-		<interface.cpp header="StockQuoteExternalService.h">
-		</interface.cpp>
+	<reference name="webService">
+		<interface.cpp header="StockQuoteWebService.h"/>
 	</reference>
-
 
 </componentType>
 	

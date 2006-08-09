@@ -8,7 +8,7 @@ namespace com
         {
 
     /*
-     *  AccountsService C interface
+     *  StockQuote interface
      */
 
 			class StockQuoteService {

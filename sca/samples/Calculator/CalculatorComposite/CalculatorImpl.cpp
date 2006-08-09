@@ -65,7 +65,7 @@ float CalculatorImpl::div(float arg1, float arg2)
     try
     {
         // Find the required service, as referenced in CalculatorImpl.componentType
-        DivideService* divideService = (DivideService*)myContext.getService("CalculatorDivideService");
+        DivideService* divideService = (DivideService*)myContext.getService("divideService");
 
         // Finally, invoke the service
         result = divideService->divide(arg1, arg2);

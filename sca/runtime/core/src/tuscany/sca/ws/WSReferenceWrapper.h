@@ -17,12 +17,12 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
-#ifndef tuscany_sca_ws_wsservicewrapper_h
-#define tuscany_sca_ws_wsservicewrapper_h
+#ifndef tuscany_sca_ws_wsreferencewrapper_h
+#define tuscany_sca_ws_wsreferencewrapper_h
 #include "osoa/sca/export.h"
 
-#include "tuscany/sca/core/ExternalServiceWrapper.h"
-#include "tuscany/sca/model/ExternalService.h"
+#include "tuscany/sca/core/CompositeReferenceWrapper.h"
+#include "tuscany/sca/model/CompositeReferenceType.h"
 #include "tuscany/sca/core/Operation.h"
 
 namespace tuscany
@@ -32,11 +32,11 @@ namespace tuscany
         namespace ws
         {
         
-            class SCA_API WSServiceWrapper : public tuscany::sca::ExternalServiceWrapper
+            class SCA_API WSReferenceWrapper : public tuscany::sca::CompositeReferenceWrapper
             {
             public:
-                WSServiceWrapper(tuscany::sca::model::WireTarget* target);
-                virtual    ~WSServiceWrapper();
+                WSReferenceWrapper(tuscany::sca::model::WireTarget* target);
+                virtual    ~WSReferenceWrapper();
 
                 virtual void invoke(Operation& operation);    
             };
@@ -44,4 +44,4 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_ws_wsservicewrapper_h
+#endif // tuscany_sca_ws_wsreferencewrapper_h

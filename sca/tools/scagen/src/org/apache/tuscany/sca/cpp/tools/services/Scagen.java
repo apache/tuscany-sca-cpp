@@ -45,7 +45,7 @@ public class Scagen extends CParsingTool {
 
     /**
      * Take a directory scanning class and create a vistor that knows how to
-     * handle any sca.composite or .fragment that the scanner comes across.
+     * handle any .composite or .fragment that the scanner comes across.
      * 
      * @param args
      *            standard main args. THe values we expect in this class are

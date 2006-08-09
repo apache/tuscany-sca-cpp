@@ -15,22 +15,19 @@
   limitations under the License.
  -->
 
-<componentType xmlns="http://www.osoa.org/xmlns/sca/0.9"
+<componentType xmlns="http://www.osoa.org/xmlns/sca/1.0"
 		xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<service name="AccountService">
-		<interface.cpp header="AccountService.h">
-		</interface.cpp>
+		<interface.cpp header="AccountService.h"/>
 	</service>
 
-	<reference name="AccountDataService">
-		<interface.cpp header="AccountDataService.h">
-		</interface.cpp>
+	<reference name="accountData">
+		<interface.cpp header="AccountDataService.h"/>
 	</reference>
 
 	<reference name="stockQuote">
-		<interface.cpp header="StockQuoteService.h">
-		</interface.cpp>
+		<interface.cpp header="StockQuoteService.h"/>
 	</reference>
 
 	<property name="currency" type="xs:string"/>

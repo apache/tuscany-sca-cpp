@@ -22,7 +22,7 @@
 #include "osoa/sca/ComponentContextImpl.h"
 #include "tuscany/sca/model/WireTarget.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
-#include "tuscany/sca/core/ExternalServiceWrapper.h"
+#include "tuscany/sca/core/CompositeReferenceWrapper.h"
 #include "tuscany/sca/model/CPPImplementation.h"
 #include "tuscany/sca/model/Composite.h"
 
@@ -213,12 +213,12 @@ namespace osoa
             // -------------------------
             switch (target->getServiceType())
             {
-            case WireTarget::ExternalServiceType:
+            case WireTarget::CompositeReferenceTypeType:
                 {
                     // ----------------
                     // External Service
                     // ----------------
-                    return ExternalServiceWrapper::createServiceWrapper((ExternalService*)target);
+                    return CompositeReferenceWrapper::createServiceWrapper((CompositeReferenceType*)target);
                 }
                 
             case WireTarget::ComponentServiceType:

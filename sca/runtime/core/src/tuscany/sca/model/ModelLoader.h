@@ -79,8 +79,8 @@ namespace tuscany
                 void mapComposite(const string& compositeName, commonj::sdo::DataObjectPtr rootDO, std::string compositeRootDir);
 
                 void addComponent(Composite* composite, DataObjectPtr componentDO);
-                void addEntryPoint(Composite* composite, DataObjectPtr entryPointDO);
-                void addExternalService(Composite* composite, DataObjectPtr externalServiceDO);
+                void addCompositeServiceType(Composite* composite, DataObjectPtr compositeServiceDO);
+                void addCompositeReferenceType(Composite* composite, DataObjectPtr externalServiceDO);
 
                 void addServices(Component* component, DataObjectPtr componentType);
                 void addReferences(Component* component, DataObjectPtr componentType);

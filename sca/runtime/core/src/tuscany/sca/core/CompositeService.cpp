@@ -17,14 +17,14 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
-#include "tuscany/sca/core/SCAEntryPoint.h"
+#include "tuscany/sca/core/CompositeService.h"
 
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
-#include "tuscany/sca/core/ExternalServiceWrapper.h"
+#include "tuscany/sca/core/CompositeReferenceWrapper.h"
 using namespace osoa::sca;
 
 namespace tuscany
@@ -34,19 +34,19 @@ namespace tuscany
         // ===========
         // Constructor
         // ===========
-        SCAEntryPoint::SCAEntryPoint(const char* epName)
-            : subsystem(0), entrypoint(0), composite(0)
+        CompositeService::CompositeService(const char* epName)
+            : subsystem(0), compositeService(0), composite(0)
         {
-            LOGENTRY(1,"SCAEntryPoint::constructor");
+            LOGENTRY(1,"CompositeService::constructor");
             string message;
     
             // initialize the system if necessary
             System* system = SCARuntime::getInstance()->getSystem();
 
             string subsystemName;
-            string entrypointName;
+            string compositeServiceName;
 
-            Utils::tokeniseUri(epName, subsystemName, entrypointName);
+            Utils::tokeniseUri(epName, subsystemName, compositeServiceName);
 
             // --------------------
             // locate the Subsystem
@@ -54,56 +54,56 @@ namespace tuscany
             subsystem = system->findSubsystem(subsystemName);
             if (!subsystem)
             {
-                throw EntryPointNotFoundException(epName);
+                throw CompositeServiceTypeNotFoundException(epName);
             }
 
             // ---------------------
-            // locate the EntryPoint
+            // locate the CompositeServiceType
             // ---------------------
-            entrypoint =  subsystem->findEntryPoint(entrypointName);
-            if (entrypoint)
+            compositeService =  subsystem->findCompositeServiceType(compositeServiceName);
+            if (compositeService)
             {
-                // found Subsystem EntryPoint
-                throw EntryPointNotFoundException("Subsystem EntryPoint not yet supported");
+                // found Subsystem CompositeServiceType
+                throw CompositeServiceTypeNotFoundException("Subsystem CompositeServiceType not yet supported");
             }
             else
             {
                 // -----------------------------------
-                // locate the EntryPoint in the Composite
+                // locate the CompositeServiceType in the Composite
                 // -----------------------------------
                 string compositeComponentName;
-                Utils::tokeniseUri(entrypointName, compositeComponentName, entrypointName);
+                Utils::tokeniseUri(compositeServiceName, compositeComponentName, compositeServiceName);
                 composite = subsystem->findCompositeByComponentName(compositeComponentName);
                 if (composite)
                 {
                     dataFactory = composite->getDataFactory();
-                    entrypoint = composite->findEntryPoint(entrypointName);
+                    compositeService = composite->findCompositeServiceType(compositeServiceName);
                 }
             }
     
-            if (!entrypoint)
+            if (!compositeService)
             {
-                throw EntryPointNotFoundException(epName);
+                throw CompositeServiceTypeNotFoundException(epName);
             }
 
             // ---------------------------------
             // Get Wrappers for each wire target
             // ---------------------------------
 
-            // Get the target services from the EntryPoint
-            const EntryPoint::TARGETS& targets = entrypoint->getTargets();
+            // Get the target services from the CompositeServiceType
+            const CompositeServiceType::TARGETS& targets = compositeService->getTargets();
             
             // --------------------
             // Validate the request
             // --------------------
-            switch (entrypoint->getMultiplicity())
+            switch (compositeService->getMultiplicity())
             {
-            case EntryPoint::ONE_MANY:
-            case EntryPoint::ONE_ONE:
+            case CompositeServiceType::ONE_MANY:
+            case CompositeServiceType::ONE_ONE:
                 {
                     if (targets.size() == 0)
                     {
-                        message = "EntryPoint " + entrypoint->getName() + " not wired";
+                        message = "CompositeServiceType " + compositeService->getName() + " not wired";
                         throw ServiceNotFoundException(message.c_str());
                     }
                 }
@@ -112,7 +112,7 @@ namespace tuscany
                 }
             } // end switch
 
-            for (EntryPoint::TARGETS::const_iterator iter = targets.begin();
+            for (CompositeServiceType::TARGETS::const_iterator iter = targets.begin();
             iter!=targets.end();
             iter++)
             {
@@ -123,31 +123,31 @@ namespace tuscany
                 }
             }
         
-            LOGEXIT(1,"SCAEntryPoint::constructor");
+            LOGEXIT(1,"CompositeService::constructor");
         }
         
         // ==========
         // Destructor
         // ==========
-        SCAEntryPoint::~SCAEntryPoint()
+        CompositeService::~CompositeService()
         {
-            LOGENTRY(1,"SCAEntryPoint::destructor");
+            LOGENTRY(1,"CompositeService::destructor");
 
             // Delete any ServiceWrappers
             for (SERVICES::iterator iter = services.begin(); iter < services.end(); iter++)
             {                
                 delete (*iter);
             }
-            LOGEXIT(1,"SCAEntryPoint::destructor");
+            LOGEXIT(1,"CompositeService::destructor");
         }
         
 
         // ======================================================================
         // invoke: 
         // ======================================================================
-        SCA_API void SCAEntryPoint::invoke(Operation& operation)
+        SCA_API void CompositeService::invoke(Operation& operation)
         {
-            LOGENTRY(1,"SCAEntryPoint::invoke");
+            LOGENTRY(1,"CompositeService::invoke");
             string message;
 
             // --------------------
@@ -155,7 +155,7 @@ namespace tuscany
             // --------------------
             if (services.size() == 0)
             {
-                message = "EntryPoint " + entrypoint->getName() + " not wired";
+                message = "CompositeServiceType " + compositeService->getName() + " not wired";
                 throw ServiceNotFoundException(message.c_str());
             }
 
@@ -166,26 +166,26 @@ namespace tuscany
             {                
                 (*iter)->invoke(operation);
             }
-            LOGEXIT(1,"SCAEntryPoint::invoke");
+            LOGEXIT(1,"CompositeService::invoke");
         }
 
 
         // ======================================================================
         // getServiceWrapper: Create and return an instance of the ServiceWrapper
         // ======================================================================
-        ServiceWrapper* SCAEntryPoint::getServiceWrapper(WireTarget* target)
+        ServiceWrapper* CompositeService::getServiceWrapper(WireTarget* target)
         {    
             // -------------------------
             // Determine type of Service
             // -------------------------
             switch (target->getServiceType())
             {
-            case WireTarget::ExternalServiceType:
+            case WireTarget::CompositeReferenceTypeType:
                 {
                     // ----------------
                     // External Service
                     // ----------------
-                    return ExternalServiceWrapper::createServiceWrapper((ExternalService*)target);
+                    return CompositeReferenceWrapper::createServiceWrapper((CompositeReferenceType*)target);
                 }
                 
             case WireTarget::ComponentServiceType:

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.osoa.org/xmlns/sca/1.0"
+    xmlns:sca="http://www.osoa.org/xmlns/sca/1.0">
 
-<schema	xmlns="http://www.w3.org/2001/XMLSchema"
-		targetNamespace="http://www.osoa.org/xmlns/sca/0.9" 
-		xmlns:sca="http://www.osoa.org/xmlns/sca/0.9">
-
-	<include schemaLocation="sca-core.xsd"/>
-
-	<include schemaLocation="sca-interface-java.xsd"/>
-	<include schemaLocation="sca-interface-wsdl.xsd"/>
-	<include schemaLocation="sca-interface-cpp.xsd"/>
-
-	<include schemaLocation="sca-implementation-java.xsd"/>
-	<include schemaLocation="sca-implementation-cpp.xsd"/>
-
-	<include schemaLocation="sca-binding-webservice.xsd"/>
-	<include schemaLocation="sca-binding-sca.xsd"/>	
+    <include schemaLocation="sca-core.xsd" />
+    <include schemaLocation="sca-composite.xsd" />
+    <include schemaLocation="sca-interface-java.xsd" />
+    <include schemaLocation="sca-interface-wsdl.xsd" />
+    <include schemaLocation="sca-interface-cpp.xsd" />
+    <include schemaLocation="sca-implementation-java.xsd" />
+    <include schemaLocation="sca-implementation-composite.xsd" />
+    <include schemaLocation="sca-implementation-cpp.xsd" />
+    <include schemaLocation="sca-binding-webservice.xsd" />
+    <include schemaLocation="sca-binding-sca.xsd" />
 
 </schema>

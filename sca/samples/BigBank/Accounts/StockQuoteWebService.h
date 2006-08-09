@@ -10,10 +10,10 @@ namespace com
         {
 
     /*
-     *  AccountsService C interface
+     *  StockQuote interface
      */
 
-			class StockQuoteExternalService {
+			class StockQuoteWebService {
 				public:
 				virtual const char* GetQuote(const char* symbol) = 0;
 

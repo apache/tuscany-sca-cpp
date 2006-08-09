@@ -89,7 +89,6 @@ namespace tuscany
             void Component::addProperty(const string& name,
                 const string& type,
                 bool many,
-                bool required,
                 const char* defaultValue)
             {
                 // Create a Type in the Properties dataFactory
@@ -213,11 +212,6 @@ namespace tuscany
 
                 // Set the default
                 
-                
-                // Add to list of required properties
-                if (required)
-                {
-                }
             }
             
             DataFactoryPtr Component::getPropertyDataFactory()

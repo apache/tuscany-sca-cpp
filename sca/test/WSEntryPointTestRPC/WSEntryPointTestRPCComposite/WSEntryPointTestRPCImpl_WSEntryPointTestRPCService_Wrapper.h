@@ -14,23 +14,23 @@
  *  limitations under the License.
  */
 
-#ifndef WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper_h
-#define WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper_h
+#ifndef WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper_h
+#define WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper_h
 
-#include "WSEntryPointTestRPCImpl.h"
+#include "WSCompositeServiceTypeTestRPCImpl.h"
 #include "tuscany/sca/core/ComponentServiceWrapper.h"
 
-class WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper : public tuscany::sca::ComponentServiceWrapper
+class WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper : public tuscany::sca::ComponentServiceWrapper
 {
 public:
-    WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper(tuscany::sca::model::Service* target);
-    virtual ~WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper();
+    WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper(tuscany::sca::model::Service* target);
+    virtual ~WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper();
     virtual void invokeService(tuscany::sca::Operation& operation);
     virtual void* newImplementation();
     virtual void deleteImplementation();
 private:
-    WSEntryPointTestRPCImpl* impl;
+    WSCompositeServiceTypeTestRPCImpl* impl;
 };
 
-#endif // WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Wrapper_h
+#endif // WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper_h
 

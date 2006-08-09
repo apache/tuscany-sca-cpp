@@ -30,7 +30,7 @@ namespace tuscany
         namespace model
         {
             /**
-             * Information about the binding for EntryPoint and ExternalService. An
+             * Information about the binding for CompositeServiceType and CompositeReferenceType. An
              * abstract class which will be extended by classes that hold specific
              * information for each type of binding.
              */

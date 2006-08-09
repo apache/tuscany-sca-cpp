@@ -89,36 +89,36 @@ namespace tuscany
                 return service;
             }
             
-            ExternalService* Composite::findExternalService(const std::string& name)
+            CompositeReferenceType* Composite::findCompositeReferenceType(const std::string& name)
             {
-                LOGENTRY(1, "Composite::findExternalService");
-                ExternalService* foundService = externalServices[name];
-                LOGEXIT(1, "Composite::findExternalService");
+                LOGENTRY(1, "Composite::findCompositeReferenceType");
+                CompositeReferenceType* foundService = externalServices[name];
+                LOGEXIT(1, "Composite::findCompositeReferenceType");
                 return foundService;
             }
             
             
-            EntryPoint* Composite::addEntryPoint(const std::string& name)
+            CompositeServiceType* Composite::addCompositeServiceType(const std::string& name)
             {
-                LOGENTRY(1, "Composite::addEntryPoint");
-                EntryPoint* ep = new EntryPoint(name);
-                entryPoints[name] = ep;
-                LOGEXIT(1, "Composite::addEntryPoint");
-                return findEntryPoint(name);
+                LOGENTRY(1, "Composite::addCompositeServiceType");
+                CompositeServiceType* ep = new CompositeServiceType(name);
+                compositeServices[name] = ep;
+                LOGEXIT(1, "Composite::addCompositeServiceType");
+                return findCompositeServiceType(name);
             }
             
-            EntryPoint* Composite::findEntryPoint(const std::string& name)
+            CompositeServiceType* Composite::findCompositeServiceType(const std::string& name)
             {
-                return entryPoints[name];
+                return compositeServices[name];
             }
 
 
-            ExternalService* Composite::addExternalService(const std::string& name)
+            CompositeReferenceType* Composite::addCompositeReferenceType(const std::string& name)
             {
-                LOGENTRY(1, "Composite::addExternalService");
-                ExternalService* es = new ExternalService(name, this);
+                LOGENTRY(1, "Composite::addCompositeReferenceType");
+                CompositeReferenceType* es = new CompositeReferenceType(name, this);
                 externalServices[name] = es;
-                LOGEXIT(1, "Composite::addExternalService");
+                LOGEXIT(1, "Composite::addCompositeReferenceType");
                 return es;
             }
             
@@ -143,7 +143,7 @@ namespace tuscany
                     WireTarget* target = findComponentService(iter->getTarget());
                     if (!target)
                     {
-                        target = findExternalService(iter->getTarget());
+                        target = findCompositeReferenceType(iter->getTarget());
                     }
                     if (!target)
                     {
@@ -151,7 +151,7 @@ namespace tuscany
                     }
                     else
                     {
-                        EntryPoint* entrypoint = findEntryPoint(iter->getSourceComponent());
+                        CompositeServiceType* entrypoint = findCompositeServiceType(iter->getSourceComponent());
                         if (entrypoint)
                         {
                             entrypoint->addTarget(target);
