@@ -18,6 +18,7 @@
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/CPPInterface.h"
 
 
@@ -37,6 +38,7 @@ namespace tuscany
                     bool remote)
                     : header(head), className(classN), remotable(remote)
             {
+                Utils::breakpoint();
                  string::size_type dot = header.rfind(".h"); // this will also find .hpp
                 if (dot != string::npos)
                 {

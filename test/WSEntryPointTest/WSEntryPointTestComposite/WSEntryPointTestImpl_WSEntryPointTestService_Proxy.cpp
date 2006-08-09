@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-#include "WSEntryPointTestImpl_WSEntryPointTestService_Proxy.h"
+#include "WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy.h"
 
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
@@ -26,31 +26,31 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    WSEntryPointTestImpl_WSEntryPointTestService_Proxy* WSEntryPointTestImpl_WSEntryPointTestService_Proxy_Factory(ServiceWrapper* target)
+    WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy* WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy_Factory(ServiceWrapper* target)
     {
-        return new WSEntryPointTestImpl_WSEntryPointTestService_Proxy(target);
+        return new WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy(target);
     }
 
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    void WSEntryPointTestImpl_WSEntryPointTestService_Proxy_Destructor(void* proxy)
+    void WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy_Destructor(void* proxy)
     {
-        delete (WSEntryPointTestImpl_WSEntryPointTestService_Proxy*)proxy;
+        delete (WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy*)proxy;
     }
 }
 
-WSEntryPointTestImpl_WSEntryPointTestService_Proxy::WSEntryPointTestImpl_WSEntryPointTestService_Proxy(ServiceWrapper* targ) : target(targ)
+WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy(ServiceWrapper* targ) : target(targ)
 {
 }
 
-WSEntryPointTestImpl_WSEntryPointTestService_Proxy::~WSEntryPointTestImpl_WSEntryPointTestService_Proxy()
+WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::~WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy()
 {
     if (target)
         delete target;
 }
 
-char* WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doChars( char* arg0)
+char* WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doChars( char* arg0)
 {
     Operation operation("doChars");
     operation.addParameter(&arg0);
@@ -60,7 +60,7 @@ char* WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doChars( char* arg0)
     return ret;
 }
 
-long WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doLong( long arg0)
+long WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doLong( long arg0)
 {
     Operation operation("doLong");
     operation.addParameter(&arg0);
@@ -70,7 +70,7 @@ long WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doLong( long arg0)
     return ret;
 }
 
-int WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doInt( int arg0)
+int WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doInt( int arg0)
 {
     Operation operation("doInt");
     operation.addParameter(&arg0);
@@ -80,7 +80,7 @@ int WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doInt( int arg0)
     return ret;
 }
 
-float WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doFloat( float arg0)
+float WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doFloat( float arg0)
 {
     Operation operation("doFloat");
     operation.addParameter(&arg0);
@@ -90,7 +90,7 @@ float WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doFloat( float arg0)
     return ret;
 }
 
-long double WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doLongDouble( long double arg0)
+long double WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doLongDouble( long double arg0)
 {
     Operation operation("doLongDouble");
     operation.addParameter(&arg0);
@@ -100,7 +100,7 @@ long double WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doLongDouble( lo
     return ret;
 }
 
-double WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doDouble( double arg0)
+double WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doDouble( double arg0)
 {
     Operation operation("doDouble");
     operation.addParameter(&arg0);
@@ -110,7 +110,7 @@ double WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doDouble( double arg0
     return ret;
 }
 
-bool WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doBool( bool arg0)
+bool WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doBool( bool arg0)
 {
     Operation operation("doBool");
     operation.addParameter(&arg0);
@@ -120,7 +120,7 @@ bool WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doBool( bool arg0)
     return ret;
 }
 
-short WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doShort( short arg0)
+short WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doShort( short arg0)
 {
     Operation operation("doShort");
     operation.addParameter(&arg0);
@@ -130,7 +130,7 @@ short WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doShort( short arg0)
     return ret;
 }
 
-char* WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doBytes( char* arg0)
+char* WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doBytes( char* arg0)
 {
     Operation operation("doBytes");
     operation.addParameter(&arg0);
@@ -140,7 +140,7 @@ char* WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doBytes( char* arg0)
     return ret;
 }
 
-char WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doByte( char arg0)
+char WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doByte( char arg0)
 {
     Operation operation("doByte");
     operation.addParameter(&arg0);
@@ -150,7 +150,7 @@ char WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doByte( char arg0)
     return ret;
 }
 
-DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doMixed( char* arg0,  long arg1,  DataObjectPtr arg2,  bool arg3,  double arg4)
+DataObjectPtr WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doMixed( char* arg0,  long arg1,  DataObjectPtr arg2,  bool arg3,  double arg4)
 {
     Operation operation("doMixed");
     operation.addParameter(&arg0);
@@ -164,7 +164,7 @@ DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doMixed( char*
     return ret;
 }
 
-DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doDataObject( DataObjectPtr arg0)
+DataObjectPtr WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doDataObject( DataObjectPtr arg0)
 {
     Operation operation("doDataObject");
     operation.addParameter(&arg0);
@@ -174,7 +174,7 @@ DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doDataObject( 
     return ret;
 }
 
-DataObjectPtr WSEntryPointTestImpl_WSEntryPointTestService_Proxy::doAny( DataObjectPtr arg0)
+DataObjectPtr WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy::doAny( DataObjectPtr arg0)
 {
     Operation operation("doAny");
     operation.addParameter(&arg0);

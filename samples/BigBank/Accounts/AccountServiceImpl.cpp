@@ -84,7 +84,7 @@ namespace com
                         factory->create("http://www.bigbank.com/AccountService","AccountReport");
                      
                     com::bigbank::account::AccountDataService *dataService = 
-                       (com::bigbank::account::AccountDataService*)theContext.getService("AccountDataService");
+                       (com::bigbank::account::AccountDataService*)theContext.getService("accountData");
         
                     if (dataService == 0)
                     {
@@ -121,7 +121,7 @@ namespace com
                     
                     if (stockService == 0)
                     {
-                        std::cout << "No Stock Quote Data Service registered" << std::endl;
+                        std::cout << "No Stock Quote Service registered" << std::endl;
                         return newReport;
                     }
 

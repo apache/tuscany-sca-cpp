@@ -17,7 +17,7 @@
 +----------------------------------------------------------------------+ 
 */
 
-#include "WSEntryPointTestImpl.h"
+#include "WSCompositeServiceTypeTestImpl.h"
 #include <stdio.h>
 #include <tuscany/sca/util/Utils.h>
 using namespace tuscany::sca;
@@ -26,94 +26,94 @@ using namespace tuscany::sca;
 using namespace commonj::sdo;
 using namespace commonj::sdo_axiom;
 
-WSEntryPointTestImpl::WSEntryPointTestImpl()
+WSCompositeServiceTypeTestImpl::WSCompositeServiceTypeTestImpl()
 {
 }
     
-WSEntryPointTestImpl::~WSEntryPointTestImpl()
+WSCompositeServiceTypeTestImpl::~WSCompositeServiceTypeTestImpl()
 {
 }
 
-// WSEntryPointTest interface
-char* WSEntryPointTestImpl::doChars(char* arg1)
+// WSCompositeServiceTypeTest interface
+char* WSCompositeServiceTypeTestImpl::doChars(char* arg1)
 {
-    printf("WSEntryPointTestImpl::doChars %s\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doChars %s\n", arg1);
     return arg1;
 }
 
 
-long WSEntryPointTestImpl::doLong(long arg1)
+long WSCompositeServiceTypeTestImpl::doLong(long arg1)
 {
-    printf("WSEntryPointTestImpl::doLong %d\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doLong %d\n", arg1);
     return arg1;
 }
 
-int WSEntryPointTestImpl::doInt(int arg1)
+int WSCompositeServiceTypeTestImpl::doInt(int arg1)
 {
-    printf("WSEntryPointTestImpl::doInt %d\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doInt %d\n", arg1);
     return arg1;
 }
 
-float WSEntryPointTestImpl::doFloat(float arg1)
+float WSCompositeServiceTypeTestImpl::doFloat(float arg1)
 {
-    printf("WSEntryPointTestImpl::doFloat %f\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doFloat %f\n", arg1);
     return arg1;
 }
 
-long double WSEntryPointTestImpl::doLongDouble(long double arg1)
+long double WSCompositeServiceTypeTestImpl::doLongDouble(long double arg1)
 {
-    printf("WSEntryPointTestImpl::doLongDouble %f\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doLongDouble %f\n", arg1);
     return arg1;
 }
 
-double WSEntryPointTestImpl::doDouble(double arg1)
+double WSCompositeServiceTypeTestImpl::doDouble(double arg1)
 {
-    printf("WSEntryPointTestImpl::doDouble %f\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doDouble %f\n", arg1);
     return arg1;
 }
 
 
-bool WSEntryPointTestImpl::doBool(bool arg1)
+bool WSCompositeServiceTypeTestImpl::doBool(bool arg1)
 {
-    printf("WSEntryPointTestImpl::doBool %d\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doBool %d\n", arg1);
     return arg1;
 }
 
-short WSEntryPointTestImpl::doShort(short arg1)
+short WSCompositeServiceTypeTestImpl::doShort(short arg1)
 {
-    printf("WSEntryPointTestImpl::doShort %d\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doShort %d\n", arg1);
     return arg1;
 }
 
-char* WSEntryPointTestImpl::doBytes(char* arg1)
+char* WSCompositeServiceTypeTestImpl::doBytes(char* arg1)
 {
-    printf("WSEntryPointTestImpl::doBytes %s\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doBytes %s\n", arg1);
     return arg1;
 }
 
-char WSEntryPointTestImpl::doByte(char arg1)
+char WSCompositeServiceTypeTestImpl::doByte(char arg1)
 {
-    printf("WSEntryPointTestImpl::doByte %c\n", arg1);
+    printf("WSCompositeServiceTypeTestImpl::doByte %c\n", arg1);
     return arg1;
 }
 
-DataObjectPtr WSEntryPointTestImpl::doMixed(char* arg1, long arg2, DataObjectPtr arg3, bool arg4, double arg5)
+DataObjectPtr WSCompositeServiceTypeTestImpl::doMixed(char* arg1, long arg2, DataObjectPtr arg3, bool arg4, double arg5)
 {
-    printf("WSEntryPointTestImpl::doMixed %s %d %s %d %d\n", arg1, arg2, arg3->getType().getURI(), arg4, arg5);
+    printf("WSCompositeServiceTypeTestImpl::doMixed %s %d %s %d %d\n", arg1, arg2, arg3->getType().getURI(), arg4, arg5);
     Utils::printDO(arg3);
     return arg3;
 }
 
-DataObjectPtr WSEntryPointTestImpl::doDataObject(DataObjectPtr arg1)
+DataObjectPtr WSCompositeServiceTypeTestImpl::doDataObject(DataObjectPtr arg1)
 {
-    printf("WSEntryPointTestImpl::doDataObject %s\n", arg1->getType().getURI());
+    printf("WSCompositeServiceTypeTestImpl::doDataObject %s\n", arg1->getType().getURI());
     Utils::printDO(arg1);
     return arg1;
 }
 
-DataObjectPtr WSEntryPointTestImpl::doAny(DataObjectPtr arg1)
+DataObjectPtr WSCompositeServiceTypeTestImpl::doAny(DataObjectPtr arg1)
 {
-    printf("WSEntryPointTestImpl::doAny %s#%s\n", arg1->getType().getURI(), arg1->getType().getName());
+    printf("WSCompositeServiceTypeTestImpl::doAny %s#%s\n", arg1->getType().getURI(), arg1->getType().getName());
     Utils::printDO(arg1);
     //return arg1;
 
@@ -129,9 +129,9 @@ DataObjectPtr WSEntryPointTestImpl::doAny(DataObjectPtr arg1)
     return data;
 }
 
-//int[] WSEntryPointTestImpl::doIntArray(int[] arg1, int arg2)
+//int[] WSCompositeServiceTypeTestImpl::doIntArray(int[] arg1, int arg2)
 //{
-//    printf("WSEntryPointTestImpl::doIntArray with length %d\n", arg2);
+//    printf("WSCompositeServiceTypeTestImpl::doIntArray with length %d\n", arg2);
 //    for(int i=0; i<arg2; i++)
 //    {
 //        printf("%d\n", arg1[i]);
@@ -139,21 +139,21 @@ DataObjectPtr WSEntryPointTestImpl::doAny(DataObjectPtr arg1)
 //    return arg1;
 //}
 //
-//string WSEntryPointTestImpl::doString(string arg1)
+//string WSCompositeServiceTypeTestImpl::doString(string arg1)
 //{
-//    printf("WSEntryPointTestImpl::doString %s\n", arg1.c_str());
+//    printf("WSCompositeServiceTypeTestImpl::doString %s\n", arg1.c_str());
 //    return arg1;
 //}
 //
-//wchar_t WSEntryPointTestImpl::doWChar(wchar_t arg1)
+//wchar_t WSCompositeServiceTypeTestImpl::doWChar(wchar_t arg1)
 //{
-//    printf("WSEntryPointTestImpl::doWChar %s\n", arg1);
+//    printf("WSCompositeServiceTypeTestImpl::doWChar %s\n", arg1);
 //    return arg1;
 //}
 //
-//int64_t WSEntryPointTestImpl::doInt64(int64_t arg1)
+//int64_t WSCompositeServiceTypeTestImpl::doInt64(int64_t arg1)
 //{
-//    printf("WSEntryPointTestImpl::doInt64 %d\n", arg1);
+//    printf("WSCompositeServiceTypeTestImpl::doInt64 %d\n", arg1);
 //    return arg1;
 //}
 

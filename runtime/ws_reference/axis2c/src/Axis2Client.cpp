@@ -45,7 +45,7 @@ using namespace tuscany::sca::ws;
 using namespace commonj::sdo;
 using namespace commonj::sdo_axiom;
 
-Axis2Client::Axis2Client(ExternalService* extService)
+Axis2Client::Axis2Client(CompositeReferenceType* extService)
     : externalService(extService)
 {
 }

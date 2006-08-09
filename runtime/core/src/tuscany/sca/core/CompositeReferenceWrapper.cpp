@@ -17,15 +17,15 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
-#include "tuscany/sca/core/ExternalServiceWrapper.h"
+#include "tuscany/sca/core/CompositeReferenceWrapper.h"
 #include <stdarg.h>
 
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/SCARuntime.h"
 
-#include "tuscany/sca/ws/WSServiceWrapper.h"
-using tuscany::sca::ws::WSServiceWrapper;
+#include "tuscany/sca/ws/WSReferenceWrapper.h"
+using tuscany::sca::ws::WSReferenceWrapper;
 
 using namespace osoa::sca;
 
@@ -39,32 +39,32 @@ namespace tuscany
         // Construction/Destruction
         //////////////////////////////////////////////////////////////////////
         
-        ExternalServiceWrapper::ExternalServiceWrapper(tuscany::sca::model::WireTarget* target)
+        CompositeReferenceWrapper::CompositeReferenceWrapper(tuscany::sca::model::WireTarget* target)
             : ServiceWrapper(target)
         {
-            LOGENTRY(1,"ExternalServiceWrapper::constructor");
-            if (target->getServiceType() != WireTarget::ExternalServiceType)
+            LOGENTRY(1,"CompositeReferenceWrapper::constructor");
+            if (target->getServiceType() != WireTarget::CompositeReferenceTypeType)
             {
-                throw ServiceRuntimeException("ExternalServiceWrapper: target is not an ExternalService");
+                throw ServiceRuntimeException("CompositeReferenceWrapper: target is not an CompositeReferenceType");
             }
             
-            LOGEXIT(1,"ExternalServiceWrapper::constructor");
+            LOGEXIT(1,"CompositeReferenceWrapper::constructor");
             
         }
         
-        ExternalServiceWrapper::~ExternalServiceWrapper()
+        CompositeReferenceWrapper::~CompositeReferenceWrapper()
         {
-            LOGENTRY(1,"ExternalServiceWrapper::destructor");
-            LOGEXIT(1,"ExternalServiceWrapper::destructor");
+            LOGENTRY(1,"CompositeReferenceWrapper::destructor");
+            LOGEXIT(1,"CompositeReferenceWrapper::destructor");
         }
 
         // ======================================================================
-        // createServiceWrapper: create a wrapper for the target ExternalService
+        // createServiceWrapper: create a wrapper for the target CompositeReferenceType
         // ======================================================================
-        ExternalServiceWrapper* ExternalServiceWrapper::createServiceWrapper(ExternalService* service)
+        CompositeReferenceWrapper* CompositeReferenceWrapper::createServiceWrapper(CompositeReferenceType* service)
         {            
             string msg;
-            ExternalServiceWrapper* serviceWrapper = 0;
+            CompositeReferenceWrapper* serviceWrapper = 0;
 
             // -----------------------------------------------
             // Get the binding for the target component
@@ -82,7 +82,7 @@ namespace tuscany
                 // -------------------------------------
                 // Create an instance of the wrapper
                 // -------------------------------------                
-                serviceWrapper = new WSServiceWrapper(service);
+                serviceWrapper = new WSReferenceWrapper(service);
                 
             }
             else

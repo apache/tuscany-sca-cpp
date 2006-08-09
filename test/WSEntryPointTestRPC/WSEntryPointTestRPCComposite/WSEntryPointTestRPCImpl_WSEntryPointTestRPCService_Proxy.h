@@ -14,21 +14,21 @@
  *  limitations under the License.
  */
 
-#ifndef WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Proxy_h
-#define WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Proxy_h
+#ifndef WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy_h
+#define WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy_h
 
-#include "WSEntryPointTestRPC.h"
+#include "WSCompositeServiceTypeTestRPC.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
-class WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Proxy : public WSEntryPointTestRPC
+class WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy : public WSCompositeServiceTypeTestRPC
 {
 public:
-    WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Proxy(tuscany::sca::ServiceWrapper*);
-    virtual ~WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Proxy();
+    WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy(tuscany::sca::ServiceWrapper*);
+    virtual ~WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy();
     virtual char* doString( char* arg1);
 private:
     tuscany::sca::ServiceWrapper* target;
 };
 
-#endif // WSEntryPointTestRPCImpl_WSEntryPointTestRPCService_Proxy_h
+#endif // WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy_h
 

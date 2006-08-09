@@ -37,29 +37,27 @@
     </complexType>
     
     <complexType name="CompositeServiceType">
-        <complexContent>
-            <extension base="sca:Contract">
-                <sequence>
-                    <element name="reference" minOccurs="0" maxOccurs="unbounded" type="anyURI" />
-                    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
-                </sequence>
-                <attribute name="multiplicity" type="sca:Multiplicity" use="optional" default="1..1" />
-                <anyAttribute namespace="##any" processContents="lax" />
-           </extension>
-       </complexContent>
+        <sequence>
+            <element ref="sca:interface" minOccurs="1" maxOccurs="1" />
+            <element ref="sca:binding" minOccurs="0" maxOccurs="unbounded" />
+            <element name="reference" minOccurs="0" maxOccurs="unbounded" type="anyURI" />
+            <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="name" type="NCName" use="required" />
+        <attribute name="multiplicity" type="sca:Multiplicity" use="optional" default="1..1" />
+        <anyAttribute namespace="##any" processContents="lax" />
     </complexType>
 
     <complexType name="CompositeReferenceType">
-        <complexContent>
-            <extension base="sca:Contract">
-                <sequence>
-                    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
-                </sequence>
-                <attribute name="multiplicity" type="sca:Multiplicity" use="optional" default="1..1" />
-                <attribute name="override" type="sca:OverrideOptions" default="may" use="optional" />
-                <anyAttribute namespace="##any" processContents="lax" />
-            </extension>
-        </complexContent>
+        <sequence>
+            <element ref="sca:interface" minOccurs="1" maxOccurs="1" />
+            <element ref="sca:binding" minOccurs="0" maxOccurs="unbounded" />
+            <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="name" type="NCName" use="required" />
+        <attribute name="multiplicity" type="sca:Multiplicity" use="optional" default="1..1" />
+        <attribute name="override" type="sca:OverrideOptions" default="may" use="optional" />
+        <anyAttribute namespace="##any" processContents="lax" />
     </complexType>
 
     <complexType name="Wire">

@@ -55,7 +55,7 @@ public class CompositeOrFragmentFileHandler extends XMLFileActor {
      *      up by the concrete subclass).
      * 
      * @param compositeXML
-     *            the sca.composite or fragment file
+     *            the composite or fragment file
      * @param target
      *            the target directory
      * @param depth

@@ -14,8 +14,8 @@
  *  limitations under the License.
  */
 
-#ifndef CalculatorImpl_CalculatorDivideService_Proxy_h
-#define CalculatorImpl_CalculatorDivideService_Proxy_h
+#ifndef CalculatorImpl_divideService_Proxy_h
+#define CalculatorImpl_divideService_Proxy_h
 
 #if defined(WIN32) || defined (_WINDOWS)
 #pragma warning(disable: 4786)
@@ -24,15 +24,15 @@
 #include "DivideService.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
-class CalculatorImpl_CalculatorDivideService_Proxy : public DivideService
+class CalculatorImpl_divideService_Proxy : public DivideService
 {
 public:
-    CalculatorImpl_CalculatorDivideService_Proxy(tuscany::sca::ServiceWrapper*);
-    virtual ~CalculatorImpl_CalculatorDivideService_Proxy();
+    CalculatorImpl_divideService_Proxy(tuscany::sca::ServiceWrapper*);
+    virtual ~CalculatorImpl_divideService_Proxy();
     virtual float divide( float arg1,  float arg2);
 private:
     tuscany::sca::ServiceWrapper* target;
 };
 
-#endif // CalculatorImpl_CalculatorDivideService_Proxy_h
+#endif // CalculatorImpl_divideService_Proxy_h
 

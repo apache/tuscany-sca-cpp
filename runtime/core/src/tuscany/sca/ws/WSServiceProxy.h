@@ -15,16 +15,16 @@
  *  limitations under the License.
  */
 
-#ifndef tuscany_sca_ws_entrypointproxy_h
-#define tuscany_sca_ws_entrypointproxy_h
+#ifndef tuscany_sca_ws_wsserviceproxy_h
+#define tuscany_sca_ws_wsserviceproxy_h
 
 #include "osoa/sca/export.h"
 
 #include "commonj/sdo/SDO.h"
 using commonj::sdo::DataObjectPtr;
 
-#include "tuscany/sca/core/SCAEntryPoint.h"
-using tuscany::sca::SCAEntryPoint;
+#include "tuscany/sca/core/CompositeService.h"
+using tuscany::sca::CompositeService;
 
 #include "tuscany/sca/core/TuscanyRuntime.h"
 using tuscany::sca::TuscanyRuntime;
@@ -38,26 +38,26 @@ namespace tuscany
     {
         namespace ws
         {        
-            class SCA_API EntryPointProxy
+            class SCA_API WSServiceProxy
             {
             public:
-                static EntryPointProxy* getInstance();
-                virtual ~EntryPointProxy();
-                virtual void init(const char* systemRoot, const char* entryPointName);
+                static WSServiceProxy* getInstance();
+                virtual ~WSServiceProxy();
+                virtual void init(const char* systemRoot, const char* compositeServiceName);
                 virtual DataFactoryPtr getDataFactory(void);
                 virtual DataObjectPtr invoke(const char* operationName, DataObjectPtr inputDataObject);    
             private:
-                EntryPointProxy();
-                static EntryPointProxy* entryPointProxyInstance;
+                WSServiceProxy();
+                static WSServiceProxy* compositeServiceProxyInstance;
                 virtual void setOutputData(Operation operation, DataObjectPtr outputDataObject);
-                string entryPointName;
+                string compositeServiceName;
                 string systemRoot;
                 string compositeComponent;
-                SCAEntryPoint* scaEntryPoint;
+                CompositeService* scaCompositeServiceType;
                 TuscanyRuntime* tuscanyRuntime;
             };
         } // End namespace ws
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_ws_entrypointproxy_h
+#endif // tuscany_sca_ws_wsserviceproxy_h

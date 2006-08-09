@@ -20,15 +20,15 @@
 #ifndef WSEENTRYPOINTTESTRPCIMPL_H
 #define WSEENTRYPOINTTESTRPCIMPL_H
 
-#include "WSEntryPointTestRPC.h"
+#include "WSCompositeServiceTypeTestRPC.h"
 
-class WSEntryPointTestRPCImpl : public WSEntryPointTestRPC
+class WSCompositeServiceTypeTestRPCImpl : public WSCompositeServiceTypeTestRPC
 {
 public:
-    WSEntryPointTestRPCImpl();
-    virtual ~WSEntryPointTestRPCImpl();
+    WSCompositeServiceTypeTestRPCImpl();
+    virtual ~WSCompositeServiceTypeTestRPCImpl();
 
-    // WSEntryPointTestRPC interface
+    // WSCompositeServiceTypeTestRPC interface
 	virtual char* doString(char* arg1);
 };
 

@@ -67,15 +67,15 @@ namespace tuscany
                 LOGENTRY(1, "ModelLoader::load");
                 LOGINFO_1(2,"configuration root: %s", configurationRoot.c_str());
                 
-                // The configuration root path will point to a directory structure:
-                //   root/
-                // The sca.subsystem files can be located anywhere under this directory
-                // structure.
-                loadSubsystems(configurationRoot);
+                // The configuration root path will point to a directory structure.
                 
-                // sca.composite files represent the root of a composite, and can occur anywhere
-                // under the directory structure
-                loadComposites(configurationRoot);
+                // The composite files representing subsystems can be located anywhere under
+                // the subsystems directory.
+                loadSubsystems(configurationRoot+"/subsystems");
+                
+                // composite files representing composite implementations can occur anywhere
+                // under the composites directory
+                loadComposites(configurationRoot+"/composites");
                 
                 system->resolveWires();
                 LOGEXIT(1, "ModelLoader::load");
@@ -88,9 +88,9 @@ namespace tuscany
             // ========================================================================
             void ModelLoader::loadSubsystems(const string& configurationRoot)
             {
-                // Get all the sca.subsystem files in the composite
+                // Get all the composite files in the configuration directory
                 LOGENTRY(1, "ModelLoader::loadSubsystems");
-                Files files(configurationRoot, "sca.subsystem", true);
+                Files files(configurationRoot, "*.composite", true);
                 for (unsigned int i=0; i < files.size(); i++)
                 {
                     loadSubsystemFile(files[i]);
@@ -142,20 +142,38 @@ namespace tuscany
                 Subsystem* subsystem;
                 subsystem = system->addSubsystem(root->getCString("name"));
                 
-                DataObjectList& Composites = root->getList("compositeComponent");
-                LOGINFO_1(2, "ModelLoader::mapSubsystem: number of composite components: %d", Composites.size());
+                DataObjectList& componentDOs = root->getList("component");
+                LOGINFO_1(2, "ModelLoader::mapSubsystem: number of composite components: %d", componentDOs.size());
                 
-                // Iterate over composite components
-                for (int i=0; i<Composites.size(); i++)
+                // Iterate over components
+                for (int i=0; i<componentDOs.size(); i++)
                 {
-                    // Add each composite component to the subsystem
-                    Composite* Composite;
-                    Composite = subsystem->addCompositeComponent(Composites[i]->getCString("name"), Composites[i]->getCString("composite"));
+                    // Get the composite component implementation
+                    DataObjectPtr impl = componentDOs[i]->getDataObject("implementation");
+                    if (!impl)
+                    {
+                        string message = "No implementation for component: ";
+                        message = message + componentDOs[i]->getCString("name");
+                        throw SystemConfigurationException(message.c_str());
+                    }
+                    
+                    // Determine the implementation type
+                    string implType = impl->getType().getName();
+                    if (implType == "SCAImplementation")
+                    {
+                        // Add each composite component to the subsystem
+                        Composite* composite;
+                        composite = subsystem->addCompositeComponent(componentDOs[i]->getCString("name"), impl->getCString("name"));
+                    }
+                    else
+                    {
+                        string message = "Atomic component implementation not yet supported in a subsystem: ";
+                        message = message + componentDOs[i]->getCString("name");
+                        throw SystemConfigurationException(message.c_str());
+                    }
                 }
                 
-                
-                /// @todo Add external services and entry points
-                
+                //TODO Add composite services and references
                 
                 LOGEXIT(1, "ModelLoader::mapSubsystem");
             }
@@ -168,12 +186,21 @@ namespace tuscany
             // =====================================================================
             void ModelLoader::loadComposites(const string& configurationRoot)
             {
-                // Get all the sca.composite files in the composite
+                // Get all the main composite files (named like the directory that contains them)
                 LOGENTRY(1, "ModelLoader::loadComposites");
-                Files files(configurationRoot, "sca.composite", true);
+                Files files(configurationRoot, "*.composite", true);
                 for (unsigned int i=0; i < files.size(); i++)
                 {
-                    loadCompositeFile(files[i]);
+                    string directoryName = files[i].getDirectory();
+                    string fileName = files[i].getFileName();
+                    int fl = fileName.length()-10;
+                    string compositeName = "/" + fileName.substr(0, fl);
+                    fl++;
+                    int dl = directoryName.length();
+                    if (dl>fl && directoryName.substr(dl-fl, fl) == compositeName)
+                    {
+                        loadCompositeFile(files[i]);
+                    }
                 }
                 LOGEXIT(1, "ModelLoader::loadComposites");
             }
@@ -192,12 +219,12 @@ namespace tuscany
                 
                 try 
                 {
-                    string filename = file.getDirectory() + "/" + file.getFileName();
+                    string mainFileName = file.getDirectory() + "/" + file.getFileName();
                     
-                    XMLDocumentPtr compositeFile = getXMLHelper()->loadFile(filename.c_str());
+                    XMLDocumentPtr compositeFile = getXMLHelper()->loadFile(mainFileName.c_str());
                     if (compositeFile->getRootDataObject() == 0)
                     {
-                        LOGERROR_1(0, "ModelLoader::loadCompositeFile: Unable to load file: %s", filename.c_str());
+                        LOGERROR_1(0, "ModelLoader::loadCompositeFile: Unable to load file: %s", mainFileName.c_str());
                     }
                     else
                     {
@@ -205,12 +232,17 @@ namespace tuscany
                         mapComposite(compositeName, compositeFile->getRootDataObject(), file.getDirectory());                        
                         
                         // --------------------------------------------------------------
-                        // Load any composite Fragments in the same folder as the sca.composite
+                        // Load any other composites in the same folder as the main composite
                         // --------------------------------------------------------------
-                        Files files(file.getDirectory(), "*.fragment", false);
+                        Files files(file.getDirectory(), "*.composite", false);
                         for (unsigned int i=0; i < files.size(); i++)
                         {
-                            filename = file.getDirectory() + "/" + files[i].getFileName();
+                            string filename = file.getDirectory() + "/" + files[i].getFileName();
+                            
+                            // Skip the main composite file
+                            if (filename == mainFileName)
+                                continue;
+                                
                             compositeFile = getXMLHelper()->loadFile(filename.c_str());
                             if (compositeFile->getRootDataObject() == 0)
                             {
@@ -271,20 +303,20 @@ namespace tuscany
                     // ------------
                     // Entry points
                     // ------------
-                    DataObjectList& entryPointList = root->getList("entryPoint");
-                    for (i=0; i < entryPointList.size(); i++)
+                    DataObjectList& compositeServiceList = root->getList("service");
+                    for (i=0; i < compositeServiceList.size(); i++)
                     {
-                        addEntryPoint(*compositeIter, entryPointList[i]);                        
+                        addCompositeServiceType(*compositeIter, compositeServiceList[i]);                        
                     }
                     
                     
                     // -----------------
                     // External services
                     // -----------------
-                    DataObjectList& externalServiceList = root->getList("externalService");
-                    for (i=0; i < externalServiceList.size(); i++)
+                    DataObjectList& compositeReferenceTypeList = root->getList("reference");
+                    for (i=0; i < compositeReferenceTypeList.size(); i++)
                     {
-                        addExternalService(*compositeIter, externalServiceList[i]);
+                        addCompositeReferenceType(*compositeIter, compositeReferenceTypeList[i]);
                     }
 
                     // -----
@@ -293,8 +325,8 @@ namespace tuscany
                     DataObjectList& wireList = root->getList("wire");
                     for (int l=0; l < wireList.size(); l++)
                     {
-                        string source = wireList[l]->getCString("sourceUri");
-                        string target = wireList[l]->getCString("targetUri");
+                        string source = wireList[l]->getCString("source");
+                        string target = wireList[l]->getCString("target");
                         (*compositeIter)->addWire(source, target);
                     }
                     
@@ -322,16 +354,17 @@ namespace tuscany
                     message = message + componentDO->getCString("name");
                     throw SystemConfigurationException(message.c_str());
                 }
+
                 // Determine the type
                 string componentTypeName;
                 string componentTypePath;
                 string implType = impl->getType().getName();
                 if (implType == "CPPImplementation")
                 {
-                    string dll = impl->getCString("dll");
+                    string library = impl->getCString("library");
                     string header = impl->getCString("header");
                     string className = impl->getCString("class");
-                    CPPImplementation* cppImpl = new CPPImplementation(dll, header, className);
+                    CPPImplementation* cppImpl = new CPPImplementation(library, header, className);
                     componentTypePath = cppImpl->getHeaderPath();
                     componentTypeName = cppImpl->getHeaderStub();
                     component->setImplementation(cppImpl);
@@ -365,44 +398,40 @@ namespace tuscany
                     LOGERROR_1(0, "ModelLoader::mapComposite: Exception caught: %s", ex.getMessageText());
                     throw SystemConfigurationException(ex.getMessageText());
                 }    
+
                 
                 // ----------
                 // Properties
                 // ----------
-                DataObjectPtr props = componentDO->getDataObject("properties");
-                component->addProperties(props);
+
+                //TODO handle new property declaration style
+                //DataObjectPtr props = componentDO->getDataObject("properties");
+                //component->addProperties(props);
                 
                 // ----------
                 // References
                 // ----------
-                DataObjectPtr refs = componentDO->getDataObject("references");
-                if (refs)
+                DataObjectList& refs = componentDO->getList("reference");
+                for (int i=0; i<refs.size(); i++)
                 {
-                    PropertyList pl = refs->getInstanceProperties();
-                    for (int refI=0; refI < pl.size(); refI++)
+                    // ----------------------------------------------------------
+                    // Add the reference to the composite wires to be resolved later
+                    // ----------------------------------------------------------
+                    string refName = refs[i]->getCString("name");
+                    if (!component->findReference(refName))
                     {
-                        // ----------------------------------------------------------
-                        // Add the reference to the composite wires to be resolved later
-                        // ----------------------------------------------------------
-                        string refName = pl[refI].getName();
-                        if (!component->findReference(pl[refI].getName()))
-                        {
-                            // Configuration error: reference is not defined
-                            message = "Undefined reference: " + refName;
-                            throw SystemConfigurationException(message.c_str());
-                        }
-                        
-                        string src = component->getName() + "/" + refName;
-
-                        // The reflist below is a list of open data objects
-                        DataObjectList& reflist = refs->getList(pl[refI]);
-                        for (int refslistI=0; refslistI<reflist.size(); refslistI++)
-                        {
-                            // Get the reference value
-                            string refValue = reflist.getDataObject(refslistI)->getSequence()->getCStringValue(0);
-                            composite->addWire(src, refValue);
-                        }
+                        // Configuration error: reference is not defined
+                        message = "Undefined reference: " + refName;
+                        throw SystemConfigurationException(message.c_str());
                     }
+                    
+                    string src = component->getName() + "/" + refName;
+
+                    // Get the reference value
+                    //Utils::printDO(refs[i], 0);
+                    string refValue = refs[i]->getCString("value");
+                    
+                    composite->addWire(src, refValue);
                 }
             }
             
@@ -470,7 +499,10 @@ namespace tuscany
                 }
                 else
                 {
-                    // Error?
+                    //TODO add support for other interface types
+                    //string message = "Interface type not yet supported: ";
+                    //message = message + ifType;
+                    //throw SystemConfigurationException(message.c_str());
                     return 0;
                 }
             }
@@ -491,59 +523,54 @@ namespace tuscany
                         many = props[i]->getBoolean("many");
                     }
 
-                    bool required=false;
-                    if (props[i]->isSet("required"))
-                    {
-                        many = props[i]->getBoolean("required");
-                    }
-                    
                     const char* defaultValue = 0;
                     if (props[i]->isSet("default"))
                     {
                         defaultValue = props[i]->getCString("default");
                     }
                     
-                    component->addProperty(name, type, many, required, defaultValue);
+                    component->addProperty(name, type, many, defaultValue);
                 }
             }
             
             // ===============================================
-            // addEntryPoint: add an EntryPoint to the composite
+            // addCompositeServiceType: add an CompositeServiceType to the composite
             // ===============================================
-            void ModelLoader::addEntryPoint(Composite* composite, DataObjectPtr entryPointDO)
+            void ModelLoader::addCompositeServiceType(Composite* composite, DataObjectPtr compositeServiceDO)
             {
 				string message;
 
-                //Utils::printDO(entryPointDO);
-                EntryPoint* entryPoint = composite->addEntryPoint(entryPointDO->getCString("name"));    
+                //Utils::printDO(compositeServiceDO);
+                CompositeServiceType* compositeServiceType = composite->addCompositeServiceType(compositeServiceDO->getCString("name"));    
 
                 string multiplicity = "1..1";
-                if (entryPointDO->isSet("multiplicity"))
+                if (compositeServiceDO->isSet("multiplicity"))
                 {
-                    multiplicity = entryPointDO->getCString("multiplicity");
+                    multiplicity = compositeServiceDO->getCString("multiplicity");
                 }
 
-                entryPoint->setMultiplicity(multiplicity);
-                entryPoint->setInterface(getInterface(entryPointDO));                    
+                compositeServiceType->setMultiplicity(multiplicity);
+                compositeServiceType->setInterface(getInterface(compositeServiceDO));                    
 
-                DataObjectList& refs = entryPointDO->getList("reference");
+                DataObjectList& refs = compositeServiceDO->getList("reference");
                 for (int i=0; i<refs.size(); i++)
                 {
                     // ----------------------------------------------------------
                     // Add the reference to the composite wires to be resolved later
                     // ----------------------------------------------------------
                     string targ = refs.getCString(i);
-                    composite->addWire(entryPoint->getName(), targ);
+                    composite->addWire(compositeServiceType->getName(), targ);
                 }
 
                 // Get binding, it will be the first and only binding
-                DataObjectPtr binding = entryPointDO->getList("binding")[0];
-                if (!binding)
+                DataObjectList& bindings = compositeServiceDO->getList("binding");
+                if (bindings.size()==0)
                 {
-                    message = "No binding for entryPoint: ";
-                    message = message + entryPointDO->getCString("name");
+                    message = "No binding for compositeService: ";
+                    message = message + compositeServiceDO->getCString("name");
                     throw SystemConfigurationException(message.c_str());
                 }
+                DataObjectPtr binding = bindings[0];
                 
                 // Utils::printDO(binding);
                 
@@ -557,37 +584,39 @@ namespace tuscany
                     
                     WSBinding* wsBinding = new WSBinding(uri,port);
                     
-                    entryPoint->setBinding(wsBinding);
+                    compositeServiceType->setBinding(wsBinding);
                     
                 }
                 else if (bindingType == "SCABinding")
                 {
-                    message = "SCA binding not yet implemented. Binding is for entryPoint: ";
-                    message = message + entryPointDO->getCString("name");
+                    message = "SCA binding not yet implemented. Binding is for compositeService: ";
+                    message = message + compositeServiceDO->getCString("name");
                     throw SystemConfigurationException(message.c_str());
                 }
             }
             
             
             // =========================================================
-            // addExternalService: add an ExternalService to the composite
+            // addCompositeReferenceType: add an CompositeReferenceType to the composite
             // =========================================================
-            void ModelLoader::addExternalService(Composite* composite, DataObjectPtr externalServiceDO)
+            void ModelLoader::addCompositeReferenceType(Composite* composite, DataObjectPtr compositeReferenceTypeDO)
             {
                 string message;
 
-                ExternalService* externalService = composite->addExternalService(externalServiceDO->getCString("name"));    
+                CompositeReferenceType* compositeReferenceType = composite->addCompositeReferenceType(compositeReferenceTypeDO->getCString("name"));
+                    
                 // Add the interface
-                externalService->setInterface(getInterface(externalServiceDO));
+                compositeReferenceType->setInterface(getInterface(compositeReferenceTypeDO));
                 
                 // Get binding, it will be the first and only binding
-                DataObjectPtr binding = externalServiceDO->getList("binding")[0];
-                if (!binding)
+                DataObjectList& bindings = compositeReferenceTypeDO->getList("binding");
+                if (bindings.size()==0)
                 {
-                    message = "No binding for externalService: ";
-                    message = message + externalServiceDO->getCString("name");
+                    message = "No binding for compositeReferenceType: ";
+                    message = message + compositeReferenceTypeDO->getCString("name");
                     throw SystemConfigurationException(message.c_str());
                 }
+                DataObjectPtr binding = bindings[0];
                 
                 //Utils::printDO(binding);
                 
@@ -601,7 +630,7 @@ namespace tuscany
                     
                     WSBinding* wsBinding = new WSBinding(uri,port);
                     
-                    externalService->setBinding(wsBinding);
+                    compositeReferenceType->setBinding(wsBinding);
                     
                 }
                 else if (bindingType == "SCABinding")

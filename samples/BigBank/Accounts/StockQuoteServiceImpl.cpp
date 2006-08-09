@@ -4,7 +4,7 @@
 #endif
 
 #include "StockQuoteServiceImpl.h"
-#include "StockQuoteExternalService.h"
+#include "StockQuoteWebService.h"
 
 #include "osoa/sca/sca.h"
 #include "commonj/sdo/SDO.h"
@@ -22,11 +22,10 @@ namespace com{
                 ComponentContext myContext = ComponentContext::getCurrent();
 
                 // Use an SCA reference to get the stock price
-                StockQuoteExternalService* stockQuoteExternalService = 
-                    (StockQuoteExternalService*)myContext.
-                    getService("StockQuoteExternal");
+                StockQuoteWebService* webService = 
+                    (StockQuoteWebService*)myContext.getService("webService");
 
-                if (stockQuoteExternalService == 0)
+                if (webService == 0)
                 {
                     std::cout << "unable to find external stock quote service" << std::endl;
                     return 0.1f;
@@ -36,7 +35,7 @@ namespace com{
                 DataObjectPtr requestDO;
 
                 // Invoke the service
-                const char* result = stockQuoteExternalService->GetQuote(symbol);
+                const char* result = webService->GetQuote(symbol);
 
                 //std::cout << result<< std::endl;
     

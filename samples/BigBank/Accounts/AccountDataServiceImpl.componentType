@@ -15,11 +15,10 @@
   limitations under the License.
  -->
 
-<componentType xmlns="http://www.osoa.org/xmlns/sca/0.9">
+<componentType xmlns="http://www.osoa.org/xmlns/sca/1.0">
 
 	<service name="AccountDataService">
-		<interface.cpp header="AccountDataService.h">
-		</interface.cpp>
+		<interface.cpp header="AccountDataService.h"/>
 	</service>
 
 </componentType>

@@ -15,12 +15,12 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date$ */
+/* $Rev: 414501 $ $Date: 2006-06-15 00:45:29 -0700 (Thu, 15 Jun 2006) $ */
 #if defined(WIN32)  || defined (_WINDOWS)
 #pragma warning(disable: 4091)
 #endif
 
-#include "tuscany/sca/ws/WSServiceWrapper.h"
+#include "tuscany/sca/ws/WSReferenceWrapper.h"
 
 #include "Axis2Client.h"
 
@@ -34,12 +34,12 @@ using namespace tuscany::sca::ws;
 
 
 
-WSServiceWrapper::WSServiceWrapper(tuscany::sca::model::WireTarget* target) : ExternalServiceWrapper(target)
+WSReferenceWrapper::WSReferenceWrapper(tuscany::sca::model::WireTarget* target) : CompositeReferenceWrapper(target)
 {
     
 }
 
-WSServiceWrapper::~WSServiceWrapper()
+WSReferenceWrapper::~WSReferenceWrapper()
 {
     
 }
@@ -47,9 +47,9 @@ WSServiceWrapper::~WSServiceWrapper()
 ///
 /// This method will be called when a web service call needs to be made.
 ///
-void WSServiceWrapper::invoke(Operation& operation) 
+void WSReferenceWrapper::invoke(Operation& operation) 
 {
-    LOGENTRY(1, "WSServiceWrapper::invoke");
+    LOGENTRY(1, "WSReferenceWrapper::invoke");
 
     const string& operationName = operation.getName();
 
@@ -61,11 +61,11 @@ void WSServiceWrapper::invoke(Operation& operation)
 	}
     
     // From the external service ws-binding, get the namespace of the wsdl endpoint
-    ExternalService* externalService = getExternalService();
+    CompositeReferenceType* externalService = getCompositeReferenceType();
     
 	Axis2Client client(externalService);
 	client.invoke(operation);
 	
-    LOGEXIT(1, "WSServiceWrapper::invoke");
+    LOGEXIT(1, "WSReferenceWrapper::invoke");
 }
 

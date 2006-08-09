@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libtuscany_sca_ws_service.la
 
-libtuscany_sca_ws_service_la_SOURCES = Axis2EntryPointService_skeleton.cpp Axis2Utils.cpp
+libtuscany_sca_ws_service_la_SOURCES = Axis2Service_skeleton.cpp Axis2Utils.cpp
 
 noinst_HEADERS = *.h
 

@@ -23,7 +23,7 @@
 #include <commonj/sdo/SDO.h>
 #include <stdio.h>
 
-class WSEntryPointTest  
+class WSCompositeServiceTypeTest  
 {
 public:
     virtual char* doChars(char* arg1) = 0;

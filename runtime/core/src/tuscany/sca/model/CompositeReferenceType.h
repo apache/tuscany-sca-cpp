@@ -37,7 +37,7 @@ namespace tuscany
             /**
              * Information about an external service.
              */
-            class ExternalService : public WireTarget
+            class CompositeReferenceType : public WireTarget
             {
             public:
                 /**
@@ -45,18 +45,18 @@ namespace tuscany
                  * @param name The name of the external service.
                  * @param composite The composite containing this external service.
                  */
-                ExternalService(const std::string& name, Composite *composite);
+                CompositeReferenceType(const std::string& name, Composite *composite);
 
                 /**
                  * Destructor.
                  */
-                virtual ~ExternalService();
+                virtual ~CompositeReferenceType();
 
                 /**
                  * Return the type of service.
-                 * @return Always returns ExternalServiceType
+                 * @return Always returns CompositeReferenceTypeType
                  */
-                virtual Type getServiceType() {return ExternalServiceType;}
+                virtual Type getServiceType() {return CompositeReferenceTypeType;}
 
                 /**
                  * Set the binding for this external service.

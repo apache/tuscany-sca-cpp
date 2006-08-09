@@ -14,21 +14,21 @@
  *  limitations under the License.
  */
 
-#ifndef WSEntryPointTestImpl_WSEntryPointTestService_Proxy_h
-#define WSEntryPointTestImpl_WSEntryPointTestService_Proxy_h
+#ifndef WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy_h
+#define WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy_h
 
 #if defined(WIN32) || defined (_WINDOWS)
 #pragma warning(disable: 4786)
 #endif 
 
-#include "WSEntryPointTest.h"
+#include "WSCompositeServiceTypeTest.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
-class WSEntryPointTestImpl_WSEntryPointTestService_Proxy : public WSEntryPointTest
+class WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy : public WSCompositeServiceTypeTest
 {
 public:
-    WSEntryPointTestImpl_WSEntryPointTestService_Proxy(tuscany::sca::ServiceWrapper*);
-    virtual ~WSEntryPointTestImpl_WSEntryPointTestService_Proxy();
+    WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy(tuscany::sca::ServiceWrapper*);
+    virtual ~WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy();
     virtual char* doChars( char* arg1);
     virtual long doLong( long arg1);
     virtual int doInt( int arg1);
@@ -46,5 +46,5 @@ private:
     tuscany::sca::ServiceWrapper* target;
 };
 
-#endif // WSEntryPointTestImpl_WSEntryPointTestService_Proxy_h
+#endif // WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Proxy_h
 

@@ -10,9 +10,9 @@ osoa/sca/sca.h \
 osoa/sca/ServiceList.h \
 osoa/sca/ServiceRuntimeException.h \
 tuscany/sca/core/ComponentServiceWrapper.h \
-tuscany/sca/core/ExternalServiceWrapper.h \
+tuscany/sca/core/CompositeReferenceWrapper.h \
 tuscany/sca/core/Operation.h \
-tuscany/sca/core/SCAEntryPoint.h \
+tuscany/sca/core/CompositeService.h \
 tuscany/sca/core/SCARuntime.h \
 tuscany/sca/core/ServiceProxy.h \
 tuscany/sca/core/ServiceWrapper.h \
@@ -21,8 +21,8 @@ tuscany/sca/model/Binding.h \
 tuscany/sca/model/Component.h \
 tuscany/sca/model/CPPImplementation.h \
 tuscany/sca/model/CPPInterface.h \
-tuscany/sca/model/EntryPoint.h \
-tuscany/sca/model/ExternalService.h \
+tuscany/sca/model/CompositeServiceType.h \
+tuscany/sca/model/CompositeReferenceType.h \
 tuscany/sca/model/Implementation.h \
 tuscany/sca/model/Interface.h \
 tuscany/sca/model/ModelLoader.h \
@@ -45,8 +45,8 @@ tuscany/sca/util/Logger.h \
 tuscany/sca/util/Logging.h \
 tuscany/sca/util/LogWriter.h \
 tuscany/sca/util/Utils.h \
-tuscany/sca/ws/WSServiceWrapper.h \
-tuscany/sca/ws/EntryPointProxy.h
+tuscany/sca/ws/WSReferenceWrapper.h \
+tuscany/sca/ws/WSServiceProxy.h
 
 
 libtuscany_sca_la_SOURCES = \
@@ -68,8 +68,8 @@ tuscany/sca/model/Binding.cpp \
 tuscany/sca/model/Component.cpp \
 tuscany/sca/model/CPPImplementation.cpp \
 tuscany/sca/model/CPPInterface.cpp \
-tuscany/sca/model/EntryPoint.cpp \
-tuscany/sca/model/ExternalService.cpp \
+tuscany/sca/model/CompositeServiceType.cpp \
+tuscany/sca/model/CompositeReferenceType.cpp \
 tuscany/sca/model/Implementation.cpp \
 tuscany/sca/model/Interface.cpp \
 tuscany/sca/model/ModelLoader.cpp \
@@ -84,14 +84,14 @@ tuscany/sca/model/WSBinding.cpp \
 tuscany/sca/model/Wsdl.cpp \
 tuscany/sca/model/WsdlOperation.cpp \
 tuscany/sca/core/ComponentServiceWrapper.cpp \
-tuscany/sca/core/ExternalServiceWrapper.cpp \
+tuscany/sca/core/CompositeReferenceWrapper.cpp \
 tuscany/sca/core/Operation.cpp \
-tuscany/sca/core/SCAEntryPoint.cpp \
+tuscany/sca/core/CompositeService.cpp \
 tuscany/sca/core/SCARuntime.cpp \
 tuscany/sca/core/ServiceProxy.cpp \
 tuscany/sca/core/ServiceWrapper.cpp \
 tuscany/sca/core/TuscanyRuntime.cpp \
-tuscany/sca/ws/EntryPointProxy.cpp
+tuscany/sca/ws/WSServiceProxy.cpp
 
 libtuscany_sca_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
     -L$(top_builddir)/runtime/ws_reference/axis2c/src -ltuscany_sca_ws_reference

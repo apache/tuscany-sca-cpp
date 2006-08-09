@@ -18,7 +18,7 @@
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/model/ExternalService.h"
+#include "tuscany/sca/model/CompositeReferenceType.h"
 
 
 namespace tuscany
@@ -30,20 +30,20 @@ namespace tuscany
         {
 
             // Constructor
-            ExternalService::ExternalService(const std::string& serviceName, Composite *composite)
+            CompositeReferenceType::CompositeReferenceType(const std::string& serviceName, Composite *composite)
                 : WireTarget(serviceName), containingComposite(composite)
             {
-                LOGENTRY(1, "ExternalService::constructor");
-                LOGINFO_1(2, "ExternalService::constructor: ExternalService name: %s", getName().c_str());
-                LOGEXIT(1, "ExternalService::constructor");
+                LOGENTRY(1, "CompositeReferenceType::constructor");
+                LOGINFO_1(2, "CompositeReferenceType::constructor: CompositeReferenceType name: %s", getName().c_str());
+                LOGEXIT(1, "CompositeReferenceType::constructor");
             }
 
-            ExternalService::~ExternalService()
+            CompositeReferenceType::~CompositeReferenceType()
             {
                 delete binding;
             }
 
-            void ExternalService::setBinding(Binding* bind)
+            void CompositeReferenceType::setBinding(Binding* bind)
             {
                 binding = bind;
             }

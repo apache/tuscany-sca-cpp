@@ -17,14 +17,14 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
-#ifndef tuscany_sca_core_externalservicewrapper_h
-#define tuscany_sca_core_externalservicewrapper_h
+#ifndef tuscany_sca_core_compositereferencewrapper_h
+#define tuscany_sca_core_compositereferencewrapper_h
 
 #include "osoa/sca/export.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
-#include "tuscany/sca/model/ExternalService.h"
-using tuscany::sca::model::ExternalService;
+#include "tuscany/sca/model/CompositeReferenceType.h"
+using tuscany::sca::model::CompositeReferenceType;
 
 namespace tuscany
 {
@@ -37,14 +37,14 @@ namespace tuscany
          * This abstract class will be extended by a class which supports
          * a specific external service binding (for example, the web services binding).
          */
-        class SCA_API ExternalServiceWrapper : public ServiceWrapper
+        class SCA_API CompositeReferenceWrapper : public ServiceWrapper
         {
         public:
             /**
              * Factory method to create a new ExternaServiceWrapper for a given
              * external service described in the SCA composite.
              */
-            static ExternalServiceWrapper* createServiceWrapper(ExternalService* service);
+            static CompositeReferenceWrapper* createServiceWrapper(CompositeReferenceType* service);
 
             /**
              * Constructor.
@@ -52,18 +52,18 @@ namespace tuscany
              * created.
              * @return A wrapper that references the given target.
              */
-            ExternalServiceWrapper(tuscany::sca::model::WireTarget* target);
+            CompositeReferenceWrapper(tuscany::sca::model::WireTarget* target);
 
             /**
              * Destructor.
              */
-            virtual    ~ExternalServiceWrapper();
+            virtual    ~CompositeReferenceWrapper();
 
             /**
              * Return the external service (in the runtime model) that is wrapped by 
              * the instance of this class.
              */
-            virtual ExternalService* getExternalService() {return (ExternalService*)getTarget();};
+            virtual CompositeReferenceType* getCompositeReferenceType() {return (CompositeReferenceType*)getTarget();};
 
             /**
              * All business method calls to the external service go through the invoke method.
@@ -78,4 +78,4 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_core_externalservicewrapper_h
+#endif // tuscany_sca_core_compositereferencewrapper_h

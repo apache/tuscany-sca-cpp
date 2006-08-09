@@ -17,8 +17,8 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
-#ifndef tuscany_sca_core_scaentrypoint_h
-#define tuscany_sca_core_scaentrypoint_h
+#ifndef tuscany_sca_core_scacompositeservice_h
+#define tuscany_sca_core_scacompositeservice_h
 
 #include "osoa/sca/export.h"
 
@@ -27,7 +27,7 @@ using std::vector;
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/model/WireTarget.h"
 #include "tuscany/sca/model/Subsystem.h"
-#include "tuscany/sca/model/EntryPoint.h"
+#include "tuscany/sca/model/CompositeServiceType.h"
 #include "tuscany/sca/model/Composite.h"
 using namespace tuscany::sca::model;
 #include "commonj/sdo/SDO.h"
@@ -44,24 +44,24 @@ namespace tuscany
          * composite, and a binding class will be provided to service the
          * communication between the external binding (e.g. for web services the
          * SOAP/HTTP communication) and the SCA runtime. The binding class will
-         * use SCAEntryPoint to call into the SCA runtime.
+         * use CompositeService to call into the SCA runtime.
          */
-        class  SCAEntryPoint
+        class  CompositeService
         {
         public:
             /**
              * Constructor to create a new instance which will be associated with
              * a given entry point in an SCA composite.
-             * @param entryPointName The qualified name of the entry point in an 
+             * @param compositeServiceName The qualified name of the entry point in an 
              * SCA composite. It is of the form 
              * "subsystem name"/"composite component name"/"entry point name".
              */
-            SCA_API SCAEntryPoint(const char* entryPointName);
+            SCA_API CompositeService(const char* compositeServiceName);
 
             /**
              * Destructor.
              */
-            SCA_API virtual    ~SCAEntryPoint();
+            SCA_API virtual    ~CompositeService();
 
             /**
              * Invokes an operation on the component to which the SCA entry point
@@ -87,7 +87,7 @@ namespace tuscany
             /**
              * The entry point in the composite.
              */
-            EntryPoint* entrypoint;
+            CompositeServiceType* compositeService;
 
             /**
              * The composite component in the subsystem.
@@ -119,4 +119,4 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_core_scaentrypoint_h
+#endif // tuscany_sca_core_scacompositeservice_h

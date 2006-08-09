@@ -18,7 +18,6 @@
 <schema	xmlns="http://www.w3.org/2001/XMLSchema" 
 		targetNamespace="http://org.apache.tuscany/xmlns/cpp/1.0" 
 		xmlns:tuscany="http://org.apache.tuscany/xmlns/cpp/1.0"
-		xmlns:sdo="commonj.sdo/XML"
 		elementFormDefault="qualified">
 
   <element name="tuscany-model" type="tuscany:ModelType"/>

@@ -24,8 +24,8 @@
 
 #include <osoa/sca/export.h>
 
-#include "tuscany/sca/core/ExternalServiceWrapper.h"
-#include "tuscany/sca/model/ExternalService.h"
+#include "tuscany/sca/core/CompositeReferenceWrapper.h"
+#include "tuscany/sca/model/CompositeReferenceType.h"
 
 #include "tuscany/sca/model/Wsdl.h"
 #include "tuscany/sca/core/Operation.h"
@@ -43,13 +43,13 @@ namespace tuscany
             class SCA_API Axis2Client
             {
             public:
-                Axis2Client(tuscany::sca::model::ExternalService* externalService);
+                Axis2Client(tuscany::sca::model::CompositeReferenceType* externalService);
                 virtual    ~Axis2Client();
 
                 virtual void invoke(tuscany::sca::Operation& operation);    
                 
             private:
-                tuscany::sca::model::ExternalService* externalService;
+                tuscany::sca::model::CompositeReferenceType* externalService;
                               
                 axiom_node_t* createPayload(Operation& operation, 
                                                const WsdlOperation& wsdlOp,

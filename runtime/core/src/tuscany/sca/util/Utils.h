@@ -49,9 +49,11 @@ namespace tuscany
                 string& token1,
                 string& token2);
 
+            static void breakpoint();
+
             SCA_API static void printDO(commonj::sdo::DataObjectPtr dataObject, int increment=0);
             SCA_API static void printTypes(commonj::sdo::DataFactoryPtr df);
-
+            
         private:
             static void tabs(int increment=0);
         };

@@ -92,7 +92,7 @@ public class ComponentDomNodeHandler extends GenericDomNodeHandler {
             implHeaderFile = new File(dir, implHeader);
         } else {
             throw new InternalError(
-                    "Internal error: sca.composite or fragment file not present in interal parameters");
+                    "Internal error: composite or fragment file not present in internal parameters");
         }
 
         try {

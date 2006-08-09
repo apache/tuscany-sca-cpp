@@ -3,11 +3,11 @@ compositedir=$(deploydir)/composites/Accounts
 
 BUILT_SOURCES = AccountDataServiceImpl_AccountDataService_Proxy.cpp \
 AccountDataServiceImpl_AccountDataService_Wrapper.cpp \
-AccountServiceImpl_AccountDataService_Proxy.cpp \
+AccountServiceImpl_accountData_Proxy.cpp \
 AccountServiceImpl_AccountService_Proxy.cpp \
 AccountServiceImpl_AccountService_Wrapper.cpp \
 AccountServiceImpl_stockQuote_Proxy.cpp \
-StockQuoteServiceImpl_StockQuoteExternal_Proxy.cpp \
+StockQuoteServiceImpl_webService_Proxy.cpp \
 StockQuoteServiceImpl_StockQuoteService_Proxy.cpp \
 StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp
 
@@ -26,11 +26,11 @@ AccountServiceImpl.cpp \
 StockQuoteServiceImpl.cpp \
 AccountDataServiceImpl_AccountDataService_Proxy.cpp \
 AccountDataServiceImpl_AccountDataService_Wrapper.cpp \
-AccountServiceImpl_AccountDataService_Proxy.cpp \
+AccountServiceImpl_accountData_Proxy.cpp \
 AccountServiceImpl_AccountService_Proxy.cpp \
 AccountServiceImpl_AccountService_Wrapper.cpp \
 AccountServiceImpl_stockQuote_Proxy.cpp \
-StockQuoteServiceImpl_StockQuoteExternal_Proxy.cpp \
+StockQuoteServiceImpl_webService_Proxy.cpp \
 StockQuoteServiceImpl_StockQuoteService_Proxy.cpp \
 StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp
 

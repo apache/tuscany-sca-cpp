@@ -32,8 +32,8 @@ using std::vector;
 
 
 #include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/model/ExternalService.h"
-#include "tuscany/sca/model/EntryPoint.h"
+#include "tuscany/sca/model/CompositeReferenceType.h"
+#include "tuscany/sca/model/CompositeServiceType.h"
 #include "tuscany/sca/model/Wire.h"
 #include "tuscany/sca/model/Wsdl.h"
 
@@ -92,21 +92,21 @@ namespace tuscany
                  * @param name The name of the new entry point.
                  * @return The entry point added to the composite.
                  */
-                EntryPoint* addEntryPoint(const std::string& name);
+                CompositeServiceType* addCompositeServiceType(const std::string& name);
 
                 /**
                  * Find an entry point by name.
                  * @param name The name of the entry point to be found.
                  * @return The entry point that was found, or 0 if not found.
                  */
-                EntryPoint* findEntryPoint(const std::string& name);
+                CompositeServiceType* findCompositeServiceType(const std::string& name);
                 
                 /**
                  * Add a new external service to the composite.
                  * @param name The name of the new external service.
                  * @return The external service added to the composite.
                  */
-                ExternalService* addExternalService(const std::string& name);
+                CompositeReferenceType* addCompositeReferenceType(const std::string& name);
 
                 /**
                  * Add a wire to the model.
@@ -138,7 +138,7 @@ namespace tuscany
                  * @param serviceName The name of the external service to be found.
                  * @return The external service that was found, or 0 if not found.
                  */
-                ExternalService* findExternalService(const std::string& serviceName);
+                CompositeReferenceType* findCompositeReferenceType(const std::string& serviceName);
 
                 /**
                  * Add a WSDL definition to the composite.
@@ -202,17 +202,17 @@ namespace tuscany
                  */
                 COMPONENT_MAP components;
 
-                typedef map<std::string, ExternalService*> EXTERNALSERVICE_MAP;
+                typedef map<std::string, CompositeReferenceType*> EXTERNALSERVICE_MAP;
                 /**
                  * Map (by name) of all the external services in this composite.
                  */
                 EXTERNALSERVICE_MAP externalServices;
 
-                typedef map<std::string, EntryPoint*> ENTRYPOINT_MAP;
+                typedef map<std::string, CompositeServiceType*> ENTRYPOINT_MAP;
                 /**
                  * Map (by name) of all the entry points in this composite.
                  */
-                ENTRYPOINT_MAP entryPoints;
+                ENTRYPOINT_MAP compositeServices;
 
                 typedef vector<Wire> WIRES;
                 /**

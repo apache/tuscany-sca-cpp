@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libtuscany_sca_ws_reference.la
 
-libtuscany_sca_ws_reference_la_SOURCES = WSServiceWrapper.cpp Axis2Client.cpp
+libtuscany_sca_ws_reference_la_SOURCES = WSReferenceWrapper.cpp Axis2Client.cpp
 
 noinst_HEADERS = *.h
 

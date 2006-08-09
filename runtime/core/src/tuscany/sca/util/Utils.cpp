@@ -95,6 +95,10 @@ namespace tuscany
             }
         }
         
+        void Utils::breakpoint() {
+            // dummy method used to set breakpoints
+        }
+        
         //////////////////////////////////////////////////////////////////////////
         // Print a DatObject tree
         //////////////////////////////////////////////////////////////////////////

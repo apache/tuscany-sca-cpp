@@ -20,15 +20,15 @@
 #ifndef WSEENTRYPOINTTESTIMPL_H
 #define WSEENTRYPOINTTESTIMPL_H
 
-#include "WSEntryPointTest.h"
+#include "WSCompositeServiceTypeTest.h"
 
-class WSEntryPointTestImpl : public WSEntryPointTest
+class WSCompositeServiceTypeTestImpl : public WSCompositeServiceTypeTest
 {
 public:
-    WSEntryPointTestImpl();
-    virtual ~WSEntryPointTestImpl();
+    WSCompositeServiceTypeTestImpl();
+    virtual ~WSCompositeServiceTypeTestImpl();
 
-    // WSEntryPointTest interface
+    // WSCompositeServiceTypeTest interface
     virtual char* doChars(char* arg1);
     virtual long doLong(long arg1);
     virtual int doInt(int arg1);

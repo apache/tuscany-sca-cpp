@@ -17,8 +17,8 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
-#ifndef tuscany_sca_model_entrypoint_h
-#define tuscany_sca_model_entrypoint_h
+#ifndef tuscany_sca_model_compositeservicetype_h
+#define tuscany_sca_model_compositeservicetype_h
 
 #include <string>
 using std::string;
@@ -38,7 +38,7 @@ namespace tuscany
             /**
              * Represents the information about an entry point.
              */
-            class EntryPoint 
+            class CompositeServiceType 
             {
 
             public:
@@ -46,12 +46,12 @@ namespace tuscany
                  * Constructor.
                  * @param name The name of the entry point.
                  */
-                EntryPoint(const std::string& name);  
+                CompositeServiceType(const std::string& name);  
 
                 /**
                  * Destructor.
                  */
-                virtual ~EntryPoint();
+                virtual ~CompositeServiceType();
 
                 /**
                  * Return the name of the entry point.
@@ -154,5 +154,5 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_model_entrypoint_h
+#endif // tuscany_sca_model_compositeservicetype_h
 

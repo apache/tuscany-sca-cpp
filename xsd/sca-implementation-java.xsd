@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,25 +14,23 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  -->
-
-<schema	xmlns="http://www.w3.org/2001/XMLSchema" 
-		targetNamespace="http://www.osoa.org/xmlns/sca/0.9" 
-		xmlns:sca="http://www.osoa.org/xmlns/sca/0.9"
-		xmlns:sdo="commonj.sdo/XML"
-		elementFormDefault="qualified">
-
-	<include schemaLocation="sca-core.xsd"/>
-
-	<element name="implementation.java" type="sca:JavaImplementation" substitutionGroup="sca:implementation" sdo:name="implementationJava"/>
-	<complexType name="JavaImplementation">
-		<complexContent>
-			<extension base="sca:Implementation">
-				<sequence>
-					<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-				</sequence>
-				<attribute name="class" type="NCName" use="required"/>
-				<anyAttribute namespace="##any" processContents="lax"/>
-			</extension>
-		</complexContent>
-	</complexType>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.osoa.org/xmlns/sca/1.0"
+    xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
+    elementFormDefault="qualified">
+    
+    <include schemaLocation="sca-core.xsd" />
+    
+    <element name="implementation.java" type="sca:JavaImplementation" substitutionGroup="sca:implementation"/>
+    <complexType name="JavaImplementation">
+        <complexContent>
+            <extension base="sca:Implementation">
+                <sequence>
+                    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+                <attribute name="class" type="NCName" use="required" />
+                <anyAttribute namespace="##any" processContents="lax" />
+            </extension>
+        </complexContent>
+    </complexType>
 </schema>
