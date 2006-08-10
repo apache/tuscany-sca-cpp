@@ -38,6 +38,7 @@
 
 #include "commonj/sdo/ChangeSummaryImpl.h"
 #include "commonj/sdo/DataFactoryImpl.h"
+#include "commonj/sdo/SDOUtils.h"
 
 #include <string>
 #include <stdio.h>
@@ -4301,6 +4302,12 @@ void DataObjectImpl::setDataObject(const SDOString& path, DataObjectPtr value)
     void DataObjectImpl::setUserData(void* value)
     {
         userdata = value;
+    }
+    
+    std::ostream& DataObjectImpl::printSelf(std::ostream &os)
+    {
+        SDOUtils::printDataObject(os, this);
+        return os;
     }
 
 };

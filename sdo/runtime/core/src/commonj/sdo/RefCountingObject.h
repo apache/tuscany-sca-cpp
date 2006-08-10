@@ -22,7 +22,7 @@
 
 
 #include "commonj/sdo/export.h"
-
+#include <iostream>
 
 namespace commonj {
     namespace sdo {
@@ -47,6 +47,12 @@ namespace commonj {
  * Subtract from the the reference count - a reference has dropped.
  */
         SDO_API void releaseRef();
+
+/**
+ * Print contents to stream
+ */
+        SDO_API virtual std::ostream& printSelf(std::ostream &os);
+
 
         private:
         unsigned int refCount;

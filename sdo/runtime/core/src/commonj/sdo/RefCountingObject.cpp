@@ -70,5 +70,12 @@ void RefCountingObject::releaseRef()
 }
 
 
+SDO_API std::ostream& RefCountingObject::printSelf(std::ostream &os) 
+{
+    os << "RefCountingObject: reference count = " << refCount <<endl;
+    return os;
+}
+
+
 };
 };

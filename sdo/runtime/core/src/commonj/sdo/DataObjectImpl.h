@@ -559,6 +559,8 @@ class DataObjectImpl : public DataObject
     virtual void transferChildren(DataObject* d, DataFactory* f);
     virtual void setDataFactory(DataFactory *df);
 
+    virtual std::ostream& printSelf(std::ostream &os);
+
 private:
 
     virtual void validateIndex(unsigned int index);

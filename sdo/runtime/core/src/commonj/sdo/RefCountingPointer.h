@@ -85,6 +85,20 @@ class RefCountingPointer {
             return RefCountingPointer<otherType>(pointee);
         }
 
+        friend std::ostream& operator<< (std::ostream &os, const RefCountingPointer<T>& ptr)
+        {
+            if (!ptr)
+            {
+                os << "RefCountingPointer is NULL" << endl;
+            }
+            else
+            {
+                ptr->printSelf(os);
+            }
+
+            return os;
+        }
+
     private:
         T *pointee;
         void init();
@@ -157,6 +171,7 @@ template<class T>
 {
     return *pointee;
 }
+
 
 class DataObject;
 typedef RefCountingPointer<DataObject> DataObjectPtr;
