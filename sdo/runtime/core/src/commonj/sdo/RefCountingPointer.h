@@ -89,7 +89,7 @@ class RefCountingPointer {
         {
             if (!ptr)
             {
-                os << "RefCountingPointer is NULL" << endl;
+                os << "RefCountingPointer is NULL" << std::endl;
             }
             else
             {
