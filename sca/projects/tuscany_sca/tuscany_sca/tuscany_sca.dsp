@@ -118,10 +118,6 @@ SOURCE=..\..\..\runtime\core\src\osoa\sca\ComponentContextImpl.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\osoa\sca\export.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContext.cpp
 # End Source File
 # Begin Source File
@@ -135,6 +131,10 @@ SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.cpp
 # Begin Source File
 
 SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\osoa\sca\export.h
 # End Source File
 # Begin Source File
 
@@ -177,11 +177,19 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\CompositeReferenceWrapper.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.h
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\CompositeReferenceWrapper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\CompositeService.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\CompositeService.h
 # End Source File
 # Begin Source File
 
@@ -190,14 +198,6 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\Operation.cpp
 # Begin Source File
 
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\Operation.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\SCAEntryPoint.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\SCAEntryPoint.h
 # End Source File
 # Begin Source File
 
@@ -253,6 +253,30 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Component.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CompositeReferenceType.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CompositeReferenceType.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CompositeServiceType.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CompositeServiceType.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CPPImplementation.cpp
 # End Source File
 # Begin Source File
@@ -266,22 +290,6 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CPPInterface.cpp
 # Begin Source File
 
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CPPInterface.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\EntryPoint.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\EntryPoint.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ExternalService.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ExternalService.h
 # End Source File
 # Begin Source File
 
@@ -306,14 +314,6 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.cpp
 # Begin Source File
 
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.h
 # End Source File
 # Begin Source File
 
@@ -469,19 +469,19 @@ SOURCE=..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\EntryPointProxy.cpp
+SOURCE=..\..\..\runtime\ws_reference\axis2c\src\WSReferenceWrapper.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\EntryPointProxy.h
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSReferenceWrapper.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\ws_reference\axis2c\src\WSServiceWrapper.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceProxy.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceWrapper.h
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceProxy.h
 # End Source File
 # End Group
 # End Group
@@ -498,7 +498,15 @@ SOURCE="..\..\..\xsd\sca-binding-webservice.xsd"
 # End Source File
 # Begin Source File
 
+SOURCE="..\..\..\xsd\sca-composite.xsd"
+# End Source File
+# Begin Source File
+
 SOURCE="..\..\..\xsd\sca-core.xsd"
+# End Source File
+# Begin Source File
+
+SOURCE="..\..\..\xsd\sca-implementation-composite.xsd"
 # End Source File
 # Begin Source File
 

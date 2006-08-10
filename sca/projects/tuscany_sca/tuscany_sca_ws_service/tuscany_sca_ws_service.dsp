@@ -102,7 +102,7 @@ PostBuild_Cmds=copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\bin	copy De
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\runtime\ws_service\axis2c\src\Axis2EntryPointService_skeleton.cpp
+SOURCE=..\..\..\runtime\ws_service\axis2c\src\Axis2Service_skeleton.cpp
 # End Source File
 # Begin Source File
 
