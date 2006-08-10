@@ -191,16 +191,16 @@ namespace tuscany
                 Files files(configurationRoot, "*.composite", true);
                 for (unsigned int i=0; i < files.size(); i++)
                 {
-                    string directoryName = files[i].getDirectory();
+                    /*string directoryName = files[i].getDirectory();
                     string fileName = files[i].getFileName();
                     int fl = fileName.length()-10;
                     string compositeName = "/" + fileName.substr(0, fl);
                     fl++;
                     int dl = directoryName.length();
                     if (dl>fl && directoryName.substr(dl-fl, fl) == compositeName)
-                    {
+                    {*/
                         loadCompositeFile(files[i]);
-                    }
+                    //}
                 }
                 LOGEXIT(1, "ModelLoader::loadComposites");
             }

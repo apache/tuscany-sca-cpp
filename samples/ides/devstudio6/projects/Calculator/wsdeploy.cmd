@@ -37,14 +37,14 @@ if not exist %destinationPath%\composites mkdir %destinationPath%\composites
 if not exist %destinationPath%\composites\CalculatorComposite mkdir %destinationPath%\composites\CalculatorComposite
 
 copy %sourcePath%\CalculatorComposite\*.componentType %destinationPath%\composites\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\sca.composite %destinationPath%\composites\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\*.composite %destinationPath%\composites\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\Calculator.h %destinationPath%\composites\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\CalculatorImpl.h %destinationPath%\composites\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\DivideService.h %destinationPath%\composites\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\DivideServiceImpl.h %destinationPath%\composites\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\Tuscany-model.config %destinationPath%\composites\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\Calculator.wsdl %destinationPath%\composites\CalculatorComposite
-copy %currentPath%\Calculator\%buildMode%\Calculator.dll %destinationPath%\composites\CalculatorComposite
+copy %currentPath%\Calculator\%buildMode%\CalculatorComposite.dll %destinationPath%\composites\CalculatorComposite
 
 if not exist %destinationPath%\bin mkdir       %destinationPath%\bin
 copy %currentPath%\WSClient\%buildMode%\WSClient.exe %destinationPath%\bin
@@ -57,7 +57,7 @@ copy %sourcePath%\WSClient\runwsclient.cmd     %destinationPath%\bin
 if not exist %destinationPath%\subsystems mkdir %destinationPath%\subsystems
 if not exist %destinationPath%\subsystems\CalculatorSubsystem mkdir %destinationPath%\subsystems\CalculatorSubsystem
 
-copy %sourcePath%\CalculatorSubsystem\sca.subsystem %destinationPath%\subsystems\CalculatorSubsystem
+copy %sourcePath%\CalculatorSubsystem\*.composite %destinationPath%\subsystems\CalculatorSubsystem
 
 
 endlocal
