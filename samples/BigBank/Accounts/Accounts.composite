@@ -33,7 +33,7 @@
 		<reference name="webService">StockQuoteWebService</reference>
 	</component>  
 
-	<service name="WSAccountEntrypoint" multiplicity="1..1">
+	<service name="WSAccountService" multiplicity="1..1">
 		<interface.wsdl interface="AccountService.wsdl"/>
 		<binding.ws port="http://www.bigbank.com/AccountService#wsdl.endpoint(AccountService/AccountServiceSOAP)"/>
 		<reference>AccountServiceComponent</reference>

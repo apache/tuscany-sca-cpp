@@ -142,7 +142,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                 if (op_name)
 				{
                     char* systemRoot = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanySystemRoot");
-                    char* fullCompositeServiceTypeName = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyCompositeServiceType");
+                    char* fullCompositeServiceTypeName = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
 
                     AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s entrypoint name: %s operation name: %s", systemRoot, fullCompositeServiceTypeName, op_name);
 
