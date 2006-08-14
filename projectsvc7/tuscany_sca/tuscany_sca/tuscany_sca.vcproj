@@ -208,7 +208,13 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.h">
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\core\src\osoa\sca\export.h">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\core\src\osoa\sca\SCA.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\src\osoa\sca\sca.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\osoa\sca\ServiceList.cpp">
@@ -221,12 +227,6 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\osoa\sca\ServiceRuntimeException.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\export.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\sca.h">
 			</File>
 		</Filter>
 		<Filter
@@ -242,22 +242,22 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\CompositeReferenceWrapper.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\CompositeReferenceWrapper.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\CompositeService.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\CompositeService.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\Operation.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\Operation.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\SCAEntryPoint.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\SCAEntryPoint.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\SCARuntime.cpp">
@@ -294,6 +294,30 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Binding.h">
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Component.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Component.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Composite.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeReferenceType.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeReferenceType.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeServiceType.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeServiceType.h">
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CPPImplementation.cpp">
 				</File>
 				<File
@@ -304,24 +328,6 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CPPInterface.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Component.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Component.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\EntryPoint.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\EntryPoint.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ExternalService.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ExternalService.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Implementation.cpp">
@@ -340,12 +346,6 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Composite.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Service.cpp">
@@ -372,12 +372,6 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\System.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.h">
-				</File>
-				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Wire.cpp">
 				</File>
 				<File
@@ -388,6 +382,12 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WireTarget.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Wsdl.cpp">
@@ -433,12 +433,6 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Library.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\LogWriter.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\LogWriter.h">
-				</File>
-				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Logger.cpp">
 				</File>
 				<File
@@ -446,6 +440,12 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Logging.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\LogWriter.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\LogWriter.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Utils.cpp">
@@ -464,52 +464,18 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 					RelativePath="..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\EntryPointProxy.cpp">
+					RelativePath="..\..\..\runtime\ws_reference\axis2c\src\WSReferenceWrapper.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\EntryPointProxy.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\WSReferenceWrapper.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\ws_reference\axis2c\src\WSServiceWrapper.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceProxy.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceWrapper.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceProxy.h">
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="xsd"
-			Filter="">
-			<File
-				RelativePath="..\..\..\xsd\sca-binding-sca.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\sca-binding-webservice.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\sca-core.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\sca-implementation-cpp.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\sca-implementation-java.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\sca-interface-cpp.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\sca-interface-java.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\sca-interface-wsdl.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\sca.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\xsd\tuscany.xsd">
-			</File>
 		</Filter>
 		<File
 			RelativePath=".\Build Instructions.txt">

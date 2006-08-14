@@ -40,7 +40,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib"
-				OutputFile=".\Debug/Calculator.dll"
+				OutputFile=".\Debug/CalculatorComposite.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
@@ -98,7 +98,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib"
-				OutputFile=".\Release/Calculator.dll"
+				OutputFile=".\Release/CalculatorComposite.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
@@ -141,12 +141,6 @@
 				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorDivideService_Proxy.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorDivideService_Proxy.h">
-			</File>
-			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.cpp">
 			</File>
 			<File
@@ -157,6 +151,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_divideService_Proxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_divideService_Proxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideService.h">
@@ -197,16 +197,22 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\Tuscany-model.config">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorComposite.composite">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\sca.composite">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.componentType">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorSubsystem\sca.subsystem">
+				RelativePath="..\..\..\..\..\Calculator\CalculatorSubsystem\CalculatorSubsystem.composite">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.componentType">
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\services.xml">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\Tuscany-model.config">
 			</File>
 		</Filter>
 		<Filter

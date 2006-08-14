@@ -44,7 +44,7 @@
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/Calc.pdb"
+				ProgramDatabaseFile=".\Debug/Client.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
