@@ -82,14 +82,15 @@
     </simpleType>
     
     <complexType name="PropertyType">
-        <sequence>
-            <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
-        </sequence>
-        <attribute name="name" type="NCName" use="required" />
-        <attribute name="type" type="QName" use="required" />
-        <attribute name="many" type="boolean" default="false" use="optional" />
-        <attribute name="override" type="sca:OverrideOptions" default="may" use="optional" />
-        <anyAttribute namespace="##any" processContents="lax" />
+        <complexContent>
+            <extension base="anyType">
+                <attribute name="name" type="NCName" use="required" />
+                <attribute name="type" type="QName" use="required" />
+                <attribute name="many" type="boolean" default="false" use="optional" />
+                <attribute name="override" type="sca:OverrideOptions" default="may" use="optional" />
+                <anyAttribute namespace="##any" processContents="lax" />
+            </extension>
+        </complexContent>
     </complexType>
 
     <complexType name="Component">
@@ -104,18 +105,20 @@
     </complexType>
     
     <complexType name="Property">
-        <sequence>
-            <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
-        </sequence>
-        <attribute name="name" type="NCName" use="required" />
-        <attribute name="source" type="string" use="optional" />
-        <anyAttribute namespace="##any" processContents="lax" />
+        <complexContent>
+            <extension base="anyType">
+                <attribute name="name" type="NCName" use="required" />
+                <attribute name="source" type="string" use="optional" />
+                <anyAttribute namespace="##any" processContents="lax" />
+            </extension>
+        </complexContent>
     </complexType>
 
     <complexType name="Reference">
         <simpleContent>
             <extension base="anyURI">
                 <attribute name="name" type="NCName" use="required" />
+                <anyAttribute namespace="##any" processContents="lax" />
             </extension>
         </simpleContent>
     </complexType>
