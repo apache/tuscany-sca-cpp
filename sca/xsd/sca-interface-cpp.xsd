@@ -29,9 +29,9 @@
                     <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
                 <attribute name="header" type="NCName" use="required" />
-                <attribute name="class" type="Name" use="required" />
-                <attribute name="callbackHeader" type="NCName" use="required" />
-                <attribute name="callbackClass" type="Name" use="required" />
+                <attribute name="class" type="Name" use="optional" />
+                <attribute name="callbackHeader" type="NCName" use="optional" />
+                <attribute name="callbackClass" type="Name" use="optional" />
                 <attribute name="scope" type="sca:CPPScope" use="optional" />
                 <attribute name="remotable" type="boolean" use="optional" />
                 <anyAttribute namespace="##any" processContents="lax" />
