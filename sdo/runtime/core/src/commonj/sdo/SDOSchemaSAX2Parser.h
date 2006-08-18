@@ -49,7 +49,8 @@ namespace commonj
         public:
             
             SDOSchemaSAX2Parser(SchemaInfo& schemaInfo,
-                ParserErrorSetter* insetter);
+                ParserErrorSetter* insetter,
+                bool loadImportNamespace = false);
             
             virtual ~SDOSchemaSAX2Parser();
 
@@ -224,6 +225,7 @@ namespace commonj
             
             TypeDefinitionsImpl typeDefinitions;
 
+            bool loadImportNamespace;
             
         };
 

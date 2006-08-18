@@ -75,10 +75,10 @@ namespace commonj
          *
          */
 
-        const char* XSDHelperImpl::defineFile(const char* schema)
+        const char* XSDHelperImpl::defineFile(const char* schema, bool loadImportNamespace)
         {
 
-            SDOSchemaSAX2Parser schemaParser(schemaInfo, this);
+            SDOSchemaSAX2Parser schemaParser(schemaInfo, this, loadImportNamespace);
             clearErrors();
             if (schemaParser.parse(schema) == 0)
             {
@@ -88,19 +88,19 @@ namespace commonj
             return 0;
         }
         
-        const char*  XSDHelperImpl::define(std::istream& schema)
+        const char*  XSDHelperImpl::define(std::istream& schema, bool loadImportNamespace)
         {
-            SDOSchemaSAX2Parser schemaParser(schemaInfo, this);
+            SDOSchemaSAX2Parser schemaParser(schemaInfo, this, loadImportNamespace);
             clearErrors();
             schema  >> schemaParser;
             defineTypes(schemaParser.getTypeDefinitions());
             return schemaInfo.getTargetNamespaceURI();
         }
         
-        const char*  XSDHelperImpl::define(const char* schema)
+        const char*  XSDHelperImpl::define(const char* schema, bool loadImportNamespace)
         {
             std::istringstream str(schema);
-            SDOSchemaSAX2Parser schemaParser(schemaInfo, this);
+            SDOSchemaSAX2Parser schemaParser(schemaInfo, this, loadImportNamespace);
             clearErrors();
             str  >> schemaParser;
             defineTypes(schemaParser.getTypeDefinitions());

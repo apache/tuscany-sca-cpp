@@ -62,9 +62,9 @@ namespace commonj
              * The return value is the URI of the root Type
              *
              */
-            virtual const char* defineFile(const char* schemaFile);
-            virtual const char* define(std::istream& schema);
-            virtual const char* define(const char* schema);
+            virtual const char* defineFile(const char* schemaFile, bool loadImportNamespace = false);
+            virtual const char* define(std::istream& schema, bool loadImportNamespace = false);
+            virtual const char* define(const char* schema, bool loadImportNamespace = false);
             
             /** getErrorCount gets number of parse errors
              *
