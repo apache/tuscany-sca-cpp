@@ -681,6 +681,8 @@ public:
 
    virtual bool generateInterface(const SDOString& fileroot, const SDOString& factoryname);
 
+    virtual std::ostream& printSelf(std::ostream &os);
+
 private:
     typedef std::map<std::string, TypeImpl*> TYPES_MAP;
     TYPES_MAP    types;

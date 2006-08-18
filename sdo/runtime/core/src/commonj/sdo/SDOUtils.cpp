@@ -224,5 +224,27 @@ namespace commonj {
             incr--;
             out << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end of do" << endl;
         }
+
+        
+        void SDOUtils::printTypes(std::ostream& out, DataFactoryPtr df) 
+        {
+            TypeList tl = df->getTypes();
+            for (int i = 0; i < tl.size(); i++)
+            {
+                out << "Type: " << tl[i].getURI()<< "#" << tl[i].getName() <<
+                    " isOpen: " << tl[i].isOpenType()
+                    << " isSequenced: " << tl[i].isSequencedType() << endl;
+                PropertyList pl = tl[i].getProperties();
+                for (int j = 0; j < pl.size(); j++)
+                {
+                    out << "\tProperty: " << pl[j].getName()
+                        << " type: " <<pl[j].getType().getURI()<<"#"<<pl[j].getType().getName()<<
+                        " isMany: " << pl[j].isMany() << endl;
+                    
+                }
+            }
+            
+        }
+
     };
 };

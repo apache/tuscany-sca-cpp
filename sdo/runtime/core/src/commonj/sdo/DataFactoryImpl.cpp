@@ -28,6 +28,7 @@
 
 #include "commonj/sdo/Logger.h"
 
+#include "commonj/sdo/SDOUtils.h"
 
 #include "commonj/sdo/PropertyList.h"
 
@@ -2265,6 +2266,12 @@ bool DataFactoryImpl::generateInterface(const SDOString& fileroot, const SDOStri
 {
 	return generateInterface(fileroot.c_str(), factoryname.c_str());
 }
+    
+    std::ostream& DataFactoryImpl::printSelf(std::ostream &os)
+    {
+        SDOUtils::printTypes(os, this);
+        return os;
+    }
 
 };
 };

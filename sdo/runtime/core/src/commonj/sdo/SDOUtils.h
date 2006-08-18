@@ -43,7 +43,8 @@ namespace commonj
             static SDO_API void printDataObject(std::ostream& out, DataObjectPtr d);                
             static SDO_API const char* SDOToXSD(const char* sdoname);
             static SDO_API const char*  XSDToSDO(const char* xsdname);
-            
+            static void printTypes(std::ostream& out, DataFactoryPtr df);
+                        
         private:
 
             static bool populate();
