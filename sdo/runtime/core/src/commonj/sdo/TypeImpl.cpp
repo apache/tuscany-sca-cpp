@@ -861,11 +861,13 @@ namespace sdo{
                          const TypeImpl& t, 
                          bool many, bool rdonly, bool cont) 
     {
-
-        props.insert(props.end(),new PropertyImpl(*this, 
-                             propname, t, many,rdonly, cont));
-        localPropsSize++;
-
+        // do not add duplicate properties
+        if (!getPropertyImpl(propname))
+        {   
+            props.insert(props.end(),new PropertyImpl(*this, 
+                propname, t, many,rdonly, cont));
+            localPropsSize++;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
