@@ -2332,7 +2332,7 @@ int sdotest::maintest()
      */
   
         /* Now add a primitive type test to the manager */
-        mdg->addPropertyToType(tm,"string",ts);
+        mdg->addPropertyToType(tm,"str",ts);
 
          fprintf(f, "Manager is sequenced?%d\n",tm.isSequencedType());
 

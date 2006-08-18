@@ -53,7 +53,7 @@ Has Property cubelocation of type String
 Type Manager
 Has Property name of type String
 Has Property officeid of type String
-Has Property string of type String
+Has Property str of type String
 Has Property boolean of type Boolean
 Has Property byte of type Byte
 Has Property character of type Character
@@ -115,7 +115,7 @@ Has Property haircolour of type String
 Has Property name of type String
 Has Property name of type String
 Has Property officeid of type String
-Has Property string of type String
+Has Property str of type String
 Has Property boolean of type Boolean
 Has Property byte of type Byte
 Has Property character of type Character

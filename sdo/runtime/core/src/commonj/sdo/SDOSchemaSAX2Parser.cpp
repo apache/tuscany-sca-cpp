@@ -37,8 +37,9 @@ namespace commonj
     {
         
         SDOSchemaSAX2Parser::SDOSchemaSAX2Parser(SchemaInfo& schemaInf,
-            ParserErrorSetter* insetter)
-            : schemaInfo(schemaInf) ,SAX2Parser(insetter)
+            ParserErrorSetter* insetter,
+            bool loadImpNamespace)
+            : schemaInfo(schemaInf), SAX2Parser(insetter), loadImportNamespace(loadImpNamespace)
         {
             bInSchema = false;
             bInvalidElement = false;
@@ -606,7 +607,13 @@ namespace commonj
 
             if (!bInSchema) return;
 
+            SchemaInfo schemaInf;
+            SDOSchemaSAX2Parser schemaParser(schemaInf, (ParserErrorSetter*)setter);
+            
+            TypeDefinitionsImpl* typedefs;
+
             SDOXMLString schemaLocation = attributes.getValue("schemaLocation");
+            SDOXMLString importNamespace = attributes.getValue("namespace");
             if (!schemaLocation.isNull())
             {
                 if (startSecondaryParse(schemaParser,schemaLocation) == 0)
@@ -616,22 +623,80 @@ namespace commonj
                     return;
                 }
 
+                typedefs = &schemaParser.getTypeDefinitions();
 
-                TypeDefinitionsImpl& typedefs = schemaParser.getTypeDefinitions();
-                XMLDAS_TypeDefs types = typedefs.types;
+            }
+            else
+            {
+                // schemaLocation isn't present. Try loading namespace for import
+                if (loadImportNamespace
+                    && localname.equalsIgnoreCase("import")
+                    && !importNamespace.isNull())
+                {
+                    try
+                    {
+                        SDOSchemaSAX2Parser sp(schemaInf, 0);
+
+                        sp.parse(importNamespace);
+                        typedefs = &sp.getTypeDefinitions();
+                    }
+                    catch (SDORuntimeException&)
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+            
+            XMLDAS_TypeDefs types = typedefs->types;
                 XMLDAS_TypeDefs::iterator iter;
                 for (iter=types.begin(); iter != types.end(); iter++)
                 {    
                     if ((*iter).second.name.equals("RootType")
-                    {
+                    && currentType.name.equals("RootType")
+                    &&  (*iter).second.uri.equals(currentType.uri))
+                {
                         // This must be true for an import/include to be
+                    // legally positioned
+                    
+                    XMLDAS_TypeDefs::iterator find = typeDefinitions.types.find(
+                        (*iter).first);
+                    
+                    std::list<PropertyDefinitionImpl>::iterator propit;
+                    std::list<PropertyDefinitionImpl>::iterator currpropit;
+                    bool found;
+                    
+                    for (propit = (*iter).second.properties.begin() ; 
+                    propit != (*iter).second.properties.end(); ++ propit)
+                    {
+                        found = false;
+                        // do not merge properties whose names clash
+                        for ( currpropit = currentType.properties.begin();
+                        currpropit != currentType.properties.end();
+                        ++currpropit)
+                        {
+                            if ((*currpropit).name.equals((*propit).name))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) 
+                        {
+                            currentType.properties.insert(
+                                currentType.properties.end(),*propit);
+                        }
                     }
+                }
                     else 
                     {
                         typeDefinitions.types.insert(*iter);
                     }
                 }
-            }                
+            
         }
 
         
