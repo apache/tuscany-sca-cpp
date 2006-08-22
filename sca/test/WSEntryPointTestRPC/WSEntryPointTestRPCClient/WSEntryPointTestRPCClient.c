@@ -63,7 +63,7 @@ int main(int argc, char** argv)
      * using the axis2.xml file.
      * In this sample client_home points to the Axis2/C default deploy folder. The client_home can 
      * be different from this folder on your system. For example, you may have a different folder 
-     * (say, my_client_folder) with its own axis2.xml file. my_client_folder/composites will have the 
+     * (say, my_client_folder) with its own axis2.xml file. my_client_folder/packages will have the 
      * composites that the client uses
      */
     client_home = AXIS2_GETENV("AXIS2C_HOME");

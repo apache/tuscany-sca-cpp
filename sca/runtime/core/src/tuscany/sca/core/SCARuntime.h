@@ -129,7 +129,7 @@ namespace tuscany
              * This will create the runtime model from which the SCA runtime
              * will operate.
              * @param configurationRoot The path to the configuration of the 
-             * SCA runtime. Under this root will be the subsystems and composites
+             * SCA runtime. Under this root will be the configuration and packages
              * directories.
              */
             void load(const string& configurationRoot);

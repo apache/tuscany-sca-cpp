@@ -89,8 +89,9 @@ Tuscany specific parameters to identify the Tuscany System Root directory and
 the EntryPoint that will be invoked. 
 
 The TuscanySystemRoot parameter requires the full path to your system root 
-directory - this is the directory that contains the "composites" and "subsystem" 
-directories; which in turn contain your composites and subsystems.
+directory - this is the directory that contains the "packages" and
+"configuration" directories; which in turn contain your packages and
+configuration.
 
 The TuscanyEntryPoint parameter is of the form 
 "<subsystem-name>/<service-name>/<entrypoint-name>", with the subsystem and 

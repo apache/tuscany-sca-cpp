@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/Calculator/deploy
-compositedir=$(deploydir)/composites/CalculatorComposite
+compositedir=$(deploydir)/packages/CalculatorComposite
 
 BUILT_SOURCES = CalculatorImpl_CalculatorService_Proxy.cpp \
 CalculatorImpl_CalculatorService_Wrapper.cpp \

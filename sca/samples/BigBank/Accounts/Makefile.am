@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/BigBank/deploy
-compositedir=$(deploydir)/composites/Accounts
+compositedir=$(deploydir)/packages/Accounts
 
 BUILT_SOURCES = AccountDataServiceImpl_AccountDataService_Proxy.cpp \
 AccountDataServiceImpl_AccountDataService_Wrapper.cpp \
