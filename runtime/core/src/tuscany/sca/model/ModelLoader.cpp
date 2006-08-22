@@ -427,8 +427,6 @@ namespace tuscany
                     string src = component->getName() + "/" + refName;
 
                     // Get the reference value
-                    //TODO this works but probably not the correct way to get
-                    // the simple content value of an element...
                     string refValue = refs[i]->getCString("value");
                     
                     composite->addWire(src, refValue);
@@ -515,7 +513,7 @@ namespace tuscany
                 DataObjectList& props = componentType->getList("property");
                 for (int i=0; i<props.size(); i++)
                 {
-                    // cout << "Property " << props[i];
+                    //cout << "Property " << props[i];
                     
                     string name = props[i]->getCString("name");
                     string type = props[i]->getCString("type");
@@ -524,15 +522,14 @@ namespace tuscany
                     {
                         many = props[i]->getBoolean("many");
                     }
-
-                    const char* defaultValue = 0;
-                    if (props[i]->getSequence() != 0)
-                    {
-                        //TODO this works but probably not the correct way to get
-                        // the open content...
-                        defaultValue = props[i]->getSequence()->getCStringValue(0);
-                    }
                     
+                    //TODO need to add support for complex properties, need the SDO
+                    // folks to shed some light on how to do this...
+                    const char* defaultValue = 0;
+                    if (props[i]->isSet("value")) {
+                        defaultValue = props[i]->getCString("value");
+                    }
+
                     component->addProperty(name, type, many, defaultValue);
                 }
             }
