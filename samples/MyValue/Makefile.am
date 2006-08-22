@@ -1,10 +1,10 @@
 SUBDIRS = MyValueComposite Client
 
 deploy_dir = $(top_builddir)/samples/runtime
-deploy_composite = $(deploy_dir)/composites/MyValueComposite
+deploy_composite = $(deploy_dir)/packages/MyValueComposite
                    
 install-exec-local:
-	cp MyValueSubsystem/sca.subsystem $(deploy_dir)/subsystems/MyValueSubsystem
+	cp MyValueSubsystem/sca.subsystem $(deploy_dir)/configuration/MyValueSubsystem
 	cp MyValueComposite/sca.composite $(deploy_composite)
 	cp MyValueComposite/CustomerInfo.fragment $(deploy_composite)
 	cp MyValueComposite/Tuscany-model.config $(deploy_composite)

@@ -56,7 +56,7 @@ namespace tuscany
                 /**
                  * Load the model from the configuration information.
                  * @param configurationRoot The location of the deployed SCA
-                 * composites and subsystems.
+                 * packages and configuration.
                  */
                 void load(const string& configurationRoot);
                 
@@ -70,9 +70,9 @@ namespace tuscany
                 const commonj::sdo::XSDHelperPtr getXSDHelper(void);
                 const commonj::sdo::XMLHelperPtr getXMLHelper(void);
                 
-                void loadSubsystems(const string& configurationRoot);
-                void loadSubsystemFile(const File& file);
-                void mapSubsystem(commonj::sdo::DataObjectPtr rootDO);
+                void loadConfiguration(const string& configurationRoot);
+                void loadConfigurationFile(const File& file);
+                void mapConfiguration(commonj::sdo::DataObjectPtr rootDO);
                 
                 void loadComposites(const string& configurationRoot);
                 void loadCompositeFile(const File& file);

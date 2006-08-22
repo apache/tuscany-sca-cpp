@@ -189,21 +189,21 @@ CalculatorImpl_CalculatorService_Wrapper.cpp
 
 9.  Deploy the various files into the SCA directory structure, as follows:
 
-<deploy_root>/composites/CompositeName/ServiceHeader.h
-<deploy_root>/composites/CompositeName/ImplementationHeader.h
-<deploy_root>/composites/CompositeName/sca.composite
-<deploy_root>/composites/CompositeName/Implementation.componentType
-<deploy_root>/composites/CompositeName/Implementation.dll (or .so on Linux)
-<deploy_root>/subsystems/SubsystemName/sca.subsystem
+<deploy_root>/packages/CompositeName/ServiceHeader.h
+<deploy_root>/packages/CompositeName/ImplementationHeader.h
+<deploy_root>/packages/CompositeName/sca.composite
+<deploy_root>/packages/CompositeName/Implementation.componentType
+<deploy_root>/packages/CompositeName/Implementation.dll (or .so on Linux)
+<deploy_root>/configuration/SubsystemName/sca.subsystem
 
     E.g. for the Calculator sample the structure is:
 
-samples/Calculator/deploy/composites/CalculatorComposite/Calculator.h
-samples/Calculator/deploy/composites/CalculatorComposite/CalculatorImpl.h
-samples/Calculator/deploy/composites/CalculatorComposite/sca.composite
-samples/Calculator/deploy/composites/CalculatorComposite/CalculatorImpl.componentType
-samples/Calculator/deploy/composites/CalculatorComposite/Calculator.dll
-samples/Calculator/deploy/subsystems/CalculatorSubsystem/sca.subsystem
+samples/Calculator/deploy/packages/CalculatorComposite/Calculator.h
+samples/Calculator/deploy/packages/CalculatorComposite/CalculatorImpl.h
+samples/Calculator/deploy/packages/CalculatorComposite/sca.composite
+samples/Calculator/deploy/packages/CalculatorComposite/CalculatorImpl.componentType
+samples/Calculator/deploy/packages/CalculatorComposite/Calculator.dll
+samples/Calculator/deploy/configuration/CalculatorSubsystem/sca.subsystem
 
 
 10. Your component, composite and subsystem are now ready to be invoked. Create a 

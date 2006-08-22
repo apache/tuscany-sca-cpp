@@ -65,85 +65,84 @@ namespace tuscany
             void ModelLoader::load(const string& configurationRoot)
             {
                 LOGENTRY(1, "ModelLoader::load");
-                LOGINFO_1(2,"configuration root: %s", configurationRoot.c_str());
+                LOGINFO_1(2,"system root: %s", configurationRoot.c_str());
                 
                 // The configuration root path will point to a directory structure.
                 
-                // The composite files representing subsystems can be located anywhere under
-                // the subsystems directory.
-                loadSubsystems(configurationRoot+"/subsystems");
+                // The composite files representing the configuration of the system can be located
+                // anywhere under the configuration directory.
+                loadConfiguration(configurationRoot+"/configuration");
                 
-                // composite files representing composite implementations can occur anywhere
-                // under the composites directory
-                loadComposites(configurationRoot+"/composites");
+                // implementations can occur anywhere under the packages directory
+                loadComposites(configurationRoot+"/packages");
                 
                 system->resolveWires();
                 LOGEXIT(1, "ModelLoader::load");
             }
             
             // ========================================================================
-            // loadSubsystems:
-            // Load all the subsystems from any directory below the configuration root.
-            // Translate the subsystem information to the runtime information
+            // loadConfiguration:
+            // Load all the composite files from any directory below the configuration root.
+            // Translate the configuration information to the runtime information
             // ========================================================================
-            void ModelLoader::loadSubsystems(const string& configurationRoot)
+            void ModelLoader::loadConfiguration(const string& configurationRoot)
             {
                 // Get all the composite files in the configuration directory
-                LOGENTRY(1, "ModelLoader::loadSubsystems");
+                LOGENTRY(1, "ModelLoader::loadConfiguration");
                 Files files(configurationRoot, "*.composite", true);
                 for (unsigned int i=0; i < files.size(); i++)
                 {
-                    loadSubsystemFile(files[i]);
+                    loadConfigurationFile(files[i]);
                 }
-                LOGEXIT(1, "ModelLoader::loadSubsystems");
+                LOGEXIT(1, "ModelLoader::loadConfiguration");
             }
             
             
             // =====================================================================
-            // loadSubsystemFile:
-            // This method is called for each sca.subsystem file found in the composite 
+            // loadConfigurationFile:
+            // This method is called for each composite file found in the configuration
             // folder structure
             // =====================================================================
-            void ModelLoader::loadSubsystemFile(const File& file)
+            void ModelLoader::loadConfigurationFile(const File& file)
             {
-                LOGENTRY(1, "ModelLoader::loadSubsystemFile");
-                LOGINFO_1(2, "subsystem filename: %s", file.getFileName().c_str());
+                LOGENTRY(1, "ModelLoader::loadConfigurationFile");
+                LOGINFO_1(2, "configuration filename: %s", file.getFileName().c_str());
                 
                 try
                 {
                     string filename = file.getDirectory() + "/" + file.getFileName();
-                    XMLDocumentPtr subsystemFile = getXMLHelper()->loadFile(filename.c_str());
-                    if (subsystemFile->getRootDataObject() == 0)
+                    XMLDocumentPtr configurationFile = getXMLHelper()->loadFile(filename.c_str());
+                    if (configurationFile->getRootDataObject() == 0)
                     {
-                        LOGERROR_1(0, "ModelLoader::loadSubsystemFile: Unable to load file: %s", filename.c_str());
+                        LOGERROR_1(0, "ModelLoader::loadConfigurationFile: Unable to load file: %s", filename.c_str());
                     }
                     else
                     {    
-                        //Utils::printDO(subsystemFile->getRootDataObject());
-                        mapSubsystem(subsystemFile->getRootDataObject());                        
+                        //Utils::printDO(configurationFile->getRootDataObject());
+                        mapConfiguration(configurationFile->getRootDataObject());                        
                     }
                 } catch (SDORuntimeException ex) 
                 {
                     LOGERROR_1(0, "ModelLoader::loadSubsytemFile: Exception caught: %s", ex.getMessageText());
                 }    
                 
-                LOGEXIT(1, "ModelLoader::loadSubsystemFile");
+                LOGEXIT(1, "ModelLoader::loadConfigurationFile");
             }
             
             // ===============
-            // mapSubsystem:
+            // mapConfiguration:
             // ===============
-            void ModelLoader::mapSubsystem(DataObjectPtr root)
+            void ModelLoader::mapConfiguration(DataObjectPtr root)
             {
-                LOGENTRY(1, "ModelLoader::mapSubsystem");
+                LOGENTRY(1, "ModelLoader::mapConfiguration");
                 
-                LOGINFO_1(2, "ModelLoader::mapSubsystem: Loaded subsystem: %s", root->getCString("name"));
+                LOGINFO_1(2, "ModelLoader::mapConfiguration: Loaded configuration: %s", root->getCString("name"));
                 
                 Subsystem* subsystem;
                 subsystem = system->addSubsystem(root->getCString("name"));
                 
                 DataObjectList& componentDOs = root->getList("component");
-                LOGINFO_1(2, "ModelLoader::mapSubsystem: number of composite components: %d", componentDOs.size());
+                LOGINFO_1(2, "ModelLoader::mapConfiguration: number of composite components: %d", componentDOs.size());
                 
                 // Iterate over components
                 for (int i=0; i<componentDOs.size(); i++)
@@ -175,7 +174,7 @@ namespace tuscany
                 
                 //TODO Add composite services and references
                 
-                LOGEXIT(1, "ModelLoader::mapSubsystem");
+                LOGEXIT(1, "ModelLoader::mapConfiguration");
             }
             
             
@@ -428,7 +427,6 @@ namespace tuscany
                     string src = component->getName() + "/" + refName;
 
                     // Get the reference value
-                    //Utils::printDO(refs[i], 0);
                     //TODO this works but probably not the correct way to get
                     // the simple content value of an element...
                     string refValue = refs[i]->getCString("value");
@@ -517,6 +515,8 @@ namespace tuscany
                 DataObjectList& props = componentType->getList("property");
                 for (int i=0; i<props.size(); i++)
                 {
+                    // cout << "Property " << props[i];
+                    
                     string name = props[i]->getCString("name");
                     string type = props[i]->getCString("type");
                     bool many=false;
