@@ -862,7 +862,7 @@ namespace sdo{
                          bool many, bool rdonly, bool cont) 
     {
         // do not add duplicate properties
-        if (!getPropertyImpl(propname))
+        if (!getPropertyImplPure(propname))
         {   
             props.insert(props.end(),new PropertyImpl(*this, 
                 propname, t, many,rdonly, cont));
