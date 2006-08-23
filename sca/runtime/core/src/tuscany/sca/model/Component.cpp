@@ -211,7 +211,22 @@ namespace tuscany
                     false,
                     true);
 
-                // Set the default
+                // Set the default for a dataType
+                try
+                {
+                    const Type& propType = factory->getType(typeUri.c_str(), typeName.c_str());
+                    if (propType.isDataType())
+                    {
+                        factory->setDefault("org/osoa/sca", "Properties",
+                            name.c_str(),
+                            (char*)defaultValue->getCString(""));
+                    }
+                }
+                catch (SDOTypeNotFoundException&)
+                {
+                    // cout << "setting default failed" <<endl;
+                }
+
                 
             }
             

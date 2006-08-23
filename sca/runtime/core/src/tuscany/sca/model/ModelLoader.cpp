@@ -380,7 +380,7 @@ namespace tuscany
                 try 
                 {
                     XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
-                    if (componentTypeFile->getRootDataObject() == 0)
+                    if (!componentTypeFile || componentTypeFile->getRootDataObject() == 0)
                     {
                         LOGERROR_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
                     }
