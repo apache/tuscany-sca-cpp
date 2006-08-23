@@ -36,13 +36,13 @@
 		<implementation.cpp library="warehouse" header="WarehouseImpl.h"/>
 		<reference name="manufacturer">manufacturer</reference>
 		<reference name="logging">logging</reference>
-		<property name="warehouseID" source="/warehouseID"/>
+		<property name="warehouseID" source="$warehouseID"/>
 	</component>
 	
 	<component name="WarehouseCallbackProcess">
 		<implementation.cpp library="warehouse" header="WarehouseCallbackImpl.h"/>
 		<reference name="logging">logging</reference>
-		<property name="warehouseID" source="/warehouseID"/>
+		<property name="warehouseID" source="$warehouseID"/>
 	</component>
 	
 	<reference name="manufacturer">
