@@ -32,6 +32,7 @@ using std::string;
 #include "commonj/sdo/SDO.h"
 using commonj::sdo::DataObjectPtr;
 using commonj::sdo::DataFactoryPtr;
+using commonj::sdo::DataObjectList;
 
 namespace tuscany
 {
@@ -127,7 +128,7 @@ namespace tuscany
                 void addProperty(const string& name,
                     const string& type,
                     bool many,
-                    const char* defaultValue = 0);
+                    DataObjectPtr defaultValue);
     
                 /**
                  * Add the property values to the properties defined on this 
@@ -135,7 +136,7 @@ namespace tuscany
                  * @param properties A data object representing all the values set
                  * for this component.
                  */
-                void addProperties(DataObjectPtr properties);
+                void setProperty(const string& name, DataObjectPtr value);
 
                 /**
                  * Returns a data object from which all the properties and their

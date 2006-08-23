@@ -25,7 +25,8 @@
 #include "tuscany/sca/model/Component.h"
 
 using namespace commonj::sdo;
-
+#include <iostream>
+using namespace std;
 namespace tuscany
 {
     namespace sca
@@ -89,7 +90,7 @@ namespace tuscany
             void Component::addProperty(const string& name,
                 const string& type,
                 bool many,
-                const char* defaultValue)
+                DataObjectPtr defaultValue)
             {
                 // Create a Type in the Properties dataFactory
                 DataFactoryPtr factory = getPropertyDataFactory();
@@ -234,64 +235,46 @@ namespace tuscany
                 return properties;
             }
             
-            void Component::addProperties(DataObjectPtr values)
+            void Component::setProperty(const string& name, DataObjectPtr value)
             {
-                if (!values)
-                {
-                    return;
-                }
-
+                //cout << "setting property: " << name.c_str() << " to: " << value <<endl;
                 DataObjectPtr props = getProperties();
 
-                PropertyList pl = values->getInstanceProperties();
-                for (int i=0; i < pl.size(); i++)
+                // Get the property's type
+                try
                 {
-                    if (!values->isSet(i))
+                    const Property& propProperty = props->getProperty(name);
+                    const Type& propType = propProperty.getType();
+                    if (propType.isDataType())
                     {
-                        continue;
-                    }
-
-                    // Add the property value to the component to be resolved later
-                    string propName = pl[i].getName();
-
-                    // Get the property's type
-                    try
-                    {
-                        const Property& propProperty = props->getProperty(pl[i].getName());
-                        const Type& propType = propProperty.getType();
- 
-                        DataObjectList& proplist = values->getList(pl[i]);
-                        for (int proplistI=0; proplistI<proplist.size(); proplistI++)
+                        if (propProperty.isMany())
                         {
-                            // Get the property value
-                            string propValue = proplist.getDataObject(proplistI)->getSequence()->getCStringValue(0);
-                            if (propType.isDataType())
-                            {
-                                if (propProperty.isMany())
-                                {
-                                    DataObjectList& dol = props->getList(propProperty);
-                                    dol.append(propValue.c_str());
-                                }
-                                else
-                                {
-                                    props->setCString(propProperty, propValue.c_str());
-                                }
-                            }
-                            else
-                            {
-                                // Create a new instance of the DO
-                                // iterate over properties setting each one
-                            }
+                            DataObjectList& dol = props->getList(propProperty);
+                            dol.append(value->getCString(""));
+                        }
+                        else
+                        {
+                            props->setCString(propProperty, value->getCString(""));
                         }
                     }
-                    catch (SDOPropertyNotFoundException&)
+                    else
                     {
-                        // Configuration error: property is not defined
-                        string message = "Undefined property: " + propName;
-                        throw SystemConfigurationException(message.c_str());
+                        // Create a new instance of the DO
+                        // iterate over properties setting each one
+
+                        // for now:
+                        props->setDataObject(propProperty, value);
                     }
-                    
                 }
+                catch (SDOPropertyNotFoundException&)
+                {
+                    // Configuration error: property is not defined
+                    string message = "Undefined property: " + name;
+                    throw SystemConfigurationException(message.c_str());
+                }
+
+                //cout << "properties set: " << props << endl;
+
             }
 
         } // End namespace model

@@ -382,7 +382,7 @@ namespace tuscany
                     XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
                     if (componentTypeFile->getRootDataObject() == 0)
                     {
-                        LOGERROR_1(0, "ModelLoader::mapComposite: Unable to load file: %s", typeFileName.c_str());
+                        LOGERROR_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
                     }
                     else
                     {                                            
@@ -394,7 +394,8 @@ namespace tuscany
                     }
                 } catch (SDORuntimeException& ex) 
                 {
-                    LOGERROR_1(0, "ModelLoader::mapComposite: Exception caught: %s", ex.getMessageText());
+                    LOGERROR_2(0, "ModelLoader::addComponent (%s): Exception caught: %s",
+                        typeFileName.c_str(), ex.getMessageText());
                     throw SystemConfigurationException(ex.getMessageText());
                 }    
 
@@ -402,10 +403,14 @@ namespace tuscany
                 // ----------
                 // Properties
                 // ----------
+                DataObjectList& props = componentDO->getList("property");
+                for (int pi=0; pi<props.size(); pi++)
+                {
+                    string propName = props[pi]->getCString("name");
+                    DataObjectPtr propValue = props[pi]->getDataObject("value");
 
-                //TODO handle new property declaration style
-                //DataObjectPtr props = componentDO->getDataObject("properties");
-                //component->addProperties(props);
+                    component->setProperty(propName, propValue);
+                }
                 
                 // ----------
                 // References
@@ -525,9 +530,9 @@ namespace tuscany
                     
                     //TODO need to add support for complex properties, need the SDO
                     // folks to shed some light on how to do this...
-                    const char* defaultValue = 0;
+                    DataObjectPtr defaultValue;
                     if (props[i]->isSet("value")) {
-                        defaultValue = props[i]->getCString("value");
+                        defaultValue = props[i]->getDataObject("value");
                     }
 
                     component->addProperty(name, type, many, defaultValue);
@@ -813,6 +818,7 @@ namespace tuscany
                     }
                 }
                 
+                //cout << myXSDHelper->getDataFactory();
                 
                 return myXSDHelper;
             }
