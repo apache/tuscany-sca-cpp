@@ -30,7 +30,7 @@
 		<implementation.cpp library="manufacturer" header="ManufacturerImpl.h"/>
 		<reference name="callback">callback</reference>
 		<reference name="logging">logging</reference>
-		<property name="manufacturerID" source="/manufacturerID"/>
+		<property name="manufacturerID" source="$manufacturerID"/>
 	</component>
 
 	<reference name="logging">
