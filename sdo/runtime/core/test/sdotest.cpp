@@ -2876,6 +2876,58 @@ int sdotest::maintest()
     }
 }
 
+int sdotest::jira490()
+{
+
+   FILE *f;
+
+   f = fopen("jira490.dat", "w+");
+   if (f == 0)
+   {
+      if (!silent) cout << "Failed to open jira490.dat" << endl;
+   }
+
+   fprintf(f,"Test Program starting to create types ...\n");
+
+   DataFactoryPtr mdg  = DataFactory::getDataFactory();
+
+   mdg->addType("myspace","Employee");
+  
+   const Type& ts = mdg->getType("commonj.sdo","String");
+   const Type& te = mdg->getType("myspace","Employee");
+
+   mdg->addPropertyToType(te,"name",ts);
+   mdg->addPropertyToType(te,"officeNumber",ts);
+
+   fprintf(f, "\nBefore Resolution\n\n");
+   printDataStructure(f, mdg);
+
+   /* Now create some objects in the dg */
+
+   DataObjectPtr dor = mdg->create((Type&) te);
+
+   fprintf(f, "\nAfter Resolution\n\n");
+   printDataStructure(f, mdg);
+
+   dor->setCString("name", "Mr A Trader");
+   dor->setCString("officeNumber", "123");
+
+   const char* chnam = dor->getCString("name");
+   fprintf(f, "%s\n", chnam);
+
+   const char* offnum = dor->getCString("officeNumber");
+   fprintf(f, "%s\n", offnum);
+
+   char c = dor->getByte("officeNumber");
+   fprintf(f, "%d\n", c);
+   fprintf(f, "%c\n", c);
+
+   fclose(f);
+
+   return comparefiles("jira490.dat", "jira490.txt");
+
+}
+
 int sdotest::getproptest()
 {
     // should be able to get a property by xpath...

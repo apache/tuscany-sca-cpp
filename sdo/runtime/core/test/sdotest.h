@@ -169,6 +169,7 @@ class sdotest {
         static int testGetters(DataObjectPtr dor);
         static int testGetter(DataObjectPtr dor, char* str);
         static int maintest();
+        static int jira490();
         
         static int b48602();
         static int b48736();

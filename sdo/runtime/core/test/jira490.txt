@@ -1,0 +1,53 @@
+Test Program starting to create types ...
+
+Before Resolution
+
+Printing Types
+Type BigDecimal
+Type BigInteger
+Type Boolean
+Type Byte
+Type Bytes
+Type ChangeSummary
+Type Character
+Type DataObject
+Type Date
+Type Double
+Type Float
+Type Integer
+Type Long
+Type OpenDataObject
+Type Short
+Type String
+Type URI
+Type Employee
+Has Property name of type String
+Has Property officeNumber of type String
+
+After Resolution
+
+Printing Types
+Type BigDecimal
+Type BigInteger
+Type Boolean
+Type Byte
+Type Bytes
+Type ChangeSummary
+Type Character
+Type DataObject
+Type Date
+Type Double
+Type Float
+Type Integer
+Type Long
+Type OpenDataObject
+Type Short
+Type String
+Type URI
+Type Employee
+Has Property name of type String
+Has Property officeNumber of type String
+Mr A Trader
+123
+123
+{

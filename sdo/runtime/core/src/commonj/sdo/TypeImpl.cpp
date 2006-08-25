@@ -2859,7 +2859,24 @@ namespace sdo{
         case UriType:
             {
              if (value == 0) return 0;
-             return (char)*(wchar_t*)value;
+              // Assume the string is a number eg "123" and attempt to convert it.
+
+#if defined(WIN32) || defined(_WINDOWS)
+              return (char) _wtoi((wchar_t*) value);
+#else
+              char* tmpstr = new char[len + 1];
+              short s = 0;
+              wchar_t* srcptr = (wchar_t*) value;
+
+              for (int j = 0; j < len; j++)
+              {
+                 tmpstr[j] = (char) srcptr[j];
+              }
+              tmpstr[len] = 0;
+              s = (char) atoi(tmpstr);
+              delete tmpstr;
+              return (char) s;
+#endif
             }
 
         case BytesType:
