@@ -2392,6 +2392,7 @@ namespace sdo{
                                         unsigned int max) const
   {
     unsigned int i;
+    outval.erase();
     switch (typeEnum) 
       {
       case BytesType:
@@ -2419,7 +2420,7 @@ namespace sdo{
           // into one byte of the target array eg H_E_L_P -> HELP
           for (i = 0; (i < count); i++)
             {
-              outval[i] = (char)(tempPtr[i]);
+              outval += (char)(tempPtr[i]);
             }
           return count;
         }
@@ -2445,7 +2446,7 @@ namespace sdo{
           if (value == 0) return 0;
 
           const long tmp = *(const long*)value;
-          outval[0] = (char)(tmp&0xFF);
+          outval += (char)(tmp&0xFF);
           return 1;
         }
 

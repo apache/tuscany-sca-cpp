@@ -21,6 +21,7 @@
 #define XPATH_HELPER_H
 
 #include "commonj/sdo/export.h"
+#include "commonj/sdo/SDOString.h"
 
 namespace commonj{
 namespace sdo{
@@ -43,6 +44,7 @@ class XpathHelper
      */
 
     static SDO_API const bool isIndexed(const char * path);
+    static SDO_API const bool isIndexed(const SDOString& path);
  
 };
 };

@@ -118,6 +118,7 @@ public:
 
     virtual  void insert (unsigned int index, const char* d) ;
     virtual  void append (const char* d) ;
+    virtual  void append (const SDOString& d) ;
 
     virtual  void insert (unsigned int index, short d) ;
     virtual  void append (short d) ;

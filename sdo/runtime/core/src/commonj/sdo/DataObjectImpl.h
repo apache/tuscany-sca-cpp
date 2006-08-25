@@ -230,103 +230,130 @@ class DataObjectImpl : public DataObject
     virtual bool getBoolean(const SDOString& path);
     virtual bool getBoolean(unsigned int propindex);
     virtual bool getBoolean(const Property& p);
-    
+
     virtual void setBoolean(const char* path, bool b);
+    virtual void setBoolean(const SDOString& path, bool b);
     virtual void setBoolean(unsigned int propindex, bool b);
     virtual void setBoolean(const Property& p, bool b);
 
     virtual char getByte(const char* path);
+    virtual char getByte(const SDOString& path);
     virtual char getByte(unsigned int propindex);
     virtual char getByte(const Property& p);
     
     virtual void setByte(const char* path, char c);
+    virtual void setByte(const SDOString& path, char c);
     virtual void setByte(unsigned int propindex, char c);
     virtual void setByte(const Property& p, char c);
 
     virtual wchar_t getCharacter(const char* path);
+    virtual wchar_t getCharacter(const SDOString& path);
     virtual wchar_t getCharacter(unsigned int propindex);
     virtual wchar_t getCharacter(const Property& p);
-    
+
     virtual void setCharacter(const char* path, wchar_t c);
+    virtual void setCharacter(const SDOString& path, wchar_t c);
     virtual void setCharacter(unsigned int propindex, wchar_t c);
     virtual void setCharacter(const Property& p, wchar_t c);
 
+    virtual unsigned int getLength(const SDOString& path) ;
     virtual unsigned int getLength(const char* path) ;
     virtual unsigned int getLength(unsigned int propindex) ;
     virtual unsigned int getLength(const Property& p) ;
     virtual unsigned int getLength() ;
 
     virtual unsigned int getBytes(const char* path, char* buf, unsigned int max) ;
+    virtual unsigned int getBytes(const SDOString& path, char* buf, unsigned int max) ;
     virtual unsigned int getBytes(unsigned int propindex, char* buf, unsigned int max) ;
     virtual unsigned int getBytes(const Property& p, char* buf, unsigned int max) ;
-    
+
     virtual void setBytes(const char* path, const char* c, unsigned int len) ;
+    virtual void setBytes(const SDOString& path, const char* c, unsigned int len) ;
     virtual void setBytes(unsigned int propindex, const char* c,unsigned int len) ;
     virtual void setBytes(const Property& p, const char* c,unsigned int len) ;
 
+    virtual unsigned int getString(const SDOString& path, wchar_t* buf, unsigned int max);
     virtual unsigned int getString(const char* path, wchar_t* buf, unsigned int max) ;
     virtual unsigned int getString(unsigned int propindex,wchar_t* buf, unsigned int max) ;
     virtual unsigned int getString(const Property& p,wchar_t* buf, unsigned int max) ;
     
+    virtual void setString(const SDOString& path, const wchar_t* c,unsigned int len);
     virtual void setString(const char* path, const wchar_t* c,unsigned int len) ;
     virtual void setString(unsigned int propindex, const wchar_t* c,unsigned int len) ;
     virtual void setString(const Property& p, const wchar_t* c,unsigned int len) ;
 
+    virtual const SDODate getDate(const SDOString& path);
     virtual const SDODate getDate(const char* path);
     virtual const SDODate getDate(unsigned int propindex);
     virtual const SDODate getDate(const Property& p);
-    
+
+    virtual void setDate(const SDOString& path, const SDODate d);
     virtual void setDate(const char* path, const SDODate d);
     virtual void setDate(unsigned int propindex, const SDODate d);
     virtual void setDate(const Property& p, const SDODate d);
 
+    virtual long double getDouble(const SDOString& path);
     virtual long double getDouble(const char* path);
     virtual long double getDouble(unsigned int propindex);
     virtual long double getDouble(const Property& p);
     
+    virtual void setDouble(const SDOString& path, long double d);
     virtual void setDouble(const char* path, long double d);
     virtual void setDouble(unsigned int propindex, long double d);
     virtual void setDouble(const Property& p, long double d);
 
+    virtual float getFloat(const SDOString& path);
     virtual float getFloat(const char* path);
     virtual float getFloat(unsigned int propindex);
     virtual float getFloat(const Property& p);
-    
+
+    virtual void setFloat(const SDOString& path, float f);
     virtual void setFloat(const char* path, float f);
     virtual void setFloat(unsigned int propindex, float f);
     virtual void setFloat(const Property& p, float f);
 
+    virtual long getInteger(const SDOString& path);
     virtual long getInteger(const char* path);
     virtual long getInteger(unsigned int propindex);
     virtual long getInteger(const Property& p);
     
+    virtual void setInteger(const SDOString& path, long i);
     virtual void setInteger(const char* path, long i);
     virtual void setInteger(unsigned int propindex, long i);
     virtual void setInteger(const Property& p, long i);
 
+    virtual /*long long*/ int64_t getLong(const SDOString& path);
     virtual /*long long*/ int64_t getLong(const char* path);
     virtual /*long long*/ int64_t getLong(unsigned int propindex);
     virtual /*long long*/ int64_t getLong(const Property& p);
-    
+
+    virtual void setLong(const SDOString& path, /*long long*/ int64_t l);
     virtual void setLong(const char* path, /*long long*/ int64_t l);
     virtual void setLong(unsigned int propindex, /*long long*/ int64_t l);
     virtual void setLong(const Property& p, /*long long*/ int64_t l);
 
+    virtual short getShort(const SDOString& path);
     virtual short getShort(const char* path);
     virtual short getShort(unsigned int propindex);
     virtual short getShort(const Property& p);
-    
+
+    virtual void setShort(const SDOString& path, short s);
     virtual void setShort(const char* path, short s);
     virtual void setShort(unsigned int propindex, short s);
     virtual void setShort(const Property& p, short s);
 
-     virtual const char* getCString(const char* path);
+    virtual const char* getCString(const char* path);
+    virtual const char* getCString(const SDOString& path);
     virtual const char* getCString(unsigned int propertyIndex);
     virtual const char* getCString(const Property& prop);
     
     virtual void setCString(const char* path, const char* value);
     virtual void setCString(unsigned int propertyIndex, const char* value);
     virtual void setCString (const Property& prop, const char* value);
+
+    virtual void setCString(const SDOString& path, const SDOString& value);
+    virtual void setCString(unsigned int propertyIndex, const SDOString& value);
+    virtual void setCString (const Property& prop, const SDOString& value);
     
     /**  setNull sets a data object value to null.
      *
@@ -337,23 +364,28 @@ class DataObjectImpl : public DataObject
      * been set to zero, or it could be null. Use isNull() to verify.
         */
 
+    virtual void setNull(const SDOString& path);
     virtual void setNull(const char* path);
     virtual void setNull(unsigned int propertyIndex);
     virtual void setNull(const Property& prop);
     
+    virtual bool isNull(const SDOString& path);
     virtual bool isNull(const char* path);
     virtual bool isNull(unsigned int propertyIndex);
     virtual bool isNull(const Property& prop);
     
     virtual bool isSet(const char* path);
+    virtual bool isSet(const SDOString& path);
     virtual bool isSet(unsigned int propertyIndex);
     virtual bool isSet(const Property& property);
 
+    virtual bool isValid(const SDOString& path);
     virtual bool isValid(const char* path);
     virtual bool isValid(unsigned int propertyIndex);
     virtual bool isValid(const Property& property);
 
     virtual void unset(const char* path);
+    virtual void unset(const SDOString& path);
     virtual void unset(unsigned int propertyIndex);
     virtual void unset(const Property& property);
 
@@ -371,6 +403,7 @@ class DataObjectImpl : public DataObject
     virtual SequenceImpl* getSequenceImpl();
     virtual SequencePtr getSequence();
     virtual SequencePtr getSequence(const char* path);
+    virtual SequencePtr getSequence(const SDOString& path);
     virtual SequencePtr getSequence(unsigned int propertyIndex);
     virtual SequencePtr getSequence(const Property& property);
 
@@ -390,6 +423,7 @@ class DataObjectImpl : public DataObject
      */
     
     virtual DataObjectPtr createDataObject(const char* propertyName);
+    virtual DataObjectPtr createDataObject(const SDOString& propertyName);
     virtual DataObjectPtr createDataObject(unsigned int propertyIndex);
     virtual DataObjectPtr createDataObject(const Property& property);
 
@@ -421,6 +455,7 @@ class DataObjectImpl : public DataObject
      */
 
     virtual DataObjectList& getList(const char* path);
+    virtual DataObjectList& getList(const SDOString& path);
     virtual DataObjectList& getList(unsigned int propIndex);
     virtual DataObjectList& getList(const Property& p);
     virtual DataObjectList& getList();
@@ -442,6 +477,7 @@ class DataObjectImpl : public DataObject
      */
 
     virtual SDO_API ChangeSummaryPtr getChangeSummary(const char* path);
+    virtual SDO_API ChangeSummaryPtr getChangeSummary(const SDOString& path);
     virtual SDO_API ChangeSummaryPtr getChangeSummary(unsigned int propIndex);
     virtual SDO_API ChangeSummaryPtr getChangeSummary(const Property& prop);
       virtual SDO_API ChangeSummaryPtr getChangeSummary();
@@ -471,6 +507,7 @@ class DataObjectImpl : public DataObject
     virtual void setDate(const SDODate d);
     virtual const char*  getCString();
     virtual void setCString(const char* s);
+    virtual void setCString(const SDOString& s);
     virtual DataObjectImpl* getDataObject();
     virtual void setDataObject(DataObject* d);
 
@@ -493,10 +530,12 @@ class DataObjectImpl : public DataObject
     
     // user data support
     virtual void setUserData(const char* path,void* value);
+    virtual void setUserData(const SDOString& path, void* value);
     virtual void setUserData(unsigned int propertyIndex, void* value);
     virtual void setUserData(const Property& property, void* value);
     virtual void setUserData(void* value);
     virtual void* getUserData(const char* path);
+    virtual void* getUserData(const SDOString& path);
     virtual void* getUserData(unsigned int propertyIndex);
     virtual void* getUserData(const Property& property);
     virtual void* getUserData();
@@ -536,17 +575,29 @@ class DataObjectImpl : public DataObject
                  const Type& t);
 
     virtual const PropertyImpl* defineBoolean(const char* propname);
+    virtual const PropertyImpl* defineBoolean(const SDOString& propname);
     virtual const PropertyImpl* defineByte(const char* propname);
+    virtual const PropertyImpl* defineByte(const SDOString& propname);
     virtual const PropertyImpl* defineCharacter(const char* propname);
+    virtual const PropertyImpl* defineCharacter(const SDOString& propname);
     virtual const PropertyImpl* defineString(const char* propname);
+    virtual const PropertyImpl* defineString(const SDOString& propname);
     virtual const PropertyImpl* defineBytes(const char* propname);
+    virtual const PropertyImpl* defineBytes(const SDOString& propname);
     virtual const PropertyImpl* defineShort(const char* propname);
+    virtual const PropertyImpl* defineShort(const SDOString& propname);
     virtual const PropertyImpl* defineInteger(const char* propname);
+    virtual const PropertyImpl* defineInteger(const SDOString& propname);
     virtual const PropertyImpl* defineLong(const char* propname);
+    virtual const PropertyImpl* defineLong(const SDOString& propname);
     virtual const PropertyImpl* defineFloat(const char* propname);
+    virtual const PropertyImpl* defineFloat(const SDOString& propname);
     virtual const PropertyImpl* defineDouble(const char* propname);
+    virtual const PropertyImpl* defineDouble(const SDOString& propname);
     virtual const PropertyImpl* defineDate(const char* propname);
+    virtual const PropertyImpl* defineDate(const SDOString& propname);
     virtual const PropertyImpl* defineCString(const char* propname);
+    virtual const PropertyImpl* defineCString(const SDOString& propname);
     virtual const PropertyImpl* defineDataObject(const char* propname,
         const Type&t );
     virtual const PropertyImpl* defineDataObject(const SDOString& propname,

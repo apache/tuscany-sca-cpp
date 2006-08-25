@@ -202,8 +202,9 @@ class DataObject : public RefCountingObject
     virtual SDO_API bool getBoolean(const SDOString& path) = 0;
     virtual SDO_API bool getBoolean(unsigned int propindex) = 0;
     virtual SDO_API bool getBoolean(const Property& p) = 0;
-    
+
     virtual SDO_API void setBoolean(const char* path, bool b) = 0;
+    virtual SDO_API void setBoolean(const SDOString& path, bool b) = 0;
     virtual SDO_API void setBoolean(unsigned int propindex, bool b) = 0;
     virtual SDO_API void setBoolean(const Property& p, bool b) = 0;
 
@@ -214,10 +215,12 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API char getByte(const char* path) = 0;
+    virtual SDO_API char getByte(const SDOString& path) = 0;
     virtual SDO_API char getByte(unsigned int propindex) = 0;
     virtual SDO_API char getByte(const Property& p) = 0;
     
     virtual SDO_API void setByte(const char* path, char c) = 0;
+    virtual SDO_API void setByte(const SDOString& path, char c) = 0;
     virtual SDO_API void setByte(unsigned int propindex, char c) = 0;
     virtual SDO_API void setByte(const Property& p, char c) = 0;
 
@@ -228,10 +231,12 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API wchar_t getCharacter(const char* path) = 0;
+    virtual SDO_API wchar_t getCharacter(const SDOString& path) = 0;
     virtual SDO_API wchar_t getCharacter(unsigned int propindex) = 0;
     virtual SDO_API wchar_t getCharacter(const Property& p) = 0;
-    
+
     virtual SDO_API void setCharacter(const char* path, wchar_t c) = 0;
+    virtual SDO_API void setCharacter(const SDOString& path, wchar_t c) = 0;
     virtual SDO_API void setCharacter(unsigned int propindex, wchar_t c) = 0;
     virtual SDO_API void setCharacter(const Property& p, wchar_t c) = 0;
 
@@ -245,6 +250,7 @@ class DataObject : public RefCountingObject
      * reallen = do->getBytes("name",buf,len);
      */
     virtual SDO_API unsigned int getLength(const char* path) = 0;
+    virtual SDO_API unsigned int getLength(const SDOString& path) = 0;
     virtual SDO_API unsigned int getLength(unsigned int propindex) = 0;
     virtual SDO_API unsigned int getLength(const Property& p) = 0;
     virtual SDO_API unsigned int getLength() = 0;
@@ -266,10 +272,12 @@ class DataObject : public RefCountingObject
     
 
     virtual SDO_API unsigned int getBytes(const char* path, char* buf, unsigned int max) = 0;
+    virtual SDO_API unsigned int getBytes(const SDOString& path, char* buf, unsigned int max) = 0;
     virtual SDO_API unsigned int getBytes(unsigned int propindex, char* buf, unsigned int max) = 0;
     virtual SDO_API unsigned int getBytes(const Property& p, char* buf, unsigned int max) = 0;
-    
+
     virtual SDO_API void setBytes(const char* path, const char* c, unsigned int length) = 0;
+    virtual SDO_API void setBytes(const SDOString& path, const char* c, unsigned int length) = 0;
     virtual SDO_API void setBytes(unsigned int propindex, const char* c, unsigned int length) = 0;
     virtual SDO_API void setBytes(const Property& p, const char* c, unsigned int length) = 0;
 
@@ -285,11 +293,13 @@ class DataObject : public RefCountingObject
      * length of the array, then only a portion of the array is returned.
      */
 
+    virtual SDO_API unsigned int getString(const SDOString& path , wchar_t* c, unsigned int max) = 0;
     virtual SDO_API unsigned int getString(const char* path , wchar_t* c, unsigned int max) = 0;
     virtual SDO_API unsigned int getString(unsigned int propindex, wchar_t* c, unsigned int max) = 0;
     virtual SDO_API unsigned int getString(const Property& p, wchar_t* c, unsigned int max) = 0;
     
     virtual SDO_API void setString(const char* path, const wchar_t* c, unsigned int length) = 0;
+    virtual SDO_API void setString(const SDOString& path, const wchar_t* c, unsigned int length) = 0;
     virtual SDO_API void setString(unsigned int propindex, const wchar_t* c, unsigned int length) = 0;
     virtual SDO_API void setString(const Property& p, const wchar_t* c, unsigned int length) = 0;
 
@@ -299,10 +309,12 @@ class DataObject : public RefCountingObject
      * reachable from it, as identified by the specified path.
      */
     virtual SDO_API const SDODate getDate(const char* path) = 0;
+    virtual SDO_API const SDODate getDate(const SDOString& path) = 0;
     virtual SDO_API const SDODate getDate(unsigned int propindex) = 0;
     virtual SDO_API const SDODate getDate(const Property& p) = 0;
     
     virtual SDO_API void setDate(const char* path, const SDODate d) = 0;
+    virtual SDO_API void setDate(const SDOString& path, const SDODate d) = 0;
     virtual SDO_API void setDate(unsigned int propindex, const SDODate d) = 0;
     virtual SDO_API void setDate(const Property& p, const SDODate d) = 0;
 
@@ -312,10 +324,12 @@ class DataObject : public RefCountingObject
      * reachable from it, as identified by the specified path.
      */
 
+    virtual SDO_API long double getDouble(const SDOString& path) = 0;
     virtual SDO_API long double getDouble(const char* path) = 0;
     virtual SDO_API long double getDouble(unsigned int propindex) = 0;
     virtual SDO_API long double getDouble(const Property& p) = 0;
     
+    virtual SDO_API void setDouble(const SDOString& path, long double d) = 0;
     virtual SDO_API void setDouble(const char* path, long double d) = 0;
     virtual SDO_API void setDouble(unsigned int propindex, long double d) = 0;
     virtual SDO_API void setDouble(const Property& p, long double d) = 0;
@@ -326,10 +340,12 @@ class DataObject : public RefCountingObject
      * reachable from it, as identified by the specified path.
      */
 
+    virtual SDO_API float getFloat(const SDOString& path) = 0;
     virtual SDO_API float getFloat(const char* path) = 0;
     virtual SDO_API float getFloat(unsigned int propindex) = 0;
     virtual SDO_API float getFloat(const Property& p) = 0;
     
+    virtual SDO_API void setFloat(const SDOString& path, float f) = 0;
     virtual SDO_API void setFloat(const char* path, float f) = 0;
     virtual SDO_API void setFloat(unsigned int propindex, float f) = 0;
     virtual SDO_API void setFloat(const Property& p, float f) = 0;
@@ -340,10 +356,12 @@ class DataObject : public RefCountingObject
      * reachable from it, as identified by the specified path.
      */
 
+    virtual SDO_API long getInteger(const SDOString& path) = 0;
     virtual SDO_API long getInteger(const char* path) = 0;
     virtual SDO_API long getInteger(unsigned int propindex) = 0;
     virtual SDO_API long getInteger(const Property& p) = 0;
     
+    virtual SDO_API void setInteger(const SDOString& path, long i) = 0;
     virtual SDO_API void setInteger(const char* path, long i) = 0;
     virtual SDO_API void setInteger(unsigned int propindex, long i) = 0;
     virtual SDO_API void setInteger(const Property& p, long i) = 0;
@@ -354,10 +372,12 @@ class DataObject : public RefCountingObject
      * reachable from it, as identified by the specified path.
      */
 
+    virtual SDO_API int64_t getLong(const SDOString& path) = 0;
     virtual SDO_API int64_t getLong(const char* path) = 0;
     virtual SDO_API int64_t getLong(unsigned int propindex) = 0;
     virtual SDO_API int64_t getLong(const Property& p) = 0;
-    
+
+    virtual SDO_API void setLong(const SDOString& path, int64_t l) = 0;
     virtual SDO_API void setLong(const char* path, int64_t l) = 0;
     virtual SDO_API void setLong(unsigned int propindex, int64_t l) = 0;
     virtual SDO_API void setLong(const Property& p, int64_t l) = 0;
@@ -368,10 +388,12 @@ class DataObject : public RefCountingObject
      * reachable from it, as identified by the specified path.
      */
 
+    virtual SDO_API short getShort(const SDOString& path) = 0;
     virtual SDO_API short getShort(const char* path) = 0;
     virtual SDO_API short getShort(unsigned int propindex) = 0;
     virtual SDO_API short getShort(const Property& p) = 0;
     
+    virtual SDO_API void setShort(const SDOString& path, short s) = 0;
     virtual SDO_API void setShort(const char* path, short s) = 0;
     virtual SDO_API void setShort(unsigned int propindex, short s) = 0;
     virtual SDO_API void setShort(const Property& p, short s) = 0;
@@ -384,12 +406,17 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API const char* getCString(const char* path) = 0;
+    virtual SDO_API const char* getCString(const SDOString& path) = 0;
     virtual SDO_API const char* getCString(unsigned int propertyIndex) = 0;
     virtual SDO_API const char* getCString(const Property& prop) = 0;
     
     virtual SDO_API void setCString(const char* path, const char* value) = 0;
     virtual SDO_API void setCString(unsigned int propertyIndex, const char* value) = 0;
     virtual SDO_API void setCString (const Property& prop, const char* value) = 0;
+
+    virtual SDO_API void setCString(const SDOString& path, const SDOString& value) = 0;
+    virtual SDO_API void setCString(unsigned int propertyIndex, const SDOString& value) = 0;
+    virtual SDO_API void setCString (const Property& prop, const SDOString& value) = 0;
     
 
     /**  setNull sets a data object value to null.
@@ -402,10 +429,12 @@ class DataObject : public RefCountingObject
         */
 
     virtual SDO_API void setNull(const char* path) = 0;
+    virtual SDO_API void setNull(const SDOString& path) = 0;
     virtual SDO_API void setNull(unsigned int propertyIndex) = 0;
     virtual SDO_API void setNull(const Property& prop) = 0;
     
     virtual SDO_API bool isNull(const char* path) = 0;
+    virtual SDO_API bool isNull(const SDOString& path) = 0;
     virtual SDO_API bool isNull(unsigned int propertyIndex) = 0;
     virtual SDO_API bool isNull(const Property& prop) = 0;
 
@@ -417,6 +446,7 @@ class DataObject : public RefCountingObject
      */
     
     virtual SDO_API bool isSet(const char* path) = 0;
+    virtual SDO_API bool isSet(const SDOString& path) = 0;
     virtual SDO_API bool isSet(unsigned int propertyIndex) = 0;
     virtual SDO_API bool isSet(const Property& property) = 0;
 
@@ -429,6 +459,7 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API bool isValid(const char* path) = 0;
+    virtual SDO_API bool isValid(const SDOString& path) = 0;
     virtual SDO_API bool isValid(unsigned int propertyIndex) = 0;
     virtual SDO_API bool isValid(const Property& property ) =0;
     
@@ -439,6 +470,7 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API void unset(const char* path) = 0;
+    virtual SDO_API void unset(const SDOString& path) = 0;
     virtual SDO_API void unset(unsigned int propertyIndex) = 0;
     virtual SDO_API void unset(const Property& property) = 0;
 
@@ -450,10 +482,12 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API void setUserData(const char* path,void* value) = 0;
+    virtual SDO_API void setUserData(const SDOString& path, void* value) = 0;
     virtual SDO_API void setUserData(unsigned int propertyIndex, void* value) = 0;
     virtual SDO_API void setUserData(const Property& property, void* value) = 0;
     virtual SDO_API void setUserData(void* value) = 0;
     virtual SDO_API void* getUserData(const char* path) = 0;
+    virtual SDO_API void* getUserData(const SDOString& path) = 0;
     virtual SDO_API void* getUserData(unsigned int propertyIndex) = 0;
     virtual SDO_API void* getUserData(const Property& property) = 0;
     virtual SDO_API void* getUserData() = 0;
@@ -467,6 +501,7 @@ class DataObject : public RefCountingObject
 
     virtual SDO_API SequencePtr getSequence() = 0;
     virtual SDO_API SequencePtr getSequence(const char* path) = 0;
+    virtual SDO_API SequencePtr getSequence(const SDOString& path) = 0;
     virtual SDO_API SequencePtr getSequence(unsigned int propertyIndex) = 0;
     virtual SDO_API SequencePtr getSequence(const Property& property) = 0;
 
@@ -482,7 +517,9 @@ class DataObject : public RefCountingObject
      * list, otherwise it sets the value, removing any old value.
      */
 
+
     virtual SDO_API DataObjectPtr createDataObject(const char* propertyName) = 0;
+    virtual SDO_API DataObjectPtr createDataObject(const SDOString& propertyName) = 0;
     virtual SDO_API DataObjectPtr createDataObject(unsigned int propertyIndex) = 0;
     virtual SDO_API DataObjectPtr createDataObject(const Property& property) = 0;
 
@@ -515,6 +552,7 @@ class DataObject : public RefCountingObject
      */
 
     virtual SDO_API DataObjectList& getList(const char* path) = 0;
+    virtual SDO_API DataObjectList& getList(const SDOString& path) = 0;
     virtual SDO_API DataObjectList& getList(unsigned int propIndex) = 0;
     virtual SDO_API DataObjectList& getList(const Property& p) = 0;
     virtual DataObjectList& getList() = 0;
@@ -531,6 +569,7 @@ class DataObject : public RefCountingObject
 
     virtual SDO_SPI ChangeSummaryPtr getChangeSummary() = 0;
     virtual SDO_SPI ChangeSummaryPtr getChangeSummary(const char* path) = 0;
+    virtual SDO_SPI ChangeSummaryPtr getChangeSummary(const SDOString& path) = 0;
     virtual SDO_SPI ChangeSummaryPtr getChangeSummary(unsigned int propIndex) = 0;
     virtual SDO_SPI ChangeSummaryPtr getChangeSummary(const Property& prop) = 0;
 

@@ -38,10 +38,45 @@ namespace sdo{
 
 const bool XpathHelper::isIndexed(const char* path)
 {
-    const char * c = strrchr(path,'/');
-    if (c == 0)c = path;
-    if (strchr(c,'[')) return true;
-    if (strchr(c,'.')) return true;
+   if (path == 0)
+   {
+      return false;
+   }
+   else
+   {
+      return isIndexed(SDOString(path));
+   }
+}
+
+const bool XpathHelper::isIndexed(const SDOString& path)
+{
+    size_t lastSlash = path.rfind('/');
+
+    if (lastSlash == string::npos)
+    {
+       // Search from start of path
+       if (path.find('[') != string::npos)
+       {
+          return true;
+       }
+       if (path.find('.') != string::npos)
+       {
+          return true;
+       }
+    }
+    else
+    {
+       // Search from lastSlash
+       if (path.find('[', lastSlash) != string::npos)
+       {
+          return true;
+       }
+       if (path.find('.', lastSlash) != string::npos)
+       {
+          return true;
+       }
+    }
+
     return false;
 }
 

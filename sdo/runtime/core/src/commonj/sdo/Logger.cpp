@@ -62,7 +62,7 @@ namespace commonj
         int Logger::setLogging()
         {
             char*  loggingVar = 0;
-            loggingVar = getenv("SDO4CPP_LOGGING");
+            loggingVar = getenv("TUSCANY_SDOCPP_LOGGING");
             if (loggingVar == 0)
                 return 0;
             else

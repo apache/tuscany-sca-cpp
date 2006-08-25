@@ -34,6 +34,11 @@ namespace commonj
         {
         }
         
+        DASValue::DASValue(const SDOString& val)
+            : value(val)
+        {
+        }
+        
         DASValue::~DASValue()
         {
 

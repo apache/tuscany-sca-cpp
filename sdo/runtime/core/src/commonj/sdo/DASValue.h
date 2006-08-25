@@ -22,6 +22,7 @@
 
 
 #include "commonj/sdo/export.h"
+#include "commonj/sdo/SDOString.h"
 #include "string"
 
 
@@ -39,11 +40,12 @@ namespace commonj
         public:
             SDO_API DASValue();
             SDO_API DASValue(const char* value);
+            SDO_API DASValue(const SDOString& value);
             SDO_API virtual ~DASValue();
             SDO_API const char* getValue() const;
 
         private:
-            std::string value;
+          SDOString value;
         
         };
         

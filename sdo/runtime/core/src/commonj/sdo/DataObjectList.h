@@ -138,6 +138,7 @@ public:
 
     virtual SDO_API void insert (unsigned int index, const char* d) = 0;
     virtual SDO_API void append (const char* d) = 0;
+    virtual SDO_API void append (const SDOString& d) = 0;
 
     virtual SDO_API void insert (unsigned int index, short d) = 0;
     virtual SDO_API void append (short d) = 0;
