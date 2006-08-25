@@ -54,6 +54,7 @@ namespace commonj
         SDO_API SDOString() : string() {}
         SDO_API virtual ~SDOString() {}
 
+        static SDO_API const SDOString SDONullString;
 
         // User defined conversion so that the compiler will automatically convert SDOString to const char *
 

@@ -46,5 +46,8 @@ namespace commonj
 
       return SDOString(result_string);
     }
+
+     const SDOString SDOString::SDONullString = SDOString();
+
   } // End - namespace sdo
 } // End - namespace commonj
