@@ -49,12 +49,12 @@ namespace tuscany
             }
             
             // TODO: This only handle CPP implementation for now
-            if (impl->getImplementationType() == Implementation::CPP)
+            if (impl->getImplementationType() == "cpp")
             {
                 // ----------------------------------------------------
                 // Get implementation dll name and service factory name
                 // ----------------------------------------------------
-                string dllName = ((CPPImplementation*)impl)->getDll();
+                string dllName = ((CPPImplementation*)impl)->getLibrary();
                 string headerStub = ((CPPImplementation*)impl)->getHeaderStub();
 
                 string fullDllName = component->getComposite()->getRoot() + "/" + dllName;

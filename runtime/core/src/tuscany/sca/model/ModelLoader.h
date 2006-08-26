@@ -31,6 +31,7 @@ using commonj::sdo::XSDHelperPtr;
 
 #include "tuscany/sca/util/File.h"
 
+#include "tuscany/sca/core/SCARuntime.h"
 namespace tuscany
 {
     namespace sca
@@ -61,6 +62,7 @@ namespace tuscany
                 void load(const string& configurationRoot);
                 
             private:
+                SCARuntime* runtime;
                 System* system;
                 void loadComposite(const char *compositeRoot);
                 
@@ -95,7 +97,6 @@ namespace tuscany
     
                 Interface* getInterface(DataObjectPtr obj);
 
-            
             };
         } // End namespace model
     } // End namespace sca
