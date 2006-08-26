@@ -29,6 +29,9 @@ using osoa::sca::ComponentContext;
 #include "tuscany/sca/model/System.h"
 using namespace tuscany::sca::model;
 
+#include "tuscany/sca/extension/ImplementationExtension.h"
+#include "tuscany/sca/util/Library.h"
+
 #if defined(WIN32)  || defined (_WINDOWS)
 #include <windows.h>
 #else
@@ -38,6 +41,7 @@ using namespace tuscany::sca::model;
 #include <stack>
 #include <string>
 #include <map>
+#include <list>
 using namespace std;
 
 namespace tuscany
@@ -61,6 +65,14 @@ namespace tuscany
              */
             SCA_API static void releaseInstance();
           
+            /**
+             * Load the SCA configuration from the scdl files (sca.composite, 
+             * *.fragment, etc).
+             * This will create the runtime model from which the SCA runtime
+             * will operate.
+             */
+            SCA_API void load();
+
             /**
              * Set the system root
              * @param root The path to the deployed system.
@@ -93,18 +105,18 @@ namespace tuscany
              * the System.
              * @return The configured SCA system.
              */
-            System* getSystem();
+            SCA_API System* getSystem();
 
             /**
              * The directory in which the Tuscany runtime has been installed.
              */
-            const string& getInstallRoot() {return SCARoot;}
+            SCA_API const string& getInstallRoot() {return SCARoot;}
 
             /**
              * Return the current component for this thread.
              * @return The current component for this thread.
              */
-            Component* getCurrentComponent();
+            SCA_API Component* getCurrentComponent();
 
             /**
              * Get the current composite. The current composite will either
@@ -113,7 +125,11 @@ namespace tuscany
              * component. There will not be a current component if a client of
              * the SCA runtime is making a call into the SCA runtime.
              */
-            Composite* getCurrentComposite();
+            SCA_API Composite* getCurrentComposite();
+
+            SCA_API void registerImplementationExtension(ImplementationExtension& extension);
+
+            SCA_API ImplementationExtension* getImplementationExtension(const string& typeQname);
 
         private:
             /**
@@ -122,17 +138,6 @@ namespace tuscany
             SCARuntime();            
 
             virtual ~SCARuntime();            
-
-            /**
-             * Load the SCA configuration from the scdl files (sca.composite, 
-             * *.fragment, etc).
-             * This will create the runtime model from which the SCA runtime
-             * will operate.
-             * @param configurationRoot The path to the configuration of the 
-             * SCA runtime. Under this root will be the configuration and packages
-             * directories.
-             */
-            void load(const string& configurationRoot);
 
             /**
              * The single instance of this class.
@@ -182,6 +187,18 @@ namespace tuscany
              * A map of threads to components.
              */
             COMPONENTS_MAP components;
+ 
+            typedef map<string, ImplementationExtension*> IMPLEMENTATIONS_MAP;
+
+            IMPLEMENTATIONS_MAP implementationExtensions;
+
+            // Runtime Extensions
+            void loadExtensions();
+            void loadImplementationExtensions();
+
+            typedef list<Library> EXTENSIONS_LIST;
+            EXTENSIONS_LIST extensionsList;
+
         };
 
         

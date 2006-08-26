@@ -77,7 +77,7 @@ namespace tuscany
         // Constructor for the SCARuntime class. This will be a singleton that
         // holds all the information about the current runtime.
         // ===================================================================
-        SCARuntime::SCARuntime() : system(new System()), defaultComposite(0)
+        SCARuntime::SCARuntime() : system(0), defaultComposite(0)
         { 
             LOGENTRY(1, "SCARuntime::constructor");
             
@@ -95,6 +95,10 @@ namespace tuscany
                 SCARoot = root;
             }
             
+            // load extensions
+            loadExtensions();
+            loadImplementationExtensions();
+
             LOGEXIT(1, "SCARuntime::constructor");
         }
 
@@ -140,8 +144,6 @@ namespace tuscany
 
                     systemRoot = systemRootEnv;
                 }
-
-                instance->load(systemRoot);
             }
             
             LOGEXIT(1, "SCARuntime::getInstance");
@@ -172,17 +174,94 @@ namespace tuscany
         // ======================================
         // Load up all the details of the runtime
         // ======================================
-        void SCARuntime::load(const string& configurationRoot)
+        void SCARuntime::load()
         {
             LOGENTRY(1, "SCARuntime::load");
             
-            LOGINFO_1(2,"configuration root: %s", configurationRoot.c_str());
+            LOGINFO_1(2,"configuration root: %s", systemRoot.c_str());
             
             ModelLoader loader(system);
             // Load details of the composite
-            loader.load(configurationRoot);
+            loader.load(systemRoot);
             
             LOGEXIT(1, "SCARuntime::load");
+        }
+        
+        
+        // ======================================
+        // Load up extensions to the runtime
+        // ======================================
+        void SCARuntime::loadExtensions()
+        {
+            LOGENTRY(1, "SCARuntime::loadExtensions");
+
+            string extensionsRoot = SCARoot + "/extensions";
+
+#if defined(WIN32)  || defined (_WINDOWS)
+            string pattern = "*.dll";
+#else
+            string pattern = "*.so";
+#endif
+
+            Files files(extensionsRoot, pattern, false);
+            for (unsigned int i=0; i < files.size(); i++)
+            {
+                try
+                {
+                    extensionsList.push_back(Library(files[i].getFileName()));                    
+                }
+                catch (ServiceRuntimeException &)
+                {
+                    LOGERROR_1(0, "SCARuntime::loadExtensions failed to load extension library: %s", files[i].getFileName().c_str());
+                }
+            }
+            
+            LOGEXIT(1, "SCARuntime::loadExtensions");
+        }
+
+        // ======================================
+        // Find implemenation extension handlers 
+        // ======================================
+        void SCARuntime::loadImplementationExtensions()
+        {
+            LOGENTRY(1, "SCARuntime::loadImplementationExtensions");
+
+            
+            for (EXTENSIONS_LIST::iterator iter = extensionsList.begin();
+                 iter != extensionsList.end();
+                 iter++)
+            {
+                TUSCANY_IMPLEMENTATION_EXTENSION_FACTORY impl = 
+                    (TUSCANY_IMPLEMENTATION_EXTENSION_FACTORY)iter->getSymbol("tuscany_sca_extension_getImplementation");
+                if (impl)
+                {
+                    ImplementationExtension* extension = impl();
+                    if (extension)
+                    {
+                        registerImplementationExtension(*extension);
+                    }
+                }
+            }
+            
+            LOGEXIT(1, "SCARuntime::loadImplementationExtensions");
+        }
+        
+        // ======================================
+        // register an implementationExtension 
+        // ======================================
+        void SCARuntime::registerImplementationExtension(ImplementationExtension& extension)
+        {
+            LOGENTRY(1, "SCARuntime::registerImplementationExtension");
+            implementationExtensions[extension.getImplementationTypeQName()] = &extension;          
+            LOGEXIT(1, "SCARuntime::registerImplementationExtension");
+        }
+        
+        // ======================================
+        // find an implementationExtension 
+        // ======================================
+        ImplementationExtension* SCARuntime::getImplementationExtension(const string& extensionTypeQName)
+        {
+            return implementationExtensions[extensionTypeQName];
         }
         
         
@@ -191,6 +270,11 @@ namespace tuscany
         // ===================================
         System* SCARuntime::getSystem()
         {
+            if (!system)
+            {
+                system = new System();
+                load();
+            }
             return system;
         }
 
@@ -315,7 +399,7 @@ namespace tuscany
                 // ---------------------------
                 // Subsystem must be specified
                 // ---------------------------
-                Subsystem* subsystem = system->findSubsystem(subsystemName);
+                Subsystem* subsystem = getSystem()->findSubsystem(subsystemName);
                 if (!subsystem)
                 {
                     message = "Default subsystem \'" + subsystemName + "\' not found";
