@@ -45,7 +45,7 @@ namespace tuscany
             ModelLoader::ModelLoader(System* system) : system(system)
             {
                 LOGENTRY(1, "ModelLoader::constructor");
-                
+                runtime = SCARuntime::getInstance();
                 
                 LOGEXIT(1, "ModelLoader::constructor");
             }
@@ -65,7 +65,7 @@ namespace tuscany
             void ModelLoader::load(const string& configurationRoot)
             {
                 LOGENTRY(1, "ModelLoader::load");
-                LOGINFO_1(2,"system root: %s", configurationRoot.c_str());
+                LOGINFO_1(2,"configuration root: %s", configurationRoot.c_str());
                 
                 // The configuration root path will point to a directory structure.
                 
@@ -354,50 +354,64 @@ namespace tuscany
                     throw SystemConfigurationException(message.c_str());
                 }
 
-                // Determine the type
-                string componentTypeName;
-                string componentTypePath;
-                string implType = impl->getType().getName();
-                if (implType == "CPPImplementation")
+                string implTypeQname = impl->getType().getURI();
+                implTypeQname += "#";
+                implTypeQname += impl->getType().getName();
+
+                // Locate extension that handles this implementation type
+                ImplementationExtension* implExtension = runtime->getImplementationExtension(implTypeQname);
+                if (implExtension)
                 {
-                    string library = impl->getCString("library");
-                    string header = impl->getCString("header");
-                    string className = impl->getCString("class");
-                    CPPImplementation* cppImpl = new CPPImplementation(library, header, className);
-                    componentTypePath = cppImpl->getHeaderPath();
-                    componentTypeName = cppImpl->getHeaderStub();
-                    component->setImplementation(cppImpl);
-                    
+                    implExtension->loadModelElement(impl, component);
                 }
-                else if (implType == "JavaImplementation")
+                else
                 {
+                    // This logic will move to the CPP extension
+                    
+                    // Determine the type
+                    string implType = impl->getType().getName();
+                    if (implType == "CPPImplementation")
+                    {
+                        string library = impl->getCString("library");
+                        string header = impl->getCString("header");
+                        string className = impl->getCString("class");
+                        CPPImplementation* cppImpl = new CPPImplementation(library, header, className);
+                        component->setImplementation(cppImpl);
+                        
+                    }
                 }
                 
                 // -----------------------
                 // Load the .componentType
                 // -----------------------
-                string typeFileName = composite->getRoot() + "/" + componentTypePath + componentTypeName + ".componentType";
-                try 
+                Implementation* theImpl = component->getImplementation();
+                if (theImpl)
                 {
-                    XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
-                    if (!componentTypeFile || componentTypeFile->getRootDataObject() == 0)
+                    string componentTypeFileName = theImpl->getComponentTypeFileName();
+                    if (componentTypeFileName != "")
                     {
-                        LOGERROR_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
+                        string typeFileName = composite->getRoot() + "/" + componentTypeFileName + ".componentType";
+                        try 
+                        {
+                            XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
+                            if (!componentTypeFile || componentTypeFile->getRootDataObject() == 0)
+                            {
+                                LOGERROR_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
+                            }
+                            else
+                            {                                            
+                                addServices(component, componentTypeFile->getRootDataObject());
+                                addReferences(component, componentTypeFile->getRootDataObject());
+                                addProperties(component, componentTypeFile->getRootDataObject());
+                            }
+                        } catch (SDORuntimeException& ex) 
+                        {
+                            LOGERROR_2(0, "ModelLoader::addComponent (%s): Exception caught: %s",
+                                typeFileName.c_str(), ex.getMessageText());
+                            throw SystemConfigurationException(ex.getMessageText());
+                        }
                     }
-                    else
-                    {                                            
-                        //Utils::printDO(componentTypeFile->getRootDataObject());
-                        //commonj::sdo::SDOUtils::printDataObject(componentTypeFile->getRootDataObject());
-                        addServices(component, componentTypeFile->getRootDataObject());
-                        addReferences(component, componentTypeFile->getRootDataObject());
-                        addProperties(component, componentTypeFile->getRootDataObject());
-                    }
-                } catch (SDORuntimeException& ex) 
-                {
-                    LOGERROR_2(0, "ModelLoader::addComponent (%s): Exception caught: %s",
-                        typeFileName.c_str(), ex.getMessageText());
-                    throw SystemConfigurationException(ex.getMessageText());
-                }    
+                }
 
                 
                 // ----------

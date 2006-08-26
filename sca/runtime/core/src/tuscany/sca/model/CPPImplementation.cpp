@@ -30,8 +30,8 @@ namespace tuscany
         {
 
             // Constructor
-            CPPImplementation::CPPImplementation(const string& dllName, const string& head, const string& classN)
-                : dll(dllName), header(head), className(classN)
+            CPPImplementation::CPPImplementation(const string& libraryName, const string& head, const string& classN)
+                : library(libraryName), header(head), className(classN)
             {
              	// Separate any path element
             	Utils::rTokeniseString("/", head, headerPath, headerStub);

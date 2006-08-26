@@ -22,6 +22,7 @@
 
 #include <string>
 
+
 namespace tuscany
 {
     namespace sca
@@ -33,19 +34,11 @@ namespace tuscany
              * of a component. The subtypes will hold information specific to 
              * the type of implementation.
              */ 
-            class Implementation 
+            class SCA_API Implementation 
             {
                 
             public:
-                /**
-                 * Supported types of implementation.
-                 */
-                enum Type
-                {
-                    CPP,
-                    JAVA
-                };
-                
+                 
                 Implementation();  
                 virtual ~Implementation();
                                 
@@ -53,8 +46,8 @@ namespace tuscany
                  * Return the type of the implementation.
                  * @return Will depend on the subtype.
                  */
-                virtual Type getImplementationType() = 0;
-                
+                virtual const std::string getImplementationType() = 0;
+                virtual std::string getComponentTypeFileName() {return "";}
             private:
             };
             

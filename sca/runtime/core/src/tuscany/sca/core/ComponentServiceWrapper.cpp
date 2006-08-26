@@ -151,12 +151,12 @@ namespace tuscany
             }
             
             // TODO: This only handle CPP implementation for now
-            if (impl->getImplementationType() == Implementation::CPP)
+            if (impl->getImplementationType() == "cpp")
             {
                 // ----------------------------------------------------
                 // Get implementation dll name and wrapper factory name
                 // ----------------------------------------------------
-                string dllName = ((CPPImplementation*)impl)->getDll();
+                string dllName = ((CPPImplementation*)impl)->getLibrary();
                 string wrapperFactoryName = ((CPPImplementation*)impl)->getHeaderStub() 
                     + "_" + service->getName() + "_Wrapper_Factory";
                 

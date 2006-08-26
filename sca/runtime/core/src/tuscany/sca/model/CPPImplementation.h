@@ -58,13 +58,14 @@ namespace tuscany
                  * Return the implementation type.
                  * @return Always returns CPP.
                  */
-                virtual Type getImplementationType() {return CPP;}
+                virtual const std::string getImplementationType() {return "cpp";}
 
+                virtual std::string getComponentTypeFileName() {return getHeaderPath() + getHeaderStub();}   
                 /**
                  * Returns the name of the shared library.
                  * @return The name of the shared library.
                  */
-                const string& getDll() {return dll;}
+                const string& getLibrary() {return library;}
 
                 /**
                  * Get the name of the header file.
@@ -93,7 +94,7 @@ namespace tuscany
                 /**
                  * Name of the shared library.
                  */
-                string dll;
+                string library;
 
                 /**
                  * Name of the header file describing the interface.
