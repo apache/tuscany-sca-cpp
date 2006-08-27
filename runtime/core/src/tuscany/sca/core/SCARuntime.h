@@ -194,7 +194,6 @@ namespace tuscany
 
             // Runtime Extensions
             void loadExtensions();
-            void loadImplementationExtensions();
 
             typedef list<Library> EXTENSIONS_LIST;
             EXTENSIONS_LIST extensionsList;
@@ -205,6 +204,7 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
+typedef void* (* TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE) ();
 
 
 

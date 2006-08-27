@@ -97,7 +97,6 @@ namespace tuscany
             
             // load extensions
             loadExtensions();
-            loadImplementationExtensions();
 
             LOGEXIT(1, "SCARuntime::constructor");
         }
@@ -208,7 +207,14 @@ namespace tuscany
             {
                 try
                 {
-                    extensionsList.push_back(Library(files[i].getFileName()));                    
+                    Library lib = Library(files[i].getFileName());
+                    extensionsList.push_back(lib);                    
+                    TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE extension = 
+                        (TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE)lib.getSymbol("tuscany_sca_extension_initialize");
+                    if (extension)
+                    {
+                        extension();
+                    }
                 }
                 catch (ServiceRuntimeException &)
                 {
@@ -219,33 +225,7 @@ namespace tuscany
             LOGEXIT(1, "SCARuntime::loadExtensions");
         }
 
-        // ======================================
-        // Find implemenation extension handlers 
-        // ======================================
-        void SCARuntime::loadImplementationExtensions()
-        {
-            LOGENTRY(1, "SCARuntime::loadImplementationExtensions");
-
-            
-            for (EXTENSIONS_LIST::iterator iter = extensionsList.begin();
-                 iter != extensionsList.end();
-                 iter++)
-            {
-                TUSCANY_IMPLEMENTATION_EXTENSION_FACTORY impl = 
-                    (TUSCANY_IMPLEMENTATION_EXTENSION_FACTORY)iter->getSymbol("tuscany_sca_extension_getImplementation");
-                if (impl)
-                {
-                    ImplementationExtension* extension = impl();
-                    if (extension)
-                    {
-                        registerImplementationExtension(*extension);
-                    }
-                }
-            }
-            
-            LOGEXIT(1, "SCARuntime::loadImplementationExtensions");
-        }
-        
+      
         // ======================================
         // register an implementationExtension 
         // ======================================
