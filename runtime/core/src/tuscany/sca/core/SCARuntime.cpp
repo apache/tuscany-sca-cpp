@@ -207,7 +207,7 @@ namespace tuscany
             {
                 try
                 {
-                    Library lib = Library(files[i].getFileName());
+                    Library lib = Library(extensionsRoot + "/" + files[i].getFileName());
                     extensionsList.push_back(lib);                    
                     TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE extension = 
                         (TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE)lib.getSymbol("tuscany_sca_extension_initialize");
