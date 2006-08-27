@@ -94,10 +94,7 @@ namespace tuscany
             {
                 SCARoot = root;
             }
-            
-            // load extensions
-            loadExtensions();
-
+ 
             LOGEXIT(1, "SCARuntime::constructor");
         }
 
@@ -127,6 +124,9 @@ namespace tuscany
             if (instance == NULL) 
             {
                 instance = new SCARuntime();
+                
+                // load extensions
+                instance->loadExtensions();
 
                 if (systemRoot == "")
                 {
@@ -229,10 +229,13 @@ namespace tuscany
         // ======================================
         // register an implementationExtension 
         // ======================================
-        void SCARuntime::registerImplementationExtension(ImplementationExtension& extension)
+        void SCARuntime::registerImplementationExtension(ImplementationExtension* extension)
         {
             LOGENTRY(1, "SCARuntime::registerImplementationExtension");
-            implementationExtensions[extension.getImplementationTypeQName()] = &extension;          
+            if (extension)
+            {
+                implementationExtensions[extension->getImplementationTypeQName()] = extension;          
+            }
             LOGEXIT(1, "SCARuntime::registerImplementationExtension");
         }
         

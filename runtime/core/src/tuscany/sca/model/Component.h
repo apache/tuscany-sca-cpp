@@ -54,31 +54,31 @@ namespace tuscany
                  * @param name The name of the component.
                  * @param composite The composite containing this component.
                  */
-                Component(const std::string& name, Composite* composite);
+                SCA_API Component(const std::string& name, Composite* composite);
 
                 /**
                  * Destructor.
                  */
-                virtual ~Component();
+                SCA_API virtual ~Component();
 
                 /**
                  * Returns the name of the component.
                  * @return The name of the component.
                  */
-                const string& getName() {return name;}
+                SCA_API const string& getName() {return name;}
 
                 /** 
                  * Get the composite containing this component.
                  * @return The containing composite.
                  */
-                Composite* getComposite() {return containingComposite;}
+                SCA_API Composite* getComposite() {return containingComposite;}
 
                 /**
                  * Add a new service to this component.
                  * @param serviceName The name of the service to add.
                  * @return The newly added service.
                  */
-                Service* addService(const std::string& serviceName);
+                SCA_API Service* addService(const std::string& serviceName);
 
                 /**
                  * Find an existing service on this component.
@@ -87,33 +87,33 @@ namespace tuscany
                  * only one service it will be returned.
                  * @return The found service, or 0 if not found.
                  */
-                Service* findService(const std::string& serviceName);
+                SCA_API Service* findService(const std::string& serviceName);
 
                 /**
                  * Add a new reference to this component.
                  * @param referenceName The name of the reference to add.
                  * @return The newly added reference.
                  */
-                ServiceReference* addReference(const std::string& referenceName);
+                SCA_API ServiceReference* addReference(const std::string& referenceName);
 
                 /**
                  * Find an existing reference on this component.
                  * @param referenceName The name of the reference to find.
                  * @return The found reference, or 0 if not found.
                  */
-                ServiceReference* findReference(const std::string& referenceName);
+                SCA_API ServiceReference* findReference(const std::string& referenceName);
 
                 /**
                  * Set the details of the implementation of this component.
                  * @param impl The details of the implementation.
                  */
-                void setImplementation(Implementation* impl);
+                SCA_API void setImplementation(Implementation* impl);
 
                 /**
                  * Returns the details of the implementation of this component.
                  * @return The details of the implementation.
                  */
-                Implementation* getImplementation() {return implementation;}
+                SCA_API Implementation* getImplementation() {return implementation;}
 
                 /**
                  * Add a new property to this component. Properties are 
@@ -125,7 +125,7 @@ namespace tuscany
                  * @param defaultValue The default value if the property does not have a
                  * value set.
                  */
-                void addProperty(const string& name,
+                SCA_API void addProperty(const string& name,
                     const string& type,
                     bool many,
                     DataObjectPtr defaultValue);
@@ -136,14 +136,14 @@ namespace tuscany
                  * @param properties A data object representing all the values set
                  * for this component.
                  */
-                void setProperty(const string& name, DataObjectPtr value);
+                SCA_API void setProperty(const string& name, DataObjectPtr value);
 
                 /**
                  * Returns a data object from which all the properties and their
                  * values can be accessed.
                  * @return A data object holding the property values.
                  */
-                DataObjectPtr getProperties();
+                SCA_API DataObjectPtr getProperties();
             private:
                 /**
                  * Name of the component.
