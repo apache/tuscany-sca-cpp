@@ -60,7 +60,7 @@ namespace tuscany
 
             virtual void loadModelElement(commonj::sdo::DataObjectPtr scdlImplementation, model::Component* component) = 0;
 
-            virtual ServiceWrapper* getServiceWrapper(model::Service* service) = 0;
+            //virtual ServiceWrapper* getServiceWrapper(model::Service* service) = 0;
          };
 
         

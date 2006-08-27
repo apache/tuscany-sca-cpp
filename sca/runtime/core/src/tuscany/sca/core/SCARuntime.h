@@ -127,7 +127,7 @@ namespace tuscany
              */
             SCA_API Composite* getCurrentComposite();
 
-            SCA_API void registerImplementationExtension(ImplementationExtension& extension);
+            SCA_API void registerImplementationExtension(ImplementationExtension* extension);
 
             SCA_API ImplementationExtension* getImplementationExtension(const string& typeQname);
 
@@ -204,7 +204,7 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-typedef void* (* TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE) ();
+typedef void (* TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE) ();
 
 
 

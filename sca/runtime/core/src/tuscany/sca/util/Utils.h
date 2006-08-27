@@ -32,7 +32,7 @@ namespace tuscany
         /**
          * Utility methods to parse strings and provide debugging information.
          */
-        class Utils {
+        class SCA_API Utils {
 
         public:
             static void tokeniseUri(const string& uri, string& token1, string& token2);
@@ -51,8 +51,8 @@ namespace tuscany
 
             static void breakpoint();
 
-            SCA_API static void printDO(commonj::sdo::DataObjectPtr dataObject, int increment=0);
-            SCA_API static void printTypes(commonj::sdo::DataFactoryPtr df);
+            static void printDO(commonj::sdo::DataObjectPtr dataObject, int increment=0);
+            static void printTypes(commonj::sdo::DataFactoryPtr df);
             
         private:
             static void tabs(int increment=0);
