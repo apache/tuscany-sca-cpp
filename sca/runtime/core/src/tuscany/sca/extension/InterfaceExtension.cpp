@@ -17,38 +17,30 @@
  * under the License.
  */
 
+#include "tuscany/sca/extension/InterfaceExtension.h"
 #include "tuscany/sca/util/Logging.h"
-#include "ImplementationCPP.h"
-#include "tuscany/sca/util/Utils.h"
-
 namespace tuscany
 {
     namespace sca
     {
+        // ===================================================================
+        // Constructor for the InterfaceExtension class. 
+        // ===================================================================
+        InterfaceExtension::InterfaceExtension()
+        { 
+            LOGENTRY(1, "InterfaceExtension::constructor");        
+            LOGEXIT(1, "InterfaceExtension::constructor");
+        }
 
-        namespace cpp
-        {
+        // ===================================================================
+        // Destructor for the InterfaceExtension class.
+        // ===================================================================
+        InterfaceExtension::~InterfaceExtension()
+        { 
+            LOGENTRY(1, "InterfaceExtension::destructor");;           
+            LOGEXIT(1, "InterfaceExtension::destructor");
+        }
 
-            // Constructor
-            ImplementationCPP::ImplementationCPP(const string& libraryName, const string& head, const string& classN)
-                : Implementation(), library(libraryName), header(head), className(classN)
-            {
-             	// Separate any path element
-            	Utils::rTokeniseString("/", head, headerPath, headerStub);
-            	if (headerPath != "")
-            	{
-            		headerPath += "/";
-            	}
-            	
-            	// Determine the header stub name
-            	string tmp;           	
-            	Utils::rTokeniseString(".h", headerStub, headerStub, tmp);
-            }
-
-            ImplementationCPP::~ImplementationCPP()
-            {
-            }
-        } // End namespace cpp
-
+                
     } // End namespace sca
 } // End namespace tuscany

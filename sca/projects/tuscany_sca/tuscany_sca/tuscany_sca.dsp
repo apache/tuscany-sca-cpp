@@ -495,6 +495,14 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ImplementationExtension.c
 
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ImplementationExtension.h
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\InterfaceExtension.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\InterfaceExtension.h
+# End Source File
 # End Group
 # End Group
 # Begin Group "xsd"

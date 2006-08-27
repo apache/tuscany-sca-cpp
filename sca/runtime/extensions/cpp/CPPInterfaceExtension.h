@@ -17,10 +17,10 @@
  * under the License.
  */
 
-#ifndef tuscany_sca_extension_cppimplementationextension_h
-#define tuscany_sca_extension_cppimplementationextension_h
+#ifndef tuscany_sca_extension_cppinterfaceextension_h
+#define tuscany_sca_extension_cppinterfaceextension_h
 
-#include "tuscany/sca/extension/ImplementationExtension.h"
+#include "tuscany/sca/extension/InterfaceExtension.h"
 
 namespace tuscany
 {
@@ -29,18 +29,18 @@ namespace tuscany
         namespace cpp
         {
             
-            class CPPImplementationExtension : public ImplementationExtension 
+            class CPPInterfaceExtension : public InterfaceExtension 
             {
             public:
             /**
             * Default constructor
                 */
-                CPPImplementationExtension();            
+                CPPInterfaceExtension();            
                 
                 /**
                 * Destructor
                 */
-                virtual ~CPPImplementationExtension();            
+                virtual ~CPPInterfaceExtension();            
                 
                 /**
                 * return the name of the extension
@@ -52,9 +52,9 @@ namespace tuscany
                 * (e.g. "http://www.osoa.org/xmlns/sca/1.0#implementation.cpp")
                 */
                 virtual const string& getExtensionTypeQName() {return typeQName;}
-                
-                virtual void loadModelElement(commonj::sdo::DataObjectPtr scdlImplementation, model::Component* component);
-                
+ 
+                virtual tuscany::sca::model::Interface* getInterface(commonj::sdo::DataObjectPtr scdlInterface);
+                 
             private:
                 static const string extensionName;
                 static const string typeQName;
@@ -66,5 +66,5 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_extension_cppimplementationextension_h
+#endif // tuscany_sca_extension_cppinterfaceextension_h
 

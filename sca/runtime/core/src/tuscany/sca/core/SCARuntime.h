@@ -29,6 +29,7 @@ using osoa::sca::ComponentContext;
 #include "tuscany/sca/model/System.h"
 using namespace tuscany::sca::model;
 
+#include "tuscany/sca/extension/InterfaceExtension.h"
 #include "tuscany/sca/extension/ImplementationExtension.h"
 #include "tuscany/sca/util/Library.h"
 
@@ -131,6 +132,11 @@ namespace tuscany
 
             SCA_API ImplementationExtension* getImplementationExtension(const string& typeQname);
 
+
+            SCA_API void registerInterfaceExtension(InterfaceExtension* extension);
+
+            SCA_API InterfaceExtension* getInterfaceExtension(const string& typeQname);
+
         private:
             /**
              * Default constructor is private to prevent more than one instance.
@@ -188,9 +194,11 @@ namespace tuscany
              */
             COMPONENTS_MAP components;
  
-            typedef map<string, ImplementationExtension*> IMPLEMENTATIONS_MAP;
+            typedef map<string, ImplementationExtension*> IMPLEMENTATION_EXTENSIONS_MAP;
+            IMPLEMENTATION_EXTENSIONS_MAP implementationExtensions;
 
-            IMPLEMENTATIONS_MAP implementationExtensions;
+            typedef map<string, InterfaceExtension*> INTERFACE_EXTENSIONS_MAP;
+            INTERFACE_EXTENSIONS_MAP interfaceExtensions;
 
             // Runtime Extensions
             void loadExtensions();

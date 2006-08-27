@@ -22,7 +22,6 @@
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/model/ModelLoader.h"
-#include "tuscany/sca/model/CPPImplementation.h"
 #include "tuscany/sca/model/CPPInterface.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/WSBinding.h"
@@ -366,19 +365,7 @@ namespace tuscany
                 }
                 else
                 {
-                    // This logic will move to the CPP extension
-                    
-                    // Determine the type
-                    string implType = impl->getType().getName();
-                    if (implType == "CPPImplementation")
-                    {
-                        string library = impl->getCString("library");
-                        string header = impl->getCString("header");
-                        string className = impl->getCString("class");
-                        CPPImplementation* cppImpl = new CPPImplementation(library, header, className);
-                        component->setImplementation(cppImpl);
-                        
-                    }
+                    LOGERROR_1(0, "ModelLoader::addComponent: Unsupported implementation type: %s", implTypeQname.c_str());
                 }
                 
                 // -----------------------
@@ -502,24 +489,21 @@ namespace tuscany
                     throw SystemConfigurationException(message.c_str());
                 }
                 
-                // Determine the type
-                string componentTypeName;
-                string ifType = iface->getType().getName();
-                if (ifType == "CPPInterface")
+                string typeQname = iface->getType().getURI();
+                typeQname += "#";
+                typeQname += iface->getType().getName();
+
+                // Locate extension that handles this implementation type
+                InterfaceExtension* ifaceExtension = runtime->getInterfaceExtension(typeQname);
+                if (ifaceExtension)
                 {
-                    string header = iface->getCString("header");
-                    string className = iface->getCString("class");
-                    string scope = iface->getCString("scope");
-                    bool remotable = iface->getBoolean("remotable");
-                    
-                    return new CPPInterface(header, className, scope, remotable);
+                    return ifaceExtension->getInterface(iface);
                 }
                 else
                 {
-                    //TODO add support for other interface types
-                    //string message = "Interface type not yet supported: ";
-                    //message = message + ifType;
-                    //throw SystemConfigurationException(message.c_str());
+                    // log this for now.
+                    // We currently do not handle <interface.wsdl>
+                    LOGERROR_1(1, "ModelLoader::getInterface: Unsupported interface type: %s", typeQname.c_str());
                     return 0;
                 }
             }

@@ -18,7 +18,7 @@
 */
 
 #include "CPPImplementationExtension.h"
-#include "ImplementationCPP.h"
+#include "CPPImplementation.h"
 #include "tuscany/sca/util/Logging.h"
 
 
@@ -61,9 +61,9 @@ namespace tuscany
                     string library = scdlImplementation->getCString("library");
                     string header = scdlImplementation->getCString("header");
                     string className = scdlImplementation->getCString("class");
-                    // The following works for now ONLY bacause ImplementationCPP is identical 
+                    // The following works for now ONLY bacause CPPImplementation is identical 
                     // to tusscany::sca::model::CPPIplementation
-                    ImplementationCPP* cppImpl = new ImplementationCPP(library, header, className);
+                    CPPImplementation* cppImpl = new CPPImplementation(library, header, className);
                     component->setImplementation(cppImpl);
                 }
             }

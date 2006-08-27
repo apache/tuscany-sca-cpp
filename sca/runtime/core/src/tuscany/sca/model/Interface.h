@@ -32,19 +32,10 @@ namespace tuscany
              * Information about an interface. Subtypes will hold information
              * specific to a type of interface.
              */
-            class Interface 
+            class SCA_API Interface 
             {
                 
-            public:
-                /**
-                 * The supported types of interface.
-                 */
-                enum Type
-                {
-                    CPP,
-                    JAVA
-                };
-                
+            public:                
                 Interface();  
                 virtual ~Interface();
                             
@@ -52,7 +43,7 @@ namespace tuscany
                  * Returns the type of the interface.
                  * @return Will depend on the subtype.
                  */
-                virtual Type getInterfaceType() = 0;
+                virtual const std::string getInterfaceType() = 0;
                 
             private:
             };
