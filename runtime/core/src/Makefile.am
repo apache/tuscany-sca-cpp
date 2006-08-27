@@ -93,7 +93,8 @@ tuscany/sca/core/ServiceProxy.cpp \
 tuscany/sca/core/ServiceWrapper.cpp \
 tuscany/sca/core/TuscanyRuntime.cpp \
 tuscany/sca/ws/WSServiceProxy.cpp \
-tuscany/sca/extension/ImplementationExtension.cpp
+tuscany/sca/extension/ImplementationExtension.cpp \
+tuscany/sca/extension/InterfaceExtension.cpp
 
 libtuscany_sca_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
     -L$(top_builddir)/runtime/ws_reference/axis2c/src -ltuscany_sca_ws_reference
