@@ -50,6 +50,8 @@ AC_CONFIG_FILES([Makefile
                  runtime/core/test/CustomerInfo/Makefile
                  runtime/core/test/MyValue/Makefile
                  runtime/core/test/src/Makefile
+                 runtime/extensions/Makefile
+                 runtime/extensions/cpp/Makefile
                  ])
 AC_OUTPUT
 

@@ -1,1 +1,1 @@
-SUBDIRS = ws_reference core ws_service
+SUBDIRS = ws_reference core extensions ws_service 
