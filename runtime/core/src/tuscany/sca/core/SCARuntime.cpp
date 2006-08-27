@@ -227,6 +227,27 @@ namespace tuscany
 
       
         // ======================================
+        // register an interfaceExtension 
+        // ======================================
+        void SCARuntime::registerInterfaceExtension(InterfaceExtension* extension)
+        {
+            LOGENTRY(1, "SCARuntime::registerInterfaceExtension");
+            if (extension)
+            {
+                interfaceExtensions[extension->getExtensionTypeQName()] = extension;          
+            }
+            LOGEXIT(1, "SCARuntime::registerInterfaceExtension");
+        }
+        
+        // ======================================
+        // find an InterfaceExtension 
+        // ======================================
+        InterfaceExtension* SCARuntime::getInterfaceExtension(const string& extensionTypeQName)
+        {
+            return interfaceExtensions[extensionTypeQName];
+        }
+      
+        // ======================================
         // register an implementationExtension 
         // ======================================
         void SCARuntime::registerImplementationExtension(ImplementationExtension* extension)
@@ -234,7 +255,7 @@ namespace tuscany
             LOGENTRY(1, "SCARuntime::registerImplementationExtension");
             if (extension)
             {
-                implementationExtensions[extension->getImplementationTypeQName()] = extension;          
+                implementationExtensions[extension->getExtensionTypeQName()] = extension;          
             }
             LOGEXIT(1, "SCARuntime::registerImplementationExtension");
         }

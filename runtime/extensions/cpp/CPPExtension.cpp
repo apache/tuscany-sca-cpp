@@ -21,6 +21,7 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "CPPImplementationExtension.h"
+#include "CPPInterfaceExtension.h"
 
 
 
@@ -63,6 +64,7 @@ namespace tuscany
             { 
                 LOGENTRY(1, "CPPExtension::initialize");;           
                 SCARuntime::getInstance()->registerImplementationExtension(new CPPImplementationExtension());
+                SCARuntime::getInstance()->registerInterfaceExtension(new CPPInterfaceExtension());
                 LOGEXIT(1, "CPPExtension::initialize");;           
             }
 

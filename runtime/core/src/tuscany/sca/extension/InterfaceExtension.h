@@ -17,35 +17,32 @@
  * under the License.
  */
 
-#ifndef tuscany_sca_extension_implementationextension_h
-#define tuscany_sca_extension_implementationextension_h
+#ifndef tuscany_sca_extension_interfaceextension_h
+#define tuscany_sca_extension_interfaceextension_h
 
 #include "osoa/sca/export.h"
 #include <string>
 using std::string;
 
-#include <tuscany/sca/model/Component.h>
-#include <tuscany/sca/model/Service.h>
-#include <tuscany/sca/core/ServiceWrapper.h>
-
+#include <tuscany/sca/model/Interface.h>
 #include <commonj/sdo/SDO.h>
 
 namespace tuscany
 {
     namespace sca
     {
-        class SCA_API ImplementationExtension 
+        class SCA_API InterfaceExtension 
         {
         public:
             /**
             * Default constructor
             */
-            ImplementationExtension();            
+            InterfaceExtension();            
             
             /**
             * Destructor
             */
-            virtual ~ImplementationExtension();            
+            virtual ~InterfaceExtension();            
                       
             /**
             * return the name of the extension (e.g. "cpp" "php")
@@ -53,20 +50,18 @@ namespace tuscany
             virtual const string& getExtensionName() = 0;
                       
             /**
-            * return the QName of schema elemant for this implementation extension
-            * (e.g. "http://www.osoa.org/xmlns/sca/1.0#implementation.cpp")
+            * return the QName of schema elemant for this interface extension
+            * (e.g. "http://www.osoa.org/xmlns/sca/1.0#interface.cpp")
             */
             virtual const string& getExtensionTypeQName() = 0;
 
-            virtual void loadModelElement(commonj::sdo::DataObjectPtr scdlImplementation, model::Component* component) = 0;
-
-            //virtual ServiceWrapper* getServiceWrapper(model::Service* service) = 0;
-         };
+            virtual tuscany::sca::model::Interface* getInterface(commonj::sdo::DataObjectPtr scdlInterface) = 0;
+        };
 
         
     } // End namespace sca
 } // End namespace tuscany
 
 
-#endif // tuscany_sca_extension_implementationextension_h
+#endif // tuscany_sca_extension_interfaceextension_h
 

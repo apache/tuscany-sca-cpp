@@ -17,8 +17,8 @@
  * under the License.
  */
 
-#ifndef tuscany_sca_model_ImplementationCPP_h
-#define tuscany_sca_model_ImplementationCPP_h
+#ifndef tuscany_sca_cpp_model_cppimplementation_h
+#define tuscany_sca_cpp_model_cppimplementation_h
 
 #include "tuscany/sca/model/Implementation.h"
 
@@ -34,9 +34,9 @@ namespace tuscany
         namespace cpp
         {
             /**
-             * Holds informatio about an SCA implementation written in C++
+             * Holds information about an SCA implementation written in C++
              */
-            class ImplementationCPP : public model::Implementation
+            class CPPImplementation : public model::Implementation
             {
                 
             public:        
@@ -48,12 +48,12 @@ namespace tuscany
                  * @param className Name of the class in the header file (could be a blank string
                  * if this is not specified).
                  */
-                ImplementationCPP(const string& libraryName, const string& header, const string& className);
+                CPPImplementation(const string& libraryName, const string& header, const string& className);
                 
                 /**
                  * Destructor
                  */
-                virtual ~ImplementationCPP();
+                virtual ~CPPImplementation();
                             
                 /**
                  * Return the implementation type.
@@ -124,5 +124,5 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_model_cppimplementation_h
+#endif // tuscany_sca_cpp_model_cppimplementation_h
 

@@ -106,11 +106,19 @@ SOURCE=..\..\..\runtime\extensions\cpp\CPPExtension.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\extensions\cpp\model\CPPImplementation.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\extensions\cpp\CPPImplementationExtension.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\extensions\cpp\model\ImplementationCPP.cpp
+SOURCE=..\..\..\runtime\extensions\cpp\model\CPPInterface.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\CPPInterfaceExtension.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -122,11 +130,19 @@ SOURCE=..\..\..\runtime\extensions\cpp\CPPExtension.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\extensions\cpp\model\CPPImplementation.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\extensions\cpp\CPPImplementationExtension.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\extensions\cpp\model\ImplementationCPP.h
+SOURCE=..\..\..\runtime\extensions\cpp\model\CPPInterface.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\CPPInterfaceExtension.h
 # End Source File
 # End Group
 # End Target

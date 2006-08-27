@@ -1,24 +1,24 @@
 /*
- *
- *  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *   
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 11:33:21 $ */
-
-#ifndef tuscany_sca_model_cppinterface_h
-#define tuscany_sca_model_cppinterface_h
+#ifndef tuscany_sca_cpp_model_cppinterface_h
+#define tuscany_sca_cpp_model_cppinterface_h
 
 #include "tuscany/sca/model/Interface.h"
 
@@ -32,13 +32,13 @@ namespace tuscany
 {
     namespace sca
     {
-        namespace model
+        namespace cpp
         {
             /**
              * Holds information about an interface described using a C++
              * header file.
              */
-            class CPPInterface : public Interface
+            class CPPInterface : public model::Interface
             {
                 
             public:    
@@ -67,7 +67,6 @@ namespace tuscany
                  * @return Always returns CPP.
                  */
                 virtual const std::string getInterfaceType() {return "cpp";}
-
 
                 /**
                  * Get the name of the header file.
@@ -136,9 +135,9 @@ namespace tuscany
                 bool remotable;
             };
             
-        } // End namespace model
+        } // End namespace cpp
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_model_cppinterface_h
+#endif // tuscany_sca_cpp_model_cppinterface_h
 
