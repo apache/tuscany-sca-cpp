@@ -68,7 +68,5 @@ namespace tuscany
 } // End namespace tuscany
 
 
-typedef tuscany::sca::ImplementationExtension* (* TUSCANY_IMPLEMENTATION_EXTENSION_FACTORY) ();
-
 #endif // tuscany_sca_extension_implementationextension_h
 
