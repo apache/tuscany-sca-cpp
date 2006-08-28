@@ -20,6 +20,7 @@
 #include "CPPImplementationExtension.h"
 #include "CPPImplementation.h"
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Utils.h"
 
 
 namespace tuscany
@@ -52,7 +53,7 @@ namespace tuscany
             // ===================================================================
             // loadModelElement - load the info from implementation.cpp 
             // ===================================================================
-            tuscany::sca::model::Implementation* CPPImplementationExtension::getImplementation(commonj::sdo::DataObjectPtr scdlImplementation)
+            ComponentType* CPPImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
             {
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "CPPImplementation")
@@ -60,11 +61,29 @@ namespace tuscany
                     string library = scdlImplementation->getCString("library");
                     string header = scdlImplementation->getCString("header");
                     string className = scdlImplementation->getCString("class");
-                    // The following works for now ONLY bacause CPPImplementation is identical 
-                    // to tusscany::sca::model::CPPIplementation which will be removed soon!
-                    return new CPPImplementation(library, header, className);
+
+                    string headerPath;
+                    string headerStub;
+
+                    // Separate any path element
+                    Utils::rTokeniseString("/", header, headerPath, headerStub);
+                    if (headerPath != "")
+                    {
+                        headerPath += "/";
+                    }
+                    
+                    // Determine the header stub name
+                    string tmp;             
+                    Utils::rTokeniseString(".h", headerStub, headerStub, tmp);
+                    
+                    CPPImplementation* cppImpl = new CPPImplementation(library, header, headerPath, headerStub, className);
+                    
+                    return cppImpl;
                 }
-                return 0;
+                else
+                {
+                    return NULL;
+                }
             }
 
         } // End namespace cpp

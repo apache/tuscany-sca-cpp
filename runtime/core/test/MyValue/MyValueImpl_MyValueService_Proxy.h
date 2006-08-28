@@ -22,7 +22,7 @@
 #endif 
 
 #include "MyValue.h"
-#include "tuscany/sca/core/ServiceWrapper.h"
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
 class MyValueImpl_MyValueService_Proxy : public MyValue
 {

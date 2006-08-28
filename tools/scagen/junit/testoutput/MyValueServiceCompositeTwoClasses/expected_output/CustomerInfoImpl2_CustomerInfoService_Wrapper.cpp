@@ -32,7 +32,7 @@ extern "C"
     }
 }
 
-CustomerInfoImpl2_CustomerInfoService_Wrapper::CustomerInfoImpl2_CustomerInfoService_Wrapper(Service* target) : ComponentServiceWrapper(target)
+CustomerInfoImpl2_CustomerInfoService_Wrapper::CustomerInfoImpl2_CustomerInfoService_Wrapper(Service* target) : CPPServiceWrapper(target)
 {
     impl = (CustomerInfoImpl2*)getImplementation();
 }

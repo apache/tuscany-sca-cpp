@@ -35,7 +35,7 @@ namespace tuscany
             /**
             * Default constructor
                 */
-                CPPImplementationExtension();            
+                CPPImplementationExtension();
                 
                 /**
                 * Destructor
@@ -53,7 +53,7 @@ namespace tuscany
                 */
                 virtual const string& getExtensionTypeQName() {return typeQName;}
                 
-                virtual tuscany::sca::model::Implementation* getImplementation(commonj::sdo::DataObjectPtr scdlImplementation);
+                virtual ComponentType* getImplementation(Composite* composite, DataObjectPtr scdlImplementation);
                 
             private:
                 static const string extensionName;

@@ -110,19 +110,19 @@
     <xsl:template name="include_headers">
         <!--For example,  
             #include "CustomerInfoImpl.h"
-            #include "tuscany/sca/core/ComponentServiceWrapper.h"
+            #include "tuscany/sca/cpp/CPPServiceWrapper.h"
         -->
         <xsl:param name="header"/>
         <xsl:text>#include "</xsl:text><xsl:value-of select="translate($header,'\','/')"/><xsl:text>"</xsl:text>
 <!-- newline -->
 <xsl:text>
 </xsl:text>
-        <xsl:text>#include "tuscany/sca/core/ComponentServiceWrapper.h"</xsl:text>
+        <xsl:text>#include "tuscany/sca/cpp/CPPServiceWrapper.h"</xsl:text>
     </xsl:template>
 
     <xsl:template match="scaService" mode="class_body">
         <!--For example
-            class wrapperclassname : public tuscany::sca::ComponentServiceWrapper
+            class wrapperclassname : public tuscany::sca::cpp::CPPServiceWrapper
             {
              constructor
              destructor
@@ -131,7 +131,7 @@
 
             E.g. Specifically
 
-        class CustomerInfoImpl_CustomerInfoService_Wrapper : public tuscany::sca::ComponentServiceWrapper
+        class CustomerInfoImpl_CustomerInfoService_Wrapper : public tuscany::sca::cpp::CPPServiceWrapper
         {
         public:
             CustomerInfoImpl_CustomerInfoService_Wrapper(tuscany::sca::model::Component*);
@@ -150,7 +150,7 @@
 
 class </xsl:text>
 <xsl:value-of select="$class"/>
-<xsl:text> : public tuscany::sca::ComponentServiceWrapper
+<xsl:text> : public tuscany::sca::cpp::CPPServiceWrapper
 {
 public:
     </xsl:text><xsl:value-of select="$class"/><xsl:text>(tuscany::sca::model::Service* target);</xsl:text>

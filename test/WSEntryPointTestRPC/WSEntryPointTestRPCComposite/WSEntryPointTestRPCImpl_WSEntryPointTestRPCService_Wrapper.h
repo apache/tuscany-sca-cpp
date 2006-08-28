@@ -14,23 +14,23 @@
  *  limitations under the License.
  */
 
-#ifndef WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper_h
-#define WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper_h
+#ifndef WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Wrapper_h
+#define WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Wrapper_h
 
-#include "WSCompositeServiceTypeTestRPCImpl.h"
-#include "tuscany/sca/core/ComponentServiceWrapper.h"
+#include "WSCompositeServiceTestRPCImpl.h"
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
-class WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper : public tuscany::sca::ComponentServiceWrapper
+class WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Wrapper : public tuscany::sca::cpp::CPPServiceWrapper
 {
 public:
-    WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper(tuscany::sca::model::Service* target);
-    virtual ~WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper();
+    WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Wrapper(tuscany::sca::model::Service* target);
+    virtual ~WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Wrapper();
     virtual void invokeService(tuscany::sca::Operation& operation);
     virtual void* newImplementation();
     virtual void deleteImplementation();
 private:
-    WSCompositeServiceTypeTestRPCImpl* impl;
+    WSCompositeServiceTestRPCImpl* impl;
 };
 
-#endif // WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Wrapper_h
+#endif // WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Wrapper_h
 

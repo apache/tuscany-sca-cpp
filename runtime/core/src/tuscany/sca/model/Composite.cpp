@@ -20,7 +20,13 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/Composite.h"
-
+#include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Wire.h"
+#include "tuscany/sca/model/WSDLDefinition.h"
+#include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/model/ServiceBinding.h"
+#include "tuscany/sca/model/ReferenceBinding.h"
 
 namespace tuscany
 {
@@ -31,41 +37,31 @@ namespace tuscany
         {
             
             // Constructor
-            Composite::Composite(const std::string& compositeName) 
-                : name(compositeName)
+            Composite::Composite(const string& name, const string& root) 
+                : ComponentType(name), root(root)
             {
                 LOGENTRY(1, "Composite::constructor");
                 LOGEXIT(1, "Composite::constructor");
             }
             
+            // Destructor
             Composite::~Composite()
             {
             }
             
-            void Composite::setRoot(const std::string& rootDirectory)
-            {
-                compositeRoot = rootDirectory;
-            }
-            
-            
-            ///
-            /// Add a new component to the composite component
-            ///
-            Component* Composite::addComponent(const std::string& name)
+            void Composite::addComponent(Component* component)
             {
                 LOGENTRY(1, "Composite::addComponent");
-                Component* newComponent = new Component(name, this);
-                components[name] = newComponent;
+                components[component->getName()] = component;
                 LOGEXIT(1, "Composite::addComponent");
-                return newComponent;
             }
             
             Component* Composite::findComponent(const std::string& name)
             {
                 LOGENTRY(1, "Composite::findComponent");
-                Component* foundComponent = components[name];
+                Component* component = components[name];
                 LOGEXIT(1, "Composite::findComponent");
-                return foundComponent;
+                return component;
             }
             
             Service* Composite::findComponentService(const std::string& name)
@@ -79,102 +75,75 @@ namespace tuscany
                 Utils::tokeniseUri(name, componentName, serviceName);
                 
                 // Locate the component
-                Component* foundComponent = components[componentName];
-                if (foundComponent)
+                Component* component = findComponent(componentName);
+                if (component)
                 {
                     // Locate the service
-                    service = foundComponent->findService(serviceName);
+                    service = component->findService(serviceName);
                 }
                 LOGEXIT(1, "Composite::findComponentService");
                 return service;
             }
             
-            CompositeReferenceType* Composite::findCompositeReferenceType(const std::string& name)
-            {
-                LOGENTRY(1, "Composite::findCompositeReferenceType");
-                CompositeReferenceType* foundService = externalServices[name];
-                LOGEXIT(1, "Composite::findCompositeReferenceType");
-                return foundService;
-            }
-            
-            
-            CompositeServiceType* Composite::addCompositeServiceType(const std::string& name)
-            {
-                LOGENTRY(1, "Composite::addCompositeServiceType");
-                CompositeServiceType* ep = new CompositeServiceType(name);
-                compositeServices[name] = ep;
-                LOGEXIT(1, "Composite::addCompositeServiceType");
-                return findCompositeServiceType(name);
-            }
-            
-            CompositeServiceType* Composite::findCompositeServiceType(const std::string& name)
-            {
-                return compositeServices[name];
-            }
-
-
-            CompositeReferenceType* Composite::addCompositeReferenceType(const std::string& name)
-            {
-                LOGENTRY(1, "Composite::addCompositeReferenceType");
-                CompositeReferenceType* es = new CompositeReferenceType(name, this);
-                externalServices[name] = es;
-                LOGEXIT(1, "Composite::addCompositeReferenceType");
-                return es;
-            }
-            
             void Composite::addWire(const std::string& source, const std::string& target)
             {
                 LOGENTRY(1, "Composite::addWire");
-                wires.push_back(Wire(source, target));
+                Wire* wire=new Wire(source, target);
+                wires.push_back(wire);
                 LOGEXIT(1, "Composite::addWire");
             }
             
+            void Composite::addInclude(Composite* composite)
+            {
+                LOGENTRY(1, "Composite::addInclude");
+                includes.push_back(composite);
+
+                for (COMPONENT_MAP::iterator iter = composite->components.begin();
+                iter != composite->components.end();
+                iter++)
+                {
+                    components[iter->first] = iter->second;
+                } 
+                LOGEXIT(1, "Composite::addInclude");
+            }
             
             void Composite::resolveWires()
             {
                 LOGENTRY(1, "Composite::resolveWires");
-                 for (WIRES::iterator iter = wires.begin();
+
+                for (WIRES::iterator iter = wires.begin();
                 iter != wires.end();
                 iter++)
                 {
-                    // -----------------
+                    Wire* wire = *iter;
+                    
                     // Locate the target
-                    // -----------------
-                    WireTarget* target = findComponentService(iter->getTarget());
-                    if (!target)
+                    Service* service = findComponentService(wire->getTarget());
+                    if (!service)
                     {
-                        target = findCompositeReferenceType(iter->getTarget());
-                    }
-                    if (!target)
-                    {
-                        LOGERROR_1(0, "Composite::resolveWires: Wire target %s not found", iter->getTarget().c_str());
+                        LOGERROR_1(0, "Composite::resolveWires: Wire target %s not found", wire->getTarget().c_str());
                     }
                     else
                     {
-                        CompositeServiceType* entrypoint = findCompositeServiceType(iter->getSourceComponent());
-                        if (entrypoint)
+                        Component* component = findComponent(wire->getSourceComponent());
+                        if (component)
                         {
-                            entrypoint->addTarget(target);
-                        }
-                        else
-                        {
-                            Component* component = findComponent(iter->getSourceComponent());
-                            if (component)
+                            Reference* reference = component->findReference(wire->getSourceReference());
+                            if (reference)
                             {
-                                ServiceReference* serviceReference = component->findReference(iter->getSourceReference());
-                                if (serviceReference)
-                                {
-                                    serviceReference->addTarget(target);
-                                }
-                                else
-                                {
-                                    LOGERROR_1(0, "Composite::resolveWires: Wire source reference %s not found", iter->getSourceReference().c_str());
-                                }
+                                
+                                // Configure the binding on the reference from the binding on the target
+                                // service
+                                reference->getBinding()->configure(service->getBinding());
                             }
                             else
                             {
-                                LOGERROR_1(0, "Composite::resolveWires: Wire source %s not found", iter->getSourceComponent().c_str());
+                                LOGERROR_1(0, "Composite::resolveWires: Wire source reference %s not found", wire->getSourceReference().c_str());
                             }
+                        }
+                        else
+                        {
+                            LOGERROR_1(0, "Composite::resolveWires: Wire source %s not found", wire->getSourceComponent().c_str());
                         }
                     }
                 }
@@ -182,25 +151,21 @@ namespace tuscany
                 LOGEXIT(1, "Composite::resolveWires");
             }
 
-
-            
-            void Composite::addWsdl(commonj::sdo::DataObjectPtr wsdlModel)
+            void Composite::addWSDLDefinition(commonj::sdo::DataObjectPtr wsdlModel)
             {
-                LOGENTRY(1, "Composite::addWsdl");
-                Wsdl* wsdl = new Wsdl(wsdlModel);
-                wsdls[wsdl->getNamespace()] = wsdl;
-                LOGEXIT(1, "Composite::addWsdl");
+                LOGENTRY(1, "Composite::addWSDLDefinition");
+                WSDLDefinition* wsdlDefinition = new WSDLDefinition(wsdlModel);
+                wsdlDefinitions[wsdlDefinition->getNamespace()] = wsdlDefinition;
+                LOGEXIT(1, "Composite::addWSDLDefinition");
 
             }
 
-            Wsdl* Composite::findWsdl(const std::string& wsdlNamespace )
+            WSDLDefinition* Composite::findWSDLDefinition(const std::string& wsdlNamespace )
             {
-                return wsdls[wsdlNamespace];
+                return wsdlDefinitions[wsdlNamespace];
 
             }
 
-
-            // Get an XSDHelper - one will be created for each composite
             commonj::sdo::XSDHelperPtr Composite::getXSDHelper()
             {
                 if (xsdHelper == 0)
@@ -211,7 +176,6 @@ namespace tuscany
                 return xsdHelper;
             }
 
-            // Get an XMLHelper - one will be created for each composite
             commonj::sdo::XMLHelperPtr Composite::getXMLHelper()
             {
                 if (xmlHelper == 0)
@@ -222,14 +186,11 @@ namespace tuscany
                 return xmlHelper;
             }
 
-
-            // Get a data factory - the one in the xsd/xml helper
             commonj::sdo::DataFactoryPtr Composite::getDataFactory()
             {
                 return getXSDHelper()->getDataFactory();
             }
             
         } // End namespace model
-        
     } // End namespace sca
 } // End namespace tuscany

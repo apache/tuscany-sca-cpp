@@ -34,7 +34,7 @@ extern "C"
     }
 }
 
-DivideServiceImpl_DivideService_Wrapper::DivideServiceImpl_DivideService_Wrapper(Service* target) : ComponentServiceWrapper(target)
+DivideServiceImpl_DivideService_Wrapper::DivideServiceImpl_DivideService_Wrapper(Service* target) : CPPServiceWrapper(target)
 {
     impl = (DivideServiceImpl*)getImplementation();
 }

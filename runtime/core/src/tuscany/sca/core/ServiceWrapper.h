@@ -21,15 +21,17 @@
 #define tuscany_sca_core_servicewrapper_h
 
 #include "osoa/sca/export.h"
-
 #include "tuscany/sca/core/Operation.h"
-#include "tuscany/sca/model/WireTarget.h"
-using tuscany::sca::model::WireTarget;
+#include "tuscany/sca/model/Service.h"
+
+using namespace tuscany::sca::model;
+
 
 namespace tuscany
 {
     namespace sca
     {
+        
         /**
          * An abstract class that wraps a component implementation or an external
          * service.
@@ -41,7 +43,7 @@ namespace tuscany
              * Constructor.
              * @param target The service wrapper wraps the target of a wire.
              */
-            ServiceWrapper(WireTarget* target);
+            ServiceWrapper(Service* service);
 
             /**
              * Destructor.
@@ -49,10 +51,10 @@ namespace tuscany
             virtual    ~ServiceWrapper();
 
             /** 
-             * Get the target represented by this wrapper.
-             * @return The target represented by this wrapper.
+             * Get the service represented by this wrapper.
+             * @return The service represented by this wrapper.
              */
-            virtual WireTarget* getTarget() {return target;}
+            Service* getService() const { return service; }
 
             /**
              * All business method calls on the target service are performed through
@@ -61,11 +63,13 @@ namespace tuscany
              * business method to be called on the target service.
              */
             virtual void invoke(Operation& operation) = 0;
+            
         private:
             /**
              * The target represented by this wrapper.
              */
-            WireTarget* target;
+            Service* service;
+            
         };
     } // End namespace sca
 } // End namespace tuscany

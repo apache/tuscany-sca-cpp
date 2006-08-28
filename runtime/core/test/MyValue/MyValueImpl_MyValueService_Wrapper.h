@@ -22,9 +22,9 @@
 #endif 
 
 #include "MyValueImpl.h"
-#include "tuscany/sca/core/ComponentServiceWrapper.h"
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
-class MyValueImpl_MyValueService_Wrapper : public tuscany::sca::ComponentServiceWrapper
+class MyValueImpl_MyValueService_Wrapper : public tuscany::sca::cpp::CPPServiceWrapper
 {
 public:
     MyValueImpl_MyValueService_Wrapper(tuscany::sca::model::Service* target);

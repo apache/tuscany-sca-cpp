@@ -39,7 +39,7 @@ TEST_SYSTEM=$APFULLDIR/../
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
-export TUSCANY_SCACPP_DEFAULT_COMPOSITE=CalculatorSubsystem
+export TUSCANY_SCACPP_DEFAULT_COMPONENT=CalculatorService
 
 ./calculator_client add 4.7 9
 ./calculator_client div 7.2 3.6

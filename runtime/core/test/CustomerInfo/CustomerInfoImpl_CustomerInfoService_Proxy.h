@@ -22,7 +22,7 @@
 #endif 
 
 #include "CustomerInfo.h"
-#include "tuscany/sca/core/ServiceWrapper.h"
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
 class CustomerInfoImpl_CustomerInfoService_Proxy : public CustomerInfo
 {

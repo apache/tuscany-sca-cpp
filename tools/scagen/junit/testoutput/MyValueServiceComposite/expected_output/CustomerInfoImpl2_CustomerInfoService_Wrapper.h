@@ -22,9 +22,9 @@
 #endif 
 
 #include "CustomerInfoImpl.h"
-#include "tuscany/sca/core/ComponentServiceWrapper.h"
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
-class CustomerInfoImpl2_CustomerInfoService_Wrapper : public tuscany::sca::ComponentServiceWrapper
+class CustomerInfoImpl2_CustomerInfoService_Wrapper : public tuscany::sca::cpp::CPPServiceWrapper
 {
 public:
     CustomerInfoImpl2_CustomerInfoService_Wrapper(tuscany::sca::model::Service* target);

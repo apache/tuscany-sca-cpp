@@ -98,7 +98,7 @@ using namespace tuscany::sca;
 }
 
 </xsl:text>
-<xsl:value-of select="$class"/><xsl:text>::</xsl:text><xsl:value-of select="$class"/><xsl:text>(Service* target) : ComponentServiceWrapper(target)
+<xsl:value-of select="$class"/><xsl:text>::</xsl:text><xsl:value-of select="$class"/><xsl:text>(Service* target) : CPPServiceWrapper(target)
 {
     impl = (</xsl:text><xsl:value-of select="../@implClass"/><xsl:text>*)getImplementation();
 }

@@ -18,12 +18,7 @@
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
 #include "tuscany/sca/core/ServiceWrapper.h"
-#include <stdarg.h>
-
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/core/SCARuntime.h"
-
-
 
 namespace tuscany
 {
@@ -33,8 +28,8 @@ namespace tuscany
         // ===========
         // Constructor
         // ===========
-        ServiceWrapper::ServiceWrapper(WireTarget* targ)
-            : target(targ)
+        ServiceWrapper::ServiceWrapper(Service* service)
+            : service(service)
         {
             LOGENTRY(1,"ServiceWrapper::constructor");
             

@@ -17,12 +17,15 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
-// Component.cpp : Represent a loaded Component
-//
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/model/ServiceType.h"
+#include "tuscany/sca/model/ReferenceType.h"
+#include "tuscany/sca/model/ComponentType.h"
 
 using namespace commonj::sdo;
 #include <iostream>
@@ -34,11 +37,15 @@ namespace tuscany
         namespace model
         {
            // Constructor
-            Component::Component(const std::string& componentName, Composite* composite) 
-                : name(componentName), containingComposite(composite), implementation(0)
+            Component::Component(Composite* composite, const std::string& componentName, ComponentType *componentType) 
+                : name(componentName), composite(composite), type(componentType)
             {
                 LOGENTRY(1, "Component::constructor");
                 LOGINFO_1(3, "Component::constructor: Component name: %s", name.c_str());
+                
+                // Initialize the component from its component type
+                componentType->initializeComponent(this);
+                
                 LOGEXIT(1, "Component::constructor");
             }
 
@@ -46,16 +53,14 @@ namespace tuscany
             {
             }
 
-            Service* Component::addService(const std::string& serviceName)
+            void Component::addService(Service* service)
             {
-                Service* service = new Service(serviceName, this);
-                services[serviceName] = service;
-                return service;
+                services[service->getType()->getName()] = service;
             }
             
-            Service* Component::findService(const std::string& serviceName)
+            Service* Component::findService(const string& serviceName)
             {
-                // If serviceName is null then return the ONLY service
+                // If serviceName is empty then return the ONLY service
                 if (serviceName == "" 
                     && services.size() == 1)
                 {
@@ -67,185 +72,21 @@ namespace tuscany
                 }
             }
             
-            ServiceReference* Component::findReference(const std::string& referenceName)
+            void Component::addReference(Reference* reference)
+            {
+                references[reference->getType()->getName()] = reference;
+            }
+            
+            Reference* Component::findReference(const std::string& referenceName)
             {
                 return references[referenceName];
             }
-            
-            ServiceReference* Component::addReference(const std::string& referenceName)
-            {
-                ServiceReference* serviceReference = references[referenceName];
-                if (!serviceReference)
-                {
-                    references[referenceName] = new ServiceReference(referenceName);
-                }
-                return references[referenceName];
-            }
-            
-            void Component::setImplementation(Implementation* impl)
-            {
-                implementation = impl;
-            }
-            
-            void Component::addProperty(const string& name,
-                const string& type,
-                bool many,
-                DataObjectPtr defaultValue)
-            {
-                // Create a Type in the Properties dataFactory
-                DataFactoryPtr factory = getPropertyDataFactory();
-                
-                string typeUri, typeName;
-                Utils::tokeniseQName(type, typeUri, typeName);
-                
-                if (typeUri == "http://www.w3.org/2001/XMLSchema")                                
-                {
-                    typeUri = Type::SDOTypeNamespaceURI;
-                    if (typeName == "string")
-                    {
-                        typeName = "String";
-                    }
-                    else if (typeName == "anyType")
-                    {
-                        typeName = "DataObject";
-                    }
-                    else if (typeName == "int")
-                    {
-                        typeName = "Integer";
-                    }
-                    else if (typeName == "integer")
-                    {
-                        typeName = "Integer";
-                    }
-                    else if (typeName == "negativeInteger")
-                    {
-                        typeName = "Integer";
-                    }
-                    else if (typeName == "nonNegativeInteger")
-                    {
-                        typeName = "Integer";
-                    }
-                    else if (typeName == "positiveInteger")
-                    {
-                        typeName = "Integer";
-                    }
-                    else if (typeName == "nonPositiveInteger")
-                    {
-                        typeName = "Integer";
-                    }
-                    else if (typeName == "unsignedLong")
-                    {
-                        typeName = "Integer";
-                    }
-                    else if (typeName == "unsignedShort")
-                    {
-                        typeName = "Integer";
-                    }
-                    else if (typeName == "unsignedInt")
-                    {
-                        typeName = "Long";
-                    }
-                    else if (typeName == "long")
-                    {
-                        typeName = "Long";
-                    }
-                    else if (typeName == "double")
-                    {
-                        typeName = "Double";
-                    }
-                    else if (typeName == "short")
-                    {
-                        typeName = "Short";
-                    }
-                    else if (typeName == "unsignedByte")
-                    {
-                        typeName = "Short";
-                    }
-                    else if (typeName == "float")
-                    {
-                        typeName = "Float";
-                    }
-                    else if (typeName == "boolean")
-                    {
-                        typeName = "Boolean";
-                    }
-                    else if (typeName == "byte")
-                    {
-                        typeName = "Byte";
-                    }
-                    else if (typeName == "base64Binary")
-                    {
-                        typeName = "Bytes";
-                    }
-                    else if (typeName == "hexBinary")
-                    {
-                        typeName = "Bytes";
-                    }
-                    else if (typeName == "anyURI")
-                    {
-                        typeName = "URI";
-                    }
-                    else if (typeName == "QName")
-                    {
-                        typeName = "URI";
-                    }
-                    else
-                    {
-                        // Default unknown xs: types to string??
-                        typeName = "String";
-                    }
-                }
-                else
-                {
-                    // It's not an XML type
-                }
 
-
-                factory->addPropertyToType(
-                    "org/osoa/sca",
-                    "Properties",
-                    name.c_str(),
-                    typeUri.c_str(), 
-                    typeName.c_str(),
-                    many,
-                    false,
-                    true);
-
-                // Set the default for a dataType
-                try
-                {
-                    const Type& propType = factory->getType(typeUri.c_str(), typeName.c_str());
-                    if (propType.isDataType())
-                    {
-                        factory->setDefault("org/osoa/sca", "Properties",
-                            name.c_str(),
-                            (char*)defaultValue->getCString(""));
-                    }
-                }
-                catch (SDOTypeNotFoundException&)
-                {
-                    // cout << "setting default failed" <<endl;
-                }
-
-                
-            }
-            
-            DataFactoryPtr Component::getPropertyDataFactory()
-            {
-                if (!propertyFactory)
-                {
-                    propertyFactory = DataFactory::getDataFactory();
-                    // Add the root type
-                    propertyFactory->addType("org/osoa/sca", "Properties", false, false, false, false);
-                }
-                return propertyFactory;
-            }
-            
             DataObjectPtr Component::getProperties()
             {
                 if (!properties)
                 {
-                    properties = getPropertyDataFactory()->create("org/osoa/sca", "Properties");
+                    properties = type->getPropertyDataFactory()->create("org/osoa/sca", "Properties");
                 }
                 return properties;
             }

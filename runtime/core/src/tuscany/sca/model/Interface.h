@@ -35,16 +35,11 @@ namespace tuscany
             class SCA_API Interface 
             {
                 
-            public:                
+            public:
+                
                 Interface();  
                 virtual ~Interface();
                             
-                /**
-                 * Returns the type of the interface.
-                 * @return Will depend on the subtype.
-                 */
-                virtual const std::string getInterfaceType() = 0;
-                
             private:
             };
             

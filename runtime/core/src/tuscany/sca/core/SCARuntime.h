@@ -22,15 +22,10 @@
 
 #include "osoa/sca/export.h"
 
-#include "osoa/sca/ComponentContext.h"
-using osoa::sca::ComponentContext;
-
-#include "tuscany/sca/core/ServiceWrapper.h"
-#include "tuscany/sca/model/System.h"
-using namespace tuscany::sca::model;
-
 #include "tuscany/sca/extension/InterfaceExtension.h"
 #include "tuscany/sca/extension/ImplementationExtension.h"
+#include "tuscany/sca/model/Composite.h"
+#include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/util/Library.h"
 
 #if defined(WIN32)  || defined (_WINDOWS)
@@ -45,6 +40,9 @@ using namespace tuscany::sca::model;
 #include <list>
 using namespace std;
 
+using namespace tuscany::sca::model;
+
+
 namespace tuscany
 {
     namespace sca
@@ -55,6 +53,7 @@ namespace tuscany
          */
         class SCARuntime {
         public:
+
             /**
              * Get the single instance.
              * @return The single instance of the runtime.
@@ -82,9 +81,9 @@ namespace tuscany
 
             /**
              * Set the default CompositeComponent for the system
-             * @param compositeComponent The name of the default compositeComponent.
+             * @param componentName The name of the default component.
              */
-            static void setDefaultCompositeComponent(const string& compositeComponent);
+            static void setDefaultComponentName(const string& componentName);
 
             /**
              * Set the current component for the current thread.
@@ -106,7 +105,7 @@ namespace tuscany
              * the System.
              * @return The configured SCA system.
              */
-            SCA_API System* getSystem();
+            SCA_API Composite* getSystem();
 
             /**
              * The directory in which the Tuscany runtime has been installed.
@@ -120,21 +119,31 @@ namespace tuscany
             SCA_API Component* getCurrentComponent();
 
             /**
-             * Get the current composite. The current composite will either
-             * be the composite in which the current component for this thread
-             * is defined, or it will be the default composite if there is no current
-             * component. There will not be a current component if a client of
-             * the SCA runtime is making a call into the SCA runtime.
+             * Get the default component set for this runtime.
+             * @return The default composite.
              */
-            SCA_API Composite* getCurrentComposite();
+            SCA_API Component* getDefaultComponent();
 
+            /**
+             * Register an implementation extension
+             */
             SCA_API void registerImplementationExtension(ImplementationExtension* extension);
 
+            /**
+             * Returns the implementation extension associated with
+             * the specified qname
+             */
             SCA_API ImplementationExtension* getImplementationExtension(const string& typeQname);
 
-
+            /**
+             * Register an interface extension
+             */
             SCA_API void registerInterfaceExtension(InterfaceExtension* extension);
 
+            /**
+             * Returns the interface extension associated with
+             * the specified qname
+             */
             SCA_API InterfaceExtension* getInterfaceExtension(const string& typeQname);
 
         private:
@@ -153,7 +162,7 @@ namespace tuscany
             /**
              * Pointer to the top of the runtime model.
              */
-            System* system;
+            Composite* system;
 
             /**
              * The installed path of the Tuscany runtime.
@@ -168,18 +177,12 @@ namespace tuscany
             /**
              * The default CompositeComponent.
              */
-            static string defaultCompositeName;
+            static string defaultComponentName;
 
             /**
-             * Get the default composite set for this runtime.
-             * @return The default composite.
+             * The default component set for this runtime.
              */
-            Composite* getDefaultComposite() {return defaultComposite;}
-
-            /**
-             * The default composite set for this runtime.
-             */
-            Composite* defaultComposite;
+            Component* defaultComponent;
             
             
             typedef stack<Component*> COMPONENT_STACK; 
@@ -208,13 +211,10 @@ namespace tuscany
 
         };
 
-        
     } // End namespace sca
 } // End namespace tuscany
 
 typedef void (* TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE) ();
-
-
 
 #endif // tuscany_sca_core_scaruntime_h
 

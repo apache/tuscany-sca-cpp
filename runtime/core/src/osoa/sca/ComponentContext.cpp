@@ -20,9 +20,11 @@
 #include "osoa/sca/ComponentContext.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Exceptions.h"
-#include "osoa/sca/ComponentContextImpl.h"
+#include "tuscany/sca/core/ComponentContextImpl.h"
 #include "tuscany/sca/core/SCARuntime.h"
+#include "commonj/sdo/SDO.h"
 
+using namespace commonj::sdo;
 using namespace tuscany::sca;
 
 namespace osoa
@@ -36,12 +38,12 @@ namespace osoa
         ComponentContext ComponentContext::getCurrent()
         {
             LOGENTRY(1, "ComponentContext::getCurrent");
-            Component* component = SCARuntime::getInstance()->getCurrentComponent();
+            Component* component = tuscany::sca::SCARuntime::getInstance()->getCurrentComponent();
             if (!component)
             {
                 throw ComponentContextException("No current component");
             }
-            ComponentContextImpl* cci = new ComponentContextImpl(component);
+            ComponentContext* cci = new tuscany::sca::ComponentContextImpl(component);
             LOGEXIT(1, "ComponentContext::constructor");
             return ComponentContext(cci);
         }
@@ -49,7 +51,7 @@ namespace osoa
         // ===========
         // Constructor
         // ===========    
-        ComponentContext::ComponentContext(ComponentContextImpl* implementation)
+        ComponentContext::ComponentContext(ComponentContext* implementation)
             : impl(implementation)
         {
             LOGENTRY(1, "ComponentContext::constructor");
@@ -71,7 +73,8 @@ namespace osoa
         // ===================================
         ComponentContext::ComponentContext(const ComponentContext& ctx)
         {
-            impl = new ComponentContextImpl(impl->getComponent());
+            Component* component = ((tuscany::sca::ComponentContextImpl*)impl)->getComponent();
+            impl = new tuscany::sca::ComponentContextImpl(component);
         }
         
         // =============================
@@ -81,7 +84,8 @@ namespace osoa
         {
             if (this != &ctx)
             {
-                impl = new ComponentContextImpl(impl->getComponent());
+                Component* component = ((tuscany::sca::ComponentContextImpl*)impl)->getComponent();
+                impl = new tuscany::sca::ComponentContextImpl(component);
             }
             return *this;
         }

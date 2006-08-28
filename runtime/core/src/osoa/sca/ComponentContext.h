@@ -27,7 +27,6 @@ namespace osoa
 {
     namespace sca
     {
-        class ComponentContextImpl;
 
         /**
          * An SCA component implementation uses the ComponentContext class to 
@@ -50,7 +49,7 @@ namespace osoa
              * the name of a reference configured in the component type file for
              * this component.
              */
-            void* getService(const char* referenceName);
+            virtual void* getService(const char* referenceName);
 
             /** 
              * Resolve a reference name into a list of configured services.
@@ -58,14 +57,14 @@ namespace osoa
              * the name of a reference configured in the component type file for
              * this component.
              */
-            ServiceList getServices(const char* referenceName);
+            virtual ServiceList getServices(const char* referenceName);
 
             /** 
              * Get the configured properties for the component.
              * @return A data object representing all the properties that
              * are configured for this component.
              */
-            commonj::sdo::DataObjectPtr getProperties();
+            virtual commonj::sdo::DataObjectPtr getProperties();
 
             /** 
              * Get an SDO data factory which will allow the component to 
@@ -74,29 +73,36 @@ namespace osoa
              * @return A data factory to be used by the component to create
              * new data objects.
              */
-            commonj::sdo::DataFactoryPtr getDataFactory();
+            virtual commonj::sdo::DataFactoryPtr getDataFactory();
 
             /** 
              * Destructor
              */
             virtual ~ComponentContext();
 
-
+            /**
+             * Constructor
+             */
             ComponentContext(const ComponentContext&);
+
+            /**
+             * Copy operator
+             */
             ComponentContext& operator=(const ComponentContext&);
             
-        private:
             /** 
              * Constructor to create an interface class from the contained
              * implementation.
              * @param  implementation the actual implementation class
              */
-            ComponentContext(ComponentContextImpl* implementation);
+            ComponentContext(ComponentContext* implementation);
+
+        private:
 
             /**
              * Pointer to the class which provides the actual implementation.
              */
-            ComponentContextImpl* impl;
+            ComponentContext* impl;
                         
         };
     } // End namespace sca

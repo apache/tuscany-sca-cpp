@@ -142,20 +142,20 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                 if (op_name)
 				{
                     char* systemRoot = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanySystemRoot");
-                    char* fullCompositeServiceTypeName = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
+                    char* fullCompositeServiceName = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
 
-                    AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s entrypoint name: %s operation name: %s", systemRoot, fullCompositeServiceTypeName, op_name);
+                    AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s entrypoint name: %s operation name: %s", systemRoot, fullCompositeServiceName, op_name);
 
-                    //LOGINFO_2(4, "Axis2Service invoke called with system root: %s and entrypoint name: %s", systemRoot, fullCompositeServiceTypeName);
+                    //LOGINFO_2(4, "Axis2Service invoke called with system root: %s and entrypoint name: %s", systemRoot, fullCompositeServiceName);
                     //LOGINFO_1(4, "Axis2Service invoke called with operation", op_name);
-                    compositeServiceProxy->init(systemRoot, fullCompositeServiceTypeName);
+                    compositeServiceProxy->init(systemRoot, fullCompositeServiceName);
 
                     //Utils::printTypes(compositeServiceProxy->getDataFactory());
 
                     AxiomHelper* axiomHelper = AxiomHelper::getHelper();
                     if (compositeServiceProxy->getDataFactory() == 0)
                     {
-                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: CompositeServiceType has no SCA implementation");
+                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: CompositeService has no SCA implementation");
                         return 0;
                     }
 
@@ -173,7 +173,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     if(!inputDataObject)
                     {
                         AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Could not convert received Axiom node to SDO");
-                        //LOGERROR(0, "Axis2Service_invoke: Failure whilst invoking CompositeServiceType");
+                        //LOGERROR(0, "Axis2Service_invoke: Failure whilst invoking CompositeService");
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }                    
@@ -189,8 +189,8 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     
                     if(!outputDataObject)
                     {
-                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Failure whilst invoking CompositeServiceType");
-                        //LOGERROR(0, "Axis2Service_invoke: Failure whilst invoking CompositeServiceType");
+                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Failure whilst invoking CompositeService");
+                        //LOGERROR(0, "Axis2Service_invoke: Failure whilst invoking CompositeService");
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }

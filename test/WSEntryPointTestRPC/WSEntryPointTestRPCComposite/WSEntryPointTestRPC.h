@@ -19,7 +19,7 @@
 
 #ifndef WSEENTRYPOINTTESTRPC_H
 #define WSEENTRYPOINTTESTRPC_H
-class WSCompositeServiceTypeTestRPC  
+class WSCompositeServiceTestRPC  
 {
 public:
 	virtual char* doString(char* arg1) = 0;

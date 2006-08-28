@@ -23,35 +23,35 @@
 #include "tuscany/sca/util/Logger.h"
 
 #define LOGENTRY(level, methodName) \
-if (Logger::loggingLevel >= level) \
-Logger::log(level, "Entering: " methodName);
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::log(level, "Entering: " methodName);
 
 #define LOGEXIT(level, methodName) \
-if (Logger::loggingLevel >= level) \
-Logger::log(level, "Exiting: " methodName);
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::log(level, "Exiting: " methodName);
 
 #define LOGINFO(level, message) \
-if (Logger::loggingLevel >= level) \
-Logger::log(level, message);
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::log(level, message);
 
 #define LOGINFO_1(level, message, arg1) \
-if (Logger::loggingLevel >= level) \
-Logger::logArgs(level, message, arg1);
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::logArgs(level, message, arg1);
 
 #define LOGINFO_2(level, message, arg1, arg2) \
-if (Logger::loggingLevel >= level) \
-Logger::logArgs(level, message, arg1, arg2);
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::logArgs(level, message, arg1, arg2);
 
 #define LOGERROR(level, message) \
-if (Logger::loggingLevel >= level) \
-Logger::log(level, message);
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::log(level, message);
 
 #define LOGERROR_1(level, message, arg1) \
-if (Logger::loggingLevel >= level) \
-Logger::logArgs(level, message, arg1);
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::logArgs(level, message, arg1);
 
 #define LOGERROR_2(level, message, arg1, arg2) \
-if (Logger::loggingLevel >= level) \
-Logger::logArgs(level, message, arg1, arg2);
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::logArgs(level, message, arg1, arg2);
 
 #endif // tuscany_sca_util_logging_h

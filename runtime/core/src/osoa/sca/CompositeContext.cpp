@@ -19,9 +19,11 @@
 
 #include "osoa/sca/CompositeContext.h"
 #include "tuscany/sca/util/Logging.h"
-#include "osoa/sca/CompositeContextImpl.h"
+#include "tuscany/sca/core/CompositeContextImpl.h"
 #include "tuscany/sca/core/SCARuntime.h"
+#include "commonj/sdo/SDO.h"
 
+using namespace commonj::sdo;
 using namespace tuscany::sca;
 
 namespace osoa
@@ -31,7 +33,7 @@ namespace osoa
         // ===========
         // Constructor
         // ===========    
-        CompositeContext::CompositeContext(CompositeContextImpl* implementation)
+        CompositeContext::CompositeContext(CompositeContext* implementation)
             : impl(implementation)
         {
         }
@@ -41,7 +43,8 @@ namespace osoa
         // ===================================
         CompositeContext::CompositeContext(const CompositeContext& ctx)
         {
-            impl = new CompositeContextImpl(SCARuntime::getInstance()->getCurrentComposite());
+            impl = new tuscany::sca::CompositeContextImpl(
+                tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
         }
         
         // =============================
@@ -51,7 +54,8 @@ namespace osoa
         {
             if (this != &ctx)
             {
-                impl = new CompositeContextImpl(SCARuntime::getInstance()->getCurrentComposite());
+                impl = new tuscany::sca::CompositeContextImpl(
+                    tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
             }
             return *this;
         }
@@ -72,9 +76,10 @@ namespace osoa
         CompositeContext CompositeContext::getCurrent()
         {
             LOGENTRY(1, "CompositeContext::getCurrent");
-            CompositeContextImpl* mci = new CompositeContextImpl(SCARuntime::getInstance()->getCurrentComposite());
+            CompositeContext* cci = new tuscany::sca::CompositeContextImpl(
+                tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
             LOGEXIT(1, "CompositeContext::getCurrent");
-            return CompositeContext(mci);
+            return CompositeContext(cci);
         }
 
         // =============

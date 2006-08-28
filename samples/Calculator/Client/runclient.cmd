@@ -40,7 +40,7 @@ set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
 
 rem Only need to specify the subsystem (and not the compositeComponent as well) because
 rem there is only one compositeComponent in the subsystem - it is a very simple sample.
-set TUSCANY_SCACPP_DEFAULT_COMPOSITE=CalculatorSubsystem
+set TUSCANY_SCACPP_DEFAULT_COMPONENT=CalculatorService
 
 rem Run the client
 

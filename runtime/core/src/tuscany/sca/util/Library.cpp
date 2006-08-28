@@ -110,7 +110,7 @@ namespace tuscany
             if (hDLL == NULL)
             {
                 LOGERROR_1(1, "Library::load: Unable to load library %s", name.c_str());
-                msg = "Unable to load dll: " + name;
+                msg = "Unable to load library: " + name;
                 throw ServiceRuntimeException(msg.c_str());
             }    
         }

@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-#include "WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper.h"
+#include "WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper.h"
 
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
@@ -28,33 +28,33 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper* WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper_Factory(tuscany::sca::model::Service* target)
+    WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper* WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper_Factory(tuscany::sca::model::Service* target)
     {
-        return new WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper(target);
+        return new WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper(target);
     }
 }
 
-WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper(Service* target) : ComponentServiceWrapper(target)
+WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper::WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper(Service* target) : CPPServiceWrapper(target)
 {
-    impl = (WSCompositeServiceTypeTestImpl*)getImplementation();
+    impl = (WSCompositeServiceTestImpl*)getImplementation();
 }
 
-WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::~WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper()
+WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper::~WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper()
 {
     releaseImplementation();
 }
 
-void* WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::newImplementation()
+void* WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper::newImplementation()
 {
-    return new WSCompositeServiceTypeTestImpl;
+    return new WSCompositeServiceTestImpl;
 }
 
-void WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::deleteImplementation()
+void WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper::deleteImplementation()
 {
     delete impl;
 }
 
-void WSCompositeServiceTypeTestImpl_WSCompositeServiceTypeTestService_Wrapper::invokeService(Operation& operation)
+void WSCompositeServiceTestImpl_WSCompositeServiceTestService_Wrapper::invokeService(Operation& operation)
 {
     const string& operationName = operation.getName();
 

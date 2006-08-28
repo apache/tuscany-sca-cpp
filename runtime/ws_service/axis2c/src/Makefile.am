@@ -1,6 +1,11 @@
 lib_LTLIBRARIES = libtuscany_sca_ws_service.la
 
-libtuscany_sca_ws_service_la_SOURCES = Axis2Service_skeleton.cpp Axis2Utils.cpp
+## To list the source files execute the following:
+## ls -1 *.cpp | awk '{ print $1 " \\" '}
+## and copy/paste the output below
+libtuscany_sca_ws_service_la_SOURCES = \
+Axis2Service_skeleton.cpp \
+Axis2Utils.cpp
 
 noinst_HEADERS = *.h
 
