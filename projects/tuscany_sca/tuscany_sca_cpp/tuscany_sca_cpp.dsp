@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sca.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Release\tuscany_sca_cpp.dll ..\..\..\deploy\extensions	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions
+PostBuild_Cmds=copy Release\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_cpp - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sca.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Debug\tuscany_sca_cpp.dll ..\..\..\deploy\extensions	copy Debug\tuscany_sca_cpp.pdb ..\..\..\deploy\extensions	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions
+PostBuild_Cmds=copy Debug\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp	copy Debug\tuscany_sca_cpp.pdb ..\..\..\deploy\extensions\cpp	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp
 # End Special Build Tool
 
 !ENDIF 
