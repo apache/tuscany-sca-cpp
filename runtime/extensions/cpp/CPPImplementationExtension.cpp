@@ -52,8 +52,7 @@ namespace tuscany
             // ===================================================================
             // loadModelElement - load the info from implementation.cpp 
             // ===================================================================
-            void CPPImplementationExtension::loadModelElement(commonj::sdo::DataObjectPtr scdlImplementation, 
-                                                              model::Component* component)
+            tuscany::sca::model::Implementation* CPPImplementationExtension::getImplementation(commonj::sdo::DataObjectPtr scdlImplementation)
             {
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "CPPImplementation")
@@ -62,10 +61,10 @@ namespace tuscany
                     string header = scdlImplementation->getCString("header");
                     string className = scdlImplementation->getCString("class");
                     // The following works for now ONLY bacause CPPImplementation is identical 
-                    // to tusscany::sca::model::CPPIplementation
-                    CPPImplementation* cppImpl = new CPPImplementation(library, header, className);
-                    component->setImplementation(cppImpl);
+                    // to tusscany::sca::model::CPPIplementation which will be removed soon!
+                    return new CPPImplementation(library, header, className);
                 }
+                return 0;
             }
 
         } // End namespace cpp

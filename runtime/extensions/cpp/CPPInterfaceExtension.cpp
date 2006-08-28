@@ -62,7 +62,9 @@ namespace tuscany
                     string className = scdlInterface->getCString("class");
                     string scope = scdlInterface->getCString("scope");
                     bool remotable = scdlInterface->getBoolean("remotable");
-                    
+
+                    // The following works for now ONLY bacause CPPInterface is identical 
+                    // to tusscany::sca::model::CPPInterface which will be removed soon!                    
                     return new CPPInterface(header, className, scope, remotable);
                 }
                 return 0;

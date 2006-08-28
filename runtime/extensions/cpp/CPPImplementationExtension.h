@@ -53,7 +53,7 @@ namespace tuscany
                 */
                 virtual const string& getExtensionTypeQName() {return typeQName;}
                 
-                virtual void loadModelElement(commonj::sdo::DataObjectPtr scdlImplementation, model::Component* component);
+                virtual tuscany::sca::model::Implementation* getImplementation(commonj::sdo::DataObjectPtr scdlImplementation);
                 
             private:
                 static const string extensionName;

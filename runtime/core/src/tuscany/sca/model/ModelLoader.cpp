@@ -361,7 +361,7 @@ namespace tuscany
                 ImplementationExtension* implExtension = runtime->getImplementationExtension(implTypeQname);
                 if (implExtension)
                 {
-                    implExtension->loadModelElement(impl, component);
+                    component->setImplementation(implExtension->getImplementation(impl));
                 }
                 else
                 {
