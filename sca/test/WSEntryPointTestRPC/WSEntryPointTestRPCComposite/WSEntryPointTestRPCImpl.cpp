@@ -17,22 +17,22 @@
 +----------------------------------------------------------------------+ 
 */
 
-#include "WSCompositeServiceTypeTestRPCImpl.h"
+#include "WSCompositeServiceTestRPCImpl.h"
 #include <stdio.h>
 
-WSCompositeServiceTypeTestRPCImpl::WSCompositeServiceTypeTestRPCImpl()
+WSCompositeServiceTestRPCImpl::WSCompositeServiceTestRPCImpl()
 {
 }
     
-WSCompositeServiceTypeTestRPCImpl::~WSCompositeServiceTypeTestRPCImpl()
+WSCompositeServiceTestRPCImpl::~WSCompositeServiceTestRPCImpl()
 {
 }
 
-// WSCompositeServiceTypeTestRPC interface
-char* WSCompositeServiceTypeTestRPCImpl::doString(char* arg1)
+// WSCompositeServiceTestRPC interface
+char* WSCompositeServiceTestRPCImpl::doString(char* arg1)
 {
-    printf("WSCompositeServiceTypeTestRPCImpl::doString %s\n", arg1);
+    printf("WSCompositeServiceTestRPCImpl::doString %s\n", arg1);
 
-    return "WSCompositeServiceTypeTestRPCImpl::doString response";
+    return "WSCompositeServiceTestRPCImpl::doString response";
 }
 

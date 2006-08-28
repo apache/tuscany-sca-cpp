@@ -22,6 +22,14 @@
 
 #include "osoa/sca/export.h"
 
+namespace tuscany
+{
+    namespace sca
+    {
+        class ComponentContextImpl;
+    }
+}
+
 namespace osoa
 {
     namespace sca
@@ -53,7 +61,9 @@ namespace osoa
             virtual ~ServiceList();
             
         private:
-            friend class ComponentContextImpl;
+        
+            //TODO Should remove this dependency on the implementation
+            friend class tuscany::sca::ComponentContextImpl;
 
             /**
              * Create a new service list with the known number of 

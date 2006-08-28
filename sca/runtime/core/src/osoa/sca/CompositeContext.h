@@ -27,8 +27,6 @@ namespace osoa
 {
     namespace sca
     {
-        class CompositeContextImpl;
-
         /**
          * An SCA component implementation, or a non-SCA client, uses the 
          * CompositeContext class to retrieve information about the configured 
@@ -51,7 +49,7 @@ namespace osoa
              * @return A pointer to an object which can be cast to the
              * business interface of the target service.
              */
-            void* locateService(const char* serviceName);
+            virtual void* locateService(const char* serviceName);
 
             /** 
              * Get an SDO data factory which will allow the component to 
@@ -60,28 +58,36 @@ namespace osoa
              * @return A data factory to be used by the component to create
              * new data objects.
              */
-            commonj::sdo::DataFactoryPtr getDataFactory();
+            virtual commonj::sdo::DataFactoryPtr getDataFactory();
 
             /**
              * Destructor.
              */
             virtual ~CompositeContext();
 
+            /**
+             * Constructor
+             */
             CompositeContext(const CompositeContext&);
+            
+            /**
+             * Copy operator
+             */
             CompositeContext& operator=(const CompositeContext&);
             
-        private:
             /**
              * Constructor to create an interface class from the contained
              * implementation.
              * @param  implementation The actual implementation class.
              */
-            CompositeContext(CompositeContextImpl* implementation);
+            CompositeContext(CompositeContext* implementation);
+            
+        private:
 
             /**
              * Pointer to the class which provides the actual implementation.
              */
-            CompositeContextImpl* impl;
+            CompositeContext* impl;
             
         };
     } // End namespace sca

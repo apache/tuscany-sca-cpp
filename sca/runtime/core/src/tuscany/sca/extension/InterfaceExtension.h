@@ -24,8 +24,12 @@
 #include <string>
 using std::string;
 
-#include <tuscany/sca/model/Interface.h>
-#include <commonj/sdo/SDO.h>
+#include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/model/Composite.h"
+#include "commonj/sdo/SDO.h"
+
+using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -55,7 +59,12 @@ namespace tuscany
             */
             virtual const string& getExtensionTypeQName() = 0;
 
-            virtual tuscany::sca::model::Interface* getInterface(commonj::sdo::DataObjectPtr scdlInterface) = 0;
+            /**
+             * Get an interface from a DataObject representing an
+             * SCDL interface
+             */
+            virtual Interface* getInterface(Composite *composite, DataObjectPtr scdlInterface) = 0;
+            
         };
 
         

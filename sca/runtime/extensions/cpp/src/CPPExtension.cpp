@@ -24,7 +24,6 @@
 #include "CPPInterfaceExtension.h"
 
 
-
 extern "C"
 {
     #if defined(WIN32) || defined(_WINDOWS)

@@ -9,4 +9,5 @@ tuscany_sca_test_LDADD   =  -L$(top_builddir)/runtime/core/src -ltuscany_sca \
 
 INCLUDES = -I$(top_builddir)/runtime/core/test/MyValue \
             -I$(top_builddir)/runtime/core/src \
+            -I$(top_builddir)/runtime/extensions \
             -I${TUSCANY_SDOCPP}/include

@@ -32,7 +32,7 @@ extern "C"
     }
 }
 
-MyValueImpl_MyValueService_Wrapper::MyValueImpl_MyValueService_Wrapper(Service* target) : ComponentServiceWrapper(target)
+MyValueImpl_MyValueService_Wrapper::MyValueImpl_MyValueService_Wrapper(Service* target) : CPPServiceWrapper(target)
 {
     impl = (MyValueImpl*)getImplementation();
 }

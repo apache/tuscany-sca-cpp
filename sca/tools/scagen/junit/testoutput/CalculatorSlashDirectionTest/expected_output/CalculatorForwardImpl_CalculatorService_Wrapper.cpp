@@ -34,7 +34,7 @@ extern "C"
     }
 }
 
-CalculatorForwardImpl_CalculatorService_Wrapper::CalculatorForwardImpl_CalculatorService_Wrapper(Service* target) : ComponentServiceWrapper(target)
+CalculatorForwardImpl_CalculatorService_Wrapper::CalculatorForwardImpl_CalculatorService_Wrapper(Service* target) : CPPServiceWrapper(target)
 {
     impl = (CalculatorForwardImpl*)getImplementation();
 }

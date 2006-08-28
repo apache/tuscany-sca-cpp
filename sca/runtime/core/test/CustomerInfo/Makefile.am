@@ -10,6 +10,7 @@ noinst_HEADERS = *.h
 libCustomerInfo_la_LIBADD =
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
+		   -I$(top_builddir)/runtime/extensions \
            -I${TUSCANY_SDOCPP}/include
                       
 install:

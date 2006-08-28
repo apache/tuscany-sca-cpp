@@ -22,7 +22,6 @@
 #include <string>
 using std::string;
 
-
 namespace tuscany
 {
     namespace sca
@@ -30,49 +29,47 @@ namespace tuscany
         namespace model
         {
             /**
-             * Information about the binding for CompositeServiceType and CompositeReferenceType. An
-             * abstract class which will be extended by classes that hold specific
-             * information for each type of binding.
+             * Represents a binding.
+             * Bindings are used by services and references. References use bindings
+             * to describe the access mechanism used to call an external service (which can
+             * be a service provided by another SCA composite). Services use bindings to describe
+             * the access mechanism that clients (which can be a client from another SCA composite)
+             * have to use to call the service.
+             * This interface will typically be extended by binding implementations to allow
+             * specification of binding/transport specific information.
              */
             class Binding 
             {
                 
             public:
-                /**
-                 * Supported binding types.
-                 */
-                enum Type
-                {
-                    WS,
-                    SCA
-                };
-                
+
                 /**
                  * Constructor to create a new binding.
-                 * @param uri The uri specified in the scdl file.
+                 * @param uri The binding URI.
                  */ 
-                Binding(const string& uri);  
+                Binding(const string& uri);
 
                 /**
                  * Destructor.
                  */ 
                 virtual ~Binding();
+                
+                /**
+                 * Returns the binding type
+                 * @return The binding type.
+                 */
+                virtual string getType() = 0;
                             
                 /**
-                 * Return the enumerated type of binding.
-                 * @return The type of the binding (see Binding#Type).
-                 */ 
-                virtual Type getBindingType() = 0;
-
-                /**
-                 * Return the uri of the binding.
-                 * @return The uri of the binding.
+                 * Returns the binding URI.
+                 * @return The binding URI.
                  */
-                string getUri() {return uri;};
+                string getURI() const { return uri; };
                 
             private:
+            
                 /**
-                 * The uri of the binding.
+                 * The binding URI.
                  */ 
                 string uri;
             };
@@ -82,4 +79,3 @@ namespace tuscany
 } // End namespace tuscany
 
 #endif // tuscany_sca_model_binding_h
-

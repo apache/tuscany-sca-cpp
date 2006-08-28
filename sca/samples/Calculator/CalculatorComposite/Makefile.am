@@ -25,7 +25,10 @@ DivideServiceImpl.cpp \
 DivideServiceImpl_DivideService_Proxy.cpp \
 DivideServiceImpl_DivideService_Wrapper.cpp
 
-libCalculatorComposite_la_LIBADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca
+libCalculatorComposite_la_LIBADD = -L${TUSCANY_SCACPP}/lib \
+			-ltuscany_sca \
+			-L${TUSCANY_SCACPP}/extensions/cpp \
+			-ltuscany_sca_cpp
 
 INCLUDES = \
            -I$(TUSCANY_SCACPP)/include \

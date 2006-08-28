@@ -35,6 +35,7 @@ namespace tuscany
             class Wire
             {
             public: 
+            
                 /**
                  * Constructor.
                  * @param source The source of the wire. Either the component and 
@@ -42,7 +43,7 @@ namespace tuscany
                  * @param target The target of the wire. Either a component and service
                  * service name (optional) or an external sevice.
                  */
-                Wire(const std::string& source, const std::string& target);
+                Wire(const string& source, const string& target);
 
                 /**
                  * Destructor.
@@ -53,19 +54,20 @@ namespace tuscany
                  * Get the component name defined by the source of the wire.
                  * @return The component name which is the source of the wire.
                  */
-                const std::string& getSourceComponent() {return sourceComponent;}
+                const string& getSourceComponent() const { return sourceComponent; }
 
                 /**
                  * Get the reference name defined by the source of the wire.
                  * @return The reference name which is the source of the wire.
                  */
-                const std::string& getSourceReference() {return sourceReference;}
+                const string& getSourceReference() const { return sourceReference; }
 
                 /**
                  * Get the target uri defined by the target of the wire.
                  * @return The target uri which is the source of the wire.
                  */
-                const std::string& getTarget() {return target;}
+                const string& getTarget() { return target; }
+                
              private:
                 /**
                  * The source component of the wire.

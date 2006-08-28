@@ -30,12 +30,7 @@ using std::vector;
 
 #include "commonj/sdo/SDO.h"
 
-
-#include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/model/CompositeReferenceType.h"
-#include "tuscany/sca/model/CompositeServiceType.h"
-#include "tuscany/sca/model/Wire.h"
-#include "tuscany/sca/model/Wsdl.h"
+#include "tuscany/sca/model/ComponentType.h"
 
 
 namespace tuscany
@@ -45,17 +40,29 @@ namespace tuscany
 
         namespace model
         {
+            class Component;
+            class ComponentType;
+            class Service;
+            class WSDLDefinition;
+            class Wire;
+            
             /**
-             * Information about a composite.
+             * Represents a composite.
+             * A composite is used to assemble SCA elements in logical groupings.
+             * It is the basic unit of composition within an SCA System. An SCA composite contains a
+             * set of components, services, references and the wires that interconnect them, plus a set
+             * of properties which can be used to configure components.
              */
-            class Composite
+            class Composite : public ComponentType
             {
             public:
+
                 /**
                  * Constructor.
                  * @param name the name of the composite.
+                 * @param root the root of the composite in the file system.
                  */
-                Composite(const std::string& name);
+                Composite(const string& name, const string& root);
 
                 /**
                  * Destructor.
@@ -63,50 +70,22 @@ namespace tuscany
                 virtual ~Composite();
 
                 /**
-                 * Set the root directory of the composite information.
-                 * @param rootDirectory The root of the composite in the file system.
-                 */
-                void setRoot(const std::string& rootDirectory);
-
-                /**
-                 * Get the root directory of the composite.
+                 * Returns the root directory of the composite.
                  * @return The root of the composite in the file system.
                  */
-                const std::string& getRoot() {return compositeRoot;}
+                const string& getRoot() const { return root; }
                 
-                /**
-                 * Return the name of the composite.
-                 * @return Name of the composite.
-                 */
-                const std::string& getName() {return name;}
-
                 /**
                  * Add a new component to the composite.
-                 * @param componentName The name of the new component.
-                 * @return The Component added to the composite.
+                 * @param component The component to add.
                  */
-                Component* addComponent(const std::string& componentName);
+                void addComponent(Component* component);
 
                 /**
-                 * Add a new entry point to the composite.
-                 * @param name The name of the new entry point.
-                 * @return The entry point added to the composite.
+                 * Add/include a composite in this composite.
+                 * @param composite The composite included in this composite.
                  */
-                CompositeServiceType* addCompositeServiceType(const std::string& name);
-
-                /**
-                 * Find an entry point by name.
-                 * @param name The name of the entry point to be found.
-                 * @return The entry point that was found, or 0 if not found.
-                 */
-                CompositeServiceType* findCompositeServiceType(const std::string& name);
-                
-                /**
-                 * Add a new external service to the composite.
-                 * @param name The name of the new external service.
-                 * @return The external service added to the composite.
-                 */
-                CompositeReferenceType* addCompositeReferenceType(const std::string& name);
+                void addInclude(Composite* composite);
 
                 /**
                  * Add a wire to the model.
@@ -115,14 +94,14 @@ namespace tuscany
                  * @param target The target location. Either the target component and
                  * service (optional), or an external service.
                  */
-                void addWire(const std::string& source, const std::string& target);
+                void addWire(const string& source, const string& target);
  
                 /**
                  * Find a component by name.
                  * @param componentName The name of the component to be found.
                  * @return The component that was found, or 0 if not found.
                  */
-                Component* findComponent(const std::string& componentName);
+                Component* findComponent(const string& componentName);
 
                 /**
                  * Find a component and service by name.
@@ -131,27 +110,20 @@ namespace tuscany
                  * if there is only one service on the component.
                  * @return The Service that was found, or 0 if not found.
                  */
-                Service* findComponentService(const std::string& componentServiceName);
-
-                /**
-                 * Find an external service by name.
-                 * @param serviceName The name of the external service to be found.
-                 * @return The external service that was found, or 0 if not found.
-                 */
-                CompositeReferenceType* findCompositeReferenceType(const std::string& serviceName);
+                Service* findComponentService(const string& componentServiceName);
 
                 /**
                  * Add a WSDL definition to the composite.
                  * @param wsdlModel A data object holding all the information about 
                  * the WSDL definition from a WSDL file.
                  */
-                void addWsdl(commonj::sdo::DataObjectPtr wsdlModel);
+                void addWSDLDefinition(commonj::sdo::DataObjectPtr wsdlModel);
 
                 /**
                  * Find a WSDL definition by target namespace.
                  * @param wsdlNamespace The namespace of the WSDL definitions to find.
                  */
-                Wsdl* findWsdl(const std::string& wsdlNamespace);
+                WSDLDefinition* findWSDLDefinition(const string& wsdlNamespace);
 
                 /**
                  * Return a cached SDO XSDHelper.
@@ -176,15 +148,11 @@ namespace tuscany
                 void resolveWires();
  
             private:
-                /**
-                 * Name of the composite.
-                 */
-                string name;
 
                 /**
                  * Directory of the root of the composite.
                  */
-                string compositeRoot;
+                string root;
 
                 /**
                  * Cached XSDHelper.
@@ -196,40 +164,33 @@ namespace tuscany
                  */
                 commonj::sdo::XMLHelperPtr xmlHelper;
 
-                typedef map<std::string, Component*> COMPONENT_MAP;
                 /**
                  * Map (by name) of all the components in this composite.
                  */
+                typedef map<string, Component*> COMPONENT_MAP;
                 COMPONENT_MAP components;
 
-                typedef map<std::string, CompositeReferenceType*> EXTERNALSERVICE_MAP;
                 /**
-                 * Map (by name) of all the external services in this composite.
+                 * Vector of all the composites included in this composite.
                  */
-                EXTERNALSERVICE_MAP externalServices;
+                typedef vector<Composite*> INCLUDES;
+                INCLUDES includes;
 
-                typedef map<std::string, CompositeServiceType*> ENTRYPOINT_MAP;
-                /**
-                 * Map (by name) of all the entry points in this composite.
-                 */
-                ENTRYPOINT_MAP compositeServices;
-
-                typedef vector<Wire> WIRES;
                 /**
                  * Vector of all the wires in this composite.
                  */
+                typedef vector<Wire*> WIRES;
                 WIRES wires;
 
-                typedef map<std::string, Wsdl*> WSDL_MAP;
                 /**
                  * Map by namespace of all the wsdl definitions in this composite.
                  */
-                WSDL_MAP wsdls;
+                typedef map<string, WSDLDefinition*> WSDL_MAP;
+                WSDL_MAP wsdlDefinitions;
             };
 
         } // End namespace model
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // SCA_CompositeComponent_h
-
+#endif // tuscany_sca_model_composite_h

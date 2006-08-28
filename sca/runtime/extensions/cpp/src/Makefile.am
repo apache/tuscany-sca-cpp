@@ -8,7 +8,11 @@ CPPExtension.cpp \
 CPPImplementationExtension.cpp \
 model/CPPImplementation.cpp \
 CPPInterfaceExtension.cpp \
-model/CPPInterface.cpp
+model/CPPInterface.cpp \
+CPPServiceProxy.cpp \
+model/CPPReferenceBinding.cpp \
+CPPServiceWrapper.cpp \
+model/CPPServiceBinding.cpp
 
 libtuscany_sca_cpp_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca

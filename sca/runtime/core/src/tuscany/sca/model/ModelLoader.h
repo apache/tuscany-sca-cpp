@@ -22,32 +22,39 @@
 
 #include "osoa/sca/export.h"
 #include "commonj/sdo/SDO.h"
-using commonj::sdo::DataObjectPtr;
-using commonj::sdo::DataFactoryPtr;
-using commonj::sdo::XSDHelperPtr;
-
-#include "tuscany/sca/model/System.h"
-#include "tuscany/sca/model/Subsystem.h"
-
-#include "tuscany/sca/util/File.h"
 
 #include "tuscany/sca/core/SCARuntime.h"
+#include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/model/Composite.h"
+#include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/ComponentType.h"
+#include "tuscany/sca/util/File.h"
+
+#include <map>
+using std::map;
+
+using namespace commonj::sdo;
+using namespace tuscany::sca;
+
+
 namespace tuscany
 {
     namespace sca
     {
         namespace model
         {
+            
             /**
              * Provides methods to load the runtime model from the SCDL file.
              */ 
             class ModelLoader {
+
             public:
                 /**
                  * Constructor.
                  * @param system The SCA system to load.
                  */
-                ModelLoader(System* system);
+                ModelLoader(Composite* system);
 
                 /**
                  * Destructor.
@@ -59,43 +66,55 @@ namespace tuscany
                  * @param configurationRoot The location of the deployed SCA
                  * packages and configuration.
                  */
-                void load(const string& configurationRoot);
+                void load(const string& systemRoot);
                 
             private:
-                SCARuntime* runtime;
-                System* system;
                 void loadComposite(const char *compositeRoot);
-                
                 
                 commonj::sdo::XMLHelperPtr myXMLHelper;    // Used to load scdl files
                 commonj::sdo::XSDHelperPtr myXSDHelper; // Used to load xsds
+                
                 const commonj::sdo::XSDHelperPtr getXSDHelper(void);
                 const commonj::sdo::XMLHelperPtr getXMLHelper(void);
                 
                 void loadConfiguration(const string& configurationRoot);
-                void loadConfigurationFile(const File& file);
-                void mapConfiguration(commonj::sdo::DataObjectPtr rootDO);
+                Composite* loadConfigurationCompositeFile(const File& file);
+                Composite* mapConfigurationComposite(DataObjectPtr rootDO, const string compositeRootDir);
                 
-                void loadComposites(const string& configurationRoot);
-                void loadCompositeFile(const File& file);
-                void mapComposite(const string& compositeName, commonj::sdo::DataObjectPtr rootDO, std::string compositeRootDir);
+                void loadPackages(const string& installRoot);
+                Composite* loadPackageCompositeFile(const File& file);
+                Composite* mapPackageComposite(DataObjectPtr rootDO, const string compositeRootDir);
 
                 void addComponent(Composite* composite, DataObjectPtr componentDO);
-                void addCompositeServiceType(Composite* composite, DataObjectPtr compositeServiceDO);
-                void addCompositeReferenceType(Composite* composite, DataObjectPtr externalServiceDO);
+                void addCompositeService(Composite* composite, DataObjectPtr compositeServiceDO);
+                void addCompositeReference(Composite* composite, DataObjectPtr referenceServiceDO);
 
-                void addServices(Component* component, DataObjectPtr componentType);
-                void addReferences(Component* component, DataObjectPtr componentType);
-                void addProperties(Component* component, DataObjectPtr componentType);
+                void addServiceTypes(Composite* composite, ComponentType* componentType, DataObjectPtr componentTypeDO);
+                void addReferenceTypes(Composite* composite, ComponentType* componentType, DataObjectPtr componentTypeDO);
+                void addPropertyTypes(ComponentType* componentType, DataObjectPtr componentTypeDO);
 
-
-                void loadCompositeConfig(const string &compositeRootDir, const string &compositeName);
-                void loadTypes(const char *fileName, const string &compositeName);
-                void loadWsdl(const char *fileName, const string &compositeName);
-
-                void loadWSDLTypes(XSDHelperPtr xsdHelper);
+                void loadTypeMetadata(Composite* composite, const string &compositeRootDir);
+                
+                void loadXMLSchema(Composite* composite, const char *fileName);
+                void loadWSDLDefinition(Composite* composite, const char *fileName);
+                void initializeWSDLModel(XSDHelperPtr xsdHelper);
     
-                Interface* getInterface(DataObjectPtr obj);
+                Interface* getInterface(Composite* composite, DataObjectPtr obj);
+
+                SCARuntime* runtime;
+
+                /**
+                 * The composite describing the composition of the system
+                 * All the composites under the configuration root directory are
+                 * included in the system composite.
+                 */
+                Composite* system;
+            
+                /**
+                 * Map of all the package composites installed on the system.
+                 */
+                typedef map<string, Composite*> PACKAGES;
+                PACKAGES packages;
 
             };
         } // End namespace model

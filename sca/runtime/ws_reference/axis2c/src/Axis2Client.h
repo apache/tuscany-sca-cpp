@@ -19,16 +19,12 @@
 #define tuscany_sca_ws_axis2client_h
 
 #include "osoa/sca/export.h"
-
 #include <axiom.h>
 
-#include <osoa/sca/export.h>
-
-#include "tuscany/sca/core/CompositeReferenceWrapper.h"
-#include "tuscany/sca/model/CompositeReferenceType.h"
-
-#include "tuscany/sca/model/Wsdl.h"
 #include "tuscany/sca/core/Operation.h"
+#include "tuscany/sca/model/CompositeReference.h"
+#include "tuscany/sca/model/WSDLOperation.h"
+
 using namespace tuscany::sca;
 using namespace tuscany::sca::model;
 
@@ -43,21 +39,21 @@ namespace tuscany
             class SCA_API Axis2Client
             {
             public:
-                Axis2Client(tuscany::sca::model::CompositeReferenceType* externalService);
+                Axis2Client(CompositeReference* externalService);
                 virtual    ~Axis2Client();
 
-                virtual void invoke(tuscany::sca::Operation& operation);    
+                virtual void invoke(Operation& operation);    
                 
             private:
-                tuscany::sca::model::CompositeReferenceType* externalService;
+                CompositeReference* compositeReference;
                               
                 axiom_node_t* createPayload(Operation& operation, 
-                                               const WsdlOperation& wsdlOp,
+                                               const WSDLOperation& wsdlOp,
                                                axis2_env_t* env);
                                                  
                 void setReturn(axiom_node_t* returnNode,
                                Operation& operation, 
-                               const WsdlOperation& wsdlOp,
+                               const WSDLOperation& wsdlOp,
                                axis2_env_t* env);
                 
             };

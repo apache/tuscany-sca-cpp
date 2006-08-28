@@ -41,6 +41,7 @@ namespace tuscany
                 virtual ~CPPExtension();            
 
                 static void initialize();
+                
             private:
                 
             };

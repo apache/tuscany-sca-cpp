@@ -50,9 +50,9 @@ namespace tuscany
             const string CPPInterfaceExtension::typeQName("http://www.osoa.org/xmlns/sca/1.0#CPPInterface");
 
             // ===================================================================
-            // loadModelElement - load the info from implementation.cpp 
+            // loadModelElement - load the info from interface.cpp 
             // ===================================================================
-            tuscany::sca::model::Interface* CPPInterfaceExtension::getInterface(commonj::sdo::DataObjectPtr scdlInterface)
+            tuscany::sca::model::Interface* CPPInterfaceExtension::getInterface(Composite* composite, DataObjectPtr scdlInterface)
             {
                 // Determine the type
                 string ifType = scdlInterface->getType().getName();
@@ -62,9 +62,7 @@ namespace tuscany
                     string className = scdlInterface->getCString("class");
                     string scope = scdlInterface->getCString("scope");
                     bool remotable = scdlInterface->getBoolean("remotable");
-
-                    // The following works for now ONLY bacause CPPInterface is identical 
-                    // to tusscany::sca::model::CPPInterface which will be removed soon!                    
+                    
                     return new CPPInterface(header, className, scope, remotable);
                 }
                 return 0;

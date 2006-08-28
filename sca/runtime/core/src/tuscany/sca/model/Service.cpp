@@ -18,6 +18,7 @@
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/model/Service.h"
 
 namespace tuscany
@@ -27,21 +28,27 @@ namespace tuscany
         namespace model
         {
             
-            
             // Constructor
-            Service::Service(const std::string& serviceName, Component* comp) 
-                : WireTarget(serviceName),
-                component(comp)
+            Service::Service(Component* component, ServiceType* serviceType)
+                : component(component), type(serviceType), binding(0)
             {
-                LOGENTRY(1, "Service::constructor (Component)");
-                LOGINFO_1(3, "Service::constructor: Service name: %s", serviceName.c_str());
-                LOGEXIT(1, "Service::constructor");
             }
-
+            
+            // Destructor
             Service::~Service()
             {
             }
-
-        } // End namespace model
+            
+            void Service::setBinding(ServiceBinding* binding)
+            {
+                this->binding = binding;
+            }
+            
+            ServiceBinding* Service::getBinding() const
+            {
+                return binding;
+            }
+            
+       } // End namespace model
     } // End namespace sca
 } // End namespace tuscany

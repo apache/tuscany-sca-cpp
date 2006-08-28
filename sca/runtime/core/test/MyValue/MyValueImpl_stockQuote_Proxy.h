@@ -22,7 +22,7 @@
 #endif 
 
 #include "StockQuoteService.h"
-#include "tuscany/sca/core/ServiceWrapper.h"
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
 class MyValueImpl_stockQuote_Proxy : public StockQuoteService
 {

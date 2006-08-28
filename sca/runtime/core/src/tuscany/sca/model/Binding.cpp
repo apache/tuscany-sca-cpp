@@ -34,11 +34,11 @@ namespace tuscany
             {
             }
 
+            // Destructor
             Binding::~Binding()
             {
             }
 
         } // End namespace model
-
     } // End namespace sca
 } // End namespace tuscany

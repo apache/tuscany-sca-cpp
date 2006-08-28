@@ -22,17 +22,13 @@
 
 #include <string>
 using std::string;
-
+   
 #include <map>
 
-#include "tuscany/sca/model/Service.h"
-#include "tuscany/sca/model/Implementation.h"
-#include "tuscany/sca/model/ServiceReference.h"
-
 #include "commonj/sdo/SDO.h"
-using commonj::sdo::DataObjectPtr;
-using commonj::sdo::DataFactoryPtr;
-using commonj::sdo::DataObjectList;
+
+using namespace commonj::sdo;
+
 
 namespace tuscany
 {
@@ -42,19 +38,29 @@ namespace tuscany
         {
 
             class Composite;
+            class ComponentType;
+            class Reference;
+            class ReferenceType;
+            class Service;
+            class ServiceType;
 
             /**
-             * Information about an SCA component.
+             * A component is a configured instance of an implementation. Components provide
+             * and consume services. More than one component can use and configure the same
+             * implementation, where each component configures the implementation differently.
+             * For example each component may configure a reference of the same implementation
+             * to consume a different service.
              */
             class Component
             {
             public:
+            
                 /**
                  * Constructor
+                 * @param composite The composite containing the component.
                  * @param name The name of the component.
-                 * @param composite The composite containing this component.
                  */
-                SCA_API Component(const std::string& name, Composite* composite);
+                Component(Composite *composite, const std::string& name, ComponentType *type);
 
                 /**
                  * Destructor.
@@ -62,23 +68,28 @@ namespace tuscany
                 SCA_API virtual ~Component();
 
                 /**
-                 * Returns the name of the component.
-                 * @return The name of the component.
+                 * Returns the name of this component.
+                 * @return the name of this component
                  */
-                SCA_API const string& getName() {return name;}
-
-                /** 
-                 * Get the composite containing this component.
-                 * @return The containing composite.
+                const string& getName() const { return name; }
+            
+                /**
+                 * Returns the composite containing this component.
+                 * @return The composite containing this component.
                  */
-                SCA_API Composite* getComposite() {return containingComposite;}
-
+                Composite* getComposite() const { return composite; }
+            
+                /**
+                 * Returns the type of this component.
+                 * @return The type of this component.
+                 */
+                ComponentType* getType() const { return type; }
+                
                 /**
                  * Add a new service to this component.
-                 * @param serviceName The name of the service to add.
-                 * @return The newly added service.
+                 * @param service The service to add.
                  */
-                SCA_API Service* addService(const std::string& serviceName);
+                void addService(Service* service);
 
                 /**
                  * Find an existing service on this component.
@@ -87,103 +98,76 @@ namespace tuscany
                  * only one service it will be returned.
                  * @return The found service, or 0 if not found.
                  */
-                SCA_API Service* findService(const std::string& serviceName);
+                Service* findService(const string& serviceName);
 
                 /**
                  * Add a new reference to this component.
-                 * @param referenceName The name of the reference to add.
-                 * @return The newly added reference.
+                 * @param reference The reference to add.
                  */
-                SCA_API ServiceReference* addReference(const std::string& referenceName);
+                void addReference(Reference* reference);
 
                 /**
                  * Find an existing reference on this component.
                  * @param referenceName The name of the reference to find.
                  * @return The found reference, or 0 if not found.
                  */
-                SCA_API ServiceReference* findReference(const std::string& referenceName);
+                Reference* findReference(const string& referenceName);
 
                 /**
-                 * Set the details of the implementation of this component.
-                 * @param impl The details of the implementation.
+                 * Returns all the services defined on this component.
+                 * @return All the services defined on this component.
                  */
-                SCA_API void setImplementation(Implementation* impl);
+                typedef std::map<std::string, Service*> SERVICE_MAP;
+                SERVICE_MAP getServices() const { return services; }; 
 
                 /**
-                 * Returns the details of the implementation of this component.
-                 * @return The details of the implementation.
+                 * Returns all the references defined on this component.
+                 * @return All the references defined on this component.
                  */
-                SCA_API Implementation* getImplementation() {return implementation;}
-
+                typedef std::map<std::string, Reference*> REFERENCE_MAP;
+                REFERENCE_MAP getReferences() const { return references; }; 
+                
                 /**
-                 * Add a new property to this component. Properties are 
-                 * added one at a time. The property definitions come from the component
-                 * type file.
+                 * Set the value of a property defined on this component. The values
+                 * will usually come from a component declaration in a composite file.
                  * @param name The name of the property.
-                 * @param type The full name of the type (including uri and local name).
-                 * @param many True if this is a many valued property.
-                 * @param defaultValue The default value if the property does not have a
-                 * value set.
+                 * @param value The value of the property.
                  */
-                SCA_API void addProperty(const string& name,
-                    const string& type,
-                    bool many,
-                    DataObjectPtr defaultValue);
-    
-                /**
-                 * Add the property values to the properties defined on this 
-                 * component. The values will come from the sca.composite file.
-                 * @param properties A data object representing all the values set
-                 * for this component.
-                 */
-                SCA_API void setProperty(const string& name, DataObjectPtr value);
+                void setProperty(const string& name, DataObjectPtr value);
 
                 /**
-                 * Returns a data object from which all the properties and their
-                 * values can be accessed.
+                 * Returns a data object from which all the properties of the component
+                 * and their values can be accessed.
                  * @return A data object holding the property values.
                  */
-                SCA_API DataObjectPtr getProperties();
+                DataObjectPtr getProperties();
+
             private:
+                
                 /**
                  * Name of the component.
                  */
                 string name;
+                
+                /**
+                 * Composite containing the component.
+                 */
+                 Composite* composite;
 
                 /**
-                 * Composite containing this component for navigating up the tree.
+                 * Type of the component.
                  */
-                Composite* containingComposite;
+                ComponentType* type;
 
-                /**
-                 * Information about the implementation of this component.
-                 */
-                Implementation* implementation;
-
-                typedef std::map<std::string, Service*> SERVICE_MAP;
                 /**
                  * Map of all the services defined on this component.
                  */
                 SERVICE_MAP services;
 
-                typedef std::map<std::string, ServiceReference*> REFERENCE_MAP;
                 /**
                  * Map of all the references defined on this component.
                  */
                 REFERENCE_MAP references;
-
-                /**
-                 * SDO data factory which has all the property types defined from
-                 * the component type file
-                 */
-                DataFactoryPtr propertyFactory;
-
-                /**
-                 * Return the SDO data factory which has the property types defined
-                 * in it.
-                 * @return The data factory.
-                 */
-                DataFactoryPtr getPropertyDataFactory();
 
                 /**
                  * The properties and their values for this component.
@@ -193,9 +177,7 @@ namespace tuscany
            };
 
         } // End namespace model
-
     } // End namespace sca
 } // End namespace tuscany
 
 #endif // tuscany_sca_model_component_h
-

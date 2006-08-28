@@ -23,8 +23,6 @@
 #include <string>
 using std::string;
 
-#include "tuscany/sca/model/WireTarget.h"
-
 namespace tuscany
 {
     namespace sca
@@ -32,44 +30,67 @@ namespace tuscany
         namespace model
         {
             class Component;
+            class ServiceType;
+            class ServiceBinding;
 
             /**
-             * Information about a service defined on a component.
+             * An addressable instance of a service type associated with a particular component.
              */
-            class Service : public WireTarget
+            class Service
             {
             public:
+                /**
+                 * Constructor.
+                 * @param component The component on which the service is defined.
+                 * @param serviceType The service type defining the characteristics of the service.
+                 */
+                 Service(Component* component, ServiceType* serviceType);
+                 
                 /**
                  * Destructor.
                  */
                  virtual ~Service();
 
                 /**
-                 * Return the type of the wire target.
-                 * @return Always returns ComponentServiceType.
-                 */
-                virtual Type getServiceType() {return ComponentServiceType;}
-
-                /**
-                 * Get the component on which this service is defined.
+                 * Returns the component on which this service is defined.
                  * @return The component on which this service is defined.
                  */
-                Component* getComponent() {return component;}
+                Component* getComponent() const { return component; }
 
+                /**
+                 * Returns the service type defining the characteristics of the service.
+                 * @return The service type defining the characteristics of the service.
+                 */
+                ServiceType* getType() const { return type; }
+
+                /**
+                 * Returns the binding supported by the service.
+                 * @return The binding supported by the service.
+                 */
+                ServiceBinding* getBinding() const;
+
+                /**
+                 * Sets the binding supported by the service.
+                 * @param binding The binding supported by the service.
+                 */
+                void setBinding(ServiceBinding* binding);
 
             private:
-                friend class Component;
-                /**
-                 * Constructor.
-                 * @param name The name of the service.
-                 * @param component The component on which this service is defined.
-                 */
-                Service(const std::string& name, Component* component);
 
                 /**
                  * The component on which this service is defined.
                  */
                  Component* component;
+
+                /**
+                 * The service type defining the characteristics of the service.
+                 */
+                 ServiceType* type;
+
+                /**
+                 * The binding supported by this service
+                 */
+                 ServiceBinding* binding;
 
             };
 
@@ -78,4 +99,3 @@ namespace tuscany
 } // End namespace tuscany
 
 #endif // tuscany_sca_model_service_h
-

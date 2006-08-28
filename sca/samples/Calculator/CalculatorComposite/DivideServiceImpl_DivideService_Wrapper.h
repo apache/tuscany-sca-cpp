@@ -22,9 +22,9 @@
 #endif 
 
 #include "DivideServiceImpl.h"
-#include "tuscany/sca/core/ComponentServiceWrapper.h"
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
-class DivideServiceImpl_DivideService_Wrapper : public tuscany::sca::ComponentServiceWrapper
+class DivideServiceImpl_DivideService_Wrapper : public tuscany::sca::cpp::CPPServiceWrapper
 {
 public:
     DivideServiceImpl_DivideService_Wrapper(tuscany::sca::model::Service* target);

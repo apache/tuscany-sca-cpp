@@ -22,9 +22,9 @@
 #endif 
 
 #include "subFolder/CalculatorBackImpl.h"
-#include "tuscany/sca/core/ComponentServiceWrapper.h"
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
-class CalculatorBackImpl_CalculatorService_Wrapper : public tuscany::sca::ComponentServiceWrapper
+class CalculatorBackImpl_CalculatorService_Wrapper : public tuscany::sca::cpp::CPPServiceWrapper
 {
 public:
     CalculatorBackImpl_CalculatorService_Wrapper(tuscany::sca::model::Service* target);

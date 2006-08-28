@@ -1,6 +1,11 @@
 lib_LTLIBRARIES = libtuscany_sca_ws_reference.la
 
-libtuscany_sca_ws_reference_la_SOURCES = WSReferenceWrapper.cpp Axis2Client.cpp
+## To list the source files execute the following:
+## ls -1 *.cpp | awk '{ print $1 " \\" '}
+## and copy/paste the output below
+libtuscany_sca_ws_reference_la_SOURCES = \
+Axis2Client.cpp \
+WSServiceWrapper.cpp
 
 noinst_HEADERS = *.h
 

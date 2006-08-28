@@ -34,7 +34,8 @@ StockQuoteServiceImpl_webService_Proxy.cpp \
 StockQuoteServiceImpl_StockQuoteService_Proxy.cpp \
 StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp
 
-libAccounts_la_LIBADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca
+libAccounts_la_LIBADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca \
+		-L${TUSCANY_SCACPP}/extensions/cpp -ltuscany_sca_cpp
 
 INCLUDES = \
            -I$(TUSCANY_SCACPP)/include \

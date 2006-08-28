@@ -21,17 +21,21 @@
 #define tuscany_sca_core_serviceproxy_h
 
 #include "osoa/sca/export.h"
-
-#include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/util/Library.h"
+#include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/core/ServiceWrapper.h"
+
+#include <vector>
+using std::vector;
 
 using namespace tuscany::sca::model;
+
 
 namespace tuscany
 {
     namespace sca
     {
+        
         /**
          * Holds a proxy for a given component and reference.
          * The proxy which is held inside a ServiceProxy will be specific to the component
@@ -42,46 +46,44 @@ namespace tuscany
         {
         public:
             /**
-             * Create a new service proxy for a given component and reference name. The
-             * create proxy will contain a pointer to the target ServiceWrapper.
-             * @param component The component for which this proxy will be created (the
-             * source component).
-             * @param name The name of the reference on the component.
-             * @param target The wrapper of the component which is wired to this component and
-             * reference.
+             * Create a new service proxy for a reference. The proxy will contain a pointer to
+             * the target ServiceWrapper.
+             * @param reference The reference on the source component.
+             * @param target The wrapper of the service which is wired to this reference.
              */
-            ServiceProxy(Component* component, const string& name, ServiceWrapper* target);
+            ServiceProxy(Reference* reference);
 
             /**
              * Destructor.
              */
             virtual    ~ServiceProxy();
+            
+            /**
+             * Returns the reference represented by this proxy.
+             * @return The Reference represented by this proxy.
+             */
+            Reference* getReference() const { return reference; };
 
             /**
              * Return an instance of the proxy created for this particular component and reference.
              * @return The proxy.
              */
-            void* getProxy() {return proxy;}
-
-
-        private:
-            /**
-             * Holds the instance of the code generated proxy.
-             */ 
-            void* proxy;
-
-            typedef void (* PROXYDESTRUCTOR) (void*);
-
-            /**
-             * A function pointer to the destructor of the proxy.
-             */
-            PROXYDESTRUCTOR destructor;
+            virtual void* getProxy() = 0;
             
             /**
-             * The library which contains the code for the proxy.
+             * Return a list of the proxies created for this particular component and reference.
+             * @return The proxies.
              */
-            Library proxyLibrary;
-
+            typedef vector<void*> PROXIES;
+            virtual PROXIES getProxies() = 0;
+            
+        private:
+        
+            /**
+             * The reference represented by this proxy.
+             */
+            Reference* reference;
+        
         };
     } // End namespace sca
 } // End namespace tuscany

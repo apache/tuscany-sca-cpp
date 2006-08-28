@@ -18,14 +18,13 @@
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
 #include "tuscany/sca/core/SCARuntime.h"
-#include "tuscany/sca/core/ComponentServiceWrapper.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
-#include "tuscany/sca/util/Exceptions.h"
-
-#include "tuscany/sca/model/System.h"
-#include "tuscany/sca/model/Subsystem.h"
 #include "tuscany/sca/model/ModelLoader.h"
+#include "tuscany/sca/util/File.h"
+#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/model/Composite.h"
+#include "tuscany/sca/model/Component.h"
 
 #if defined(WIN32)  || defined (_WINDOWS)
 #include <windows.h> 
@@ -40,7 +39,7 @@ namespace tuscany
          */
         static const char* TUSCANY_SCACPP = "TUSCANY_SCACPP";
         static const char* TUSCANY_SCACPP_SYSTEM_ROOT = "TUSCANY_SCACPP_SYSTEM_ROOT";
-        static const char* TUSCANY_SCACPP_DEFAULT_COMPOSITE = "TUSCANY_SCACPP_DEFAULT_COMPOSITE";
+        static const char* TUSCANY_SCACPP_DEFAULT_COMPONENT = "TUSCANY_SCACPP_DEFAULT_COMPONENT";
             
  
         // ==========================================================
@@ -48,7 +47,7 @@ namespace tuscany
         // ==========================================================
         SCARuntime* SCARuntime::instance = 0;
         string SCARuntime::systemRoot = "";
-        string SCARuntime::defaultCompositeName = "";
+        string SCARuntime::defaultComponentName = "";
         
 
         // ==========================================================
@@ -63,21 +62,21 @@ namespace tuscany
         }
 
         // ==========================================================
-        // Set the default CompositeComponent name
+        // Set the default component name
         // ==========================================================
-        void SCARuntime::setDefaultCompositeComponent(const string& compositeComponent)
+        void SCARuntime::setDefaultComponentName(const string& componentName)
         {
-            LOGENTRY(1, "SCARuntime::setDefaultCompositeComponent");
-            defaultCompositeName = compositeComponent;
-            LOGINFO_1(3, "SCARuntime::setDefaultCompositeComponent - set to %s", compositeComponent.c_str());
-            LOGEXIT(1, "SCARuntime::setDefaultCompositeComponent");
+            LOGENTRY(1, "SCARuntime::setDefaultComponentName");
+            defaultComponentName = componentName;
+            LOGINFO_1(3, "SCARuntime::setDefaultComponentName - set to %s", componentName.c_str());
+            LOGEXIT(1, "SCARuntime::setDefaultComponentName");
         }
 
         // ===================================================================
         // Constructor for the SCARuntime class. This will be a singleton that
         // holds all the information about the current runtime.
         // ===================================================================
-        SCARuntime::SCARuntime() : system(0), defaultComposite(0)
+        SCARuntime::SCARuntime() : system(0), defaultComponent(0)
         { 
             LOGENTRY(1, "SCARuntime::constructor");
             
@@ -164,7 +163,7 @@ namespace tuscany
                 delete instance;
                 instance = 0;
                 systemRoot = "";
-                defaultCompositeName = "";        
+                defaultComponentName = "";        
             }
             
             LOGEXIT(1, "SCARuntime::releaseInstance");           
@@ -272,11 +271,11 @@ namespace tuscany
         // ===================================
         // Return the top of the runtime model
         // ===================================
-        System* SCARuntime::getSystem()
+        Composite* SCARuntime::getSystem()
         {
             if (!system)
             {
-                system = new System();
+                system = new Composite("tuscany/sca/system", "");
                 load();
             }
             return system;
@@ -362,81 +361,40 @@ namespace tuscany
             
         }
         
-
         // ===========================================
-        // getCurrentComposite: return the current composite
+        // getCurrentCompositeComponent: return the current composite component
         // ===========================================
-        Composite* SCARuntime::getCurrentComposite()
+        Component* SCARuntime::getDefaultComponent()
         {
-            // ---------------------------------------------
-            // Get composite from current component if possible
-            // ---------------------------------------------
-            Component* comp = getCurrentComponent();
-            if (comp != 0)
-            {
-                return comp->getComposite();
-            }
 
             // ----------------------
-            // Get the default Composite
+            // Get the default Component
             // ----------------------
-            string message;
-            if (!defaultComposite)
+            if (!defaultComponent)
             {
                 // -------------------------------------------
                 // Get the default composite from the environment
                 // -------------------------------------------
-                if (defaultCompositeName == "")
+                if (defaultComponentName == "")
                 {
-                    const char* defMod = getenv(TUSCANY_SCACPP_DEFAULT_COMPOSITE);
+                    const char* defMod = getenv(TUSCANY_SCACPP_DEFAULT_COMPONENT);
                     if (!defMod)
                     {
-                        message = TUSCANY_SCACPP_DEFAULT_COMPOSITE;
+                        string message = TUSCANY_SCACPP_DEFAULT_COMPONENT;
                         message += " environment variable not set";
                         throw SystemConfigurationException(message.c_str());
                     }
-                    defaultCompositeName = defMod;
-                }
-                string subsystemName, compositeName;
-                Utils::tokeniseUri(defaultCompositeName, subsystemName, compositeName);
-
-                // ---------------------------
-                // Subsystem must be specified
-                // ---------------------------
-                Subsystem* subsystem = getSystem()->findSubsystem(subsystemName);
-                if (!subsystem)
-                {
-                    message = "Default subsystem \'" + subsystemName + "\' not found";
-                    throw SystemConfigurationException(message.c_str());
+                    defaultComponentName = defMod;
                 }
                 
-                // --------------------------------------------------------------------------
-                // If composite is not specified then get the default composite for this subsystem.
-                // This will be the ONLY composite for this subsystem
-                // --------------------------------------------------------------------------
-                if (compositeName == "")
+                defaultComponent = getSystem()->findComponent(defaultComponentName);
+                if (!defaultComponent)
                 {
-                    defaultComposite = subsystem->getDefaultComposite();
-                    if (!defaultComposite)
-                    {
-                        message = "Default composite not found for subsystem \'" + subsystemName + "\'";
-                        throw SystemConfigurationException(message.c_str());
-                    }
-                }
-                else 
-                {
-                    // -----------------------------
-                    // get the named CompositeComponent
-                    // -----------------------------
-                    defaultComposite = subsystem->findCompositeByComponentName(compositeName);
-                    if (!defaultComposite)
-                    {
-                        message = "Default composite \'" + compositeName  + "\' not found in subsystem \'" + subsystemName +"\'";
-                        throw SystemConfigurationException(message.c_str());
-                    }
+                    string message = "Default component \'" + defaultComponentName + "\' not found";
+                    throw SystemConfigurationException(message.c_str());
                 }
             }
-            return defaultComposite;        
+            return defaultComponent;        
         }
                 
     } // End namespace sca

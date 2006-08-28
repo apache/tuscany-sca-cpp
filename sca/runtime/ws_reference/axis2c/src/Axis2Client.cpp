@@ -35,9 +35,15 @@
 using namespace osoa::sca;
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/model/WSBinding.h"
+#include "tuscany/sca/ws/WSServiceBinding.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Operation.h"
+#include "tuscany/sca/model/CompositeReference.h"
+#include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/Composite.h"
+#include "tuscany/sca/model/WSDLDefinition.h"
+#include "tuscany/sca/model/WSDLOperation.h"
 
 using namespace tuscany::sca::ws;
 
@@ -45,8 +51,8 @@ using namespace tuscany::sca::ws;
 using namespace commonj::sdo;
 using namespace commonj::sdo_axiom;
 
-Axis2Client::Axis2Client(CompositeReferenceType* extService)
-    : externalService(extService)
+Axis2Client::Axis2Client(CompositeReference* compositeReference)
+    : compositeReference(compositeReference)
 {
 }
 
@@ -58,15 +64,16 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
 {
     LOGENTRY(1, "Axis2Client::invoke");
 
-    // From the external service ws-binding, get the namespace of the wsdl endpoint
-    WSBinding* binding = (WSBinding *)externalService->getBinding();
-    // TODO check 0 throw
+    // From the service ws-binding, get the namespace of the wsdl endpoint
+    Service* service = compositeReference->getService();
+    WSServiceBinding* binding = (WSServiceBinding *)service->getBinding();
 
     string portNamespace = binding->getWSDLNamespaceURL();
 
     // Lookup the wsdl model from the composite, keyed on the namespace 
     // (the wsdl will have been loaded at startup, based on the information in the config file)
-    Wsdl* wsdlDefinition = externalService->getContainingComposite()->findWsdl(portNamespace);
+    Composite* composite=compositeReference->getComposite();
+    WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(portNamespace);
     if (wsdlDefinition == 0)
     {
     	string msg = "WSDL not found for " + portNamespace;
@@ -76,7 +83,7 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
     const string& operationName = operation.getName();
 
     // Match the operation in Operation to the operation in the wsdl port type.
-    const WsdlOperation& wsdlOperation =  wsdlDefinition->findOperation(
+    const WSDLOperation& wsdlOperation =  wsdlDefinition->findOperation(
                                                        binding->getServiceName(),
                                                        binding->getPortName(),
                                                        operationName);  
@@ -104,7 +111,7 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
     axis2_options_t* options = axis2_options_create(env);
     AXIS2_OPTIONS_SET_TO(options, env, endpoint_ref);
     int soap_version = AXIOM_SOAP11;
-    if (wsdlOperation.getSoapVersion() == WsdlOperation::SOAP12)
+    if (wsdlOperation.getSoapVersion() == WSDLOperation::SOAP12)
     {
     	soap_version = AXIOM_SOAP12;
     }
@@ -156,7 +163,7 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
 }
 
 axiom_node_t* Axis2Client::createPayload(Operation& operation, 
-                                            const WsdlOperation& wsdlOp,
+                                            const WSDLOperation& wsdlOp,
                                             axis2_env_t* env)
 {	
     LOGENTRY(1, "Axis2Client::createPayload");
@@ -171,7 +178,7 @@ axiom_node_t* Axis2Client::createPayload(Operation& operation,
     	// Build up the payload as an SDO
 
         // Get the data factory for the composite (it will already have the typecreates loaded for the xsds)
-      	DataFactoryPtr dataFactory = externalService->getContainingComposite()->getDataFactory();
+      	DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
     	DataObjectPtr requestDO = dataFactory->create(wsdlOp.getInputTypeUri().c_str(), 
     	                                              wsdlOp.getInputTypeName().c_str());
     	
@@ -256,18 +263,19 @@ axiom_node_t* Axis2Client::createPayload(Operation& operation,
     AXIOM_NODE_SERIALIZE(requestOM, env, om_output);
     axis2_char_t* buffer = (axis2_char_t*)AXIOM_XML_WRITER_GET_XML(xml_writer, env);         
     LOGINFO_1(3, "Sending this OM node in XML : %s \n",  buffer); 
+    
     AXIOM_OUTPUT_FREE(om_output, env);
     AXIS2_FREE((env)->allocator, buffer);
     // Logging end
 
-    return requestOM;
-    
     LOGEXIT(1, "Axis2Client::createPayload");
+    
+    return requestOM;
 }
 
 void Axis2Client::setReturn(axiom_node_t* ret_node,
                             Operation& operation, 
-                            const WsdlOperation& wsdlOp,
+                            const WSDLOperation& wsdlOp,
                             axis2_env_t* env)
 {	
     LOGENTRY(1, "Axis2Client::setReturn");
@@ -288,7 +296,7 @@ void Axis2Client::setReturn(axiom_node_t* ret_node,
     {
         // Document style 
         
-        DataFactoryPtr dataFactory = externalService->getContainingComposite()->getDataFactory();
+        DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
         AxiomHelper myHelper;
         DataObjectPtr returnDO = myHelper.toSdo(ret_node, dataFactory);
         

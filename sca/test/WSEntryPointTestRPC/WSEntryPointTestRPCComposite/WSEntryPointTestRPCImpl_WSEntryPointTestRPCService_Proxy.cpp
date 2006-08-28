@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-#include "WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy.h"
+#include "WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy.h"
 
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
@@ -26,31 +26,31 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy* WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy_Factory(ServiceWrapper* target)
+    WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy* WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy_Factory(ServiceWrapper* target)
     {
-        return new WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy(target);
+        return new WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy(target);
     }
 
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    void WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy_Destructor(void* proxy)
+    void WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy_Destructor(void* proxy)
     {
-        delete (WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy*)proxy;
+        delete (WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy*)proxy;
     }
 }
 
-WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy::WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy(ServiceWrapper* targ) : target(targ)
+WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy::WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy(ServiceWrapper* targ) : target(targ)
 {
 }
 
-WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy::~WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy()
+WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy::~WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy()
 {
     if (target)
         delete target;
 }
 
-char* WSCompositeServiceTypeTestRPCImpl_WSCompositeServiceTypeTestRPCService_Proxy::doString( char* arg0)
+char* WSCompositeServiceTestRPCImpl_WSCompositeServiceTestRPCService_Proxy::doString( char* arg0)
 {
     Operation operation("doString");
     operation.addParameter(&arg0);

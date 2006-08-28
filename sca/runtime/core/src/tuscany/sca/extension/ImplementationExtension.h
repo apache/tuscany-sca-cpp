@@ -24,11 +24,15 @@
 #include <string>
 using std::string;
 
-#include <tuscany/sca/model/Component.h>
-#include <tuscany/sca/model/Service.h>
-#include <tuscany/sca/core/ServiceWrapper.h>
+#include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/core/ServiceWrapper.h"
+#include "tuscany/sca/model/Composite.h"
 
-#include <commonj/sdo/SDO.h>
+#include "commonj/sdo/SDO.h"
+
+using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -58,9 +62,12 @@ namespace tuscany
             */
             virtual const string& getExtensionTypeQName() = 0;
 
-            virtual tuscany::sca::model::Implementation* getImplementation(commonj::sdo::DataObjectPtr scdlImplementation) = 0;
+            /**
+             * Get an implementation from a DataObject representing
+             * an SCDL implementation element
+             */ 
+            virtual ComponentType* getImplementation(Composite* composite, DataObjectPtr scdlImplementation) = 0;
 
-            //virtual ServiceWrapper* getServiceWrapper(model::Service* service) = 0;
          };
 
         

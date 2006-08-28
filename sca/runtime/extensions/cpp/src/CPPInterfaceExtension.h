@@ -53,7 +53,7 @@ namespace tuscany
                 */
                 virtual const string& getExtensionTypeQName() {return typeQName;}
  
-                virtual tuscany::sca::model::Interface* getInterface(commonj::sdo::DataObjectPtr scdlInterface);
+                virtual tuscany::sca::model::Interface* getInterface(Composite* composite, DataObjectPtr scdlInterface);
                  
             private:
                 static const string extensionName;

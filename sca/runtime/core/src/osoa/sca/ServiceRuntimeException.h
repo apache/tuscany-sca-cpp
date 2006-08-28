@@ -217,16 +217,16 @@ namespace osoa
         /**
          * Unable to find the specified entry point in the composite.
          */
-        class SCA_API CompositeServiceTypeNotFoundException: public ServiceRuntimeException
+        class SCA_API CompositeServiceNotFoundException: public ServiceRuntimeException
         {
         public:
-            CompositeServiceTypeNotFoundException(const char* msg)
-                : ServiceRuntimeException("CompositeServiceTypeNotFoundException", Error,
+            CompositeServiceNotFoundException(const char* msg)
+                : ServiceRuntimeException("CompositeServiceNotFoundException", Error,
                 msg)
             {
             }
         private:
-        }; // End CompositeServiceTypeNotFoundException class definition
+        }; // End CompositeServiceNotFoundException class definition
 
         
         

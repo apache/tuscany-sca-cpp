@@ -19,18 +19,17 @@
 #define tuscany_sca_ws_wsserviceproxy_h
 
 #include "osoa/sca/export.h"
-
-#include "commonj/sdo/SDO.h"
-using commonj::sdo::DataObjectPtr;
-
-#include "tuscany/sca/core/CompositeService.h"
-using tuscany::sca::CompositeService;
-
 #include "tuscany/sca/core/TuscanyRuntime.h"
-using tuscany::sca::TuscanyRuntime;
+#include "tuscany/sca/core/Operation.h"
+#include "tuscany/sca/core/CompositeServiceHelper.h"
+#include "commonj/sdo/SDO.h"
 
 #include <string>
 using std::string;
+
+using namespace commonj::sdo;
+using namespace tuscany::sca;
+
 
 namespace tuscany
 {
@@ -52,9 +51,9 @@ namespace tuscany
                 virtual void setOutputData(Operation operation, DataObjectPtr outputDataObject);
                 string compositeServiceName;
                 string systemRoot;
-                string compositeComponent;
-                CompositeService* scaCompositeServiceType;
+                string defaultComponentName;
                 TuscanyRuntime* tuscanyRuntime;
+                CompositeServiceHelper* compositeServiceHelper;
             };
         } // End namespace ws
     } // End namespace sca

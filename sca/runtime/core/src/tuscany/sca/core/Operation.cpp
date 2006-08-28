@@ -24,7 +24,6 @@
 #include "tuscany/sca/core/SCARuntime.h"
 
 
-
 namespace tuscany
 {
     namespace sca
