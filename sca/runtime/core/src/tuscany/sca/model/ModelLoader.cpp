@@ -796,8 +796,9 @@ namespace tuscany
                     // Create an xsd helper
                     myXSDHelper = HelperProvider::getXSDHelper();
                     
-                    // Now add to it some xsd files
                     try {
+                    
+                        // Load the Assembly model schema    
                         string root = SCARuntime::getInstance()->getInstallRoot();
                         string filename = root + "/xsd/sca.xsd";
                         
@@ -808,6 +809,17 @@ namespace tuscany
                         myXSDHelper->defineFile(filename.c_str());
                      
                         loadWSDLTypes(myXSDHelper);
+
+                        // Load any schema from the extensions directory
+                        string extensionsRoot = root + "/extensions";
+
+                        Files files(extensionsRoot, "*.xsd", false);
+                        for (unsigned int i=0; i < files.size(); i++)
+                        {
+                            string extensionSchema = extensionsRoot + "/" + files[i].getFileName();
+                            myXSDHelper->defineFile(extensionSchema.c_str());
+                        }
+
                      
                     } catch (SDOTypeNotFoundException ex)
                     {

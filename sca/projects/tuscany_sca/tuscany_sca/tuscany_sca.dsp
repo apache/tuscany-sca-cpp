@@ -530,15 +530,7 @@ SOURCE="..\..\..\xsd\sca-implementation-composite.xsd"
 # End Source File
 # Begin Source File
 
-SOURCE="..\..\..\xsd\sca-implementation-cpp.xsd"
-# End Source File
-# Begin Source File
-
 SOURCE="..\..\..\xsd\sca-implementation-java.xsd"
-# End Source File
-# Begin Source File
-
-SOURCE="..\..\..\xsd\sca-interface-cpp.xsd"
 # End Source File
 # Begin Source File
 
