@@ -6,9 +6,7 @@ noinst_HEADERS = *.h model/*.h
 libtuscany_sca_cpp_la_SOURCES = \
 CPPExtension.cpp \
 CPPImplementationExtension.cpp \
-model/CPPImplementation.cpp \
-CPPInterfaceExtension.cpp \
-model/CPPInterface.cpp
+model/ImplementationCPP.cpp
 
 libtuscany_sca_cpp_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca

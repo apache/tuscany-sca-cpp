@@ -18,8 +18,6 @@
     targetNamespace="http://www.osoa.org/xmlns/sca/1.0"
     xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
     elementFormDefault="qualified">
-
-    <include schemaLocation="sca-core.xsd" />
     
     <element name="interface.cpp" type="sca:CPPInterface" substitutionGroup="sca:interface"/>
     <complexType name="CPPInterface">
