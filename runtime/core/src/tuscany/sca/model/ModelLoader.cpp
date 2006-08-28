@@ -38,7 +38,6 @@
 
 
 using namespace commonj::sdo;
-using namespace tuscany::sca;
 
 using tuscany::sca::ws::WSServiceBinding;
 using tuscany::sca::ws::WSReferenceBinding;
@@ -440,9 +439,9 @@ namespace tuscany
                 DataObjectList& serviceTypes = componentTypeDO->getList("service");
                 for (int i=0; i<serviceTypes.size(); i++)
                 {
-                    Interface* interface = getInterface(composite, serviceTypes[i]);
+                    Interface* iface = getInterface(composite, serviceTypes[i]);
                     ServiceType* serviceType =  new ServiceType(
-                        componentType, serviceTypes[i]->getCString("name"), interface, NULL, false);
+                        componentType, serviceTypes[i]->getCString("name"), iface, NULL, false);
                     componentType->addServiceType(serviceType);
                 }
             }
@@ -466,10 +465,10 @@ namespace tuscany
                          multiplicity = ReferenceType::ONE_ONE;
                     }
                     
-                    Interface* interface = getInterface(composite, refs[i]);
+                    Interface* iface = getInterface(composite, refs[i]);
                     
                     ReferenceType* referenceType = new ReferenceType(
-                        componentType, refs[i]->getCString("name"), interface, NULL, false, multiplicity);
+                        componentType, refs[i]->getCString("name"), iface, NULL, false, multiplicity);
                     componentType->addReferenceType(referenceType);
                                             
                 }
@@ -549,7 +548,7 @@ namespace tuscany
                 //Utils::printDO(compositeServiceDO);
                 string compositeServiceName = compositeServiceDO->getCString("name");
                 
-                Interface* interface = getInterface(composite, compositeServiceDO);
+                Interface* iface = getInterface(composite, compositeServiceDO);
                 
                     ReferenceType::Multiplicity multiplicity;
                     if (compositeServiceDO->isSet("multiplicity"))
@@ -563,7 +562,7 @@ namespace tuscany
                     }
 
                 CompositeService* compositeService = new CompositeService(
-                        composite, compositeServiceName, interface, NULL, false, multiplicity); 
+                        composite, compositeServiceName, iface, NULL, false, multiplicity); 
                 
                 composite->addComponent(compositeService);    
 
@@ -619,10 +618,10 @@ namespace tuscany
             {
                 string compositeReferenceName = compositeReferenceDO->getCString("name");
                 
-                Interface* interface = getInterface(composite, compositeReferenceDO);
+                Interface* iface = getInterface(composite, compositeReferenceDO);
                 
                 CompositeReference* compositeReference = new CompositeReference(
-                        composite, compositeReferenceName, interface, NULL, false, ReferenceType::ONE_ONE); 
+                        composite, compositeReferenceName, iface, NULL, false, ReferenceType::ONE_ONE); 
                     
                 composite->addComponent(compositeReference);
                     

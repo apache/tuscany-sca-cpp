@@ -30,8 +30,8 @@
 #include "tuscany/sca/core/ServiceProxy.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
-using namespace tuscany::sca;
 using namespace tuscany::sca::model;
+using namespace commonj::sdo;
 
 namespace tuscany
 {

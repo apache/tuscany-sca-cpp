@@ -30,7 +30,6 @@ using std::vector;
 #include "commonj/sdo/SDO.h"
 
 using namespace osoa::sca;
-using namespace commonj::sdo;
 using namespace tuscany::sca::model;
 
 namespace tuscany

@@ -31,7 +31,7 @@
 using std::vector;
 
 #include "commonj/sdo/SDO.h"
-using namespace commonj::sdo;
+
 using namespace tuscany::sca::model;
 
 namespace tuscany
@@ -75,7 +75,7 @@ namespace tuscany
              * Returns a SDO data factory from which all the types associated with the entry point
              * and composite can be created.
              */
-            SCA_API DataFactoryPtr getDataFactory() const { return dataFactory; }
+            SCA_API commonj::sdo::DataFactoryPtr getDataFactory() const { return dataFactory; }
 
         protected:
 
@@ -99,7 +99,7 @@ namespace tuscany
              * Cached data factory which has all the types defined for the composite in which
              * this entry point is found.
              */
-            DataFactoryPtr dataFactory;
+            commonj::sdo::DataFactoryPtr dataFactory;
 
             typedef vector<ServiceWrapper*> SERVICES;
             /**

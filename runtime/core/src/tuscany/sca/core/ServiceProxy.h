@@ -42,7 +42,7 @@ namespace tuscany
          * and reference and will have been code generated and be contained in a dll 
          * created by a developer of an SCA application.
          */
-        class ServiceProxy 
+        class SCA_API ServiceProxy 
         {
         public:
             /**

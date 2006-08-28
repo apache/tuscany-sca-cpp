@@ -38,7 +38,7 @@ namespace tuscany
              * This interface will typically be extended by binding implementations to allow
              * specification of binding/transport specific information.
              */
-            class Binding 
+            class SCA_API Binding 
             {
                 
             public:

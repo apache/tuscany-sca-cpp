@@ -30,8 +30,6 @@ namespace tuscany
     namespace sca
     {
         class ServiceWrapper;
-
-        using namespace tuscany::sca;
         
         namespace model
         {
@@ -47,7 +45,7 @@ namespace tuscany
              * This interface will typically be extended by binding implementations to allow
              * specification of binding/transport specific information.
              */
-            class ServiceBinding : public Binding 
+            class SCA_API ServiceBinding : public Binding 
             {
             public:
 

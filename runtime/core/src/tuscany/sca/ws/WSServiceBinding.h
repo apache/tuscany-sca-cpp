@@ -21,9 +21,7 @@
 #define tuscany_sca_ws_wsservicebinding_h
 
 #include "tuscany/sca/model/ServiceBinding.h"
-
-using namespace tuscany::sca;
-using namespace tuscany::sca::model;
+#include "tuscany/sca/model/Service.h"
 
 #include <string>
 using std::string;
@@ -37,7 +35,7 @@ namespace tuscany
             /**
              * Information about a web service binding for service or a reference.
              */
-            class WSServiceBinding : public ServiceBinding
+            class WSServiceBinding : public model::ServiceBinding
             {    
             public:
 
@@ -48,7 +46,7 @@ namespace tuscany
                  * or external service is to be bound. This is of the form
                  * "namespace"#endpoint("service"/"port")
                  */
-                WSServiceBinding(Service* service, const string&uri, const string& port);  
+                WSServiceBinding(model::Service* service, const string& uri, const string& port);  
 
                 /**
                  * Destructor.

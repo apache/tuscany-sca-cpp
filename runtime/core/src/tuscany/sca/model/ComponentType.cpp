@@ -241,11 +241,11 @@ namespace tuscany
                     Service* service = new Service(component, iter->second);
                     component->addService(service);    
                 }
-                for (REFERENCETYPE_MAP::iterator iter = referenceTypes.begin();
-                iter != referenceTypes.end();
-                iter++)
+                for (REFERENCETYPE_MAP::iterator refiter = referenceTypes.begin();
+                refiter != referenceTypes.end();
+                refiter++)
                 {
-                    Reference* reference = new Reference(component, iter->second);
+                    Reference* reference = new Reference(component, refiter->second);
                     component->addReference(reference);    
                 }
             }

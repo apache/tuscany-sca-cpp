@@ -21,10 +21,7 @@
 #define tuscany_sca_extension_cpp_model_cppservicebinding_h
 
 #include "tuscany/sca/model/ServiceBinding.h"
-
-using namespace tuscany::sca;
 using namespace tuscany::sca::model;
-
 #include <string>
 using std::string;
 

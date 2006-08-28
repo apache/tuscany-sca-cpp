@@ -51,43 +51,43 @@ namespace tuscany
                  * @param component The component on which the reference is defined.
                  * @param referenceType The reference type defining the characteristics of the reference.
                  */
-                 Reference(Component* component, ReferenceType* referenceType);
+                 SCA_API Reference(Component* component, ReferenceType* referenceType);
                  
                 /**
                  * Destructor.
                  */
-                 virtual ~Reference();
+                 SCA_API virtual ~Reference();
 
                 /**
                  * Returns the component on which this reference is defined.
                  * @return The component on which this reference is defined.
                  */
-                Component* getComponent() const { return component; }
+                SCA_API Component* getComponent() const { return component; }
 
                 /**
                  * Returns the reference type defining the characteristics of the reference.
                  * @return The reference type defining the characteristics of the reference.
                  */
-                ReferenceType* getType() const { return type; }
+                SCA_API ReferenceType* getType() const { return type; }
 
                 /**
                  * Returns the binding supported by the reference.
                  * @return The binding supported by the reference.
                  */
-                ReferenceBinding* getBinding() const;
+                SCA_API ReferenceBinding* getBinding() const;
 
                 /**
                  * Sets the binding supported by the reference.
                  * @param binding The binding supported by the reference.
                  */
-                void setBinding(ReferenceBinding* binding);
+                SCA_API void setBinding(ReferenceBinding* binding);
 
                /**
                  * Add a target for this reference. There may be more than
                  * one if the multiplicity is 0..n or 1..n.
                  * @param target The target of the reference.
                  */
-                void addTarget(Service* target);
+                SCA_API void addTarget(Service* target);
 
                 typedef vector<Service*> TARGETS;
 
@@ -95,7 +95,7 @@ namespace tuscany
                  * Get a vector of all the targets from this reference.
                  * @return The targets of this reference.
                  */
-                const TARGETS& getTargets() const { return targets; }
+                SCA_API const TARGETS& getTargets() const { return targets; }
 
             private:
 

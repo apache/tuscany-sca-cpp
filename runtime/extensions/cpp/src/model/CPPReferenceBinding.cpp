@@ -21,7 +21,6 @@
 #include "CPPReferenceBinding.h"
 #include "CPPServiceProxy.h"
 
-using namespace tuscany::sca;
 
 namespace tuscany
 {

@@ -28,7 +28,6 @@ using std::string;
 #include "tuscany/sca/model/Composite.h"
 #include "commonj/sdo/SDO.h"
 
-using namespace commonj::sdo;
 using namespace tuscany::sca::model;
 
 namespace tuscany
@@ -63,7 +62,7 @@ namespace tuscany
              * Get an interface from a DataObject representing an
              * SCDL interface
              */
-            virtual Interface* getInterface(Composite *composite, DataObjectPtr scdlInterface) = 0;
+            virtual Interface* getInterface(Composite *composite, commonj::sdo::DataObjectPtr scdlInterface) = 0;
             
         };
 

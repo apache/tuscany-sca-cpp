@@ -56,7 +56,7 @@ namespace tuscany
                  * Returns the interface for invocations from the requestor to the provider.
                  * @return The interface for invocations from the requestor to the provider.
                  */
-                Interface* getInterface() const { return interface; }
+                Interface* getInterface() const { return iface; }
                 
                 /**
                  * Returns the interface for invocations from the provider back to the requestor.
@@ -75,7 +75,7 @@ namespace tuscany
                 /**
                  * The interface for invocations from the requestor to the provider.
                  */
-                Interface* interface;
+                Interface* iface;
 
                 /**
                  * The interface for invocations from the provider back to the requestor.
