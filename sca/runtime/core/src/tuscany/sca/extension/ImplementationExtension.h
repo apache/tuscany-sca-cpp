@@ -58,7 +58,7 @@ namespace tuscany
             */
             virtual const string& getExtensionTypeQName() = 0;
 
-            virtual void loadModelElement(commonj::sdo::DataObjectPtr scdlImplementation, model::Component* component) = 0;
+            virtual tuscany::sca::model::Implementation* getImplementation(commonj::sdo::DataObjectPtr scdlImplementation) = 0;
 
             //virtual ServiceWrapper* getServiceWrapper(model::Service* service) = 0;
          };
