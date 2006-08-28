@@ -27,8 +27,6 @@ using std::string;
 
 #include "commonj/sdo/SDO.h"
 
-using namespace commonj::sdo;
-
 
 namespace tuscany
 {
@@ -133,7 +131,7 @@ namespace tuscany
                  * @param name The name of the property.
                  * @param value The value of the property.
                  */
-                void setProperty(const string& name, DataObjectPtr value);
+                void setProperty(const string& name, commonj::sdo::DataObjectPtr value);
 
                 /**
                  * Returns a data object from which all the properties of the component
@@ -172,7 +170,7 @@ namespace tuscany
                 /**
                  * The properties and their values for this component.
                  */ 
-                DataObjectPtr properties;
+                commonj::sdo::DataObjectPtr properties;
 
            };
 

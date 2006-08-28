@@ -20,12 +20,14 @@
 #ifndef tuscany_sca_model_wsdldefinition_h
 #define tuscany_sca_model_wsdldefinition_h
 
+#include "tuscany/sca/model/WSDLOperation.h"
+
 #include "osoa/sca/export.h"
 #include <string>
 using std::string;
 
 #include "commonj/sdo/SDO.h"
-using namespace commonj::sdo;
+using commonj::sdo::DataObjectPtr;
 
 #include <map>
 using std::map;

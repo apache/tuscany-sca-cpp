@@ -23,12 +23,12 @@
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/core/CompositeServiceHelper.h"
 #include "commonj/sdo/SDO.h"
+using commonj::sdo::DataFactoryPtr;
+using commonj::sdo::DataObjectPtr;
 
 #include <string>
 using std::string;
 
-using namespace commonj::sdo;
-using namespace tuscany::sca;
 
 
 namespace tuscany

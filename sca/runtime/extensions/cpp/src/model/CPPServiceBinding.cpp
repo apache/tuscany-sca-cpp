@@ -21,8 +21,6 @@
 #include "CPPServiceBinding.h"
 #include "CPPServiceWrapper.h"
 
-using namespace tuscany::sca;
-
 namespace tuscany
 {
     namespace sca

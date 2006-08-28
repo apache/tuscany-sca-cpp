@@ -31,7 +31,6 @@ using std::string;
 
 #include "commonj/sdo/SDO.h"
 
-using namespace commonj::sdo;
 using namespace tuscany::sca::model;
 
 namespace tuscany
@@ -66,7 +65,7 @@ namespace tuscany
              * Get an implementation from a DataObject representing
              * an SCDL implementation element
              */ 
-            virtual ComponentType* getImplementation(Composite* composite, DataObjectPtr scdlImplementation) = 0;
+            virtual ComponentType* getImplementation(Composite* composite, commonj::sdo::DataObjectPtr scdlImplementation) = 0;
 
          };
 

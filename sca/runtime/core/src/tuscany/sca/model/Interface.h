@@ -20,8 +20,6 @@
 #ifndef tuscany_sca_model_interface_h
 #define tuscany_sca_model_interface_h
 
-#include <string>
-
 namespace tuscany
 {
     namespace sca

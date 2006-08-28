@@ -26,7 +26,6 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/util/Library.h"
 
-using namespace tuscany::sca;
 using namespace tuscany::sca::model;
 
 
@@ -56,25 +55,25 @@ namespace tuscany
                  * created.
                  * @return A wrapper that references the given target.
                  */
-                static SCA_API CPPServiceWrapper* getServiceWrapper(Service* service);
+                static CPPServiceWrapper* getServiceWrapper(Service* service);
     
                 /**
                  * Constructor.
                  * @param target The component service to which this wrapper refers.
                  */
-                SCA_API CPPServiceWrapper(Service* service);
+                CPPServiceWrapper(Service* service);
     
                 /**
                  * Destructor.
                  */ 
-                SCA_API virtual    ~CPPServiceWrapper();
+                virtual    ~CPPServiceWrapper();
     
                 /**
                  * All business method calls to the target component go through the invoke method.
                  * @param operation The details of the method, paramaters and return value for the
                  * business method to be called on the target component.
                  */
-                SCA_API virtual void invoke(Operation& operation);
+                virtual void invoke(Operation& operation);
     
                 /**
                  * Return the loaded shared library for the target component.
@@ -87,27 +86,27 @@ namespace tuscany
                  * Delegated method to invoke the correct method on the target component. 
                  * Implemented by the subtype.
                  */
-                SCA_API virtual void invokeService(Operation& operation) = 0;
+                virtual void invokeService(Operation& operation) = 0;
     
                 /**
                  * Delegated method to create a new component implementation.
                  * Implemented by the subtype.
                  * @return A pointer to an instance of the component implementation class.
                  */
-                SCA_API virtual void* newImplementation() = 0;
+                virtual void* newImplementation() = 0;
     
                 /**
                  * Delegated method to delete the current instance of the component
                  * implementation.
                  * Implemented by the subtype.
                  */
-                SCA_API virtual void deleteImplementation() = 0;
+                virtual void deleteImplementation() = 0;
     
                 /**
                  * Return the current instance of the component implementation.
                  * @return A pointer to an instance of the component implementation class.
                  */
-                SCA_API virtual void* getImplementation();
+                virtual void* getImplementation();
     
                 /**
                  * Indicates that the current instance of the component implementation
@@ -116,7 +115,7 @@ namespace tuscany
                  * implementation is stateless (so that a new instance is returned
                  * for each call).
                  */
-                SCA_API virtual void releaseImplementation();
+                virtual void releaseImplementation();
     
             private:
                 /**

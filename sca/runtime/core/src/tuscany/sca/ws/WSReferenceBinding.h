@@ -22,7 +22,6 @@
 
 #include "tuscany/sca/model/ReferenceBinding.h"
 
-using namespace tuscany::sca;
 using namespace tuscany::sca::model;
 
 #include <string>

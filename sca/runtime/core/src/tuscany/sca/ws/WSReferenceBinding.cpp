@@ -21,8 +21,6 @@
 #include "tuscany/sca/ws/WSReferenceBinding.h"
 #include "tuscany/sca/core/ServiceProxy.h"
 
-using namespace tuscany::sca;
-
 namespace tuscany
 {
     namespace sca

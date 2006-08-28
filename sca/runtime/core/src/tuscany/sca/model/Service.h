@@ -36,7 +36,7 @@ namespace tuscany
             /**
              * An addressable instance of a service type associated with a particular component.
              */
-            class Service
+            class SCA_API Service
             {
             public:
                 /**

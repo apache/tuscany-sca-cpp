@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "../../../runtime/extensions/cpp/src/model" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "../../../runtime/extensions/cpp/src" /I "../../../runtime/extensions/cpp/src/model" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -74,7 +74,7 @@ PostBuild_Cmds=copy Release\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp	c
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/cpp/src/model" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/cpp/src" /I "../../../runtime/extensions/cpp/src/model" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -120,6 +120,22 @@ SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPInterface.cpp
 
 SOURCE=..\..\..\runtime\extensions\cpp\src\CPPInterfaceExtension.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPReferenceBinding.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPServiceBinding.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\CPPServiceProxy.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\CPPServiceWrapper.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -143,6 +159,22 @@ SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPInterface.h
 # Begin Source File
 
 SOURCE=..\..\..\runtime\extensions\cpp\src\CPPInterfaceExtension.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPReferenceBinding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPServiceBinding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\CPPServiceProxy.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\CPPServiceWrapper.h
 # End Source File
 # End Group
 # Begin Group "xsd"

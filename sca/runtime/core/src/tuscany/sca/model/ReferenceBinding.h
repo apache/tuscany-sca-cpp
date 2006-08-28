@@ -29,8 +29,7 @@ namespace tuscany
     namespace sca
     {
         class ServiceProxy;
-        
-        using namespace tuscany::sca;
+       
         
         namespace model
         {
@@ -47,7 +46,7 @@ namespace tuscany
              * This interface will typically be extended by binding implementations to allow
              * specification of binding/transport specific information.
              */
-            class ReferenceBinding : public Binding 
+            class SCA_API ReferenceBinding : public Binding 
             {
             public:
 
