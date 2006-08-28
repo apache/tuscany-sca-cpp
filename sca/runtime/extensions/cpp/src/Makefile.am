@@ -1,4 +1,4 @@
-libdir=$(prefix)/extensions
+libdir=$(prefix)/extensions/cpp
 lib_LTLIBRARIES = libtuscany_sca_cpp.la
 
 noinst_HEADERS = *.h model/*.h

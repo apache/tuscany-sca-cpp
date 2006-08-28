@@ -813,10 +813,10 @@ namespace tuscany
                         // Load any schema from the extensions directory
                         string extensionsRoot = root + "/extensions";
 
-                        Files files(extensionsRoot, "*.xsd", false);
+                        Files files(extensionsRoot, "*.xsd", true);
                         for (unsigned int i=0; i < files.size(); i++)
                         {
-                            string extensionSchema = extensionsRoot + "/" + files[i].getFileName();
+                            string extensionSchema = files[i].getDirectory() + "/" + files[i].getFileName();
                             myXSDHelper->defineFile(extensionSchema.c_str());
                         }
 
