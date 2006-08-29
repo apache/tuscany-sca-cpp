@@ -275,7 +275,6 @@ namespace tuscany
             LOGENTRY(1, "SCARuntime::registerReferenceBindingExtension");
             if (extension)
             {
-                cout << "register ref ext" << extension->getExtensionTypeQName();
                 referenceBindingExtensions[extension->getExtensionTypeQName()] = extension;          
             }
             LOGEXIT(1, "SCARuntime::registerReferenceBindingExtension");
@@ -286,7 +285,6 @@ namespace tuscany
         // ======================================
         ReferenceBindingExtension* SCARuntime::getReferenceBindingExtension(const string& extensionTypeQName)
         {
-            cout << "get ref ext" << extensionTypeQName;
             return referenceBindingExtensions[extensionTypeQName];
         }
         
@@ -298,7 +296,6 @@ namespace tuscany
             LOGENTRY(1, "SCARuntime::registerServiceBindingExtension");
             if (extension)
             {
-                cout << "register service ext" << extension->getExtensionTypeQName();
                 serviceBindingExtensions[extension->getExtensionTypeQName()] = extension;          
             }
             LOGEXIT(1, "SCARuntime::registerServiceBindingExtension");
@@ -309,7 +306,6 @@ namespace tuscany
         // ======================================
         ServiceBindingExtension* SCARuntime::getServiceBindingExtension(const string& extensionTypeQName)
         {
-            cout << "get service ext" << extensionTypeQName;
             return serviceBindingExtensions[extensionTypeQName];
         }
         
