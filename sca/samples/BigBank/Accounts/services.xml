@@ -17,7 +17,7 @@
 <service name="BigBank">
     <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
     <parameter name="TuscanySystemRoot" locked="xsd:false">PATH-TO-THE-SYSTEM-ROOT</parameter>
-    <parameter name="TuscanyService" locked="xsd:false">BigBankSubsystem/AccountsService/WSAccountService</parameter>
+    <parameter name="TuscanyService" locked="xsd:false">AccountsService/WSAccountService</parameter>
 
    <description>
         This is a testing service, named 'BigBank'
