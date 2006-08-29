@@ -8,11 +8,11 @@ EXTRA_DIST = runclient.sh
 AM_CPPFLAGS = $(CPPFLAGS)
 account_client_SOURCES = AccountClient.cpp
 
-account_client_LDADD   =  -L${TUSCANY_SCACPP}/lib -ltuscany_sca -ltuscany_sca_ws_reference \
+account_client_LDADD   =  -L${TUSCANY_SCACPP}/lib -ltuscany_sca \
 		-L${TUSCANY_SCACPP}/extensions/cpp -ltuscany_sca_cpp \
 		-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -ltuscany_sdo_axiom \
-         -L$(AXIS2C_HOME)/lib \
-					-laxis2_util \
+                -L$(AXIS2C_HOME)/lib \
+                    -laxis2_util \
                     -laxis2_axiom \
                     -laxis2_wsdl \
                     -laxis2_engine \

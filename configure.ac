@@ -38,21 +38,21 @@ AC_CONFIG_FILES([Makefile
                  tools/Makefile
                  tools/scagen/Makefile
                  runtime/Makefile
-                 runtime/ws_reference/Makefile
-                 runtime/ws_reference/axis2c/Makefile
-                 runtime/ws_reference/axis2c/src/Makefile
-                 runtime/ws_service/Makefile
-                 runtime/ws_service/axis2c/Makefile
-                 runtime/ws_service/axis2c/src/Makefile
                  runtime/core/Makefile
                  runtime/core/src/Makefile
+                 runtime/extensions/Makefile
+                 runtime/extensions/cpp/Makefile
+                 runtime/extensions/cpp/src/Makefile
+                 runtime/extensions/ws_service/Makefile
+                 runtime/extensions/ws_service/axis2c/Makefile
+                 runtime/extensions/ws_service/axis2c/src/Makefile
+                 runtime/extensions/ws_reference/Makefile
+                 runtime/extensions/ws_reference/axis2c/Makefile
+                 runtime/extensions/ws_reference/axis2c/src/Makefile
                  runtime/core/test/Makefile
                  runtime/core/test/CustomerInfo/Makefile
                  runtime/core/test/MyValue/Makefile
                  runtime/core/test/src/Makefile
-                 runtime/extensions/Makefile
-                 runtime/extensions/cpp/Makefile
-                 runtime/extensions/cpp/src/Makefile
                  ])
 AC_OUTPUT
 
