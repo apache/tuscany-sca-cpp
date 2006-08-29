@@ -21,7 +21,6 @@ copy Accounts\StockQuoteServiceImpl.componentType deploy\packages\Accounts
 copy Accounts\AccountService.wsdl deploy\packages\Accounts
 copy Accounts\StockQuoteService.wsdl deploy\packages\Accounts
 copy Accounts\StockQuoteTypes.xsd deploy\packages\Accounts
-copy Accounts\Tuscany-model.config deploy\packages\Accounts
 
 copy BigBankSubsystem\BigBankSubsystem.composite deploy\configuration\Accounts
 

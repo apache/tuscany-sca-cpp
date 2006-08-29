@@ -43,7 +43,6 @@ copy %sourcePath%\CalculatorComposite\Calculator.h %destinationPath%\packages\Ca
 copy %sourcePath%\CalculatorComposite\CalculatorImpl.h %destinationPath%\packages\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\DivideService.h %destinationPath%\packages\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\DivideServiceImpl.h %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\Tuscany-model.config %destinationPath%\packages\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\Calculator.wsdl %destinationPath%\packages\CalculatorComposite
 copy %currentPath%\Calculator\%buildMode%\CalculatorComposite.dll %destinationPath%\packages\CalculatorComposite
 

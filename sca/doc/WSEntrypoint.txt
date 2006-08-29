@@ -54,10 +54,10 @@ E.g. for the Calculator component, based on the Calculator.wsdl file:
 </entryPoint>
 
 
-3. Create a file named Tuscany-model.config in the same directory as your 
-component. This file defines which WSDL and XML Schema files to include in the 
-Tuscany runtime environment for this composite. Set the contents of the file 
-using the example below and use the path and name of the WSDL file created 
+3. Optionally, create a file named Tuscany.config in the same directory as
+your component. This file defines which WSDL and XML Schema files to include
+in the Tuscany runtime environment for this composite. Set the contents of the
+file using the example below and use the path and name of the WSDL file created 
 above.
 
 E.g. for the Calculator component

@@ -13,8 +13,8 @@ ${BUILT_SOURCES}: CalculatorComposite.composite
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
 composite_LTLIBRARIES = libCalculatorComposite.la
-composite_DATA = *.composite Tuscany-model.config *.componentType *.wsdl services.xml
-EXTRA_DIST = *.composite Tuscany-model.config *.componentType *.wsdl services.xml
+composite_DATA = *.composite *.componentType *.wsdl services.xml
+EXTRA_DIST = *.composite *.componentType *.wsdl services.xml
 
 libCalculatorComposite_la_SOURCES = \
 CalculatorImpl.cpp \
