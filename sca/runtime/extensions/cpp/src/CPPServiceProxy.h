@@ -17,8 +17,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_sca_extension_cpp_model_cppserviceproxy_h
-#define tuscany_sca_extension_cpp_model_cppserviceproxy_h
+#ifndef tuscany_sca_extension_cpp_cppserviceproxy_h
+#define tuscany_sca_extension_cpp_cppserviceproxy_h
 
 #include "osoa/sca/export.h"
 #include "tuscany/sca/core/ServiceProxy.h" 
@@ -109,4 +109,4 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_extension_cpp_model_cppserviceproxy_h
+#endif // tuscany_sca_extension_cpp_cppserviceproxy_h

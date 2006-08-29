@@ -20,6 +20,7 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/ws/WSReferenceBinding.h"
 #include "tuscany/sca/core/ServiceProxy.h"
+#include "tuscany/sca/ws/WSServiceProxy.h"
 
 namespace tuscany
 {
@@ -121,14 +122,14 @@ namespace tuscany
             
             void WSReferenceBinding::configure(ServiceBinding *binding)
             {
-                //TODO configure this reference binding from the info in the
-                // given service binding
+                targetServiceBinding = binding;
+                
+                serviceProxy = new WSServiceProxy(getReference());
             }
             
             ServiceProxy* WSReferenceBinding::getServiceProxy()
             {
-                //TODO create the service proxy
-                return (ServiceProxy*)0;
+                return serviceProxy;
             }
                 
         } // End namespace ws
