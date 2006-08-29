@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "../../../runtime/extensions/cpp/src" /I "../../../runtime/extensions/cpp/src/model" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "../../../runtime/extensions/cpp/src" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sca.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Release\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp
+PostBuild_Cmds=copy Release\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp\bin	copy Release\tuscany_sca_cpp.lib ..\..\..\deploy\extensions\cpp\lib	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp\xsd	copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp	copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp\model	copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions\cpp\include\osoa\sca
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_cpp - Win32 Debug"
@@ -74,7 +74,7 @@ PostBuild_Cmds=copy Release\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp	c
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/cpp/src" /I "../../../runtime/extensions/cpp/src/model" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/cpp/src" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_CPP_EXPORTS" /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sca.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Debug\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp	copy Debug\tuscany_sca_cpp.pdb ..\..\..\deploy\extensions\cpp	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp
+PostBuild_Cmds=copy Debug\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp\bin	copy Debug\tuscany_sca_cpp.pdb ..\..\..\deploy\extensions\cpp\bin	copy Debug\tuscany_sca_cpp.lib ..\..\..\deploy\extensions\cpp\lib	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp\xsd	copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp	copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp\model	copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions\cpp\include\osoa\sca
 # End Special Build Tool
 
 !ENDIF 
@@ -97,86 +97,6 @@ PostBuild_Cmds=copy Debug\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp	cop
 
 # Name "tuscany_sca_cpp - Win32 Release"
 # Name "tuscany_sca_cpp - Win32 Debug"
-# Begin Group "Source Files"
-
-# PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPExtension.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPImplementation.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPImplementationExtension.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPInterface.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPInterfaceExtension.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPReferenceBinding.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPServiceBinding.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPServiceProxy.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPServiceWrapper.cpp
-# End Source File
-# End Group
-# Begin Group "Header Files"
-
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPExtension.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPImplementation.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPImplementationExtension.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPInterface.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPInterfaceExtension.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPReferenceBinding.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\model\CPPServiceBinding.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPServiceProxy.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\CPPServiceWrapper.h
-# End Source File
-# End Group
 # Begin Group "xsd"
 
 # PROP Default_Filter ""
@@ -187,6 +107,142 @@ SOURCE="..\..\..\runtime\extensions\cpp\xsd\sca-implementation-cpp.xsd"
 # Begin Source File
 
 SOURCE="..\..\..\runtime\extensions\cpp\xsd\sca-interface-cpp.xsd"
+# End Source File
+# End Group
+# Begin Group "osoa/sca"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\ComponentContext.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\ComponentContext.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\CompositeContext.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\CompositeContext.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\export.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\sca.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\ServiceList.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\ServiceList.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\ServiceRuntimeException.h
+# End Source File
+# End Group
+# Begin Group "tuscany/sca/cpp"
+
+# PROP Default_Filter ""
+# Begin Group "model"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\CPPImplementation.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\CPPImplementation.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\CPPInterface.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\CPPInterface.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\CPPReferenceBinding.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\CPPReferenceBinding.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\CPPServiceBinding.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\CPPServiceBinding.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\ComponentContextImpl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\ComponentContextImpl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CompositeContextImpl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CompositeContextImpl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPExtension.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPExtension.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPImplementationExtension.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPImplementationExtension.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPInterfaceExtension.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPInterfaceExtension.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPServiceProxy.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPServiceProxy.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPServiceWrapper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPServiceWrapper.h
 # End Source File
 # End Group
 # End Target
