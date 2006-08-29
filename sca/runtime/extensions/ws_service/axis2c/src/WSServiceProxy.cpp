@@ -37,7 +37,6 @@
 #include "commonj/sdo/SDO.h"
 using namespace commonj::sdo;
 
-using namespace osoa::sca;
 using namespace tuscany::sca::model;
 
 namespace tuscany
@@ -436,7 +435,7 @@ namespace tuscany
                     LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
                     return NULL;
               }  
-              catch(ServiceRuntimeException &ex)
+              catch(TuscanyRuntimeException &ex)
               {   
                     // TODO: Return more error information than just a null DataObject
                     LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());

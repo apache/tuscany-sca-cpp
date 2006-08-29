@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "osoa/sca/export.h"
+
 #if defined(WIN32)  || defined (_WINDOWS)
 #pragma warning(disable: 4091)
 #endif
@@ -30,9 +30,6 @@
 #include <sdo_axiom.h>
 #include "Axis2Client.h"
 
-
-#include <osoa/sca/sca.h>
-using namespace osoa::sca;
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Logging.h"
 #include "model/WSServiceBinding.h"
@@ -133,7 +130,7 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
 						" %d :: %s", env->error->error_number,
                         AXIS2_ERROR_GET_MESSAGE(env->error));
                         
-        throw ServiceRuntimeException("Axis2Client: axis2_svc_client_create failed");
+        throw TuscanyRuntimeException("Axis2Client: axis2_svc_client_create failed");
     }
 
     /* Set service client options */
@@ -150,7 +147,7 @@ void Axis2Client::invoke(tuscany::sca::Operation& operation)
     	AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Invoke failed: Error code:"
                         " %d :: %s", env->error->error_number,
                         AXIS2_ERROR_GET_MESSAGE(env->error));
-        throw ServiceRuntimeException("Axis2Client: Invoke failed");
+        throw TuscanyRuntimeException("Axis2Client: Invoke failed");
     }
     
     if (svc_client)

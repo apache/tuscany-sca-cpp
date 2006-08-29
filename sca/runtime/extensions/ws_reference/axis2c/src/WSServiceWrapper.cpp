@@ -20,7 +20,6 @@
 #pragma warning(disable: 4091)
 #endif
 
-#include "osoa/sca/sca.h"
 #include "tuscany/sca/util/Logging.h"
 #include "Axis2Client.h"
 #include "WSServiceWrapper.h"

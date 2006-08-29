@@ -1,6 +1,6 @@
 libdir=$(prefix)/extensions/cpp/lib
 lib_LTLIBRARIES = libtuscany_sca_cpp.la
-
+includedir=$(prefix)/extensions/cpp/include
 nobase_include_HEADERS = \
 osoa/sca/*.h \
 tuscany/sca/cpp/*.h \
