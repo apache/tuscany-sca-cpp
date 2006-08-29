@@ -17,7 +17,7 @@
 <service name="Calculator">
     <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
     <parameter name="TuscanySystemRoot" locked="xsd:false">PATH-TO-THE-SYSTEM-ROOT</parameter>
-    <parameter name="TuscanyService" locked="xsd:false">CalculatorSubsystem/CalculatorService/WSCalculatorService</parameter>
+    <parameter name="TuscanyService" locked="xsd:false">CalculatorService/WSCalculatorService</parameter>
 
    <description>
         This is a testing service, named 'Calculator' to test multiple operations in the same service
