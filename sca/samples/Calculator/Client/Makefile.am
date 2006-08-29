@@ -10,7 +10,7 @@ calculator_client_SOURCES = Calc.cpp
 
 calculator_client_LDADD   =  -L${TUSCANY_SCACPP}/lib \
 		-ltuscany_sca \
-		-L${TUSCANY_SCACPP}/extensions/cpp \
+		-L${TUSCANY_SCACPP}/extensions/cpp/lib \
 		-ltuscany_sca_cpp \
 		-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -ltuscany_sdo_axiom \
                 -L$(AXIS2C_HOME)/lib \
@@ -26,5 +26,6 @@ calculator_client_LDADD   =  -L${TUSCANY_SCACPP}/lib \
 	
 
 INCLUDES =  -I$(top_builddir)/Calculator/CalculatorComposite \
+           -I$(TUSCANY_SCACPP)/extensions/cpp/include \
             -I${TUSCANY_SCACPP}/include \
             -I${TUSCANY_SDOCPP}/include
