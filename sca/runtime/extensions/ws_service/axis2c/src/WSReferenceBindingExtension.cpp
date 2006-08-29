@@ -60,7 +60,7 @@ namespace tuscany
             }
 
             const string WSReferenceBindingExtension::extensionName("ws");
-            const string WSReferenceBindingExtension::typeQName("http://www.osoa.org/xmlns/sca/1.0#WebReferenceBinding");
+            const string WSReferenceBindingExtension::typeQName("http://www.osoa.org/xmlns/sca/1.0#WebServiceBinding");
 
             // ===================================================================
             // loadModelElement - load the info from binding.ws
