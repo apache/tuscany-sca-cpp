@@ -22,7 +22,7 @@
 
 #include "tuscany/sca/model/WSDLOperation.h"
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 #include <string>
 using std::string;
 

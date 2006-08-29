@@ -20,7 +20,7 @@
 #ifndef tuscany_sca_extension_implementationextension_h
 #define tuscany_sca_extension_implementationextension_h
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 #include <string>
 using std::string;
 

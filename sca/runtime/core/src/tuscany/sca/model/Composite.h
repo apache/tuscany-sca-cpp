@@ -62,30 +62,30 @@ namespace tuscany
                  * @param name the name of the composite.
                  * @param root the root of the composite in the file system.
                  */
-                Composite(const string& name, const string& root);
+                SCA_API Composite(const string& name, const string& root);
 
                 /**
                  * Destructor.
                  */
-                virtual ~Composite();
+                SCA_API virtual ~Composite();
 
                 /**
                  * Returns the root directory of the composite.
                  * @return The root of the composite in the file system.
                  */
-                const string& getRoot() const { return root; }
+                SCA_API const string& getRoot() const { return root; }
                 
                 /**
                  * Add a new component to the composite.
                  * @param component The component to add.
                  */
-                void addComponent(Component* component);
+                SCA_API void addComponent(Component* component);
 
                 /**
                  * Add/include a composite in this composite.
                  * @param composite The composite included in this composite.
                  */
-                void addInclude(Composite* composite);
+                SCA_API void addInclude(Composite* composite);
 
                 /**
                  * Add a wire to the model.
@@ -94,14 +94,14 @@ namespace tuscany
                  * @param target The target location. Either the target component and
                  * service (optional), or an external service.
                  */
-                void addWire(const string& source, const string& target);
+                SCA_API void addWire(const string& source, const string& target);
  
                 /**
                  * Find a component by name.
                  * @param componentName The name of the component to be found.
                  * @return The component that was found, or 0 if not found.
                  */
-                Component* findComponent(const string& componentName);
+                SCA_API Component* findComponent(const string& componentName);
 
                 /**
                  * Find a component and service by name.
@@ -110,42 +110,42 @@ namespace tuscany
                  * if there is only one service on the component.
                  * @return The Service that was found, or 0 if not found.
                  */
-                Service* findComponentService(const string& componentServiceName);
+                SCA_API Service* findComponentService(const string& componentServiceName);
 
                 /**
                  * Add a WSDL definition to the composite.
                  * @param wsdlModel A data object holding all the information about 
                  * the WSDL definition from a WSDL file.
                  */
-                void addWSDLDefinition(commonj::sdo::DataObjectPtr wsdlModel);
+                SCA_API void addWSDLDefinition(commonj::sdo::DataObjectPtr wsdlModel);
 
                 /**
                  * Find a WSDL definition by target namespace.
                  * @param wsdlNamespace The namespace of the WSDL definitions to find.
                  */
-                WSDLDefinition* findWSDLDefinition(const string& wsdlNamespace);
+                SCA_API WSDLDefinition* findWSDLDefinition(const string& wsdlNamespace);
 
                 /**
                  * Return a cached SDO XSDHelper.
                  */
-                commonj::sdo::XSDHelperPtr getXSDHelper(void);
+                SCA_API commonj::sdo::XSDHelperPtr getXSDHelper(void);
 
                 /**
                  * Return a cached SDO XMLHelper.
                  */
-                commonj::sdo::XMLHelperPtr getXMLHelper(void);
+                SCA_API commonj::sdo::XMLHelperPtr getXMLHelper(void);
 
                 /**
                  * Return a data factory which has all the types defined in XSDs and
                  * WSDL files configured for this composite.
                  * @return The data factory for this composite.
                  */
-                commonj::sdo::DataFactoryPtr getDataFactory(void);
+                SCA_API commonj::sdo::DataFactoryPtr getDataFactory(void);
 
                 /**
                  * Work through the list of wires and connect the source and target uris.
                  */
-                void resolveWires();
+                SCA_API void resolveWires();
  
             private:
 

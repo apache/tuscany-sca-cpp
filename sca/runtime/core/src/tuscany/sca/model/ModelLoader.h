@@ -20,7 +20,7 @@
 #ifndef tuscany_sca_model_modelloader_h
 #define tuscany_sca_model_modelloader_h
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 #include "commonj/sdo/SDO.h"
 
 #include "tuscany/sca/core/SCARuntime.h"
@@ -33,7 +33,8 @@
 #include <map>
 using std::map;
 
-using namespace commonj::sdo;
+using commonj::sdo::DataObjectPtr;
+using commonj::sdo::XSDHelperPtr;
 using namespace tuscany::sca;
 
 

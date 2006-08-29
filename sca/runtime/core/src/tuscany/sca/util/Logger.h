@@ -20,7 +20,7 @@
 #ifndef tuscany_sca_util_logger_h
 #define tuscany_sca_util_logger_h
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 #include "tuscany/sca/util/LogWriter.h"
 namespace tuscany
 {

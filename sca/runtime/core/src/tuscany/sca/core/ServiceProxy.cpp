@@ -21,8 +21,6 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Exceptions.h"
 
-using namespace osoa::sca;
-
 namespace tuscany
 {
     namespace sca

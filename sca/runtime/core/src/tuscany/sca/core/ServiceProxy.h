@@ -20,7 +20,7 @@
 #ifndef tuscany_sca_core_serviceproxy_h
 #define tuscany_sca_core_serviceproxy_h
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/core/ServiceWrapper.h"

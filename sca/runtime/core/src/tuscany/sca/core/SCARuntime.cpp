@@ -215,7 +215,7 @@ namespace tuscany
                         extension();
                     }
                 }
-                catch (ServiceRuntimeException &)
+                catch (TuscanyRuntimeException &)
                 {
                     LOGERROR_1(0, "SCARuntime::loadExtensions failed to load extension library: %s", files[i].getFileName().c_str());
                 }

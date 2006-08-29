@@ -17,7 +17,7 @@
 
 /* $Rev$ $Date: 2005/12/22 11:33:21 $ */
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
@@ -733,10 +733,10 @@ namespace tuscany
                     }                    
 
                     Files wsdlFiles(compositeRootDir, "*.wsdl", true);
-                    for (unsigned int i=0; i < wsdlFiles.size(); i++)
+                    for (unsigned int wi=0; wi < wsdlFiles.size(); wi++)
                     {
                         // Load a wsdl file -> get the types, then the contents of the wsdl
-                        string wsdlName = compositeRootDir + "/" + wsdlFiles[i].getFileName();
+                        string wsdlName = compositeRootDir + "/" + wsdlFiles[wi].getFileName();
                         loadXMLSchema(composite, wsdlName.c_str());
                         
                         // Load the contents of the wsdl files
