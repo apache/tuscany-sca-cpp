@@ -20,7 +20,7 @@ The directory in which the sca runtime is deployed - probably something ending i
 TUSCANY_SDOCPP:
 The directory where the sdo runtime is deployed - probably something ending in sdo/deploy.
 
-TUSCANY_SCACPP_DEFAULT_COMPOSITE=CalculatorSubsystem
+TUSCANY_SCACPP_DEFAULT_COMPONENT=CalculatorSubsystem
 This is the default composite to be loaded by SCA. It consists of <subsystem>/<component>
 
 TUSCANY_SCACPP_SYSTEM_ROOT
