@@ -17,8 +17,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_sca_extension_cpp_model_cppservicewrapper_h
-#define tuscany_sca_extension_cpp_model_cppservicewrapper_h
+#ifndef tuscany_sca_extension_cpp_cppservicewrapper_h
+#define tuscany_sca_extension_cpp_cppservicewrapper_h
 
 #include "osoa/sca/export.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
@@ -156,4 +156,4 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_extension_cpp_model_cppservicewrapper_h
+#endif // tuscany_sca_extension_cpp_cppservicewrapper_h

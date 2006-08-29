@@ -1,6 +1,6 @@
 /*
  *
- *  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+ *  Copyright 2005 The Apache Software Foundation or its licensors, as applicable.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,48 +15,96 @@
  *  limitations under the License.
  */
 
-#ifndef tuscany_sca_ws_wsserviceproxy_h
-#define tuscany_sca_ws_wsserviceproxy_h
+/* $Rev: 437730 $ $Date: 2006-08-28 08:57:52 -0700 (Mon, 28 Aug 2006) $ */
+
+#ifndef tuscany_sca_extension_ws_wsserviceproxy_h
+#define tuscany_sca_extension_ws_wsserviceproxy_h
 
 #include "osoa/sca/export.h"
-#include "tuscany/sca/core/TuscanyRuntime.h"
-#include "tuscany/sca/core/Operation.h"
-#include "tuscany/sca/core/CompositeServiceHelper.h"
+#include "tuscany/sca/core/ServiceProxy.h" 
+#include "tuscany/sca/core/ServiceWrapper.h" 
+#include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/ws/WSReferenceBinding.h"
 #include "commonj/sdo/SDO.h"
-using commonj::sdo::DataFactoryPtr;
+
+using namespace tuscany::sca::model;
+
 using commonj::sdo::DataObjectPtr;
-
-#include <string>
-using std::string;
-
-
 
 namespace tuscany
 {
     namespace sca
     {
         namespace ws
-        {        
-            class SCA_API WSServiceProxy
+        {
+            
+            /**
+             * Holds a proxy for a given component and reference.
+             * The proxy which is held inside a ServiceProxy will be specific to the programming
+             * interface expected by the client. In this particular case the client is an Axis2 
+             * Web service skeleton.
+             */
+            class WSServiceProxy : public ServiceProxy
             {
             public:
-                static WSServiceProxy* getInstance();
+                /**
+                 * Create a new service proxy for a reference. The proxy will contain a pointer to
+                 * the target ServiceWrapper.
+                 * @param reference The reference on the source component.
+                 * @param target The wrapper of the service which is wired to this reference.
+                 */
+                WSServiceProxy(Reference* reference);
+    
+                /**
+                 * Create a new service proxy for a service. The proxy will contain a pointer to
+                 * the target ServiceWrapper.
+                 * @param reference The service on the target component.
+                 * @param target The wrapper of the target service.
+                 */
+                WSServiceProxy(Service* service);
+    
+                /**
+                 * Destructor.
+                 */
                 virtual ~WSServiceProxy();
-                virtual void init(const char* systemRoot, const char* compositeServiceName);
-                virtual DataFactoryPtr getDataFactory(void);
-                virtual DataObjectPtr invoke(const char* operationName, DataObjectPtr inputDataObject);    
+    
+                /**
+                 * Return an instance of the proxy created for this particular component and reference.
+                 * @return The proxy.
+                 */
+                virtual void* getProxy();
+                
+                /**
+                 * Return the proxies created for this particular component and reference.
+                 * @return The proxies.
+                 */
+                virtual PROXIES getProxies();
+
+                /**
+                 * Invoke the specified operation
+                 */
+                DataObjectPtr invoke(const char* operationName, DataObjectPtr inputDataObject);    
+    
             private:
-                WSServiceProxy();
-                static WSServiceProxy* compositeServiceProxyInstance;
-                virtual void setOutputData(Operation operation, DataObjectPtr outputDataObject);
-                string compositeServiceName;
-                string systemRoot;
-                string defaultComponentName;
-                TuscanyRuntime* tuscanyRuntime;
-                CompositeServiceHelper* compositeServiceHelper;
+
+                void setOutputData(Operation operation, DataObjectPtr outputDataObject);
+                
+                /**
+                 * The target service wrapper
+                 */
+                 ServiceWrapper* serviceWrapper;
+            
+                /**
+                 * Holds the instances of the WS proxies.
+                 */ 
+                PROXIES proxies;
+    
             };
+            
         } // End namespace ws
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_ws_wsserviceproxy_h
+#endif // tuscany_sca_extension_ws_wsserviceproxy_h

@@ -89,6 +89,11 @@ namespace tuscany
                  */
                 string getPortName() const { return portName; };
                 
+                 /**
+                  * Returns the target service binding.
+                  */
+                  ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
+                                
             private:
             
                 /**
@@ -115,6 +120,17 @@ namespace tuscany
                  * Port name from the port.
                  */
                 string portName;
+
+                /**
+                 * The proxy representing the reference to the client
+                 * component.
+                 */
+                ServiceProxy* serviceProxy;
+                
+                /**
+                 * The service binding of the target
+                 */
+                ServiceBinding* targetServiceBinding; 
             };
             
         } // End namespace model

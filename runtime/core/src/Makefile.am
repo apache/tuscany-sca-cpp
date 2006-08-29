@@ -21,7 +21,6 @@ osoa/sca/ServiceRuntimeException.cpp \
 tuscany/sca/core/DefaultServiceProxy.cpp \
 tuscany/sca/core/ComponentContextImpl.cpp \
 tuscany/sca/core/CompositeContextImpl.cpp \
-tuscany/sca/core/CompositeServiceHelper.cpp \
 tuscany/sca/core/Operation.cpp \
 tuscany/sca/core/SCARuntime.cpp \
 tuscany/sca/core/ServiceProxy.cpp \
