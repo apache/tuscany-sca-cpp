@@ -23,7 +23,7 @@
 #include "osoa/sca/sca.h"
 #include "tuscany/sca/util/Logging.h"
 #include "Axis2Client.h"
-#include "tuscany/sca/ws/WSServiceWrapper.h"
+#include "WSServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/ServiceType.h"

@@ -6,7 +6,6 @@ tuscany/sca/core/*.h \
 tuscany/sca/model/*.h \
 tuscany/sca/util/*.h \
 tuscany/sca/cpp/*.h \
-tuscany/sca/ws/*.h \
 tuscany/sca/extension/*.h
 
 ## To list the source files execute the following:
@@ -28,6 +27,8 @@ tuscany/sca/core/ServiceWrapper.cpp \
 tuscany/sca/core/TuscanyRuntime.cpp \
 tuscany/sca/extension/ImplementationExtension.cpp \
 tuscany/sca/extension/InterfaceExtension.cpp \
+tuscany/sca/extension/ReferenceBindingExtension.cpp \
+tuscany/sca/extension/ServiceBindingExtension.cpp \
 tuscany/sca/model/Binding.cpp \
 tuscany/sca/model/Component.cpp \
 tuscany/sca/model/ComponentType.cpp \
@@ -52,16 +53,12 @@ tuscany/sca/util/FileLogWriter.cpp \
 tuscany/sca/util/Library.cpp \
 tuscany/sca/util/Logger.cpp \
 tuscany/sca/util/LogWriter.cpp \
-tuscany/sca/util/Utils.cpp \
-tuscany/sca/ws/WSReferenceBinding.cpp \
-tuscany/sca/ws/WSServiceBinding.cpp \
-tuscany/sca/ws/WSServiceProxy.cpp
+tuscany/sca/util/Utils.cpp
 
-libtuscany_sca_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
-    -L$(top_builddir)/runtime/ws_reference/axis2c/src -ltuscany_sca_ws_reference
-
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
+libtuscany_sca_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include
+
+AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
                    

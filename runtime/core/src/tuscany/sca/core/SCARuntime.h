@@ -24,6 +24,8 @@
 
 #include "tuscany/sca/extension/InterfaceExtension.h"
 #include "tuscany/sca/extension/ImplementationExtension.h"
+#include "tuscany/sca/extension/ReferenceBindingExtension.h"
+#include "tuscany/sca/extension/ServiceBindingExtension.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/util/Library.h"
@@ -136,6 +138,28 @@ namespace tuscany
             SCA_API ImplementationExtension* getImplementationExtension(const string& typeQname);
 
             /**
+             * Register a reference binding extension
+             */
+            SCA_API void registerReferenceBindingExtension(ReferenceBindingExtension* extension);
+
+            /**
+             * Returns the reference binding extension associated with
+             * the specified qname
+             */
+            SCA_API ReferenceBindingExtension* getReferenceBindingExtension(const string& typeQname);
+
+            /**
+             * Register a service binding extension
+             */
+            SCA_API void registerServiceBindingExtension(ServiceBindingExtension* extension);
+
+            /**
+             * Returns the service binding extension associated with
+             * the specified qname
+             */
+            SCA_API ServiceBindingExtension* getServiceBindingExtension(const string& typeQname);
+
+            /**
              * Register an interface extension
              */
             SCA_API void registerInterfaceExtension(InterfaceExtension* extension);
@@ -200,6 +224,12 @@ namespace tuscany
             typedef map<string, ImplementationExtension*> IMPLEMENTATION_EXTENSIONS_MAP;
             IMPLEMENTATION_EXTENSIONS_MAP implementationExtensions;
 
+            typedef map<string, ReferenceBindingExtension*> REFERENCE_BINDING_EXTENSIONS_MAP;
+            REFERENCE_BINDING_EXTENSIONS_MAP referenceBindingExtensions;
+
+            typedef map<string, ServiceBindingExtension*> SERVICE_BINDING_EXTENSIONS_MAP;
+            SERVICE_BINDING_EXTENSIONS_MAP serviceBindingExtensions;
+
             typedef map<string, InterfaceExtension*> INTERFACE_EXTENSIONS_MAP;
             INTERFACE_EXTENSIONS_MAP interfaceExtensions;
 
@@ -217,4 +247,3 @@ namespace tuscany
 typedef void (* TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE) ();
 
 #endif // tuscany_sca_core_scaruntime_h
-

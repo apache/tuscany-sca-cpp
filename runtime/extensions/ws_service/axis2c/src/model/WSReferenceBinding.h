@@ -17,8 +17,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_sca_ws_wsreferencebinding_h
-#define tuscany_sca_ws_wsreferencebinding_h
+#ifndef tuscany_sca_extension_ws_model_wsreferencebinding_h
+#define tuscany_sca_extension_ws_model_wsreferencebinding_h
 
 #include "tuscany/sca/model/ReferenceBinding.h"
 
@@ -133,8 +133,8 @@ namespace tuscany
                 ServiceBinding* targetServiceBinding; 
             };
             
-        } // End namespace model
+        } // End namespace ws
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_ws_wsreferencebinding_h
+#endif // tuscany_sca_extension_ws_model_wsreferencebinding_h
