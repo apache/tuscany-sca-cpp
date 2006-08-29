@@ -1,7 +1,7 @@
 lib_LTLIBRARIES = libtuscany_sca.la
 
 nobase_include_HEADERS = \
-osoa/sca/*.h \
+tuscany/sca/*.h \
 tuscany/sca/core/*.h \
 tuscany/sca/model/*.h \
 tuscany/sca/util/*.h \
@@ -9,17 +9,9 @@ tuscany/sca/cpp/*.h \
 tuscany/sca/extension/*.h
 
 ## To list the source files execute the following:
-## ls -1 osoa/sca/*.cpp tuscany/sca/util/*.cpp tuscany/sca/extension/*.cpp tuscany/sca/model/*.cpp tuscany/sca/core/*.cpp tuscany/sca/cpp/*.cpp tuscany/sca/ws/*.cpp | awk '{ print $1 " \\" }'
+## ls -1 tuscany/sca/util/*.cpp tuscany/sca/extension/*.cpp tuscany/sca/model/*.cpp tuscany/sca/core/*.cpp tuscany/sca/cpp/*.cpp tuscany/sca/ws/*.cpp | awk '{ print $1 " \\" }'
 ## and copy/paste the output below
 libtuscany_sca_la_SOURCES = \
-osoa/sca/ComponentContext.cpp \
-osoa/sca/CompositeContext.cpp \
-osoa/sca/SCA.cpp \
-osoa/sca/ServiceList.cpp \
-osoa/sca/ServiceRuntimeException.cpp \
-tuscany/sca/core/DefaultServiceProxy.cpp \
-tuscany/sca/core/ComponentContextImpl.cpp \
-tuscany/sca/core/CompositeContextImpl.cpp \
 tuscany/sca/core/Operation.cpp \
 tuscany/sca/core/SCARuntime.cpp \
 tuscany/sca/core/ServiceProxy.cpp \
@@ -48,6 +40,7 @@ tuscany/sca/model/Wire.cpp \
 tuscany/sca/model/WSDLDefinition.cpp \
 tuscany/sca/model/WSDLOperation.cpp \
 tuscany/sca/util/DefaultLogWriter.cpp \
+tuscany/sca/util/Exceptions.cpp \
 tuscany/sca/util/File.cpp \
 tuscany/sca/util/FileLogWriter.cpp \
 tuscany/sca/util/Library.cpp \

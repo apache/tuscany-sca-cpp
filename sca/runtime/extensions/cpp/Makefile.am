@@ -2,4 +2,4 @@ SUBDIRS = src
 
 datadir=$(prefix)/extensions/cpp
 
-data_DATA = xsd/*.xsd
+nobase_data_DATA = xsd/*.xsd
