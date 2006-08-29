@@ -136,13 +136,13 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char* se
 
         bool newInitParams = false;
 
-        if(systemRoot.length() != 0 && systemRoot != root)
+        if(systemRoot != root)
         {
             systemRoot = root;
             newInitParams = true;
         }
 
-        if(serviceName.length() != 0 && serviceName != service)
+        if(serviceName != service)
         {
             serviceName = service;
             newInitParams = true;
@@ -169,7 +169,7 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char* se
 
         if(compositeService == NULL)
         {
-            Composite* composite = SCARuntime::getInstance()->getDefaultComponent()->getComposite();
+            Composite* composite = (Composite*)SCARuntime::getInstance()->getDefaultComponent()->getType();
             compositeService = (CompositeService*)composite->findComponent(compositeServiceName);
         }
         else

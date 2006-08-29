@@ -45,7 +45,7 @@ namespace tuscany
         void TuscanyRuntime::setDefaultComponentName(const string& componentName)
         {
             LOGENTRY(1, "TuscanyRuntime::setDefaultComponentName");
-            defaultComponentName = defaultComponentName;
+            defaultComponentName = componentName;
             LOGINFO_1(3, "TuscanyRuntime::setDefaultComponentName - set to %s", componentName.c_str());
             LOGEXIT(1, "TuscanyRuntime::setDefaultComponentName");
         }
