@@ -34,8 +34,8 @@ int main(int argc, char* argv[])
     commonj::sdo::Logger::setLogging(20);
     cout << "Start of SCA test" << endl;
 
-    // Set default composite
-    TuscanyRuntime runtime("SubSystem1");
+    // Set default component
+    TuscanyRuntime runtime("MyValue");
 
     try
     {
