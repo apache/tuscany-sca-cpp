@@ -17,8 +17,8 @@ ${BUILT_SOURCES}: Accounts.composite
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
 composite_LTLIBRARIES = libAccounts.la
-composite_DATA = *.composite Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
-EXTRA_DIST = *.composite Tuscany-model.config *.componentType *.wsdl *.xsd services.xml
+composite_DATA = *.composite *.componentType *.wsdl *.xsd services.xml
+EXTRA_DIST = *.composite *.componentType *.wsdl *.xsd services.xml
 
 libAccounts_la_SOURCES = \
 AccountDataServiceImpl.cpp \

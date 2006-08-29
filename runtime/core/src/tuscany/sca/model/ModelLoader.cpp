@@ -661,62 +661,89 @@ namespace tuscany
             
             
             ///
-            /// Use the Tuscany-model.config file in the composite root directory to
+            /// Use the Tuscany.config file in the composite root directory to
             /// determine which xsds and wsdls to load into a dataFactory.
             ///
             void ModelLoader::loadTypeMetadata(Composite* composite, const string &compositeRootDir)
             {
                 LOGENTRY(1, "ModelLoader::loadTypeMetadata");
 
-                // Load the "Tuscany-model.config" file, if it exists
-                Files files(compositeRootDir, "Tuscany-model.config", false);
-                for (unsigned int i=0; i < files.size(); i++)
+                // Load the "Tuscany.config" file, if it exists
+                Files files(compositeRootDir, "Tuscany.config", false);
+                if (files.size() !=0)
                 {
-                    string filename = compositeRootDir + "/" + files[i].getFileName();
-                    XMLDocumentPtr compositeConfigFile = getXMLHelper()->loadFile(filename.c_str());
-                    if (compositeConfigFile->getRootDataObject() == 0)
+                    for (unsigned int i=0; i < files.size(); i++)
                     {
-                        LOGERROR_1(0, "ModelLoader::loadTypeMetadata: Unable to load file: %s", filename.c_str());
-                    }
-                    else
-                    {    
-                        LOGINFO_2(2, "ModelLoader::loadTypeMetadata: Loading composite config for: %s, root Dir: %s", composite->getName().c_str(), compositeRootDir.c_str());
-
-                        if(compositeConfigFile->getRootDataObject()->isSet("xsd"))
+                        string filename = compositeRootDir + "/" + files[i].getFileName();
+                        XMLDocumentPtr compositeConfigFile = getXMLHelper()->loadFile(filename.c_str());
+                        if (compositeConfigFile->getRootDataObject() == 0)
                         {
-                            DataObjectList& xsds = compositeConfigFile->getRootDataObject()->getList("xsd/file");
-
-                            for (int i=0; i<xsds.size(); i++)
-                            {
-                                if(xsds[i]->isSet("name"))
-                                {
-                                    // Load a xsd file -> set the types in the compositeComponents data factory file
-                                    string xsdName = compositeRootDir + "/" +xsds[i]->getCString("name");
-                                    loadXMLSchema(composite, xsdName.c_str());
-                                }
-                            }
+                            LOGERROR_1(0, "ModelLoader::loadTypeMetadata: Unable to load file: %s", filename.c_str());
                         }
-                        
-
-                        if( compositeConfigFile->getRootDataObject()->isSet("wsdl"))
-                        {
-                            DataObjectList& wsdls = compositeConfigFile->getRootDataObject()->getList("wsdl/file");
-                            for (int j=0; j<wsdls.size(); j++)
+                        else
+                        {    
+                            LOGINFO_2(2, "ModelLoader::loadTypeMetadata: Loading composite config for: %s, root Dir: %s", composite->getName().c_str(), compositeRootDir.c_str());
+    
+                            if(compositeConfigFile->getRootDataObject()->isSet("xsd"))
                             {
-                                if(wsdls[i]->isSet("name"))
-                                { 
-                                    string wsdlName = compositeRootDir + "/" +wsdls[j]->getCString("name");
-                                    // Load a wsdl file -> get the types, then the contents of the wsdl
-                                    loadXMLSchema(composite, wsdlName.c_str());
-                                    
-                                    // Load the contents of the wsdl files
-                                    loadWSDLDefinition(composite, wsdlName.c_str());
+                                DataObjectList& xsds = compositeConfigFile->getRootDataObject()->getList("xsd/file");
+    
+                                for (int i=0; i<xsds.size(); i++)
+                                {
+                                    if(xsds[i]->isSet("name"))
+                                    {
+                                        // Load a xsd file -> set the types in the compositeComponents data factory file
+                                        string xsdName = compositeRootDir + "/" +xsds[i]->getCString("name");
+                                        loadXMLSchema(composite, xsdName.c_str());
+                                    }
                                 }
                             }
-                        }                            
+                            
+    
+                            if( compositeConfigFile->getRootDataObject()->isSet("wsdl"))
+                            {
+                                DataObjectList& wsdls = compositeConfigFile->getRootDataObject()->getList("wsdl/file");
+                                for (int j=0; j<wsdls.size(); j++)
+                                {
+                                    if(wsdls[i]->isSet("name"))
+                                    { 
+                                        string wsdlName = compositeRootDir + "/" +wsdls[j]->getCString("name");
+                                        // Load a wsdl file -> get the types, then the contents of the wsdl
+                                        loadXMLSchema(composite, wsdlName.c_str());
+                                        
+                                        // Load the contents of the wsdl files
+                                        loadWSDLDefinition(composite, wsdlName.c_str());
+                                    }
+                                }
+                            }                            
+                        }
                     }
                 }
-            
+                else
+                {
+                    // The default scheme is to have no Tuscany.config file, then we simply load all
+                    // WSDLs and XSDs that we find under the composite root
+                    
+                    Files xsdFiles(compositeRootDir, "*.xsd", true);
+                    for (unsigned int i=0; i < xsdFiles.size(); i++)
+                    {
+                        // Load a xsd file -> set the types in the compositeComponents data factory file
+                        string xsdName = compositeRootDir + "/" + xsdFiles[i].getFileName();
+                        loadXMLSchema(composite, xsdName.c_str());
+                        
+                    }                    
+
+                    Files wsdlFiles(compositeRootDir, "*.wsdl", true);
+                    for (unsigned int i=0; i < wsdlFiles.size(); i++)
+                    {
+                        // Load a wsdl file -> get the types, then the contents of the wsdl
+                        string wsdlName = compositeRootDir + "/" + wsdlFiles[i].getFileName();
+                        loadXMLSchema(composite, wsdlName.c_str());
+                        
+                        // Load the contents of the wsdl files
+                        loadWSDLDefinition(composite, wsdlName.c_str());
+                    }                    
+                } 
                 
                 LOGEXIT(1, "ModelLoader::loadTypeMetadata");
             }
