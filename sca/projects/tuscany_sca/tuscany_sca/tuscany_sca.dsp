@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /dll /machine:I386 /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.lib	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\extension\*.h ..\..\..\deploy\include\tuscany\sca\extension	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws	copy Release\tuscany_sca.dll ..\..\..\deploy\bin	copy Release\tuscany_sca.lib ..\..\..\deploy\lib	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
+PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.lib	copy ..\..\..\runtime\core\src\tuscany\sca\*.h ..\..\..\deploy\include\tuscany\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\extension\*.h ..\..\..\deploy\include\tuscany\sca\extension	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util	copy Release\tuscany_sca.dll ..\..\..\deploy\bin	copy Release\tuscany_sca.lib ..\..\..\deploy\lib	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.lib	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\extension\*.h ..\..\..\deploy\include\tuscany\sca\extension	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws	copy Debug\tuscany_sca.dll ..\..\..\deploy\bin	copy Debug\tuscany_sca.pdb ..\..\..\deploy\bin	copy Debug\tuscany_sca.lib ..\..\..\deploy\lib	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
+PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.lib	copy ..\..\..\runtime\core\src\tuscany\sca\*.h ..\..\..\deploy\include\tuscany\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\extension\*.h ..\..\..\deploy\include\tuscany\sca\extension	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util	copy Debug\tuscany_sca.dll ..\..\..\deploy\bin	copy Debug\tuscany_sca.pdb ..\..\..\deploy\bin	copy Debug\tuscany_sca.lib ..\..\..\deploy\lib	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 # End Special Build Tool
 
 !ENDIF 
@@ -97,92 +97,12 @@ PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.l
 
 # Name "tuscany_sca - Win32 Release"
 # Name "tuscany_sca - Win32 Debug"
-# Begin Group "osoa/sca"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ComponentContext.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ComponentContext.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContext.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContext.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\export.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\SCA.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\sca.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ServiceList.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ServiceList.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ServiceRuntimeException.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ServiceRuntimeException.h
-# End Source File
-# End Group
 # Begin Group "tuscany/sca"
 
 # PROP Default_Filter ""
 # Begin Group "core"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ComponentContextImpl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ComponentContextImpl.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\CompositeContextImpl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\CompositeContextImpl.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\CompositeServiceHelper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\CompositeServiceHelper.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\DefaultServiceProxy.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\DefaultServiceProxy.h
-# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\Operation.cpp
@@ -385,6 +305,10 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\DefaultLogWriter.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.h
 # End Source File
 # Begin Source File
@@ -440,50 +364,6 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\Utils.cpp
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\Utils.h
 # End Source File
 # End Group
-# Begin Group "ws"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSReferenceBinding.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSReferenceBinding.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceBinding.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceBinding.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceProxy.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceProxy.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\ws_reference\axis2c\src\WSServiceWrapper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceWrapper.h
-# End Source File
-# End Group
 # Begin Group "extension"
 
 # PROP Default_Filter ""
@@ -503,15 +383,27 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\InterfaceExtension.cpp
 
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\InterfaceExtension.h
 # End Source File
-# End Group
-# Begin Group "cpp"
-
-# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\cpp\CPPServiceWrapper.h
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ReferenceBindingExtension.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ReferenceBindingExtension.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ServiceBindingExtension.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ServiceBindingExtension.h
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\export.h
+# End Source File
 # End Group
 # Begin Group "xsd"
 
