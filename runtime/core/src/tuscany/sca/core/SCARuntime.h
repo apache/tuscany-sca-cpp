@@ -20,7 +20,7 @@
 #ifndef tuscany_sca_core_scaruntime_h
 #define tuscany_sca_core_scaruntime_h
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 
 #include "tuscany/sca/extension/InterfaceExtension.h"
 #include "tuscany/sca/extension/ImplementationExtension.h"

@@ -20,7 +20,7 @@
 #ifndef tuscany_sca_core_servicewrapper_h
 #define tuscany_sca_core_servicewrapper_h
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Service.h"
 

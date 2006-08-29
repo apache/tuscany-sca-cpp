@@ -23,7 +23,7 @@
 using std::string;
 #include "commonj/sdo/SDO.h"
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 
 namespace tuscany
 {

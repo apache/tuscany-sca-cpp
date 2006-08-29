@@ -19,7 +19,7 @@
 
 #ifndef tuscany_sca_util_library_h
 #define tuscany_sca_util_library_h
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 
 #if defined(WIN32)  || defined (_WINDOWS)
 #include <windows.h> 

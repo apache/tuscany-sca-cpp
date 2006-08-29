@@ -24,7 +24,6 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
-using namespace osoa::sca;
 
 namespace tuscany
 {
@@ -111,7 +110,7 @@ namespace tuscany
             {
                 LOGERROR_1(1, "Library::load: Unable to load library %s", name.c_str());
                 msg = "Unable to load library: " + name;
-                throw ServiceRuntimeException(msg.c_str());
+                throw TuscanyRuntimeException(msg.c_str());
             }    
         }
         
