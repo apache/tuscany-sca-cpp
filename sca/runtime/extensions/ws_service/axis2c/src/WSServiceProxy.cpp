@@ -15,9 +15,9 @@
  *  limitations under the License.
  */
 
-/* $Rev: 437637 $ $Date: 2006-08-28 03:42:10 -0700 (Mon, 28 Aug 2006) $ */
+/* $Rev$ $Date$ */
 
-#include "tuscany/sca/ws/WSServiceProxy.h"
+#include "WSServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/core/SCARuntime.h"
@@ -32,7 +32,7 @@
 #include "tuscany/sca/model/ServiceBinding.h"
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/WSDLOperation.h"
-#include "tuscany/sca/ws/WSReferenceBinding.h"
+#include "model/WSReferenceBinding.h"
 
 #include "commonj/sdo/SDO.h"
 using namespace commonj::sdo;

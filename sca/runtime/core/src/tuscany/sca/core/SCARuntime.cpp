@@ -267,6 +267,52 @@ namespace tuscany
             return implementationExtensions[extensionTypeQName];
         }
         
+        // ======================================
+        // register a referenceBindingExtension 
+        // ======================================
+        void SCARuntime::registerReferenceBindingExtension(ReferenceBindingExtension* extension)
+        {
+            LOGENTRY(1, "SCARuntime::registerReferenceBindingExtension");
+            if (extension)
+            {
+                cout << "register ref ext" << extension->getExtensionTypeQName();
+                referenceBindingExtensions[extension->getExtensionTypeQName()] = extension;          
+            }
+            LOGEXIT(1, "SCARuntime::registerReferenceBindingExtension");
+        }
+        
+        // ======================================
+        // find a referenceBindingExtension 
+        // ======================================
+        ReferenceBindingExtension* SCARuntime::getReferenceBindingExtension(const string& extensionTypeQName)
+        {
+            cout << "get ref ext" << extensionTypeQName;
+            return referenceBindingExtensions[extensionTypeQName];
+        }
+        
+        // ======================================
+        // register a serviceBindingExtension 
+        // ======================================
+        void SCARuntime::registerServiceBindingExtension(ServiceBindingExtension* extension)
+        {
+            LOGENTRY(1, "SCARuntime::registerServiceBindingExtension");
+            if (extension)
+            {
+                cout << "register service ext" << extension->getExtensionTypeQName();
+                serviceBindingExtensions[extension->getExtensionTypeQName()] = extension;          
+            }
+            LOGEXIT(1, "SCARuntime::registerServiceBindingExtension");
+        }
+        
+        // ======================================
+        // find a serviceBindingExtension 
+        // ======================================
+        ServiceBindingExtension* SCARuntime::getServiceBindingExtension(const string& extensionTypeQName)
+        {
+            cout << "get service ext" << extensionTypeQName;
+            return serviceBindingExtensions[extensionTypeQName];
+        }
+        
         
         // ===================================
         // Return the top of the runtime model

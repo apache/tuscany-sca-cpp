@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev: 437730 $ $Date: 2006-08-28 08:57:52 -0700 (Mon, 28 Aug 2006) $ */
+/* $Rev$ $Date$ */
 
 #ifndef tuscany_sca_extension_ws_wsserviceproxy_h
 #define tuscany_sca_extension_ws_wsserviceproxy_h
@@ -26,7 +26,7 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/Service.h"
-#include "tuscany/sca/ws/WSReferenceBinding.h"
+#include "model/WSReferenceBinding.h"
 #include "commonj/sdo/SDO.h"
 
 using namespace tuscany::sca::model;

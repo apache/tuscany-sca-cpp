@@ -1,19 +1,18 @@
+libdir=$(prefix)/extensions/ws_reference
 lib_LTLIBRARIES = libtuscany_sca_ws_reference.la
 
-## To list the source files execute the following:
-## ls -1 *.cpp | awk '{ print $1 " \\" '}
-## and copy/paste the output below
+noinst_HEADERS = *.h model/*.h
+
 libtuscany_sca_ws_reference_la_SOURCES = \
-Axis2Client.cpp \
-WSServiceWrapper.cpp
-
-noinst_HEADERS = *.h
-
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
+WSServiceBindingExtension.cpp \
+model/WSServiceBinding.cpp \
+WSServiceWrapper.cpp \
+Axis2Client.cpp
 
 libtuscany_sca_ws_reference_la_LIBADD = \
 	-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -ltuscany_sdo_axiom \
-	                    -L$(AXIS2C_HOME)/lib \
+					-L$(top_builddir)/runtime/core/src -ltuscany_sca
+	                -L$(AXIS2C_HOME)/lib \
 					-laxis2_util \
                     -laxis2_axiom \
                     -laxis2_wsdl \
@@ -23,9 +22,10 @@ libtuscany_sca_ws_reference_la_LIBADD = \
                     -lpthread \
                     -laxis2_http_sender \
                     -laxis2_http_receiver
-	
-	
-INCLUDES = -I$(top_builddir)/runtime/core/src \
+
+INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
            -I${AXIS2C_HOME}/include
+                   
+AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
                    

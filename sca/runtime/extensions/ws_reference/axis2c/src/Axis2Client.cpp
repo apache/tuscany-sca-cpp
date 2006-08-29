@@ -35,7 +35,7 @@
 using namespace osoa::sca;
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/ws/WSServiceBinding.h"
+#include "model/WSServiceBinding.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/core/Operation.h"

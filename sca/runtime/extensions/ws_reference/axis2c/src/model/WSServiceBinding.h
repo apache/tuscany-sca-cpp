@@ -17,8 +17,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_sca_ws_wsservicebinding_h
-#define tuscany_sca_ws_wsservicebinding_h
+#ifndef tuscany_sca_extension_ws_model_wsservicebinding_h
+#define tuscany_sca_extension_ws_model_wsservicebinding_h
 
 #include "tuscany/sca/model/ServiceBinding.h"
 #include "tuscany/sca/model/Service.h"
@@ -121,4 +121,4 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_ws_wsservicebinding_h
+#endif // tuscany_sca_extension_ws_model_wsservicebinding_h

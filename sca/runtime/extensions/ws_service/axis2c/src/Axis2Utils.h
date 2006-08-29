@@ -15,8 +15,8 @@
  *  limitations under the License.
  */
 
-#ifndef tuscany_sca_ws_axis2utils_h
-#define tuscany_sca_ws_axis2utils_h
+#ifndef tuscany_sca_extension_ws_axis2utils_h
+#define tuscany_sca_extension_ws_axis2utils_h
 
 #include <axis2_env.h>
 #include <axis2_msg_ctx.h>
@@ -39,4 +39,4 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_ws_axis2utils_h
+#endif // tuscany_sca_extension_ws_axis2utils_h

@@ -15,8 +15,8 @@
  *  limitations under the License.
  */
 
-#ifndef tuscany_sca_ws_axis2client_h
-#define tuscany_sca_ws_axis2client_h
+#ifndef tuscany_sca_extension_ws_axis2client_h
+#define tuscany_sca_extension_ws_axis2client_h
 
 #include "osoa/sca/export.h"
 #include <axiom.h>
@@ -61,4 +61,4 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_ws_axis2client_h
+#endif // tuscany_sca_extension_ws_axis2client_h

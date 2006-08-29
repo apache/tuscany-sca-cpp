@@ -31,16 +31,11 @@
 #include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/core/SCARuntime.h"
-#include "tuscany/sca/ws/WSServiceBinding.h"
-#include "tuscany/sca/ws/WSReferenceBinding.h"
 #include "commonj/sdo/TypeDefinitions.h"
 #include "tuscany/sca/util/File.h"
 
 
 using namespace commonj::sdo;
-
-using tuscany::sca::ws::WSServiceBinding;
-using tuscany::sca::ws::WSReferenceBinding;
 
 
 namespace tuscany
@@ -342,8 +337,8 @@ namespace tuscany
                 ComponentType* componentType;
                 string componentTypeName;
                 string componentTypePath;
-                string implementationType = impl->getType().getName();
 
+                string implementationType = impl->getType().getName();
                 string implTypeQname = impl->getType().getURI();
                 implTypeQname += "#";
                 implTypeQname += impl->getType().getName();
@@ -588,24 +583,26 @@ namespace tuscany
                 
                 // Utils::printDO(binding);
                 
-                string uri = binding->getCString("uri");
-                
                 // Determine the binding type
                 string bindingType = binding->getType().getName();
-                if (bindingType == "WebServiceBinding")
+                string bindingTypeQname = binding->getType().getURI();
+                bindingTypeQname += "#";
+                bindingTypeQname += binding->getType().getName();
+
+                // Locate the extension that handles this binding type
+                ReferenceBindingExtension* bindingExtension = runtime->getReferenceBindingExtension(bindingTypeQname);
+                if (bindingExtension)
                 {
-                    string port = binding->getCString("port");
-                    
                     Reference* reference = compositeService->getReference();
-                    WSReferenceBinding* wsBinding = new WSReferenceBinding(reference, uri, port);
-                    
-                    reference->setBinding(wsBinding);
-                    
+                    ReferenceBinding* referenceBinding = bindingExtension->getReferenceBinding(composite, reference, binding);
+                    reference->setBinding(referenceBinding);
                 }
                 else
                 {
-                    string message = "Binding type not yet implemented. Binding is for compositeService: ";
-                    message = message + compositeServiceDO->getCString("name");
+                    LOGERROR_1(0, "ModelLoader::addCompositeService: Unsupported binding type: %s", bindingTypeQname.c_str());
+
+                    string message = "Binding type not supported: ";
+                    message = message + bindingTypeQname;
                     throw SystemConfigurationException(message.c_str());
                 }
             }
@@ -637,24 +634,26 @@ namespace tuscany
                 
                 //Utils::printDO(binding);
                 
-                string uri = binding->getCString("uri");
-                
                 // Determine the binding type
                 string bindingType = binding->getType().getName();
-                if (bindingType == "WebServiceBinding")
+                string bindingTypeQname = binding->getType().getURI();
+                bindingTypeQname += "#";
+                bindingTypeQname += binding->getType().getName();
+
+                // Locate the extension that handles this binding type
+                ServiceBindingExtension* bindingExtension = runtime->getServiceBindingExtension(bindingTypeQname);
+                if (bindingExtension)
                 {
-                    string port = binding->getCString("port");
-                    
-                    Service* service = compositeReference->getService();
-                    WSServiceBinding* wsBinding = new WSServiceBinding(service, uri,port);
-                    
-                    service->setBinding(wsBinding);
-                    
+                    Service *service = compositeReference->getService();
+                    ServiceBinding* serviceBinding = bindingExtension->getServiceBinding(composite, service, binding);
+                    service->setBinding(serviceBinding);
                 }
                 else
                 {
-                    string message = "Binding type not yet implemented. Binding is for compositeReference: ";
-                    message = message + compositeReferenceDO->getCString("name");
+                    LOGERROR_1(0, "ModelLoader::addCompositeReference: Unsupported binding type: %s", bindingTypeQname.c_str());
+
+                    string message = "Binding type not supported: ";
+                    message = message + bindingTypeQname;
                     throw SystemConfigurationException(message.c_str());
                 }
             }

@@ -33,8 +33,8 @@ using namespace commonj::sdo_axiom;
 using namespace osoa::sca;
 
 #include "tuscany/sca/util/Exceptions.h"
-#include "tuscany/sca/ws/WSServiceProxy.h"
-#include "tuscany/sca/ws/WSReferenceBinding.h"
+#include "WSServiceProxy.h"
+#include "model/WSReferenceBinding.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/CompositeService.h"
 #include "tuscany/sca/model/Component.h"
