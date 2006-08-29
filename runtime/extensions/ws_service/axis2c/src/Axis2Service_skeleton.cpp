@@ -29,9 +29,6 @@
 using namespace commonj::sdo;
 using namespace commonj::sdo_axiom;
 
-#include "osoa/sca/sca.h"
-using namespace osoa::sca;
-
 #include "tuscany/sca/util/Exceptions.h"
 #include "WSServiceProxy.h"
 #include "model/WSReferenceBinding.h"
@@ -185,7 +182,7 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char* se
     {   
         AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI,  "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
     }
-    catch(ServiceRuntimeException &ex)
+    catch(TuscanyRuntimeException &ex)
     {   
         AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI,  "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
     }  

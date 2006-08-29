@@ -19,7 +19,6 @@
 
 #ifndef tuscany_sca_extension_ws_wsservicewrapper_h
 #define tuscany_sca_extension_ws_wsservicewrapper_h
-#include "osoa/sca/export.h"
 
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"

@@ -5,7 +5,6 @@ tuscany/sca/*.h \
 tuscany/sca/core/*.h \
 tuscany/sca/model/*.h \
 tuscany/sca/util/*.h \
-tuscany/sca/cpp/*.h \
 tuscany/sca/extension/*.h
 
 ## To list the source files execute the following:
