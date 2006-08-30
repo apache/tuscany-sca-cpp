@@ -35,8 +35,9 @@ namespace tuscany
                 
             public:
                 
-                Interface();  
-                virtual ~Interface();
+                SCA_API Interface();
+                  
+                SCA_API virtual ~Interface();
                             
             private:
             };

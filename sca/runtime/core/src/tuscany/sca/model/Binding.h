@@ -47,24 +47,24 @@ namespace tuscany
                  * Constructor to create a new binding.
                  * @param uri The binding URI.
                  */ 
-                Binding(const string& uri);
+                SCA_API Binding(const string& uri);
 
                 /**
                  * Destructor.
                  */ 
-                virtual ~Binding();
+                SCA_API virtual ~Binding();
                 
                 /**
                  * Returns the binding type
                  * @return The binding type.
                  */
-                virtual string getType() = 0;
+                SCA_API virtual string getType() = 0;
                             
                 /**
                  * Returns the binding URI.
                  * @return The binding URI.
                  */
-                string getURI() const { return uri; };
+                SCA_API const string& getURI() const { return uri; };
                 
             private:
             

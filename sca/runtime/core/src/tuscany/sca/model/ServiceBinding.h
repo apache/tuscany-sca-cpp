@@ -52,24 +52,24 @@ namespace tuscany
                 /**
                  * Constructor to create a new binding.
                  */ 
-                ServiceBinding(Service* service, const string& uri);
+                SCA_API ServiceBinding(Service* service, const string& uri);
 
                 /**
                  * Destructor.
                  */ 
-                virtual ~ServiceBinding();
+                SCA_API virtual ~ServiceBinding();
                             
                /**
                  * Create a service wrapper handling the interaction
                  * with the service configured with this binding.
                  */
-                 virtual ServiceWrapper* getServiceWrapper() = 0;
+                 SCA_API virtual ServiceWrapper* getServiceWrapper() = 0;
  
                 /**
                  * Returns the service
                  * @return The service.
                  */
-                 Service* getService() const { return service; };
+                 SCA_API Service* getService() const { return service; };
                                 
              private:
             

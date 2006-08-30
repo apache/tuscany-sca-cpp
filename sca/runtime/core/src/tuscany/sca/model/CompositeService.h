@@ -54,19 +54,19 @@ namespace tuscany
                  * @param componentType The component type on which this service is defined.
                  * @param name The name of the service.
                  */
-                CompositeService(Composite* composite, const string& name,
+                SCA_API CompositeService(Composite* composite, const string& name,
                     Interface* interface, Interface* callbackInterface, bool conversational, ReferenceType::Multiplicity multiplicity);
 
                 /**
                  * Destructor.
                  */
-                virtual ~CompositeService();
+                SCA_API virtual ~CompositeService();
 
                 /**
                  * Returns the reference used by this composite service.
                  * @return The reference used by this composite service.
                  */
-                Reference* getReference() const { return reference; };
+                SCA_API Reference* getReference() const { return reference; };
                 
             private:
             
