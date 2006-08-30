@@ -50,34 +50,34 @@ namespace tuscany
                  * @param endpoint The endpoint address of the operation.
                  * @param responseName The name of the response message.
                  */
-                 WSDLOperation();
+                 SCA_API WSDLOperation();
                  
                 /**
                  * Destructor.
                  */ 
-                ~WSDLOperation();
+                SCA_API virtual ~WSDLOperation();
 
                 /**
                  * Return the name of the operation for use when serializing an
                  * outgoing message.
                  * @return The name of the element in the request message.
                  */ 
-                const string& getOperationName() const {return operationName;}
-                void setOperationName(const string& opName) {operationName = opName;}
+                SCA_API const string& getOperationName() const {return operationName;}
+                SCA_API void setOperationName(const string& opName) {operationName = opName;}
 
                 /**
                  * The soap action string for this operation.
                  * @return The soap action.
                  */
-                const string& getSoapAction() const {return soapAction;}
-                void setSoapAction(const string& soapAct) {soapAction = soapAct;}
+                SCA_API const string& getSoapAction() const {return soapAction;}
+                SCA_API void setSoapAction(const string& soapAct) {soapAction = soapAct;}
 
                 /**
                  * Return the endpoint address for the target web service.
                  * @return The endpoint address.
                  */
-                const string& getEndpoint() const {return endpoint;}
-                void setEndpoint(const string& ep) {endpoint = ep;}
+                SCA_API const string& getEndpoint() const {return endpoint;}
+                SCA_API void setEndpoint(const string& ep) {endpoint = ep;}
 
                 enum soapVersion
                 {
@@ -85,22 +85,22 @@ namespace tuscany
                 	SOAP12
                 };
                 
-                void setSoapVersion(soapVersion ver) {soapVer = ver;}
-                soapVersion getSoapVersion() const {return soapVer;}
+                SCA_API void setSoapVersion(soapVersion ver) {soapVer = ver;}
+                SCA_API soapVersion getSoapVersion() const {return soapVer;}
                 
-                void setDocumentStyle(bool docStyle) {documentStyle = docStyle;}
-                bool isDocumentStyle() const {return documentStyle;}
+                SCA_API void setDocumentStyle(bool docStyle) {documentStyle = docStyle;}
+                SCA_API bool isDocumentStyle() const {return documentStyle;}
 
-                void setEncoded(bool enc) {encoded = enc;}
-                bool isEncoded() const {return encoded;}
+                SCA_API void setEncoded(bool enc) {encoded = enc;}
+                SCA_API bool isEncoded() const {return encoded;}
 
                 
-                void setInputType(const string& inputType);
-                const string& getInputTypeUri() const {return inputTypeUri;}
-                const string& getInputTypeName() const {return inputTypeName;}
-                void setOutputType(const string& outputType);
-                const string& getOutputTypeUri() const {return outputTypeUri;}
-                const string& getOutputTypeName() const {return outputTypeName;}
+                SCA_API void setInputType(const string& inputType);
+                SCA_API const string& getInputTypeUri() const {return inputTypeUri;}
+                SCA_API const string& getInputTypeName() const {return inputTypeName;}
+                SCA_API void setOutputType(const string& outputType);
+                SCA_API const string& getOutputTypeUri() const {return outputTypeUri;}
+                SCA_API const string& getOutputTypeName() const {return outputTypeName;}
                 
             private:
                 /**

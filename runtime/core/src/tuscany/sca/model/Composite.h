@@ -20,6 +20,7 @@
 #ifndef tuscany_sca_model_composite_h
 #define tuscany_sca_model_composite_h
 
+#include "tuscany/sca/export.h"
 #include <string>
 using std::string;
 

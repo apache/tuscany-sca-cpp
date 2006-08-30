@@ -24,7 +24,6 @@
 #include "tuscany/sca/model/CompositeReference.h"
 #include "tuscany/sca/model/WSDLOperation.h"
 
-using namespace tuscany::sca;
 using namespace tuscany::sca::model;
 
 
@@ -35,7 +34,7 @@ namespace tuscany
         namespace ws
         {
         
-            class SCA_API Axis2Client
+            class Axis2Client
             {
             public:
                 Axis2Client(CompositeReference* externalService);

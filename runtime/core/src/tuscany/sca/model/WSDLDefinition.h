@@ -52,19 +52,19 @@ namespace tuscany
                  * @param wsdlModel The data object representing the WSDL document
                  * defining a web service.
                  */
-                 WSDLDefinition(DataObjectPtr wsdlModel);
+                 SCA_API WSDLDefinition(DataObjectPtr wsdlModel);
 
                 /**
                  * Destructor.
                  */ 
-                ~WSDLDefinition();
+                SCA_API virtual ~WSDLDefinition();
 
 
                 /**
                  * Returns the target namespace of the WSDL definitions.
                  * @return The target namespace.
                  */
-                string getNamespace(void);
+                SCA_API string getNamespace(void);
 
                 /**
                  * Find an operation in the WSDL definitions.
@@ -75,7 +75,7 @@ namespace tuscany
                  * @param operationName The name of the operation to find.
                  * @return The operation if found. Exception thrown if not found.
                  */
-                const WSDLOperation& findOperation(const string& serviceName, 
+                SCA_API const WSDLOperation& findOperation(const string& serviceName, 
                                         const string& portName, 
                                         const string& operationName);
                 

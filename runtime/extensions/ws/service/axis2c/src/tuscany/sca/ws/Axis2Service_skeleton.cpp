@@ -26,8 +26,9 @@
 #include <stdio.h>
 
 #include <sdo_axiom.h>
-using namespace commonj::sdo;
-using namespace commonj::sdo_axiom;
+using commonj::sdo::DataObjectPtr;
+using commonj::sdo::DataFactoryPtr;
+using commonj::sdo_axiom::AxiomHelper;
 
 #include "tuscany/sca/util/Exceptions.h"
 #include "WSServiceProxy.h"
