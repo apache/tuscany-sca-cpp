@@ -43,12 +43,13 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/Makefile
                  runtime/extensions/cpp/Makefile
                  runtime/extensions/cpp/src/Makefile
-                 runtime/extensions/ws_service/Makefile
-                 runtime/extensions/ws_service/axis2c/Makefile
-                 runtime/extensions/ws_service/axis2c/src/Makefile
-                 runtime/extensions/ws_reference/Makefile
-                 runtime/extensions/ws_reference/axis2c/Makefile
-                 runtime/extensions/ws_reference/axis2c/src/Makefile
+                 runtime/extensions/ws/Makefile
+                 runtime/extensions/ws/reference/Makefile
+                 runtime/extensions/ws/reference/axis2c/Makefile
+                 runtime/extensions/ws/reference/axis2c/src/Makefile
+                 runtime/extensions/ws/service/Makefile
+                 runtime/extensions/ws/service/axis2c/Makefile
+                 runtime/extensions/ws/service/axis2c/src/Makefile
                  runtime/core/test/Makefile
                  runtime/core/test/CustomerInfo/Makefile
                  runtime/core/test/MyValue/Makefile
