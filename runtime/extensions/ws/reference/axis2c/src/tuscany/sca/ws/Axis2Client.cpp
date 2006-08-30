@@ -74,7 +74,7 @@ namespace tuscany
                 string portNamespace = binding->getWSDLNamespaceURL();
                 
                 // Lookup the wsdl model from the composite, keyed on the namespace 
-                // (the wsdl will have been loaded at startup, based on the information in the config file)
+                // (the wsdl will have been loaded at startup)
                 Composite* composite=compositeReference->getComposite();
                 WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(portNamespace);
                 if (wsdlDefinition == 0)
@@ -89,7 +89,7 @@ namespace tuscany
                 const WSDLOperation& wsdlOperation =  wsdlDefinition->findOperation(
                     binding->getServiceName(),
                     binding->getPortName(),
-                    operationName);  
+                    operationName);
                 
                 // Initialize Axis2 stuff
                 axis2_allocator_t *allocator = axis2_allocator_init (NULL);
@@ -99,7 +99,19 @@ namespace tuscany
                 env->log->level = AXIS2_LOG_LEVEL_TRACE;
                 axis2_error_init();
                 
-                axis2_char_t* address = (axis2_char_t*)wsdlOperation.getEndpoint().c_str();
+                // Get the target endpoint address
+                // The URI specified in the binding overrides the address specified in
+                // the WSDL
+                axis2_char_t* address;
+                if (binding->getURI() != "")
+                {
+                    address = (axis2_char_t*)binding->getURI().c_str();
+                }
+                else
+                {
+                    address = (axis2_char_t*)wsdlOperation.getEndpoint().c_str();
+                }
+                
                 axis2_char_t* opName = (axis2_char_t*)operationName.c_str();
                 axis2_char_t* soap_action = (axis2_char_t*)wsdlOperation.getSoapAction().c_str();
                 axis2_char_t* serviceName = (axis2_char_t*)binding->getServiceName().c_str();
@@ -370,8 +382,6 @@ namespace tuscany
                  }
                  LOGEXIT(1, "Axis2Client::setReturn");
              }
-             
-             
              
         } // End namespace ws
     } // End namespace sca
