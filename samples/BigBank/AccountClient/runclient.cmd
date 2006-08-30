@@ -45,7 +45,7 @@ set TUSCANY_SCACPP_DEFAULT_COMPONENT=AccountsService
 
 rem Run the client
 
-set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
+set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\cpp\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
 .\AccountClient.exe 1234
 
