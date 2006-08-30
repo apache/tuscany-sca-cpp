@@ -1,13 +1,13 @@
-libdir=$(prefix)/extensions/ws_reference
+libdir=$(prefix)/extensions/ws/reference/lib
 lib_LTLIBRARIES = libtuscany_sca_ws_reference.la
 
-noinst_HEADERS = *.h model/*.h
+noinst_HEADERS = tuscany/sca/ws/*.h tuscany/sca/ws/model/*.h
 
 libtuscany_sca_ws_reference_la_SOURCES = \
-WSServiceBindingExtension.cpp \
-model/WSServiceBinding.cpp \
-WSServiceWrapper.cpp \
-Axis2Client.cpp
+tuscany/sca/ws/WSServiceBindingExtension.cpp \
+tuscany/sca/ws/model/WSServiceBinding.cpp \
+tuscany/sca/ws/WSServiceWrapper.cpp \
+tuscany/sca/ws/Axis2Client.cpp
 
 libtuscany_sca_ws_reference_la_LIBADD = \
 	-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -ltuscany_sdo_axiom \
@@ -23,7 +23,7 @@ libtuscany_sca_ws_reference_la_LIBADD = \
                     -laxis2_http_sender \
                     -laxis2_http_receiver
 
-INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
+INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
            -I${AXIS2C_HOME}/include
                    
