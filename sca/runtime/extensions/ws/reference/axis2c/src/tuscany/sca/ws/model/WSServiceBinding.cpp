@@ -18,9 +18,9 @@
 /* $Rev$ $Date$ */
 
 #include "tuscany/sca/util/Logging.h"
-#include "model/WSReferenceBinding.h"
-#include "tuscany/sca/core/ServiceProxy.h"
-#include "WSServiceProxy.h"
+#include "tuscany/sca/ws/model/WSServiceBinding.h"
+#include "tuscany/sca/core/ServiceWrapper.h"
+#include "tuscany/sca/ws/WSServiceWrapper.h"
 
 namespace tuscany
 {
@@ -30,13 +30,15 @@ namespace tuscany
         {
 
             // Constructor
-            WSReferenceBinding::WSReferenceBinding(Reference* reference, const string& uri, const string& port)
-                : ReferenceBinding(reference, uri), port(port)
+            WSServiceBinding::WSServiceBinding(Service* service, const string& uri, const string& port)
+                : ServiceBinding(service, uri), port(port)
             {
                 parsePort();
+                
+                serviceWrapper = new WSServiceWrapper(service);
             }
-            
-            void WSReferenceBinding::parsePort()
+
+            void WSServiceBinding::parsePort()
             {
                 // Port is of the form: <wsdl-namepace-uri>#wsdl.endpoint(<service-name>/<port-name>)
                 string::size_type hash = port.find("#");
@@ -116,20 +118,13 @@ namespace tuscany
             }
 
             // Destructor
-            WSReferenceBinding::~WSReferenceBinding()
+            WSServiceBinding::~WSServiceBinding()
             {
             }
             
-            void WSReferenceBinding::configure(ServiceBinding *binding)
+            ServiceWrapper* WSServiceBinding::getServiceWrapper()
             {
-                targetServiceBinding = binding;
-                
-                serviceProxy = new WSServiceProxy(getReference());
-            }
-            
-            ServiceProxy* WSReferenceBinding::getServiceProxy()
-            {
-                return serviceProxy;
+                return serviceWrapper;
             }
                 
         } // End namespace ws

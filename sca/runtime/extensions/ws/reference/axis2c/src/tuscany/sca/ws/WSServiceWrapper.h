@@ -35,7 +35,7 @@ namespace tuscany
         namespace ws
         {
         
-            class SCA_API WSServiceWrapper : public ServiceWrapper
+            class WSServiceWrapper : public ServiceWrapper
             {
             public:
 

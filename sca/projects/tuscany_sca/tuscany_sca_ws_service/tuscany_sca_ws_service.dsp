@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "../../../runtime/extensions/ws/service/axis2c/src" /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /machine:I386 /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\lib	copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\bin
+PostBuild_Cmds=copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib	copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin	copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_ws_service - Win32 Debug"
@@ -74,7 +74,7 @@ PostBuild_Cmds=copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\lib	copy 
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/ws/service/axis2c/src" /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\bin	copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\bin	copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\lib
+PostBuild_Cmds=copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin	copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\bin	copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib	copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 # End Special Build Tool
 
 !ENDIF 
@@ -97,17 +97,57 @@ PostBuild_Cmds=copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\bin	copy De
 
 # Name "tuscany_sca_ws_service - Win32 Release"
 # Name "tuscany_sca_ws_service - Win32 Debug"
-# Begin Group "Source Files"
+# Begin Group "tuscany/sca/ws"
 
-# PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# PROP Default_Filter ""
+# Begin Group "model"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\model\WSReferenceBinding.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\model\WSReferenceBinding.h
+# End Source File
 # End Group
-# Begin Group "Header Files"
+# Begin Source File
 
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Service_skeleton.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Utils.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Utils.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSReferenceBindingExtension.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSReferenceBindingExtension.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSServiceProxy.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSServiceProxy.h
+# End Source File
 # End Group
-# Begin Group "Resource Files"
+# Begin Group "xsd"
 
-# PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE="..\..\..\runtime\extensions\ws\xsd\sca-binding-webservice.xsd"
+# End Source File
 # End Group
 # End Target
 # End Project
