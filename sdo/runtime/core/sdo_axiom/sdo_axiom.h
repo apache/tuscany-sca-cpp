@@ -29,10 +29,11 @@
 
 #include "commonj/sdo/SDO.h"
 
-using namespace commonj::sdo;
+
 
 namespace commonj
 {
+    using namespace sdo;
     namespace sdo_axiom
     {
             
