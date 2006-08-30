@@ -50,19 +50,19 @@ namespace tuscany
                  * Constructor.
                  * @param name The name of the reference.
                  */
-                CompositeReference(Composite* composite, const string& name,
+                SCA_API CompositeReference(Composite* composite, const string& name,
                     Interface* interface, Interface* callbackInterface, bool conversational, ReferenceType::Multiplicity multiplicity);
 
                 /**
                  * Destructor.
                  */
-                virtual ~CompositeReference();
+                SCA_API virtual ~CompositeReference();
                 
                 /**
                  * Returns the service exposed by this composite reference.
                  * @return The service exposed by this composite reference.
                  */
-                Service* getService() const { return service; };
+                SCA_API Service* getService() const { return service; };
 
             private:
             

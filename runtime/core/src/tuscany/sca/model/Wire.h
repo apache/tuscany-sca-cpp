@@ -43,30 +43,30 @@ namespace tuscany
                  * @param target The target of the wire. Either a component and service
                  * service name (optional) or an external sevice.
                  */
-                Wire(const string& source, const string& target);
+                SCA_API Wire(const string& source, const string& target);
 
                 /**
                  * Destructor.
                  */
-                virtual ~Wire();
+                SCA_API virtual ~Wire();
 
                 /**
                  * Get the component name defined by the source of the wire.
                  * @return The component name which is the source of the wire.
                  */
-                const string& getSourceComponent() const { return sourceComponent; }
+                SCA_API const string& getSourceComponent() const { return sourceComponent; }
 
                 /**
                  * Get the reference name defined by the source of the wire.
                  * @return The reference name which is the source of the wire.
                  */
-                const string& getSourceReference() const { return sourceReference; }
+                SCA_API const string& getSourceReference() const { return sourceReference; }
 
                 /**
                  * Get the target uri defined by the target of the wire.
                  * @return The target uri which is the source of the wire.
                  */
-                const string& getTarget() { return target; }
+                SCA_API const string& getTarget() { return target; }
                 
              private:
                 /**

@@ -44,36 +44,36 @@ namespace tuscany
                  * @param component The component on which the service is defined.
                  * @param serviceType The service type defining the characteristics of the service.
                  */
-                 Service(Component* component, ServiceType* serviceType);
+                 SCA_API Service(Component* component, ServiceType* serviceType);
                  
                 /**
                  * Destructor.
                  */
-                 virtual ~Service();
+                 SCA_API virtual ~Service();
 
                 /**
                  * Returns the component on which this service is defined.
                  * @return The component on which this service is defined.
                  */
-                Component* getComponent() const { return component; }
+                SCA_API Component* getComponent() const { return component; }
 
                 /**
                  * Returns the service type defining the characteristics of the service.
                  * @return The service type defining the characteristics of the service.
                  */
-                ServiceType* getType() const { return type; }
+                SCA_API ServiceType* getType() const { return type; }
 
                 /**
                  * Returns the binding supported by the service.
                  * @return The binding supported by the service.
                  */
-                ServiceBinding* getBinding() const;
+                SCA_API ServiceBinding* getBinding() const;
 
                 /**
                  * Sets the binding supported by the service.
                  * @param binding The binding supported by the service.
                  */
-                void setBinding(ServiceBinding* binding);
+                SCA_API void setBinding(ServiceBinding* binding);
 
             private:
 

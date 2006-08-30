@@ -45,30 +45,30 @@ namespace tuscany
                 /**
                  * Constructor.
                  */
-                Contract(Interface* interface, Interface* callbackInterface, bool conversational);
+                SCA_API Contract(Interface* interface, Interface* callbackInterface, bool conversational);
 
                 /**
                  * Destructor.
                  */
-                virtual ~Contract();
+                SCA_API virtual ~Contract();
                 
                 /**
                  * Returns the interface for invocations from the requestor to the provider.
                  * @return The interface for invocations from the requestor to the provider.
                  */
-                Interface* getInterface() const { return iface; }
+                SCA_API Interface* getInterface() const { return iface; }
                 
                 /**
                  * Returns the interface for invocations from the provider back to the requestor.
                  * @return The interface for invocations from the provider back to the requestor.
                  */
-                Interface* getCallbackInterface() const { return callbackInterface; }
+                SCA_API Interface* getCallbackInterface() const { return callbackInterface; }
                 
                 /**
                  * Returns true if the interface contract is conversational. 
                  * @return True if the interface contract is conversational
                  */
-                 bool isConversational() const { return conversational; }
+                 SCA_API bool isConversational() const { return conversational; }
                  
             private:
 

@@ -61,43 +61,43 @@ namespace tuscany
                  * Constructor.
                  * @param name The name of the reference.
                  */
-                ReferenceType(ComponentType* componentType, const string& name,
+                SCA_API ReferenceType(ComponentType* componentType, const string& name,
                     Interface* interface, Interface* callbackInterface, bool conversational, Multiplicity multiplicity);
                     
                 /**
                  * Destructor.
                  */;
-                virtual ~ReferenceType();
+                SCA_API virtual ~ReferenceType();
                 
                 /**
                  * Returns the component type on which this reference is defined.
                  * @return The component type on which this reference is defined.
                  */
-                ComponentType* getComponentType() const { return componentType; }
+                SCA_API ComponentType* getComponentType() const { return componentType; }
 
                 /**
                  * Returns the name of the reference.
                  * @return The name of the reference.
                  */
-                const string& getName() const { return name; }
+                SCA_API const string& getName() const { return name; }
 
                 /**
                  * Returns the multiplicity allowed for wires connected to this reference.
                  * @return The multiplicity allowed for wires connected to this reference
                  */
-                Multiplicity getMultiplicity() const { return multiplicity; }
+                SCA_API Multiplicity getMultiplicity() const { return multiplicity; }
 
                 /**
                  * Returns the binding supported by the reference.
                  * @return The binding supported by the reference.
                  */
-                Binding* getBinding() const;
+                SCA_API Binding* getBinding() const;
 
                 /**
                  * Sets the binding supported by the reference.
                  * @param binding The binding supported by the reference.
                  */
-                void setBinding(Binding* binding);
+                SCA_API void setBinding(Binding* binding);
                 
                 /**
                  * Get the multiplicity corresponding to the given

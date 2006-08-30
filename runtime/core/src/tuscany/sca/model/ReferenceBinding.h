@@ -53,29 +53,29 @@ namespace tuscany
                 /**
                  * Constructor to create a new binding.
                  */ 
-                ReferenceBinding(Reference* reference, const string& uri);
+                SCA_API ReferenceBinding(Reference* reference, const string& uri);
 
                 /**
                  * Destructor.
                  */ 
-                virtual ~ReferenceBinding();
+                SCA_API virtual ~ReferenceBinding();
                             
                 /**
                  * Create a proxy representing the reference to the
                  * client component.
                  */
-                 virtual ServiceProxy* getServiceProxy() = 0;
+                 SCA_API virtual ServiceProxy* getServiceProxy() = 0;
                  
                  /**
                   * Configure this binding from a service binding.
                   */
-                  virtual void configure(ServiceBinding* serviceBinding) = 0;
+                  SCA_API virtual void configure(ServiceBinding* serviceBinding) = 0;
                                 
                   /**
                    * Returns the reference.
                    * @return The reference.
                    */
-                   Reference* getReference() const { return reference; };
+                   SCA_API Reference* getReference() const { return reference; };
                    
             private:
             
