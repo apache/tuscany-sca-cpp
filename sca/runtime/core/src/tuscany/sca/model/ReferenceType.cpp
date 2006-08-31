@@ -31,8 +31,8 @@ namespace tuscany
             
             // Constructor
             ReferenceType::ReferenceType(ComponentType* componentType, const string& name,
-                Interface* interface, Interface* callbackInterface, bool conversational, Multiplicity multiplicity)
-                : Contract(interface, callbackInterface, conversational),
+                Interface* intface, Interface* callbackInterface, bool conversational, Multiplicity multiplicity)
+                : Contract(intface, callbackInterface, conversational),
                 componentType(componentType), name(name), multiplicity(multiplicity)
             {
             }

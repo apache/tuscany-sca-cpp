@@ -55,7 +55,7 @@ namespace tuscany
                  * @param name The name of the service.
                  */
                 SCA_API CompositeService(Composite* composite, const string& name,
-                    Interface* interface, Interface* callbackInterface, bool conversational, ReferenceType::Multiplicity multiplicity);
+                    Interface* intface, Interface* callbackInterface, bool conversational, ReferenceType::Multiplicity multiplicity);
 
                 /**
                  * Destructor.

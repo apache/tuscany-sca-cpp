@@ -38,7 +38,7 @@ namespace tuscany
 
             // Constructor
             CompositeService::CompositeService(Composite* composite, const string& name,
-                    Interface* interface, Interface* callbackInterface, bool conversational,
+                    Interface* intface, Interface* callbackInterface, bool conversational,
                     ReferenceType::Multiplicity multiplicity) :
                 Component(composite, name, new ComponentType(name))
             {
@@ -48,7 +48,7 @@ namespace tuscany
                 // Initialize the component type, reference type and reference
                 ComponentType* componentType = getType();
                 ReferenceType* referenceType = new ReferenceType(
-                    componentType, "", interface, callbackInterface, conversational, multiplicity);
+                    componentType, "", intface, callbackInterface, conversational, multiplicity);
                 componentType->addReferenceType(referenceType);
                 
                 reference = new Reference(this, referenceType);

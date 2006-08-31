@@ -49,7 +49,7 @@ namespace tuscany
                  * @param name The name of the service.
                  */
                 SCA_API ServiceType(ComponentType* componentType, const string& name,
-                    Interface* interface, Interface* callbackInterface, bool conversational);
+                    Interface* intface, Interface* callbackInterface, bool conversational);
 
                 /**
                  * Destructor.
