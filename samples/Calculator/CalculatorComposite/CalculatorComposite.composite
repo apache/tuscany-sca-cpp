@@ -31,6 +31,23 @@
         
 	<component name="DivideServiceComponent">
 		<implementation.cpp library="CalculatorComposite" header="DivideServiceImpl.h"/>
+
+                <!-- 
+                   Instead of the C++ Divide Service implementation, uncomment the following to use 
+                   the DivideServiceImpl.py Python implementation for the Divide Service, in this case
+                   invoking the module-level divide function.
+
+		   <implementation.python module="DivideServiceImpl"/>
+                -->
+
+                <!-- 
+                   Instead of the C++ Divide Service implementation, uncomment the following to use 
+                   the DivideServiceImpl.py Python implementation for the Divide Service, in this case
+                   invoking the divide function in the DivideClass.
+
+		   <implementation.python module="DivideServiceImpl" class="DivideClass"/>
+                -->
+
 	</component>
 
 </composite>
