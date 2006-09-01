@@ -11,90 +11,6 @@
 	</Platforms>
 	<Configurations>
 		<Configuration
-			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
-			<Tool
-				Name="VCCLCompilerTool"
-				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCA_EXPORTS"
-				StringPooling="TRUE"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
-				PrecompiledHeaderFile=".\Release/tuscany_sca.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				CompileAs="0"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="axis2_engine.lib tuscany_sdo_axiom.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib"
-				OutputFile=".\Release/tuscany_sca.dll"
-				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
-				ProgramDatabaseFile=".\Release/tuscany_sca.pdb"
-				ImportLibrary=".\Release/tuscany_sca.lib"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Release/tuscany_sca.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="if not exist ..\..\..\deploy mkdir ..\..\..\deploy
-if not exist ..\..\..\deploy\bin mkdir ..\..\..\deploy\bin
-if not exist ..\..\..\deploy\lib mkdir ..\..\..\deploy\lib
-if not exist ..\..\..\deploy\include mkdir ..\..\..\deploy\include
-if not exist ..\..\..\deploy\include\osoa mkdir ..\..\..\deploy\include\osoa
-if not exist ..\..\..\deploy\include\osoa\sca  mkdir ..\..\..\deploy\include\osoa\sca
-if not exist ..\..\..\deploy\include\tuscany mkdir ..\..\..\deploy\include\tuscany
-if not exist ..\..\..\deploy\include\tuscany\sca mkdir ..\..\..\deploy\include\tuscany\sca
-if not exist ..\..\..\deploy\include\tuscany\sca\core mkdir ..\..\..\deploy\include\tuscany\sca\core
-if not exist ..\..\..\deploy\include\tuscany\sca\model mkdir ..\..\..\deploy\include\tuscany\sca\model
-if not exist ..\..\..\deploy\include\tuscany\sca\util mkdir ..\..\..\deploy\include\tuscany\sca\util
-if not exist ..\..\..\deploy\include\tuscany\sca\ws mkdir ..\..\..\deploy\include\tuscany\sca\ws
-if not exist ..\..\..\deploy\xsd mkdir ..\..\..\deploy\xsd
-
-del ..\..\..\deploy\bin\tuscany_sca.*
-del ..\..\..\deploy\lib\*.lib
-copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca
-copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core
-copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model
-copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util
-copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws
-copy Release\tuscany_sca.dll ..\..\..\deploy\bin
-copy Release\tuscany_sca.pdb ..\..\..\deploy\bin
-copy Release\tuscany_sca.lib ..\..\..\deploy\lib
-copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
-
-"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="2057"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
-		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\Debug"
 			IntermediateDirectory=".\Debug"
@@ -121,45 +37,32 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="axis2_engine.lib tuscany_sdo_axiom.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib"
 				OutputFile=".\Debug/tuscany_sca.dll"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/tuscany_sca.pdb"
-				ImportLibrary=".\Debug/tuscany_sca.lib"/>
+				ImportLibrary=".\Debug/tuscany_sca.lib"
+				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/tuscany_sca.tlb"/>
+				TypeLibraryName=".\Debug/tuscany_sca.tlb"
+				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if not exist ..\..\..\deploy mkdir ..\..\..\deploy
-if not exist ..\..\..\deploy\bin mkdir ..\..\..\deploy\bin
-if not exist ..\..\..\deploy\lib mkdir ..\..\..\deploy\lib
-if not exist ..\..\..\deploy\include mkdir ..\..\..\deploy\include
-if not exist ..\..\..\deploy\include\osoa mkdir ..\..\..\deploy\include\osoa
-if not exist ..\..\..\deploy\include\osoa\sca  mkdir ..\..\..\deploy\include\osoa\sca
-if not exist ..\..\..\deploy\include\tuscany mkdir ..\..\..\deploy\include\tuscany
-if not exist ..\..\..\deploy\include\tuscany\sca mkdir ..\..\..\deploy\include\tuscany\sca
-if not exist ..\..\..\deploy\include\tuscany\sca\core mkdir ..\..\..\deploy\include\tuscany\sca\core
-if not exist ..\..\..\deploy\include\tuscany\sca\model mkdir ..\..\..\deploy\include\tuscany\sca\model
-if not exist ..\..\..\deploy\include\tuscany\sca\util mkdir ..\..\..\deploy\include\tuscany\sca\util
-if not exist ..\..\..\deploy\include\tuscany\sca\ws mkdir ..\..\..\deploy\include\tuscany\sca\ws
-if not exist ..\..\..\deploy\xsd mkdir ..\..\..\deploy\xsd
-
-del ..\..\..\deploy\bin\tuscany_sca.*
+				CommandLine="del ..\..\..\deploy\bin\tuscany_sca.*
 del ..\..\..\deploy\lib\*.lib
-copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca
+copy ..\..\..\runtime\core\src\tuscany\sca\*.h ..\..\..\deploy\include\tuscany\sca
 copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core
 copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model
+copy ..\..\..\runtime\core\src\tuscany\sca\extension\*.h ..\..\..\deploy\include\tuscany\sca\extension
 copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util
-copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws
 copy Debug\tuscany_sca.dll ..\..\..\deploy\bin
 copy Debug\tuscany_sca.pdb ..\..\..\deploy\bin
 copy Debug\tuscany_sca.lib ..\..\..\deploy\lib
@@ -178,107 +81,198 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCA_EXPORTS"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=".\Release/tuscany_sca.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="axis2_engine.lib tuscany_sdo_axiom.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib"
+				OutputFile=".\Release/tuscany_sca.dll"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
+				ProgramDatabaseFile=".\Release/tuscany_sca.pdb"
+				ImportLibrary=".\Release/tuscany_sca.lib"
+				TargetMachine="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Release/tuscany_sca.tlb"
+				HeaderFileName=""/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="del ..\..\..\deploy\bin\tuscany_sca.*
+del ..\..\..\deploy\lib\*.lib
+copy ..\..\..\runtime\core\src\tuscany\sca\*.h ..\..\..\deploy\include\tuscany\sca
+copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core
+copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model
+copy ..\..\..\runtime\core\src\tuscany\sca\extension\*.h ..\..\..\deploy\include\tuscany\sca\extension
+copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util
+copy Release\tuscany_sca.dll ..\..\..\deploy\bin
+copy Release\tuscany_sca.lib ..\..\..\deploy\lib
+copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
 	</Configurations>
 	<Files>
 		<Filter
-			Name="osoa/sca"
-			Filter="">
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ComponentContext.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ComponentContext.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ComponentContextImpl.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ComponentContextImpl.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContext.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContext.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\export.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\SCA.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\sca.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ServiceList.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ServiceList.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ServiceRuntimeException.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\osoa\sca\ServiceRuntimeException.h">
-			</File>
-		</Filter>
-		<Filter
 			Name="tuscany/sca"
 			Filter="">
+			<File
+				RelativePath="..\..\..\runtime\core\src\tuscany\sca\export.h">
+			</File>
 			<Filter
 				Name="core"
 				Filter="">
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\CompositeReferenceWrapper.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\CompositeReferenceWrapper.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\CompositeService.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\CompositeService.h">
-				</File>
-				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\Operation.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\Operation.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\SCARuntime.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\SCARuntime.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ServiceProxy.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ServiceProxy.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ServiceWrapper.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ServiceWrapper.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\TuscanyRuntime.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\TuscanyRuntime.h">
@@ -289,114 +283,414 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				Filter="">
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Binding.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Binding.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Component.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Component.h">
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ComponentType.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ComponentType.h">
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Composite.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeReferenceType.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeReference.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeReferenceType.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeReference.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeServiceType.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeService.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeServiceType.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeService.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CPPImplementation.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Contract.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CPPImplementation.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CPPInterface.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CPPInterface.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Implementation.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Implementation.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Contract.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Interface.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Interface.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.h">
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Reference.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Reference.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ReferenceBinding.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ReferenceBinding.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ReferenceType.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ReferenceType.h">
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Service.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Service.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ServiceReference.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ServiceBinding.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ServiceReference.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ServiceBinding.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Subsystem.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ServiceType.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Subsystem.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\System.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\System.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\ServiceType.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Wire.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Wire.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WireTarget.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLDefinition.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WireTarget.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLDefinition.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Wsdl.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\Wsdl.h">
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WsdlOperation.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLOperation.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WsdlOperation.h">
@@ -407,33 +701,138 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				Filter="">
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\DefaultLogWriter.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\DefaultLogWriter.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\File.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\File.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\FileLogWriter.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\FileLogWriter.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Library.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Library.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Logger.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Logger.h">
@@ -443,42 +842,150 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\LogWriter.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\LogWriter.h">
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Utils.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Utils.h">
 				</File>
 			</Filter>
 			<Filter
-				Name="ws"
+				Name="extension"
 				Filter="">
 				<File
-					RelativePath="..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\extension\ImplementationExtension.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\extension\ImplementationExtension.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\ws_reference\axis2c\src\WSReferenceWrapper.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\extension\InterfaceExtension.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\WSReferenceWrapper.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\extension\InterfaceExtension.h">
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceProxy.cpp">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\extension\ReferenceBindingExtension.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\ws\WSServiceProxy.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\extension\ReferenceBindingExtension.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\extension\ServiceBindingExtension.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;SCA_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\extension\ServiceBindingExtension.h">
 				</File>
 			</Filter>
 		</Filter>
 		<File
-			RelativePath=".\Build Instructions.txt">
+			RelativePath="Build Instructions.txt">
 		</File>
 	</Files>
 	<Globals>

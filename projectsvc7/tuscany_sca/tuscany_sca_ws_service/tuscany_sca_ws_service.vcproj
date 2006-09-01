@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/ws/service/axis2c/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -54,8 +54,9 @@
 				TypeLibraryName=".\Release/tuscany_sca_ws_service.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\lib
-copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\bin
+				CommandLine="copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib
+copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin
+copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -81,7 +82,7 @@ copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\bin
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/ws/service/axis2c/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -115,9 +116,10 @@ copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\bin
 				TypeLibraryName=".\Debug/tuscany_sca_ws_service.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\bin
-copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\bin
-copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\lib
+				CommandLine="copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin
+copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\bin
+copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib
+copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -135,25 +137,124 @@ copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\lib
 	</Configurations>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			Name="tuscany/sca/ws"
+			Filter="">
 			<File
-				RelativePath="..\..\..\runtime\ws_service\axis2c\src\Axis2Service_skeleton.cpp">
+				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Service_skeleton.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\ws_service\axis2c\src\Axis2Utils.cpp">
+				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Utils.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
 			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\..\..\runtime\ws_service\axis2c\src\Axis2Utils.h">
+				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Utils.h">
 			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSReferenceBindingExtension.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSReferenceBindingExtension.h">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSServiceProxy.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"
+						BasicRuntimeChecks="3"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSServiceProxy.h">
+			</File>
+			<Filter
+				Name="model"
+				Filter="">
+				<File
+					RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\model\WSReferenceBinding.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="2"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							Optimization="0"
+							AdditionalIncludeDirectories=""
+							PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"
+							BasicRuntimeChecks="3"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\model\WSReferenceBinding.h">
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
