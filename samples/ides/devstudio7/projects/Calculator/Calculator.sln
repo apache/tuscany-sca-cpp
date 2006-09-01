@@ -1,18 +1,22 @@
-Microsoft Visual Studio Solution File, Format Version 7.00
+Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Calculator", "Calculator\Calculator.vcproj", "{B1C1917A-4423-456D-9F68-3C600C885A1F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcproj", "{CA2CB545-D0E2-416C-BE93-90BC4DD82B90}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B1C1917A-4423-456D-9F68-3C600C885A1F} = {B1C1917A-4423-456D-9F68-3C600C885A1F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WSClient", "WSClient\WSClient.vcproj", "{3CDD5BC2-9722-4F7D-8B0E-1A49D34E7A17}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B1C1917A-4423-456D-9F68-3C600C885A1F} = {B1C1917A-4423-456D-9F68-3C600C885A1F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		ConfigName.0 = Debug
-		ConfigName.1 = Release
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
-		{CA2CB545-D0E2-416C-BE93-90BC4DD82B90}.0 = {B1C1917A-4423-456D-9F68-3C600C885A1F}
-		{3CDD5BC2-9722-4F7D-8B0E-1A49D34E7A17}.0 = {B1C1917A-4423-456D-9F68-3C600C885A1F}
+		Debug = Debug
+		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{B1C1917A-4423-456D-9F68-3C600C885A1F}.Debug.ActiveCfg = Debug|Win32
