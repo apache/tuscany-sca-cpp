@@ -36,11 +36,12 @@ if not exist %destinationPath%\packages mkdir %destinationPath%\packages
 if not exist %destinationPath%\packages\CalculatorComposite mkdir %destinationPath%\packages\CalculatorComposite
 
 copy %sourcePath%\CalculatorComposite\*.componentType %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\CalculatorComposite.composite %destinationPath%\packages\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\*.composite %destinationPath%\packages\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\Calculator.h %destinationPath%\packages\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\CalculatorImpl.h %destinationPath%\packages\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\DivideService.h %destinationPath%\packages\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\DivideServiceImpl.h %destinationPath%\packages\CalculatorComposite
+copy %sourcePath%\CalculatorComposite\DivideServiceImpl.py %destinationPath%\packages\CalculatorComposite
 copy %sourcePath%\CalculatorComposite\Calculator.wsdl %destinationPath%\packages\CalculatorComposite
 copy %currentPath%\Calculator\%buildMode%\CalculatorComposite.dll %destinationPath%\packages\CalculatorComposite
 
@@ -55,6 +56,6 @@ copy %sourcePath%\Client\runclient.cmd   %destinationPath%\bin
 if not exist %destinationPath%\configuration mkdir %destinationPath%\configuration
 if not exist %destinationPath%\configuration\CalculatorSubsystem mkdir %destinationPath%\configuration\CalculatorSubsystem
 
-copy %sourcePath%\CalculatorSubsystem\CalculatorSubsystem.composite %destinationPath%\configuration\CalculatorSubsystem
+copy %sourcePath%\CalculatorSubsystem\*.composite %destinationPath%\configuration\CalculatorSubsystem
 
 endlocal

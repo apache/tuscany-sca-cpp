@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include,$(TUSCANY_SCACPP)/extensions/cpp/include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -38,11 +38,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib"
 				OutputFile="./Debug/Client.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/Client.pdb"
 				SubSystem="1"/>
@@ -77,12 +77,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="1"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include,$(TUSCANY_SCACPP)/extensions/cpp/include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/Client.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -94,11 +94,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib"
 				OutputFile=".\Release/Client.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib"
 				ProgramDatabaseFile=".\Release/Client.pdb"
 				SubSystem="1"/>
 			<Tool

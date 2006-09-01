@@ -21,11 +21,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include,$(TUSCANY_SCACPP)/extensions/cpp/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;CALCULATOR_EXPORTS"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Debug/Calculator.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -39,11 +39,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib tuscany_sca_cpp.lib"
 				OutputFile=".\Debug/CalculatorComposite.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/Calculator.pdb"
 				ImportLibrary=".\Debug/Calculator.lib"/>
@@ -80,12 +80,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(TUSCANY_SCACPP)/include,$(TUSCANY_SCACPP)/extensions/cpp/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;CALCULATOR_EXPORTS"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/Calculator.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -97,11 +97,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib tuscany_sca_cpp.lib"
 				OutputFile=".\Release/CalculatorComposite.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,,$(TUSCANY_SCACPP)/extensions/cpp/lib"
 				ProgramDatabaseFile=".\Release/Calculator.pdb"
 				ImportLibrary=".\Release/Calculator.lib"/>
 			<Tool
@@ -124,9 +124,17 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
@@ -166,6 +174,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.py">
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.cpp">
