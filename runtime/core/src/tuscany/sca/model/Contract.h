@@ -45,7 +45,7 @@ namespace tuscany
                 /**
                  * Constructor.
                  */
-                SCA_API Contract(Interface* interface, Interface* callbackInterface, bool conversational);
+                SCA_API Contract(Interface* intface, Interface* callbackInterface, bool conversational);
 
                 /**
                  * Destructor.
