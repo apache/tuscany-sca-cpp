@@ -1,49 +1,53 @@
-Microsoft Visual Studio Solution File, Format Version 7.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca", "tuscany_sca\tuscany_sca.vcproj", "{2FC1B037-C30C-4B63-949E-B7467529671F}"
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca", "tuscany_sca\tuscany_sca.vcproj", "{02DBB555-DFF3-448A-BC35-569640FE73D9}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_test", "tuscany_sca_test\tuscany_sca_test.vcproj", "{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_cpp", "tuscany_sca_cpp\tuscany_sca_cpp.vcproj", "{61C87D0D-B2C9-4951-8296-CE2CFCC420A1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02DBB555-DFF3-448A-BC35-569640FE73D9} = {02DBB555-DFF3-448A-BC35-569640FE73D9}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_test_CustomerInfo", "tuscany_sca_test_CustomerInfo\tuscany_sca_test_CustomerInfo.vcproj", "{4CA34112-DC16-42E5-B6C6-66742E4F5CE1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_ws_reference", "tuscany_sca_ws_reference\tuscany_sca_ws_reference.vcproj", "{7F4E797F-6BDC-472D-A51D-C81C8152DAF6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02DBB555-DFF3-448A-BC35-569640FE73D9} = {02DBB555-DFF3-448A-BC35-569640FE73D9}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_test_MyValue", "tuscany_sca_test_MyValue\tuscany_sca_test_MyValue.vcproj", "{664DD6E6-B551-45D3-83A9-49FFAEB4A4D2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_ws_service", "tuscany_sca_ws_service\tuscany_sca_ws_service.vcproj", "{5DFDD169-BF84-4132-B87F-52AC601C8678}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02DBB555-DFF3-448A-BC35-569640FE73D9} = {02DBB555-DFF3-448A-BC35-569640FE73D9}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_ws_service", "tuscany_sca_ws_service\tuscany_sca_ws_service.vcproj", "{A5943537-08D7-4A51-A7F0-B24400810738}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_python", "tuscany_sca_python\tuscany_sca_python.vcproj", "{C3DE6545-380A-45AE-9D55-0DE04AB7613C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		ConfigName.0 = Debug
-		ConfigName.1 = Release
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
-		{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}.0 = {A5943537-08D7-4A51-A7F0-B24400810738}
-		{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}.1 = {664DD6E6-B551-45D3-83A9-49FFAEB4A4D2}
-		{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}.2 = {4CA34112-DC16-42E5-B6C6-66742E4F5CE1}
-		{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}.3 = {2FC1B037-C30C-4B63-949E-B7467529671F}
-		{4CA34112-DC16-42E5-B6C6-66742E4F5CE1}.0 = {2FC1B037-C30C-4B63-949E-B7467529671F}
-		{664DD6E6-B551-45D3-83A9-49FFAEB4A4D2}.0 = {2FC1B037-C30C-4B63-949E-B7467529671F}
-		{A5943537-08D7-4A51-A7F0-B24400810738}.0 = {2FC1B037-C30C-4B63-949E-B7467529671F}
+		Debug = Debug
+		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{2FC1B037-C30C-4B63-949E-B7467529671F}.Debug.ActiveCfg = Debug|Win32
-		{2FC1B037-C30C-4B63-949E-B7467529671F}.Debug.Build.0 = Debug|Win32
-		{2FC1B037-C30C-4B63-949E-B7467529671F}.Release.ActiveCfg = Release|Win32
-		{2FC1B037-C30C-4B63-949E-B7467529671F}.Release.Build.0 = Release|Win32
-		{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}.Debug.ActiveCfg = Debug|Win32
-		{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}.Debug.Build.0 = Debug|Win32
-		{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}.Release.ActiveCfg = Release|Win32
-		{2E87E2DB-3BE9-4FCF-9D16-9725A62A6BC5}.Release.Build.0 = Release|Win32
-		{4CA34112-DC16-42E5-B6C6-66742E4F5CE1}.Debug.ActiveCfg = Debug|Win32
-		{4CA34112-DC16-42E5-B6C6-66742E4F5CE1}.Debug.Build.0 = Debug|Win32
-		{4CA34112-DC16-42E5-B6C6-66742E4F5CE1}.Release.ActiveCfg = Release|Win32
-		{4CA34112-DC16-42E5-B6C6-66742E4F5CE1}.Release.Build.0 = Release|Win32
-		{664DD6E6-B551-45D3-83A9-49FFAEB4A4D2}.Debug.ActiveCfg = Debug|Win32
-		{664DD6E6-B551-45D3-83A9-49FFAEB4A4D2}.Debug.Build.0 = Debug|Win32
-		{664DD6E6-B551-45D3-83A9-49FFAEB4A4D2}.Release.ActiveCfg = Release|Win32
-		{664DD6E6-B551-45D3-83A9-49FFAEB4A4D2}.Release.Build.0 = Release|Win32
-		{A5943537-08D7-4A51-A7F0-B24400810738}.Debug.ActiveCfg = Debug|Win32
-		{A5943537-08D7-4A51-A7F0-B24400810738}.Debug.Build.0 = Debug|Win32
-		{A5943537-08D7-4A51-A7F0-B24400810738}.Release.ActiveCfg = Release|Win32
-		{A5943537-08D7-4A51-A7F0-B24400810738}.Release.Build.0 = Release|Win32
+		{02DBB555-DFF3-448A-BC35-569640FE73D9}.Debug.ActiveCfg = Debug|Win32
+		{02DBB555-DFF3-448A-BC35-569640FE73D9}.Debug.Build.0 = Debug|Win32
+		{02DBB555-DFF3-448A-BC35-569640FE73D9}.Release.ActiveCfg = Release|Win32
+		{02DBB555-DFF3-448A-BC35-569640FE73D9}.Release.Build.0 = Release|Win32
+		{61C87D0D-B2C9-4951-8296-CE2CFCC420A1}.Debug.ActiveCfg = Debug|Win32
+		{61C87D0D-B2C9-4951-8296-CE2CFCC420A1}.Debug.Build.0 = Debug|Win32
+		{61C87D0D-B2C9-4951-8296-CE2CFCC420A1}.Release.ActiveCfg = Release|Win32
+		{61C87D0D-B2C9-4951-8296-CE2CFCC420A1}.Release.Build.0 = Release|Win32
+		{7F4E797F-6BDC-472D-A51D-C81C8152DAF6}.Debug.ActiveCfg = Debug|Win32
+		{7F4E797F-6BDC-472D-A51D-C81C8152DAF6}.Debug.Build.0 = Debug|Win32
+		{7F4E797F-6BDC-472D-A51D-C81C8152DAF6}.Release.ActiveCfg = Release|Win32
+		{7F4E797F-6BDC-472D-A51D-C81C8152DAF6}.Release.Build.0 = Release|Win32
+		{5DFDD169-BF84-4132-B87F-52AC601C8678}.Debug.ActiveCfg = Debug|Win32
+		{5DFDD169-BF84-4132-B87F-52AC601C8678}.Debug.Build.0 = Debug|Win32
+		{5DFDD169-BF84-4132-B87F-52AC601C8678}.Release.ActiveCfg = Release|Win32
+		{5DFDD169-BF84-4132-B87F-52AC601C8678}.Release.Build.0 = Release|Win32
+		{C3DE6545-380A-45AE-9D55-0DE04AB7613C}.Debug.ActiveCfg = Debug|Win32
+		{C3DE6545-380A-45AE-9D55-0DE04AB7613C}.Debug.Build.0 = Debug|Win32
+		{C3DE6545-380A-45AE-9D55-0DE04AB7613C}.Release.ActiveCfg = Release|Win32
+		{C3DE6545-380A-45AE-9D55-0DE04AB7613C}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
