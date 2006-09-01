@@ -30,7 +30,7 @@ namespace tuscany
              * Information about an interface. Subtypes will hold information
              * specific to a type of interface.
              */
-            class SCA_API Interface 
+            class Interface 
             {
                 
             public:
