@@ -15,11 +15,13 @@ tuscany/sca/python/model/PythonServiceBinding.cpp
 
 libtuscany_sca_python_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \
-	-L$(top_builddir)/runtime/extensions/cpp/src -ltuscany_sca_cpp
+	-L$(top_builddir)/runtime/extensions/cpp/src -ltuscany_sca_cpp \
+	-L${PYTHON_LIB} -lpython2.3
 
 INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
-           -I$(top_builddir)/runtime/extensions/cpp/src
+           -I$(top_builddir)/runtime/extensions/cpp/src \
+           -I${PYTHON_INCLUDE}
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
                    
