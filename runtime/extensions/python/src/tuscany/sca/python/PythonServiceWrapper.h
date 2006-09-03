@@ -96,7 +96,7 @@ namespace tuscany
                 virtual PyObject* newInstance();
     
                 /**
-                 * Indicates that the current instance of the python class
+                 * Indicates that the current instance of the python module or class
                  * has been finished with. 
                  */
                 virtual void releaseInstance();

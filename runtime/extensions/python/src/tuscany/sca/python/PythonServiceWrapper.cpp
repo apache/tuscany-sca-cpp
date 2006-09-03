@@ -227,11 +227,25 @@ namespace tuscany
                 LOGENTRY(1,"PythonServiceWrapper::releaseInstance");
                 CPPInterface::SCOPE scope = interf->getScope();
 
-                if (scope == CPPInterface::STATELESS && pythonClassInstance != NULL && PyInstance_Check(pythonClassInstance))
+                if(scope == CPPInterface::STATELESS)
                 {
-                    Py_XDECREF(pythonClassInstance);
-                    pythonClassInstance = NULL;
-                }            
+                    // Delete the class instance if there is one
+                    if(pythonClassInstance != NULL && PyInstance_Check(pythonClassInstance))
+                    {
+                        Py_DECREF(pythonClassInstance);
+                        pythonClassInstance = NULL;
+                    }
+
+                    // Need to reload the module
+                    PyObject* reloadedPythonModule = PyImport_ReloadModule(pythonModule);
+
+                    if(reloadedPythonModule != NULL)
+                    {
+                        // Get rid of old pythonModule and replace with the reloaded one
+                        Py_DECREF(pythonModule);
+                        pythonModule = reloadedPythonModule;
+                    }
+                }
                 LOGEXIT(1,"PythonServiceWrapper::releaseInstance");
             }
             
@@ -250,12 +264,12 @@ namespace tuscany
                     LOGINFO_1(4, "PythonServiceWrapper::invoke called with operation name: %s", operation.getName().c_str());
 
                     PyObject* pFunc = NULL; 
-                    PyObject* pClassInstance = getInstance();
+                    pythonClassInstance = getInstance();
 
-                    if(pClassInstance != NULL && PyInstance_Check(pClassInstance))
+                    if(pythonClassInstance != NULL && PyInstance_Check(pythonClassInstance))
                     {
                         // Get the function from the instance
-                        pFunc = PyObject_GetAttrString(pClassInstance, (char*) operation.getName().c_str());
+                        pFunc = PyObject_GetAttrString(pythonClassInstance, (char*) operation.getName().c_str());
                     }
                     if(pFunc == NULL && pythonModule != NULL)
                     {
