@@ -21,7 +21,7 @@ set currentPath=%~d0%~p0
 set sourcePath=%currentPath%..\..\..\..\Calculator
 
 set buildMode=Release
-if .Debug == %1. (
+if .Debug == .%1 (
 set buildMode=Debug
 )
 
