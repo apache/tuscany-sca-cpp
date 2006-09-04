@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     const axis2_char_t *operation = "getAccountReport";
     const axis2_char_t *param1 = "ED";
    
-    env = axis2_env_create_all( "Account_blocking.log", AXIS2_LOG_LEVEL_TRACE);
+    env = axis2_env_create_all( "BigBank_blocking.log", AXIS2_LOG_LEVEL_TRACE);
 
     client_home = AXIS2_GETENV("AXIS2C_HOME");
     if (!client_home)
