@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AccountClient", "AccountClient\AccountClient.vcproj", "{297C9F3A-EDB1-4EA1-86ED-473B0863B996}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Accounts", "Accounts\Accounts.vcproj", "{87372DC7-582B-46C6-AA0F-960A47972503}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WSAccountClient", "WSAccountClient\WSAccountClient.vcproj", "{E7F4DDEC-6592-434B-B5D6-4E538298C898}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{297C9F3A-EDB1-4EA1-86ED-473B0863B996}.Debug.ActiveCfg = Debug|Win32
+		{297C9F3A-EDB1-4EA1-86ED-473B0863B996}.Debug.Build.0 = Debug|Win32
+		{297C9F3A-EDB1-4EA1-86ED-473B0863B996}.Release.ActiveCfg = Release|Win32
+		{297C9F3A-EDB1-4EA1-86ED-473B0863B996}.Release.Build.0 = Release|Win32
+		{87372DC7-582B-46C6-AA0F-960A47972503}.Debug.ActiveCfg = Debug|Win32
+		{87372DC7-582B-46C6-AA0F-960A47972503}.Debug.Build.0 = Debug|Win32
+		{87372DC7-582B-46C6-AA0F-960A47972503}.Release.ActiveCfg = Release|Win32
+		{87372DC7-582B-46C6-AA0F-960A47972503}.Release.Build.0 = Release|Win32
+		{E7F4DDEC-6592-434B-B5D6-4E538298C898}.Debug.ActiveCfg = Debug|Win32
+		{E7F4DDEC-6592-434B-B5D6-4E538298C898}.Debug.Build.0 = Debug|Win32
+		{E7F4DDEC-6592-434B-B5D6-4E538298C898}.Release.ActiveCfg = Release|Win32
+		{E7F4DDEC-6592-434B-B5D6-4E538298C898}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
