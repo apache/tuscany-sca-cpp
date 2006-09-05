@@ -1,0 +1,71 @@
+Tuscany SCA for C++ Samples - Calculator Sample
+===============================================
+
+This is a very simple sample to show how an SCA composite can wire together
+two components to implement a Calculator service and expose that service as
+a Web Service.
+
+There are four sub projects in this workspace:
+    - sample.calculator
+      This contains the source code and SCDL artifacts for the SCA composite.
+      This is the composite that will be deployed into the SCA runtime.
+
+    - sample.calculator.solution
+      This contains the SCDL file describing the configuration of the SCA
+      composite deployed to the SCA runtime.
+
+    - sample.calculator.client
+      A sample client which will call the service exposed by the Calculator
+      composite.
+
+    - sample.calculator.wsclient
+      A sample Axis2 Web Service client which will call the Web service
+      exposed by the Calculator composite.
+
+
+Build instructions
+------------------
+
+Notes:
+
+The projects are set up to locate SCA and SDO libraries using the environment variables
+TUSCANY_SCACPP and TUSCANY_SDOCPP. These must be set before building.
+
+scagen is a code generation tool written in java. This will need to be built before you 
+can run it. To build scagen, you must go to the tools/scagen directory, and type "ant".
+(You must have apache ant installed, and have a valid java virtual machine installed - 
+upwards of version 1.4.2).  Once scagen has successfully built, it can be run from the 
+sca/bin directory.
+
+1) Build the SCA composite.
+    - Set CalculatorComposite project as the active project.
+      Right click->Set as active project
+
+    - Run the SCA generation tool to create the proxy and wrapper classes.
+      Either Tools->SCA Gen if you have added SCA Gen as an external tool
+      Or run from the command line: 
+        scagen -dir <projectDirectory> -output <projectDirectory> 
+      where the projectDirectory is the directory with the sca.composite file.
+
+    - Rebuild All
+      Build->Rebuild All
+
+2) Package and deploy the SCA composite
+    - There is a script file in the sca/samples/Calculator directory which will
+      copy across all the files needed for deployment to the Tuscany runtime.
+      On a command line run pack_deploy.cmd
+      As a default, the sample will be copied to sca/samples/runtime directory
+      Both the SCA composite and the subsystem will be copied.
+
+3) Build the client
+    - Set the Client project as the active project.
+      Right click->Set as active project
+
+    - Rebuild All
+      Build->Rebuild All
+
+4) Run the client
+    - Use the command file in the sca/samples/Calculator/Client directory to run the
+      client. This command file will set the SCA environment variables before running
+      the client. For example, 
+        runclient add 4 9
