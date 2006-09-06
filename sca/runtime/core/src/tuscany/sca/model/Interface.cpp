@@ -30,7 +30,8 @@ namespace tuscany
         {
 
             // Constructor
-            Interface::Interface()
+            Interface::Interface(bool remotable, Scope scope)
+                : remotable(remotable), scope(scope)
             {
             }
 

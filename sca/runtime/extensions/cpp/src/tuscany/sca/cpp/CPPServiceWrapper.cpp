@@ -29,7 +29,7 @@
 #include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/cpp/model/CPPImplementation.h"
-#include "tuscany/sca/cpp/model/CPPInterface.h"
+#include "tuscany/sca/model/Interface.h"
 
 using namespace osoa::sca;
 
@@ -55,8 +55,8 @@ namespace tuscany
                 LOGENTRY(1,"CPPServiceWrapper::constructor");
     
                 component = service->getComponent();
-                interf = (CPPInterface*)service->getType()->getInterface();
-                remotable = interf->getRemotable();
+                interf = service->getType()->getInterface();
+                remotable = interf->isRemotable();
                 
                 LOGEXIT(1,"CPPServiceWrapper::constructor");
                 
@@ -77,8 +77,7 @@ namespace tuscany
             // ======================================================================
             void* CPPServiceWrapper::getImplementation()
             {
-                CPPInterface::SCOPE scope = interf->getScope();
-                if (scope == CPPInterface::COMPOSITE)
+                if (interf->getScope() == Interface::COMPOSITE)
                 {
                     if (!staticImpl)
                     {
@@ -97,8 +96,7 @@ namespace tuscany
             // ======================================================================
             void CPPServiceWrapper::releaseImplementation()
             {
-                CPPInterface::SCOPE scope = interf->getScope();
-                if (scope == CPPInterface::STATELESS)
+                if (interf->getScope() == Interface::STATELESS)
                 {
                     deleteImplementation();
                 }            

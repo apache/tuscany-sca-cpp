@@ -35,11 +35,49 @@ namespace tuscany
                 
             public:
                 
-                SCA_API Interface();
+                /**
+                 * Scope of the interface.
+                 */
+                enum Scope
+                {
+                    COMPOSITE,
+                    STATELESS
+                };
+
+                /**
+                 * Constructor
+                 */
+                SCA_API Interface(bool remotable, Scope scope);
                   
+                /**
+                 * Destructor
+                 */
                 SCA_API virtual ~Interface();
+                
+                /**
+                 * Returns true if the interface is remotable.
+                 * @return True if the interface is remotable.
+                 */
+                bool isRemotable() const { return remotable; };
                             
+                /**
+                 * Get the scope of the interface.
+                 * @return The scope of the interface.
+                 */
+                 Scope getScope() { return scope; }
+
             private:
+
+                /**
+                 * True if the interface is remotable
+                 */            
+                bool remotable;
+
+                /**
+                 * Scope of the interface.
+                 */
+                Scope scope;
+
             };
             
         } // End namespace model

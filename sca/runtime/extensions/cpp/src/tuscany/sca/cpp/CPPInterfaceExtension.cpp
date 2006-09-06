@@ -60,9 +60,18 @@ namespace tuscany
                 {
                     string header = scdlInterface->getCString("header");
                     string className = scdlInterface->getCString("class");
-                    string scope = scdlInterface->getCString("scope");
+                    string scopeName = scdlInterface->getCString("scope");
                     bool remotable = scdlInterface->getBoolean("remotable");
                     
+                    Interface::Scope scope;
+                    if (scopeName == "composite")
+                    {
+                        scope = Interface::COMPOSITE;
+                    }
+                    else
+                    {
+                        scope = Interface::STATELESS;
+                    }
                     return new CPPInterface(header, className, scope, remotable);
                 }
                 return 0;

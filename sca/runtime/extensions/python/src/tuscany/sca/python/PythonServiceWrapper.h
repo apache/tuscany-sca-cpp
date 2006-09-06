@@ -21,15 +21,12 @@
 #define tuscany_sca_python_pythonservicewrapper_h
 
 
-#include "osoa/sca/export.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
-
-#include "tuscany/sca/cpp/model/CPPInterface.h"
+#include "tuscany/sca/model/Interface.h"
 
 using namespace tuscany::sca::model;
-using tuscany::sca::cpp::CPPInterface;
 
 #include <Python.h>
 
@@ -49,7 +46,7 @@ namespace tuscany
              * An instance of this class wraps the actual component implementation which 
              * has been written by a developer of an SCA application.
              */
-            class SCA_PYTHON_API PythonServiceWrapper : public ServiceWrapper
+            class SCA_API PythonServiceWrapper : public ServiceWrapper
             {
             public:
                 /**
@@ -126,7 +123,7 @@ namespace tuscany
                 /**
                  * A pointer to the interface which the service exposes.
                  */
-                CPPInterface* interf;
+                Interface* interf;
 
             };
             

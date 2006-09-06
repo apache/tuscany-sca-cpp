@@ -20,7 +20,7 @@
 #ifndef osoa_sca_serviceruntimeexception_h
 #define osoa_sca_serviceruntimeexception_h
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/export.h"
 
 #include "tuscany/sca/util/Exceptions.h"
 using tuscany::sca::TuscanyRuntimeException;
@@ -32,7 +32,7 @@ namespace osoa
          * Top level exception to represent all the exceptions that may be 
          * thrown by an SCA runtime implementation.
          */
-        class SCA_PYTHON_API ServiceRuntimeException : public TuscanyRuntimeException
+        class SCA_API ServiceRuntimeException : public TuscanyRuntimeException
         {
         public:
             ServiceRuntimeException(
@@ -49,7 +49,7 @@ namespace osoa
          * A remotable service is currently unavailable. It is possible that a retry
          * may resolve this exception.
          */
-        class SCA_PYTHON_API ServiceUnavailableException: public ServiceRuntimeException
+        class SCA_API ServiceUnavailableException: public ServiceRuntimeException
         {
         public:
             ServiceUnavailableException(const char* serviceName)
@@ -65,7 +65,7 @@ namespace osoa
          * The target of a wire cannot be found, or the reference has not been
          * configured.
          */
-        class SCA_PYTHON_API ServiceNotFoundException: public ServiceRuntimeException
+        class SCA_API ServiceNotFoundException: public ServiceRuntimeException
         {
         public:
             ServiceNotFoundException(const char* msg)
@@ -81,7 +81,7 @@ namespace osoa
          * There is no current component (for example, if a non-SCA component
          * tries to get the current ComponentContext).
          */
-        class SCA_PYTHON_API ComponentContextException: public ServiceRuntimeException
+        class SCA_API ComponentContextException: public ServiceRuntimeException
         {
         public:
             ComponentContextException(const char* msg)
@@ -95,7 +95,7 @@ namespace osoa
         /**
          * There is an error whilst trying to invoke a component.
          */
-        class SCA_PYTHON_API ComponentInvocationException: public ServiceRuntimeException
+        class SCA_API ComponentInvocationException: public ServiceRuntimeException
         {
         public:
             ComponentInvocationException(const char* msg)

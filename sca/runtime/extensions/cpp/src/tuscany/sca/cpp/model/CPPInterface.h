@@ -55,7 +55,7 @@ namespace tuscany
                 CPPInterface(
                     const string& header,
                     const string& className,
-                    const string& scope,
+                    Scope scope,
                     bool remotable);  
 
                 /**
@@ -82,27 +82,6 @@ namespace tuscany
                  */
                 const string& getClass() { return className; }
 
-                /**
-                 * Scope of interface.
-                 */
-                enum SCOPE
-                {
-                    COMPOSITE,
-                    STATELESS
-                };
-
-                /**
-                 * Get the scope of the interface.
-                 * @return The scope of the interface.
-                 */
-                 SCOPE getScope() { return scope; }
-
-                /**
-                 * Return whether the interface is remotable or local.
-                 * @return True if the interface is remotable, otherwise false.
-                 */
-                bool  getRemotable() { return remotable; }
-
            private:
            
                 /**
@@ -120,15 +99,6 @@ namespace tuscany
                  */
                 string className;
 
-                /**
-                 * Scope of the interface.
-                 */
-                SCOPE scope;
-
-                /**
-                 * Remotable interface or not.
-                 */
-                bool remotable;
             };
             
         } // End namespace cpp

@@ -2,7 +2,6 @@ libdir=$(prefix)/extensions/python/lib
 lib_LTLIBRARIES = libtuscany_sca_python.la
 includedir=$(prefix)/extensions/python/include
 nobase_include_HEADERS = \
-osoa/sca/*.h \
 tuscany/sca/python/*.h \
 tuscany/sca/python/model/*.h
 
@@ -15,12 +14,10 @@ tuscany/sca/python/model/PythonServiceBinding.cpp
 
 libtuscany_sca_python_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \
-	-L$(top_builddir)/runtime/extensions/cpp/src -ltuscany_sca_cpp \
 	-L${PYTHON_LIB} -lpython2.3
 
 INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
-           -I$(top_builddir)/runtime/extensions/cpp/src \
            -I${PYTHON_INCLUDE}
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
