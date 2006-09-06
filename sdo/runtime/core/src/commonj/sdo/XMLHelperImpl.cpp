@@ -98,75 +98,176 @@ namespace commonj
         }
 
 
-        const TypeImpl* XMLHelperImpl::findRoot(DataFactory* df,
-			                                        const char* rootElementURI)
-		{
-            if (rootElementURI  != 0)
-            {
-                return ((DataFactoryImpl*)df)->findTypeImpl
-                    (rootElementURI, "RootType");
-            }
+//       const TypeImpl* XMLHelperImpl::findRoot(DataFactory* df,
+//                                               const char* rootElementURI)
+//       {
+//         if (rootElementURI != 0)
+//           {
+//             return ((DataFactoryImpl*)df)->findTypeImpl
+//               (rootElementURI, "RootType");
+//           }
 
-			const TypeList& tl = df->getTypes();
-            for (int i=0;i<tl.size();i++)
-            {
-                if (!strcmp("RootType",tl[i].getName()))
-                {
-                    return ((DataFactoryImpl*)df)->findTypeImpl
-                            (tl[i].getURI(), "RootType");
-                }
-            }
-			return 0;
-		}
+//         const TypeList& tl = df->getTypes();
+//         for (int i=0;i<tl.size();i++)
+//           {
+//             if (!strcmp("RootType",tl[i].getName()))
+//               {
+//                 return ((DataFactoryImpl*)df)->findTypeImpl(tl[i].getURI(), "RootType");
+//               }
+//           }
+
+//         return 0;
+
+//       }
+      const TypeImpl* XMLHelperImpl::findRoot(DataFactory* df,
+                                                  const SDOString& rootElementURI)
+      {
+
+        const TypeImpl* rootTypePtr = ((DataFactoryImpl*)df)->findTypeImpl(rootElementURI.c_str(),
+                                                                           "RootType");
+
+        if (rootTypePtr != 0)
+        {
+           return rootTypePtr;
+        }
+
+        const TypeList& tl = df->getTypes();
+        for (int i = 0; i < tl.size(); i++)
+        {
+           if (!strcmp("RootType", tl[i].getName()))
+           {
+              return ((DataFactoryImpl*)df)->findTypeImpl(tl[i].getURI(), "RootType");
+           }
+        }
+        return 0;
+      }
 
         XMLDocumentPtr XMLHelperImpl::createDocument(const char* elementname,
                                                      const char* rootElementURI)
         {
-            DataFactory* dp = (DataFactory*)getDataFactory();
-            if (dp == 0) return 0;
-
-			const TypeImpl* rType = findRoot(dp,rootElementURI);
-            if (rType == 0)
-            {
-				std::string msg("createDocument - cannot find element ");
-                if (elementname != 0) msg += elementname;
-                SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
-                msg.c_str());
-			}
-
-            if ((elementname != 0) && (strlen(elementname) != 0))
-            {
-                PropertyImpl* pl = rType->getPropertyImpl(elementname);
-                if (pl == 0)
-                {
-                     std::string msg("createDocument - cannot find element ");
-                     msg += elementname;
-                     SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
-                     msg.c_str());
-				}
-
-                const Type& tp = pl->getType();
-                DataObjectPtr dob = dp->create(tp);
-                return new XMLDocumentImpl(dob,
-                     tp.getURI(), /*tp.getName()*/ elementname);
-            }
-            else
-            {
-                const Property& pl = rType->getProperty((unsigned int)0);
-                const Type& tp = pl.getType();
-                DataObjectPtr dob = dp->create(tp);
-                return new XMLDocumentImpl(dob,
-                    tp.getURI(), /*tp.getName()*/ pl.getName());
-            }
-
-			std::string msg("createDocument - unable to find root type in namespace ");
-            if (rootElementURI != 0) 
-                 msg += rootElementURI;
-            else
-                 msg += " NULL";
-            SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
-            msg.c_str());
+           if (rootElementURI == 0)
+           {
+              if (elementname == 0)
+              {
+                 return createDocument(SDOString::SDONullString, SDOString::SDONullString);
+              }
+              else
+              {
+                 return createDocument(SDOString(elementname), SDOString::SDONullString);
+              }
+           }
+           else
+           {
+              if (elementname == 0)
+              {
+                 return createDocument(SDOString::SDONullString, SDOString(rootElementURI));
+              }
+              else
+              {
+                 return createDocument(SDOString(elementname), SDOString(rootElementURI));
+              }
+           }
         }
+
+//         XMLDocumentPtr XMLHelperImpl::createDocument(const char* elementname,
+//                                                      const char* rootElementURI)
+//         {
+//             DataFactory* dp = (DataFactory*)getDataFactory();
+//             if (dp == 0) return 0;
+
+//             const TypeImpl* rType = findRoot(dp,rootElementURI);
+//             if (rType == 0)
+//             {
+// 				std::string msg("createDocument - cannot find element ");
+//                 if (elementname != 0) msg += elementname;
+//                 SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+//                 msg.c_str());
+// 			}
+
+//             if ((elementname != 0) && (strlen(elementname) != 0))
+//             {
+//                 PropertyImpl* pl = rType->getPropertyImpl(elementname);
+//                 if (pl == 0)
+//                 {
+//                      std::string msg("createDocument - cannot find element ");
+//                      msg += elementname;
+//                      SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+//                      msg.c_str());
+// 				}
+
+//                 const Type& tp = pl->getType();
+//                 DataObjectPtr dob = dp->create(tp);
+//                 return new XMLDocumentImpl(dob,
+//                      tp.getURI(), /*tp.getName()*/ elementname);
+//             }
+//             else
+//             {
+//                 const Property& pl = rType->getProperty((unsigned int)0);
+//                 const Type& tp = pl.getType();
+//                 DataObjectPtr dob = dp->create(tp);
+//                 return new XMLDocumentImpl(dob,
+//                     tp.getURI(), /*tp.getName()*/ pl.getName());
+//             }
+
+// 			std::string msg("createDocument - unable to find root type in namespace ");
+//             if (rootElementURI != 0) 
+//                  msg += rootElementURI;
+//             else
+//                  msg += " NULL";
+//             SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+//             msg.c_str());
+//         }
+
+      // +++
+
+       XMLDocumentPtr XMLHelperImpl::createDocument(const SDOString& elementname,
+                                                    const SDOString& rootElementURI)
+       {
+          DataFactory* dp = (DataFactory*)getDataFactory();
+          if (dp == 0) return 0;
+
+          const TypeImpl* rType = findRoot(dp, rootElementURI);
+          if (rType == 0)
+          {
+             std::string msg("createDocument - cannot find element ");
+             msg += elementname;
+             SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+                                 msg.c_str());
+          }
+
+          if (elementname.length() != 0)
+          {
+             PropertyImpl* pl = rType->getPropertyImpl(elementname);
+             if (pl == 0)
+             {
+                std::string msg("createDocument - cannot find element ");
+                msg += elementname;
+                SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+                                    msg.c_str());
+             }
+
+             const Type& tp = pl->getType();
+             DataObjectPtr dob = dp->create(tp);
+             return new XMLDocumentImpl(dob,
+                                        tp.getURI(), /*tp.getName()*/ 
+                                        elementname.c_str());
+          }
+          else
+          {
+             const Property& pl = rType->getProperty((unsigned int)0);
+             const Type& tp = pl.getType();
+             DataObjectPtr dob = dp->create(tp);
+             return new XMLDocumentImpl(dob,
+                                        tp.getURI(), /*tp.getName()*/ pl.getName());
+          }
+
+          std::string msg("createDocument - unable to find root type in namespace ");
+             msg += " NULL";
+          SDO_THROW_EXCEPTION("createDocument", SDOUnsupportedOperationException,
+                              msg.c_str());
+       }
+
+      // ---
 
         XMLDocumentPtr XMLHelperImpl::createDocument(
             DataObjectPtr dataObject,
@@ -174,6 +275,13 @@ namespace commonj
             const char* rootElementName)
         {
             return new XMLDocumentImpl(dataObject, rootElementURI, rootElementName);
+        }
+        XMLDocumentPtr XMLHelperImpl::createDocument(
+            DataObjectPtr dataObject,
+            const SDOString& rootElementURI,
+            const SDOString& rootElementName)
+        {
+            return new XMLDocumentImpl(dataObject, rootElementURI.c_str(), rootElementName.c_str());
         }
         
         XMLDocumentPtr XMLHelperImpl::loadFile(
@@ -185,6 +293,22 @@ namespace commonj
             SDOSAX2Parser sdoParser(getDataFactory(), targetNamespaceURI, rootDataObject,
                 this);
             if (sdoParser.parse(xmlFile) == 0)
+            {                
+                return createDocument(rootDataObject);
+            }
+            return 0;
+        }
+        XMLDocumentPtr XMLHelperImpl::loadFile(
+            const SDOString& xmlFile,
+            const SDOString& targetNamespaceURI)
+        {
+            DataObjectPtr rootDataObject;
+            clearErrors();
+            SDOSAX2Parser sdoParser(getDataFactory(),
+                                    targetNamespaceURI.c_str(),
+                                    rootDataObject,
+                                    this);
+            if (sdoParser.parse(xmlFile.c_str()) == 0)
             {                
                 return createDocument(rootDataObject);
             }
@@ -203,6 +327,19 @@ namespace commonj
             inXml>>sdoParser;
             return createDocument(rootDataObject);
         }
+        XMLDocumentPtr XMLHelperImpl::load(
+            std::istream& inXml,
+            const SDOString& targetNamespaceURI)
+        {
+            DataObjectPtr rootDataObject;
+            SDOSAX2Parser sdoParser(getDataFactory(),
+                                    targetNamespaceURI.c_str(),
+                                    rootDataObject,
+                                    this);
+            clearErrors();
+            inXml>>sdoParser;
+            return createDocument(rootDataObject);
+        }
         
         XMLDocumentPtr XMLHelperImpl::load(
             const char* inXml,
@@ -211,10 +348,22 @@ namespace commonj
             std::istringstream str(inXml);
             return load(str, targetNamespaceURI);
         }
-        
+        XMLDocumentPtr XMLHelperImpl::load(
+            const SDOString& inXml,
+            const SDOString& targetNamespaceURI)
+        {
+            std::istringstream str(inXml);
+            return load(str, targetNamespaceURI);
+        }
+
         void XMLHelperImpl::save(XMLDocumentPtr doc, const char* xmlFile, int indent)
         {
             SDOXMLFileWriter writer(xmlFile, dataFactory);
+            writer.write(doc, indent);
+        }
+        void XMLHelperImpl::save(XMLDocumentPtr doc, const SDOString& xmlFile, int indent)
+        {
+            SDOXMLFileWriter writer(xmlFile.c_str(), dataFactory);
             writer.write(doc, indent);
         }
         
@@ -223,6 +372,16 @@ namespace commonj
             const char* rootElementURI,
             const char* rootElementName,
             const char* xmlFile,
+            int indent)
+        {
+            save(createDocument(dataObject,rootElementURI, rootElementName), xmlFile,
+                indent);
+        }
+        void XMLHelperImpl::save(
+            DataObjectPtr dataObject,
+            const SDOString& rootElementURI,
+            const SDOString& rootElementName,
+            const SDOString& xmlFile,
             int indent)
         {
             save(createDocument(dataObject,rootElementURI, rootElementName), xmlFile,
@@ -237,10 +396,20 @@ namespace commonj
             SDOXMLStreamWriter writer(outXml, dataFactory);
             writer.write(doc, indent);                
         }
+
         void XMLHelperImpl::save(
             DataObjectPtr dataObject,
             const char* rootElementURI,
             const char* rootElementName,
+            std::ostream& outXml,
+            int indent )
+        {
+            save(createDocument(dataObject,rootElementURI, rootElementName), outXml, indent);
+        }
+        void XMLHelperImpl::save(
+            DataObjectPtr dataObject,
+            const SDOString& rootElementURI,
+            const SDOString& rootElementName,
             std::ostream& outXml,
             int indent )
         {
@@ -262,6 +431,15 @@ namespace commonj
             DataObjectPtr dataObject,
             const char* rootElementURI,
             const char* rootElementName,
+            int indent)
+        {
+            return save(createDocument(dataObject,rootElementURI, rootElementName),
+                indent);
+        }
+        char* XMLHelperImpl::save(
+            DataObjectPtr dataObject,
+            const SDOString& rootElementURI,
+            const SDOString& rootElementName,
             int indent)
         {
             return save(createDocument(dataObject,rootElementURI, rootElementName),

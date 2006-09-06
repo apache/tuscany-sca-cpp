@@ -87,6 +87,18 @@ namespace commonj
             }
             return 0;
         }
+        const char* XSDHelperImpl::defineFile(const SDOString& schema, bool loadImportNamespace)
+        {
+
+            SDOSchemaSAX2Parser schemaParser(schemaInfo, this, loadImportNamespace);
+            clearErrors();
+            if (schemaParser.parse(schema.c_str()) == 0)
+            {
+                defineTypes(schemaParser.getTypeDefinitions());
+                return schemaInfo.getTargetNamespaceURI();
+            }
+            return 0;
+        }
         
         const char*  XSDHelperImpl::define(std::istream& schema, bool loadImportNamespace)
         {
@@ -98,6 +110,16 @@ namespace commonj
         }
         
         const char*  XSDHelperImpl::define(const char* schema, bool loadImportNamespace)
+        {
+            std::istringstream str(schema);
+            SDOSchemaSAX2Parser schemaParser(schemaInfo, this, loadImportNamespace);
+            clearErrors();
+            str  >> schemaParser;
+            defineTypes(schemaParser.getTypeDefinitions());
+            return schemaInfo.getTargetNamespaceURI();
+            return define(str);
+        }
+        const char*  XSDHelperImpl::define(const SDOString& schema, bool loadImportNamespace)
         {
             std::istringstream str(schema);
             SDOSchemaSAX2Parser schemaParser(schemaInfo, this, loadImportNamespace);
@@ -518,6 +540,18 @@ namespace commonj
             writer.write(types, targetNamespaceURI, 
                 ((DataFactoryImpl*)fac)->getOpenProperties(), indent);
         }
+        void XSDHelperImpl::generateFile(
+            const TypeList& types,
+            const SDOString& fileName, 
+            const SDOString& targetNamespaceURI,
+            int indent
+            )
+        {
+            SDOXSDFileWriter writer(fileName.c_str());
+            DataFactory* fac = dataFactory;
+            writer.write(types, targetNamespaceURI.c_str(), 
+                ((DataFactoryImpl*)fac)->getOpenProperties(), indent);
+        }
         
         void XSDHelperImpl::generate(
             const TypeList& types,
@@ -531,6 +565,18 @@ namespace commonj
             writer.write(types,    targetNamespaceURI, 
                 ((DataFactoryImpl*)fac)->getOpenProperties(), indent);                
         }
+        void XSDHelperImpl::generate(
+            const TypeList& types,
+            std::ostream& outXml,
+            const SDOString& targetNamespaceURI,
+            int indent
+            )
+        {
+            SDOXSDStreamWriter writer(outXml);
+            DataFactory* fac = dataFactory;
+            writer.write(types,    targetNamespaceURI.c_str(), 
+                ((DataFactoryImpl*)fac)->getOpenProperties(), indent);                
+        }
         
         char* XSDHelperImpl::generate(
             const TypeList& types,
@@ -541,6 +587,21 @@ namespace commonj
             SDOXSDBufferWriter writer;
             DataFactory* fac = dataFactory;
             writer.write(types, targetNamespaceURI, 
+                ((DataFactoryImpl*)fac)->getOpenProperties(), indent);
+            SDOXMLString ret = writer.getBuffer();
+            char* retString = new char[strlen(ret) +1];
+            strcpy(retString, ret);
+            return retString;
+        }
+        char* XSDHelperImpl::generate(
+            const TypeList& types,
+            const SDOString& targetNamespaceURI,
+            int indent
+            )
+        {
+            SDOXSDBufferWriter writer;
+            DataFactory* fac = dataFactory;
+            writer.write(types, targetNamespaceURI.c_str(), 
                 ((DataFactoryImpl*)fac)->getOpenProperties(), indent);
             SDOXMLString ret = writer.getBuffer();
             char* retString = new char[strlen(ret) +1];

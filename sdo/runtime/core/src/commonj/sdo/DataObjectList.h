@@ -98,6 +98,7 @@ public:
     virtual SDO_API void setDouble(unsigned int index, long double d)  = 0;
     virtual SDO_API void setDate(unsigned int index, const SDODate d)  = 0;
     virtual SDO_API void setCString(unsigned int index, char* d)  = 0;
+    virtual SDO_API void setCString(unsigned int index, const SDOString& d)  = 0;
     virtual SDO_API void setDataObject(unsigned int index, DataObjectPtr dob)  = 0;
 
     /**  getLength returns the length of a string element
@@ -137,6 +138,7 @@ public:
     virtual SDO_API void append (const char* d, unsigned int len) = 0;
 
     virtual SDO_API void insert (unsigned int index, const char* d) = 0;
+    virtual SDO_API void insert (unsigned int index, const SDOString& d) = 0;
     virtual SDO_API void append (const char* d) = 0;
     virtual SDO_API void append (const SDOString& d) = 0;
 

@@ -52,9 +52,10 @@ namespace commonj
              */
 
             SDO_API virtual const char* defineFile(const char* schemaFile, bool loadImportNamespace = false) = 0;
+            SDO_API virtual const char* defineFile(const SDOString& schemaFile, bool loadImportNamespace = false) = 0;
             SDO_API virtual const char* define(std::istream& schema, bool loadImportNamespace = false) = 0;
             SDO_API virtual const char* define(const char* schema, bool loadImportNamespace = false) = 0;
-            
+            SDO_API virtual const char* define(const SDOString& schema, bool loadImportNamespace = false) = 0;
 
             /**  generate buildsXSD from types/properties
              *
@@ -68,15 +69,29 @@ namespace commonj
                 const TypeList& types,
                 const char* targetNamespaceURI = "",
                 int indent = -1) = 0;
+            SDO_API virtual char* generate(
+                const TypeList& types,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                int indent = -1) = 0;
             SDO_API virtual void generate(
                 const TypeList& types,
                 std::ostream& outXsd,
                 const char* targetNamespaceURI = "",
                 int indent = -1) = 0;
+            SDO_API virtual void generate(
+                const TypeList& types,
+                std::ostream& outXsd,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                int indent = -1) = 0;
             SDO_API virtual void generateFile(
                 const TypeList& types,
                 const char* fileName,
                 const char* targetNamespaceURI = "",
+                int indent = -1) = 0;
+            SDO_API virtual void generateFile(
+                const TypeList& types,
+                const SDOString& fileName,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString,
                 int indent = -1) = 0;
 
             /***********************************/

@@ -86,6 +86,7 @@ namespace commonj
          * This sets the encoding to save this data to XML.
          */
             SDO_API virtual void setEncoding(const char* encoding) = 0;
+            SDO_API virtual void setEncoding(const SDOString& encoding) = 0;
 
         /**  getXMLDeclaration
          *
@@ -110,6 +111,7 @@ namespace commonj
          * NOT IMPLEMENTED
          */
             SDO_API virtual void setXMLVersion(const char* xmlVersion) = 0;
+            SDO_API virtual void setXMLVersion(const SDOString& xmlVersion) = 0;
 
         /**  getSchemaLocation- return the schema location
          *
@@ -122,6 +124,7 @@ namespace commonj
          * Sets the XML Schema location.
          */
             SDO_API virtual void setSchemaLocation(const char* schemaLocation) = 0;
+            SDO_API virtual void setSchemaLocation(const SDOString& schemaLocation) = 0;
 
         /**  getNoNamespaceSchemaLocation
          *
@@ -134,6 +137,7 @@ namespace commonj
          * Sets the nonamespace schema location
          */
             SDO_API virtual void setNoNamespaceSchemaLocation(const char* noNamespaceSchemaLocation) = 0;        
+            SDO_API virtual void setNoNamespaceSchemaLocation(const SDOString& noNamespaceSchemaLocation) = 0;        
             
             SDO_API friend std::istream& operator>>(std::istream& input, XMLDocument& doc);
             

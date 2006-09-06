@@ -624,6 +624,17 @@ void DataObjectListImpl::insert (unsigned int index, const char* d)
     ((DataObjectImpl*)dob)->setCString(d);
     insert(index, dol);
 }
+void DataObjectListImpl::insert (unsigned int index, const SDOString& d)
+{
+    if (theFactory == 0) return;
+
+    if (typeUnset)setType(Type::SDOTypeNamespaceURI, BytesLiteral);
+
+    RefCountingPointer<DataObject> dol = theFactory->create(typeURI, typeName);
+    DataObject* dob = dol;
+    ((DataObjectImpl*)dob)->setCString(d);
+    insert(index, dol);
+}
 
 void DataObjectListImpl::append (const char* d)
 {
@@ -1058,6 +1069,17 @@ void DataObjectListImpl::setDate(unsigned int index, const SDODate d)
     ((DataObjectImpl*)dob)->setDate(d);
 }
 void DataObjectListImpl::setCString(unsigned int index, char* d) 
+{
+    validateIndex(index);
+    if (container != 0)
+    {
+        container->logChange(pindex);
+    }
+    RefCountingPointer<DataObject> dd = ((*this)[index]);
+    DataObject* dob = dd;
+    ((DataObjectImpl*)dob)->setCString(d);
+}
+void DataObjectListImpl::setCString(unsigned int index, const SDOString& d) 
 {
     validateIndex(index);
     if (container != 0)

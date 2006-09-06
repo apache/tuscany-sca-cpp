@@ -62,18 +62,22 @@ namespace commonj
 			virtual const char* getRootElementName() const {return rootElementName;}
             virtual const char* getEncoding() const {return encoding;}
             virtual void setEncoding(const char* enc);
+            virtual void setEncoding(const SDOString& enc);
 
             virtual bool getXMLDeclaration() const {return xmlDeclaration;}
             virtual void setXMLDeclaration(bool xmlDecl);
 
             virtual const char* getXMLVersion() const {return xmlVersion;}
             virtual void setXMLVersion(const char* xmlVer);
+            virtual void setXMLVersion(const SDOString& xmlVer);
 
             virtual const char* getSchemaLocation() const {return schemaLocation;}
             virtual void setSchemaLocation(const char* schemaLoc);
+            virtual void setSchemaLocation(const SDOString& schemaLoc);
 
             virtual const char* getNoNamespaceSchemaLocation() const { return noNamespaceSchemaLocation;}
             virtual void setNoNamespaceSchemaLocation(const char* noNamespaceSchemaLoc);
+            virtual void setNoNamespaceSchemaLocation(const SDOString& noNamespaceSchemaLoc);
             
             
             friend std::istream& operator>>(std::istream& input, XMLDocumentImpl& doc);

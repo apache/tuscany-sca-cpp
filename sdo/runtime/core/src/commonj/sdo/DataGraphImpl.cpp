@@ -65,8 +65,31 @@ namespace commonj{
     }
 
 
+//     DataObjectPtr DataGraphImpl::createRootObject(const char* uri,
+//                         const char* name)
+//     {
+//         if (root != 0)
+//         {
+//             SDO_THROW_EXCEPTION("createRootObject",SDOUnsupportedOperationException,
+//                 "Root data object already exists");
+//         }
+//         root = factory->create(uri,name);
+//         if (root->getInstanceProperties()[0].getType().isDataType())
+//         {
+//             SDO_THROW_EXCEPTION("createRootObject",SDOUnsupportedOperationException,
+//                 "Root data object cannot have a datatype property at element 0");
+//         }
+//         return root;
+//     }
+
     DataObjectPtr DataGraphImpl::createRootObject(const char* uri,
                         const char* name)
+    {
+      return createRootObject(SDOString(uri), SDOString(name));
+    }
+
+    DataObjectPtr DataGraphImpl::createRootObject(const SDOString& uri,
+                        const SDOString& name)
     {
         if (root != 0)
         {
@@ -109,6 +132,11 @@ namespace commonj{
 
     const Type& DataGraphImpl::getType(const char* uri,
                             const char* name)
+    {
+        return factory->getType(uri,name);
+    }
+    const Type& DataGraphImpl::getType(const SDOString& uri,
+                            const SDOString& name)
     {
         return factory->getType(uri,name);
     }

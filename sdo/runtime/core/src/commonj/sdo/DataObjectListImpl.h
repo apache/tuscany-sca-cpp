@@ -92,6 +92,7 @@ public:
     virtual void setDouble(unsigned int index, long double d);
     virtual void setDate(unsigned int index, const SDODate d);
     virtual void setCString(unsigned int index, char* d);
+    virtual void setCString(unsigned int index, const SDOString& d);
     virtual void setDataObject(unsigned int index, DataObjectPtr dob);
 
     virtual unsigned int getLength(unsigned int index) const;
@@ -117,6 +118,7 @@ public:
     virtual  void append (const char* d, unsigned int len) ;
 
     virtual  void insert (unsigned int index, const char* d) ;
+    virtual  void insert (unsigned int index, const SDOString& d) ;
     virtual  void append (const char* d) ;
     virtual  void append (const SDOString& d) ;
 

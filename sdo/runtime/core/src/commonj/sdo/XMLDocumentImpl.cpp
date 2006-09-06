@@ -44,6 +44,10 @@ namespace commonj
         {
             encoding = enc;
         }
+        void XMLDocumentImpl::setEncoding(const SDOString& enc)
+        {
+            encoding = enc.c_str();
+        }
         
         void XMLDocumentImpl::setXMLDeclaration(bool xmlDecl)
         {
@@ -54,15 +58,27 @@ namespace commonj
         {
             xmlVersion = xmlVer;
         }
+        void XMLDocumentImpl::setXMLVersion(const SDOString& xmlVer)
+        {
+            xmlVersion = xmlVer.c_str();
+        }
         
         void XMLDocumentImpl::setSchemaLocation(const char* schemaLoc)
         {
             schemaLocation = schemaLoc;
         }
+        void XMLDocumentImpl::setSchemaLocation(const SDOString& schemaLoc)
+        {
+            schemaLocation = schemaLoc.c_str();
+        }
         
         void XMLDocumentImpl::setNoNamespaceSchemaLocation(const char* noNamespaceSchemaLoc)
         {
             noNamespaceSchemaLocation = noNamespaceSchemaLoc;
+        }
+        void XMLDocumentImpl::setNoNamespaceSchemaLocation(const SDOString& noNamespaceSchemaLoc)
+        {
+            noNamespaceSchemaLocation = noNamespaceSchemaLoc.c_str();
         }
         
     } // End - namespace sdo

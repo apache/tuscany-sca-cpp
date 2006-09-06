@@ -63,8 +63,10 @@ namespace commonj
              *
              */
             virtual const char* defineFile(const char* schemaFile, bool loadImportNamespace = false);
+            virtual const char* defineFile(const SDOString& schemaFile, bool loadImportNamespace = false);
             virtual const char* define(std::istream& schema, bool loadImportNamespace = false);
             virtual const char* define(const char* schema, bool loadImportNamespace = false);
+            virtual const char* define(const SDOString& schema, bool loadImportNamespace = false);
             
             /** getErrorCount gets number of parse errors
              *
@@ -97,16 +99,32 @@ namespace commonj
                 const char* targetNamespaceURI = "",
                 int indent = -1
                 );
+            virtual char* generate(
+                const TypeList& types,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                int indent = -1
+                );
             void generate(
                 const TypeList& types,
                 std::ostream& outXsd,
                 const char* targetNamespaceURI = "", 
                 int indent = -1
                 );
+            void generate(
+                const TypeList& types,
+                std::ostream& outXsd,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                int indent = -1
+                );
             virtual void generateFile(
                 const TypeList& types,
                 const char* fileName,
                 const char* targetNamespaceURI = "", 
+                int indent = -1);
+            virtual void generateFile(
+                const TypeList& types,
+                const SDOString& fileName,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString, 
                 int indent = -1);
             
             virtual DataFactoryPtr getDataFactory();

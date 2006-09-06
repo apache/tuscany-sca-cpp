@@ -24,6 +24,7 @@
 
 
 #include "commonj/sdo/PropertyDefinition.h"
+#include "commonj/sdo/SDOString.h"
 #include "list"
 
 
@@ -55,24 +56,33 @@ namespace commonj
             TypeDefinitionImpl* getTypeDefinition();       
         
             /*SDO_API*/ void setUri(const char * inuri) ;
+            /*SDO_API*/ void setUri(const SDOString& inuri) ;
+
             /*SDO_API*/ const char * getUri() const;
 
             /*SDO_API*/ void setName(const char * inname) ;
+            /*SDO_API*/ void setName(const SDOString& inname) ;
             /*SDO_API*/ const char * getName() const;
 
             /*SDO_API*/ void setLocalName(const char * inname) ;
+            /*SDO_API*/ void setLocalName(const SDOString& inname) ;
             /*SDO_API*/ const char * getLocalName() const;
 
             /*SDO_API*/ void setAliases(const char * inaliases) ;
+            /*SDO_API*/ void setAliases(const SDOString& inaliases) ;
             /*SDO_API*/ const char * getAliases() const;
 
-      
+
             /*SDO_API*/ void setParentType(const char* uri, const char* name,
                 bool isrestriction);
+            /*SDO_API*/ void setParentType(const SDOString& uri,
+                                           const SDOString& name,
+                                           bool isrestriction);
             /*SDO_API*/ const char * getParentTypeUri() const;
             /*SDO_API*/ const char * getParentTypeName() const;
 
             /*SDO_API*/ void setIDPropertyName(const char * idpropname) ;
+            /*SDO_API*/ void setIDPropertyName(const SDOString& idpropname) ;
             /*SDO_API*/ const char * getIDPropertyName() const;
 
 

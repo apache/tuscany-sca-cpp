@@ -67,32 +67,62 @@ namespace commonj
                const char* elementname= 0,
                const char* rootElementURI=0);
 
+           virtual XMLDocumentPtr createDocument(
+               const SDOString& elementname,
+               const SDOString& rootElementURI);
+
            virtual XMLDocumentPtr loadFile(
                 const char* xmlFile,
                 const char* targetNamespaceURI = 0);
+           virtual XMLDocumentPtr loadFile(
+                const SDOString& xmlFile,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString);
+
             virtual XMLDocumentPtr load(
                 std::istream& inXml,
                 const char* targetNamespaceURI = 0);
             virtual XMLDocumentPtr load(
+                std::istream& inXml,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString);
+
+            virtual XMLDocumentPtr load(
                 const char* inXml,
                 const char* targetNamespaceURI = 0);
-            
+            virtual XMLDocumentPtr load(
+                const SDOString& inXml,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString);
+
             virtual XMLDocumentPtr createDocument(
                 DataObjectPtr dataObject,
                 const char* rootElementURI,
                 const char* rootElementName);
+            virtual XMLDocumentPtr createDocument(
+                DataObjectPtr dataObject,
+                const SDOString& rootElementURI,
+                const SDOString& rootElementName);
 
             /**  save saves the graph to XML
              *
              * save - Serializes the datagraph to the XML file
              */
 
-            void save(XMLDocumentPtr doc, const char* xmlFile, int indent = -1);
+            void save(XMLDocumentPtr doc,
+                      const char* xmlFile,
+                      int indent = -1);
+            void save(XMLDocumentPtr doc,
+                      const SDOString& xmlFile,
+                      int indent = -1);
+
             void save(
                 DataObjectPtr dataObject,
                 const char* rootElementURI,
                 const char* rootElementName,
                 const char* xmlFile, int indent = -1);
+            void save(
+                DataObjectPtr dataObject,
+                const SDOString& rootElementURI,
+                const SDOString& rootElementName,
+                const SDOString& xmlFile, int indent = -1);
 
             /**  save saves the graph to XML
              *
@@ -107,6 +137,12 @@ namespace commonj
                 const char* rootElementName,
                 std::ostream& outXml,
                 int indent = -1);
+            void save(
+                DataObjectPtr dataObject,
+                const SDOString& rootElementURI,
+                const SDOString& rootElementName,
+                std::ostream& outXml,
+                int indent = -1);
 
             /**  save saves the graph to XML
              *
@@ -117,6 +153,11 @@ namespace commonj
                 DataObjectPtr dataObject,
                 const char* rootElementURI,
                 const char* rootElementName,
+                int indent = -1);
+            char* save(
+                DataObjectPtr dataObject,
+                const SDOString& rootElementURI,
+                const SDOString& rootElementName,
                 int indent = -1);
                             
         private:
@@ -131,8 +172,10 @@ namespace commonj
 
             XMLDocumentPtr createDocument(DataObjectPtr dataObject);
 
-            const TypeImpl* findRoot(DataFactory* df,
-			                                        const char* rootElementURI);
+//               const TypeImpl* findRoot(DataFactory* df,
+//                                         const char* rootElementURI);
+              const TypeImpl* findRoot(DataFactory* df,
+                                           const SDOString& rootElementURI);
 
             DataFactoryPtr getDataFactory();
         };

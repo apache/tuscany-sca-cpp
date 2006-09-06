@@ -70,6 +70,8 @@ class DataGraphImpl : public DataGraph
 
     virtual DataObjectPtr createRootObject(const char* uri,
                         const char* name);
+    virtual DataObjectPtr createRootObject(const SDOString& uri,
+                        const SDOString& name);
 
     /**
      * Creates the root data object - for use by DAS implementations
@@ -93,6 +95,8 @@ class DataGraphImpl : public DataGraph
 
     virtual const Type& getType(const char* uri,
                             const char* name);
+    virtual const Type& getType(const SDOString& uri,
+                            const SDOString& name);
 
     private:
 

@@ -971,12 +971,11 @@ void DataFactoryImpl::setBaseType(const SDOString& typeuri,
         setDefault(t.getURI(), t.getName(), propname, c);
     }
 
-// #pragma message( "GMW: Unimplemented method, writable string parameter" )
-//     void DataFactoryImpl::setDefault(
-//         const Type& t, const SDOString& propname , SDOString& c) 
-//     {
-//         setDefault(t.getURI(), t.getName(), propname.c_str(), c.c_str());
-//     }
+    void DataFactoryImpl::setDefault(
+        const Type& t, const SDOString& propname , SDOString& outstr)
+    {
+        setDefault(t.getURI(), t.getName(), propname, outstr);
+    }
 
     void DataFactoryImpl::setDefault(
         const Type& t, const char* propname , short s) 
@@ -1134,13 +1133,14 @@ void DataFactoryImpl::setBaseType(const SDOString& typeuri,
         if (pi != 0)pi->setDefault(c);
     }
 
-// #pragma message( "GMW: Unimplemented method, writable string parameter" )
-//     void DataFactoryImpl::setDefault(
-//         const SDOString& typuri, const SDOString& typnam, 
-//         const SDOString& propname , SDOString& c) 
-//     {
-//       setDefault(typuri.c_str(), typnam.c_str(), propname.c_str(), c.c_str());
-//     }
+    void DataFactoryImpl::setDefault(
+        const SDOString& typuri, const SDOString& typnam, 
+        const SDOString& propname , SDOString& c) 
+    {
+        const TypeImpl* ti = findTypeImpl(typuri, typnam);
+        PropertyImpl* pi = ti->getPropertyImpl(propname);
+        if (pi != 0)pi->setDefault(c);
+    }
 
     void DataFactoryImpl::setDefault(
         const char* typuri, const char* typnam, 

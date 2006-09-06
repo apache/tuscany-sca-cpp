@@ -458,11 +458,10 @@ class DataFactory : public RefCountingObject
             const char* propname , 
             char* c) = 0;
 
-// #pragma message( "GMW: Unimplemented method, writable string parameter" )
-//         virtual SDO_API void setDefault(
-//             const Type& t, 
-//             const SDOString& propname , 
-//             SDOString& c) = 0;
+        virtual SDO_API void setDefault(
+            const Type& t, 
+            const SDOString& propname , 
+            SDOString& outstr) = 0;
 
         virtual SDO_API void setDefault(
             const Type& t, 
@@ -594,12 +593,11 @@ class DataFactory : public RefCountingObject
             const char* propname , 
             char* c) = 0;
 
-// #pragma message( "GMW: Unimplemented method, writable string parameter" )
-//         virtual SDO_API void setDefault(
-//             const SDOString& typuri, 
-//             const SDOString& typnam, 
-//             const SDOString& propname , 
-//             SDOString& c) = 0;
+        virtual SDO_API void setDefault(
+            const SDOString& typuri, 
+            const SDOString& typnam, 
+            const SDOString& propname , 
+            SDOString& c) = 0;
 
         virtual SDO_API void setDefault(
             const char* typuri, 

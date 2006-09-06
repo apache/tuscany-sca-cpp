@@ -316,11 +316,10 @@ public:
         const char* propname , 
         char* c) ;
 
-// #pragma message( "GMW: Unimplemented method, writable string parameter" )
-//     virtual void setDefault(
-//         const Type& t, 
-//         const SDOString& propname , 
-//         SDOString& c) ;
+    virtual void setDefault(
+        const Type& t, 
+        const SDOString& propname , 
+        SDOString& outstr);
 
     virtual void setDefault(
         const Type& t, 
@@ -453,12 +452,11 @@ public:
         const char* propname ,
         char* c) ;
 
-// #pragma message( "GMW: Unimplemented method, writable string parameter" )
-//     virtual void setDefault(
-//         const SDOString& typuri, 
-//         const SDOString& typnam, 
-//         const SDOString& propname ,
-//         SDOString& c) ;
+    virtual void setDefault(
+        const SDOString& typuri, 
+        const SDOString& typnam, 
+        const SDOString& propname ,
+        SDOString& c) ;
 
     virtual void setDefault(
         const char* typuri, 

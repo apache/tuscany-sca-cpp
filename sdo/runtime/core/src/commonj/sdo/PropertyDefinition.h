@@ -23,6 +23,7 @@
 #include "export.h"
 
 #include <vector>
+#include "commonj/sdo/SDOString.h"
 
 
 
@@ -57,37 +58,47 @@ namespace commonj
                        
             // where this property is to be substituted for another
             /*SDO_API*/ void setSubstituteName(const char * name);
+            /*SDO_API*/ void setSubstituteName(const SDOString& name);
             /*SDO_API*/ const char* getSubstituteName() const;
 
             /*SDO_API*/ void setSubstituteUri(const char* name);
+            /*SDO_API*/ void setSubstituteUri(const SDOString& name);
             /*SDO_API*/ const char* getSubstituteUri() const;
 
             // where there are substitute names for this property.
             /*SDO_API*/ void addSubstitute(const char* name,
                 const char* localname);
+            /*SDO_API*/ void addSubstitute(const SDOString& name,
+                const SDOString& localname);
             /*SDO_API*/ int getSubstituteCount() const;
             /*SDO_API*/ const char* getSubstituteNames(int index) const;
             /*SDO_API*/ const char* getSubstituteLocalNames(int index) const;
 
             
             /*SDO_API*/ void setAliases(const char* aliases);
+            /*SDO_API*/ void setAliases(const SDOString& aliases);
             /*SDO_API*/ const char* getAliases() const;
 
             /*SDO_API*/ void setName(const char* name);
+            /*SDO_API*/ void setName(const SDOString& name);
             /*SDO_API*/ const char* getName() const;
             
             /*SDO_API*/ void setLocalName(const char* name);
+            /*SDO_API*/ void setLocalName(const SDOString& name);
             /*SDO_API*/ const char* getLocalName() const;
-            
+
             /*SDO_API*/ void setType(const char* uri, const char* name);
+            /*SDO_API*/ void setType(const SDOString& uri, const SDOString& name);
             /*SDO_API*/ const char * getTypeName() const;
             /*SDO_API*/ const char * getTypeUri() const;
             /*SDO_API*/ const char * getTypeFullName() const;
             /*SDO_API*/ const char * getTypeFullLocalName() const ;
             
             /*SDO_API*/ void setTypeFullLocalName(const char* name);
+            /*SDO_API*/ void setTypeFullLocalName(const SDOString& name);
 
             /*SDO_API*/ void setDefaultValue(const char* value);
+            /*SDO_API*/ void setDefaultValue(const SDOString& value);
             /*SDO_API*/ const char* getDefaultValue() const;
 
             /*SDO_API*/ bool getIsMany() const;

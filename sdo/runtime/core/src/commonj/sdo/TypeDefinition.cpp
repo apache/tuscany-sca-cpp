@@ -62,6 +62,10 @@ namespace commonj
         {
             typedefinition->uri = inuri;
         }
+        void TypeDefinition::setUri(const SDOString& inuri) 
+        {
+            typedefinition->uri = inuri.c_str();
+        }
 
         const char * TypeDefinition::getUri() const
         {
@@ -72,6 +76,10 @@ namespace commonj
         void TypeDefinition::setName(const char * inname)
         {
             typedefinition->name = inname;
+        }
+        void TypeDefinition::setName(const SDOString& inname)
+        {
+            typedefinition->name = inname.c_str();
         }
 
         const char * TypeDefinition::getName() const
@@ -84,6 +92,10 @@ namespace commonj
         {
             typedefinition->localname = inname;
         }
+        void TypeDefinition::setLocalName(const SDOString& inname) 
+        {
+            typedefinition->localname = inname.c_str();
+        }
 
         const char * TypeDefinition::getLocalName() const
         {
@@ -94,6 +106,10 @@ namespace commonj
         void TypeDefinition::setAliases(const char * inaliases)
         {
             typedefinition->aliases = inaliases;
+        }
+        void TypeDefinition::setAliases(const SDOString& inaliases)
+        {
+            typedefinition->aliases = inaliases.c_str();
         }
         
         const char * TypeDefinition::getAliases() const
@@ -106,6 +122,14 @@ namespace commonj
         {
             typedefinition->parentTypeUri = uri;
             typedefinition->parentTypeName = name;
+            typedefinition->isRestriction = isrestriction;
+        }
+        void TypeDefinition::setParentType(const SDOString& uri,
+                                           const SDOString& name,
+                                           bool isrestriction)
+        {
+            typedefinition->parentTypeUri = uri.c_str();
+            typedefinition->parentTypeName = name.c_str();
             typedefinition->isRestriction = isrestriction;
         }
 
@@ -122,6 +146,10 @@ namespace commonj
         void TypeDefinition::setIDPropertyName(const char * idpropname)
         {
             typedefinition->IDPropertyName = idpropname;
+        }
+        void TypeDefinition::setIDPropertyName(const SDOString& idpropname)
+        {
+            typedefinition->IDPropertyName = idpropname.c_str();
         }
         
         const char * TypeDefinition::getIDPropertyName() const

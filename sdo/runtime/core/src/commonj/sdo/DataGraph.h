@@ -68,6 +68,8 @@ class DataGraph : public RefCountingObject
 
     virtual SDO_API DataObjectPtr createRootObject(const char* uri,
                         const char* name) = 0;
+    virtual SDO_API DataObjectPtr createRootObject(const SDOString& uri,
+                        const SDOString& name) = 0;
 
    /**
      * Creates a root data object - used by DAS implementations.
@@ -90,6 +92,8 @@ class DataGraph : public RefCountingObject
 
     virtual SDO_API const Type& getType(const char* uri,
                             const char* name) = 0;
+    virtual SDO_API const Type& getType(const SDOString& uri,
+                            const SDOString& name) = 0;
 
 
 };

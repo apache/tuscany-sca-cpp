@@ -48,32 +48,56 @@ namespace commonj
            SDO_API virtual XMLDocumentPtr createDocument(
                const char* elementname = 0,
                const char* rootElementURI=0) = 0;
+           SDO_API virtual XMLDocumentPtr createDocument(
+               const SDOString& elementname,
+               const SDOString& rootElementURI) = 0;
 
            SDO_API virtual XMLDocumentPtr loadFile(
                 const char* xmlFile,
                 const char* targetNamespaceURI=0) = 0;
+           SDO_API virtual XMLDocumentPtr loadFile(
+                const SDOString& xmlFile,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString) = 0;
+
             SDO_API virtual XMLDocumentPtr load(
                 std::istream& inXml,
                 const char* targetNamespaceURI=0) = 0;
             SDO_API virtual XMLDocumentPtr load(
+                std::istream& inXml,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString) = 0;
+
+            SDO_API virtual XMLDocumentPtr load(
                 const char* inXml,
                 const char* targetNamespaceURI=0) = 0;
+            SDO_API virtual XMLDocumentPtr load(
+                const SDOString& inXml,
+                const SDOString& targetNamespaceURI = SDOString::SDONullString) = 0;
             
             /**  save saves the graph to XML
              *
              * save - Serializes the datagraph to the XML file
              */
 
-            SDO_API virtual void    save(XMLDocumentPtr doc, const char* xmlFile,
-                int indent = -1) = 0;                
+              SDO_API virtual void save(XMLDocumentPtr doc, 
+                                        const char* xmlFile,
+                                        int indent = -1) = 0;
+              SDO_API virtual void save(XMLDocumentPtr doc,
+                                        const SDOString& xmlFile,
+                                        int indent = -1) = 0;
+
             SDO_API virtual void save(
                 DataObjectPtr dataObject,
                 const char* rootElementURI,
                 const char* rootElementName,
                 const char* xmlFile,
                 int indent = -1) = 0;
-            
-            
+            SDO_API virtual void save(
+                DataObjectPtr dataObject,
+                const SDOString& rootElementURI,
+                const SDOString& rootElementName,
+                const SDOString& xmlFile,
+                int indent = -1) = 0;
+
             /**  save saves the graph to XML
              *
              * save - Serializes the datagraph to the XML stream
@@ -81,10 +105,17 @@ namespace commonj
 
             SDO_API virtual void save(XMLDocumentPtr doc, std::ostream& outXml,
                 int indent = -1) = 0;
+
             SDO_API virtual void save(
                 DataObjectPtr dataObject,
                 const char* rootElementURI,
                 const char* rootElementName,
+                std::ostream& outXml,
+                int indent = -1) = 0;
+            SDO_API virtual void save(
+                DataObjectPtr dataObject,
+                const SDOString& rootElementURI,
+                const SDOString& rootElementName,
                 std::ostream& outXml,
                 int indent = -1) = 0;
             
@@ -99,6 +130,11 @@ namespace commonj
                 const char* rootElementURI,
                 const char* rootElementName,
                 int indent = -1) = 0;
+            SDO_API virtual char* save(
+                DataObjectPtr dataObject,
+                const SDOString& rootElementURI,
+                const SDOString& rootElementName,
+                int indent = -1) = 0;
             
             /**  createDocument creates an XMLDocument
              *
@@ -111,6 +147,10 @@ namespace commonj
                 DataObjectPtr dataObject,
                 const char* rootElementURI,
                 const char* rootElementName) = 0;
+            SDO_API virtual XMLDocumentPtr createDocument(
+                DataObjectPtr dataObject,
+                const SDOString& rootElementURI,
+                const SDOString& rootElementName) = 0;
             
             /***********************************/
             /* Destructor */
