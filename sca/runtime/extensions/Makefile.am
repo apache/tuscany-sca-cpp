@@ -1,1 +1,1 @@
-SUBDIRS = cpp ws python
+SUBDIRS = cpp ws python ruby
