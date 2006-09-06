@@ -1,3 +1,3 @@
-SUBDIRS = Calculator BigBank RubyCalculator
+SUBDIRS = Calculator BigBank RubyCalculator PythonCalculator
 
 EXTRA_DIST = GettingStarted.html
