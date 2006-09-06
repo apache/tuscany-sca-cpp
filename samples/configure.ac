@@ -21,6 +21,10 @@ AC_CONFIG_FILES([Makefile
                  Calculator/CalculatorComposite/Makefile
                  Calculator/Client/Makefile
                  Calculator/WSClient/Makefile
+                 RubyCalculator/Makefile
+                 RubyCalculator/sample.calculator/Makefile
+                 RubyCalculator/sample.calculator.client/Makefile
+                 RubyCalculator/sample.calculator.wsclient/Makefile
                  BigBank/Makefile
                  BigBank/Accounts/Makefile
                  BigBank/WSAccountClient/Makefile
