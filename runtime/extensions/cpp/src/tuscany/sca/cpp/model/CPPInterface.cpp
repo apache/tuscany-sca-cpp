@@ -33,9 +33,9 @@ namespace tuscany
                 CPPInterface::CPPInterface(
                     const string& header,
                     const string& className,
-                    const string& scop,
+                    Scope scope,
                     bool remotable)  
-                    : header(header), className(className), remotable(remotable)
+                    : Interface(remotable, scope), header(header), className(className)
             {
                 string::size_type dot = header.rfind(".h"); // this will also find .hpp
                 if (dot != string::npos)
@@ -47,14 +47,6 @@ namespace tuscany
                     headerStub = header;
                 }
 
-                if (scop == "composite")
-                {
-                    scope = COMPOSITE;
-                }
-                else
-                {
-                    scope = STATELESS;
-                }
            }
 
             CPPInterface::~CPPInterface()

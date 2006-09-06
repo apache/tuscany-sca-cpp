@@ -25,9 +25,9 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/ServiceType.h"
+#include "tuscany/sca/model/Interface.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/python/model/PythonImplementation.h"
-#include "tuscany/sca/cpp/model/CPPInterface.h"
 
 using namespace osoa::sca;
 
@@ -64,8 +64,8 @@ namespace tuscany
                 LOGENTRY(1,"PythonServiceWrapper::constructor");
     
                 component = service->getComponent();
-                interf = (CPPInterface*)service->getType()->getInterface();
-                remotable = interf->getRemotable();                
+                interf = service->getType()->getInterface();
+                remotable = interf->isRemotable();                
 
                 pythonModule = NULL;
                 pythonClassInstance = NULL;
@@ -202,9 +202,8 @@ namespace tuscany
             {
                 LOGENTRY(1,"PythonServiceWrapper::getInstance");
 
-                CPPInterface::SCOPE scope = interf->getScope();
-
-                if (scope == CPPInterface::COMPOSITE)
+                Interface::Scope scope = interf->getScope();
+                if (scope == Interface::COMPOSITE)
                 {
                     if (!pythonClassInstance)
                     {
@@ -225,9 +224,9 @@ namespace tuscany
             void PythonServiceWrapper::releaseInstance()
             {
                 LOGENTRY(1,"PythonServiceWrapper::releaseInstance");
-                CPPInterface::SCOPE scope = interf->getScope();
-
-                if(scope == CPPInterface::STATELESS)
+                
+                Interface::Scope scope = interf->getScope();
+                if(scope == Interface::STATELESS)
                 {
                     // Delete the class instance if there is one
                     if(pythonClassInstance != NULL && PyInstance_Check(pythonClassInstance))
