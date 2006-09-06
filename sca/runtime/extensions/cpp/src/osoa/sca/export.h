@@ -20,7 +20,6 @@
 
 #ifndef osoa_sca_export_h
 #define osoa_sca_export_h
-#include "tuscany/sca/export.h"
 
 #if defined(WIN32)  || defined (_WINDOWS)
 #pragma warning(disable: 4786)
