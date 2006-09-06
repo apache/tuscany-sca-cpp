@@ -18,9 +18,9 @@ AC_PROG_LIBTOOL
 
 AC_CONFIG_FILES([Makefile
                  Calculator/Makefile
-                 Calculator/CalculatorComposite/Makefile
-                 Calculator/Client/Makefile
-                 Calculator/WSClient/Makefile
+                 Calculator/sample.calculator/Makefile
+                 Calculator/sample.calculator.client/Makefile
+                 Calculator/sample.calculator.wsclient/Makefile
                  RubyCalculator/Makefile
                  RubyCalculator/sample.calculator/Makefile
                  RubyCalculator/sample.calculator.client/Makefile
