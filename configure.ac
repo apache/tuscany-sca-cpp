@@ -52,6 +52,8 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/ws/service/axis2c/src/Makefile
                  runtime/extensions/python/Makefile
                  runtime/extensions/python/src/Makefile
+                 runtime/extensions/ruby/Makefile
+                 runtime/extensions/ruby/src/Makefile
                  runtime/core/test/Makefile
                  runtime/core/test/CustomerInfo/Makefile
                  runtime/core/test/MyValue/Makefile
