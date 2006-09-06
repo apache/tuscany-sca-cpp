@@ -113,8 +113,8 @@ namespace tuscany
                             }
                             
 
-                            string soapAction;
-                            bool documentStyle = false;
+                            string soapAction = "";
+                            bool documentStyle = true;
                             bool useEncoded = false;
                             WSDLOperation::soapVersion soapVer = WSDLOperation::SOAP11;
 
@@ -132,6 +132,7 @@ namespace tuscany
                                     {
                                         soapVer = WSDLOperation::SOAP12;
                                     }
+ 
                                     // Get the soapAction
                                     soapAction = bindingOperationList[i]->getCString("operation/soapAction");
                                     
@@ -141,14 +142,14 @@ namespace tuscany
                                     {
                                         style = wsBinding->getCString("binding/style");
                                     }
-                                    if (style == "document")
+                                    if (style != "document")
                                     {
-                                        documentStyle = true;
+                                        documentStyle = false;
                                     }
  
                                     // get the use
                                     string use = bindingOperationList[i]->getCString("input/body/use");
-                                    if (style == "encoded")
+                                    if (use == "encoded")
                                     {
                                         useEncoded = true;
                                     }
