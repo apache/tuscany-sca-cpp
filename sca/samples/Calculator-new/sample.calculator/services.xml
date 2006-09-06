@@ -17,7 +17,7 @@
 <service name="CalculatorService">
     <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
     <parameter name="TuscanySystemRoot" locked="xsd:false">PATH-TO-THE-SYSTEM-ROOT</parameter>
-    <parameter name="TuscanyService" locked="xsd:false">sample.CalculatorComponent/CalculatorService</parameter>
+    <parameter name="TuscanyService" locked="xsd:false">sample.calculator.CalculatorComponent/CalculatorService</parameter>
 
    <description>
         This is a sample SCA service implemented with two components wired together
