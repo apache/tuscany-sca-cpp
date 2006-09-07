@@ -18,41 +18,32 @@
 #include "AccountService.h"
 
 
-namespace com
+namespace services
 {
-    namespace bigbank
+    namespace account
     {
-        namespace account
+
+        /**
+         * AccountServiceImpl component implementation class
+         */
+        class AccountServiceImpl:  public AccountService 
         {
+        public:
+        
+            AccountServiceImpl();
+            virtual ~AccountServiceImpl();
+        
+            // public business methods
+            
+            virtual DataObjectPtr /*AccountReport*/
+                getAccountReport(const char* customerID);
+        
+        private:
+        
+            float fromUSDollarToCurrency(float value);
+        	
+        };
 
-class AccountServiceImpl:  public AccountService 
-    {
+    } // End account
+} // End services
 
-    public:
-
-
-    AccountServiceImpl();
-    virtual ~AccountServiceImpl();
-
-    // public API
-
-    virtual DataObjectPtr /*AccountReport*/
-        getAccountReport(const char* customerID);
-
-
-    //virtual void lazyGetDependencies();
-    
-private:
-
-   
-    float fromUSDollarToCurrency(float value);
-
-    bool initialized;
-	
-};
-
-}
-}
-} // namespaces
-
-using namespace com::bigbank::account;

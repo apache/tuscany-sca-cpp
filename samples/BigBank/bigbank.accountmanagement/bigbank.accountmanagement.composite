@@ -16,10 +16,10 @@
  -->
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="BigBankSubsystem">
+	name="bigbank.accountmanagement">
 	
-	<component name="AccountsService">
-		<implementation.composite name="Accounts"/>
+	<component name="bigbank.AccountManagementComponent">
+		<implementation.composite name="bigbank.account"/>
 	</component>
 
 </composite>

@@ -22,11 +22,11 @@
 		<interface.cpp header="AccountService.h"/>
 	</service>
 
-	<reference name="accountData">
+	<reference name="accountDataService">
 		<interface.cpp header="AccountDataService.h"/>
 	</reference>
 
-	<reference name="stockQuote">
+	<reference name="stockQuoteService">
 		<interface.cpp header="StockQuoteService.h"/>
 	</reference>
 

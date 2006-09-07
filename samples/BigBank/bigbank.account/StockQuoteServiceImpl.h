@@ -17,25 +17,20 @@
 
 #include "StockQuoteService.h"
 
-
-namespace com
+namespace services
 {
-    namespace bigbank
+    namespace stockquote
     {
-        namespace stockquote
+
+        /**
+         *  StockQuoteServiceImpl component implementation class
+         */
+        class StockQuoteServiceImpl : public StockQuoteService
         {
-
-    /*
-     *  StockQuote interface
-     */
-
-            class StockQuoteServiceImpl : public StockQuoteService {
 	    public:
-		virtual float getQuote(const char* symbol);
-
-	};
-	
-
-}
-} 		 
-} // namespace;
+        
+		  virtual float getQuote(const char* symbol);
+    	};
+        
+    } // End stockquote	 
+} // End services

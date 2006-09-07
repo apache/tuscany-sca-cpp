@@ -6,7 +6,7 @@ prgbin_SCRIPTS = runwsclient.sh
 EXTRA_DIST = runwsclient.sh
 
 AM_CPPFLAGS = $(CPPFLAGS)
-account_wsclient_SOURCES = axis2_Account_stub.cpp WSAccountClient.cpp
+account_wsclient_SOURCES = axis2_Account_stub.cpp AccountWSClient.cpp
 noinst_HEADERS = *.h
 
 account_wsclient_LDADD   =  -L$(AXIS2C_HOME)/lib \

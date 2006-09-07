@@ -15,26 +15,20 @@
  *  limitations under the License.
  */
 
-
-namespace com
+namespace services
 {
-    namespace bigbank
+    namespace stockquote
     {
-        namespace stockquote
+        /**
+         *  StockQuoteService business interface
+         */
+		class StockQuoteService
         {
+		public:
 
-    /*
-     *  StockQuote interface
-     */
+			virtual float getQuote(const char* symbol) = 0;
 
-			class StockQuoteService {
-				public:
-				virtual float getQuote(const char* symbol) = 0;
+		};
 
-			};
-
-		}
-	} 		 
-} // namespace;
-
-using namespace com::bigbank::stockquote;
+	} // End stockquote 		 
+} // End services
