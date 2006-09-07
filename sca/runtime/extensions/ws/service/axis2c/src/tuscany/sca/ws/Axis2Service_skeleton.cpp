@@ -36,6 +36,8 @@ using commonj::sdo_axiom::AxiomHelper;
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/CompositeService.h"
 #include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/WSDLDefinition.h"
+#include "tuscany/sca/model/WSDLOperation.h"
 #include "tuscany/sca/core/TuscanyRuntime.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Utils.h"
@@ -242,7 +244,31 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has request OM: %s\n", om_str);
                     }
 
-                    DataObjectPtr inputDataObject = axiomHelper->toSdo(node, dataFactory);
+                    // Get the WS binding
+                    WSReferenceBinding* binding = (WSReferenceBinding*)compositeService->getReference()->getBinding();
+                    string portNamespace = binding->getWSDLNamespaceURL();
+                    
+                    // Lookup the WSDL model from the composite, keyed on the namespace 
+                    // (the wsdl will have been loaded at startup)
+                    Composite* composite = compositeService->getComposite();
+                    WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(portNamespace);
+                    if (wsdlDefinition == 0)
+                    {
+                        string msg = "WSDL not found for " + portNamespace;
+                        throw SystemConfigurationException(msg.c_str());
+                    }
+                    
+                    // Find the target operation in the wsdl port type.
+                    const WSDLOperation& wsdlOperation =  wsdlDefinition->findOperation(
+                        binding->getServiceName(),
+                        binding->getPortName(),
+                        op_name);
+                    
+                    // Get the input namespace
+                    const char* inputNamespace = wsdlOperation.getInputTypeUri().c_str();
+
+                    // Convert the input AXIOM node to an SDO DataObject
+                    DataObjectPtr inputDataObject = axiomHelper->toSdo(node, dataFactory, inputNamespace);
 
                     //printf("Axis2ServiceType inputDataObject: (%d)\n", inputDataObject);
 
@@ -261,8 +287,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     //  Dispatch to the WS proxy
                     //
                     
-                    WSReferenceBinding* referenceBinding = (WSReferenceBinding*)compositeService->getReference()->getBinding();
-                    WSServiceProxy* proxy = (WSServiceProxy*)referenceBinding->getServiceProxy();
+                    WSServiceProxy* proxy = (WSServiceProxy*)binding->getServiceProxy();
                     DataObjectPtr outputDataObject = proxy->invoke(op_name, inputDataObject);
 
                     //std::cout << "Axis2ServiceType outputDataObject:" << outputDataObject;

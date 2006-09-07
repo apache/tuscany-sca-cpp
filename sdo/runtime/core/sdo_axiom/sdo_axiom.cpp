@@ -169,7 +169,8 @@ namespace commonj
         }
 
         DataObjectPtr AxiomHelper::toSdo(axiom_document_t* document,
-            DataFactoryPtr factory)
+            DataFactoryPtr factory,
+            const char* targetNamespaceURI)
         {
         
             if (!the_env)
@@ -181,11 +182,12 @@ namespace commonj
             axiom_node_t* root_node = 
                 AXIOM_DOCUMENT_GET_ROOT_ELEMENT(document, the_env);
 
-            return toSdo(root_node,factory);
+            return toSdo(root_node,factory, targetNamespaceURI);
         }
  
         DataObjectPtr AxiomHelper::toSdo(axiom_node_t* root_node,
-                                DataFactoryPtr factory)
+                                DataFactoryPtr factory,
+                                const char* targetNamespaceURI)
         {
         
             if (!the_env)
@@ -214,7 +216,7 @@ namespace commonj
     
             axis2_char_t* buffer = (axis2_char_t*)AXIOM_XML_WRITER_GET_XML(writer, the_env);
 
-            XMLDocumentPtr theXMLDocument = helper->load(buffer);
+            XMLDocumentPtr theXMLDocument = helper->load(buffer, targetNamespaceURI);
 
             if (theXMLDocument != 0)
             {

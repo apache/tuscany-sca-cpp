@@ -56,8 +56,8 @@ namespace commonj
             SDO_AXIOM_API axiom_document_t*  toAxiomDoc(DataObjectPtr dob);
             SDO_AXIOM_API axiom_node_t*      toAxiomNode(DataObjectPtr dob);
 
-            SDO_AXIOM_API DataObjectPtr  toSdo(axiom_document_t* doc,DataFactoryPtr factory);
-            SDO_AXIOM_API DataObjectPtr  toSdo(axiom_node_t* root_node,DataFactoryPtr factory);
+            SDO_AXIOM_API DataObjectPtr  toSdo(axiom_document_t* doc, DataFactoryPtr factory, const char* targetNamespaceURI=0);
+            SDO_AXIOM_API DataObjectPtr  toSdo(axiom_node_t* root_node, DataFactoryPtr factory, const char* targetNamespaceURI=0);
 
             SDO_AXIOM_API axis2_env_t* getEnv();
 
