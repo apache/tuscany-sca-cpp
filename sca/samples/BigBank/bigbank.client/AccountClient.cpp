@@ -26,7 +26,7 @@
 
 using namespace osoa::sca;
 using namespace std;
-using namespace com::bigbank::account;
+using namespace services::account;
 using namespace commonj::sdo;
 
 int main(int argc, char* argv[])
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 	
     if (argc != 2)
     {
-        cout << "AccountClient: Argument must be the name of the account" << endl;
+        cout << "account_client: Argument must be the name of the account" << endl;
     	return 0;
     }
 	try
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
             (AccountService*) myContext.locateService("AccountServiceComponent");
 		if (accountService == 0)
 		{
-			cout << "AccountClient: Unable to find Account service" << endl;
+			cout << "account_client: Unable to find Account service" << endl;
 		}
 		else
 		{
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
             }
 			catch (char* x)
 			{
-				cout << "AccountService: exception caught: " << x << endl;
+				cout << "account_client: exception caught: " << x << endl;
 			}
 		}
 		

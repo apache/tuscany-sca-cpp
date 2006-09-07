@@ -15,47 +15,43 @@
  *  limitations under the License.
  */
 
-
 #include "AccountDataService.h"
 
-
-namespace com
+namespace services
 {
-    namespace bigbank
+    namespace accountdata
     {
-        namespace account
+
+        /**
+         *  AccountDataServiceImpl component implementation class
+         */
+        class AccountDataServiceImpl : public AccountDataService
         {
+        public:
 
-    /*
-     *  AccountDataService C interface
-     */
-
-        class AccountDataServiceImpl : public AccountDataService {
-
-            public:
             // CheckingAccount is a data object containing
-            // String "accountNumber"
+            // string accountNumber
             // float balance
 
             virtual DataObjectPtr /* CheckingAccount*/ getCheckingAccount(
                 const char *id);
 
             // SavingsAccount is a data object containing
-            // String accountNumber
+            // string accountNumber
             // float balance
 
             virtual DataObjectPtr /* SavingsAccount */ getSavingsAccount(
                 const char *id);
 
             // StockAccount is a data object containing
-            // String accountNumber
-            // String symbol
+            // string accountNumber
+            // string symbol
             // int quantity
 
             virtual DataObjectPtr /* StockAccount */ getStockAccount (
                 const char* id);
 
-            };
-        }
-    }
-}
+        };
+        
+    } // End accountdata
+} // End services

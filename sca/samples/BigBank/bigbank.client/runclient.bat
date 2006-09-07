@@ -14,37 +14,31 @@
 @REM  See the License for the specific language governing permissions and
 @REM  limitations under the License.
 
-rem Runs the client after setting the SCA environment variables to use the
-rem AccountSubsystem
 setlocal
-
-if "%AXIS2C_HOME%" == "" (
-echo "AXIS2C_HOME not set"
-goto end
-)
-echo using Axis2C: %AXIS2C_HOME%
-
-if "%TUSCANY_SDOCPP%" == "" (
-echo "TUSCANY_SDOCPP not set"
-goto end
-)
-echo using TUSCANY_SDOCPP: %TUSCANY_SDOCPP%
 
 if "%TUSCANY_SCACPP%" == "" (
 echo "TUSCANY_SCACPP not set"
 goto end
 )
-echo using TUSCANY_SCACPP: %TUSCANY_SCACPP%
+echo Using SCA installed at %TUSCANY_SCACPP%
+
+if "%TUSCANY_SDOCPP%" == "" (
+echo "TUSCANY_SDOCPP not set"
+goto end
+)
+echo Using SDO installed at %TUSCANY_SDOCPP%
+
+if "%AXIS2C_HOME%" == "" (
+echo "AXIS2C_HOME not set"
+goto end
+)
+echo Using Axis2C installed at %AXIS2C_HOME%
 
 set APFULLDIR=%~d0%~p0
 set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
-
-rem Only need to specify the subsystem (and not the compositeComponent as well) because
-rem there is only one compositeComponent in the subsystem - it is a very simple sample.
-set TUSCANY_SCACPP_DEFAULT_COMPONENT=AccountsService
+set TUSCANY_SCACPP_DEFAULT_COMPONENT=bigbank.AccountManagementComponent
 
 rem Run the client
-
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\cpp\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
 .\AccountClient.exe 1234

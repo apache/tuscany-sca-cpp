@@ -17,10 +17,10 @@
 <service name="BigBank">
     <parameter name="ServiceClass" locked="xsd:false">tuscany_sca_ws_service</parameter>
     <parameter name="TuscanySystemRoot" locked="xsd:false">PATH-TO-TUSCANY-SCA/samples/BigBank/deploy</parameter>
-    <parameter name="TuscanyService" locked="xsd:false">AccountsService/WSAccountService</parameter>
+    <parameter name="TuscanyService" locked="xsd:false">bigbank.AccountManagementComponent/AccountService</parameter>
 
    <description>
-        This is a testing service, named 'BigBank' to test multiple operations in the same service
+        This is the SCA 'BigBank' sample service
    </description>
 
     <operation name="getAccountReport">

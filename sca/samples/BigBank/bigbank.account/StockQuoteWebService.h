@@ -15,27 +15,24 @@
  *  limitations under the License.
  */
 
-#include "commonj/sdo/SDO.h"
-using namespace commonj::sdo;
-
-
-namespace com
+namespace services
 {
-    namespace bigbank
+    namespace stockquote
     {
-        namespace stockquote
+
+        /**
+         * StockQuoteWebService business interface
+         * 
+         * This is the interface of the Web service used to get
+         * live stock quotes.
+         */
+		class StockQuoteWebService
         {
+		public:
+		
+        	virtual const char* GetQuote(const char* symbol) = 0;
 
-    /*
-     *  StockQuote interface
-     */
-
-			class StockQuoteWebService {
-				public:
-				virtual const char* GetQuote(const char* symbol) = 0;
-
-			};
-
-		}
-	} 		 
-} // namespace;
+		};
+        
+	} // End stockquote 		 
+} // End services

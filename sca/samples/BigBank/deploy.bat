@@ -1,35 +1,35 @@
 if not exist deploy mkdir deploy
 if not exist deploy\packages mkdir deploy\packages
-if not exist deploy\packages\Accounts mkdir deploy\packages\Accounts
+if not exist deploy\packages\bigbank.account mkdir deploy\packages\bigbank.account
 if not exist deploy\configuration mkdir deploy\configuration
-if not exist deploy\configuration\Accounts mkdir deploy\configuration\Accounts
+if not exist deploy\configuration\bigbank.account mkdir deploy\configuration\bigbank.accountmanagement
 if not exist deploy\bin mkdir deploy\bin
 
-copy Accounts\Debug\Accounts.dll deploy\packages\Accounts
-copy Accounts\Debug\Accounts.pdb deploy\packages\Accounts
-copy Accounts\AccountServiceImpl.h deploy\packages\Accounts
-copy Accounts\AccountService.h deploy\packages\Accounts
-copy Accounts\AccountDataServiceImpl.h deploy\packages\Accounts
-copy Accounts\AccountDataService.h deploy\packages\Accounts
-copy Accounts\StockQuoteService.h deploy\packages\Accounts
-copy Accounts\StockQuoteServiceImpl.h deploy\packages\Accounts
-copy Accounts\StockQuoteWebService.h deploy\packages\Accounts
-copy Accounts\Accounts.composite deploy\packages\Accounts
-copy Accounts\AccountServiceImpl.componentType deploy\packages\Accounts
-copy Accounts\AccountDataServiceImpl.componentType deploy\packages\Accounts
-copy Accounts\StockQuoteServiceImpl.componentType deploy\packages\Accounts
-copy Accounts\AccountService.wsdl deploy\packages\Accounts
-copy Accounts\StockQuoteService.wsdl deploy\packages\Accounts
-copy Accounts\StockQuoteTypes.xsd deploy\packages\Accounts
+copy bigbank.account\Debug\Account.dll deploy\packages\bigbank.account
+copy bigbank.account\Debug\Account.pdb deploy\packages\bigbank.account
+copy bigbank.account\AccountServiceImpl.h deploy\packages\bigbank.account
+copy bigbank.account\AccountService.h deploy\packages\bigbank.account
+copy bigbank.account\AccountDataServiceImpl.h deploy\packages\bigbank.account
+copy bigbank.account\AccountDataService.h deploy\packages\bigbank.account
+copy bigbank.account\StockQuoteService.h deploy\packages\bigbank.account
+copy bigbank.account\StockQuoteServiceImpl.h deploy\packages\bigbank.account
+copy bigbank.account\StockQuoteWebService.h deploy\packages\bigbank.account
+copy bigbank.account\bigbank.account.composite deploy\packages\bigbank.account
+copy bigbank.account\AccountServiceImpl.componentType deploy\packages\bigbank.account
+copy bigbank.account\AccountDataServiceImpl.componentType deploy\packages\bigbank.account
+copy bigbank.account\StockQuoteServiceImpl.componentType deploy\packages\bigbank.account
+copy bigbank.account\AccountService.wsdl deploy\packages\bigbank.account
+copy bigbank.account\StockQuoteService.wsdl deploy\packages\bigbank.account
+copy bigbank.account\StockQuoteTypes.xsd deploy\packages\bigbank.account
 
-copy BigBankSubsystem\BigBankSubsystem.composite deploy\configuration\Accounts
+copy bigbank.accountmanagement\bigbank.accountmanagement.composite deploy\configuration\bigbank.accountmanagement
 
-copy AccountClient\Debug\AccountClient.exe deploy\bin
-copy AccountClient\Debug\AccountClient.pdb deploy\bin
-copy AccountClient\runclient.cmd deploy\bin
+copy bigbank.client\Debug\account_client.exe deploy\bin
+copy bigbank.client\Debug\account_client.pdb deploy\bin
+copy bigbank.client\runclient.cmd deploy\bin
 
-copy WSAccountClient\Debug\WSAccountClient.exe deploy\bin
-copy WSAccountClient\Debug\WSAccountClient.pdb deploy\bin
-copy WSAccountClient\runwsclient.cmd deploy\bin
+copy bigbank.wsclient\Debug\account_wsclient.exe deploy\bin
+copy bigbank.wsclient\Debug\account_wsclient.pdb deploy\bin
+copy bigbank.wsclient\runwsclient.cmd deploy\bin
 
 
