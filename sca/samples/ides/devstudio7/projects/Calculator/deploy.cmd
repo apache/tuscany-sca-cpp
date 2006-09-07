@@ -33,29 +33,28 @@ set destinationPath=%2
 )
 
 if not exist %destinationPath%\packages mkdir %destinationPath%\packages 
-if not exist %destinationPath%\packages\CalculatorComposite mkdir %destinationPath%\packages\CalculatorComposite
+if not exist %destinationPath%\packages\sample.calculator mkdir %destinationPath%\packages\sample.calculator
 
-copy %sourcePath%\CalculatorComposite\*.componentType %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\*.composite %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\Calculator.h %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\CalculatorImpl.h %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\DivideService.h %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\DivideServiceImpl.h %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\DivideServiceImpl.py %destinationPath%\packages\CalculatorComposite
-copy %sourcePath%\CalculatorComposite\Calculator.wsdl %destinationPath%\packages\CalculatorComposite
-copy %currentPath%\Calculator\%buildMode%\CalculatorComposite.dll %destinationPath%\packages\CalculatorComposite
+copy %sourcePath%\sample.calculator\*.componentType %destinationPath%\packages\sample.calculator
+copy %sourcePath%\sample.calculator\*.composite %destinationPath%\packages\sample.calculator
+copy %sourcePath%\sample.calculator\Calculator.h %destinationPath%\packages\sample.calculator
+copy %sourcePath%\sample.calculator\CalculatorImpl.h %destinationPath%\packages\sample.calculator
+copy %sourcePath%\sample.calculator\Divide.h %destinationPath%\packages\sample.calculator
+copy %sourcePath%\sample.calculator\DivideImpl.h %destinationPath%\packages\sample.calculator
+copy %sourcePath%\sample.calculator\Calculator.wsdl %destinationPath%\packages\sample.calculator
+copy %currentPath%\Calculator\%buildMode%\Calculator.dll %destinationPath%\packages\sample.calculator
 
 if not exist %destinationPath%\bin mkdir %destinationPath%\bin
-copy %currentPath%\Client\%buildMode%\Client.exe %destinationPath%\bin
+copy %currentPath%\Client\%buildMode%\calculator_client.exe %destinationPath%\bin
 if %buildMode% == Debug (
-copy %currentPath%\Client\%buildMode%\Client.pdb %destinationPath%\bin
+copy %currentPath%\Client\%buildMode%\calculator_client.pdb %destinationPath%\bin
 )
-copy %sourcePath%\Client\runclient.cmd   %destinationPath%\bin
+copy %sourcePath%\sample.calculator.client\runclient.bat   %destinationPath%\bin
 
 
 if not exist %destinationPath%\configuration mkdir %destinationPath%\configuration
-if not exist %destinationPath%\configuration\CalculatorSubsystem mkdir %destinationPath%\configuration\CalculatorSubsystem
+if not exist %destinationPath%\configuration\sample.calculator.solution mkdir %destinationPath%\configuration\sample.calculator.solution
 
-copy %sourcePath%\CalculatorSubsystem\*.composite %destinationPath%\configuration\CalculatorSubsystem
+copy %sourcePath%\sample.calculator.solution\*.composite %destinationPath%\configuration\sample.calculator.solution
 
 endlocal
