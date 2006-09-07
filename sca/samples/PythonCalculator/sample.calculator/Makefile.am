@@ -11,8 +11,8 @@ ${BUILT_SOURCES}: sample.calculator.composite
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
 composite_LTLIBRARIES = libCalculator.la
-composite_DATA = *.composite *.componentType *.wsdl *.py services.xml
-EXTRA_DIST = *.composite *.componentType *.wsdl *.py services.xml
+composite_DATA = *.composite *.componentType *.wsdl *.py
+EXTRA_DIST = *.composite *.componentType *.wsdl *.py
 
 libCalculator_la_SOURCES = \
 CalculatorImpl.cpp \
