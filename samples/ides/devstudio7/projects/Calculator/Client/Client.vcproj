@@ -39,12 +39,12 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib"
-				OutputFile="./Debug/Client.exe"
+				OutputFile="./Debug/calculator_client.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/Client.pdb"
+				ProgramDatabaseFile=".\Debug/calculator_client.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -126,10 +126,10 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\..\..\..\Calculator\Client\Calc.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator.client\Calculator.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\Client\Calculator.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator.client\CalculatorClient.cpp">
 			</File>
 		</Filter>
 		<Filter

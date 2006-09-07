@@ -40,7 +40,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib tuscany_sca_cpp.lib"
-				OutputFile=".\Debug/CalculatorComposite.dll"
+				OutputFile=".\Debug/Calculator.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib"
@@ -57,7 +57,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -140,90 +141,68 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\Calculator.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\Calculator.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_CalculatorService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_CalculatorService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_CalculatorService_Wrapper.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_CalculatorService_Wrapper.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_divideService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_divideService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_divideService_Proxy.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_divideService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideService.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\Divide.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\DivideImpl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\DivideImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.py">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\DivideImpl_DivideService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\DivideImpl_DivideService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\DivideImpl_DivideService_Wrapper.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\DivideImpl_DivideService_Wrapper.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\Calculator.wsdl">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCustomBuildTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCustomBuildTool"/>
-				</FileConfiguration>
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\Calculator.wsdl">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorComposite.composite">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl.componentType">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.componentType">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\DivideImpl.componentType">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorSubsystem\CalculatorSubsystem.composite">
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.componentType">
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\services.xml">
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Calculator\CalculatorComposite\Tuscany-model.config">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator\sample.calculator.composite">
 			</File>
 		</Filter>
 		<Filter

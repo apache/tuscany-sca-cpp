@@ -40,12 +40,12 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib"
-				OutputFile=".\Debug/WSClient.exe"
+				OutputFile=".\Debug/calculator_wsclient.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(AXIS2C_HOME)\lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/WSClient.pdb"
+				ProgramDatabaseFile=".\Debug/calculator_wsclient.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -126,13 +126,13 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\..\..\..\Calculator\WSClient\axis2_Calculator_stub.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator.wsclient\axis2_Calculator_stub.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\WSClient\axis2_Calculator_stub.h">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator.wsclient\axis2_Calculator_stub.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Calculator\WSClient\Calculator_Client.cpp">
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator.wsclient\CalculatorWSClient.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -142,6 +142,9 @@
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			<File
+				RelativePath="..\..\..\..\..\Calculator\sample.calculator.wsclient\services.xml">
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\BuildInstructions.txt">
