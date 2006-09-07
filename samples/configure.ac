@@ -30,9 +30,9 @@ AC_CONFIG_FILES([Makefile
                  PythonCalculator/sample.calculator.client/Makefile
                  PythonCalculator/sample.calculator.wsclient/Makefile
                  BigBank/Makefile
-                 BigBank/Accounts/Makefile
-                 BigBank/WSAccountClient/Makefile
-                 BigBank/AccountClient/Makefile
+                 BigBank/bigbank.account/Makefile
+                 BigBank/bigbank.client/Makefile
+                 BigBank/bigbank.wsclient/Makefile
                  ])
 AC_OUTPUT
 
