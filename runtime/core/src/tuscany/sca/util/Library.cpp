@@ -76,23 +76,29 @@ namespace tuscany
             string msg;
 #if defined(WIN32)  || defined (_WINDOWS)
             int l = name.length();
+            string dllName;
             if (l>=4 && name.substr(l-4, 4)==".dll")
             {
-                hDLL = LoadLibrary(name.c_str());
+                dllName = name;
             }
             else
             {
-                hDLL = LoadLibrary((name+".dll").c_str());
+                dllName = name+".dll";
+            }
+            hDLL = LoadLibrary(dllName.c_str());
+            if (hDLL == NULL)
+            {
+                msg = "Unable to load library: " + dllName;
             }
 #else
             int l = name.length();
+            string soName;
             if (l>=3 && name.substr(l-3, 3)==".so")
             {
-                hDLL = dlopen(name.c_str(), RTLD_NOW);
+                soName = name;
             }
             else
             {
-                string soName;
                 int s = name.rfind("/");
                 if (s == name.length())
                 {
@@ -103,13 +109,16 @@ namespace tuscany
                     s++;
                     soName = name.substr(0, s) + "lib" + name.substr(s, name.length()-s) + ".so";
                 }
-                hDLL = dlopen(soName.c_str(), RTLD_NOW);
+            }
+            hDLL = dlopen(soName.c_str(), RTLD_NOW);
+            if (hDLL == NULL)
+            {
+                msg = "Unable to load library: " + soName + ": " + dlerror();
             }
 #endif
             if (hDLL == NULL)
             {
                 LOGERROR_1(1, "Library::load: Unable to load library %s", name.c_str());
-                msg = "Unable to load library: " + name;
                 throw TuscanyRuntimeException(msg.c_str());
             }    
         }
