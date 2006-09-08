@@ -29,9 +29,9 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/ServiceType.h"
+#include "tuscany/sca/model/Interface.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/php/model/PHPImplementation.h"
-#include "tuscany/sca/cpp/model/CPPInterface.h"
 
 #include <php_embed.h>
 
@@ -98,8 +98,8 @@ namespace tuscany
                 LOGENTRY(1,"PHPServiceWrapper::constructor");
     
                 component = service->getComponent();
-                interf = (CPPInterface*)service->getType()->getInterface();
-                remotable = interf->getRemotable();                
+                interf = service->getType()->getInterface();
+                remotable = interf->isRemotable();                
 
                  // -----------------------------------------------
                 // Get the implementation for the target component

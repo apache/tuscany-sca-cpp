@@ -54,6 +54,8 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/python/src/Makefile
                  runtime/extensions/ruby/Makefile
                  runtime/extensions/ruby/src/Makefile
+                 runtime/extensions/php/Makefile
+                 runtime/extensions/php/src/Makefile
                  runtime/core/test/Makefile
                  runtime/core/test/CustomerInfo/Makefile
                  runtime/core/test/MyValue/Makefile

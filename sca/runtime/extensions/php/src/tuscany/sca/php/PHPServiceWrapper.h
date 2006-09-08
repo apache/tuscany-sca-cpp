@@ -25,11 +25,9 @@
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
-
-#include "tuscany/sca/cpp/model/CPPInterface.h"
+#include "tuscany/sca/model/Interface.h"
 
 using namespace tuscany::sca::model;
-using tuscany::sca::cpp::CPPInterface;
 
 
 namespace tuscany
@@ -98,7 +96,7 @@ namespace tuscany
                 /**
                  * A pointer to the interface which the service exposes.
                  */
-                CPPInterface* interf;
+                Interface* interf;
 
             };
             
