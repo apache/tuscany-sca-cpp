@@ -54,13 +54,6 @@ namespace tuscany
         // ==========
         CompositeContextImpl::~CompositeContextImpl()
         {
-            // --------------------------------------------
-            // Delete the proxies served up by this context
-            // --------------------------------------------
-            for (PROXIES::iterator iter = proxies.begin(); iter != proxies.end(); iter++)
-            {
-                delete *iter;
-            }
         }
 
         // ===========================================================================
@@ -89,7 +82,6 @@ namespace tuscany
             // The locate service API is used from CPP clients so we are using
             // our default service proxy here
             CPPServiceProxy* serviceProxy =  new CPPServiceProxy(service);
-            proxies.push_back(serviceProxy);
             LOGEXIT(1, "CompositeContextImpl::locateService");
             return serviceProxy->getProxy();
 

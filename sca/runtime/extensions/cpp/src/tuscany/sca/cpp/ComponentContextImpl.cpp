@@ -47,13 +47,6 @@ namespace tuscany
         // ==========
         ComponentContextImpl::~ComponentContextImpl()
         {
-            // --------------------------------------------
-            // Delete the proxies served up by this context
-            // --------------------------------------------
-            for (PROXIES::iterator iter = proxies.begin(); iter != proxies.end(); iter++)
-            {
-                delete *iter;
-            }
         }
         
         
@@ -83,7 +76,6 @@ namespace tuscany
                 message = message + referenceName + " not wired";
                 throw ServiceNotFoundException(message.c_str());
             }
-            proxies.push_back(serviceProxy);
             
             CPPServiceProxy::PROXIES proxies = serviceProxy->getProxies();
             ServiceList services(proxies.size());
@@ -144,7 +136,6 @@ namespace tuscany
             }
             
             void* service = serviceProxy->getProxy();
-            proxies.push_back(serviceProxy);
             return service;
             
         } // End getService()

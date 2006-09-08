@@ -113,12 +113,6 @@ namespace tuscany
              */
             ServiceWrapper* getServiceWrapper(Service* target);
 
-            /**
-             * A vector of the proxies created by this ComponentContext. The 
-             * proxies will be destroyed when the ComponentContext is destroyed.
-             */
-            typedef vector<CPPServiceProxy*> PROXIES;
-            PROXIES proxies;
         };
 
         } // End namespaca cpp

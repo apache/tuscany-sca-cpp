@@ -82,12 +82,6 @@ namespace tuscany
              */
             Component* component;
 
-            /**
-             * Vector of proxies created from calls to the locateService
-             * method.
-             */
-            typedef vector<CPPServiceProxy*> PROXIES;
-            PROXIES proxies;
         };
 
        } // End namespace cpp
