@@ -30,11 +30,6 @@ namespace services
         {
         public:
         
-            AccountServiceImpl();
-            virtual ~AccountServiceImpl();
-        
-            // public business methods
-            
             virtual DataObjectPtr /*AccountReport*/
                 getAccountReport(const char* customerID);
         
