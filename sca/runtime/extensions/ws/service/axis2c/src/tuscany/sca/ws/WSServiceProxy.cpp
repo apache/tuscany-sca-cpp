@@ -58,9 +58,6 @@ namespace tuscany
                 WSReferenceBinding* referenceBinding = (WSReferenceBinding*)reference->getBinding();
                 serviceWrapper = referenceBinding->getTargetServiceBinding()->getServiceWrapper();
                 
-                // getProxy and getProxies will return "this"
-                proxies.push_back(this);
-    
                 LOGEXIT(1,"WSServiceProxy::constructor");
             }
             
@@ -71,16 +68,6 @@ namespace tuscany
             {
                 LOGENTRY(1,"WSServiceProxy::destructor");
                 LOGEXIT(1,"WSServiceProxy::destructor");
-            }
-            
-            ServiceProxy::PROXIES WSServiceProxy::getProxies()
-            {
-                return proxies;
-            }
-            
-            void* WSServiceProxy::getProxy()
-            {
-                return this;
             }
             
             ///

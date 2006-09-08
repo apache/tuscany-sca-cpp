@@ -29,7 +29,7 @@ using std::vector;
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
-#include "tuscany/sca/core/ServiceProxy.h"
+#include "tuscany/sca/cpp/CPPServiceProxy.h"
 
 using namespace osoa::sca;
         
@@ -113,12 +113,11 @@ namespace tuscany
              */
             ServiceWrapper* getServiceWrapper(Service* target);
 
-            
-            typedef vector<ServiceProxy*> PROXIES;
             /**
              * A vector of the proxies created by this ComponentContext. The 
              * proxies will be destroyed when the ComponentContext is destroyed.
              */
+            typedef vector<CPPServiceProxy*> PROXIES;
             PROXIES proxies;
         };
 

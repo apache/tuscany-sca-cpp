@@ -70,18 +70,6 @@ namespace tuscany
                 virtual ~WSServiceProxy();
     
                 /**
-                 * Return an instance of the proxy created for this particular component and reference.
-                 * @return The proxy.
-                 */
-                virtual void* getProxy();
-                
-                /**
-                 * Return the proxies created for this particular component and reference.
-                 * @return The proxies.
-                 */
-                virtual PROXIES getProxies();
-
-                /**
                  * Invoke the specified operation
                  */
                 DataObjectPtr invoke(const char* operationName, DataObjectPtr inputDataObject);    
@@ -95,11 +83,6 @@ namespace tuscany
                  */
                  ServiceWrapper* serviceWrapper;
             
-                /**
-                 * Holds the instances of the WS proxies.
-                 */ 
-                PROXIES proxies;
-    
             };
             
         } // End namespace ws

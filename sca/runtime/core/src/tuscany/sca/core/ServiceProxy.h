@@ -64,19 +64,6 @@ namespace tuscany
              */
             Reference* getReference() const { return reference; };
 
-            /**
-             * Return an instance of the proxy created for this particular component and reference.
-             * @return The proxy.
-             */
-            virtual void* getProxy() = 0;
-            
-            /**
-             * Return a list of the proxies created for this particular component and reference.
-             * @return The proxies.
-             */
-            typedef vector<void*> PROXIES;
-            virtual PROXIES getProxies() = 0;
-            
         private:
         
             /**

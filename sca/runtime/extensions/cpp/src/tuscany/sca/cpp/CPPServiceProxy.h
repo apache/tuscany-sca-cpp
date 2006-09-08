@@ -78,6 +78,7 @@ namespace tuscany
                  * Return the proxies created for this particular component and reference.
                  * @return The proxies.
                  */
+                typedef vector<void*> PROXIES;
                 virtual PROXIES getProxies();
     
             private:

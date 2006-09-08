@@ -59,7 +59,7 @@ namespace tuscany
             // --------------------------------------------
             for (PROXIES::iterator iter = proxies.begin(); iter != proxies.end(); iter++)
             {
-                delete (ServiceProxy*)*iter;
+                delete *iter;
             }
         }
 
@@ -88,8 +88,7 @@ namespace tuscany
 
             // The locate service API is used from CPP clients so we are using
             // our default service proxy here
-            //TODO is that right?
-            ServiceProxy* serviceProxy =  new cpp::CPPServiceProxy(service);
+            CPPServiceProxy* serviceProxy =  new CPPServiceProxy(service);
             proxies.push_back(serviceProxy);
             LOGEXIT(1, "CompositeContextImpl::locateService");
             return serviceProxy->getProxy();
