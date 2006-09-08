@@ -67,18 +67,6 @@ namespace tuscany
                  */
                 virtual ~RubyServiceProxy();
     
-                /**
-                 * Return an instance of the proxy created for this particular component and reference.
-                 * @return The proxy.
-                 */
-                virtual void* getProxy();
-                
-                /**
-                 * Return the proxies created for this particular component and reference.
-                 * @return The proxies.
-                 */
-                virtual PROXIES getProxies();
-    
             private:
     
                 /**
@@ -86,11 +74,6 @@ namespace tuscany
                  */
                  ServiceWrapper* serviceWrapper;
             
-                /**
-                 * Holds the instances of the Ruby proxies.
-                 */ 
-                PROXIES proxies;
-    
             };
             
         } // End namespace ruby

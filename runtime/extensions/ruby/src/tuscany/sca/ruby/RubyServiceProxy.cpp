@@ -58,9 +58,6 @@ namespace tuscany
                 
                 serviceWrapper = referenceBinding->getTargetServiceBinding()->getServiceWrapper();
     
-                // getProxy and getProxies will return "this"
-                proxies.push_back(this);
-    
                 LOGEXIT(1,"RubyServiceProxy::constructor");
             }
             
@@ -81,9 +78,6 @@ namespace tuscany
                 // Get the service wrapper
                 serviceWrapper = service->getBinding()->getServiceWrapper();
     
-                // getProxy and getProxies will return "this"
-                proxies.push_back(this);
-    
                 LOGEXIT(1,"RubyServiceProxy::constructor");
             }
             
@@ -96,23 +90,6 @@ namespace tuscany
                 LOGEXIT(1,"RubyServiceProxy::destructor");
             }
             
-            ServiceProxy::PROXIES RubyServiceProxy::getProxies()
-            {
-                return proxies;
-            }
-            
-            void* RubyServiceProxy::getProxy()
-            {
-                if (proxies.size() != 0)
-                {
-                    return proxies[0];
-                }
-                else
-                {
-                    return NULL;
-                }
-            }
-    
         } // End namespace ruby        
     } // End namespace sca
 } // End namespace tuscany

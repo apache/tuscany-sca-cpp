@@ -169,7 +169,7 @@ namespace tuscany
                 LOGEXIT(1,"CPPServiceProxy::destructor");
             }
             
-            ServiceProxy::PROXIES CPPServiceProxy::getProxies()
+            CPPServiceProxy::PROXIES CPPServiceProxy::getProxies()
             {
                 return proxies;
             }

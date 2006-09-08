@@ -26,7 +26,7 @@ using std::vector;
 #include "osoa/sca/CompositeContext.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/core/ServiceProxy.h"
+#include "tuscany/sca/cpp/CPPServiceProxy.h"
 
 using namespace osoa::sca;
 
@@ -86,7 +86,7 @@ namespace tuscany
              * Vector of proxies created from calls to the locateService
              * method.
              */
-            typedef vector<tuscany::sca::ServiceProxy*> PROXIES;
+            typedef vector<CPPServiceProxy*> PROXIES;
             PROXIES proxies;
         };
 

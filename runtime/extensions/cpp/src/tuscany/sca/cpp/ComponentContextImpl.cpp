@@ -52,7 +52,7 @@ namespace tuscany
             // --------------------------------------------
             for (PROXIES::iterator iter = proxies.begin(); iter != proxies.end(); iter++)
             {
-                delete (ServiceProxy*)*iter;
+                delete *iter;
             }
         }
         
@@ -76,7 +76,7 @@ namespace tuscany
             }
 
             // Get a service proxy from the binding configured on the reference
-            ServiceProxy* serviceProxy =  reference->getBinding()->getServiceProxy();
+            CPPServiceProxy* serviceProxy =  (CPPServiceProxy*)reference->getBinding()->getServiceProxy();
             if (serviceProxy == NULL)
             {
                 string message = "Reference ";
@@ -85,9 +85,9 @@ namespace tuscany
             }
             proxies.push_back(serviceProxy);
             
-            ServiceProxy::PROXIES proxies = serviceProxy->getProxies();
+            CPPServiceProxy::PROXIES proxies = serviceProxy->getProxies();
             ServiceList services(proxies.size());
-            for (ServiceProxy::PROXIES::const_iterator iter = proxies.begin();
+            for (CPPServiceProxy::PROXIES::const_iterator iter = proxies.begin();
             iter!=proxies.end();
             iter++)
             {
@@ -135,7 +135,7 @@ namespace tuscany
             } // end switch
 
             // Get a service proxy from the binding configured on the reference
-            ServiceProxy* serviceProxy =  reference->getBinding()->getServiceProxy();
+            CPPServiceProxy* serviceProxy =  (CPPServiceProxy*)reference->getBinding()->getServiceProxy();
             if (serviceProxy == NULL)
             {
                 string message = "Reference ";
