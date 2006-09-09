@@ -48,8 +48,8 @@ namespace tuscany
                 virtual const string& getExtensionName() {return extensionName;}
                 
                 /**
-                * return the QName of schema elemant for this implementation extension
-                * (e.g. "http://www.osoa.org/xmlns/sca/1.0#implementation.cpp")
+                * return the QName of schema type for this interface extension
+                * (e.g. "http://www.osoa.org/xmlns/sca/1.0#interface.cpp")
                 */
                 virtual const string& getExtensionTypeQName() {return typeQName;}
  

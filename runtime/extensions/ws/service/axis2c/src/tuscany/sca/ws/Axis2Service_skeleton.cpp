@@ -36,8 +36,12 @@ using commonj::sdo_axiom::AxiomHelper;
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/CompositeService.h"
 #include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/WSDLOperation.h"
+#include "tuscany/sca/model/WSDLInterface.h" 
+#include "tuscany/sca/model/Interface.h" 
 #include "tuscany/sca/core/TuscanyRuntime.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Utils.h"
@@ -244,31 +248,93 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has request OM: %s\n", om_str);
                     }
 
-                    // Get the WS binding
-                    WSReferenceBinding* binding = (WSReferenceBinding*)compositeService->getReference()->getBinding();
-                    string portNamespace = binding->getWSDLNamespaceURL();
-                    
-                    // Lookup the WSDL model from the composite, keyed on the namespace 
-                    // (the wsdl will have been loaded at startup)
+                    // Get the WS binding and the WSDL operation
                     Composite* composite = compositeService->getComposite();
-                    WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(portNamespace);
-                    if (wsdlDefinition == 0)
+                    Reference* reference = compositeService->getReference();
+                    WSReferenceBinding* binding = (WSReferenceBinding*)reference->getBinding();
+                    WSDLOperation wsdlOperation;
+                     
+                    string wsdlNamespace = binding->getWSDLNamespaceURL();
+                    if (wsdlNamespace != "")
                     {
-                        string msg = "WSDL not found for " + portNamespace;
-                        throw SystemConfigurationException(msg.c_str());
+                        
+                        // Lookup the WSDL model from the composite, keyed on the namespace 
+                        // (the wsdl will have been loaded at startup)
+                        WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(wsdlNamespace);
+                        if (wsdlDefinition == 0)
+                        {
+                            AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI,  "WSDL description %s not found\n", wsdlNamespace.c_str());
+                            string msg = "WSDL not found for " + wsdlNamespace;
+                            throw SystemConfigurationException(msg.c_str());
+                        }
+                        
+                        // Find the target operation in the wsdl port type.
+                        try {
+                            wsdlOperation =  wsdlDefinition->findOperation(
+                                binding->getServiceName(),
+                                binding->getPortName(),
+                                op_name);
+                        }
+                        catch(SystemConfigurationException &ex)
+                        {   
+                            AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
+                            throw;
+                        }
+                        
+                    }
+                    else
+                    {
+                        Interface* iface = reference->getType()->getInterface();
+                        if (iface != NULL &&
+                            iface->getInterfaceTypeQName() == WSDLInterface::typeQName)
+                        {
+                            WSDLInterface* wsdlInterface = (WSDLInterface*)iface;
+                            wsdlNamespace = wsdlInterface->getNamespaceURI();
+                            
+                            if (wsdlNamespace != "")
+                            {
+                                
+                                WSDLDefinition* wsdl = composite->findWSDLDefinition(wsdlNamespace);
+                                if (wsdl == 0)
+                                {
+                                    AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "WSDL description %s not found\n", wsdlNamespace.c_str());
+                                    string msg = "WSDL not found for " + wsdlNamespace;
+                                    throw SystemConfigurationException(msg.c_str());
+                                }
+                        
+                                try
+                                {
+                                    wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), op_name);
+                                }
+                                catch(SystemConfigurationException &ex)
+                                {   
+                                    AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
+                                    throw;
+                                }
+                            }
+                        }
                     }
                     
-                    // Find the target operation in the wsdl port type.
-                    const WSDLOperation& wsdlOperation =  wsdlDefinition->findOperation(
-                        binding->getServiceName(),
-                        binding->getPortName(),
-                        op_name);
-                    
-                    // Get the input namespace
-                    const char* inputNamespace = wsdlOperation.getInputTypeUri().c_str();
+                    if (wsdlNamespace == "")
+                    {
+                        
+                        // Create a default document literal wrapped WSDL operation
+                        wsdlNamespace = compositeService->getName();
+                        wsdlOperation = WSDLOperation();
+                        wsdlOperation.setOperationName(op_name);
+                        wsdlOperation.setSoapAction(wsdlNamespace+ "#" +op_name);
+                        wsdlOperation.setEndpoint("");
+                        wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
+                        wsdlOperation.setDocumentStyle(true);
+                        wsdlOperation.setWrappedStyle(true);
+                        wsdlOperation.setEncoded(false);
+                        wsdlOperation.setInputType(wsdlNamespace + "#" + op_name);
+                        wsdlOperation.setOutputType(wsdlNamespace + "#" + op_name + "Response");
+                    }
 
                     // Convert the input AXIOM node to an SDO DataObject
-                    DataObjectPtr inputDataObject = axiomHelper->toSdo(node, dataFactory, inputNamespace);
+                    DataObjectPtr inputDataObject = axiomHelper->toSdo(
+                            node, dataFactory, wsdlOperation.getInputTypeUri().c_str());
 
                     //printf("Axis2ServiceType inputDataObject: (%d)\n", inputDataObject);
 
@@ -288,7 +354,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     //
                     
                     WSServiceProxy* proxy = (WSServiceProxy*)binding->getServiceProxy();
-                    DataObjectPtr outputDataObject = proxy->invoke(op_name, inputDataObject);
+                    DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
 
                     //std::cout << "Axis2ServiceType outputDataObject:" << outputDataObject;
                     //Utils::printDO(outputDataObject);			

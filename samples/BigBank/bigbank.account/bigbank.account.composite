@@ -19,7 +19,9 @@
 
 	<service name="AccountService">
 		<interface.wsdl interface="http://www.bigbank.com/AccountService#wsdl.interface(AccountService)"/>
-		<binding.ws port="http://www.bigbank.com/AccountService#wsdl.endpoint(AccountService/AccountServiceSOAP)"/>
+		<!--  The port is optional -->
+		<!--  <binding.ws port="http://www.bigbank.com/AccountService#wsdl.endpoint(AccountService/AccountServiceSOAP)"/> -->
+		<binding.ws/>
 		<reference>AccountServiceComponent</reference>
 	</service>
 

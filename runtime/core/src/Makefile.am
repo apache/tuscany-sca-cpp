@@ -37,6 +37,7 @@ tuscany/sca/model/Service.cpp \
 tuscany/sca/model/ServiceType.cpp \
 tuscany/sca/model/Wire.cpp \
 tuscany/sca/model/WSDLDefinition.cpp \
+tuscany/sca/model/WSDLInterface.cpp \
 tuscany/sca/model/WSDLOperation.cpp \
 tuscany/sca/util/DefaultLogWriter.cpp \
 tuscany/sca/util/Exceptions.cpp \

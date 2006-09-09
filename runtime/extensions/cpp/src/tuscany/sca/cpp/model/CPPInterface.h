@@ -82,6 +82,12 @@ namespace tuscany
                  */
                 const string& getClass() { return className; }
 
+                /**
+                * return the QName of the schema type for this interface type
+                * (e.g. "http://www.osoa.org/xmlns/sca/1.0#interface.cpp")
+                */
+                virtual const string& getInterfaceTypeQName() { return typeQName; };
+    
            private:
            
                 /**
@@ -99,6 +105,10 @@ namespace tuscany
                  */
                 string className;
 
+                /**
+                 * The QName of the schema type for this interface type.
+                 */
+                static const string typeQName;
             };
             
         } // End namespace cpp

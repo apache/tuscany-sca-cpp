@@ -115,6 +115,7 @@ namespace tuscany
 
                             string soapAction = "";
                             bool documentStyle = true;
+                            bool wrappedStyle = true;
                             bool useEncoded = false;
                             WSDLOperation::soapVersion soapVer = WSDLOperation::SOAP11;
 
@@ -145,6 +146,7 @@ namespace tuscany
                                     if (style != "document")
                                     {
                                         documentStyle = false;
+                                        wrappedStyle = false;
                                     }
  
                                     // get the use
@@ -215,6 +217,7 @@ namespace tuscany
                                     wsdlOp.setEndpoint(targetAddress);
                                     wsdlOp.setSoapVersion(soapVer);
                                     wsdlOp.setDocumentStyle(documentStyle);
+                                    wsdlOp.setWrappedStyle(wrappedStyle);
                                     wsdlOp.setEncoded(useEncoded);
                                     wsdlOp.setInputType(requestType);
                                     wsdlOp.setOutputType(responseType);
@@ -251,8 +254,9 @@ namespace tuscany
                     return iter->second;
                 }
                 
-                string soapAction = "";
+                string soapAction = getNamespace() + "#" + operationName;
                 bool documentStyle = true;
+                bool wrappedStyle = true;
                 bool useEncoded = false;
                 WSDLOperation::soapVersion soapVer = WSDLOperation::SOAP11;
 
@@ -311,6 +315,7 @@ namespace tuscany
                         wsdlOp.setEndpoint("");
                         wsdlOp.setSoapVersion(soapVer);
                         wsdlOp.setDocumentStyle(documentStyle);
+                        wsdlOp.setWrappedStyle(wrappedStyle);
                         wsdlOp.setEncoded(useEncoded);
                         wsdlOp.setInputType(requestType);
                         wsdlOp.setOutputType(responseType);

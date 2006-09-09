@@ -37,8 +37,10 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/WSDLDefinition.h"
+#include "tuscany/sca/model/WSDLInterface.h"
 #include "tuscany/sca/model/WSDLOperation.h"
 
 using namespace tuscany::sca::ws;
@@ -66,31 +68,7 @@ namespace tuscany
             void Axis2Client::invoke(tuscany::sca::Operation& operation)
             {
                 LOGENTRY(1, "Axis2Client::invoke");
-                
-                // From the service ws-binding, get the namespace of the wsdl endpoint
-                Service* service = compositeReference->getService();
-                WSServiceBinding* binding = (WSServiceBinding *)service->getBinding();
-                
-                string portNamespace = binding->getWSDLNamespaceURL();
-                
-                // Lookup the wsdl model from the composite, keyed on the namespace 
-                // (the wsdl will have been loaded at startup)
-                Composite* composite=compositeReference->getComposite();
-                WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(portNamespace);
-                if (wsdlDefinition == 0)
-                {
-                    string msg = "WSDL not found for " + portNamespace;
-                    throw SystemConfigurationException(msg.c_str());
-                }
-                
-                const string& operationName = operation.getName();
-                
-                // Match the operation in Operation to the operation in the wsdl port type.
-                const WSDLOperation& wsdlOperation =  wsdlDefinition->findOperation(
-                    binding->getServiceName(),
-                    binding->getPortName(),
-                    operationName);
-                
+
                 // Initialize Axis2 stuff
                 axis2_allocator_t *allocator = axis2_allocator_init (NULL);
                 axis2_log_t *log = axis2_log_create(allocator, NULL, "tuscany_client.log");
@@ -99,6 +77,93 @@ namespace tuscany
                 env->log->level = AXIS2_LOG_LEVEL_TRACE;
                 axis2_error_init();
                 
+                // Get the WS service binding and WSDLOperation
+                Composite* composite=compositeReference->getComposite();
+                Service* service = compositeReference->getService();
+                WSServiceBinding* binding = (WSServiceBinding *)service->getBinding();
+                const string& operationName = operation.getName();
+                WSDLOperation wsdlOperation;
+                
+                // Get the WSDL namespace
+                string wsdlNamespace = binding->getWSDLNamespaceURL();
+                if (wsdlNamespace != "")
+                {
+                
+                    // Lookup the wsdl model from the composite, keyed on the namespace 
+                    // (the wsdl will have been loaded at startup)
+                    WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(wsdlNamespace);
+                    if (wsdlDefinition == 0)
+                    {
+                        AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI,  "WSDL description %s not found\n", wsdlNamespace.c_str());
+                        string msg = "WSDL not found for " + wsdlNamespace;
+                        throw SystemConfigurationException(msg.c_str());
+                    }
+                    
+                    // Match the operation in Operation to the operation in the wsdl port type.
+                    try
+                    {
+                        wsdlOperation =  wsdlDefinition->findOperation(
+                            binding->getServiceName(),
+                            binding->getPortName(),
+                            operationName);
+                    }
+                    catch(SystemConfigurationException &ex)
+                    {   
+                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
+                        throw;
+                    }
+                    
+                }
+                else
+                {
+                    Interface* iface = service->getType()->getInterface();
+                    if (iface != NULL &&
+                        iface->getInterfaceTypeQName() == WSDLInterface::typeQName)
+                    {
+                        WSDLInterface* wsdlInterface = (WSDLInterface*)iface;
+                        wsdlNamespace = wsdlInterface->getNamespaceURI();
+                        
+                        if (wsdlNamespace != "")
+                        {
+                            
+                            WSDLDefinition* wsdl = composite->findWSDLDefinition(wsdlNamespace);
+                            if (wsdl == 0)
+                            {
+                                AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "WSDL description %s not found\n", wsdlNamespace.c_str());
+                                string msg = "WSDL not found for " + wsdlNamespace;
+                                throw SystemConfigurationException(msg.c_str());
+                            }
+                    
+                            try
+                            {
+                                wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), operationName);
+                            }
+                            catch(SystemConfigurationException &ex)
+                            {   
+                                AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
+                                throw;
+                            }
+                        }
+                    }
+                }
+                
+                if (wsdlNamespace == "")
+                {
+                    
+                    // Create a default document literal wrapped WSDL operation
+                    wsdlNamespace = compositeReference->getName();
+                    wsdlOperation = WSDLOperation();
+                    wsdlOperation.setOperationName(operationName);
+                    wsdlOperation.setSoapAction(wsdlNamespace+ "#" +operationName);
+                    wsdlOperation.setEndpoint("");
+                    wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
+                    wsdlOperation.setDocumentStyle(true);
+                    wsdlOperation.setWrappedStyle(true);
+                    wsdlOperation.setEncoded(false);
+                    wsdlOperation.setInputType(wsdlNamespace + "#" + operationName);
+                    wsdlOperation.setOutputType(wsdlNamespace + "#" + operationName + "Response");
+                }
+                    
                 // Get the target endpoint address
                 // The URI specified in the binding overrides the address specified in
                 // the WSDL

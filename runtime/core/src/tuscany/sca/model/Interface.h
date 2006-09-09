@@ -20,6 +20,10 @@
 #ifndef tuscany_sca_model_interface_h
 #define tuscany_sca_model_interface_h
 
+#include <string>
+
+using namespace std;
+
 namespace tuscany
 {
     namespace sca
@@ -57,6 +61,12 @@ namespace tuscany
                  */
                 SCA_API bool isConversational() const { return conversational; };
                             
+                /**
+                * return the QName of schema type for this interface type
+                * (e.g. "http://www.osoa.org/xmlns/sca/1.0#WSDLInterface")
+                */
+                SCA_API virtual const string& getInterfaceTypeQName() = 0;
+    
             private:
 
                 /**
