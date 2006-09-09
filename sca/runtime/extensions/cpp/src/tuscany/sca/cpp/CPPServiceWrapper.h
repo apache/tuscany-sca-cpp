@@ -25,6 +25,7 @@
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/cpp/model/CPPImplementation.h"
 #include "tuscany/sca/util/Library.h"
 
 using namespace tuscany::sca::model;
@@ -134,9 +135,9 @@ namespace tuscany
                 Interface* interf;
     
                 /**
-                 * Set to true if the service is remotable.
+                 * The component implementation
                  */
-                bool remotable;
+                 CPPImplementation* implementation;
                 
                 /**
                  * Pointer to the loaded library which contains the component

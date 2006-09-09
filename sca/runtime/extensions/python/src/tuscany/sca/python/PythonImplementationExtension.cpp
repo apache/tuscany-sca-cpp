@@ -61,8 +61,19 @@ namespace tuscany
                     string module = scdlImplementation->getCString("module");
                     string path = scdlImplementation->getCString("path");
                     string className = scdlImplementation->getCString("class");
+                    string scopeName = scdlImplementation->getCString("scope");
                     
-                    PythonImplementation* pythonImpl = new PythonImplementation(module, path, className);
+                    PythonImplementation::Scope scope;
+                    if (scopeName == "composite")
+                    {
+                        scope = PythonImplementation::COMPOSITE;
+                    }
+                    else
+                    {
+                        scope = PythonImplementation::STATELESS;
+                    }
+
+                    PythonImplementation* pythonImpl = new PythonImplementation(module, path, className, scope);
                     
                     return pythonImpl;
                 }

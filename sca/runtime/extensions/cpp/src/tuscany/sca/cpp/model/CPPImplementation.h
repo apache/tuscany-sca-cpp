@@ -42,6 +42,15 @@ namespace tuscany
                 
             public:
                 /**
+                 * Scope of the component implementation.
+                 */
+                enum Scope
+                {
+                    COMPOSITE,
+                    STATELESS
+                };
+
+                /**
                  * Constructor.
                  * @param dllName Name of the shared library.
                  * @param header Name of the header file that contains the class declaring the 
@@ -50,7 +59,7 @@ namespace tuscany
                  * if this is not specified).
                  */
                 CPPImplementation(const string& library, const string& header, const string&headerPath,
-                        const string& headerStub, const string& className);
+                        const string& headerStub, const string& className, Scope scope);
                 
                 /**
                  * Destructor
@@ -93,6 +102,11 @@ namespace tuscany
                  */
                 const string& getClass() const { return className; }
                 
+                /**
+                 * Returns the implementation scope
+                 */
+                 Scope getScope() { return scope; }
+                
             private:
                 
                 /**
@@ -120,6 +134,11 @@ namespace tuscany
                  * May be an empty string if not set in the SCDL file.
                  */
                 string className;
+                
+                /**
+                 * Scope of the implementation
+                 */
+                Scope scope;
             };
             
         } // End namespace cpp

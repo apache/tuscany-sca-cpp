@@ -35,9 +35,10 @@ namespace tuscany
         {
 
             // Constructor
-            PythonImplementation::PythonImplementation(const string& module, const string& modulePath, const string& className)
+            PythonImplementation::PythonImplementation(
+                const string& module, const string& modulePath, const string& className, Scope scope)
                 : ComponentType(modulePath + "/" + module),
-                    module(module), modulePath(modulePath), className(className)
+                    module(module), modulePath(modulePath), className(className), scope(scope)
             {
                 LOGENTRY(1,"PythonImplementation::constructor");
                 LOGEXIT(1,"PythonImplementation::constructor");

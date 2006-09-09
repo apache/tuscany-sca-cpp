@@ -25,6 +25,7 @@
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/python/model/PythonImplementation.h"
 
 using namespace tuscany::sca::model;
 
@@ -116,15 +117,15 @@ namespace tuscany
                 Component* component;
     
                 /**
-                 * Set to true if the service is remotable.
-                 */
-                bool remotable;                
-
-                /**
                  * A pointer to the interface which the service exposes.
                  */
                 Interface* interf;
 
+                /**
+                 * The component implementation
+                 */
+                 PythonImplementation* implementation;
+                
             };
             
         } // End namespace python

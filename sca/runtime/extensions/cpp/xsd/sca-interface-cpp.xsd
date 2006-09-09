@@ -30,17 +30,11 @@
                 <attribute name="class" type="Name" use="optional" />
                 <attribute name="callbackHeader" type="NCName" use="optional" />
                 <attribute name="callbackClass" type="Name" use="optional" />
-                <attribute name="scope" type="sca:CPPScope" use="optional" />
                 <attribute name="remotable" type="boolean" use="optional" />
+                <attribute name="conversational" type="boolean" use="optional" />
                 <anyAttribute namespace="##any" processContents="lax" />
             </extension>
         </complexContent>
     </complexType>
     
-    <simpleType name="CPPScope">
-        <restriction base="string">
-            <enumeration value="stateless" />
-            <enumeration value="composite" />
-        </restriction>
-    </simpleType>
 </schema>

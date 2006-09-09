@@ -33,9 +33,9 @@ namespace tuscany
                 CPPInterface::CPPInterface(
                     const string& header,
                     const string& className,
-                    Scope scope,
-                    bool remotable)  
-                    : Interface(remotable, scope), header(header), className(className)
+                    bool remotable,
+                    bool conversational)  
+                    : Interface(remotable, conversational), header(header), className(className)
             {
                 string::size_type dot = header.rfind(".h"); // this will also find .hpp
                 if (dot != string::npos)

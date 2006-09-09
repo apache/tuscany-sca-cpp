@@ -29,8 +29,16 @@
 				<attribute name="module" type="NCName" use="required"/>
 				<attribute name="path" type="NCName" use="optional"/>
                 <attribute name="class" type="Name" use="optional"/>
+                <attribute name="scope" type="sca:PythonImplementationScope" use="optional" />
 				<anyAttribute namespace="##any" processContents="lax"/>
 			</extension>
 		</complexContent>
 	</complexType>
+
+    <simpleType name="PythonImplementationScope">
+        <restriction base="string">
+            <enumeration value="stateless" />
+            <enumeration value="composite" />
+        </restriction>
+    </simpleType>
 </schema>

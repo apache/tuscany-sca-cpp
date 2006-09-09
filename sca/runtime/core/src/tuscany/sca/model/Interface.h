@@ -36,18 +36,9 @@ namespace tuscany
             public:
                 
                 /**
-                 * Scope of the interface.
-                 */
-                enum Scope
-                {
-                    COMPOSITE,
-                    STATELESS
-                };
-
-                /**
                  * Constructor
                  */
-                SCA_API Interface(bool remotable, Scope scope);
+                SCA_API Interface(bool remotable, bool conversational);
                   
                 /**
                  * Destructor
@@ -58,14 +49,14 @@ namespace tuscany
                  * Returns true if the interface is remotable.
                  * @return True if the interface is remotable.
                  */
-                bool isRemotable() const { return remotable; };
+                SCA_API bool isRemotable() const { return remotable; };
                             
                 /**
-                 * Get the scope of the interface.
-                 * @return The scope of the interface.
+                 * Returns true if the interface is conversational.
+                 * @return True if the interface is conversational.
                  */
-                 Scope getScope() { return scope; }
-
+                SCA_API bool isConversational() const { return conversational; };
+                            
             private:
 
                 /**
@@ -74,9 +65,9 @@ namespace tuscany
                 bool remotable;
 
                 /**
-                 * Scope of the interface.
-                 */
-                Scope scope;
+                 * True if the interface is conversational
+                 */            
+                bool conversational;
 
             };
             

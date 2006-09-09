@@ -61,6 +61,17 @@ namespace tuscany
                     string library = scdlImplementation->getCString("library");
                     string header = scdlImplementation->getCString("header");
                     string className = scdlImplementation->getCString("class");
+                    string scopeName = scdlImplementation->getCString("scope");
+
+                    CPPImplementation::Scope scope;
+                    if (scopeName == "composite")
+                    {
+                        scope = CPPImplementation::COMPOSITE;
+                    }
+                    else
+                    {
+                        scope = CPPImplementation::STATELESS;
+                    }
 
                     string headerPath;
                     string headerStub;
@@ -76,7 +87,8 @@ namespace tuscany
                     string tmp;             
                     Utils::rTokeniseString(".h", headerStub, headerStub, tmp);
                     
-                    CPPImplementation* cppImpl = new CPPImplementation(library, header, headerPath, headerStub, className);
+                    CPPImplementation* cppImpl = new CPPImplementation(
+                                    library, header, headerPath, headerStub, className, scope);
                     
                     return cppImpl;
                 }
