@@ -55,8 +55,8 @@ namespace tuscany
                 CPPInterface(
                     const string& header,
                     const string& className,
-                    Scope scope,
-                    bool remotable);  
+                    bool remotable,
+                    bool conversational);  
 
                 /**
                  * Destructor.

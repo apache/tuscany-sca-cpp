@@ -56,7 +56,7 @@ namespace tuscany
     
                 component = service->getComponent();
                 interf = service->getType()->getInterface();
-                remotable = interf->isRemotable();
+                implementation = (CPPImplementation*)component->getType();
                 
                 LOGEXIT(1,"CPPServiceWrapper::constructor");
                 
@@ -77,7 +77,7 @@ namespace tuscany
             // ======================================================================
             void* CPPServiceWrapper::getImplementation()
             {
-                if (interf->getScope() == Interface::COMPOSITE)
+                if (implementation->getScope() == CPPImplementation::COMPOSITE)
                 {
                     if (!staticImpl)
                     {
@@ -96,7 +96,7 @@ namespace tuscany
             // ======================================================================
             void CPPServiceWrapper::releaseImplementation()
             {
-                if (interf->getScope() == Interface::STATELESS)
+                if (implementation->getScope() == CPPImplementation::STATELESS)
                 {
                     deleteImplementation();
                 }            

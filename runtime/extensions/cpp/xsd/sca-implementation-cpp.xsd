@@ -30,8 +30,16 @@
 				<attribute name="path" type="NCName" use="optional"/>
                 <attribute name="header" type="NCName" use="required"/>
                 <attribute name="class" type="Name" use="optional"/>
+                <attribute name="scope" type="sca:CPPImplementationScope" use="optional" />
 				<anyAttribute namespace="##any" processContents="lax"/>
 			</extension>
 		</complexContent>
 	</complexType>
+
+    <simpleType name="CPPImplementationScope">
+        <restriction base="string">
+            <enumeration value="stateless" />
+            <enumeration value="composite" />
+        </restriction>
+    </simpleType>
 </schema>

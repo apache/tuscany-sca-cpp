@@ -42,6 +42,15 @@ namespace tuscany
                 
             public:
                 /**
+                 * Scope of the component implementation.
+                 */
+                enum Scope
+                {
+                    COMPOSITE,
+                    STATELESS
+                };
+
+                /**
                  * Constructor.
                  * @param module Name of the module.
                  * @param modulePath Path to the module (could be a blank string
@@ -49,7 +58,7 @@ namespace tuscany
                  * @param className Name of the class in the module (could be a blank string
                  * if this is not specified).
                  */
-                PythonImplementation(const string& module, const string& modulePath, const string& className);
+                PythonImplementation(const string& module, const string& modulePath, const string& className, Scope scope);
                 
                 /**
                  * Destructor
@@ -80,6 +89,11 @@ namespace tuscany
                  */
                 const string& getClass() const { return className; }
                 
+                /**
+                 * Returns the implementation scope
+                 */
+                 Scope getScope() const { return scope; }
+                
             private:
                 
                 /**
@@ -97,6 +111,11 @@ namespace tuscany
                  * May be an empty string if not set in the SCDL file.
                  */
                 string className;
+                
+                /**
+                 * The implementation scope
+                 */
+                 Scope scope;
             };
             
         } // End namespace python

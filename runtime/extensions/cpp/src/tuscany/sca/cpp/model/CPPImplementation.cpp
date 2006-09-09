@@ -36,10 +36,10 @@ namespace tuscany
 
             // Constructor
             CPPImplementation::CPPImplementation(const string& library, const string& header,
-                    const string&headerPath, const string& headerStub, const string& className)
+                    const string&headerPath, const string& headerStub, const string& className, Scope scope)
                 : ComponentType(headerPath + headerStub),
                     library(library), header(header), headerPath(headerPath),
-                    headerStub(headerStub), className(className)
+                    headerStub(headerStub), className(className), scope(scope)
             {
             }
 

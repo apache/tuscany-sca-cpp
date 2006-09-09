@@ -65,7 +65,7 @@ namespace tuscany
     
                 component = service->getComponent();
                 interf = service->getType()->getInterface();
-                remotable = interf->isRemotable();                
+                implementation = (PythonImplementation*)component->getType();              
 
                 pythonModule = NULL;
                 pythonClassInstance = NULL;
@@ -202,8 +202,8 @@ namespace tuscany
             {
                 LOGENTRY(1,"PythonServiceWrapper::getInstance");
 
-                Interface::Scope scope = interf->getScope();
-                if (scope == Interface::COMPOSITE)
+                PythonImplementation::Scope scope = implementation->getScope();
+                if (scope == PythonImplementation::COMPOSITE)
                 {
                     if (!pythonClassInstance)
                     {
@@ -211,7 +211,7 @@ namespace tuscany
                     }
                     return pythonClassInstance;
                 }
-                else // (scope == CPPInterface::STATELESS)
+                else // (scope == PythonImplementation::STATELESS)
                 {
                     return newInstance();
                 }        
@@ -225,8 +225,8 @@ namespace tuscany
             {
                 LOGENTRY(1,"PythonServiceWrapper::releaseInstance");
                 
-                Interface::Scope scope = interf->getScope();
-                if(scope == Interface::STATELESS)
+                PythonImplementation::Scope scope = implementation->getScope();
+                if(scope == PythonImplementation::STATELESS)
                 {
                     // Delete the class instance if there is one
                     if(pythonClassInstance != NULL && PyInstance_Check(pythonClassInstance))
