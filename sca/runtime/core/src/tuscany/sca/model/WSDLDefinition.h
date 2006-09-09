@@ -79,6 +79,16 @@ namespace tuscany
                                         const string& portName, 
                                         const string& operationName);
                 
+                /**
+                 * Find an operation in the WSDL definitions.
+                 * @param portTypeName The name of the portType on which this
+                 * operation is defined.
+                 * @param operationName The name of the operation to find.
+                 * @return The operation if found. Exception thrown if not found.
+                 */
+                SCA_API const WSDLOperation& findOperation(const string& portTypeName, 
+                                        const string& operationName);
+                
             private:
 
                 /**

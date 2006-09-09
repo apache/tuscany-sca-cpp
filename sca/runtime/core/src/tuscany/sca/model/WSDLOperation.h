@@ -91,6 +91,9 @@ namespace tuscany
                 SCA_API void setDocumentStyle(bool docStyle) {documentStyle = docStyle;}
                 SCA_API bool isDocumentStyle() const {return documentStyle;}
 
+                SCA_API void setWrappedStyle(bool wrapStyle) {wrappedStyle = wrapStyle;}
+                SCA_API bool isWrappedStyle() const {return wrappedStyle;}
+
                 SCA_API void setEncoded(bool enc) {encoded = enc;}
                 SCA_API bool isEncoded() const {return encoded;}
 
@@ -120,6 +123,7 @@ namespace tuscany
                 string endpoint;
 
 				bool documentStyle;
+                bool wrappedStyle;
 				bool encoded;
 				soapVersion soapVer;
 				
