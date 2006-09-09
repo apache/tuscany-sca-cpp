@@ -29,8 +29,10 @@ namespace tuscany
         namespace cpp
         {
 
+            const string CPPInterface::typeQName("http://www.osoa.org/xmlns/sca/1.0#CPPInterface");
+            
             // Constructor
-                CPPInterface::CPPInterface(
+            CPPInterface::CPPInterface(
                     const string& header,
                     const string& className,
                     bool remotable,

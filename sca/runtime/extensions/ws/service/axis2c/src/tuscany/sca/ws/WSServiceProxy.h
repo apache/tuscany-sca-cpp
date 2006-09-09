@@ -25,6 +25,7 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/WSDLOperation.h"
 #include "model/WSReferenceBinding.h"
 #include "commonj/sdo/SDO.h"
 
@@ -72,7 +73,7 @@ namespace tuscany
                 /**
                  * Invoke the specified operation
                  */
-                DataObjectPtr invoke(const char* operationName, DataObjectPtr inputDataObject);    
+                DataObjectPtr invoke(const WSDLOperation& wsdlOperation, DataObjectPtr inputDataObject);    
     
             private:
 

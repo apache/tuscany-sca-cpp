@@ -30,6 +30,7 @@
 #include "tuscany/sca/model/CompositeReference.h"
 #include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/ReferenceType.h"
+#include "tuscany/sca/model/WSDLInterface.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "commonj/sdo/TypeDefinitions.h"
 #include "tuscany/sca/util/File.h"
@@ -489,20 +490,30 @@ namespace tuscany
                 string typeQname = iface->getType().getURI();
                 typeQname += "#";
                 typeQname += iface->getType().getName();
-
-                // Locate extension that handles this implementation type
-                InterfaceExtension* ifaceExtension = runtime->getInterfaceExtension(typeQname);
-                if (ifaceExtension)
+                
+                if (typeQname == WSDLInterface::typeQName)
                 {
-                    return ifaceExtension->getInterface(composite, iface);
+                    // Load a WSDL interface
+                    string qname = iface->getCString("interface");
+                    
+                    return new WSDLInterface(qname, true, false);
                 }
                 else
                 {
-                    // log this for now.
-                    // We currently do not handle <interface.wsdl>
-                    LOGERROR_1(1, "ModelLoader::getInterface: Unsupported interface type: %s", typeQname.c_str());
-                    return 0;
+                    // Locate extension that handles this interface type
+                    InterfaceExtension* ifaceExtension = runtime->getInterfaceExtension(typeQname);
+                    if (ifaceExtension)
+                    {
+                        return ifaceExtension->getInterface(composite, iface);
+                    }
+                    else
+                    {
+                        // log this for now.
+                        LOGERROR_1(1, "ModelLoader::getInterface: Unsupported interface type: %s", typeQname.c_str());
+                        return 0;
+                    }
                 }
+
             }
             
             // ==============================================
@@ -543,18 +554,26 @@ namespace tuscany
                 //Utils::printDO(compositeServiceDO);
                 string compositeServiceName = compositeServiceDO->getCString("name");
                 
-                Interface* iface = getInterface(composite, compositeServiceDO);
+                Interface* iface;
+                if (compositeServiceDO->getDataObject("interface"))
+                {
+                    iface = getInterface(composite, compositeServiceDO);
+                }
+                else
+                {
+                    iface = NULL;
+                }
                 
-                    ReferenceType::Multiplicity multiplicity;
-                    if (compositeServiceDO->isSet("multiplicity"))
-                    {
-                        string s = compositeServiceDO->getCString("multiplicity");
-                        multiplicity = ReferenceType::getMultiplicityFromString(s);
-                    }
-                    else
-                    {
-                         multiplicity = ReferenceType::ONE_ONE;
-                    }
+                ReferenceType::Multiplicity multiplicity;
+                if (compositeServiceDO->isSet("multiplicity"))
+                {
+                    string s = compositeServiceDO->getCString("multiplicity");
+                    multiplicity = ReferenceType::getMultiplicityFromString(s);
+                }
+                else
+                {
+                     multiplicity = ReferenceType::ONE_ONE;
+                }
 
                 CompositeService* compositeService = new CompositeService(
                         composite, compositeServiceName, iface, NULL, false, multiplicity); 
@@ -615,13 +634,21 @@ namespace tuscany
             {
                 string compositeReferenceName = compositeReferenceDO->getCString("name");
                 
-                Interface* iface = getInterface(composite, compositeReferenceDO);
+                Interface* iface;
+                if (compositeReferenceDO->getDataObject("interface"))
+                {                 
+                    iface = getInterface(composite, compositeReferenceDO);
+                }
+                else
+                {
+                    iface = NULL;
+                }
                 
                 CompositeReference* compositeReference = new CompositeReference(
                         composite, compositeReferenceName, iface, NULL, false, ReferenceType::ONE_ONE); 
                     
                 composite->addComponent(compositeReference);
-                    
+                
                 // Get binding, it will be the first and only binding
                 DataObjectList& bindings = compositeReferenceDO->getList("binding");
                 if (bindings.size()==0)

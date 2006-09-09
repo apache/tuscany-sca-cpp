@@ -61,9 +61,8 @@ namespace tuscany
                     string header = scdlInterface->getCString("header");
                     string className = scdlInterface->getCString("class");
                     bool remotable = scdlInterface->getBoolean("remotable");
-                    bool conversational = scdlInterface->getBoolean("conversational");
                     
-                    return new CPPInterface(header, className, remotable, conversational);
+                    return new CPPInterface(header, className, remotable, false);
                 }
                 return 0;
             }
