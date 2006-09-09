@@ -19,8 +19,6 @@
     xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
     elementFormDefault="qualified">
 
-    <include schemaLocation="sca-core.xsd" />
-    
     <element name="interface.wsdl" type="sca:WSDLPortType" substitutionGroup="sca:interface"/>
     <complexType name="WSDLPortType">
         <complexContent>
