@@ -19,8 +19,6 @@
     xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
     elementFormDefault="qualified">
     
-    <include schemaLocation="sca-core.xsd" />
-    
     <element name="implementation.composite" type="sca:SCAImplementation" substitutionGroup="sca:implementation"/>
     <complexType name="SCAImplementation">
         <complexContent>
