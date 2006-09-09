@@ -239,6 +239,93 @@ namespace tuscany
             }
             
             ///
+            /// Find the operation defined in this wsdl
+            ///
+            const WSDLOperation& WSDLDefinition::findOperation(const string& portTypeName, 
+                                        const string& operationName)
+            {
+                string operationKey = portTypeName+"#"+operationName;
+                OperationMap::iterator iter = operationMap.find(operationKey);
+                if (iter != operationMap.end())
+                {
+                    return iter->second;
+                }
+                
+                string soapAction = "";
+                bool documentStyle = true;
+                bool useEncoded = false;
+                WSDLOperation::soapVersion soapVer = WSDLOperation::SOAP11;
+
+                // Get the portType
+                DataObjectPtr wsPortType = findPortType(portTypeName);
+                if (!wsPortType)
+                {
+                    string message = "Unable to find PortType ";
+                    message = message + portTypeName;
+                    message = message + " in the WSDL definition";
+                    throw SystemConfigurationException(message.c_str());
+                }
+
+                //Utils::printDO(wsPortType);
+                
+                // Found the portType, find the operation
+                DataObjectList& operationList = wsPortType->getList("operation");
+                for (int k=0; k< operationList.size(); k++)
+                {
+                    string opName(operationList[k]->getCString("name"));
+                    if( opName.compare(operationName) == 0)
+                    {
+                        // Found the operation
+
+                        // Find the type of the request message
+                        string inputMessageType =  string(operationList[k]->getCString("input/message"));
+
+                        DataObjectPtr wsMessageIn = findMessage(inputMessageType);
+                        if (!wsMessageIn)
+                        {
+                            string message = "Unable to find message ";
+                            message = message + inputMessageType;
+                            message = message + " in the WSDL definition";
+                            throw SystemConfigurationException(message.c_str());
+                        }
+
+                        string requestType(wsMessageIn->getList("part")[0]->getCString("element"));
+
+                        // Find the type of the response message
+                        string outputMessageType =  string(operationList[k]->getCString("output/message"));
+
+                        DataObjectPtr wsMessageOut = findMessage(outputMessageType);
+                        if (!wsMessageOut)
+                        {
+                            string message = "Unable to find message ";
+                            message = message + outputMessageType;
+                            message = message + " in the WSDL definition";
+                            throw SystemConfigurationException(message.c_str());
+                        }
+
+                        string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
+                        
+                        WSDLOperation& wsdlOp = operationMap[operationKey];
+                        wsdlOp.setOperationName(operationName);
+                        wsdlOp.setSoapAction(soapAction);
+                        wsdlOp.setEndpoint("");
+                        wsdlOp.setSoapVersion(soapVer);
+                        wsdlOp.setDocumentStyle(documentStyle);
+                        wsdlOp.setEncoded(useEncoded);
+                        wsdlOp.setInputType(requestType);
+                        wsdlOp.setOutputType(responseType);
+                        return wsdlOp;
+                    }
+                }
+                
+                string message = "Unable to find Operation ";
+                message = message + operationName;
+                message = message + " in the WSDL definition";
+                throw SystemConfigurationException(message.c_str());                           
+                
+            }
+            
+            ///
             /// Find a service
             ///
             DataObjectPtr WSDLDefinition::findService(const string& serviceName)
