@@ -69,7 +69,7 @@ namespace tuscany
         {
             if (size() <= index)
             {
-                throw TuscanyRuntimeException("Files::operator[] index out of bounds");
+                throw SystemConfigurationException("Files::operator[] index out of bounds");
             }
             
             FILES::iterator iter = files.begin();

@@ -42,6 +42,10 @@ tuscany::sca::Logger::logArgs(level, message, arg1);
 if (tuscany::sca::Logger::loggingLevel >= level) \
 tuscany::sca::Logger::logArgs(level, message, arg1, arg2);
 
+#define LOGINFO_3(level, message, arg1, arg2, arg3) \
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::logArgs(level, message, arg1, arg2, arg3);
+
 #define LOGERROR(level, message) \
 if (tuscany::sca::Logger::loggingLevel >= level) \
 tuscany::sca::Logger::log(level, message);
@@ -53,5 +57,9 @@ tuscany::sca::Logger::logArgs(level, message, arg1);
 #define LOGERROR_2(level, message, arg1, arg2) \
 if (tuscany::sca::Logger::loggingLevel >= level) \
 tuscany::sca::Logger::logArgs(level, message, arg1, arg2);
+
+#define LOGERROR_3(level, message, arg1, arg2, arg3) \
+if (tuscany::sca::Logger::loggingLevel >= level) \
+tuscany::sca::Logger::logArgs(level, message, arg1, arg2, arg3);
 
 #endif // tuscany_sca_util_logging_h

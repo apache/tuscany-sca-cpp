@@ -118,8 +118,8 @@ namespace tuscany
 #endif
             if (hDLL == NULL)
             {
-                LOGERROR_1(1, "Library::load: Unable to load library %s", name.c_str());
-                throw TuscanyRuntimeException(msg.c_str());
+                LOGERROR(1, msg.c_str());
+                throw SystemConfigurationException(msg.c_str());
             }    
         }
         
