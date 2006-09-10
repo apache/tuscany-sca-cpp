@@ -213,7 +213,7 @@ namespace tuscany
                         " %d :: %s", env->error->error_number,
                         AXIS2_ERROR_GET_MESSAGE(env->error));
                     
-                    throw TuscanyRuntimeException("Axis2Client: axis2_svc_client_create failed");
+                    throw SystemConfigurationException("Axis2Client: axis2_svc_client_create failed");
                 }
                 
                 /* Set service client options */
@@ -230,7 +230,7 @@ namespace tuscany
                     AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Invoke failed: Error code:"
                         " %d :: %s", env->error->error_number,
                         AXIS2_ERROR_GET_MESSAGE(env->error));
-                    throw TuscanyRuntimeException("Axis2Client: Invoke failed");
+                    throw SystemConfigurationException("Axis2Client: Invoke failed");
                 }
                 
                 if (svc_client)
