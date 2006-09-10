@@ -26,6 +26,8 @@ using std::map;
 #include <string>
 using std::string;
 
+#include <ruby.h>
+
 using namespace tuscany::sca::model;
 
 namespace tuscany
@@ -43,11 +45,12 @@ namespace tuscany
             public:
                 /**
                  * Constructor.
+                 * @param composite The composite containing this implementation.
                  * @param module Name of the Ruby module.
                  * @param className Name of the Ruby implementation class.
                  * @param script Path of the Ruby script.
                  */
-                RubyImplementation(const string& module, const string& className, const string& script);
+                RubyImplementation(Composite* composite, const string& module, const string& className, const string& script);
                 
                 /**
                  * Destructor
@@ -77,6 +80,11 @@ namespace tuscany
                  * @return The path of the Ruby script.
                  */
                 const string& getScript() const { return script; }
+                
+                /**
+                 * Returns the Ruby implementation class
+                 */
+                VALUE getImplementationClass() const { return implementationClass; }
 
             private:
                 
@@ -94,6 +102,16 @@ namespace tuscany
                  * Path of the Ruby script.
                  */
                 string script;
+
+                /**
+                 * True if the Ruby runtime has been initialized
+                 */
+                static bool initialized;
+
+                /**
+                 * The Ruby implementation class
+                 */                
+                VALUE implementationClass;
 
             };
             

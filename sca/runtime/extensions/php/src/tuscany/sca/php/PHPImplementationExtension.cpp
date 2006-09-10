@@ -61,7 +61,7 @@ namespace tuscany
                     string module = scdlImplementation->getCString("module");
                     string className = scdlImplementation->getCString("class");
                     
-                    PHPImplementation* phpImpl = new PHPImplementation(module, className);
+                    PHPImplementation* phpImpl = new PHPImplementation(composite, module, className);
                     
                     return phpImpl;
                 }

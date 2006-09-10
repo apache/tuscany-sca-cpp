@@ -24,6 +24,7 @@
 #include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/Reference.h"
 
@@ -40,8 +41,8 @@ namespace tuscany
         {
             
            // Constructor
-            ComponentType::ComponentType(const string& name)
-            : name(name)
+            ComponentType::ComponentType(Composite* composite, const string& name)
+            : composite(composite), name(name)
             {
                 LOGENTRY(1, "ComponentType::constructor");
                 LOGEXIT(1, "ComponentType::constructor");

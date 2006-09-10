@@ -73,7 +73,7 @@ namespace tuscany
                         scope = PythonImplementation::STATELESS;
                     }
 
-                    PythonImplementation* pythonImpl = new PythonImplementation(module, path, className, scope);
+                    PythonImplementation* pythonImpl = new PythonImplementation(composite, module, path, className, scope);
                     
                     return pythonImpl;
                 }

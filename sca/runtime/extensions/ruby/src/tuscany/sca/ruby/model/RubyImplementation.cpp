@@ -22,6 +22,7 @@
 #include "tuscany/sca/ruby/model/RubyServiceBinding.h"
 #include "tuscany/sca/ruby/model/RubyReferenceBinding.h"
 #include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/util/Utils.h"
@@ -34,11 +35,30 @@ namespace tuscany
         namespace ruby
         {
 
+            bool RubyImplementation::initialized = false;
+            
             // Constructor
-            RubyImplementation::RubyImplementation(const string& module, const string& className, const string& script)
-                : ComponentType(script.substr(0, script.find_last_of('.'))),
+            RubyImplementation::RubyImplementation(Composite* composite, const string& module, const string& className, const string& script)
+                : ComponentType(composite, script.substr(0, script.find_last_of('.'))),
                     module(module), className(className), script(script)
             {
+                // Initialize the Ruby runtime
+                if (!initialized)
+                {
+                    ruby_init();
+                    initialized = true;
+                }
+    
+                // Load the specified Ruby script
+                if (script != "")
+                {
+                    string path = composite->getRoot() + '/' + script;
+                    rb_require((char *)path.c_str());
+                }
+
+                // Load the Ruby implementation class                
+                implementationClass = rb_path2class(className.c_str());
+                
             }
 
             RubyImplementation::~RubyImplementation()

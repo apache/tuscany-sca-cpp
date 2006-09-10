@@ -25,6 +25,7 @@
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/ruby/model/RubyImplementation.h"
 
 #include <ruby.h>
 
@@ -83,6 +84,11 @@ namespace tuscany
                  * A pointer to the interface which the service exposes.
                  */
                 Interface* interf;
+
+                /**
+                 * The Ruby implementation
+                 */
+                 RubyImplementation* implementation;
 
             };
             
