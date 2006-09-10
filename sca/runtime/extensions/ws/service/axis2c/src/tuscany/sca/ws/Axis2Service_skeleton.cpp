@@ -185,10 +185,6 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char* se
             }
         }
     }
-    catch(SystemConfigurationException &ex)
-    {   
-        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI,  "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
-    }
     catch(TuscanyRuntimeException &ex)
     {   
         AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI,  "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
