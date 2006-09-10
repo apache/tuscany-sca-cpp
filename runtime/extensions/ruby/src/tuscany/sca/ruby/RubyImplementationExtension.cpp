@@ -62,7 +62,7 @@ namespace tuscany
                     string className = scdlImplementation->getCString("class");
                     string script = scdlImplementation->getCString("script");
 
-                    RubyImplementation* rubyImpl = new RubyImplementation(module, className, script);
+                    RubyImplementation* rubyImpl = new RubyImplementation(composite, module, className, script);
                     
                     return rubyImpl;
                 }

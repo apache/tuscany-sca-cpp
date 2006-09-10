@@ -40,7 +40,7 @@ namespace tuscany
             CompositeService::CompositeService(Composite* composite, const string& name,
                     Interface* intface, Interface* callbackInterface, bool conversational,
                     ReferenceType::Multiplicity multiplicity) :
-                Component(composite, name, new ComponentType(name))
+                Component(composite, name, new ComponentType(composite, name))
             {
                 LOGENTRY(1, "CompositeService::constructor");
                 LOGINFO_1(2, "CompositeService::constructor: CompositeService name: %s", name.c_str());

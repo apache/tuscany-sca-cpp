@@ -88,7 +88,7 @@ namespace tuscany
                     Utils::rTokeniseString(".h", headerStub, headerStub, tmp);
                     
                     CPPImplementation* cppImpl = new CPPImplementation(
-                                    library, header, headerPath, headerStub, className, scope);
+                                    composite, library, header, headerPath, headerStub, className, scope);
                     
                     return cppImpl;
                 }

@@ -44,21 +44,11 @@ namespace tuscany
                 : ServiceWrapper(service)
             {
                 LOGENTRY(1,"RubyServiceWrapper::constructor");
-    
+                
                 component = service->getComponent();
+                implementation = (RubyImplementation*)component->getType();
                 interf = service->getType()->getInterface();
                 remotable = interf->isRemotable();
-                
-                // Initialize the Ruby runtime
-                ruby_init();
-                
-                // Execute the specified Ruby script
-                RubyImplementation* impl = (RubyImplementation*)component->getType();
-                if (impl->getScript() != "")
-                {
-                    string script = component->getComposite()->getRoot() + '/' + impl->getScript();
-                    rb_require((char *)script.c_str());
-                }
                 
                 LOGEXIT(1,"RubyServiceWrapper::constructor");
                 
@@ -85,12 +75,10 @@ namespace tuscany
                 
                 try
                 {
-                    // Create a new instance of the component implementation class
-                    RubyImplementation* impl = (RubyImplementation*)component->getType();
-                    
-                    string expr = impl->getClass() + ".new";
-                    VALUE instance = rb_eval_string(expr.c_str());
 
+                    // Create a new instance of the Ruby implementation class
+                    VALUE instance = rb_class_new_instance(0, NULL, implementation->getImplementationClass());
+                    
                     // Get the ID of the specified method
                     ID method = rb_intern(operation.getName().c_str());
 

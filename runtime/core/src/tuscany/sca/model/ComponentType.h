@@ -39,6 +39,7 @@ namespace tuscany
             class ReferenceType;
             class Interface;
             class Component;
+            class Composite;
 
             /**
              * Component type represents the configurable aspects of an implementation.
@@ -54,7 +55,7 @@ namespace tuscany
                 /**
                  * Constructor
                  */
-                SCA_API ComponentType(const string& name);
+                SCA_API ComponentType(Composite* composite, const string& name);
 
                 /**
                  * Destructor.
@@ -64,7 +65,12 @@ namespace tuscany
                 /**
                  * Returns the name of the component type
                  */
-                SCA_API const string& getName() { return name; };
+                SCA_API const string& getName() const { return name; };
+                
+                /**
+                 * Returns the composite containing this component type
+                 */
+                SCA_API Composite* getComposite() const { return composite; };
 
                 /**
                  * Add a new service type to this component type.
@@ -141,6 +147,11 @@ namespace tuscany
                  * The name of the component type
                  */
                 string name;
+                
+                /**
+                 * The composite containing this component type
+                 */
+                 Composite* composite;
                 
                 /**
                  * Map of all the service types defined on this component.

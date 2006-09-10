@@ -22,6 +22,7 @@
 #include "tuscany/sca/cpp/model/CPPServiceBinding.h"
 #include "tuscany/sca/cpp/model/CPPReferenceBinding.h"
 #include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/util/Utils.h"
@@ -35,9 +36,9 @@ namespace tuscany
         {
 
             // Constructor
-            CPPImplementation::CPPImplementation(const string& library, const string& header,
+            CPPImplementation::CPPImplementation(Composite* composite, const string& library, const string& header,
                     const string&headerPath, const string& headerStub, const string& className, Scope scope)
-                : ComponentType(headerPath + headerStub),
+                : ComponentType(composite, headerPath + headerStub),
                     library(library), header(header), headerPath(headerPath),
                     headerStub(headerStub), className(className), scope(scope)
             {
