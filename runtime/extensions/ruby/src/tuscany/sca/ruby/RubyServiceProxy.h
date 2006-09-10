@@ -29,6 +29,8 @@
 
 using namespace tuscany::sca::model;
 
+#include <ruby.h>
+
 
 namespace tuscany
 {
@@ -67,13 +69,23 @@ namespace tuscany
                  */
                 virtual ~RubyServiceProxy();
     
+                /**
+                 * Returns the Ruby value of the proxy
+                 */
+                 VALUE getValue() const { return value; };
+            
             private:
     
                 /**
                  * The target service wrapper
                  */
                  ServiceWrapper* serviceWrapper;
-            
+
+                /**
+                 * The Ruby value of the proxy
+                 */
+                 VALUE value;
+                 
             };
             
         } // End namespace ruby

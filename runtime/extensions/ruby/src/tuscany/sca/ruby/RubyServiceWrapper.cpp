@@ -26,9 +26,12 @@
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/ServiceType.h"
+#include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
 #include "tuscany/sca/ruby/model/RubyServiceBinding.h"
+#include "tuscany/sca/ruby/RubyServiceProxy.h"
 
 namespace tuscany
 {
@@ -78,6 +81,18 @@ namespace tuscany
 
                     // Create a new instance of the Ruby implementation class
                     VALUE instance = rb_class_new_instance(0, NULL, implementation->getImplementationClass());
+
+                    // Set all the references and properties
+                    const Component::REFERENCE_MAP& references = component->getReferences();
+                    Component::REFERENCE_MAP::const_iterator refiter = references.begin();
+                    for (int ri=0; ri< references.size(); ri++)
+                    {
+                        Reference* reference = refiter->second;
+                        RubyServiceProxy* proxy = (RubyServiceProxy*)reference->getBinding()->getServiceProxy();
+                        VALUE referenceValue = proxy->getValue();
+                        rb_iv_set(instance, refiter->first.c_str(), referenceValue);
+                        refiter++;
+                    }
                     
                     // Get the ID of the specified method
                     ID method = rb_intern(operation.getName().c_str());
