@@ -69,7 +69,7 @@ namespace tuscany
                 /**
                  * The QName of the schema type for this interface type.
                  */
-                static const string typeQName;
+                SCA_API static const string typeQName;
                 
            private:
            
