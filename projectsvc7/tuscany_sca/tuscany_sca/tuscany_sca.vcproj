@@ -673,6 +673,12 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLDefinition.h">
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLInterface.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLInterface.h">
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLOperation.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -693,7 +699,7 @@ copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WsdlOperation.h">
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLOperation.h">
 				</File>
 			</Filter>
 			<Filter
