@@ -18,6 +18,7 @@
  */
 
 #include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/util/Logging.h"
 using namespace std;
 
 namespace tuscany
@@ -37,6 +38,7 @@ namespace tuscany
             strcpy(class_name,name);
             message_text = new char[strlen(msg_text)+1];
             strcpy(message_text,msg_text);
+            LOGERROR_2(1, "%s raised: %s", class_name, message_text);
             
         } // end TuscanyRuntimeException constuctor
         
@@ -60,6 +62,7 @@ namespace tuscany
                 locations[i].function = new char[strlen(c.locations[i].function) + 1];
                 strcpy(locations[i].function, c.locations[i].function);
             }
+            LOGERROR_2(1, "%s raised: %s", class_name, message_text);
         }
         
         // ========================================================================
