@@ -471,103 +471,72 @@ namespace tuscany
                 for(int i=0; i<pl.size(); i++)
                 {
                     const char* name = pl[i].getName();
-            
-                    switch (pl[i].getTypeEnum()) 
+
+                    Operation::ParameterType resultType = operation.getReturnType();
+                    switch(resultType)
                     {
-                    case Type::BooleanType:
+                    case Operation::BOOL: 
                         {
-                            bool* boolData = (bool*)operation.getReturnValue();
-                            //printf("outputDataObject has BooleanType named %s with value %d\n", name, *boolData);
-                            outputDataObject->setBoolean(pl[i], *boolData); 
+                            outputDataObject->setBoolean(pl[i], *(bool*)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::ByteType:
+                    case Operation::SHORT: 
                         {
-                            char* byteData = (char*) operation.getReturnValue();
-                            //printf("outputDataObject has ByteType named %s with value %c (#%d)\n", name, *byteData, *byteData);
-                            outputDataObject->setByte(pl[i], *byteData);
+                            outputDataObject->setShort(pl[i], *(short*)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::BytesType:
+                    case Operation::LONG: 
                         {
-                            const char** bytesData = (const char**) operation.getReturnValue();
-                            // TODO This looks for the first NULL byte - this may not be the full length of the data...
-                            int len = 0;
-                            while((*bytesData)[len] != 0)
-                            {
-                                len++;
-                            }
-                            //printf("outputDataObject has BytesType named %s with value %s and length %d\n", name, *bytesData, len);
-                            outputDataObject->setBytes(pl[i], *bytesData, len);
+                            outputDataObject->setLong(pl[i], *(long*)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::CharacterType:
+                    case Operation::USHORT: 
                         {
-                            wchar_t* charData = (wchar_t*) operation.getReturnValue();
-                            //printf("outputDataObject has CharacterType named %s with value %s\n", name, charData);
-                            outputDataObject->setCharacter(pl[i], *charData);
+                            outputDataObject->setInteger(pl[i], *(unsigned short*)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::DoubleType:
+                    case Operation::ULONG: 
                         {
-                            long double* doubleData = (long double*) operation.getReturnValue();
-                            //printf("outputDataObject has DoubleType named %s with value %f\n", name, *doubleData);
-                            outputDataObject->setDouble(pl[i], *doubleData);
+                            outputDataObject->setInteger(pl[i], *(unsigned long*)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::FloatType:
+                    case Operation::FLOAT: 
                         {
-                            float* floatData = (float*) operation.getReturnValue();
-                            //printf("outputDataObject has FloatType named %s with value %f \n", name, *floatData);
-                            outputDataObject->setFloat(pl[i], *floatData);
+                            outputDataObject->setFloat(pl[i], *(float*)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::IntegerType:
+                    case Operation::DOUBLE: 
                         {
-                            long* intData = (long*) operation.getReturnValue();
-                            //printf("outputDataObject has IntegerType named %s with value %d\n", name, *intData);
-                            outputDataObject->setInteger(pl[i], *intData);
+                            outputDataObject->setDouble(pl[i], *(double*)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::ShortType:
+                    case Operation::LONGDOUBLE: 
                         {
-                            short* shortData = (short*) operation.getReturnValue();
-                            //printf("outputDataObject has ShortType named %s  with value %d\n", name, *shortData);
-                            outputDataObject->setShort(pl[i], *shortData);
+                            outputDataObject->setDouble(pl[i], *(long double*)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::StringType:
+                    case Operation::CHARS: 
                         {
-                            const char** stringData = (const char**) operation.getReturnValue();
-                            //printf("outputDataObject has StringType named %s with value %s\n", name, *stringData);
-                            outputDataObject->setCString(pl[i], *stringData);
+                            outputDataObject->setCString(pl[i], *(char**)operation.getReturnValue());
+                            break;
                         }
-                        break;
-                    case Type::DataObjectType:
+                    case Operation::STRING: 
                         {
-                            DataObjectPtr* dataObjectData = (DataObjectPtr*) operation.getReturnValue();
-                            //printf("outputDataObject has DataObjectType named %s with value (%d)\n", name, (*dataObjectData));
-                            outputDataObject->setDataObject(pl[i], *dataObjectData);
+                            outputDataObject->setCString(pl[i], (*(string*)operation.getReturnValue()).c_str());
+                            break;
                         }
-                        break;
-                    case Type::DateType:
-                        LOGERROR_1(0, "SDO DateType return values are not yet supported (%s)", name);
-                        break;
-                    case Type::LongType:
-                        LOGERROR_1(0, "SDO LongType (int64_t) return values are not yet supported (%s)", name);
-                        break;
-                    case Type::UriType:
-                        LOGERROR_1(0, "SDO UriType return values are not yet supported (%s)", name);
-                        break;
-                    case Type::BigDecimalType:
-                        LOGERROR_1(0, "SDO BigDecimalType return values are not yet supported (%s)", name);
-                        break;
-                    case Type::BigIntegerType:
-                        LOGERROR_1(0, "SDO BigIntegerType return values are not yet supported (%s)", name);
-                        break;
+                    case Operation::DATAOBJECT: 
+                        {
+                            outputDataObject->setDataObject(pl[i], *(DataObjectPtr*)operation.getReturnValue());
+                            break;
+                        }
                     default:
-                        LOGERROR_1(0, "Unknown SDO type return value named %s has been found. Unknown types are not yet supported", name);
-                    }   
+                        {
+                            string msg = "Unsupported parameter type";
+                            msg += resultType;
+                            throw msg.c_str();
+                        }
+                    }
                 }
             }
     

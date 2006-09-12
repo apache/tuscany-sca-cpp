@@ -19,8 +19,8 @@
 	name="sample.calculator">
 
 	<service name="CalculatorService">
-		<interface.wsdl interface="http://sample/calculator#wsdl.interface(CalculatorPortType)"/>
-		<binding.ws port="http://sample/calculator#wsdl.endpoint(CalculatorService/CalculatorPort)"/>
+		<interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/>
+		<binding.ws/>
 		<reference>CalculatorComponent/CalculatorService</reference>
 	</service>
 
