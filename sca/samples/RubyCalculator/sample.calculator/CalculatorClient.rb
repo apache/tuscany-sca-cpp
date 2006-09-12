@@ -25,6 +25,6 @@ x = calculator.add(1, 2)
 print x
 print "\n"
 
-x = calculator.div(4, 2)
+x = calculator.div(5, 2)
 print x
 print "\n"

@@ -32,6 +32,9 @@
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
 #include "tuscany/sca/ruby/model/RubyServiceBinding.h"
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
+#include "commonj/sdo/SDO.h"
+
+using commonj::sdo::PropertyList;
 
 namespace tuscany
 {
@@ -98,7 +101,33 @@ namespace tuscany
                     }
                     
                     // Set all the configured properties
-                    //TODO
+                    DataObjectPtr properties = component->getProperties();
+                    PropertyList pl = properties->getInstanceProperties();
+                    for (int i = 0; i < pl.size(); i++)
+                    {
+                        if (properties->isSet(pl[i]))
+                        {
+                            string varName = "@";
+                            varName += pl[i].getName();
+                            string cstr = properties->getCString(pl[i]);
+                            VALUE propertyValue;
+                            if (cstr == "true")
+                            {
+                                propertyValue = Qtrue;
+                            }
+                            else if (cstr == "false")
+                            {
+                                propertyValue = Qfalse;
+                            }
+                            else
+                            {
+                                //TODO use one of the rb_str_to_inum() functions
+                                // to convert a numeric value to a Ruby numeric
+                                propertyValue = rb_str_new2(cstr.c_str());
+                            }  
+                            rb_iv_set(instance, varName.c_str(), propertyValue);
+                        }
+                    }
                     
                     // Get the ID of the specified method
                     ID method = rb_intern(operation.getName().c_str());
