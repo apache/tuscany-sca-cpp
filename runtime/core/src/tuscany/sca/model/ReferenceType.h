@@ -62,7 +62,7 @@ namespace tuscany
                  * @param name The name of the reference.
                  */
                 SCA_API ReferenceType(ComponentType* componentType, const string& name,
-                    Interface* intface, Interface* callbackInterface, bool conversational, Multiplicity multiplicity);
+                    Interface* intface, Interface* callbackInterface, Multiplicity multiplicity);
                     
                 /**
                  * Destructor.

@@ -45,7 +45,7 @@ namespace tuscany
                 /**
                  * Constructor.
                  */
-                SCA_API Contract(Interface* intface, Interface* callbackInterface, bool conversational);
+                SCA_API Contract(Interface* intface, Interface* callbackInterface);
 
                 /**
                  * Destructor.
@@ -64,12 +64,6 @@ namespace tuscany
                  */
                 SCA_API Interface* getCallbackInterface() const { return callbackInterface; }
                 
-                /**
-                 * Returns true if the interface contract is conversational. 
-                 * @return True if the interface contract is conversational
-                 */
-                 SCA_API bool isConversational() const { return conversational; }
-                 
             private:
 
                 /**
@@ -82,11 +76,6 @@ namespace tuscany
                  */
                 Interface* callbackInterface;
                 
-                /**
-                 * True if the interface contract is conversational
-                 */
-                bool conversational;
-
             };
             
         } // End namespace model

@@ -45,7 +45,7 @@ namespace tuscany
                 // Initialize the component type, service type and service
                 ComponentType* componentType = getType();
                 ServiceType* serviceType = new ServiceType(
-                    componentType, "", intface, callbackInterface, conversational);
+                    componentType, "", intface, callbackInterface);
                 componentType->addServiceType(serviceType);
                 
                 service = new Service(this, serviceType);

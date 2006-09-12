@@ -437,7 +437,7 @@ namespace tuscany
                 {
                     Interface* iface = getInterface(composite, serviceTypes[i]);
                     ServiceType* serviceType =  new ServiceType(
-                        componentType, serviceTypes[i]->getCString("name"), iface, NULL, false);
+                        componentType, serviceTypes[i]->getCString("name"), iface, NULL);
                     componentType->addServiceType(serviceType);
                 }
             }
@@ -464,7 +464,7 @@ namespace tuscany
                     Interface* iface = getInterface(composite, refs[i]);
                     
                     ReferenceType* referenceType = new ReferenceType(
-                        componentType, refs[i]->getCString("name"), iface, NULL, false, multiplicity);
+                        componentType, refs[i]->getCString("name"), iface, NULL, multiplicity);
                     componentType->addReferenceType(referenceType);
                                             
                 }

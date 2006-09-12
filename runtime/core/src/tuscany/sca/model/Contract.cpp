@@ -30,8 +30,8 @@ namespace tuscany
         {
 
             // Constructor
-            Contract::Contract(Interface *intface, Interface* callbackInterface, bool conversational) :
-                iface(intface), callbackInterface(callbackInterface), conversational(conversational)
+            Contract::Contract(Interface *intface, Interface* callbackInterface) :
+                iface(intface), callbackInterface(callbackInterface)
             {
             }
 

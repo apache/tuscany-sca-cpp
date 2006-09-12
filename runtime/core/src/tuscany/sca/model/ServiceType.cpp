@@ -30,8 +30,8 @@ namespace tuscany
             
             // Constructor
             ServiceType::ServiceType(ComponentType* componentType, const string& name,
-                Interface* intface, Interface* callbackInterface, bool conversational)
-                : Contract(intface, callbackInterface, conversational),
+                Interface* intface, Interface* callbackInterface)
+                : Contract(intface, callbackInterface),
                 componentType(componentType), name(name)
             {
             }

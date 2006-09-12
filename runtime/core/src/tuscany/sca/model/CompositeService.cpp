@@ -48,7 +48,7 @@ namespace tuscany
                 // Initialize the component type, reference type and reference
                 ComponentType* componentType = getType();
                 ReferenceType* referenceType = new ReferenceType(
-                    componentType, "", intface, callbackInterface, conversational, multiplicity);
+                    componentType, "", intface, callbackInterface, multiplicity);
                 componentType->addReferenceType(referenceType);
                 
                 reference = new Reference(this, referenceType);
