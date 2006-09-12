@@ -19,13 +19,21 @@
 
 class DivideImpl
 
+  attr_writer :round
+
   def initialize()
     print "Ruby - DivideImpl.initialize\n"
   end
 	
   def divide(arg1, arg2)
-    print "Ruby - DivideImpl.divide\n"
-    arg1 / arg2
+    print "Ruby - DivideImpl.divide ", arg1, " / ", arg2, "\n"
+    res = arg1.to_f / arg2.to_f
+    if @round then
+      res = res.round
+      print "DivideImpl.divide rounding\n"
+    end
+    print "DivideImpl.divide ", res, "\n"
+    res
   end
 
 end

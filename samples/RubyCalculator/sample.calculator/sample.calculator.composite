@@ -31,6 +31,7 @@
         
 	<component name="DivideComponent">
 		<implementation.ruby script="DivideImpl.rb" class="DivideImpl"/>
+		<property name="round">true</property>
 	</component>
 
 </composite>
