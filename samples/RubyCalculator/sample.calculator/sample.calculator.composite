@@ -21,12 +21,12 @@
 	<service name="CalculatorService">
 		<interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/>
 		<binding.ws/>
-		<reference>CalculatorComponent/CalculatorService</reference>
+		<reference>CalculatorComponent</reference>
 	</service>
 
 	<component name="CalculatorComponent">
 		<implementation.ruby script="CalculatorImpl.rb" class="CalculatorImpl"/>
-	    <reference name="divideService">DivideComponent/DivideService</reference>
+	    <reference name="divideService">DivideComponent</reference>
 	</component>
         
 	<component name="DivideComponent">
