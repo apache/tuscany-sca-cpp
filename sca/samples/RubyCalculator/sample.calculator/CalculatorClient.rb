@@ -19,7 +19,7 @@
 
 require("libtuscany_sca_ruby")
 
-calculator = SCA::locateService("CalculatorComponent/CalculatorService")
+calculator = SCA::locateService("CalculatorComponent")
 
 x = calculator.add(1, 2)
 print x
