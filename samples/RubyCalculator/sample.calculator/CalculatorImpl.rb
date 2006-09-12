@@ -19,6 +19,8 @@
 
 class CalculatorImpl
 
+  attr_writer :divideService
+
   def initialize()
     print "Ruby - CalculatorImpl.initialize\n"
   end

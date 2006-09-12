@@ -560,12 +560,9 @@ namespace tuscany
                     
                     //TODO need to add support for complex properties, need the SDO
                     // folks to help understand how to do this...
-                    DataObjectPtr defaultValue;
-                    if (props[i]->isSet("value")) {
-                        defaultValue = props[i]->getDataObject("value");
-                    }
+                    DataObjectPtr defaultValue = props[i]->getDataObject("value");
 
-                    componentType->addPropertyType(name, type, many, defaultValue);
+                    componentType->addPropertyType(name, type, many, &defaultValue);
                 }
             }
             

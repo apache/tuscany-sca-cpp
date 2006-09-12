@@ -126,7 +126,7 @@ namespace tuscany
                 SCA_API virtual void addPropertyType(const string& name,
                     const string& type,
                     bool many,
-                    commonj::sdo::DataObjectPtr defaultValue);
+                    commonj::sdo::DataObjectPtr* defaultValue);
     
                 /**
                  * Return the SDO data factory which has the types of the properties defined
