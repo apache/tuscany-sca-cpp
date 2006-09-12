@@ -380,66 +380,148 @@ namespace tuscany
                      AxiomHelper myHelper;
                      DataObjectPtr returnDO = myHelper.toSdo(ret_node, dataFactory);
                      
-                     unsigned int index = 0;
-                     switch(operation.getReturnType())
-                     {
-                     case Operation::BOOL: 
-                         {
-                             *(bool*)operation.getReturnValue() = returnDO->getBoolean(index);
-                             break;
-                         }
-                     case Operation::SHORT: 
-                         {
-                             *(short*)operation.getReturnValue() = returnDO->getShort(index);
-                             break;
-                         }
-                     case Operation::LONG: 
-                         {
-                             *(long*)operation.getReturnValue() = returnDO->getLong(index);
-                             break;
-                         }
-                     case Operation::USHORT: 
-                         {
-                             *(unsigned short*)operation.getReturnValue() = (unsigned short)returnDO->getInteger(index);
-                             break;
-                         }
-                     case Operation::ULONG: 
-                         {
-                             *(unsigned long*)operation.getReturnValue() = (unsigned long)returnDO->getInteger(index);
-                             break;
-                         }
-                     case Operation::FLOAT: 
-                         {
-                             *(float*)operation.getReturnValue() = returnDO->getFloat(index);
-                             break;
-                         }
-                     case Operation::DOUBLE: 
-                         {
-                             *(double*)operation.getReturnValue() = returnDO->getDouble(index);
-                             break;
-                         }
-                     case Operation::LONGDOUBLE: 
-                         {
-                             *(long double*)operation.getReturnValue() = returnDO->getDouble(index);
-                             break;
-                         }
-                     case Operation::CHARS: 
-                         {
-                             *(char**)operation.getReturnValue() = strdup(returnDO->getCString(index));
-                             break;
-                         }
-                     case Operation::STRING: 
-                         {
-                             *(string*)operation.getReturnValue() = returnDO->getCString(index);
-                             break;
-                         }
-                     case Operation::DATAOBJECT: 
-                         {
-                             *(DataObjectPtr*)operation.getReturnValue() = returnDO->getDataObject(index);
-                             break;
-                         }
-                     default:;
-                     }
+                    PropertyList pl = returnDO->getInstanceProperties();
+                    unsigned int i = 0;
+                     
+                    switch(pl[i].getTypeEnum())
+                    {
+                    case Type::BooleanType:
+                        {
+                            bool* boolData = new bool;
+                            *boolData = returnDO->getBoolean(pl[i]);
+                            //printf("returnDO has BooleanType named %s with value %d\n", name, boolData);
+                            operation.setReturnValue(boolData);
+                        }
+                        break;
+                    case Type::ByteType:
+                        {
+                            char* byteData = new char;
+                            //printf("returnDO has ByteType named %s\n", name);
+                            *byteData = returnDO->getByte(pl[i]);
+                            operation.setReturnValue(byteData);
+                        }
+                        break;
+                    case Type::BytesType:
+                        {
+                            int len = returnDO->getLength(pl[i]);
+                            char* bytesData = new char[len+1];
+                            int bytesWritten = returnDO->getBytes(pl[i], bytesData, len);
+                            // Ensure the bytes end with the null char. Not sure if this is neccessary
+                            if(bytesWritten <= len)
+                            {
+                                bytesData[bytesWritten] = 0;
+                            }
+                            else
+                            {
+                                bytesData[len] = 0;
+                            }
+                            //printf("returnDO has BytesType named %s with length %d\n", name, bytesWritten);
+                            operation.setReturnValue(&bytesData);
+                        }
+                        break;
+                    case Type::CharacterType:
+                        {
+                            // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
+                            wchar_t* charData = new wchar_t;
+                            //printf("returnDO has CharacterType named %s\n", name);
+                            *charData = returnDO->getCharacter(pl[i]);
+                            operation.setReturnValue(charData);
+                        }
+                        break;
+                    case Type::DoubleType:
+                        {
+                            long double* doubleData = new long double;
+                            *doubleData = returnDO->getDouble(pl[i]);
+                            //printf("returnDO has DoubleType named %s\n", name);            
+                            operation.setReturnValue(doubleData);
+                        }
+                        break;
+                    case Type::FloatType:
+                        {
+                            float* floatData = new float;
+                            *floatData = returnDO->getFloat(pl[i]);
+                            //printf("returnDO has FloatType named %s with value %f\n", name, *floatData);
+                            operation.setReturnValue(floatData); 
+                        }
+                        break;
+                    case Type::IntegerType:
+                        {
+                            long* intData = new long;
+                            //printf("returnDO has IntegerType named %s\n", name);
+                            *intData = returnDO->getInteger(pl[i]);
+                            operation.setReturnValue(intData);
+                        }
+                        break;
+                    case Type::ShortType:
+                        {
+                            short* shortData = new short;
+                            //printf("returnDO has ShortType named %s\n", name);
+                            *shortData = returnDO->getShort(pl[i]);
+                            operation.setReturnValue(shortData);
+                        }
+                        break;
+                    case Type::StringType:
+                        {
+                            const char** stringData = new const char*; 
+                            string* str = new string(returnDO->getCString(pl[i]));
+                            *stringData = str->c_str();
+                            //printf("returnDO has StringType named %s with value %s\n", name, stringData);
+                            operation.setReturnValue(stringData);
+                        }
+                        break;
+                    case Type::DataObjectType:
+                        {
+                            DataObjectPtr dataObjectData = returnDO->getDataObject(pl[i]);
+                            //printf("returnDO has DataObjectType named %s (#%d)\n", name, dataObjectData);
+            
+                            if(!dataObjectData)
+                            {
+                                LOGINFO(4, "SDO DataObject return value was null");
+                            }
+                            operation.setReturnValue(&dataObjectData);
+                        }
+                        break;
+                    case Type::OpenDataObjectType:
+                        {         
+                            /*
+                             * This code deals with xsd:any element parameters
+                             * Get each element as a DataObject and add in to the parameter list
+                             */
+            
+                            //printf("returnDO has OpenDataObjectType named %s\n", name);
+                            DataObjectList& dataObjectList = returnDO->getList(pl[i]);
+                            
+                            for(int j=0; j<dataObjectList.size(); j++)
+                            {
+                                DataObjectPtr dataObjectData = dataObjectList[j];
+                                if(!dataObjectData)
+                                {
+                                    LOGINFO(4, "SDO OpenDataObject return value was null");
+                                }
+                                operation.setReturnValue(&dataObjectData);
+                                //Utils::printDO(dataObjectData);
+                            }
+                        }
+                        break;
+                    case Type::DateType:
+                        LOGERROR(0, "SDO DateType return values are not yet supported");
+                        break;
+                    case Type::LongType:
+                        LOGERROR(0, "SDO LongType (int64_t) return values are not yet supported");
+                        break;
+                    case Type::UriType:
+                        LOGERROR(0, "SDO UriType return values are not yet supported");
+                        break;
+                    case Type::BigDecimalType:
+                        LOGERROR(0, "SDO BigDecimalType return values are not yet supported");
+                        break;
+                    case Type::BigIntegerType:
+                        LOGERROR(0, "SDO BigIntegerType return values are not yet supported");
+                        break;
+                    default:
+                        LOGERROR(0, "Unknown SDO type has been found in return value. Unknown types are not yet supported");
+                        break;
+                    }         
                  }
                  else
                  {
