@@ -82,22 +82,25 @@ namespace tuscany
                     // Create a new instance of the Ruby implementation class
                     VALUE instance = rb_class_new_instance(0, NULL, implementation->getImplementationClass());
 
-                    // Set all the references and properties
+                    // Set all the references
                     const Component::REFERENCE_MAP& references = component->getReferences();
                     Component::REFERENCE_MAP::const_iterator refiter = references.begin();
                     for (int ri=0; ri< references.size(); ri++)
                     {
                         Reference* reference = refiter->second;
                         RubyServiceProxy* proxy = (RubyServiceProxy*)reference->getBinding()->getServiceProxy();
-                        VALUE referenceValue = proxy->getValue();
-                        rb_iv_set(instance, refiter->first.c_str(), referenceValue);
+                        VALUE proxyValue = proxy->getProxyValue();
+                        string varName = "@" + refiter->first; 
+                        rb_iv_set(instance, varName.c_str(), proxyValue);
                         refiter++;
                     }
+                    
+                    // TODO Set all the properties
                     
                     // Get the ID of the specified method
                     ID method = rb_intern(operation.getName().c_str());
 
-                    // Convert C arguments to Ruby arguments
+                    // Convert C++ parameters to Ruby parameters
                     VALUE *args = NULL;
                     int n = operation.getNParms();
                     if (n != 0)
@@ -109,7 +112,8 @@ namespace tuscany
                             VALUE value;
                             
                             Operation::Parameter& parm = operation.getParameter(i);
-                            switch(parm.getType())
+                            Operation::ParameterType parmType = parm.getType();
+                            switch(parmType)
                             {
                                 case Operation::BOOL: 
                                 {
@@ -172,7 +176,8 @@ namespace tuscany
                                 default:
                                 {
                                     //throw new ComponentInvocationException("Operation parameter type not supported");
-                                    std::cout << "Operation parameter type not supported" << std::endl;
+                                    string msg = "Operation parameter type not supported" + parmType;
+                                    throw msg.c_str();
                                 }
                             }
                             
@@ -182,70 +187,68 @@ namespace tuscany
 
                     
                     // Invoke the specified method
-                    VALUE value;
+                    VALUE result;
                     if (n == 0)
                     {
-                        value = rb_funcall(instance, method, 0);
+                        result = rb_funcall(instance, method, 0);
                     }
                     else
                     {
-                        value = rb_funcall2(instance, method, n, args);
+                        result = rb_funcall2(instance, method, n, args);
                     }
                     
-                    // Convert the result to a C result
-                    switch(operation.getReturnType())
+                    // Convert the Ruby result value to a C++ result
+                    int resultType = TYPE(result);
+                    switch(resultType)
                     {
-                    case Operation::BOOL: 
+                    case T_FLOAT: 
                         {
-                            *(bool*)operation.getReturnValue() = (rb_num2long(value)!=0);
+                            float* data = new float; 
+                            *data = rb_num2dbl(result);
+                            operation.setReturnValue(data);
                             break;
                         }
-                    case Operation::SHORT: 
+                    case T_STRING: 
                         {
-                            *(short*)operation.getReturnValue() = (short) rb_num2long(value);
+                            string* data = new string(rb_string_value_cstr(&result));
+                            const char** cdata = new const char*; 
+                            *cdata = data->c_str();
+                            operation.setReturnValue(cdata);
                             break;
                         }
-                    case Operation::LONG: 
+                    case T_FIXNUM: 
                         {
-                            *(long*)operation.getReturnValue() =  (long) rb_num2long(value);
+                            long* data = new long;
+                            *data = rb_num2long(result);
+                            operation.setReturnValue(data);
                             break;
                         }
-                    case Operation::USHORT: 
+                    case T_BIGNUM: 
                         {
-                            *(unsigned short*)operation.getReturnValue() = (unsigned short) rb_num2ulong(value);
+                            long double* data = new long double; 
+                            *data = rb_num2dbl(result);
+                            operation.setReturnValue(data);
                             break;
                         }
-                    case Operation::ULONG: 
+                    case T_TRUE: 
                         {
-                            *(unsigned long*)operation.getReturnValue() = (unsigned long) rb_num2ulong(value);
+                            bool* data = new bool;
+                            *data = true; 
+                            operation.setReturnValue(data);
                             break;
                         }
-                    case Operation::FLOAT: 
+                    case T_FALSE: 
                         {
-                            *(float*)operation.getReturnValue() = (float) rb_num2dbl(value);
+                            bool* data = new bool;
+                            *data = false; 
+                            operation.setReturnValue(data);
                             break;
                         }
-                    case Operation::DOUBLE: 
+                    default:
                         {
-                            *(double*)operation.getReturnValue() = (double) rb_num2dbl(value);
-                            break;
-                        }
-                    case Operation::LONGDOUBLE: 
-                        {
-                            *(long double*)operation.getReturnValue() = (long double) rb_num2dbl(value);
-                            break;
-                        }
-                    case Operation::CHARS: 
-                        {
-                            *(char**)operation.getReturnValue() = strdup(rb_string_value_cstr(&value));
-                            break;
-                        }
-                    case Operation::STRING: 
-                        {
-                            *(string*)operation.getReturnValue() = string(rb_string_value_cstr(&value));
-                            break;
-                        }
-                    default:;
+                            string msg = "Ruby type not supported: " + resultType;
+                            throw msg.c_str();
+                        } 
                     }
                     
                 }

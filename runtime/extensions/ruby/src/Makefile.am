@@ -12,7 +12,8 @@ tuscany/sca/ruby/RubyServiceProxy.cpp \
 tuscany/sca/ruby/RubyServiceWrapper.cpp \
 tuscany/sca/ruby/model/RubyImplementation.cpp \
 tuscany/sca/ruby/model/RubyReferenceBinding.cpp \
-tuscany/sca/ruby/model/RubyServiceBinding.cpp
+tuscany/sca/ruby/model/RubyServiceBinding.cpp \
+tuscany/sca/ruby/RubyCompositeContext.cpp
 
 libtuscany_sca_ruby_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \

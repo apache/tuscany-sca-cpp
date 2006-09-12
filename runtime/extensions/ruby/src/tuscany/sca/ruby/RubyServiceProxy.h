@@ -72,9 +72,19 @@ namespace tuscany
                 /**
                  * Returns the Ruby value of the proxy
                  */
-                 VALUE getValue() const { return value; };
+                 VALUE getProxyValue() const { return proxyValue; };
+                 
+                 /**
+                  * Handles the invocation of a Ruby method.
+                  */
+                  VALUE invoke(int argc, VALUE* argv);
             
             private:
+            
+                /**
+                 * Create the Ruby proxy object
+                 */
+                 void createProxy();
     
                 /**
                  * The target service wrapper
@@ -84,7 +94,12 @@ namespace tuscany
                 /**
                  * The Ruby value of the proxy
                  */
-                 VALUE value;
+                 VALUE proxyValue;
+
+                /**
+                 * The Ruby proxy class
+                 */
+                static VALUE proxyClass;                  
                  
             };
             

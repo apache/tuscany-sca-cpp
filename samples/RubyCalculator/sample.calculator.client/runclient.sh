@@ -36,12 +36,9 @@ echo "Using Axis2C installed at $AXIS2C_HOME"
 
 TEST_SYSTEM=$APFULLDIR/../
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
 export TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent
 
-./calculator_client add 4.7 9
-./calculator_client div 7.2 3.6
-./calculator_client mul 7 6
-
+ruby -C../packages/sample.calculator -I$TUSCANY_SCACPP/extensions/ruby/lib CalculatorClient.rb
