@@ -25,7 +25,7 @@
 	</service>
 
 	<component name="CalculatorComponent">
-		<implementation.cpp library="Calculator" header="CalculatorImpl.h"/>
+		<implementation.ruby script="CalculatorImpl.rb" class="CalculatorImpl"/>
 	    <reference name="divideService">DivideComponent/DivideService</reference>
 	</component>
         
