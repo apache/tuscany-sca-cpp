@@ -88,13 +88,17 @@ namespace tuscany
                     {
                         Reference* reference = refiter->second;
                         RubyServiceProxy* proxy = (RubyServiceProxy*)reference->getBinding()->getServiceProxy();
-                        VALUE proxyValue = proxy->getProxyValue();
-                        string varName = "@" + refiter->first; 
-                        rb_iv_set(instance, varName.c_str(), proxyValue);
+                        if (proxy != NULL)
+                        {
+                            VALUE proxyValue = proxy->getProxyValue();
+                            string varName = "@" + refiter->first; 
+                            rb_iv_set(instance, varName.c_str(), proxyValue);
+                        }
                         refiter++;
                     }
                     
-                    // TODO Set all the properties
+                    // Set all the configured properties
+                    //TODO
                     
                     // Get the ID of the specified method
                     ID method = rb_intern(operation.getName().c_str());

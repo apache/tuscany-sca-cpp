@@ -85,7 +85,7 @@ namespace tuscany
             void ComponentType::addPropertyType(const string& name,
                 const string& type,
                 bool many,
-                DataObjectPtr defaultValue)
+                DataObjectPtr* defaultValue)
             {
                 // Create a Type in the Properties dataFactory
                 DataFactoryPtr factory = getPropertyDataFactory();
@@ -206,19 +206,22 @@ namespace tuscany
                     true);
 
                 // Set the default for a dataType
-                try
+                if (defaultValue!=NULL)
                 {
-                    const Type& propType = factory->getType(typeUri.c_str(), typeName.c_str());
-                    if (propType.isDataType())
+                    try
                     {
-                        factory->setDefault("org/osoa/sca", "Properties",
-                            name.c_str(),
-                            (char*)defaultValue->getCString(""));
+                        const Type& propType = factory->getType(typeUri.c_str(), typeName.c_str());
+                        if (propType.isDataType())
+                        {
+                            factory->setDefault("org/osoa/sca", "Properties",
+                                name.c_str(),
+                                (char*)(*defaultValue)->getCString(""));
+                        }
                     }
-                }
-                catch (SDOTypeNotFoundException&)
-                {
-                    // cout << "setting default failed" <<endl;
+                    catch (SDOTypeNotFoundException&)
+                    {
+                        // cout << "setting default failed" <<endl;
+                    }
                 }
             }
             

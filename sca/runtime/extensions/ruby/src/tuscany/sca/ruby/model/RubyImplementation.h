@@ -86,14 +86,12 @@ namespace tuscany
                  */
                 VALUE getImplementationClass() const { return implementationClass; }
 
-                /**
-                 * Find an existing reference type on this component type.
-                 * @param referenceName The name of the reference type to find.
-                 * @return The found reference type, or 0 if not found.
-                 */
-                SCA_API virtual ReferenceType* findReferenceType(const string& referenceName);
-
             private:
+            
+                /**
+                 * Load the Ruby implementation class
+                 */
+                 void loadClass();
                 
                 /**
                  * Name of the Ruby module.

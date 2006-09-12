@@ -31,7 +31,7 @@ namespace tuscany
 
             // Constructor
             RubyReferenceBinding::RubyReferenceBinding(Reference* reference)
-                : ReferenceBinding(reference, ""), serviceProxy(NULL)
+                : ReferenceBinding(reference, ""), serviceProxy(NULL), targetServiceBinding(NULL)
             {
             }
             

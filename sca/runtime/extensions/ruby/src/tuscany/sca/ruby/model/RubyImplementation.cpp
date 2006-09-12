@@ -44,6 +44,15 @@ namespace tuscany
                 : ComponentType(composite, script.substr(0, script.find_last_of('.'))),
                     module(module), className(className), script(script)
             {
+                loadClass();
+            }
+
+            RubyImplementation::~RubyImplementation()
+            {
+            }
+            
+            void RubyImplementation::loadClass()
+            {
                 // Initialize the Ruby runtime
                 if (!initialized)
                 {
@@ -54,7 +63,7 @@ namespace tuscany
                 // Load the specified Ruby script
                 if (script != "")
                 {
-                    string path = composite->getRoot() + '/' + script;
+                    string path = getComposite()->getRoot() + '/' + script;
                     rb_require((char *)path.c_str());
                 }
 
@@ -64,10 +73,30 @@ namespace tuscany
                 // Create a default service
                 ServiceType* defaultServiceType = new ServiceType(this, "", NULL, NULL);
                 addServiceType(defaultServiceType);
-            }
 
-            RubyImplementation::~RubyImplementation()
-            {
+                // Introspect the Ruby class and create references and properties for
+                // all public attributes
+                VALUE methods = rb_class_public_instance_methods(0, NULL, implementationClass);
+                int n = RARRAY(methods)->len;
+                for (int i = 0; i<n; i++)
+                {
+                    VALUE method = rb_ary_entry(methods, i);
+                    string methodName = string(rb_string_value_cstr(&method));
+                    
+                    // Create a reference type for each setter method
+                    int s = methodName.size();
+                    if (s > 1 && methodName[s-1] == '=' && methodName[0] != '=')
+                    {
+                        string variableName = methodName.substr(0, s-1);
+                        ReferenceType* referenceType = new ReferenceType(
+                                this, variableName, NULL, NULL, ReferenceType::ONE_ONE);
+                        addReferenceType(referenceType);
+                        
+                        // Create a property type as well
+                        addPropertyType(variableName, "http://www.w3.org/2001/XMLSchema#string", false, NULL);
+                        
+                    }
+                }
             }
             
             void RubyImplementation::initializeComponent(Component* component)
@@ -95,20 +124,6 @@ namespace tuscany
                     reference->setBinding(binding);
                     refiter++;
                 }
-            }
-            
-            // Override this method to add reference types as they are needed
-            ReferenceType* RubyImplementation::findReferenceType(const string& referenceName)
-            {
-                ReferenceType* referenceType = ComponentType::findReferenceType(referenceName);
-    
-                if (referenceType == NULL)
-                {
-                    referenceType = new ReferenceType(this, referenceName, NULL, NULL, ReferenceType::ONE_ONE);
-                    addReferenceType(referenceType);
-                }
-                
-                return referenceType;
             }
             
         } // End namespace ruby
