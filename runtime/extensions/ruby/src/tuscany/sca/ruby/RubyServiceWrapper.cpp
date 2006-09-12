@@ -51,7 +51,6 @@ namespace tuscany
                 component = service->getComponent();
                 implementation = (RubyImplementation*)component->getType();
                 interf = service->getType()->getInterface();
-                remotable = interf->isRemotable();
                 
                 LOGEXIT(1,"RubyServiceWrapper::constructor");
                 

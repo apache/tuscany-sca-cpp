@@ -76,7 +76,7 @@ namespace tuscany
                  * Add a new service type to this component type.
                  * @param serviceType The service type to add.
                  */
-                SCA_API void addServiceType(ServiceType* serviceType);
+                SCA_API virtual void addServiceType(ServiceType* serviceType);
 
                 /**
                  * Find an existing service type on this component type.
@@ -85,20 +85,20 @@ namespace tuscany
                  * only one service type it will be returned.
                  * @return The found service, or 0 if not found.
                  */
-                SCA_API ServiceType* findServiceType(const string& serviceName);
+                SCA_API virtual ServiceType* findServiceType(const string& serviceName);
 
                 /**
                  * Add a new reference type to this component type.
                  * @param referenceType The reference type to add.
                  */
-                SCA_API void addReferenceType(ReferenceType* referenceType);
+                SCA_API virtual void addReferenceType(ReferenceType* referenceType);
 
                 /**
                  * Find an existing reference type on this component type.
                  * @param referenceName The name of the reference type to find.
                  * @return The found reference type, or 0 if not found.
                  */
-                SCA_API ReferenceType* findReferenceType(const string& referenceName);
+                SCA_API virtual ReferenceType* findReferenceType(const string& referenceName);
 
                 /**
                  * Returns the service types defined on this component.
@@ -123,7 +123,7 @@ namespace tuscany
                  * @param defaultValue The default value if the property does not have a
                  * value set.
                  */
-                SCA_API void addPropertyType(const string& name,
+                SCA_API virtual void addPropertyType(const string& name,
                     const string& type,
                     bool many,
                     commonj::sdo::DataObjectPtr defaultValue);
@@ -133,7 +133,7 @@ namespace tuscany
                  * in this component type.
                  * @return The data factory.
                  */
-                SCA_API commonj::sdo::DataFactoryPtr getPropertyDataFactory();
+                SCA_API virtual commonj::sdo::DataFactoryPtr getPropertyDataFactory();
 
                 /**
                  * Initialize a component of this type.

@@ -354,26 +354,37 @@ namespace tuscany
                     // Load the .componentType
                     // -----------------------
                     string typeFileName = composite->getRoot() + "/" + componentType->getName() + ".componentType";
-                    try 
+
+                    // Check that the component type file exists
+                    //TODO We need a better and portable way to do this
+                    string dirName;
+                    string fileName;                    
+                    Utils::rTokeniseString("/", typeFileName, dirName, fileName);
+                    Files files(dirName, fileName, false);
+                    if (files.size() !=0)
                     {
-                        XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
-                        if (!componentTypeFile || componentTypeFile->getRootDataObject() == 0)
+                        try 
                         {
-                            LOGERROR_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
+                            XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
+                            if (!componentTypeFile || componentTypeFile->getRootDataObject() == 0)
+                            {
+                                // Component type files are optional
+                                LOGINFO_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
+                            }
+                            else
+                            {                                            
+                                //Utils::printDO(componentTypeFile->getRootDataObject());
+                                //commonj::sdo::SDOUtils::printDataObject(componentTypeFile->getRootDataObject());
+                                addServiceTypes(composite, componentType, componentTypeFile->getRootDataObject());
+                                addReferenceTypes(composite, componentType, componentTypeFile->getRootDataObject());
+                                addPropertyTypes(componentType, componentTypeFile->getRootDataObject());
+                            }
+                        } catch (SDORuntimeException& ex) 
+                        {
+                            LOGERROR_2(0, "ModelLoader::addComponent (%s): Exception caught: %s",
+                                typeFileName.c_str(), ex.getMessageText());
+                            throw SystemConfigurationException(ex.getMessageText());
                         }
-                        else
-                        {                                            
-                            //Utils::printDO(componentTypeFile->getRootDataObject());
-                            //commonj::sdo::SDOUtils::printDataObject(componentTypeFile->getRootDataObject());
-                            addServiceTypes(composite, componentType, componentTypeFile->getRootDataObject());
-                            addReferenceTypes(composite, componentType, componentTypeFile->getRootDataObject());
-                            addPropertyTypes(componentType, componentTypeFile->getRootDataObject());
-                        }
-                    } catch (SDORuntimeException& ex) 
-                    {
-                        LOGERROR_2(0, "ModelLoader::addComponent (%s): Exception caught: %s",
-                            typeFileName.c_str(), ex.getMessageText());
-                        throw SystemConfigurationException(ex.getMessageText());
                     }    
                 }
                 else
@@ -383,6 +394,20 @@ namespace tuscany
                     string message = "Implementation type not supported: ";
                     message = message + implTypeQname;
                     throw SystemConfigurationException(message.c_str());
+                }
+                
+                // First check that references exist, some component types
+                // will create all used references automatically
+                DataObjectList& refs = componentDO->getList("reference");
+                for (int i=0; i<refs.size(); i++)
+                {
+                    string refName = refs[i]->getCString("name");
+                    if (!componentType->findReferenceType(refName))
+                    {
+                        // Configuration error: reference is not defined
+                        string message = "Undefined reference: " + refName;
+                        throw SystemConfigurationException(message.c_str());
+                    }
                 }
                 
                 // Create the component
@@ -404,7 +429,6 @@ namespace tuscany
                 // ----------
                 // References
                 // ----------
-                DataObjectList& refs = componentDO->getList("reference");
                 for (int i=0; i<refs.size(); i++)
                 {
                     // ----------------------------------------------------------

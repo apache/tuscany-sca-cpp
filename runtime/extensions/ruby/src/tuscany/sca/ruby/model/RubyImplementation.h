@@ -61,7 +61,7 @@ namespace tuscany
                  * Initialize a component of this type.
                  * @param component The component to initialize.
                  */
-                virtual void initializeComponent(Component* component);
+                SCA_API virtual void initializeComponent(Component* component);
 
                 /**
                  * Returns the name of the Ruby module.
@@ -85,6 +85,13 @@ namespace tuscany
                  * Returns the Ruby implementation class
                  */
                 VALUE getImplementationClass() const { return implementationClass; }
+
+                /**
+                 * Find an existing reference type on this component type.
+                 * @param referenceName The name of the reference type to find.
+                 * @return The found reference type, or 0 if not found.
+                 */
+                SCA_API virtual ReferenceType* findReferenceType(const string& referenceName);
 
             private:
                 

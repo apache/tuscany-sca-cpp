@@ -24,7 +24,9 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/util/Utils.h"
 
 namespace tuscany
@@ -59,6 +61,9 @@ namespace tuscany
                 // Load the Ruby implementation class                
                 implementationClass = rb_path2class(className.c_str());
                 
+                // Create a default service
+                ServiceType* defaultServiceType = new ServiceType(this, "", NULL, NULL);
+                addServiceType(defaultServiceType);
             }
 
             RubyImplementation::~RubyImplementation()
@@ -90,6 +95,20 @@ namespace tuscany
                     reference->setBinding(binding);
                     refiter++;
                 }
+            }
+            
+            // Override this method to add reference types as they are needed
+            ReferenceType* RubyImplementation::findReferenceType(const string& referenceName)
+            {
+                ReferenceType* referenceType = ComponentType::findReferenceType(referenceName);
+    
+                if (referenceType == NULL)
+                {
+                    referenceType = new ReferenceType(this, referenceName, NULL, NULL, ReferenceType::ONE_ONE);
+                    addReferenceType(referenceType);
+                }
+                
+                return referenceType;
             }
             
         } // End namespace ruby
