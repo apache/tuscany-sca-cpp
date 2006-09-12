@@ -237,7 +237,7 @@ DOM nodes that each relate to a function in the service
         </xsl:when>
         <xsl:otherwise><!-- simple type -->
         <xsl:text>
-    return ret;</xsl:text>
+    return *(</xsl:text><xsl:value-of select="$type"/><xsl:text>*)operation.getReturnValue();</xsl:text>
         </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
