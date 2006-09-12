@@ -68,7 +68,13 @@ namespace tuscany
                 }
                 else
                 {
-                    return services[serviceName];
+                    Service* service = services[serviceName];
+                    if (service == NULL)
+                    {
+                        // A service with an empty name will match any service name 
+                        service = services[""];
+                    }
+                    return service;
                 }
             }
             

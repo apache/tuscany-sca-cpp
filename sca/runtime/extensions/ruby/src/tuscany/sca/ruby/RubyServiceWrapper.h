@@ -76,11 +76,6 @@ namespace tuscany
                 Component* component;
     
                 /**
-                 * Set to true if the service is remotable.
-                 */
-                bool remotable;
-                
-                /**
                  * A pointer to the interface which the service exposes.
                  */
                 Interface* interf;
