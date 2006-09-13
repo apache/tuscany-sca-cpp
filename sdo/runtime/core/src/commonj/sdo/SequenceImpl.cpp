@@ -848,19 +848,27 @@ charInserter (Bytes , const char* );
     {
         int j = 0;
         const Property* prop;
-        SEQUENCE_ITEM_LIST::iterator i;
-        for (i=the_list.begin();i != the_list.end(); ++i)
+        SEQUENCE_ITEM_LIST::iterator i = the_list.begin();
+
+        while (i != the_list.end())
         {
-            prop = (*i).getProp();
-            if (prop != 0) {
-                if (!strcmp(prop->getName(),
-                            p.getName()))
-                {
-                    // not sure this works - does i still equate
-                    // to an iterator over the list after the remove?
-                    i = the_list.erase(i);
-                }
-            }
+           prop = (*i).getProp();
+           if (prop != 0)
+           {
+              if (!strcmp(prop->getName(), p.getName()))
+              {
+                 i = the_list.erase(i);
+              }
+              else
+              {
+                 ++i;
+              }
+           }
+           else
+           {
+              ++i;
+           }
+
         }
     
         return;

@@ -18,7 +18,7 @@
 /* $Rev$ $Date: 2006/03/16 12:21:39 $ */
 
 #include "commonj/sdo/SDOUtils.h"
-
+#include <stdio.h>
 using namespace std;
 
 //

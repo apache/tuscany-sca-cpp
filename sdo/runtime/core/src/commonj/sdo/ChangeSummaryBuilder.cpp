@@ -26,6 +26,8 @@
 #include "commonj/sdo/DASProperty.h"
 #include "commonj/sdo/Logging.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 namespace commonj
 {
     namespace sdo

@@ -22,7 +22,7 @@
 #include <stdarg.h>
 #include "commonj/sdo/DefaultLogWriter.h"
 #include <stdio.h>
-
+#include <stdlib.h>
 using namespace std;
 
 namespace commonj

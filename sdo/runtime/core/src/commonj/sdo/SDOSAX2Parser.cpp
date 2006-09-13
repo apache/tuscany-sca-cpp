@@ -30,6 +30,7 @@
 #include "commonj/sdo/TypeImpl.h"
 #include "commonj/sdo/DataObjectImpl.h"
 #include "commonj/sdo/DataFactoryImpl.h"
+#include <stdio.h>
 using namespace std;
 
 namespace commonj

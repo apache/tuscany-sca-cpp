@@ -42,6 +42,7 @@
 
 #include <string>
 #include <stdio.h>
+#include <stdlib.h>
 using std::string;
 
 

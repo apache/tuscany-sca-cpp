@@ -20,6 +20,7 @@
 /* work in progress on generation of structures from sdos*/
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #pragma warning(disable:4786)
 

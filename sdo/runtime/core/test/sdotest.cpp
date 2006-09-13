@@ -18,6 +18,7 @@
 /* $Id: sdotest.cpp,v 1.22 2006/03/16 12:53:57 slattery Exp $ */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #pragma warning(disable:4786)
 

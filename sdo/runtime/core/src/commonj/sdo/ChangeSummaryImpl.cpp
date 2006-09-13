@@ -30,6 +30,7 @@
 #include "commonj/sdo/SDORuntimeException.h"
 #include "commonj/sdo/Logging.h"
 
+#include <stdlib.h>
 
 namespace commonj{
 namespace sdo{
