@@ -11,10 +11,12 @@ tuscany/sca/python/PythonImplementationExtension.cpp \
 tuscany/sca/python/PythonInterfaceExtension.cpp \
 tuscany/sca/python/PythonServiceWrapper.cpp \
 tuscany/sca/python/PythonServiceProxy.cpp \
+tuscany/sca/python/TuscanySCAModule.cpp \
 tuscany/sca/python/model/PythonImplementation.cpp \
 tuscany/sca/python/model/PythonInterface.cpp \
 tuscany/sca/python/model/PythonReferenceBinding.cpp \
 tuscany/sca/python/model/PythonServiceBinding.cpp
+
 
 libtuscany_sca_python_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \

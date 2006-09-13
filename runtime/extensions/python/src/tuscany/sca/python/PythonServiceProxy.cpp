@@ -32,11 +32,9 @@
 #include "tuscany/sca/model/ServiceBinding.h"
 #include "tuscany/sca/python/model/PythonImplementation.h"
 #include "tuscany/sca/python/model/PythonReferenceBinding.h"
-#include "tuscany/sca/cpp/model/CPPInterface.h"
 
 using namespace osoa::sca;
 using namespace tuscany::sca::model;
-using tuscany::sca::cpp::CPPInterface;
 
 namespace tuscany
 {
