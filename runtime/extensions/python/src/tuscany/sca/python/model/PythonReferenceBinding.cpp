@@ -18,8 +18,9 @@
  */
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/python/model/PythonServiceBinding.h"
-#include "tuscany/sca/python/PythonServiceWrapper.h"
+#include "tuscany/sca/python/model/PythonReferenceBinding.h"
+#include "tuscany/sca/python/PythonServiceProxy.h"
+
 
 namespace tuscany
 {
@@ -29,28 +30,28 @@ namespace tuscany
         {
 
             // Constructor
-            PythonServiceBinding::PythonServiceBinding(Service* service)
-                : ServiceBinding(service, "")
+            PythonReferenceBinding::PythonReferenceBinding(Reference* reference)
+                : ReferenceBinding(reference, ""), serviceProxy(NULL)
             {
-                LOGENTRY(1,"PythonServiceBinding::constructor");
-                serviceWrapper = new PythonServiceWrapper(service);
-                LOGEXIT(1,"PythonServiceBinding::constructor");
-            }
-
-            // Destructor
-            PythonServiceBinding::~PythonServiceBinding()
-            {
-                LOGENTRY(1,"PythonServiceBinding::destructor");
-                LOGEXIT(1,"PythonServiceBinding::destructor");
             }
             
-            ServiceWrapper* PythonServiceBinding::getServiceWrapper()
+            // Destructor
+            PythonReferenceBinding::~PythonReferenceBinding()
             {
-                LOGENTRY(1,"PythonServiceBinding::getServiceWrapper");
-                LOGEXIT(1,"PythonServiceBinding::getServiceWrapper");
-                return (ServiceWrapper*)serviceWrapper;
+            }
+            
+            ServiceProxy* PythonReferenceBinding::getServiceProxy()
+            {
+                return serviceProxy;
+            }
+            
+            void PythonReferenceBinding::configure(ServiceBinding* binding)
+            {
+                targetServiceBinding = binding;
+                
+                serviceProxy = new PythonServiceProxy(getReference());
             }
                 
-        } // End namespace ws
+        } // End namespace python
     } // End namespace sca
 } // End namespace tuscany

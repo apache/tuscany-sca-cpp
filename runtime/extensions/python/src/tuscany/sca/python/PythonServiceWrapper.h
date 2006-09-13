@@ -20,7 +20,7 @@
 #ifndef tuscany_sca_python_pythonservicewrapper_h
 #define tuscany_sca_python_pythonservicewrapper_h
 
-
+#include "tuscany/sca/python/export.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
@@ -47,19 +47,10 @@ namespace tuscany
              * An instance of this class wraps the actual component implementation which 
              * has been written by a developer of an SCA application.
              */
-            class SCA_API PythonServiceWrapper : public ServiceWrapper
+            class PythonServiceWrapper : public ServiceWrapper
             {
             public:
-                /**
-                 * Factory method to create a new PythonServiceWrapper for a given target
-                 * service. This method will provide all the loading of dlls required to 
-                 * create the target component.
-                 * @param target The service on the component for which this wrapper is to be
-                 * created.
-                 * @return A wrapper that references the given target.
-                 */
-                static PythonServiceWrapper* getServiceWrapper(Service* service);
-    
+
                 /**
                  * Constructor.
                  * @param target The component service to which this wrapper refers.
@@ -99,6 +90,7 @@ namespace tuscany
                  */
                 virtual void releaseInstance();
     
+
             private:
                 /**
                  * Holds a class instance if a classname is provided. 
@@ -110,21 +102,21 @@ namespace tuscany
                  * Holds the module 
                  */
                 PyObject* pythonModule;
+                                
+                /**
+                 * Adds references to the provided implementation module or class instance 
+                 */
+                void addReferences(PyObject* module);
 
                 /**
                  * The component to which this wrapper refers.
                  */
                 Component* component;
-    
-                /**
-                 * A pointer to the interface which the service exposes.
-                 */
-                Interface* interf;
 
                 /**
                  * The component implementation
                  */
-                 PythonImplementation* implementation;
+                PythonImplementation* implementation;
                 
             };
             

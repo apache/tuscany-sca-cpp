@@ -17,9 +17,9 @@
  * under the License.
  */
 
+#include "osoa/sca/ServiceRuntimeException.h"
 #include "tuscany/sca/python/PythonServiceWrapper.h"
 
-#include "osoa/sca/ServiceRuntimeException.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/Component.h"
@@ -64,7 +64,6 @@ namespace tuscany
                 LOGENTRY(1,"PythonServiceWrapper::constructor");
     
                 component = service->getComponent();
-                interf = service->getType()->getInterface();
                 implementation = (PythonImplementation*)component->getType();              
 
                 pythonModule = NULL;
@@ -80,9 +79,9 @@ namespace tuscany
                     throw ServiceNotFoundException(msg.c_str());
                 }
 
-                LOGINFO_1(3,"PythonServiceWrapper::getServiceWrapper module %s", impl->getModule().c_str());
-                LOGINFO_1(3,"PythonServiceWrapper::getServiceWrapper path %s", impl->getModulePath().c_str());
-                LOGINFO_1(3,"PythonServiceWrapper::getServiceWrapper class %s", impl->getClass().c_str());
+                LOGINFO_1(3,"PythonServiceWrapper::constructor module %s", impl->getModule().c_str());
+                LOGINFO_1(3,"PythonServiceWrapper::constructor path %s", impl->getModulePath().c_str());
+                LOGINFO_1(3,"PythonServiceWrapper::constructor class %s", impl->getClass().c_str());
 
                 // Initialize the Python environment
                 Py_Initialize();
@@ -103,7 +102,6 @@ namespace tuscany
                         PyObject* pPath = PyString_FromString(path.c_str());
                         PyList_Append(pSysPath, pPath);
                         
-                        //printPyObject("sys.path", pSysPath);
                         
                         Py_DECREF(pPath);
                         Py_DECREF(pSysPath);
@@ -128,9 +126,14 @@ namespace tuscany
                     }
                     string msg = "Failed to load module named " + impl->getModule();
                     LOGERROR(0, msg.c_str());
-                    throw new ComponentInvocationException(msg.c_str());
+                    throw ComponentContextException(msg.c_str());
+                }
+                else
+                {
+                    addReferences(pythonModule);
                 }
 
+                printPyObject("pythonModule",pythonModule);
 
                 LOGEXIT(1,"PythonServiceWrapper::constructor");
                 
@@ -243,6 +246,9 @@ namespace tuscany
                         // Get rid of old pythonModule and replace with the reloaded one
                         Py_DECREF(pythonModule);
                         pythonModule = reloadedPythonModule;
+
+                        // Reload the references into the module
+                        addReferences(pythonModule);
                     }
                 }
                 LOGEXIT(1,"PythonServiceWrapper::releaseInstance");
@@ -380,63 +386,52 @@ namespace tuscany
                         Py_DECREF(pArgs);
                         if (pValue != NULL) 
                         {
-                            switch(operation.getReturnType())
+                            if(PyInt_Check(pValue))
                             {
-                            case Operation::BOOL: 
-                                {
-                                    if(PyBool_Check(pValue))
-                                    {
-                                        *(bool*)operation.getReturnValue() = (pValue == Py_True);
-                                    }
-                                    break;
-                                }
-                            case Operation::SHORT: 
-                                {
-                                    *(short*)operation.getReturnValue() = (short) PyInt_AsLong(pValue);
-                                    break;
-                                }
-                            case Operation::LONG: 
-                                {
-                                    *(long*)operation.getReturnValue() =  (long) PyLong_AsLong(pValue);
-                                    break;
-                                }
-                            case Operation::USHORT: 
-                                {
-                                    *(unsigned short*)operation.getReturnValue() = (unsigned short) PyInt_AsLong(pValue);
-                                    break;
-                                }
-                            case Operation::ULONG: 
-                                {
-                                    *(unsigned long*)operation.getReturnValue() = (unsigned long) PyLong_AsUnsignedLong(pValue);
-                                    break;
-                                }
-                            case Operation::FLOAT: 
-                                {
-                                    *(float*)operation.getReturnValue() = (float) PyFloat_AsDouble(pValue);
-                                    break;
-                                }
-                            case Operation::DOUBLE: 
-                                {
-                                    *(double*)operation.getReturnValue() = (double) PyFloat_AsDouble(pValue);
-                                    break;
-                                }
-                            case Operation::LONGDOUBLE: 
-                                {
-                                    *(long double*)operation.getReturnValue() = (long double) PyFloat_AsDouble(pValue);
-                                    break;
-                                }
-                            case Operation::CHARS: 
-                                {
-                                    *(char**)operation.getReturnValue() = strdup(PyString_AsString(pValue));
-                                    break;
-                                }
-                            case Operation::STRING: 
-                                {
-                                    *(string*)operation.getReturnValue() = PyString_AsString(pValue);
-                                    break;
-                                }
-                            default:;
+                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is int type: %d", PyInt_AsLong(pValue));
+                                long* intData = new long;
+                                *intData = PyInt_AsLong(pValue);
+                                operation.setReturnValue(intData);
                             }
+                            else if(PyBool_Check(pValue))
+                            {
+                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is bool type: %d", (pValue == Py_True));
+                                bool* boolData = new bool;
+                                *boolData = (pValue == Py_True);
+                                operation.setReturnValue(boolData);
+                            }
+                            else if(PyLong_Check(pValue))
+                            {
+                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is long type: %l", PyLong_AsLong(pValue));
+                                long* longData = new long;
+                                *longData = PyLong_AsLong(pValue);
+                                operation.setReturnValue(longData);
+                            }
+                            else if(PyFloat_Check(pValue))
+                            {
+                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is float type: %f", PyFloat_AsDouble(pValue));
+                                double* doubleData = new double;
+                                *doubleData = PyFloat_AsDouble(pValue);
+                                operation.setReturnValue(doubleData);
+                            }
+                            else if(PyString_Check(pValue))
+                            {
+                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is string type: %s", PyString_AsString(pValue));
+                                const char** stringData = new const char*; 
+                                *stringData = PyString_AsString(pValue);
+                                operation.setReturnValue(stringData);
+                            }
+                            else
+                            {
+                                PyObject* valueRepr = PyObject_Repr(pValue); 
+                                PyObject* valueType = PyObject_Type(pValue);             
+                                PyObject* valueTypeRepr = PyObject_Repr(valueType);    
+                                LOGINFO_2(3, "PythonServiceWrapper::invoke Return value is of unknown type (%s) and has repr: %s", PyString_AsString(valueTypeRepr), PyString_AsString(valueRepr));
+                                Py_DECREF(valueTypeRepr);
+                                Py_DECREF(valueType);
+                                Py_DECREF(valueRepr);
+                            }
+
                             Py_DECREF(pValue);
                         }
                         else 
@@ -475,30 +470,65 @@ namespace tuscany
                 LOGEXIT(1,"PythonServiceWrapper::invoke");
                 
             }
-            
+ 
             // ======================================================================
-            // getServiceWrapper: create a wrapper for the target ComponentService
+            // Add any references into the loaded implementation module as class instances that look like
+            // the classes defined in the interface.python xml
             // ======================================================================
-            PythonServiceWrapper* PythonServiceWrapper::getServiceWrapper(Service* service)
-            {            
-                LOGENTRY(1,"PythonServiceWrapper::getServiceWrapper");
-                PythonServiceWrapper* serviceWrapper = 0;
-                
-                // ---------------------------------
-                // Create an instance of the wrapper
-                // ---------------------------------                
-                serviceWrapper = new PythonServiceWrapper(service);
-                if (!serviceWrapper)
-                {
-                    string msg = "Could not create new PythonServiceWrapper";
-                    LOGERROR(1, msg.c_str());
-                    throw ServiceNotFoundException(msg.c_str());
-                }                
-                
-                LOGEXIT(1,"PythonServiceWrapper::getServiceWrapper");
-                return serviceWrapper;
-            }    
+            void PythonServiceWrapper::addReferences(PyObject* module)
+            {
 
+                // Import the TuscanySCA python-extension module
+                PyObject* pModuleName = PyString_FromString("TuscanySCAProxy");
+                PyObject* tuscanySCAProxyModule = PyImport_Import(pModuleName);
+                Py_DECREF(pModuleName);
+
+                if(!tuscanySCAProxyModule)
+                {
+                    if(PyErr_Occurred())
+                    {
+                        PyErr_Print();
+                    }
+                    string msg = "Failed to load the TuscanySCAProxy Python module - has it been successfully installed?\nReferences from Python components will not be supported";
+                    LOGERROR(0, msg.c_str());
+                }
+                else
+                {
+                    // Get the TuscanySCAProxy class
+                    PyObject* tuscanySCAProxyClass = PyObject_GetAttrString(tuscanySCAProxyModule, "TuscanySCAProxyClass");
+
+                    // Iterate through the references of the current component, adding
+                    // each reference to the module
+                    Component::REFERENCE_MAP references = component->getReferences();
+                    Component::REFERENCE_MAP::iterator pos;
+                    for( pos = references.begin(); pos != references.end(); ++pos)
+                    {
+                        ReferenceType* referenceType = ((Reference*) pos->second)->getType();
+
+                        PyObject* tuscanySCAArgs = PyTuple_New(2);
+                        PyObject* refName = PyString_FromString(referenceType->getName().c_str());
+                        PyTuple_SetItem(tuscanySCAArgs, 0, refName);
+                        Py_INCREF(Py_True);
+                        PyTuple_SetItem(tuscanySCAArgs, 1, Py_True);
+
+                        // Create the instance of the TuscanySCAReference class
+                        PyObject* tuscanySCAProxyClassInstance = PyInstance_New(tuscanySCAProxyClass, tuscanySCAArgs, NULL);
+                        Py_DECREF(tuscanySCAArgs);
+
+                        int success = PyModule_AddObject(module, (char*)referenceType->getName().c_str(), tuscanySCAProxyClassInstance);
+
+                        if(success == 0)
+                        {
+                            LOGINFO_1(3, "Successfully added TuscanySCAReferenceClassInstance as %s to pythonModule", referenceType->getName().c_str());
+                        }
+                        else
+                        {
+                            LOGERROR_1(1, "Failed to add TuscanySCAReferenceClassInstance as %s to pythonModule", referenceType->getName().c_str());
+                        }
+                    }                       
+                    Py_DECREF(tuscanySCAProxyModule);
+                }
+            }
         } // End namespace python        
     } // End namespace sca
 } // End namespace tuscany

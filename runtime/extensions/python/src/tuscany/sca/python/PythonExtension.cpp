@@ -21,6 +21,7 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/python/PythonImplementationExtension.h"
+#include "tuscany/sca/python/PythonInterfaceExtension.h"
 
 
 extern "C"
@@ -62,7 +63,7 @@ namespace tuscany
             { 
                 LOGENTRY(1, "PythonExtension::initialize");;           
                 SCARuntime::getInstance()->registerImplementationExtension(new PythonImplementationExtension());
-                //SCARuntime::getInstance()->registerInterfaceExtension(new PythonInterfaceExtension());
+                SCARuntime::getInstance()->registerInterfaceExtension(new PythonInterfaceExtension());
                 LOGEXIT(1, "PythonExtension::initialize");;           
             }
 

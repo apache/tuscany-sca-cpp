@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.osoa.org/xmlns/sca/1.0"
+    xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
+    elementFormDefault="qualified">
+    
+    <element name="interface.python" type="sca:PythonInterface" substitutionGroup="sca:interface"/>
+    <complexType name="PythonInterface">
+        <complexContent>
+            <extension base="sca:Interface">
+                <sequence>
+                    <element name="operation" type="sca:PythonOperation" minOccurs="0" maxOccurs="unbounded" />
+                    <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+                <attribute name="remotable" type="boolean" use="optional" />
+                <attribute name="conversational" type="boolean" use="optional" />
+                <anyAttribute namespace="##any" processContents="lax" />
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PythonOperation">
+        <complexContent>
+            <sequence>
+                <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+            <attribute name="name" type="string" use="required" />
+            <attribute name="returnType" type="sca:PythonReturnTypes" use="optional" />
+            <anyAttribute namespace="##any" processContents="lax" />
+        </complexContent>
+    </complexType>
+
+    <simpleType name="PythonReturnTypes">
+        <restriction base="string">
+            <enumeration value="string" />
+            <enumeration value="int" />
+            <enumeration value="long" />
+            <enumeration value="boolean" />
+            <enumeration value="float" />
+            <enumeration value="other" />
+        </restriction>
+    </simpleType>
+</schema>
