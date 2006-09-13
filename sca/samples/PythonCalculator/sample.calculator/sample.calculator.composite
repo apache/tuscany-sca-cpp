@@ -19,18 +19,18 @@
 	name="sample.calculator">
 
 	<service name="CalculatorService">
-		<interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/>
-		<binding.ws/>
+		<interface.wsdl interface="http://sample/calculator#wsdl.interface(CalculatorPortType)"/>
+		<binding.ws port="http://sample/calculator#wsdl.endpoint(CalculatorService/CalculatorPort)"/>
 		<reference>CalculatorComponent/CalculatorService</reference>
 	</service>
 
 	<component name="CalculatorComponent">
-		<implementation.cpp library="Calculator" header="CalculatorImpl.h"/>
+        <implementation.python module="CalculatorImpl" scope="composite"/>
 	    <reference name="divideService">DivideComponent/DivideService</reference>
 	</component>
-        
-	<component name="DivideComponent">
-		<implementation.python module="DivideImpl" class="DivideClass"/>
-	</component>
+
+    <component name="DivideComponent">
+        <implementation.python module="DivideImpl" scope="composite"/>
+    </component>
 
 </composite>

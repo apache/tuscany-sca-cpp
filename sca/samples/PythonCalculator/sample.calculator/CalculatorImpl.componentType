@@ -18,11 +18,11 @@
 <componentType xmlns="http://www.osoa.org/xmlns/sca/1.0">
 
 	<service name="CalculatorService">
-		<interface.cpp header="Calculator.h"/>
+		<interface.python/>
 	</service>
 
     <reference name="divideService">
-		<interface.cpp header="Divide.h"/>
+		<interface.python/>
 	</reference>
 
 </componentType>

@@ -18,7 +18,7 @@
 <componentType xmlns="http://www.osoa.org/xmlns/sca/1.0">
 
 	<service name="DivideService">
-		<interface.cpp header="Divide.h"/>
+		<interface.python/>
 	</service>
 
 </componentType>
