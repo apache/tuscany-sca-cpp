@@ -18,8 +18,9 @@
  */
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/python/model/PythonServiceBinding.h"
-#include "tuscany/sca/python/PythonServiceWrapper.h"
+#include "tuscany/sca/python/export.h"
+#include "tuscany/sca/python/model/PythonInterface.h"
+
 
 namespace tuscany
 {
@@ -27,30 +28,22 @@ namespace tuscany
     {
         namespace python
         {
+            const string PythonInterface::typeQName("http://www.osoa.org/xmlns/sca/1.0#PythonInterface");
 
             // Constructor
-            PythonServiceBinding::PythonServiceBinding(Service* service)
-                : ServiceBinding(service, "")
+            PythonInterface::PythonInterface(
+                    bool remotable,
+                    bool conversational)  
+                    : Interface(remotable, conversational)
             {
-                LOGENTRY(1,"PythonServiceBinding::constructor");
-                serviceWrapper = new PythonServiceWrapper(service);
-                LOGEXIT(1,"PythonServiceBinding::constructor");
+                LOGENTRY(1, "PythonInterface::constructor");
+                LOGEXIT(1, "PythonInterface::constructor");
             }
 
-            // Destructor
-            PythonServiceBinding::~PythonServiceBinding()
+            PythonInterface::~PythonInterface()
             {
-                LOGENTRY(1,"PythonServiceBinding::destructor");
-                LOGEXIT(1,"PythonServiceBinding::destructor");
             }
-            
-            ServiceWrapper* PythonServiceBinding::getServiceWrapper()
-            {
-                LOGENTRY(1,"PythonServiceBinding::getServiceWrapper");
-                LOGEXIT(1,"PythonServiceBinding::getServiceWrapper");
-                return (ServiceWrapper*)serviceWrapper;
-            }
-                
-        } // End namespace ws
+
+        } // End namespace python
     } // End namespace sca
 } // End namespace tuscany
