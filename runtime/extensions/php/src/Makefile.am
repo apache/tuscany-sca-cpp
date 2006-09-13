@@ -21,7 +21,8 @@ INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${PHP_INCLUDE} \
            -I${PHP_INCLUDE}/main \
            -I${PHP_INCLUDE}/Zend \
-           -I${PHP_INCLUDE}/TSRM
+           -I${PHP_INCLUDE}/TSRM \
+           -I${PHP_INCLUDE}/sapi/embed
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
                    
