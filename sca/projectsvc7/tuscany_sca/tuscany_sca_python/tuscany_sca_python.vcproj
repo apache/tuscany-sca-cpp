@@ -52,7 +52,9 @@ copy ..\..\..\runtime\extensions\python\xsd\*.xsd ..\..\..\deploy\extensions\pyt
 copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\*.h ..\..\..\deploy\extensions\python\include\tuscany\sca\python
 copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\*.h ..\..\..\deploy\extensions\python\include\tuscany\sca\python\model
 copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensions\python\include\osoa\sca
-"/>
+cd ..\..\..\runtime\extensions\python\src\tuscany\sca\python
+$(PYTHON_HOME)\python  TuscanySCASetup.py build
+$(PYTHON_HOME)\python  TuscanySCASetup.py install"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -119,6 +121,9 @@ copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensi
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\export.h">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonExtension.cpp">
 			</File>
 			<File
@@ -129,6 +134,18 @@ copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensi
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonImplementationExtension.h">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonInterfaceExtension.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonInterfaceExtension.h">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceProxy.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceProxy.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceWrapper.cpp">
@@ -146,6 +163,18 @@ copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensi
 					RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\PythonImplementation.h">
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\PythonInterface.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\PythonInterface.h">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\PythonReferenceBinding.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\PythonReferenceBinding.h">
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\PythonServiceBinding.cpp">
 				</File>
 				<File
@@ -156,9 +185,6 @@ copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensi
 		<Filter
 			Name="osoa/sca"
 			Filter="">
-			<File
-				RelativePath="..\..\..\runtime\extensions\python\src\osoa\sca\export.h">
-			</File>
 			<File
 				RelativePath="..\..\..\runtime\extensions\python\src\osoa\sca\ServiceRuntimeException.h">
 			</File>
