@@ -496,10 +496,44 @@ namespace tuscany
                                 DataObjectPtr dataObjectData = dataObjectList[j];
                                 if(!dataObjectData)
                                 {
+                                    operation.setReturnValue(&dataObjectData);
                                     LOGINFO(4, "SDO OpenDataObject return value was null");
                                 }
-                                operation.setReturnValue(&dataObjectData);
-                                //Utils::printDO(dataObjectData);
+                                else 
+                                {
+                                    
+                                    SequencePtr sequence = dataObjectData->getSequence();
+                                    if (sequence->size()!=0)
+                                    {
+                                        // Return a text element        
+                                        if (sequence->isText(0))
+                                        {                                        
+                                            const char** stringData = new const char*; 
+                                            *stringData = sequence->getCStringValue(0);
+
+                                            operation.setReturnValue(stringData);
+                                        }
+                                        else
+                                        {
+                                            // Add a complex element DataObject
+                                            DataObjectPtr dob = sequence->getDataObjectValue(0);
+                                            if(!dob)
+                                            {
+                                                LOGINFO(4, "SDO DataObject return value was null");
+                                            }
+                                            operation.setReturnValue(&dob);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Empty content, add an empty string
+                                        LOGINFO(4, "SDO OpenDataObject return value was empy");
+                                        const char** stringData = new const char*; 
+                                        *stringData = "";
+
+                                        operation.setReturnValue(stringData);
+                                    }
+                                }
                             }
                         }
                         break;
