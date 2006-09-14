@@ -41,12 +41,23 @@ class DivideClass:
     # The class-level divide function
     def divide(self, val1, val2):
         result = float(val1) / float(val2)
+
         print "Python - DivideImpl.DivideClass.divide " + str( val1 ) + " / " + str(val2) + " = " + str(result)
+
+        if doRounding:
+           result = round(result)
+           print "Python - DivideImpl.DivideClass.divide is rounding the result to " + str(result)
+
         return result
 
 # The module-level divide function
 def divide(val1, val2):
     result = float(val1) / float(val2)
     print "Python - DivideImpl.divide " + str(val1) + " / " + str(val2) + " = " + str(result)
+
+    if doRounding:
+        result = round(result)
+        print "Python - DivideImpl.divide is rounding the result to " + str(result)
+
     return result
 
