@@ -109,6 +109,11 @@ namespace tuscany
                 void addReferences(PyObject* module);
 
                 /**
+                 * Adds properties to the provided implementation module or class instance 
+                 */
+                void addProperties(PyObject* module);
+
+                /**
                  * The component to which this wrapper refers.
                  */
                 Component* component;

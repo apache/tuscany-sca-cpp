@@ -31,6 +31,9 @@
 
 using namespace osoa::sca;
 
+#include "commonj/sdo/SDO.h"
+using namespace commonj::sdo;
+
 namespace tuscany
 {
     namespace sca
@@ -128,10 +131,11 @@ namespace tuscany
                     LOGERROR(0, msg.c_str());
                     throw ComponentContextException(msg.c_str());
                 }
-                else
-                {
-                    addReferences(pythonModule);
-                }
+                //else
+                //{
+                //    addReferences(pythonModule);
+                //    addProperties(pythonModule);
+                //}
 
                 printPyObject("pythonModule",pythonModule);
 
@@ -246,9 +250,6 @@ namespace tuscany
                         // Get rid of old pythonModule and replace with the reloaded one
                         Py_DECREF(pythonModule);
                         pythonModule = reloadedPythonModule;
-
-                        // Reload the references into the module
-                        addReferences(pythonModule);
                     }
                 }
                 LOGEXIT(1,"PythonServiceWrapper::releaseInstance");
@@ -264,6 +265,11 @@ namespace tuscany
                 SCARuntime* runtime = SCARuntime::getInstance();
                 runtime->setCurrentComponent(component);
                 
+
+                // Load the references & properties into the module
+                addReferences(pythonModule);
+                addProperties(pythonModule);
+
                 try
                 {
                     LOGINFO_1(4, "PythonServiceWrapper::invoke called with operation name: %s", operation.getName().c_str());
@@ -470,7 +476,101 @@ namespace tuscany
                 LOGEXIT(1,"PythonServiceWrapper::invoke");
                 
             }
+
  
+            // ==========================================================================
+            // Add any properties into the loaded implementation module as Python objects
+            // ==========================================================================
+            void PythonServiceWrapper::addProperties(PyObject* module)
+            {
+                // Set all the configured properties
+                DataObjectPtr properties = component->getProperties();
+                PropertyList pl = properties->getInstanceProperties();
+
+                for (int i = 0; i < pl.size(); i++)
+                {
+                    if (properties->isSet(pl[i]))
+                    {
+                        string propName = pl[i].getName();
+                        string propValue = properties->getCString(pl[i]);
+                        PyObject* property;
+
+                        if(pl[i].isMany())
+                        {
+                            //TODO - deal with properties that are many
+                        }
+                        
+                        switch(pl[i].getTypeEnum())
+                        {
+                        case Type::BooleanType:
+                            {
+                                if(properties->getBoolean(pl[i]))
+                                {
+                                    property = Py_True;
+                                }
+                                else
+                                {
+                                    property = Py_False;
+                                }
+                                Py_INCREF(property);
+                                break;
+                            }
+                        case Type::BigIntegerType:
+                        case Type::BigDecimalType:
+                        case Type::LongType:
+                            {
+                                property = PyLong_FromLong(properties->getLong(pl[i]));
+                                break;
+                            }
+                        case Type::ShortType:
+                        case Type::IntegerType:
+                            {
+                                property = PyInt_FromLong(properties->getLong(pl[i]));
+                                break;
+                            }
+                        case Type::DoubleType:
+                        case Type::FloatType:
+                            {
+                                property = PyFloat_FromDouble(properties->getDouble(pl[i]));
+                                break;
+                            }
+                        case Type::DataObjectType:
+                        case Type::OpenDataObjectType:
+                            {
+                                // Serialize a DataObject and create a python string object from the XML
+                                DataObjectPtr data = properties->getDataObject(pl[i]);                                
+                                XMLHelperPtr helper = HelperProvider::getXMLHelper(properties->getDataFactory());
+                                string serializedData = helper->save(data, "", propName);
+                                property = PyString_FromString(serializedData.c_str());
+                                break;
+                            }
+                        case Type::CharacterType:
+                        case Type::StringType:
+                        case Type::TextType:
+                        case Type::UriType:
+                        default:
+                            {
+                                // For strings and by default create a python string object 
+                                property = PyString_FromString(propValue.c_str());
+                                break;
+                            }
+                        }
+                                                                          
+                        int success = PyModule_AddObject(module, (char*)propName.c_str(), property);
+
+                        if(success == 0)
+                        {
+                            LOGINFO_3(3, "Successfully added property named %s with type %s and value %s to python module", propName.c_str(), pl[i].getType().getName(), propValue.c_str());
+                        }
+                        else
+                        {
+                            LOGERROR_1(1, "Failed to add property named %s to python module", propName.c_str());
+                        }
+                    }
+                }
+            }
+
+
             // ======================================================================
             // Add any references into the loaded implementation module as class instances that look like
             // the classes defined in the interface.python xml
@@ -504,6 +604,7 @@ namespace tuscany
                     for( pos = references.begin(); pos != references.end(); ++pos)
                     {
                         ReferenceType* referenceType = ((Reference*) pos->second)->getType();
+                        string referenceName = referenceType->getName();
 
                         PyObject* tuscanySCAArgs = PyTuple_New(2);
                         PyObject* refName = PyString_FromString(referenceType->getName().c_str());
@@ -515,15 +616,15 @@ namespace tuscany
                         PyObject* tuscanySCAProxyClassInstance = PyInstance_New(tuscanySCAProxyClass, tuscanySCAArgs, NULL);
                         Py_DECREF(tuscanySCAArgs);
 
-                        int success = PyModule_AddObject(module, (char*)referenceType->getName().c_str(), tuscanySCAProxyClassInstance);
+                        int success = PyModule_AddObject(module, (char*)referenceName.c_str(), tuscanySCAProxyClassInstance);
 
                         if(success == 0)
                         {
-                            LOGINFO_1(3, "Successfully added TuscanySCAReferenceClassInstance as %s to pythonModule", referenceType->getName().c_str());
+                            LOGINFO_1(3, "Successfully added TuscanySCAReferenceClassInstance as %s to pythonModule", referenceName.c_str());
                         }
                         else
                         {
-                            LOGERROR_1(1, "Failed to add TuscanySCAReferenceClassInstance as %s to pythonModule", referenceType->getName().c_str());
+                            LOGERROR_1(1, "Failed to add TuscanySCAReferenceClassInstance as %s to pythonModule", referenceName.c_str());
                         }
                     }                       
                     Py_DECREF(tuscanySCAProxyModule);
