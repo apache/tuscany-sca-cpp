@@ -38,7 +38,7 @@ set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
 set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent
 
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\python\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
-
+set PYTHONPATH=%TUSCANY_SCACPP%\extensions\python\bin
 
 python calculator_client.py add 4.7 9   
 python calculator_client.py div 7.2 3.6 
