@@ -15,10 +15,13 @@
   limitations under the License.
  -->
  
-<componentType xmlns="http://www.osoa.org/xmlns/sca/1.0">
+<componentType xmlns="http://www.osoa.org/xmlns/sca/1.0"
+               xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
 	<service name="DivideService">
 		<interface.python/>
 	</service>
+
+    <property name="doRounding" type="xsd:boolean"/>
 
 </componentType>
