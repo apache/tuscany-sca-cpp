@@ -20,6 +20,7 @@
 #include "WSServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/ReferenceType.h"
@@ -231,10 +232,46 @@ namespace tuscany
                                         DataObjectPtr dataObjectData = dataObjectList[j];
                                         if(!dataObjectData)
                                         {
+                                            
+                                            // Add a null DataObject ptr
                                             LOGINFO_2(4, "SDO OpenDataObject parameter named %s[%d] was null", name, j);
+                                            operation.addParameter(&dataObjectData);
                                         }
-                                        operation.addParameter(&dataObjectData);
-                                        //Utils::printDO(dataObjectData);
+                                        else
+                                        {
+                                            
+                                            SequencePtr sequence = dataObjectData->getSequence();
+                                            if (sequence->size()!=0)
+                                            {
+                                                // Add a text element        
+                                                if (sequence->isText(0))
+                                                {                                        
+                                                    const char** stringData = new const char*; 
+                                                    *stringData = sequence->getCStringValue(0);
+        
+                                                    operation.addParameter(stringData);
+                                                }
+                                                else
+                                                {
+                                                    // Add a complex element DataObject
+                                                    DataObjectPtr dob = sequence->getDataObjectValue(0);
+                                                    if(!dob)
+                                                    {
+                                                        LOGINFO_1(4, "SDO DataObject parameter named %s was null", name);
+                                                    }
+                                                    operation.addParameter(&dob);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                // Empty content, add an empty string
+                                                LOGINFO_2(4, "SDO OpenDataObject parameter named %s[%d] was empty", name, j);
+                                                const char** stringData = new const char*; 
+                                                *stringData = "";
+    
+                                                operation.addParameter(stringData);
+                                            }
+                                        }                       
                                     }
                                 }
                                 break;
