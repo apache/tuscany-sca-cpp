@@ -54,7 +54,8 @@ copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\*.h ..\..\.
 copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensions\python\include\osoa\sca
 cd ..\..\..\runtime\extensions\python\src\tuscany\sca\python
 $(PYTHON_HOME)\python  TuscanySCASetup.py build
-$(PYTHON_HOME)\python  TuscanySCASetup.py install"/>
+$(PYTHON_HOME)\python  TuscanySCASetup.py install --install-lib ..\..\..\..\..\..\..\deploy\extensions\python\bin
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
