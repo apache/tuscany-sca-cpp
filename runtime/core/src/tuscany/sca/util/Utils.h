@@ -53,6 +53,7 @@ namespace tuscany
 
             static void printDO(commonj::sdo::DataObjectPtr dataObject, int increment=0);
             static void printTypes(commonj::sdo::DataFactoryPtr df);
+            static void printType(const commonj::sdo::Type& type, int increment=0);
             
         private:
             static void tabs(int increment=0);

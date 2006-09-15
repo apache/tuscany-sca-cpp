@@ -32,6 +32,7 @@
 using namespace tuscany::sca::model;
 
 using commonj::sdo::DataObjectPtr;
+using commonj::sdo::DataFactoryPtr;
 
 namespace tuscany
 {
@@ -77,7 +78,7 @@ namespace tuscany
     
             private:
 
-                void setOutputData(Operation operation, DataObjectPtr outputDataObject);
+                void setOutputData(Operation operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr);
                 
                 /**
                  * The target service wrapper
