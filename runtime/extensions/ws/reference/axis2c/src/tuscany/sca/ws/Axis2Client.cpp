@@ -261,69 +261,150 @@ namespace tuscany
                     DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
                     DataObjectPtr requestDO = dataFactory->create(wsdlOp.getInputTypeUri().c_str(), 
                         wsdlOp.getInputTypeName().c_str());
-                    
-                    // Each parameter in the operation should be a property on the request dataobject
-                    for (int i=0; i<operation.getNParms(); i++)
+
+                    // Go through data object to set the return value
+                    PropertyList pl = requestDO->getType().getProperties();
+                
+                    if(pl.size() == 0)
                     {
-                        Operation::Parameter& parm = operation.getParameter(i);
-                        switch(parm.getType())
+                        if(requestDO->getType().isOpenType() && requestDO->getType().isDataObjectType())
                         {
-                        case Operation::BOOL: 
+                            /*
+                             * This code deals with sending xsd:any elements
+                             */
+                            for (int i=0; i<operation.getNParms(); i++)
                             {
-                                requestDO->setBoolean(i, *(bool*)parm.getValue());
-                                break;
+                                string pname = "param" + (i+1);
+                                DataObjectList& l = requestDO->getList(pname);
+                                
+                                Operation::Parameter& parm = operation.getParameter(i);
+                                switch(parm.getType())
+                                {
+                                case Operation::BOOL: 
+                                    {
+                                        l.append(*(bool*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::SHORT: 
+                                    {
+                                        l.append(*(short*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::LONG: 
+                                    {
+                                        l.append(*(long*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::USHORT: 
+                                    {
+                                        l.append(*(short*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::ULONG: 
+                                    {
+                                        l.append(*(long*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::FLOAT: 
+                                    {
+                                        l.append(*(float*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::DOUBLE: 
+                                    {
+                                        l.append(*(long double*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::LONGDOUBLE: 
+                                    {
+                                        l.append(*(long double*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::CHARS: 
+                                    {
+                                        l.append(*(char**)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::STRING: 
+                                    {
+                                        l.append((*(string*)parm.getValue()).c_str());
+                                        break;
+                                    }
+                                case Operation::DATAOBJECT: 
+                                    {
+                                        l.append(*(DataObjectPtr*)parm.getValue());
+                                        break;
+                                    }
+                                default: throw "unsupported parameter type";
+                                }
                             }
-                        case Operation::SHORT: 
+                        }
+                    }
+                    else {
+                        
+                        // Each parameter in the operation should be a property on the request dataobject
+                        for (int i=0; i<operation.getNParms(); i++)
+                        {
+                            Operation::Parameter& parm = operation.getParameter(i);
+                            switch(parm.getType())
                             {
-                                requestDO->setShort(i, *(short*)parm.getValue());
-                                break;
+                            case Operation::BOOL: 
+                                {
+                                    requestDO->setBoolean(i, *(bool*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::SHORT: 
+                                {
+                                    requestDO->setShort(i, *(short*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::LONG: 
+                                {
+                                    requestDO->setLong(i, *(long*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::USHORT: 
+                                {
+                                    requestDO->setInteger(i, *(unsigned short*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::ULONG: 
+                                {
+                                    requestDO->setInteger(i, *(unsigned long*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::FLOAT: 
+                                {
+                                    requestDO->setFloat(i, *(float*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::DOUBLE: 
+                                {
+                                    requestDO->setDouble(i, *(double*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::LONGDOUBLE: 
+                                {
+                                    requestDO->setDouble(i, *(long double*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::CHARS: 
+                                {
+                                    requestDO->setCString(i, *(char**)parm.getValue());
+                                    break;
+                                }
+                            case Operation::STRING: 
+                                {
+                                    requestDO->setCString(i, (*(string*)parm.getValue()).c_str());
+                                    break;
+                                }
+                            case Operation::DATAOBJECT: 
+                                {
+                                    requestDO->setDataObject(i, *(DataObjectPtr*)parm.getValue());
+                                    break;
+                                }
+                            default: throw "unsupported parameter type";
                             }
-                        case Operation::LONG: 
-                            {
-                                requestDO->setLong(i, *(long*)parm.getValue());
-                                break;
-                            }
-                        case Operation::USHORT: 
-                            {
-                                requestDO->setInteger(i, *(unsigned short*)parm.getValue());
-                                break;
-                            }
-                        case Operation::ULONG: 
-                            {
-                                requestDO->setInteger(i, *(unsigned long*)parm.getValue());
-                                break;
-                            }
-                        case Operation::FLOAT: 
-                            {
-                                requestDO->setFloat(i, *(float*)parm.getValue());
-                                break;
-                            }
-                        case Operation::DOUBLE: 
-                            {
-                                requestDO->setDouble(i, *(double*)parm.getValue());
-                                break;
-                            }
-                        case Operation::LONGDOUBLE: 
-                            {
-                                requestDO->setDouble(i, *(long double*)parm.getValue());
-                                break;
-                            }
-                        case Operation::CHARS: 
-                            {
-                                requestDO->setCString(i, *(char**)parm.getValue());
-                                break;
-                            }
-                        case Operation::STRING: 
-                            {
-                                requestDO->setCString(i, (*(string*)parm.getValue()).c_str());
-                                break;
-                            }
-                        case Operation::DATAOBJECT: 
-                            {
-                                requestDO->setDataObject(i, *(DataObjectPtr*)parm.getValue());
-                                break;
-                            }
-                        default: throw "unsupported parameter type";
                         }
                     }
                     
@@ -515,7 +596,7 @@ namespace tuscany
                                         }
                                         else
                                         {
-                                            // Add a complex element DataObject
+                                            // Return a DataObject representing a complex element
                                             DataObjectPtr dob = sequence->getDataObjectValue(0);
                                             if(!dob)
                                             {
