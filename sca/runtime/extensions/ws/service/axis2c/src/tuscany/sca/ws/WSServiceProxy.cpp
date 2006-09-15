@@ -366,7 +366,7 @@ namespace tuscany
                         /*
                          * This code deals with returning xsd:any elements
                          */
-                        DataObjectList& l = outputDataObject->getList("data");
+                        DataObjectList& l = outputDataObject->getList("return");
                         Operation::ParameterType resultType = operation.getReturnType();
                         switch(resultType)
                         {
