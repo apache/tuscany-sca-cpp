@@ -27,22 +27,22 @@ class CalculatorImpl
 	
   def div(arg1, arg2)
     print "Ruby - CalculatorImpl.div\n"
-    @divideService.divide(arg1, arg2)
+    @divideService.divide(arg1.to_f, arg2.to_f)
   end
 
   def add(arg1, arg2)
     print "Ruby - CalculatorImpl.add\n"
-    arg1 + arg2
+    arg1.to_f + arg2.to_f
   end
 
   def sub(arg1, arg2)
     print "Ruby - CalculatorImpl.sub\n"
-    arg1 - arg2
+    arg1.to_f - arg2.to_f
   end
 
   def mul(arg1, arg2)
     print "Ruby - CalculatorImpl.mul\n"
-    arg1 * arg2
+    arg1.to_f * arg2.to_f
   end
 
 end

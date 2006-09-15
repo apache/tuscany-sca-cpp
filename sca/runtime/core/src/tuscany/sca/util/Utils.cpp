@@ -124,70 +124,157 @@ namespace tuscany
             // Iterate over all the properties
             //////////////////////////////////////////////////////////////////////////
             PropertyList pl = dataObject->getInstanceProperties();
-            for (int i = 0; i < pl.size(); i++)
+            if (pl.size() != 0)
             {
-                tabs(inc);
-                cout << "Property: " << pl[i].getName() << endl;
-                
-                const Type& propertyType = pl[i].getType();
-                
-                tabs(inc);
-                cout << "Property Type: " << propertyType.getURI()<< "#" << propertyType.getName() << endl;
-                
-                if (dataObject->isSet(pl[i]))
-                {
-                    
-                    //////////////////////////////////////////////////////////////////////
-                    // For a many-valued property get the list of values
-                    //////////////////////////////////////////////////////////////////////
-                    if (pl[i].isMany())
-                    {
-                        inc++;
-                        DataObjectList& dol = dataObject->getList(pl[i]);
-                        for (int j = 0; j <dol.size(); j++)
-                        {
-                            tabs(inc);
-                            cout << "Value " << j <<endl;
-                            inc++;
-                            
-                            if (propertyType.isDataType())
-                            {
-                                tabs(inc);
-                                cout<< "Property Value: " << dol.getCString(j) <<endl ; 
-                            }
-                            else
-                                printDO(dol[j], inc);
-                            inc--;
-                        }
-                        inc--;
-                    } // end IsMany
-                    
-                    
-                    //////////////////////////////////////////////////////////////////////
-                    // For a primitive data type print the value
-                    //////////////////////////////////////////////////////////////////////
-                    else if (propertyType.isDataType())
-                    {
-                        tabs(inc);
-                        cout<< "Property Value: " << dataObject->getCString(pl[i]) <<endl ; 
-                    }
-                    
-                    //////////////////////////////////////////////////////////////////////
-                    // For a dataobject print the do
-                    //////////////////////////////////////////////////////////////////////
-                    else
-                    {
-                        inc++;
-                        printDO(dataObject->getDataObject(pl[i]), inc);
-                        inc--;
-                    }
-                }
-                else
+                for (int i = 0; i < pl.size(); i++)
                 {
                     tabs(inc);
-                    cout<< "Property Value: not set" <<endl ; 
+                    cout << "Property: " << pl[i].getName() << endl;
+                    
+                    const Type& propertyType = pl[i].getType();
+                    
+                    tabs(inc);
+                    cout << "Property Type: " << propertyType.getURI()<< "#" << propertyType.getName() << endl;
+                    
+                    if (dataObject->isSet(pl[i]))
+                    {
+                        
+                        //////////////////////////////////////////////////////////////////////
+                        // For a many-valued property get the list of values
+                        //////////////////////////////////////////////////////////////////////
+                        if (pl[i].isMany())
+                        {
+                            inc++;
+                            DataObjectList& dol = dataObject->getList(pl[i]);
+                            for (int j = 0; j <dol.size(); j++)
+                            {
+                                tabs(inc);
+                                cout << "Value " << j <<endl;
+                                inc++;
+                                
+                                if (propertyType.isDataType())
+                                {
+                                    tabs(inc);
+                                    cout<< "Property Value: " << dol.getCString(j) <<endl ; 
+                                }
+                                else
+                                    printDO(dol[j], inc);
+                                inc--;
+                            }
+                            inc--;
+                        } // end IsMany
+                        
+                        
+                        //////////////////////////////////////////////////////////////////////
+                        // For a primitive data type print the value
+                        //////////////////////////////////////////////////////////////////////
+                        else if (propertyType.isDataType())
+                        {
+                            tabs(inc);
+                            cout<< "Property Value: " << dataObject->getCString(pl[i]) <<endl ; 
+                        }
+                        
+                        //////////////////////////////////////////////////////////////////////
+                        // For a dataobject print the do
+                        //////////////////////////////////////////////////////////////////////
+                        else
+                        {
+                            inc++;
+                            printDO(dataObject->getDataObject(pl[i]), inc);
+                            inc--;
+                        }
+                    }
+                    else
+                    {
+                        tabs(inc);
+                        cout<< "Property Value: not set" <<endl ; 
+                    }
+                    
                 }
-                
+            }
+            else
+            {
+                // Print elements under an open DataObject 
+                if(dataObject->getType().isOpenType() && dataObject->getType().isDataObjectType())
+                {
+                    SequencePtr sequence = dataObject->getSequence();
+                    if (sequence != NULL)
+                    {
+                        for (int i = 0; i < sequence->size(); i++)
+                        {
+                            if (sequence->isText(i))
+                            {
+                                tabs(inc);
+                                cout<< "Text Value: " << sequence->getCStringValue(i) <<endl ; 
+                            }
+                            else {
+                                const Property& p = sequence->getProperty(i);
+                                
+                                tabs(inc);
+                                cout << "Property: " << p.getName() << endl;
+                                
+                                const Type& propertyType = p.getType();
+                                
+                                tabs(inc);
+                                cout << "Property Type: " << propertyType.getURI()<< "#" << propertyType.getName() << endl;
+                                
+                                if (dataObject->isSet(p))
+                                {
+                                    
+                                    //////////////////////////////////////////////////////////////////////
+                                    // For a many-valued property get the list of values
+                                    //////////////////////////////////////////////////////////////////////
+                                    if (p.isMany())
+                                    {
+                                        inc++;
+                                        DataObjectList& dol = dataObject->getList(p);
+                                        for (int j = 0; j <dol.size(); j++)
+                                        {
+                                            tabs(inc);
+                                            cout << "Value " << j <<endl;
+                                            inc++;
+                                            
+                                            if (propertyType.isDataType())
+                                            {
+                                                tabs(inc);
+                                                cout<< "Property Value: " << dol.getCString(j) <<endl ; 
+                                            }
+                                            else
+                                                printDO(dol[j], inc);
+                                            inc--;
+                                        }
+                                        inc--;
+                                    } // end IsMany
+                                    
+                                    
+                                    //////////////////////////////////////////////////////////////////////
+                                    // For a primitive data type print the value
+                                    //////////////////////////////////////////////////////////////////////
+                                    else if (propertyType.isDataType())
+                                    {
+                                        tabs(inc);
+                                        cout<< "Property Value: " << dataObject->getCString(p) <<endl ; 
+                                    }
+                                    
+                                    //////////////////////////////////////////////////////////////////////
+                                    // For a dataobject print the do
+                                    //////////////////////////////////////////////////////////////////////
+                                    else
+                                    {
+                                        inc++;
+                                        printDO(dataObject->getDataObject(p), inc);
+                                        inc--;
+                                    }
+                                }
+                                else
+                                {
+                                    tabs(inc);
+                                    cout<< "Property Value: not set" <<endl ; 
+                                }
+                            }
+                        }
+                    }
+                }
             }
             inc--;
         }
@@ -213,6 +300,23 @@ namespace tuscany
             
         }
         
+        void Utils::printType(const Type& type, int increment) 
+        {
+            int inc = increment;
+            tabs(inc);
+            cout << "Type: " << type.getURI()<< "#" << type.getName() << endl;
+            inc++;
+            PropertyList pl = type.getProperties();
+            for (int j = 0; j < pl.size(); j++)
+            {
+                tabs(inc);
+                cout << "\tProperty: " << pl[j].getName()
+                    << " type: " <<pl[j].getType().getURI()<<"#"<<pl[j].getType().getName()<< endl;
+                inc++;
+                printType(pl[j].getType(), inc);
+                inc--;
+            }
+        }
         
     } // End namespace sca
 } // End namespace tuscany

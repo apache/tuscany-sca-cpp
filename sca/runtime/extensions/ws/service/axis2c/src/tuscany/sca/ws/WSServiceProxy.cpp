@@ -78,6 +78,10 @@ namespace tuscany
             DataObjectPtr WSServiceProxy::invoke(const WSDLOperation& wsdlOperation, DataObjectPtr inputDataObject)
             {
                 LOGENTRY(1,"WSServiceProxy::invoke");
+    
+                printf("inputDataObject %s#%s\n", inputDataObject->getType().getURI(), inputDataObject->getType().getName());
+                Utils::printType(inputDataObject->getType());
+                Utils::printDO(inputDataObject);
             
                 Reference* reference = getReference();
                 Component* component = reference->getComponent();
@@ -102,13 +106,10 @@ namespace tuscany
                     documentStyle,
                     wrappedStyle);
                 
-                DataObjectPtr outputDataObject;
-                
                 if (documentStyle)
                 {
                     if (wrappedStyle)
                     {
-                        outputDataObject = dataFactoryPtr->create(outputTypeURI, outputTypeName);
 
                         // Create new Operation object and set parameters and return value
                         Operation operation(wsdlOperation.getOperationName().c_str());
@@ -300,137 +301,24 @@ namespace tuscany
                             }         
                         }
                                 
-                        // Now go through outputDataObject to set the return value
-                        pl = outputDataObject->getInstanceProperties();
-                    
-                        // Set up the possible return value pointers
-                        bool boolData = 0;
-                        char byteData = 0;
-                        wchar_t charData = 0;
-                        long double doubleData = 0;
-                        float floatData = 0;
-                        long intData = 0;
-                        short shortData = 0;
-                        const char* stringData;
-                        DataObjectPtr dataObjectData;
-                    
-                    
-                        // There should only be one return value, but go through any list anyway?
-                        if(pl.size() > 1)
-                        {
-                            LOGINFO(4, "More than one return value is defined in the WSDL, just defining the first");
-                        }
-                        else if(pl.size() == 0)
-                        {
-                            if(outputDataObject->getType().isOpenType() && outputDataObject->getType().isDataObjectType())
-                            {
-                                /*
-                                 * This code deals with returning xsd:any elements
-                                 * Return as a DataObject set within the outputDataObject
-                                 */
-                               
-                                // An OpenDataObject for the data to return in
-                                operation.setReturnValue(&dataObjectData);            
-                            }
-                            else
-                            {
-                                LOGINFO(4, "No return values are defined in the WSDL");
-                            }
-                    
-                        }
-                    
-                        if(pl.size() > 0)
-                        {
-                            const char* name = pl[0].getName();
-                            
-                            switch (pl[0].getTypeEnum()) 
-                            {
-                            case Type::BooleanType:
-                                {
-                                    //printf("outputDataObject has BooleanType named %s\n", name);
-                                    operation.setReturnValue(&boolData);
-                                }
-                                break;
-                            case Type::ByteType:
-                                {
-                                    //printf("outputDataObject has ByteType named %s\n", name);
-                                    operation.setReturnValue(&byteData);
-                                }
-                                break;
-                            case Type::CharacterType:
-                                {
-                                    //printf("outputDataObject has CharacterType named %s\n", name);
-                                    operation.setReturnValue(&charData);
-                                }
-                                break;
-                            case Type::DoubleType:
-                                {
-                                    //printf("outputDataObject has DoubleType named %s\n", name);
-                                    operation.setReturnValue((long double*) &doubleData);
-                                }
-                                break;
-                            case Type::FloatType:
-                                {
-                                    //printf("outputDataObject has FloatType named %s\n", name);
-                                    operation.setReturnValue(&floatData);
-                                }
-                                break;
-                            case Type::IntegerType:
-                                {
-                                    //printf("outputDataObject has IntegerType named %s\n", name);
-                                    operation.setReturnValue(&intData);
-                                }
-                                break;
-                            case Type::ShortType:
-                                {
-                                    //printf("outputDataObject has ShortType named %s\n", name);
-                                    operation.setReturnValue(&shortData);
-                                }
-                                break;
-                            case Type::StringType:
-                            case Type::BytesType:
-                                 {
-                                    //printf("outputDataObject has StringType or BytesType named %s\n", name);
-                                    operation.setReturnValue((const char**) &stringData);
-                                }
-                                break;
-                            case Type::DataObjectType:
-                                {
-                                    // printf("outputDataObject has DataObjectType named %s with type %s # %s\n", name, pl[0].getType().getURI(), pl[0].getType().getName());
-                                    operation.setReturnValue(&dataObjectData);
-                                }
-                                break;
-                            case Type::DateType:
-                                LOGERROR_1(0, "SDO DateType return values are not yet supported (%s)", name);
-                                return NULL;
-                            case Type::LongType:
-                                LOGERROR_1(0, "SDO LongType (int64_t) return values are not yet supported (%s)", name);
-                                return NULL;
-                            case Type::UriType:
-                                LOGERROR_1(0, "SDO UriType return values are not yet supported (%s)", name);
-                                return NULL;
-                            case Type::BigDecimalType:
-                                LOGERROR_1(0, "SDO BigDecimalType return values are not yet supported (%s)", name);
-                                return NULL;
-                            case Type::BigIntegerType:
-                                LOGERROR_1(0, "SDO BigIntegerType return values are not yet supported (%s)", name);
-                                return NULL;
-                            default:
-                                LOGERROR_1(0, "Unknown SDO type return value named %s has been found. Unknown types are not yet supported", name);
-                                return NULL;
-                            }         
-                        }
-                    
                         try
                         {
                             // Call into the target service wrapper
                             serviceWrapper->invoke(operation);
                     
                             // Set the data in the outputDataObject to be returned
-                            setOutputData(operation, outputDataObject);                            
-            
-                            //printf("outputDataObject %s#%s\n", outputDataObject->getType().getURI(), outputDataObject->getType().getName());
-                            //Utils::printDO(outputDataObject);
+                            DataObjectPtr outputDataObject = dataFactoryPtr->create(outputTypeURI, outputTypeName);
+                            
+                            const Type& rootType = dataFactoryPtr->getType(outputDataObject->getType().getURI(), "RootType");
+                            printf("rootType %s#%s\n", rootType.getURI(), rootType.getName());
+                            Utils::printType(rootType);
+
+                            printf("outputDataObject %s#%s\n", outputDataObject->getType().getURI(), outputDataObject->getType().getName());
+                            Utils::printType(outputDataObject->getType());
+
+                            setOutputData(operation, outputDataObject, dataFactoryPtr);                            
+
+                            Utils::printDO(outputDataObject);
 
                             LOGEXIT(1,"WSServiceProxy::invoke");
                         
@@ -466,10 +354,10 @@ namespace tuscany
             }
             
             
-            void WSServiceProxy::setOutputData(Operation operation, DataObjectPtr outputDataObject)
+            void WSServiceProxy::setOutputData(Operation operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr)
             {    
                 // Go through data object to set the return value
-                PropertyList pl = outputDataObject->getInstanceProperties();
+                PropertyList pl = outputDataObject->getType().getProperties();
             
                 if(pl.size() == 0)
                 {
@@ -477,101 +365,150 @@ namespace tuscany
                     {
                         /*
                          * This code deals with returning xsd:any elements
-                         * Return as a DataObject set within the outputDataObject
                          */
-                        
-                        DataObjectPtr* dataObjectData = (DataObjectPtr*) operation.getReturnValue();
-                        //Utils::printDO(*dataObjectData);
-            
-                        // Need to provide a name for the dataobject being returned, use the containment property name if there is one.
-                        const char* rootName = "OpenDataObject";
-                        try
+                        DataObjectList& l = outputDataObject->getList("data");
+                        Operation::ParameterType resultType = operation.getReturnType();
+                        switch(resultType)
                         {
-                            const Property& prop = (*dataObjectData)->getContainmentProperty();
-                            rootName = prop.getName();
-                            (*dataObjectData)->detach();
+                        case Operation::BOOL: 
+                            {
+                                l.append(*(bool*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::SHORT: 
+                            {
+                                l.append(*(short*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::LONG: 
+                            {
+                                l.append(*(long*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::USHORT: 
+                            {
+                                l.append(*(short*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::ULONG: 
+                            {
+                                l.append(*(long*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::FLOAT: 
+                            {
+                                l.append(*(float*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::DOUBLE: 
+                            {
+                                l.append(*(long double*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::LONGDOUBLE: 
+                            {
+                                l.append(*(long double*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::CHARS: 
+                            {
+                                l.append(*(char**)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::STRING: 
+                            {
+                                l.append((*(string*)operation.getReturnValue()).c_str());
+                                break;
+                            }
+                        case Operation::DATAOBJECT: 
+                            {
+                                l.append(*(DataObjectPtr*)operation.getReturnValue());
+                                break;
+                            }
+                        default:
+                            {
+                                string msg = "Unsupported parameter type";
+                                msg += resultType;
+                                throw msg.c_str();
+                            }
                         }
-                        catch(SDOPropertyNotFoundException&)
-                        {
-                            // DataObject has no containment property - use default rootName
-                        }
-                        outputDataObject->setDataObject(rootName, *dataObjectData);
                     }
                     else
                     {
-                        LOGINFO(4, "No return values are defined in the WSDL");
+                        LOGINFO(4, "No return values are defined");
                     }
-            
                 }
+                else {
             
-                // Should only be one return value.. This goes through all return values
-                for(int i=0; i<pl.size(); i++)
-                {
-                    const char* name = pl[i].getName();
-
-                    Operation::ParameterType resultType = operation.getReturnType();
-                    switch(resultType)
+                    // Should only be one return value.. This goes through all return values
+                    for(int i=0; i<pl.size(); i++)
                     {
-                    case Operation::BOOL: 
+                        const char* name = pl[i].getName();
+    
+                        Operation::ParameterType resultType = operation.getReturnType();
+                        switch(resultType)
                         {
-                            outputDataObject->setBoolean(pl[i], *(bool*)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::SHORT: 
-                        {
-                            outputDataObject->setShort(pl[i], *(short*)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::LONG: 
-                        {
-                            outputDataObject->setLong(pl[i], *(long*)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::USHORT: 
-                        {
-                            outputDataObject->setInteger(pl[i], *(unsigned short*)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::ULONG: 
-                        {
-                            outputDataObject->setInteger(pl[i], *(unsigned long*)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::FLOAT: 
-                        {
-                            outputDataObject->setFloat(pl[i], *(float*)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::DOUBLE: 
-                        {
-                            outputDataObject->setDouble(pl[i], *(double*)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::LONGDOUBLE: 
-                        {
-                            outputDataObject->setDouble(pl[i], *(long double*)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::CHARS: 
-                        {
-                            outputDataObject->setCString(pl[i], *(char**)operation.getReturnValue());
-                            break;
-                        }
-                    case Operation::STRING: 
-                        {
-                            outputDataObject->setCString(pl[i], (*(string*)operation.getReturnValue()).c_str());
-                            break;
-                        }
-                    case Operation::DATAOBJECT: 
-                        {
-                            outputDataObject->setDataObject(pl[i], *(DataObjectPtr*)operation.getReturnValue());
-                            break;
-                        }
-                    default:
-                        {
-                            string msg = "Unsupported parameter type";
-                            msg += resultType;
-                            throw msg.c_str();
+                        case Operation::BOOL: 
+                            {
+                                outputDataObject->setBoolean(pl[i], *(bool*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::SHORT: 
+                            {
+                                outputDataObject->setShort(pl[i], *(short*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::LONG: 
+                            {
+                                outputDataObject->setLong(pl[i], *(long*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::USHORT: 
+                            {
+                                outputDataObject->setInteger(pl[i], *(unsigned short*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::ULONG: 
+                            {
+                                outputDataObject->setInteger(pl[i], *(unsigned long*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::FLOAT: 
+                            {
+                                outputDataObject->setFloat(pl[i], *(float*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::DOUBLE: 
+                            {
+                                outputDataObject->setDouble(pl[i], *(double*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::LONGDOUBLE: 
+                            {
+                                outputDataObject->setDouble(pl[i], *(long double*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::CHARS: 
+                            {
+                                outputDataObject->setCString(pl[i], *(char**)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::STRING: 
+                            {
+                                outputDataObject->setCString(pl[i], (*(string*)operation.getReturnValue()).c_str());
+                                break;
+                            }
+                        case Operation::DATAOBJECT: 
+                            {
+                                outputDataObject->setDataObject(pl[i], *(DataObjectPtr*)operation.getReturnValue());
+                                break;
+                            }
+                        default:
+                            {
+                                string msg = "Unsupported parameter type";
+                                msg += resultType;
+                                throw msg.c_str();
+                            }
                         }
                     }
                 }
