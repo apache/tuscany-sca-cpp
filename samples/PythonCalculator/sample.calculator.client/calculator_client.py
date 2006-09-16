@@ -30,7 +30,7 @@ val1 = sys.argv[2]
 val2 = sys.argv[3]
 
 # Locate the calculator service
-calc = TuscanySCA.locateService("CalculatorComponent/CalculatorService")
+calc = TuscanySCA.locateService("CalculatorComponent")
 
 # Invoke the calculator operations
 if op == 'add':

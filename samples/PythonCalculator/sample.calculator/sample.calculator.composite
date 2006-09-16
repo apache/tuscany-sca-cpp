@@ -21,12 +21,12 @@
 	<service name="CalculatorService">
 		<interface.wsdl interface="http://sample/calculator#wsdl.interface(CalculatorPortType)"/>
 		<binding.ws port="http://sample/calculator#wsdl.endpoint(CalculatorService/CalculatorPort)"/>
-		<reference>CalculatorComponent/CalculatorService</reference>
+		<reference>CalculatorComponent</reference>
 	</service>
 
 	<component name="CalculatorComponent">
         <implementation.python module="CalculatorImpl" scope="composite"/>
-	    <reference name="divideService">DivideComponent/DivideService</reference>
+	    <reference name="divideService">DivideComponent</reference>
 	</component>
 
     <component name="DivideComponent">
