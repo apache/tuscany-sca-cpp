@@ -17,7 +17,7 @@
 #
 #
 
-require("libtuscany_sca_ruby")
+require("tuscany_sca_ruby")
 
 calculator = SCA::locateService("CalculatorComponent")
 
