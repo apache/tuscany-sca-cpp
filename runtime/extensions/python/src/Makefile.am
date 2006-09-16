@@ -1,5 +1,13 @@
 libdir=$(prefix)/extensions/python/lib
 lib_LTLIBRARIES = libtuscany_sca_python.la
+
+install-exec-hook:
+	cd $(libdir); ln -s -f libtuscany_sca_python.so TuscanySCA.so
+
+pydir=$(prefix)/extensions/python/lib
+py_DATA = tuscany/sca/python/TuscanySCAProxy.py
+EXTRA_DIST = tuscany/sca/python/TuscanySCAProxy.py
+
 includedir=$(prefix)/extensions/python/include
 nobase_include_HEADERS = \
 tuscany/sca/python/*.h \
@@ -11,6 +19,7 @@ tuscany/sca/python/PythonImplementationExtension.cpp \
 tuscany/sca/python/PythonInterfaceExtension.cpp \
 tuscany/sca/python/PythonServiceWrapper.cpp \
 tuscany/sca/python/PythonServiceProxy.cpp \
+tuscany/sca/python/TuscanySCAModule.cpp \
 tuscany/sca/python/model/PythonImplementation.cpp \
 tuscany/sca/python/model/PythonInterface.cpp \
 tuscany/sca/python/model/PythonReferenceBinding.cpp \
