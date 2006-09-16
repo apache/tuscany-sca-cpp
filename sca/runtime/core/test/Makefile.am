@@ -33,6 +33,6 @@ ${BUILT_SOURCES}: ./testSCASystem/packages/MyValueServiceComposite/sca.composite
 	
                    
 install-exec-local:
-	cp CustomerInfo/.libs/libCustomerInfo.so testSCASystem/packages/MyValueServiceComposite
-	cp MyValue/.libs/libMyValue.so testSCASystem/packages/MyValueServiceComposite
+	cp CustomerInfo/.libs/libCustomerInfo$(libsuffix) testSCASystem/packages/MyValueServiceComposite
+	cp MyValue/.libs/libMyValue$(libsuffix) testSCASystem/packages/MyValueServiceComposite
 	

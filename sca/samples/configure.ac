@@ -16,6 +16,14 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
+# Check for dynamic library suffixes
+AC_MSG_CHECKING([checking for dynamic library suffix])
+AC_CHECK_HEADER([sys/appleapiopts.h],
+  [AC_SUBST([libsuffix],[".dylib"]) AC_MSG_RESULT([using .dylib])],
+  [AC_SUBST([libsuffix],[".so"]) AC_MSG_RESULT([using .so])]
+)
+
+
 AC_CONFIG_FILES([Makefile
                  Calculator/Makefile
                  Calculator/sample.calculator/Makefile

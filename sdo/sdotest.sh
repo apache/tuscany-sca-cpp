@@ -22,6 +22,11 @@ fi
 
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-export LD_LIBRARY_PATH=$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH
+if [ `uname -s` = Darwin ]
+then
+  export DYLD_LIBRARY_PATH=$TUSCANY_SDOCPP/lib:$DYLD_LIBRARY_PATH
+else
+  export LD_LIBRARY_PATH=$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH
+fi
 cd runtime/core/test
 ./tuscany_sdo_test
