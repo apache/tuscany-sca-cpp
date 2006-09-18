@@ -1,0 +1,137 @@
+Big Bank PHP Client
+===================
+
+Overview
+--------
+
+This is a pair of very simple PHP scripts to demonstrate how the Accounts service
+that the C++ Big Bank sample exposes can be used from within the PHP scripting 
+language. 
+
+bigwelcome.php
+  A bootstrap script that shows a form and allows the user to press a button
+  in order to invoke the bigaccount.php script
+
+bigaccout.php
+  Makes a call to a locally installed BigBank Accounts service. The script 
+  shows how to use PHP SDO and SOAP extensions to construct the call 
+  and interpret the result. 
+  
+As this is a very simple test client once you have reached bigaccount.php you are done. 
+So there are no further buttons other than the browser back button.
+
+Installation
+------------
+
+This assumes that you have the BigBank sample runnig as a web service in your local
+Axis2C container at http://localhost:9090/axis2/services/BigBank
+
+To run the php scripts requires some configuration and setup of a php runtime with 
+the SDO and SimpleXML extensions enabled. The bits you will need are:
+
+Apache web server - http://httpd.apache.org/ (I'm currently at 2.0.55)
+PHP 5.1.6 - http://www.php.net/downloads.php (I'm currently at 5.1.6)
+PHP SDO - http://pecl.php.net/package/sdo (I'm currently at 1.0.3)
+
+Windows 
+-------
+If you are on windows you can get binary builds from http://www.php.net/downloads.php. 
+For SDO you need two dlls as followd 
+
+php_sdo.dll            http://pecl4win.php.net/ext.php/php_sdo.dll
+php_sdo_das_xml.dll    http://pecl4win.php.net/ext.php/php_sdo_das_xml.dll
+
+I copied these to my php5.1.6/ext dir ( php_soap.dll is already there)
+
+And added the following to my php.ini file (having already renamed php.ini-recommended to 
+php.ini of course)
+
+extension=php_soap.dll
+extension=php_sdo.dll
+extension=php_sdo_das_xml.dll
+
+I also changed the extension_dir directive to point to my extensions directory:
+
+extension_dir="C:/simon/apps/php5.1.6/ext"
+
+When I ask PHP to list what modules are active in my version of PHP I get the 
+following
+
+C:\simon\apps\php5.1.6>php -m
+[PHP Modules]
+bcmath
+calendar
+com_dotnet
+ctype
+date
+dom
+ftp
+hash
+iconv
+libxml
+odbc
+pcre
+Reflection
+sdo
+sdo_das_xml
+session
+SimpleXML
+soap
+SPL
+standard
+tokenizer
+wddx
+xml
+xmlreader
+xmlwriter
+zlib
+
+[Zend Modules]
+
+Of particular relevance to these scripts note that soap, sdo and sd_das_xml are active. 
+
+Other Platforms
+---------------
+
+If your on on another platform, such as Linux, then you will need to compile the
+SDO extension. The documentation at the SDO extension page (http://livedocs.phpdoc.info/index.php?l=en&q=ref.sdo)
+is currently a bit missleading and needs updating. What you need to do is do a 
+phpize build of the SDO PECL extension. This is discussed in the SDO documentation
+but is also discussed in many other places, for example, http://www.php.net/manual/en/install.pecl.phpize.php. 
+Here is not the time to go into the details of how to build PHP extensions using 
+phpize but if you are familar with the process I use the following configure line
+on windows. 
+
+cscript configure.js --with-extra-includes=c:\simon\projects\tuscany\php\win32build\include;
+                     c:\simon\apps\libxml2-2.6.23.win32\include;
+                     c:\simon\apps\iconv-1.9.1.win32\include 
+                     --with-extra-libs=c:\simon\projects\tuscany\php\win32build\lib;
+                     c:\simon\apps\libxml2-2.6.23.win32\lib;
+                     c:\simon\apps\iconv-1.9.1.win32\lib 
+                     --enable-sdo=shared 
+                     --enable-soap 
+                     
+There are no newlines in my command line by the way. I've just included them
+here so you can see the command. 
+
+Running
+-------
+
+You need to configure Apache to run PHP of course. This is well documented but this
+is what I put at the end of httpd.conf
+
+# PHP5 Support
+LoadModule php5_module "C:/simon/apps/php5.1.6/php5apache2.dll"
+AddType application/x-httpd-php .php
+
+# configure the path to php.ini
+PHPIniDir "C:/simon/apps/php5.1.6"
+
+Having set up Apache all that remains is to 
+
+- put the bigbank.phpwsclient directory in your web server's root documents directory
+- start up the Axis2C runtime configured to run BigBank
+- point your browser at http://myserver:port/bigbank.phpwsclient/bigwelcome.php
+
+You should now be able to press the "GetAccount" button and see the values
+returned from the BigBank SCA application. 
