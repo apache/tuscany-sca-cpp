@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
@@ -62,7 +62,13 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
@@ -120,18 +126,150 @@ copy ..\..\..\deploy\bin\*.pdb Debug
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="stdcxx-Debug|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm200 "
+				Optimization="0"
+				AdditionalIncludeDirectories="..\..\..\deploy\include;&quot;$(STDCXX_HOME)\include&quot;;&quot;$(STDCXX_HOME)\include\ansi&quot;;&quot;$(STDCXX_HOME)\Debug\include\15d&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_RWSTD_USE_CONFIG;_RWSHARED;_RWSTDDEBUG"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation=".\$(ConfigurationName)/"
+				ObjectFile=".\$(ConfigurationName)/"
+				ProgramDataBaseFileName=".\$(ConfigurationName)/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="tuscany_sdo.lib odbc32.lib odbccp32.lib stdlib15d.lib"
+				OutputFile=".\$(ConfigurationName)/sdo_test.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib;&quot;$(STDCXX_HOME)\Debug\lib&quot;"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile=".\$(ConfigurationName)/sdo_test.pdb"
+				SubSystem="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\..\..\..\runtime\core\test\Debug/sdo_test.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="copy ..\..\..\deploy\bin\*.dll $(ConfigurationName)
+copy ..\..\..\deploy\bin\*.pdb $(ConfigurationName)
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="stdcxx-Release|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\..\deploy\include;&quot;$(STDCXX_HOME)\include&quot;;&quot;$(STDCXX_HOME)\include\ansi&quot;;&quot;$(STDCXX_HOME)\Release\include\12d&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_RWSTD_USE_CONFIG;_RWSHARED"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation=".\$(ConfigurationName)/"
+				ObjectFile=".\$(ConfigurationName)/"
+				ProgramDataBaseFileName=".\$(ConfigurationName)/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib stdlib12d.lib"
+				OutputFile=".\$(ConfigurationName)/sdo_test.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib;&quot;$(STDCXX_HOME)\Release\lib&quot;"
+				ProgramDatabaseFile=".\$(ConfigurationName)/sdo_test.pdb"
+				SubSystem="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\..\..\..\runtime\core\test\Release/sdo_test.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="copy ..\..\..\deploy\bin\*.dll $(ConfigurationName)"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\..\runtime\core\test\SdoGenerate.cpp">
+				RelativePath="..\..\..\runtime\core\test\main.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\test\main.cpp">
+				RelativePath="..\..\..\runtime\core\test\SdoGenerate.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\test\sdotest.cpp">

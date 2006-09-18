@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
 	Name="sdo_runtime"
+	RootNamespace="sdo_runtime"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -79,7 +80,13 @@ copy .\Debug\tuscany_sdo.pdb ..\..\..\deploy\bin
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -149,13 +156,177 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="stdcxx-Debug|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\..\..\runtime\core\src;&quot;$(LIBXML2_HOME)\include&quot;;&quot;$(ICONV_HOME)\include&quot;;&quot;$(ZLIB_HOME)\include&quot;;&quot;$(STDCXX_HOME)\include&quot;;&quot;$(STDCXX_HOME)\include\ansi&quot;;&quot;$(STDCXX_HOME)\Debug\include\15d&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SDO_EXPORTS;_RWSTD_USE_CONFIG;_RWSHARED;_RWSTDDEBUG"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation=".\$(ConfigurationName)/"
+				ObjectFile=".\$(ConfigurationName)/"
+				ProgramDataBaseFileName=".\$(ConfigurationName)/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib libxml2.lib stdlib15d.lib"
+				OutputFile=".\$(ConfigurationName)\tuscany_sdo.dll"
+				LinkIncremental="2"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="&quot;$(LIBXML2_HOME)\lib&quot;;&quot;$(STDCXX_HOME)\Debug\lib&quot;"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile=".\$(ConfigurationName)/tuscany_sdo.pdb"
+				ImportLibrary=".\$(ConfigurationName)/tuscany_sdo.lib"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\..\..\..\runtime\core\Debug/sdo_runtime.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="copyout"
+				CommandLine="if not exist ..\..\..\deploy mkdir ..\..\..\deploy
+if not exist ..\..\..\deploy\bin mkdir ..\..\..\deploy\bin
+if not exist ..\..\..\deploy\lib mkdir ..\..\..\deploy\lib
+if not exist ..\..\..\deploy\include mkdir ..\..\..\deploy\include
+if not exist ..\..\..\deploy\include\commonj  mkdir ..\..\..\deploy\include\commonj
+if not exist ..\..\..\deploy\include\commonj\sdo mkdir ..\..\..\deploy\include\commonj\sdo
+
+copy .\$(ConfigurationName)\tuscany_sdo.dll ..\..\..\deploy\bin
+copy .\$(ConfigurationName)\tuscany_sdo.lib ..\..\..\deploy\lib
+copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
+copy .\$(ConfigurationName)\tuscany_sdo.pdb ..\..\..\deploy\bin
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="stdcxx-Release|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\..\runtime\core\src;&quot;$(LIBXML2_HOME)\include&quot;;&quot;$(ICONV_HOME)\include&quot;;&quot;$(ZLIB_HOME)\include&quot;;&quot;$(STDCXX_HOME)\include&quot;;&quot;$(STDCXX_HOME)\include\ansi&quot;;&quot;$(STDCXX_HOME)\Release\include\12d&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SDO_EXPORTS;_RWSTD_USE_CONFIG;_RWSHARED"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="TRUE"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\Release/sdo_runtime.pch"
+				AssemblerListingLocation=".\$(ConfigurationName)/"
+				ObjectFile=".\$(ConfigurationName)/"
+				ProgramDataBaseFileName=".\$(ConfigurationName)/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib libxml2.lib stdlib12d.lib"
+				OutputFile=".\$(ConfigurationName)\tuscany_sdo.dll"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="&quot;$(LIBXML2_HOME)\lib&quot;;&quot;$(STDCXX_HOME)\Release\lib&quot;"
+				ProgramDatabaseFile=".\$(ConfigurationName)/tuscany_sdo.pdb"
+				ImportLibrary=".\$(ConfigurationName)/tuscany_sdo.lib"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\..\..\..\runtime\core\Release/sdo_runtime.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="copyout"
+				CommandLine="if not exist ..\..\..\deploy mkdir ..\..\..\deploy
+if not exist ..\..\..\deploy\bin mkdir ..\..\..\deploy\bin
+if not exist ..\..\..\deploy\lib mkdir ..\..\..\deploy\lib
+if not exist ..\..\..\deploy\include mkdir ..\..\..\deploy\include
+if not exist ..\..\..\deploy\include\commonj  mkdir ..\..\..\deploy\include\commonj
+if not exist ..\..\..\deploy\include\commonj\sdo mkdir ..\..\..\deploy\include\commonj\sdo
+
+copy .\$(ConfigurationName)\tuscany_sdo.dll ..\..\..\deploy\bin
+copy .\$(ConfigurationName)\tuscany_sdo.lib ..\..\..\deploy\lib
+copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectListImpl.cpp">
+			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangeSummary.cpp">
 			</File>
@@ -164,9 +335,6 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangeSummaryImpl.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectListImpl.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\CopyHelper.cpp">
@@ -226,10 +394,10 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\HelperProvider.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\LogWriter.cpp">
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\Logger.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\Logger.cpp">
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\LogWriter.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ParserErrorSetter.cpp">
@@ -271,7 +439,16 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SAX2Parser.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SchemaInfo.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SdoCheck.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDODate.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SdoRuntime.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDORuntimeException.cpp">
@@ -314,15 +491,6 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOXSDWriter.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SchemaInfo.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SdoCheck.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SdoRuntime.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\Sequence.cpp">
@@ -373,6 +541,9 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XMLQName.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XpathHelper.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XSDHelper.cpp">
 			</File>
 			<File
@@ -384,13 +555,16 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XSDTypeInfo.cpp">
 			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XpathHelper.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
+			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectList.h">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectListImpl.h">
+			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangeSummary.h">
 			</File>
@@ -399,12 +573,6 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangeSummaryImpl.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectList.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ChangedDataObjectListImpl.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\CopyHelper.h">
@@ -452,7 +620,13 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\DefaultLogWriter.h">
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\disable_warn.h">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\EqualityHelper.h">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\export.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\GroupDefinition.h">
@@ -464,13 +638,13 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\HelperProvider.h">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\LogWriter.h">
-			</File>
-			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\Logger.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\Logging.h">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\LogWriter.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\ParserErrorSetter.h">
@@ -512,10 +686,19 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SAX2Parser.h">
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SchemaInfo.h">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDO.h">
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SdoCheck.h">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDODate.h">
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SdoRuntime.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDORuntimeException.h">
@@ -524,10 +707,10 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOSAX2Parser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOSPI.h">
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOSchemaSAX2Parser.h">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOSchemaSAX2Parser.h">
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOSPI.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOString.h">
@@ -561,15 +744,6 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOXSDWriter.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SchemaInfo.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SdoCheck.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SdoRuntime.h">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\Sequence.h">
@@ -620,6 +794,9 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XMLQName.h">
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XSDHelper.h">
 			</File>
 			<File
@@ -630,15 +807,6 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XSDTypeInfo.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\XpathHelper.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\disable_warn.h">
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\export.h">
 			</File>
 		</Filter>
 		<Filter
