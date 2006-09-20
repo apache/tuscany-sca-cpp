@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     if (!client_home)
         client_home = "../../deploy";
     
-    address = "http://localhost:9090/axis2/services/BigBank";
+    address = "http://localhost:9090/axis2/services/AccountService";
     if (argc > 1 )
         operation = argv[1];
     if (AXIS2_STRCMP(operation, "-h") == 0)
