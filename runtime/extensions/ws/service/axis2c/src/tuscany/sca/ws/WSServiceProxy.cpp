@@ -381,7 +381,7 @@ namespace tuscany
                             }
                         case Operation::INT: 
                             {
-                                l.append(*(int*)operation.getReturnValue());
+                                l.append(*(long*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::LONG: 
@@ -391,12 +391,12 @@ namespace tuscany
                             }
                         case Operation::USHORT: 
                             {
-                                l.append(*(short*)operation.getReturnValue());
+                                l.append(*(unsigned short*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::UINT: 
                             {
-                                l.append(*(int*)operation.getReturnValue());
+                                l.append(*(long*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::ULONG: 
