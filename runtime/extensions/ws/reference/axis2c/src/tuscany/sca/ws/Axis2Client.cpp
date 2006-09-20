@@ -292,7 +292,7 @@ namespace tuscany
                                     }
                                 case Operation::INT: 
                                     {
-                                        l.append(*(int*)parm.getValue());
+                                        l.append(*(long*)parm.getValue());
                                         break;
                                     }
                                 case Operation::LONG: 
@@ -307,12 +307,12 @@ namespace tuscany
                                     }
                                 case Operation::UINT: 
                                     {
-                                        l.append(*(unsigned int*)parm.getValue());
+                                        l.append(*(long*)parm.getValue());
                                         break;
                                     }
                                 case Operation::ULONG: 
                                     {
-                                        l.append(*(unsigned long*)parm.getValue());
+                                        l.append(*(long*)parm.getValue());
                                         break;
                                     }
                                 case Operation::FLOAT: 
