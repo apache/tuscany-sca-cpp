@@ -79,9 +79,9 @@ namespace tuscany
             {
                 LOGENTRY(1,"WSServiceProxy::invoke");
     
-                printf("inputDataObject %s#%s\n", inputDataObject->getType().getURI(), inputDataObject->getType().getName());
-                Utils::printType(inputDataObject->getType());
-                Utils::printDO(inputDataObject);
+                //printf("inputDataObject %s#%s\n", inputDataObject->getType().getURI(), inputDataObject->getType().getName());
+                //Utils::printType(inputDataObject->getType());
+                //Utils::printDO(inputDataObject);
             
                 Reference* reference = getReference();
                 Component* component = reference->getComponent();
@@ -309,12 +309,11 @@ namespace tuscany
                             // Set the data in the outputDataObject to be returned
                             DataObjectPtr outputDataObject = dataFactoryPtr->create(outputTypeURI, outputTypeName);
                             
-                            const Type& rootType = dataFactoryPtr->getType(outputDataObject->getType().getURI(), "RootType");
-                            printf("rootType %s#%s\n", rootType.getURI(), rootType.getName());
-                            Utils::printType(rootType);
-
-                            printf("outputDataObject %s#%s\n", outputDataObject->getType().getURI(), outputDataObject->getType().getName());
-                            Utils::printType(outputDataObject->getType());
+                            //const Type& rootType = dataFactoryPtr->getType(outputDataObject->getType().getURI(), "RootType");
+                            //printf("rootType %s#%s\n", rootType.getURI(), rootType.getName());
+                            //Utils::printType(rootType);
+                            //printf("outputDataObject %s#%s\n", outputDataObject->getType().getURI(), outputDataObject->getType().getName());
+                            //Utils::printType(outputDataObject->getType());
 
                             setOutputData(operation, outputDataObject, dataFactoryPtr);                            
 

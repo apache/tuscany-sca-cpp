@@ -18,7 +18,6 @@
 #pragma warning(disable: 4091)
 #endif
 
-#include <axis2_disp.h>
 #include <axis2_handler_desc.h>
 #include <axis2_qname.h>
 #include <axis2_relates_to.h>
@@ -50,37 +49,25 @@ Axis2Dispatcher_find_op(
     const axis2_env_t *env,
     axis2_svc_t *svc);
 
-axis2_disp_t *AXIS2_CALL 
-Axis2Dispatcher_create(
-    const axis2_env_t *env) 
+AXIS2_EXTERN axis2_handler_t* AXIS2_CALL
+Axis2Dispatcher_create(const axis2_env_t *env, 
+                         axis2_qname_t *qname) 
 {
-    axis2_disp_t *disp = NULL;
     axis2_handler_t *handler = NULL;
-    axis2_qname_t *qname = NULL;
     
-    AXIS2_ENV_CHECK(env, NULL);
-
-    qname = axis2_qname_create(env, "tuscany_dispatcher", 
-                                                "http://tuscany.ws.apache.org",
-                                                NULL);
-    
-    disp = axis2_disp_create(env, qname);
-    if (!disp)
-    { 
-        return NULL;        
-    }
-    
-    handler = AXIS2_DISP_GET_BASE(disp, env);
+    handler = axis2_handler_create(env);
     if (!handler)
     {
-        return NULL;        
+        return NULL;
     }
+   
+    /* handler init is handled by conf loading, so no need to do it here */
+    
+    /* set the base struct's invoke op */
+    if (handler->ops) 
+        handler->ops->invoke = Axis2Dispatcher_invoke;
 
-    handler->ops->invoke = Axis2Dispatcher_invoke;
-    
-    AXIS2_QNAME_FREE(qname, env);
-    
-    return disp;
+    return handler;
 }
 
 axis2_svc_t *AXIS2_CALL 
@@ -128,9 +115,6 @@ Axis2Dispatcher_find_svc(
                             {
                                 AXIS2_LOG_DEBUG(env->log, AXIS2_LOG_SI, 
                                     "Service found using target endpoint address");
-                                    
-                                // TODO store the URL token in the message context
-                                // url_tokens[0]
                             }
                         }
                     }                    
@@ -208,37 +192,39 @@ Axis2Dispatcher_invoke(
     struct axis2_msg_ctx *msg_ctx)
 {
     AXIS2_ENV_CHECK(env, AXIS2_FAILURE);    
+
+    if (!(AXIS2_MSG_CTX_GET_SERVER_SIDE(msg_ctx, env)))
+        return AXIS2_SUCCESS;
     
     msg_ctx->ops->find_svc = Axis2Dispatcher_find_svc;
     msg_ctx->ops->find_op = Axis2Dispatcher_find_op;
     
-    return axis2_disp_invoke(handler, env, msg_ctx);
-}
-
-/**
- * Following block distinguish the exposed part of the dll.
- */
-
-AXIS2_EXPORT int axis2_get_instance(axis2_disp_t **inst,
-                        axis2_env_t *env)
-{
-    *inst = Axis2Dispatcher_create(env);
-    if(!(*inst))
+    axis2_svc_t *axis_service = NULL;
+    axis2_op_t *op = NULL;
+    
+    axis_service = AXIS2_MSG_CTX_GET_SVC(msg_ctx, env);
+        
+    if (!axis_service) 
     {
-        return AXIS2_FAILURE;
+        axis_service = AXIS2_MSG_CTX_FIND_SVC(msg_ctx, env);
+        if (axis_service) 
+        {
+            AXIS2_MSG_CTX_SET_SVC(msg_ctx, env, axis_service);
+            /*TODO Set the Service Group Context to the message Context*/
+        }
+    }
+    op = AXIS2_MSG_CTX_GET_OP(msg_ctx, env);
+    if (!op)
+    {
+        op = AXIS2_MSG_CTX_FIND_OP(msg_ctx, env, axis_service);
+        
+        if (op)
+        {
+            AXIS2_MSG_CTX_SET_OP(msg_ctx, env, op);
+        }
     }
 
     return AXIS2_SUCCESS;
 }
 
-AXIS2_EXPORT int axis2_remove_instance(axis2_disp_t *inst,
-                            axis2_env_t *env)
-{
-    axis2_status_t status = AXIS2_FAILURE;
-	if (inst)
-	{
-        status = AXIS2_HANDLER_FREE(inst, env);
-    }
-    return status;
-}
 }
