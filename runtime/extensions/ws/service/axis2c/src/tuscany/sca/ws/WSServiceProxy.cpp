@@ -209,7 +209,7 @@ namespace tuscany
                             case Type::DataObjectType:
                                 {
                                     DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
-                                    printf("inputDataObject has DataObjectType named %s (#%d)\n", name, dataObjectData);
+                                    //printf("inputDataObject has DataObjectType named %s (#%d)\n", name, dataObjectData);
                     
                                     if(!dataObjectData)
                                     {
@@ -303,6 +303,7 @@ namespace tuscany
                                 
                         try
                         {
+                            
                             // Call into the target service wrapper
                             serviceWrapper->invoke(operation);
                     
