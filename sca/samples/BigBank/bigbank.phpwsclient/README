@@ -12,7 +12,7 @@ bigwelcome.php
   A bootstrap script that shows a form and allows the user to press a button
   in order to invoke the bigaccount.php script
 
-bigaccout.php
+bigaccount.php
   Makes a call to a locally installed BigBank Accounts service. The script 
   shows how to use PHP SDO and SOAP extensions to construct the call 
   and interpret the result. 
@@ -24,7 +24,7 @@ Installation
 ------------
 
 This assumes that you have the BigBank sample runnig as a web service in your local
-Axis2C container at http://localhost:9090/axis2/services/BigBank
+Axis2C container at http://localhost:9090/axis2/services/AccountService
 
 To run the php scripts requires some configuration and setup of a php runtime with 
 the SDO and SimpleXML extensions enabled. The bits you will need are:
