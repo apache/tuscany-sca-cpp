@@ -233,11 +233,14 @@ namespace tuscany
                     throw SystemConfigurationException("Axis2Client: Invoke failed");
                 }
                 
-                if (svc_client)
-                {
-                    AXIS2_SVC_CLIENT_FREE(svc_client, env);
-                    svc_client = NULL;
-                } 
+                LOGINFO(2, "Warning: Have not freed Axis2C service client memory due to Jira AXIS2C-209");
+                // Uncommenting this code causes crash when invoking a composite with both Axis2C ws.binding 
+                // service and reference. See Jiras TUSCANY-536 and AXIS2C-209
+                //if (svc_client)
+                //{
+                //    AXIS2_SVC_CLIENT_FREE(svc_client, env);
+                //    svc_client = NULL;
+                //} 
                 
                 LOGEXIT(1, "Axis2Client::invoke");
             }
