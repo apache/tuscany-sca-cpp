@@ -209,7 +209,7 @@ namespace tuscany
                             case Type::DataObjectType:
                                 {
                                     DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
-                                    //printf("inputDataObject has DataObjectType named %s (#%d)\n", name, dataObjectData);
+                                    printf("inputDataObject has DataObjectType named %s (#%d)\n", name, dataObjectData);
                     
                                     if(!dataObjectData)
                                     {
@@ -225,7 +225,7 @@ namespace tuscany
                                      * Get each element as a DataObject and add in to the parameter list
                                      */
                     
-                                    //printf("inputDataObject has OpenDataObjectType named %s\n", name);
+                                    printf("inputDataObject has OpenDataObjectType named %s\n", name);
                                     DataObjectList& dataObjectList = inputDataObject->getList(pl[i]);
                                     
                                     for(int j=0; j<dataObjectList.size(); j++)
@@ -379,6 +379,11 @@ namespace tuscany
                                 l.append(*(short*)operation.getReturnValue());
                                 break;
                             }
+                        case Operation::INT: 
+                            {
+                                l.append(*(int*)operation.getReturnValue());
+                                break;
+                            }
                         case Operation::LONG: 
                             {
                                 l.append(*(long*)operation.getReturnValue());
@@ -387,6 +392,11 @@ namespace tuscany
                         case Operation::USHORT: 
                             {
                                 l.append(*(short*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::UINT: 
+                            {
+                                l.append(*(int*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::ULONG: 
@@ -457,14 +467,24 @@ namespace tuscany
                                 outputDataObject->setShort(pl[i], *(short*)operation.getReturnValue());
                                 break;
                             }
+                        case Operation::INT: 
+                            {
+                                outputDataObject->setInteger(pl[i], *(int*)operation.getReturnValue());
+                                break;
+                            }
                         case Operation::LONG: 
                             {
-                                outputDataObject->setLong(pl[i], *(long*)operation.getReturnValue());
+                                outputDataObject->setInteger(pl[i], *(long*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::USHORT: 
                             {
                                 outputDataObject->setInteger(pl[i], *(unsigned short*)operation.getReturnValue());
+                                break;
+                            }
+                        case Operation::UINT: 
+                            {
+                                outputDataObject->setInteger(pl[i], *(unsigned int*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::ULONG: 

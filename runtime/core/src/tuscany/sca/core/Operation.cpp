@@ -114,6 +114,12 @@ namespace tuscany
             parameters.insert(parameters.end(), Parameter((void*)parm, SHORT));
         }
 
+        void Operation::addParameter(const int *parm)
+        {
+            LOGINFO(4, "Operation::addParameter(int)");
+            parameters.insert(parameters.end(), Parameter((void*)parm, INT));
+        }
+
         void Operation::addParameter(const long *parm)
         {
             LOGINFO(4, "Operation::addParameter(long)");
@@ -124,6 +130,12 @@ namespace tuscany
         {
             LOGINFO(4, "Operation::addParameter(unsigned short)");
             parameters.insert(parameters.end(), Parameter((void*)parm, USHORT));
+        }
+
+        void Operation::addParameter(const unsigned int *parm)
+        {
+            LOGINFO(4, "Operation::addParameter(unsigned int)");
+            parameters.insert(parameters.end(), Parameter((void*)parm, UINT));
         }
 
         void Operation::addParameter(const unsigned long *parm)
@@ -200,6 +212,12 @@ namespace tuscany
             returnValue = Parameter((void*)parm, SHORT);
         }
 
+        void Operation::setReturnValue(const int *parm)
+        {
+            LOGINFO(4, "Operation::setReturnValue(int)");
+            returnValue = Parameter((void*)parm, INT);
+        }
+
         void Operation::setReturnValue(const long *parm)
         {
             LOGINFO(4, "Operation::setReturnValue(long*)");
@@ -210,6 +228,12 @@ namespace tuscany
         {
             LOGINFO(4, "Operation::setReturnValue(unsigned short*)");
             returnValue = Parameter((void*)parm, USHORT);
+        }
+
+        void Operation::setReturnValue(const unsigned int *parm)
+        {
+            LOGINFO(4, "Operation::setReturnValue(unsigned int)");
+            returnValue = Parameter((void*)parm, UINT);
         }
 
         void Operation::setReturnValue(const unsigned long *parm)
