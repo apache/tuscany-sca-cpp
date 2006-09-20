@@ -1,0 +1,7 @@
+<module name="tuscany" class="tuscany_sca_ws_dispatcher">
+    <inflow>
+        <handler name="TuscanyDispatcher" class="tuscany_sca_ws_dispatcher">
+            <order phase="Dispatch"/>
+        </handler>
+    </inflow>
+</module>

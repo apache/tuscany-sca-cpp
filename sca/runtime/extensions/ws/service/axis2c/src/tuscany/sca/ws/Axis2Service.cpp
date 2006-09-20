@@ -128,13 +128,14 @@ Axis2Service_free(axis2_svc_skeleton_t *svc_skeleton,
  */
  
 static string systemRoot = "";
+static string componentName = "";
 static string serviceName = "";
 static TuscanyRuntime* tuscanyRuntime = NULL;
 static CompositeService* compositeService = NULL;
 
-void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char* service)
+void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *component, const char* service)
 {
-    AXIS2_LOG_INFO((env)->log, "Axis2Service init : %s $s\n", root, service);
+    AXIS2_LOG_INFO((env)->log, "Axis2Service init, root: %s, component: %s, service: %s\n", root, component, service);
     try
     {
 
@@ -146,27 +147,29 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char* se
             newInitParams = true;
         }
 
+        if(componentName != component)
+        {
+            componentName = component;
+            newInitParams = true;
+        }
+        
         if(serviceName != service)
         {
             serviceName = service;
             newInitParams = true;
         }
         
-        // service is of the form "component name"/"composite service name"
-        string defaultComponentName, compositeServiceName;
-        Utils::rTokeniseString("/", service, defaultComponentName, compositeServiceName);
-
         if(tuscanyRuntime == NULL)
         {
             AXIS2_LOG_INFO((env)->log, "Creating new Tuscany runtime\n");
-            tuscanyRuntime = new TuscanyRuntime(defaultComponentName, systemRoot);
+            tuscanyRuntime = new TuscanyRuntime(componentName, systemRoot);
             tuscanyRuntime->start();
         }
         else if(tuscanyRuntime != NULL && newInitParams)
         {
             AXIS2_LOG_INFO((env)->log, "Restarting Tuscany runtime\n");
             tuscanyRuntime->stop();
-            tuscanyRuntime->setDefaultComponentName(defaultComponentName);
+            tuscanyRuntime->setDefaultComponentName(componentName);
             tuscanyRuntime->setSystemRoot(systemRoot);
             tuscanyRuntime->start();
         }
@@ -174,14 +177,14 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char* se
         if(compositeService == NULL)
         {
             Composite* composite = (Composite*)SCARuntime::getInstance()->getDefaultComponent()->getType();
-            compositeService = (CompositeService*)composite->findComponent(compositeServiceName);
+            compositeService = (CompositeService*)composite->findComponent(serviceName);
         }
         else
         {
             if(newInitParams)
             {
                 Composite* composite = SCARuntime::getInstance()->getDefaultComponent()->getComposite();
-                compositeService = (CompositeService*)composite->findComponent(compositeServiceName);
+                compositeService = (CompositeService*)composite->findComponent(serviceName);
             }
         }
     }
@@ -218,14 +221,39 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                 axis2_char_t *op_name = AXIOM_ELEMENT_GET_LOCALNAME(element, env);
                 if (op_name)
 				{
-                    char* root = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanySystemRoot");
-                    char* service = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
+                    // Get the Tuscany system root and composite service name from the Axis2
+                    // service parameters 
+                    char* rootParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanySystemRoot");
+                    if (rootParam == NULL)
+                        rootParam = "";
                     
-                    AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s entrypoint name: %s operation name: %s", root, service, op_name);
-
-                    //LOGINFO_2(4, "Axis2Service invoke called with system root: %s and entrypoint name: %s", systemRoot, fullCompositeServiceName);
-                    //LOGINFO_1(4, "Axis2Service invoke called with operation", op_name);
-                    initTuscanyRuntime(env, root, service);
+                    char* serviceParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
+                    if (serviceParam != NULL)
+                    {
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, service name: %s, operation name: %s", rootParam, serviceParam, op_name);
+    
+                        // Service is of the form "component name"/"composite service name"
+                        string component, service;
+                        Utils::rTokeniseString("/", serviceParam, component, service);
+                
+                        initTuscanyRuntime(env, rootParam, component.c_str(), service.c_str());
+                    }
+                    else {
+                        
+                        // Use the default system root and component, the service is
+                        // derived from the target address
+                        axis2_endpoint_ref_t *endpoint_ref = NULL;
+                        endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
+                        axis2_char_t *address = NULL;        
+                        address = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
+                        axis2_char_t **url_tokens = NULL;
+                        url_tokens = axis2_parse_request_url_for_svc_and_op(env, address);
+                        string service(url_tokens[0]);
+                        
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, service name: %s, operation name: %s", rootParam, service.c_str(), op_name);
+                        
+                        initTuscanyRuntime(env, rootParam, "", service.c_str());
+                    }
 
                     //Utils::printTypes(compositeServiceProxy->getDataFactory());
 
@@ -341,10 +369,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }                    
-                    //std::cout << "Axis2ServiceType inputDataObject:" << inputDataObject;
-                    //Utils::printDO(inputDataObject);			
-                    //std::cout << "Axis2ServiceType inputDataObject printed\n";
-                    
+
                     //
                     //  Dispatch to the WS proxy
                     //
@@ -352,14 +377,10 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     WSServiceProxy* proxy = (WSServiceProxy*)binding->getServiceProxy();
                     DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
 
-                    //std::cout << "Axis2ServiceType outputDataObject:" << outputDataObject;
-                    //Utils::printDO(outputDataObject);			
-                    //std::cout << "Axis2ServiceType outputDataObject printed\n";
-                    
                     if(!outputDataObject)
                     {
                 		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Failure whilst invoking CompositeService");
-                        //LOGERROR(0, "Axis2Service_invoke: Failure whilst invoking CompositeService");
+
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }
@@ -392,6 +413,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
 
 extern "C"
 {                                                                                   
+
 /**
  * Following block distinguish the exposed part of the dll.
  */
@@ -400,10 +422,6 @@ AXIS2_EXPORT int axis2_get_instance(axis2_svc_skeleton **inst,
                         axis2_env_t *env)
 {
     *inst = axis2_Axis2Service_create(env);
-    /*if(NULL != *inst)
-    {
-        status = *inst->init();
-    }*/
     if(!(*inst))
     {
         return AXIS2_FAILURE;
