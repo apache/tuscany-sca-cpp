@@ -241,8 +241,18 @@ void </xsl:text><xsl:value-of select="$class"/><xsl:text>::invokeService(Operati
         <xsl:text>
         operation.setReturnValue(&amp;ret);</xsl:text>
         </xsl:when>
-        <xsl:otherwise><!-- simple type -->
-            <xsl:text>        *(</xsl:text><xsl:value-of select="$type"/><xsl:text>*)operation.getReturnValue() = </xsl:text><xsl:call-template name="impl_arrow_op_brackets_and_parms"/><xsl:text>;</xsl:text>
+        <xsl:otherwise><!-- simple type -->            
+            <xsl:text>
+        if(operation.getReturnValue() != NULL)
+        {
+            *(</xsl:text><xsl:value-of select="$type"/><xsl:text>*)operation.getReturnValue() = </xsl:text><xsl:call-template name="impl_arrow_op_brackets_and_parms"/><xsl:text>;
+        }
+        else
+        {
+            </xsl:text><xsl:value-of select="$type"/><xsl:text>* ret = new </xsl:text><xsl:value-of select="$type"/><xsl:text>;
+            *ret = </xsl:text><xsl:call-template name="impl_arrow_op_brackets_and_parms"/><xsl:text>;
+            operation.setReturnValue((const </xsl:text><xsl:value-of select="$type"/><xsl:text>*)ret);
+        }</xsl:text>
         </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
