@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite xmlns="http://www.osoa.org/xmlns/sca/1.0" 
+	name="ws.binding.service">
+
+	<!-- Expose as a web service -->
+	<service name="ws.binding.service">
+		<interface.wsdl interface="Test.wsdl"/>
+		<binding.ws port="http://test/ws.binding.service/#wsdl.endpoint(ws.binding.service/ws.binding.serviceSOAP)"/>
+		<reference>ws.binding.service.component/TestService</reference>
+	</service>
+
+
+	<component name="ws.binding.service.component">
+		<implementation.cpp library="ws.binding.service" header="TestImpl.h"/>
+	</component>
+</composite>

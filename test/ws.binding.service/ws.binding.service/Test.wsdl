@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.WSEntryPointTest.org/WSEntryPointTest/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="WSEntryPointTest" targetNamespace="http://www.WSEntryPointTest.org/WSEntryPointTest/">
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+				xmlns:tns="http://test/ws.binding.service/" 
+				xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				name="ws.binding.service" 
+				targetNamespace="http://test/ws.binding.service/">
   <wsdl:types>
-    <xsd:schema targetNamespace="http://www.WSEntryPointTest.org/WSEntryPointTest/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:schema targetNamespace="http://test/ws.binding.service/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 		
 		<xsd:element name="doChars">
 			<xsd:complexType>
@@ -205,7 +210,7 @@
 				<xsd:element name="someIntData" type="xsd:int" minOccurs="1"/>
 				<xsd:element name="someFloatData" type="xsd:float" minOccurs="1"/>
 				<xsd:element name="someDateData" type="xsd:date" minOccurs="1"/>
-				<xsd:element name="someListData" type="listData" minOccurs="1"/>
+				<xsd:element name="someListData" type="tns:listData" minOccurs="1"/>
 			</xsd:sequence>
 		</xsd:complexType>
 		
@@ -381,7 +386,7 @@
   </wsdl:message>
 
 
-  <wsdl:portType name="WSEntryPointTest">
+  <wsdl:portType name="ws.binding.service">
     <wsdl:operation name="doDataObject">
       <wsdl:input message="tns:doDataObjectRequestMsg"/>
       <wsdl:output message="tns:doDataObjectResponseMsg"/>
@@ -441,10 +446,10 @@
   </wsdl:portType>
 
   
-  <wsdl:binding name="WSEntryPointTestSOAP" type="tns:WSEntryPointTest">
+  <wsdl:binding name="ws.binding.serviceSOAP" type="tns:ws.binding.service">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <wsdl:operation name="doDataObject">
-      <soap:operation soapAction="WSEntryPointTest/doDataObject"/>
+      <soap:operation soapAction="ws.binding.service/doDataObject"/>
       <wsdl:input>
         <soap:body use="literal"/>
       </wsdl:input>
@@ -453,74 +458,74 @@
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doChars">
-      <soap:operation soapAction="WSEntryPointTest/doChars"/>
+      <soap:operation soapAction="ws.binding.service/doChars"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doString">
-      <soap:operation soapAction="WSEntryPointTest/doString"/>
+      <soap:operation soapAction="ws.binding.service/doString"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doLong">
-      <soap:operation soapAction="WSEntryPointTest/doLong"/>
+      <soap:operation soapAction="ws.binding.service/doLong"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doInt">
-      <soap:operation soapAction="WSEntryPointTest/doInt"/>
+      <soap:operation soapAction="ws.binding.service/doInt"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doFloat">
-      <soap:operation soapAction="WSEntryPointTest/doFloat"/>
+      <soap:operation soapAction="ws.binding.service/doFloat"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doLongDouble">
-      <soap:operation soapAction="WSEntryPointTest/doLongDouble"/>
+      <soap:operation soapAction="ws.binding.service/doLongDouble"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doDouble">
-      <soap:operation soapAction="WSEntryPointTest/doDouble"/>
+      <soap:operation soapAction="ws.binding.service/doDouble"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doBool">
-      <soap:operation soapAction="WSEntryPointTest/doBool"/>
+      <soap:operation soapAction="ws.binding.service/doBool"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doShort">
-      <soap:operation soapAction="WSEntryPointTest/doShort"/>
+      <soap:operation soapAction="ws.binding.service/doShort"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doBytes">
-      <soap:operation soapAction="WSEntryPointTest/doBytes"/>
+      <soap:operation soapAction="ws.binding.service/doBytes"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doByte">
-      <soap:operation soapAction="WSEntryPointTest/doByte"/>
+      <soap:operation soapAction="ws.binding.service/doByte"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doMixed">
-      <soap:operation soapAction="WSEntryPointTest/doMixed"/>
+      <soap:operation soapAction="ws.binding.service/doMixed"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="doAny">
-      <soap:operation soapAction="WSEntryPointTest/doAny"/>
+      <soap:operation soapAction="ws.binding.service/doAny"/>
       <wsdl:input><soap:body use="literal"/></wsdl:input>
       <wsdl:output><soap:body use="literal"/></wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
-  <wsdl:service name="WSEntryPointTest">
-    <wsdl:port binding="tns:WSEntryPointTestSOAP" name="WSEntryPointTestSOAP">
-      <soap:address location="http://localhost:9090/axis2/services/WSEntryPointTest"/>
+  <wsdl:service name="ws.binding.service">
+    <wsdl:port binding="tns:ws.binding.serviceSOAP" name="ws.binding.serviceSOAP">
+      <soap:address location="http://localhost:9090/axis2/services/ws.binding.service"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
