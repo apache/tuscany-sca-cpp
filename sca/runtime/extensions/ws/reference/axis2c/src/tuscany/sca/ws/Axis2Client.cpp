@@ -302,7 +302,7 @@ namespace tuscany
                                     }
                                 case Operation::USHORT: 
                                     {
-                                        l.append(*(unsigned short*)parm.getValue());
+                                        l.append(*(short*)parm.getValue());
                                         break;
                                     }
                                 case Operation::UINT: 

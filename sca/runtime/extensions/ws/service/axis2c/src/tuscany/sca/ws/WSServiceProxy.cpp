@@ -391,7 +391,7 @@ namespace tuscany
                             }
                         case Operation::USHORT: 
                             {
-                                l.append(*(unsigned short*)operation.getReturnValue());
+                                l.append(*(short*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::UINT: 
