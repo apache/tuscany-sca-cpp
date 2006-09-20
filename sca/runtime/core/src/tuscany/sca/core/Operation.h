@@ -65,8 +65,10 @@ namespace tuscany
                 VOID_TYPE,
                 BOOL,
                 SHORT,
+                INT,
                 LONG,
                 USHORT,
+                UINT,
                 ULONG,
                 FLOAT,
                 DOUBLE,
@@ -96,8 +98,10 @@ namespace tuscany
             SCA_API void setReturnValue(const void *retVal);
             SCA_API void setReturnValue(const bool *retVal);
             SCA_API void setReturnValue(const short *retVal);
+            SCA_API void setReturnValue(const int *retVal);
             SCA_API void setReturnValue(const long *retVal);
             SCA_API void setReturnValue(const unsigned short *retVal);
+            SCA_API void setReturnValue(const unsigned int *retVal);
             SCA_API void setReturnValue(const unsigned long *retVal);
             SCA_API void setReturnValue(const float *retVal);
             SCA_API void setReturnValue(const double *retVal);
@@ -115,8 +119,10 @@ namespace tuscany
             SCA_API void addParameter(const void *parm);
             SCA_API void addParameter(const bool *parm);
             SCA_API void addParameter(const short *parm);
+            SCA_API void addParameter(const int *parm);
             SCA_API void addParameter(const long *parm);
             SCA_API void addParameter(const unsigned short *parm);
+            SCA_API void addParameter(const unsigned int *parm);
             SCA_API void addParameter(const unsigned long *parm);
             SCA_API void addParameter(const float *parm);
             SCA_API void addParameter(const double *parm);

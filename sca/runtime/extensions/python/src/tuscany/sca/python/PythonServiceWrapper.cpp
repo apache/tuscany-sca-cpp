@@ -328,6 +328,16 @@ namespace tuscany
                                     pValue = PyInt_FromLong(*(unsigned short*)parm.getValue());
     				                break;
     			                }
+    			                case Operation::INT: 
+    			                {
+                                    pValue = PyInt_FromLong(*(int*)parm.getValue());
+    				                break;
+    			                }
+    			                case Operation::UINT: 
+    			                {
+                                    pValue = PyInt_FromLong(*(unsigned int*)parm.getValue());
+    				                break;
+    			                }
     			                case Operation::LONG: 
     			                {
                                     pValue = PyLong_FromLong(*(long*)parm.getValue());

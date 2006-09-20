@@ -290,6 +290,11 @@ namespace tuscany
                                         l.append(*(short*)parm.getValue());
                                         break;
                                     }
+                                case Operation::INT: 
+                                    {
+                                        l.append(*(int*)parm.getValue());
+                                        break;
+                                    }
                                 case Operation::LONG: 
                                     {
                                         l.append(*(long*)parm.getValue());
@@ -297,12 +302,17 @@ namespace tuscany
                                     }
                                 case Operation::USHORT: 
                                     {
-                                        l.append(*(short*)parm.getValue());
+                                        l.append(*(unsigned short*)parm.getValue());
+                                        break;
+                                    }
+                                case Operation::UINT: 
+                                    {
+                                        l.append(*(unsigned int*)parm.getValue());
                                         break;
                                     }
                                 case Operation::ULONG: 
                                     {
-                                        l.append(*(long*)parm.getValue());
+                                        l.append(*(unsigned long*)parm.getValue());
                                         break;
                                     }
                                 case Operation::FLOAT: 
@@ -358,6 +368,11 @@ namespace tuscany
                                     requestDO->setShort(i, *(short*)parm.getValue());
                                     break;
                                 }
+                            case Operation::INT: 
+                                {
+                                    requestDO->setInteger(i, *(int*)parm.getValue());
+                                    break;
+                                }
                             case Operation::LONG: 
                                 {
                                     requestDO->setLong(i, *(long*)parm.getValue());
@@ -366,6 +381,11 @@ namespace tuscany
                             case Operation::USHORT: 
                                 {
                                     requestDO->setInteger(i, *(unsigned short*)parm.getValue());
+                                    break;
+                                }
+                            case Operation::UINT: 
+                                {
+                                    requestDO->setInteger(i, *(unsigned int*)parm.getValue());
                                     break;
                                 }
                             case Operation::ULONG: 
