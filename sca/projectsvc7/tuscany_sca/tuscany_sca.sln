@@ -22,6 +22,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_python", "tusca
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_ws_dispatcher", "tuscany_sca_ws_dispatcher\tuscany_sca_ws_dispatcher.vcproj", "{639AFB7F-A88C-4BCE-A2FC-A4E60CA5BCF5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -48,6 +52,10 @@ Global
 		{C3DE6545-380A-45AE-9D55-0DE04AB7613C}.Debug.Build.0 = Debug|Win32
 		{C3DE6545-380A-45AE-9D55-0DE04AB7613C}.Release.ActiveCfg = Release|Win32
 		{C3DE6545-380A-45AE-9D55-0DE04AB7613C}.Release.Build.0 = Release|Win32
+		{639AFB7F-A88C-4BCE-A2FC-A4E60CA5BCF5}.Debug.ActiveCfg = Debug|Win32
+		{639AFB7F-A88C-4BCE-A2FC-A4E60CA5BCF5}.Debug.Build.0 = Debug|Win32
+		{639AFB7F-A88C-4BCE-A2FC-A4E60CA5BCF5}.Release.ActiveCfg = Release|Win32
+		{639AFB7F-A88C-4BCE-A2FC-A4E60CA5BCF5}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

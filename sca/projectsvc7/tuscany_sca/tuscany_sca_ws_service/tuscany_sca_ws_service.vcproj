@@ -116,10 +116,12 @@ copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 				TypeLibraryName=".\Debug/tuscany_sca_ws_service.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin
-copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\bin
+				CommandLine="copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\services\tuscany
+copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\services\tuscany
 copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib
 copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
+copy ..\..\..\runtime\extensions\ws\service\axis2c\src\services.xml ..\..\..\deploy\extensions\ws\service\services\tuscany
+copy ..\..\..\runtime\extensions\ws\service\axis2c\src\axis2.xml ..\..\..\deploy\extensions\ws\service\
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -140,24 +142,7 @@ copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 			Name="tuscany/sca/ws"
 			Filter="">
 			<File
-				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Service_skeleton.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_WS_SERVICE_EXPORTS;$(NoInherit)"
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
+				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Service.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Utils.cpp">
