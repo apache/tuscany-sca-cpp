@@ -26,22 +26,28 @@ set destinationPath=%sourcePath%\deploy
 set destinationPath=%2
 )
 
-if not exist %destinationPath%\packages mkdir %destinationPath%\packages 
+if not exist %destinationPath%\packages                   mkdir %destinationPath%\packages 
 if not exist %destinationPath%\packages\sample.calculator mkdir %destinationPath%\packages\sample.calculator
-
 copy %sourcePath%\sample.calculator\*.componentType %destinationPath%\packages\sample.calculator
-copy %sourcePath%\sample.calculator\*.composite %destinationPath%\packages\sample.calculator
-copy %sourcePath%\sample.calculator\*.py %destinationPath%\packages\sample.calculator
+copy %sourcePath%\sample.calculator\*.composite     %destinationPath%\packages\sample.calculator
+copy %sourcePath%\sample.calculator\*.py            %destinationPath%\packages\sample.calculator
 copy %sourcePath%\sample.calculator\Calculator.wsdl %destinationPath%\packages\sample.calculator
 
-if not exist %destinationPath%\bin mkdir %destinationPath%\bin
-copy %sourcePath%\sample.calculator.client\calculator_client.py   %destinationPath%\bin
-copy %sourcePath%\sample.calculator.client\runclient.bat   %destinationPath%\bin
+if not exist %destinationPath%\packages\sample.calculator.client mkdir %destinationPath%\packages\sample.calculator.client
+copy %sourcePath%\sample.calculator.client\calculator_client.py %destinationPath%\packages\sample.calculator.client
 
+if not exist %destinationPath%\packages\sample.calculator.wsclient mkdir %destinationPath%\packages\sample.calculator.wsclient
+copy %sourcePath%\sample.calculator.wsclient\calculator_wsclient.py               %destinationPath%\packages\sample.calculator.wsclient
+copy %sourcePath%\sample.calculator.wsclient\sample.calculator.wsclient.composite %destinationPath%\packages\sample.calculator.wsclient
+copy %sourcePath%\sample.calculator.wsclient\Calculator.wsdl                      %destinationPath%\packages\sample.calculator.wsclient
 
-if not exist %destinationPath%\configuration mkdir %destinationPath%\configuration
+if not exist %destinationPath%\configuration                            mkdir %destinationPath%\configuration
 if not exist %destinationPath%\configuration\sample.calculator.solution mkdir %destinationPath%\configuration\sample.calculator.solution
-
 copy %sourcePath%\sample.calculator.solution\*.composite %destinationPath%\configuration\sample.calculator.solution
+
+if not exist %destinationPath%\bin mkdir %destinationPath%\bin
+copy %sourcePath%\sample.calculator.client\runclient.bat     %destinationPath%\bin
+copy %sourcePath%\sample.calculator\runwsserver.bat          %destinationPath%\bin
+copy %sourcePath%\sample.calculator.wsclient\runwsclient.bat %destinationPath%\bin
 
 endlocal
