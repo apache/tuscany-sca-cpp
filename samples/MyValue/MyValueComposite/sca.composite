@@ -23,7 +23,7 @@
 	<!-- Expose as a web service -->
 	<entryPoint name="MyValueService" multiplicity="1..1">
 		<interface.wsdl interface="MyValue/MyValueService.wsdl" callbackInterface=""></interface.wsdl>
-		<binding.ws port="mvs:MyValueServiceBinding"></binding.ws>
+		<binding.ws endpoint="mvs:MyValueServiceBinding"></binding.ws>
 		<reference>MyValueServiceComponent</reference>
 	</entryPoint>
 
@@ -39,7 +39,7 @@
 
 	<externalService name="StockQuoteService">
 		<interface.cpp header="StockQuoteService/StockQuoteService.h"/>
-		<binding.ws port="http://swanandmokashi.com#wsdl.endpoint(StockQuotes/StockQuotesSoap)"/>
+		<binding.ws endpoint="http://swanandmokashi.com#wsdl.endpoint(StockQuotes/StockQuotesSoap)"/>
 	</externalService>
 
 	<!--wire>
