@@ -49,7 +49,8 @@ copy %currentPath%\WSClient\%buildMode%\calculator_wsclient.exe %destinationPath
 if %buildMode% == Debug (
 copy %currentPath%\WSClient\%buildMode%\calculator_wsclient.pdb %destinationPath%\bin
 )
-copy %sourcePath%\sample.calculator.wsclient\runwsclient.bat     %destinationPath%\bin
+copy %sourcePath%\sample.calculator.wsclient\runwsclient.bat    %destinationPath%\bin
+copy %sourcePath%\sample.calculator\runwsserver.bat             %destinationPath%\bin
 
 
 if not exist %destinationPath%\configuration mkdir %destinationPath%\configuration
