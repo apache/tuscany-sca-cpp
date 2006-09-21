@@ -296,7 +296,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         try {
                             wsdlOperation =  wsdlDefinition->findOperation(
                                 binding->getServiceName(),
-                                binding->getPortName(),
+                                binding->getEndpointName(),
                                 op_name);
                         }
                         catch(SystemConfigurationException &ex)

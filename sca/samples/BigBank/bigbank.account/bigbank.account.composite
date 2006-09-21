@@ -19,8 +19,8 @@
 
 	<service name="AccountService">
 		<interface.wsdl interface="http://www.bigbank.com/AccountService#wsdl.interface(AccountService)"/>
-		<!--  The port is optional -->
-		<!--  <binding.ws port="http://www.bigbank.com/AccountService#wsdl.endpoint(AccountService/AccountServiceSOAP)"/> -->
+		<!--  The endpoint is optional -->
+		<!--  <binding.ws endpoint="http://www.bigbank.com/AccountService#wsdl.endpoint(AccountService/AccountServiceSOAP)"/> -->
 		<binding.ws/>
 		<reference>AccountServiceComponent</reference>
 	</service>
@@ -43,7 +43,7 @@
 
 	<reference name="StockQuoteWebService">
 		<interface.wsdl interface="http://www.webserviceX.NET/#wsdl.interface(StockQuoteSoap)"/>
-		<binding.ws port="http://www.webserviceX.NET/#wsdl.endpoint(StockQuote/StockQuoteSoap)"/>
+		<binding.ws endpoint="http://www.webserviceX.NET/#wsdl.endpoint(StockQuote/StockQuoteSoap)"/>
 	</reference>
 
 </composite>

@@ -19,7 +19,7 @@
 
 	<service name="RetailerService">
 		<interface.wsdl interface="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Retailer.wsdl#wsdl.interface(RetailerPortType)"/>
-		<binding.ws port="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Retailer.wsdl#wsdl.endpoint(RetailerService/RetailerPort)"/>
+		<binding.ws endpoint="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Retailer.wsdl#wsdl.endpoint(RetailerService/RetailerPort)"/>
 		<reference>RetailerProcess/RetailerService</reference>
 	</service>
 
@@ -31,12 +31,12 @@
 
 	<reference name="warehouses" multiplicity="0..n">
 		<interface.wsdl interface="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Warehouse.wsdl#wsdl.interface(WarehouseShipmentsPortType)"/>
-		<binding.ws port="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Warehouse.wsdl#wsdl.endpoint(WarehouseShipmentsService/WarehouseShipmentsPort)"/>
+		<binding.ws endpoint="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Warehouse.wsdl#wsdl.endpoint(WarehouseShipmentsService/WarehouseShipmentsPort)"/>
 	</reference>
 
 	<reference name="logging">
 		<interface.wsdl interface="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.wsdl#wsdl.interface(LoggingFacilityLogPortType)"/>
-		<binding.ws port="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.wsdl#wsdl.endpoint(LoggingFacilityService/LoggingFacilityPort)"/>
+		<binding.ws endpoint="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.wsdl#wsdl.endpoint(LoggingFacilityService/LoggingFacilityPort)"/>
 	</reference>
 
 </composite>

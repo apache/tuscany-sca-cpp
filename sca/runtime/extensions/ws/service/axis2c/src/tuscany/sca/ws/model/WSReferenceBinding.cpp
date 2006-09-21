@@ -30,57 +30,57 @@ namespace tuscany
         {
 
             // Constructor
-            WSReferenceBinding::WSReferenceBinding(Reference* reference, const string& uri, const string& port)
-                : ReferenceBinding(reference, uri), port(port)
+            WSReferenceBinding::WSReferenceBinding(Reference* reference, const string& uri, const string& endpoint, const string&version)
+                : ReferenceBinding(reference, uri), endpoint(endpoint), soapVersion(version)
             {
-                parsePort();
+                parseEndpoint();
             }
             
-            void WSReferenceBinding::parsePort()
+            void WSReferenceBinding::parseEndpoint()
             {
-                // Port is of the form: <wsdl-namepace-uri>#wsdl.endpoint(<service-name>/<port-name>)
-                string::size_type hash = port.find("#");
+                // Endpoint is of the form: <wsdl-namepace-uri>#wsdl.endpoint(<service-name>/<endpoint-name>)
+                string::size_type hash = endpoint.find("#");
                 if (hash != string::npos)
                 {
                     // Found a hash
 
                     // Namepace is the part before the #
-                    wsdlNamespaceURL = port.substr(0, hash);
+                    wsdlNamespaceURL = endpoint.substr(0, hash);
 
                     
-                    if ( (hash+1) < port.length())
+                    if ( (hash+1) < endpoint.length())
                     {
                         // Check the next part is wsdl.endpoint( 
                         int ending = hash+15;
-                        string check = port.substr(hash+1, 14);
+                        string check = endpoint.substr(hash+1, 14);
                         if (check.compare("wsdl.endpoint(") == 0)
                         {
                             // Find the matching )
-                            int endBracket = port.find(")",ending);
+                            int endBracket = endpoint.find(")",ending);
                             if (endBracket-1 > ending+1)
                             {
-                                string serviceAndPort = port.substr(ending, endBracket-ending);
+                                string serviceAndEndpoint = endpoint.substr(ending, endBracket-ending);
                                 // Look for a '/'
-                                string::size_type slash = serviceAndPort.find("/");
+                                string::size_type slash = serviceAndEndpoint.find("/");
                                 if (slash != string::npos)
                                 {
-                                    serviceName = serviceAndPort.substr(0, slash);
+                                    serviceName = serviceAndEndpoint.substr(0, slash);
 
-                                    if ( (slash+1) < serviceAndPort.length())
+                                    if ( (slash+1) < serviceAndEndpoint.length())
                                     {
-                                        portName = serviceAndPort.substr(slash+1);
+                                        endpointName = serviceAndEndpoint.substr(slash+1);
                                     }
                                     else
                                     {
-                                        portName = "";
+                                        endpointName = "";
                                     }
 
                                 }
                                 else
                                 {
                                     // No '/' so all of it is the service name
-                                    serviceName = serviceAndPort;
-                                    portName = "";
+                                    serviceName = serviceAndEndpoint;
+                                    endpointName = "";
 
                                 }
                             }
@@ -88,14 +88,14 @@ namespace tuscany
                             {
                                 // Nothing between the ()
                                 serviceName = "";
-                                portName = "";
+                                endpointName = "";
                             }
                         }
                         else
                         {
                             // not the correct characters after the #, ignore the rest
                             serviceName = "";
-                            portName = "";
+                            endpointName = "";
                         }
                         
                     }
@@ -103,15 +103,15 @@ namespace tuscany
                     {
                         // Nothing after the hash
                         serviceName = "";
-                        portName = "";
+                        endpointName = "";
                     }
                 }
                 else
                 {
                     // No hash at all
-                    wsdlNamespaceURL = port;
+                    wsdlNamespaceURL = endpoint;
                     serviceName = "";
-                    portName = "";
+                    endpointName = "";
                 }
             }
 

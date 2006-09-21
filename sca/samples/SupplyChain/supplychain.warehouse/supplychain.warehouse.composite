@@ -20,13 +20,13 @@
 	
 	<service name="WarehouseService">
 		<interface.wsdl interface="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Warehouse.wsdl#wsdl.interface(WarehouseShipmentsPortType)"/>
-		<binding.ws port="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Warehouse.wsdl#wsdl.endpoint(WarehouseService/WarehousePort)"/>
+		<binding.ws endpoint="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/Warehouse.wsdl#wsdl.endpoint(WarehouseService/WarehousePort)"/>
 		<reference>WarehouseProcess/WarehouseService</reference>
 	</service>
 	
 	<service name="WarehouseCallbackService">
 		<interface.wsdl interface="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer.wsdl#wsdl.interface(WarehouseCallbackPortType)"/>
-		<binding.ws port="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer.wsdl#wsdl.endpoint(WarehouseCallbackService/WarehouseCallbackPort)"/>
+		<binding.ws endpoint="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer.wsdl#wsdl.endpoint(WarehouseCallbackService/WarehouseCallbackPort)"/>
 		<reference>WarehouseCallbackProcess/WarehouseCallbackService</reference>
 	</service>
 	
@@ -47,12 +47,12 @@
 	
 	<reference name="manufacturer">
 		<interface.wsdl interface="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer.wsdl#wsdl.interface(ManufacturerPortType)"/>
-		<binding.ws port="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer.wsdl#wsdl.endpoint(ManufacturerService/ManufacturerPort)"/>
+		<binding.ws endpoint="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-10/Manufacturer.wsdl#wsdl.endpoint(ManufacturerService/ManufacturerPort)"/>
 	</reference>
 	
 	<reference name="logging">
 		<interface.wsdl interface="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.wsdl#wsdl.interface(LoggingFacilityLogPortType)"/>
-		<binding.ws port="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.wsdl#wsdl.endpoint(LoggingFacilityService/LoggingFacilityPort)"/>
+		<binding.ws endpoint="http://www.ws-i.org/SampleApplications/SupplyChainManagement/2002-08/LoggingFacility.wsdl#wsdl.endpoint(LoggingFacilityService/LoggingFacilityPort)"/>
 	</reference>
 	
 </composite>

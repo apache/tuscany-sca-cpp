@@ -104,7 +104,7 @@ namespace tuscany
                     {
                         wsdlOperation =  wsdlDefinition->findOperation(
                             binding->getServiceName(),
-                            binding->getPortName(),
+                            binding->getEndpointName(),
                             operationName);
                     }
                     catch(SystemConfigurationException &ex)
@@ -191,9 +191,16 @@ namespace tuscany
                 axis2_options_t* options = axis2_options_create(env);
                 AXIS2_OPTIONS_SET_TO(options, env, endpoint_ref);
                 int soap_version = AXIOM_SOAP11;
-                if (wsdlOperation.getSoapVersion() == WSDLOperation::SOAP12)
+                if (binding->getSOAPVersion() == "1.2")
                 {
                     soap_version = AXIOM_SOAP12;
+                }
+                else
+                {
+                    if (wsdlOperation.getSoapVersion() == WSDLOperation::SOAP12)
+                    {
+                        soap_version = AXIOM_SOAP12;
+                    }
                 }
                 
                 AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, soap_version);
@@ -265,7 +272,7 @@ namespace tuscany
                     DataObjectPtr requestDO = dataFactory->create(wsdlOp.getInputTypeUri().c_str(), 
                         wsdlOp.getInputTypeName().c_str());
 
-                    // Go through data object to set the return value
+                    // Go through data object to set the input parameters
                     PropertyList pl = requestDO->getType().getProperties();
                 
                     if(pl.size() == 0)

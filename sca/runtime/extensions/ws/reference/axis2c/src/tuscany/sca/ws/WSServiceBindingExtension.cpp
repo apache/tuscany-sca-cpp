@@ -72,9 +72,19 @@ namespace tuscany
                 if (bindingType == "WebServiceBinding")
                 {
                     string uri = scdlBinding->getCString("uri");
-                    string port = scdlBinding->getCString("port");
+                    string endpoint = scdlBinding->getCString("endpoint");
+                    commonj::sdo::DataObjectList& soap = scdlBinding->getList("soapbinding");
+                    string version;
+                    if (soap.size()!=0)
+                    {
+                        version = soap.getCString(0);
+                    }
+                    else
+                    {
+                        version = "";
+                    }
 
-                    WSServiceBinding* serviceBinding = new WSServiceBinding(service, uri, port);
+                    WSServiceBinding* serviceBinding = new WSServiceBinding(service, uri, endpoint, version);
                     
                     return serviceBinding;
                 }

@@ -43,11 +43,11 @@ namespace tuscany
                 /**
                  * Constructor.
                  * @param uri The uri of the binding.
-                 * @param port The definition of the port to which the entrypoint
+                 * @param endpoint The definition of the endpoint to which the entrypoint
                  * or external service is to be bound. This is of the form
-                 * "namespace"#endpoint("service"/"port")
+                 * "namespace"#endpoint("service"/"endpoint")
                  */
-                WSReferenceBinding(Reference* reference, const string&uri, const string& port);  
+                WSReferenceBinding(Reference* reference, const string&uri, const string& endpoint, const string& version);  
 
                 /**
                  * Destructor.
@@ -71,23 +71,29 @@ namespace tuscany
                  virtual ServiceProxy* getServiceProxy();
                                 
                 /**
-                 * Return the part of the port definition describing the wsdl 
+                 * Return the part of the endpoint definition describing the wsdl 
                  * namespace.
                  * @return The wsdl namespace.
                  */
                 string getWSDLNamespaceURL() const { return wsdlNamespaceURL; };
 
                 /**
-                 * Return the service part of the port definition.
+                 * Return the service part of the endpoint definition.
                  * @return The service to use.
                  */
                 string getServiceName() const { return serviceName; };
 
                 /**
-                 * Return the port name part of the port definition.
-                 * @return The port name to use.
+                 * Return the endpoint name part of the endpoint definition.
+                 * @return The endpoint name to use.
                  */
-                string getPortName() const { return portName; };
+                string getEndpointName() const { return endpointName; };
+                
+                /**
+                 * Return the SOAP version.
+                 * @return The SOAP version to use.
+                 */
+                string getSOAPVersion() const { return soapVersion; };
                 
                  /**
                   * Returns the target service binding.
@@ -97,29 +103,34 @@ namespace tuscany
             private:
             
                 /**
-                 * Parse the port specification.
+                 * Parse the endpoint specification.
                  */
-                void parsePort();
+                void parseEndpoint();
             
                 /**
-                 * The full port string.
+                 * The full endpoint string.
                  */
-                string port;
+                string endpoint;
 
                 /**
-                 * Namespace from the port.
+                 * Namespace from the endpoint.
                  */
                 string wsdlNamespaceURL;
 
                 /**
-                 * Service name from the port.
+                 * Service name from the endpoint.
                  */
                 string serviceName;
 
                 /**
-                 * Port name from the port.
+                 * Endpoint name from the endpoint.
                  */
-                string portName;
+                string endpointName;
+
+                /**
+                 * SOAP version.
+                 */
+                string soapVersion;
 
                 /**
                  * The proxy representing the reference to the client
