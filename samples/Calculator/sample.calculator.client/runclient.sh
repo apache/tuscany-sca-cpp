@@ -41,7 +41,4 @@ export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/cpp/lib:$T
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
 export TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent
 
-./calculator_client add 4.7 9
-./calculator_client div 7.2 3.6
-./calculator_client mul 7 6
-
+./calculator_client div 5 2

@@ -16,14 +16,30 @@
 
 APFULLDIR=`pwd`
 
+if [ x$TUSCANY_SCACPP = x ]; then
+echo "TUSCANY_SCACPP not set"
+exit;
+fi
+echo "Using SCA installed at $TUSCANY_SCACPP"
+
+if [ x$TUSCANY_SDOCPP = x ]; then
+echo "TUSCANY_SDOCPP not set"
+exit;
+fi
+echo "Using SDO installed at $TUSCANY_SDOCPP"
+
 if [ x$AXIS2C_HOME = x ]; then
 echo "AXIS2C_HOME not set"
 exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
-export LD_LIBRARY_PATH=$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+TEST_SYSTEM=$APFULLDIR/../
 
-./calculator_wsclient add 4.7 9
-./calculator_wsclient div 7.2 3.6
-./calculator_wsclient mul 7 6
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+
+export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
+export TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorWSClientComponent
+
+cd $TUSCANY_SCACPP_SYSTEM_ROOT/packages/sample.calculator.wsclient
+ruby -I$TUSCANY_SCACPP/extensions/ruby/lib CalculatorWSClient.rb

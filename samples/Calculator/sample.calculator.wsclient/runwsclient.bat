@@ -23,9 +23,7 @@ goto end
 echo Using Axis2C installed at %AXIS2C_HOME%"
 
 rem Run the client
-.\calculator_wsclient.exe add 4.7 9
-.\calculator_wsclient.exe div 7.2 3.6
-.\calculator_wsclient.exe mul 7 6
+.\calculator_wsclient.exe div 5 2
 
 :end
 endlocal

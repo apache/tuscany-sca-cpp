@@ -16,16 +16,32 @@
 
 setlocal
 
+if "%TUSCANY_SCACPP%" == "" (
+echo "TUSCANY_SCACPP not set"
+goto end
+)
+echo using SCA installed at %TUSCANY_SCACPP%
+
+if "%TUSCANY_SDOCPP%" == "" (
+echo "TUSCANY_SDOCPP not set"
+goto end
+)
+echo using SDO installed at %TUSCANY_SDOCPP%
+
 if "%AXIS2C_HOME%" == "" (
 echo "AXIS2C_HOME not set"
 goto end
 )
-echo Using Axis2C installed at %AXIS2C_HOME%"
+echo using Axis2C installed at %AXIS2C_HOME%
 
-rem Run the client
-.\calculator_wsclient.exe add 4.7 9
-.\calculator_wsclient.exe div 7.2 3.6
-.\calculator_wsclient.exe mul 7 6
+set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
+set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorWSClientComponent
 
+set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\python\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
+set PYTHONPATH=%TUSCANY_SCACPP%\extensions\python\bin
+
+cd %TUSCANY_SCACPP_SYSTEM_ROOT%\packages\sample.calculator.wsclient
+python calculator_wsclient.py div 5 2
+    
 :end
 endlocal

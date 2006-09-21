@@ -24,6 +24,4 @@ echo "Using Axis2C installed at $AXIS2C_HOME"
 
 export LD_LIBRARY_PATH=$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
-./calculator_wsclient add 4.7 9
-./calculator_wsclient div 7.2 3.6
-./calculator_wsclient mul 7 6
+./calculator_wsclient div 5 2

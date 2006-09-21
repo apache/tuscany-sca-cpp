@@ -1,5 +1,7 @@
 deploydir=$(prefix)/samples/RubyCalculator/deploy
+clientdir=$(deploydir)/packages/sample.calculator.client
 prgbindir=$(deploydir)/bin
 
-prgbin_SCRIPTS = runclient.sh *.rb
+client_DATA = *.rb
+prgbin_SCRIPTS = runclient.sh
 EXTRA_DIST = runclient.sh *.rb
