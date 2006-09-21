@@ -42,8 +42,5 @@ export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
 export TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent
 
-python calculator_client.py add 4.7 9   
-python calculator_client.py div 7.2 3.6 
-python calculator_client.py mul 7 6 
-    
-
+cd $TUSCANY_SCACPP_SYSTEM_ROOT/packages/sample.calculator.client
+python calculator_client.py div 5 2

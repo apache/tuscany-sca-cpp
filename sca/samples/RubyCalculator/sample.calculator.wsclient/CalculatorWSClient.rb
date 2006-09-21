@@ -19,7 +19,7 @@
 
 require("tuscany_sca_ruby")
 
-calculator = SCA::locateService("CalculatorComponent")
+calculator = SCA::locateService("CalculatorService")
 
 x = calculator.div(5, 2)
 print x, "\n"
