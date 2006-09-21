@@ -49,7 +49,7 @@ Axis2Dispatcher_find_op(
     const axis2_env_t *env,
     axis2_svc_t *svc);
 
-AXIS2_EXTERN axis2_handler_t* AXIS2_CALL
+AXIS2_EXPORT axis2_handler_t* AXIS2_CALL
 Axis2Dispatcher_create(const axis2_env_t *env, 
                          axis2_qname_t *qname) 
 {
