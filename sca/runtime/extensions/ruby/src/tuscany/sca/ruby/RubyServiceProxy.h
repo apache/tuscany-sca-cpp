@@ -95,6 +95,11 @@ namespace tuscany
                  * The Ruby value of the proxy
                  */
                  VALUE proxyValue;
+                 
+                 /**
+                  * The component owning the proxy
+                  */
+                  Component* component;
 
                 /**
                  * The Ruby proxy class
