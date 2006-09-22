@@ -56,7 +56,11 @@ int main(int argc, char* argv[])
 
                 DataObjectPtr report = 
                     accountService->getAccountReport(argv[1]);
-
+                    
+                XMLHelperPtr xmlHelper = HelperProvider::getXMLHelper(myContext.getDataFactory()); 
+                char* doc = xmlHelper->save(report, report->getType().getURI(), report->getType().getName());
+                cout << "XML: " << doc <<endl;
+                
                 if (report != 0)
                 {
                     int i;
