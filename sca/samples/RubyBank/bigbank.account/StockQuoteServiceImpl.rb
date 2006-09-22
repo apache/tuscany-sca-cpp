@@ -30,7 +30,12 @@ class StockQuoteServiceImpl
   def getQuote(symbol)
     print "Ruby - StockQuoteServiceImpl.getQuote ", symbol, "\n"
     
-    return 80.0
+    result = @webService.GetQuote(symbol)
+    doc = Document.new(result)
+    
+    price = doc.root.elements["Stock"].elements["Last"].text;
+    
+    return price.to_f
   end
 	
 end
