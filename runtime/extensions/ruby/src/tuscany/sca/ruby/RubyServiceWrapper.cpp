@@ -205,6 +205,23 @@ namespace tuscany
                                     value = rb_str_new2((*(string*)parm.getValue()).c_str());
                                     break;
                                 }
+                                case Operation::DATAOBJECT: 
+                                {
+                                    DataObjectPtr dob = *(DataObjectPtr*)parm.getValue();
+
+                                    // Convert a DataObject to a REXML Document object
+                                    Composite* composite = component->getComposite();                                    
+                                    commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
+                                    char* str = xmlHelper->save(
+                                        dob,
+                                        dob->getType().getURI(),
+                                        dob->getType().getName());
+                                    VALUE vstr[1];
+                                    vstr[0] = rb_str_new2(str);
+
+                                    value = rb_class_new_instance(1, vstr, RubyImplementation::getXMLDocumentClass());
+                                    break;
+                                }
                                 default:
                                 {
                                     //throw new ComponentInvocationException("Operation parameter type not supported");
@@ -274,6 +291,42 @@ namespace tuscany
                             bool* data = new bool;
                             *data = false; 
                             operation.setReturnValue(data);
+                            break;
+                        }
+                    case T_OBJECT: 
+                        {
+                            VALUE klass = rb_obj_class(result);
+                            if (klass == RubyImplementation::getXMLDocumentClass())
+                            {
+                                // Convert a REXML::Document to a DataObject
+                                ID to_s = rb_intern("to_s");
+                                VALUE vstr = rb_funcall(result, to_s, 0);
+                                string str = string(rb_string_value_cstr(&vstr));
+                                                                
+                                Composite* composite = component->getComposite();                                   
+                                commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
+                                commonj::sdo::XMLDocumentPtr xmlDoc = xmlHelper->load(str.c_str());
+                                
+                                DataObjectPtr* dob = new DataObjectPtr;
+                                if (xmlDoc != NULL)
+                                {
+                                    *dob = xmlDoc->getRootDataObject();
+                                }
+                                if (*dob != NULL)
+                                {
+                                    operation.setReturnValue(dob);
+                                }
+                                else
+                                {
+                                    string msg = "Document could not be converted to a DataObject";
+                                    throw msg.c_str();
+                                }
+                            }
+                            else
+                            {
+                                string msg = "Ruby type not supported: " + resultType;
+                                throw msg.c_str();
+                            }
                             break;
                         }
                     default:

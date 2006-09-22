@@ -38,6 +38,7 @@ namespace tuscany
         {
 
             bool RubyImplementation::initialized = false;
+            VALUE RubyImplementation::xmlDocumentClass = 0;
             
             // Constructor
             RubyImplementation::RubyImplementation(Composite* composite, const string& module, const string& className, const string& script)
@@ -57,14 +58,25 @@ namespace tuscany
                 if (!initialized)
                 {
                     ruby_init();
+                    ruby_init_loadpath();
+
+                    // Load the Rexml module. Rexml is used to handle XML documents.
+                    //rb_require("rexml/document");
+                    // Use rb_eval_string for now as it provides better error reporting
+                    rb_eval_string("require(\"rexml/document\")");
+
+                    xmlDocumentClass =  rb_path2class("REXML::Document");
+                    
                     initialized = true;
                 }
     
                 // Load the specified Ruby script
                 if (script != "")
                 {
-                    string path = getComposite()->getRoot() + '/' + script;
-                    rb_require((char *)path.c_str());
+                    // Use rb_eval_string for now as it provides better error reporting
+                    string path = "require(\"" + getComposite()->getRoot() + "/" + script +"\")";
+                    //rb_require((char *)path.c_str());
+                    rb_eval_string(path.c_str());
                 }
 
                 // Load the Ruby implementation class                

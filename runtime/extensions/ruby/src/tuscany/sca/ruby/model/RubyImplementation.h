@@ -85,6 +85,11 @@ namespace tuscany
                  * Returns the Ruby implementation class
                  */
                 VALUE getImplementationClass() const { return implementationClass; }
+                
+                /**
+                 * Returns the Ruby REXML::Document class
+                 */
+                 static VALUE getXMLDocumentClass() { return xmlDocumentClass; }
 
             private:
             
@@ -109,14 +114,19 @@ namespace tuscany
                 string script;
 
                 /**
+                 * The Ruby implementation class
+                 */                
+                VALUE implementationClass;
+
+                /**
                  * True if the Ruby runtime has been initialized
                  */
                 static bool initialized;
 
                 /**
-                 * The Ruby implementation class
-                 */                
-                VALUE implementationClass;
+                 * The Ruby REXML::Document class.
+                 */
+                static VALUE xmlDocumentClass;
 
             };
             
