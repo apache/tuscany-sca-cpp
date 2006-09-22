@@ -1,1 +1,10 @@
-SUBDIRS = cpp ws python ruby php
+if WANT_PYTHON
+  PYTHON_EXTENSION = python
+endif
+if WANT_RUBY
+  RUBY_EXTENSION = ruby
+endif
+if WANT_PHP
+  PHP_EXTENSION = php
+endif
+SUBDIRS = cpp ws ${PYTHON_EXTENSION} ${RUBY_EXTENSION} ${PHP_EXTENSION}
