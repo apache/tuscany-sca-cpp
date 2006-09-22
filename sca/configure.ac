@@ -41,6 +41,55 @@ AC_FUNC_STAT
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([getcwd putenv strdup])
 # AC_CONFIG_SUBDIRS([samples])
+
+AC_MSG_CHECKING(whether to build Python extension)
+AC_ARG_ENABLE(python, [  --enable-python  enable python. default=no],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_python=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_python=true
+    ;;
+  esac ],
+  AC_MSG_RESULT(no)
+)
+AM_CONDITIONAL([WANT_PYTHON], [test x$want_python = xtrue])
+
+AC_MSG_CHECKING(whether to build Ruby extension)
+AC_ARG_ENABLE(ruby, [  --enable-ruby  enable ruby. default=no],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_ruby=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_ruby=true
+    ;;
+  esac ],
+  AC_MSG_RESULT(no)
+)
+AM_CONDITIONAL([WANT_RUBY], [test x$want_ruby = xtrue])
+
+AC_MSG_CHECKING(whether to build PHP extension)
+AC_ARG_ENABLE(php, [  --enable-php  enable php. default=no],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_php=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_php=true
+    ;;
+  esac ],
+  AC_MSG_RESULT(no)
+)
+AM_CONDITIONAL([WANT_PHP], [test x$want_php = xtrue])
+
 AC_CONFIG_FILES([Makefile
                  tools/Makefile
                  tools/scagen/Makefile
