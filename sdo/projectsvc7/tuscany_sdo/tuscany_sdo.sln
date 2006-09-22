@@ -1,23 +1,29 @@
-Microsoft Visual Studio Solution File, Format Version 7.00
+Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdo_axiom", "sdo_axiom\sdo_axiom.vcproj", "{BF03BF2B-8F39-4458-8AD9-E3420988EFCA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE} = {EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdo_axiom_test", "sdo_axiom_test\sdo_axiom_test.vcproj", "{CE1FE92A-3F1C-4AD2-922C-E16703402234}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C22D761C-F453-45EB-AA23-D13E2F3B786B} = {C22D761C-F453-45EB-AA23-D13E2F3B786B}
+		{EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE} = {EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE}
+		{BF03BF2B-8F39-4458-8AD9-E3420988EFCA} = {BF03BF2B-8F39-4458-8AD9-E3420988EFCA}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdo_runtime", "sdo_runtime\sdo_runtime.vcproj", "{EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdo_test", "sdo_test\sdo_test.vcproj", "{C22D761C-F453-45EB-AA23-D13E2F3B786B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE} = {EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		ConfigName.0 = Debug
-		ConfigName.1 = Release
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
-		{BF03BF2B-8F39-4458-8AD9-E3420988EFCA}.0 = {EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE}
-		{CE1FE92A-3F1C-4AD2-922C-E16703402234}.0 = {BF03BF2B-8F39-4458-8AD9-E3420988EFCA}
-		{CE1FE92A-3F1C-4AD2-922C-E16703402234}.1 = {EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE}
-		{CE1FE92A-3F1C-4AD2-922C-E16703402234}.2 = {C22D761C-F453-45EB-AA23-D13E2F3B786B}
-		{C22D761C-F453-45EB-AA23-D13E2F3B786B}.0 = {EAA49F3B-30A9-4F59-BCD7-F5769A28C1CE}
+		Debug = Debug
+		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{BF03BF2B-8F39-4458-8AD9-E3420988EFCA}.Debug.ActiveCfg = Debug|Win32

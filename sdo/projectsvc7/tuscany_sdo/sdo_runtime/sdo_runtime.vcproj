@@ -22,17 +22,18 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\runtime\core\src,$(LIBXML2_HOME)\include,$(ICONV_HOME)\include,$(ZLIB_HOME)\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SDO_EXPORTS"
+				AdditionalIncludeDirectories="..\..\..\runtime\core\src;&quot;$(LIBXML2_HOME)\include&quot;;&quot;$(ICONV_HOME)\include&quot;;&quot;$(ZLIB_HOME)\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SDO_EXPORTS;_RWSTD_USE_CONFIG;_RWSHARED;_RWSTDDEBUG"
+				IgnoreStandardIncludePath="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/sdo_runtime.pch"
+				PrecompiledHeaderFile=""
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -43,7 +44,7 @@
 				OutputFile=".\Debug\tuscany_sdo.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="$(LIBXML2_HOME)\lib"
+				AdditionalLibraryDirectories="&quot;$(LIBXML2_HOME)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/tuscany_sdo.pdb"
 				ImportLibrary=".\Debug/tuscany_sdo.lib"/>
