@@ -79,10 +79,12 @@ namespace commonj
             return the_env;
         }
 
-        axiom_node_t* AxiomHelper::toAxiomNode(DataObjectPtr dob)
+        axiom_node_t* AxiomHelper::toAxiomNode(DataObjectPtr dob,
+            const char* targetNamespaceURI, const char* elementName)
         {
 
-            axiom_document_t* doc = toAxiomDoc(dob);
+            axiom_document_t* doc = toAxiomDoc(dob,
+                targetNamespaceURI, elementName);
 
             if (!doc)
             {
@@ -101,7 +103,8 @@ namespace commonj
             return root_node;
         }
 
-        axiom_document_t* AxiomHelper::toAxiomDoc(DataObjectPtr dob)
+        axiom_document_t* AxiomHelper::toAxiomDoc(DataObjectPtr dob,
+            const char* targetNamespaceURI, const char* elementName)
         {
 
             DataFactory* df = dob->getDataFactory();
@@ -112,13 +115,17 @@ namespace commonj
                 cout << "No Axis Environment" << endl;
                 return 0;
             }
-           char * str = 
-                xm->save(
+            
+            XMLDocumentPtr doc = xm->createDocument(
                 dob,
-                dob->getType().getURI(),
-                dob->getType().getName());
+                targetNamespaceURI,
+                elementName);
+            
+           char * str = xm->save(doc);
 
-            // if (str) cout << str << endl;
+            //if (str) {
+            //    cout << "toAxiomDoc " << str << endl;
+            //}
 
             axiom_xml_reader_t * reader =  
             axiom_xml_reader_create_for_memory(the_env,
