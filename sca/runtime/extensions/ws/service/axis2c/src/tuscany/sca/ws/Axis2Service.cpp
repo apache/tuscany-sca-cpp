@@ -28,6 +28,8 @@
 #include <sdo_axiom.h>
 using commonj::sdo::DataObjectPtr;
 using commonj::sdo::DataFactoryPtr;
+using commonj::sdo::DataObjectList;
+using commonj::sdo::PropertyList;
 using commonj::sdo_axiom::AxiomHelper;
 
 #include "tuscany/sca/util/Exceptions.h"
@@ -196,7 +198,7 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
 
 
 /*
- * This method invokes the right service method 
+ * This method invokes the target service method 
  */
 axiom_node_t* AXIS2_CALL
 Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
@@ -204,11 +206,6 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
             axiom_node_t *node,
             axis2_msg_ctx_t *msg_ctx)
 {
-	axiom_node_t *returnNode = node;
-
-    /* Depending on the function name invoke the
-     *  corresponding Axis2Service method
-     */
     if (node)
     {
         if (AXIOM_NODE_GET_NODE_TYPE(node, env) == AXIOM_ELEMENT)
@@ -262,14 +259,6 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     {
                 		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: CompositeService has no SCA implementation");
                         return 0;
-                    }
-
-                    AxiomHelper* axiomHelper = AxiomHelper::getHelper();
-                    char* om_str = NULL;
-                    om_str = AXIOM_NODE_TO_STRING(node, env);
-                    if (om_str)
-                    {
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has request OM: %s\n", om_str);
                     }
 
                     // Get the WS binding and the WSDL operation
@@ -357,26 +346,51 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     }
 
                     // Convert the input AXIOM node to an SDO DataObject
-                    DataObjectPtr inputDataObject = axiomHelper->toSdo(
-                            node, dataFactory, wsdlOperation.getInputTypeUri().c_str());
+                    axiom_node_t* body = AXIOM_NODE_GET_PARENT(node, env);
+                    char* str = NULL;
+                    str = AXIOM_NODE_TO_STRING(body, env);
+                    if (str)
+                    {
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has request OM: %s\n", str);
+                    }
 
-                    //printf("Axis2ServiceType inputDataObject: (%d)\n", inputDataObject);
+                    // Convert the SOAP body to an SDO DataObject
+                    AxiomHelper* axiomHelper = AxiomHelper::getHelper();
+                    
+                    DataObjectPtr inputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
 
-                    if(!inputDataObject)
+                    if(!inputBodyDataObject)
                     {
                         AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Could not convert received Axiom node to SDO");
-                        //LOGERROR(0, "Axis2Service_invoke: Failure whilst invoking CompositeService");
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }                    
 
-                    //
+                    // Get the first body part representing the doc-lit-wrapped wrapper element
+                    DataObjectPtr inputDataObject = NULL; 
+                    PropertyList bpl = inputBodyDataObject->getInstanceProperties();
+                    if (bpl.size()!=0)
+                    {
+                        if (bpl[0].isMany())
+                        {
+                            DataObjectList& parts = inputBodyDataObject->getList((unsigned int)0);
+                            inputDataObject = parts[0];
+                        }
+                        else
+                        {
+                            inputDataObject = inputBodyDataObject->getDataObject(bpl[0]);
+                        }
+                    }
+                    if (inputDataObject == NULL)
+                    {
+                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Could not convert body part to SDO");
+                        return 0;
+                    }
+
                     //  Dispatch to the WS proxy
-                    //
-                    
                     WSServiceProxy* proxy = (WSServiceProxy*)binding->getServiceProxy();
                     DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
-
+                    
                     if(!outputDataObject)
                     {
                 		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Failure whilst invoking CompositeService");
@@ -384,20 +398,22 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         /** TODO: return a SOAP fault here */
                         return 0;
                     }
+                    
+                    // Convert the output DataObject to an Axiom node
+                    axiom_node_t* outputNode = axiomHelper->toAxiomNode(outputDataObject,
+                        wsdlOperation.getOutputTypeUri().c_str(), wsdlOperation.getOutputTypeName().c_str());
 
-					returnNode = axiomHelper->toAxiomNode(outputDataObject);
-						
-                    om_str = NULL;
-                    om_str = AXIOM_NODE_TO_STRING(returnNode, env);
-                    if (om_str)
+                    AxiomHelper::releaseHelper(axiomHelper);                                                
+                    
+                    str = AXIOM_NODE_TO_STRING(outputNode, env);
+                    if (str)
                     {
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has response OM : %s\n", om_str);
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has response OM : %s\n", str);
                     }
                         
-					AxiomHelper::releaseHelper(axiomHelper);												
 
                 	//LOGEXIT(1, "Axis2Service_invoke");						
-					return returnNode;
+					return outputNode;
                 }
             }
         }
@@ -407,7 +423,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
     //LOGERROR(0, "Axis2Service service ERROR: invalid OM parameters in request\n");
     
     /** TODO: return a SOAP fault here */
-    return node;
+    return 0;
 }
 
 

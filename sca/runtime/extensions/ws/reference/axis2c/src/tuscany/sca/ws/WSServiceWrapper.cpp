@@ -25,7 +25,12 @@
 #include "WSServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/ServiceType.h"
+
+#include "commonj/sdo/SDO.h"
+using namespace commonj::sdo;
 
 using namespace tuscany::sca;
 using namespace tuscany::sca::model;
@@ -39,6 +44,29 @@ namespace tuscany
             
             WSServiceWrapper::WSServiceWrapper(Service* service) : ServiceWrapper(service)
             {
+                // Define the SOAP Body type and element to allow a SOAP body to
+                // be loaded in a DataObject
+                DataFactoryPtr dataFactory = service->getComponent()->getComposite()->getDataFactory();
+                try {
+                    const Type& bodyType = dataFactory->getType("http://www.w3.org/2003/05/soap-envelope", "Body");
+                } catch (SDORuntimeException e)
+                {
+                    dataFactory->addType("http://www.w3.org/2003/05/soap-envelope", "RootType", false, false, false);                
+                    dataFactory->addType("http://www.w3.org/2003/05/soap-envelope", "Body", false, true, false);                
+                    dataFactory->addPropertyToType(
+                        "http://www.w3.org/2003/05/soap-envelope", "RootType",
+                        "Body",
+                        "http://www.w3.org/2003/05/soap-envelope", "Body",
+                        false, false, true);
+    
+                    dataFactory->addType("http://schemas.xmlsoap.org/soap/envelope/", "RootType", false, false, false);
+                    dataFactory->addType("http://schemas.xmlsoap.org/soap/envelope/", "Body", false, true, false);
+                    dataFactory->addPropertyToType(
+                        "http://schemas.xmlsoap.org/soap/envelope/", "RootType",
+                        "Body",
+                        "http://schemas.xmlsoap.org/soap/envelope/", "Body",
+                        false, false, true);
+                }
             }
             
             WSServiceWrapper::~WSServiceWrapper()
