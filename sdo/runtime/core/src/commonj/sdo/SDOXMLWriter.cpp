@@ -129,7 +129,7 @@ namespace commonj
                     writeXSIType = true;
                 }
                 
-                writeDO(root, elementURI, elementName, true, true);
+                writeDO(root, elementURI, elementName, writeXSIType, true);
             }
             rc = xmlTextWriterEndDocument(writer);
             if (rc < 0) {
@@ -787,30 +787,33 @@ namespace commonj
             // write out the type if the xsi:type if the containing type is open
             // and the property is not one of the declared properties
              //////////////////////////////////////////////////////////////////////////
-            DataObject* dob = dataObject;
-            DataObjectImpl* cont = 
-                     ((DataObjectImpl*)dob)->getContainerImpl();
-            if (cont != 0)
+            if (!writeXSIType)
             {
-                if (cont->getType().isOpenType())
+                DataObject* dob = dataObject;
+                DataObjectImpl* cont = 
+                         ((DataObjectImpl*)dob)->getContainerImpl();
+                if (cont != 0)
                 {
-                    //if (dataObject->getType().getURI() != 0)
-                    //{
-                    //    std::string value = 
-                    //        dataObject->getType().getURI();
-                    //    value += ":";
-                    //    value += dataObject->getType().getName();
-                    //    rc = xmlTextWriterWriteAttribute(writer, 
-                    //        (const unsigned char*)"xsi:type", 
-                    //        (const unsigned char*)value.c_str());
-                    //}
-                    //else
-                    //{
-                    if (cont->getTypeImpl().getPropertyImpl(elementName) == 0)
+                    if (cont->getType().isOpenType())
                     {
-                        rc = xmlTextWriterWriteAttribute(writer, 
-                        (const unsigned char*)"xsi:type", 
-                        (const unsigned char*)dataObject->getType().getName());
+                        //if (dataObject->getType().getURI() != 0)
+                        //{
+                        //    std::string value = 
+                        //        dataObject->getType().getURI();
+                        //    value += ":";
+                        //    value += dataObject->getType().getName();
+                        //    rc = xmlTextWriterWriteAttribute(writer, 
+                        //        (const unsigned char*)"xsi:type", 
+                        //        (const unsigned char*)value.c_str());
+                        //}
+                        //else
+                        //{
+                        if (cont->getTypeImpl().getPropertyImpl(elementName) == 0)
+                        {
+                            rc = xmlTextWriterWriteAttribute(writer, 
+                            (const unsigned char*)"xsi:type", 
+                            (const unsigned char*)dataObject->getType().getName());
+                        }
                     }
                 }
             }
