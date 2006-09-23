@@ -60,6 +60,33 @@ namespace tuscany
                 WSReferenceBinding* referenceBinding = (WSReferenceBinding*)reference->getBinding();
                 serviceWrapper = referenceBinding->getTargetServiceBinding()->getServiceWrapper();
                 
+                // Define the SOAP Body type and element to allow a SOAP body to
+                // be loaded in a DataObject
+                DataFactoryPtr dataFactory = reference->getComponent()->getComposite()->getDataFactory();
+                try {
+                    const Type& bodyType = dataFactory->getType("http://www.w3.org/2003/05/soap-envelope", "Body");
+                } catch (SDORuntimeException e)
+                {
+                    
+                    // Define the SOAP 1.2 Body type
+                    dataFactory->addType("http://www.w3.org/2003/05/soap-envelope", "RootType", false, false, false);                
+                    dataFactory->addType("http://www.w3.org/2003/05/soap-envelope", "Body", false, true, false);                
+                    dataFactory->addPropertyToType(
+                        "http://www.w3.org/2003/05/soap-envelope", "RootType",
+                        "Body",
+                        "http://www.w3.org/2003/05/soap-envelope", "Body",
+                        false, false, true);
+    
+                    // Define the SOAP 1.1 Body type
+                    dataFactory->addType("http://schemas.xmlsoap.org/soap/envelope/", "RootType", false, false, false);
+                    dataFactory->addType("http://schemas.xmlsoap.org/soap/envelope/", "Body", false, true, false);
+                    dataFactory->addPropertyToType(
+                        "http://schemas.xmlsoap.org/soap/envelope/", "RootType",
+                        "Body",
+                        "http://schemas.xmlsoap.org/soap/envelope/", "Body",
+                        false, false, true);
+                }
+                
                 LOGEXIT(1,"WSServiceProxy::constructor");
             }
             
@@ -79,10 +106,6 @@ namespace tuscany
             {
                 LOGENTRY(1,"WSServiceProxy::invoke");
     
-                //printf("inputDataObject %s#%s\n", inputDataObject->getType().getURI(), inputDataObject->getType().getName());
-                //Utils::printType(inputDataObject->getType());
-                //Utils::printDO(inputDataObject);
-            
                 Reference* reference = getReference();
                 Component* component = reference->getComponent();
                 Composite* composite = component ->getComposite();
@@ -114,7 +137,7 @@ namespace tuscany
                         // Create new Operation object and set parameters and return value
                         Operation operation(wsdlOperation.getOperationName().c_str());
                     
-                        // Go through input data object to set the operation parameters
+                        // Go through the input data object to set the operation parameters
                         PropertyList pl = inputDataObject->getInstanceProperties();
                     
                         for(int i=0; i<pl.size(); i++)
@@ -127,14 +150,12 @@ namespace tuscany
                                 {
                                     bool* boolData = new bool;
                                     *boolData = inputDataObject->getBoolean(pl[i]);
-                                    //printf("inputDataObject has BooleanType named %s with value %d\n", name, boolData);
                                     operation.addParameter(boolData);
                                 }
                                 break;
                             case Type::ByteType:
                                 {
                                     char* byteData = new char;
-                                    //printf("inputDataObject has ByteType named %s\n", name);
                                     *byteData = inputDataObject->getByte(pl[i]);
                                     operation.addParameter(byteData);
                                 }
@@ -153,7 +174,6 @@ namespace tuscany
                                     {
                                         bytesData[len] = 0;
                                     }
-                                    //printf("inputDataObject has BytesType named %s with length %d\n", name, bytesWritten);
                                     operation.addParameter(&bytesData);
                                 }
                                 break;
@@ -161,7 +181,6 @@ namespace tuscany
                                 {
                                     // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
                                     wchar_t* charData = new wchar_t;
-                                    //printf("inputDataObject has CharacterType named %s\n", name);
                                     *charData = inputDataObject->getCharacter(pl[i]);
                                     operation.addParameter(charData);
                                 }
@@ -170,7 +189,6 @@ namespace tuscany
                                 {
                                     long double* doubleData = new long double;
                                     *doubleData = inputDataObject->getDouble(pl[i]);
-                                    //printf("inputDataObject has DoubleType named %s\n", name);            
                                     operation.addParameter(doubleData);
                                 }
                                 break;
@@ -185,7 +203,6 @@ namespace tuscany
                             case Type::IntegerType:
                                 {
                                     long* intData = new long;
-                                    //printf("inputDataObject has IntegerType named %s\n", name);
                                     *intData = inputDataObject->getInteger(pl[i]);
                                     operation.addParameter(intData);
                                 }
@@ -193,7 +210,6 @@ namespace tuscany
                             case Type::ShortType:
                                 {
                                     short* shortData = new short;
-                                    //printf("inputDataObject has ShortType named %s\n", name);
                                     *shortData = inputDataObject->getShort(pl[i]);
                                     operation.addParameter(shortData);
                                 }
@@ -202,14 +218,12 @@ namespace tuscany
                                 {
                                     const char** stringData = new const char*; 
                                     *stringData = inputDataObject->getCString(pl[i]);
-                                    //printf("inputDataObject has StringType named %s with value %s\n", name, stringData);
                                     operation.addParameter(stringData);
                                 }
                                 break;
                             case Type::DataObjectType:
                                 {
                                     DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
-                                    //printf("inputDataObject has DataObjectType named %s (#%d)\n", name, dataObjectData);
                     
                                     if(!dataObjectData)
                                     {
@@ -308,17 +322,21 @@ namespace tuscany
                             serviceWrapper->invoke(operation);
                     
                             // Set the data in the outputDataObject to be returned
-                            DataObjectPtr outputDataObject = dataFactoryPtr->create(outputTypeURI, outputTypeName);
+                            DataObjectPtr outputDataObject;
+                            try
+                            {
+                                
+                                // Create the output wrapper
+                                const Type& outputType = dataFactoryPtr->getType(outputTypeURI, outputTypeName);
+                                outputDataObject = dataFactoryPtr->create(outputType);
+                            }
+                            catch (SDORuntimeException e)
+                            {
+                                // The output wrapper type is not known, create an open DataObject 
+                                outputDataObject = dataFactoryPtr->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                            }
                             
-                            //const Type& rootType = dataFactoryPtr->getType(outputDataObject->getType().getURI(), "RootType");
-                            //printf("rootType %s#%s\n", rootType.getURI(), rootType.getName());
-                            //Utils::printType(rootType);
-                            //printf("outputDataObject %s#%s\n", outputDataObject->getType().getURI(), outputDataObject->getType().getName());
-                            //Utils::printType(outputDataObject->getType());
-
                             setOutputData(operation, outputDataObject, dataFactoryPtr);                            
-
-                            Utils::printDO(outputDataObject);
 
                             LOGEXIT(1,"WSServiceProxy::invoke");
                         

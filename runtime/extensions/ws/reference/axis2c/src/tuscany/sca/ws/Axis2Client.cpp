@@ -253,14 +253,14 @@ namespace tuscany
             }
             
             axiom_node_t* Axis2Client::createPayload(Operation& operation, 
-                const WSDLOperation& wsdlOp,
+                const WSDLOperation& wsdlOperation,
                 axis2_env_t* env)
             {	
                 LOGENTRY(1, "Axis2Client::createPayload");
-                axiom_node_t* requestOM = NULL;
+                axiom_node_t* request_node = NULL;
                 
                 // map the operation request to the wsdl
-                if (wsdlOp.isDocumentStyle())
+                if (wsdlOperation.isDocumentStyle())
                 {
                     // Document style 
                     // only support single part messages - WS-I compliant
@@ -269,15 +269,28 @@ namespace tuscany
                     
                     // Get the data factory for the composite (it will already have the typecreates loaded for the xsds)
                     DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
-                    DataObjectPtr requestDO = dataFactory->create(wsdlOp.getInputTypeUri().c_str(), 
-                        wsdlOp.getInputTypeName().c_str());
-
+                    
+                    DataObjectPtr inputDataObject;
+                    try
+                    {
+                        
+                        // Create the output wrapper
+                        const Type& inputType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), 
+                            wsdlOperation.getInputTypeName().c_str());
+                        inputDataObject = dataFactory->create(inputType);
+                    }
+                    catch (SDORuntimeException e)
+                    {
+                        // The input wrapper type is not known, create an open DataObject 
+                        inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                    }
+                            
                     // Go through data object to set the input parameters
-                    PropertyList pl = requestDO->getType().getProperties();
+                    PropertyList pl = inputDataObject->getType().getProperties();
                 
                     if(pl.size() == 0)
                     {
-                        if(requestDO->getType().isOpenType() && requestDO->getType().isDataObjectType())
+                        if(inputDataObject->getType().isOpenType() && inputDataObject->getType().isDataObjectType())
                         {
                             /*
                              * This code deals with sending xsd:any elements
@@ -285,7 +298,7 @@ namespace tuscany
                             for (int i=0; i<operation.getNParms(); i++)
                             {
                                 string pname = "param" + (i+1);
-                                DataObjectList& l = requestDO->getList(pname);
+                                DataObjectList& l = inputDataObject->getList(pname);
                                 
                                 Operation::Parameter& parm = operation.getParameter(i);
                                 switch(parm.getType())
@@ -370,67 +383,67 @@ namespace tuscany
                             {
                             case Operation::BOOL: 
                                 {
-                                    requestDO->setBoolean(i, *(bool*)parm.getValue());
+                                    inputDataObject->setBoolean(i, *(bool*)parm.getValue());
                                     break;
                                 }
                             case Operation::SHORT: 
                                 {
-                                    requestDO->setShort(i, *(short*)parm.getValue());
+                                    inputDataObject->setShort(i, *(short*)parm.getValue());
                                     break;
                                 }
                             case Operation::INT: 
                                 {
-                                    requestDO->setInteger(i, *(int*)parm.getValue());
+                                    inputDataObject->setInteger(i, *(int*)parm.getValue());
                                     break;
                                 }
                             case Operation::LONG: 
                                 {
-                                    requestDO->setLong(i, *(long*)parm.getValue());
+                                    inputDataObject->setLong(i, *(long*)parm.getValue());
                                     break;
                                 }
                             case Operation::USHORT: 
                                 {
-                                    requestDO->setInteger(i, *(unsigned short*)parm.getValue());
+                                    inputDataObject->setInteger(i, *(unsigned short*)parm.getValue());
                                     break;
                                 }
                             case Operation::UINT: 
                                 {
-                                    requestDO->setInteger(i, *(unsigned int*)parm.getValue());
+                                    inputDataObject->setInteger(i, *(unsigned int*)parm.getValue());
                                     break;
                                 }
                             case Operation::ULONG: 
                                 {
-                                    requestDO->setInteger(i, *(unsigned long*)parm.getValue());
+                                    inputDataObject->setInteger(i, *(unsigned long*)parm.getValue());
                                     break;
                                 }
                             case Operation::FLOAT: 
                                 {
-                                    requestDO->setFloat(i, *(float*)parm.getValue());
+                                    inputDataObject->setFloat(i, *(float*)parm.getValue());
                                     break;
                                 }
                             case Operation::DOUBLE: 
                                 {
-                                    requestDO->setDouble(i, *(double*)parm.getValue());
+                                    inputDataObject->setDouble(i, *(double*)parm.getValue());
                                     break;
                                 }
                             case Operation::LONGDOUBLE: 
                                 {
-                                    requestDO->setDouble(i, *(long double*)parm.getValue());
+                                    inputDataObject->setDouble(i, *(long double*)parm.getValue());
                                     break;
                                 }
                             case Operation::CHARS: 
                                 {
-                                    requestDO->setCString(i, *(char**)parm.getValue());
+                                    inputDataObject->setCString(i, *(char**)parm.getValue());
                                     break;
                                 }
                             case Operation::STRING: 
                                 {
-                                    requestDO->setCString(i, (*(string*)parm.getValue()).c_str());
+                                    inputDataObject->setCString(i, (*(string*)parm.getValue()).c_str());
                                     break;
                                 }
                             case Operation::DATAOBJECT: 
                                 {
-                                    requestDO->setDataObject(i, *(DataObjectPtr*)parm.getValue());
+                                    inputDataObject->setDataObject(i, *(DataObjectPtr*)parm.getValue());
                                     break;
                                 }
                             default: throw "unsupported parameter type";
@@ -439,59 +452,80 @@ namespace tuscany
                     }
                     
                     // Create the Axiom object from the request dataobject
-                    AxiomHelper myHelper;
-                    requestOM = myHelper.toAxiomNode(requestDO);
+                    AxiomHelper* axiomHelper = AxiomHelper::getHelper();
+                    request_node = axiomHelper->toAxiomNode(inputDataObject,
+                        wsdlOperation.getInputTypeUri().c_str(), wsdlOperation.getInputTypeName().c_str());
+                    AxiomHelper::releaseHelper(axiomHelper);
                 }
                 else
                 {
                     // RPC
                 }
                 
-                // Logging start
-                axiom_xml_writer_t* xml_writer = axiom_xml_writer_create_for_memory(env, NULL, AXIS2_FALSE, AXIS2_FALSE, AXIS2_XML_PARSER_TYPE_BUFFER);
-                axiom_output_t* om_output = axiom_output_create( env, xml_writer);
-                
-                AXIOM_NODE_SERIALIZE(requestOM, env, om_output);
-                axis2_char_t* buffer = (axis2_char_t*)AXIOM_XML_WRITER_GET_XML(xml_writer, env);         
-                LOGINFO_1(3, "Sending this OM node in XML : %s \n",  buffer); 
-                
-                AXIOM_OUTPUT_FREE(om_output, env);
-                AXIS2_FREE((env)->allocator, buffer);
-                // Logging end
+                char* str =  AXIOM_NODE_TO_STRING(request_node, env);
+                LOGINFO_1(3, "Sending this OM node in XML : %s \n",  str); 
                 
                 LOGEXIT(1, "Axis2Client::createPayload");
-                
-                return requestOM;
+                return request_node;
              }
              
              void Axis2Client::setReturn(axiom_node_t* ret_node,
                  Operation& operation, 
-                 const WSDLOperation& wsdlOp,
+                 const WSDLOperation& wsdlOperation,
                  axis2_env_t* env)
              {	
                  LOGENTRY(1, "Axis2Client::setReturn");
-                 /* Get the response value from the SOAP message */
                  
-                 // logging start
-                 axiom_xml_writer_t* writer = axiom_xml_writer_create_for_memory(env, NULL, AXIS2_TRUE, 0, AXIS2_XML_PARSER_TYPE_BUFFER);
-                 axiom_output_t* om_output = axiom_output_create (env, writer);
-                 AXIOM_NODE_SERIALIZE (ret_node, env, om_output);
-                 axis2_char_t* buffer = (axis2_char_t*)AXIOM_XML_WRITER_GET_XML(writer, env);
-                 LOGINFO_1(3,"Received OM node in XML : %s\n", buffer);
-                 AXIOM_OUTPUT_FREE(om_output, env);
-                 AXIS2_FREE((env)->allocator, buffer);
-                 // Logging end
-                 
-                 
-                 if (wsdlOp.isDocumentStyle())
+                 if (wsdlOperation.isDocumentStyle())
                  {
                      // Document style 
+                    DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
+
+                    // Get the AXIOM node representing the SOAP Body 
+                    axiom_node_t* body = AXIOM_NODE_GET_PARENT(ret_node, env);
                      
-                     DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
-                     AxiomHelper myHelper;
-                     DataObjectPtr returnDO = myHelper.toSdo(ret_node, dataFactory);
+                    // Convert the AXIOM node to an SDO DataObject
+                    char* str = NULL;
+                    str = AXIOM_NODE_TO_STRING(body, env);
+                    if (str)
+                    {
+                        AXIS2_LOG_INFO((env)->log, "Axis2Client invoke has response OM: %s\n", str);
+                    }
+
+                    // Convert the SOAP body to an SDO DataObject
+                    AxiomHelper* axiomHelper = AxiomHelper::getHelper();
+                    DataObjectPtr outputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
+                    AxiomHelper::releaseHelper(axiomHelper);
+
+                    if(!outputBodyDataObject)
+                    {
+                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service invoke: Could not convert received Axiom node to SDO");
+                        /** TODO: return a SOAP fault here */
+                        return;
+                    }                    
+
+                    // Get the first body part representing the doc-lit-wrapped wrapper element
+                    DataObjectPtr outputDataObject = NULL; 
+                    PropertyList bpl = outputBodyDataObject->getInstanceProperties();
+                    if (bpl.size()!=0)
+                    {
+                        if (bpl[0].isMany())
+                        {
+                            DataObjectList& parts = outputBodyDataObject->getList((unsigned int)0);
+                            outputDataObject = parts[0];
+                        }
+                        else
+                        {
+                            outputDataObject = outputBodyDataObject->getDataObject(bpl[0]);
+                        }
+                    }
+                    if (outputDataObject == NULL)
+                    {
+                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Client invoke: Could not convert body part to SDO");
+                        return;
+                    }
                      
-                    PropertyList pl = returnDO->getInstanceProperties();
+                    PropertyList pl = outputDataObject->getInstanceProperties();
                     unsigned int i = 0;
                      
                     switch(pl[i].getTypeEnum())
@@ -499,24 +533,22 @@ namespace tuscany
                     case Type::BooleanType:
                         {
                             bool* boolData = new bool;
-                            *boolData = returnDO->getBoolean(pl[i]);
-                            //printf("returnDO has BooleanType named %s with value %d\n", name, boolData);
+                            *boolData = outputDataObject->getBoolean(pl[i]);
                             operation.setReturnValue(boolData);
                         }
                         break;
                     case Type::ByteType:
                         {
                             char* byteData = new char;
-                            //printf("returnDO has ByteType named %s\n", name);
-                            *byteData = returnDO->getByte(pl[i]);
+                            *byteData = outputDataObject->getByte(pl[i]);
                             operation.setReturnValue(byteData);
                         }
                         break;
                     case Type::BytesType:
                         {
-                            int len = returnDO->getLength(pl[i]);
+                            int len = outputDataObject->getLength(pl[i]);
                             char* bytesData = new char[len+1];
-                            int bytesWritten = returnDO->getBytes(pl[i], bytesData, len);
+                            int bytesWritten = outputDataObject->getBytes(pl[i], bytesData, len);
                             // Ensure the bytes end with the null char. Not sure if this is neccessary
                             if(bytesWritten <= len)
                             {
@@ -526,7 +558,7 @@ namespace tuscany
                             {
                                 bytesData[len] = 0;
                             }
-                            //printf("returnDO has BytesType named %s with length %d\n", name, bytesWritten);
+                            //printf("outputDataObject has BytesType named %s with length %d\n", name, bytesWritten);
                             operation.setReturnValue(&bytesData);
                         }
                         break;
@@ -534,57 +566,49 @@ namespace tuscany
                         {
                             // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
                             wchar_t* charData = new wchar_t;
-                            //printf("returnDO has CharacterType named %s\n", name);
-                            *charData = returnDO->getCharacter(pl[i]);
+                            *charData = outputDataObject->getCharacter(pl[i]);
                             operation.setReturnValue(charData);
                         }
                         break;
                     case Type::DoubleType:
                         {
                             long double* doubleData = new long double;
-                            *doubleData = returnDO->getDouble(pl[i]);
-                            //printf("returnDO has DoubleType named %s\n", name);            
+                            *doubleData = outputDataObject->getDouble(pl[i]);
                             operation.setReturnValue(doubleData);
                         }
                         break;
                     case Type::FloatType:
                         {
                             float* floatData = new float;
-                            *floatData = returnDO->getFloat(pl[i]);
-                            //printf("returnDO has FloatType named %s with value %f\n", name, *floatData);
+                            *floatData = outputDataObject->getFloat(pl[i]);
                             operation.setReturnValue(floatData); 
                         }
                         break;
                     case Type::IntegerType:
                         {
                             long* intData = new long;
-                            //printf("returnDO has IntegerType named %s\n", name);
-                            *intData = returnDO->getInteger(pl[i]);
+                            *intData = outputDataObject->getInteger(pl[i]);
                             operation.setReturnValue(intData);
                         }
                         break;
                     case Type::ShortType:
                         {
                             short* shortData = new short;
-                            //printf("returnDO has ShortType named %s\n", name);
-                            *shortData = returnDO->getShort(pl[i]);
+                            *shortData = outputDataObject->getShort(pl[i]);
                             operation.setReturnValue(shortData);
                         }
                         break;
                     case Type::StringType:
                         {
                             const char** stringData = new const char*; 
-                            string* str = new string(returnDO->getCString(pl[i]));
+                            string* str = new string(outputDataObject->getCString(pl[i]));
                             *stringData = str->c_str();
-                            //printf("returnDO has StringType named %s with value %s\n", name, stringData);
                             operation.setReturnValue(stringData);
                         }
                         break;
                     case Type::DataObjectType:
                         {
-                            DataObjectPtr dataObjectData = returnDO->getDataObject(pl[i]);
-                            //printf("returnDO has DataObjectType named %s (#%d)\n", name, dataObjectData);
-            
+                            DataObjectPtr dataObjectData = outputDataObject->getDataObject(pl[i]);
                             if(!dataObjectData)
                             {
                                 LOGINFO(4, "SDO DataObject return value was null");
@@ -599,8 +623,7 @@ namespace tuscany
                              * Get each element as a DataObject and add in to the parameter list
                              */
             
-                            //printf("returnDO has OpenDataObjectType named %s\n", name);
-                            DataObjectList& dataObjectList = returnDO->getList(pl[i]);
+                            DataObjectList& dataObjectList = outputDataObject->getList(pl[i]);
                             
                             for(int j=0; j<dataObjectList.size(); j++)
                             {
