@@ -43,6 +43,8 @@
 #include "tuscany/sca/model/WSDLInterface.h"
 #include "tuscany/sca/model/WSDLOperation.h"
 
+#include <sstream>
+
 using namespace tuscany::sca::ws;
 
 
@@ -297,8 +299,9 @@ namespace tuscany
                              */
                             for (int i=0; i<operation.getNParms(); i++)
                             {
-                                string pname = "param" + (i+1);
-                                DataObjectList& l = inputDataObject->getList(pname);
+                                ostringstream pname;
+                                pname << "param" << (i+1);
+                                DataObjectList& l = inputDataObject->getList(pname.str());
                                 
                                 Operation::Parameter& parm = operation.getParameter(i);
                                 switch(parm.getType())
@@ -600,10 +603,8 @@ namespace tuscany
                         break;
                     case Type::StringType:
                         {
-                            const char** stringData = new const char*; 
                             string* str = new string(outputDataObject->getCString(pl[i]));
-                            *stringData = str->c_str();
-                            operation.setReturnValue(stringData);
+                            operation.setReturnValue(str);
                         }
                         break;
                     case Type::DataObjectType:
@@ -642,9 +643,7 @@ namespace tuscany
                                         // Return a text element        
                                         if (sequence->isText(0))
                                         {                                        
-                                            const char** stringData = new const char*; 
-                                            *stringData = sequence->getCStringValue(0);
-
+                                            string* stringData = new string(sequence->getCStringValue(0));
                                             operation.setReturnValue(stringData);
                                         }
                                         else
@@ -662,9 +661,7 @@ namespace tuscany
                                     {
                                         // Empty content, add an empty string
                                         LOGINFO(4, "SDO OpenDataObject return value was empy");
-                                        const char** stringData = new const char*; 
-                                        *stringData = "";
-
+                                        string *stringData = new string(""); 
                                         operation.setReturnValue(stringData);
                                     }
                                 }
