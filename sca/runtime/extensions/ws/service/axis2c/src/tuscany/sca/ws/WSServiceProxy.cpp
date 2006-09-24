@@ -216,8 +216,7 @@ namespace tuscany
                                 break;
                             case Type::StringType:
                                 {
-                                    const char** stringData = new const char*; 
-                                    *stringData = inputDataObject->getCString(pl[i]);
+                                    string* stringData = new string(inputDataObject->getCString(pl[i]));
                                     operation.addParameter(stringData);
                                 }
                                 break;
@@ -261,9 +260,7 @@ namespace tuscany
                                                 // Add a text element        
                                                 if (sequence->isText(0))
                                                 {                                        
-                                                    const char** stringData = new const char*; 
-                                                    *stringData = sequence->getCStringValue(0);
-        
+                                                    string* stringData = new string(sequence->getCStringValue(0));
                                                     operation.addParameter(stringData);
                                                 }
                                                 else
@@ -281,9 +278,7 @@ namespace tuscany
                                             {
                                                 // Empty content, add an empty string
                                                 LOGINFO_2(4, "SDO OpenDataObject parameter named %s[%d] was empty", name, j);
-                                                const char** stringData = new const char*; 
-                                                *stringData = "";
-    
+                                                string* stringData = new string(""); 
                                                 operation.addParameter(stringData);
                                             }
                                         }                       
