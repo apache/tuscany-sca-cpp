@@ -42,8 +42,76 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([getcwd putenv strdup])
 # AC_CONFIG_SUBDIRS([samples])
 
-AC_MSG_CHECKING(whether to build Python extension)
-AC_ARG_ENABLE(python, [  --enable-python  enable python. default=no],
+AC_MSG_CHECKING(whether to build all component type and binding extensions)
+AC_ARG_ENABLE(all-extensions, [AS_HELP_STRING([--enable-all-extensions],[build all runtime extensions [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_all=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_all=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+  want_all=false ]
+)
+AM_CONDITIONAL([WANT_ALL], [test x$want_all = xtrue])
+
+AC_MSG_CHECKING(whether to build C++ component type extension)
+AC_ARG_ENABLE(cpp, [AS_HELP_STRING([--enable-cpp],[build C++ component type extension [default=yes]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_cpp=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_cpp=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(yes)
+  want_cpp=true ]
+)
+AM_CONDITIONAL([WANT_CPP], [test x$want_cpp = xtrue])
+
+AC_MSG_CHECKING(whether to build Web Service binding extension)
+AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service binding extension [default=yes]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_wsbinding=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_wsbinding=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(yes)
+  want_wsbinding=true ]
+)
+AM_CONDITIONAL([WANT_WSBINDING], [test x$want_wsbinding = xtrue])
+
+AC_MSG_CHECKING(whether to build SCA default binding extension)
+AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA default binding extension [default=yes]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_scabinding=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_scabinding=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(yes)
+  want_scabinding=true ]
+)
+AM_CONDITIONAL([WANT_SCABINDING], [test x$want_scabinding = xtrue])
+
+AC_MSG_CHECKING(whether to build Python component type extension)
+AC_ARG_ENABLE(python, [AS_HELP_STRING([--enable-python],[build Python component type extension [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
@@ -54,12 +122,13 @@ AC_ARG_ENABLE(python, [  --enable-python  enable python. default=no],
     want_python=true
     ;;
   esac ],
-  AC_MSG_RESULT(no)
+[ AC_MSG_RESULT(no)
+  want_python=false ]
 )
 AM_CONDITIONAL([WANT_PYTHON], [test x$want_python = xtrue])
 
-AC_MSG_CHECKING(whether to build Ruby extension)
-AC_ARG_ENABLE(ruby, [  --enable-ruby  enable ruby. default=no],
+AC_MSG_CHECKING(whether to build Ruby component type extension)
+AC_ARG_ENABLE(ruby, [AS_HELP_STRING([--enable-ruby],[build Ruby component type extension [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
@@ -70,12 +139,13 @@ AC_ARG_ENABLE(ruby, [  --enable-ruby  enable ruby. default=no],
     want_ruby=true
     ;;
   esac ],
-  AC_MSG_RESULT(no)
+[ AC_MSG_RESULT(no)
+  want_ruby=false ]
 )
 AM_CONDITIONAL([WANT_RUBY], [test x$want_ruby = xtrue])
 
-AC_MSG_CHECKING(whether to build PHP extension)
-AC_ARG_ENABLE(php, [  --enable-php  enable php. default=no],
+AC_MSG_CHECKING(whether to build PHP component type extension)
+AC_ARG_ENABLE(php, [AS_HELP_STRING([--enable-php],[build PHP component type extension [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
@@ -86,7 +156,8 @@ AC_ARG_ENABLE(php, [  --enable-php  enable php. default=no],
     want_php=true
     ;;
   esac ],
-  AC_MSG_RESULT(no)
+[ AC_MSG_RESULT(no)
+  want_php=false ]
 )
 AM_CONDITIONAL([WANT_PHP], [test x$want_php = xtrue])
 
@@ -106,6 +177,13 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/ws/service/Makefile
                  runtime/extensions/ws/service/axis2c/Makefile
                  runtime/extensions/ws/service/axis2c/src/Makefile
+                 runtime/extensions/sca/Makefile
+                 runtime/extensions/sca/reference/Makefile
+                 runtime/extensions/sca/reference/axis2c/Makefile
+                 runtime/extensions/sca/reference/axis2c/src/Makefile
+                 runtime/extensions/sca/service/Makefile
+                 runtime/extensions/sca/service/axis2c/Makefile
+                 runtime/extensions/sca/service/axis2c/src/Makefile
                  runtime/extensions/python/Makefile
                  runtime/extensions/python/src/Makefile
                  runtime/extensions/ruby/Makefile
