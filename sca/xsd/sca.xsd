@@ -23,6 +23,5 @@
     <include schemaLocation="sca-interface-wsdl.xsd" />
     <include schemaLocation="sca-implementation-java.xsd" />
     <include schemaLocation="sca-implementation-composite.xsd" />
-    <include schemaLocation="sca-binding-sca.xsd" />
 
 </schema>
