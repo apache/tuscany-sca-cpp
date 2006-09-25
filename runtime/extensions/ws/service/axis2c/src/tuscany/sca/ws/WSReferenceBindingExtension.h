@@ -17,8 +17,8 @@
  * under the License.
  */
 
-#ifndef tuscany_sca_extension_wsreferencebindingextension_h
-#define tuscany_sca_extension_wsreferencebindingextension_h
+#ifndef tuscany_sca_extension_ws_wsreferencebindingextension_h
+#define tuscany_sca_extension_ws_wsreferencebindingextension_h
 
 #include "tuscany/sca/extension/ReferenceBindingExtension.h"
 
@@ -68,5 +68,5 @@ namespace tuscany
     } // End namespace sca
 } // End namespace tuscany
 
-#endif // tuscany_sca_extension_wsreferencebindingextension_h
+#endif // tuscany_sca_extension_ws_wsreferencebindingextension_h
 
