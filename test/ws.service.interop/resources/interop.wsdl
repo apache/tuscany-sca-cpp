@@ -1,0 +1,1814 @@
+<wsdl:definitions name="interop"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+                  xmlns:interop="http://www.apache.org/tuscany/interop" 
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"  
+                  targetNamespace="http://www.apache.org/tuscany/interop">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://www.apache.org/tuscany/interop" 
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+                
+  	  <xsd:include schemaLocation="interop01.xsd" />
+  	  <xsd:include schemaLocation="interop02.xsd" />
+  	  <xsd:include schemaLocation="interop03.xsd" />
+  	  <xsd:include schemaLocation="interop04.xsd" />
+  	  <!--xsd:include schemaLocation="interop05.xsd" /-->
+  	  <xsd:include schemaLocation="interop06.xsd" />
+  	  <xsd:include schemaLocation="interop07.xsd" />
+  	  <xsd:include schemaLocation="interop08.xsd" />
+  	  <xsd:include schemaLocation="interop09.xsd" />
+  	  <xsd:include schemaLocation="interop10.xsd" />
+  	  <xsd:include schemaLocation="interop11.xsd" />
+  	  <xsd:include schemaLocation="interop12.xsd" />
+  	  <xsd:include schemaLocation="interop14.xsd" />
+  	  <xsd:include schemaLocation="interop15.xsd" />
+  	  <xsd:include schemaLocation="interop16.xsd" />
+  	  <xsd:include schemaLocation="interop17.xsd" />
+  	  <xsd:include schemaLocation="interop18.xsd" />
+  	  <xsd:include schemaLocation="interop19.xsd" />
+  	  <xsd:include schemaLocation="interop20.xsd" />
+  	  <xsd:include schemaLocation="interop21.xsd" />
+  	  <xsd:include schemaLocation="interop22.xsd" />
+  	  <xsd:include schemaLocation="interop23.xsd" />
+  	  <xsd:include schemaLocation="interop24.xsd" />
+  	  <!--xsd:include schemaLocation="interop25.xsd" /-->
+  	  <xsd:include schemaLocation="interop26.xsd" />
+  	  <!--xsd:include schemaLocation="interop27.xsd" /-->
+  	  <xsd:include schemaLocation="interop28.xsd" />
+  	  <xsd:include schemaLocation="interop29.xsd" />
+  	  <xsd:include schemaLocation="interop30.xsd" />
+  	  <xsd:include schemaLocation="interop31.xsd" />
+  	  <xsd:include schemaLocation="interop32.xsd" />
+  	  <xsd:include schemaLocation="interop33.xsd" />
+  	  <xsd:include schemaLocation="interop34.xsd" />
+  	  <xsd:include schemaLocation="interop35.xsd" />
+  	  <xsd:include schemaLocation="interop36.xsd" />
+  	  <xsd:include schemaLocation="interop37.xsd" />
+  	  <xsd:include schemaLocation="interop38.xsd" />
+  	  <!--xsd:include schemaLocation="interop39.xsd" /-->
+  	  <xsd:include schemaLocation="interop40.xsd" />
+  	  <xsd:include schemaLocation="interop41.xsd" />
+  	  <xsd:include schemaLocation="interop42.xsd" />
+  	  <xsd:include schemaLocation="interop43.xsd" />
+  	  <xsd:include schemaLocation="interop44.xsd" />
+  	  <xsd:include schemaLocation="interop45.xsd" />
+  	  <xsd:include schemaLocation="interop46.xsd" />
+  	  <xsd:include schemaLocation="interop47.xsd" />
+  	  <xsd:include schemaLocation="interop50.xsd" />
+                
+      <xsd:element name="Interop01">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement01"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop01Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement01"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop02">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement02"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop02Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement02"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop03">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement03"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop03Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement03"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop04">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement04"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop04Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement04"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop05">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <!--xsd:element ref="interop:RootElement05"/-->
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop05Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <!--xsd:element ref="interop:RootElement05"/-->
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop06">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement06"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop06Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement06"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop07">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement07"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop07Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement07"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop08">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement08"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop08Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement08"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop09">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement09"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop09Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement09"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop10">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement10"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop10Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement10"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop11">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement11"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop11Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement11"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop12">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement12"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop12Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement12"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop14">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement14"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop14Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement14"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop15">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement15"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop15Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement15"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop16">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement16"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop16Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement16"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop17">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement17"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop17Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement17"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop18">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement18"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop18Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement18"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop19">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement19"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop19Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement19"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop20">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement20"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop20Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement20"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop21">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement21"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop21Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement21"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop22">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement22"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop22Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement22"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop23">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement23"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop23Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement23"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop24">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement24"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop24Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement24"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop25">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <!--xsd:element ref="interop:RootElement25"/-->
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop25Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <!--xsd:element ref="interop:RootElement25"/-->
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop26">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement26"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop26Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement26"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop27">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <!--xsd:element ref="interop:RootElement27"/-->
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop27Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <!--xsd:element ref="interop:RootElement27"/-->
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop28">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement28"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop28Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement28"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop29">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement29"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop29Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement29"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop30">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement30"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop30Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement30"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop31">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement31"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop31Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement31"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop32">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement32"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop32Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement32"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop33">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement33"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop33Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement33"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop34">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement34"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop34Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement34"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop35">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement35"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop35Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement35"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop36">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement36"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop36Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement36"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop37">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement37"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop37Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement37"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop38">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement38"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop38Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement38"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop39">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <!--xsd:element ref="interop:RootElement39"/-->
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop39Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <!--xsd:element ref="interop:RootElement39"/-->
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop40">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement40"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop40Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement40"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop41">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement41"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop41Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement41"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop42">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement42"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop42Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement42"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop43">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement43"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop43Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement43"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop44">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement44"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop44Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement44"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop45">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement45"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop45Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement45"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop46">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement46"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop46Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement46"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop47">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement47"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop47Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement47"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+                
+      <xsd:element name="Interop50">                
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement50"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Interop50Response">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element ref="interop:RootElement50"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>      
+ 
+    </xsd:schema>
+  </wsdl:types>
+   
+  <wsdl:message name="Interop01Request">
+    <wsdl:part element="interop:Interop01" name="Interop01"/>
+  </wsdl:message>
+  <wsdl:message name="Interop01Response">
+    <wsdl:part element="interop:Interop01Response" name="Interop011Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop02Request">
+    <wsdl:part element="interop:Interop02" name="Interop02"/>
+  </wsdl:message>
+  <wsdl:message name="Interop02Response">
+    <wsdl:part element="interop:Interop02Response" name="Interop021Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop03Request">
+    <wsdl:part element="interop:Interop03" name="Interop03"/>
+  </wsdl:message>
+  <wsdl:message name="Interop03Response">
+    <wsdl:part element="interop:Interop03Response" name="Interop031Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop04Request">
+    <wsdl:part element="interop:Interop04" name="Interop04"/>
+  </wsdl:message>
+  <wsdl:message name="Interop04Response">
+    <wsdl:part element="interop:Interop04Response" name="Interop041Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop05Request">
+    <wsdl:part element="interop:Interop05" name="Interop05"/>
+  </wsdl:message>
+  <wsdl:message name="Interop05Response">
+    <wsdl:part element="interop:Interop05Response" name="Interop051Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop06Request">
+    <wsdl:part element="interop:Interop06" name="Interop06"/>
+  </wsdl:message>
+  <wsdl:message name="Interop06Response">
+    <wsdl:part element="interop:Interop06Response" name="Interop061Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop07Request">
+    <wsdl:part element="interop:Interop07" name="Interop07"/>
+  </wsdl:message>
+  <wsdl:message name="Interop07Response">
+    <wsdl:part element="interop:Interop07Response" name="Interop071Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop08Request">
+    <wsdl:part element="interop:Interop08" name="Interop08"/>
+  </wsdl:message>
+  <wsdl:message name="Interop08Response">
+    <wsdl:part element="interop:Interop08Response" name="Interop081Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop09Request">
+    <wsdl:part element="interop:Interop09" name="Interop09"/>
+  </wsdl:message>
+  <wsdl:message name="Interop09Response">
+    <wsdl:part element="interop:Interop09Response" name="Interop091Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop10Request">
+    <wsdl:part element="interop:Interop10" name="Interop10"/>
+  </wsdl:message>
+  <wsdl:message name="Interop10Response">
+    <wsdl:part element="interop:Interop10Response" name="Interop101Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop11Request">
+    <wsdl:part element="interop:Interop11" name="Interop11"/>
+  </wsdl:message>
+  <wsdl:message name="Interop11Response">
+    <wsdl:part element="interop:Interop11Response" name="Interop111Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop12Request">
+    <wsdl:part element="interop:Interop12" name="Interop12"/>
+  </wsdl:message>
+  <wsdl:message name="Interop12Response">
+    <wsdl:part element="interop:Interop12Response" name="Interop121Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop14Request">
+    <wsdl:part element="interop:Interop14" name="Interop14"/>
+  </wsdl:message>
+  <wsdl:message name="Interop14Response">
+    <wsdl:part element="interop:Interop14Response" name="Interop141Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop15Request">
+    <wsdl:part element="interop:Interop15" name="Interop15"/>
+  </wsdl:message>
+  <wsdl:message name="Interop15Response">
+    <wsdl:part element="interop:Interop15Response" name="Interop151Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop16Request">
+    <wsdl:part element="interop:Interop16" name="Interop16"/>
+  </wsdl:message>
+  <wsdl:message name="Interop16Response">
+    <wsdl:part element="interop:Interop16Response" name="Interop161Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop17Request">
+    <wsdl:part element="interop:Interop17" name="Interop17"/>
+  </wsdl:message>
+  <wsdl:message name="Interop17Response">
+    <wsdl:part element="interop:Interop17Response" name="Interop171Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop18Request">
+    <wsdl:part element="interop:Interop18" name="Interop18"/>
+  </wsdl:message>
+  <wsdl:message name="Interop18Response">
+    <wsdl:part element="interop:Interop18Response" name="Interop181Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop19Request">
+    <wsdl:part element="interop:Interop19" name="Interop19"/>
+  </wsdl:message>
+  <wsdl:message name="Interop19Response">
+    <wsdl:part element="interop:Interop19Response" name="Interop191Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop20Request">
+    <wsdl:part element="interop:Interop20" name="Interop20"/>
+  </wsdl:message>
+  <wsdl:message name="Interop20Response">
+    <wsdl:part element="interop:Interop20Response" name="Interop201Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop21Request">
+    <wsdl:part element="interop:Interop21" name="Interop21"/>
+  </wsdl:message>
+  <wsdl:message name="Interop21Response">
+    <wsdl:part element="interop:Interop21Response" name="Interop211Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop22Request">
+    <wsdl:part element="interop:Interop22" name="Interop22"/>
+  </wsdl:message>
+  <wsdl:message name="Interop22Response">
+    <wsdl:part element="interop:Interop22Response" name="Interop221Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop23Request">
+    <wsdl:part element="interop:Interop23" name="Interop23"/>
+  </wsdl:message>
+  <wsdl:message name="Interop23Response">
+    <wsdl:part element="interop:Interop23Response" name="Interop231Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop24Request">
+    <wsdl:part element="interop:Interop24" name="Interop24"/>
+  </wsdl:message>
+  <wsdl:message name="Interop24Response">
+    <wsdl:part element="interop:Interop24Response" name="Interop241Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop25Request">
+    <wsdl:part element="interop:Interop25" name="Interop25"/>
+  </wsdl:message>
+  <wsdl:message name="Interop25Response">
+    <wsdl:part element="interop:Interop25Response" name="Interop251Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop26Request">
+    <wsdl:part element="interop:Interop26" name="Interop26"/>
+  </wsdl:message>
+  <wsdl:message name="Interop26Response">
+    <wsdl:part element="interop:Interop26Response" name="Interop261Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop27Request">
+    <wsdl:part element="interop:Interop27" name="Interop27"/>
+  </wsdl:message>
+  <wsdl:message name="Interop27Response">
+    <wsdl:part element="interop:Interop27Response" name="Interop271Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop28Request">
+    <wsdl:part element="interop:Interop28" name="Interop28"/>
+  </wsdl:message>
+  <wsdl:message name="Interop28Response">
+    <wsdl:part element="interop:Interop28Response" name="Interop281Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop29Request">
+    <wsdl:part element="interop:Interop29" name="Interop29"/>
+  </wsdl:message>
+  <wsdl:message name="Interop29Response">
+    <wsdl:part element="interop:Interop29Response" name="Interop291Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop30Request">
+    <wsdl:part element="interop:Interop30" name="Interop30"/>
+  </wsdl:message>
+  <wsdl:message name="Interop30Response">
+    <wsdl:part element="interop:Interop30Response" name="Interop301Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop31Request">
+    <wsdl:part element="interop:Interop31" name="Interop31"/>
+  </wsdl:message>
+  <wsdl:message name="Interop31Response">
+    <wsdl:part element="interop:Interop31Response" name="Interop311Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop32Request">
+    <wsdl:part element="interop:Interop32" name="Interop32"/>
+  </wsdl:message>
+  <wsdl:message name="Interop32Response">
+    <wsdl:part element="interop:Interop32Response" name="Interop321Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop33Request">
+    <wsdl:part element="interop:Interop33" name="Interop33"/>
+  </wsdl:message>
+  <wsdl:message name="Interop33Response">
+    <wsdl:part element="interop:Interop33Response" name="Interop331Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop34Request">
+    <wsdl:part element="interop:Interop34" name="Interop34"/>
+  </wsdl:message>
+  <wsdl:message name="Interop34Response">
+    <wsdl:part element="interop:Interop34Response" name="Interop341Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop35Request">
+    <wsdl:part element="interop:Interop35" name="Interop35"/>
+  </wsdl:message>
+  <wsdl:message name="Interop35Response">
+    <wsdl:part element="interop:Interop35Response" name="Interop351Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop36Request">
+    <wsdl:part element="interop:Interop36" name="Interop36"/>
+  </wsdl:message>
+  <wsdl:message name="Interop36Response">
+    <wsdl:part element="interop:Interop36Response" name="Interop361Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop37Request">
+    <wsdl:part element="interop:Interop37" name="Interop37"/>
+  </wsdl:message>
+  <wsdl:message name="Interop37Response">
+    <wsdl:part element="interop:Interop37Response" name="Interop371Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop38Request">
+    <wsdl:part element="interop:Interop38" name="Interop38"/>
+  </wsdl:message>
+  <wsdl:message name="Interop38Response">
+    <wsdl:part element="interop:Interop38Response" name="Interop381Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop39Request">
+    <wsdl:part element="interop:Interop39" name="Interop39"/>
+  </wsdl:message>
+  <wsdl:message name="Interop39Response">
+    <wsdl:part element="interop:Interop39Response" name="Interop391Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop40Request">
+    <wsdl:part element="interop:Interop40" name="Interop40"/>
+  </wsdl:message>
+  <wsdl:message name="Interop40Response">
+    <wsdl:part element="interop:Interop40Response" name="Interop401Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop41Request">
+    <wsdl:part element="interop:Interop41" name="Interop41"/>
+  </wsdl:message>
+  <wsdl:message name="Interop41Response">
+    <wsdl:part element="interop:Interop41Response" name="Interop411Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop42Request">
+    <wsdl:part element="interop:Interop42" name="Interop42"/>
+  </wsdl:message>
+  <wsdl:message name="Interop42Response">
+    <wsdl:part element="interop:Interop42Response" name="Interop421Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop43Request">
+    <wsdl:part element="interop:Interop43" name="Interop43"/>
+  </wsdl:message>
+  <wsdl:message name="Interop43Response">
+    <wsdl:part element="interop:Interop43Response" name="Interop431Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop44Request">
+    <wsdl:part element="interop:Interop44" name="Interop44"/>
+  </wsdl:message>
+  <wsdl:message name="Interop44Response">
+    <wsdl:part element="interop:Interop44Response" name="Interop441Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop45Request">
+    <wsdl:part element="interop:Interop45" name="Interop45"/>
+  </wsdl:message>
+  <wsdl:message name="Interop45Response">
+    <wsdl:part element="interop:Interop45Response" name="Interop451Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop46Request">
+    <wsdl:part element="interop:Interop46" name="Interop46"/>
+  </wsdl:message>
+  <wsdl:message name="Interop46Response">
+    <wsdl:part element="interop:Interop46Response" name="Interop461Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop47Request">
+    <wsdl:part element="interop:Interop47" name="Interop47"/>
+  </wsdl:message>
+  <wsdl:message name="Interop47Response">
+    <wsdl:part element="interop:Interop47Response" name="Interop471Response"/>
+  </wsdl:message>
+   
+  <wsdl:message name="Interop50Request">
+    <wsdl:part element="interop:Interop50" name="Interop50"/>
+  </wsdl:message>
+  <wsdl:message name="Interop50Response">
+    <wsdl:part element="interop:Interop50Response" name="Interop501Response"/>
+  </wsdl:message>
+   
+  <wsdl:portType name="interop">
+   
+    <wsdl:operation name="Interop01">
+      <wsdl:input message="interop:Interop01Request"/>
+      <wsdl:output message="interop:Interop01Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop02">
+      <wsdl:input message="interop:Interop02Request"/>
+      <wsdl:output message="interop:Interop02Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop03">
+      <wsdl:input message="interop:Interop03Request"/>
+      <wsdl:output message="interop:Interop03Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop04">
+      <wsdl:input message="interop:Interop04Request"/>
+      <wsdl:output message="interop:Interop04Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop05">
+      <wsdl:input message="interop:Interop05Request"/>
+      <wsdl:output message="interop:Interop05Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop06">
+      <wsdl:input message="interop:Interop06Request"/>
+      <wsdl:output message="interop:Interop06Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop07">
+      <wsdl:input message="interop:Interop07Request"/>
+      <wsdl:output message="interop:Interop07Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop08">
+      <wsdl:input message="interop:Interop08Request"/>
+      <wsdl:output message="interop:Interop08Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop09">
+      <wsdl:input message="interop:Interop09Request"/>
+      <wsdl:output message="interop:Interop09Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop10">
+      <wsdl:input message="interop:Interop10Request"/>
+      <wsdl:output message="interop:Interop10Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop11">
+      <wsdl:input message="interop:Interop11Request"/>
+      <wsdl:output message="interop:Interop11Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop12">
+      <wsdl:input message="interop:Interop12Request"/>
+      <wsdl:output message="interop:Interop12Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop14">
+      <wsdl:input message="interop:Interop14Request"/>
+      <wsdl:output message="interop:Interop14Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop15">
+      <wsdl:input message="interop:Interop15Request"/>
+      <wsdl:output message="interop:Interop15Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop16">
+      <wsdl:input message="interop:Interop16Request"/>
+      <wsdl:output message="interop:Interop16Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop17">
+      <wsdl:input message="interop:Interop17Request"/>
+      <wsdl:output message="interop:Interop17Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop18">
+      <wsdl:input message="interop:Interop18Request"/>
+      <wsdl:output message="interop:Interop18Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop19">
+      <wsdl:input message="interop:Interop19Request"/>
+      <wsdl:output message="interop:Interop19Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop20">
+      <wsdl:input message="interop:Interop20Request"/>
+      <wsdl:output message="interop:Interop20Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop21">
+      <wsdl:input message="interop:Interop21Request"/>
+      <wsdl:output message="interop:Interop21Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop22">
+      <wsdl:input message="interop:Interop22Request"/>
+      <wsdl:output message="interop:Interop22Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop23">
+      <wsdl:input message="interop:Interop23Request"/>
+      <wsdl:output message="interop:Interop23Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop24">
+      <wsdl:input message="interop:Interop24Request"/>
+      <wsdl:output message="interop:Interop24Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop25">
+      <wsdl:input message="interop:Interop25Request"/>
+      <wsdl:output message="interop:Interop25Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop26">
+      <wsdl:input message="interop:Interop26Request"/>
+      <wsdl:output message="interop:Interop26Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop27">
+      <wsdl:input message="interop:Interop27Request"/>
+      <wsdl:output message="interop:Interop27Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop28">
+      <wsdl:input message="interop:Interop28Request"/>
+      <wsdl:output message="interop:Interop28Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop29">
+      <wsdl:input message="interop:Interop29Request"/>
+      <wsdl:output message="interop:Interop29Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop30">
+      <wsdl:input message="interop:Interop30Request"/>
+      <wsdl:output message="interop:Interop30Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop31">
+      <wsdl:input message="interop:Interop31Request"/>
+      <wsdl:output message="interop:Interop31Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop32">
+      <wsdl:input message="interop:Interop32Request"/>
+      <wsdl:output message="interop:Interop32Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop33">
+      <wsdl:input message="interop:Interop33Request"/>
+      <wsdl:output message="interop:Interop33Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop34">
+      <wsdl:input message="interop:Interop34Request"/>
+      <wsdl:output message="interop:Interop34Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop35">
+      <wsdl:input message="interop:Interop35Request"/>
+      <wsdl:output message="interop:Interop35Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop36">
+      <wsdl:input message="interop:Interop36Request"/>
+      <wsdl:output message="interop:Interop36Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop37">
+      <wsdl:input message="interop:Interop37Request"/>
+      <wsdl:output message="interop:Interop37Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop38">
+      <wsdl:input message="interop:Interop38Request"/>
+      <wsdl:output message="interop:Interop38Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop39">
+      <wsdl:input message="interop:Interop39Request"/>
+      <wsdl:output message="interop:Interop39Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop40">
+      <wsdl:input message="interop:Interop40Request"/>
+      <wsdl:output message="interop:Interop40Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop41">
+      <wsdl:input message="interop:Interop41Request"/>
+      <wsdl:output message="interop:Interop41Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop42">
+      <wsdl:input message="interop:Interop42Request"/>
+      <wsdl:output message="interop:Interop42Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop43">
+      <wsdl:input message="interop:Interop43Request"/>
+      <wsdl:output message="interop:Interop43Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop44">
+      <wsdl:input message="interop:Interop44Request"/>
+      <wsdl:output message="interop:Interop44Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop45">
+      <wsdl:input message="interop:Interop45Request"/>
+      <wsdl:output message="interop:Interop45Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop46">
+      <wsdl:input message="interop:Interop46Request"/>
+      <wsdl:output message="interop:Interop46Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop47">
+      <wsdl:input message="interop:Interop47Request"/>
+      <wsdl:output message="interop:Interop47Response"/>
+    </wsdl:operation>
+   
+    <wsdl:operation name="Interop50">
+      <wsdl:input message="interop:Interop50Request"/>
+      <wsdl:output message="interop:Interop50Response"/>
+    </wsdl:operation>
+    
+  </wsdl:portType>
+  
+  <wsdl:binding name="interopSOAP" type="interop:interop">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+     
+    <wsdl:operation name="Interop01">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop01"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop02">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop02"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop03">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop03"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop04">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop04"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop05">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop05"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop06">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop06"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop07">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop07"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop08">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop08"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop09">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop09"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop10">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop10"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop11">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop11"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop12">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop12"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop14">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop14"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop15">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop15"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop16">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop16"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop17">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop17"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop18">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop18"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop19">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop19"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop20">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop20"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop21">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop21"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop22">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop22"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop23">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop23"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop24">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop24"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop25">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop25"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop26">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop26"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop27">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop27"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop28">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop28"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop29">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop29"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop30">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop30"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop31">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop31"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop32">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop32"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop33">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop33"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop34">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop34"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop35">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop35"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop36">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop36"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop37">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop37"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop38">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop38"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop39">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop39"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop40">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop40"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop41">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop41"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop42">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop42"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop43">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop43"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop44">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop44"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop45">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop45"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop46">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop46"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop47">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop47"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+    <wsdl:operation name="Interop50">
+      <soap:operation soapAction="http://www.apache.org/tuscany/interop/Interop50"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+     
+  </wsdl:binding>
+  <wsdl:service name="interop">
+    <wsdl:port binding="interop:interopSOAP" name="interopSOAP">
+      <soap:address location="http://localhost:8080/services/interop"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
