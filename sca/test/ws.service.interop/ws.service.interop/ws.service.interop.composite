@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<composite xmlns="http://www.osoa.org/xmlns/sca/1.0" 
+	name="ws.service.interop">
+
+	<!-- Expose as a web service -->
+	<service name="ws.service">
+		<interface.wsdl interface="http://www.apache.org/tuscany/interop#wsdl.interface(interop)"/>
+		<binding.ws/>
+		<reference>ws.service.interop.component/TestService</reference>
+	</service>
+
+
+	<component name="ws.service.interop.component">
+		<implementation.cpp library="ws.service.interop" header="TestImpl.h"/>
+	</component>
+</composite>

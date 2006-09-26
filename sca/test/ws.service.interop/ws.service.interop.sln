@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ws.service.interop", "ws.service.interop\ws.service.interop.vcproj", "{25B65303-B2E2-47AF-968C-89D9E58611F8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ws.service.interop.client", "ws.service.interop.client\ws.service.interop.client.vcproj", "{136C4966-3073-4EB0-9259-BC5E3B987D19}"
+	ProjectSection(ProjectDependencies) = postProject
+		{25B65303-B2E2-47AF-968C-89D9E58611F8} = {25B65303-B2E2-47AF-968C-89D9E58611F8}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{25B65303-B2E2-47AF-968C-89D9E58611F8}.Debug.ActiveCfg = Debug|Win32
+		{25B65303-B2E2-47AF-968C-89D9E58611F8}.Debug.Build.0 = Debug|Win32
+		{25B65303-B2E2-47AF-968C-89D9E58611F8}.Release.ActiveCfg = Release|Win32
+		{25B65303-B2E2-47AF-968C-89D9E58611F8}.Release.Build.0 = Release|Win32
+		{136C4966-3073-4EB0-9259-BC5E3B987D19}.Debug.ActiveCfg = Debug|Win32
+		{136C4966-3073-4EB0-9259-BC5E3B987D19}.Debug.Build.0 = Debug|Win32
+		{136C4966-3073-4EB0-9259-BC5E3B987D19}.Release.ActiveCfg = Release|Win32
+		{136C4966-3073-4EB0-9259-BC5E3B987D19}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
