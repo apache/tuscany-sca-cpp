@@ -118,6 +118,8 @@ copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 				Name="VCPostBuildEventTool"
 				CommandLine="copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\services\tuscany
 copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\services\tuscany
+copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin
+copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\bin
 copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib
 copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 copy ..\..\..\runtime\extensions\ws\service\axis2c\src\services.xml ..\..\..\deploy\extensions\ws\service\services\tuscany
