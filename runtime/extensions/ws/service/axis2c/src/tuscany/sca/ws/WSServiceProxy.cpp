@@ -216,7 +216,16 @@ namespace tuscany
                                 break;
                             case Type::StringType:
                                 {
-                                    string* stringData = new string(inputDataObject->getCString(pl[i]));
+                                    string* stringData;
+                                    if(inputDataObject->isSet(pl[i]))
+                                    {
+                                        stringData = new string(inputDataObject->getCString(pl[i]));                                        
+                                    }
+                                    else
+                                    {
+                                        // The data is not set, so pass an empty string as the parameter
+                                        stringData = new string();
+                                    }
                                     operation.addParameter(stringData);
                                 }
                                 break;
@@ -523,17 +532,33 @@ namespace tuscany
                             }
                         case Operation::CHARS: 
                             {
-                                outputDataObject->setCString(pl[i], *(char**)operation.getReturnValue());
+                                if(*(char**)operation.getReturnValue() != NULL)
+                                {
+                                    outputDataObject->setCString(pl[i], *(char**)operation.getReturnValue());
+                                }
+                                else
+                                {
+                                    LOGINFO_1(4, "Return value is NULL, so leaving property %s unset", pl[i].getName());
+                                }
                                 break;
                             }
                         case Operation::STRING: 
                             {
-                                outputDataObject->setCString(pl[i], (*(string*)operation.getReturnValue()).c_str());
+                                outputDataObject->setCString(pl[i], (*(string*)operation.getReturnValue()).c_str());                                
                                 break;
                             }
                         case Operation::DATAOBJECT: 
                             {
-                                outputDataObject->setDataObject(pl[i], *(DataObjectPtr*)operation.getReturnValue());
+
+                                if(*(DataObjectPtr*)operation.getReturnValue() != NULL)
+                                {
+                                    outputDataObject->setDataObject(pl[i], *(DataObjectPtr*)operation.getReturnValue());
+                                }
+                                else
+                                {
+                                    LOGINFO_1(4, "Return value is NULL, so leaving property %s unset", pl[i].getName());
+                                }
+                                
                                 break;
                             }
                         default:
