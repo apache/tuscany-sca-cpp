@@ -252,7 +252,11 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         initTuscanyRuntime(env, rootParam, "", service.c_str());
                     }
 
-                    //Utils::printTypes(compositeServiceProxy->getDataFactory());
+                    if(!compositeService)
+                    {
+               		    AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Tuscany initialisation failed");
+                        return 0;
+                    }
 
                     DataFactoryPtr dataFactory = compositeService->getComposite()->getDataFactory();
                     if (dataFactory == 0)
@@ -330,7 +334,6 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     
                     if (wsdlNamespace == "")
                     {
-                        
                         // Create a default document literal wrapped WSDL operation
                         wsdlNamespace = compositeService->getName();
                         wsdlOperation = WSDLOperation();
@@ -356,8 +359,16 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
 
                     // Convert the SOAP body to an SDO DataObject
                     AxiomHelper* axiomHelper = AxiomHelper::getHelper();
-                    
-                    DataObjectPtr inputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
+                    DataObjectPtr inputBodyDataObject = NULL;
+
+                    try
+                    {
+                        inputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
+                    }
+                    catch(SDORuntimeException &ex)
+                    {
+                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: SDORuntimeException thrown: %s", ex.getMessageText());
+                    }
 
                     if(!inputBodyDataObject)
                     {
@@ -389,6 +400,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
 
                     //  Dispatch to the WS proxy
                     WSServiceProxy* proxy = (WSServiceProxy*)binding->getServiceProxy();
+
                     DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
                     
                     if(!outputDataObject)
