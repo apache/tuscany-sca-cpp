@@ -31,7 +31,7 @@ extern "C"{
 #define TEST(testname)\
     value = testname;\
     if (value == 0) {\
-        cout << "Test Failed:" << totaltests  << endl;\
+        cout << "Test Failed: " << totaltests  << " " << #testname << endl;\
     }\
     testspassed += value;\
     totaltests++;
