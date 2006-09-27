@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<company xmlns="companyNS" xmlns:tns="companyNS" name="MegaCorp"><departments name="Advanced Technologies" location="NY" number="123"><employees><name>Jane Doe</name><SN xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></employees></departments></company>
