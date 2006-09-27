@@ -1,6 +1,7 @@
 prgbindir=$(prefix)/bin/test
 prgbin_PROGRAMS = tuscany_sdo_test
 SUBDIRS =
+TESTS=tuscany_sdo_test
 AM_CPPFLAGS = $(CPPFLAGS)
 tuscany_sdo_test_SOURCES = sdotest.cpp sdotest2.cpp utils.cpp main.cpp
 
