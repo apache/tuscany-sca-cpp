@@ -171,7 +171,10 @@ int main (int argc, char** argv)
     TEST (  sdotest::jira705() );
 
     cout << "Total tests:" << totaltests << " Tests passed:" << testspassed << endl;
-
-return 0;
+	
+	if (totaltests == testspassed)
+		return 0;
+ 	else
+		return -1;
 }
 }
