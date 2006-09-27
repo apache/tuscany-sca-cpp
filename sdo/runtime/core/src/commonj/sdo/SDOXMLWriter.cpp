@@ -1118,16 +1118,16 @@ namespace commonj
                                 {
                                     if (dataObject->isNull(pl[i]))
                                     {
-                                        rc = xmlTextWriterStartElement(writer, propertyName);
+                                        rc = xmlTextWriterStartElementNS(writer, NULL, propertyName, NULL);
                                         if (rc < 0) 
                                         {
                                             SDO_THROW_EXCEPTION("writeDO", 
-                                            SDOXMLParserException, 
-                                            "xmlTextWriterStartElement failed");
+                                                                SDOXMLParserException, 
+                                                                "xmlTextWriterStartElementNS failed");
                                         }
                                         rc = xmlTextWriterWriteAttribute(writer, 
-                                        (const unsigned char*)"xsi:nil", 
-                                        (const unsigned char*)"true");
+                                                                         (const unsigned char*)"xsi:nil", 
+                                                                         (const unsigned char*)"true");
                                         
                                         writeXmlnsXsi();
                                         rc = xmlTextWriterEndElement(writer);

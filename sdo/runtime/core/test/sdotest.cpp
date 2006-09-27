@@ -2877,6 +2877,49 @@ int sdotest::maintest()
     }
 }
 
+int sdotest::jira705()
+{
+
+  char* retval = NULL;
+
+  try
+  {
+    DataFactoryPtr dataFactoryPtr = DataFactory::getDataFactory();
+    XSDHelperPtr xsdHelperPtr = HelperProvider::getXSDHelper((DataFactory *)dataFactoryPtr);
+    XMLHelperPtr xmlHelperPtr = HelperProvider::getXMLHelper((DataFactory *)dataFactoryPtr);
+    xsdHelperPtr->defineFile("jira705.xsd");
+
+    DataObjectPtr dataObjectPtr = dataFactoryPtr->create("http://ConvertedStockQuote", "getQuote");
+
+    dataObjectPtr->setCString("ticker1", "IBM");
+    dataObjectPtr->setNull("ticker2");
+
+    XMLDocumentPtr xmlDocumentPtr = xmlHelperPtr->createDocument(dataObjectPtr, 0, "getQuote");
+
+    retval = xmlHelperPtr->save(xmlDocumentPtr, 2);
+
+  }
+  catch (SDORuntimeException e)
+  {
+     if (!silent) cout << "jira705 test failed" << endl;
+     return 0;
+  }
+
+  FILE *outfile = fopen("jira705_out.xml","w+");
+   if (outfile == 0)
+   {
+      if (!silent) cout << "Unable to open jira705_out.xml" << endl;
+      return 0;
+   }
+
+   fprintf(outfile, "%s", retval);
+
+   fclose(outfile);
+
+   return comparefiles("jira705_out.xml", "jira705_out.txt");
+
+}
+
 int sdotest::jira490()
 {
 
@@ -8881,8 +8924,3 @@ int sdotest::simple()
         return 0;
     }
 }
-
-
-
-
-

@@ -168,6 +168,7 @@ int main (int argc, char** argv)
     TEST (  sdotest::b46613() );
     TEST (  sdotest::b45933() );
     TEST (  sdotest::jira490() );
+    TEST (  sdotest::jira705() );
 
     cout << "Total tests:" << totaltests << " Tests passed:" << testspassed << endl;
 
