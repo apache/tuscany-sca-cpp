@@ -109,6 +109,8 @@ namespace commonj
                 bool isElement,
                 DataObjectPtr refferedToObject = 0);
 
+            void writeXmlnsXsi();
+
         };
     } // End - namespace sdo
 } // End - namespace commonj

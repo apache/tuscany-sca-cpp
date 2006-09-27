@@ -114,21 +114,45 @@ namespace commonj
             DataObjectPtr root = doc->getRootDataObject();
             if (root)
             {
-                bool writeXSIType = false;
+                const Type& rootType = root->getType();
+                SDOXMLString rootTypeURI = rootType.getURI();
+                SDOXMLString rootTypeName = rootType.getName();
+                
                 // For the root DataObject we need to determine the element name
                 SDOXMLString elementURI = doc->getRootElementURI();
                 if (elementURI.isNull() || elementURI.equals(""))
                 {
-                    elementURI = root->getType().getURI();
+                    elementURI = rootTypeURI;
                 }
                 SDOXMLString elementName = doc->getRootElementName();
                 if (elementName.isNull() || elementName.equals(""))
                 {
-                    elementName = root->getType().getName();
+                    elementName = rootTypeName;
                     elementName = elementName.toLower(0,1);
-                    writeXSIType = true;
                 }
-                
+
+                // If the element name is not defined as a global element then we
+                // can supress the writing of xsi:type according to the spec
+                bool writeXSIType = true;
+
+                try
+                {
+                    // Locate the RootType
+                    const Type& rootTy = dataFactory->getType(elementURI, "RootType");
+                    // Does a property exist with the given element name?
+                    const Property& rootProp = rootTy.getProperty(elementName);
+                    // Is this property of the correct Type?
+                    const Type& rootPropType = rootProp.getType();
+                    if (rootTypeURI == (SDOXMLString)rootPropType.getURI()
+                        && rootTypeName == (SDOXMLString)rootPropType.getName())
+                    {
+                        writeXSIType = false;
+                    }
+                }
+                catch(SDORuntimeException&)
+                {
+                }
+
                 writeDO(root, elementURI, elementName, writeXSIType, true);
             }
             rc = xmlTextWriterEndDocument(writer);
@@ -600,7 +624,21 @@ namespace commonj
         }
             
 
-        
+        //////////////////////////////////////////////////////////////////////////
+        // Write xmlns:xsi= if nexessary
+        //////////////////////////////////////////////////////////////////////////
+        void SDOXMLWriter::writeXmlnsXsi()
+        {
+            SDOXMLString xsins("http://www.w3.org/2001/XMLSchema-instance");
+
+            std::map<SDOXMLString,SDOXMLString>::iterator it = namespaceMap.find(xsins);
+            if (it == namespaceMap.end())
+            {               
+                SDOXMLString prefix("xmlns:xsi");
+                xmlTextWriterWriteAttribute(writer,
+                prefix, xsins);
+            }
+        }
         
         //////////////////////////////////////////////////////////////////////////
         // Write a DatObject tree
@@ -647,6 +685,7 @@ namespace commonj
                     rc = xmlTextWriterWriteAttribute(writer, 
                         (const unsigned char*)"xsi:nil", 
                         (const unsigned char*)"true");
+                    writeXmlnsXsi();
                     rc = xmlTextWriterEndElement(writer);
                 }
                 else
@@ -721,6 +760,10 @@ namespace commonj
                         SDOXMLString("http://www.w3.org/2001/XMLSchema-instance"),
                         SDOXMLString("xsi")));
  
+                }
+                else
+                {  
+                    writeXmlnsXsi();
                 }
             }
 
@@ -813,6 +856,8 @@ namespace commonj
                             rc = xmlTextWriterWriteAttribute(writer, 
                             (const unsigned char*)"xsi:type", 
                             (const unsigned char*)dataObject->getType().getName());
+
+                            writeXmlnsXsi();
                         }
                     }
                 }
@@ -824,6 +869,8 @@ namespace commonj
                 rc = xmlTextWriterWriteAttribute(writer, 
                 (const unsigned char*)"xsi:nil", 
                 (const unsigned char*)"true");
+                
+                writeXmlnsXsi();
             }
 
 
@@ -1081,6 +1128,8 @@ namespace commonj
                                         rc = xmlTextWriterWriteAttribute(writer, 
                                         (const unsigned char*)"xsi:nil", 
                                         (const unsigned char*)"true");
+                                        
+                                        writeXmlnsXsi();
                                         rc = xmlTextWriterEndElement(writer);
                                     }
                                     else
