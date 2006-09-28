@@ -105,7 +105,7 @@ namespace osoa
         // ===========
         // getServices
         // ===========
-        ServiceList ComponentContext::getServices(const std::string& referenceName)
+        std::list<void*> ComponentContext::getServices(const std::string& referenceName)
         {
             return impl->getServices(referenceName);
         }

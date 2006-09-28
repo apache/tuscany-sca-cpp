@@ -53,7 +53,7 @@ namespace tuscany
         // ==========================================================================
         // getServices: return a list of Proxies for services wired to this reference
         // ==========================================================================
-        ServiceList ComponentContextImpl::getServices(const std::string& referenceName)
+        std::list<void*> ComponentContextImpl::getServices(const std::string& referenceName)
         {
             LOGENTRY(1, "ComponentContextImpl::getServices");
             
@@ -77,16 +77,7 @@ namespace tuscany
                 throw ServiceNotFoundException(message.c_str());
             }
             
-            CPPServiceProxy::PROXIES proxies = serviceProxy->getProxies();
-            ServiceList services(proxies.size());
-            for (CPPServiceProxy::PROXIES::const_iterator iter = proxies.begin();
-            iter!=proxies.end();
-            iter++)
-            {
-                services.addService(*iter);
-            }
-            
-            return services;
+            return serviceProxy->getProxies();
             
         } // End getServices()
         

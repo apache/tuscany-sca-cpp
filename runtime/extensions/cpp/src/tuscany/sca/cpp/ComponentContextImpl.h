@@ -23,7 +23,6 @@
 #include <vector>
 using std::vector;
 
-#include "osoa/sca/ServiceList.h"
 #include "osoa/sca/ComponentContext.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Service.h"
@@ -67,7 +66,7 @@ namespace tuscany
             /** 
              * See ComponentContext.
              */
-            virtual ServiceList getServices(const std::string& referenceName);
+            virtual std::list<void*> getServices(const std::string& referenceName);
 
             /** 
              * See ComponentContext.
