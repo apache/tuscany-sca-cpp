@@ -33,7 +33,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib tuscany_sca_cpp.lib axiom.lib tuscany_sdo_axiom.lib axis2_util.lib"
-				OutputFile="$(OutDir)/ws.service.interop.dll"
+				OutputFile="$(OutDir)/ws_service_interop.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib,$(TUSCANY_SDOCPP)/lib,$(AXIS2C_HOME)/lib"
 				GenerateDebugInformation="TRUE"

@@ -11,6 +11,6 @@
 
 
 	<component name="ws.service.interop.component">
-		<implementation.cpp library="ws.service.interop" header="TestImpl.h"/>
+		<implementation.cpp library="ws_service_interop" header="TestImpl.h"/>
 	</component>
 </composite>
