@@ -53,7 +53,7 @@ namespace tuscany
         // ==========================================================================
         // getServices: return a list of Proxies for services wired to this reference
         // ==========================================================================
-        ServiceList ComponentContextImpl::getServices(const char* referenceName)
+        ServiceList ComponentContextImpl::getServices(const std::string& referenceName)
         {
             LOGENTRY(1, "ComponentContextImpl::getServices");
             
@@ -94,7 +94,7 @@ namespace tuscany
         // ===================================================================
         // getService: return a Proxy for the services wired to this reference
         // ===================================================================
-        void* ComponentContextImpl::getService(const char* referenceName)
+        void* ComponentContextImpl::getService(const std::string& referenceName)
         {
             LOGENTRY(1, "ComponentContextImpl::getService");
             

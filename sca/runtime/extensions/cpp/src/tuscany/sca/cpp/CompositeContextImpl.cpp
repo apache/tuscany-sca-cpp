@@ -59,7 +59,7 @@ namespace tuscany
         // ===========================================================================
         // locateService: return a proxy connected to a wrapper for the target service
         // ===========================================================================
-        void* CompositeContextImpl::locateService(const char* serviceName)
+        void* CompositeContextImpl::locateService(const std::string& serviceName)
         {
             LOGENTRY(1, "CompositeContextImpl::locateService");
 

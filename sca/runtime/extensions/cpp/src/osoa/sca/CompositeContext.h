@@ -49,7 +49,7 @@ namespace osoa
              * @return A pointer to an object which can be cast to the
              * business interface of the target service.
              */
-            virtual void* locateService(const char* serviceName);
+            virtual void* locateService(const std::string& serviceName);
 
             /** 
              * Get an SDO data factory which will allow the component to 

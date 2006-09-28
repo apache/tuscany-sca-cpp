@@ -62,12 +62,12 @@ namespace tuscany
             /** 
              * See ComponentContext.
              */
-            virtual void* getService(const char* referenceName);
+            virtual void* getService(const std::string& referenceName);
 
             /** 
              * See ComponentContext.
              */
-            virtual ServiceList getServices(const char* referenceName);
+            virtual ServiceList getServices(const std::string& referenceName);
 
             /** 
              * See ComponentContext.
