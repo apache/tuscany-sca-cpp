@@ -164,7 +164,7 @@ namespace tuscany
                 // Delete the proxies
                 if (destructor != NULL && proxies.size() != 0)
                 {
-                    destructor(proxies[0]);
+                    destructor(*proxies.begin());
                 }
                 LOGEXIT(1,"CPPServiceProxy::destructor");
             }
@@ -178,7 +178,7 @@ namespace tuscany
             {
                 if (proxies.size() != 0)
                 {
-                    return proxies[0];
+                    return *proxies.begin();
                 }
                 else
                 {

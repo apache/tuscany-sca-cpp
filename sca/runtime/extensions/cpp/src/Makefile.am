@@ -9,7 +9,6 @@ tuscany/sca/cpp/model/*.h
 libtuscany_sca_cpp_la_SOURCES = \
 osoa/sca/ComponentContext.cpp \
 osoa/sca/CompositeContext.cpp \
-osoa/sca/ServiceList.cpp \
 tuscany/sca/cpp/ComponentContextImpl.cpp \
 tuscany/sca/cpp/CompositeContextImpl.cpp \
 tuscany/sca/cpp/CPPExtension.cpp \
