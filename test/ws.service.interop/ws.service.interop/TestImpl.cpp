@@ -18,8 +18,6 @@
 */
 
 #include "TestImpl.h"
-#include <axiom.h>
-#include <axis2_util.h>
 
 #include <tuscany/sca/util/Utils.h>
 #include <tuscany/sca/core/SCARuntime.h>
@@ -28,8 +26,6 @@
 using namespace tuscany::sca;
 #include <commonj/sdo/SDO.h>
 using namespace commonj::sdo;
-#include <sdo_axiom.h>
-using namespace commonj::sdo_axiom;
 
 #include <stdio.h>
 
@@ -73,448 +69,439 @@ bool TestImpl::compareWithFile(DataObjectPtr suppliedDO, string test)
     return result;
 }
 
-DataObjectPtr TestImpl::Interop01(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop01(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop01 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop01"))
+    printf("TestImpl::interop01 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop01"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop02(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop02(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop02 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop02"))
+    printf("TestImpl::interop02 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop02"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop03(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop03(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop03 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop03"))
+    printf("TestImpl::interop03 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop03"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop04(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop04(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop04 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop04"))
+    printf("TestImpl::interop04 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop04"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop05(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop05(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop05 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop05"))
+    printf("TestImpl::interop05 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop05"))
     {
         return arg1;
     }
     return NULL;
 }
-string TestImpl::Interop06(string arg1)
+string TestImpl::interop06(string arg1)
 {
-    printf("TestImpl::Interop06 %s\n", arg1.c_str());    
+    printf("TestImpl::interop06 %s\n", arg1.c_str());    
     return arg1;
 }
-DataObjectPtr TestImpl::Interop07(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop07(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop07 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop07"))
+    printf("TestImpl::interop07 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop07"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop08(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop08(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop08 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop08"))
+    printf("TestImpl::interop08 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop08"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop09(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop09(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop09 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop09"))
+    printf("TestImpl::interop09 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop09"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop10(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop10(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop10 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop10"))
+    printf("TestImpl::interop10 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop10"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop11(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop11(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop11 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop11"))
+    printf("TestImpl::interop11 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop11"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop12(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop12(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop12 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop12"))
+    printf("TestImpl::interop12 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop12"))
     {
         return arg1;
     }
     return NULL;
 }
-// DataObjectPtr TestImpl::Interop13(DataObjectPtr arg1)
+// DataObjectPtr TestImpl::interop13(DataObjectPtr arg1)
 // {
-//     printf("TestImpl::Interop13 %s\n", arg1->getType().getURI());
+//     printf("TestImpl::interop13 %s\n", arg1->getType().getURI());
 //     Utils::printDO(arg1);
 //     return arg1;
 // }
-DataObjectPtr TestImpl::Interop14(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop14(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop14 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop14"))
+    printf("TestImpl::interop14 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop14"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop15(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop15(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop15 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop15"))
+    printf("TestImpl::interop15 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop15"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop16(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop16(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop16 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop16"))
+    printf("TestImpl::interop16 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop16"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop17(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop17(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop17 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop17"))
+    printf("TestImpl::interop17 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop17"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop18(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop18(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop18 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop18"))
+    printf("TestImpl::interop18 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop18"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop19(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop19(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop19 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop19"))
+    printf("TestImpl::interop19 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop19"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop20(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop20(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop20 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop20"))
+    printf("TestImpl::interop20 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop20"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop21(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop21(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop21 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop21"))
+    printf("TestImpl::interop21 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop21"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop22(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop22(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop22 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop22"))
+    printf("TestImpl::interop22 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop22"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop23(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop23(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop23 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop23"))
+    printf("TestImpl::interop23 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop23"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop24(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop24(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop24 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop24"))
+    printf("TestImpl::interop24 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop24"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop25(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop25(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop25 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop25"))
+    printf("TestImpl::interop25 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop25"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop26(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop26(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop26 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop26"))
+    printf("TestImpl::interop26 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop26"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop27(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop27(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop27 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop27"))
+    printf("TestImpl::interop27 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop27"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop28(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop28(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop28 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop28"))
+    printf("TestImpl::interop28 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop28"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop29(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop29(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop29 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop29"))
+    printf("TestImpl::interop29 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop29"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop30(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop30(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop30 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop30"))
+    printf("TestImpl::interop30 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop30"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop31(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop31(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop31 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop31"))
+    printf("TestImpl::interop31 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop31"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop32(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop32(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop32 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop32"))
+    printf("TestImpl::interop32 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop32"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop33(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop33(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop33 %s\n", arg1->getType().getURI());
-    bool result = true;
-    try
-    {
-
-        result = compareWithFile(arg1, "Interop33");
-    }
-    catch(...)
-    {
-        cout<<"Caught exception"<<endl;
-    }
+    printf("TestImpl::interop33 %s\n", arg1->getType().getURI());
+    bool result = compareWithFile(arg1, "interop33");
     if(result)
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop34(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop34(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop34 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop34"))
+    printf("TestImpl::interop34 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop34"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop35(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop35(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop35 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop35"))
+    printf("TestImpl::interop35 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop35"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop36(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop36(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop36 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop36"))
+    printf("TestImpl::interop36 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop36"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop37(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop37(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop37 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop37"))
+    printf("TestImpl::interop37 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop37"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop38(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop38(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop38 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop38"))
+    printf("TestImpl::interop38 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop38"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop39(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop39(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop39 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop39"))
+    printf("TestImpl::interop39 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop39"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop40(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop40(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop40 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop40"))
+    printf("TestImpl::interop40 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop40"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop41(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop41(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop41 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop41"))
+    printf("TestImpl::interop41 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop41"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop42(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop42(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop42 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop42"))
+    printf("TestImpl::interop42 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop42"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop43(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop43(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop43 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop43"))
+    printf("TestImpl::interop43 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop43"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop44(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop44(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop44 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop44"))
+    printf("TestImpl::interop44 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop44"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop45(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop45(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop45 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop45"))
+    printf("TestImpl::interop45 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop45"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop46(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop46(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop46 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop46"))
+    printf("TestImpl::interop46 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop46"))
     {
         return arg1;
     }
     return NULL;
 }
-DataObjectPtr TestImpl::Interop47(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop47(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop47 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop47"))
+    printf("TestImpl::interop47 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop47"))
     {
         return arg1;
     }
     return NULL;
 }
-// DataObjectPtr TestImpl::Interop48(DataObjectPtr arg1)
+// DataObjectPtr TestImpl::interop48(DataObjectPtr arg1)
 // {
-//     printf("TestImpl::Interop48 %s\n", arg1->getType().getURI());
+//     printf("TestImpl::interop48 %s\n", arg1->getType().getURI());
 //     Utils::printDO(arg1);
 //     return arg1;
 // }
-// DataObjectPtr TestImpl::Interop49(DataObjectPtr arg1)
+// DataObjectPtr TestImpl::interop49(DataObjectPtr arg1)
 // {
-//     printf("TestImpl::Interop49 %s\n", arg1->getType().getURI());
+//     printf("TestImpl::interop49 %s\n", arg1->getType().getURI());
 //     Utils::printDO(arg1);
 //     return arg1;
 // }
-DataObjectPtr TestImpl::Interop50(DataObjectPtr arg1)
+DataObjectPtr TestImpl::interop50(DataObjectPtr arg1)
 {
-    printf("TestImpl::Interop50 %s\n", arg1->getType().getURI());
-    if(compareWithFile(arg1, "Interop50"))
+    printf("TestImpl::interop50 %s\n", arg1->getType().getURI());
+    if(compareWithFile(arg1, "interop50"))
     {
         return arg1;
     }

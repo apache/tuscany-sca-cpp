@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 
     cout<<"Using endpoint : "<< address << endl;
 
-    const string interop = "Interop";
+    const string interop = "interop";
                     
     string currentTest;
 
@@ -290,7 +290,7 @@ void loadAllXSD()
                 continue;
             }
 
-            string currentTest = "Interop";
+            string currentTest = "interop";
             if(i<10)
             {
                 currentTest.append("0");
