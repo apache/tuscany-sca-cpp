@@ -1,0 +1,1 @@
+SUBDIRS = ws.service.interop

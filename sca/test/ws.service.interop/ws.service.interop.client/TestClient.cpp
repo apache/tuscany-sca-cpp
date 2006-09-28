@@ -213,6 +213,7 @@ axiom_node_t* runCall(axis2_env_t *env, char* endpoint, char* opName, axiom_node
     /* Engage addressing composite */
     AXIS2_SVC_CLIENT_ENGAGE_MODULE(svc_client, env, AXIS2_MODULE_ADDRESSING);
     
+
     /* Send request */
     ret_node = AXIS2_SVC_CLIENT_SEND_RECEIVE(svc_client, env, payload);
     if(ret_node)
@@ -225,6 +226,7 @@ axiom_node_t* runCall(axis2_env_t *env, char* endpoint, char* opName, axiom_node
     }
     else
     {
+          cout << "request failed" << endl;
 		AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Stub invoke FAILED: Error code:"
 						" %d :: %s", env->error->error_number,
                         AXIS2_ERROR_GET_MESSAGE(env->error));
@@ -237,9 +239,11 @@ axiom_node_t* runCall(axis2_env_t *env, char* endpoint, char* opName, axiom_node
     }
     if (endpoint_ref)
     {
-        AXIS2_ENDPOINT_REF_FREE(endpoint_ref, env);
+	// The following line is commented out due to it causing a segmentation fault on Linux with Axis2C 0.93
+        // AXIS2_ENDPOINT_REF_FREE(endpoint_ref, env);
         endpoint_ref = NULL;
     }
+    
     return ret;
 }
 
@@ -367,4 +371,3 @@ axiom_node_t* get_om_payload_from_xml_file(axis2_env_t *env, const char* current
 
     return req_om_node;
 }
-
