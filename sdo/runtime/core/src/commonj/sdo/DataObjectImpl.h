@@ -624,7 +624,6 @@ private:
 
    
     virtual DataObjectImpl* getDataObjectImpl(const SDOString& path); 
-    virtual DataObjectImpl* getDataObjectImpl(const char* path); 
     virtual DataObjectImpl* getDataObjectImpl(unsigned int propertyIndex); 
     virtual DataObjectImpl* getDataObjectImpl(const Property& property); 
 
@@ -633,13 +632,13 @@ private:
         const char* namespaceURI,
         const char* typeName);
 
-    DataObjectImpl* findDataObject(char* token, long* index);
     DataObjectImpl* findDataObject(const SDOString& token, long* index);
      const Property*   findInProperties(DataObject* ob);
-    char* findPropertyContainer(const char* path, DataObjectImpl** din);
-    SDOString findPropertyContainer(const SDOString& path, DataObjectImpl** din);
+
+     SDOString findPropertyContainer(const SDOString& path, DataObjectImpl** din);
+
      char* stripPath(const char* path);
-  void stripPath(const SDOString& path, SDOString& result);
+     void stripPath(const SDOString& path, SDOString& result);
 
 
     // Does not keep a reference counted pointer to the container.
