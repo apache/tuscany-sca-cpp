@@ -2628,7 +2628,7 @@ DataObjectImpl* DataObjectImpl::findDataObject(const SDOString& token, long* ind
                size_t ender = PropertyValue.find(searchchar, firstquote + 1);
                if (ender != string::npos)
                {
-                  if (!strcmp(PropertyValue.substr(firstquote + 1, ender - firstquote).c_str(), list[li]->getCString(p)))
+                  if (!strcmp(PropertyValue.substr(firstquote + 1, ender - (firstquote+1)).c_str(), list[li]->getCString(p)))
                      ok = 1;
                }
             }

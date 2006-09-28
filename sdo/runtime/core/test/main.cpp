@@ -169,12 +169,9 @@ int main (int argc, char** argv)
     TEST (  sdotest::b45933() );
     TEST (  sdotest::jira490() );
     TEST (  sdotest::jira705() );
+    TEST (  sdotest::testXPath() );
 
     cout << "Total tests:" << totaltests << " Tests passed:" << testspassed << endl;
-	
-	if (totaltests == testspassed)
-		return 0;
- 	else
-		return -1;
+	return testspassed - totaltests;
 }
 }

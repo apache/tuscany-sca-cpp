@@ -1443,3 +1443,30 @@ int sdotest::xhtml1()
         return 0;
     }
 }
+
+int sdotest::testXPath()
+{
+
+
+    try {
+        DataFactoryPtr mdg  = DataFactory::getDataFactory();
+        
+        XSDHelperPtr xsh = HelperProvider::getXSDHelper(mdg);
+        xsh->defineFile("company.xsd");
+        XMLHelperPtr myXMLHelper = HelperProvider::getXMLHelper(mdg);
+        XMLDocumentPtr myXMLDocument = myXMLHelper->loadFile("b46617b.xml", "companyNS");
+        DataObjectPtr newdob = myXMLDocument->getRootDataObject();
+
+        DataObjectPtr dop = newdob->getDataObject("departments[name='Shoe']/employees[name='Sarah Jones']");
+        string x = "departments[name='Shoe']/employees[name='Sarah Jones']";
+        dop = newdob->getDataObject(x);
+
+        return 1;
+        
+    }
+    catch (SDORuntimeException e)
+    {
+        cout << "Exception in testXPath" << e << endl;
+        return 0;
+    }
+}
