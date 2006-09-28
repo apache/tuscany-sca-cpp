@@ -164,7 +164,9 @@ int main(int argc, char** argv)
     cout << "Passed " << testsPassed << " of " << testsRun << " tests" << endl;
     if(failedTests.size() > 0)
     {
-        cout << "Failed: " << failedTests << endl;
+        string expectedFailedTests = "interop04 interop28 interop30 interop32 interop33 interop40 interop50";
+        cout << "     Failed Tests: " << failedTests << endl;
+        cout << "Expected failures: " << expectedFailedTests << endl;
     }
     if(unsupportedTests.size() > 0)
     {

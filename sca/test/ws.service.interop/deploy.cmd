@@ -34,7 +34,7 @@ copy %sourcePath%\ws.service.interop\TestImpl.h                   %destinationPa
 copy %sourcePath%\resources\interop.wsdl                          %destinationPath%\packages\ws.service.interop
 copy %sourcePath%\resources\*.xsd                                 %destinationPath%\packages\ws.service.interop
 copy %sourcePath%\resources\*.xml                                 %destinationPath%\packages\ws.service.interop
-copy %sourcePath%\ws.service.interop\Debug\ws.service.interop.dll %destinationPath%\packages\ws.service.interop
+copy %sourcePath%\ws.service.interop\Debug\ws_service_interop.dll %destinationPath%\packages\ws.service.interop
 
 
 if not exist %destinationPath%\bin           mkdir %destinationPath%\bin
