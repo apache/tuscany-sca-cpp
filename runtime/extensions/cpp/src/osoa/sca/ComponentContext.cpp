@@ -94,7 +94,7 @@ namespace osoa
         // ==========
         // getService
         // ==========
-        void* ComponentContext::getService(const char* referenceName)
+        void* ComponentContext::getService(const std::string& referenceName)
         {
             LOGENTRY(1, "ComponentContext::getService");
             void* service = impl->getService(referenceName);
@@ -105,7 +105,7 @@ namespace osoa
         // ===========
         // getServices
         // ===========
-        ServiceList ComponentContext::getServices(const char* referenceName)
+        ServiceList ComponentContext::getServices(const std::string& referenceName)
         {
             return impl->getServices(referenceName);
         }

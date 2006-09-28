@@ -87,7 +87,7 @@ namespace osoa
         // =============
         // locateService
         // =============
-        void* CompositeContext::locateService(const char* serviceName)
+        void* CompositeContext::locateService(const std::string& serviceName)
         {
             LOGENTRY(1, "CompositeContext::locateService");
             void* sp = impl->locateService(serviceName);

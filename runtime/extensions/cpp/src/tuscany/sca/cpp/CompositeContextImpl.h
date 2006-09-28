@@ -54,7 +54,7 @@ namespace tuscany
             /**
              * See CompositeContext#locateService.
              */
-            virtual void* locateService(const char* serviceName);
+            virtual void* locateService(const std::string& serviceName);
             
             /** 
              * See CompositeContext.

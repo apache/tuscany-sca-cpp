@@ -23,6 +23,7 @@
 #include "osoa/sca/export.h"
 #include "osoa/sca/ServiceList.h"
 #include "commonj/sdo/SDO.h"
+#include <string>
 namespace osoa
 {
     namespace sca
@@ -49,7 +50,7 @@ namespace osoa
              * the name of a reference configured in the component type file for
              * this component.
              */
-            virtual void* getService(const char* referenceName);
+            virtual void* getService(const std::string& referenceName);
 
             /** 
              * Resolve a reference name into a list of configured services.
@@ -57,7 +58,7 @@ namespace osoa
              * the name of a reference configured in the component type file for
              * this component.
              */
-            virtual ServiceList getServices(const char* referenceName);
+            virtual ServiceList getServices(const std::string& referenceName);
 
             /** 
              * Get the configured properties for the component.
