@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-APFULLDIR=`pwd`
 
 if [ x$TUSCANY_SCACPP = x ]; then
 echo "TUSCANY_SCACPP not set"
@@ -34,12 +33,7 @@ exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
-TEST_SYSTEM=$APFULLDIR/../
+./configure --prefix=${TUSCANY_SCACPP} --enable-static=no
+make
+make install
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
-
-export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
-export TUSCANY_SCACPP_DEFAULT_COMPONENT=ws.service.interop.solution.component
-
-cd $AXIS2C_HOME/bin
-./axis2_http_server
