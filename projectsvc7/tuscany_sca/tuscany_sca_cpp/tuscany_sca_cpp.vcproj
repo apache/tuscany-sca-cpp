@@ -215,29 +215,6 @@ copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions
 				RelativePath="..\..\..\runtime\extensions\cpp\src\osoa\sca\sca.h">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\extensions\cpp\src\osoa\sca\ServiceList.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_CPP_EXPORTS;$(NoInherit)"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_MBCS;_USRDLL;TUSCANY_SCA_CPP_EXPORTS;$(NoInherit)"
-						BasicRuntimeChecks="3"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\cpp\src\osoa\sca\ServiceList.h">
-			</File>
-			<File
 				RelativePath="..\..\..\runtime\extensions\cpp\src\osoa\sca\ServiceRuntimeException.h">
 			</File>
 		</Filter>
