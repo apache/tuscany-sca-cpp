@@ -19,104 +19,104 @@
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://www.bigbank.com/AccountService"
-	name="AccountService">
-
-	<wsdl:types>
+	name="AccountService">
+
+	<wsdl:types>
 		<xsd:schema
 			targetNamespace="http://www.bigbank.com/AccountService"
-			xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-
-			<xsd:element name="getAccountReport">
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+			<xsd:element name="getAccountReport">
 				<xsd:complexType>
 					<xsd:sequence>
 						<xsd:element name="customerID"
 							type="xsd:string" />
 					</xsd:sequence>
-				</xsd:complexType>
+				</xsd:complexType>
 			</xsd:element>
 
-			<xsd:element name="getAccountReportResponse">
-				<xsd:complexType>
-					<xsd:sequence>
+			<xsd:element name="getAccountReportResponse">
+				<xsd:complexType>
+					<xsd:sequence>
 						<xsd:element name="result"
-							type="tns:AccountReport" />
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
-
-			<xsd:complexType name="AccountReport">
-				<xsd:sequence>
+							type="tns:AccountReport" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:complexType name="AccountReport">
+				<xsd:sequence>
 					<xsd:element name="checking"
-						type="tns:CheckingAccount" maxOccurs="unbounded" />
+						type="tns:CheckingAccount" maxOccurs="unbounded" />
 					<xsd:element name="savings"
-						type="tns:SavingsAccount" maxOccurs="unbounded" />
+						type="tns:SavingsAccount" maxOccurs="unbounded" />
 					<xsd:element name="stocks" type="tns:StockAccount"
-						maxOccurs="unbounded" />
-				</xsd:sequence>
-			</xsd:complexType>
-
-			<xsd:complexType name="StockAccount">
-				<xsd:sequence>
-					<xsd:element name="accountNumber" type="xsd:string" />
-					<xsd:element name="symbol" type="xsd:string" />
-					<xsd:element name="quantity" type="xsd:integer" />
-					<xsd:element name="balance" type="xsd:float" />
-				</xsd:sequence>
-			</xsd:complexType>
-
-			<xsd:complexType name="CheckingAccount">
-				<xsd:sequence>
-					<xsd:element name="accountNumber" type="xsd:string" />
-					<xsd:element name="balance" type="xsd:float" />
-				</xsd:sequence>
-			</xsd:complexType>
-
-			<xsd:complexType name="SavingsAccount">
-				<xsd:sequence>
-					<xsd:element name="accountNumber" type="xsd:string" />
-					<xsd:element name="balance" type="xsd:float" />
-				</xsd:sequence>
-			</xsd:complexType>
-		</xsd:schema>
-	</wsdl:types>
-
-	<wsdl:message name="getAccountReportRequest">
+						maxOccurs="unbounded" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:complexType name="StockAccount">
+				<xsd:sequence>
+					<xsd:element name="accountNumber" type="xsd:string" />
+					<xsd:element name="symbol" type="xsd:string" />
+					<xsd:element name="quantity" type="xsd:integer" />
+					<xsd:element name="balance" type="xsd:float" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:complexType name="CheckingAccount">
+				<xsd:sequence>
+					<xsd:element name="accountNumber" type="xsd:string" />
+					<xsd:element name="balance" type="xsd:float" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:complexType name="SavingsAccount">
+				<xsd:sequence>
+					<xsd:element name="accountNumber" type="xsd:string" />
+					<xsd:element name="balance" type="xsd:float" />
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="getAccountReportRequest">
 		<wsdl:part element="tns:getAccountReport"
-			name="getAccountReportRequest" />
-	</wsdl:message>
-
-	<wsdl:message name="getAccountReportResponse">
+			name="getAccountReportRequest" />
+	</wsdl:message>
+
+	<wsdl:message name="getAccountReportResponse">
 		<wsdl:part element="tns:getAccountReportResponse"
-			name="getAccountReportResponse" />
-	</wsdl:message>
-
-	<wsdl:portType name="AccountService">
-		<wsdl:operation name="getAccountReport">
-			<wsdl:input message="tns:getAccountReportRequest" />
-			<wsdl:output message="tns:getAccountReportResponse" />
-		</wsdl:operation>
-	</wsdl:portType>
-
-	<wsdl:binding name="AccountServiceSOAP" type="tns:AccountService">
+			name="getAccountReportResponse" />
+	</wsdl:message>
+
+	<wsdl:portType name="AccountService">
+		<wsdl:operation name="getAccountReport">
+			<wsdl:input message="tns:getAccountReportRequest" />
+			<wsdl:output message="tns:getAccountReportResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="AccountServiceSOAP" type="tns:AccountService">
 		<soap:binding style="document"
-			transport="http://schemas.xmlsoap.org/soap/http" />
-		<wsdl:operation name="getAccountReport">
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="getAccountReport">
 			<soap:operation
-				soapAction="http://www.bigbank.com/AccountService/getAccountReport" />
-			<wsdl:input>
-				<soap:body use="literal" />
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal" />
-			</wsdl:output>
-		</wsdl:operation>
-	</wsdl:binding>
-
-	<wsdl:service name="AccountService">
+				soapAction="http://www.bigbank.com/AccountService/getAccountReport" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="AccountService">
 		<wsdl:port binding="tns:AccountServiceSOAP"
-			name="AccountServiceSOAP">
+			name="AccountServiceSOAP">
 			<soap:address
-				location="http://localhost:9090/axis2/services/AccountService" />
-		</wsdl:port>
-	</wsdl:service>
+				location="http://localhost:9090/axis2/services/AccountService" />
+		</wsdl:port>
+	</wsdl:service>
 </wsdl:definitions>
