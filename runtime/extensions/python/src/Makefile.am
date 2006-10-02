@@ -25,10 +25,13 @@ tuscany/sca/python/model/PythonInterface.cpp \
 tuscany/sca/python/model/PythonReferenceBinding.cpp \
 tuscany/sca/python/model/PythonServiceBinding.cpp
 
-
+# Need python env varibles set. e.g:
+# PYTHON_LIB=/usr/lib
+# PYTHON_INCLUDE=/usr/include/python2.4
+# PYTHON_VERSION=python2.4
 libtuscany_sca_python_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \
-	-L${PYTHON_LIB} -lpython2.3
+	-L${PYTHON_LIB} -l${PYTHON_VERSION}
 
 INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
