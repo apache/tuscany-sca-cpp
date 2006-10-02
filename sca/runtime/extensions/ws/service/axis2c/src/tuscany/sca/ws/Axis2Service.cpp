@@ -53,7 +53,6 @@ using namespace tuscany::sca;
 using namespace tuscany::sca::ws;
 using namespace tuscany::sca::model;
 
-
 int AXIS2_CALL
 Axis2Service_free(axis2_svc_skeleton_t *svc_skeleton,
           const axis2_env_t *env);
@@ -214,9 +213,39 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
             element = (axiom_element_t *)AXIOM_NODE_GET_DATA_ELEMENT(node, env);
             if (element)
             {
-                // This gets the operation name from the root element name - this is correct for DocLit Wrapped style
-                axis2_char_t *op_name = AXIOM_ELEMENT_GET_LOCALNAME(element, env);
-                if (op_name)
+                string op_name = "";
+                axis2_bool_t rest = AXIS2_MSG_CTX_GET_DOING_REST(msg_ctx, env);
+                if (rest)
+                {
+                    axis2_endpoint_ref_t *endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
+                    if (endpoint_ref)
+                    {
+                        axis2_char_t *address = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
+                        if (address)
+                        {
+                            axis2_char_t **url_tokens = axis2_parse_request_url_for_svc_and_op(env, address);
+                            if (url_tokens)
+                            {                
+                                if (url_tokens[1])
+                                {
+                                    op_name = url_tokens[1];
+                                }
+                                if (NULL !=  url_tokens[1])
+                                    AXIS2_FREE(env->allocator, url_tokens[1]);
+                                if (NULL !=  url_tokens[0])
+                                    AXIS2_FREE(env->allocator, url_tokens[0]);
+                                AXIS2_FREE(env->allocator, url_tokens);
+                            }
+                        }
+                    }
+                }
+                else
+                {                
+                    // This gets the operation name from the root element name - this is correct for DocLit Wrapped style
+                    op_name = AXIOM_ELEMENT_GET_LOCALNAME(element, env);
+                }
+                
+                if (op_name != "")
 				{
                     // Get the Tuscany system root and composite service name from the Axis2
                     // service parameters 
@@ -227,7 +256,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     char* serviceParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
                     if (serviceParam != NULL)
                     {
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, service name: %s, operation name: %s", rootParam, serviceParam, op_name);
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, service name: %s, operation name: %s", rootParam, serviceParam, op_name.c_str());
     
                         // Service is of the form "component name"/"composite service name"
                         string component, service;
@@ -247,7 +276,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         url_tokens = axis2_parse_request_url_for_svc_and_op(env, address);
                         string service(url_tokens[0]);
                         
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, service name: %s, operation name: %s", rootParam, service.c_str(), op_name);
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, service name: %s, operation name: %s", rootParam, service.c_str(), op_name.c_str());
                         
                         initTuscanyRuntime(env, rootParam, "", service.c_str());
                     }
@@ -290,7 +319,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                             wsdlOperation =  wsdlDefinition->findOperation(
                                 binding->getServiceName(),
                                 binding->getEndpointName(),
-                                op_name);
+                                op_name.c_str());
                         }
                         catch(SystemConfigurationException &ex)
                         {   
@@ -321,7 +350,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         
                                 try
                                 {
-                                    wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), op_name);
+                                    wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), op_name.c_str());
                                 }
                                 catch(SystemConfigurationException &ex)
                                 {   
@@ -337,7 +366,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         // Create a default document literal wrapped WSDL operation
                         wsdlNamespace = compositeService->getName();
                         wsdlOperation = WSDLOperation();
-                        wsdlOperation.setOperationName(op_name);
+                        wsdlOperation.setOperationName(op_name.c_str());
                         wsdlOperation.setSoapAction(wsdlNamespace+ "#" +op_name);
                         wsdlOperation.setEndpoint("");
                         wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
