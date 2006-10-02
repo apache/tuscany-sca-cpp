@@ -24,7 +24,6 @@
 #include "osoa/sca/export.h"
 #include "osoa/sca/CompositeContext.h"
 #include "osoa/sca/ComponentContext.h"
-#include "osoa/sca/ServiceList.h"
 #include "osoa/sca/ServiceRuntimeException.h"
 
 #endif // osoa_sca_sca_h
