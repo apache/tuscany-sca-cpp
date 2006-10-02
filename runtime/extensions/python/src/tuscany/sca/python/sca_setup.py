@@ -18,12 +18,12 @@
 #
 # 
 # 
-# This Python code builds and/or installs the TuscanySCA and 
-# TuscanySCAProxy extension modules
+# This Python code builds and/or installs the sca and 
+# sca_proxy extension modules
 # 
 # Build/install with the following comands:
-# python TuscanySCASetup.py build
-# python TuscanySCASetup.py install
+# python scaSetup.py build
+# python scaSetup.py install
 # 
 # 
 
@@ -39,9 +39,9 @@ macros = []
 if os.name == 'nt':
     macros = [ ('WIN32',None) ]
 
-module1 = Extension('TuscanySCA',
+module1 = Extension('sca',
                     define_macros = macros,
-                    sources = ['TuscanySCAModule.cpp'],
+                    sources = ['sca_module.cpp'],
                     include_dirs = [ TUSCANY_SCACPP + '/include',
                                      TUSCANY_SCACPP + '/extensions/python/include',
                                      TUSCANY_SDOCPP + '/include'],
@@ -52,9 +52,9 @@ module1 = Extension('TuscanySCA',
                                      TUSCANY_SCACPP + '/extensions/python/lib',
                                      TUSCANY_SDOCPP + '/lib'])
 
-setup (name = 'TuscanySCA',
+setup (name = 'sca',
        version = '1.0',
-       description = 'The TuscanySCA package',
+       description = 'The Tuscany SCA package',
        url='http://incubator.apache.org/tuscany/',
        ext_modules = [module1],
-       py_modules = ['TuscanySCAProxy'])
+       py_modules = ['sca_proxy'])

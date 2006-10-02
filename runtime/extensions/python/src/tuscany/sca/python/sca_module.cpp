@@ -37,7 +37,7 @@ using namespace tuscany::sca::python;
 #include <iostream>
 using namespace std;
 
-static PyObject* tuscanySCAError;
+static PyObject* scaError;
 
 /**
 * Prints out PyObject and dir(PyObject)
@@ -61,40 +61,40 @@ static void printPyObject(char* prefix, char* name, PyObject* pObj)
     LOGINFO(4, "Returning from printPyObject");
 }
 
-static PyObject* TuscanySCA_locateService(PyObject *self, PyObject *args)
+static PyObject* sca_locateservice(PyObject *self, PyObject *args)
 {
     // Get the service name
     PyObject* pServiceName = PyTuple_GetItem(args, 0);
 
-    // Import the TuscanySCA python-extension module
-    PyObject* pModuleName = PyString_FromString("TuscanySCAProxy");
-    PyObject* tuscanySCAProxyModule = PyImport_Import(pModuleName);
+    // Import the SCA python-extension module
+    PyObject* pModuleName = PyString_FromString("sca_proxy");
+    PyObject* sca_proxy_module = PyImport_Import(pModuleName);
     Py_DECREF(pModuleName);
 
-    if(!tuscanySCAProxyModule)
+    if(!sca_proxy_module)
     {
         if(PyErr_Occurred())
         {
             PyErr_Print();
         }
-        string msg = "Failed to load the TuscanySCAProxy Python module - has it been successfully installed?\nReferences from Python components will not be supported";
+        string msg = "Failed to load the sca_proxy Python module - has it been successfully installed?\nReferences from Python components will not be supported";
         LOGERROR(0, msg.c_str());
     }
     else
     {
-        // Get the TuscanySCAProxy class
-        PyObject* tuscanySCAProxyClass = PyObject_GetAttrString(tuscanySCAProxyModule, "TuscanySCAProxyClass");
+        // Get the sca_proxy class
+        PyObject* sca_proxy_class = PyObject_GetAttrString(sca_proxy_module, "sca_proxy_class");
 
-        PyObject* tuscanySCAArgs = PyTuple_New(2);
-        PyTuple_SetItem(tuscanySCAArgs, 0, pServiceName);
+        PyObject* scaArgs = PyTuple_New(2);
+        PyTuple_SetItem(scaArgs, 0, pServiceName);
         Py_INCREF(Py_True);
-        PyTuple_SetItem(tuscanySCAArgs, 1, Py_False);
+        PyTuple_SetItem(scaArgs, 1, Py_False);
 
-        // Create the instance of the TuscanySCAReference class
-        PyObject* tuscanySCAProxyClassInstance = PyInstance_New(tuscanySCAProxyClass, tuscanySCAArgs, NULL);
-        Py_DECREF(tuscanySCAArgs);
+        // Create the instance of the scaReference class
+        PyObject* sca_proxy_classInstance = PyInstance_New(sca_proxy_class, scaArgs, NULL);
+        Py_DECREF(scaArgs);
 
-        return tuscanySCAProxyClassInstance;
+        return sca_proxy_classInstance;
     }
 
     Py_INCREF(Py_None);
@@ -104,7 +104,7 @@ static PyObject* TuscanySCA_locateService(PyObject *self, PyObject *args)
 
 static PythonServiceProxy* getServiceProxy(PyObject *args)
 {
-    LOGENTRY(1, "TuscanySCAModule getPythonServiceProxy");
+    LOGENTRY(1, "sca_module getPythonServiceProxy");
 
     PythonServiceProxy* serviceProxy = NULL;
     SCARuntime* runtime = SCARuntime::getInstance();
@@ -118,13 +118,13 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
     }
     if(name.size() > 0)
     {
-        LOGINFO_1(3, "TuscanySCA_invoke Service/Reference name is %s", name.c_str());
+        LOGINFO_1(3, "sca_invoke Service/Reference name is %s", name.c_str());
     }
     else
     {
-        string msg = "TuscanySCA_invoke Service/Reference name has not been set";
+        string msg = "sca_invoke Service/Reference name has not been set";
         LOGERROR(1, msg.c_str());
-        PyErr_SetString(tuscanySCAError, msg.c_str());
+        PyErr_SetString(scaError, msg.c_str());
         return NULL;
     }
 
@@ -138,9 +138,9 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
         Reference* ref = component->findReference(name);
         if(!ref)
         {
-            string msg = "TuscanySCA_invoke Could not find the reference named "+name;
+            string msg = "sca_invoke Could not find the reference named "+name;
             LOGERROR(1, msg.c_str());
-            PyErr_SetString(tuscanySCAError, msg.c_str());
+            PyErr_SetString(scaError, msg.c_str());
 
             return NULL;
         }
@@ -156,9 +156,9 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
 
         if(!service)
         {
-            string msg = "TuscanySCA_invoke Could not find the service named "+name;
+            string msg = "sca_invoke Could not find the service named "+name;
             LOGERROR(1, msg.c_str());
-            PyErr_SetString(tuscanySCAError, msg.c_str());
+            PyErr_SetString(scaError, msg.c_str());
             return NULL;
         }
 
@@ -169,9 +169,9 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
 }
 
 
-static PyObject* TuscanySCA_invoke(PyObject *self, PyObject *args)
+static PyObject* sca_invoke(PyObject *self, PyObject *args)
 {
-    LOGENTRY(1, "TuscanySCA_invoke");
+    LOGENTRY(1, "sca_invoke");
 
     PythonServiceProxy* pythonServiceProxy = getServiceProxy(args);
     if(!pythonServiceProxy)
@@ -189,13 +189,13 @@ static PyObject* TuscanySCA_invoke(PyObject *self, PyObject *args)
 
     if(operationName.size() > 0)
     {
-        LOGINFO_1(3, "TuscanySCA_invoke Operation name is %s", operationName.c_str());
+        LOGINFO_1(3, "sca_invoke Operation name is %s", operationName.c_str());
     }
     else
     {
-        string msg = "TuscanySCA_invoke Operation name has not been set";
+        string msg = "sca_invoke Operation name has not been set";
         LOGERROR(1, msg.c_str());
-        PyErr_SetString(tuscanySCAError, msg.c_str());
+        PyErr_SetString(scaError, msg.c_str());
         return NULL;
     }
 
@@ -212,35 +212,35 @@ static PyObject* TuscanySCA_invoke(PyObject *self, PyObject *args)
 
         if(PyInt_Check(param))
         {
-            LOGINFO_2(3, "TuscanySCA_invoke Param %d is int type: %d", i, PyInt_AsLong(param));
+            LOGINFO_2(3, "sca_invoke Param %d is int type: %d", i, PyInt_AsLong(param));
             long* intData = new long;
             *intData = PyInt_AsLong(param);
             operation.addParameter(intData);
         }
         else if(PyBool_Check(param))
         {
-            LOGINFO_2(3, "TuscanySCA_invoke Param %d is bool type: %d", i, (param == Py_True));
+            LOGINFO_2(3, "sca_invoke Param %d is bool type: %d", i, (param == Py_True));
             bool* boolData = new bool;
             *boolData = (param == Py_True);
             operation.addParameter(boolData);
         }
         else if(PyLong_Check(param))
         {
-            LOGINFO_2(3, "TuscanySCA_invoke Param %d is long type: %l", i, PyLong_AsLong(param));
+            LOGINFO_2(3, "sca_invoke Param %d is long type: %l", i, PyLong_AsLong(param));
             long* longData = new long;
             *longData = PyLong_AsLong(param);
             operation.addParameter(longData);
         }
         else if(PyFloat_Check(param))
         {
-            LOGINFO_2(3, "TuscanySCA_invoke Param %d is float type: %f", i, PyFloat_AsDouble(param));
+            LOGINFO_2(3, "sca_invoke Param %d is float type: %f", i, PyFloat_AsDouble(param));
             double* doubleData = new double;
             *doubleData = PyFloat_AsDouble(param);
             operation.addParameter(doubleData);
         }
         else if(PyString_Check(param))
         {
-            LOGINFO_2(3, "TuscanySCA_invoke %d is string type: %s", i, PyString_AsString(param));
+            LOGINFO_2(3, "sca_invoke %d is string type: %s", i, PyString_AsString(param));
             const char** stringData = new const char*; 
             *stringData = PyString_AsString(param);
             operation.addParameter(stringData);
@@ -251,7 +251,7 @@ static PyObject* TuscanySCA_invoke(PyObject *self, PyObject *args)
             PyObject* paramType = PyObject_Type(param);             
             PyObject* paramTypeRepr = PyObject_Repr(paramType);    
             
-            string msg = "TuscanySCA_invoke Param ";
+            string msg = "sca_invoke Param ";
             msg += i;
             msg += "is of unknown type (";
             msg += PyString_AsString(paramTypeRepr);
@@ -259,7 +259,7 @@ static PyObject* TuscanySCA_invoke(PyObject *self, PyObject *args)
             msg += PyString_AsString(paramRepr);
 
             LOGERROR(1, msg.c_str());
-            PyErr_SetString(tuscanySCAError, msg.c_str());
+            PyErr_SetString(scaError, msg.c_str());
             
             Py_DECREF(paramTypeRepr);
             Py_DECREF(paramType);
@@ -278,9 +278,9 @@ static PyObject* TuscanySCA_invoke(PyObject *self, PyObject *args)
     }
     catch(...)
     {
-        string msg = "TuscanySCA_invoke Exception thrown whilst invoking the service";
+        string msg = "sca_invoke Exception thrown whilst invoking the service";
         LOGERROR(1, msg.c_str());
-        PyErr_SetString(tuscanySCAError, msg.c_str());
+        PyErr_SetString(scaError, msg.c_str());
         return NULL;
     }
 
@@ -352,26 +352,26 @@ static PyObject* TuscanySCA_invoke(PyObject *self, PyObject *args)
 
     }
 
-    LOGEXIT(1, "TuscanySCA_invoke");
+    LOGEXIT(1, "sca_invoke");
     return returnValue;
 }
 static PyMethodDef ModuleMethods[] = 
 {
-    {"locateService", TuscanySCA_locateService, METH_VARARGS, "Locates a TuscanySCA service & returns a TuscanySCAReference instance"},
-    {"invoke", TuscanySCA_invoke, METH_VARARGS, "Invoke an operation on a Tuscany service or reference"},
+    {"locateservice", sca_locateservice, METH_VARARGS, "Locates an SCA service & returns an sca_proxy_class instance"},
+    {"invoke", sca_invoke, METH_VARARGS, "Invoke an operation on an SCA service or reference"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
-PyMODINIT_FUNC initTuscanySCA(void)
+PyMODINIT_FUNC initsca(void)
 {
-    LOGENTRY(1, "initTuscanySCA");
+    LOGENTRY(1, "initsca");
 
     // Create a new module 
-    PyObject* module = Py_InitModule("TuscanySCA", ModuleMethods);
+    PyObject* module = Py_InitModule("sca", ModuleMethods);
     
-    tuscanySCAError = PyErr_NewException("TuscanySCA.error", NULL, NULL);
-    Py_INCREF(tuscanySCAError);
-    PyModule_AddObject(module, "error", tuscanySCAError);
+    scaError = PyErr_NewException("sca.error", NULL, NULL);
+    Py_INCREF(scaError);
+    PyModule_AddObject(module, "error", scaError);
 
-    LOGEXIT(1, "initTuscanySCA");
+    LOGEXIT(1, "initsca");
 }

@@ -23,14 +23,14 @@
  
 
 import sys
-import TuscanySCA
+import sca
 
 op = sys.argv[1]
 val1 = sys.argv[2]
 val2 = sys.argv[3]
 
 # Locate the calculator service
-calc = TuscanySCA.locateService("CalculatorService")
+calc = sca.locateservice("CalculatorService")
 
 # Invoke the calculator operations
 if op == 'add':
