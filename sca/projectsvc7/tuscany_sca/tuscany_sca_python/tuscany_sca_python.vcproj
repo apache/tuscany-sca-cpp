@@ -53,8 +53,8 @@ copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\*.h ..\..\..\depl
 copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\*.h ..\..\..\deploy\extensions\python\include\tuscany\sca\python\model
 copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensions\python\include\osoa\sca
 cd ..\..\..\runtime\extensions\python\src\tuscany\sca\python
-$(PYTHON_HOME)\python  TuscanySCASetup.py build
-$(PYTHON_HOME)\python  TuscanySCASetup.py install --install-lib ..\..\..\..\..\..\..\deploy\extensions\python\bin
+$(PYTHON_HOME)\python  sca_setup.py build
+$(PYTHON_HOME)\python  sca_setup.py install --install-lib ..\..\..\..\..\..\..\deploy\extensions\python\bin
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -65,7 +65,13 @@ $(PYTHON_HOME)\python  TuscanySCASetup.py install --install-lib ..\..\..\..\..\.
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"

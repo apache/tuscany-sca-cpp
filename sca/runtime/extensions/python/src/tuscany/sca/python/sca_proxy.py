@@ -18,7 +18,7 @@
 #
 # 
 # 
-# This Python code is used in the TuscanySCA package and
+# This Python code is used in the SCA package and
 # provides the proxy objects to a Python SCA component or SCA 
 # client.  
 # 
@@ -26,22 +26,22 @@
 # calls to myProxy.anyMethod go to __getattr__ which will return
 # the invokeFunction defined inside the invoke method
 
-import TuscanySCA
+import sca
 
-class TuscanySCAProxyClass:
+class sca_proxy_class:
 
-    TuscanySCAProxyName = ''
-    TuscanySCAProxyIsReference = 1
+    sca_proxy_name = ''
+    sca_proxy_is_reference = 1
 
     def __init__(self, name, isReference):
-        self.TuscanySCAProxyName = name 
-        self.TuscanySCAProxyIsReference = isReference
+        self.sca_proxy_name = name 
+        self.sca_proxy_is_reference = isReference
         return
 
     def invoke(self, operationName):
         
         def invokeFunction(*args,**kwargs):
-            return TuscanySCA.invoke(self.TuscanySCAProxyName, self.TuscanySCAProxyIsReference, operationName, args)
+            return sca.invoke(self.sca_proxy_name, self.sca_proxy_is_reference, operationName, args)
 
         return invokeFunction
 
@@ -49,8 +49,8 @@ class TuscanySCAProxyClass:
         return self.invoke(operationName)
 
     def __str__(self):
-        return  '<TuscanySCAProxy.TuscanySCAProxyClass instance for ' + self.TuscanySCAProxyName + '>'
+        return  '<sca_proxy.sca_proxy_class instance for ' + self.sca_proxy_name + '>'
 
     def __repr__(self):
-        return  '<TuscanySCAProxy.TuscanySCAProxyClass instance for ' + self.TuscanySCAProxyName + '>'
+        return  '<sca_proxy.sca_proxy_class instance for ' + self.sca_proxy_name + '>'
 
