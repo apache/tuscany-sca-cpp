@@ -20,6 +20,7 @@
 #include "commonj/sdo/XpathHelper.h"
 
 #include <string.h>
+using std::string;
 
 namespace commonj{
 namespace sdo{

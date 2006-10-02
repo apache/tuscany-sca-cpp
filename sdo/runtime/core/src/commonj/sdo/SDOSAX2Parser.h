@@ -73,9 +73,9 @@ namespace commonj
 
             virtual void  handleOpenAttribute(
                                 SDOXMLString& tns,
-                                const char* propuri,
-                                const char* propname,
-                                const char* value);
+                                const SDOXMLString& propuri,
+                                const SDOXMLString& propname,
+                                const SDOXMLString& value);
 
             virtual const PropertyImpl* handleOpenType(
                         SDOXMLString& tns,

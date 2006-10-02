@@ -267,10 +267,10 @@ namespace commonj
                     cout << addTypeCode.c_str() <<endl;
                     */
 
-                    df->addType(ty.uri, ty.name, ty.isSequenced, 
+                    df->addType((const char*)ty.uri, (const char*)ty.name, ty.isSequenced, 
                                          ty.isOpen, ty.isAbstract, ty.dataType, ty.isFromList);
                     df->setDASValue(
-                        ty.uri, ty.name,
+                        (const char*)ty.uri, (const char*)ty.name,
                         "XMLDAS::TypeInfo",
                         new XSDTypeInfo(ty));
 
@@ -336,11 +336,11 @@ namespace commonj
                         */
 
                        df->setBaseType(
-                            ty.uri,
-                            ty.name,
-                            ty.parentTypeUri,
-                            ty.parentTypeName,
-                            ty.isRestriction);
+                            (const char*)ty.uri,
+                            (const char*)ty.name,
+                            (const char*)ty.parentTypeUri,
+                            (const char*)ty.parentTypeName,
+                            (const char*)ty.isRestriction);
                     }        
                     catch (SDORuntimeException& e)
                     {
@@ -438,13 +438,13 @@ namespace commonj
                     try 
                     {
 
-                        df->addPropertyToType(ty.uri, ty.name,
-                            prop.name,
-                            prop.typeUri,
-                            prop.typeName,
-                            prop.isMany,
-                            prop.isReadOnly,
-                            prop.isContainment);
+                        df->addPropertyToType((const char*)ty.uri, (const char*)ty.name,
+                            (const char*)prop.name,
+                            (const char*)prop.typeUri,
+                            (const char*)prop.typeName,
+                            (const char*)prop.isMany,
+                            (const char*)prop.isReadOnly,
+                            (const char*)prop.isContainment);
 
                         LOGINFO_1(INFO,"XSDHelper adds property %s",(const char*)(prop.name));
 

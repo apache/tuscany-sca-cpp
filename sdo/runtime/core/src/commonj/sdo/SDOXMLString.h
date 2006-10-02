@@ -63,6 +63,7 @@ namespace commonj
 
             SDO_SPI bool operator< (const SDOXMLString& str) const;
             
+            SDO_SPI operator std::string() const;
             SDO_SPI operator const char*() const {return (const char*) xmlForm;}
             SDO_SPI operator const xmlChar*() const {return xmlForm;}
             

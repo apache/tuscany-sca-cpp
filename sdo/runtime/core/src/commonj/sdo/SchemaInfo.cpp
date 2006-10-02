@@ -24,6 +24,7 @@ namespace commonj
     {
 
         SchemaInfo::SchemaInfo()
+            : targetNamespaceURI("")
         {
         }
         

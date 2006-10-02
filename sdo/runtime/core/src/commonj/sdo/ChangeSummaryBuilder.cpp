@@ -105,7 +105,7 @@ namespace commonj
                                 // dob may have been set by the line above.
                                 if (deletions[i].dob != 0)
                                 {
-                                    DataObjectList& dli = dob->getList(prop);
+                                    DataObjectList& dli = dob->getList((const char*)prop);
                                     dli.insert(0,deletions[i].dob);
                                 }
                                 break;
@@ -114,7 +114,7 @@ namespace commonj
                     }
                     else
                     {
-                        DataObjectList& dli = dob->getList(prop);
+                        DataObjectList& dli = dob->getList((const char*)prop);
                         dli.append((const char*)value);
                     }
                 }
@@ -147,7 +147,7 @@ namespace commonj
                 return;
             }
 
-            const Property& p = cont->getProperty(prop);
+            const Property& p = cont->getProperty((const char*)prop);
             DataObjectPtr dob = dataFactory->create(
                                 p.getType());
             populateDeletion(csi,dob,currentIndex);
@@ -214,7 +214,7 @@ namespace commonj
             else 
             {
                 try {
-                    cont = rootDataObject->getDataObject(contpath);
+                    cont = rootDataObject->getDataObject((const char*)contpath);
                     LOGINFO_2(INFO,"Handling deletion from %s of %s",
                         (const char*)contpath,(const char*)prop);
                 }
@@ -374,7 +374,7 @@ namespace commonj
                         }
                         else
                         {
-                            dob = rootDataObject->getDataObject(thispath);
+                            dob = rootDataObject->getDataObject((const char*)thispath);
                         }
                         if (dob != 0) {
                             
@@ -428,7 +428,7 @@ namespace commonj
                     }
                     else 
                     {
-                        dob = rootDataObject->getDataObject(changes[i].reference);
+                        dob = rootDataObject->getDataObject((const char*)changes[i].reference);
                     }
                     if (dob != 0)
                     {
@@ -491,7 +491,7 @@ namespace commonj
                                     (const char*)((*e).path),
                                     (const char*)((*e).value));
 
-                                DataObjectPtr pdob = rootDataObject->getDataObject((*e).value);
+                                DataObjectPtr pdob = rootDataObject->getDataObject((const char*)(*e).value);
                                 if (pdob != 0)
                                 {
                                     csi->appendToChanges(p,dob,pdob,(*e).index);

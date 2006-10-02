@@ -76,21 +76,21 @@ namespace commonj
                 const char* targetNamespaceURI = 0);
            virtual XMLDocumentPtr loadFile(
                 const SDOString& xmlFile,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString);
+                const SDOString& targetNamespaceURI = "");
 
             virtual XMLDocumentPtr load(
                 std::istream& inXml,
                 const char* targetNamespaceURI = 0);
             virtual XMLDocumentPtr load(
                 std::istream& inXml,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString);
+                const SDOString& targetNamespaceURI = "");
 
             virtual XMLDocumentPtr load(
                 const char* inXml,
                 const char* targetNamespaceURI = 0);
             virtual XMLDocumentPtr load(
                 const SDOString& inXml,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString);
+                const SDOString& targetNamespaceURI = "");
 
             virtual XMLDocumentPtr createDocument(
                 DataObjectPtr dataObject,

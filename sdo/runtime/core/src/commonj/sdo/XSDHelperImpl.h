@@ -101,7 +101,7 @@ namespace commonj
                 );
             virtual char* generate(
                 const TypeList& types,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                const SDOString& targetNamespaceURI = "",
                 int indent = -1
                 );
             void generate(
@@ -113,7 +113,7 @@ namespace commonj
             void generate(
                 const TypeList& types,
                 std::ostream& outXsd,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                const SDOString& targetNamespaceURI = "",
                 int indent = -1
                 );
             virtual void generateFile(
@@ -124,7 +124,7 @@ namespace commonj
             virtual void generateFile(
                 const TypeList& types,
                 const SDOString& fileName,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString, 
+                const SDOString& targetNamespaceURI = "", 
                 int indent = -1);
             
             virtual DataFactoryPtr getDataFactory();

@@ -142,7 +142,6 @@ class DataObjectImpl : public DataObject
     virtual const Property& getProperty(const char* prop);
     virtual const Property& getProperty(const SDOString& prop);
 
-    virtual PropertyImpl* getPropertyImpl(const char* prop);
     virtual PropertyImpl* getPropertyImpl(const SDOString& prop);
     
     virtual PropertyImpl* getPropertyImpl(unsigned int index);
@@ -568,38 +567,21 @@ class DataObjectImpl : public DataObject
      * This method and its siblings define a new property on an
      * open type when a setting is requested.
      */
-
-    virtual const PropertyImpl* defineProperty(const char* propname, 
-                 const Type& t);
     virtual const PropertyImpl* defineProperty(const SDOString& propname, 
                  const Type& t);
 
-    virtual const PropertyImpl* defineBoolean(const char* propname);
-    virtual const PropertyImpl* defineBoolean(const SDOString& propname);
-    virtual const PropertyImpl* defineByte(const char* propname);
+     virtual const PropertyImpl* defineBoolean(const SDOString& propname);
     virtual const PropertyImpl* defineByte(const SDOString& propname);
-    virtual const PropertyImpl* defineCharacter(const char* propname);
     virtual const PropertyImpl* defineCharacter(const SDOString& propname);
-    virtual const PropertyImpl* defineString(const char* propname);
     virtual const PropertyImpl* defineString(const SDOString& propname);
-    virtual const PropertyImpl* defineBytes(const char* propname);
     virtual const PropertyImpl* defineBytes(const SDOString& propname);
-    virtual const PropertyImpl* defineShort(const char* propname);
     virtual const PropertyImpl* defineShort(const SDOString& propname);
-    virtual const PropertyImpl* defineInteger(const char* propname);
     virtual const PropertyImpl* defineInteger(const SDOString& propname);
-    virtual const PropertyImpl* defineLong(const char* propname);
     virtual const PropertyImpl* defineLong(const SDOString& propname);
-    virtual const PropertyImpl* defineFloat(const char* propname);
     virtual const PropertyImpl* defineFloat(const SDOString& propname);
-    virtual const PropertyImpl* defineDouble(const char* propname);
     virtual const PropertyImpl* defineDouble(const SDOString& propname);
-    virtual const PropertyImpl* defineDate(const char* propname);
     virtual const PropertyImpl* defineDate(const SDOString& propname);
-    virtual const PropertyImpl* defineCString(const char* propname);
     virtual const PropertyImpl* defineCString(const SDOString& propname);
-    virtual const PropertyImpl* defineDataObject(const char* propname,
-        const Type&t );
     virtual const PropertyImpl* defineDataObject(const SDOString& propname,
         const Type&t );
     virtual const PropertyImpl* defineDataObject(const char* propname,

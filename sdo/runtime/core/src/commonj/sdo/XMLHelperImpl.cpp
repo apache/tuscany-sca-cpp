@@ -149,18 +149,18 @@ namespace commonj
            {
               if (elementname == 0)
               {
-                 return createDocument(SDOString::SDONullString, SDOString::SDONullString);
+                 return createDocument(SDOString(""), SDOString(""));
               }
               else
               {
-                 return createDocument(SDOString(elementname), SDOString::SDONullString);
+                 return createDocument(SDOString(elementname), SDOString(""));
               }
            }
            else
            {
               if (elementname == 0)
               {
-                 return createDocument(SDOString::SDONullString, SDOString(rootElementURI));
+                 return createDocument(SDOString(""), SDOString(rootElementURI));
               }
               else
               {

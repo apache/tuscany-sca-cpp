@@ -62,6 +62,15 @@ namespace commonj
             }
             return *this;
         }
+        
+        SDOXMLString::operator std::string() const
+        {
+            if (xmlForm)
+            {
+                return (const char *)xmlForm;
+            }
+            return "";
+        }
 
         SDOXMLString SDOXMLString::operator+(const SDOXMLString& str) const
         {

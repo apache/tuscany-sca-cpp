@@ -71,7 +71,7 @@ namespace commonj
                 int indent = -1) = 0;
             SDO_API virtual char* generate(
                 const TypeList& types,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                const SDOString& targetNamespaceURI = "",
                 int indent = -1) = 0;
             SDO_API virtual void generate(
                 const TypeList& types,
@@ -81,7 +81,7 @@ namespace commonj
             SDO_API virtual void generate(
                 const TypeList& types,
                 std::ostream& outXsd,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                const SDOString& targetNamespaceURI = "",
                 int indent = -1) = 0;
             SDO_API virtual void generateFile(
                 const TypeList& types,
@@ -91,7 +91,7 @@ namespace commonj
             SDO_API virtual void generateFile(
                 const TypeList& types,
                 const SDOString& fileName,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString,
+                const SDOString& targetNamespaceURI = "",
                 int indent = -1) = 0;
 
             /***********************************/

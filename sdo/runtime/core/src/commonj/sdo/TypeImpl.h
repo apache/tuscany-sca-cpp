@@ -157,7 +157,6 @@ public:
     const Property& getProperty(const SDOString& propertyName) const ;
     const Property& getProperty(unsigned int index)  const ;
 
-    PropertyImpl* getPropertyImpl(const char* propertyName) const ;
     PropertyImpl* getPropertyImpl(const SDOString& propertyName) const ;
     PropertyImpl* getPropertyImpl(unsigned int index)  const ;
     
@@ -169,8 +168,8 @@ public:
     PropertyImpl* getPropertyImplPure(const char* propertyName) const ;
 
     // get the type of the property even if its a substitute
-    const Type& getRealPropertyType(const char* propertyName) const ;
-    const TypeImpl* getRealPropertyTypeImpl(const char* propertyName) const ;
+    const Type& getRealPropertyType(const std::string& propertyName) const ;
+    const TypeImpl* getRealPropertyTypeImpl(const std::string& propertyName) const ;
 
 
 

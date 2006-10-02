@@ -284,10 +284,6 @@ SOURCE=..\..\..\runtime\core\src\commonj\sdo\SDOSchemaSAX2Parser.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\runtime\core\src\commonj\sdo\SDOString.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\runtime\core\src\commonj\sdo\SDOUtils.cpp
 # End Source File
 # Begin Source File

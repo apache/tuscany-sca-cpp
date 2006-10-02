@@ -488,7 +488,7 @@ namespace sdo{
     // Substitute Support - get the real underlying type
     ///////////////////////////////////////////////////////////////////////////
 
-    const Type& TypeImpl::getRealPropertyType(const char* propertyName) const
+  const Type& TypeImpl::getRealPropertyType(const std::string& propertyName) const
     {
         const TypeImpl* ti = getRealPropertyTypeImpl(propertyName);
         if (ti != 0)return (Type&)*ti;
@@ -501,26 +501,26 @@ namespace sdo{
     }
 
     
-    const TypeImpl* TypeImpl::getRealPropertyTypeImpl(const char* propertyName) const
+    const TypeImpl* TypeImpl::getRealPropertyTypeImpl(const std::string& propertyName) const
     {
 
         std::list<PropertyImpl*>::const_iterator i;    
         for (i = props.begin(); i != props.end(); ++i)
         {
-            if (!strcmp(propertyName,(*i)->getName()))
+            if (propertyName == (*i)->getName())
             {
                     return ((*i)->getTypeImpl());
             }
             for (unsigned int k=0;k < (*i)->getAliasCount(); k++)
             {
-                if (!strcmp(propertyName,(*i)->getAlias(k)))
+                if (propertyName == (*i)->getAlias(k))
                 {
                     return ((*i)->getTypeImpl());
                 }
             }
             for (unsigned int j=0;j < (*i)->getSubstitutionCount(); j++)
             {
-                if (!strcmp(propertyName,(*i)->getSubstitutionName(j)))
+                if (propertyName == (*i)->getSubstitutionName(j))
                 {
                     return (TypeImpl*)(*i)->getSubstitutionType(j);
                 }
@@ -528,62 +528,57 @@ namespace sdo{
         }
         return 0;
     }
-
+    
     ///////////////////////////////////////////////////////////////////////////
     // Returns the property with the specified name.
     ///////////////////////////////////////////////////////////////////////////
-    PropertyImpl* TypeImpl::getPropertyImpl(const char* propertyName) const
+    
+    PropertyImpl* TypeImpl::getPropertyImpl(const SDOString& propertyName) const
     {
-
-        // Extension - find the property from an xpath
-        // not very elegant, but it will do.
-        // you should not be able to have "." and "[" before a "/" - this is assumed.
-
-        if (propertyName == 0 || strlen(propertyName) == 0) return 0;
-
-        char*    tokenend    = (char*) strchr(propertyName,'/');
-        char *    bracket        =  (char*) strchr(propertyName,'[');
-        char*    dot            =  (char*) strchr(propertyName,'.');
-        char*   copy;
         
-
-        int len = strlen(propertyName);
-        if (tokenend != 0) 
+        // Extension - find the property from an xpath
+        // you should not be able to have both "." and "[" before a "/" - this is assumed.
+        
+        if (propertyName.length() == 0) return 0;
+        
+        // strchr returns NULL if target not found
+        // find_first_of returns string::npos in that case
+        // find_first_of returns the subscript of the character found eg 0 if it is the first
+        size_t tokenend = propertyName.find_first_of('/');
+        size_t bracket = propertyName.find_first_of('[');
+        size_t dot = propertyName.find_first_of('.');
+        size_t dotOrBracketOrSlash = propertyName.find_first_of(".[/");
+        SDOString copy;
+        // char* copy;
+        
+        int len = propertyName.length();
+        if (dotOrBracketOrSlash != string::npos)
         {
-            len = tokenend  - propertyName;
-            if (bracket != 0 && bracket <  tokenend) len = bracket  - propertyName;
-            if (dot     != 0 && dot     <  tokenend) len = dot      - propertyName;
+            len = dotOrBracketOrSlash;
         }
-        else 
-        {
-            if (bracket != 0) len = bracket - propertyName;
-            if (dot     != 0) len = dot     - propertyName;
-        }
+        
         if (len != 0)
         {
-            copy = new char[len+1];
-            strncpy(copy, propertyName,len);
-            copy[len] = 0;
+            copy.assign(propertyName, 0, len);
         }
         else
         {
-            copy = new char[strlen(propertyName)+1];
-            strcpy(copy,propertyName);
+            copy = propertyName;
         }
-            
+        
         std::list<PropertyImpl*>::const_iterator i;    
         for (i = props.begin(); i != props.end(); ++i)
         {
-            if (!strcmp(copy,(*i)->getName()))
+            if (!strcmp(copy.c_str(),(*i)->getName())) // ie the two strings are the same
             {
-                delete copy;
-                if (tokenend && strlen(tokenend) > 1) 
-                { 
+                // delete copy;
+                if ((tokenend != string::npos) && (propertyName.length() - tokenend) > 1) 
+                {
+                    // There is someting to the right of the "/"
                     const TypeImpl* ti = (*i)->getTypeImpl();
                     if (ti != 0)
                     {
-                        PropertyImpl* p = ti->
-                            getPropertyImpl((const char *)(tokenend+1));
+                        PropertyImpl* p = ti->getPropertyImpl(SDOString(propertyName, tokenend + 1, string::npos));
                         return p;
                     }
                     else
@@ -595,18 +590,20 @@ namespace sdo{
                     return (PropertyImpl*)(*i);
                 }
             }
-            for (unsigned int j=0;j < (*i)->getSubstitutionCount(); j++)
+            
+            for (unsigned int j = 0; j < (*i)->getSubstitutionCount(); j++)
             {
-                if (!strcmp(copy,(*i)->getSubstitutionName(j)))
+                if (!strcmp(copy.c_str(), (*i)->getSubstitutionName(j))) // ie the two strings are the same
                 {
-                    delete copy;
-                    if (tokenend && strlen(tokenend) > 1) 
-                    {     
+                    // delete copy;
+                    if ((tokenend != string::npos) && (propertyName.length() - tokenend) > 1) 
+                    {
+                        // There is someting to the right of the "/"
                         const TypeImpl* ti = (*i)->getTypeImpl();
                         if (ti != 0)
                         {
-                            PropertyImpl* p = ti->
-                            getPropertyImpl((const char *)(tokenend+1));
+                            // PropertyImpl* p = ti->getPropertyImpl((const char *)(tokenend+1));
+                            PropertyImpl* p = ti->getPropertyImpl(SDOString(propertyName, tokenend + 1, string::npos));
                             return p;
                         }
                         else
@@ -619,18 +616,18 @@ namespace sdo{
                     }
                 }
             }
-            for (unsigned int k=0;k < (*i)->getAliasCount(); k++)
+            for (unsigned int k = 0; k < (*i)->getAliasCount(); k++)
             {
-                if (!strcmp(copy,(*i)->getAlias(k)))
+                if (!strcmp(copy.c_str(), (*i)->getAlias(k))) // ie the two strings are the same
                 {
-                    delete copy;
-                    if (tokenend && strlen(tokenend) > 1) 
-                    {     
+                    // delete copy;
+                    if ((tokenend != string::npos) && (propertyName.length() - tokenend) > 1)
+                    {
                         const TypeImpl* ti = (*i)->getTypeImpl();
                         if (ti != 0)
                         {
-                            PropertyImpl* p = ti->
-                            getPropertyImpl((const char *)(tokenend+1));
+                            // PropertyImpl* p = ti->getPropertyImpl((const char *)(tokenend+1));
+                            PropertyImpl* p = ti->getPropertyImpl(SDOString(propertyName, tokenend + 1, string::npos));
                             return p;
                         }
                         else
@@ -645,120 +642,7 @@ namespace sdo{
             }
         }
         return 0;
-    }
-  // +++
-  PropertyImpl* TypeImpl::getPropertyImpl(const SDOString& propertyName) const
-  {
-
-    // Extension - find the property from an xpath
-    // you should not be able to have both "." and "[" before a "/" - this is assumed.
-
-    if (propertyName.length() == 0) return 0;
-
-    // strchr returns NULL if target not found
-    // find_first_of returns string::npos in that case
-    // find_first_of returns the subscript of the character found eg 0 if it is the first
-    size_t tokenend = propertyName.find_first_of('/');
-    size_t bracket = propertyName.find_first_of('[');
-    size_t dot = propertyName.find_first_of('.');
-    size_t dotOrBracketOrSlash = propertyName.find_first_of(".[/");
-    SDOString copy;
-    // char* copy;
-
-    int len = propertyName.length();
-    if (dotOrBracketOrSlash != string::npos)
-      {
-        len = dotOrBracketOrSlash;
-      }
-
-    if (len != 0)
-      {
-        copy.assign(propertyName, 0, len);
-      }
-    else
-      {
-        copy = propertyName;
-      }
-            
-    std::list<PropertyImpl*>::const_iterator i;    
-    for (i = props.begin(); i != props.end(); ++i)
-      {
-        if (!strcmp(copy.c_str(),(*i)->getName())) // ie the two strings are the same
-          {
-            // delete copy;
-            if ((tokenend != string::npos) && (propertyName.length() - tokenend) > 1) 
-              {
-                // There is someting to the right of the "/"
-                const TypeImpl* ti = (*i)->getTypeImpl();
-                if (ti != 0)
-                  {
-                    PropertyImpl* p = ti->getPropertyImpl(SDOString(propertyName, tokenend + 1));
-                    return p;
-                  }
-                else
-                  {
-                    return (PropertyImpl*)(*i);
-                  }
-              }
-            else {
-              return (PropertyImpl*)(*i);
-            }
-          }
-
-        for (unsigned int j = 0; j < (*i)->getSubstitutionCount(); j++)
-          {
-            if (!strcmp(copy.c_str(), (*i)->getSubstitutionName(j))) // ie the two strings are the same
-              {
-                // delete copy;
-                if ((tokenend != string::npos) && (propertyName.length() - tokenend) > 1) 
-                  {
-                    // There is someting to the right of the "/"
-                    const TypeImpl* ti = (*i)->getTypeImpl();
-                    if (ti != 0)
-                      {
-                        // PropertyImpl* p = ti->getPropertyImpl((const char *)(tokenend+1));
-                        PropertyImpl* p = ti->getPropertyImpl(SDOString(propertyName, tokenend + 1));
-                        return p;
-                      }
-                    else
-                      {
-                        return (PropertyImpl*)(*i);
-                      }
-                  }
-                else {
-                  return (PropertyImpl*)(*i);
-                }
-              }
-          }
-        for (unsigned int k = 0; k < (*i)->getAliasCount(); k++)
-          {
-            if (!strcmp(copy.c_str(), (*i)->getAlias(k))) // ie the two strings are the same
-              {
-                // delete copy;
-                if ((tokenend != string::npos) && (propertyName.length() - tokenend) > 1)
-                  {
-                    const TypeImpl* ti = (*i)->getTypeImpl();
-                    if (ti != 0)
-                      {
-                        // PropertyImpl* p = ti->getPropertyImpl((const char *)(tokenend+1));
-                        PropertyImpl* p = ti->getPropertyImpl(SDOString(propertyName, tokenend + 1));
-                        return p;
-                      }
-                    else
-                      {
-                        return (PropertyImpl*)(*i);
-                      }
-                  }
-                else {
-                  return (PropertyImpl*)(*i);
-                }
-              }
-          }
-      }
-    return 0;
-  }
-
-  // ---
+     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Returns the property with the specified name.
@@ -791,11 +675,15 @@ namespace sdo{
     ///////////////////////////////////////////////////////////////////////////
     unsigned int TypeImpl::getPropertyIndex(const char* propertyName) const 
     {
+        return getPropertyIndex(SDOString(propertyName));
+    }
+    unsigned int TypeImpl::getPropertyIndex(const SDOString& propertyName) const 
+    {
         std::list<PropertyImpl*>::const_iterator i;    
         int j = 0;
         for (i = props.begin(); i != props.end(); ++i)
         {
-            if (!strcmp(propertyName,(*i)->getName()))
+            if (!strcmp(propertyName.c_str(), (*i)->getName()))
             {
                 return j;
             }
@@ -806,23 +694,7 @@ namespace sdo{
         SDO_THROW_EXCEPTION("getPropertyIndex", 
             SDOPropertyNotFoundException, msg.c_str());
     }
-  unsigned int TypeImpl::getPropertyIndex(const SDOString& propertyName) const 
-  {
-    std::list<PropertyImpl*>::const_iterator i;    
-    int j = 0;
-    for (i = props.begin(); i != props.end(); ++i)
-      {
-        if (!strcmp(propertyName.c_str(), (*i)->getName()))
-          {
-            return j;
-          }
-        j++;
-      }
-    string msg("Property not found:");
-    msg += propertyName;
-    SDO_THROW_EXCEPTION("getPropertyIndex", 
-                        SDOPropertyNotFoundException, msg.c_str());
-  }
+
     ///////////////////////////////////////////////////////////////////////////
     // Returns the property with the specified name.
     ///////////////////////////////////////////////////////////////////////////

@@ -919,12 +919,6 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
 
     // open type support
 
-    const PropertyImpl* DataObjectImpl::defineProperty(const char* propname, 
-                 const Type& t)
-    {
-        return defineProperty(SDOString(propname), t);
-    }
-
    const PropertyImpl* DataObjectImpl::defineProperty(const SDOString& propname, 
                                                       const Type& t)
    {
@@ -995,126 +989,84 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
         return getPropertyImpl(propname);
     }
 
-    const PropertyImpl* DataObjectImpl::defineBoolean(const char* propname)
-    {
-        return defineBoolean(SDOString(propname));
-    }
-
     const PropertyImpl* DataObjectImpl::defineBoolean(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Boolean");
         return defineProperty(propname,t);
     }
-
-    const PropertyImpl* DataObjectImpl::defineByte(const char* propname)
-    {
-        return defineByte(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineByte(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Byte");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineCharacter(const char* propname)
-    {
-        return defineCharacter(SDOString(propname));
-    }
+
     const PropertyImpl* DataObjectImpl::defineCharacter(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Character");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineString(const char* propname)
-    {
-        return defineString(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineString(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "String");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineBytes(const char* propname)
-    {
-        return defineBytes(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineBytes(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Bytes");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineShort(const char* propname)
-    {
-        return defineShort(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineShort(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Short");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineInteger(const char* propname)
-    {
-        return defineInteger(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineInteger(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Integer");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineLong(const char* propname)
-    {
-        return defineLong(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineLong(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Long");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineFloat(const char* propname)
-    {
-        return defineFloat(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineFloat(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Float");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineDouble(const char* propname)
-    {
-        return defineDouble(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineDouble(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Double");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineDate(const char* propname)
-    {
-        return defineDate(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineDate(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Date");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineCString(const char* propname)
-    {
-        return defineCString(SDOString(propname));
-    }
+    
     const PropertyImpl* DataObjectImpl::defineCString(const SDOString& propname)
     {
         const Type& t = factory->getType(Type::SDOTypeNamespaceURI, "Bytes");
         return defineProperty(propname,t);
     }
-    const PropertyImpl* DataObjectImpl::defineDataObject(const char* propname,
-        const Type& t)
-    {
-        return defineDataObject(SDOString(propname), t);
-    }
+    
     const PropertyImpl* DataObjectImpl::defineDataObject(const SDOString& propname,
         const Type& t)
     {
         return defineProperty(propname,t);
     }
+    
     const PropertyImpl* DataObjectImpl::defineDataObject(const char* propname,
         const char* typeURI, const char* typeName)
     {
@@ -2006,7 +1958,7 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
             {
                 root = root->getContainerImpl();
             }
-            return root->findPropertyContainer(SDOString(path, 2), din);
+            return root->findPropertyContainer(SDOString(path, 2, string::npos), din);
         }
         
         DataObjectImpl* d;
@@ -3291,11 +3243,6 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
             
         }
         return (Property&)*pi;
-    }
-    
-    PropertyImpl* DataObjectImpl::getPropertyImpl(const char* prop)
-    {
-        return getPropertyImpl(SDOString(prop));
     }
 
     PropertyImpl* DataObjectImpl::getPropertyImpl(const SDOString& prop)

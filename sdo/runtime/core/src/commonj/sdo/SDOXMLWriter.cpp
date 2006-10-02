@@ -140,7 +140,7 @@ namespace commonj
                     // Locate the RootType
                     const Type& rootTy = dataFactory->getType(elementURI, "RootType");
                     // Does a property exist with the given element name?
-                    const Property& rootProp = rootTy.getProperty(elementName);
+                    const Property& rootProp = rootTy.getProperty((const char*)elementName);
                     // Is this property of the correct Type?
                     const Type& rootPropType = rootProp.getType();
                     if (rootTypeURI == (SDOXMLString)rootPropType.getURI()
@@ -1198,7 +1198,7 @@ namespace commonj
                 TypeDefinitionImpl typeDef = ti->getTypeDefinition();
                 if (!typeDef.IDPropertyName.isNull())
                 {
-                    refValue = reffedObject->getCString(typeDef.IDPropertyName);
+                    refValue = reffedObject->getCString((const char*)typeDef.IDPropertyName);
                 }
             }
             

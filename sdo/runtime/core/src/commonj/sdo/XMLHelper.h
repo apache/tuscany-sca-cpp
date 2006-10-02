@@ -57,21 +57,21 @@ namespace commonj
                 const char* targetNamespaceURI=0) = 0;
            SDO_API virtual XMLDocumentPtr loadFile(
                 const SDOString& xmlFile,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString) = 0;
+                const SDOString& targetNamespaceURI = "") = 0;
 
             SDO_API virtual XMLDocumentPtr load(
                 std::istream& inXml,
                 const char* targetNamespaceURI=0) = 0;
             SDO_API virtual XMLDocumentPtr load(
                 std::istream& inXml,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString) = 0;
+                const SDOString& targetNamespaceURI = "") = 0;
 
             SDO_API virtual XMLDocumentPtr load(
                 const char* inXml,
                 const char* targetNamespaceURI=0) = 0;
             SDO_API virtual XMLDocumentPtr load(
                 const SDOString& inXml,
-                const SDOString& targetNamespaceURI = SDOString::SDONullString) = 0;
+                const SDOString& targetNamespaceURI = "") = 0;
             
             /**  save saves the graph to XML
              *
