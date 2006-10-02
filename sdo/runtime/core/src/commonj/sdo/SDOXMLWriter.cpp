@@ -130,8 +130,8 @@ namespace commonj
                     elementName = rootTypeName;
                     elementName = elementName.toLower(0,1);
                 }
-
-                // If the element name is not defined as a global element then we
+                
+                // If the element name is defined as a global element then we
                 // can supress the writing of xsi:type according to the spec
                 bool writeXSIType = true;
 
@@ -151,6 +151,14 @@ namespace commonj
                 }
                 catch(SDORuntimeException&)
                 {
+                }
+                
+                // Supress the writing of xsi:type as well for DataObjects of type
+                // commonj.sdo#OpenDataObject
+                if (writeXSIType &&
+                    string(rootTypeURI) == "commonj.sdo" && string(rootTypeName) == "OpenDataObject")
+                {
+                    writeXSIType = false;
                 }
 
                 writeDO(root, elementURI, elementName, writeXSIType, true);
