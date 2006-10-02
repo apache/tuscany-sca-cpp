@@ -156,7 +156,7 @@ namespace commonj
                 // Supress the writing of xsi:type as well for DataObjects of type
                 // commonj.sdo#OpenDataObject
                 if (writeXSIType &&
-                    string(rootTypeURI) == "commonj.sdo" && string(rootTypeName) == "OpenDataObject")
+                    rootTypeURI.equals("commonj.sdo") && rootTypeName.equals("OpenDataObject"))
                 {
                     writeXSIType = false;
                 }
