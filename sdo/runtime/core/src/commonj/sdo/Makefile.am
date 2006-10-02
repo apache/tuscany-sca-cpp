@@ -47,7 +47,6 @@ libtuscany_sdo_la_SOURCES = \
 	SDORuntimeException.cpp \
 	SDOSAX2Parser.cpp \
 	SDOSchemaSAX2Parser.cpp \
-	SDOString.cpp \
 	SDOUtils.cpp \
 	SDOXMLBufferWriter.cpp \
 	SDOXMLFileWriter.cpp \
