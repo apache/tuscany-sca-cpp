@@ -589,23 +589,23 @@ namespace tuscany
             {
 
                 // Import the TuscanySCA python-extension module
-                PyObject* pModuleName = PyString_FromString("TuscanySCAProxy");
-                PyObject* tuscanySCAProxyModule = PyImport_Import(pModuleName);
+                PyObject* pModuleName = PyString_FromString("sca_proxy");
+                PyObject* sca_proxy_module = PyImport_Import(pModuleName);
                 Py_DECREF(pModuleName);
 
-                if(!tuscanySCAProxyModule)
+                if(!sca_proxy_module)
                 {
                     if(PyErr_Occurred())
                     {
                         PyErr_Print();
                     }
-                    string msg = "Failed to load the TuscanySCAProxy Python module - has it been successfully installed?\nReferences from Python components will not be supported";
+                    string msg = "Failed to load the sca_proxy Python module - has it been successfully installed?\nReferences from Python components will not be supported";
                     LOGERROR(0, msg.c_str());
                 }
                 else
                 {
-                    // Get the TuscanySCAProxy class
-                    PyObject* tuscanySCAProxyClass = PyObject_GetAttrString(tuscanySCAProxyModule, "TuscanySCAProxyClass");
+                    // Get the sca_proxy class
+                    PyObject* sca_proxy_class = PyObject_GetAttrString(sca_proxy_module, "sca_proxy_class");
 
                     // Iterate through the references of the current component, adding
                     // each reference to the module
@@ -623,21 +623,21 @@ namespace tuscany
                         PyTuple_SetItem(tuscanySCAArgs, 1, Py_True);
 
                         // Create the instance of the TuscanySCAReference class
-                        PyObject* tuscanySCAProxyClassInstance = PyInstance_New(tuscanySCAProxyClass, tuscanySCAArgs, NULL);
+                        PyObject* sca_proxy_classInstance = PyInstance_New(sca_proxy_class, tuscanySCAArgs, NULL);
                         Py_DECREF(tuscanySCAArgs);
 
-                        int success = PyModule_AddObject(module, (char*)referenceName.c_str(), tuscanySCAProxyClassInstance);
+                        int success = PyModule_AddObject(module, (char*)referenceName.c_str(), sca_proxy_classInstance);
 
                         if(success == 0)
                         {
-                            LOGINFO_1(3, "Successfully added TuscanySCAReferenceClassInstance as %s to pythonModule", referenceName.c_str());
+                            LOGINFO_1(3, "Successfully added sca_proxy_class instance as %s to pythonModule", referenceName.c_str());
                         }
                         else
                         {
-                            LOGERROR_1(1, "Failed to add TuscanySCAReferenceClassInstance as %s to pythonModule", referenceName.c_str());
+                            LOGERROR_1(1, "Failed to add sca_proxy_class instance as %s to pythonModule", referenceName.c_str());
                         }
                     }                       
-                    Py_DECREF(tuscanySCAProxyModule);
+                    Py_DECREF(sca_proxy_module);
                 }
             }
         } // End namespace python        
