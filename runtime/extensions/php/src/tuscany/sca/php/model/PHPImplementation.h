@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #ifndef tuscany_sca_php_model_phpimplementation_h
 #define tuscany_sca_php_model_phpimplementation_h
 #include "tuscany/sca/model/ComponentType.h"

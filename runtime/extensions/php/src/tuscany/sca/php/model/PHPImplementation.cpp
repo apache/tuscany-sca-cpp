@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/php/model/PHPImplementation.h"
 #include "tuscany/sca/php/model/PHPServiceBinding.h"

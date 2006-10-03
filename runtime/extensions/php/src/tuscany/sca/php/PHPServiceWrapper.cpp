@@ -17,6 +17,9 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
+
 // some strangeness in the build that causes 
 // WinSock.h and WinSock2.h to be included leading to redefinitions
 #define _WINSOCKAPI_
