@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "tuscany/sca/extension/ReferenceBindingExtension.h"
 #include "tuscany/sca/util/Logging.h"
 namespace tuscany
