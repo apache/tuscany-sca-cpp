@@ -17,6 +17,7 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
 
 #ifndef osoa_sca_export_h
 #define osoa_sca_export_h
