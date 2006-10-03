@@ -24,7 +24,7 @@
 				AdditionalIncludeDirectories="..\..\..\..\..\BigBank\Accounts;&quot;$(TUSCANY_SDOCPP)/include&quot;;&quot;$(TUSCANY_SCACPP)\extensions\cpp\include&quot;;&quot;$(TUSCANY_SCACPP)/include&quot;"
 				PreprocessorDefinitions="WIN32,_DEBUG,_CONSOLE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Debug/AccountClient.pch"
 				AssemblerListingLocation=".\Debug/"
@@ -122,12 +122,15 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\..\..\..\BigBank\AccountClient\AccountClient.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.client\AccountClient.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
+			<File
+				RelativePath="..\..\..\..\..\BigBank\bigbank.client\AccountService.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

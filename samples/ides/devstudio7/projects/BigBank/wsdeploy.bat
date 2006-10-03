@@ -50,8 +50,9 @@ copy %sourcePath%\bigbank.account\*.xsd           %destinationPath%\packages\big
 
 copy %sourcePath%\bigbank.accountmanagement\*.composite   %destinationPath%\configuration\bigbank.accountmanagement
 
-copy %currentPath%\AccountClient\%buildMode%\AccountClient.exe     %destinationPath%\bin
-if exist %currentPath%\AccountClient\%buildMode%\AccountClient.pdb copy %currentPath%\AccountClient\%buildMode%\AccountClient.pdb     %destinationPath%\bin
-copy %sourcePath%\bigbank.client\*.bat                       %destinationPath%\bin
+copy %currentPath%\WSAccountClient\%buildMode%\WSAccountClient.exe %destinationPath%\bin
+if exist %currentPath%\WSAccountClient\%buildMode%\WSAccountClient.pdb copy %currentPath%\WSAccountClient\%buildMode%\WSAccountClient.pdb %destinationPath%\bin
+copy %sourcePath%\bigbank.wsclient\*.bat                     %destinationPath%\bin
+copy %sourcePath%\bigbank.account\*.bat                      %destinationPath%\bin
 
 
