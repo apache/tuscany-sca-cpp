@@ -23,6 +23,108 @@ AC_CHECK_HEADER([sys/appleapiopts.h],
   [AC_SUBST([libsuffix],[".so"]) AC_MSG_RESULT([using .so])]
 )
 
+# Checks for libraries.
+
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS([inttypes.h stdlib.h string.h sys/time.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+
+# Checks for library functions.
+AC_FUNC_CLOSEDIR_VOID
+AC_FUNC_STAT
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS([getcwd putenv strdup])
+
+AC_MSG_CHECKING(whether to build all samples)
+AC_ARG_ENABLE(all-samples, [AS_HELP_STRING([--enable-all-samples],[build all samples [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_all_samples=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_all_samples=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+  want_all_samples=false ]
+)
+AM_CONDITIONAL([WANT_ALL_SAMPLES], [test x$want_all_samples = xtrue])
+
+AC_MSG_CHECKING(whether to build C++ samples)
+AC_ARG_ENABLE(cpp, [AS_HELP_STRING([--enable-cpp],[build C++ samples [default=yes]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_cpp_samples=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_cpp_samples=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(yes)
+  want_cpp_samples=true ]
+)
+AM_CONDITIONAL([WANT_CPP_SAMPLES], [test x$want_cpp_samples = xtrue])
+
+AC_MSG_CHECKING(whether to build Python samples)
+AC_ARG_ENABLE(python, [AS_HELP_STRING([--enable-python],[build Python samples [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_python_samples=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_python_samples=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+  want_python_samples=false ]
+)
+AM_CONDITIONAL([WANT_PYTHON_SAMPLES], [test x$want_python_samples = xtrue])
+
+AC_MSG_CHECKING(whether to build Ruby samples)
+AC_ARG_ENABLE(ruby, [AS_HELP_STRING([--enable-ruby],[build Ruby samples [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_ruby_samples=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_ruby_samples=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+  want_ruby_samples=false ]
+)
+AM_CONDITIONAL([WANT_RUBY_SAMPLES], [test x$want_ruby_samples = xtrue])
+
+AC_MSG_CHECKING(whether to build PHP samples)
+AC_ARG_ENABLE(php, [AS_HELP_STRING([--enable-php],[build PHP samples [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_php_samples=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_php_samples=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+  want_php_samples=false ]
+)
+AM_CONDITIONAL([WANT_PHP_SAMPLES], [test x$want_php_samples = xtrue])
 
 AC_CONFIG_FILES([Makefile
                  Calculator/Makefile
@@ -46,4 +148,3 @@ AC_CONFIG_FILES([Makefile
                  RubyBank/bigbank.client/Makefile
                  ])
 AC_OUTPUT
-
