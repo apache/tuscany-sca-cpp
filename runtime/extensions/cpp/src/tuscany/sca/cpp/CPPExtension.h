@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #ifndef tuscany_sca_cpp_cppextension_h
 #define tuscany_sca_cpp_cppextension_h
 

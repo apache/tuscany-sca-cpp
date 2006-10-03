@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/cpp/model/CPPReferenceBinding.h"
 #include "tuscany/sca/cpp/CPPServiceProxy.h"

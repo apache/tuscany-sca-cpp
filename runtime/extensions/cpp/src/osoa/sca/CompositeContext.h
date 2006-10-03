@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #ifndef osoa_sca_compositecontext_h
 #define osoa_sca_compositecontext_h
 

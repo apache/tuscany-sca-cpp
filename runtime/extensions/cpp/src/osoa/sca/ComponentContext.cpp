@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "osoa/sca/ComponentContext.h"
 #include "tuscany/sca/util/Logging.h"
 #include "osoa/sca/ServiceRuntimeException.h"
