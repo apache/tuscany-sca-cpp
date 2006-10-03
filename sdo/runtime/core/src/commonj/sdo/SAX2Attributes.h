@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/07 13:35:33 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _SAX2ATTRIBUTES_H_
 #define _SAX2ATTRIBUTES_H_

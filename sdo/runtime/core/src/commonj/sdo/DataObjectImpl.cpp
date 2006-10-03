@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/DataObjectImpl.h"

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 11:33:21 $ */
+/* $Rev$ $Date$ */
 
 #ifndef StockQuoteService_h
 #define StockQuoteService_h

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/20 14:24:42 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/SDOSAX2Parser.h"
 

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/SDOXMLFileWriter.h"   // Include first to avoid libxml compile problems!
 #include "commonj/sdo/SDOXMLStreamWriter.h" // Include first to avoid libxml compile problems!

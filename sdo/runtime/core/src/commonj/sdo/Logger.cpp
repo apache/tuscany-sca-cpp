@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/01/23 16:39:24 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/Logger.h"
 #include <iostream>

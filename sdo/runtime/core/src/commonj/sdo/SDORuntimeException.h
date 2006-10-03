@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:15 $ */
+/* $Rev$ $Date$ */
 
 #if !defined SDO_EXCEPTIONS_H
 #define SDO_EXCEPTIONS_H

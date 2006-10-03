@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date$ */
 #pragma warning(disable:4786)
 
 #include "commonj/sdo/SDO.h"

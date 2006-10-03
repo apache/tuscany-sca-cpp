@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
+/* $Rev$ $Date$ */
 #include "libxml/uri.h"
 #include "commonj/sdo/SDOSchemaSAX2Parser.h"
 #include "commonj/sdo/XSDPropertyInfo.h"

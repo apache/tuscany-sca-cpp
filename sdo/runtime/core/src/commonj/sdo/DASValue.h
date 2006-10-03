@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _SDO_DASValue_H_
 #define _SDO_DASValue_H_

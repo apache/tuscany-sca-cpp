@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/16 12:21:39 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/SDOUtils.h"
 #include <stdio.h>

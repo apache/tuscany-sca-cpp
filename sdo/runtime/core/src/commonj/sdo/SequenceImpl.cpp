@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/07 08:25:11 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/Property.h"

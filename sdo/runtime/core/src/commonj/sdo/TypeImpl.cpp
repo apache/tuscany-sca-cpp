@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/18 13:47:39 $ */
+/* $Rev$ $Date$ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

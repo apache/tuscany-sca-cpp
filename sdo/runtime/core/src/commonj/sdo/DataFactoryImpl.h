@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _DataFactoryIMPL_H_
 #define _DataFactoryIMPL_H_

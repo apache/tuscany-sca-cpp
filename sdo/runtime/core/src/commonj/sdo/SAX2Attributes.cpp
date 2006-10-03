@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/07 13:35:33 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/SAX2Attributes.h"
 

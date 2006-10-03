@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/02 16:41:30 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _SDO_TYPE_H_
 #define _SDO_TYPE_H_

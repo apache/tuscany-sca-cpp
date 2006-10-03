@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/17 16:01:05 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/ChangeSummaryImpl.h"
 

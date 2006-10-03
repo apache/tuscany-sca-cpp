@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/01 12:53:49 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/SDOXSDWriter.h"
 #include "iostream"

@@ -16,7 +16,7 @@
  */
 
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date$ */
 
 
 #include "commonj/sdo/ChangedDataObjectListImpl.h"

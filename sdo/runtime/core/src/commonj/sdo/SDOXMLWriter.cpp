@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/07 15:35:56 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/SDOXMLWriter.h"
 #include "commonj/sdo/SDOXMLString.h"

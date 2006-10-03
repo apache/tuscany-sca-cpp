@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/02/01 16:24:13 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _XSDHELPER_H_
 #define _XSDHELPER_H_

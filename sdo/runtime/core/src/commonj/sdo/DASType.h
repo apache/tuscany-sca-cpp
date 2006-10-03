@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/01 08:52:41 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _DASTYPE_H_
 #define _DASTYPE_H_

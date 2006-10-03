@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/06 12:58:18 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _PROPERTYIMPL_H_
 #define _PROPERTYIMPL_H_

@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/03/07 11:05:20 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _DATAOBJECTIMPL_H_
 #define _DATAOBJECTIMPL_H_

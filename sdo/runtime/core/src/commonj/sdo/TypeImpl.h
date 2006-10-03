@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/13 08:35:04 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _TYPEIMPL_H_
 #define _TYPEIMPL_H_

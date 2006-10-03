@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 16:54:14 $ */
+/* $Rev$ $Date$ */
 
 #include "commonj/sdo/disable_warn.h"
 #include "commonj/sdo/DataGraph.h"

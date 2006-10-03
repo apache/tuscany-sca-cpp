@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2006/04/18 12:33:33 $ */
+/* $Rev$ $Date$ */
 
 #ifndef _PARSER_ERROR_SETTER_H_
 #define _PARSER_ERROR_SETTER_H_
