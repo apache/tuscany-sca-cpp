@@ -16,6 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+/* $Rev$ $Date$ */
+
 #ifndef tuscany_sca_util_exceptions_h
 #define tuscany_sca_util_exceptions_h
 
