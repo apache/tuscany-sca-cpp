@@ -31,7 +31,7 @@ namespace services
         public:
         
             virtual DataObjectPtr /*AccountReport*/
-                getAccountReport(const char* customerID);
+                getAccountReport(const string customerID);
         
         private:
         

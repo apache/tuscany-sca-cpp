@@ -37,7 +37,7 @@ namespace services
     {
 
         DataObjectPtr /* CheckingAccount*/
-            AccountDataServiceImpl::getCheckingAccount(const char *id) 
+            AccountDataServiceImpl::getCheckingAccount(const string id) 
         {
             try {
 
@@ -46,8 +46,8 @@ namespace services
                 DataObjectPtr newaccount = 
                     factory->create("http://www.bigbank.com/AccountService","CheckingAccount");
 
-                char* name = new char[strlen(id) + 10];
-                strcpy(name,id);
+                char* name = new char[id.size() + 10];
+                strcpy(name,id.c_str());
                 strcat(name,"_CHA12345");
 
                 newaccount->setCString("accountNumber",name);
@@ -68,7 +68,7 @@ namespace services
 
 
         DataObjectPtr /* SavingsAccount */
-            AccountDataServiceImpl::getSavingsAccount(const char *id) 
+            AccountDataServiceImpl::getSavingsAccount(const string id) 
         {
             try {
 
@@ -77,8 +77,8 @@ namespace services
                 DataObjectPtr newaccount = 
                     factory->create("http://www.bigbank.com/AccountService","SavingsAccount");
 
-                char* name = new char[strlen(id) + 10];
-                strcpy(name,id);
+                char* name = new char[id.size() + 10];
+                strcpy(name,id.c_str());
                 strcat(name,"_SAA12345");
 
                 newaccount->setCString("accountNumber",name);
@@ -98,7 +98,7 @@ namespace services
 
 
         DataObjectPtr /* StockAccount */
-            AccountDataServiceImpl::getStockAccount (const char* id)
+            AccountDataServiceImpl::getStockAccount (const string id)
         {
             try {
 
@@ -107,8 +107,8 @@ namespace services
                 DataObjectPtr newaccount = 
                     factory->create("http://www.bigbank.com/AccountService","StockAccount");
 
-                char* name = new char[strlen(id) + 10];
-                strcpy(name,id);
+                char* name = new char[id.size() + 10];
+                strcpy(name,id.c_str());
                 strcat(name,"_STA12345");
 
                 newaccount->setCString("accountNumber",name);
