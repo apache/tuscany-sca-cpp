@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 11:33:21 $ */
+/* $Rev$ $Date$ */
 
 #include "tuscany/sca/util/LogWriter.h"
 

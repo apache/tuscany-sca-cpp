@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 11:33:21 $ */
+/* $Rev$ $Date$ */
 
 #include "tuscany/sca/export.h"
 #include "tuscany/sca/util/Utils.h"
@@ -429,12 +429,12 @@ namespace tuscany
                 // ----------
                 // References
                 // ----------
-                for (int i=0; i<refs.size(); i++)
+                for (int ri=0; ri<refs.size(); ri++)
                 {
                     // ----------------------------------------------------------
                     // Add the reference to the composite wires to be resolved later
                     // ----------------------------------------------------------
-                    string refName = refs[i]->getCString("name");
+                    string refName = refs[ri]->getCString("name");
                     if (!component->findReference(refName))
                     {
                         // Configuration error: reference is not defined
@@ -445,7 +445,7 @@ namespace tuscany
                     string src = component->getName() + "/" + refName;
 
                     // Get the reference value
-                    string refValue = refs[i]->getCString("value");
+                    string refValue = refs[ri]->getCString("value");
                     
                     composite->addWire(src, refValue);
                 }
