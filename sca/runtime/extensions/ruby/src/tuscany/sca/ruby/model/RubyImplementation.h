@@ -17,6 +17,9 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
+
 #ifndef tuscany_sca_ruby_model_rubyimplementation_h
 #define tuscany_sca_ruby_model_rubyimplementation_h
 #include "tuscany/sca/model/ComponentType.h"

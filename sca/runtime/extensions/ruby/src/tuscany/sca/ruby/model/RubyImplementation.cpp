@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
 #include "tuscany/sca/ruby/model/RubyServiceBinding.h"

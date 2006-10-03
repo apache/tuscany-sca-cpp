@@ -17,6 +17,9 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
+
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/SCARuntime.h"
