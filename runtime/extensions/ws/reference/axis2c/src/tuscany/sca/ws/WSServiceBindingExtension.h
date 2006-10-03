@@ -17,6 +17,9 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
+
 #ifndef tuscany_sca_extension_ws_wsservicebindingextension_h
 #define tuscany_sca_extension_ws_wsservicebindingextension_h
 
