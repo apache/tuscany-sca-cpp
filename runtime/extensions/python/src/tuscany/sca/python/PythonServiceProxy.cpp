@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "tuscany/sca/python/PythonServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
 #include "osoa/sca/ServiceRuntimeException.h"

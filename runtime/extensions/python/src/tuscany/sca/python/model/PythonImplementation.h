@@ -17,6 +17,9 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
+
 #ifndef tuscany_sca_python_model_pythonimplementation_h
 #define tuscany_sca_python_model_pythonimplementation_h
 #include "tuscany/sca/model/ComponentType.h"
