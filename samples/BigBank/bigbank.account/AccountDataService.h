@@ -17,6 +17,9 @@
 
 #include "commonj/sdo/SDO.h"
 
+#include <string>
+using std::string;
+
 namespace services
 {
     namespace accountdata
@@ -34,14 +37,14 @@ namespace services
             // float balance
     
             virtual commonj::sdo::DataObjectPtr /* CheckingAccount*/ getCheckingAccount(
-                const char *id) = 0;
+                const string id) = 0;
     
             // SavingsAccount is a data object containing
             // string accountNumber
             // float balance
     
             virtual commonj::sdo::DataObjectPtr /* SavingsAccount */ getSavingsAccount(
-                const char *id) = 0;
+                const string id) = 0;
     
             // StockAccount is a data object containing
             // string accountNumber
@@ -49,7 +52,7 @@ namespace services
             // int quantity
     
             virtual commonj::sdo::DataObjectPtr /* StockAccount */ getStockAccount (
-                const char* id) = 0;
+                const string id) = 0;
     
         };
 

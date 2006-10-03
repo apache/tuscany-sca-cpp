@@ -36,7 +36,7 @@ namespace services {
 
         // Map the format returned by the StockQuote Web service to
         // the format expected in the BigBank application
-        float StockQuoteServiceImpl::getQuote(const char *symbol)
+        float StockQuoteServiceImpl::getQuote(const string symbol)
         {
             ComponentContext myContext = ComponentContext::getCurrent();
 
@@ -45,7 +45,7 @@ namespace services {
                 (StockQuoteWebService*)myContext.getService("webService");
 
             // Invoke the service
-            const char* result = webService->GetQuote(symbol);
+            const string result = webService->GetQuote(symbol);
 
             float stockPrice = 0.0f;
 

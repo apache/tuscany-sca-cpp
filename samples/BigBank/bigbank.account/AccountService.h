@@ -17,6 +17,9 @@
 
 #include "commonj/sdo/SDO.h"
 
+#include <string>
+using std::string;
+
 namespace services
 {
     namespace account
@@ -37,7 +40,7 @@ namespace services
             // float balance.
 
              virtual commonj::sdo::DataObjectPtr /*AccountReport*/
-                 getAccountReport(const char* customerID) = 0;
+                 getAccountReport(const string customerID) = 0;
     
         };
 

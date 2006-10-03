@@ -34,14 +34,14 @@ namespace services
             // float balance
 
             virtual DataObjectPtr /* CheckingAccount*/ getCheckingAccount(
-                const char *id);
+                const string id);
 
             // SavingsAccount is a data object containing
             // string accountNumber
             // float balance
 
             virtual DataObjectPtr /* SavingsAccount */ getSavingsAccount(
-                const char *id);
+                const string id);
 
             // StockAccount is a data object containing
             // string accountNumber
@@ -49,7 +49,7 @@ namespace services
             // int quantity
 
             virtual DataObjectPtr /* StockAccount */ getStockAccount (
-                const char* id);
+                const string id);
 
         };
         

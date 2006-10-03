@@ -38,7 +38,7 @@ namespace services
     {
 
         DataObjectPtr /*AccountReport**/ 
-            AccountServiceImpl::getAccountReport(const char* customerID)
+            AccountServiceImpl::getAccountReport(const string customerID)
         {
                 ComponentContext theContext = ComponentContext::getCurrent();
     
