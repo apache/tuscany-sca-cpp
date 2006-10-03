@@ -461,9 +461,6 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOSchemaSAX2Parser.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOString.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\runtime\core\src\commonj\sdo\SDOUtils.cpp">
 			</File>
 			<File
