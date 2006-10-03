@@ -95,12 +95,12 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sca_cpp.lib tuscany_sdo.lib"
-				OutputFile=".\Debug/Accounts.dll"
+				OutputFile=".\Debug/Account.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="&quot;$(TUSCANY_SCACPP)/extensions/cpp/lib&quot;;&quot;$(TUSCANY_SCACPP)/lib&quot;;&quot;$(TUSCANY_SDOCPP)/lib&quot;"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/Accounts.pdb"
+				ProgramDatabaseFile=".\Debug/Account.pdb"
 				ImportLibrary=".\Debug/Accounts.lib"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -113,7 +113,8 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ..\..\..\..\..\BigBank\Accounts -output ..\..\..\..\..\BigBank\Accounts -verbose"/>
+				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ..\..\..\..\..\BigBank\bigbank.account -output ..\..\..\..\..\BigBank\bigbank.account -verbose"
+				ExcludedFromBuild="FALSE"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -131,129 +132,119 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountDataServiceImpl.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountDataServiceImpl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountDataServiceImpl_AccountDataService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountDataServiceImpl_AccountDataService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountDataServiceImpl_AccountDataService_Wrapper.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountDataServiceImpl_AccountDataService_Wrapper.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl_AccountService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl_accountDataService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl_AccountService_Wrapper.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl_AccountService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl_accountData_Proxy.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl_AccountService_Wrapper.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl_stockQuote_Proxy.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl_stockQuoteService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl_StockQuoteService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl_StockQuoteService_Proxy.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl_StockQuoteService_Wrapper.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl_webService_Proxy.cpp">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl_webService_Proxy.cpp">
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountDataService.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountDataService.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountDataServiceImpl.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountDataServiceImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountDataServiceImpl_AccountDataService_Proxy.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountDataServiceImpl_AccountDataService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountDataServiceImpl_AccountDataService_Wrapper.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountDataServiceImpl_AccountDataService_Wrapper.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountService.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountService.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl_AccountService_Proxy.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl_accountDataService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl_AccountService_Wrapper.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl_AccountService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl_stockQuote_Proxy.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl_AccountService_Wrapper.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteExternalService.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl_stockQuoteService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteService.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteService.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl_StockQuoteExternal_Proxy.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl_StockQuoteService_Proxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl_StockQuoteService_Proxy.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl_StockQuoteService_Wrapper.h">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl_StockQuoteService_Wrapper.h">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl_webService_Proxy.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteWebService.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 			<File
-				RelativePath="..\..\..\..\..\BigBank\WSAccountClient\Tuscany-model.config">
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountDataServiceImpl.componentType">
 			</File>
-
+			<File
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountService.wsdl">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\AccountServiceImpl.componentType">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\bigbank.account.composite">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\BigBank\bigbank.accountmanagement\bigbank.accountmanagement.composite">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl.componentType">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\BigBank\bigbank.account\StockQuoteWebService.wsdl">
+			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\..\..\..\BigBank\Accounts\AccountDataServiceImpl.componentType">
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\BigBank\Accounts\AccountService.wsdl">
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="TRUE">
-				<Tool
-					Name="VCCustomBuildTool"/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\BigBank\Accounts\AccountServiceImpl.componenttype">
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\BigBank\AccountsAccounts.composite">
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteService.wsdl">
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="TRUE">
-				<Tool
-					Name="VCCustomBuildTool"/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\BigBank\Accounts\StockQuoteServiceImpl.componentType">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
