@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-/* $Rev$ $Date: 2005/12/22 11:33:21 $ */
+/* $Rev$ $Date$ */
 
 #ifndef tuscany_sca_util_logwriter_h
 #define tuscany_sca_util_logwriter_h
