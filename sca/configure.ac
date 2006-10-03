@@ -191,9 +191,6 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/php/Makefile
                  runtime/extensions/php/src/Makefile
                  runtime/core/test/Makefile
-                 runtime/core/test/CustomerInfo/Makefile
-                 runtime/core/test/MyValue/Makefile
-                 runtime/core/test/src/Makefile
                  ])
 AC_OUTPUT
 
