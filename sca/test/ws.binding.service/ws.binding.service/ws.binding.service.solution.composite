@@ -16,11 +16,12 @@
  -->
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="ws.binding.service.solution">
+    name="ws.binding.service.solution">
 	
-        <component name="ws.binding.service.solution.component">
-        	<implementation.composite name="ws.binding.service" />
-       	</component>
+
+    <component name="ws.binding.service.solution.component">
+        <implementation.composite name="ws.binding.service" />
+    </component>
 
 </composite>
 

@@ -16,11 +16,12 @@
  -->
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="ws.service.interop.solution">
+    name="ws.service.interop.solution">
 	
-        <component name="ws.service.interop.solution.component">
-        	<implementation.composite name="ws.service.interop" />
-       	</component>
+
+    <component name="ws.service.interop.solution.component">
+        <implementation.composite name="ws.service.interop" />
+    </component>
 
 </composite>
 
