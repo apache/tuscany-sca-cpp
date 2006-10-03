@@ -220,7 +220,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                     axis2_endpoint_ref_t *endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
                     if (endpoint_ref)
                     {
-                        axis2_char_t *address = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
+                        const axis2_char_t *address = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
                         if (address)
                         {
                             axis2_char_t **url_tokens = axis2_parse_request_url_for_svc_and_op(env, address);
