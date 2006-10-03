@@ -95,11 +95,11 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib"
-				OutputFile=".\Release/Client.exe"
+				OutputFile=".\Release/calculator_client.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib"
-				ProgramDatabaseFile=".\Release/Client.pdb"
+				ProgramDatabaseFile=".\Release/calculator_client.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"

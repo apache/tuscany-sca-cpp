@@ -95,11 +95,11 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib"
-				OutputFile=".\Release/WSClient.exe"
+				OutputFile=".\Release/calculator_wsclient.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(AXIS2C_HOME)\lib"
-				ProgramDatabaseFile=".\Release/WSClient.pdb"
+				ProgramDatabaseFile=".\Release/calculator_wsclient.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"

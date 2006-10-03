@@ -99,7 +99,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib tuscany_sca_cpp.lib"
-				OutputFile=".\Release/CalculatorComposite.dll"
+				OutputFile=".\Release/Calculator.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,,$(TUSCANY_SCACPP)/extensions/cpp/lib"
@@ -115,7 +115,8 @@
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
