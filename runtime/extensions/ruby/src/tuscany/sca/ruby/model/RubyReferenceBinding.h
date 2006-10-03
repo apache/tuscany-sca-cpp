@@ -17,6 +17,9 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
+
 #ifndef tuscany_sca_ruby_model_rubyreferencebinding_h
 #define tuscany_sca_ruby_model_rubyreferencebinding_h
 
