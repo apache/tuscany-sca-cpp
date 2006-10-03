@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "osoa/sca/CompositeContext.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/cpp/CompositeContextImpl.h"

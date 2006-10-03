@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "tuscany/sca/cpp/CPPServiceWrapper.h"
 
 #include "osoa/sca/ServiceRuntimeException.h"

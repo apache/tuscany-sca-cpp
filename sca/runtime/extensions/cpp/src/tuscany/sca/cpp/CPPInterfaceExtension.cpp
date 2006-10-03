@@ -17,6 +17,8 @@
  * under the License.
  */
 
+/* $Rev$ $Date$ */
+
 #include "tuscany/sca/cpp/CPPInterfaceExtension.h"
 #include "tuscany/sca/cpp/model/CPPInterface.h"
 #include "tuscany/sca/util/Logging.h"
