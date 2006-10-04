@@ -25,6 +25,9 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "sdo_test - Win32 Release"
 
 OUTDIR=.\Release
@@ -59,40 +62,7 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MD /W3 /GX /I "..\..\..\deploy\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_test.bsc" 
 BSC32_SBRS= \
@@ -135,11 +105,11 @@ OutDir=.\Debug
 
 !IF "$(RECURSE)" == "0" 
 
-ALL : "$(OUTDIR)\sdo_test.exe"
+ALL : "$(OUTDIR)\sdo_test.exe" "$(OUTDIR)\sdo_test.bsc"
 
 !ELSE 
 
-ALL : "sdo_runtime - Win32 Debug" "$(OUTDIR)\sdo_test.exe"
+ALL : "sdo_runtime - Win32 Debug" "$(OUTDIR)\sdo_test.exe" "$(OUTDIR)\sdo_test.bsc"
 
 !ENDIF 
 
@@ -149,12 +119,18 @@ CLEAN :"sdo_runtime - Win32 DebugCLEAN"
 CLEAN :
 !ENDIF 
 	-@erase "$(INTDIR)\main.obj"
+	-@erase "$(INTDIR)\main.sbr"
 	-@erase "$(INTDIR)\SdoGenerate.obj"
+	-@erase "$(INTDIR)\SdoGenerate.sbr"
 	-@erase "$(INTDIR)\sdotest.obj"
+	-@erase "$(INTDIR)\sdotest.sbr"
 	-@erase "$(INTDIR)\sdotest2.obj"
+	-@erase "$(INTDIR)\sdotest2.sbr"
 	-@erase "$(INTDIR)\utils.obj"
+	-@erase "$(INTDIR)\utils.sbr"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
+	-@erase "$(OUTDIR)\sdo_test.bsc"
 	-@erase "$(OUTDIR)\sdo_test.exe"
 	-@erase "$(OUTDIR)\sdo_test.ilk"
 	-@erase "$(OUTDIR)\sdo_test.pdb"
@@ -162,8 +138,51 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
-CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /Zm200 /c 
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /Zm200 /c 
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_test.bsc" 
+BSC32_SBRS= \
+	"$(INTDIR)\main.sbr" \
+	"$(INTDIR)\SdoGenerate.sbr" \
+	"$(INTDIR)\sdotest.sbr" \
+	"$(INTDIR)\sdotest2.sbr" \
+	"$(INTDIR)\utils.sbr"
+
+"$(OUTDIR)\sdo_test.bsc" : "$(OUTDIR)" $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
+<<
+
+LINK32=link.exe
+LINK32_FLAGS=tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\sdo_test.pdb" /debug /machine:I386 /out:"$(OUTDIR)\sdo_test.exe" /pdbtype:sept /libpath:"..\..\..\deploy\lib" 
+LINK32_OBJS= \
+	"$(INTDIR)\main.obj" \
+	"$(INTDIR)\SdoGenerate.obj" \
+	"$(INTDIR)\sdotest.obj" \
+	"$(INTDIR)\sdotest2.obj" \
+	"$(INTDIR)\utils.obj" \
+	"..\sdo_runtime\Debug\tuscany_sdo.lib"
+
+"$(OUTDIR)\sdo_test.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+SOURCE="$(InputPath)"
+DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
+
+ALL : $(DS_POSTBUILD_DEP)
+
+# Begin Custom Macros
+OutDir=.\Debug
+# End Custom Macros
+
+$(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\sdo_test.exe" "$(OUTDIR)\sdo_test.bsc"
+   copy ..\..\..\deploy\bin\*.dll Debug
+	copy ..\..\..\deploy\bin\*.pdb Debug
+	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
+
+!ENDIF 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -195,42 +214,6 @@ CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /D "WIN32
    $(CPP_PROJ) $< 
 <<
 
-RSC=rc.exe
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_test.bsc" 
-BSC32_SBRS= \
-	
-LINK32=link.exe
-LINK32_FLAGS=tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\sdo_test.pdb" /debug /machine:I386 /out:"$(OUTDIR)\sdo_test.exe" /pdbtype:sept /libpath:"..\..\..\deploy\lib" 
-LINK32_OBJS= \
-	"$(INTDIR)\main.obj" \
-	"$(INTDIR)\SdoGenerate.obj" \
-	"$(INTDIR)\sdotest.obj" \
-	"$(INTDIR)\sdotest2.obj" \
-	"$(INTDIR)\utils.obj" \
-	"..\sdo_runtime\Debug\tuscany_sdo.lib"
-
-"$(OUTDIR)\sdo_test.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
-    $(LINK32) @<<
-  $(LINK32_FLAGS) $(LINK32_OBJS)
-<<
-
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=.\Debug
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\sdo_test.exe"
-   copy ..\..\..\deploy\bin\*.dll Debug
-	copy ..\..\..\deploy\bin\*.pdb Debug
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
-
-!ENDIF 
-
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
 !IF EXISTS("sdo_test.dep")
@@ -244,33 +227,93 @@ $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\sdo_test.exe"
 !IF "$(CFG)" == "sdo_test - Win32 Release" || "$(CFG)" == "sdo_test - Win32 Debug"
 SOURCE=..\..\..\runtime\core\test\main.cpp
 
+!IF  "$(CFG)" == "sdo_test - Win32 Release"
+
+
 "$(INTDIR)\main.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
+
+
+"$(INTDIR)\main.obj"	"$(INTDIR)\main.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
 SOURCE=..\..\..\runtime\core\test\SdoGenerate.cpp
+
+!IF  "$(CFG)" == "sdo_test - Win32 Release"
+
 
 "$(INTDIR)\SdoGenerate.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
+
+
+"$(INTDIR)\SdoGenerate.obj"	"$(INTDIR)\SdoGenerate.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
 SOURCE=..\..\..\runtime\core\test\sdotest.cpp
+
+!IF  "$(CFG)" == "sdo_test - Win32 Release"
+
 
 "$(INTDIR)\sdotest.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
+
+
+"$(INTDIR)\sdotest.obj"	"$(INTDIR)\sdotest.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
 SOURCE=..\..\..\runtime\core\test\sdotest2.cpp
+
+!IF  "$(CFG)" == "sdo_test - Win32 Release"
+
 
 "$(INTDIR)\sdotest2.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+!ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
+
+
+"$(INTDIR)\sdotest2.obj"	"$(INTDIR)\sdotest2.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
 SOURCE=..\..\..\runtime\core\test\utils.cpp
+
+!IF  "$(CFG)" == "sdo_test - Win32 Release"
+
 
 "$(INTDIR)\utils.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
+
+
+"$(INTDIR)\utils.obj"	"$(INTDIR)\utils.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 !IF  "$(CFG)" == "sdo_test - Win32 Release"
 

@@ -751,9 +751,5 @@ SOURCE=..\..\..\runtime\core\src\commonj\sdo\XSDTypeInfo.h
 
 SOURCE="..\..\..\Committers Guide.txt"
 # End Source File
-# Begin Source File
-
-SOURCE=..\..\..\readme.txt
-# End Source File
 # End Target
 # End Project

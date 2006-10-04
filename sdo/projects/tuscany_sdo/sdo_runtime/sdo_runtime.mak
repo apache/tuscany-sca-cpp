@@ -25,6 +25,10 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+MTL=midl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "sdo_runtime - Win32 Release"
 
 OUTDIR=.\Release
@@ -82,7 +86,6 @@ CLEAN :
 	-@erase "$(INTDIR)\SDORuntimeException.obj"
 	-@erase "$(INTDIR)\SDOSAX2Parser.obj"
 	-@erase "$(INTDIR)\SDOSchemaSAX2Parser.obj"
-	-@erase "$(INTDIR)\SDOString.obj"
 	-@erase "$(INTDIR)\SDOUtils.obj"
 	-@erase "$(INTDIR)\SDOXMLBufferWriter.obj"
 	-@erase "$(INTDIR)\SDOXMLFileWriter.obj"
@@ -122,42 +125,8 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "..\..\..\runtime\core\src" /I "$(LIBXML2_HOME)\include" /I "$(ICONV_HOME)\include" /I "$(ZLIB_HOME)\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-MTL=midl.exe
 MTL_PROJ=/nologo /D "NDEBUG" /mktyplib203 /win32 
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_runtime.bsc" 
 BSC32_SBRS= \
@@ -210,7 +179,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\SDORuntimeException.obj" \
 	"$(INTDIR)\SDOSAX2Parser.obj" \
 	"$(INTDIR)\SDOSchemaSAX2Parser.obj" \
-	"$(INTDIR)\SDOString.obj" \
 	"$(INTDIR)\SDOUtils.obj" \
 	"$(INTDIR)\SDOXMLBufferWriter.obj" \
 	"$(INTDIR)\SDOXMLFileWriter.obj" \
@@ -321,7 +289,6 @@ CLEAN :
 	-@erase "$(INTDIR)\SDORuntimeException.obj"
 	-@erase "$(INTDIR)\SDOSAX2Parser.obj"
 	-@erase "$(INTDIR)\SDOSchemaSAX2Parser.obj"
-	-@erase "$(INTDIR)\SDOString.obj"
 	-@erase "$(INTDIR)\SDOUtils.obj"
 	-@erase "$(INTDIR)\SDOXMLBufferWriter.obj"
 	-@erase "$(INTDIR)\SDOXMLFileWriter.obj"
@@ -364,42 +331,8 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
 CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\runtime\core\src" /I "$(LIBXML2_HOME)\include" /I "$(ICONV_HOME)\include" /I "$(ZLIB_HOME)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-MTL=midl.exe
 MTL_PROJ=/nologo /D "_DEBUG" /mktyplib203 /win32 
-RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_runtime.bsc" 
 BSC32_SBRS= \
@@ -452,7 +385,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\SDORuntimeException.obj" \
 	"$(INTDIR)\SDOSAX2Parser.obj" \
 	"$(INTDIR)\SDOSchemaSAX2Parser.obj" \
-	"$(INTDIR)\SDOString.obj" \
 	"$(INTDIR)\SDOUtils.obj" \
 	"$(INTDIR)\SDOXMLBufferWriter.obj" \
 	"$(INTDIR)\SDOXMLFileWriter.obj" \
@@ -508,6 +440,36 @@ $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sdo.dll"
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -787,12 +749,6 @@ SOURCE=..\..\..\runtime\core\src\commonj\sdo\SDOSAX2Parser.cpp
 SOURCE=..\..\..\runtime\core\src\commonj\sdo\SDOSchemaSAX2Parser.cpp
 
 "$(INTDIR)\SDOSchemaSAX2Parser.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\commonj\sdo\SDOString.cpp
-
-"$(INTDIR)\SDOString.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
