@@ -1,4 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<!--
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
 <HTML>
 <HEAD>
    <META CONTENT="text/html; charset=iso-8859-1" HTTP-EQUIV="Content-Type">
@@ -17,12 +32,12 @@
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany - Getting Started - SDO C++ Milestone release 1</H2> 
+         <H2>Tuscany - Getting Started - SDO C++ Milestone release 2</H2> 
 
          <P>Tuscany SDO C++ is an implementation of the Service Data Objects 2.0 specification for C++ developers.
           This page describes what is needed to install Tuscany SDO for C++.<BR/>If you haven't already done so, the first
-         step is to download the SDO C++ Milestone release 1 of Apache Tuscany from our
-         <A HREF="http://incubator.apache.org/tuscany/download.html" target='_blank'>download page</A>.<BR/>
+         step is to download the SDO C++ Milestone release 2 of Apache Tuscany from our
+         <A HREF="http://incubator.apache.org/tuscany/downloads.html" target='_blank'>download page</A>.<BR/>
          </P>
       </DIV>
       <DIV CLASS="section"> 
@@ -33,8 +48,10 @@
                 <UL>
                     <LI><A HREF="#linuxbin">..from the binary release on Linux</A></LI>
                     <LI><A HREF="#linuxsrc">..from the source release on Linux</A></LI>
+                    <LI><A HREF="#linuxsrcstdcxx">..from the source release on Linux with Apache STDCXX</A></LI>
                     <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
                     <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
+                    <LI><A HREF="#winsrcstdcxx">..from the source release on Windows with Apache STDCXX</A></LI>
                 </UL></LI>
             <LI><A HREF="#samples">Samples</A></LI>
             <LI><A HREF="#help">Getting Help</A></LI>
@@ -63,7 +80,7 @@
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD>Axis2C Release 0.92</TD>
+               <TD>Axis2C Release 0.93</TD>
 
                <TD> 
                   <A HREF="http://ws.apache.org/axis2/c/download.cgi"
@@ -82,6 +99,17 @@
                   These libraries will need to be on the PATH in order to run Tuscany SDO.
                </TD>
             </TR>
+            <TR CLASS="b">
+               <TD><STRONG>Optional: </STRONG>STDCXX Release 4.1.3</TD>
+
+               <TD> 
+                  <A HREF="http://incubator.apache.org/stdcxx/" TARGET="_blank">http://incubator.apache.org/stdcxx/download.html</A><BR/>
+                  STDCXX is the Apache implementation of the C++ Standard Library. Tuscany SDO can be built using this library implementation 
+                  rather than the default platform libraries available on your operating system.<BR/>
+                  If you wish to use STDCXX please download, install and follow the instructions below to build SDO with STDCXX.<BR/>
+                  The STDCXX libraries will then need to be on the PATH in order to run Tuscany SDO.
+               </TD>
+            </TR>
             </TBODY>
          </TABLE>
       </DIV> 
@@ -89,12 +117,12 @@
          <A NAME="install"><H2>Installing Tuscany SDO for C++</H2></A>
          <A NAME="linuxbin"><H3>Getting Tuscany SDO for C++ working with the binary release on Linux</H3></A>
           <OL>
-              <LI>Extract the binary tar package to a folder</LI>
-              <LI>Add the *install_dir*/lib directory to the LD_LIBRARY_PATH (Linux) or DYLD_LIBRARY_PATH (MacOS X) environment variable</LI>
+              <LI>Extract the binary tar package to a folder &lt;tuscany_sdo_install_dir&gt;</LI>
+              <LI>Add the &lt;tuscany_sdo_install_dir&gt;/lib directory to the LD_LIBRARY_PATH <!-- (Linux) or DYLD_LIBRARY_PATH (MacOS X) --> environment variable</LI>
           </OL>
          <A NAME="linuxsrc"><H3>Getting Tuscany SDO for C++ working with the source release on Linux</H3></A>
           <OL>
-              <LI>Extract the source tar package to a folder &lt;tuscany_sdo&gt;</LI>
+              <LI>Extract the source tar package to a folder &lt;tuscany_sdo_install_dir&gt;</LI>
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>LIBXML2_INCLUDE=&lt;path to libxml2 includes&gt;                                      
@@ -103,7 +131,7 @@
                    LIBXML2_LIB=/usr/lib<BR/>
                    LIBXML2_INCLUDE=/usr/include/libxml2<BR/></LI>
                                                                                                 
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
                 </UL></LI>
               <LI>Build the source with the following command sequence:
                   <UL>
@@ -115,37 +143,86 @@
                   /usr/local/tuscany/sdo</LI>
               <LI>Run the test:
                   <UL>
-                      <LI>cd to &lt;tuscany_sdo&gt;/runtime/core/test</LI>
+                      <LI>cd to &lt;tuscany_sdo_install_dir&gt;/runtime/core/test</LI>
+                      <LI>./tuscany_sdo_test</LI>
+                  </UL></LI>
+          </OL>
+         <A NAME="linuxsrcstdcxx"><H3>Getting Tuscany SDO for C++ working with the source release and Apache STDCXX on Linux</H3></A>
+          <OL>
+              <LI>Extract the source tar package to a folder &lt;tuscany_sdo_install_dir&gt;</LI>
+              <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>LIBXML2_INCLUDE=&lt;path to libxml2 includes&gt;                                      
+                  <LI>LIBXML2_LIB=&lt;path to libxml2 lib&gt;<BR/>
+                   Note: If you are using the default installation of libxml2 these are usually:<BR/>
+                   LIBXML2_LIB=/usr/lib<BR/>
+                   LIBXML2_INCLUDE=/usr/include/libxml2<BR/></LI>
+                                                                                                
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
+                </UL></LI>
+              <LI>Build the source with the following command sequence:
+                  <UL>
+                      <LI>./configure</LI>
+                      <LI>make</LI>
+                      <LI>make install</LI>
+                  </UL>
+	              NOTE: If you don't provide a --prefix configure option, it will by default install into
+                  /usr/local/tuscany/sdo</LI>
+              <LI>Run the test:
+                  <UL>
+                      <LI>cd &lt;tuscany_sdo_install_dir&gt;/runtime/core/test</LI>
                       <LI>./tuscany_sdo_test</LI>
                   </UL></LI>
           </OL>
            
         <A NAME="winbin"><H3>Getting Tuscany SDO for C++ working with the binary release on Windows</H3></A>
           <OL>
-              <LI>Unzip the supplied zip file to a folder</LI>
-              <LI>Add the *install_dir*\bin directory to the PATH environment variable</LI>
+              <LI>Unzip the supplied zip file to a folder &lt;tuscany_sdo_install_dir&gt;</LI>
+              <LI>Add the &lt;tuscany_sdo_install_dir&gt;\bin directory to the PATH environment variable</LI>
           </OL>
         <A NAME="winsrc"><H3>Getting Tuscany SDO for C++ working with the source release on Windows</H3></A>
            <OL>   
-              <LI>Unzip the supplied source zip file</LI>
+              <LI>Unzip the supplied source zip file to a folder &lt;tuscany_sdo_install_dir&gt;</LI>
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>LIBXML2_HOME=&lt;path to installed libxml2&gt;<BR/>
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
                 </UL></LI>
               <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
                   will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
                   This will be where you installed the compiler.</LI>
               <LI>Build the source:
                   <UL>
-                      <LI>cd &lt;to where you unzipped the source&gt;</LI>
+                      <LI>cd &lt;tuscany_sdo_install_dir&gt;</LI>
                       <LI>build</LI>                      
                   </UL>
-	              This will build all the projects and put the required output into the 'deploy' directory<BR/><BR/>
+	              This will build all the projects and put the required output into the &lt;tuscany_sdo_install_dir&gt;\deploy directory<BR/><BR/>
                   Alternatively, open the workspace tuscany_sdo.dsw in Visual Studio 6 - you can build projects individually
                   or build the test project to build all its dependencies. Running the test project should give a list of
                   tests passed - this is currently 108 tests, no failures.</LI>
-              <LI>Add the 'deploy'\bin directory PATH environment variable</LI>
+              <LI>Add the &lt;tuscany_sdo_install_dir&gt;\deploy\bin directory to the PATH environment variable</LI>
+          </OL>
+        <A NAME="winsrcstdcxx"><H3>Getting Tuscany SDO for C++ working with the source release and Apache STDCXX on Windows</H3></A>
+           <OL>   
+              <LI>Unzip the supplied source zip file to a folder &lt;tuscany_sdo_install_dir&gt;</LI>
+              <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>LIBXML2_HOME=&lt;path to installed libxml2&gt;<BR/>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
+                </UL></LI>
+              <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
+                  will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
+                  This will be where you installed the compiler.</LI>
+              <LI>Build the source:
+                  <UL>
+                      <LI>cd &lt;tuscany_sdo_install_dir&gt;</LI>
+                      <LI>build</LI>                      
+                  </UL>
+	              This will build all the projects and put the required output into the &lt;tuscany_sdo_install_dir&gt;\deploy directory<BR/><BR/>
+                  Alternatively, open the workspace tuscany_sdo.dsw in Visual Studio 6 - you can build projects individually
+                  or build the test project to build all its dependencies. Running the test project should give a list of
+                  tests passed - this is currently 108 tests, no failures.</LI>
+              <LI>Add the &lt;tuscany_sdo_install_dir&gt;\deploy\bin directory to the PATH environment variable</LI>
           </OL>
       </DIV>
 
@@ -195,9 +272,6 @@
                </TD>
             </TR>
             </TBODY>
-         </TABLE>
-
-         <P></P>
       </DIV>
    </DIV>
 </DIV>

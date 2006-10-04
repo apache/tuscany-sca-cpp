@@ -1,4 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<!--
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
 <HTML>
 <HEAD>
    <META CONTENT="text/html; charset=iso-8859-1" HTTP-EQUIV="Content-Type">
@@ -22,24 +37,26 @@
          <P>Tuscany SDO C++ includes some simple technology samples that demonstrate some of the basic sceanrios for C++ SDO. 
             This page describes the samples and what is needed to install and run them.
          </P>
-         <P>The ObjectCreation sample demonstrates building the metadata programmatically, followed by use 
-            of the metadata to instantiate objects in a graph.
-         </P>
-         <P>The XSDLoading sample shows how to load metadata from an XSD, and how to check for errors during 
-            parsing. The parser gathers all non-fatal errors into one list, so all errors can be checked at one
-            time after parsing. Elements which contained errors will have been omitted from the resulting metadata.
-         </P>
-         <P>The ChangeSummarySave sample modifies a data graph of employees, and saves the modified graph with
-            its change summary. The output in ChangeSummarySave-output.xml shows the summary and its relationship 
-            by references to the data graph.
-         </P>
-         <P>The Substitutes sample shows how to use substitites in XSD  to achieve a property which will accept a 
-            range of types.
-         </P>
-         <P>The Query sample shows how to use XPath to navigate within a graph to the required element. Note 
-            that exceptions such as "path not found" may well be thrown if the XPath specified does not lead to
-            a real object in the graph.
-         </P>
+          <UL>              
+             <LI>The ObjectCreation sample demonstrates building the metadata programmatically, followed by use 
+                of the metadata to instantiate objects in a graph.
+             </LI>
+             <LI>The XSDLoading sample shows how to load metadata from an XSD, and how to check for errors during 
+                parsing. The parser gathers all non-fatal errors into one list, so all errors can be checked at one
+                time after parsing. Elements which contained errors will have been omitted from the resulting metadata.
+             </LI>
+             <LI>The ChangeSummarySave sample modifies a data graph of employees, and saves the modified graph with
+                its change summary. The output in ChangeSummarySave-output.xml shows the summary and its relationship 
+                by references to the data graph.
+             </LI>
+             <LI>The Substitutes sample shows how to use substitites in XSD  to achieve a property which will accept a 
+                range of types.
+             </LI>
+             <LI>The Query sample shows how to use XPath to navigate within a graph to the required element. Note 
+                that exceptions such as "path not found" may well be thrown if the XPath specified does not lead to
+                a real object in the graph.
+             </LI>
+          </UL>
          <P>The SDO samples are built together into a single executable called sdo_misc.exe on Windows and sdo_misc on Linux
          </P>
       </DIV>
@@ -48,8 +65,9 @@
          <H2>Contents</H2> 
          <OL>
             <LI><A HREF="#linuxbld">Building the samples on Linux</A></LI>
+            <LI><A HREF="#linuxbldstdcxx">Building the samples on Linux with Apache STDCXX</A></LI>
             <LI><A HREF="#linuxrun">Running the samples on Linux</A></LI>
-            <LI><A HREF="#winbld">Building the samples on Windows</A></LI>
+            <LI><A HREF="#winbldstdcxx">Building the samples on Windows with Apache STDCXX</A></LI>
             <LI><A HREF="#winrun">Running the samples on Windows</A></LI>
          </OL>
       </DIV>
@@ -63,7 +81,28 @@
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
+                </UL></LI>
+             </LI>
+             <LI>Build the source with the following command sequence:
+                  <UL>
+                      <LI>cd &lt;tuscany_sdo_install_dir&gt;/samples</LI>
+                      <LI>./configure</LI>
+                      <LI>make</LI>
+                      <LI>make install</LI>
+                  </UL>
+	              NOTE: If you don't provide a --prefix configure option, it will by default install into
+                  /usr/local/tuscany/sdo/samples/misc</LI>
+         </OL>                                                  
+        </DIV>
+
+       <DIV CLASS="section"> 
+         <A NAME="linuxbldstdcxx"><H2>Building the samples on Linux with Apache STDCXX</H2></A>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
                 </UL></LI>
              </LI>
              <LI>Build the source with the following command sequence:
@@ -100,7 +139,29 @@
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
+                </UL></LI>
+             </LI>
+             <LI>You must have set up the environment for Microsoft Visual C++ tools.
+                 The build command will call vcvars32 to set the environment. Ensure the 
+                 directory containing this is on your path. This will be where you 
+                 installed the compiler.
+             </LI>
+             <LI>Build the source, either via the Visual Studio 6 project under 
+                 &lt;tuscany_sdo_install_dir&gt;\samples\ides or via the command-line build file
+                 found at &lt;tuscany_sdo_install_dir&gt;\samples\ides\devstudio6\projects\misc\build.cmd
+                 which will build and deploy the samples.
+             </LI>
+         </OL>                                                  
+        </DIV>
+
+         <DIV CLASS="section">
+         <A NAME="winbldstdcxx"><H2>Building the samples on Windows with Apache STDCXX</H2></A>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
                 </UL></LI>
              </LI>
              <LI>You must have set up the environment for Microsoft Visual C++ tools.
