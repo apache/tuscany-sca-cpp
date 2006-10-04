@@ -1,3 +1,4 @@
+@echo off
 @REM  Licensed to the Apache Software Foundation (ASF) under one
 @REM  or more contributor license agreements.  See the NOTICE file
 @REM  distributed with this work for additional information
@@ -14,5 +15,6 @@
 @REM  KIND, either express or implied.  See the License for the
 @REM  specific language governing permissions and limitations
 @REM  under the License.
+
 rm -rf out
 java -jar scagen.jar -dir c:\workspaces\wid60-no-core\Hydra.sca.core\test\testSCASystem\packages\MyValueServiceComposite -output c:\hydra\out
