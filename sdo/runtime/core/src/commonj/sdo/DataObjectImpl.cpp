@@ -3603,14 +3603,16 @@ void DataObjectImpl::handlePropertyNotSet(const char* name)
          PropertyValueMap::iterator i = PropertyValues.begin();
         while (i != PropertyValues.end()) 
         {
-            unset((*i).first);
-            if (i == PropertyValues.begin())
+            unsigned int pindx = (*i).first;
+            unset(pindx);
+            i = PropertyValues.begin();
+            if (i != PropertyValues.end() && (*i).first == pindx)
             {
                 // unset has not removed the item from the list - do it 
                 // here instead
                 PropertyValues.erase(i);
+                i = PropertyValues.begin();
             }
-            i = PropertyValues.begin();
         }
 
         // Theory: A DO cant get here if its still attached to anything,
