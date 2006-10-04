@@ -17,6 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+
 APFULLDIR=`pwd`
 
 if [ x$TUSCANY_SCACPP = x ]; then
