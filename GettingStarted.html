@@ -17,14 +17,16 @@
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany - Getting Started - SCA C++ Milestone release 1</H2> 
+         <H2>Tuscany - Getting Started - SCA C++ Milestone release 2</H2> 
 
          <P>Tuscany SCA C++ provides a runtime implementation for the Service Component
-         Architecture 0.9 specification, written in C++ and currently supports C++
+         Architecture 0.96 Assembly specification and the 0.95 C++ Client & Implementation specification 
+         (found <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">here</A>), 
+         written in C++ and currently supports C++, Python and Ruby
          component implementation types. This page describes what is needed to install and run Tuscany
          SCA for C++.<BR/>If you haven't already done so, the first
-         step is to download the SCA C++ Milestone release 1 of Apache Tuscany from our
-         <A HREF="http://incubator.apache.org/tuscany/download.html" target='_blank'>download page</A>.<BR/>
+         step is to download the SCA C++ Milestone release 2 of Apache Tuscany from our
+         <A HREF="http://incubator.apache.org/tuscany/downloads.html" target='_blank'>download page</A>.<BR/>
          </P>
       </DIV>
 
@@ -70,7 +72,7 @@
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD>Axis2C Release 0.92</TD>
+               <TD>Axis2C Release 0.93</TD>
 
                <TD> 
                   <A HREF="http://ws.apache.org/axis2/c/download.cgi"
@@ -79,7 +81,7 @@
                </TD>
             </TR>
             <TR CLASS="b">
-               <TD>Tuscany SDO for C++ Milestone Release 1</TD>
+               <TD>Tuscany SDO for C++ Milestone Release 2</TD>
 
                <TD> 
                   <A HREF="http://incubator.apache.org/tuscany/download.html"
@@ -116,7 +118,7 @@
           <OL>
               <LI>Extract the binary tar package to a folder</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just extracted</LI>
-              <LI>Add the *install_dir*/lib directory to the LD_LIBRARY_PATH (Linux) or DYLD_LIBRARY_PATH (MacOS X) environment variable</LI>
+              <LI>Add the *install_dir*/lib directory to the LD_LIBRARY_PATH <!--(Linux) or DYLD_LIBRARY_PATH (MacOS X)--> environment variable</LI>
           </OL>
          <A NAME="linuxsrc"><H3>Getting Tuscany SCA for C++ working with the source release on Linux</H3></A>
           <OL>
@@ -124,7 +126,7 @@
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
                 </UL></LI>
               <LI>Build the source with the following command sequence:
                   <UL>
@@ -148,7 +150,7 @@
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.93&gt;</LI>
                 </UL></LI>
               <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
                   will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
@@ -205,7 +207,7 @@
       <DIV CLASS="section"> 
          <A NAME="help"><H2>Getting Help</H2></A>
 
-         <P>First place to look is at the Tuscany FAQ at 
+         <P>The first place to look is at the Tuscany FAQ at 
          <A HREF="http://incubator.apache.org/tuscany/faq.html"
             TARGET="_blank">http://incubator.apache.org/tuscany/faq.html</A> </P>
 
@@ -227,15 +229,10 @@
 
                   <P>Thank you for your interest in Tuscany.</P> <STRONG><EM>-The
                   Tuscany Development Team</EM></STRONG> 
-
-                  <P></P>
-
                </TD>
             </TR>
             </TBODY>
          </TABLE>
-
-         <P></P>
       </DIV>
    </DIV>
 </DIV>
