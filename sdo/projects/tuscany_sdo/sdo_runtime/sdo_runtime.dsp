@@ -58,7 +58,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=deploy
-PostBuild_Cmds=..\..\..\runtime\core\src\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_runtime\Release
+PostBuild_Cmds=..\..\..\runtime\core\src\deploy.bat ..\..\..\ Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "sdo_runtime - Win32 Debug"
@@ -90,7 +90,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=deploy
-PostBuild_Cmds=..\..\..\runtime\core\src\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_runtime\Debug
+PostBuild_Cmds=..\..\..\runtime\core\src\deploy.bat ..\..\..\ Debug
 # End Special Build Tool
 
 !ENDIF 

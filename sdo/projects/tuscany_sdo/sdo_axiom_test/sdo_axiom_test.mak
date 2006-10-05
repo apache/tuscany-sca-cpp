@@ -210,24 +210,24 @@ SOURCE=..\..\..\runtime\core\sdo_axiom_test\sdo_axiom_test.cpp
 !IF  "$(CFG)" == "sdo_axiom_test - Win32 Release"
 
 "sdo_axiom - Win32 Release" : 
-   cd "..\sdo_axiom"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_axiom"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_axiom.mak CFG="sdo_axiom - Win32 Release" 
    cd "..\sdo_axiom_test"
 
 "sdo_axiom - Win32 ReleaseCLEAN" : 
-   cd "..\sdo_axiom"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_axiom"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_axiom.mak CFG="sdo_axiom - Win32 Release" RECURSE=1 CLEAN 
    cd "..\sdo_axiom_test"
 
 !ELSEIF  "$(CFG)" == "sdo_axiom_test - Win32 Debug"
 
 "sdo_axiom - Win32 Debug" : 
-   cd "..\sdo_axiom"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_axiom"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_axiom.mak CFG="sdo_axiom - Win32 Debug" 
    cd "..\sdo_axiom_test"
 
 "sdo_axiom - Win32 DebugCLEAN" : 
-   cd "..\sdo_axiom"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_axiom"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_axiom.mak CFG="sdo_axiom - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\sdo_axiom_test"
 
@@ -236,24 +236,24 @@ SOURCE=..\..\..\runtime\core\sdo_axiom_test\sdo_axiom_test.cpp
 !IF  "$(CFG)" == "sdo_axiom_test - Win32 Release"
 
 "sdo_runtime - Win32 Release" : 
-   cd "..\sdo_runtime"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Release" 
    cd "..\sdo_axiom_test"
 
 "sdo_runtime - Win32 ReleaseCLEAN" : 
-   cd "..\sdo_runtime"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Release" RECURSE=1 CLEAN 
    cd "..\sdo_axiom_test"
 
 !ELSEIF  "$(CFG)" == "sdo_axiom_test - Win32 Debug"
 
 "sdo_runtime - Win32 Debug" : 
-   cd "..\sdo_runtime"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Debug" 
    cd "..\sdo_axiom_test"
 
 "sdo_runtime - Win32 DebugCLEAN" : 
-   cd "..\sdo_runtime"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\sdo_axiom_test"
 

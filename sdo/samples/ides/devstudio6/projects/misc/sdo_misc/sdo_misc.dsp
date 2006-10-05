@@ -54,7 +54,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib /nologo /subsystem:console /machine:I386 /libpath:"$(TUSCANY_SDOCPP)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=if not exist ..\..\..\..\..\misc\deploy mkdir ..\..\..\..\..\misc\deploy	if not exist ..\..\..\..\..\misc\deploy\bin mkdir ..\..\..\..\..\misc\deploy\bin	copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy	copy ..\..\..\..\..\misc\*.xml ..\..\..\..\..\misc\deploy	copy Release\*.exe ..\..\..\..\..\misc\deploy\bin
+PostBuild_Cmds=..\..\..\..\..\misc\deploy.bat ..\..\..\..\..\misc Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "sdo_misc - Win32 Debug"
@@ -83,7 +83,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=if not exist ..\..\..\..\..\misc\deploy mkdir ..\..\..\..\..\misc\deploy	if not exist ..\..\..\..\..\misc\deploy\bin mkdir ..\..\..\..\..\misc\deploy\bin	copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy	copy ..\..\..\..\..\misc\*.xml ..\..\..\..\..\misc\deploy	copy Debug\*.exe ..\..\..\..\..\misc\deploy\bin
+PostBuild_Cmds=..\..\..\..\..\misc\deploy.bat ..\..\..\..\..\misc Debug
 # End Special Build Tool
 
 !ENDIF 

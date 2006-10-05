@@ -118,7 +118,7 @@ OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Release" "$(OUTDIR)\tuscany_sdo_axiom.dll"
-   ..\..\..\runtime\core\sdo_axiom\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_axiom\Release
+   ..\..\..\runtime\core\sdo_axiom\deploy.bat ..\..\..\ Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_axiom - Win32 Debug"
@@ -217,7 +217,7 @@ OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\tuscany_sdo_axiom.dll"
-   ..\..\..\runtime\core\sdo_axiom\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_axiom\Debug
+   ..\..\..\runtime\core\sdo_axiom\deploy.bat ..\..\..\ Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
@@ -242,24 +242,24 @@ SOURCE=..\..\..\runtime\core\sdo_axiom\sdo_axiom.cpp
 !IF  "$(CFG)" == "sdo_axiom - Win32 Release"
 
 "sdo_runtime - Win32 Release" : 
-   cd "..\sdo_runtime"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Release" 
    cd "..\sdo_axiom"
 
 "sdo_runtime - Win32 ReleaseCLEAN" : 
-   cd "..\sdo_runtime"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Release" RECURSE=1 CLEAN 
    cd "..\sdo_axiom"
 
 !ELSEIF  "$(CFG)" == "sdo_axiom - Win32 Debug"
 
 "sdo_runtime - Win32 Debug" : 
-   cd "..\sdo_runtime"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Debug" 
    cd "..\sdo_axiom"
 
 "sdo_runtime - Win32 DebugCLEAN" : 
-   cd "..\sdo_runtime"
+   cd "\tuscanysvn\cpp\sdo\projects\tuscany_sdo\sdo_runtime"
    $(MAKE) /$(MAKEFLAGS) /F .\sdo_runtime.mak CFG="sdo_runtime - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\sdo_axiom"
 

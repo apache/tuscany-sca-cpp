@@ -24,6 +24,10 @@ goto end
 )
 echo using Axis2C: %AXIS2C_HOME%"
 
+if not .%1 == . (
+cd %1
+)
+
 if "%TUSCANY_SDOCPP%" == "" (
 echo "TUSCANY_SDOCPP not set"
 set TUSCANY_SDOCPP=%cd%\deploy

@@ -257,7 +257,7 @@ OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sdo.dll"
-   ..\..\..\runtime\core\src\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_runtime\Release
+   ..\..\..\runtime\core\src\deploy.bat ..\..\..\ Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_runtime - Win32 Debug"
@@ -495,7 +495,7 @@ OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sdo.dll"
-   ..\..\..\runtime\core\src\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_runtime\Debug
+   ..\..\..\runtime\core\src\deploy.bat ..\..\..\ Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
