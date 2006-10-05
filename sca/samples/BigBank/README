@@ -1,0 +1,29 @@
+Tuscany SCA for C++ Samples - BigBank Sample
+===============================================
+
+This sample implements the "Simplified BigBank" scenario. A whitepaper 
+describing the scenario based on the SCA 0.9 Assembly specification can be 
+found here. This sample uses multiple C++ components, calls out to an 
+external Web Service via a reference, exposes the service as a Web Service 
+and also provides a PHP based client.
+
+There are five sub projects in this workspace:
+    - bigbank.account
+      This contains the source code and SCDL artifacts for the SCA BigBank 
+      composite implementing the account services.
+
+    - bigbank.accountmanagement
+      This contains the SCDL file describing the configuration of the SCA 
+      BigBank composite deployed to the SCA runtime.
+
+    - bigbank.client
+      A sample client which does a local call to the BigBank service.
+
+    - bigbank.wsclient
+      A sample Axis2 Web Service client which calls the BigBank Web service.
+
+    - bigbank.phpclient
+      A sample PHP client which calls the BigBank Web service and then 
+      deconstructs and displays the result by using the SDO for PHP extension.
+
+See the README.html file for instructions to build and run this sample

@@ -20,4 +20,4 @@ There are four sub projects in this workspace:
     - sample.calculator.wsclient
       A sample Axis2 Web Service client which calls the Calculator Web service.
 
-
+See the README.html file for instructions to build and run this sample
