@@ -119,11 +119,11 @@
           <OL>
               <LI>Extract the binary tar package to a folder</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just extracted</LI>
-              <LI>Add the *install_dir*/lib directory to the LD_LIBRARY_PATH <!--(Linux) or DYLD_LIBRARY_PATH (MacOS X)--> environment variable</LI>
+              <LI>Add the &lt;tuscany_sca_install_dir&gt;/lib directory to the LD_LIBRARY_PATH <!--(Linux) or DYLD_LIBRARY_PATH (MacOS X)--> environment variable</LI>
           </OL>
          <A NAME="linuxsrc"><H3>Getting Tuscany SCA for C++ working with the source release on Linux</H3></A>
           <OL>
-              <LI>Extract the source tar package to a folder &lt;tuscany_sca&gt;</LI>
+              <LI>Extract the source tar package to a folder &lt;tuscany_sca_install_dir&gt;</LI>
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
@@ -131,19 +131,21 @@
                 </UL></LI>
               <LI>Build the source with the following command sequence:
                   <UL>
-                      <LI>./configure</LI>
+                      <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy</LI>
                       <LI>make</LI>
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
                   /usr/local/tuscany/sca</LI>
+              <LI>Set the TUSCANY_SCACPP environment variable to point to the &lt;tuscany_sca_install_dir&gt;/deploy
+                  directory that contains the built Tuscany SCA distribution</LI>
               </OL>
            
          <A NAME="winbin"><H3>Getting Tuscany SCA for C++ working with the binary release on Windows</H3></A>
           <OL>
               <LI>Unzip the supplied zip file to a folder</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just unzipped</LI>
-              <LI>Add the *install_dir*\bin directory to the PATH environment variable</LI>
+              <LI>Add the &lt;tuscany_sca_install_dir&gt;\bin directory to the PATH environment variable</LI>
           </OL>
         <A NAME="winsrc"><H3>Getting Tuscany SCA for C++ working with the source release on Windows</H3></A>
            <OL>   
@@ -179,8 +181,8 @@
             compiled into a dll) or invoke a binding (e.g. make a Web Services call).
          </P>
          <P>The table below details the extensions that are included with TuscanySCA for C++ Milestone 
-          Release 2. All these extensions are compiled in the binary releases, but not all are compiled by default 
-          when you follow the instructions above for building SCA from a source release.
+            Release 2. All these extensions are compiled in the binary releases, but not all are compiled by 
+            default when you follow the instructions above for building SCA from a source release.
          </P>
          <TABLE CLASS="bodyTable"> 
             <TBODY>
@@ -225,7 +227,18 @@
             </TR>
             </TBODY>
          </TABLE>
-         <BR> 
+         <P>It is possible to build all the extensions from a Tuscany SCA source release, but you 
+            must ensure that the extension requirements and environment variables are available on 
+            your system (see the <A HREF="doc/PythonExtension.html">Python</A> and 
+            <A HREF="doc/RubyExtension.html">Ruby</A> extension documentation for this information):
+         </P>
+         <P>On <STRONG>Linux</STRONG> use the --enable-all-extensions configure option and then follow 
+            the rest of the above instructions. e.g:
+         </P>
+         <UL>
+             <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy --enable-all-extensions</LI>
+         </UL>
+         <BR/> 
       </DIV>
 
       <DIV CLASS="section"> 

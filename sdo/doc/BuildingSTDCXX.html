@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<!--
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+<HTML>
+<HEAD>
+   <META CONTENT="text/html; charset=iso-8859-1" HTTP-EQUIV="Content-Type">
+   <META CONTENT="text/css" HTTP-EQUIV="Content-Style-Type">
+   <STYLE MEDIA="all" TYPE="text/css">
+@import url("css/maven-base.css");
+@import url("css/maven-theme.css");
+   </STYLE> 
+
+    <LINK HREF="css/maven-theme.css" MEDIA="print" REL="stylesheet"
+         TYPE="text/css">
+   <TITLE>Tuscany SDO C++ - Building STDCXX for Tuscany SDO</TITLE>
+</HEAD>
+
+<BODY>
+<DIV ID="bodyColumn"> 
+   <DIV ID="contentBox"> 
+      <DIV CLASS="section"> 
+         <H2>Tuscany SDO C++ - Building STDCXX for Tuscany SDO</H2> 
+
+         <P>STDCXX is an implementation of the C++ Standard Library provided by Apache.
+         </P>
+         <P>The website is at <A href="http://incubator.apache.org/stdcxx/">http://incubator.apache.org/stdcxx/</A>.
+         </P>
+         <P>At the time of writing, the current release is 4.1.3 and is available as
+            source distribution only. This document explains how to build stdcxx for
+            Windows XP and Red Hat Enterprise Linux 3 in the way required by the SDO build
+            process.
+         </P>
+      </DIV>
+      <DIV CLASS="section"> 
+         <H2>Contents</H2> 
+         <OL>
+            <LI><A HREF="#install">Building STDCXX..</A>
+                <UL>
+                    <LI><A HREF="#linux">..on Linux</A></LI>
+                    <LI><A HREF="#win">..on Windows</A></LI>
+                </UL></LI>
+         </OL>
+      </DIV>
+
+      <DIV CLASS="section"> 
+         <A NAME="install"><H2>Building STDCXX</H2></A>
+         <A NAME="linux"><H3>Building STDCXX on Linux</H3></A>
+
+         <OL>
+             <LI>The release is distributed as a gzipped tar file, called
+                 stdcxx-incubating-4.1.3.tar.gz. Extract the contents of this file into a
+                 convenient directory. For this example, let's assume it is
+                 /home/Tuscany/stdcxx-4.1.3
+             </LI>
+             <LI>Define the STDCXX_HOME environment variable to refer to this directory. The
+                Tuscany SDO build system uses this environment variable to locate stdcxx.
+             </LI>
+             <LI>Change directory to STDCXX_HOME. Then build a debug version of the stdcxx
+                 library using the following command:
+             <DIV CLASS="sourcecode">gmake BUILDDIR=$STDCXX_HOME/Debug BUILDTYPE=15d CONFIG=gcc.config</DIV>         
+                 This will create a sub-directory of STDCXX_HOME called Debug and place the
+                 build products below that.
+             </LI>
+             <LI>For a release version the command is:
+             <DIV CLASS="sourcecode">gmake BUILDDIR=$STDCXX_HOME/Release BUILDTYPE=12d CONFIG=gcc.config</DIV>
+             </LI>        
+         </OL>
+         <P>This provides Tuscany SDO with the versions of stdcxx that it needs for both
+            Release and Debug builds.
+         </P>
+         <A NAME="win"><H3>Building STDCXX on Windows</H3></A>
+         <P>STDCXX is supported only when used with Microsoft Visual Studio C++ V7.1
+         </P>
+         <OL>
+             <LI>The release is distributed as a gzipped tar file, called stdcxx-incubating-4.1.3.tar.gz. 
+                Extract the contents of this file into a convenient directory. For this example let's 
+                assume it is C:\Tuscany\stdcxx-4.1.3
+             </LI>
+             <LI>Define the STDCXX_HOME environment variable to refer to this directory. The
+                Tuscany SDO build system uses this environment variable to locate stdcxx.
+             </LI>
+             <LI>Create two directories to contain the results of building stdcxx. The first is
+                for the debug enabled version and must be:
+             <DIV CLASS="sourcecode">&lt;STDCXX_HOME&gt;\Debug</DIV>
+             </LI>
+             <LI>The second is for the release (ie optimised) version and must be
+             <DIV CLASS="sourcecode">&lt;STDCXX_HOME&gt;\Release</DIV>
+             </LI>
+             <LI>Launch an MSVC++ 7.1 command window. In the command window, set the default
+                directory to &lt;STDCXX_HOME&gt; where there is a file called generate.bat. Create
+                the project definitions that MSVC++ 7.1 will need in order to build stdcxx by
+                running generate.bat using the following command:
+             <DIV CLASS="sourcecode">.\generate.bat /BUILDDIR:&lt;STDCXX_HOME&gt;\Debug /CONFIG:VC71</DIV>
+                It is necessary to provide the full, absolute path to the build directory - it
+                is not sufficient to provide a relative path. (This restriction will be fixed
+                in a future release.)
+             </LI>
+             <LI>Repeat this operation for the release build, via the command:
+             <DIV CLASS="sourcecode">.\generate.bat /BUILDDIR:&lt;STDCXX_HOME&gt;\Release /CONFIG:VC71</DIV>
+             </LI>
+             <LI>Still using the MSVC++ 7.1 command window, set the default directory to one of
+                the two build directories eg
+             <DIV CLASS="sourcecode">cd &lt;STDCXX_HOME&gt;\Debug</DIV>
+             </LI>
+             <LI>Then launch the developer studio via
+             <DIV CLASS="sourcecode">cd &lt;STDCXX_HOME&gt;\Debug</DIV>
+             </LI>
+             <LI>Select the configuration to build. For the Debug version of SDO this will be
+                "15d Debug Thread-safe Dll". Then select "Build Solution". The build will take
+                a while to complete and runs a test suite when it is finished. The test suite
+                is extensive and produces a scattering of errors, however the library build
+                itself is fine.
+             </LI>
+             <LI>Repeat this process for the release version, setting the default directory to
+             <DIV CLASS="sourcecode">cd &lt;STDCXX_HOME&gt;\Release</DIV>
+                 and choosing "12d Optimized Thread-safe Dll" as the build configuration.
+             </LI>        
+         </OL>
+         <P>This provides Tuscany SDO with the versions of stdcxx that it needs for both
+            Release and Debug builds.
+         </P>
+      </DIV>
+   </DIV>
+</DIV>
+</BODY>
+
+</HTML>
+
