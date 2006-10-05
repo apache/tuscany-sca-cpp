@@ -55,7 +55,7 @@ namespace tuscany
             // ===================================================================
             // loadModelElement - load the info from implementation.php 
             // ===================================================================
-            ComponentType* PHPImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
+            ComponentType* PHPImplementationExtension::getImplementation(DataObjectPtr scdlImplementation)
             {
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "PHPImplementation")
@@ -63,7 +63,7 @@ namespace tuscany
                     string module = scdlImplementation->getCString("module");
                     string className = scdlImplementation->getCString("class");
                     
-                    PHPImplementation* phpImpl = new PHPImplementation(composite, module, className);
+                    PHPImplementation* phpImpl = new PHPImplementation(module, className);
                     
                     return phpImpl;
                 }

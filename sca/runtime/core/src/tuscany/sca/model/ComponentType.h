@@ -57,7 +57,7 @@ namespace tuscany
                 /**
                  * Constructor
                  */
-                SCA_API ComponentType(Composite* composite, const string& name);
+                SCA_API ComponentType(const string& name);
 
                 /**
                  * Destructor.
@@ -69,11 +69,6 @@ namespace tuscany
                  */
                 SCA_API const string& getName() const { return name; };
                 
-                /**
-                 * Returns the composite containing this component type
-                 */
-                SCA_API Composite* getComposite() const { return composite; };
-
                 /**
                  * Add a new service type to this component type.
                  * @param serviceType The service type to add.
@@ -149,11 +144,6 @@ namespace tuscany
                  * The name of the component type
                  */
                 string name;
-                
-                /**
-                 * The composite containing this component type
-                 */
-                 Composite* composite;
                 
                 /**
                  * Map of all the service types defined on this component.

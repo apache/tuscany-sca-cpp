@@ -40,7 +40,7 @@ namespace tuscany
             
             // Constructor
             Composite::Composite(const string& name, const string& root) 
-                : ComponentType(this, name), root(root)
+                : ComponentType(name), root(root)
             {
                 LOGENTRY(1, "Composite::constructor");
                 LOGEXIT(1, "Composite::constructor");

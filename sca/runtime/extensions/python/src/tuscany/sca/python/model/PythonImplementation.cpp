@@ -38,8 +38,8 @@ namespace tuscany
 
             // Constructor
             PythonImplementation::PythonImplementation(
-                Composite* composite, const string& module, const string& modulePath, const string& className, Scope scope)
-                : ComponentType(composite, modulePath + "/" + module),
+                const string& module, const string& modulePath, const string& className, Scope scope)
+                : ComponentType(modulePath + "/" + module),
                     module(module), modulePath(modulePath), className(className), scope(scope)
             {
                 LOGENTRY(1,"PythonImplementation::constructor");

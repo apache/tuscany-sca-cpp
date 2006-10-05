@@ -48,12 +48,11 @@ namespace tuscany
             public:
                 /**
                  * Constructor.
-                 * @param composite The composite containing this implementation.
                  * @param module Name of the Ruby module.
                  * @param className Name of the Ruby implementation class.
                  * @param script Path of the Ruby script.
                  */
-                RubyImplementation(Composite* composite, const string& module, const string& className, const string& script);
+                RubyImplementation(const string& module, const string& className, const string& script);
                 
                 /**
                  * Destructor

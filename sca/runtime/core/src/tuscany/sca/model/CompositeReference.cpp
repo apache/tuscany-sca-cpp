@@ -39,7 +39,7 @@ namespace tuscany
             // Constructor
             CompositeReference::CompositeReference(Composite* composite, const string& name,
                     Interface* intface, Interface* callbackInterface, bool conversational, ReferenceType::Multiplicity multiplicity) :
-                Component(composite, name, new ComponentType(composite, name))
+                Component(composite, name, new ComponentType(name))
             {
                 LOGENTRY(1, "CompositeReference::constructor");
                 LOGINFO_1(2, "CompositeReference::constructor: CompositeReference name: %s", name.c_str());

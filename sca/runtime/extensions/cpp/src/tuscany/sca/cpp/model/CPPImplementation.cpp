@@ -38,9 +38,9 @@ namespace tuscany
         {
 
             // Constructor
-            CPPImplementation::CPPImplementation(Composite* composite, const string& library, const string& header,
+            CPPImplementation::CPPImplementation(const string& library, const string& header,
                     const string&headerPath, const string& headerStub, const string& className, Scope scope)
-                : ComponentType(composite, headerPath + headerStub),
+                : ComponentType(headerPath + headerStub),
                     library(library), header(header), headerPath(headerPath),
                     headerStub(headerStub), className(className), scope(scope)
             {

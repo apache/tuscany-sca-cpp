@@ -56,7 +56,7 @@ namespace tuscany
             // ===================================================================
             // loadModelElement - load the info from implementation.python 
             // ===================================================================
-            ComponentType* PythonImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
+            ComponentType* PythonImplementationExtension::getImplementation(DataObjectPtr scdlImplementation)
             {
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "PythonImplementation")
@@ -76,7 +76,7 @@ namespace tuscany
                         scope = PythonImplementation::STATELESS;
                     }
 
-                    PythonImplementation* pythonImpl = new PythonImplementation(composite, module, path, className, scope);
+                    PythonImplementation* pythonImpl = new PythonImplementation(module, path, className, scope);
                     
                     return pythonImpl;
                 }
