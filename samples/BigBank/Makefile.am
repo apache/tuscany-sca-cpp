@@ -1,4 +1,4 @@
 deploydir=$(prefix)/samples/BigBank/deploy/configuration/bigbank.accountmanagement
 SUBDIRS = bigbank.account bigbank.client bigbank.wsclient
-EXTRA_DIST = bigbank.accountmanagement
+EXTRA_DIST = bigbank.accountmanagement README.html
 deploy_DATA = bigbank.accountmanagement/bigbank.accountmanagement.composite
