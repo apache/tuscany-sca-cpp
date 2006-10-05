@@ -25,9 +25,6 @@ NULL=
 NULL=nul
 !ENDIF 
 
-CPP=cl.exe
-RSC=rc.exe
-
 !IF  "$(CFG)" == "sdo_axiom_test - Win32 Release"
 
 OUTDIR=.\Release
@@ -58,7 +55,40 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "..\..\..\deploy\include" /I "$(AXIS2C_HOME)\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_axiom_test.bsc" 
 BSC32_SBRS= \
@@ -74,19 +104,6 @@ LINK32_OBJS= \
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
-
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=.\Release
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Release" "sdo_axiom - Win32 Release" "$(OUTDIR)\sdo_axiom_test.exe"
-   copy ..\..\..\deploy\bin\*.dll Release
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_axiom_test - Win32 Debug"
 
@@ -121,38 +138,8 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /I "$(AXIS2C_HOME)\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_axiom_test.bsc" 
-BSC32_SBRS= \
-	
-LINK32=link.exe
-LINK32_FLAGS=tuscany_sdo.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\sdo_axiom_test.pdb" /debug /machine:I386 /out:"$(OUTDIR)\sdo_axiom_test.exe" /pdbtype:sept /libpath:"..\..\..\deploy\lib" 
-LINK32_OBJS= \
-	"$(INTDIR)\sdo_axiom_test.obj" \
-	"..\sdo_axiom\Debug\tuscany_sdo_axiom.lib" \
-	"..\sdo_runtime\Debug\tuscany_sdo.lib"
-
-"$(OUTDIR)\sdo_axiom_test.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
-    $(LINK32) @<<
-  $(LINK32_FLAGS) $(LINK32_OBJS)
-<<
-
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=.\Debug
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "sdo_axiom - Win32 Debug" "$(OUTDIR)\sdo_axiom_test.exe"
-   copy ..\..\..\deploy\bin\*.dll Debug
-	copy ..\..\..\deploy\bin\*.pdb Debug
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
-
-!ENDIF 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -183,6 +170,25 @@ $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "sdo_axiom - Win32 Debug" "$(O
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
+
+RSC=rc.exe
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_axiom_test.bsc" 
+BSC32_SBRS= \
+	
+LINK32=link.exe
+LINK32_FLAGS=tuscany_sdo.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\sdo_axiom_test.pdb" /debug /machine:I386 /out:"$(OUTDIR)\sdo_axiom_test.exe" /pdbtype:sept /libpath:"..\..\..\deploy\lib" 
+LINK32_OBJS= \
+	"$(INTDIR)\sdo_axiom_test.obj" \
+	"..\sdo_axiom\Debug\tuscany_sdo_axiom.lib" \
+	"..\sdo_runtime\Debug\tuscany_sdo.lib"
+
+"$(OUTDIR)\sdo_axiom_test.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+!ENDIF 
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"

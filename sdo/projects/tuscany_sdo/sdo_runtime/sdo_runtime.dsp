@@ -57,8 +57,8 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Desc=copyout
-PostBuild_Cmds=copy Release\tuscany_sdo.dll ..\..\..\deploy\bin	copy Release\tuscany_sdo.lib ..\..\..\deploy\lib	copy ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
+PostBuild_Desc=deploy
+PostBuild_Cmds=..\..\..\runtime\core\src\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_runtime\Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "sdo_runtime - Win32 Debug"
@@ -89,8 +89,8 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Desc=copyout
-PostBuild_Cmds=copy Debug\tuscany_sdo.dll ..\..\..\deploy\bin	copy Debug\tuscany_sdo.lib ..\..\..\deploy\lib	copy ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo	copy Debug\tuscany_sdo.pdb ..\..\..\deploy\bin
+PostBuild_Desc=deploy
+PostBuild_Cmds=..\..\..\runtime\core\src\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_runtime\Debug
 # End Special Build Tool
 
 !ENDIF 

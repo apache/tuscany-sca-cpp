@@ -48,15 +48,18 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-MTL=midl.exe
-
 !IF  "$(CFG)" == "Build - Win32 Release"
+
+MTL=midl.exe
+MTL_PROJ=
 
 !ELSEIF  "$(CFG)" == "Build - Win32 Debug"
 
+MTL=midl.exe
+MTL_PROJ=
+
 !ENDIF 
 
-MTL_PROJ=
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
 !IF EXISTS("Build.dep")

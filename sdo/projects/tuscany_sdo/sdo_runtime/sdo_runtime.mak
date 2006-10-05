@@ -25,10 +25,6 @@ NULL=
 NULL=nul
 !ENDIF 
 
-CPP=cl.exe
-MTL=midl.exe
-RSC=rc.exe
-
 !IF  "$(CFG)" == "sdo_runtime - Win32 Release"
 
 OUTDIR=.\Release
@@ -125,8 +121,42 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "..\..\..\runtime\core\src" /I "$(LIBXML2_HOME)\include" /I "$(ICONV_HOME)\include" /I "$(ZLIB_HOME)\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+MTL=midl.exe
 MTL_PROJ=/nologo /D "NDEBUG" /mktyplib203 /win32 
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_runtime.bsc" 
 BSC32_SBRS= \
@@ -217,7 +247,7 @@ LINK32_OBJS= \
 <<
 
 SOURCE="$(InputPath)"
-PostBuild_Desc=copyout
+PostBuild_Desc=deploy
 DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
 
 ALL : $(DS_POSTBUILD_DEP)
@@ -227,9 +257,7 @@ OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sdo.dll"
-   copy Release\tuscany_sdo.dll ..\..\..\deploy\bin
-	copy Release\tuscany_sdo.lib ..\..\..\deploy\lib
-	copy ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
+   ..\..\..\runtime\core\src\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_runtime\Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_runtime - Win32 Debug"
@@ -331,8 +359,42 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\runtime\core\src" /I "$(LIBXML2_HOME)\include" /I "$(ICONV_HOME)\include" /I "$(ZLIB_HOME)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "SDO_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+MTL=midl.exe
 MTL_PROJ=/nologo /D "_DEBUG" /mktyplib203 /win32 
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_runtime.bsc" 
 BSC32_SBRS= \
@@ -423,7 +485,7 @@ LINK32_OBJS= \
 <<
 
 SOURCE="$(InputPath)"
-PostBuild_Desc=copyout
+PostBuild_Desc=deploy
 DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
 
 ALL : $(DS_POSTBUILD_DEP)
@@ -433,43 +495,10 @@ OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sdo.dll"
-   copy Debug\tuscany_sdo.dll ..\..\..\deploy\bin
-	copy Debug\tuscany_sdo.lib ..\..\..\deploy\lib
-	copy ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\sdo
-	copy Debug\tuscany_sdo.pdb ..\..\..\deploy\bin
+   ..\..\..\runtime\core\src\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_runtime\Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"

@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_parser.lib axis2_util.lib axiom.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /out:"Release/tuscany_sdo_axiom.dll" /libpath:"..\..\..\deploy\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy       Release\tuscany_sdo_axiom.dll           ..\..\..\deploy\bin          	copy        Release\tuscany_sdo_axiom.lib           ..\..\..\deploy\lib          	copy           ..\..\..\runtime\core\sdo_axiom\sdo_axiom.h           ..\..\..\deploy\include	copy           ..\..\..\runtime\core\sdo_axiom\sdo_axiom_export.h           ..\..\..\deploy\include
+PostBuild_Cmds=..\..\..\runtime\core\sdo_axiom\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_axiom\Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "sdo_axiom - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_parser.lib axis2_util.lib axiom.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /out:"Debug/tuscany_sdo_axiom.dll" /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy           Debug\tuscany_sdo_axiom.dll           ..\..\..\deploy\bin          	copy           Debug\tuscany_sdo_axiom.pdb           ..\..\..\deploy\bin          	copy           Debug\tuscany_sdo_axiom.lib           ..\..\..\deploy\lib          	copy           ..\..\..\runtime\core\sdo_axiom\sdo_axiom.h           ..\..\..\deploy\include	copy           ..\..\..\runtime\core\sdo_axiom\sdo_axiom_export.h           ..\..\..\deploy\include
+PostBuild_Cmds=..\..\..\runtime\core\sdo_axiom\deploy.bat ..\..\..\ ..\..\..\projects\tuscany_sdo\sdo_axiom\Debug
 # End Special Build Tool
 
 !ENDIF 

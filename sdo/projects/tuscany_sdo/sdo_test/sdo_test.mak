@@ -25,9 +25,6 @@ NULL=
 NULL=nul
 !ENDIF 
 
-CPP=cl.exe
-RSC=rc.exe
-
 !IF  "$(CFG)" == "sdo_test - Win32 Release"
 
 OUTDIR=.\Release
@@ -62,7 +59,40 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MD /W3 /GX /I "..\..\..\deploy\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_test.bsc" 
 BSC32_SBRS= \
@@ -81,19 +111,6 @@ LINK32_OBJS= \
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
-
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=.\Release
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Release" "$(OUTDIR)\sdo_test.exe"
-   copy ..\..\..\deploy\bin\*.dll Release
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_test - Win32 Debug"
 
@@ -138,51 +155,8 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\deploy\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /Zm200 /c 
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_test.bsc" 
-BSC32_SBRS= \
-	"$(INTDIR)\main.sbr" \
-	"$(INTDIR)\SdoGenerate.sbr" \
-	"$(INTDIR)\sdotest.sbr" \
-	"$(INTDIR)\sdotest2.sbr" \
-	"$(INTDIR)\utils.sbr"
-
-"$(OUTDIR)\sdo_test.bsc" : "$(OUTDIR)" $(BSC32_SBRS)
-    $(BSC32) @<<
-  $(BSC32_FLAGS) $(BSC32_SBRS)
-<<
-
-LINK32=link.exe
-LINK32_FLAGS=tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\sdo_test.pdb" /debug /machine:I386 /out:"$(OUTDIR)\sdo_test.exe" /pdbtype:sept /libpath:"..\..\..\deploy\lib" 
-LINK32_OBJS= \
-	"$(INTDIR)\main.obj" \
-	"$(INTDIR)\SdoGenerate.obj" \
-	"$(INTDIR)\sdotest.obj" \
-	"$(INTDIR)\sdotest2.obj" \
-	"$(INTDIR)\utils.obj" \
-	"..\sdo_runtime\Debug\tuscany_sdo.lib"
-
-"$(OUTDIR)\sdo_test.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
-    $(LINK32) @<<
-  $(LINK32_FLAGS) $(LINK32_OBJS)
-<<
-
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=.\Debug
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\sdo_test.exe" "$(OUTDIR)\sdo_test.bsc"
-   copy ..\..\..\deploy\bin\*.dll Debug
-	copy ..\..\..\deploy\bin\*.pdb Debug
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
-
-!ENDIF 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -213,6 +187,38 @@ $(DS_POSTBUILD_DEP) : "sdo_runtime - Win32 Debug" "$(OUTDIR)\sdo_test.exe" "$(OU
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
+
+RSC=rc.exe
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\sdo_test.bsc" 
+BSC32_SBRS= \
+	"$(INTDIR)\main.sbr" \
+	"$(INTDIR)\SdoGenerate.sbr" \
+	"$(INTDIR)\sdotest.sbr" \
+	"$(INTDIR)\sdotest2.sbr" \
+	"$(INTDIR)\utils.sbr"
+
+"$(OUTDIR)\sdo_test.bsc" : "$(OUTDIR)" $(BSC32_SBRS)
+    $(BSC32) @<<
+  $(BSC32_FLAGS) $(BSC32_SBRS)
+<<
+
+LINK32=link.exe
+LINK32_FLAGS=tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\sdo_test.pdb" /debug /machine:I386 /out:"$(OUTDIR)\sdo_test.exe" /pdbtype:sept /libpath:"..\..\..\deploy\lib" 
+LINK32_OBJS= \
+	"$(INTDIR)\main.obj" \
+	"$(INTDIR)\SdoGenerate.obj" \
+	"$(INTDIR)\sdotest.obj" \
+	"$(INTDIR)\sdotest2.obj" \
+	"$(INTDIR)\utils.obj" \
+	"..\sdo_runtime\Debug\tuscany_sdo.lib"
+
+"$(OUTDIR)\sdo_test.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+!ENDIF 
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"

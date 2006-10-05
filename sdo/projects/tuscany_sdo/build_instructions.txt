@@ -24,8 +24,6 @@ Build->Set Active Configuration->sdo_axiom_test - Win32 Release
 
 Build->Rebuild All
 
-The output of the build will be in runtime\core\Release.
-
-The executable, required headers and lib are copied to the deploy directory.
+The dlls, required headers and libs are copied to the tuscany\cpp\sdo\deploy directory.
 
 
