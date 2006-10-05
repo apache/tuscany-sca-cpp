@@ -1,0 +1,277 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<!--
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+<HTML>
+<HEAD>
+   <META CONTENT="text/html; charset=iso-8859-1" HTTP-EQUIV="Content-Type">
+   <META CONTENT="text/css" HTTP-EQUIV="Content-Style-Type">
+   <STYLE MEDIA="all" TYPE="text/css">
+@import url("css/maven-base.css");
+@import url("css/maven-theme.css");
+   </STYLE> 
+
+    <LINK HREF="css/maven-theme.css" MEDIA="print" REL="stylesheet"
+         TYPE="text/css">
+   <TITLE>Tuscany SCA for C++ - Ruby Extension</TITLE>
+</HEAD>
+
+<BODY>
+<DIV ID="bodyColumn"> 
+   <DIV ID="contentBox"> 
+      <DIV CLASS="section"> 
+         <H2>Tuscany SCA for C++ - Ruby Extension</H2> 
+
+         <P>The Tuscany Ruby extension allows Ruby scripts to be used as components in
+            SCA composites and as clients that can invoke SCA services.
+         </P>
+         <P>See <A HREF="../samples/RubyCalculator/README.html">RubyCalculator</A> and
+            <A HREF="../samples/RubyBank/README.html">RubyBank</A> for 
+            two samples that demonstrate the use of the Ruby extension.
+         </P>
+      </DIV>
+      <DIV CLASS="section"> 
+         <H2>Contents</H2> 
+         <OL>
+            <LI><A HREF="#requirements">System Requirements</A></LI>
+            <LI><A HREF="#install">Installing the Tuscany SCA Ruby Extension..</A>
+                <UL>
+                    <LI><A HREF="#linuxbin">..from the binary release on Linux</A></LI>
+                    <LI><A HREF="#linuxsrc">..from the source release on Linux</A></LI>
+                    <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
+                    <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
+                </UL></LI>
+            <LI><A HREF="#pm">The Tuscany Ruby Programming Model</A></LI>
+               <UL>
+                  <LI><A HREF="#clients">Clients</A></LI>
+                  <LI><A HREF="#components">SCA Components</A></LI>
+                  <LI><A HREF="#references">Component references</A></LI>
+                  <LI><A HREF="#properties">Component properties</A></LI>
+               </UL>
+            <LI><A HREF="#help">Getting help</A></LI>
+         </OL>
+      </DIV>
+     <DIV CLASS="section"> 
+         <A NAME="requirements"><H2>System Requirements</H2></A>
+
+         <P>In order to install and use the Tuscany SCA Ruby Extension there are some
+         extra requirements in addition to the <A HREF="../GettingStarted.html#requirements">Tuscany 
+         SCA requirements</A>:</P> 
+         <TABLE CLASS="bodyTable">
+
+            <TBODY>
+            <TR CLASS="a">
+               <TD><B>Software</B></TD>
+               <TD><B>Download Link</B></TD>
+            </TR>
+            <TR CLASS="b">
+               <TD>Ruby version 1.8.4 or higher</TD>
+
+               <TD> 
+                  <A HREF="http://www.ruby-lang.org"
+                     TARGET="_blank">http://www.ruby-lang.org</A><BR/>
+                  Please download and follow the installation instructions
+               </TD>
+            </TR>
+            </TBODY>
+         </TABLE>
+      </DIV> 
+
+      <DIV CLASS="section"> 
+         <A NAME="install"><H2>Installing the Tuscany SCA Ruby Extension</H2></A>
+         <A NAME="linuxbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Linux</H3></A>
+          <OL>
+              <LI>Extract the binary tar package to a folder</LI>
+              <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just extracted</LI>
+              <LI>Add the &lt;tuscany_sca_install_dir&gt;/lib directory to the LD_LIBRARY_PATH <!--(Linux) or DYLD_LIBRARY_PATH (MacOS X)--> environment variable</LI>
+          </OL>
+         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Ruby Extension working with the source release on Linux</H3></A>
+          <OL>
+              <LI>You will need the Tuscany SCA and SDO libraries - follow the instructions 
+                  <A HREF="../GettingStarted.html">here</A> to build the SCA libraries and default extensions</LI>
+              <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to built Tuscany SCA&gt;                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                  <LI>RUBY_LIB=&lt;path to Ruby libraries&gt;</LI>
+                  <LI>RUBY_INCLUDE=&lt;path to Ruby includes&gt;<BR/>
+                   Note: If you are using a default installation of Ruby these are usually:<BR/>
+                   RUBY_LIB=/usr/lib<BR/>
+                   RUBY_INCLUDE=/usr/lib/ruby/1.8/i386-linux</LI>
+                </UL></LI>
+              <LI>Build the Ruby source only with the following command sequence:
+                  <UL>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;</LI>
+                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-ruby --enable-cpp=no</LI>
+                      <LI>make</LI>
+                      <LI>make install</LI>
+                  </UL>
+	              NOTE: If you don't provide a --prefix configure option, it will by default install into
+                  /usr/local/tuscany/sca</LI>
+              </OL>
+           
+         <A NAME="winbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Windows</H3></A>
+          <OL>
+              <LI>Unzip the supplied zip file to a folder</LI>
+              <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just unzipped</LI>
+              <LI>Add the &lt;tuscany_sca_install_dir&gt;\bin directory to the PATH environment variable</LI>
+          </OL>
+        <A NAME="winsrc"><H3>Getting the Tuscany SCA Ruby Extension working with the source release on Windows</H3></A>
+           <OL>   
+              <LI>Unzip the supplied source zip file</LI>
+              <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to built Tuscany SCA&gt;                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                  <LI>RUBY_HOME=&lt;path to installed Ruby&gt;                                      
+                </UL></LI>
+              <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
+                  will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
+                  This will be where you installed the compiler.</LI>
+              <LI>Build the source:
+                  <UL>
+                      <LI>cd &lt;to where you unzipped the source&gt;</LI>
+                      <LI>build</LI>                      
+                  </UL>
+	              This will build all the projects and put the required output into the 'deploy' directory<BR/><BR/>
+                  Alternatively, open the workspace tuscany_sca.dsw in Visual Studio 6 - you can build projects individually
+                  or build the samples to rebuild all the projects</LI>
+              <LI>Set the TUSCANY_SCACPP environment variable to point to the 'deploy' directory that was just created</LI>
+          </OL>
+      </DIV>
+
+
+      <DIV CLASS="section"> 
+         <A NAME="pm"><H2>The Tuscany Ruby Programming Model</H2></A>
+         <P>This section will explain the Tuscany Ruby programming model to help you to 
+            write your own Ruby components and clients.
+         </P>
+         <P>The Tuscany Ruby component and client support comes from a Ruby extension 
+            library that is built in the &lt;tuscany_sca_install_dir&gt;/extensions/ruby/bin
+            directory on Windows and &lt;tuscany_sca_install_dir&gt;/extensions/ruby/lib on
+            Linux. 
+         </P>
+         <A NAME="clients"><H3>Clients</H3></A>
+         <P>Using the Ruby SCA extension library, a Ruby client can search for an SCA service with:
+         </P>
+<DIV CLASS="sourcecode">require("libtuscany_sca_ruby")
+
+calculator = SCA::locateService("CalculatorComponent/CalculatorService")
+</DIV>
+         <P>This finds the component and service as defined in the composite and componentType 
+            side files and returns a proxy object that can call the SCA service. You can then 
+            simply call a business method on "calculator", like this:
+         </P>
+<DIV CLASS="sourcecode">result = calculator.add(12.3, 45.6)</DIV>
+         </P>
+         <A NAME="components"><H3>Components</H3></A>
+         <P>Ruby component implementations are standard Ruby scripts, where class-level 
+            functions or module-level functions can be invoked by the Tuscany runtime. To 
+            use a Ruby component implementation, use the implementation.ruby element in 
+            your .composite file. For example:
+         </P>         
+<DIV CLASS="sourcecode">&lt;implementation.ruby script="CalculatorImpl.rb"/&gt;
+</DIV>
+         <P>To instantiate a class instance and use a class-level function, the Ruby class must 
+            have a default constructor (an initialize() method that takes no arguments) and the 
+            class attribute must be definde in the implementation.ruby element 
+            in your composite, like so:
+         </P>
+<DIV CLASS="sourcecode">&lt;implementation.ruby script="CalculatorImpl.rb" class="CalculatorImpl"/&gt;
+</DIV>
+         <P>You can write a componentType file for your Ruby component, but you don't have to, the Ruby 
+            extension introspects Ruby component implementation classes for you and binds public 
+            attributes to references and properties.
+         </P>
+         <A NAME="references"><H3>References</H3></A>
+         <P>References can be invoked from Ruby component implementations by the use of public 
+            attributes in the component implementation classes, like this:
+         </P>
+<DIV CLASS="sourcecode">class CalculatorImpl
+
+  # Define the public attribute that corresponds to the divideService reference
+  attr_writer :divideService
+
+...	
+
+  def div(arg1, arg2)
+    print "Ruby - CalculatorImpl.div\n"
+    # Invoke the divideService reference
+    @divideService.divide(arg1.to_f, arg2.to_f)
+  end
+
+...
+end
+</DIV>
+        <P>and in your composite file:
+        </P>
+<DIV CLASS="sourcecode">&lt;component name="CalculatorComponent"&gt;
+    &lt;implementation.ruby script="CalculatorImpl.rb"/&gt;
+    &lt;reference name="divideService"&gt;DivideComponent/DivideService&lt;/reference&gt;
+&lt;/component&gt;
+</DIV>
+        <A NAME="properties"><H3>Properties</H3></A>
+        <P>A composite with a property defined for a component like so:
+        </P>
+<DIV CLASS="sourcecode">&lt;component name="DivideComponent"&gt;
+    &lt;implementation.ruby script="DivideImpl.rb" class="DivideImpl"/&gt;
+    &lt;property name="round"&gt;true&lt;/property&gt;
+&lt;/component&gt;
+</DIV>
+        <P>allows a public attribute of a Ruby component implementation class to be
+           assigned the property value, so it can be used like so:
+        </P>
+<DIV CLASS="sourcecode">class DivideImpl
+
+  # Define the public attribute that corresponds to the round property
+  attr_writer :round           
+
+...	
+
+  def divide(arg1, arg2)
+    print "Ruby - DivideImpl.divide ", arg1, " / ", arg2, "\n"
+    res = arg1.to_f / arg2.to_f
+    # Use the round property
+    if @round then
+      res = res.round
+      print "DivideImpl.divide rounding\n"
+    end
+    print "DivideImpl.divide ", res, "\n"
+    res
+  end
+end
+</DIV>
+</P>
+      </DIV>
+              
+      <DIV CLASS="section"> 
+         <A NAME="help"><H2>Getting Help</H2></A>
+
+         <P>First place to look is at the Tuscany FAQ at 
+         <A HREF="http://incubator.apache.org/tuscany/faq.html"
+            TARGET="_blank">http://incubator.apache.org/tuscany/faq.html</A> </P>
+
+         <P>Any problem with this release can be reported to the Tuscany 
+         <A HREF="http://incubator.apache.org/tuscany/mail-lists.html"
+            TARGET="_blank">mailing lists</A> or create a JIRA issue at&nbsp;<A HREF="http://issues.apache.org/jira/browse/Tuscany"
+                                                                                TARGET="_blank">http://issues.apache.org/jira/browse/Tuscany</A>.</P>
+      </DIV>
+   </DIV>
+</DIV>
+</BODY>
+
+</HTML>
+

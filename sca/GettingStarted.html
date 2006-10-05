@@ -41,6 +41,7 @@
                     <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
                     <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
                 </UL></LI>
+            <LI><A HREF="#extensions">Tuscany SCA Extensions</A></LI>
             <LI><A HREF="#samples">Samples</A></LI>
             <LI><A HREF="#userguide">User Guide Documents</A></LI>
             <LI><A HREF="#help">Getting Help</A></LI>
@@ -165,6 +166,66 @@
                   or build the samples to rebuild all the projects</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the 'deploy' directory that was just created</LI>
           </OL>
+      </DIV>
+
+      <DIV CLASS="section"> 
+         <A NAME="extensions"><H2>Tuscany SCA Extensions</H2></A>
+         <P>Tuscany SCA is composed of two distinct areas: the core and extensions. The core provides the
+            implementation of the 
+            <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">Service 
+            Component Architecture Assembly Model specification</A>, reading composite files, loading the 
+            appropriate extensions and invoking components via references and services during runtime. The 
+            extensions provide the functionality required to call a component implementation (e.g. a C++ class 
+            compiled into a dll) or invoke a binding (e.g. make a Web Services call).
+         </P>
+         <P>The table below details the extensions that are included with TuscanySCA for C++ Milestone 
+          Release 2. All these extensions are compiled in the binary releases, but not all are compiled by default 
+          when you follow the instructions above for building SCA from a source release.
+         </P>
+         <TABLE CLASS="bodyTable"> 
+            <TBODY>
+            <TR CLASS="a">
+               <TD><STRONG>Extension</STRONG></TD>
+               <TD><STRONG>Details</STRONG></TD>
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;">C++ 
+               </TD>
+               <TD>Provides the SCA C++ client API and enables C++ component implementations 
+                and interfaces. This extension is built by default from a source release.
+               </TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;">Axis2C Web Services 
+               </TD>
+               <TD>Provides the Web Service bindings enabling Tuscany to call SCA references via
+                Web Services or expose SCA services as Web Services. This extension is built by 
+                default from a source release.
+               </TD>
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;">
+                <A HREF="doc/PythonExtension.html">Python</A>
+               </TD>
+               <TD>Provides a Python SCA client API and enables Python component implementations. 
+                This extension is <STRONG>not</STRONG> built by default from a source release. 
+                See the <A HREF="doc/PythonExtension.html">Python extension documentation</A> for 
+                more details.
+               </TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;">
+                <A HREF="doc/RubyExtension.html">Ruby</A>
+               </TD>
+               <TD>Provides a Ruby SCA client API and enables Ruby component implementations. 
+                This extension is <STRONG>not</STRONG> built by default from a source release. 
+                See the <A HREF="doc/RubyExtension.html">Ruby extension documentation</A> for 
+                more details.
+               </TD>
+            </TR>
+            </TBODY>
+         </TABLE>
+         <BR> 
       </DIV>
 
       <DIV CLASS="section"> 
