@@ -55,7 +55,7 @@ namespace tuscany
                 */
                 virtual const string& getExtensionTypeQName() {return typeQName;}
                 
-                virtual ComponentType* getImplementation(Composite* composite, DataObjectPtr scdlImplementation);
+                virtual ComponentType* getImplementation(DataObjectPtr scdlImplementation);
                 
             private:
                 static const string extensionName;

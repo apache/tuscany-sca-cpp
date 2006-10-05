@@ -43,8 +43,8 @@ namespace tuscany
         {
             
            // Constructor
-            ComponentType::ComponentType(Composite* composite, const string& name)
-            : composite(composite), name(name)
+            ComponentType::ComponentType(const string& name)
+            : name(name)
             {
                 LOGENTRY(1, "ComponentType::constructor");
                 LOGEXIT(1, "ComponentType::constructor");
