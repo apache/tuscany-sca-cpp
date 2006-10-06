@@ -123,7 +123,7 @@ if not exist %TO_BIN%\%BIN_PACKAGE%\samples\ides mkdir %TO_BIN%\%BIN_PACKAGE%\sa
 if not exist %TO_BIN%\%BIN_PACKAGE%\samples\misc mkdir %TO_BIN%\%BIN_PACKAGE%\samples\misc
 
 xcopy/s %FROM_DIR%\samples\ides %TO_BIN%\%BIN_PACKAGE%\samples\ides
-xcopy/s %FROM_DIR%\samples\misc %TO_BIN%\%BIN_PACKAGE%\samples\misc
+xcopy/s /Y %FROM_DIR%\samples\misc %TO_BIN%\%BIN_PACKAGE%\samples\misc
 copy %FROM_DIR%\samples\INSTALL   %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\LICENSE   %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\COPYING   %TO_BIN%\%BIN_PACKAGE%\samples
