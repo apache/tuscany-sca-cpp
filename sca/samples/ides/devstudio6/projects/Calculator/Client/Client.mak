@@ -73,7 +73,7 @@ OutDir=.\Release
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\calculator_client.exe"
    ..\..\..\..\..\Calculator\deployclient.bat ..\..\..\..\..\Calculator Release
-	D:\tuscanysvn\cpp\sca\deploy/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose
+	$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "Client - Win32 Debug"
@@ -124,7 +124,7 @@ OutDir=.\Debug
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\calculator_client.exe"
    ..\..\..\..\..\Calculator\deployclient.bat ..\..\..\..\..\Calculator Debug
-	D:\tuscanysvn\cpp\sca\deploy/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose
+	$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
