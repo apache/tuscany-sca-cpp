@@ -55,7 +55,7 @@ namespace tuscany
             // ===================================================================
             // loadModelElement - load the info from implementation.ruby 
             // ===================================================================
-            ComponentType* RubyImplementationExtension::getImplementation(DataObjectPtr scdlImplementation)
+            ComponentType* RubyImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
             {
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "RubyImplementation")
@@ -64,7 +64,7 @@ namespace tuscany
                     string className = scdlImplementation->getCString("class");
                     string script = scdlImplementation->getCString("script");
 
-                    RubyImplementation* rubyImpl = new RubyImplementation(module, className, script);
+                    RubyImplementation* rubyImpl = new RubyImplementation(composite, module, className, script);
                     
                     return rubyImpl;
                 }

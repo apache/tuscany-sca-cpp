@@ -29,6 +29,7 @@ using std::string;
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
+#include "tuscany/sca/model/Composite.h"
 
 #include "commonj/sdo/SDO.h"
 
@@ -66,7 +67,7 @@ namespace tuscany
              * Get an implementation from a DataObject representing
              * an SCDL implementation element
              */ 
-            virtual ComponentType* getImplementation(commonj::sdo::DataObjectPtr scdlImplementation) = 0;
+            virtual ComponentType* getImplementation(Composite* composite, commonj::sdo::DataObjectPtr scdlImplementation) = 0;
 
          };
 

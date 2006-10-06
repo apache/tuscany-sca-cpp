@@ -60,7 +60,7 @@ namespace tuscany
                  * @param className Name of the class in the header file (could be a blank string
                  * if this is not specified).
                  */
-                CPPImplementation(const string& library, const string& header, const string&headerPath,
+                CPPImplementation(Composite* composite, const string& library, const string& header, const string&headerPath,
                         const string& headerStub, const string& className, Scope scope);
                 
                 /**

@@ -37,8 +37,8 @@ namespace tuscany
         {
 
             // Constructor
-            PHPImplementation::PHPImplementation(const string& module, const string& className)
-                : ComponentType(module),
+            PHPImplementation::PHPImplementation(Composite* composite, const string& module, const string& className)
+                : ComponentType(composite, module),
                     module(module), className(className)
             {
                 LOGENTRY(1,"PHPImplementation::constructor");

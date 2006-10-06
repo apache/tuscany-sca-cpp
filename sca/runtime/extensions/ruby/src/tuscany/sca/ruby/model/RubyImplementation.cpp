@@ -43,8 +43,8 @@ namespace tuscany
             VALUE RubyImplementation::xmlDocumentClass = 0;
             
             // Constructor
-            RubyImplementation::RubyImplementation(const string& module, const string& className, const string& script)
-                : ComponentType(script.substr(0, script.find_last_of('.'))),
+            RubyImplementation::RubyImplementation(Composite* composite, const string& module, const string& className, const string& script)
+                : ComponentType(composite, script.substr(0, script.find_last_of('.'))),
                     module(module), className(className), script(script)
             {
                 loadClass();
