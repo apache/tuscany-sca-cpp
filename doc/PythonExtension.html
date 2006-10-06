@@ -174,15 +174,15 @@
          <A NAME="clients"><H3>Clients</H3></A>
          <P>Using the sca module, a Python client can search for an SCA service with:
          </P>
-<DIV CLASS="sourcecode">import sca
+<PRE>import sca
 
 calculator = sca.locateservice("CalculatorComponent/CalculatorService")
-</DIV>
+</PRE>
          <P>This finds the component and service as defined in the composite and componentType 
             side files and returns a proxy object that can call the SCA service. You can then 
             simply call a business method on "calculator", like this:
          </P>
-<DIV CLASS="sourcecode">result = calculator.add(12.3, 45.6)</DIV>
+<PRE>result = calculator.add(12.3, 45.6)</PRE>
          </P>
          <A NAME="components"><H3>Components</H3></A>
          <P>Python component implementations are standard Python scripts, where class-level 
@@ -192,15 +192,15 @@ calculator = sca.locateservice("CalculatorComponent/CalculatorService")
             at path/to/module/PythonModuleName.py, where the path is relative to the location of
             the composite file:
          </P>         
-<DIV CLASS="sourcecode">&lt;implementation.python module="PythonModuleName" path="path/to/module"/&gt;
-</DIV>
+<PRE>&lt;implementation.python module="PythonModuleName" path="path/to/module"/&gt;
+</PRE>
          <P>To instantiate a class instance and use a class-level function, the Python class must 
             have a default constructor (an __init__ method that takes no arguments besides 
             'self') and the class attribute must be defined in the implementation.python element 
             in your composite, like so:
          </P>
-<DIV CLASS="sourcecode">&lt;implementation.python module="PythonModuleName" path="relative/path/to/module" class="PythonClassName"/&gt;
-</DIV>
+<PRE>&lt;implementation.python module="PythonModuleName" path="relative/path/to/module" class="PythonClassName"/&gt;
+</PRE>
          <P>Additionally, Tuscany currently requires a componentType file that corresponds to the 
             name of the Python module, e.g. for the Python Calculator sample, the module name is
             'CalculatorImpl' and the componentType file is 'CalculatorImpl.componentType'. The 
@@ -208,7 +208,7 @@ calculator = sca.locateservice("CalculatorComponent/CalculatorService")
             references are called by the component. For example, CalculatorImpl.componentType
             contains the following:
          </P>
-<DIV CLASS="sourcecode">&lt;componentType xmlns="http://www.osoa.org/xmlns/sca/1.0"&gt;
+<PRE>&lt;componentType xmlns="http://www.osoa.org/xmlns/sca/1.0"&gt;
     &lt;service name="CalculatorService"&gt;
         &lt;interface.python/&gt;
     &lt;/service&gt;
@@ -216,44 +216,44 @@ calculator = sca.locateservice("CalculatorComponent/CalculatorService")
         &lt;interface.python/&gt;
     &lt;/reference&gt;
 &lt;/componentType&gt;
-</DIV>
+</PRE>
          <A NAME="references"><H3>References</H3></A>
          <P>References are automatically added to your Python component implementation when 
             the runtime loads the implementation script, so they can be used like so:
          </P>
-<DIV CLASS="sourcecode"># The module-level div function
+<PRE># The module-level div function
 def div(val1, val2):
     # Use the divideService reference
     result = divideService.divide(val1, val2)
     return result
-</DIV>
+</PRE>
         <P>and in your composite file:
         </P>
-<DIV CLASS="sourcecode">&lt;component name="CalculatorComponent"&gt;
+<PRE>&lt;component name="CalculatorComponent"&gt;
     &lt;implementation.python module="CalculatorImpl"/&gt;
     &lt;reference name="divideService"&gt;DivideComponent/DivideService&lt;/reference&gt;
 &lt;/component&gt;
-</DIV>
+</PRE>
         <A NAME="properties"><H3>Properties</H3></A>
         <P>A composite with a property defined for a component like so:
         </P>
-<DIV CLASS="sourcecode">&lt;component name="DivideComponent"&gt;
+<PRE>&lt;component name="DivideComponent"&gt;
     &lt;implementation.python module="DivideImpl"/&gt;
     &lt;property name="doRounding"&gt;true&lt;/property&gt;
 &lt;/component&gt;
-</DIV>
+</PRE>
         <P>and in the associated .componentType file like so:
         </P>
-<DIV CLASS="sourcecode">&lt;componentType ...
+<PRE>&lt;componentType ...
 ...
     &lt;property name="doRounding" type="xsd:boolean"/&gt;
 &lt;/componentType&gt;
-</DIV>
+</PRE>
         <P>means the property is automatically instantiated and assigned the 
           property value in the Python component implementation, so it can be 
           used like so:
         </P>
-<DIV CLASS="sourcecode">def divide(val1, val2):
+<PRE>def divide(val1, val2):
     result = float(val1) / float(val2)
     print "Python - DivideImpl.divide " + str(val1) + " / " + str(val2) + " = " + str(result)
 
@@ -263,7 +263,7 @@ def div(val1, val2):
         print "Python - DivideImpl.divide is rounding the result to " + str(result)
 
     return result
-</DIV>
+</PRE>
 </P>
       </DIV>
               

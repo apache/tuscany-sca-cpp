@@ -1,0 +1,364 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<!--
+  Copyright 2006 The Apache Software Foundation or its licensors, as applicable.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+<HTML>
+<HEAD>
+   <META CONTENT="text/html; charset=iso-8859-1" HTTP-EQUIV="Content-Type">
+   <META CONTENT="text/css" HTTP-EQUIV="Content-Style-Type">
+   <STYLE MEDIA="all" TYPE="text/css">
+@import url("css/maven-base.css");
+@import url("css/maven-theme.css");
+   </STYLE> 
+
+    <LINK HREF="css/maven-theme.css" MEDIA="print" REL="stylesheet"
+         TYPE="text/css">
+   <TITLE>Tuscany SCA for C++ - Creating C++ SCA Components</TITLE>
+</HEAD>
+
+<BODY>
+<DIV ID="bodyColumn"> 
+   <DIV ID="contentBox"> 
+      <DIV CLASS="section"> 
+         <H2>Tuscany SCA for C++ - Creating C++ SCA Components</H2> 
+
+         <P>This document describes the deployment and use of the Axis2C Web Service 
+            (binding.ws) service support in the Apache Tuscany SCA C++ runtime.
+         </P>
+         <P>The WS service code is based on <A HREF="http://ws.apache.org/axis2/c">Apache 
+            Axis2C version 0.94</A> and allows SCA components to be invoked via Web 
+            Service calls.
+         </P>
+         <P>WS service currently supports Document/literal Wrapped style Web Services 
+            only. There are also restrictions about the parameter and return types of the 
+            operations in SCA components that can be exposed as Web Services, see below 
+            for more details.
+         </P>
+         <P>See the <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">SCA 
+            Web Service binding specification</A> for more details about SCA Web 
+            Service support.            
+         </P>
+         <P>Also, see the <A HREF="../samples/GettingStarted.html">samples</A> for various
+            demonstrations of the use of the binding.ws service support.
+         </P>
+      </DIV>
+
+      <DIV CLASS="section"> 
+         <H2>Contents</H2> 
+         <OL>
+            <LI><A HREF="#deploy">Deploying the Tuscany Web Service support to Axis2C..</A>
+                <UL>
+                    <LI><A HREF="#autodeploy">..automatically via scripts</A></LI>
+                    <LI><A HREF="#mandeploy">..manually</A></LI>
+                </UL></LI>
+            <LI><A HREF="#use">Defining an SCA Composite with a WS service</A></LI>
+            <LI><A HREF="#maptable">XML Schema Type to C++ Type Mapping</A></LI>
+            <LI><A HREF="#creatingwsdl">Notes on creating WSDL</A></LI>
+         </OL>
+      </DIV>
+
+
+      <DIV CLASS="section"> 
+         <A NAME="deploy"><H2>Deploying the Tuscany Web Service support to Axis2C</H2></A>
+         <A NAME="autodeploy"><H3>Deploying via scripts</H3></A>
+         <P>Tuscany provides simple shell scripts to deploy the Web Service support to Axis2C.
+            However, the script <STRONG>will overwrite your Axis2C axis.xml file</STRONG>, so if you 
+            have altered your axis2.xml from the default provided by the Axis2C distribution, it is
+            recommended that you follow the <A HREF="#mandeploy">manual deployment</A> steps 
+            outlined below. 
+         </P>
+         <P>To automatically deploy Tuscany Web Service support to Axis2C on Linux:
+           <OL> 
+              <LI>The AXIS2C_HOME environment variable is required:                                 
+                <UL>
+                  <LI>set AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                </UL></LI>
+              <LI>Use the following command sequence to run the deploy script:
+                  <UL>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;/extensions/ws/service</LI>
+                      <LI>./deploy.sh</LI>
+                  </UL>
+              </LI>
+           </OL>
+         </P>
+         <P>To automatically deploy Tuscany Web Service support to Axis2C on Windows:
+           <OL> 
+              <LI>The AXIS2C_HOME environment variable is required:                                 
+                <UL>
+                  <LI>export AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                </UL></LI>
+              <LI>Use the following command sequence to run the deploy script:
+                  <UL>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;/extensions/ws/service</LI>
+                      <LI>./deploy.cmd</LI>
+                  </UL>
+              </LI>
+           </OL>
+         </P>
+
+
+         <A NAME="mandeploy"><H3>Deploying manually</H3></A>
+         <P>To deploy Tuscany Web Service support to Axis2C manually, use the following steps:
+         </P>
+         <OL>
+             <LI>Create a &lt;axis2c version 0.94&gt;/services/tuscany directory 
+             </LI>
+             <LI>Copy all the files in &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/services/tuscany/
+                 to the directory created above
+             </LI>          
+             <LI>Create a &lt;axis2c version 0.94&gt;/modules/tuscany directory 
+             </LI>
+             <LI>Copy all the files in &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/modules/tuscany/
+                 to the directory created above
+             </LI>
+             <LI>Edit the &lt;axis2c version 0.94&gt;/axis2.xml file to add a &lt;ref module="tuscany"&gt; 
+                 element. This will register the above module. E.g.:
+                 <PRE>...
+    &lt;!-- ================================================= --&gt;
+    &lt;!-- Global Modules  --&gt;
+    &lt;!-- ================================================= --&gt;
+    &lt;!-- Comment this to disable Addressing --&gt;
+    &lt;module ref="addressing"/&gt;
+
+    &lt;module ref="tuscany"/&gt;
+
+...              </PRE>
+             </LI>
+         </OL>
+      </DIV>
+
+      <DIV CLASS="section"> 
+         <A NAME="use"><H2>Defining an SCA Composite with a WS service</H2></A>
+
+         <P>In this section we will use the Calculator sample as a worked example. 
+            The Calculator code and files can be found at 
+            &lt;tuscany_sca_install_dir&gt;samples/Calculator.
+         </P> 
+         <P>Pre-requisites:
+           <UL>
+               <LI>A working component within a composite and solution composite, 
+                   with SCAGEN generated Proxy and Wrapper classes and a .dll or 
+                   .so library compiled from these and the component class files. 
+                   The *.composite and *.componentType files must also be available 
+                   and working                       
+               </LI>
+           </UL>
+         </P>
+         <OL>
+             <LI>Create the WSDL that defines the interface of your SCA component. See the 
+                 table <A HREF="#maptable">XML Schema Type to C++ Type Mapping</A> and 
+                 <A HREF="#creatingwsdl">Notes on creating WSDL</A> below 
+                 for mapping the parameters and return types of the component operations to XML 
+                 schema types in the WSDL. This file needs to be accessible from the component, 
+                 so place it in the same directory as the component or in a subdirectory.
+                 <BR/>
+                 See the &lt;tuscany_sca_install_dir&gt;/samples/Calculator/sample.calculator/Calculator.wsdl 
+                 file as an example.
+             </LI>
+             <LI>Add a service definition to the component .composite file, setting the         
+                 interface.wsdl interface attribute to the namespace, port name specified in the        
+                 WSDL, in the form: "&lt;namespace&gt;#wsdl.interface(&lt;port-name&gt;)".    
+                 Link a reference from this service definition to your
+                 component, give the service a name and set the multiplicity if required.                      
+                 <BR/>                                                                               
+                 E.g. for the Calculator component, based on the Calculator.wsdl file:          
+                 <PRE>&lt;service name="CalculatorService"&gt;
+    &lt;interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/&gt;
+    &lt;binding.ws/&gt;
+    &lt;reference&gt;CalculatorComponent/CalculatorService&lt;/reference&gt;
+&lt;/service&gt;</PRE>
+             </LI>         
+             <LI>You are now ready to start the Axis2C HTTP server. Remember you will need to have the 
+                 TUSCANY_SCACPP, TUSCANY_SDOCPP and AXIS2C_HOME environment variables set, 
+                 as well as the SCA and SDO bin directories and the Axis2C lib directory on 
+                 your PATH on Windows or the SCA, SDO and Axis2C lib directories on 
+                 your LD_LIBRARY_PATH on Linux. You will also need to set the TUSCANY_SCACPP_SYSTEM_ROOT
+                 and TUSCANY_SCACPP_DEFAULT_COMPONENT environment variables to the 
+                 path to your SCA component directory structure and the default component respectively.
+                 E.g. on Windows run the following commands:
+                 <UL>
+                     <LI>set TUSCANY_SCACPP=C:/tuscany_sca                                                 </LI>
+                     <LI>set TUSCANY_SDOCPP=C:/tuscany_sdo                                                 </LI>
+                     <LI>set AXIS2C_HOME=C:/axis2c-bin-0.94-win32                                          </LI>
+                     <LI>set PATH=%PATH%;C:/tuscany_sca/bin;C:/tuscany_sdo/bin;C:/axis2c-bin-0.94-win32/lib</LI>
+                     <LI>set TUSCANY_SCACPP_SYSTEM_ROOT=C:/tuscany_sca/samples/Calculator/deploy           </LI>
+                     <LI>set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent        </LI>
+                     <LI>cd %AXIS2C_HOME%/bin/                                                             </LI>
+                     <LI>./axis2_http_server.exe                                                           </LI>
+                 </UL>
+             </LI>
+             <LI>Optionally, enable Tuscany logging by setting the TUSCANY_SCACPP_LOGGING 
+                 environment variable with the level you wish to log at (0 for minimal 
+                 logging, up to 9 for more detailed logging) and the TUSCANY_SCACPP_LOG 
+                 environment variable to define the file to log to (if this is not set, 
+                 logging will go to the console). E.g. on Windows run the following 
+                 commands:
+                 <UL>
+                     <LI>set TUSCANY_SCACPP_LOGGING=5                   </LI>
+                     <LI>set TUSCANY_SCACPP_LOG=C:/tuscany/mylogfile.txt</LI>
+                 </UL>
+             </LI>
+         </OL>
+         <P>Your component should now be exposed as an Axis2C Web Service, via the WS    
+            service you created. See the Axis2C documentation for writing clients to  
+            invoke the Web Service, or you can use any other Web Service client platform 
+            (e.g. <A HREF="http://ws.apache.org/axis2">Axis2 for Java</A>), or you can invoke your    
+            component from another Tuscany runtime by using Tuscany's WS reference
+            support.                                                                     
+         </P>
+
+      </DIV>              
+
+      <DIV CLASS="section"> 
+         <A name="maptable"><H2>XML Schema Type to C++ Type Mapping</H2></A>
+         <P>To help define the WSDL that describes the interface of your component, the    
+            table below lists how incoming XML data in Web Service messages is mapped to   
+            C++ types used in the parameters and return types of your component operations.
+         </P>
+         <P>This lists the only C++ types that can currently be used on the operations of a
+            component exposed as a Web Service. For other types, use an SDO DataObject to  
+            wrap the data, and define that wrapping as a complexType in the WSDL. See the  
+            <A HREF="http://www.osoa.org/display/Main/SDO+-+Previously+Published+Specifications">SDO 
+            specifications</A> for the C++ types that SDO supports.                                                                  
+         </P>
+         <TABLE CLASS="bodyTable"> 
+            <TBODY>
+            <TR CLASS="a">
+               <TD><STRONG>XML Schema Type</STRONG></TD>
+               <TD><STRONG>C++ Type</STRONG></TD>
+            </TR>
+            <TR CLASS="b">
+               <TD>string</TD>
+               <TD>std::string</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD>int</TD>
+               <TD>long</TD>
+            </TR>
+            <TR CLASS="b">
+               <TD>integer</TD>
+               <TD>long</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD>short</TD>
+               <TD>short</TD>
+            </TR>
+            <TR CLASS="b">
+               <TD>float</TD>
+               <TD>float</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD>double</TD>
+               <TD>long double</TD>
+            </TR>
+            <TR CLASS="b">
+               <TD>boolean</TD>
+               <TD>bool</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD>hexBinary</TD>
+               <TD>char*</TD>
+            </TR>
+            <TR CLASS="b">
+               <TD>base64Binary</TD>
+               <TD>char*</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD>byte</TD>
+               <TD>char</TD>
+            </TR>
+            <TR CLASS="b">
+               <TD>complexType</TD>
+               <TD>commonj::sdo::DataObjectPtr</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD>any</TD>
+               <TD>commonj::sdo::DataObjectPtr with OpenDataObjectType</TD>
+            </TR>
+            </TBODY>
+         </TABLE>
+      </DIV>
+
+      <DIV CLASS="section"> 
+         <A name="creatingwsdl"><H2>Notes on creating WSDL</H2></A>
+         <P>Currently only Document/literal Wrapped style Web Services are supported by                  
+            WS EntryPoint, support for RPC style Web Services is planned for future                      
+            releases.                                                                                    
+         </P>                                                                                                
+         <P>See <A HREF="http://www.ibm.com/developerworks/webservices/library/ws-whichwsdl/">this article</A>
+            for an explanation of Document/literal Wrapped style WSDL and Web Services                   
+         </P>                                                                                             
+         <P>Operation parameter and return messages that are defined in the WSDL must be                 
+            XML Schema elements containing a complexType - there is currently no                         
+            support for simpleTypes or single-level elements. Also, Document/literal                     
+            Wrapped services require that the operation name is used as the name of the                  
+            incoming element that wraps the operation parameters.                                        
+         </P>                                                                                                
+         <P>For example, a component operation defined in C++ as:                                        
+         <PRE>long myOperation(std::string arg1, short arg2, DataObjectPtr arg3);</PRE>
+            will need to be described in WSDL with messages like:                                        
+         <PRE>&lt;wsdl:message name="myOperationRequestMsg"&gt;                                               
+  &lt;wsdl:part element="tns:myOperation" name="myOperationRequestPart"/&gt;                    
+&lt;/wsdl:message&gt;                                                                           
+&lt;wsdl:message name="myOperationResponseMsg"&gt;                                              
+  &lt;wsdl:part element="tns:myOperationResponse" name="myOperationResponsePart"/&gt;           
+&lt;/wsdl:message&gt;</PRE>                                                                           
+            and will need an XML schema to define the types like:                                        
+         <PRE>&lt;xsd:element name="myOperation"&gt;                                                          
+ &lt;xsd:complexType&gt;                                                                       
+   &lt;xsd:sequence&gt;                                                                        
+     &lt;xsd:element name="arg1" type="xsd:string" minOccurs="1"/&gt;                          
+     &lt;xsd:element name="arg2" type="xsd:short" minOccurs="1"/&gt;                           
+     &lt;xsd:element name="arg3" minOccurs="1"&gt;                                             
+       &lt;xsd:complexType&gt;                                                                 
+         &lt;xsd:sequence&gt;                                                                  
+           &lt;xsd:element name="dataObjectFloatData" type="xsd:float"/&gt;                    
+           &lt;xsd:element name="dataObjectStringData" type="xsd:string"/&gt;                  
+           &lt;xsd:element name="dataObjectIntData" type="xsd:int"/&gt;                        
+         &lt;/xsd:sequence&gt;                                                                 
+       &lt;/xsd:complexType&gt;                                                                
+     &lt;/xsd:element&gt;                                                                      
+   &lt;/xsd:sequence&gt;                                                                       
+ &lt;/xsd:complexType&gt;                                                                      
+&lt;/xsd:element&gt;                                                                            
+                                                                                         
+&lt;xsd:element name="myOperationResponse"&gt;                                                  
+ &lt;xsd:complexType&gt;                                                                       
+   &lt;xsd:sequence&gt;                                                                        
+     &lt;xsd:element name="result" type="xsd:int" minOccurs="1"/&gt;                           
+   &lt;/xsd:sequence&gt;                                                                       
+ &lt;/xsd:complexType&gt;                                                                      
+&lt;/xsd:element&gt;</PRE>                                                                            
+      </DIV>
+
+      <DIV CLASS="section"> 
+         <A NAME="help"><H2>Getting Help</H2></A>
+
+         <P>First place to look is at the Tuscany FAQ at 
+         <A HREF="http://incubator.apache.org/tuscany/faq.html"
+            TARGET="_blank">http://incubator.apache.org/tuscany/faq.html</A> </P>
+
+         <P>Any problem with this release can be reported to the Tuscany 
+         <A HREF="http://incubator.apache.org/tuscany/mail-lists.html"
+            TARGET="_blank">mailing lists</A> or create a JIRA issue at&nbsp;<A HREF="http://issues.apache.org/jira/browse/Tuscany"
+                                                                                TARGET="_blank">http://issues.apache.org/jira/browse/Tuscany</A>.</P>
+      </DIV>
+   </DIV>
+</DIV>
+</BODY>
+
+</HTML>
+

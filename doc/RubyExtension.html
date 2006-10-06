@@ -167,15 +167,15 @@
          <A NAME="clients"><H3>Clients</H3></A>
          <P>Using the Ruby SCA extension library, a Ruby client can search for an SCA service with:
          </P>
-<DIV CLASS="sourcecode">require("libtuscany_sca_ruby")
+<PRE>require("libtuscany_sca_ruby")
 
 calculator = SCA::locateService("CalculatorComponent/CalculatorService")
-</DIV>
+</PRE>
          <P>This finds the component and service as defined in the composite and componentType 
             side files and returns a proxy object that can call the SCA service. You can then 
             simply call a business method on "calculator", like this:
          </P>
-<DIV CLASS="sourcecode">result = calculator.add(12.3, 45.6)</DIV>
+<PRE>result = calculator.add(12.3, 45.6)</PRE>
          </P>
          <A NAME="components"><H3>Components</H3></A>
          <P>Ruby component implementations are standard Ruby scripts, where class-level 
@@ -183,15 +183,15 @@ calculator = SCA::locateService("CalculatorComponent/CalculatorService")
             use a Ruby component implementation, use the implementation.ruby element in 
             your .composite file. For example:
          </P>         
-<DIV CLASS="sourcecode">&lt;implementation.ruby script="CalculatorImpl.rb"/&gt;
-</DIV>
+<PRE>&lt;implementation.ruby script="CalculatorImpl.rb"/&gt;
+</PRE>
          <P>To instantiate a class instance and use a class-level function, the Ruby class must 
             have a default constructor (an initialize() method that takes no arguments) and the 
             class attribute must be definde in the implementation.ruby element 
             in your composite, like so:
          </P>
-<DIV CLASS="sourcecode">&lt;implementation.ruby script="CalculatorImpl.rb" class="CalculatorImpl"/&gt;
-</DIV>
+<PRE>&lt;implementation.ruby script="CalculatorImpl.rb" class="CalculatorImpl"/&gt;
+</PRE>
          <P>You can write a componentType file for your Ruby component, but you don't have to, the Ruby 
             extension introspects Ruby component implementation classes for you and binds public 
             attributes to references and properties.
@@ -200,7 +200,7 @@ calculator = SCA::locateService("CalculatorComponent/CalculatorService")
          <P>References can be invoked from Ruby component implementations by the use of public 
             attributes in the component implementation classes, like this:
          </P>
-<DIV CLASS="sourcecode">class CalculatorImpl
+<PRE>class CalculatorImpl
 
   # Define the public attribute that corresponds to the divideService reference
   attr_writer :divideService
@@ -215,26 +215,26 @@ calculator = SCA::locateService("CalculatorComponent/CalculatorService")
 
 ...
 end
-</DIV>
+</PRE>
         <P>and in your composite file:
         </P>
-<DIV CLASS="sourcecode">&lt;component name="CalculatorComponent"&gt;
+<PRE>&lt;component name="CalculatorComponent"&gt;
     &lt;implementation.ruby script="CalculatorImpl.rb"/&gt;
     &lt;reference name="divideService"&gt;DivideComponent/DivideService&lt;/reference&gt;
 &lt;/component&gt;
-</DIV>
+</PRE>
         <A NAME="properties"><H3>Properties</H3></A>
         <P>A composite with a property defined for a component like so:
         </P>
-<DIV CLASS="sourcecode">&lt;component name="DivideComponent"&gt;
+<PRE>&lt;component name="DivideComponent"&gt;
     &lt;implementation.ruby script="DivideImpl.rb" class="DivideImpl"/&gt;
     &lt;property name="round"&gt;true&lt;/property&gt;
 &lt;/component&gt;
-</DIV>
+</PRE>
         <P>allows a public attribute of a Ruby component implementation class to be
            assigned the property value, so it can be used like so:
         </P>
-<DIV CLASS="sourcecode">class DivideImpl
+<PRE>class DivideImpl
 
   # Define the public attribute that corresponds to the round property
   attr_writer :round           
@@ -253,7 +253,7 @@ end
     res
   end
 end
-</DIV>
+</PRE>
 </P>
       </DIV>
               

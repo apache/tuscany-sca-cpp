@@ -41,15 +41,11 @@
             This sample uses multiple C++ components, calls out to an external Web Service via a reference, 
             exposes the service as a Web Service and also provides a PHP based client.
          </P>
-         <P>There are five sub projects in this workspace:</P>
+         <P>There are four sub projects in this workspace:</P>
          <UL>
             <LI>bigbank.account<BR/>
                 This contains the source code and SCDL artifacts for the SCA BigBank 
                 composite implementing the account services.
-            </LI>
-            <LI>bigbank.accountmanagement<BR/>
-                This contains the SCDL file describing the configuration of the SCA
-                BigBank composite deployed to the SCA runtime.
             </LI>
             <LI>bigbank.client<BR/>
                 A sample client which does a local call to the BigBank service.
@@ -61,8 +57,26 @@
                 A sample PHP client which calls the BigBank Web service and then deconstructs 
                 and displays the result by using the 
                 <A HREF="http://www.osoa.org/display/PHP/SOA+PHP+Homepage">SDO for PHP extension</A>.
+                  <P>This is a pair of very simple PHP scripts to demonstrate how the Accounts service
+                     that the C++ Big Bank sample exposes can be used from within the PHP scripting 
+                     language. 
+                  </P>
+                  <P>bigwelcome.php<BR/>
+                     A bootstrap script that shows a form and allows the user to press a button
+                     in order to invoke the bigaccount.php script
+                  </P>
+                  <P>bigaccount.php<BR/>
+                     Makes a call to a locally installed BigBank Accounts service. The script 
+                     shows how to use PHP SDO and SOAP extensions to construct the call 
+                     and interpret the result. 
+                  </P>
             </LI>
          </UL>
+         <P>Additionally, there is the bigbank.accountmanagement.composite file. This     
+            describes the configuration of the SCA Calculator composite deployed to the SCA
+            runtime.                                                                       
+         </P>
+
       </DIV>
 
       <DIV CLASS="section"> 
@@ -131,7 +145,8 @@
          </OL>                                                  
          <A NAME="linuxws"><H3>BigBank with Web Service client</H3></A>
          <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions found here.
+             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
+                 found <A HREF="../../../doc/Axis2CWSService.html">here</A>.
              </LI>
              <LI>Start the Axis2C simple http server:
                 <OL>
@@ -161,7 +176,8 @@
          </OL>                                                  
         <A NAME="linuxphp"><H3>BigBank with PHP web client</H3></A>
           <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions found here.
+             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
+                 found <A HREF="../../../doc/Axis2CWSService.html">here</A>.
              </LI>
              <LI>Start the Axis2C simple http server:
                 <OL>
@@ -177,13 +193,36 @@
                    <LI>./runwsserver.sh</LI>
                 </OL>
              </LI>
-             <LI>Install the PHP web client:
-                <OL>
-                   <LI></LI>
-                </OL>
+             <LI>To run the php scripts requires some configuration and setup of a php runtime with 
+                 the SDO and SimpleXML extensions enabled. The bits you will need are:
+                 <UL>
+                   <LI><A HREF="http://httpd.apache.org/">Apache web server</A> (tested with version 2.0.55)</LI>
+                   <LI><A HREF="http://www.php.net/downloads.php">PHP 5</A> (tested with version 5.1.6)</LI>
+                   <LI><A HREF="http://pecl.php.net/package/sdo">PHP SDO</A> (tested with version 1.0.3)</LI>
+                 </UL>
+                 <P>Follow 
+                    <A HREF="http://livedocs.phpdoc.info/index.php?l=en&q=ref.sdo">these instructions</A> to
+                    install SDO and DAS.
+                 </P>
+               </LI>
+               <LI>You need to configure Apache to run PHP of course. This is well documented but this
+                   is what I put at the end of httpd.conf:
+                 <PRE># PHP5 Support
+LoadModule php5_module "/home/php/php5.1.6/php5apache2.so"
+AddType application/x-httpd-php .php
+
+# configure the path to php.ini
+PHPIniDir "/home/php/php5.1.6"</PRE>
+               </LI>
+               <LI>Copy the &lt;tuscany_sca_install_dir&gt;/samples/BigBank/bigbank.phpwsclient
+                   directory to your Apache document root directory (by default this is named 'htdocs').
+               </LI>
+               <LI>Finally, start your Apache web server.
              </LI>
              <LI>Run the PHP web client by pointing your browser at
-                <A HREF="http://localhost/BigBank/welcome.php">http://localhost/BigBank/welcome.php</A>
+                <A HREF="http://localhost/bigbank.phpwsclient/welcome.php">http://localhost/bigbank.phpwsclient/welcome.php</A>.
+                You should now be able to press the "GetAccount" button and see the values
+                returned from the BigBank SCA application.
              </LI>
 
           </OL>
@@ -234,7 +273,8 @@
          </OL>                                                  
          <A NAME="winws"><H3>BigBank with Web Service client</H3></A>
          <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions found here.
+             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
+                 found <A HREF="../../../doc/Axis2CWSService.html">here</A>.
              </LI>
              <LI>Start the Axis2C simple http server:
                 <OL>
@@ -264,7 +304,8 @@
          </OL>                                                  
         <A NAME="winphp"><H3>BigBank with PHP web client</H3></A>
           <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions found here.
+             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
+                 found <A HREF="../../../doc/Axis2CWSService.html">here</A>.
              </LI>
              <LI>Start the Axis2C simple http server:
                 <OL>
@@ -280,13 +321,83 @@
                    <LI>./runwsserver.bat</LI>
                 </OL>
              </LI>
-             <LI>Install the PHP web client:
-                <OL>
-                   <LI></LI>
-                </OL>
+             <LI>To run the php scripts requires some configuration and setup of a php runtime with 
+                 the SDO and SimpleXML extensions enabled. The bits you will need are:
+                 <UL>
+                   <LI><A HREF="http://httpd.apache.org/">Apache web server</A> (tested with version 2.0.55)</LI>
+                   <LI><A HREF="http://www.php.net/downloads.php">PHP 5</A> (tested with version 5.1.6)</LI>
+                   <LI><A HREF="http://pecl.php.net/package/sdo">PHP SDO</A> (tested with version 1.0.3)</LI>
+                 </UL>
+                 <P>You can get Windows binary builds from 
+                    <A HREF="http://www.php.net/downloads.php">http://www.php.net/downloads.php</A>. 
+                    For SDO you need two dlls as follows: 
+                 </P>
+                 <UL>
+                   <LI><A HREF="http://pecl4win.php.net/ext.php/php_sdo.dll">php_sdo.dll</A></LI>
+                   <LI><A HREF="http://pecl4win.php.net/ext.php/php_sdo_das_xml.dll">php_sdo_das_xml.dll</A></LI>
+                 </UL>
+                 <P>I copied these to my php5.1.6/ext dir ( php_soap.dll is already there) and added the 
+                    following to my php.ini file (having already renamed php.ini-recommended to php.ini 
+                    of course)
+                 <PRE>extension=php_soap.dll
+extension=php_sdo.dll
+extension=php_sdo_das_xml.dll</PRE>
+                    I also changed the extension_dir directive to point to my extensions directory:
+                 <PRE>extension_dir="C:/php5.1.6/ext"</PRE>
+                 </P>
+                 <P>When I ask PHP to list what modules are active in my version of PHP I get the 
+                    following:
+                 <PRE>C:\php5.1.6>php -m
+[PHP Modules]
+bcmath
+calendar
+com_dotnet
+ctype
+date
+dom
+ftp
+hash
+iconv
+libxml
+odbc
+pcre
+Reflection
+sdo
+sdo_das_xml
+session
+SimpleXML
+soap
+SPL
+standard
+tokenizer
+wddx
+xml
+xmlreader
+xmlwriter
+zlib
+
+[Zend Modules]</PRE>
+                    Of particular relevance to these scripts note that soap, sdo and sdo_das_xml are active. 
+                 </P>
+               </LI>
+               <LI>You need to configure Apache to run PHP of course. This is well documented but this
+                   is what I put at the end of httpd.conf:
+                 <PRE># PHP5 Support
+LoadModule php5_module "C:/php5.1.6/php5apache2.dll"
+AddType application/x-httpd-php .php
+
+# configure the path to php.ini
+PHPIniDir "C:/php5.1.6"</PRE>
+               </LI>
+               <LI>Copy the &lt;tuscany_sca_install_dir&gt;/samples/BigBank/bigbank.phpwsclient
+                   directory to your Apache document root directory (by default this is named 'htdocs').
+               </LI>
+               <LI>Finally, start your Apache web server.
              </LI>
              <LI>Run the PHP web client by pointing your browser at
-                <A HREF="http://localhost/BigBank/welcome.php">http://localhost/BigBank/welcome.php</A>
+                <A HREF="http://localhost/bigbank.phpwsclient/welcome.php">http://localhost/bigbank.phpwsclient/welcome.php</A>.
+                You should now be able to press the "GetAccount" button and see the values
+                returned from the BigBank SCA application.
              </LI>
           </OL>
       </DIV>
