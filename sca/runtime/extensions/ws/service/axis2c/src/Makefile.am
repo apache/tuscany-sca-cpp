@@ -55,7 +55,7 @@ service_DATA = services.xml
 moduledir=$(rootdir)/modules/tuscany
 module_DATA = module.xml
 
-EXTRA_DIST = axis2.xml services.xml module.xml
+EXTRA_DIST = axis2.xml services.xml module.xml deploy.sh
 
 install-data-hook:
 	cd $(servicedir); ln -s -f ../../lib/libtuscany_sca_ws_service.so libtuscany_sca_ws_service.so
