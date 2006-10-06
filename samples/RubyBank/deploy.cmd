@@ -31,18 +31,16 @@ set destinationPath=%2
 if not exist %destinationPath%                          mkdir %destinationPath%
 if not exist %destinationPath%\bigbank.account mkdir %destinationPath%\bigbank.account
 if not exist %destinationPath%\bigbank.client  mkdir %destinationPath%\bigbank.client
-if not exist %destinationPath%\bin                      mkdir %destinationPath%\bin
 
 copy %sourcePath%\bigbank.account\*.rb        %destinationPath%\bigbank.account
 copy %sourcePath%\bigbank.account\*.composite %destinationPath%\bigbank.account
 copy %sourcePath%\bigbank.account\*.wsdl      %destinationPath%\bigbank.account
 copy %sourcePath%\bigbank.account\*.xsd       %destinationPath%\bigbank.account
+copy %sourcePath%\bigbank.account\*.bat       %destinationPath%\bigbank.account
 
 copy %sourcePath%\bigbank.client\*.rb         %destinationPath%\bigbank.client
+copy %sourcePath%\bigbank.client\*.bat        %destinationPath%\bigbank.client
 
 copy %sourcePath%\*.composite   %destinationPath%
-
-copy %sourcePath%\bigbank.account\*.bat       %destinationPath%\bin
-copy %sourcePath%\bigbank.client\*.bat        %destinationPath%\bin
 
 endlocal

@@ -33,20 +33,18 @@ if not exist %destinationPath%\sample.calculator mkdir %destinationPath%\sample.
 copy %sourcePath%\sample.calculator\*.composite     %destinationPath%\sample.calculator
 copy %sourcePath%\sample.calculator\*.rb            %destinationPath%\sample.calculator
 copy %sourcePath%\sample.calculator\Calculator.wsdl %destinationPath%\sample.calculator
+copy %sourcePath%\sample.calculator\runwsserver.bat          %destinationPath%\sample.calculator
 
 if not exist %destinationPath%\sample.calculator.client mkdir %destinationPath%\sample.calculator.client
 copy %sourcePath%\sample.calculator.client\CalculatorClient.rb %destinationPath%\sample.calculator.client
+copy %sourcePath%\sample.calculator.client\runclient.bat     %destinationPath%\sample.calculator.client
 
 if not exist %destinationPath%\sample.calculator.wsclient mkdir %destinationPath%\sample.calculator.wsclient
 copy %sourcePath%\sample.calculator.wsclient\CalculatorWSClient.rb               %destinationPath%\sample.calculator.wsclient
 copy %sourcePath%\sample.calculator.wsclient\sample.calculator.wsclient.composite %destinationPath%\sample.calculator.wsclient
 copy %sourcePath%\sample.calculator.wsclient\Calculator.wsdl                      %destinationPath%\sample.calculator.wsclient
+copy %sourcePath%\sample.calculator.wsclient\runwsclient.bat %destinationPath%\sample.calculator.wsclient
 
 copy %sourcePath%\*.composite %destinationPath%
-
-if not exist %destinationPath%\bin mkdir %destinationPath%\bin
-copy %sourcePath%\sample.calculator.client\runclient.bat     %destinationPath%\bin
-copy %sourcePath%\sample.calculator\runwsserver.bat          %destinationPath%\bin
-copy %sourcePath%\sample.calculator.wsclient\runwsclient.bat %destinationPath%\bin
 
 endlocal
