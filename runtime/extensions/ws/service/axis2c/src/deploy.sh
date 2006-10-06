@@ -33,13 +33,13 @@ if ! [ -d $AXIS2C_HOME/modules/tuscany ]; then
    mkdir $AXIS2C_HOME/modules/tuscany
 fi
 
-cp $APFULLDIR/services/tuscany/services.xml %AXIS2C_HOME%/services/tuscany
+cp $APFULLDIR/services/tuscany/services.xml $AXIS2C_HOME/services/tuscany
 
 if ! [ -f $AXIS2C_HOME/services/tuscany/libtuscany_sca_ws_service.so ]; then
    ln -s $APFULLDIR/services/tuscany/libtuscany_sca_ws_service.so $AXIS2C_HOME/services/tuscany/libtuscany_sca_ws_service.so
 fi
 
-cp $APFULLDIR/modules/tuscany/module.xml %AXIS2C_HOME%/modules/tuscany
+cp $APFULLDIR/modules/tuscany/module.xml $AXIS2C_HOME/modules/tuscany
 if ! [ -f $AXIS2C_HOME/modules/tuscany/libtuscany_sca_ws_dispatcher.so ]; then
    ln -s $APFULLDIR/modules/tuscany/libtuscany_sca_ws_dispatcher.so $AXIS2C_HOME/modules/tuscany/libtuscany_sca_ws_dispatcher.so 
 fi

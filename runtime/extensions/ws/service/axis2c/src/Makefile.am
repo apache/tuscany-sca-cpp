@@ -30,6 +30,7 @@ libtuscany_sca_ws_service_la_LIBADD = \
 
 rootdir=$(prefix)/extensions/ws/service
 root_DATA = axis2.xml
+root_SCRIPTS = deploy.sh
 
 libtuscany_sca_ws_dispatcher_la_SOURCES = \
 tuscany/sca/ws/Axis2Dispatcher.cpp \
