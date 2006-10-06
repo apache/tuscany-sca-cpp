@@ -1,5 +1,5 @@
-Apache Tuscany C++ M1 build (July, 2006)
-===================================
+Apache Tuscany C++ M2 build (October, 2006)
+===========================================
 
 http://incubator.apache.org/tuscany
 
@@ -19,18 +19,23 @@ Getting Started
 ===============
 
 Documentation describing the system requirements and the steps to install
-Tuscany SCA C++ and run the samples can be found in the GettingStarted.html file.
+Tuscany SCA C++ and run the samples can be found in the GettingStarted.html 
+file.
 
 
 About Tuscany SCA C++
 =====================
 
-Tuscany SCA C++ provides a runtime implementation for the Service Component
-Architecture 0.9 specification, written in C++ and will currently support C++
-component implementation types. 
+Tuscany SCA C++ provides a runtime implementation for the for the Service 
+Component Architecture 0.96 Assembly specification and the 0.95 C++ Client 
+& Implementation Model specification, written in C++ and will currently 
+support C++, Python and Ruby component implementation types.
+
+The specifications can be found at
+http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications 
 
 It is possible to interoperate with Tuscany SCA Java via the Web Service bindings
-for EntryPoint/ExternalService but restrictions apply. This is not yet a complete
+for services and references but restrictions apply. This is not yet a complete
 implementation and known restrictions are described below.
 
 Supported SCA Assembly Model features
@@ -38,29 +43,29 @@ Supported SCA Assembly Model features
      below. See SCA Assembly Model specification.
 
 Supported language bindings
-  * Component implementations written in C++. See SCA Client and
+  * Component implementations written in C++. See the SCA C++ Client and 
     Implementation Model specification.
+  * Component implementations written in Python. See the doc/PythonExtension.html 
+    documentation.
+  * Component implementations written in Python. See the doc/RubyExtension.html 
+    documentation.
   * Component interfaces described by C++ classes. See SCA Client and
     Implementation Model specification.
 
-Supported external service and entry point bindings
+Supported service and reference bindings
   * The web service binding is supported. This implementation will support
     web services which using document literal SOAP bindings conforming to the
     WS-I basic profile (rpc/encoded is not yet supported).
 
 Known restrictions
-  * Subsystem wiring, entry points and external services are not supported.
   * Local service interfaces cannot use overloaded operations (the SCA
     specification limits remote service interfaces to not using overloaded
-	operations).
+    operations).
   * Each WSDL definition for a web service binding must be in a single WSDL
     document.
-  * No load time validation of the deployed SCA application (run time validation
-    only).
-  * No metadata API.
-  * A Web Service EntryPoint that is wired (via zero or more components) to a 
-    Web Service ExternalService will fail when attempting to send the final 
-    response to the originating client. 
+  * No load time validation of the deployed SCA application (run time 
+    validation only).
+  * No metadata API. 
 
 
 
