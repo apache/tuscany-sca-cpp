@@ -124,6 +124,7 @@ copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib
 copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 copy ..\..\..\runtime\extensions\ws\service\axis2c\src\services.xml ..\..\..\deploy\extensions\ws\service\services\tuscany
 copy ..\..\..\runtime\extensions\ws\service\axis2c\src\axis2.xml ..\..\..\deploy\extensions\ws\service\
+copy ..\..\..\runtime\extensions\ws\service\axis2c\src\deploy.cmd ..\..\..\deploy\extensions\ws\service\
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
