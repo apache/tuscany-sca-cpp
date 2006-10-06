@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/RubyCalculator/deploy
-compositedir=$(deploydir)/packages/sample.calculator
+compositedir=$(deploydir)/sample.calculator
 prgbindir=$(deploydir)/bin
 
 prgbin_SCRIPTS = runwsserver.sh

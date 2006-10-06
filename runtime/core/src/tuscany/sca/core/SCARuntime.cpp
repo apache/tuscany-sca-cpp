@@ -42,13 +42,17 @@ namespace tuscany
         static const char* TUSCANY_SCACPP = "TUSCANY_SCACPP";
         static const char* TUSCANY_SCACPP_SYSTEM_ROOT = "TUSCANY_SCACPP_SYSTEM_ROOT";
         static const char* TUSCANY_SCACPP_DEFAULT_COMPONENT = "TUSCANY_SCACPP_DEFAULT_COMPONENT";
-            
+        
+        static const char* TUSCANY_SCACPP_ROOT = "TUSCANY_SCACPP_ROOT";
+        static const char* TUSCANY_SCACPP_COMPONENT = "TUSCANY_SCACPP_COMPONENT";
+        static const char* TUSCANY_SCACPP_PATH = "TUSCANY_SCACPP_PATH";
  
         // ==========================================================
         // Initialize static class member to not pointing at anything
         // ==========================================================
         SCARuntime* SCARuntime::instance = 0;
         string SCARuntime::systemRoot = "";
+        string SCARuntime::systemPath = "";
         string SCARuntime::defaultComponentName = "";
         
 
@@ -57,10 +61,21 @@ namespace tuscany
         // ==========================================================
         void SCARuntime::setSystemRoot(const string& root)
         {
-            LOGENTRY(1, "SCARuntime::");
+            LOGENTRY(1, "SCARuntime::setSystemRoot");
             systemRoot = root;
             LOGINFO_1(3, "SCARuntime::setSystemRoot - set to %s", root.c_str());
             LOGEXIT(1, "SCARuntime::setSystemRoot");
+        }
+
+        // ==========================================================
+        // Set the system configuration root
+        // ==========================================================
+        void SCARuntime::setSystemPath(const string& path)
+        {
+            LOGENTRY(1, "SCARuntime::setSystemPath");
+            systemPath = path;
+            LOGINFO_1(3, "SCARuntime::setSystemPath - set to %s", path.c_str());
+            LOGEXIT(1, "SCARuntime::setSystemPath");
         }
 
         // ==========================================================
@@ -131,18 +146,38 @@ namespace tuscany
 
                 if (systemRoot == "")
                 {
-                    
-                    // Load the runtime
-                    // Get root from environment variable TUSCANY_SCACPP_SYSTEM_ROOT
-                    char* systemRootEnv = getenv(TUSCANY_SCACPP_SYSTEM_ROOT);
+                    // Get root from environment variable TUSCANY_SCACPP_ROOT
+                    char* systemRootEnv = getenv(TUSCANY_SCACPP_ROOT);
                     if (systemRootEnv == 0)
                     {
-                        string msg = TUSCANY_SCACPP_SYSTEM_ROOT;
+                        // Get root from environment variable TUSCANY_SCACPP_SYSTEM_ROOT
+                        systemRootEnv = getenv(TUSCANY_SCACPP_SYSTEM_ROOT);
+                    }
+                    if (systemRootEnv == 0)
+                    {
+                        string msg = TUSCANY_SCACPP_ROOT;
                         msg += " environment variable not set";
                         throw SystemConfigurationException(msg.c_str());
                     } 
 
                     systemRoot = systemRootEnv;
+                }
+                if (systemPath == "")
+                {
+                    
+                    // Get system path from environment variable TUSCANY_SCACPP_PATH
+                    char* systemPathEnv = getenv(TUSCANY_SCACPP_PATH);
+                    if (systemPathEnv == 0)
+                    {
+                    // Make the path optional for now
+//                        string msg = TUSCANY_SCACPP_PATH;
+//                        msg += " environment variable not set";
+//                        throw SystemConfigurationException(msg.c_str());
+                    }
+                    else
+                    {
+                        systemPath = systemPathEnv;
+                    }
                 }
             }
             
@@ -165,6 +200,7 @@ namespace tuscany
                 delete instance;
                 instance = 0;
                 systemRoot = "";
+                systemPath = "";
                 defaultComponentName = "";        
             }
             
@@ -179,10 +215,11 @@ namespace tuscany
             LOGENTRY(1, "SCARuntime::load");
             
             LOGINFO_1(2,"configuration root: %s", systemRoot.c_str());
+            LOGINFO_1(2,"configuration path: %s", systemPath.c_str());
             
+            // Load the system composite
             ModelLoader loader(system);
-            // Load details of the composite
-            loader.load(systemRoot);
+            loader.load(systemRoot, systemPath);
             
             LOGEXIT(1, "SCARuntime::load");
         }
@@ -418,24 +455,28 @@ namespace tuscany
             if (!defaultComponent)
             {
                 // -------------------------------------------
-                // Get the default composite from the environment
+                // Get the default component name from the environment
                 // -------------------------------------------
                 if (defaultComponentName == "")
                 {
-                    const char* defMod = getenv(TUSCANY_SCACPP_DEFAULT_COMPONENT);
-                    if (!defMod)
+                    const char* defComp = getenv(TUSCANY_SCACPP_COMPONENT);
+                    if (!defComp)
                     {
-                        string message = TUSCANY_SCACPP_DEFAULT_COMPONENT;
+                        defComp = getenv(TUSCANY_SCACPP_DEFAULT_COMPONENT);
+                    }
+                    if (!defComp)
+                    {
+                        string message = TUSCANY_SCACPP_COMPONENT;
                         message += " environment variable not set";
                         throw SystemConfigurationException(message.c_str());
                     }
-                    defaultComponentName = defMod;
+                    defaultComponentName = defComp;
                 }
                 
                 defaultComponent = getSystem()->findComponent(defaultComponentName);
                 if (!defaultComponent)
                 {
-                    string message = "Default component \'" + defaultComponentName + "\' not found";
+                    string message = "Component \'" + defaultComponentName + "\' not found";
                     throw SystemConfigurationException(message.c_str());
                 }
             }

@@ -29,21 +29,18 @@ set destinationPath=%2
 )
 
 if not exist %destinationPath%                          mkdir %destinationPath%
-if not exist %destinationPath%\packages                 mkdir %destinationPath%\packages
-if not exist %destinationPath%\packages\bigbank.account mkdir %destinationPath%\packages\bigbank.account
-if not exist %destinationPath%\packages\bigbank.client  mkdir %destinationPath%\packages\bigbank.client
-if not exist %destinationPath%\configuration            mkdir %destinationPath%\configuration
-if not exist %destinationPath%\configuration\bigbank.accountmanagement mkdir %destinationPath%\configuration\bigbank.accountmanagement
+if not exist %destinationPath%\bigbank.account mkdir %destinationPath%\bigbank.account
+if not exist %destinationPath%\bigbank.client  mkdir %destinationPath%\bigbank.client
 if not exist %destinationPath%\bin                      mkdir %destinationPath%\bin
 
-copy %sourcePath%\bigbank.account\*.rb        %destinationPath%\packages\bigbank.account
-copy %sourcePath%\bigbank.account\*.composite %destinationPath%\packages\bigbank.account
-copy %sourcePath%\bigbank.account\*.wsdl      %destinationPath%\packages\bigbank.account
-copy %sourcePath%\bigbank.account\*.xsd       %destinationPath%\packages\bigbank.account
+copy %sourcePath%\bigbank.account\*.rb        %destinationPath%\bigbank.account
+copy %sourcePath%\bigbank.account\*.composite %destinationPath%\bigbank.account
+copy %sourcePath%\bigbank.account\*.wsdl      %destinationPath%\bigbank.account
+copy %sourcePath%\bigbank.account\*.xsd       %destinationPath%\bigbank.account
 
-copy %sourcePath%\bigbank.client\*.rb         %destinationPath%\packages\bigbank.client
+copy %sourcePath%\bigbank.client\*.rb         %destinationPath%\bigbank.client
 
-copy %sourcePath%\bigbank.accountmanagement\*.composite   %destinationPath%\configuration\bigbank.accountmanagement
+copy %sourcePath%\*.composite   %destinationPath%
 
 copy %sourcePath%\bigbank.account\*.bat       %destinationPath%\bin
 copy %sourcePath%\bigbank.client\*.bat        %destinationPath%\bin

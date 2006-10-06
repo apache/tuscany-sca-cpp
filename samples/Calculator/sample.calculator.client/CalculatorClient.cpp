@@ -72,14 +72,6 @@ int main(int argc, char* argv[])
 
     try
     {
-        // Set the default  environment variable: <subsystem>/<Name>
-        string systemRoot = getenv("TUSCANY_SCACPP");
-        if (systemRoot  == "")
-        {
-            cout << "TUSCANY_SCACPP environment variable not set" <<endl;
-            return -1;
-        }
-        
         // Locate a service
 		CompositeContext myContext = CompositeContext::getCurrent();
 		Calculator *calcService = (Calculator*) myContext.locateService("CalculatorComponent/CalculatorService");

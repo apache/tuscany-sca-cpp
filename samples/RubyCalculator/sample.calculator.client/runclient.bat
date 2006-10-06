@@ -42,7 +42,7 @@ set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent
 
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
-cd %TUSCANY_SCACPP_SYSTEM_ROOT%\packages\sample.calculator.client
+cd %TUSCANY_SCACPP_SYSTEM_ROOT%\sample.calculator.client
 ruby -I%TUSCANY_SCACPP%\extensions\ruby\lib CalculatorClient.rb
 
 :end

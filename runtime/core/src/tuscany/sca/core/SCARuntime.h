@@ -79,12 +79,18 @@ namespace tuscany
 
             /**
              * Set the system root
-             * @param root The path to the deployed system.
+             * @param root The path to the system configuration.
              */
             static void setSystemRoot(const string& root);
 
             /**
-             * Set the default CompositeComponent for the system
+             * Set the search path for composites.
+             * @param path The search path for composites.
+             */
+            static void setSystemPath(const string& path);
+
+            /**
+             * Set the default Component for the system
              * @param componentName The name of the default component.
              */
             static void setDefaultComponentName(const string& componentName);
@@ -196,9 +202,14 @@ namespace tuscany
             string SCARoot;
  
             /**
-             * The path to the system root
+             * The path to the system configuration
              */
             static string systemRoot;
+
+            /**
+             * The search path for composites.
+             */
+            static string systemPath;
 
             /**
              * The default CompositeComponent.

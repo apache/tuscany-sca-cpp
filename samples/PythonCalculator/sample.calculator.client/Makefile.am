@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/PythonCalculator/deploy
-clientdir=$(deploydir)/packages/sample.calculator.client
+clientdir=$(deploydir)/sample.calculator.client
 prgbindir=$(deploydir)/bin
 
 client_DATA = *.py

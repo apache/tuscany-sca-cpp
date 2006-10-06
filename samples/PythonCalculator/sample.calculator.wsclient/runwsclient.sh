@@ -45,5 +45,5 @@ export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
 export TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorWSClientComponent
 
-cd $TUSCANY_SCACPP_SYSTEM_ROOT/packages/sample.calculator.wsclient
+cd $TUSCANY_SCACPP_SYSTEM_ROOT/sample.calculator.wsclient
 python calculator_wsclient.py div 5 2

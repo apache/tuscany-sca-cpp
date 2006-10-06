@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/RubyBank/deploy
-compositedir=$(deploydir)/packages/bigbank.account
+compositedir=$(deploydir)/bigbank.account
 prgbindir=$(deploydir)/bin
 
 prgbin_SCRIPTS = runwsserver.sh

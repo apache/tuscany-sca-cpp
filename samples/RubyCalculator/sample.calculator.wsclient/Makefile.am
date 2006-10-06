@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/RubyCalculator/deploy
-wsclientdir=$(deploydir)/packages/sample.calculator.wsclient
+wsclientdir=$(deploydir)/sample.calculator.wsclient
 prgbindir=$(deploydir)/bin
 
 wsclient_DATA = *.rb *.wsdl *.composite

@@ -44,7 +44,7 @@ set TUSCANY_SCACPP_DEFAULT_COMPONENT=bigbank.AccountManagementComponent
 rem Run the client
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
-cd %TUSCANY_SCACPP_SYSTEM_ROOT%\packages\bigbank.client
+cd %TUSCANY_SCACPP_SYSTEM_ROOT%\bigbank.client
 ruby -I%TUSCANY_SCACPP%\extensions\ruby\lib AccountClient.rb
 
 :end

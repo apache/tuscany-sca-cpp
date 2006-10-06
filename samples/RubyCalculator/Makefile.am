@@ -1,4 +1,4 @@
-deploydir=$(prefix)/samples/RubyCalculator/deploy/configuration
+deploydir=$(prefix)/samples/RubyCalculator/deploy
 SUBDIRS = sample.calculator sample.calculator.client sample.calculator.wsclient
-EXTRA_DIST = sample.calculator.solution README.html
-deploy_DATA = sample.calculator.solution/sample.calculator.solution.composite
+EXTRA_DIST = *.composite README.html
+deploy_DATA = *.composite
