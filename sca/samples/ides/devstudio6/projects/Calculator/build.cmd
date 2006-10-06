@@ -18,7 +18,7 @@
 
 setlocal
 call vcvars32
-cd WSClient
-nmake -f WSClient.mak CFG="WSClient - Win32 Release"
+cd Build
+nmake -f Build.mak CFG="Build - Win32 Release"
 cd ..
 endlocal

@@ -48,7 +48,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "../../../runtime/extensions/ws/service/axis2c/src" /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_ws_dispatcher_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "../../../runtime/extensions/ws/service/axis2c/src" /I "../../../runtime/core/src" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_DISPATCHER_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -88,7 +88,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\tuscany_sca_ws_dispatcher.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\tuscany_sca_ws_dispatcher.pdb" /machine:I386 /out:"$(OUTDIR)\tuscany_sca_ws_dispatcher.dll" /implib:"$(OUTDIR)\tuscany_sca_ws_dispatcher.lib" /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
+LINK32_FLAGS=axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\tuscany_sca_ws_dispatcher.pdb" /machine:I386 /out:"$(OUTDIR)\tuscany_sca_ws_dispatcher.dll" /implib:"$(OUTDIR)\tuscany_sca_ws_dispatcher.lib" /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\Axis2Dispatcher.obj" \
 	"$(INTDIR)\Axis2DispatcherModule.obj"
@@ -137,7 +137,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/ws/service/axis2c/src" /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_DISPATCHER_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/ws/service/axis2c/src" /I "../../../runtime/core/src" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_DISPATCHER_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -177,7 +177,7 @@ BSC32_FLAGS=/nologo /o"$(OUTDIR)\tuscany_sca_ws_dispatcher.bsc"
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\tuscany_sca_ws_dispatcher.pdb" /debug /machine:I386 /out:"$(OUTDIR)\tuscany_sca_ws_dispatcher.dll" /implib:"$(OUTDIR)\tuscany_sca_ws_dispatcher.lib" /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
+LINK32_FLAGS=axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\tuscany_sca_ws_dispatcher.pdb" /debug /machine:I386 /out:"$(OUTDIR)\tuscany_sca_ws_dispatcher.dll" /implib:"$(OUTDIR)\tuscany_sca_ws_dispatcher.lib" /pdbtype:sept /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
 	"$(INTDIR)\Axis2Dispatcher.obj" \
 	"$(INTDIR)\Axis2DispatcherModule.obj"

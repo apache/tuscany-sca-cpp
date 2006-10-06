@@ -42,7 +42,7 @@ call vcvars32
 
 echo Build of SDO started....
 set PACKAGE=tuscany_sdo_cpp
-set VERSION=0.1.incubating-M2
+set VERSION=1.0.incubating-M2
 set SRC_PACKAGE=%PACKAGE%-%VERSION%-src
 set BIN_PACKAGE=%PACKAGE%-%VERSION%-bin
 
