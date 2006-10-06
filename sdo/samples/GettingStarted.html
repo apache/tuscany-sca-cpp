@@ -157,24 +157,27 @@
 
          <DIV CLASS="section">
          <A NAME="winbldstdcxx"><H2>Building the samples on Windows with Apache STDCXX</H2></A>
-         <OL>
-             <LI>The following environment variables are required:                                 
-                <UL>
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                </UL></LI>
-             </LI>
-             <LI>You must have set up the environment for Microsoft Visual C++ tools.
-                 The build command will call vcvars32 to set the environment. Ensure the 
-                 directory containing this is on your path. This will be where you 
-                 installed the compiler.
-             </LI>
-             <LI>Build the source, either via the Visual Studio 6 project under 
-                 &lt;tuscany_sdo_install_dir&gt;\samples\ides or via the command-line build file
-                 found at &lt;tuscany_sdo_install_dir&gt;\samples\ides\devstudio6\projects\misc\build.cmd
-                 which will build and deploy the samples.
-             </LI>
-         </OL>                                                  
+          <P>STDCXX is an implementation of the C++ Standard Library provided by Apache.
+             The website is at <A HREF="http://incubator.apache.org/stdcxx/">http://incubator.apache.org/stdcxx/</A>.
+          </P>
+          <P>You must begin by downloading and building STDCXX as described <A HREF="../doc/BuildingSTDCXX.html">here</A>
+          </P>
+          <P>STDCXX is supported only when used with Microsoft Visual Studio C++ V7.1. Launch the 
+             MSVC++ 7.1 studio by opening the file 
+             &lt;tuscany_sdo_install_dir&gt;samples\ides\devstudio7\projects\misc\misc.sln
+          </P>
+          <P>The sdo_misc project includes build configurations that
+             use STDCXX. There are several ways to access the build configurations, and all
+             are equally effective. As an example, open the Property pages for sdo_misc by
+             right clicking on sdo_misc in the Solution Explorer pane and selecting
+             Properties. The Configuration property in the top left corner of the pane is a
+             drop down box offering four options: Debug, Release, stdcxx-Debug,
+             stdcxx-Release. Choose the one you want and then launch the build.
+          </P>
+          <P>All components that are linked (by the linker) must all use the same C++
+             Standard library. Therefore, if either sdo_misc or sdo_runtime are built with
+             STDCXX then both must be.
+          </P>                                                  
         </DIV>
 
        <DIV CLASS="section"> 
