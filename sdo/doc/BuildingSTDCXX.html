@@ -70,12 +70,12 @@
              </LI>
              <LI>Change directory to STDCXX_HOME. Then build a debug version of the stdcxx
                  library using the following command:
-             <DIV CLASS="sourcecode">gmake BUILDDIR=$STDCXX_HOME/Debug BUILDTYPE=15d CONFIG=gcc.config</DIV>         
+             <PRE>gmake BUILDDIR=$STDCXX_HOME/Debug BUILDTYPE=15d CONFIG=gcc.config</PRE>         
                  This will create a sub-directory of STDCXX_HOME called Debug and place the
                  build products below that.
              </LI>
              <LI>For a release version the command is:
-             <DIV CLASS="sourcecode">gmake BUILDDIR=$STDCXX_HOME/Release BUILDTYPE=12d CONFIG=gcc.config</DIV>
+             <PRE>gmake BUILDDIR=$STDCXX_HOME/Release BUILDTYPE=12d CONFIG=gcc.config</PRE>
              </LI>        
          </OL>
          <P>This provides Tuscany SDO with the versions of stdcxx that it needs for both
@@ -94,29 +94,29 @@
              </LI>
              <LI>Create two directories to contain the results of building stdcxx. The first is
                 for the debug enabled version and must be:
-             <DIV CLASS="sourcecode">&lt;STDCXX_HOME&gt;\Debug</DIV>
+             <PRE>&lt;STDCXX_HOME&gt;\Debug</PRE>
              </LI>
              <LI>The second is for the release (ie optimised) version and must be
-             <DIV CLASS="sourcecode">&lt;STDCXX_HOME&gt;\Release</DIV>
+             <PRE>&lt;STDCXX_HOME&gt;\Release</PRE>
              </LI>
              <LI>Launch an MSVC++ 7.1 command window. In the command window, set the default
                 directory to &lt;STDCXX_HOME&gt; where there is a file called generate.bat. Create
                 the project definitions that MSVC++ 7.1 will need in order to build stdcxx by
                 running generate.bat using the following command:
-             <DIV CLASS="sourcecode">.\generate.bat /BUILDDIR:&lt;STDCXX_HOME&gt;\Debug /CONFIG:VC71</DIV>
+             <PRE>.\generate.bat /BUILDDIR:&lt;STDCXX_HOME&gt;\Debug /CONFIG:VC71</PRE>
                 It is necessary to provide the full, absolute path to the build directory - it
                 is not sufficient to provide a relative path. (This restriction will be fixed
                 in a future release.)
              </LI>
              <LI>Repeat this operation for the release build, via the command:
-             <DIV CLASS="sourcecode">.\generate.bat /BUILDDIR:&lt;STDCXX_HOME&gt;\Release /CONFIG:VC71</DIV>
+             <PRE>.\generate.bat /BUILDDIR:&lt;STDCXX_HOME&gt;\Release /CONFIG:VC71</PRE>
              </LI>
              <LI>Still using the MSVC++ 7.1 command window, set the default directory to one of
                 the two build directories eg
-             <DIV CLASS="sourcecode">cd &lt;STDCXX_HOME&gt;\Debug</DIV>
+             <PRE>cd &lt;STDCXX_HOME&gt;\Debug</PRE>
              </LI>
              <LI>Then launch the developer studio via
-             <DIV CLASS="sourcecode">cd &lt;STDCXX_HOME&gt;\Debug</DIV>
+             <PRE>cd &lt;STDCXX_HOME&gt;\Debug</PRE>
              </LI>
              <LI>Select the configuration to build. For the Debug version of SDO this will be
                 "15d Debug Thread-safe Dll". Then select "Build Solution". The build will take
@@ -125,7 +125,7 @@
                 itself is fine.
              </LI>
              <LI>Repeat this process for the release version, setting the default directory to
-             <DIV CLASS="sourcecode">cd &lt;STDCXX_HOME&gt;\Release</DIV>
+             <PRE>cd &lt;STDCXX_HOME&gt;\Release</PRE>
                  and choosing "12d Optimized Thread-safe Dll" as the build configuration.
              </LI>        
          </OL>

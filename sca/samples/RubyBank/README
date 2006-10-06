@@ -7,16 +7,16 @@ found here. This sample uses multiple Ruby components, calls out to an
 external Web Service via a reference, exposes the service as a Web Service 
 and also provides a PHP based client.
 
-There are three sub projects in this workspace:
+There are two sub projects in this workspace:
     - bigbank.account
       This contains the source code and SCDL artifacts for the SCA BigBank 
       composite implementing the account services.
 
-    - bigbank.accountmanagement
-      This contains the SCDL file describing the configuration of the SCA 
-      BigBank composite deployed to the SCA runtime.
-
     - bigbank.client
       A sample client which does a local call to the BigBank service.
+
+Additionally, there is the bigbank.accountmanagement.composite file. This      
+describes the configuration of the SCA Calculator composite deployed to the 
+SCA runtime.                                                                       
 
 See the README.html file for instructions to build and run this sample
