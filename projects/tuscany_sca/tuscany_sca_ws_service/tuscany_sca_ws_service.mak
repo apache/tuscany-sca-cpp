@@ -39,18 +39,21 @@ ALL : "$(OUTDIR)\tuscany_sca_ws_service.dll"
 
 !ELSE 
 
-ALL : "tuscany_sca - Win32 Release" "$(OUTDIR)\tuscany_sca_ws_service.dll"
+ALL : "tuscany_sca_ws_dispatcher - Win32 Release" "tuscany_sca - Win32 Release" "$(OUTDIR)\tuscany_sca_ws_service.dll"
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"tuscany_sca - Win32 ReleaseCLEAN" 
+CLEAN :"tuscany_sca - Win32 ReleaseCLEAN" "tuscany_sca_ws_dispatcher - Win32 ReleaseCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
-	-@erase "$(INTDIR)\Axis2EntryPointService_skeleton.obj"
+	-@erase "$(INTDIR)\Axis2Service.obj"
 	-@erase "$(INTDIR)\Axis2Utils.obj"
 	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\WSReferenceBinding.obj"
+	-@erase "$(INTDIR)\WSReferenceBindingExtension.obj"
+	-@erase "$(INTDIR)\WSServiceProxy.obj"
 	-@erase "$(OUTDIR)\tuscany_sca_ws_service.dll"
 	-@erase "$(OUTDIR)\tuscany_sca_ws_service.exp"
 	-@erase "$(OUTDIR)\tuscany_sca_ws_service.lib"
@@ -59,7 +62,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "../../../runtime/extensions/ws/service/axis2c/src" /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -101,9 +104,13 @@ BSC32_SBRS= \
 LINK32=link.exe
 LINK32_FLAGS=axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\tuscany_sca_ws_service.pdb" /machine:I386 /out:"$(OUTDIR)\tuscany_sca_ws_service.dll" /implib:"$(OUTDIR)\tuscany_sca_ws_service.lib" /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
-	"$(INTDIR)\Axis2EntryPointService_skeleton.obj" \
+	"$(INTDIR)\WSReferenceBinding.obj" \
+	"$(INTDIR)\Axis2Service.obj" \
 	"$(INTDIR)\Axis2Utils.obj" \
-	"..\tuscany_sca\Release\tuscany_sca.lib"
+	"$(INTDIR)\WSReferenceBindingExtension.obj" \
+	"$(INTDIR)\WSServiceProxy.obj" \
+	"..\tuscany_sca\Release\tuscany_sca.lib" \
+	"..\tuscany_sca_ws_dispatcher\Release\tuscany_sca_ws_dispatcher.lib"
 
 "$(OUTDIR)\tuscany_sca_ws_service.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -119,9 +126,8 @@ ALL : $(DS_POSTBUILD_DEP)
 OutDir=.\Release
 # End Custom Macros
 
-$(DS_POSTBUILD_DEP) : "tuscany_sca - Win32 Release" "$(OUTDIR)\tuscany_sca_ws_service.dll"
-   copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\lib
-	copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\bin
+$(DS_POSTBUILD_DEP) : "tuscany_sca_ws_dispatcher - Win32 Release" "tuscany_sca - Win32 Release" "$(OUTDIR)\tuscany_sca_ws_service.dll"
+   ..\..\..\runtime\extensions\ws\service\deploy.bat ..\..\..\ Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_ws_service - Win32 Debug"
@@ -138,19 +144,22 @@ ALL : "$(OUTDIR)\tuscany_sca_ws_service.dll"
 
 !ELSE 
 
-ALL : "tuscany_sca - Win32 Debug" "$(OUTDIR)\tuscany_sca_ws_service.dll"
+ALL : "tuscany_sca_ws_dispatcher - Win32 Debug" "tuscany_sca - Win32 Debug" "$(OUTDIR)\tuscany_sca_ws_service.dll"
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"tuscany_sca - Win32 DebugCLEAN" 
+CLEAN :"tuscany_sca - Win32 DebugCLEAN" "tuscany_sca_ws_dispatcher - Win32 DebugCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
-	-@erase "$(INTDIR)\Axis2EntryPointService_skeleton.obj"
+	-@erase "$(INTDIR)\Axis2Service.obj"
 	-@erase "$(INTDIR)\Axis2Utils.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
+	-@erase "$(INTDIR)\WSReferenceBinding.obj"
+	-@erase "$(INTDIR)\WSReferenceBindingExtension.obj"
+	-@erase "$(INTDIR)\WSServiceProxy.obj"
 	-@erase "$(OUTDIR)\tuscany_sca_ws_service.dll"
 	-@erase "$(OUTDIR)\tuscany_sca_ws_service.exp"
 	-@erase "$(OUTDIR)\tuscany_sca_ws_service.ilk"
@@ -161,7 +170,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/ws/service/axis2c/src" /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_SERVICE_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -203,9 +212,13 @@ BSC32_SBRS= \
 LINK32=link.exe
 LINK32_FLAGS=axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\tuscany_sca_ws_service.pdb" /debug /machine:I386 /out:"$(OUTDIR)\tuscany_sca_ws_service.dll" /implib:"$(OUTDIR)\tuscany_sca_ws_service.lib" /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
-	"$(INTDIR)\Axis2EntryPointService_skeleton.obj" \
+	"$(INTDIR)\WSReferenceBinding.obj" \
+	"$(INTDIR)\Axis2Service.obj" \
 	"$(INTDIR)\Axis2Utils.obj" \
-	"..\tuscany_sca\Debug\tuscany_sca.lib"
+	"$(INTDIR)\WSReferenceBindingExtension.obj" \
+	"$(INTDIR)\WSServiceProxy.obj" \
+	"..\tuscany_sca\Debug\tuscany_sca.lib" \
+	"..\tuscany_sca_ws_dispatcher\Debug\tuscany_sca_ws_dispatcher.lib"
 
 "$(OUTDIR)\tuscany_sca_ws_service.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -221,10 +234,8 @@ ALL : $(DS_POSTBUILD_DEP)
 OutDir=.\Debug
 # End Custom Macros
 
-$(DS_POSTBUILD_DEP) : "tuscany_sca - Win32 Debug" "$(OUTDIR)\tuscany_sca_ws_service.dll"
-   copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\bin
-	copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\bin
-	copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\lib
+$(DS_POSTBUILD_DEP) : "tuscany_sca_ws_dispatcher - Win32 Debug" "tuscany_sca - Win32 Debug" "$(OUTDIR)\tuscany_sca_ws_service.dll"
+   ..\..\..\runtime\extensions\ws\service\deploy.bat ..\..\..\ Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
@@ -240,15 +251,33 @@ $(DS_POSTBUILD_DEP) : "tuscany_sca - Win32 Debug" "$(OUTDIR)\tuscany_sca_ws_serv
 
 
 !IF "$(CFG)" == "tuscany_sca_ws_service - Win32 Release" || "$(CFG)" == "tuscany_sca_ws_service - Win32 Debug"
-SOURCE=..\..\..\runtime\ws_service\axis2c\src\Axis2EntryPointService_skeleton.cpp
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\model\WSReferenceBinding.cpp
 
-"$(INTDIR)\Axis2EntryPointService_skeleton.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\WSReferenceBinding.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\ws_service\axis2c\src\Axis2Utils.cpp
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Service.cpp
+
+"$(INTDIR)\Axis2Service.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Utils.cpp
 
 "$(INTDIR)\Axis2Utils.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSReferenceBindingExtension.cpp
+
+"$(INTDIR)\WSReferenceBindingExtension.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\WSServiceProxy.cpp
+
+"$(INTDIR)\WSServiceProxy.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -274,6 +303,32 @@ SOURCE=..\..\..\runtime\ws_service\axis2c\src\Axis2Utils.cpp
 "tuscany_sca - Win32 DebugCLEAN" : 
    cd "..\tuscany_sca"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Debug" RECURSE=1 CLEAN 
+   cd "..\tuscany_sca_ws_service"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "tuscany_sca_ws_service - Win32 Release"
+
+"tuscany_sca_ws_dispatcher - Win32 Release" : 
+   cd "..\tuscany_sca_ws_dispatcher"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_dispatcher.mak CFG="tuscany_sca_ws_dispatcher - Win32 Release" 
+   cd "..\tuscany_sca_ws_service"
+
+"tuscany_sca_ws_dispatcher - Win32 ReleaseCLEAN" : 
+   cd "..\tuscany_sca_ws_dispatcher"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_dispatcher.mak CFG="tuscany_sca_ws_dispatcher - Win32 Release" RECURSE=1 CLEAN 
+   cd "..\tuscany_sca_ws_service"
+
+!ELSEIF  "$(CFG)" == "tuscany_sca_ws_service - Win32 Debug"
+
+"tuscany_sca_ws_dispatcher - Win32 Debug" : 
+   cd "..\tuscany_sca_ws_dispatcher"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_dispatcher.mak CFG="tuscany_sca_ws_dispatcher - Win32 Debug" 
+   cd "..\tuscany_sca_ws_service"
+
+"tuscany_sca_ws_dispatcher - Win32 DebugCLEAN" : 
+   cd "..\tuscany_sca_ws_dispatcher"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_dispatcher.mak CFG="tuscany_sca_ws_dispatcher - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\tuscany_sca_ws_service"
 
 !ENDIF 

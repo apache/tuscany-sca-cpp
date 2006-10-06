@@ -17,22 +17,33 @@
 @REM  under the License.
 
 rem Will copy the correct files from the source tree for packaging and deployment of the 
-rem SCA sample.
+rem SCA Calculator sample.
+
 setlocal
-set currentPath=%~d0%~p0
-set sourcePath=%currentPath%..\..\..\..\Calculator
 
-set buildMode=Release
-if .Debug == .%1 (
-set buildMode=Debug
+if . == .%1 (
+echo source path not specified
+goto usage
 )
+set srcdir=%1
 
-
-if . == %2. (
-set destinationPath=%sourcePath%\deploy
-) ELSE (
-set destinationPath=%2
+if . == .%2 (
+echo input directory not specified
+goto usage
 )
+set inpath=%2
+echo %inpath%
+
+
+set deploydir=%TUSCANY_SCACPP%\deploy
+set samplesdir=%deploydir%\samples
+set calcdir=%samplesdir%\Calculator
+set calcdeploydir=%calcdir%\deploy
+
+if not exist %deploydir% mkdir %deploydir%
+if not exist %samplesir% mkdir %samplesir%
+if not exist %calcdir% mkdir %calcdir%
+if not exist %calcdeploydir% mkdir %calcdeploydir%
 
 if not exist %destinationPath%\packages mkdir %destinationPath%\packages 
 if not exist %destinationPath%\packages\CalculatorComposite mkdir %destinationPath%\packages\CalculatorComposite

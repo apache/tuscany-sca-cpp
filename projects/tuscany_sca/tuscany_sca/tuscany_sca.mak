@@ -37,51 +37,43 @@ ALL : "$(OUTDIR)\tuscany_sca.dll"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\Axis2Client.obj"
 	-@erase "$(INTDIR)\Binding.obj"
 	-@erase "$(INTDIR)\Component.obj"
-	-@erase "$(INTDIR)\ComponentContext.obj"
-	-@erase "$(INTDIR)\ComponentContextImpl.obj"
-	-@erase "$(INTDIR)\ComponentServiceWrapper.obj"
-	-@erase "$(INTDIR)\CPPImplementation.obj"
-	-@erase "$(INTDIR)\CPPInterface.obj"
+	-@erase "$(INTDIR)\ComponentType.obj"
+	-@erase "$(INTDIR)\Composite.obj"
+	-@erase "$(INTDIR)\CompositeReference.obj"
+	-@erase "$(INTDIR)\CompositeService.obj"
+	-@erase "$(INTDIR)\Contract.obj"
 	-@erase "$(INTDIR)\DefaultLogWriter.obj"
-	-@erase "$(INTDIR)\EntryPoint.obj"
-	-@erase "$(INTDIR)\EntryPointProxy.obj"
-	-@erase "$(INTDIR)\ExternalService.obj"
-	-@erase "$(INTDIR)\ExternalServiceWrapper.obj"
+	-@erase "$(INTDIR)\Exceptions.obj"
 	-@erase "$(INTDIR)\File.obj"
 	-@erase "$(INTDIR)\FileLogWriter.obj"
-	-@erase "$(INTDIR)\Implementation.obj"
+	-@erase "$(INTDIR)\ImplementationExtension.obj"
 	-@erase "$(INTDIR)\Interface.obj"
+	-@erase "$(INTDIR)\InterfaceExtension.obj"
 	-@erase "$(INTDIR)\Library.obj"
 	-@erase "$(INTDIR)\Logger.obj"
 	-@erase "$(INTDIR)\LogWriter.obj"
 	-@erase "$(INTDIR)\ModelLoader.obj"
-	-@erase "$(INTDIR)\Composite.obj"
-	-@erase "$(INTDIR)\CompositeContext.obj"
-	-@erase "$(INTDIR)\CompositeContextImpl.obj"
 	-@erase "$(INTDIR)\Operation.obj"
-	-@erase "$(INTDIR)\SCA.obj"
-	-@erase "$(INTDIR)\SCAEntryPoint.obj"
+	-@erase "$(INTDIR)\Reference.obj"
+	-@erase "$(INTDIR)\ReferenceBinding.obj"
+	-@erase "$(INTDIR)\ReferenceBindingExtension.obj"
+	-@erase "$(INTDIR)\ReferenceType.obj"
 	-@erase "$(INTDIR)\SCARuntime.obj"
 	-@erase "$(INTDIR)\Service.obj"
-	-@erase "$(INTDIR)\ServiceList.obj"
+	-@erase "$(INTDIR)\ServiceBinding.obj"
+	-@erase "$(INTDIR)\ServiceBindingExtension.obj"
 	-@erase "$(INTDIR)\ServiceProxy.obj"
-	-@erase "$(INTDIR)\ServiceReference.obj"
-	-@erase "$(INTDIR)\ServiceRuntimeException.obj"
+	-@erase "$(INTDIR)\ServiceType.obj"
 	-@erase "$(INTDIR)\ServiceWrapper.obj"
-	-@erase "$(INTDIR)\Subsystem.obj"
-	-@erase "$(INTDIR)\System.obj"
 	-@erase "$(INTDIR)\TuscanyRuntime.obj"
 	-@erase "$(INTDIR)\Utils.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\Wire.obj"
-	-@erase "$(INTDIR)\WireTarget.obj"
-	-@erase "$(INTDIR)\WSBinding.obj"
-	-@erase "$(INTDIR)\Wsdl.obj"
-	-@erase "$(INTDIR)\WsdlOperation.obj"
-	-@erase "$(INTDIR)\WSServiceWrapper.obj"
+	-@erase "$(INTDIR)\WSDLDefinition.obj"
+	-@erase "$(INTDIR)\WSDLInterface.obj"
+	-@erase "$(INTDIR)\WSDLOperation.obj"
 	-@erase "$(OUTDIR)\tuscany_sca.dll"
 	-@erase "$(OUTDIR)\tuscany_sca.exp"
 	-@erase "$(OUTDIR)\tuscany_sca.lib"
@@ -132,50 +124,42 @@ BSC32_SBRS= \
 LINK32=link.exe
 LINK32_FLAGS=axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /dll /incremental:no /pdb:"$(OUTDIR)\tuscany_sca.pdb" /machine:I386 /out:"$(OUTDIR)\tuscany_sca.dll" /implib:"$(OUTDIR)\tuscany_sca.lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
-	"$(INTDIR)\ComponentContext.obj" \
-	"$(INTDIR)\ComponentContextImpl.obj" \
-	"$(INTDIR)\CompositeContext.obj" \
-	"$(INTDIR)\CompositeContextImpl.obj" \
-	"$(INTDIR)\SCA.obj" \
-	"$(INTDIR)\ServiceList.obj" \
-	"$(INTDIR)\ServiceRuntimeException.obj" \
-	"$(INTDIR)\ComponentServiceWrapper.obj" \
-	"$(INTDIR)\ExternalServiceWrapper.obj" \
 	"$(INTDIR)\Operation.obj" \
-	"$(INTDIR)\SCAEntryPoint.obj" \
 	"$(INTDIR)\SCARuntime.obj" \
 	"$(INTDIR)\ServiceProxy.obj" \
 	"$(INTDIR)\ServiceWrapper.obj" \
 	"$(INTDIR)\TuscanyRuntime.obj" \
 	"$(INTDIR)\Binding.obj" \
 	"$(INTDIR)\Component.obj" \
-	"$(INTDIR)\CPPImplementation.obj" \
-	"$(INTDIR)\CPPInterface.obj" \
-	"$(INTDIR)\EntryPoint.obj" \
-	"$(INTDIR)\ExternalService.obj" \
-	"$(INTDIR)\Implementation.obj" \
+	"$(INTDIR)\ComponentType.obj" \
+	"$(INTDIR)\Composite.obj" \
+	"$(INTDIR)\CompositeReference.obj" \
+	"$(INTDIR)\CompositeService.obj" \
+	"$(INTDIR)\Contract.obj" \
 	"$(INTDIR)\Interface.obj" \
 	"$(INTDIR)\ModelLoader.obj" \
-	"$(INTDIR)\Composite.obj" \
+	"$(INTDIR)\Reference.obj" \
+	"$(INTDIR)\ReferenceBinding.obj" \
+	"$(INTDIR)\ReferenceType.obj" \
 	"$(INTDIR)\Service.obj" \
-	"$(INTDIR)\ServiceReference.obj" \
-	"$(INTDIR)\Subsystem.obj" \
-	"$(INTDIR)\System.obj" \
+	"$(INTDIR)\ServiceBinding.obj" \
+	"$(INTDIR)\ServiceType.obj" \
 	"$(INTDIR)\Wire.obj" \
-	"$(INTDIR)\WireTarget.obj" \
-	"$(INTDIR)\WSBinding.obj" \
-	"$(INTDIR)\Wsdl.obj" \
-	"$(INTDIR)\WsdlOperation.obj" \
+	"$(INTDIR)\WSDLDefinition.obj" \
+	"$(INTDIR)\WSDLInterface.obj" \
+	"$(INTDIR)\WSDLOperation.obj" \
 	"$(INTDIR)\DefaultLogWriter.obj" \
+	"$(INTDIR)\Exceptions.obj" \
 	"$(INTDIR)\File.obj" \
 	"$(INTDIR)\FileLogWriter.obj" \
 	"$(INTDIR)\Library.obj" \
 	"$(INTDIR)\Logger.obj" \
 	"$(INTDIR)\LogWriter.obj" \
 	"$(INTDIR)\Utils.obj" \
-	"$(INTDIR)\Axis2Client.obj" \
-	"$(INTDIR)\EntryPointProxy.obj" \
-	"$(INTDIR)\WSServiceWrapper.obj"
+	"$(INTDIR)\ImplementationExtension.obj" \
+	"$(INTDIR)\InterfaceExtension.obj" \
+	"$(INTDIR)\ReferenceBindingExtension.obj" \
+	"$(INTDIR)\ServiceBindingExtension.obj"
 
 "$(OUTDIR)\tuscany_sca.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -192,16 +176,7 @@ OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sca.dll"
-   del ..\..\..\deploy\bin\tuscany_sca.*
-	del ..\..\..\deploy\lib\*.lib
-	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca
-	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core
-	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model
-	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util
-	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws
-	copy Release\tuscany_sca.dll ..\..\..\deploy\bin
-	copy Release\tuscany_sca.lib ..\..\..\deploy\lib
-	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
+   ..\..\..\runtime\core\deploy.bat ..\..\..\ Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "tuscany_sca - Win32 Debug"
@@ -216,52 +191,44 @@ ALL : "$(OUTDIR)\tuscany_sca.dll"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\Axis2Client.obj"
 	-@erase "$(INTDIR)\Binding.obj"
 	-@erase "$(INTDIR)\Component.obj"
-	-@erase "$(INTDIR)\ComponentContext.obj"
-	-@erase "$(INTDIR)\ComponentContextImpl.obj"
-	-@erase "$(INTDIR)\ComponentServiceWrapper.obj"
-	-@erase "$(INTDIR)\CPPImplementation.obj"
-	-@erase "$(INTDIR)\CPPInterface.obj"
+	-@erase "$(INTDIR)\ComponentType.obj"
+	-@erase "$(INTDIR)\Composite.obj"
+	-@erase "$(INTDIR)\CompositeReference.obj"
+	-@erase "$(INTDIR)\CompositeService.obj"
+	-@erase "$(INTDIR)\Contract.obj"
 	-@erase "$(INTDIR)\DefaultLogWriter.obj"
-	-@erase "$(INTDIR)\EntryPoint.obj"
-	-@erase "$(INTDIR)\EntryPointProxy.obj"
-	-@erase "$(INTDIR)\ExternalService.obj"
-	-@erase "$(INTDIR)\ExternalServiceWrapper.obj"
+	-@erase "$(INTDIR)\Exceptions.obj"
 	-@erase "$(INTDIR)\File.obj"
 	-@erase "$(INTDIR)\FileLogWriter.obj"
-	-@erase "$(INTDIR)\Implementation.obj"
+	-@erase "$(INTDIR)\ImplementationExtension.obj"
 	-@erase "$(INTDIR)\Interface.obj"
+	-@erase "$(INTDIR)\InterfaceExtension.obj"
 	-@erase "$(INTDIR)\Library.obj"
 	-@erase "$(INTDIR)\Logger.obj"
 	-@erase "$(INTDIR)\LogWriter.obj"
 	-@erase "$(INTDIR)\ModelLoader.obj"
-	-@erase "$(INTDIR)\Composite.obj"
-	-@erase "$(INTDIR)\CompositeContext.obj"
-	-@erase "$(INTDIR)\CompositeContextImpl.obj"
 	-@erase "$(INTDIR)\Operation.obj"
-	-@erase "$(INTDIR)\SCA.obj"
-	-@erase "$(INTDIR)\SCAEntryPoint.obj"
+	-@erase "$(INTDIR)\Reference.obj"
+	-@erase "$(INTDIR)\ReferenceBinding.obj"
+	-@erase "$(INTDIR)\ReferenceBindingExtension.obj"
+	-@erase "$(INTDIR)\ReferenceType.obj"
 	-@erase "$(INTDIR)\SCARuntime.obj"
 	-@erase "$(INTDIR)\Service.obj"
-	-@erase "$(INTDIR)\ServiceList.obj"
+	-@erase "$(INTDIR)\ServiceBinding.obj"
+	-@erase "$(INTDIR)\ServiceBindingExtension.obj"
 	-@erase "$(INTDIR)\ServiceProxy.obj"
-	-@erase "$(INTDIR)\ServiceReference.obj"
-	-@erase "$(INTDIR)\ServiceRuntimeException.obj"
+	-@erase "$(INTDIR)\ServiceType.obj"
 	-@erase "$(INTDIR)\ServiceWrapper.obj"
-	-@erase "$(INTDIR)\Subsystem.obj"
-	-@erase "$(INTDIR)\System.obj"
 	-@erase "$(INTDIR)\TuscanyRuntime.obj"
 	-@erase "$(INTDIR)\Utils.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
 	-@erase "$(INTDIR)\Wire.obj"
-	-@erase "$(INTDIR)\WireTarget.obj"
-	-@erase "$(INTDIR)\WSBinding.obj"
-	-@erase "$(INTDIR)\Wsdl.obj"
-	-@erase "$(INTDIR)\WsdlOperation.obj"
-	-@erase "$(INTDIR)\WSServiceWrapper.obj"
+	-@erase "$(INTDIR)\WSDLDefinition.obj"
+	-@erase "$(INTDIR)\WSDLInterface.obj"
+	-@erase "$(INTDIR)\WSDLOperation.obj"
 	-@erase "$(OUTDIR)\tuscany_sca.dll"
 	-@erase "$(OUTDIR)\tuscany_sca.exp"
 	-@erase "$(OUTDIR)\tuscany_sca.ilk"
@@ -314,50 +281,42 @@ BSC32_SBRS= \
 LINK32=link.exe
 LINK32_FLAGS=axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\tuscany_sca.pdb" /debug /machine:I386 /out:"$(OUTDIR)\tuscany_sca.dll" /implib:"$(OUTDIR)\tuscany_sca.lib" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib" 
 LINK32_OBJS= \
-	"$(INTDIR)\ComponentContext.obj" \
-	"$(INTDIR)\ComponentContextImpl.obj" \
-	"$(INTDIR)\CompositeContext.obj" \
-	"$(INTDIR)\CompositeContextImpl.obj" \
-	"$(INTDIR)\SCA.obj" \
-	"$(INTDIR)\ServiceList.obj" \
-	"$(INTDIR)\ServiceRuntimeException.obj" \
-	"$(INTDIR)\ComponentServiceWrapper.obj" \
-	"$(INTDIR)\ExternalServiceWrapper.obj" \
 	"$(INTDIR)\Operation.obj" \
-	"$(INTDIR)\SCAEntryPoint.obj" \
 	"$(INTDIR)\SCARuntime.obj" \
 	"$(INTDIR)\ServiceProxy.obj" \
 	"$(INTDIR)\ServiceWrapper.obj" \
 	"$(INTDIR)\TuscanyRuntime.obj" \
 	"$(INTDIR)\Binding.obj" \
 	"$(INTDIR)\Component.obj" \
-	"$(INTDIR)\CPPImplementation.obj" \
-	"$(INTDIR)\CPPInterface.obj" \
-	"$(INTDIR)\EntryPoint.obj" \
-	"$(INTDIR)\ExternalService.obj" \
-	"$(INTDIR)\Implementation.obj" \
+	"$(INTDIR)\ComponentType.obj" \
+	"$(INTDIR)\Composite.obj" \
+	"$(INTDIR)\CompositeReference.obj" \
+	"$(INTDIR)\CompositeService.obj" \
+	"$(INTDIR)\Contract.obj" \
 	"$(INTDIR)\Interface.obj" \
 	"$(INTDIR)\ModelLoader.obj" \
-	"$(INTDIR)\Composite.obj" \
+	"$(INTDIR)\Reference.obj" \
+	"$(INTDIR)\ReferenceBinding.obj" \
+	"$(INTDIR)\ReferenceType.obj" \
 	"$(INTDIR)\Service.obj" \
-	"$(INTDIR)\ServiceReference.obj" \
-	"$(INTDIR)\Subsystem.obj" \
-	"$(INTDIR)\System.obj" \
+	"$(INTDIR)\ServiceBinding.obj" \
+	"$(INTDIR)\ServiceType.obj" \
 	"$(INTDIR)\Wire.obj" \
-	"$(INTDIR)\WireTarget.obj" \
-	"$(INTDIR)\WSBinding.obj" \
-	"$(INTDIR)\Wsdl.obj" \
-	"$(INTDIR)\WsdlOperation.obj" \
+	"$(INTDIR)\WSDLDefinition.obj" \
+	"$(INTDIR)\WSDLInterface.obj" \
+	"$(INTDIR)\WSDLOperation.obj" \
 	"$(INTDIR)\DefaultLogWriter.obj" \
+	"$(INTDIR)\Exceptions.obj" \
 	"$(INTDIR)\File.obj" \
 	"$(INTDIR)\FileLogWriter.obj" \
 	"$(INTDIR)\Library.obj" \
 	"$(INTDIR)\Logger.obj" \
 	"$(INTDIR)\LogWriter.obj" \
 	"$(INTDIR)\Utils.obj" \
-	"$(INTDIR)\Axis2Client.obj" \
-	"$(INTDIR)\EntryPointProxy.obj" \
-	"$(INTDIR)\WSServiceWrapper.obj"
+	"$(INTDIR)\ImplementationExtension.obj" \
+	"$(INTDIR)\InterfaceExtension.obj" \
+	"$(INTDIR)\ReferenceBindingExtension.obj" \
+	"$(INTDIR)\ServiceBindingExtension.obj"
 
 "$(OUTDIR)\tuscany_sca.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -374,17 +333,7 @@ OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sca.dll"
-   del ..\..\..\deploy\bin\tuscany_sca.*
-	del ..\..\..\deploy\lib\*.lib
-	copy ..\..\..\runtime\core\src\osoa\sca\*.h ..\..\..\deploy\include\osoa\sca
-	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core
-	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model
-	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util
-	copy ..\..\..\runtime\core\src\tuscany\sca\ws\*.h ..\..\..\deploy\include\tuscany\sca\ws
-	copy Debug\tuscany_sca.dll ..\..\..\deploy\bin
-	copy Debug\tuscany_sca.pdb ..\..\..\deploy\bin
-	copy Debug\tuscany_sca.lib ..\..\..\deploy\lib
-	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
+   ..\..\..\runtime\core\deploy.bat ..\..\..\ Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
@@ -400,69 +349,9 @@ $(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sca.dll"
 
 
 !IF "$(CFG)" == "tuscany_sca - Win32 Release" || "$(CFG)" == "tuscany_sca - Win32 Debug"
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ComponentContext.cpp
-
-"$(INTDIR)\ComponentContext.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ComponentContextImpl.cpp
-
-"$(INTDIR)\ComponentContextImpl.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContext.cpp
-
-"$(INTDIR)\CompositeContext.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\CompositeContextImpl.cpp
-
-"$(INTDIR)\CompositeContextImpl.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\SCA.cpp
-
-"$(INTDIR)\SCA.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ServiceList.cpp
-
-"$(INTDIR)\ServiceList.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\osoa\sca\ServiceRuntimeException.cpp
-
-"$(INTDIR)\ServiceRuntimeException.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ComponentServiceWrapper.cpp
-
-"$(INTDIR)\ComponentServiceWrapper.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\ExternalServiceWrapper.cpp
-
-"$(INTDIR)\ExternalServiceWrapper.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\Operation.cpp
 
 "$(INTDIR)\Operation.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\core\SCAEntryPoint.cpp
-
-"$(INTDIR)\SCAEntryPoint.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -502,33 +391,33 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Component.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CPPImplementation.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ComponentType.cpp
 
-"$(INTDIR)\CPPImplementation.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\ComponentType.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CPPInterface.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp
 
-"$(INTDIR)\CPPInterface.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\Composite.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\EntryPoint.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CompositeReference.cpp
 
-"$(INTDIR)\EntryPoint.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\CompositeReference.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ExternalService.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\CompositeService.cpp
 
-"$(INTDIR)\ExternalService.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\CompositeService.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Implementation.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Contract.cpp
 
-"$(INTDIR)\Implementation.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\Contract.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -544,9 +433,21 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ModelLoader.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Composite.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Reference.cpp
 
-"$(INTDIR)\Composite.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\Reference.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ReferenceBinding.cpp
+
+"$(INTDIR)\ReferenceBinding.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ReferenceType.cpp
+
+"$(INTDIR)\ReferenceType.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -556,21 +457,15 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Service.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ServiceReference.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ServiceBinding.cpp
 
-"$(INTDIR)\ServiceReference.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\ServiceBinding.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Subsystem.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\ServiceType.cpp
 
-"$(INTDIR)\Subsystem.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\System.cpp
-
-"$(INTDIR)\System.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\ServiceType.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -580,33 +475,33 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Wire.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WireTarget.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WSDLDefinition.cpp
 
-"$(INTDIR)\WireTarget.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\WSDLDefinition.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WSBinding.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WSDLInterface.cpp
 
-"$(INTDIR)\WSBinding.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\WSDLInterface.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\Wsdl.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WSDLOperation.cpp
 
-"$(INTDIR)\Wsdl.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WsdlOperation.cpp
-
-"$(INTDIR)\WsdlOperation.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\WSDLOperation.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\DefaultLogWriter.cpp
 
 "$(INTDIR)\DefaultLogWriter.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.cpp
+
+"$(INTDIR)\Exceptions.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -646,21 +541,27 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\util\Utils.cpp
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\ws_reference\axis2c\src\Axis2Client.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ImplementationExtension.cpp
 
-"$(INTDIR)\Axis2Client.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\ImplementationExtension.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\core\src\tuscany\sca\ws\EntryPointProxy.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\InterfaceExtension.cpp
 
-"$(INTDIR)\EntryPointProxy.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\InterfaceExtension.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-SOURCE=..\..\..\runtime\ws_reference\axis2c\src\WSServiceWrapper.cpp
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ReferenceBindingExtension.cpp
 
-"$(INTDIR)\WSServiceWrapper.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\ReferenceBindingExtension.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\extension\ServiceBindingExtension.cpp
+
+"$(INTDIR)\ServiceBindingExtension.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
