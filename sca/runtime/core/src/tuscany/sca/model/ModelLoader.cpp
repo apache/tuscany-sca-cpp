@@ -248,9 +248,9 @@ namespace tuscany
                 // Composite references
                 // -----------------
                 DataObjectList& compositeReferenceList = root->getList("reference");
-                for (int i = 0; i < compositeReferenceList.size(); i++)
+                for (int cri = 0; cri < compositeReferenceList.size(); cri++)
                 {
-                    addCompositeReference(composite, compositeReferenceList[i]);
+                    addCompositeReference(composite, compositeReferenceList[cri]);
                 }
 
                 // -----
@@ -774,10 +774,10 @@ namespace tuscany
                     }                    
 
                     Files wsdlFiles(compositeRootDir, "*.wsdl", true);
-                    for (unsigned int i=0; i < wsdlFiles.size(); i++)
+                    for (unsigned int wi=0; wi < wsdlFiles.size(); wi++)
                     {
                         // Load a wsdl file -> get the types, then the contents of the wsdl
-                        string wsdlName = wsdlFiles[i].getDirectory() + "/" + wsdlFiles[i].getFileName();
+                        string wsdlName = wsdlFiles[wi].getDirectory() + "/" + wsdlFiles[wi].getFileName();
                         loadXMLSchema(composite, wsdlName.c_str());
                         
                         // Load the contents of the wsdl files
