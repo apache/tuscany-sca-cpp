@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="sdo_misc"
+	RootNamespace="sdo_misc"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -64,7 +65,14 @@ copy Release\*.exe ..\..\..\..\..\misc\deploy\bin
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"
+				Output=""/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
@@ -124,9 +132,148 @@ copy Debug\*.exe ..\..\..\..\..\misc\deploy\bin
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"
+				Output=""/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="stdcxx-Debug|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(TUSCANY_SDOCPP)\include&quot;;&quot;$(STDCXX_HOME)\include&quot;;&quot;$(STDCXX_HOME)\include\ansi&quot;;&quot;$(STDCXX_HOME)\Debug\include\15d&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_RWSTD_USE_CONFIG;_RWSHARED;_RWSTDDEBUG"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation=".\$(ConfigurationName)/"
+				ObjectFile=".\$(ConfigurationName)/"
+				ProgramDataBaseFileName=".\$(ConfigurationName)/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib stdlib15d.lib"
+				OutputFile=".\$(ConfigurationName)/sdo_misc.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="&quot;$(TUSCANY_SDOCPP)\lib&quot;;&quot;$(STDCXX_HOME)\Debug\lib&quot;"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile=".\$(ConfigurationName)/sdo_misc.pdb"
+				SubSystem="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\Debug/sdo_misc.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="if not exist ..\..\..\..\..\misc\deploy mkdir ..\..\..\..\..\misc\deploy
+if not exist ..\..\..\..\..\misc\deploy\bin  mkdir ..\..\..\..\..\misc\deploy\bin
+copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy
+copy ..\..\..\..\..\misc\*.xml ..\..\..\..\..\misc\deploy
+copy $(ConfigurationName)\*.exe ..\..\..\..\..\misc\deploy\bin
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+				Output=""/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="stdcxx-Release|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(TUSCANY_SDOCPP)\include&quot;;&quot;$(STDCXX_HOME)\include&quot;;&quot;$(STDCXX_HOME)\include\ansi&quot;;&quot;$(STDCXX_HOME)\Release\include\12d&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_RWSTD_USE_CONFIG;_RWSHARED"
+				RuntimeLibrary="2"
+				PrecompiledHeaderFile=""
+				AssemblerListingLocation=".\$(ConfigurationName)/"
+				ObjectFile=".\$(ConfigurationName)/"
+				ProgramDataBaseFileName=".\$(ConfigurationName)/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sdo.lib stdlib12d.lib"
+				OutputFile=".\$(ConfigurationName)/sdo_misc.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="&quot;$(TUSCANY_SDOCPP)\lib&quot;;&quot;$(STDCXX_HOME)\Release\lib&quot;"
+				ProgramDatabaseFile=".\$(ConfigurationName)/sdo_misc.pdb"
+				SubSystem="1"/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\Release/sdo_misc.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="if not exist ..\..\..\..\..\misc\deploy mkdir ..\..\..\..\..\misc\deploy
+if not exist ..\..\..\..\..\misc\deploy\bin  mkdir ..\..\..\..\..\misc\deploy\bin
+copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy
+copy ..\..\..\..\..\misc\*.xml ..\..\..\..\..\misc\deploy
+copy $(ConfigurationName)\*.exe ..\..\..\..\..\misc\deploy\bin
+"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="2057"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+				Output=""/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
@@ -141,13 +288,13 @@ copy Debug\*.exe ..\..\..\..\..\misc\deploy\bin
 				RelativePath="..\..\..\..\..\misc\Query.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\..\misc\samples.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\..\misc\Substitutes.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\misc\XSDLoading.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\misc\samples.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -164,13 +311,13 @@ copy Debug\*.exe ..\..\..\..\..\misc\deploy\bin
 				RelativePath="..\..\..\..\..\misc\ChangeSummarySave.xsd">
 			</File>
 			<File
+				RelativePath="..\..\..\..\..\misc\companysubs.xsd">
+			</File>
+			<File
 				RelativePath="..\..\..\..\..\misc\XSDLoading.xml">
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\misc\XSDLoading.xsd">
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\misc\companysubs.xsd">
 			</File>
 		</Filter>
 		<File
