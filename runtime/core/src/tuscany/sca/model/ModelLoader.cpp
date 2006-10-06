@@ -340,7 +340,7 @@ namespace tuscany
                     ImplementationExtension* implExtension = runtime->getImplementationExtension(implTypeQname);
                     if (implExtension)
                     {
-                        componentType = implExtension->getImplementation(impl);
+                        componentType = implExtension->getImplementation(composite, impl);
                         
                         // -----------------------
                         // Load the .componentType

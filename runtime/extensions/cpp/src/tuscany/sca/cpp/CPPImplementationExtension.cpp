@@ -55,7 +55,7 @@ namespace tuscany
             // ===================================================================
             // loadModelElement - load the info from implementation.cpp 
             // ===================================================================
-            ComponentType* CPPImplementationExtension::getImplementation(DataObjectPtr scdlImplementation)
+            ComponentType* CPPImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
             {
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "CPPImplementation")
@@ -90,7 +90,7 @@ namespace tuscany
                     Utils::rTokeniseString(".h", headerStub, headerStub, tmp);
                     
                     CPPImplementation* cppImpl = new CPPImplementation(
-                                    library, header, headerPath, headerStub, className, scope);
+                                    composite, library, header, headerPath, headerStub, className, scope);
                     
                     return cppImpl;
                 }

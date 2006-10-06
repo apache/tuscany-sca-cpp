@@ -45,13 +45,14 @@ namespace tuscany
             public:
                 /**
                  * Constructor.
+                 * @param composite Composite containing this implementation.
                  * @param module Name of the module.
                  * @param modulePath Path to the module (could be a blank string
                  * if this is not specified).
                  * @param className Name of the class in the module (could be a blank string
                  * if this is not specified).
                  */
-                PHPImplementation(const string& module, const string& className);
+                PHPImplementation(Composite* composite, const string& module, const string& className);
                 
                 /**
                  * Destructor
