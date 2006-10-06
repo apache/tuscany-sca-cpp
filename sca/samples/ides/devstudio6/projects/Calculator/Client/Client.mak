@@ -25,6 +25,9 @@ NULL=
 NULL=nul
 !ENDIF 
 
+CPP=cl.exe
+RSC=rc.exe
+
 !IF  "$(CFG)" == "Client - Win32 Release"
 
 OUTDIR=.\Release
@@ -33,73 +36,28 @@ INTDIR=.\Release
 OutDir=.\Release
 # End Custom Macros
 
-!IF "$(RECURSE)" == "0" 
+ALL : "$(OUTDIR)\calculator_client.exe"
 
-ALL : "$(OUTDIR)\Client.exe"
 
-!ELSE 
-
-ALL : "Calculator - Win32 Release" "$(OUTDIR)\Client.exe"
-
-!ENDIF 
-
-!IF "$(RECURSE)" == "1" 
-CLEAN :"Calculator - Win32 ReleaseCLEAN" 
-!ELSE 
 CLEAN :
-!ENDIF 
-	-@erase "$(INTDIR)\Calc.obj"
+	-@erase "$(INTDIR)\CalculatorClient.obj"
 	-@erase "$(INTDIR)\vc60.idb"
-	-@erase "$(OUTDIR)\Client.exe"
+	-@erase "$(OUTDIR)\calculator_client.exe"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
-CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
-
-.c{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.obj::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.c{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cpp{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-.cxx{$(INTDIR)}.sbr::
-   $(CPP) @<<
-   $(CPP_PROJ) $< 
-<<
-
-RSC=rc.exe
+CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\Client.bsc" 
 BSC32_SBRS= \
 	
 LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\Client.pdb" /machine:I386 /out:"$(OUTDIR)\Client.exe" /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" 
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib /nologo /subsystem:console /incremental:no /pdb:"$(OUTDIR)\calculator_client.pdb" /machine:I386 /out:"$(OUTDIR)\calculator_client.exe" /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib" 
 LINK32_OBJS= \
-	"$(INTDIR)\Calc.obj" \
-	"..\Calculator\Release\Calculator.lib"
+	"$(INTDIR)\CalculatorClient.obj"
 
-"$(OUTDIR)\Client.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+"$(OUTDIR)\calculator_client.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -113,8 +71,9 @@ ALL : $(DS_POSTBUILD_DEP)
 OutDir=.\Release
 # End Custom Macros
 
-$(DS_POSTBUILD_DEP) : "Calculator - Win32 Release" "$(OUTDIR)\Client.exe"
-   ..\deploy.cmd Release
+$(DS_POSTBUILD_DEP) : "$(OUTDIR)\calculator_client.exe"
+   ..\..\..\..\..\Calculator\deployclient.bat ..\..\..\..\..\Calculator Release
+	D:\tuscanysvn\cpp\sca\deploy/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "Client - Win32 Debug"
@@ -125,33 +84,50 @@ INTDIR=.\Debug
 OutDir=.\Debug
 # End Custom Macros
 
-!IF "$(RECURSE)" == "0" 
+ALL : "$(OUTDIR)\calculator_client.exe"
 
-ALL : "$(OUTDIR)\Client.exe"
 
-!ELSE 
-
-ALL : "Calculator - Win32 Debug" "$(OUTDIR)\Client.exe"
-
-!ENDIF 
-
-!IF "$(RECURSE)" == "1" 
-CLEAN :"Calculator - Win32 DebugCLEAN" 
-!ELSE 
 CLEAN :
-!ENDIF 
-	-@erase "$(INTDIR)\Calc.obj"
+	-@erase "$(INTDIR)\CalculatorClient.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
-	-@erase "$(OUTDIR)\Client.exe"
-	-@erase "$(OUTDIR)\Client.ilk"
-	-@erase "$(OUTDIR)\Client.pdb"
+	-@erase "$(OUTDIR)\calculator_client.exe"
+	-@erase "$(OUTDIR)\calculator_client.ilk"
+	-@erase "$(OUTDIR)\calculator_client.pdb"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP=cl.exe
-CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\Client.bsc" 
+BSC32_SBRS= \
+	
+LINK32=link.exe
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\calculator_client.pdb" /debug /machine:I386 /out:"$(OUTDIR)\calculator_client.exe" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib" 
+LINK32_OBJS= \
+	"$(INTDIR)\CalculatorClient.obj"
+
+"$(OUTDIR)\calculator_client.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+SOURCE="$(InputPath)"
+DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
+
+ALL : $(DS_POSTBUILD_DEP)
+
+# Begin Custom Macros
+OutDir=.\Debug
+# End Custom Macros
+
+$(DS_POSTBUILD_DEP) : "$(OUTDIR)\calculator_client.exe"
+   ..\..\..\..\..\Calculator\deployclient.bat ..\..\..\..\..\Calculator Debug
+	D:\tuscanysvn\cpp\sca\deploy/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose
+	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
+
+!ENDIF 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -182,37 +158,6 @@ CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SDOCPP)/include" /I "$(T
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
-
-RSC=rc.exe
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\Client.bsc" 
-BSC32_SBRS= \
-	
-LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\Client.pdb" /debug /machine:I386 /out:"$(OUTDIR)\Client.exe" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" 
-LINK32_OBJS= \
-	"$(INTDIR)\Calc.obj" \
-	"..\Calculator\Debug\Calculator.lib"
-
-"$(OUTDIR)\Client.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
-    $(LINK32) @<<
-  $(LINK32_FLAGS) $(LINK32_OBJS)
-<<
-
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=.\Debug
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "Calculator - Win32 Debug" "$(OUTDIR)\Client.exe"
-   ..\deploy.cmd Debug
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
-
-!ENDIF 
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
@@ -225,37 +170,11 @@ $(DS_POSTBUILD_DEP) : "Calculator - Win32 Debug" "$(OUTDIR)\Client.exe"
 
 
 !IF "$(CFG)" == "Client - Win32 Release" || "$(CFG)" == "Client - Win32 Debug"
-SOURCE=..\..\..\..\..\Calculator\Client\Calc.cpp
+SOURCE=..\..\..\..\..\Calculator\sample.calculator.client\CalculatorClient.cpp
 
-"$(INTDIR)\Calc.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\CalculatorClient.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
-
-!IF  "$(CFG)" == "Client - Win32 Release"
-
-"Calculator - Win32 Release" : 
-   cd "..\Calculator"
-   $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Release" 
-   cd "..\Client"
-
-"Calculator - Win32 ReleaseCLEAN" : 
-   cd "..\Calculator"
-   $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Release" RECURSE=1 CLEAN 
-   cd "..\Client"
-
-!ELSEIF  "$(CFG)" == "Client - Win32 Debug"
-
-"Calculator - Win32 Debug" : 
-   cd "..\Calculator"
-   $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Debug" 
-   cd "..\Client"
-
-"Calculator - Win32 DebugCLEAN" : 
-   cd "..\Calculator"
-   $(MAKE) /$(MAKEFLAGS) /F .\Calculator.mak CFG="Calculator - Win32 Debug" RECURSE=1 CLEAN 
-   cd "..\Client"
-
-!ENDIF 
 
 
 !ENDIF 

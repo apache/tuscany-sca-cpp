@@ -54,7 +54,11 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca_cpp.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /machine:I386 /out:"Release/CalculatorComposite.dll" /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca_cpp.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /machine:I386 /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib"
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Cmds=..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Release
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "Calculator - Win32 Debug"
 
@@ -81,7 +85,11 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca_cpp.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /debug /machine:I386 /out:"Debug/CalculatorComposite.dll" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca_cpp.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib"
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Cmds=..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Debug
+# End Special Build Tool
 
 !ENDIF 
 
@@ -94,63 +102,31 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\Calculator.h
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.cpp
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_CalculatorService_Proxy.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl.h
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_CalculatorService_Wrapper.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.cpp
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_divideService_Proxy.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Proxy.h
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\DivideImpl.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.cpp
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\DivideImpl_DivideService_Proxy.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_CalculatorService_Wrapper.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_divideService_Proxy.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideService.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Proxy.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideService_Wrapper.h
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\DivideImpl_DivideService_Wrapper.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -158,7 +134,39 @@ SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\DivideServiceImpl_DivideSer
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\..\..\..\..\Calculator\CalculatorComposite\CalculatorImpl_divideService_Proxy.h
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\Calculator.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_CalculatorService_Proxy.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_CalculatorService_Wrapper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\CalculatorImpl_divideService_Proxy.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\Divide.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\DivideImpl.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\DivideImpl_DivideService_Proxy.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\..\Calculator\sample.calculator\DivideImpl_DivideService_Wrapper.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
