@@ -1,8 +1,8 @@
 deploydir=$(prefix)/samples/BigBank/deploy
-prgbindir=$(deploydir)/bin
+wsclientdir=$(deploydir)/bigbank.wsclient
 
-prgbin_PROGRAMS = account_wsclient
-prgbin_SCRIPTS = runwsclient.sh
+wsclient_PROGRAMS = account_wsclient
+wsclient_SCRIPTS = runwsclient.sh
 EXTRA_DIST = runwsclient.sh
 
 AM_CPPFLAGS = $(CPPFLAGS)

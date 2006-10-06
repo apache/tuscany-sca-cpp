@@ -1,6 +1,5 @@
 deploydir=$(prefix)/samples/Calculator/deploy
 compositedir=$(deploydir)/sample.calculator
-prgbindir=$(deploydir)/bin
 
 BUILT_SOURCES = CalculatorImpl_CalculatorService_Proxy.cpp \
 CalculatorImpl_CalculatorService_Wrapper.cpp \
@@ -13,7 +12,7 @@ noinst_HEADERS = *.h
 ${BUILT_SOURCES}: sample.calculator.composite
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
-prgbin_SCRIPTS = runwsserver.sh
+composite_SCRIPTS = runwsserver.sh
 
 composite_LTLIBRARIES = libCalculator.la
 composite_DATA = *.composite *.componentType *.wsdl

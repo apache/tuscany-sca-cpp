@@ -1,8 +1,8 @@
 deploydir=$(prefix)/samples/Calculator/deploy
-prgbindir=$(deploydir)/bin
+clientdir=$(deploydir)/sample.calculator.client
 
-prgbin_PROGRAMS = calculator_client
-prgbin_SCRIPTS = runclient.sh
+client_PROGRAMS = calculator_client
+client_SCRIPTS = runclient.sh
 EXTRA_DIST = runclient.sh
 
 AM_CPPFLAGS = $(CPPFLAGS)
