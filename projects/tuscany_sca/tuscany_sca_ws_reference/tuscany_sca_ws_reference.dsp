@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib axis2_parser.lib /nologo /dll /machine:I386 /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd	copy Release\tuscany_sca_ws_reference.lib ..\..\..\deploy\extensions\ws\reference\lib	copy Release\tuscany_sca_ws_reference.dll ..\..\..\deploy\extensions\ws\reference\bin
+PostBuild_Cmds=..\..\..\runtime\extensions\ws\reference\deploy.bat ..\..\..\ Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_ws_reference - Win32 Debug"
@@ -73,8 +73,8 @@ PostBuild_Cmds=copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\ext
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_REFERENCE_EXPORTS" /YX /FD /GZ  /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/ws/reference/axis2c/src" /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_REFERENCE_EXPORTS" /FD /GZ  /c
+# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_REFERENCE_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/ws/reference/axis2c/src" /I "../../../runtime/core/src" /I "$(TUSCANY_SDOCPP)/include" /I "$(AXIS2C_HOME)/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_WS_REFERENCE_EXPORTS" /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib axis2_parser.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd	copy Debug\tuscany_sca_ws_reference.dll ..\..\..\deploy\extensions\ws\reference\bin	copy Debug\tuscany_sca_ws_reference.pdb ..\..\..\deploy\extensions\ws\reference\bin	copy Debug\tuscany_sca_ws_reference.lib ..\..\..\deploy\extensions\ws\reference\lib
+PostBuild_Cmds=..\..\..\runtime\extensions\ws\reference\deploy.bat ..\..\..\ Debug
 # End Special Build Tool
 
 !ENDIF 

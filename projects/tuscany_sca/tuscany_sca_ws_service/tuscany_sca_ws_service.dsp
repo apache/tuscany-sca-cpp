@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /machine:I386 /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib	copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin	copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
+PostBuild_Cmds=..\..\..\runtime\extensions\ws\service\deploy.bat ..\..\..\ Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_ws_service - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_util.lib axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib axis2_engine.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin	copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\bin	copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib	copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
+PostBuild_Cmds=..\..\..\runtime\extensions\ws\service\deploy.bat ..\..\..\ Debug
 # End Special Build Tool
 
 !ENDIF 
@@ -114,7 +114,7 @@ SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\model\WS
 # End Group
 # Begin Source File
 
-SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Service_skeleton.cpp
+SOURCE=..\..\..\runtime\extensions\ws\service\axis2c\src\tuscany\sca\ws\Axis2Service.cpp
 # End Source File
 # Begin Source File
 
