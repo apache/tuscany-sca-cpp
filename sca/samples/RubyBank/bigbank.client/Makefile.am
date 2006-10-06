@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/RubyBank/deploy
-clientdir=$(deploydir)/packages/bigbank.client
+clientdir=$(deploydir)/bigbank.client
 prgbindir=$(deploydir)/bin
 
 client_DATA = *.rb

@@ -41,6 +41,12 @@
 using namespace commonj::sdo;
 
 
+#if defined(WIN32)  || defined (_WINDOWS)
+#define PATH_SEPARATOR ";"
+#else
+#define PATH_SEPARATOR ":"
+#endif 
+
 namespace tuscany
 {
     namespace sca
@@ -72,208 +78,206 @@ namespace tuscany
             // This class has the responsibility for translating from
             // the SCDL files to the SCA runtime's in memory model.
             // =========================================================
-            void ModelLoader::load(const string& systemRoot)
+            void ModelLoader::load(const string& systemRoot, const string& systemPath)
             {
                 LOGENTRY(1, "ModelLoader::load");
                 LOGINFO_1(2,"system root: %s", systemRoot.c_str());
+                LOGINFO_1(2,"system path: %s", systemPath.c_str());
                 
-                // The configuration root path will point to a directory structure.
+                // Load composite implementations
+                // Composite implementations can occur anywhere on the given search path
+                if (systemPath != "")
+                {
+                    loadComposites(systemRoot + PATH_SEPARATOR + systemPath);
+                }
+                else
+                {
+                    loadComposites(systemRoot);
+                }
                 
-                // Implementation packages can occur anywhere under the packages directory
-                loadPackages(systemRoot+"/packages");
+                // Load system composites
+                // Composites on the the system root path get included
+                // in the System composite
+                loadSystem(systemRoot);
                 
-                // The composite files representing the configuration of the system can be located
-                // anywhere under the configuration directory.
-                loadConfiguration(systemRoot+"/configuration");
-                
+                // Resolve the wires in the system composite
                 system->resolveWires();
                 
                 LOGEXIT(1, "ModelLoader::load");
             }
             
             // ========================================================================
-            // loadConfiguration:
-            // Load all the composite files from any directory below the configuration root.
-            // Translate the configuration information to the runtime information
+            // loadSystem:
+            // Load all the composite files on the system root path
+            // Translate the composite information to composite model objects
             // ========================================================================
-            void ModelLoader::loadConfiguration(const string& configurationRoot)
+            void ModelLoader::loadSystem(const string& systemRoot)
             {
-                // Get all the composite files in the configuration directory
-                LOGENTRY(1, "ModelLoader::loadConfiguration");
-                Files files(configurationRoot, "*.composite", true);
-                for (unsigned int i=0; i < files.size(); i++)
+                // Get all the composite files on the system root path
+                // These composites are included in the system composite
+                LOGENTRY(1, "ModelLoader::loadSystem");
+                for (string path = systemRoot; path != ""; )
                 {
-                    Composite* include = loadConfigurationCompositeFile(files[i]);
-                    
-                    // Include each composite in the system composite
-                    system->addInclude(include);
-                }
-                LOGEXIT(1, "ModelLoader::loadConfiguration");
-            }
-            
-            
-            // =====================================================================
-            // loadConfigurationFile:
-            // This method is called for each composite file found in the configuration
-            // folder structure
-            // =====================================================================
-            Composite* ModelLoader::loadConfigurationCompositeFile(const File& file)
-            {
-                LOGENTRY(1, "ModelLoader::loadConfigurationCompositeFile");
-                LOGINFO_1(2, "configuration filename: %s", file.getFileName().c_str());
-                
-                Composite* include;
-                try
-                {
-                    string filename = file.getDirectory() + "/" + file.getFileName();
-                    XMLDocumentPtr configurationFile = getXMLHelper()->loadFile(filename.c_str());
-                    if (configurationFile->getRootDataObject() == 0)
+                    string dir;
+                    Utils::tokeniseString(PATH_SEPARATOR, path, dir, path);
+                    if (dir != "")
                     {
-                        LOGERROR_1(0, "ModelLoader::loadConfigurationCompositeFile: Unable to load file: %s", filename.c_str());
-                    }
-                    else
-                    {    
-                        //Utils::printDO(configurationFile->getRootDataObject());
-                        include = mapConfigurationComposite(configurationFile->getRootDataObject(), file.getDirectory());        
-                    }
-                } catch (SDORuntimeException ex) 
-                {
-                    LOGERROR_1(0, "ModelLoader::loadConfigurationCompositeFile: Exception caught: %s", ex.getMessageText());
-                }    
-                
-                LOGEXIT(1, "ModelLoader::loadConfigurationCompositeFile");
-                return include;
-            }
-            
-            // ===============
-            // mapConfiguration:
-            // ===============
-            Composite* ModelLoader::mapConfigurationComposite(DataObjectPtr root, string compositeRootDir)
-            {
-                LOGENTRY(1, "ModelLoader::mapConfigurationComposite");
-                
-                LOGINFO_1(2, "ModelLoader::mapConfigurationComposite: Loaded configuration: %s", root->getCString("name"));
-
-                // Create a composite and include it in the system                
-                Composite* include = new Composite(root->getCString("name"), compositeRootDir); 
-                
-                DataObjectList& componentDOs = root->getList("component");
-                LOGINFO_1(2, "ModelLoader::mapConfigurationComposite: number of composite components: %d", componentDOs.size());
-                
-                // Iterate over components
-                for (int i=0; i<componentDOs.size(); i++)
-                {
-                    // Get the composite component implementation
-                    DataObjectPtr impl = componentDOs[i]->getDataObject("implementation");
-                    if (!impl)
-                    {
-                        string message = "No implementation for component: ";
-                        message = message + componentDOs[i]->getCString("name");
-                        throw SystemConfigurationException(message.c_str());
-                    }
-                    
-                    // Determine the implementation type
-                    string implementationType = impl->getType().getName();
-                    if (implementationType == "SCAImplementation")
-                    {
-                        // Add each composite component to the include
-                        
-                        Composite* composite = packages[impl->getCString("name")];
-                        if (!composite)
+                        LOGINFO_1(2, "system root directory: %s", dir.c_str());
+                        Files files(dir, "*.composite", false);
+                        for (unsigned int i=0; i < files.size(); i++)
                         {
-                            string message = "Composite not found: ";
-                            message = message + impl->getCString("name");
-                            throw SystemConfigurationException(message.c_str());
-                        }
-                        else
-                        {
-                            Component* component = new Component(include, componentDOs[i]->getCString("name"), composite);
-                            include->addComponent(component);
+                            string fileName = files[i].getDirectory() + "/" + files[i].getFileName();
+                            Composite* composite = compositeFiles[fileName];
+                            if (composite)
+                            {
+                                // Include the composite in the system composite
+                                system->addInclude(composite);
+                            }
+                            else
+                            {
+                                // We already got an error or warning indicating why the file
+                                // didn't turn into a composite
+                            }
                         }
                     }
-                    else
+                }
+                LOGEXIT(1, "ModelLoader::loadSystem");
+            }
+            
+            // =====================================================================
+            // loadComposites:
+            // Load all the composites from any directory under the composite search path
+            // Translate the composite information to composite model objects
+            // =====================================================================
+            void ModelLoader::loadComposites(const string& searchPath)
+            {
+                // Get all the composite files on the composite search path
+                LOGENTRY(1, "ModelLoader::loadComposites");
+                for (string path = searchPath; path != ""; )
+                {
+                    string dir;
+                    Utils::tokeniseString(PATH_SEPARATOR, path, dir, path);
+                    if (dir != "")
                     {
-                        string message = "Atomic component implementation not yet supported in a system include: ";
-                        message = message + componentDOs[i]->getCString("name");
-                        throw SystemConfigurationException(message.c_str());
+                        LOGINFO_1(2, "composite path directory: %s", dir.c_str());
+                        Files files(dir, "*.composite", true);
+                        for (unsigned int i=0; i < files.size(); i++)
+                        {
+                            loadCompositeFile(files[i]);
+                        }
                     }
                 }
                 
-                //TODO Add composite services and references
-                
-                LOGEXIT(1, "ModelLoader::mapConfigurationComposite");
-                return include;
-            }
-            
-            
-            // =====================================================================
-            // loadPackages:
-            // Load all the composites from any directory below the packages root.
-            // Translate the composite information to the runtime information
-            // =====================================================================
-            void ModelLoader::loadPackages(const string& installRoot)
-            {
-                // Get all the composite files
-                LOGENTRY(1, "ModelLoader::loadPackages");
-                Files files(installRoot, "*.composite", true);
-                for (unsigned int i=0; i < files.size(); i++)
+                // Complete the mapping of the composites
+                for (COMPOSITE_DATAOBJECTS::iterator iter = compositeDataObjects.begin();
+                iter != compositeDataObjects.end();
+                iter++)
                 {
-                    loadPackageCompositeFile(files[i]);
+                    mapCompositePass2(iter->first, iter->second);
                 }
-                LOGEXIT(1, "ModelLoader::loadPackages");
+                
+                LOGEXIT(1, "ModelLoader::loadComposites");
             }
             
-            
             // ====================================================================
-            // loadPackageCompositeFile:
-            // This method is called for each .composite file found in the packages
-            // folder structure
-            // The location of this composite file will indicate the root of a composite
+            // loadCompositeFile:
+            // This method is called for each .composite file found under the composite search
+            // path. The location of this composite file will indicate the root of a composite.
             // ====================================================================
-            Composite* ModelLoader::loadPackageCompositeFile(const File& file)
+            Composite* ModelLoader::loadCompositeFile(const File& file)
             {
-                LOGENTRY(1, "ModelLoader::loadPackageCompositeFile");
+                LOGENTRY(1, "ModelLoader::loadCompositeFile");
                 LOGINFO_1(2, "composite filename: %s", file.getFileName().c_str());
 
                 Composite* composite = NULL;                
                 try 
                 {
                     string fileName = file.getDirectory() + "/" + file.getFileName();
-                    XMLDocumentPtr compositeFile = getXMLHelper()->loadFile(fileName.c_str());
-                    if (compositeFile->getRootDataObject() == NULL)
+                    if (compositeFiles[fileName] == NULL)
                     {
-                        LOGERROR_1(0, "ModelLoader::loadPackageCompositeFile: Unable to load file: %s", fileName.c_str());
-                    }
-                    else
-                    {
-                        // Map the SCDL 
-                        composite = mapPackageComposite(compositeFile->getRootDataObject(), file.getDirectory());                        
-
-                        // Load the xsd types and wsdl files in the composite
-                        loadTypeMetadata(composite, file.getDirectory());
+                        XMLDocumentPtr compositeFile = getXMLHelper()->loadFile(fileName.c_str());
+                        if (compositeFile->getRootDataObject() == NULL)
+                        {
+                            LOGERROR_1(0, "ModelLoader::loadCompositeFile: Unable to load file: %s", fileName.c_str());
+                        }
+                        else
+                        {
+                            // Map the SCDL 
+                            composite = mapCompositePass1(file, compositeFile->getRootDataObject());                        
+    
+                            // Load the xsd types and wsdl files in the composite
+                            loadTypeMetadata(file.getDirectory(), composite);
+                        }
                     }
                     
                 } catch (SDORuntimeException ex) 
                 {
-                    LOGERROR_1(0, "ModelLoader::loadPackageCompositeFile: Exception caught: %s", ex.getMessageText());
+                    LOGERROR_1(0, "ModelLoader::loadCompositeFile: Exception caught: %s", ex.getMessageText());
                 }    
                 
-                LOGEXIT(1, "ModelLoader::loadPackageCompositeFile");
+                LOGEXIT(1, "ModelLoader::loadCompositeFile");
                 return composite;
             }
             
             // ===========
-            // mapPackageComposite
+            // mapCompositePass1
             // ===========
-            Composite* ModelLoader::mapPackageComposite(DataObjectPtr root, string compositeRootDir)
+            Composite* ModelLoader::mapCompositePass1(const File& file, DataObjectPtr root)
             {
-                LOGENTRY(1, "ModelLoader::mapPackageComposite");
+                LOGENTRY(1, "ModelLoader::mapCompositePass1");
                 
-                string compositeName = root->getCString("name");
-                LOGINFO_2(2, "ModelLoader::mapPackageComposite: Loading composite: %s, root Dir: %s", compositeName.c_str(), compositeRootDir.c_str());
+                const string& compositeRootDir = file.getDirectory();
+                const string compositeName = root->getCString("name");
+                LOGINFO_2(2, "ModelLoader::mapCompositePass1: Loading composite: %s, root Dir: %s", compositeName.c_str(), compositeRootDir.c_str());
                 
                 Composite* composite = new Composite(compositeName, compositeRootDir);
-                packages[compositeName] = composite; 
+                compositeModels[compositeName] = composite; 
+                compositeDataObjects[compositeName] = root;
+                compositeFiles[file.getDirectory() + "/" + file.getFileName()] = composite;
+                
+                // ------------
+                // Composite services
+                // ------------
+                DataObjectList& compositeServiceList = root->getList("service");
+                for (int i = 0; i < compositeServiceList.size(); i++)
+                {
+                    addCompositeService(composite, compositeServiceList[i]);                        
+                }
+                    
+                // -----------------
+                // Composite references
+                // -----------------
+                DataObjectList& compositeReferenceList = root->getList("reference");
+                for (int i = 0; i < compositeReferenceList.size(); i++)
+                {
+                    addCompositeReference(composite, compositeReferenceList[i]);
+                }
+
+                // -----
+                // Wires
+                // -----
+                DataObjectList& wireList = root->getList("wire");
+                for (int l = 0; l < wireList.size(); l++)
+                {
+                    string source = wireList[l]->getCString("source");
+                    string target = wireList[l]->getCString("target");
+                    composite->addWire(source, target);
+                }
+                
+                LOGEXIT(1, "ModelLoader::mapCompositePass1");
+                return composite;
+            }
+
+            // ===========
+            // mapCompositePass2
+            // ===========
+            Composite* ModelLoader::mapCompositePass2(const string& compositeName, DataObjectPtr root)
+            {
+                LOGENTRY(1, "ModelLoader::mapCompositePass2");
+                
+                LOGINFO_1(2, "ModelLoader::mapCompositePass2: Loading composite: %s", compositeName.c_str());
+                
+                Composite* composite = compositeModels[compositeName]; 
                 
                 // ----------------------------
                 // Add components to the composite
@@ -285,38 +289,10 @@ namespace tuscany
                     addComponent(composite, componentList[i]);                        
                 }
 
-                // ------------
-                // Composite services
-                // ------------
-                DataObjectList& compositeServiceList = root->getList("service");
-                for (i=0; i < compositeServiceList.size(); i++)
-                {
-                    addCompositeService(composite, compositeServiceList[i]);                        
-                }
-                    
-                // -----------------
-                // Composite references
-                // -----------------
-                DataObjectList& compositeReferenceList = root->getList("reference");
-                for (i=0; i < compositeReferenceList.size(); i++)
-                {
-                    addCompositeReference(composite, compositeReferenceList[i]);
-                }
-
-                // -----
-                // Wires
-                // -----
-                DataObjectList& wireList = root->getList("wire");
-                for (int l=0; l < wireList.size(); l++)
-                {
-                    string source = wireList[l]->getCString("source");
-                    string target = wireList[l]->getCString("target");
-                    composite->addWire(source, target);
-                }
-                
+                // Resolve all the wires inside the composite
                 composite->resolveWires();
                                 
-                LOGEXIT(1, "ModelLoader::mapPackageComposite");
+                LOGEXIT(1, "ModelLoader::mapCompositePass2");
                 return composite;
             }
 
@@ -341,61 +317,76 @@ namespace tuscany
                 string componentTypeName;
                 string componentTypePath;
 
-                string implementationType = impl->getType().getName();
                 string implTypeQname = impl->getType().getURI();
                 implTypeQname += "#";
                 implTypeQname += impl->getType().getName();
-
-                // Locate extension that handles this implementation type
-                ImplementationExtension* implExtension = runtime->getImplementationExtension(implTypeQname);
-                if (implExtension)
+                
+                if (implTypeQname == "http://www.osoa.org/xmlns/sca/1.0#SCAImplementation")
                 {
-                    componentType = implExtension->getImplementation(impl);
-                    
-                    // -----------------------
-                    // Load the .componentType
-                    // -----------------------
-                    string typeFileName = composite->getRoot() + "/" + componentType->getName() + ".componentType";
-
-                    // Check that the component type file exists
-                    //TODO We need a better and portable way to do this
-                    string dirName;
-                    string fileName;                    
-                    Utils::rTokeniseString("/", typeFileName, dirName, fileName);
-                    Files files(dirName, fileName, false);
-                    if (files.size() !=0)
+                    // Handle a composite implementation 
+                    Composite* composite = compositeModels[impl->getCString("name")];
+                    if (!composite)
                     {
-                        try 
-                        {
-                            XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
-                            if (!componentTypeFile || componentTypeFile->getRootDataObject() == 0)
-                            {
-                                // Component type files are optional
-                                LOGINFO_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
-                            }
-                            else
-                            {                                            
-                                //Utils::printDO(componentTypeFile->getRootDataObject());
-                                //commonj::sdo::SDOUtils::printDataObject(componentTypeFile->getRootDataObject());
-                                addServiceTypes(composite, componentType, componentTypeFile->getRootDataObject());
-                                addReferenceTypes(composite, componentType, componentTypeFile->getRootDataObject());
-                                addPropertyTypes(componentType, componentTypeFile->getRootDataObject());
-                            }
-                        } catch (SDORuntimeException& ex) 
-                        {
-                            LOGERROR_2(0, "ModelLoader::addComponent (%s): Exception caught: %s",
-                                typeFileName.c_str(), ex.getMessageText());
-                            throw SystemConfigurationException(ex.getMessageText());
-                        }
-                    }    
+                        string message = "Composite not found: ";
+                        message = message + impl->getCString("name");
+                        throw SystemConfigurationException(message.c_str());
+                    }
+                    componentType = composite;
                 }
                 else
                 {
-                    LOGERROR_1(0, "ModelLoader::addComponent: Unsupported implementation type: %s", implTypeQname.c_str());
-
-                    string message = "Implementation type not supported: ";
-                    message = message + implTypeQname;
-                    throw SystemConfigurationException(message.c_str());
+    
+                    // Locate extension that handles this implementation type
+                    ImplementationExtension* implExtension = runtime->getImplementationExtension(implTypeQname);
+                    if (implExtension)
+                    {
+                        componentType = implExtension->getImplementation(impl);
+                        
+                        // -----------------------
+                        // Load the .componentType
+                        // -----------------------
+                        string typeFileName = composite->getRoot() + "/" + componentType->getName() + ".componentType";
+    
+                        // Check that the component type file exists
+                        //TODO We need a better and portable way to do this
+                        string dirName;
+                        string fileName;                    
+                        Utils::rTokeniseString("/", typeFileName, dirName, fileName);
+                        Files files(dirName, fileName, false);
+                        if (files.size() !=0)
+                        {
+                            try 
+                            {
+                                XMLDocumentPtr componentTypeFile = getXMLHelper()->loadFile(typeFileName.c_str());
+                                if (!componentTypeFile || componentTypeFile->getRootDataObject() == 0)
+                                {
+                                    // Component type files are optional
+                                    LOGINFO_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
+                                }
+                                else
+                                {                                            
+                                    //Utils::printDO(componentTypeFile->getRootDataObject());
+                                    //commonj::sdo::SDOUtils::printDataObject(componentTypeFile->getRootDataObject());
+                                    addServiceTypes(composite, componentType, componentTypeFile->getRootDataObject());
+                                    addReferenceTypes(composite, componentType, componentTypeFile->getRootDataObject());
+                                    addPropertyTypes(componentType, componentTypeFile->getRootDataObject());
+                                }
+                            } catch (SDORuntimeException& ex) 
+                            {
+                                LOGERROR_2(0, "ModelLoader::addComponent (%s): Exception caught: %s",
+                                    typeFileName.c_str(), ex.getMessageText());
+                                throw SystemConfigurationException(ex.getMessageText());
+                            }
+                        }    
+                    }
+                    else
+                    {
+                        LOGERROR_1(0, "ModelLoader::addComponent: Unsupported implementation type: %s", implTypeQname.c_str());
+    
+                        string message = "Implementation type not supported: ";
+                        message = message + implTypeQname;
+                        throw SystemConfigurationException(message.c_str());
+                    }
                 }
                 
                 // First check that references exist, some component types
@@ -713,7 +704,7 @@ namespace tuscany
             /// Use the Tuscany.config file in the composite root directory to
             /// determine which xsds and wsdls to load into a dataFactory.
             ///
-            void ModelLoader::loadTypeMetadata(Composite* composite, const string &compositeRootDir)
+            void ModelLoader::loadTypeMetadata(const string &compositeRootDir, Composite* composite)
             {
                 LOGENTRY(1, "ModelLoader::loadTypeMetadata");
 
@@ -777,16 +768,16 @@ namespace tuscany
                     for (unsigned int i=0; i < xsdFiles.size(); i++)
                     {
                         // Load a xsd file -> set the types in the compositeComponents data factory file
-                        string xsdName = compositeRootDir + "/" + xsdFiles[i].getFileName();
+                        string xsdName = xsdFiles[i].getDirectory() + "/" + xsdFiles[i].getFileName();
                         loadXMLSchema(composite, xsdName.c_str());
                         
                     }                    
 
                     Files wsdlFiles(compositeRootDir, "*.wsdl", true);
-                    for (unsigned int wi=0; wi < wsdlFiles.size(); wi++)
+                    for (unsigned int i=0; i < wsdlFiles.size(); i++)
                     {
                         // Load a wsdl file -> get the types, then the contents of the wsdl
-                        string wsdlName = compositeRootDir + "/" + wsdlFiles[wi].getFileName();
+                        string wsdlName = wsdlFiles[i].getDirectory() + "/" + wsdlFiles[i].getFileName();
                         loadXMLSchema(composite, wsdlName.c_str());
                         
                         // Load the contents of the wsdl files

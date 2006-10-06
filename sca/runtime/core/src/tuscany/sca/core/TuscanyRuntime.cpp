@@ -31,7 +31,7 @@ namespace tuscany
     {
             
         // ==========================================================
-        // Set the default CompositeComponent name
+        // Set the system configuration root path
         // ==========================================================
         void TuscanyRuntime::setSystemRoot(const string& root)
         {
@@ -39,6 +39,17 @@ namespace tuscany
             systemRoot = root;
             LOGINFO_1(3, "TuscanyRuntime::setSystemRoot - set to %s", root.c_str());
             LOGEXIT(1, "TuscanyRuntime::setSystemRoot");
+        }
+
+        // ==========================================================
+        // Set the search path for composites
+        // ==========================================================
+        void TuscanyRuntime::setSystemPath(const string& path)
+        {
+            LOGENTRY(1, "TuscanyRuntime::setSystemPath");
+            systemPath = path;
+            LOGINFO_1(3, "TuscanyRuntime::setSystemPath - set to %s", path.c_str());
+            LOGEXIT(1, "TuscanyRuntime::setSystemPath");
         }
 
         // ==========================================================
@@ -55,10 +66,11 @@ namespace tuscany
         // ===================================================================
         // Constructor for the TuscanyRuntime class. 
         // ===================================================================
-        TuscanyRuntime::TuscanyRuntime(const string& componentName, const string& root)
+        TuscanyRuntime::TuscanyRuntime(const string& componentName, const string& root, const string& path)
         { 
             LOGENTRY(1, "TuscanyRuntime::constructor");
             setSystemRoot(root);
+            setSystemPath(path);
             setDefaultComponentName(componentName);           
             LOGEXIT(1, "TuscanyRuntime::constructor");
         }
@@ -79,6 +91,7 @@ namespace tuscany
         { 
             LOGENTRY(1, "TuscanyRuntime::start");
             SCARuntime::setSystemRoot(systemRoot);
+            SCARuntime::setSystemPath(systemPath);
             SCARuntime::setDefaultComponentName(defaultComponentName);
             SCARuntime::getInstance();
             LOGEXIT(1, "TuscanyRuntime::start");

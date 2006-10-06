@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/PythonCalculator/deploy
-compositedir=$(deploydir)/packages/sample.calculator
+compositedir=$(deploydir)/sample.calculator
 prgbindir=$(deploydir)/bin
 
 composite_DATA = *.composite *.componentType *.wsdl *.py

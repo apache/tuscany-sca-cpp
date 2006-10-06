@@ -44,5 +44,5 @@ export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:
 export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
 export TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorWSClientComponent
 
-cd $TUSCANY_SCACPP_SYSTEM_ROOT/packages/sample.calculator.wsclient
+cd $TUSCANY_SCACPP_SYSTEM_ROOT/sample.calculator.wsclient
 ruby -I$TUSCANY_SCACPP/extensions/ruby/lib CalculatorWSClient.rb

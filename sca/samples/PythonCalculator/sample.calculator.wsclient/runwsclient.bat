@@ -43,7 +43,7 @@ set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorWSClientCompone
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\python\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 set PYTHONPATH=%TUSCANY_SCACPP%\extensions\python\bin
 
-cd %TUSCANY_SCACPP_SYSTEM_ROOT%\packages\sample.calculator.wsclient
+cd %TUSCANY_SCACPP_SYSTEM_ROOT%\sample.calculator.wsclient
 python calculator_wsclient.py div 5 2
     
 :end

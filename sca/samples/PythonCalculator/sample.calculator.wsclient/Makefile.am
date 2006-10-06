@@ -1,5 +1,5 @@
 deploydir=$(prefix)/samples/PythonCalculator/deploy
-wsclientdir=$(deploydir)/packages/sample.calculator.wsclient
+wsclientdir=$(deploydir)/sample.calculator.wsclient
 prgbindir=$(deploydir)/bin
 
 wsclient_DATA = *.py *.wsdl *.composite

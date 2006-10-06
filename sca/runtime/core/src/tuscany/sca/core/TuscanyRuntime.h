@@ -40,7 +40,8 @@ namespace tuscany
             /**
             * Default constructor
             */
-            TuscanyRuntime(const string& defaultComponentName = "", const string& root = "");            
+            TuscanyRuntime(const string& defaultComponentName = "",
+                const string& root = "", const string& path = "");            
             
             /**
             * Destructor
@@ -49,10 +50,16 @@ namespace tuscany
             
             
             /**
-            * Set the system root
-            * @param root The path to the deployed system.
+            * Set the system root configuration path
+            * @param root The path to the system configuration.
             */
             void setSystemRoot(const string& root);
+            
+            /**
+            * Set the system composite search path
+            * @param root The search path for composites.
+            */
+            void setSystemPath(const string& path);
             
             /**
             * Set the default component for the system
@@ -73,6 +80,7 @@ namespace tuscany
             
         private:
             string systemRoot;
+            string systemPath;
             string defaultComponentName;
         };
 

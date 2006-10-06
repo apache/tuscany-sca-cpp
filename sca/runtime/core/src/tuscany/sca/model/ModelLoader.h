@@ -66,27 +66,18 @@ namespace tuscany
                 
                 /**
                  * Load the model from the configuration information.
-                 * @param configurationRoot The location of the deployed SCA
-                 * packages and configuration.
+                 * @param systemRoot The location of the system configuration
+                 * @param systemPath The search path for composites
                  */
-                void load(const string& systemRoot);
+                void load(const string& systemRoot, const string& systemPath);
                 
             private:
-                void loadComposite(const char *compositeRoot);
+                void loadSystem(const string& systemRoot);
                 
-                commonj::sdo::XMLHelperPtr myXMLHelper;    // Used to load scdl files
-                commonj::sdo::XSDHelperPtr myXSDHelper; // Used to load xsds
-                
-                const commonj::sdo::XSDHelperPtr getXSDHelper(void);
-                const commonj::sdo::XMLHelperPtr getXMLHelper(void);
-                
-                void loadConfiguration(const string& configurationRoot);
-                Composite* loadConfigurationCompositeFile(const File& file);
-                Composite* mapConfigurationComposite(DataObjectPtr rootDO, const string compositeRootDir);
-                
-                void loadPackages(const string& installRoot);
-                Composite* loadPackageCompositeFile(const File& file);
-                Composite* mapPackageComposite(DataObjectPtr rootDO, const string compositeRootDir);
+                void loadComposites(const string& searchPath);
+                Composite* loadCompositeFile(const File& file);
+                Composite* mapCompositePass1(const File& file, DataObjectPtr rootDO);
+                Composite* mapCompositePass2(const string& compositeName, DataObjectPtr rootDO);
 
                 void addComponent(Composite* composite, DataObjectPtr componentDO);
                 void addCompositeService(Composite* composite, DataObjectPtr compositeServiceDO);
@@ -96,7 +87,7 @@ namespace tuscany
                 void addReferenceTypes(Composite* composite, ComponentType* componentType, DataObjectPtr componentTypeDO);
                 void addPropertyTypes(ComponentType* componentType, DataObjectPtr componentTypeDO);
 
-                void loadTypeMetadata(Composite* composite, const string &compositeRootDir);
+                void loadTypeMetadata(const string &compositeRootDir, Composite* composite);
                 
                 void loadXMLSchema(Composite* composite, const char *fileName);
                 void loadWSDLDefinition(Composite* composite, const char *fileName);
@@ -106,18 +97,28 @@ namespace tuscany
 
                 SCARuntime* runtime;
 
+                commonj::sdo::XMLHelperPtr myXMLHelper;    // Used to load scdl files
+                commonj::sdo::XSDHelperPtr myXSDHelper; // Used to load xsds
+                
+                const commonj::sdo::XSDHelperPtr getXSDHelper(void);
+                const commonj::sdo::XMLHelperPtr getXMLHelper(void);
+                
                 /**
                  * The composite describing the composition of the system
-                 * All the composites under the configuration root directory are
-                 * included in the system composite.
                  */
                 Composite* system;
             
                 /**
-                 * Map of all the package composites installed on the system.
+                 * Maps of all the composites installed on the system.
                  */
-                typedef map<string, Composite*> PACKAGES;
-                PACKAGES packages;
+                typedef map<string, Composite*> COMPOSITE_MODELS;
+                COMPOSITE_MODELS compositeModels;
+                
+                typedef map<string, DataObjectPtr> COMPOSITE_DATAOBJECTS;
+                COMPOSITE_DATAOBJECTS compositeDataObjects;
+
+                typedef map<string, Composite*> COMPOSITE_FILES;
+                COMPOSITE_FILES compositeFiles;
 
             };
         } // End namespace model
