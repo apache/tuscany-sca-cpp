@@ -1,8 +1,8 @@
 deploydir=$(prefix)/samples/BigBank/deploy
-prgbindir=$(deploydir)/bin
+clientdir=$(deploydir)/bigbank.client
 
-prgbin_PROGRAMS = account_client
-prgbin_SCRIPTS = runclient.sh
+client_PROGRAMS = account_client
+client_SCRIPTS = runclient.sh
 EXTRA_DIST = runclient.sh
 
 AM_CPPFLAGS = $(CPPFLAGS)

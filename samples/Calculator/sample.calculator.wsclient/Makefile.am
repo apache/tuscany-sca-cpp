@@ -1,8 +1,8 @@
 deploydir=$(prefix)/samples/Calculator/deploy
-prgbindir=$(deploydir)/bin
+wsclientdir=$(deploydir)/sample.calculator.wsclient
 
-prgbin_PROGRAMS = calculator_wsclient
-prgbin_SCRIPTS = runwsclient.sh
+wsclient_PROGRAMS = calculator_wsclient
+wsclient_SCRIPTS = runwsclient.sh
 EXTRA_DIST = runwsclient.sh
 
 AM_CPPFLAGS = $(CPPFLAGS)

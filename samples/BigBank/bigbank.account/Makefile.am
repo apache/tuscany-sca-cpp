@@ -1,6 +1,5 @@
 deploydir=$(prefix)/samples/BigBank/deploy
 compositedir=$(deploydir)/bigbank.account
-prgbindir=$(deploydir)/bin
 
 BUILT_SOURCES = AccountDataServiceImpl_AccountDataService_Proxy.cpp \
 AccountDataServiceImpl_AccountDataService_Wrapper.cpp \
@@ -14,7 +13,7 @@ StockQuoteServiceImpl_webService_Proxy.cpp
 
 noinst_HEADERS = *.h
 
-prgbin_SCRIPTS = runwsserver.sh
+composite_SCRIPTS = runwsserver.sh
 
 ${BUILT_SOURCES}: bigbank.account.composite
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
