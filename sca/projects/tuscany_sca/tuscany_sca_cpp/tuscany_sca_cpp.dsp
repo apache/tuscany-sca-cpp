@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sca.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /machine:I386 /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Release\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp\bin	copy Release\tuscany_sca_cpp.lib ..\..\..\deploy\extensions\cpp\lib	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp\xsd	copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp	copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp\model	copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions\cpp\include\osoa\sca
+PostBuild_Cmds=..\..\..\runtime\extensions\cpp\deploy.bat ..\..\..\ Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca_cpp - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 tuscany_sca.lib tuscany_sdo.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"..\..\..\deploy\lib" /libpath:"$(TUSCANY_SDOCPP)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=copy Debug\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp\bin	copy Debug\tuscany_sca_cpp.pdb ..\..\..\deploy\extensions\cpp\bin	copy Debug\tuscany_sca_cpp.lib ..\..\..\deploy\extensions\cpp\lib	copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp\xsd	copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp	copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp\model	copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions\cpp\include\osoa\sca
+PostBuild_Cmds=..\..\..\runtime\extensions\cpp\deploy.bat ..\..\..\ Debug
 # End Special Build Tool
 
 !ENDIF 
@@ -135,14 +135,6 @@ SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\export.h
 # Begin Source File
 
 SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\sca.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\ServiceList.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\runtime\extensions\cpp\src\osoa\sca\ServiceList.h
 # End Source File
 # Begin Source File
 

@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /dll /machine:I386 /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.lib	copy ..\..\..\runtime\core\src\tuscany\sca\*.h ..\..\..\deploy\include\tuscany\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\extension\*.h ..\..\..\deploy\include\tuscany\sca\extension	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util	copy Release\tuscany_sca.dll ..\..\..\deploy\bin	copy Release\tuscany_sca.lib ..\..\..\deploy\lib	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
+PostBuild_Cmds=..\..\..\runtime\core\deploy.bat ..\..\..\ Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tuscany_sca - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 axis2_engine.lib tuscany_sdo_axiom.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=del ..\..\..\deploy\bin\tuscany_sca.*	del ..\..\..\deploy\lib\*.lib	copy ..\..\..\runtime\core\src\tuscany\sca\*.h ..\..\..\deploy\include\tuscany\sca	copy ..\..\..\runtime\core\src\tuscany\sca\core\*.h ..\..\..\deploy\include\tuscany\sca\core	copy ..\..\..\runtime\core\src\tuscany\sca\model\*.h ..\..\..\deploy\include\tuscany\sca\model	copy ..\..\..\runtime\core\src\tuscany\sca\extension\*.h ..\..\..\deploy\include\tuscany\sca\extension	copy ..\..\..\runtime\core\src\tuscany\sca\util\*.h ..\..\..\deploy\include\tuscany\sca\util	copy Debug\tuscany_sca.dll ..\..\..\deploy\bin	copy Debug\tuscany_sca.pdb ..\..\..\deploy\bin	copy Debug\tuscany_sca.lib ..\..\..\deploy\lib	copy ..\..\..\xsd\*.* ..\..\..\deploy\xsd
+PostBuild_Cmds=..\..\..\runtime\core\deploy.bat ..\..\..\ Debug
 # End Special Build Tool
 
 !ENDIF 
@@ -285,6 +285,14 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WSDLDefinition.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WSDLInterface.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WSDLInterface.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\core\src\tuscany\sca\model\WSDLOperation.cpp
 # End Source File
 # Begin Source File
@@ -410,18 +418,6 @@ SOURCE=..\..\..\runtime\core\src\tuscany\sca\export.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE="..\..\..\xsd\sca-binding-sca.xsd"
-# End Source File
-# Begin Source File
-
-SOURCE="..\..\..\xsd\sca-binding-webservice.xsd"
-# End Source File
-# Begin Source File
-
-SOURCE="..\..\..\xsd\sca-composite.xsd"
-# End Source File
-# Begin Source File
-
 SOURCE="..\..\..\xsd\sca-core.xsd"
 # End Source File
 # Begin Source File
@@ -449,9 +445,5 @@ SOURCE=..\..\..\xsd\sca.xsd
 SOURCE=..\..\..\xsd\tuscany.xsd
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=".\Build Instructions.txt"
-# End Source File
 # End Target
 # End Project

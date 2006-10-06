@@ -1,4 +1,5 @@
 @echo off
+
 @REM  Licensed to the Apache Software Foundation (ASF) under one
 @REM  or more contributor license agreements.  See the NOTICE file
 @REM  distributed with this work for additional information
@@ -16,8 +17,29 @@
 @REM  specific language governing permissions and limitations
 @REM  under the License.
 
+
 setlocal
-cd tuscany_sca_test
-nmake -f tuscany_sca_test.mak CFG="tuscany_sca_test - Win32 Release"
-cd ..
+
+if . == .%1 (
+echo sca root not specified
+goto usage
+)
+set rootdir=%1
+set deploydir=%rootdir%\deploy
+set extdir=%deploydir%\extensions
+set wsextdir=%extdir%\ws
+set srcdir=%rootdir%\runtime\extensions\ws
+
+if not exist %deploydir% mkdir %deploydir%
+if not exist %extdir% mkdir %extdir%
+if not exist %wsextdir% mkdir %wsextdir%
+if not exist %wsextdir%\xsd mkdir %wsextdir%\xsd
+
+copy %srcdir%\xsd\*.* %wsextdir%\xsd
+
+goto end
+:usage
+echo Usage: deploy <sca-root>
+:end
+
 endlocal

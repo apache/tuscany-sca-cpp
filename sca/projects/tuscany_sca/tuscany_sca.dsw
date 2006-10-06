@@ -23,6 +23,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name tuscany_sca_ws_service
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tuscany_sca_ws_dispatcher
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -54,6 +57,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "tuscany_sca_ws_dispatcher"=.\tuscany_sca_ws_dispatcher\tuscany_sca_ws_dispatcher.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "tuscany_sca_ws_reference"=.\tuscany_sca_ws_reference\tuscany_sca_ws_reference.dsp - Package Owner=<4>
 
 Package=<5>
@@ -79,6 +94,9 @@ Package=<4>
 {{{
     Begin Project Dependency
     Project_Dep_Name tuscany_sca
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tuscany_sca_ws_dispatcher
     End Project Dependency
 }}}
 
