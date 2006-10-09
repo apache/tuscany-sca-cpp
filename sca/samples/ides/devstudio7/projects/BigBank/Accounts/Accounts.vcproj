@@ -21,9 +21,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="$(TUSCANY_SCACPP)\include,$(TUSCANY_SCACPP)\extensions\cpp\include,$(TUSCANY_SDOCPP)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ACCOUNTS_EXPORTS"
 				StringPooling="TRUE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Release/Accounts.pch"
@@ -37,10 +38,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib"
-				OutputFile=".\Release/Accounts.dll"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sca_cpp.lib tuscany_sdo.lib"
+				OutputFile=".\Release/Account.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="&quot;$(TUSCANY_SCACPP)/extensions/cpp/lib&quot;;&quot;$(TUSCANY_SCACPP)/lib&quot;;&quot;$(TUSCANY_SDOCPP)/lib&quot;"
 				ProgramDatabaseFile=".\Release/Accounts.pdb"
 				ImportLibrary=".\Release/Accounts.lib"/>
 			<Tool
@@ -51,9 +53,11 @@
 				TargetEnvironment="1"
 				TypeLibraryName=".\Release/Accounts.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="..\..\..\..\..\BigBank\deploy.bat ..\..\..\..\..\BigBank Release"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ..\..\..\..\..\BigBank\bigbank.account -output ..\..\..\..\..\BigBank\bigbank.account -verbose"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -94,7 +98,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sca_cpp.lib tuscany_sdo.lib"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sca_cpp.lib tuscany_sdo.lib"
 				OutputFile=".\Debug/Account.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -110,7 +114,8 @@
 				TargetEnvironment="1"
 				TypeLibraryName=".\Debug/Accounts.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="..\..\..\..\..\BigBank\deploy.bat ..\..\..\..\..\BigBank Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ..\..\..\..\..\BigBank\bigbank.account -output ..\..\..\..\..\BigBank\bigbank.account -verbose"
