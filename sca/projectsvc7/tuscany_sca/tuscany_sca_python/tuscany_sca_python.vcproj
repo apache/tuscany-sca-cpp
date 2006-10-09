@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../runtime/extensions/python/src,../../../deploy/include, $(TUSCANY_SDOCPP)/include, $(PYTHON_HOME)/include, $(TUSCANY_SCACPP)/extensions/cpp/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/python/src,../../../deploy/include, $(TUSCANY_SDOCPP)/include, $(PYTHON_HOME)/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_PYTHON_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -32,7 +32,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib python24.lib"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib"
 				OutputFile="$(OutDir)/tuscany_sca_python.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib, $(TUSCANY_SDOCPP)/lib, $(PYTHON_HOME)/libs,"
@@ -71,6 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../../runtime/extensions/python/src,../../../deploy/include, $(TUSCANY_SDOCPP)/include, $(PYTHON_HOME)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_PYTHON_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -81,8 +82,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib"
 				OutputFile="$(OutDir)/tuscany_sca_python.dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib, $(TUSCANY_SDOCPP)/lib, $(PYTHON_HOME)/libs"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"

@@ -71,7 +71,8 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_RUBY_EXPORTS"
+				AdditionalIncludeDirectories="../../../runtime/extensions/ruby/src;$(TUSCANY_SCACPP)/include;&quot;$(TUSCANY_SDOCPP)/include&quot;;&quot;$(RUBY_HOME)/lib/ruby/1.8/i386-mswin32&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_RUBY_EXPORTS;_MSC_VER=1200"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -81,8 +82,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib msvcrt-ruby18.lib"
 				OutputFile="$(OutDir)/tuscany_sca_ruby.dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib, $(TUSCANY_SDOCPP)/lib, $(RUBY_HOME)/lib,"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -93,7 +96,7 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\..\..\runtime\extensions\cpp\deploy.bat ..\..\..\ Release"/>
+				CommandLine="..\..\..\runtime\extensions\ruby\deploy.bat ..\..\..\ Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
