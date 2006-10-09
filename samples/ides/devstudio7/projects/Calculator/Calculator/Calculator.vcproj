@@ -55,7 +55,8 @@
 				TargetEnvironment="1"
 				TypeLibraryName=".\Debug/Calculator.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose"/>
@@ -113,7 +114,8 @@
 				TargetEnvironment="1"
 				TypeLibraryName=".\Release/Calculator.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir ../../../../../Calculator/sample.calculator -output ../../../../../Calculator/sample.calculator -verbose"/>

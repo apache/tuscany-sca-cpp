@@ -52,7 +52,7 @@
 				TypeLibraryName=".\Debug/WSClient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\wsdeploy.cmd Debug"/>
+				CommandLine="..\..\..\..\..\Calculator\deploywsclient.bat ..\..\..\..\..\Calculator Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -106,7 +106,7 @@
 				TypeLibraryName=".\Release/WSClient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\wsdeploy.cmd Release"/>
+				CommandLine="..\..\..\..\..\Calculator\deploywsclient.bat ..\..\..\..\..\Calculator Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

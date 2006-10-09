@@ -51,7 +51,7 @@
 				TypeLibraryName=".\Debug/Client.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\deploy.cmd Debug"/>
+				CommandLine="..\..\..\..\..\Calculator\deployclient.bat ..\..\..\..\..\Calculator Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -106,7 +106,7 @@
 				TypeLibraryName=".\Release/Client.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\deploy.cmd Release"/>
+				CommandLine="..\..\..\..\..\Calculator\deployclient.bat ..\..\..\..\..\Calculator Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

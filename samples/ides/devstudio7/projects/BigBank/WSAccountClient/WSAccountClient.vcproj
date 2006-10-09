@@ -21,11 +21,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_CONSOLE"
 				StringPooling="TRUE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/WSAccountClient.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -37,17 +38,19 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib"
 				OutputFile=".\Release/WSAccountClient.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)\lib,$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
 				ProgramDatabaseFile=".\Release/WSAccountClient.pdb"
 				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
 				TypeLibraryName=".\Release/WSAccountClient.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="..\..\..\..\..\BigBank\deploywsclient.bat ..\..\..\..\..\BigBank Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -90,7 +93,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib tuscany_sca.lib tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib"
 				OutputFile=".\Debug/WSAccountClient.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -103,7 +106,7 @@
 				TypeLibraryName=".\Debug/WSAccountClient.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\wsdeploy.bat Debug"/>
+				CommandLine="..\..\..\..\..\BigBank\deploywsclient.bat ..\..\..\..\..\BigBank Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
