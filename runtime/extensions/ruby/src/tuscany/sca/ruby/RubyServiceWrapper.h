@@ -22,12 +22,12 @@
 #ifndef tuscany_sca_ruby_rubyservicewrapper_h
 #define tuscany_sca_ruby_rubyservicewrapper_h
 
-#include "tuscany/sca/export.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Interface.h"
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
+#include "tuscany/sca/ruby/export.h"
 
 #include <ruby.h>
 
@@ -48,7 +48,7 @@ namespace tuscany
              * An instance of this class wraps the actual component implementation which 
              * has been written by a developer of an SCA application.
              */
-            class SCA_API RubyServiceWrapper : public ServiceWrapper
+            class SCA_RUBY_API RubyServiceWrapper : public ServiceWrapper
             {
             public:
 

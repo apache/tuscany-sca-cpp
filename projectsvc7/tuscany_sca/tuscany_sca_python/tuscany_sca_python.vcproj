@@ -32,10 +32,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib python24.lib tuscany_sca_cpp.lib"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib python24.lib"
 				OutputFile="$(OutDir)/tuscany_sca_python.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib, $(TUSCANY_SDOCPP)/lib, $(PYTHON_HOME)/libs, $(TUSCANY_SCACPP)/extensions/cpp/lib"
+				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib, $(TUSCANY_SDOCPP)/lib, $(PYTHON_HOME)/libs,"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/tuscany_sca_python.pdb"
 				SubSystem="2"
@@ -45,17 +45,7 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\tuscany_sca_python.dll ..\..\..\deploy\extensions\python\bin
-copy Debug\tuscany_sca_python.pdb ..\..\..\deploy\extensions\python\bin
-copy Debug\tuscany_sca_python.lib ..\..\..\deploy\extensions\python\lib
-copy ..\..\..\runtime\extensions\python\xsd\*.xsd ..\..\..\deploy\extensions\python\xsd
-copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\*.h ..\..\..\deploy\extensions\python\include\tuscany\sca\python
-copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\*.h ..\..\..\deploy\extensions\python\include\tuscany\sca\python\model
-copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensions\python\include\osoa\sca
-cd ..\..\..\runtime\extensions\python\src\tuscany\sca\python
-$(PYTHON_HOME)\python  sca_setup.py build
-$(PYTHON_HOME)\python  sca_setup.py install --install-lib ..\..\..\..\..\..\..\deploy\extensions\python\bin
-"/>
+				CommandLine="..\..\..\runtime\extensions\python\deploy.bat ..\..\..\ Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -103,13 +93,7 @@ $(PYTHON_HOME)\python  sca_setup.py install --install-lib ..\..\..\..\..\..\..\d
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\tuscany_sca_python.dll ..\..\..\deploy\extensions\python\bin
-copy Release\tuscany_sca_python.lib ..\..\..\deploy\extensions\python\lib
-copy ..\..\..\runtime\extensions\python\xsd\*.xsd ..\..\..\deploy\extensions\python\xsd
-copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\*.h ..\..\..\deploy\extensions\python\include\tuscany\sca\python
-copy ..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\*.h ..\..\..\deploy\extensions\python\include\tuscany\sca\python\model
-copy ..\..\..\runtime\extensions\python\src\osoa\sca\*.h ..\..\..\deploy\extensions\python\include\osoa\sca
-"/>
+				CommandLine="..\..\..\runtime\extensions\python\deploy.bat ..\..\..\ Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

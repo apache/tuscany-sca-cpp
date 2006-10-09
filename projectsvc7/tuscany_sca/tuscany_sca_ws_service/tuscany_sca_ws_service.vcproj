@@ -54,10 +54,7 @@
 				TypeLibraryName=".\Release/tuscany_sca_ws_service.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib
-copy Release\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin
-copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
-"/>
+				CommandLine="..\..\..\runtime\extensions\ws\service\deploy.bat ..\..\..\ Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -116,16 +113,7 @@ copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
 				TypeLibraryName=".\Debug/tuscany_sca_ws_service.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\services\tuscany
-copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\services\tuscany
-copy Debug\tuscany_sca_ws_service.dll ..\..\..\deploy\extensions\ws\service\bin
-copy Debug\tuscany_sca_ws_service.pdb ..\..\..\deploy\extensions\ws\service\bin
-copy Debug\tuscany_sca_ws_service.lib ..\..\..\deploy\extensions\ws\service\lib
-copy ..\..\..\runtime\extensions\ws\xsd\*.xsd ..\..\..\deploy\extensions\ws\xsd
-copy ..\..\..\runtime\extensions\ws\service\axis2c\src\services.xml ..\..\..\deploy\extensions\ws\service\services\tuscany
-copy ..\..\..\runtime\extensions\ws\service\axis2c\src\axis2.xml ..\..\..\deploy\extensions\ws\service\
-copy ..\..\..\runtime\extensions\ws\service\axis2c\src\deploy.cmd ..\..\..\deploy\extensions\ws\service\
-"/>
+				CommandLine="..\..\..\runtime\extensions\ws\service\deploy.bat ..\..\..\ Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
