@@ -52,6 +52,7 @@ del %deploydir%\bin\tuscany_sca.*
 del %deploydir%\lib\*.lib
 
 copy %srcdir%\tuscany\sca\*.h %deploydir%\include\tuscany\sca
+copy %srcdir%\tuscany\sca\core\*.h %deploydir%\include\tuscany\sca\core
 copy %srcdir%\tuscany\sca\extension\*.h %deploydir%\include\tuscany\sca\extension
 copy %srcdir%\tuscany\sca\model\*.h %deploydir%\include\tuscany\sca\model
 copy %srcdir%\tuscany\sca\util\*.h %deploydir%\include\tuscany\sca\util
