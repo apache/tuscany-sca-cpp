@@ -75,8 +75,17 @@ namespace tuscany
                 // Load the specified Ruby script
                 if (script != "")
                 {
+                    // Convert any windows slashes \ in the root path to unix slashes /
+                    // otherwise the ruby interpreter throws an error
+                    string rootpath = getComposite()->getRoot();
+                    int pos = 0;
+                    while((pos = rootpath.find('\\', pos)) != string::npos)
+                    {
+                        rootpath = rootpath.replace(pos, 1, "/");
+                    }
+
                     // Use rb_eval_string for now as it provides better error reporting
-                    string path = "require(\"" + getComposite()->getRoot() + "/" + script +"\")";
+                    string path = "require(\"" + rootpath + "/" + script +"\")";
                     //rb_require((char *)path.c_str());
                     rb_eval_string(path.c_str());
                 }
