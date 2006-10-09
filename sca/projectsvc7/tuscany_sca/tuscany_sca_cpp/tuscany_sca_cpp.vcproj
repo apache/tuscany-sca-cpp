@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib"
 				OutputFile=".\Release/tuscany_sca_cpp.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -56,13 +56,7 @@
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp\bin
-copy Release\tuscany_sca_cpp.lib ..\..\..\deploy\extensions\cpp\lib
-copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp\xsd
-copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp
-copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp\model
-copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions\cpp\include\osoa\sca
-"/>
+				CommandLine="..\..\..\runtime\extensions\cpp\deploy.bat ..\..\..\ Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -109,7 +103,7 @@ copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib"
 				OutputFile=".\Debug/tuscany_sca_cpp.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -128,14 +122,7 @@ copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions
 				HeaderFileName=""/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\tuscany_sca_cpp.dll ..\..\..\deploy\extensions\cpp\bin
-copy Debug\tuscany_sca_cpp.pdb ..\..\..\deploy\extensions\cpp\bin
-copy Debug\tuscany_sca_cpp.lib ..\..\..\deploy\extensions\cpp\lib
-copy ..\..\..\runtime\extensions\cpp\xsd\*.xsd ..\..\..\deploy\extensions\cpp\xsd
-copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp
-copy ..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\model\*.h ..\..\..\deploy\extensions\cpp\include\tuscany\sca\cpp\model
-copy ..\..\..\runtime\extensions\cpp\src\osoa\sca\*.h ..\..\..\deploy\extensions\cpp\include\osoa\sca
-"/>
+				CommandLine="..\..\..\runtime\extensions\cpp\deploy.bat ..\..\..\ Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

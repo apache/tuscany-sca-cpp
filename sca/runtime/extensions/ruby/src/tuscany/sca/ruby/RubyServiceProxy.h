@@ -22,7 +22,7 @@
 #ifndef tuscany_sca_ruby_rubyserviceproxy_h
 #define tuscany_sca_ruby_rubyserviceproxy_h
 
-#include "tuscany/sca/export.h"
+#include "tuscany/sca/ruby/export.h"
 #include "tuscany/sca/core/ServiceProxy.h" 
 #include "tuscany/sca/core/ServiceWrapper.h" 
 #include "tuscany/sca/model/Component.h"

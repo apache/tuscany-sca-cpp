@@ -40,7 +40,7 @@ extern "C"
 {
     
     // Initialize a Ruby proxy
-    SCA_API VALUE tuscany_sca_ruby_proxy_initialize(VALUE self, VALUE serviceProxy)
+    SCA_RUBY_API VALUE tuscany_sca_ruby_proxy_initialize(VALUE self, VALUE serviceProxy)
     {
         rb_iv_set(self, "@cppProxy", serviceProxy);
         return self;
@@ -48,7 +48,7 @@ extern "C"
 
     // Handle a method_missing message and dispatch to
     // our C++ proxy
-    SCA_API VALUE tuscany_sca_ruby_proxy_method_missing(int argc, VALUE* argv, VALUE self)
+    SCA_RUBY_API VALUE tuscany_sca_ruby_proxy_method_missing(int argc, VALUE* argv, VALUE self)
     {
         VALUE proxy = rb_iv_get(self, "@cppProxy");
         

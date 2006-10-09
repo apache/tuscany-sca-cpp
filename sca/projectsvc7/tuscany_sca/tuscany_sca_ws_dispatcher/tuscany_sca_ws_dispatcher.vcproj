@@ -44,11 +44,7 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\tuscany_sca_ws_dispatcher.dll ..\..\..\deploy\extensions\ws\service\modules\tuscany
-copy Debug\tuscany_sca_ws_dispatcher.pdb ..\..\..\deploy\extensions\ws\service\modules\tuscany
-copy Debug\tuscany_sca_ws_dispatcher.lib ..\..\..\deploy\extensions\ws\service\lib
-copy ..\..\..\runtime\extensions\ws\service\axis2c\src\module.xml ..\..\..\deploy\extensions\ws\service\modules\tuscany
-"/>
+				CommandLine="..\..\..\runtime\extensions\ws\service\deploymodule.bat ..\..\..\ Debug"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -64,12 +60,13 @@ copy ..\..\..\runtime\extensions\ws\service\axis2c\src\module.xml ..\..\..\deplo
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(TUSCANY_SCACPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="4"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
@@ -78,8 +75,10 @@ copy ..\..\..\runtime\extensions\ws\service\axis2c\src\module.xml ..\..\..\deplo
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/tuscany_sca_ws_dispatcher.exe"
+				AdditionalDependencies="axiom.lib axis2_util.lib axis2_engine.lib"
+				OutputFile="$(OutDir)/tuscany_sca_ws_dispatcher.dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib,$(AXIS2C_HOME)/lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -88,7 +87,8 @@ copy ..\..\..\runtime\extensions\ws\service\axis2c\src\module.xml ..\..\..\deplo
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="..\..\..\runtime\extensions\ws\service\deploymodule.bat ..\..\..\ Release"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

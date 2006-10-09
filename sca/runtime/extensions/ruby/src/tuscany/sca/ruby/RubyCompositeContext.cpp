@@ -35,7 +35,7 @@ extern "C"
 {
 
     // Implement the Sca::locateService module function    
-    SCA_API VALUE tuscany_sca_ruby_locateService(VALUE module, VALUE value)
+    SCA_RUBY_API VALUE tuscany_sca_ruby_locateService(VALUE module, VALUE value)
     {
         
         // Get the default component
@@ -61,7 +61,7 @@ extern "C"
     }
     
     // Initialize the Ruby extension
-    SCA_API void Init_tuscany_sca_ruby()
+    SCA_RUBY_API void Init_tuscany_sca_ruby()
     {
         
         // Define the Sca::locateService() function 
@@ -70,7 +70,7 @@ extern "C"
         
     }
 
-    SCA_API void Init_libtuscany_sca_ruby()
+    SCA_RUBY_API void Init_libtuscany_sca_ruby()
     {
         Init_tuscany_sca_ruby();
     }
