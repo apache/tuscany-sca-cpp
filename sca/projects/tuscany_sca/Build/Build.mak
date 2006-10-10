@@ -34,12 +34,12 @@ ALL :
 
 !ELSE 
 
-ALL : "tuscany_sca_ws_dispatcher - Win32 Release" "tuscany_sca_ws_service - Win32 Release" "tuscany_sca_ws_reference - Win32 Release" "tuscany_sca_cpp - Win32 Release" "tuscany_sca - Win32 Release" 
+ALL : "tuscany_sca_python - Win32 Release" "tuscany_sca_ws_dispatcher - Win32 Release" "tuscany_sca_ws_service - Win32 Release" "tuscany_sca_ws_reference - Win32 Release" "tuscany_sca_cpp - Win32 Release" "tuscany_sca - Win32 Release" 
 
 !ENDIF 
 
 !IF "$(RECURSE)" == "1" 
-CLEAN :"tuscany_sca - Win32 ReleaseCLEAN" "tuscany_sca_cpp - Win32 ReleaseCLEAN" "tuscany_sca_ws_reference - Win32 ReleaseCLEAN" "tuscany_sca_ws_service - Win32 ReleaseCLEAN" "tuscany_sca_ws_dispatcher - Win32 ReleaseCLEAN" 
+CLEAN :"tuscany_sca - Win32 ReleaseCLEAN" "tuscany_sca_cpp - Win32 ReleaseCLEAN" "tuscany_sca_ws_reference - Win32 ReleaseCLEAN" "tuscany_sca_ws_service - Win32 ReleaseCLEAN" "tuscany_sca_ws_dispatcher - Win32 ReleaseCLEAN" "tuscany_sca_python - Win32 ReleaseCLEAN" 
 !ELSE 
 CLEAN :
 !ENDIF 
@@ -198,6 +198,32 @@ MTL_PROJ=
 "tuscany_sca_ws_dispatcher - Win32 DebugCLEAN" : 
    cd "..\tuscany_sca_ws_dispatcher"
    $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_ws_dispatcher.mak CFG="tuscany_sca_ws_dispatcher - Win32 Debug" RECURSE=1 CLEAN 
+   cd "..\Build"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "Build - Win32 Release"
+
+"tuscany_sca_python - Win32 Release" : 
+   cd "..\tuscany_sca_python"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_python.mak CFG="tuscany_sca_python - Win32 Release" 
+   cd "..\Build"
+
+"tuscany_sca_python - Win32 ReleaseCLEAN" : 
+   cd "..\tuscany_sca_python"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_python.mak CFG="tuscany_sca_python - Win32 Release" RECURSE=1 CLEAN 
+   cd "..\Build"
+
+!ELSEIF  "$(CFG)" == "Build - Win32 Debug"
+
+"tuscany_sca_python - Win32 Debug" : 
+   cd "..\tuscany_sca_python"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_python.mak CFG="tuscany_sca_python - Win32 Debug" 
+   cd "..\Build"
+
+"tuscany_sca_python - Win32 DebugCLEAN" : 
+   cd "..\tuscany_sca_python"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca_python.mak CFG="tuscany_sca_python - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\Build"
 
 !ENDIF 
