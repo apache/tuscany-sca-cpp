@@ -31,7 +31,7 @@
 
 using namespace tuscany::sca::model;
 
-#include "tuscany/sca/ruby/ruby.h"
+#include "tuscany/sca/ruby/Ruby.h"
 
 
 namespace tuscany
