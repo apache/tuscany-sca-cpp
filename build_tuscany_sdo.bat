@@ -42,7 +42,7 @@ call vcvars32
 
 echo Build of SDO started....
 set PACKAGE=tuscany_sdo_cpp
-set VERSION=1.0.incubating-M2
+set VERSION=1.0-incubating-M2
 set SRC_PACKAGE=%PACKAGE%-%VERSION%-src
 set BIN_PACKAGE=%PACKAGE%-%VERSION%-bin
 
@@ -89,6 +89,10 @@ copy %FROM_DIR%\samples\GettingStarted.html    %TO_SRC%\%SRC_PACKAGE%\samples
 
 xcopy /s /e %FROM_DIR%\samples\misc %TO_SRC%\%SRC_PACKAGE%\samples\misc
 xcopy/s %FROM_DIR%\samples\ides %TO_SRC%\%SRC_PACKAGE%\samples\ides
+
+cd %TO_SRC%\%SRC_PACKAGE%
+del /S Makefile.am
+
 echo Building SDO....
 
 cd %FROM_DIR%
@@ -130,6 +134,14 @@ copy %FROM_DIR%\samples\COPYING   %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\NOTICE    %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\README    %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\GettingStarted.html    %TO_BIN%\%BIN_PACKAGE%\samples
+
+cd %TO_BIN%\%BIN_PACKAGE%
+del /S Makefile.am
+
+echo Creating zip file: %TO_SRC%\%SRC_PACKAGE%.zip 
+jar -cMf %TO_SRC%\%SRC_PACKAGE%.zip -C %TO_SRC% %SRC_PACKAGE%
+echo Creating zip file: %TO_BIN%\%BIN_PACKAGE%.zip
+jar -cMf %TO_BIN%\%BIN_PACKAGE%.zip -C %TO_BIN% %BIN_PACKAGE%
 
 :end
 echo SDO Build complete.

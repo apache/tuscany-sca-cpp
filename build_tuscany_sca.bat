@@ -40,7 +40,7 @@ call vcvars32
 
 echo Build of SCA started....
 set PACKAGE=tuscany_sca_cpp
-set VERSION=1.0.incubating-M2
+set VERSION=1.0-incubating-M2
 set SRC_PACKAGE=%PACKAGE%-%VERSION%-src
 set BIN_PACKAGE=%PACKAGE%-%VERSION%-bin
 
@@ -69,7 +69,6 @@ copy %FROM_DIR%\NOTICE    %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\README    %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\GettingStarted.html  %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\build.bat  %TO_SRC%\%SRC_PACKAGE%
-copy %FROM_DIR%\scatest.bat  %TO_SRC%\%SRC_PACKAGE%
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
 xcopy /t /e  %FROM_DIR%\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
@@ -89,12 +88,20 @@ xcopy/s %FROM_DIR%\tools %TO_SRC%\%SRC_PACKAGE%\tools
 if not exist %TO_SRC%\%SRC_PACKAGE%\doc mkdir %TO_SRC%\%SRC_PACKAGE%\doc 
 xcopy/s %FROM_DIR%\doc %TO_SRC%\%SRC_PACKAGE%\doc
 
-if not exist %TO_SRC%\%SRC_PACKAGE%\samples mkdir %TO_SRC%\%SRC_PACKAGE%\samples 
-if not exist %TO_SRC%\%SRC_PACKAGE%\samples\Calculator mkdir %TO_SRC%\%SRC_PACKAGE%\samples\Calculator
-if not exist %TO_SRC%\%SRC_PACKAGE%\samples\ides mkdir %TO_SRC%\%SRC_PACKAGE%\samples\ides
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples                  mkdir %TO_SRC%\%SRC_PACKAGE%\samples 
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\BigBank          mkdir %TO_SRC%\%SRC_PACKAGE%\samples\BigBank
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\Calculator       mkdir %TO_SRC%\%SRC_PACKAGE%\samples\Calculator
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\ides             mkdir %TO_SRC%\%SRC_PACKAGE%\samples\ides
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\PythonCalculator mkdir %TO_SRC%\%SRC_PACKAGE%\samples\PythonCalculator
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank         mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank
 
-xcopy/s %FROM_DIR%\samples\Calculator %TO_SRC%\%SRC_PACKAGE%\samples\Calculator
-xcopy/s %FROM_DIR%\samples\ides %TO_SRC%\%SRC_PACKAGE%\samples\ides
+xcopy/s %FROM_DIR%\samples\BigBank          %TO_SRC%\%SRC_PACKAGE%\samples\BigBank
+xcopy/s %FROM_DIR%\samples\Calculator       %TO_SRC%\%SRC_PACKAGE%\samples\Calculator
+xcopy/s %FROM_DIR%\samples\ides             %TO_SRC%\%SRC_PACKAGE%\samples\ides
+xcopy/s %FROM_DIR%\samples\PythonCalculator %TO_SRC%\%SRC_PACKAGE%\samples\PythonCalculator
+xcopy/s %FROM_DIR%\samples\RubyCalculator   %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
+xcopy/s %FROM_DIR%\samples\RubyBank         %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank
 copy %FROM_DIR%\samples\INSTALL   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\LICENSE   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\COPYING   %TO_SRC%\%SRC_PACKAGE%\samples
@@ -105,9 +112,12 @@ copy %FROM_DIR%\samples\GettingStarted.html    %TO_SRC%\%SRC_PACKAGE%\samples
 if not exist %TO_SRC%\%SRC_PACKAGE%\xsd mkdir %TO_SRC%\%SRC_PACKAGE%\xsd 
 xcopy/s %FROM_DIR%\xsd %TO_SRC%\%SRC_PACKAGE%\xsd
 
+cd %TO_SRC%\%SRC_PACKAGE%
+del /S Makefile.am
 
 echo Building SCA....
 
+set TUSCANY_SCACPP=%FROM_DIR%\deploy
 cd %FROM_DIR%
 call build
 
@@ -130,25 +140,53 @@ copy %FROM_DIR%\NOTICE    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\README    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\GettingStarted.html   %TO_BIN%\%BIN_PACKAGE%
 
-echo Building calculator....
-
 set TUSCANY_SCACPP=%FROM_DIR%\deploy
+echo Building calculator....
 cd %FROM_DIR%\samples\ides\devstudio6\projects\Calculator
-
 call build
+
+echo Building bigbank....
+rem cd %FROM_DIR%\samples\ides\devstudio6\projects\BigBank
+rem call build
+
+set TUSCANY_SCACPP=%TO_BIN%\%BIN_PACKAGE%
+echo Deploying Python & Ruby samples....
+cd %FROM_DIR%\samples\PythonCalculator
+call deploy
+cd %FROM_DIR%\samples\RubyCalculator
+call deploy
+cd %FROM_DIR%\samples\RubyBank
+call deploy
+
 
 if not exist %TO_BIN%\%BIN_PACKAGE%\samples mkdir %TO_BIN%\%BIN_PACKAGE%\samples
 if not exist %TO_BIN%\%BIN_PACKAGE%\samples\ides mkdir %TO_BIN%\%BIN_PACKAGE%\samples\ides
 if not exist %TO_BIN%\%BIN_PACKAGE%\samples\Calculator mkdir %TO_BIN%\%BIN_PACKAGE%\samples\Calculator
+if not exist %TO_BIN%\%BIN_PACKAGE%\samples\PythonCalculator mkdir %TO_BIN%\%BIN_PACKAGE%\samples\PythonCalculator
+if not exist %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator mkdir %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator
+if not exist %TO_BIN%\%BIN_PACKAGE%\samples\BigBank mkdir %TO_BIN%\%BIN_PACKAGE%\samples\BigBank
+if not exist %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank mkdir %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
 
 xcopy/s %FROM_DIR%\samples\ides %TO_BIN%\%BIN_PACKAGE%\samples\ides
 xcopy/s %FROM_DIR%\samples\Calculator %TO_BIN%\%BIN_PACKAGE%\samples\Calculator
+xcopy/s %FROM_DIR%\samples\PythonCalculator %TO_BIN%\%BIN_PACKAGE%\samples\PythonCalculator
+xcopy/s %FROM_DIR%\samples\RubyCalculator %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator
+xcopy/s %FROM_DIR%\samples\BigBank %TO_BIN%\%BIN_PACKAGE%\samples\BigBank
+xcopy/s %FROM_DIR%\samples\RubyBank %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
 copy %FROM_DIR%\samples\INSTALL   %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\LICENSE   %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\COPYING   %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\NOTICE    %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\README    %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\GettingStarted.html    %TO_BIN%\%BIN_PACKAGE%\samples
+
+cd %TO_BIN%\%BIN_PACKAGE%
+del /S Makefile.am
+
+echo Creating zip file: %TO_SRC%\%SRC_PACKAGE%.zip 
+jar -cMf %TO_SRC%\%SRC_PACKAGE%.zip -C %TO_SRC% %SRC_PACKAGE%
+echo Creating zip file: %TO_BIN%\%BIN_PACKAGE%.zip
+jar -cMf %TO_BIN%\%BIN_PACKAGE%.zip -C %TO_BIN% %BIN_PACKAGE%
 
 :end
 echo SCA Build complete.
