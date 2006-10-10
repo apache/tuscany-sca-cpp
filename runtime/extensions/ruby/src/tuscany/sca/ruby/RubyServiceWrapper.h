@@ -29,7 +29,7 @@
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
 #include "tuscany/sca/ruby/export.h"
 
-#include "tuscany/sca/ruby/ruby.h"
+#include "tuscany/sca/ruby/Ruby.h"
 
 using namespace tuscany::sca::model;
 
