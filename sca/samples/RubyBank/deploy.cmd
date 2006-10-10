@@ -22,13 +22,20 @@ setlocal
 set currentPath=%~d0%~p0
 set sourcePath=%currentPath%
 
-if . == %2. (
-set destinationPath=%sourcePath%\deploy
+set deploydir=%TUSCANY_SCACPP%
+set samplesdir=%deploydir%\samples
+set bbdir=%samplesdir%\RubyBank
+
+
+if . == %1. (
+set destinationPath=%bbdir%\deploy
 ) ELSE (
-set destinationPath=%2
+set destinationPath=%1
 )
 
-if not exist %destinationPath%                          mkdir %destinationPath%
+if not exist %samplesdir%                      mkdir %samplesdir%
+if not exist %bbdir%                           mkdir %bbdir%
+if not exist %destinationPath%                 mkdir %destinationPath%
 if not exist %destinationPath%\bigbank.account mkdir %destinationPath%\bigbank.account
 if not exist %destinationPath%\bigbank.client  mkdir %destinationPath%\bigbank.client
 

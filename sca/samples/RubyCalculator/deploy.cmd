@@ -22,12 +22,18 @@ setlocal
 set currentPath=%~d0%~p0
 set sourcePath=%currentPath%
 
-if . == %2. (
-set destinationPath=%sourcePath%\deploy
+set deploydir=%TUSCANY_SCACPP%
+set samplesdir=%deploydir%\samples
+set calcdir=%samplesdir%\RubyCalculator
+
+if . == %1. (
+set destinationPath=%calcdir%\deploy
 ) ELSE (
-set destinationPath=%2
+set destinationPath=%1
 )
 
+if not exist %samplesdir%                        mkdir %samplesdir%
+if not exist %calcdir%                           mkdir %calcdir%
 if not exist %destinationPath%                   mkdir %destinationPath%
 if not exist %destinationPath%\sample.calculator mkdir %destinationPath%\sample.calculator
 copy %sourcePath%\sample.calculator\*.composite     %destinationPath%\sample.calculator
