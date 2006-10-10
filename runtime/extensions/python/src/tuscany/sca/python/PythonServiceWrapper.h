@@ -32,7 +32,15 @@
 
 using namespace tuscany::sca::model;
 
+// undefine _DEBUG so Python does not need it's deebug dll
+#ifdef _DEBUG
+#undef _DEBUG
+#define _SCA_PYTHON_DEBUG
+#endif
 #include <Python.h>
+#ifdef _SCA_PYTHON_DEBUG
+#define _DEBUG
+#endif
 
 
 namespace tuscany
