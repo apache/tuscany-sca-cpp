@@ -185,17 +185,17 @@ namespace tuscany
                                 }
                                 case Operation::FLOAT: 
                                 {
-                                    value = rb_dbl2big(*(float*)parm.getValue());
+                                    value = rb_float_new(*(float*)parm.getValue());
                                     break;
                                 }
                                 case Operation::DOUBLE: 
                                 {
-                                    value = rb_dbl2big(*(double*)parm.getValue());
+                                    value = rb_float_new(*(double*)parm.getValue());
                                     break;
                                 }
                                 case Operation::LONGDOUBLE: 
                                 {
-                                    value = rb_dbl2big(*(long double*)parm.getValue());
+                                    value = rb_float_new(*(long double*)parm.getValue());
                                     break;
                                 }
                                 case Operation::CHARS: 
@@ -251,49 +251,418 @@ namespace tuscany
                     
                     // Convert the Ruby result value to a C++ result
                     int resultType = TYPE(result);
+                    char buf[20];
                     switch(resultType)
                     {
                     case T_FLOAT: 
                         {
                             float* data = new float; 
                             *data = rb_num2dbl(result);
-                            operation.setReturnValue(data);
+                            
+                            // Check if the return type has already been set for typed languages
+    		                switch(operation.getReturnType())
+    		                {
+    			                case Operation::BOOL: 
+    			                {
+    				                *(bool*)operation.getReturnValue() = (*data != 0.0);
+    				                break;
+    			                }
+    			                case Operation::SHORT: 
+    			                {
+                                    *(short*)operation.getReturnValue() = (short)*data;
+    				                break;
+    			                }
+    			                case Operation::USHORT: 
+    			                {
+                                    *(unsigned short*)operation.getReturnValue() = (unsigned short)*data;
+    				                break;
+    			                }
+    			                case Operation::INT: 
+    			                {
+                                    *(int*)operation.getReturnValue() = (int)*data;
+    				                break;
+    			                }
+    			                case Operation::UINT: 
+    			                {
+                                    *(unsigned int*)operation.getReturnValue() = (unsigned int)*data;
+    				                break;
+    			                }
+    			                case Operation::LONG: 
+    			                {
+                                    *(long*)operation.getReturnValue() = (long)*data;
+    				                break;
+    			                }
+    			                case Operation::ULONG: 
+    			                {
+                                    *(unsigned long*)operation.getReturnValue() = (unsigned long)*data;
+    				                break;
+    			                }
+    			                case Operation::FLOAT: 
+    			                {
+                                    *(float*)operation.getReturnValue() = (float)*data;
+    				                break;
+    			                }
+    			                case Operation::DOUBLE: 
+    			                {
+                                    *(double*)operation.getReturnValue() = (double)*data;
+    				                break;
+    			                }
+    			                case Operation::LONGDOUBLE: 
+    			                {
+                                    *(long double*)operation.getReturnValue() = (long double)*data;
+    				                break;
+    			                }
+    			                case Operation::CHARS: 
+    			                {
+                                    sprintf(buf, "%f", *data);
+                                    *(char**)operation.getReturnValue() = buf;
+    				                break;
+    			                }
+    			                case Operation::STRING: 
+    			                {
+                                    sprintf(buf, "%f", *data);
+                                    *(string*)operation.getReturnValue() = buf;
+    				                break;
+    			                }
+                                default:
+                                {
+                                    // The type is set as something else or has not been set
+                                    operation.setReturnValue(data);
+                                }
+                            }
                             break;
                         }
                     case T_STRING: 
                         {
-                            string* data = new string(rb_string_value_cstr(&result));
-                            const char** cdata = new const char*; 
-                            *cdata = data->c_str();
-                            operation.setReturnValue(cdata);
+                            string* stringdata = new string(rb_string_value_cstr(&result));
+                            const char** data = new const char*; 
+                            *data = stringdata->c_str();
+
+                            // Check if the return type has already been set (for typed languages)
+    		                switch(operation.getReturnType())
+    		                {
+    			                case Operation::BOOL: 
+    			                {
+                                    // If the string is empty or "0" or "false" set to false, otherwise true
+                                    if(strlen(*data) == 0 || strcmp(*data, "0") == 0 || strcmp(*data, "false") == 0)
+                                    {
+    				                    *(bool*)operation.getReturnValue() = false;
+                                    }
+                                    else
+                                    {
+                                        *(bool*)operation.getReturnValue() = true;
+                                    }
+    				                break;
+    			                }
+    			                case Operation::SHORT: 
+    			                {
+                                    *(short*)operation.getReturnValue() = (short)atoi(*data);
+    				                break;
+    			                }
+    			                case Operation::USHORT: 
+    			                {
+                                    *(unsigned short*)operation.getReturnValue() = (unsigned short)atoi(*data);
+    				                break;
+    			                }
+    			                case Operation::INT: 
+    			                {
+                                    *(int*)operation.getReturnValue() = (int)atoi(*data);
+    				                break;
+    			                }
+    			                case Operation::UINT: 
+    			                {
+                                    *(unsigned int*)operation.getReturnValue() = (unsigned int)atoi(*data);
+    				                break;
+    			                }
+    			                case Operation::LONG: 
+    			                {
+                                    *(long*)operation.getReturnValue() = (long)atol(*data);
+    				                break;
+    			                }
+    			                case Operation::ULONG: 
+    			                {
+                                    *(unsigned long*)operation.getReturnValue() = (unsigned long)atol(*data);
+    				                break;
+    			                }
+    			                case Operation::FLOAT: 
+    			                {
+                                    *(float*)operation.getReturnValue() = (float)atof(*data);
+    				                break;
+    			                }
+    			                case Operation::DOUBLE: 
+    			                {
+                                    *(double*)operation.getReturnValue() = (double)atof(*data);
+    				                break;
+    			                }
+    			                case Operation::LONGDOUBLE: 
+    			                {
+                                    *(long double*)operation.getReturnValue() = (long double)atof(*data);
+    				                break;
+    			                }
+    			                case Operation::CHARS: 
+    			                {
+                                    *(const char**)operation.getReturnValue() = *data;
+    				                break;
+    			                }
+    			                case Operation::STRING: 
+    			                {
+                                    *(string*)operation.getReturnValue() = *data;
+    				                break;
+    			                }
+                                default:
+                                {
+                                    // The type is set as something else or has not been set
+                                    operation.setReturnValue(data);
+                                }
+                            }
                             break;
                         }
                     case T_FIXNUM: 
                         {
                             long* data = new long;
                             *data = rb_num2long(result);
-                            operation.setReturnValue(data);
+                                                            
+                            // Check if the return type has already been (set for typed languages)
+    		                switch(operation.getReturnType())
+    		                {
+    			                case Operation::BOOL: 
+    			                {
+    				                *(bool*)operation.getReturnValue() = (*data != 0);
+    				                break;
+    			                }
+    			                case Operation::SHORT: 
+    			                {
+                                    *(short*)operation.getReturnValue() = (short)*data;
+    				                break;
+    			                }
+    			                case Operation::USHORT: 
+    			                {
+                                    *(unsigned short*)operation.getReturnValue() = (unsigned short)*data;
+    				                break;
+    			                }
+    			                case Operation::INT: 
+    			                {
+                                    *(int*)operation.getReturnValue() = (int)*data;
+    				                break;
+    			                }
+    			                case Operation::UINT: 
+    			                {
+                                    *(unsigned int*)operation.getReturnValue() = (unsigned int)*data;
+    				                break;
+    			                }
+    			                case Operation::LONG: 
+    			                {
+                                    *(long*)operation.getReturnValue() = (long)*data;
+    				                break;
+    			                }
+    			                case Operation::ULONG: 
+    			                {
+                                    *(unsigned long*)operation.getReturnValue() = (unsigned long)*data;
+    				                break;
+    			                }
+    			                case Operation::FLOAT: 
+    			                {
+                                    *(float*)operation.getReturnValue() = (float)*data;
+    				                break;
+    			                }
+    			                case Operation::DOUBLE: 
+    			                {
+                                    *(double*)operation.getReturnValue() = (double)*data;
+    				                break;
+    			                }
+    			                case Operation::LONGDOUBLE: 
+    			                {
+                                    *(long double*)operation.getReturnValue() = (long double)*data;
+    				                break;
+    			                }
+    			                case Operation::CHARS: 
+    			                {
+                                    sprintf(buf, "%d", *data);
+                                    *(char**)operation.getReturnValue() = buf;
+    				                break;
+    			                }
+    			                case Operation::STRING: 
+    			                {
+                                    sprintf(buf, "%d", *data);
+                                    *(string*)operation.getReturnValue() = buf;
+    				                break;
+    			                }
+                                default:
+                                {
+                                    // The type is set as something else or has not been set
+                                    operation.setReturnValue(data);
+                                }
+    		                }
+
                             break;
                         }
                     case T_BIGNUM: 
                         {
                             long double* data = new long double; 
                             *data = rb_num2dbl(result);
-                            operation.setReturnValue(data);
+
+                            // Check if the return type has already been set (for typed languages)
+    		                switch(operation.getReturnType())
+    		                {
+    			                case Operation::BOOL: 
+    			                {
+    				                *(bool*)operation.getReturnValue() = (*data != 0.0);
+    				                break;
+    			                }
+    			                case Operation::SHORT: 
+    			                {
+                                    *(short*)operation.getReturnValue() = (short)*data;
+    				                break;
+    			                }
+    			                case Operation::USHORT: 
+    			                {
+                                    *(unsigned short*)operation.getReturnValue() = (unsigned short)*data;
+    				                break;
+    			                }
+    			                case Operation::INT: 
+    			                {
+                                    *(int*)operation.getReturnValue() = (int)*data;
+    				                break;
+    			                }
+    			                case Operation::UINT: 
+    			                {
+                                    *(unsigned int*)operation.getReturnValue() = (unsigned int)*data;
+    				                break;
+    			                }
+    			                case Operation::LONG: 
+    			                {
+                                    *(long*)operation.getReturnValue() = (long)*data;
+    				                break;
+    			                }
+    			                case Operation::ULONG: 
+    			                {
+                                    *(unsigned long*)operation.getReturnValue() = (unsigned long)*data;
+    				                break;
+    			                }
+    			                case Operation::FLOAT: 
+    			                {
+                                    *(float*)operation.getReturnValue() = (float)*data;
+    				                break;
+    			                }
+    			                case Operation::DOUBLE: 
+    			                {
+                                    *(double*)operation.getReturnValue() = (double)*data;
+    				                break;
+    			                }
+    			                case Operation::LONGDOUBLE: 
+    			                {
+                                    *(long double*)operation.getReturnValue() = (long double)*data;
+    				                break;
+    			                }
+    			                case Operation::CHARS: 
+    			                {
+                                    sprintf(buf, "%f", *data);
+                                    *(char**)operation.getReturnValue() = buf;
+    				                break;
+    			                }
+    			                case Operation::STRING: 
+    			                {
+                                    sprintf(buf, "%f", *data);
+                                    *(string*)operation.getReturnValue() = buf;
+    				                break;
+    			                }
+                                default:
+                                {
+                                    // The type is set as something else or has not been set
+                                    operation.setReturnValue(data);
+                                }
+                            }
                             break;
                         }
                     case T_TRUE: 
-                        {
-                            bool* data = new bool;
-                            *data = true; 
-                            operation.setReturnValue(data);
-                            break;
-                        }
                     case T_FALSE: 
                         {
                             bool* data = new bool;
-                            *data = false; 
-                            operation.setReturnValue(data);
+                            *data = (resultType == T_TRUE); 
+                            // Check if the return type has already been set (for typed languages)                                
+    		                switch(operation.getReturnType())
+    		                {
+    			                case Operation::BOOL: 
+    			                {
+    				                *(bool*)operation.getReturnValue() = *data;
+    				                break;
+    			                }
+    			                case Operation::SHORT: 
+    			                {
+                                    *(short*)operation.getReturnValue() = (short)*data;
+    				                break;
+    			                }
+    			                case Operation::USHORT: 
+    			                {
+                                    *(unsigned short*)operation.getReturnValue() = (unsigned short)*data;
+    				                break;
+    			                }
+    			                case Operation::INT: 
+    			                {
+                                    *(int*)operation.getReturnValue() = (int)*data;
+    				                break;
+    			                }
+    			                case Operation::UINT: 
+    			                {
+                                    *(unsigned int*)operation.getReturnValue() = (unsigned int)*data;
+    				                break;
+    			                }
+    			                case Operation::LONG: 
+    			                {
+                                    *(long*)operation.getReturnValue() = (long)*data;
+    				                break;
+    			                }
+    			                case Operation::ULONG: 
+    			                {
+                                    *(unsigned long*)operation.getReturnValue() = (unsigned long)*data;
+    				                break;
+    			                }
+    			                case Operation::FLOAT: 
+    			                {
+                                    *(float*)operation.getReturnValue() = (float)*data;
+    				                break;
+    			                }
+    			                case Operation::DOUBLE: 
+    			                {
+                                    *(double*)operation.getReturnValue() = (double)*data;
+    				                break;
+    			                }
+    			                case Operation::LONGDOUBLE: 
+    			                {
+                                    *(long double*)operation.getReturnValue() = (long double)*data;
+    				                break;
+    			                }
+    			                case Operation::CHARS: 
+    			                {
+                                    if(*data)
+                                    {
+                                        *(char**)operation.getReturnValue() = "true";
+                                    }
+                                    else
+                                    {
+                                        *(char**)operation.getReturnValue() = "false";
+                                    }
+    				                break;
+    			                }
+    			                case Operation::STRING: 
+    			                {
+                                    if(*data)
+                                    {
+                                        *(string*)operation.getReturnValue() = "true";
+                                    }
+                                    else
+                                    {
+                                        *(string*)operation.getReturnValue() = "false";
+                                    }
+    				                break;
+    			                }
+                                default:
+                                {
+                                    // The type is set as something else or has not been set
+                                    operation.setReturnValue(data);
+                                }
+    		                }
+
                             break;
                         }
                     case T_OBJECT: 
