@@ -134,6 +134,10 @@ SOURCE=..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\export.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\Ruby.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\RubyCompositeContext.cpp
 # End Source File
 # Begin Source File

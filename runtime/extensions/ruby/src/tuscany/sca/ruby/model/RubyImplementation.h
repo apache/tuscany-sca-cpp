@@ -29,7 +29,7 @@ using std::map;
 #include <string>
 using std::string;
 
-#include <ruby.h>
+#include "tuscany/sca/ruby/ruby.h"
 
 using namespace tuscany::sca::model;
 
