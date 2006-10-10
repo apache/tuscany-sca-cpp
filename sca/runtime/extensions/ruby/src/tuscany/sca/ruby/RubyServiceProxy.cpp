@@ -304,17 +304,17 @@ namespace tuscany
                         }
                         case Operation::FLOAT: 
                         {
-                            value = rb_dbl2big(*(float*)operation.getReturnValue());
+                            value = rb_float_new(*(float*)operation.getReturnValue());
                             break;
                         }
                         case Operation::DOUBLE: 
                         {
-                            value = rb_dbl2big(*(double*)operation.getReturnValue());
+                            value = rb_float_new(*(double*)operation.getReturnValue());
                             break;
                         }
                         case Operation::LONGDOUBLE: 
                         {
-                            value = rb_dbl2big(*(long double*)operation.getReturnValue());
+                            value = rb_float_new(*(long double*)operation.getReturnValue());
                             break;
                         }
                         case Operation::CHARS: 

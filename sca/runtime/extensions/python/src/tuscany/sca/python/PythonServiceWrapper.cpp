@@ -404,40 +404,345 @@ namespace tuscany
                         Py_DECREF(pArgs);
                         if (pValue != NULL) 
                         {
-                            if(PyInt_Check(pValue))
+                            char buf[20];
+                            if(PyInt_Check(pValue) || PyLong_Check(pValue))
                             {
-                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is int type: %d", PyInt_AsLong(pValue));
-                                long* intData = new long;
-                                *intData = PyInt_AsLong(pValue);
-                                operation.setReturnValue(intData);
+                                long* data = new long;
+                                if(PyInt_Check(pValue))
+                                {
+                                    LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is int type: %d", PyInt_AsLong(pValue));           
+                                    *data = PyInt_AsLong(pValue);
+                                }
+                                else
+                                {
+                                    LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is long type: %l", PyLong_AsLong(pValue));
+                                    *data = PyLong_AsLong(pValue);                                
+                                }
+
+                                // Check if the return type has already been set (for typed languages)
+    		                    switch(operation.getReturnType())
+    		                    {
+    			                    case Operation::BOOL: 
+    			                    {
+    				                    *(bool*)operation.getReturnValue() = (*data != 0);
+    				                    break;
+    			                    }
+    			                    case Operation::SHORT: 
+    			                    {
+                                        *(short*)operation.getReturnValue() = (short)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::USHORT: 
+    			                    {
+                                        *(unsigned short*)operation.getReturnValue() = (unsigned short)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::INT: 
+    			                    {
+                                        *(int*)operation.getReturnValue() = (int)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::UINT: 
+    			                    {
+                                        *(unsigned int*)operation.getReturnValue() = (unsigned int)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::LONG: 
+    			                    {
+                                        *(long*)operation.getReturnValue() = (long)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::ULONG: 
+    			                    {
+                                        *(unsigned long*)operation.getReturnValue() = (unsigned long)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::FLOAT: 
+    			                    {
+                                        *(float*)operation.getReturnValue() = (float)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::DOUBLE: 
+    			                    {
+                                        *(double*)operation.getReturnValue() = (double)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::LONGDOUBLE: 
+    			                    {
+                                        *(long double*)operation.getReturnValue() = (long double)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::CHARS: 
+    			                    {
+                                        sprintf(buf, "%d", *data);
+                                        *(char**)operation.getReturnValue() = buf;
+    				                    break;
+    			                    }
+    			                    case Operation::STRING: 
+    			                    {
+                                        sprintf(buf, "%d", *data);
+                                        *(string*)operation.getReturnValue() = buf;
+    				                    break;
+    			                    }
+                                    default:
+                                    {
+                                        // The type is set as something else or has not been set
+                                        operation.setReturnValue(data);
+                                    }
+    		                    }
                             }
                             else if(PyBool_Check(pValue))
                             {
                                 LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is bool type: %d", (pValue == Py_True));
-                                bool* boolData = new bool;
-                                *boolData = (pValue == Py_True);
-                                operation.setReturnValue(boolData);
-                            }
-                            else if(PyLong_Check(pValue))
-                            {
-                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is long type: %l", PyLong_AsLong(pValue));
-                                long* longData = new long;
-                                *longData = PyLong_AsLong(pValue);
-                                operation.setReturnValue(longData);
+                                bool* data = new bool;
+                                *data = (pValue == Py_True);
+
+                                // Check if the return type has already been set (for typed languages)                                
+    		                    switch(operation.getReturnType())
+    		                    {
+    			                    case Operation::BOOL: 
+    			                    {
+    				                    *(bool*)operation.getReturnValue() = *data;
+    				                    break;
+    			                    }
+    			                    case Operation::SHORT: 
+    			                    {
+                                        *(short*)operation.getReturnValue() = (short)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::USHORT: 
+    			                    {
+                                        *(unsigned short*)operation.getReturnValue() = (unsigned short)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::INT: 
+    			                    {
+                                        *(int*)operation.getReturnValue() = (int)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::UINT: 
+    			                    {
+                                        *(unsigned int*)operation.getReturnValue() = (unsigned int)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::LONG: 
+    			                    {
+                                        *(long*)operation.getReturnValue() = (long)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::ULONG: 
+    			                    {
+                                        *(unsigned long*)operation.getReturnValue() = (unsigned long)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::FLOAT: 
+    			                    {
+                                        *(float*)operation.getReturnValue() = (float)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::DOUBLE: 
+    			                    {
+                                        *(double*)operation.getReturnValue() = (double)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::LONGDOUBLE: 
+    			                    {
+                                        *(long double*)operation.getReturnValue() = (long double)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::CHARS: 
+    			                    {
+                                        if(*data)
+                                        {
+                                            *(char**)operation.getReturnValue() = "true";
+                                        }
+                                        else
+                                        {
+                                            *(char**)operation.getReturnValue() = "false";
+                                        }
+    				                    break;
+    			                    }
+    			                    case Operation::STRING: 
+    			                    {
+                                        if(*data)
+                                        {
+                                            *(string*)operation.getReturnValue() = "true";
+                                        }
+                                        else
+                                        {
+                                            *(string*)operation.getReturnValue() = "false";
+                                        }
+    				                    break;
+    			                    }
+                                    default:
+                                    {
+                                        // The type is set as something else or has not been set
+                                        operation.setReturnValue(data);
+                                    }
+    		                    }
                             }
                             else if(PyFloat_Check(pValue))
                             {
                                 LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is float type: %f", PyFloat_AsDouble(pValue));
-                                double* doubleData = new double;
-                                *doubleData = PyFloat_AsDouble(pValue);
-                                operation.setReturnValue(doubleData);
+
+                                double* data = new double;
+                                *data = PyFloat_AsDouble(pValue);
+
+                                // Check if the return type has already been set (for typed languages)                                
+    		                    switch(operation.getReturnType())
+    		                    {
+    			                    case Operation::BOOL: 
+    			                    {
+    				                    *(bool*)operation.getReturnValue() = (*data != 0.0);
+    				                    break;
+    			                    }
+    			                    case Operation::SHORT: 
+    			                    {
+                                        *(short*)operation.getReturnValue() = (short)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::USHORT: 
+    			                    {
+                                        *(unsigned short*)operation.getReturnValue() = (unsigned short)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::INT: 
+    			                    {
+                                        *(int*)operation.getReturnValue() = (int)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::UINT: 
+    			                    {
+                                        *(unsigned int*)operation.getReturnValue() = (unsigned int)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::LONG: 
+    			                    {
+                                        *(long*)operation.getReturnValue() = (long)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::ULONG: 
+    			                    {
+                                        *(unsigned long*)operation.getReturnValue() = (unsigned long)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::FLOAT: 
+    			                    {
+                                        *(float*)operation.getReturnValue() = (float)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::DOUBLE: 
+    			                    {
+                                        *(double*)operation.getReturnValue() = (double)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::LONGDOUBLE: 
+    			                    {
+                                        *(long double*)operation.getReturnValue() = (long double)*data;
+    				                    break;
+    			                    }
+    			                    case Operation::CHARS: 
+    			                    {
+                                        sprintf(buf, "%f", *data);
+                                        *(char**)operation.getReturnValue() = buf;
+    				                    break;
+    			                    }
+    			                    case Operation::STRING: 
+    			                    {
+                                        sprintf(buf, "%f", *data);
+                                        *(string*)operation.getReturnValue() = buf;
+    				                    break;
+    			                    }
+                                    default:
+                                    {
+                                        // The type is set as something else or has not been set
+                                        operation.setReturnValue(data);
+                                    }
+                                }
                             }
                             else if(PyString_Check(pValue))
                             {
                                 LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is string type: %s", PyString_AsString(pValue));
-                                const char** stringData = new const char*; 
-                                *stringData = PyString_AsString(pValue);
-                                operation.setReturnValue(stringData);
+                                const char** data = new const char*; 
+                                *data = PyString_AsString(pValue);
+
+                                // Check if the return type has already been set (for typed languages)                                
+    		                    switch(operation.getReturnType())
+    		                    {
+    			                    case Operation::BOOL: 
+    			                    {
+                                        // If the string is empty or "0" or "false" set to false, otherwise true
+                                        if(strlen(*data) == 0 || strcmp(*data, "0") == 0 || strcmp(*data, "false") == 0)
+                                        {
+    				                        *(bool*)operation.getReturnValue() = false;
+                                        }
+                                        else
+                                        {
+                                            *(bool*)operation.getReturnValue() = true;
+                                        }
+    				                    break;
+    			                    }
+    			                    case Operation::SHORT: 
+    			                    {
+                                        *(short*)operation.getReturnValue() = (short)atoi(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::USHORT: 
+    			                    {
+                                        *(unsigned short*)operation.getReturnValue() = (unsigned short)atoi(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::INT: 
+    			                    {
+                                        *(int*)operation.getReturnValue() = (int)atoi(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::UINT: 
+    			                    {
+                                        *(unsigned int*)operation.getReturnValue() = (unsigned int)atoi(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::LONG: 
+    			                    {
+                                        *(long*)operation.getReturnValue() = (long)atol(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::ULONG: 
+    			                    {
+                                        *(unsigned long*)operation.getReturnValue() = (unsigned long)atol(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::FLOAT: 
+    			                    {
+                                        *(float*)operation.getReturnValue() = (float)atof(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::DOUBLE: 
+    			                    {
+                                        *(double*)operation.getReturnValue() = (double)atof(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::LONGDOUBLE: 
+    			                    {
+                                        *(long double*)operation.getReturnValue() = (long double)atof(*data);
+    				                    break;
+    			                    }
+    			                    case Operation::CHARS: 
+    			                    {
+                                        *(const char**)operation.getReturnValue() = *data;
+    				                    break;
+    			                    }
+    			                    case Operation::STRING: 
+    			                    {
+                                        *(string*)operation.getReturnValue() = *data;
+    				                    break;
+    			                    }
+                                    default:
+                                    {
+                                        // The type is set as something else or has not been set
+                                        operation.setReturnValue(data);
+                                    }
+                                }
                             }
                             else
                             {
@@ -531,13 +836,13 @@ namespace tuscany
                         case Type::BigDecimalType:
                         case Type::LongType:
                             {
-                                property = PyLong_FromLong(properties->getLong(pl[i]));
+                                property = PyLong_FromLongLong(properties->getLong(pl[i]));
                                 break;
                             }
                         case Type::ShortType:
                         case Type::IntegerType:
                             {
-                                property = PyInt_FromLong(properties->getLong(pl[i]));
+                                property = PyInt_FromLong(properties->getInteger(pl[i]));
                                 break;
                             }
                         case Type::DoubleType:
