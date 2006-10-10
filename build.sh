@@ -35,8 +35,10 @@ if [ x$PYTHON_LIB = x ]; then
 echo "PYTHON_LIB not set. Python extension will not be built"
 elif [ x$PYTHON_INCLUDE = x ]; then
 echo "PYTHON_INCLUDE not set. Python extension will not be built"
+elif [ x$PYTHON_VERSION = x ]; then
+echo "PYTHON_VERSION not set. Python extension will not be built"
 else
-echo "Building PYTHON extension with Python installed at $PYTHON_LIB, $PYTHON_INCLUDE"
+echo "Building PYTHON extension with Python $PYTHON_VERSION installed at $PYTHON_LIB, $PYTHON_INCLUDE"
 ENABLE_PYTHON=--enable-python
 fi
 
