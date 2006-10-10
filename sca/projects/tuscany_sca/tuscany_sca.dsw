@@ -29,6 +29,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name tuscany_sca_python
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tuscany_sca_ruby
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -68,6 +71,24 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name tuscany_sca
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "tuscany_sca_ruby"=.\tuscany_sca_ruby\tuscany_sca_ruby.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name tuscany_sca
+    End Project Dependency
 }}}
 
 ###############################################################################
