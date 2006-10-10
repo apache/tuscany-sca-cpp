@@ -614,19 +614,19 @@ namespace tuscany
                         break;
                     case Type::DataObjectType:
                         {
-                            DataObjectPtr dataObjectData = outputDataObject->getDataObject(pl[i]);
+                            DataObjectPtr* dataObjectData = new DataObjectPtr;
+                            *dataObjectData = outputDataObject->getDataObject(pl[i]);
                             if(!dataObjectData)
                             {
                                 LOGINFO(4, "SDO DataObject return value was null");
                             }
-                            operation.setReturnValue(&dataObjectData);
+                            operation.setReturnValue(dataObjectData);
                         }
                         break;
                     case Type::OpenDataObjectType:
                         {         
                             /*
                              * This code deals with xsd:any element parameters
-                             * Get each element as a DataObject and add in to the parameter list
                              */
             
                             DataObjectList& dataObjectList = outputDataObject->getList(pl[i]);
@@ -636,7 +636,9 @@ namespace tuscany
                                 DataObjectPtr dataObjectData = dataObjectList[j];
                                 if(!dataObjectData)
                                 {
-                                    operation.setReturnValue(&dataObjectData);
+                                    DataObjectPtr* dob = new DataObjectPtr;
+                                    *dob = NULL;
+                                    operation.setReturnValue(dob);
                                     LOGINFO(4, "SDO OpenDataObject return value was null");
                                 }
                                 else 
@@ -654,12 +656,13 @@ namespace tuscany
                                         else
                                         {
                                             // Return a DataObject representing a complex element
-                                            DataObjectPtr dob = sequence->getDataObjectValue(0);
-                                            if(!dob)
+                                            DataObjectPtr* dob = new DataObjectPtr;
+                                            *dob = sequence->getDataObjectValue(0);
+                                            if(!*dob)
                                             {
                                                 LOGINFO(4, "SDO DataObject return value was null");
                                             }
-                                            operation.setReturnValue(&dob);
+                                            operation.setReturnValue(dob);
                                         }
                                     }
                                     else

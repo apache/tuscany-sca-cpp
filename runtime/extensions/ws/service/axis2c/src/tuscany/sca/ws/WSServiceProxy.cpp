@@ -233,13 +233,14 @@ namespace tuscany
                                 break;
                             case Type::DataObjectType:
                                 {
-                                    DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
+                                    DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                    *dataObjectData = inputDataObject->getDataObject(pl[i]);
                     
                                     if(!dataObjectData)
                                     {
                                         LOGINFO_1(4, "SDO DataObject parameter named %s was null", name);
                                     }
-                                    operation.addParameter(&dataObjectData);
+                                    operation.addParameter(dataObjectData);
                                 }
                                 break;
                             case Type::OpenDataObjectType:
@@ -260,7 +261,9 @@ namespace tuscany
                                             
                                             // Add a null DataObject ptr
                                             LOGINFO_2(4, "SDO OpenDataObject parameter named %s[%d] was null", name, j);
-                                            operation.addParameter(&dataObjectData);
+                                            DataObjectPtr* dob = new DataObjectPtr;
+                                            *dob = NULL;
+                                            operation.addParameter(dob);
                                         }
                                         else
                                         {
@@ -277,12 +280,13 @@ namespace tuscany
                                                 else
                                                 {
                                                     // Add a complex element DataObject
-                                                    DataObjectPtr dob = sequence->getDataObjectValue(0);
-                                                    if(!dob)
+                                                    DataObjectPtr* dob = new DataObjectPtr;
+                                                    *dob = sequence->getDataObjectValue(0);
+                                                    if(!*dob)
                                                     {
                                                         LOGINFO_1(4, "SDO DataObject parameter named %s was null", name);
                                                     }
-                                                    operation.addParameter(&dob);
+                                                    operation.addParameter(dob);
                                                 }
                                             }
                                             else
