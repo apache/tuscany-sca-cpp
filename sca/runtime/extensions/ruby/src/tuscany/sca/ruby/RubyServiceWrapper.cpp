@@ -146,7 +146,7 @@ namespace tuscany
                         {
                             VALUE value;
                             
-                            Operation::Parameter& parm = operation.getParameter(i);
+                            const Operation::Parameter& parm = operation.getParameter(i);
                             Operation::ParameterType parmType = parm.getType();
                             switch(parmType)
                             {
@@ -678,15 +678,15 @@ namespace tuscany
                                 Composite* composite = component->getComposite();                                   
                                 commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
                                 commonj::sdo::XMLDocumentPtr xmlDoc = xmlHelper->load(str.c_str());
-                                
-                                DataObjectPtr* dob = new DataObjectPtr;
+                               
+                                DataObjectPtr dob;
                                 if (xmlDoc != NULL)
                                 {
-                                    *dob = xmlDoc->getRootDataObject();
+                                    dob = xmlDoc->getRootDataObject();
                                 }
-                                if (*dob != NULL)
+                                if (dob != NULL)
                                 {
-                                    operation.setReturnValue(dob);
+                                    operation.setReturnValue(&dob);
                                 }
                                 else
                                 {

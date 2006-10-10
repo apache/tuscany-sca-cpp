@@ -304,7 +304,7 @@ namespace tuscany
 
                         for(unsigned int i = 0; i < operation.getNParms(); i++) 
                         {
-                            Operation::Parameter& parm = operation.getParameter(i);
+                            const Operation::Parameter& parm = operation.getParameter(i);
     		                switch(parm.getType())
     		                {
     			                case Operation::BOOL: 

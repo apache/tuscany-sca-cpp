@@ -55,10 +55,20 @@ namespace tuscany
             SCA_API virtual    ~Operation();
 
             /**
+             * Copy constructor.
+             */
+            SCA_API Operation(const Operation& op);
+
+            /**
+             * Assignment operator.
+             */
+            SCA_API Operation& operator=(const Operation& op);
+
+            /**
              * Return the operation name.
              * @return The name of the operation.
              */
-            SCA_API const string& getName() {return name;}
+            SCA_API const string& getName() const {return name;}
 
 
             enum ParameterType
@@ -85,8 +95,8 @@ namespace tuscany
             {
                 public:
                     SCA_API Parameter(void* value = NULL, ParameterType type = VOID_TYPE);
-                    SCA_API void* getValue() {return value;}
-                    SCA_API ParameterType getType() {return type;}
+                    SCA_API void* getValue() const {return value;}
+                    SCA_API ParameterType getType() const {return type;}
 
                 private:
                     void* value;
@@ -134,7 +144,7 @@ namespace tuscany
             SCA_API void addParameter(const string *parm);
             SCA_API void addParameter(const DataObjectPtr *parm);
             
-            SCA_API unsigned int getNParms() {return parameters.size();}
+            SCA_API unsigned int getNParms() const {return parameters.size();}
 
             /**
              * Get a parameter from the operation.
@@ -142,7 +152,7 @@ namespace tuscany
              * @return Pointer to the paramter at the given postion. Should be
              * cast to the appropriate type.
              */
-            SCA_API Parameter& getParameter(unsigned int pos);
+            SCA_API const Parameter& getParameter(unsigned int pos) const;
 
             /**
              * Get a parameter type from the operation.
@@ -150,7 +160,7 @@ namespace tuscany
              * @return Pointer to the paramter at the given postion. Should be
              * cast to the appropriate type.
              */
-            SCA_API ParameterType getParameterType(unsigned int pos);
+            SCA_API ParameterType getParameterType(unsigned int pos) const;
 
             /**
              * Get a parameter from the operation.
@@ -158,10 +168,10 @@ namespace tuscany
              * @return Pointer to the paramter at the given postion. Should be
              * cast to the appropriate type.
              */
-            SCA_API void* getParameterValue(unsigned int pos);
+            SCA_API void* getParameterValue(unsigned int pos) const;
 
-            SCA_API ParameterType getReturnType() {return returnValue.getType();}
-            SCA_API void* getReturnValue() {return returnValue.getValue();}
+            SCA_API ParameterType getReturnType() const {return returnValue.getType();}
+            SCA_API void* getReturnValue() const {return returnValue.getValue();}
 
         private:
             /**
@@ -177,6 +187,9 @@ namespace tuscany
             PARAMETER_VECTOR parameters;
 
             Parameter returnValue;
+            
+            void clean();
+            void copy(const Operation& op);
 
         };
     } // End namespace sca

@@ -308,7 +308,7 @@ namespace tuscany
                                 pname << "param" << (i+1);
                                 DataObjectList& l = inputDataObject->getList(pname.str());
                                 
-                                Operation::Parameter& parm = operation.getParameter(i);
+                                const Operation::Parameter& parm = operation.getParameter(i);
                                 switch(parm.getType())
                                 {
                                 case Operation::BOOL: 
@@ -386,7 +386,7 @@ namespace tuscany
                         // Each parameter in the operation should be a property on the request dataobject
                         for (int i=0; i<operation.getNParms(); i++)
                         {
-                            Operation::Parameter& parm = operation.getParameter(i);
+                            const Operation::Parameter& parm = operation.getParameter(i);
                             switch(parm.getType())
                             {
                             case Operation::BOOL: 
@@ -614,13 +614,12 @@ namespace tuscany
                         break;
                     case Type::DataObjectType:
                         {
-                            DataObjectPtr* dataObjectData = new DataObjectPtr;
-                            *dataObjectData = outputDataObject->getDataObject(pl[i]);
+                            DataObjectPtr dataObjectData = outputDataObject->getDataObject(pl[i]);
                             if(!dataObjectData)
                             {
                                 LOGINFO(4, "SDO DataObject return value was null");
                             }
-                            operation.setReturnValue(dataObjectData);
+                            operation.setReturnValue(&dataObjectData);
                         }
                         break;
                     case Type::OpenDataObjectType:
@@ -636,9 +635,7 @@ namespace tuscany
                                 DataObjectPtr dataObjectData = dataObjectList[j];
                                 if(!dataObjectData)
                                 {
-                                    DataObjectPtr* dob = new DataObjectPtr;
-                                    *dob = NULL;
-                                    operation.setReturnValue(dob);
+                                    operation.setReturnValue(&dataObjectData);
                                     LOGINFO(4, "SDO OpenDataObject return value was null");
                                 }
                                 else 
@@ -656,13 +653,12 @@ namespace tuscany
                                         else
                                         {
                                             // Return a DataObject representing a complex element
-                                            DataObjectPtr* dob = new DataObjectPtr;
-                                            *dob = sequence->getDataObjectValue(0);
-                                            if(!*dob)
+                                            DataObjectPtr dob = sequence->getDataObjectValue(0);
+                                            if(!dob)
                                             {
                                                 LOGINFO(4, "SDO DataObject return value was null");
                                             }
-                                            operation.setReturnValue(dob);
+                                            operation.setReturnValue(&dob);
                                         }
                                     }
                                     else

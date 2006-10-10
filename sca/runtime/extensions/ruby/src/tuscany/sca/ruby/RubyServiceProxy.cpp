@@ -227,14 +227,14 @@ namespace tuscany
                                 commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
                                 commonj::sdo::XMLDocumentPtr xmlDoc = xmlHelper->load(str.c_str());
                                 
-                                DataObjectPtr* dob = new DataObjectPtr;
+                                DataObjectPtr dob;
                                 if (xmlDoc != NULL)
                                 {
-                                    *dob = xmlDoc->getRootDataObject();
+                                    dob = xmlDoc->getRootDataObject();
                                 }
-                                if (*dob != NULL)
+                                if (dob != NULL)
                                 {
-                                    operation.addParameter(dob);
+                                    operation.addParameter(&dob);
                                 }
                                 else
                                 {
