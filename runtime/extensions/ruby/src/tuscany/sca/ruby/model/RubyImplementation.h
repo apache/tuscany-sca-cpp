@@ -64,7 +64,7 @@ namespace tuscany
                  * Initialize a component of this type.
                  * @param component The component to initialize.
                  */
-                SCA_API virtual void initializeComponent(Component* component);
+                virtual void initializeComponent(Component* component);
 
                 /**
                  * Returns the name of the Ruby module.

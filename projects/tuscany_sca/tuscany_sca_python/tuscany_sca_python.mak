@@ -33,10 +33,21 @@ INTDIR=.\Release
 OutDir=.\Release
 # End Custom Macros
 
+!IF "$(RECURSE)" == "0" 
+
 ALL : "$(OUTDIR)\tuscany_sca_python.dll"
 
+!ELSE 
 
+ALL : "tuscany_sca - Win32 Release" "$(OUTDIR)\tuscany_sca_python.dll"
+
+!ENDIF 
+
+!IF "$(RECURSE)" == "1" 
+CLEAN :"tuscany_sca - Win32 ReleaseCLEAN" 
+!ELSE 
 CLEAN :
+!ENDIF 
 	-@erase "$(INTDIR)\PythonExtension.obj"
 	-@erase "$(INTDIR)\PythonImplementation.obj"
 	-@erase "$(INTDIR)\PythonImplementationExtension.obj"
@@ -105,7 +116,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\PythonImplementationExtension.obj" \
 	"$(INTDIR)\PythonInterfaceExtension.obj" \
 	"$(INTDIR)\PythonServiceProxy.obj" \
-	"$(INTDIR)\PythonServiceWrapper.obj"
+	"$(INTDIR)\PythonServiceWrapper.obj" \
+	"..\tuscany_sca\Release\tuscany_sca.lib"
 
 "$(OUTDIR)\tuscany_sca_python.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -121,7 +133,7 @@ ALL : $(DS_POSTBUILD_DEP)
 OutDir=.\Release
 # End Custom Macros
 
-$(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sca_python.dll"
+$(DS_POSTBUILD_DEP) : "tuscany_sca - Win32 Release" "$(OUTDIR)\tuscany_sca_python.dll"
    ..\..\..\runtime\extensions\python\deploy.bat ..\..\..\ Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
@@ -133,10 +145,21 @@ INTDIR=.\Debug
 OutDir=.\Debug
 # End Custom Macros
 
+!IF "$(RECURSE)" == "0" 
+
 ALL : "$(OUTDIR)\tuscany_sca_python.dll"
 
+!ELSE 
 
+ALL : "tuscany_sca - Win32 Debug" "$(OUTDIR)\tuscany_sca_python.dll"
+
+!ENDIF 
+
+!IF "$(RECURSE)" == "1" 
+CLEAN :"tuscany_sca - Win32 DebugCLEAN" 
+!ELSE 
 CLEAN :
+!ENDIF 
 	-@erase "$(INTDIR)\PythonExtension.obj"
 	-@erase "$(INTDIR)\PythonImplementation.obj"
 	-@erase "$(INTDIR)\PythonImplementationExtension.obj"
@@ -208,7 +231,8 @@ LINK32_OBJS= \
 	"$(INTDIR)\PythonImplementationExtension.obj" \
 	"$(INTDIR)\PythonInterfaceExtension.obj" \
 	"$(INTDIR)\PythonServiceProxy.obj" \
-	"$(INTDIR)\PythonServiceWrapper.obj"
+	"$(INTDIR)\PythonServiceWrapper.obj" \
+	"..\tuscany_sca\Debug\tuscany_sca.lib"
 
 "$(OUTDIR)\tuscany_sca_python.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -224,7 +248,7 @@ ALL : $(DS_POSTBUILD_DEP)
 OutDir=.\Debug
 # End Custom Macros
 
-$(DS_POSTBUILD_DEP) : "$(OUTDIR)\tuscany_sca_python.dll"
+$(DS_POSTBUILD_DEP) : "tuscany_sca - Win32 Debug" "$(OUTDIR)\tuscany_sca_python.dll"
    ..\..\..\runtime\extensions\python\deploy.bat ..\..\..\ Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
@@ -294,6 +318,32 @@ SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceWr
 "$(INTDIR)\PythonServiceWrapper.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!IF  "$(CFG)" == "tuscany_sca_python - Win32 Release"
+
+"tuscany_sca - Win32 Release" : 
+   cd "..\tuscany_sca"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Release" 
+   cd "..\tuscany_sca_python"
+
+"tuscany_sca - Win32 ReleaseCLEAN" : 
+   cd "..\tuscany_sca"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Release" RECURSE=1 CLEAN 
+   cd "..\tuscany_sca_python"
+
+!ELSEIF  "$(CFG)" == "tuscany_sca_python - Win32 Debug"
+
+"tuscany_sca - Win32 Debug" : 
+   cd "..\tuscany_sca"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Debug" 
+   cd "..\tuscany_sca_python"
+
+"tuscany_sca - Win32 DebugCLEAN" : 
+   cd "..\tuscany_sca"
+   $(MAKE) /$(MAKEFLAGS) /F .\tuscany_sca.mak CFG="tuscany_sca - Win32 Debug" RECURSE=1 CLEAN 
+   cd "..\tuscany_sca_python"
+
+!ENDIF 
 
 
 !ENDIF 
