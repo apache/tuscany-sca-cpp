@@ -51,14 +51,91 @@ namespace tuscany
         Operation::~Operation()
         {
             LOGENTRY(1,"Operation::destructor");
+            clean();
             LOGEXIT(1,"Operation::destructor");
         }
+
+        // ==========
+        // Copy Constructor
+        // ==========
+        Operation::Operation(const Operation& op)
+        {
+            LOGENTRY(1,"Operation::copy contructor");
+          	copy(op);
+            LOGEXIT(1,"Operation::copy contructor");
+        }
+
+        // ==========
+        // operator=
+        // ==========
+        Operation& Operation::operator=(const Operation& op)
+        {
+            LOGENTRY(1,"Operation::operator=");
+            if (&op != this)
+            {
+            	copy(op);
+            }
+            LOGEXIT(1,"Operation::operator=");
+            return *this;
+        }
     
+        // ==========
+        // Clean 
+        // ==========
+        void Operation::clean()
+        {
+            LOGENTRY(1,"Operation::clean");
+            for (unsigned int i = 0; i < getNParms(); i++)
+            {
+            	const Parameter& parm = getParameter(i);
+            	if (parm.getType() == DATAOBJECT)
+            	{
+            		delete (DataObjectPtr*)parm.getValue();
+            	}
+            }
+            
+            parameters.empty();
+            
+            if (getReturnType() == DATAOBJECT)
+            {
+            	delete (DataObjectPtr*)getReturnValue();
+            }
+          	
+            LOGEXIT(1,"Operation::clean");
+        }
+    
+        // ==========
+        // Copy 
+        // ==========
+        void Operation::copy(const Operation& op)
+        {
+            LOGENTRY(1,"Operation::copy");
+            clean();
+            for (unsigned int i = 0; i < op.getNParms(); i++)
+            {
+            	const Parameter& parm = op.getParameter(i);
+            	if (parm.getType() == DATAOBJECT)
+            	{
+            		addParameter((const DataObject*)parm.getValue());
+            	}
+            	else
+            	{
+            		parameters.insert(parameters.end(), parm);
+            	}          	
+            }
+            
+            if (getReturnType() == DATAOBJECT)
+            {
+            	setReturnValue((const DataObjectPtr*)op.getReturnValue());
+            }
+          	
+            LOGEXIT(1,"Operation::copy");
+        }
 
         // ==============================================
         // getParameter: return parameter at position pos
         // ==============================================
-        void* Operation::getParameterValue(unsigned int pos)
+        void* Operation::getParameterValue(unsigned int pos) const
         {
             if (pos < parameters.size())
             {
@@ -71,7 +148,7 @@ namespace tuscany
         // ==============================================
         // getParameter: return of parameter
         // ==============================================
-        Operation::Parameter& Operation::getParameter(unsigned int pos)
+        const Operation::Parameter& Operation::getParameter(unsigned int pos) const
         {
             if (pos < parameters.size())
             {
@@ -85,7 +162,7 @@ namespace tuscany
         // ==============================================
         // getParameterType: return type of parameter
         // ==============================================
-        Operation::ParameterType Operation::getParameterType(unsigned int pos)
+        Operation::ParameterType Operation::getParameterType(unsigned int pos) const
         {
             if (pos < parameters.size())
             {
@@ -185,7 +262,7 @@ namespace tuscany
         void Operation::addParameter(const DataObjectPtr *parm)
         {
             LOGINFO(4, "Operation::addParameter(DataObjectPtr)");
-            parameters.insert(parameters.end(), Parameter((void*)parm, DATAOBJECT));
+            parameters.insert(parameters.end(), Parameter((void*)new DataObjectPtr(*parm), DATAOBJECT));
         }
 
         Operation::Parameter::Parameter(void* val, Operation::ParameterType typ)
@@ -283,7 +360,7 @@ namespace tuscany
         void Operation::setReturnValue(const DataObjectPtr *parm)
         {
             LOGINFO(4, "Operation::setReturnValue(DataObjectPtr*)");
-            returnValue = Parameter((void*)parm, DATAOBJECT);
+            returnValue = Parameter((void*)new DataObjectPtr(*parm), DATAOBJECT);
         }
 
  
