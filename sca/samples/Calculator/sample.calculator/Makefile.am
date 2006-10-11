@@ -1,16 +1,12 @@
 deploydir=$(prefix)/samples/Calculator/deploy
 compositedir=$(deploydir)/sample.calculator
 
-BUILT_SOURCES = CalculatorImpl_CalculatorService_Proxy.cpp \
-CalculatorImpl_CalculatorService_Wrapper.cpp \
-CalculatorImpl_divideService_Proxy.cpp \
-DivideImpl_DivideService_Proxy.cpp \
-DivideImpl_DivideService_Wrapper.cpp
+BUILT_SOURCES = scagen
 
 noinst_HEADERS = *.h
 
-${BUILT_SOURCES}: sample.calculator.composite
-	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
+scagen:
+        java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
 composite_SCRIPTS = runwsserver.sh
 
@@ -18,12 +14,14 @@ composite_LTLIBRARIES = libCalculator.la
 composite_DATA = *.composite *.componentType *.wsdl
 EXTRA_DIST = *.composite *.componentType *.wsdl runwsserver.sh
 
-libCalculator_la_SOURCES = \
+dist_libCalculator_la_SOURCES = \
 CalculatorImpl.cpp \
+DivideImpl.cpp
+
+nodist_libCalculator_la_SOURCES = \
 CalculatorImpl_CalculatorService_Proxy.cpp \
 CalculatorImpl_CalculatorService_Wrapper.cpp \
 CalculatorImpl_divideService_Proxy.cpp \
-DivideImpl.cpp \
 DivideImpl_DivideService_Proxy.cpp \
 DivideImpl_DivideService_Wrapper.cpp
 
