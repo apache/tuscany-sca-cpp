@@ -157,8 +157,8 @@ cd %FROM_DIR%\samples\ides\devstudio6\projects\Calculator
 call build
 
 echo Building bigbank....
-rem cd %FROM_DIR%\samples\ides\devstudio6\projects\BigBank
-rem call build
+cd %FROM_DIR%\samples\ides\devstudio6\projects\BigBank
+call build
 
 set TUSCANY_SCACPP=%TO_BIN%\%BIN_PACKAGE%
 echo Deploying Python & Ruby samples....
