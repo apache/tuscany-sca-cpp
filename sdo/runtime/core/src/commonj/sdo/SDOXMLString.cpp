@@ -214,7 +214,7 @@ namespace commonj
         {
             if (length >0)
             {
-                return xmlStrsub(xmlForm, start, length);
+                return SDOXMLString(xmlForm, start, length);
             }
             else
                 return SDOXMLString();
@@ -223,7 +223,7 @@ namespace commonj
         SDOXMLString SDOXMLString::substring(int start) const
         {
             
-            return xmlStrsub(xmlForm, start, xmlStrlen(xmlForm) - start);
+            return SDOXMLString(xmlForm, start, xmlStrlen(xmlForm) - start);
         }
         
         
