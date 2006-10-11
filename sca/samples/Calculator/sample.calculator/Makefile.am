@@ -6,7 +6,7 @@ BUILT_SOURCES = scagen
 noinst_HEADERS = *.h
 
 scagen:
-        java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
+	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
 composite_SCRIPTS = runwsserver.sh
 
