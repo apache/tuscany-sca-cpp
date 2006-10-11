@@ -124,24 +124,24 @@ MTL_PROJ=
 !IF  "$(CFG)" == "Build - Win32 Release"
 
 "WSAccountClient - Win32 Release" : 
-   cd "..WSAccountClient"
+   cd "..\WSAccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\WSAccountClient.mak CFG="WSAccountClient - Win32 Release" 
    cd "..\Build"
 
 "WSAccountClient - Win32 ReleaseCLEAN" : 
-   cd "..WSAccountClient"
+   cd "..\WSAccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\WSAccountClient.mak CFG="WSAccountClient - Win32 Release" RECURSE=1 CLEAN 
    cd "..\Build"
 
 !ELSEIF  "$(CFG)" == "Build - Win32 Debug"
 
 "WSAccountClient - Win32 Debug" : 
-   cd "..WSAccountClient"
+   cd "..\WSAccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\WSAccountClient.mak CFG="WSAccountClient - Win32 Debug" 
    cd "..\Build"
 
 "WSAccountClient - Win32 DebugCLEAN" : 
-   cd "..WSAccountClient"
+   cd "..\WSAccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\WSAccountClient.mak CFG="WSAccountClient - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\Build"
 
