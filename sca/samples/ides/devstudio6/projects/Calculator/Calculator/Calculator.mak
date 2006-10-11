@@ -25,10 +25,6 @@ NULL=
 NULL=nul
 !ENDIF 
 
-CPP=cl.exe
-MTL=midl.exe
-RSC=rc.exe
-
 !IF  "$(CFG)" == "Calculator - Win32 Release"
 
 OUTDIR=.\Release
@@ -67,8 +63,42 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "CALCULATOR_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+MTL=midl.exe
 MTL_PROJ=/nologo /D "NDEBUG" /mktyplib203 /win32 
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\Calculator.bsc" 
 BSC32_SBRS= \
@@ -99,7 +129,7 @@ OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "Client - Win32 Release" "$(OUTDIR)\Calculator.dll"
-   ..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Release
+   call ..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "Calculator - Win32 Debug"
@@ -143,42 +173,8 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
+CPP=cl.exe
 CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "CALCULATOR_EXPORTS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-MTL_PROJ=/nologo /D "_DEBUG" /mktyplib203 /win32 
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\Calculator.bsc" 
-BSC32_SBRS= \
-	
-LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca_cpp.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\Calculator.pdb" /debug /machine:I386 /out:"$(OUTDIR)\Calculator.dll" /implib:"$(OUTDIR)\Calculator.lib" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib" 
-LINK32_OBJS= \
-	"$(INTDIR)\CalculatorImpl.obj" \
-	"$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj" \
-	"$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj" \
-	"$(INTDIR)\CalculatorImpl_divideService_Proxy.obj" \
-	"$(INTDIR)\DivideImpl.obj" \
-	"$(INTDIR)\DivideImpl_DivideService_Proxy.obj" \
-	"$(INTDIR)\DivideImpl_DivideService_Wrapper.obj"
-
-"$(OUTDIR)\Calculator.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
-    $(LINK32) @<<
-  $(LINK32_FLAGS) $(LINK32_OBJS)
-<<
-
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=.\Debug
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "Client - Win32 Debug" "$(OUTDIR)\Calculator.dll"
-   ..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Debug
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
-
-!ENDIF 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -209,6 +205,44 @@ $(DS_POSTBUILD_DEP) : "Client - Win32 Debug" "$(OUTDIR)\Calculator.dll"
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
+
+MTL=midl.exe
+MTL_PROJ=/nologo /D "_DEBUG" /mktyplib203 /win32 
+RSC=rc.exe
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\Calculator.bsc" 
+BSC32_SBRS= \
+	
+LINK32=link.exe
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca_cpp.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /incremental:yes /pdb:"$(OUTDIR)\Calculator.pdb" /debug /machine:I386 /out:"$(OUTDIR)\Calculator.dll" /implib:"$(OUTDIR)\Calculator.lib" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib" 
+LINK32_OBJS= \
+	"$(INTDIR)\CalculatorImpl.obj" \
+	"$(INTDIR)\CalculatorImpl_CalculatorService_Proxy.obj" \
+	"$(INTDIR)\CalculatorImpl_CalculatorService_Wrapper.obj" \
+	"$(INTDIR)\CalculatorImpl_divideService_Proxy.obj" \
+	"$(INTDIR)\DivideImpl.obj" \
+	"$(INTDIR)\DivideImpl_DivideService_Proxy.obj" \
+	"$(INTDIR)\DivideImpl_DivideService_Wrapper.obj"
+
+"$(OUTDIR)\Calculator.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+SOURCE="$(InputPath)"
+DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
+
+ALL : $(DS_POSTBUILD_DEP)
+
+# Begin Custom Macros
+OutDir=.\Debug
+# End Custom Macros
+
+$(DS_POSTBUILD_DEP) : "Client - Win32 Debug" "$(OUTDIR)\Calculator.dll"
+   call ..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Debug
+	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
+
+!ENDIF 
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"

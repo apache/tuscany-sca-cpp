@@ -57,7 +57,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca_cpp.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /machine:I386 /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Release
+PostBuild_Cmds=call ..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "Calculator - Win32 Debug"
@@ -88,7 +88,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sca_cpp.lib tuscany_sca.lib tuscany_sdo.lib /nologo /dll /debug /machine:I386 /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Debug
+PostBuild_Cmds=call ..\..\..\..\..\Calculator\deploy.bat ..\..\..\..\..\Calculator Debug
 # End Special Build Tool
 
 !ENDIF 
