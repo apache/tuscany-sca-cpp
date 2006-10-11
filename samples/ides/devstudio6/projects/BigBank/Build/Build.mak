@@ -72,24 +72,24 @@ MTL_PROJ=
 !IF  "$(CFG)" == "Build - Win32 Release"
 
 "Accounts - Win32 Release" : 
-   cd "..Accounts"
+   cd "..\Accounts"
    $(MAKE) /$(MAKEFLAGS) /F .\Accounts.mak CFG="Accounts - Win32 Release" 
    cd "..\Build"
 
 "Accounts - Win32 ReleaseCLEAN" : 
-   cd "..Accounts"
+   cd "..\Accounts"
    $(MAKE) /$(MAKEFLAGS) /F .\Accounts.mak CFG="Accounts - Win32 Release" RECURSE=1 CLEAN 
    cd "..\Build"
 
 !ELSEIF  "$(CFG)" == "Build - Win32 Debug"
 
 "Accounts - Win32 Debug" : 
-   cd "..Accounts"
+   cd "..\Accounts"
    $(MAKE) /$(MAKEFLAGS) /F .\Accounts.mak CFG="Accounts - Win32 Debug" 
    cd "..\Build"
 
 "Accounts - Win32 DebugCLEAN" : 
-   cd "..Accounts"
+   cd "..\Accounts"
    $(MAKE) /$(MAKEFLAGS) /F .\Accounts.mak CFG="Accounts - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\Build"
 
@@ -98,24 +98,24 @@ MTL_PROJ=
 !IF  "$(CFG)" == "Build - Win32 Release"
 
 "AccountClient - Win32 Release" : 
-   cd "..AccountClient"
+   cd "..\AccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\AccountClient.mak CFG="AccountClient - Win32 Release" 
    cd "..\Build"
 
 "AccountClient - Win32 ReleaseCLEAN" : 
-   cd "..AccountClient"
+   cd "..\AccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\AccountClient.mak CFG="AccountClient - Win32 Release" RECURSE=1 CLEAN 
    cd "..\Build"
 
 !ELSEIF  "$(CFG)" == "Build - Win32 Debug"
 
 "AccountClient - Win32 Debug" : 
-   cd "..AccountClient"
+   cd "..\AccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\AccountClient.mak CFG="AccountClient - Win32 Debug" 
    cd "..\Build"
 
 "AccountClient - Win32 DebugCLEAN" : 
-   cd "..AccountClient"
+   cd "..\AccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\AccountClient.mak CFG="AccountClient - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\Build"
 

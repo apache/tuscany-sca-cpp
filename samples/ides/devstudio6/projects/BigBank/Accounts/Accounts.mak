@@ -316,24 +316,24 @@ SOURCE=..\..\..\..\..\BigBank\bigbank.account\StockQuoteServiceImpl_webService_P
 !IF  "$(CFG)" == "Accounts - Win32 Release"
 
 "AccountClient - Win32 Release" : 
-   cd "..AccountClient"
+   cd "..\AccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\AccountClient.mak CFG="AccountClient - Win32 Release" 
    cd "..\Accounts"
 
 "AccountClient - Win32 ReleaseCLEAN" : 
-   cd "..AccountClient"
+   cd "..\AccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\AccountClient.mak CFG="AccountClient - Win32 Release" RECURSE=1 CLEAN 
    cd "..\Accounts"
 
 !ELSEIF  "$(CFG)" == "Accounts - Win32 Debug"
 
 "AccountClient - Win32 Debug" : 
-   cd "..AccountClient"
+   cd "..\AccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\AccountClient.mak CFG="AccountClient - Win32 Debug" 
    cd "..\Accounts"
 
 "AccountClient - Win32 DebugCLEAN" : 
-   cd "..AccountClient"
+   cd "..\AccountClient"
    $(MAKE) /$(MAKEFLAGS) /F .\AccountClient.mak CFG="AccountClient - Win32 Debug" RECURSE=1 CLEAN 
    cd "..\Accounts"
 
