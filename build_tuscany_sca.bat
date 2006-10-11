@@ -113,6 +113,7 @@ xcopy/s %FROM_DIR%\samples\ides             %TO_SRC%\%SRC_PACKAGE%\samples\ides
 xcopy/s %FROM_DIR%\samples\PythonCalculator %TO_SRC%\%SRC_PACKAGE%\samples\PythonCalculator
 xcopy/s %FROM_DIR%\samples\RubyCalculator   %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
 xcopy/s %FROM_DIR%\samples\RubyBank         %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank
+copy %FROM_DIR%\samples\scagen.bat   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\INSTALL   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\LICENSE   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\COPYING   %TO_SRC%\%SRC_PACKAGE%\samples
