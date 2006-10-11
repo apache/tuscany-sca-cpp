@@ -377,7 +377,7 @@ namespace tuscany
             }
             
             
-            void WSServiceProxy::setOutputData(Operation operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr)
+            void WSServiceProxy::setOutputData(Operation& operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr)
             {    
                 // Go through data object to set the return value
                 PropertyList pl = outputDataObject->getType().getProperties();
