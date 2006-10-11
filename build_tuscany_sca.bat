@@ -80,7 +80,18 @@ if not exist %TO_SRC%\%SRC_PACKAGE%\projectsvc7 mkdir %TO_SRC%\%SRC_PACKAGE%\pro
 xcopy/s %FROM_DIR%\projectsvc7 %TO_SRC%\%SRC_PACKAGE%\projectsvc7
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\runtime mkdir %TO_SRC%\%SRC_PACKAGE%\runtime 
-xcopy/s %FROM_DIR%\runtime %TO_SRC%\%SRC_PACKAGE%\runtime
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\core mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\core 
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\cpp mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\cpp
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ws mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ws
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\python mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\python
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ruby mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ruby
+
+xcopy/s %FROM_DIR%\runtime\core %TO_SRC%\%SRC_PACKAGE%\runtime\core
+xcopy/s %FROM_DIR%\runtime\extensions\cpp %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\cpp
+xcopy/s %FROM_DIR%\runtime\extensions\ws %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ws
+xcopy/s %FROM_DIR%\runtime\extensions\python %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\python
+xcopy/s %FROM_DIR%\runtime\extensions\ruby %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ruby
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\tools mkdir %TO_SRC%\%SRC_PACKAGE%\tools 
 xcopy/s %FROM_DIR%\tools %TO_SRC%\%SRC_PACKAGE%\tools
