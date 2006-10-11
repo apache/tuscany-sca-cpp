@@ -128,6 +128,10 @@ namespace tuscany
             {
             	setReturnValue((const DataObjectPtr*)op.getReturnValue());
             }
+            else
+            {
+            	returnValue = op.returnValue;
+            }
           	
             LOGEXIT(1,"Operation::copy");
         }
