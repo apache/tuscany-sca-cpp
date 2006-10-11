@@ -54,7 +54,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /subsystem:console /machine:I386 /out:"Release/calculator_wsclient.exe" /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=..\..\..\..\..\Calculator\deploywsclient.bat ..\..\..\..\..\Calculator Release
+PostBuild_Cmds=call ..\..\..\..\..\Calculator\deploywsclient.bat ..\..\..\..\..\Calculator Release
 # End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "WSClient - Win32 Debug"
@@ -83,7 +83,7 @@ LINK32=link.exe
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib /nologo /subsystem:console /debug /machine:I386 /out:"Debug/calculator_wsclient.exe" /pdbtype:sept /libpath:"$(TUSCANY_SDOCPP)\lib" /libpath:"$(AXIS2C_HOME)\lib"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
-PostBuild_Cmds=..\..\..\..\..\Calculator\deploywsclient.bat ..\..\..\..\..\Calculator  Debug
+PostBuild_Cmds=call ..\..\..\..\..\Calculator\deploywsclient.bat ..\..\..\..\..\Calculator  Debug
 # End Special Build Tool
 
 !ENDIF 
