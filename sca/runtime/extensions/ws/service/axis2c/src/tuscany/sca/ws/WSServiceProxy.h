@@ -80,7 +80,7 @@ namespace tuscany
     
             private:
 
-                void setOutputData(Operation operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr);
+                void setOutputData(Operation& operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr);
                 
                 /**
                  * The target service wrapper
