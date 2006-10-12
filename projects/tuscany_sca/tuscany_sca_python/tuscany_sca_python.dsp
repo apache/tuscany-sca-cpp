@@ -73,8 +73,8 @@ PostBuild_Cmds=..\..\..\runtime\extensions\python\deploy.bat ..\..\..\ Release
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_PYTHON_EXPORTS" /YX /FD /GZ  /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/python/src" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /I "$(PYTHON_HOME)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_PYTHON_EXPORTS" /FD /GZ  /c
+# ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_PYTHON_EXPORTS" /YX /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../../../runtime/extensions/python/src" /I "../../../deploy/include" /I "$(TUSCANY_SDOCPP)/include" /I "$(PYTHON_HOME)\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "TUSCANY_SCA_PYTHON_EXPORTS" /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
@@ -174,19 +174,19 @@ SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServicePr
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceRuntimeException.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceWrapper.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceWrapper.h
 # End Source File
-# End Group
-# Begin Group "osoa/sca"
-
-# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\..\runtime\extensions\python\src\osoa\sca\ServiceRuntimeException.h
+SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\sca_module.cpp
 # End Source File
 # End Group
 # Begin Group "xsd"
