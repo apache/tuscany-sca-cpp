@@ -185,6 +185,10 @@ xcopy/s %FROM_DIR%\samples\PythonCalculator %TO_BIN%\%BIN_PACKAGE%\samples\Pytho
 xcopy/s %FROM_DIR%\samples\RubyCalculator %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator
 xcopy/s %FROM_DIR%\samples\BigBank %TO_BIN%\%BIN_PACKAGE%\samples\BigBank
 xcopy/s %FROM_DIR%\samples\RubyBank %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
+
+xcopy/s %FROM_DIR%\deploy\samples\Calculator %TO_BIN%\%BIN_PACKAGE%\samples\Calculator
+xcopy/s %FROM_DIR%\deploy\samples\BigBank %TO_BIN%\%BIN_PACKAGE%\samples\BigBank
+
 copy %FROM_DIR%\samples\INSTALL   %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\LICENSE   %TO_BIN%\%BIN_PACKAGE%\samples
 copy %FROM_DIR%\samples\COPYING   %TO_BIN%\%BIN_PACKAGE%\samples
