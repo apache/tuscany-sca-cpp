@@ -45,7 +45,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "..\..\..\..\..\Calculator\sample.calculator" /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -129,7 +129,7 @@ CLEAN :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
 CPP=cl.exe
-CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\..\..\Calculator\sample.calculator" /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<

@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\..\..\..\..\Calculator\sample.calculator" /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FD /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
 # ADD RSC /l 0x809 /d "NDEBUG"
@@ -71,7 +71,7 @@ PostBuild_Cmds=call ..\..\..\..\..\Calculator\deployclient.bat ..\..\..\..\..\Ca
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\..\..\Calculator\sample.calculator" /I "$(TUSCANY_SDOCPP)/include" /I "$(TUSCANY_SCACPP)/include" /I "$(TUSCANY_SCACPP)/extensions/cpp/include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
 # ADD RSC /l 0x809 /d "_DEBUG"
@@ -104,10 +104,6 @@ SOURCE=..\..\..\..\..\Calculator\sample.calculator.client\CalculatorClient.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\..\..\..\Calculator\sample.calculator.client\Calculator.h
-# End Source File
 # End Group
 # Begin Group "Resource Files"
 
