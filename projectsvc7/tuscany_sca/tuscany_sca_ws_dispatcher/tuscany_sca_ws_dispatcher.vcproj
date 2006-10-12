@@ -85,7 +85,7 @@
 				OutputFile="$(OutDir)/tuscany_sca_ws_dispatcher.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib,$(AXIS2C_HOME)/lib"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
