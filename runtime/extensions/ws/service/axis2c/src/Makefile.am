@@ -25,6 +25,7 @@ libtuscany_sca_ws_service_la_LIBADD = \
     -laxis2_parser \
     -laxis2_minizip \
     -lpthread \
+    -lwoden \
     -laxis2_http_sender \
     -laxis2_http_receiver
 
@@ -47,6 +48,7 @@ libtuscany_sca_ws_dispatcher_la_LIBADD = \
     -laxis2_parser \
     -laxis2_minizip \
     -lpthread \
+    -lwoden \
     -laxis2_http_sender \
     -laxis2_http_receiver
 

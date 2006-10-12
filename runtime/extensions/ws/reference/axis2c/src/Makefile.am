@@ -20,6 +20,7 @@ libtuscany_sca_ws_reference_la_LIBADD = \
                     -laxis2_parser \
                     -laxis2_minizip \
                     -lpthread \
+                    -lwoden \
                     -laxis2_http_sender \
                     -laxis2_http_receiver
 
