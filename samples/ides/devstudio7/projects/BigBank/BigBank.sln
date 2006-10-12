@@ -1,16 +1,20 @@
-Microsoft Visual Studio Solution File, Format Version 7.00
+Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AccountClient", "AccountClient\AccountClient.vcproj", "{297C9F3A-EDB1-4EA1-86ED-473B0863B996}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Accounts", "Accounts\Accounts.vcproj", "{87372DC7-582B-46C6-AA0F-960A47972503}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WSAccountClient", "WSAccountClient\WSAccountClient.vcproj", "{E7F4DDEC-6592-434B-B5D6-4E538298C898}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		ConfigName.0 = Debug
-		ConfigName.1 = Release
-	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
+		Debug = Debug
+		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{297C9F3A-EDB1-4EA1-86ED-473B0863B996}.Debug.ActiveCfg = Debug|Win32
