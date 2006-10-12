@@ -65,8 +65,9 @@
          <H2>Contents</H2> 
          <OL>
             <LI><A HREF="#linuxbld">Building the samples on Linux</A></LI>
-            <LI><A HREF="#linuxbldstdcxx">Building the samples on Linux with Apache STDCXX</A></LI>
+            <!--LI><A HREF="#linuxbldstdcxx">Building the samples on Linux with Apache STDCXX</A></LI-->
             <LI><A HREF="#linuxrun">Running the samples on Linux</A></LI>
+            <LI><A HREF="#winbld">Building the samples on Windows</A></LI>
             <LI><A HREF="#winbldstdcxx">Building the samples on Windows with Apache STDCXX</A></LI>
             <LI><A HREF="#winrun">Running the samples on Windows</A></LI>
          </OL>
@@ -96,7 +97,7 @@
          </OL>                                                  
         </DIV>
 
-       <DIV CLASS="section"> 
+       <!--DIV CLASS="section"> 
          <A NAME="linuxbldstdcxx"><H2>Building the samples on Linux with Apache STDCXX</H2></A>
          <OL>
              <LI>The following environment variables are required:                                 
@@ -115,7 +116,7 @@
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
                   /usr/local/tuscany/sdo/samples/misc</LI>
          </OL>                                                  
-        </DIV>
+        </DIV-->
 
        <DIV CLASS="section"> 
          <A NAME="linuxrun"><H2>Running the samples on Linux</H2></A>
@@ -147,7 +148,7 @@
                  directory containing this is on your path. This will be where you 
                  installed the compiler.
              </LI>
-             <LI>Build the source, either via the Visual Studio 6 project under 
+             <LI>Build the source, either via the Visual Studio 6 or 7 projects under 
                  &lt;tuscany_sdo_install_dir&gt;\samples\ides or via the command-line build file
                  found at &lt;tuscany_sdo_install_dir&gt;\samples\ides\devstudio6\projects\misc\build.cmd
                  which will build and deploy the samples.
