@@ -28,4 +28,5 @@ account_client_LDADD   =  -L${TUSCANY_SCACPP}/lib -ltuscany_sca \
 
 INCLUDES =  -I$(TUSCANY_SCACPP)/extensions/cpp/include \
             -I${TUSCANY_SCACPP}/include \
-            -I${TUSCANY_SDOCPP}/include
+            -I${TUSCANY_SDOCPP}/include \
+            -I../bigbank.account
