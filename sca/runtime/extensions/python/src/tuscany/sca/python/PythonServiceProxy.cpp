@@ -21,7 +21,7 @@
 
 #include "tuscany/sca/python/PythonServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
-#include "osoa/sca/ServiceRuntimeException.h"
+#include "tuscany/sca/python/PythonServiceRuntimeException.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/ReferenceType.h"
@@ -35,7 +35,6 @@
 #include "tuscany/sca/python/model/PythonImplementation.h"
 #include "tuscany/sca/python/model/PythonReferenceBinding.h"
 
-using namespace osoa::sca;
 using namespace tuscany::sca::model;
 
 namespace tuscany
