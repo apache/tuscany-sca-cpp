@@ -150,6 +150,9 @@
 				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceProxy.h">
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceRuntimeException.h">
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceWrapper.cpp">
 			</File>
 			<File
@@ -183,13 +186,6 @@
 					RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\model\PythonServiceBinding.h">
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="osoa/sca"
-			Filter="">
-			<File
-				RelativePath="..\..\..\runtime\extensions\python\src\osoa\sca\ServiceRuntimeException.h">
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

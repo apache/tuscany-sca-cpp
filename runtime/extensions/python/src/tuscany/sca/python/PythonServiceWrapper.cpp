@@ -19,7 +19,7 @@
 
 /* $Rev$ $Date$ */
 
-#include "osoa/sca/ServiceRuntimeException.h"
+#include "tuscany/sca/python/PythonServiceRuntimeException.h"
 #include "tuscany/sca/python/PythonServiceWrapper.h"
 
 #include "tuscany/sca/util/Logging.h"
@@ -30,8 +30,6 @@
 #include "tuscany/sca/model/Interface.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/python/model/PythonImplementation.h"
-
-using namespace osoa::sca;
 
 #include "commonj/sdo/SDO.h"
 using namespace commonj::sdo;
@@ -81,7 +79,7 @@ namespace tuscany
                 if (!impl)
                 {
                     string msg = "Component " + component->getName() + " has no implementation defined";
-                    throw ServiceNotFoundException(msg.c_str());
+                    throw PythonServiceNotFoundException(msg.c_str());
                 }
 
                 LOGINFO_1(3,"PythonServiceWrapper::constructor module %s", impl->getModule().c_str());
@@ -131,7 +129,7 @@ namespace tuscany
                     }
                     string msg = "Failed to load module named " + impl->getModule();
                     LOGERROR(0, msg.c_str());
-                    throw ComponentContextException(msg.c_str());
+                    throw PythonComponentContextException(msg.c_str());
                 }
                 //else
                 //{
@@ -182,7 +180,7 @@ namespace tuscany
                             }
                             string msg = "Cannot find class named " + className + " in Python module";
                             LOGERROR(0, msg.c_str());
-                            throw new ComponentInvocationException(msg.c_str());
+                            throw new PythonComponentInvocationException(msg.c_str());
                         }
 
                         pClassInstance = PyInstance_New(pClass, NULL, NULL);
@@ -195,7 +193,7 @@ namespace tuscany
                             }
                             string msg = "Could not create new instance of class named " + className + " in Python module";
                             LOGERROR(0, msg.c_str());
-                            throw new ComponentInvocationException(msg.c_str());
+                            throw new PythonComponentInvocationException(msg.c_str());
                         }
                         Py_XDECREF(pClass);
                     }
@@ -294,7 +292,7 @@ namespace tuscany
                         // Can't get the function from the class or module - throw exception
                         string msg = "Python module or class instance has not been created";
                         LOGERROR(0, msg.c_str());
-                        throw new ComponentInvocationException(msg.c_str());
+                        throw new PythonComponentInvocationException(msg.c_str());
                     }
 
                     if (pFunc && PyCallable_Check(pFunc)) 
@@ -375,7 +373,7 @@ namespace tuscany
                                     pValue = PyString_FromString((*(string*)parm.getValue()).c_str());
     				                break;
     			                }
-                                default: throw new ComponentInvocationException("Operation parameter type not supported");
+                                default: throw new PythonComponentInvocationException("Operation parameter type not supported");
     		                }
 
                             if (!pValue) 
@@ -389,7 +387,7 @@ namespace tuscany
 
                                 string msg = "Error converting parameter into Python type";
                                 LOGERROR(0, msg.c_str());
-                                throw new ComponentInvocationException(msg.c_str());
+                                throw new PythonComponentInvocationException(msg.c_str());
                                 
                             }
                             //printPyObject("Param value", pValue);
@@ -766,7 +764,7 @@ namespace tuscany
                             }
                             string msg = "Error whilst calling Python module";
                             LOGERROR(0, msg.c_str());
-                            throw new ComponentInvocationException(msg.c_str());
+                            throw new PythonComponentInvocationException(msg.c_str());
                         }
                     }
                     else 
@@ -777,7 +775,7 @@ namespace tuscany
                         }
                         string msg = "Cannot find the operation named " + operation.getName() + " in the Python module";
                         LOGERROR(0, msg.c_str());
-                        throw new ComponentInvocationException(msg.c_str());
+                        throw new PythonComponentInvocationException(msg.c_str());
                     }
                     Py_XDECREF(pFunc);
  
