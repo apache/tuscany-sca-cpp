@@ -25,9 +25,6 @@ NULL=
 NULL=nul
 !ENDIF 
 
-CPP=cl.exe
-RSC=rc.exe
-
 !IF  "$(CFG)" == "AccountClient - Win32 Release"
 
 OUTDIR=.\Release
@@ -47,7 +44,40 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "$(TUSCANY_SCACPP)\include" /I "$(TUSCANY_SCACPP)\extensions\cpp\include" /I "$(TUSCANY_SDOCPP)\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP=cl.exe
+CPP_PROJ=/nologo /MD /W3 /GX /O2 /I "..\..\..\..\..\BigBank\bigbank.account" /I "$(TUSCANY_SCACPP)\include" /I "$(TUSCANY_SCACPP)\extensions\cpp\include" /I "$(TUSCANY_SDOCPP)\include" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
+
+RSC=rc.exe
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\AccountClient.bsc" 
 BSC32_SBRS= \
@@ -98,36 +128,8 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "$(TUSCANY_SCACPP)\include" /I "$(TUSCANY_SCACPP)\extensions\cpp\include" /I "$(TUSCANY_SDOCPP)\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
-BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\AccountClient.bsc" 
-BSC32_SBRS= \
-	
-LINK32=link.exe
-LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\AccountClient.pdb" /debug /machine:I386 /out:"$(OUTDIR)\AccountClient.exe" /pdbtype:sept /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SDOCPP)/lib" 
-LINK32_OBJS= \
-	"$(INTDIR)\AccountClient.obj"
-
-"$(OUTDIR)\AccountClient.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
-    $(LINK32) @<<
-  $(LINK32_FLAGS) $(LINK32_OBJS)
-<<
-
-SOURCE="$(InputPath)"
-DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
-
-ALL : $(DS_POSTBUILD_DEP)
-
-# Begin Custom Macros
-OutDir=.\Debug
-# End Custom Macros
-
-$(DS_POSTBUILD_DEP) : "$(OUTDIR)\AccountClient.exe"
-   call ..\..\..\..\..\BigBank\deployclient.bat ..\..\..\..\..\BigBank Debug
-	call ..\..\..\..\..\scagen.bat ..\..\..\..\..\BigBank\bigbank.account
-	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
-
-!ENDIF 
+CPP=cl.exe
+CPP_PROJ=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\..\..\BigBank\bigbank.account" /I "$(TUSCANY_SCACPP)\include" /I "$(TUSCANY_SCACPP)\extensions\cpp\include" /I "$(TUSCANY_SDOCPP)\include" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
@@ -158,6 +160,37 @@ $(DS_POSTBUILD_DEP) : "$(OUTDIR)\AccountClient.exe"
    $(CPP) @<<
    $(CPP_PROJ) $< 
 <<
+
+RSC=rc.exe
+BSC32=bscmake.exe
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\AccountClient.bsc" 
+BSC32_SBRS= \
+	
+LINK32=link.exe
+LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib /nologo /subsystem:console /incremental:yes /pdb:"$(OUTDIR)\AccountClient.pdb" /debug /machine:I386 /out:"$(OUTDIR)\AccountClient.exe" /pdbtype:sept /libpath:"$(TUSCANY_SCACPP)/extensions/cpp/lib" /libpath:"$(TUSCANY_SCACPP)/lib" /libpath:"$(TUSCANY_SDOCPP)/lib" 
+LINK32_OBJS= \
+	"$(INTDIR)\AccountClient.obj"
+
+"$(OUTDIR)\AccountClient.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
+    $(LINK32) @<<
+  $(LINK32_FLAGS) $(LINK32_OBJS)
+<<
+
+SOURCE="$(InputPath)"
+DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
+
+ALL : $(DS_POSTBUILD_DEP)
+
+# Begin Custom Macros
+OutDir=.\Debug
+# End Custom Macros
+
+$(DS_POSTBUILD_DEP) : "$(OUTDIR)\AccountClient.exe"
+   call ..\..\..\..\..\BigBank\deployclient.bat ..\..\..\..\..\BigBank Debug
+	call ..\..\..\..\..\scagen.bat ..\..\..\..\..\BigBank\bigbank.account
+	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
+
+!ENDIF 
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
