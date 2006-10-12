@@ -190,7 +190,6 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/ruby/src/Makefile
                  runtime/extensions/php/Makefile
                  runtime/extensions/php/src/Makefile
-                 runtime/core/test/Makefile
                  ])
 AC_OUTPUT
 
