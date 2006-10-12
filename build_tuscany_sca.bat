@@ -40,7 +40,7 @@ call vcvars32
 
 echo Build of SCA started....
 set PACKAGE=tuscany_sca_cpp
-set VERSION=1.0-incubating-M2
+set VERSION=1.0-incubator-M2
 set SRC_PACKAGE=%PACKAGE%-%VERSION%-src
 set BIN_PACKAGE=%PACKAGE%-%VERSION%-bin
 
