@@ -110,6 +110,28 @@
                   when developing Tuscany SCA C++ components
                </TD>
             </TR>
+            <TR CLASS="a">
+               <TD><STRONG>Optional:</STRONG> Python version 2.3 or later</TD>
+
+               <TD> 
+                  <A HREF="http://www.python.org/download/"
+                     TARGET="_blank">http://www.python.org/download/</A><BR/>
+                  This is required for building or running the Tuscany SCA Python extension
+                  (see <A HREF="#extensions">below</A>).
+                  Please download and follow the installation instructions
+               </TD>
+            </TR>
+            <TR CLASS="b">
+               <TD><STRONG>Optional:</STRONG> Ruby version 1.8.4 or later</TD>
+
+               <TD> 
+                  <A HREF="http://www.ruby-lang.org"
+                     TARGET="_blank">http://www.ruby-lang.org</A><BR/>
+                  This is required for building or running the Tuscany SCA Ruby extension
+                  (see <A HREF="#extensions">below</A>).
+                  Please download and follow the installation instructions
+               </TD>
+            </TR>
             </TBODY>
          </TABLE>
       </DIV> 
@@ -128,6 +150,23 @@
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
                   <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                </UL></LI>
+              <LI>The following environment variables are optional if you wish to build the Python or Ruby extensions
+                  (see the <A HREF="doc/PythonExtension.html">Python extension</A> and 
+                  <A HREF="doc/RubyExtension.html">Ruby extension</A> documentation):
+                <UL>
+                  <LI>PYTHON_LIB=&lt;path to Python libraries&gt;</LI>
+                  <LI>PYTHON_INCLUDE=&lt;path to Python includes&gt;</LI>
+                  <LI>PYTHON_VERSION=&lt;name of the Python version&gt;<BR/>
+                   Note: If you are using a default installation of Python 2.3 these are usually:<BR/>
+                   PYTHON_LIB=/usr/lib<BR/>
+                   PYTHON_INCLUDE=/usr/include/python2.3<BR/>
+                   PYTHON_VERSION=python2.3<BR/></LI>
+                  <LI>RUBY_LIB=&lt;path to Ruby libraries&gt;</LI>
+                  <LI>RUBY_INCLUDE=&lt;path to Ruby includes&gt;<BR/>
+                   Note: If you are using a default installation of Ruby these are usually:<BR/>
+                   RUBY_LIB=/usr/lib<BR/>
+                   RUBY_INCLUDE=/usr/lib/ruby/1.8/i386-linux</LI>
                 </UL></LI>
               <LI>Build the source with the following command sequence:
                   <UL>
@@ -155,6 +194,13 @@
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
                   <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
+              <LI>The following environment variables are optional if you wish to build the Python or Ruby extensions
+                  (see the <A HREF="doc/PythonExtension.html">Python extension</A> and 
+                  <A HREF="doc/RubyExtension.html">Ruby extension</A> documentation):
+                <UL>
+                  <LI>PYTHON_HOME=&lt;path to installed Python&gt;                                      
+                  <LI>RUBY_HOME=&lt;path to installed Ruby&gt;</LI>
+                </UL></LI>
               <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
                   will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
                   This will be where you installed the compiler.</LI>
@@ -164,7 +210,9 @@
                       <LI>build</LI>                      
                   </UL>
 	              This will build all the projects and put the required output into the 'deploy' directory<BR/><BR/>
-                  Alternatively, open the workspace tuscany_sca.dsw in Visual Studio 6 - you can build projects individually
+                  Alternatively, open the workspace at &lt;tuscany_sca_install_dir&gt;/projects/tuscany_sca/tuscany_sca.dsw 
+                  in Visual Studio 6 or at at &lt;tuscany_sca_install_dir&gt;/projectsvc7/tuscany_sca/tuscany_sca.sln 
+                  in Visual Studio 7.1 - you can build projects individually
                   or build the samples to rebuild all the projects</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the 'deploy' directory that was just created</LI>
           </OL>
@@ -181,8 +229,7 @@
             compiled into a dll) or invoke a binding (e.g. make a Web Services call).
          </P>
          <P>The table below details the extensions that are included with TuscanySCA for C++ Milestone 
-            Release 2. All these extensions are compiled in the binary releases, but not all are compiled by 
-            default when you follow the instructions above for building SCA from a source release.
+            Release 2. 
          </P>
          <TABLE CLASS="bodyTable"> 
             <TBODY>
@@ -194,8 +241,8 @@
                <TD STYLE="vertical-align: top; white-space: nowrap;">C++ 
                </TD>
                <TD>Provides the SCA C++ client API and enables C++ component implementations 
-                and interfaces. This extension is built by default from a source release. See 
-                the <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">SCA 
+                and interfaces. See the 
+                <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">SCA 
                 C++ Client and Implementation specification</A> for more details about the SCA C++ 
                 Programming Model and the <A HREF="doc/CPPComponents.html">Creating C++ SCA Components</A> 
                 document for a step-by-step example.
@@ -205,8 +252,7 @@
                <TD STYLE="vertical-align: top; white-space: nowrap;">Axis2C Web Services 
                </TD>
                <TD>Provides the Web Service bindings enabling Tuscany to call SCA references via
-                Web Services or expose SCA services as Web Services. This extension is built by 
-                default from a source release. See the 
+                Web Services or expose SCA services as Web Services. See the 
                 <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">SCA 
                 Web Service bindings specification</A> for more details about SCA Web Service support
                 and the <A HREF="doc/Axis2CWSService.html">Enabling Web Service 
@@ -218,7 +264,6 @@
                 <A HREF="doc/PythonExtension.html">Python</A>
                </TD>
                <TD>Provides a Python SCA client API and enables Python component implementations. 
-                This extension is <STRONG>not</STRONG> built by default from a source release. 
                 See the <A HREF="doc/PythonExtension.html">Python extension documentation</A> for 
                 more details.
                </TD>
@@ -228,25 +273,12 @@
                 <A HREF="doc/RubyExtension.html">Ruby</A>
                </TD>
                <TD>Provides a Ruby SCA client API and enables Ruby component implementations. 
-                This extension is <STRONG>not</STRONG> built by default from a source release. 
                 See the <A HREF="doc/RubyExtension.html">Ruby extension documentation</A> for 
                 more details.
                </TD>
             </TR>
             </TBODY>
          </TABLE>
-         <P>It is possible to build all the extensions from a Tuscany SCA source release, but you 
-            must ensure that the extension requirements and environment variables are available on 
-            your system (see the <A HREF="doc/PythonExtension.html">Python</A> and 
-            <A HREF="doc/RubyExtension.html">Ruby</A> extension documentation for this information):
-         </P>
-         <P>On <STRONG>Linux</STRONG> use the --enable-all-extensions configure option and then follow 
-            the rest of the above instructions. e.g:
-         </P>
-         <UL>
-             <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy --enable-all-extensions</LI>
-         </UL>
-         <BR/> 
       </DIV>
 
       <DIV CLASS="section"> 
