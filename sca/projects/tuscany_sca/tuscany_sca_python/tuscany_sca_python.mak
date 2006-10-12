@@ -57,6 +57,7 @@ CLEAN :
 	-@erase "$(INTDIR)\PythonServiceBinding.obj"
 	-@erase "$(INTDIR)\PythonServiceProxy.obj"
 	-@erase "$(INTDIR)\PythonServiceWrapper.obj"
+	-@erase "$(INTDIR)\sca_module.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(OUTDIR)\tuscany_sca_python.dll"
 	-@erase "$(OUTDIR)\tuscany_sca_python.exp"
@@ -117,6 +118,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\PythonInterfaceExtension.obj" \
 	"$(INTDIR)\PythonServiceProxy.obj" \
 	"$(INTDIR)\PythonServiceWrapper.obj" \
+	"$(INTDIR)\sca_module.obj" \
 	"..\tuscany_sca\Release\tuscany_sca.lib"
 
 "$(OUTDIR)\tuscany_sca_python.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
@@ -169,6 +171,7 @@ CLEAN :
 	-@erase "$(INTDIR)\PythonServiceBinding.obj"
 	-@erase "$(INTDIR)\PythonServiceProxy.obj"
 	-@erase "$(INTDIR)\PythonServiceWrapper.obj"
+	-@erase "$(INTDIR)\sca_module.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\vc60.pdb"
 	-@erase "$(OUTDIR)\tuscany_sca_python.dll"
@@ -232,6 +235,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\PythonInterfaceExtension.obj" \
 	"$(INTDIR)\PythonServiceProxy.obj" \
 	"$(INTDIR)\PythonServiceWrapper.obj" \
+	"$(INTDIR)\sca_module.obj" \
 	"..\tuscany_sca\Debug\tuscany_sca.lib"
 
 "$(OUTDIR)\tuscany_sca_python.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
@@ -316,6 +320,12 @@ SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServicePr
 SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceWrapper.cpp
 
 "$(INTDIR)\PythonServiceWrapper.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\runtime\extensions\python\src\tuscany\sca\python\sca_module.cpp
+
+"$(INTDIR)\sca_module.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
