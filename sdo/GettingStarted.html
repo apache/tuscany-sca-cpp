@@ -175,10 +175,29 @@
                       <LI>cd &lt;tuscany_sdo_install_dir&gt;</LI>
                       <LI>build</LI>                      
                   </UL>
-	              This will build all the projects and put the required output into the &lt;tuscany_sdo_install_dir&gt;\deploy directory<BR/><BR/>
-                  Alternatively, open the workspace tuscany_sdo.dsw in Visual Studio 6 - you can build projects individually
-                  or build the test project to build all its dependencies. Running the test project should give a list of
-                  tests passed - this is currently 108 tests, no failures.</LI>
+	              This will build all the projects and put the required output into the &lt;tuscany_sdo_install_dir&gt;\deploy directory</LI>
+              <LI>Run the test program:
+                  <UL>
+                      <LI>sdotest.bat</LI>
+                  </UL>
+                  The output will indicate the number of test run and passed. For example:
+<xmp>using Axis2C: D:\axis2c-bin-0.94-win32"
+using TUSCANY_SDOCPP: d:\tuscany_sdo_cpp-1.0-incubator-M2-src\deploy
+I/O warning : failed to load external entity "not_present.xsd"
+I/O warning : failed to load external entity "not-present.xml"
+I/O warning : failed to load external entity "sca-policy.xsd"
+I/O warning : failed to load external entity "sca-policy.xsd"
+I/O warning : failed to load external entity "sca-policy.xsd"
+I/O warning : failed to load external entity "sca-policy.xsd"
+I/O warning : failed to load external entity "sca-policy.xsd"
+I/O warning : failed to load external entity "sca-policy.xsd"
+I/O warning : failed to load external entity "sca-policy.xsd"
+I/O warning : failed to load external entity "sca-policy.xsd"
+I/O warning : failed to load external entity "sca-policy.xsd"
+Total tests:111 Tests passed:111
+</xmp>
+The I/O warning messages can be ignored.
+              </LI>
               <LI>Add the &lt;tuscany_sdo_install_dir&gt;\deploy\bin directory to the PATH environment variable</LI>
           </OL>
         <A NAME="winsrcstdcxx"><H3>Getting Tuscany SDO for C++ working with the source release and Apache STDCXX on Windows</H3></A>
