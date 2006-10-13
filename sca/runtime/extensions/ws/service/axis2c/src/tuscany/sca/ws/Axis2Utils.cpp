@@ -59,7 +59,7 @@ char* Axis2Utils::getAxisServiceParameterValue(const axis2_env_t *env, axis2_msg
     param = AXIS2_SVC_GET_PARAM(svc, env, parameterName);
     if(!param)
     {
-		LOGERROR_1(0,"Axis parameter %s cannot be found", parameterName);
+		LOGERROR_1(1,"Axis parameter %s cannot be found", parameterName);
     }
     else
     {
