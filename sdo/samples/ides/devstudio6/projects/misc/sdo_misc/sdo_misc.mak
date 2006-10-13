@@ -112,9 +112,7 @@ OutDir=.\Release
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\sdo_misc.exe"
-   copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy
-	copy ..\..\..\..\..\misc\*.xml ..\..\..\..\..\misc\deploy
-	copy Release\*.exe ..\..\..\..\..\misc\deploy\bin
+   ..\..\..\..\..\misc\deploy.bat ..\..\..\..\..\misc Release
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ELSEIF  "$(CFG)" == "sdo_misc - Win32 Debug"
@@ -207,9 +205,7 @@ OutDir=.\Debug
 # End Custom Macros
 
 $(DS_POSTBUILD_DEP) : "$(OUTDIR)\sdo_misc.exe"
-   copy ..\..\..\..\..\misc\*.xsd ..\..\..\..\..\misc\deploy
-	copy ..\..\..\..\..\misc\*.xml ..\..\..\..\..\misc\deploy
-	copy Debug\*.exe ..\..\..\..\..\misc\deploy\bin
+   ..\..\..\..\..\misc\deploy.bat ..\..\..\..\..\misc Debug
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
