@@ -143,6 +143,7 @@ AC_CONFIG_FILES([Makefile
                  BigBank/bigbank.account/Makefile
                  BigBank/bigbank.client/Makefile
                  BigBank/bigbank.wsclient/Makefile
+                 BigBank/bigbank.phpwsclient/Makefile
                  RubyBank/Makefile
                  RubyBank/bigbank.account/Makefile
                  RubyBank/bigbank.client/Makefile
