@@ -38,8 +38,6 @@ tuscany/sca/ws/Axis2Dispatcher.cpp \
 tuscany/sca/ws/Axis2DispatcherModule.cpp
 
 libtuscany_sca_ws_dispatcher_la_LIBADD = \
-  -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -ltuscany_sdo_axiom \
-  -L$(top_builddir)/runtime/core/src -ltuscany_sca \
   -L$(AXIS2C_HOME)/lib \
     -laxis2_util \
     -laxis2_axiom \
