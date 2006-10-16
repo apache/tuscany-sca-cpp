@@ -59,7 +59,7 @@
             <TBODY>
             <TR CLASS="a">
                <TD><B>Software</B></TD>
-               <TD><B>Download Link</B></TD>
+               <TD><B>Notes and Download Link</B></TD>
             </TR>
             <TR CLASS="b">
                <TD>Operating systems: 
@@ -70,6 +70,8 @@
                   </UL>
                </TD>
                <TD> 
+                Linux distributions tested on include Redhat Enterprise Linux v3, Redhat Enterprise Linux v4, 
+                Ubuntu 6.06 LTS and Fedora Core 5.
                </TD>
             </TR>
             <TR CLASS="a">
@@ -91,27 +93,29 @@
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD>Java SDK 1.4 or later</TD>
+               <TD><STRONG>Optional:</STRONG> Java SDK 1.4 or later</TD>
 
                <TD> 
                   <A HREF="http://java.sun.com/javase/downloads/index.jsp"
                      TARGET="_blank">http://java.sun.com/javase/downloads/index.jsp</A><BR/>
                   This is required for building and running the SCAGEN code generation tool, which is used
-                  when developing Tuscany SCA C++ components
+                  when developing Tuscany SCA C++ components. This is not required when only developing
+                  Python or Ruby SCA components.
                </TD>
             </TR>
             <TR CLASS="b">
-               <TD>Apache Ant 1.6 or later</TD>
+               <TD><STRONG>Optional:</STRONG> Apache Ant 1.6 or later</TD>
 
                <TD> 
                   <A HREF="http://ant.apache.org"
                      TARGET="_blank">http://ant.apache.org</A><BR/>
                   This is required for building the SCAGEN code generation tool, which is used
-                  when developing Tuscany SCA C++ components
+                  when developing Tuscany SCA C++ components. This is only required when building
+                  a source distribution of Tuscany SCA C++.
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD><STRONG>Optional:</STRONG> Python version 2.3 or later</TD>
+               <TD><STRONG>Optional:</STRONG> Python version 2.3.4 or later</TD>
 
                <TD> 
                   <A HREF="http://www.python.org/download/"
@@ -170,12 +174,12 @@
                 </UL></LI>
               <LI>Build the source with the following command sequence:
                   <UL>
-                      <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy</LI>
+                      <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy --enable-static=no</LI>
                       <LI>make</LI>
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sca</LI>
+                  /usr/local/tuscany/sca. Use ./configure --help to see all the available options</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the &lt;tuscany_sca_install_dir&gt;/deploy
                   directory that contains the built Tuscany SCA distribution</LI>
               </OL>
