@@ -108,7 +108,8 @@
                <TD><STRONG>Optional: </STRONG>STDCXX Release 4.1.3</TD>
 
                <TD> 
-                  <A HREF="http://incubator.apache.org/stdcxx/" TARGET="_blank">http://incubator.apache.org/stdcxx/download.html</A><BR/>
+                  <A HREF="http://incubator.apache.org/stdcxx/download.html" 
+                     TARGET="_blank">http://incubator.apache.org/stdcxx/download.html</A><BR/>
                   STDCXX is the Apache implementation of the C++ Standard Library. Tuscany SDO 
                   can be built using this library implementation rather than the default 
                   platform libraries available on your operating system.<BR/>
@@ -142,12 +143,12 @@
                 </UL></LI>
               <LI>Build the source with the following command sequence:
                   <UL>
-                      <LI>./configure</LI>
+                      <LI>./configure --prefix=&lt;tuscany_sdo_install_dir&gt;/deploy --enable-static=no</LI>
                       <LI>make</LI>
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sdo</LI>
+                  /usr/local/tuscany/sdo. Use ./configure --help to see all the available options</LI>
               <LI>Run the test:
                   <UL>
                       <LI>cd to &lt;tuscany_sdo_install_dir&gt;/runtime/core/test</LI>
