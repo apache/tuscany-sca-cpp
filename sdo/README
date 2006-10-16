@@ -26,9 +26,9 @@ file.
 About Tuscany SDO for C++
 =========================
 
-Tuscany SDO is an implementation of the Service Data Objects 2.01 
-specification for C++ developers found at
-http://www.osoa.org/display/Main/Service+Data+Objects+Specifications
+Tuscany SDO is an implementation of the Service Data Objects for C++ 2.01 
+specification found at
+http://www.osoa.org/display/Main/SDO+-+Previously+Published+Specifications
 
 The implementation adheres closely to the specification, but there are a number 
 of features which did not make it into this release. These are documented 
