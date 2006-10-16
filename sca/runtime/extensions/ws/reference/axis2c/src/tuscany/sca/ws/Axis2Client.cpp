@@ -38,6 +38,7 @@
 
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Utils.h"
 #include "model/WSServiceBinding.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Exceptions.h"
@@ -281,15 +282,27 @@ namespace tuscany
                     try
                     {
                         
-                        // Create the output wrapper
-                        const Type& inputType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), 
-                            wsdlOperation.getInputTypeName().c_str());
+                        // Create the input wrapper
+                        const Type& rootType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), "RootType");
+                        const Property& prop = rootType.getProperty(wsdlOperation.getInputTypeName().c_str());
+                        const Type& inputType = prop.getType();
                         inputDataObject = dataFactory->create(inputType);
                     }
                     catch (SDORuntimeException e)
                     {
-                        // The input wrapper type is not known, create an open DataObject 
-                        inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                        try
+                        {
+                            // Create the input wrapper
+                            const Type& inputType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), 
+                                wsdlOperation.getInputTypeName().c_str());
+                            inputDataObject = dataFactory->create(inputType);
+                        }
+                        catch (SDORuntimeException e2)
+                        {
+                            
+                            // The input wrapper type is not known, create an open DataObject 
+                            inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                        }
                     }
                             
                     // Go through data object to set the input parameters

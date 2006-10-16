@@ -198,7 +198,6 @@ namespace tuscany
                                 {
                                     float* floatData = new float;
                                     *floatData = inputDataObject->getFloat(pl[i]);
-                                    //printf("inputDataObject has FloatType named %s with value %f\n", name, *floatData);
                                     operation.addParameter(floatData); 
                                 }
                                 break;
@@ -248,7 +247,6 @@ namespace tuscany
                                      * Get each element as a DataObject and add in to the parameter list
                                      */
                     
-                                    printf("inputDataObject has OpenDataObjectType named %s\n", name);
                                     DataObjectList& dataObjectList = inputDataObject->getList(pl[i]);
                                     
                                     for(int j=0; j<dataObjectList.size(); j++)
@@ -328,17 +326,28 @@ namespace tuscany
                     
                             // Set the data in the outputDataObject to be returned
                             DataObjectPtr outputDataObject;
-                            try
-                            {
+                            try {
                                 
                                 // Create the output wrapper
-                                const Type& outputType = dataFactoryPtr->getType(outputTypeURI, outputTypeName);
+                                const Type& rootType = dataFactoryPtr->getType(outputTypeURI, "RootType");
+                                const Property& prop = rootType.getProperty(outputTypeName);
+                                const Type& outputType = prop.getType();
                                 outputDataObject = dataFactoryPtr->create(outputType);
                             }
                             catch (SDORuntimeException e)
                             {
-                                // The output wrapper type is not known, create an open DataObject 
-                                outputDataObject = dataFactoryPtr->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                                try
+                                {
+                                    
+                                    // Create the output wrapper
+                                    const Type& outputType = dataFactoryPtr->getType(outputTypeURI, outputTypeName);
+                                    outputDataObject = dataFactoryPtr->create(outputType);
+                                }
+                                catch (SDORuntimeException e)
+                                {
+                                    // The output wrapper type is not known, create an open DataObject 
+                                    outputDataObject = dataFactoryPtr->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                                }
                             }
                             
                             setOutputData(operation, outputDataObject, dataFactoryPtr);                            
