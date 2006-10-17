@@ -210,7 +210,7 @@
                  </P>
                </LI>
                <LI>You need to configure Apache to run PHP of course. This is well documented but this
-                   is what I put at the end of httpd.conf:
+                   is what to put at the end of httpd.conf:
                  <PRE># PHP5 Support
 LoadModule php5_module "/home/php/php5.1.6/php5apache2.so"
 AddType application/x-httpd-php .php
@@ -235,7 +235,7 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
         <DIV CLASS="section">
          <A NAME="winbld"><H2>Building the BigBank sample on Windows</H2></A>
          <P>If using the binary distribution the samples are built and installed in
-            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
+            &lt;tuscany_sca_install_dir&gt;\samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
          <OL>
              <LI>The following environment variables are required:                                 
                 <UL>
@@ -270,8 +270,8 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
              </LI>
              <LI>Run the sample with the following commands:
                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/BigBank/deploy/bigbank.client</LI>
-                   <LI>./runclient.bat</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\BigBank\deploy\bigbank.client</LI>
+                   <LI>runclient.bat</LI>
                 </UL>
              </LI>
          </OL>                                                  
@@ -289,9 +289,9 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/BigBank/deploy/bigbank.account
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\BigBank\deploy\bigbank.account
                    </LI>
-                   <LI>./runwsserver.bat</LI>
+                   <LI>runwsserver.bat</LI>
                 </OL>
              </LI>
              <LI>Run the client:
@@ -301,8 +301,8 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/BigBank/deploy/bigbank.wsclient</LI>
-                   <LI>./runwsclient.bat</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\BigBank\deploy\bigbank.wsclient</LI>
+                   <LI>runwsclient.bat</LI>
                 </OL>
              </LI>
          </OL>                                                  
@@ -320,9 +320,9 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/BigBank/deploy/bigbank.account
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\BigBank\deploy\bigbank.account
                    </LI>
-                   <LI>./runwsserver.bat</LI>
+                   <LI>runwsserver.bat</LI>
                 </OL>
              </LI>
              <LI>To run the php scripts requires some configuration and setup of a php runtime with 
@@ -340,17 +340,16 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
                    <LI><A HREF="http://pecl4win.php.net/ext.php/php_sdo.dll">php_sdo.dll</A></LI>
                    <LI><A HREF="http://pecl4win.php.net/ext.php/php_sdo_das_xml.dll">php_sdo_das_xml.dll</A></LI>
                  </UL>
-                 <P>I copied these to my php5.1.6/ext dir ( php_soap.dll is already there) and added the 
-                    following to my php.ini file (having already renamed php.ini-recommended to php.ini 
+                 <P>Copy these to the php5.1.6\ext dir ( php_soap.dll is already there) and add the 
+                    following to php.ini file (having already renamed php.ini-recommended to php.ini 
                     of course)
                  <PRE>extension=php_soap.dll
 extension=php_sdo.dll
 extension=php_sdo_das_xml.dll</PRE>
                     I also changed the extension_dir directive to point to my extensions directory:
-                 <PRE>extension_dir="C:/php5.1.6/ext"</PRE>
+                 <PRE>extension_dir="C:\php5.1.6\ext"</PRE>
                  </P>
-                 <P>When I ask PHP to list what modules are active in my version of PHP I get the 
-                    following:
+                 <P>Asking PHP to list what modules are active gives the following:
                  <PRE>C:\php5.1.6>php -m
 [PHP Modules]
 bcmath
@@ -385,15 +384,15 @@ zlib
                  </P>
                </LI>
                <LI>You need to configure Apache to run PHP of course. This is well documented but this
-                   is what I put at the end of httpd.conf:
+                   is what to put at the end of httpd.conf:
                  <PRE># PHP5 Support
-LoadModule php5_module "C:/php5.1.6/php5apache2.dll"
+LoadModule php5_module "C:\php5.1.6\php5apache2.dll"
 AddType application/x-httpd-php .php
 
 # configure the path to php.ini
-PHPIniDir "C:/php5.1.6"</PRE>
+PHPIniDir "C:\php5.1.6"</PRE>
                </LI>
-               <LI>Copy the &lt;tuscany_sca_install_dir&gt;/samples/BigBank/bigbank.phpwsclient
+               <LI>Copy the &lt;tuscany_sca_install_dir&gt;\samples\BigBank\bigbank.phpwsclient
                    directory to your Apache document root directory (by default this is named 'htdocs').
                </LI>
                <LI>Finally, start your Apache web server.
