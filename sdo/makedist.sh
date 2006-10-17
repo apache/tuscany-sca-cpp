@@ -25,6 +25,16 @@ exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
+if [ x$LIBXML2_INCLUDE = x ]; then
+echo "LIBXML2_INCLUDE not set"
+exit;
+fi
+if [ x$LIBXML2_LIB = x ]; then
+echo "LIBXML2_LIB not set"
+exit;
+fi
+echo "Using libxml2 installed at $LIBXML2_LIB, $LIBXML2_INCLUDE"
+
 cd ${TUSCANY_SDOCPP_HOME}/samples
 ./autogen.sh
 ./configure --prefix=${TUSCANY_SDOCPP_HOME}/deploy --enable-static=no
