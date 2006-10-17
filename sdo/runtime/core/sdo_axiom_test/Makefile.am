@@ -15,8 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-prgbindir=$(prefix)/bin/test
-prgbin_PROGRAMS = tuscany_sdo_axiom_test
+noinst_PROGRAMS = tuscany_sdo_axiom_test
 SUBDIRS =
 TESTS = tuscany_sdo_axiom_test
 TESTS_ENVIRONMENT = LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${LIBXML2_LIB}:$(AXIS2C_HOME)/lib

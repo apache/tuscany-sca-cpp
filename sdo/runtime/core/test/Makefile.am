@@ -15,8 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-prgbindir=$(prefix)/bin/test
-prgbin_PROGRAMS = tuscany_sdo_test
+noinst_PROGRAMS = tuscany_sdo_test
 SUBDIRS =
 TESTS=tuscany_sdo_test
 AM_CPPFLAGS = $(CPPFLAGS)
