@@ -153,34 +153,49 @@
          </P> 
          <P>Pre-requisites:
            <UL>
-               <LI>A working component within a composite and solution composite, 
-                   with SCAGEN generated Proxy and Wrapper classes and a .dll or 
-                   .so library compiled from these and the component class files. 
-                   The *.composite and *.componentType files must also be available 
-                   and working                       
+               <LI>At least one working component within a composite and solution 
+                   composite. The component(s) can be implemented in C++, Ruby or Python.
+                   If this includes C++ components, the SCAGEN generated Proxy and Wrapper 
+                   classes and the component class files must have been compiled into a 
+                   .dll or .so library. The *.composite and *.componentType files must 
+                   also be available and working.
                </LI>
            </UL>
          </P>
          <OL>
-             <LI>Create the WSDL that defines the interface of your SCA component. See the 
+             <LI>Optionally, create the WSDL that defines the interface of your SCA component. See the 
                  table <A HREF="#maptable">XML Schema Type to C++ Type Mapping</A> and 
                  <A HREF="#creatingwsdl">Notes on creating WSDL</A> below 
                  for mapping the parameters and return types of the component operations to XML 
-                 schema types in the WSDL. This file needs to be accessible from the component, 
+                 schema types in the WSDL. This file will need to be accessible from the component, 
                  so place it in the same directory as the component or in a subdirectory.
                  <BR/>
                  See the &lt;tuscany_sca_install_dir&gt;/samples/Calculator/sample.calculator/Calculator.wsdl 
                  file as an example.
+                 <BR/>
+                 If you do not provide a WSDL file describing the service interface then the service will 
+                 accept any incoming document/literal wrapped XML request that matches an operation on the 
+                 target service (the wrapper element name and types of the sub-elements must match the operation 
+                 name and its parameter types). Additionally, if the target component is a Python or Ruby 
+                 scripting component, it will accept any parameter type so you can pretty much pass whatever 
+                 data you want, as long at the incoming XML request matches to an operation name with the 
+                 correct number of parameters on the target service.
              </LI>
-             <LI>Add a service definition to the component .composite file, setting the         
-                 interface.wsdl interface attribute to the namespace, port name specified in the        
-                 WSDL, in the form: "&lt;namespace&gt;#wsdl.interface(&lt;port-name&gt;)".    
+             <LI>Add a service definition to the component .composite file. If you have created a WSDL 
+                 definition, set the interface.wsdl interface attribute to the namespace and port name 
+                 specified in the WSDL, in the form: "&lt;namespace&gt;#wsdl.interface(&lt;port-name&gt;)".    
                  Link a reference from this service definition to your
                  component, give the service a name and set the multiplicity if required.                      
                  <BR/>                                                                               
                  E.g. for the Calculator component, based on the Calculator.wsdl file:          
                  <PRE>&lt;service name="CalculatorService"&gt;
     &lt;interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/&gt;
+    &lt;binding.ws/&gt;
+    &lt;reference&gt;CalculatorComponent/CalculatorService&lt;/reference&gt;
+&lt;/service&gt;</PRE>
+                 If the Calculator.wsdl file were not included, the service definition would simply 
+                 be as follows:          
+                 <PRE>&lt;service name="CalculatorService"&gt;
     &lt;binding.ws/&gt;
     &lt;reference&gt;CalculatorComponent/CalculatorService&lt;/reference&gt;
 &lt;/service&gt;</PRE>
@@ -219,9 +234,9 @@
          <P>Your component should now be exposed as an Axis2C Web Service, via the WS    
             service you created. See the Axis2C documentation for writing clients to  
             invoke the Web Service, or you can use any other Web Service client platform 
-            (e.g. <A HREF="http://ws.apache.org/axis2">Axis2 for Java</A>), or you can invoke your    
-            component from another Tuscany runtime by using Tuscany's WS reference
-            support.                                                                     
+            (e.g. <A HREF="http://ws.apache.org/axis2">Axis2 for Java</A>), or you can 
+            invoke your service from another SCA application by using Tuscany's WS 
+            reference support.                                                                     
          </P>
 
       </DIV>              
@@ -305,11 +320,10 @@
          <P>See <A HREF="http://www.ibm.com/developerworks/webservices/library/ws-whichwsdl/">this article</A>
             for an explanation of Document/literal Wrapped style WSDL and Web Services                   
          </P>                                                                                             
-         <P>Operation parameter and return messages that are defined in the WSDL must be                 
-            XML Schema elements containing a complexType - there is currently no                         
-            support for simpleTypes or single-level elements. Also, Document/literal                     
-            Wrapped services require that the operation name is used as the name of the                  
-            incoming element that wraps the operation parameters.                                        
+         <P>Document/literal Wrapped services require that the operation name is used as 
+            the name of the incoming element that wraps the operation parameters. Additionally, 
+            operation parameter and return messages that are defined in the WSDL must be                 
+            XML Schema elements containing a complexType.                                        
          </P>                                                                                                
          <P>For example, a component operation defined in C++ as:                                        
          <PRE>long myOperation(std::string arg1, short arg2, DataObjectPtr arg3);</PRE>
