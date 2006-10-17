@@ -81,7 +81,7 @@
                <TD><B>Download Link</B></TD>
             </TR>
             <TR CLASS="b">
-               <TD>Python version 2.3 or higher</TD>
+               <TD>Python version 2.3.4 or higher</TD>
 
                <TD> 
                   <A HREF="http://www.python.org/download/"
@@ -206,6 +206,10 @@ calculator = sca.locateservice("CalculatorComponent/CalculatorService")
          </P>
 <PRE>&lt;implementation.python module="PythonModuleName" path="relative/path/to/module" class="PythonClassName"/&gt;
 </PRE>
+         <P>Tuscany currently only supports passing simple types (strings, ints, floats, etc) into 
+            and out of Python components. Support for more complex types, such as Service Data Objects,
+            will be added in later releases.
+         </P>
          <P>Additionally, Tuscany currently requires a componentType file that corresponds to the 
             name of the Python module, e.g. for the Python Calculator sample, the module name is
             'CalculatorImpl' and the componentType file is 'CalculatorImpl.componentType'. The 
