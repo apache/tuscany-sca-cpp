@@ -106,8 +106,8 @@
                 </UL></LI>
               <LI>Use the following command sequence to run the deploy script:
                   <UL>
-                      <LI>cd &lt;tuscany_sca_install_dir&gt;/extensions/ws/service</LI>
-                      <LI>./deploy.cmd</LI>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;\extensions\ws\service</LI>
+                      <LI>deploy.cmd</LI>
                   </UL>
               </LI>
            </OL>
@@ -118,17 +118,29 @@
          <P>To deploy Tuscany Web Service support to Axis2C manually, use the following steps:
          </P>
          <OL>
-             <LI>Create a &lt;axis2c version 0.94&gt;/services/tuscany directory 
-             </LI>
-             <LI>Copy all the files in &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/services/tuscany/
-                 to the directory created above
-             </LI>          
-             <LI>Create a &lt;axis2c version 0.94&gt;/modules/tuscany directory 
-             </LI>
-             <LI>Copy all the files in &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/modules/tuscany/
-                 to the directory created above
-             </LI>
-             <LI>Edit the &lt;axis2c version 0.94&gt;/axis2.xml file to add a &lt;ref module="tuscany"&gt; 
+           <LI>
+             Linux:
+             <OL>
+               <LI>cd &lt;axis2c version 0.94&gt;/services</LI>
+               <LI>ln -sf  &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/services/tuscany</LI>
+               <LI>cd &lt;axis2c version 0.94&gt;/modules</LI>
+               <LI>ln -sf  &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/modules/tuscany</LI>
+             </OL>
+             Windows:
+             <OL>
+               <LI>Create a &lt;axis2c version 0.94&gt;\services\tuscany directory 
+               </LI>
+               <LI>Copy all the files in &lt;tuscany_sca_install_dir&gt;\extensions\ws\service\services\tuscany
+                   to the directory created above
+               </LI>          
+               <LI>Create a &lt;axis2c version 0.94&gt;\modules\tuscany directory 
+               </LI>
+               <LI>Copy all the files in &lt;tuscany_sca_install_dir&gt;\extensions\ws\service\modules\tuscany
+                   to the directory created above
+               </LI>
+             </OL>
+           </LI>
+           <LI>Edit the &lt;axis2c version 0.94&gt;/axis2.xml file to add a &lt;ref module="tuscany"&gt; 
                  element. This will register the above module. E.g.:
                  <PRE>...
     &lt;!-- ================================================= --&gt;
@@ -140,7 +152,8 @@
     &lt;module ref="tuscany"/&gt;
 
 ...              </PRE>
-             </LI>
+           </LI>
+
          </OL>
       </DIV>
 
