@@ -25,8 +25,7 @@ pydir=$(prefix)/extensions/python/lib
 py_DATA = tuscany/sca/python/sca_proxy.py
 EXTRA_DIST = tuscany/sca/python/sca_proxy.py
 
-includedir=$(prefix)/extensions/python/include
-nobase_include_HEADERS = \
+noinst_HEADERS = \
 tuscany/sca/python/*.h \
 tuscany/sca/python/model/*.h
 

@@ -17,8 +17,8 @@
 
 libdir=$(prefix)/extensions/php/lib
 lib_LTLIBRARIES = libtuscany_sca_php.la
-includedir=$(prefix)/extensions/php/include
-nobase_include_HEADERS = \
+
+noinst_HEADERS = \
 tuscany/sca/php/*.h \
 tuscany/sca/php/model/*.h
 
