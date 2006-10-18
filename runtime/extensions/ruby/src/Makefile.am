@@ -21,8 +21,7 @@ lib_LTLIBRARIES = libtuscany_sca_ruby.la
 install-exec-hook:
 	cd $(libdir); ln -s -f libtuscany_sca_ruby.so tuscany_sca_ruby.so
 
-includedir=$(prefix)/extensions/ruby/include
-nobase_include_HEADERS = \
+noinst_HEADERS = \
 tuscany/sca/ruby/*.h \
 tuscany/sca/ruby/model/*.h
 
