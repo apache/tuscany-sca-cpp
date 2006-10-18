@@ -19,11 +19,19 @@ libdir=$(prefix)/extensions/python/lib
 lib_LTLIBRARIES = libtuscany_sca_python.la
 
 install-exec-hook:
-	cd $(libdir); ln -s -f libtuscany_sca_python.so sca.so
+	cd $(libdir); \
+        ln -s -f libtuscany_sca_python.so sca.so; \
+        mv libtuscany_sca_python.so.0.0.0 libtuscany_sca_python.so.0.0.0.disabled; \
+        mv libtuscany_sca_python.so.0.0 libtuscany_sca_python.so.0.0.disabled; \
+        mv libtuscany_sca_python.so.0 libtuscany_sca_python.so.0.disabled; \
+        mv libtuscany_sca_python.so libtuscany_sca_python.so.disabled;
 
 pydir=$(prefix)/extensions/python/lib
 py_DATA = tuscany/sca/python/sca_proxy.py
 EXTRA_DIST = tuscany/sca/python/sca_proxy.py
+
+rootdir=$(prefix)/extensions/python
+root_SCRIPTS = deploy.sh
 
 noinst_HEADERS = \
 tuscany/sca/python/*.h \
