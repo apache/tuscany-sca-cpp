@@ -48,6 +48,7 @@ if not exist %rubyextdir%\xsd mkdir %rubyextdir%\xsd
 del %rubyextdir%\bin\tuscany_sca_ruby.*
 del %rubyextdir%\lib\*.lib
 
+copy %srcdir%\deploy.cmd %rubyextdir%
 copy %srcdir%\..\xsd\*.* %rubyextdir%\xsd
 
 copy %inpath%\tuscany_sca_ruby.lib %rubyextdir%\lib
