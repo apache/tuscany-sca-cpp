@@ -21,11 +21,11 @@ lib_LTLIBRARIES = libtuscany_sca_python.la
 install-exec-hook:
 	cd $(libdir); \
         ln -s -f libtuscany_sca_python.so sca.so; \
-        for i in lib/libtuscany_sca_python.*; do mv $i $i.disabled; done
+        for i in libtuscany_sca_python.*; do mv $$i $$i.disabled; done
 
 pydir=$(prefix)/extensions/python/lib
 py_DATA = tuscany/sca/python/sca_proxy.py
-EXTRA_DIST = tuscany/sca/python/sca_proxy.py
+EXTRA_DIST = tuscany/sca/python/sca_proxy.py deploy.sh
 
 rootdir=$(prefix)/extensions/python
 root_SCRIPTS = deploy.sh
