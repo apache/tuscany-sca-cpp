@@ -56,10 +56,11 @@ del %pythonextdir%\lib\*.lib
 #copy %srcdir%\tuscany\sca\python\*.h %pythonextdir%\include\tuscany\sca\python
 #copy %srcdir%\tuscany\sca\python\model\*.h %pythonextdir%\include\tuscany\sca\python\model
 
+copy %srcdir%\deploy.cmd %pythonextdir%
 copy %srcdir%\..\xsd\*.* %pythonextdir%\xsd
 
 copy %inpath%\tuscany_sca_python.lib %pythonextdir%\lib
-copy %inpath%\tuscany_sca_python.dll %pythonextdir%\bin
+copy %inpath%\tuscany_sca_python.dll %pythonextdir%\bin\tuscany_sca_python.dll.disabled
 
 if exist %inpath%\tuscany_sca_python.pdb copy %inpath%\tuscany_sca_python.pdb %pythonextdir%\bin
 
