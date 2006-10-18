@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="sdo_runtime"
 	RootNamespace="sdo_runtime"
 	SccProjectName=""
@@ -811,12 +811,6 @@ copy  ..\..\..\runtime\core\src\commonj\sdo\*.h ..\..\..\deploy\include\commonj\
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 		</Filter>
-		<File
-			RelativePath="..\..\..\Committers Guide.txt">
-		</File>
-		<File
-			RelativePath="..\..\..\readme.txt">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

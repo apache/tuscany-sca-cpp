@@ -983,9 +983,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="Build Instructions.txt">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -148,9 +148,5 @@ SOURCE=..\..\..\..\..\misc\XSDLoading.xml
 SOURCE=..\..\..\..\..\misc\XSDLoading.xsd
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\BuildInstructions.txt
-# End Source File
 # End Target
 # End Project

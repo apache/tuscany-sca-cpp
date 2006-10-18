@@ -59,9 +59,5 @@ MTL=midl.exe
 
 # Name "Build - Win32 Release"
 # Name "Build - Win32 Debug"
-# Begin Source File
-
-SOURCE=.\BuildInstructions.txt
-# End Source File
 # End Target
 # End Project

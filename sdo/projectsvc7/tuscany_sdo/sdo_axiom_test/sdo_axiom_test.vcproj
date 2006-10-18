@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="sdo_axiom_test"
 	SccProjectName=""
 	SccLocalPath="">
@@ -62,7 +62,13 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
@@ -105,7 +111,7 @@
 				TypeLibraryName=".\Debug/sdo_axiom_test.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\deploy\bin\*.dll Debug 
+				CommandLine="copy ..\..\..\deploy\bin\*.dll Debug
 copy ..\..\..\deploy\bin\*.pdb Debug
 "/>
 			<Tool
@@ -119,9 +125,17 @@ copy ..\..\..\deploy\bin\*.pdb Debug
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"

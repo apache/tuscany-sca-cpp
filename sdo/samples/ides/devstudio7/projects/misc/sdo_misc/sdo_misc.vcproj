@@ -320,9 +320,6 @@ copy $(ConfigurationName)\*.exe ..\..\..\..\..\misc\deploy\bin
 				RelativePath="..\..\..\..\..\misc\XSDLoading.xsd">
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\BuildInstructions.txt">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

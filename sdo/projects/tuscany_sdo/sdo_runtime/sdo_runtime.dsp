@@ -747,9 +747,5 @@ SOURCE=..\..\..\runtime\core\src\commonj\sdo\XSDTypeInfo.h
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # End Group
-# Begin Source File
-
-SOURCE="..\..\..\Committers Guide.txt"
-# End Source File
 # End Target
 # End Project

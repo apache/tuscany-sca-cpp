@@ -160,9 +160,6 @@
 				RelativePath="..\..\..\..\..\Calculator\sample.calculator.wsclient\services.xml">
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\BuildInstructions.txt">
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
