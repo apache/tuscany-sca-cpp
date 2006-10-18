@@ -111,7 +111,7 @@ AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service
 AM_CONDITIONAL([WANT_WSBINDING], [test x$want_wsbinding = xtrue])
 
 AC_MSG_CHECKING(whether to build SCA default binding extension)
-AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA default binding extension [default=yes]])],
+AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA default binding extension [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
@@ -122,8 +122,8 @@ AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA defau
     want_scabinding=true
     ;;
   esac ],
-[ AC_MSG_RESULT(yes)
-  want_scabinding=true ]
+[ AC_MSG_RESULT(no)
+  want_scabinding=false ]
 )
 AM_CONDITIONAL([WANT_SCABINDING], [test x$want_scabinding = xtrue])
 
