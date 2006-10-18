@@ -43,23 +43,15 @@ if not exist %extdir% mkdir %extdir%
 if not exist %rubyextdir% mkdir %rubyextdir%
 if not exist %rubyextdir%\bin mkdir %rubyextdir%\bin
 if not exist %rubyextdir%\lib mkdir %rubyextdir%\lib
-#if not exist %rubyextdir%\include mkdir %rubyextdir%\include
-#if not exist %rubyextdir%\include\tuscany mkdir %rubyextdir%\include\tuscany
-#if not exist %rubyextdir%\include\tuscany\sca mkdir %rubyextdir%\include\tuscany\sca
-#if not exist %rubyextdir%\include\tuscany\sca\ruby mkdir %rubyextdir%\include\tuscany\sca\ruby
-#if not exist %rubyextdir%\include\tuscany\sca\ruby\model mkdir %rubyextdir%\include\tuscany\sca\ruby\model
 if not exist %rubyextdir%\xsd mkdir %rubyextdir%\xsd
 
 del %rubyextdir%\bin\tuscany_sca_ruby.*
 del %rubyextdir%\lib\*.lib
 
-#copy %srcdir%\tuscany\sca\ruby\*.h %rubyextdir%\include\tuscany\sca\ruby
-#copy %srcdir%\tuscany\sca\ruby\model\*.h %rubyextdir%\include\tuscany\sca\ruby\model
-
 copy %srcdir%\..\xsd\*.* %rubyextdir%\xsd
 
 copy %inpath%\tuscany_sca_ruby.lib %rubyextdir%\lib
-copy %inpath%\tuscany_sca_ruby.dll %rubyextdir%\bin\tuscany_sca_ruby.dll.rename-me
+copy %inpath%\tuscany_sca_ruby.dll %rubyextdir%\bin\tuscany_sca_ruby.dll.disabled
 
 if exist %inpath%\tuscany_sca_ruby.pdb copy %inpath%\tuscany_sca_ruby.pdb %rubyextdir%\bin
 
