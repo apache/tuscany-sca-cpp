@@ -59,7 +59,7 @@ del %rubyextdir%\lib\*.lib
 copy %srcdir%\..\xsd\*.* %rubyextdir%\xsd
 
 copy %inpath%\tuscany_sca_ruby.lib %rubyextdir%\lib
-copy %inpath%\tuscany_sca_ruby.dll %rubyextdir%\bin
+copy %inpath%\tuscany_sca_ruby.dll %rubyextdir%\bin\tuscany_sca_ruby.dll.rename-me
 
 if exist %inpath%\tuscany_sca_ruby.pdb copy %inpath%\tuscany_sca_ruby.pdb %rubyextdir%\bin
 

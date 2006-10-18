@@ -19,7 +19,12 @@ libdir=$(prefix)/extensions/ruby/lib
 lib_LTLIBRARIES = libtuscany_sca_ruby.la
 
 install-exec-hook:
-	cd $(libdir); ln -s -f libtuscany_sca_ruby.so tuscany_sca_ruby.so
+	cd $(libdir); \
+        ln -s -f libtuscany_sca_ruby.so tuscany_sca_ruby.so; \
+        for i in lib/libtuscany_sca_ruby.*; do mv $i $i.disabled; done
+
+rootdir=$(prefix)/extensions/ruby
+root_SCRIPTS = deploy.sh
 
 noinst_HEADERS = \
 tuscany/sca/ruby/*.h \

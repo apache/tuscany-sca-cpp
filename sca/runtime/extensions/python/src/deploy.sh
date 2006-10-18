@@ -20,9 +20,7 @@
 APFULLDIR=`pwd`
 
 echo "Enabling the Tuscany Python extension"
-mv $APFULLDIR/lib/libtuscany_sca_python.so.0.0.0.disabled $APFULLDIR/lib/libtuscany_sca_python.so.0.0.0
-mv $APFULLDIR/lib/libtuscany_sca_python.so.0.0.disabled $APFULLDIR/lib/libtuscany_sca_python.so.0.0
-mv $APFULLDIR/lib/libtuscany_sca_python.so.0.disabled $APFULLDIR/lib/libtuscany_sca_python.so.0
-mv $APFULLDIR/lib/libtuscany_sca_python.so.disabled $APFULLDIR/lib/libtuscany_sca_python.so
 
+for i in lib/*.disabled; do x=${i%.disabled}; mv $i $x; done
 
+echo "Done"

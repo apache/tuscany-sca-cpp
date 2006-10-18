@@ -24,4 +24,5 @@ echo Enabling the Tuscany Python extension
 rename %currentPath%\bin\tuscany_sca_python.dll.disabled tuscany_sca_python.dll
 
 :end
+echo Done
 endlocal

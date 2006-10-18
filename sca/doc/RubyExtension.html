@@ -82,12 +82,13 @@
                <TD><B>Download Link</B></TD>
             </TR>
             <TR CLASS="b">
-               <TD>Ruby version 1.8.4 or higher</TD>
+               <TD>Ruby version 1.8.x</TD>
 
                <TD> 
                   <A HREF="http://www.ruby-lang.org"
                      TARGET="_blank">http://www.ruby-lang.org</A><BR/>
-                  Please download and follow the installation instructions
+                  Please download and follow the installation instructions. You should
+                  be able to build the Tuscany SCA Ruby Extension with other versions of Ruby.
                </TD>
             </TR>
             </TBODY>
@@ -101,6 +102,13 @@
               <LI>Extract the binary tar package to a folder</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just extracted</LI>
               <LI>Add the &lt;tuscany_sca_install_dir&gt;/lib directory to the LD_LIBRARY_PATH <!--(Linux) or DYLD_LIBRARY_PATH (MacOS X)--> environment variable</LI>
+              <LI>Use the following command sequence to enable the extension:
+                  <UL>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;/extensions/python</LI>
+                      <LI>./deploy.sh</LI>
+                  </UL>
+              </LI>
+
           </OL>
          <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Ruby Extension working with the source release on Linux</H3></A>
           <OL>
@@ -125,6 +133,9 @@
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
                   /usr/local/tuscany/sca</LI>
+              <LI>You will now need to follow the <A HREF="#linuxbin">instructions above</A> to enable 
+                  and use the extension.</LI>
+
               </OL>
            
          <A NAME="winbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Windows</H3></A>
@@ -132,6 +143,12 @@
               <LI>Unzip the supplied zip file to a folder</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just unzipped</LI>
               <LI>Add the &lt;tuscany_sca_install_dir&gt;\bin directory to the PATH environment variable</LI>
+              <LI>Use the following command sequence to enable the extension:
+                  <UL>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;\extensions\ruby</LI>
+                      <LI>deploy.cmd</LI>
+                  </UL>
+              </LI>
           </OL>
         <A NAME="winsrc"><H3>Getting the Tuscany SCA Ruby Extension working with the source release on Windows</H3></A>
            <OL>   
@@ -156,6 +173,9 @@
                   in Visual Studio 7.1 - you can build projects individually
                   or build the samples to rebuild all the projects</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the 'deploy' directory that was just created</LI>
+              <LI>You will now need to follow the <A HREF="#winbin">instructions above</A> to enable 
+                  and use the extension.</LI>
+
           </OL>
       </DIV>
 
