@@ -43,18 +43,18 @@ if not exist %extdir% mkdir %extdir%
 if not exist %pythonextdir% mkdir %pythonextdir%
 if not exist %pythonextdir%\bin mkdir %pythonextdir%\bin
 if not exist %pythonextdir%\lib mkdir %pythonextdir%\lib
-if not exist %pythonextdir%\include mkdir %pythonextdir%\include
-if not exist %pythonextdir%\include\tuscany mkdir %pythonextdir%\include\tuscany
-if not exist %pythonextdir%\include\tuscany\sca mkdir %pythonextdir%\include\tuscany\sca
-if not exist %pythonextdir%\include\tuscany\sca\python mkdir %pythonextdir%\include\tuscany\sca\python
-if not exist %pythonextdir%\include\tuscany\sca\python\model mkdir %pythonextdir%\include\tuscany\sca\python\model
+#if not exist %pythonextdir%\include mkdir %pythonextdir%\include
+#if not exist %pythonextdir%\include\tuscany mkdir %pythonextdir%\include\tuscany
+#if not exist %pythonextdir%\include\tuscany\sca mkdir %pythonextdir%\include\tuscany\sca
+#if not exist %pythonextdir%\include\tuscany\sca\python mkdir %pythonextdir%\include\tuscany\sca\python
+#if not exist %pythonextdir%\include\tuscany\sca\python\model mkdir %pythonextdir%\include\tuscany\sca\python\model
 if not exist %pythonextdir%\xsd mkdir %pythonextdir%\xsd
 
 del %pythonextdir%\bin\tuscany_sca_python.*
 del %pythonextdir%\lib\*.lib
 
-copy %srcdir%\tuscany\sca\python\*.h %pythonextdir%\include\tuscany\sca\python
-copy %srcdir%\tuscany\sca\python\model\*.h %pythonextdir%\include\tuscany\sca\python\model
+#copy %srcdir%\tuscany\sca\python\*.h %pythonextdir%\include\tuscany\sca\python
+#copy %srcdir%\tuscany\sca\python\model\*.h %pythonextdir%\include\tuscany\sca\python\model
 
 copy %srcdir%\..\xsd\*.* %pythonextdir%\xsd
 
