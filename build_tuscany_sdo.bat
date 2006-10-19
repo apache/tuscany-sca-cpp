@@ -80,6 +80,7 @@ copy %FROM_DIR%\sdotest.bat  %TO_SRC%\%SRC_PACKAGE%
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples mkdir %TO_SRC%\%SRC_PACKAGE%\samples 
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\misc mkdir %TO_SRC%\%SRC_PACKAGE%\samples\misc
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\ides mkdir %TO_SRC%\%SRC_PACKAGE%\samples\ides
+copy %FROM_DIR%\samples\build.bat %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\INSTALL   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\LICENSE   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\COPYING   %TO_SRC%\%SRC_PACKAGE%\samples
