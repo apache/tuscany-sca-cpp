@@ -19,7 +19,7 @@ libdir=$(prefix)/extensions/python/lib
 lib_LTLIBRARIES = libtuscany_sca_python.la
 
 install-exec-hook:
-        cd $(libdir); \
+	cd $(libdir); \
         for i in libtuscany_sca_python.so*; \
         do mv $$i $$i.disabled; \
            if ! [ "$$i" = "libtuscany_sca_python.so.0.0.0" ]; then \
