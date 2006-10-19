@@ -197,12 +197,14 @@
                 </UL></LI>
               <LI>Build the source with the following command sequence:
                   <UL>
-                      <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy --enable-static=no</LI>
+                      <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy --enable-static=no --enable-python=yes --enable-ruby=yes</LI>
                       <LI>make</LI>
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sca. Use ./configure --help to see all the available options</LI>
+                  /usr/local/tuscany/sca. If you do not wish to build the Python or Ruby extensions, simply change the 
+                  --enable-python and --enable-ruby options to "no". Use ./configure --help to see all the available 
+                  options</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the &lt;tuscany_sca_install_dir&gt;/deploy
                   directory that contains the built Tuscany SCA distribution</LI>
               </OL>

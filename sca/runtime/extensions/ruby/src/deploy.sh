@@ -21,6 +21,16 @@ APFULLDIR=`pwd`
 
 echo "Enabling the Tuscany Ruby extension"
 
-for i in lib/*.disabled; do x=${i%.disabled}; mv $i $x; done
+cd ./lib
+
+for i in *.disabled; \
+do x=${i%.disabled}; \
+   mv $i $x; \
+   if ! [ "$x" = "libtuscany_sca_ruby.so.0.0.0" ]; then \
+      ln -s -f libtuscany_sca_ruby.so.0.0.0 $x; \
+   fi; \
+done
+
+ln -s -f libtuscany_sca_ruby.so tuscany_sca_ruby.so;
 
 echo "Done"
