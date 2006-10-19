@@ -99,12 +99,10 @@
          <A NAME="install"><H2>Installing the Tuscany SCA Ruby Extension</H2></A>
          <A NAME="linuxbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Linux</H3></A>
           <OL>
-              <LI>Extract the binary tar package to a folder</LI>
-              <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just extracted</LI>
-              <LI>Add the &lt;tuscany_sca_install_dir&gt;/lib directory to the LD_LIBRARY_PATH <!--(Linux) or DYLD_LIBRARY_PATH (MacOS X)--> environment variable</LI>
+              <LI>Ensure the Ruby libraries are available on the PATH environment variable</LI>
               <LI>Use the following command sequence to enable the extension:
                   <UL>
-                      <LI>cd &lt;tuscany_sca_install_dir&gt;/extensions/python</LI>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;/extensions/ruby</LI>
                       <LI>./deploy.sh</LI>
                   </UL>
               </LI>
@@ -140,9 +138,7 @@
            
          <A NAME="winbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Windows</H3></A>
           <OL>
-              <LI>Unzip the supplied zip file to a folder</LI>
-              <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just unzipped</LI>
-              <LI>Add the &lt;tuscany_sca_install_dir&gt;\bin directory to the PATH environment variable</LI>
+              <LI>Ensure the Ruby libraries are available on the PATH environment variable</LI>
               <LI>Use the following command sequence to enable the extension:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;\extensions\ruby</LI>
