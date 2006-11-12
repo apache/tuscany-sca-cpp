@@ -48,24 +48,24 @@ static PyObject* scaError;
 */
 static void printPyObject(char* prefix, char* name, PyObject* pObj)
 {
-    LOGINFO(4, "Entering printPyObject");
     PyObject* pObjRepr = PyObject_Repr(pObj);    
-    LOGINFO_3(4, "%s printPyObject %s: %s", prefix, name, PyString_AsString(pObjRepr));
+    loginfo("%s printPyObject %s: %s", prefix, name, PyString_AsString(pObjRepr));
     Py_XDECREF(pObjRepr);
 
     if(pObj != NULL)
     {
         PyObject* pObjDir = PyObject_Dir(pObj);    
         PyObject* pObjDirRepr = PyObject_Repr(pObjDir);
-        LOGINFO_3(4, "%s printPyObject dir(%s): %s", prefix, name, PyString_AsString(pObjDirRepr));
+        loginfo("%s printPyObject dir(%s): %s", prefix, name, PyString_AsString(pObjDirRepr));
         Py_DECREF(pObjDirRepr);
         Py_DECREF(pObjDir);
     }
-    LOGINFO(4, "Returning from printPyObject");
 }
 
 static PyObject* sca_locateservice(PyObject *self, PyObject *args)
 {
+    logentry();
+    
     // Get the service name
     PyObject* pServiceName = PyTuple_GetItem(args, 0);
 
@@ -81,7 +81,7 @@ static PyObject* sca_locateservice(PyObject *self, PyObject *args)
             PyErr_Print();
         }
         string msg = "Failed to load the sca_proxy Python module - has it been successfully installed?\nReferences from Python components will not be supported";
-        LOGERROR(0, msg.c_str());
+        logerror(msg.c_str());
     }
     else
     {
@@ -107,7 +107,7 @@ static PyObject* sca_locateservice(PyObject *self, PyObject *args)
 
 static PythonServiceProxy* getServiceProxy(PyObject *args)
 {
-    LOGENTRY(1, "sca_module getPythonServiceProxy");
+    logentry();
 
     PythonServiceProxy* serviceProxy = NULL;
     SCARuntime* runtime = SCARuntime::getInstance();
@@ -121,12 +121,12 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
     }
     if(name.size() > 0)
     {
-        LOGINFO_1(3, "sca_invoke Service/Reference name is %s", name.c_str());
+        loginfo("Service/Reference name is %s", name.c_str());
     }
     else
     {
-        string msg = "sca_invoke Service/Reference name has not been set";
-        LOGERROR(1, msg.c_str());
+        string msg = "Service/Reference name has not been set";
+        logwarning(msg.c_str());
         PyErr_SetString(scaError, msg.c_str());
         return NULL;
     }
@@ -141,8 +141,8 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
         Reference* ref = component->findReference(name);
         if(!ref)
         {
-            string msg = "sca_invoke Could not find the reference named "+name;
-            LOGERROR(1, msg.c_str());
+            string msg = "Could not find the reference: "+name;
+            logwarning(msg.c_str());
             PyErr_SetString(scaError, msg.c_str());
 
             return NULL;
@@ -159,8 +159,8 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
 
         if(!service)
         {
-            string msg = "sca_invoke Could not find the service named "+name;
-            LOGERROR(1, msg.c_str());
+            string msg = "Could not find service: "+name;
+            logwarning(msg.c_str());
             PyErr_SetString(scaError, msg.c_str());
             return NULL;
         }
@@ -174,7 +174,7 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
 
 static PyObject* sca_invoke(PyObject *self, PyObject *args)
 {
-    LOGENTRY(1, "sca_invoke");
+    logentry();
 
     PythonServiceProxy* pythonServiceProxy = getServiceProxy(args);
     if(!pythonServiceProxy)
@@ -192,12 +192,12 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 
     if(operationName.size() > 0)
     {
-        LOGINFO_1(3, "sca_invoke Operation name is %s", operationName.c_str());
+        loginfo("Operation: %s", operationName.c_str());
     }
     else
     {
-        string msg = "sca_invoke Operation name has not been set";
-        LOGERROR(1, msg.c_str());
+        string msg = "Operation name has not been set";
+        logwarning(msg.c_str());
         PyErr_SetString(scaError, msg.c_str());
         return NULL;
     }
@@ -215,35 +215,35 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 
         if(PyInt_Check(param))
         {
-            LOGINFO_2(3, "sca_invoke Param %d is int type: %d", i, PyInt_AsLong(param));
+            loginfo("Int param %d: %d", i, PyInt_AsLong(param));
             long* intData = new long;
             *intData = PyInt_AsLong(param);
             operation.addParameter(intData);
         }
         else if(PyBool_Check(param))
         {
-            LOGINFO_2(3, "sca_invoke Param %d is bool type: %d", i, (param == Py_True));
+            loginfo("Bool param %d: %d", i, (param == Py_True));
             bool* boolData = new bool;
             *boolData = (param == Py_True);
             operation.addParameter(boolData);
         }
         else if(PyLong_Check(param))
         {
-            LOGINFO_2(3, "sca_invoke Param %d is long type: %l", i, PyLong_AsLong(param));
+            loginfo("Long param %d: %l", i, PyLong_AsLong(param));
             long* longData = new long;
             *longData = PyLong_AsLong(param);
             operation.addParameter(longData);
         }
         else if(PyFloat_Check(param))
         {
-            LOGINFO_2(3, "sca_invoke Param %d is float type: %f", i, PyFloat_AsDouble(param));
+            loginfo("Float param %d: %f", i, PyFloat_AsDouble(param));
             double* doubleData = new double;
             *doubleData = PyFloat_AsDouble(param);
             operation.addParameter(doubleData);
         }
         else if(PyString_Check(param))
         {
-            LOGINFO_2(3, "sca_invoke %d is string type: %s", i, PyString_AsString(param));
+            loginfo("String param %d: %s", i, PyString_AsString(param));
             const char** stringData = new const char*; 
             *stringData = PyString_AsString(param);
             operation.addParameter(stringData);
@@ -261,7 +261,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
             msg += ") and has repr: ";
             msg += PyString_AsString(paramRepr);
 
-            LOGERROR(1, msg.c_str());
+            logerror(msg.c_str());
             PyErr_SetString(scaError, msg.c_str());
             
             Py_DECREF(paramTypeRepr);
@@ -281,8 +281,8 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
     }
     catch(...)
     {
-        string msg = "sca_invoke Exception thrown whilst invoking the service";
-        LOGERROR(1, msg.c_str());
+        string msg = "Exception whilst invoking the service";
+        logwarning(msg.c_str());
         PyErr_SetString(scaError, msg.c_str());
         return NULL;
     }
@@ -355,7 +355,6 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 
     }
 
-    LOGEXIT(1, "sca_invoke");
     return returnValue;
 }
 static PyMethodDef ModuleMethods[] = 
@@ -367,7 +366,7 @@ static PyMethodDef ModuleMethods[] =
 
 PyMODINIT_FUNC initsca(void)
 {
-    LOGENTRY(1, "initsca");
+    logentry();
 
     // Create a new module 
     PyObject* module = Py_InitModule("sca", ModuleMethods);
@@ -375,6 +374,4 @@ PyMODINIT_FUNC initsca(void)
     scaError = PyErr_NewException("sca.error", NULL, NULL);
     Py_INCREF(scaError);
     PyModule_AddObject(module, "error", scaError);
-
-    LOGEXIT(1, "initsca");
 }

@@ -23,6 +23,7 @@
 #include <stdarg.h>
 
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/core/SCARuntime.h"
 
 
@@ -35,14 +36,11 @@ namespace tuscany
         // ===========
         Operation::Operation(const char* operationName)
         {
-            LOGENTRY(1,"Operation::constructor");
-
+            logentry();
             if (operationName != 0)
             {
                 name = operationName;
             }
-                        
-            LOGEXIT(1,"Operation::constructor");
         }
 
         // ==========
@@ -50,9 +48,8 @@ namespace tuscany
         // ==========
         Operation::~Operation()
         {
-            LOGENTRY(1,"Operation::destructor");
+            logentry();
             clean();
-            LOGEXIT(1,"Operation::destructor");
         }
 
         // ==========
@@ -60,9 +57,8 @@ namespace tuscany
         // ==========
         Operation::Operation(const Operation& op)
         {
-            LOGENTRY(1,"Operation::copy contructor");
+            logentry();
           	copy(op);
-            LOGEXIT(1,"Operation::copy contructor");
         }
 
         // ==========
@@ -70,12 +66,11 @@ namespace tuscany
         // ==========
         Operation& Operation::operator=(const Operation& op)
         {
-            LOGENTRY(1,"Operation::operator=");
+            logentry();
             if (&op != this)
             {
             	copy(op);
             }
-            LOGEXIT(1,"Operation::operator=");
             return *this;
         }
     
@@ -84,7 +79,7 @@ namespace tuscany
         // ==========
         void Operation::clean()
         {
-            LOGENTRY(1,"Operation::clean");
+            logentry();
             for (unsigned int i = 0; i < getNParms(); i++)
             {
             	const Parameter& parm = getParameter(i);
@@ -100,8 +95,6 @@ namespace tuscany
             {
             	delete (DataObjectPtr*)getReturnValue();
             }
-          	
-            LOGEXIT(1,"Operation::clean");
         }
     
         // ==========
@@ -109,7 +102,7 @@ namespace tuscany
         // ==========
         void Operation::copy(const Operation& op)
         {
-            LOGENTRY(1,"Operation::copy");
+            logentry();
             clean();
             for (unsigned int i = 0; i < op.getNParms(); i++)
             {
@@ -132,8 +125,6 @@ namespace tuscany
             {
             	returnValue = op.returnValue;
             }
-          	
-            LOGEXIT(1,"Operation::copy");
         }
 
         // ==============================================
@@ -141,6 +132,7 @@ namespace tuscany
         // ==============================================
         void* Operation::getParameterValue(unsigned int pos) const
         {
+            logentry();
             if (pos < parameters.size())
             {
                 return parameters[pos].getValue();
@@ -154,12 +146,13 @@ namespace tuscany
         // ==============================================
         const Operation::Parameter& Operation::getParameter(unsigned int pos) const
         {
+            logentry();
             if (pos < parameters.size())
             {
                 return parameters[pos];
             }
             
-            throw "index out of range";
+            throwException(ServiceInvocationException, "Index out of range");
         }
 
 
@@ -168,6 +161,7 @@ namespace tuscany
         // ==============================================
         Operation::ParameterType Operation::getParameterType(unsigned int pos) const
         {
+            logentry();
             if (pos < parameters.size())
             {
                 return parameters[pos].getType();
@@ -181,91 +175,91 @@ namespace tuscany
         // ===========================================
         void Operation::addParameter(const void *parm)
         {
-            LOGINFO(4, "Operation::addParameter(void*)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, VOID_TYPE));
          }
 
         void Operation::addParameter(const bool *parm)
         {
-            LOGINFO(4, "Operation::addParameter(bool)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, BOOL));
         }
 
         void Operation::addParameter(const short *parm)
         {
-            LOGINFO(4, "Operation::addParameter(short)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, SHORT));
         }
 
         void Operation::addParameter(const int *parm)
         {
-            LOGINFO(4, "Operation::addParameter(int)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, INT));
         }
 
         void Operation::addParameter(const long *parm)
         {
-            LOGINFO(4, "Operation::addParameter(long)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, LONG));
         }
 
         void Operation::addParameter(const unsigned short *parm)
         {
-            LOGINFO(4, "Operation::addParameter(unsigned short)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, USHORT));
         }
 
         void Operation::addParameter(const unsigned int *parm)
         {
-            LOGINFO(4, "Operation::addParameter(unsigned int)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, UINT));
         }
 
         void Operation::addParameter(const unsigned long *parm)
         {
-            LOGINFO(4, "Operation::addParameter(unsigned long)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, ULONG));
         }
 
        void Operation::addParameter(const float *parm)
         {
-            LOGINFO(4, "Operation::addParameter(float)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, FLOAT));
         }
 
        void Operation::addParameter(const double *parm)
         {
-            LOGINFO(4, "Operation::addParameter(double)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, DOUBLE));
         }
 
        void Operation::addParameter(const long double *parm)
         {
-            LOGINFO(4, "Operation::addParameter(long double)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, LONGDOUBLE));
         }
 
         void Operation::addParameter(const char* *parm)
         {
-            LOGINFO(4, "Operation::addParameter(char*)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, CHARS));
         }
 
         void Operation::addParameter(const char *parm)
         {
-            LOGINFO(4, "Operation::addParameter(char)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, CHAR));
         }
 
         void Operation::addParameter(const string *parm)
         {
-            LOGINFO(4, "Operation::addParameter(string)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)parm, STRING));
         }
 
         void Operation::addParameter(const DataObjectPtr *parm)
         {
-            LOGINFO(4, "Operation::addParameter(DataObjectPtr)");
+            logentry();
             parameters.insert(parameters.end(), Parameter((void*)new DataObjectPtr(*parm), DATAOBJECT));
         }
 
@@ -279,91 +273,91 @@ namespace tuscany
         // ===========================================
         void Operation::setReturnValue(const void *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(void*)");
+            logentry();
             returnValue = Parameter((void*)parm, VOID_TYPE);
         }
 
         void Operation::setReturnValue(const bool *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(bool*)");
+            logentry();
             returnValue = Parameter((void*)parm, BOOL);
         }
 
         void Operation::setReturnValue(const short *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(short*)");
+            logentry();
             returnValue = Parameter((void*)parm, SHORT);
         }
 
         void Operation::setReturnValue(const int *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(int)");
+            logentry();
             returnValue = Parameter((void*)parm, INT);
         }
 
         void Operation::setReturnValue(const long *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(long*)");
+            logentry();
             returnValue = Parameter((void*)parm, LONG);
         }
 
         void Operation::setReturnValue(const unsigned short *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(unsigned short*)");
+            logentry();
             returnValue = Parameter((void*)parm, USHORT);
         }
 
         void Operation::setReturnValue(const unsigned int *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(unsigned int)");
+            logentry();
             returnValue = Parameter((void*)parm, UINT);
         }
 
         void Operation::setReturnValue(const unsigned long *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(unsigned long*)");
+            logentry();
             returnValue = Parameter((void*)parm, ULONG);
         }
 
        void Operation::setReturnValue(const float *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(float*)");
+            logentry();
             returnValue = Parameter((void*)parm, FLOAT);
         }
 
        void Operation::setReturnValue(const double *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(double*)");
+            logentry();
             returnValue = Parameter((void*)parm, DOUBLE);
         }
 
        void Operation::setReturnValue(const long double *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(long double*)");
+            logentry();
             returnValue = Parameter((void*)parm, LONGDOUBLE);
         }
 
         void Operation::setReturnValue(const char *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(char)");
+            logentry();
             returnValue = Parameter((void*)parm, CHAR);
         }
 
         void Operation::setReturnValue(const char* *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(char*)");
+            logentry();
             returnValue = Parameter((void*)parm, CHARS);
         }
 
         void Operation::setReturnValue(const string *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(string*)");
+            logentry();
             returnValue = Parameter((void*)parm, STRING);
         }
 
         void Operation::setReturnValue(const DataObjectPtr *parm)
         {
-            LOGINFO(4, "Operation::setReturnValue(DataObjectPtr*)");
+            logentry();
             returnValue = Parameter((void*)new DataObjectPtr(*parm), DATAOBJECT);
         }
 

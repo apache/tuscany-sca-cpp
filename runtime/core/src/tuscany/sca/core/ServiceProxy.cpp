@@ -33,9 +33,7 @@ namespace tuscany
         ServiceProxy::ServiceProxy(Reference* reference)
             : reference(reference)
         {
-            LOGENTRY(1,"ServiceProxy::constructor");
-            LOGEXIT(1,"ServiceProxy::constructor");
-            
+            logentry();
         }
 
         // ==========
@@ -43,8 +41,7 @@ namespace tuscany
         // ==========
         ServiceProxy::~ServiceProxy()
         {
-            LOGENTRY(1,"ServiceProxy::destructor");
-            LOGEXIT(1,"ServiceProxy::destructor");
+            logentry();
         }
         
     } // End namespace sca

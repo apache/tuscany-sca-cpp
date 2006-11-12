@@ -42,26 +42,29 @@ namespace tuscany
             Component::Component(Composite* composite, const std::string& componentName, ComponentType *componentType) 
                 : name(componentName), composite(composite), type(componentType)
             {
-                LOGENTRY(1, "Component::constructor");
-                LOGINFO_1(3, "Component::constructor: Component name: %s", name.c_str());
+                logentry();
+                loginfo("Component name: %s", name.c_str());
                 
                 // Initialize the component from its component type
                 componentType->initializeComponent(this);
                 
-                LOGEXIT(1, "Component::constructor");
             }
 
             Component::~Component()
             {
+                logentry();
             }
 
             void Component::addService(Service* service)
             {
+                logentry();
                 services[service->getType()->getName()] = service;
             }
             
             Service* Component::findService(const string& serviceName)
             {
+                logentry();
+                
                 // If serviceName is empty then return the ONLY service
                 if (serviceName == "" 
                     && services.size() == 1)
@@ -82,16 +85,20 @@ namespace tuscany
             
             void Component::addReference(Reference* reference)
             {
+                logentry();
                 references[reference->getType()->getName()] = reference;
             }
             
             Reference* Component::findReference(const std::string& referenceName)
             {
+                logentry();
                 return references[referenceName];
             }
 
             DataObjectPtr Component::getProperties()
             {
+                logentry();
+                
                 if (!properties)
                 {
                     properties = type->getPropertyDataFactory()->create("org/osoa/sca", "Properties");
@@ -101,7 +108,8 @@ namespace tuscany
             
             void Component::setProperty(const string& name, DataObjectPtr value)
             {
-                //cout << "setting property: " << name.c_str() << " to: " << value <<endl;
+                logentry();
+                
                 DataObjectPtr props = getProperties();
 
                 // Get the property's type
@@ -130,14 +138,11 @@ namespace tuscany
                         props->setDataObject(propProperty, value);
                     }
                 }
-                catch (SDOPropertyNotFoundException&)
+                catch (SDORuntimeException& ex)
                 {
                     // Configuration error: property is not defined
-                    string message = "Undefined property: " + name;
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, ex);
                 }
-
-                //cout << "properties set: " << props << endl;
 
             }
 

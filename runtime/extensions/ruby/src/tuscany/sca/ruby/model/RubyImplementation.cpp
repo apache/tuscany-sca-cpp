@@ -61,7 +61,7 @@ namespace tuscany
                 {
                     ruby_init();
                     ruby_init_loadpath();
-
+                    
                     // Load the Rexml module. Rexml is used to handle XML documents.
                     //rb_require("rexml/document");
                     // Use rb_eval_string for now as it provides better error reporting
@@ -76,7 +76,6 @@ namespace tuscany
                 if (script != "")
                 {
                     // Convert any windows slashes \ in the root path to unix slashes /
-                    // otherwise the ruby interpreter throws an error
                     string rootpath = getComposite()->getRoot();
                     int pos = 0;
                     while((pos = rootpath.find('\\', pos)) != string::npos)

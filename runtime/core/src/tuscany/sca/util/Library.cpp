@@ -40,14 +40,14 @@ namespace tuscany
         Library::Library(const string& libraryName)
             : name(libraryName), hDLL(NULL)
         {
-            LOGINFO_1(3, "Library::construcor : %s", name.c_str()); 
+            logentry();
             load();
         }
 
         Library::Library(const Library& lib)
             : name(lib.name), hDLL(NULL)
         {
-            LOGINFO_1(3, "Library::copy constructor : %s", name.c_str()); 
+            logentry();
             if (lib.hDLL)
             {
                 load();
@@ -56,7 +56,7 @@ namespace tuscany
         
         Library& Library::operator=(const Library& lib)
         {
-            LOGINFO_1(3, "Library::operator= : %s", name.c_str()); 
+            logentry();
             if (&lib != this)
             {
                 unload();
@@ -68,14 +68,16 @@ namespace tuscany
         
         Library::~Library()
         {
-            LOGINFO_1(3, "Library::destructor: %s", name.c_str()); 
+            logentry();
             unload();
         }
         
         
         void Library::load()
         {
-            LOGINFO_1(3, "Library::load : %s", name.c_str()); 
+            logentry();
+            loginfo("Library: %s", name.c_str()); 
+
             string msg;
 #if defined(WIN32)  || defined (_WINDOWS)
             int l = name.length();
@@ -121,16 +123,17 @@ namespace tuscany
 #endif
             if (hDLL == NULL)
             {
-                LOGERROR(1, msg.c_str());
-                throw SystemConfigurationException(msg.c_str());
+                throwException(SystemConfigurationException, msg.c_str());
             }    
         }
         
         void Library::unload()
         {
+            logentry();
+            loginfo("Library: %s", name.c_str()); 
+            
             if (hDLL != NULL)
             {
-            LOGINFO_1(3, "Library::unload : %s", name.c_str()); 
 #if defined(WIN32)  || defined (_WINDOWS)
                 FreeLibrary(hDLL);
 #else
@@ -142,7 +145,8 @@ namespace tuscany
     
         void* Library::getSymbol(const string& symbol)
         {
-            LOGINFO_1(3, "Library::getSymbol : %s", symbol.c_str()); 
+            logentry();
+            loginfo("Symbol: %s", symbol.c_str()); 
             if (!hDLL)
             {
                 return 0;

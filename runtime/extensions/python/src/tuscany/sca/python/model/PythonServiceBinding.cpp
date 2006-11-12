@@ -34,22 +34,19 @@ namespace tuscany
             PythonServiceBinding::PythonServiceBinding(Service* service)
                 : ServiceBinding(service, "")
             {
-                LOGENTRY(1,"PythonServiceBinding::constructor");
+                logentry();
                 serviceWrapper = new PythonServiceWrapper(service);
-                LOGEXIT(1,"PythonServiceBinding::constructor");
             }
 
             // Destructor
             PythonServiceBinding::~PythonServiceBinding()
             {
-                LOGENTRY(1,"PythonServiceBinding::destructor");
-                LOGEXIT(1,"PythonServiceBinding::destructor");
+                logentry();
             }
             
             ServiceWrapper* PythonServiceBinding::getServiceWrapper()
             {
-                LOGENTRY(1,"PythonServiceBinding::getServiceWrapper");
-                LOGEXIT(1,"PythonServiceBinding::getServiceWrapper");
+                logentry();
                 return (ServiceWrapper*)serviceWrapper;
             }
                 

@@ -49,6 +49,7 @@ namespace tuscany
         CompositeContextImpl::CompositeContextImpl(Component* component)
             : CompositeContext(0), component(component),  composite((Composite*)component->getType())
         {
+            logentry();
         }
 
         // ==========
@@ -56,6 +57,7 @@ namespace tuscany
         // ==========
         CompositeContextImpl::~CompositeContextImpl()
         {
+            logentry();
         }
 
         // ===========================================================================
@@ -63,30 +65,38 @@ namespace tuscany
         // ===========================================================================
         void* CompositeContextImpl::locateService(const std::string& serviceName)
         {
-            LOGENTRY(1, "CompositeContextImpl::locateService");
-
-            // ----------------------------
-            // Locate the component service
-            // ----------------------------
-            Service* service = composite->findComponentService(serviceName);
-            string msg;
-            if (!service)
+            logentry();
+            try
             {
-                msg = "Service not found: ";
-                msg = msg + serviceName;
-                throw ServiceNotFoundException(msg.c_str());
+                // ----------------------------
+                // Locate the component service
+                // ----------------------------
+                Service* service = composite->findComponentService(serviceName);
+                string msg;
+                if (!service)
+                {
+                    msg = "Service not found: ";
+                    msg = msg + serviceName;
+                    throwException(ServiceNotFoundException, msg.c_str());
+                }
+    
+                // ----------------------------
+                // Get a Proxy for this service
+                // ----------------------------
+    
+                // The locate service API is used from CPP clients so we are using
+                // our default service proxy here
+                CPPServiceProxy* serviceProxy =  new CPPServiceProxy(service);
+                return serviceProxy->getProxy();
             }
-
-            // ----------------------------
-            // Get a Proxy for this service
-            // ----------------------------
-
-            // The locate service API is used from CPP clients so we are using
-            // our default service proxy here
-            CPPServiceProxy* serviceProxy =  new CPPServiceProxy(service);
-            LOGEXIT(1, "CompositeContextImpl::locateService");
-            return serviceProxy->getProxy();
-
+            catch (ServiceRuntimeException&)
+            {
+                throw;
+            }
+            catch (TuscanyRuntimeException& e)
+            {
+                throwException(ServiceRuntimeException, e);
+            }
         }
         
         // ==============================================
@@ -94,11 +104,20 @@ namespace tuscany
         // ==============================================
         DataFactoryPtr CompositeContextImpl::getDataFactory()
         {
-            LOGENTRY(1, "CompositeContextImpl::getDataFactory");
-            DataFactoryPtr dataFactory = composite->getDataFactory();
-            
-            LOGEXIT(1, "CompositeContextImpl::getDataFactory");
-            return dataFactory;
+            logentry();
+            try
+            {
+                DataFactoryPtr dataFactory = composite->getDataFactory();
+                return dataFactory;
+            }
+            catch (ServiceRuntimeException&)
+            {
+                throw;
+            }
+            catch (TuscanyRuntimeException& e)
+            {
+                throwException(ServiceRuntimeException, e);
+            }
         }
 
        } // End namespace cpp

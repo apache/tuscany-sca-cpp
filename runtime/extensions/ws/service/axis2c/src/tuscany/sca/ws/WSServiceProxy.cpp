@@ -56,7 +56,7 @@ namespace tuscany
             WSServiceProxy::WSServiceProxy(Reference* reference)
                 : ServiceProxy(reference)
             {
-                LOGENTRY(1,"WSServiceProxy::constructor");
+                logentry();
     
                 // Get the target service wrapper
                 WSReferenceBinding* referenceBinding = (WSReferenceBinding*)reference->getBinding();
@@ -67,7 +67,7 @@ namespace tuscany
                 DataFactoryPtr dataFactory = reference->getComponent()->getComposite()->getDataFactory();
                 try {
                     const Type& bodyType = dataFactory->getType("http://www.w3.org/2003/05/soap-envelope", "Body");
-                } catch (SDORuntimeException e)
+                } catch (SDORuntimeException&)
                 {
                     
                     // Define the SOAP 1.2 Body type
@@ -88,8 +88,13 @@ namespace tuscany
                         "http://schemas.xmlsoap.org/soap/envelope/", "Body",
                         false, false, true);
                 }
-                
-                LOGEXIT(1,"WSServiceProxy::constructor");
+
+                try {
+                    const Type& tempType = dataFactory->getType("http://tempuri.org", "RootType");
+                } catch (SDORuntimeException&)
+                {
+                    dataFactory->addType("http://tempuri.org", "RootType", false, false, false);                
+                }
             }
             
             // ==========
@@ -97,8 +102,7 @@ namespace tuscany
             // ==========
             WSServiceProxy::~WSServiceProxy()
             {
-                LOGENTRY(1,"WSServiceProxy::destructor");
-                LOGEXIT(1,"WSServiceProxy::destructor");
+                logentry();
             }
             
             ///
@@ -106,7 +110,7 @@ namespace tuscany
             ///
             DataObjectPtr WSServiceProxy::invoke(const WSDLOperation& wsdlOperation, DataObjectPtr inputDataObject)
             {
-                LOGENTRY(1,"WSServiceProxy::invoke");
+                logentry();
     
                 Reference* reference = getReference();
                 Component* component = reference->getComponent();
@@ -121,13 +125,13 @@ namespace tuscany
                 const char* outputTypeURI = wsdlOperation.getOutputTypeUri().c_str();
                 const char* outputTypeName = wsdlOperation.getOutputTypeName().c_str();
 
-                LOGINFO_2(4, "WSServiceProxy has got WSDLOperation with inputType: %s#%s",
+                loginfo("WSDLOperation inputType: %s#%s",
                     wsdlOperation.getInputTypeUri().c_str(), 
                     wsdlOperation.getInputTypeName().c_str());
-                LOGINFO_2(4, "WSServiceProxy has got WSDLOperation with outputType: %s#%s",
+                loginfo("WSDLOperation outputType: %s#%s",
                     outputTypeURI, 
                     outputTypeName);
-                LOGINFO_2(4, "WSServiceProxy has got WSDLOperation with documentStyle=%d and wrapped=%d",        
+                loginfo("WSDLOperation documentStyle: %d, wrapped: %d",        
                     documentStyle,
                     wrappedStyle);
                 
@@ -235,7 +239,7 @@ namespace tuscany
                                     DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
                                     if(!dataObjectData)
                                     {
-                                        LOGINFO_1(4, "SDO DataObject parameter named %s was null", name);
+                                        loginfo("Null DataObject parameter named %s", name);
                                     }
                                     operation.addParameter(&dataObjectData);
                                 }
@@ -256,7 +260,7 @@ namespace tuscany
                                         {
                                             
                                             // Add a null DataObject ptr
-                                            LOGINFO_2(4, "SDO OpenDataObject parameter named %s[%d] was null", name, j);
+                                            loginfo("Null OpenDataObject parameter named %s[%d]", name, j);
                                             operation.addParameter(&dataObjectData);
                                         }
                                         else
@@ -277,7 +281,7 @@ namespace tuscany
                                                     DataObjectPtr dob = sequence->getDataObjectValue(0);
                                                     if(!dob)
                                                     {
-                                                        LOGINFO_1(4, "SDO DataObject parameter named %s was null", name);
+                                                        loginfo("Null DataObject parameter named %s", name);
                                                     }
                                                     operation.addParameter(&dob);
                                                 }
@@ -285,7 +289,7 @@ namespace tuscany
                                             else
                                             {
                                                 // Empty content, add an empty string
-                                                LOGINFO_2(4, "SDO OpenDataObject parameter named %s[%d] was empty", name, j);
+                                                loginfo("Empty OpenDataObject parameter named %s[%d]", name, j);
                                                 string* stringData = new string(""); 
                                                 operation.addParameter(stringData);
                                             }
@@ -294,26 +298,26 @@ namespace tuscany
                                 }
                                 break;
                             case Type::DateType:
-                                LOGERROR_1(0, "SDO DateType parameters are not yet supported (%s)", name);
+                                logwarning("SDO DateType parameters are not yet supported (%s)", name);
                                 return NULL;
                             case Type::LongType:
-                                LOGERROR_1(0, "SDO LongType (int64_t) parameters are not yet supported (%s)", name);
+                                logwarning("SDO LongType (int64_t) parameters are not yet supported (%s)", name);
                                 return NULL;
                                 break;
                             case Type::UriType:
-                                LOGERROR_1(0, "SDO UriType parameters are not yet supported (%s)", name);
+                                logwarning("SDO UriType parameters are not yet supported (%s)", name);
                                 return NULL;
                                 break;
                             case Type::BigDecimalType:
-                                LOGERROR_1(0, "SDO BigDecimalType parameters are not yet supported (%s)", name);
+                                logwarning("SDO BigDecimalType parameters are not yet supported (%s)", name);
                                 return NULL;
                                 break;
                             case Type::BigIntegerType:
-                                LOGERROR_1(0, "SDO BigIntegerType parameters are not yet supported (%s)", name);
+                                logwarning("SDO BigIntegerType parameters are not yet supported (%s)", name);
                                 return NULL;
                                 break;
                             default:
-                                LOGERROR_1(0, "Unknown SDO type parameter named %s has been found. Unknown types are not yet supported", name);
+                                logwarning("Unknown SDO type parameter named %s has been found. Unknown types are not yet supported", name);
                                 return NULL;
                             }         
                         }
@@ -334,7 +338,7 @@ namespace tuscany
                                 const Type& outputType = prop.getType();
                                 outputDataObject = dataFactoryPtr->create(outputType);
                             }
-                            catch (SDORuntimeException e)
+                            catch (SDORuntimeException&)
                             {
                                 try
                                 {
@@ -343,7 +347,7 @@ namespace tuscany
                                     const Type& outputType = dataFactoryPtr->getType(outputTypeURI, outputTypeName);
                                     outputDataObject = dataFactoryPtr->create(outputType);
                                 }
-                                catch (SDORuntimeException e)
+                                catch (SDORuntimeException&)
                                 {
                                     // The output wrapper type is not known, create an open DataObject 
                                     outputDataObject = dataFactoryPtr->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
@@ -352,35 +356,32 @@ namespace tuscany
                             
                             setOutputData(operation, outputDataObject, dataFactoryPtr);                            
 
-                            LOGEXIT(1,"WSServiceProxy::invoke");
-                        
                             return outputDataObject;
 
                         }
-                      catch(SDORuntimeException &ex)
+                      catch(SDORuntimeException& ex)
                       {   
                             // TODO: Return more error information than just a null DataObject
-                            LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
+                            logwarning("%s has been caught: %s", ex.getEClassName(), ex.getMessageText());
                             return NULL;
                       }  
-                      catch(TuscanyRuntimeException &ex)
+                      catch(TuscanyRuntimeException& ex)
                       {   
                             // TODO: Return more error information than just a null DataObject
-                            LOGERROR_2(0, "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
+                            logwarning("%s has been caught: %s", ex.getEClassName(), ex.getMessageText());
                             return NULL;
                       }  
                     }
                     else
                     {
-                        LOGERROR(0, "CompositeServices with non-wrapped document style WSDL Operations are not yet supported");
-                        LOGEXIT(1,"WSServiceProxy::invoke");
+                        logwarning("Non-wrapped document style WSDL operations are not yet supported");
                         return NULL;
                     }
                 }
                 else
                 {
                     // RPC style
-                    LOGERROR(0, "CompositeServices with RPC style WSDL Operations are not yet supported");
+                    logwarning("RPC style WSDL Operations are not yet supported");
                     return NULL;
                 }
             }
@@ -388,6 +389,8 @@ namespace tuscany
             
             void WSServiceProxy::setOutputData(Operation& operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr)
             {    
+                logentry();
+
                 // Go through data object to set the return value
                 PropertyList pl = outputDataObject->getType().getProperties();
             
@@ -471,13 +474,13 @@ namespace tuscany
                             {
                                 string msg = "Unsupported parameter type";
                                 msg += resultType;
-                                throw msg.c_str();
+                                throwException(SystemConfigurationException, msg.c_str());
                             }
                         }
                     }
                     else
                     {
-                        LOGINFO(4, "No return values are defined");
+                        loginfo("No return values defined");
                     }
                 }
                 else {
@@ -548,7 +551,7 @@ namespace tuscany
                                 }
                                 else
                                 {
-                                    LOGINFO_1(4, "Return value is NULL, so leaving property %s unset", pl[i].getName());
+                                    loginfo("Null return value, leaving property %s unset", pl[i].getName());
                                 }
                                 break;
                             }
@@ -566,7 +569,7 @@ namespace tuscany
                                 }
                                 else
                                 {
-                                    LOGINFO_1(4, "Return value is NULL, so leaving property %s unset", pl[i].getName());
+                                    loginfo("Null return value, leaving property %s unset", pl[i].getName());
                                 }
                                 
                                 break;
@@ -575,7 +578,7 @@ namespace tuscany
                             {
                                 string msg = "Unsupported parameter type";
                                 msg += resultType;
-                                throw msg.c_str();
+                                throwException(SystemConfigurationException, msg.c_str());
                             }
                         }
                     }

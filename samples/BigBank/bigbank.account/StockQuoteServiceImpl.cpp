@@ -60,7 +60,7 @@ namespace services {
                     stockPrice=stockDoc->getRootDataObject()->getFloat("Stock.0/Last");
                 }
             }
-            catch (SDORuntimeException e)
+            catch (SDORuntimeException& e)
             {
                 std::cout << e << std::endl;
                 return 0.0f;

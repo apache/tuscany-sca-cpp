@@ -26,6 +26,7 @@
 #include "tuscany/sca/util/File.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/util/Logging.h"
 #include <iostream>
 
 #include <string>
@@ -72,7 +73,7 @@ namespace tuscany
         {
             if (size() <= index)
             {
-                throw SystemConfigurationException("Files::operator[] index out of bounds");
+                throwException(SystemConfigurationException, "Index of of bounds");
             }
             
             FILES::iterator iter = files.begin();
@@ -165,7 +166,7 @@ namespace tuscany
             DIR* root = opendir(rootDir.c_str());
             if (!root)
             {
-                cout << "Unable to open directory: " << rootDir.c_str() << endl;
+                logwarning("Unable to open directory: %s", rootDir.c_str());
                 return;
             }
             
@@ -186,7 +187,7 @@ namespace tuscany
                     continue;
                 if (stat(entryName.c_str(), &statbuf)  != 0)
                 {
-                    perror("stat");
+                    logwarning("Unable to stat entry: %s", entryName.c_str());
                 }
                 else
                 {

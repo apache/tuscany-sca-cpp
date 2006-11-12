@@ -29,18 +29,16 @@ namespace tuscany
         // Constructor for the InterfaceExtension class. 
         // ===================================================================
         InterfaceExtension::InterfaceExtension()
-        { 
-            LOGENTRY(1, "InterfaceExtension::constructor");        
-            LOGEXIT(1, "InterfaceExtension::constructor");
+        {
+            logentry(); 
         }
 
         // ===================================================================
         // Destructor for the InterfaceExtension class.
         // ===================================================================
         InterfaceExtension::~InterfaceExtension()
-        { 
-            LOGENTRY(1, "InterfaceExtension::destructor");;           
-            LOGEXIT(1, "InterfaceExtension::destructor");
+        {
+            logentry(); 
         }
 
                 

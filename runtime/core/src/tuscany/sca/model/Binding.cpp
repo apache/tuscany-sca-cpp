@@ -34,11 +34,13 @@ namespace tuscany
             // Constructor
             Binding::Binding(const string& uri) : uri(uri)
             {
+                logentry();
             }
 
             // Destructor
             Binding::~Binding()
             {
+                logentry();
             }
 
         } // End namespace model

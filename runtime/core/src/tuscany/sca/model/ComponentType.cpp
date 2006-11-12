@@ -46,22 +46,25 @@ namespace tuscany
             ComponentType::ComponentType(Composite* composite, const string& name)
             : composite(composite), name(name)
             {
-                LOGENTRY(1, "ComponentType::constructor");
-                LOGEXIT(1, "ComponentType::constructor");
+                logentry(); 
             }
 
             // Destructor
             ComponentType::~ComponentType()
             {
+                logentry(); 
             }
 
             void ComponentType::addServiceType(ServiceType* serviceType)
             {
+                logentry(); 
                 serviceTypes[serviceType->getName()] = serviceType;
             }
             
             ServiceType* ComponentType::findServiceType(const string& serviceName)
             {
+                logentry(); 
+
                 // If serviceName is empty then return the ONLY service
                 if (serviceName == "" 
                     && serviceTypes.size() == 1)
@@ -76,11 +79,15 @@ namespace tuscany
             
             void ComponentType::addReferenceType(ReferenceType* referenceType)
             {
+                logentry(); 
+
                 referenceTypes[referenceType->getName()] = referenceType;
             }
             
             ReferenceType* ComponentType::findReferenceType(const string& referenceName)
             {
+                logentry(); 
+
                 return referenceTypes[referenceName];
             }
             
@@ -89,6 +96,8 @@ namespace tuscany
                 bool many,
                 DataObjectPtr* defaultValue)
             {
+                logentry(); 
+
                 // Create a Type in the Properties dataFactory
                 DataFactoryPtr factory = getPropertyDataFactory();
                 
@@ -222,7 +231,6 @@ namespace tuscany
                     }
                     catch (SDOTypeNotFoundException&)
                     {
-                        // cout << "setting default failed" <<endl;
                     }
                 }
             }

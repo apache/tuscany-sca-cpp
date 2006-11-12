@@ -42,33 +42,31 @@ namespace tuscany
             Composite::Composite(const string& name, const string& root) 
                 : ComponentType(0, name), root(root)
             {
-                LOGENTRY(1, "Composite::constructor");
-                LOGEXIT(1, "Composite::constructor");
+                logentry(); 
             }
             
             // Destructor
             Composite::~Composite()
             {
+                logentry(); 
             }
             
             void Composite::addComponent(Component* component)
             {
-                LOGENTRY(1, "Composite::addComponent");
+                logentry(); 
                 components[component->getName()] = component;
-                LOGEXIT(1, "Composite::addComponent");
             }
             
             Component* Composite::findComponent(const std::string& name)
             {
-                LOGENTRY(1, "Composite::findComponent");
+                logentry(); 
                 Component* component = components[name];
-                LOGEXIT(1, "Composite::findComponent");
                 return component;
             }
             
             Service* Composite::findComponentService(const std::string& name)
             {
-                LOGENTRY(1, "Composite::findComponentService");
+                logentry(); 
                 
                 Service* service = 0;
                 
@@ -83,21 +81,19 @@ namespace tuscany
                     // Locate the service
                     service = component->findService(serviceName);
                 }
-                LOGEXIT(1, "Composite::findComponentService");
                 return service;
             }
             
             void Composite::addWire(const std::string& source, const std::string& target)
             {
-                LOGENTRY(1, "Composite::addWire");
+                logentry(); 
                 Wire* wire=new Wire(source, target);
                 wires.push_back(wire);
-                LOGEXIT(1, "Composite::addWire");
             }
             
             void Composite::addInclude(Composite* composite)
             {
-                LOGENTRY(1, "Composite::addInclude");
+                logentry(); 
                 includes.push_back(composite);
 
                 for (COMPONENT_MAP::iterator iter = composite->components.begin();
@@ -106,12 +102,11 @@ namespace tuscany
                 {
                     components[iter->first] = iter->second;
                 } 
-                LOGEXIT(1, "Composite::addInclude");
             }
             
             void Composite::resolveWires()
             {
-                LOGENTRY(1, "Composite::resolveWires");
+                logentry(); 
 
                 for (WIRES::iterator iter = wires.begin();
                 iter != wires.end();
@@ -123,7 +118,7 @@ namespace tuscany
                     Service* service = findComponentService(wire->getTarget());
                     if (!service)
                     {
-                        LOGERROR_1(0, "Composite::resolveWires: Wire target %s not found", wire->getTarget().c_str());
+                        logerror("Wire target %s not found", wire->getTarget().c_str());
                     }
                     else
                     {
@@ -140,36 +135,42 @@ namespace tuscany
                             }
                             else
                             {
-                                LOGERROR_1(0, "Composite::resolveWires: Wire source reference %s not found", wire->getSourceReference().c_str());
+                                logerror("Wire source reference %s not found", wire->getSourceReference().c_str());
                             }
                         }
                         else
                         {
-                            LOGERROR_1(0, "Composite::resolveWires: Wire source %s not found", wire->getSourceComponent().c_str());
+                            logerror("Wire source %s not found", wire->getSourceComponent().c_str());
                         }
                     }
                 }
-
-                LOGEXIT(1, "Composite::resolveWires");
             }
 
             void Composite::addWSDLDefinition(commonj::sdo::DataObjectPtr wsdlModel)
             {
-                LOGENTRY(1, "Composite::addWSDLDefinition");
+                logentry(); 
                 WSDLDefinition* wsdlDefinition = new WSDLDefinition(wsdlModel);
-                wsdlDefinitions[wsdlDefinition->getNamespace()] = wsdlDefinition;
-                LOGEXIT(1, "Composite::addWSDLDefinition");
-
+                
+                WSDLDefinition* existingDefinition = wsdlDefinitions[wsdlDefinition->getNamespace()];
+                if (existingDefinition == NULL)
+                {
+                    wsdlDefinitions[wsdlDefinition->getNamespace()] = wsdlDefinition;
+                }
+                else{
+                   existingDefinition->addWSDLModel(wsdlModel); 
+                }
             }
 
             WSDLDefinition* Composite::findWSDLDefinition(const std::string& wsdlNamespace )
             {
+                logentry(); 
                 return wsdlDefinitions[wsdlNamespace];
 
             }
 
             commonj::sdo::XSDHelperPtr Composite::getXSDHelper()
             {
+                logentry(); 
                 if (xsdHelper == 0)
                 {
                     xsdHelper = commonj::sdo::HelperProvider::getXSDHelper();
@@ -180,6 +181,7 @@ namespace tuscany
 
             commonj::sdo::XMLHelperPtr Composite::getXMLHelper()
             {
+                logentry(); 
                 if (xmlHelper == 0)
                 {
                     xmlHelper = commonj::sdo::HelperProvider::getXMLHelper(getXSDHelper()->getDataFactory());
@@ -190,6 +192,7 @@ namespace tuscany
 
             commonj::sdo::DataFactoryPtr Composite::getDataFactory()
             {
+                logentry(); 
                 return getXSDHelper()->getDataFactory();
             }
             

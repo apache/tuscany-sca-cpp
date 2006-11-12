@@ -146,33 +146,35 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
     try
     {
 
-        bool newInitParams = false;
+        bool restart = false;
+        bool resolve = false;
 
-        if(systemRoot != root)
+        if (systemRoot != root)
         {
             systemRoot = root;
-            newInitParams = true;
+            restart = true;
+            resolve = true;
         }
 
-        if(componentName != component)
+        if (componentName != component)
         {
             componentName = component;
-            newInitParams = true;
+            resolve = true;
         }
         
-        if(serviceName != service)
+        if (serviceName != service)
         {
             serviceName = service;
-            newInitParams = true;
+            resolve = true;
         }
         
-        if(tuscanyRuntime == NULL)
+        if (tuscanyRuntime == NULL)
         {
             AXIS2_LOG_INFO((env)->log, "Creating new Tuscany runtime\n");
             tuscanyRuntime = new TuscanyRuntime(componentName, systemRoot);
             tuscanyRuntime->start();
         }
-        else if(tuscanyRuntime != NULL && newInitParams)
+        else if (tuscanyRuntime != NULL && restart)
         {
             AXIS2_LOG_INFO((env)->log, "Restarting Tuscany runtime\n");
             tuscanyRuntime->stop();
@@ -181,14 +183,14 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
             tuscanyRuntime->start();
         }
 
-        if(compositeService == NULL)
+        if (compositeService == NULL)
         {
             Composite* composite = (Composite*)SCARuntime::getInstance()->getDefaultComponent()->getType();
             compositeService = (CompositeService*)composite->findComponent(serviceName);
         }
         else
         {
-            if(newInitParams)
+            if (resolve)
             {
                 Composite* composite = SCARuntime::getInstance()->getDefaultComponent()->getComposite();
                 compositeService = (CompositeService*)composite->findComponent(serviceName);
@@ -220,34 +222,30 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
             if (element)
             {
                 string op_name = "";
+                
                 axis2_bool_t rest = AXIS2_MSG_CTX_GET_DOING_REST(msg_ctx, env);
                 if (rest)
                 {
                     axis2_endpoint_ref_t *endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
                     if (endpoint_ref)
                     {
-                        const axis2_char_t *address = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
-                        if (address)
+                        const axis2_char_t *addr = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
+                        if (addr)
                         {
-                            axis2_char_t **url_tokens = axis2_parse_request_url_for_svc_and_op(env, address);
-                            if (url_tokens)
-                            {                
-                                if (url_tokens[1])
-                                {
-                                    op_name = url_tokens[1];
-                                }
-                                if (NULL !=  url_tokens[1])
-                                    AXIS2_FREE(env->allocator, url_tokens[1]);
-                                if (NULL !=  url_tokens[0])
-                                    AXIS2_FREE(env->allocator, url_tokens[0]);
-                                AXIS2_FREE(env->allocator, url_tokens);
-                            }
+                            // REST request, the op name is the last segment of the path
+                            string raddress = addr;
+                            string path;
+                            string query;
+                            Utils::tokeniseString("?", raddress, path, query);
+                            string uri;
+                            Utils::rTokeniseString("/", path, uri, op_name);
                         }
                     }
                 }
                 else
-                {                
-                    // This gets the operation name from the root element name - this is correct for DocLit Wrapped style
+                {
+                    // SOAP request                
+                    // Get the operation name from the root element name, this is correct for DocLit Wrapped style
                     op_name = AXIOM_ELEMENT_GET_LOCALNAME(element, env);
                 }
                 
@@ -276,15 +274,36 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         // derived from the target address
                         axis2_endpoint_ref_t *endpoint_ref = NULL;
                         endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
-                        axis2_char_t *address = NULL;        
-                        address = (axis2_char_t*) AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
-                        axis2_char_t **url_tokens = NULL;
-                        url_tokens = axis2_parse_request_url_for_svc_and_op(env, address);
-                        string service(url_tokens[0]);
+                        string address = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
                         
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, service name: %s, operation name: %s", rootParam, service.c_str(), op_name.c_str());
+                        axis2_bool_t isrest = AXIS2_MSG_CTX_GET_DOING_REST(msg_ctx, env);
+                        string path;
+                        if (isrest)
+                        {
+                            string op;
+                            Utils::rTokeniseString("/", address, path, op);
+                        }
+                        else
+                        {
+                            path = address;
+                        }
+
+                        string path2;                        
+                        string service;
+                        Utils::rTokeniseString("/", path, path2, service);
                         
-                        initTuscanyRuntime(env, rootParam, "", service.c_str());
+                        string path3;
+                        string component;
+                        Utils::rTokeniseString("/", path2, path3, component);
+                        if (component == "services")
+                        {
+                            component = "";
+                        }
+                        
+                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, component name: %s, service name: %s, operation name: %s",
+                            rootParam, component.c_str(), service.c_str(), op_name.c_str());
+                        
+                        initTuscanyRuntime(env, rootParam, component.c_str(), service.c_str());
                     }
 
                     if(!compositeService)
@@ -317,7 +336,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         {
                             AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI,  "WSDL description %s not found\n", wsdlNamespace.c_str());
                             string msg = "WSDL not found for " + wsdlNamespace;
-                            throw SystemConfigurationException(msg.c_str());
+                            throwException(SystemConfigurationException, msg.c_str());
                         }
                         
                         // Find the target operation in the wsdl port type.
@@ -327,7 +346,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                                 binding->getEndpointName(),
                                 op_name.c_str());
                         }
-                        catch(SystemConfigurationException &ex)
+                        catch(SystemConfigurationException& ex)
                         {   
                             AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
                             throw;
@@ -351,14 +370,14 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                                 {
                                     AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "WSDL description %s not found\n", wsdlNamespace.c_str());
                                     string msg = "WSDL not found for " + wsdlNamespace;
-                                    throw SystemConfigurationException(msg.c_str());
+                                    throwException(SystemConfigurationException, msg.c_str());
                                 }
                         
                                 try
                                 {
                                     wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), op_name.c_str());
                                 }
-                                catch(SystemConfigurationException &ex)
+                                catch(SystemConfigurationException& ex)
                                 {   
                                     AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
                                     throw;
@@ -379,8 +398,8 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         wsdlOperation.setDocumentStyle(true);
                         wsdlOperation.setWrappedStyle(true);
                         wsdlOperation.setEncoded(false);
-                        wsdlOperation.setInputType(wsdlNamespace + "#" + op_name);
-                        wsdlOperation.setOutputType(wsdlNamespace + "#" + op_name + "Response");
+                        wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
+                        wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
                     }
 
                     // Convert the input AXIOM node to an SDO DataObject
@@ -458,8 +477,6 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                         AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has response OM : %s\n", str);
                     }
                         
-
-                	//LOGEXIT(1, "Axis2Service_invoke");						
 					return outputNode;
                 }
             }
@@ -467,7 +484,6 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
     }
     
 	AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: invalid OM parameters in request");
-    //LOGERROR(0, "Axis2Service service ERROR: invalid OM parameters in request\n");
     
     /** TODO: return a SOAP fault here */
     return 0;

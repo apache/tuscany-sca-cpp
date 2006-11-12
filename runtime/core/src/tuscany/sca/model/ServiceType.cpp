@@ -36,11 +36,13 @@ namespace tuscany
                 : Contract(intface, callbackInterface),
                 componentType(componentType), name(name)
             {
+                logentry(); 
             }
 
             // Destructor
             ServiceType::~ServiceType()
             {
+                logentry(); 
             }
 
             void ServiceType::setBinding(Binding* binding)

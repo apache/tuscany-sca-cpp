@@ -35,11 +35,13 @@ namespace tuscany
             ReferenceBinding::ReferenceBinding(Reference *reference, const string& uri) :
                 Binding(uri), reference(reference)
             {
+                logentry(); 
             }
 
             // Destructor
             ReferenceBinding::~ReferenceBinding()
             {
+                logentry(); 
             }
 
         } // End namespace model

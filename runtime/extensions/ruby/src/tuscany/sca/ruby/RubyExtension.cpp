@@ -47,8 +47,7 @@ namespace tuscany
             // ===================================================================
             RubyExtension::RubyExtension()
             { 
-                LOGENTRY(1, "RubyExtension::constructor");     
-                LOGEXIT(1, "RubyExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -56,15 +55,13 @@ namespace tuscany
             // ===================================================================
             RubyExtension::~RubyExtension()
             { 
-                LOGENTRY(1, "RubyExtension::destructor");;           
-                LOGEXIT(1, "RubyExtension::destructor");
+                logentry();
             }
 
             void RubyExtension::initialize()
             { 
-                LOGENTRY(1, "RubyExtension::initialize");;           
+                logentry();
                 SCARuntime::getInstance()->registerImplementationExtension(new RubyImplementationExtension());
-                LOGEXIT(1, "RubyExtension::initialize");;           
             }
 
         } // End namespace ruby

@@ -38,11 +38,14 @@ namespace tuscany
                     const string& qname, bool remotable, bool conversational) 
                     : Interface(remotable, conversational)
             {
+                logentry(); 
                 parse(qname);
            }
            
             void WSDLInterface::parse(const string& qname)
             {
+                logentry(); 
+
                 // PortType is of the form: <wsdl-namepace-uri>#wsdl.interface(<portType-name>)
                 string::size_type hash = qname.find("#");
                 if (hash != string::npos)
@@ -95,6 +98,7 @@ namespace tuscany
            
             WSDLInterface::~WSDLInterface()
             {
+                logentry(); 
             }
 
         } // End namespace model

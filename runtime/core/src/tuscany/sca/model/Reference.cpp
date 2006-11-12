@@ -35,11 +35,13 @@ namespace tuscany
             Reference::Reference(Component* component, ReferenceType* referenceType)
                 : component(component), type(referenceType), binding(0)
             {
+                logentry(); 
             }
             
             // Destructor
             Reference::~Reference()
             {
+                logentry(); 
             }
             
             void Reference::setBinding(ReferenceBinding* binding)
@@ -54,13 +56,14 @@ namespace tuscany
             
             void Reference::addTarget(Service* target)
             {
+                logentry(); 
+
                 if (type->getMultiplicity() == ReferenceType::ONE_ONE || type->getMultiplicity() == ReferenceType::ZERO_ONE)
                 {
                     if (targets.size() > 0)
                     {
-                        // throw exception
                         string message = "Duplicate wire for reference: " + type->getName();
-                        throw SystemConfigurationException(message.c_str());
+                        throwException(SystemConfigurationException, message.c_str());
                     }
                 }
 

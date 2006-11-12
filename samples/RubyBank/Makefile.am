@@ -16,6 +16,6 @@
 #  under the License.
 
 deploydir=$(prefix)/samples/RubyBank/deploy
-SUBDIRS = bigbank.account bigbank.client
+SUBDIRS = bigbank.account bigbank.client bigbank.wsclient
 EXTRA_DIST = *.composite README.html
 deploy_DATA = *.composite

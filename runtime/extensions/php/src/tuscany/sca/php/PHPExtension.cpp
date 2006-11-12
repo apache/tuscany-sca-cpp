@@ -47,8 +47,7 @@ namespace tuscany
             // ===================================================================
             PHPExtension::PHPExtension()
             { 
-                LOGENTRY(1, "PHPExtension::constructor");     
-                LOGEXIT(1, "PHPExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -56,16 +55,14 @@ namespace tuscany
             // ===================================================================
             PHPExtension::~PHPExtension()
             { 
-                LOGENTRY(1, "PHPExtension::destructor");;           
-                LOGEXIT(1, "PHPExtension::destructor");
+                logentry();
             }
 
             void PHPExtension::initialize()
             { 
-                LOGENTRY(1, "PHPExtension::initialize");;           
+                logentry();
                 SCARuntime::getInstance()->registerImplementationExtension(new PHPImplementationExtension());
                 //SCARuntime::getInstance()->registerInterfaceExtension(new PHPInterfaceExtension());
-                LOGEXIT(1, "PHPExtension::initialize");;           
             }
 
         } // End namespace php

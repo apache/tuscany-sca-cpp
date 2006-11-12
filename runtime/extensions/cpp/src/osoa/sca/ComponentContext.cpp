@@ -40,15 +40,25 @@ namespace osoa
         // =======================================================
         ComponentContext ComponentContext::getCurrent()
         {
-            LOGENTRY(1, "ComponentContext::getCurrent");
-            Component* component = tuscany::sca::SCARuntime::getInstance()->getCurrentComponent();
-            if (!component)
+            logentry();
+            try
             {
-                throw ComponentContextException("No current component");
+                Component* component = tuscany::sca::SCARuntime::getInstance()->getCurrentComponent();
+                if (!component)
+                {
+                    throwException(ComponentContextException, "No current component");
+                }
+                ComponentContext* cci = new ComponentContextImpl(component);
+                return ComponentContext(cci);
             }
-            ComponentContext* cci = new ComponentContextImpl(component);
-            LOGEXIT(1, "ComponentContext::constructor");
-            return ComponentContext(cci);
+            catch (ServiceRuntimeException&)
+            {
+                throw;
+            }
+            catch (TuscanyRuntimeException& e)
+            {
+                throwException(ServiceRuntimeException, e);
+            }
         }
         
         // ===========
@@ -57,8 +67,7 @@ namespace osoa
         ComponentContext::ComponentContext(ComponentContext* implementation)
             : impl(implementation)
         {
-            LOGENTRY(1, "ComponentContext::constructor");
-            LOGEXIT(1, "ComponentContext::constructor");
+            logentry();
         }
         
         // ==========
@@ -66,9 +75,8 @@ namespace osoa
         // ==========
         ComponentContext::~ComponentContext()
         {
-            LOGENTRY(1, "ComponentContext::destructor");
+            logentry();
             delete impl;
-            LOGEXIT(1, "ComponentContext::destructor");
         }
 
         // ===================================
@@ -76,6 +84,7 @@ namespace osoa
         // ===================================
         ComponentContext::ComponentContext(const ComponentContext& ctx)
         {
+            logentry();
             Component* component = ((ComponentContextImpl*)impl)->getComponent();
             impl = new ComponentContextImpl(component);
         }
@@ -85,6 +94,7 @@ namespace osoa
         // =============================
         ComponentContext& ComponentContext::operator=(const ComponentContext& ctx)
         {
+            logentry();
             if (this != &ctx)
             {
                 Component* component = ((ComponentContextImpl*)impl)->getComponent();
@@ -98,9 +108,8 @@ namespace osoa
         // ==========
         void* ComponentContext::getService(const std::string& referenceName)
         {
-            LOGENTRY(1, "ComponentContext::getService");
+            logentry();
             void* service = impl->getService(referenceName);
-            LOGEXIT(1, "ComponentContext::getService");
             return service;
         }
         
@@ -109,6 +118,7 @@ namespace osoa
         // ===========
         std::list<void*> ComponentContext::getServices(const std::string& referenceName)
         {
+            logentry();
             return impl->getServices(referenceName);
         }
         
@@ -117,9 +127,8 @@ namespace osoa
         // =============
         DataObjectPtr ComponentContext::getProperties()
         {
-            LOGENTRY(1, "ComponentContext::getProperties");
+            logentry();
             DataObjectPtr properties = impl->getProperties();
-            LOGEXIT(1, "ComponentContext::getProperties");
             return properties;
         }
 
@@ -128,9 +137,8 @@ namespace osoa
         // =============
         DataFactoryPtr ComponentContext::getDataFactory()
         {
-            LOGENTRY(1, "ComponentContext::getDataFactory");
+            logentry();
             DataFactoryPtr dataFactory = impl->getDataFactory();
-            LOGEXIT(1, "ComponentContext::getDataFactory");
             return dataFactory;
         }
 

@@ -48,8 +48,7 @@ namespace tuscany
             // ===================================================================
             SCAServiceBindingExtension::SCAServiceBindingExtension()
             { 
-                LOGENTRY(1, "SCAServiceBindingExtension::constructor");     
-                LOGEXIT(1, "SCAServiceBindingExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -57,8 +56,7 @@ namespace tuscany
             // ===================================================================
             SCAServiceBindingExtension::~SCAServiceBindingExtension()
             { 
-                LOGENTRY(1, "SCAServiceBindingExtension::destructor");;           
-                LOGEXIT(1, "SCAServiceBindingExtension::destructor");
+                logentry();
             }
 
             const string SCAServiceBindingExtension::extensionName("sca");
@@ -70,6 +68,8 @@ namespace tuscany
             // ===================================================================
             ServiceBinding* SCAServiceBindingExtension::getServiceBinding(Composite *composite, Service* service, DataObjectPtr scdlBinding)
             {
+                logentry();
+
                 string bindingType = scdlBinding->getType().getName();
                 if (bindingType == "SCABinding")
                 {
@@ -87,9 +87,8 @@ namespace tuscany
 
             void SCAServiceBindingExtension::initialize()
             { 
-                LOGENTRY(1, "SCAServiceBindingExtension::initialize");;           
+                logentry();
                 SCARuntime::getInstance()->registerServiceBindingExtension(new SCAServiceBindingExtension());
-                LOGEXIT(1, "SCAServiceBindingExtension::initialize");;           
             }
 
         } // End namespace ws

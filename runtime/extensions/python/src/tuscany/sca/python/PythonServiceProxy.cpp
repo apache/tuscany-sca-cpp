@@ -21,7 +21,7 @@
 
 #include "tuscany/sca/python/PythonServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/python/PythonServiceRuntimeException.h"
+#include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/ReferenceType.h"
@@ -50,13 +50,11 @@ namespace tuscany
             PythonServiceProxy::PythonServiceProxy(Reference* reference)
                 : ServiceProxy(reference)
             {
-                LOGENTRY(1,"PythonServiceProxy::constructor(Reference)");
+                logentry();
  
                 // Get the service wrapper
                 PythonReferenceBinding* referenceBinding = (PythonReferenceBinding*)reference->getBinding();                
                 serviceWrapper = referenceBinding->getTargetServiceBinding()->getServiceWrapper();
-    
-                LOGEXIT(1,"PythonServiceProxy::constructor(Reference)");
             }
 
             // ==========================================
@@ -65,12 +63,10 @@ namespace tuscany
             PythonServiceProxy::PythonServiceProxy(Service* service)
                 : ServiceProxy(NULL)
             {
-                LOGENTRY(1,"PythonServiceProxy::constructor(Service)");
+                logentry();
  
                 // Get the service wrapper
                 serviceWrapper = service->getBinding()->getServiceWrapper();                
-    
-                LOGEXIT(1,"PythonServiceProxy::constructor(Service)");
             }
 
             // ==========
@@ -78,8 +74,7 @@ namespace tuscany
             // ==========
             PythonServiceProxy::~PythonServiceProxy()
             {
-                LOGENTRY(1,"PythonServiceProxy::destructor");
-                LOGEXIT(1,"PythonServiceProxy::destructor");
+                logentry();
             }
 
             // =====================================================
@@ -87,12 +82,10 @@ namespace tuscany
             // =====================================================
             void PythonServiceProxy::invokeService(Operation& operation)
             {
-                LOGENTRY(1,"PythonServiceProxy::invokeService");
+                logentry();
 
                 // Invoke the service
                 serviceWrapper->invoke(operation);
-
-                LOGEXIT(1,"PythonServiceProxy::invokeService");
             }
         } // End namespace python        
     } // End namespace sca

@@ -42,19 +42,17 @@ namespace tuscany
                 : ComponentType(composite, modulePath + "/" + module),
                     module(module), modulePath(modulePath), className(className), scope(scope)
             {
-                LOGENTRY(1,"PythonImplementation::constructor");
-                LOGEXIT(1,"PythonImplementation::constructor");
+                logentry();
             }
 
             PythonImplementation::~PythonImplementation()
             {
-                LOGENTRY(1,"PythonImplementation::destructor");
-                LOGEXIT(1,"PythonImplementation::destructor");
+                logentry();
             }
             
             void PythonImplementation::initializeComponent(Component* component)
             {
-                LOGENTRY(1,"PythonImplementation::initializeComponent");
+                logentry();
                 ComponentType::initializeComponent(component);
                 
                 // Create Python bindings for all the services
@@ -78,8 +76,6 @@ namespace tuscany
                     reference->setBinding(binding);
                     refiter++;
                 }
-
-                LOGEXIT(1,"PythonImplementation::initializeComponent");
             }
             
         } // End namespace python

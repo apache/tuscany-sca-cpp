@@ -36,8 +36,7 @@ namespace tuscany
             // ===================================================================
             RubyImplementationExtension::RubyImplementationExtension()
             { 
-                LOGENTRY(1, "RubyImplementationExtension::constructor");     
-                LOGEXIT(1, "RubyImplementationExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -45,8 +44,7 @@ namespace tuscany
             // ===================================================================
             RubyImplementationExtension::~RubyImplementationExtension()
             { 
-                LOGENTRY(1, "RubyImplementationExtension::destructor");;           
-                LOGEXIT(1, "RubyImplementationExtension::destructor");
+                logentry();
             }
 
             const string RubyImplementationExtension::extensionName("ruby");
@@ -57,6 +55,8 @@ namespace tuscany
             // ===================================================================
             ComponentType* RubyImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
             {
+                logentry();
+
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "RubyImplementation")
                 {

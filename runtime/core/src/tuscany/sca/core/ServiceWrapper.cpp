@@ -33,10 +33,7 @@ namespace tuscany
         ServiceWrapper::ServiceWrapper(Service* service)
             : service(service)
         {
-            LOGENTRY(1,"ServiceWrapper::constructor");
-            
-            LOGEXIT(1,"ServiceWrapper::constructor");
-            
+            logentry();
         }
         
         // ==========
@@ -44,8 +41,7 @@ namespace tuscany
         // ==========
         ServiceWrapper::~ServiceWrapper()
         {
-            LOGENTRY(1,"ServiceWrapper::destructor");
-            LOGEXIT(1,"ServiceWrapper::destructor");
+            logentry();
         }        
         
     } // End namespace sca

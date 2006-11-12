@@ -49,8 +49,7 @@ namespace tuscany
             // ===================================================================
             WSReferenceBindingExtension::WSReferenceBindingExtension()
             { 
-                LOGENTRY(1, "WSReferenceBindingExtension::constructor");     
-                LOGEXIT(1, "WSReferenceBindingExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -58,8 +57,7 @@ namespace tuscany
             // ===================================================================
             WSReferenceBindingExtension::~WSReferenceBindingExtension()
             { 
-                LOGENTRY(1, "WSReferenceBindingExtension::destructor");;           
-                LOGEXIT(1, "WSReferenceBindingExtension::destructor");
+                logentry();
             }
 
             const string WSReferenceBindingExtension::extensionName("ws");
@@ -70,6 +68,8 @@ namespace tuscany
             // ===================================================================
             ReferenceBinding* WSReferenceBindingExtension::getReferenceBinding(Composite *composite, Reference* reference, DataObjectPtr scdlBinding)
             {
+                logentry();
+
                 string bindingType = scdlBinding->getType().getName();
                 if (bindingType == "WebServiceBinding")
                 {
@@ -98,9 +98,8 @@ namespace tuscany
 
            void WSReferenceBindingExtension::initialize()
             { 
-                LOGENTRY(1, "WSReferenceBindingExtension::initialize");;           
+                logentry();
                 SCARuntime::getInstance()->registerReferenceBindingExtension(new WSReferenceBindingExtension());
-                LOGEXIT(1, "WSReferenceBindingExtension::initialize");;           
             }
 
         } // End namespace ws

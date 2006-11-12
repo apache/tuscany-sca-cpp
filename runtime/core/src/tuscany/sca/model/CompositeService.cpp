@@ -44,8 +44,8 @@ namespace tuscany
                     ReferenceType::Multiplicity multiplicity) :
                 Component(composite, name, new ComponentType(composite, name))
             {
-                LOGENTRY(1, "CompositeService::constructor");
-                LOGINFO_1(2, "CompositeService::constructor: CompositeService name: %s", name.c_str());
+                logentry(); 
+                loginfo("Composite service name: %s", name.c_str());
                 
                 // Initialize the component type, reference type and reference
                 ComponentType* componentType = getType();
@@ -55,13 +55,12 @@ namespace tuscany
                 
                 reference = new Reference(this, referenceType);
                 addReference(reference);
-                
-                LOGEXIT(1, "CompositeService::constructor");
             }
 
             // Destructor
             CompositeService::~CompositeService()
             {
+                logentry(); 
             }
 
         } // End namespace model

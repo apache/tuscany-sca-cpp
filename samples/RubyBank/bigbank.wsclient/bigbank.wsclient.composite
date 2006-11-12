@@ -18,25 +18,12 @@
    under the License.
 -->
 
-<xs:schema targetNamespace="http://www.myvalue.org/MyValueService/" 
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://www.myvalue.org/MyValueService/"
-           elementFormDefault="qualified">
+<composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
+	name="bigbank.wsclient">
 
-    <xs:element name="getMyValue">
-    	<xs:complexType>
-    		<xs:sequence>
-    			<xs:element name="customerID" type="xs:string" minOccurs="1"/>
-    		</xs:sequence>
-    	</xs:complexType>
-    </xs:element>
+	<reference name="AccountService">
+		<interface.wsdl interface="http://www.bigbank.com/AccountService#wsdl.interface(AccountService)"/>
+		<binding.ws uri="http://localhost:9090axis2/services/AccountService"/>
+	</reference>
 
-    <xs:element name="getMyValueResponse">
-    	<xs:complexType>
-    		<xs:sequence>
-    			<xs:element name="myValue" type="xs:float" minOccurs="1"/>
-    		</xs:sequence>
-    	</xs:complexType>
-    </xs:element>
-    
-</xs:schema>
+</composite>

@@ -40,8 +40,7 @@ namespace tuscany
         ComponentContextImpl::ComponentContextImpl(Component* comp)
             : ComponentContext(0),  component(comp)
         {
-            LOGENTRY(1, "ComponentContextImpl::constructor");
-            LOGEXIT(1, "ComponentContextImpl::constructor");
+            logentry();
         }
         
         // ==========
@@ -49,6 +48,7 @@ namespace tuscany
         // ==========
         ComponentContextImpl::~ComponentContextImpl()
         {
+            logentry();
         }
         
         
@@ -57,29 +57,39 @@ namespace tuscany
         // ==========================================================================
         std::list<void*> ComponentContextImpl::getServices(const std::string& referenceName)
         {
-            LOGENTRY(1, "ComponentContextImpl::getServices");
-            
-            // --------------------------------------------------------------
-            // locate reference in the current component and determine target
-            // --------------------------------------------------------------
-            Reference* reference = component->findReference(referenceName);
-            if (!reference)
+            logentry();
+            try
             {
-                string message = "Reference not defined: ";
-                message = message + referenceName;
-                throw ServiceNotFoundException(message.c_str());
+                // --------------------------------------------------------------
+                // locate reference in the current component and determine target
+                // --------------------------------------------------------------
+                Reference* reference = component->findReference(referenceName);
+                if (!reference)
+                {
+                    string message = "Reference not defined: ";
+                    message = message + referenceName;
+                    throwException(ServiceNotFoundException, message.c_str());
+                }
+    
+                // Get a service proxy from the binding configured on the reference
+                CPPServiceProxy* serviceProxy =  (CPPServiceProxy*)reference->getBinding()->getServiceProxy();
+                if (serviceProxy == NULL)
+                {
+                    string message = "Reference ";
+                    message = message + referenceName + " not wired";
+                    throwException(ServiceNotFoundException, message.c_str());
+                }
+                
+                return serviceProxy->getProxies();
             }
-
-            // Get a service proxy from the binding configured on the reference
-            CPPServiceProxy* serviceProxy =  (CPPServiceProxy*)reference->getBinding()->getServiceProxy();
-            if (serviceProxy == NULL)
+            catch (ServiceRuntimeException&)
             {
-                string message = "Reference ";
-                message = message + referenceName + " not wired";
-                throw ServiceNotFoundException(message.c_str());
+                throw;
             }
-            
-            return serviceProxy->getProxies();
+            catch (TuscanyRuntimeException& e)
+            {
+                throwException(ServiceRuntimeException, e);
+            }
             
         } // End getServices()
         
@@ -89,47 +99,58 @@ namespace tuscany
         // ===================================================================
         void* ComponentContextImpl::getService(const std::string& referenceName)
         {
-            LOGENTRY(1, "ComponentContextImpl::getService");
-            
-            // --------------------------------------------------------------
-            // locate reference in the current component and determine target
-            // --------------------------------------------------------------
-            Reference* reference = component->findReference(referenceName);
-            if (!reference)
-            {
-                string message = "Reference not defined: ";
-                message = message + referenceName;
-                throw ServiceNotFoundException(message.c_str());
-            }
-            
-            // --------------------
-            // Validate the request
-            // --------------------
-            switch (reference->getType()->getMultiplicity())
-            {
-            case ReferenceType::ZERO_MANY:
-            case ReferenceType::ONE_MANY:
+            logentry();
+            try
+            {            
+                // --------------------------------------------------------------
+                // locate reference in the current component and determine target
+                // --------------------------------------------------------------
+                Reference* reference = component->findReference(referenceName);
+                if (!reference)
                 {
-                    string message = "getService() called for reference with multiplicity >1 :";
+                    string message = "Reference not defined: ";
                     message = message + referenceName;
-                    throw ServiceNotFoundException(message.c_str());                    
+                    throwException(ServiceNotFoundException, message.c_str());
                 }
-            default:
+                
+                // --------------------
+                // Validate the request
+                // --------------------
+                switch (reference->getType()->getMultiplicity())
                 {
+                case ReferenceType::ZERO_MANY:
+                case ReferenceType::ONE_MANY:
+                    {
+                        string message = "getService() called for reference with multiplicity >1 :";
+                        message = message + referenceName;
+                        throwException(ServiceNotFoundException, message.c_str());
+                    }
+                default:
+                    {
+                    }
+                } // end switch
+    
+                // Get a service proxy from the binding configured on the reference
+                CPPServiceProxy* serviceProxy =  (CPPServiceProxy*)reference->getBinding()->getServiceProxy();
+                if (serviceProxy == NULL)
+                {
+                    string message = "Reference ";
+                    message = message + referenceName + " not wired";
+                    throwException(ServiceNotFoundException, message.c_str());
                 }
-            } // end switch
-
-            // Get a service proxy from the binding configured on the reference
-            CPPServiceProxy* serviceProxy =  (CPPServiceProxy*)reference->getBinding()->getServiceProxy();
-            if (serviceProxy == NULL)
-            {
-                string message = "Reference ";
-                message = message + referenceName + " not wired";
-                throw ServiceNotFoundException(message.c_str());
+                
+                void* service = serviceProxy->getProxy();
+                
+                return service;
             }
-            
-            void* service = serviceProxy->getProxy();
-            return service;
+            catch (ServiceRuntimeException&)
+            {
+                throw;
+            }
+            catch (TuscanyRuntimeException& e)
+            {
+                throwException(ServiceRuntimeException, e);
+            }
             
         } // End getService()
         
@@ -138,11 +159,20 @@ namespace tuscany
         // ==============================================
         DataObjectPtr ComponentContextImpl::getProperties()
         {
-            LOGENTRY(1, "ComponentContextImpl::getProperties");
-            DataObjectPtr properties = component->getProperties();
-            
-            LOGEXIT(1, "ComponentContextImpl::getProperties");
-            return properties;
+            logentry();
+            try
+            {
+                DataObjectPtr properties = component->getProperties();
+                return properties;
+            }
+            catch (ServiceRuntimeException&)
+            {
+                throw;
+            }
+            catch (TuscanyRuntimeException& e)
+            {
+                throwException(ServiceRuntimeException, e);
+            }
         }
 
         // ==============================================
@@ -151,11 +181,20 @@ namespace tuscany
         // ==============================================
         commonj::sdo::DataFactoryPtr ComponentContextImpl::getDataFactory()
         {
-            LOGENTRY(1, "ComponentContextImpl::getProperties");
-            commonj::sdo::DataFactoryPtr dataFactory = component->getComposite()->getDataFactory();
-            
-            LOGEXIT(1, "ComponentContextImpl::getDataFactory");
-            return dataFactory;
+            logentry();
+            try
+            {
+                commonj::sdo::DataFactoryPtr dataFactory = component->getComposite()->getDataFactory();
+                return dataFactory;
+            }
+            catch (ServiceRuntimeException&)
+            {
+                throw;
+            }
+            catch (TuscanyRuntimeException& e)
+            {
+                throwException(ServiceRuntimeException, e);
+            }
         }
         
        } // End namespace cpp

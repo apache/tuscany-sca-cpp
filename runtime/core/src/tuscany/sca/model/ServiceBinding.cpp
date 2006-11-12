@@ -35,11 +35,13 @@ namespace tuscany
             ServiceBinding::ServiceBinding(Service* service, const string& uri) :
                 Binding(uri), service(service)
             {
+                logentry(); 
             }
 
             // Destructor
             ServiceBinding::~ServiceBinding()
             {
+                logentry(); 
             }
 
         } // End namespace model

@@ -40,13 +40,14 @@ using namespace tuscany::sca::ws;
  */
 char* Axis2Utils::getAxisServiceParameterValue(const axis2_env_t *env, axis2_msg_ctx_t *msg_ctx, char* parameterName)
 {
+    logentry();
+    
     struct axis2_svc *svc = NULL;
     struct axis2_op_ctx *op_ctx = NULL;
     struct axis2_svc_ctx *svc_ctx = NULL;
     axis2_param_t *param = NULL;
     char* paramValue = NULL;
 
-    LOGENTRY(1, "Axis2Utils::getAxisServiceParameterValue");
 
     op_ctx = AXIS2_MSG_CTX_GET_OP_CTX(msg_ctx, env);
     svc_ctx = AXIS2_OP_CTX_GET_PARENT(op_ctx, env);
@@ -59,14 +60,13 @@ char* Axis2Utils::getAxisServiceParameterValue(const axis2_env_t *env, axis2_msg
     param = AXIS2_SVC_GET_PARAM(svc, env, parameterName);
     if(!param)
     {
-		LOGERROR_1(1,"Axis parameter %s cannot be found", parameterName);
+		logwarning("Axis parameter %s cannot be found", parameterName);
     }
     else
     {
 	    paramValue = (char*) AXIS2_PARAM_GET_VALUE(param, env);
     }
 
-    LOGEXIT(1, "Axis2Utils::getAxisServiceParameterValue");
 	return paramValue;
 }
 

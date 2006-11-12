@@ -35,10 +35,12 @@ namespace tuscany
             Interface::Interface(bool remotable, bool conversational)
                 : remotable(remotable), conversational(conversational)
             {
+                logentry(); 
             }
 
             Interface::~Interface()
             {
+                logentry(); 
             }
 
         } // End namespace model

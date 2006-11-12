@@ -37,8 +37,7 @@ namespace tuscany
             // ===================================================================
             PythonInterfaceExtension::PythonInterfaceExtension()
             { 
-                LOGENTRY(1, "PythonInterfaceExtension::constructor");     
-                LOGEXIT(1, "PythonInterfaceExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -46,8 +45,7 @@ namespace tuscany
             // ===================================================================
             PythonInterfaceExtension::~PythonInterfaceExtension()
             { 
-                LOGENTRY(1, "PythonInterfaceExtension::destructor");;           
-                LOGEXIT(1, "PythonInterfaceExtension::destructor");
+                logentry();
             }
 
             const string PythonInterfaceExtension::extensionName("python");
@@ -58,6 +56,8 @@ namespace tuscany
             // ===================================================================
             tuscany::sca::model::Interface* PythonInterfaceExtension::getInterface(Composite* composite, DataObjectPtr scdlInterface)
             {
+                logentry();
+
                 // Determine the type
                 string ifType = scdlInterface->getType().getName();
                 if (ifType == "PythonInterface")

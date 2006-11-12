@@ -36,8 +36,7 @@ namespace tuscany
             // ===================================================================
             PHPImplementationExtension::PHPImplementationExtension()
             { 
-                LOGENTRY(1, "PHPImplementationExtension::constructor");     
-                LOGEXIT(1, "PHPImplementationExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -45,8 +44,7 @@ namespace tuscany
             // ===================================================================
             PHPImplementationExtension::~PHPImplementationExtension()
             { 
-                LOGENTRY(1, "PHPImplementationExtension::destructor");;           
-                LOGEXIT(1, "PHPImplementationExtension::destructor");
+                logentry();
             }
 
             const string PHPImplementationExtension::extensionName("php");
@@ -57,6 +55,8 @@ namespace tuscany
             // ===================================================================
             ComponentType* PHPImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
             {
+                logentry();
+                
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "PHPImplementation")
                 {

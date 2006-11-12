@@ -25,7 +25,9 @@
 #include "osoa/sca/export.h"
 
 #include "tuscany/sca/util/Exceptions.h"
+
 using tuscany::sca::TuscanyRuntimeException;
+
 namespace osoa
 {
     namespace sca
@@ -44,8 +46,12 @@ namespace osoa
                 : TuscanyRuntimeException(name, sev, msg_text)
             {
             }
+
+            ServiceRuntimeException(const TuscanyRuntimeException& e)
+                : TuscanyRuntimeException(e)
+            {
+            }
         }; // End ServiceRuntimeException class definition
-        
 
         /**
          * A remotable service is currently unavailable. It is possible that a retry

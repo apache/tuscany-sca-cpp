@@ -23,6 +23,11 @@
 #include "tuscany/sca/util/Logging.h"
 using namespace std;
 
+#if defined(WIN32)  || defined (_WINDOWS)
+#else
+#include <execinfo.h>
+#endif
+
 namespace tuscany
 {
     namespace sca
@@ -34,13 +39,22 @@ namespace tuscany
         TuscanyRuntimeException :: TuscanyRuntimeException(const char* name,
             severity_level sev,
             const char* msg_text)
-            : severity(sev), location_set(0)
         {
+            severity = sev;
+            location_set = 0;
             class_name = new char[strlen(name) + 1];
             strcpy(class_name,name);
             message_text = new char[strlen(msg_text)+1];
             strcpy(message_text,msg_text);
-            LOGERROR_2(1, "%s raised: %s", class_name, message_text);
+            
+#if defined(WIN32)  || defined (_WINDOWS)
+#else
+            void* array[25];
+            stacktrace_size = backtrace(array, 25);
+            stacktrace_symbols = backtrace_symbols(array, stacktrace_size);
+#endif
+            
+            logwarning("%s raised: %s", class_name, message_text);
             
         } // end TuscanyRuntimeException constuctor
         
@@ -48,15 +62,15 @@ namespace tuscany
         // Constructor
         // ========================================================================
         TuscanyRuntimeException ::  TuscanyRuntimeException(const TuscanyRuntimeException& c)
-            : 
-        severity(c.getSeverity()), location_set(c.location_set)
-            
         {
+            severity = c.getSeverity();
+            location_set = c.location_set;
             class_name = new char[strlen(c.getEClassName()) + 1];
             strcpy(class_name, c.getEClassName());
             message_text = new char[strlen(c.getMessageText())+1];
             strcpy(message_text,c.getMessageText());
-            for (int i=0;i<c.location_set;i++)
+
+            for (int i=0; i < location_set; i++)
             {
                 locations[i].file = new char[strlen(c.locations[i].file) + 1];
                 strcpy(locations[i].file,c.locations[i].file);
@@ -64,7 +78,59 @@ namespace tuscany
                 locations[i].function = new char[strlen(c.locations[i].function) + 1];
                 strcpy(locations[i].function, c.locations[i].function);
             }
-            LOGERROR_2(1, "%s raised: %s", class_name, message_text);
+
+#if defined(WIN32)  || defined (_WINDOWS)
+#else
+            void* array[25];
+            stacktrace_size = backtrace(array, 25);
+            stacktrace_symbols = backtrace_symbols(array, stacktrace_size);
+#endif
+            
+            logwarning("%s raised: %s", class_name, message_text);
+        }
+        
+        // ========================================================================
+        // Constructor
+        // ========================================================================
+        TuscanyRuntimeException ::  TuscanyRuntimeException(const SDORuntimeException& c)
+        {
+            class_name = new char[strlen(c.getEClassName()) + 1];
+            strcpy(class_name, c.getEClassName());
+            message_text = new char[strlen(c.getMessageText())+1];
+            strcpy(message_text,c.getMessageText());
+            switch (c.getSeverity())
+            {
+                case SDORuntimeException::Normal:
+                    severity = Normal;
+                    break;
+                case SDORuntimeException::Warning:
+                    severity = Warning;
+                    break;
+                case SDORuntimeException::Error:
+                    severity = Error;
+                    break;
+                default:
+                    severity = Severe;
+                    break;
+            }
+
+            const char* file = c.getFileName();
+            unsigned long line = c.getLineNumber();
+            const char* function = c.getFunctionName();
+            location_set = 0;
+            if (file)
+            {
+                setLocation(file, line, function);
+            }
+            
+#if defined(WIN32)  || defined (_WINDOWS)
+#else
+            void* array[25];
+            stacktrace_size = backtrace(array, 25);
+            stacktrace_symbols = backtrace_symbols(array, stacktrace_size);
+#endif
+            
+            logwarning("%s raised: %s", class_name, message_text);
         }
         
         // ========================================================================
@@ -79,6 +145,11 @@ namespace tuscany
                 if (locations[i].file) delete locations[i].file;
                 if (locations[i].function) delete locations[i].function;
             }
+            
+#if defined(WIN32)  || defined (_WINDOWS)
+#else
+            free(stacktrace_symbols);
+#endif            
             
         } // end TuscanyRuntimeException destructor
         
@@ -150,7 +221,7 @@ namespace tuscany
         } // end setMessageText(const string &msg_text) const
         
         // ========================================================================
-        // set location of most recent throw/handling of the exception
+        // set location of most recent handling of the exception
         // ========================================================================
         void TuscanyRuntimeException :: setLocation(const char* file,    
             unsigned long line,       
@@ -175,28 +246,42 @@ namespace tuscany
         ostream& TuscanyRuntimeException :: PrintSelf(ostream &os) const
         { 
             
-            os << "Exception object :" << endl;
-            os << " class:           " << class_name << endl;
-            os << " description:     " << message_text << endl;
+            os << "Exception" << endl;
+            os << " Class:           " << class_name << endl;
+            os << " Description:     " << message_text << endl;
             if (location_set != 0)
             {
-                os << " file name:       " << locations[0].file << endl;
+                os << " Origin:" << endl;
+                os << "   File:            " << locations[0].file << endl;
                 char lineNumber[100];
                 sprintf(lineNumber, "%lu",locations[0].line);
-                os << " line number:     " << lineNumber << endl;
-                os << " function:        " << locations[0].function << endl;
-                os << " location history:" << endl;
+                os << "   Line:            " << lineNumber << endl;
+                os << "   Function:        " << locations[0].function << endl;
                 
-                int i=1;
-                while (i < location_set)
+                if (location_set >1)
                 {
-                    os << "  " <<  i << ")" << endl;
-                    os << "   file:          " << locations[i].file << endl;
-                    os << "   line:          " << locations[i].line << endl;
-                    os << "   function:      " << locations[i].function << endl;
-                    i++;
+                    os << " Path:" << endl;
+                    int i=1;
+                    while (i < location_set)
+                    {
+                        os << "   File:          " << locations[i].file << endl;
+                        os << "   Line:          " << locations[i].line << endl;
+                        os << "   Function:      " << locations[i].function << endl;
+                        i++;
+                    }
                 }
             }
+#if defined(WIN32)  || defined (_WINDOWS)
+#else
+            if (stacktrace_size != 0)
+            {
+                os << " Backtrace:" << endl;
+                for (int j = 0; j < stacktrace_size; j++)
+                {
+                    os << "   " << stacktrace_symbols[j] << endl;
+                }
+            }
+#endif            
             return os;
         } // end ostream operator <<
         

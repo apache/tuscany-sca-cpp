@@ -54,14 +54,11 @@ namespace tuscany
             CPPServiceWrapper::CPPServiceWrapper(Service* service)
                 : ServiceWrapper(service)
             {
-                LOGENTRY(1,"CPPServiceWrapper::constructor");
+                logentry();
     
                 component = service->getComponent();
                 interf = service->getType()->getInterface();
                 implementation = (CPPImplementation*)component->getType();
-                
-                LOGEXIT(1,"CPPServiceWrapper::constructor");
-                
             }
             
             // ==========
@@ -69,8 +66,7 @@ namespace tuscany
             // ==========
             CPPServiceWrapper::~CPPServiceWrapper()
             {
-                LOGENTRY(1,"CPPServiceWrapper::destructor");
-                LOGEXIT(1,"CPPServiceWrapper::destructor");
+                logentry();
             }
             
             
@@ -79,6 +75,7 @@ namespace tuscany
             // ======================================================================
             void* CPPServiceWrapper::getImplementation()
             {
+                logentry();
                 if (implementation->getScope() == CPPImplementation::COMPOSITE)
                 {
                     if (!staticImpl)
@@ -98,6 +95,7 @@ namespace tuscany
             // ======================================================================
             void CPPServiceWrapper::releaseImplementation()
             {
+                logentry();
                 if (implementation->getScope() == CPPImplementation::STATELESS)
                 {
                     deleteImplementation();
@@ -109,7 +107,7 @@ namespace tuscany
             // ======================================================================
             void CPPServiceWrapper::invoke(Operation& operation)
             {
-                LOGENTRY(1,"CPPServiceWrapper::invoke");
+                logentry();
     
                 SCARuntime* runtime = SCARuntime::getInstance();
                 runtime->setCurrentComponent(component);
@@ -124,8 +122,6 @@ namespace tuscany
                     throw;
                 }
                 runtime->unsetCurrentComponent();
-                LOGEXIT(1,"CPPServiceWrapper::invoke");
-                
             }
             
             void CPPServiceWrapper::setLibrary(Library* lib)
@@ -138,6 +134,8 @@ namespace tuscany
             // ======================================================================
             CPPServiceWrapper* CPPServiceWrapper::getServiceWrapper(Service* service)
             {            
+                logentry();
+
                 CPPServiceWrapper* serviceWrapper = 0;
                 
                 // -----------------------------------------------
@@ -148,7 +146,7 @@ namespace tuscany
                 if (!impl)
                 {
                     string msg = "Component " + component->getName() + " has no implementation defined";
-                    throw ServiceNotFoundException(msg.c_str());
+                    throwException(ServiceNotFoundException, msg.c_str());
                 }
                 
                 // ----------------------------------------------------
@@ -171,10 +169,10 @@ namespace tuscany
                 WRAPPERFACTORY wrapperFactory = (WRAPPERFACTORY)wrapperLib->getSymbol(wrapperFactoryName);
                 if (!wrapperFactory)
                 {
-                    LOGERROR_2(1, "CPPServiceWrapper::getServiceWrapper: Unable to locate %s in library %s",
+                    logerror("Unable to locate %s in library %s",
                         wrapperFactoryName.c_str(), fullLibraryName.c_str());
                     string msg = "Unable to locate " + wrapperFactoryName + " in library " + fullLibraryName;
-                    throw ServiceNotFoundException(msg.c_str());
+                    throwException(ServiceNotFoundException, msg.c_str());
                 }
                 
                 // -------------------------------------
@@ -183,10 +181,10 @@ namespace tuscany
                 serviceWrapper = wrapperFactory(service);
                 if (!serviceWrapper)
                 {
-                    LOGERROR_2(1, "CPPServiceWrapper::getServiceWrapper: Factory method %s in library %s returned null",
+                    logerror("Factory method %s in library %s returned null",
                         wrapperFactoryName.c_str(), fullLibraryName.c_str());
                     string msg = "Factory method " + wrapperFactoryName + " in library " + fullLibraryName + " returned null";
-                    throw ServiceNotFoundException(msg.c_str());
+                    throwException(ServiceNotFoundException, msg.c_str());
                 }                
                 serviceWrapper->setLibrary(wrapperLib);
                 

@@ -59,11 +59,9 @@ namespace tuscany
             // ===========
             ModelLoader::ModelLoader(Composite* system) : system(system)
             {
-                LOGENTRY(1, "ModelLoader::constructor");
+                logentry(); 
                 
                 runtime = SCARuntime::getInstance();
-                
-                LOGEXIT(1, "ModelLoader::constructor");
             }
             
             // ==========
@@ -71,6 +69,7 @@ namespace tuscany
             // ==========
             ModelLoader::~ModelLoader()
             {
+                logentry(); 
             }
             
             // =========================================================
@@ -80,9 +79,9 @@ namespace tuscany
             // =========================================================
             void ModelLoader::load(const string& systemRoot, const string& systemPath)
             {
-                LOGENTRY(1, "ModelLoader::load");
-                LOGINFO_1(2,"system root: %s", systemRoot.c_str());
-                LOGINFO_1(2,"system path: %s", systemPath.c_str());
+                logentry(); 
+                loginfo("System root: %s", systemRoot.c_str());
+                loginfo("System path: %s", systemPath.c_str());
                 
                 // Load composite implementations
                 // Composite implementations can occur anywhere on the given search path
@@ -102,8 +101,6 @@ namespace tuscany
                 
                 // Resolve the wires in the system composite
                 system->resolveWires();
-                
-                LOGEXIT(1, "ModelLoader::load");
             }
             
             // ========================================================================
@@ -113,16 +110,17 @@ namespace tuscany
             // ========================================================================
             void ModelLoader::loadSystem(const string& systemRoot)
             {
+                logentry(); 
+
                 // Get all the composite files on the system root path
                 // These composites are included in the system composite
-                LOGENTRY(1, "ModelLoader::loadSystem");
                 for (string path = systemRoot; path != ""; )
                 {
                     string dir;
                     Utils::tokeniseString(PATH_SEPARATOR, path, dir, path);
                     if (dir != "")
                     {
-                        LOGINFO_1(2, "system root directory: %s", dir.c_str());
+                        loginfo("System root directory: %s", dir.c_str());
                         Files files(dir, "*.composite", false);
                         for (unsigned int i=0; i < files.size(); i++)
                         {
@@ -141,7 +139,6 @@ namespace tuscany
                         }
                     }
                 }
-                LOGEXIT(1, "ModelLoader::loadSystem");
             }
             
             // =====================================================================
@@ -151,15 +148,16 @@ namespace tuscany
             // =====================================================================
             void ModelLoader::loadComposites(const string& searchPath)
             {
+                logentry(); 
+
                 // Get all the composite files on the composite search path
-                LOGENTRY(1, "ModelLoader::loadComposites");
                 for (string path = searchPath; path != ""; )
                 {
                     string dir;
                     Utils::tokeniseString(PATH_SEPARATOR, path, dir, path);
                     if (dir != "")
                     {
-                        LOGINFO_1(2, "composite path directory: %s", dir.c_str());
+                        loginfo("Composite path directory: %s", dir.c_str());
                         Files files(dir, "*.composite", true);
                         for (unsigned int i=0; i < files.size(); i++)
                         {
@@ -175,8 +173,6 @@ namespace tuscany
                 {
                     mapCompositePass2(iter->first, iter->second);
                 }
-                
-                LOGEXIT(1, "ModelLoader::loadComposites");
             }
             
             // ====================================================================
@@ -186,8 +182,9 @@ namespace tuscany
             // ====================================================================
             Composite* ModelLoader::loadCompositeFile(const File& file)
             {
-                LOGENTRY(1, "ModelLoader::loadCompositeFile");
-                LOGINFO_1(2, "composite filename: %s", file.getFileName().c_str());
+                logentry(); 
+
+                loginfo("Composite file name: %s", file.getFileName().c_str());
 
                 Composite* composite = NULL;                
                 try 
@@ -198,7 +195,7 @@ namespace tuscany
                         XMLDocumentPtr compositeFile = getXMLHelper()->loadFile(fileName.c_str());
                         if (compositeFile->getRootDataObject() == NULL)
                         {
-                            LOGERROR_1(0, "ModelLoader::loadCompositeFile: Unable to load file: %s", fileName.c_str());
+                            logerror("Unable to load file: %s", fileName.c_str());
                         }
                         else
                         {
@@ -210,12 +207,10 @@ namespace tuscany
                         }
                     }
                     
-                } catch (SDORuntimeException ex) 
+                } catch (SDORuntimeException& ex) 
                 {
-                    LOGERROR_1(0, "ModelLoader::loadCompositeFile: Exception caught: %s", ex.getMessageText());
+                    logerror("Unable to load composite: %s", ex.getMessageText());
                 }    
-                
-                LOGEXIT(1, "ModelLoader::loadCompositeFile");
                 return composite;
             }
             
@@ -224,11 +219,11 @@ namespace tuscany
             // ===========
             Composite* ModelLoader::mapCompositePass1(const File& file, DataObjectPtr root)
             {
-                LOGENTRY(1, "ModelLoader::mapCompositePass1");
+                logentry(); 
                 
                 const string& compositeRootDir = file.getDirectory();
                 const string compositeName = root->getCString("name");
-                LOGINFO_2(2, "ModelLoader::mapCompositePass1: Loading composite: %s, root Dir: %s", compositeName.c_str(), compositeRootDir.c_str());
+                loginfo("Composite: %s, root directory: %s", compositeName.c_str(), compositeRootDir.c_str());
                 
                 Composite* composite = new Composite(compositeName, compositeRootDir);
                 compositeModels[compositeName] = composite; 
@@ -264,7 +259,6 @@ namespace tuscany
                     composite->addWire(source, target);
                 }
                 
-                LOGEXIT(1, "ModelLoader::mapCompositePass1");
                 return composite;
             }
 
@@ -273,9 +267,8 @@ namespace tuscany
             // ===========
             Composite* ModelLoader::mapCompositePass2(const string& compositeName, DataObjectPtr root)
             {
-                LOGENTRY(1, "ModelLoader::mapCompositePass2");
-                
-                LOGINFO_1(2, "ModelLoader::mapCompositePass2: Loading composite: %s", compositeName.c_str());
+                logentry(); 
+                loginfo("Composite: %s", compositeName.c_str());
                 
                 Composite* composite = compositeModels[compositeName]; 
                 
@@ -292,7 +285,6 @@ namespace tuscany
                 // Resolve all the wires inside the composite
                 composite->resolveWires();
                                 
-                LOGEXIT(1, "ModelLoader::mapCompositePass2");
                 return composite;
             }
 
@@ -301,6 +293,8 @@ namespace tuscany
             // =================================
             void ModelLoader::addComponent(Composite* composite, DataObjectPtr componentDO)
             {
+                logentry(); 
+
                 // -------------------
                 // Get the component implementation
                 // -------------------
@@ -309,7 +303,7 @@ namespace tuscany
                 {
                     string message = "No implementation for component: ";
                     message = message + componentDO->getCString("name");
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
 
                 // Create the component type
@@ -329,7 +323,7 @@ namespace tuscany
                     {
                         string message = "Composite not found: ";
                         message = message + impl->getCString("name");
-                        throw SystemConfigurationException(message.c_str());
+                        throwException(SystemConfigurationException, message.c_str());
                     }
                     componentType = composite;
                 }
@@ -361,7 +355,7 @@ namespace tuscany
                                 if (!componentTypeFile || componentTypeFile->getRootDataObject() == 0)
                                 {
                                     // Component type files are optional
-                                    LOGINFO_1(0, "ModelLoader::addComponent: Unable to load file: %s", typeFileName.c_str());
+                                    logerror("Unable to load file: %s", typeFileName.c_str());
                                 }
                                 else
                                 {                                            
@@ -373,19 +367,18 @@ namespace tuscany
                                 }
                             } catch (SDORuntimeException& ex) 
                             {
-                                LOGERROR_2(0, "ModelLoader::addComponent (%s): Exception caught: %s",
-                                    typeFileName.c_str(), ex.getMessageText());
-                                throw SystemConfigurationException(ex.getMessageText());
+                                logerror(0, "Unable to load file:%s", typeFileName.c_str());
+                                throwException(SystemConfigurationException, ex);
                             }
                         }    
                     }
                     else
                     {
-                        LOGERROR_1(0, "ModelLoader::addComponent: Unsupported implementation type: %s", implTypeQname.c_str());
+                        logerror("Unsupported implementation type: %s", implTypeQname.c_str());
     
                         string message = "Implementation type not supported: ";
                         message = message + implTypeQname;
-                        throw SystemConfigurationException(message.c_str());
+                        throwException(SystemConfigurationException, message.c_str());
                     }
                 }
                 
@@ -399,7 +392,7 @@ namespace tuscany
                     {
                         // Configuration error: reference is not defined
                         string message = "Undefined reference: " + refName;
-                        throw SystemConfigurationException(message.c_str());
+                        throwException(SystemConfigurationException, message.c_str());
                     }
                 }
                 
@@ -432,7 +425,7 @@ namespace tuscany
                     {
                         // Configuration error: reference is not defined
                         string message = "Undefined reference: " + refName;
-                        throw SystemConfigurationException(message.c_str());
+                        throwException(SystemConfigurationException, message.c_str());
                     }
                     
                     string src = component->getName() + "/" + refName;
@@ -449,6 +442,8 @@ namespace tuscany
             // =====================================================================
             void ModelLoader::addServiceTypes(Composite* composite, ComponentType* componentType, DataObjectPtr componentTypeDO)
             {
+                logentry(); 
+
                 DataObjectList& serviceTypes = componentTypeDO->getList("service");
                 for (int i=0; i<serviceTypes.size(); i++)
                 {
@@ -464,6 +459,8 @@ namespace tuscany
             // ===================================================
             void ModelLoader::addReferenceTypes(Composite* composite, ComponentType* componentType, DataObjectPtr componentTypeDO)
             {
+                logentry(); 
+
                 DataObjectList& refs = componentTypeDO->getList("reference");
                 for (int i=0; i<refs.size(); i++)
                 {
@@ -493,6 +490,8 @@ namespace tuscany
             // ==============
             Interface* ModelLoader::getInterface(Composite* composite, DataObjectPtr obj)
             {
+                logentry(); 
+
                 // -----------------
                 // get the interface
                 // -----------------
@@ -501,7 +500,7 @@ namespace tuscany
                 {
                     string message = "No interface for: ";
                     message = message + obj->getCString("name");
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
                 
                 string typeQname = iface->getType().getURI();
@@ -526,7 +525,7 @@ namespace tuscany
                     else
                     {
                         // log this for now.
-                        LOGERROR_1(1, "ModelLoader::getInterface: Unsupported interface type: %s", typeQname.c_str());
+                        logerror("Unsupported interface type: %s", typeQname.c_str());
                         return 0;
                     }
                 }
@@ -538,6 +537,8 @@ namespace tuscany
             // ==============================================
             void ModelLoader::addPropertyTypes(ComponentType* componentType, DataObjectPtr componentTypeDO)
             {
+                logentry(); 
+
                 DataObjectList& props = componentTypeDO->getList("property");
                 for (int i=0; i<props.size(); i++)
                 {
@@ -564,8 +565,8 @@ namespace tuscany
             // ===============================================
             void ModelLoader::addCompositeService(Composite* composite, DataObjectPtr compositeServiceDO)
             {
+                logentry(); 
 
-                //Utils::printDO(compositeServiceDO);
                 string compositeServiceName = compositeServiceDO->getCString("name");
                 
                 Interface* iface;
@@ -610,11 +611,9 @@ namespace tuscany
                 {
                     string message = "No binding for compositeService: ";
                     message = message + compositeServiceDO->getCString("name");
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
                 DataObjectPtr binding = bindings[0];
-                
-                // Utils::printDO(binding);
                 
                 // Determine the binding type
                 string bindingType = binding->getType().getName();
@@ -632,11 +631,11 @@ namespace tuscany
                 }
                 else
                 {
-                    LOGERROR_1(0, "ModelLoader::addCompositeService: Unsupported binding type: %s", bindingTypeQname.c_str());
+                    logerror("Unsupported binding type: %s", bindingTypeQname.c_str());
 
                     string message = "Binding type not supported: ";
                     message = message + bindingTypeQname;
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
             }
             
@@ -646,6 +645,8 @@ namespace tuscany
             // =========================================================
             void ModelLoader::addCompositeReference(Composite* composite, DataObjectPtr compositeReferenceDO)
             {
+                logentry(); 
+
                 string compositeReferenceName = compositeReferenceDO->getCString("name");
                 
                 Interface* iface;
@@ -669,11 +670,9 @@ namespace tuscany
                 {
                     string message = "No binding for compositeReference: ";
                     message = message + compositeReferenceDO->getCString("name");
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
                 DataObjectPtr binding = bindings[0];
-                
-                //Utils::printDO(binding);
                 
                 // Determine the binding type
                 string bindingType = binding->getType().getName();
@@ -691,11 +690,11 @@ namespace tuscany
                 }
                 else
                 {
-                    LOGERROR_1(0, "ModelLoader::addCompositeReference: Unsupported binding type: %s", bindingTypeQname.c_str());
+                    logerror("Unsupported binding type: %s", bindingTypeQname.c_str());
 
                     string message = "Binding type not supported: ";
                     message = message + bindingTypeQname;
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
             }
             
@@ -706,7 +705,7 @@ namespace tuscany
             ///
             void ModelLoader::loadTypeMetadata(const string &compositeRootDir, Composite* composite)
             {
-                LOGENTRY(1, "ModelLoader::loadTypeMetadata");
+                logentry(); 
 
                 // Load the "Tuscany.config" file, if it exists
                 Files files(compositeRootDir, "Tuscany.config", false);
@@ -718,11 +717,11 @@ namespace tuscany
                         XMLDocumentPtr compositeConfigFile = getXMLHelper()->loadFile(filename.c_str());
                         if (compositeConfigFile->getRootDataObject() == 0)
                         {
-                            LOGERROR_1(0, "ModelLoader::loadTypeMetadata: Unable to load file: %s", filename.c_str());
+                            logerror("Unable to load file: %s", filename.c_str());
                         }
                         else
                         {    
-                            LOGINFO_2(2, "ModelLoader::loadTypeMetadata: Loading composite config for: %s, root Dir: %s", composite->getName().c_str(), compositeRootDir.c_str());
+                            loginfo("Composite config for: %s, root directory: %s", composite->getName().c_str(), compositeRootDir.c_str());
     
                             if(compositeConfigFile->getRootDataObject()->isSet("xsd"))
                             {
@@ -784,8 +783,6 @@ namespace tuscany
                         loadWSDLDefinition(composite, wsdlName.c_str());
                     }                    
                 } 
-                
-                LOGEXIT(1, "ModelLoader::loadTypeMetadata");
             }
             
             
@@ -794,7 +791,7 @@ namespace tuscany
             ///
             void ModelLoader::loadXMLSchema(Composite* composite, const char *fileName)
             {
-                LOGENTRY(1, "ModelLoader::loadXMLSchema");
+                logentry(); 
                                    
                 // Load a xsd file -> set the types in the data factory associated with
                 // the composite
@@ -802,12 +799,11 @@ namespace tuscany
                     composite->getXSDHelper()->defineFile(fileName);                        
                     //Utils::printTypes((*compositeIter)->getXSDHelper()->getDataFactory());
                     
-                } catch (SDOTypeNotFoundException ex)
+                } catch (SDORuntimeException& ex)
                 {
-                    LOGERROR_1(0, "ModelLoader: Exception caught: %s", ex.getMessageText());
-                    throw ex;
+                    logerror("Unable to load schema: %s", fileName);
+                    throwException(SystemConfigurationException, ex);
                 }
-                LOGEXIT(1, "ModelLoader::loadXMLSchema");                            
             }
 
             ///
@@ -815,7 +811,7 @@ namespace tuscany
             ///
             void ModelLoader::loadWSDLDefinition(Composite* composite, const char *fileName)
             {
-                LOGENTRY(1, "ModelLoader::loadWSDLDefinition");
+                logentry(); 
 
                 try {
                     // Load the wsdl file
@@ -831,21 +827,14 @@ namespace tuscany
                     }
                     else
                     {
-                        LOGERROR_1(0, "ModelLoader: Unable to load or parse WSDL %s", fileName);
+                        logerror("Unable to load or parse WSDL: %s", fileName);
                     }
                     
-                } catch (SDOTypeNotFoundException ex)
+                } catch (SDORuntimeException& ex)
                 {
-                    LOGERROR_1(0, "ModelLoader: SDOTypeNotFoundException caught: %s", ex.getMessageText());
-                    throw ex;
+                    logerror("Unable to load or parse WSDL: %s", fileName);
+                    throwException(SystemConfigurationException, ex);
                 }
-                catch (SDONullPointerException ex)
-                {
-                    LOGERROR_1(0, "ModelLoader: SDONullPointerException caught: %s", ex.getMessageText());
-                    throw ex;
-                }
-                LOGEXIT(1, "ModelLoader::loadWSDLDefinition");                                            
-                
             }
             
             //////////////////////////////////////////////////////////////////////////////
@@ -857,6 +846,8 @@ namespace tuscany
             ///
             const XSDHelperPtr ModelLoader::getXSDHelper() 
             {
+                logentry(); 
+
                 if (myXSDHelper == 0)
                 {
                     
@@ -888,14 +879,11 @@ namespace tuscany
                         }
 
                      
-                    } catch (SDOTypeNotFoundException ex)
+                    } catch (SDORuntimeException& ex)
                     {
-                        LOGERROR_1(0, "ModelLoader: Exception caught: %s", ex.getMessageText());
-                        throw ex;
+                        throwException(SystemConfigurationException, ex);
                     }
                 }
-                
-                //cout << myXSDHelper->getDataFactory();
                 
                 return myXSDHelper;
             }
@@ -906,6 +894,8 @@ namespace tuscany
             ///
             const XMLHelperPtr ModelLoader::getXMLHelper() 
             {
+                logentry(); 
+
                 if (myXMLHelper == 0) {
                     
                     // Create an xml helper
@@ -918,6 +908,8 @@ namespace tuscany
             
             void ModelLoader::initializeWSDLModel(XSDHelperPtr xsdHelper)
             {
+                logentry(); 
+
                 DataFactoryPtr dataFactory = xsdHelper->getDataFactory();
  
                 dataFactory->addType(
@@ -1808,7 +1800,6 @@ namespace tuscany
                     "http://schemas.xmlsoap.org/wsdl/soap12/", "useChoice",
                     "commonj.sdo", "String");  
             }
-            
             
         } // End namespace model
     } // End namespace sca

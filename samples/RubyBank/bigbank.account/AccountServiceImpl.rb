@@ -24,60 +24,53 @@ class AccountServiceImpl
   attr_writer :accountDataService
   attr_writer :stockQuoteService
   attr_writer :currency
-
+  
   def initialize()
     print "Ruby - AccountServiceImpl.initialize\n"
   end
 
   def getAccountReport(customerID)
   
+    # Get the checking account info
     checking = @accountDataService.getCheckingAccount(customerID)
 
+    # Get the savings account info
     savings = @accountDataService.getSavingsAccount(customerID)
     
+    # Get the stocks account info
     stock = @accountDataService.getStockAccount(customerID);
     symbol = stock.root.elements["symbol"].text
     quantity = stock.root.elements["quantity"].text
     
+    # Get the stock price
     price = @stockQuoteService.getQuote(symbol);
-
-    balance = fromUSDollarToCurrency(price.to_f * quantity.to_f)
     
+    # Convert to the configured currency
+    price = price.to_f * 0.80 if @currency == "EUR"
+
+    # Calculate the balance
+    balance = price.to_f * quantity.to_f
+    
+    # Form the AccountReport document
     report = Document.new <<-eof
       <AccountReport xmlns="http://www.bigbank.com/AccountService"
         xsi:type="AccountReport" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
         <checking>
-          <accountNumber>
-            #{ checking.root.elements["accountNumber"].text }
-          </accountNumber>
-          <balance>
-            #{ fromUSDollarToCurrency(checking.root.elements["balance"].text) }
-          </balance>
+          <accountNumber>#{ checking.root.elements["accountNumber"].text }</accountNumber>
+          <balance>#{ checking.root.elements["balance"].text }</balance>
         </checking>
 
         <savings>
-          <accountNumber>
-            #{ savings.root.elements["accountNumber"].text }
-          </accountNumber>
-          <balance>
-            #{ fromUSDollarToCurrency(savings.root.elements["balance"].text) }
-          </balance>
+          <accountNumber>#{ savings.root.elements["accountNumber"].text }</accountNumber>
+          <balance>#{ savings.root.elements["balance"].text }</balance>
         </savings>
 
         <stocks>
-          <accountNumber>
-            #{ stock.root.elements["accountNumber"].text }
-          </accountNumber>
-          <symbol>
-            #{ symbol }
-          </symbol>
-          <quantity>
-            #{ quantity }
-          </quantity>
-          <balance>
-            #{ balance }
-          </balance>
+          <accountNumber>#{ stock.root.elements["accountNumber"].text }</accountNumber>
+          <symbol>#{ symbol }</symbol>
+          <quantity>#{ quantity }</quantity>
+          <balance>#{ balance }</balance>
         </stocks>
         
       </AccountReport>
@@ -86,9 +79,4 @@ class AccountServiceImpl
     return report
   end
   
-  def fromUSDollarToCurrency(value)
-    return value.to_f * 0.8 if @currency == "EURO"
-    return value.to_f
-  end
-	
 end

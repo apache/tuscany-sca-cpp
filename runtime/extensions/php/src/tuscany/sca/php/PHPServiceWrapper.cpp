@@ -26,8 +26,8 @@
 
 #include "tuscany/sca/php/PHPServiceWrapper.h"
 
-#include "osoa/sca/ServiceRuntimeException.h"
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Composite.h"
@@ -37,8 +37,6 @@
 #include "tuscany/sca/php/model/PHPImplementation.h"
 
 #include <php_embed.h>
-
-using namespace osoa::sca;
 
 namespace tuscany
 {
@@ -59,14 +57,15 @@ namespace tuscany
 
             // Callback for log messages
             void php_log_message(char *message) 
-            { 
-                LOGINFO_1(5, "PHP Log (%s)", message); 
+            {
+                loginfo("PHP log: %s", message); 
             }
 
             // Callback for unbuffered writes (echo, print etc.)
             int php_ub_write(const char *str, unsigned int str_length TSRMLS_DC)
             {
-                LOGINFO_1(5, "PHP Write (%s)", str);
+                logentry();
+                loginfo("Write: %s", str);
                 scriptResponse = str;
                 return str_length;
             }
@@ -77,19 +76,21 @@ namespace tuscany
                               const uint error_lineno,
                               const char *format, va_list args)
             {
+                logentry();
+                
                 char buffer[2048];
                 int len;
 				
                 len = snprintf(buffer, 2048, "Error on line %d: ", error_lineno);
                 vsnprintf(buffer + len, (2048 - len), format, args);
-                LOGINFO_1(5, "PHP Unformatted Error (%s)", buffer);
+                logwarning("PHP unformatted error: %s", buffer);
                 zend_bailout(); 
             }
 
             // Callback for flush (could be used to do something with the scriptResponse)
             void php_flush(void *server_context) 
             { 
-                LOGINFO(5, "Flush");
+               logentry();
             }
 
             // ===========
@@ -98,7 +99,7 @@ namespace tuscany
             PHPServiceWrapper::PHPServiceWrapper(Service* service)
                 : ServiceWrapper(service)
             {
-                LOGENTRY(1,"PHPServiceWrapper::constructor");
+                logentry();
     
                 component = service->getComponent();
                 interf = service->getType()->getInterface();
@@ -111,14 +112,11 @@ namespace tuscany
                 if (!impl)
                 {
                     string msg = "Component " + component->getName() + " has no implementation defined";
-                    throw ServiceNotFoundException(msg.c_str());
+                    throwException(SystemConfigurationException, msg.c_str());
                 }
 
-                LOGINFO_1(3,"PHPServiceWrapper::getServiceWrapper module %s", impl->getModule().c_str());
-                LOGINFO_1(3,"PHPServiceWrapper::getServiceWrapper class %s", impl->getClass().c_str());
-
-                LOGEXIT(1,"PHPServiceWrapper::constructor");
-                
+                loginfo("Module: %s", impl->getModule().c_str());
+                loginfo("Class: %s", impl->getClass().c_str());
             }
             
             // ==========
@@ -126,8 +124,7 @@ namespace tuscany
             // ==========
             PHPServiceWrapper::~PHPServiceWrapper()
             {
-                LOGENTRY(1,"PHPServiceWrapper::destructor");
-                LOGEXIT(1,"PHPServiceWrapper::destructor");
+                logentry();
             }
             
             
@@ -136,14 +133,14 @@ namespace tuscany
             // ======================================================================
             void PHPServiceWrapper::invoke(Operation& operation)
             {
-                LOGENTRY(1,"PHPServiceWrapper::invoke");
+                logentry();
     
                 SCARuntime* runtime = SCARuntime::getInstance();
                 runtime->setCurrentComponent(component);
                 
                 try
                 {
-                    LOGINFO_1(4, "PHPServiceWrapper::invoke called with operation name: %s", operation.getName().c_str());
+                    loginfo("Operation: %s", operation.getName().c_str());
 
                     // create a temporary script which
                     // - includes the named script
@@ -249,7 +246,7 @@ namespace tuscany
     			            }
                             default: 
                             {
-                                throw new ComponentInvocationException("Operation parameter type not supported");
+                                throwException(ServiceDataException, "Operation parameter type not supported");
                             }
     		            }
                            
@@ -264,7 +261,7 @@ namespace tuscany
                     script += ");echo $response;return $response;";                  
                  
                     // we now have the temporary script to make the call
-                    LOGINFO_1(5, "Executing PHP script \n%s", script.c_str());
+                    loginfo("Script: %s", script.c_str());
 
                     // load the PHP logging and error callback methods
                     php_embed_module.log_message = php_log_message;
@@ -274,7 +271,7 @@ namespace tuscany
                     //PHP_EMBED_START_BLOCK(/* argc */ 0, /* argv */ NULL)
                     void ***tsrm_ls; 
                     int status = php_embed_init(0, NULL PTSRMLS_CC);  
-                    LOGINFO_1(5, "Engine startup status %d", status);
+                    loginfo("Engine startup status: %d", status);
 
                     zend_first_try {
                         // set error handler
@@ -293,21 +290,21 @@ namespace tuscany
                         // This is a bit of a rubbish way of doing things so 
                         // needs replacing when proper SAPI is used
                         //convert_to_string(&retval);
-                        //LOGINFO_1(5, "Script returned %s", Z_STRVAL(retval));
+                        //loginfo("Script returned: %s", Z_STRVAL(retval));
                         //zval_dtor(&retval);
 
                         //PHP_EMBED_END_BLOCK()
                     } zend_catch {
                         int exit_status = EG(exit_status); 
-                        LOGINFO_1(5, "In catch %d", exit_status);
+                        loginfo("In catch: %d", exit_status);
                     } zend_end_try(); 
 
                     //clean up
                     php_embed_shutdown(TSRMLS_C); 
-                    LOGINFO(5, "Engine shutdown");
+                    loginfo("Engine shutdown");
                    
                     // get the response values
-                    LOGINFO_1(5, "Script returned %s", scriptResponse.c_str());
+                    loginfo("Script returned: %s", scriptResponse.c_str());
 
                     switch(operation.getReturnType())
                     {
@@ -369,12 +366,10 @@ namespace tuscany
                 }
                 catch (...)
                 {
-                       runtime->unsetCurrentComponent();
+                    runtime->unsetCurrentComponent();
                     throw;
                 }
-                   runtime->unsetCurrentComponent();
-                LOGEXIT(1,"PHPServiceWrapper::invoke");
-                
+                runtime->unsetCurrentComponent();
             }
             
             // ======================================================================
@@ -382,7 +377,7 @@ namespace tuscany
             // ======================================================================
             PHPServiceWrapper* PHPServiceWrapper::getServiceWrapper(Service* service)
             {            
-                LOGENTRY(1,"PHPServiceWrapper::getServiceWrapper");
+                logentry();
                 PHPServiceWrapper* serviceWrapper = 0;
                 
                 // ---------------------------------
@@ -392,11 +387,9 @@ namespace tuscany
                 if (!serviceWrapper)
                 {
                     string msg = "Could not create new PHPServiceWrapper";
-                    LOGERROR(1, msg.c_str());
-                    throw ServiceNotFoundException(msg.c_str());
+                    throwException(SystemConfigurationException, msg.c_str());
                 }                
                 
-                LOGEXIT(1,"PHPServiceWrapper::getServiceWrapper");
                 return serviceWrapper;
             }    
 

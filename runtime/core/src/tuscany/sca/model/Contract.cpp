@@ -35,11 +35,13 @@ namespace tuscany
             Contract::Contract(Interface *intface, Interface* callbackInterface) :
                 iface(intface), callbackInterface(callbackInterface)
             {
+                logentry(); 
             }
 
             // Destructor
             Contract::~Contract()
             {
+                logentry(); 
             }
 
         } // End namespace model

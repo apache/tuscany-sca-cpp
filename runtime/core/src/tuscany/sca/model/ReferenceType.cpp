@@ -37,14 +37,18 @@ namespace tuscany
                 : Contract(intface, callbackInterface),
                 componentType(componentType), name(name), multiplicity(multiplicity)
             {
+                logentry(); 
             }
             
             ReferenceType::~ReferenceType()
             {
+                logentry(); 
             }
             
             ReferenceType::Multiplicity ReferenceType::getMultiplicityFromString(const string& multip)
             {
+                logentry(); 
+
                 if (multip == "0..1")
                 {
                     return ReferenceType::ZERO_ONE;

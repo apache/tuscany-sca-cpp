@@ -41,8 +41,8 @@ namespace tuscany
                     Interface* intface, Interface* callbackInterface, bool conversational, ReferenceType::Multiplicity multiplicity) :
                 Component(composite, name, new ComponentType(composite, name))
             {
-                LOGENTRY(1, "CompositeReference::constructor");
-                LOGINFO_1(2, "CompositeReference::constructor: CompositeReference name: %s", name.c_str());
+                logentry(); 
+                loginfo("Composite reference name: %s", name.c_str());
                 
                 // Initialize the component type, service type and service
                 ComponentType* componentType = getType();
@@ -52,13 +52,12 @@ namespace tuscany
                 
                 service = new Service(this, serviceType);
                 addService(service);
-                
-                LOGEXIT(1, "CompositeReference::constructor");
             }
 
             // Destructor
             CompositeReference::~CompositeReference()
             {
+                logentry(); 
             }
 
         } // End namespace model

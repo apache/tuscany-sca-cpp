@@ -19,7 +19,7 @@
 
 require("tuscany_sca_ruby")
 
-accountService = SCA::locateService("AccountServiceComponent")
+accountService = SCA::locateService("AccountService")
 
 report = accountService.getAccountReport(1234)
 
@@ -27,14 +27,14 @@ checking = report.root.elements["checking"]
 savings = report.root.elements["savings"]
 stocks = report.root.elements["stocks"]
 
-print "\n"
-print "Checking account: ", checking.elements["accountNumber"].text.strip, "\n"
+print "\n\n"
+print "Checking account #: ", checking.elements["accountNumber"].text.strip, "\n"
 print "Balance: ", checking.elements["balance"].text.strip, "\n"
 
-print "Savings account: ", savings.elements["accountNumber"].text.strip, "\n"
+print "Savings account #: ", savings.elements["accountNumber"].text.strip, "\n"
 print "Balance: ", savings.elements["balance"].text.strip, "\n"
 
-print "Stocks account:", stocks.elements["accountNumber"].text.strip, "\n"
+print "Stocks account #:", stocks.elements["accountNumber"].text.strip, "\n"
 print "Symbol: ", stocks.elements["symbol"].text.strip, "\n"
 print "Quantity: ", stocks.elements["quantity"].text.strip, "\n"
 print "Balance: ", stocks.elements["balance"].text.strip, "\n"

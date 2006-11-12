@@ -33,6 +33,8 @@ using commonj::sdo::DataObjectPtr;
 
 #include <map>
 using std::map;
+#include <vector>
+using std::vector;
 
 namespace tuscany
 {
@@ -61,12 +63,16 @@ namespace tuscany
                  */ 
                 SCA_API virtual ~WSDLDefinition();
 
-
                 /**
                  * Returns the target namespace of the WSDL definitions.
                  * @return The target namespace.
                  */
                 SCA_API string getNamespace(void);
+
+                /**
+                 * Add a WSDL model.
+                 */
+                SCA_API void addWSDLModel(DataObjectPtr wsdlModel);
 
                 /**
                  * Find an operation in the WSDL definitions.
@@ -129,10 +135,11 @@ namespace tuscany
                 /**
                  * The data object representation of the WSDL document.
                  */
-                DataObjectPtr wsdlModel;
+                typedef std::vector<DataObjectPtr> MODEL_VECTOR;
+                MODEL_VECTOR wsdlModels;
                 
-                typedef map<string, WSDLOperation> OperationMap;
-                OperationMap operationMap;
+                typedef map<string, WSDLOperation> OPERATION_MAP;
+                OPERATION_MAP operationMap;
             };
 
          } // End namespace model

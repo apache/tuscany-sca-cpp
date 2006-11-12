@@ -25,5 +25,9 @@
 		<implementation.composite name="bigbank.account"/>
 	</component>
 
+	<component name="bigbank.AccountWSClientComponent">
+		<implementation.composite name="bigbank.wsclient"/>
+	</component>
+
 </composite>
 	

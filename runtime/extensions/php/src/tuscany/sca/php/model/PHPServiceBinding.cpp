@@ -34,22 +34,19 @@ namespace tuscany
             PHPServiceBinding::PHPServiceBinding(Service* service)
                 : ServiceBinding(service, "")
             {
-                LOGENTRY(1,"PHPServiceBinding::constructor");
+                logentry();
                 serviceWrapper = PHPServiceWrapper::getServiceWrapper(service);
-                LOGEXIT(1,"PHPServiceBinding::constructor");
             }
 
             // Destructor
             PHPServiceBinding::~PHPServiceBinding()
             {
-                LOGENTRY(1,"PHPServiceBinding::destructor");
-                LOGEXIT(1,"PHPServiceBinding::destructor");
+                logentry();
             }
             
             ServiceWrapper* PHPServiceBinding::getServiceWrapper()
             {
-                LOGENTRY(1,"PHPServiceBinding::getServiceWrapper");
-                LOGEXIT(1,"PHPServiceBinding::getServiceWrapper");
+                logentry();
                 return (ServiceWrapper*)serviceWrapper;
             }
                 

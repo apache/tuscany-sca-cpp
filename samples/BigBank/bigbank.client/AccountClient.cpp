@@ -113,10 +113,6 @@ int main(int argc, char* argv[])
             {
                 cout << e << endl;
             }
-			catch (char* x)
-			{
-				cout << "account_client: exception caught: " << x << endl;
-			}
 		}
 		
 	}

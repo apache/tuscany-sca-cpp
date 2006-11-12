@@ -19,10 +19,10 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/python/PythonServiceRuntimeException.h"
 #include "tuscany/sca/python/PythonServiceWrapper.h"
 
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Composite.h"
@@ -48,12 +48,12 @@ namespace tuscany
             void printPyObject(char * name, PyObject *pObj)
             {
                 PyObject* pObjRepr = PyObject_Repr(pObj);    
-                LOGINFO_2(5, "PythonServiceWrapper::printPyObject %s: %s", name, PyString_AsString(pObjRepr));
+                loginfo("PyObject %s: %s", name, PyString_AsString(pObjRepr));
                 Py_DECREF(pObjRepr);
 
                 PyObject* pObjDir = PyObject_Dir(pObj);    
                 PyObject* pObjDirRepr = PyObject_Repr(pObjDir);
-                LOGINFO_2(5, "PythonServiceWrapper::printPyObject dir(%s): %s", name, PyString_AsString(pObjDirRepr));
+                loginfo("PyObject dir(%s): %s", name, PyString_AsString(pObjDirRepr));
                 Py_DECREF(pObjDirRepr);
                 Py_DECREF(pObjDir);
             }
@@ -64,7 +64,7 @@ namespace tuscany
             PythonServiceWrapper::PythonServiceWrapper(Service* service)
                 : ServiceWrapper(service)
             {
-                LOGENTRY(1,"PythonServiceWrapper::constructor");
+                logentry();
     
                 component = service->getComponent();
                 implementation = (PythonImplementation*)component->getType();              
@@ -79,12 +79,12 @@ namespace tuscany
                 if (!impl)
                 {
                     string msg = "Component " + component->getName() + " has no implementation defined";
-                    throw PythonServiceNotFoundException(msg.c_str());
+                    throwException(SystemConfigurationException, msg.c_str());
                 }
 
-                LOGINFO_1(3,"PythonServiceWrapper::constructor module %s", impl->getModule().c_str());
-                LOGINFO_1(3,"PythonServiceWrapper::constructor path %s", impl->getModulePath().c_str());
-                LOGINFO_1(3,"PythonServiceWrapper::constructor class %s", impl->getClass().c_str());
+                loginfo("Module: %s", impl->getModule().c_str());
+                loginfo("Path: %s", impl->getModulePath().c_str());
+                loginfo("Class: %s", impl->getClass().c_str());
 
                 // Initialize the Python environment
                 Py_Initialize();
@@ -128,8 +128,7 @@ namespace tuscany
                         PyErr_Print();
                     }
                     string msg = "Failed to load module named " + impl->getModule();
-                    LOGERROR(0, msg.c_str());
-                    throw PythonComponentContextException(msg.c_str());
+                    throwException(SystemConfigurationException, msg.c_str());
                 }
                 //else
                 //{
@@ -138,9 +137,6 @@ namespace tuscany
                 //}
 
                 printPyObject("pythonModule",pythonModule);
-
-                LOGEXIT(1,"PythonServiceWrapper::constructor");
-                
             }
             
             // ==========
@@ -148,11 +144,11 @@ namespace tuscany
             // ==========
             PythonServiceWrapper::~PythonServiceWrapper()
             {
-                LOGENTRY(1,"PythonServiceWrapper::destructor");
+                logentry();
+
                 Py_XDECREF(pythonClassInstance);
                 Py_XDECREF(pythonModule);
                 Py_Finalize();
-                LOGEXIT(1,"PythonServiceWrapper::destructor");
             }
             
             // ======================================================================
@@ -160,7 +156,8 @@ namespace tuscany
             // ======================================================================
             PyObject* PythonServiceWrapper::newInstance()
             {
-                LOGENTRY(1,"PythonServiceWrapper::newInstance");
+                logentry();
+
                 PythonImplementation* impl = (PythonImplementation*)component->getType();
                 string className = impl->getClass();
 
@@ -179,8 +176,7 @@ namespace tuscany
                                 PyErr_Print();
                             }
                             string msg = "Cannot find class named " + className + " in Python module";
-                            LOGERROR(0, msg.c_str());
-                            throw new PythonComponentInvocationException(msg.c_str());
+                            throwException(SystemConfigurationException, msg.c_str());
                         }
 
                         pClassInstance = PyInstance_New(pClass, NULL, NULL);
@@ -192,13 +188,11 @@ namespace tuscany
                                 PyErr_Print();
                             }
                             string msg = "Could not create new instance of class named " + className + " in Python module";
-                            LOGERROR(0, msg.c_str());
-                            throw new PythonComponentInvocationException(msg.c_str());
+                            throwException(ServiceInvocationException, msg.c_str());
                         }
                         Py_XDECREF(pClass);
                     }
                 }
-                LOGEXIT(1,"PythonServiceWrapper::newInstance");
                 return pClassInstance;
             }
 
@@ -207,7 +201,7 @@ namespace tuscany
             // ======================================================================
             PyObject* PythonServiceWrapper::getInstance()
             {
-                LOGENTRY(1,"PythonServiceWrapper::getInstance");
+                logentry();
 
                 PythonImplementation::Scope scope = implementation->getScope();
                 if (scope == PythonImplementation::COMPOSITE)
@@ -222,7 +216,6 @@ namespace tuscany
                 {
                     return newInstance();
                 }        
-                LOGEXIT(1,"PythonServiceWrapper::getInstance");
             }
             
             // ======================================================================
@@ -230,7 +223,7 @@ namespace tuscany
             // ======================================================================
             void PythonServiceWrapper::releaseInstance()
             {
-                LOGENTRY(1,"PythonServiceWrapper::releaseInstance");
+                logentry();
                 
                 PythonImplementation::Scope scope = implementation->getScope();
                 if(scope == PythonImplementation::STATELESS)
@@ -252,7 +245,6 @@ namespace tuscany
                         pythonModule = reloadedPythonModule;
                     }
                 }
-                LOGEXIT(1,"PythonServiceWrapper::releaseInstance");
             }
             
             // ======================================================================
@@ -260,7 +252,7 @@ namespace tuscany
             // ======================================================================
             void PythonServiceWrapper::invoke(Operation& operation)
             {
-                LOGENTRY(1,"PythonServiceWrapper::invoke");
+                logentry();
     
                 SCARuntime* runtime = SCARuntime::getInstance();
                 runtime->setCurrentComponent(component);
@@ -272,7 +264,7 @@ namespace tuscany
 
                 try
                 {
-                    LOGINFO_1(4, "PythonServiceWrapper::invoke called with operation name: %s", operation.getName().c_str());
+                    loginfo("Operation: %s", operation.getName().c_str());
 
                     PyObject* pFunc = NULL; 
                     pythonClassInstance = getInstance();
@@ -289,10 +281,9 @@ namespace tuscany
                     }
                     if(pFunc == NULL)
                     {
-                        // Can't get the function from the class or module - throw exception
+                        // Can't get the function from the class or module
                         string msg = "Python module or class instance has not been created";
-                        LOGERROR(0, msg.c_str());
-                        throw new PythonComponentInvocationException(msg.c_str());
+                        throwException(ServiceInvocationException, msg.c_str());
                     }
 
                     if (pFunc && PyCallable_Check(pFunc)) 
@@ -373,7 +364,8 @@ namespace tuscany
                                     pValue = PyString_FromString((*(string*)parm.getValue()).c_str());
     				                break;
     			                }
-                                default: throw new PythonComponentInvocationException("Operation parameter type not supported");
+                                default:
+                                    throwException(ServiceDataException, "Operation parameter type not supported");
     		                }
 
                             if (!pValue) 
@@ -386,8 +378,7 @@ namespace tuscany
                                 }
 
                                 string msg = "Error converting parameter into Python type";
-                                LOGERROR(0, msg.c_str());
-                                throw new PythonComponentInvocationException(msg.c_str());
+                                throwException(ServiceDataException, msg.c_str());
                                 
                             }
                             //printPyObject("Param value", pValue);
@@ -408,12 +399,12 @@ namespace tuscany
                                 long* data = new long;
                                 if(PyInt_Check(pValue))
                                 {
-                                    LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is int type: %d", PyInt_AsLong(pValue));           
+                                    loginfo("Int return value: %d", PyInt_AsLong(pValue));           
                                     *data = PyInt_AsLong(pValue);
                                 }
                                 else
                                 {
-                                    LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is long type: %l", PyLong_AsLong(pValue));
+                                    loginfo("Long return value: %l", PyLong_AsLong(pValue));
                                     *data = PyLong_AsLong(pValue);                                
                                 }
 
@@ -491,7 +482,7 @@ namespace tuscany
                             }
                             else if(PyBool_Check(pValue))
                             {
-                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is bool type: %d", (pValue == Py_True));
+                                loginfo("Bool return value: %d", (pValue == Py_True));
                                 bool* data = new bool;
                                 *data = (pValue == Py_True);
 
@@ -581,7 +572,7 @@ namespace tuscany
                             }
                             else if(PyFloat_Check(pValue))
                             {
-                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is float type: %f", PyFloat_AsDouble(pValue));
+                                loginfo("Float return value: %f", PyFloat_AsDouble(pValue));
 
                                 double* data = new double;
                                 *data = PyFloat_AsDouble(pValue);
@@ -660,7 +651,7 @@ namespace tuscany
                             }
                             else if(PyString_Check(pValue))
                             {
-                                LOGINFO_1(3, "PythonServiceWrapper::invoke Return value is string type: %s", PyString_AsString(pValue));
+                                loginfo("String return value: %s", PyString_AsString(pValue));
                                 const char** data = new const char*; 
                                 *data = PyString_AsString(pValue);
 
@@ -747,7 +738,7 @@ namespace tuscany
                                 PyObject* valueRepr = PyObject_Repr(pValue); 
                                 PyObject* valueType = PyObject_Type(pValue);             
                                 PyObject* valueTypeRepr = PyObject_Repr(valueType);    
-                                LOGINFO_2(3, "PythonServiceWrapper::invoke Return value is of unknown type (%s) and has repr: %s", PyString_AsString(valueTypeRepr), PyString_AsString(valueRepr));
+                                loginfo("Return value of unknown type (%s) has repr: %s", PyString_AsString(valueTypeRepr), PyString_AsString(valueRepr));
                                 Py_DECREF(valueTypeRepr);
                                 Py_DECREF(valueType);
                                 Py_DECREF(valueRepr);
@@ -763,8 +754,7 @@ namespace tuscany
                                 PyErr_Print();
                             }
                             string msg = "Error whilst calling Python module";
-                            LOGERROR(0, msg.c_str());
-                            throw new PythonComponentInvocationException(msg.c_str());
+                            throwException(ServiceInvocationException, msg.c_str());
                         }
                     }
                     else 
@@ -774,8 +764,7 @@ namespace tuscany
                             PyErr_Print();
                         }
                         string msg = "Cannot find the operation named " + operation.getName() + " in the Python module";
-                        LOGERROR(0, msg.c_str());
-                        throw new PythonComponentInvocationException(msg.c_str());
+                        throwException(ServiceInvocationException, msg.c_str());
                     }
                     Py_XDECREF(pFunc);
  
@@ -788,8 +777,6 @@ namespace tuscany
                 }
                 releaseInstance();
                 runtime->unsetCurrentComponent();
-                LOGEXIT(1,"PythonServiceWrapper::invoke");
-                
             }
 
  
@@ -798,6 +785,8 @@ namespace tuscany
             // ==========================================================================
             void PythonServiceWrapper::addProperties(PyObject* module)
             {
+                logentry();
+
                 // Set all the configured properties
                 DataObjectPtr properties = component->getProperties();
                 PropertyList pl = properties->getInstanceProperties();
@@ -875,11 +864,11 @@ namespace tuscany
 
                         if(success == 0)
                         {
-                            LOGINFO_3(3, "Successfully added property named %s with type %s and value %s to python module", propName.c_str(), pl[i].getType().getName(), propValue.c_str());
+                            loginfo("Added property named %s with type %s and value %s to python module", propName.c_str(), pl[i].getType().getName(), propValue.c_str());
                         }
                         else
                         {
-                            LOGERROR_1(1, "Failed to add property named %s to python module", propName.c_str());
+                            logwarning("Failed to add property named %s to python module", propName.c_str());
                         }
                     }
                 }
@@ -892,6 +881,7 @@ namespace tuscany
             // ======================================================================
             void PythonServiceWrapper::addReferences(PyObject* module)
             {
+                logentry();
 
                 // Import the TuscanySCA python-extension module
                 PyObject* pModuleName = PyString_FromString("sca_proxy");
@@ -905,7 +895,7 @@ namespace tuscany
                         PyErr_Print();
                     }
                     string msg = "Failed to load the sca_proxy Python module - has it been successfully installed?\nReferences from Python components will not be supported";
-                    LOGERROR(0, msg.c_str());
+                    logwarning(0, msg.c_str());
                 }
                 else
                 {
@@ -935,11 +925,11 @@ namespace tuscany
 
                         if(success == 0)
                         {
-                            LOGINFO_1(3, "Successfully added sca_proxy_class instance as %s to pythonModule", referenceName.c_str());
+                            loginfo("Successfully added sca_proxy_class instance as %s to pythonModule", referenceName.c_str());
                         }
                         else
                         {
-                            LOGERROR_1(1, "Failed to add sca_proxy_class instance as %s to pythonModule", referenceName.c_str());
+                            logwarning("Failed to add sca_proxy_class instance as %s to pythonModule", referenceName.c_str());
                         }
                     }                       
                     Py_DECREF(sca_proxy_module);

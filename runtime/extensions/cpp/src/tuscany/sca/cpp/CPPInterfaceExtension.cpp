@@ -35,8 +35,7 @@ namespace tuscany
             // ===================================================================
             CPPInterfaceExtension::CPPInterfaceExtension()
             { 
-                LOGENTRY(1, "CPPInterfaceExtension::constructor");     
-                LOGEXIT(1, "CPPInterfaceExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -44,8 +43,7 @@ namespace tuscany
             // ===================================================================
             CPPInterfaceExtension::~CPPInterfaceExtension()
             { 
-                LOGENTRY(1, "CPPInterfaceExtension::destructor");;           
-                LOGEXIT(1, "CPPInterfaceExtension::destructor");
+                logentry();
             }
 
             const string CPPInterfaceExtension::extensionName("cpp");
@@ -56,6 +54,8 @@ namespace tuscany
             // ===================================================================
             tuscany::sca::model::Interface* CPPInterfaceExtension::getInterface(Composite* composite, DataObjectPtr scdlInterface)
             {
+                logentry();
+
                 // Determine the type
                 string ifType = scdlInterface->getType().getName();
                 if (ifType == "CPPInterface")

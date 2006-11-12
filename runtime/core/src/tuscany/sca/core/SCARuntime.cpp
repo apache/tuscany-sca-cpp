@@ -61,10 +61,9 @@ namespace tuscany
         // ==========================================================
         void SCARuntime::setSystemRoot(const string& root)
         {
-            LOGENTRY(1, "SCARuntime::setSystemRoot");
+            logentry();
             systemRoot = root;
-            LOGINFO_1(3, "SCARuntime::setSystemRoot - set to %s", root.c_str());
-            LOGEXIT(1, "SCARuntime::setSystemRoot");
+            loginfo("System root: %s", root.c_str());
         }
 
         // ==========================================================
@@ -72,10 +71,9 @@ namespace tuscany
         // ==========================================================
         void SCARuntime::setSystemPath(const string& path)
         {
-            LOGENTRY(1, "SCARuntime::setSystemPath");
+            logentry();
             systemPath = path;
-            LOGINFO_1(3, "SCARuntime::setSystemPath - set to %s", path.c_str());
-            LOGEXIT(1, "SCARuntime::setSystemPath");
+            loginfo("System path: %s", path.c_str());
         }
 
         // ==========================================================
@@ -83,10 +81,9 @@ namespace tuscany
         // ==========================================================
         void SCARuntime::setDefaultComponentName(const string& componentName)
         {
-            LOGENTRY(1, "SCARuntime::setDefaultComponentName");
+            logentry();
             defaultComponentName = componentName;
-            LOGINFO_1(3, "SCARuntime::setDefaultComponentName - set to %s", componentName.c_str());
-            LOGEXIT(1, "SCARuntime::setDefaultComponentName");
+            loginfo("Default component name: %s", componentName.c_str());
         }
 
         // ===================================================================
@@ -95,7 +92,7 @@ namespace tuscany
         // ===================================================================
         SCARuntime::SCARuntime() : system(0), defaultComponent(0)
         { 
-            LOGENTRY(1, "SCARuntime::constructor");
+            logentry();
             
             // Locate the SCA install root
             char*  root = 0;
@@ -104,14 +101,13 @@ namespace tuscany
             {
             	string msg = TUSCANY_SCACPP;
             	msg += " environment variable not set";
-                throw SystemConfigurationException(msg.c_str());
+                throwException(SystemConfigurationException, msg.c_str());
             }
             else
             {
                 SCARoot = root;
             }
  
-            LOGEXIT(1, "SCARuntime::constructor");
         }
 
         // ===================================================================
@@ -119,14 +115,13 @@ namespace tuscany
         // ===================================================================
         SCARuntime::~SCARuntime()
         { 
-            LOGENTRY(1, "SCARuntime::destructor");
+            logentry();
 
             if (system)
             {
                 delete system;
             }
             
-            LOGEXIT(1, "SCARuntime::destructor");
         }
 
         // =============================================================
@@ -135,7 +130,7 @@ namespace tuscany
         // =============================================================
         SCARuntime* SCARuntime::getInstance()
         {
-            LOGENTRY(1, "SCARuntime::getInstance");
+            logentry();
             
             if (instance == NULL) 
             {
@@ -157,7 +152,7 @@ namespace tuscany
                     {
                         string msg = TUSCANY_SCACPP_ROOT;
                         msg += " environment variable not set";
-                        throw SystemConfigurationException(msg.c_str());
+                        throwException(SystemConfigurationException, msg.c_str());
                     } 
 
                     systemRoot = systemRootEnv;
@@ -167,21 +162,12 @@ namespace tuscany
                     
                     // Get system path from environment variable TUSCANY_SCACPP_PATH
                     char* systemPathEnv = getenv(TUSCANY_SCACPP_PATH);
-                    if (systemPathEnv == 0)
-                    {
-                    // Make the path optional for now
-//                        string msg = TUSCANY_SCACPP_PATH;
-//                        msg += " environment variable not set";
-//                        throw SystemConfigurationException(msg.c_str());
-                    }
-                    else
+                    if (systemPathEnv != 0)
                     {
                         systemPath = systemPathEnv;
                     }
                 }
             }
-            
-            LOGEXIT(1, "SCARuntime::getInstance");
             
             return instance;
             
@@ -193,7 +179,7 @@ namespace tuscany
         // =============================================================
         void SCARuntime::releaseInstance()
         {
-            LOGENTRY(1, "SCARuntime::releaseInstance");
+            logentry();
             
             if (instance) 
             {
@@ -203,8 +189,6 @@ namespace tuscany
                 systemPath = "";
                 defaultComponentName = "";        
             }
-            
-            LOGEXIT(1, "SCARuntime::releaseInstance");           
         }
 
         // ======================================
@@ -212,16 +196,14 @@ namespace tuscany
         // ======================================
         void SCARuntime::load()
         {
-            LOGENTRY(1, "SCARuntime::load");
+            logentry();
             
-            LOGINFO_1(2,"configuration root: %s", systemRoot.c_str());
-            LOGINFO_1(2,"configuration path: %s", systemPath.c_str());
+            loginfo("Configuration root: %s", systemRoot.c_str());
+            loginfo("Configuration path: %s", systemPath.c_str());
             
             // Load the system composite
             ModelLoader loader(system);
             loader.load(systemRoot, systemPath);
-            
-            LOGEXIT(1, "SCARuntime::load");
         }
         
         
@@ -230,7 +212,7 @@ namespace tuscany
         // ======================================
         void SCARuntime::loadExtensions()
         {
-            LOGENTRY(1, "SCARuntime::loadExtensions");
+            logentry();
 
             string extensionsRoot = SCARoot + "/extensions";
 
@@ -256,12 +238,10 @@ namespace tuscany
                 }
                 catch (TuscanyRuntimeException& ex)
                 {
-                    LOGERROR_3(0, "SCARuntime::loadExtensions failed to load extension library: %s: %s: %s",
+                    logerror("Failed to load extension library: %s: %s: %s",
                         files[i].getFileName().c_str(), ex.getEClassName(), ex.getMessageText());
                 }
             }
-            
-            LOGEXIT(1, "SCARuntime::loadExtensions");
         }
 
       
@@ -270,12 +250,11 @@ namespace tuscany
         // ======================================
         void SCARuntime::registerInterfaceExtension(InterfaceExtension* extension)
         {
-            LOGENTRY(1, "SCARuntime::registerInterfaceExtension");
+            logentry();
             if (extension)
             {
                 interfaceExtensions[extension->getExtensionTypeQName()] = extension;          
             }
-            LOGEXIT(1, "SCARuntime::registerInterfaceExtension");
         }
         
         // ======================================
@@ -291,12 +270,11 @@ namespace tuscany
         // ======================================
         void SCARuntime::registerImplementationExtension(ImplementationExtension* extension)
         {
-            LOGENTRY(1, "SCARuntime::registerImplementationExtension");
+            logentry();
             if (extension)
             {
                 implementationExtensions[extension->getExtensionTypeQName()] = extension;          
             }
-            LOGEXIT(1, "SCARuntime::registerImplementationExtension");
         }
         
         // ======================================
@@ -312,12 +290,11 @@ namespace tuscany
         // ======================================
         void SCARuntime::registerReferenceBindingExtension(ReferenceBindingExtension* extension)
         {
-            LOGENTRY(1, "SCARuntime::registerReferenceBindingExtension");
+            logentry();
             if (extension)
             {
                 referenceBindingExtensions[extension->getExtensionTypeQName()] = extension;          
             }
-            LOGEXIT(1, "SCARuntime::registerReferenceBindingExtension");
         }
         
         // ======================================
@@ -333,12 +310,11 @@ namespace tuscany
         // ======================================
         void SCARuntime::registerServiceBindingExtension(ServiceBindingExtension* extension)
         {
-            LOGENTRY(1, "SCARuntime::registerServiceBindingExtension");
+            logentry();
             if (extension)
             {
                 serviceBindingExtensions[extension->getExtensionTypeQName()] = extension;          
             }
-            LOGEXIT(1, "SCARuntime::registerServiceBindingExtension");
         }
         
         // ======================================
@@ -355,6 +331,7 @@ namespace tuscany
         // ===================================
         Composite* SCARuntime::getSystem()
         {
+            logentry();
             if (!system)
             {
                 system = new Composite("tuscany/sca/system", "");
@@ -369,6 +346,7 @@ namespace tuscany
         // ===================================================        
         void SCARuntime::setCurrentComponent(Component* component)
         {
+            logentry();
 
 #if defined(WIN32)  || defined (_WINDOWS)
             DWORD currentThreadId = GetCurrentThreadId();
@@ -392,6 +370,8 @@ namespace tuscany
         // ====================================================
         Component* SCARuntime::unsetCurrentComponent()
         {
+            logentry();
+            
 #if defined(WIN32)  || defined (_WINDOWS)
             DWORD currentThreadId = GetCurrentThreadId();
 #else
@@ -418,6 +398,8 @@ namespace tuscany
         // =============================================================
         Component* SCARuntime::getCurrentComponent()
         {
+            logentry();
+            
 #if defined(WIN32)  || defined (_WINDOWS)
             DWORD currentThreadId = GetCurrentThreadId();
 #else
@@ -448,36 +430,42 @@ namespace tuscany
         // ===========================================
         Component* SCARuntime::getDefaultComponent()
         {
+            logentry();
 
-            // ----------------------
-            // Get the default Component
-            // ----------------------
+            // -------------------------------------------
+            // Get the default component name from the environment
+            // -------------------------------------------
+            if (defaultComponentName == "")
+            {
+                const char* defComp = getenv(TUSCANY_SCACPP_COMPONENT);
+                if (!defComp)
+                {
+                    defComp = getenv(TUSCANY_SCACPP_DEFAULT_COMPONENT);
+                }
+                if (!defComp)
+                {
+                    string message = TUSCANY_SCACPP_COMPONENT;
+                    message += " environment variable not set";
+                    throwException(SystemConfigurationException, message.c_str());
+                }
+                defaultComponentName = defComp;
+            }
+                    
+            // -------------------------------------------
+            // Get the default component
+            // -------------------------------------------
+            if (defaultComponent && defaultComponentName != defaultComponent->getName())
+            {
+                defaultComponent = NULL;
+            }
             if (!defaultComponent)
             {
-                // -------------------------------------------
-                // Get the default component name from the environment
-                // -------------------------------------------
-                if (defaultComponentName == "")
-                {
-                    const char* defComp = getenv(TUSCANY_SCACPP_COMPONENT);
-                    if (!defComp)
-                    {
-                        defComp = getenv(TUSCANY_SCACPP_DEFAULT_COMPONENT);
-                    }
-                    if (!defComp)
-                    {
-                        string message = TUSCANY_SCACPP_COMPONENT;
-                        message += " environment variable not set";
-                        throw SystemConfigurationException(message.c_str());
-                    }
-                    defaultComponentName = defComp;
-                }
                 
                 defaultComponent = getSystem()->findComponent(defaultComponentName);
                 if (!defaultComponent)
                 {
                     string message = "Component \'" + defaultComponentName + "\' not found";
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
             }
             return defaultComponent;        

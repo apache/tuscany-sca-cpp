@@ -35,10 +35,9 @@ namespace tuscany
         // ==========================================================
         void TuscanyRuntime::setSystemRoot(const string& root)
         {
-            LOGENTRY(1, "TuscanyRuntime::setSystemRoot");
+            logentry();
             systemRoot = root;
-            LOGINFO_1(3, "TuscanyRuntime::setSystemRoot - set to %s", root.c_str());
-            LOGEXIT(1, "TuscanyRuntime::setSystemRoot");
+            loginfo("System root: %s", root.c_str());
         }
 
         // ==========================================================
@@ -46,10 +45,9 @@ namespace tuscany
         // ==========================================================
         void TuscanyRuntime::setSystemPath(const string& path)
         {
-            LOGENTRY(1, "TuscanyRuntime::setSystemPath");
+            logentry();
             systemPath = path;
-            LOGINFO_1(3, "TuscanyRuntime::setSystemPath - set to %s", path.c_str());
-            LOGEXIT(1, "TuscanyRuntime::setSystemPath");
+            loginfo("System path: %s", path.c_str());
         }
 
         // ==========================================================
@@ -57,10 +55,9 @@ namespace tuscany
         // ==========================================================
         void TuscanyRuntime::setDefaultComponentName(const string& componentName)
         {
-            LOGENTRY(1, "TuscanyRuntime::setDefaultComponentName");
+            logentry();
             defaultComponentName = componentName;
-            LOGINFO_1(3, "TuscanyRuntime::setDefaultComponentName - set to %s", componentName.c_str());
-            LOGEXIT(1, "TuscanyRuntime::setDefaultComponentName");
+            loginfo("Default component name: %s", componentName.c_str());
         }
 
         // ===================================================================
@@ -68,11 +65,10 @@ namespace tuscany
         // ===================================================================
         TuscanyRuntime::TuscanyRuntime(const string& componentName, const string& root, const string& path)
         { 
-            LOGENTRY(1, "TuscanyRuntime::constructor");
+            logentry();
             setSystemRoot(root);
             setSystemPath(path);
             setDefaultComponentName(componentName);           
-            LOGEXIT(1, "TuscanyRuntime::constructor");
         }
 
         // ===================================================================
@@ -80,21 +76,19 @@ namespace tuscany
         // ===================================================================
         TuscanyRuntime::~TuscanyRuntime()
         { 
-            LOGENTRY(1, "TuscanyRuntime::destructor");;           
-            LOGEXIT(1, "TuscanyRuntime::destructor");
+            logentry();
         }
 
         // ===================================================================
         // Start the runtime. 
         // ===================================================================
         void TuscanyRuntime::start()
-        { 
-            LOGENTRY(1, "TuscanyRuntime::start");
+        {
+            logentry(); 
             SCARuntime::setSystemRoot(systemRoot);
             SCARuntime::setSystemPath(systemPath);
             SCARuntime::setDefaultComponentName(defaultComponentName);
             SCARuntime::getInstance();
-            LOGEXIT(1, "TuscanyRuntime::start");
         }
 
         // ===================================================================
@@ -102,9 +96,8 @@ namespace tuscany
         // ===================================================================
         void TuscanyRuntime::stop()
         { 
-            LOGENTRY(1, "TuscanyRuntime::stop");
+            logentry();
             SCARuntime::releaseInstance();
-            LOGEXIT(1, "TuscanyRuntime::stop");
         }
 
     } // End namespace sca

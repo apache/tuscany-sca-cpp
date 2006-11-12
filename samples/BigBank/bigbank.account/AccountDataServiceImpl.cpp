@@ -59,11 +59,11 @@ namespace services
                 delete name;
 
                 newaccount->setFloat("balance",1500.0f);
-
+                
                 return newaccount;
 
             }
-            catch (SDORuntimeException e)
+            catch (SDORuntimeException& e)
             {
                 return 0;
             }
@@ -94,7 +94,7 @@ namespace services
                 return newaccount;
 
             }
-            catch (SDORuntimeException e)
+            catch (SDORuntimeException& e)
             {
                 return 0;
             }
@@ -126,7 +126,7 @@ namespace services
                 return newaccount;
 
             }
-            catch (SDORuntimeException e)
+            catch (SDORuntimeException& e)
             {
                 return 0;
             }

@@ -29,18 +29,16 @@ namespace tuscany
         // Constructor for the ReferenceBindingExtension class. 
         // ===================================================================
         ReferenceBindingExtension::ReferenceBindingExtension()
-        { 
-            LOGENTRY(1, "ReferenceBindingExtension::constructor");        
-            LOGEXIT(1, "ReferenceBindingExtension::constructor");
+        {
+            logentry(); 
         }
 
         // ===================================================================
         // Destructor for the ReferenceBindingExtension class.
         // ===================================================================
         ReferenceBindingExtension::~ReferenceBindingExtension()
-        { 
-            LOGENTRY(1, "ReferenceBindingExtension::destructor");;           
-            LOGEXIT(1, "ReferenceBindingExtension::destructor");
+        {
+            logentry(); 
         }
                 
     } // End namespace sca

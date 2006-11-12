@@ -49,8 +49,7 @@ namespace tuscany
             // ===================================================================
             PythonExtension::PythonExtension()
             { 
-                LOGENTRY(1, "PythonExtension::constructor");     
-                LOGEXIT(1, "PythonExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -58,16 +57,14 @@ namespace tuscany
             // ===================================================================
             PythonExtension::~PythonExtension()
             { 
-                LOGENTRY(1, "PythonExtension::destructor");;           
-                LOGEXIT(1, "PythonExtension::destructor");
+                logentry();
             }
 
             void PythonExtension::initialize()
             { 
-                LOGENTRY(1, "PythonExtension::initialize");;           
+                logentry();
                 SCARuntime::getInstance()->registerImplementationExtension(new PythonImplementationExtension());
                 SCARuntime::getInstance()->registerInterfaceExtension(new PythonInterfaceExtension());
-                LOGEXIT(1, "PythonExtension::initialize");;           
             }
 
         } // End namespace python

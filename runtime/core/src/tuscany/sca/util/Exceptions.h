@@ -26,6 +26,7 @@
 #include "tuscany/sca/export.h"
 
 #include <ostream>
+#include "commonj/sdo/SDO.h"
 
 
 namespace tuscany
@@ -57,11 +58,12 @@ namespace tuscany
              * @param msg_text Detailed description of the exception.
              */
             TuscanyRuntimeException(
-                const char *name="TuscanyRuntimeException",
-                severity_level sev=Severe,
-                const char* msg_text="");
+                const char *name = "TuscanyRuntimeException",
+                severity_level sev = Severe,
+                const char* msg_text = "");
             
             TuscanyRuntimeException(const TuscanyRuntimeException& c);
+            TuscanyRuntimeException(const SDORuntimeException& c);
             
             // Destructor
             virtual  ~TuscanyRuntimeException();
@@ -125,6 +127,7 @@ namespace tuscany
              * Operator to send exceptions details to a stream.
              */
             SCA_API friend std::ostream& operator<< (std::ostream &os, const TuscanyRuntimeException &except);
+
         protected:
             
         private:
@@ -166,6 +169,14 @@ namespace tuscany
              */
             int              location_set;
             
+            /**
+             * A snapshot of the stack when the exception was constructed
+             */
+#if defined(WIN32)  || defined (_WINDOWS)
+#else
+            int stacktrace_size;
+            char** stacktrace_symbols;
+#endif
             
         }; // End TuscanyRuntimeException class definition
         
@@ -182,9 +193,154 @@ namespace tuscany
                 msg)
             {
             }
+
+            SystemConfigurationException(
+                const char *name,
+                severity_level sev,
+                const char* msg_text)
+                : TuscanyRuntimeException(name, sev, msg_text)
+            {
+            }
+            
+            SystemConfigurationException(const SDORuntimeException& c)
+                : TuscanyRuntimeException(c)
+            {
+            }
+        private:
+        };
+        
+        /**
+         * Indicates a problem while invoking a service.
+         */
+        class SCA_API ServiceInvocationException: public TuscanyRuntimeException
+        {
+        public:
+            ServiceInvocationException(const char* msg)
+                : TuscanyRuntimeException("ServiceInvocationException", Severe, msg)
+            {
+            }
+
+            ServiceInvocationException(
+                const char *name,
+                severity_level sev,
+                const char* msg_text)
+                : TuscanyRuntimeException(name, sev, msg_text)
+            {
+            }
+            
+            ServiceInvocationException(const SDORuntimeException& c)
+                : TuscanyRuntimeException(c)
+            {
+            }
+
+        private:
+        };
+        
+        /**
+         * Indicates a problem while working with service data.
+         */
+        class SCA_API ServiceDataException: public TuscanyRuntimeException
+        {
+        public:
+            ServiceDataException(const char* msg)
+                : TuscanyRuntimeException("ServiceDataException", Severe,
+                msg)
+            {
+            }
+
+            ServiceDataException(
+                const char *name,
+                severity_level sev,
+                const char* msg_text)
+                : TuscanyRuntimeException(name, sev, msg_text)
+            {
+            }
+            
+            ServiceDataException(const SDORuntimeException& c)
+                : TuscanyRuntimeException(c)
+            {
+            }
         private:
         };
         
     } // End namespace sca
 } // End namespace tuscany
+
+
+/**
+  * =========================================================================
+  * Macro  - throwException
+  *
+  * adds the current file name, line number and function name to the exception.
+  * then throws the exception.
+  * The parameter 'function_name' should be the name of the function throwing
+  * this exception.
+  * The parameter 'type' is the class of exception to throw and must be a
+  * SDORuntimeException or a class derived from SDORuntimeException.
+  * The parameter 'parameter' is the construction parameter for the exception
+  * =========================================================================
+*/
+
+#if defined(WIN32)  || defined (_WINDOWS)
+#define throwException(type, parameter)  \
+{\
+ type __TuscanyThrownException__(parameter); \
+ __TuscanyThrownException__.setLocation(__FILE__,__LINE__,__FUNCTION__); \
+ throw __TuscanyThrownException__;\
+}
+#else
+#define throwException(type, parameter)  \
+{\
+ type __TuscanyThrownException__(parameter); \
+ __TuscanyThrownException__.setLocation(__FILE__,__LINE__,__PRETTY_FUNCTION__); \
+ throw __TuscanyThrownException__;\
+}
+#endif
+
+/** 
+    =========================================================================
+  * Macro  - rethrowException
+  *
+  * adds the current file name, line number and function name to the exception.
+  * then re-throws the exception.
+  * The parameter 'function_name' should be the name of the function throwing
+  * this exception.
+  * =========================================================================
+*/
+#if defined(WIN32)  || defined (_WINDOWS)
+#define rethrowException(exception)  \
+{\
+ (exception).setLocation(__FILE__,__LINE__,__FUNCTION__); \
+ throw (exception);\
+}
+#else
+#define rethrowException(exception)  \
+{\
+ (exception).setLocation(__FILE__,__LINE__,__PRETTY_FUNCTION__); \
+ throw (exception);\
+}
+#endif
+
+/**
+  * =========================================================================
+  * Macro  - handleException
+  *
+  * adds the current file name, line number and function name to the exception.
+  * Writes an exception trace entry then continues.
+  * The parameter 'function_name' should be the name of the function handling
+  * this exception.
+  * =========================================================================
+*/
+#if defined(WIN32)  || defined (_WINDOWS)
+#define handleException(__PRETTY_FUNCTION__, exception)  \
+{\
+ (exception).setLocation(__FILE__,__LINE__,__FUNCTION__); \
+}
+#else
+#define handleException(__PRETTY_FUNCTION__, exception)  \
+{\
+ (exception).setLocation(__FILE__,__LINE__,__PRETTY_FUNCTION__); \
+}
+#endif
+
 #endif // tuscany_sca_util_exceptions_h

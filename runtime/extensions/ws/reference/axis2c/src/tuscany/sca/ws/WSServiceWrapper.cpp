@@ -47,12 +47,14 @@ namespace tuscany
             
             WSServiceWrapper::WSServiceWrapper(Service* service) : ServiceWrapper(service)
             {
+                logentry();
+
                 // Define the SOAP Body type and element to allow a SOAP body to
                 // be loaded in a DataObject
                 DataFactoryPtr dataFactory = service->getComponent()->getComposite()->getDataFactory();
                 try {
                     const Type& bodyType = dataFactory->getType("http://www.w3.org/2003/05/soap-envelope", "Body");
-                } catch (SDORuntimeException e)
+                } catch (SDORuntimeException&)
                 {
                     dataFactory->addType("http://www.w3.org/2003/05/soap-envelope", "RootType", false, false, false);                
                     dataFactory->addType("http://www.w3.org/2003/05/soap-envelope", "Body", false, true, false);                
@@ -70,10 +72,18 @@ namespace tuscany
                         "http://schemas.xmlsoap.org/soap/envelope/", "Body",
                         false, false, true);
                 }
+
+                try {
+                    const Type& tempType = dataFactory->getType("http://tempuri.org", "RootType");
+                } catch (SDORuntimeException&)
+                {
+                    dataFactory->addType("http://tempuri.org", "RootType", false, false, false);                
+                }
             }
             
             WSServiceWrapper::~WSServiceWrapper()
             {
+                logentry();
             }
             
             ///
@@ -81,15 +91,15 @@ namespace tuscany
             ///
             void WSServiceWrapper::invoke(Operation& operation) 
             {
-                LOGENTRY(1, "WSServiceWrapper::invoke");
+                logentry();
             
                 const string& operationName = operation.getName();
             
-                LOGINFO_2(2,"Service: %s, Operation: %s", getService()->getType()->getName().c_str() , operationName.c_str());
+                loginfo("Service: %s, operation: %s", getService()->getType()->getName().c_str() , operationName.c_str());
             
                 for (unsigned int i=0; i<operation.getNParms(); i++)
                 {
-                    LOGINFO_2(2, "Parameter %p, Type %u", operation.getParameterValue(i),(int) operation.getParameterType(i));
+                    loginfo("Parameter: %p, type: %u", operation.getParameterValue(i),(int) operation.getParameterType(i));
                 }
 
                 // Create the Axis2 client that will handle the Web Service invocation
@@ -98,8 +108,6 @@ namespace tuscany
                 
                 Axis2Client client(compositeReference);
                 client.invoke(operation);
-                
-                LOGEXIT(1, "WSServiceWrapper::invoke");
             }
 
         } // End namespace ws

@@ -24,7 +24,7 @@
 #define tuscany_sca_php_phpservicewrapper_h
 
 
-#include "osoa/sca/export.h"
+#include "tuscany/sca/php/export.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"

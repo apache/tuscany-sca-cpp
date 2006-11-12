@@ -33,12 +33,15 @@ namespace tuscany
             // Constructor
             Wire::Wire(const std::string& source, const std::string& targ) 
             {
+                logentry(); 
+
                 Utils::tokeniseUri(source, sourceComponent, sourceReference);
                 target = targ;
            }
             
             Wire::~Wire()
             {
+                logentry(); 
             }
 
         } // End namespace model

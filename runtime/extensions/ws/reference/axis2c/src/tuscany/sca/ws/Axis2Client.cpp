@@ -67,15 +67,17 @@ namespace tuscany
             Axis2Client::Axis2Client(CompositeReference* compositeReference)
                 : compositeReference(compositeReference)
             {
+                logentry();
             }
             
             Axis2Client::~Axis2Client()
             {
+                logentry();
             }
             
             void Axis2Client::invoke(tuscany::sca::Operation& operation)
             {
-                LOGENTRY(1, "Axis2Client::invoke");
+                logentry();
 
                 // Initialize Axis2 stuff
                 axis2_allocator_t *allocator = axis2_allocator_init (NULL);
@@ -104,7 +106,7 @@ namespace tuscany
                     {
                         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI,  "WSDL description %s not found\n", wsdlNamespace.c_str());
                         string msg = "WSDL not found for " + wsdlNamespace;
-                        throw SystemConfigurationException(msg.c_str());
+                        throwException(SystemConfigurationException, msg.c_str());
                     }
                     
                     // Match the operation in Operation to the operation in the wsdl port type.
@@ -115,7 +117,7 @@ namespace tuscany
                             binding->getEndpointName(),
                             operationName);
                     }
-                    catch(SystemConfigurationException &ex)
+                    catch(SystemConfigurationException& ex)
                     {   
                         AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
                         throw;
@@ -139,14 +141,14 @@ namespace tuscany
                             {
                                 AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "WSDL description %s not found\n", wsdlNamespace.c_str());
                                 string msg = "WSDL not found for " + wsdlNamespace;
-                                throw SystemConfigurationException(msg.c_str());
+                                throwException(SystemConfigurationException, msg.c_str());
                             }
                     
                             try
                             {
                                 wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), operationName);
                             }
-                            catch(SystemConfigurationException &ex)
+                            catch(SystemConfigurationException& ex)
                             {   
                                 AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
                                 throw;
@@ -168,8 +170,8 @@ namespace tuscany
                     wsdlOperation.setDocumentStyle(true);
                     wsdlOperation.setWrappedStyle(true);
                     wsdlOperation.setEncoded(false);
-                    wsdlOperation.setInputType(wsdlNamespace + "#" + operationName);
-                    wsdlOperation.setOutputType(wsdlNamespace + "#" + operationName + "Response");
+                    wsdlOperation.setInputType(string("http://tempuri.org") + "#" + operationName);
+                    wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + operationName + "Response");
                 }
                     
                 // Get the target endpoint address
@@ -178,7 +180,20 @@ namespace tuscany
                 axis2_char_t* address;
                 if (binding->getURI() != "")
                 {
-                    address = (axis2_char_t*)binding->getURI().c_str();
+                    if (binding->getURI().find("http://")==0)
+                    {
+                        address = (axis2_char_t*)binding->getURI().c_str();
+                    }
+                    else
+                    {
+                        //TODO Hack for now, hardcode the address of the target service
+                        // Derive it from the component / service name
+                        string componentName;
+                        string serviceName;
+                        Utils::tokeniseString("/", binding->getURI(), componentName, serviceName);
+                        string saddress = "http://" + componentName + ":9090/axis2/services/" + serviceName;
+                        address = (axis2_char_t*)saddress.c_str();
+                    }
                 }
                 else
                 {
@@ -219,7 +234,7 @@ namespace tuscany
                 axis2_char_t* client_home = AXIS2_GETENV("AXIS2C_HOME");
                 if (!client_home)
                 {
-                    throw SystemConfigurationException("Environment error: AXIS2C_HOME not set");
+                    throwException(SystemConfigurationException, "AXIS2C_HOME not set");
                 }
                 axis2_svc_client_t* svc_client = axis2_svc_client_create(env, client_home);
                 if (!svc_client)
@@ -228,7 +243,7 @@ namespace tuscany
                         " %d :: %s", env->error->error_number,
                         AXIS2_ERROR_GET_MESSAGE(env->error));
                     
-                    throw SystemConfigurationException("Axis2Client: axis2_svc_client_create failed");
+                    throwException(SystemConfigurationException, "axis2_svc_client_create failed");
                 }
                 
                 /* Set service client options */
@@ -245,10 +260,10 @@ namespace tuscany
                     AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Invoke failed: Error code:"
                         " %d :: %s", env->error->error_number,
                         AXIS2_ERROR_GET_MESSAGE(env->error));
-                    throw SystemConfigurationException("Axis2Client: Invoke failed");
+                    throwException(ServiceInvocationException, "Web Service invoke failed");
                 }
                 
-                LOGINFO(2, "Warning: Have not freed Axis2C service client memory due to Jira AXIS2C-209");
+                loginfo("Have not freed Axis2C service client memory due to Jira AXIS2C-209");
                 // Uncommenting this code causes crash when invoking a composite with both Axis2C ws.binding 
                 // service and reference. See Jiras TUSCANY-536 and AXIS2C-209
                 //if (svc_client)
@@ -256,15 +271,14 @@ namespace tuscany
                 //    AXIS2_SVC_CLIENT_FREE(svc_client, env);
                 //    svc_client = NULL;
                 //} 
-                
-                LOGEXIT(1, "Axis2Client::invoke");
             }
             
             axiom_node_t* Axis2Client::createPayload(Operation& operation, 
                 const WSDLOperation& wsdlOperation,
                 axis2_env_t* env)
             {	
-                LOGENTRY(1, "Axis2Client::createPayload");
+                logentry();
+
                 axiom_node_t* request_node = NULL;
                 
                 // map the operation request to the wsdl
@@ -288,7 +302,7 @@ namespace tuscany
                         const Type& inputType = prop.getType();
                         inputDataObject = dataFactory->create(inputType);
                     }
-                    catch (SDORuntimeException e)
+                    catch (SDORuntimeException&)
                     {
                         try
                         {
@@ -297,7 +311,7 @@ namespace tuscany
                                 wsdlOperation.getInputTypeName().c_str());
                             inputDataObject = dataFactory->create(inputType);
                         }
-                        catch (SDORuntimeException e2)
+                        catch (SDORuntimeException&)
                         {
                             
                             // The input wrapper type is not known, create an open DataObject 
@@ -389,7 +403,8 @@ namespace tuscany
                                         l.append(*(DataObjectPtr*)parm.getValue());
                                         break;
                                     }
-                                default: throw "unsupported parameter type";
+                                default:
+                                   throwException(SystemConfigurationException, "Unsupported parameter type");
                                 }
                             }
                         }
@@ -467,7 +482,8 @@ namespace tuscany
                                     inputDataObject->setDataObject(i, *(DataObjectPtr*)parm.getValue());
                                     break;
                                 }
-                            default: throw "unsupported parameter type";
+                            default:
+                                throwException(ServiceDataException, "Unsupported parameter type");
                             }
                         }
                     }
@@ -484,9 +500,8 @@ namespace tuscany
                 }
                 
                 char* str =  AXIOM_NODE_TO_STRING(request_node, env);
-                LOGINFO_1(3, "Sending this OM node in XML : %s \n",  str); 
+                loginfo("Sending OM node: %s ",  str); 
                 
-                LOGEXIT(1, "Axis2Client::createPayload");
                 return request_node;
              }
              
@@ -495,7 +510,7 @@ namespace tuscany
                  const WSDLOperation& wsdlOperation,
                  axis2_env_t* env)
              {	
-                 LOGENTRY(1, "Axis2Client::setReturn");
+                logentry();
                  
                  if (wsdlOperation.isDocumentStyle())
                  {
@@ -512,18 +527,22 @@ namespace tuscany
                     {
                         AXIS2_LOG_INFO((env)->log, "Axis2Client invoke has response OM: %s\n", str);
                     }
+                    
+                    //cout << "response body = " << str << endl;
 
                     // Convert the SOAP body to an SDO DataObject
                     AxiomHelper* axiomHelper = AxiomHelper::getHelper();
                     DataObjectPtr outputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
                     AxiomHelper::releaseHelper(axiomHelper);
-
+                    
                     if(!outputBodyDataObject)
                     {
                         AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service invoke: Could not convert received Axiom node to SDO");
                         /** TODO: return a SOAP fault here */
                         return;
-                    }                    
+                    }
+                    
+                    XMLHelperPtr xmlHelper = compositeReference->getComposite()->getXMLHelper();
 
                     // Get the first body part representing the doc-lit-wrapped wrapper element
                     DataObjectPtr outputDataObject = NULL; 
@@ -545,171 +564,209 @@ namespace tuscany
                         AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Client invoke: Could not convert body part to SDO");
                         return;
                     }
-                     
-                    PropertyList pl = outputDataObject->getInstanceProperties();
-                    unsigned int i = 0;
-                     
-                    switch(pl[i].getTypeEnum())
+
+                    PropertyList pl = outputDataObject->getType().getProperties();
+                    if (pl.size() == 0)
                     {
-                    case Type::BooleanType:
+                        if (outputDataObject->getType().isOpenType() && outputDataObject->getType().isDataObjectType())
                         {
-                            bool* boolData = new bool;
-                            *boolData = outputDataObject->getBoolean(pl[i]);
-                            operation.setReturnValue(boolData);
-                        }
-                        break;
-                    case Type::ByteType:
-                        {
-                            char* byteData = new char;
-                            *byteData = outputDataObject->getByte(pl[i]);
-                            operation.setReturnValue(byteData);
-                        }
-                        break;
-                    case Type::BytesType:
-                        {
-                            int len = outputDataObject->getLength(pl[i]);
-                            char* bytesData = new char[len+1];
-                            int bytesWritten = outputDataObject->getBytes(pl[i], bytesData, len);
-                            // Ensure the bytes end with the null char. Not sure if this is neccessary
-                            if(bytesWritten <= len)
+                            SequencePtr sequence = outputDataObject->getSequence();
+                            if (sequence != NULL && sequence->size() != 0)
                             {
-                                bytesData[bytesWritten] = 0;
-                            }
-                            else
-                            {
-                                bytesData[len] = 0;
-                            }
-                            //printf("outputDataObject has BytesType named %s with length %d\n", name, bytesWritten);
-                            operation.setReturnValue(&bytesData);
-                        }
-                        break;
-                    case Type::CharacterType:
-                        {
-                            // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
-                            wchar_t* charData = new wchar_t;
-                            *charData = outputDataObject->getCharacter(pl[i]);
-                            operation.setReturnValue(charData);
-                        }
-                        break;
-                    case Type::DoubleType:
-                        {
-                            long double* doubleData = new long double;
-                            *doubleData = outputDataObject->getDouble(pl[i]);
-                            operation.setReturnValue(doubleData);
-                        }
-                        break;
-                    case Type::FloatType:
-                        {
-                            float* floatData = new float;
-                            *floatData = outputDataObject->getFloat(pl[i]);
-                            operation.setReturnValue(floatData); 
-                        }
-                        break;
-                    case Type::IntegerType:
-                        {
-                            long* intData = new long;
-                            *intData = outputDataObject->getInteger(pl[i]);
-                            operation.setReturnValue(intData);
-                        }
-                        break;
-                    case Type::ShortType:
-                        {
-                            short* shortData = new short;
-                            *shortData = outputDataObject->getShort(pl[i]);
-                            operation.setReturnValue(shortData);
-                        }
-                        break;
-                    case Type::StringType:
-                        {
-                            string* str = new string(outputDataObject->getCString(pl[i]));
-                            operation.setReturnValue(str);
-                        }
-                        break;
-                    case Type::DataObjectType:
-                        {
-                            DataObjectPtr dataObjectData = outputDataObject->getDataObject(pl[i]);
-                            if(!dataObjectData)
-                            {
-                                LOGINFO(4, "SDO DataObject return value was null");
-                            }
-                            operation.setReturnValue(&dataObjectData);
-                        }
-                        break;
-                    case Type::OpenDataObjectType:
-                        {         
-                            /*
-                             * This code deals with xsd:any element parameters
-                             */
-            
-                            DataObjectList& dataObjectList = outputDataObject->getList(pl[i]);
-                            
-                            for(int j=0; j<dataObjectList.size(); j++)
-                            {
-                                DataObjectPtr dataObjectData = dataObjectList[j];
-                                if(!dataObjectData)
-                                {
-                                    operation.setReturnValue(&dataObjectData);
-                                    LOGINFO(4, "SDO OpenDataObject return value was null");
+                                // Return a text element        
+                                if (sequence->isText(0))
+                                {                                        
+                                    string* stringData = new string(sequence->getCStringValue(0));
+                                    operation.setReturnValue(stringData);
                                 }
-                                else 
+                                else
                                 {
-                                    
-                                    SequencePtr sequence = dataObjectData->getSequence();
-                                    if (sequence->size()!=0)
+                                    // Return a DataObject representing a complex element
+                                    DataObjectPtr *dataObjectData = new DataObjectPtr;
+                                    *dataObjectData = sequence->getDataObjectValue(0);
+                                    if(!*dataObjectData)
                                     {
-                                        // Return a text element        
-                                        if (sequence->isText(0))
-                                        {                                        
-                                            string* stringData = new string(sequence->getCStringValue(0));
-                                            operation.setReturnValue(stringData);
+                                        loginfo("Null DataObject return value");
+                                    }
+                                    
+                                    cout << "ReturnValue " << *dataObjectData << endl;
+                                    
+                                    operation.setReturnValue(dataObjectData);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        const Property* p = &pl[0];
+
+                        switch(pl[0].getTypeEnum())
+                        {
+                        case Type::BooleanType:
+                            {
+                                bool* boolData = new bool;
+                                *boolData = outputDataObject->getBoolean(pl[0]);
+                                operation.setReturnValue(boolData);
+                            }
+                            break;
+                        case Type::ByteType:
+                            {
+                                char* byteData = new char;
+                                *byteData = outputDataObject->getByte(pl[0]);
+                                operation.setReturnValue(byteData);
+                            }
+                            break;
+                        case Type::BytesType:
+                            {
+                                int len = outputDataObject->getLength(pl[0]);
+                                char** bytesData = new char*;
+                                *bytesData = new char[len+1];
+                                int bytesWritten = outputDataObject->getBytes(pl[0], *bytesData, len);
+                                // Ensure the bytes end with the null char. Not sure if this is neccessary
+                                if(bytesWritten <= len)
+                                {
+                                    (*bytesData)[bytesWritten] = 0;
+                                }
+                                else
+                                {
+                                    (*bytesData)[len] = 0;
+                                }
+                                //printf("outputDataObject has BytesType named %s with length %d\n", name, bytesWritten);
+                                operation.setReturnValue(bytesData);
+                            }
+                            break;
+                        case Type::CharacterType:
+                            {
+                                // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
+                                wchar_t* charData = new wchar_t;
+                                *charData = outputDataObject->getCharacter(pl[0]);
+                                operation.setReturnValue(charData);
+                            }
+                            break;
+                        case Type::DoubleType:
+                            {
+                                long double* doubleData = new long double;
+                                *doubleData = outputDataObject->getDouble(pl[0]);
+                                operation.setReturnValue(doubleData);
+                            }
+                            break;
+                        case Type::FloatType:
+                            {
+                                float* floatData = new float;
+                                *floatData = outputDataObject->getFloat(pl[0]);
+                                operation.setReturnValue(floatData); 
+                            }
+                            break;
+                        case Type::IntegerType:
+                            {
+                                long* intData = new long;
+                                *intData = outputDataObject->getInteger(pl[0]);
+                                operation.setReturnValue(intData);
+                            }
+                            break;
+                        case Type::ShortType:
+                            {
+                                short* shortData = new short;
+                                *shortData = outputDataObject->getShort(pl[0]);
+                                operation.setReturnValue(shortData);
+                            }
+                            break;
+                        case Type::StringType:
+                            {
+                                string* stringData = new string(outputDataObject->getCString(pl[0]));
+                                operation.setReturnValue(stringData);
+                            }
+                            break;
+                        case Type::DataObjectType:
+                            {
+                                DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                *dataObjectData = outputDataObject->getDataObject(pl[0]);
+                                if(!*dataObjectData)
+                                {
+                                    loginfo("Null DataObject return value");
+                                }
+                                operation.setReturnValue(dataObjectData);
+                            }
+                            break;
+                        case Type::OpenDataObjectType:
+                            {         
+                                /*
+                                 * This code deals with xsd:any element parameters
+                                 */
+                
+                                DataObjectList& dataObjectList = outputDataObject->getList(pl[0]);
+                                
+                                for(int j=0; j<dataObjectList.size(); j++)
+                                {
+                                    DataObjectPtr dob = dataObjectList[j];
+                                    if(!dob)
+                                    {
+                                        DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                        *dataObjectData = NULL;
+                                        operation.setReturnValue(dataObjectData);
+                                        loginfo("Null OpenDataObject return value");
+                                    }
+                                    else 
+                                    {
+                                        
+                                        SequencePtr sequence = dob->getSequence();
+                                        if (sequence->size()!=0)
+                                        {
+                                            // Return a text element        
+                                            if (sequence->isText(0))
+                                            {                                        
+                                                string* stringData = new string(sequence->getCStringValue(0));
+                                                operation.setReturnValue(stringData);
+                                            }
+                                            else
+                                            {
+                                                // Return a DataObject representing a complex element
+                                                DataObjectPtr *dataObjectData = new DataObjectPtr;
+                                                *dataObjectData = sequence->getDataObjectValue(0);
+                                                if(!*dataObjectData)
+                                                {
+                                                    loginfo("Null DataObject return value");
+                                                }
+                                                operation.setReturnValue(dataObjectData);
+                                            }
                                         }
                                         else
                                         {
-                                            // Return a DataObject representing a complex element
-                                            DataObjectPtr dob = sequence->getDataObjectValue(0);
-                                            if(!dob)
-                                            {
-                                                LOGINFO(4, "SDO DataObject return value was null");
-                                            }
-                                            operation.setReturnValue(&dob);
+                                            // Empty content, add an empty string
+                                            loginfo("Null OpenDataObject return value");
+                                            string *stringData = new string(""); 
+                                            operation.setReturnValue(stringData);
                                         }
-                                    }
-                                    else
-                                    {
-                                        // Empty content, add an empty string
-                                        LOGINFO(4, "SDO OpenDataObject return value was empy");
-                                        string *stringData = new string(""); 
-                                        operation.setReturnValue(stringData);
                                     }
                                 }
                             }
-                        }
-                        break;
-                    case Type::DateType:
-                        LOGERROR(0, "SDO DateType return values are not yet supported");
-                        break;
-                    case Type::LongType:
-                        LOGERROR(0, "SDO LongType (int64_t) return values are not yet supported");
-                        break;
-                    case Type::UriType:
-                        LOGERROR(0, "SDO UriType return values are not yet supported");
-                        break;
-                    case Type::BigDecimalType:
-                        LOGERROR(0, "SDO BigDecimalType return values are not yet supported");
-                        break;
-                    case Type::BigIntegerType:
-                        LOGERROR(0, "SDO BigIntegerType return values are not yet supported");
-                        break;
-                    default:
-                        LOGERROR(0, "Unknown SDO type has been found in return value. Unknown types are not yet supported");
-                        break;
-                    }         
+                            break;
+                        case Type::DateType:
+                            logwarning("SDO DateType return values are not yet supported");
+                            break;
+                        case Type::LongType:
+                            logwarning("SDO LongType (int64_t) return values are not yet supported");
+                            break;
+                        case Type::UriType:
+                            logwarning("SDO UriType return values are not yet supported");
+                            break;
+                        case Type::BigDecimalType:
+                            logwarning("SDO BigDecimalType return values are not yet supported");
+                            break;
+                        case Type::BigIntegerType:
+                            logwarning("SDO BigIntegerType return values are not yet supported");
+                            break;
+                        default:
+                            logwarning("Unknown SDO type has been found in return value. Unknown types are not yet supported");
+                            break;
+                        }         
+                    }
+                    
                  }
                  else
                  {
                      // RPC
                  }
-                 LOGEXIT(1, "Axis2Client::setReturn");
              }
              
         } // End namespace ws

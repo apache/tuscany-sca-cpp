@@ -39,12 +39,12 @@ namespace tuscany
                     bool conversational)  
                     : Interface(remotable, conversational)
             {
-                LOGENTRY(1, "PythonInterface::constructor");
-                LOGEXIT(1, "PythonInterface::constructor");
+                logentry();
             }
 
             PythonInterface::~PythonInterface()
             {
+                logentry();
             }
 
         } // End namespace python

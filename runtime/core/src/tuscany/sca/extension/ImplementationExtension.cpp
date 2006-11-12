@@ -29,9 +29,8 @@ namespace tuscany
         // Constructor for the ImplementationExtension class. 
         // ===================================================================
         ImplementationExtension::ImplementationExtension()
-        { 
-            LOGENTRY(1, "ImplementationExtension::constructor");        
-            LOGEXIT(1, "ImplementationExtension::constructor");
+        {
+            logentry(); 
         }
 
         // ===================================================================
@@ -39,10 +38,8 @@ namespace tuscany
         // ===================================================================
         ImplementationExtension::~ImplementationExtension()
         { 
-            LOGENTRY(1, "ImplementationExtension::destructor");;           
-            LOGEXIT(1, "ImplementationExtension::destructor");
+            logentry(); 
         }
-
                 
     } // End namespace sca
 } // End namespace tuscany

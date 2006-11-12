@@ -19,16 +19,23 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef MyValue_h
-#define MyValue_h
+#ifndef tuscany_sca_php_export_h
+#define tuscany_sca_php_export_h
 
-#include "commonj/sdo/SDO.h"
-using commonj::sdo::DataObjectPtr;
+#if defined(WIN32)  || defined (_WINDOWS)
+#pragma warning(disable: 4786)
 
-class MyValue  
-{
-public:
-	virtual DataObjectPtr getMyValue(DataObjectPtr inDataObject) = 0;
-};
-
+#ifdef TUSCANY_SCA_PHP_EXPORTS
+#define SCA_PHP_API __declspec(dllexport)
+#else
+#define SCA_PHP_API __declspec(dllimport)
 #endif
+
+#else
+#include <sys/time.h>
+#include <inttypes.h> 
+#include <stdlib.h>
+#define SCA_PHP_API 
+#endif
+
+#endif // tuscany_sca_export_h

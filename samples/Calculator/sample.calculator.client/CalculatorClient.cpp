@@ -81,47 +81,39 @@ int main(int argc, char* argv[])
 		}
 		else
 		{
-			try
-			{
-                float result = 0;
-                if (strcmp(operation, "add") == 0)
-                {
-                    result = calcService->add(arg1, arg2);
-                    cout << "calculator_client: add(" << arg1 << "," << arg2 << ") = " << result << endl;
-                }
-                else
-                if (strcmp(operation, "sub") == 0)
-                {
-                    result = calcService->sub(arg1, arg2);
-                    cout << "calculator_client: sub(" << arg1 << "," << arg2 << ") = " << result << endl;
-                }
-                else
-                if (strcmp(operation, "mul") == 0)
-                {
-                    result = calcService->mul(arg1, arg2);
-                    cout << "calculator_client: mul(" << arg1 << "," << arg2 << ") = " << result << endl;
-                }
-                else
-                if (strcmp(operation, "div") == 0)
-                {
-                    result = calcService->div(arg1, arg2);
-                    cout << "calculator_client: div(" << arg1 << "," << arg2 << ") = " << result << endl;
-                }
-				else
-			    {
-			        cout << "calculator_client: Unrecognized operation: " << operation << endl;
-				}
-			}
-			catch (char* x)
-			{
-				cout << "calculator_client: exception caught: " << x << endl;
+            float result = 0;
+            if (strcmp(operation, "add") == 0)
+            {
+                result = calcService->add(arg1, arg2);
+                cout << "calculator_client: add(" << arg1 << "," << arg2 << ") = " << result << endl;
+            }
+            else
+            if (strcmp(operation, "sub") == 0)
+            {
+                result = calcService->sub(arg1, arg2);
+                cout << "calculator_client: sub(" << arg1 << "," << arg2 << ") = " << result << endl;
+            }
+            else
+            if (strcmp(operation, "mul") == 0)
+            {
+                result = calcService->mul(arg1, arg2);
+                cout << "calculator_client: mul(" << arg1 << "," << arg2 << ") = " << result << endl;
+            }
+            else
+            if (strcmp(operation, "div") == 0)
+            {
+                result = calcService->div(arg1, arg2);
+                cout << "calculator_client: div(" << arg1 << "," << arg2 << ") = " << result << endl;
+            }
+			else
+		    {
+		        cout << "calculator_client: Unrecognized operation: " << operation << endl;
 			}
 		}
-		
 	}
 	catch (ServiceRuntimeException& ex)
 	{
-		cout << ex << endl;
+        cout << "calculator_client: exception caught: " << ex << endl;
 	}
 	return 0;
 }

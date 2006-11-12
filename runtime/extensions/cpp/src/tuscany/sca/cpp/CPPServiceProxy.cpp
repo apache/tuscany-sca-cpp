@@ -50,7 +50,7 @@ namespace tuscany
             CPPServiceProxy::CPPServiceProxy(Reference* reference)
                 : ServiceProxy(reference)
             {
-                LOGENTRY(1,"CPPServiceProxy::constructor");
+                logentry();
     
                 // ----------------------
                 // Get the component
@@ -64,8 +64,6 @@ namespace tuscany
                 ServiceWrapper* serviceWrapper = referenceBinding->getTargetServiceBinding()->getServiceWrapper();
     
                 createProxy(component, name, serviceWrapper);
-    
-                LOGEXIT(1,"CPPServiceProxy::constructor");
             }
             
             // ============================
@@ -74,7 +72,7 @@ namespace tuscany
             CPPServiceProxy::CPPServiceProxy(Service* service)
                 : ServiceProxy(0)
             {
-                LOGENTRY(1,"CPPServiceProxy::constructor");
+                logentry();
                 
                 // ----------------------
                 // Get the component
@@ -86,19 +84,17 @@ namespace tuscany
                 ServiceWrapper* serviceWrapper = service->getBinding()->getServiceWrapper();
     
                 createProxy(component, name, serviceWrapper);
-    
-                LOGEXIT(1,"CPPServiceProxy::constructor");
             }
             
             void CPPServiceProxy::createProxy(Component* component, const string& name, ServiceWrapper* serviceWrapper)
             {
-                LOGENTRY(1,"CPPServiceProxy::createProxy");
+                logentry();
                 
                 ComponentType* componentType = component->getType();
                 if (!componentType)
                 {
                     string msg = "Component " + component->getName() + " has no implementation defined";
-                    throw ServiceNotFoundException(msg.c_str());
+                    throwException(ServiceNotFoundException, msg.c_str());
                 }
                 
                 // If we got here we have a CPP implementation
@@ -126,10 +122,10 @@ namespace tuscany
                 PROXYFACTORY proxyFactory = (PROXYFACTORY)proxyLibrary.getSymbol(proxyFactoryName);        
                 if (!proxyFactory)
                 {
-                    LOGERROR_2(1, "CPPServiceProxy::createProxy: Unable to locate %s in library %s",
+                    logerror("Unable to locate %s in library %s",
                         proxyFactoryName.c_str(), fullLibraryName.c_str());
                     string msg = "Unable to locate " + proxyFactoryName + " in library " + fullLibraryName;
-                    throw ServiceNotFoundException(msg.c_str());
+                    throwException(ServiceNotFoundException, msg.c_str());
                 }
                 
                 // -----------------------------------
@@ -138,10 +134,10 @@ namespace tuscany
                 void* proxy = proxyFactory(serviceWrapper); 
                 if (!proxy)
                 {
-                    LOGERROR_2(1, "CPPServiceProxy::createProxy: Factory method %s in library %s returned null",
+                    logerror("Factory method %s in library %s returned null",
                         proxyFactoryName.c_str(), fullLibraryName.c_str());
                     string msg = "Factory method " + proxyFactoryName + " in library " + fullLibraryName + " returned null";
-                    throw ServiceNotFoundException(msg.c_str());
+                    throwException(ServiceNotFoundException, msg.c_str());
                 }
                 else
                 {
@@ -152,8 +148,6 @@ namespace tuscany
                 // Get the destructor method
                 // -------------------------
                 destructor  = (PROXYDESTRUCTOR)proxyLibrary.getSymbol(proxyDestructorName);        
-                
-                LOGEXIT(1,"CPPServiceProxy::createProxy");
             }
     
             // ==========
@@ -161,14 +155,13 @@ namespace tuscany
             // ==========
             CPPServiceProxy::~CPPServiceProxy()
             {
-                LOGENTRY(1,"CPPServiceProxy::destructor");
+                logentry();
     
                 // Delete the proxies
                 if (destructor != NULL && proxies.size() != 0)
                 {
                     destructor(*proxies.begin());
                 }
-                LOGEXIT(1,"CPPServiceProxy::destructor");
             }
             
             CPPServiceProxy::PROXIES CPPServiceProxy::getProxies()
@@ -178,6 +171,8 @@ namespace tuscany
             
             void* CPPServiceProxy::getProxy()
             {
+                logentry();
+
                 if (proxies.size() != 0)
                 {
                     return *proxies.begin();

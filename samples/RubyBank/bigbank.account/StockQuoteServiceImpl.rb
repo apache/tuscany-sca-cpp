@@ -35,6 +35,8 @@ class StockQuoteServiceImpl
     
     price = doc.root.elements["Stock"].elements["Last"].text;
     
+    print "Ruby - stock price = ", price, "\n"
+    
     return price.to_f
   end
 	

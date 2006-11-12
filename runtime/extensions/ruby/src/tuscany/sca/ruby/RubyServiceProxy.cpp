@@ -78,7 +78,7 @@ namespace tuscany
             RubyServiceProxy::RubyServiceProxy(Reference* reference)
                 : ServiceProxy(reference)
             {
-                LOGENTRY(1,"RubyServiceProxy::constructor");
+                logentry();
     
                 // ----------------------
                 // Get the component
@@ -93,8 +93,6 @@ namespace tuscany
     
                 // Create the Ruby proxy
                 createProxy();
-                
-                LOGEXIT(1,"RubyServiceProxy::constructor");
             }
             
             // ============================
@@ -103,7 +101,7 @@ namespace tuscany
             RubyServiceProxy::RubyServiceProxy(Service* service)
                 : ServiceProxy(0)
             {
-                LOGENTRY(1,"RubyServiceProxy::constructor");
+                logentry();
                 
                 // ----------------------
                 // Get the component
@@ -116,8 +114,6 @@ namespace tuscany
                 
                 // Create the Ruby proxy
                 createProxy();
-                
-                LOGEXIT(1,"RubyServiceProxy::constructor");
             }
             
             // ==========
@@ -125,12 +121,13 @@ namespace tuscany
             // ==========
             RubyServiceProxy::~RubyServiceProxy()
             {
-                LOGENTRY(1,"RubyServiceProxy::destructor");
-                LOGEXIT(1,"RubyServiceProxy::destructor");
+                logentry();
             }
             
             void RubyServiceProxy::createProxy()
             {
+                logentry();
+
                 // Create the Ruby proxy class
                 if (RubyServiceProxy::proxyClass == Qnil)
                 {
@@ -152,6 +149,8 @@ namespace tuscany
             
             VALUE RubyServiceProxy::invoke(int argc, VALUE* argv)
             {
+                logentry();
+
                 // Get the method name
                 char* methodName = rb_id2name(SYM2ID(argv[0]));
         
@@ -346,7 +345,6 @@ namespace tuscany
                         }
                         default:
                         {
-                            //throw new ComponentInvocationException("Operation parameter type not supported");
                             string msg = "Operation parameter type not supported" + resultType;
                             rb_raise(rb_eRuntimeError, msg.c_str());
                             return Qnil;
@@ -356,7 +354,7 @@ namespace tuscany
                     return value;
 
                 }
-                catch(TuscanyRuntimeException &ex)
+                catch(TuscanyRuntimeException& ex)
                 {   
                     string msg = "Exception while invoking a service: ";
                     msg += ex.getEClassName();

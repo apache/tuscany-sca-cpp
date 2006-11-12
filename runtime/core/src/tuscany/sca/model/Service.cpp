@@ -34,11 +34,13 @@ namespace tuscany
             Service::Service(Component* component, ServiceType* serviceType)
                 : component(component), type(serviceType), binding(0)
             {
+                logentry(); 
             }
             
             // Destructor
             Service::~Service()
             {
+                logentry(); 
             }
             
             void Service::setBinding(ServiceBinding* binding)

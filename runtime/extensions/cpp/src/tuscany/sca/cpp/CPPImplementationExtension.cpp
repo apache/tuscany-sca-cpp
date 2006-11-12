@@ -36,8 +36,7 @@ namespace tuscany
             // ===================================================================
             CPPImplementationExtension::CPPImplementationExtension()
             { 
-                LOGENTRY(1, "CPPImplementationExtension::constructor");     
-                LOGEXIT(1, "CPPImplementationExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -45,8 +44,7 @@ namespace tuscany
             // ===================================================================
             CPPImplementationExtension::~CPPImplementationExtension()
             { 
-                LOGENTRY(1, "CPPImplementationExtension::destructor");;           
-                LOGEXIT(1, "CPPImplementationExtension::destructor");
+                logentry();
             }
 
             const string CPPImplementationExtension::extensionName("cpp");
@@ -57,6 +55,7 @@ namespace tuscany
             // ===================================================================
             ComponentType* CPPImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
             {
+                logentry();
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "CPPImplementation")
                 {

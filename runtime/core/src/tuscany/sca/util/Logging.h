@@ -24,44 +24,24 @@
 
 #include "tuscany/sca/util/Logger.h"
 
-#define LOGENTRY(level, methodName) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::log(level, "Entering: " methodName);
+#if defined(WIN32)  || defined (_WINDOWS)
+#define logentry() \
+const LogEntry& __LOGENTRY__ = tuscany::sca::Logger::loggingLevel >= 2 ? tuscany::sca::EnabledLogEntry(__FUNCTION__) :  tuscany::sca::LogEntry()
+#else
+#define logentry() \
+const LogEntry& __LOGENTRY__ = tuscany::sca::Logger::loggingLevel >= 2 ? tuscany::sca::EnabledLogEntry(__PRETTY_FUNCTION__) :  tuscany::sca::LogEntry()
+#endif 
 
-#define LOGEXIT(level, methodName) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::log(level, "Exiting: " methodName);
+#define loginfo(...) \
+if (tuscany::sca::Logger::loggingLevel >= 2) \
+tuscany::sca::Logger::logArgs(2, __VA_ARGS__);
 
-#define LOGINFO(level, message) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::log(level, message);
+#define logwarning(...) \
+if (tuscany::sca::Logger::loggingLevel >= 1) \
+tuscany::sca::Logger::logArgs(1, __VA_ARGS__);
 
-#define LOGINFO_1(level, message, arg1) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::logArgs(level, message, arg1);
-
-#define LOGINFO_2(level, message, arg1, arg2) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::logArgs(level, message, arg1, arg2);
-
-#define LOGINFO_3(level, message, arg1, arg2, arg3) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::logArgs(level, message, arg1, arg2, arg3);
-
-#define LOGERROR(level, message) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::log(level, message);
-
-#define LOGERROR_1(level, message, arg1) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::logArgs(level, message, arg1);
-
-#define LOGERROR_2(level, message, arg1, arg2) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::logArgs(level, message, arg1, arg2);
-
-#define LOGERROR_3(level, message, arg1, arg2, arg3) \
-if (tuscany::sca::Logger::loggingLevel >= level) \
-tuscany::sca::Logger::logArgs(level, message, arg1, arg2, arg3);
+#define logerror(...) \
+if (tuscany::sca::Logger::loggingLevel >= 0) \
+tuscany::sca::Logger::logArgs(0, __VA_ARGS__);
 
 #endif // tuscany_sca_util_logging_h

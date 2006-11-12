@@ -29,18 +29,16 @@ namespace tuscany
         // Constructor for the ServiceBindingExtension class. 
         // ===================================================================
         ServiceBindingExtension::ServiceBindingExtension()
-        { 
-            LOGENTRY(1, "ServiceBindingExtension::constructor");        
-            LOGEXIT(1, "ServiceBindingExtension::constructor");
+        {
+            logentry(); 
         }
 
         // ===================================================================
         // Destructor for the ServiceBindingExtension class.
         // ===================================================================
         ServiceBindingExtension::~ServiceBindingExtension()
-        { 
-            LOGENTRY(1, "ServiceBindingExtension::destructor");;           
-            LOGEXIT(1, "ServiceBindingExtension::destructor");
+        {
+            logentry(); 
         }
                 
     } // End namespace sca

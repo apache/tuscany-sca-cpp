@@ -38,27 +38,30 @@ namespace tuscany
             
             
             // Constructor
-            WSDLDefinition::WSDLDefinition(DataObjectPtr wsdlModel) 
-                : wsdlModel(wsdlModel)
+            WSDLDefinition::WSDLDefinition(DataObjectPtr wsdlModel)
             {
-                LOGENTRY(1, "WSDLDefinition::constructor");
+                logentry(); 
 
-                // Trace
-                //Utils::printDO(wsdlModel);
-                
-                LOGEXIT(1, "WSDLDefinition::constructor");
+                wsdlModels.insert(wsdlModels.end(), wsdlModel);
             }
 
             WSDLDefinition::~WSDLDefinition()
             {
+                logentry(); 
             }
-
 
             /// 
             /// The namespace of the service and other definitions defined in this wsdl definition
             string WSDLDefinition::getNamespace()
             {
-                return wsdlModel->getCString("targetNamespace");
+                logentry(); 
+                return wsdlModels[0]->getCString("targetNamespace");
+            }
+
+            void WSDLDefinition::addWSDLModel(DataObjectPtr wsdlModel)
+            {
+                logentry(); 
+                wsdlModels.insert(wsdlModels.end(), wsdlModel);
             }
 
             ///
@@ -68,10 +71,12 @@ namespace tuscany
                                         const string& portName, 
                                         const string& operationName)
             {
+                logentry(); 
+
                 string message;
                 
                 string operationKey = serviceName+"#"+portName+"#"+operationName;
-                OperationMap::iterator iter = operationMap.find(operationKey);
+                OPERATION_MAP::iterator iter = operationMap.find(operationKey);
                 if (iter != operationMap.end())
                 {
                 	return iter->second;
@@ -85,7 +90,7 @@ namespace tuscany
                     message = "Unable to find service ";
                     message = message + serviceName;
                     message = message + " in the WSDL definition";
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
                 else
                 {
@@ -111,7 +116,7 @@ namespace tuscany
                                 message = "Unable to find binding ";
                                 message = message + wsBindingName;
                                 message = message + " in the WSDL definition";
-                                throw SystemConfigurationException(message.c_str());
+                                throwException(SystemConfigurationException, message.c_str());
                             }
                             
 
@@ -171,7 +176,7 @@ namespace tuscany
                                 message = "Unable to find PortType ";
                                 message = message + wsPortTypeName;
                                 message = message + " in the WSDL definition";
-                                throw SystemConfigurationException(message.c_str());
+                                throwException(SystemConfigurationException, message.c_str());
                             }
 
                             //Utils::printDO(wsPortType);
@@ -194,7 +199,7 @@ namespace tuscany
                                         message = "Unable to find message ";
                                         message = message + inputMessageType;
                                         message = message + " in the WSDL definition";
-                                        throw SystemConfigurationException(message.c_str());
+                                        throwException(SystemConfigurationException, message.c_str());
                                     }
 
                                     string requestType(wsMessageIn->getList("part")[0]->getCString("element"));
@@ -208,7 +213,7 @@ namespace tuscany
                                         message = "Unable to find message ";
                                         message = message + outputMessageType;
                                         message = message + " in the WSDL definition";
-                                        throw SystemConfigurationException(message.c_str());
+                                        throwException(SystemConfigurationException, message.c_str());
                                     }
 
                                     string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
@@ -231,14 +236,14 @@ namespace tuscany
                             message = "Unable to find Operation ";
                             message = message + operationName;
                             message = message + " in the WSDL definition";
-                            throw SystemConfigurationException(message.c_str());                           
+                            throwException(SystemConfigurationException, message.c_str());                           
                         }
                     }
                     // cannot find the port
                     message = "Unable to find port ";
                     message = message + portName;
                     message = message + " in the WSDL definition";
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
                 
             }
@@ -249,8 +254,10 @@ namespace tuscany
             const WSDLOperation& WSDLDefinition::findOperation(const string& portTypeName, 
                                         const string& operationName)
             {
+                logentry(); 
+
                 string operationKey = portTypeName+"#"+operationName;
-                OperationMap::iterator iter = operationMap.find(operationKey);
+                OPERATION_MAP::iterator iter = operationMap.find(operationKey);
                 if (iter != operationMap.end())
                 {
                     return iter->second;
@@ -269,11 +276,9 @@ namespace tuscany
                     string message = "Unable to find PortType ";
                     message = message + portTypeName;
                     message = message + " in the WSDL definition";
-                    throw SystemConfigurationException(message.c_str());
+                    throwException(SystemConfigurationException, message.c_str());
                 }
 
-                //Utils::printDO(wsPortType);
-                
                 // Found the portType, find the operation
                 DataObjectList& operationList = wsPortType->getList("operation");
                 for (int k=0; k< operationList.size(); k++)
@@ -292,7 +297,7 @@ namespace tuscany
                             string message = "Unable to find message ";
                             message = message + inputMessageType;
                             message = message + " in the WSDL definition";
-                            throw SystemConfigurationException(message.c_str());
+                            throwException(SystemConfigurationException, message.c_str());
                         }
 
                         string requestType(wsMessageIn->getList("part")[0]->getCString("element"));
@@ -306,7 +311,7 @@ namespace tuscany
                             string message = "Unable to find message ";
                             message = message + outputMessageType;
                             message = message + " in the WSDL definition";
-                            throw SystemConfigurationException(message.c_str());
+                            throwException(SystemConfigurationException, message.c_str());
                         }
 
                         string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
@@ -328,7 +333,7 @@ namespace tuscany
                 string message = "Unable to find Operation ";
                 message = message + operationName;
                 message = message + " in the WSDL definition";
-                throw SystemConfigurationException(message.c_str());                           
+                throwException(SystemConfigurationException, message.c_str());
                 
             }
             
@@ -337,18 +342,22 @@ namespace tuscany
             ///
             DataObjectPtr WSDLDefinition::findService(const string& serviceName)
             {
+                logentry(); 
+
                 DataObjectPtr service = 0;
-        
 
                 // Find the binding
-                DataObjectList& serviceList = wsdlModel->getList("service");
-                for (int i=0; i<serviceList.size(); i++)
+                for (int m = 0; m < wsdlModels.size(); m++)
                 {
-                    string name(serviceList[i]->getCString("name"));
-
-                    if (name.compare(serviceName) == 0)
+                    DataObjectList& serviceList = wsdlModels[m]->getList("service");
+                    for (int i=0; i<serviceList.size(); i++)
                     {
-                        return serviceList[i];
+                        string name(serviceList[i]->getCString("name"));
+    
+                        if (name.compare(serviceName) == 0)
+                        {
+                            return serviceList[i];
+                        }
                     }
                 }
 
@@ -361,24 +370,26 @@ namespace tuscany
             ///
             DataObjectPtr WSDLDefinition::findBinding(const string& bindingName)
             {
+                logentry(); 
+
                 DataObjectPtr binding = 0;
                 string uri;
                 string name;
 
-
-                //Utils::tokeniseQName(bindingName, uri, name);
                 Utils::rTokeniseString(":", bindingName, uri, name);
 
-
                 // Find the binding
-                DataObjectList& bindingList = wsdlModel->getList("binding");
-                for (int i=0; i<bindingList.size(); i++)
+                for (int m = 0; m < wsdlModels.size(); m++)
                 {
-                    string nameBinding(bindingList[i]->getCString("name"));
-
-                    if (nameBinding.compare(name) == 0)
+                    DataObjectList& bindingList = wsdlModels[m]->getList("binding");
+                    for (int i=0; i<bindingList.size(); i++)
                     {
-                        return bindingList[i];
+                        string nameBinding(bindingList[i]->getCString("name"));
+    
+                        if (nameBinding.compare(name) == 0)
+                        {
+                            return bindingList[i];
+                        }
                     }
                 }
 
@@ -390,24 +401,26 @@ namespace tuscany
             ///
             DataObjectPtr WSDLDefinition::findPortType(const string& portTypeName)
             {
+                logentry(); 
+
                 DataObjectPtr portType = 0;
                 string uri;
                 string name;
 
-
-                // Utils::tokeniseQName(portTypeName, uri, name);
                 Utils::rTokeniseString(":", portTypeName, uri, name);
 
-
                 // Find the binding
-                DataObjectList& portTypeList = wsdlModel->getList("portType");
-                for (int i=0; i<portTypeList.size(); i++)
+                for (int m = 0; m < wsdlModels.size(); m++)
                 {
-                    string namePortType(portTypeList[i]->getCString("name"));
-
-                    if (namePortType.compare(name) == 0)
+                    DataObjectList& portTypeList = wsdlModels[m]->getList("portType");
+                    for (int i=0; i<portTypeList.size(); i++)
                     {
-                        return portTypeList[i];
+                        string namePortType(portTypeList[i]->getCString("name"));
+    
+                        if (namePortType.compare(name) == 0)
+                        {
+                            return portTypeList[i];
+                        }
                     }
                 }
 
@@ -419,24 +432,26 @@ namespace tuscany
             ///
             DataObjectPtr WSDLDefinition::findMessage(const string& messageName)
             {
+                logentry(); 
+
                 DataObjectPtr message = 0;
                 string uri;
                 string name;
 
-
-                // Utils::tokeniseQName(messageName, uri, name);
                 Utils::rTokeniseString(":", messageName, uri, name);
 
-
                 // Find the binding
-                DataObjectList& messageList = wsdlModel->getList("message");
-                for (int i=0; i<messageList.size(); i++)
+                for (int m = 0; m < wsdlModels.size(); m++)
                 {
-                    string nameMessage(messageList[i]->getCString("name"));
-
-                    if (nameMessage.compare(name) == 0)
+                    DataObjectList& messageList = wsdlModels[m]->getList("message");
+                    for (int i=0; i<messageList.size(); i++)
                     {
-                        return messageList[i];
+                        string nameMessage(messageList[i]->getCString("name"));
+    
+                        if (nameMessage.compare(name) == 0)
+                        {
+                            return messageList[i];
+                        }
                     }
                 }
 

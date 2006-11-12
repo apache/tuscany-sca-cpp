@@ -48,8 +48,7 @@ namespace tuscany
             // ===================================================================
             CPPExtension::CPPExtension()
             { 
-                LOGENTRY(1, "CPPExtension::constructor");     
-                LOGEXIT(1, "CPPExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -57,16 +56,14 @@ namespace tuscany
             // ===================================================================
             CPPExtension::~CPPExtension()
             { 
-                LOGENTRY(1, "CPPExtension::destructor");;           
-                LOGEXIT(1, "CPPExtension::destructor");
+                logentry();
             }
 
             void CPPExtension::initialize()
             { 
-                LOGENTRY(1, "CPPExtension::initialize");;           
+                logentry();
                 SCARuntime::getInstance()->registerImplementationExtension(new CPPImplementationExtension());
                 SCARuntime::getInstance()->registerInterfaceExtension(new CPPInterfaceExtension());
-                LOGEXIT(1, "CPPExtension::initialize");;           
             }
 
         } // End namespace cpp

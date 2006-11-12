@@ -48,8 +48,7 @@ namespace tuscany
             // ===================================================================
             WSServiceBindingExtension::WSServiceBindingExtension()
             { 
-                LOGENTRY(1, "WSServiceBindingExtension::constructor");     
-                LOGEXIT(1, "WSServiceBindingExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -57,8 +56,7 @@ namespace tuscany
             // ===================================================================
             WSServiceBindingExtension::~WSServiceBindingExtension()
             { 
-                LOGENTRY(1, "WSServiceBindingExtension::destructor");;           
-                LOGEXIT(1, "WSServiceBindingExtension::destructor");
+                logentry();
             }
 
             const string WSServiceBindingExtension::extensionName("ws");
@@ -70,6 +68,8 @@ namespace tuscany
             // ===================================================================
             ServiceBinding* WSServiceBindingExtension::getServiceBinding(Composite *composite, Service* service, DataObjectPtr scdlBinding)
             {
+                logentry();
+
                 string bindingType = scdlBinding->getType().getName();
                 if (bindingType == "WebServiceBinding")
                 {
@@ -98,9 +98,8 @@ namespace tuscany
 
             void WSServiceBindingExtension::initialize()
             { 
-                LOGENTRY(1, "WSServiceBindingExtension::initialize");;           
+                logentry();
                 SCARuntime::getInstance()->registerServiceBindingExtension(new WSServiceBindingExtension());
-                LOGEXIT(1, "WSServiceBindingExtension::initialize");;           
             }
 
         } // End namespace ws

@@ -49,8 +49,7 @@ namespace tuscany
             // ===================================================================
             SCAReferenceBindingExtension::SCAReferenceBindingExtension()
             { 
-                LOGENTRY(1, "SCAReferenceBindingExtension::constructor");     
-                LOGEXIT(1, "SCAReferenceBindingExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -58,8 +57,7 @@ namespace tuscany
             // ===================================================================
             SCAReferenceBindingExtension::~SCAReferenceBindingExtension()
             { 
-                LOGENTRY(1, "SCAReferenceBindingExtension::destructor");;           
-                LOGEXIT(1, "SCAReferenceBindingExtension::destructor");
+                logentry();
             }
 
             const string SCAReferenceBindingExtension::extensionName("sca");
@@ -70,6 +68,8 @@ namespace tuscany
             // ===================================================================
             ReferenceBinding* SCAReferenceBindingExtension::getReferenceBinding(Composite *composite, Reference* reference, DataObjectPtr scdlBinding)
             {
+                logentry();
+
                 string bindingType = scdlBinding->getType().getName();
                 if (bindingType == "SCABinding")
                 {
@@ -87,9 +87,8 @@ namespace tuscany
 
            void SCAReferenceBindingExtension::initialize()
             { 
-                LOGENTRY(1, "SCAReferenceBindingExtension::initialize");;           
+                logentry();
                 SCARuntime::getInstance()->registerReferenceBindingExtension(new SCAReferenceBindingExtension());
-                LOGEXIT(1, "SCAReferenceBindingExtension::initialize");;           
             }
 
         } // End namespace binding

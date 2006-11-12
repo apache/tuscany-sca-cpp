@@ -23,6 +23,7 @@
 #include "tuscany/sca/ruby/RubyServiceWrapper.h"
 
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Library.h"
 #include "tuscany/sca/model/Component.h"
@@ -52,14 +53,11 @@ namespace tuscany
             RubyServiceWrapper::RubyServiceWrapper(Service* service)
                 : ServiceWrapper(service)
             {
-                LOGENTRY(1,"RubyServiceWrapper::constructor");
+                logentry();
                 
                 component = service->getComponent();
                 implementation = (RubyImplementation*)component->getType();
                 interf = service->getType()->getInterface();
-                
-                LOGEXIT(1,"RubyServiceWrapper::constructor");
-                
             }
             
             // ==========
@@ -67,8 +65,7 @@ namespace tuscany
             // ==========
             RubyServiceWrapper::~RubyServiceWrapper()
             {
-                LOGENTRY(1,"RubyServiceWrapper::destructor");
-                LOGEXIT(1,"RubyServiceWrapper::destructor");
+                logentry();
             }
             
             // ======================================================================
@@ -76,7 +73,7 @@ namespace tuscany
             // ======================================================================
             void RubyServiceWrapper::invoke(Operation& operation)
             {
-                LOGENTRY(1,"RubyServiceWrapper::invoke");
+                logentry();
     
                 SCARuntime* runtime = SCARuntime::getInstance();
                 runtime->setCurrentComponent(component);
@@ -227,9 +224,8 @@ namespace tuscany
                                 }
                                 default:
                                 {
-                                    //throw new ComponentInvocationException("Operation parameter type not supported");
                                     string msg = "Operation parameter type not supported" + parmType;
-                                    throw msg.c_str();
+                                    throwException(ServiceDataException, msg.c_str());
                                 }
                             }
                             
@@ -679,32 +675,36 @@ namespace tuscany
                                 commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
                                 commonj::sdo::XMLDocumentPtr xmlDoc = xmlHelper->load(str.c_str());
                                
-                                DataObjectPtr dob;
+                                DataObjectPtr* dataObjectData = new DataObjectPtr;
                                 if (xmlDoc != NULL)
                                 {
-                                    dob = xmlDoc->getRootDataObject();
+                                    *dataObjectData = xmlDoc->getRootDataObject();
                                 }
-                                if (dob != NULL)
+                                else
                                 {
-                                    operation.setReturnValue(&dob);
+                                    *dataObjectData = NULL;
+                                }
+                                if (*dataObjectData != NULL)
+                                {
+                                    operation.setReturnValue(dataObjectData);
                                 }
                                 else
                                 {
                                     string msg = "Document could not be converted to a DataObject";
-                                    throw msg.c_str();
+                                    throwException(ServiceDataException, msg.c_str());
                                 }
                             }
                             else
                             {
                                 string msg = "Ruby type not supported: " + resultType;
-                                throw msg.c_str();
+                                throwException(ServiceDataException, msg.c_str());
                             }
                             break;
                         }
                     default:
                         {
                             string msg = "Ruby type not supported: " + resultType;
-                            throw msg.c_str();
+                            throwException(ServiceDataException, msg.c_str());
                         } 
                     }
                     
@@ -714,9 +714,8 @@ namespace tuscany
                     runtime->unsetCurrentComponent();
                     throw;
                 }
-                runtime->unsetCurrentComponent();
-                LOGEXIT(1,"RubyServiceWrapper::invoke");
                 
+                runtime->unsetCurrentComponent();
             }
             
         } // End namespace ruby        

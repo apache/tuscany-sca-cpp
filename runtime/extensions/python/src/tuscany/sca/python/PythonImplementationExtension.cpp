@@ -37,8 +37,7 @@ namespace tuscany
             // ===================================================================
             PythonImplementationExtension::PythonImplementationExtension()
             { 
-                LOGENTRY(1, "PythonImplementationExtension::constructor");     
-                LOGEXIT(1, "PythonImplementationExtension::constructor");
+                logentry();
             }
             
             // ===================================================================
@@ -46,8 +45,7 @@ namespace tuscany
             // ===================================================================
             PythonImplementationExtension::~PythonImplementationExtension()
             { 
-                LOGENTRY(1, "PythonImplementationExtension::destructor");;           
-                LOGEXIT(1, "PythonImplementationExtension::destructor");
+                logentry();
             }
 
             const string PythonImplementationExtension::extensionName("python");
@@ -58,6 +56,8 @@ namespace tuscany
             // ===================================================================
             ComponentType* PythonImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
             {
+                logentry();
+
                 string implType = scdlImplementation->getType().getName();
                 if (implType == "PythonImplementation")
                 {

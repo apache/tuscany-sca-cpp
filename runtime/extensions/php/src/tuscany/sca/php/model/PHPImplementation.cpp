@@ -41,19 +41,17 @@ namespace tuscany
                 : ComponentType(composite, module),
                     module(module), className(className)
             {
-                LOGENTRY(1,"PHPImplementation::constructor");
-                LOGEXIT(1,"PHPImplementation::constructor");
+                logentry();
             }
 
             PHPImplementation::~PHPImplementation()
             {
-                LOGENTRY(1,"PHPImplementation::destructor");
-                LOGEXIT(1,"PHPImplementation::destructor");
+                logentry();
             }
             
             void PHPImplementation::initializeComponent(Component* component)
             {
-                LOGENTRY(1,"PHPImplementation::initializeComponent");
+                logentry();
                 ComponentType::initializeComponent(component);
                 
                 // Create PHP bindings for all the services
@@ -79,7 +77,6 @@ namespace tuscany
                 //    reference->setBinding(binding);
                 //    refiter++;
                 //}
-                LOGEXIT(1,"PHPImplementation::initializeComponent");
             }
             
         } // End namespace php

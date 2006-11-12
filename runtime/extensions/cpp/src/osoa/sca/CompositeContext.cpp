@@ -20,6 +20,7 @@
 /* $Rev$ $Date$ */
 
 #include "osoa/sca/CompositeContext.h"
+#include "osoa/sca/ServiceRuntimeException.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/cpp/CompositeContextImpl.h"
 #include "tuscany/sca/core/SCARuntime.h"
@@ -40,6 +41,7 @@ namespace osoa
         CompositeContext::CompositeContext(CompositeContext* implementation)
             : impl(implementation)
         {
+            logentry();
         }
 
         // ===================================
@@ -47,6 +49,7 @@ namespace osoa
         // ===================================
         CompositeContext::CompositeContext(const CompositeContext& ctx)
         {
+            logentry();
             impl = new CompositeContextImpl(
                 tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
         }
@@ -56,6 +59,7 @@ namespace osoa
         // =============================
         CompositeContext& CompositeContext::operator=(const CompositeContext& ctx)
         {
+            logentry();
             if (this != &ctx)
             {
                 impl = new CompositeContextImpl(
@@ -69,9 +73,8 @@ namespace osoa
         // ==========
         CompositeContext::~CompositeContext()
         {
-            LOGENTRY(1, "CompositeContext::destructor");
+            logentry();
             delete impl;
-            LOGEXIT(1, "CompositeContext::destructor");
         }
         
         // ====================================================
@@ -79,11 +82,22 @@ namespace osoa
         // ====================================================
         CompositeContext CompositeContext::getCurrent()
         {
-            LOGENTRY(1, "CompositeContext::getCurrent");
-            CompositeContext* cci = new CompositeContextImpl(
-                tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
-            LOGEXIT(1, "CompositeContext::getCurrent");
-            return CompositeContext(cci);
+            logentry();
+            try
+            {
+                CompositeContext* cci = new CompositeContextImpl(
+                    tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
+                    
+                return CompositeContext(cci);
+            }
+            catch (ServiceRuntimeException&)
+            {
+                throw;
+            }
+            catch (TuscanyRuntimeException& e)
+            {
+                throwException(ServiceRuntimeException, e);
+            }
         }
 
         // =============
@@ -91,9 +105,8 @@ namespace osoa
         // =============
         void* CompositeContext::locateService(const std::string& serviceName)
         {
-            LOGENTRY(1, "CompositeContext::locateService");
+            logentry();
             void* sp = impl->locateService(serviceName);
-            LOGEXIT(1, "CompositeContext::locateService");
             return sp;
         }
 
@@ -102,9 +115,8 @@ namespace osoa
         // =============
         DataFactoryPtr CompositeContext::getDataFactory()
         {
-            LOGENTRY(1, "CompositeContext::getDataFactory");
+            logentry();
             DataFactoryPtr df = impl->getDataFactory();
-            LOGEXIT(1, "CompositeContext::getDataFactory");
             return df;
         }
 

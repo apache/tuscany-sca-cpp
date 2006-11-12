@@ -86,6 +86,31 @@ namespace tuscany
             static int setLogging();
         };
         
+        class LogEntry
+        {
+        };
+        
+        class EnabledLogEntry : public LogEntry
+        {
+        public:
+        
+            EnabledLogEntry(const char* func)
+                : funcName(func)
+            {
+                Logger::logArgs(2, ">> %s", funcName);
+            }
+            
+            ~EnabledLogEntry()
+            {
+                tuscany::sca::Logger::logArgs(2, "<< %s", funcName);
+            }
+            
+        private:
+            const char *funcName;
+        
+        };
+        
     } // End namespace sca
 } // End namespace tuscany
+
 #endif // tuscany_sca_util_logger_h

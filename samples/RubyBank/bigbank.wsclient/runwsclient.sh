@@ -17,37 +17,33 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+
 APFULLDIR=`pwd`
 
-export SCA4CPP_HOME="$APFULLDIR"
-if [ x$SCA4CPP = x ]; then
-export TUSCANY_SCACPP="$SCA4CPP_HOME"
-fi
-echo "Using SCA installed at $SCA4CPP_HOME"
-
-if [ x$AXISCPP_DEPLOY = x ]; then
-echo "AXISCPP_DEPLOY not set"
+if [ x$TUSCANY_SCACPP = x ]; then
+echo "TUSCANY_SCACPP not set"
 exit;
 fi
-echo "Using Axis C++ installed at $AXISCPP_DEPLOY"
-
-if [ x$XERCES_DEPLOY = x ]; then
-echo "XERCES_DEPLOY not set"
-exit;
-fi
-echo "Using Xerces C++ installed at $XERCES_DEPLOY"
+echo "Using SCA installed at $TUSCANY_SCACPP"
 
 if [ x$TUSCANY_SDOCPP = x ]; then
-echo "TUSCANY_SDOCPP not set"exit;
+echo "TUSCANY_SDOCPP not set"
+exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-TEST_ROOT=$SCA4CPP_HOME/runtime/core/test
+if [ x$AXIS2C_HOME = x ]; then
+echo "AXIS2C_HOME not set"
+exit;
+fi
+echo "Using Axis2C installed at $AXIS2C_HOME"
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH:$AXISCPP_DEPLOY/lib:$XERCES_DEPLOY/lib
+TEST_SYSTEM=$APFULLDIR/../
 
-export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_ROOT/testSCASystem
-export TUSCANY_SCACPP_DEFAULT_COMPOSITE=SubSystem1
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
-cd $TUSCANY_SCACPP/bin/test
-./tuscany_sca_test
+export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
+export TUSCANY_SCACPP_DEFAULT_COMPONENT=bigbank.AccountWSClientComponent
+
+cd $TUSCANY_SCACPP_SYSTEM_ROOT/bigbank.wsclient
+ruby -I$TUSCANY_SCACPP/extensions/ruby/lib AccountWSClient.rb

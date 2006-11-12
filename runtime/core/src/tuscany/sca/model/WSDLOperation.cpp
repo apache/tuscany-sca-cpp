@@ -34,22 +34,24 @@ namespace tuscany
             // Constructor
             WSDLOperation::WSDLOperation() 
             {
-                LOGENTRY(1, "WSDLOperation::constructor");                
-                LOGEXIT(1, "WSDLOperation::constructor");
+                logentry(); 
             }
 
             WSDLOperation::~WSDLOperation()
             {
+                logentry(); 
             }
 
 
             void WSDLOperation::setInputType(const string& inputType)
             {
+                logentry(); 
             	Utils::tokeniseQName(inputType, inputTypeUri, inputTypeName); 
             }
 
             void WSDLOperation::setOutputType(const string& outputType)
             {
+                logentry(); 
             	Utils::tokeniseQName(outputType, outputTypeUri, outputTypeName); 
             }
 
