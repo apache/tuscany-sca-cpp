@@ -38,7 +38,37 @@
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
 #include "commonj/sdo/SDO.h"
 
+#include <sstream>
+
 using commonj::sdo::PropertyList;
+
+extern "C"
+{
+    
+    typedef struct _safe_rb_call
+    {
+        VALUE instance;
+        ID method;
+        int argc;
+        const VALUE* argv;
+    } safe_rb_call;
+
+    static VALUE safe_rb_funcall(VALUE value)
+    {
+        safe_rb_call* call = (safe_rb_call*)value;
+        if (call->argc == 0)
+        {
+            VALUE result = rb_funcall(call->instance, call->method, 0);
+            return result;
+        }
+        else
+        {
+            VALUE result = rb_funcall2(call->instance, call->method, call->argc, call->argv);
+            return result;
+        }
+    }
+
+}
 
 namespace tuscany
 {
@@ -235,14 +265,36 @@ namespace tuscany
 
                     
                     // Invoke the specified method
-                    VALUE result;
-                    if (n == 0)
+                    safe_rb_call call;
+                    call.instance = instance;
+                    call.method = method;
+                    call.argc = n;
+                    call.argv = args;
+                    int error = 0;
+                    VALUE result = rb_protect(safe_rb_funcall, (VALUE)&call, &error);
+                    if (error)
                     {
-                        result = rb_funcall(instance, method, 0);
-                    }
-                    else
-                    {
-                        result = rb_funcall2(instance, method, n, args);
+                        // Convert a Ruby error to a C++ exception
+                        VALUE lasterr = rb_gv_get("$!");
+                        ostringstream msg;
+                    
+                        // class
+                        VALUE klass = rb_class_path(CLASS_OF(lasterr));
+                        msg << "Ruby Exception " << RSTRING(klass)->ptr << ": "; 
+                    
+                        // message
+                        VALUE message = rb_obj_as_string(lasterr);
+                        msg << RSTRING(message)->ptr << endl;
+                    
+                        // backtrace
+                        if(!NIL_P(ruby_errinfo)) {
+                            VALUE ary = rb_funcall(ruby_errinfo, rb_intern("backtrace"), 0);
+                            int c;
+                            for (c=0; c<RARRAY(ary)->len; c++) {
+                                msg << "from " << RSTRING(RARRAY(ary)->ptr[c])->ptr << endl;
+                            }
+                        }
+                        throwException(ServiceInvocationException, msg.str().c_str());                        
                     }
                     
                     // Convert the Ruby result value to a C++ result
