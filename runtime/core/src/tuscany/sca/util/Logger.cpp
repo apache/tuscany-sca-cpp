@@ -104,6 +104,42 @@ namespace tuscany
             }
         }
         
+        void Logger::logArgs0(const char* msg, ...)
+        {
+            if (0 <= loggingLevel)
+            {
+                va_list variableArguments;
+                va_start(variableArguments, msg);
+                char messageBuffer[1024];
+                vsprintf(messageBuffer, msg, variableArguments);
+                logWriter->log(0, messageBuffer);
+                va_end(variableArguments);
+            }
+        }
+        void Logger::logArgs1(const char* msg, ...)
+        {
+            if (1 <= loggingLevel)
+            {
+                va_list variableArguments;
+                va_start(variableArguments, msg);
+                char messageBuffer[1024];
+                vsprintf(messageBuffer, msg, variableArguments);
+                logWriter->log(1, messageBuffer);
+                va_end(variableArguments);
+            }
+        }
+        void Logger::logArgs2(const char* msg, ...)
+        {
+            if (2 <= loggingLevel)
+            {
+                va_list variableArguments;
+                va_start(variableArguments, msg);
+                char messageBuffer[1024];
+                vsprintf(messageBuffer, msg, variableArguments);
+                logWriter->log(2, messageBuffer);
+                va_end(variableArguments);
+            }
+        }
+
     } // End namespace sca
 } // End namespace tuscany
-

@@ -62,6 +62,9 @@ namespace tuscany
              * @param ... Variable arguments.
              */
             SCA_API static void logArgs(int level, const char* msg, ...);
+            SCA_API static void logArgs0(const char* msg, ...);
+            SCA_API static void logArgs1(const char* msg, ...);
+            SCA_API static void logArgs2(const char* msg, ...);
 
             /**
              * The currently set logging level

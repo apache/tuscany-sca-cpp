@@ -32,16 +32,13 @@ const LogEntry& __LOGENTRY__ = tuscany::sca::Logger::loggingLevel >= 2 ? tuscany
 const LogEntry& __LOGENTRY__ = tuscany::sca::Logger::loggingLevel >= 2 ? tuscany::sca::EnabledLogEntry(__PRETTY_FUNCTION__) :  tuscany::sca::LogEntry()
 #endif 
 
-#define loginfo(...) \
-if (tuscany::sca::Logger::loggingLevel >= 2) \
-tuscany::sca::Logger::logArgs(2, __VA_ARGS__);
+#define loginfo \
+if (tuscany::sca::Logger::loggingLevel >= 2) tuscany::sca::Logger::logArgs2
 
-#define logwarning(...) \
-if (tuscany::sca::Logger::loggingLevel >= 1) \
-tuscany::sca::Logger::logArgs(1, __VA_ARGS__);
+#define logwarning \
+if (tuscany::sca::Logger::loggingLevel >= 1) tuscany::sca::Logger::logArgs1
 
-#define logerror(...) \
-if (tuscany::sca::Logger::loggingLevel >= 0) \
-tuscany::sca::Logger::logArgs(0, __VA_ARGS__);
+#define logerror \
+if (tuscany::sca::Logger::loggingLevel >= 0) tuscany::sca::Logger::logArgs0
 
 #endif // tuscany_sca_util_logging_h
