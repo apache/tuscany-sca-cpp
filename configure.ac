@@ -178,6 +178,30 @@ AC_ARG_ENABLE(php, [AS_HELP_STRING([--enable-php],[build PHP component type exte
 )
 AM_CONDITIONAL([WANT_PHP], [test x$want_php = xtrue])
 
+AC_MSG_CHECKING(whether to build Doxygen documentation)
+AC_ARG_ENABLE(doxygen, [AS_HELP_STRING([--enable-doxygen],[build Doxygen documentation [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_doxygen=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_doxygen=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+  want_doxygen=true ]
+)
+if test x$want_doxygen = xyes; then
+  AC_PATH_PROG(DOXYGEN, doxygen, , $PATH)
+  if test x$DOXYGEN = x; then
+    AC_MSG_ERROR([could not find doxygen])
+    want_doxygen=no
+  fi
+fi
+AM_CONDITIONAL([WANT_DOXYGEN], [test x$want_doxygen = xtrue])
+
 AC_CONFIG_FILES([Makefile
                  tools/Makefile
                  tools/scagen/Makefile
@@ -207,6 +231,8 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/ruby/src/Makefile
                  runtime/extensions/php/Makefile
                  runtime/extensions/php/src/Makefile
+                 doc/Makefile
+                 doc/Doxyfile
                  ])
 AC_OUTPUT
 

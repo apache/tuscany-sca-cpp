@@ -15,27 +15,28 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = tools runtime
-DIST_SUBDIRS = tools runtime samples
+SUBDIRS = tools runtime doc
+DIST_SUBDIRS = tools runtime doc samples
 datadir=$(prefix)
 
 data_DATA = INSTALL README LICENSE COPYING NOTICE GettingStarted.html
 nobase_data_DATA = xsd/*.*
-EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE GettingStarted.html xsd doc
+EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE GettingStarted.html xsd
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`
 	rm -rf `find $(distdir)/ -type d -name .deps`
 
 install-data-hook:
+	rm -rf $(prefix)/doc
+	cp -r doc $(prefix)
+	rm -f $(prefix)/doc/Makefile* $(prefix)/doc/Doxyfile*
+	rm -rf `find $(prefix)/doc -type d -name .svn`
+	rm -rf `find $(prefix)/doc -type d -name .deps`
+
 	rm -rf $(prefix)/samples
 	cp -r samples $(prefix)
 	rm -rf `find $(prefix)/samples -type d -name .svn`
 	rm -rf `find $(prefix)/samples -type d -name .deps`
-	rm -rf $(prefix)/doc
-	cp -r doc $(prefix)
-	rm -rf `find $(prefix)/doc -type d -name .svn`
-	rm -rf `find $(prefix)/doc -type d -name .deps`
-	
 	
 bindist: dist
 	rm -rf ${PACKAGE}-${PACKAGE_VERSION}
