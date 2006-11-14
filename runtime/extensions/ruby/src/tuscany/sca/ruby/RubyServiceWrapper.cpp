@@ -42,20 +42,31 @@
 
 using commonj::sdo::PropertyList;
 
+namespace tuscany
+{
+    namespace sca
+    {
+        namespace ruby
+        {
+            
+            class RubyServiceInvocation
+            {
+            public:
+                VALUE instance;
+                ID method;
+                int argc;
+                const VALUE* argv;
+            };
+        }
+    }
+}
+
 extern "C"
 {
     
-    typedef struct _safe_rb_call
-    {
-        VALUE instance;
-        ID method;
-        int argc;
-        const VALUE* argv;
-    } safe_rb_call;
-
     static VALUE safe_rb_funcall(VALUE value)
     {
-        safe_rb_call* call = (safe_rb_call*)value;
+        tuscany::sca::ruby::RubyServiceInvocation* call = (tuscany::sca::ruby::RubyServiceInvocation*)value;
         if (call->argc == 0)
         {
             VALUE result = rb_funcall(call->instance, call->method, 0);
@@ -265,7 +276,7 @@ namespace tuscany
 
                     
                     // Invoke the specified method
-                    safe_rb_call call;
+                    RubyServiceInvocation call;
                     call.instance = instance;
                     call.method = method;
                     call.argc = n;
