@@ -19,12 +19,14 @@
 -->
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="supplychain.manufacturerC.solution">
-
-	<component name="supplychain.manufacturerC">
-		<implementation.composite name="supplychain.manufacturer"/>
-		<reference name="logging">supplychain.Logging/LoggingService</reference>
-		<property name="manufacturerID">manufacturerC</property>
-	</component>
+	name="sample.calculator.app">
 	
+        <component name="sample.calculator.CalculatorComponent">
+        	<implementation.composite name="sample.calculator" />
+       	</component>
+
+        <component name="sample.calculator.CalculatorWSClientComponent">
+        	<implementation.composite name="sample.calculator.wsclient" />
+       	</component>
+
 </composite>

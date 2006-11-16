@@ -37,14 +37,13 @@ goto end
 )
 echo Using Axis2C installed at %AXIS2C_HOME%
 
-set APFULLDIR=%~d0%~p0
-set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
-set TUSCANY_SCACPP_DEFAULT_COMPONENT=bigbank.AccountManagementComponent
-
 rem Run the client
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
-cd %TUSCANY_SCACPP_SYSTEM_ROOT%\bigbank.client
+set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
+set TUSCANY_SCACPP_COMPONENT=bigbank.AccountManagementComponent
+
+cd %TUSCANY_SCACPP_ROOT%\bigbank.client
 ruby -I%TUSCANY_SCACPP%\extensions\ruby\bin AccountClient.rb
 
 :end

@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     if (!client_home)
         client_home = "../../deploy";
     
-    address = "http://localhost:9090/axis2/services/CalculatorService";
+    address = "http://localhost:9090/axis2/services/sample.calculator.CalculatorComponent/CalculatorService";
     if (argc > 1 )
         operation = argv[1];
     if (AXIS2_STRCMP(operation, "-h") == 0)

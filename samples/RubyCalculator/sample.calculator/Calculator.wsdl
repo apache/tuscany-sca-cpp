@@ -111,4 +111,51 @@
 		</operation>
 	</portType>
 
+	<binding name="CalculatorBinding"
+		type="tns:Calculator">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+		<operation name="add">
+			<soap:operation soapAction="CalculatorService#add" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="sub">
+			<soap:operation soapAction="CalculatorService#sub" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="mul">
+			<soap:operation soapAction="CalculatorService#mul" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="div">
+			<soap:operation soapAction="CalculatorService#div" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+	</binding>
+
+	<service name="CalculatorService">
+		<port name="CalculatorPort"
+			binding="tns:CalculatorBinding">
+			<soap:address location="http://localhost:9090/axis2/services/sample.calculator.CalculatorComponent/CalculatorService" />
+		</port>
+	</service>
 </definitions>

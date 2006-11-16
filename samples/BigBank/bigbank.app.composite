@@ -20,11 +20,10 @@
 
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="bigbank.accountmanagement">
+	name="bigbank.app">
 	
 	<component name="bigbank.AccountManagementComponent">
 		<implementation.composite name="bigbank.account"/>
 	</component>
 
 </composite>
-	

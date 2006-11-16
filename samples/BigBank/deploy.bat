@@ -48,7 +48,7 @@ if not exist %bbdeploydir% mkdir %bbdeploydir%
 if not exist %samplebb% mkdir %samplebb% 
 
 set samplebbsrc=%srcdir%\%package%
-copy %srcdir%\bigbank.accountmanagement.composite %bbdeploydir%
+copy %srcdir%\bigbank.app.composite %bbdeploydir%
 copy %samplebbsrc%\*.wsdl %samplebb% 
 copy %samplebbsrc%\*.composite %samplebb% 
 copy %samplebbsrc%\*.componentType %samplebb% 

@@ -19,7 +19,7 @@
 -->
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="supplychain.retailer.solution">
+	name="supplychain.retailer.app">
 
 	<component name="supplychain.Retailer">
 		<implementation.composite name="supplychain.retailer"/>

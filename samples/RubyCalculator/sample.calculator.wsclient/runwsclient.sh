@@ -37,12 +37,10 @@ exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
-TEST_SYSTEM=$APFULLDIR/../
-
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
-export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
-export TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorWSClientComponent
+export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
+export TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorWSClientComponent
 
-cd $TUSCANY_SCACPP_SYSTEM_ROOT/sample.calculator.wsclient
+cd $TUSCANY_SCACPP_ROOT/sample.calculator.wsclient
 ruby -I$TUSCANY_SCACPP/extensions/ruby/lib CalculatorWSClient.rb

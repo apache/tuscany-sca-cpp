@@ -37,12 +37,9 @@ exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
-TEST_SYSTEM=$APFULLDIR/../
-
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
-export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
-export TUSCANY_SCACPP_DEFAULT_COMPONENT=bigbank.AccountManagementComponent
+export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 
 cd $AXIS2C_HOME/bin
 ./axis2_http_server

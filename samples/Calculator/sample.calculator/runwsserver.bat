@@ -37,10 +37,9 @@ goto end
 )
 echo using Axis2C installed at %AXIS2C_HOME%
 
-set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
-set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent
-
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\cpp\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
+
+set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
 
 cd %AXIS2C_HOME%\bin
 .\axis2_http_server.exe

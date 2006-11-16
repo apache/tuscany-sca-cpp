@@ -155,7 +155,7 @@
 	<service name="CalculatorService">
 		<port name="CalculatorPort"
 			binding="tns:CalculatorBinding">
-			<soap:address location="http://localhost:9090/axis2/services/CalculatorService" />
+			<soap:address location="http://localhost:9090/axis2/services/sample.calculator.CalculatorComponent/CalculatorService" />
 		</port>
 	</service>
 </definitions>

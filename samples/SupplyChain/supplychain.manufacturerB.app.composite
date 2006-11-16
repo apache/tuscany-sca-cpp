@@ -19,15 +19,12 @@
 -->
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="bigbank.accountmanagement">
+	name="supplychain.manufacturerB.app">
+
+	<component name="supplychain.manufacturerB">
+		<implementation.composite name="supplychain.manufacturer"/>
+		<reference name="logging">supplychain.Logging/LoggingService</reference>
+		<property name="manufacturerID">manufacturerB</property>
+	</component>
 	
-	<component name="bigbank.AccountManagementComponent">
-		<implementation.composite name="bigbank.account"/>
-	</component>
-
-	<component name="bigbank.AccountWSClientComponent">
-		<implementation.composite name="bigbank.wsclient"/>
-	</component>
-
 </composite>
-	

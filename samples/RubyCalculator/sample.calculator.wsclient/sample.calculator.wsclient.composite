@@ -23,7 +23,7 @@
 
 	<reference name="CalculatorService">
 		<interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/>
-		<binding.ws uri="http://localhost:9090/axis2/services/CalculatorService"/>
+		<binding.ws uri="http://localhost:9090/axis2/services/sample.calculator.CalculatorComponent/CalculatorService"/>
 	</reference>
 
 </composite>

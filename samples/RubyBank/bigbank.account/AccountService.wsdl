@@ -120,7 +120,7 @@
 		<wsdl:port binding="tns:AccountServiceSOAP"
 			name="AccountServiceSOAP">
 			<soap:address
-				location="http://localhost:9090/axis2/services/AccountService" />
+				location="http://localhost:9090/axis2/services/bigbank.AccountManagementComponent/AccountService" />
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>

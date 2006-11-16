@@ -16,7 +16,7 @@ There are three sub projects in this workspace:
     - sample.calculator.wsclient
       A sample Axis2 Web Service client which calls the Calculator Web service.
 
-Additionally, there is the sample.calculator.solution.composite file. This 
+Additionally, there is the sample.calculator.app.composite file. This 
 describes the configuration of the SCA Calculator composite deployed to the 
 SCA runtime.
 

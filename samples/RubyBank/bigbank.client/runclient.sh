@@ -38,12 +38,10 @@ exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
-TEST_SYSTEM=$APFULLDIR/../
-
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
-export TUSCANY_SCACPP_SYSTEM_ROOT=$TEST_SYSTEM
-export TUSCANY_SCACPP_DEFAULT_COMPONENT=bigbank.AccountManagementComponent
+export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
+export TUSCANY_SCACPP_COMPONENT=bigbank.AccountManagementComponent
 
-cd $TUSCANY_SCACPP_SYSTEM_ROOT/bigbank.client
+cd $TUSCANY_SCACPP_ROOT/bigbank.client
 ruby -I$TUSCANY_SCACPP/extensions/ruby/lib AccountClient.rb

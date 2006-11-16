@@ -15,8 +15,7 @@ There are two sub projects in this workspace:
     - bigbank.client
       A sample client which does a local call to the BigBank service.
 
-Additionally, there is the bigbank.accountmanagement.composite file. This      
-describes the configuration of the SCA Calculator composite deployed to the 
-SCA runtime.                                                                       
+Additionally, there is the bigbank.app.composite file. This describes the
+configuration of the SCA Calculator composite deployed to the SCA runtime.                                                                       
 
 See the README.html file for instructions to build and run this sample

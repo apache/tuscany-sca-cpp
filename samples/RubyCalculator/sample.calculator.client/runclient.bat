@@ -37,12 +37,12 @@ goto end
 )
 echo using Axis2C installed at %AXIS2C_HOME%
 
-set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
-set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent
-
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
-cd %TUSCANY_SCACPP_SYSTEM_ROOT%\sample.calculator.client
+set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
+set TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorComponent
+
+cd %TUSCANY_SCACPP_ROOT%\sample.calculator.client
 ruby -I%TUSCANY_SCACPP%\extensions\ruby\bin CalculatorClient.rb
 
 :end

@@ -22,9 +22,8 @@ There are four sub projects in this workspace:
       A sample PHP client which calls the BigBank Web service and then 
       deconstructs and displays the result by using the SDO for PHP extension.
 
-Additionally, there is the bigbank.accountmanagement.composite file. This      
-describes the configuration of the SCA Calculator composite deployed to the 
-SCA runtime.                                                                       
+Additionally, there is the bigbank.app.composite file. This describes the
+configuration of the SCA Calculator composite deployed to the SCA runtime.
 
 See the README.html file for instructions to build and run this sample
 

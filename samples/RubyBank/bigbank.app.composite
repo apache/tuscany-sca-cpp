@@ -19,14 +19,15 @@
 -->
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="sample.calculator.solution">
+	name="bigbank.app">
 	
-        <component name="sample.calculator.CalculatorComponent">
-        	<implementation.composite name="sample.calculator" />
-       	</component>
+	<component name="bigbank.AccountManagementComponent">
+		<implementation.composite name="bigbank.account"/>
+	</component>
 
-        <component name="sample.calculator.CalculatorWSClientComponent">
-        	<implementation.composite name="sample.calculator.wsclient" />
-       	</component>
+	<component name="bigbank.AccountWSClientComponent">
+		<implementation.composite name="bigbank.wsclient"/>
+	</component>
 
 </composite>
+	

@@ -37,12 +37,12 @@ goto end
 )
 echo Using Axis2C installed at %AXIS2C_HOME%
 
-set APFULLDIR=%~d0%~p0
-set TUSCANY_SCACPP_SYSTEM_ROOT=%~d0%~p0\..\
-set TUSCANY_SCACPP_DEFAULT_COMPONENT=bigbank.AccountManagementComponent
-
 rem Run the client
 set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\cpp\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
+
+set APFULLDIR=%~d0%~p0
+set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
+set TUSCANY_SCACPP_COMPONENT=bigbank.AccountManagementComponent
 
 .\AccountClient.exe 1234
 
