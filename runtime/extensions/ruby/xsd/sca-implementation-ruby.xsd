@@ -30,6 +30,7 @@
                 <sequence>
                     <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
+				<attribute name="script" type="NCName" use="optional"/>
 				<attribute name="module" type="NCName" use="optional"/>
                 <attribute name="class" type="Name" use="optional"/>
 				<anyAttribute namespace="##any" processContents="lax"/>
