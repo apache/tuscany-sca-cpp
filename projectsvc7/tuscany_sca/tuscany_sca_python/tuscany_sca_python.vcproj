@@ -150,9 +150,6 @@
 				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceProxy.h">
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceRuntimeException.h">
-			</File>
-			<File
 				RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\PythonServiceWrapper.cpp">
 			</File>
 			<File
