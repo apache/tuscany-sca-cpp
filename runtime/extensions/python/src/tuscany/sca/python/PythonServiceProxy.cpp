@@ -21,18 +21,7 @@
 
 #include "tuscany/sca/python/PythonServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/util/Exceptions.h"
-#include "tuscany/sca/core/SCARuntime.h"
-#include "tuscany/sca/model/Reference.h"
-#include "tuscany/sca/model/ReferenceType.h"
-#include "tuscany/sca/model/Service.h"
-#include "tuscany/sca/model/ServiceType.h"
-#include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/model/ComponentType.h"
-#include "tuscany/sca/core/ServiceWrapper.h"
-#include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/ServiceBinding.h"
-#include "tuscany/sca/python/model/PythonImplementation.h"
 #include "tuscany/sca/python/model/PythonReferenceBinding.h"
 
 using namespace tuscany::sca::model;

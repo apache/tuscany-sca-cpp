@@ -291,6 +291,10 @@ namespace tuscany
                         PyObject* pArgs = PyTuple_New(operation.getNParms());
                         PyObject* pValue = NULL;
 
+                        // Load up the xml.etree.ElementTree module for dealing with SDO params and return values
+                        PyObject* elementTreeModuleName = PyString_FromString("xml.etree.ElementTree"); 
+                        PyObject* elementTreeModule = PyImport_Import(elementTreeModuleName);                        
+
                         for(unsigned int i = 0; i < operation.getNParms(); i++) 
                         {
                             const Operation::Parameter& parm = operation.getParameter(i);
@@ -364,6 +368,27 @@ namespace tuscany
                                     pValue = PyString_FromString((*(string*)parm.getValue()).c_str());
     				                break;
     			                }
+                                case Operation::DATAOBJECT: 
+                                {
+                                    DataObjectPtr dob = *(DataObjectPtr*)parm.getValue();
+
+                                    // Convert a DataObject to a xml.etree.ElementTree Element object
+                                    Composite* composite = component->getComposite();                                    
+                                    XMLHelper* xmlHelper = composite->getXMLHelper();
+                                    char* str = xmlHelper->save(
+                                        dob,
+                                        dob->getType().getURI(),
+                                        dob->getType().getName());                                    
+
+                                    // Get the xml.etree.ElementTree.XML function
+                                    PyObject* elementTreeXMLFunc = PyObject_GetAttrString(elementTreeModule, "XML");
+
+                                    // Call the XML() function with the XML string 
+                                    pValue = PyObject_CallFunction(elementTreeXMLFunc, "s", str);
+
+                                    Py_DECREF(elementTreeXMLFunc);
+                                    break;
+                                }
                                 default:
                                     throwException(ServiceDataException, "Operation parameter type not supported");
     		                }
@@ -735,20 +760,69 @@ namespace tuscany
                             }
                             else
                             {
-                                PyObject* valueRepr = PyObject_Repr(pValue); 
-                                PyObject* valueType = PyObject_Type(pValue);             
-                                PyObject* valueTypeRepr = PyObject_Repr(valueType);    
-                                loginfo("Return value of unknown type (%s) has repr: %s", PyString_AsString(valueTypeRepr), PyString_AsString(valueRepr));
-                                Py_DECREF(valueTypeRepr);
-                                Py_DECREF(valueType);
-                                Py_DECREF(valueRepr);
+                                // Get the xml.etree.ElementTree.iselement function
+                                PyObject* elementTreeIsElementFunc = PyObject_GetAttrString(elementTreeModule, "iselement");
+
+                                // Call the iselement() function with pValue to check it
+                                PyObject* pIsElement = PyObject_CallFunction(elementTreeIsElementFunc, "O", pValue);
+
+                                if(PyObject_IsTrue(pIsElement) == 1)
+                                {
+                                    // pValue is an xml.etree.ElementTree.Element - convert to SDO
+                                    PyObject* elementTreeToStringFunc = PyObject_GetAttrString(elementTreeModule, "tostring");
+                                    PyObject* pElemString = PyObject_CallFunction(elementTreeToStringFunc, "O", pValue);
+                                    char* data = PyString_AsString(pElemString);
+
+                                    Py_DECREF(elementTreeToStringFunc);
+                                    Py_DECREF(pElemString);
+
+                                    Composite* composite = component->getComposite();                                   
+                                    XMLHelper* xmlHelper = composite->getXMLHelper();
+                                    XMLDocumentPtr xmlDoc = xmlHelper->load(data);
+                                    DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                    if (xmlDoc != NULL)
+                                    {
+                                        *dataObjectData = xmlDoc->getRootDataObject();
+                                    }
+                                    else
+                                    {
+                                        *dataObjectData = NULL;
+                                    }
+                                    if (*dataObjectData != NULL)
+                                    {
+                                        operation.setReturnValue(dataObjectData);
+                                    }
+                                    else
+                                    {
+                                        string msg = "xml.etree.ElementTree.Element could not be converted to a DataObject";
+                                        throwException(ServiceDataException, msg.c_str());
+                                    }                                    
+                                }
+                                else
+                                {
+                                    PyObject* valueRepr = PyObject_Repr(pValue); 
+                                    PyObject* valueType = PyObject_Type(pValue);             
+                                    PyObject* valueTypeRepr = PyObject_Repr(valueType);    
+                                    loginfo("Return value of unknown type (%s) has repr: %s", PyString_AsString(valueTypeRepr), PyString_AsString(valueRepr));
+                                    Py_DECREF(valueTypeRepr);
+                                    Py_DECREF(valueType);
+                                    Py_DECREF(valueRepr);
+                                }
+
+                                Py_DECREF(pIsElement);
+                                Py_DECREF(elementTreeIsElementFunc);
                             }
 
+                            Py_DECREF(elementTreeModule);
+                            Py_DECREF(elementTreeModuleName);
                             Py_DECREF(pValue);
                         }
                         else 
                         {
                             Py_DECREF(pFunc);
+                            Py_DECREF(elementTreeModule);
+                            Py_DECREF(elementTreeModuleName);
+
                             if(PyErr_Occurred())
                             {
                                 PyErr_Print();
@@ -756,6 +830,7 @@ namespace tuscany
                             string msg = "Error whilst calling Python module";
                             throwException(ServiceInvocationException, msg.c_str());
                         }
+
                     }
                     else 
                     {
@@ -844,8 +919,21 @@ namespace tuscany
                                 // Serialize a DataObject and create a python string object from the XML
                                 DataObjectPtr data = properties->getDataObject(pl[i]);                                
                                 XMLHelperPtr helper = HelperProvider::getXMLHelper(properties->getDataFactory());
-                                string serializedData = helper->save(data, "", propName);
-                                property = PyString_FromString(serializedData.c_str());
+                                string serializedData = helper->save(data, 
+                                        data->getType().getURI(),
+                                        data->getType().getName());
+
+                                // Get the xml.etree.ElementTree.XML function
+                                PyObject* elementTreeModuleName = PyString_FromString("xml.etree.ElementTree"); 
+                                PyObject* elementTreeModule = PyImport_Import(elementTreeModuleName);                        
+                                PyObject* elementTreeXMLFunc = PyObject_GetAttrString(elementTreeModule, "XML");
+
+                                // Call the XML() function with the XML string 
+                                property = PyObject_CallFunction(elementTreeXMLFunc, "s", serializedData.c_str());
+
+                                Py_DECREF(elementTreeXMLFunc);
+                                Py_DECREF(elementTreeModule);
+                                Py_DECREF(elementTreeModuleName);
                                 break;
                             }
                         case Type::CharacterType:
