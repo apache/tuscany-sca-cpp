@@ -22,6 +22,10 @@
 #include <iostream>
 #include <stdarg.h>
 
+#if defined(WIN32)  || defined (_WINDOWS)
+#include <process.h>
+#endif
+
 #include "tuscany/sca/util/Logger.h"
 #include "tuscany/sca/util/DefaultLogWriter.h"
 #include "tuscany/sca/util/FileLogWriter.h"
