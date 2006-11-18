@@ -40,7 +40,7 @@ namespace tuscany
              * Will write to the console.
              * See LogWriter#log.
              */
-            virtual void log(int level, const char* msg);
+            virtual void log(int level, const char* pid, const char* msg);
         };
         
     } // End namespace sca

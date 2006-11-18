@@ -26,10 +26,10 @@
 
 #if defined(WIN32)  || defined (_WINDOWS)
 #define logentry() \
-const LogEntry& __LOGENTRY__ = tuscany::sca::Logger::loggingLevel >= 2 ? tuscany::sca::EnabledLogEntry(__FUNCTION__) :  tuscany::sca::LogEntry()
+const tuscany::sca::LogEntry __LOGENTRY__(__FUNCTION__)
 #else
 #define logentry() \
-const LogEntry& __LOGENTRY__ = tuscany::sca::Logger::loggingLevel >= 2 ? tuscany::sca::EnabledLogEntry(__PRETTY_FUNCTION__) :  tuscany::sca::LogEntry()
+const tuscany::sca::LogEntry __LOGENTRY__(__PRETTY_FUNCTION__)
 #endif 
 
 #define loginfo \

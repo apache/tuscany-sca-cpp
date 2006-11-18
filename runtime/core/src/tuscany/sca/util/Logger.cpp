@@ -33,12 +33,17 @@ namespace tuscany
     namespace sca
     {
         LogWriter* Logger::logWriter = getLogWriter();
+        
+        char* Logger::pid = NULL;
 
         LogWriter* Logger::getLogWriter()
         {
             if (logWriter == 0)
             {
                 setLogWriter(0);
+                
+                pid = new char[10];
+                sprintf(pid, "%d", getpid());
             }
             return logWriter;
         }
@@ -87,7 +92,7 @@ namespace tuscany
         {
             if (level <= loggingLevel)
             {
-                logWriter->log(level, msg);
+                logWriter->log(level, pid, msg);
             }
         }
 
@@ -99,7 +104,7 @@ namespace tuscany
                 va_start(variableArguments, msg);
                 char messageBuffer[1024];
                 vsprintf(messageBuffer, msg, variableArguments);
-                logWriter->log(level, messageBuffer);
+                logWriter->log(level, pid, messageBuffer);
                 va_end(variableArguments);
             }
         }
@@ -112,7 +117,7 @@ namespace tuscany
                 va_start(variableArguments, msg);
                 char messageBuffer[1024];
                 vsprintf(messageBuffer, msg, variableArguments);
-                logWriter->log(0, messageBuffer);
+                logWriter->log(0, pid, messageBuffer);
                 va_end(variableArguments);
             }
         }
@@ -124,7 +129,7 @@ namespace tuscany
                 va_start(variableArguments, msg);
                 char messageBuffer[1024];
                 vsprintf(messageBuffer, msg, variableArguments);
-                logWriter->log(1, messageBuffer);
+                logWriter->log(1, pid, messageBuffer);
                 va_end(variableArguments);
             }
         }
@@ -136,7 +141,7 @@ namespace tuscany
                 va_start(variableArguments, msg);
                 char messageBuffer[1024];
                 vsprintf(messageBuffer, msg, variableArguments);
-                logWriter->log(2, messageBuffer);
+                logWriter->log(2, pid, messageBuffer);
                 va_end(variableArguments);
             }
         }

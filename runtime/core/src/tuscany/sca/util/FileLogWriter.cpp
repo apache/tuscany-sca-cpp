@@ -37,8 +37,9 @@ namespace tuscany
         	logFile.close();        	
         }
 
-        void FileLogWriter::log(int level, const char* msg)
+        void FileLogWriter::log(int level, const char*pid, const char* msg)
         {
+            logFile << pid << " ";
             for (int i=0; i < level; i++)
             {
                 logFile << "  ";

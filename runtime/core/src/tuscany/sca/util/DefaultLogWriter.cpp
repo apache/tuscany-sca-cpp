@@ -31,8 +31,9 @@ namespace tuscany
         {
         }
 
-        void DefaultLogWriter::log(int level, const char* msg)
+        void DefaultLogWriter::log(int level, const char* pid, const char* msg)
         {
+            cout << pid << " ";
             for (int i=0; i < level; i++)
             {
                 cout << "  ";

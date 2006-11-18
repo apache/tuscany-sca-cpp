@@ -76,6 +76,11 @@ namespace tuscany
              * The current log writer.
              */
             static LogWriter* logWriter;
+            
+            /**
+             * The current process ID
+             */
+             static char* pid;
 
             /**
              * Get the current log writer.
@@ -91,21 +96,23 @@ namespace tuscany
         
         class LogEntry
         {
-        };
-        
-        class EnabledLogEntry : public LogEntry
-        {
         public:
         
-            EnabledLogEntry(const char* func)
+            LogEntry(const char* func)
                 : funcName(func)
             {
-                Logger::logArgs(2, ">> %s", funcName);
+                if (tuscany::sca::Logger::loggingLevel >= 2)
+                {
+                    Logger::logArgs(2, ">> %s", funcName);
+                }
             }
             
-            ~EnabledLogEntry()
+            ~LogEntry()
             {
-                tuscany::sca::Logger::logArgs(2, "<< %s", funcName);
+                if (tuscany::sca::Logger::loggingLevel >= 2)
+                {
+                    tuscany::sca::Logger::logArgs(2, "<< %s", funcName);
+                }
             }
             
         private:
