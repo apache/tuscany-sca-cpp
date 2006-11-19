@@ -35,6 +35,8 @@
 #include <axiom_soap_envelope.h>
 #include <axiom_soap_body.h>
 
+#include "tuscany/sca/util/Logging.h"
+
 extern "C"
 {                                                                                   
 
@@ -54,6 +56,7 @@ Axis2Dispatcher_find_op(
     axis2_msg_ctx_t *msg_ctx, 
     const axis2_env_t *env,
     axis2_svc_t *svc);
+
 
 AXIS2_EXPORT axis2_handler_t* AXIS2_CALL
 Axis2Dispatcher_create(const axis2_env_t *env, 
@@ -97,8 +100,7 @@ Axis2Dispatcher_find_svc(
             svc = AXIS2_CONF_GET_SVC(conf, env, service_name);
             if (svc)
             {
-                AXIS2_LOG_DEBUG(env->log, AXIS2_LOG_SI, 
-                    "Service found using target endpoint address");
+                loginfo("Service found using target endpoint address");
             }
         }
     }                    
@@ -125,8 +127,7 @@ Axis2Dispatcher_find_op(
     AXIS2_QNAME_FREE(op_qname, env);
     if (op)
     {
-        AXIS2_LOG_DEBUG(env->log, AXIS2_LOG_SI, 
-            "TuscanyService execute operation found");
+        loginfo("TuscanyService execute operation found");
     }
     return op;
 }

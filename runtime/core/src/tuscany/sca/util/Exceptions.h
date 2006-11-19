@@ -127,6 +127,9 @@ namespace tuscany
              * Operator to send exceptions details to a stream.
              */
             SCA_API friend std::ostream& operator<< (std::ostream &os, const TuscanyRuntimeException &except);
+            
+            SCA_API operator std::string() const;
+            SCA_API operator const char*() const;
 
         protected:
             

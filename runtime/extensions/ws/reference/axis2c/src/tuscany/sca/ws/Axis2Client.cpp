@@ -53,7 +53,6 @@
 
 using namespace tuscany::sca::ws;
 
-
 using namespace commonj::sdo;
 using namespace commonj::sdo_axiom;
 
@@ -104,7 +103,6 @@ namespace tuscany
                     WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(wsdlNamespace);
                     if (wsdlDefinition == 0)
                     {
-                        AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI,  "WSDL description %s not found\n", wsdlNamespace.c_str());
                         string msg = "WSDL not found for " + wsdlNamespace;
                         throwException(SystemConfigurationException, msg.c_str());
                     }
@@ -119,7 +117,6 @@ namespace tuscany
                     }
                     catch(SystemConfigurationException& ex)
                     {   
-                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
                         throw;
                     }
                     
@@ -139,7 +136,6 @@ namespace tuscany
                             WSDLDefinition* wsdl = composite->findWSDLDefinition(wsdlNamespace);
                             if (wsdl == 0)
                             {
-                                AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "WSDL description %s not found\n", wsdlNamespace.c_str());
                                 string msg = "WSDL not found for " + wsdlNamespace;
                                 throwException(SystemConfigurationException, msg.c_str());
                             }
@@ -150,7 +146,6 @@ namespace tuscany
                             }
                             catch(SystemConfigurationException& ex)
                             {   
-                                AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
                                 throw;
                             }
                         }
@@ -239,11 +234,10 @@ namespace tuscany
                 axis2_svc_client_t* svc_client = axis2_svc_client_create(env, client_home);
                 if (!svc_client)
                 {
-                    AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "invoke FAILED: Error code:"
-                        " %d :: %s", env->error->error_number,
-                        AXIS2_ERROR_GET_MESSAGE(env->error));
-                    
-                    throwException(SystemConfigurationException, "axis2_svc_client_create failed");
+                    ostringstream msg;
+                    msg << "Axis2 svc_client_create failed, error: " << env->error->error_number <<
+                    ", " << AXIS2_ERROR_GET_MESSAGE(env->error);
+                    throwException(SystemConfigurationException, msg.str().c_str());
                 }
                 
                 /* Set service client options */
@@ -257,10 +251,10 @@ namespace tuscany
                 }
                 else
                 {
-                    AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Invoke failed: Error code:"
-                        " %d :: %s", env->error->error_number,
-                        AXIS2_ERROR_GET_MESSAGE(env->error));
-                    throwException(ServiceInvocationException, "Web Service invoke failed");
+                    ostringstream msg;
+                    msg << "Axis2 client_send_received failed, error: " << env->error->error_number <<
+                    ", " << AXIS2_ERROR_GET_MESSAGE(env->error);
+                    throwException(ServiceInvocationException, msg.str().c_str());
                 }
                 
                 loginfo("Have not freed Axis2C service client memory due to Jira AXIS2C-209");
@@ -404,7 +398,11 @@ namespace tuscany
                                         break;
                                     }
                                 default:
-                                   throwException(SystemConfigurationException, "Unsupported parameter type");
+                                    {
+                                        ostringstream msg;
+                                        msg << "Unsupported parameter type: " << parm.getType();
+                                        throwException(ServiceDataException, msg.str().c_str());
+                                    }
                                 }
                             }
                         }
@@ -483,7 +481,9 @@ namespace tuscany
                                     break;
                                 }
                             default:
-                                throwException(ServiceDataException, "Unsupported parameter type");
+                                ostringstream msg;
+                                msg << "Unsupported parameter type: " << parm.getType();
+                                throwException(ServiceDataException, msg.str().c_str());
                             }
                         }
                     }
@@ -500,7 +500,7 @@ namespace tuscany
                 }
                 
                 char* str =  AXIOM_NODE_TO_STRING(request_node, env);
-                loginfo("Sending OM node: %s ",  str); 
+                loginfo("Sending Axis2 OM: %s ",  str); 
                 
                 return request_node;
              }
@@ -525,11 +525,9 @@ namespace tuscany
                     str = AXIOM_NODE_TO_STRING(body, env);
                     if (str)
                     {
-                        AXIS2_LOG_INFO((env)->log, "Axis2Client invoke has response OM: %s\n", str);
+                        loginfo("Received Axis2 OM: %s ",  str); 
                     }
                     
-                    //cout << "response body = " << str << endl;
-
                     // Convert the SOAP body to an SDO DataObject
                     AxiomHelper* axiomHelper = AxiomHelper::getHelper();
                     DataObjectPtr outputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
@@ -537,9 +535,8 @@ namespace tuscany
                     
                     if(!outputBodyDataObject)
                     {
-                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service invoke: Could not convert received Axiom node to SDO");
-                        /** TODO: return a SOAP fault here */
-                        return;
+                        string msg = "Could not convert Axis2 OM node to SDO";
+                        throwException(ServiceInvocationException, msg.c_str());
                     }
                     
                     XMLHelperPtr xmlHelper = compositeReference->getComposite()->getXMLHelper();
@@ -561,8 +558,8 @@ namespace tuscany
                     }
                     if (outputDataObject == NULL)
                     {
-                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Client invoke: Could not convert body part to SDO");
-                        return;
+                        string msg = "Could not convert Axis2 body part to SDO";
+                        throwException(ServiceInvocationException, msg.c_str());
                     }
 
                     PropertyList pl = outputDataObject->getType().getProperties();
@@ -588,9 +585,6 @@ namespace tuscany
                                     {
                                         loginfo("Null DataObject return value");
                                     }
-                                    
-                                    cout << "ReturnValue " << *dataObjectData << endl;
-                                    
                                     operation.setReturnValue(dataObjectData);
                                 }
                             }

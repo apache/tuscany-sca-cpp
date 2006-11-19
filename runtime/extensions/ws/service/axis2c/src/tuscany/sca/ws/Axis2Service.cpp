@@ -39,6 +39,7 @@ using commonj::sdo::PropertyList;
 using commonj::sdo_axiom::AxiomHelper;
 
 #include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/util/Logging.h"
 #include "WSServiceProxy.h"
 #include "model/WSReferenceBinding.h"
 #include "tuscany/sca/model/Composite.h"
@@ -142,7 +143,9 @@ static CompositeService* compositeService = NULL;
 
 void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *component, const char* service)
 {
-    AXIS2_LOG_INFO((env)->log, "Axis2Service init, root: %s, component: %s, service: %s\n", root, component, service);
+    logentry();
+    loginfo("Root: %s, component: %s, service: %s", root, component, service);
+    
     try
     {
 
@@ -170,13 +173,21 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
         
         if (tuscanyRuntime == NULL)
         {
-            AXIS2_LOG_INFO((env)->log, "Creating new Tuscany runtime\n");
+            loginfo("Creating new Tuscany runtime");
             tuscanyRuntime = new TuscanyRuntime(componentName, systemRoot);
             tuscanyRuntime->start();
         }
-        else if (tuscanyRuntime != NULL && restart)
+        else if (restart)
         {
-            AXIS2_LOG_INFO((env)->log, "Restarting Tuscany runtime\n");
+            loginfo("Restarting Tuscany runtime");
+            tuscanyRuntime->stop();
+            tuscanyRuntime->setDefaultComponentName(componentName);
+            tuscanyRuntime->setSystemRoot(systemRoot);
+            tuscanyRuntime->start();
+        }
+        else if (resolve)
+        {
+            loginfo("Refreshing Tuscany runtime");
             tuscanyRuntime->stop();
             tuscanyRuntime->setDefaultComponentName(componentName);
             tuscanyRuntime->setSystemRoot(systemRoot);
@@ -185,21 +196,50 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
 
         if (compositeService == NULL)
         {
-            Composite* composite = (Composite*)SCARuntime::getInstance()->getDefaultComponent()->getType();
+            loginfo("Resolving composite: %s, service: %s", componentName.c_str(), serviceName.c_str());
+            Component* component = SCARuntime::getInstance()->getDefaultComponent();
+            if (component == NULL)
+            {
+                string msg = "Component not found " + componentName;
+                throwException(SystemConfigurationException, msg.c_str());
+            }
+            Composite* composite = (Composite*)component->getType();
             compositeService = (CompositeService*)composite->findComponent(serviceName);
+            if (compositeService == NULL)
+            {
+                string msg = "Composite service not found " + serviceName;
+                throwException(SystemConfigurationException, msg.c_str());
+            }
         }
         else
         {
             if (resolve)
             {
-                Composite* composite = SCARuntime::getInstance()->getDefaultComponent()->getComposite();
+                loginfo("Switching to composite: %s, service: %s", componentName.c_str(), serviceName.c_str());
+                Component* component = SCARuntime::getInstance()->getDefaultComponent();
+                if (component == NULL)
+                {
+                    string msg = "Component not found " + componentName;
+                    throwException(SystemConfigurationException, msg.c_str());
+                }
+                Composite* composite = (Composite*)component->getType();
                 compositeService = (CompositeService*)composite->findComponent(serviceName);
+                if (compositeService == NULL)
+                {
+                    string msg = "Composite service not found " + serviceName;
+                    throwException(SystemConfigurationException, msg.c_str());
+                }
+            }
+            else
+            {
+                loginfo("Reusing composite: %s, service: %s", componentName.c_str(), serviceName.c_str());
             }
         }
     }
     catch(TuscanyRuntimeException &ex)
-    {   
-        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI,  "%s has been caught: %s\n", ex.getEClassName(), ex.getMessageText());
+    {
+        logerror("Failed to initialize Tuscany runtime: %s", (const char*)ex);
+        throw;
     }  
 }
 
@@ -213,279 +253,280 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
             axiom_node_t *node,
             axis2_msg_ctx_t *msg_ctx)
 {
-    if (node)
-    {
-        if (AXIOM_NODE_GET_NODE_TYPE(node, env) == AXIOM_ELEMENT)
+    logentry();
+
+    try
+    {    
+        if (node)
         {
-            axiom_element_t *element = NULL;
-            element = (axiom_element_t *)AXIOM_NODE_GET_DATA_ELEMENT(node, env);
-            if (element)
+            if (AXIOM_NODE_GET_NODE_TYPE(node, env) == AXIOM_ELEMENT)
             {
-                string op_name = "";
-                
-                axis2_bool_t rest = AXIS2_MSG_CTX_GET_DOING_REST(msg_ctx, env);
-                if (rest)
+                axiom_element_t *element = NULL;
+                element = (axiom_element_t *)AXIOM_NODE_GET_DATA_ELEMENT(node, env);
+                if (element)
                 {
-                    axis2_endpoint_ref_t *endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
-                    if (endpoint_ref)
-                    {
-                        const axis2_char_t *addr = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
-                        if (addr)
-                        {
-                            // REST request, the op name is the last segment of the path
-                            string raddress = addr;
-                            string path;
-                            string query;
-                            Utils::tokeniseString("?", raddress, path, query);
-                            string uri;
-                            Utils::rTokeniseString("/", path, uri, op_name);
-                        }
-                    }
-                }
-                else
-                {
-                    // SOAP request                
-                    // Get the operation name from the root element name, this is correct for DocLit Wrapped style
-                    op_name = AXIOM_ELEMENT_GET_LOCALNAME(element, env);
-                }
-                
-                if (op_name != "")
-				{
-                    // Get the Tuscany system root and composite service name from the Axis2
-                    // service parameters 
-                    char* rootParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanySystemRoot");
-                    if (rootParam == NULL)
-                        rootParam = "";
+                    string op_name = "";
                     
-                    char* serviceParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
-                    if (serviceParam != NULL)
+                    axis2_bool_t rest = AXIS2_MSG_CTX_GET_DOING_REST(msg_ctx, env);
+                    if (rest)
                     {
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, service name: %s, operation name: %s", rootParam, serviceParam, op_name.c_str());
-    
-                        // Service is of the form "component name"/"composite service name"
-                        string component, service;
-                        Utils::rTokeniseString("/", serviceParam, component, service);
-                
-                        initTuscanyRuntime(env, rootParam, component.c_str(), service.c_str());
-                    }
-                    else {
-                        
-                        // Use the default system root and component, the service is
-                        // derived from the target address
-                        axis2_endpoint_ref_t *endpoint_ref = NULL;
-                        endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
-                        string address = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
-                        
-                        axis2_bool_t isrest = AXIS2_MSG_CTX_GET_DOING_REST(msg_ctx, env);
-                        string path;
-                        if (isrest)
+                        axis2_endpoint_ref_t *endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
+                        if (endpoint_ref)
                         {
-                            string op;
-                            Utils::rTokeniseString("/", address, path, op);
-                        }
-                        else
-                        {
-                            path = address;
-                        }
-
-                        string path2;                        
-                        string service;
-                        Utils::rTokeniseString("/", path, path2, service);
-                        
-                        string path3;
-                        string component;
-                        Utils::rTokeniseString("/", path2, path3, component);
-                        if (component == "services")
-                        {
-                            component = "";
-                        }
-                        
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke called with system root: %s, component name: %s, service name: %s, operation name: %s",
-                            rootParam, component.c_str(), service.c_str(), op_name.c_str());
-                        
-                        initTuscanyRuntime(env, rootParam, component.c_str(), service.c_str());
-                    }
-
-                    if(!compositeService)
-                    {
-               		    AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Tuscany initialisation failed");
-                        return 0;
-                    }
-
-                    DataFactoryPtr dataFactory = compositeService->getComposite()->getDataFactory();
-                    if (dataFactory == 0)
-                    {
-                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: CompositeService has no SCA implementation");
-                        return 0;
-                    }
-
-                    // Get the WS binding and the WSDL operation
-                    Composite* composite = compositeService->getComposite();
-                    Reference* reference = compositeService->getReference();
-                    WSReferenceBinding* binding = (WSReferenceBinding*)reference->getBinding();
-                    WSDLOperation wsdlOperation;
-                     
-                    string wsdlNamespace = binding->getWSDLNamespaceURL();
-                    if (wsdlNamespace != "")
-                    {
-                        
-                        // Lookup the WSDL model from the composite, keyed on the namespace 
-                        // (the wsdl will have been loaded at startup)
-                        WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(wsdlNamespace);
-                        if (wsdlDefinition == 0)
-                        {
-                            AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI,  "WSDL description %s not found\n", wsdlNamespace.c_str());
-                            string msg = "WSDL not found for " + wsdlNamespace;
-                            throwException(SystemConfigurationException, msg.c_str());
-                        }
-                        
-                        // Find the target operation in the wsdl port type.
-                        try {
-                            wsdlOperation =  wsdlDefinition->findOperation(
-                                binding->getServiceName(),
-                                binding->getEndpointName(),
-                                op_name.c_str());
-                        }
-                        catch(SystemConfigurationException& ex)
-                        {   
-                            AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
-                            throw;
-                        }
-                        
-                    }
-                    else
-                    {
-                        Interface* iface = reference->getType()->getInterface();
-                        if (iface != NULL &&
-                            iface->getInterfaceTypeQName() == WSDLInterface::typeQName)
-                        {
-                            WSDLInterface* wsdlInterface = (WSDLInterface*)iface;
-                            wsdlNamespace = wsdlInterface->getNamespaceURI();
-                            
-                            if (wsdlNamespace != "")
+                            const axis2_char_t *addr = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
+                            if (addr)
                             {
-                                
-                                WSDLDefinition* wsdl = composite->findWSDLDefinition(wsdlNamespace);
-                                if (wsdl == 0)
-                                {
-                                    AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "WSDL description %s not found\n", wsdlNamespace.c_str());
-                                    string msg = "WSDL not found for " + wsdlNamespace;
-                                    throwException(SystemConfigurationException, msg.c_str());
-                                }
-                        
-                                try
-                                {
-                                    wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), op_name.c_str());
-                                }
-                                catch(SystemConfigurationException& ex)
-                                {   
-                                    AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "SystemConfigurationException has been caught: %s\n", ex.getMessageText());
-                                    throw;
-                                }
+                                // REST request, the op name is the last segment of the path
+                                string raddress = addr;
+                                string path;
+                                string query;
+                                Utils::tokeniseString("?", raddress, path, query);
+                                string uri;
+                                Utils::rTokeniseString("/", path, uri, op_name);
                             }
                         }
                     }
+                    else
+                    {
+                        // SOAP request                
+                        // Get the operation name from the root element name, this is correct for DocLit Wrapped style
+                        op_name = AXIOM_ELEMENT_GET_LOCALNAME(element, env);
+                    }
                     
-                    if (wsdlNamespace == "")
-                    {
-                        // Create a default document literal wrapped WSDL operation
-                        wsdlNamespace = compositeService->getName();
-                        wsdlOperation = WSDLOperation();
-                        wsdlOperation.setOperationName(op_name.c_str());
-                        wsdlOperation.setSoapAction(wsdlNamespace+ "#" +op_name);
-                        wsdlOperation.setEndpoint("");
-                        wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
-                        wsdlOperation.setDocumentStyle(true);
-                        wsdlOperation.setWrappedStyle(true);
-                        wsdlOperation.setEncoded(false);
-                        wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
-                        wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
-                    }
-
-                    // Convert the input AXIOM node to an SDO DataObject
-                    axiom_node_t* body = AXIOM_NODE_GET_PARENT(node, env);
-                    char* str = NULL;
-                    str = AXIOM_NODE_TO_STRING(body, env);
-                    if (str)
-                    {
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has request OM: %s\n", str);
-                    }
-
-                    // Convert the SOAP body to an SDO DataObject
-                    AxiomHelper* axiomHelper = AxiomHelper::getHelper();
-                    DataObjectPtr inputBodyDataObject = NULL;
-
-                    try
-                    {
-                        inputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
-                    }
-                    catch(SDORuntimeException &ex)
-                    {
-                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: SDORuntimeException thrown: %s", ex.getMessageText());
-                    }
-
-                    if(!inputBodyDataObject)
-                    {
-                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Could not convert received Axiom node to SDO");
-                        /** TODO: return a SOAP fault here */
-                        return 0;
-                    }                    
-
-                    // Get the first body part representing the doc-lit-wrapped wrapper element
-                    DataObjectPtr inputDataObject = NULL; 
-                    PropertyList bpl = inputBodyDataObject->getInstanceProperties();
-                    if (bpl.size()!=0)
-                    {
-                        if (bpl[0].isMany())
+                    if (op_name != "")
+    				{
+                        // Get the Tuscany system root and composite service name from the Axis2
+                        // service parameters 
+                        char* rootParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanySystemRoot");
+                        if (rootParam == NULL)
+                            rootParam = "";
+                        
+                        char* serviceParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
+                        if (serviceParam != NULL)
                         {
-                            DataObjectList& parts = inputBodyDataObject->getList((unsigned int)0);
-                            inputDataObject = parts[0];
+                            loginfo("System root: %s, service name: %s, operation name: %s", rootParam, serviceParam, op_name.c_str());
+        
+                            // Service is of the form "component name"/"composite service name"
+                            string component, service;
+                            Utils::rTokeniseString("/", serviceParam, component, service);
+                    
+                            initTuscanyRuntime(env, rootParam, component.c_str(), service.c_str());
+                        }
+                        else {
+                            
+                            // Use the default system root and component, the service is
+                            // derived from the target address
+                            axis2_endpoint_ref_t *endpoint_ref = NULL;
+                            endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
+                            string address = AXIS2_ENDPOINT_REF_GET_ADDRESS(endpoint_ref, env);
+                            
+                            axis2_bool_t isrest = AXIS2_MSG_CTX_GET_DOING_REST(msg_ctx, env);
+                            string path;
+                            if (isrest)
+                            {
+                                string op;
+                                Utils::rTokeniseString("/", address, path, op);
+                            }
+                            else
+                            {
+                                path = address;
+                            }
+    
+                            string path2;                        
+                            string service;
+                            Utils::rTokeniseString("/", path, path2, service);
+                            
+                            string path3;
+                            string component;
+                            Utils::rTokeniseString("/", path2, path3, component);
+                            if (component == "services")
+                            {
+                                component = "";
+                            }
+                            
+                            loginfo("System root: %s, component name: %s, service name: %s, operation name: %s",
+                                rootParam, component.c_str(), service.c_str(), op_name.c_str());
+                            
+                            initTuscanyRuntime(env, rootParam, component.c_str(), service.c_str());
+                        }
+    
+                        if(!compositeService)
+                        {
+                   		    logerror("Failed to initialize Tuscany runtime, could not initialize CompositeService");
+                            return 0;
+                        }
+    
+                        DataFactoryPtr dataFactory = compositeService->getComposite()->getDataFactory();
+                        if (dataFactory == 0)
+                        {
+                            logerror("Failed to initialize Tuscany runtime, could not get DataFactory");
+                            return 0;
+                        }
+    
+                        // Get the WS binding and the WSDL operation
+                        Composite* composite = compositeService->getComposite();
+                        Reference* reference = compositeService->getReference();
+                        WSReferenceBinding* binding = (WSReferenceBinding*)reference->getBinding();
+                        WSDLOperation wsdlOperation;
+                         
+                        string wsdlNamespace = binding->getWSDLNamespaceURL();
+                        if (wsdlNamespace != "")
+                        {
+                            
+                            // Lookup the WSDL model from the composite, keyed on the namespace 
+                            // (the wsdl will have been loaded at startup)
+                            WSDLDefinition* wsdlDefinition = composite->findWSDLDefinition(wsdlNamespace);
+                            if (wsdlDefinition == 0)
+                            {
+                                string msg = "WSDL not found for: " + wsdlNamespace;
+                                throwException(SystemConfigurationException, msg.c_str());
+                            }
+                            
+                            // Find the target operation in the wsdl port type.
+                            try {
+                                wsdlOperation =  wsdlDefinition->findOperation(
+                                    binding->getServiceName(),
+                                    binding->getEndpointName(),
+                                    op_name.c_str());
+                            }
+                            catch(SystemConfigurationException& ex)
+                            {   
+                                throw;
+                            }
+                            
                         }
                         else
                         {
-                            inputDataObject = inputBodyDataObject->getDataObject(bpl[0]);
+                            Interface* iface = reference->getType()->getInterface();
+                            if (iface != NULL &&
+                                iface->getInterfaceTypeQName() == WSDLInterface::typeQName)
+                            {
+                                WSDLInterface* wsdlInterface = (WSDLInterface*)iface;
+                                wsdlNamespace = wsdlInterface->getNamespaceURI();
+                                
+                                if (wsdlNamespace != "")
+                                {
+                                    
+                                    WSDLDefinition* wsdl = composite->findWSDLDefinition(wsdlNamespace);
+                                    if (wsdl == 0)
+                                    {
+                                        string msg = "WSDL not found for: " + wsdlNamespace;
+                                        throwException(SystemConfigurationException, msg.c_str());
+                                    }
+                            
+                                    try
+                                    {
+                                        wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), op_name.c_str());
+                                    }
+                                    catch(SystemConfigurationException& ex)
+                                    {   
+                                        throw;
+                                    }
+                                }
+                            }
                         }
-                    }
-                    if (inputDataObject == NULL)
-                    {
-                        AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Could not convert body part to SDO");
-                        return 0;
-                    }
-
-                    //  Dispatch to the WS proxy
-                    WSServiceProxy* proxy = (WSServiceProxy*)binding->getServiceProxy();
-
-                    DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
-                    
-                    if(!outputDataObject)
-                    {
-                		AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: Failure whilst invoking CompositeService");
-
-                        /** TODO: return a SOAP fault here */
-                        return 0;
-                    }
-                    
-                    // Convert the output DataObject to an Axiom node
-                    axiom_node_t* outputNode = axiomHelper->toAxiomNode(outputDataObject,
-                        wsdlOperation.getOutputTypeUri().c_str(), wsdlOperation.getOutputTypeName().c_str());
-
-                    AxiomHelper::releaseHelper(axiomHelper);                                                
-                    
-                    str = AXIOM_NODE_TO_STRING(outputNode, env);
-                    if (str)
-                    {
-                        AXIS2_LOG_INFO((env)->log, "Axis2Service invoke has response OM : %s\n", str);
-                    }
                         
-					return outputNode;
+                        if (wsdlNamespace == "")
+                        {
+                            // Create a default document literal wrapped WSDL operation
+                            wsdlNamespace = compositeService->getName();
+                            wsdlOperation = WSDLOperation();
+                            wsdlOperation.setOperationName(op_name.c_str());
+                            wsdlOperation.setSoapAction(wsdlNamespace+ "#" +op_name);
+                            wsdlOperation.setEndpoint("");
+                            wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
+                            wsdlOperation.setDocumentStyle(true);
+                            wsdlOperation.setWrappedStyle(true);
+                            wsdlOperation.setEncoded(false);
+                            wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
+                            wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                        }
+    
+                        // Convert the input AXIOM node to an SDO DataObject
+                        axiom_node_t* body = AXIOM_NODE_GET_PARENT(node, env);
+                        char* str = NULL;
+                        str = AXIOM_NODE_TO_STRING(body, env);
+                        if (str)
+                        {
+                            loginfo("Received request Axis2 OM: %s", str);
+                        }
+    
+                        // Convert the SOAP body to an SDO DataObject
+                        AxiomHelper* axiomHelper = AxiomHelper::getHelper();
+                        DataObjectPtr inputBodyDataObject = NULL;
+    
+                        try
+                        {
+                            inputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
+                        }
+                        catch(SDORuntimeException &ex)
+                        {
+                            throw;
+                        }
+    
+                        if(!inputBodyDataObject)
+                        {
+                            string msg = "Could not convert request Axis2 OM to SDO";
+                            throwException(ServiceInvocationException, msg.c_str());
+                        }                    
+    
+                        // Get the first body part representing the doc-lit-wrapped wrapper element
+                        DataObjectPtr inputDataObject = NULL; 
+                        PropertyList bpl = inputBodyDataObject->getInstanceProperties();
+                        if (bpl.size()!=0)
+                        {
+                            if (bpl[0].isMany())
+                            {
+                                DataObjectList& parts = inputBodyDataObject->getList((unsigned int)0);
+                                inputDataObject = parts[0];
+                            }
+                            else
+                            {
+                                inputDataObject = inputBodyDataObject->getDataObject(bpl[0]);
+                            }
+                        }
+                        if (inputDataObject == NULL)
+                        {
+                            string msg = "Could not convert Axis2 body part to SDO";
+                            throwException(ServiceInvocationException, msg.c_str());
+                        }
+    
+                        //  Dispatch to the WS proxy
+                        WSServiceProxy* proxy = (WSServiceProxy*)binding->getServiceProxy();
+    
+                        DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
+                        
+                        if(!outputDataObject)
+                        {
+                            return 0;
+                        }
+                        
+                        // Convert the output DataObject to an Axiom node
+                        axiom_node_t* outputNode = axiomHelper->toAxiomNode(outputDataObject,
+                            wsdlOperation.getOutputTypeUri().c_str(), wsdlOperation.getOutputTypeName().c_str());
+    
+                        AxiomHelper::releaseHelper(axiomHelper);                                                
+                        
+                        str = AXIOM_NODE_TO_STRING(outputNode, env);
+                        if (str)
+                        {
+                            loginfo("Sending response Axis2 OM : %s", str);
+                        }
+                            
+    					return outputNode;
+                    }
                 }
             }
         }
+        
+    	string msg = "Invalid parameters in Axis2 request OM";
+        throwException(ServiceInvocationException, msg.c_str());
+
     }
-    
-	AXIS2_LOG_ERROR((env)->log, AXIS2_LOG_SI, "Axis2Service_invoke: invalid OM parameters in request");
-    
-    /** TODO: return a SOAP fault here */
+    catch(TuscanyRuntimeException& ex)
+    {
+        logerror("Failed to process Web service invocation: %s", (const char*)ex);
+    }        
     return 0;
 }
 

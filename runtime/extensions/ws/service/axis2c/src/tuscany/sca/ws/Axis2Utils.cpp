@@ -23,50 +23,55 @@
 #pragma warning(disable: 4786)
 #pragma warning(disable: 4091)
 #endif
-#include "Axis2Utils.h"
 
 #include <axis2_svc_ctx.h>
 #include <axis2_defines.h>
 
 #include "tuscany/sca/util/Logging.h"
+#include "Axis2Utils.h"
 
 using namespace tuscany::sca;
 using namespace tuscany::sca::ws;
 
-
-/* Static utility method to retrieve service parameters from the service.xml file
- * Get an odd linking error if this method (or the header's it requires) are in
- * a different class.
- */
-char* Axis2Utils::getAxisServiceParameterValue(const axis2_env_t *env, axis2_msg_ctx_t *msg_ctx, char* parameterName)
+namespace tuscany
 {
-    logentry();
-    
-    struct axis2_svc *svc = NULL;
-    struct axis2_op_ctx *op_ctx = NULL;
-    struct axis2_svc_ctx *svc_ctx = NULL;
-    axis2_param_t *param = NULL;
-    char* paramValue = NULL;
-
-
-    op_ctx = AXIS2_MSG_CTX_GET_OP_CTX(msg_ctx, env);
-    svc_ctx = AXIS2_OP_CTX_GET_PARENT(op_ctx, env);
-    svc = AXIS2_SVC_CTX_GET_SVC(svc_ctx, env);
-    if(NULL == svc)
+    namespace sca
     {
-        return NULL;
-    }
+        namespace ws
+        {
+        
+            char* Axis2Utils::getAxisServiceParameterValue(const axis2_env_t *env, axis2_msg_ctx_t *msg_ctx, char* parameterName)
+            {
+                logentry();
+            
+                struct axis2_svc *svc = NULL;
+                struct axis2_op_ctx *op_ctx = NULL;
+                struct axis2_svc_ctx *svc_ctx = NULL;
+                axis2_param_t *param = NULL;
+                char* paramValue = NULL;
+            
+                op_ctx = AXIS2_MSG_CTX_GET_OP_CTX(msg_ctx, env);
+                svc_ctx = AXIS2_OP_CTX_GET_PARENT(op_ctx, env);
+                svc = AXIS2_SVC_CTX_GET_SVC(svc_ctx, env);
+                if(NULL == svc)
+                {
+                    return NULL;
+                }
+            
+                param = AXIS2_SVC_GET_PARAM(svc, env, parameterName);
+                if(!param)
+                {
+            		logwarning("Axis parameter %s cannot be found", parameterName);
+                }
+                else
+                {
+            	    paramValue = (char*) AXIS2_PARAM_GET_VALUE(param, env);
+                }
+            
+            	return paramValue;
+            }
 
-    param = AXIS2_SVC_GET_PARAM(svc, env, parameterName);
-    if(!param)
-    {
-		logwarning("Axis parameter %s cannot be found", parameterName);
-    }
-    else
-    {
-	    paramValue = (char*) AXIS2_PARAM_GET_VALUE(param, env);
-    }
-
-	return paramValue;
-}
+        } // End namespace ws
+    } // End namespace sca
+} // End namespace tuscany
 

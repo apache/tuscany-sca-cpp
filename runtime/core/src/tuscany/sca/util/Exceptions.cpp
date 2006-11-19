@@ -23,6 +23,8 @@
 #include "tuscany/sca/util/Logging.h"
 using namespace std;
 
+#include <sstream>
+
 #if defined(WIN32)  || defined (_WINDOWS)
 #else
 #include <execinfo.h>
@@ -285,6 +287,7 @@ namespace tuscany
             return os;
         } // end ostream operator <<
         
+        
         // ========================================================================
         // ostream operator <<
         // ========================================================================
@@ -292,7 +295,20 @@ namespace tuscany
         {
             return except.PrintSelf(os);
         } // end ostream operator <<
+
+        SCA_API TuscanyRuntimeException::operator std::string() const
+        {
+            ostringstream os;
+            os << *this;
+            return os.str();
+        }
         
+        SCA_API TuscanyRuntimeException::operator const char*() const
+        {
+            ostringstream os;
+            os << *this;
+            return os.str().c_str();
+        }
         
     } // End namespace sca
 } // End namespace tuscany

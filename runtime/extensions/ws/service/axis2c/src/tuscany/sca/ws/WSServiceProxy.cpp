@@ -38,6 +38,8 @@
 #include "tuscany/sca/model/WSDLOperation.h"
 #include "model/WSReferenceBinding.h"
 
+#include <sstream>
+
 #include "commonj/sdo/SDO.h"
 using namespace commonj::sdo;
 
@@ -472,9 +474,9 @@ namespace tuscany
                             }
                         default:
                             {
-                                string msg = "Unsupported parameter type";
-                                msg += resultType;
-                                throwException(SystemConfigurationException, msg.c_str());
+                                ostringstream msg;
+                                msg << "Unsupported result type: " << resultType;
+                                throwException(SystemConfigurationException, msg.str().c_str());
                             }
                         }
                     }
@@ -576,9 +578,9 @@ namespace tuscany
                             }
                         default:
                             {
-                                string msg = "Unsupported parameter type";
-                                msg += resultType;
-                                throwException(SystemConfigurationException, msg.c_str());
+                                ostringstream msg;
+                                msg << "Unsupported result type: " << resultType;
+                                throwException(SystemConfigurationException, msg.str().c_str());
                             }
                         }
                     }
