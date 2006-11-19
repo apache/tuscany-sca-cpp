@@ -1,0 +1,26 @@
+<xsd:schema targetNamespace="http://www.bigbank.com/AccountService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:complexType name="StockAccount">
+		<xsd:sequence>
+			<xsd:element name="accountNumber" type="xsd:string" />
+			<xsd:element name="symbol" type="xsd:string" />
+			<xsd:element name="quantity" type="xsd:integer" />
+			<xsd:element name="balance" type="xsd:float" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="CheckingAccount">
+		<xsd:sequence>
+			<xsd:element name="accountNumber" type="xsd:string" />
+			<xsd:element name="balance" type="xsd:float" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="SavingsAccount">
+		<xsd:sequence>
+			<xsd:element name="accountNumber" type="xsd:string" />
+			<xsd:element name="balance" type="xsd:float" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+</xsd:schema>
