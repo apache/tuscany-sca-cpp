@@ -23,7 +23,18 @@ service and the account data service are in different composites.
 The httpserver directory contains a minimal httpd configuration.
 Make sure that Apache apachectl and httpd 2.2.x are on the PATH.
 
+Before running the sample, edit httpserver/conf/httpd.conf and complete
+where it says <Your AXIS2C_HOME directory>.
+
 To start the server, cd to httpserver, and run ./startserver.sh.
+
+To verify that the server is working, point your Web browser to
+http://localhost:9090.
+
+To verify that Axis2C is working, point your Web browser to
+http://localhost:9090/axis2, you should see a list of deployed services.
+
 To stop the server, cd to httpserver, and run ./stopserver.sh.
+
 To run the sample go to bigbank.wsclient, and run ./runwsclient.sh.
 
