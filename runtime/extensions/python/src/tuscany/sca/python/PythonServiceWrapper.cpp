@@ -82,15 +82,19 @@ namespace tuscany
                     throwException(SystemConfigurationException, msg.c_str());
                 }
 
-                loginfo("Module: %s", impl->getModule().c_str());
-                loginfo("Path: %s", impl->getModulePath().c_str());
-                loginfo("Class: %s", impl->getClass().c_str());
-
                 // Initialize the Python environment
                 Py_Initialize();
 
                 // Add the path to the composite (+ any further path specified) to the Python sys.path
-                string path = component->getComposite()->getRoot() + "/" + impl->getModulePath();
+                string path = component->getComposite()->getRoot();
+                if(impl->getModulePath().size() > 0)
+                {
+                    path += "/" + impl->getModulePath();
+                }
+
+                loginfo("Module: %s", impl->getModule().c_str());
+                loginfo("Path: %s", path.c_str());
+                loginfo("Class: %s", impl->getClass().c_str());
 
                 PyObject* pSysName = PyString_FromString("sys");
                 PyObject* pSys = PyImport_Import(pSysName);
@@ -104,8 +108,7 @@ namespace tuscany
                     {
                         PyObject* pPath = PyString_FromString(path.c_str());
                         PyList_Append(pSysPath, pPath);
-                        
-                        
+
                         Py_DECREF(pPath);
                         Py_DECREF(pSysPath);
                     }
@@ -127,7 +130,7 @@ namespace tuscany
                     {
                         PyErr_Print();
                     }
-                    string msg = "Failed to load module named " + impl->getModule();
+                    string msg = "Failed to load module named " + impl->getModule() + " on path " + path;
                     throwException(SystemConfigurationException, msg.c_str());
                 }
                 //else
