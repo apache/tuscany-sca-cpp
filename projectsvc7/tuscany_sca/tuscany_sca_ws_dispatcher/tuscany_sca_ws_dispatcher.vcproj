@@ -32,7 +32,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="axiom.lib axis2_util.lib axis2_engine.lib"
+				AdditionalDependencies="axiom.lib axis2_util.lib axis2_engine.lib tuscany_sca.lib"
 				OutputFile="$(OutDir)/tuscany_sca_ws_dispatcher.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(TUSCANY_SCACPP)/lib,$(AXIS2C_HOME)/lib"
