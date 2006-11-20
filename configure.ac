@@ -127,6 +127,23 @@ AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA defau
 )
 AM_CONDITIONAL([WANT_SCABINDING], [test x$want_scabinding = xtrue])
 
+AC_MSG_CHECKING(whether to build REST binding extension)
+AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-restbinding],[build REST binding extension [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_restbinding=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_restbinding=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+  want_restbinding=false ]
+)
+AM_CONDITIONAL([WANT_RESTBINDING], [test x$want_restbinding = xtrue])
+
 AC_MSG_CHECKING(whether to build Python component type extension)
 AC_ARG_ENABLE(python, [AS_HELP_STRING([--enable-python],[build Python component type extension [default=no]])],
 [ case "${enableval}" in
@@ -225,6 +242,15 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/sca/service/Makefile
                  runtime/extensions/sca/service/axis2c/Makefile
                  runtime/extensions/sca/service/axis2c/src/Makefile
+                 runtime/extensions/rest/Makefile
+                 runtime/extensions/rest/interface/Makefile
+                 runtime/extensions/rest/interface/src/Makefile
+                 runtime/extensions/rest/reference/Makefile
+                 runtime/extensions/rest/reference/curl/Makefile
+                 runtime/extensions/rest/reference/curl/src/Makefile
+                 runtime/extensions/rest/service/Makefile
+                 runtime/extensions/rest/service/httpd/Makefile
+                 runtime/extensions/rest/service/httpd/src/Makefile
                  runtime/extensions/python/Makefile
                  runtime/extensions/python/src/Makefile
                  runtime/extensions/ruby/Makefile
