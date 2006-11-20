@@ -165,5 +165,10 @@ AC_CONFIG_FILES([Makefile
                  RubyBank/bigbank.account/Makefile
                  RubyBank/bigbank.client/Makefile
                  RubyBank/bigbank.wsclient/Makefile
+                 HttpdBigBank/Makefile
+                 HttpdBigBank/bigbank.account/Makefile
+                 HttpdBigBank/bigbank.accountdata/Makefile
+                 HttpdBigBank/bigbank.wsclient/Makefile
+                 HttpdBigBank/httpserver/Makefile
                  ])
 AC_OUTPUT
