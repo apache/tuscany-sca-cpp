@@ -11,11 +11,12 @@ tuscany/sca/rest/RESTServiceWrapper.cpp
 libtuscany_sca_rest_reference_la_LIBADD = \
   -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
   -L$(top_builddir)/runtime/core/src -ltuscany_sca \
-  -L${CURL_HOME}/lib -lcurl
+  -L${CURL_LIB}
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
   -I${TUSCANY_SDOCPP}/include \
-  -I${CURL_HOME}/include
+  -I${CURL_INCLUDE}
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-                   
+
+
