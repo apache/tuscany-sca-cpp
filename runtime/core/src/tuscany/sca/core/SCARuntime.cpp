@@ -238,7 +238,7 @@ namespace tuscany
                 }
                 catch (TuscanyRuntimeException& ex)
                 {
-                    logerror("Failed to load extension library: %s: %s: %s",
+                    logwarning("Failed to load extension library: %s: %s: %s",
                         files[i].getFileName().c_str(), ex.getEClassName(), ex.getMessageText());
                 }
             }
