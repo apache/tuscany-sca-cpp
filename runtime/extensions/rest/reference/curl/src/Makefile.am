@@ -11,7 +11,7 @@ tuscany/sca/rest/RESTServiceWrapper.cpp
 libtuscany_sca_rest_reference_la_LIBADD = \
   -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
   -L$(top_builddir)/runtime/core/src -ltuscany_sca \
-  -L${CURL_LIB}
+  -L${CURL_LIB} -lcurl
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
   -I${TUSCANY_SDOCPP}/include \
