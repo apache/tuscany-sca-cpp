@@ -208,7 +208,7 @@ AC_ARG_ENABLE(doxygen, [AS_HELP_STRING([--enable-doxygen],[build Doxygen documen
     ;;
   esac ],
 [ AC_MSG_RESULT(no)
-  want_doxygen=true ]
+  want_doxygen=false ]
 )
 if test x$want_doxygen = xyes; then
   AC_PATH_PROG(DOXYGEN, doxygen, , $PATH)
