@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,22 +17,30 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_ALL_SAMPLES
-  CPP_SAMPLES = Calculator BigBank
-  PYTHON_SAMPLES = PythonCalculator
-  RUBY_SAMPLES = RubyCalculator RubyBank HttpdBigBank RestCalculator
-endif
-if WANT_CPP_SAMPLES
-  CPP_SAMPLES = Calculator BigBank
-endif
-if WANT_PYTHON_SAMPLES
-  PYTHON_SAMPLES = PythonCalculator
-endif
-if WANT_RUBY_SAMPLES
-  RUBY_SAMPLES = RubyCalculator RubyBank HttpdBigBank RestCalculator
-endif
-if WANT_PHP_SAMPLES
-endif
-SUBDIRS = ${CPP_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PHP_SAMPLES}
+APFULLDIR=`pwd`
 
-EXTRA_DIST = GettingStarted.html
+if [ x$TUSCANY_SCACPP = x ]; then
+echo "TUSCANY_SCACPP not set"
+exit;
+fi
+echo "Using SCA installed at $TUSCANY_SCACPP"
+
+if [ x$TUSCANY_SDOCPP = x ]; then
+echo "TUSCANY_SDOCPP not set"
+exit;
+fi
+echo "Using SDO installed at $TUSCANY_SDOCPP"
+
+if [ x$AXIS2C_HOME = x ]; then
+echo "AXIS2C_HOME not set"
+exit;
+fi
+echo "Using Axis2C installed at $AXIS2C_HOME"
+
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+
+export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
+export TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorRestClientComponent
+
+cd $TUSCANY_SCACPP_ROOT/sample.calculator.restclient
+ruby -I$TUSCANY_SCACPP/extensions/ruby/lib CalculatorRestClient.rb

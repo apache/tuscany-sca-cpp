@@ -15,22 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_ALL_SAMPLES
-  CPP_SAMPLES = Calculator BigBank
-  PYTHON_SAMPLES = PythonCalculator
-  RUBY_SAMPLES = RubyCalculator RubyBank HttpdBigBank RestCalculator
-endif
-if WANT_CPP_SAMPLES
-  CPP_SAMPLES = Calculator BigBank
-endif
-if WANT_PYTHON_SAMPLES
-  PYTHON_SAMPLES = PythonCalculator
-endif
-if WANT_RUBY_SAMPLES
-  RUBY_SAMPLES = RubyCalculator RubyBank HttpdBigBank RestCalculator
-endif
-if WANT_PHP_SAMPLES
-endif
-SUBDIRS = ${CPP_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PHP_SAMPLES}
+deploydir=$(prefix)/samples/RestCalculator/deploy
+restclientdir=$(deploydir)/sample.calculator.restclient
 
-EXTRA_DIST = GettingStarted.html
+restclient_DATA = *.rb *.composite
+restclient_SCRIPTS = runrestclient.sh
+EXTRA_DIST = runrestclient.sh *.rb *.composite
