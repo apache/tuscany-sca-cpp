@@ -36,7 +36,6 @@ if not exist %samplesdir%                        mkdir %samplesdir%
 if not exist %calcdir%                           mkdir %calcdir%
 if not exist %destinationPath%                   mkdir %destinationPath%
 if not exist %destinationPath%\sample.calculator mkdir %destinationPath%\sample.calculator
-copy %sourcePath%\sample.calculator\*.componentType %destinationPath%\sample.calculator
 copy %sourcePath%\sample.calculator\*.composite     %destinationPath%\sample.calculator
 copy %sourcePath%\sample.calculator\*.py            %destinationPath%\sample.calculator
 copy %sourcePath%\sample.calculator\Calculator.wsdl %destinationPath%\sample.calculator
