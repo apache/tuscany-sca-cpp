@@ -46,8 +46,8 @@
             C++ Client and Implementation specification</A> for more details about the SCA C++ 
             programming model.            
          </P>
-         <P>See <A HREF="../samples/Calculator/README.html">Calculator</A> or 
-            <A HREF="../samples/BigBank/README.html">BigBank</A> for samples that 
+         <P>See <A HREF="../samples/CppCalculator/README.html">CppCalculator</A> or 
+            <A HREF="../samples/CppBigBank/README.html">CppBigBank</A> for samples that 
             demonstrate the use of C++ components                    
          </P>
       </DIV>
@@ -82,7 +82,7 @@
             being created and used.
          </P> 
          <P>In this section we will use the Calculator sample as a worked example. 
-            The Calculator code and files can be found at samples/Calculator and has been 
+            The Calculator code and files can be found at samples/CppCalculator and has been 
             developed further than the details specified below. In the interests of 
             readability, the example used below takes the simplest path.
          </P>
@@ -202,7 +202,7 @@ float CalculatorImpl::mul(float arg1, float arg2)
                  sca.composite and componentType file are and the directory where you       
                  want the generated files to be placed. E.g. on Windows, the                
                  following command is run from the directory where Tuscany SCA is deployed:<BR/>
-                 <PRE>./bin/scagen.cmd -dir ./samples/Calculator/sample.calculator -output ./samples/Calculator/sample.calculator</PRE>
+                 <PRE>./bin/scagen.cmd -dir ./samples/CppCalculator/sample.calculator -output ./samples/CppCalculator/sample.calculator</PRE>
                  which produces the following files:
                  <UL>
                      <LI>CalculatorImpl_CalculatorService_Proxy.h</LI>
@@ -238,12 +238,12 @@ float CalculatorImpl::mul(float arg1, float arg2)
                  </UL>
                  E.g. for the Calculator sample the structure is:
                  <UL>
-                     <LI>samples/Calculator/deploy/sample.calculator/Calculator.h                </LI>
-                     <LI>samples/Calculator/deploy/sample.calculator/CalculatorImpl.h            </LI>
-                     <LI>samples/Calculator/deploy/sample.calculator/sample.calculator.composite </LI>
-                     <LI>samples/Calculator/deploy/sample.calculator/CalculatorImpl.componentType</LI>
-                     <LI>samples/Calculator/deploy/sample.calculator/Calculator.dll              </LI>
-                     <LI>samples/Calculator/deploy/sample.calculator.solution.composite</LI>
+                     <LI>samples/CppCalculator/deploy/sample.calculator/Calculator.h                </LI>
+                     <LI>samples/CppCalculator/deploy/sample.calculator/CalculatorImpl.h            </LI>
+                     <LI>samples/CppCalculator/deploy/sample.calculator/sample.calculator.composite </LI>
+                     <LI>samples/CppCalculator/deploy/sample.calculator/CalculatorImpl.componentType</LI>
+                     <LI>samples/CppCalculator/deploy/sample.calculator/Calculator.dll              </LI>
+                     <LI>samples/CppCalculator/deploy/sample.calculator.solution.composite</LI>
                  </UL>
              </LI>
              <LI>Your component, composite and subsystem are now ready to be invoked. Create a 
@@ -290,7 +290,7 @@ catch (ServiceRuntimeException& ex)
                      <LI>set TUSCANY_SDOCPP=C:/tuscany_sdo                                                 </LI>
                      <LI>set AXIS2C_HOME=C:/axis2c-bin-0.94-win32                                          </LI>
                      <LI>set PATH=%PATH%;C:/tuscany_sca/bin;C:/tuscany_sdo/bin;C:/axis2c-bin-0.94-win32/lib</LI>
-                     <LI>set TUSCANY_SCACPP_SYSTEM_ROOT=C:/tuscany_sca/samples/Calculator/deploy           </LI>
+                     <LI>set TUSCANY_SCACPP_SYSTEM_ROOT=C:/tuscany_sca/samples/CppCalculator/deploy        </LI>
                      <LI>set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent        </LI>
                      <LI>./calculator_client.exe                                                           </LI>
                  </UL>

@@ -1,7 +1,5 @@
-Tuscany SCA for C++ Samples - REST Calculator Sample
+Tuscany SCA for C++ Samples - C++ Calculator Sample
 ===============================================
-
-TODO update this doc???
 
 This is a very simple sample to show how an SCA composite can wire together
 two components to implement a Calculator service and expose that service as

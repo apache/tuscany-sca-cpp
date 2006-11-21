@@ -144,10 +144,10 @@ AC_ARG_ENABLE(php, [AS_HELP_STRING([--enable-php],[build PHP samples [default=no
 AM_CONDITIONAL([WANT_PHP_SAMPLES], [test x$want_php_samples = xtrue])
 
 AC_CONFIG_FILES([Makefile
-                 Calculator/Makefile
-                 Calculator/sample.calculator/Makefile
-                 Calculator/sample.calculator.client/Makefile
-                 Calculator/sample.calculator.wsclient/Makefile
+                 CppCalculator/Makefile
+                 CppCalculator/sample.calculator/Makefile
+                 CppCalculator/sample.calculator.client/Makefile
+                 CppCalculator/sample.calculator.wsclient/Makefile
                  RubyCalculator/Makefile
                  RubyCalculator/sample.calculator/Makefile
                  RubyCalculator/sample.calculator.client/Makefile
@@ -158,15 +158,15 @@ AC_CONFIG_FILES([Makefile
                  PythonCalculator/sample.calculator.wsclient/Makefile
                  RestCalculator/Makefile
                  RestCalculator/sample.calculator.restclient/Makefile
-                 BigBank/Makefile
-                 BigBank/bigbank.account/Makefile
-                 BigBank/bigbank.client/Makefile
-                 BigBank/bigbank.wsclient/Makefile
-                 BigBank/bigbank.phpwsclient/Makefile
-                 RubyBank/Makefile
-                 RubyBank/bigbank.account/Makefile
-                 RubyBank/bigbank.client/Makefile
-                 RubyBank/bigbank.wsclient/Makefile
+                 CppBigBank/Makefile
+                 CppBigBank/bigbank.account/Makefile
+                 CppBigBank/bigbank.client/Makefile
+                 CppBigBank/bigbank.wsclient/Makefile
+                 CppBigBank/bigbank.phpwsclient/Makefile
+                 RubyBigBank/Makefile
+                 RubyBigBank/bigbank.account/Makefile
+                 RubyBigBank/bigbank.client/Makefile
+                 RubyBigBank/bigbank.wsclient/Makefile
                  HttpdBigBank/Makefile
                  HttpdBigBank/bigbank.account/Makefile
                  HttpdBigBank/bigbank.accountdata/Makefile

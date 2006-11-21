@@ -27,11 +27,37 @@ goto usage
 )
 set srcdir=%1
 
-%TUSCANY_SCACPP%\bin\scagen.cmd -dir %srcdir% -output %srcdir% -verbose
+if . == .%2 (
+echo input directory not specified
+goto usage
+)
+set inpath=%2
+echo %inpath%
+
+set package=sample.calculator.wsclient
+
+set deploydir=%TUSCANY_SCACPP%
+set samplesdir=%deploydir%\samples
+set calcdir=%samplesdir%\CppCalculator
+set calcdeploydir=%calcdir%\deploy
+set clientdir=%calcdeploydir%\%package%
+
+if not exist %samplesdir% mkdir %samplesdir%
+if not exist %calcdir% mkdir %calcdir%
+if not exist %calcdeploydir% mkdir %calcdeploydir%
+if not exist %clientdir% mkdir %clientdir% 
+
+set clientdirsrc=%srcdir%\%package%
+copy %clientdirsrc%\runwsclient.bat %clientdir% 
+
+set library=calculator_wsclient
+copy %inpath%\%library%.exe %clientdir%
+
+if exist %inpath%\%library%.pdb copy %inpath%\%library%.pdb %clientdir%
 
 goto end
 :usage
-echo Usage: scagen <sample-src>
+echo Usage: deploy <sample-src> <build-output>
 :end
 
 endlocal

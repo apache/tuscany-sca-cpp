@@ -39,7 +39,7 @@
       <DIV CLASS="section"> 
          <H2>Tuscany SCA for C++ Samples - REST Calculator Sample</H2> 
 
-         <P>TODO update this doc
+         <P>TODO update this doc???
          <P>This is a very simple sample to show how an SCA composite can wire 
           together two Ruby components to implement a Calculator service and expose 
           that service as a Web Service.
@@ -68,13 +68,13 @@
          <H2>Contents</H2> 
          <OL>
             <LI><A HREF="#linuxbld">Building the Ruby samples on Linux</A></LI>
-            <LI><A HREF="#linuxrun">Running the RubyCalculator sample on Linux:</A></LI>
+            <LI><A HREF="#linuxrun">Running the REST Calculator sample on Linux:</A></LI>
                <UL>
                   <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
                   <LI><A HREF="#linuxws">Running the Web Service client</A></LI>
                </UL>
-            <LI><A HREF="#winbld">Building the RubyCalculator sample on Windows</A></LI>
-            <LI><A HREF="#winrun">Running the RubyCalculator sample on Windows:</A></LI>
+            <LI><A HREF="#winbld">Building the REST Calculator sample on Windows</A></LI>
+            <LI><A HREF="#winrun">Running the REST Calculator sample on Windows:</A></LI>
                <UL>
                   <LI><A HREF="#winbasic">Running the basic client</A></LI>
                   <LI><A HREF="#winws">Running the Web Service client</A></LI>
@@ -96,7 +96,7 @@
                   <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
              </LI>
-             <LI>As the RubyCalculator sample is based on Ruby scripts, a specific compilation step is not necessary - 
+             <LI>As the REST Calculator sample is based on Ruby scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the Ruby samples only with the following command sequence:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples</LI>
@@ -104,13 +104,13 @@
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide the --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sca/samples/RubyCalculator</LI>
+                  /usr/local/tuscany/sca/samples/RestCalculator</LI>
          </OL>                                                  
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="linuxrun"><H2>Running the RubyCalculator sample on Linux</H2></A>
-         <A NAME="linuxbasic"><H3>RubyCalculator with basic client</H3></A>
+         <A NAME="linuxrun"><H2>Running the REST Calculator sample on Linux</H2></A>
+         <A NAME="linuxbasic"><H3>Calculator with basic client</H3></A>
          <OL>
              <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
                  found <A HREF="../../doc/RubyExtension.html#linuxbin">here</A>.
@@ -124,12 +124,12 @@
              </LI>
              <LI>Run the sample with the following commands:
                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator.client</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RestCalculator/deploy/sample.calculator.client</LI>
                    <LI>./runclient.sh</LI>
                 </UL>
              </LI>
          </OL>                                                  
-         <A NAME="linuxws"><H3>RubyCalculator with Web Service client</H3></A>
+         <A NAME="linuxws"><H3>Calculator with Web Service client</H3></A>
          <OL>
              <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
                  found <A HREF="../../doc/Axis2CWSService.html">here</A>.
@@ -146,7 +146,7 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RestCalculator/deploy/sample.calculator</LI>
                    <LI>./runwsserver.sh</LI>
                 </OL>
              </LI>
@@ -157,7 +157,7 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator.wsclient</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RestCalculator/deploy/sample.calculator.wsclient</LI>
                    <LI>./runwsclient.sh</LI>
                 </OL>
              </LI>
@@ -165,7 +165,7 @@
         </DIV>
 
         <DIV CLASS="section">
-         <A NAME="winbld"><H2>Building the RubyCalculator sample on Windows</H2></A>
+         <A NAME="winbld"><H2>Building the REST Calculator sample on Windows</H2></A>
          <P>If using the binary distribution the samples are built and installed in
             &lt;tuscany_sca_install_dir&gt;\samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
          <OL>
@@ -179,7 +179,7 @@
              <LI>As this sample is based on Ruby scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the sample with the following commands:
                  <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestCalculator</LI>
                    <LI>deploy.cmd</LI>
                 </UL>
              </LI>
@@ -187,8 +187,8 @@
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="winrun"><H2>Running the RubyCalculator sample on Windows</H2></A>
-         <A NAME="winbasic"><H3>RubyCalculator with basic client</H3></A>
+         <A NAME="winrun"><H2>Running the REST Calculator sample on Windows</H2></A>
+         <A NAME="winbasic"><H3>Calculator with basic client</H3></A>
          <OL>
              <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
                  found <A HREF="../../doc/RubyExtension.html#winbin">here</A>.
@@ -202,12 +202,12 @@
              </LI>
              <LI>Run the sample with the following commands:
                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator.client</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestCalculator\deploy\sample.calculator.client</LI>
                    <LI>runclient.bat</LI>
                 </UL>
              </LI>
          </OL>                                                  
-         <A NAME="winws"><H3>RubyCalculator with Web Service client</H3></A>
+         <A NAME="winws"><H3>Calculator with Web Service client</H3></A>
          <OL>
              <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
                  found <A HREF="../../doc/Axis2CWSService.html">here</A>.
@@ -224,7 +224,7 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestCalculator\deploy\sample.calculator</LI>
                    <LI>runwsserver.bat</LI>
                 </OL>
              </LI>
@@ -237,7 +237,7 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator.wsclient</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestCalculator\deploy\sample.calculator.wsclient</LI>
                    <LI>runwsclient.bat</LI>
                 </OL>
              </LI>

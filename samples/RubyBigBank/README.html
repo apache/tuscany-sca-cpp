@@ -30,35 +30,33 @@
 
     <LINK HREF="../doc/css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA for C++ Samples - Ruby Calculator Sample</TITLE>
+   <TITLE>Tuscany SCA for C++ Samples - Ruby BigBank Sample</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA for C++ Samples - Ruby Calculator Sample</H2> 
+         <H2>Tuscany SCA for C++ Samples - Ruby BigBank Sample</H2> 
 
-         <P>This is a very simple sample to show how an SCA composite can wire 
-          together two Ruby components to implement a Calculator service and expose 
-          that service as a Web Service.
+         <P>This sample implements the "Simplified BigBank" scenario. A whitepaper describing
+            the scenario based on the SCA 0.9 Assembly specification can be found 
+            <A HREF="http://www.osoa.org/display/Main/SCA+-+Previously+Published+Specifications">here</A>.
+            This sample uses multiple Ruby components, calls out to an external Web Service via a reference 
+            and exposes the service as a Web Service.
          </P>
-         <P>There are three sub projects in this workspace:</P>
+         <P>There are two sub projects in this workspace:</P>
          <UL>
-            <LI>sample.calculator<BR/>
-                This contains the Ruby scripts and SCDL artifacts for the SCA Calculator 
-                composite implementing the sample Calculator.
+            <LI>bigbank.account<BR/>
+                This contains the source code and SCDL artifacts for the SCA Ruby BigBank
+                composite implementing the account services.
             </LI>
-            <LI>sample.calculator.client<BR/>
-                A sample client which does a local call to the Calculator service.
+            <LI>bigbank.client<BR/>
+                A sample client which does a local call to the BigBank service.
             </LI>
-            <LI>sample.calculator.wsclient<BR/>
-                A sample client which does a local call to a composite that contains a Web Service reference
-                that calls the Calculator Web Service.
-            </LI>
-         </UL>
-         <P>Additionally, there is the sample.calculator.app.composite file. This     
-            describes the configuration of the SCA Calculator composite deployed to the SCA
+         </UL> 
+         <P>Additionally, there is the bigbank.app.composite file. This     
+            describes the configuration of the SCA BigBank composite deployed to the SCA
             runtime.                                                                       
          </P>
       </DIV>
@@ -66,17 +64,17 @@
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
          <OL>
-            <LI><A HREF="#linuxbld">Building the Ruby samples on Linux</A></LI>
-            <LI><A HREF="#linuxrun">Running the Ruby Calculator sample on Linux:</A></LI>
+            <LI><A HREF="#linuxbld">Building the Ruby BigBank sample on Linux</A></LI>
+            <LI><A HREF="#linuxrun">Running the Ruby BigBank sample on Linux:</A></LI>
                <UL>
                   <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#linuxws">Running the Web Service client</A></LI>
+                  <LI><A HREF="#linuxws">Running with Web Service clients</A></LI>
                </UL>
-            <LI><A HREF="#winbld">Building the Ruby Calculator sample on Windows</A></LI>
-            <LI><A HREF="#winrun">Running the Ruby Calculator sample on Windows:</A></LI>
+            <LI><A HREF="#winbld">Building the Ruby BigBank sample on Windows</A></LI>
+            <LI><A HREF="#winrun">Running the Ruby BigBank sample on Windows:</A></LI>
                <UL>
                   <LI><A HREF="#winbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#winws">Running the Web Service client</A></LI>
+                  <LI><A HREF="#winws">Running with Web Service clients</A></LI>
                </UL>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
@@ -84,7 +82,7 @@
 
 
        <DIV CLASS="section"> 
-         <A NAME="linuxbld"><H2>Building the Ruby samples on Linux</H2></A>
+         <A NAME="linuxbld"><H2>Building the Ruby BigBank sample on Linux</H2></A>
          <P>If using the binary distribution the samples are built and installed in
             &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux</A>.</P>
          <OL>
@@ -95,7 +93,7 @@
                   <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
              </LI>
-             <LI>As the Ruby Calculator sample is based on Ruby scripts, a specific compilation step is not necessary - 
+             <LI>As the Ruby BigBank sample is based on Ruby scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the Ruby samples only with the following command sequence:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples</LI>
@@ -103,13 +101,14 @@
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide the --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sca/samples/RubyCalculator</LI>
+                  /usr/local/tuscany/sca/samples/RubyBigBank
+             </LI>
          </OL>                                                  
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="linuxrun"><H2>Running the Ruby Calculator sample on Linux</H2></A>
-         <A NAME="linuxbasic"><H3>Calculator with basic client</H3></A>
+         <A NAME="linuxrun"><H2>Running the Ruby BigBank sample on Linux</H2></A>
+         <A NAME="linuxbasic"><H3>BigBank with basic client</H3></A>
          <OL>
              <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
                  found <A HREF="../../doc/RubyExtension.html#linuxbin">here</A>.
@@ -118,17 +117,17 @@
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator.client</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyBigBank/deploy/bigbank.client</LI>
                    <LI>./runclient.sh</LI>
                 </UL>
              </LI>
          </OL>                                                  
-         <A NAME="linuxws"><H3>Calculator with Web Service client</H3></A>
+         <A NAME="linuxws"><H3>BigBank with Web Service clients</H3></A>
          <OL>
              <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
                  found <A HREF="../../doc/Axis2CWSService.html">here</A>.
@@ -145,26 +144,20 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyBigBank/deploy/bigbank.account
+                   </LI>
                    <LI>./runwsserver.sh</LI>
                 </OL>
              </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variable is required:                                 
-                      <UL>
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator.wsclient</LI>
-                   <LI>./runwsclient.sh</LI>
-                </OL>
+            <LI>The Web Service client and PHP web client detailed in the 
+                 <A HREF="../BigBank/README.html">BigBank</A> sample can both be used 
+                 with the Ruby BigBank service that is served by the Axis2C http server started above.
              </LI>
          </OL>                                                  
         </DIV>
 
         <DIV CLASS="section">
-         <A NAME="winbld"><H2>Building the Ruby Calculator sample on Windows</H2></A>
+         <A NAME="winbld"><H2>Building the Ruby BigBank sample on Windows</H2></A>
          <P>If using the binary distribution the samples are built and installed in
             &lt;tuscany_sca_install_dir&gt;\samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
          <OL>
@@ -178,7 +171,7 @@
              <LI>As this sample is based on Ruby scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the sample with the following commands:
                  <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyBigBank</LI>
                    <LI>deploy.cmd</LI>
                 </UL>
              </LI>
@@ -186,8 +179,8 @@
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="winrun"><H2>Running the Ruby Calculator sample on Windows</H2></A>
-         <A NAME="winbasic"><H3>Calculator with basic client</H3></A>
+         <A NAME="winrun"><H2>Running the Ruby BigBank sample on Windows</H2></A>
+         <A NAME="winbasic"><H3>BigBank with basic client</H3></A>
          <OL>
              <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
                  found <A HREF="../../doc/RubyExtension.html#winbin">here</A>.
@@ -201,12 +194,12 @@
              </LI>
              <LI>Run the sample with the following commands:
                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator.client</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyBigBank\deploy\bigbank.client</LI>
                    <LI>runclient.bat</LI>
                 </UL>
              </LI>
          </OL>                                                  
-         <A NAME="winws"><H3>Calculator with Web Service client</H3></A>
+         <A NAME="winws"><H3>BigBank with Web Service clients</H3></A>
          <OL>
              <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
                  found <A HREF="../../doc/Axis2CWSService.html">here</A>.
@@ -223,22 +216,14 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyBigBank\deploy\bigbank.account
+                   </LI>
                    <LI>runwsserver.bat</LI>
                 </OL>
              </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator.wsclient</LI>
-                   <LI>runwsclient.bat</LI>
-                </OL>
+             <LI>The Web Service client and PHP web client detailed in the 
+                 <A HREF="../BigBank/README.html">BigBank</A> sample can both be used 
+                 with the Ruby BigBank service that is served by the Axis2C http server started above.
              </LI>
          </OL>                                                  
       </DIV>
@@ -254,8 +239,9 @@
 
          <P>Any problem with this release can be reported to the Tuscany 
          <A HREF="http://incubator.apache.org/tuscany/mail-lists.html"
-            TARGET="_blank">mailing lists</A> or create a JIRA issue at&nbsp;<A HREF="http://issues.apache.org/jira/browse/Tuscany"
-                                                                                TARGET="_blank">http://issues.apache.org/jira/browse/Tuscany</A>.</P>
+            TARGET="_blank">mailing lists</A> or create a JIRA issue at 
+         <A HREF="http://issues.apache.org/jira/browse/Tuscany" 
+            TARGET="_blank">http://issues.apache.org/jira/browse/Tuscany</A>.</P>
       </DIV>
    </DIV>
 </DIV>

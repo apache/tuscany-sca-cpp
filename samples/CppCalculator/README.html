@@ -30,31 +30,30 @@
 
     <LINK HREF="../doc/css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA for C++ Samples - Ruby Calculator Sample</TITLE>
+   <TITLE>Tuscany SCA for C++ Samples - C++ Calculator Sample</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA for C++ Samples - Ruby Calculator Sample</H2> 
+         <H2>Tuscany SCA for C++ Samples - C++ Calculator Sample</H2> 
 
          <P>This is a very simple sample to show how an SCA composite can wire 
-          together two Ruby components to implement a Calculator service and expose 
+          together two C++ components to implement a Calculator service and expose 
           that service as a Web Service.
          </P>
          <P>There are three sub projects in this workspace:</P>
          <UL>
             <LI>sample.calculator<BR/>
-                This contains the Ruby scripts and SCDL artifacts for the SCA Calculator 
+                This contains the source code and SCDL artifacts for the SCA Calculator 
                 composite implementing the sample Calculator.
             </LI>
             <LI>sample.calculator.client<BR/>
                 A sample client which does a local call to the Calculator service.
             </LI>
             <LI>sample.calculator.wsclient<BR/>
-                A sample client which does a local call to a composite that contains a Web Service reference
-                that calls the Calculator Web Service.
+                A sample Axis2 Web Service client which calls the Calculator Web service.
             </LI>
          </UL>
          <P>Additionally, there is the sample.calculator.app.composite file. This     
@@ -66,14 +65,14 @@
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
          <OL>
-            <LI><A HREF="#linuxbld">Building the Ruby samples on Linux</A></LI>
-            <LI><A HREF="#linuxrun">Running the Ruby Calculator sample on Linux:</A></LI>
+            <LI><A HREF="#linuxbld">Building the C++ samples on Linux</A></LI>
+            <LI><A HREF="#linuxrun">Running the C++ Calculator sample on Linux:</A></LI>
                <UL>
                   <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
                   <LI><A HREF="#linuxws">Running the Web Service client</A></LI>
                </UL>
-            <LI><A HREF="#winbld">Building the Ruby Calculator sample on Windows</A></LI>
-            <LI><A HREF="#winrun">Running the Ruby Calculator sample on Windows:</A></LI>
+            <LI><A HREF="#winbld">Building the C++ Calculator sample on Windows</A></LI>
+            <LI><A HREF="#winrun">Running the C++ Calculator sample on Windows:</A></LI>
                <UL>
                   <LI><A HREF="#winbasic">Running the basic client</A></LI>
                   <LI><A HREF="#winws">Running the Web Service client</A></LI>
@@ -84,7 +83,7 @@
 
 
        <DIV CLASS="section"> 
-         <A NAME="linuxbld"><H2>Building the Ruby samples on Linux</H2></A>
+         <A NAME="linuxbld"><H2>Building the C++ samples on Linux</H2></A>
          <P>If using the binary distribution the samples are built and installed in
             &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux</A>.</P>
          <OL>
@@ -95,35 +94,32 @@
                   <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
              </LI>
-             <LI>As the Ruby Calculator sample is based on Ruby scripts, a specific compilation step is not necessary - 
-                 only deployment is required. Deploy the Ruby samples only with the following command sequence:
+             <LI>Build the C++ samples with the following command sequence:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples</LI>
-                      <LI>./configure --enable-ruby --enable-cpp=no --prefix=$TUSCANY_SCACPP</LI>
+                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-static=no</LI>
+                      <LI>make</LI>
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide the --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sca/samples/RubyCalculator</LI>
+                  /usr/local/tuscany/sca/samples/CppCalculator</LI>
          </OL>                                                  
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="linuxrun"><H2>Running the Ruby Calculator sample on Linux</H2></A>
+         <A NAME="linuxrun"><H2>Running the C++ Calculator sample on Linux</H2></A>
          <A NAME="linuxbasic"><H3>Calculator with basic client</H3></A>
          <OL>
-             <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
-                 found <A HREF="../../doc/RubyExtension.html#linuxbin">here</A>.
-             </LI>
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator.client</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppCalculator/deploy/sample.calculator.client</LI>
                    <LI>./runclient.sh</LI>
                 </UL>
              </LI>
@@ -132,9 +128,6 @@
          <OL>
              <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
                  found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
-                 found <A HREF="../../doc/RubyExtension.html#linuxbin">here</A>.
              </LI>
              <LI>Start the Axis2C simple http server:
                 <OL>
@@ -145,7 +138,8 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppCalculator/deploy/sample.calculator
+                   </LI>
                    <LI>./runwsserver.sh</LI>
                 </OL>
              </LI>
@@ -156,7 +150,7 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator.wsclient</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppCalculator/deploy/sample.calculator.wsclient</LI>
                    <LI>./runwsclient.sh</LI>
                 </OL>
              </LI>
@@ -164,7 +158,7 @@
         </DIV>
 
         <DIV CLASS="section">
-         <A NAME="winbld"><H2>Building the Ruby Calculator sample on Windows</H2></A>
+         <A NAME="winbld"><H2>Building the C++ Calculator sample on Windows</H2></A>
          <P>If using the binary distribution the samples are built and installed in
             &lt;tuscany_sca_install_dir&gt;\samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
          <OL>
@@ -175,23 +169,23 @@
                   <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
              </LI>
-             <LI>As this sample is based on Ruby scripts, a specific compilation step is not necessary - 
-                 only deployment is required. Deploy the sample with the following commands:
-                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator</LI>
-                   <LI>deploy.cmd</LI>
-                </UL>
+             <LI>You must have set up the environment for Microsoft Visual C++ tools.
+                 The build command will call vcvars32 to set the environment. Ensure the 
+                 directory containing this is on your path. This will be where you 
+                 installed the compiler.
+             </LI>
+             <LI>Build the source, either via the Visual Studio 6 or 7 projects under 
+                 &lt;tuscany_sca_install_dir&gt;\samples\ides or via the command-line build file
+                 found at &lt;tuscany_sca_install_dir&gt;\samples\ides\devstudio6\projects\CppCalculator\build.cmd
+                 which will build and deploy the samples.
              </LI>
          </OL>                                                  
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="winrun"><H2>Running the Ruby Calculator sample on Windows</H2></A>
+         <A NAME="winrun"><H2>Running the C++ Calculator sample on Windows</H2></A>
          <A NAME="winbasic"><H3>Calculator with basic client</H3></A>
          <OL>
-             <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
-                 found <A HREF="../../doc/RubyExtension.html#winbin">here</A>.
-             </LI>
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
@@ -201,7 +195,7 @@
              </LI>
              <LI>Run the sample with the following commands:
                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator.client</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppCalculator\deploy\sample.calculator.client</LI>
                    <LI>runclient.bat</LI>
                 </UL>
              </LI>
@@ -210,9 +204,6 @@
          <OL>
              <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
                  found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
-                 found <A HREF="../../doc/RubyExtension.html#winbin">here</A>.
              </LI>
              <LI>Start the Axis2C simple http server:
                 <OL>
@@ -223,20 +214,18 @@
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppCalculator\deploy\sample.calculator</LI>
                    <LI>runwsserver.bat</LI>
                 </OL>
              </LI>
              <LI>Run the client:
                 <OL>
-                   <LI>The following environment variables are required:                                 
+                   <LI>The following environment variable is required:                                 
                       <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
                         <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator.wsclient</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppCalculator\deploy\sample.calculator.wsclient</LI>
                    <LI>runwsclient.bat</LI>
                 </OL>
              </LI>

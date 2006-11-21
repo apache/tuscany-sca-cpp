@@ -43,7 +43,7 @@
             SCA composites and as clients that can invoke SCA services.
          </P>
          <P>See <A HREF="../samples/RubyCalculator/README.html">RubyCalculator</A> and
-            <A HREF="../samples/RubyBank/README.html">RubyBank</A> for 
+            <A HREF="../samples/RubyBigBank/README.html">RubyBigBank</A> for 
             two samples that demonstrate the use of the Ruby extension.
          </P>
       </DIV>
@@ -216,8 +216,8 @@ calculator = SCA::locateService("CalculatorComponent/CalculatorService")
 </PRE>
          <P>Tuscany currently supports passing simple types (strings, ints, floats, etc) as well
             as Service Data Objects into and out of Ruby components. Service Data Objects are represented 
-            in Ruby as REXML Document objects (see the <A HREF="../samples/RubyBank/README.html">RubyBank
-            sample</A> for a demonstration).
+            in Ruby as REXML Document objects (see the <A HREF="../samples/RubyBigBank/README.html">
+            Ruby BigBank sample</A> for a demonstration).
          </P>
          <P>You can write a componentType file for your Ruby component, but you don't have to - the Ruby 
             extension introspects Ruby component implementation classes for you and binds public 
