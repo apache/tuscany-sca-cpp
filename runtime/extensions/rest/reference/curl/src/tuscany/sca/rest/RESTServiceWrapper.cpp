@@ -136,7 +136,7 @@ namespace tuscany
                     // Build the request URL
                     string uri = binding->getURI();
                     ostringstream os;
-                    if (uri[uri.length()-1]=='?')
+                    if (uri[uri.length()-1] == '?')
                     {
                         // Add the parameters to the end of the URL in the form
                         // param=value&
@@ -164,10 +164,10 @@ namespace tuscany
                     string url = os.str();                                        
                     curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
  
-                    // Send all data to this function  */
+                    // Send all data to this function
                     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
  
-                    // Pass our 'chunk' struct to the callback function */
+                    // Pass our 'chunk' struct to the callback function
                     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
  
                     // Perform the HTTP get
@@ -475,8 +475,10 @@ namespace tuscany
                     }
                 default:
                     {
-                        throwException(ServiceDataException, "Unsupported parameter type");
-                    } 
+                        ostringstream msg;
+                        msg << "Unsupported parameter type: " << parm.getType();
+                        throwException(ServiceDataException, msg.str().c_str());
+                    }
                 }
             }
 
@@ -502,7 +504,6 @@ namespace tuscany
                 if(!outputBodyDataObject)
                 {
                     logerror("Could not convert received document to SDO");
-                    /** TODO: return a fault here */
                     return;
                 }                    
 
@@ -560,7 +561,6 @@ namespace tuscany
                         {
                             bytesData[len] = 0;
                         }
-                        //printf("outputDataObject has BytesType named %s with length %d\n", name, bytesWritten);
                         operation.setReturnValue(&bytesData);
                     }
                     break;
@@ -623,7 +623,6 @@ namespace tuscany
                          * This code deals with xsd:any element parameters
                          * Get each element as a DataObject and add in to the parameter list
                          */
-        
                         DataObjectList& dataObjectList = outputDataObject->getList(pl[i]);
                         
                         for(int j=0; j<dataObjectList.size(); j++)
