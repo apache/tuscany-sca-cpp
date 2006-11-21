@@ -133,12 +133,6 @@ namespace tuscany
                     string msg = "Failed to load module named " + impl->getModule() + " on path " + path;
                     throwException(SystemConfigurationException, msg.c_str());
                 }
-                //else
-                //{
-                //    addReferences(pythonModule);
-                //    addProperties(pythonModule);
-                //}
-
                 printPyObject("pythonModule",pythonModule);
             }
             

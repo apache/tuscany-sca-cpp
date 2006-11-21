@@ -23,6 +23,7 @@
 #ifndef tuscany_sca_python_model_pythonimplementation_h
 #define tuscany_sca_python_model_pythonimplementation_h
 #include "tuscany/sca/model/ComponentType.h"
+#include "commonj/sdo/SDO.h"
 
 #include <map>
 using std::map;
@@ -74,6 +75,21 @@ namespace tuscany
                  * @param component The component to initialize.
                  */
                 virtual void initializeComponent(Component* component);
+
+                /**
+                 * Override the ComponentType::findReferenceType method
+                 * to allow Python components to be defined without requiring 
+                 * a componentType side-file
+                 */
+                virtual ReferenceType* findReferenceType(const string& referenceName);
+
+                /**
+                 * Override the ComponentType::findPropertyType method
+                 * to allow Python components to be defined without requiring 
+                 * a componentType side-file
+                 */
+                virtual const commonj::sdo::Property* findPropertyType(const string& propertyName);
+
 
                 /**
                  * Returns the name of the module.

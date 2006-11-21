@@ -25,8 +25,12 @@
 #include "tuscany/sca/python/model/PythonReferenceBinding.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/util/Utils.h"
+
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -43,11 +47,53 @@ namespace tuscany
                     module(module), modulePath(modulePath), className(className), scope(scope)
             {
                 logentry();
+
+                // Create a default service for this componentType
+                ServiceType* defaultServiceType = new ServiceType(this, "", NULL, NULL);
+                addServiceType(defaultServiceType);
             }
 
             PythonImplementation::~PythonImplementation()
             {
                 logentry();
+            }
+
+            /**
+             * Overrides the findReferenceType method in ComponentType.
+             * This allows us to create references without needing a componentType file.
+             */
+            ReferenceType* PythonImplementation::findReferenceType(const string& referenceName)
+            {
+                logentry();
+
+                ReferenceType* refType = ComponentType::findReferenceType(referenceName); 
+                if(!refType)
+                {
+                    // The reference has not yet been created - try creating it
+                    refType = new ReferenceType(this, referenceName, NULL, NULL, ReferenceType::ONE_ONE);
+                    addReferenceType(refType);
+                }
+
+                return refType;
+            }
+            
+            /**
+             * Overrides the findPropertyType method in ComponentType.
+             * This allows us to create properties without needing a componentType file.
+             */
+            const commonj::sdo::Property* PythonImplementation::findPropertyType(const string& propertyName)
+            {
+                logentry();
+
+                const commonj::sdo::Property* prop = ComponentType::findPropertyType(propertyName); 
+                if(!prop)
+                {
+                    ComponentType::addPropertyType(propertyName, "http://www.w3.org/2001/XMLSchema#string", false, NULL);
+                    // Just added it so it should now be available
+                    prop = ComponentType::findPropertyType(propertyName); 
+                }
+
+                return prop;
             }
             
             void PythonImplementation::initializeComponent(Component* component)

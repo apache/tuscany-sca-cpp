@@ -382,8 +382,8 @@ namespace tuscany
                     }
                 }
                 
-                // First check that references exist, some component types
-                // will create all used references automatically
+                // First check that references and properties exist, some component types
+                // will create all used references & properties automatically
                 DataObjectList& refs = componentDO->getList("reference");
                 for (int i=0; i<refs.size(); i++)
                 {
@@ -395,6 +395,19 @@ namespace tuscany
                         throwException(SystemConfigurationException, message.c_str());
                     }
                 }
+
+                DataObjectList& props = componentDO->getList("property");
+                for (int pi=0; pi<props.size(); pi++)
+                {
+                    string propName = props[pi]->getCString("name");
+                    if (!componentType->findPropertyType(propName))
+                    {
+                        // Configuration error: property is not defined
+                        string message = "Undefined property: " + propName;
+                        throwException(SystemConfigurationException, message.c_str());
+                    }
+                }
+
                 
                 // Create the component
                 Component* component = new Component(composite, componentDO->getCString("name"), componentType);
@@ -403,7 +416,6 @@ namespace tuscany
                 // ----------
                 // Properties
                 // ----------
-                DataObjectList& props = componentDO->getList("property");
                 for (int pi=0; pi<props.size(); pi++)
                 {
                     string propName = props[pi]->getCString("name");

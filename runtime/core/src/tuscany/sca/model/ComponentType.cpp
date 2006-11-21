@@ -235,8 +235,30 @@ namespace tuscany
                 }
             }
             
+            const Property* ComponentType::findPropertyType(const string& propertyName)
+            {
+                logentry();
+                const Property* property = NULL;
+
+                DataFactoryPtr dataFactory = getPropertyDataFactory(); 
+                const Type& propertiesType = dataFactory->getType("org/osoa/sca", "Properties");
+
+                try
+                {
+                    const Property& prop = propertiesType.getProperty(propertyName);
+                    property = &prop;
+                }
+                catch(SDOPropertyNotFoundException)
+                {
+                    loginfo("Property named %s not found, returning null", propertyName.c_str());
+                }
+                return property;
+            }
+
             DataFactoryPtr ComponentType::getPropertyDataFactory()
             {
+                logentry();
+
                 if (!propertyFactory)
                 {
                     propertyFactory = DataFactory::getDataFactory();
@@ -248,6 +270,8 @@ namespace tuscany
             
             void ComponentType::initializeComponent(Component* component)
             {
+                logentry();
+
                 for (SERVICETYPE_MAP::iterator iter = serviceTypes.begin();
                 iter != serviceTypes.end();
                 iter++)

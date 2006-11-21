@@ -131,6 +131,13 @@ namespace tuscany
                     commonj::sdo::DataObjectPtr* defaultValue);
     
                 /**
+                 * Find an existing property type on this component type.
+                 * @param propertyName The name of the property type to find.
+                 * @return The found property, or 0 if not found.
+                 */
+                SCA_API virtual const commonj::sdo::Property* findPropertyType(const string& propertyName);
+
+                /**
                  * Return the SDO data factory which has the types of the properties defined
                  * in this component type.
                  * @return The data factory.
