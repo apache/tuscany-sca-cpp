@@ -48,7 +48,7 @@ if not exist %calcdeploydir% mkdir %calcdeploydir%
 if not exist %samplecalc% mkdir %samplecalc% 
 
 set samplecalcsrc=%srcdir%\%package%
-copy %srcdir%\%package%.solution.composite %calcdeploydir%
+copy %srcdir%\*.composite %calcdeploydir%
 copy %samplecalcsrc%\*.wsdl %samplecalc% 
 copy %samplecalcsrc%\*.composite %samplecalc% 
 copy %samplecalcsrc%\*.componentType %samplecalc% 
