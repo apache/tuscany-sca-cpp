@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="sample.calculator.client"
-	ProjectGUID="{799C40A9-9DDB-4DCD-806D-50205508AE0E}"
+	Name="sample.calculator.wsclient"
+	ProjectGUID="{A215C30F-DB83-4617-ACF7-3048E8379E25}"
 	>
 	<Platforms>
 		<Platform
@@ -37,18 +37,18 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/Client.tlb"
+				TypeLibraryName=".\Debug/WSClient.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\CppCalculator\sample.calculator;&quot;$(TUSCANY_SDOCPP)/include&quot;;&quot;$(TUSCANY_SCACPP)/include&quot;;&quot;$(TUSCANY_SCACPP)/extensions/cpp/include&quot;"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/Client.pch"
+				RuntimeLibrary="1"
+				PrecompiledHeaderFile=".\Debug/WSClient.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -69,13 +69,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib $(NOINHERIT)"
-				OutputFile="Debug/calculator_client.exe"
+				AdditionalDependencies="tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib $(NOINHERIT)"
+				OutputFile="Debug/calculator_wsclient.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/calculator_client.pdb"
+				ProgramDatabaseFile=".\Debug/calculator_wsclient.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -91,7 +91,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Debug/Client.bsc"
+				OutputFile=".\Debug/WSClient.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -104,7 +104,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call ..\..\..\..\CppCalculator\deployclient.bat ..\..\..\..\CppCalculator Debug&#x0D;&#x0A;"
+				CommandLine="call ..\..\deploywsclient.bat ..\..\  Debug"
 			/>
 		</Configuration>
 		<Configuration
@@ -131,19 +131,19 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				TypeLibraryName=".\Release/Client.tlb"
+				TypeLibraryName=".\Release/WSClient.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\..\CppCalculator\sample.calculator;&quot;$(TUSCANY_SDOCPP)/include&quot;;&quot;$(TUSCANY_SCACPP)/include&quot;;&quot;$(TUSCANY_SCACPP)/extensions/cpp/include&quot;"
+				AdditionalIncludeDirectories="$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/Client.pch"
+				PrecompiledHeaderFile=".\Release/WSClient.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -163,12 +163,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sdo.lib tuscany_sca.lib tuscany_sca_cpp.lib $(NOINHERIT)"
-				OutputFile="Release/calculator_client.exe"
+				AdditionalDependencies="tuscany_sdo.lib axis2_engine.lib axis2_parser.lib axis2_util.lib axiom.lib $(NOINHERIT)"
+				OutputFile="Release/calculator_wsclient.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)/lib,$(TUSCANY_SCACPP)/lib,$(TUSCANY_SCACPP)/extensions/cpp/lib"
-				ProgramDatabaseFile=".\Release/calculator_client.pdb"
+				AdditionalLibraryDirectories="$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
+				ProgramDatabaseFile=".\Release/calculator_wsclient.pdb"
 				SubSystem="1"
 				TargetMachine="1"
 			/>
@@ -184,7 +184,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Release/Client.bsc"
+				OutputFile=".\Release/WSClient.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -197,7 +197,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call ..\..\..\..\CppCalculator\deployclient.bat ..\..\..\..\CppCalculator Release&#x0D;&#x0A;"
+				CommandLine="call ..\..\deploywsclient.bat ..\..\ Release"
 			/>
 		</Configuration>
 	</Configurations>
@@ -209,7 +209,11 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator.client\CalculatorClient.cpp"
+				RelativePath="..\..\sample.calculator.wsclient\axis2_Calculator_stub.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sample.calculator.wsclient\CalculatorWSClient.cpp"
 				>
 			</File>
 		</Filter>
@@ -217,6 +221,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath="..\..\sample.calculator.wsclient\axis2_Calculator_stub.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

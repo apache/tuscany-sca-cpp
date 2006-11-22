@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="..\..\..\..\scagen.bat ..\..\..\..\CppCalculator\sample.calculator"
+				CommandLine="..\..\..\scagen.bat ..\..\sample.calculator"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call ..\..\..\..\CppCalculator\deploy.bat ..\..\..\..\CppCalculator Debug"
+				CommandLine="call ..\..\deploy.bat ..\..\ Debug"
 			/>
 		</Configuration>
 		<Configuration
@@ -124,7 +124,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="..\..\..\..\scagen.bat ..\..\..\..\CppCalculator\sample.calculator"
+				CommandLine="..\..\..\scagen.bat ..\..\sample.calculator"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -207,7 +207,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call ..\..\..\..\CppCalculator\deploy.bat ..\..\..\..\CppCalculator Release"
+				CommandLine="call ..\..\deploy.bat ..\..\ Release"
 			/>
 		</Configuration>
 	</Configurations>
@@ -219,31 +219,31 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\CalculatorImpl.cpp"
+				RelativePath="..\..\sample.calculator\CalculatorImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\CalculatorImpl_CalculatorService_Proxy.cpp"
+				RelativePath="..\..\sample.calculator\CalculatorImpl_CalculatorService_Proxy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\CalculatorImpl_CalculatorService_Wrapper.cpp"
+				RelativePath="..\..\sample.calculator\CalculatorImpl_CalculatorService_Wrapper.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\CalculatorImpl_divideService_Proxy.cpp"
+				RelativePath="..\..\sample.calculator\CalculatorImpl_divideService_Proxy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\DivideImpl.cpp"
+				RelativePath="..\..\sample.calculator\DivideImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\DivideImpl_DivideService_Proxy.cpp"
+				RelativePath="..\..\sample.calculator\DivideImpl_DivideService_Proxy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\DivideImpl_DivideService_Wrapper.cpp"
+				RelativePath="..\..\sample.calculator\DivideImpl_DivideService_Wrapper.cpp"
 				>
 			</File>
 		</Filter>
@@ -252,39 +252,39 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\Calculator.h"
+				RelativePath="..\..\sample.calculator\Calculator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\CalculatorImpl.h"
+				RelativePath="..\..\sample.calculator\CalculatorImpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\CalculatorImpl_CalculatorService_Proxy.h"
+				RelativePath="..\..\sample.calculator\CalculatorImpl_CalculatorService_Proxy.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\CalculatorImpl_CalculatorService_Wrapper.h"
+				RelativePath="..\..\sample.calculator\CalculatorImpl_CalculatorService_Wrapper.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\CalculatorImpl_divideService_Proxy.h"
+				RelativePath="..\..\sample.calculator\CalculatorImpl_divideService_Proxy.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\Divide.h"
+				RelativePath="..\..\sample.calculator\Divide.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\DivideImpl.h"
+				RelativePath="..\..\sample.calculator\DivideImpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\DivideImpl_DivideService_Proxy.h"
+				RelativePath="..\..\sample.calculator\DivideImpl_DivideService_Proxy.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\CppCalculator\sample.calculator\DivideImpl_DivideService_Wrapper.h"
+				RelativePath="..\..\sample.calculator\DivideImpl_DivideService_Wrapper.h"
 				>
 			</File>
 		</Filter>

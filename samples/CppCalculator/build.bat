@@ -37,7 +37,7 @@ goto end
 echo using Axis2C: %AXIS2C_HOME%"
 
 call vcvars32.bat
-cd ..\ides\VSExpress\CppCalculator
+cd VSExpress
 call vcbuild CppCalculator.sln "Release|Win32"
 
 :end
