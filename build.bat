@@ -20,13 +20,47 @@
 
 @setlocal
 
-echo building Java code
-cd tools\scagen 
-call ant
+echo building Tuscany SCA C++
 
-echo building C++ code
+if "%LIBXML2_HOME%" == "" (
+echo "LIBXML2_HOME not set"
+goto end
+)
+echo using LIBXML2: %LIBXML2_HOME%
+
+if "%AXIS2C_HOME%" == "" (
+echo "AXIS2C_HOME not set"
+goto end
+)
+echo using Axis2C: %AXIS2C_HOME%"
+
+if "%TUSCANY_SDOCPP%" == "" (
+echo "TUSCANY_SDOCPP not set"
+goto end
+)
+echo using Tuscany SDOCPP: %TUSCANY_SDOCPP%
+
 call vcvars32
-cd ..\..\projects\tuscany_sca
-build.cmd
+echo building Tuscany SCA C++ core + cpp and ws extensions
+cd vsexpress\tuscany_sca
+call vcbuild tuscany_sca.sln "Release|Win32"
+
+if "%PYTHON_HOME%" == "" (
+echo PYTHON_HOME not set. Skipping build of Python extension
+goto pythonend
+)
+echo building Python extension
+call vcbuild tuscany_sca_python\tuscany_sca_python.vcproj "Release|Win32"
+:pythonend
+
+if "%RUBY_HOME%" == "" (
+echo RUBY_HOME not set. Skipping build of Ruby extension
+goto rubyend
+)
+echo building Ruby extension
+call vcbuild tuscany_sca_ruby\tuscany_sca_ruby.vcproj "Release|Win32"
+:rubyend
+
+:end
 
 @endlocal
