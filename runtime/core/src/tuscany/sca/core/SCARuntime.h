@@ -78,22 +78,47 @@ namespace tuscany
             SCA_API void load();
 
             /**
+             * Set the directory in which the Tuscany runtime has been installed.
+             */
+            SCA_API static void setInstallRoot(const string& root);
+
+            /**
+             * Returns the directory in which the Tuscany runtime has been installed.
+             */
+            SCA_API static const string& getInstallRoot();
+
+            /**
              * Set the system root
              * @param root The path to the system configuration.
              */
-            static void setSystemRoot(const string& root);
+            SCA_API static void setSystemRoot(const string& root);
+
+            /**
+             * Returns the system root
+             */
+            SCA_API static const string& getSystemRoot();
 
             /**
              * Set the search path for composites.
              * @param path The search path for composites.
              */
-            static void setSystemPath(const string& path);
+            SCA_API static void setSystemPath(const string& path);
+
+            /**
+             * Returns the search path for composites.
+             */
+            SCA_API static const string& getSystemPath();
 
             /**
              * Set the default Component for the system
              * @param componentName The name of the default component.
              */
-            static void setDefaultComponentName(const string& componentName);
+            SCA_API static void setDefaultComponentName(const string& componentName);
+
+            /**
+             * Returns the default Component for the system
+             */
+            SCA_API static const string& getDefaultComponentName();
 
             /**
              * Set the current component for the current thread.
@@ -116,11 +141,6 @@ namespace tuscany
              * @return The configured SCA system.
              */
             SCA_API Composite* getSystem();
-
-            /**
-             * The directory in which the Tuscany runtime has been installed.
-             */
-            SCA_API const string& getInstallRoot() {return SCARoot;}
 
             /**
              * Return the current component for this thread.
@@ -199,7 +219,7 @@ namespace tuscany
             /**
              * The installed path of the Tuscany runtime.
              */
-            string SCARoot;
+            static string installRoot;
  
             /**
              * The path to the system configuration

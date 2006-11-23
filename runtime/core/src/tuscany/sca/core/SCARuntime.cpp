@@ -51,6 +51,7 @@ namespace tuscany
         // Initialize static class member to not pointing at anything
         // ==========================================================
         SCARuntime* SCARuntime::instance = 0;
+        string SCARuntime::installRoot = "";
         string SCARuntime::systemRoot = "";
         string SCARuntime::systemPath = "";
         string SCARuntime::defaultComponentName = "";
@@ -67,6 +68,14 @@ namespace tuscany
         }
 
         // ==========================================================
+        // Returns the system configuration root
+        // ==========================================================
+        const string& SCARuntime::getSystemRoot()
+        {
+            return systemRoot;
+        }
+
+        // ==========================================================
         // Set the system configuration root
         // ==========================================================
         void SCARuntime::setSystemPath(const string& path)
@@ -74,6 +83,14 @@ namespace tuscany
             logentry();
             systemPath = path;
             loginfo("System path: %s", path.c_str());
+        }
+
+        // ==========================================================
+        // Set the system configuration root
+        // ==========================================================
+        const string& SCARuntime::getSystemPath()
+        {
+            return systemPath;
         }
 
         // ==========================================================
@@ -86,6 +103,32 @@ namespace tuscany
             loginfo("Default component name: %s", componentName.c_str());
         }
 
+        // ==========================================================
+        // Returns the default component name
+        // ==========================================================
+        const string& SCARuntime::getDefaultComponentName()
+        {
+            return defaultComponentName ;
+        }
+
+        // ==========================================================
+        // Set the install root
+        // ==========================================================
+        void SCARuntime::setInstallRoot(const string& root)
+        {
+            logentry();
+            installRoot = root;
+            loginfo("SCA runtime install root: %s", installRoot.c_str());
+        }
+
+        // ==========================================================
+        // Returns the install root
+        // ==========================================================
+        const string& SCARuntime::getInstallRoot()
+        {
+            return installRoot;
+        }
+
         // ===================================================================
         // Constructor for the SCARuntime class. This will be a singleton that
         // holds all the information about the current runtime.
@@ -93,21 +136,6 @@ namespace tuscany
         SCARuntime::SCARuntime() : system(0), defaultComponent(0)
         { 
             logentry();
-            
-            // Locate the SCA install root
-            char*  root = 0;
-            root = getenv(TUSCANY_SCACPP);
-            if (root == 0)
-            {
-            	string msg = TUSCANY_SCACPP;
-            	msg += " environment variable not set";
-                throwException(SystemConfigurationException, msg.c_str());
-            }
-            else
-            {
-                SCARoot = root;
-            }
- 
         }
 
         // ===================================================================
@@ -134,11 +162,23 @@ namespace tuscany
             
             if (instance == NULL) 
             {
-                instance = new SCARuntime();
-                
-                // load extensions
-                instance->loadExtensions();
-
+                if (installRoot == "")
+                {
+                    // Get install dir from environment variable TUSCANY_SCACPP
+                    const char* root = getenv(TUSCANY_SCACPP);
+                    if (root != NULL)
+                    {
+                        loginfo("SCA runtime install root: %s", root);
+                        installRoot = root;
+                    }
+                    else
+                    {
+                        string msg = TUSCANY_SCACPP;
+                        msg += " environment variable not set";
+                        throwException(SystemConfigurationException, msg.c_str());
+                    }
+                }
+            
                 if (systemRoot == "")
                 {
                     // Get root from environment variable TUSCANY_SCACPP_ROOT
@@ -155,6 +195,7 @@ namespace tuscany
                         throwException(SystemConfigurationException, msg.c_str());
                     } 
 
+                    loginfo("System root: %s", systemRootEnv);
                     systemRoot = systemRootEnv;
                 }
                 if (systemPath == "")
@@ -164,9 +205,17 @@ namespace tuscany
                     char* systemPathEnv = getenv(TUSCANY_SCACPP_PATH);
                     if (systemPathEnv != 0)
                     {
+                        loginfo("System path: %s", systemPathEnv);
                         systemPath = systemPathEnv;
                     }
                 }
+
+                // Create new instance of the runtime
+                instance = new SCARuntime();
+                
+                // load extensions
+                instance->loadExtensions();
+
             }
             
             return instance;
@@ -214,7 +263,7 @@ namespace tuscany
         {
             logentry();
 
-            string extensionsRoot = SCARoot + "/extensions";
+            string extensionsRoot = installRoot + "/extensions";
 
 #if defined(WIN32)  || defined (_WINDOWS)
             string pattern = "*.dll";
