@@ -367,7 +367,7 @@ namespace tuscany
                                 }
                             } catch (SDORuntimeException& ex) 
                             {
-                                logerror(0, "Unable to load file:%s", typeFileName.c_str());
+                                logerror("Unable to load file:%s", typeFileName.c_str());
                                 throwException(SystemConfigurationException, ex);
                             }
                         }    
