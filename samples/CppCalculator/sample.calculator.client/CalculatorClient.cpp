@@ -24,9 +24,6 @@
 #include "osoa/sca/sca.h"
 using namespace osoa::sca;
 
-#include "tuscany/sca/core/TuscanyRuntime.h"
-using namespace tuscany::sca;
-
 #include <iostream>
 #include <stdlib.h>
 using namespace std;
