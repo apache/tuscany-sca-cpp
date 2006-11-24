@@ -51,7 +51,6 @@ using commonj::sdo_axiom::AxiomHelper;
 #include "tuscany/sca/model/WSDLOperation.h"
 #include "tuscany/sca/model/WSDLInterface.h" 
 #include "tuscany/sca/model/Interface.h" 
-#include "tuscany/sca/core/TuscanyRuntime.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Utils.h"
 #include "Axis2Utils.h"
@@ -131,17 +130,16 @@ Axis2Service_free(axis2_svc_skeleton_t *svc_skeleton,
     return AXIS2_SUCCESS; 
 }
 
-/**
- * Initialize the Tuscany runtime
- */
  
-static string systemRoot = "";
-static string componentName = "";
-static string serviceName = "";
-static TuscanyRuntime* tuscanyRuntime = NULL;
+static SCARuntime* scaRuntime = NULL;
 static CompositeService* compositeService = NULL;
 
-void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *component, const char* service)
+static string serviceName = "";
+
+/**
+ * Initialize the SCA runtime
+ */
+static void initializeSCARuntime(const char* root, const char *component, const char* service)
 {
     logentry();
     loginfo("Root: %s, component: %s, service: %s", root, component, service);
@@ -152,6 +150,7 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
         bool restart = false;
         bool resolve = false;
 
+        string systemRoot = SCARuntime::getSystemRoot();
         if (systemRoot != root)
         {
             systemRoot = root;
@@ -159,6 +158,7 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
             resolve = true;
         }
 
+        string componentName = SCARuntime::getDefaultComponentName();
         if (componentName != component)
         {
             componentName = component;
@@ -171,33 +171,37 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
             resolve = true;
         }
         
-        if (tuscanyRuntime == NULL)
+        if (scaRuntime == NULL)
         {
-            loginfo("Creating new Tuscany runtime");
-            tuscanyRuntime = new TuscanyRuntime(componentName, systemRoot);
-            tuscanyRuntime->start();
+            loginfo("Creating new SCA runtime");
+            SCARuntime::setSystemRoot(systemRoot);
+            SCARuntime::setSystemPath("");
+            SCARuntime::setDefaultComponentName(componentName);
+            scaRuntime = SCARuntime::getInstance();
         }
         else if (restart)
         {
-            loginfo("Restarting Tuscany runtime");
-            tuscanyRuntime->stop();
-            tuscanyRuntime->setDefaultComponentName(componentName);
-            tuscanyRuntime->setSystemRoot(systemRoot);
-            tuscanyRuntime->start();
+            loginfo("Restarting SCA runtime");
+            SCARuntime::releaseInstance();
+            SCARuntime::setSystemRoot(systemRoot);
+            SCARuntime::setSystemPath("");
+            SCARuntime::setDefaultComponentName(componentName);
+            scaRuntime = SCARuntime::getInstance();
         }
         else if (resolve)
         {
-            loginfo("Refreshing Tuscany runtime");
-            tuscanyRuntime->stop();
-            tuscanyRuntime->setDefaultComponentName(componentName);
-            tuscanyRuntime->setSystemRoot(systemRoot);
-            tuscanyRuntime->start();
+            loginfo("Refreshing SCA runtime");
+            SCARuntime::releaseInstance();
+            SCARuntime::setSystemRoot(systemRoot);
+            SCARuntime::setSystemPath("");
+            SCARuntime::setDefaultComponentName(componentName);
+            scaRuntime = SCARuntime::getInstance();
         }
 
         if (compositeService == NULL)
         {
             loginfo("Resolving composite: %s, service: %s", componentName.c_str(), serviceName.c_str());
-            Component* component = SCARuntime::getInstance()->getDefaultComponent();
+            Component* component = scaRuntime->getDefaultComponent();
             if (component == NULL)
             {
                 string msg = "Component not found " + componentName;
@@ -216,7 +220,7 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
             if (resolve)
             {
                 loginfo("Switching to composite: %s, service: %s", componentName.c_str(), serviceName.c_str());
-                Component* component = SCARuntime::getInstance()->getDefaultComponent();
+                Component* component = scaRuntime->getDefaultComponent();
                 if (component == NULL)
                 {
                     string msg = "Component not found " + componentName;
@@ -238,7 +242,7 @@ void initTuscanyRuntime(const axis2_env_t *env, const char* root, const char *co
     }
     catch(TuscanyRuntimeException &ex)
     {
-        logerror("Failed to initialize Tuscany runtime: %s", (const char*)ex);
+        logerror("Failed to initialize SCA runtime: %s", (const char*)ex);
         throw;
     }  
 }
@@ -310,7 +314,7 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                             string component, service;
                             Utils::rTokeniseString("/", serviceParam, component, service);
                     
-                            initTuscanyRuntime(env, rootParam, component.c_str(), service.c_str());
+                            initializeSCARuntime(rootParam, component.c_str(), service.c_str());
                         }
                         else {
                             
@@ -347,19 +351,19 @@ Axis2Service_invoke(axis2_svc_skeleton_t *svc_skeleton,
                             loginfo("System root: %s, component name: %s, service name: %s, operation name: %s",
                                 rootParam, component.c_str(), service.c_str(), op_name.c_str());
                             
-                            initTuscanyRuntime(env, rootParam, component.c_str(), service.c_str());
+                            initializeSCARuntime(rootParam, component.c_str(), service.c_str());
                         }
     
                         if(!compositeService)
                         {
-                   		    logerror("Failed to initialize Tuscany runtime, could not initialize CompositeService");
+                   		    logerror("Failed to initialize SCA runtime, could not initialize CompositeService");
                             return 0;
                         }
     
                         DataFactoryPtr dataFactory = compositeService->getComposite()->getDataFactory();
                         if (dataFactory == 0)
                         {
-                            logerror("Failed to initialize Tuscany runtime, could not get DataFactory");
+                            logerror("Failed to initialize SCA runtime, could not get DataFactory");
                             return 0;
                         }
     
