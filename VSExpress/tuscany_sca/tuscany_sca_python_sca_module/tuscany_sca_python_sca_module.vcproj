@@ -121,6 +121,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="../../../runtime/extensions/python/src,../../../deploy/include,$(TUSCANY_SDOCPP)/include,$(PYTHON_HOME)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_PYTHON_SCA_MODULE_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -139,8 +140,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib tuscany_sca_python.lib $(NOINHERIT)"
+				OutputFile=".\Release\sca.pyd"
 				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib,..\..\..\deploy\extensions\python\lib,$(TUSCANY_SDOCPP)\lib,$(PYTHON_HOME)\libs"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -169,6 +173,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="..\..\..\runtime\extensions\python\deploymodule.bat ..\..\..\ Release"
 			/>
 		</Configuration>
 	</Configurations>
