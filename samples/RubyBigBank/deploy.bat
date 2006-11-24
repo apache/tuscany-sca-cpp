@@ -33,11 +33,12 @@ set destinationPath=%bbdir%\deploy
 set destinationPath=%1
 )
 
-if not exist %samplesdir%                      mkdir %samplesdir%
-if not exist %bbdir%                           mkdir %bbdir%
-if not exist %destinationPath%                 mkdir %destinationPath%
-if not exist %destinationPath%\bigbank.account mkdir %destinationPath%\bigbank.account
-if not exist %destinationPath%\bigbank.client  mkdir %destinationPath%\bigbank.client
+if not exist %samplesdir%                       mkdir %samplesdir%
+if not exist %bbdir%                            mkdir %bbdir%
+if not exist %destinationPath%                  mkdir %destinationPath%
+if not exist %destinationPath%\bigbank.account  mkdir %destinationPath%\bigbank.account
+if not exist %destinationPath%\bigbank.client   mkdir %destinationPath%\bigbank.client
+if not exist %destinationPath%\bigbank.wsclient mkdir %destinationPath%\bigbank.wsclient
 
 copy %sourcePath%\bigbank.account\*.rb        %destinationPath%\bigbank.account
 copy %sourcePath%\bigbank.account\*.composite %destinationPath%\bigbank.account
@@ -47,6 +48,11 @@ copy %sourcePath%\bigbank.account\*.bat       %destinationPath%\bigbank.account
 
 copy %sourcePath%\bigbank.client\*.rb         %destinationPath%\bigbank.client
 copy %sourcePath%\bigbank.client\*.bat        %destinationPath%\bigbank.client
+
+copy %sourcePath%\bigbank.wsclient\*.rb        %destinationPath%\bigbank.wsclient
+copy %sourcePath%\bigbank.wsclient\*.bat       %destinationPath%\bigbank.wsclient
+copy %sourcePath%\bigbank.wsclient\*.composite %destinationPath%\bigbank.wsclient
+copy %sourcePath%\bigbank.wsclient\*.wsdl      %destinationPath%\bigbank.wsclient
 
 copy %sourcePath%\*.composite   %destinationPath%
 
