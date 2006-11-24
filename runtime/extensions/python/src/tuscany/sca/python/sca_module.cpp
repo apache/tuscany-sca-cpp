@@ -19,9 +19,6 @@
 
 /* $Rev$ $Date$ */
 
-
-#include <Python.h>
-
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
@@ -43,6 +40,16 @@ using namespace commonj::sdo;
 #include <string>
 #include <iostream>
 using namespace std;
+
+// undefine _DEBUG so Python does not need it's debug dll
+#ifdef _DEBUG
+#undef _DEBUG
+#define _SCA_PYTHON_DEBUG
+#endif
+#include <Python.h>
+#ifdef _SCA_PYTHON_DEBUG
+#define _DEBUG
+#endif
 
 static PyObject* scaError;
 

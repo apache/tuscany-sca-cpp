@@ -45,16 +45,13 @@ if not exist %pythonextdir%\bin mkdir %pythonextdir%\bin
 if not exist %pythonextdir%\lib mkdir %pythonextdir%\lib
 if not exist %pythonextdir%\xsd mkdir %pythonextdir%\xsd
 
-del %pythonextdir%\bin\tuscany_sca_python.*
-del %pythonextdir%\lib\*.lib
+del %pythonextdir%\bin\sca.pyd
+del %pythonextdir%\bin\sca_proxy.py
 
-copy %srcdir%\deploy.cmd %pythonextdir%
-copy %srcdir%\..\xsd\*.* %pythonextdir%\xsd
+copy %inpath%\sca.pyd %pythonextdir%\bin
+copy %srcdir%\tuscany\sca\python\sca_proxy.py %pythonextdir%\bin
 
-copy %inpath%\tuscany_sca_python.lib %pythonextdir%\lib
-copy %inpath%\tuscany_sca_python.dll %pythonextdir%\bin\tuscany_sca_python.dll.disabled
-
-if exist %inpath%\tuscany_sca_python.pdb copy %inpath%\tuscany_sca_python.pdb %pythonextdir%\bin
+if exist %inpath%\sca.pdb copy %inpath%\sca.pdb %pythonextdir%\bin
 
 goto end
 :usage
