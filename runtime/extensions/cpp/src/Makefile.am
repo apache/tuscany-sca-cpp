@@ -33,6 +33,7 @@ tuscany/sca/cpp/CPPImplementationExtension.cpp \
 tuscany/sca/cpp/CPPInterfaceExtension.cpp \
 tuscany/sca/cpp/CPPServiceProxy.cpp \
 tuscany/sca/cpp/CPPServiceWrapper.cpp \
+tuscany/sca/cpp/TuscanyRuntime.cpp \
 tuscany/sca/cpp/model/CPPImplementation.cpp \
 tuscany/sca/cpp/model/CPPInterface.cpp \
 tuscany/sca/cpp/model/CPPReferenceBinding.cpp \

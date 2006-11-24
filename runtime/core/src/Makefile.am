@@ -32,7 +32,6 @@ tuscany/sca/core/Operation.cpp \
 tuscany/sca/core/SCARuntime.cpp \
 tuscany/sca/core/ServiceProxy.cpp \
 tuscany/sca/core/ServiceWrapper.cpp \
-tuscany/sca/core/TuscanyRuntime.cpp \
 tuscany/sca/extension/ImplementationExtension.cpp \
 tuscany/sca/extension/InterfaceExtension.cpp \
 tuscany/sca/extension/ReferenceBindingExtension.cpp \
