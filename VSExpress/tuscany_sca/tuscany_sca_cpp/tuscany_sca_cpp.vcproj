@@ -466,6 +466,14 @@
 				RelativePath="..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\CPPServiceWrapper.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\TuscanyRuntime.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\cpp\src\tuscany\sca\cpp\TuscanyRuntime.h"
+				>
+			</File>
 			<Filter
 				Name="model"
 				>

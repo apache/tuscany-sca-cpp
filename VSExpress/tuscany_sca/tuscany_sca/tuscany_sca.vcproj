@@ -327,32 +327,6 @@
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\ServiceWrapper.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\TuscanyRuntime.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\TuscanyRuntime.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="model"

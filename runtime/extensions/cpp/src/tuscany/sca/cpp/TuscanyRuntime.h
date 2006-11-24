@@ -22,7 +22,8 @@
 #ifndef tuscany_sca_cpp_tuscanyruntime_h
 #define tuscany_sca_cpp_tuscanyruntime_h
 
-#include "tuscany/sca/export.h"
+#include "osoa/sca/export.h"
+
 #include <string>
 using std::string;
 
@@ -36,7 +37,7 @@ namespace tuscany
             /**
              * A singleton which represents the executing SCA runtime.
              */
-            class SCA_API TuscanyRuntime 
+            class SCA_CPP_API TuscanyRuntime 
             {
             public:
                 /**
