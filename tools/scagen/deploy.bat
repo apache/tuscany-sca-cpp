@@ -34,7 +34,7 @@ if not exist %deploydir%\bin mkdir %deploydir%\bin
 
 
 copy %srcdir%\scagen.jar  %deploydir%\bin
-copy %srcdir%\scagen.cmd  %deploydir%\bin
+copy %srcdir%\scagen.bat  %deploydir%\bin
 
 goto end
 :usage

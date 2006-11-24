@@ -60,7 +60,7 @@ if not exist %svcsdir% mkdir %svcsdir%
 if not exist %svcsdir%\tuscany mkdir %svcsdir%\tuscany
 
 copy %srcdir%\axis2.xml %svcextdir%
-copy %srcdir%\deploy.cmd %svcextdir%
+copy %srcdir%\deploy.bat %svcextdir%
 copy %srcdir%\services.xml %svcsdir%\tuscany
 copy %inpath%\%libname%.dll %svcsdir%\tuscany
 if exist %inpath%\%libname%.pdb copy %inpath%\%libname%.pdb %svcsdir%\tuscany

@@ -35,7 +35,7 @@ Running the scagen tool
 
 The scagen tool user interface is quite basic in this initial release. 
 It can be run from the scagen.jar file using "java -jar scagen.jar" 
-or from small scripts - scagen.cmd for Windows and scagen.sh for Unix. 
+or from small scripts - scagen.bat for Windows and scagen.sh for Unix. 
 The parameters are: 
  -dir <the path to the sca composite root directory>
  -output <the path to an output directory where the generated file will be placed>
