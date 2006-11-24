@@ -18,6 +18,12 @@
 
 setlocal
 
+set config=Release
+if .Debug == .%1 (
+echo Building Debug version
+set config=Debug
+)
+
 if "%TUSCANY_SDOCPP%" == "" (
 echo "TUSCANY_SDOCPP not set"
 goto end
@@ -38,7 +44,7 @@ echo using Axis2C: %AXIS2C_HOME%"
 
 call vcvars32.bat
 cd VSExpress
-call vcbuild CppBigBank.sln "Release|Win32"
+call vcbuild CppBigBank.sln "%config%|Win32"
 
 :end
 endlocal

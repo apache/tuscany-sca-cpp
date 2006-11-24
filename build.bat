@@ -22,6 +22,12 @@
 
 echo building Tuscany SCA C++
 
+set config=Release
+if .Debug == .%1 (
+echo Building Debug version
+set config=Debug
+)
+
 if "%LIBXML2_HOME%" == "" (
 echo "LIBXML2_HOME not set"
 goto end
@@ -43,14 +49,14 @@ echo using Tuscany SDOCPP: %TUSCANY_SDOCPP%
 call vcvars32
 echo building Tuscany SCA C++ core + cpp and ws extensions
 cd vsexpress\tuscany_sca
-call vcbuild tuscany_sca.sln "Release|Win32"
+call vcbuild tuscany_sca.sln "%config%|Win32"
 
 if "%PYTHON_HOME%" == "" (
 echo PYTHON_HOME not set. Skipping build of Python extension
 goto pythonend
 )
 echo building Python extension
-call vcbuild tuscany_sca_python\tuscany_sca_python.vcproj "Release|Win32"
+call vcbuild tuscany_sca_python\tuscany_sca_python.vcproj "%config%|Win32"
 :pythonend
 
 if "%RUBY_HOME%" == "" (
@@ -58,7 +64,7 @@ echo RUBY_HOME not set. Skipping build of Ruby extension
 goto rubyend
 )
 echo building Ruby extension
-call vcbuild tuscany_sca_ruby\tuscany_sca_ruby.vcproj "Release|Win32"
+call vcbuild tuscany_sca_ruby\tuscany_sca_ruby.vcproj "%config%|Win32"
 :rubyend
 
 :end
