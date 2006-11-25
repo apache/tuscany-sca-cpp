@@ -18,8 +18,8 @@
 SUBDIRS = 
 
 BUILT_SOURCES = scagen_build
-EXTRA_DIST = build.xml scagen.sh scagen.cmd src META-INF
-bin_SCRIPTS = scagen.sh scagen.cmd
+EXTRA_DIST = build.xml scagen.sh src META-INF
+bin_SCRIPTS = scagen.sh
 
 scagen_build:
 	ant 
