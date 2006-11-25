@@ -46,7 +46,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.cmd -dir . -output . -verbose"
+				CommandLine="$(TUSCANY_SCACPP)/bin/scagen.bat -dir . -output . -verbose"
 				ExcludedFromBuild="TRUE"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
