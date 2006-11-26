@@ -82,9 +82,6 @@ namespace tuscany
             Axis2Service_init(axis2_svc_skeleton_t *svc_skeleton,
                                     const axis2_env_t *env);
             
-            axis2_svc_skeleton_t* AXIS2_CALL
-            axis2_Axis2Service_create(axis2_env_t *env);
-            
             axis2_svc_skeleton_t*
             axis2_Axis2Service_create(axis2_env_t *env)
             {

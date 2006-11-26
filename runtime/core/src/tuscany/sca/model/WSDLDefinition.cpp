@@ -347,7 +347,7 @@ namespace tuscany
                 DataObjectPtr service = 0;
 
                 // Find the binding
-                for (int m = 0; m < wsdlModels.size(); m++)
+                for (unsigned int m = 0; m < wsdlModels.size(); m++)
                 {
                     DataObjectList& serviceList = wsdlModels[m]->getList("service");
                     for (int i=0; i<serviceList.size(); i++)
@@ -379,7 +379,7 @@ namespace tuscany
                 Utils::rTokeniseString(":", bindingName, uri, name);
 
                 // Find the binding
-                for (int m = 0; m < wsdlModels.size(); m++)
+                for (unsigned int m = 0; m < wsdlModels.size(); m++)
                 {
                     DataObjectList& bindingList = wsdlModels[m]->getList("binding");
                     for (int i=0; i<bindingList.size(); i++)
@@ -410,7 +410,7 @@ namespace tuscany
                 Utils::rTokeniseString(":", portTypeName, uri, name);
 
                 // Find the binding
-                for (int m = 0; m < wsdlModels.size(); m++)
+                for (unsigned int m = 0; m < wsdlModels.size(); m++)
                 {
                     DataObjectList& portTypeList = wsdlModels[m]->getList("portType");
                     for (int i=0; i<portTypeList.size(); i++)
@@ -441,7 +441,7 @@ namespace tuscany
                 Utils::rTokeniseString(":", messageName, uri, name);
 
                 // Find the binding
-                for (int m = 0; m < wsdlModels.size(); m++)
+                for (unsigned int m = 0; m < wsdlModels.size(); m++)
                 {
                     DataObjectList& messageList = wsdlModels[m]->getList("message");
                     for (int i=0; i<messageList.size(); i++)

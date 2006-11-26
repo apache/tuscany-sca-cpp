@@ -115,7 +115,7 @@ namespace tuscany
                             binding->getEndpointName(),
                             operationName);
                     }
-                    catch(SystemConfigurationException& ex)
+                    catch(SystemConfigurationException&)
                     {   
                         throw;
                     }
@@ -143,7 +143,7 @@ namespace tuscany
                             {
                                 wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), operationName);
                             }
-                            catch(SystemConfigurationException& ex)
+                            catch(SystemConfigurationException&)
                             {   
                                 throw;
                             }
@@ -321,7 +321,7 @@ namespace tuscany
                         /*
                          * This code deals with sending xsd:any elements
                          */
-                        for (int i=0; i<operation.getNParms(); i++)
+                        for (unsigned int i=0; i<operation.getNParms(); i++)
                         {
                             ostringstream pname;
                             pname << "param" << (i+1);
@@ -408,7 +408,7 @@ namespace tuscany
                 else {
                     
                     // Each parameter in the operation should be a property on the request dataobject
-                    for (int i=0; i<operation.getNParms(); i++)
+                    for (unsigned int i=0; i<operation.getNParms(); i++)
                     {
                         const Operation::Parameter& parm = operation.getParameter(i);
                         switch(parm.getType())

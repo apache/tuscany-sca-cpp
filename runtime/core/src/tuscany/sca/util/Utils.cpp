@@ -310,7 +310,7 @@ namespace tuscany
                             return false;
                         }
 
-                        for (int i = 0; i < sequence1->size(); i++)
+                        for (unsigned int i = 0; i < sequence1->size(); i++)
                         {
                             if (sequence1->isText(i) != sequence2->isText(i))
                             {
@@ -439,7 +439,7 @@ namespace tuscany
                     SequencePtr sequence = dataObject->getSequence();
                     if (sequence != NULL)
                     {
-                        for (int i = 0; i < sequence->size(); i++)
+                        for (unsigned int i = 0; i < sequence->size(); i++)
                         {
                             if (sequence->isText(i))
                             {

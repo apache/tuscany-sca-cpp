@@ -337,7 +337,7 @@ namespace tuscany
                 {
                     throwException(ServiceInvocationException, ex);                         
                 }  
-                catch(TuscanyRuntimeException& ex)
+                catch(TuscanyRuntimeException&)
                 {
                   throw;   
                 }  

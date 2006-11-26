@@ -47,7 +47,11 @@ namespace tuscany
                 setLogWriter(0);
                 
                 pid = new char[10];
+#if defined(WIN32)  || defined (_WINDOWS)
+                sprintf(pid, "%d", _getpid());
+#else
                 sprintf(pid, "%d", getpid());
+#endif
             }
             return logWriter;
         }
