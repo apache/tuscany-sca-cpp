@@ -40,7 +40,7 @@ class StockQuoteServiceImpl
         
       rescue
         # offline or StockQuote web service is down
-        price = 80.0
+        price = 95.0
       end
     end  
     
