@@ -18,15 +18,23 @@
    under the License.
 -->
 
-<composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-	name="sample.calculator.app">
-	
-        <component name="sample.calculator.CalculatorComponent">
-        	<implementation.composite name="sample.calculator" />
-       	</component>
+<composite xmlns="http://www.osoa.org/xmlns/sca/1.0" 
+	name="sample.calculator">
 
-        <component name="sample.calculator.CalculatorRestClientComponent">
-        	<implementation.composite name="sample.calculator.restclient" />
-       	</component>
+	<service name="CalculatorService">
+		<interface.rest/>
+		<binding.rest/>
+		<reference>CalculatorComponent</reference>
+	</service>
+
+	<component name="CalculatorComponent">
+		<implementation.ruby script="CalculatorImpl.rb" class="CalculatorImpl"/>
+	    <reference name="divideService">DivideComponent</reference>
+	</component>
+        
+	<component name="DivideComponent">
+		<implementation.ruby script="DivideImpl.rb" class="DivideImpl"/>
+		<property name="round">true</property>
+	</component>
 
 </composite>

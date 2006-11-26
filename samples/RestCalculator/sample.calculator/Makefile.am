@@ -16,8 +16,9 @@
 #  under the License.
 
 deploydir=$(prefix)/samples/RestCalculator/deploy
-SUBDIRS = sample.calculator sample.calculator.restclient httpserver
+compositedir=$(deploydir)/sample.calculator
 
-EXTRA_DIST = *.composite README.html
-deploy_DATA = *.composite
+composite_SCRIPTS = runwsserver.sh
 
+composite_DATA = *.composite *.rb
+EXTRA_DIST = *.composite *.rb runwsserver.sh

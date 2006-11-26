@@ -157,7 +157,9 @@ AC_CONFIG_FILES([Makefile
                  PythonCalculator/sample.calculator.client/Makefile
                  PythonCalculator/sample.calculator.wsclient/Makefile
                  RestCalculator/Makefile
+                 RestCalculator/sample.calculator/Makefile
                  RestCalculator/sample.calculator.restclient/Makefile
+                 RestCalculator/httpserver/Makefile
                  CppBigBank/Makefile
                  CppBigBank/bigbank.account/Makefile
                  CppBigBank/bigbank.client/Makefile

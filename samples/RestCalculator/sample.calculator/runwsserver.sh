@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,9 +17,29 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestCalculator/deploy
-SUBDIRS = sample.calculator sample.calculator.restclient httpserver
+APFULLDIR=`pwd`
 
-EXTRA_DIST = *.composite README.html
-deploy_DATA = *.composite
+if [ x$TUSCANY_SCACPP = x ]; then
+echo "TUSCANY_SCACPP not set"
+exit;
+fi
+echo "Using SCA installed at $TUSCANY_SCACPP"
 
+if [ x$TUSCANY_SDOCPP = x ]; then
+echo "TUSCANY_SDOCPP not set"
+exit;
+fi
+echo "Using SDO installed at $TUSCANY_SDOCPP"
+
+if [ x$AXIS2C_HOME = x ]; then
+echo "AXIS2C_HOME not set"
+exit;
+fi
+echo "Using Axis2C installed at $AXIS2C_HOME"
+
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+
+export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
+
+cd $AXIS2C_HOME/bin
+./axis2_http_server
