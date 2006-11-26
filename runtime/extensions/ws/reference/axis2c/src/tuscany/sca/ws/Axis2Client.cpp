@@ -119,7 +119,6 @@ namespace tuscany
                     {   
                         throw;
                     }
-                    
                 }
                 else
                 {
@@ -167,6 +166,11 @@ namespace tuscany
                     wsdlOperation.setEncoded(false);
                     wsdlOperation.setInputType(string("http://tempuri.org") + "#" + operationName);
                     wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + operationName + "Response");
+                }
+                else if (!wsdlOperation.isDocumentStyle() || !wsdlOperation.isWrappedStyle())
+                {
+                    throwException(ServiceInvocationException,
+                        "Only wrapped document style WSDL operations are currentlysupported");
                 }
                     
                 // Get the target endpoint address
@@ -275,234 +279,224 @@ namespace tuscany
 
                 axiom_node_t* request_node = NULL;
                 
-                // map the operation request to the wsdl
-                if (wsdlOperation.isDocumentStyle())
+                // Build up the payload as an SDO
+                
+                // Get the data factory for the composite (it will already have the typecreates loaded for the xsds)
+                DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
+                
+                DataObjectPtr inputDataObject;
+                try
                 {
-                    // Document style 
-                    // only support single part messages - WS-I compliant
                     
-                    // Build up the payload as an SDO
-                    
-                    // Get the data factory for the composite (it will already have the typecreates loaded for the xsds)
-                    DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
-                    
-                    DataObjectPtr inputDataObject;
+                    // Create the input wrapper
+                    const Type& rootType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), "RootType");
+                    const Property& prop = rootType.getProperty(wsdlOperation.getInputTypeName().c_str());
+                    const Type& inputType = prop.getType();
+                    inputDataObject = dataFactory->create(inputType);
+                }
+                catch (SDORuntimeException&)
+                {
                     try
                     {
-                        
                         // Create the input wrapper
-                        const Type& rootType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), "RootType");
-                        const Property& prop = rootType.getProperty(wsdlOperation.getInputTypeName().c_str());
-                        const Type& inputType = prop.getType();
+                        const Type& inputType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), 
+                            wsdlOperation.getInputTypeName().c_str());
                         inputDataObject = dataFactory->create(inputType);
                     }
                     catch (SDORuntimeException&)
                     {
-                        try
-                        {
-                            // Create the input wrapper
-                            const Type& inputType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), 
-                                wsdlOperation.getInputTypeName().c_str());
-                            inputDataObject = dataFactory->create(inputType);
-                        }
-                        catch (SDORuntimeException&)
-                        {
-                            
-                            // The input wrapper type is not known, create an open DataObject 
-                            inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
-                        }
-                    }
-                            
-                    // Go through data object to set the input parameters
-                    PropertyList pl = inputDataObject->getType().getProperties();
-                
-                    if(pl.size() == 0)
-                    {
-                        if(inputDataObject->getType().isOpenType() && inputDataObject->getType().isDataObjectType())
-                        {
-                            /*
-                             * This code deals with sending xsd:any elements
-                             */
-                            for (int i=0; i<operation.getNParms(); i++)
-                            {
-                                ostringstream pname;
-                                pname << "param" << (i+1);
-                                DataObjectList& l = inputDataObject->getList(pname.str());
-                                
-                                const Operation::Parameter& parm = operation.getParameter(i);
-                                switch(parm.getType())
-                                {
-                                case Operation::BOOL: 
-                                    {
-                                        l.append(*(bool*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::SHORT: 
-                                    {
-                                        l.append(*(short*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::INT: 
-                                    {
-                                        l.append(*(long*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::LONG: 
-                                    {
-                                        l.append(*(long*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::USHORT: 
-                                    {
-                                        l.append(*(short*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::UINT: 
-                                    {
-                                        l.append(*(long*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::ULONG: 
-                                    {
-                                        l.append(*(long*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::FLOAT: 
-                                    {
-                                        l.append(*(float*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::DOUBLE: 
-                                    {
-                                        l.append(*(long double*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::LONGDOUBLE: 
-                                    {
-                                        l.append(*(long double*)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::CHARS: 
-                                    {
-                                        l.append(*(char**)parm.getValue());
-                                        break;
-                                    }
-                                case Operation::STRING: 
-                                    {
-                                        l.append((*(string*)parm.getValue()).c_str());
-                                        break;
-                                    }
-                                case Operation::DATAOBJECT: 
-                                    {
-                                        l.append(*(DataObjectPtr*)parm.getValue());
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        ostringstream msg;
-                                        msg << "Unsupported parameter type: " << parm.getType();
-                                        throwException(ServiceDataException, msg.str().c_str());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else {
                         
-                        // Each parameter in the operation should be a property on the request dataobject
+                        // The input wrapper type is not known, create an open DataObject 
+                        inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                    }
+                }
+                        
+                // Go through data object to set the input parameters
+                PropertyList pl = inputDataObject->getType().getProperties();
+            
+                if(pl.size() == 0)
+                {
+                    if(inputDataObject->getType().isOpenType() && inputDataObject->getType().isDataObjectType())
+                    {
+                        /*
+                         * This code deals with sending xsd:any elements
+                         */
                         for (int i=0; i<operation.getNParms(); i++)
                         {
+                            ostringstream pname;
+                            pname << "param" << (i+1);
+                            DataObjectList& l = inputDataObject->getList(pname.str());
+                            
                             const Operation::Parameter& parm = operation.getParameter(i);
                             switch(parm.getType())
                             {
                             case Operation::BOOL: 
                                 {
-                                    inputDataObject->setBoolean(i, *(bool*)parm.getValue());
+                                    l.append(*(bool*)parm.getValue());
                                     break;
                                 }
                             case Operation::SHORT: 
                                 {
-                                    inputDataObject->setShort(i, *(short*)parm.getValue());
+                                    l.append(*(short*)parm.getValue());
                                     break;
                                 }
                             case Operation::INT: 
                                 {
-                                    inputDataObject->setInteger(i, *(int*)parm.getValue());
+                                    l.append(*(long*)parm.getValue());
                                     break;
                                 }
                             case Operation::LONG: 
                                 {
-                                    inputDataObject->setLong(i, *(long*)parm.getValue());
+                                    l.append(*(long*)parm.getValue());
                                     break;
                                 }
                             case Operation::USHORT: 
                                 {
-                                    inputDataObject->setInteger(i, *(unsigned short*)parm.getValue());
+                                    l.append(*(short*)parm.getValue());
                                     break;
                                 }
                             case Operation::UINT: 
                                 {
-                                    inputDataObject->setInteger(i, *(unsigned int*)parm.getValue());
+                                    l.append(*(long*)parm.getValue());
                                     break;
                                 }
                             case Operation::ULONG: 
                                 {
-                                    inputDataObject->setInteger(i, *(unsigned long*)parm.getValue());
+                                    l.append(*(long*)parm.getValue());
                                     break;
                                 }
                             case Operation::FLOAT: 
                                 {
-                                    inputDataObject->setFloat(i, *(float*)parm.getValue());
+                                    l.append(*(float*)parm.getValue());
                                     break;
                                 }
                             case Operation::DOUBLE: 
                                 {
-                                    inputDataObject->setDouble(i, *(double*)parm.getValue());
+                                    l.append(*(long double*)parm.getValue());
                                     break;
                                 }
                             case Operation::LONGDOUBLE: 
                                 {
-                                    inputDataObject->setDouble(i, *(long double*)parm.getValue());
+                                    l.append(*(long double*)parm.getValue());
                                     break;
                                 }
                             case Operation::CHARS: 
                                 {
-                                    inputDataObject->setCString(i, *(char**)parm.getValue());
+                                    l.append(*(char**)parm.getValue());
                                     break;
                                 }
                             case Operation::STRING: 
                                 {
-                                    inputDataObject->setCString(i, (*(string*)parm.getValue()).c_str());
+                                    l.append((*(string*)parm.getValue()).c_str());
                                     break;
                                 }
                             case Operation::DATAOBJECT: 
                                 {
-                                    inputDataObject->setDataObject(i, *(DataObjectPtr*)parm.getValue());
+                                    l.append(*(DataObjectPtr*)parm.getValue());
                                     break;
                                 }
                             default:
-                                ostringstream msg;
-                                msg << "Unsupported parameter type: " << parm.getType();
-                                throwException(ServiceDataException, msg.str().c_str());
+                                {
+                                    ostringstream msg;
+                                    msg << "Unsupported parameter type: " << parm.getType();
+                                    throwException(ServiceDataException, msg.str().c_str());
+                                }
                             }
                         }
                     }
-                    
-                    // Create the Axiom object from the request dataobject
-                    AxiomHelper* axiomHelper = AxiomHelper::getHelper();
-                    request_node = axiomHelper->toAxiomNode(inputDataObject,
-                        wsdlOperation.getInputTypeUri().c_str(), wsdlOperation.getInputTypeName().c_str());
-                    AxiomHelper::releaseHelper(axiomHelper);
                 }
-                else
-                {
-                    // RPC
+                else {
+                    
+                    // Each parameter in the operation should be a property on the request dataobject
+                    for (int i=0; i<operation.getNParms(); i++)
+                    {
+                        const Operation::Parameter& parm = operation.getParameter(i);
+                        switch(parm.getType())
+                        {
+                        case Operation::BOOL: 
+                            {
+                                inputDataObject->setBoolean(i, *(bool*)parm.getValue());
+                                break;
+                            }
+                        case Operation::SHORT: 
+                            {
+                                inputDataObject->setShort(i, *(short*)parm.getValue());
+                                break;
+                            }
+                        case Operation::INT: 
+                            {
+                                inputDataObject->setInteger(i, *(int*)parm.getValue());
+                                break;
+                            }
+                        case Operation::LONG: 
+                            {
+                                inputDataObject->setLong(i, *(long*)parm.getValue());
+                                break;
+                            }
+                        case Operation::USHORT: 
+                            {
+                                inputDataObject->setInteger(i, *(unsigned short*)parm.getValue());
+                                break;
+                            }
+                        case Operation::UINT: 
+                            {
+                                inputDataObject->setInteger(i, *(unsigned int*)parm.getValue());
+                                break;
+                            }
+                        case Operation::ULONG: 
+                            {
+                                inputDataObject->setInteger(i, *(unsigned long*)parm.getValue());
+                                break;
+                            }
+                        case Operation::FLOAT: 
+                            {
+                                inputDataObject->setFloat(i, *(float*)parm.getValue());
+                                break;
+                            }
+                        case Operation::DOUBLE: 
+                            {
+                                inputDataObject->setDouble(i, *(double*)parm.getValue());
+                                break;
+                            }
+                        case Operation::LONGDOUBLE: 
+                            {
+                                inputDataObject->setDouble(i, *(long double*)parm.getValue());
+                                break;
+                            }
+                        case Operation::CHARS: 
+                            {
+                                inputDataObject->setCString(i, *(char**)parm.getValue());
+                                break;
+                            }
+                        case Operation::STRING: 
+                            {
+                                inputDataObject->setCString(i, (*(string*)parm.getValue()).c_str());
+                                break;
+                            }
+                        case Operation::DATAOBJECT: 
+                            {
+                                inputDataObject->setDataObject(i, *(DataObjectPtr*)parm.getValue());
+                                break;
+                            }
+                        default:
+                            ostringstream msg;
+                            msg << "Unsupported parameter type: " << parm.getType();
+                            throwException(ServiceDataException, msg.str().c_str());
+                        }
+                    }
                 }
                 
+                // Create the Axiom object from the request dataobject
+                AxiomHelper* axiomHelper = AxiomHelper::getHelper();
+                request_node = axiomHelper->toAxiomNode(inputDataObject,
+                    wsdlOperation.getInputTypeUri().c_str(), wsdlOperation.getInputTypeName().c_str());
+                AxiomHelper::releaseHelper(axiomHelper);
+
                 char* str =  AXIOM_NODE_TO_STRING(request_node, env);
                 loginfo("Sending Axis2 OM: %s ",  str); 
                 
                 return request_node;
+                
              }
              
              void Axis2Client::setReturn(axiom_node_t* ret_node,
@@ -512,255 +506,234 @@ namespace tuscany
              {	
                 logentry();
                  
-                 if (wsdlOperation.isDocumentStyle())
-                 {
-                     // Document style 
-                    DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
+                DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
 
-                    // Get the AXIOM node representing the SOAP Body 
-                    axiom_node_t* body = AXIOM_NODE_GET_PARENT(ret_node, env);
-                     
-                    // Convert the AXIOM node to an SDO DataObject
-                    char* str = NULL;
-                    str = AXIOM_NODE_TO_STRING(body, env);
-                    if (str)
-                    {
-                        loginfo("Received Axis2 OM: %s ",  str); 
-                    }
-                    
-                    // Convert the SOAP body to an SDO DataObject
-                    AxiomHelper* axiomHelper = AxiomHelper::getHelper();
-                    DataObjectPtr outputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
-                    AxiomHelper::releaseHelper(axiomHelper);
-                    
-                    if(!outputBodyDataObject)
-                    {
-                        string msg = "Could not convert Axis2 OM node to SDO";
-                        throwException(ServiceInvocationException, msg.c_str());
-                    }
-                    
-                    XMLHelperPtr xmlHelper = compositeReference->getComposite()->getXMLHelper();
+                // Get the AXIOM node representing the SOAP Body 
+                axiom_node_t* body = AXIOM_NODE_GET_PARENT(ret_node, env);
+                 
+                // Convert the AXIOM node to an SDO DataObject
+                char* str = NULL;
+                str = AXIOM_NODE_TO_STRING(body, env);
+                if (str)
+                {
+                    loginfo("Received Axis2 OM: %s ",  str); 
+                }
+                
+                // Convert the SOAP body to an SDO DataObject
+                AxiomHelper* axiomHelper = AxiomHelper::getHelper();
+                DataObjectPtr outputBodyDataObject = axiomHelper->toSdo(body, dataFactory);
+                AxiomHelper::releaseHelper(axiomHelper);
+                
+                if(!outputBodyDataObject)
+                {
+                    string msg = "Could not convert Axis2 OM node to SDO";
+                    throwException(ServiceInvocationException, msg.c_str());
+                }
+                
+                XMLHelperPtr xmlHelper = compositeReference->getComposite()->getXMLHelper();
 
-                    // Get the first body part representing the doc-lit-wrapped wrapper element
-                    DataObjectPtr outputDataObject = NULL; 
-                    PropertyList bpl = outputBodyDataObject->getInstanceProperties();
-                    if (bpl.size()!=0)
+                // Get the first body part representing the doc-lit-wrapped wrapper element
+                DataObjectPtr outputDataObject = NULL; 
+                PropertyList bpl = outputBodyDataObject->getInstanceProperties();
+                if (bpl.size()!=0)
+                {
+                    if (bpl[0].isMany())
                     {
-                        if (bpl[0].isMany())
-                        {
-                            DataObjectList& parts = outputBodyDataObject->getList((unsigned int)0);
-                            outputDataObject = parts[0];
-                        }
-                        else
-                        {
-                            outputDataObject = outputBodyDataObject->getDataObject(bpl[0]);
-                        }
-                    }
-                    if (outputDataObject == NULL)
-                    {
-                        string msg = "Could not convert Axis2 body part to SDO";
-                        throwException(ServiceInvocationException, msg.c_str());
-                    }
-
-                    PropertyList pl = outputDataObject->getType().getProperties();
-                    if (pl.size() == 0)
-                    {
-                        if (outputDataObject->getType().isOpenType() && outputDataObject->getType().isDataObjectType())
-                        {
-                            SequencePtr sequence = outputDataObject->getSequence();
-                            if (sequence != NULL && sequence->size() != 0)
-                            {
-                                // Return a text element        
-                                if (sequence->isText(0))
-                                {                                        
-                                    string* stringData = new string(sequence->getCStringValue(0));
-                                    operation.setReturnValue(stringData);
-                                }
-                                else
-                                {
-                                    // Return a DataObject representing a complex element
-                                    DataObjectPtr *dataObjectData = new DataObjectPtr;
-                                    *dataObjectData = sequence->getDataObjectValue(0);
-                                    if(!*dataObjectData)
-                                    {
-                                        loginfo("Null DataObject return value");
-                                    }
-                                    operation.setReturnValue(dataObjectData);
-                                }
-                            }
-                        }
+                        DataObjectList& parts = outputBodyDataObject->getList((unsigned int)0);
+                        outputDataObject = parts[0];
                     }
                     else
                     {
-                        const Property* p = &pl[0];
+                        outputDataObject = outputBodyDataObject->getDataObject(bpl[0]);
+                    }
+                }
+                if (outputDataObject == NULL)
+                {
+                    string msg = "Could not convert Axis2 body part to SDO";
+                    throwException(ServiceInvocationException, msg.c_str());
+                }
 
-                        switch(pl[0].getTypeEnum())
+                PropertyList pl = outputDataObject->getType().getProperties();
+                if (pl.size() == 0)
+                {
+                    if (outputDataObject->getType().isOpenType() && outputDataObject->getType().isDataObjectType())
+                    {
+                        SequencePtr sequence = outputDataObject->getSequence();
+                        if (sequence != NULL && sequence->size() != 0)
                         {
-                        case Type::BooleanType:
-                            {
-                                bool* boolData = new bool;
-                                *boolData = outputDataObject->getBoolean(pl[0]);
-                                operation.setReturnValue(boolData);
-                            }
-                            break;
-                        case Type::ByteType:
-                            {
-                                char* byteData = new char;
-                                *byteData = outputDataObject->getByte(pl[0]);
-                                operation.setReturnValue(byteData);
-                            }
-                            break;
-                        case Type::BytesType:
-                            {
-                                int len = outputDataObject->getLength(pl[0]);
-                                char** bytesData = new char*;
-                                *bytesData = new char[len+1];
-                                int bytesWritten = outputDataObject->getBytes(pl[0], *bytesData, len);
-                                // Ensure the bytes end with the null char. Not sure if this is neccessary
-                                if(bytesWritten <= len)
-                                {
-                                    (*bytesData)[bytesWritten] = 0;
-                                }
-                                else
-                                {
-                                    (*bytesData)[len] = 0;
-                                }
-                                //printf("outputDataObject has BytesType named %s with length %d\n", name, bytesWritten);
-                                operation.setReturnValue(bytesData);
-                            }
-                            break;
-                        case Type::CharacterType:
-                            {
-                                // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
-                                wchar_t* charData = new wchar_t;
-                                *charData = outputDataObject->getCharacter(pl[0]);
-                                operation.setReturnValue(charData);
-                            }
-                            break;
-                        case Type::DoubleType:
-                            {
-                                long double* doubleData = new long double;
-                                *doubleData = outputDataObject->getDouble(pl[0]);
-                                operation.setReturnValue(doubleData);
-                            }
-                            break;
-                        case Type::FloatType:
-                            {
-                                float* floatData = new float;
-                                *floatData = outputDataObject->getFloat(pl[0]);
-                                operation.setReturnValue(floatData); 
-                            }
-                            break;
-                        case Type::IntegerType:
-                            {
-                                long* intData = new long;
-                                *intData = outputDataObject->getInteger(pl[0]);
-                                operation.setReturnValue(intData);
-                            }
-                            break;
-                        case Type::ShortType:
-                            {
-                                short* shortData = new short;
-                                *shortData = outputDataObject->getShort(pl[0]);
-                                operation.setReturnValue(shortData);
-                            }
-                            break;
-                        case Type::StringType:
-                            {
-                                string* stringData = new string(outputDataObject->getCString(pl[0]));
+                            // Return a text element        
+                            if (sequence->isText(0))
+                            {                                        
+                                string* stringData = new string(sequence->getCStringValue(0));
                                 operation.setReturnValue(stringData);
                             }
-                            break;
-                        case Type::DataObjectType:
+                            else
                             {
-                                DataObjectPtr* dataObjectData = new DataObjectPtr;
-                                *dataObjectData = outputDataObject->getDataObject(pl[0]);
+                                // Return a DataObject representing a complex element
+                                DataObjectPtr *dataObjectData = new DataObjectPtr;
+                                *dataObjectData = sequence->getDataObjectValue(0);
                                 if(!*dataObjectData)
                                 {
                                     loginfo("Null DataObject return value");
                                 }
                                 operation.setReturnValue(dataObjectData);
                             }
-                            break;
-                        case Type::OpenDataObjectType:
-                            {         
-                                /*
-                                 * This code deals with xsd:any element parameters
-                                 */
-                
-                                DataObjectList& dataObjectList = outputDataObject->getList(pl[0]);
-                                
-                                for(int j=0; j<dataObjectList.size(); j++)
+                        }
+                    }
+                }
+                else
+                {
+                    const Property* p = &pl[0];
+
+                    switch(pl[0].getTypeEnum())
+                    {
+                    case Type::BooleanType:
+                        {
+                            bool* boolData = new bool;
+                            *boolData = outputDataObject->getBoolean(pl[0]);
+                            operation.setReturnValue(boolData);
+                        }
+                        break;
+                    case Type::ByteType:
+                        {
+                            char* byteData = new char;
+                            *byteData = outputDataObject->getByte(pl[0]);
+                            operation.setReturnValue(byteData);
+                        }
+                        break;
+                    case Type::BytesType:
+                        {
+                            int len = outputDataObject->getLength(pl[0]);
+                            char** bytesData = new char*;
+                            *bytesData = new char[len+1];
+                            int bytesWritten = outputDataObject->getBytes(pl[0], *bytesData, len);
+                            // Ensure the bytes end with the null char. Not sure if this is neccessary
+                            if(bytesWritten <= len)
+                            {
+                                (*bytesData)[bytesWritten] = 0;
+                            }
+                            else
+                            {
+                                (*bytesData)[len] = 0;
+                            }
+                            //printf("outputDataObject has BytesType named %s with length %d\n", name, bytesWritten);
+                            operation.setReturnValue(bytesData);
+                        }
+                        break;
+                    case Type::CharacterType:
+                        {
+                            // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
+                            wchar_t* charData = new wchar_t;
+                            *charData = outputDataObject->getCharacter(pl[0]);
+                            operation.setReturnValue(charData);
+                        }
+                        break;
+                    case Type::DoubleType:
+                        {
+                            long double* doubleData = new long double;
+                            *doubleData = outputDataObject->getDouble(pl[0]);
+                            operation.setReturnValue(doubleData);
+                        }
+                        break;
+                    case Type::FloatType:
+                        {
+                            float* floatData = new float;
+                            *floatData = outputDataObject->getFloat(pl[0]);
+                            operation.setReturnValue(floatData); 
+                        }
+                        break;
+                    case Type::IntegerType:
+                        {
+                            long* intData = new long;
+                            *intData = outputDataObject->getInteger(pl[0]);
+                            operation.setReturnValue(intData);
+                        }
+                        break;
+                    case Type::ShortType:
+                        {
+                            short* shortData = new short;
+                            *shortData = outputDataObject->getShort(pl[0]);
+                            operation.setReturnValue(shortData);
+                        }
+                        break;
+                    case Type::StringType:
+                        {
+                            string* stringData = new string(outputDataObject->getCString(pl[0]));
+                            operation.setReturnValue(stringData);
+                        }
+                        break;
+                    case Type::DataObjectType:
+                        {
+                            DataObjectPtr* dataObjectData = new DataObjectPtr;
+                            *dataObjectData = outputDataObject->getDataObject(pl[0]);
+                            if(!*dataObjectData)
+                            {
+                                loginfo("Null DataObject return value");
+                            }
+                            operation.setReturnValue(dataObjectData);
+                        }
+                        break;
+                    case Type::OpenDataObjectType:
+                        {         
+                            /*
+                             * This code deals with xsd:any element parameters
+                             */
+            
+                            DataObjectList& dataObjectList = outputDataObject->getList(pl[0]);
+                            
+                            for(int j=0; j<dataObjectList.size(); j++)
+                            {
+                                DataObjectPtr dob = dataObjectList[j];
+                                if(!dob)
                                 {
-                                    DataObjectPtr dob = dataObjectList[j];
-                                    if(!dob)
+                                    DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                    *dataObjectData = NULL;
+                                    operation.setReturnValue(dataObjectData);
+                                    loginfo("Null OpenDataObject return value");
+                                }
+                                else 
+                                {
+                                    
+                                    SequencePtr sequence = dob->getSequence();
+                                    if (sequence->size()!=0)
                                     {
-                                        DataObjectPtr* dataObjectData = new DataObjectPtr;
-                                        *dataObjectData = NULL;
-                                        operation.setReturnValue(dataObjectData);
-                                        loginfo("Null OpenDataObject return value");
-                                    }
-                                    else 
-                                    {
-                                        
-                                        SequencePtr sequence = dob->getSequence();
-                                        if (sequence->size()!=0)
-                                        {
-                                            // Return a text element        
-                                            if (sequence->isText(0))
-                                            {                                        
-                                                string* stringData = new string(sequence->getCStringValue(0));
-                                                operation.setReturnValue(stringData);
-                                            }
-                                            else
-                                            {
-                                                // Return a DataObject representing a complex element
-                                                DataObjectPtr *dataObjectData = new DataObjectPtr;
-                                                *dataObjectData = sequence->getDataObjectValue(0);
-                                                if(!*dataObjectData)
-                                                {
-                                                    loginfo("Null DataObject return value");
-                                                }
-                                                operation.setReturnValue(dataObjectData);
-                                            }
+                                        // Return a text element        
+                                        if (sequence->isText(0))
+                                        {                                        
+                                            string* stringData = new string(sequence->getCStringValue(0));
+                                            operation.setReturnValue(stringData);
                                         }
                                         else
                                         {
-                                            // Empty content, add an empty string
-                                            loginfo("Null OpenDataObject return value");
-                                            string *stringData = new string(""); 
-                                            operation.setReturnValue(stringData);
+                                            // Return a DataObject representing a complex element
+                                            DataObjectPtr *dataObjectData = new DataObjectPtr;
+                                            *dataObjectData = sequence->getDataObjectValue(0);
+                                            if(!*dataObjectData)
+                                            {
+                                                loginfo("Null DataObject return value");
+                                            }
+                                            operation.setReturnValue(dataObjectData);
                                         }
+                                    }
+                                    else
+                                    {
+                                        // Empty content, add an empty string
+                                        loginfo("Null OpenDataObject return value");
+                                        string *stringData = new string(""); 
+                                        operation.setReturnValue(stringData);
                                     }
                                 }
                             }
-                            break;
-                        case Type::DateType:
-                            logwarning("SDO DateType return values are not yet supported");
-                            break;
-                        case Type::LongType:
-                            logwarning("SDO LongType (int64_t) return values are not yet supported");
-                            break;
-                        case Type::UriType:
-                            logwarning("SDO UriType return values are not yet supported");
-                            break;
-                        case Type::BigDecimalType:
-                            logwarning("SDO BigDecimalType return values are not yet supported");
-                            break;
-                        case Type::BigIntegerType:
-                            logwarning("SDO BigIntegerType return values are not yet supported");
-                            break;
-                        default:
-                            logwarning("Unknown SDO type has been found in return value. Unknown types are not yet supported");
-                            break;
-                        }         
+                        }
+                        break;
+                    default:
+                        {
+                            ostringstream msg;
+                            msg << "Unsupported result type: " << pl[0].getTypeEnum();
+                            throwException(SystemConfigurationException, msg.str().c_str());
+                        }
                     }
-                    
-                 }
-                 else
-                 {
-                     // RPC
-                 }
+                }
              }
              
         } // End namespace ws
