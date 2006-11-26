@@ -92,6 +92,12 @@ namespace tuscany
              * Retrieves the logging level set as an environment variable.
              */
             static int setLogging();
+            
+            /**
+             * Message buffer
+             */
+            static char messageBuffer[4096];
+            
         };
         
         class LogEntry

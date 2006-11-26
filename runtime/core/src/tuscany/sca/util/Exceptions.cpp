@@ -296,19 +296,5 @@ namespace tuscany
             return except.PrintSelf(os);
         } // end ostream operator <<
 
-        SCA_API TuscanyRuntimeException::operator std::string() const
-        {
-            ostringstream os;
-            os << *this;
-            return os.str();
-        }
-        
-        SCA_API TuscanyRuntimeException::operator const char*() const
-        {
-            ostringstream os;
-            os << *this;
-            return os.str().c_str();
-        }
-        
     } // End namespace sca
 } // End namespace tuscany

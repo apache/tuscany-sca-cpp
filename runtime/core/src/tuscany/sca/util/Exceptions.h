@@ -128,9 +128,6 @@ namespace tuscany
              */
             SCA_API friend std::ostream& operator<< (std::ostream &os, const TuscanyRuntimeException &except);
             
-            operator std::string() const;
-            operator const char*() const;
-
         protected:
             
         private:
