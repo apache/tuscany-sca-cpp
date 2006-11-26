@@ -29,11 +29,20 @@ class StockQuoteServiceImpl
 
   def getQuote(symbol)
     print "Ruby - StockQuoteServiceImpl.getQuote ", symbol, "\n"
-    
-    result = @webService.GetQuote(symbol)
-    doc = Document.new(result)
-    
-    price = doc.root.elements["Stock"].elements["Last"].text;
+
+    price = 0
+    catch (:RuntimeError) do
+      begin
+      
+        result = @webService.GetQuote(symbol)
+        doc = Document.new(result)
+        price = doc.root.elements["Stock"].elements["Last"].text;
+        
+      rescue
+        # offline or StockQuote web service is down
+        price = 95.0
+      end
+    end  
     
     print "Ruby - stock price = ", price, "\n"
     
