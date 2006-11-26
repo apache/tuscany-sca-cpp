@@ -670,25 +670,13 @@ namespace tuscany
                         }
                     }
                     break;
-                case Type::DateType:
-                    logwarning("SDO DateType return values are not yet supported");
-                    break;
-                case Type::LongType:
-                    logwarning("SDO LongType (int64_t) return values are not yet supported");
-                    break;
-                case Type::UriType:
-                    logwarning("SDO UriType return values are not yet supported");
-                    break;
-                case Type::BigDecimalType:
-                    logwarning("SDO BigDecimalType return values are not yet supported");
-                    break;
-                case Type::BigIntegerType:
-                    logwarning("SDO BigIntegerType return values are not yet supported");
-                    break;
                 default:
-                    logwarning("Unknown SDO type has been found in return value. Unknown types are not yet supported");
-                    break;
-                }         
+                    {
+                        ostringstream msg;
+                        msg << "Unsupported result type: " << pl[i].getTypeEnum();
+                        throwException(ServiceDataException, msg.str().c_str());
+                    }
+                }
              }
              
         } // End namespace rest
