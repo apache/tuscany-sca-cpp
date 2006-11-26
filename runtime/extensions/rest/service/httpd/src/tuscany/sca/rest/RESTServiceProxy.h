@@ -25,6 +25,7 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/model/WSDLOperation.h"
 #include "model/RESTReferenceBinding.h"
 #include "commonj/sdo/SDO.h"
 
@@ -73,11 +74,11 @@ namespace tuscany
                 /**
                  * Invoke the specified operation
                  */
-                DataObjectPtr invoke(const string& operationName, DataObjectPtr inputDataObject);    
+                DataObjectPtr invoke(const WSDLOperation& wsdlOperation, DataObjectPtr inputDataObject);    
     
             private:
 
-                void setOutputData(Operation operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr);
+                void setOutputData(Operation& operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr);
                 
                 /**
                  * The target service wrapper
