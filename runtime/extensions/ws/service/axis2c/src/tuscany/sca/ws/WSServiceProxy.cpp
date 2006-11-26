@@ -121,9 +121,6 @@ namespace tuscany
                 WSReferenceBinding* referenceBinding = (WSReferenceBinding*)reference->getBinding();
                 DataFactoryPtr dataFactoryPtr = reference->getComponent()->getComposite()->getDataFactory();
                                     
-                bool documentStyle = wsdlOperation.isDocumentStyle();
-                bool wrappedStyle = wsdlOperation.isWrappedStyle();
-
                 const char* outputTypeURI = wsdlOperation.getOutputTypeUri().c_str();
                 const char* outputTypeName = wsdlOperation.getOutputTypeName().c_str();
 
@@ -133,262 +130,220 @@ namespace tuscany
                 loginfo("WSDLOperation outputType: %s#%s",
                     outputTypeURI, 
                     outputTypeName);
-                loginfo("WSDLOperation documentStyle: %d, wrapped: %d",        
-                    documentStyle,
-                    wrappedStyle);
                 
-                if (documentStyle)
+                try
                 {
-                    if (wrappedStyle)
+                    
+                    // Create new Operation object and set parameters and return value
+                    Operation operation(wsdlOperation.getOperationName().c_str());
+                
+                    // Go through the input data object to set the operation parameters
+                    PropertyList pl = inputDataObject->getInstanceProperties();
+                
+                    for(int i=0; i<pl.size(); i++)
                     {
-
-                        // Create new Operation object and set parameters and return value
-                        Operation operation(wsdlOperation.getOperationName().c_str());
-                    
-                        // Go through the input data object to set the operation parameters
-                        PropertyList pl = inputDataObject->getInstanceProperties();
-                    
-                        for(int i=0; i<pl.size(); i++)
+                        const char* name = pl[i].getName();
+                
+                        switch (pl[i].getTypeEnum()) 
                         {
-                            const char* name = pl[i].getName();
-                    
-                            switch (pl[i].getTypeEnum()) 
+                        case Type::BooleanType:
                             {
-                            case Type::BooleanType:
+                                bool* boolData = new bool;
+                                *boolData = inputDataObject->getBoolean(pl[i]);
+                                operation.addParameter(boolData);
+                            }
+                            break;
+                        case Type::ByteType:
+                            {
+                                char* byteData = new char;
+                                *byteData = inputDataObject->getByte(pl[i]);
+                                operation.addParameter(byteData);
+                            }
+                            break;
+                        case Type::BytesType:
+                            {
+                                int len = inputDataObject->getLength(pl[i]);
+                                char* bytesData = new char[len+1];
+                                int bytesWritten = inputDataObject->getBytes(pl[i], bytesData, len);
+                                // Ensure the bytes end with the null char. Not sure if this is neccessary
+                                if(bytesWritten <= len)
                                 {
-                                    bool* boolData = new bool;
-                                    *boolData = inputDataObject->getBoolean(pl[i]);
-                                    operation.addParameter(boolData);
+                                    bytesData[bytesWritten] = 0;
                                 }
-                                break;
-                            case Type::ByteType:
+                                else
                                 {
-                                    char* byteData = new char;
-                                    *byteData = inputDataObject->getByte(pl[i]);
-                                    operation.addParameter(byteData);
+                                    bytesData[len] = 0;
                                 }
-                                break;
-                            case Type::BytesType:
+                                operation.addParameter(&bytesData);
+                            }
+                            break;
+                        case Type::CharacterType:
+                            {
+                                // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
+                                wchar_t* charData = new wchar_t;
+                                *charData = inputDataObject->getCharacter(pl[i]);
+                                operation.addParameter(charData);
+                            }
+                            break;
+                        case Type::DoubleType:
+                            {
+                                long double* doubleData = new long double;
+                                *doubleData = inputDataObject->getDouble(pl[i]);
+                                operation.addParameter(doubleData);
+                            }
+                            break;
+                        case Type::FloatType:
+                            {
+                                float* floatData = new float;
+                                *floatData = inputDataObject->getFloat(pl[i]);
+                                operation.addParameter(floatData); 
+                            }
+                            break;
+                        case Type::IntegerType:
+                            {
+                                long* intData = new long;
+                                *intData = inputDataObject->getInteger(pl[i]);
+                                operation.addParameter(intData);
+                            }
+                            break;
+                        case Type::ShortType:
+                            {
+                                short* shortData = new short;
+                                *shortData = inputDataObject->getShort(pl[i]);
+                                operation.addParameter(shortData);
+                            }
+                            break;
+                        case Type::StringType:
+                            {
+                                string* stringData;
+                                if(inputDataObject->isSet(pl[i]))
                                 {
-                                    int len = inputDataObject->getLength(pl[i]);
-                                    char* bytesData = new char[len+1];
-                                    int bytesWritten = inputDataObject->getBytes(pl[i], bytesData, len);
-                                    // Ensure the bytes end with the null char. Not sure if this is neccessary
-                                    if(bytesWritten <= len)
-                                    {
-                                        bytesData[bytesWritten] = 0;
-                                    }
-                                    else
-                                    {
-                                        bytesData[len] = 0;
-                                    }
-                                    operation.addParameter(&bytesData);
+                                    stringData = new string(inputDataObject->getCString(pl[i]));                                        
                                 }
-                                break;
-                            case Type::CharacterType:
+                                else
                                 {
-                                    // This code should work but won't be used as there is no mapping from an XSD type to the SDO CharacterType
-                                    wchar_t* charData = new wchar_t;
-                                    *charData = inputDataObject->getCharacter(pl[i]);
-                                    operation.addParameter(charData);
+                                    // The data is not set, so pass an empty string as the parameter
+                                    stringData = new string();
                                 }
-                                break;
-                            case Type::DoubleType:
+                                operation.addParameter(stringData);
+                            }
+                            break;
+                        case Type::DataObjectType:
+                            {
+                                DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
+                                if(!dataObjectData)
                                 {
-                                    long double* doubleData = new long double;
-                                    *doubleData = inputDataObject->getDouble(pl[i]);
-                                    operation.addParameter(doubleData);
+                                    loginfo("Null DataObject parameter named %s", name);
                                 }
-                                break;
-                            case Type::FloatType:
+                                operation.addParameter(&dataObjectData);
+                            }
+                            break;
+                        case Type::OpenDataObjectType:
+                            {         
+                                /*
+                                 * This code deals with xsd:any element parameters
+                                 * Get each element as a DataObject and add in to the parameter list
+                                 */
+                
+                                DataObjectList& dataObjectList = inputDataObject->getList(pl[i]);
+                                
+                                for(int j=0; j<dataObjectList.size(); j++)
                                 {
-                                    float* floatData = new float;
-                                    *floatData = inputDataObject->getFloat(pl[i]);
-                                    operation.addParameter(floatData); 
-                                }
-                                break;
-                            case Type::IntegerType:
-                                {
-                                    long* intData = new long;
-                                    *intData = inputDataObject->getInteger(pl[i]);
-                                    operation.addParameter(intData);
-                                }
-                                break;
-                            case Type::ShortType:
-                                {
-                                    short* shortData = new short;
-                                    *shortData = inputDataObject->getShort(pl[i]);
-                                    operation.addParameter(shortData);
-                                }
-                                break;
-                            case Type::StringType:
-                                {
-                                    string* stringData;
-                                    if(inputDataObject->isSet(pl[i]))
-                                    {
-                                        stringData = new string(inputDataObject->getCString(pl[i]));                                        
-                                    }
-                                    else
-                                    {
-                                        // The data is not set, so pass an empty string as the parameter
-                                        stringData = new string();
-                                    }
-                                    operation.addParameter(stringData);
-                                }
-                                break;
-                            case Type::DataObjectType:
-                                {
-                                    DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
+                                    DataObjectPtr dataObjectData = dataObjectList[j];
                                     if(!dataObjectData)
                                     {
-                                        loginfo("Null DataObject parameter named %s", name);
+                                        
+                                        // Add a null DataObject ptr
+                                        loginfo("Null OpenDataObject parameter named %s[%d]", name, j);
+                                        operation.addParameter(&dataObjectData);
                                     }
-                                    operation.addParameter(&dataObjectData);
-                                }
-                                break;
-                            case Type::OpenDataObjectType:
-                                {         
-                                    /*
-                                     * This code deals with xsd:any element parameters
-                                     * Get each element as a DataObject and add in to the parameter list
-                                     */
-                    
-                                    DataObjectList& dataObjectList = inputDataObject->getList(pl[i]);
-                                    
-                                    for(int j=0; j<dataObjectList.size(); j++)
+                                    else
                                     {
-                                        DataObjectPtr dataObjectData = dataObjectList[j];
-                                        if(!dataObjectData)
+                                        
+                                        SequencePtr sequence = dataObjectData->getSequence();
+                                        if (sequence->size()!=0)
                                         {
-                                            
-                                            // Add a null DataObject ptr
-                                            loginfo("Null OpenDataObject parameter named %s[%d]", name, j);
-                                            operation.addParameter(&dataObjectData);
-                                        }
-                                        else
-                                        {
-                                            
-                                            SequencePtr sequence = dataObjectData->getSequence();
-                                            if (sequence->size()!=0)
-                                            {
-                                                // Add a text element        
-                                                if (sequence->isText(0))
-                                                {                                        
-                                                    string* stringData = new string(sequence->getCStringValue(0));
-                                                    operation.addParameter(stringData);
-                                                }
-                                                else
-                                                {
-                                                    // Add a complex element DataObject
-                                                    DataObjectPtr dob = sequence->getDataObjectValue(0);
-                                                    if(!dob)
-                                                    {
-                                                        loginfo("Null DataObject parameter named %s", name);
-                                                    }
-                                                    operation.addParameter(&dob);
-                                                }
+                                            // Add a text element        
+                                            if (sequence->isText(0))
+                                            {                                        
+                                                string* stringData = new string(sequence->getCStringValue(0));
+                                                operation.addParameter(stringData);
                                             }
                                             else
                                             {
-                                                // Empty content, add an empty string
-                                                loginfo("Empty OpenDataObject parameter named %s[%d]", name, j);
-                                                string* stringData = new string(""); 
-                                                operation.addParameter(stringData);
+                                                // Add a complex element DataObject
+                                                DataObjectPtr dob = sequence->getDataObjectValue(0);
+                                                if(!dob)
+                                                {
+                                                    loginfo("Null DataObject parameter named %s", name);
+                                                }
+                                                operation.addParameter(&dob);
                                             }
-                                        }                       
-                                    }
+                                        }
+                                        else
+                                        {
+                                            // Empty content, add an empty string
+                                            loginfo("Empty OpenDataObject parameter named %s[%d]", name, j);
+                                            string* stringData = new string(""); 
+                                            operation.addParameter(stringData);
+                                        }
+                                    }                       
                                 }
-                                break;
-                            case Type::DateType:
-                                logwarning("SDO DateType parameters are not yet supported (%s)", name);
-                                return NULL;
-                            case Type::LongType:
-                                logwarning("SDO LongType (int64_t) parameters are not yet supported (%s)", name);
-                                return NULL;
-                                break;
-                            case Type::UriType:
-                                logwarning("SDO UriType parameters are not yet supported (%s)", name);
-                                return NULL;
-                                break;
-                            case Type::BigDecimalType:
-                                logwarning("SDO BigDecimalType parameters are not yet supported (%s)", name);
-                                return NULL;
-                                break;
-                            case Type::BigIntegerType:
-                                logwarning("SDO BigIntegerType parameters are not yet supported (%s)", name);
-                                return NULL;
-                                break;
-                            default:
-                                logwarning("Unknown SDO type parameter named %s has been found. Unknown types are not yet supported", name);
-                                return NULL;
-                            }         
-                        }
-                                
+                            }
+                            break;
+                        default:
+                            {
+                                ostringstream msg;
+                                msg << "Unsupported param type: " << pl[i].getTypeEnum();
+                                throwException(SystemConfigurationException, msg.str().c_str());
+                            }
+                        }         
+                    }
+                            
+                    // Call into the target service wrapper
+                    serviceWrapper->invoke(operation);
+            
+                    // Set the data in the outputDataObject to be returned
+                    DataObjectPtr outputDataObject;
+                    try
+                    {
+                        // Create the output wrapper
+                        const Type& rootType = dataFactoryPtr->getType(outputTypeURI, "RootType");
+                        const Property& prop = rootType.getProperty(outputTypeName);
+                        const Type& outputType = prop.getType();
+                        outputDataObject = dataFactoryPtr->create(outputType);
+                    }
+                    catch (SDORuntimeException&)
+                    {
                         try
                         {
-                            
-                            // Call into the target service wrapper
-                            serviceWrapper->invoke(operation);
-                    
-                            // Set the data in the outputDataObject to be returned
-                            DataObjectPtr outputDataObject;
-                            try {
-                                
-                                // Create the output wrapper
-                                const Type& rootType = dataFactoryPtr->getType(outputTypeURI, "RootType");
-                                const Property& prop = rootType.getProperty(outputTypeName);
-                                const Type& outputType = prop.getType();
-                                outputDataObject = dataFactoryPtr->create(outputType);
-                            }
-                            catch (SDORuntimeException&)
-                            {
-                                try
-                                {
-                                    
-                                    // Create the output wrapper
-                                    const Type& outputType = dataFactoryPtr->getType(outputTypeURI, outputTypeName);
-                                    outputDataObject = dataFactoryPtr->create(outputType);
-                                }
-                                catch (SDORuntimeException&)
-                                {
-                                    // The output wrapper type is not known, create an open DataObject 
-                                    outputDataObject = dataFactoryPtr->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
-                                }
-                            }
-                            
-                            setOutputData(operation, outputDataObject, dataFactoryPtr);                            
-
-                            return outputDataObject;
-
+                            // Create the output wrapper
+                            const Type& outputType = dataFactoryPtr->getType(outputTypeURI, outputTypeName);
+                            outputDataObject = dataFactoryPtr->create(outputType);
                         }
-                      catch(SDORuntimeException& ex)
-                      {   
-                            // TODO: Return more error information than just a null DataObject
-                            logwarning("%s has been caught: %s", ex.getEClassName(), ex.getMessageText());
-                            return NULL;
-                      }  
-                      catch(TuscanyRuntimeException& ex)
-                      {   
-                            // TODO: Return more error information than just a null DataObject
-                            logwarning("%s has been caught: %s", ex.getEClassName(), ex.getMessageText());
-                            return NULL;
-                      }  
+                        catch (SDORuntimeException&)
+                        {
+                            // The output wrapper type is not known, create an open DataObject 
+                            outputDataObject = dataFactoryPtr->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                        }
                     }
-                    else
-                    {
-                        logwarning("Non-wrapped document style WSDL operations are not yet supported");
-                        return NULL;
-                    }
+                    
+                    setOutputData(operation, outputDataObject, dataFactoryPtr);                            
+
+                    return outputDataObject;
+
                 }
-                else
+                catch(SDORuntimeException& ex)
                 {
-                    // RPC style
-                    logwarning("RPC style WSDL Operations are not yet supported");
-                    return NULL;
-                }
+                    throwException(ServiceInvocationException, ex);                         
+                }  
+                catch(TuscanyRuntimeException& ex)
+                {
+                  throw;   
+                }  
             }
             
-            
+
             void WSServiceProxy::setOutputData(Operation& operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr)
             {    
                 logentry();
