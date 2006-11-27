@@ -24,6 +24,8 @@
 
 #if defined(WIN32)  || defined (_WINDOWS)
 #include <process.h>
+#else
+#include <unistd.h>
 #endif
 
 #include "tuscany/sca/util/Logger.h"
