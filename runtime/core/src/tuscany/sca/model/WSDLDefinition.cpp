@@ -98,7 +98,7 @@ namespace tuscany
                     
                     // Found the service
                     DataObjectList& portList = service->getList("port");
-                    for (int j=0; j<portList.size();j++)
+                    for (unsigned int j=0; j<portList.size();j++)
                     {
                         string portListName(portList[j]->getCString("name"));
                         if (portListName.compare(portName) == 0)
@@ -128,7 +128,7 @@ namespace tuscany
 
                             // Find the binding operation
                             DataObjectList& bindingOperationList = wsBinding->getList("operation");
-                            for (int i=0; i<bindingOperationList.size(); i++)
+                            for (unsigned int i=0; i<bindingOperationList.size(); i++)
                             {
                                 string name(bindingOperationList[i]->getCString("name"));
                                 
@@ -183,7 +183,7 @@ namespace tuscany
                             
                             // Found the portType, find the operation
                             DataObjectList& operationList = wsPortType->getList("operation");
-                            for (int k=0; k< operationList.size(); k++)
+                            for (unsigned int k=0; k< operationList.size(); k++)
                             {
                                 string opName(operationList[k]->getCString("name"));
                                 if( opName.compare(operationName) == 0)
@@ -281,7 +281,7 @@ namespace tuscany
 
                 // Found the portType, find the operation
                 DataObjectList& operationList = wsPortType->getList("operation");
-                for (int k=0; k< operationList.size(); k++)
+                for (unsigned int k=0; k< operationList.size(); k++)
                 {
                     string opName(operationList[k]->getCString("name"));
                     if( opName.compare(operationName) == 0)
@@ -350,7 +350,7 @@ namespace tuscany
                 for (unsigned int m = 0; m < wsdlModels.size(); m++)
                 {
                     DataObjectList& serviceList = wsdlModels[m]->getList("service");
-                    for (int i=0; i<serviceList.size(); i++)
+                    for (unsigned int i=0; i<serviceList.size(); i++)
                     {
                         string name(serviceList[i]->getCString("name"));
     
@@ -382,7 +382,7 @@ namespace tuscany
                 for (unsigned int m = 0; m < wsdlModels.size(); m++)
                 {
                     DataObjectList& bindingList = wsdlModels[m]->getList("binding");
-                    for (int i=0; i<bindingList.size(); i++)
+                    for (unsigned int i=0; i<bindingList.size(); i++)
                     {
                         string nameBinding(bindingList[i]->getCString("name"));
     
@@ -413,7 +413,7 @@ namespace tuscany
                 for (unsigned int m = 0; m < wsdlModels.size(); m++)
                 {
                     DataObjectList& portTypeList = wsdlModels[m]->getList("portType");
-                    for (int i=0; i<portTypeList.size(); i++)
+                    for (unsigned int i=0; i<portTypeList.size(); i++)
                     {
                         string namePortType(portTypeList[i]->getCString("name"));
     
@@ -444,7 +444,7 @@ namespace tuscany
                 for (unsigned int m = 0; m < wsdlModels.size(); m++)
                 {
                     DataObjectList& messageList = wsdlModels[m]->getList("message");
-                    for (int i=0; i<messageList.size(); i++)
+                    for (unsigned int i=0; i<messageList.size(); i++)
                     {
                         string nameMessage(messageList[i]->getCString("name"));
     

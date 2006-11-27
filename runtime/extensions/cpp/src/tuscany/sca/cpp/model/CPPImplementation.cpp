@@ -68,7 +68,7 @@ namespace tuscany
                 // Create CPP bindings for all the references
                 const Component::REFERENCE_MAP& references = component->getReferences();
                 Component::REFERENCE_MAP::const_iterator refiter = references.begin();
-                for (int ri=0; ri< references.size(); ri++)
+                for (unsigned int ri=0; ri< references.size(); ri++)
                 {
                     Reference *reference = refiter->second;
                     CPPReferenceBinding* binding = new CPPReferenceBinding(reference);

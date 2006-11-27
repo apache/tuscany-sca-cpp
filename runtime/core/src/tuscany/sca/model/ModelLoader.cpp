@@ -234,7 +234,7 @@ namespace tuscany
                 // Composite services
                 // ------------
                 DataObjectList& compositeServiceList = root->getList("service");
-                for (int i = 0; i < compositeServiceList.size(); i++)
+                for (unsigned int i = 0; i < compositeServiceList.size(); i++)
                 {
                     addCompositeService(composite, compositeServiceList[i]);                        
                 }
@@ -243,7 +243,7 @@ namespace tuscany
                 // Composite references
                 // -----------------
                 DataObjectList& compositeReferenceList = root->getList("reference");
-                for (int cri = 0; cri < compositeReferenceList.size(); cri++)
+                for (unsigned int cri = 0; cri < compositeReferenceList.size(); cri++)
                 {
                     addCompositeReference(composite, compositeReferenceList[cri]);
                 }
@@ -252,7 +252,7 @@ namespace tuscany
                 // Wires
                 // -----
                 DataObjectList& wireList = root->getList("wire");
-                for (int l = 0; l < wireList.size(); l++)
+                for (unsigned int l = 0; l < wireList.size(); l++)
                 {
                     string source = wireList[l]->getCString("source");
                     string target = wireList[l]->getCString("target");
@@ -276,7 +276,7 @@ namespace tuscany
                 // Add components to the composite
                 // ----------------------------
                 DataObjectList& componentList = root->getList("component");
-                int i;
+                unsigned int i;
                 for (i=0; i < componentList.size(); i++)
                 {
                     addComponent(composite, componentList[i]);                        
@@ -385,7 +385,7 @@ namespace tuscany
                 // First check that references and properties exist, some component types
                 // will create all used references & properties automatically
                 DataObjectList& refs = componentDO->getList("reference");
-                for (int i=0; i<refs.size(); i++)
+                for (unsigned int i=0; i<refs.size(); i++)
                 {
                     string refName = refs[i]->getCString("name");
                     if (!componentType->findReferenceType(refName))
@@ -397,7 +397,7 @@ namespace tuscany
                 }
 
                 DataObjectList& props = componentDO->getList("property");
-                for (int pi=0; pi<props.size(); pi++)
+                for (unsigned int pi=0; pi<props.size(); pi++)
                 {
                     string propName = props[pi]->getCString("name");
                     if (!componentType->findPropertyType(propName))
@@ -416,7 +416,7 @@ namespace tuscany
                 // ----------
                 // Properties
                 // ----------
-                for (int pi=0; pi<props.size(); pi++)
+                for (unsigned int pi=0; pi<props.size(); pi++)
                 {
                     string propName = props[pi]->getCString("name");
                     DataObjectPtr propValue = props[pi]->getDataObject("value");
@@ -427,7 +427,7 @@ namespace tuscany
                 // ----------
                 // References
                 // ----------
-                for (int ri=0; ri<refs.size(); ri++)
+                for (unsigned int ri=0; ri<refs.size(); ri++)
                 {
                     // ----------------------------------------------------------
                     // Add the reference to the composite wires to be resolved later
@@ -457,7 +457,7 @@ namespace tuscany
                 logentry(); 
 
                 DataObjectList& serviceTypes = componentTypeDO->getList("service");
-                for (int i=0; i<serviceTypes.size(); i++)
+                for (unsigned int i=0; i<serviceTypes.size(); i++)
                 {
                     Interface* iface = getInterface(composite, serviceTypes[i]);
                     ServiceType* serviceType =  new ServiceType(
@@ -474,7 +474,7 @@ namespace tuscany
                 logentry(); 
 
                 DataObjectList& refs = componentTypeDO->getList("reference");
-                for (int i=0; i<refs.size(); i++)
+                for (unsigned int i=0; i<refs.size(); i++)
                 {
                     ReferenceType::Multiplicity multiplicity;
                     if (refs[i]->isSet("multiplicity"))
@@ -552,7 +552,7 @@ namespace tuscany
                 logentry(); 
 
                 DataObjectList& props = componentTypeDO->getList("property");
-                for (int i=0; i<props.size(); i++)
+                for (unsigned int i=0; i<props.size(); i++)
                 {
                     //cout << "Property " << props[i];
                     
@@ -608,7 +608,7 @@ namespace tuscany
                 composite->addComponent(compositeService);    
 
                 DataObjectList& refs = compositeServiceDO->getList("reference");
-                for (int i=0; i<refs.size(); i++)
+                for (unsigned int i=0; i<refs.size(); i++)
                 {
                     // ----------------------------------------------------------
                     // Add the reference to the composite wires to be resolved later
@@ -739,7 +739,7 @@ namespace tuscany
                             {
                                 DataObjectList& xsds = compositeConfigFile->getRootDataObject()->getList("xsd/file");
     
-                                for (int i=0; i<xsds.size(); i++)
+                                for (unsigned int i=0; i<xsds.size(); i++)
                                 {
                                     if(xsds[i]->isSet("name"))
                                     {
@@ -754,7 +754,7 @@ namespace tuscany
                             if( compositeConfigFile->getRootDataObject()->isSet("wsdl"))
                             {
                                 DataObjectList& wsdls = compositeConfigFile->getRootDataObject()->getList("wsdl/file");
-                                for (int j=0; j<wsdls.size(); j++)
+                                for (unsigned int j=0; j<wsdls.size(); j++)
                                 {
                                     if(wsdls[i]->isSet("name"))
                                     { 

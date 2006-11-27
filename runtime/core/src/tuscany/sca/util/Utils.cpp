@@ -181,7 +181,7 @@ namespace tuscany
                         return false;
                     }
 
-                    for (int j = 0; j <dol1.size(); j++)
+                    for (unsigned int j = 0; j <dol1.size(); j++)
                     {                               
 
                         if (propertyType1.isDataType())
@@ -279,7 +279,7 @@ namespace tuscany
 
             if (pl1.size() != 0)
             {
-                for (int i = 0; i < pl1.size(); i++)
+                for (unsigned int i = 0; i < pl1.size(); i++)
                 {
                     if(!compareProperties(dataObject1, pl1[i], dataObject2, pl2[i], diff))
                     {
@@ -365,7 +365,7 @@ namespace tuscany
             PropertyList pl = dataObject->getInstanceProperties();
             if (pl.size() != 0)
             {
-                for (int i = 0; i < pl.size(); i++)
+                for (unsigned int i = 0; i < pl.size(); i++)
                 {
                     tabs(inc);
                     cout << "Property: " << pl[i].getName() << endl;
@@ -385,7 +385,7 @@ namespace tuscany
                         {
                             inc++;
                             DataObjectList& dol = dataObject->getList(pl[i]);
-                            for (int j = 0; j <dol.size(); j++)
+                            for (unsigned int j = 0; j <dol.size(); j++)
                             {
                                 tabs(inc);
                                 cout << "Value " << j <<endl;
@@ -467,7 +467,7 @@ namespace tuscany
                                     {
                                         inc++;
                                         DataObjectList& dol = dataObject->getList(p);
-                                        for (int j = 0; j <dol.size(); j++)
+                                        for (unsigned int j = 0; j <dol.size(); j++)
                                         {
                                             tabs(inc);
                                             cout << "Value " << j <<endl;
@@ -525,11 +525,11 @@ namespace tuscany
             // get the list of Types in the DataFactory and list them
             //////////////////////////////////////////////////////////////////////////
             TypeList tl = df->getTypes();
-            for (int i = 0; i < tl.size(); i++)
+            for (unsigned int i = 0; i < tl.size(); i++)
             {
                 cout << "Type: " << tl[i].getURI()<< "#" << tl[i].getName() << endl;
                 PropertyList pl = tl[i].getProperties();
-                for (int j = 0; j < pl.size(); j++)
+                for (unsigned int j = 0; j < pl.size(); j++)
                 {
                     cout << "\tProperty: " << pl[j].getName()
                         << " type: " <<pl[j].getType().getURI()<<"#"<<pl[j].getType().getName()<< endl;
@@ -546,7 +546,7 @@ namespace tuscany
             cout << "Type: " << type.getURI()<< "#" << type.getName() << endl;
             inc++;
             PropertyList pl = type.getProperties();
-            for (int j = 0; j < pl.size(); j++)
+            for (unsigned int j = 0; j < pl.size(); j++)
             {
                 tabs(inc);
                 cout << "\tProperty: " << pl[j].getName()

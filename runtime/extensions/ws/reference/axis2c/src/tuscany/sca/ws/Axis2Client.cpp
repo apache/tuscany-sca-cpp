@@ -681,7 +681,7 @@ namespace tuscany
             
                             DataObjectList& dataObjectList = outputDataObject->getList(pl[0]);
                             
-                            for(int j=0; j<dataObjectList.size(); j++)
+                            for(unsigned int j=0; j<dataObjectList.size(); j++)
                             {
                                 DataObjectPtr dob = dataObjectList[j];
                                 if(!dob)

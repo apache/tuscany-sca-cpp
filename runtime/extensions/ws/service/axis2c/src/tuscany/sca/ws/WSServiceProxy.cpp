@@ -140,7 +140,7 @@ namespace tuscany
                     // Go through the input data object to set the operation parameters
                     PropertyList pl = inputDataObject->getInstanceProperties();
                 
-                    for(int i=0; i<pl.size(); i++)
+                    for(unsigned int i=0; i<pl.size(); i++)
                     {
                         const char* name = pl[i].getName();
                 
@@ -247,7 +247,7 @@ namespace tuscany
                 
                                 DataObjectList& dataObjectList = inputDataObject->getList(pl[i]);
                                 
-                                for(int j=0; j<dataObjectList.size(); j++)
+                                for(unsigned int j=0; j<dataObjectList.size(); j++)
                                 {
                                     DataObjectPtr dataObjectData = dataObjectList[j];
                                     if(!dataObjectData)
@@ -443,7 +443,7 @@ namespace tuscany
                 else {
             
                     // Should only be one return value.. This goes through all return values
-                    for(int i=0; i<pl.size(); i++)
+                    for(unsigned int i=0; i<pl.size(); i++)
                     {
                         const char* name = pl[i].getName();
     

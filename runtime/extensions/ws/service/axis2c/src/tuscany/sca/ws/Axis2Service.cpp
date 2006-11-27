@@ -370,7 +370,7 @@ namespace tuscany
                                                 binding->getEndpointName(),
                                                 op_name.c_str());
                                         }
-                                        catch(SystemConfigurationException& ex)
+                                        catch(SystemConfigurationException&)
                                         {   
                                             throw;
                                         }
@@ -400,7 +400,7 @@ namespace tuscany
                                                 {
                                                     wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), op_name.c_str());
                                                 }
-                                                catch(SystemConfigurationException& ex)
+                                                catch(SystemConfigurationException&)
                                                 {   
                                                     throw;
                                                 }
