@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
                 
                 if (report != 0)
                 {
-                    int i;
+                    unsigned int i;
                     char balanceStr[20];
                     float balance;
 

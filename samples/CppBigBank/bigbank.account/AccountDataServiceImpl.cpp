@@ -63,7 +63,7 @@ namespace services
                 return newaccount;
 
             }
-            catch (SDORuntimeException& e)
+            catch (SDORuntimeException&)
             {
                 return 0;
             }
@@ -94,7 +94,7 @@ namespace services
                 return newaccount;
 
             }
-            catch (SDORuntimeException& e)
+            catch (SDORuntimeException&)
             {
                 return 0;
             }
@@ -126,7 +126,7 @@ namespace services
                 return newaccount;
 
             }
-            catch (SDORuntimeException& e)
+            catch (SDORuntimeException&)
             {
                 return 0;
             }
