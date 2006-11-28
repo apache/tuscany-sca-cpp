@@ -114,6 +114,7 @@ namespace tuscany
             {
                 va_list variableArguments;
                 va_start(variableArguments, msg);
+                char messageBuffer[4096];
                 vsprintf(messageBuffer, msg, variableArguments);
                 logWriter->log(level, pid, messageBuffer);
                 va_end(variableArguments);
@@ -126,6 +127,7 @@ namespace tuscany
             {
                 va_list variableArguments;
                 va_start(variableArguments, msg);
+                char messageBuffer[4096];
                 vsprintf(messageBuffer, msg, variableArguments);
                 logWriter->log(0, pid, messageBuffer);
                 va_end(variableArguments);
@@ -137,6 +139,7 @@ namespace tuscany
             {
                 va_list variableArguments;
                 va_start(variableArguments, msg);
+                char messageBuffer[4096];
                 vsprintf(messageBuffer, msg, variableArguments);
                 logWriter->log(1, pid, messageBuffer);
                 va_end(variableArguments);
@@ -148,6 +151,7 @@ namespace tuscany
             {
                 va_list variableArguments;
                 va_start(variableArguments, msg);
+                char messageBuffer[4096];
                 vsprintf(messageBuffer, msg, variableArguments);
                 logWriter->log(2, pid, messageBuffer);
                 va_end(variableArguments);
