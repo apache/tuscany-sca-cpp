@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,22 +17,32 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_ALL_SAMPLES
-  CPP_SAMPLES = CppCalculator CppBigBank
-  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast
-  RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
-endif
-if WANT_CPP_SAMPLES
-  CPP_SAMPLES = CppCalculator CppBigBank
-endif
-if WANT_PYTHON_SAMPLES
-  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast
-endif
-if WANT_RUBY_SAMPLES
-  RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
-endif
-if WANT_PHP_SAMPLES
-endif
-SUBDIRS = ${CPP_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PHP_SAMPLES}
+APFULLDIR=`pwd`
 
-EXTRA_DIST = GettingStarted.html
+if [ x$TUSCANY_SCACPP = x ]; then
+echo "TUSCANY_SCACPP not set"
+exit;
+fi
+echo "Using SCA installed at $TUSCANY_SCACPP"
+
+if [ x$TUSCANY_SDOCPP = x ]; then
+echo "TUSCANY_SDOCPP not set"
+exit;
+fi
+echo "Using SDO installed at $TUSCANY_SDOCPP"
+
+if [ x$AXIS2C_HOME = x ]; then
+echo "AXIS2C_HOME not set"
+exit;
+fi
+echo "Using Axis2C installed at $AXIS2C_HOME"
+
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/python/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
+
+export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
+export TUSCANY_SCACPP_COMPONENT=sample.weather.WeatherForecastComponent
+
+cd $TUSCANY_SCACPP_ROOT/sample.weather.client
+python weather_forecast_client.py
+

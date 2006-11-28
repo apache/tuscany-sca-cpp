@@ -156,6 +156,9 @@ AC_CONFIG_FILES([Makefile
                  PythonCalculator/sample.calculator/Makefile
                  PythonCalculator/sample.calculator.client/Makefile
                  PythonCalculator/sample.calculator.wsclient/Makefile
+                 PythonWeatherForecast/Makefile
+                 PythonWeatherForecast/sample.weather/Makefile
+                 PythonWeatherForecast/sample.weather.client/Makefile                 
                  RestCalculator/Makefile
                  RestCalculator/sample.calculator/Makefile
                  RestCalculator/sample.calculator.restclient/Makefile
@@ -174,8 +177,5 @@ AC_CONFIG_FILES([Makefile
                  HttpdBigBank/bigbank.accountdata/Makefile
                  HttpdBigBank/bigbank.wsclient/Makefile
                  HttpdBigBank/httpserver/Makefile
-                 WeatherForecast/Makefile
-                 WeatherForecast/sample.weather/Makefile
-                 WeatherForecast/sample.weather.client/Makefile                 
                  ])
 AC_OUTPUT
