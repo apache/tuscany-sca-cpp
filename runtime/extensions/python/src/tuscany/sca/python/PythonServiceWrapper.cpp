@@ -817,8 +817,8 @@ namespace tuscany
                         else 
                         {
                             Py_DECREF(pFunc);
-                            Py_DECREF(elementTreeModule);
-                            Py_DECREF(elementTreeModuleName);
+                            Py_XDECREF(elementTreeModule);
+                            Py_XDECREF(elementTreeModuleName);
 
                             if(PyErr_Occurred())
                             {

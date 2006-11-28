@@ -291,8 +291,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                 PyObject* elementTreeToStringFunc = PyObject_GetAttrString(elementTreeModule, "tostring");
                 PyObject* pElemString = PyObject_CallFunction(elementTreeToStringFunc, "O", param);
                 char* data = PyString_AsString(pElemString);
-                loginfo("SDO param %d: %s", i, data);
-
+                
                 Py_DECREF(elementTreeToStringFunc);
                 Py_DECREF(pElemString);
 
@@ -316,7 +315,9 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                 else
                 {
                     string msg = "xml.etree.ElementTree.Element could not be converted to a DataObject";
-                    throwException(ServiceDataException, msg.c_str());
+                    logerror(msg.c_str());
+                    PyErr_SetString(scaError, msg.c_str());
+                    return NULL;
                 }                                    
             }
             else
@@ -452,8 +453,8 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 
     }
 
-    Py_DECREF(elementTreeModuleName); 
-    Py_DECREF(elementTreeModule);                        
+    Py_XDECREF(elementTreeModuleName); 
+    Py_XDECREF(elementTreeModule);                        
 
     return returnValue;
 }
