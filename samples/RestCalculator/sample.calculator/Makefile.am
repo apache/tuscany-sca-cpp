@@ -18,7 +18,5 @@
 deploydir=$(prefix)/samples/RestCalculator/deploy
 compositedir=$(deploydir)/sample.calculator
 
-composite_SCRIPTS = runwsserver.sh
-
 composite_DATA = *.composite *.rb
-EXTRA_DIST = *.composite *.rb runwsserver.sh
+EXTRA_DIST = *.composite *.rb
