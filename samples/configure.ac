@@ -174,5 +174,8 @@ AC_CONFIG_FILES([Makefile
                  HttpdBigBank/bigbank.accountdata/Makefile
                  HttpdBigBank/bigbank.wsclient/Makefile
                  HttpdBigBank/httpserver/Makefile
+                 WeatherForecast/Makefile
+                 WeatherForecast/sample.weather/Makefile
+                 WeatherForecast/sample.weather.client/Makefile                 
                  ])
 AC_OUTPUT

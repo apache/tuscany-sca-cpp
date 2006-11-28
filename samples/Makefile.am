@@ -17,14 +17,14 @@
 
 if WANT_ALL_SAMPLES
   CPP_SAMPLES = CppCalculator CppBigBank
-  PYTHON_SAMPLES = PythonCalculator
+  PYTHON_SAMPLES = PythonCalculator WeatherForecast
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
 endif
 if WANT_CPP_SAMPLES
   CPP_SAMPLES = CppCalculator CppBigBank
 endif
 if WANT_PYTHON_SAMPLES
-  PYTHON_SAMPLES = PythonCalculator
+  PYTHON_SAMPLES = PythonCalculator WeatherForecast
 endif
 if WANT_RUBY_SAMPLES
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
