@@ -31,12 +31,6 @@ exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-if [ x$AXIS2C_HOME = x ]; then
-echo "AXIS2C_HOME not set"
-exit;
-fi
-echo "Using Axis2C installed at $AXIS2C_HOME"
-
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
