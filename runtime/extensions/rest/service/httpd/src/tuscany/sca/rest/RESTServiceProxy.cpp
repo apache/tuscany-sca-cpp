@@ -64,38 +64,24 @@ namespace tuscany
                 RESTReferenceBinding* referenceBinding = (RESTReferenceBinding*)reference->getBinding();
                 serviceWrapper = referenceBinding->getTargetServiceBinding()->getServiceWrapper();
                 
-                // Define the SOAP Body type and element to allow a SOAP body to
-                // be loaded in a DataObject
                 DataFactoryPtr dataFactory = reference->getComponent()->getComposite()->getDataFactory();
-                try {
-                    const Type& bodyType = dataFactory->getType("http://www.w3.org/2003/05/soap-envelope", "Body");
-                } catch (SDORuntimeException&)
-                {
-                    
-                    // Define the SOAP 1.2 Body type
-                    dataFactory->addType("http://www.w3.org/2003/05/soap-envelope", "RootType", false, false, false);                
-                    dataFactory->addType("http://www.w3.org/2003/05/soap-envelope", "Body", false, true, false);                
-                    dataFactory->addPropertyToType(
-                        "http://www.w3.org/2003/05/soap-envelope", "RootType",
-                        "Body",
-                        "http://www.w3.org/2003/05/soap-envelope", "Body",
-                        false, false, true);
-    
-                    // Define the SOAP 1.1 Body type
-                    dataFactory->addType("http://schemas.xmlsoap.org/soap/envelope/", "RootType", false, false, false);
-                    dataFactory->addType("http://schemas.xmlsoap.org/soap/envelope/", "Body", false, true, false);
-                    dataFactory->addPropertyToType(
-                        "http://schemas.xmlsoap.org/soap/envelope/", "RootType",
-                        "Body",
-                        "http://schemas.xmlsoap.org/soap/envelope/", "Body",
-                        false, false, true);
-                }
-
                 try {
                     const Type& tempType = dataFactory->getType("http://tempuri.org", "RootType");
                 } catch (SDORuntimeException&)
                 {
                     dataFactory->addType("http://tempuri.org", "RootType", false, false, false);                
+                    dataFactory->addType("http://tempuri.org", "Body", false, true, false);                
+                    dataFactory->addPropertyToType(
+                        "http://tempuri.org", "RootType",
+                        "Body",
+                        "http://tempuri.org", "Body",
+                        false, false, true);
+                    dataFactory->addType("http://tempuri.org", "Part", false, true, false);                
+                    dataFactory->addPropertyToType(
+                        "http://tempuri.org", "RootType",
+                        "Part",
+                        "http://tempuri.org", "Part",
+                        false, false, true);
                 }
             }
             
@@ -163,18 +149,19 @@ namespace tuscany
                         case Type::BytesType:
                             {
                                 int len = inputDataObject->getLength(pl[i]);
-                                char* bytesData = new char[len+1];
-                                int bytesWritten = inputDataObject->getBytes(pl[i], bytesData, len);
+                                char** bytesData = new char*;
+                                *bytesData = new char[len+1];
+                                int bytesWritten = inputDataObject->getBytes(pl[i], *bytesData, len);
                                 // Ensure the bytes end with the null char. Not sure if this is neccessary
                                 if(bytesWritten <= len)
                                 {
-                                    bytesData[bytesWritten] = 0;
+                                    (*bytesData)[bytesWritten] = 0;
                                 }
                                 else
                                 {
-                                    bytesData[len] = 0;
+                                    (*bytesData)[len] = 0;
                                 }
-                                operation.addParameter(&bytesData);
+                                operation.addParameter(bytesData);
                             }
                             break;
                         case Type::CharacterType:
@@ -238,12 +225,17 @@ namespace tuscany
                             break;
                         case Type::DataObjectType:
                             {
-                                DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
-                                if(!dataObjectData)
+                                DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                *dataObjectData = inputDataObject->getDataObject(pl[i]);
+                                if(!*dataObjectData)
                                 {
                                     loginfo("Null DataObject parameter named %s", name);
                                 }
-                                operation.addParameter(&dataObjectData);
+                                else
+                                {
+                                    (*dataObjectData)->detach();
+                                }
+                                operation.addParameter(dataObjectData);
                             }
                             break;
                         case Type::OpenDataObjectType:
@@ -257,18 +249,20 @@ namespace tuscany
                                 
                                 for(int j=0; j<dataObjectList.size(); j++)
                                 {
-                                    DataObjectPtr dataObjectData = dataObjectList[j];
-                                    if(!dataObjectData)
+                                    DataObjectPtr dob = dataObjectList[j];
+                                    if(!dob)
                                     {
                                         
                                         // Add a null DataObject ptr
+                                        DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                        *dataObjectData = NULL; 
                                         loginfo("Null OpenDataObject parameter named %s[%d]", name, j);
-                                        operation.addParameter(&dataObjectData);
+                                        operation.addParameter(dataObjectData);
                                     }
                                     else
                                     {
                                         
-                                        SequencePtr sequence = dataObjectData->getSequence();
+                                        SequencePtr sequence = dob->getSequence();
                                         if (sequence->size()!=0)
                                         {
                                             // Add a text element        
@@ -280,12 +274,17 @@ namespace tuscany
                                             else
                                             {
                                                 // Add a complex element DataObject
-                                                DataObjectPtr dob = sequence->getDataObjectValue(0);
-                                                if(!dob)
+                                                DataObjectPtr* dataObjectData =new DataObjectPtr;
+                                                *dataObjectData = sequence->getDataObjectValue(0);
+                                                if(!*dataObjectData)
                                                 {
                                                     loginfo("Null DataObject parameter named %s", name);
                                                 }
-                                                operation.addParameter(&dob);
+                                                else
+                                                {
+                                                    (*dataObjectData)->detach();
+                                                }
+                                                operation.addParameter(dataObjectData);
                                             }
                                         }
                                         else
