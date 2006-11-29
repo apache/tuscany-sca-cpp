@@ -106,8 +106,6 @@ namespace tuscany
             }
         }
 
-        char Logger::messageBuffer[4096];
-        
         void Logger::logArgs(int level, const char* msg, ...)
         {
             if (level <= loggingLevel)
