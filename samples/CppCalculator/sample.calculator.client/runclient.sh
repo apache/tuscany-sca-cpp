@@ -33,11 +33,12 @@ echo "Using SDO installed at $TUSCANY_SDOCPP"
 
 if [ x$AXIS2C_HOME = x ]; then
 echo "AXIS2C_HOME not set"
-exit;
-fi
+else
 echo "Using Axis2C installed at $AXIS2C_HOME"
+export AXIS2C_LIB = $AXIS2C_HOME/lib:
+fi
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_LIB:$LD_LIBRARY_PATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorComponent

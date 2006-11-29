@@ -29,7 +29,9 @@
 #include "tuscany/sca/model/Component.h"
 
 #if defined(WIN32)  || defined (_WINDOWS)
-#include <windows.h> 
+#include <windows.h>
+#else
+#include "tuscany_sca_config.h"
 #endif
 
 namespace tuscany
@@ -268,9 +270,13 @@ namespace tuscany
 #if defined(WIN32)  || defined (_WINDOWS)
             string pattern = "*.dll";
 #else
+#if defined(IS_DARWIN)
+            string pattern = "*.dylib";
+#else
             string pattern = "*.so";
 #endif
-
+#endif
+          
             Files files(extensionsRoot, pattern, true);
             for (unsigned int i=0; i < files.size(); i++)
             {

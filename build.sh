@@ -20,10 +20,12 @@
 TUSCANY_SCACPP_HOME=`pwd`
 
 if [ x$AXIS2C_HOME = x ]; then
-echo "AXIS2C_HOME not set"
-exit;
-fi
+echo "AXIS2C_HOME not set not building Axis2C WS binding extensions"
+WITH_AXIS2C=--with-axis2c=false
+else
 echo "Using Axis2C installed at $AXIS2C_HOME"
+WITH_AXIS2C=--with-axis2c=true
+fi
 
 if [ x$TUSCANY_SDOCPP = x ]; then
 echo "TUSCANY_SDOCPP not set"
@@ -57,7 +59,7 @@ cd ${TUSCANY_SCACPP_HOME}/samples
 cd $TUSCANY_SCACPP_HOME
 ./autogen.sh
 
-./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no ${ENABLE_RUBY} ${ENABLE_PYTHON}
+./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no ${WITH_AXIS2C} ${ENABLE_RUBY} ${ENABLE_PYTHON}
 make
 make install
 

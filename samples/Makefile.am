@@ -16,12 +16,18 @@
 #  under the License.
 
 if WANT_ALL_SAMPLES
-  CPP_SAMPLES = CppCalculator CppBigBank
+  CPP_SAMPLES = CppCalculator
+if WITH_AXIS2C
+  CPP_AXIS2C_SAMPLES = CppBigBank
+endif
   PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
 endif
 if WANT_CPP_SAMPLES
-  CPP_SAMPLES = CppCalculator CppBigBank
+  CPP_SAMPLES = CppCalculator
+if WITH_AXIS2C
+  CPP_AXIS2C_SAMPLES = CppBigBank
+endif
 endif
 if WANT_PYTHON_SAMPLES
   PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast
@@ -31,6 +37,6 @@ if WANT_RUBY_SAMPLES
 endif
 if WANT_PHP_SAMPLES
 endif
-SUBDIRS = ${CPP_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PHP_SAMPLES}
+SUBDIRS = ${CPP_SAMPLES} ${CPP_AXIS2C_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PHP_SAMPLES}
 
 EXTRA_DIST = GettingStarted.html

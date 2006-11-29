@@ -33,6 +33,16 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
+# Check for running on Darwin
+AC_MSG_CHECKING([Checking if running on Darwin])
+UNAME=`uname -s`
+if test "x$UNAME" = "xDarwin"; then
+  AC_DEFINE([IS_DARWIN], [1], [Set to 1 when running on Darwin - Mac OSX])
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
 # Check for dynamic library suffixes
 AC_MSG_CHECKING([checking for dynamic library suffix])
 AC_CHECK_HEADER([sys/appleapiopts.h],
@@ -74,6 +84,40 @@ AC_ARG_ENABLE(all-samples, [AS_HELP_STRING([--enable-all-samples],[build all sam
   want_all_samples=false ]
 )
 AM_CONDITIONAL([WANT_ALL_SAMPLES], [test x$want_all_samples = xtrue])
+
+AC_MSG_CHECKING(whether to build WS samples)
+AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service binding samples [default=yes]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    want_wsbinding=false
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_wsbinding=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(yes)
+  want_wsbinding=true ]
+)
+AM_CONDITIONAL([WANT_WSBINDING], [test x$want_wsbinding = xtrue])
+
+AC_MSG_CHECKING(whether to build Axis2C Web Service samples)
+AC_ARG_WITH(axis2c, [AS_HELP_STRING([--with-axis2c],[build Axis2C Web Service samples [default=no]])],
+[ case "${withval}" in
+  yes)
+    AC_MSG_RESULT(yes)
+    with_axis2c=true
+    ;;
+  *)
+    AC_MSG_RESULT(no)
+    with_axis2c=false
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+    with_axis2c=false ]
+)
+AM_CONDITIONAL([WITH_AXIS2C], [test x$with_axis2c = xtrue])
 
 AC_MSG_CHECKING(whether to build C++ samples)
 AC_ARG_ENABLE(cpp, [AS_HELP_STRING([--enable-cpp],[build C++ samples [default=yes]])],

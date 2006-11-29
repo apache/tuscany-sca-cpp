@@ -28,6 +28,8 @@
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 
+#include "tuscany_sca_config.h"
+
 namespace tuscany
 {
     namespace sca
@@ -97,28 +99,34 @@ namespace tuscany
             }
 #else
             int l = name.length();
-            string soName;
-            if (l>=3 && name.substr(l-3, 3)==".so")
+            string libName;
+#ifdef IS_DARWIN
+            string suffix = ".dylib";
+#else
+            string suffix = ".so";
+#endif
+            unsigned int suffixLength = suffix.length();
+            if (l>=suffixLength && name.substr(l-suffixLength, suffixLength)==suffix)
             {
-                soName = name;
+                libName = name;
             }
-            else
-            {
+           else
+           {
                 int s = name.rfind("/");
                 if (s == name.length())
                 {
-                    soName = name + ".so";
+                    libName = name + suffix;
                 }
                 else
                 {
                     s++;
-                    soName = name.substr(0, s) + "lib" + name.substr(s, name.length()-s) + ".so";
+                    libName = name.substr(0, s) + "lib" + name.substr(s, name.length()-s) + suffix;
                 }
             }
-            hDLL = dlopen(soName.c_str(), RTLD_NOW);
+            hDLL = dlopen(libName.c_str(), RTLD_NOW);
             if (hDLL == NULL)
             {
-                msg = "Unable to load library: " + soName + ": " + dlerror();
+                msg = "Unable to load library: " + libName + ": " + dlerror();
             }
 #endif
             if (hDLL == NULL)

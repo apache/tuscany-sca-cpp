@@ -20,7 +20,7 @@ dnl run autogen.sh to generate the configure script.
 AC_PREREQ(2.59)
 AC_INIT(tuscany_sca_cpp, 1.0-incubator-M2)
 AC_CANONICAL_SYSTEM
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER(tuscany_sca_config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 AC_PREFIX_DEFAULT(/usr/local/tuscany/sca)
 
@@ -32,6 +32,16 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
+
+# Check for running on Darwin
+AC_MSG_CHECKING([Checking if running on Darwin])
+UNAME=`uname -s`
+if test "x$UNAME" = "xDarwin"; then
+  AC_DEFINE([IS_DARWIN], [1], [Set to 1 when running on Darwin - Mac OSX])
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
 
 # Check for dynamic library suffixes
 AC_MSG_CHECKING([checking for dynamic library suffix])
@@ -109,6 +119,23 @@ AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service
   want_wsbinding=true ]
 )
 AM_CONDITIONAL([WANT_WSBINDING], [test x$want_wsbinding = xtrue])
+
+AC_MSG_CHECKING(whether to build Axis2C Web Service binding extension)
+AC_ARG_WITH(axis2c, [AS_HELP_STRING([--with-axis2c],[build Axis2C Web Service binding extension [default=no]])],
+[ case "${withval}" in
+  yes)
+    AC_MSG_RESULT(yes)
+    with_axis2c=true
+    ;;
+  *)
+    AC_MSG_RESULT(no)
+    with_axis2c=false
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)
+    with_axis2c=false ]
+)
+AM_CONDITIONAL([WITH_AXIS2C], [test x$with_axis2c = xtrue])
 
 AC_MSG_CHECKING(whether to build SCA default binding extension)
 AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA default binding extension [default=no]])],

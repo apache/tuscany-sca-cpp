@@ -15,4 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = axis2c
+if WITH_AXIS2C
+  AXIS2C_SUBDIRS = axis2c
+endif
+  
+SUBDIRS = ${AXIS2C_SUBDIRS}

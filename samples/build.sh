@@ -31,32 +31,34 @@ fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
 if [ x$AXIS2C_HOME = x ]; then
-echo "AXIS2C_HOME not set"
-exit;
-fi
+echo "AXIS2C_HOME not set not building Axis2C WS samples"
+WITH_AXIS2C=--with-axis2c=false
+else
 echo "Using Axis2C installed at $AXIS2C_HOME"
+WITH_AXIS2C=--with-axis2c=true
+fi
 
 if [ x$PYTHON_LIB = x ]; then
-echo "PYTHON_LIB not set. Python extension will not be built"
+echo "PYTHON_LIB not set. Python samples will not be built"
 elif [ x$PYTHON_INCLUDE = x ]; then
-echo "PYTHON_INCLUDE not set. Python extension will not be built"
+echo "PYTHON_INCLUDE not set. Python samples will not be built"
 elif [ x$PYTHON_VERSION = x ]; then
-echo "PYTHON_VERSION not set. Python extension will not be built"
+echo "PYTHON_VERSION not set. Python samples will not be built"
 else
-echo "Building PYTHON extension with Python $PYTHON_VERSION installed at $PYTHON_LIB, $PYTHON_INCLUDE"
+echo "Building PYTHON samples with Python $PYTHON_VERSION installed at $PYTHON_LIB, $PYTHON_INCLUDE"
 ENABLE_PYTHON=--enable-python
 fi
 
 if [ x$RUBY_LIB = x ]; then
-echo "RUBY_LIB not set. Ruby extension will not be built"
+echo "RUBY_LIB not set. Ruby samples will not be built"
 elif [ x$RUBY_INCLUDE = x ]; then
-echo "RUBY_INCLUDE not set. Ruby extension will not be built"
+echo "RUBY_INCLUDE not set. Ruby samples will not be built"
 else
-echo "Building Ruby extension with Ruby installed at $RUBY_LIB, $RUBY_INCLUDE"
+echo "Building Ruby samples with Ruby installed at $RUBY_LIB, $RUBY_INCLUDE"
 ENABLE_RUBY=--enable-ruby
 fi
 
-./configure --prefix=${TUSCANY_SCACPP} --enable-static=no ${ENABLE_RUBY} ${ENABLE_PYTHON}
+./configure --prefix=${TUSCANY_SCACPP} --enable-static=no ${WITH_AXIS2C} ${ENABLE_RUBY} ${ENABLE_PYTHON}
 make
 make install
 

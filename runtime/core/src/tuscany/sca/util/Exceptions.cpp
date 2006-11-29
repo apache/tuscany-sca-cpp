@@ -21,11 +21,17 @@
 
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
+
+#if defined(WIN32)  || defined (_WINDOWS) 
+#else
+#include "tuscany_sca_config.h"
+#endif
+
 using namespace std;
 
 #include <sstream>
 
-#if defined(WIN32)  || defined (_WINDOWS)
+#if defined(WIN32)  || defined (_WINDOWS) || defined (IS_DARWIN)
 #else
 #include <execinfo.h>
 #endif
@@ -49,7 +55,7 @@ namespace tuscany
             message_text = new char[strlen(msg_text)+1];
             strcpy(message_text,msg_text);
             
-#if defined(WIN32)  || defined (_WINDOWS)
+#if defined(WIN32)  || defined (_WINDOWS) || defined (IS_DARWIN)
 #else
             void* array[25];
             stacktrace_size = backtrace(array, 25);
@@ -81,7 +87,7 @@ namespace tuscany
                 strcpy(locations[i].function, c.locations[i].function);
             }
 
-#if defined(WIN32)  || defined (_WINDOWS)
+#if defined(WIN32)  || defined (_WINDOWS) || defined (IS_DARWIN)
 #else
             void* array[25];
             stacktrace_size = backtrace(array, 25);
@@ -125,7 +131,7 @@ namespace tuscany
                 setLocation(file, line, function);
             }
             
-#if defined(WIN32)  || defined (_WINDOWS)
+#if defined(WIN32)  || defined (_WINDOWS) || defined (IS_DARWIN)
 #else
             void* array[25];
             stacktrace_size = backtrace(array, 25);
@@ -148,7 +154,7 @@ namespace tuscany
                 if (locations[i].function) delete locations[i].function;
             }
             
-#if defined(WIN32)  || defined (_WINDOWS)
+#if defined(WIN32)  || defined (_WINDOWS) || defined (IS_DARWIN)
 #else
             free(stacktrace_symbols);
 #endif            
@@ -273,7 +279,7 @@ namespace tuscany
                     }
                 }
             }
-#if defined(WIN32)  || defined (_WINDOWS)
+#if defined(WIN32)  || defined (_WINDOWS) || defined (IS_DARWIN)
 #else
             if (stacktrace_size != 0)
             {
