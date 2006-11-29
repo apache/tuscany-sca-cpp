@@ -23,6 +23,7 @@
 #define tuscany_sca_rest_model_restinterface_h
 
 #include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/rest/exportinterface.h"
 
 #include <map>
 using std::map;
@@ -66,12 +67,13 @@ namespace tuscany
                 */
                 virtual const string& getInterfaceTypeQName() { return typeQName; };
     
-           private:
-           
                 /**
                  * The QName of the schema type for this interface type.
                  */
-                static const string typeQName;
+                SCA_REST_INTERFACE_API static const string typeQName;
+                
+            private:
+            
             };
             
         } // End namespace rest
