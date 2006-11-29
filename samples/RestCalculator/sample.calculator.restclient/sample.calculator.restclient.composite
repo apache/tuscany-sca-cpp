@@ -22,7 +22,7 @@
 	name="sample.calculator.restclient">
 
 	<reference name="CalculatorService">
-		<binding.rest uri="http://localhost:9090/axis2/services/sample.calculator.CalculatorComponent/CalculatorService"/>
+		<binding.rest uri="http://localhost:9090/rest/sample.calculator.CalculatorComponent/CalculatorService"/>
 	</reference>
 
 </composite>
