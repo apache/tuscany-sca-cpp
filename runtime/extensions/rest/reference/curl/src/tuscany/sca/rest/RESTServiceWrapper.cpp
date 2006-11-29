@@ -30,6 +30,7 @@
 #include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/CompositeReference.h"
 #include "model/RESTServiceBinding.h"
+#include "tuscany/sca/rest/model/RESTInterface.h"
 
 #include "commonj/sdo/SDO.h"
 using namespace commonj::sdo;
@@ -83,6 +84,28 @@ namespace tuscany
             
             RESTServiceWrapper::RESTServiceWrapper(Service* service) : ServiceWrapper(service)
             {
+                logentry();
+                
+                DataFactoryPtr dataFactory = service->getComponent()->getComposite()->getDataFactory();
+                try {
+                    const Type& tempType = dataFactory->getType("http://tempuri.org", "RootType");
+                } catch (SDORuntimeException&)
+                {
+                    dataFactory->addType("http://tempuri.org", "RootType", false, false, false);                
+                    dataFactory->addType("http://tempuri.org", "Body", false, true, false);                
+                    dataFactory->addPropertyToType(
+                        "http://tempuri.org", "RootType",
+                        "Body",
+                        "http://tempuri.org", "Body",
+                        false, false, true);
+                    dataFactory->addType("http://tempuri.org", "Part", false, true, false);                
+                    dataFactory->addPropertyToType(
+                        "http://tempuri.org", "RootType",
+                        "Part",
+                        "http://tempuri.org", "Part",
+                        false, false, true);
+                }
+                
                 if (!initialized)
                 {
                     curl_global_init(CURL_GLOBAL_ALL);
@@ -114,11 +137,11 @@ namespace tuscany
                 Service* service = getService();
                 CompositeReference* compositeReference = (CompositeReference*)service->getComponent();
                 Composite* composite = compositeReference->getComposite();
-                
                 XMLHelper* xmlHelper = composite->getXMLHelper();
 
                 // Get the REST binding
                 RESTServiceBinding* binding = (RESTServiceBinding *)service->getBinding();
+                Interface* iface = service->getType()->getInterface();
                 
                 // Init the curl session
                 CURL *curl_handle = curl_easy_init();
@@ -128,180 +151,192 @@ namespace tuscany
                 
                 // Some servers don't like requests that are made without a user-agent
                 curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-
-                // HTTP GET
-                const string& opName = operation.getName();
-                if (opName == "get")
+                
+                // Get the operation name
+                string opName = operation.getName();
+                
+                // If we have a REST interface, the operation name translates to an HTTP verb
+                if (iface != NULL && iface->getInterfaceTypeQName() == RESTInterface::typeQName)
                 {
-                    // Build the request URL
-                    string uri = binding->getURI();
-                    ostringstream os;
-                    if (uri[uri.length()-1] == '?')
+    
+                    // HTTP GET
+                    if (opName == "retrieve")
                     {
-                        // Add the parameters to the end of the URL in the form
-                        // param=value&
-                        os << uri;
-                        for (int i=0; i<operation.getNParms(); i++)
-                        {
-                            os << "param" << (i + 1) << "=";
-                            writeParameter(xmlHelper, os, operation.getParameter(i));
-                            if (i < operation.getNParms()-1)
-                                os << "&";
-                        }
-                    }
-                    else
-                    {
-                        // Add the parameters to the end of the URL in the
-                        // form value1 / value2 / value3 
-                        os << uri;
-                        for (int i=0; i<operation.getNParms(); i++)
-                        {
-                            os << "/";
-                            writeParameter(xmlHelper, os, operation.getParameter(i));
-                        }
-                    }
-
-                    string url = os.str();                                        
-                    curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
- 
-                    // Send all data to this function
-                    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
- 
-                    // Pass our 'chunk' struct to the callback function
-                    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
- 
-                    // Perform the HTTP get
-                    CURLcode rc = curl_easy_perform(curl_handle);
-                    
-                    if (rc)
-                    {
-                        if (chunk.memory)
-                            free(chunk.memory);
-                        throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
-                    }
-
-                    // Get the output data out of the returned document 
-                    if (chunk.memory)
-                    {
-                        string payload((const char*)chunk.memory, chunk.size);
-                        free(chunk.memory);
-
-                        // TODO This is a temp hack, clean this up
-                        // Wrap the returned document inside a part element 
-                        string part = 
-                        "<part xsi:type=\"sdo:OpenDataObject\" xmlns:sdo=\"commonj.sdo\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                        + payload
-                        + "</part>";
-                        setReturn(xmlHelper, part, operation);
-                    }
-                }
-                else if (opName == "post")
-                {
-                    // HTTP POST
-                    
-                    // Set the target URL
-                    string url = binding->getURI();  
-                    curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
-
-                    // If the request contains complex content then we'll use
-                    // a multipart form POST, otherwise we use a simpler
-                    // url-encoded POST
-                    bool complexContent = false; 
-                    for (int i=0; i<operation.getNParms(); i++)
-                    {
-                        if (operation.getParameter(i).getType() == Operation::DATAOBJECT)
-                        {
-                            complexContent = true;
-                            break;
-                        }
-                    }
-                    struct curl_httppost *formpost = NULL;
-                    if (complexContent)
-                    {
-                        // Build the input form
-                        struct curl_httppost *lastptr = NULL;
-                        for (int i=0; i<operation.getNParms(); i++)
-                        {
-                            ostringstream pname;
-                            pname << "param" << (i+1);
-                            
-                            ostringstream pvalue;
-                            writeParameter(xmlHelper, pvalue, operation.getParameter(i));
-                            
-                            curl_formadd(&formpost,
-                                &lastptr,
-                                CURLFORM_COPYNAME, pname.str().c_str(),
-                                CURLFORM_COPYCONTENTS, pvalue.str().c_str(),
-                                CURLFORM_END);
-                        }
-                        
-                        // Set the form into the request
-                        curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, formpost);
-                    }
-                    else
-                    {
-                        // Build the request string
-                        // Add the parameters in the form // param=value&
+                        // Build the request URL
+                        string uri = binding->getURI();
                         ostringstream os;
+                        if (uri[uri.length()-1] == '?')
+                        {
+                            // Add the parameters to the end of the URL in the form
+                            // param=value&
+                            os << uri;
+                            for (int i=0; i<operation.getNParms(); i++)
+                            {
+                                os << "param" << (i + 1) << "=";
+                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                                if (i < operation.getNParms()-1)
+                                    os << "&";
+                            }
+                        }
+                        else
+                        {
+                            // Add the parameters to the end of the URL in the
+                            // form value1 / value2 / value3 
+                            os << uri;
+                            for (int i=0; i<operation.getNParms(); i++)
+                            {
+                                os << "/";
+                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                            }
+                        }
+    
+                        string url = os.str();                                        
+                        curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
+     
+                        // Send all data to this function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+     
+                        // Perform the HTTP get
+                        CURLcode rc = curl_easy_perform(curl_handle);
+                        
+                        if (rc)
+                        {
+                            if (chunk.memory)
+                                free(chunk.memory);
+                            throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
+                        }
+    
+                        // Get the output data out of the returned document 
+                        if (chunk.memory)
+                        {
+                            string payload((const char*)chunk.memory, chunk.size);
+                            free(chunk.memory);
+    
+                            // TODO This is a temp hack, clean this up
+                            // Wrap the returned document inside a part element 
+                            string part = 
+                            "<Part xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                            + payload
+                            + "</Part>";
+                            setReturn(xmlHelper, part, operation);
+                        }
+                    }
+                    else if (opName == "create")
+                    {
+                        // HTTP POST
+                        
+                        // Set the target URL
+                        string url = binding->getURI();  
+                        curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
+    
+                        // If the request contains complex content then we'll use
+                        // a multipart form POST, otherwise we use a simpler
+                        // url-encoded POST
+                        bool complexContent = false; 
                         for (int i=0; i<operation.getNParms(); i++)
                         {
-                            os << "param" << (i + 1) << "=";
-                            writeParameter(xmlHelper, os, operation.getParameter(i));
-                            if (i < operation.getNParms()-1)
-                                os << "&";
+                            if (operation.getParameter(i).getType() == Operation::DATAOBJECT)
+                            {
+                                complexContent = true;
+                                break;
+                            }
                         }
-                        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, os.str().c_str());
-                    }                    
+                        struct curl_httppost *formpost = NULL;
+                        if (complexContent)
+                        {
+                            // Build the input form
+                            struct curl_httppost *lastptr = NULL;
+                            for (int i=0; i<operation.getNParms(); i++)
+                            {
+                                ostringstream pname;
+                                pname << "param" << (i+1);
+                                
+                                ostringstream pvalue;
+                                writeParameter(xmlHelper, pvalue, operation.getParameter(i));
+                                
+                                curl_formadd(&formpost,
+                                    &lastptr,
+                                    CURLFORM_COPYNAME, pname.str().c_str(),
+                                    CURLFORM_COPYCONTENTS, pvalue.str().c_str(),
+                                    CURLFORM_END);
+                            }
+                            
+                            // Set the form into the request
+                            curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, formpost);
+                        }
+                        else
+                        {
+                            // Build the request string
+                            // Add the parameters in the form // param=value&
+                            ostringstream os;
+                            for (int i=0; i<operation.getNParms(); i++)
+                            {
+                                os << "param" << (i + 1) << "=";
+                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                                if (i < operation.getNParms()-1)
+                                    os << "&";
+                            }
+                            curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, os.str().c_str());
+                        }                    
+                            
+                        // Send all data to this function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+     
+                        // Perform the HTTP post
+                        CURLcode rc = curl_easy_perform(curl_handle);
                         
-                    // Send all data to this function
-                    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
- 
-                    // Pass our 'chunk' struct to the callback function
-                    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
- 
-                    // Perform the HTTP post
-                    CURLcode rc = curl_easy_perform(curl_handle);
-                    
-                    // Cleanup the form
-                    if (complexContent)
-                    {
-                        curl_formfree(formpost);
-                    }                    
-                    
-                    if (rc)
-                    {
+                        // Cleanup the form
+                        if (complexContent)
+                        {
+                            curl_formfree(formpost);
+                        }                    
+                        
+                        if (rc)
+                        {
+                            if (chunk.memory)
+                                free(chunk.memory);
+                            throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
+                        }
+    
+                        // Get the output data out of the returned document 
                         if (chunk.memory)
+                        {
+                            string payload((const char*)chunk.memory, chunk.size);
                             free(chunk.memory);
-                        throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
+    
+                            // TODO This is a temp hack, clean this up
+                            // Wrap the returned document inside a part element 
+                            string part = 
+                            "<Part xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                            + payload
+                            + "</Part>";
+                            setReturn(xmlHelper, part, operation);
+                        }
                     }
-
-                    // Get the output data out of the returned document 
-                    if (chunk.memory)
+                    else if (opName == "update")
                     {
-                        string payload((const char*)chunk.memory, chunk.size);
-                        free(chunk.memory);
-
-                        // TODO This is a temp hack, clean this up
-                        // Wrap the returned document inside a part element 
-                        string part = 
-                        "<part xsi:type=\"sdo:OpenDataObject\" xmlns:sdo=\"commonj.sdo\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                        + payload
-                        + "</part>";
-                        setReturn(xmlHelper, part, operation);
+                        // HTTP PUT
                     }
-                }
-                else if (opName == "put")
-                {
-                    // HTTP PUT
-                }
-                else if (opName == "delete")
-                {
-                    // HTTP DELETE
-                    
+                    else if (opName == "delete")
+                    {
+                        // HTTP DELETE
+                        
+                    }
+                    else
+                    {
+                            string msg = "Unknown REST verb: " + opName;
+                            throwException(ServiceInvocationException, msg.c_str());
+                    }
                 }
                 else
                 {
-                    // XML / HTTP RPC style
+                    // Not a REST interface, XML / HTTP command style
                     
                     // If the request contains complex content then we'll use
                     // a multipart form POST, otherwise we use a GET
@@ -318,7 +353,10 @@ namespace tuscany
                     if (complexContent)
                     {
                        // Set the target URL
-                        string url = binding->getURI();  
+                        string uri = binding->getURI();
+                        ostringstream os;
+                        os << uri << "/" << opName;
+                        string url = os.str();                                        
                         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
 
                         // Build the input form
@@ -361,7 +399,8 @@ namespace tuscany
                                 os << "&";
                         }
     
-                        string url = os.str();                                        
+                        string url = os.str();
+                                                                
                         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
                     }
                     
@@ -490,9 +529,9 @@ namespace tuscany
                 //TODO Remove this workaround once SDO supports loading of open top level content
                 // The workaround is to wrap the open content in a wrapper element of type OpenDataObject
                 string body = 
-                "<body xsi:type=\"sdo:OpenDataObject\" xmlns:sdo=\"commonj.sdo\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                "<Body xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
                 + payload
-                + "</body>";
+                + "</Body>";
                 
                 // Convert the body to an SDO DataObject
                 DataObjectPtr outputBodyDataObject = NULL;
@@ -503,7 +542,7 @@ namespace tuscany
                 }
                 if(!outputBodyDataObject)
                 {
-                    logerror("Could not convert received document to SDO");
+                    logerror("Could not convert received document to SDO: %s", body.c_str());
                     return;
                 }                    
 
@@ -524,7 +563,7 @@ namespace tuscany
                 }
                 if (outputDataObject == NULL)
                 {
-                    logerror("Could not convert body part to SDO");
+                    logerror("Could not convert body part to SDO: %s", body.c_str());
                     return;
                 }
                  
@@ -614,6 +653,10 @@ namespace tuscany
                         {
                             loginfo("Null SDO DataObject return value");
                         }
+                        else
+                        {
+                            (*dataObjectData)->detach();
+                        }
                         operation.setReturnValue(dataObjectData);
                     }
                     break;
@@ -655,6 +698,10 @@ namespace tuscany
                                         if(!*dataObjectData)
                                         {
                                             loginfo("Null DataObject return value");
+                                        }
+                                        else
+                                        {
+                                            (*dataObjectData)->detach();
                                         }
                                         operation.setReturnValue(dataObjectData);
                                     }
