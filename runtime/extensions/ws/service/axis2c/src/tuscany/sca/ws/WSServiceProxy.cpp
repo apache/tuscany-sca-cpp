@@ -163,18 +163,19 @@ namespace tuscany
                         case Type::BytesType:
                             {
                                 int len = inputDataObject->getLength(pl[i]);
-                                char* bytesData = new char[len+1];
-                                int bytesWritten = inputDataObject->getBytes(pl[i], bytesData, len);
+                                char** bytesData = new char*;
+                                *bytesData = new char[len+1];
+                                int bytesWritten = inputDataObject->getBytes(pl[i], *bytesData, len);
                                 // Ensure the bytes end with the null char. Not sure if this is neccessary
                                 if(bytesWritten <= len)
                                 {
-                                    bytesData[bytesWritten] = 0;
+                                    (*bytesData)[bytesWritten] = 0;
                                 }
                                 else
                                 {
-                                    bytesData[len] = 0;
+                                    (*bytesData)[len] = 0;
                                 }
-                                operation.addParameter(&bytesData);
+                                operation.addParameter(bytesData);
                             }
                             break;
                         case Type::CharacterType:
@@ -230,12 +231,17 @@ namespace tuscany
                             break;
                         case Type::DataObjectType:
                             {
-                                DataObjectPtr dataObjectData = inputDataObject->getDataObject(pl[i]);
-                                if(!dataObjectData)
+                                DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                *dataObjectData = inputDataObject->getDataObject(pl[i]);
+                                if(!*dataObjectData)
                                 {
                                     loginfo("Null DataObject parameter named %s", name);
                                 }
-                                operation.addParameter(&dataObjectData);
+                                else
+                                {
+                                    (*dataObjectData)->detach();
+                                }
+                                operation.addParameter(dataObjectData);
                             }
                             break;
                         case Type::OpenDataObjectType:
@@ -249,18 +255,20 @@ namespace tuscany
                                 
                                 for(unsigned int j=0; j<dataObjectList.size(); j++)
                                 {
-                                    DataObjectPtr dataObjectData = dataObjectList[j];
-                                    if(!dataObjectData)
+                                    DataObjectPtr dob = dataObjectList[j];
+                                    if(!dob)
                                     {
                                         
                                         // Add a null DataObject ptr
+                                        DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                        *dataObjectData = NULL;
                                         loginfo("Null OpenDataObject parameter named %s[%d]", name, j);
-                                        operation.addParameter(&dataObjectData);
+                                        operation.addParameter(dataObjectData);
                                     }
                                     else
                                     {
                                         
-                                        SequencePtr sequence = dataObjectData->getSequence();
+                                        SequencePtr sequence = dob->getSequence();
                                         if (sequence->size()!=0)
                                         {
                                             // Add a text element        
@@ -272,12 +280,17 @@ namespace tuscany
                                             else
                                             {
                                                 // Add a complex element DataObject
-                                                DataObjectPtr dob = sequence->getDataObjectValue(0);
-                                                if(!dob)
+                                                DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                                *dataObjectData = sequence->getDataObjectValue(0);
+                                                if(!*dataObjectData)
                                                 {
                                                     loginfo("Null DataObject parameter named %s", name);
                                                 }
-                                                operation.addParameter(&dob);
+                                                else
+                                                {
+                                                    (*dataObjectData)->detach();
+                                                }
+                                                operation.addParameter(dataObjectData);
                                             }
                                         }
                                         else

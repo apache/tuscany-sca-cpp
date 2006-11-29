@@ -576,9 +576,10 @@ namespace tuscany
                                 {
                                     loginfo("Null DataObject return value");
                                 }
-
-                                // Detach from it's container as sequence will go out of scope
-                                (*dataObjectData)->detach();
+                                else
+                                {
+                                    (*dataObjectData)->detach();
+                                }
                                 operation.setReturnValue(dataObjectData);
                             }
                         }
@@ -673,8 +674,10 @@ namespace tuscany
                             {
                                 loginfo("Null DataObject return value");
                             }
-                           // Detach from it's container as outputDataObject will go out of scope
-                           (*dataObjectData)->detach();
+                            else
+                            {
+                               (*dataObjectData)->detach();
+                            }
                             operation.setReturnValue(dataObjectData);
                         }
                         break;
@@ -717,8 +720,10 @@ namespace tuscany
                                             {
                                                 loginfo("Null DataObject return value");
                                             }
-                                            // Detach from it's container as sequence will go out of scope
-                                            (*dataObjectData)->detach();
+                                            else
+                                            {
+                                                (*dataObjectData)->detach();
+                                            }
                                             operation.setReturnValue(dataObjectData);
                                         }
                                     }
