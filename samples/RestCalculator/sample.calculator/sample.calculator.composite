@@ -22,7 +22,6 @@
 	name="sample.calculator">
 
 	<service name="CalculatorService">
-		<interface.rest/>
 		<binding.rest/>
 		<reference>CalculatorComponent</reference>
 	</service>
