@@ -36,6 +36,8 @@
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
 #include "tuscany/sca/ruby/model/RubyReferenceBinding.h"
 
+#include <sstream>
+
 extern "C"
 {
     
@@ -233,7 +235,9 @@ namespace tuscany
                                 }
                                 if (dob != NULL)
                                 {
-                                    operation.addParameter(&dob);
+                                    DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                    *dataObjectData = dob;
+                                    operation.addParameter(dataObjectData);
                                 }
                                 else
                                 {
@@ -345,8 +349,9 @@ namespace tuscany
                         }
                         default:
                         {
-                            string msg = "Operation parameter type not supported" + resultType;
-                            rb_raise(rb_eRuntimeError, msg.c_str());
+                            ostringstream msg;
+                            msg << "Operation parameter type not supported: " << resultType;
+                            rb_raise(rb_eRuntimeError, msg.str().c_str());
                             return Qnil;
                         }
                     }

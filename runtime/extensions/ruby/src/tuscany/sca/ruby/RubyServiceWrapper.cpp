@@ -265,8 +265,9 @@ namespace tuscany
                                 }
                                 default:
                                 {
-                                    string msg = "Operation parameter type not supported" + parmType;
-                                    throwException(ServiceDataException, msg.c_str());
+                                    ostringstream msg;
+                                    msg << "Operation parameter type not supported: " << parmType;
+                                    throwException(ServiceDataException, msg.str().c_str());
                                 }
                             }
                             
