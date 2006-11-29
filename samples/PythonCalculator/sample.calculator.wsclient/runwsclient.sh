@@ -37,6 +37,12 @@ exit;
 fi
 echo "Using Axis2C installed at $AXIS2C_HOME"
 
+if [ x$PYTHON_LIB != x ]; then
+echo "Using Python library installed at $PYTHON_LIB"
+export LD_LIBRARY_PATH=$PYTHON_LIB:$LD_LIBRARY_PATH
+export PATH=$PYTHON_LIB/../bin:$PATH
+fi
+
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/python/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
 
