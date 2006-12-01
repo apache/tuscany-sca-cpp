@@ -44,7 +44,7 @@ set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
 set TUSCANY_SCACPP_COMPONENT=bigbank.AccountWSClientComponent
 
 cd %TUSCANY_SCACPP_ROOT%\bigbank.wsclient
-ruby -I%TUSCANY_SCACPP%\extensions\ruby\lib AccountWSClient.rb
+ruby -I%TUSCANY_SCACPP%\extensions\ruby\bin AccountWSClient.rb
 
 :end
 endlocal
