@@ -20,11 +20,11 @@
 TUSCANY_SCACPP_HOME=`pwd`
 
 if [ x$AXIS2C_HOME = x ]; then
-echo "AXIS2C_HOME not set not building Axis2C WS binding extensions"
-WITH_AXIS2C=--with-axis2c=false
+echo "AXIS2C_HOME not set. Not building Axis2C WS binding extensions"
+
 else
 echo "Using Axis2C installed at $AXIS2C_HOME"
-WITH_AXIS2C=--with-axis2c=true
+WITH_AXIS2C=--with-axis2c
 fi
 
 if [ x$TUSCANY_SDOCPP = x ]; then
