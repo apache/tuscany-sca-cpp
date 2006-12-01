@@ -243,6 +243,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\extensions\ws\reference\axis2c\src\tuscany\sca\ws\export.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\extensions\ws\reference\axis2c\src\tuscany\sca\ws\WSServiceBindingExtension.cpp"
 				>
 				<FileConfiguration

@@ -26,7 +26,6 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/SCARuntime.h"
 
-
 extern "C"
 {
     #if defined(WIN32) || defined(_WINDOWS)

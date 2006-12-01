@@ -23,6 +23,7 @@
 #define tuscany_sca_extension_ws_model_wsreferencebinding_h
 
 #include "tuscany/sca/model/ReferenceBinding.h"
+#include "tuscany/sca/ws/export.h"
 
 using namespace tuscany::sca::model;
 
@@ -49,12 +50,12 @@ namespace tuscany
                  * or external service is to be bound. This is of the form
                  * "namespace"#endpoint("service"/"endpoint")
                  */
-                WSReferenceBinding(Reference* reference, const string&uri, const string& endpoint, const string& version);  
+                SCA_WS_SERVICE_API WSReferenceBinding(Reference* reference, const string&uri, const string& endpoint, const string& version);  
 
                 /**
                  * Destructor.
                  */
-                virtual ~WSReferenceBinding();
+                SCA_WS_SERVICE_API virtual ~WSReferenceBinding();
                             
                 /**
                  * Returns the type of binding.
@@ -64,13 +65,13 @@ namespace tuscany
                  /**
                   * Configure this binding from a service binding.
                   */
-                  virtual void configure(ServiceBinding* serviceBinding);
+                SCA_WS_SERVICE_API virtual void configure(ServiceBinding* serviceBinding);
                                 
                 /**
                  * Create a proxy representing the reference to the
                  * client component.
                  */
-                 virtual ServiceProxy* getServiceProxy();
+                SCA_WS_SERVICE_API virtual ServiceProxy* getServiceProxy();
                                 
                 /**
                  * Return the part of the endpoint definition describing the wsdl 

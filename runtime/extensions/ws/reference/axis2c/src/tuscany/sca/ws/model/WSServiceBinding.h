@@ -24,6 +24,7 @@
 
 #include "tuscany/sca/model/ServiceBinding.h"
 #include "tuscany/sca/model/Service.h"
+#include "tuscany/sca/ws/export.h"
 
 #include <string>
 using std::string;
@@ -48,12 +49,12 @@ namespace tuscany
                  * or reference is to be bound. This is of the form
                  * "namespace"#endpoint("service"/"endpoint")
                  */
-                WSServiceBinding(model::Service* service, const string& uri, const string& endpoint, const string& version);  
+                SCA_WS_REFERENCE_API WSServiceBinding(model::Service* service, const string& uri, const string& endpoint, const string& version);  
 
                 /**
                  * Destructor.
                  */
-                virtual ~WSServiceBinding();
+                SCA_WS_REFERENCE_API virtual ~WSServiceBinding();
                             
                 /**
                  * Returns the type of binding.
@@ -64,7 +65,7 @@ namespace tuscany
                  * Create a wrapper for the service configured by this
                  * binding.
                  */
-                 virtual ServiceWrapper* getServiceWrapper();
+                SCA_WS_REFERENCE_API virtual ServiceWrapper* getServiceWrapper();
                                 
                 /**
                  * Return the part of the endpoint definition describing the wsdl 

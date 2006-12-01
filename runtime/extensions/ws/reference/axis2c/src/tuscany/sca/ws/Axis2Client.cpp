@@ -203,9 +203,9 @@ namespace tuscany
                 axis2_char_t* soap_action = (axis2_char_t*)wsdlOperation.getSoapAction().c_str();
                 axis2_char_t* serviceName = (axis2_char_t*)binding->getServiceName().c_str();
                 
+
                 // create OM from Operation and wsdlOperation
                 axiom_node_t* payload = createPayload(operation, wsdlOperation, env);
-                
                 /* Create EPR with given address */
                 axis2_endpoint_ref_t* endpoint_ref = axis2_endpoint_ref_create(env, address);
                 
@@ -227,7 +227,20 @@ namespace tuscany
                 
                 AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, soap_version);
                 AXIS2_OPTIONS_SET_ACTION(options, env, soap_action);
-                
+                loginfo("Set action: %s", soap_action);
+                loginfo("address: %s", address);
+                if(soap_version == AXIOM_SOAP11)
+                {
+                    loginfo("Set soap version: 1.1");
+                }
+                else if(soap_version == AXIOM_SOAP12)
+                {
+                    loginfo("Set soap version: 1.2");
+                }
+                else
+                {
+                    loginfo("Set soap version: unset");
+                }
                 /* Create service client */
                 
                 axis2_char_t* client_home = AXIS2_GETENV("AXIS2C_HOME");
@@ -246,7 +259,11 @@ namespace tuscany
                 
                 /* Set service client options */
                 AXIS2_SVC_CLIENT_SET_OPTIONS(svc_client, env, options);    
-                
+
+                /* Engage addressing module */
+                AXIS2_SVC_CLIENT_ENGAGE_MODULE(svc_client, env, AXIS2_MODULE_ADDRESSING);
+
+                loginfo("Sending WS request");
                 /* Send request */
                 axiom_node_t* ret_node = AXIS2_SVC_CLIENT_SEND_RECEIVE(svc_client, env, payload);
                 if(ret_node)
