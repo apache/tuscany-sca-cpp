@@ -207,6 +207,10 @@ AC_CONFIG_FILES([Makefile
                  RestCalculator/sample.calculator/Makefile
                  RestCalculator/sample.calculator.restclient/Makefile
                  RestCalculator/httpserver/Makefile
+                 RestCustomer/Makefile
+                 RestCustomer/sample.customer/Makefile
+                 RestCustomer/sample.customer.restclient/Makefile
+                 RestCustomer/httpserver/Makefile
                  CppBigBank/Makefile
                  CppBigBank/bigbank.account/Makefile
                  CppBigBank/bigbank.client/Makefile

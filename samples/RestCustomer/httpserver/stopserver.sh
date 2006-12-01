@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,28 +17,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_ALL_SAMPLES
-  CPP_SAMPLES = CppCalculator
-if WITH_AXIS2C
-  CPP_AXIS2C_SAMPLES = CppBigBank
-endif
-  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer
-  RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
-endif
-if WANT_CPP_SAMPLES
-  CPP_SAMPLES = CppCalculator
-if WITH_AXIS2C
-  CPP_AXIS2C_SAMPLES = CppBigBank
-endif
-endif
-if WANT_PYTHON_SAMPLES
-  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer
-endif
-if WANT_RUBY_SAMPLES
-  RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
-endif
-if WANT_PHP_SAMPLES
-endif
-SUBDIRS = ${CPP_SAMPLES} ${CPP_AXIS2C_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PHP_SAMPLES}
+APFULLDIR=`pwd`
 
-EXTRA_DIST = GettingStarted.html
+# Stop the HTTP server
+echo "Stopping Apache httpd"
+apachectl -k stop -d $APFULLDIR
+

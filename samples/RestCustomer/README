@@ -1,0 +1,25 @@
+Tuscany SCA for C++ Samples - REST Customer Sample
+===============================================
+
+This is a very simple sample to show how to use the SCA REST binding to
+implement a resource management service and make resources available
+through HTTP.
+
+There are three sub projects in this workspace:
+    - sample.customer
+      This contains the source code and SCDL artifacts for the SCA component
+      implementing the Customer resource management service.
+
+    - sample.customer.restclient
+      A sample REST client which shows how to create, update, retrieve, and
+      delete Customer resources.
+
+    - httpserver
+      This contains a minimal configuration for the Apache HTTP server used
+      to host the REST service as well as scripts to start and stop the server.
+
+Additionally, there is the sample.customer.app.composite file. This 
+describes the configuration of the SCA Calculator composite deployed to the 
+SCA runtime.
+
+See the README.html file for instructions to build and run this sample

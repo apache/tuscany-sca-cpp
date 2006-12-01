@@ -1,0 +1,14 @@
+<xsd:schema targetNamespace="http://sample.customer" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="customer">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id" type="xsd:int" />
+				<xsd:element name="firstName" type="xsd:string" />
+				<xsd:element name="lastName" type="xsd:string" />
+				<xsd:element name="address" type="xsd:string" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+</xsd:schema>
