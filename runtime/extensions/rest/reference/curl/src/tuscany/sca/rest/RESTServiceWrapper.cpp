@@ -44,9 +44,15 @@ using namespace tuscany::sca::model;
 
 extern "C"
 {
-    struct Chunk {
+    struct ResponseChunk {
         char *memory;
         size_t size;
+    };
+
+    struct RequestChunk {
+        const char *memory;
+        size_t size;
+        size_t read;
     };
 
     static void *my_realloc(void *ptr, size_t size)
@@ -60,16 +66,43 @@ extern "C"
     static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *data)
     {
         size_t realsize = size * nmemb;
-        struct Chunk *mem = (struct Chunk *)data;
+        struct ResponseChunk *mem = (struct ResponseChunk *)data;
 
         mem->memory = (char *)my_realloc(mem->memory, mem->size + realsize + 1);
-        if (mem->memory) {
-            memcpy(&(mem->memory[mem->size]), ptr, realsize);
-            mem->size += realsize;
-            mem->memory[mem->size] = 0;
-        }
+        memcpy(&(mem->memory[mem->size]), ptr, realsize);
+        mem->size += realsize;
+        mem->memory[mem->size] = 0;
         return realsize;
     }
+    
+    static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *data)
+    {
+        size_t realsize = size * nmemb;
+        struct RequestChunk *mem = (struct RequestChunk *)data;
+
+        if (realsize < mem->size - mem->read)
+        {
+            realsize = mem->size - mem->read;
+        }
+        if (realsize != 0)
+        {
+            memcpy(ptr, &(mem->memory[mem->read]), realsize);
+        }
+        return realsize; 
+    }    
+ 
+    static size_t header_callback(void *ptr, size_t size, size_t nmemb, void *data)
+    {
+        size_t realsize = size * nmemb;
+        char* str = (char*)malloc(realsize + 1);
+        memcpy(str, ptr, realsize);
+        str[realsize] = 0;
+        
+        printf("Header: %s", str);
+        free(str);
+
+        return realsize; 
+    }    
  
  }
 
@@ -145,9 +178,14 @@ namespace tuscany
                 
                 // Init the curl session
                 CURL *curl_handle = curl_easy_init();
-                Chunk chunk;
-                chunk.memory=NULL;
-                chunk.size = 0;
+
+                RequestChunk requestChunk;
+                requestChunk.memory=NULL;
+                requestChunk.size = 0;
+                requestChunk.read = 0;
+                ResponseChunk responseChunk;
+                responseChunk.memory=NULL;
+                responseChunk.size = 0;
                 
                 // Some servers don't like requests that are made without a user-agent
                 curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
@@ -197,31 +235,57 @@ namespace tuscany
                         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
      
                         // Pass our 'chunk' struct to the callback function
-                        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&responseChunk);
+     
+                        // Send all headers to this function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEHEADER, header_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)0);
      
                         // Perform the HTTP get
                         CURLcode rc = curl_easy_perform(curl_handle);
                         
                         if (rc)
                         {
-                            if (chunk.memory)
-                                free(chunk.memory);
+                            if (responseChunk.memory)
+                                free(responseChunk.memory);
                             throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
                         }
     
-                        // Get the output data out of the returned document 
-                        if (chunk.memory)
+                        // Get the output data out of the returned document
+                        long httprc;
+                        curl_easy_getinfo (curl_handle, CURLINFO_RESPONSE_CODE, &httprc);
+
+                        string responsePayload = ""; 
+                        if (responseChunk.memory)
                         {
-                            string payload((const char*)chunk.memory, chunk.size);
-                            free(chunk.memory);
-    
-                            // TODO This is a temp hack, clean this up
-                            // Wrap the returned document inside a part element 
-                            string part = 
-                            "<Part xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                            + payload
-                            + "</Part>";
-                            setReturn(xmlHelper, part, operation);
+                            responsePayload = string((const char*)responseChunk.memory, responseChunk.size);
+                            free(responseChunk.memory);
+                        }
+        
+                        if (httprc == 200)
+                        {
+                            if (responsePayload != "")
+                            {
+                                // TODO This is a temp hack, clean this up
+                                // Wrap the returned document inside a part element 
+                                string part = 
+                                "<Part xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                                + responsePayload
+                                + "</Part>";
+                                setReturn(xmlHelper, part, operation);
+                            }
+                        }
+                        else
+                        {
+                            ostringstream msg;
+                            msg << "Failed to retrieve REST resource, HTTP code: " << httprc;
+                            if (responsePayload != "")
+                            {
+                                msg << ", payload: " << responsePayload;
+                            } 
+                            throwException(ServiceInvocationException, msg.str().c_str());
                         }
                     }
                     else if (opName == "create")
@@ -232,91 +296,78 @@ namespace tuscany
                         string url = binding->getURI();  
                         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
     
-                        // If the request contains complex content then we'll use
-                        // a multipart form POST, otherwise we use a simpler
-                        // url-encoded POST
-                        bool complexContent = false; 
+                        // Create the input payload     
+                        ostringstream spayload;
                         for (int i=0; i<operation.getNParms(); i++)
                         {
-                            if (operation.getParameter(i).getType() == Operation::DATAOBJECT)
-                            {
-                                complexContent = true;
-                                break;
-                            }
+                            writeParameter(xmlHelper, spayload, operation.getParameter(i));
                         }
-                        struct curl_httppost *formpost = NULL;
-                        if (complexContent)
-                        {
-                            // Build the input form
-                            struct curl_httppost *lastptr = NULL;
-                            for (int i=0; i<operation.getNParms(); i++)
-                            {
-                                ostringstream pname;
-                                pname << "param" << (i+1);
-                                
-                                ostringstream pvalue;
-                                writeParameter(xmlHelper, pvalue, operation.getParameter(i));
-                                
-                                curl_formadd(&formpost,
-                                    &lastptr,
-                                    CURLFORM_COPYNAME, pname.str().c_str(),
-                                    CURLFORM_COPYCONTENTS, pvalue.str().c_str(),
-                                    CURLFORM_END);
-                            }
-                            
-                            // Set the form into the request
-                            curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, formpost);
-                        }
-                        else
-                        {
-                            // Build the request string
-                            // Add the parameters in the form // param=value&
-                            ostringstream os;
-                            for (int i=0; i<operation.getNParms(); i++)
-                            {
-                                os << "param" << (i + 1) << "=";
-                                writeParameter(xmlHelper, os, operation.getParameter(i));
-                                if (i < operation.getNParms()-1)
-                                    os << "&";
-                            }
-                            curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, os.str().c_str());
-                        }                    
-                            
+                        const string& requestPayload = spayload.str(); 
+                        requestChunk.memory = requestPayload.c_str();
+                        requestChunk.size = requestPayload.size();
+                        
+                        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, requestChunk.size);
+                        
+                        // Read all data using this function
+                        curl_easy_setopt(curl_handle, CURLOPT_READFUNCTION, read_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_READDATA, (void *)&requestChunk);
+                        
                         // Send all data to this function
                         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
      
                         // Pass our 'chunk' struct to the callback function
-                        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&responseChunk);
      
+                        // Send all headers to this function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEHEADER, header_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)0);
+
+                        // Configure headers
+                        curl_slist *requestHeaders = NULL;
+                        requestHeaders = curl_slist_append(requestHeaders, "Content-Type: text/xml");
+                        requestHeaders = curl_slist_append(requestHeaders, "Expect:");
+                        curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, requestHeaders);
+                                                
                         // Perform the HTTP post
+                        curl_easy_setopt(curl_handle, CURLOPT_POST, true);
                         CURLcode rc = curl_easy_perform(curl_handle);
                         
-                        // Cleanup the form
-                        if (complexContent)
-                        {
-                            curl_formfree(formpost);
-                        }                    
+                        curl_slist_free_all(requestHeaders);
                         
                         if (rc)
                         {
-                            if (chunk.memory)
-                                free(chunk.memory);
                             throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
                         }
-    
-                        // Get the output data out of the returned document 
-                        if (chunk.memory)
+                        
+                        // Get the output and location of the created resource
+                        string responsePayload = "";
+                        if (responseChunk.memory)
                         {
-                            string payload((const char*)chunk.memory, chunk.size);
-                            free(chunk.memory);
-    
-                            // TODO This is a temp hack, clean this up
-                            // Wrap the returned document inside a part element 
-                            string part = 
-                            "<Part xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                            + payload
-                            + "</Part>";
-                            setReturn(xmlHelper, part, operation);
+                            responsePayload = string((const char*)responseChunk.memory, responseChunk.size);
+                            free(responseChunk.memory);
+                        }
+                        
+                        long httprc;
+                        curl_easy_getinfo (curl_handle, CURLINFO_RESPONSE_CODE, &httprc);
+                        if (httprc == 201)
+                        {
+                            string* location = new string;
+                            *location = "http://wherever.org";
+                            operation.setReturnValue(location);
+                        }
+                        else
+                        {
+                            ostringstream msg;
+                            msg << "Failed to create REST resource, HTTP code: " << httprc;
+                            if (responsePayload != "")
+                            {
+                                msg << ", payload: " << responsePayload;
+                            } 
+                            throwException(ServiceInvocationException, msg.str().c_str());
                         }
                     }
                     else if (opName == "update")
@@ -408,7 +459,7 @@ namespace tuscany
                     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
  
                     // Pass our 'chunk' struct to the callback function
-                    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+                    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&responseChunk);
  
                     // Perform the HTTP request
                     CURLcode rc = curl_easy_perform(curl_handle);
@@ -421,15 +472,15 @@ namespace tuscany
                     
                     if (rc)
                     {
-                        if (chunk.memory)
-                            free(chunk.memory);
+                        if (responseChunk.memory)
+                            free(responseChunk.memory);
                         throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
                     }
  
-                    if (chunk.memory)
+                    if (responseChunk.memory)
                     {
-                        string payload((const char*)chunk.memory, chunk.size);
-                        free(chunk.memory);
+                        string payload((const char*)responseChunk.memory, responseChunk.size);
+                        free(responseChunk.memory);
                         
                         setReturn(xmlHelper, payload, operation);
                     }
@@ -509,6 +560,7 @@ namespace tuscany
                     {
                         DataObjectPtr dob = *(DataObjectPtr*)parm.getValue(); 
                         XMLDocumentPtr doc = xmlHelper->createDocument(dob, NULL, NULL);
+                        doc->setXMLDeclaration(false);
                         xmlHelper->save(doc, os);
                         break;
                     }
@@ -542,8 +594,9 @@ namespace tuscany
                 }
                 if(!outputBodyDataObject)
                 {
-                    logerror("Could not convert received document to SDO: %s", body.c_str());
-                    return;
+                    ostringstream msg;
+                    msg << "Could not convert received document to SDO: " << body;
+                    throwException(ServiceDataException, msg.str().c_str());
                 }                    
 
                 // Get the body part
@@ -563,8 +616,9 @@ namespace tuscany
                 }
                 if (outputDataObject == NULL)
                 {
-                    logerror("Could not convert body part to SDO: %s", body.c_str());
-                    return;
+                    ostringstream msg;
+                    msg << "Could not convert body part to SDO: " << body;
+                    throwException(ServiceDataException, msg.str().c_str());
                 }
                  
                 PropertyList pl = outputDataObject->getInstanceProperties();
