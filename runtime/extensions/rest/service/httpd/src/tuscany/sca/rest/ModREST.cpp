@@ -214,11 +214,8 @@ namespace tuscany
                         return rc;
                     }
                     ap_should_client_block(request);
-                    
-                    int content_length = request->remaining;
-                    if (request->read_chunked == true && content_length == 0)
+                    if (request->read_chunked == true && request->remaining == 0)
                     {
-                        content_length = -1;
                         request->chunked = true;
                     }
                 
@@ -707,8 +704,6 @@ namespace tuscany
                         DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
                         
                         // Send the response back to the client
-                        // Send the output DataObject
-                        char *str;
                         if (iface!=NULL &&
                             iface->getInterfaceTypeQName() == RESTInterface::typeQName)
                         {
@@ -734,6 +729,7 @@ namespace tuscany
                             {
                                 loginfo("No resource location, sending HTTP 400 response code");
                                 request->status = HTTP_BAD_REQUEST;
+                                
                                 return OK;
                             }
 
@@ -744,9 +740,11 @@ namespace tuscany
                             const char* loc = ap_construct_url(request->pool, locuri.c_str(), request);
                             loginfo("Sending resource location: %s", loc);
                             apr_table_setn(request->headers_out, "Location", loc);
-                            
                             request->status = HTTP_CREATED;
-                            return OK;
+
+                            // Send the created resource entity back to the client
+                            ap_rputs(input.c_str(), request);
+                            
                         }
                         else
                         {
@@ -758,7 +756,6 @@ namespace tuscany
                             if (outputDataObject == NULL)
                             {
                                 loginfo("Sending empty response");
-                                return OK;
                             }
                             else
                             {
@@ -767,37 +764,41 @@ namespace tuscany
                                     outputDataObject,
                                     wsdlOperation.getOutputTypeUri().c_str(), 
                                     wsdlOperation.getOutputTypeName().c_str());
-                               doc->setXMLDeclaration(false);
-                               str = xm->save(doc);
+                                doc->setXMLDeclaration(false);
+                                char* str = xm->save(doc);
+
+                                loginfo("Sending response: %s", str);
+                               ap_rputs(str, request);
                             }
                         }
                        
-                        loginfo("Sending response: %s", str);
-                       ap_rputs(str, request);
-                       
-                       return OK;
+                        // Close the connection after this
+                        apr_table_setn(request->headers_out, "Connection", "close");
+                        
+                        return OK;
                     }
                     else if (request->method_number == M_PUT)
                     {
+
+                        return OK;
                     }
                     else if (request->method_number == M_DELETE)
                     {
+                    
+                        return OK;
                     }
                     else
                     {
                         if (request->method)
                         {
-                            ostringstream msg;
-                            msg << "Unsupported HTTP method: %s" << request->method;
-                            throwException(ServiceInvocationException, msg.str().c_str());
+                            logerror("Unsupported HTTP method: %s", request->method);
                         }
                         else
                         {
-                            throwException(ServiceInvocationException, "Unsupported HTTP method");
+                            logerror("Unsupported HTTP method: %d", request->method_number);
                         }
+                        return HTTP_NOT_IMPLEMENTED;
                     }
-                    
-                    return OK;
                 }
                 catch(TuscanyRuntimeException& ex)
                 {
