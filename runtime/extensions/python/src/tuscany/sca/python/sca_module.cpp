@@ -39,7 +39,9 @@ using namespace commonj::sdo;
 
 #include <string>
 #include <iostream>
+#include <sstream>
 using namespace std;
+
 
 // undefine _DEBUG so Python does not need it's debug dll
 #ifdef _DEBUG
@@ -352,6 +354,18 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
     {
         // Invoke the wired service
         pythonServiceProxy->invokeService(operation);
+    }
+    catch(const TuscanyRuntimeException& e)
+    {
+        ostringstream msgs;
+        msgs << "Exception whilst invoking the ";
+        msgs << operationName.c_str();
+        msgs << " operation on the service/reference: ";
+        msgs << e;
+        string msg = msgs.str();
+        logwarning(msg.c_str());
+        PyErr_SetString(scaError, msg.c_str());
+        return NULL;
     }
     catch(...)
     {
