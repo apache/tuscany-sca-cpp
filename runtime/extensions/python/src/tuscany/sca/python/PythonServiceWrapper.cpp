@@ -751,7 +751,9 @@ namespace tuscany
                                     default:
                                     {
                                         // The type is set as something else or has not been set
-                                        operation.setReturnValue(data);
+                                        string* stringData = new string;
+                                        *stringData = *data;
+                                        operation.setReturnValue(stringData);
                                     }
                                 }
                             }
