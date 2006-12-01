@@ -92,6 +92,8 @@ namespace tuscany
             DataObjectPtr createPayload(DataFactoryPtr dataFactory,
                 Operation& operation, const WSDLOperation& wsdlOperation);
 
+            void addPart(XMLHelper* xmlHelper, string& payload, Operation& operation);
+             
             int logHeaders(void* request, const char* key, const char* value);
 
             /**
@@ -253,31 +255,28 @@ namespace tuscany
                         ap_rprintf(request, "<p>SCA component: %s", dir_conf->component);
                     }
                     
-                    const char* protocol = request->protocol;
-                    if (protocol)
+                    if (request->protocol)
                     {
-                        loginfo("Protocol: %s", protocol);
+                        loginfo("Protocol: %s", request->protocol);
                         if (printRequest)
                         {
-                            ap_rprintf(request, "<p>Protocol: %s", protocol);
+                            ap_rprintf(request, "<p>Protocol: %s", request->protocol);
                         }
                     }
                     
-                    const char* method = request->method;
-                    if (method)
+                    if (request->method)
                     {
-                        loginfo("HTTP method: %s", method);
+                        loginfo("HTTP method: %s", request->method);
                         if (printRequest)
                         {
-                            ap_rprintf(request, "<p>HTTP method: %s", method);
+                            ap_rprintf(request, "<p>HTTP method: %s", request->method);
                         }
                     }
                 
-                    const int method_number = request->method_number;
-                    loginfo("HTTP method number: %d", method_number);
+                    loginfo("HTTP method number: %d", request->method_number);
                     if (printRequest)
                     {
-                        ap_rprintf(request, "<p>HTTP method number: %d", method_number);
+                        ap_rprintf(request, "<p>HTTP method number: %d", request->method_number);
                     }
                     
                     const char* content_type = apr_table_get(request->headers_in, "Content-Type");
@@ -290,13 +289,12 @@ namespace tuscany
                         }
                     }
                 
-                    const char* content_encoding = request->content_encoding;
-                    if (content_encoding)
+                    if (request->content_encoding)
                     {
-                        loginfo("Content encoding: %s", content_encoding);
+                        loginfo("Content encoding: %s", request->content_encoding);
                         if (printRequest)
                         {
-                            ap_rprintf(request, "<p>Content encoding: %s", content_encoding);
+                            ap_rprintf(request, "<p>Content encoding: %s", request->content_encoding);
                         }
                     }
                 
@@ -306,33 +304,30 @@ namespace tuscany
                     }
                     apr_table_do(logHeaders, request, request->headers_in, NULL);
                     
-                    const char* uri = request->uri;
-                    if (uri)
+                    if (request->uri)
                     {
-                        loginfo("URI: %s", uri);
+                        loginfo("URI: %s", request->uri);
                         if (printRequest)
                         {
-                            ap_rprintf(request, "<p>URI: %s", uri);
+                            ap_rprintf(request, "<p>URI: %s", request->uri);
                         }
                     }
                     
-                    const char* path_info = request->path_info;
-                    if (path_info)
+                    if (request->path_info)
                     {
-                        loginfo("Path info: %s", path_info);
+                        loginfo("Path info: %s", request->path_info);
                         if (printRequest)
                         {
-                            ap_rprintf(request, "<p>Path info: %s", path_info);
+                            ap_rprintf(request, "<p>Path info: %s", request->path_info);
                         }
                     }
                     
-                    const char* queryArgs = request->args;
-                    if (queryArgs)
+                    if (request->args)
                     {
-                        loginfo("Args: %s", queryArgs);
+                        loginfo("Args: %s", request->args);
                         if (printRequest)
                         {
-                            ap_rprintf(request, "<p>Args: %s", queryArgs);
+                            ap_rprintf(request, "<p>Args: %s", request->args);
                         }
                     }
                     
@@ -341,66 +336,71 @@ namespace tuscany
                         ap_rputs("</body></html>", request);
                     }
                     
-                    if (method_number == M_GET)
+                    // Extract the service and component names from the HTTP URI path
+                    string path;
+                    if (strlen(request->path_info) != 0 && *(request->path_info) == '/')
+                    {
+                        path = request->path_info + 1;
+                    }
+                    else
+                    {
+                        path = request->path_info;
+                    }
+                    string uri;
+            
+                    string component;
+                    string service;        
+                    if (strlen(dir_conf->component))
+                    {
+                        // The path only specifies the service, the component name
+                        // is configured in the directory/location configured
+                        component = dir_conf->component;
+                        Utils::tokeniseString("/", path, service, uri); 
+                    }
+                    else
+                    {
+                        // The path must be in the form component / service
+                        string path2;
+                        Utils::tokeniseString("/", path, component, path2);
+                        Utils::tokeniseString("/", path2, service, uri);
+                    }
+            
+                    loginfo("Component name: %s", component.c_str());
+                    loginfo("Service name: %s", service.c_str());
+                    
+                    // Initialize the SCA runtime
+                    CompositeService* compositeService = initializeSCARuntime(
+                                server_conf->home, dir_conf->root, dir_conf->path, component.c_str(), service.c_str());
+                                
+                    if(!compositeService)
+                    {
+                        throwException(SystemConfigurationException,
+                            "Failed to initialize SCA runtime, could not initialize CompositeService");
+                    }
+        
+                    Composite* composite = compositeService->getComposite();
+                    DataFactoryPtr dataFactory = composite->getDataFactory();
+                    if (dataFactory == 0)
+                    {
+                        throwException(SystemConfigurationException,
+                            "Failed to initialize SCA runtime, could not get DataFactory");
+                    }
+                    XMLHelper* xmlHelper = composite->getXMLHelper();
+        
+                    // Get the REST binding
+                    Reference* reference = compositeService->getReference();
+                    RESTReferenceBinding* binding = (RESTReferenceBinding*)reference->getBinding();
+                    
+                    //  Get the REST proxy
+                    RESTServiceProxy* proxy = (RESTServiceProxy*)binding->getServiceProxy();
+        
+                    // Get the component interface
+                    Interface* iface = reference->getType()->getInterface();
+
+                    if (request->method_number == M_GET)
                     {
                         // Handle an HTTP GET
                         
-                        // Extract the operation name, service and component names from
-                        // the HTTP URI path
-                        string path;
-                        if (strlen(path_info) != 0 && *path_info == '/')
-                        {
-                            path = path_info + 1;
-                        }
-                        else
-                        {
-                            path = path_info;
-                        }
-                        string uri;
-                
-                        string component;
-                        string service;        
-                        if (strlen(dir_conf->component))
-                        {
-                            // The path only specifies the service, the component name
-                            // is configured in the directory/location configured
-                            component = dir_conf->component;
-                            Utils::tokeniseString("/", path, service, uri); 
-                        }
-                        else
-                        {
-                            // The path must be in the form component / service
-                            string path2;
-                            Utils::tokeniseString("/", path, component, path2);
-                            Utils::tokeniseString("/", path2, service, uri);
-                        }
-                
-                        loginfo("Component name: %s", component.c_str());
-                        loginfo("Service name: %s", service.c_str());
-                        
-                        // Initialize the SCA runtime
-                        CompositeService* compositeService = initializeSCARuntime(
-                                    server_conf->home, dir_conf->root, dir_conf->path, component.c_str(), service.c_str());
-                                    
-                        if(!compositeService)
-                        {
-                            throwException(SystemConfigurationException,
-                                "Failed to initialize SCA runtime, could not initialize CompositeService");
-                        }
-            
-                        DataFactoryPtr dataFactory = compositeService->getComposite()->getDataFactory();
-                        if (dataFactory == 0)
-                        {
-                            throwException(SystemConfigurationException,
-                                "Failed to initialize SCA runtime, could not get DataFactory");
-                        }
-            
-                        // Get the REST binding
-                        Composite* composite = compositeService->getComposite();
-                        Reference* reference = compositeService->getReference();
-                        RESTReferenceBinding* binding = (RESTReferenceBinding*)reference->getBinding();
-                        Interface* iface = reference->getType()->getInterface();
-    
                         // Determine the operation to invoke                    
                         WSDLOperation wsdlOperation;
                         string wsdlNamespace = "";
@@ -469,9 +469,6 @@ namespace tuscany
                             wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
                         }
                         
-                        //  Get the REST proxy
-                        RESTServiceProxy* proxy = (RESTServiceProxy*)binding->getServiceProxy();
-            
                         // Create the input DataObject
                         Operation operation(op_name.c_str());
                         
@@ -495,9 +492,9 @@ namespace tuscany
                         }                        
                         
                         // Parse the query string
-                        if (queryArgs)
+                        if (request->args)
                         {
-                            string query = queryArgs;
+                            string query = request->args;
                             for (; query != ""; )
                             {
                                 string param;
@@ -518,68 +515,280 @@ namespace tuscany
                         // Dispatch to the REST proxy
                         DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
                         
-                        // Send the response back to the client
-                        if (outputDataObject == NULL)
-                        {
-                            loginfo("Sending empty response");
-
-                            // Set the content type
-                            ap_set_content_type(request, "text/xml");
-                        
-                            return OK;
-                        }
-                        
                         // Send the output DataObject
                         char *str;
                         if (iface!=NULL &&
                             iface->getInterfaceTypeQName() == RESTInterface::typeQName)
                         {
-                            // Pure REST, send the response document
-                            XMLHelperPtr xm = HelperProvider::getXMLHelper(dataFactory);
-                            DataObjectList& l = outputDataObject->getList("return");
-                            DataObjectPtr resourceDataObject = l[0];
-                            XMLDocumentPtr doc = xm->createDocument(
-                                resourceDataObject,
-                                resourceDataObject->getType().getURI(),
-                                resourceDataObject->getType().getName());
-                           doc->setXMLDeclaration(false);
-                           str = xm->save(doc);
+                            // Set the content type
+                            ap_set_content_type(request, "text/xml");
+                        
+                            if (outputDataObject == NULL)
+                            {
+                                throwException(ServiceInvocationException, "Null output from REST create operation");
+                            }
+                            else
+                            {
+                                    
+                                // Pure REST, send the response document
+                                XMLHelperPtr xm = HelperProvider::getXMLHelper(dataFactory);
+                                DataObjectList& l = outputDataObject->getList("return");
+                                if (l.size() != 0)
+                                {
+                                    DataObjectPtr resourceDataObject = l[0];
+                                    XMLDocumentPtr doc = xm->createDocument(
+                                        resourceDataObject,
+                                        resourceDataObject->getType().getURI(),
+                                        resourceDataObject->getType().getName());
+                                    doc->setXMLDeclaration(false);
+                                    str = xm->save(doc);
+    
+                                    loginfo("Sending response: %s", str);
+                                    ap_rputs(str, request);
+                                
+                                    return OK;
+                                }
+                                else
+                                {
+                                    loginfo("REST resource not found, sending HTTP 404 response code");
+                                    request->status = HTTP_NOT_FOUND;
+                                    return OK;
+                                }
+                            }
                         }
                         else
                         {
                             // Command style, send the response wrapper element
-                            XMLHelperPtr xm = HelperProvider::getXMLHelper(dataFactory);
-                            XMLDocumentPtr doc = xm->createDocument(
-                                outputDataObject,
-                                wsdlOperation.getOutputTypeUri().c_str(), 
-                                wsdlOperation.getOutputTypeName().c_str());
-                           doc->setXMLDeclaration(false);
-                           str = xm->save(doc);
+
+                            // Set the content type
+                            ap_set_content_type(request, "text/xml");
+                    
+                            if (outputDataObject == NULL)
+                            {
+                                loginfo("Sending empty response");
+                                return OK;
+                            }
+                            else
+                            {
+                                XMLHelperPtr xm = HelperProvider::getXMLHelper(dataFactory);
+                                XMLDocumentPtr doc = xm->createDocument(
+                                    outputDataObject,
+                                    wsdlOperation.getOutputTypeUri().c_str(), 
+                                    wsdlOperation.getOutputTypeName().c_str());
+                                doc->setXMLDeclaration(false);
+                                str = xm->save(doc);
+
+                                loginfo("Sending response: %s", str);
+                                ap_rputs(str, request);
+                       
+                               return OK;
+                            }
+                        }
+                    }
+                    else if (request->method_number == M_POST)
+                    {
+                        // Handle an HTTP POST
+                        
+                        // Determine the operation to invoke                    
+                        WSDLOperation wsdlOperation;
+                        string wsdlNamespace = "";
+                        string op_name = "";
+                        string uriArgs = "";
+                        if (iface != NULL)
+                        {
+                            // If we have a REST interface, the operation name is "create"
+                            if (iface->getInterfaceTypeQName() == RESTInterface::typeQName)
+                            {
+                                op_name = "create";
+                            }
+                            else if (iface->getInterfaceTypeQName() == WSDLInterface::typeQName)
+                            {
+                                // we have a WSDL interface, the operation name is part of the URI
+                                Utils::tokeniseString("/", uri, op_name, uriArgs);
+                                
+                                // look for the WSDL operation definition
+                                WSDLInterface* wsdlInterface = (WSDLInterface*)iface;
+                                wsdlNamespace = wsdlInterface->getNamespaceURI();
+                                
+                                if (wsdlNamespace != "")
+                                {
+                                    WSDLDefinition* wsdl = composite->findWSDLDefinition(wsdlNamespace);
+                                    if (wsdl == 0)
+                                    {
+                                        string msg = "WSDL not found for: " + wsdlNamespace;
+                                        throwException(SystemConfigurationException, msg.c_str());
+                                    }
+                                    try
+                                    {
+                                        wsdlOperation = wsdl->findOperation(wsdlInterface->getName(), op_name.c_str());
+                                    }
+                                    catch(SystemConfigurationException&)
+                                    {   
+                                        throw;
+                                    }
+                                    
+                                    if (!wsdlOperation.isDocumentStyle() || !wsdlOperation.isWrappedStyle())
+                                    {
+                                        throwException(ServiceInvocationException,
+                                            "Only wrapped document style WSDL operations are currentlysupported");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Utils::tokeniseString("/", uri, op_name, uriArgs);
+                        }
+                    
+                        // Create a default document literal wrapped WSDL operation
+                        if (wsdlNamespace == "")
+                        {
+                            wsdlNamespace = compositeService->getName();
+                            wsdlOperation = WSDLOperation();
+                            wsdlOperation.setOperationName(op_name.c_str());
+                            wsdlOperation.setSoapAction(wsdlNamespace+ "#" +op_name);
+                            wsdlOperation.setEndpoint("");
+                            wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
+                            wsdlOperation.setDocumentStyle(true);
+                            wsdlOperation.setWrappedStyle(true);
+                            wsdlOperation.setEncoded(false);
+                            wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
+                            wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                        }
+                        
+                        // Create the input DataObject
+                        Operation operation(op_name.c_str());
+                        
+                        // Parse the args part of the URI
+                        if (uriArgs != "")
+                        {
+                            string args = uriArgs;
+                            for (; args != ""; )
+                            {
+                                string param;
+                                string next;
+                                Utils::tokeniseString("/", args, param, next);
+                                if (param != "")
+                                {
+                                    string* data = new string;
+                                    *data = param;
+                                    operation.addParameter(data);    
+                                }
+                                args = next;
+                            }
+                        }
+                        
+                        // Read the POST input
+                        ostringstream sinput;
+                        char buffer[2049];
+                        for ( ; ; )
+                        {
+                            int size = ap_get_client_block(request, buffer, 2048);
+                            if (size > 0)
+                            {
+                                buffer[size] = '\0';
+                                sinput << buffer;
+                            }
+                            else if (size == 0)
+                            {
+                                break;
+                            }
+                            else if (size < 0)
+                            {
+                                throwException(ServiceInvocationException, "Error reading POST input");
+                            }
+                        }
+                        string input = sinput.str();
+                        addPart(xmlHelper, input, operation);
+                        
+                        DataObjectPtr inputDataObject = createPayload(dataFactory, operation, wsdlOperation);
+                        
+                        // Dispatch to the REST proxy
+                        DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
+                        
+                        // Send the response back to the client
+                        // Send the output DataObject
+                        char *str;
+                        if (iface!=NULL &&
+                            iface->getInterfaceTypeQName() == RESTInterface::typeQName)
+                        {
+                            // Pure REST, send the location of the created resource
+
+                            // Set the content type
+                            ap_set_content_type(request, "text/xml");
+                    
+                            if (outputDataObject == NULL)
+                            {
+                                throwException(ServiceInvocationException, "Null output from REST create operation");
+                            }
+                            
+                            string location = "";
+                                                        
+                            DataObjectList& l = outputDataObject->getList("return");
+                            if (l.size())
+                            {
+                                location = l.getCString(0);
+                            }
+                            
+                            if (location == "")
+                            {
+                                loginfo("No resource location, sending HTTP 400 response code");
+                                request->status = HTTP_BAD_REQUEST;
+                                return OK;
+                            }
+
+                            string locuri = request->uri;
+                            locuri += '/';
+                            locuri += location;
+                            
+                            const char* loc = ap_construct_url(request->pool, locuri.c_str(), request);
+                            loginfo("Sending resource location: %s", loc);
+                            apr_table_setn(request->headers_out, "Location", loc);
+                            
+                            request->status = HTTP_CREATED;
+                            return OK;
+                        }
+                        else
+                        {
+                            // Command style, send the response wrapper element
+    
+                            // Set the content type
+                            ap_set_content_type(request, "text/xml");
+                            
+                            if (outputDataObject == NULL)
+                            {
+                                loginfo("Sending empty response");
+                                return OK;
+                            }
+                            else
+                            {
+                                XMLHelperPtr xm = HelperProvider::getXMLHelper(dataFactory);
+                                XMLDocumentPtr doc = xm->createDocument(
+                                    outputDataObject,
+                                    wsdlOperation.getOutputTypeUri().c_str(), 
+                                    wsdlOperation.getOutputTypeName().c_str());
+                               doc->setXMLDeclaration(false);
+                               str = xm->save(doc);
+                            }
                         }
                        
-                        // Set the content type
-                        ap_set_content_type(request, "text/xml");
-                    
                         loginfo("Sending response: %s", str);
                        ap_rputs(str, request);
                        
                        return OK;
                     }
-                    else if (method_number == M_POST)
+                    else if (request->method_number == M_PUT)
                     {
                     }
-                    else if (method_number == M_PUT)
-                    {
-                    }
-                    else if (method_number == M_DELETE)
+                    else if (request->method_number == M_DELETE)
                     {
                     }
                     else
                     {
-                        if (method)
+                        if (request->method)
                         {
                             ostringstream msg;
-                            msg << "Unsupported HTTP method: %s" << method;
+                            msg << "Unsupported HTTP method: %s" << request->method;
                             throwException(ServiceInvocationException, msg.str().c_str());
                         }
                         else
@@ -647,23 +856,109 @@ namespace tuscany
                             DataObjectList& l = inputDataObject->getList(pname.str());
                             
                             const Operation::Parameter& parm = operation.getParameter(i);
-                            l.append((*(string*)parm.getValue()).c_str());
+                            switch(parm.getType())
+                            {
+                            case Operation::STRING: 
+                                {
+                                    l.append((*(string*)parm.getValue()).c_str());
+                                    break;
+                                }
+                            case Operation::DATAOBJECT: 
+                                {
+                                    l.append(*(DataObjectPtr*)parm.getValue());
+                                    break;
+                                }
+                            default:
+                                {
+                                    ostringstream msg;
+                                    msg << "Unsupported parameter type: " << parm.getType();
+                                    throwException(ServiceDataException, msg.str().c_str());
+                                }
+                            }
                         }
                     }
                 }
                 else {
                     
                     // Each parameter in the operation should be a property on the request dataobject
-                    for (int i=0; i<operation.getNParms(); i++)
+                    for (unsigned int i=0; i<operation.getNParms(); i++)
                     {
                         const Operation::Parameter& parm = operation.getParameter(i);
-                        inputDataObject->setCString(i, (*(string*)parm.getValue()).c_str());
+                        switch(parm.getType())
+                        {
+                        case Operation::STRING: 
+                            {
+                                inputDataObject->setCString(i, (*(string*)parm.getValue()).c_str());
+                                break;
+                            }
+                        case Operation::DATAOBJECT: 
+                            {
+                                inputDataObject->setDataObject(i, *(DataObjectPtr*)parm.getValue());
+                                break;
+                            }
+                        default:
+                            ostringstream msg;
+                            msg << "Unsupported parameter type: " << parm.getType();
+                            throwException(ServiceDataException, msg.str().c_str());
+                        }
                     }
                 }
                 
                 return inputDataObject;
              }
 
+             void addPart(XMLHelper* xmlHelper, string& payload, Operation& operation)
+             {  
+                logentry();
+                
+                //TODO Remove this workaround once SDO supports loading of open top level content
+                // The workaround is to wrap the open content in a wrapper element of type OpenDataObject
+                string body = 
+                "<Body xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
+                + payload
+                + "</Body>";
+                
+                // Convert the body to an SDO DataObject
+                DataObjectPtr inputBodyDataObject = NULL;
+                XMLDocumentPtr theXMLDocument = xmlHelper->load(body.c_str(), NULL);
+                if (theXMLDocument != 0)
+                {
+                    inputBodyDataObject = theXMLDocument->getRootDataObject();
+                }
+                if(!inputBodyDataObject)
+                {
+                    ostringstream msg;
+                    msg << "Could not convert received document to SDO: " << body;                     
+                    throwException(ServiceDataException, msg.str().c_str());
+                }                    
+
+                // Get the body part
+                DataObjectPtr inputDataObject = NULL; 
+                PropertyList bpl = inputBodyDataObject->getInstanceProperties();
+                if (bpl.size()!=0)
+                {
+                    if (bpl[0].isMany())
+                    {
+                        DataObjectList& parts = inputBodyDataObject->getList((unsigned int)0);
+                        inputDataObject = parts[0];
+                    }
+                    else
+                    {
+                        inputDataObject = inputBodyDataObject->getDataObject(bpl[0]);
+                    }
+                }
+                if (inputDataObject == NULL)
+                {
+                    ostringstream msg;
+                    msg << "Could not convert received document to SDO: " << body;                     
+                    throwException(ServiceDataException, msg.str().c_str());
+                }
+                
+                DataObjectPtr* dataObjectData = new DataObjectPtr;
+                *dataObjectData = inputDataObject;
+                (*dataObjectData)->detach();
+                operation.addParameter(dataObjectData);
+             }
 
             const char *rest_set_home(cmd_parms *cmd, void *dummy, 
                                     const char *arg)

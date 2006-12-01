@@ -226,7 +226,15 @@ namespace tuscany
                         case Type::DataObjectType:
                             {
                                 DataObjectPtr* dataObjectData = new DataObjectPtr;
-                                *dataObjectData = inputDataObject->getDataObject(pl[i]);
+                                if (pl[i].isMany())
+                                {
+                                    DataObjectList& l = inputDataObject->getList((unsigned int)i);
+                                    *dataObjectData = l[0];
+                                }
+                                else
+                                {
+                                    *dataObjectData = inputDataObject->getDataObject(pl[i]);
+                                }
                                 if(!*dataObjectData)
                                 {
                                     loginfo("Null DataObject parameter named %s", name);
@@ -234,7 +242,10 @@ namespace tuscany
                                 else
                                 {
                                     (*dataObjectData)->detach();
+                                    
+                                    std::cout << *dataObjectData;
                                 }
+                                
                                 operation.addParameter(dataObjectData);
                             }
                             break;
@@ -337,6 +348,8 @@ namespace tuscany
                     }
                     
                     setOutputData(operation, outputDataObject, dataFactoryPtr);                            
+
+                    std::cout << outputDataObject;
 
                     return outputDataObject;
 
