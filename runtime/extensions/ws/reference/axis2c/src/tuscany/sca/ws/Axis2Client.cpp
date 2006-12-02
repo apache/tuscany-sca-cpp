@@ -324,7 +324,7 @@ namespace tuscany
                     {
                         
                         // The input wrapper type is not known, create an open DataObject 
-                        inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                        inputDataObject = dataFactory->create("http://tempuri.org", "Wrapper");
                     }
                 }
                         

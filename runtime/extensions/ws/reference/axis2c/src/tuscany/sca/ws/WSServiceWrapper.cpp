@@ -78,6 +78,18 @@ namespace tuscany
                 } catch (SDORuntimeException&)
                 {
                     dataFactory->addType("http://tempuri.org", "RootType", false, false, false);                
+                    dataFactory->addType("http://tempuri.org", "Wrapper", false, true, false);                
+                    dataFactory->addPropertyToType(
+                        "http://tempuri.org", "RootType",
+                        "Wrapper",
+                        "http://tempuri.org", "Wrapper",
+                        false, false, true);
+                    dataFactory->addType("http://tempuri.org", "Part", false, true, false);                
+                    dataFactory->addPropertyToType(
+                        "http://tempuri.org", "RootType",
+                        "Part",
+                        "http://tempuri.org", "Part",
+                        false, false, true);
                 }
             }
             
