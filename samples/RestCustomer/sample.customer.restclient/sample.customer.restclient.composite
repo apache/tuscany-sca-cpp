@@ -21,9 +21,13 @@
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0" 
 	name="sample.customer.restclient">
 
-	<reference name="Customer">
+	<reference name="CustomerResource">
 		<interface.rest/>
-		<binding.rest uri="http://localhost:9090/rest/sample.customer.CustomerComponent/Customer"/>
+		<binding.rest uri="http://localhost:9190/rest/sample.customer.CustomerComponent/CustomerResource"/>
+	</reference>
+
+	<reference name="CustomerCommand">
+		<binding.rest uri="http://localhost:9190/rest/sample.customer.CustomerComponent/CustomerCommand"/>
 	</reference>
 
 </composite>

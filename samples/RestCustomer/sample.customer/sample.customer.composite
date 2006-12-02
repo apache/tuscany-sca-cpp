@@ -21,14 +21,19 @@
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0" 
 	name="sample.customer">
 
-	<service name="Customer">
+	<service name="CustomerResource">
 		<interface.rest/>
 		<binding.rest/>
 		<reference>CustomerComponent</reference>
 	</service>
 
+	<service name="CustomerCommand">
+		<binding.rest/>
+		<reference>CustomerComponent</reference>
+	</service>
+
 	<component name="CustomerComponent">
-		<implementation.python module="CustomerResource" class="CustomerResourceImpl"/>
+		<implementation.python module="CustomerResourceImpl" class="CustomerResourceImpl"/>
 	</component>
         
 </composite>
