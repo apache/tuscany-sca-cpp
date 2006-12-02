@@ -442,9 +442,8 @@ namespace tuscany
                             }
                         default:
                             {
-                                ostringstream msg;
-                                msg << "Unsupported result type: " << resultType;
-                                throwException(SystemConfigurationException, msg.str().c_str());
+                                // One way operation, no return value
+                                break;
                             }
                         }
                     }
@@ -546,9 +545,8 @@ namespace tuscany
                             }
                         default:
                             {
-                                ostringstream msg;
-                                msg << "Unsupported result type: " << resultType;
-                                throwException(SystemConfigurationException, msg.str().c_str());
+                                // One way operation, no return value
+                                break;
                             }
                         }
                     }
