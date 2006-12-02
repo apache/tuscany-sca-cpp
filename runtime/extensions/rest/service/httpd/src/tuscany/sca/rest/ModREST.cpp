@@ -515,13 +515,9 @@ namespace tuscany
                         DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
                         
                         // Send the output DataObject
-                        char *str;
                         if (iface!=NULL &&
                             iface->getInterfaceTypeQName() == RESTInterface::typeQName)
                         {
-                            // Set the content type
-                            ap_set_content_type(request, "text/xml");
-                        
                             if (outputDataObject == NULL)
                             {
                                 throwException(ServiceInvocationException, "Null output from REST create operation");
@@ -539,18 +535,18 @@ namespace tuscany
                                         resourceDataObject,
                                         resourceDataObject->getType().getURI(),
                                         resourceDataObject->getType().getName());
-                                    doc->setXMLDeclaration(false);
-                                    str = xm->save(doc);
+                                    char* str = xm->save(doc);
     
                                     loginfo("Sending response: %s", str);
+                                    ap_set_content_type(request, "text/xml");
                                     ap_rputs(str, request);
                                 
-                                    return OK;
                                 }
                                 else
                                 {
                                     loginfo("REST resource not found, sending HTTP 404 response code");
                                     request->status = HTTP_NOT_FOUND;
+                                    
                                     return OK;
                                 }
                             }
@@ -559,30 +555,37 @@ namespace tuscany
                         {
                             // Command style, send the response wrapper element
 
-                            // Set the content type
-                            ap_set_content_type(request, "text/xml");
-                    
                             if (outputDataObject == NULL)
                             {
                                 loginfo("Sending empty response");
-                                return OK;
+                                //request->status = HTTP_NO_CONTENT;
                             }
                             else
                             {
                                 XMLHelperPtr xm = HelperProvider::getXMLHelper(dataFactory);
-                                XMLDocumentPtr doc = xm->createDocument(
-                                    outputDataObject,
-                                    wsdlOperation.getOutputTypeUri().c_str(), 
-                                    wsdlOperation.getOutputTypeName().c_str());
-                                doc->setXMLDeclaration(false);
-                                str = xm->save(doc);
-
-                                loginfo("Sending response: %s", str);
-                                ap_rputs(str, request);
-                       
-                               return OK;
+                                DataObjectList& l = outputDataObject->getList("return");
+                                if (l.size() != 0)
+                                {
+                                    DataObjectPtr resultDataObject = l[0];
+                                    XMLDocumentPtr doc = xm->createDocument(
+                                        resultDataObject,
+                                        resultDataObject->getType().getURI(),
+                                        resultDataObject->getType().getName());
+                                    char* str = xm->save(doc);
+    
+                                    loginfo("Sending response: %s", str);
+                                    ap_set_content_type(request, "text/xml");
+                                    ap_rputs(str, request);
+                                }
+                                else
+                                {
+                                    loginfo("Sending empty response");
+                                    //request->status = HTTP_NO_CONTENT;
+                                }
                             }
                         }
+                        
+                        return OK;
                     }
                     else if (request->method_number == M_POST)
                     {
@@ -731,9 +734,6 @@ namespace tuscany
                         {
                             // Pure REST, send the location of the created resource
 
-                            // Set the content type
-                            ap_set_content_type(request, "text/xml");
-                    
                             if (outputDataObject == NULL)
                             {
                                 throwException(ServiceInvocationException, "Null output from REST create operation");
@@ -762,35 +762,45 @@ namespace tuscany
                             const char* loc = ap_construct_url(request->pool, locuri.c_str(), request);
                             loginfo("Sending resource location: %s", loc);
                             apr_table_setn(request->headers_out, "Location", loc);
+                            apr_table_setn(request->headers_out, "Content-Location", loc);
                             request->status = HTTP_CREATED;
 
                             // Send the created resource entity back to the client
+                            ap_set_content_type(request, "text/xml");
                             ap_rputs(input.c_str(), request);
                             
                         }
                         else
                         {
-                            // Command style, send the response wrapper element
+                            // Command style, send the response element
     
-                            // Set the content type
-                            ap_set_content_type(request, "text/xml");
-                            
                             if (outputDataObject == NULL)
                             {
                                 loginfo("Sending empty response");
+                                //request->status = HTTP_NO_CONTENT;
                             }
                             else
                             {
                                 XMLHelperPtr xm = HelperProvider::getXMLHelper(dataFactory);
-                                XMLDocumentPtr doc = xm->createDocument(
-                                    outputDataObject,
-                                    wsdlOperation.getOutputTypeUri().c_str(), 
-                                    wsdlOperation.getOutputTypeName().c_str());
-                                doc->setXMLDeclaration(false);
-                                char* str = xm->save(doc);
-
-                                loginfo("Sending response: %s", str);
-                               ap_rputs(str, request);
+                                DataObjectList& l = outputDataObject->getList("return");
+                                if (l.size() != 0)
+                                {
+                                    DataObjectPtr resultDataObject = l[0];
+                                    XMLDocumentPtr doc = xm->createDocument(
+                                        resultDataObject,
+                                        resultDataObject->getType().getURI(),
+                                        resultDataObject->getType().getName());
+                                    char* str = xm->save(doc);
+    
+                                    loginfo("Sending response: %s", str);
+                                    ap_set_content_type(request, "text/xml");
+                                    ap_rputs(str, request);
+                                }
+                                else
+                                {
+                                    loginfo("Sending empty response");
+                                    //request->status = HTTP_NO_CONTENT;
+                                }
                             }
                         }
                        
@@ -889,10 +899,9 @@ namespace tuscany
                         
                         // Dispatch to the REST proxy
                         DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
-                        
-                        // Send the response back to the client
-                        ap_set_content_type(request, "text/xml");
-                        
+
+                        // Empty response                        
+                        //request->status = HTTP_NO_CONTENT;
                         return OK;
                     }
                     else if (request->method_number == M_DELETE)
@@ -963,10 +972,9 @@ namespace tuscany
                         
                         // Dispatch to the REST proxy
                         DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
-                        
-                        // Send the response back to the client
-                        ap_set_content_type(request, "text/xml");
-                        
+
+                        // Empty response
+                        //request->status = HTTP_NO_CONTENT;                        
                         return OK;
                     }
                     else
@@ -1018,7 +1026,7 @@ namespace tuscany
                     {
                         
                         // The input wrapper type is not known, create an open DataObject 
-                        inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                        inputDataObject = dataFactory->create("http://tempuri.org", "Wrapper");
                     }
                 }
                         
@@ -1092,21 +1100,25 @@ namespace tuscany
              {  
                 logentry();
                 
+                
                 //TODO Remove this workaround once SDO supports loading of open top level content
-                // The workaround is to wrap the open content in a wrapper element of type OpenDataObject
-                string body = 
-                "<Body xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                + payload
-                + "</Body>";
+                // The workaround is to wrap the open content in a wrapper element
+                string xmldecl;
+                string xml;
+                Utils::rTokeniseString("?>", payload, xmldecl, xml);
+                string body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+                body += "<Wrapper xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
+                body += xml;
+                body +=  "\n</Wrapper>";
                 
                 // Convert the body to an SDO DataObject
-                DataObjectPtr inputBodyDataObject = NULL;
+                DataObjectPtr inputWrapperDataObject = NULL;
                 XMLDocumentPtr theXMLDocument = xmlHelper->load(body.c_str(), NULL);
                 if (theXMLDocument != 0)
                 {
-                    inputBodyDataObject = theXMLDocument->getRootDataObject();
+                    inputWrapperDataObject = theXMLDocument->getRootDataObject();
                 }
-                if(!inputBodyDataObject)
+                if(!inputWrapperDataObject)
                 {
                     ostringstream msg;
                     msg << "Could not convert received document to SDO: " << body;                     
@@ -1115,17 +1127,17 @@ namespace tuscany
 
                 // Get the body part
                 DataObjectPtr inputDataObject = NULL; 
-                PropertyList bpl = inputBodyDataObject->getInstanceProperties();
+                PropertyList bpl = inputWrapperDataObject->getInstanceProperties();
                 if (bpl.size()!=0)
                 {
                     if (bpl[0].isMany())
                     {
-                        DataObjectList& parts = inputBodyDataObject->getList((unsigned int)0);
+                        DataObjectList& parts = inputWrapperDataObject->getList((unsigned int)0);
                         inputDataObject = parts[0];
                     }
                     else
                     {
-                        inputDataObject = inputBodyDataObject->getDataObject(bpl[0]);
+                        inputDataObject = inputWrapperDataObject->getDataObject(bpl[0]);
                     }
                 }
                 if (inputDataObject == NULL)

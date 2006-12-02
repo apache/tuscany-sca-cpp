@@ -22,6 +22,7 @@
 
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/util/Utils.h"
 #include "RESTServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Service.h"
@@ -163,11 +164,11 @@ namespace tuscany
                 } catch (SDORuntimeException&)
                 {
                     dataFactory->addType("http://tempuri.org", "RootType", false, false, false);                
-                    dataFactory->addType("http://tempuri.org", "Body", false, true, false);                
+                    dataFactory->addType("http://tempuri.org", "Wrapper", false, true, false);                
                     dataFactory->addPropertyToType(
                         "http://tempuri.org", "RootType",
-                        "Body",
-                        "http://tempuri.org", "Body",
+                        "Wrapper",
+                        "http://tempuri.org", "Wrapper",
                         false, false, true);
                     dataFactory->addType("http://tempuri.org", "Part", false, true, false);                
                     dataFactory->addPropertyToType(
@@ -323,12 +324,16 @@ namespace tuscany
                         {
                             if (responsePayload != "")
                             {
-                                // TODO This is a temp hack, clean this up
-                                // Wrap the returned document inside a part element 
-                                string part = 
-                                "<Part xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                                + responsePayload
-                                + "</Part>";
+                                //TODO Remove this workaround once SDO supports loading of open top level content
+                                // The workaround is to wrap the open content in a wrapper element
+                                string xmldecl;
+                                string xml;
+                                Utils::rTokeniseString("?>", responsePayload, xmldecl, xml);
+                                string part = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+                                part += "<Part xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
+                                part += xml;
+                                part +=  "\n</Part>";
+                                
                                 setReturn(xmlHelper, part, operation);
                             }
                             else
@@ -658,9 +663,14 @@ namespace tuscany
                 else
                 {
                     // Not a REST interface, XML / HTTP command style
+                    curl_slist *requestHeaders = NULL;
+                    struct curl_httppost *formpost = NULL;
+                    ostringstream spayload;
+                    string requestPayload;
+                    string url; 
                     
                     // If the request contains complex content then we'll use
-                    // a multipart form POST, otherwise we use a GET
+                    // a POST, otherwise we use a GET with a query string
                     bool complexContent = false; 
                     for (int i=0; i<operation.getNParms(); i++)
                     {
@@ -670,35 +680,77 @@ namespace tuscany
                             break;
                         }
                     }
-                    struct curl_httppost *formpost = NULL;
+
                     if (complexContent)
                     {
                        // Set the target URL
                         string uri = binding->getURI();
                         ostringstream os;
                         os << uri << "/" << opName;
-                        string url = os.str();                                        
+                        url = os.str();                                        
                         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
-
-                        // Build the input form
-                        struct curl_httppost *lastptr = NULL;
-                        for (int i=0; i<operation.getNParms(); i++)
-                        {
-                            ostringstream pname;
-                            pname << "param" << (i+1);
-                            
-                            ostringstream pvalue;
-                            writeParameter(xmlHelper, pvalue, operation.getParameter(i));
-                            
-                            curl_formadd(&formpost,
-                                &lastptr,
-                                CURLFORM_COPYNAME, pname.str().c_str(),
-                                CURLFORM_COPYCONTENTS, pvalue.str().c_str(),
-                                CURLFORM_END);
-                        }
                         
-                        // Set the form into the request
-                        curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, formpost);
+                        // Disable the 100 continue handshake
+                        requestHeaders = curl_slist_append(requestHeaders, "Expect:");
+                            
+                        if (operation.getNParms() == 1)
+                        {
+                            // Single parameter, send it as the body of the POST
+                            
+                            // Create the input payload     
+                            writeParameter(xmlHelper, spayload, operation.getParameter(0));
+                            requestPayload = spayload.str(); 
+                            requestChunk.memory = requestPayload.c_str();
+                            requestChunk.size = requestPayload.size();
+                            
+                            curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, requestChunk.size);
+                            
+                            // Read all data using this function
+                            curl_easy_setopt(curl_handle, CURLOPT_READFUNCTION, read_callback);
+         
+                            // Pass our 'chunk' struct to the callback function
+                            curl_easy_setopt(curl_handle, CURLOPT_READDATA, (void *)&requestChunk);
+
+                            // Set the content type
+                            requestHeaders = curl_slist_append(requestHeaders, "Content-Type: text/xml");
+
+                            // This will be a POST                        
+                            curl_easy_setopt(curl_handle, CURLOPT_POST, true);
+                        }
+                        else
+                        {
+    
+                            // Multiple parameters, use a form type POST
+                            struct curl_httppost *lastptr = NULL;
+                            for (int i=0; i<operation.getNParms(); i++)
+                            {
+                                ostringstream pname;
+                                pname << "param" << (i+1);
+                                
+                                const char* ctype;
+                                if (operation.getParameter(i).getType() == Operation::DATAOBJECT)
+                                {
+                                    ctype ="text/xml"; 
+                                }
+                                else
+                                {
+                                    ctype = "text/plain";
+                                }
+                                
+                                ostringstream pvalue;
+                                writeParameter(xmlHelper, pvalue, operation.getParameter(i));
+                                
+                                curl_formadd(&formpost,
+                                    &lastptr,
+                                    CURLFORM_CONTENTTYPE, ctype,
+                                    CURLFORM_COPYNAME, pname.str().c_str(),
+                                    CURLFORM_COPYCONTENTS, pvalue.str().c_str(),
+                                    CURLFORM_END);
+                            }
+
+                            // Set the form into the request
+                            curl_easy_setopt(curl_handle, CURLOPT_HTTPPOST, formpost);
+                        }
                     }
                     else
                     {
@@ -720,7 +772,7 @@ namespace tuscany
                                 os << "&";
                         }
     
-                        string url = os.str();
+                        url = os.str();
                                                                 
                         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
                     }
@@ -731,9 +783,21 @@ namespace tuscany
                     // Pass our 'chunk' struct to the callback function
                     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&responseChunk);
  
+                    // Configure the headers
+                    if (requestHeaders)
+                    {
+                        curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, requestHeaders);
+                    }
+                                                
                     // Perform the HTTP request
                     CURLcode rc = curl_easy_perform(curl_handle);
 
+                    // Free any headers
+                    if (requestHeaders)
+                    {
+                        curl_slist_free_all(requestHeaders);
+                    }
+                        
                     // Cleanup the form
                     if (complexContent)
                     {
@@ -747,8 +811,19 @@ namespace tuscany
  
                     if (responseChunk.memory)
                     {
-                        string payload((const char*)responseChunk.memory, responseChunk.size);
-                        setReturn(xmlHelper, payload, operation);
+                        string responsePayload((const char*)responseChunk.memory, responseChunk.size);
+                        
+                        //TODO Remove this workaround once SDO supports loading of open top level content
+                        // The workaround is to wrap the open content in a wrapper element
+                        string xmldecl;
+                        string xml;
+                        Utils::rTokeniseString("?>", responsePayload, xmldecl, xml);
+                        string part = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+                        part += "<Part xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
+                        part += xml;
+                        part +=  "\n</Part>";
+                        
+                        setReturn(xmlHelper, part, operation);
                     }
                 }
                 
@@ -826,7 +901,6 @@ namespace tuscany
                     {
                         DataObjectPtr dob = *(DataObjectPtr*)parm.getValue(); 
                         XMLDocumentPtr doc = xmlHelper->createDocument(dob, NULL, NULL);
-                        doc->setXMLDeclaration(false);
                         xmlHelper->save(doc, os);
                         break;
                     }
@@ -843,20 +917,23 @@ namespace tuscany
                 logentry();
                 
                 //TODO Remove this workaround once SDO supports loading of open top level content
-                // The workaround is to wrap the open content in a wrapper element of type OpenDataObject
-                string body = 
-                "<Body xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
-                + payload
-                + "</Body>";
+                // The workaround is to wrap the open content in a wrapper element
+                string xmldecl;
+                string xml;
+                Utils::rTokeniseString("?>", payload, xmldecl, xml);
+                string body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+                body += "<Wrapper xmlns=\"http://tempuri.org\" xmlns:tns=\"http://tempuri.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n";
+                body += xml;
+                body +=  "\n</Wrapper>";
                 
                 // Convert the body to an SDO DataObject
-                DataObjectPtr outputBodyDataObject = NULL;
+                DataObjectPtr outputWrapperDataObject = NULL;
                 XMLDocumentPtr theXMLDocument = xmlHelper->load(body.c_str(), NULL);
                 if (theXMLDocument != 0)
                 {
-                    outputBodyDataObject = theXMLDocument->getRootDataObject();
+                    outputWrapperDataObject = theXMLDocument->getRootDataObject();
                 }
-                if(!outputBodyDataObject)
+                if(!outputWrapperDataObject)
                 {
                     ostringstream msg;
                     msg << "Could not convert received document to SDO: " << body;
@@ -865,17 +942,17 @@ namespace tuscany
 
                 // Get the body part
                 DataObjectPtr outputDataObject = NULL; 
-                PropertyList bpl = outputBodyDataObject->getInstanceProperties();
+                PropertyList bpl = outputWrapperDataObject->getInstanceProperties();
                 if (bpl.size()!=0)
                 {
                     if (bpl[0].isMany())
                     {
-                        DataObjectList& parts = outputBodyDataObject->getList((unsigned int)0);
+                        DataObjectList& parts = outputWrapperDataObject->getList((unsigned int)0);
                         outputDataObject = parts[0];
                     }
                     else
                     {
-                        outputDataObject = outputBodyDataObject->getDataObject(bpl[0]);
+                        outputDataObject = outputWrapperDataObject->getDataObject(bpl[0]);
                     }
                 }
                 if (outputDataObject == NULL)

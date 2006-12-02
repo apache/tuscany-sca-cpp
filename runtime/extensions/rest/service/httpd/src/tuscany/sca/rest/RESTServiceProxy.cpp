@@ -70,11 +70,11 @@ namespace tuscany
                 } catch (SDORuntimeException&)
                 {
                     dataFactory->addType("http://tempuri.org", "RootType", false, false, false);                
-                    dataFactory->addType("http://tempuri.org", "Body", false, true, false);                
+                    dataFactory->addType("http://tempuri.org", "Wrapper", false, true, false);                
                     dataFactory->addPropertyToType(
                         "http://tempuri.org", "RootType",
-                        "Body",
-                        "http://tempuri.org", "Body",
+                        "Wrapper",
+                        "http://tempuri.org", "Wrapper",
                         false, false, true);
                     dataFactory->addType("http://tempuri.org", "Part", false, true, false);                
                     dataFactory->addPropertyToType(
@@ -340,7 +340,7 @@ namespace tuscany
                         catch (SDORuntimeException&)
                         {
                             // The output wrapper type is not known, create an open DataObject 
-                            outputDataObject = dataFactoryPtr->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                            outputDataObject = dataFactoryPtr->create("http://tempuri.org", "Wrapper");
                         }
                     }
                     
