@@ -143,7 +143,7 @@ namespace tuscany
                 if (strlen(str) > 10 && !strncmp(str, "Location: ", 10))
                 {
                     string s = &str[10];
-                    mem->location = s.substr(0,s.find_last_not_of("\r\n"));
+                    mem->location = s.substr(0,s.find_last_not_of("\r\n")+1);
                 }
                 
                 delete str;
@@ -235,7 +235,6 @@ namespace tuscany
                     if (opName == "retrieve")
                     {
                         // Build the request URL
-                        
                         bool firstParm = 0;
                         string uri;
                         if (operation.getNParms() !=0)
@@ -302,7 +301,7 @@ namespace tuscany
                         // Pass our 'chunk' struct to the callback function
                         curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)&headerChunk);
      
-                        // Perform the HTTP get
+                        // Perform the HTTP GET
                         CURLcode rc = curl_easy_perform(curl_handle);
                         
                         if (rc)
@@ -332,6 +331,10 @@ namespace tuscany
                                 + "</Part>";
                                 setReturn(xmlHelper, part, operation);
                             }
+                            else
+                            {
+                                throwException(ServiceInvocationException, "Failed to retrieve resource, empty response");
+                            }
                         }
                         else
                         {
@@ -354,10 +357,7 @@ namespace tuscany
     
                         // Create the input payload     
                         ostringstream spayload;
-                        for (int i=0; i<operation.getNParms(); i++)
-                        {
-                            writeParameter(xmlHelper, spayload, operation.getParameter(i));
-                        }
+                        writeParameter(xmlHelper, spayload, operation.getParameter(0));
                         const string& requestPayload = spayload.str(); 
                         requestChunk.memory = requestPayload.c_str();
                         requestChunk.size = requestPayload.size();
@@ -386,10 +386,9 @@ namespace tuscany
                         curl_slist *requestHeaders = NULL;
                         requestHeaders = curl_slist_append(requestHeaders, "Expect:");
                         requestHeaders = curl_slist_append(requestHeaders, "Content-Type: text/xml");
-                        requestHeaders = curl_slist_append(requestHeaders, "Connection: close");
                         curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, requestHeaders);
                                                 
-                        // Perform the HTTP post
+                        // Perform the HTTP POST
                         curl_easy_setopt(curl_handle, CURLOPT_POST, true);
                         CURLcode rc = curl_easy_perform(curl_handle);
                         
@@ -429,11 +428,226 @@ namespace tuscany
                     else if (opName == "update")
                     {
                         // HTTP PUT
+                        
+                        // Build the request URL
+                        bool firstParm = 0;
+                        string uri;
+                        if (operation.getNParms() > 1)
+                        {
+                            
+                            // If the first parameter is a URI, then we'll use it,
+                            // otherwise we'll use the binding URI 
+                            ostringstream s0;
+                            writeParameter(xmlHelper, s0, operation.getParameter(0));
+                            string p0 = s0.str();
+                            if (p0.find("://") != string::npos)
+                            {
+                                firstParm = 1;
+                                uri = p0;
+                            }
+                            else
+                            {
+                                uri = binding->getURI();
+                            }
+                        }
+                        else
+                        {
+                            uri = binding->getURI();
+                        }
+                        // Add the parameters to the end of the URI
+                        ostringstream os;
+                        if (uri[uri.length()-1] == '?')
+                        {
+                            // If the URI ends with a "?" then we use the query
+                            // form param=value&
+                            os << uri;
+                            for (int i = firstParm; i < operation.getNParms()-1; i++)
+                            {
+                                os << "param" << (i + 1) << "=";
+                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                                if (i < operation.getNParms()-1)
+                                    os << "&";
+                            }
+                        }
+                        else
+                        {
+                            // Add the parameters in the form
+                            // value1 / value2 / value3 
+                            os << uri;
+                            for (int i = firstParm; i < operation.getNParms()-1; i++)
+                            {
+                                os << "/";
+                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                            }
+                        }
+    
+                        string url = os.str();                                        
+                        curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
+    
+                        // Create the input payload     
+                        ostringstream spayload;
+                        writeParameter(xmlHelper, spayload, operation.getParameter(operation.getNParms()-1));
+                        const string& requestPayload = spayload.str(); 
+                        requestChunk.memory = requestPayload.c_str();
+                        requestChunk.size = requestPayload.size();
+                        
+                        // Read all data using this function
+                        curl_easy_setopt(curl_handle, CURLOPT_READFUNCTION, read_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_READDATA, (void *)&requestChunk);
+                        
+                        // Send all data to this function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&responseChunk);
+     
+                        // Send all headers to this function
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)&headerChunk);
+
+                        // Configure headers
+                        curl_slist *requestHeaders = NULL;
+                        requestHeaders = curl_slist_append(requestHeaders, "Expect:");
+                        requestHeaders = curl_slist_append(requestHeaders, "Content-Type: text/xml");
+                        curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, requestHeaders);
+                                                
+                        // Perform the HTTP PUT
+                        curl_easy_setopt(curl_handle, CURLOPT_PUT, true);
+                        curl_easy_setopt(curl_handle, CURLOPT_UPLOAD, true) ;
+                        long size = (long)requestChunk.size;
+                        curl_easy_setopt(curl_handle, CURLOPT_INFILESIZE, size);
+                        
+                        CURLcode rc = curl_easy_perform(curl_handle);
+                        
+                        curl_slist_free_all(requestHeaders);
+                        
+                        if (rc)
+                        {
+                            throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
+                        }
+                        
+                        // Get the output and location of the created resource
+                        string responsePayload = "";
+                        if (responseChunk.memory)
+                        {
+                            responsePayload = string((const char*)responseChunk.memory, responseChunk.size);
+                        }
+                        
+                        long httprc;
+                        curl_easy_getinfo (curl_handle, CURLINFO_RESPONSE_CODE, &httprc);
+                        if (httprc != 200)
+                        {
+                            ostringstream msg;
+                            msg << "Failed to update REST resource, HTTP code: " << httprc;
+                            if (responsePayload != "")
+                            {
+                                msg << ", payload: " << responsePayload;
+                            } 
+                            throwException(ServiceInvocationException, msg.str().c_str());
+                        }
                     }
                     else if (opName == "delete")
                     {
                         // HTTP DELETE
-                        
+
+                        // Build the request URL
+                        bool firstParm = 0;
+                        string uri;
+                        if (operation.getNParms() !=0)
+                        {
+                            
+                            // If the first parameter is a URI, then we'll use it,
+                            // otherwise we'll use the binding URI 
+                            ostringstream s0;
+                            writeParameter(xmlHelper, s0, operation.getParameter(0));
+                            string p0 = s0.str();
+                            if (p0.find("://") != string::npos)
+                            {
+                                firstParm = 1;
+                                uri = p0;
+                            }
+                            else
+                            {
+                                uri = binding->getURI();
+                            }
+                        }
+                        else
+                        {
+                            uri = binding->getURI();
+                        }
+                        // Add the parameters to the end of the URI
+                        ostringstream os;
+                        if (uri[uri.length()-1] == '?')
+                        {
+                            // If the URI ends with a "?" then we use the query
+                            // form param=value&
+                            os << uri;
+                            for (int i = firstParm; i < operation.getNParms(); i++)
+                            {
+                                os << "param" << (i + 1) << "=";
+                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                                if (i < operation.getNParms()-1)
+                                    os << "&";
+                            }
+                        }
+                        else
+                        {
+                            // Add the parameters in the form
+                            // value1 / value2 / value3 
+                            os << uri;
+                            for (int i = firstParm; i < operation.getNParms(); i++)
+                            {
+                                os << "/";
+                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                            }
+                        }
+    
+                        string url = os.str();                                        
+                        curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
+     
+                        // Send all data to this function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&responseChunk);
+     
+                        // Send all headers to this function
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_callback);
+     
+                        // Pass our 'chunk' struct to the callback function
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)&headerChunk);
+     
+                        // Perform the HTTP DELETE
+                        curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, "DELETE");
+                        CURLcode rc = curl_easy_perform(curl_handle);
+                        if (rc)
+                        {
+                            throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
+                        }
+    
+                        // Get the output data out of the returned document
+                        string responsePayload = ""; 
+                        if (responseChunk.memory)
+                        {
+                            responsePayload = string((const char*)responseChunk.memory, responseChunk.size);
+                        }
+        
+                        long httprc;
+                        curl_easy_getinfo (curl_handle, CURLINFO_RESPONSE_CODE, &httprc);
+                        if (httprc != 200)
+                        {
+                            ostringstream msg;
+                            msg << "Failed to delete REST resource, HTTP code: " << httprc;
+                            if (responsePayload != "")
+                            {
+                                msg << ", payload: " << responsePayload;
+                            } 
+                            throwException(ServiceInvocationException, msg.str().c_str());
+                        }
                     }
                     else
                     {
@@ -618,9 +832,7 @@ namespace tuscany
                     }
                 default:
                     {
-                        ostringstream msg;
-                        msg << "Unsupported parameter type: " << parm.getType();
-                        throwException(ServiceDataException, msg.str().c_str());
+                        break;
                     }
                 }
             }

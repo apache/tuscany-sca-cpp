@@ -242,10 +242,7 @@ namespace tuscany
                                 else
                                 {
                                     (*dataObjectData)->detach();
-                                    
-                                    std::cout << *dataObjectData;
                                 }
-                                
                                 operation.addParameter(dataObjectData);
                             }
                             break;
@@ -349,10 +346,7 @@ namespace tuscany
                     
                     setOutputData(operation, outputDataObject, dataFactoryPtr);                            
 
-                    std::cout << outputDataObject;
-
                     return outputDataObject;
-
                 }
                 catch(SDORuntimeException& ex)
                 {
@@ -450,9 +444,7 @@ namespace tuscany
                             }
                         default:
                             {
-                                ostringstream msg;
-                                msg << "Unsupported result type: " << resultType;
-                                throwException(SystemConfigurationException, msg.str().c_str());
+                                break;
                             }
                         }
                     }
@@ -554,9 +546,7 @@ namespace tuscany
                             }
                         default:
                             {
-                                ostringstream msg;
-                                msg << "Unsupported result type: " << resultType;
-                                throwException(SystemConfigurationException, msg.str().c_str());
+                                break;
                             }
                         }
                     }

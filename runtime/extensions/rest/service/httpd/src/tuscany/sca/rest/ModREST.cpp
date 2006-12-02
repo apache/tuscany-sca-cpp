@@ -218,6 +218,8 @@ namespace tuscany
                     {
                         request->chunked = true;
                     }
+                    
+                    apr_table_setn(request->headers_out, "Connection", "close");
                 
                     if (printRequest)
                     {
@@ -674,6 +676,26 @@ namespace tuscany
                                 args = next;
                             }
                         }
+
+                        // Parse the query string
+                        if (request->args)
+                        {
+                            string query = request->args;
+                            for (; query != ""; )
+                            {
+                                string param;
+                                string next;
+                                Utils::tokeniseString("&", query, param, next);
+                                if (param != "")
+                                {
+                                    string n;
+                                    string* data = new string;
+                                    Utils::tokeniseString("=", param, n, *data);
+                                    operation.addParameter(data);    
+                                }
+                                query = next;
+                            }
+                        }
                         
                         // Read the POST input
                         ostringstream sinput;
@@ -776,12 +798,175 @@ namespace tuscany
                     }
                     else if (request->method_number == M_PUT)
                     {
-
+    
+                        // Handle an HTTP PUT
+                        
+                        // Determine the operation to invoke                    
+                        WSDLOperation wsdlOperation;
+                        string wsdlNamespace = "";
+                        string op_name = "update";
+                        string uriArgs = uri;
+                    
+                        // Create a default document literal wrapped WSDL operation
+                        wsdlNamespace = compositeService->getName();
+                        wsdlOperation = WSDLOperation();
+                        wsdlOperation.setOperationName(op_name.c_str());
+                        wsdlOperation.setSoapAction(wsdlNamespace+ "#" +op_name);
+                        wsdlOperation.setEndpoint("");
+                        wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
+                        wsdlOperation.setDocumentStyle(true);
+                        wsdlOperation.setWrappedStyle(true);
+                        wsdlOperation.setEncoded(false);
+                        wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
+                        wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                        
+                        // Create the input DataObject
+                        Operation operation(op_name.c_str());
+                        
+                        // Parse the args part of the URI
+                        if (uriArgs != "")
+                        {
+                            string args = uriArgs;
+                            for (; args != ""; )
+                            {
+                                string param;
+                                string next;
+                                Utils::tokeniseString("/", args, param, next);
+                                if (param != "")
+                                {
+                                    string* data = new string;
+                                    *data = param;
+                                    operation.addParameter(data);    
+                                }
+                                args = next;
+                            }
+                        }
+                        
+                        // Parse the query string
+                        if (request->args)
+                        {
+                            string query = request->args;
+                            for (; query != ""; )
+                            {
+                                string param;
+                                string next;
+                                Utils::tokeniseString("&", query, param, next);
+                                if (param != "")
+                                {
+                                    string n;
+                                    string* data = new string;
+                                    Utils::tokeniseString("=", param, n, *data);
+                                    operation.addParameter(data);    
+                                }
+                                query = next;
+                            }
+                        }
+                        
+                        // Read the PUT input
+                        ostringstream sinput;
+                        char buffer[2049];
+                        for ( ; ; )
+                        {
+                            int size = ap_get_client_block(request, buffer, 2048);
+                            if (size > 0)
+                            {
+                                buffer[size] = '\0';
+                                sinput << buffer;
+                            }
+                            else if (size == 0)
+                            {
+                                break;
+                            }
+                            else if (size < 0)
+                            {
+                                throwException(ServiceInvocationException, "Error reading PUT input");
+                            }
+                        }
+                        string input = sinput.str();
+                        addPart(xmlHelper, input, operation);
+                        
+                        DataObjectPtr inputDataObject = createPayload(dataFactory, operation, wsdlOperation);
+                        
+                        // Dispatch to the REST proxy
+                        DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
+                        
+                        // Send the response back to the client
+                        ap_set_content_type(request, "text/xml");
+                        
                         return OK;
                     }
                     else if (request->method_number == M_DELETE)
                     {
+                        
+                        // Determine the operation to invoke                    
+                        WSDLOperation wsdlOperation;
+                        string wsdlNamespace = "";
+                        string op_name = "delete";
+                        string uriArgs = uri;
                     
+                        // Create a default document literal wrapped WSDL operation
+                        wsdlNamespace = compositeService->getName();
+                        wsdlOperation = WSDLOperation();
+                        wsdlOperation.setOperationName(op_name.c_str());
+                        wsdlOperation.setSoapAction(wsdlNamespace+ "#" +op_name);
+                        wsdlOperation.setEndpoint("");
+                        wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
+                        wsdlOperation.setDocumentStyle(true);
+                        wsdlOperation.setWrappedStyle(true);
+                        wsdlOperation.setEncoded(false);
+                        wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
+                        wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                        
+                        // Create the input DataObject
+                        Operation operation(op_name.c_str());
+                        
+                        // Parse the args part of the URI
+                        if (uriArgs != "")
+                        {
+                            string args = uriArgs;
+                            for (; args != ""; )
+                            {
+                                string param;
+                                string next;
+                                Utils::tokeniseString("/", args, param, next);
+                                if (param != "")
+                                {
+                                    string* data = new string;
+                                    *data = param;
+                                    operation.addParameter(data);    
+                                }
+                                args = next;
+                            }
+                        }
+                        
+                        // Parse the query string
+                        if (request->args)
+                        {
+                            string query = request->args;
+                            for (; query != ""; )
+                            {
+                                string param;
+                                string next;
+                                Utils::tokeniseString("&", query, param, next);
+                                if (param != "")
+                                {
+                                    string n;
+                                    string* data = new string;
+                                    Utils::tokeniseString("=", param, n, *data);
+                                    operation.addParameter(data);    
+                                }
+                                query = next;
+                            }
+                        }
+                        
+                        DataObjectPtr inputDataObject = createPayload(dataFactory, operation, wsdlOperation);
+                        
+                        // Dispatch to the REST proxy
+                        DataObjectPtr outputDataObject = proxy->invoke(wsdlOperation, inputDataObject);
+                        
+                        // Send the response back to the client
+                        ap_set_content_type(request, "text/xml");
+                        
                         return OK;
                     }
                     else
@@ -868,9 +1053,7 @@ namespace tuscany
                                 }
                             default:
                                 {
-                                    ostringstream msg;
-                                    msg << "Unsupported parameter type: " << parm.getType();
-                                    throwException(ServiceDataException, msg.str().c_str());
+                                    break;
                                 }
                             }
                         }
@@ -895,9 +1078,9 @@ namespace tuscany
                                 break;
                             }
                         default:
-                            ostringstream msg;
-                            msg << "Unsupported parameter type: " << parm.getType();
-                            throwException(ServiceDataException, msg.str().c_str());
+                            {
+                                break;
+                            }
                         }
                     }
                 }
