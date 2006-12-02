@@ -22,7 +22,6 @@
 # manages Customer resources.
 # 
 
-import sys
 import os
 import shutil
 from xml.etree import ElementTree as et
@@ -39,7 +38,7 @@ class CustomerResourceImpl:
         f = open(dir + "/" + id + ".xml", "w")
         f.write(et.tostring(customer))
         f.close()
-		return id
+        return id
 
     def retrieve(self, id):
         print "Python - CustomerResourceImpl.retrieve " + id
@@ -48,8 +47,7 @@ class CustomerResourceImpl:
         f.close()
         return customer
 
-    def update(self, customer):
-        id = customer.findtext(qname)
+    def update(self, id, customer):
         print "Python - CustomerResourceImpl.update " + id
         f = open(dir + "/" + id + ".xml", "w")
         f.write(et.tostring(customer))

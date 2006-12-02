@@ -24,22 +24,31 @@
 
 from xml.etree import ElementTree as et
 import sca
-import sys
 
 # Locate the customer service
 customerService = sca.locateservice("Customer")
 
 # Invoke the CRUD operations on the customer resource
 
+customer = customerService.retrieve("2345")
+print "Retrieved customer " + et.tostring(customer)
+
 customer = et.fromstring("""<customer xmlns="http://sample.customer"><id>1234</id><firstName>Jane</firstName><lastName>Doe</lastName></customer>""")
-print et.tostring(customer)
-
 url = customerService.create(customer)
-print url
+print "Created customer " + url
 
-#customer = customerService.retrieve("1234")
-#print et.tostring(customer)
+customer = customerService.retrieve("1234")
+print "Retrieved customer " + et.tostring(customer)
 
-#customer = customerService.retrieve("2345")
-#print et.tostring(customer)
+customer = customerService.retrieve(url)
+print "Retrieved by url " + et.tostring(customer)
 
+customer.find("{http://sample.customer}lastName").text="Smith"
+customerService.update("1234", customer)
+print "Updated customer 1234"
+
+customer = customerService.retrieve("1234")
+print "Retrieved customer " + et.tostring(customer)
+
+customerService.delete("1234")
+print "Deleted customer 1234"
