@@ -42,70 +42,6 @@ using namespace commonj::sdo;
 using namespace tuscany::sca;
 using namespace tuscany::sca::model;
 
-extern "C"
-{
-    struct ResponseChunk {
-        char *memory;
-        size_t size;
-    };
-
-    struct RequestChunk {
-        const char *memory;
-        size_t size;
-        size_t read;
-    };
-
-    static void *my_realloc(void *ptr, size_t size)
-    {
-        if (ptr)
-            return realloc(ptr, size);
-        else
-            return malloc(size);
-    }
-
-    static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *data)
-    {
-        size_t realsize = size * nmemb;
-        struct ResponseChunk *mem = (struct ResponseChunk *)data;
-
-        mem->memory = (char *)my_realloc(mem->memory, mem->size + realsize + 1);
-        memcpy(&(mem->memory[mem->size]), ptr, realsize);
-        mem->size += realsize;
-        mem->memory[mem->size] = 0;
-        return realsize;
-    }
-    
-    static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *data)
-    {
-        size_t realsize = size * nmemb;
-        struct RequestChunk *mem = (struct RequestChunk *)data;
-
-        if (realsize < mem->size - mem->read)
-        {
-            realsize = mem->size - mem->read;
-        }
-        if (realsize != 0)
-        {
-            memcpy(ptr, &(mem->memory[mem->read]), realsize);
-        }
-        return realsize; 
-    }    
- 
-    static size_t header_callback(void *ptr, size_t size, size_t nmemb, void *data)
-    {
-        size_t realsize = size * nmemb;
-        char* str = (char*)malloc(realsize + 1);
-        memcpy(str, ptr, realsize);
-        str[realsize] = 0;
-        
-        printf("Header: %s", str);
-        free(str);
-
-        return realsize; 
-    }    
- 
- }
-
 namespace tuscany
 {
     namespace sca
@@ -113,6 +49,108 @@ namespace tuscany
         namespace rest
         {
             
+            class ResponseChunk {
+            public:
+                ResponseChunk() : memory(NULL), size(0)
+                {
+                }
+                
+                ~ResponseChunk()
+                {
+                    if (memory)
+                    {
+                        free(memory);
+                    }
+                }
+            
+                char *memory;
+                int size;
+            };
+        
+            class RequestChunk {
+            public:
+                RequestChunk() : memory(NULL), size(0), read(0)
+                {
+                }
+                
+                ~RequestChunk()
+                {
+                }
+                
+                const char *memory;
+                int size;
+                int read;
+            };
+        
+            class HeaderChunk {
+            public:
+                HeaderChunk() : location("")
+                {
+                }
+                
+                ~HeaderChunk()
+                {
+                }
+                
+                string location;
+            };
+        
+            size_t write_callback(void *ptr, size_t size, size_t nmemb, void *data)
+            {
+                int realsize = size * nmemb;
+                ResponseChunk *mem = (ResponseChunk *)data;
+        
+                if (mem->memory != NULL)
+                {
+                    mem->memory = (char *)realloc(mem->memory, mem->size + realsize + 1);
+                }
+                else
+                {
+                    mem->memory = (char *)malloc(mem->size + realsize + 1);
+                }
+                memcpy(&(mem->memory[mem->size]), ptr, realsize);
+                mem->size += realsize;
+                mem->memory[mem->size] = 0;
+                return realsize;
+            }
+            
+            static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *data)
+            {
+                int realsize = size * nmemb;
+                RequestChunk *mem = (RequestChunk *)data;
+        
+                if (realsize > mem->size - mem->read)
+                {
+                    realsize = mem->size - mem->read;
+                }
+                if (realsize != 0)
+                {
+                    memcpy(ptr, &(mem->memory[mem->read]), realsize);
+                    mem->read += realsize;
+                }
+                return realsize; 
+            }    
+         
+            size_t header_callback(void *ptr, size_t size, size_t nmemb, void *data)
+            {
+                int realsize = size * nmemb;
+                HeaderChunk* mem = (HeaderChunk*)data;
+                
+                char* str = new char[realsize + 1];
+                memcpy(str, ptr, realsize);
+                str[realsize] = 0;
+                
+                if (strlen(str) > 10 && !strncmp(str, "Location: ", 10))
+                {
+                    string s = &str[10];
+                    mem->location = s.substr(0,s.find_last_not_of("\r\n"));
+                }
+                
+                delete str;
+        
+                return realsize; 
+            }    
+         
             bool RESTServiceWrapper::initialized = false;
             
             RESTServiceWrapper::RESTServiceWrapper(Service* service) : ServiceWrapper(service)
@@ -180,12 +218,8 @@ namespace tuscany
                 CURL *curl_handle = curl_easy_init();
 
                 RequestChunk requestChunk;
-                requestChunk.memory=NULL;
-                requestChunk.size = 0;
-                requestChunk.read = 0;
                 ResponseChunk responseChunk;
-                responseChunk.memory=NULL;
-                responseChunk.size = 0;
+                HeaderChunk headerChunk;
                 
                 // Some servers don't like requests that are made without a user-agent
                 curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
@@ -201,14 +235,39 @@ namespace tuscany
                     if (opName == "retrieve")
                     {
                         // Build the request URL
-                        string uri = binding->getURI();
+                        
+                        bool firstParm = 0;
+                        string uri;
+                        if (operation.getNParms() !=0)
+                        {
+                            
+                            // If the first parameter is a URI, then we'll use it,
+                            // otherwise we'll use the binding URI 
+                            ostringstream s0;
+                            writeParameter(xmlHelper, s0, operation.getParameter(0));
+                            string p0 = s0.str();
+                            if (p0.find("://") != string::npos)
+                            {
+                                firstParm = 1;
+                                uri = p0;
+                            }
+                            else
+                            {
+                                uri = binding->getURI();
+                            }
+                        }
+                        else
+                        {
+                            uri = binding->getURI();
+                        }
+                        // Add the parameters to the end of the URI
                         ostringstream os;
                         if (uri[uri.length()-1] == '?')
                         {
-                            // Add the parameters to the end of the URL in the form
-                            // param=value&
+                            // If the URI ends with a "?" then we use the query
+                            // form param=value&
                             os << uri;
-                            for (int i=0; i<operation.getNParms(); i++)
+                            for (int i = firstParm; i < operation.getNParms(); i++)
                             {
                                 os << "param" << (i + 1) << "=";
                                 writeParameter(xmlHelper, os, operation.getParameter(i));
@@ -218,10 +277,10 @@ namespace tuscany
                         }
                         else
                         {
-                            // Add the parameters to the end of the URL in the
-                            // form value1 / value2 / value3 
+                            // Add the parameters in the form
+                            // value1 / value2 / value3 
                             os << uri;
-                            for (int i=0; i<operation.getNParms(); i++)
+                            for (int i = firstParm; i < operation.getNParms(); i++)
                             {
                                 os << "/";
                                 writeParameter(xmlHelper, os, operation.getParameter(i));
@@ -238,18 +297,16 @@ namespace tuscany
                         curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&responseChunk);
      
                         // Send all headers to this function
-                        curl_easy_setopt(curl_handle, CURLOPT_WRITEHEADER, header_callback);
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_callback);
      
                         // Pass our 'chunk' struct to the callback function
-                        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)0);
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)&headerChunk);
      
                         // Perform the HTTP get
                         CURLcode rc = curl_easy_perform(curl_handle);
                         
                         if (rc)
                         {
-                            if (responseChunk.memory)
-                                free(responseChunk.memory);
                             throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
                         }
     
@@ -261,7 +318,6 @@ namespace tuscany
                         if (responseChunk.memory)
                         {
                             responsePayload = string((const char*)responseChunk.memory, responseChunk.size);
-                            free(responseChunk.memory);
                         }
         
                         if (httprc == 200)
@@ -321,15 +377,16 @@ namespace tuscany
                         curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&responseChunk);
      
                         // Send all headers to this function
-                        curl_easy_setopt(curl_handle, CURLOPT_WRITEHEADER, header_callback);
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_callback);
      
                         // Pass our 'chunk' struct to the callback function
-                        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)0);
+                        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)&headerChunk);
 
                         // Configure headers
                         curl_slist *requestHeaders = NULL;
-                        requestHeaders = curl_slist_append(requestHeaders, "Content-Type: text/xml");
                         requestHeaders = curl_slist_append(requestHeaders, "Expect:");
+                        requestHeaders = curl_slist_append(requestHeaders, "Content-Type: text/xml");
+                        requestHeaders = curl_slist_append(requestHeaders, "Connection: close");
                         curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, requestHeaders);
                                                 
                         // Perform the HTTP post
@@ -348,7 +405,6 @@ namespace tuscany
                         if (responseChunk.memory)
                         {
                             responsePayload = string((const char*)responseChunk.memory, responseChunk.size);
-                            free(responseChunk.memory);
                         }
                         
                         long httprc;
@@ -356,7 +412,7 @@ namespace tuscany
                         if (httprc == 201)
                         {
                             string* location = new string;
-                            *location = "http://wherever.org";
+                            *location = headerChunk.location;
                             operation.setReturnValue(location);
                         }
                         else
@@ -472,16 +528,12 @@ namespace tuscany
                     
                     if (rc)
                     {
-                        if (responseChunk.memory)
-                            free(responseChunk.memory);
                         throwException(ServiceInvocationException, curl_easy_strerror(rc)); 
                     }
  
                     if (responseChunk.memory)
                     {
                         string payload((const char*)responseChunk.memory, responseChunk.size);
-                        free(responseChunk.memory);
-                        
                         setReturn(xmlHelper, payload, operation);
                     }
                 }

@@ -772,9 +772,6 @@ namespace tuscany
                             }
                         }
                        
-                        // Close the connection after this
-                        apr_table_setn(request->headers_out, "Connection", "close");
-                        
                         return OK;
                     }
                     else if (request->method_number == M_PUT)
