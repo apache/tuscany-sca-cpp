@@ -349,10 +349,8 @@ namespace tuscany
                         }
                         default:
                         {
-                            ostringstream msg;
-                            msg << "Operation parameter type not supported: " << resultType;
-                            rb_raise(rb_eRuntimeError, msg.str().c_str());
-                            return Qnil;
+                            value = Qnil;
+                            break;
                         }
                     }
             
