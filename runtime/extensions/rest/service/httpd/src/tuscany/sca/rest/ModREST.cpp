@@ -287,6 +287,10 @@ namespace tuscany
                             ap_rprintf(request, "<p>Content type: %s", content_type);
                         }
                     }
+                    else
+                    {
+                        content_type = "text/plain";
+                    }
                 
                     if (request->content_encoding)
                     {
@@ -721,7 +725,84 @@ namespace tuscany
                             }
                         }
                         string input = sinput.str();
-                        addPart(xmlHelper, input, operation);
+                        
+                        string contentType = content_type;
+                        if (contentType.find("multipart/form-data") == 0)
+                        {
+                            // This is a multipart POST, extract each part from the
+                            // POST body
+                            string begin;
+                            string boundary;
+                            Utils::tokeniseString("boundary=", contentType, begin, boundary);
+                            
+                            for (;;)
+                            {
+                                // Read each part
+                                string part;
+                                string next;
+                                Utils::tokeniseString(boundary, input, part, next);
+                                input = next;
+                                
+                                // Skip first and last empty parts
+                                if (part.length() == 0 || part == "--")
+                                    continue;
+                                
+                                // Read headers
+                                bool xml = false;
+                                int empty = -1;
+                                for (;;)
+                                {
+                                    string header;
+                                    Utils::tokeniseString("\r\n", part, header, next);
+                                    part = next;
+                                    if (header == "")
+                                    {
+                                        // Two empty lines signal the beginning of the content
+                                        empty++;
+                                        if (empty == 1)
+                                            break;
+                                    }
+                                    else
+                                    {
+                                        empty = 0;
+                                        
+                                        // Detect XML content
+                                        if (header == "Content-Type: text/xml")
+                                            xml = true;
+                                    }
+                                }
+
+                                // Read the part content
+                                if (part.length())
+                                {                       
+                                    // Strip the trailer         
+                                    string value;
+                                    Utils::tokeniseString("\r\n--", part, value, next);
+                                    
+                                    if (xml)
+                                    {
+                                        // Add an XML parameter to the operation
+                                        addPart(xmlHelper, value, operation);
+                                    }
+                                    else
+                                    {
+                                        // Add a text parameter to the operation
+                                        string* stringData = new string;
+                                        *stringData = value;
+                                        operation.addParameter(stringData); 
+                                    }
+                                }
+
+                                // Read till the end of the POST body
+                                if (input.length() == 0)
+                                    break;
+                            }                    
+                        }
+                        else
+                        {
+                            // The POST body represents a single part 
+                            addPart(xmlHelper, input, operation);
+                        }
                         
                         DataObjectPtr inputDataObject = createPayload(dataFactory, operation, wsdlOperation);
                         
