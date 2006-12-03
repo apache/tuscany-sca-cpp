@@ -21,6 +21,8 @@
 
 #if defined(WIN32)  || defined (_WINDOWS)
 #pragma warning(disable: 4786)
+#else
+#include "tuscany_sca_config.h"
 #endif
 
 #include "tuscany/sca/util/Library.h"
@@ -28,7 +30,6 @@
 #include "tuscany/sca/util/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 
-#include "tuscany_sca_config.h"
 
 namespace tuscany
 {
