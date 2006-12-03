@@ -55,10 +55,11 @@ namespace tuscany
             string::size_type sep = str.find(separator);
             if (sep != string::npos)
             {
+                int l = separator.length();
                 token1 = str.substr(0, sep);
-                if ( (sep+1) < str.length())
+                if ( (sep+l) < str.length())
                 {
-                    token2 = str.substr(sep+1);
+                    token2 = str.substr(sep+l);
                 }
                 else
                 {
@@ -81,10 +82,11 @@ namespace tuscany
             string::size_type sep = str.rfind(separator);
             if (sep != string::npos)
             {
+                int l = separator.length();
                 token1 = str.substr(0, sep);
-                if ( (sep+1) < str.length())
+                if ( (sep+l) < str.length())
                 {
-                    token2 = str.substr(sep+1);
+                    token2 = str.substr(sep+l);
                 }
                 else
                 {
