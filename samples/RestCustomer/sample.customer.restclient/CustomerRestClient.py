@@ -75,9 +75,8 @@ customer = customerCommand.retrieve("1234")
 print "Command  - Retrieved customer " + et.tostring(customer)
 
 customer.find("{http://sample.customer}lastName").text="Smith"
-# commented out for now as application/form-data does not work yet
-#customerCommand.update("1234", customer)
-#print "Command  - Updated customer 1234"
+customerCommand.update("1234", customer)
+print "Command  - Updated customer 1234"
 
 customer = customerCommand.retrieve("1234")
 print "Command  - Retrieved customer " + et.tostring(customer)
