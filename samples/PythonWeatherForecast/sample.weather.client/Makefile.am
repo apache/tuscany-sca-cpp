@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/WeatherForecast/deploy
+deploydir=$(prefix)/samples/PythonWeatherForecast/deploy
 clientdir=$(deploydir)/sample.weather.client
 
 client_DATA = *.py
