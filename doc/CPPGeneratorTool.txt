@@ -1,10 +1,6 @@
-Tuscany SCA For C++ Developers Guide
-====================================
+Tuscany SCA For C++ - scagen C++ generator tool
+===============================================
 
-Contents: 
-	Developing Services in C++
-	Running C++ Services
-	
 
 See cpp/build.txt in the parent directory or the cpp/sca/INSTALL file 
 for build instructions.
