@@ -349,7 +349,8 @@ namespace tuscany
                         catch (SDORuntimeException&)
                         {
                             // The output wrapper type is not known, create an open DataObject 
-                            outputDataObject = dataFactoryPtr->create("http://tempuri.org", "Wrapper");
+                            //outputDataObject = dataFactoryPtr->create("http://tempuri.org", "Wrapper");
+                            outputDataObject = dataFactoryPtr->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
                         }
                     }
                     

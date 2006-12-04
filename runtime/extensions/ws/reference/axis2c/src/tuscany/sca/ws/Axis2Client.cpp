@@ -203,7 +203,6 @@ namespace tuscany
                 axis2_char_t* soap_action = (axis2_char_t*)wsdlOperation.getSoapAction().c_str();
                 axis2_char_t* serviceName = (axis2_char_t*)binding->getServiceName().c_str();
                 
-
                 // create OM from Operation and wsdlOperation
                 axiom_node_t* payload = createPayload(operation, wsdlOperation, env);
                 /* Create EPR with given address */
@@ -324,7 +323,8 @@ namespace tuscany
                     {
                         
                         // The input wrapper type is not known, create an open DataObject 
-                        inputDataObject = dataFactory->create("http://tempuri.org", "Wrapper");
+                        //inputDataObject = dataFactory->create("http://tempuri.org", "Wrapper");
+                        inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
                     }
                 }
                         
@@ -569,7 +569,7 @@ namespace tuscany
                     string msg = "Could not convert Axis2 body part to SDO";
                     throwException(ServiceInvocationException, msg.c_str());
                 }
-
+                
                 PropertyList pl = outputDataObject->getType().getProperties();
                 if (pl.size() == 0)
                 {
