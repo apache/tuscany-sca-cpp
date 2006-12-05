@@ -42,14 +42,14 @@ namespace tuscany
             class Axis2Client
             {
             public:
-                Axis2Client(CompositeReference* externalService);
+                Axis2Client(CompositeReference* compositeReference);
                 virtual    ~Axis2Client();
 
                 virtual void invoke(Operation& operation);    
                 
             private:
                 CompositeReference* compositeReference;
-                              
+                               
                 axiom_node_t* createPayload(Operation& operation, 
                                                const WSDLOperation& wsdlOp,
                                                axis2_env_t* env);
