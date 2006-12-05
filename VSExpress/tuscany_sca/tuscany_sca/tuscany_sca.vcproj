@@ -462,6 +462,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeReferenceBinding.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeReferenceBinding.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\CompositeService.cpp"
 					>
 					<FileConfiguration
