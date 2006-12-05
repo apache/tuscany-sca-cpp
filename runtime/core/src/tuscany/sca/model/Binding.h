@@ -66,7 +66,7 @@ namespace tuscany
                  * Returns the binding URI.
                  * @return The binding URI.
                  */
-                SCA_API const string& getURI() const { return uri; };
+                SCA_API virtual const string& getURI() const { return uri; };
                 
             private:
             

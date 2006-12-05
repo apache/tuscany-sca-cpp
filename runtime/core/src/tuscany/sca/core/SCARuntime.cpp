@@ -48,6 +48,7 @@ namespace tuscany
         static const char* TUSCANY_SCACPP_ROOT = "TUSCANY_SCACPP_ROOT";
         static const char* TUSCANY_SCACPP_COMPONENT = "TUSCANY_SCACPP_COMPONENT";
         static const char* TUSCANY_SCACPP_PATH = "TUSCANY_SCACPP_PATH";
+        static const char* TUSCANY_SCACPP_BASE_URI = "TUSCANY_SCACPP_BASE_URI";
  
         // ==========================================================
         // Initialize static class member to not pointing at anything
@@ -57,6 +58,7 @@ namespace tuscany
         string SCARuntime::systemRoot = "";
         string SCARuntime::systemPath = "";
         string SCARuntime::defaultComponentName = "";
+        string SCARuntime::defaultBaseURI = "";
         
 
         // ==========================================================
@@ -111,6 +113,24 @@ namespace tuscany
         const string& SCARuntime::getDefaultComponentName()
         {
             return defaultComponentName ;
+        }
+
+        // ==========================================================
+        // Set the default base URI
+        // ==========================================================
+        void SCARuntime::setDefaultBaseURI(const string& baseURI)
+        {
+            logentry();
+            defaultBaseURI = baseURI;
+            loginfo("Default base URI: %s", baseURI.c_str());
+        }
+
+        // ==========================================================
+        // Returns the default base URI
+        // ==========================================================
+        const string& SCARuntime::getDefaultBaseURI()
+        {
+            return defaultBaseURI;
         }
 
         // ==========================================================
@@ -209,6 +229,17 @@ namespace tuscany
                     {
                         loginfo("System path: %s", systemPathEnv);
                         systemPath = systemPathEnv;
+                    }
+                }
+                if (defaultBaseURI == "")
+                {
+                    
+                    // Get default base URI from environment variable TUSCANY_SCACPP_BASE_URI
+                    char* baseURI = getenv(TUSCANY_SCACPP_BASE_URI);
+                    if (baseURI != 0)
+                    {
+                        loginfo("Default base URI: %s", baseURI);
+                        defaultBaseURI = baseURI;
                     }
                 }
 
@@ -481,7 +512,7 @@ namespace tuscany
         }
         
         // ===========================================
-        // getCurrentCompositeComponent: return the current composite component
+        // getDefaultComponent: return the default composite component
         // ===========================================
         Component* SCARuntime::getDefaultComponent()
         {

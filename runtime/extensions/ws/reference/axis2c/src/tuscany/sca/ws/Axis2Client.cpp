@@ -173,26 +173,39 @@ namespace tuscany
                         "Only wrapped document style WSDL operations are currentlysupported");
                 }
                     
-                // Get the target endpoint address
                 // The URI specified in the binding overrides the address specified in
                 // the WSDL
                 axis2_char_t* address;
-                if (binding->getURI() != "")
+
+                // Get the URI configured on the top level component                
+                string bindingURI = "";
+                SCARuntime* runtime = SCARuntime::getInstance();
+                Component* component = runtime->getDefaultComponent();
+                Reference* reference = component->findReference(compositeReference->getName());
+                if (reference != NULL)
                 {
-                    if (binding->getURI().find("http://")==0)
+                    ReferenceBinding* referenceBinding = reference->getBinding();
+                    if (referenceBinding != NULL && referenceBinding->getURI() != "")
                     {
-                        address = (axis2_char_t*)binding->getURI().c_str();
-                    }
-                    else
+                        bindingURI = referenceBinding->getURI();
+                    } 
+                }
+                if (bindingURI == "")
+                {
+                    // Get the URI configured on the binding
+                    if (binding->getURI() != "")
                     {
-                        //TODO Hack for now, hardcode the address of the target service
-                        // Derive it from the component / service name
-                        string componentName;
-                        string serviceName;
-                        Utils::tokeniseString("/", binding->getURI(), componentName, serviceName);
-                        string saddress = "http://" + componentName + ":9090/axis2/services/" + serviceName;
-                        address = (axis2_char_t*)saddress.c_str();
+                        bindingURI = binding->getURI();
                     }
+                }
+                if (bindingURI != "")
+                {
+                    // Prepend the default base URI if the URI is not absolute
+                    if (bindingURI.find("://") == string::npos)
+                    {
+                        bindingURI = runtime->getDefaultBaseURI() + bindingURI;
+                    }
+                    address = (axis2_char_t*)bindingURI.c_str();
                 }
                 else
                 {

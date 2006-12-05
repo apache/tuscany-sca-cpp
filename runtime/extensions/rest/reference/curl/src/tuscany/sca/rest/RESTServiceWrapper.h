@@ -69,6 +69,11 @@ namespace tuscany
                 static bool initialized;
                 
                 /**
+                 * Get the configured binding URI
+                 */
+                 const string getBindingURI();
+                
+                /**
                  * Write a parameter into a URL
                  */
                 void writeParameter(commonj::sdo::XMLHelper* xmlHelper, std::ostringstream& os, const Operation::Parameter& parm);

@@ -605,7 +605,7 @@ namespace tuscany
                 CompositeService* compositeService = new CompositeService(
                         composite, compositeServiceName, iface, NULL, false, multiplicity); 
                 
-                composite->addComponent(compositeService);    
+                composite->addCompositeService(compositeService);    
 
                 DataObjectList& refs = compositeServiceDO->getList("reference");
                 for (unsigned int i=0; i<refs.size(); i++)
@@ -674,7 +674,7 @@ namespace tuscany
                 CompositeReference* compositeReference = new CompositeReference(
                         composite, compositeReferenceName, iface, NULL, false, ReferenceType::ONE_ONE); 
                     
-                composite->addComponent(compositeReference);
+                composite->addCompositeReference(compositeReference);
                 
                 // Get binding, it will be the first and only binding
                 DataObjectList& bindings = compositeReferenceDO->getList("binding");

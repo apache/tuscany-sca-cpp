@@ -65,6 +65,12 @@ namespace tuscany
                  * @return The service exposed by this composite reference.
                  */
                 SCA_API Service* getService() const { return service; };
+                
+                /**
+                 * Returns the multiplicity of this composite reference
+                 * @return The multiplicity of the composite reference
+                 */
+                 SCA_API ReferenceType::Multiplicity getMultiplicity() { return multiplicity; }
 
             private:
             
@@ -72,6 +78,11 @@ namespace tuscany
                  * The service exposed by this composite reference.
                  */
                 Service* service;
+                
+                /**
+                 * The multiplicity of this reference
+                 */
+                 ReferenceType::Multiplicity multiplicity;
 
             };
         } // End namespace model

@@ -41,6 +41,7 @@ tuscany/sca/model/Component.cpp \
 tuscany/sca/model/ComponentType.cpp \
 tuscany/sca/model/Composite.cpp \
 tuscany/sca/model/CompositeReference.cpp \
+tuscany/sca/model/CompositeReferenceBinding.cpp \
 tuscany/sca/model/CompositeService.cpp \
 tuscany/sca/model/Contract.cpp \
 tuscany/sca/model/Interface.cpp \

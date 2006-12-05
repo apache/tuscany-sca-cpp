@@ -25,6 +25,7 @@
 #include "tuscany/sca/util/Utils.h"
 #include "RESTServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
+#include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Composite.h"
@@ -253,12 +254,12 @@ namespace tuscany
                             }
                             else
                             {
-                                uri = binding->getURI();
+                                uri = getBindingURI();
                             }
                         }
                         else
                         {
-                            uri = binding->getURI();
+                            uri = getBindingURI();
                         }
                         // Add the parameters to the end of the URI
                         ostringstream os;
@@ -357,7 +358,7 @@ namespace tuscany
                         // HTTP POST
                         
                         // Set the target URL
-                        string url = binding->getURI();  
+                        string url = getBindingURI();  
                         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
     
                         // Create the input payload     
@@ -452,12 +453,12 @@ namespace tuscany
                             }
                             else
                             {
-                                uri = binding->getURI();
+                                uri = getBindingURI();
                             }
                         }
                         else
                         {
-                            uri = binding->getURI();
+                            uri = getBindingURI();
                         }
                         // Add the parameters to the end of the URI
                         ostringstream os;
@@ -577,12 +578,12 @@ namespace tuscany
                             }
                             else
                             {
-                                uri = binding->getURI();
+                                uri = getBindingURI();
                             }
                         }
                         else
                         {
-                            uri = binding->getURI();
+                            uri = getBindingURI();
                         }
                         // Add the parameters to the end of the URI
                         ostringstream os;
@@ -684,7 +685,7 @@ namespace tuscany
                     if (complexContent)
                     {
                        // Set the target URL
-                        string uri = binding->getURI();
+                        string uri = getBindingURI();
                         ostringstream os;
                         os << uri << "/" << opName;
                         url = os.str();                                        
@@ -756,7 +757,7 @@ namespace tuscany
                     {
 
                         // Build the request URL, uri / opName ? params
-                        string uri = binding->getURI();
+                        string uri = getBindingURI();
                         ostringstream os;
                         os << uri << "/" << opName;
     
@@ -830,6 +831,44 @@ namespace tuscany
                 // Cleanup curl session
                 curl_easy_cleanup(curl_handle);
             }
+            
+
+            const string RESTServiceWrapper::getBindingURI()
+            {
+                string bindingURI = "";
+                
+                // Get the binding URI configured on the top level component 
+                Service* service = getService();
+                CompositeReference* compositeReference = (CompositeReference*)service->getComponent();
+                SCARuntime* runtime = SCARuntime::getInstance();
+                Component* component = runtime->getDefaultComponent();
+                Reference* reference = component->findReference(compositeReference->getName());
+                if (reference != NULL)
+                {
+                    ReferenceBinding* binding = reference->getBinding();
+                    if (binding != NULL && binding->getURI() != "")
+                    {
+                        bindingURI = binding->getURI();
+                    } 
+                }
+                if (bindingURI == "")
+                {
+                    // Get the binding URI configured on the binding 
+                    RESTServiceBinding* binding = (RESTServiceBinding *)service->getBinding();
+                    bindingURI = binding->getURI();
+                }
+                if (bindingURI != "")
+                {
+                    
+                    // Prepend the default base URI if the URI is not absolute
+                    if (bindingURI.find("://") == string::npos)
+                    {
+                        bindingURI = runtime->getDefaultBaseURI() + bindingURI;
+                    }
+                }
+                return bindingURI;
+            }
+            
             
             void RESTServiceWrapper::writeParameter(XMLHelper* xmlHelper, ostringstream& os, const Operation::Parameter& parm)
             {

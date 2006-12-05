@@ -23,6 +23,12 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/CompositeReference.h"
+#include "tuscany/sca/model/CompositeReferenceBinding.h"
+#include "tuscany/sca/model/CompositeService.h"
+//#include "tuscany/sca/model/CompositeServiceBinding.h"
+#include "tuscany/sca/model/ServiceType.h"
+#include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/Wire.h"
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/Service.h"
@@ -55,6 +61,62 @@ namespace tuscany
             {
                 logentry(); 
                 components[component->getName()] = component;
+            }
+            
+            void Composite::addCompositeReference(CompositeReference* compositeReference)
+            {
+                logentry(); 
+                components[compositeReference->getName()] = compositeReference;
+
+                // Create a reference type describing the composite reference                
+                ServiceType* serviceType = compositeReference->getType()->findServiceType("");
+                ReferenceType* referenceType = new ReferenceType(
+                    this, compositeReference->getName(),
+                    serviceType->getInterface(),
+                    serviceType->getCallbackInterface(),
+                    compositeReference->getMultiplicity());
+                addReferenceType(referenceType);
+            }
+            
+            void Composite::addCompositeService(CompositeService* compositeService)
+            {
+                logentry(); 
+                components[compositeService->getName()] = compositeService;
+                
+                // Create a service type describing the composite service
+                ReferenceType* referenceType = compositeService->getType()->findReferenceType("");
+                ServiceType* serviceType = new ServiceType(
+                    this, compositeService->getName(),
+                    referenceType->getInterface(),
+                    referenceType->getCallbackInterface());
+                addServiceType(serviceType);
+            }
+            
+            void Composite::initializeComponent(Component* component)
+            {
+                ComponentType::initializeComponent(component);
+                
+                // Create bindings for all the services
+                const Component::SERVICE_MAP& services = component->getServices();
+                Component::SERVICE_MAP::const_iterator iter = services.begin();
+                for (int i=0; i< services.size(); i++)
+                {
+                    Service *service = iter->second;
+                    //CompositeServiceBinding* binding = new CompositeServiceBinding(service);
+                    //service->setBinding(binding);
+                    iter++;
+                }
+                
+                // Create bindings for all the references
+                const Component::REFERENCE_MAP& references = component->getReferences();
+                Component::REFERENCE_MAP::const_iterator refiter = references.begin();
+                for (int ri=0; ri< references.size(); ri++)
+                {
+                    Reference *reference = refiter->second;
+                    CompositeReferenceBinding* binding = new CompositeReferenceBinding(reference);
+                    reference->setBinding(binding);
+                    refiter++;
+                }
             }
             
             Component* Composite::findComponent(const std::string& name)
@@ -113,35 +175,28 @@ namespace tuscany
                 iter++)
                 {
                     Wire* wire = *iter;
-                    
-                    // Locate the target
-                    Service* service = findComponentService(wire->getTarget());
-                    if (!service)
+
+                    // Find the source component and reference
+                    Component* component = findComponent(wire->getSourceComponent());
+                    Reference* reference;                    
+                    if (component)
                     {
-                        logerror("Wire target %s not found", wire->getTarget().c_str());
+                        reference = component->findReference(wire->getSourceReference());
+                        if (!reference)
+                        {
+                            logerror("Wire source reference %s not found", wire->getSourceReference().c_str());
+                        }
                     }
                     else
                     {
-                        Component* component = findComponent(wire->getSourceComponent());
-                        if (component)
-                        {
-                            Reference* reference = component->findReference(wire->getSourceReference());
-                            if (reference)
-                            {
-                                
-                                // Configure the binding on the reference from the binding on the target
-                                // service
-                                reference->getBinding()->configure(service->getBinding());
-                            }
-                            else
-                            {
-                                logerror("Wire source reference %s not found", wire->getSourceReference().c_str());
-                            }
-                        }
-                        else
-                        {
-                            logerror("Wire source %s not found", wire->getSourceComponent().c_str());
-                        }
+                        reference = NULL;
+                        logerror("Wire source %s not found", wire->getSourceComponent().c_str());
+                    }
+                    
+                    // Configure the reference binding with the wire target URI 
+                    if (reference)
+                    {
+                        reference->getBinding()->configure(wire->getTarget());
                     }
                 }
             }

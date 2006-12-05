@@ -73,6 +73,11 @@ namespace tuscany
                   */
                   SCA_API virtual void configure(ServiceBinding* serviceBinding) = 0;
                                 
+                 /**
+                  * Configure this binding from a URI.
+                  */
+                  SCA_API virtual void configure(const string& uri);
+                                
                   /**
                    * Returns the reference.
                    * @return The reference.

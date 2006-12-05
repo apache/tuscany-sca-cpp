@@ -121,6 +121,17 @@ namespace tuscany
             SCA_API static const string& getDefaultComponentName();
 
             /**
+             * Set the default base URI for the system
+             * @param baseURI The default base URI.
+             */
+            SCA_API static void setDefaultBaseURI(const string& baseURI);
+
+            /**
+             * Returns the default base URI for the system
+             */
+            SCA_API static const string& getDefaultBaseURI();
+
+            /**
              * Set the current component for the current thread.
              * @param component The current component.
              */
@@ -235,6 +246,11 @@ namespace tuscany
              * The default CompositeComponent.
              */
             static string defaultComponentName;
+
+            /**
+             * The default base URI.
+             */
+            static string defaultBaseURI;
 
             /**
              * The default component set for this runtime.

@@ -45,6 +45,8 @@ namespace tuscany
         {
             class Component;
             class ComponentType;
+            class CompositeReference;
+            class CompositeService;
             class Service;
             class WSDLDefinition;
             class Wire;
@@ -83,6 +85,18 @@ namespace tuscany
                  * @param component The component to add.
                  */
                 SCA_API void addComponent(Component* component);
+
+                /**
+                 * Add a new composite reference to the composite.
+                 * @param compositeReference The composite reference to add.
+                 */
+                SCA_API void addCompositeReference(CompositeReference* compositeReference);
+
+                /**
+                 * Add a new composite service to the composite.
+                 * @param compositeService The composite service to add.
+                 */
+                SCA_API void addCompositeService(CompositeService* compositeService);
 
                 /**
                  * Add/include a composite in this composite.
@@ -127,6 +141,12 @@ namespace tuscany
                  * @param wsdlNamespace The namespace of the WSDL definitions to find.
                  */
                 SCA_API WSDLDefinition* findWSDLDefinition(const string& wsdlNamespace);
+
+                 /**
+                 * Initialize a component of this type.
+                 * @param component The component to initialize.
+                 */
+                virtual void initializeComponent(Component* component);
 
                 /**
                  * Return a cached SDO XSDHelper.

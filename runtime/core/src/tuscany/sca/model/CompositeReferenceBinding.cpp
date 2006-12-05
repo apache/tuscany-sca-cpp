@@ -20,50 +20,39 @@
 /* $Rev$ $Date$ */
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/model/ReferenceBinding.h"
-#include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/model/Reference.h"
-#include "tuscany/sca/model/Composite.h"
-#include "tuscany/sca/model/Service.h"
-
+#include "tuscany/sca/model/CompositeReferenceBinding.h"
 
 namespace tuscany
 {
     namespace sca
     {
-
         namespace model
         {
 
             // Constructor
-            ReferenceBinding::ReferenceBinding(Reference *reference, const string& uri) :
-                Binding(uri), reference(reference)
+            CompositeReferenceBinding::CompositeReferenceBinding(Reference* reference)
+                : ReferenceBinding(reference, ""), uri("")
             {
-                logentry(); 
             }
-
+            
             // Destructor
-            ReferenceBinding::~ReferenceBinding()
+            CompositeReferenceBinding::~CompositeReferenceBinding()
             {
-                logentry(); 
             }
-
-            void ReferenceBinding::configure(const string& uri)
+            
+            void CompositeReferenceBinding::configure(ServiceBinding *binding)
             {
-                // Find the target service
-                Component* component = reference->getComponent();
-                Composite* composite = component->getComposite();
-                Service* service;
-                service = composite->findComponentService(uri);
-                if (!service)
-                {
-                    logerror("Wire target %s not found", uri.c_str());
-                }
-                else
-                {
-                    // Configure this binding from the target service binding
-                    configure(service->getBinding());
-                }
+                targetServiceBinding = binding;
+            }
+            
+            ServiceProxy* CompositeReferenceBinding::getServiceProxy()
+            {
+                return serviceProxy;
+            }
+                
+            void CompositeReferenceBinding::configure(const string& uri)
+            {
+                this->uri = uri;
             }
                                 
         } // End namespace model
