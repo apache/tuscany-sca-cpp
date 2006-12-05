@@ -99,7 +99,7 @@ namespace tuscany
                 // Create bindings for all the services
                 const Component::SERVICE_MAP& services = component->getServices();
                 Component::SERVICE_MAP::const_iterator iter = services.begin();
-                for (int i=0; i< services.size(); i++)
+                for (unsigned int i=0; i< services.size(); i++)
                 {
                     Service *service = iter->second;
                     //CompositeServiceBinding* binding = new CompositeServiceBinding(service);
@@ -110,7 +110,7 @@ namespace tuscany
                 // Create bindings for all the references
                 const Component::REFERENCE_MAP& references = component->getReferences();
                 Component::REFERENCE_MAP::const_iterator refiter = references.begin();
-                for (int ri=0; ri< references.size(); ri++)
+                for (unsigned int ri=0; ri< references.size(); ri++)
                 {
                     Reference *reference = refiter->second;
                     CompositeReferenceBinding* binding = new CompositeReferenceBinding(reference);
