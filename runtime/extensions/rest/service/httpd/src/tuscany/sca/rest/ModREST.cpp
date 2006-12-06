@@ -31,6 +31,7 @@
 #include "http_log.h"
 #include "http_main.h"
 #include "util_script.h"
+#include "util_md5.h"
 
 #include "mod_core.h"
 
@@ -540,11 +541,31 @@ namespace tuscany
                                         resourceDataObject->getType().getURI(),
                                         resourceDataObject->getType().getName());
                                     char* str = xm->save(doc);
-    
-                                    loginfo("Sending response: %s", str);
-                                    ap_set_content_type(request, "text/xml");
-                                    ap_rputs(str, request);
-                                
+                                    
+                                    // Calculate an Etag hash for the response
+                                    char* etag = ap_md5(request->pool, (const unsigned char*)str);
+                                    
+                                    // Handle a conditional GET, if the etag matches the etag
+                                    // sent by the client, we don't need to send the whole response
+                                    const char* match = apr_table_get(request->headers_in, "If-None-Match");
+                                    if (match != NULL && !strcmp(etag, match))
+                                    {
+                                        loginfo("REST resource matches ETag, sending HTTP 304 response code");
+                                        request->status = HTTP_NOT_MODIFIED;
+                                    }
+                                    else
+                                    {
+                                        loginfo("Sending response: %s", str);
+                                        ap_set_content_type(request, "text/xml");
+                                        apr_table_setn(request->headers_out, "ETag", etag);
+                                        
+                                        // Send an Etag header to allow caching and
+                                        // conditional gets
+                                        char* etag = ap_md5(request->pool, (const unsigned char*)str);
+                                        apr_table_setn(request->headers_out, "ETag", etag);
+                                        
+                                        ap_rputs(str, request);
+                                    }
                                 }
                                 else
                                 {
