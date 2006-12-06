@@ -561,7 +561,6 @@ namespace tuscany
                                         
                                         // Send an Etag header to allow caching and
                                         // conditional gets
-                                        char* etag = ap_md5(request->pool, (const unsigned char*)str);
                                         apr_table_setn(request->headers_out, "ETag", etag);
                                         
                                         ap_rputs(str, request);
