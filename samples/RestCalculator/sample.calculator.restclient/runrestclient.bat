@@ -20,24 +20,24 @@
 setlocal
 
 if "%TUSCANY_SCACPP%" == "" (
-echo "TUSCANY_SCACPP not set"
+echo TUSCANY_SCACPP not set
 goto end
 )
 echo using SCA installed at %TUSCANY_SCACPP%
 
 if "%TUSCANY_SDOCPP%" == "" (
-echo "TUSCANY_SDOCPP not set"
+echo TUSCANY_SDOCPP not set
 goto end
 )
 echo using SDO installed at %TUSCANY_SDOCPP%
 
-if "%AXIS2C_HOME%" == "" (
-echo "AXIS2C_HOME not set"
+if "%LIBCURL_HOME%" == "" (
+echo LIBCURL_HOME not set
 goto end
 )
-echo using Axis2C installed at %AXIS2C_HOME%
+echo using Libcurl installed at %LIBCURL_HOME%
 
-set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
+set PATH=%HTTPD_HOME%\bin;%LIBCURL_HOME%\lib;%TUSCANY_SCACPP%\extensions\rest\interface\bin;%TUSCANY_SCACPP%\extensions\rest\reference\bin;%TUSCANY_SCACPP%\extensions\rest\service\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%PATH%
 
 set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
 set TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorRestClientComponent

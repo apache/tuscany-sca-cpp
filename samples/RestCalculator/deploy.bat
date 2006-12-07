@@ -35,12 +35,24 @@ set destinationPath=%1
 if not exist %samplesdir%                        mkdir %samplesdir%
 if not exist %calcdir%                           mkdir %calcdir%
 if not exist %destinationPath%                   mkdir %destinationPath%
+if not exist %destinationPath%\httpserver        mkdir %destinationPath%\httpserver
+if not exist %destinationPath%\httpserver\conf   mkdir %destinationPath%\httpserver\conf
+if not exist %destinationPath%\httpserver\htdocs mkdir %destinationPath%\httpserver\htdocs
+
+if not exist %destinationPath%\sample.calculator mkdir %destinationPath%\sample.calculator
+copy %sourcePath%\sample.calculator\*.rb        %destinationPath%\sample.calculator
+copy %sourcePath%\sample.calculator\*.composite %destinationPath%\sample.calculator
 
 if not exist %destinationPath%\sample.calculator.restclient mkdir %destinationPath%\sample.calculator.restclient
-copy %sourcePath%\sample.calculator.restclient\CalculatorRestClient.rb               %destinationPath%\sample.calculator.restclient
+copy %sourcePath%\sample.calculator.restclient\CalculatorRestClient.rb                %destinationPath%\sample.calculator.restclient
 copy %sourcePath%\sample.calculator.restclient\sample.calculator.restclient.composite %destinationPath%\sample.calculator.restclient
-copy %sourcePath%\sample.calculator.wsclient\runrestclient.bat %destinationPath%\sample.calculator.restclient
+copy %sourcePath%\sample.calculator.restclient\runrestclient.bat                      %destinationPath%\sample.calculator.restclient
 
 copy %sourcePath%\*.composite %destinationPath%
+
+copy %sourcePath%\httpserver\*.bat         %destinationPath%\httpserver
+copy %sourcePath%\httpserver\conf\*.types  %destinationPath%\httpserver\conf
+copy %sourcePath%\httpserver\conf\*.conf   %destinationPath%\httpserver\conf
+copy %sourcePath%\httpserver\htdocs\*.html %destinationPath%\httpserver\htdocs
 
 endlocal
