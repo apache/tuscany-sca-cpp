@@ -59,7 +59,11 @@ cd ${TUSCANY_SCACPP_HOME}/samples
 cd $TUSCANY_SCACPP_HOME
 ./autogen.sh
 
-./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no ${WITH_AXIS2C} ${ENABLE_RUBY} ${ENABLE_PYTHON}
+if [ x$TUSCANY_SCACPP = x ]; then
+export TUSCANY_SCACPP=`pwd`/deploy
+fi
+
+./configure --prefix=${TUSCANY_SCACPP} --enable-static=no ${WITH_AXIS2C} ${ENABLE_RUBY} ${ENABLE_PYTHON}
 make
 make install
 
