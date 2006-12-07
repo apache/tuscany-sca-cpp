@@ -16,14 +16,21 @@
 
 #include "apr_strings.h"
 #include "apr_fnmatch.h"
-#include "apr_strings.h"
 #include "apr_lib.h"
 
 #define APR_WANT_STRFUNC
 #include "apr_want.h"
-
 #include "ap_config.h"
 #include "httpd.h"
+
+// This section removes the windows/httpd build error "strtoul_is_not_a_portable_function_use_strtol_instead"
+#if defined(WIN32)  || defined (_WINDOWS)
+#ifdef strtoul
+#undef strtoul
+#endif
+#define strtoul strtoul
+#endif
+
 #include "http_config.h"
 #include "http_core.h"
 #include "http_request.h"

@@ -28,6 +28,7 @@
 #include "tuscany/sca/model/WSDLOperation.h"
 #include "model/RESTReferenceBinding.h"
 #include "commonj/sdo/SDO.h"
+#include "export.h"
 
 using namespace tuscany::sca::model;
 
@@ -74,7 +75,7 @@ namespace tuscany
                 /**
                  * Invoke the specified operation
                  */
-                DataObjectPtr invoke(const WSDLOperation& wsdlOperation, DataObjectPtr inputDataObject);    
+                SCA_REST_SERVICE_API DataObjectPtr invoke(const WSDLOperation& wsdlOperation, DataObjectPtr inputDataObject);    
     
             private:
 
