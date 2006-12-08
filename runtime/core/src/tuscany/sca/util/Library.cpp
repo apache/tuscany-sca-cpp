@@ -93,6 +93,7 @@ namespace tuscany
             {
                 dllName = name+".dll";
             }
+            SetErrorMode(SEM_FAILCRITICALERRORS);
             hDLL = LoadLibrary(dllName.c_str());
             if (hDLL == NULL)
             {
