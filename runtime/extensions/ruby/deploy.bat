@@ -52,7 +52,7 @@ copy %srcdir%\deploy.bat %rubyextdir%
 copy %srcdir%\..\xsd\*.* %rubyextdir%\xsd
 
 copy %inpath%\tuscany_sca_ruby.lib %rubyextdir%\lib
-copy %inpath%\tuscany_sca_ruby.dll %rubyextdir%\bin\tuscany_sca_ruby.dll.disabled
+copy %inpath%\tuscany_sca_ruby.dll %rubyextdir%\bin
 
 if exist %inpath%\tuscany_sca_ruby.pdb copy %inpath%\tuscany_sca_ruby.pdb %rubyextdir%\bin
 

@@ -52,7 +52,7 @@ copy %srcdir%\deploy.bat %pythonextdir%
 copy %srcdir%\..\xsd\*.* %pythonextdir%\xsd
 
 copy %inpath%\tuscany_sca_python.lib %pythonextdir%\lib
-copy %inpath%\tuscany_sca_python.dll %pythonextdir%\bin\tuscany_sca_python.dll.disabled
+copy %inpath%\tuscany_sca_python.dll %pythonextdir%\bin
 
 if exist %inpath%\tuscany_sca_python.pdb copy %inpath%\tuscany_sca_python.pdb %pythonextdir%\bin
 
