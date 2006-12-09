@@ -35,12 +35,25 @@ set destinationPath=%1
 if not exist %samplesdir%                        mkdir %samplesdir%
 if not exist %custdir%                           mkdir %custdir%
 if not exist %destinationPath%                   mkdir %destinationPath%
+if not exist %destinationPath%\httpserver        mkdir %destinationPath%\httpserver
+if not exist %destinationPath%\httpserver\conf   mkdir %destinationPath%\httpserver\conf
+if not exist %destinationPath%\httpserver\htdocs mkdir %destinationPath%\httpserver\htdocs
+
+if not exist %destinationPath%\sample.customer mkdir %destinationPath%\sample.customer
+copy %sourcePath%\sample.customer\*.py        %destinationPath%\sample.customer
+copy %sourcePath%\sample.customer\*.composite %destinationPath%\sample.customer
+copy %sourcePath%\sample.customer\2345.xml %destinationPath%\sample.customer
 
 if not exist %destinationPath%\sample.customer.restclient mkdir %destinationPath%\sample.customer.restclient
-copy %sourcePath%\sample.customer.restclient\CustomerRestClient.rb               %destinationPath%\sample.customer.restclient
-copy %sourcePath%\sample.customer.restclient\sample.customer.restclient.composite %destinationPath%\sample.customer.restclient
-copy %sourcePath%\sample.customer.wsclient\runrestclient.bat %destinationPath%\sample.customer.restclient
+copy %sourcePath%\sample.customer.restclient\*.py %destinationPath%\sample.customer.restclient
+copy %sourcePath%\sample.customer.restclient\*.composite %destinationPath%\sample.customer.restclient
+copy %sourcePath%\sample.customer.restclient\runrestclient.bat %destinationPath%\sample.customer.restclient
 
 copy %sourcePath%\*.composite %destinationPath%
+
+copy %sourcePath%\httpserver\*.bat         %destinationPath%\httpserver
+copy %sourcePath%\httpserver\conf\*.types  %destinationPath%\httpserver\conf
+copy %sourcePath%\httpserver\conf\*.conf   %destinationPath%\httpserver\conf
+copy %sourcePath%\httpserver\htdocs\*.html %destinationPath%\httpserver\htdocs
 
 endlocal
