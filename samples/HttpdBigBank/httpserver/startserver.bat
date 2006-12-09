@@ -40,19 +40,32 @@ goto end
 )
 echo Using Axis2C installed at %AXIS2C_HOME%
 
-set PATH=%TUSCANY_SCACPP%\extensions\sca\reference\bin;%TUSCANY_SCACPP%\extensions\sca\service\bin;%TUSCANY_SCACPP%\extensions\ws\reference\bin;%TUSCANY_SCACPP%\extensions\ws\service\bin;%TUSCANY_SCACPP%\extensions\ruby\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
+if "%HTTPD_HOME%" == "" (
+echo "HTTPD_HOME not set"
+goto end
+)
+echo Using HTTPD installed at %HTTPD_HOME%
+
+set PATH=%TUSCANY_SCACPP%\extensions\sca\reference\bin;%TUSCANY_SCACPP%\extensions\sca\service\bin;%TUSCANY_SCACPP%\extensions\ws\reference\bin;%TUSCANY_SCACPP%\extensions\ws\service\bin;%TUSCANY_SCACPP%\extensions\ruby\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%HTTPD_HOME%\bin;\%PATH%
 
 set TUSCANY_SCACPP_ROOT=%APFULLDIR%\..\
 
 @REM Generate the mod_axis2 configuration
 if not exist %APFULLDIR%\conf\mod_axis2.conf (
-  echo LoadModule axis2_module %AXIS2C_HOME%/lib/mod_axis2.dll > %APFULLDIR%\conf\mod_axis2.conf
+  echo LoadModule axis2_module %AXIS2C_HOME%\lib\mod_axis2.dll > %APFULLDIR%\conf\mod_axis2.conf
   echo ^<Location /axis2^> >> %APFULLDIR%\conf\mod_axis2.conf
   echo         SetHandler axis2_module >> %APFULLDIR%\conf\mod_axis2.conf
   echo         RepoPath %AXIS2C_HOME% >> %APFULLDIR%\conf\mod_axis2.conf
-  echo         LogFile %AXIS2C_HOME%/logs/httpd.log >> %APFULLDIR%\conf\mod_axis2.conf
+  echo         LogFile %AXIS2C_HOME%\logs\httpd.log >> %APFULLDIR%\conf\mod_axis2.conf
   echo         Axis2LogLevel AXIS2_LOG_LEVEL_DEBUG >> %APFULLDIR%\conf\mod_axis2.conf           
   echo ^</Location^> >> %APFULLDIR%\conf\mod_axis2.conf
+)
+
+@REM Generate the base HTTPD configuration
+if not exist %APFULLDIR%\conf\base.conf (
+  echo LoadModule mime_module %HTTPD_HOME%\modules\mod_mime.so > %APFULLDIR%\conf\base.conf
+  echo LoadModule dir_module %HTTPD_HOME%\modules\mod_dir.so >> %APFULLDIR%\conf\base.conf
+  echo DocumentRoot %APFULLDIR%\htdocs >> %APFULLDIR%\conf\base.conf
 )
 
 @REM Create logs directory
@@ -63,4 +76,3 @@ set TUSCANY_SCACPP_LOGGING=9
 @REM Start the HTTP server
 echo Starting Apache httpd
 httpd -d %APFULLDIR%
-

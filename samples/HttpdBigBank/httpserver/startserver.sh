@@ -52,6 +52,11 @@ if [ ! -f conf/mod_axis2.conf ]; then
   echo "</Location>" >>conf/mod_axis2.conf
 fi
 
+# Generate the HTTPD base configuration
+if [ ! -f conf/base.conf ]; then
+  echo "DocumentRoot $APFULLDIR/htdocs" >conf/base.conf
+fi
+
 # Create logs directory
 if [ ! -d logs ]; then
   mkdir logs
