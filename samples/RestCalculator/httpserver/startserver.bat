@@ -34,17 +34,17 @@ goto end
 )
 echo Using SDO installed at %TUSCANY_SDOCPP%
 
-if "%AXIS2C_HOME%" == "" (
-echo "AXIS2C_HOME not set"
+if "%HTTPD_HOME%" == "" (
+echo "HTTPD_HOME not set"
 goto end
 )
-echo Using Axis2C installed at %AXIS2C_HOME%
+echo Using HTTPD installed at %HTTPD_HOME%
 
-set PATH=%TUSCANY_SCACPP%\extensions\ruby\bin;%TUSCANY_SCACPP%\extensions\rest\interface\bin;%TUSCANY_SCACPP%\extensions\rest\service\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%PATH%
+set PATH=%TUSCANY_SCACPP%\extensions\ruby\bin;%TUSCANY_SCACPP%\extensions\rest\interface\bin;%TUSCANY_SCACPP%\extensions\rest\service\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%HTTPD_HOME%\bin;%PATH%
 
 set TUSCANY_SCACPP_ROOT=%APFULLDIR%\..\
 
-@REM Generate the mod_axis2 configuration
+@REM Generate the tuscany_sca_mod_rest configuration
 if not exist %APFULLDIR%\conf\tuscany_sca_mod_rest.conf (
   echo LoadModule sca_rest_module %TUSCANY_SCACPP%/extensions/rest\service/bin/tuscany_sca_mod_rest.dll > %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
   echo TuscanyHome %TUSCANY_SCACPP% >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
@@ -52,6 +52,13 @@ if not exist %APFULLDIR%\conf\tuscany_sca_mod_rest.conf (
   echo        SetHandler sca_rest_module >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
   echo        TuscanyRoot %TUSCANY_SCACPP_ROOT% >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
   echo ^</Location^> >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
+)
+
+@REM Generate the base HTTPD configuration
+if not exist %APFULLDIR%\conf\base.conf (
+  echo LoadModule mime_module %HTTPD_HOME%\modules\mod_mime.so > %APFULLDIR%\conf\base.conf
+  echo LoadModule dir_module %HTTPD_HOME%\modules\mod_dir.so >> %APFULLDIR%\conf\base.conf
+  echo DocumentRoot %APFULLDIR%\htdocs >> %APFULLDIR%\conf\base.conf
 )
 
 @REM Create logs directory
@@ -62,4 +69,3 @@ set TUSCANY_SCACPP_LOGGING=9
 @REM Start the HTTP server
 echo Starting Apache httpd
 httpd -d %APFULLDIR%
-

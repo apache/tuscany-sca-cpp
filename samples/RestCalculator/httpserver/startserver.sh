@@ -45,6 +45,10 @@ if [ ! -f conf/tuscany_sca_mod_rest.conf ]; then
   echo "</Location>" >>conf/tuscany_sca_mod_rest.conf
 fi
 
+if [ ! -f conf/base.conf ]; then
+  echo "DocumentRoot $APFULLDIR/htdocs" >conf/base.conf
+fi
+
 # Create logs directory
 if [ ! -d logs ]; then
   mkdir logs
