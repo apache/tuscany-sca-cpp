@@ -559,6 +559,12 @@ namespace tuscany
                     string msg = "Could not convert Axis2 OM node to SDO";
                     throwException(ServiceInvocationException, msg.c_str());
                 }
+                else
+                {
+                    ostringstream os;
+                    os << outputBodyDataObject;
+                    loginfo("Converted Axis2 OM node to SDO: %s", os.str().c_str());
+                }
                 
                 XMLHelperPtr xmlHelper = compositeReference->getComposite()->getXMLHelper();
 

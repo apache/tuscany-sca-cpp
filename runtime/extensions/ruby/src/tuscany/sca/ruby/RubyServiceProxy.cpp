@@ -223,6 +223,8 @@ namespace tuscany
                                 ID to_s = rb_intern("to_s");
                                 VALUE vstr = rb_funcall(value, to_s, 0);
                                 string str = string(rb_string_value_cstr(&vstr));
+                                
+                                loginfo("Converting Rexml document to SDO: %s", str.c_str());
                                                                 
                                 Composite* composite = getReference()->getComponent()->getComposite();                                   
                                 commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
@@ -341,6 +343,9 @@ namespace tuscany
                                 dob,
                                 dob->getType().getURI(),
                                 dob->getType().getName());
+                                
+                            loginfo("Converting SDO to Rexml document: %s", str);
+                                
                             VALUE vstr[1];
                             vstr[0] = rb_str_new2(str);
 

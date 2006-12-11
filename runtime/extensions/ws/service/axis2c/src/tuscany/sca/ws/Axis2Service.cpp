@@ -452,8 +452,14 @@ namespace tuscany
                                         {
                                             string msg = "Could not convert request Axis2 OM to SDO";
                                             throwException(ServiceInvocationException, msg.c_str());
-                                        }                    
-                    
+                                        }
+                                        else
+                                        {
+                                            ostringstream os;
+                                            os << inputBodyDataObject;
+                                            loginfo("Converted Axis2 OM node to SDO: %s", os.str().c_str());
+                                        }                   
+
                                         // Get the first body part representing the doc-lit-wrapped wrapper element
                                         PropertyList bpl = inputBodyDataObject->getInstanceProperties();
                                         if (bpl.size()!=0)
