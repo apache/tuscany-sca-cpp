@@ -32,7 +32,7 @@
 #endif
 
 #else
-#define SCA_WS_SERVICE_API 
+#define SCA_REST_SERVICE_API 
 #endif
 
 #endif // tuscany_sca_rest_service_export_h
