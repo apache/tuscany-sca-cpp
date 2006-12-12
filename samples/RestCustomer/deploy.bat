@@ -41,12 +41,14 @@ if not exist %destinationPath%\httpserver\htdocs mkdir %destinationPath%\httpser
 
 if not exist %destinationPath%\sample.customer mkdir %destinationPath%\sample.customer
 copy %sourcePath%\sample.customer\*.py        %destinationPath%\sample.customer
+copy %sourcePath%\sample.customer\*.xsd       %destinationPath%\sample.customer
 copy %sourcePath%\sample.customer\*.composite %destinationPath%\sample.customer
-copy %sourcePath%\sample.customer\2345.xml %destinationPath%\sample.customer
+copy %sourcePath%\sample.customer\2345.xml    %destinationPath%\sample.customer
 
 if not exist %destinationPath%\sample.customer.restclient mkdir %destinationPath%\sample.customer.restclient
-copy %sourcePath%\sample.customer.restclient\*.py %destinationPath%\sample.customer.restclient
-copy %sourcePath%\sample.customer.restclient\*.composite %destinationPath%\sample.customer.restclient
+copy %sourcePath%\sample.customer.restclient\*.py              %destinationPath%\sample.customer.restclient
+copy %sourcePath%\sample.customer.restclient\*.xsd             %destinationPath%\sample.customer.restclient
+copy %sourcePath%\sample.customer.restclient\*.composite       %destinationPath%\sample.customer.restclient
 copy %sourcePath%\sample.customer.restclient\runrestclient.bat %destinationPath%\sample.customer.restclient
 
 copy %sourcePath%\*.composite %destinationPath%
