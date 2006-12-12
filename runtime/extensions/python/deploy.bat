@@ -48,7 +48,6 @@ if not exist %pythonextdir%\xsd mkdir %pythonextdir%\xsd
 del %pythonextdir%\bin\tuscany_sca_python.*
 del %pythonextdir%\lib\*.lib
 
-copy %srcdir%\deploy.bat %pythonextdir%
 copy %srcdir%\..\xsd\*.* %pythonextdir%\xsd
 
 copy %inpath%\tuscany_sca_python.lib %pythonextdir%\lib
