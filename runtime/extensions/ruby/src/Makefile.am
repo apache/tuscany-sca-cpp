@@ -23,13 +23,10 @@ install-exec-hook:
 
 
 rootdir=$(prefix)/extensions/ruby
-root_SCRIPTS = deploy.sh
 
 noinst_HEADERS = \
 tuscany/sca/ruby/*.h \
 tuscany/sca/ruby/model/*.h
-
-EXTRA_DIST = deploy.sh
 
 libtuscany_sca_ruby_la_SOURCES = \
 tuscany/sca/ruby/RubyExtension.cpp \

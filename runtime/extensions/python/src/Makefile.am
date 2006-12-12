@@ -24,10 +24,9 @@ install-exec-hook:
 
 pydir=$(prefix)/extensions/python/lib
 py_DATA = tuscany/sca/python/sca_proxy.py
-EXTRA_DIST = tuscany/sca/python/sca_proxy.py deploy.sh
+EXTRA_DIST = tuscany/sca/python/sca_proxy.py
 
 rootdir=$(prefix)/extensions/python
-root_SCRIPTS = deploy.sh
 
 noinst_HEADERS = \
 tuscany/sca/python/*.h \
