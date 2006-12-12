@@ -375,7 +375,9 @@ namespace tuscany
                                     char* str = xmlHelper->save(
                                         dob,
                                         dob->getType().getURI(),
-                                        dob->getType().getName());                                    
+                                        dob->getType().getName());
+
+                                    loginfo("Converting SDO DataObject to Python ElementTree: %s", str);
 
                                     // Get the xml.etree.ElementTree.XML function
                                     PyObject* elementTreeXMLFunc = PyObject_GetAttrString(elementTreeModule, "XML");
@@ -775,6 +777,8 @@ namespace tuscany
                                     Py_DECREF(elementTreeToStringFunc);
                                     Py_DECREF(pElemString);
 
+                                    loginfo("Converting Python ElementTree to SDO DataObject: %s", data);
+
                                     Composite* composite = component->getComposite();                                   
                                     XMLHelper* xmlHelper = composite->getXMLHelper();
                                     XMLDocumentPtr xmlDoc = xmlHelper->load(data);
@@ -921,6 +925,8 @@ namespace tuscany
                                 string serializedData = helper->save(data, 
                                         data->getType().getURI(),
                                         data->getType().getName());
+
+                                loginfo("Converting SDO DataObject to Python ElementTree: %s", serializedData.c_str());
 
                                 // Get the xml.etree.ElementTree.XML function
                                 PyObject* elementTreeModuleName = PyString_FromString("xml.etree.ElementTree"); 

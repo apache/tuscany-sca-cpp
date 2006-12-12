@@ -224,7 +224,7 @@ namespace tuscany
                                 VALUE vstr = rb_funcall(value, to_s, 0);
                                 string str = string(rb_string_value_cstr(&vstr));
                                 
-                                loginfo("Converting Rexml document to SDO: %s", str.c_str());
+                                loginfo("Converting Ruby Rexml document to SDO DataObject: %s", str.c_str());
                                                                 
                                 Composite* composite = getReference()->getComponent()->getComposite();                                   
                                 commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
@@ -344,7 +344,7 @@ namespace tuscany
                                 dob->getType().getURI(),
                                 dob->getType().getName());
                                 
-                            loginfo("Converting SDO to Rexml document: %s", str);
+                            loginfo("Converting SDO DataObject to Ruby Rexml document: %s", str);
                                 
                             VALUE vstr[1];
                             vstr[0] = rb_str_new2(str);

@@ -297,6 +297,8 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                 Py_DECREF(elementTreeToStringFunc);
                 Py_DECREF(pElemString);
 
+                loginfo("Converting Python ElementTree to SDO DataObject: %s", data);
+
                 Composite* composite = component->getComposite();                                   
                 XMLHelper* xmlHelper = composite->getXMLHelper();
                 XMLDocumentPtr xmlDoc = xmlHelper->load(data);
@@ -449,6 +451,8 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                     dob,
                     dob->getType().getURI(),
                     dob->getType().getName());                                    
+
+                loginfo("Converting SDO DataObject to Python ElementTree: %s", str);
 
                 // Get the xml.etree.ElementTree.XML function
                 PyObject* elementTreeXMLFunc = PyObject_GetAttrString(elementTreeModule, "XML");
