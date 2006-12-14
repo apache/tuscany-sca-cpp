@@ -58,8 +58,8 @@ def formatWeather(weather, name):
         result += "Latitude: "+ weather.findtext(pathAndNS+"Latitude")+ " Longitude: "+ weather.findtext(pathAndNS+"Longitude")+"\n\n"
     
         for node in weather.findall(".//{http://www.webservicex.net}WeatherData"):
-            result += node.findtext(pathAndNS+"Day")
-            result += ":\tMax "+ node.findtext(pathAndNS+"MaxTemperatureC")
-            result += "C. Min "+ node.findtext(pathAndNS+"MinTemperatureC")+ "C.\n"
+            if node.findtext(pathAndNS+"Day"): result += node.findtext(pathAndNS+"Day")
+            if node.findtext(pathAndNS+"MaxTemperatureC"): result += ":\tMax "+ node.findtext(pathAndNS+"MaxTemperatureC")
+            if node.findtext(pathAndNS+"MinTemperatureC"): result += "C. Min "+ node.findtext(pathAndNS+"MinTemperatureC")+ "C.\n"
 
     return result
