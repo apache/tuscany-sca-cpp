@@ -125,9 +125,19 @@ namespace tuscany
             {
                 va_list variableArguments;
                 va_start(variableArguments, msg);
-                char messageBuffer[4096];
-                vsprintf(messageBuffer, msg, variableArguments);
-                logWriter->log(0, pid, messageBuffer);
+                char messageBuffer[256];
+                int size = vsnprintf(messageBuffer, 256, msg, variableArguments);
+                if (size > 256)
+                {
+                    char* bigMessageBuffer = new char[size];
+                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    logWriter->log(0, pid, bigMessageBuffer);
+                    delete bigMessageBuffer; 
+                }
+                else
+                {
+                    logWriter->log(0, pid, messageBuffer);
+                }
                 va_end(variableArguments);
             }
         }
@@ -137,9 +147,19 @@ namespace tuscany
             {
                 va_list variableArguments;
                 va_start(variableArguments, msg);
-                char messageBuffer[4096];
-                vsprintf(messageBuffer, msg, variableArguments);
-                logWriter->log(1, pid, messageBuffer);
+                char messageBuffer[256];
+                int size = vsnprintf(messageBuffer, 256, msg, variableArguments);
+                if (size > 256)
+                {
+                    char* bigMessageBuffer = new char[size];
+                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    logWriter->log(1, pid, bigMessageBuffer);
+                    delete bigMessageBuffer; 
+                }
+                else
+                {
+                    logWriter->log(1, pid, messageBuffer);
+                }
                 va_end(variableArguments);
             }
         }
@@ -149,9 +169,19 @@ namespace tuscany
             {
                 va_list variableArguments;
                 va_start(variableArguments, msg);
-                char messageBuffer[4096];
-                vsprintf(messageBuffer, msg, variableArguments);
-                logWriter->log(2, pid, messageBuffer);
+                char messageBuffer[256];
+                int size = vsnprintf(messageBuffer, 256, msg, variableArguments);
+                if (size > 256)
+                {
+                    char* bigMessageBuffer = new char[size];
+                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    logWriter->log(2, pid, bigMessageBuffer);
+                    delete bigMessageBuffer; 
+                }
+                else
+                {
+                    logWriter->log(2, pid, messageBuffer);
+                }
                 va_end(variableArguments);
             }
         }
