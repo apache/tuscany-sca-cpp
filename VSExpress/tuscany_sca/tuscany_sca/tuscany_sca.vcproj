@@ -224,6 +224,14 @@
 				Name="core"
 				>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\Exceptions.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\Exceptions.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\core\Operation.cpp"
 					>
 					<FileConfiguration
@@ -861,32 +869,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\DefaultLogWriter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Exceptions.h"
 					>
 				</File>
 				<File
