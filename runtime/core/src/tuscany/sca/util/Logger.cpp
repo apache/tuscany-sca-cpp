@@ -112,9 +112,33 @@ namespace tuscany
             {
                 va_list variableArguments;
                 va_start(variableArguments, msg);
-                char messageBuffer[4096];
-                vsprintf(messageBuffer, msg, variableArguments);
-                logWriter->log(level, pid, messageBuffer);
+                char messageBuffer[256];
+                int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
+#if defined(WIN32)  || defined (_WINDOWS)
+                if (size == -1)
+                {
+                    size = _vscprintf(msg, variableArguments);
+                    char* bigMessageBuffer = new char[size+1];
+                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    bigMessageBuffer[size] = '\0';
+                    logWriter->log(level, pid, bigMessageBuffer);
+                    delete bigMessageBuffer; 
+                }
+#else
+                if (size > 255)
+                {
+                    char* bigMessageBuffer = new char[size+1];
+                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    bigMessageBuffer[size] = '\0';
+                    logWriter->log(level, pid, bigMessageBuffer);
+                    delete bigMessageBuffer; 
+                }
+#endif
+                else
+                {
+                    messageBuffer[255] = '\0';
+                    logWriter->log(level, pid, messageBuffer);
+                }
                 va_end(variableArguments);
             }
         }
@@ -126,16 +150,30 @@ namespace tuscany
                 va_list variableArguments;
                 va_start(variableArguments, msg);
                 char messageBuffer[256];
-                int size = vsnprintf(messageBuffer, 256, msg, variableArguments);
-                if (size > 256)
+                int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
+#if defined(WIN32)  || defined (_WINDOWS)
+                if (size == -1)
                 {
-                    char* bigMessageBuffer = new char[size];
+                    size = _vscprintf(msg, variableArguments);
+                    char* bigMessageBuffer = new char[size+1];
                     vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    bigMessageBuffer[size] = '\0';
                     logWriter->log(0, pid, bigMessageBuffer);
                     delete bigMessageBuffer; 
                 }
+#else
+                if (size > 255)
+                {
+                    char* bigMessageBuffer = new char[size+1];
+                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    bigMessageBuffer[size] = '\0';
+                    logWriter->log(0, pid, bigMessageBuffer);
+                    delete bigMessageBuffer; 
+                }
+#endif
                 else
                 {
+                    messageBuffer[255] = '\0';
                     logWriter->log(0, pid, messageBuffer);
                 }
                 va_end(variableArguments);
@@ -148,16 +186,30 @@ namespace tuscany
                 va_list variableArguments;
                 va_start(variableArguments, msg);
                 char messageBuffer[256];
-                int size = vsnprintf(messageBuffer, 256, msg, variableArguments);
-                if (size > 256)
+                int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
+#if defined(WIN32)  || defined (_WINDOWS)
+                if (size == -1)
                 {
-                    char* bigMessageBuffer = new char[size];
+                    size = _vscprintf(msg, variableArguments);
+                    char* bigMessageBuffer = new char[size+1];
                     vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    bigMessageBuffer[size] = '\0';
                     logWriter->log(1, pid, bigMessageBuffer);
                     delete bigMessageBuffer; 
                 }
+#else
+                if (size > 255)
+                {
+                    char* bigMessageBuffer = new char[size+1];
+                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    bigMessageBuffer[size] = '\0';
+                    logWriter->log(1, pid, bigMessageBuffer);
+                    delete bigMessageBuffer; 
+                }
+#endif
                 else
                 {
+                    messageBuffer[255] = '\0';
                     logWriter->log(1, pid, messageBuffer);
                 }
                 va_end(variableArguments);
@@ -170,16 +222,30 @@ namespace tuscany
                 va_list variableArguments;
                 va_start(variableArguments, msg);
                 char messageBuffer[256];
-                int size = vsnprintf(messageBuffer, 256, msg, variableArguments);
-                if (size > 256)
+                int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
+#if defined(WIN32)  || defined (_WINDOWS)
+                if (size == -1)
                 {
-                    char* bigMessageBuffer = new char[size];
+                    size = _vscprintf(msg, variableArguments);
+                    char* bigMessageBuffer = new char[size+1];
                     vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    bigMessageBuffer[size] = '\0';
                     logWriter->log(2, pid, bigMessageBuffer);
                     delete bigMessageBuffer; 
                 }
+#else
+                if (size > 255)
+                {
+                    char* bigMessageBuffer = new char[size+1];
+                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                    bigMessageBuffer[size] = '\0';
+                    logWriter->log(2, pid, bigMessageBuffer);
+                    delete bigMessageBuffer; 
+                }
+#endif
                 else
                 {
+                    messageBuffer[255] = '\0';
                     logWriter->log(2, pid, messageBuffer);
                 }
                 va_end(variableArguments);
