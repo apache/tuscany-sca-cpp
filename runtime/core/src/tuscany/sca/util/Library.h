@@ -37,62 +37,65 @@ namespace tuscany
 {
     namespace sca
     {
-        /**
-         * Information about shared libraries and methods to 
-         * access these shared libraries.
-         */
-        class SCA_API Library
+        namespace util
         {
-        public:
-            Library();
-
-            /** 
-             * Constructor. Will load the library.
-             * @param libraryName Fully qualified name of the library.
+            /**
+             * Information about shared libraries and methods to 
+             * access these shared libraries.
              */
-            Library(const string& libraryName);
-
-            /**
-             * Destructor. Will unload the library.
-             */ 
-            virtual ~Library();
-
-            Library(const Library& lib);
-            Library& operator=(const Library& lib);
-            
-            /**
-             * Find an externalized symbol in the library.
-             * @param symbol The name of the symbol to be found.
-             * @return The pointer to the symbol if found, otherwise 0.
-             */ 
-            void* getSymbol(const string& symbol);
-        private:
-            /**
-             * Name of the library.
-             */ 
-            string name;
-
-            /**
-             * Handle to the loaded library.
-             */ 
-#if defined(WIN32)  || defined (_WINDOWS)
-            HINSTANCE hDLL;
-#else
-            void* hDLL;
-#endif
-
-            /**
-             * Load the library.
-             */
-            void load();
-
-            /**
-             * Unload the library, if successfully loaded.
-             */ 
-            void unload();
-                        
-        };
+            class SCA_API Library
+            {
+            public:
+                Library();
+    
+                /** 
+                 * Constructor. Will load the library.
+                 * @param libraryName Fully qualified name of the library.
+                 */
+                Library(const string& libraryName);
+    
+                /**
+                 * Destructor. Will unload the library.
+                 */ 
+                virtual ~Library();
+    
+                Library(const Library& lib);
+                Library& operator=(const Library& lib);
                 
+                /**
+                 * Find an externalized symbol in the library.
+                 * @param symbol The name of the symbol to be found.
+                 * @return The pointer to the symbol if found, otherwise 0.
+                 */ 
+                void* getSymbol(const string& symbol);
+            private:
+                /**
+                 * Name of the library.
+                 */ 
+                string name;
+    
+                /**
+                 * Handle to the loaded library.
+                 */ 
+#if defined(WIN32)  || defined (_WINDOWS)
+                HINSTANCE hDLL;
+#else
+                void* hDLL;
+#endif
+    
+                /**
+                 * Load the library.
+                 */
+                void load();
+    
+                /**
+                 * Unload the library, if successfully loaded.
+                 */ 
+                void unload();
+                            
+            };
+                
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 

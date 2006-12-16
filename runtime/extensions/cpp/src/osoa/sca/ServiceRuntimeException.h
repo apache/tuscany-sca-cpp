@@ -24,7 +24,7 @@
 
 #include "osoa/sca/export.h"
 
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 
 using tuscany::sca::TuscanyRuntimeException;
 

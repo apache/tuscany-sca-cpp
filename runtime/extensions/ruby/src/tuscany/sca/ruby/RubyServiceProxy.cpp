@@ -23,7 +23,7 @@
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/SCARuntime.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/Service.h"

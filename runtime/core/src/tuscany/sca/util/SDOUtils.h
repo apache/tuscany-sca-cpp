@@ -36,69 +36,72 @@ namespace tuscany
 {
     namespace sca
     {
-        /**
-         * An SDO visitor interface
-         */
-        class SCA_API SDOVisitor
+        namespace util
         {
-        public:
             /**
-             * Constructor.
+             * An SDO visitor interface
              */
-            SDOVisitor();
-
-            /**
-             * Destructor.
-             */ 
-            virtual ~SDOVisitor();
-
-            /**
-             * Visit depth
-             */
-            enum DEPTH
+            class SCA_API SDOVisitor
             {
-                DEPTH_ZERO = 0,
-                DEPTH_ONE,
-                DEPTH_INFINITE
+            public:
+                /**
+                 * Constructor.
+                 */
+                SDOVisitor();
+    
+                /**
+                 * Destructor.
+                 */ 
+                virtual ~SDOVisitor();
+    
+                /**
+                 * Visit depth
+                 */
+                enum DEPTH
+                {
+                    DEPTH_ZERO = 0,
+                    DEPTH_ONE,
+                    DEPTH_INFINITE
+                };
+    
+                /**
+                 * Visit status
+                 */
+                enum RESULT
+                {
+                    RESULT_CONTINUE = 0,
+                    RESULT_STOP,
+                    RESULT_NOT_SUPPORTED
+                };
+    
+                /**
+                 * Visit an SDO.
+                 */
+                virtual RESULT visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, bool boolData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, char byteData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, const char* bytesData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, wchar_t charData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, const commonj::sdo::SDODate& dateData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, long double doubleData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, float floatData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, long intData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, short shortData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, const string& stringData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, commonj::sdo::DataObjectPtr dataObjectData);
+            };
+    
+            /**
+             * SDO utilities.
+             */
+            class SCA_API SDOUtils
+            {
+            public:
+    
+                static SDOVisitor::RESULT accept(commonj::sdo::DataObjectPtr dataObject, SDOVisitor& visitor, SDOVisitor::DEPTH depth);
+    
             };
 
-            /**
-             * Visit status
-             */
-            enum RESULT
-            {
-                RESULT_CONTINUE = 0,
-                RESULT_STOP,
-                RESULT_NOT_SUPPORTED
-            };
-
-            /**
-             * Visit an SDO.
-             */
-            virtual RESULT visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, bool boolData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, char byteData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, const char* bytesData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, wchar_t charData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, const commonj::sdo::SDODate& dateData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, long double doubleData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, float floatData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, long intData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, short shortData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, const string& stringData);
-            virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, commonj::sdo::DataObjectPtr dataObjectData);
-        };
-
-        /**
-         * SDO utilities.
-         */
-        class SCA_API SDOUtils
-        {
-        public:
-
-            static SDOVisitor::RESULT accept(commonj::sdo::DataObjectPtr dataObject, SDOVisitor& visitor, SDOVisitor::DEPTH depth);
-
-        };
-
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 #endif // tuscany_sca_sdovisitor_file_h

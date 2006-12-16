@@ -28,6 +28,7 @@ tuscany/sca/extension/*.h
 ## ls -1 tuscany/sca/util/*.cpp tuscany/sca/extension/*.cpp tuscany/sca/model/*.cpp tuscany/sca/core/*.cpp tuscany/sca/cpp/*.cpp tuscany/sca/ws/*.cpp | awk '{ print $1 " \\" }'
 ## and copy/paste the output below
 libtuscany_sca_la_SOURCES = \
+tuscany/sca/core/Exceptions.cpp \
 tuscany/sca/core/Operation.cpp \
 tuscany/sca/core/SCARuntime.cpp \
 tuscany/sca/core/ServiceProxy.cpp \
@@ -57,7 +58,6 @@ tuscany/sca/model/WSDLDefinition.cpp \
 tuscany/sca/model/WSDLInterface.cpp \
 tuscany/sca/model/WSDLOperation.cpp \
 tuscany/sca/util/DefaultLogWriter.cpp \
-tuscany/sca/util/Exceptions.cpp \
 tuscany/sca/util/File.cpp \
 tuscany/sca/util/FileLogWriter.cpp \
 tuscany/sca/util/Library.cpp \

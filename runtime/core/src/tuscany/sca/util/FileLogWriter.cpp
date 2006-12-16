@@ -27,26 +27,29 @@ namespace tuscany
 {
     namespace sca
     {
-        FileLogWriter::FileLogWriter(const char* logfile)
+        namespace util
         {
-        	logFile.open(logfile, ios_base::app);
-        }
-
-        FileLogWriter::~FileLogWriter()
-        {
-        	logFile.close();        	
-        }
-
-        void FileLogWriter::log(int level, const char*pid, const char* msg)
-        {
-            logFile << pid << " ";
-            for (int i=0; i < level; i++)
+            FileLogWriter::FileLogWriter(const char* logfile)
             {
-                logFile << "  ";
+            	logFile.open(logfile, ios_base::app);
             }
-            logFile << msg <<endl;
-        }
+    
+            FileLogWriter::~FileLogWriter()
+            {
+            	logFile.close();        	
+            }
+    
+            void FileLogWriter::log(int level, const char*pid, const char* msg)
+            {
+                logFile << pid << " ";
+                for (int i=0; i < level; i++)
+                {
+                    logFile << "  ";
+                }
+                logFile << msg <<endl;
+            }
 
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 

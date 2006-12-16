@@ -19,7 +19,7 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 
 #if defined(WIN32)  || defined (_WINDOWS) 

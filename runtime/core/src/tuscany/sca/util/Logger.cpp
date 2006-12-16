@@ -38,219 +38,222 @@ namespace tuscany
 {
     namespace sca
     {
-        LogWriter* Logger::logWriter = getLogWriter();
-        
-        char* Logger::pid = NULL;
-
-        LogWriter* Logger::getLogWriter()
+        namespace util
         {
-            if (logWriter == 0)
+            LogWriter* Logger::logWriter = getLogWriter();
+            
+            char* Logger::pid = NULL;
+    
+            LogWriter* Logger::getLogWriter()
             {
-                setLogWriter(0);
-                
-                pid = new char[10];
+                if (logWriter == 0)
+                {
+                    setLogWriter(0);
+                    
+                    pid = new char[10];
 #if defined(WIN32)  || defined (_WINDOWS)
-                sprintf(pid, "%d", _getpid());
+                    sprintf(pid, "%d", _getpid());
 #else
-                sprintf(pid, "%d", getpid());
+                    sprintf(pid, "%d", getpid());
 #endif
+                }
+                return logWriter;
             }
-            return logWriter;
-        }
-
-        void Logger::setLogWriter(LogWriter* writer)
-        {
-            if (logWriter != writer
-            	&& logWriter != 0)
+    
+            void Logger::setLogWriter(LogWriter* writer)
             {
-                delete logWriter;
+                if (logWriter != writer
+                	&& logWriter != 0)
+                {
+                    delete logWriter;
+                }
+    
+                if (writer == 0)
+                {
+                    char*  loggingVar = 0;
+                    loggingVar = getenv("TUSCANY_SCACPP_LOG");
+                    if (loggingVar == 0)
+                        logWriter = new DefaultLogWriter;
+                    else
+                        logWriter = new FileLogWriter(loggingVar);
+                }
+                else
+                {
+                    logWriter = writer;
+                }
             }
-
-            if (writer == 0)
+    
+            int Logger::loggingLevel = setLogging();
+            
+            int Logger::setLogging()
             {
                 char*  loggingVar = 0;
-                loggingVar = getenv("TUSCANY_SCACPP_LOG");
+                loggingVar = getenv("TUSCANY_SCACPP_LOGGING");
                 if (loggingVar == 0)
-                    logWriter = new DefaultLogWriter;
+                    return 0;
                 else
-                    logWriter = new FileLogWriter(loggingVar);
+                    return atoi(loggingVar);
             }
-            else
-            {
-                logWriter = writer;
-            }
-        }
-
-        int Logger::loggingLevel = setLogging();
-        
-        int Logger::setLogging()
-        {
-            char*  loggingVar = 0;
-            loggingVar = getenv("TUSCANY_SCACPP_LOGGING");
-            if (loggingVar == 0)
-                return 0;
-            else
-                return atoi(loggingVar);
-        }
-        
-        void Logger::setLogging(int level)
-        {
-            loggingLevel = level;
-        }
             
-        void Logger::log(int level, const char* msg)
-        {
-            if (level <= loggingLevel)
+            void Logger::setLogging(int level)
             {
-                logWriter->log(level, pid, msg);
+                loggingLevel = level;
             }
-        }
+                
+            void Logger::log(int level, const char* msg)
+            {
+                if (level <= loggingLevel)
+                {
+                    logWriter->log(level, pid, msg);
+                }
+            }
+    
+            void Logger::logArgs(int level, const char* msg, ...)
+            {
+                if (level <= loggingLevel)
+                {
+                    va_list variableArguments;
+                    va_start(variableArguments, msg);
+                    char messageBuffer[256];
+                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
+#if defined(WIN32)  || defined (_WINDOWS)
+                    if (size == -1)
+                    {
+                        size = _vscprintf(msg, variableArguments);
+                        char* bigMessageBuffer = new char[size+1];
+                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        bigMessageBuffer[size] = '\0';
+                        logWriter->log(level, pid, bigMessageBuffer);
+                        delete bigMessageBuffer; 
+                    }
+#else
+                    if (size > 255)
+                    {
+                        char* bigMessageBuffer = new char[size+1];
+                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        bigMessageBuffer[size] = '\0';
+                        logWriter->log(level, pid, bigMessageBuffer);
+                        delete bigMessageBuffer; 
+                    }
+#endif
+                    else
+                    {
+                        messageBuffer[255] = '\0';
+                        logWriter->log(level, pid, messageBuffer);
+                    }
+                    va_end(variableArguments);
+                }
+            }
+            
+            void Logger::logArgs0(const char* msg, ...)
+            {
+                if (0 <= loggingLevel)
+                {
+                    va_list variableArguments;
+                    va_start(variableArguments, msg);
+                    char messageBuffer[256];
+                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
+#if defined(WIN32)  || defined (_WINDOWS)
+                    if (size == -1)
+                    {
+                        size = _vscprintf(msg, variableArguments);
+                        char* bigMessageBuffer = new char[size+1];
+                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        bigMessageBuffer[size] = '\0';
+                        logWriter->log(0, pid, bigMessageBuffer);
+                        delete bigMessageBuffer; 
+                    }
+#else
+                    if (size > 255)
+                    {
+                        char* bigMessageBuffer = new char[size+1];
+                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        bigMessageBuffer[size] = '\0';
+                        logWriter->log(0, pid, bigMessageBuffer);
+                        delete bigMessageBuffer; 
+                    }
+#endif
+                    else
+                    {
+                        messageBuffer[255] = '\0';
+                        logWriter->log(0, pid, messageBuffer);
+                    }
+                    va_end(variableArguments);
+                }
+            }
+            void Logger::logArgs1(const char* msg, ...)
+            {
+                if (1 <= loggingLevel)
+                {
+                    va_list variableArguments;
+                    va_start(variableArguments, msg);
+                    char messageBuffer[256];
+                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
+#if defined(WIN32)  || defined (_WINDOWS)
+                    if (size == -1)
+                    {
+                        size = _vscprintf(msg, variableArguments);
+                        char* bigMessageBuffer = new char[size+1];
+                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        bigMessageBuffer[size] = '\0';
+                        logWriter->log(1, pid, bigMessageBuffer);
+                        delete bigMessageBuffer; 
+                    }
+#else
+                    if (size > 255)
+                    {
+                        char* bigMessageBuffer = new char[size+1];
+                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        bigMessageBuffer[size] = '\0';
+                        logWriter->log(1, pid, bigMessageBuffer);
+                        delete bigMessageBuffer; 
+                    }
+#endif
+                    else
+                    {
+                        messageBuffer[255] = '\0';
+                        logWriter->log(1, pid, messageBuffer);
+                    }
+                    va_end(variableArguments);
+                }
+            }
+            void Logger::logArgs2(const char* msg, ...)
+            {
+                if (2 <= loggingLevel)
+                {
+                    va_list variableArguments;
+                    va_start(variableArguments, msg);
+                    char messageBuffer[256];
+                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
+#if defined(WIN32)  || defined (_WINDOWS)
+                    if (size == -1)
+                    {
+                        size = _vscprintf(msg, variableArguments);
+                        char* bigMessageBuffer = new char[size+1];
+                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        bigMessageBuffer[size] = '\0';
+                        logWriter->log(2, pid, bigMessageBuffer);
+                        delete bigMessageBuffer; 
+                    }
+#else
+                    if (size > 255)
+                    {
+                        char* bigMessageBuffer = new char[size+1];
+                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        bigMessageBuffer[size] = '\0';
+                        logWriter->log(2, pid, bigMessageBuffer);
+                        delete bigMessageBuffer; 
+                    }
+#endif
+                    else
+                    {
+                        messageBuffer[255] = '\0';
+                        logWriter->log(2, pid, messageBuffer);
+                    }
+                    va_end(variableArguments);
+                }
+            }
 
-        void Logger::logArgs(int level, const char* msg, ...)
-        {
-            if (level <= loggingLevel)
-            {
-                va_list variableArguments;
-                va_start(variableArguments, msg);
-                char messageBuffer[256];
-                int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
-#if defined(WIN32)  || defined (_WINDOWS)
-                if (size == -1)
-                {
-                    size = _vscprintf(msg, variableArguments);
-                    char* bigMessageBuffer = new char[size+1];
-                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
-                    bigMessageBuffer[size] = '\0';
-                    logWriter->log(level, pid, bigMessageBuffer);
-                    delete bigMessageBuffer; 
-                }
-#else
-                if (size > 255)
-                {
-                    char* bigMessageBuffer = new char[size+1];
-                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
-                    bigMessageBuffer[size] = '\0';
-                    logWriter->log(level, pid, bigMessageBuffer);
-                    delete bigMessageBuffer; 
-                }
-#endif
-                else
-                {
-                    messageBuffer[255] = '\0';
-                    logWriter->log(level, pid, messageBuffer);
-                }
-                va_end(variableArguments);
-            }
-        }
-        
-        void Logger::logArgs0(const char* msg, ...)
-        {
-            if (0 <= loggingLevel)
-            {
-                va_list variableArguments;
-                va_start(variableArguments, msg);
-                char messageBuffer[256];
-                int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
-#if defined(WIN32)  || defined (_WINDOWS)
-                if (size == -1)
-                {
-                    size = _vscprintf(msg, variableArguments);
-                    char* bigMessageBuffer = new char[size+1];
-                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
-                    bigMessageBuffer[size] = '\0';
-                    logWriter->log(0, pid, bigMessageBuffer);
-                    delete bigMessageBuffer; 
-                }
-#else
-                if (size > 255)
-                {
-                    char* bigMessageBuffer = new char[size+1];
-                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
-                    bigMessageBuffer[size] = '\0';
-                    logWriter->log(0, pid, bigMessageBuffer);
-                    delete bigMessageBuffer; 
-                }
-#endif
-                else
-                {
-                    messageBuffer[255] = '\0';
-                    logWriter->log(0, pid, messageBuffer);
-                }
-                va_end(variableArguments);
-            }
-        }
-        void Logger::logArgs1(const char* msg, ...)
-        {
-            if (1 <= loggingLevel)
-            {
-                va_list variableArguments;
-                va_start(variableArguments, msg);
-                char messageBuffer[256];
-                int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
-#if defined(WIN32)  || defined (_WINDOWS)
-                if (size == -1)
-                {
-                    size = _vscprintf(msg, variableArguments);
-                    char* bigMessageBuffer = new char[size+1];
-                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
-                    bigMessageBuffer[size] = '\0';
-                    logWriter->log(1, pid, bigMessageBuffer);
-                    delete bigMessageBuffer; 
-                }
-#else
-                if (size > 255)
-                {
-                    char* bigMessageBuffer = new char[size+1];
-                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
-                    bigMessageBuffer[size] = '\0';
-                    logWriter->log(1, pid, bigMessageBuffer);
-                    delete bigMessageBuffer; 
-                }
-#endif
-                else
-                {
-                    messageBuffer[255] = '\0';
-                    logWriter->log(1, pid, messageBuffer);
-                }
-                va_end(variableArguments);
-            }
-        }
-        void Logger::logArgs2(const char* msg, ...)
-        {
-            if (2 <= loggingLevel)
-            {
-                va_list variableArguments;
-                va_start(variableArguments, msg);
-                char messageBuffer[256];
-                int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
-#if defined(WIN32)  || defined (_WINDOWS)
-                if (size == -1)
-                {
-                    size = _vscprintf(msg, variableArguments);
-                    char* bigMessageBuffer = new char[size+1];
-                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
-                    bigMessageBuffer[size] = '\0';
-                    logWriter->log(2, pid, bigMessageBuffer);
-                    delete bigMessageBuffer; 
-                }
-#else
-                if (size > 255)
-                {
-                    char* bigMessageBuffer = new char[size+1];
-                    vsnprintf(bigMessageBuffer, size, msg, variableArguments);
-                    bigMessageBuffer[size] = '\0';
-                    logWriter->log(2, pid, bigMessageBuffer);
-                    delete bigMessageBuffer; 
-                }
-#endif
-                else
-                {
-                    messageBuffer[255] = '\0';
-                    logWriter->log(2, pid, messageBuffer);
-                }
-                va_end(variableArguments);
-            }
-        }
-
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany

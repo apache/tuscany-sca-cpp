@@ -32,7 +32,7 @@
 
 #include <sdo_axiom.h>
 
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 #include "WSServiceProxy.h"
 #include "model/WSReferenceBinding.h"

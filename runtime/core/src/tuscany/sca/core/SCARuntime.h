@@ -45,6 +45,7 @@
 using namespace std;
 
 using namespace tuscany::sca::model;
+using namespace tuscany::sca::util;
 
 
 namespace tuscany

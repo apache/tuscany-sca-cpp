@@ -42,7 +42,7 @@
 
 #include "mod_core.h"
 
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 #include "RESTServiceProxy.h"
 #include "model/RESTReferenceBinding.h"

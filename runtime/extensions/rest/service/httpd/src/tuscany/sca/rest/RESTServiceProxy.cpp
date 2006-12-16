@@ -21,7 +21,7 @@
 
 #include "RESTServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Reference.h"

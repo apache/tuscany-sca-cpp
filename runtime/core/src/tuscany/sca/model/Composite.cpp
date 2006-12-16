@@ -26,7 +26,6 @@
 #include "tuscany/sca/model/CompositeReference.h"
 #include "tuscany/sca/model/CompositeReferenceBinding.h"
 #include "tuscany/sca/model/CompositeService.h"
-//#include "tuscany/sca/model/CompositeServiceBinding.h"
 #include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/Wire.h"
@@ -35,6 +34,8 @@
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/ServiceBinding.h"
 #include "tuscany/sca/model/ReferenceBinding.h"
+
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {

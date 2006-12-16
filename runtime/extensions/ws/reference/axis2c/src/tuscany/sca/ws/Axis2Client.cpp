@@ -41,7 +41,7 @@
 #include "tuscany/sca/util/Utils.h"
 #include "model/WSServiceBinding.h"
 #include "tuscany/sca/util/Utils.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/ServiceType.h"
 #include "tuscany/sca/model/Composite.h"

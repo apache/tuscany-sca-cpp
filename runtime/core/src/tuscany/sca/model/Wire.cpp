@@ -23,6 +23,8 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/Wire.h"
 
+using namespace tuscany::sca::util;
+
 namespace tuscany
 {
     namespace sca

@@ -23,10 +23,9 @@
 #include "tuscany/sca/model/WSDLOperation.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 
-using namespace tuscany::sca;
-
+using namespace tuscany::sca::util;
 using namespace commonj::sdo;
 
 namespace tuscany
@@ -35,7 +34,6 @@ namespace tuscany
     {
         namespace model
         {
-            
             
             // Constructor
             WSDLDefinition::WSDLDefinition(DataObjectPtr wsdlModel)

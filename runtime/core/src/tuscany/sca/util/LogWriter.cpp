@@ -25,10 +25,13 @@ namespace tuscany
 {
     namespace sca
     {
-        LogWriter::~LogWriter()
+        namespace util
         {
-        }
+            LogWriter::~LogWriter()
+            {
+            }
 
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 

@@ -24,6 +24,8 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
 
+using namespace tuscany::sca::util;
+
 
 namespace tuscany
 {

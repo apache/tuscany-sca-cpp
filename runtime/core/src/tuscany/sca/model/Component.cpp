@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Service.h"

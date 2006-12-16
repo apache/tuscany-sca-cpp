@@ -31,7 +31,7 @@
 #include "tuscany/sca/util/Library.h"
 
 using namespace tuscany::sca::model;
-
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {

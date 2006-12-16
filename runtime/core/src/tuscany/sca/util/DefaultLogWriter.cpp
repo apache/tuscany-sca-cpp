@@ -27,20 +27,23 @@ namespace tuscany
 {
     namespace sca
     {
-        DefaultLogWriter::~DefaultLogWriter()
+        namespace util
         {
-        }
-
-        void DefaultLogWriter::log(int level, const char* pid, const char* msg)
-        {
-            cout << pid << " ";
-            for (int i=0; i < level; i++)
+            DefaultLogWriter::~DefaultLogWriter()
             {
-                cout << "  ";
             }
-            cout << msg <<endl;
-        }
+    
+            void DefaultLogWriter::log(int level, const char* pid, const char* msg)
+            {
+                cout << pid << " ";
+                for (int i=0; i < level; i++)
+                {
+                    cout << "  ";
+                }
+                cout << msg <<endl;
+            }
 
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 

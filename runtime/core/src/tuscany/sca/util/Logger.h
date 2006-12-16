@@ -28,104 +28,107 @@ namespace tuscany
 {
     namespace sca
     {
-        /**
-         * Provide a logging interface.
-         */
-        class Logger {
-
-        public:
-            /**
-             * Set the log writer to use.
-             * @param writer The writer to use for all subsequent logging.
-             */
-            SCA_API static void setLogWriter(LogWriter* writer);
-
-            /**
-             * Set or reset the logging level. Any message with a higher logging
-             * level than this value will be filtered (i.e. not shown).
-             * @param level The level of logging to use for all subsequent logging.
-             */
-            SCA_API static void setLogging(int level);
-
-            /**
-             * Log a message.
-             * @param level The log level of this message.
-             * @param msg The message to be logged.
-             */
-            SCA_API static void log(int level, const char* msg);
-
-            /**
-             * Log a message with variable arguments.
-             * @param level The log level of this message.
-             * @param msg The message to be logged. Must include template 
-             * characters as described in printf.
-             * @param ... Variable arguments.
-             */
-            SCA_API static void logArgs(int level, const char* msg, ...);
-            SCA_API static void logArgs0(const char* msg, ...);
-            SCA_API static void logArgs1(const char* msg, ...);
-            SCA_API static void logArgs2(const char* msg, ...);
-
-            /**
-             * The currently set logging level
-             */
-            SCA_API static int loggingLevel;
-
-        private:
-            /** 
-             * The current log writer.
-             */
-            static LogWriter* logWriter;
-            
-            /**
-             * The current process ID
-             */
-             static char* pid;
-
-            /**
-             * Get the current log writer.
-             * @return The current log writer.
-             */
-            static LogWriter* getLogWriter();
-
-            /**
-             * Retrieves the logging level set as an environment variable.
-             */
-            static int setLogging();
-            
-            /**
-             * Message buffer
-             */
-            static char messageBuffer[4096];
-            
-        };
-        
-        class LogEntry
+        namespace util
         {
-        public:
-        
-            LogEntry(const char* func)
-                : funcName(func)
-            {
-                if (tuscany::sca::Logger::loggingLevel >= 2)
-                {
-                    Logger::logArgs(2, ">> %s", funcName);
-                }
-            }
+            /**
+             * Provide a logging interface.
+             */
+            class Logger {
+    
+            public:
+                /**
+                 * Set the log writer to use.
+                 * @param writer The writer to use for all subsequent logging.
+                 */
+                SCA_API static void setLogWriter(LogWriter* writer);
+    
+                /**
+                 * Set or reset the logging level. Any message with a higher logging
+                 * level than this value will be filtered (i.e. not shown).
+                 * @param level The level of logging to use for all subsequent logging.
+                 */
+                SCA_API static void setLogging(int level);
+    
+                /**
+                 * Log a message.
+                 * @param level The log level of this message.
+                 * @param msg The message to be logged.
+                 */
+                SCA_API static void log(int level, const char* msg);
+    
+                /**
+                 * Log a message with variable arguments.
+                 * @param level The log level of this message.
+                 * @param msg The message to be logged. Must include template 
+                 * characters as described in printf.
+                 * @param ... Variable arguments.
+                 */
+                SCA_API static void logArgs(int level, const char* msg, ...);
+                SCA_API static void logArgs0(const char* msg, ...);
+                SCA_API static void logArgs1(const char* msg, ...);
+                SCA_API static void logArgs2(const char* msg, ...);
+    
+                /**
+                 * The currently set logging level
+                 */
+                SCA_API static int loggingLevel;
+    
+            private:
+                /** 
+                 * The current log writer.
+                 */
+                static LogWriter* logWriter;
+                
+                /**
+                 * The current process ID
+                 */
+                 static char* pid;
+    
+                /**
+                 * Get the current log writer.
+                 * @return The current log writer.
+                 */
+                static LogWriter* getLogWriter();
+    
+                /**
+                 * Retrieves the logging level set as an environment variable.
+                 */
+                static int setLogging();
+                
+                /**
+                 * Message buffer
+                 */
+                static char messageBuffer[4096];
+                
+            };
             
-            ~LogEntry()
+            class LogEntry
             {
-                if (tuscany::sca::Logger::loggingLevel >= 2)
-                {
-                    tuscany::sca::Logger::logArgs(2, "<< %s", funcName);
-                }
-            }
+            public:
             
-        private:
-            const char *funcName;
+                LogEntry(const char* func)
+                    : funcName(func)
+                {
+                    if (Logger::loggingLevel >= 2)
+                    {
+                        Logger::logArgs(2, ">> %s", funcName);
+                    }
+                }
+                
+                ~LogEntry()
+                {
+                    if (Logger::loggingLevel >= 2)
+                    {
+                        Logger::logArgs(2, "<< %s", funcName);
+                    }
+                }
+                
+            private:
+                const char *funcName;
+            
+            };
         
-        };
-        
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 

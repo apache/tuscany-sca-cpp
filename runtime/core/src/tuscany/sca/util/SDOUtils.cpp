@@ -31,279 +31,363 @@ namespace tuscany
 {
     namespace sca
     {
-        
-        /**
-         * Constructor
-         */
-        SDOVisitor::SDOVisitor()
+        namespace util
         {
-        }
         
-        /**
-         * Destructor
-         */
-        SDOVisitor::~SDOVisitor()
-        {
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, bool boolData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, char byteData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, const char* bytesData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, wchar_t charData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, const SDODate& dateData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, long double doubleData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, float floatData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, long intData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, short shortData)
-        {
-            return SDOVisitor::RESULT_NOT_SUPPORTED;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, const string& stringData)
-        {
-            return SDOVisitor::RESULT_CONTINUE;
-        }
-        
-        SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, DataObjectPtr dataObjectData)
-        {
-            return SDOVisitor::RESULT_CONTINUE;
-        }
-        
-        SDOVisitor::RESULT SDOUtils::accept(DataObjectPtr dataObject, SDOVisitor& visitor, SDOVisitor::DEPTH depth)
-        {
-            SDOVisitor::RESULT result = SDOVisitor::RESULT_CONTINUE;
-
-            const Type& type = dataObject->getType();
-            if (type.isSequencedType())
+            /**
+             * Constructor
+             */
+            SDOVisitor::SDOVisitor()
             {
-                Sequence* sequence = dataObject->getSequence();
-                int size = sequence->size();
-                for (int i = 0; i < size; i++)
+            }
+            
+            /**
+             * Destructor
+             */
+            SDOVisitor::~SDOVisitor()
+            {
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, bool boolData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, char byteData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, const char* bytesData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, wchar_t charData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, const SDODate& dateData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, long double doubleData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, float floatData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, long intData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, short shortData)
+            {
+                return SDOVisitor::RESULT_NOT_SUPPORTED;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, const string& stringData)
+            {
+                return SDOVisitor::RESULT_CONTINUE;
+            }
+            
+            SDOVisitor::RESULT SDOVisitor::visit(DataObjectPtr parent, const Property& property, DataObjectPtr dataObjectData)
+            {
+                return SDOVisitor::RESULT_CONTINUE;
+            }
+            
+            SDOVisitor::RESULT SDOUtils::accept(DataObjectPtr dataObject, SDOVisitor& visitor, SDOVisitor::DEPTH depth)
+            {
+                SDOVisitor::RESULT result = SDOVisitor::RESULT_CONTINUE;
+    
+                const Type& type = dataObject->getType();
+                if (type.isSequencedType())
                 {
-                    if (sequence->isText(i))
+                    Sequence* sequence = dataObject->getSequence();
+                    int size = sequence->size();
+                    for (int i = 0; i < size; i++)
                     {
-                        const string text(sequence->getCStringValue(i)); 
-                        result = visitor.visit(dataObject, *(Property*)NULL, (const string&)text);
-                    } 
-                    else 
-                    {
-                        const Property& seqProperty = sequence->getProperty(i); 
-                        const Type& seqType = seqProperty.getType();
-                        if (seqType.isDataObjectType())
-                        {                                
-                            DataObjectPtr dob;
-                            if (seqProperty.isMany())
-                            {
-                                int index = sequence->getListIndex(i);
-                                dob = dataObject->getList(seqProperty)[index];
-                            }
+                        if (sequence->isText(i))
+                        {
+                            const string text(sequence->getCStringValue(i)); 
+                            result = visitor.visit(dataObject, *(Property*)NULL, (const string&)text);
+                        } 
+                        else 
+                        {
+                            const Property& seqProperty = sequence->getProperty(i); 
+                            const Type& seqType = seqProperty.getType();
+                            if (seqType.isDataObjectType())
+                            {                                
+                                DataObjectPtr dob;
+                                if (seqProperty.isMany())
+                                {
+                                    int index = sequence->getListIndex(i);
+                                    dob = dataObject->getList(seqProperty)[index];
+                                }
+                                else
+                                {
+                                    dob = dataObject->getDataObject(seqProperty);
+                                }
+                                
+                                if (dob)
+                                {
+                                    result = visitor.visit(dataObject, seqProperty, (DataObjectPtr)dob);
+                                }
+                            } 
                             else
                             {
-                                dob = dataObject->getDataObject(seqProperty);
-                            }
-                            
-                            if (dob)
-                            {
-                                result = visitor.visit(dataObject, seqProperty, (DataObjectPtr)dob);
-                            }
-                        } 
-                        else
-                        {
-                            Type::Types t = seqProperty.getTypeEnum(); 
-                            switch (t)
-                            {
-                            case Type::BooleanType:
+                                Type::Types t = seqProperty.getTypeEnum(); 
+                                switch (t)
                                 {
-                                    result = visitor.visit(dataObject, seqProperty, (bool)sequence->getBooleanValue(i));
+                                case Type::BooleanType:
+                                    {
+                                        result = visitor.visit(dataObject, seqProperty, (bool)sequence->getBooleanValue(i));
+                                    }
+                                    break;
+                                case Type::ByteType:
+                                    {
+                                        result = visitor.visit(dataObject, seqProperty, (char)sequence->getByteValue(i));
+                                    }
+                                    break;
+                                case Type::CharacterType:
+                                    {
+                                        result = visitor.visit(dataObject, seqProperty, (wchar_t)sequence->getCharacterValue(i));
+                                    }
+                                    break;
+                                case Type::IntegerType: 
+                                    {
+                                        result = visitor.visit(dataObject, seqProperty, (long)sequence->getIntegerValue(i));
+                                    }
+                                    break;
+                                case Type::ShortType:
+                                    {
+                                        result = visitor.visit(dataObject, seqProperty, (short)sequence->getShortValue(i));
+                                    }
+                                    break;
+                                case Type::DoubleType:
+                                    {
+                                        result = visitor.visit(dataObject, seqProperty, (long double)sequence->getDoubleValue(i));
+                                    }
+                                    break;
+                                case Type::FloatType:
+                                    {
+                                        result = visitor.visit(dataObject, seqProperty, (float)sequence->getFloatValue(i));
+                                    }
+                                    break;
+                                case Type::LongType:
+                                    {
+                                        result = visitor.visit(dataObject, seqProperty, (long)sequence->getLongValue(i));
+                                    }
+                                    break;
+                                case Type::DateType:
+                                    {
+                                        const SDODate date = sequence->getDateValue(i);
+                                        result = visitor.visit(dataObject, seqProperty, (const time_t)date.getTime());
+                                    }
+                                    break;
+                                case Type::BigDecimalType: 
+                                case Type::BigIntegerType: 
+                                case Type::UriType:
+                                case Type::StringType:
+                                    {
+                                        ;
+                                        const string stringData(sequence->getCStringValue(i));
+                                        result = visitor.visit(dataObject, seqProperty, (const string&)stringData);
+                                    }
+                                    break;
+                                case Type::BytesType:
+                                    {
+                                        unsigned int len = sequence->getLength(i);
+                                        char* byteData = new char[len];
+                                        sequence->getBytesValue(i, byteData, len);
+                                        result = visitor.visit(dataObject, seqProperty, byteData);
+                                        delete byteData;
+                                    }
+                                    break;
+                                default:
+                                    result = SDOVisitor::RESULT_NOT_SUPPORTED;
+                                    break;
                                 }
-                                break;
-                            case Type::ByteType:
-                                {
-                                    result = visitor.visit(dataObject, seqProperty, (char)sequence->getByteValue(i));
-                                }
-                                break;
-                            case Type::CharacterType:
-                                {
-                                    result = visitor.visit(dataObject, seqProperty, (wchar_t)sequence->getCharacterValue(i));
-                                }
-                                break;
-                            case Type::IntegerType: 
-                                {
-                                    result = visitor.visit(dataObject, seqProperty, (long)sequence->getIntegerValue(i));
-                                }
-                                break;
-                            case Type::ShortType:
-                                {
-                                    result = visitor.visit(dataObject, seqProperty, (short)sequence->getShortValue(i));
-                                }
-                                break;
-                            case Type::DoubleType:
-                                {
-                                    result = visitor.visit(dataObject, seqProperty, (long double)sequence->getDoubleValue(i));
-                                }
-                                break;
-                            case Type::FloatType:
-                                {
-                                    result = visitor.visit(dataObject, seqProperty, (float)sequence->getFloatValue(i));
-                                }
-                                break;
-                            case Type::LongType:
-                                {
-                                    result = visitor.visit(dataObject, seqProperty, (long)sequence->getLongValue(i));
-                                }
-                                break;
-                            case Type::DateType:
-                                {
-                                    const SDODate date = sequence->getDateValue(i);
-                                    result = visitor.visit(dataObject, seqProperty, (const time_t)date.getTime());
-                                }
-                                break;
-                            case Type::BigDecimalType: 
-                            case Type::BigIntegerType: 
-                            case Type::UriType:
-                            case Type::StringType:
+                                if (result == SDOVisitor::RESULT_NOT_SUPPORTED)
                                 {
                                     ;
                                     const string stringData(sequence->getCStringValue(i));
                                     result = visitor.visit(dataObject, seqProperty, (const string&)stringData);
                                 }
-                                break;
-                            case Type::BytesType:
-                                {
-                                    unsigned int len = sequence->getLength(i);
-                                    char* byteData = new char[len];
-                                    sequence->getBytesValue(i, byteData, len);
-                                    result = visitor.visit(dataObject, seqProperty, byteData);
-                                    delete byteData;
-                                }
-                                break;
-                            default:
-                                result = SDOVisitor::RESULT_NOT_SUPPORTED;
-                                break;
-                            }
-                            if (result == SDOVisitor::RESULT_NOT_SUPPORTED)
-                            {
-                                ;
-                                const string stringData(sequence->getCStringValue(i));
-                                result = visitor.visit(dataObject, seqProperty, (const string&)stringData);
-                            }
-                        } 
+                            } 
+                        }
+                        if (result == SDOVisitor::RESULT_STOP)
+                            return result;
                     }
-                    if (result == SDOVisitor::RESULT_STOP)
-                        return result;
                 }
-            }
-            else
-            {
-                PropertyList pl = dataObject->getInstanceProperties();
-                for (unsigned int i = 0; i < pl.size(); i++)
+                else
                 {
-                    if (dataObject->isSet(pl[i]))
+                    PropertyList pl = dataObject->getInstanceProperties();
+                    for (unsigned int i = 0; i < pl.size(); i++)
                     {
-                        if (pl[i].getType().isDataObjectType()) 
+                        if (dataObject->isSet(pl[i]))
                         {
-                            if (pl[i].isMany())
+                            if (pl[i].getType().isDataObjectType()) 
                             {
-                                DataObjectList& doList = dataObject->getList(pl[i]);
-                                for (unsigned int li = 0; li < doList.size(); li++)
+                                if (pl[i].isMany())
                                 {
-                                    DataObjectPtr dob = doList[li];
+                                    DataObjectList& doList = dataObject->getList(pl[i]);
+                                    for (unsigned int li = 0; li < doList.size(); li++)
+                                    {
+                                        DataObjectPtr dob = doList[li];
+                                        result = visitor.visit(dataObject, pl[i], (DataObjectPtr)dob);
+                                        if (result == SDOVisitor::RESULT_STOP)
+                                            return result;
+                                    }
+                                }
+                                else 
+                                {
+                                    DataObjectPtr dob = dataObject->getDataObject(pl[i]);
                                     result = visitor.visit(dataObject, pl[i], (DataObjectPtr)dob);
-                                    if (result == SDOVisitor::RESULT_STOP)
-                                        return result;
                                 }
                             }
                             else 
                             {
-                                DataObjectPtr dob = dataObject->getDataObject(pl[i]);
-                                result = visitor.visit(dataObject, pl[i], (DataObjectPtr)dob);
-                            }
-                        }
-                        else 
-                        {
-                            if (pl[i].isMany())
-                            {
-                                Type::Types t = pl[i].getTypeEnum();
-                                DataObjectList& doList = dataObject->getList(pl[i]);
-                                for (unsigned int li = 0; li < doList.size(); li++)
+                                if (pl[i].isMany())
                                 {
+                                    Type::Types t = pl[i].getTypeEnum();
+                                    DataObjectList& doList = dataObject->getList(pl[i]);
+                                    for (unsigned int li = 0; li < doList.size(); li++)
+                                    {
+                                        switch (t)
+                                        {
+                                        case Type::BooleanType:
+                                            {
+                                                result = visitor.visit(dataObject, pl[i], (bool)doList.getBoolean(li));
+                                            }
+                                            break;
+                                        case Type::ByteType:
+                                            {
+                                                result = visitor.visit(dataObject, pl[i], (char)doList.getByte(li));
+                                            }
+                                            break;
+                                        case Type::CharacterType:
+                                            {
+                                                result = visitor.visit(dataObject, pl[i], (wchar_t)doList.getCharacter(li));
+                                            }
+                                            break;
+                                        case Type::IntegerType: 
+                                            {
+                                                result = visitor.visit(dataObject, pl[i], (long)doList.getInteger(li));
+                                            }
+                                            break;
+                                        case Type::ShortType:
+                                            {
+                                                result = visitor.visit(dataObject, pl[i], (short)doList.getShort(li));
+                                            }
+                                            break;
+                                        case Type::DoubleType:
+                                            {
+                                                result = visitor.visit(dataObject, pl[i], (long double)doList.getDouble(li));
+                                            }
+                                            break;
+                                        case Type::FloatType:
+                                            {
+                                                result = visitor.visit(dataObject, pl[i], (float)doList.getFloat(li));
+                                            }
+                                            break;
+                                        case Type::LongType:
+                                            {
+                                                result = visitor.visit(dataObject, pl[i], (long)doList.getLong(li));
+                                            }
+                                            break;
+                                        case Type::DateType:
+                                            {
+                                                const SDODate date = doList.getDate(li);
+                                                result = visitor.visit(dataObject, pl[i], (const time_t)date.getTime());
+                                            }
+                                            break;
+                                        case Type::BigDecimalType: 
+                                        case Type::BigIntegerType: 
+                                        case Type::UriType:
+                                        case Type::StringType:
+                                            {
+                                                const string stringData(doList.getCString(li));
+                                                result = visitor.visit(dataObject, pl[i], (const string&)stringData);
+                                            }
+                                            break;
+                                        case Type::BytesType:
+                                            {
+                                                unsigned int len = doList.getLength(li);
+                                                char* byteData = new char[len];
+                                                doList.getBytes(li, byteData, len);
+                                                result = visitor.visit(dataObject, pl[i], byteData);
+                                                delete byteData;
+                                            }
+                                            break;
+                                        default:
+                                            result = SDOVisitor::RESULT_NOT_SUPPORTED;
+                                            break;
+                                        }
+                                        if (result == SDOVisitor::RESULT_NOT_SUPPORTED)
+                                        {
+                                            const string stringData(doList.getCString(li));
+                                            result = visitor.visit(dataObject, pl[i], (const string&)stringData);
+                                        }
+                                        if (result == SDOVisitor::RESULT_STOP)
+                                            return result;
+                                    }
+                                }
+                                else 
+                                {
+                                    Type::Types t = pl[i].getTypeEnum();
                                     switch (t)
                                     {
                                     case Type::BooleanType:
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (bool)doList.getBoolean(li));
+                                            result = visitor.visit(dataObject, pl[i], (bool)dataObject->getBoolean(pl[i]));
                                         }
                                         break;
                                     case Type::ByteType:
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (char)doList.getByte(li));
+                                            result = visitor.visit(dataObject, pl[i], (char)dataObject->getByte(pl[i]));
                                         }
                                         break;
                                     case Type::CharacterType:
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (wchar_t)doList.getCharacter(li));
+                                            result = visitor.visit(dataObject, pl[i], (wchar_t)dataObject->getCharacter(pl[i]));
                                         }
                                         break;
                                     case Type::IntegerType: 
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (long)doList.getInteger(li));
+                                            result = visitor.visit(dataObject, pl[i], (long)dataObject->getInteger(pl[i]));
                                         }
                                         break;
                                     case Type::ShortType:
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (short)doList.getShort(li));
+                                            result = visitor.visit(dataObject, pl[i], (short)dataObject->getShort(pl[i]));
                                         }
                                         break;
                                     case Type::DoubleType:
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (long double)doList.getDouble(li));
+                                            result = visitor.visit(dataObject, pl[i], (long double)dataObject->getDouble(pl[i]));
                                         }
                                         break;
                                     case Type::FloatType:
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (float)doList.getFloat(li));
+                                            result = visitor.visit(dataObject, pl[i], (float)dataObject->getFloat(pl[i]));
                                         }
                                         break;
                                     case Type::LongType:
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (long)doList.getLong(li));
+                                            result = visitor.visit(dataObject, pl[i], (long)dataObject->getLong(pl[i]));
                                         }
                                         break;
                                     case Type::DateType:
                                         {
-                                            const SDODate date = doList.getDate(li);
+                                            const SDODate date = dataObject->getDate(pl[i]);
                                             result = visitor.visit(dataObject, pl[i], (const time_t)date.getTime());
                                         }
                                         break;
@@ -312,15 +396,15 @@ namespace tuscany
                                     case Type::UriType:
                                     case Type::StringType:
                                         {
-                                            const string stringData(doList.getCString(li));
+                                            const string stringData(dataObject->getCString(pl[i]));
                                             result = visitor.visit(dataObject, pl[i], (const string&)stringData);
                                         }
                                         break;
                                     case Type::BytesType:
                                         {
-                                            unsigned int len = doList.getLength(li);
+                                            unsigned int len = dataObject->getLength(pl[i]);
                                             char* byteData = new char[len];
-                                            doList.getBytes(li, byteData, len);
+                                            dataObject->getBytes(pl[i], byteData, len);
                                             result = visitor.visit(dataObject, pl[i], byteData);
                                             delete byteData;
                                         }
@@ -331,102 +415,21 @@ namespace tuscany
                                     }
                                     if (result == SDOVisitor::RESULT_NOT_SUPPORTED)
                                     {
-                                        const string stringData(doList.getCString(li));
-                                        result = visitor.visit(dataObject, pl[i], (const string&)stringData);
-                                    }
-                                    if (result == SDOVisitor::RESULT_STOP)
-                                        return result;
-                                }
-                            }
-                            else 
-                            {
-                                Type::Types t = pl[i].getTypeEnum();
-                                switch (t)
-                                {
-                                case Type::BooleanType:
-                                    {
-                                        result = visitor.visit(dataObject, pl[i], (bool)dataObject->getBoolean(pl[i]));
-                                    }
-                                    break;
-                                case Type::ByteType:
-                                    {
-                                        result = visitor.visit(dataObject, pl[i], (char)dataObject->getByte(pl[i]));
-                                    }
-                                    break;
-                                case Type::CharacterType:
-                                    {
-                                        result = visitor.visit(dataObject, pl[i], (wchar_t)dataObject->getCharacter(pl[i]));
-                                    }
-                                    break;
-                                case Type::IntegerType: 
-                                    {
-                                        result = visitor.visit(dataObject, pl[i], (long)dataObject->getInteger(pl[i]));
-                                    }
-                                    break;
-                                case Type::ShortType:
-                                    {
-                                        result = visitor.visit(dataObject, pl[i], (short)dataObject->getShort(pl[i]));
-                                    }
-                                    break;
-                                case Type::DoubleType:
-                                    {
-                                        result = visitor.visit(dataObject, pl[i], (long double)dataObject->getDouble(pl[i]));
-                                    }
-                                    break;
-                                case Type::FloatType:
-                                    {
-                                        result = visitor.visit(dataObject, pl[i], (float)dataObject->getFloat(pl[i]));
-                                    }
-                                    break;
-                                case Type::LongType:
-                                    {
-                                        result = visitor.visit(dataObject, pl[i], (long)dataObject->getLong(pl[i]));
-                                    }
-                                    break;
-                                case Type::DateType:
-                                    {
-                                        const SDODate date = dataObject->getDate(pl[i]);
-                                        result = visitor.visit(dataObject, pl[i], (const time_t)date.getTime());
-                                    }
-                                    break;
-                                case Type::BigDecimalType: 
-                                case Type::BigIntegerType: 
-                                case Type::UriType:
-                                case Type::StringType:
-                                    {
                                         const string stringData(dataObject->getCString(pl[i]));
                                         result = visitor.visit(dataObject, pl[i], (const string&)stringData);
                                     }
-                                    break;
-                                case Type::BytesType:
-                                    {
-                                        unsigned int len = dataObject->getLength(pl[i]);
-                                        char* byteData = new char[len];
-                                        dataObject->getBytes(pl[i], byteData, len);
-                                        result = visitor.visit(dataObject, pl[i], byteData);
-                                        delete byteData;
-                                    }
-                                    break;
-                                default:
-                                    result = SDOVisitor::RESULT_NOT_SUPPORTED;
-                                    break;
-                                }
-                                if (result == SDOVisitor::RESULT_NOT_SUPPORTED)
-                                {
-                                    const string stringData(dataObject->getCString(pl[i]));
-                                    result = visitor.visit(dataObject, pl[i], (const string&)stringData);
                                 }
                             }
                         }
-                    }
-                    if (result == SDOVisitor::RESULT_STOP)
-                        return result;
-                } 
-            }
-    
-            return SDOVisitor::RESULT_CONTINUE;
-        }
+                        if (result == SDOVisitor::RESULT_STOP)
+                            return result;
+                    } 
+                }
         
+                return SDOVisitor::RESULT_CONTINUE;
+            }
+        
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 

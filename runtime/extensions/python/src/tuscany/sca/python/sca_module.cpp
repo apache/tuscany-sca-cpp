@@ -32,7 +32,7 @@ using namespace tuscany::sca::model;
 using namespace tuscany::sca::python;
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 
 #include "commonj/sdo/SDO.h"
 using namespace commonj::sdo;

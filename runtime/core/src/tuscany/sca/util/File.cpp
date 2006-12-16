@@ -25,7 +25,7 @@
 
 #include "tuscany/sca/util/File.h"
 #include "tuscany/sca/util/Utils.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 #include <iostream>
 
@@ -45,180 +45,182 @@ namespace tuscany
 {
     namespace sca
     {
-        File::File(const string& dir, const string& file)
-            : directory(dir), fileName(file)
+        namespace util
         {
-        }
-        File::~File()
-        {
-        }
-        
-        
-        Files::Files(const string& rootDir, const string& pattern, bool subdirectories)
-            : rootDirectory(rootDir)
-        {
-            findFiles(rootDirectory, pattern, subdirectories);
-        }
-        
-        Files::~Files()
-        {
-        }
-        
-        unsigned int Files::size()
-        {
-            return files.size();
-        }
-        
-        const File& Files::operator[] (unsigned int index)
-        {
-            if (size() <= index)
+            File::File(const string& dir, const string& file)
+                : directory(dir), fileName(file)
             {
-                throwException(SystemConfigurationException, "Index of of bounds");
+            }
+            File::~File()
+            {
             }
             
-            FILES::iterator iter = files.begin();
-            for (unsigned int i=0; i<index; i++)
+            
+            Files::Files(const string& rootDir, const string& pattern, bool subdirectories)
+                : rootDirectory(rootDir)
             {
-                iter++;
+                findFiles(rootDirectory, pattern, subdirectories);
             }
             
-            return *iter;
-        }
-        
-        
-        void Files::findFiles(const string& rootDir, const string& pattern, bool subdirectories)
-        {
-            
-#if defined(WIN32)  || defined (_WINDOWS)
-            char currentDir[ _MAX_FNAME];
-            
-            
-            GetCurrentDirectory(_MAX_FNAME, currentDir);
-            
-            // Set current directory, from which to search.
-            if (!SetCurrentDirectory(rootDir.c_str()))
+            Files::~Files()
             {
-                cout << "Unable to set current directory to: " << rootDir.c_str() << endl;
-                return;
             }
-            char fullDirname[ _MAX_FNAME];
-            GetCurrentDirectory(_MAX_FNAME, fullDirname);
             
-            // First, look for all files in this directory that meet the pattern
-            char search[ _MAX_FNAME];
-            strcpy(search, pattern.c_str());
-            
-            // Find the first file in the directory
-            WIN32_FIND_DATA data;
-            HANDLE searchHandle = FindFirstFile(search, &data);
-            
-            int more = TRUE;
-            if (searchHandle != INVALID_HANDLE_VALUE)
+            unsigned int Files::size()
             {
-                // Found some matching files, so call the function with the details of each one
-                while (more)
+                return files.size();
+            }
+            
+            const File& Files::operator[] (unsigned int index)
+            {
+                if (size() <= index)
                 {
-                    // Skip over directories
-                    if (!(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-                    {
-                        // Add the file to our list
-                        files.push_back(File(fullDirname, data.cFileName));
-                    }
-                    
-                    more = FindNextFile(searchHandle, &data);
+                    throwException(SystemConfigurationException, "Index of of bounds");
                 }
-            }
-            
-            
-            if (!subdirectories)
-                return;
-            
-            // Now recurse down all the directories
-            // Find the first file in the directory
-            searchHandle = FindFirstFile( "*.*", &data);
-            more = TRUE;
-            
-            if (searchHandle != INVALID_HANDLE_VALUE)
-            {
-                // Found some files in the directory.
-                while (more)
-                {
-                    // If directory
-                    if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-                    {                        
-                        // Skip over '.' and '..'
-                        if ((strcmp(data.cFileName, ".")) && (strcmp("..", data.cFileName)))
-                        {
-                            // Recurse
-                            findFiles(data.cFileName, pattern, subdirectories);
-                        }
-                    }
-                    
-                    more = FindNextFile(searchHandle, &data);
-                }
-            }
-            SetCurrentDirectory(currentDir);
-#else
-            // Linux
-            //char fullDirname[MAX_PATH];
-            //getcwd(fullDirname, MAX_PATH);
-            
-            DIR* root = opendir(rootDir.c_str());
-            if (!root)
-            {
-                logwarning("Unable to open directory: %s", rootDir.c_str());
-                return;
-            }
-            
-            bool exactMatch = true;
-            string token1, token2;
-            if (pattern.find('*') != string::npos)
-            {
-                exactMatch = false;
-                Utils::tokeniseString("*", pattern, token1, token2);
-            }
-            
-            struct dirent *entry=0;
-            while ((entry = readdir(root)))
-            {
-                string entryName = rootDir + "/" + entry->d_name;
-                struct stat statbuf;
-                if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-                    continue;
-                if (stat(entryName.c_str(), &statbuf)  != 0)
-                {
-                    logwarning("Unable to stat entry: %s", entryName.c_str());
-                }
-                else
-                {
-                    if (S_ISDIR(statbuf.st_mode))
-                    {
-                        if (subdirectories)
-                        {
-                            findFiles(entryName, pattern, subdirectories);
-                        }
-                    }
-                    else if (S_ISREG(statbuf.st_mode))
-                    {
-                        string filename = entry->d_name;
                 
-                        if ((exactMatch && filename == pattern) ||
-                            (!exactMatch &&
-                             ((filename.find(token1) == 0)
-                             && (filename.length() >= token2.length())
-                             && (filename.rfind(token2) == (filename.length() - token2.length())) )))
+                FILES::iterator iter = files.begin();
+                for (unsigned int i=0; i<index; i++)
+                {
+                    iter++;
+                }
+                
+                return *iter;
+            }
+            
+            
+            void Files::findFiles(const string& rootDir, const string& pattern, bool subdirectories)
+            {
+                
+#if defined(WIN32)  || defined (_WINDOWS)
+                char currentDir[ _MAX_FNAME];
+                
+                
+                GetCurrentDirectory(_MAX_FNAME, currentDir);
+                
+                // Set current directory, from which to search.
+                if (!SetCurrentDirectory(rootDir.c_str()))
+                {
+                    cout << "Unable to set current directory to: " << rootDir.c_str() << endl;
+                    return;
+                }
+                char fullDirname[ _MAX_FNAME];
+                GetCurrentDirectory(_MAX_FNAME, fullDirname);
+                
+                // First, look for all files in this directory that meet the pattern
+                char search[ _MAX_FNAME];
+                strcpy(search, pattern.c_str());
+                
+                // Find the first file in the directory
+                WIN32_FIND_DATA data;
+                HANDLE searchHandle = FindFirstFile(search, &data);
+                
+                int more = TRUE;
+                if (searchHandle != INVALID_HANDLE_VALUE)
+                {
+                    // Found some matching files, so call the function with the details of each one
+                    while (more)
+                    {
+                        // Skip over directories
+                        if (!(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
                         {
                             // Add the file to our list
-                            files.push_back(File(rootDir, filename));
+                            files.push_back(File(fullDirname, data.cFileName));
                         }
+                        
+                        more = FindNextFile(searchHandle, &data);
                     }
-                }            
-            }
-            closedir(root);
+                }
+                
+                
+                if (!subdirectories)
+                    return;
+                
+                // Now recurse down all the directories
+                // Find the first file in the directory
+                searchHandle = FindFirstFile( "*.*", &data);
+                more = TRUE;
+                
+                if (searchHandle != INVALID_HANDLE_VALUE)
+                {
+                    // Found some files in the directory.
+                    while (more)
+                    {
+                        // If directory
+                        if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+                        {                        
+                            // Skip over '.' and '..'
+                            if ((strcmp(data.cFileName, ".")) && (strcmp("..", data.cFileName)))
+                            {
+                                // Recurse
+                                findFiles(data.cFileName, pattern, subdirectories);
+                            }
+                        }
+                        
+                        more = FindNextFile(searchHandle, &data);
+                    }
+                }
+                SetCurrentDirectory(currentDir);
+#else
+                // Linux
+                //char fullDirname[MAX_PATH];
+                //getcwd(fullDirname, MAX_PATH);
+                
+                DIR* root = opendir(rootDir.c_str());
+                if (!root)
+                {
+                    logwarning("Unable to open directory: %s", rootDir.c_str());
+                    return;
+                }
+                
+                bool exactMatch = true;
+                string token1, token2;
+                if (pattern.find('*') != string::npos)
+                {
+                    exactMatch = false;
+                    Utils::tokeniseString("*", pattern, token1, token2);
+                }
+                
+                struct dirent *entry=0;
+                while ((entry = readdir(root)))
+                {
+                    string entryName = rootDir + "/" + entry->d_name;
+                    struct stat statbuf;
+                    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+                        continue;
+                    if (stat(entryName.c_str(), &statbuf)  != 0)
+                    {
+                        logwarning("Unable to stat entry: %s", entryName.c_str());
+                    }
+                    else
+                    {
+                        if (S_ISDIR(statbuf.st_mode))
+                        {
+                            if (subdirectories)
+                            {
+                                findFiles(entryName, pattern, subdirectories);
+                            }
+                        }
+                        else if (S_ISREG(statbuf.st_mode))
+                        {
+                            string filename = entry->d_name;
+                    
+                            if ((exactMatch && filename == pattern) ||
+                                (!exactMatch &&
+                                 ((filename.find(token1) == 0)
+                                 && (filename.length() >= token2.length())
+                                 && (filename.rfind(token2) == (filename.length() - token2.length())) )))
+                            {
+                                // Add the file to our list
+                                files.push_back(File(rootDir, filename));
+                            }
+                        }
+                    }            
+                }
+                closedir(root);
 #endif
-        }
-        
-        
+            }
+            
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 

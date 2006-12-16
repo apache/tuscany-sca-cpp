@@ -21,7 +21,7 @@
 #endif
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "RESTServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"

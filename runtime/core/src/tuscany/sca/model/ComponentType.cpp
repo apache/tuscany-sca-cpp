@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/ComponentType.h"
 #include "tuscany/sca/model/ServiceType.h"
@@ -34,6 +34,7 @@
 
 using namespace commonj::sdo;
 using namespace std;
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {

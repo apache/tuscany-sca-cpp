@@ -21,7 +21,7 @@
 
 #include "tuscany/sca/core/ServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 
 namespace tuscany
 {

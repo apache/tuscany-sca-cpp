@@ -28,21 +28,24 @@ namespace tuscany
 {
     namespace sca
     {
-        /**
-         * Log writer to write out to standard out.
-         */
-        class DefaultLogWriter : public LogWriter
+        namespace util
         {
-        public:
-            virtual ~DefaultLogWriter();
-
             /**
-             * Will write to the console.
-             * See LogWriter#log.
+             * Log writer to write out to standard out.
              */
-            virtual void log(int level, const char* pid, const char* msg);
-        };
+            class DefaultLogWriter : public LogWriter
+            {
+            public:
+                virtual ~DefaultLogWriter();
+    
+                /**
+                 * Will write to the console.
+                 * See LogWriter#log.
+                 */
+                virtual void log(int level, const char* pid, const char* msg);
+            };
         
+        } // End namespace util
     } // End namespace sca
 } // End namespace tuscany
 #endif // tuscany_sca_util_defaultlogwriter_h

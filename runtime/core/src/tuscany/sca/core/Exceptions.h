@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_sca_util_exceptions_h
-#define tuscany_sca_util_exceptions_h
+#ifndef tuscany_sca_core_exceptions_h
+#define tuscany_sca_core_exceptions_h
 
 
 #include "tuscany/sca/export.h"
@@ -343,4 +343,4 @@ namespace tuscany
 }
 #endif
 
-#endif // tuscany_sca_util_exceptions_h
+#endif // tuscany_sca_core_exceptions_h

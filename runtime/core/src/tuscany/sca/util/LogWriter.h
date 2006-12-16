@@ -28,23 +28,26 @@ namespace tuscany
 {
     namespace sca
     {
-        /**
-         * Abstract class for extending logging to other destinations.
-         */
-        class SCA_API LogWriter 
+        namespace util
         {
-        public:
-            virtual ~LogWriter();
-            
             /**
-             * Log a message.
-             * @param level The level of logging for this message.
-             * @param pid The current process id.
-             * @param msg The message to log.
+             * Abstract class for extending logging to other destinations.
              */
-            virtual void log(int level, const char* pid, const char* msg) = 0;
-        };
-        
+            class SCA_API LogWriter 
+            {
+            public:
+                virtual ~LogWriter();
+                
+                /**
+                 * Log a message.
+                 * @param level The level of logging for this message.
+                 * @param pid The current process id.
+                 * @param msg The message to log.
+                 */
+                virtual void log(int level, const char* pid, const char* msg) = 0;
+            };
+
+        } // End namespace util        
     } // End namespace sca
 } // End namespace tuscany
 #endif // tuscany_sca_util_logwriter_h

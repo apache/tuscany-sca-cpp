@@ -24,14 +24,14 @@
 
 #include <string>
 
-using namespace std;
-
 namespace tuscany
 {
     namespace sca
     {
         namespace model
         {
+            using namespace std;
+
             /**
              * Information about an interface. Subtypes will hold information
              * specific to a type of interface.

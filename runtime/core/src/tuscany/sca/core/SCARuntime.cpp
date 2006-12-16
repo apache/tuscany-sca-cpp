@@ -24,7 +24,7 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/ModelLoader.h"
 #include "tuscany/sca/util/File.h"
-#include "tuscany/sca/util/Exceptions.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Component.h"
 
