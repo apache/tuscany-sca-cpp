@@ -39,16 +39,14 @@ UNAME=`uname -s`
 if test "x$UNAME" = "xDarwin"; then
   AC_DEFINE([IS_DARWIN], [1], [Set to 1 when running on Darwin - Mac OSX])
   AC_MSG_RESULT(yes)
+  AC_SUBST([libsuffix],[".dylib"])
+  is_darwin=true
 else
   AC_MSG_RESULT(no)
+  AC_SUBST([libsuffix],[".so"])
+  is_darwin=false
 fi
-
-# Check for dynamic library suffixes
-AC_MSG_CHECKING([checking for dynamic library suffix])
-AC_CHECK_HEADER([sys/appleapiopts.h],
-  [AC_SUBST([libsuffix],[".dylib"]) AC_MSG_RESULT([using .dylib])],
-  [AC_SUBST([libsuffix],[".so"]) AC_MSG_RESULT([using .so])]
-)
+AM_CONDITIONAL([DARWIN], [test x$is_darmin = xtrue])
 
 # Checks for libraries.
 
@@ -155,7 +153,7 @@ AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA defau
 AM_CONDITIONAL([WANT_SCABINDING], [test x$want_scabinding = xtrue])
 
 AC_MSG_CHECKING(whether to build REST binding extension)
-AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-restbinding],[build REST binding extension [default=no]])],
+AC_ARG_ENABLE(restbinding, [AS_HELP_STRING([--enable-restbinding],[build REST binding extension [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
