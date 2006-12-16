@@ -27,6 +27,8 @@
 
         <component name="sample.customer.CustomerRestClientComponent">
         	<implementation.composite name="sample.customer.restclient" />
+        	<reference name="CustomerResource">sample.customer.CustomerComponent/CustomerResource</reference>
+        	<reference name="CustomerCommand">sample.customer.CustomerComponent/CustomerCommand</reference>
        	</component>
 
 </composite>

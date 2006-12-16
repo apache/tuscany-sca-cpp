@@ -44,6 +44,7 @@ set PATH=%TUSCANY_SCACPP%\extensions\python\bin;%TUSCANY_SCACPP%\extensions\rest
 set PYTHONPATH=%TUSCANY_SCACPP%\extensions\python\bin
 
 set TUSCANY_SCACPP_ROOT=%APFULLDIR%\..\
+set TUSCANY_SCACPP_BASE_URI=http://localhost:9090/rest/
 
 set CUSTOMER_DIR=%TUSCANY_SCACPP_ROOT%\sample.customer
 

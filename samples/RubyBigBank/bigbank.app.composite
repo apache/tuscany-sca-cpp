@@ -27,7 +27,7 @@
 
 	<component name="bigbank.AccountWSClientComponent">
 		<implementation.composite name="bigbank.wsclient"/>
+		<reference name="AccountService">bigbank.AccountManagementComponent/AccountService</reference>
 	</component>
-
-</composite>
 	
+</composite>

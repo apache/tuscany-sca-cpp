@@ -23,6 +23,7 @@
 	
 	<component name="bigbank.AccountManagementComponent">
 		<implementation.composite name="bigbank.account"/>
+		<reference name="AccountDataService">bigbank.AccountDataManagementComponent/AccountDataService</reference>
 	</component>
 
 	<component name="bigbank.AccountDataManagementComponent">
@@ -31,6 +32,7 @@
 
 	<component name="bigbank.AccountWSClientComponent">
 		<implementation.composite name="bigbank.wsclient"/>
+		<reference name="AccountService">bigbank.AccountManagementComponent/AccountService</reference>
 	</component>
 
 </composite>

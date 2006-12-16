@@ -48,6 +48,7 @@ export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorWSClientComponent
+export TUSCANY_SCACPP_BASE_URI=http://localhost:9090/axis2/services/
 
 cd $TUSCANY_SCACPP_ROOT/sample.calculator.wsclient
 python calculator_wsclient.py div 5 2

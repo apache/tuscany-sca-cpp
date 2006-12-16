@@ -41,6 +41,7 @@ set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\python\bin;%TUSCANY_SD
 set PYTHONPATH=%TUSCANY_SCACPP%\extensions\python\bin
 
 set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
+set TUSCANY_SCACPP_BASE_URI=http://localhost:9090/axis2/services/
 
 cd %AXIS2C_HOME%\bin
 .\axis2_http_server.exe

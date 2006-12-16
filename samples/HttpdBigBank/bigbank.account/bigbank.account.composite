@@ -31,7 +31,7 @@
 		<implementation.ruby script="AccountServiceImpl.rb" class="AccountServiceImpl"/>
 		<reference name="accountDataService">AccountDataService</reference>
 		<reference name="stockQuoteService">StockQuoteServiceComponent</reference>
-		<property name="currency">EUR</property>
+		<property name="currency">USD</property>
 	</component>  
 
 	<component name="StockQuoteServiceComponent">
@@ -45,7 +45,7 @@
 	</reference>
 
 	<reference name="AccountDataService">
-		<binding.sca uri="http://localhost:9090/axis2/services/bigbank.AccountDataManagementComponent/AccountDataService"/>
+		<binding.sca/>
 	</reference>
 
 </composite>

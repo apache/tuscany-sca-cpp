@@ -41,6 +41,7 @@ set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
 set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
 set TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorComponent
+set TUSCANY_SCACPP_BASE_URI=http://localhost:9090/axis2/services/
 
 cd %TUSCANY_SCACPP_ROOT%\sample.calculator.client
 ruby -I%TUSCANY_SCACPP%\extensions\ruby\bin CalculatorClient.rb

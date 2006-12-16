@@ -41,6 +41,7 @@ set PATH=%HTTPD_HOME%\bin;%LIBCURL_HOME%\lib;%TUSCANY_SCACPP%\extensions\rest\in
 
 set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
 set TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorRestClientComponent
+set TUSCANY_SCACPP_BASE_URI=http://localhost:9090/rest/
 
 cd %TUSCANY_SCACPP_ROOT%\sample.calculator.restclient
 ruby -I%TUSCANY_SCACPP%\extensions\ruby\bin CalculatorRestClient.rb

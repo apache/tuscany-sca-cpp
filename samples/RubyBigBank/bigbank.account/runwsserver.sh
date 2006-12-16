@@ -40,6 +40,7 @@ echo "Using Axis2C installed at $AXIS2C_HOME"
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
+export TUSCANY_SCACPP_BASE_URI=http://localhost:9090/axis2/services/
 
 cd $AXIS2C_HOME/bin
 ./axis2_http_server

@@ -49,6 +49,7 @@ echo Using HTTPD installed at %HTTPD_HOME%
 set PATH=%TUSCANY_SCACPP%\extensions\sca\reference\bin;%TUSCANY_SCACPP%\extensions\sca\service\bin;%TUSCANY_SCACPP%\extensions\ws\reference\bin;%TUSCANY_SCACPP%\extensions\ws\service\bin;%TUSCANY_SCACPP%\extensions\ruby\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%HTTPD_HOME%\bin;%PATH%
 
 set TUSCANY_SCACPP_ROOT=%APFULLDIR%\..\
+set TUSCANY_SCACPP_BASE_URI=http://localhost:9090/axis2/services/
 
 @REM Generate the mod_axis2 configuration
 if not exist %APFULLDIR%\conf\mod_axis2.conf (

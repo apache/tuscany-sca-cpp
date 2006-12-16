@@ -23,11 +23,11 @@
 
 	<reference name="CustomerResource">
 		<interface.rest/>
-		<binding.rest uri="http://localhost:9090/rest/sample.customer.CustomerComponent/CustomerResource"/>
+		<binding.rest/>
 	</reference>
 
 	<reference name="CustomerCommand">
-		<binding.rest uri="http://localhost:9090/rest/sample.customer.CustomerComponent/CustomerCommand"/>
+		<binding.rest/>
 	</reference>
 
 </composite>

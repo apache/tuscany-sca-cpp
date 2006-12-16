@@ -34,6 +34,7 @@ echo "Using SDO installed at $TUSCANY_SDOCPP"
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
+export TUSCANY_SCACPP_BASE_URI=http://localhost:9090/rest/
 
 # Generate the mod_rest configuration
 if [ ! -f conf/tuscany_sca_mod_rest.conf ]; then

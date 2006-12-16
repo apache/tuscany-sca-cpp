@@ -43,6 +43,7 @@ echo Using HTTPD installed at %HTTPD_HOME%
 set PATH=%TUSCANY_SCACPP%\extensions\ruby\bin;%TUSCANY_SCACPP%\extensions\rest\interface\bin;%TUSCANY_SCACPP%\extensions\rest\service\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%HTTPD_HOME%\bin;%PATH%
 
 set TUSCANY_SCACPP_ROOT=%APFULLDIR%\..\
+set TUSCANY_SCACPP_BASE_URI=http://localhost:9090/rest/
 
 @REM Generate the tuscany_sca_mod_rest configuration
 if not exist %APFULLDIR%\conf\tuscany_sca_mod_rest.conf (

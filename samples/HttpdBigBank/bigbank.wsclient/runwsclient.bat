@@ -42,6 +42,7 @@ set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\ws\reference\bin;%TUSC
 
 set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
 set TUSCANY_SCACPP_COMPONENT=bigbank.AccountWSClientComponent
+set TUSCANY_SCACPP_BASE_URI=http://localhost:9090/axis2/services/
 
 cd %TUSCANY_SCACPP_ROOT%\bigbank.wsclient
 ruby -I%TUSCANY_SCACPP%\extensions\ruby\bin AccountWSClient.rb

@@ -27,6 +27,7 @@
 
         <component name="sample.calculator.CalculatorRestClientComponent">
         	<implementation.composite name="sample.calculator.restclient" />
+        	<reference name="CalculatorService">sample.calculator.CalculatorComponent/CalculatorService</reference>
        	</component>
 
 </composite>

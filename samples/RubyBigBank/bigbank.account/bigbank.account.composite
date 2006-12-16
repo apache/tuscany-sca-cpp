@@ -33,7 +33,7 @@
 		<implementation.ruby script="AccountServiceImpl.rb" class="AccountServiceImpl"/>
 		<reference name="accountDataService">AccountDataServiceComponent</reference>
 		<reference name="stockQuoteService">StockQuoteServiceComponent</reference>
-		<property name="currency">EUR</property>
+		<property name="currency">USD</property>
 	</component>  
 
 	<component name="AccountDataServiceComponent">

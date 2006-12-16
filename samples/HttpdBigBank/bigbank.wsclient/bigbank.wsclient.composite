@@ -23,7 +23,7 @@
 
 	<reference name="AccountService">
 		<interface.wsdl interface="http://www.bigbank.com/AccountService#wsdl.interface(AccountService)"/>
-		<binding.ws uri="http://localhost:9090/axis2/services/bigbank.AccountManagementComponent/AccountService"/>
+		<binding.ws/>
 	</reference>
 
 </composite>
