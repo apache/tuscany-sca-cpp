@@ -19,15 +19,15 @@
 
 /* $Rev$ $Date$ */
 
+#if defined(WIN32)  || defined (_WINDOWS) 
+#else
+#include "tuscany_sca_config.h"
+#endif
+
 #include <sstream>
 #if defined(WIN32)  || defined (_WINDOWS) || defined (IS_DARWIN)
 #else
 #include <execinfo.h>
-#endif
-
-#if defined(WIN32)  || defined (_WINDOWS) 
-#else
-#include "tuscany_sca_config.h"
 #endif
 
 #include "tuscany/sca/core/Exceptions.h"
