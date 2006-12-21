@@ -26,8 +26,6 @@
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Service.h"
 
-using namespace tuscany::sca::model;
-
 
 namespace tuscany
 {
@@ -45,7 +43,7 @@ namespace tuscany
                  * Constructor.
                  * @param target The service wrapper represents a Web service.
                  */
-                WSServiceWrapper(Service* service);
+                WSServiceWrapper(tuscany::sca::model::Service* service);
                 
                 /**
                  * Destructor

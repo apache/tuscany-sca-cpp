@@ -22,16 +22,13 @@
 #ifndef tuscany_sca_python_pythonserviceproxy_h
 #define tuscany_sca_python_pythonserviceproxy_h
 
+#include "export.h" 
 #include "tuscany/sca/core/ServiceProxy.h" 
 #include "tuscany/sca/core/ServiceWrapper.h" 
 #include "tuscany/sca/util/Library.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/Service.h"
-
-#include "export.h" 
-
-using namespace tuscany::sca::model;
 
 
 namespace tuscany
@@ -52,14 +49,14 @@ namespace tuscany
                  * the target ServiceWrapper.
                  * @param reference The reference on the source component.
                  */
-                PythonServiceProxy(Reference* reference);
+                PythonServiceProxy(tuscany::sca::model::Reference* reference);
        
                /**
                  * Create a new service proxy for a service. The proxy will contain a pointer to
                  * the target ServiceWrapper.
                  * @param service The service on the target component.
                  */
-                SCA_PYTHON_API PythonServiceProxy(Service* service);
+                SCA_PYTHON_API PythonServiceProxy(tuscany::sca::model::Service* service);
        
                 /**
                  * Destructor.

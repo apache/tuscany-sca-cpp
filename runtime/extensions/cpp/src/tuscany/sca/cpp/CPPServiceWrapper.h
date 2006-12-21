@@ -23,15 +23,13 @@
 #define tuscany_sca_cpp_cppservicewrapper_h
 
 #include "osoa/sca/export.h"
+
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Interface.h"
 #include "tuscany/sca/cpp/model/CPPImplementation.h"
 #include "tuscany/sca/util/Library.h"
-
-using namespace tuscany::sca::model;
-using namespace tuscany::sca::util;
 
 namespace tuscany
 {
@@ -58,13 +56,13 @@ namespace tuscany
                  * created.
                  * @return A wrapper that references the given target.
                  */
-                static CPPServiceWrapper* getServiceWrapper(Service* service);
+                static CPPServiceWrapper* getServiceWrapper(tuscany::sca::model::Service* service);
     
                 /**
                  * Constructor.
                  * @param target The component service to which this wrapper refers.
                  */
-                CPPServiceWrapper(Service* service);
+                CPPServiceWrapper(tuscany::sca::model::Service* service);
     
                 /**
                  * Destructor.
@@ -81,7 +79,7 @@ namespace tuscany
                 /**
                  * Return the loaded shared library for the target component.
                  */
-                Library* getLibrary() const { return wrapperLibrary; }
+                tuscany::sca::util::Library* getLibrary() const { return wrapperLibrary; }
                 
             protected:
                 
@@ -129,12 +127,12 @@ namespace tuscany
                 /**
                  * The component to which this wrapper refers.
                  */
-                Component* component;
+                tuscany::sca::model::Component* component;
     
                 /**
                  * A pointer to the interface which the service exposes.
                  */
-                Interface* interf;
+                tuscany::sca::model::Interface* interf;
     
                 /**
                  * The component implementation
@@ -145,14 +143,14 @@ namespace tuscany
                  * Pointer to the loaded library which contains the component
                  * implementation.
                  */
-                Library* wrapperLibrary;
+                tuscany::sca::util::Library* wrapperLibrary;
     
                 /**
                  * Set the loaded library which contains the component 
                  * implementation.
                  * @param lib The library.
                  */
-                void setLibrary(Library* lib);
+                void setLibrary(tuscany::sca::util::Library* lib);
             };
             
         } // End namespace cpp

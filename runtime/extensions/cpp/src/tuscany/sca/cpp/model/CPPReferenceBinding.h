@@ -22,13 +22,10 @@
 #ifndef tuscany_sca_cpp_model_cppreferencebinding_h
 #define tuscany_sca_cpp_model_cppreferencebinding_h
 
+#include <string>
+
 #include "tuscany/sca/model/ReferenceBinding.h"
 
-
-#include <string>
-using std::string;
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -39,7 +36,7 @@ namespace tuscany
             /**
              * Information about a CPP service binding for service or a reference.
              */
-            class CPPReferenceBinding : public ReferenceBinding
+            class CPPReferenceBinding : public tuscany::sca::model::ReferenceBinding
             {    
             public:
 
@@ -50,7 +47,7 @@ namespace tuscany
                  * or external service is to be bound. This is of the form
                  * "namespace"#endpoint("service"/"port")
                  */
-                CPPReferenceBinding(Reference* reference);  
+                CPPReferenceBinding(tuscany::sca::model::Reference* reference);  
 
                 /**
                  * Destructor.
@@ -60,7 +57,7 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#CPPImplementationBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#CPPImplementationBinding"; };
                             
                 /**
                  * Create a proxy representing the reference to the
@@ -71,12 +68,12 @@ namespace tuscany
                  /**
                   * Configure this binding from a service binding.
                   */
-                  virtual void configure(ServiceBinding* serviceBinding);
+                  virtual void configure(tuscany::sca::model::ServiceBinding* serviceBinding);
                   
                  /**
                   * Returns the target service binding.
                   */
-                  ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
+                  tuscany::sca::model::ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
                                 
             private:
                 
@@ -89,7 +86,7 @@ namespace tuscany
                 /**
                  * The service binding of the target
                  */
-                ServiceBinding* targetServiceBinding; 
+                tuscany::sca::model::ServiceBinding* targetServiceBinding; 
             };
             
         } // End namespace cpp

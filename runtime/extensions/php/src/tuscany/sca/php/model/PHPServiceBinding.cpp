@@ -23,6 +23,9 @@
 #include "tuscany/sca/php/model/PHPServiceBinding.h"
 #include "tuscany/sca/php/PHPServiceWrapper.h"
 
+using namespace std;
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

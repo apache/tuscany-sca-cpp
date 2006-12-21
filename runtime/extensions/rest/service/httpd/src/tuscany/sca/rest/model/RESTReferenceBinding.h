@@ -20,12 +20,9 @@
 #ifndef tuscany_sca_extension_rest_model_restreferencebinding_h
 #define tuscany_sca_extension_rest_model_restreferencebinding_h
 
-#include "tuscany/sca/model/ReferenceBinding.h"
-
-using namespace tuscany::sca::model;
-
 #include <string>
-using std::string;
+
+#include "tuscany/sca/model/ReferenceBinding.h"
 
 namespace tuscany
 {
@@ -36,7 +33,7 @@ namespace tuscany
             /**
              * Information about a web service binding for service or a reference.
              */
-            class RESTReferenceBinding : public ReferenceBinding
+            class RESTReferenceBinding : public tuscany::sca::model::ReferenceBinding
             {    
             public:
 
@@ -44,7 +41,7 @@ namespace tuscany
                  * Constructor.
                  * @param uri The uri of the binding.
                  */
-                RESTReferenceBinding(Reference* reference, const string&uri);  
+                RESTReferenceBinding(tuscany::sca::model::Reference* reference, const std::string& uri);  
 
                 /**
                  * Destructor.
@@ -54,12 +51,12 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#RESTBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#RESTBinding"; };
                             
                  /**
                   * Configure this binding from a service binding.
                   */
-                  virtual void configure(ServiceBinding* serviceBinding);
+                  virtual void configure(tuscany::sca::model::ServiceBinding* serviceBinding);
                                 
                 /**
                  * Create a proxy representing the reference to the
@@ -70,7 +67,7 @@ namespace tuscany
                  /**
                   * Returns the target service binding.
                   */
-                  ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
+                  tuscany::sca::model::ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
                                 
             private:
             
@@ -83,7 +80,7 @@ namespace tuscany
                 /**
                  * The service binding of the target
                  */
-                ServiceBinding* targetServiceBinding; 
+                tuscany::sca::model::ServiceBinding* targetServiceBinding; 
             };
             
         } // End namespace rest

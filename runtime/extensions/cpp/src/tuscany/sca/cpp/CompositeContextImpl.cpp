@@ -19,8 +19,11 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/util/Logging.h"
+#include "commonj/sdo/SDO.h"
+
 #include "osoa/sca/ServiceRuntimeException.h"
+
+#include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/cpp/CompositeContextImpl.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Composite.h"
@@ -30,11 +33,11 @@
 #include "tuscany/sca/core/ServiceProxy.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/cpp/CPPServiceProxy.h"
-#include "commonj/sdo/SDO.h"
 
-using namespace tuscany::sca::model;
-using namespace osoa::sca;
+using namespace std;
 using namespace commonj::sdo;
+using namespace osoa::sca;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {

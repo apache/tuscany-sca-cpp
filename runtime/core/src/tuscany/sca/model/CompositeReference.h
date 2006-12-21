@@ -52,7 +52,7 @@ namespace tuscany
                  * Constructor.
                  * @param name The name of the reference.
                  */
-                SCA_API CompositeReference(Composite* composite, const string& name,
+                SCA_API CompositeReference(Composite* composite, const std::string& name,
                     Interface* intface, Interface* callbackInterface, bool conversational, ReferenceType::Multiplicity multiplicity);
 
                 /**

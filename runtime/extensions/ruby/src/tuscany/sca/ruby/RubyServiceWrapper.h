@@ -22,16 +22,14 @@
 #ifndef tuscany_sca_ruby_rubyservicewrapper_h
 #define tuscany_sca_ruby_rubyservicewrapper_h
 
+#include "tuscany/sca/ruby/export.h"
+#include "tuscany/sca/ruby/Ruby.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Interface.h"
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
-#include "tuscany/sca/ruby/export.h"
 
-#include "tuscany/sca/ruby/Ruby.h"
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -56,7 +54,7 @@ namespace tuscany
                  * Constructor.
                  * @param target The component service to which this wrapper refers.
                  */
-                RubyServiceWrapper(Service* service);
+                RubyServiceWrapper(tuscany::sca::model::Service* service);
     
                 /**
                  * Destructor.
@@ -75,12 +73,12 @@ namespace tuscany
                 /**
                  * The component to which this wrapper refers.
                  */
-                Component* component;
+                tuscany::sca::model::Component* component;
     
                 /**
                  * A pointer to the interface which the service exposes.
                  */
-                Interface* interf;
+                tuscany::sca::model::Interface* interf;
 
                 /**
                  * The Ruby implementation

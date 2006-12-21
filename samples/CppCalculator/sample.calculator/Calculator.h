@@ -32,5 +32,3 @@ public:
 };
 
 #endif // sample_calculator_h
-
-

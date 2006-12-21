@@ -23,9 +23,7 @@
 #define tuscany_sca_util_sdovisitor_h
 
 #include <string>
-using std::string;
 #include <vector>
-using std::vector;
 #include <time.h>
 
 #include "commonj/sdo/SDO.h"
@@ -86,7 +84,7 @@ namespace tuscany
                 virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, float floatData);
                 virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, long intData);
                 virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, short shortData);
-                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, const string& stringData);
+                virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, const std::string& stringData);
                 virtual RESULT  visit(commonj::sdo::DataObjectPtr parent, const commonj::sdo::Property& property, commonj::sdo::DataObjectPtr dataObjectData);
             };
     

@@ -21,8 +21,8 @@
 
 #ifndef tuscany_sca_model_referencebinding_h
 #define tuscany_sca_model_referencebinding_h
+
 #include <string>
-using std::string;
 
 #include "tuscany/sca/model/Binding.h"
 
@@ -55,7 +55,7 @@ namespace tuscany
                 /**
                  * Constructor to create a new binding.
                  */ 
-                SCA_API ReferenceBinding(Reference* reference, const string& uri);
+                SCA_API ReferenceBinding(Reference* reference, const std::string& uri);
 
                 /**
                  * Destructor.
@@ -76,7 +76,7 @@ namespace tuscany
                  /**
                   * Configure this binding from a URI.
                   */
-                  SCA_API virtual void configure(const string& uri);
+                  SCA_API virtual void configure(const std::string& uri);
                                 
                   /**
                    * Returns the reference.

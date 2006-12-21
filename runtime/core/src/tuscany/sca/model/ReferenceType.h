@@ -23,7 +23,6 @@
 #define tuscany_sca_model_referencetype_h
 
 #include <string>
-using std::string;
 
 #include "tuscany/sca/model/Contract.h"
 
@@ -63,7 +62,7 @@ namespace tuscany
                  * Constructor.
                  * @param name The name of the reference.
                  */
-                SCA_API ReferenceType(ComponentType* componentType, const string& name,
+                SCA_API ReferenceType(ComponentType* componentType, const std::string& name,
                     Interface* intface, Interface* callbackInterface, Multiplicity multiplicity);
                     
                 /**
@@ -81,7 +80,7 @@ namespace tuscany
                  * Returns the name of the reference.
                  * @return The name of the reference.
                  */
-                SCA_API const string& getName() const { return name; }
+                SCA_API const std::string& getName() const { return name; }
 
                 /**
                  * Returns the multiplicity allowed for wires connected to this reference.
@@ -105,7 +104,7 @@ namespace tuscany
                  * Get the multiplicity corresponding to the given
                  * string.
                  */
-                static Multiplicity getMultiplicityFromString(const string& multip);
+                static Multiplicity getMultiplicityFromString(const std::string& multip);
 
             private:
             
@@ -117,7 +116,7 @@ namespace tuscany
                 /**
                  * The name of the reference type.
                  */
-                string name;
+                std::string name;
                 
                 /**
                  * The multiplicity allowed for wires connected to this reference.

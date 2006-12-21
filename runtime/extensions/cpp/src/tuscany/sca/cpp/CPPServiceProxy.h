@@ -24,15 +24,13 @@
 #define tuscany_sca_cpp_cppserviceproxy_h
 
 #include "osoa/sca/export.h"
+
 #include "tuscany/sca/core/ServiceProxy.h" 
 #include "tuscany/sca/core/ServiceWrapper.h" 
 #include "tuscany/sca/util/Library.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/Service.h"
-
-using namespace tuscany::sca::model;
-using namespace tuscany::sca::util;
 
 
 namespace tuscany
@@ -57,7 +55,7 @@ namespace tuscany
                  * @param reference The reference on the source component.
                  * @param target The wrapper of the service which is wired to this reference.
                  */
-                CPPServiceProxy(Reference* reference);
+                CPPServiceProxy(tuscany::sca::model::Reference* reference);
     
                 /**
                  * Create a new service proxy for a service. The proxy will contain a pointer to
@@ -65,7 +63,7 @@ namespace tuscany
                  * @param reference The service on the target component.
                  * @param target The wrapper of the target service.
                  */
-                CPPServiceProxy(Service* service);
+                CPPServiceProxy(tuscany::sca::model::Service* service);
     
                 /**
                  * Destructor.
@@ -90,7 +88,9 @@ namespace tuscany
                 /**
                  * Create the proxy
                  */        
-                void createProxy(Component* component, const string& name, ServiceWrapper* serviceWrapper);
+                void createProxy(tuscany::sca::model::Component* component,
+                    const std::string& name,
+                    ServiceWrapper* serviceWrapper);
             
                 /**
                  * Holds the instances of the code generated proxies.
@@ -106,7 +106,7 @@ namespace tuscany
                 /**
                  * The library which contains the code for the proxy.
                  */
-                Library proxyLibrary;
+                tuscany::sca::util::Library proxyLibrary;
     
             };
             

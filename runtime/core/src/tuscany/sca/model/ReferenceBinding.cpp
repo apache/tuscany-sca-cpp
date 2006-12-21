@@ -27,6 +27,8 @@
 #include "tuscany/sca/model/Service.h"
 
 
+using namespace std;
+
 namespace tuscany
 {
     namespace sca

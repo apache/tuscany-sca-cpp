@@ -23,7 +23,6 @@
 #define tuscany_sca_model_servicetype_h
 
 #include <string>
-using std::string;
 
 #include "tuscany/sca/model/Contract.h"
 
@@ -50,7 +49,7 @@ namespace tuscany
                  * @param componentType The component type on which this service is defined.
                  * @param name The name of the service.
                  */
-                SCA_API ServiceType(ComponentType* componentType, const string& name,
+                SCA_API ServiceType(ComponentType* componentType, const std::string& name,
                     Interface* intface, Interface* callbackInterface);
 
                 /**
@@ -68,7 +67,7 @@ namespace tuscany
                  * Returns the name of the service type.
                  * @return The name of the service type
                  */
-                 SCA_API const string& getName() const { return name; }
+                 SCA_API const std::string& getName() const { return name; }
 
                 /**
                  * Returns the binding supported by this service type.
@@ -92,7 +91,7 @@ namespace tuscany
                  /**
                   * The name of the service type.
                   */
-                 string name;
+                 std::string name;
 
                 /**
                  * The binding supported by this service

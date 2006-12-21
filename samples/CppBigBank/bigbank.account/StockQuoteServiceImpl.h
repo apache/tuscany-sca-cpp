@@ -29,7 +29,7 @@ namespace services
         {
 	    public:
         
-		  virtual float getQuote(const string symbol);
+		  virtual float getQuote(const std::string symbol);
     	};
         
     } // End stockquote	 

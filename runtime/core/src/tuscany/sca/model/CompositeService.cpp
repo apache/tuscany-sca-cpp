@@ -30,6 +30,8 @@
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/ServiceType.h"
 
+using namespace std;
+
 namespace tuscany
 {
     namespace sca

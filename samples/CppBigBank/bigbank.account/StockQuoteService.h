@@ -14,8 +14,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 #include <string>
-using std::string;
 
 namespace services
 {
@@ -28,7 +28,7 @@ namespace services
         {
 		public:
 
-			virtual float getQuote(const string symbol) = 0;
+			virtual float getQuote(const std::string symbol) = 0;
 
 		};
 

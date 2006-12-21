@@ -23,6 +23,7 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/model/WSDLInterface.h"
 
+using namespace std;
 
 namespace tuscany
 {

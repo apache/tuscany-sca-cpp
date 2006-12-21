@@ -22,14 +22,10 @@
 #ifndef tuscany_sca_extension_binding_model_scareferencebinding_h
 #define tuscany_sca_extension_binding_model_scareferencebinding_h
 
+#include <string>
+
 #include "tuscany/sca/model/ReferenceBinding.h"
 #include "tuscany/sca/ws/model/WSReferenceBinding.h"
-
-using namespace tuscany::sca::model;
-using namespace tuscany::sca::ws;
-
-#include <string>
-using std::string;
 
 namespace tuscany
 {
@@ -40,7 +36,7 @@ namespace tuscany
             /**
              * Information about a web service binding for service or a reference.
              */
-            class SCAReferenceBinding : public WSReferenceBinding
+            class SCAReferenceBinding : public tuscany::sca::ws::WSReferenceBinding
             {    
             public:
 
@@ -48,7 +44,7 @@ namespace tuscany
                  * Constructor.
                  * @param uri The uri of the binding.
                  */
-                SCAReferenceBinding(Reference* reference, const string&uri);  
+                SCAReferenceBinding(tuscany::sca::model::Reference* reference, const std::string&uri);  
 
                 /**
                  * Destructor.
@@ -58,7 +54,7 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#SCABinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#SCABinding"; };
                             
             private:
             

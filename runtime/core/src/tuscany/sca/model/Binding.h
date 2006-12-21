@@ -21,8 +21,8 @@
 
 #ifndef tuscany_sca_model_binding_h
 #define tuscany_sca_model_binding_h
+
 #include <string>
-using std::string;
 
 namespace tuscany
 {
@@ -49,7 +49,7 @@ namespace tuscany
                  * Constructor to create a new binding.
                  * @param uri The binding URI.
                  */ 
-                SCA_API Binding(const string& uri);
+                SCA_API Binding(const std::string& uri);
 
                 /**
                  * Destructor.
@@ -60,20 +60,20 @@ namespace tuscany
                  * Returns the binding type
                  * @return The binding type.
                  */
-                SCA_API virtual string getType() = 0;
+                SCA_API virtual std::string getType() = 0;
                             
                 /**
                  * Returns the binding URI.
                  * @return The binding URI.
                  */
-                SCA_API virtual const string& getURI() const { return uri; };
+                SCA_API virtual const std::string& getURI() const { return uri; };
                 
             private:
             
                 /**
                  * The binding URI.
                  */ 
-                string uri;
+                std::string uri;
             };
             
         } // End namespace model

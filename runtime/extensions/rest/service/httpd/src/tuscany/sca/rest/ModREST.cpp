@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <sstream>
+
 #include "apr_strings.h"
 #include "apr_fnmatch.h"
 #include "apr_lib.h"
@@ -42,6 +44,8 @@
 
 #include "mod_core.h"
 
+#include "commonj/sdo/SDO.h"
+
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 #include "RESTServiceProxy.h"
@@ -59,15 +63,11 @@
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Utils.h"
 
-#include "commonj/sdo/SDO.h"
-
-#include <sstream>
-
+using namespace std;
 using namespace commonj::sdo;
-
 using namespace tuscany::sca;
-using namespace tuscany::sca::rest;
 using namespace tuscany::sca::model;
+using namespace tuscany::sca::util;
 
 
 extern "C"
@@ -1296,13 +1296,13 @@ namespace tuscany
             
             const command_rec rest_module_cmds[] = 
             {
-                AP_INIT_TAKE1("TuscanyHome", (const char*(*)())rest_set_home, NULL, RSRC_CONF,
+                AP_INIT_TAKE1("TuscanyHome", (const char*(*)())tuscany::sca::rest::rest_set_home, NULL, RSRC_CONF,
                               "Tuscany home directory"),
-                AP_INIT_TAKE1("TuscanyPath", (const char*(*)())rest_set_path, NULL, ACCESS_CONF,
+                AP_INIT_TAKE1("TuscanyPath", (const char*(*)())tuscany::sca::rest::rest_set_path, NULL, ACCESS_CONF,
                               "Tuscany SCA composite search path"),
-                AP_INIT_TAKE1("TuscanyRoot", (const char*(*)())rest_set_root, NULL, ACCESS_CONF,
+                AP_INIT_TAKE1("TuscanyRoot", (const char*(*)())tuscany::sca::rest::rest_set_root, NULL, ACCESS_CONF,
                               "Tuscany root SCA configuration path"),
-                AP_INIT_TAKE1("TuscanyComponent", (const char*(*)())rest_set_component, NULL, ACCESS_CONF,
+                AP_INIT_TAKE1("TuscanyComponent", (const char*(*)())tuscany::sca::rest::rest_set_component, NULL, ACCESS_CONF,
                               "SCA component name"),
                 {NULL}
             };
@@ -1359,12 +1359,12 @@ extern "C"
     module AP_MODULE_DECLARE_DATA sca_rest_module =
     {
         STANDARD20_MODULE_STUFF,
-        rest_create_dir_config,         /* dir config */
+        tuscany::sca::rest::rest_create_dir_config,         /* dir config */
         NULL,                       /* dir merger --- default is to override */
-        rest_create_server_config,        /* server config */
+        tuscany::sca::rest::rest_create_server_config,        /* server config */
         NULL,                       /* merge server config */
-        rest_module_cmds,         /* command table */
-        register_hooks              /* register_hooks */
+        tuscany::sca::rest::rest_module_cmds,         /* command table */
+        tuscany::sca::rest::register_hooks              /* register_hooks */
     };
     
 }

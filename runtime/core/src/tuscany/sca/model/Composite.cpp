@@ -35,6 +35,7 @@
 #include "tuscany/sca/model/ServiceBinding.h"
 #include "tuscany/sca/model/ReferenceBinding.h"
 
+using namespace std;
 using namespace tuscany::sca::util;
 
 namespace tuscany

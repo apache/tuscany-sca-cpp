@@ -19,29 +19,9 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/core/SCARuntime.h"
-#include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/model/Reference.h"
-#include "tuscany/sca/model/ReferenceType.h"
-#include "tuscany/sca/model/ServiceBinding.h"
-#include "tuscany/sca/core/Operation.h"
-using namespace tuscany::sca;
-using namespace tuscany::sca::model;
-
-#include "PythonServiceProxy.h"
-using namespace tuscany::sca::python;
-
-#include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/core/Exceptions.h"
-
-#include "commonj/sdo/SDO.h"
-using namespace commonj::sdo;
-
 #include <string>
 #include <iostream>
 #include <sstream>
-using namespace std;
-
 
 // undefine _DEBUG so Python does not need it's debug dll
 #ifdef _DEBUG
@@ -52,6 +32,23 @@ using namespace std;
 #ifdef _SCA_PYTHON_DEBUG
 #define _DEBUG
 #endif
+
+#include "commonj/sdo/SDO.h"
+
+#include "PythonServiceProxy.h"
+#include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/core/Exceptions.h"
+#include "tuscany/sca/core/SCARuntime.h"
+#include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Reference.h"
+#include "tuscany/sca/model/ReferenceType.h"
+#include "tuscany/sca/model/ServiceBinding.h"
+#include "tuscany/sca/core/Operation.h"
+
+using namespace std;
+using namespace commonj::sdo;
+using namespace tuscany::sca;
+using namespace tuscany::sca::model;
 
 static PyObject* scaError;
 
@@ -118,11 +115,11 @@ static PyObject* sca_locateservice(PyObject *self, PyObject *args)
 }
 
 
-static PythonServiceProxy* getServiceProxy(PyObject *args)
+static tuscany::sca::python::PythonServiceProxy* getServiceProxy(PyObject *args)
 {
     logentry();
 
-    PythonServiceProxy* serviceProxy = NULL;
+    tuscany::sca::python::PythonServiceProxy* serviceProxy = NULL;
     SCARuntime* runtime = SCARuntime::getInstance();
 
     // The first argument holds the name
@@ -162,7 +159,7 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
         }
 
         ReferenceBinding* refBinding = ref->getBinding();
-        serviceProxy = (PythonServiceProxy*) refBinding->getServiceProxy();
+        serviceProxy = (tuscany::sca::python::PythonServiceProxy*) refBinding->getServiceProxy();
     }
     else
     {
@@ -178,7 +175,7 @@ static PythonServiceProxy* getServiceProxy(PyObject *args)
             return NULL;
         }
 
-        serviceProxy = new PythonServiceProxy(service);
+        serviceProxy = new tuscany::sca::python::PythonServiceProxy(service);
     }
 
     return serviceProxy;
@@ -189,7 +186,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 {
     logentry();
 
-    PythonServiceProxy* pythonServiceProxy = getServiceProxy(args);
+    tuscany::sca::python::PythonServiceProxy* pythonServiceProxy = getServiceProxy(args);
     if(!pythonServiceProxy)
     {
         return NULL;

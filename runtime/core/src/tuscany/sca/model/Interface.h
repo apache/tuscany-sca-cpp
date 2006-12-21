@@ -30,7 +30,6 @@ namespace tuscany
     {
         namespace model
         {
-            using namespace std;
 
             /**
              * Information about an interface. Subtypes will hold information
@@ -67,7 +66,7 @@ namespace tuscany
                 * return the QName of schema type for this interface type
                 * (e.g. "http://www.osoa.org/xmlns/sca/1.0#WSDLInterface")
                 */
-                SCA_API virtual const string& getInterfaceTypeQName() = 0;
+                SCA_API virtual const std::string& getInterfaceTypeQName() = 0;
     
             private:
 

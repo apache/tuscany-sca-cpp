@@ -24,6 +24,8 @@
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/ReferenceType.h"
 
+using namespace std;
+
 namespace tuscany
 {
     namespace sca

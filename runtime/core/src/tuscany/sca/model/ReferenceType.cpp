@@ -23,6 +23,8 @@
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/model/ReferenceType.h"
 
+using namespace std;
+
 namespace tuscany
 {
     namespace sca

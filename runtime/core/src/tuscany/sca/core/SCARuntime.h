@@ -22,16 +22,6 @@
 #ifndef tuscany_sca_core_scaruntime_h
 #define tuscany_sca_core_scaruntime_h
 
-#include "tuscany/sca/export.h"
-
-#include "tuscany/sca/extension/InterfaceExtension.h"
-#include "tuscany/sca/extension/ImplementationExtension.h"
-#include "tuscany/sca/extension/ReferenceBindingExtension.h"
-#include "tuscany/sca/extension/ServiceBindingExtension.h"
-#include "tuscany/sca/model/Composite.h"
-#include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/util/Library.h"
-
 #if defined(WIN32)  || defined (_WINDOWS)
 #include <windows.h>
 #else
@@ -42,10 +32,15 @@
 #include <string>
 #include <map>
 #include <list>
-using namespace std;
 
-using namespace tuscany::sca::model;
-using namespace tuscany::sca::util;
+#include "tuscany/sca/export.h"
+#include "tuscany/sca/extension/InterfaceExtension.h"
+#include "tuscany/sca/extension/ImplementationExtension.h"
+#include "tuscany/sca/extension/ReferenceBindingExtension.h"
+#include "tuscany/sca/extension/ServiceBindingExtension.h"
+#include "tuscany/sca/model/Composite.h"
+#include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/util/Library.h"
 
 
 namespace tuscany
@@ -81,69 +76,69 @@ namespace tuscany
             /**
              * Set the directory in which the Tuscany runtime has been installed.
              */
-            SCA_API static void setInstallRoot(const string& root);
+            SCA_API static void setInstallRoot(const std::string& root);
 
             /**
              * Returns the directory in which the Tuscany runtime has been installed.
              */
-            SCA_API static const string& getInstallRoot();
+            SCA_API static const std::string& getInstallRoot();
 
             /**
              * Set the system root
              * @param root The path to the system configuration.
              */
-            SCA_API static void setSystemRoot(const string& root);
+            SCA_API static void setSystemRoot(const std::string& root);
 
             /**
              * Returns the system root
              */
-            SCA_API static const string& getSystemRoot();
+            SCA_API static const std::string& getSystemRoot();
 
             /**
              * Set the search path for composites.
              * @param path The search path for composites.
              */
-            SCA_API static void setSystemPath(const string& path);
+            SCA_API static void setSystemPath(const std::string& path);
 
             /**
              * Returns the search path for composites.
              */
-            SCA_API static const string& getSystemPath();
+            SCA_API static const std::string& getSystemPath();
 
             /**
              * Set the default Component for the system
              * @param componentName The name of the default component.
              */
-            SCA_API static void setDefaultComponentName(const string& componentName);
+            SCA_API static void setDefaultComponentName(const std::string& componentName);
 
             /**
              * Returns the default Component for the system
              */
-            SCA_API static const string& getDefaultComponentName();
+            SCA_API static const std::string& getDefaultComponentName();
 
             /**
              * Set the default base URI for the system
              * @param baseURI The default base URI.
              */
-            SCA_API static void setDefaultBaseURI(const string& baseURI);
+            SCA_API static void setDefaultBaseURI(const std::string& baseURI);
 
             /**
              * Returns the default base URI for the system
              */
-            SCA_API static const string& getDefaultBaseURI();
+            SCA_API static const std::string& getDefaultBaseURI();
 
             /**
              * Set the current component for the current thread.
              * @param component The current component.
              */
-            SCA_API void setCurrentComponent(Component* component);
+            SCA_API void setCurrentComponent(tuscany::sca::model::Component* component);
 
             /**
              * Remove the current component from this thread, and return
              * to the previous component (if there was one).
              * @return The previous component.
              */
-            SCA_API Component* unsetCurrentComponent();
+            SCA_API tuscany::sca::model::Component* unsetCurrentComponent();
 
             /**
              * Get a pointer to the configured SCA system which this
@@ -152,19 +147,19 @@ namespace tuscany
              * the System.
              * @return The configured SCA system.
              */
-            SCA_API Composite* getSystem();
+            SCA_API tuscany::sca::model::Composite* getSystem();
 
             /**
              * Return the current component for this thread.
              * @return The current component for this thread.
              */
-            SCA_API Component* getCurrentComponent();
+            SCA_API tuscany::sca::model::Component* getCurrentComponent();
 
             /**
              * Get the default component set for this runtime.
              * @return The default composite.
              */
-            SCA_API Component* getDefaultComponent();
+            SCA_API tuscany::sca::model::Component* getDefaultComponent();
 
             /**
              * Register an implementation extension
@@ -175,7 +170,7 @@ namespace tuscany
              * Returns the implementation extension associated with
              * the specified qname
              */
-            SCA_API ImplementationExtension* getImplementationExtension(const string& typeQname);
+            SCA_API ImplementationExtension* getImplementationExtension(const std::string& typeQname);
 
             /**
              * Register a reference binding extension
@@ -186,7 +181,7 @@ namespace tuscany
              * Returns the reference binding extension associated with
              * the specified qname
              */
-            SCA_API ReferenceBindingExtension* getReferenceBindingExtension(const string& typeQname);
+            SCA_API ReferenceBindingExtension* getReferenceBindingExtension(const std::string& typeQname);
 
             /**
              * Register a service binding extension
@@ -197,7 +192,7 @@ namespace tuscany
              * Returns the service binding extension associated with
              * the specified qname
              */
-            SCA_API ServiceBindingExtension* getServiceBindingExtension(const string& typeQname);
+            SCA_API ServiceBindingExtension* getServiceBindingExtension(const std::string& typeQname);
 
             /**
              * Register an interface extension
@@ -208,7 +203,7 @@ namespace tuscany
              * Returns the interface extension associated with
              * the specified qname
              */
-            SCA_API InterfaceExtension* getInterfaceExtension(const string& typeQname);
+            SCA_API InterfaceExtension* getInterfaceExtension(const std::string& typeQname);
 
         private:
             /**
@@ -226,44 +221,44 @@ namespace tuscany
             /**
              * Pointer to the top of the runtime model.
              */
-            Composite* system;
+            tuscany::sca::model::Composite* system;
 
             /**
              * The installed path of the Tuscany runtime.
              */
-            static string installRoot;
+            static std::string installRoot;
  
             /**
              * The path to the system configuration
              */
-            static string systemRoot;
+            static std::string systemRoot;
 
             /**
              * The search path for composites.
              */
-            static string systemPath;
+            static std::string systemPath;
 
             /**
              * The default CompositeComponent.
              */
-            static string defaultComponentName;
+            static std::string defaultComponentName;
 
             /**
              * The default base URI.
              */
-            static string defaultBaseURI;
+            static std::string defaultBaseURI;
 
             /**
              * The default component set for this runtime.
              */
-            Component* defaultComponent;
+            tuscany::sca::model::Component* defaultComponent;
             
             
-            typedef stack<Component*> COMPONENT_STACK; 
+            typedef std::stack<tuscany::sca::model::Component*> COMPONENT_STACK; 
 #if defined(WIN32)  || defined (_WINDOWS)
-            typedef map<DWORD, COMPONENT_STACK> COMPONENTS_MAP;
+            typedef std::map<DWORD, COMPONENT_STACK> COMPONENTS_MAP;
 #else
-            typedef map<pthread_t, COMPONENT_STACK> COMPONENTS_MAP;
+            typedef std::map<pthread_t, COMPONENT_STACK> COMPONENTS_MAP;
 #endif
 
             /**
@@ -271,22 +266,22 @@ namespace tuscany
              */
             COMPONENTS_MAP components;
  
-            typedef map<string, ImplementationExtension*> IMPLEMENTATION_EXTENSIONS_MAP;
+            typedef std::map<std::string, ImplementationExtension*> IMPLEMENTATION_EXTENSIONS_MAP;
             IMPLEMENTATION_EXTENSIONS_MAP implementationExtensions;
 
-            typedef map<string, ReferenceBindingExtension*> REFERENCE_BINDING_EXTENSIONS_MAP;
+            typedef std::map<std::string, ReferenceBindingExtension*> REFERENCE_BINDING_EXTENSIONS_MAP;
             REFERENCE_BINDING_EXTENSIONS_MAP referenceBindingExtensions;
 
-            typedef map<string, ServiceBindingExtension*> SERVICE_BINDING_EXTENSIONS_MAP;
+            typedef std::map<std::string, ServiceBindingExtension*> SERVICE_BINDING_EXTENSIONS_MAP;
             SERVICE_BINDING_EXTENSIONS_MAP serviceBindingExtensions;
 
-            typedef map<string, InterfaceExtension*> INTERFACE_EXTENSIONS_MAP;
+            typedef std::map<std::string, InterfaceExtension*> INTERFACE_EXTENSIONS_MAP;
             INTERFACE_EXTENSIONS_MAP interfaceExtensions;
 
             // Runtime Extensions
             void loadExtensions();
 
-            typedef list<Library> EXTENSIONS_LIST;
+            typedef std::list<tuscany::sca::util::Library> EXTENSIONS_LIST;
             EXTENSIONS_LIST extensionsList;
 
         };

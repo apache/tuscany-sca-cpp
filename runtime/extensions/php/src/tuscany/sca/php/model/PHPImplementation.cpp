@@ -28,6 +28,9 @@
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/util/Utils.h"
 
+using namespace std;
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

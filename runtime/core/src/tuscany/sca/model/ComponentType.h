@@ -23,8 +23,6 @@
 #define tuscany_sca_model_componenttype_h
 
 #include <string>
-using std::string;
-
 #include <map>
 
 #include "commonj/sdo/SDO.h"
@@ -57,7 +55,7 @@ namespace tuscany
                 /**
                  * Constructor
                  */
-                SCA_API ComponentType(Composite* composite, const string& name);
+                SCA_API ComponentType(Composite* composite, const std::string& name);
 
                 /**
                  * Destructor.
@@ -67,7 +65,7 @@ namespace tuscany
                 /**
                  * Returns the name of the component type
                  */
-                SCA_API const string& getName() const { return name; };
+                SCA_API const std::string& getName() const { return name; };
                 
                 /**
                  * Returns the composite containing this component type
@@ -87,7 +85,7 @@ namespace tuscany
                  * only one service type it will be returned.
                  * @return The found service, or 0 if not found.
                  */
-                SCA_API virtual ServiceType* findServiceType(const string& serviceName);
+                SCA_API virtual ServiceType* findServiceType(const std::string& serviceName);
 
                 /**
                  * Add a new reference type to this component type.
@@ -100,7 +98,7 @@ namespace tuscany
                  * @param referenceName The name of the reference type to find.
                  * @return The found reference type, or 0 if not found.
                  */
-                SCA_API virtual ReferenceType* findReferenceType(const string& referenceName);
+                SCA_API virtual ReferenceType* findReferenceType(const std::string& referenceName);
 
                 /**
                  * Returns the service types defined on this component.
@@ -125,8 +123,8 @@ namespace tuscany
                  * @param defaultValue The default value if the property does not have a
                  * value set.
                  */
-                SCA_API virtual void addPropertyType(const string& name,
-                    const string& type,
+                SCA_API virtual void addPropertyType(const std::string& name,
+                    const std::string& type,
                     bool many,
                     commonj::sdo::DataObjectPtr* defaultValue);
     
@@ -135,7 +133,7 @@ namespace tuscany
                  * @param propertyName The name of the property type to find.
                  * @return The found property, or 0 if not found.
                  */
-                SCA_API virtual const commonj::sdo::Property* findPropertyType(const string& propertyName);
+                SCA_API virtual const commonj::sdo::Property* findPropertyType(const std::string& propertyName);
 
                 /**
                  * Return the SDO data factory which has the types of the properties defined
@@ -155,7 +153,7 @@ namespace tuscany
                 /**
                  * The name of the component type
                  */
-                string name;
+                std::string name;
                 
                 /**
                  * The composite containing this component type

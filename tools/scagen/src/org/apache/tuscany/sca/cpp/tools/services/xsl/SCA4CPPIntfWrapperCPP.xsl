@@ -62,8 +62,6 @@
 <xsl:apply-templates select="scaService" mode="include_header"/>
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;
 
 <xsl:if test="not(@implNamespace = '')">using <xsl:value-of select="@implNamespace"/><xsl:value-of select="@implClass"/>;</xsl:if>
 <xsl:text><!-- newline -->
@@ -104,7 +102,7 @@ using namespace tuscany::sca;
 }
 
 </xsl:text>
-<xsl:value-of select="$class"/><xsl:text>::</xsl:text><xsl:value-of select="$class"/><xsl:text>(Service* target) : CPPServiceWrapper(target)
+<xsl:value-of select="$class"/><xsl:text>::</xsl:text><xsl:value-of select="$class"/><xsl:text>(tuscany::sca::model::Service* target) : tuscany::sca::cpp::CPPServiceWrapper(target)
 {
     impl = (</xsl:text><xsl:value-of select="../@implClass"/><xsl:text>*)getImplementation();
 }
@@ -127,15 +125,15 @@ void </xsl:text>
     delete impl;
 }
 
-void </xsl:text><xsl:value-of select="$class"/><xsl:text>::invokeService(Operation&amp; operation)
+void </xsl:text><xsl:value-of select="$class"/><xsl:text>::invokeService(tuscany::sca::Operation&amp; operation)
 {
-    const string&amp; operationName = operation.getName();
+    const std::string&amp; operationName = operation.getName();
 
 </xsl:text>
 <xsl:apply-templates/><!-- an if statment for each operation -->
 <xsl:text>        
 
-    throw ServiceRuntimeException("Invalid operation");
+    throw osoa::sca::ServiceRuntimeException("Invalid operation");
     
 }</xsl:text>
 </xsl:template>  
@@ -219,7 +217,7 @@ void </xsl:text><xsl:value-of select="$class"/><xsl:text>::invokeService(Operati
 </xsl:text>
         </xsl:when>
         <xsl:when test="contains($type, 'DataObjectPtr')"><!-- DataObjectPtr -->
-            <xsl:text>DataObjectPtr&amp; p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = *(DataObjectPtr*)operation.getParameterValue(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);</xsl:text>
+            <xsl:text>commonj::sdo::DataObjectPtr&amp; p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = *(commonj::sdo::DataObjectPtr*)operation.getParameterValue(</xsl:text><xsl:value-of select="position()-1"/><xsl:text>);</xsl:text>
         </xsl:when>
         <xsl:otherwise><!-- simple type -->
     <xsl:if test="contains($isConst,'true')">const </xsl:if><xsl:value-of select="$type"/><xsl:text>&amp; p</xsl:text><xsl:value-of select="position()-1"/><xsl:text> = *(</xsl:text>

@@ -23,8 +23,9 @@
 #include "tuscany/sca/python/model/PythonInterface.h"
 #include "tuscany/sca/util/Logging.h"
 
-//#include "commonj/sdo/SDO.h"
-//using commonj::sdo::DataObjectList; 
+using namespace std;
+using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {

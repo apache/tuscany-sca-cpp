@@ -22,10 +22,10 @@
 #ifndef tuscany_sca_cpp_model_cppservicebinding_h
 #define tuscany_sca_cpp_model_cppservicebinding_h
 
-#include "tuscany/sca/model/ServiceBinding.h"
-using namespace tuscany::sca::model;
 #include <string>
-using std::string;
+
+#include "tuscany/sca/model/ServiceBinding.h"
+
 
 namespace tuscany
 {
@@ -36,7 +36,7 @@ namespace tuscany
             /**
              * Information about a CPP service binding for service or a reference.
              */
-            class CPPServiceBinding : public ServiceBinding
+            class CPPServiceBinding : public tuscany::sca::model::ServiceBinding
             {    
             public:
 
@@ -47,7 +47,7 @@ namespace tuscany
                  * or external service is to be bound. This is of the form
                  * "namespace"#endpoint("service"/"port")
                  */
-                CPPServiceBinding(Service* service);  
+                CPPServiceBinding(tuscany::sca::model::Service* service);  
 
                 /**
                  * Destructor.
@@ -57,7 +57,7 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#CPPImplementationBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#CPPImplementationBinding"; };
                             
                 /**
                  * Create a wrapper for the service configured by this

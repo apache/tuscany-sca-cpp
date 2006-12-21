@@ -21,14 +21,11 @@
 
 #ifndef tuscany_sca_php_model_phpimplementation_h
 #define tuscany_sca_php_model_phpimplementation_h
+
+#include <string>
+
 #include "tuscany/sca/model/ComponentType.h"
 
-#include <map>
-using std::map;
-#include <string>
-using std::string;
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -39,7 +36,7 @@ namespace tuscany
             /**
              * Holds information about an SCA implementation written in PHP
              */
-            class PHPImplementation : public ComponentType
+            class PHPImplementation : public tuscany::sca::model::ComponentType
             {
                 
             public:
@@ -52,7 +49,7 @@ namespace tuscany
                  * @param className Name of the class in the module (could be a blank string
                  * if this is not specified).
                  */
-                PHPImplementation(Composite* composite, const string& module, const string& className);
+                PHPImplementation(tuscany::sca::model::Composite* composite, const std::string& module, const std::string& className);
                 
                 /**
                  * Destructor
@@ -63,32 +60,32 @@ namespace tuscany
                  * Initialize a component of this type.
                  * @param component The component to initialize.
                  */
-                virtual void initializeComponent(Component* component);
+                virtual void initializeComponent(tuscany::sca::model::Component* component);
 
                 /**
                  * Returns the name of the module.
                  * @return The name of the module.
                  */
-                const string& getModule() const { return module; }
+                const std::string& getModule() const { return module; }
 
                 /**
                  * Get the name of the class.
                  * @return The class name if specified.
                  */
-                const string& getClass() const { return className; }
+                const std::string& getClass() const { return className; }
                 
             private:
                 
                 /**
                  * Name of the module.
                  */
-                string module;
+                std::string module;
 
                 /**
                  * Name of the class in the header file declaring the implementation.
                  * May be an empty string if not set in the SCDL file.
                  */
-                string className;
+                std::string className;
             };
             
         } // End namespace php

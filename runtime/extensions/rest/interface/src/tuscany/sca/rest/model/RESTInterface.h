@@ -22,15 +22,11 @@
 #ifndef tuscany_sca_rest_model_restinterface_h
 #define tuscany_sca_rest_model_restinterface_h
 
+#include <string>
+
 #include "tuscany/sca/model/Interface.h"
 #include "tuscany/sca/rest/exportinterface.h"
 
-#include <map>
-using std::map;
-#include <string>
-using std::string;
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -41,7 +37,7 @@ namespace tuscany
             /**
              * Holds information about a REST interface
              */
-            class RESTInterface : public Interface
+            class RESTInterface : public tuscany::sca::model::Interface
             {
                 
             public:    
@@ -65,12 +61,12 @@ namespace tuscany
                 * return the QName of the schema type for this interface type
                 * (e.g. "http://www.osoa.org/xmlns/sca/1.0#interface.rest")
                 */
-                virtual const string& getInterfaceTypeQName() { return typeQName; };
+                virtual const std::string& getInterfaceTypeQName() { return typeQName; };
     
                 /**
                  * The QName of the schema type for this interface type.
                  */
-                SCA_REST_INTERFACE_API static const string typeQName;
+                SCA_REST_INTERFACE_API static const std::string typeQName;
                 
             private:
             

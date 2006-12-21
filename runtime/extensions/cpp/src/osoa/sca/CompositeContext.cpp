@@ -19,14 +19,16 @@
 
 /* $Rev$ $Date$ */
 
+#include "commonj/sdo/SDO.h"
+
 #include "osoa/sca/CompositeContext.h"
 #include "osoa/sca/ServiceRuntimeException.h"
+
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/cpp/CompositeContextImpl.h"
 #include "tuscany/sca/core/SCARuntime.h"
-#include "commonj/sdo/SDO.h"
 
-using commonj::sdo::DataFactoryPtr;
+using namespace commonj::sdo;
 using namespace tuscany::sca;
 using namespace tuscany::sca::cpp;
 

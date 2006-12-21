@@ -19,14 +19,15 @@
 
 /* $Rev$ $Date$ */
 
-#include "Calculator.h"
-
-#include "osoa/sca/sca.h"
-using namespace osoa::sca;
-
 #include <iostream>
 #include <stdlib.h>
+
+#include "osoa/sca/sca.h"
+
+#include "Calculator.h"
+
 using namespace std;
+using namespace osoa::sca;
 
 
 void usage();

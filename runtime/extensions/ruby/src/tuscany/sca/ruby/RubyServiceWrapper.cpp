@@ -20,8 +20,11 @@
 /* $Rev$ $Date$ */
 
 
-#include "tuscany/sca/ruby/RubyServiceWrapper.h"
+#include <sstream>
 
+#include "commonj/sdo/SDO.h"
+
+#include "tuscany/sca/ruby/RubyServiceWrapper.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
@@ -36,11 +39,10 @@
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
 #include "tuscany/sca/ruby/model/RubyServiceBinding.h"
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
-#include "commonj/sdo/SDO.h"
 
-#include <sstream>
-
-using commonj::sdo::PropertyList;
+using namespace std;
+using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {

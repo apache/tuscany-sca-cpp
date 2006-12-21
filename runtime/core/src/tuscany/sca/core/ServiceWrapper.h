@@ -26,8 +26,6 @@
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Service.h"
 
-using namespace tuscany::sca::model;
-
 
 namespace tuscany
 {
@@ -45,7 +43,7 @@ namespace tuscany
              * Constructor.
              * @param target The service wrapper wraps the target of a wire.
              */
-            ServiceWrapper(Service* service);
+            ServiceWrapper(tuscany::sca::model::Service* service);
 
             /**
              * Destructor.
@@ -56,7 +54,7 @@ namespace tuscany
              * Get the service represented by this wrapper.
              * @return The service represented by this wrapper.
              */
-            Service* getService() const { return service; }
+            tuscany::sca::model::Service* getService() const { return service; }
 
             /**
              * All business method calls on the target service are performed through
@@ -70,7 +68,7 @@ namespace tuscany
             /**
              * The target represented by this wrapper.
              */
-            Service* service;
+            tuscany::sca::model::Service* service;
             
         };
     } // End namespace sca

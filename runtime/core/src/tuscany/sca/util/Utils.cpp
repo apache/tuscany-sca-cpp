@@ -27,6 +27,7 @@
 
 using namespace std;
 using namespace commonj::sdo;
+
 namespace tuscany
 {
     namespace sca

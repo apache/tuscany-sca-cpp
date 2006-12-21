@@ -31,6 +31,9 @@
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/util/Utils.h"
 
+using namespace std;
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

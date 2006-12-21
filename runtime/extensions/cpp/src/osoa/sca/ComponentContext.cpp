@@ -19,16 +19,19 @@
 
 /* $Rev$ $Date$ */
 
+#include "commonj/sdo/SDO.h"
+
 #include "osoa/sca/ComponentContext.h"
-#include "tuscany/sca/util/Logging.h"
 #include "osoa/sca/ServiceRuntimeException.h"
+
+#include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/cpp/ComponentContextImpl.h"
 #include "tuscany/sca/core/SCARuntime.h"
-#include "commonj/sdo/SDO.h"
-using commonj::sdo::DataFactoryPtr;
 
+using namespace commonj::sdo;
 using namespace tuscany::sca;
 using namespace tuscany::sca::cpp;
+using namespace tuscany::sca::model;
 
 namespace osoa
 {

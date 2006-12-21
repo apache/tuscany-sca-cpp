@@ -19,8 +19,9 @@
 
 /* $Rev$ $Date$ */
 
-#include "DivideImpl.h"
 #include <stdio.h>
+
+#include "DivideImpl.h"
 
 DivideImpl::DivideImpl()
 {

@@ -23,14 +23,6 @@
 #ifndef tuscany_sca_python_pythonservicewrapper_h
 #define tuscany_sca_python_pythonservicewrapper_h
 
-#include "tuscany/sca/python/export.h"
-#include "tuscany/sca/core/ServiceWrapper.h"
-#include "tuscany/sca/core/Operation.h"
-#include "tuscany/sca/model/Component.h"
-#include "tuscany/sca/model/Interface.h"
-#include "tuscany/sca/python/model/PythonImplementation.h"
-
-using namespace tuscany::sca::model;
 
 // undefine _DEBUG so Python does not need it's deebug dll
 #ifdef _DEBUG
@@ -41,6 +33,13 @@ using namespace tuscany::sca::model;
 #ifdef _SCA_PYTHON_DEBUG
 #define _DEBUG
 #endif
+
+#include "tuscany/sca/python/export.h"
+#include "tuscany/sca/core/ServiceWrapper.h"
+#include "tuscany/sca/core/Operation.h"
+#include "tuscany/sca/model/Component.h"
+#include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/python/model/PythonImplementation.h"
 
 
 namespace tuscany
@@ -66,7 +65,7 @@ namespace tuscany
                  * Constructor.
                  * @param target The component service to which this wrapper refers.
                  */
-                PythonServiceWrapper(Service* service);
+                PythonServiceWrapper(tuscany::sca::model::Service* service);
     
                 /**
                  * Destructor.
@@ -127,7 +126,7 @@ namespace tuscany
                 /**
                  * The component to which this wrapper refers.
                  */
-                Component* component;
+                tuscany::sca::model::Component* component;
 
                 /**
                  * The component implementation

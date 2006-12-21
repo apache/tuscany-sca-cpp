@@ -21,8 +21,8 @@
 
 #ifndef tuscany_sca_model_servicebinding_h
 #define tuscany_sca_model_servicebinding_h
+
 #include <string>
-using std::string;
 
 #include "tuscany/sca/model/Binding.h"
 
@@ -54,7 +54,7 @@ namespace tuscany
                 /**
                  * Constructor to create a new binding.
                  */ 
-                SCA_API ServiceBinding(Service* service, const string& uri);
+                SCA_API ServiceBinding(Service* service, const std::string& uri);
 
                 /**
                  * Destructor.

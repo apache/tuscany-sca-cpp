@@ -22,15 +22,14 @@
 #ifndef tuscany_sca_extension_interfaceextension_h
 #define tuscany_sca_extension_interfaceextension_h
 
-#include "tuscany/sca/export.h"
 #include <string>
-using std::string;
 
-#include "tuscany/sca/model/Interface.h"
-#include "tuscany/sca/model/Composite.h"
 #include "commonj/sdo/SDO.h"
 
-using namespace tuscany::sca::model;
+#include "tuscany/sca/export.h"
+#include "tuscany/sca/model/Interface.h"
+#include "tuscany/sca/model/Composite.h"
+
 
 namespace tuscany
 {
@@ -52,19 +51,21 @@ namespace tuscany
             /**
             * return the name of the extension (e.g. "cpp" "php")
             */
-            virtual const string& getExtensionName() = 0;
+            virtual const std::string& getExtensionName() = 0;
                       
             /**
             * return the QName of schema elemant for this interface extension
             * (e.g. "http://www.osoa.org/xmlns/sca/1.0#interface.cpp")
             */
-            virtual const string& getExtensionTypeQName() = 0;
+            virtual const std::string& getExtensionTypeQName() = 0;
 
             /**
              * Get an interface from a DataObject representing an
              * SCDL interface
              */
-            virtual Interface* getInterface(Composite *composite, commonj::sdo::DataObjectPtr scdlInterface) = 0;
+            virtual tuscany::sca::model::Interface* getInterface(
+                tuscany::sca::model::Composite *composite,
+                commonj::sdo::DataObjectPtr scdlInterface) = 0;
             
         };
 

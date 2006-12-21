@@ -24,6 +24,7 @@
 
 #include "tuscany/sca/export.h"
 #include "tuscany/sca/util/LogWriter.h"
+
 namespace tuscany
 {
     namespace sca

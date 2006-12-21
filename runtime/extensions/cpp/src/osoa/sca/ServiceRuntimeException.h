@@ -26,8 +26,6 @@
 
 #include "tuscany/sca/core/Exceptions.h"
 
-using tuscany::sca::TuscanyRuntimeException;
-
 namespace osoa
 {
     namespace sca
@@ -36,19 +34,19 @@ namespace osoa
          * Top level exception to represent all the exceptions that may be 
          * thrown by an SCA runtime implementation.
          */
-        class SCA_CPP_API ServiceRuntimeException : public TuscanyRuntimeException
+        class SCA_CPP_API ServiceRuntimeException : public tuscany::sca::TuscanyRuntimeException
         {
         public:
             ServiceRuntimeException(
                 const char *name="ServiceRuntimeException",
                 severity_level sev=Severe,
                 const char* msg_text="")
-                : TuscanyRuntimeException(name, sev, msg_text)
+                : tuscany::sca::TuscanyRuntimeException(name, sev, msg_text)
             {
             }
 
-            ServiceRuntimeException(const TuscanyRuntimeException& e)
-                : TuscanyRuntimeException(e)
+            ServiceRuntimeException(const tuscany::sca::TuscanyRuntimeException& e)
+                : tuscany::sca::TuscanyRuntimeException(e)
             {
             }
         }; // End ServiceRuntimeException class definition

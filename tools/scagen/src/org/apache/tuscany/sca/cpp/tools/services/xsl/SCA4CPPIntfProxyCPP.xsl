@@ -67,9 +67,6 @@
 <xsl:apply-templates select="scaService" mode="include_header"/>
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;<!-- thats the prologue over nad done with
-     now continue with the scaServiceElement -->
 <xsl:apply-templates/> <!-- should go on to generic scaService below -->
 </xsl:template>
   
@@ -93,7 +90,7 @@ extern "C"
     </xsl:text><xsl:value-of select="$clazz"/>
 <xsl:text>* </xsl:text>
 <xsl:value-of select="$clazz"/>
-<xsl:text>_Factory(ServiceWrapper* target)
+<xsl:text>_Factory(tuscany::sca::ServiceWrapper* target)
     {
         return new </xsl:text><xsl:value-of select="$clazz"/><xsl:text>(target);
     }
@@ -110,7 +107,7 @@ extern "C"
 }
 
 </xsl:text>
-<xsl:value-of select="$clazz"/><xsl:text>::</xsl:text><xsl:value-of select="$clazz"/>(ServiceWrapper* targ) : target(targ)
+<xsl:value-of select="$clazz"/><xsl:text>::</xsl:text><xsl:value-of select="$clazz"/>(tuscany::sca::ServiceWrapper* targ) : target(targ)
 {
 }
 
@@ -211,7 +208,7 @@ DOM nodes that each relate to a function in the service
       </xsl:choose>
     </xsl:variable>
 <xsl:text>
-    Operation operation("</xsl:text>
+    tuscany::sca::Operation operation("</xsl:text>
     <xsl:value-of select="@operationNameAttr"/>
     <xsl:text>");</xsl:text>
     <xsl:if test="$noOfParms!=0">

@@ -21,6 +21,7 @@
 
 #include "tuscany/sca/extension/InterfaceExtension.h"
 #include "tuscany/sca/util/Logging.h"
+
 namespace tuscany
 {
     namespace sca

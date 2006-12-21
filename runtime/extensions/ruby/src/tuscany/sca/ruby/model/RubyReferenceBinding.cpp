@@ -23,6 +23,7 @@
 #include "tuscany/sca/ruby/model/RubyReferenceBinding.h"
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
 
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {

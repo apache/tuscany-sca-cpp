@@ -22,16 +22,11 @@
 
 #ifndef tuscany_sca_ruby_model_rubyimplementation_h
 #define tuscany_sca_ruby_model_rubyimplementation_h
-#include "tuscany/sca/model/ComponentType.h"
 
-#include <map>
-using std::map;
 #include <string>
-using std::string;
 
 #include "tuscany/sca/ruby/Ruby.h"
-
-using namespace tuscany::sca::model;
+#include "tuscany/sca/model/ComponentType.h"
 
 namespace tuscany
 {
@@ -42,7 +37,7 @@ namespace tuscany
             /**
              * Holds information about an SCA implementation written in Ruby
              */
-            class RubyImplementation : public ComponentType
+            class RubyImplementation : public tuscany::sca::model::ComponentType
             {
                 
             public:
@@ -53,7 +48,8 @@ namespace tuscany
                  * @param className Name of the Ruby implementation class.
                  * @param script Path of the Ruby script.
                  */
-                RubyImplementation(Composite* composite, const string& module, const string& className, const string& script);
+                RubyImplementation(tuscany::sca::model::Composite* composite,
+                    const std::string& module, const std::string& className, const std::string& script);
                 
                 /**
                  * Destructor
@@ -64,25 +60,25 @@ namespace tuscany
                  * Initialize a component of this type.
                  * @param component The component to initialize.
                  */
-                virtual void initializeComponent(Component* component);
+                virtual void initializeComponent(tuscany::sca::model::Component* component);
 
                 /**
                  * Returns the name of the Ruby module.
                  * @return The name of the Ruby module.
                  */
-                const string& getModule() const { return module; }
+                const std::string& getModule() const { return module; }
 
                 /**
                  * Returns the name of Ruby class.
                  * @return Name of the Ruby class.
                  */
-                const string& getClass() const { return className; }
+                const std::string& getClass() const { return className; }
 
                 /**
                  * Returns the path of the Ruby script.
                  * @return The path of the Ruby script.
                  */
-                const string& getScript() const { return script; }
+                const std::string& getScript() const { return script; }
                 
                 /**
                  * Returns the Ruby implementation class
@@ -104,17 +100,17 @@ namespace tuscany
                 /**
                  * Name of the Ruby module.
                  */
-                string module;
+                std::string module;
 
                 /**
                  * Name of the Ruby class.
                  */
-                string className;
+                std::string className;
 
                 /**
                  * Path of the Ruby script.
                  */
-                string script;
+                std::string script;
 
                 /**
                  * The Ruby implementation class

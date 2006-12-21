@@ -23,7 +23,6 @@
 #define tuscany_sca_model_wire_h
 
 #include <string>
-using std::string;
 
 namespace tuscany
 {
@@ -45,7 +44,7 @@ namespace tuscany
                  * @param target The target of the wire. Either a component and service
                  * service name (optional) or an external sevice.
                  */
-                SCA_API Wire(const string& source, const string& target);
+                SCA_API Wire(const std::string& source, const std::string& target);
 
                 /**
                  * Destructor.
@@ -56,35 +55,35 @@ namespace tuscany
                  * Get the component name defined by the source of the wire.
                  * @return The component name which is the source of the wire.
                  */
-                SCA_API const string& getSourceComponent() const { return sourceComponent; }
+                SCA_API const std::string& getSourceComponent() const { return sourceComponent; }
 
                 /**
                  * Get the reference name defined by the source of the wire.
                  * @return The reference name which is the source of the wire.
                  */
-                SCA_API const string& getSourceReference() const { return sourceReference; }
+                SCA_API const std::string& getSourceReference() const { return sourceReference; }
 
                 /**
                  * Get the target uri defined by the target of the wire.
                  * @return The target uri which is the source of the wire.
                  */
-                SCA_API const string& getTarget() { return target; }
+                SCA_API const std::string& getTarget() { return target; }
                 
              private:
                 /**
                  * The source component of the wire.
                  */
-                string sourceComponent;
+                std::string sourceComponent;
 
                 /**
                  * The source reference of the wire.
                  */
-                string sourceReference;
+                std::string sourceReference;
 
                 /**
                  * The target uri of the wire.
                  */
-                 string target;
+                 std::string target;
             };
             
         } // End namespace model

@@ -37,23 +37,23 @@ namespace services
             // string accountNumber
             // float balance
 
-            virtual DataObjectPtr /* CheckingAccount*/ getCheckingAccount(
-                const string id);
+            virtual commonj::sdo::DataObjectPtr /* CheckingAccount*/ getCheckingAccount(
+                const std::string id);
 
             // SavingsAccount is a data object containing
             // string accountNumber
             // float balance
 
-            virtual DataObjectPtr /* SavingsAccount */ getSavingsAccount(
-                const string id);
+            virtual commonj::sdo::DataObjectPtr /* SavingsAccount */ getSavingsAccount(
+                const std::string id);
 
             // StockAccount is a data object containing
             // string accountNumber
             // string symbol
             // int quantity
 
-            virtual DataObjectPtr /* StockAccount */ getStockAccount (
-                const string id);
+            virtual commonj::sdo::DataObjectPtr /* StockAccount */ getStockAccount (
+                const std::string id);
 
         };
         

@@ -23,6 +23,8 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

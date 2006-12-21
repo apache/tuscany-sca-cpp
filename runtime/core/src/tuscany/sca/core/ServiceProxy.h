@@ -26,12 +26,6 @@
 #include "tuscany/sca/export.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
-#include "tuscany/sca/core/ServiceWrapper.h"
-
-#include <vector>
-using std::vector;
-
-using namespace tuscany::sca::model;
 
 
 namespace tuscany
@@ -54,7 +48,7 @@ namespace tuscany
              * @param reference The reference on the source component.
              * @param target The wrapper of the service which is wired to this reference.
              */
-            ServiceProxy(Reference* reference);
+            ServiceProxy(tuscany::sca::model::Reference* reference);
 
             /**
              * Destructor.
@@ -65,14 +59,14 @@ namespace tuscany
              * Returns the reference represented by this proxy.
              * @return The Reference represented by this proxy.
              */
-            Reference* getReference() const { return reference; };
+            tuscany::sca::model::Reference* getReference() const { return reference; };
 
         private:
         
             /**
              * The reference represented by this proxy.
              */
-            Reference* reference;
+            tuscany::sca::model::Reference* reference;
         
         };
     } // End namespace sca

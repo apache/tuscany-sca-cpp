@@ -22,18 +22,14 @@
 #ifndef tuscany_sca_cpp_componentcontextimpl_h
 #define tuscany_sca_cpp_componentcontextimpl_h
 
-#include <vector>
-using std::vector;
-
 #include "osoa/sca/ComponentContext.h"
+
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/cpp/CPPServiceProxy.h"
 
-using namespace osoa::sca;
-        
 
 namespace tuscany
 {
@@ -45,7 +41,7 @@ namespace tuscany
         /** 
          * Contains the actual implementation of a ComponentContext interface.
          */
-        class ComponentContextImpl : public ComponentContext  
+        class ComponentContextImpl : public osoa::sca::ComponentContext  
         {
         
         public:
@@ -53,7 +49,7 @@ namespace tuscany
              * Constructor that takes a Component which represents the runtime
              * model for this context.
              */
-            ComponentContextImpl(Component* component);
+            ComponentContextImpl(tuscany::sca::model::Component* component);
 
             /**
              * Default constructor.
@@ -73,7 +69,7 @@ namespace tuscany
             /** 
              * See ComponentContext.
              */
-            virtual DataObjectPtr getProperties();
+            virtual commonj::sdo::DataObjectPtr getProperties();
 
             /** 
              * See ComponentContext.
@@ -84,7 +80,7 @@ namespace tuscany
              * Returns the contained Component.
              * @return The Component to which this context refers.
              */
-            virtual Component* getComponent() {return component;}
+            virtual tuscany::sca::model::Component* getComponent() {return component;}
             
         private:
             ComponentContextImpl(const ComponentContextImpl&);
@@ -94,7 +90,7 @@ namespace tuscany
              * Pointer to the runtime model Component to which this 
              * context refers.
              */
-            Component* component;
+            tuscany::sca::model::Component* component;
 
             /**
              * Helper method to return a proxy to a service.
@@ -104,15 +100,15 @@ namespace tuscany
              * class representing the target.
              */
             void* getServiceProxy(
-                Reference* serviceReference,
-                Service* target);
+                tuscany::sca::model::Reference* serviceReference,
+                tuscany::sca::model::Service* target);
 
             /**
              * Helper method to return a wrapper for a target service.
              * @param target The target for which this wrapper is to be created.
              * @return The service wrapper.
              */
-            ServiceWrapper* getServiceWrapper(Service* target);
+            ServiceWrapper* getServiceWrapper(tuscany::sca::model::Service* target);
 
         };
 

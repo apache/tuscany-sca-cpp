@@ -22,6 +22,8 @@
 #ifndef tuscany_sca_extension_ws_wsserviceproxy_h
 #define tuscany_sca_extension_ws_wsserviceproxy_h
 
+#include "commonj/sdo/SDO.h"
+
 #include "tuscany/sca/core/ServiceProxy.h" 
 #include "tuscany/sca/core/ServiceWrapper.h" 
 #include "tuscany/sca/model/Component.h"
@@ -29,12 +31,7 @@
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/WSDLOperation.h"
 #include "model/WSReferenceBinding.h"
-#include "commonj/sdo/SDO.h"
 
-using namespace tuscany::sca::model;
-
-using commonj::sdo::DataObjectPtr;
-using commonj::sdo::DataFactoryPtr;
 
 namespace tuscany
 {
@@ -58,7 +55,7 @@ namespace tuscany
                  * @param reference The reference on the source component.
                  * @param target The wrapper of the service which is wired to this reference.
                  */
-                WSServiceProxy(Reference* reference);
+                WSServiceProxy(tuscany::sca::model::Reference* reference);
     
                 /**
                  * Create a new service proxy for a service. The proxy will contain a pointer to
@@ -66,7 +63,7 @@ namespace tuscany
                  * @param reference The service on the target component.
                  * @param target The wrapper of the target service.
                  */
-                WSServiceProxy(Service* service);
+                WSServiceProxy(tuscany::sca::model::Service* service);
     
                 /**
                  * Destructor.
@@ -76,11 +73,13 @@ namespace tuscany
                 /**
                  * Invoke the specified operation
                  */
-                DataObjectPtr invoke(const WSDLOperation& wsdlOperation, DataObjectPtr inputDataObject);    
+                commonj::sdo::DataObjectPtr invoke(const tuscany::sca::model::WSDLOperation& wsdlOperation,
+                    commonj::sdo::DataObjectPtr inputDataObject);    
     
             private:
 
-                void setOutputData(Operation& operation, DataObjectPtr outputDataObject, DataFactoryPtr dataFactoryPtr);
+                void setOutputData(Operation& operation,
+                    commonj::sdo::DataObjectPtr outputDataObject, commonj::sdo::DataFactoryPtr dataFactoryPtr);
                 
                 /**
                  * The target service wrapper

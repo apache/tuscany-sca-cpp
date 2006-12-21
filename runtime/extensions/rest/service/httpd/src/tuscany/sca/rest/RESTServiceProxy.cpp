@@ -19,6 +19,10 @@
 
 /* $Rev$ $Date$ */
 
+#include <sstream>
+
+#include "commonj/sdo/SDO.h"
+
 #include "RESTServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
@@ -38,11 +42,8 @@
 #include "tuscany/sca/model/WSDLOperation.h"
 #include "model/RESTReferenceBinding.h"
 
-#include <sstream>
-
-#include "commonj/sdo/SDO.h"
+using namespace std;
 using namespace commonj::sdo;
-
 using namespace tuscany::sca::model;
 
 namespace tuscany

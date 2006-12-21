@@ -19,9 +19,10 @@
 
 /* $Rev$ $Date$ */
 
+#include "osoa/sca/ServiceRuntimeException.h"
+
 #include "tuscany/sca/cpp/CPPServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
-#include "osoa/sca/ServiceRuntimeException.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/ReferenceType.h"
@@ -35,7 +36,10 @@
 #include "tuscany/sca/cpp/model/CPPImplementation.h"
 #include "tuscany/sca/cpp/model/CPPReferenceBinding.h"
 
+using namespace std;
 using namespace osoa::sca;
+using namespace tuscany::sca::model;
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {

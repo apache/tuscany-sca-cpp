@@ -24,6 +24,7 @@
 #include "tuscany/sca/python/export.h"
 #include "tuscany/sca/python/model/PythonInterface.h"
 
+using namespace std;
 
 namespace tuscany
 {

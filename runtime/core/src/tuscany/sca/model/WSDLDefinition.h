@@ -22,19 +22,15 @@
 #ifndef tuscany_sca_model_wsdldefinition_h
 #define tuscany_sca_model_wsdldefinition_h
 
-#include "tuscany/sca/model/WSDLOperation.h"
-
-#include "tuscany/sca/export.h"
 #include <string>
-using std::string;
+#include <map>
+#include <vector>
 
 #include "commonj/sdo/SDO.h"
-using commonj::sdo::DataObjectPtr;
 
-#include <map>
-using std::map;
-#include <vector>
-using std::vector;
+#include "tuscany/sca/export.h"
+#include "tuscany/sca/model/WSDLOperation.h"
+
 
 namespace tuscany
 {
@@ -56,7 +52,7 @@ namespace tuscany
                  * @param wsdlModel The data object representing the WSDL document
                  * defining a web service.
                  */
-                 SCA_API WSDLDefinition(DataObjectPtr wsdlModel);
+                 SCA_API WSDLDefinition(commonj::sdo::DataObjectPtr wsdlModel);
 
                 /**
                  * Destructor.
@@ -67,12 +63,12 @@ namespace tuscany
                  * Returns the target namespace of the WSDL definitions.
                  * @return The target namespace.
                  */
-                SCA_API string getNamespace(void);
+                SCA_API std::string getNamespace(void);
 
                 /**
                  * Add a WSDL model.
                  */
-                SCA_API void addWSDLModel(DataObjectPtr wsdlModel);
+                SCA_API void addWSDLModel(commonj::sdo::DataObjectPtr wsdlModel);
 
                 /**
                  * Find an operation in the WSDL definitions.
@@ -83,9 +79,9 @@ namespace tuscany
                  * @param operationName The name of the operation to find.
                  * @return The operation if found. Exception thrown if not found.
                  */
-                SCA_API const WSDLOperation& findOperation(const string& serviceName, 
-                                        const string& portName, 
-                                        const string& operationName);
+                SCA_API const WSDLOperation& findOperation(const std::string& serviceName, 
+                                        const std::string& portName, 
+                                        const std::string& operationName);
                 
                 /**
                  * Find an operation in the WSDL definitions.
@@ -94,8 +90,8 @@ namespace tuscany
                  * @param operationName The name of the operation to find.
                  * @return The operation if found. Exception thrown if not found.
                  */
-                SCA_API const WSDLOperation& findOperation(const string& portTypeName, 
-                                        const string& operationName);
+                SCA_API const WSDLOperation& findOperation(const std::string& portTypeName, 
+                                        const std::string& operationName);
                 
             private:
 
@@ -105,7 +101,7 @@ namespace tuscany
                  * @return A data object describing the service if found, otherwise
                  * a 0 if not found.
                  */
-                DataObjectPtr findService(const string& serviceName);
+                commonj::sdo::DataObjectPtr findService(const std::string& serviceName);
 
                 /**
                  * Find a binding in the wsdl definition.
@@ -113,7 +109,7 @@ namespace tuscany
                  * @return A data object describing the binding if found, otherwise
                  * a 0 if not found.
                  */
-                DataObjectPtr findBinding(const string& bindingName);
+                commonj::sdo::DataObjectPtr findBinding(const std::string& bindingName);
 
                 /**
                  * Find a portType in the wsdl definition.
@@ -121,7 +117,7 @@ namespace tuscany
                  * @return A data object describing the portType if found, otherwise
                  * a 0 if not found.
                  */
-                DataObjectPtr findPortType(const string& portTypeName);
+                commonj::sdo::DataObjectPtr findPortType(const std::string& portTypeName);
 
                 /**
                  * Find a message in the wsdl definition.
@@ -129,16 +125,16 @@ namespace tuscany
                  * @return A data object describing the message if found, otherwise
                  * a 0 if not found.
                  */
-                DataObjectPtr findMessage(const string& messageName);
+                commonj::sdo::DataObjectPtr findMessage(const std::string& messageName);
 
 
                 /**
                  * The data object representation of the WSDL document.
                  */
-                typedef std::vector<DataObjectPtr> MODEL_VECTOR;
+                typedef std::vector<commonj::sdo::DataObjectPtr> MODEL_VECTOR;
                 MODEL_VECTOR wsdlModels;
                 
-                typedef map<string, WSDLOperation> OPERATION_MAP;
+                typedef std::map<std::string, WSDLOperation> OPERATION_MAP;
                 OPERATION_MAP operationMap;
             };
 

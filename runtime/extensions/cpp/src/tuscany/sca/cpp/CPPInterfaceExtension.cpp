@@ -23,6 +23,8 @@
 #include "tuscany/sca/cpp/model/CPPInterface.h"
 #include "tuscany/sca/util/Logging.h"
 
+using namespace std;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {

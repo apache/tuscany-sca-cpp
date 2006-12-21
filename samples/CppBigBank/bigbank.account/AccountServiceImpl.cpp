@@ -29,6 +29,7 @@
 #include "StockQuoteService.h"
 #include "AccountDataService.h"
 
+using namespace std;
 using namespace osoa::sca;
 using namespace services::accountdata;
 using namespace services::stockquote;

@@ -24,6 +24,9 @@
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/ws/WSServiceWrapper.h"
 
+using namespace std;
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

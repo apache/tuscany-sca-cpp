@@ -22,13 +22,12 @@
 #ifndef tuscany_sca_model_component_h
 #define tuscany_sca_model_component_h
 
-#include "tuscany/sca/export.h"
 #include <string>
-using std::string;
-   
 #include <map>
 
 #include "commonj/sdo/SDO.h"
+
+#include "tuscany/sca/export.h"
 
 
 namespace tuscany
@@ -72,7 +71,7 @@ namespace tuscany
                  * Returns the name of this component.
                  * @return the name of this component
                  */
-                SCA_API const string& getName() const { return name; }
+                SCA_API const std::string& getName() const { return name; }
             
                 /**
                  * Returns the composite containing this component.
@@ -99,7 +98,7 @@ namespace tuscany
                  * only one service it will be returned.
                  * @return The found service, or 0 if not found.
                  */
-                SCA_API Service* findService(const string& serviceName);
+                SCA_API Service* findService(const std::string& serviceName);
 
                 /**
                  * Add a new reference to this component.
@@ -112,7 +111,7 @@ namespace tuscany
                  * @param referenceName The name of the reference to find.
                  * @return The found reference, or 0 if not found.
                  */
-                SCA_API Reference* findReference(const string& referenceName);
+                SCA_API Reference* findReference(const std::string& referenceName);
 
                 /**
                  * Returns all the services defined on this component.
@@ -134,7 +133,7 @@ namespace tuscany
                  * @param name The name of the property.
                  * @param value The value of the property.
                  */
-                SCA_API void setProperty(const string& name, commonj::sdo::DataObjectPtr value);
+                SCA_API void setProperty(const std::string& name, commonj::sdo::DataObjectPtr value);
 
                 /**
                  * Returns a data object from which all the properties of the component
@@ -148,7 +147,7 @@ namespace tuscany
                 /**
                  * Name of the component.
                  */
-                string name;
+                std::string name;
                 
                 /**
                  * Composite containing the component.

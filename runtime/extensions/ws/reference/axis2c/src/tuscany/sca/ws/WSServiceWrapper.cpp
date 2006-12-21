@@ -23,6 +23,8 @@
 #pragma warning(disable: 4091)
 #endif
 
+#include "commonj/sdo/SDO.h"
+
 #include "tuscany/sca/util/Logging.h"
 #include "Axis2Client.h"
 #include "WSServiceWrapper.h"
@@ -32,9 +34,8 @@
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/ServiceType.h"
 
-#include "commonj/sdo/SDO.h"
+using namespace std;
 using namespace commonj::sdo;
-
 using namespace tuscany::sca;
 using namespace tuscany::sca::model;
 

@@ -20,14 +20,13 @@
 #ifndef tuscany_sca_extension_rest_restservicewrapper_h
 #define tuscany_sca_extension_rest_restservicewrapper_h
 
+#include <sstream>
+
+#include "commonj/sdo/SDO.h"
+
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/model/Service.h"
-#include "commonj/sdo/SDO.h"
-
-using namespace tuscany::sca::model;
-
-#include <sstream>
 
 
 namespace tuscany
@@ -46,7 +45,7 @@ namespace tuscany
                  * Constructor.
                  * @param target The service wrapper represents a Web service.
                  */
-                RESTServiceWrapper(Service* service);
+                RESTServiceWrapper(tuscany::sca::model::Service* service);
                 
                 /**
                  * Destructor
@@ -71,7 +70,7 @@ namespace tuscany
                 /**
                  * Get the configured binding URI
                  */
-                 const string getBindingURI();
+                 const std::string getBindingURI();
                 
                 /**
                  * Write a parameter into a URL
@@ -81,7 +80,7 @@ namespace tuscany
                 /**
                  * Set the return value on the given operation
                  */
-                void setReturn(commonj::sdo::XMLHelper* xmlHelper, string& payload, Operation& operation);
+                void setReturn(commonj::sdo::XMLHelper* xmlHelper, std::string& payload, Operation& operation);
                 
             };
         } // End namespace rest

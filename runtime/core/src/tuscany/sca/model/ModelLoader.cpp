@@ -19,6 +19,8 @@
 
 /* $Rev$ $Date$ */
 
+#include "commonj/sdo/TypeDefinitions.h"
+
 #include "tuscany/sca/export.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/Exceptions.h"
@@ -34,11 +36,12 @@
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/WSDLInterface.h"
 #include "tuscany/sca/core/SCARuntime.h"
-#include "commonj/sdo/TypeDefinitions.h"
 #include "tuscany/sca/util/File.h"
 
 
+using namespace std;
 using namespace commonj::sdo;
+using namespace tuscany::sca::util;
 
 
 #if defined(WIN32)  || defined (_WINDOWS)

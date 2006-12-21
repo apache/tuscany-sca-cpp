@@ -23,9 +23,7 @@
 #define tuscany_sca_util_file_h
 
 #include <string>
-using std::string;
 #include <vector>
-using std::vector;
 
 namespace tuscany
 {
@@ -46,7 +44,7 @@ namespace tuscany
                  * Either / or \ can be used interchangeably for separating directory elements.
                  * @param fileName Name of the file in the dirctory.
                  */
-                File(const string& directory, const string& fileName);
+                File(const std::string& directory, const std::string& fileName);
     
                 /**
                  * Destructor.
@@ -57,23 +55,23 @@ namespace tuscany
                  * Return the directory in which this file is located.
                  * @return Name of the directory.
                  */
-                const string& getDirectory() const {return directory;}
+                const std::string& getDirectory() const {return directory;}
     
                 /**
                  * Name of the file.
                  * @return Name of the file.
                  */
-                const string& getFileName() const {return fileName;}
+                const std::string& getFileName() const {return fileName;}
             private:
                 /**
                  * Name of the directory.
                  */
-                string directory;
+                std::string directory;
     
                 /**
                  * Name of the file.
                  */ 
-                string fileName;
+                std::string fileName;
             };
             
             /**
@@ -90,7 +88,7 @@ namespace tuscany
                  * @param pattern A pattern for matching file names. Can include * and ?.
                  * @param subdirectories Whether subdirectories should be searched too.
                  */
-                Files(const string& rootDirectory, const string& pattern, bool subdirectories = false);
+                Files(const std::string& rootDirectory, const std::string& pattern, bool subdirectories = false);
     
                 /**
                  * Destructor.
@@ -117,14 +115,14 @@ namespace tuscany
                  * @param pattern A pattern for matching file names. Can include * and ?.
                  * @param subdirectories Whether subdirectories should be searched too.
                  */
-                void findFiles(const string& rootDirectory, const string& pattern, bool subdirectories);
+                void findFiles(const std::string& rootDirectory, const std::string& pattern, bool subdirectories);
                 
                 /**
                  * The top level directory to search.
                  */ 
-                string rootDirectory;
+                std::string rootDirectory;
     
-                typedef vector<File> FILES;
+                typedef std::vector<File> FILES;
     
                 /**
                  * Vector of File.

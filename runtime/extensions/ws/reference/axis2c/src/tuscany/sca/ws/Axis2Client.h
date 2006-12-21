@@ -29,8 +29,6 @@
 #include "tuscany/sca/model/CompositeReference.h"
 #include "tuscany/sca/model/WSDLOperation.h"
 
-using namespace tuscany::sca::model;
-
 
 namespace tuscany
 {
@@ -42,21 +40,21 @@ namespace tuscany
             class Axis2Client
             {
             public:
-                Axis2Client(CompositeReference* compositeReference);
+                Axis2Client(tuscany::sca::model::CompositeReference* compositeReference);
                 virtual    ~Axis2Client();
 
                 virtual void invoke(Operation& operation);    
                 
             private:
-                CompositeReference* compositeReference;
+                tuscany::sca::model::CompositeReference* compositeReference;
                                
                 axiom_node_t* createPayload(Operation& operation, 
-                                               const WSDLOperation& wsdlOp,
+                                               const tuscany::sca::model::WSDLOperation& wsdlOp,
                                                axis2_env_t* env);
                                                  
                 void setReturn(axiom_node_t* returnNode,
                                Operation& operation, 
-                               const WSDLOperation& wsdlOp,
+                               const tuscany::sca::model::WSDLOperation& wsdlOp,
                                axis2_env_t* env);
                 
             };

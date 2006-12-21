@@ -19,8 +19,9 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/python/PythonServiceWrapper.h"
+#include "commonj/sdo/SDO.h"
 
+#include "tuscany/sca/python/PythonServiceWrapper.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
@@ -31,8 +32,9 @@
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/python/model/PythonImplementation.h"
 
-#include "commonj/sdo/SDO.h"
+using namespace std;
 using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {

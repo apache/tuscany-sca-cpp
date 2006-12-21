@@ -22,23 +22,17 @@
 #ifndef tuscany_sca_model_modelloader_h
 #define tuscany_sca_model_modelloader_h
 
-#include "tuscany/sca/export.h"
+#include <map>
+
 #include "commonj/sdo/SDO.h"
 
+#include "tuscany/sca/export.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Interface.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/ComponentType.h"
 #include "tuscany/sca/util/File.h"
-
-#include <map>
-using std::map;
-
-using commonj::sdo::DataObjectPtr;
-using commonj::sdo::XSDHelperPtr;
-using namespace tuscany::sca;
-
 
 namespace tuscany
 {
@@ -69,31 +63,31 @@ namespace tuscany
                  * @param systemRoot The location of the system configuration
                  * @param systemPath The search path for composites
                  */
-                void load(const string& systemRoot, const string& systemPath);
+                void load(const std::string& systemRoot, const std::string& systemPath);
                 
             private:
-                void loadSystem(const string& systemRoot);
+                void loadSystem(const std::string& systemRoot);
                 
-                void loadComposites(const string& searchPath);
-                Composite* loadCompositeFile(const File& file);
-                Composite* mapCompositePass1(const File& file, DataObjectPtr rootDO);
-                Composite* mapCompositePass2(const string& compositeName, DataObjectPtr rootDO);
+                void loadComposites(const std::string& searchPath);
+                Composite* loadCompositeFile(const tuscany::sca::util::File& file);
+                Composite* mapCompositePass1(const tuscany::sca::util::File& file, commonj::sdo::DataObjectPtr rootDO);
+                Composite* mapCompositePass2(const std::string& compositeName, commonj::sdo::DataObjectPtr rootDO);
 
-                void addComponent(Composite* composite, DataObjectPtr componentDO);
-                void addCompositeService(Composite* composite, DataObjectPtr compositeServiceDO);
-                void addCompositeReference(Composite* composite, DataObjectPtr referenceServiceDO);
+                void addComponent(Composite* composite, commonj::sdo::DataObjectPtr componentDO);
+                void addCompositeService(Composite* composite, commonj::sdo::DataObjectPtr compositeServiceDO);
+                void addCompositeReference(Composite* composite, commonj::sdo::DataObjectPtr referenceServiceDO);
 
-                void addServiceTypes(Composite* composite, ComponentType* componentType, DataObjectPtr componentTypeDO);
-                void addReferenceTypes(Composite* composite, ComponentType* componentType, DataObjectPtr componentTypeDO);
-                void addPropertyTypes(ComponentType* componentType, DataObjectPtr componentTypeDO);
+                void addServiceTypes(Composite* composite, ComponentType* componentType, commonj::sdo::DataObjectPtr componentTypeDO);
+                void addReferenceTypes(Composite* composite, ComponentType* componentType, commonj::sdo::DataObjectPtr componentTypeDO);
+                void addPropertyTypes(ComponentType* componentType, commonj::sdo::DataObjectPtr componentTypeDO);
 
-                void loadTypeMetadata(const string &compositeRootDir, Composite* composite);
+                void loadTypeMetadata(const std::string &compositeRootDir, Composite* composite);
                 
                 void loadXMLSchema(Composite* composite, const char *fileName);
                 void loadWSDLDefinition(Composite* composite, const char *fileName);
-                void initializeWSDLModel(XSDHelperPtr xsdHelper);
+                void initializeWSDLModel(commonj::sdo::XSDHelperPtr xsdHelper);
     
-                Interface* getInterface(Composite* composite, DataObjectPtr obj);
+                Interface* getInterface(Composite* composite, commonj::sdo::DataObjectPtr obj);
 
                 SCARuntime* runtime;
 
@@ -111,13 +105,13 @@ namespace tuscany
                 /**
                  * Maps of all the composites installed on the system.
                  */
-                typedef map<string, Composite*> COMPOSITE_MODELS;
+                typedef std::map<std::string, Composite*> COMPOSITE_MODELS;
                 COMPOSITE_MODELS compositeModels;
                 
-                typedef map<string, DataObjectPtr> COMPOSITE_DATAOBJECTS;
+                typedef std::map<std::string, DataObjectPtr> COMPOSITE_DATAOBJECTS;
                 COMPOSITE_DATAOBJECTS compositeDataObjects;
 
-                typedef map<string, Composite*> COMPOSITE_FILES;
+                typedef std::map<std::string, Composite*> COMPOSITE_FILES;
                 COMPOSITE_FILES compositeFiles;
 
             };

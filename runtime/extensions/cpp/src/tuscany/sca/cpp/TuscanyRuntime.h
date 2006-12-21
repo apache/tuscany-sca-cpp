@@ -22,10 +22,9 @@
 #ifndef tuscany_sca_cpp_tuscanyruntime_h
 #define tuscany_sca_cpp_tuscanyruntime_h
 
-#include "osoa/sca/export.h"
-
 #include <string>
-using std::string;
+
+#include "osoa/sca/export.h"
 
 namespace tuscany
 {
@@ -43,8 +42,8 @@ namespace tuscany
                 /**
                 * Default constructor
                 */
-                TuscanyRuntime(const string& defaultComponentName = "",
-                    const string& root = "", const string& path = "");            
+                TuscanyRuntime(const std::string& defaultComponentName = "",
+                    const std::string& root = "", const std::string& path = "");            
                 
                 /**
                 * Destructor
@@ -56,19 +55,19 @@ namespace tuscany
                 * Set the system root configuration path
                 * @param root The path to the system configuration.
                 */
-                void setSystemRoot(const string& root);
+                void setSystemRoot(const std::string& root);
                 
                 /**
                 * Set the system composite search path
                 * @param root The search path for composites.
                 */
-                void setSystemPath(const string& path);
+                void setSystemPath(const std::string& path);
                 
                 /**
                 * Set the default component for the system
                 * @param componentName The name of the default component.
                 */
-                void setDefaultComponentName(const string& componentName);
+                void setDefaultComponentName(const std::string& componentName);
                 
                 /**
                 * start the runtime
@@ -82,9 +81,9 @@ namespace tuscany
                 
                 
             private:
-                string systemRoot;
-                string systemPath;
-                string defaultComponentName;
+                std::string systemRoot;
+                std::string systemPath;
+                std::string defaultComponentName;
             };
     
         } // End namespace cpp

@@ -22,8 +22,9 @@
 #ifndef osoa_sca_compositecontext_h
 #define osoa_sca_compositecontext_h
 
-#include "osoa/sca/export.h"
 #include "commonj/sdo/SDO.h"
+
+#include "osoa/sca/export.h"
 
 namespace osoa
 {

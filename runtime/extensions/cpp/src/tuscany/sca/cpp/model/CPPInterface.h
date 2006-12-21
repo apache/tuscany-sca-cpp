@@ -22,14 +22,10 @@
 #ifndef tuscany_sca_cpp_model_cppinterface_h
 #define tuscany_sca_cpp_model_cppinterface_h
 
+#include <string>
+
 #include "tuscany/sca/model/Interface.h"
 
-#include <map>
-using std::map;
-#include <string>
-using std::string;
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -41,7 +37,7 @@ namespace tuscany
              * Holds information about an interface described using a C++
              * header file.
              */
-            class CPPInterface : public Interface
+            class CPPInterface : public tuscany::sca::model::Interface
             {
                 
             public:    
@@ -55,8 +51,8 @@ namespace tuscany
                  * @param remotable True if the interface is remotable.
                  */
                 CPPInterface(
-                    const string& header,
-                    const string& className,
+                    const std::string& header,
+                    const std::string& className,
                     bool remotable,
                     bool conversational);  
 
@@ -70,47 +66,47 @@ namespace tuscany
                  * @return The name of the header file containing the definition of the
                  * interface.
                  */
-                const string& getHeader() { return header; }
+                const std::string& getHeader() { return header; }
 
                 /**
                  * Return the name of the header file without the extension.
                  * @return Header file name without any extension.
                  */
-                const string& getHeaderStub() { return headerStub; }
+                const std::string& getHeaderStub() { return headerStub; }
 
                 /**
                  * Get the name of the class.
                  * @return The name of the class defining the interface.
                  */
-                const string& getClass() { return className; }
+                const std::string& getClass() { return className; }
 
                 /**
                 * return the QName of the schema type for this interface type
                 * (e.g. "http://www.osoa.org/xmlns/sca/1.0#interface.cpp")
                 */
-                virtual const string& getInterfaceTypeQName() { return typeQName; };
+                virtual const std::string& getInterfaceTypeQName() { return typeQName; };
     
            private:
            
                 /**
                  * Name of the header file containing the definition of the interface.
                  */
-                string header;
+                std::string header;
 
                 /**
                  * Name of the header file without the extension.
                  */
-                string headerStub;
+                std::string headerStub;
 
                 /**
                  * Name of the class in the header file.
                  */
-                string className;
+                std::string className;
 
                 /**
                  * The QName of the schema type for this interface type.
                  */
-                static const string typeQName;
+                static const std::string typeQName;
             };
             
         } // End namespace cpp

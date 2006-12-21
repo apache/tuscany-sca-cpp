@@ -48,21 +48,24 @@ namespace tuscany
                 /**
                 * return the name of the extension
                 */
-                virtual const string& getExtensionName() {return extensionName;}
+                virtual const std::string& getExtensionName() {return extensionName;}
                 
                 /**
                 * return the QName of schema elemant for this implementation extension
                 * (e.g. "http://www.osoa.org/xmlns/sca/1.0#binding.ws")
                 */
-                virtual const string& getExtensionTypeQName() {return typeQName;}
+                virtual const std::string& getExtensionTypeQName() {return typeQName;}
                 
-                virtual ServiceBinding* getServiceBinding(Composite* composite, Service* service, DataObjectPtr scdlBinding);
+                virtual tuscany::sca::model::ServiceBinding* getServiceBinding(
+                    tuscany::sca::model::Composite* composite,
+                    tuscany::sca::model::Service* service,
+                    commonj::sdo::DataObjectPtr scdlBinding);
                 
                 static void initialize();
 
             private:
-                static const string extensionName;
-                static const string typeQName;
+                static const std::string extensionName;
+                static const std::string typeQName;
                 
             };
             

@@ -19,13 +19,18 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/util/Logging.h"
 #include "osoa/sca/ServiceRuntimeException.h"
+
+#include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/cpp/ComponentContextImpl.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/ReferenceBinding.h"
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/ServiceBinding.h"
+
+using namespace std;
+using namespace tuscany::sca::model;
+using namespace osoa::sca;
 
 namespace tuscany
 {

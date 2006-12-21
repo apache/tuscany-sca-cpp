@@ -22,13 +22,11 @@
 #ifndef tuscany_sca_extension_ws_model_wsreferencebinding_h
 #define tuscany_sca_extension_ws_model_wsreferencebinding_h
 
-#include "tuscany/sca/model/ReferenceBinding.h"
-#include "tuscany/sca/ws/export.h"
-
-using namespace tuscany::sca::model;
-
 #include <string>
-using std::string;
+
+#include "tuscany/sca/ws/export.h"
+#include "tuscany/sca/model/ReferenceBinding.h"
+
 
 namespace tuscany
 {
@@ -39,7 +37,7 @@ namespace tuscany
             /**
              * Information about a web service binding for service or a reference.
              */
-            class WSReferenceBinding : public ReferenceBinding
+            class WSReferenceBinding : public tuscany::sca::model::ReferenceBinding
             {    
             public:
 
@@ -50,7 +48,8 @@ namespace tuscany
                  * or external service is to be bound. This is of the form
                  * "namespace"#endpoint("service"/"endpoint")
                  */
-                SCA_WS_SERVICE_API WSReferenceBinding(Reference* reference, const string&uri, const string& endpoint, const string& version);  
+                SCA_WS_SERVICE_API WSReferenceBinding(tuscany::sca::model::Reference* reference,
+                    const std::string&uri, const std::string& endpoint, const std::string& version);  
 
                 /**
                  * Destructor.
@@ -60,12 +59,12 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#WebServiceBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#WebServiceBinding"; };
                             
                  /**
                   * Configure this binding from a service binding.
                   */
-                SCA_WS_SERVICE_API virtual void configure(ServiceBinding* serviceBinding);
+                SCA_WS_SERVICE_API virtual void configure(tuscany::sca::model::ServiceBinding* serviceBinding);
                                 
                 /**
                  * Create a proxy representing the reference to the
@@ -78,30 +77,30 @@ namespace tuscany
                  * namespace.
                  * @return The wsdl namespace.
                  */
-                string getWSDLNamespaceURL() const { return wsdlNamespaceURL; };
+                std::string getWSDLNamespaceURL() const { return wsdlNamespaceURL; };
 
                 /**
                  * Return the service part of the endpoint definition.
                  * @return The service to use.
                  */
-                string getServiceName() const { return serviceName; };
+                std::string getServiceName() const { return serviceName; };
 
                 /**
                  * Return the endpoint name part of the endpoint definition.
                  * @return The endpoint name to use.
                  */
-                string getEndpointName() const { return endpointName; };
+                std::string getEndpointName() const { return endpointName; };
                 
                 /**
                  * Return the SOAP version.
                  * @return The SOAP version to use.
                  */
-                string getSOAPVersion() const { return soapVersion; };
+                std::string getSOAPVersion() const { return soapVersion; };
                 
                  /**
                   * Returns the target service binding.
                   */
-                  ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
+                tuscany::sca::model::ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
                                 
             private:
             
@@ -113,27 +112,27 @@ namespace tuscany
                 /**
                  * The full endpoint string.
                  */
-                string endpoint;
+                std::string endpoint;
 
                 /**
                  * Namespace from the endpoint.
                  */
-                string wsdlNamespaceURL;
+                std::string wsdlNamespaceURL;
 
                 /**
                  * Service name from the endpoint.
                  */
-                string serviceName;
+                std::string serviceName;
 
                 /**
                  * Endpoint name from the endpoint.
                  */
-                string endpointName;
+                std::string endpointName;
 
                 /**
                  * SOAP version.
                  */
-                string soapVersion;
+                std::string soapVersion;
 
                 /**
                  * The proxy representing the reference to the client
@@ -144,7 +143,7 @@ namespace tuscany
                 /**
                  * The service binding of the target
                  */
-                ServiceBinding* targetServiceBinding; 
+                tuscany::sca::model::ServiceBinding* targetServiceBinding; 
             };
             
         } // End namespace ws

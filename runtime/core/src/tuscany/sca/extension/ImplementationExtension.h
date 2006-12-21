@@ -22,18 +22,15 @@
 #ifndef tuscany_sca_extension_implementationextension_h
 #define tuscany_sca_extension_implementationextension_h
 
-#include "tuscany/sca/export.h"
 #include <string>
-using std::string;
 
+#include "commonj/sdo/SDO.h"
+
+#include "tuscany/sca/export.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/model/Composite.h"
-
-#include "commonj/sdo/SDO.h"
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -55,19 +52,21 @@ namespace tuscany
             /**
             * return the name of the extension (e.g. "cpp" "php")
             */
-            virtual const string& getExtensionName() = 0;
+            virtual const std::string& getExtensionName() = 0;
                       
             /**
             * return the QName of schema elemant for this implementation extension
             * (e.g. "http://www.osoa.org/xmlns/sca/1.0#implementation.cpp")
             */
-            virtual const string& getExtensionTypeQName() = 0;
+            virtual const std::string& getExtensionTypeQName() = 0;
 
             /**
              * Get an implementation from a DataObject representing
              * an SCDL implementation element
              */ 
-            virtual ComponentType* getImplementation(Composite* composite, commonj::sdo::DataObjectPtr scdlImplementation) = 0;
+            virtual tuscany::sca::model::ComponentType* getImplementation(
+                tuscany::sca::model::Composite* composite,
+                commonj::sdo::DataObjectPtr scdlImplementation) = 0;
 
          };
 

@@ -30,6 +30,8 @@
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 
+using namespace std;
+
 
 namespace tuscany
 {

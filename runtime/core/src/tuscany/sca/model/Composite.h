@@ -22,17 +22,13 @@
 #ifndef tuscany_sca_model_composite_h
 #define tuscany_sca_model_composite_h
 
-#include "tuscany/sca/export.h"
 #include <string>
-using std::string;
-
 #include <map>
-using std::map;
 #include <vector>
-using std::vector;
 
 #include "commonj/sdo/SDO.h"
 
+#include "tuscany/sca/export.h"
 #include "tuscany/sca/model/ComponentType.h"
 
 
@@ -67,7 +63,7 @@ namespace tuscany
                  * @param name the name of the composite.
                  * @param root the root of the composite in the file system.
                  */
-                SCA_API Composite(const string& name, const string& root);
+                SCA_API Composite(const std::string& name, const std::string& root);
 
                 /**
                  * Destructor.
@@ -78,7 +74,7 @@ namespace tuscany
                  * Returns the root directory of the composite.
                  * @return The root of the composite in the file system.
                  */
-                SCA_API const string& getRoot() const { return root; }
+                SCA_API const std::string& getRoot() const { return root; }
                 
                 /**
                  * Add a new component to the composite.
@@ -111,14 +107,14 @@ namespace tuscany
                  * @param target The target location. Either the target component and
                  * service (optional), or an external service.
                  */
-                SCA_API void addWire(const string& source, const string& target);
+                SCA_API void addWire(const std::string& source, const std::string& target);
  
                 /**
                  * Find a component by name.
                  * @param componentName The name of the component to be found.
                  * @return The component that was found, or 0 if not found.
                  */
-                SCA_API Component* findComponent(const string& componentName);
+                SCA_API Component* findComponent(const std::string& componentName);
 
                 /**
                  * Find a component and service by name.
@@ -127,7 +123,7 @@ namespace tuscany
                  * if there is only one service on the component.
                  * @return The Service that was found, or 0 if not found.
                  */
-                SCA_API Service* findComponentService(const string& componentServiceName);
+                SCA_API Service* findComponentService(const std::string& componentServiceName);
 
                 /**
                  * Add a WSDL definition to the composite.
@@ -140,7 +136,7 @@ namespace tuscany
                  * Find a WSDL definition by target namespace.
                  * @param wsdlNamespace The namespace of the WSDL definitions to find.
                  */
-                SCA_API WSDLDefinition* findWSDLDefinition(const string& wsdlNamespace);
+                SCA_API WSDLDefinition* findWSDLDefinition(const std::string& wsdlNamespace);
 
                  /**
                  * Initialize a component of this type.
@@ -175,7 +171,7 @@ namespace tuscany
                 /**
                  * Directory of the root of the composite.
                  */
-                string root;
+                std::string root;
 
                 /**
                  * Cached XSDHelper.
@@ -190,25 +186,25 @@ namespace tuscany
                 /**
                  * Map (by name) of all the components in this composite.
                  */
-                typedef map<string, Component*> COMPONENT_MAP;
+                typedef std::map<std::string, Component*> COMPONENT_MAP;
                 COMPONENT_MAP components;
 
                 /**
                  * Vector of all the composites included in this composite.
                  */
-                typedef vector<Composite*> INCLUDES;
+                typedef std::vector<Composite*> INCLUDES;
                 INCLUDES includes;
 
                 /**
                  * Vector of all the wires in this composite.
                  */
-                typedef vector<Wire*> WIRES;
+                typedef std::vector<Wire*> WIRES;
                 WIRES wires;
 
                 /**
                  * Map by namespace of all the wsdl definitions in this composite.
                  */
-                typedef map<string, WSDLDefinition*> WSDL_MAP;
+                typedef std::map<std::string, WSDLDefinition*> WSDL_MAP;
                 WSDL_MAP wsdlDefinitions;
             };
 

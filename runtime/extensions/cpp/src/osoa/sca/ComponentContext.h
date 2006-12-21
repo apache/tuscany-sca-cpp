@@ -22,10 +22,13 @@
 #ifndef osoa_sca_componentcontext_h
 #define osoa_sca_componentcontext_h
 
-#include "osoa/sca/export.h"
-#include "commonj/sdo/SDO.h"
 #include <string>
 #include <list>
+
+#include "commonj/sdo/SDO.h"
+
+#include "osoa/sca/export.h"
+
 namespace osoa
 {
     namespace sca

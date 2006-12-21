@@ -47,19 +47,21 @@ namespace tuscany
                 /**
                 * return the name of the extension
                 */
-                virtual const string& getExtensionName() {return extensionName;}
+                virtual const std::string& getExtensionName() {return extensionName;}
                 
                 /**
                 * return the QName of schema elemant for this implementation extension
                 * (e.g. "http://www.osoa.org/xmlns/sca/1.0#PythonInterface")
                 */
-                virtual const string& getExtensionTypeQName() {return typeQName;}
+                virtual const std::string& getExtensionTypeQName() {return typeQName;}
  
-                virtual tuscany::sca::model::Interface* getInterface(Composite* composite, DataObjectPtr scdlInterface);
+                virtual tuscany::sca::model::Interface* getInterface(
+                    tuscany::sca::model::Composite* composite,
+                    commonj::sdo::DataObjectPtr scdlInterface);
                  
             private:
-                static const string extensionName;
-                static const string typeQName;
+                static const std::string extensionName;
+                static const std::string typeQName;
                 
             };
             

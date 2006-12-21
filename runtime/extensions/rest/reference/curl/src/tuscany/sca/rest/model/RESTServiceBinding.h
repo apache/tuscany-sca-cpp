@@ -20,11 +20,10 @@
 #ifndef tuscany_sca_extension_rest_model_restservicebinding_h
 #define tuscany_sca_extension_rest_model_restservicebinding_h
 
+#include <string>
+
 #include "tuscany/sca/model/ServiceBinding.h"
 #include "tuscany/sca/model/Service.h"
-
-#include <string>
-using std::string;
 
 namespace tuscany
 {
@@ -35,7 +34,7 @@ namespace tuscany
             /**
              * Information about a REST binding for a service or a reference.
              */
-            class RESTServiceBinding : public model::ServiceBinding
+            class RESTServiceBinding : public tuscany::sca::model::ServiceBinding
             {    
             public:
 
@@ -43,7 +42,7 @@ namespace tuscany
                  * Constructor.
                  * @param uri The uri of the binding.
                  */
-                RESTServiceBinding(model::Service* service, const string& uri);  
+                RESTServiceBinding(tuscany::sca::model::Service* service, const std::string& uri);  
 
                 /**
                  * Destructor.
@@ -53,7 +52,7 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#RESTBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#RESTBinding"; };
                             
                 /**
                  * Create a wrapper for the service configured by this

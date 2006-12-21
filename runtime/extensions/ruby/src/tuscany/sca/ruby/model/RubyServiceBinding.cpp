@@ -23,6 +23,8 @@
 #include "tuscany/sca/ruby/model/RubyServiceBinding.h"
 #include "tuscany/sca/ruby/RubyServiceWrapper.h"
 
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

@@ -22,19 +22,17 @@
 #ifndef tuscany_sca_extension_servicebindingextension_h
 #define tuscany_sca_extension_servicebindingextension_h
 
-#include "tuscany/sca/export.h"
 #include <string>
-using std::string;
 
+#include "commonj/sdo/SDO.h"
+
+#include "tuscany/sca/export.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/ServiceBinding.h"
 
-#include "commonj/sdo/SDO.h"
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -56,19 +54,22 @@ namespace tuscany
             /**
             * return the name of the extension (e.g. "cpp" "php")
             */
-            virtual const string& getExtensionName() = 0;
+            virtual const std::string& getExtensionName() = 0;
                       
             /**
             * return the QName of schema elemant for this binding extension
             * (e.g. "http://www.osoa.org/xmlns/sca/1.0#binding.ws")
             */
-            virtual const string& getExtensionTypeQName() = 0;
+            virtual const std::string& getExtensionTypeQName() = 0;
 
             /**
              * Get a reference binding from a DataObject representing
              * an SCDL binding element
              */ 
-            virtual ServiceBinding* getServiceBinding(Composite* composite, Service* service, commonj::sdo::DataObjectPtr scdlBinding) = 0;
+            virtual tuscany::sca::model::ServiceBinding* getServiceBinding(
+                tuscany::sca::model::Composite* composite,
+                tuscany::sca::model::Service* service,
+                commonj::sdo::DataObjectPtr scdlBinding) = 0;
 
          };
 

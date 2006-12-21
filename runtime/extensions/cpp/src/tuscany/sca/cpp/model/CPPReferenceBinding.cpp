@@ -23,6 +23,8 @@
 #include "tuscany/sca/cpp/model/CPPReferenceBinding.h"
 #include "tuscany/sca/cpp/CPPServiceProxy.h"
 
+using namespace tuscany::sca::model;
+
 
 namespace tuscany
 {

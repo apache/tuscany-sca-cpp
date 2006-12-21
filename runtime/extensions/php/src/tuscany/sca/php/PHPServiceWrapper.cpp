@@ -24,8 +24,9 @@
 // WinSock.h and WinSock2.h to be included leading to redefinitions
 #define _WINSOCKAPI_
 
-#include "tuscany/sca/php/PHPServiceWrapper.h"
+#include <php_embed.h>
 
+#include "tuscany/sca/php/PHPServiceWrapper.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
@@ -36,7 +37,8 @@
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/php/model/PHPImplementation.h"
 
-#include <php_embed.h>
+using namespace std;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {

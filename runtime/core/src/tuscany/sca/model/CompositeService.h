@@ -23,9 +23,6 @@
 #define tuscany_sca_model_compositeservicetype_h
 
 #include <string>
-using std::string;
-#include <vector>
-using std::vector;
 
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/ReferenceType.h"
@@ -56,7 +53,7 @@ namespace tuscany
                  * @param componentType The component type on which this service is defined.
                  * @param name The name of the service.
                  */
-                SCA_API CompositeService(Composite* composite, const string& name,
+                SCA_API CompositeService(Composite* composite, const std::string& name,
                     Interface* intface, Interface* callbackInterface, bool conversational, ReferenceType::Multiplicity multiplicity);
 
                 /**

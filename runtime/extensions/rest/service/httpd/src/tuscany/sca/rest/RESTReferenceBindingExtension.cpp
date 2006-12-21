@@ -23,12 +23,15 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/SCARuntime.h"
 
+using namespace std;
+using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 extern "C"
 {
-    #if defined(WIN32) || defined(_WINDOWS)
+#if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
-    #endif
+#endif
         void tuscany_sca_extension_initialize()
     {
         tuscany::sca::rest::RESTReferenceBindingExtension::initialize();
@@ -70,9 +73,9 @@ namespace tuscany
                 {
                     string uri = scdlBinding->getCString("uri");
 
-                    RESTReferenceBinding* serviceBinding = new RESTReferenceBinding(reference, uri);
+                    RESTReferenceBinding* referenceBinding = new RESTReferenceBinding(reference, uri);
                     
-                    return serviceBinding;
+                    return referenceBinding;
                 }
                 else
                 {

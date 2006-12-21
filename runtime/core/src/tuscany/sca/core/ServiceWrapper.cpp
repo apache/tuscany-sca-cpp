@@ -22,6 +22,8 @@
 #include "tuscany/sca/core/ServiceWrapper.h"
 #include "tuscany/sca/util/Logging.h"
 
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

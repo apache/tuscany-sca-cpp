@@ -19,12 +19,13 @@
 
 /* $Rev$ $Date$ */
 
-#include "CalculatorImpl.h"
 #include <stdio.h>
 
-#include "Divide.h"
 #include "osoa/sca/ComponentContext.h"
 #include "osoa/sca/ServiceRuntimeException.h"
+
+#include "CalculatorImpl.h"
+#include "Divide.h"
 
 CalculatorImpl::CalculatorImpl()
 {

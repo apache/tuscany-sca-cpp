@@ -23,15 +23,8 @@
 #pragma warning(disable: 4786)
 #endif
 
-#include "tuscany/sca/util/File.h"
-#include "tuscany/sca/util/Utils.h"
-#include "tuscany/sca/core/Exceptions.h"
-#include "tuscany/sca/util/Logging.h"
 #include <iostream>
-
 #include <string>
-#include <iostream>
-using namespace std;
 
 #if defined(WIN32)  || defined (_WINDOWS)
 #include <windows.h> 
@@ -40,6 +33,13 @@ using namespace std;
 #include <sys/stat.h>
 #include <dirent.h>
 #endif
+
+#include "tuscany/sca/util/File.h"
+#include "tuscany/sca/util/Utils.h"
+#include "tuscany/sca/core/Exceptions.h"
+#include "tuscany/sca/util/Logging.h"
+
+using namespace std;
 
 namespace tuscany
 {

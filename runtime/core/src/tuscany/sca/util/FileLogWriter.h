@@ -22,10 +22,10 @@
 #ifndef tuscany_sca_util_filelogwriter_h
 #define tuscany_sca_util_filelogwriter_h
 
-#include "tuscany/sca/util/LogWriter.h"
 #include <iostream>
 #include <fstream>
-using std::ofstream;
+
+#include "tuscany/sca/util/LogWriter.h"
 
 namespace tuscany
 {
@@ -49,7 +49,7 @@ namespace tuscany
                  */
                 virtual void log(int level, const char* pid, const char* msg);
             private:
-                ofstream logFile;
+                std::ofstream logFile;
             };
         
         } // End namespace util

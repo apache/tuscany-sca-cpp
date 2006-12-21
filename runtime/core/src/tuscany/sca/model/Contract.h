@@ -22,9 +22,6 @@
 #ifndef tuscany_sca_model_contract_h
 #define tuscany_sca_model_contract_h
 
-#include <string>
-using std::string;
-
 #include "tuscany/sca/model/Interface.h"
 
 namespace tuscany

@@ -20,6 +20,12 @@
 #pragma warning(disable: 4091)
 #endif
 
+#include <curl/curl.h>
+#include <curl/types.h>
+#include <curl/easy.h>
+
+#include "commonj/sdo/SDO.h"
+
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
@@ -34,15 +40,10 @@
 #include "model/RESTServiceBinding.h"
 #include "tuscany/sca/rest/model/RESTInterface.h"
 
-#include "commonj/sdo/SDO.h"
+using namespace std;
 using namespace commonj::sdo;
-
-#include <curl/curl.h>
-#include <curl/types.h>
-#include <curl/easy.h>
-
-using namespace tuscany::sca;
 using namespace tuscany::sca::model;
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {

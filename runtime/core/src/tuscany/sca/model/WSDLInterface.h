@@ -22,10 +22,9 @@
 #ifndef tuscany_sca_model_wsdlinterface_h
 #define tuscany_sca_model_wsdlinterface_h
 
-#include "tuscany/sca/model/Interface.h"
-
 #include <string>
-using std::string;
+
+#include "tuscany/sca/model/Interface.h"
 
 namespace tuscany
 {
@@ -45,7 +44,7 @@ namespace tuscany
                  * Constuctor.
                  * @param interfaceName Name of the WSDL interface.
                  */
-                WSDLInterface(const string& qname, bool remotable, bool conversational);  
+                WSDLInterface(const std::string& qname, bool remotable, bool conversational);  
 
                 /**
                  * Destructor.
@@ -55,40 +54,40 @@ namespace tuscany
                 /**
                  * Returns the WSDL namespace
                  */
-                 string getNamespaceURI() const { return namespaceURI; }
+                 std::string getNamespaceURI() const { return namespaceURI; }
                  
                  /**
                   * Returns the interface name
                   */
-                  string getName() const { return name; }  
+                  std::string getName() const { return name; }  
 
                 /**
                 * return the QName of the schema type for this interface type
                 * (e.g. "http://www.osoa.org/xmlns/sca/1.0#interface.cpp")
                 */
-                virtual const string& getInterfaceTypeQName() { return typeQName; };
+                virtual const std::string& getInterfaceTypeQName() { return typeQName; };
     
                 /**
                  * The QName of the schema type for this interface type.
                  */
-                SCA_API static const string typeQName;
+                SCA_API static const std::string typeQName;
                 
            private:
            
                 /**
                  * Parse the WSDL qname
                  */
-                 void parse(const string& qname);
+                 void parse(const std::string& qname);
            
                 /**
                  * WSDL namespace.
                  */
-                string namespaceURI;
+                std::string namespaceURI;
 
                 /**
                  * Name of the WSDL interface.
                  */
-                string name;
+                std::string name;
 
             };
             

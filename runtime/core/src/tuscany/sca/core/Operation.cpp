@@ -19,14 +19,15 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/core/Operation.h"
 #include <stdarg.h>
-
 #include <sstream>
 
+#include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/core/SCARuntime.h"
+
+using namespace std;
 
 
 namespace tuscany

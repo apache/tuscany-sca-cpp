@@ -22,8 +22,6 @@
 #ifndef tuscany_sca_model_service_h
 #define tuscany_sca_model_service_h
 
-#include <string>
-using std::string;
 
 namespace tuscany
 {

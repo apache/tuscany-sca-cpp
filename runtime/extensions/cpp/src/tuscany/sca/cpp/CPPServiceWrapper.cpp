@@ -19,9 +19,9 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/cpp/CPPServiceWrapper.h"
-
 #include "osoa/sca/ServiceRuntimeException.h"
+
+#include "tuscany/sca/cpp/CPPServiceWrapper.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/util/Library.h"
@@ -33,8 +33,10 @@
 #include "tuscany/sca/cpp/model/CPPImplementation.h"
 #include "tuscany/sca/model/Interface.h"
 
+using namespace std;
 using namespace osoa::sca;
-
+using namespace tuscany::sca::model;
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {

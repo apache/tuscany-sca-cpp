@@ -21,13 +21,13 @@
 
 #ifndef tuscany_sca_model_wsdloperation_h
 #define tuscany_sca_model_wsdloperation_h
-#include "tuscany/sca/export.h"
-#include <string>
-using std::string;
 
+#include <string>
 
 #include "commonj/sdo/SDO.h"
-using commonj::sdo::DataObjectPtr;
+
+#include "tuscany/sca/export.h"
+
 
 namespace tuscany
 {
@@ -64,22 +64,22 @@ namespace tuscany
                  * outgoing message.
                  * @return The name of the element in the request message.
                  */ 
-                SCA_API const string& getOperationName() const {return operationName;}
-                SCA_API void setOperationName(const string& opName) {operationName = opName;}
+                SCA_API const std::string& getOperationName() const {return operationName;}
+                SCA_API void setOperationName(const std::string& opName) {operationName = opName;}
 
                 /**
                  * The soap action string for this operation.
                  * @return The soap action.
                  */
-                SCA_API const string& getSoapAction() const {return soapAction;}
-                SCA_API void setSoapAction(const string& soapAct) {soapAction = soapAct;}
+                SCA_API const std::string& getSoapAction() const {return soapAction;}
+                SCA_API void setSoapAction(const std::string& soapAct) {soapAction = soapAct;}
 
                 /**
                  * Return the endpoint address for the target web service.
                  * @return The endpoint address.
                  */
-                SCA_API const string& getEndpoint() const {return endpoint;}
-                SCA_API void setEndpoint(const string& ep) {endpoint = ep;}
+                SCA_API const std::string& getEndpoint() const {return endpoint;}
+                SCA_API void setEndpoint(const std::string& ep) {endpoint = ep;}
 
                 enum soapVersion
                 {
@@ -100,43 +100,43 @@ namespace tuscany
                 SCA_API bool isEncoded() const {return encoded;}
 
                 
-                SCA_API void setInputType(const string& inputType);
-                SCA_API const string& getInputTypeUri() const {return inputTypeUri;}
-                SCA_API const string& getInputTypeName() const {return inputTypeName;}
-                SCA_API void setOutputType(const string& outputType);
-                SCA_API const string& getOutputTypeUri() const {return outputTypeUri;}
-                SCA_API const string& getOutputTypeName() const {return outputTypeName;}
+                SCA_API void setInputType(const std::string& inputType);
+                SCA_API const std::string& getInputTypeUri() const {return inputTypeUri;}
+                SCA_API const std::string& getInputTypeName() const {return inputTypeName;}
+                SCA_API void setOutputType(const std::string& outputType);
+                SCA_API const std::string& getOutputTypeUri() const {return outputTypeUri;}
+                SCA_API const std::string& getOutputTypeName() const {return outputTypeName;}
                 
             private:
                 /**
                  * The name of the operation for use when serializing an
                  * outgoing message.
                  */ 
-                string operationName;
+                std::string operationName;
 
                  /**
                  * The soap action string for this operation.
                  */
-                string soapAction;
+                std::string soapAction;
 
                 /**
                  * The endpoint address of the target web service.
                  */
-                string endpoint;
+                std::string endpoint;
 
 				bool documentStyle;
                 bool wrappedStyle;
 				bool encoded;
 				soapVersion soapVer;
 				
-				string inputTypeUri;
-				string inputTypeName;
+				std::string inputTypeUri;
+				std::string inputTypeName;
 				
-				string outputTypeUri;
-				string outputTypeName;
+				std::string outputTypeUri;
+				std::string outputTypeName;
 				
-                DataObjectPtr inputMessage;
-                DataObjectPtr outputMessage;
+                commonj::sdo::DataObjectPtr inputMessage;
+                commonj::sdo::DataObjectPtr outputMessage;
             };
 
          } // End namespace model

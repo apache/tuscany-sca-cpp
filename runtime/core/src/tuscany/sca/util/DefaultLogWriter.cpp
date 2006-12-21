@@ -19,8 +19,10 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/util/DefaultLogWriter.h"
 #include <iostream>
+
+#include "tuscany/sca/util/DefaultLogWriter.h"
+
 using namespace std;
 
 namespace tuscany

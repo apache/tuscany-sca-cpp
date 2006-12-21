@@ -21,13 +21,14 @@
 
 #ifndef tuscany_sca_core_operation_h
 #define tuscany_sca_core_operation_h
-#include "tuscany/sca/export.h"
-#include "commonj/sdo/SDO.h"
-using commonj::sdo::DataObjectPtr;
+
 #include <string>
-using std::string;
 #include <vector>
-using std::vector;
+
+#include "commonj/sdo/SDO.h"
+
+#include "tuscany/sca/export.h"
+
 
 namespace tuscany
 {
@@ -68,7 +69,7 @@ namespace tuscany
              * Return the operation name.
              * @return The name of the operation.
              */
-            SCA_API const string& getName() const {return name;}
+            SCA_API const std::string& getName() const {return name;}
 
 
             enum ParameterType
@@ -120,8 +121,8 @@ namespace tuscany
             SCA_API void setReturnValue(const long double *retVal);
             SCA_API void setReturnValue(const char *retVal);
             SCA_API void setReturnValue(const char* *retVal);
-            SCA_API void setReturnValue(const string *retVal);
-            SCA_API void setReturnValue(const DataObjectPtr *retVal);
+            SCA_API void setReturnValue(const std::string *retVal);
+            SCA_API void setReturnValue(const commonj::sdo::DataObjectPtr *retVal);
 
             /**
              * Set a parameter on the operation.
@@ -141,8 +142,8 @@ namespace tuscany
             SCA_API void addParameter(const long double *parm);
             SCA_API void addParameter(const char *parm);
             SCA_API void addParameter(const char* *parm);
-            SCA_API void addParameter(const string *parm);
-            SCA_API void addParameter(const DataObjectPtr *parm);
+            SCA_API void addParameter(const std::string *parm);
+            SCA_API void addParameter(const commonj::sdo::DataObjectPtr *parm);
             
             SCA_API unsigned int getNParms() const {return parameters.size();}
 
@@ -177,7 +178,7 @@ namespace tuscany
             /**
              * Operation name (method name).
              */ 
-            string name;
+            std::string name;
 
             /**
              * Array of parameters.

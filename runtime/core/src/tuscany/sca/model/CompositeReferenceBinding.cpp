@@ -22,6 +22,8 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/model/CompositeReferenceBinding.h"
 
+using namespace std;
+
 namespace tuscany
 {
     namespace sca

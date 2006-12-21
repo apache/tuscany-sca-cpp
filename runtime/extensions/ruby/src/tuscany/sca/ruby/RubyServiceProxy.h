@@ -22,16 +22,13 @@
 #ifndef tuscany_sca_ruby_rubyserviceproxy_h
 #define tuscany_sca_ruby_rubyserviceproxy_h
 
+#include "tuscany/sca/ruby/Ruby.h"
 #include "tuscany/sca/ruby/export.h"
 #include "tuscany/sca/core/ServiceProxy.h" 
 #include "tuscany/sca/core/ServiceWrapper.h" 
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/Service.h"
-
-using namespace tuscany::sca::model;
-
-#include "tuscany/sca/ruby/Ruby.h"
 
 
 namespace tuscany
@@ -56,7 +53,7 @@ namespace tuscany
                  * @param reference The reference on the source component.
                  * @param target The wrapper of the service which is wired to this reference.
                  */
-                RubyServiceProxy(Reference* reference);
+                RubyServiceProxy(tuscany::sca::model::Reference* reference);
     
                 /**
                  * Create a new service proxy for a service. The proxy will contain a pointer to
@@ -64,7 +61,7 @@ namespace tuscany
                  * @param reference The service on the target component.
                  * @param target The wrapper of the target service.
                  */
-                RubyServiceProxy(Service* service);
+                RubyServiceProxy(tuscany::sca::model::Service* service);
     
                 /**
                  * Destructor.
@@ -101,7 +98,7 @@ namespace tuscany
                  /**
                   * The component owning the proxy
                   */
-                  Component* component;
+                  tuscany::sca::model::Component* component;
 
                 /**
                  * The Ruby proxy class

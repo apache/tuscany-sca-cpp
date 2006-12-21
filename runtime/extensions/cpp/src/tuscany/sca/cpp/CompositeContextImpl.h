@@ -22,15 +22,11 @@
 #ifndef tuscany_sca_cpp_compositecontextimpl_h
 #define tuscany_sca_cpp_compositecontextimpl_h
 
-#include <vector>
-using std::vector;
-
 #include "osoa/sca/CompositeContext.h"
+
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/cpp/CPPServiceProxy.h"
-
-using namespace osoa::sca;
 
 namespace tuscany
 {
@@ -43,7 +39,7 @@ namespace tuscany
         /** 
          * Contains the actual implementation of a CompositeContext interface.
          */
-        class CompositeContextImpl : public CompositeContext
+        class CompositeContextImpl : public osoa::sca::CompositeContext
         {
         
         public:
@@ -51,7 +47,7 @@ namespace tuscany
              * Constructor that takes a Composite which represents the runtime
              * model for this context.
              */
-            CompositeContextImpl(Component* component);
+            CompositeContextImpl(tuscany::sca::model::Component* component);
 
             /**
              * See CompositeContext#locateService.
@@ -76,13 +72,13 @@ namespace tuscany
              * Pointer to the runtime model Composite object to which this
              * context refers.
              */
-            Composite* composite;
+            tuscany::sca::model::Composite* composite;
 
             /**
              * Pointer to the runtime model Component object to which this
              * context refers.
              */
-            Component* component;
+            tuscany::sca::model::Component* component;
 
         };
 

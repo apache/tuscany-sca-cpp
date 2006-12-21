@@ -25,8 +25,9 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/Exceptions.h"
 
-using namespace tuscany::sca::util;
+using namespace std;
 using namespace commonj::sdo;
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {

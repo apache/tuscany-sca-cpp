@@ -24,6 +24,8 @@
 #pragma warning(disable: 4091)
 #endif
 
+#include <sstream>
+
 #include <axis2_svc_skeleton.h>
 #include <axis2_array_list.h>
 #include <axis2_log_default.h>
@@ -49,17 +51,12 @@
 #include "tuscany/sca/util/Utils.h"
 #include "Axis2Utils.h"
 
-#include <sstream>
-
-using commonj::sdo::DataObjectPtr;
-using commonj::sdo::DataFactoryPtr;
-using commonj::sdo::DataObjectList;
-using commonj::sdo::PropertyList;
-using commonj::sdo_axiom::AxiomHelper;
-
+using namespace std;
+using namespace commonj::sdo;
+using namespace commonj::sdo_axiom;
 using namespace tuscany::sca;
-using namespace tuscany::sca::ws;
 using namespace tuscany::sca::model;
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {
@@ -547,7 +544,7 @@ extern "C"
     AXIS2_EXPORT int axis2_get_instance(axis2_svc_skeleton **inst,
                             axis2_env_t *env)
     {
-        *inst = axis2_Axis2Service_create(env);
+        *inst = tuscany::sca::ws::axis2_Axis2Service_create(env);
         if(!(*inst))
         {
             return AXIS2_FAILURE;

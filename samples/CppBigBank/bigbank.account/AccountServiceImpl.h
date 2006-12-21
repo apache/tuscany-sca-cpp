@@ -30,8 +30,8 @@ namespace services
         {
         public:
         
-            virtual DataObjectPtr /*AccountReport*/
-                getAccountReport(const string customerID);
+            virtual commonj::sdo::DataObjectPtr /*AccountReport*/
+                getAccountReport(const std::string customerID);
         
         private:
         

@@ -22,10 +22,7 @@
 #ifndef tuscany_sca_model_reference_h
 #define tuscany_sca_model_reference_h
 
-#include <string>
-using std::string;
 #include <vector>
-using std::vector;
 
 namespace tuscany
 {
@@ -91,7 +88,7 @@ namespace tuscany
                  */
                 SCA_API void addTarget(Service* target);
 
-                typedef vector<Service*> TARGETS;
+                typedef std::vector<Service*> TARGETS;
 
                 /**
                  * Get a vector of all the targets from this reference.

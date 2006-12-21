@@ -23,6 +23,7 @@
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/rest/model/RESTInterface.h"
 
+using namespace std;
 
 namespace tuscany
 {

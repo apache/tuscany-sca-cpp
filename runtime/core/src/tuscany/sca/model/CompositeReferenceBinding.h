@@ -22,9 +22,9 @@
 #ifndef tuscany_sca_model_compositereferencebinding_h
 #define tuscany_sca_model_compositereferencebinding_h
 
-#include "tuscany/sca/model/ReferenceBinding.h"
-
 #include <string>
+
+#include "tuscany/sca/model/ReferenceBinding.h"
 
 namespace tuscany
 {
@@ -53,7 +53,7 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#CompositeServiceBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#CompositeServiceBinding"; };
                             
                  /**
                   * Configure this binding from a service binding.
@@ -63,7 +63,7 @@ namespace tuscany
                  /**
                   * Configure this binding from a URI.
                   */
-                  SCA_API virtual void configure(const string& uri);
+                  SCA_API virtual void configure(const std::string& uri);
                                 
                 /**
                  * Create a proxy representing the reference to the
@@ -80,7 +80,7 @@ namespace tuscany
                  * Returns the binding URI.
                  * @return The binding URI.
                  */
-                SCA_API virtual const string& getURI() const { return uri; };
+                SCA_API virtual const std::string& getURI() const { return uri; };
                 
             private:
             
@@ -98,7 +98,7 @@ namespace tuscany
                 /**
                  * The binding URI
                  */
-                 string uri; 
+                 std::string uri; 
             };
             
         } // End namespace model

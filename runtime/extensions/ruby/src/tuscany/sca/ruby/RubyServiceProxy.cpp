@@ -20,6 +20,8 @@
 /* $Rev$ $Date$ */
 
 
+#include <sstream>
+
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/SCARuntime.h"
@@ -36,7 +38,8 @@
 #include "tuscany/sca/ruby/model/RubyImplementation.h"
 #include "tuscany/sca/ruby/model/RubyReferenceBinding.h"
 
-#include <sstream>
+using namespace std;
+using namespace tuscany::sca::model;
 
 extern "C"
 {

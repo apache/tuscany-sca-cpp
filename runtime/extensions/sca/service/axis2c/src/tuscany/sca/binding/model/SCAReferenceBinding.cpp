@@ -24,6 +24,10 @@
 #include "tuscany/sca/ws/model/WSReferenceBinding.h"
 #include "tuscany/sca/core/ServiceProxy.h"
 
+using namespace std;
+using namespace tuscany::sca::ws;
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

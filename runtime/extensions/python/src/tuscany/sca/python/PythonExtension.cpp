@@ -26,12 +26,15 @@
 #include "tuscany/sca/python/PythonImplementationExtension.h"
 #include "tuscany/sca/python/PythonInterfaceExtension.h"
 
+using namespace std;
+using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 extern "C"
 {
-    #if defined(WIN32) || defined(_WINDOWS)
+#if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
-    #endif
+#endif
         void tuscany_sca_extension_initialize()
     {
         tuscany::sca::python::PythonExtension::initialize();

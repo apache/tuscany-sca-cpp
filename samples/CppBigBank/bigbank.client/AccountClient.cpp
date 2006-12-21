@@ -23,15 +23,17 @@
 #pragma warning(disable: 4786)
 #endif
 
-#include "AccountService.h"
-#include "osoa/sca/sca.h"
 #include <iostream>
 #include <stdlib.h>
 
-using namespace osoa::sca;
+#include "osoa/sca/sca.h"
+
+#include "AccountService.h"
+
 using namespace std;
-using namespace services::account;
 using namespace commonj::sdo;
+using namespace osoa::sca;
+using namespace services::account;
 
 int main(int argc, char* argv[])
 {

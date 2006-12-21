@@ -22,11 +22,11 @@
 #ifndef tuscany_sca_core_exceptions_h
 #define tuscany_sca_core_exceptions_h
 
+#include <ostream>
+
+#include "commonj/sdo/SDO.h"
 
 #include "tuscany/sca/export.h"
-
-#include <ostream>
-#include "commonj/sdo/SDO.h"
 
 
 namespace tuscany

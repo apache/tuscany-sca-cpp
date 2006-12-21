@@ -23,10 +23,9 @@
 #ifndef tuscany_sca_python_model_pythonservicebinding_h
 #define tuscany_sca_python_model_pythonservicebinding_h
 
-#include "tuscany/sca/model/ServiceBinding.h"
-using namespace tuscany::sca::model;
 #include <string>
-using std::string;
+
+#include "tuscany/sca/model/ServiceBinding.h"
 
 namespace tuscany
 {
@@ -37,7 +36,7 @@ namespace tuscany
             /**
              * Information about a Python service binding for service or a reference.
              */
-            class PythonServiceBinding : public ServiceBinding
+            class PythonServiceBinding : public tuscany::sca::model::ServiceBinding
             {    
             public:
 
@@ -48,7 +47,7 @@ namespace tuscany
                  * or external service is to be bound. This is of the form
                  * "namespace"#endpoint("service"/"port")
                  */
-                PythonServiceBinding(Service* service);  
+                PythonServiceBinding(tuscany::sca::model::Service* service);  
 
                 /**
                  * Destructor.
@@ -58,7 +57,7 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#PythonImplementationBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#PythonImplementationBinding"; };
                             
                 /**
                  * Create a wrapper for the service configured by this

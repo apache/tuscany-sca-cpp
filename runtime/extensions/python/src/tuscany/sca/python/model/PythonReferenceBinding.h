@@ -22,13 +22,10 @@
 #ifndef tuscany_sca_python_model_pythonreferencebinding_h
 #define tuscany_sca_python_model_pythonreferencebinding_h
 
+#include <string>
+
 #include "tuscany/sca/model/ReferenceBinding.h"
 
-
-#include <string>
-using std::string;
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -39,14 +36,14 @@ namespace tuscany
             /**
              * Information about a Python service binding for service or a reference.
              */
-            class PythonReferenceBinding : public ReferenceBinding
+            class PythonReferenceBinding : public tuscany::sca::model::ReferenceBinding
             {    
             public:
 
                 /**
                  * Constructor.
                  */
-                PythonReferenceBinding(Reference* reference);  
+                PythonReferenceBinding(tuscany::sca::model::Reference* reference);  
 
                 /**
                  * Destructor.
@@ -56,7 +53,7 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#PythonImplementationBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#PythonImplementationBinding"; };
                             
                 /**
                  * Create a proxy representing the reference to the
@@ -67,12 +64,12 @@ namespace tuscany
                  /**
                   * Configure this binding from a service binding.
                   */
-                  virtual void configure(ServiceBinding* serviceBinding);
+                  virtual void configure(tuscany::sca::model::ServiceBinding* serviceBinding);
                   
                  /**
                   * Returns the target service binding.
                   */
-                  ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
+                  tuscany::sca::model::ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
                                 
             private:
                 
@@ -85,7 +82,7 @@ namespace tuscany
                 /**
                  * The service binding of the target
                  */
-                ServiceBinding* targetServiceBinding; 
+                tuscany::sca::model::ServiceBinding* targetServiceBinding; 
             };
             
         } // End namespace python

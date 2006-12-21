@@ -23,6 +23,8 @@
 #include "tuscany/sca/python/model/PythonReferenceBinding.h"
 #include "tuscany/sca/python/PythonServiceProxy.h"
 
+using namespace std;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {

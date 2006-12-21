@@ -23,17 +23,10 @@
 #ifndef tuscany_sca_python_model_pythoninterface_h
 #define tuscany_sca_python_model_pythoninterface_h
 
+#include <string>
+
 #include "tuscany/sca/python/export.h"
 #include "tuscany/sca/model/Interface.h"
-
-#include <map>
-using std::map;
-#include <vector>
-using std::vector;
-#include <string>
-using std::string;
-
-using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -42,10 +35,10 @@ namespace tuscany
         namespace python
         {
             /**
-             * Holds information about an interface described using a C++
+             * Holds information about an interface described using a Python
              * header file.
              */
-            class PythonInterface : public Interface
+            class PythonInterface : public tuscany::sca::model::Interface
             {
                 
             public:    
@@ -67,12 +60,12 @@ namespace tuscany
                  * return the QName of the schema type for this interface type
                  * (e.g. "http://www.osoa.org/xmlns/sca/1.0#interface.cpp")
                  */
-                const string& getInterfaceTypeQName() { return typeQName; };
+                const std::string& getInterfaceTypeQName() { return typeQName; };
     
                 /**
                  * The QName of the schema type for this interface type.
                  */               
-                SCA_PYTHON_API static const string typeQName;
+                SCA_PYTHON_API static const std::string typeQName;
            
             };
             

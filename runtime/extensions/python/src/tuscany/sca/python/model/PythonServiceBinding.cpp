@@ -23,6 +23,9 @@
 #include "tuscany/sca/python/model/PythonServiceBinding.h"
 #include "tuscany/sca/python/PythonServiceWrapper.h"
 
+using namespace std;
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

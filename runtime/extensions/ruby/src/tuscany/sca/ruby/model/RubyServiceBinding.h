@@ -23,10 +23,9 @@
 #ifndef tuscany_sca_ruby_model_rubyservicebinding_h
 #define tuscany_sca_ruby_model_rubyservicebinding_h
 
-#include "tuscany/sca/model/ServiceBinding.h"
-using namespace tuscany::sca::model;
 #include <string>
-using std::string;
+
+#include "tuscany/sca/model/ServiceBinding.h"
 
 namespace tuscany
 {
@@ -37,14 +36,14 @@ namespace tuscany
             /**
              * Information about a Ruby service binding for service or a reference.
              */
-            class RubyServiceBinding : public ServiceBinding
+            class RubyServiceBinding : public tuscany::sca::model::ServiceBinding
             {    
             public:
 
                 /**
                  * Constructor.
                  */
-                RubyServiceBinding(Service* service);  
+                RubyServiceBinding(tuscany::sca::model::Service* service);  
 
                 /**
                  * Destructor.
@@ -54,7 +53,7 @@ namespace tuscany
                 /**
                  * Returns the type of binding.
                  */                
-                virtual string getType() { return "http://www.osoa.org/xmlns/sca/1.0#RubyImplementationBinding"; };
+                virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#RubyImplementationBinding"; };
                             
                 /**
                  * Create a wrapper for the service configured by this

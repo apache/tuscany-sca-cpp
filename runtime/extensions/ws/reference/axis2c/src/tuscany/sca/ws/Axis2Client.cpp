@@ -25,6 +25,8 @@
 #pragma warning(disable: 4786)
 #endif
 
+#include <sstream>
+
 #include <axis2_client.h>
 
 #include <axis2_error_default.h>
@@ -34,8 +36,8 @@
 #include <platforms/axis2_platform_auto_sense.h>
 
 #include <sdo_axiom.h>
-#include "Axis2Client.h"
 
+#include "Axis2Client.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
@@ -49,12 +51,11 @@
 #include "tuscany/sca/model/WSDLInterface.h"
 #include "tuscany/sca/model/WSDLOperation.h"
 
-#include <sstream>
-
-using namespace tuscany::sca::ws;
-
+using namespace std;
 using namespace commonj::sdo;
 using namespace commonj::sdo_axiom;
+using namespace tuscany::sca::model;
+
 
 namespace tuscany
 {

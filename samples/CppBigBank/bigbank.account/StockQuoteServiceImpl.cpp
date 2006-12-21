@@ -19,12 +19,13 @@
 #pragma warning(disable: 4786)
 #endif
 
-#include "StockQuoteServiceImpl.h"
-#include "StockQuoteWebService.h"
-
 #include "osoa/sca/sca.h"
 #include "commonj/sdo/SDO.h"
 
+#include "StockQuoteServiceImpl.h"
+#include "StockQuoteWebService.h"
+
+using namespace std;
 using namespace osoa::sca;
 using namespace commonj::sdo;
 

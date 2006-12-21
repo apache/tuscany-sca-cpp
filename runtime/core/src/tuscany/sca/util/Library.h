@@ -21,7 +21,6 @@
 
 #ifndef tuscany_sca_util_library_h
 #define tuscany_sca_util_library_h
-#include "tuscany/sca/export.h"
 
 #if defined(WIN32)  || defined (_WINDOWS)
 #include <windows.h> 
@@ -31,7 +30,9 @@
 #endif
 
 #include <string>
-using std::string;
+
+#include "tuscany/sca/export.h"
+
 
 namespace tuscany
 {
@@ -52,7 +53,7 @@ namespace tuscany
                  * Constructor. Will load the library.
                  * @param libraryName Fully qualified name of the library.
                  */
-                Library(const string& libraryName);
+                Library(const std::string& libraryName);
     
                 /**
                  * Destructor. Will unload the library.
@@ -67,12 +68,12 @@ namespace tuscany
                  * @param symbol The name of the symbol to be found.
                  * @return The pointer to the symbol if found, otherwise 0.
                  */ 
-                void* getSymbol(const string& symbol);
+                void* getSymbol(const std::string& symbol);
             private:
                 /**
                  * Name of the library.
                  */ 
-                string name;
+                std::string name;
     
                 /**
                  * Handle to the loaded library.

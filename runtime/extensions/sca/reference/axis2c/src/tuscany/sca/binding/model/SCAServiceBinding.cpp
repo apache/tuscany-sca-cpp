@@ -23,6 +23,10 @@
 #include "tuscany/sca/binding/model/SCAServiceBinding.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
+using namespace std;
+using namespace tuscany::sca::ws;
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

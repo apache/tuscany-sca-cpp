@@ -29,7 +29,8 @@
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
 
-using namespace tuscany::sca::ruby;
+using namespace std;
+using namespace tuscany::sca::model;
 
 extern "C"
 {
@@ -54,7 +55,7 @@ extern "C"
         }
 
         // Get a Proxy for this service
-        RubyServiceProxy* serviceProxy = new RubyServiceProxy(service);
+        tuscany::sca::ruby::RubyServiceProxy* serviceProxy = new tuscany::sca::ruby::RubyServiceProxy(service);
 
         // Return the Ruby proxy value object        
         return serviceProxy->getProxyValue();

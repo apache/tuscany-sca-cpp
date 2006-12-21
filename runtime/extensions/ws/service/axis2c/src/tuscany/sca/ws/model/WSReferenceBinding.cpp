@@ -24,6 +24,9 @@
 #include "tuscany/sca/core/ServiceProxy.h"
 #include "tuscany/sca/ws/WSServiceProxy.h"
 
+using namespace std;
+using namespace tuscany::sca::model;
+
 namespace tuscany
 {
     namespace sca

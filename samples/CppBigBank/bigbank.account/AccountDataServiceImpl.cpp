@@ -28,6 +28,7 @@
 
 #include "AccountDataServiceImpl.h"
 
+using namespace std;
 using namespace commonj::sdo;
 using namespace osoa::sca;
 
