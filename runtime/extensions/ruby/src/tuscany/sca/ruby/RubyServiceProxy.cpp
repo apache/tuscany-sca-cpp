@@ -39,6 +39,7 @@
 #include "tuscany/sca/ruby/model/RubyReferenceBinding.h"
 
 using namespace std;
+using namespace commonj::sdo;
 using namespace tuscany::sca::model;
 
 extern "C"

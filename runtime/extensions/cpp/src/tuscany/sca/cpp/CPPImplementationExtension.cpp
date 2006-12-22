@@ -25,6 +25,7 @@
 #include "tuscany/sca/util/Utils.h"
 
 using namespace std;
+using namespace commonj::sdo;
 using namespace tuscany::sca::util;
 using namespace tuscany::sca::model;
 

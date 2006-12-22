@@ -140,7 +140,7 @@ namespace tuscany
                  * and their values can be accessed.
                  * @return A data object holding the property values.
                  */
-                SCA_API DataObjectPtr getProperties();
+                SCA_API commonj::sdo::DataObjectPtr getProperties();
 
             private:
                 

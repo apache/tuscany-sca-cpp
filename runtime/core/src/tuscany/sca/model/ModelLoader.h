@@ -108,7 +108,7 @@ namespace tuscany
                 typedef std::map<std::string, Composite*> COMPOSITE_MODELS;
                 COMPOSITE_MODELS compositeModels;
                 
-                typedef std::map<std::string, DataObjectPtr> COMPOSITE_DATAOBJECTS;
+                typedef std::map<std::string, commonj::sdo::DataObjectPtr> COMPOSITE_DATAOBJECTS;
                 COMPOSITE_DATAOBJECTS compositeDataObjects;
 
                 typedef std::map<std::string, Composite*> COMPOSITE_FILES;

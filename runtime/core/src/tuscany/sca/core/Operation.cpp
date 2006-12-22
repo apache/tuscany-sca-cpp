@@ -28,6 +28,7 @@
 #include "tuscany/sca/core/SCARuntime.h"
 
 using namespace std;
+using namespace commonj::sdo;
 
 
 namespace tuscany

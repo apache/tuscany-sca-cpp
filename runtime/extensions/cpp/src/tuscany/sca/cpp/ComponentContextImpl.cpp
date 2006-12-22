@@ -29,8 +29,9 @@
 #include "tuscany/sca/model/ServiceBinding.h"
 
 using namespace std;
-using namespace tuscany::sca::model;
 using namespace osoa::sca;
+using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {
