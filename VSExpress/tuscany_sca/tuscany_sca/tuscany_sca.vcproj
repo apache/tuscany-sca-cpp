@@ -1006,6 +1006,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Mutex.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Mutex.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Utils.cpp"
 					>
 					<FileConfiguration
