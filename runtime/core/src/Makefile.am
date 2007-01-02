@@ -63,6 +63,7 @@ tuscany/sca/util/FileLogWriter.cpp \
 tuscany/sca/util/Library.cpp \
 tuscany/sca/util/Logger.cpp \
 tuscany/sca/util/LogWriter.cpp \
+tuscany/sca/util/Mutex.cpp \
 tuscany/sca/util/SDOUtils.cpp \
 tuscany/sca/util/Utils.cpp
 
