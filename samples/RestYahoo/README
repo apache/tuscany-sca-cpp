@@ -13,7 +13,7 @@ There are two sub-projects in this workspace:
       A Ruby client which calls the WebSearch component.
 
 Additionally, there is the sample.yahoo.app.composite file. This 
-describes the configuration of the SCA sample.yahoo composite deployed to 
+describes the configuration of the SCA Yahoo Search composite deployed to 
 the SCA runtime.
 
 See the README.html file for instructions to build and run this sample
