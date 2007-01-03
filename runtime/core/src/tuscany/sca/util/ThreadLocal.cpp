@@ -47,6 +47,13 @@ namespace tuscany
             {
                 logentry();
 #if defined(WIN32)  || defined (_WINDOWS)
+                index = TlsAlloc();
+                if (index == TLS_OUT_OF_INDEXES)
+                {
+                    ostringstream msg;
+                    msg << "Failed to create thread local index, error: " << GetLastError();
+                    throwException(TuscanyRuntimeException, msg.str().c_str());
+                }
 #else
                 int rc = pthread_key_create(&key, NULL);
                 if (rc)
@@ -62,6 +69,12 @@ namespace tuscany
             {
                 logentry();
 #if defined(WIN32)  || defined (_WINDOWS)
+                if (!TlsFree(index))
+                {
+                    ostringstream msg;
+                    msg << "Failed to destroy thread local index, error: " << GetLastError();
+                    throwException(TuscanyRuntimeException, msg.str().c_str());
+                }
 #else
                 int rc = pthread_key_delete(key);
                 if (rc) {
@@ -72,10 +85,16 @@ namespace tuscany
 #endif             
             }
             
-            void ThreadLocal::setValue(const void* value)
+            void ThreadLocal::setValue(void* value)
             {
                 logentry();
 #if defined(WIN32)  || defined (_WINDOWS)
+                if (!TlsSetValue(index, value))
+                {
+                    ostringstream msg;
+                    msg << "Failed to set thread local value, error: " << GetLastError();
+                    throwException(TuscanyRuntimeException, msg.str().c_str());
+                }
 #else
                 int rc = pthread_setspecific(key, value);
                 if (rc) {
@@ -90,6 +109,7 @@ namespace tuscany
             {
                 logentry();
 #if defined(WIN32)  || defined (_WINDOWS)
+                return TlsGetValue(index);
 #else
                 return pthread_getspecific(key);
 #endif             

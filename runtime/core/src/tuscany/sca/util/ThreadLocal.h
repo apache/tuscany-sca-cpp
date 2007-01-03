@@ -57,7 +57,7 @@ namespace tuscany
                 /**
                  * Set the ThreadLocal value.
                  */ 
-                void setValue(const void *value);
+                void setValue(void *value);
 
                 /**
                  * Get the ThreadLocal value.
@@ -70,6 +70,7 @@ namespace tuscany
                  * Handle to the thread local key.
                  */ 
 #if defined(WIN32)  || defined (_WINDOWS)
+                DWORD index;
 #else
                 pthread_key_t key;
 #endif
