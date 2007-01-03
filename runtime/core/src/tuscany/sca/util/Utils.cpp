@@ -586,6 +586,9 @@ namespace tuscany
                 os << (const char *)buf;
                 LocalFree(buf);
 #else
+                char buf[256];
+                strerror_r(errno, buf, 255);
+                os << buf;
 #endif
             }
         
