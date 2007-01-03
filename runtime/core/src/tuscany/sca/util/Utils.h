@@ -23,6 +23,7 @@
 #define tuscany_sca_util_utils_h
 
 #include <string>
+#include <ostream>
 
 #include "commonj/sdo/SDO.h"
 
@@ -55,6 +56,8 @@ namespace tuscany
                     std::string& token2);
     
                 static void breakpoint();
+
+                static void printLastError(std::ostream& os);
     
                 static void printDO(commonj::sdo::DataObjectPtr dataObject, int increment=0);
                 static void printTypes(commonj::sdo::DataFactoryPtr df);

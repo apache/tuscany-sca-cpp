@@ -23,6 +23,12 @@
 #pragma warning(disable: 4786)
 #endif
 
+#if defined(WIN32)  || defined (_WINDOWS)
+#include <windows.h> 
+#else
+#include <errno.h>
+#endif
+
 #include "tuscany/sca/util/Utils.h"
 
 using namespace std;
@@ -560,6 +566,27 @@ namespace tuscany
                     printType(pl[j].getType(), inc);
                     inc--;
                 }
+            }
+
+            void Utils::printLastError(ostream& os)
+            {
+#if defined(WIN32)  || defined (_WINDOWS)
+                DWORD err = GetLastError();
+                LPTSTR buf;
+                FormatMessage(
+                    FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+                    FORMAT_MESSAGE_FROM_SYSTEM |
+                    FORMAT_MESSAGE_IGNORE_INSERTS,
+                    NULL,
+                    err,
+                    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                    (LPTSTR) &buf,
+                    0, NULL );
+
+                os << (const char *)buf;
+                LocalFree(buf);
+#else
+#endif
             }
         
         } // End namespace util
