@@ -95,11 +95,14 @@ namespace tuscany
             class Parameter
             {
                 public:
-                    SCA_API Parameter(void* value = NULL, ParameterType type = VOID_TYPE);
+                    SCA_API Parameter(void* value = NULL, ParameterType type = VOID_TYPE, std::string& name = std::string(""));
                     SCA_API void* getValue() const {return value;}
                     SCA_API ParameterType getType() const {return type;}
+                    SCA_API const std::string& getName() const {return name;}
+                    SCA_API bool hasName() const {return (name.length() > 0);}
 
                 private:
+                    std::string name;
                     void* value;
                     ParameterType type;
             };
@@ -126,7 +129,6 @@ namespace tuscany
 
             /**
              * Set a parameter on the operation.
-             * @param pos The position of the parameter in the parameter list.
              * @param parm Pointer to the parameter to be passed.
              */
             SCA_API void addParameter(const void *parm);
@@ -144,6 +146,27 @@ namespace tuscany
             SCA_API void addParameter(const char* *parm);
             SCA_API void addParameter(const std::string *parm);
             SCA_API void addParameter(const commonj::sdo::DataObjectPtr *parm);
+
+            /**
+             * Set a parameter on the operation.
+             * @param name The name of the parameter in the parameter list.
+             * @param parm Pointer to the parameter to be passed.
+             */
+            SCA_API void addParameter(const std::string& name, const void *parm);
+            SCA_API void addParameter(const std::string& name, const bool *parm);
+            SCA_API void addParameter(const std::string& name, const short *parm);
+            SCA_API void addParameter(const std::string& name, const int *parm);
+            SCA_API void addParameter(const std::string& name, const long *parm);
+            SCA_API void addParameter(const std::string& name, const unsigned short *parm);
+            SCA_API void addParameter(const std::string& name, const unsigned int *parm);
+            SCA_API void addParameter(const std::string& name, const unsigned long *parm);
+            SCA_API void addParameter(const std::string& name, const float *parm);
+            SCA_API void addParameter(const std::string& name, const double *parm);
+            SCA_API void addParameter(const std::string& name, const long double *parm);
+            SCA_API void addParameter(const std::string& name, const char *parm);
+            SCA_API void addParameter(const std::string& name, const char* *parm);
+            SCA_API void addParameter(const std::string& name, const std::string *parm);
+            SCA_API void addParameter(const std::string& name, const commonj::sdo::DataObjectPtr *parm);
             
             SCA_API unsigned int getNParms() const {return parameters.size();}
 
@@ -156,20 +179,49 @@ namespace tuscany
             SCA_API const Parameter& getParameter(unsigned int pos) const;
 
             /**
+             * Get a parameter from the operation.
+             * @param name The name of the parameter in the parameter list.
+             * @return Pointer to the paramter with the given name. Should be
+             * cast to the appropriate type.
+             */
+            SCA_API const Parameter& getParameter(const std::string& name) const;
+
+            /**
              * Get a parameter type from the operation.
              * @param pos The position of the parameter in the parameter list.
-             * @return Pointer to the paramter at the given postion. Should be
-             * cast to the appropriate type.
+             * @return Type of the parameter at the given position.
              */
             SCA_API ParameterType getParameterType(unsigned int pos) const;
 
             /**
-             * Get a parameter from the operation.
+             * Get a parameter type from the operation.
+             * @param name The name of the parameter in the parameter list.
+             * @return Type of the parameter with the given name.
+             */
+            SCA_API ParameterType getParameterType(const std::string& name) const;
+
+            /**
+             * Get a parameter name from the operation.
              * @param pos The position of the parameter in the parameter list.
-             * @return Pointer to the paramter at the given postion. Should be
+             * @return Name of the parameter at the given position.
+             */
+            SCA_API const std::string& getParameterName(unsigned int pos) const;
+
+            /**
+             * Get the parameter value from the operation.
+             * @param pos The position of the parameter in the parameter list.
+             * @return Pointer to the value of the parameter at the given postion. Should be
              * cast to the appropriate type.
              */
             SCA_API void* getParameterValue(unsigned int pos) const;
+
+            /**
+             * Get the parameter value from the operation.
+             * @param name The name of the parameter in the parameter list.
+             * @return Pointer to the value of the parameter with the given name. Should be
+             * cast to the appropriate type.
+             */
+            SCA_API void* getParameterValue(const std::string& name) const;
 
             SCA_API ParameterType getReturnType() const {return returnValue.getType();}
             SCA_API void* getReturnValue() const {return returnValue.getValue();}

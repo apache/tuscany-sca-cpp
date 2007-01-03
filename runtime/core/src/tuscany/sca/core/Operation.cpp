@@ -145,9 +145,25 @@ namespace tuscany
             return 0;
         }
 
-        // ==============================================
-        // getParameter: return of parameter
-        // ==============================================
+        // ==================================================
+        // getParameter: return parameter value based on name
+        // ==================================================
+        void* Operation::getParameterValue(const string& name) const
+        {
+            logentry();
+            try
+            {
+                return getParameter(name).getValue();
+            }
+            catch(ServiceInvocationException)
+            {}
+
+            return 0;
+        }
+
+        // ======================================================
+        // getParameter: return parameter based on index position
+        // ======================================================
         const Operation::Parameter& Operation::getParameter(unsigned int pos) const
         {
             logentry();
@@ -159,10 +175,27 @@ namespace tuscany
             throwException(ServiceInvocationException, "Index out of range");
         }
 
+        // ===============================================
+        // getParameter: return of parameter based on name
+        // ===============================================
+        const Operation::Parameter& Operation::getParameter(const string& name) const
+        {
+            logentry();
+            for(unsigned int pos=0; pos < parameters.size(); pos++)
+            {
+                if(parameters[pos].getName() == name)
+                {
+                    return parameters[pos];
+                }
+            }
+            
+            throwException(ServiceInvocationException, "Parameter name not found");
+        }
 
-        // ==============================================
-        // getParameterType: return type of parameter
-        // ==============================================
+
+        // ============================================================
+        // getParameterType: return type of parameter based on position
+        // ============================================================
         Operation::ParameterType Operation::getParameterType(unsigned int pos) const
         {
             logentry();
@@ -172,6 +205,38 @@ namespace tuscany
             }
 
             return VOID_TYPE;
+        }
+
+        // ========================================================
+        // getParameterType: return type of parameter based on name
+        // ========================================================
+        Operation::ParameterType Operation::getParameterType(const string& name) const
+        {
+            logentry();
+            try
+            {
+                return getParameter(name).getType();
+            }
+            catch(ServiceInvocationException)
+            {}
+
+            return VOID_TYPE;
+        }
+
+        const string emptyString = string();
+
+        // ==============================================
+        // getParameterName: return name of parameter
+        // ==============================================
+        const string& Operation::getParameterName(unsigned int pos) const
+        {
+            logentry();
+            if (pos < parameters.size())
+            {
+                return parameters[pos].getName();
+            }
+            
+            return emptyString;
         }
 
         // ===========================================
@@ -284,8 +349,118 @@ namespace tuscany
             parameters.insert(parameters.end(), Parameter((void*)new DataObjectPtr(*parm), DATAOBJECT));
         }
 
-        Operation::Parameter::Parameter(void* val, Operation::ParameterType typ)
-            : value(val), type(typ)
+        // =======================================================
+        // addParameter: set parameter at position pos with a name
+        // =======================================================
+        void Operation::addParameter(const string& name, const void *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: void, value: %p", name.c_str(), parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, VOID_TYPE, (string&) name));
+         }
+
+        void Operation::addParameter(const string& name, const bool *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: bool, value: %d", name.c_str(), (int)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, BOOL, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const short *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: short, value: %hd", name.c_str(), (short)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, SHORT, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const int *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: int, value: %d", name.c_str(), (int)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, INT, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const long *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: long, value: %ld", name.c_str(), (long)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, LONG, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const unsigned short *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: unsigned short, value: %hu", (unsigned short)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, USHORT, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const unsigned int *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: unsigned int, value: %u", name.c_str(), (unsigned int)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, UINT, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const unsigned long *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: unsigned long, value: %lu", name.c_str(), (unsigned long)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, ULONG, (string&) name));
+        }
+
+       void Operation::addParameter(const string& name, const float *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: float, value: %f", name.c_str(), (float)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, FLOAT, (string&) name));
+        }
+
+       void Operation::addParameter(const string& name, const double *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: double, value: %lf", name.c_str(), (double)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, DOUBLE, (string&) name));
+        }
+
+       void Operation::addParameter(const string& name, const long double *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: long double, value: %Lf", name.c_str(), (long double)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, LONGDOUBLE, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const char* *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: char*, value: %s", name.c_str(), (const char*)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, CHARS, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const char *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: char, value: %d", name.c_str(), (int)*parm);
+            parameters.insert(parameters.end(), Parameter((void*)parm, CHAR, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const string *parm)
+        {
+            logentry();
+            loginfo("Adding operation parameter, name: %s, type: string, value: %s", (const char*)(*parm).c_str());
+            parameters.insert(parameters.end(), Parameter((void*)parm, STRING, (string&) name));
+        }
+
+        void Operation::addParameter(const string& name, const DataObjectPtr *parm)
+        {
+            logentry();
+            ostringstream os;
+            os << *parm;
+            loginfo("Adding operation parameter, name: %s, type: DataObject, value: %s", name.c_str(), os.str().c_str());
+            parameters.insert(parameters.end(), Parameter((void*)new DataObjectPtr(*parm), DATAOBJECT, (string&) name));
+        }
+
+        Operation::Parameter::Parameter(void* val, Operation::ParameterType typ, string& nam)
+            : value(val), type(typ), name(nam)
         {
         }
 

@@ -40,8 +40,9 @@ class sca_proxy_class:
 
     def invoke(self, operationName):
         
-        def invokeFunction(*args,**kwargs):
-            return sca.invoke(self.sca_proxy_name, self.sca_proxy_is_reference, operationName, args)
+        def invokeFunction(*args, **kwargs):
+            # Pass the args and keywords in to the invoke method as arguments
+            return sca.invoke(self.sca_proxy_name, self.sca_proxy_is_reference, operationName, args, kwargs)
 
         return invokeFunction
 

@@ -269,10 +269,20 @@ namespace tuscany
                             // If the URI ends with a "?" then we use the query
                             // form param=value&
                             os << uri;
-                            for (int i = firstParm; i < operation.getNParms(); i++)
+                            for (unsigned int i = firstParm; i < operation.getNParms(); i++)
                             {
-                                os << "param" << (i + 1) << "=";
-                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                                Operation::Parameter param = operation.getParameter(i);
+
+                                if(param.hasName())
+                                {
+                                    os << param.getName() << "=";
+                                }
+                                else
+                                {
+                                    // No name - use "param1", etc
+                                    os << "param" << (i + 1) << "=";
+                                }
+                                writeParameter(xmlHelper, os, param);
                                 if (i < operation.getNParms()-1)
                                     os << "&";
                             }
@@ -282,14 +292,15 @@ namespace tuscany
                             // Add the parameters in the form
                             // value1 / value2 / value3 
                             os << uri;
-                            for (int i = firstParm; i < operation.getNParms(); i++)
+                            for (unsigned int i = firstParm; i < operation.getNParms(); i++)
                             {
                                 os << "/";
                                 writeParameter(xmlHelper, os, operation.getParameter(i));
                             }
                         }
     
-                        string url = os.str();                                        
+                        string url = os.str(); 
+                        //loginfo("RESTServiceWrapper: HTTP GET %s", url.c_str());
                         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
      
                         // Send all data to this function
@@ -468,10 +479,19 @@ namespace tuscany
                             // If the URI ends with a "?" then we use the query
                             // form param=value&
                             os << uri;
-                            for (int i = firstParm; i < operation.getNParms()-1; i++)
+                            for (unsigned int i = firstParm; i < operation.getNParms()-1; i++)
                             {
-                                os << "param" << (i + 1) << "=";
-                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                                Operation::Parameter param = operation.getParameter(i);
+                                if(param.hasName())
+                                {
+                                    os << param.getName() << "=";
+                                }
+                                else
+                                {
+                                    // No name - use "param1", etc
+                                    os << "param" << (i + 1) << "=";
+                                }
+                                writeParameter(xmlHelper, os, param);
                                 if (i < operation.getNParms()-1)
                                     os << "&";
                             }
@@ -481,7 +501,7 @@ namespace tuscany
                             // Add the parameters in the form
                             // value1 / value2 / value3 
                             os << uri;
-                            for (int i = firstParm; i < operation.getNParms()-1; i++)
+                            for (unsigned int i = firstParm; i < operation.getNParms()-1; i++)
                             {
                                 os << "/";
                                 writeParameter(xmlHelper, os, operation.getParameter(i));
@@ -593,10 +613,20 @@ namespace tuscany
                             // If the URI ends with a "?" then we use the query
                             // form param=value&
                             os << uri;
-                            for (int i = firstParm; i < operation.getNParms(); i++)
+                            for (unsigned int i = firstParm; i < operation.getNParms(); i++)
                             {
-                                os << "param" << (i + 1) << "=";
-                                writeParameter(xmlHelper, os, operation.getParameter(i));
+                                Operation::Parameter param = operation.getParameter(i);
+
+                                if(param.hasName())
+                                {
+                                    os << param.getName() << "=";
+                                }
+                                else
+                                {
+                                    // No name - use "param1", etc
+                                    os << "param" << (i + 1) << "=";
+                                }
+                                writeParameter(xmlHelper, os, param);
                                 if (i < operation.getNParms()-1)
                                     os << "&";
                             }
@@ -606,7 +636,7 @@ namespace tuscany
                             // Add the parameters in the form
                             // value1 / value2 / value3 
                             os << uri;
-                            for (int i = firstParm; i < operation.getNParms(); i++)
+                            for (unsigned int i = firstParm; i < operation.getNParms(); i++)
                             {
                                 os << "/";
                                 writeParameter(xmlHelper, os, operation.getParameter(i));
@@ -674,7 +704,7 @@ namespace tuscany
                     // If the request contains complex content then we'll use
                     // a POST, otherwise we use a GET with a query string
                     bool complexContent = false; 
-                    for (int i=0; i<operation.getNParms(); i++)
+                    for (unsigned int i=0; i<operation.getNParms(); i++)
                     {
                         if (operation.getParameter(i).getType() == Operation::DATAOBJECT)
                         {
@@ -724,13 +754,23 @@ namespace tuscany
     
                             // Multiple parameters, use a form type POST
                             struct curl_httppost *lastptr = NULL;
-                            for (int i=0; i<operation.getNParms(); i++)
+                            for (unsigned int i=0; i<operation.getNParms(); i++)
                             {
                                 ostringstream pname;
-                                pname << "param" << (i+1);
+                                Operation::Parameter param = operation.getParameter(i);
+
+                                if(param.hasName())
+                                {
+                                    pname << param.getName();
+                                }
+                                else
+                                {
+                                    // No name - use "param1", etc
+                                    pname << "param" << (i+1);
+                                }                                
                                 
                                 const char* ctype;
-                                if (operation.getParameter(i).getType() == Operation::DATAOBJECT)
+                                if (param.getType() == Operation::DATAOBJECT)
                                 {
                                     ctype ="text/xml"; 
                                 }
@@ -740,7 +780,7 @@ namespace tuscany
                                 }
                                 
                                 ostringstream pvalue;
-                                writeParameter(xmlHelper, pvalue, operation.getParameter(i));
+                                writeParameter(xmlHelper, pvalue, param);
                                 
                                 curl_formadd(&formpost,
                                     &lastptr,
@@ -764,17 +804,28 @@ namespace tuscany
     
                         // Add the parameters to the end of the URL in the form
                         // param=value&
-                        for (int i=0; i<operation.getNParms(); i++)
+                        for (unsigned int i=0; i<operation.getNParms(); i++)
                         {
                             if (i == 0)
                                 os << "?";
-                            os << "param" << (i + 1) << "=";
-                            writeParameter(xmlHelper, os, operation.getParameter(i));
+                            
+                            Operation::Parameter param = operation.getParameter(i);
+                            if(param.hasName())
+                            {
+                                os << param.getName() << "=";
+                            }
+                            else
+                            {
+                                // No name - use "param1", etc
+                                os << "param" << (i + 1) << "=";
+                            }
+                            writeParameter(xmlHelper, os, param);
                             if (i < operation.getNParms()-1)
                                 os << "&";
                         }
     
                         url = os.str();
+                        loginfo("RESTServiceWrapper: HTTP GET %s", url.c_str());
                                                                 
                         curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
                     }
@@ -790,10 +841,12 @@ namespace tuscany
                     {
                         curl_easy_setopt(curl_handle, CURLOPT_HTTPHEADER, requestHeaders);
                     }
-                                                
+                    
+                    loginfo("RESTServiceWrapper: Performing HTTP request");
                     // Perform the HTTP request
                     CURLcode rc = curl_easy_perform(curl_handle);
 
+                    loginfo("RESTServiceWrapper: Completed HTTP request");
                     // Free any headers
                     if (requestHeaders)
                     {
@@ -815,6 +868,9 @@ namespace tuscany
                     {
                         string responsePayload((const char*)responseChunk.memory, responseChunk.size);
                         
+
+                        loginfo("RESTServiceWrapper: responsePayload: %s", responsePayload.c_str());
+
                         //TODO Remove this workaround once SDO supports loading of open top level content
                         // The workaround is to wrap the open content in a wrapper element
                         string xmldecl;
@@ -1103,7 +1159,7 @@ namespace tuscany
                          */
                         DataObjectList& dataObjectList = outputDataObject->getList(pl[i]);
                         
-                        for(int j=0; j<dataObjectList.size(); j++)
+                        for(unsigned int j=0; j<dataObjectList.size(); j++)
                         {
                             DataObjectPtr dob = dataObjectList[j];
                             if(!dob)

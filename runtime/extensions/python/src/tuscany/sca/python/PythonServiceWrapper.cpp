@@ -288,6 +288,7 @@ namespace tuscany
                     if (pFunc && PyCallable_Check(pFunc)) 
                     {
                         PyObject* pArgs = PyTuple_New(operation.getNParms());
+                        PyObject* pKeywordsDict = PyDict_New();
                         PyObject* pValue = NULL;
 
                         // Load up the xml.etree.ElementTree module for dealing with SDO params and return values
@@ -407,13 +408,27 @@ namespace tuscany
                                 throwException(ServiceDataException, msg.c_str());
                                 
                             }
-                            //printPyObject("Param value", pValue);
+                            //printPyObject("Param value", pValue);                                                        
 
-                            /* pValue reference stolen here: */
-                            PyTuple_SetItem(pArgs, i, pValue);
+                            // If we have a param name, put it in the keyword args
+                            if(parm.hasName())
+                            {
+                                PyDict_SetItemString(pKeywordsDict, parm.getName().c_str(), pValue);
+                                Py_DECREF(pValue);
+                            }
+                            else
+                            {   
+                                /* pValue reference stolen here: */
+                                PyTuple_SetItem(pArgs, i, pValue);
+                            }
                         }
 
-                        pValue = PyObject_CallObject(pFunc, pArgs);
+                        // Resize the args to the correct length
+                        _PyTuple_Resize(&pArgs, operation.getNParms() - PyDict_Size(pKeywordsDict));
+
+                        loginfo("Calling python func with %d args and %d keyword args", PyTuple_Size(pArgs), PyDict_Size(pKeywordsDict));
+
+                        pValue = PyObject_Call(pFunc, pArgs, pKeywordsDict);
                         //printPyObject("Return value", pValue);
 
                         Py_DECREF(pArgs);
@@ -871,7 +886,7 @@ namespace tuscany
                 DataObjectPtr properties = component->getProperties();
                 PropertyList pl = properties->getInstanceProperties();
 
-                for (int i = 0; i < pl.size(); i++)
+                for (unsigned int i = 0; i < pl.size(); i++)
                 {
                     if (properties->isSet(pl[i]))
                     {

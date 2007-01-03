@@ -52,6 +52,8 @@ namespace tuscany
 
             void ReferenceBinding::configure(const string& uri)
             {
+                logentry();
+
                 // Find the target service
                 Component* component = reference->getComponent();
                 Composite* composite = component->getComposite();

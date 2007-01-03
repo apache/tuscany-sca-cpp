@@ -58,8 +58,9 @@ static PyObject* scaError;
 */
 static void printPyObject(char* prefix, char* name, PyObject* pObj)
 {
-    PyObject* pObjRepr = PyObject_Repr(pObj);    
-    loginfo("%s printPyObject %s: %s", prefix, name, PyString_AsString(pObjRepr));
+    PyObject* pObjRepr = PyObject_Repr(pObj);   
+    PyTypeObject* type = pObj->ob_type;
+    loginfo("%s printPyObject (%s) %s = %s", prefix, type->tp_name, name, PyString_AsString(pObjRepr));
     Py_XDECREF(pObjRepr);
 
     if(pObj != NULL)
@@ -216,7 +217,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 
     if(operationName.size() > 0)
     {
-        loginfo("Operation: %s", operationName.c_str());
+        loginfo("sca_invoke Operation name: %s", operationName.c_str());
     }
     else
     {
@@ -235,46 +236,67 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 
     // Parameters are the fourth argument
     PyObject* paramTuple = PyTuple_GetItem(args, 3);
+    unsigned int numberOfArgs = (unsigned int) PyTuple_Size(paramTuple);
+    loginfo("sca_invoke %d arg parameters supplied", numberOfArgs);
+    
+    // Keyword parameters (AKA named arguments) are the fifth argument
+    PyObject* keywordParamDict = PyTuple_GetItem(args, 4);
+    loginfo("sca_invoke %d keyword parameters supplied", PyDict_Size(keywordParamDict));
+    
+    PyObject* paramKeys = PyDict_Keys(keywordParamDict);   
 
-    // Go through the supplied parameters
-    for(int i=0; i < PyTuple_Size(paramTuple); i++)
+    // Go through all the supplied parameters (args and keyword args)
+    for(unsigned int i=0; i < (numberOfArgs + PyList_Size(paramKeys)); i++)
     {
-        PyObject* param = PyTuple_GetItem(paramTuple, i);
+        string* paramName;
+        PyObject* param;
+
+        if(i < PyTuple_Size(paramTuple))
+        {
+            param = PyTuple_GetItem(paramTuple, i);
+            paramName = new string();
+        }
+        else
+        {
+            PyObject* key = PyList_GetItem(paramKeys, i-numberOfArgs);
+            param = PyDict_GetItem(keywordParamDict, key);
+            paramName = new string(PyString_AsString(key));
+        }
 
         if(PyInt_Check(param))
         {
-            loginfo("Int param %d: %d", i, PyInt_AsLong(param));
+            loginfo("Int param %d %s: %d", i, (*paramName).c_str(), PyInt_AsLong(param));
             long* intData = new long;
             *intData = PyInt_AsLong(param);
-            operation.addParameter(intData);
+            operation.addParameter(*paramName, intData);
         }
         else if(PyBool_Check(param))
         {
-            loginfo("Bool param %d: %d", i, (param == Py_True));
+            loginfo("Bool param %d %s: %d", i, (*paramName).c_str(), (param == Py_True));
             bool* boolData = new bool;
             *boolData = (param == Py_True);
-            operation.addParameter(boolData);
+            operation.addParameter(*paramName, boolData);
         }
         else if(PyLong_Check(param))
         {
-            loginfo("Long param %d: %l", i, PyLong_AsLong(param));
+            loginfo("Long param %d %s: %l", i, (*paramName).c_str(), PyLong_AsLong(param));
             long* longData = new long;
             *longData = PyLong_AsLong(param);
-            operation.addParameter(longData);
+            operation.addParameter(*paramName, longData);
         }
         else if(PyFloat_Check(param))
         {
-            loginfo("Float param %d: %f", i, PyFloat_AsDouble(param));
+            loginfo("Float param %d %s: %f", i, (*paramName).c_str(), PyFloat_AsDouble(param));
             double* doubleData = new double;
             *doubleData = PyFloat_AsDouble(param);
-            operation.addParameter(doubleData);
+            operation.addParameter(*paramName, doubleData);
         }
         else if(PyString_Check(param))
         {
-            loginfo("String param %d: %s", i, PyString_AsString(param));
+            loginfo("String param %d %s: %s", i, (*paramName).c_str(), PyString_AsString(param));
             const char** stringData = new const char*; 
             *stringData = PyString_AsString(param);
-            operation.addParameter(stringData);
+            operation.addParameter(*paramName, stringData);
         }
         else
         {
@@ -290,7 +312,8 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                 PyObject* elementTreeToStringFunc = PyObject_GetAttrString(elementTreeModule, "tostring");
                 PyObject* pElemString = PyObject_CallFunction(elementTreeToStringFunc, "O", param);
                 char* data = PyString_AsString(pElemString);
-                
+                loginfo("SDO param %d %s: %s", i, (*paramName).c_str(), data);
+
                 Py_DECREF(elementTreeToStringFunc);
                 Py_DECREF(pElemString);
 
@@ -311,7 +334,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                 }
                 if (*dataObjectData != NULL)
                 {
-                    operation.addParameter(dataObjectData);
+                    operation.addParameter(*paramName, dataObjectData);
                 }
                 else
                 {
@@ -475,8 +498,8 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 }
 static PyMethodDef ModuleMethods[] = 
 {
-    {"locateservice", sca_locateservice, METH_VARARGS, "Locates an SCA service & returns an sca_proxy_class instance"},
-    {"invoke", sca_invoke, METH_VARARGS, "Invoke an operation on an SCA service or reference"},
+    {"locateservice", (PyCFunction) sca_locateservice, METH_VARARGS, "Locates an SCA service & returns an sca_proxy_class instance"},
+    {"invoke", (PyCFunction) sca_invoke, METH_VARARGS, "Invoke an operation on an SCA service or reference"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
