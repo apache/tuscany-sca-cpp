@@ -65,6 +65,7 @@ tuscany/sca/util/Logger.cpp \
 tuscany/sca/util/LogWriter.cpp \
 tuscany/sca/util/Mutex.cpp \
 tuscany/sca/util/SDOUtils.cpp \
+tuscany/sca/util/ThreadLocal.cpp \
 tuscany/sca/util/Utils.cpp
 
 libtuscany_sca_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo
