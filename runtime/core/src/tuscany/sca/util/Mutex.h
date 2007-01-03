@@ -54,9 +54,6 @@ namespace tuscany
                  */ 
                 virtual ~Mutex();
     
-                Mutex(const Mutex& lib);
-                Mutex& operator=(const Mutex& mutex);
-                
                 /**
                  * Lock the mutex.
                  */ 
