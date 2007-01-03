@@ -31,6 +31,9 @@ endif
 endif
 if WANT_PYTHON_SAMPLES
   PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer
+if WANT_RUBY_SAMPLES
+  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer RestYahoo
+endif
 endif
 if WANT_RUBY_SAMPLES
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator

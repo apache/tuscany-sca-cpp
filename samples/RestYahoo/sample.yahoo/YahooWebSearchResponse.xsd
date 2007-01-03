@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="urn:yahoo:srch"
+  xmlns="urn:yahoo:srch"
+  elementFormDefault="qualified">
+
+	<xs:element name="ResultSet">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Result" type="ResultType" minOccurs="0" maxOccurs="100" />
+			</xs:sequence>
+			<xs:attribute name="totalResultsAvailable" type="xs:integer" />
+			<xs:attribute name="totalResultsReturned" type="xs:integer" />
+			<xs:attribute name="firstResultPosition" type="xs:integer" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="ResultType">
+		<xs:sequence>
+			<xs:element name="Title" type="xs:string" />
+			<xs:element name="Summary" type="xs:string" />
+			<xs:element name="Url" type="xs:string" />
+			<xs:element name="ClickUrl" type="xs:string" />
+			<xs:element name="ModificationDate" type="xs:string" minOccurs="0" />
+			<xs:element name="MimeType" type="xs:string" minOccurs="0" />
+			<xs:element name="Cache" type="CacheType" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="CacheType">
+		<xs:sequence>
+			<xs:element name="Url" type="xs:string" />
+			<xs:element name="Size" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>
+<!-- ws01.search.re2.yahoo.com compressed/chunked Wed Jan  3 06:46:11 PST 2007 -->

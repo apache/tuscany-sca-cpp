@@ -1,0 +1,175 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+
+<HTML>
+<HEAD>
+   <META CONTENT="text/html; charset=iso-8859-1" HTTP-EQUIV="Content-Type">
+   <META CONTENT="text/css" HTTP-EQUIV="Content-Style-Type">
+   <STYLE MEDIA="all" TYPE="text/css">
+@import url("../../doc/css/maven-base.css");
+@import url("../../doc/css/maven-theme.css");
+   </STYLE> 
+
+    <LINK HREF="../doc/css/maven-theme.css" MEDIA="print" REL="stylesheet"
+         TYPE="text/css">
+   <TITLE>Tuscany SCA for C++ Samples - REST Yahoo Search Sample</TITLE>
+</HEAD>
+
+<BODY>
+<DIV ID="bodyColumn"> 
+   <DIV ID="contentBox"> 
+      <DIV CLASS="section"> 
+         <H2>Tuscany SCA for C++ Samples - REST Yahoo Search Sample</H2> 
+
+         <P>TODO update this doc???
+         <P>This is a very simple sample to show how to use the SCA REST binding to
+            invoke the Yahoo Web Search REST service.
+         </P>
+         <P>There are two sub projects in this workspace:</P>
+         <UL>
+            <LI>sample.yahoo<BR/>
+                This contains the SCDL artifacts and Python source code for the WebSearch 
+                Component which calls a Reference that is configured to call the 
+                Yahoo service
+            </LI>
+            <LI>sample.yahoo.client<BR/>
+                A Ruby client which calls the WebSearch component
+            </LI>
+         </UL>
+         <P>Additionally, there is the sample.yahoo.app.composite file. This 
+            describes the configuration of the SCA Yahoo Search composite deployed to 
+            the SCA runtime.                                                                      
+         </P>
+      </DIV>
+
+      <DIV CLASS="section"> 
+         <H2>Contents</H2> 
+         <OL>
+            <LI><A HREF="#linuxbld">Building the Ruby & Python samples on Linux</A></LI>
+            <LI><A HREF="#linuxrun">Running the REST Yahoo Search sample on Linux:</A></LI>
+            <LI><A HREF="#winbld">Building the REST Yahoo Search sample on Windows</A></LI>
+            <LI><A HREF="#winrun">Running the REST Yahoo Search sample on Windows:</A></LI>
+            <LI><A HREF="#help">Getting help</A></LI>
+         </OL>
+      </DIV>
+
+
+       <DIV CLASS="section"> 
+         <A NAME="linuxbld"><H2>Building the Ruby & Python samples on Linux</H2></A>
+         <P>If using the binary distribution the samples are built and installed in
+            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux</A>.</P>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                </UL></LI>
+             </LI>
+             <LI>As the REST Yahoo sample is based on Ruby and Python scripts, a specific compilation step is not necessary - 
+                 only deployment is required. Deploy the Ruby and Python samples only with the following command sequence:
+                  <UL>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;/samples</LI>
+                      <LI>./configure --enable-ruby --enable-python --enable-cpp=no --prefix=$TUSCANY_SCACPP</LI>
+                      <LI>make install</LI>
+                  </UL>
+	              NOTE: If you don't provide the --prefix configure option, it will by default install into
+                  /usr/local/tuscany/sca/samples/RestYahoo</LI>
+         </OL>                                                  
+        </DIV>
+
+       <DIV CLASS="section"> 
+         <A NAME="linuxrun"><H2>Running the REST Yahoo Search sample on Linux</H2></A>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
+                </UL>
+             </LI>
+             <LI>Run the sample with the following commands:
+                <UL>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RestYahoo/deploy/sample.yahoo.client</LI>
+                   <LI>./runclient.sh</LI>
+                </UL>
+             </LI>
+         </OL>                                                  
+        </DIV>
+
+        <DIV CLASS="section">
+         <A NAME="winbld"><H2>Building the REST Yahoo Search sample on Windows</H2></A>
+         <P>If using the binary distribution the samples are built and installed in
+            &lt;tuscany_sca_install_dir&gt;\samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                </UL></LI>
+             </LI>
+             <LI>As this sample is based on Ruby and Python scripts, a specific compilation step is not necessary - 
+                 only deployment is required. Deploy the sample with the following commands:
+                 <UL>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestYahoo</LI>
+                   <LI>deploy.bat</LI>
+                </UL>
+             </LI>
+         </OL>                                                  
+        </DIV>
+
+       <DIV CLASS="section"> 
+         <A NAME="winrun"><H2>Running the REST Yahoo Search sample on Windows</H2></A>
+         <OL>
+             <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
+                  <LI>LIBCURL_HOME=&lt;path to libcurl&gt;</LI>
+                </UL>
+             </LI>
+             <LI>Run the sample with the following commands:
+                <UL>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestYahoo\deploy\sample.yahoo.client</LI>
+                   <LI>runclient.bat</LI>
+                </UL>
+             </LI>
+         </OL>                                                  
+      </DIV>
+
+
+              
+      <DIV CLASS="section"> 
+         <A NAME="help"><H2>Getting Help</H2></A>
+
+         <P>First place to look is at the Tuscany FAQ at 
+         <A HREF="http://incubator.apache.org/tuscany/faq.html"
+            TARGET="_blank">http://incubator.apache.org/tuscany/faq.html</A> </P>
+
+         <P>Any problem with this release can be reported to the Tuscany 
+         <A HREF="http://incubator.apache.org/tuscany/mail-lists.html"
+            TARGET="_blank">mailing lists</A> or create a JIRA issue at&nbsp;<A HREF="http://issues.apache.org/jira/browse/Tuscany"
+                                                                                TARGET="_blank">http://issues.apache.org/jira/browse/Tuscany</A>.</P>
+      </DIV>
+   </DIV>
+</DIV>
+</BODY>
+
+</HTML>
+

@@ -1,0 +1,19 @@
+Tuscany SCA for C++ Samples - REST Yahoo Sample
+===============================================
+
+This is a very simple sample to show how to use the SCA REST binding to
+invoke the Yahoo Web Search REST service.
+
+There are two sub-projects in this workspace:
+    - sample.yahoo
+      This contains the SCDL artifacts and source code for the WebSearch 
+      Component which calls a Reference that is configured to call the 
+      Yahoo service 
+    - sample.yahoo.client
+      A Ruby client which calls the WebSearch component.
+
+Additionally, there is the sample.yahoo.app.composite file. This 
+describes the configuration of the SCA sample.yahoo composite deployed to 
+the SCA runtime.
+
+See the README.html file for instructions to build and run this sample

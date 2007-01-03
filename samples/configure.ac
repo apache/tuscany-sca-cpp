@@ -202,7 +202,7 @@ AC_CONFIG_FILES([Makefile
                  PythonCalculator/sample.calculator.wsclient/Makefile
                  PythonWeatherForecast/Makefile
                  PythonWeatherForecast/sample.weather/Makefile
-                 PythonWeatherForecast/sample.weather.client/Makefile                 
+                 PythonWeatherForecast/sample.weather.client/Makefile
                  RestCalculator/Makefile
                  RestCalculator/sample.calculator/Makefile
                  RestCalculator/sample.calculator.restclient/Makefile
@@ -211,6 +211,9 @@ AC_CONFIG_FILES([Makefile
                  RestCustomer/sample.customer/Makefile
                  RestCustomer/sample.customer.restclient/Makefile
                  RestCustomer/httpserver/Makefile
+                 RestYahoo/Makefile
+                 RestYahoo/sample.yahoo/Makefile
+                 RestYahoo/sample.yahoo.client/Makefile
                  CppBigBank/Makefile
                  CppBigBank/bigbank.account/Makefile
                  CppBigBank/bigbank.client/Makefile
