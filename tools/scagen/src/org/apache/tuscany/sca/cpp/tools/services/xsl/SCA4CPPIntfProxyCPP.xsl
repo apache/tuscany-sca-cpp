@@ -273,6 +273,6 @@ DOM nodes that each relate to a function in the service
     <xsl:variable name="type">
         <xsl:value-of select="."/>
     </xsl:variable>
-    operation.addParameter(&amp;<xsl:value-of select="$scaOperationParameterNameAttrInner"/><xsl:text>);</xsl:text>
+    operation.addParameter("<xsl:value-of select="@scaOperationParameterNameAttr"/>", &amp;<xsl:value-of select="$scaOperationParameterNameAttrInner"/><xsl:text>);</xsl:text>
 </xsl:template>
 </xsl:stylesheet>
