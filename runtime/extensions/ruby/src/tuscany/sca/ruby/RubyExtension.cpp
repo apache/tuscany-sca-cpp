@@ -64,7 +64,7 @@ namespace tuscany
             void RubyExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerImplementationExtension(new RubyImplementationExtension());
+                SCARuntime::getCurrentRuntime()->registerImplementationExtension(new RubyImplementationExtension());
             }
 
         } // End namespace ruby

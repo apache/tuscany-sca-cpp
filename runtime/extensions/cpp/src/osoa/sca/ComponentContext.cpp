@@ -46,7 +46,7 @@ namespace osoa
             logentry();
             try
             {
-                Component* component = tuscany::sca::SCARuntime::getInstance()->getCurrentComponent();
+                Component* component = tuscany::sca::SCARuntime::getCurrentRuntime()->getCurrentComponent();
                 if (!component)
                 {
                     throwException(ComponentContextException, "No current component");

@@ -41,6 +41,8 @@
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/util/Library.h"
+#include "tuscany/sca/util/ThreadLocal.h"
+#include "tuscany/sca/util/Mutex.h"
 
 
 namespace tuscany
@@ -49,83 +51,71 @@ namespace tuscany
     {
         
         /**
-         * A singleton which represents the executing SCA runtime.
+         * Represents an executing SCA runtime.
          */
         class SCARuntime {
         public:
+        
+            /**
+             * Constructor
+             */
+             SCA_API SCARuntime(const std::string& installRoot = "",
+                const std::string& systemRoot = "", const std::string& systemPath = "",
+                const std::string& baseURI = "", const std::string& defaultComponentName = "");
 
             /**
-             * Get the single instance.
-             * @return The single instance of the runtime.
+             * Destructor
              */
-            SCA_API static SCARuntime* getInstance();
+             SCA_API virtual ~SCARuntime();
 
             /**
-             * Release the single instance.
+             * Get the runtime associated with the current thread.
+             * @return The runtime associated with the current thread.
              */
-            SCA_API static void releaseInstance();
-          
-            /**
-             * Load the SCA configuration from the scdl files (sca.composite, 
-             * *.fragment, etc).
-             * This will create the runtime model from which the SCA runtime
-             * will operate.
-             */
-            SCA_API void load();
+            SCA_API static SCARuntime* getCurrentRuntime();
 
             /**
-             * Set the directory in which the Tuscany runtime has been installed.
+             * Get the runtime associated with the current thread.
+             * @return The runtime associated with the current thread.
              */
-            SCA_API static void setInstallRoot(const std::string& root);
+            SCA_API static void setCurrentRuntime(SCARuntime* runtime);
+
+            /**
+             * Get the runtime associated with the current process.
+             * @return The runtime associated with the current process.
+             */
+            SCA_API static SCARuntime* getSharedRuntime();
+
+            /**
+             * Get the runtime associated with the current process.
+             * @return The runtime associated with the current process.
+             */
+            SCA_API static void setSharedRuntime(SCARuntime* runtime);
 
             /**
              * Returns the directory in which the Tuscany runtime has been installed.
              */
-            SCA_API static const std::string& getInstallRoot();
-
-            /**
-             * Set the system root
-             * @param root The path to the system configuration.
-             */
-            SCA_API static void setSystemRoot(const std::string& root);
+            SCA_API const std::string& getInstallRoot();
 
             /**
              * Returns the system root
              */
-            SCA_API static const std::string& getSystemRoot();
-
-            /**
-             * Set the search path for composites.
-             * @param path The search path for composites.
-             */
-            SCA_API static void setSystemPath(const std::string& path);
+            SCA_API const std::string& getSystemRoot();
 
             /**
              * Returns the search path for composites.
              */
-            SCA_API static const std::string& getSystemPath();
+            SCA_API const std::string& getSystemPath();
 
             /**
-             * Set the default Component for the system
-             * @param componentName The name of the default component.
+             * Returns the default component name.
              */
-            SCA_API static void setDefaultComponentName(const std::string& componentName);
-
-            /**
-             * Returns the default Component for the system
-             */
-            SCA_API static const std::string& getDefaultComponentName();
-
-            /**
-             * Set the default base URI for the system
-             * @param baseURI The default base URI.
-             */
-            SCA_API static void setDefaultBaseURI(const std::string& baseURI);
+            SCA_API const std::string& getDefaultComponentName();
 
             /**
              * Returns the default base URI for the system
              */
-            SCA_API static const std::string& getDefaultBaseURI();
+            SCA_API const std::string& getDefaultBaseURI();
 
             /**
              * Set the current component for the current thread.
@@ -156,10 +146,16 @@ namespace tuscany
             SCA_API tuscany::sca::model::Component* getCurrentComponent();
 
             /**
-             * Get the default component set for this runtime.
+             * Get the default component set for the current thread.
              * @return The default composite.
              */
             SCA_API tuscany::sca::model::Component* getDefaultComponent();
+
+            /**
+             * Get the default component set for the current thread.
+             * @return The default composite.
+             */
+            SCA_API void setDefaultComponent(tuscany::sca::model::Component* component);
 
             /**
              * Register an implementation extension
@@ -206,17 +202,17 @@ namespace tuscany
             SCA_API InterfaceExtension* getInterfaceExtension(const std::string& typeQname);
 
         private:
-            /**
-             * Default constructor is private to prevent more than one instance.
-             */
-            SCARuntime();            
-
-            virtual ~SCARuntime();            
 
             /**
-             * The single instance of this class.
+             * The runtime associated with the current thread.
              */
-            static SCARuntime* instance;
+            static tuscany::sca::util::ThreadLocal current;
+            
+            /**
+             * The runtime shared by all threads of the current process.
+             */
+             static tuscany::sca::util::Mutex sharedRuntimeLock;
+             static SCARuntime* sharedRuntime;
 
             /**
              * Pointer to the top of the runtime model.
@@ -226,46 +222,50 @@ namespace tuscany
             /**
              * The installed path of the Tuscany runtime.
              */
-            static std::string installRoot;
+            std::string installRoot;
  
             /**
              * The path to the system configuration
              */
-            static std::string systemRoot;
+            std::string systemRoot;
 
             /**
              * The search path for composites.
              */
-            static std::string systemPath;
-
-            /**
-             * The default CompositeComponent.
-             */
-            static std::string defaultComponentName;
+            std::string systemPath;
 
             /**
              * The default base URI.
              */
-            static std::string defaultBaseURI;
+            std::string defaultBaseURI;
 
             /**
-             * The default component set for this runtime.
+             * The default CompositeComponent name.
              */
-            tuscany::sca::model::Component* defaultComponent;
-            
-            
+            std::string defaultComponentName;
+
+            /**
+             * Load the SCA configuration from the scdl files (sca.composite, 
+             * *.fragment, etc).
+             * This will create the runtime model from which the SCA runtime
+             * will operate.
+             */
+            void loadSystem();
+
+            /**
+             * Component stack for the current thread.
+             */
             typedef std::stack<tuscany::sca::model::Component*> COMPONENT_STACK; 
-#if defined(WIN32)  || defined (_WINDOWS)
-            typedef std::map<DWORD, COMPONENT_STACK> COMPONENTS_MAP;
-#else
-            typedef std::map<pthread_t, COMPONENT_STACK> COMPONENTS_MAP;
-#endif
-
-            /**
-             * A map of threads to components.
-             */
-            COMPONENTS_MAP components;
+            tuscany::sca::util::ThreadLocal componentStack;  
  
+            /**
+             * The default component for the current thread.
+             */
+            tuscany::sca::util::ThreadLocal defaultComponent;  
+ 
+            /**
+             *  Runtime Extensions
+             */
             typedef std::map<std::string, ImplementationExtension*> IMPLEMENTATION_EXTENSIONS_MAP;
             IMPLEMENTATION_EXTENSIONS_MAP implementationExtensions;
 
@@ -278,7 +278,6 @@ namespace tuscany
             typedef std::map<std::string, InterfaceExtension*> INTERFACE_EXTENSIONS_MAP;
             INTERFACE_EXTENSIONS_MAP interfaceExtensions;
 
-            // Runtime Extensions
             void loadExtensions();
 
             typedef std::list<tuscany::sca::util::Library> EXTENSIONS_LIST;

@@ -897,7 +897,7 @@ namespace tuscany
                 // Get the binding URI configured on the top level component 
                 Service* service = getService();
                 CompositeReference* compositeReference = (CompositeReference*)service->getComponent();
-                SCARuntime* runtime = SCARuntime::getInstance();
+                SCARuntime* runtime = SCARuntime::getCurrentRuntime();
                 Component* component = runtime->getDefaultComponent();
                 Reference* reference = component->findReference(compositeReference->getName());
                 if (reference != NULL)

@@ -51,7 +51,7 @@ namespace tuscany
                  * Constructor.
                  * @param system The SCA system to load.
                  */
-                ModelLoader(Composite* system);
+                ModelLoader(tuscany::sca::SCARuntime* runtime, Composite* system);
 
                 /**
                  * Destructor.

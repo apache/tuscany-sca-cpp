@@ -86,7 +86,7 @@ namespace tuscany
            void RESTReferenceBindingExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerReferenceBindingExtension(new RESTReferenceBindingExtension());
+                SCARuntime::getCurrentRuntime()->registerReferenceBindingExtension(new RESTReferenceBindingExtension());
             }
 
         } // End namespace rest

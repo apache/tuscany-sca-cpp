@@ -40,7 +40,7 @@ extern "C"
     {
         
         // Get the default component
-        Component* defaultComponent = tuscany::sca::SCARuntime::getInstance()->getDefaultComponent();
+        Component* defaultComponent = tuscany::sca::SCARuntime::getCurrentRuntime()->getDefaultComponent();
         Composite* composite = (Composite*)defaultComponent->getType();
                 
         // Locate the service

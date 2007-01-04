@@ -118,7 +118,7 @@ namespace tuscany
             {
                 logentry();
     
-                SCARuntime* runtime = SCARuntime::getInstance();
+                SCARuntime* runtime = SCARuntime::getCurrentRuntime();
                 runtime->setCurrentComponent(component);
                 
                 try

@@ -121,7 +121,7 @@ static tuscany::sca::python::PythonServiceProxy* getServiceProxy(PyObject *args)
     logentry();
 
     tuscany::sca::python::PythonServiceProxy* serviceProxy = NULL;
-    SCARuntime* runtime = SCARuntime::getInstance();
+    SCARuntime* runtime = SCARuntime::getCurrentRuntime();
 
     // The first argument holds the name
     string name;
@@ -195,7 +195,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 
     // Get the component from the reference or service provided
     Component* component = NULL; 
-    SCARuntime* runtime = SCARuntime::getInstance();
+    SCARuntime* runtime = SCARuntime::getCurrentRuntime();
 
     PyObject* isReference = PyTuple_GetItem(args, 1);   
     if(PyObject_IsTrue(isReference))

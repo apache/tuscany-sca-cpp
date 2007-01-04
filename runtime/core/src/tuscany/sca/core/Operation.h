@@ -95,7 +95,7 @@ namespace tuscany
             class Parameter
             {
                 public:
-                    SCA_API Parameter(void* value = NULL, ParameterType type = VOID_TYPE, std::string& name = std::string(""));
+                    SCA_API Parameter(void* value = NULL, ParameterType type = VOID_TYPE, const std::string& name = "");
                     SCA_API void* getValue() const {return value;}
                     SCA_API ParameterType getType() const {return type;}
                     SCA_API const std::string& getName() const {return name;}

@@ -83,7 +83,7 @@ namespace tuscany
            void RESTInterfaceExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerInterfaceExtension(new RESTInterfaceExtension());
+                SCARuntime::getCurrentRuntime()->registerInterfaceExtension(new RESTInterfaceExtension());
             }
 
         } // End namespace rest

@@ -91,7 +91,7 @@ namespace tuscany
            void SCAReferenceBindingExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerReferenceBindingExtension(new SCAReferenceBindingExtension());
+                SCARuntime::getCurrentRuntime()->registerReferenceBindingExtension(new SCAReferenceBindingExtension());
             }
 
         } // End namespace binding

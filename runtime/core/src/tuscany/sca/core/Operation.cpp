@@ -459,7 +459,7 @@ namespace tuscany
             parameters.insert(parameters.end(), Parameter((void*)new DataObjectPtr(*parm), DATAOBJECT, (string&) name));
         }
 
-        Operation::Parameter::Parameter(void* val, Operation::ParameterType typ, string& nam)
+        Operation::Parameter::Parameter(void* val, Operation::ParameterType typ, const string& nam)
             : value(val), type(typ), name(nam)
         {
         }

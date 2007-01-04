@@ -102,7 +102,7 @@ namespace tuscany
            void WSReferenceBindingExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerReferenceBindingExtension(new WSReferenceBindingExtension());
+                SCARuntime::getCurrentRuntime()->registerReferenceBindingExtension(new WSReferenceBindingExtension());
             }
 
         } // End namespace ws

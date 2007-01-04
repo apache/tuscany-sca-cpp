@@ -53,7 +53,7 @@ namespace osoa
         {
             logentry();
             impl = new CompositeContextImpl(
-                tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
+                tuscany::sca::SCARuntime::getCurrentRuntime()->getDefaultComponent());
         }
         
         // =============================
@@ -65,7 +65,7 @@ namespace osoa
             if (this != &ctx)
             {
                 impl = new CompositeContextImpl(
-                    tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
+                    tuscany::sca::SCARuntime::getCurrentRuntime()->getDefaultComponent());
             }
             return *this;
         }
@@ -88,7 +88,7 @@ namespace osoa
             try
             {
                 CompositeContext* cci = new CompositeContextImpl(
-                    tuscany::sca::SCARuntime::getInstance()->getDefaultComponent());
+                    tuscany::sca::SCARuntime::getCurrentRuntime()->getDefaultComponent());
                     
                 return CompositeContext(cci);
             }

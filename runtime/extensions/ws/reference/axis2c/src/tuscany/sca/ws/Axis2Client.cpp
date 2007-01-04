@@ -180,7 +180,7 @@ namespace tuscany
 
                 // Get the URI configured on the top level component                
                 string bindingURI = "";
-                SCARuntime* runtime = SCARuntime::getInstance();
+                SCARuntime* runtime = SCARuntime::getCurrentRuntime();
                 Component* component = runtime->getDefaultComponent();
                 Reference* reference = component->findReference(compositeReference->getName());
                 if (reference != NULL)

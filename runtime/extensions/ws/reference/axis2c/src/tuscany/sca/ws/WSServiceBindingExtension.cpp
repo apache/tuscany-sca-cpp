@@ -103,7 +103,7 @@ namespace tuscany
             void WSServiceBindingExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerServiceBindingExtension(new WSServiceBindingExtension());
+                SCARuntime::getCurrentRuntime()->registerServiceBindingExtension(new WSServiceBindingExtension());
             }
 
         } // End namespace ws

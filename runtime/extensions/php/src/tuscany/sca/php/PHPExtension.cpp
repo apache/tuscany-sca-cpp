@@ -61,7 +61,7 @@ namespace tuscany
             void PHPExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerImplementationExtension(new PHPImplementationExtension());
+                SCARuntime::getCurrentRuntime()->registerImplementationExtension(new PHPImplementationExtension());
                 //SCARuntime::getInstance()->registerInterfaceExtension(new PHPInterfaceExtension());
             }
 

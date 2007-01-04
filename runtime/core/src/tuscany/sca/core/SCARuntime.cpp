@@ -53,115 +53,140 @@ namespace tuscany
         static const char* TUSCANY_SCACPP_COMPONENT = "TUSCANY_SCACPP_COMPONENT";
         static const char* TUSCANY_SCACPP_PATH = "TUSCANY_SCACPP_PATH";
         static const char* TUSCANY_SCACPP_BASE_URI = "TUSCANY_SCACPP_BASE_URI";
+
+        // Initialize statics        
+        SCARuntime* SCARuntime::sharedRuntime = NULL;
+        Mutex SCARuntime::sharedRuntimeLock;
+        ThreadLocal SCARuntime::current;
  
-        // ==========================================================
-        // Initialize static class member to not pointing at anything
-        // ==========================================================
-        SCARuntime* SCARuntime::instance = 0;
-        string SCARuntime::installRoot = "";
-        string SCARuntime::systemRoot = "";
-        string SCARuntime::systemPath = "";
-        string SCARuntime::defaultComponentName = "";
-        string SCARuntime::defaultBaseURI = "";
-        
-
-        // ==========================================================
-        // Set the system configuration root
-        // ==========================================================
-        void SCARuntime::setSystemRoot(const string& root)
-        {
-            logentry();
-            systemRoot = root;
-            loginfo("System root: %s", root.c_str());
-        }
-
-        // ==========================================================
-        // Returns the system configuration root
-        // ==========================================================
-        const string& SCARuntime::getSystemRoot()
-        {
-            return systemRoot;
-        }
-
-        // ==========================================================
-        // Set the system configuration root
-        // ==========================================================
-        void SCARuntime::setSystemPath(const string& path)
-        {
-            logentry();
-            systemPath = path;
-            loginfo("System path: %s", path.c_str());
-        }
-
-        // ==========================================================
-        // Set the system configuration root
-        // ==========================================================
-        const string& SCARuntime::getSystemPath()
-        {
-            return systemPath;
-        }
-
-        // ==========================================================
-        // Set the default component name
-        // ==========================================================
-        void SCARuntime::setDefaultComponentName(const string& componentName)
-        {
-            logentry();
-            defaultComponentName = componentName;
-            loginfo("Default component name: %s", componentName.c_str());
-        }
-
-        // ==========================================================
-        // Returns the default component name
-        // ==========================================================
-        const string& SCARuntime::getDefaultComponentName()
-        {
-            return defaultComponentName ;
-        }
-
-        // ==========================================================
-        // Set the default base URI
-        // ==========================================================
-        void SCARuntime::setDefaultBaseURI(const string& baseURI)
-        {
-            logentry();
-            defaultBaseURI = baseURI;
-            loginfo("Default base URI: %s", baseURI.c_str());
-        }
-
-        // ==========================================================
-        // Returns the default base URI
-        // ==========================================================
-        const string& SCARuntime::getDefaultBaseURI()
-        {
-            return defaultBaseURI;
-        }
-
-        // ==========================================================
-        // Set the install root
-        // ==========================================================
-        void SCARuntime::setInstallRoot(const string& root)
-        {
-            logentry();
-            installRoot = root;
-            loginfo("SCA runtime install root: %s", installRoot.c_str());
-        }
-
-        // ==========================================================
-        // Returns the install root
-        // ==========================================================
-        const string& SCARuntime::getInstallRoot()
-        {
-            return installRoot;
-        }
 
         // ===================================================================
-        // Constructor for the SCARuntime class. This will be a singleton that
-        // holds all the information about the current runtime.
+        // Constructor for the SCARuntime class. This will 
+        // hold all the information about the current runtime.
         // ===================================================================
-        SCARuntime::SCARuntime() : system(0), defaultComponent(0)
+        SCARuntime::SCARuntime(const string& insRoot,
+                const string& sysRoot, const string& sysPath,
+                const string& base, const string& defName)  
+            :   system(0),
+                installRoot(insRoot), systemRoot(sysRoot), systemPath(sysPath),
+                defaultBaseURI(base), defaultComponentName(defName)
         { 
             logentry();
+
+            if (installRoot == "")
+            {
+                // Get install dir from environment variable TUSCANY_SCACPP
+                const char* root = getenv(TUSCANY_SCACPP);
+                if (root != NULL)
+                {
+                    installRoot = root;
+                }
+                else
+                {
+                    string msg = TUSCANY_SCACPP;
+                    msg += " environment variable not set";
+                    throwException(SystemConfigurationException, msg.c_str());
+                }
+            }
+            loginfo("SCA runtime install root: %s", installRoot.c_str());
+        
+            if (systemRoot == "")
+            {
+                // Get root from environment variable TUSCANY_SCACPP_ROOT
+                char* systemRootEnv = getenv(TUSCANY_SCACPP_ROOT);
+                if (systemRootEnv == 0)
+                {
+                    // Get root from environment variable TUSCANY_SCACPP_SYSTEM_ROOT
+                    systemRootEnv = getenv(TUSCANY_SCACPP_SYSTEM_ROOT);
+                }
+                if (systemRootEnv == 0)
+                {
+                    string msg = TUSCANY_SCACPP_ROOT;
+                    msg += " environment variable not set";
+                    throwException(SystemConfigurationException, msg.c_str());
+                } 
+
+                systemRoot = systemRootEnv;
+            }
+            else
+            {
+                loginfo("System root: %s", systemRoot.c_str());
+            }
+            
+            if (systemPath == "")
+            {
+                
+                // Get system path from environment variable TUSCANY_SCACPP_PATH
+                char* systemPathEnv = getenv(TUSCANY_SCACPP_PATH);
+                if (systemPathEnv != 0)
+                {
+                    systemPath = systemPathEnv;
+                }
+            }
+            else
+            {
+                loginfo("System path: %s", systemPath.c_str());
+            }
+
+            if (defaultBaseURI == "")
+            {
+                
+                // Get default base URI from environment variable TUSCANY_SCACPP_BASE_URI
+                char* baseURI = getenv(TUSCANY_SCACPP_BASE_URI);
+                if (baseURI != 0)
+                {
+                    defaultBaseURI = baseURI;
+                }
+            }
+            else
+            {
+                loginfo("Default base URI: %s", defaultBaseURI.c_str());
+            }
+
+            if (defaultComponentName == "")
+            {
+                const char* defComp = getenv(TUSCANY_SCACPP_COMPONENT);
+                if (!defComp)
+                {
+                    defComp = getenv(TUSCANY_SCACPP_DEFAULT_COMPONENT);
+                }
+                if (defComp)
+                {
+                    defaultComponentName = defComp;
+                }
+            }
+            loginfo("Default component: %s", defaultComponentName.c_str());
+            
+            SCARuntime* currentRuntime = (SCARuntime*)current.getValue();
+            current.setValue(this);
+            try
+            {
+
+                // Load the runtime extensions
+                loadExtensions();
+    
+                // Load the system composite
+                loadSystem();
+            }
+            catch (...)
+            {
+                current.setValue(currentRuntime);
+                throw;
+            }
+            current.setValue(currentRuntime);
+    
+            // Find the default component
+            if (defaultComponentName != "")
+            {
+                Component* comp = system->findComponent(defaultComponentName);
+                if (!comp)
+                {
+                    string message = "Component \'" + defaultComponentName + "\' not found";
+                    throwException(SystemConfigurationException, message.c_str());
+                }
+                defaultComponent.setValue(comp);
+            }
+                    
         }
 
         // ===================================================================
@@ -175,123 +200,121 @@ namespace tuscany
             {
                 delete system;
             }
-            
+        }
+
+        // ==========================================================
+        // Returns the system configuration root
+        // ==========================================================
+        const string& SCARuntime::getSystemRoot()
+        {
+            return systemRoot;
+        }
+
+        // ==========================================================
+        // Returns the system path
+        // ==========================================================
+        const string& SCARuntime::getSystemPath()
+        {
+            return systemPath;
+        }
+
+        // ==========================================================
+        // Returns the default component name
+        // ==========================================================
+        const string& SCARuntime::getDefaultComponentName()
+        {
+            return defaultComponentName ;
+        }
+
+        // ==========================================================
+        // Returns the default base URI
+        // ==========================================================
+        const string& SCARuntime::getDefaultBaseURI()
+        {
+            return defaultBaseURI;
+        }
+
+        // ==========================================================
+        // Returns the install root
+        // ==========================================================
+        const string& SCARuntime::getInstallRoot()
+        {
+            return installRoot;
         }
 
         // =============================================================
-        // Get the instance of the runtime, creates it if does not exist
-        // static method
+        // Get the runtime associated with the current thread.
         // =============================================================
-        SCARuntime* SCARuntime::getInstance()
+        SCARuntime* SCARuntime::getCurrentRuntime()
         {
             logentry();
             
-            if (instance == NULL) 
+            SCARuntime* runtime = (SCARuntime*)current.getValue();
+            if (runtime == NULL)
             {
-                if (installRoot == "")
+                runtime = getSharedRuntime();
+                if (runtime != NULL)
                 {
-                    // Get install dir from environment variable TUSCANY_SCACPP
-                    const char* root = getenv(TUSCANY_SCACPP);
-                    if (root != NULL)
-                    {
-                        loginfo("SCA runtime install root: %s", root);
-                        installRoot = root;
-                    }
-                    else
-                    {
-                        string msg = TUSCANY_SCACPP;
-                        msg += " environment variable not set";
-                        throwException(SystemConfigurationException, msg.c_str());
-                    }
+                    setCurrentRuntime(runtime);
                 }
-            
-                if (systemRoot == "")
+                else
                 {
-                    // Get root from environment variable TUSCANY_SCACPP_ROOT
-                    char* systemRootEnv = getenv(TUSCANY_SCACPP_ROOT);
-                    if (systemRootEnv == 0)
-                    {
-                        // Get root from environment variable TUSCANY_SCACPP_SYSTEM_ROOT
-                        systemRootEnv = getenv(TUSCANY_SCACPP_SYSTEM_ROOT);
-                    }
-                    if (systemRootEnv == 0)
-                    {
-                        string msg = TUSCANY_SCACPP_ROOT;
-                        msg += " environment variable not set";
-                        throwException(SystemConfigurationException, msg.c_str());
-                    } 
-
-                    loginfo("System root: %s", systemRootEnv);
-                    systemRoot = systemRootEnv;
+                    runtime = new SCARuntime();
+                    setCurrentRuntime(runtime);
                 }
-                if (systemPath == "")
-                {
-                    
-                    // Get system path from environment variable TUSCANY_SCACPP_PATH
-                    char* systemPathEnv = getenv(TUSCANY_SCACPP_PATH);
-                    if (systemPathEnv != 0)
-                    {
-                        loginfo("System path: %s", systemPathEnv);
-                        systemPath = systemPathEnv;
-                    }
-                }
-                if (defaultBaseURI == "")
-                {
-                    
-                    // Get default base URI from environment variable TUSCANY_SCACPP_BASE_URI
-                    char* baseURI = getenv(TUSCANY_SCACPP_BASE_URI);
-                    if (baseURI != 0)
-                    {
-                        loginfo("Default base URI: %s", baseURI);
-                        defaultBaseURI = baseURI;
-                    }
-                }
-
-                // Create new instance of the runtime
-                instance = new SCARuntime();
-                
-                // load extensions
-                instance->loadExtensions();
-
             }
-            
-            return instance;
-            
+            loginfo("Runtime: %p", runtime);            
+            return runtime;
         }
 
+        // =============================================================
+        // Set the runtime associated with the current thread.
+        // =============================================================
+        void SCARuntime::setCurrentRuntime(SCARuntime* runtime)
+        {
+            logentry();
+
+            loginfo("Runtime: %p", runtime);            
+            current.setValue(runtime);
+        }
 
         // =============================================================
-        // Release the instance of the runtime.
+        // Get the runtime associated with the current process.
         // =============================================================
-        void SCARuntime::releaseInstance()
+        SCARuntime* SCARuntime::getSharedRuntime()
         {
             logentry();
             
-            if (instance) 
-            {
-                delete instance;
-                instance = 0;
-                systemRoot = "";
-                systemPath = "";
-                defaultComponentName = "";        
-            }
+            sharedRuntimeLock.lock();
+            SCARuntime* runtime = sharedRuntime;
+            sharedRuntimeLock.unlock();
+            
+            return runtime;
+        }
+
+        // =============================================================
+        // Set the runtime associated with the current process.
+        // =============================================================
+        void SCARuntime::setSharedRuntime(SCARuntime* runtime)
+        {
+            logentry();
+            
+            sharedRuntimeLock.lock();
+            sharedRuntime = runtime;
+            sharedRuntimeLock.unlock();
         }
 
         // ======================================
-        // Load up all the details of the runtime
+        // Load the system composite
         // ======================================
-        void SCARuntime::load()
+        void SCARuntime::loadSystem()
         {
             logentry();
-            
-            loginfo("Configuration root: %s", systemRoot.c_str());
-            loginfo("Configuration path: %s", systemPath.c_str());
-            
-            // Load the system composite
-            ModelLoader loader(system);
+
+            system = new Composite("tuscany/sca/system", "");
+            ModelLoader loader(this, system);
             loader.load(systemRoot, systemPath);
         }
-        
         
         // ======================================
         // Load up extensions to the runtime
@@ -422,11 +445,7 @@ namespace tuscany
         Composite* SCARuntime::getSystem()
         {
             logentry();
-            if (!system)
-            {
-                system = new Composite("tuscany/sca/system", "");
-                load();
-            }
+
             return system;
         }
 
@@ -438,22 +457,14 @@ namespace tuscany
         {
             logentry();
 
-#if defined(WIN32)  || defined (_WINDOWS)
-            DWORD currentThreadId = GetCurrentThreadId();
-#else
-            pthread_t currentThreadId = pthread_self();
-#endif
-            COMPONENTS_MAP::iterator iter = components.find(currentThreadId);
-            if (iter == components.end())
+            COMPONENT_STACK* compStack = (COMPONENT_STACK*)componentStack.getValue();
+            if (compStack == NULL)
             {
-                components[currentThreadId] = COMPONENT_STACK();
-                iter = components.find(currentThreadId);
+                compStack = new COMPONENT_STACK();
+                componentStack.setValue(compStack);
             }
-            
-            COMPONENT_STACK& compStack = iter->second;
-            compStack.push(component);
+            compStack->push(component);
         }
-
         
         // ====================================================
         // unsetCurrentComponent: pop component for this thread
@@ -462,25 +473,18 @@ namespace tuscany
         {
             logentry();
             
-#if defined(WIN32)  || defined (_WINDOWS)
-            DWORD currentThreadId = GetCurrentThreadId();
-#else
-            pthread_t currentThreadId = pthread_self();
-#endif
-
-            COMPONENTS_MAP::iterator iter = components.find(currentThreadId);
-            if (iter != components.end())
-            {    
-                COMPONENT_STACK& compStack = iter->second;
-                if (compStack.size() > 0)
+            COMPONENT_STACK* compStack = (COMPONENT_STACK*)componentStack.getValue();
+            if (compStack != NULL)
+            {
+                if (compStack->size() > 0)
                 {
-                    Component* component = compStack.top();
-                    compStack.pop();
+                    Component* component = compStack->top();
+                    compStack->pop();
                     return component;
                 }
             }
             
-            return 0;
+            return NULL;
         }
         
         // =============================================================
@@ -490,29 +494,16 @@ namespace tuscany
         {
             logentry();
             
-#if defined(WIN32)  || defined (_WINDOWS)
-            DWORD currentThreadId = GetCurrentThreadId();
-#else
-            pthread_t currentThreadId = pthread_self();
-#endif
-
-            COMPONENTS_MAP::iterator iter = components.find(currentThreadId);
-            if (iter == components.end())
+            COMPONENT_STACK* compStack = (COMPONENT_STACK*)componentStack.getValue();
+            if (compStack != NULL)
             {
-                components[currentThreadId] = COMPONENT_STACK();
-                iter = components.find(currentThreadId);
+                if (compStack->size() > 0)
+                {
+                    return compStack->top();
+                }
             }
             
-            COMPONENT_STACK& compStack = iter->second;
-            if (compStack.size() > 0)
-            {
-                return compStack.top();
-            }
-            else
-            {
-                return 0;
-            }
-            
+            return NULL;
         }
         
         // ===========================================
@@ -521,44 +512,29 @@ namespace tuscany
         Component* SCARuntime::getDefaultComponent()
         {
             logentry();
-
-            // -------------------------------------------
-            // Get the default component name from the environment
-            // -------------------------------------------
-            if (defaultComponentName == "")
+            
+            Component* comp = (Component*)defaultComponent.getValue();
+            if (comp == NULL && defaultComponentName != "")
             {
-                const char* defComp = getenv(TUSCANY_SCACPP_COMPONENT);
-                if (!defComp)
-                {
-                    defComp = getenv(TUSCANY_SCACPP_DEFAULT_COMPONENT);
-                }
-                if (!defComp)
-                {
-                    string message = TUSCANY_SCACPP_COMPONENT;
-                    message += " environment variable not set";
-                    throwException(SystemConfigurationException, message.c_str());
-                }
-                defaultComponentName = defComp;
-            }
-                    
-            // -------------------------------------------
-            // Get the default component
-            // -------------------------------------------
-            if (defaultComponent && defaultComponentName != defaultComponent->getName())
-            {
-                defaultComponent = NULL;
-            }
-            if (!defaultComponent)
-            {
-                
-                defaultComponent = getSystem()->findComponent(defaultComponentName);
-                if (!defaultComponent)
+                comp = system->findComponent(defaultComponentName);
+                if (!comp)
                 {
                     string message = "Component \'" + defaultComponentName + "\' not found";
                     throwException(SystemConfigurationException, message.c_str());
                 }
+                defaultComponent.setValue(comp);
             }
-            return defaultComponent;        
+            return comp;
+        }
+                
+        // ===========================================
+        // Set the default composite component
+        // ===========================================
+        void SCARuntime::setDefaultComponent(Component* component)
+        {
+            logentry();
+            
+            return defaultComponent.setValue(component);
         }
                 
     } // End namespace sca

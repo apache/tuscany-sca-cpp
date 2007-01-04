@@ -62,8 +62,9 @@ namespace tuscany
             void CPPExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerImplementationExtension(new CPPImplementationExtension());
-                SCARuntime::getInstance()->registerInterfaceExtension(new CPPInterfaceExtension());
+                SCARuntime* runtime = SCARuntime::getCurrentRuntime();
+                runtime->registerImplementationExtension(new CPPImplementationExtension());
+                runtime->registerInterfaceExtension(new CPPInterfaceExtension());
             }
 
         } // End namespace cpp

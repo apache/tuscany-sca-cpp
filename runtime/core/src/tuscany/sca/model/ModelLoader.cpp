@@ -60,11 +60,10 @@ namespace tuscany
             // ===========
             // Constructor
             // ===========
-            ModelLoader::ModelLoader(Composite* system) : system(system)
+            ModelLoader::ModelLoader(SCARuntime* runtime, Composite* system)
+                : system(system), runtime(runtime)
             {
                 logentry(); 
-                
-                runtime = SCARuntime::getInstance();
             }
             
             // ==========
@@ -872,7 +871,7 @@ namespace tuscany
                     try {
                     
                         // Load the Assembly model schema    
-                        string root = SCARuntime::getInstance()->getInstallRoot();
+                        string root = runtime->getInstallRoot();
                         string filename = root + "/xsd/sca.xsd";
                         
                         myXSDHelper->defineFile(filename.c_str());

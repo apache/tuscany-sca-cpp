@@ -66,8 +66,9 @@ namespace tuscany
             void PythonExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerImplementationExtension(new PythonImplementationExtension());
-                SCARuntime::getInstance()->registerInterfaceExtension(new PythonInterfaceExtension());
+                SCARuntime* runtime = SCARuntime::getCurrentRuntime();
+                runtime->registerImplementationExtension(new PythonImplementationExtension());
+                runtime->registerInterfaceExtension(new PythonInterfaceExtension());
             }
 
         } // End namespace python

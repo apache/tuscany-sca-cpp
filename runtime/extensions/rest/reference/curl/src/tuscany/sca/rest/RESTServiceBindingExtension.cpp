@@ -89,7 +89,7 @@ namespace tuscany
             void RESTServiceBindingExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerServiceBindingExtension(new RESTServiceBindingExtension());
+                SCARuntime::getCurrentRuntime()->registerServiceBindingExtension(new RESTServiceBindingExtension());
             }
 
         } // End namespace rest

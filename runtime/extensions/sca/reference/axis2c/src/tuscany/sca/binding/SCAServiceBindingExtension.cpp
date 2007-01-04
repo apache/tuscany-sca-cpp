@@ -92,7 +92,7 @@ namespace tuscany
             void SCAServiceBindingExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getInstance()->registerServiceBindingExtension(new SCAServiceBindingExtension());
+                SCARuntime::getCurrentRuntime()->registerServiceBindingExtension(new SCAServiceBindingExtension());
             }
 
         } // End namespace ws

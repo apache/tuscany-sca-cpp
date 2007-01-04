@@ -114,65 +114,49 @@ namespace tuscany
                 
                 try
                 {
-                    bool restart = false;
-                    bool resolve = false;
-            
-                    string systemRoot = SCARuntime::getSystemRoot();
-                    if (systemRoot != root)
+                    SCARuntime* runtime = SCARuntime::getSharedRuntime();
+                    if (runtime == NULL)
                     {
-                        systemRoot = root;
-                        restart = true;
-                        resolve = true;
-                    }
-            
-                    string systemPath = SCARuntime::getSystemPath();
-                    if (systemPath != path)
-                    {
-                        systemPath = path;
-                        restart = true;
-                        resolve = true;
-                    }
-            
-                    string componentName = SCARuntime::getDefaultComponentName();
-                    if (componentName != component)
-                    {
-                        componentName = component;
-                        resolve = true;
-                    }
-                    
-                    string serviceName = service;
-            
-                    SCARuntime* scaRuntime;
-                    if (restart)
-                    {
-                        loginfo("Starting SCA runtime");
-                        SCARuntime::releaseInstance();
-                        SCARuntime::setSystemRoot(systemRoot);
-                        SCARuntime::setSystemPath(systemPath);
-                        SCARuntime::setDefaultComponentName(componentName);
-                        scaRuntime = SCARuntime::getInstance();
-                    }
-                    else if (resolve)
-                    {
-                        loginfo("Starting SCA runtime");
-                        SCARuntime::releaseInstance();
-                        SCARuntime::setSystemRoot(systemRoot);
-                        SCARuntime::setSystemPath(systemPath);
-                        SCARuntime::setDefaultComponentName(componentName);
-                        scaRuntime = SCARuntime::getInstance();
+                        runtime = new SCARuntime("", root, path, "", "");
+                        SCARuntime::setSharedRuntime(runtime);
                     }
                     else
                     {
-                        scaRuntime = SCARuntime::getInstance();
+                        if (strlen(root) != 0 && runtime->getSystemRoot() != root)
+                        {
+                            string msg = "Cannot switch to a different system root: " + string(root);
+                            throwException(SystemConfigurationException, msg.c_str());
+                        }
+                        else
+                        {
+                            if (strlen(path) != 0 && runtime->getSystemPath() != path)
+                            {
+                                string msg = "Cannot switch to a different system path: " + string(path);
+                                throwException(SystemConfigurationException, msg.c_str());
+                            }
+                        }
                     }
-            
+
+                    string componentName;
+                    if (strlen(component))
+                    {
+                        componentName = component;
+                    }
+                    else
+                    {
+                        componentName = runtime->getDefaultComponentName();
+                    }
+                    string serviceName = service;
+                    
                     loginfo("Resolving composite: %s, service: %s", componentName.c_str(), serviceName.c_str());
-                    Component* compositeComponent = scaRuntime->getDefaultComponent();
+                    Component* compositeComponent = runtime->getSystem()->findComponent(componentName);
                     if (compositeComponent == NULL)
                     {
                         string msg = "Component not found " + componentName;
                         throwException(SystemConfigurationException, msg.c_str());
                     }
+                    runtime->setDefaultComponent(compositeComponent);
+
                     Composite* composite = (Composite*)compositeComponent->getType();
                     CompositeService* compositeService = (CompositeService*)composite->findComponent(serviceName);
                     if (compositeService == NULL)
@@ -180,7 +164,7 @@ namespace tuscany
                         string msg = "Composite service not found " + serviceName;
                         throwException(SystemConfigurationException, msg.c_str());
                     }
-                    
+                
                     return compositeService;
                 }
                 catch(TuscanyRuntimeException &ex)

@@ -50,25 +50,6 @@ namespace tuscany
                 */
                 virtual ~TuscanyRuntime();            
                 
-                
-                /**
-                * Set the system root configuration path
-                * @param root The path to the system configuration.
-                */
-                void setSystemRoot(const std::string& root);
-                
-                /**
-                * Set the system composite search path
-                * @param root The search path for composites.
-                */
-                void setSystemPath(const std::string& path);
-                
-                /**
-                * Set the default component for the system
-                * @param componentName The name of the default component.
-                */
-                void setDefaultComponentName(const std::string& componentName);
-                
                 /**
                 * start the runtime
                 */
@@ -84,6 +65,9 @@ namespace tuscany
                 std::string systemRoot;
                 std::string systemPath;
                 std::string defaultComponentName;
+                
+                void* defaultComponent;
+                void* runtime;
             };
     
         } // End namespace cpp

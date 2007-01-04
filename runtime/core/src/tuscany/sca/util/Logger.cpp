@@ -23,9 +23,11 @@
 #include <stdarg.h>
 
 #if defined(WIN32)  || defined (_WINDOWS)
+#include <windows.h>
 #include <process.h>
 #else
 #include <unistd.h>
+#include <pthread.h>
 #endif
 
 #include "tuscany/sca/util/Logger.h"
@@ -50,11 +52,11 @@ namespace tuscany
                 {
                     setLogWriter(0);
                     
-                    pid = new char[10];
+                    pid = new char[21];
 #if defined(WIN32)  || defined (_WINDOWS)
-                    sprintf(pid, "%d", _getpid());
+                    sprintf(pid, "%lu:%lu", (unsigned long)_getpid(), (unsigned long)GetCurrentThreadId());
 #else
-                    sprintf(pid, "%d", getpid());
+                    sprintf(pid, "%lu:%lu", (unsigned long)getpid(), (unsigned long)pthread_self());
 #endif
                 }
                 return logWriter;
