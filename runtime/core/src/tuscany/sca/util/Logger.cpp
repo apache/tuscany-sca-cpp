@@ -44,20 +44,12 @@ namespace tuscany
         {
             LogWriter* Logger::logWriter = getLogWriter();
             
-            char* Logger::pid = NULL;
-    
             LogWriter* Logger::getLogWriter()
             {
                 if (logWriter == 0)
                 {
                     setLogWriter(0);
                     
-                    pid = new char[21];
-#if defined(WIN32)  || defined (_WINDOWS)
-                    sprintf(pid, "%lu:%lu", (unsigned long)_getpid(), (unsigned long)GetCurrentThreadId());
-#else
-                    sprintf(pid, "%lu:%lu", (unsigned long)getpid(), (unsigned long)pthread_self());
-#endif
                 }
                 return logWriter;
             }
@@ -106,8 +98,19 @@ namespace tuscany
             {
                 if (level <= loggingLevel)
                 {
-                    logWriter->log(level, pid, msg);
+                    char tid[21];
+                    formatThreadID(tid);
+                    logWriter->log(level, tid, msg);
                 }
+            }
+
+            void Logger::formatThreadID(char* tid)
+            {
+#if defined(WIN32)  || defined (_WINDOWS)
+                sprintf(tid, "%lu:%lu", (unsigned long)_getpid(), (unsigned long)GetCurrentThreadId());
+#else
+                sprintf(tid, "%lu:%lu", (unsigned long)getpid(), (unsigned long)pthread_self());
+#endif
             }
     
             void Logger::logArgs(int level, const char* msg, ...)
@@ -116,6 +119,8 @@ namespace tuscany
                 {
                     va_list variableArguments;
                     va_start(variableArguments, msg);
+                    char tid[21];
+                    formatThreadID(tid);
                     char messageBuffer[256];
                     int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
 #if defined(WIN32)  || defined (_WINDOWS)
@@ -125,7 +130,7 @@ namespace tuscany
                         char* bigMessageBuffer = new char[size+1];
                         vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
-                        logWriter->log(level, pid, bigMessageBuffer);
+                        logWriter->log(level, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #else
@@ -134,14 +139,14 @@ namespace tuscany
                         char* bigMessageBuffer = new char[size+1];
                         vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
-                        logWriter->log(level, pid, bigMessageBuffer);
+                        logWriter->log(level, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #endif
                     else
                     {
                         messageBuffer[255] = '\0';
-                        logWriter->log(level, pid, messageBuffer);
+                        logWriter->log(level, tid, messageBuffer);
                     }
                     va_end(variableArguments);
                 }
@@ -153,6 +158,8 @@ namespace tuscany
                 {
                     va_list variableArguments;
                     va_start(variableArguments, msg);
+                    char tid[21];
+                    formatThreadID(tid);
                     char messageBuffer[256];
                     int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
 #if defined(WIN32)  || defined (_WINDOWS)
@@ -162,7 +169,7 @@ namespace tuscany
                         char* bigMessageBuffer = new char[size+1];
                         vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
-                        logWriter->log(0, pid, bigMessageBuffer);
+                        logWriter->log(0, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #else
@@ -171,14 +178,14 @@ namespace tuscany
                         char* bigMessageBuffer = new char[size+1];
                         vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
-                        logWriter->log(0, pid, bigMessageBuffer);
+                        logWriter->log(0, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #endif
                     else
                     {
                         messageBuffer[255] = '\0';
-                        logWriter->log(0, pid, messageBuffer);
+                        logWriter->log(0, tid, messageBuffer);
                     }
                     va_end(variableArguments);
                 }
@@ -189,6 +196,8 @@ namespace tuscany
                 {
                     va_list variableArguments;
                     va_start(variableArguments, msg);
+                    char tid[21];
+                    formatThreadID(tid);
                     char messageBuffer[256];
                     int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
 #if defined(WIN32)  || defined (_WINDOWS)
@@ -198,7 +207,7 @@ namespace tuscany
                         char* bigMessageBuffer = new char[size+1];
                         vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
-                        logWriter->log(1, pid, bigMessageBuffer);
+                        logWriter->log(1, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #else
@@ -207,14 +216,14 @@ namespace tuscany
                         char* bigMessageBuffer = new char[size+1];
                         vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
-                        logWriter->log(1, pid, bigMessageBuffer);
+                        logWriter->log(1, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #endif
                     else
                     {
                         messageBuffer[255] = '\0';
-                        logWriter->log(1, pid, messageBuffer);
+                        logWriter->log(1, tid, messageBuffer);
                     }
                     va_end(variableArguments);
                 }
@@ -225,6 +234,8 @@ namespace tuscany
                 {
                     va_list variableArguments;
                     va_start(variableArguments, msg);
+                    char tid[21];
+                    formatThreadID(tid);
                     char messageBuffer[256];
                     int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
 #if defined(WIN32)  || defined (_WINDOWS)
@@ -234,7 +245,7 @@ namespace tuscany
                         char* bigMessageBuffer = new char[size+1];
                         vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
-                        logWriter->log(2, pid, bigMessageBuffer);
+                        logWriter->log(2, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #else
@@ -243,14 +254,14 @@ namespace tuscany
                         char* bigMessageBuffer = new char[size+1];
                         vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
-                        logWriter->log(2, pid, bigMessageBuffer);
+                        logWriter->log(2, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #endif
                     else
                     {
                         messageBuffer[255] = '\0';
-                        logWriter->log(2, pid, messageBuffer);
+                        logWriter->log(2, tid, messageBuffer);
                     }
                     va_end(variableArguments);
                 }

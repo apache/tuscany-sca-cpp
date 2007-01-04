@@ -81,11 +81,6 @@ namespace tuscany
                 static LogWriter* logWriter;
                 
                 /**
-                 * The current process ID
-                 */
-                 static char* pid;
-    
-                /**
                  * Get the current log writer.
                  * @return The current log writer.
                  */
@@ -96,6 +91,11 @@ namespace tuscany
                  */
                 static int setLogging();
                 
+                /**
+                 * Print the current thread id into the given char buffer.
+                 */
+                static void formatThreadID(char* tid);
+
                 /**
                  * Message buffer
                  */

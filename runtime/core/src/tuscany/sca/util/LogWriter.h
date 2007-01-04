@@ -41,10 +41,10 @@ namespace tuscany
                 /**
                  * Log a message.
                  * @param level The level of logging for this message.
-                 * @param pid The current process id.
+                 * @param tid The current thread id.
                  * @param msg The message to log.
                  */
-                virtual void log(int level, const char* pid, const char* msg) = 0;
+                virtual void log(int level, const char* tid, const char* msg) = 0;
             };
 
         } // End namespace util        
