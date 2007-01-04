@@ -32,7 +32,8 @@ exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$TUSCANY_SCACPP/extensions/python/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_COMPONENT=sample.yahoo.app.WebSearchComponent
