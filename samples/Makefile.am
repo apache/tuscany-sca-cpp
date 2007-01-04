@@ -18,28 +18,30 @@
 if WANT_ALL_SAMPLES
   CPP_SAMPLES = CppCalculator
 if WITH_AXIS2C
-  CPP_AXIS2C_SAMPLES = CppBigBank
+    CPP_AXIS2C_SAMPLES = CppBigBank
 endif
   PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
-endif
+  PYTHON_RUBY_SAMPLES = RestYahoo
+else
 if WANT_CPP_SAMPLES
-  CPP_SAMPLES = CppCalculator
+    CPP_SAMPLES = CppCalculator
 if WITH_AXIS2C
-  CPP_AXIS2C_SAMPLES = CppBigBank
+      CPP_AXIS2C_SAMPLES = CppBigBank
 endif
 endif
 if WANT_PYTHON_SAMPLES
-  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer
+    PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer
 if WANT_RUBY_SAMPLES
-  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer RestYahoo
+      PYTHON_RUBY_SAMPLES = RestYahoo
 endif
 endif
 if WANT_RUBY_SAMPLES
-  RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
+    RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
 endif
 if WANT_PHP_SAMPLES
 endif
-SUBDIRS = ${CPP_SAMPLES} ${CPP_AXIS2C_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PHP_SAMPLES}
+endif
+SUBDIRS = ${CPP_SAMPLES} ${CPP_AXIS2C_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PYTHON_RUBY_SAMPLES} ${PHP_SAMPLES}
 
 EXTRA_DIST = GettingStarted.html
