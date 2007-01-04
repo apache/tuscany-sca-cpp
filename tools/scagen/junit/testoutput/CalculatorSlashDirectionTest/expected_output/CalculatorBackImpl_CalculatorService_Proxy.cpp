@@ -20,8 +20,6 @@
 #include "CalculatorBackImpl_CalculatorService_Proxy.h"
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;
 
 extern "C"
 {
@@ -29,7 +27,7 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    CalculatorBackImpl_CalculatorService_Proxy* CalculatorBackImpl_CalculatorService_Proxy_Factory(ServiceWrapper* target)
+    CalculatorBackImpl_CalculatorService_Proxy* CalculatorBackImpl_CalculatorService_Proxy_Factory(tuscany::sca::ServiceWrapper* target)
     {
         return new CalculatorBackImpl_CalculatorService_Proxy(target);
     }
@@ -43,7 +41,7 @@ extern "C"
     }
 }
 
-CalculatorBackImpl_CalculatorService_Proxy::CalculatorBackImpl_CalculatorService_Proxy(ServiceWrapper* targ) : target(targ)
+CalculatorBackImpl_CalculatorService_Proxy::CalculatorBackImpl_CalculatorService_Proxy(tuscany::sca::ServiceWrapper* targ) : target(targ)
 {
 }
 
@@ -55,24 +53,24 @@ CalculatorBackImpl_CalculatorService_Proxy::~CalculatorBackImpl_CalculatorServic
 
 long CalculatorBackImpl_CalculatorService_Proxy::subtractBack( long arg0,  long arg1)
 {
-    Operation operation("subtractBack");
+    tuscany::sca::Operation operation("subtractBack");
     operation.addParameter(&arg0);
     operation.addParameter(&arg1);
     long ret;
     operation.setReturnValue(&ret);
     target->invoke(operation);
-    return ret;
+    return *(long*)operation.getReturnValue();
 }
 
 long CalculatorBackImpl_CalculatorService_Proxy::addBack( long arg0,  long arg1)
 {
-    Operation operation("addBack");
+    tuscany::sca::Operation operation("addBack");
     operation.addParameter(&arg0);
     operation.addParameter(&arg1);
     long ret;
     operation.setReturnValue(&ret);
     target->invoke(operation);
-    return ret;
+    return *(long*)operation.getReturnValue();
 }
 
 

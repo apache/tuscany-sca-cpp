@@ -36,7 +36,7 @@ public:
     virtual void* newImplementation();
     virtual void deleteImplementation();
 private:
-    MyValueImpl* impl;
+    myvaluecorp::implns::MyValueImpl* impl;
 };
 
 #endif // MyValueImpl_MyValueService_Wrapper_h

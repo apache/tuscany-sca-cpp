@@ -20,8 +20,6 @@
 #include "MyValueImpl_MyValueService_Proxy.h"
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;
 
 extern "C"
 {
@@ -29,7 +27,7 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    MyValueImpl_MyValueService_Proxy* MyValueImpl_MyValueService_Proxy_Factory(ServiceWrapper* target)
+    MyValueImpl_MyValueService_Proxy* MyValueImpl_MyValueService_Proxy_Factory(tuscany::sca::ServiceWrapper* target)
     {
         return new MyValueImpl_MyValueService_Proxy(target);
     }
@@ -43,7 +41,7 @@ extern "C"
     }
 }
 
-MyValueImpl_MyValueService_Proxy::MyValueImpl_MyValueService_Proxy(ServiceWrapper* targ) : target(targ)
+MyValueImpl_MyValueService_Proxy::MyValueImpl_MyValueService_Proxy(tuscany::sca::ServiceWrapper* targ) : target(targ)
 {
 }
 
@@ -55,37 +53,37 @@ MyValueImpl_MyValueService_Proxy::~MyValueImpl_MyValueService_Proxy()
 
 float MyValueImpl_MyValueService_Proxy::getMyValue(const char* arg0)
 {
-    Operation operation("getMyValue");
+    tuscany::sca::Operation operation("getMyValue");
     operation.addParameter(&arg0);
     float ret;
     operation.setReturnValue(&ret);
     target->invoke(operation);
-    return ret;
+    return *(float*)operation.getReturnValue();
 }
 
 float MyValueImpl_MyValueService_Proxy::getMyValueS(const string& arg0)
 {
-    Operation operation("getMyValueS");
+    tuscany::sca::Operation operation("getMyValueS");
     operation.addParameter(&arg0);
     float ret;
     operation.setReturnValue(&ret);
     target->invoke(operation);
-    return ret;
+    return *(float*)operation.getReturnValue();
 }
 
 string MyValueImpl_MyValueService_Proxy::getCustname( string& arg0)
 {
-    Operation operation("getCustname");
+    tuscany::sca::Operation operation("getCustname");
     operation.addParameter(&arg0);
     string ret;
     operation.setReturnValue(&ret);
     target->invoke(operation);
-    return ret;
+    return *(string*)operation.getReturnValue();
 }
 
 const string& MyValueImpl_MyValueService_Proxy::getCustnamecs( string arg0)
 {
-    Operation operation("getCustnamecs");
+    tuscany::sca::Operation operation("getCustnamecs");
     operation.addParameter(&arg0);
     target->invoke(operation);
     return *(const string*)operation.getReturnValue();

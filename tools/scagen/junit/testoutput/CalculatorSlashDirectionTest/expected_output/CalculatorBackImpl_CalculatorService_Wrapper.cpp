@@ -20,8 +20,6 @@
 #include "CalculatorBackImpl_CalculatorService_Wrapper.h"
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;
 
 
 
@@ -37,7 +35,7 @@ extern "C"
     }
 }
 
-CalculatorBackImpl_CalculatorService_Wrapper::CalculatorBackImpl_CalculatorService_Wrapper(Service* target) : CPPServiceWrapper(target)
+CalculatorBackImpl_CalculatorService_Wrapper::CalculatorBackImpl_CalculatorService_Wrapper(tuscany::sca::model::Service* target) : tuscany::sca::cpp::CPPServiceWrapper(target)
 {
     impl = (CalculatorBackImpl*)getImplementation();
 }
@@ -57,27 +55,47 @@ void CalculatorBackImpl_CalculatorService_Wrapper::deleteImplementation()
     delete impl;
 }
 
-void CalculatorBackImpl_CalculatorService_Wrapper::invokeService(Operation& operation)
+void CalculatorBackImpl_CalculatorService_Wrapper::invokeService(tuscany::sca::Operation& operation)
 {
-    const string& operationName = operation.getName();
+    const std::string& operationName = operation.getName();
 
     if (operationName == "subtractBack")
     {
         long& p0 = *( long*)operation.getParameterValue(0);
         long& p1 = *( long*)operation.getParameterValue(1);
-        *(long*)operation.getReturnValue() = impl->subtractBack(p0, p1);
+
+        if(operation.getReturnValue() != NULL)
+        {
+            *(long*)operation.getReturnValue() = impl->subtractBack(p0, p1);
+        }
+        else
+        {
+            long* ret = new long;
+            *ret = impl->subtractBack(p0, p1);
+            operation.setReturnValue((const long*)ret);
+        }
         return;
     }
     if (operationName == "addBack")
     {
         long& p0 = *( long*)operation.getParameterValue(0);
         long& p1 = *( long*)operation.getParameterValue(1);
-        *(long*)operation.getReturnValue() = impl->addBack(p0, p1);
+
+        if(operation.getReturnValue() != NULL)
+        {
+            *(long*)operation.getReturnValue() = impl->addBack(p0, p1);
+        }
+        else
+        {
+            long* ret = new long;
+            *ret = impl->addBack(p0, p1);
+            operation.setReturnValue((const long*)ret);
+        }
         return;
     }
         
 
-    throw ServiceRuntimeException("Invalid operation");
+    throw osoa::sca::ServiceRuntimeException("Invalid operation");
     
 }
 

@@ -20,8 +20,6 @@
 #include "MyValueImpl_stockQuote_Proxy.h"
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;
 
 extern "C"
 {
@@ -29,7 +27,7 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    MyValueImpl_stockQuote_Proxy* MyValueImpl_stockQuote_Proxy_Factory(ServiceWrapper* target)
+    MyValueImpl_stockQuote_Proxy* MyValueImpl_stockQuote_Proxy_Factory(tuscany::sca::ServiceWrapper* target)
     {
         return new MyValueImpl_stockQuote_Proxy(target);
     }
@@ -43,7 +41,7 @@ extern "C"
     }
 }
 
-MyValueImpl_stockQuote_Proxy::MyValueImpl_stockQuote_Proxy(ServiceWrapper* targ) : target(targ)
+MyValueImpl_stockQuote_Proxy::MyValueImpl_stockQuote_Proxy(tuscany::sca::ServiceWrapper* targ) : target(targ)
 {
 }
 
@@ -55,12 +53,12 @@ MyValueImpl_stockQuote_Proxy::~MyValueImpl_stockQuote_Proxy()
 
 commonj::sdo::DataObjectPtr MyValueImpl_stockQuote_Proxy::GetStockQuotes( commonj::sdo::DataObjectPtr arg0)
 {
-    Operation operation("GetStockQuotes");
-    operation.addParameter(&arg0);
+    tuscany::sca::Operation operation("GetStockQuotes");
+    operation.addParameter("request", &arg0);
     commonj::sdo::DataObjectPtr ret;
     operation.setReturnValue(&ret);
     target->invoke(operation);
-    return ret;
+    return *(commonj::sdo::DataObjectPtr*)operation.getReturnValue();
 }
 
 

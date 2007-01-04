@@ -20,8 +20,6 @@
 #include "CustomerInfoImpl_CustomerInfoService_Wrapper.h"
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;
 
 
 
@@ -37,7 +35,7 @@ extern "C"
     }
 }
 
-CustomerInfoImpl_CustomerInfoService_Wrapper::CustomerInfoImpl_CustomerInfoService_Wrapper(Service* target) : CPPServiceWrapper(target)
+CustomerInfoImpl_CustomerInfoService_Wrapper::CustomerInfoImpl_CustomerInfoService_Wrapper(tuscany::sca::model::Service* target) : tuscany::sca::cpp::CPPServiceWrapper(target)
 {
     impl = (CustomerInfoImpl*)getImplementation();
 }
@@ -57,34 +55,64 @@ void CustomerInfoImpl_CustomerInfoService_Wrapper::deleteImplementation()
     delete impl;
 }
 
-void CustomerInfoImpl_CustomerInfoService_Wrapper::invokeService(Operation& operation)
+void CustomerInfoImpl_CustomerInfoService_Wrapper::invokeService(tuscany::sca::Operation& operation)
 {
-    const string& operationName = operation.getName();
+    const std::string& operationName = operation.getName();
 
     if (operationName == "getCustomerInformationCharPublic")
     {
         char* p0 = *( char**)operation.getParameterValue(0);
         const char* p1 = *(const char**)operation.getParameterValue(1);
-        *(const char**)operation.getReturnValue() = impl->getCustomerInformationCharPublic(p0, p1);
+
+        if(operation.getReturnValue() != NULL)
+        {
+            *(const char**)operation.getReturnValue() = impl->getCustomerInformationCharPublic(p0, p1);
+        }
+        else
+        {
+            const char** ret = new const char*;
+            *ret = impl->getCustomerInformationCharPublic(p0, p1);
+            operation.setReturnValue((const const char**)ret);
+        }
         return;
     }
     if (operationName == "getCustomerInfoACharPublic")
     {
         char* p0 = *( char**)operation.getParameterValue(0);
         const char* p1 = *(const char**)operation.getParameterValue(1);
-        *(const char**)operation.getReturnValue() = impl->getCustomerInfoACharPublic(p0, p1);
+
+        if(operation.getReturnValue() != NULL)
+        {
+            *(const char**)operation.getReturnValue() = impl->getCustomerInfoACharPublic(p0, p1);
+        }
+        else
+        {
+            const char** ret = new const char*;
+            *ret = impl->getCustomerInfoACharPublic(p0, p1);
+            operation.setReturnValue((const const char**)ret);
+        }
         return;
     }
     if (operationName == "getCustomerInfoBCharPublic")
     {
         char* p0 = *( char**)operation.getParameterValue(0);
         char* p1 = *( char**)operation.getParameterValue(1);
-        *(const char**)operation.getReturnValue() = impl->getCustomerInfoBCharPublic(p0, p1);
+
+        if(operation.getReturnValue() != NULL)
+        {
+            *(const char**)operation.getReturnValue() = impl->getCustomerInfoBCharPublic(p0, p1);
+        }
+        else
+        {
+            const char** ret = new const char*;
+            *ret = impl->getCustomerInfoBCharPublic(p0, p1);
+            operation.setReturnValue((const const char**)ret);
+        }
         return;
     }
         
 
-    throw ServiceRuntimeException("Invalid operation");
+    throw osoa::sca::ServiceRuntimeException("Invalid operation");
     
 }
 

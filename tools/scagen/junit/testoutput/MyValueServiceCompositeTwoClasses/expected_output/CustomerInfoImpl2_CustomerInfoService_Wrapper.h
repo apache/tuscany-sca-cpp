@@ -36,7 +36,7 @@ public:
     virtual void* newImplementation();
     virtual void deleteImplementation();
 private:
-    CustomerInfoImpl2* impl;
+    myvaluecorp::implns::CustomerInfoImpl2* impl;
 };
 
 #endif // CustomerInfoImpl2_CustomerInfoService_Wrapper_h

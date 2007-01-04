@@ -20,8 +20,8 @@
 #include "MyValueImpl_MyValueService_Wrapper.h"
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;
+
+using myvaluecorp::implns::MyValueImpl;
 
 extern "C"
 {
@@ -35,7 +35,7 @@ extern "C"
     }
 }
 
-MyValueImpl_MyValueService_Wrapper::MyValueImpl_MyValueService_Wrapper(Service* target) : CPPServiceWrapper(target)
+MyValueImpl_MyValueService_Wrapper::MyValueImpl_MyValueService_Wrapper(tuscany::sca::model::Service* target) : tuscany::sca::cpp::CPPServiceWrapper(target)
 {
     impl = (MyValueImpl*)getImplementation();
 }
@@ -55,26 +55,56 @@ void MyValueImpl_MyValueService_Wrapper::deleteImplementation()
     delete impl;
 }
 
-void MyValueImpl_MyValueService_Wrapper::invokeService(Operation& operation)
+void MyValueImpl_MyValueService_Wrapper::invokeService(tuscany::sca::Operation& operation)
 {
-    const string& operationName = operation.getName();
+    const std::string& operationName = operation.getName();
 
     if (operationName == "getMyValue")
     {
         const char* p0 = *(const char**)operation.getParameterValue(0);
-        *(float*)operation.getReturnValue() = impl->getMyValue(p0);
+
+        if(operation.getReturnValue() != NULL)
+        {
+            *(float*)operation.getReturnValue() = impl->getMyValue(p0);
+        }
+        else
+        {
+            float* ret = new float;
+            *ret = impl->getMyValue(p0);
+            operation.setReturnValue((const float*)ret);
+        }
         return;
     }
     if (operationName == "getMyValueS")
     {
         string& p0 = *(string*)operation.getParameterValue(0);
-        *(float*)operation.getReturnValue() = impl->getMyValueS(p0);
+
+        if(operation.getReturnValue() != NULL)
+        {
+            *(float*)operation.getReturnValue() = impl->getMyValueS(p0);
+        }
+        else
+        {
+            float* ret = new float;
+            *ret = impl->getMyValueS(p0);
+            operation.setReturnValue((const float*)ret);
+        }
         return;
     }
     if (operationName == "getCustname")
     {
         string& p0 = *(string*)operation.getParameterValue(0);
-        *(string*)operation.getReturnValue() = impl->getCustname(p0);
+
+        if(operation.getReturnValue() != NULL)
+        {
+            *(string*)operation.getReturnValue() = impl->getCustname(p0);
+        }
+        else
+        {
+            string* ret = new string;
+            *ret = impl->getCustname(p0);
+            operation.setReturnValue((const string*)ret);
+        }
         return;
     }
     if (operationName == "getCustnamecs")
@@ -86,7 +116,7 @@ void MyValueImpl_MyValueService_Wrapper::invokeService(Operation& operation)
     }
         
 
-    throw ServiceRuntimeException("Invalid operation");
+    throw osoa::sca::ServiceRuntimeException("Invalid operation");
     
 }
 

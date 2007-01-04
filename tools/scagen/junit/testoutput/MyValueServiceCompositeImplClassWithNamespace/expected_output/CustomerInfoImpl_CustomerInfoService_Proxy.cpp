@@ -20,8 +20,6 @@
 #include "CustomerInfoImpl_CustomerInfoService_Proxy.h"
 
 #include "osoa/sca/sca.h"
-using namespace osoa::sca;
-using namespace tuscany::sca;
 
 extern "C"
 {
@@ -29,7 +27,7 @@ extern "C"
     #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
     #endif
-    CustomerInfoImpl_CustomerInfoService_Proxy* CustomerInfoImpl_CustomerInfoService_Proxy_Factory(ServiceWrapper* target)
+    CustomerInfoImpl_CustomerInfoService_Proxy* CustomerInfoImpl_CustomerInfoService_Proxy_Factory(tuscany::sca::ServiceWrapper* target)
     {
         return new CustomerInfoImpl_CustomerInfoService_Proxy(target);
     }
@@ -43,7 +41,7 @@ extern "C"
     }
 }
 
-CustomerInfoImpl_CustomerInfoService_Proxy::CustomerInfoImpl_CustomerInfoService_Proxy(ServiceWrapper* targ) : target(targ)
+CustomerInfoImpl_CustomerInfoService_Proxy::CustomerInfoImpl_CustomerInfoService_Proxy(tuscany::sca::ServiceWrapper* targ) : target(targ)
 {
 }
 
@@ -55,12 +53,12 @@ CustomerInfoImpl_CustomerInfoService_Proxy::~CustomerInfoImpl_CustomerInfoServic
 
 const char* CustomerInfoImpl_CustomerInfoService_Proxy::getCustomerInformation(const char* arg0)
 {
-    Operation operation("getCustomerInformation");
-    operation.addParameter(&arg0);
+    tuscany::sca::Operation operation("getCustomerInformation");
+    operation.addParameter("customerID", &arg0);
     const char* ret;
     operation.setReturnValue(&ret);
     target->invoke(operation);
-    return ret;
+    return *(const char**)operation.getReturnValue();
 }
 
 
