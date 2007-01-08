@@ -190,6 +190,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\..\runtime\extensions\python\src\tuscany\sca\python\sca_proxy.py"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
