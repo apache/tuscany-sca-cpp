@@ -1014,6 +1014,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Queue.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Queue.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Thread.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Thread.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\ThreadLocal.cpp"
 					>
 				</File>
