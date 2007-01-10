@@ -1,0 +1,83 @@
+Tuscany SCA for C++ Samples - PHP Calculator Sample
+===================================================
+
+This is a very simple sample to show how an SCA composite can wire together
+two components to implement a Calculator service and expose that service as
+a Web Service. The sample components are implemented in various ways to demonstrate 
+the different features of the PHP SCA extension.
+
+There are three sub projects in this workspace:
+    - sample.calculator
+      This contains the source code and SCDL artifacts for the SCA Calculator.
+      composite implementing the sample Calculator.
+
+    - sample.calculator.client
+      A sample client which does a local call to the Calculator service.
+
+    - sample.calculator.wsclient
+      A sample PHP SCA Web Service client which calls the Calculator Web service.
+
+Additionally, there is the sample.calculator.app.composite file. This 
+describes the configuration of the SCA Calculator composite deployed to the 
+SCA runtime.
+
+(See the README.html file for instructions to build and run this sample - TODO)
+
+This is a work in progress. The ultimate intention is to demonstrate integration
+of PHP SCA with C++ SCA and this sample is being used as a motivator for that 
+work. As it stands the PHP extension for C++ SCA only supports PHP functions or classes
+as service implementations and the work to include PHP SCA is in progress. To this end
+this sample exposes the "add" service and method. This is only callable from the 
+CalculatorWSClient.php. 
+
+
+Client (PHP/SCA)  ->  Calculator (PHP/SCA Service in PHP extension )
+                        add() ------------------------> Add (PHP function)
+                        sub() ------------------------> Subtract (PHP class/function)
+                        mul() ------------------------> PHP/SCA local service 
+                        div() ------------------------> PHP/SCA remote service
+              
+In the first instance of course we don't have this all working. The following is the
+current configuration
+
+Client (PHP/SCA)  ->  Calculator (PHP/SCA Service in PHP extension )
+                        add() ------------------------> Add (PHP function)
+                        
+To run the sample configure the axis runtime to reference the PHPCalculator 
+application. 
+
+Windows
+=======
+
+I use the following bat file to start the stand alone axis server and include 
+appropriate references to PHP dependencies. This needs turning into a proper
+run script but I haven't got to this yet
+
+set TUSCANY_SCACPP_LOGGING=9
+set AXIS2C_HOME=C:\axis2c-bin-0.95-win32
+set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%TUSCANY_SCACPP%\extensions\php\bin;%AXIS2C_HOME%\lib;c:\libxml2-2.6.23.win32\bin;c:\apps\iconv-1.9.1.win32\bin;c:\apps\zlib-1.2.3.win32\bin;C:\php-5.2.0\
+set TUSCANY_SCACPP_ROOT=%TUSCANY_SCACPP%\samples\PHPCalculator
+rem set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent
+
+%AXIS2C_HOME%\bin\axis2_http_server.exe -l 9                         
+
+I then
+
+cd %TUSCANY_SCACPP%\samples\PHPCalculator\samples.calculator.wsclient
+runwsclient.bat
+
+This has the effect of runing a PHP/SCA client (no C++ SCA content at all)
+to generate a web service request to the C++ SCA runtime hosting the calculator
+application.
+
+Currently this doesn't runt all the way through due to a WSDL bug in PHP SCA
+(http://pecl.php.net/bugs/bug.php?id=9572). But it gets 99% of the way there. 
+You will see the server doing all of its stuff and returning the correct result. 
+
+Linux
+=====
+
+TBD
+              
+
+

@@ -24,6 +24,8 @@
 // WinSock.h and WinSock2.h to be included leading to redefinitions
 #define _WINSOCKAPI_
 
+#include <iostream>
+
 #include <php_embed.h>
 
 #include "tuscany/sca/php/PHPServiceWrapper.h"
@@ -152,8 +154,11 @@ namespace tuscany
                     // get the component type information
                     PHPImplementation* impl = (PHPImplementation*)component->getType();
                     
+                    // get the directory containing the component type
+                    const string &compositeDir = impl->getComposite()->getRoot();
+                    
                     // first create the temporay script and include the module
-                    string script = "include '" + impl->getModule() + ".php';";
+                    string script = "include '" + compositeDir + "/" + impl->getModule() + ".php';";
                     
                     // if we have a class create an instance 
                     string className = impl->getClass();
@@ -302,11 +307,25 @@ namespace tuscany
                     } zend_end_try(); 
 
                     //clean up
-                    php_embed_shutdown(TSRMLS_C); 
+// TODO
+// Shutdown is crashing now I have moved from PHP5.1.4 to PHP5.2.0
+// This SAPI needs rewiriting properly anyhow so I'm not spending the 
+// time to fix at the moment 
+//                    php_embed_shutdown(TSRMLS_C); 
                     loginfo("Engine shutdown");
                    
                     // get the response values
                     loginfo("Script returned: %s", scriptResponse.c_str());
+
+// TODO
+// how do we determine the return type of the component method
+// something has changed in the infrastructure so that this no longer works 
+// I'm cheating for now and assuming it is always a string.
+// Needs fixing when we revist the SAPI
+// the following has the effect of setting the return value type
+// to CHARS
+                    static const char *tempChars = "";
+                    operation.setReturnValue(&tempChars);
 
                     switch(operation.getReturnType())
                     {
