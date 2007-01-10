@@ -25,13 +25,14 @@
 #include "tuscany_sca_config.h"
 #endif
 
+#include <sstream>
+
 #include "tuscany/sca/util/Library.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Logging.h"
 
 using namespace std;
-
 
 namespace tuscany
 {
@@ -101,7 +102,10 @@ namespace tuscany
                 hDLL = LoadLibrary(dllName.c_str());
                 if (hDLL == NULL)
                 {
-                    msg = "Unable to load library: " + dllName;
+                    ostringstream msgs;
+                    msgs << "Unable to load library: " + dllName << ", error: ";
+                    Utils::printLastError(msgs);
+                    msg = msgs.str();
                 }
 #else
                 int l = name.length();
