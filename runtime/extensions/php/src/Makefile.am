@@ -31,7 +31,7 @@ tuscany/sca/php/model/PHPServiceBinding.cpp
 
 libtuscany_sca_php_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \
-	-L${PHP_LIB} -lphp5
+	-L${PHP_LIB} -lphp5 -lresolv
 
 INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
