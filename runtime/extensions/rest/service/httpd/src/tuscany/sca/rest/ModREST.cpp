@@ -91,11 +91,12 @@ namespace tuscany
             {
                 char * root;
                 char * path;
+                char * base_uri;
                 char * component;
             } rest_dir_config_rec_t;
             
-            CompositeService* initializeSCARuntime(
-                const char* home, const char* root, const char* path, const char *component, const char* service);
+            CompositeService* initializeSCARuntime(const char* home, const char* root,
+                const char* path, const char* baseURI, const char *component, const char* service);
             
             DataObjectPtr createPayload(DataFactoryPtr dataFactory,
                 Operation& operation, const WSDLOperation& wsdlOperation);
@@ -107,35 +108,20 @@ namespace tuscany
             /**
              * Initialize the SCA runtime
              */
-            CompositeService* initializeSCARuntime(const char* home, const char* root, const char* path, const char *component, const char* service)
+            CompositeService* initializeSCARuntime(const char* home, const char* root,
+                const char* path, const char* baseURI, const char *component, const char* service)
             {
                 logentry();
-                loginfo("Root: %s, path: %s, component: %s, service: %s", root, path, component, service);
+                loginfo("Home: %s", home);
+                loginfo("Root: %s", root);
+                loginfo("Path: %s", path);
+                loginfo("Base URI: %s", baseURI);
+                loginfo("Component: %s", component);
+                loginfo("Service: %s", service);
                 
                 try
                 {
-                    SCARuntime* runtime = SCARuntime::getSharedRuntime();
-                    if (runtime == NULL)
-                    {
-                        runtime = new SCARuntime("", root, path, "", "");
-                        SCARuntime::setSharedRuntime(runtime);
-                    }
-                    else
-                    {
-                        if (strlen(root) != 0 && runtime->getSystemRoot() != root)
-                        {
-                            string msg = "Cannot switch to a different system root: " + string(root);
-                            throwException(SystemConfigurationException, msg.c_str());
-                        }
-                        else
-                        {
-                            if (strlen(path) != 0 && runtime->getSystemPath() != path)
-                            {
-                                string msg = "Cannot switch to a different system path: " + string(path);
-                                throwException(SystemConfigurationException, msg.c_str());
-                            }
-                        }
-                    }
+                    SCARuntime* runtime = SCARuntime::initializeSharedRuntime(home, root, path, baseURI);
 
                     string componentName;
                     if (strlen(component))
@@ -365,7 +351,7 @@ namespace tuscany
                     
                     // Initialize the SCA runtime
                     CompositeService* compositeService = initializeSCARuntime(
-                                server_conf->home, dir_conf->root, dir_conf->path, component.c_str(), service.c_str());
+                                server_conf->home, dir_conf->root, dir_conf->path, dir_conf->base_uri, component.c_str(), service.c_str());
                                 
                     if(!compositeService)
                     {
@@ -1270,6 +1256,14 @@ namespace tuscany
                 return NULL;
             }
             
+            const char *rest_set_base_uri(cmd_parms *cmd, void *c, 
+                                    const char *arg)
+            {
+                rest_dir_config_rec_t *conf = (rest_dir_config_rec_t*)c;
+                conf->base_uri = apr_pstrdup(cmd->pool, arg);
+                return NULL;
+            }
+            
             const char *rest_set_component(cmd_parms *cmd, void *c, 
                                     const char *arg)
             {
@@ -1286,6 +1280,8 @@ namespace tuscany
                               "Tuscany SCA composite search path"),
                 AP_INIT_TAKE1("TuscanyRoot", (const char*(*)())tuscany::sca::rest::rest_set_root, NULL, ACCESS_CONF,
                               "Tuscany root SCA configuration path"),
+                AP_INIT_TAKE1("TuscanyBaseURI", (const char*(*)())tuscany::sca::rest::rest_set_base_uri, NULL, ACCESS_CONF,
+                              "Tuscany SCA system base URI"),
                 AP_INIT_TAKE1("TuscanyComponent", (const char*(*)())tuscany::sca::rest::rest_set_component, NULL, ACCESS_CONF,
                               "SCA component name"),
                 {NULL}
@@ -1322,6 +1318,7 @@ namespace tuscany
                 rest_dir_config_rec_t* conf = (rest_dir_config_rec_t* )apr_palloc(p, sizeof(*conf));
                 conf->path = "";
                 conf->root = "";
+                conf->base_uri = "";
                 conf->component = "";
                 return conf;
             }

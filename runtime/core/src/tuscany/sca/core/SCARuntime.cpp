@@ -293,15 +293,61 @@ namespace tuscany
         }
 
         // =============================================================
-        // Set the runtime associated with the current process.
+        // Initialize the runtime associated with the current process.
         // =============================================================
-        void SCARuntime::setSharedRuntime(SCARuntime* runtime)
+        SCARuntime* SCARuntime::initializeSharedRuntime(const string& installRoot, const string& systemRoot,
+                const string& systemPath, const string& baseURI, const string& defaultComponentName)
         {
             logentry();
+
+            SCARuntime* runtime;
             
             sharedRuntimeLock.lock();
-            sharedRuntime = runtime;
+            try
+            {
+                if (sharedRuntime == NULL)
+                {
+                    sharedRuntime = new SCARuntime(installRoot, systemRoot, systemPath, baseURI, defaultComponentName);
+                }
+                else
+                {
+                    if (installRoot.size() != 0 && sharedRuntime->getInstallRoot() != installRoot)
+                    {
+                        string msg = "Cannot reconfigure runtime installation directory: " + string(installRoot);
+                        throwException(SystemConfigurationException, msg.c_str());
+                    }
+                    if (systemRoot.size() != 0 && sharedRuntime->getSystemRoot() != systemRoot)
+                    {
+                        string msg = "Cannot reconfigure SCA system root: " + string(systemRoot);
+                        throwException(SystemConfigurationException, msg.c_str());
+                    }
+                    if (systemPath.size() != 0 && sharedRuntime->getSystemPath() != systemPath)
+                    {
+                        string msg = "Cannot reconfigure SCA system path: " + string(systemPath);
+                        throwException(SystemConfigurationException, msg.c_str());
+                    }
+                    if (baseURI.size() != 0 && sharedRuntime->getDefaultBaseURI() != baseURI)
+                    {
+                        string msg = "Cannot reconfigure SCA system URI: " + string(baseURI);
+                        throwException(SystemConfigurationException, msg.c_str());
+                    }
+                    if (defaultComponentName.size() != 0 && sharedRuntime->getDefaultComponentName() != defaultComponentName)
+                    {
+                        string msg = "Cannot reconfigure main SCA component: " + string(baseURI);
+                        throwException(SystemConfigurationException, msg.c_str());
+                    }
+                }
+                
+                runtime = sharedRuntime;
+            }
+            catch (...)
+            {
+                sharedRuntimeLock.unlock();
+                throw;
+            }
             sharedRuntimeLock.unlock();
+            
+            return runtime;
         }
 
         // ======================================

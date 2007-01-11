@@ -87,10 +87,12 @@ namespace tuscany
             SCA_API static SCARuntime* getSharedRuntime();
 
             /**
-             * Get the runtime associated with the current process.
+             * Initialize the runtime associated with the current process.
              * @return The runtime associated with the current process.
              */
-            SCA_API static void setSharedRuntime(SCARuntime* runtime);
+            SCA_API static SCARuntime* initializeSharedRuntime(const std::string& installRoot = "",
+                const std::string& systemRoot = "", const std::string& systemPath = "",
+                const std::string& baseURI = "",  const std::string& defaultComponentName = "");
 
             /**
              * Returns the directory in which the Tuscany runtime has been installed.
@@ -152,8 +154,8 @@ namespace tuscany
             SCA_API tuscany::sca::model::Component* getDefaultComponent();
 
             /**
-             * Get the default component set for the current thread.
-             * @return The default composite.
+             * Set the default component for the current thread.
+             * @return The default component.
              */
             SCA_API void setDefaultComponent(tuscany::sca::model::Component* component);
 

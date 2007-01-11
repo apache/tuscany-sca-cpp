@@ -132,35 +132,20 @@ namespace tuscany
             /**
              * Initialize the SCA runtime
              */
-            CompositeService* initializeSCARuntime(const char* root, const char* path, const char *component, const char* service)
+            CompositeService* initializeSCARuntime(const char*home, const char* root,
+                const char* path, const char* baseURI, const char *component, const char* service)
             {
                 logentry();
-                loginfo("Root: %s, path: %s, component: %s, service: %s", root, path, component, service);
+                loginfo("Home: %s", home);
+                loginfo("Root: %s", root);
+                loginfo("Path: %s", path);
+                loginfo("Base URI: %s", baseURI);
+                loginfo("Component: %s", component);
+                loginfo("Service: %s", service);
                 
                 try
                 {
-                    SCARuntime* runtime = SCARuntime::getSharedRuntime();
-                    if (runtime == NULL)
-                    {
-                        runtime = new SCARuntime("", root, path, "", "");
-                        SCARuntime::setSharedRuntime(runtime);
-                    }
-                    else
-                    {
-                        if (strlen(root) != 0 && runtime->getSystemRoot() != root)
-                        {
-                            string msg = "Cannot switch to a different system root: " + string(root);
-                            throwException(SystemConfigurationException, msg.c_str());
-                        }
-                        else
-                        {
-                            if (strlen(path) != 0 && runtime->getSystemPath() != path)
-                            {
-                                string msg = "Cannot switch to a different system path: " + string(path);
-                                throwException(SystemConfigurationException, msg.c_str());
-                            }
-                        }
-                    }
+                    SCARuntime* runtime = SCARuntime::initializeSharedRuntime(home, root, path, baseURI);
 
                     string componentName;
                     if (strlen(component))
@@ -255,8 +240,12 @@ namespace tuscany
                 				{
                                     CompositeService* compositeService;
                                     
-                                    // Get the Tuscany system root, path and composite service name from the Axis2
+                                    // Get the Tuscany home, system root, path and composite service name from the Axis2
                                     // service parameters 
+                                    char* homeParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyHome");
+                                    if (homeParam == NULL)
+                                        homeParam = "";
+                                    
                                     char* rootParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyRoot");
                                     if (rootParam == NULL)
                                         rootParam = "";
@@ -264,6 +253,10 @@ namespace tuscany
                                     char* pathParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyPath");
                                     if (pathParam == NULL)
                                         pathParam = "";
+                                    
+                                    char* baseURIParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyBaseURI");
+                                    if (baseURIParam == NULL)
+                                        baseURIParam = "";
                                     
                                     char* serviceParam = Axis2Utils::getAxisServiceParameterValue(env, msg_ctx, "TuscanyService");
                                     if (serviceParam != NULL)
@@ -274,11 +267,11 @@ namespace tuscany
                                         string component, service;
                                         Utils::rTokeniseString("/", serviceParam, component, service);
                                 
-                                        compositeService = initializeSCARuntime(rootParam, pathParam, component.c_str(), service.c_str());
+                                        compositeService = initializeSCARuntime(homeParam, rootParam, pathParam, baseURIParam, component.c_str(), service.c_str());
                                     }
                                     else {
                                         
-                                        // Use the default system root and component, the service is
+                                        // Use the default home, system root and component, the service is
                                         // derived from the target address
                                         axis2_endpoint_ref_t *endpoint_ref = NULL;
                                         endpoint_ref = AXIS2_MSG_CTX_GET_FROM(msg_ctx, env);
@@ -311,7 +304,7 @@ namespace tuscany
                                         loginfo("System root: %s, component name: %s, service name: %s, operation name: %s",
                                             rootParam, component.c_str(), service.c_str(), op_name.c_str());
                                         
-                                        compositeService = initializeSCARuntime(rootParam, pathParam, component.c_str(), service.c_str());
+                                        compositeService = initializeSCARuntime(homeParam, rootParam, pathParam, baseURIParam, component.c_str(), service.c_str());
                                     }
                 
                                     if(!compositeService)
