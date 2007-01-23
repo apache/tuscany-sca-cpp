@@ -80,11 +80,7 @@ namespace tuscany
                 logentry();
 
                 // Initialize Axis2 stuff
-                axis2_allocator_t *allocator = axis2_allocator_init (NULL);
-                axis2_log_t *log = axis2_log_create(allocator, NULL, "tuscany_client.log");
-                axis2_error_t *error = axis2_error_create(allocator);
-                axis2_env_t *env = axis2_env_create_with_error_log(allocator, error, log);
-                env->log->level = AXIS2_LOG_LEVEL_TRACE;
+                axis2_env_t *env = axis2_env_create_all("tuscany_ws_reference.log",AXIS2_LOG_LEVEL_TRACE);
                 axis2_error_init();
                 
                 // Get the WS service binding and WSDLOperation
@@ -212,11 +208,10 @@ namespace tuscany
                 {
                     address = (axis2_char_t*)wsdlOperation.getEndpoint().c_str();
                 }
-                
+                                
                 axis2_char_t* opName = (axis2_char_t*)operationName.c_str();
                 axis2_char_t* soap_action = (axis2_char_t*)wsdlOperation.getSoapAction().c_str();
-                axis2_char_t* serviceName = (axis2_char_t*)binding->getServiceName().c_str();
-                
+
                 // create OM from Operation and wsdlOperation
                 axiom_node_t* payload = createPayload(operation, wsdlOperation, env);
                 /* Create EPR with given address */
@@ -240,10 +235,14 @@ namespace tuscany
                 
                 AXIS2_OPTIONS_SET_SOAP_VERSION(options, env, soap_version);
                 AXIS2_OPTIONS_SET_ACTION(options, env, soap_action);
-                loginfo("Set action: %s", soap_action);
-                loginfo("address: %s", address);
+                AXIS2_OPTIONS_SET_XML_PARSER_RESET(options, env, AXIS2_FALSE);
+
+                loginfo("WS SOAP action: %s", soap_action);
+                loginfo("WS Endpoint address: %s", address);
                 if(soap_version == AXIOM_SOAP11)
                 {
+                    // Only set the SOAP action when using SOAP1.1
+                    AXIS2_OPTIONS_SET_SOAP_ACTION(options, env, soap_action);
                     loginfo("Set soap version: 1.1");
                 }
                 else if(soap_version == AXIOM_SOAP12)
@@ -282,6 +281,15 @@ namespace tuscany
                 if(ret_node)
                 {
                     setReturn(ret_node, operation, wsdlOperation, env);
+
+                    // Set return value - now need to detach the node from the Axiom document                     
+                    // for clean-up
+                    axiom_document_t *document = AXIOM_NODE_GET_DOCUMENT(ret_node, env);
+                    if (document)
+                    {
+                        AXIOM_DOCUMENT_BUILD_ALL (document, env);
+                    }
+                    AXIOM_NODE_DETACH (ret_node, env);
                 }
                 else
                 {
@@ -290,17 +298,58 @@ namespace tuscany
                     ", " << AXIS2_ERROR_GET_MESSAGE(env->error);
                     throwException(ServiceInvocationException, msg.str().c_str());
                 }
-                
-                loginfo("Have not freed Axis2C service client memory due to Jira AXIS2C-209");
-                // Uncommenting this code causes crash when invoking a composite with both Axis2C ws.binding 
-                // service and reference. See Jiras TUSCANY-536 and AXIS2C-209
-                //if (svc_client)
-                //{
-                //    AXIS2_SVC_CLIENT_FREE(svc_client, env);
-                //    svc_client = NULL;
-                //} 
+
+                if (svc_client)
+                {
+                    AXIS2_SVC_CLIENT_FREE(svc_client, env);
+                    svc_client = NULL;
+                }
+
+                if(env)
+                {
+                    axis2_env_free((axis2_env_t *) env);
+                    env = NULL;
+                }
+                loginfo("Freed env");
+
             }
-            
+
+axiom_node_t *
+build_payload_for_math ()
+{
+    axis2_env_t *env = NULL;
+    axiom_node_t *math_om_node = NULL;
+    axiom_element_t* math_om_ele = NULL;
+    axiom_node_t* text_om_node = NULL;
+    axiom_element_t * text_om_ele = NULL;
+    axiom_namespace_t *ns1 = NULL;
+
+    //axis2_allocator_t *the_allocator = axis2_allocator_init (NULL);
+    //env = axis2_env_create(the_allocator); 
+    env = axis2_env_create_all("alt_math.log",AXIS2_LOG_LEVEL_TRACE);
+
+    ns1 = axiom_namespace_create (env, "http://sample/calculator", "ns1");
+
+    math_om_ele = axiom_element_create (env, NULL, "add", ns1, &math_om_node);
+
+    text_om_ele = axiom_element_create (env, math_om_node, "param1", NULL, &text_om_node);
+    AXIOM_ELEMENT_SET_TEXT (text_om_ele, env, "10", text_om_node);
+
+    text_om_ele = axiom_element_create (env, math_om_node, "param2", NULL, &text_om_node);
+    AXIOM_ELEMENT_SET_TEXT (text_om_ele, env, "12", text_om_node);
+
+    //if(the_allocator)
+    //{
+    //    axis2_allocator_free(the_allocator);
+    //}
+    if(env)
+    {
+        axis2_env_free(env);
+    }
+
+    return math_om_node;
+}
+
             axiom_node_t* Axis2Client::createPayload(Operation& operation, 
                 const WSDLOperation& wsdlOperation,
                 axis2_env_t* env)
