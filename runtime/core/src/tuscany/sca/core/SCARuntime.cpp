@@ -372,27 +372,45 @@ namespace tuscany
             string extensionsRoot = installRoot + "/extensions";
 
 #if defined(WIN32)  || defined (_WINDOWS)
-            string pattern = "*.dll";
+            string libraryExtension = ".dll";
 #else
 #if defined(IS_DARWIN)
-            string pattern = "*.dylib";
+            string libraryExtension = ".dylib";
 #else
-            string pattern = "*.so";
+            string libraryExtension = ".so";
 #endif
 #endif
-          
+            string pattern = "*" + libraryExtension;
             Files files(extensionsRoot, pattern, true);
             for (unsigned int i=0; i < files.size(); i++)
             {
                 try
                 {
-                    Library lib = Library( files[i].getDirectory() + "/" + files[i].getFileName());
-                    extensionsList.push_back(lib);                    
+                	string filename = files[i].getFileName();
+                    Library lib = Library( files[i].getDirectory() + "/" + filename);
+                    
+                    // Determine the name of the initialize method
+                    // 1) strip the .dll/.so/.dylib suffix
+                    // 2) for non-Windows strip any lib prefix                    
+                    string initializeMethod;
+                    #if defined(WIN32)  || defined (_WINDOWS)
+                    #else
+                    if (filename.substr(0,3) == "lib")
+                    {
+                    	initializeMethod = filename.substr(3, filename.size()-libraryExtension.size() - 3);
+                    }
+                    else
+                    #endif
+                    {
+                        initializeMethod = filename.substr(0, filename.size()-libraryExtension.size());
+                    }
+                    initializeMethod += "_initialize";
                     TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE extension = 
-                        (TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE)lib.getSymbol("tuscany_sca_extension_initialize");
+                        (TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE)lib.getSymbol(initializeMethod);
                     if (extension)
                     {
                         extension();
+                        extensionsList.push_back(lib);
                     }
                 }
                 catch (TuscanyRuntimeException& ex)

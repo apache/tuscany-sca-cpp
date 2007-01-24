@@ -35,7 +35,7 @@ extern "C"
 #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
 #endif
-        void tuscany_sca_extension_initialize()
+        void tuscany_sca_binding_service_initialize()
     {
         tuscany::sca::binding::SCAReferenceBindingExtension::initialize();
     }

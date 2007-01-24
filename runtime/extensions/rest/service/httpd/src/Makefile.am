@@ -31,6 +31,6 @@ libtuscany_sca_mod_rest_la_LIBADD = \
 INCLUDES = -I$(top_builddir)/runtime/core/src \
   -I$(top_builddir)/runtime/extensions/rest/interface/src \
   -I${TUSCANY_SDOCPP}/include \
-  -I${HTTPD_INCLUDE}
+  -I${HTTPD_INCLUDE} -I${APR_INCLUDE}
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
