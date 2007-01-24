@@ -314,42 +314,6 @@ namespace tuscany
 
             }
 
-axiom_node_t *
-build_payload_for_math ()
-{
-    axis2_env_t *env = NULL;
-    axiom_node_t *math_om_node = NULL;
-    axiom_element_t* math_om_ele = NULL;
-    axiom_node_t* text_om_node = NULL;
-    axiom_element_t * text_om_ele = NULL;
-    axiom_namespace_t *ns1 = NULL;
-
-    //axis2_allocator_t *the_allocator = axis2_allocator_init (NULL);
-    //env = axis2_env_create(the_allocator); 
-    env = axis2_env_create_all("alt_math.log",AXIS2_LOG_LEVEL_TRACE);
-
-    ns1 = axiom_namespace_create (env, "http://sample/calculator", "ns1");
-
-    math_om_ele = axiom_element_create (env, NULL, "add", ns1, &math_om_node);
-
-    text_om_ele = axiom_element_create (env, math_om_node, "param1", NULL, &text_om_node);
-    AXIOM_ELEMENT_SET_TEXT (text_om_ele, env, "10", text_om_node);
-
-    text_om_ele = axiom_element_create (env, math_om_node, "param2", NULL, &text_om_node);
-    AXIOM_ELEMENT_SET_TEXT (text_om_ele, env, "12", text_om_node);
-
-    //if(the_allocator)
-    //{
-    //    axis2_allocator_free(the_allocator);
-    //}
-    if(env)
-    {
-        axis2_env_free(env);
-    }
-
-    return math_om_node;
-}
-
             axiom_node_t* Axis2Client::createPayload(Operation& operation, 
                 const WSDLOperation& wsdlOperation,
                 axis2_env_t* env)
