@@ -19,8 +19,7 @@ libdir=$(prefix)/extensions/ruby/lib
 lib_LTLIBRARIES = libtuscany_sca_ruby.la
 
 install-exec-hook:
-	cd $(libdir); ln -s -f libtuscany_sca_ruby.so tuscany_sca_ruby.so
-
+	cd $(libdir); ln -s -f libtuscany_sca_ruby$(libsuffix) tuscany_sca_ruby$(libsuffix) 
 
 rootdir=$(prefix)/extensions/ruby
 
