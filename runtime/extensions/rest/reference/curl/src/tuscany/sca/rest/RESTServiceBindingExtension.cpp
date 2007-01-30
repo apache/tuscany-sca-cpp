@@ -33,7 +33,7 @@ extern "C"
 #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
 #endif
-        void tuscany_sca_rest_service_initialize()
+        void tuscany_sca_rest_reference_initialize()
     {
         tuscany::sca::rest::RESTServiceBindingExtension::initialize();
     }
