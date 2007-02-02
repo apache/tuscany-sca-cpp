@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../runtime/extensions/php/src;../../../deploy/include;&quot;$(TUSCANY_SDOCPP)/include&quot;;&quot;$(PHP_HOME)/sapi/embed&quot;;&quot;$(PHP_HOME)&quot;;&quot;$(PHP_HOME)/zend&quot;;&quot;$(PHP_HOME)/TSRM&quot;"
+				AdditionalIncludeDirectories="../../../runtime/extensions/php/src;../../../deploy/include;$(TUSCANY_SDOCPP)/include;$(PHP_HOME)/main;$(PHP_HOME)/sapi/embed;$(PHP_HOME);$(PHP_HOME)/zend;$(PHP_HOME)/TSRM"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_PHP_EXPORTS;ZEND_WIN32;PHP_WIN32;ZTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -187,6 +187,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\model\PHPReferenceBinding.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\model\PHPReferenceBinding.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\model\PHPServiceBinding.cpp"
 				>
 			</File>
@@ -197,6 +205,10 @@
 		</Filter>
 		<File
 			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\export.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\php_sca.h"
 			>
 		</File>
 		<File
@@ -216,11 +228,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\PHPServiceProxy.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\PHPServiceProxy.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\PHPServiceWrapper.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\PHPServiceWrapper.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\sca.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\sca.h"
 			>
 		</File>
 	</Files>

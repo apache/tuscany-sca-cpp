@@ -17,23 +17,16 @@
 # under the License.
 #
 #
+require 'SCA/SCA.php';
 
-
-/**
- * @service
- * @binding.php
- */
 class Multiply {
-
-    /**
-     * Division
-     * 
-     * @param float $num1 (the first number)
-     * @param float $num2 (the second number)
-     * @return float The result
-     */
     function mul($num1, $num2) {
-        return $num1 * $num2;
+        $result = $num1 * $num2;    
+
+        $log_proxy = SCA::getService("log_service");
+        $log_proxy->log_message($result);
+        
+        return $result;
     }    
 }
   

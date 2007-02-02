@@ -22,4 +22,7 @@
 	<service name="MultiplyService">
 		<interface.cpp header="Multiply.h"/>
 	</service>
+    <reference name="log_service">
+		<interface.cpp header="Log.h"/>
+	</reference>	
 </componentType>

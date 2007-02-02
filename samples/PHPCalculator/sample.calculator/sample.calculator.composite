@@ -24,39 +24,57 @@
 	<service name="CalculatorService">
 		<interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/>
 		<binding.ws/>
-		<reference>AddComponent</reference>
+		<reference>CalculatorCPPComponent</reference>
 	</service>
+	
+    <component name="CalculatorCPPComponent">
+		<implementation.cpp library="Calculator" header="CalculatorImpl.h"/>
+	    <reference name="divideService">DivideComponent/DivideService</reference>
+	</component>
 
-<!--
-	<component name="CalculatorComponent">
+	<component name="CalculatorPHPComponent">
         <implementation.php module="Calculator" scope="composite"/>
         <reference name="add_service">AddComponent</reference>
         <reference name="sub_service">SubtractComponent</reference>
         <reference name="mul_service">MultiplyComponent</reference>
         <reference name="div_service">DivideComponent</reference>
 	</component>
--->
+
     <component name="AddComponent">
         <implementation.php module="Add" scope="composite"/>
+        <reference name="log_service">LogComponent</reference>
     </component>
-<!--    
+    
     <component name="SubtractComponent">
-        <implementation.php module="Subtract" class="Subtract" scope="composite"/>
+        <implementation.php module="Subtract" scope="composite"/>
+        <reference name="log_service">LogComponent</reference>
     </component>	
 	
     <component name="MultiplyComponent">
-        <implementation.php module="Multiply" scope="composite"/>
-    </component>	
+        <implementation.php module="Multiply" class="Multiply" scope="composite"/>
+        <reference name="log_service">LogComponent</reference>
+    </component>
     
     <component name="DivideComponent">
-        <implementation.php module="Divide" scope="composite"/>
-    </component>
--->     
-<!--        
-	<reference name="DivideReference">
-		<interface.wsdl interface="http://sample/calculator#wsdl.interface(Divide)"/>
-		<binding.ws endpoint="http://sample/calculator#wsdl.endpoint(DivideService/DividePort)"/>
-	</reference>    
--->
+        <implementation.php module="Divide" class="Divide" scope="composite"/>
+	    <reference name="cppDivideService">DivideCPPComponent/DivideService</reference>
+        <reference name="add_service">AddComponent</reference>	  
+        <reference name="multiply_service">MultiplyComponent</reference>	
+        <reference name="subtract_service">SubtractComponent</reference> 
+        <reference name="add_service">AddComponent</reference>                         
+	</component>	
+	
+	<component name="DivideCPPComponent">
+		<implementation.cpp library="Calculator" header="DivideImpl.h"/>
+	</component>     
+    
+    <component name="LogComponent">
+        <implementation.php module="Log" class="Log" scope="composite"/>
+    </component>    
+    
+    	
+    
+
+
 </composite>
 

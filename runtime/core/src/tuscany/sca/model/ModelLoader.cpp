@@ -806,12 +806,12 @@ namespace tuscany
             void ModelLoader::loadXMLSchema(Composite* composite, const char *fileName)
             {
                 logentry(); 
-                                   
+                loginfo("Loading XML schema %s", fileName);                   
                 // Load a xsd file -> set the types in the data factory associated with
                 // the composite
                 try {
                     composite->getXSDHelper()->defineFile(fileName);                        
-                    //Utils::printTypes((*compositeIter)->getXSDHelper()->getDataFactory());
+                    //Utils::printTypes(composite->getXSDHelper()->getDataFactory());
                     
                 } catch (SDORuntimeException& ex)
                 {

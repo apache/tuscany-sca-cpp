@@ -26,12 +26,16 @@ libtuscany_sca_php_la_SOURCES = \
 tuscany/sca/php/PHPExtension.cpp \
 tuscany/sca/php/PHPImplementationExtension.cpp \
 tuscany/sca/php/PHPServiceWrapper.cpp \
+tuscany/sca/php/PHPServiceProxy.cpp \
+tuscany/sca/php/sca.cpp \
 tuscany/sca/php/model/PHPImplementation.cpp \
+tuscany/sca/php/model/PHPReferenceBinding.cpp \
 tuscany/sca/php/model/PHPServiceBinding.cpp
 
 libtuscany_sca_php_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \
-	-L${PHP_LIB} -lphp5 -lresolv
+	-L${PHP_LIB} -lphp5 \
+	-L${PHP_SCA_SDO_LIB} -lsdo
 
 INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
@@ -39,7 +43,8 @@ INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${PHP_INCLUDE}/main \
            -I${PHP_INCLUDE}/Zend \
            -I${PHP_INCLUDE}/TSRM \
-           -I${PHP_INCLUDE}/sapi/embed
+           -I${PHP_INCLUDE}/sapi/embed \
+           -I${PHP_SCA_SDO_INCLUDE}
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
+AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG 
                    

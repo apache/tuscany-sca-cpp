@@ -430,6 +430,7 @@ namespace tuscany
             logentry();
             if (extension)
             {
+                loginfo("Registering interface: %s", extension->getExtensionTypeQName().c_str());
                 interfaceExtensions[extension->getExtensionTypeQName()] = extension;          
             }
         }
@@ -450,6 +451,7 @@ namespace tuscany
             logentry();
             if (extension)
             {
+                loginfo("Registering implementation: %s", extension->getExtensionTypeQName().c_str());
                 implementationExtensions[extension->getExtensionTypeQName()] = extension;          
             }
         }
@@ -470,6 +472,7 @@ namespace tuscany
             logentry();
             if (extension)
             {
+                loginfo("Registering reference binding: %s", extension->getExtensionTypeQName().c_str());
                 referenceBindingExtensions[extension->getExtensionTypeQName()] = extension;          
             }
         }
@@ -490,6 +493,7 @@ namespace tuscany
             logentry();
             if (extension)
             {
+                loginfo("Registering service binding: %s", extension->getExtensionTypeQName().c_str());
                 serviceBindingExtensions[extension->getExtensionTypeQName()] = extension;          
             }
         }

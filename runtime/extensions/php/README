@@ -1,0 +1,239 @@
+PHP Extension for C++ SCA README
+================================
+
+Overview
+--------
+
+The PHP extension for C++ SCA allows PHP scripts to be used to implement SCA components. 
+This is achieved by using the C++ SCA extension API to drive script execution through the 
+PHP embedding SAPI. In its current incarnation the PHP Extension requires that a full SCDL 
+description is provided for each PHP component, i.e. we are not yet making use of the meta data
+provided by the annotations that can appear in PHP SCA components. 
+
+There are various styles of PHP script that are supported. The examples here are taken from 
+the PHPCalculator sample and if you look at the SCDL files provided with the sample you can 
+see the component type and composite files that tie these components into the working system
+
+SCA Service
+-----------
+
+/**
+ * @service
+ * @binding.ws
+ */
+class Divide {
+
+    /**
+     * @reference 
+     * @binding.tuscany cppDivideService
+     */
+    public $another_divide;
+
+    /**
+     * Division
+     *
+     * @param float $num1 (the first number)
+     * @param float $num2 (the second number)
+     * @return float The result
+     */
+    function div($num1, $num2) {
+        return $this->another_divide->div($num1, $num2);
+    }
+
+}
+
+PHP Class
+---------
+
+class Multiply {
+    function mul($num1, $num2) {
+        $result = $num1 * $num2;    
+
+        $log_proxy = SCA::getService("log_service");
+        $log_proxy->log_message($result);
+        
+        return $result;
+    }    
+}
+
+PHP Function
+------------
+
+function sub($num1, $num2){
+    $result = $num1 - $num2;    
+
+    $log_proxy = SCA::getService("log_service");
+    $log_proxy->log_message($result);
+        
+    return $result;
+}  
+
+PHP Script
+----------
+
+$num1 = $_REQUEST[0];
+$num2 = $_REQUEST[1];
+
+$result = $num1 + $num2;    
+
+$log_proxy = SCA::getService("log_service");
+$log_proxy->log_message($result);
+
+echo $result;
+
+TODO
+----
+1 I could not get this extension to work on Windows (memory corruption) but I suspect 
+  my configuration so I need to work with someone who is prepared to test it for me
+2 scagen does not run on my linux box (NPE) so I have constructed the PHPCalculator
+  sample from the parts of the CPPCalculator that had alread been generated. Need
+  to get a working scagen and try it from scratch
+3 I struggled for a long time with a missing symbol problem loading sdo.so at runtime on linux.
+  I got round this by creating a standalone Makefile for the CalculatorClient exe. All the 
+  shared objects that are loaded are compiled with the normal automake toolchain still but this
+  solves the problem. I need to investigate in detail what's going on here. Having someone
+  else try building with the full automake configuration would be insteresting
+4 The problem from 3 appears when running SCA behind axis hence I am unable to test with
+  remote clients
+5 The SCA_SDO build generates sdo.so and the Tuscany PHP Extension tries to load libsdo.so.
+  One side needs fixing. For now I just copy the library  
+6 SDO passing in and out of components is coded but not tested
+7 Returning values from plain PHP scripts (scripts without classes and functions) is not 
+  operating correctly
+8 Error handling needs looking at. Many situations are not trapped and those
+  that are may not be reported correctly
+9 Reorganize the extension code so that Tuscany SCA can be loaded by PHP running in Apache 
+  and accessed through SCA references. This will play the same role as SCA running hosted
+  in Axis2C and will open up the service bindings implemented in PHP SCA_SDO. 
+10Implement meta data exchange between the PHP SCA implementation and the Tuscany C++ SCA
+  implementations so that selected parts of the SCDL definition can be omitted
+
+Dependencies 
+------------
+PHP5.2.0 - (http://php.net/)  
+   To compile this extension you require a working installation of PHP5.2
+PHP5.2.0 source code - - (http://php.net/)
+   The binary release of PHP doesn't ship with the header files required to build 
+   against the PHP embedding SAPI and runtime libraries. You don't necessarily need 
+   to build PHP though just have the PHP source available
+SCA_SDO PECL extension V1.1.2 - (http://pecl.php.net/package/SCA_SDO)
+   Provides the SCA framework for PHP and the necessary mediation code to translate
+   between Tuscany SCA and PHP SCA. You will need to copy the library sdo.so to 
+   libsdo.so so that the Tuscany PHPExtension can load it given the makefile 
+   configuration as it stands. 
+SCA_SDO PECL extension V1.1.2 source code - (http://pecl.php.net/package/SCA_SDO)
+   On linux you can install this SCA_SDO extension automaitcally with PEAR but you 
+   need access to the source to build the extension so it's best to go get the
+   extension and install it somewhere you can point PHP_SCA_SDO_INCLUDE to
+
+Building on windows
+-------------------
+
+The Visual C++ Express solution provided with C++ SCA includes a project
+to build the PHP extension. This project relies on being able to access the 
+PHP include files from the source code directory and the PHP lib files from the
+binary install. Make sure your environment is set as follows before you start
+Visual C++ Express (if you do this after you start Visual C++ Express it will 
+not pick up the changes)
+
+PHP_HOME = the root directory of the PHP 5.2.0 source code install
+PATH = ensure that the root directory of the PHP 5.2.0 binary install appears 
+
+These changes come over and above the enviroment changes you need to make
+to build the core C++ SCA software (where are these described?)
+
+Now compile the PHP extension. Compiling with VC++ Express requires some care
+
+1/ Ensure that the PHP include files are configured correctly for 
+   compiling against C++ SCA in Visual C++ express
+  
+  See - http://bugs.php.net/bug.php?id=39130
+
+  Comment out two lines in $(PHP_HOME)/main/config.w32.h:
+  #define _USE_32BIT_TIME_T 1
+  #define HAVE_STDLIB_H 1
+  
+
+Building on Linux 
+-----------------
+
+The PHP extension comes with a set of automake files so that the PHP extension is built
+at the same time as all of the other extensions assuming that appropriate environment
+variables are set. The build.sh script that can be found under the top level sca directory
+checks whether the PHP_LIB and PHP_INCLUDE variables are set and if so enables compilation
+of the PHP extension automatically by adding --enable-php to the configure line. 
+
+There are a number of environment variables that the build depends on. I find setting the 
+following variables useful. 
+
+# the location of libxm2 
+export LIBXML2_LIB=/usr/lib
+export LIBXML2_INCLUDE=/usr/include/libxml2
+
+# the location of PHP
+export PHP_LIB=/usr/local/lib
+export PHP_INCLUDE=/usr/local/include/php
+
+# the location of the PHP SCA_SDO extension source
+# the lib location depends oh the configuration options used
+# when building PHP so beware
+export PHP_SCA_SDO_INCLUDE=where ever you install the SCA_SDO package source
+export PHP_SCA_SDO_LIB=$PHP_LIB/php/extensions/no-debug-zts-20060613/
+
+# the location of axis2
+export AXIS2C_HOME=/usr/local/axis2c-bin-0.96-linux
+
+# the install directories for the tuscany sca and sdo projects
+export TUSCANY_SDOCPP=/usr/local/tuscany/cpp/sdo/deploy
+export TUSCANY_SCACPP=/usr/local/tuscany/cpp/sca/deploy
+
+Once these are set running sca/build.sh should compile and install the PHP extension. 
+
+Testing the PHP Extension
+-------------------------
+
+In order to run the PHP extension successfully as an embedded component of the 
+C++ SCA runtime the PHP environment must be configured correctly. This configuration
+is provided by the php.ini file. The location of this file depends on your installation
+of PHP but by default is as follows. 
+
+/usr/local/bin            - PHP executables
+/usr/local/lib/php.ini    - the ini file that tell PHP where to look for scripts and 
+                            extension libraries
+/usr/local/lib/php        - PHP runtime installation, extension files and tests
+
+As is usually the case your milage may vary but wherever PHP is installed you will find 
+a similar set of directories. To force PHP to look in the correct place use the following
+setting
+
+# tell PHP specifically where to find php.ini rather than relying on the default
+set PHPRC=/usr/local/lib
+
+The php.ini file must be configured to load the SCA_SDO extension so you would expect to 
+see the following modifications to the file.
+
+; around line 528 you need to set the variable that tells PHP where to 
+; load extension libraries from. This varies depending on how PHP has been 
+; compiled and installed, for example,
+extension_dir = "/usr/local/lib/php/extensions/no-debug-zts-20060613/"
+
+; around line 512 you need to set the variable that tells PHP where to 
+; load included scripts from. There are windows and unix versions. Here
+; is a Unix example
+include_path=".:/usr/local/lib/php:/usr/local/lib/php/PEAR:/usr/local/tuscany/cppsca/samples/PHPCalculator/deploy/sample.calculator"
+
+; around line 673 you will find the end of the list of enabled extensions. We need to turn
+; on SDO so add the following line. sdo.so should be found in "extension_dir". 
+extension=sdo.so
+
+
+
+Compiling with VC++ Express requires some care
+
+- http://bugs.php.net/bug.php?id=39130
+
+  Comment out two lines in config.w32.h:
+  #define _USE_32BIT_TIME_T 1
+  #define HAVE_STDLIB_H 1
+  
+- 

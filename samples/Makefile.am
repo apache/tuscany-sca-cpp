@@ -40,6 +40,7 @@ if WANT_RUBY_SAMPLES
     RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
 endif
 if WANT_PHP_SAMPLES
+    PHP_SAMPLES = PHPCalculator
 endif
 endif
 SUBDIRS = ${CPP_SAMPLES} ${CPP_AXIS2C_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PYTHON_RUBY_SAMPLES} ${PHP_SAMPLES}

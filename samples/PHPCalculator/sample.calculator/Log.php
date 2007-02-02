@@ -18,15 +18,19 @@
 #
 #
 
-require 'SCA/SCA.php';
+/**
+ * @service
+ */
+class Log {
 
-$num1 = $_REQUEST[0];
-$num2 = $_REQUEST[1];
-
-$result = $num1 + $num2;    
-
-$log_proxy = SCA::getService("log_service");
-$log_proxy->log_message($result);
-
-echo $result;
+    /**
+     * Log
+     * 
+     * @param string $message (the message to be logged)
+     */
+    function log_message($message) {
+        SCA::$logger->toLog('>>> ' . $message);
+    }    
+}
+  
 ?>

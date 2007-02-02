@@ -22,4 +22,20 @@
 	<service name="DivideService">
 		<interface.cpp header="Divide.h"/>
 	</service>
+	
+    <reference name="cppDivideService">
+		<interface.cpp header="Divide.h"/>
+	</reference>	
+	
+    <reference name="add_service">
+		<interface.cpp header="Add.h"/>
+	</reference>	
+	
+    <reference name="subtract_service">
+		<interface.cpp header="Subtract.h"/>
+	</reference>	
+
+    <reference name="multiply_service">
+		<interface.cpp header="Multiply.h"/>
+	</reference>	
 </componentType>

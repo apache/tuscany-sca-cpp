@@ -17,12 +17,14 @@
 # under the License.
 #
 #
+require 'SCA/SCA.php';
 
-class Subtract 
-{
-    public function sub($num1, $num2)
-    {
-        return $num1 - $num2;
-    }
+function sub($num1, $num2){
+    $result = $num1 - $num2;    
+
+    $log_proxy = SCA::getService("log_service");
+    $log_proxy->log_message($result);
+        
+    return $result;
 }   
 ?>

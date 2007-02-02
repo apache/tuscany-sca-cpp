@@ -22,13 +22,15 @@
 
 // some strangeness in the build that causes 
 // WinSock.h and WinSock2.h to be included leading to redefinitions
-#define _WINSOCKAPI_
-
-#include <iostream>
+//#define _WINSOCKAPI_
 
 #include <php_embed.h>
 
+#include <iostream>
+#include <sstream>
+
 #include "tuscany/sca/php/PHPServiceWrapper.h"
+#include "tuscany/sca/php/PHPServiceProxy.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
@@ -39,6 +41,9 @@
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/php/model/PHPImplementation.h"
 
+
+#include "sca.h"
+
 using namespace std;
 using namespace tuscany::sca::model;
 
@@ -48,29 +53,32 @@ namespace tuscany
     {
         namespace php
         {
-            // a global!! place to put the response
-            // as I can't get the PHP return value
-            // processing to work. Need to be
-            // removed when the proper PHP SAPI is used
-            // The variable is only valid between the PHP engine call and
-            // the results processing. It stores the last thing that
-            // the script echoed
-            string scriptResponse;
-
+      
+            int embedSAPIInitializeCount = 0;
+            
             // Global callbacks used by the PHP engine
+
+            // Callback for SAPI error
+            void php_sapi_error(int type, const char *error_msg, ...) 
+            {
+                logwarning("PHP sapi error: %s", error_msg); 
+                //TODO - do something sensible with this output
+                zend_bailout(); 
+            }
 
             // Callback for log messages
             void php_log_message(char *message) 
             {
                 loginfo("PHP log: %s", message); 
+                //TODO - do something sensible with this output                
             }
 
             // Callback for unbuffered writes (echo, print etc.)
             int php_ub_write(const char *str, unsigned int str_length TSRMLS_DC)
             {
                 logentry();
-                loginfo("Write: %s", str);
-                scriptResponse = str;
+                loginfo("PHP Output: %s", str);
+                //TODO - do something sensible with this output
                 return str_length;
             }
 
@@ -85,17 +93,13 @@ namespace tuscany
                 char buffer[2048];
                 int len;
 				
-                len = snprintf(buffer, 2048, "Error on line %d: ", error_lineno);
+                len = snprintf(buffer, 2048, "Error in file %s on line %d: ", error_filename, error_lineno);
                 vsnprintf(buffer + len, (2048 - len), format, args);
-                logwarning("PHP unformatted error: %s", buffer);
+                logwarning("PHP error: %s", buffer);
+                //TODO - do something sensible with this output                
                 zend_bailout(); 
             }
 
-            // Callback for flush (could be used to do something with the scriptResponse)
-            void php_flush(void *server_context) 
-            { 
-               logentry();
-            }
 
             // ===========
             // Constructor
@@ -138,252 +142,139 @@ namespace tuscany
             void PHPServiceWrapper::invoke(Operation& operation)
             {
                 logentry();
-    
+
+                // set the current component in the SCA runtime
+                // so that other things can get at it thorugh this
+                // static class
                 SCARuntime* runtime = SCARuntime::getCurrentRuntime();
                 runtime->setCurrentComponent(component);
-                
-                try
-                {
-                    loginfo("Operation: %s", operation.getName().c_str());
 
-                    // create a temporary script which
-                    // - includes the named script
-                    // - creates a class instance if required
-                    // - calls the named method with the provided arguments
-                    
+                try
+                {                
                     // get the component type information
                     PHPImplementation* impl = (PHPImplementation*)component->getType();
                     
                     // get the directory containing the component type
                     const string &compositeDir = impl->getComposite()->getRoot();
-                    
-                    // first create the temporay script and include the module
-                    string script = "include '" + compositeDir + "/" + impl->getModule() + ".php';";
-                    
-                    // if we have a class create an instance 
-                    string className = impl->getClass();
-                    if( &className != NULL && className.size() > 0)
-                    {           
-                      script += "$anobject = new " + className + "();";
-                    }
 
-                    // construct the call to the function
-                    script += "$response = ";
-                    
-                    if( &className != NULL && className.size() > 0)
-                    { 
-                      script += " $anobject->";
-                    }
-                    
-                    script += operation.getName().c_str(); 
-                    script += "(";
-                    
-                    char tempString [32];
-
-                    // add the parameters to the call
-                    for(unsigned int i = 0; i < operation.getNParms(); i++) 
-					{
-                        const Operation::Parameter& parm = operation.getParameter(i);
-    		            switch(parm.getType())
-    		            {
-    			            case Operation::BOOL: 
-    			            {
-    				            if( *(bool*)parm.getValue())
-                                {
-                                    //boolean true
-                                    script += "true";
-                                }
-                                else
-                                {
-                                    script += "false";
-                                }
-    				            break;
-    			            }
-    			            case Operation::SHORT: 
-    			            {
-                                sprintf ( tempString, "%d", *(short*)parm.getValue() );
-                                script += tempString;
-    				            break;
-    			            }
-    			            case Operation::USHORT: 
-    			            {
-                                sprintf ( tempString, "%d", *(unsigned short*)parm.getValue() );
-                                script += tempString;
-    				            break;
-    			            }
-    			            case Operation::LONG: 
-    			            {
-                                sprintf ( tempString, "%d", *(long*)parm.getValue() );
-                                script += tempString;
-    				            break;
-    			            }
-    			            case Operation::ULONG: 
-    			            {
-                                sprintf ( tempString, "%d", *(unsigned long*)parm.getValue() );
-                                script += tempString;
-    				            break;
-    			            }
-    			            case Operation::FLOAT: 
-    			            {
-                                sprintf ( tempString, "%g", *(float*)parm.getValue() );
-                                script += tempString;
-    				            break;
-    			            }
-    			            case Operation::DOUBLE: 
-    			            {
-                                sprintf ( tempString, "%g", *(double*)parm.getValue() );
-                                script += tempString;
-                                break;
-                            }
-    			            case Operation::LONGDOUBLE: 
-    			            {
-                                sprintf ( tempString, "%g", *(long double*)parm.getValue() );
-                                script += tempString;
-    				            break;
-    			            }
-    			            case Operation::CHARS: 
-    			            {
-                                script += *(char**)parm.getValue();
-    				            break;
-    			            }
-    			            case Operation::STRING: 
-    			            {
-                                script += (*(string*)parm.getValue()).c_str();
-    				            break;
-    			            }
-                            default: 
-                            {
-                                throwException(ServiceDataException, "Operation parameter type not supported");
-                            }
-    		            }
-                           
-                        if ( ( i + 1 ) < operation.getNParms() )
-                        {
-                            script += ", ";
-                        }
-                    }
-                    
-                    
-                    // the closing bracket of the call 
-                    script += ");echo $response;return $response;";                  
-                 
-                    // we now have the temporary script to make the call
-                    loginfo("Script: %s", script.c_str());
-
+                    // get some useful information that will be used later
+                    // when we construct the wrapper script 
+                    string componentName = component->getName();
+                    string className     = impl->getClass();
+                    string operationName = operation.getName();
+                    loginfo("Component %s class %s operation: %s", 
+                            componentName.c_str(),
+                            className.c_str(),
+                            operationName.c_str());          
+                
                     // load the PHP logging and error callback methods
                     php_embed_module.log_message = php_log_message;
                     php_embed_module.ub_write    = php_ub_write;
-                    php_embed_module.flush		 = php_flush;
+                    php_embed_module.sapi_error  = php_sapi_error;
 
-                    //PHP_EMBED_START_BLOCK(/* argc */ 0, /* argv */ NULL)
-                    void ***tsrm_ls; 
-                    int status = php_embed_init(0, NULL PTSRMLS_CC);  
-                    loginfo("Engine startup status: %d", status);
+// would normally use the following macro before the embeded call
+// but we need to take account of multiple nested calls
+// and ZTS threading safety is not behaving itself
+//                  PHP_EMBED_START_BLOCK(/* argc */ 0, /* argv */ NULL)
+// ===================================================================== 
+                    {   
+#ifdef ZTS
+                    static void ***tsrm_ls;
+                    loginfo("ZTS enabled");
+#endif
+                    if ( embedSAPIInitializeCount == 0 )
+                    {
+                        embedSAPIInitializeCount = 1;
+                                           
+                        php_embed_init(0, NULL PTSRMLS_CC); 
 
-                    zend_first_try {
+                        // load up the sca module that provides the interface between
+                        // C++ and user space PHP
+                        zend_startup_module(&sca_module_entry);                        
+                    }
+                    else
+                    {
+                        embedSAPIInitializeCount++;
+                    }
+// should really be doing a first try but don't want to 
+// do it more than once                    
+//                    zend_first_try {
+                    zend_try {
+// =====================================================================
                         // set error handler
                         zend_error_cb = php_error_cb;
+                    
+                        // create an SCA_Tuscany object and give it the operation
+                        // object so that the script in user space PHP can get 
+                        // at the arguments and return a response. 
+                        long object_id = createSCATuscanyObject(operation TSRMLS_CC);
+                        std::stringstream string_stream;
+                        string object_id_str;
+                        string_stream << object_id;
+                        string_stream >> object_id_str;  
+                    
+                        // create the wrapper script that gets everything up and
+                        // going in userspace PHP
+                        string script;
+                        script += "include 'SCA/SCA.php';";                   
+                        script += "include 'SCA/SCA_TuscanyWrapper.php';";
+                        script += "$wrapper = new SCA_TuscanyWrapper(";
+                        script += object_id_str;
+                        script += ", '" + componentName + "', "; 
 
+                        if( &className != NULL && className.size() > 0)
+                        {           
+                            script += " '" + className + "'";
+                        }
+                        else
+                        {
+                            script += "null";
+                        }
+                  
+                        script += ", '" + operationName + "');";
+                        script += "include '" + compositeDir + "/" + impl->getModule() + ".php';";                         
+                        script += "$response = $wrapper->invoke();";
+                        script += "echo $response;"; 
+                        loginfo("Script: %s", script.c_str());
+                    
 						// call the dynamically created script
+						// I'm not trapping the return value here 
+						// as it seems to prevent any kind of output
+						// being produced. Needs investigation.
                         //zval retval;
                         zend_eval_string((char *) script.c_str(), 
                                          NULL,//&retval, 
                                          "PHP Component" TSRMLS_CC);
 						
-                        // get the response 
-                        // This doesn't want to work for some reason
-                        // so have chaced the last echo that the script 
-                        // returns in the global scriptResponse variable
-                        // This is a bit of a rubbish way of doing things so 
-                        // needs replacing when proper SAPI is used
+                        // As retval is not behaving post processing is commented out for now 
                         //convert_to_string(&retval);
-                        //loginfo("Script returned: %s", Z_STRVAL(retval));
+                        //loginfo("Script returned1: %s", Z_STRVAL(retval));
                         //zval_dtor(&retval);
-
-                        //PHP_EMBED_END_BLOCK()
-                    } zend_catch {
-                        int exit_status = EG(exit_status); 
-                        loginfo("In catch: %d", exit_status);
-                    } zend_end_try(); 
-
-                    //clean up
-// TODO
-// Shutdown is crashing now I have moved from PHP5.1.4 to PHP5.2.0
-// This SAPI needs rewiriting properly anyhow so I'm not spending the 
-// time to fix at the moment 
-//                    php_embed_shutdown(TSRMLS_C); 
-                    loginfo("Engine shutdown");
-                   
-                    // get the response values
-                    loginfo("Script returned: %s", scriptResponse.c_str());
-
-// TODO
-// how do we determine the return type of the component method
-// something has changed in the infrastructure so that this no longer works 
-// I'm cheating for now and assuming it is always a string.
-// Needs fixing when we revist the SAPI
-// the following has the effect of setting the return value type
-// to CHARS
-                    static const char *tempChars = "";
-                    operation.setReturnValue(&tempChars);
-
-                    switch(operation.getReturnType())
+    
+// would normally use the following macro after the embeded call
+// but we need to take account of multiple nested calls                    
+//                  PHP_EMBED_END_BLOCK()
+// =====================================================================
+                    } zend_catch { 
+                       /* int exit_status = EG(exit_status); */ 
+                    } 
+                    zend_end_try(); 
+                    
+                    if ( embedSAPIInitializeCount == 1 )
                     {
-                        case Operation::BOOL: 
-                            {
-                                if(scriptResponse == "true")
-                                {
-                                    *(bool*)operation.getReturnValue() = true;
-                                }
-                                break;
-                            }
-                        case Operation::SHORT: 
-                            {
-                                *(short*)operation.getReturnValue() = (short) strtol(scriptResponse.c_str(), NULL,10);
-                                break;
-                            }
-                        case Operation::LONG: 
-                            {
-                                *(long*)operation.getReturnValue() =  (long) strtol(scriptResponse.c_str(), NULL,10);
-                                break;
-                            }
-                        case Operation::USHORT: 
-                            {
-                                *(unsigned short*)operation.getReturnValue() = (unsigned short) strtoul(scriptResponse.c_str(), NULL,10);
-                                break;
-                            }
-                        case Operation::ULONG: 
-                            {
-                                *(unsigned long*)operation.getReturnValue() = (unsigned long) strtoul(scriptResponse.c_str(), NULL,10);
-                                break;
-                            }
-                        case Operation::FLOAT: 
-                            {
-                                *(float*)operation.getReturnValue() = (float) strtod(scriptResponse.c_str(), NULL);
-                                break;
-                            }
-                        case Operation::DOUBLE: 
-                            {
-                                *(double*)operation.getReturnValue() = (double) strtod(scriptResponse.c_str(), NULL);
-                                break;
-                            }
-                        case Operation::LONGDOUBLE: 
-                            {
-                                *(long double*)operation.getReturnValue() = (long double) strtod(scriptResponse.c_str(), NULL);
-                                break;
-                            }
-                        case Operation::CHARS: 
-                            {
-                                *(char**)operation.getReturnValue() = (char *)scriptResponse.c_str();
-                                break;
-                            }
-                        case Operation::STRING: 
-                            {
-                                *(string*)operation.getReturnValue() = scriptResponse;
-                                break;
-                            }
-                        default:;
+                        php_embed_shutdown(TSRMLS_C); 
+                        loginfo("Engine shutdown");                        
                     }
+                    else
+                    {
+                        embedSAPIInitializeCount--;
+                    }
+                    }
+// =====================================================================                    
+      
+                    // The response is set back into 'operation' by the
+                    // PECL extension code when the PHP user sapce wrapper
+                    // calls setResponse()
                 }
                 catch (...)
                 {
@@ -391,6 +282,7 @@ namespace tuscany
                     throw;
                 }
                 runtime->unsetCurrentComponent();
+
             }
             
             // ======================================================================

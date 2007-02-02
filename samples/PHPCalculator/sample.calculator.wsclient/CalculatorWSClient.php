@@ -23,9 +23,9 @@ include 'SCA/SCA.php';
 $service = SCA::getService('Calculator.wsdl');
 
 // Call the local service and write out the response
-echo "add(1.23, 4.56) = " . $service->add(1.23, 4.56) . "\n";
+//echo "add(1.23, 4.56) = " . $service->add(1.23, 4.56) . "\n";
 //echo "sub(1.23, 4.56) = " . $service->sub(1.23, 4.56) . "\n";
 //echo "mul(1.23, 4.56) = " . $service->mul(1.23, 4.56) . "\n";
-//echo "div(1.23, 4.56) = " . $service->div(1.23, 4.56) . "\n";
+echo "div(1.23, 4.56) = " . $service->div(1.23, 4.56) . "\n";
 
 ?>

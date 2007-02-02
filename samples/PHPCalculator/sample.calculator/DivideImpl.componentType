@@ -19,11 +19,9 @@
 -->
 
 <componentType xmlns="http://www.osoa.org/xmlns/sca/1.0">
-	<service name="SubtractService">
-		<interface.cpp header="Subtract.h"/>
+
+	<service name="DivideService">
+		<interface.cpp header="Divide.h"/>
 	</service>
 
-    <reference name="log_service">
-		<interface.cpp header="Log.h"/>
-	</reference>	
 </componentType>

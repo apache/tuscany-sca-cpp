@@ -22,4 +22,8 @@
 	<service name="AddService">
 		<interface.cpp header="Add.h"/>
 	</service>
+	
+    <reference name="log_service">
+		<interface.cpp header="Log.h"/>
+	</reference>	
 </componentType>

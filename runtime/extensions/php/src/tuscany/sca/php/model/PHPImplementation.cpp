@@ -22,7 +22,7 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/php/model/PHPImplementation.h"
 #include "tuscany/sca/php/model/PHPServiceBinding.h"
-//#include "tuscany/sca/php/model/PHPReferenceBinding.h"
+#include "tuscany/sca/php/model/PHPReferenceBinding.h"
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Service.h"
 #include "tuscany/sca/model/Reference.h"
@@ -68,18 +68,16 @@ namespace tuscany
                     iter++;
                 }
                 
-                // References not yet supported..
-
-                //// Create PHP bindings for all the references
-                //const Component::REFERENCE_MAP& references = component->getReferences();
-                //Component::REFERENCE_MAP::const_iterator refiter = references.begin();
-                //for (int ri=0; ri< references.size(); ri++)
-                //{
-                //    Reference *reference = refiter->second;
-                //    PHPReferenceBinding* binding = new PHPReferenceBinding(reference);
-                //    reference->setBinding(binding);
-                //    refiter++;
-                //}
+                // Create PHP bindings for all the references
+                const Component::REFERENCE_MAP& references = component->getReferences();
+                Component::REFERENCE_MAP::const_iterator refiter = references.begin();
+                for (int ri=0; ri< references.size(); ri++)
+                {
+                    Reference *reference = refiter->second;
+                    PHPReferenceBinding* binding = new PHPReferenceBinding(reference);
+                    reference->setBinding(binding);
+                    refiter++;
+                }
             }
             
         } // End namespace php
