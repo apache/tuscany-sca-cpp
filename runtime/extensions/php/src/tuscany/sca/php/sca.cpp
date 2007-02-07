@@ -19,6 +19,14 @@
 
 /* $ Id: $ */ 
 
+#ifdef WIN32
+
+// some strangeness in the build that causes 
+// WinSock.h and WinSock2.h to be included leading to redefinitions
+#define _WINSOCKAPI_
+
+#endif //WIN32
+
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/php/PHPServiceProxy.h"
 #include "commonj/sdo/RefCountingPointer.h"
@@ -707,6 +715,7 @@ long createSCATuscanyObject(Operation& operation TSRMLS_DC)
     
     // create an object of type SCA_Tuscany
     zval *_this_zval;
+    MAKE_STD_ZVAL(_this_zval);
     Z_TYPE_P(_this_zval) = IS_OBJECT;
     if ( object_init_ex(_this_zval, SCA_Tuscany_ce_ptr) == FAILURE) {
     	char *class_name;

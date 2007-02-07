@@ -19,15 +19,22 @@
 
 /* $Rev$ $Date$ */
 
+#ifdef WIN32
 
 // some strangeness in the build that causes 
 // WinSock.h and WinSock2.h to be included leading to redefinitions
-//#define _WINSOCKAPI_
+#define _WINSOCKAPI_
 
-#include <php_embed.h>
+// sdo.cpp also includes the math libraries and causes redeclarations
+// of all the math functions
+#define _INC_MATH
+
+#endif //WIN32
 
 #include <iostream>
 #include <sstream>
+
+#include <php_embed.h>
 
 #include "tuscany/sca/php/PHPServiceWrapper.h"
 #include "tuscany/sca/php/PHPServiceProxy.h"
@@ -142,7 +149,9 @@ namespace tuscany
             void PHPServiceWrapper::invoke(Operation& operation)
             {
                 logentry();
-
+string temp;
+cout << "Press Key\n";
+cin >> temp;
                 // set the current component in the SCA runtime
                 // so that other things can get at it thorugh this
                 // static class

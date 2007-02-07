@@ -108,7 +108,7 @@ TODO
 10Implement meta data exchange between the PHP SCA implementation and the Tuscany C++ SCA
   implementations so that selected parts of the SCDL definition can be omitted.
 11There is a threading issue with the way that we are firing up the PHP embedding SAPI 
-  TSRM should solve it failes on the embedding initialization for some reason. 
+  TSRM should solve it fails on the embedding initialization for some reason. 
 
 Dependencies 
 ------------
@@ -143,8 +143,16 @@ PATH = ensure that the root directory of the PHP 5.2.0 binary install appears
 
 PHP_SCA_SDO_HOME = the directory in which the SCA_SDO pecl extension source is installed
 
-These changes come over and above the enviroment changes you need to make
-to build the core C++ SCA software (where are these described?)
+These changes come over and above the environment changes you need to make
+to build the core C++ SCA software. I have the following set in my environment but
+of course the details depend on where you have the various bits of software installed. 
+
+AXIS2C_HOME=c:\axis2c-bin-0.96-win32
+LIBXML2_HOME=c:\libxml2-2.6.26.ein32
+ICONV_HOME=c:\iconv-1.9.2.win32
+ZLIB_HOME=c:\zlib-1.2.3.win32
+TUSCANY_SCACPP=c:\sca\deploy
+TUSCANY_SDOCPP=c:\sdo\deploy
 
 Now compile the PHP extension. Compiling with VC++ Express requires some care
 
