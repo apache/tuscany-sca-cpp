@@ -106,7 +106,9 @@ TODO
   and accessed through SCA references. This will play the same role as SCA running hosted
   in Axis2C and will open up the service bindings implemented in PHP SCA_SDO. 
 10Implement meta data exchange between the PHP SCA implementation and the Tuscany C++ SCA
-  implementations so that selected parts of the SCDL definition can be omitted
+  implementations so that selected parts of the SCDL definition can be omitted.
+11There is a threading issue with the way that we are firing up the PHP embedding SAPI 
+  TSRM should solve it failes on the embedding initialization for some reason. 
 
 Dependencies 
 ------------
@@ -138,6 +140,8 @@ not pick up the changes)
 
 PHP_HOME = the root directory of the PHP 5.2.0 source code install
 PATH = ensure that the root directory of the PHP 5.2.0 binary install appears 
+
+PHP_SCA_SDO_HOME = the directory in which the SCA_SDO pecl extension source is installed
 
 These changes come over and above the enviroment changes you need to make
 to build the core C++ SCA software (where are these described?)
