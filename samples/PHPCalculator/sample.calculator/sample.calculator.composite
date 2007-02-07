@@ -20,12 +20,13 @@
 
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0" 
 	       name="sample.calculator">
-
+<!--
 	<service name="CalculatorService">
 		<interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/>
 		<binding.ws/>
 		<reference>CalculatorCPPComponent</reference>
 	</service>
+-->
 	
     <component name="CalculatorCPPComponent">
 		<implementation.cpp library="Calculator" header="CalculatorImpl.h"/>

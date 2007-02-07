@@ -53,4 +53,7 @@ copy %sourcePath%\sample.calculator.wsclient\runwsclient.bat %destinationPath%\s
 
 copy %sourcePath%\*.composite %destinationPath%
 
+copy Debug\Calculator.dll %destinationPath%\sample.calculator
+copy Debug\Calculator.pdb %destinationPath%\sample.calculator
+
 endlocal
