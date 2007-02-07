@@ -40,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../runtime/extensions/php/src;../../../deploy/include;$(TUSCANY_SDOCPP)/include;$(PHP_HOME)/main;$(PHP_HOME)/sapi/embed;$(PHP_HOME);$(PHP_HOME)/zend;$(PHP_HOME)/TSRM"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_PHP_EXPORTS;ZEND_WIN32;PHP_WIN32;ZTS"
+				AdditionalIncludeDirectories="../../../runtime/extensions/php/src;../../../deploy/include;&quot;$(TUSCANY_SDOCPP)/include&quot;;&quot;$(PHP_HOME)/main&quot;;&quot;$(PHP_HOME)/sapi/embed&quot;;&quot;$(PHP_HOME)&quot;;&quot;$(PHP_HOME)/zend&quot;;&quot;$(PHP_HOME)/TSRM&quot;;&quot;$(PHP_SCA_SDO_HOME)&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_PHP_EXPORTS;ZEND_WIN32;PHP_WIN32;ZTS;ZEND_DEBUG=0"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib php5embed.lib"
+				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib php5embed.lib php_sdo.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\deploy\lib,$(TUSCANY_SDOCPP)\lib,$(PHP_HOME)\Debug_Ts"
 				IgnoreDefaultLibraryNames="MSVCRT"
