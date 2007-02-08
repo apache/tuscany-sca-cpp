@@ -91,7 +91,8 @@ namespace tuscany
                 {
                     ComponentType::addPropertyType(propertyName, "http://www.w3.org/2001/XMLSchema#string", false, NULL);
                     // Just added it so it should now be available
-                    prop = ComponentType::findPropertyType(propertyName); 
+                    prop = ComponentType::findPropertyType(propertyName);
+                    loginfo("Added string property named %s to Python component", propertyName.c_str());
                 }
 
                 return prop;

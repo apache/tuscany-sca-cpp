@@ -843,14 +843,14 @@ namespace tuscany
                             Py_XDECREF(elementTreeModule);
                             Py_XDECREF(elementTreeModuleName);
 
+                            string msg = "Error whilst calling Python function "+operation.getName();
                             if(PyErr_Occurred())
                             {
                                 PyErr_Print();
                             }
-                            string msg = "Error whilst calling Python module";
+                            
                             throwException(ServiceInvocationException, msg.c_str());
                         }
-
                     }
                     else 
                     {
@@ -1005,7 +1005,7 @@ namespace tuscany
                         PyErr_Print();
                     }
                     string msg = "Failed to load the sca_proxy Python module - has it been successfully installed?\nReferences from Python components will not be supported";
-                    logwarning(0, msg.c_str());
+                    logwarning(msg.c_str());
                 }
                 else
                 {
