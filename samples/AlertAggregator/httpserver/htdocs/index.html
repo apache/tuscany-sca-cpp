@@ -192,7 +192,7 @@ function deleteSource(sourceid)
         if(xmlHttp.readyState==4)
         {
             getSources();
-            document.getElementById("alertData").innerHTML=""
+            document.getElementById("alertData").innerHTML="";
         }
     }
     xmlHttp.open("GET","rest/sample.display.DisplayComponent/HTMLDisplayService/deleteAlertSource?sourceId="+sourceid,true);
@@ -269,7 +269,7 @@ function constructSourceXML(sourceid, type)
 <H1 ID="top">Apache Tuscany Alert Aggregator Sample</H1>
 <P>Alert Sources<SPAN ID="refreshSources"></SPAN>:</P>
 <DIV ID="sourcesTable"></DIV>
-<P>Recent Alerts (<SPAN ID="refresh"><SPAN CLASS="clickable link" ONCLICK="getAlerts()">Refresh</SPAN></SPAN>):</P
+<P>Recent Alerts (<SPAN ID="refresh"><SPAN CLASS="clickable link" ONCLICK="getAlerts()">Refresh</SPAN></SPAN>):</P>
 <DIV ID="alertTable"></DIV>
 <HR></HR>
 <P><A ID="data" HREF="#top">Back to top</A></P>

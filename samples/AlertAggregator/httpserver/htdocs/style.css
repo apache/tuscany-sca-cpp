@@ -85,7 +85,7 @@ color: DimGrey;
 
 .hidden
 {
-visibility: collapse;
+display: none;
 }
 
 .alert_data
