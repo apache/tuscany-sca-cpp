@@ -1,0 +1,14 @@
+<ns0:config xmlns:ns0="http://tuscany.apache.org/samples/alerter">
+<ns0:source id="0" type="rss">
+  <ns0:name>BBC News</ns0:name>
+  <ns0:address>http://news.bbc.co.uk/</ns0:address>
+  <ns0:lastChecked>2007-02-07T17:11:16</ns0:lastChecked>
+  <ns0:feedAddress>http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/world/rss.xml</ns0:feedAddress>
+</ns0:source>
+<ns0:source id="1" type="rss">
+  <ns0:name>Engadget</ns0:name>
+  <ns0:address>http://www.engadget.com</ns0:address>
+  <ns0:lastChecked>2007-02-07T17:11:14</ns0:lastChecked>
+  <ns0:feedAddress>http://www.engadget.com/rss.xml</ns0:feedAddress>
+</ns0:source>
+</ns0:config>
