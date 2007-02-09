@@ -185,7 +185,11 @@ AC_ARG_ENABLE(php, [AS_HELP_STRING([--enable-php],[build PHP samples [default=no
 )
 AM_CONDITIONAL([WANT_PHP_SAMPLES], [test x$want_php_samples = xtrue])
 
-AC_CONFIG_FILES([Makefile
+AC_CONFIG_FILES([Makefile  
+                 AlertAggregator/Makefile
+                 AlertAggregator/sample.alerter/Makefile
+                 AlertAggregator/sample.display/Makefile
+                 AlertAggregator/httpserver/Makefile
                  CppCalculator/Makefile
                  CppCalculator/sample.calculator/Makefile
                  CppCalculator/sample.calculator.client/Makefile

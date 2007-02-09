@@ -20,7 +20,7 @@ if WANT_ALL_SAMPLES
 if WITH_AXIS2C
     CPP_AXIS2C_SAMPLES = CppBigBank
 endif
-  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer
+  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
   PYTHON_RUBY_SAMPLES = RestYahoo
 else
@@ -31,7 +31,7 @@ if WITH_AXIS2C
 endif
 endif
 if WANT_PYTHON_SAMPLES
-    PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer
+    PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator
 if WANT_RUBY_SAMPLES
       PYTHON_RUBY_SAMPLES = RestYahoo
 endif
