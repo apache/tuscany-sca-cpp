@@ -16,6 +16,6 @@
 #  under the License.
 
 deploydir=$(prefix)/samples/PythonCalculator/deploy
-SUBDIRS = sample.alerter sample.alerter.client httpserver
-EXTRA_DIST = *.composite README.html
-deploy_DATA = *.composite
+SUBDIRS = sample.alerter sample.display httpserver
+EXTRA_DIST = *.composite *.xml README.html
+deploy_DATA = *.composite *.xml
