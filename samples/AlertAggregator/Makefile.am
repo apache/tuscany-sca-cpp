@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/PythonCalculator/deploy
+deploydir=$(prefix)/samples/AlertAggregator/deploy
 SUBDIRS = sample.alerter sample.display httpserver
 EXTRA_DIST = *.composite *.xml README.html
 deploy_DATA = *.composite *.xml
