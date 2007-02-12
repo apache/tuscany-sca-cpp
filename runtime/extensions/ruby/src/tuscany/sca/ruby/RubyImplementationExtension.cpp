@@ -60,21 +60,13 @@ namespace tuscany
             {
                 logentry();
 
-                string implType = scdlImplementation->getType().getName();
-                if (implType == "RubyImplementation")
-                {
-                    string module = scdlImplementation->getCString("module");
-                    string className = scdlImplementation->getCString("class");
-                    string script = scdlImplementation->getCString("script");
+                string module = scdlImplementation->getCString("module");
+                string className = scdlImplementation->getCString("class");
+                string script = scdlImplementation->getCString("script");
 
-                    RubyImplementation* rubyImpl = new RubyImplementation(composite, module, className, script);
-                    
-                    return rubyImpl;
-                }
-                else
-                {
-                    return NULL;
-                }
+                RubyImplementation* rubyImpl = new RubyImplementation(composite, module, className, script);
+                
+                return rubyImpl;
             }
 
         } // End namespace ruby
