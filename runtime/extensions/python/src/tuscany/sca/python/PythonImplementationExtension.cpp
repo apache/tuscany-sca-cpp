@@ -61,32 +61,24 @@ namespace tuscany
             {
                 logentry();
 
-                string implType = scdlImplementation->getType().getName();
-                if (implType == "PythonImplementation")
+                string module = scdlImplementation->getCString("module");
+                string path = scdlImplementation->getCString("path");
+                string className = scdlImplementation->getCString("class");
+                string scopeName = scdlImplementation->getCString("scope");
+                
+                PythonImplementation::Scope scope;
+                if (scopeName == "composite")
                 {
-                    string module = scdlImplementation->getCString("module");
-                    string path = scdlImplementation->getCString("path");
-                    string className = scdlImplementation->getCString("class");
-                    string scopeName = scdlImplementation->getCString("scope");
-                    
-                    PythonImplementation::Scope scope;
-                    if (scopeName == "composite")
-                    {
-                        scope = PythonImplementation::COMPOSITE;
-                    }
-                    else
-                    {
-                        scope = PythonImplementation::STATELESS;
-                    }
-
-                    PythonImplementation* pythonImpl = new PythonImplementation(composite, module, path, className, scope);
-                    
-                    return pythonImpl;
+                    scope = PythonImplementation::COMPOSITE;
                 }
                 else
                 {
-                    return NULL;
+                    scope = PythonImplementation::STATELESS;
                 }
+
+                PythonImplementation* pythonImpl = new PythonImplementation(composite, module, path, className, scope);
+                
+                return pythonImpl;
             }
 
         } // End namespace python
