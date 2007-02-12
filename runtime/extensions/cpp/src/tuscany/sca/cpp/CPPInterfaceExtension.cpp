@@ -59,17 +59,11 @@ namespace tuscany
             {
                 logentry();
 
-                // Determine the type
-                string ifType = scdlInterface->getType().getName();
-                if (ifType == "CPPInterface")
-                {
-                    string header = scdlInterface->getCString("header");
-                    string className = scdlInterface->getCString("class");
-                    bool remotable = scdlInterface->getBoolean("remotable");
-                    
-                    return new CPPInterface(header, className, remotable, false);
-                }
-                return 0;
+                string header = scdlInterface->getCString("header");
+                string className = scdlInterface->getCString("class");
+                bool remotable = scdlInterface->getBoolean("remotable");
+                
+                return new CPPInterface(header, className, remotable, false);
             }
 
         } // End namespace cpp

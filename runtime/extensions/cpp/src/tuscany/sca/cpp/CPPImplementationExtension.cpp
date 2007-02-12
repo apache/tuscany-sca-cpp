@@ -61,47 +61,39 @@ namespace tuscany
             ComponentType* CPPImplementationExtension::getImplementation(Composite *composite, DataObjectPtr scdlImplementation)
             {
                 logentry();
-                string implType = scdlImplementation->getType().getName();
-                if (implType == "CPPImplementation")
+                string library = scdlImplementation->getCString("library");
+                string header = scdlImplementation->getCString("header");
+                string className = scdlImplementation->getCString("class");
+                string scopeName = scdlImplementation->getCString("scope");
+
+                CPPImplementation::Scope scope;
+                if (scopeName == "composite")
                 {
-                    string library = scdlImplementation->getCString("library");
-                    string header = scdlImplementation->getCString("header");
-                    string className = scdlImplementation->getCString("class");
-                    string scopeName = scdlImplementation->getCString("scope");
-
-                    CPPImplementation::Scope scope;
-                    if (scopeName == "composite")
-                    {
-                        scope = CPPImplementation::COMPOSITE;
-                    }
-                    else
-                    {
-                        scope = CPPImplementation::STATELESS;
-                    }
-
-                    string headerPath;
-                    string headerStub;
-
-                    // Separate any path element
-                    Utils::rTokeniseString("/", header, headerPath, headerStub);
-                    if (headerPath != "")
-                    {
-                        headerPath += "/";
-                    }
-                    
-                    // Determine the header stub name
-                    string tmp;             
-                    Utils::rTokeniseString(".h", headerStub, headerStub, tmp);
-                    
-                    CPPImplementation* cppImpl = new CPPImplementation(
-                                    composite, library, header, headerPath, headerStub, className, scope);
-                    
-                    return cppImpl;
+                    scope = CPPImplementation::COMPOSITE;
                 }
                 else
                 {
-                    return NULL;
+                    scope = CPPImplementation::STATELESS;
                 }
+
+                string headerPath;
+                string headerStub;
+
+                // Separate any path element
+                Utils::rTokeniseString("/", header, headerPath, headerStub);
+                if (headerPath != "")
+                {
+                    headerPath += "/";
+                }
+                
+                // Determine the header stub name
+                string tmp;             
+                Utils::rTokeniseString(".h", headerStub, headerStub, tmp);
+                
+                CPPImplementation* cppImpl = new CPPImplementation(
+                                composite, library, header, headerPath, headerStub, className, scope);
+                
+                return cppImpl;
             }
 
         } // End namespace cpp
