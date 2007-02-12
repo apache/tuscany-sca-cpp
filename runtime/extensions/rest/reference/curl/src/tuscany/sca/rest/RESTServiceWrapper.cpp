@@ -920,7 +920,7 @@ namespace tuscany
                     // Prepend the default base URI if the URI is not absolute
                     if (bindingURI.find("://") == string::npos)
                     {
-                        bindingURI = runtime->getDefaultBaseURI() + bindingURI;
+                        bindingURI = runtime->getDefaultBaseURI() + string("/rest/") + bindingURI;
                     }
                 }
                 return bindingURI;

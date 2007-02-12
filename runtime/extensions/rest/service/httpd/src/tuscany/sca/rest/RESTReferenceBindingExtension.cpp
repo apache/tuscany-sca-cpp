@@ -68,19 +68,11 @@ namespace tuscany
             // ===================================================================
             ReferenceBinding* RESTReferenceBindingExtension::getReferenceBinding(Composite *composite, Reference* reference, DataObjectPtr scdlBinding)
             {
-                string bindingType = scdlBinding->getType().getName();
-                if (bindingType == "RESTBinding")
-                {
-                    string uri = scdlBinding->getCString("uri");
+                string uri = scdlBinding->getCString("uri");
 
-                    RESTReferenceBinding* referenceBinding = new RESTReferenceBinding(reference, uri);
-                    
-                    return referenceBinding;
-                }
-                else
-                {
-                    return NULL;
-                }
+                RESTReferenceBinding* referenceBinding = new RESTReferenceBinding(reference, uri);
+                
+                return referenceBinding;
             }
 
            void RESTReferenceBindingExtension::initialize()

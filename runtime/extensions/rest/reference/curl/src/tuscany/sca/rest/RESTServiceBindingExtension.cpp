@@ -71,19 +71,11 @@ namespace tuscany
             // ===================================================================
             ServiceBinding* RESTServiceBindingExtension::getServiceBinding(Composite *composite, Service* service, DataObjectPtr scdlBinding)
             {
-                string bindingType = scdlBinding->getType().getName();
-                if (bindingType == "RESTBinding")
-                {
-                    string uri = scdlBinding->getCString("uri");
+                string uri = scdlBinding->getCString("uri");
 
-                    RESTServiceBinding* serviceBinding = new RESTServiceBinding(service, uri);
-                    
-                    return serviceBinding;
-                }
-                else
-                {
-                    return NULL;
-                }
+                RESTServiceBinding* serviceBinding = new RESTServiceBinding(service, uri);
+                
+                return serviceBinding;
             }
 
             void RESTServiceBindingExtension::initialize()

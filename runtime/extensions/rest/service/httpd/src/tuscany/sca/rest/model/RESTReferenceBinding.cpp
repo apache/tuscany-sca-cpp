@@ -36,15 +36,19 @@ namespace tuscany
             RESTReferenceBinding::RESTReferenceBinding(Reference* reference, const string& uri)
                 : ReferenceBinding(reference, uri)
             {
+                logentry();
             }
             
             // Destructor
             RESTReferenceBinding::~RESTReferenceBinding()
             {
+                logentry();
             }
             
             void RESTReferenceBinding::configure(ServiceBinding *binding)
             {
+                logentry();
+
                 targetServiceBinding = binding;
                 
                 serviceProxy = new RESTServiceProxy(getReference());
@@ -52,6 +56,8 @@ namespace tuscany
             
             ServiceProxy* RESTReferenceBinding::getServiceProxy()
             {
+                logentry();
+
                 return serviceProxy;
             }
                 

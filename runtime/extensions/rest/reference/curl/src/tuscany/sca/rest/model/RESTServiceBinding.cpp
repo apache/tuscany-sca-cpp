@@ -36,16 +36,21 @@ namespace tuscany
             RESTServiceBinding::RESTServiceBinding(Service* service, const string& uri)
                 : ServiceBinding(service, uri)
             {
+                logentry();
+                
                 serviceWrapper = new RESTServiceWrapper(service);
             }
 
             // Destructor
             RESTServiceBinding::~RESTServiceBinding()
             {
+                logentry();
             }
             
             ServiceWrapper* RESTServiceBinding::getServiceWrapper()
             {
+                logentry();
+                
                 return serviceWrapper;
             }
                 

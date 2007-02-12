@@ -71,13 +71,7 @@ namespace tuscany
             {
                 logentry();
 
-                // Determine the type
-                string ifType = scdlInterface->getType().getName();
-                if (ifType == "RESTInterface")
-                {
-                    return new RESTInterface();
-                }
-                return 0;
+                return new RESTInterface();
             }
 
            void RESTInterfaceExtension::initialize()

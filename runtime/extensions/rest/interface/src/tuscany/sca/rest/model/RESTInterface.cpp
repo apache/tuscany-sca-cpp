@@ -38,10 +38,12 @@ namespace tuscany
             RESTInterface::RESTInterface()  
                     : Interface(true, false)
             {
+                logentry();
             }
 
             RESTInterface::~RESTInterface()
             {
+                logentry();
             }
 
         } // End namespace rest
