@@ -41,7 +41,7 @@ export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/python/lib
 export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
-export TUSCANY_SCACPP_BASE_URI=http://localhost:9090/rest/
+export TUSCANY_SCACPP_BASE_URI=http://localhost:9090
 
 export CUSTOMER_DIR=$TUSCANY_SCACPP_ROOT/sample.customer
 

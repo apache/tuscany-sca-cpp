@@ -42,7 +42,7 @@ set PYTHONPATH=%TUSCANY_SCACPP%\extensions\python\bin
 
 set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
 set TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorComponent
-set TUSCANY_SCACPP_BASE_URI=http://localhost:9090/axis2/services/
+set TUSCANY_SCACPP_BASE_URI=http://localhost:9090
 
 cd %TUSCANY_SCACPP_ROOT%\sample.calculator.client
 python calculator_client.py div 5 2

@@ -42,7 +42,7 @@ export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_COMPONENT=bigbank.AccountWSClientComponent
-export TUSCANY_SCACPP_BASE_URI=http://localhost:9090/axis2/services/
+export TUSCANY_SCACPP_BASE_URI=http://localhost:9090
 
 cd $TUSCANY_SCACPP_ROOT/bigbank.wsclient
 ruby -I$TUSCANY_SCACPP/extensions/ruby/lib AccountWSClient.rb
