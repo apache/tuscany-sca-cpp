@@ -19,12 +19,11 @@
 
 /* $Rev$ $Date$ */
 
-
-#include "SCAReferenceBindingExtension.h"
-#include "model/SCAReferenceBinding.h"
+#include "SCAServiceBindingExtension.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/SCARuntime.h"
+#include "tuscany/sca/core/Exceptions.h"
 
 using namespace std;
 using namespace commonj::sdo;
@@ -35,11 +34,12 @@ extern "C"
 #if defined(WIN32) || defined(_WINDOWS)
     __declspec(dllexport) 
 #endif
-        void tuscany_sca_binding_service_initialize()
+        void tuscany_sca_binding_reference_initialize()
     {
-        tuscany::sca::binding::SCAReferenceBindingExtension::initialize();
+        tuscany::sca::binding::SCAServiceBindingExtension::initialize();
     }
 }
+
 
 namespace tuscany
 {
@@ -48,52 +48,56 @@ namespace tuscany
         namespace binding
         {
             // ===================================================================
-            // Constructor for the SCAReferenceBinding class. 
+            // Constructor for the SCAServiceBinding class. 
             // ===================================================================
-            SCAReferenceBindingExtension::SCAReferenceBindingExtension()
+            SCAServiceBindingExtension::SCAServiceBindingExtension()
             { 
                 logentry();
             }
             
             // ===================================================================
-            // Destructor for the SCAReferenceBindingExtension class.
+            // Destructor for the SCAServiceBindingExtension class.
             // ===================================================================
-            SCAReferenceBindingExtension::~SCAReferenceBindingExtension()
+            SCAServiceBindingExtension::~SCAServiceBindingExtension()
             { 
                 logentry();
             }
 
-            const string SCAReferenceBindingExtension::extensionName("sca");
-            const string SCAReferenceBindingExtension::typeQName("http://www.osoa.org/xmlns/sca/1.0#SCABinding");
+            const string SCAServiceBindingExtension::extensionName("sca");
+            const string SCAServiceBindingExtension::typeQName("http://www.osoa.org/xmlns/sca/1.0#SCABinding");
+                                                                                                    
 
             // ===================================================================
             // loadModelElement - load the info from binding.ws
             // ===================================================================
-            ReferenceBinding* SCAReferenceBindingExtension::getReferenceBinding(Composite *composite, Reference* reference, DataObjectPtr scdlBinding)
+            ServiceBinding* SCAServiceBindingExtension::getServiceBinding(Composite *composite, Service* service, DataObjectPtr scdlBinding)
             {
                 logentry();
 
-                string bindingType = scdlBinding->getType().getName();
-                if (bindingType == "SCABinding")
+                SCARuntime* runtime = SCARuntime::getCurrentRuntime();
+                
+                ServiceBindingExtension* bindingExtension = NULL;  // runtime->getServiceBindingExtension("http://www.osoa.org/xmlns/sca/1.0#RESTBinding");
+                if (bindingExtension == NULL)
                 {
-                    string uri = scdlBinding->getCString("uri");
+                    bindingExtension = runtime->getServiceBindingExtension("http://www.osoa.org/xmlns/sca/1.0#WebServiceBinding");
+                    if (bindingExtension == NULL)
+                    {
+                        logerror("SCA default binding requires the REST or WS binding to be available");
+    
+                        string message = "SCA default binding requires the REST or WS binding to be available";
+                        throwException(SystemConfigurationException, message.c_str());
+                    }                
+                }
 
-                    SCAReferenceBinding* serviceBinding = new SCAReferenceBinding(reference, uri);
-                    
-                    return serviceBinding;
-                }
-                else
-                {
-                    return NULL;
-                }
+                return bindingExtension->getServiceBinding(composite, service, scdlBinding);                
             }
 
-           void SCAReferenceBindingExtension::initialize()
+            void SCAServiceBindingExtension::initialize()
             { 
                 logentry();
-                SCARuntime::getCurrentRuntime()->registerReferenceBindingExtension(new SCAReferenceBindingExtension());
+                SCARuntime::getCurrentRuntime()->registerServiceBindingExtension(new SCAServiceBindingExtension());
             }
 
-        } // End namespace binding
+        } // End namespace ws
     } // End namespace sca
 } // End namespace tuscany

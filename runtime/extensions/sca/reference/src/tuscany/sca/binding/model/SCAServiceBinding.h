@@ -24,9 +24,10 @@
 
 #include <string>
 
+#include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/ServiceBinding.h"
+#include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/Service.h"
-#include "tuscany/sca/ws/model/WSServiceBinding.h"
 
 
 namespace tuscany
@@ -38,7 +39,7 @@ namespace tuscany
             /**
              * Information about an SCA service binding for service or a reference.
              */
-            class SCAServiceBinding : public tuscany::sca::ws::WSServiceBinding
+            class SCAServiceBinding : public tuscany::sca::model::ServiceBinding
             {    
             public:
 
@@ -46,7 +47,7 @@ namespace tuscany
                  * Constructor.
                  * @param uri The uri of the binding.
                  */
-                SCAServiceBinding(tuscany::sca::model::Service* service, const std::string& uri);  
+                SCAServiceBinding(tuscany::sca::model::Composite* composite, tuscany::sca::model::Service* service, const std::string& uri, commonj::sdo::DataObjectPtr scdlBinding);  
 
                 /**
                  * Destructor.
@@ -58,6 +59,12 @@ namespace tuscany
                  */                
                 virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#SCABinding"; };
                             
+               /**
+                 * Create a service wrapper handling the interaction
+                 * with the service configured with this binding.
+                 */
+                 virtual tuscany::sca::ServiceWrapper* getServiceWrapper();
+ 
             private:
             
             };

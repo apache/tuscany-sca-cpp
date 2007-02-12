@@ -20,12 +20,12 @@
 /* $Rev$ $Date$ */
 
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/binding/model/SCAReferenceBinding.h"
-#include "tuscany/sca/ws/model/WSReferenceBinding.h"
 #include "tuscany/sca/core/ServiceProxy.h"
 
 using namespace std;
-using namespace tuscany::sca::ws;
+using namespace commonj::sdo;
 using namespace tuscany::sca::model;
 
 namespace tuscany
@@ -36,8 +36,8 @@ namespace tuscany
         {
 
             // Constructor
-            SCAReferenceBinding::SCAReferenceBinding(Reference* reference, const string& uri)
-                : WSReferenceBinding(reference, uri, "", "")
+            SCAReferenceBinding::SCAReferenceBinding(Composite* composite, Reference* reference, const string& uri, DataObjectPtr scdlBinding)
+                : ReferenceBinding(reference, uri)
             {
             }
             
@@ -46,6 +46,21 @@ namespace tuscany
             {
             }
             
+            ServiceProxy* SCAReferenceBinding::getServiceProxy()
+            {
+                throwException(SystemConfigurationException, "Not supported");
+            }
+                 
+            void SCAReferenceBinding::configure(ServiceBinding* serviceBinding)
+            {
+                throwException(SystemConfigurationException, "Not supported");
+            }
+                                
+            void SCAReferenceBinding::configure(const std::string& uri)
+            {
+                throwException(SystemConfigurationException, "Not supported");
+            }
+                                
         } // End namespace binding
     } // End namespace sca
 } // End namespace tuscany

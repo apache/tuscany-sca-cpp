@@ -24,8 +24,10 @@
 
 #include <string>
 
+#include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/model/ReferenceBinding.h"
-#include "tuscany/sca/ws/model/WSReferenceBinding.h"
+#include "tuscany/sca/model/ServiceBinding.h"
+#include "tuscany/sca/core/ServiceProxy.h"
 
 namespace tuscany
 {
@@ -36,7 +38,7 @@ namespace tuscany
             /**
              * Information about a web service binding for service or a reference.
              */
-            class SCAReferenceBinding : public tuscany::sca::ws::WSReferenceBinding
+            class SCAReferenceBinding : public tuscany::sca::model::ReferenceBinding
             {    
             public:
 
@@ -44,7 +46,7 @@ namespace tuscany
                  * Constructor.
                  * @param uri The uri of the binding.
                  */
-                SCAReferenceBinding(tuscany::sca::model::Reference* reference, const std::string&uri);  
+                SCAReferenceBinding(tuscany::sca::model::Composite* composite, tuscany::sca::model::Reference* reference, const std::string&uri, commonj::sdo::DataObjectPtr scdlBinding);  
 
                 /**
                  * Destructor.
@@ -56,6 +58,22 @@ namespace tuscany
                  */                
                 virtual std::string getType() { return "http://www.osoa.org/xmlns/sca/1.0#SCABinding"; };
                             
+                /**
+                 * Create a proxy representing the reference to the
+                 * client component.
+                 */
+                 virtual tuscany::sca::ServiceProxy* getServiceProxy();
+                 
+                 /**
+                  * Configure this binding from a service binding.
+                  */
+                  virtual void configure(tuscany::sca::model::ServiceBinding* serviceBinding);
+                                
+                 /**
+                  * Configure this binding from a URI.
+                  */
+                  virtual void configure(const std::string& uri);
+                                
             private:
             
             };

@@ -20,11 +20,13 @@
 /* $Rev$ $Date$ */
 
 #include "tuscany/sca/util/Logging.h"
+#include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/binding/model/SCAServiceBinding.h"
 #include "tuscany/sca/core/ServiceWrapper.h"
 
 using namespace std;
-using namespace tuscany::sca::ws;
+using namespace commonj::sdo;
+using namespace tuscany::sca;
 using namespace tuscany::sca::model;
 
 namespace tuscany
@@ -35,14 +37,21 @@ namespace tuscany
         {
 
             // Constructor
-            SCAServiceBinding::SCAServiceBinding(Service* service, const string& uri)
-                : WSServiceBinding(service, uri, "", "")
+            SCAServiceBinding::SCAServiceBinding(Composite* composite, Service* service, const string& uri, DataObjectPtr scdlBinding)
+                : ServiceBinding(service, uri)
             {
             }
 
             // Destructor
             SCAServiceBinding::~SCAServiceBinding()
             {
+            }
+            
+            ServiceWrapper* SCAServiceBinding::getServiceWrapper()
+            {
+                logentry();
+                
+                throwException(SystemConfigurationException, "Not supported");
             }
             
         } // End namespace binding

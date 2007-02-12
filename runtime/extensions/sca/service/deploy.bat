@@ -29,7 +29,7 @@ set deploydir=%rootdir%\deploy
 set extdir=%deploydir%\extensions
 set wsextdir=%extdir%\sca
 set svcextdir=%wsextdir%\service
-set srcdir=%rootdir%\runtime\extensions\sca\service\axis2c\src
+set srcdir=%rootdir%\runtime\extensions\sca\service\src
 
 if . == .%2 (
 echo input directory not specified

@@ -15,4 +15,4 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = axis2c
+SUBDIRS = src
