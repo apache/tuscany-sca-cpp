@@ -262,11 +262,9 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/ws/service/axis2c/src/Makefile
                  runtime/extensions/sca/Makefile
                  runtime/extensions/sca/reference/Makefile
-                 runtime/extensions/sca/reference/axis2c/Makefile
-                 runtime/extensions/sca/reference/axis2c/src/Makefile
+                 runtime/extensions/sca/reference/src/Makefile
                  runtime/extensions/sca/service/Makefile
-                 runtime/extensions/sca/service/axis2c/Makefile
-                 runtime/extensions/sca/service/axis2c/src/Makefile
+                 runtime/extensions/sca/service/src/Makefile
                  runtime/extensions/rest/Makefile
                  runtime/extensions/rest/interface/Makefile
                  runtime/extensions/rest/interface/src/Makefile
