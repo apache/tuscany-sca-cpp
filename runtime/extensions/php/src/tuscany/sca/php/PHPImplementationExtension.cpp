@@ -60,20 +60,12 @@ namespace tuscany
             {
                 logentry();
                 
-                string implType = scdlImplementation->getType().getName();
-                if (implType == "PHPImplementation")
-                {
-                    string module = scdlImplementation->getCString("module");
-                    string className = scdlImplementation->getCString("class");
-                    
-                    PHPImplementation* phpImpl = new PHPImplementation(composite, module, className);
-                    
-                    return phpImpl;
-                }
-                else
-                {
-                    return NULL;
-                }
+                string module = scdlImplementation->getCString("module");
+                string className = scdlImplementation->getCString("class");
+                
+                PHPImplementation* phpImpl = new PHPImplementation(composite, module, className);
+                
+                return phpImpl;
             }
 
         } // End namespace php
