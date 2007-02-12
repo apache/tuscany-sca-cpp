@@ -38,6 +38,8 @@ namespace tuscany
             WSServiceBinding::WSServiceBinding(Service* service, const string& uri, const string& endpoint, const string& version)
                 : ServiceBinding(service, uri), endpoint(endpoint), soapVersion(version)
             {
+                logentry();
+                
                 parseEndpoint();
                 
                 serviceWrapper = new WSServiceWrapper(service);
@@ -45,6 +47,8 @@ namespace tuscany
 
             void WSServiceBinding::parseEndpoint()
             {
+                logentry();
+                
                 // Endpoint is of the form: <wsdl-namepace-uri>#wsdl.endpoint(<service-name>/<endpoint-name>)
                 string::size_type hash = endpoint.find("#");
                 if (hash != string::npos)
@@ -125,10 +129,13 @@ namespace tuscany
             // Destructor
             WSServiceBinding::~WSServiceBinding()
             {
+                logentry();
             }
             
             ServiceWrapper* WSServiceBinding::getServiceWrapper()
             {
+                logentry();
+                
                 return serviceWrapper;
             }
                 

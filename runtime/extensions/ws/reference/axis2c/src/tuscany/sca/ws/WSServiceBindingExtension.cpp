@@ -74,13 +74,20 @@ namespace tuscany
             {
                 logentry();
 
-                string bindingType = scdlBinding->getType().getName();
-                if (bindingType == "WebServiceBinding")
+                string uri = scdlBinding->getCString("uri");
+                string endpoint;
+                try
                 {
-                    string uri = scdlBinding->getCString("uri");
-                    string endpoint = scdlBinding->getCString("endpoint");
+                    endpoint = scdlBinding->getCString("endpoint");
+                }
+                catch (SDORuntimeException&)
+                {
+                    endpoint = "";
+                }
+                string version;
+                try
+                {
                     commonj::sdo::DataObjectList& soap = scdlBinding->getList("soapbinding");
-                    string version;
                     if (soap.size()!=0)
                     {
                         version = soap.getCString(0);
@@ -89,15 +96,15 @@ namespace tuscany
                     {
                         version = "";
                     }
-
-                    WSServiceBinding* serviceBinding = new WSServiceBinding(service, uri, endpoint, version);
-                    
-                    return serviceBinding;
                 }
-                else
+                catch (SDORuntimeException&)
                 {
-                    return NULL;
+                    version = "";
                 }
+
+                WSServiceBinding* serviceBinding = new WSServiceBinding(service, uri, endpoint, version);
+                
+                return serviceBinding;
             }
 
             void WSServiceBindingExtension::initialize()

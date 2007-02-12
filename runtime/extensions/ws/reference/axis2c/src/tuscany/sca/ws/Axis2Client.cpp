@@ -200,7 +200,7 @@ namespace tuscany
                     // Prepend the default base URI if the URI is not absolute
                     if (bindingURI.find("://") == string::npos)
                     {
-                        bindingURI = runtime->getDefaultBaseURI() + bindingURI;
+                        bindingURI = runtime->getDefaultBaseURI() + string("/axis2/services/") + bindingURI;
                     }
                     address = (axis2_char_t*)bindingURI.c_str();
                 }

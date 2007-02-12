@@ -38,11 +38,15 @@ namespace tuscany
             WSReferenceBinding::WSReferenceBinding(Reference* reference, const string& uri, const string& endpoint, const string&version)
                 : ReferenceBinding(reference, uri), endpoint(endpoint), soapVersion(version)
             {
+                logentry();
+                
                 parseEndpoint();
             }
             
             void WSReferenceBinding::parseEndpoint()
             {
+                logentry();
+                
                 // Endpoint is of the form: <wsdl-namepace-uri>#wsdl.endpoint(<service-name>/<endpoint-name>)
                 string::size_type hash = endpoint.find("#");
                 if (hash != string::npos)
@@ -123,10 +127,13 @@ namespace tuscany
             // Destructor
             WSReferenceBinding::~WSReferenceBinding()
             {
+                logentry();
             }
             
             void WSReferenceBinding::configure(ServiceBinding *binding)
             {
+                logentry();
+                
                 targetServiceBinding = binding;
                 
                 serviceProxy = new WSServiceProxy(getReference());
@@ -134,6 +141,8 @@ namespace tuscany
             
             ServiceProxy* WSReferenceBinding::getServiceProxy()
             {
+                logentry();
+                
                 return serviceProxy;
             }
                 
