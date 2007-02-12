@@ -28,9 +28,8 @@ sourceTypeMap = {}
 
 ns = "./{http://tuscany.apache.org/samples/alerter}"
 
-def getAlertsHTMLTable ():
 
-    returnData = "<TABLE border=\"0\">"    
+def updateAllAlertsHTMLTable ():
 
     # Use the alertService reference
     newAlertsElem = alertService.getAllNewAlerts();
@@ -40,6 +39,28 @@ def getAlertsHTMLTable ():
 
         alert.attrib["unread"]="True"
         alertsElem.append(alert)        
+
+    return generateHTMLTable()
+
+
+def updateSourceAlertsHTMLTable (sourceId):
+
+    # Use the alertService reference
+    newAlertsElem = alertService.getNewAlerts(sourceId);
+    #newAlertsElem = getAllNewAlerts(); # For testing
+
+    for alert in newAlertsElem.findall(ns+"alert"):
+
+        alert.attrib["unread"]="True"
+        alertsElem.append(alert)        
+
+    return generateHTMLTable()
+
+
+
+def generateHTMLTable ():
+
+    returnData = "<TABLE border=\"0\">"    
 
     # If we have more than x alerts, clear out any that have been read
     # x is determined by the showNumberOfReadAlerts property
@@ -134,18 +155,20 @@ def getAlertSourcesHTMLTable():
         returnData += srcType
         returnData += ".png\"/>&nbsp;&nbsp;"
         returnData += source.find(ns+"name").text
-        returnData += "</TD><TD CLASS=\"clickable link\" ONCLICK=\"showEditSource('"
+        returnData += "</TD><TD CLASS=\"clickable link\" ONCLICK=\"getAlerts('"
         returnData += srcId
-        returnData += "')\">Edit</TD><TD CLASS=\"clickable link\" ONCLICK=\"deleteSource('"
+        returnData += "')\">Update Alerts</TD><TD CLASS=\"clickable link\" ONCLICK=\"showEditSource('"
         returnData += srcId
-        returnData += "')\">Delete</TD></TR>\n"
+        returnData += "')\">Edit Source</TD><TD CLASS=\"clickable link\" ONCLICK=\"deleteSource('"
+        returnData += srcId
+        returnData += "')\">Delete Source</TD></TR>\n"
 
         # Now write out the row that gets shown when "edit" is pressed
         returnData += "<TR ID=\"edit_source_"
         returnData += srcId
         returnData += "\" CLASS=\"hidden source_"
         returnData += srcId
-        returnData += "\"><TD COLSPAN=\"3\"><TABLE CLASS=\"sourceDetailsTable\"><TR><TD>Source name:</TD><TD><INPUT ID=\"source_"
+        returnData += "\"><TD COLSPAN=\"4\"><TABLE CLASS=\"sourceDetailsTable\"><TR><TD>Source name:</TD><TD><INPUT ID=\"source_"
         returnData += srcId
         returnData += "_name\" TYPE=\"TEXT\" SIZE=\"50\" VALUE=\""
         returnData += source.find(ns+"name").text
@@ -160,6 +183,22 @@ def getAlertSourcesHTMLTable():
             returnData += "_feedAddress\" TYPE=\"TEXT\" SIZE=\"50\" VALUE=\""
             returnData += source.find(ns+"feedAddress").text
             returnData += "\"/></TR>"
+        elif srcType=="pop":
+            returnData += "<TR><TD>POP3 server:</TD><TD><INPUT ID=\"source_"
+            returnData += srcId
+            returnData += "_popServer\" TYPE=\"TEXT\" SIZE=\"50\" VALUE=\""
+            returnData += source.find(ns+"popServer").text
+            returnData += "\"/></TR>"
+            returnData += "<TR><TD>Username:</TD><TD><INPUT ID=\"source_"
+            returnData += srcId
+            returnData += "_popUsername\" TYPE=\"TEXT\" SIZE=\"50\" VALUE=\""
+            returnData += source.find(ns+"popUsername").text
+            returnData += "\"/></TD></TR>"
+            returnData += "<TR><TD>Password:</TD><TD><INPUT ID=\"source_"
+            returnData += srcId
+            returnData += "_popPassword\" TYPE=\"PASSWORD\" SIZE=\"50\" VALUE=\""
+            returnData += source.find(ns+"popPassword").text
+            returnData += "\"/></TD></TR>"
         returnData += "<TR><TD><INPUT ID=\"source_"
         returnData += srcId
         returnData += "_type\" TYPE=\"HIDDEN\" VALUE=\""
@@ -178,7 +217,7 @@ def getAlertSourcesHTMLTable():
     # Now write out the "add new source" row
     returnData += "<TR CLASS=\"source_"
     returnData += srcId
-    returnData += "\"><TD COLSPAN=\"3\" CLASS=\"clickable link\" ONCLICK=\"showAddNewSource('"
+    returnData += "\"><TD COLSPAN=\"4\" CLASS=\"clickable link\" ONCLICK=\"showAddNewSource('"
     returnData += srcId
     returnData += "')\">Add new Alert Source</TD></TR>"
     # Add the (initially hidden) new source details row
@@ -186,7 +225,7 @@ def getAlertSourcesHTMLTable():
     returnData += srcId
     returnData += "\"CLASS=\"hidden source_"
     returnData += srcId
-    returnData += "\"><TD COLSPAN=\"3\"><TABLE CLASS=\"sourceDetailsTable\"><TR><TD>Source name:</TD><TD><INPUT ID=\"source_"
+    returnData += "\"><TD COLSPAN=\"4\"><TABLE CLASS=\"sourceDetailsTable\"><TR><TD>Source name:</TD><TD><INPUT ID=\"source_"
     returnData += srcId
     returnData += "_name\" TYPE=\"TEXT\" SIZE=\"50\"/></TD></TR><TR><TD>Source address:</TD><TD><INPUT ID=\"source_"
     returnData += srcId
@@ -238,8 +277,18 @@ def addAlertSource(alertSourceElem):
 def updateAlertSource(alertSourceElem):
 
     if xml.etree.ElementTree.iselement(alertSourceElem):
-        # Use the alertService reference    
+
+        # Get the sourceid
+        sourceId = alertSourceElem.attrib["id"]
+
+        # Remove all alerts with this sourceid - they may have changed
+        for alert in alertsElem.findall(ns+"alert"):
+            if alert.attrib["sourceid"]==sourceId:
+                alertsElem.remove(alert)
+
+        # Use the alertService reference to update the config
         alertService.updateAlertSource(alertSourceElem)
+
     return
 
 

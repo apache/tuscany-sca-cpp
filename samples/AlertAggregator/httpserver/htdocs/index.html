@@ -23,7 +23,7 @@
     <link REL="stylesheet" TYPE="text/css" href="style.css">
 </HEAD>
 
-<BODY ONLOAD="getSources()">
+<BODY ONLOAD="getSources('')">
 <script type="text/javascript">
 function getXMLHTTP()
 {
@@ -58,7 +58,7 @@ function getXMLHTTP()
 
 var callIsRunning = false;
 
-function getAlerts()
+function getAlerts(sourceid)
 {
   var xmlHttp = getXMLHTTP();
   xmlHttp.onreadystatechange=function()
@@ -72,20 +72,27 @@ function getAlerts()
       if(xmlHttp.readyState==4)
       {
           callIsRunning = false;
-          refr.innerHTML="<SPAN CLASS=\"clickable link\" ONCLICK=\"getAlerts()\">Refresh</SPAN>";
+          refr.innerHTML="<SPAN CLASS=\"clickable link\" ONCLICK=\"getAlerts('')\">Refresh</SPAN>";
           document.getElementById("alertTable").innerHTML=xmlHttp.responseText;
       }
   }
 
   if(!callIsRunning)
   {
-      xmlHttp.open("GET","rest/sample.display.DisplayComponent/HTMLDisplayService/getAlertsHTMLTable",true);
+      if(sourceid=='')
+      {
+          xmlHttp.open("GET","rest/sample.display.DisplayComponent/HTMLDisplayService/updateAllAlertsHTMLTable",true);
+      }
+      else
+      {
+          xmlHttp.open("GET","rest/sample.display.DisplayComponent/HTMLDisplayService/updateSourceAlertsHTMLTable?sourceId="+sourceid,true);
+      }
       xmlHttp.setRequestHeader( "If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT" );
       xmlHttp.send(null);
   }
 
   // Call this function again after x minutes
-  setTimeout("getAlerts();", 5*60000);
+  setTimeout("getAlerts('');", 5*60000);
 }
 
 function displayAlert(url, alertid)
@@ -121,7 +128,7 @@ function displayAlert(url, alertid)
     xmlHttp.send(null);    
 }
 
-function getSources()
+function getSources(sourceid)
 {
     var xmlHttp = getXMLHTTP()
     xmlHttp.onreadystatechange=function()
@@ -137,7 +144,7 @@ function getSources()
         {
             refreshSources.innerHTML="";
             document.getElementById("sourcesTable").innerHTML=xmlHttp.responseText;
-            getAlerts();
+            getAlerts(sourceid);
         }
     }
     xmlHttp.open("GET","rest/sample.display.DisplayComponent/HTMLDisplayService/getAlertSourcesHTMLTable",true);
@@ -161,11 +168,10 @@ function updateSource(sourceid)
     var type = document.getElementById("source_"+sourceid+"_type").value;
     var sourceXML = constructSourceXML(sourceid, type);
 
-    sendSource("rest/sample.display.DisplayComponent/HTMLDisplayService/updateAlertSource", sourceXML);
-
+    sendSourceData("rest/sample.display.DisplayComponent/HTMLDisplayService/updateAlertSource", sourceXML, sourceid);
 }
 
-function sendSource(url, sourceXML)
+function sendSourceData(url, sourceXML, sourceid)
 {    
     var xmlHttp = getXMLHTTP()
     xmlHttp.onreadystatechange=function()
@@ -179,7 +185,7 @@ function sendSource(url, sourceXML)
         }
         if(xmlHttp.readyState==4)
         {            
-            getSources();
+            getSources(sourceid);
         }
     }
     xmlHttp.open("POST",url,true);
@@ -194,7 +200,7 @@ function deleteSource(sourceid)
     {        
         if(xmlHttp.readyState==4)
         {
-            getSources();
+            getSources('');
             document.getElementById("alertData").innerHTML="";
         }
     }
@@ -238,7 +244,7 @@ function addSource(sourceid)
     var type = typeElem.options[typeElem.selectedIndex].value;
     var sourceXML = constructSourceXML(sourceid, type);
 
-    sendSource("rest/sample.display.DisplayComponent/HTMLDisplayService/addAlertSource", sourceXML);
+    sendSourceData("rest/sample.display.DisplayComponent/HTMLDisplayService/addAlertSource", sourceXML, sourceid);
 
 }
 
@@ -273,7 +279,7 @@ function constructSourceXML(sourceid, type)
 <H1 ID="top">Apache Tuscany Alert Aggregator Sample</H1>
 <P>Alert Sources<SPAN ID="refreshSources"></SPAN>:</P>
 <DIV ID="sourcesTable"></DIV>
-<P>Recent Alerts (<SPAN ID="refresh"><SPAN CLASS="clickable link" ONCLICK="getAlerts()">Refresh</SPAN></SPAN>):</P>
+<P>Recent Alerts (<SPAN ID="refresh"><SPAN CLASS="clickable link" ONCLICK="getAlerts('')">Refresh</SPAN></SPAN>):</P>
 <DIV ID="alertTable"></DIV>
 <HR></HR>
 <P><A ID="data" HREF="#top">Back to top</A></P>
