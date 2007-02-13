@@ -48,7 +48,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../runtime/extensions/sca/reference/axis2c/src,../../../runtime/extensions/ws/reference/axis2c/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/sca/reference/src,../../../runtime/extensions/ws/reference/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_BINDING_REFERENCE_EXPORTS;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -217,22 +217,22 @@
 			Name="tuscany/sca/binding"
 			>
 			<File
-				RelativePath="..\..\..\runtime\extensions\sca\reference\axis2c\src\tuscany\sca\binding\SCAServiceBindingExtension.cpp"
+				RelativePath="..\..\..\runtime\extensions\sca\reference\src\tuscany\sca\binding\SCAServiceBindingExtension.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\runtime\extensions\sca\reference\axis2c\src\tuscany\sca\binding\SCAServiceBindingExtension.h"
+				RelativePath="..\..\..\runtime\extensions\sca\reference\src\tuscany\sca\binding\SCAServiceBindingExtension.h"
 				>
 			</File>
 			<Filter
 				Name="model"
 				>
 				<File
-					RelativePath="..\..\..\runtime\extensions\sca\reference\axis2c\src\tuscany\sca\binding\model\SCAServiceBinding.cpp"
+					RelativePath="..\..\..\runtime\extensions\sca\reference\src\tuscany\sca\binding\model\SCAServiceBinding.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\runtime\extensions\sca\reference\axis2c\src\tuscany\sca\binding\model\SCAServiceBinding.h"
+					RelativePath="..\..\..\runtime\extensions\sca\reference\src\tuscany\sca\binding\model\SCAServiceBinding.h"
 					>
 				</File>
 			</Filter>
