@@ -25,8 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Build scagen tool"
-				CommandLine="ant -f ..\..\..\tools\scagen\build.xml"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -38,7 +37,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\..\..\tools\scagen\deploy.bat ..\..\..\"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -52,7 +51,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="ant -f ..\..\..\tools\scagen\build.xml"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -64,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\..\..\tools\scagen\deploy.bat ..\..\..\"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
