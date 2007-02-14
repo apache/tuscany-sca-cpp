@@ -31,17 +31,25 @@ def getNewAlerts(rssaddress, lastchecktimestamp):
     if lastchecktimestamp:
         lastcheckdate = datetime.datetime.strptime(lastchecktimestamp, "%Y-%m-%dT%H:%M:%S")
 
+    defaultTitle = d.feed.get('title', 'RSS feed article')
+    defaultLink = d.feed.get('link', 'http://incubator.apache.org/tuscany')
+    defaultSummary = 'No information provided'
+
     for entry in d.entries:
 
-        (year, month, day, hour, minute, second, millisecond, microsecond, tzinfo) = entry.date_parsed
-        entrydate = datetime.datetime(year, month, day, hour, minute, second)
+        if entry.has_key('date'):
+            (year, month, day, hour, minute, second, millisecond, microsecond, tzinfo) = entry.date_parsed
+            entrydate = datetime.datetime(year, month, day, hour, minute, second)
+        else:
+            entrydate = datetime.datetime.now()
+
 
         if (entrydate > lastcheckdate) :
 
-            newalertsxml += "<alert><title>" + stripXML(entry.title) + "</title>\n"
-            newalertsxml += "<address>" + entry.link + "</address>\n"
+            newalertsxml += "<alert><title>" + stripXML(entry.get('title', defaultTitle)) + "</title>\n"
+            newalertsxml += "<address>" + entry.get('link', defaultLink) + "</address>\n"
             newalertsxml += "<date>" + entrydate.isoformat() + "</date>\n"
-            newalertsxml += "<summary>" + stripXML(entry.description) + "</summary></alert>\n"
+            newalertsxml += "<summary>" + stripXML(entry.get('description', defaultSummary)) + "</summary></alert>\n"
     newalertsxml += "</alerts>"    
 
     return xml.etree.ElementTree.XML(newalertsxml)
