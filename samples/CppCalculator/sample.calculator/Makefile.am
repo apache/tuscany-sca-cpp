@@ -25,11 +25,9 @@ noinst_HEADERS = *.h
 scagen:
 	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
 
-composite_SCRIPTS = runwsserver.sh
-
 composite_LTLIBRARIES = libCalculator.la
-composite_DATA = *.composite *.componentType *.wsdl
-EXTRA_DIST = *.composite *.componentType *.wsdl runwsserver.sh
+composite_DATA = *.composite *.componentType
+EXTRA_DIST = *.composite *.componentType
 
 dist_libCalculator_la_SOURCES = \
 CalculatorImpl.cpp \
