@@ -40,10 +40,9 @@
          <H2>Tuscany SCA for C++ Samples - C++ Calculator Sample</H2> 
 
          <P>This is a very simple sample to show how an SCA composite can wire 
-          together two C++ components to implement a Calculator service and expose 
-          that service as a Web Service.
+          together two C++ components to implement a Calculator service.
          </P>
-         <P>There are three sub projects in this workspace:</P>
+         <P>There are two sub projects in this workspace:</P>
          <UL>
             <LI>sample.calculator<BR/>
                 This contains the source code and SCDL artifacts for the SCA Calculator 
@@ -51,9 +50,6 @@
             </LI>
             <LI>sample.calculator.client<BR/>
                 A sample client which does a local call to the Calculator service.
-            </LI>
-            <LI>sample.calculator.wsclient<BR/>
-                A sample Axis2 Web Service client which calls the Calculator Web service.
             </LI>
          </UL>
          <P>Additionally, there is the sample.calculator.app.composite file. This     
@@ -69,13 +65,11 @@
             <LI><A HREF="#linuxrun">Running the C++ Calculator sample on Linux:</A></LI>
                <UL>
                   <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#linuxws">Running the Web Service client</A></LI>
                </UL>
             <LI><A HREF="#winbld">Building the C++ Calculator sample on Windows</A></LI>
             <LI><A HREF="#winrun">Running the C++ Calculator sample on Windows:</A></LI>
                <UL>
                   <LI><A HREF="#winbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#winws">Running the Web Service client</A></LI>
                </UL>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
@@ -90,8 +84,7 @@
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;
                 </UL></LI>
              </LI>
              <LI>Build the C++ samples with the following command sequence:
@@ -113,8 +106,7 @@
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
@@ -123,38 +115,7 @@
                    <LI>./runclient.sh</LI>
                 </UL>
              </LI>
-         </OL>                                                  
-         <A NAME="linuxws"><H3>Calculator with Web Service client</H3></A>
-         <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Start the Axis2C simple http server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppCalculator/deploy/sample.calculator
-                   </LI>
-                   <LI>./runwsserver.sh</LI>
-                </OL>
-             </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variable is required:                                 
-                      <UL>
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppCalculator/deploy/sample.calculator.wsclient</LI>
-                   <LI>./runwsclient.sh</LI>
-                </OL>
-             </LI>
-         </OL>                                                  
+         </OL>                                                                                                
         </DIV>
 
         <DIV CLASS="section">
@@ -165,8 +126,7 @@
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;
                 </UL></LI>
              </LI>
              <LI>You must have set up the environment for Microsoft Visual C++ tools.
@@ -189,8 +149,7 @@
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI> 
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
@@ -199,37 +158,6 @@
                    <LI>runclient.bat</LI>
                 </UL>
              </LI>
-         </OL>                                                  
-         <A NAME="winws"><H3>Calculator with Web Service client</H3></A>
-         <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Start the Axis2C simple http server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppCalculator\deploy\sample.calculator</LI>
-                   <LI>runwsserver.bat</LI>
-                </OL>
-             </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variable is required:                                 
-                      <UL>
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppCalculator\deploy\sample.calculator.wsclient</LI>
-                   <LI>runwsclient.bat</LI>
-                </OL>
-             </LI>
-         </OL>                                                  
       </DIV>
 
 
