@@ -15,11 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WITH_AXIS2C
-  WSBINDING_SAMPLE = sample.calculator.wsclient
-endif
-
 deploydir=$(prefix)/samples/CppCalculator/deploy
-SUBDIRS = sample.calculator sample.calculator.client ${WSBINDING_SAMPLE}
+SUBDIRS = sample.calculator sample.calculator.client
 EXTRA_DIST = *.composite README.html
 deploy_DATA = *.composite
