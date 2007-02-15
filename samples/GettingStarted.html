@@ -49,31 +49,40 @@
          <TABLE CLASS="bodyTable"> 
             <TBODY>
             <TR CLASS="a">
-               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="CppCalculator/README.html">CppCalculator</A> 
-               </TD>
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="CppCalculator/README.html">CppCalculator</A></TD>
                <TD>A very simple sample to show how an SCA composite can wire 
                 together two C++ components to implement a Calculator service
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PythonCalculator/README.html">PythonCalculator</A> 
-               </TD>
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PythonCalculator/README.html">PythonCalculator</A></TD>
                <TD>A very simple sample to show how an SCA composite can wire 
                 together two Python components to implement a Calculator service 
                 and expose that service as a Web Service
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RubyCalculator/README.html">RubyCalculator</A> 
-               </TD>
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RubyCalculator/README.html">RubyCalculator</A></TD>
                <TD>A very simple sample to show how an SCA composite can wire 
                 together two Ruby components to implement a Calculator service 
                 and expose that service as a Web Service
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="CppBigBank/README.html">CppBigBank</A> 
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PHPCalculator/README.html">PHPCalculator</A></TD>
+               <TD>This is a simple sample to show how an SCA composite can wire together
+                a number of components to implement a Calculator service and expose that service as
+                to a number of different tpyes of client. The sample components are implemented in various 
+                ways to demonstrate the different features of the PHP SCA extension.
                </TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestCalculator/README.html">RESTCalculator</A></TD>
+               <TD>This sample is based on RubyCalculator but exposes the Calculator service as a REST Service 
+                running under the Apache HTTPD server rather than as a SOAP Web Service</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="CppBigBank/README.html">CppBigBank</A></TD>
                <TD>A more complex sample that implements the "Simplified BigBank" scenario. A whitepaper describing
                 the scenario based on the SCA 0.9 Assembly specification can be found 
                 <A HREF="http://www.osoa.org/display/Main/SCA+-+Previously+Published+Specifications">here</A>.
@@ -82,17 +91,268 @@
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RubyBigBank/README.html">RubyBigBank</A> 
-               </TD>
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RubyBigBank/README.html">RubyBigBank</A></TD>
                <TD>A more complex sample that implements the "Simplified BigBank" scenario. This sample uses multiple
                 Ruby components, calls out to an external Web Service via a reference and exposes the service as a 
                 Web Service.
                </TD>
             </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="HTTPDBigBank/README.html">HTTPDBigBank</A></TD>
+               <TD>A more complex sample that implements the "Simplified BigBank" scenario. This sample contains the same 
+                SCA components and calls as RubyBigBank, but demonstrates running the sample under the Apache HTTPD server
+               </TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PythonWeatherForecast/README.html">PythonWeatherForecsat</A></TD>
+               <TD>This sample makes calls to an external Web Service via a reference, demonstrating how Python 
+                ElementTree objects are used in Tuscany to access the XML data returned from the service.</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestCustomer/README.html">RestCustomer</A></TD>
+               <TD>This sample demonstrates a Python component exposed as a REST Service either with or without the REST 
+                interface (which specifies whether the service uses CRUD operations that translate to HTTP POST, GET, PUT 
+                and DELETE or uses HTTP GET and XML over HTTP POST to invoke named operations) running under the Apache 
+                HTTPD server</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestYahoo/README.html">RestYahoo</A></TD>
+               <TD>This sample demonstrates a Python component that is wired to make REST calls out to the external 
+                Yahoo! Web Search service</TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="AlertAggregator/README.html">AlertAggregator</A></TD>
+               <TD>A more complex sample that shows how a Web 2.0-style application can be built using SCA. The Alert 
+                Aggregator Sample aggregates various data sources and presents a unified view of data from these sources, 
+                served as XML and displayed via a web page</TD>
+            </TR>
             </TBODY>
          </TABLE>
          <BR> 
       </DIV>
+      <DIV CLASS="section"> 
+         <A NAME="samples"><H2>Sample Dependencies</H2></A>
+         <P>The Tuscany samples each demonstrate different aspects of functionality provided by Tuscany, often in 
+          particular extensions. The table below documents the extension and container dependencies that each sample has. 
+          Please see the extension documentation for details on the dependencies that particular extensions require.
+         <TABLE CLASS="bodyTable"> 
+            <THEAD>
+            <TR STYLE="vertical-align: top;">
+               <TD></TD>
+               <TD><A HREF="../doc/CPPComponents.html">C++ Extension</A></TD>
+               <TD><A HREF="../doc/PythonExtension.html">Python Extension</A></TD>
+               <TD><A HREF="../doc/RubyExtension.html">Ruby Extension</A></TD>
+               <TD><A HREF="../doc/PHPExtension.html">PHP Extension</A></TD>
+               <TD><A HREF="../doc/Axis2CWSService.html#service">Axis2C Web Service Service Extension</A></TD>
+               <TD><A HREF="../doc/Axis2CWSService.html#reference">Axis2C Web Service Reference Extension</A></TD>
+               <TD><A HREF="../doc/RESTExtension.html#service">REST Service Extension</A></TD>
+               <TD><A HREF="../doc/RESTExtension.html#reference">REST Reference Extension</A></TD>
+               <TD><A HREF="../doc/RESTExtension.html#interface">REST Interface Extension</A></TD>
+               <TD><A HREF="../doc/SCABindingExtension.html#service">SCA Service Extension</A></TD>
+               <TD><A HREF="../doc/SCABindingExtension.html#reference">SCA Reference Extension</A></TD>
+               <TD><A HREF="../doc/Axis2CWSService.html">Axis2C Simple HTTP server</A></TD>
+               <TD><A HREF="../doc/HTTPDService.html">HTTPD server</A></TD>
+            </TR>
+            </THEAD>
+            <TBODY>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="CppCalculator/README.html">CppCalculator</A></TD>
+               <TD>Yes</TD> <!-- C++ -->
+               <TD></TD> <!-- Python -->
+               <TD></TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD></TD> <!-- WS Service -->
+               <TD></TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD></TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD></TD> <!-- Axis HTTP server -->
+               <TD></TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PythonCalculator/README.html">PythonCalculator</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD>Yes</TD> <!-- Python -->
+               <TD></TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD>Yes</TD> <!-- WS Service -->
+               <TD>Yes</TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD></TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD>Yes</TD> <!-- Axis HTTP server -->
+               <TD></TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RubyCalculator/README.html">RubyCalculator</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD></TD> <!-- Python -->
+               <TD>Yes</TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD>Yes</TD> <!-- WS Service -->
+               <TD>Yes</TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD></TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD>Yes</TD> <!-- Axis HTTP server -->
+               <TD></TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="b">
+                <!-- TODO - check/fix/remove this -->
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PHPCalculator/README.html">PHPCalculator</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD></TD> <!-- Python -->
+               <TD></TD> <!-- Ruby -->
+               <TD>Yes</TD> <!-- PHP -->
+               <TD>?</TD> <!-- WS Service -->
+               <TD>?</TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD></TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD>?</TD> <!-- Axis HTTP server -->
+               <TD></TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestCalculator/README.html">RESTCalculator</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD></TD> <!-- Python -->
+               <TD>Yes</TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD></TD> <!-- WS Service -->
+               <TD></TD> <!-- WS Reference -->
+               <TD>Yes</TD> <!-- REST Service -->
+               <TD>Yes</TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD></TD> <!-- Axis HTTP server -->
+               <TD>Yes</TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="CppBigBank/README.html">CppBigBank</A></TD>
+               <TD>Yes</TD> <!-- C++ -->
+               <TD></TD> <!-- Python -->
+               <TD></TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD>Yes</TD> <!-- WS Service -->
+               <TD>Yes</TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD></TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD>Yes</TD> <!-- Axis HTTP server -->
+               <TD></TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RubyBigBank/README.html">RubyBigBank</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD></TD> <!-- Python -->
+               <TD>Yes</TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD>Yes</TD> <!-- WS Service -->
+               <TD>Yes</TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD></TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD>Yes</TD> <!-- Axis HTTP server -->
+               <TD></TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="HTTPDBigBank/README.html">HTTPDBigBank</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD></TD> <!-- Python -->
+               <TD>Yes</TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD>Yes</TD> <!-- WS Service -->
+               <TD>Yes</TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD></TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD>Yes</TD> <!-- SCA Service -->
+               <TD>Yes</TD> <!-- SCA Reference -->
+               <TD></TD> <!-- Axis HTTP server -->
+               <TD>Yes</TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PythonWeatherForecast/README.html">PythonWeatherForecsat</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD>Yes</TD> <!-- Python -->
+               <TD></TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD></TD> <!-- WS Service -->
+               <TD>Yes</TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD></TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD></TD> <!-- Axis HTTP server -->
+               <TD></TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestCustomer/README.html">RestCustomer</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD>Yes</TD> <!-- Python -->
+               <TD></TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD></TD> <!-- WS Service -->
+               <TD></TD> <!-- WS Reference -->
+               <TD>Yes</TD> <!-- REST Service -->
+               <TD>Yes</TD> <!-- REST Reference -->
+               <TD>Yes</TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD></TD> <!-- Axis HTTP server -->
+               <TD>Yes</TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestYahoo/README.html">RestYahoo</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD>Yes</TD> <!-- Python -->
+               <TD></TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD></TD> <!-- WS Service -->
+               <TD></TD> <!-- WS Reference -->
+               <TD></TD> <!-- REST Service -->
+               <TD>Yes</TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD></TD> <!-- Axis HTTP server -->
+               <TD></TD> <!-- HTTPD -->
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="AlertAggregator/README.html">AlertAggregator</A></TD>
+               <TD></TD> <!-- C++ -->
+               <TD>Yes</TD> <!-- Python -->
+               <TD></TD> <!-- Ruby -->
+               <TD></TD> <!-- PHP -->
+               <TD></TD> <!-- WS Service -->
+               <TD></TD> <!-- WS Reference -->
+               <TD>Yes</TD> <!-- REST Service -->
+               <TD>Yes</TD> <!-- REST Reference -->
+               <TD></TD> <!-- REST Interface -->
+               <TD></TD> <!-- SCA Service -->
+               <TD></TD> <!-- SCA Reference -->
+               <TD></TD> <!-- Axis HTTP server -->
+               <TD>Yes</TD> <!-- HTTPD -->
+            </TR>
+            </TBODY>
+         </TABLE>
+         <BR> 
+      </DIV>
+
       <DIV CLASS="section"> 
          <A NAME="help"><H2>Getting Help</H2></A>
 
