@@ -326,7 +326,7 @@
             </TBODY>
          </TABLE>
          <BR/> 
-         <P>The table below documents the libraries or environments necessary to run each sample. These are generally 
+         <P>The table below documents the libraries or environments necessary to build and/or run each sample. These are generally 
           required by the Tuscany extensions that the sample employs.
           Please see the extension documentation for more details (such as the version required) about the dependencies that particular 
           extensions require.
@@ -335,36 +335,46 @@
             <THEAD>
             <TR STYLE="vertical-align: top;">
                <TD></TD>
+               <TD><A HREF="http://java.sun.com/javase/downloads/index.jsp">Java runtime</A></TD>
                <TD><A HREF="http://www.python.org/">Python runtime</A></TD>
                <TD><A HREF="http://www.ruby-lang.org/">Ruby runtime</A></TD>
                <TD><A HREF="http://www.php.net/">PHP runtime</A></TD>
                <TD><A HREF="http://ws.apache.org/axis2/c/">Axis2/C library & server</A></TD>
                <TD><A HREF="http://curl.haxx.se/">libcurl library</A></TD>
                <TD><A HREF="http://httpd.apache.org/">HTTPD server</A></TD>
-               <TD><A HREF="http://feedparser.org/">Universal Feed Parser</A></TD>
+               <TD><A HREF="http://feedparser.org/">Universal Feed Parser library</A></TD>
             </TR>
             </THEAD>
             <TBODY>
             <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="CppCalculator/README.html">CppCalculator</A></TD>
-               <TD COLSPAN="7">No further libraries or environments required</TD>
+               <TD>Build</TD> <!-- Java runtime -->
+               <TD></TD> <!--Python runtime -->
+               <TD></TD> <!--Ruby runtime -->
+               <TD></TD> <!--PHP runtime -->
+               <TD></TD> <!--Axis2/C library & server -->
+               <TD></TD> <!--libcurl library -->
+               <TD></TD> <!--HTTPD server -->
+               <TD></TD> <!--Universal Feed Parser -->               
             </TR>
             <TR CLASS="b">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PythonCalculator/README.html">PythonCalculator</A></TD>
-               <TD>Yes</TD> <!--Python runtime -->
+               <TD></TD> <!-- Java runtime -->
+               <TD>Run</TD> <!--Python runtime -->
                <TD></TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
-               <TD>Yes</TD> <!--Axis2/C library & server -->
+               <TD>Run</TD> <!--Axis2/C library & server -->
                <TD></TD> <!--libcurl library -->
                <TD></TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
             </TR>
             <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RubyCalculator/README.html">RubyCalculator</A></TD>
+               <TD></TD> <!-- Java runtime -->
                <TD></TD> <!--Python runtime -->
-               <TD>Yes</TD> <!--Ruby runtime -->
+               <TD>Run</TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
-               <TD>Yes</TD> <!--Axis2/C library & server -->
+               <TD>Run</TD> <!--Axis2/C library & server -->
                <TD></TD> <!--libcurl library -->
                <TD></TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
@@ -372,9 +382,10 @@
             <TR CLASS="b">
                 <!-- TODO - check/fix/remove this -->
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PHPCalculator/README.html">PHPCalculator</A></TD>
+               <TD></TD> <!-- Java runtime -->
                <TD></TD> <!--Python runtime -->
                <TD></TD> <!--Ruby runtime -->
-               <TD>Yes</TD> <!--PHP runtime -->
+               <TD>Run</TD> <!--PHP runtime -->
                <TD>?</TD> <!--Axis2/C library & server -->
                <TD></TD> <!--libcurl library -->
                <TD>?</TD> <!--HTTPD server -->
@@ -382,83 +393,91 @@
             </TR>
             <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestCalculator/README.html">RESTCalculator</A></TD>
+               <TD></TD> <!-- Java runtime -->
                <TD></TD> <!--Python runtime -->
-               <TD>Yes</TD> <!--Ruby runtime -->
+               <TD>Run</TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
                <TD></TD> <!--Axis2/C library & server -->
-               <TD>Yes</TD> <!--libcurl library -->
-               <TD>Yes</TD> <!--HTTPD server -->
+               <TD>Run</TD> <!--libcurl library -->
+               <TD>Run</TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
             </TR>
             <TR CLASS="b">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="CppBigBank/README.html">CppBigBank</A></TD>
+               <TD>Build</TD> <!-- Java runtime -->
                <TD></TD> <!--Python runtime -->
                <TD></TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
-               <TD>Yes</TD> <!--Axis2/C library & server -->
+               <TD>Run</TD> <!--Axis2/C library & server -->
                <TD></TD> <!--libcurl library -->
                <TD></TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
             </TR>
             <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RubyBigBank/README.html">RubyBigBank</A></TD>
+               <TD></TD> <!-- Java runtime -->
                <TD></TD> <!--Python runtime -->
-               <TD>Yes</TD> <!--Ruby runtime -->
+               <TD>Run</TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
-               <TD>Yes</TD> <!--Axis2/C library & server -->
+               <TD>Run</TD> <!--Axis2/C library & server -->
                <TD></TD> <!--libcurl library -->
                <TD></TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
             </TR>
             <TR CLASS="b">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="HTTPDBigBank/README.html">HTTPDBigBank</A></TD>
+               <TD></TD> <!-- Java runtime -->
                <TD></TD> <!--Python runtime -->
-               <TD>Yes</TD> <!--Ruby runtime -->
+               <TD>Run</TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
-               <TD>Yes</TD> <!--Axis2/C library & server -->
+               <TD>Run</TD> <!--Axis2/C library & server -->
                <TD></TD> <!--libcurl library -->
-               <TD>Yes</TD> <!--HTTPD server -->
+               <TD>Run</TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
             </TR>
             <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="PythonWeatherForecast/README.html">PythonWeatherForecast</A></TD>
-               <TD>Yes</TD> <!--Python runtime -->
+               <TD></TD> <!-- Java runtime -->
+               <TD>Run</TD> <!--Python runtime -->
                <TD></TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
-               <TD>Yes</TD> <!--Axis2/C library & server -->
+               <TD>Run</TD> <!--Axis2/C library & server -->
                <TD></TD> <!--libcurl library -->
                <TD></TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
             </TR>
             <TR CLASS="b">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestCustomer/README.html">RestCustomer</A></TD>
-               <TD>Yes</TD> <!--Python runtime -->
+               <TD></TD> <!-- Java runtime -->
+               <TD>Run</TD> <!--Python runtime -->
                <TD></TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
                <TD></TD> <!--Axis2/C library & server -->
-               <TD>Yes</TD> <!--libcurl library -->
-               <TD>Yes</TD> <!--HTTPD server -->
+               <TD>Run</TD> <!--libcurl library -->
+               <TD>Run</TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
             </TR>
             <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="RestYahoo/README.html">RestYahoo</A></TD>
-               <TD>Yes</TD> <!--Python runtime -->
+               <TD></TD> <!-- Java runtime -->
+               <TD>Run</TD> <!--Python runtime -->
                <TD></TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
                <TD></TD> <!--Axis2/C library & server -->
-               <TD>Yes</TD> <!--libcurl library -->
+               <TD>Run</TD> <!--libcurl library -->
                <TD></TD> <!--HTTPD server -->
                <TD></TD> <!--Universal Feed Parser -->
             </TR>
             <TR CLASS="b">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="AlertAggregator/README.html">AlertAggregator</A></TD>
-               <TD>Yes</TD> <!--Python runtime -->
+               <TD></TD> <!-- Java runtime -->
+               <TD>Run</TD> <!--Python runtime -->
                <TD></TD> <!--Ruby runtime -->
                <TD></TD> <!--PHP runtime -->
                <TD></TD> <!--Axis2/C library & server -->
-               <TD>Yes</TD> <!--libcurl library -->
-               <TD>Yes</TD> <!--HTTPD server -->
-               <TD>Yes</TD> <!--Universal Feed Parser -->
+               <TD>Run</TD> <!--libcurl library -->
+               <TD>Run</TD> <!--HTTPD server -->
+               <TD>Run</TD> <!--Universal Feed Parser -->
             </TR>
             </TBODY>
          </TABLE>
