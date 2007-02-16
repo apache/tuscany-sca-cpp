@@ -17,14 +17,14 @@
  * under the License.
  */
 
-/* $Rev:$ $Date:$ */
+/* $Rev$ $Date$ */
 
 body {
   padding: 0px 0px 10px 0px;
 }
 body, td, select, input, li{
   font-family: Verdana, Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  #font-size: 13px;
   padding: 4px 4px 4px 4px;
   line-height: 1.5em;
 }
@@ -60,14 +60,20 @@ a.newWindow, a.newWindow:link, a.newWindow:visited, a.newWindow:active, a.newWin
   background: url(../images/newwindow.png) right center no-repeat;
   padding-right: 18px;
 }
+h1 {
+  font-size: x-large;
+  line-height: 1em;
+}             
+            
+
 h2 {
   padding: 4px 4px 4px 6px;
   border: 1px solid #999;
   color: #900;
   background-color: #ddd;
-  font-weight:900;
-  font-size: x-large;
-}
+  
+  font-size: large;
+}             
 h3 {
   padding: 4px 4px 4px 6px;
   border: 1px solid #aaa;
@@ -118,7 +124,7 @@ table.bodyTable th {
 }
 
 table.bodyTable th, table.bodyTable td {
-  font-size: 1em;
+  font-size: small;
 }
 
 table.bodyTable tr.a {
