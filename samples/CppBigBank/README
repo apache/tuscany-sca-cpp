@@ -7,16 +7,13 @@ found here. This sample uses multiple C++ components, calls out to an
 external Web Service via a reference, exposes the service as a Web Service 
 and also provides a PHP based client.
 
-There are four sub projects in this workspace:
+There are three sub projects in this workspace:
     - bigbank.account
       This contains the source code and SCDL artifacts for the SCA BigBank 
       composite implementing the account services.
 
     - bigbank.client
       A sample client which does a local call to the BigBank service.
-
-    - bigbank.wsclient
-      A sample Axis2 Web Service client which calls the BigBank Web service.
 
     - bigbank.phpclient
       A sample PHP client which calls the BigBank Web service and then 

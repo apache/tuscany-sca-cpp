@@ -16,6 +16,6 @@
 #  under the License.
 
 deploydir=$(prefix)/samples/CppBigBank/deploy
-SUBDIRS = bigbank.account bigbank.client bigbank.wsclient bigbank.phpwsclient
+SUBDIRS = bigbank.account bigbank.client bigbank.phpwsclient
 EXTRA_DIST = *.composite README.html
 deploy_DATA = *.composite

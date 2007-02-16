@@ -45,7 +45,7 @@
             This sample uses multiple C++ components, calls out to an external Web Service via a reference, 
             exposes the service as a Web Service and also provides a PHP based client.
          </P>
-         <P>There are four sub projects in this workspace:</P>
+         <P>There are three sub projects in this workspace:</P>
          <UL>
             <LI>bigbank.account<BR/>
                 This contains the source code and SCDL artifacts for the SCA BigBank 
@@ -53,9 +53,6 @@
             </LI>
             <LI>bigbank.client<BR/>
                 A sample client which does a local call to the BigBank service.
-            </LI>
-            <LI>bigbank.wsclient<BR/>
-                A sample Axis2 Web Service client which calls the BigBank Web service.
             </LI>
             <LI>bigbank.phpclient<BR/>
                 A sample PHP client which calls the BigBank Web service and then deconstructs 
@@ -89,14 +86,12 @@
             <LI><A HREF="#linuxrun">Running the C++ BigBank sample on Linux:</A></LI>
                <UL>
                   <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#linuxws">Running the Web Service client</A></LI>
                   <LI><A HREF="#linuxphp">Installing and running the PHP web client</A></LI>
                </UL>
             <LI><A HREF="#winbld">Building the C++ BigBank sample on Windows</A></LI>
             <LI><A HREF="#winrun">Running the C++ BigBank sample on Windows:</A></LI>
                <UL>
                   <LI><A HREF="#winbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#winws">Running the Web Service client</A></LI>
                   <LI><A HREF="#winphp">Installing and running the PHP web client</A></LI>
                </UL>
             <LI><A HREF="#help">Getting help</A></LI>
@@ -144,37 +139,6 @@
                    <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppBigBank/deploy/bigbank.client</LI>
                    <LI>./runclient.sh</LI>
                 </UL>
-             </LI>
-         </OL>                                                  
-         <A NAME="linuxws"><H3>BigBank with Web Service client</H3></A>
-         <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Start the Axis2C simple http server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppBigBank/deploy/bigbank.account
-                   </LI>
-                   <LI>./runwsserver.sh</LI>
-                </OL>
-             </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variable is required:                                 
-                      <UL>
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppBigBank/deploy/bigbank.wsclient</LI>
-                   <LI>./runwsclient.sh</LI>
-                </OL>
              </LI>
          </OL>                                                  
         <A NAME="linuxphp"><H3>BigBank with PHP web client</H3></A>
@@ -272,37 +236,6 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
                    <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppBigBank\deploy\bigbank.client</LI>
                    <LI>runclient.bat</LI>
                 </UL>
-             </LI>
-         </OL>                                                  
-         <A NAME="winws"><H3>BigBank with Web Service client</H3></A>
-         <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Start the Axis2C simple http server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppBigBank\deploy\bigbank.account
-                   </LI>
-                   <LI>runwsserver.bat</LI>
-                </OL>
-             </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variable is required:                                 
-                      <UL>
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppBigBank\deploy\bigbank.wsclient</LI>
-                   <LI>runwsclient.bat</LI>
-                </OL>
              </LI>
          </OL>                                                  
         <A NAME="winphp"><H3>BigBank with PHP web client</H3></A>

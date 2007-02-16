@@ -218,7 +218,6 @@ AC_CONFIG_FILES([Makefile
                  CppBigBank/Makefile
                  CppBigBank/bigbank.account/Makefile
                  CppBigBank/bigbank.client/Makefile
-                 CppBigBank/bigbank.wsclient/Makefile
                  CppBigBank/bigbank.phpwsclient/Makefile
                  RubyBigBank/Makefile
                  RubyBigBank/bigbank.account/Makefile
