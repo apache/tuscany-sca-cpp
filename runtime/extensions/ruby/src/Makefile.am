@@ -39,7 +39,7 @@ tuscany/sca/ruby/RubyCompositeContext.cpp
 
 libtuscany_sca_ruby_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \
-	-L${RUBY_LIB} -lruby
+	-L${RUBY_LIB} -lruby  -lpthread
 
 INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \

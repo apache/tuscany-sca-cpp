@@ -70,7 +70,7 @@ tuscany/sca/util/Thread.cpp \
 tuscany/sca/util/ThreadLocal.cpp \
 tuscany/sca/util/Utils.cpp
 
-libtuscany_sca_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo
+libtuscany_sca_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -lpthread
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include
