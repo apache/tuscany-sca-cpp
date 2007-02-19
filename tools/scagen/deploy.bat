@@ -29,6 +29,7 @@ set deploydir=%rootdir%\deploy
 set srcdir=%rootdir%\tools\scagen\bld
 
 
+echo Deploying SCAGEN to %deploydir%\bin
 if not exist %deploydir% mkdir %deploydir%
 if not exist %deploydir%\bin mkdir %deploydir%\bin
 
