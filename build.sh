@@ -53,6 +53,18 @@ echo "Building Ruby extension with Ruby installed at $RUBY_LIB, $RUBY_INCLUDE"
 ENABLE_RUBY=--enable-ruby
 fi
 
+if [ x$CURL_LIB = x ]; then
+echo "CURL_LIB not set. REST extension will not be built"
+elif [ x$CURL_INCLUDE = x ]; then
+echo "CURL_INCLUDE not set. REST extension will not be built"
+elif [ x$HTTPD_INCLUDE = x ]; then
+echo "HTTPD_INCLUDE not set. REST extension will not be built"
+elif [ x$APR_INCLUDE = x ]; then
+echo "APR_INCLUDE not set. REST extension will not be built"
+else
+echo "Building REST extension using HTTPD from $HTTPD_INCLUDE, APR from $APR_INCLUDE and libCURL from $CURL_LIB"
+ENABLE_REST=--enable-restbinding
+fi
 cd ${TUSCANY_SCACPP_HOME}/samples
 ./autogen.sh
 
@@ -63,7 +75,7 @@ if [ x$TUSCANY_SCACPP = x ]; then
 export TUSCANY_SCACPP=`pwd`/deploy
 fi
 
-./configure --prefix=${TUSCANY_SCACPP} --enable-static=no ${WITH_AXIS2C} ${ENABLE_RUBY} ${ENABLE_PYTHON}
+./configure --prefix=${TUSCANY_SCACPP} --enable-static=no ${WITH_AXIS2C} ${ENABLE_RUBY} ${ENABLE_PYTHON} ${ENABLE_REST}
 make
 make install
 
