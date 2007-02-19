@@ -446,7 +446,7 @@ namespace tuscany
         void Operation::addParameter(const string& name, const string *parm)
         {
             logentry();
-            loginfo("Adding operation parameter, name: %s, type: string, value: %s", (const char*)(*parm).c_str());
+            loginfo("Adding operation parameter, name: %s, type: string, value: %s", name.c_str(), (const char*)(*parm).c_str());
             parameters.insert(parameters.end(), Parameter((void*)parm, STRING, (string&) name));
         }
 
