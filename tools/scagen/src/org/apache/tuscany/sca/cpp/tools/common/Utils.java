@@ -116,11 +116,19 @@ public final class Utils {
        char t0 = t.charAt(0);
        for (int i = 0; i < s.length(); i++) {
            if (s.charAt(i) == t0
-                   && s.substring(i).startsWith(t)
-                   && (0 == i || !Character.isLetterOrDigit(s.charAt(i - 1)))
+                   && s.substring(i).startsWith(t)) {
+               
+
+               // When finding a single non-alphanumeric character
+               if(t.length() == 1 && !Character.isLetterOrDigit(t0))
+                   return i;
+               
+               // When finding an alphanumeric string
+               if((0 == i || !Character.isLetterOrDigit(s.charAt(i - 1))) // Check we're matching at the start of a word
                    && (s.length() == (i + t.length()) || !Character
-                           .isLetterOrDigit(s.charAt(i + t.length()))))
-               return i;
+                           .isLetterOrDigit(s.charAt(i + t.length()))))   // Check we're still matching by the end of the word
+                   return i;
+           }
 
            i = skip(s.substring(i), i);
            if (-1 == i)

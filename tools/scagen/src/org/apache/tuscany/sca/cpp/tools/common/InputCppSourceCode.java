@@ -146,7 +146,7 @@ public class InputCppSourceCode {
                     // TODO: cope with comments here
                     // TODO: split out classes into a ClassPart
                     StringTokenizer st = new StringTokenizer(text,
-                            Utils.whitespace + ":");
+                            Utils.whitespace + ":{");
                     st.nextToken(); // step over "class"
                     while (st.hasMoreTokens()) {
                         String word = st.nextToken();
