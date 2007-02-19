@@ -41,8 +41,11 @@ public class ServiceDomNodeHandler extends GenericDomNodeHandler {
         // Pick up attrs and the interface.cpp child elements
         super.handleNode(node, contextXPath, handlers, parameters);
 
-        //OK now go and create the wrapper and proxy for the service
-        createWrapperAndProxyForService(parameters);
+        // Only generate if this is a C++ service
+        if(parameters.containsKey("/componentType/service/interface.cpp/@header")) {
+            //OK now go and create the wrapper and proxy for the service
+            createWrapperAndProxyForService(parameters);
+        }
 
     }
 

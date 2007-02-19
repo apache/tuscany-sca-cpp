@@ -47,8 +47,10 @@ public class ReferenceDomNodeHandler extends GenericDomNodeHandler {
         super.handleNode(node, contextXPath, handlers, parameters);
 
         //OK we know we are handling a reference
-        //now go and create the wrapper and proxy for it
-        createProxyForReference(parameters);
+        //now go and create the wrapper and proxy for it if it is a C++ reference
+        if(parameters.containsKey("/componentType/reference/interface.cpp/@header")) {
+            createProxyForReference(parameters);
+        }
 
     }
 
