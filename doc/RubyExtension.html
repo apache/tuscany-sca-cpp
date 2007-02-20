@@ -30,22 +30,26 @@
 
     <LINK HREF="css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA for C++ - Ruby Extension</TITLE>
+   <TITLE>Tuscany SCA Native - Ruby Extension</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA for C++ - Ruby Extension</H2> 
+         <H1>Tuscany SCA Native - Ruby Extension</H1> 
 
          <P>The Tuscany Ruby extension allows Ruby scripts to be used as components in
             SCA composites and as clients that can invoke SCA services.
          </P>
-         <P>See <A HREF="../samples/RubyCalculator/README.html">RubyCalculator</A> and
-            <A HREF="../samples/RubyBigBank/README.html">RubyBigBank</A> for 
-            two samples that demonstrate the use of the Ruby extension.
-         </P>
+         <P>The following samples demonstrate use of the Ruby extension:</P>
+         <UL>
+             <LI><A HREF="../samples/RubyCalculator/README.html">RubyCalculator</A></LI>
+             <LI><A HREF="../samples/RubyBigBank/README.html">RubyBigBank</A></LI>
+             <LI><A HREF="../samples/RestCalculator/README.html">RestCalculator</A></LI>
+             <LI><A HREF="../samples/RestYahoo/README.html">RestYahoo</A></LI>
+             <LI><A HREF="../samples/HTTPDBigBank/README.html">HTTPDBigBank</A></LI>
+         </UL>
       </DIV>
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
@@ -89,6 +93,10 @@
                      TARGET="_blank">http://www.ruby-lang.org</A><BR/>
                   Please download and follow the installation instructions. You should
                   be able to build the Tuscany SCA Ruby Extension with other versions of Ruby.
+                  The extension has been tested with the 
+                  <A HREF="http://rubyforge.org/frs/download.php/12751/ruby185-21.exe">Ruby 1.8.5 One-Click Installer</A>
+                  on Windows and the <A HREF="ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.8.5-p12.tar.gz">1.8.5 source code</A> 
+                  (compiled locally) on Linux.
                </TD>
             </TR>
             </TBODY>
@@ -100,13 +108,6 @@
          <A NAME="linuxbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Linux</H3></A>
           <OL>
               <LI>Ensure the Ruby libraries are available on the PATH environment variable</LI>
-              <LI>Use the following command sequence to enable the extension:
-                  <UL>
-                      <LI>cd &lt;tuscany_sca_install_dir&gt;/extensions/ruby</LI>
-                      <LI>./deploy.sh</LI>
-                  </UL>
-              </LI>
-
           </OL>
          <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Ruby Extension working with the source release on Linux</H3></A>
           <OL>
@@ -131,20 +132,11 @@
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
                   /usr/local/tuscany/sca</LI>
-              <LI>You will now need to follow the <A HREF="#linuxbin">instructions above</A> to enable 
-                  and use the extension.</LI>
-
               </OL>
            
          <A NAME="winbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Windows</H3></A>
           <OL>
               <LI>Ensure the Ruby libraries are available on the PATH environment variable</LI>
-              <LI>Use the following command sequence to enable the extension:
-                  <UL>
-                      <LI>cd &lt;tuscany_sca_install_dir&gt;\extensions\ruby</LI>
-                      <LI>deploy.bat</LI>
-                  </UL>
-              </LI>
           </OL>
         <A NAME="winsrc"><H3>Getting the Tuscany SCA Ruby Extension working with the source release on Windows</H3></A>
            <OL>   
@@ -169,9 +161,6 @@
                   in Visual Studio 7.1 - you can build projects individually
                   or build the samples to rebuild all the projects</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the 'deploy' directory that was just created</LI>
-              <LI>You will now need to follow the <A HREF="#winbin">instructions above</A> to enable 
-                  and use the extension.</LI>
-
           </OL>
       </DIV>
 

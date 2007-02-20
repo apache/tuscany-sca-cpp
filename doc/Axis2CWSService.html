@@ -30,20 +30,20 @@
 
     <LINK HREF="css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA for C++ - Enabling Axis2C Web Services</TITLE>
+   <TITLE>Tuscany SCA Native - Enabling Axis2C Web Services</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA for C++ - Enabling Axis2C Web Services</H2> 
+         <H2>Tuscany SCA Native - Enabling Axis2C Web Services</H2> 
 
          <P>This document describes the deployment and use of the Axis2C Web Service 
-            (binding.ws) service support in the Apache Tuscany SCA C++ runtime.
+            (binding.ws) service support in the Apache Tuscany SCA Native runtime.
          </P>
          <P>The WS service code is based on <A HREF="http://ws.apache.org/axis2/c">Apache 
-            Axis2C version 0.94</A> and allows SCA components to be invoked via Web 
+            Axis2C version 0.96</A> and allows SCA components to be invoked via Web 
             Service calls.
          </P>
          <P>WS service currently supports Document/literal Wrapped style Web Services 
@@ -88,7 +88,7 @@
            <OL> 
               <LI>The AXIS2C_HOME environment variable is required:                                 
                 <UL>
-                  <LI>set AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>set AXIS2C_HOME=&lt;path to axis2c version 0.96&gt;</LI>
                 </UL></LI>
               <LI>Use the following command sequence to run the deploy script:
                   <UL>
@@ -102,7 +102,7 @@
            <OL> 
               <LI>The AXIS2C_HOME environment variable is required:                                 
                 <UL>
-                  <LI>export AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>export AXIS2C_HOME=&lt;path to axis2c version 0.96&gt;</LI>
                 </UL></LI>
               <LI>Use the following command sequence to run the deploy script:
                   <UL>
@@ -121,26 +121,26 @@
            <LI>
              Linux:
              <OL>
-               <LI>cd &lt;axis2c version 0.94&gt;/services</LI>
+               <LI>cd &lt;axis2c version 0.96&gt;/services</LI>
                <LI>ln -sf  &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/services/tuscany</LI>
-               <LI>cd &lt;axis2c version 0.94&gt;/modules</LI>
+               <LI>cd &lt;axis2c version 0.96&gt;/modules</LI>
                <LI>ln -sf  &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/modules/tuscany</LI>
              </OL>
              Windows:
              <OL>
-               <LI>Create a &lt;axis2c version 0.94&gt;\services\tuscany directory 
+               <LI>Create a &lt;axis2c version 0.96&gt;\services\tuscany directory 
                </LI>
                <LI>Copy all the files in &lt;tuscany_sca_install_dir&gt;\extensions\ws\service\services\tuscany
                    to the directory created above
                </LI>          
-               <LI>Create a &lt;axis2c version 0.94&gt;\modules\tuscany directory 
+               <LI>Create a &lt;axis2c version 0.96&gt;\modules\tuscany directory 
                </LI>
                <LI>Copy all the files in &lt;tuscany_sca_install_dir&gt;\extensions\ws\service\modules\tuscany
                    to the directory created above
                </LI>
              </OL>
            </LI>
-           <LI>Edit the &lt;axis2c version 0.94&gt;/axis2.xml file to add a &lt;ref module="tuscany"&gt; 
+           <LI>Edit the &lt;axis2c version 0.96&gt;/axis2.xml file to add a &lt;ref module="tuscany"&gt; 
                  element. This will register the above module. E.g.:
                  <PRE>...
     &lt;!-- ================================================= --&gt;
@@ -224,8 +224,8 @@
                  <UL>
                      <LI>set TUSCANY_SCACPP=C:/tuscany_sca                                                 </LI>
                      <LI>set TUSCANY_SDOCPP=C:/tuscany_sdo                                                 </LI>
-                     <LI>set AXIS2C_HOME=C:/axis2c-bin-0.94-win32                                          </LI>
-                     <LI>set PATH=%PATH%;C:/tuscany_sca/bin;C:/tuscany_sdo/bin;C:/axis2c-bin-0.94-win32/lib</LI>
+                     <LI>set AXIS2C_HOME=C:/axis2c-bin-0.96-win32                                          </LI>
+                     <LI>set PATH=%PATH%;C:/tuscany_sca/bin;C:/tuscany_sdo/bin;C:/axis2c-bin-0.96-win32/lib</LI>
                      <LI>set TUSCANY_SCACPP_SYSTEM_ROOT=C:/tuscany_sca/samples/CppCalculator/deploy        </LI>
                      <LI>set TUSCANY_SCACPP_DEFAULT_COMPONENT=sample.calculator.CalculatorComponent        </LI>
                      <LI>cd %AXIS2C_HOME%/bin/                                                             </LI>

@@ -30,22 +30,22 @@
 
     <LINK HREF="doc/css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany - Getting Started</TITLE>
+   <TITLE>Tuscany SCA Native - Getting Started</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany - Getting Started - SCA C++ Milestone release 2</H2> 
+         <H1>Tuscany - Getting Started - SCA Native Milestone release 3</H1> 
 
-         <P>Tuscany SCA C++ provides a runtime implementation for the Service Component
+         <P>Tuscany SCA Native provides a runtime implementation for the Service Component
          Architecture 0.96 Assembly specification and the 0.95 C++ Client & Implementation specification 
          (found <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">here</A>), 
          written in C++ and currently supports C++, Python and Ruby
          component implementation types. This page describes what is needed to install and run Tuscany
-         SCA for C++.<BR/>If you haven't already done so, the first
-         step is to download the SCA C++ Milestone release 2 of Apache Tuscany from our
+         SCA Native.<BR/>If you haven't already done so, the first
+         step is to download the SCA Native Milestone release 3 of Apache Tuscany from our
          <A HREF="http://incubator.apache.org/tuscany/downloads.html" target='_blank'>download page</A>.<BR/>
          </P>
       </DIV>
@@ -95,16 +95,7 @@
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD>Axis2C Release 0.94</TD>
-
-               <TD> 
-                  <A HREF="http://ws.apache.org/axis2/c/download.cgi"
-                     TARGET="_blank">http://ws.apache.org/axis2/c/download.cgi</A><BR/>
-                  Please download and follow the installation instructions. Ensure you can run the Axis2C samples                  
-               </TD>
-            </TR>
-            <TR CLASS="b">
-               <TD>Tuscany SDO for C++ Milestone Release 2</TD>
+               <TD>Tuscany SDO for C++ Milestone Release 3</TD>
 
                <TD> 
                   <A HREF="http://incubator.apache.org/tuscany/download.html"
@@ -112,7 +103,7 @@
                   Please download and follow the installation instructions
                </TD>
             </TR>
-            <TR CLASS="a">
+            <TR CLASS="b">
                <TD><STRONG>Optional:</STRONG> Java SDK 1.4 or later</TD>
 
                <TD> 
@@ -123,33 +114,28 @@
                   Python or Ruby SCA components.
                </TD>
             </TR>
-            <TR CLASS="b">
+            <TR CLASS="a">
                <TD><STRONG>Optional:</STRONG> Apache Ant 1.6 or later</TD>
-
                <TD> 
                   <A HREF="http://ant.apache.org"
                      TARGET="_blank">http://ant.apache.org</A><BR/>
                   This is required for building the SCAGEN code generation tool, which is used
                   when developing Tuscany SCA C++ components. This is only required when building
-                  a source distribution of Tuscany SCA C++.
+                  the C++ extension from a source distribution of Tuscany SCA Native.
                </TD>
             </TR>
-            <TR CLASS="a">
-               <TD><STRONG>Optional:</STRONG> Python version 2.4</TD>
-
+            <TR CLASS="b">
+               <TD><STRONG>Optional:</STRONG> Python version 2.5</TD>
                <TD> 
                   <A HREF="http://www.python.org/download/"
                      TARGET="_blank">http://www.python.org/download/</A><BR/>
                   This is required for building or running the Tuscany SCA Python extension
                   (see <A HREF="#extensions">below</A>).
-                  Please download and follow the installation instructions. You can build 
-                  the Tuscany SCA Python Extension with other versions of Python - versions 2.3.4 
-                  and higher have been tested.
+                  Please download and follow the installation instructions. 
                </TD>
             </TR>
-            <TR CLASS="b">
+            <TR CLASS="a">
                <TD><STRONG>Optional:</STRONG> Ruby version 1.8.x</TD>
-
                <TD> 
                   <A HREF="http://www.ruby-lang.org"
                      TARGET="_blank">http://www.ruby-lang.org</A><BR/>
@@ -159,24 +145,76 @@
                   be able to build the Tuscany SCA Ruby Extension with other versions of Ruby.
                </TD>
             </TR>
+            <TR CLASS="b">
+               <TD><STRONG>Optional:</STRONG> PHP version 5.2</TD>
+               <TD> 
+                  <A HREF="http://www.php.net"
+                     TARGET="_blank">http://www.php.net</A><BR/>
+                  This is required for building and running the Tuscany SCA PHP extension
+                  (see <A HREF="#extensions">below</A>).
+                  Please download and follow the installation instructions. 
+               </TD>
+            </TR>
+            <TR CLASS="a">
+               <TD><STRONG>Optional:</STRONG> PHP PECL SCA_SDO package version 1.1.2</TD>
+               <TD> 
+                  <A HREF="http://pecl.php.net/package/SCA_SDO"
+                     TARGET="_blank">http://pecl.php.net/package/SCA_SDO</A><BR/>
+                  This is required for running the Tuscany SCA PHP extension
+                  (see <A HREF="#extensions">below</A>).
+                  Please download and follow the installation instructions. 
+               </TD>
+            </TR>
+            <TR CLASS="b">
+               <TD><STRONG>Optional:</STRONG> Axis2C Release 0.96</TD>
+               <TD> 
+                  <A HREF="http://ws.apache.org/axis2/c/download.cgi"
+                     TARGET="_blank">http://ws.apache.org/axis2/c/download.cgi</A><BR/>
+                  This is required for building and running the Tuscany SCA Web Service extension
+                  (see <A HREF="#extensions">below</A>).
+                  Please download and follow the installation instructions. Ensure you can run the Axis2C samples                  
+               </TD>
+            </TR>
+            <TR CLASS="a">
+               <TD><STRONG>Optional:</STRONG> Apache HTTPD version 2.2</TD>
+               <TD> 
+                  <A HREF="http://httpd.apache.org"
+                     TARGET="_blank">http://httpd.apache.org</A><BR/>
+                  This is required for building and running the Tuscany SCA REST extension
+                  (see <A HREF="#extensions">below</A>). It is also required for some
+                   of the Web Services samples.
+                  Please download and follow the installation instructions. 
+               </TD>
+            </TR>
+            <TR CLASS="b">
+               <TD><STRONG>Optional:</STRONG> libcurl version 7.15 or higher</TD>
+
+               <TD> 
+                  <A HREF="http://curl.haxx.se/download.html"
+                     TARGET="_blank">http://curl.haxx.se/download.html</A><BR/>
+                  This is required for building and running the Tuscany SCA REST extension
+                  (see <A HREF="#extensions">below</A>).
+                  Please download and follow the installation instructions. 
+               </TD>
+            </TR>
             </TBODY>
          </TABLE>
       </DIV> 
       <DIV CLASS="section"> 
-         <A NAME="install"><H2>Installing Tuscany SCA for C++</H2></A>
-         <A NAME="linuxbin"><H3>Getting Tuscany SCA for C++ working with the binary release on Linux</H3></A>
+         <A NAME="install"><H2>Installing Tuscany SCA Native</H2></A>
+         <A NAME="linuxbin"><H3>Getting Tuscany SCA Native working with the binary release on Linux</H3></A>
           <OL>
               <LI>Extract the binary tar package to a folder</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just extracted</LI>
               <LI>Add the &lt;tuscany_sca_install_dir&gt;/lib directory to the LD_LIBRARY_PATH <!--(Linux) or DYLD_LIBRARY_PATH (MacOS X)--> environment variable</LI>
           </OL>
-         <A NAME="linuxsrc"><H3>Getting Tuscany SCA for C++ working with the source release on Linux</H3></A>
+         <A NAME="linuxsrc"><H3>Getting Tuscany SCA Native working with the source release on Linux</H3></A>
           <OL>
               <LI>Extract the source tar package to a folder &lt;tuscany_sca_install_dir&gt;</LI>
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.96&gt;</LI>
                 </UL></LI>
               <LI>The following environment variables are optional if you wish to build the Python or Ruby extensions
                   (see the <A HREF="doc/PythonExtension.html">Python extension</A> and 
@@ -185,10 +223,10 @@
                   <LI>PYTHON_LIB=&lt;path to Python libraries&gt;</LI>
                   <LI>PYTHON_INCLUDE=&lt;path to Python includes&gt;</LI>
                   <LI>PYTHON_VERSION=&lt;name of the Python version&gt;<BR/>
-                   Note: If you are using a default installation of Python 2.3 these are usually:<BR/>
+                   Note: If you are using a default installation of Python 2.5 these are usually:<BR/>
                    PYTHON_LIB=/usr/lib<BR/>
-                   PYTHON_INCLUDE=/usr/include/python2.3<BR/>
-                   PYTHON_VERSION=python2.3<BR/></LI>
+                   PYTHON_INCLUDE=/usr/include/python2.5<BR/>
+                   PYTHON_VERSION=python2.5<BR/></LI>
                   <LI>RUBY_LIB=&lt;path to Ruby libraries&gt;</LI>
                   <LI>RUBY_INCLUDE=&lt;path to Ruby includes&gt;<BR/>
                    Note: If you are using a default installation of Ruby these are usually:<BR/>
@@ -209,19 +247,19 @@
                   directory that contains the built Tuscany SCA distribution</LI>
               </OL>
            
-         <A NAME="winbin"><H3>Getting Tuscany SCA for C++ working with the binary release on Windows</H3></A>
+         <A NAME="winbin"><H3>Getting Tuscany SCA Native working with the binary release on Windows</H3></A>
           <OL>
               <LI>Unzip the supplied zip file to a folder</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just unzipped</LI>
               <LI>Add the &lt;tuscany_sca_install_dir&gt;\bin directory to the PATH environment variable</LI>
           </OL>
-        <A NAME="winsrc"><H3>Getting Tuscany SCA for C++ working with the source release on Windows</H3></A>
+        <A NAME="winsrc"><H3>Getting Tuscany SCA Native working with the source release on Windows</H3></A>
            <OL>   
               <LI>Unzip the supplied source zip file</LI>
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.96&gt;</LI>
                 </UL></LI>
               <LI>The following environment variables are optional if you wish to build the Python or Ruby extensions
                   (see the <A HREF="doc/PythonExtension.html">Python extension</A> and 
@@ -246,7 +284,7 @@
 
       <DIV CLASS="section"> 
          <A NAME="extensions"><H2>Tuscany SCA Extensions</H2></A>
-         <P>Tuscany SCA is composed of two distinct areas: the core and extensions. The core provides the
+         <P>Tuscany SCA is composed of two distinct areas: the kernel and extensions. The kernel provides the
             implementation of the 
             <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">Service 
             Component Architecture Assembly Model specification</A>, reading composite files, loading the 
@@ -254,8 +292,8 @@
             extensions provide the functionality required to call a component implementation (e.g. a C++ class 
             compiled into a dll) or invoke a binding (e.g. make a Web Services call).
          </P>
-         <P>The table below details the extensions that are included with TuscanySCA for C++ Milestone 
-            Release 2. 
+         <P>The table below details the extensions that are included with Tuscany SCA Native Milestone 
+            Release 3. 
          </P>
          <TABLE CLASS="bodyTable"> 
             <TBODY>
@@ -271,38 +309,107 @@
                 <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">SCA 
                 C++ Client and Implementation specification</A> for more details about the SCA C++ 
                 Programming Model and the <A HREF="doc/CPPComponents.html">Creating C++ SCA Components</A> 
-                document for a step-by-step example.
+                document for a step-by-step example.<BR/>
+                <STRONG>Requires:</STRONG>
+                <UL>
+                    <LI><A HREF="http://java.sun.com/javase/downloads/index.jsp" TARGET="_blank">Java SDK 1.4 or later</A>
+                    - for building and running the SCAGEN code generation tool, which is used
+                    when developing Tuscany SCA C++ components.</LI>
+                    <LI><A HREF="http://ant.apache.org" TARGET="_blank">Apache Ant 1.6 or later</A>
+                    - for building the SCAGEN code generation tool. This is only required when building
+                    the C++ extension from a source distribution of Tuscany SCA Native.</LI>
+                </UL>
                </TD>
             </TR>
             <TR CLASS="a">
-               <TD STYLE="vertical-align: top; white-space: nowrap;">Axis2C Web Services 
+               <TD STYLE="vertical-align: top; white-space: nowrap;">
+                <A HREF="doc/PythonExtension.html">Python</A>
                </TD>
+               <TD>Provides a Python SCA client API and enables Python component implementations. 
+                See the <A HREF="doc/PythonExtension.html">Python extension documentation</A> for 
+                more details.<BR/>
+                <STRONG>Requires:</STRONG>
+                <UL>
+                    <LI><A HREF="http://www.python.org/download/" TARGET="_blank">Python version 2.5</A>
+                    - for building and running the extension.</LI>
+                </UL>
+               </TD>
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;">
+                <A HREF="doc/RubyExtension.html">Ruby</A>
+               </TD>
+               <TD>Provides a Ruby SCA client API and enables Ruby component implementations. 
+                See the <A HREF="doc/RubyExtension.html">Ruby extension documentation</A> for 
+                more details.<BR/> 
+                <STRONG>Requires:</STRONG>
+                <UL>
+                    <LI><A HREF="http://www.ruby-lang.org" TARGET="_blank">Ruby version 1.8.x</A>
+                    - for building and running the extension.</LI>
+                </UL>
+               </TD>
+            </TR>
+            <TR CLASS="a">
+               <TD STYLE="vertical-align: top; white-space: nowrap;">
+                <A HREF="doc/PHPExtension.html">PHP</A>
+               </TD>
+               <TD>Provides a PHP SCA client API and enables PHP component implementations by integrating
+                with the <A HREF="http://pecl.php.net/package/SCA_SDO">PECL SCA_SDO package</A>. 
+                See the <A HREF="doc/PHPExtension.html">PHP extension documentation</A> for 
+                more details. <BR/> 
+                <STRONG>Requires:</STRONG>
+                <UL>
+                    <LI><A HREF="http://www.php.net" TARGET="_blank">PHP version 5.2</A>
+                        - for building and running the extension.</LI>
+                    <LI><A HREF="http://pecl.php.net/package/SCA_SDO" TARGET="_blank">PECL SCA_SDO package version 1.1.2</A>
+                        - for running the extension.</LI>
+                </UL>
+               </TD>
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;">Axis2C Web Services</TD>
                <TD>Provides the Web Service bindings enabling Tuscany to call SCA references via
                 Web Services or expose SCA services as Web Services. See the 
                 <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">SCA 
                 Web Service bindings specification</A> for more details about SCA Web Service support
                 and the <A HREF="doc/Axis2CWSService.html">Enabling Web Service 
-                access to SCA Components</A> document for a step-by-step example.
-               </TD>
-            </TR>
-            <TR CLASS="b">
-               <TD STYLE="vertical-align: top; white-space: nowrap;">
-                <A HREF="doc/PythonExtension.html">Python</A>
-               </TD>
-               <TD>Provides a Python SCA client API and enables Python component implementations. 
-                This extension is disabled by default and must be enabled to be used.
-                See the <A HREF="doc/PythonExtension.html">Python extension documentation</A> for 
-                more details.
+                access to SCA Components</A> document for a step-by-step example.<BR/> 
+                <STRONG>Requires:</STRONG>
+                <UL>
+                    <LI><A HREF="http://ws.apache.org/axis2/c/download.cgi" TARGET="_blank">Axis2C Release 0.96</A>
+                    - for building and running the extension.</LI>
+                </UL>
                </TD>
             </TR>
             <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;">
-                <A HREF="doc/RubyExtension.html">Ruby</A>
+                <A HREF="doc/RESTExtension.html">REST</A>
                </TD>
-               <TD>Provides a Ruby SCA client API and enables Ruby component implementations. 
-                This extension is disabled by default and must be enabled to be used.
-                See the <A HREF="doc/RubyExtension.html">Ruby extension documentation</A> for 
-                more details. 
+               <TD>Provides the REST bindings enabling Tuscany to call SCA references via
+                REST HTTP calls or expose SCA services as REST Services. See the 
+                <A HREF="doc/RESTExtension.html">REST extension documentation</A> for more details.<BR/> 
+                <STRONG>Requires:</STRONG>
+                <UL>
+                    <LI><A HREF="http://httpd.apache.org" TARGET="_blank">Apache HTTPD version 2.2</TD>
+                    - for building and running the REST Service extension</LI>
+                    <LI><A HREF="http://curl.haxx.se/download.html" TARGET="_blank">libcurl version 7.15 or higher</TD>
+                    - for building and running the REST Reference extension</LI>
+                </UL>
+               </TD>
+            </TR>
+            <TR CLASS="b">
+               <TD STYLE="vertical-align: top; white-space: nowrap;">
+                <A HREF="doc/SCAExtension.html">SCA</A>
+               </TD>
+               <TD>Provides a default SCA binding enabling Tuscany to determine the appropriate technology
+                to use to provide services or invoke references. Currently this defaults to using the 
+                Axis2C Web Services binding. See the 
+                <A HREF="doc/SCAExtension.html">SCA extension documentation</A> for more details.<BR/> 
+                <STRONG>Requires:</STRONG>
+                <UL>
+                    <LI><A HREF="doc/Axis2CWSService.html" TARGET="_blank">Axis2C Web Services extension</A>
+                    - for building and running the extension.</LI>
+                </UL>
                </TD>
             </TR>
             </TBODY>

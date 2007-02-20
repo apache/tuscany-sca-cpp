@@ -27,6 +27,7 @@ body, td, select, input, li{
   #font-size: 13px;
   padding: 4px 4px 4px 4px;
   line-height: 1.5em;
+  font-size: small;
 }
 code{
   font-family: Courier, monospace;

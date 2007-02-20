@@ -30,21 +30,27 @@
 
     <LINK HREF="css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA for C++ - Python Extension</TITLE>
+   <TITLE>Tuscany SCA Native - Python Extension</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA for C++ - Python Extension</H2> 
+         <H1>Tuscany SCA Native - Python Extension</H1> 
 
          <P>The Tuscany Python extension allows Python scripts to be used as components in
             SCA composites and as clients that can invoke SCA services.
          </P>
-         <P>See <A HREF="../samples/PythonCalculator/README.html">PythonCalculator</A> for 
-            a sample that demonstrates the use of the Python extension.
-         </P>
+         <P>The following samples demonstrate use of the Python extension:</P>
+         <UL>
+             <LI><A HREF="../samples/PythonCalculator/README.html">PythonCalculator</A></LI>
+             <LI><A HREF="../samples/PythonWeatherForecast/README.html">PythonWeatherForecast</A></LI>
+             <LI><A HREF="../samples/RestCustomer/README.html">RestCustomer</A></LI>
+             <LI><A HREF="../samples/RestYahoo/README.html">RestYahoo</A></LI>
+             <LI><A HREF="../samples/AlertAggregator/README.html">AlertAggregator</A></LI>
+         </UL>
+          
       </DIV>
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
@@ -81,14 +87,12 @@
                <TD><B>Download Link</B></TD>
             </TR>
             <TR CLASS="b">
-               <TD>Python version 2.4</TD>
+               <TD>Python version 2.5</TD>
 
                <TD> 
                   <A HREF="http://www.python.org/download/"
                      TARGET="_blank">http://www.python.org/download/</A><BR/>
-                  Please download and follow the installation instructions. You can build 
-                  the Tuscany SCA Python Extension with other versions of Python - versions 2.3.4 
-                  and higher have been tested.
+                  Please download and follow the installation instructions. 
                </TD>
             </TR>
             </TBODY>
@@ -101,12 +105,6 @@
           <OL>
               <LI>Ensure the Python libraries are available on the PATH environment variable</LI>
               <LI>Add the &lt;tuscany_sca_install_dir&gt;/extensions/python/lib directory to the PYTHONPATH environment variable</LI>
-              <LI>Use the following command sequence to enable the extension:
-                  <UL>
-                      <LI>cd &lt;tuscany_sca_install_dir&gt;/extensions/python</LI>
-                      <LI>./deploy.sh</LI>
-                  </UL>
-              </LI>
           </OL>
          <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Python Extension working with the source release on Linux</H3></A>
           <OL>
@@ -119,10 +117,10 @@
                   <LI>PYTHON_LIB=&lt;path to Python libraries&gt;</LI>
                   <LI>PYTHON_INCLUDE=&lt;path to Python includes&gt;</LI>
                   <LI>PYTHON_VERSION=&lt;name of the Python version&gt;<BR/>
-                   Note: If you are using a default installation of Python 2.3 these are usually:<BR/>
+                   Note: If you are using a default installation of Python 2.5 these are usually:<BR/>
                    PYTHON_LIB=/usr/lib<BR/>
-                   PYTHON_INCLUDE=/usr/include/python2.3<BR/>
-                   PYTHON_VERSION=python2.3<BR/></LI>
+                   PYTHON_INCLUDE=/usr/include/python2.5<BR/>
+                   PYTHON_VERSION=python2.5<BR/></LI>
                 </UL></LI>
               <LI>Build the Python source only with the following command sequence:
                   <UL>
@@ -133,20 +131,12 @@
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
                   /usr/local/tuscany/sca</LI>
-              <LI>You will now need to follow the <A HREF="#linuxbin">instructions above</A> to enable 
-                  and use the extension.</LI>
               </OL>
            
          <A NAME="winbin"><H3>Getting the Tuscany SCA Python Extension working with the binary release on Windows</H3></A>
           <OL>
               <LI>Ensure the Python libraries are available on the PATH environment variable</LI>
               <LI>Add the &lt;tuscany_sca_install_dir&gt;\extensions\python\bin directory to the PYTHONPATH environment variable</LI>
-              <LI>Use the following command sequence to enable the extension:
-                  <UL>
-                      <LI>cd &lt;tuscany_sca_install_dir&gt;\extensions\python</LI>
-                      <LI>deploy.bat</LI>
-                  </UL>
-              </LI>
           </OL>
         <A NAME="winsrc"><H3>Getting the Tuscany SCA Python Extension working with the source release on Windows</H3></A>
            <OL>   
@@ -170,8 +160,6 @@
                   in Visual Studio 6 or at at &lt;tuscany_sca_install_dir&gt;/projectsvc7/tuscany_sca/tuscany_sca.sln 
                   in Visual Studio 7.1 - you can build projects individually
               <LI>Set the TUSCANY_SCACPP environment variable to point to the 'deploy' directory that was just created</LI>
-              <LI>You will now need to follow the <A HREF="#winbin">instructions above</A> to enable 
-                  and use the extension.</LI>
           </OL>
       </DIV>
 
@@ -218,28 +206,18 @@ calculator = sca.locateservice("CalculatorComponent/CalculatorService")
             'self') and the class attribute must be defined in the implementation.python element 
             in your composite, like so:
          </P>
-<PRE>&lt;implementation.python module="PythonModuleName" path="relative/path/to/module" class="PythonClassName"/&gt;
+<PRE>&lt;implementation.python module="PythonModuleName" path="path/to/module" class="PythonClassName"/&gt;
 </PRE>
-         <P>Tuscany currently only supports passing simple types (strings, ints, floats, etc) into 
-            and out of Python components. Support for more complex types, such as Service Data Objects,
-            will be added in later releases.
+         <P>Tuscany currently supports passing simple types (strings, ints, floats, etc) as well
+            as Service Data Objects into and out of Ruby components. Service Data Objects are represented 
+            in Python as xml.etree.ElementTree Element objects (see the <A HREF="../samples/PythonWeatherForecast/README.html">
+            PythonWeatherForecast sample</A> for a demonstration).
          </P>
-         <P>Additionally, Tuscany currently requires a componentType file that corresponds to the 
-            name of the Python module, e.g. for the Python Calculator sample, the module name is
-            'CalculatorImpl' and the componentType file is 'CalculatorImpl.componentType'. The 
-            componentType file specifies what services are available on the component and which
-            references are called by the component. For example, CalculatorImpl.componentType
-            contains the following:
+         <P>You can write a componentType file for your Python component, but you don't have to - the Python 
+            extension automatically exposes a service and adds references and properties to your Python component 
+            implementation classes based on the information in the composite file.
          </P>
-<PRE>&lt;componentType xmlns="http://www.osoa.org/xmlns/sca/1.0"&gt;
-    &lt;service name="CalculatorService"&gt;
-        &lt;interface.python/&gt;
-    &lt;/service&gt;
-    &lt;reference name="divideService"&gt;
-        &lt;interface.python/&gt;
-    &lt;/reference&gt;
-&lt;/componentType&gt;
-</PRE>
+
          <A NAME="references"><H3>References</H3></A>
          <P>References are automatically added to your Python component implementation when 
             the runtime loads the implementation script, so they can be used like so:
@@ -264,13 +242,6 @@ def div(val1, val2):
     &lt;implementation.python module="DivideImpl"/&gt;
     &lt;property name="doRounding"&gt;true&lt;/property&gt;
 &lt;/component&gt;
-</PRE>
-        <P>and in the associated .componentType file like so:
-        </P>
-<PRE>&lt;componentType ...
-...
-    &lt;property name="doRounding" type="xsd:boolean"/&gt;
-&lt;/componentType&gt;
 </PRE>
         <P>means the property is automatically instantiated and assigned the 
           property value in the Python component implementation, so it can be 
