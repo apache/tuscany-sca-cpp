@@ -3,6 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual C++ Express 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Build", "Build\Build.vcproj", "{DE6DB733-17B8-40EC-B01D-6665C84347B4}"
 	ProjectSection(ProjectDependencies) = postProject
+		{B7B0A0BD-F511-4F77-845D-B78A632FA099} = {B7B0A0BD-F511-4F77-845D-B78A632FA099}
 		{C255EE00-A218-4A7F-8767-C3B2F24E60B1} = {C255EE00-A218-4A7F-8767-C3B2F24E60B1}
 		{4E16D015-6578-4D78-8DF0-82A98DB56CC3} = {4E16D015-6578-4D78-8DF0-82A98DB56CC3}
 		{E13F6477-84B6-4F60-8E51-78848D5C339E} = {E13F6477-84B6-4F60-8E51-78848D5C339E}
@@ -33,6 +34,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_python", "tusca
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_ruby", "tuscany_sca_ruby\tuscany_sca_ruby.vcproj", "{B5630E91-D747-4520-8089-0EAAB76BE600}"
 	ProjectSection(ProjectDependencies) = postProject
+		{B7B0A0BD-F511-4F77-845D-B78A632FA099} = {B7B0A0BD-F511-4F77-845D-B78A632FA099}
 		{E13F6477-84B6-4F60-8E51-78848D5C339E} = {E13F6477-84B6-4F60-8E51-78848D5C339E}
 	EndProjectSection
 EndProject
@@ -87,6 +89,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_rest_interface"
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_php", "tuscany_sca_php\tuscany_sca_php.vcproj", "{28E45334-1F59-45CB-93EE-FB787D81B6D2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tuscany_sca_ruby_lang", "tuscany_sca_ruby_lang\tuscany_sca_ruby_lang.vcproj", "{B7B0A0BD-F511-4F77-845D-B78A632FA099}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -152,6 +156,10 @@ Global
 		{28E45334-1F59-45CB-93EE-FB787D81B6D2}.Debug|Win32.Build.0 = Debug|Win32
 		{28E45334-1F59-45CB-93EE-FB787D81B6D2}.Release|Win32.ActiveCfg = Release|Win32
 		{28E45334-1F59-45CB-93EE-FB787D81B6D2}.Release|Win32.Build.0 = Release|Win32
+		{B7B0A0BD-F511-4F77-845D-B78A632FA099}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B7B0A0BD-F511-4F77-845D-B78A632FA099}.Debug|Win32.Build.0 = Debug|Win32
+		{B7B0A0BD-F511-4F77-845D-B78A632FA099}.Release|Win32.ActiveCfg = Release|Win32
+		{B7B0A0BD-F511-4F77-845D-B78A632FA099}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

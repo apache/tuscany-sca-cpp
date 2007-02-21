@@ -28,7 +28,6 @@ set rootdir=%1
 set deploydir=%rootdir%\deploy
 set extdir=%deploydir%\extensions
 set rubyextdir=%extdir%\ruby
-set srcdir=%rootdir%\runtime\extensions\ruby\src
 
 if . == .%2 (
 echo input directory not specified
@@ -43,17 +42,14 @@ if not exist %extdir% mkdir %extdir%
 if not exist %rubyextdir% mkdir %rubyextdir%
 if not exist %rubyextdir%\bin mkdir %rubyextdir%\bin
 if not exist %rubyextdir%\lib mkdir %rubyextdir%\lib
-if not exist %rubyextdir%\xsd mkdir %rubyextdir%\xsd
 
-del %rubyextdir%\bin\tuscany_sca_ruby_lang.*
-del %rubyextdir%\lib\tuscany_sca_ruby_lang.lib
+del %rubyextdir%\bin\tuscany_sca_ruby.*
+del %rubyextdir%\lib\tuscany_sca_ruby.lib
 
-copy %srcdir%\..\xsd\*.* %rubyextdir%\xsd
+copy %inpath%\tuscany_sca_ruby.lib %rubyextdir%\lib
+copy %inpath%\tuscany_sca_ruby.dll %rubyextdir%\bin
 
-copy %inpath%\tuscany_sca_ruby_lang.lib %rubyextdir%\lib
-copy %inpath%\tuscany_sca_ruby_lang.dll %rubyextdir%\bin
-
-if exist %inpath%\tuscany_sca_ruby_lang.pdb copy %inpath%\tuscany_sca_ruby_lang.pdb %rubyextdir%\bin
+if exist %inpath%\tuscany_sca_ruby.pdb copy %inpath%\tuscany_sca_ruby.pdb %rubyextdir%\bin
 
 goto end
 :usage

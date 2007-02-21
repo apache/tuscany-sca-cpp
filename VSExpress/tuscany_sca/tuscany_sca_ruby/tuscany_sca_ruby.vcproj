@@ -74,11 +74,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib msvcrt-ruby18.lib $(NOINHERIT)"
+				AdditionalDependencies="tuscany_sca_ruby_lang.lib tuscany_sca.lib tuscany_sdo.lib msvcrt-ruby18.lib $(NOINHERIT)"
 				OutputFile=".\Release/tuscany_sca_ruby.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\..\deploy\lib,$(TUSCANY_SDOCPP)\lib,$(RUBY_HOME)\lib"
+				AdditionalLibraryDirectories="..\..\..\deploy\extensions\ruby\lib;..\..\..\deploy\lib;&quot;$(TUSCANY_SDOCPP)\lib&quot;;&quot;$(RUBY_HOME)\lib&quot;"
 				ProgramDatabaseFile=".\Release/tuscany_sca_ruby.pdb"
 				ImportLibrary=".\Release/tuscany_sca_ruby.lib"
 				TargetMachine="1"
@@ -108,7 +108,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\..\..\runtime\extensions\ruby\deploy.bat ..\..\..\ Release"
+				CommandLine="..\..\..\runtime\extensions\ruby\xtension\deploy.bat ..\..\..\ Release"
 			/>
 		</Configuration>
 		<Configuration
@@ -171,11 +171,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="tuscany_sca.lib tuscany_sdo.lib msvcrt-ruby18.lib $(NOINHERIT)"
+				AdditionalDependencies="tuscany_sca_ruby_lang.lib tuscany_sca.lib tuscany_sdo.lib msvcrt-ruby18.lib $(NOINHERIT)"
 				OutputFile=".\Debug/tuscany_sca_ruby.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\..\deploy\lib,$(TUSCANY_SDOCPP)\lib,$(RUBY_HOME)\lib"
+				AdditionalLibraryDirectories="..\..\..\deploy\extensions\ruby\lib;..\..\..\deploy\lib;&quot;$(TUSCANY_SDOCPP)\lib&quot;;&quot;$(RUBY_HOME)\lib&quot;"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/tuscany_sca_ruby.pdb"
 				ImportLibrary=".\Debug/tuscany_sca_ruby.lib"
@@ -206,7 +206,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\..\..\runtime\extensions\ruby\deploy.bat ..\..\..\ Debug"
+				CommandLine="..\..\..\runtime\extensions\ruby\extension\deploy.bat ..\..\..\ Debug"
 			/>
 		</Configuration>
 	</Configurations>
@@ -217,221 +217,9 @@
 			Name="tuscany/sca/ruby"
 			>
 			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\export.h"
+				RelativePath="..\..\..\runtime\extensions\ruby\extension\src\Extension.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\Ruby.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\RubyCompositeContext.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\RubyExtension.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\rubyExtension.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\RubyImplementationExtension.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\rubyImplementationExtension.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\RubyServiceProxy.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\rubyServiceProxy.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\RubyServiceWrapper.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\rubyServiceWrapper.h"
-				>
-			</File>
-			<Filter
-				Name="model"
-				>
-				<File
-					RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\model\RubyImplementation.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\model\rubyImplementation.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\model\RubyReferenceBinding.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\model\rubyReferenceBinding.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\model\RubyServiceBinding.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalIncludeDirectories=""
-							PreprocessorDefinitions=""
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\runtime\extensions\ruby\src\tuscany\sca\ruby\model\rubyServiceBinding.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

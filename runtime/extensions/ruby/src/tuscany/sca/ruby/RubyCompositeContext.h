@@ -19,20 +19,32 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_sca_ruby_export_h
-#define tuscany_sca_ruby_export_h
+#ifndef tuscany_sca_ruby_RubyCompositeContext_h
+#define tuscany_sca_ruby_RubyCompositeContext_h
 
-#if defined(WIN32)  || defined (_WINDOWS)
-#pragma warning(disable: 4786)
+#include "tuscany/sca/ruby/Ruby.h"
+#include "tuscany/sca/ruby/export.h"
 
-#ifdef TUSCANY_SCA_RUBY_LANG_EXPORTS
-#define SCA_RUBY_API __declspec(dllexport)
-#else
-#define SCA_RUBY_API __declspec(dllimport)
-#endif
 
-#else
-#define SCA_RUBY_API 
-#endif
 
-#endif // tuscany_sca_ruby_export_h
+namespace tuscany
+{
+    namespace sca
+    {
+        namespace ruby
+        {
+            
+            class RubyCompositeContext 
+            {
+            public:
+            	SCA_RUBY_API static VALUE locateService(const char* serviceName);
+
+            };
+            
+            
+        } // End namespace ruby       
+    } // End namespace sca
+} // End namespace tuscany
+
+#endif // tuscany_sca_ruby_RubyCompositeContext_h
+

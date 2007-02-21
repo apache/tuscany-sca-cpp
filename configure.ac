@@ -278,6 +278,7 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/python/src/Makefile
                  runtime/extensions/ruby/Makefile
                  runtime/extensions/ruby/src/Makefile
+                 runtime/extensions/ruby/extension/Makefile
                  runtime/extensions/php/Makefile
                  runtime/extensions/php/src/Makefile
                  doc/Makefile

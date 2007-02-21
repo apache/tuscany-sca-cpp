@@ -28,51 +28,43 @@
 #include "tuscany/sca/model/ComponentType.h"
 #include "tuscany/sca/model/Composite.h"
 #include "tuscany/sca/ruby/RubyServiceProxy.h"
+#include "tuscany/sca/ruby/RubyCompositeContext.h"
 
 using namespace std;
 using namespace tuscany::sca::model;
 
-extern "C"
+
+namespace tuscany
 {
-
-    // Implement the Sca::locateService module function    
-    SCA_RUBY_API VALUE tuscany_sca_ruby_locateService(VALUE module, VALUE value)
+    namespace sca
     {
-        
-        // Get the default component
-        Component* defaultComponent = tuscany::sca::SCARuntime::getCurrentRuntime()->getDefaultComponent();
-        Composite* composite = (Composite*)defaultComponent->getType();
-                
-        // Locate the service
-        const char* serviceName = rb_string_value_cstr(&value);
-        Service* service = composite->findComponentService(serviceName);
-        string msg;
-        if (!service)
+        namespace ruby
         {
-            string msg = "Service not found: ";
-            msg = msg + serviceName;
-            rb_raise(rb_eRuntimeError, msg.c_str());
-        }
+        	
+        	VALUE RubyCompositeContext::locateService(const char* serviceName)	        	
+		    {			        
+		        // Get the default component
+		        Component* defaultComponent = tuscany::sca::SCARuntime::getCurrentRuntime()->getDefaultComponent();
+		        Composite* composite = (Composite*)defaultComponent->getType();
+		                
+		        // Locate the service
+		        Service* service = composite->findComponentService(serviceName);
+		        string msg;
+		        if (!service)
+		        {
+		            string msg = "Service not found: ";
+		            msg = msg + serviceName;
+		            rb_raise(rb_eRuntimeError, msg.c_str());
+		        }
+		
+		        // Get a Proxy for this service
+		        tuscany::sca::ruby::RubyServiceProxy* serviceProxy = new tuscany::sca::ruby::RubyServiceProxy(service);
+		
+		        // Return the Ruby proxy value object        
+		        return serviceProxy->getProxyValue();
+		    }
 
-        // Get a Proxy for this service
-        tuscany::sca::ruby::RubyServiceProxy* serviceProxy = new tuscany::sca::ruby::RubyServiceProxy(service);
-
-        // Return the Ruby proxy value object        
-        return serviceProxy->getProxyValue();
-    }
-    
-    // Initialize the Ruby extension
-    SCA_RUBY_API void Init_tuscany_sca_ruby()
-    {
-        
-        // Define the Sca::locateService() function 
-        VALUE module = rb_define_module("SCA");
-        rb_define_module_function(module, "locateService", (VALUE(*)(ANYARGS))tuscany_sca_ruby_locateService, 1);
-        
-    }
-
-    SCA_RUBY_API void Init_libtuscany_sca_ruby()
-    {
-        Init_tuscany_sca_ruby();
-    }
-}
+            
+        } // End namespace ruby        
+    } // End namespace sca
+} // End namespace tuscany

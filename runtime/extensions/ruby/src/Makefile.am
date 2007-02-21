@@ -16,10 +16,9 @@
 #  under the License.
 
 libdir=$(prefix)/extensions/ruby/lib
-lib_LTLIBRARIES = libtuscany_sca_ruby.la
+lib_LTLIBRARIES = libtuscany_sca_ruby_lang.la
 
 install-exec-hook:
-	cd $(libdir); ln -s -f libtuscany_sca_ruby$(libsuffix) tuscany_sca_ruby$(libsuffix) 
 
 rootdir=$(prefix)/extensions/ruby
 
@@ -27,7 +26,7 @@ noinst_HEADERS = \
 tuscany/sca/ruby/*.h \
 tuscany/sca/ruby/model/*.h
 
-libtuscany_sca_ruby_la_SOURCES = \
+libtuscany_sca_ruby_lang_la_SOURCES = \
 tuscany/sca/ruby/RubyExtension.cpp \
 tuscany/sca/ruby/RubyImplementationExtension.cpp \
 tuscany/sca/ruby/RubyServiceProxy.cpp \
@@ -37,9 +36,9 @@ tuscany/sca/ruby/model/RubyReferenceBinding.cpp \
 tuscany/sca/ruby/model/RubyServiceBinding.cpp \
 tuscany/sca/ruby/RubyCompositeContext.cpp
 
-libtuscany_sca_ruby_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
+libtuscany_sca_ruby_lang_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L$(top_builddir)/runtime/core/src -ltuscany_sca \
-	-L${RUBY_LIB} -lruby  -lpthread
+	-L${RUBY_LIB}  -lruby -lpthread
 
 INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \

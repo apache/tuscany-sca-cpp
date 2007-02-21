@@ -14,11 +14,19 @@
 #  KIND, either express or implied.  See the License for the
 #  specific language governing permissions and limitations
 #  under the License.
+SUBDIRS = 
 
-SUBDIRS = src extension
+libdir=$(prefix)/extensions/ruby/lib
+BUILT_SOURCES = extension_build
 
-datadir=$(prefix)/extensions/ruby
-
-nobase_data_DATA = xsd/*.xsd
-
-EXTRA_DIST = xsd
+extension_build: src/Extension.cpp src/extconf.rb
+	cd src; ruby extconf.rb; make
+	touch extension_build
+	
+clean:
+	cd src;make clean
+	rm -f extension_build
+	                    
+install-exec-hook:
+	cp src/tuscany_sca_ruby.* $(libdir)	
+	
