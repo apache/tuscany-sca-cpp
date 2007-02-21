@@ -21,12 +21,6 @@
 <composite xmlns="http://www.osoa.org/xmlns/sca/1.0" 
 	name="sample.calculator">
 
-	<service name="CalculatorService">
-		<interface.wsdl interface="http://sample/calculator#wsdl.interface(Calculator)"/>
-		<binding.ws/>
-		<reference>CalculatorComponent</reference>
-	</service>
-
 	<component name="CalculatorComponent">
         <implementation.python module="CalculatorImpl" scope="composite"/>
 	    <reference name="divideService">DivideComponent</reference>

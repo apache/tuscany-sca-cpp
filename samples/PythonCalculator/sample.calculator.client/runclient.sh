@@ -31,19 +31,13 @@ exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-if [ x$AXIS2C_HOME = x ]; then
-echo "AXIS2C_HOME not set"
-exit;
-fi
-echo "Using Axis2C installed at $AXIS2C_HOME"
-
 if [ x$PYTHON_LIB != x ]; then
 echo "Using Python library installed at $PYTHON_LIB"
 export LD_LIBRARY_PATH=$PYTHON_LIB:$LD_LIBRARY_PATH
 export PATH=$PYTHON_LIB/../bin:$PATH
 fi
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/python/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SCACPP/extensions/python/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH
 export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../

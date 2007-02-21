@@ -25,9 +25,4 @@
         	<implementation.composite name="sample.calculator" />
        	</component>
 
-        <component name="sample.calculator.CalculatorWSClientComponent">
-        	<implementation.composite name="sample.calculator.wsclient" />
-        	<reference name="CalculatorService">sample.calculator.CalculatorComponent/CalculatorService</reference>
-       	</component>
-
 </composite>

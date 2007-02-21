@@ -19,6 +19,5 @@ deploydir=$(prefix)/samples/PythonCalculator/deploy
 compositedir=$(deploydir)/sample.calculator
 
 composite_DATA = *.composite *.wsdl *.py
-composite_SCRIPTS = runwsserver.sh
-EXTRA_DIST = *.composite *.wsdl *.py runwsserver.sh
 
+EXTRA_DIST = *.composite *.wsdl *.py

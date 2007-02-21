@@ -16,6 +16,6 @@
 #  under the License.
 
 deploydir=$(prefix)/samples/RubyCalculator/deploy
-SUBDIRS = sample.calculator sample.calculator.client sample.calculator.wsclient
+SUBDIRS = sample.calculator sample.calculator.client
 EXTRA_DIST = *.composite README.html
 deploy_DATA = *.composite

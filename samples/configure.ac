@@ -196,11 +196,9 @@ AC_CONFIG_FILES([Makefile
                  RubyCalculator/Makefile
                  RubyCalculator/sample.calculator/Makefile
                  RubyCalculator/sample.calculator.client/Makefile
-                 RubyCalculator/sample.calculator.wsclient/Makefile
                  PythonCalculator/Makefile
                  PythonCalculator/sample.calculator/Makefile
                  PythonCalculator/sample.calculator.client/Makefile
-                 PythonCalculator/sample.calculator.wsclient/Makefile
                  PythonWeatherForecast/Makefile
                  PythonWeatherForecast/sample.weather/Makefile
                  PythonWeatherForecast/sample.weather.client/Makefile
