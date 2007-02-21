@@ -54,23 +54,23 @@ set TUSCANY_SCACPP_BASE_URI=http://localhost:9090
 @REM Generate the mod_axis2 configuration
 if not exist %APFULLDIR%\conf\mod_axis2.conf (
   echo LoadModule axis2_module %AXIS2C_HOME%\lib\mod_axis2.dll > %APFULLDIR%\conf\mod_axis2.conf
+  echo Axis2RepoPath %AXIS2C_HOME% >> %APFULLDIR%\conf\mod_axis2.conf
+  echo Axis2LogFile %AXIS2C_HOME%\logs\httpd.log >> %APFULLDIR%\conf\mod_axis2.conf
+  echo Axis2LogLevel AXIS2_LOG_LEVEL_DEBUG >> %APFULLDIR%\conf\mod_axis2.conf           
   echo ^<Location /axis2^> >> %APFULLDIR%\conf\mod_axis2.conf
   echo         SetHandler axis2_module >> %APFULLDIR%\conf\mod_axis2.conf
-  echo         RepoPath %AXIS2C_HOME% >> %APFULLDIR%\conf\mod_axis2.conf
-  echo         LogFile %AXIS2C_HOME%\logs\httpd.log >> %APFULLDIR%\conf\mod_axis2.conf
-  echo         Axis2LogLevel AXIS2_LOG_LEVEL_DEBUG >> %APFULLDIR%\conf\mod_axis2.conf           
   echo ^</Location^> >> %APFULLDIR%\conf\mod_axis2.conf
 )
 
 @REM Generate the tuscany_sca_mod_rest configuration
-if not exist %APFULLDIR%\conf\tuscany_sca_mod_rest.conf (
-  echo LoadModule sca_rest_module %TUSCANY_SCACPP%/extensions/rest\service/bin/tuscany_sca_mod_rest.dll > %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
-  echo TuscanyHome %TUSCANY_SCACPP% >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
-  echo ^<Location /rest^> >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
-  echo        SetHandler sca_rest_module >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
-  echo        TuscanyRoot %TUSCANY_SCACPP_ROOT% >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
-  echo ^</Location^> >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
-)
+@REM if not exist %APFULLDIR%\conf\tuscany_sca_mod_rest.conf (
+@REM   echo LoadModule sca_rest_module %TUSCANY_SCACPP%/extensions/rest\service/bin/tuscany_sca_mod_rest.dll > %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
+@REM   echo TuscanyHome %TUSCANY_SCACPP% >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
+@REM   echo ^<Location /rest^> >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
+@REM   echo        SetHandler sca_rest_module >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
+@REM   echo        TuscanyRoot %TUSCANY_SCACPP_ROOT% >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
+@REM   echo ^</Location^> >> %APFULLDIR%\conf\tuscany_sca_mod_rest.conf
+@REM )
 
 @REM Generate the base HTTPD configuration
 if not exist %APFULLDIR%\conf\base.conf (
@@ -81,9 +81,9 @@ if not exist %APFULLDIR%\conf\base.conf (
 
 @REM Create logs directory
 if not exist %APFULLDIR%\logs mkdir %APFULLDIR%\logs
-set TUSCANY_SCACPP_LOG=%APFULLDIR%\logs\tuscany-server.log
+@rem set TUSCANY_SCACPP_LOG=%APFULLDIR%\logs\tuscany-server.log
 set TUSCANY_SCACPP_LOGGING=9
 
 @REM Start the HTTP server
 echo Starting Apache httpd
-httpd -d %APFULLDIR%
+httpd -X -d %APFULLDIR%

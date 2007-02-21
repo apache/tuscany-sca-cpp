@@ -45,11 +45,11 @@ export TUSCANY_SCACPP_BASE_URI=http://localhost:9090
 # Generate the mod_axis2 configuration
 if [ ! -f conf/mod_axis2.conf ]; then
   echo "LoadModule axis2_module $AXIS2C_HOME/lib/libmod_axis2.so.0.0.0" >conf/mod_axis2.conf
+  echo "Axis2RepoPath $AXIS2C_HOME" >>conf/mod_axis2.conf
+  echo "Axis2LogFile $AXIS2C_HOME/logs/httpd.log" >>conf/mod_axis2.conf
+  echo "Axis2LogLevel AXIS2_LOG_LEVEL_INFO" >>conf/mod_axis2.conf
   echo "<Location /axis2>" >>conf/mod_axis2.conf
   echo "        SetHandler axis2_module" >>conf/mod_axis2.conf
-  echo "        RepoPath $AXIS2C_HOME" >>conf/mod_axis2.conf
-  echo "        LogFile $AXIS2C_HOME/logs/httpd.log" >>conf/mod_axis2.conf
-  echo "        Axis2LogLevel AXIS2_LOG_LEVEL_INFO" >>conf/mod_axis2.conf
   echo "</Location>" >>conf/mod_axis2.conf
 fi
 
