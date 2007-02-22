@@ -83,50 +83,40 @@ echo $result;
 
 TODO
 ----
-1 I could not get this extension to work on Windows (memory corruption) but I suspect 
-  my configuration so I need to work with someone who is prepared to test it for me
-2 scagen does not run on my linux box (NPE) so I have constructed the PHPCalculator
-  sample from the parts of the CPPCalculator that had alread been generated. Need
-  to get a working scagen and try it from scratch
-3 I struggled for a long time with a missing symbol problem loading sdo.so at runtime on linux.
+* I struggled for a long time with a missing symbol problem loading sdo.so at runtime on linux.
   I got round this by creating a standalone Makefile for the CalculatorClient exe. All the 
   shared objects that are loaded are compiled with the normal automake toolchain still but this
   solves the problem. I need to investigate in detail what's going on here. Having someone
   else try building with the full automake configuration would be insteresting
-4 The problem from 3 appears when running SCA behind axis hence I am unable to test with
+* The problem from above does appear when running SCA behind axis hence I am unable to test with
   remote clients
-5 The SCA_SDO build generates sdo.so and the Tuscany PHP Extension tries to load libsdo.so.
+* The SCA_SDO build generates sdo.so and the Tuscany PHP Extension tries to load libsdo.so.
   One side needs fixing. For now I just copy the library  
-6 SDO passing in and out of components is coded but not tested
-7 Returning values from plain PHP scripts (scripts without classes and functions) is not 
+* SDO passing in and out of components is coded but not tested
+* Returning values from plain PHP scripts (scripts without classes and functions) is not 
   operating correctly
-8 Error handling needs looking at. Many situations are not trapped and those
+* Error handling needs looking at. Many situations are not trapped and those
   that are may not be reported correctly
-9 Reorganize the extension code so that Tuscany SCA can be loaded by PHP running in Apache 
+* Reorganize the extension code so that Tuscany SCA can be loaded by PHP running in Apache 
   and accessed through SCA references. This will play the same role as SCA running hosted
   in Axis2C and will open up the service bindings implemented in PHP SCA_SDO. 
-10Implement meta data exchange between the PHP SCA implementation and the Tuscany C++ SCA
+* Implement meta data exchange between the PHP SCA implementation and the Tuscany C++ SCA
   implementations so that selected parts of the SCDL definition can be omitted.
-11There is a threading issue with the way that we are firing up the PHP embedding SAPI 
+* There is a threading issue with the way that we are firing up the PHP embedding SAPI 
   TSRM should solve it fails on the embedding initialization for some reason. 
 
 Dependencies 
 ------------
-PHP5.2.0 - (http://php.net/)  
-   To compile this extension you require a working installation of PHP5.2
 PHP5.2.0 source code - - (http://php.net/)
    The binary release of PHP doesn't ship with the header files required to build 
-   against the PHP embedding SAPI and runtime libraries. You don't necessarily need 
-   to build PHP though just have the PHP source available
-SCA_SDO PECL extension V1.1.2 - (http://pecl.php.net/package/SCA_SDO)
+   against the PHP embedding SAPI and runtime libraries. 
+SCA_SDO PECL extension AVOCET branch source code - (http://pecl.php.net/package/SCA_SDO)
    Provides the SCA framework for PHP and the necessary mediation code to translate
-   between Tuscany SCA and PHP SCA. You will need to copy the library sdo.so to 
+   between Tuscany SCA and PHP SCA. Once built you will need to copy the library sdo.so to 
    libsdo.so so that the Tuscany PHPExtension can load it given the makefile 
-   configuration as it stands. 
-SCA_SDO PECL extension V1.1.2 source code - (http://pecl.php.net/package/SCA_SDO)
-   On linux you can install this SCA_SDO extension automaitcally with PEAR but you 
-   need access to the source to build the extension so it's best to go get the
-   extension and install it somewhere you can point PHP_SCA_SDO_INCLUDE to
+   configuration as it stands. Go get the AVOCET branch from PECL cvs build it 
+   (see http://uk2.php.net/sdo/) and install it somewhere you can point 
+   PHP_SCA_SDO_INCLUDE at.
 
 Building on windows
 -------------------
@@ -238,14 +228,3 @@ include_path=".:/usr/local/lib/php:/usr/local/lib/php/PEAR:/usr/local/tuscany/cp
 ; on SDO so add the following line. sdo.so should be found in "extension_dir". 
 extension=sdo.so
 
-
-
-Compiling with VC++ Express requires some care
-
-- http://bugs.php.net/bug.php?id=39130
-
-  Comment out two lines in config.w32.h:
-  #define _USE_32BIT_TIME_T 1
-  #define HAVE_STDLIB_H 1
-  
-- 
