@@ -1,0 +1,33 @@
+Alert Aggregator - PHP Display Component
+========================================
+
+This httpserver configuration includes a PHP implementation of the display
+component that replaces the python component in sample.display.
+
+The HTTPD configuration created by the startserver scrips relies on the 
+PHP_HOME environment variable in order to install PHP in Apache as follows:
+
+LoadModule php5_module %PHP_HOME%\php5apache2.dll
+AddType application/x-httpd-php .php 
+PHPIniDir %PHP_HOME% 
+
+PHP must be configured to include the PHP SCA_SDO extension from PECL.
+This provides the SCA and SDO support that the display component relies on. 
+Currently you must have the version from the AVOCET branch as changes have
+been made here that this application requires. 
+
+To run the AlertAggregator sample with the PHP component you must start the
+original HTTP server, e.g., on windows
+
+> cd AlertAggregator\httpserver
+> startserver.bat
+
+and then start the HTTPD server that servers the PHP part of the application, e.g.,
+
+> cd AlertAggregator\httpserver.php
+> startserver.bat
+
+then point your browser at 
+
+http://localhost:9091/index.html
+
