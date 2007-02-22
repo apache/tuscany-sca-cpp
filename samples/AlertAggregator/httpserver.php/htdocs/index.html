@@ -1,0 +1,280 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+
+<HTML>
+<HEAD>
+    <TITLE>Apache Tuscany Alert Aggregator Sample</TITLE>
+    <link REL="stylesheet" TYPE="text/css" href="style.css">
+</HEAD>
+
+<BODY ONLOAD="getSources()">
+<script type="text/javascript">
+function getXMLHTTP()
+{
+    var xmlHttp;
+    try
+    {
+      // Firefox, Opera 8.0+, Safari
+      xmlHttp=new XMLHttpRequest();
+    }
+    catch (e)
+    {
+        // Internet Explorer
+        try
+        {
+            xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        catch (e)
+        {
+            try
+            {
+                xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            catch (e)
+            {
+                alert("Your browser does not support AJAX!");
+                return false;
+            }
+        }
+    }
+    return xmlHttp;
+}
+
+var callIsRunning = false;
+
+function getAlerts()
+{
+  var xmlHttp = getXMLHTTP();
+  xmlHttp.onreadystatechange=function()
+  {
+      var refr = document.getElementById("refresh");
+      if(xmlHttp.readyState<4)
+      {
+          callIsRunning = true;
+          refr.innerHTML="<SPAN>Updating...</SPAN>";
+      }
+      if(xmlHttp.readyState==4)
+      {
+          callIsRunning = false;
+          refr.innerHTML="<SPAN CLASS=\"clickable link\" ONCLICK=\"getAlerts()\">Refresh</SPAN>";
+          document.getElementById("alertTable").innerHTML=xmlHttp.responseText;
+      }
+  }
+
+  if(!callIsRunning)
+  {
+      xmlHttp.open("GET","AlertDisplay.php/getAlertsHTMLTable",true);
+      xmlHttp.send(null);
+  }
+
+  // Call this function again after x minutes
+  setTimeout("getAlerts();", 5*60000);
+}
+
+function displayAlert(url, alertid)
+{
+    if(alertid=="")
+    {
+        document.getElementById("alertData").innerHTML="<IFRAME CLASS=\"alert_data\" SRC=\""+url+"\"/>";
+        window.location="#data";
+        return;
+    }
+
+    document.getElementById(alertid).className="read_title";
+
+    var xmlHttp = getXMLHTTP()
+    xmlHttp.onreadystatechange=function()
+    {        
+        if(xmlHttp.readyState==4)
+        {            
+            if(xmlHttp.responseText=="")
+            {
+                document.getElementById("alertData").innerHTML="<IFRAME CLASS=\"alert_data\" SRC=\""+url+"\"/>";
+            }
+            else
+            {
+                document.getElementById("alertData").innerHTML=xmlHttp.responseText;
+            }
+            window.location="#data";
+        }
+    }
+
+    xmlHttp.open("GET","AlertDisplay.php/readAlert?alertID="+alertid,true);
+    xmlHttp.send(null);    
+}
+
+function getSources()
+{
+    var xmlHttp = getXMLHTTP()
+    xmlHttp.onreadystatechange=function()
+    {        
+        var refreshSources = document.getElementById("refreshSources");
+        var refresh = document.getElementById("refresh");
+        if(xmlHttp.readyState<4)
+        {
+            refreshSources.innerHTML=" (Updating...)";
+            refresh.innerHTML="<SPAN>Updating...</SPAN>";
+        }
+        if(xmlHttp.readyState==4)
+        {
+            refreshSources.innerHTML="";
+            document.getElementById("sourcesTable").innerHTML=xmlHttp.responseText;
+            getAlerts();
+        }
+    }
+    xmlHttp.open("GET","AlertDisplay.php/getAlertSourcesHTMLTable",true);
+    xmlHttp.send(null);
+}
+
+function showEditSource(sourceid)
+{
+    document.getElementById("edit_source_"+sourceid).className = "source_"+sourceid;
+}
+
+function hideEditSource(sourceid)
+{
+    document.getElementById("edit_source_"+sourceid).className = "hidden source_"+sourceid;
+}
+
+function updateSource(sourceid)
+{
+    hideEditSource(sourceid);
+    var type = document.getElementById("source_"+sourceid+"_type").value;
+    var sourceXML = constructSourceXML(sourceid, type);
+
+    sendSource("AlertDisplay.php/updateAlertSource", sourceXML);
+
+}
+
+function sendSource(url, sourceXML)
+{    
+    var xmlHttp = getXMLHTTP()
+    xmlHttp.onreadystatechange=function()
+    {        
+        var refreshSources = document.getElementById("refreshSources");
+        var refresh = document.getElementById("refresh");
+        if(xmlHttp.readyState<4)
+        {
+            refreshSources.innerHTML=" (Updating...)";
+            refresh.innerHTML="<SPAN>Updating...</SPAN>";
+        }
+        if(xmlHttp.readyState==4)
+        {            
+            getSources();
+        }
+    }
+    xmlHttp.open("POST",url,true);
+    xmlHttp.send(sourceXML);
+
+}
+
+function deleteSource(sourceid)
+{
+    var xmlHttp = getXMLHTTP()
+    xmlHttp.onreadystatechange=function()
+    {        
+        if(xmlHttp.readyState==4)
+        {
+            getSources();
+            document.getElementById("alertData").innerHTML=""
+        }
+    }
+    xmlHttp.open("GET","AlertDisplay.php/deleteAlertSource?sourceId="+sourceid,true);
+    xmlHttp.send(null);
+}
+
+function showAddNewSource(sourceid)
+{
+    document.getElementById("add_source_"+sourceid).className = "source_"+sourceid;
+}
+
+function hideAddNewSource(sourceid)
+{
+    document.getElementById("add_source_"+sourceid).className = "hidden source_"+sourceid;
+}
+
+function showSourceType(sourceid)
+{
+    var typeElem = document.getElementById("source_"+sourceid+"_type");
+    var type = typeElem.options[typeElem.selectedIndex].value;
+    
+    if(type=="rss")
+    {
+        document.getElementById("add_rss_source").className = "";
+        document.getElementById("add_pop_source").className = "hidden";
+    }
+    else if(type=="pop")
+    {
+        document.getElementById("add_rss_source").className = "hidden";
+        document.getElementById("add_pop_source").className = "";
+    }
+}
+
+function addSource(sourceid)
+{
+    hideAddNewSource(sourceid);
+
+    var typeElem = document.getElementById("source_"+sourceid+"_type");
+    var type = typeElem.options[typeElem.selectedIndex].value;
+    var sourceXML = constructSourceXML(sourceid, type);
+
+    sendSource("AlertDisplay.php/addAlertSource", sourceXML);
+
+}
+
+function constructSourceXML(sourceid, type)
+{
+    var name = document.getElementById("source_"+sourceid+"_name").value;
+    var address = document.getElementById("source_"+sourceid+"_address").value;
+
+    var sourceXML = "<source xmlns=\"http://tuscany.apache.org/samples/alerter\" type=\""+type+"\" id=\""+sourceid+"\">";
+    sourceXML += "<name>"+name+"</name>";
+    sourceXML += "<address>"+address+"</address>";
+
+    if(type=="rss")
+    {
+        var feedAddress = document.getElementById("source_"+sourceid+"_feedAddress").value;
+        sourceXML += "<feedAddress>"+feedAddress+"</feedAddress>";
+    }
+    else if(type=="pop")
+    {
+        var popServer = document.getElementById("source_"+sourceid+"_popServer").value;
+        sourceXML += "<popServer>"+popServer+"</popServer>";
+        var popUsername = document.getElementById("source_"+sourceid+"_popUsername").value;
+        sourceXML += "<popUsername>"+popUsername+"</popUsername>";
+        var popPassword = document.getElementById("source_"+sourceid+"_popPassword").value;
+        sourceXML += "<popPassword>"+popPassword+"</popPassword>";
+    }
+    sourceXML += "</source>";
+
+    return sourceXML;
+}
+</script>
+<H1 ID="top">Apache Tuscany Alert Aggregator Sample</H1>
+<P>Alert Sources<SPAN ID="refreshSources"></SPAN>:</P>
+<DIV ID="sourcesTable"></DIV>
+<P>Recent Alerts (<SPAN ID="refresh"><SPAN CLASS="clickable link" ONCLICK="getAlerts()">Refresh</SPAN></SPAN>):</P
+<DIV ID="alertTable"></DIV>
+<HR></HR>
+<P><A ID="data" HREF="#top">Back to top</A></P>
+<DIV ID="alertData"></DIV>
+
+</BODY>
+</HTML>
+
