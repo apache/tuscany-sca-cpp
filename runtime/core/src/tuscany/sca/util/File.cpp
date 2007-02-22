@@ -94,13 +94,12 @@ namespace tuscany
 #if defined(WIN32)  || defined (_WINDOWS)
                 char currentDir[ _MAX_FNAME];
                 
-                
                 GetCurrentDirectory(_MAX_FNAME, currentDir);
                 
                 // Set current directory, from which to search.
                 if (!SetCurrentDirectory(rootDir.c_str()))
                 {
-                    cout << "Unable to set current directory to: " << rootDir.c_str() << endl;
+                    loginfo("Unable to set current directory to: %s", rootDir.c_str());
                     return;
                 }
                 char fullDirname[ _MAX_FNAME];
@@ -123,7 +122,7 @@ namespace tuscany
                         // Skip over directories
                         if (!(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
                         {
-                        	if (directories)
+                        	if (!directories)
                         	{
                         		// Add the file to our list
                         		files.push_back(File(fullDirname, data.cFileName));
@@ -159,7 +158,7 @@ namespace tuscany
                             if ((strcmp(data.cFileName, ".")) && (strcmp("..", data.cFileName)))
                             {
                                 // Recurse
-                                findFiles(data.cFileName, pattern, subdirectories);
+                                findFiles(data.cFileName, pattern, subdirectories, directories);
                             }
                         }
                         
