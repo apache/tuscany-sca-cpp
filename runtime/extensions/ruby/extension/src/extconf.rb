@@ -19,7 +19,7 @@
 	
 	require 'mkmf'
 	CONFIG["CC"] = "g++"
-	$INCFLAGS << " -I../../src "
+	$CPPFLAGS << " -I../../src "
 	$LIBPATH << "../../src/.libs"
 	$LIBS << " -ltuscany_sca_ruby_lang "
 	create_makefile 'tuscany_sca_ruby'
