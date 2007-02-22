@@ -40,6 +40,10 @@ if not exist %destinationPath%\sample.display            mkdir %destinationPath%
 if not exist %destinationPath%\httpserver                mkdir %destinationPath%\httpserver
 if not exist %destinationPath%\httpserver\conf           mkdir %destinationPath%\httpserver\conf
 if not exist %destinationPath%\httpserver\htdocs         mkdir %destinationPath%\httpserver\htdocs
+if not exist %destinationPath%\httpserver.php            mkdir %destinationPath%\httpserver.php
+if not exist %destinationPath%\httpserver.php\conf       mkdir %destinationPath%\httpserver.php\conf
+if not exist %destinationPath%\httpserver.php\htdocs     mkdir %destinationPath%\httpserver.php\htdocs
+
 
 copy %sourcePath%\sample.alerter\*.composite     %destinationPath%\sample.alerter
 copy %sourcePath%\sample.alerter\*.py            %destinationPath%\sample.alerter
@@ -56,6 +60,17 @@ copy %sourcePath%\httpserver\conf\*.conf   %destinationPath%\httpserver\conf
 copy %sourcePath%\httpserver\htdocs\*.html %destinationPath%\httpserver\htdocs
 copy %sourcePath%\httpserver\htdocs\*.css %destinationPath%\httpserver\htdocs
 copy %sourcePath%\httpserver\htdocs\*.png %destinationPath%\httpserver\htdocs
+
+copy %sourcePath%\httpserver.php\*.bat         %destinationPath%\httpserver.php
+copy %sourcePath%\httpserver.php\conf\*.types  %destinationPath%\httpserver.php\conf
+copy %sourcePath%\httpserver.php\conf\*.conf   %destinationPath%\httpserver.php\conf
+copy %sourcePath%\httpserver.php\htdocs\*.html %destinationPath%\httpserver.php\htdocs
+copy %sourcePath%\httpserver.php\htdocs\*.css  %destinationPath%\httpserver.php\htdocs
+copy %sourcePath%\httpserver.php\htdocs\*.png  %destinationPath%\httpserver.php\htdocs
+copy %sourcePath%\httpserver.php\htdocs\*.php  %destinationPath%\httpserver.php\htdocs
+copy %sourcePath%\httpserver.php\htdocs\*.xsd  %destinationPath%\httpserver.php\htdocs
+copy %sourcePath%\httpserver.php\htdocs\*.xml  %destinationPath%\httpserver.php\htdocs
+
 
 copy %sourcePath%\*.composite %destinationPath%
 copy %sourcePath%\*.xml       %destinationPath%
