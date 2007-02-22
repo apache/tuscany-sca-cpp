@@ -109,7 +109,41 @@ Dependencies
 ------------
 PHP5.2.0 source code - - (http://php.net/)
    The binary release of PHP doesn't ship with the header files required to build 
-   against the PHP embedding SAPI and runtime libraries. 
+   against the PHP embedding SAPI and runtime libraries. So go get the PHP source
+   code and build PHP. PHP will need to be configured correctly in order to 
+   work properly when embedded in C++ SCA. Here are some sample configuration 
+   statements but they will need to be tailored for you specific environment:
+   
+   Winodws
+   -------
+   cscript configure.js --with-extra-includes=win32build\include;
+                          libxml2-2.6.26.threads\include;
+                          iconv-1.9.1.win32\include;
+                          libcurl-7.15.4-nossl\include 
+                        --with-extra-libs=win32build\lib;
+                          libxml2-2.6.26.threads\lib;                       
+                          iconv-1.9.1.win32\lib;
+                          libcurl-7.15.4-nossl\lib 
+                        --enable-debug 
+                        --enable-soap  
+                        --enable-apache2handler=shared 
+                        --enable-embed 
+                        --with-curl=C:\simon\apps\libcurl-7.15.4-nossl 
+
+   Note. This configure line is artificially broken across sever lines to aid
+   readability here. You will need to join it all back together on one line to 
+   run it. 
+
+   Linux
+   -----
+   ./configure --enable-debug \
+               --enable-soap \
+               --enable-fastcgi \
+               --with-zlib \
+               --enable-embed \
+               --with-tsrm-pthreads \
+               --enable-maintainer-zts \
+   
 SCA_SDO PECL extension AVOCET branch source code - (http://pecl.php.net/package/SCA_SDO)
    Provides the SCA framework for PHP and the necessary mediation code to translate
    between Tuscany SCA and PHP SCA. Once built you will need to copy the library sdo.so to 
