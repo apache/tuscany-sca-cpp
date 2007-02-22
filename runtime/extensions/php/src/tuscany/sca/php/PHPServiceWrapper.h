@@ -29,7 +29,7 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Interface.h"
 
-#include <TSRM/tsrm.h>
+#include <TSRM/TSRM.h>
 
 namespace tuscany
 {
