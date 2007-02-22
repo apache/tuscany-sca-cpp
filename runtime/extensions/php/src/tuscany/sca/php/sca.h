@@ -24,17 +24,11 @@
 
 #include "tuscany/sca/core/Operation.h"
 
-#include <php.h>
+#include <main/php.h>
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
-
-// creates an instance of SCA_Tuscany and popoulates
-// the operation property. It returns the four byte
-// representation of the object id from the objects
-// zval. 
-long createSCATuscanyObject(tuscany::sca::Operation& operation TSRMLS_DC);
 
 extern zend_module_entry sca_module_entry;
 

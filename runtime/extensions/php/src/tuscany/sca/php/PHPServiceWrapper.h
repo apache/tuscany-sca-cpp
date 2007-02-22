@@ -29,6 +29,7 @@
 #include "tuscany/sca/model/Component.h"
 #include "tuscany/sca/model/Interface.h"
 
+#include <TSRM/tsrm.h>
 
 namespace tuscany
 {
@@ -82,6 +83,10 @@ namespace tuscany
     
             private:
 
+                /**
+                 * Utility method to execute a script on the include_path.     
+                 */
+                static void includeFile(char *includeFileName TSRMLS_DC);
 
                 /**
                  * The component to which this wrapper refers.

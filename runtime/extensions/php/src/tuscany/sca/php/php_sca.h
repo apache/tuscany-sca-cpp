@@ -29,15 +29,15 @@ extern "C" {
 #endif
 
 #ifdef HAVE_CONFIG_H
-//#include "config.h"
+#include "config.h"
 #endif
 
-#include <php.h>
+#include <main/php.h>
 
 #ifdef HAVE_SCA
 
-#include <php_ini.h>
-#include <SAPI.h>
+#include <main/php_ini.h>
+#include <main/SAPI.h>
 #include <ext/standard/info.h>
 #include <Zend/zend_extensions.h>
 #ifdef  __cplusplus
@@ -59,12 +59,10 @@ extern "C" {
 
 PHP_MINIT_FUNCTION(sca);
 PHP_MSHUTDOWN_FUNCTION(sca);
-PHP_RINIT_FUNCTION(sca);
-PHP_RSHUTDOWN_FUNCTION(sca);
 PHP_MINFO_FUNCTION(sca);
 
 #ifdef ZTS
-#include "TSRM.h"
+#include "TSRM/TSRM.h"
 #endif
 
 #define FREE_RESOURCE(resource) zend_list_delete(Z_LVAL_P(resource))
@@ -81,18 +79,9 @@ PHP_MINFO_FUNCTION(sca);
 #define PROP_SET_STRINGL(name, s, l) zend_update_property_string(_this_ce, _this_zval, #name, strlen(#name), s, l TSRMLS_CC)
 
 
-PHP_METHOD(SCA_Tuscany, getSCATuscanyObject);
-#if (PHP_MAJOR_VERSION >= 5)
-ZEND_BEGIN_ARG_INFO_EX(SCA_Tuscany_getSCATuscanyObject_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_INFO(0, object_id)
-ZEND_END_ARG_INFO()
-#else /* PHP 4.x */
-#define SCA_Tuscany_getSCATuscanyObject_args NULL
-#endif
-
 PHP_METHOD(SCA_Tuscany, __construct);
 #if (PHP_MAJOR_VERSION >= 5)
-ZEND_BEGIN_ARG_INFO_EX(SCA_Tuscany____construct_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_BEGIN_ARG_INFO_EX(SCA_Tuscany____construct_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 ZEND_END_ARG_INFO()
 #else /* PHP 4.x */
 #define SCA_Tuscany____construct_args NULL
@@ -121,16 +110,6 @@ ZEND_END_ARG_INFO()
 #else /* PHP 4.x */
 #define SCA_Tuscany__getArgArray_args NULL
 #endif
-
-PHP_METHOD(SCA_Tuscany, setResponse);
-#if (PHP_MAJOR_VERSION >= 5)
-ZEND_BEGIN_ARG_INFO_EX(SCA_Tuscany__setResponse_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-  ZEND_ARG_INFO(0, response)
-ZEND_END_ARG_INFO()
-#else /* PHP 4.x */
-#define SCA_Tuscany__setResponse_args NULL
-#endif
-
 
 #ifdef  __cplusplus
 } // extern "C" 

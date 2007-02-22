@@ -52,53 +52,27 @@ using namespace commonj::sdo;
 /* {{{ Class SCA_Tuscany */
 
 static zend_class_entry * SCA_Tuscany_ce_ptr = NULL;
-static zend_object_handlers SCA_Tuscany_object_handlers;
 
 /* {{{ Methods */
-
-/* {{{ proto object getSCATuscanyObject(long object_id)
-  return an SCA_Tuscany object based on the object_id
-  the object_id 
-  */
-PHP_METHOD(SCA_Tuscany, getSCATuscanyObject)
-{
-	long  object_id = 0;
-
-    printf("IN getSCATuscanyObject\n");	
-    
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "l", &object_id) == FAILURE) 
-	{
-		return;
-	}
-	
-    Z_TYPE_P(return_value) = IS_OBJECT;
-    
-	// poke the object id that has been passed in into the zval
-	// to fake the creation of the object
-    return_value->value.obj.handle = (zend_object_handle) object_id;
-	return_value->value.obj.handlers = &SCA_Tuscany_object_handlers;
-	return_value->value.obj.handlers->add_ref(return_value TSRMLS_CC);
-}
-/* }}} getSCATuscanyObject */
 
 /* {{{ proto void __construct(int operation_handle)
    */
 PHP_METHOD(SCA_Tuscany, __construct)
 {
-	zend_class_entry * _this_ce;
-	zval * _this_zval;
+	zval *_this_zval = getThis();
+	zend_class_entry *_this_ce = Z_OBJCE_P(_this_zval);
+
 	long operation_handle = 0;
-	
-    printf("IN constructor\n");	
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &operation_handle) == FAILURE) {
 		return;
 	}
 
-	_this_zval = getThis();
-	_this_ce = Z_OBJCE_P(_this_zval);
+	if (!operation_handle) {
+		php_error(E_ERROR, "SCA_Tuscany ctor called with NULL operation");
+	}
 
-	PROP_SET_LONG("operation", operation_handle);
+	PROP_SET_LONG(operation, operation_handle);
 }
 /* }}} __construct */
 
@@ -106,8 +80,7 @@ PHP_METHOD(SCA_Tuscany, __construct)
   Invoke a Tuscany component */
 PHP_METHOD(SCA_Tuscany, invoke)
 {
-	zend_class_entry * _this_ce;
-	zval * _this_zval = NULL;
+	//zval * _this_zval = NULL;
 	const char * component_name = NULL;
 	int component_name_len = 0;
 	const char * reference_name = NULL;
@@ -117,9 +90,11 @@ PHP_METHOD(SCA_Tuscany, invoke)
 	zval * arguments = NULL;
 	HashTable * arguments_hash = NULL;
 
-    printf("IN invoke\n");	
-
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osssa/", &_this_zval, SCA_Tuscany_ce_ptr, &component_name, &component_name_len, &reference_name, &reference_name_len, &method_name, &method_name_len, &arguments) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssa/", 
+		&component_name, &component_name_len, 
+		&reference_name, &reference_name_len,
+		&method_name, &method_name_len, 
+		&arguments) == FAILURE) {
 		return;
 	}
 
@@ -129,8 +104,7 @@ PHP_METHOD(SCA_Tuscany, invoke)
     SCARuntime* runtime = SCARuntime::getCurrentRuntime();
     Component* component = runtime->getCurrentComponent();    
     Reference* ref = component->findReference(reference_name);
-    if(!ref)
-    {
+    if(!ref) {
     	char *class_name;
     	char *space;
 	    class_name = get_active_class_name(&space TSRMLS_CC);
@@ -178,13 +152,14 @@ PHP_METHOD(SCA_Tuscany, invoke)
         {
             case IS_NULL:
             {
-                printf("NULL agument");
+                //printf("NULL argument");
+				break;
             }
             case IS_BOOL: 
             {
                 convert_to_boolean(*data);
                 bool *newBool = new bool;
-                *newBool =  Z_BVAL_PP(data);
+                *newBool =  ZEND_TRUTH(Z_BVAL_PP(data));
                 operation.addParameter(newBool);
                 break;
             }
@@ -273,6 +248,7 @@ PHP_METHOD(SCA_Tuscany, invoke)
         case Operation::VOID_TYPE: 
         {
             // do nothing
+			break;
         }    	
     	case Operation::DATAOBJECT: 
     	{
@@ -297,37 +273,27 @@ PHP_METHOD(SCA_Tuscany, invoke)
 }
 /* }}} invoke */
 
-
-
 /* {{{ proto array getArgArray()
   return the arguments for the operation as an array */
 PHP_METHOD(SCA_Tuscany, getArgArray)
 {
-	zend_class_entry * _this_ce;
-	zval * _this_zval = NULL;
+	zval * _this_zval = getThis();
+	zend_class_entry *_this_ce = Z_OBJCE_P(_this_zval);
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O", &_this_zval, SCA_Tuscany_ce_ptr) == FAILURE) {
-		return;
+	if (ZEND_NUM_ARGS() > 0) {
+		WRONG_PARAM_COUNT;
 	}
-
-	_this_zval = getThis();
-	_this_ce = Z_OBJCE_P(_this_zval);
-
-	array_init(return_value);
-
-    printf("IN getArgArray\n");
 
     array_init(return_value);
     
-    // get the operaton object from the object properties
-    
-    Operation *operation = (Operation *)(long)PROP_GET_LONG("operation");
+    // get the operation object from the object properties    
+	Operation *operation = (Operation *)PROP_GET_LONG(operation);
 
     // get the parameters from the operation structure
     for(unsigned int i = 0; i < operation->getNParms(); i++) 
 	{
         const Operation::Parameter& parm = operation->getParameter(i);
-        printf("Arg %d type %d\n", i, parm.getType());
+        //printf("Arg %d type %d\n", i, parm.getType());
         switch(parm.getType())
     	{
     	    case Operation::BOOL: 
@@ -369,7 +335,8 @@ PHP_METHOD(SCA_Tuscany, getArgArray)
     		    // convert the tuscany SDO into a PHP SDO
     		    
     		    // create the object
-    		    zval * sdo;
+    		    zval *sdo;
+				ALLOC_INIT_ZVAL(sdo);
                 sdo_do_new(sdo, *(DataObjectPtr*)parm.getValue() TSRMLS_CC);
                 
                 // add it to the arg array
@@ -393,188 +360,10 @@ PHP_METHOD(SCA_Tuscany, getArgArray)
 }
 /* }}} getArgArray */
 
-
-/* {{{ proto void setResponse(mixed response)
-  set the results from the operation */
-PHP_METHOD(SCA_Tuscany, setResponse)
-{
-	zend_class_entry * _this_ce;
-	zval * _this_zval = NULL;
-	zval * response = NULL;
-
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oz/", &_this_zval, SCA_Tuscany_ce_ptr, &response) == FAILURE) {
-		return;
-	}
-
-	_this_zval = getThis();
-	_this_ce = Z_OBJCE_P(_this_zval);
-
-    printf("IN setResponse\n");	
-
-    // get the operaton object from the object properties
-    Operation *operation = (Operation *)(long)PROP_GET_LONG("operation");
-
-    switch(Z_TYPE_P(response))
-    {
-        case IS_NULL:
-        {
-            printf("NULL response");
-        }
-        case IS_BOOL: 
-        {
-            bool *newBool = new bool;
-            *newBool =  Z_BVAL_P(response);
-            operation->setReturnValue(newBool);
-            break;        
-        }
-        case IS_LONG: 
-        {
-            long *newLong = new long;
-            *newLong =  Z_LVAL_P(response);
-            operation->setReturnValue(newLong);                            
-            break;
-        }
-        case IS_DOUBLE: 
-        {
-            //double *newDouble = new double;
-            float *newDouble = new float;                                
-            *newDouble =  (float)Z_DVAL_P(response);
-            operation->setReturnValue(newDouble);                            
-            break;
-        }
-        case IS_STRING: 
-        {   
-            string newString (Z_STRVAL_P(response));
-            operation->setReturnValue(&newString);
-            break;
-        }
-        case IS_OBJECT: 
-  		{
-  		    // convert the PHP SDO into a Tuscany SDO
-    		DataObjectPtr sdo = sdo_do_get(response TSRMLS_CC);
-    		operation->setReturnValue(&sdo);  		    
-   			break;
-   		}
-        default: 
-        {
- 	        char *class_name;
-  	        char *space;
-            class_name = get_active_class_name(&space TSRMLS_CC);
-	        php_error(E_ERROR, 
-	                  "%s%s%s(): Input argument type %d not supported on invoke",
-			          class_name, 
-			          space, 
-			          get_active_function_name(TSRMLS_C), 
-			          Z_TYPE_P(response)); 
-        }                            
-  
-    }
-
-/*
-The following code interprets the return based on what the operation
-structure is expecting. In the case of a call from another dynamic script 
-component this will be not be set correct so I have changed the code above 
-to rely on the type returned from the script instead. Hanging on to the
-following switch just in case  
-    switch(operation->getReturnType())
-    {
-        case Operation::BOOL: 
-        {
-            convert_to_boolean(response);
-            *(bool*)operation->getReturnValue() = Z_BVAL_P(response);
-            break;
-        }
-        case Operation::SHORT: 
-        {
-            convert_to_long(response);
-            *(short*)operation->getReturnValue() = (short) Z_LVAL_P(response);
-            break;
-        }
-        case Operation::LONG: 
-        {
-            convert_to_long(response);
-            *(long*)operation->getReturnValue() = (long) Z_LVAL_P(response);                                
-            break;
-        }
-        case Operation::USHORT: 
-        {
-            convert_to_long(response);
-            *(unsigned short*)operation->getReturnValue() = (unsigned short) Z_LVAL_P(response);
-            break;
-        }
-        case Operation::ULONG: 
-        {
-            convert_to_long(response);
-            *(unsigned long*)operation->getReturnValue() = (unsigned long) Z_LVAL_P(response);
-            break;
-        }
-        case Operation::FLOAT: 
-        {
-            convert_to_double(response);                           
-            *(float*)operation->getReturnValue() = (float) Z_DVAL_P(response);
-            break;
-        }
-        case Operation::DOUBLE: 
-        {
-            convert_to_double(response);
-            *(double*)operation->getReturnValue() = (double) Z_DVAL_P(response);
-            break;
-        }
-        case Operation::LONGDOUBLE: 
-        {
-            convert_to_double(response);
-            *(long double*)operation->getReturnValue() = (long double) Z_DVAL_P(response);
-            break;
-        }
-        case Operation::CHARS: 
-        {
-            convert_to_string(response);
-            // need to copy the string out of PHP memory into SCA memory
-            char * strCopy = strdup((char *)Z_STRVAL_P(response));
-            *(char**)operation->getReturnValue() = strCopy;
-            break;
-        }
-        case Operation::STRING: 
-        {
-            convert_to_string(response);   
-            string reponseString ( Z_STRVAL_P(response) );                        
-            *(string*)operation->getReturnValue() = reponseString;
-            break;
-        }
-        case Operation::VOID_TYPE: 
-        {
-            // do nothing
-        }
-    	case Operation::DATAOBJECT: 
-    	{
-    		// need to convert the PHP SDO into a Tuscanu SDO?
-    		printf("SDOs are not supported yet");
-    		break;
-    	}
-        default: 
-        {
-    	    char *class_name;
-    	    char *space;
-	        class_name = get_active_class_name(&space TSRMLS_CC);
-		    php_error(E_ERROR, 
-		          "%s%s%s(): Response type %d not supported",
-				  class_name, 
-				  space, 
-				  get_active_function_name(TSRMLS_C), 
-				  operation->getReturnType());
-        }                            
-    }
-*/
-}
-/* }}} setResponse */
-
-
 static zend_function_entry SCA_Tuscany_methods[] = {
-	PHP_ME(SCA_Tuscany, getSCATuscanyObject, SCA_Tuscany_getSCATuscanyObject_args, /**/ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	PHP_ME(SCA_Tuscany, __construct, NULL, /**/ZEND_ACC_PUBLIC)
-	PHP_ME(SCA_Tuscany, invoke, SCA_Tuscany__invoke_args, /**/ZEND_ACC_PUBLIC)
-	PHP_ME(SCA_Tuscany, getArgArray, NULL, /**/ZEND_ACC_PUBLIC)
-	PHP_ME(SCA_Tuscany, setResponse, SCA_Tuscany__setResponse_args, /**/ZEND_ACC_PUBLIC)
+	PHP_ME(SCA_Tuscany, __construct, SCA_Tuscany____construct_args, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+	PHP_ME(SCA_Tuscany, invoke, SCA_Tuscany__invoke_args, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(SCA_Tuscany, getArgArray, SCA_Tuscany__getArgArray_args, ZEND_ACC_PUBLIC)
 	{ NULL, NULL, NULL }
 };
 
@@ -589,9 +378,9 @@ static void class_init_SCA_Tuscany(TSRMLS_D)
 
 	/* {{{ Property registration */
 
-	zend_declare_property_long(SCA_Tuscany_ce_ptr, 
-		"operation", 9, -1, 
-		ZEND_ACC_PRIVATE TSRMLS_CC);
+	zend_declare_property_null(SCA_Tuscany_ce_ptr, 
+		"operation", sizeof("operation") -1,
+		ZEND_ACC_PUBLIC TSRMLS_CC);
 
 	/* }}} Property registration */
 
@@ -630,8 +419,8 @@ zend_module_entry sca_module_entry = {
 	sca_functions,
 	PHP_MINIT(sca),     /* Replace with NULL if there is nothing to do at php startup   */ 
 	PHP_MSHUTDOWN(sca), /* Replace with NULL if there is nothing to do at php shutdown  */
-	PHP_RINIT(sca),     /* Replace with NULL if there is nothing to do at request start */
-	PHP_RSHUTDOWN(sca), /* Replace with NULL if there is nothing to do at request end   */
+	NULL,               /* Replace with NULL if there is nothing to do at request start */
+	NULL,               /* Replace with NULL if there is nothing to do at request end   */
 	PHP_MINFO(sca),
 	"0.0.1", 
 	STANDARD_MODULE_PROPERTIES
@@ -648,9 +437,29 @@ ZEND_GET_MODULE(sca)
 /* {{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(sca)
 {
-	class_init_SCA_Tuscany(TSRMLS_C);
+	/* We use the SDO extension for reference because it is a prereq */
+	zend_module_entry *req_module_entry;
+	char *req_module_name = "libxml";
+	if (zend_hash_find(&module_registry, req_module_name, strlen(req_module_name)+1, (void**)&req_module_entry) == SUCCESS) {
+		if (req_module_entry->zend_debug != ZEND_DEBUG ||
+		       req_module_entry->zts != USING_ZTS ||
+		       req_module_entry->zend_api != ZEND_MODULE_API_NO) {
+			php_error(E_ERROR, 
+				"Cannot initialize module sca.\nModule sca compiled with module API=%d, debug=%d, thread-safety=%d\nModule %n compiled with module API=%d, debug=%d, thread-safety=%d\nThese options need to match",
+				req_module_name,
+				ZEND_MODULE_API_NO, ZEND_DEBUG, USING_ZTS,
+				req_module_entry->zend_api, req_module_entry->zend_debug, req_module_entry->zts);
+			return FAILURE;
+		}
+	} else {
+		/* The dependency checker should already have found this, but to be on the safe side ... */
+		php_error (E_ERROR, 
+			"Cannot load module sca because required module %n is not loaded", 
+			req_module_name);
+		return FAILURE;
+	}
 
-	memcpy(&SCA_Tuscany_object_handlers, zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+	class_init_SCA_Tuscany(TSRMLS_C);
 
 	return SUCCESS;
 }
@@ -660,33 +469,19 @@ PHP_MINIT_FUNCTION(sca)
 /* {{{ PHP_MSHUTDOWN_FUNCTION */
 PHP_MSHUTDOWN_FUNCTION(sca)
 {
-
-	/* add your stuff here */
-
-	return SUCCESS;
-}
-/* }}} */
-
-
-/* {{{ PHP_RINIT_FUNCTION */
-PHP_RINIT_FUNCTION(sca)
-{
-	/* add your stuff here */
+	/*
+	 * There is some corruption going on at shutdown.
+	 * The following hack eliminates the symptom, but there's probably still
+	 * an underlying problem.
+	 */
+	free(SCA_Tuscany_ce_ptr->name);
+	SCA_Tuscany_ce_ptr->name = NULL;
+	destroy_zend_class(&SCA_Tuscany_ce_ptr);
+	SCA_Tuscany_ce_ptr = NULL;
 
 	return SUCCESS;
 }
 /* }}} */
-
-
-/* {{{ PHP_RSHUTDOWN_FUNCTION */
-PHP_RSHUTDOWN_FUNCTION(sca)
-{
-	/* add your stuff here */
-
-	return SUCCESS;
-}
-/* }}} */
-
 
 /* {{{ PHP_MINFO_FUNCTION */
 PHP_MINFO_FUNCTION(sca)
@@ -708,44 +503,7 @@ PHP_MINFO_FUNCTION(sca)
 
 /* Other functions not directly related to implementing the 
    SCA_Tuscany extension */
-  
-long createSCATuscanyObject(Operation& operation TSRMLS_DC) 
-{
-    printf("IN createSCATuscanyObject\n");	
-    
-    // create an object of type SCA_Tuscany
-    zval *_this_zval;
-    MAKE_STD_ZVAL(_this_zval);
-    Z_TYPE_P(_this_zval) = IS_OBJECT;
-    if ( object_init_ex(_this_zval, SCA_Tuscany_ce_ptr) == FAILURE) {
-    	char *class_name;
-    	char *space;
-	    class_name = get_active_class_name(&space TSRMLS_CC);
-		php_error(E_ERROR, 
-		          "%s%s%s(): internal error (%i) - failed to instantiate SCA_Tuscany object",
-				  class_name, 
-				  space, 
-				  get_active_function_name(TSRMLS_C), 
-				  __LINE__);
-	    return 0;
-    }
-    
-  	zend_class_entry * _this_ce;
-    _this_ce = Z_OBJCE_P(_this_zval);
-    	
-    // Set the address of the C++ operation object as a four byte value
-    // in the operation property
-   	PROP_SET_LONG("operation", (long) &operation);
-   	
-   	// get the four byte value of the address of the object
-   	// we have just created and return it
-    long object_id = (long) Z_OBJ_HANDLE_P(_this_zval);  
-    
-    printf("IN object_id = %d\n", object_id);
-    
-    return object_id;
-}
-
+ 
 #endif /* HAVE_SCA */
 
 
