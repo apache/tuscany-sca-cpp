@@ -22,3 +22,10 @@ INCLUDES = -I$(top_builddir)/runtime/core/src \
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
 
 
+moduledir=$(prefix)/extensions/rest/reference/module
+extension = libtuscany_sca_rest_reference$(libsuffix)
+	                    
+install-exec-hook:
+	test -z $(moduledir) || $(mkdir_p) $(moduledir);
+	-rm -f  $(moduledir)/$(extension)
+	$(LN_S) $(libdir)/$(extension) $(moduledir)/$(extension)   

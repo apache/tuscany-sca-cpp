@@ -34,3 +34,11 @@ INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
+
+moduledir=$(prefix)/extensions/sca/service/module
+extension = libtuscany_sca_binding_service$(libsuffix)
+	                    
+install-exec-hook:
+	test -z $(moduledir) || $(mkdir_p) $(moduledir);
+	-rm -f  $(moduledir)/$(extension)
+	$(LN_S) $(libdir)/$(extension) $(moduledir)/$(extension)   

@@ -34,3 +34,11 @@ INCLUDES = -I$(top_builddir)/runtime/core/src \
   -I${HTTPD_INCLUDE} -I${APR_INCLUDE}
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
+
+moduledir=$(prefix)/extensions/rest/service/module
+extension = libtuscany_sca_rest_service$(libsuffix)
+	                    
+install-exec-hook:
+	test -z $(moduledir) || $(mkdir_p) $(moduledir);
+	-rm -f  $(moduledir)/$(extension)
+	$(LN_S) $(libdir)/$(extension) $(moduledir)/$(extension)   

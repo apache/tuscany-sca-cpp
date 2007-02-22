@@ -44,7 +44,7 @@ namespace tuscany
                  * Either / or \ can be used interchangeably for separating directory elements.
                  * @param fileName Name of the file in the dirctory.
                  */
-                File(const std::string& directory, const std::string& fileName);
+                File(const std::string& directory, const std::string& fileName, bool isDirectory = false);
     
                 /**
                  * Destructor.
@@ -53,25 +53,43 @@ namespace tuscany
     
                 /**
                  * Return the directory in which this file is located.
-                 * @return Name of the directory.
+                 * @return Name of the parent directory.
                  */
                 const std::string& getDirectory() const {return directory;}
     
                 /**
-                 * Name of the file.
-                 * @return Name of the file.
+                 * Return the name of the file.
+                 * @return Name of the file/directory.
                  */
                 const std::string& getFileName() const {return fileName;}
+                
+                /**
+                 * Return if this is a directory
+                 * @return true if a directory
+                 */
+                 bool isDirectory() const {return isDir;}
+                 
+                /**
+                 * Return if this is a file
+                 * @return true if a file
+                 */
+                 bool isFile() const {return !isDir;}
+                 
             private:
                 /**
-                 * Name of the directory.
+                 * Name of the parent directory.
                  */
                 std::string directory;
     
                 /**
-                 * Name of the file.
+                 * Name of the file/directory
                  */ 
                 std::string fileName;
+                
+                /**
+                 * Is this a directory
+                 */
+                bool isDir;
             };
             
             /**
@@ -87,8 +105,12 @@ namespace tuscany
                  * @param rootDirectory The directory in which to search.
                  * @param pattern A pattern for matching file names. Can include * and ?.
                  * @param subdirectories Whether subdirectories should be searched too.
+                 * @param directories Whether to directories or files.
                  */
-                Files(const std::string& rootDirectory, const std::string& pattern, bool subdirectories = false);
+                Files(const std::string& rootDirectory,
+                      const std::string& pattern, 
+                      bool subdirectories = false,
+                      bool directories = false);
     
                 /**
                  * Destructor.
@@ -114,8 +136,10 @@ namespace tuscany
                  * @param rootDirectory The directory in which to search.
                  * @param pattern A pattern for matching file names. Can include * and ?.
                  * @param subdirectories Whether subdirectories should be searched too.
+                 * @param directories Whether to directories or files.
                  */
-                void findFiles(const std::string& rootDirectory, const std::string& pattern, bool subdirectories);
+                void findFiles(const std::string& rootDirectory, const std::string& pattern,
+                               bool subdirectories, bool directories);
                 
                 /**
                  * The top level directory to search.

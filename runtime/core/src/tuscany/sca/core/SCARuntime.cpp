@@ -381,44 +381,54 @@ namespace tuscany
 #endif
 #endif
             string pattern = "*" + libraryExtension;
-            Files files(extensionsRoot, pattern, true);
-            for (unsigned int i=0; i < files.size(); i++)
-            {
-                try
-                {
-                	string filename = files[i].getFileName();
-                    Library lib = Library( files[i].getDirectory() + "/" + filename);
-                    
-                    // Determine the name of the initialize method
-                    // 1) strip the .dll/.so/.dylib suffix
-                    // 2) for non-Windows strip any lib prefix                    
-                    string initializeMethod;
-                    #if defined(WIN32)  || defined (_WINDOWS)
-                    #else
-                    if (filename.substr(0,3) == "lib")
-                    {
-                    	initializeMethod = filename.substr(3, filename.size()-libraryExtension.size() - 3);
-                    }
-                    else
-                    #endif
-                    {
-                        initializeMethod = filename.substr(0, filename.size()-libraryExtension.size());
-                    }
-                    initializeMethod += "_initialize";
-                    TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE extension = 
-                        (TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE)lib.getSymbol(initializeMethod);
-                    if (extension)
-                    {
-                        extension();
-                        extensionsList.push_back(lib);
-                    }
-                }
-                catch (TuscanyRuntimeException& ex)
-                {
-                    logwarning("Failed to load extension library: %s: %s: %s",
-                        files[i].getFileName().c_str(), ex.getEClassName(), ex.getMessageText());
-                }
-            }
+
+            // Get list of all directories named "module"
+			Files extensionModules(extensionsRoot, "module", true, true);
+			for (unsigned int emI=0; emI < extensionModules.size(); emI++)
+			{
+				string extensionRoot = extensionModules[emI].getDirectory().c_str();
+				extensionRoot += "/module";
+				loginfo("Loading extension module: %s", extensionRoot.c_str() );
+			
+	            Files files(extensionRoot, pattern, true);
+	            for (unsigned int i=0; i < files.size(); i++)
+	            {
+	                try
+	                {
+	                	string filename = files[i].getFileName();
+	                    Library lib = Library( files[i].getDirectory() + "/" + filename);
+	                    
+	                    // Determine the name of the initialize method
+	                    // 1) strip the .dll/.so/.dylib suffix
+	                    // 2) for non-Windows strip any lib prefix                    
+	                    string initializeMethod;
+	                    #if defined(WIN32)  || defined (_WINDOWS)
+	                    #else
+	                    if (filename.substr(0,3) == "lib")
+	                    {
+	                    	initializeMethod = filename.substr(3, filename.size()-libraryExtension.size() - 3);
+	                    }
+	                    else
+	                    #endif
+	                    {
+	                        initializeMethod = filename.substr(0, filename.size()-libraryExtension.size());
+	                    }
+	                    initializeMethod += "_initialize";
+	                    TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE extension = 
+	                        (TUSCANY_IMPLEMENTATION_EXTENSION_INITIALIZE)lib.getSymbol(initializeMethod);
+	                    if (extension)
+	                    {
+	                        extension();
+	                        extensionsList.push_back(lib);
+	                    }
+	                }
+	                catch (TuscanyRuntimeException& ex)
+	                {
+	                    logwarning("Failed to load extension library: %s: %s: %s",
+	                        files[i].getFileName().c_str(), ex.getEClassName(), ex.getMessageText());
+	                }
+	            }
+			}
         }
 
       

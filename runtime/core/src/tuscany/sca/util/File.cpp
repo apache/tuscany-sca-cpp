@@ -47,8 +47,8 @@ namespace tuscany
     {
         namespace util
         {
-            File::File(const string& dir, const string& file)
-                : directory(dir), fileName(file)
+            File::File(const string& dir, const string& file, bool isDirectory)
+                : directory(dir), fileName(file), isDir(isDirectory)
             {
             }
             File::~File()
@@ -56,10 +56,10 @@ namespace tuscany
             }
             
             
-            Files::Files(const string& rootDir, const string& pattern, bool subdirectories)
+            Files::Files(const string& rootDir, const string& pattern, bool subdirectories, bool directories)
                 : rootDirectory(rootDir)
             {
-                findFiles(rootDirectory, pattern, subdirectories);
+                findFiles(rootDirectory, pattern, subdirectories, directories);
             }
             
             Files::~Files()
@@ -88,7 +88,7 @@ namespace tuscany
             }
             
             
-            void Files::findFiles(const string& rootDir, const string& pattern, bool subdirectories)
+            void Files::findFiles(const string& rootDir, const string& pattern, bool subdirectories, bool directories)
             {
                 
 #if defined(WIN32)  || defined (_WINDOWS)
@@ -121,10 +121,17 @@ namespace tuscany
                     while (more)
                     {
                         // Skip over directories
-                        if (!(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+                        if (!(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
                         {
-                            // Add the file to our list
-                            files.push_back(File(fullDirname, data.cFileName));
+                        	if (directories)
+                        	{
+                        		// Add the file to our list
+                        		files.push_back(File(fullDirname, data.cFileName));
+                        	}
+                        }
+                        else if (directories)
+                        {
+                        	files.push_back(File(fullDirname, data.cFileName, true));
                         }
                         
                         more = FindNextFile(searchHandle, &data);
@@ -193,29 +200,39 @@ namespace tuscany
                     }
                     else
                     {
-                        if (S_ISDIR(statbuf.st_mode))
+                        string filename = entry->d_name;
+                
+                        if ((exactMatch && filename == pattern) ||
+                            (!exactMatch &&
+                             ((filename.find(token1) == 0)
+                             && (filename.length() >= token2.length())
+                             && (filename.rfind(token2) == (filename.length() - token2.length())) )))
+                        {	                                                
+	                        if (S_ISDIR(statbuf.st_mode))
+	                        {
+	                        	if (directories)
+	                        	{
+	                        		files.push_back(File(rootDir, filename, true));
+	                        	}
+	                        }
+	                        else if (S_ISREG(statbuf.st_mode))
+	                        {
+	                            if (!directories)
+	                            {
+	                            	 // Add the file to our list
+	                                files.push_back(File(rootDir, filename));
+	                            }
+	                        }
+                        } // end - matching filename
+	
+                        // recurse if necessary
+                        if (subdirectories && S_ISDIR(statbuf.st_mode))
                         {
-                            if (subdirectories)
-                            {
-                                findFiles(entryName, pattern, subdirectories);
-                            }
-                        }
-                        else if (S_ISREG(statbuf.st_mode))
-                        {
-                            string filename = entry->d_name;
-                    
-                            if ((exactMatch && filename == pattern) ||
-                                (!exactMatch &&
-                                 ((filename.find(token1) == 0)
-                                 && (filename.length() >= token2.length())
-                                 && (filename.rfind(token2) == (filename.length() - token2.length())) )))
-                            {
-                                // Add the file to our list
-                                files.push_back(File(rootDir, filename));
-                            }
-                        }
+                            findFiles(entryName, pattern, subdirectories, directories);
+                        }                        
                     }            
                 }
+                
                 closedir(root);
 #endif
             }

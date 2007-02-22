@@ -16,6 +16,7 @@
 #  under the License.
 
 libdir=$(prefix)/extensions/cpp/lib
+
 lib_LTLIBRARIES = libtuscany_sca_cpp.la
 includedir=$(prefix)/extensions/cpp/include
 nobase_include_HEADERS = \
@@ -46,4 +47,11 @@ INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-                   
+
+moduledir=$(prefix)/extensions/cpp/module
+extension = libtuscany_sca_cpp$(libsuffix)
+	                    
+install-exec-hook:
+	test -z $(moduledir) || $(mkdir_p) $(moduledir);
+	-rm -f  $(moduledir)/$(extension)
+	$(LN_S) $(libdir)/$(extension) $(moduledir)/$(extension)
