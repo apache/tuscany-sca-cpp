@@ -41,6 +41,7 @@ echo %inpath%
 if not exist %deploydir% mkdir %deploydir%
 if not exist %extdir% mkdir %extdir%
 if not exist %pythonextdir% mkdir %pythonextdir%
+if not exist %pythonextdir%\module mkdir %pythonextdir%\module
 if not exist %pythonextdir%\bin mkdir %pythonextdir%\bin
 if not exist %pythonextdir%\lib mkdir %pythonextdir%\lib
 if not exist %pythonextdir%\xsd mkdir %pythonextdir%\xsd
@@ -52,8 +53,10 @@ copy %srcdir%\..\xsd\*.* %pythonextdir%\xsd
 
 copy %inpath%\tuscany_sca_python.lib %pythonextdir%\lib
 copy %inpath%\tuscany_sca_python.dll %pythonextdir%\bin
+copy %inpath%\tuscany_sca_python.dll %pythonextdir%\module
 
 if exist %inpath%\tuscany_sca_python.pdb copy %inpath%\tuscany_sca_python.pdb %pythonextdir%\bin
+if exist %inpath%\tuscany_sca_python.pdb copy %inpath%\tuscany_sca_python.pdb %pythonextdir%\module
 
 goto end
 :usage

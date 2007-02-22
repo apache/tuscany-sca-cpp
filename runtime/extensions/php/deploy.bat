@@ -41,6 +41,7 @@ echo %inpath%
 if not exist %deploydir% mkdir %deploydir%
 if not exist %extdir% mkdir %extdir%
 if not exist %phpextdir% mkdir %phpextdir%
+if not exist %phpextdir%\module mkdir %phpextdir%\module
 if not exist %phpextdir%\bin mkdir %phpextdir%\bin
 if not exist %phpextdir%\lib mkdir %phpextdir%\lib
 if not exist %phpextdir%\xsd mkdir %phpextdir%\xsd
@@ -53,8 +54,10 @@ copy %srcdir%\..\xsd\*.* %phpextdir%\xsd
 
 copy %inpath%\tuscany_sca_php.lib %phpextdir%\lib
 copy %inpath%\tuscany_sca_php.dll %phpextdir%\bin\tuscany_sca_php.dll
+copy %inpath%\tuscany_sca_php.dll %phpextdir%\module
 
 if exist %inpath%\tuscany_sca_php.pdb copy %inpath%\tuscany_sca_php.pdb %phpextdir%\bin
+if exist %inpath%\tuscany_sca_php.pdb copy %inpath%\tuscany_sca_php.pdb %phpextdir%\module
 
 goto end
 :usage

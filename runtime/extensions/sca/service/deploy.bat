@@ -42,6 +42,7 @@ if not exist %deploydir% mkdir %deploydir%
 if not exist %extdir% mkdir %extdir%
 if not exist %wsextdir% mkdir %wsextdir%
 if not exist %svcextdir% mkdir %svcextdir%
+if not exist %svcextdir%\module mkdir %svcextdir%\module
 if not exist %svcextdir%\bin mkdir %svcextdir%\bin
 if not exist %svcextdir%\lib mkdir %svcextdir%\lib
 
@@ -52,8 +53,10 @@ del %svcextdir%\lib\%libname%.*
 
 copy %inpath%\%libname%.lib %svcextdir%\lib
 copy %inpath%\%libname%.dll %svcextdir%\bin
+copy %inpath%\%libname%.dll %svcextdir%\module
 
 if exist %inpath%\%libname%.pdb copy %inpath%\%libname%.pdb %svcextdir%\bin
+if exist %inpath%\%libname%.pdb copy %inpath%\%libname%.pdb %svcextdir%\module
 
 goto end
 :usage

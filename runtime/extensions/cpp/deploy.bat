@@ -41,6 +41,7 @@ echo %inpath%
 if not exist %deploydir% mkdir %deploydir%
 if not exist %extdir% mkdir %extdir%
 if not exist %cppextdir% mkdir %cppextdir%
+if not exist %cppextdir%\module mkdir %cppextdir%\module
 if not exist %cppextdir%\bin mkdir %cppextdir%\bin
 if not exist %cppextdir%\lib mkdir %cppextdir%\lib
 if not exist %cppextdir%\include mkdir %cppextdir%\include
@@ -63,8 +64,10 @@ copy %srcdir%\..\xsd\*.* %cppextdir%\xsd
 
 copy %inpath%\tuscany_sca_cpp.lib %cppextdir%\lib
 copy %inpath%\tuscany_sca_cpp.dll %cppextdir%\bin
+copy %inpath%\tuscany_sca_cpp.dll %cppextdir%\module
 
 if exist %inpath%\tuscany_sca_cpp.pdb copy %inpath%\tuscany_sca_cpp.pdb %cppextdir%\bin
+if exist %inpath%\tuscany_sca_cpp.pdb copy %inpath%\tuscany_sca_cpp.pdb %cppextdir%\module
 
 goto end
 :usage

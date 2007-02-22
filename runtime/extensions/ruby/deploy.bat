@@ -41,6 +41,7 @@ echo %inpath%
 if not exist %deploydir% mkdir %deploydir%
 if not exist %extdir% mkdir %extdir%
 if not exist %rubyextdir% mkdir %rubyextdir%
+if not exist %rubyextdir%\module mkdir %rubyextdir%\module
 if not exist %rubyextdir%\bin mkdir %rubyextdir%\bin
 if not exist %rubyextdir%\lib mkdir %rubyextdir%\lib
 if not exist %rubyextdir%\xsd mkdir %rubyextdir%\xsd
@@ -52,8 +53,10 @@ copy %srcdir%\..\xsd\*.* %rubyextdir%\xsd
 
 copy %inpath%\tuscany_sca_ruby_lang.lib %rubyextdir%\lib
 copy %inpath%\tuscany_sca_ruby_lang.dll %rubyextdir%\bin
+copy %inpath%\tuscany_sca_ruby_lang.dll %rubyextdir%\module
 
 if exist %inpath%\tuscany_sca_ruby_lang.pdb copy %inpath%\tuscany_sca_ruby_lang.pdb %rubyextdir%\bin
+if exist %inpath%\tuscany_sca_ruby_lang.pdb copy %inpath%\tuscany_sca_ruby_lang.pdb %rubyextdir%\module
 
 goto end
 :usage

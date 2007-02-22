@@ -44,6 +44,7 @@ if not exist %deploydir% mkdir %deploydir%
 if not exist %extdir% mkdir %extdir%
 if not exist %restextdir% mkdir %restextdir%
 if not exist %refextdir% mkdir %refextdir%
+if not exist %refextdir%\module mkdir %refextdir%\module
 if not exist %refextdir%\bin mkdir %refextdir%\bin
 if not exist %refextdir%\lib mkdir %refextdir%\lib
 
@@ -54,8 +55,10 @@ del %refextdir%\lib\%libname%.*
 
 copy %inpath%\%libname%.lib %refextdir%\lib
 copy %inpath%\%libname%.dll %refextdir%\bin
+copy %inpath%\%libname%.dll %refextdir%\module
 
 if exist %inpath%\%libname%.pdb copy %inpath%\%libname%.pdb %refextdir%\bin
+if exist %inpath%\%libname%.pdb copy %inpath%\%libname%.pdb %refextdir%\module
 
 goto end
 :usage
