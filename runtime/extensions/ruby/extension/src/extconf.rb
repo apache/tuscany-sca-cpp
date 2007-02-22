@@ -18,7 +18,8 @@
 #
 	
 	require 'mkmf'
-	find_header("tuscany/sca/ruby/RubyCompositeContext.h", "../../src")
-	find_library("tuscany_sca_ruby_lang", "", "../../src/.libs")
 	CONFIG["CC"] = "g++"
+	$INCFLAGS << " -I../../src "
+	$LIBPATH << "../../src/.libs"
+	$LIBS << " -ltuscany_sca_ruby_lang "
 	create_makefile 'tuscany_sca_ruby'
