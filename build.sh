@@ -22,9 +22,11 @@ TUSCANY_SCACPP_HOME=`pwd`
 if [ x$AXIS2C_HOME = x ]; then
 echo "AXIS2C_HOME not set. Not building Axis2C WS binding extensions"
 
+ENABLE_WS=--enable-wsbinding=no
 else
 echo "Using Axis2C installed at $AXIS2C_HOME"
-WITH_AXIS2C=--with-axis2c
+ENABLE_SCABINDING=--enable-scabinding
+ENABLE_WS=--enable-wsbinding
 fi
 
 if [ x$TUSCANY_SDOCPP = x ]; then
@@ -75,7 +77,7 @@ if [ x$TUSCANY_SCACPP = x ]; then
 export TUSCANY_SCACPP=`pwd`/deploy
 fi
 
-./configure --prefix=${TUSCANY_SCACPP} --enable-static=no ${WITH_AXIS2C} ${ENABLE_RUBY} ${ENABLE_PYTHON} ${ENABLE_REST}
+./configure --prefix=${TUSCANY_SCACPP} --enable-static=no  ${ENABLE_WS} ${ENABLE_SCABINDING} ${ENABLE_RUBY} ${ENABLE_PYTHON} ${ENABLE_REST}
 make
 make install
 

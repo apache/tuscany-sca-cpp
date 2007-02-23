@@ -118,23 +118,6 @@ AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service
 )
 AM_CONDITIONAL([WANT_WSBINDING], [test x$want_wsbinding = xtrue])
 
-AC_MSG_CHECKING(whether to build Axis2C Web Service binding extension)
-AC_ARG_WITH(axis2c, [AS_HELP_STRING([--with-axis2c],[build Axis2C Web Service binding extension [default=no]])],
-[ case "${withval}" in
-  yes)
-    AC_MSG_RESULT(yes)
-    with_axis2c=true
-    ;;
-  *)
-    AC_MSG_RESULT(no)
-    with_axis2c=false
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-    with_axis2c=false ]
-)
-AM_CONDITIONAL([WITH_AXIS2C], [test x$with_axis2c = xtrue])
-
 AC_MSG_CHECKING(whether to build SCA default binding extension)
 AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA default binding extension [default=no]])],
 [ case "${enableval}" in
