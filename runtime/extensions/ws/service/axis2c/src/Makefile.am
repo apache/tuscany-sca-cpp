@@ -72,14 +72,14 @@ libtuscany_sca_ws_dispatcher_la_LIBADD = \
 servicedir=$(rootdir)/services/tuscany
 service_DATA = services.xml
 
-moduledir=$(rootdir)/modules/tuscany
+modulesdir=$(rootdir)/modules/tuscany
 module_DATA = module.xml
 
 EXTRA_DIST = axis2.xml services.xml module.xml deploy.sh
 
 install-data-hook:
 	cd $(servicedir); ln -s -f ../../lib/libtuscany_sca_ws_service.so libtuscany_sca_ws_service.so
-	cd $(moduledir); ln -s -f ../../lib/libtuscany_sca_ws_dispatcher.so libtuscany_sca_ws_dispatcher.so
+	cd $(modulesdir); ln -s -f ../../lib/libtuscany_sca_ws_dispatcher.so libtuscany_sca_ws_dispatcher.so
 
 INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
