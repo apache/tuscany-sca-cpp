@@ -31,14 +31,19 @@ exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/ruby/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_BASE_URI=http://localhost:9090
 
+libsuffix=.so
+UNAME=`uname -s`
+if [ "x$UNAME" = "xDarwin" ]; then
+    libsuffix=.dylib
+fi
 # Generate the mod_rest configuration
 if [ ! -f conf/tuscany_sca_mod_rest.conf ]; then
-  echo "LoadModule sca_rest_module $TUSCANY_SCACPP/extensions/rest/service/lib/libtuscany_sca_mod_rest.so.0.0.0" >conf/tuscany_sca_mod_rest.conf
+  echo "LoadModule sca_rest_module $TUSCANY_SCACPP/extensions/rest/service/lib/libtuscany_sca_mod_rest$libsuffix" >conf/tuscany_sca_mod_rest.conf
   echo "TuscanyHome $TUSCANY_SCACPP" >>conf/tuscany_sca_mod_rest.conf
   echo "<Location /rest>" >>conf/tuscany_sca_mod_rest.conf
   echo "        SetHandler sca_rest_module" >>conf/tuscany_sca_mod_rest.conf
