@@ -18,9 +18,6 @@
 libdir=$(prefix)/extensions/python/lib
 lib_LTLIBRARIES = libtuscany_sca_python.la
 
-install-exec-hook:
-	cd $(libdir); ln -s -f libtuscany_sca_python$(libsuffix) sca.so
-
 pydir=$(prefix)/extensions/python/lib
 py_DATA = tuscany/sca/python/sca_proxy.py
 EXTRA_DIST = tuscany/sca/python/sca_proxy.py
@@ -65,3 +62,5 @@ install-exec-hook:
 	test -z $(moduledir) || $(mkdir_p) $(moduledir);
 	-rm -f  $(moduledir)/$(extension)
 	$(LN_S) $(libdir)/$(extension) $(moduledir)/$(extension)
+	-rm -f  $(libdir)/sca.so
+	$(LN_S) $(libdir)/libtuscany_sca_python$(libsuffix) $(libdir)/sca.so
