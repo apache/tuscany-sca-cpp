@@ -209,5 +209,7 @@ AC_CONFIG_FILES([Makefile
                  HttpdBigBank/bigbank.accountdata/Makefile
                  HttpdBigBank/bigbank.wsclient/Makefile
                  HttpdBigBank/httpserver/Makefile
+                 PHPCalculator/Makefile
+                 PHPCalculator/sample.calculator/Makefile
                  ])
 AC_OUTPUT

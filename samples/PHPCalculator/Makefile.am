@@ -15,12 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WITH_AXIS2C
-  WSBINDING_SAMPLE = sample.calculator.wsclient
-endif
-
 deploydir=$(prefix)/samples/PHPCalculator/deploy
-# SUBDIRS = sample.calculator sample.calculator.client ${WSBINDING_SAMPLE}
+# SUBDIRS = sample.calculator sample.calculator.client
 SUBDIRS = sample.calculator 
-EXTRA_DIST = *.php *.composite 
+EXTRA_DIST = *.composite 
 deploy_DATA = *.composite

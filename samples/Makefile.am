@@ -20,6 +20,7 @@ if WANT_ALL_SAMPLES
   PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
   PYTHON_RUBY_SAMPLES = RestYahoo
+  PHP_SAMPLES = PHPCalculator
 else
 if WANT_CPP_SAMPLES
     CPP_SAMPLES = CppCalculator CppBigBank

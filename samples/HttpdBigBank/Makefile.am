@@ -17,5 +17,5 @@
 
 deploydir=$(prefix)/samples/HttpdBigBank/deploy
 SUBDIRS = bigbank.account bigbank.accountdata bigbank.wsclient httpserver
-EXTRA_DIST = *.composite README.html
+EXTRA_DIST = *.composite 
 deploy_DATA = *.composite
