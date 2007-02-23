@@ -45,9 +45,15 @@ export TUSCANY_SCACPP_BASE_URI=http://localhost:9090
 
 export CUSTOMER_DIR=$TUSCANY_SCACPP_ROOT/sample.customer
 
+libsuffix=.so
+UNAME=`uname -s`
+if [ "x$UNAME" = "xDarwin" ]; then
+    libsuffix=.dylib
+fi
+
 # Generate the mod_rest configuration
 if [ ! -f conf/tuscany_sca_mod_rest.conf ]; then
-  echo "LoadModule sca_rest_module $TUSCANY_SCACPP/extensions/rest/service/lib/libtuscany_sca_mod_rest.so.0.0.0" >conf/tuscany_sca_mod_rest.conf
+  echo "LoadModule sca_rest_module $TUSCANY_SCACPP/extensions/rest/service/lib/libtuscany_sca_mod_rest$libsuffix" >conf/tuscany_sca_mod_rest.conf
   echo "TuscanyHome $TUSCANY_SCACPP" >>conf/tuscany_sca_mod_rest.conf
   echo "<Location /rest>" >>conf/tuscany_sca_mod_rest.conf
   echo "        SetHandler sca_rest_module" >>conf/tuscany_sca_mod_rest.conf
