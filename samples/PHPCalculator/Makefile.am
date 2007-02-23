@@ -22,5 +22,5 @@ endif
 deploydir=$(prefix)/samples/PHPCalculator/deploy
 # SUBDIRS = sample.calculator sample.calculator.client ${WSBINDING_SAMPLE}
 SUBDIRS = sample.calculator 
-EXTRA_DIST = *.php *.composite README.html
+EXTRA_DIST = *.php *.composite 
 deploy_DATA = *.composite

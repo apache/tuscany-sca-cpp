@@ -20,10 +20,14 @@
 TUSCANY_SCACPP_HOME=`pwd`
 
 if [ x$AXIS2C_HOME = x ]; then
-echo "AXIS2C_HOME not set"
-exit;
-fi
+echo "AXIS2C_HOME not set. Not building Axis2C WS binding extensions"
+
+ENABLE_WS=--enable-wsbinding=no
+else
 echo "Using Axis2C installed at $AXIS2C_HOME"
+ENABLE_SCABINDING=--enable-scabinding
+ENABLE_WS=--enable-wsbinding
+fi
 
 if [ x$TUSCANY_SDOCPP = x ]; then
 echo "TUSCANY_SDOCPP not set"
@@ -51,8 +55,21 @@ echo "Building Ruby extension with Ruby installed at $RUBY_LIB, $RUBY_INCLUDE"
 ENABLE_RUBY=--enable-ruby
 fi
 
+if [ x$CURL_LIB = x ]; then
+echo "CURL_LIB not set. REST extension will not be built"
+elif [ x$CURL_INCLUDE = x ]; then
+echo "CURL_INCLUDE not set. REST extension will not be built"
+elif [ x$HTTPD_INCLUDE = x ]; then
+echo "HTTPD_INCLUDE not set. REST extension will not be built"
+elif [ x$APR_INCLUDE = x ]; then
+echo "APR_INCLUDE not set. REST extension will not be built"
+else
+echo "Building REST extension using HTTPD from $HTTPD_INCLUDE, APR from $APR_INCLUDE and libCURL from $CURL_LIB"
+ENABLE_REST=--enable-restbinding
+fi
+
 cd $TUSCANY_SCACPP_HOME
-./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no ${ENABLE_RUBY} ${ENABLE_PYTHON}
+./configure --prefix=${TUSCANY_SCACPP_HOME}/deploy --enable-static=no  ${ENABLE_WS} ${ENABLE_SCABINDING} ${ENABLE_RUBY} ${ENABLE_PYTHON} ${ENABLE_REST}
 make
 make install
 

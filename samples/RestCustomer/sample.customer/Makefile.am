@@ -19,4 +19,4 @@ deploydir=$(prefix)/samples/RestCustomer/deploy
 compositedir=$(deploydir)/sample.customer
 
 composite_DATA = *.composite *.py *.xsd *.xml
-EXTRA_DIST = *.composite *.py runwsserver.sh *.xsd *.xml
+EXTRA_DIST = *.composite *.py *.xsd *.xml
