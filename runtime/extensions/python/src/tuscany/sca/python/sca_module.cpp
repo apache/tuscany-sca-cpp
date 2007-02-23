@@ -234,6 +234,18 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
     PyObject* elementTreeModuleName = PyString_FromString("xml.etree.ElementTree"); 
     PyObject* elementTreeModule = PyImport_Import(elementTreeModuleName);                        
 
+    if(elementTreeModule == NULL)
+    {
+        // pre-Python2.5? - try to get an installed elementtree package
+        elementTreeModuleName = PyString_FromString("elementtree.ElementTree"); 
+        elementTreeModule = PyImport_Import(elementTreeModuleName); 
+    }
+    if(elementTreeModule == NULL)
+    {
+        // Still null - throw a warning but carry on - user may not need XML
+        logwarning("Could not load Python ElementTree module - is it installed? SDO and XML will not be supported");
+    }
+
     // Parameters are the fourth argument
     PyObject* paramTuple = PyTuple_GetItem(args, 3);
     unsigned int numberOfArgs = (unsigned int) PyTuple_Size(paramTuple);
@@ -300,11 +312,15 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
         }
         else
         {
-            // Get the xml.etree.ElementTree.iselement function
-            PyObject* elementTreeIsElementFunc = PyObject_GetAttrString(elementTreeModule, "iselement");
+            PyObject* pIsElement = Py_False;
+            if(elementTreeModule != NULL)
+            {
+                // Get the xml.etree.ElementTree.iselement function
+                PyObject* elementTreeIsElementFunc = PyObject_GetAttrString(elementTreeModule, "iselement");
 
-            // Call the iselement() function with pValue to check it
-            PyObject* pIsElement = PyObject_CallFunction(elementTreeIsElementFunc, "O", param);
+                // Call the iselement() function with pValue to check it
+                PyObject* pIsElement = PyObject_CallFunction(elementTreeIsElementFunc, "O", param);
+            }
 
             if(PyObject_IsTrue(pIsElement) == 1)
             {
@@ -342,7 +358,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                     logerror(msg.c_str());
                     PyErr_SetString(scaError, msg.c_str());
                     return NULL;
-                }                                    
+                }
             }
             else
             {
@@ -462,25 +478,34 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
             }
         case Operation::DATAOBJECT: 
             {
-                DataObjectPtr dob = *(DataObjectPtr*)operation.getReturnValue();
+                if(elementTreeModule != NULL)
+                {
+                    DataObjectPtr dob = *(DataObjectPtr*)operation.getReturnValue();
 
-                // Convert a DataObject to a xml.etree.ElementTree Element object
-                Composite* composite = component->getComposite();                                    
-                XMLHelper* xmlHelper = composite->getXMLHelper();
-                char* str = xmlHelper->save(
-                    dob,
-                    dob->getType().getURI(),
-                    dob->getType().getName());                                    
+                    // Convert a DataObject to a xml.etree.ElementTree Element object
+                    Composite* composite = component->getComposite();                                    
+                    XMLHelper* xmlHelper = composite->getXMLHelper();
+                    char* str = xmlHelper->save(
+                        dob,
+                        dob->getType().getURI(),
+                        dob->getType().getName());                                    
 
-                loginfo("Converting SDO DataObject to Python ElementTree: %s", str);
+                    loginfo("Converting SDO DataObject to Python ElementTree: %s", str);
 
-                // Get the xml.etree.ElementTree.XML function
-                PyObject* elementTreeXMLFunc = PyObject_GetAttrString(elementTreeModule, "XML");
+                    // Get the xml.etree.ElementTree.XML function
+                    PyObject* elementTreeXMLFunc = PyObject_GetAttrString(elementTreeModule, "XML");
 
-                // Call the XML() function with the XML string 
-                returnValue = PyObject_CallFunction(elementTreeXMLFunc, "s", str);
+                    // Call the XML() function with the XML string 
+                    returnValue = PyObject_CallFunction(elementTreeXMLFunc, "s", str);
 
-                Py_DECREF(elementTreeXMLFunc);
+                    Py_DECREF(elementTreeXMLFunc);
+                }
+                else
+                {
+                    logwarning("Could not convert SDO DataObject to Python ElementTree as ElementTree module could not be loaded. Returning NONE");
+                    Py_INCREF(Py_None);
+                    returnValue = Py_None;
+                }
                 break;
             }
         default:
