@@ -17,7 +17,15 @@
 #
 #
 
-import xml.etree.ElementTree
+try:
+    import xml.etree.ElementTree
+except ImportError:
+    # Running under a pre-Python2.5 
+    try:
+        import elementtree.ElementTree
+    except ImportError:
+        print "The RestYahoo sample requires the ElementTree package"
+        
 
 def search(searchText):
 

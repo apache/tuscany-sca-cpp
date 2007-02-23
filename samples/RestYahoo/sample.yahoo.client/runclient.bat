@@ -37,7 +37,7 @@ goto end
 )
 echo using Libcurl installed at %LIBCURL_HOME%
 
-set PATH=%LIBCURL_HOME%\lib;%TUSCANY_SCACPP%\extensions\rest\interface\bin;%TUSCANY_SCACPP%\extensions\rest\reference\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%PATH%
+set PATH=%LIBCURL_HOME%\lib;%TUSCANY_SCACPP%\extensions\rest\interface\bin;%TUSCANY_SCACPP%\extensions\ruby\bin;%TUSCANY_SCACPP%\extensions\rest\reference\bin;%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%PATH%
 set PYTHONPATH=%TUSCANY_SCACPP%\extensions\python\bin
 
 set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
