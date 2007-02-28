@@ -16,16 +16,16 @@
 # under the License.
 #
 
-import xml.etree.ElementTree, os.path, datetime
+import xml.etree.ElementTree, os.path, os
 
 def getAlertConfig ():
 
     # Set up some default config data
     configData = "<config xmlns=\"http://tuscany.apache.org/samples/alerter\">\n</config>"
 
-    if os.path.isfile("config.xml"):
+    if os.path.isfile(os.environ['TUSCANY_SCACPP_ROOT']+"/config.xml"):
         # Retrieve the configuration from a file
-        f = open("config.xml")
+        f = open(os.environ['TUSCANY_SCACPP_ROOT']+"/config.xml")
         try:
             configData = f.read()
         finally:
@@ -91,7 +91,7 @@ def saveConfigData (configElem):
     configData = xml.etree.ElementTree.tostring(configElem)
 
     # Save the configuration to a file
-    f = open("config.xml", "w")
+    f = open(os.environ['TUSCANY_SCACPP_ROOT']+"/config.xml", "w")
 
     if not f:
         print "Failed to open config file for writing"

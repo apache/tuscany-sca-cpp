@@ -106,3 +106,11 @@ def removeAlertSource (sourceId):
 def getAlertSources ():
     # Get the config for all the sources
     return alertConfigService.getAlertConfig()
+
+# # Testing
+# import AlertConfigImpl as alertConfigService
+# import RSSCheckerImpl as rssCheckerService
+# import POPCheckerImpl as popCheckerService
+#
+# print xml.etree.ElementTree.tostring(getAlertSources())
+# print xml.etree.ElementTree.tostring(getAllNewAlerts())
