@@ -65,8 +65,6 @@
 
 <target name="scripts" depends="init">
 <mkdir dir="${build.result.folder}" />
-<copy file="scagen.bat" todir="${build.result.folder}" />
-<copy file="scagen.sh" todir="${build.result.folder}" />
 </target>
 
 
@@ -131,8 +129,6 @@
 </target>
 
 <target name="tobin" depends="jars, scripts" description="move the desired stuff to bin">
-    <move file="${build.result.folder}/scagen.bat" todir="${bin.dir}" />
-    <move file="${build.result.folder}/scagen.sh" todir="${bin.dir}" />
     <move file="${build.result.folder}/scagen.jar" todir="${bin.dir}" />
 </target>
 
