@@ -32,6 +32,7 @@ fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/python/lib:$TUSCANY_SCACPP/extensions/ruby/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$TUSCANY_SCACPP/extensions/python/lib:$PYTHONPATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_BASE_URI=http://localhost:9090
