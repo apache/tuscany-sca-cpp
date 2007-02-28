@@ -323,6 +323,8 @@ def updateAlertSource(alertSourceElem):
 
     if xml.etree.ElementTree.iselement(alertSourceElem):
 
+        alertsElem = getSavedAlerts()
+
         # Get the sourceid
         sourceId = alertSourceElem.attrib["id"]
 
@@ -333,6 +335,8 @@ def updateAlertSource(alertSourceElem):
 
         # Use the alertService reference to update the config
         alertService.updateAlertSource(alertSourceElem)
+
+        saveAlerts(alertsElem)
 
     return
 
