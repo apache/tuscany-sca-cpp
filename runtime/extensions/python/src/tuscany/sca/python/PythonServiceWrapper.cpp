@@ -867,9 +867,30 @@ namespace tuscany
                             Py_XDECREF(elementTreeModule);
                             Py_XDECREF(elementTreeModuleName);
 
-                            string msg = "Error whilst calling Python function "+operation.getName();
+                            string msg = "Error whilst calling Python function "+operation.getName()+": ";
                             if(PyErr_Occurred())
                             {
+                                PyObject *pErrorType, *pErrorValue, *pErrorTraceback;
+                                PyErr_Fetch(&pErrorType, &pErrorValue, &pErrorTraceback);
+ 
+                                if (pErrorType != NULL && pErrorValue != NULL)
+                                {
+                                    PyObject* pErrorTypeStr = PyObject_Str(pErrorType);    
+                                    PyObject* pErrorValueStr = PyObject_Str(pErrorValue);    
+                                    msg += PyString_AsString(pErrorTypeStr);
+                                    msg += " : ";
+                                    msg += PyString_AsString(pErrorValueStr);
+                                    Py_DECREF(pErrorTypeStr);
+                                    Py_DECREF(pErrorValueStr);                                    
+                                }
+                                else
+                                {
+                                    msg += "No Python Error information provided";                                    
+                                }
+                                Py_XDECREF(pErrorType);
+                                Py_XDECREF(pErrorValue);         
+                                Py_XDECREF(pErrorTraceback);    
+
                                 PyErr_Print();
                             }
                             
