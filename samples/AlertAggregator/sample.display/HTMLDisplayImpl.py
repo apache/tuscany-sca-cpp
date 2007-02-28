@@ -18,32 +18,60 @@
 #
 
 
-import xml.etree.ElementTree, datetime
-
-# Data structure to hold the alerts
-alertsElem = xml.etree.ElementTree.XML("<alerts xmlns=\"http://tuscany.apache.org/samples/alerter\"/>")
-
-# Data structure to map source_ids to source types
-sourceTypeMap = {}
+import xml.etree.ElementTree, datetime, os.path, os
 
 ns = "./{http://tuscany.apache.org/samples/alerter}"
+
+def getSavedAlerts():
+
+    # Set up some default config data
+    alertsData = "<alerts xmlns=\"http://tuscany.apache.org/samples/alerter\">\n</alerts>"
+
+    if os.path.isfile(os.environ['TUSCANY_SCACPP_ROOT']+"/sample.display/alerts.xml"):
+        # Retrieve the configuration from a file
+        f = open(os.environ['TUSCANY_SCACPP_ROOT']+"/sample.display/alerts.xml")
+        try:
+            alertsData = f.read()
+        finally:
+            f.close()
+   
+    alertsElem = xml.etree.ElementTree.XML(alertsData)
+
+    return alertsElem
+
+def saveAlerts(alertsElem):
+    alertsData = xml.etree.ElementTree.tostring(alertsElem)
+
+    # Save the configuration to a file
+    f = open(os.environ['TUSCANY_SCACPP_ROOT']+"/sample.display/alerts.xml", "w")
+
+    if not f:
+        print "Failed to open alerts file for writing"
+    try:
+        f.write(alertsData)
+    finally:
+        f.close()
 
 
 def updateAllAlertsHTMLTable ():
 
+    alertsElem = getSavedAlerts()
+
     # Use the alertService reference
-    newAlertsElem = alertService.getAllNewAlerts();
+    newAlertsElem = alertService.getAllNewAlerts()
     #newAlertsElem = getAllNewAlerts(); # For testing
 
     for alert in newAlertsElem.findall(ns+"alert"):
 
         alert.attrib["unread"]="True"
-        alertsElem.append(alert)        
+        alertsElem.append(alert)          
 
-    return generateHTMLTable()
+    return generateHTMLTable(alertsElem)
 
 
 def updateSourceAlertsHTMLTable (sourceId):
+
+    alertsElem = getSavedAlerts()
 
     # Use the alertService reference
     newAlertsElem = alertService.getNewAlerts(sourceId);
@@ -54,11 +82,11 @@ def updateSourceAlertsHTMLTable (sourceId):
         alert.attrib["unread"]="True"
         alertsElem.append(alert)        
 
-    return generateHTMLTable()
+    return generateHTMLTable(alertsElem)
 
 
 
-def generateHTMLTable ():
+def generateHTMLTable (alertsElem):
 
     returnData = "<TABLE border=\"0\">"    
 
@@ -107,10 +135,13 @@ def generateHTMLTable ():
 
     returnData += "</TABLE>" 
 
+    saveAlerts(alertsElem)
     #print xml.etree.ElementTree.tostring(alertsElem)
     return returnData
 
 def readAlert (alertID):
+
+    alertsElem = getSavedAlerts()
 
     returnData = ""
     for alert in alertsElem.findall(ns+"alert"):
@@ -118,7 +149,10 @@ def readAlert (alertID):
         if alert.attrib["id"]==alertID:
             alert.attrib["unread"] = "False"
 
-            srcType = sourceTypeMap[alert.attrib["sourceid"]]
+            saveAlerts(alertsElem)
+
+            srcType = getSourceType(alert.attrib["sourceid"])
+
             if srcType=="pop":
                 returnData += "<PRE>"
                 returnData += alert.find(ns+"summary").text
@@ -126,6 +160,19 @@ def readAlert (alertID):
                 return returnData
 
     return
+
+def getSourceType(sourceid):
+    # Use the alertService reference
+    alertSources = alertService.getAlertSources()
+    #alertSources = getAlertSources() #testing
+
+    for source in alertSources.findall(ns+"source"):
+
+        if sourceid == source.attrib["id"]:
+            return source.attrib["type"]
+
+    return "none"
+
 
 def getAlertSourcesHTMLTable():
 
@@ -141,9 +188,7 @@ def getAlertSourcesHTMLTable():
 
         srcId = source.attrib["id"]
         srcIdList.append(srcId)
-        srcType = source.attrib["type"]
-
-        sourceTypeMap[srcId]=srcType
+        srcType = source.attrib["type"]        
 
         # Write out the source data row
         returnData += "<TR CLASS=\"source_"
