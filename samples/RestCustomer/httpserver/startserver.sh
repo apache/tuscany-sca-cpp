@@ -72,5 +72,9 @@ fi
 
 # Start the HTTP server
 echo "Starting Apache httpd"
+
+# Set LD_PRELOAD to use the expat included in Python to avoid incompatibilities
+export LD_PRELOAD=$TUSCANY_SCACPP/extensions/python/lib/libtuscany_sca_python$libsuffix
+
 apachectl -k start -d $APFULLDIR
 
