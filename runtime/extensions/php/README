@@ -142,15 +142,27 @@ PHP5.2.0 source code - - (http://php.net/)
                --with-zlib \
                --enable-embed \
                --with-tsrm-pthreads \
-               --enable-maintainer-zts \
+               --enable-maintainer-zts 
+   Note. debug, pthreads, maintainer-zts, fastcgi are not absolute requirements but just
+         represent the environment I was testing with when I wrote this. 
    
 SCA_SDO PECL extension AVOCET branch source code - (http://pecl.php.net/package/SCA_SDO)
    Provides the SCA framework for PHP and the necessary mediation code to translate
-   between Tuscany SCA and PHP SCA. Once built you will need to copy the library sdo.so to 
+   between Tuscany SCA and PHP SCA.  Go get the AVOCET branch from PECL cvs 
+
+   export CVSROOT=:pserver:cvsread@cvs.php.net/repository
+   cvs export -r AVOCET pecl/sdo
+   
+   The process to build this code varies quite considerably between windows and Linux.
+   Take a look at the instructions in the SCA_SDO manual, follow the documentation link
+   from the projects PECL page (http://uk2.php.net/sdo/).
+   
+   Once built you will need to copy the library sdo.so to 
    libsdo.so so that the Tuscany PHPExtension can load it given the makefile 
-   configuration as it stands. Go get the AVOCET branch from PECL cvs build it 
-   (see http://uk2.php.net/sdo/) and install it somewhere you can point 
-   PHP_SCA_SDO_INCLUDE at.
+   configuration as it stands. For example, on linux
+   
+   ln -s sdo.so libsdo.so
+      
 
 Building on windows
 -------------------
