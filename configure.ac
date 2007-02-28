@@ -21,7 +21,7 @@ AC_PREREQ(2.59)
 AC_INIT(tuscany_sca_cpp, 1.0-incubator-M3)
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(tuscany_sca_config.h)
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+AM_INIT_AUTOMAKE([tar-ustar])
 AC_PREFIX_DEFAULT(/usr/local/tuscany/sca)
 
 # Checks for programs.
