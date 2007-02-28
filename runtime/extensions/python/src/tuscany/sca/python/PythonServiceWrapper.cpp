@@ -816,9 +816,6 @@ namespace tuscany
                                     PyObject* pElemString = PyObject_CallFunction(elementTreeToStringFunc, "O", pValue);
                                     char* data = PyString_AsString(pElemString);
 
-                                    Py_DECREF(elementTreeToStringFunc);
-                                    Py_DECREF(pElemString);
-
                                     loginfo("Converting Python ElementTree to SDO DataObject: %s", data);
 
                                     Composite* composite = component->getComposite();                                   
@@ -833,6 +830,7 @@ namespace tuscany
                                     {
                                         *dataObjectData = NULL;
                                     }
+
                                     if (*dataObjectData != NULL)
                                     {
                                         operation.setReturnValue(dataObjectData);
@@ -841,7 +839,10 @@ namespace tuscany
                                     {
                                         string msg = "xml.etree.ElementTree.Element could not be converted to a DataObject";
                                         throwException(ServiceDataException, msg.c_str());
-                                    }                                    
+                                    }
+
+                                    Py_DECREF(elementTreeToStringFunc);
+                                    Py_DECREF(pElemString);
                                 }
                                 else
                                 {
