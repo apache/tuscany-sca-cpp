@@ -39,4 +39,13 @@ export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_COMPONENT=sample.yahoo.app.WebSearchComponent
 
 cd $TUSCANY_SCACPP_ROOT/sample.yahoo.client
+
+libsuffix=.so
+UNAME=`uname -s`
+if [ "x$UNAME" = "xDarwin" ]; then
+    libsuffix=.dylib
+fi
+# Set LD_PRELOAD to use the expat included in Python to avoid incompatibilities
+export LD_PRELOAD=$TUSCANY_SCACPP/extensions/python/lib/libtuscany_sca_python$libsuffix
+
 ruby -I$TUSCANY_SCACPP/extensions/ruby/lib YahooWebSearchClient.rb
