@@ -319,7 +319,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                 PyObject* elementTreeIsElementFunc = PyObject_GetAttrString(elementTreeModule, "iselement");
 
                 // Call the iselement() function with pValue to check it
-                PyObject* pIsElement = PyObject_CallFunction(elementTreeIsElementFunc, "O", param);
+                pIsElement = PyObject_CallFunction(elementTreeIsElementFunc, "O", param);
             }
 
             if(PyObject_IsTrue(pIsElement) == 1)

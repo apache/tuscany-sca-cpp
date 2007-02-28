@@ -805,7 +805,7 @@ namespace tuscany
                                     PyObject* elementTreeIsElementFunc = PyObject_GetAttrString(elementTreeModule, "iselement");
 
                                     // Call the iselement() function with pValue to check it
-                                    PyObject* pIsElement = PyObject_CallFunction(elementTreeIsElementFunc, "O", pValue);
+                                    pIsElement = PyObject_CallFunction(elementTreeIsElementFunc, "O", pValue);
                                     Py_DECREF(elementTreeIsElementFunc);
                                 }
 
