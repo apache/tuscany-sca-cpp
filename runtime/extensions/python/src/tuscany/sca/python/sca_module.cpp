@@ -330,9 +330,6 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                 char* data = PyString_AsString(pElemString);
                 loginfo("SDO param %d %s: %s", i, (*paramName).c_str(), data);
 
-                Py_DECREF(elementTreeToStringFunc);
-                Py_DECREF(pElemString);
-
                 loginfo("Converting Python ElementTree to SDO DataObject: %s", data);
 
                 Composite* composite = component->getComposite();                                   
@@ -359,6 +356,8 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                     PyErr_SetString(scaError, msg.c_str());
                     return NULL;
                 }
+                Py_DECREF(elementTreeToStringFunc);
+                Py_DECREF(pElemString);
             }
             else
             {
