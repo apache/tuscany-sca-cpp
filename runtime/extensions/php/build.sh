@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,31 +17,39 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_ALL
-  CPP_EXTENSION = cpp
-  PYTHON_EXTENSION = python
-  RUBY_EXTENSION = ruby
-  WSBINDING_EXTENSION = ws
-  SCABINDING_EXTENSION = sca
-  RESTBINDING_EXTENSION = rest
-endif
-if WANT_CPP
-  CPP_EXTENSION = cpp
-endif
-if WANT_PYTHON
-  PYTHON_EXTENSION = python
-endif
-if WANT_RUBY
-  RUBY_EXTENSION = ruby
-endif
+SCA_PHP_EXTENSION_HOME=`pwd`
 
-if WANT_WSBINDING
-  WSBINDING_EXTENSION = ws
-endif
-if WANT_SCABINDING
-  SCABINDING_EXTENSION = sca
-endif
-if WANT_RESTBINDING
-  RESTBINDING_EXTENSION = rest
-endif
-SUBDIRS = ${CPP_EXTENSION} ${WSBINDING_EXTENSION} ${SCABINDING_EXTENSION} ${RESTBINDING_EXTENSION} ${PYTHON_EXTENSION} ${RUBY_EXTENSION}
+if [ x$TUSCANY_SCACPP = x ]; then
+echo "TUSCANY_SCACPP not set"
+exit;
+fi
+
+echo "Using SCA installed at $TUSCANY_SCACPP"
+
+if [ x$PHP_LIB = x ]; then
+echo "PHP_LIB not set."
+exit;
+elif [ x$PHP_INCLUDE = x ]; then
+echo "PHP_INCLUDE not set."
+exit;
+elif [ x$PHP_SCA_SDO_INCLUDE = x ]; then
+echo "PHP_SCA_SDO_INCLUDE not set."
+exit;
+elif [ x$PHP_SCA_SDO_LIB = x ]; then
+echo "PHP_SCA_SDO_LIB not set."
+exit;
+fi
+echo "Building PHP extension with PHP installed at $PHP_LIB, $PHP_INCLUDE"
+echo "and PHP SCA and SDO installed at $PHP_SCA_SDO_LIB, $PHP_SCA_SDO_INCLUDE"
+
+#cd ${TUSCANY_SCACPP_HOME}/samples
+#./autogen.sh
+
+cd SCA_PHP_EXTENSION_HOME
+./autogen.sh
+
+
+./configure --prefix=${TUSCANY_SCACPP}/extensions/php
+make
+make install
+

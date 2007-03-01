@@ -17,7 +17,7 @@
 
 SUBDIRS = src
 
-datadir=$(prefix)/extensions/php
+datadir=$(prefix)
 
 nobase_data_DATA = xsd/*.xsd
 

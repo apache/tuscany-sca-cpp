@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-libdir=$(prefix)/extensions/php/lib
+libdir=$(prefix)/lib
 lib_LTLIBRARIES = libtuscany_sca_php.la
 
 noinst_HEADERS = \
@@ -32,12 +32,12 @@ tuscany/sca/php/model/PHPImplementation.cpp \
 tuscany/sca/php/model/PHPReferenceBinding.cpp \
 tuscany/sca/php/model/PHPServiceBinding.cpp
 
-libtuscany_sca_php_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
-	-L$(top_builddir)/runtime/core/src -ltuscany_sca \
+libtuscany_sca_php_la_LIBADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca \
+	-L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 	-L${PHP_LIB} -lphp5 \
 	-L${PHP_SCA_SDO_LIB} -lsdo
 
-INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
+INCLUDES = -I${TUSCANY_SCACPP}/include \
            -I${TUSCANY_SDOCPP}/include \
            -I${PHP_INCLUDE} \
            -I${PHP_INCLUDE}/main \
@@ -48,7 +48,7 @@ INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
                    
 AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG 
                    
-moduledir=$(prefix)/extensions/php/module
+moduledir=$(prefix)/module
 extension = libtuscany_sca_php$(libsuffix)
 	                    
 install-exec-hook:

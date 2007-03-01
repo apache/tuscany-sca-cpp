@@ -22,7 +22,7 @@
 #ifndef tuscany_sca_php_phpserviceproxy_h
 #define tuscany_sca_php_phpserviceproxy_h
 
-#include "export.h" 
+#include "tuscany/sca/php/export.h" 
 #include "tuscany/sca/core/ServiceProxy.h" 
 #include "tuscany/sca/core/ServiceWrapper.h" 
 #include "tuscany/sca/util/Library.h"
