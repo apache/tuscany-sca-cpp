@@ -1,5 +1,5 @@
 Tuscany SCA for C++ Samples - REST Customer Sample
-===============================================
+==================================================
 
 This is a very simple sample to show how to use the SCA REST binding to
 implement a resource management service and make resources available
