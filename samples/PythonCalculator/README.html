@@ -37,7 +37,7 @@
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA for C++ Samples - Python Calculator Sample</H2> 
+         <H1>Tuscany SCA for C++ Samples - Python Calculator Sample</H1> 
 
          <P>This is a very simple sample to show how an SCA composite can wire 
           together two Python components to implement a Calculator service and expose 
@@ -47,7 +47,7 @@
           documentation for information about building the Tuscany Python extension 
           and using Python in SCA composites.
          </P>
-         <P>There are three sub projects in this workspace:</P>
+         <P>There are two sub projects in this workspace:</P>
          <UL>
             <LI>sample.calculator<BR/>
                 This contains the Python scripts and SCDL artifacts for the SCA Calculator 
@@ -55,10 +55,6 @@
             </LI>
             <LI>sample.calculator.client<BR/>
                 A sample client which does a local call to the Calculator service.
-            </LI>
-            <LI>sample.calculator.wsclient<BR/>
-                A sample client which does a local call to a composite that contains a Web Service reference
-                that calls the Calculator Web Service.
             </LI>
          </UL>
          <P>Additionally, there is the sample.calculator.app.composite file. This     
@@ -72,17 +68,9 @@
          <H2>Contents</H2> 
          <OL>
             <LI><A HREF="#linuxbld">Building the Python samples on Linux</A></LI>
-            <LI><A HREF="#linuxrun">Running the Python Calculator sample on Linux:</A></LI>
-               <UL>
-                  <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#linuxws">Running the Web Service client</A></LI>
-               </UL>
+            <LI><A HREF="#linuxrun">Running the Python Calculator sample on Linux</A></LI>
             <LI><A HREF="#winbld">Building the Python Calculator sample on Windows</A></LI>
-            <LI><A HREF="#winrun">Running the Python Calculator sample on Windows:</A></LI>
-               <UL>
-                  <LI><A HREF="#winbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#winws">Running the Web Service client</A></LI>
-               </UL>
+            <LI><A HREF="#winrun">Running the Python Calculator sample on Windows</A></LI>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
       </DIV>
@@ -114,7 +102,6 @@
 
        <DIV CLASS="section"> 
          <A NAME="linuxrun"><H2>Running the Python Calculator sample on Linux</H2></A>
-         <A NAME="linuxbasic"><H3>Calculator with basic client</H3></A>
          <OL>
              <LI>Ensure you have enabled the Tuscany Python extension. Follow the instructions 
                  found <A HREF="../../doc/PythonExtension.html#linuxbin">here</A>.
@@ -123,7 +110,6 @@
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
@@ -131,39 +117,6 @@
                    <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/PythonCalculator/deploy/sample.calculator.client</LI>
                    <LI>./runclient.sh</LI>
                 </UL>
-             </LI>
-         </OL>                                                  
-         <A NAME="linuxws"><H3>Calculator with Web Service client</H3></A>
-         <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Ensure you have enabled the Tuscany Python extension. Follow the instructions 
-                 found <A HREF="../../doc/PythonExtension.html#linuxbin">here</A>.
-             </LI>
-             <LI>Start the Axis2C simple http server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/PythonCalculator/deploy/sample.calculator</LI>
-                   <LI>./runwsserver.sh</LI>
-                </OL>
-             </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variable is required:                                 
-                      <UL>
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/PythonCalculator/deploy/sample.calculator.wsclient</LI>
-                   <LI>./runwsclient.sh</LI>
-                </OL>
              </LI>
          </OL>                                                  
         </DIV>
@@ -177,7 +130,6 @@
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
              </LI>
              <LI>As this sample is based on Python scripts, a specific compilation step is not necessary - 
@@ -192,7 +144,6 @@
 
        <DIV CLASS="section"> 
          <A NAME="winrun"><H2>Running the Python Calculator sample on Windows</H2></A>
-         <A NAME="winbasic"><H3>Calculator with basic client</H3></A>
          <OL>
              <LI>Ensure you have enabled the Tuscany Python extension. Follow the instructions 
                  found <A HREF="../../doc/PythonExtension.html#winbin">here</A>.
@@ -201,7 +152,6 @@
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
@@ -209,41 +159,6 @@
                    <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\PythonCalculator\deploy\sample.calculator.client</LI>
                    <LI>runclient.bat</LI>
                 </UL>
-             </LI>
-         </OL>                                                  
-         <A NAME="winws"><H3>Calculator with Web Service client</H3></A>
-         <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Ensure you have enabled the Tuscany Python extension. Follow the instructions 
-                 found <A HREF="../../doc/PythonExtension.html#winbin">here</A>.
-             </LI>
-             <LI>Start the Axis2C simple http server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\PythonCalculator\deploy\sample.calculator</LI>
-                   <LI>runwsserver.bat</LI>
-                </OL>
-             </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\PythonCalculator\deploy\sample.calculator.wsclient</LI>
-                   <LI>runwsclient.bat</LI>
-                </OL>
              </LI>
          </OL>                                                  
       </DIV>

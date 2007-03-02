@@ -5,17 +5,13 @@ This is a very simple sample to show how an SCA composite can wire together
 two components to implement a Calculator service and expose that service as
 a Web Service.
 
-There are three sub projects in this workspace:
+There are two sub projects in this workspace:
     - sample.calculator
       This contains the source code and SCDL artifacts for the SCA Calculator.
       composite implementing the sample Calculator.
 
     - sample.calculator.client
       A sample client which does a local call to the Calculator service.
-
-    - sample.calculator.wsclient
-      A sample Axis2 Web Service client which calls the Calculator Web service.
-
 
 Additionally, there is the sample.calculator.app.composite file. This 
 describes the configuration of the SCA Calculator composite deployed to the 
