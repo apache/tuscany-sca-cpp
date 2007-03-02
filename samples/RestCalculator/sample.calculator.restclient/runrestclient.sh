@@ -31,7 +31,7 @@ exit;
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
-export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/ruby/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/ruby/lib:$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$LD_LIBRARY_PATH
 
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_COMPONENT=sample.calculator.CalculatorRestClientComponent

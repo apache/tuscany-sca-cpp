@@ -40,10 +40,10 @@
          <H2>Tuscany SCA for C++ Samples - Ruby Calculator Sample</H2> 
 
          <P>This is a very simple sample to show how an SCA composite can wire 
-          together two Ruby components to implement a Calculator service and expose 
-          that service as a Web Service.
+          together two Ruby components to implement a Calculator service and invoke
+          the service via a local client.
          </P>
-         <P>There are three sub projects in this workspace:</P>
+         <P>There are two sub projects in this workspace:</P>
          <UL>
             <LI>sample.calculator<BR/>
                 This contains the Ruby scripts and SCDL artifacts for the SCA Calculator 
@@ -51,10 +51,6 @@
             </LI>
             <LI>sample.calculator.client<BR/>
                 A sample client which does a local call to the Calculator service.
-            </LI>
-            <LI>sample.calculator.wsclient<BR/>
-                A sample client which does a local call to a composite that contains a Web Service reference
-                that calls the Calculator Web Service.
             </LI>
          </UL>
          <P>Additionally, there is the sample.calculator.app.composite file. This     
@@ -68,16 +64,8 @@
          <OL>
             <LI><A HREF="#linuxbld">Building the Ruby samples on Linux</A></LI>
             <LI><A HREF="#linuxrun">Running the Ruby Calculator sample on Linux:</A></LI>
-               <UL>
-                  <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#linuxws">Running the Web Service client</A></LI>
-               </UL>
             <LI><A HREF="#winbld">Building the Ruby Calculator sample on Windows</A></LI>
             <LI><A HREF="#winrun">Running the Ruby Calculator sample on Windows:</A></LI>
-               <UL>
-                  <LI><A HREF="#winbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#winws">Running the Web Service client</A></LI>
-               </UL>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
       </DIV>
@@ -92,7 +80,6 @@
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
              </LI>
              <LI>As the Ruby Calculator sample is based on Ruby scripts, a specific compilation step is not necessary - 
@@ -109,16 +96,11 @@
 
        <DIV CLASS="section"> 
          <A NAME="linuxrun"><H2>Running the Ruby Calculator sample on Linux</H2></A>
-         <A NAME="linuxbasic"><H3>Calculator with basic client</H3></A>
          <OL>
-             <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
-                 found <A HREF="../../doc/RubyExtension.html#linuxbin">here</A>.
-             </LI>
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
@@ -126,39 +108,6 @@
                    <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator.client</LI>
                    <LI>./runclient.sh</LI>
                 </UL>
-             </LI>
-         </OL>                                                  
-         <A NAME="linuxws"><H3>Calculator with Web Service client</H3></A>
-         <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
-                 found <A HREF="../../doc/RubyExtension.html#linuxbin">here</A>.
-             </LI>
-             <LI>Start the Axis2C simple http server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator</LI>
-                   <LI>./runwsserver.sh</LI>
-                </OL>
-             </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variable is required:                                 
-                      <UL>
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyCalculator/deploy/sample.calculator.wsclient</LI>
-                   <LI>./runwsclient.sh</LI>
-                </OL>
              </LI>
          </OL>                                                  
         </DIV>
@@ -170,10 +119,9 @@
          <OL>
              <LI>The following environment variables are required:                                 
                 <UL>
-                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                </UL></LI>
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>
+                </UL>
              </LI>
              <LI>As this sample is based on Ruby scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the sample with the following commands:
@@ -187,16 +135,11 @@
 
        <DIV CLASS="section"> 
          <A NAME="winrun"><H2>Running the Ruby Calculator sample on Windows</H2></A>
-         <A NAME="winbasic"><H3>Calculator with basic client</H3></A>
          <OL>
-             <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
-                 found <A HREF="../../doc/RubyExtension.html#winbin">here</A>.
-             </LI>
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
@@ -206,44 +149,7 @@
                 </UL>
              </LI>
          </OL>                                                  
-         <A NAME="winws"><H3>Calculator with Web Service client</H3></A>
-         <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
-             </LI>
-             <LI>Ensure you have enabled the Tuscany Ruby extension. Follow the instructions 
-                 found <A HREF="../../doc/RubyExtension.html#winbin">here</A>.
-             </LI>
-             <LI>Start the Axis2C simple http server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator</LI>
-                   <LI>runwsserver.bat</LI>
-                </OL>
-             </LI>
-             <LI>Run the client:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyCalculator\deploy\sample.calculator.wsclient</LI>
-                   <LI>runwsclient.bat</LI>
-                </OL>
-             </LI>
-         </OL>                                                  
       </DIV>
-
-
               
       <DIV CLASS="section"> 
          <A NAME="help"><H2>Getting Help</H2></A>

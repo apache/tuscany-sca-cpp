@@ -166,13 +166,13 @@
                </TD>
             </TR>
             <TR CLASS="b">
-               <TD><STRONG>Optional:</STRONG> Axis2C Release 0.96</TD>
+               <TD><STRONG>Optional:</STRONG> Axis2/C Release 0.96</TD>
                <TD> 
                   <A HREF="http://ws.apache.org/axis2/c/download.cgi"
                      TARGET="_blank">http://ws.apache.org/axis2/c/download.cgi</A><BR/>
                   This is required for building and running the Tuscany SCA Web Service extension
                   (see <A HREF="#extensions">below</A>).
-                  Please download and follow the installation instructions. Ensure you can run the Axis2C samples                  
+                  Please download and follow the installation instructions. Ensure you can run the Axis2/C samples                  
                </TD>
             </TR>
             <TR CLASS="a">
@@ -214,7 +214,7 @@
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.96&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
                 </UL></LI>
               <LI>The following environment variables are optional if you wish to build the Python or Ruby extensions
                   (see the <A HREF="doc/PythonExtension.html">Python extension</A> and 
@@ -259,7 +259,7 @@
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.96&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
                 </UL></LI>
               <LI>The following environment variables are optional if you wish to build the Python or Ruby extensions
                   (see the <A HREF="doc/PythonExtension.html">Python extension</A> and 
@@ -302,13 +302,14 @@
                <TD><STRONG>Details</STRONG></TD>
             </TR>
             <TR CLASS="b">
-               <TD STYLE="vertical-align: top; white-space: nowrap;">C++ 
+               <TD STYLE="vertical-align: top; white-space: nowrap;">
+                <A HREF="doc/CppExtension.html">C++</A> 
                </TD>
                <TD>Provides the SCA C++ client API and enables C++ component implementations 
                 and interfaces. See the 
                 <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">SCA 
                 C++ Client and Implementation specification</A> for more details about the SCA C++ 
-                Programming Model and the <A HREF="doc/CPPComponents.html">Creating C++ SCA Components</A> 
+                Programming Model and the <A HREF="doc/CppExtension.html#components">Creating C++ SCA Components</A> 
                 document for a step-by-step example.<BR/>
                 <STRONG>Requires:</STRONG>
                 <UL>
@@ -367,16 +368,18 @@
                </TD>
             </TR>
             <TR CLASS="b">
-               <TD STYLE="vertical-align: top; white-space: nowrap;">Axis2C Web Services</TD>
+               <TD STYLE="vertical-align: top; white-space: nowrap;">
+                <A HREF="doc/Axis2CWSExtension.html">Axis2/C Web Services</A>
+               </TD>
                <TD>Provides the Web Service bindings enabling Tuscany to call SCA references via
                 Web Services or expose SCA services as Web Services. See the 
                 <A HREF="http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications">SCA 
                 Web Service bindings specification</A> for more details about SCA Web Service support
-                and the <A HREF="doc/Axis2CWSService.html">Enabling Web Service 
+                and the <A HREF="doc/Axis2CWSExtension.html#service">Enabling Web Service 
                 access to SCA Components</A> document for a step-by-step example.<BR/> 
                 <STRONG>Requires:</STRONG>
                 <UL>
-                    <LI><A HREF="http://ws.apache.org/axis2/c/download.cgi" TARGET="_blank">Axis2C Release 0.96</A>
+                    <LI><A HREF="http://ws.apache.org/axis2/c/download.cgi" TARGET="_blank">Axis2/C Release 0.96</A>
                     - for building and running the extension.</LI>
                 </UL>
                </TD>
@@ -403,11 +406,11 @@
                </TD>
                <TD>Provides a default SCA binding enabling Tuscany to determine the appropriate technology
                 to use to provide services or invoke references. Currently this defaults to using the 
-                Axis2C Web Services binding. See the 
+                Axis2/C Web Services binding. See the 
                 <A HREF="doc/SCAExtension.html">SCA extension documentation</A> for more details.<BR/> 
                 <STRONG>Requires:</STRONG>
                 <UL>
-                    <LI><A HREF="doc/Axis2CWSService.html" TARGET="_blank">Axis2C Web Services extension</A>
+                    <LI><A HREF="doc/Axis2CWSExtension.html" TARGET="_blank">Axis2/C Web Services extension</A>
                     - for building and running the extension.</LI>
                 </UL>
                </TD>
@@ -446,7 +449,7 @@
             <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;"><A HREF="doc/Axis2CWSService.html">Enabling Web Service access to your Tuscany SCA component</A> 
                </TD>
-               <TD>A document that describes how to expose a Tuscany SCA C++ component as a Web Service via the Tuscany Axis2C Web Service support.
+               <TD>A document that describes how to expose a Tuscany SCA C++ component as a Web Service via the Tuscany Axis2/C Web Service support.
                </TD>
             </TR>
             <TR CLASS="a">
