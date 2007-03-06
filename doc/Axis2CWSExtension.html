@@ -30,20 +30,20 @@
 
     <LINK HREF="css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA Native - Enabling Axis2C Web Services</TITLE>
+   <TITLE>Tuscany SCA Native - Axis2/C Web Services Extension</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA Native - Enabling Axis2C Web Services</H2> 
+         <H1>Tuscany SCA Native - Axis2/C Web Services Extension</H1> 
 
-         <P>This document describes the deployment and use of the Axis2C Web Service 
-            (binding.ws) service support in the Apache Tuscany SCA Native runtime.
+         <P>This document describes the installation, deployment and use of the Axis2/C Web Service 
+            support in the Apache Tuscany SCA Native runtime.
          </P>
          <P>The WS service code is based on <A HREF="http://ws.apache.org/axis2/c">Apache 
-            Axis2C version 0.96</A> and allows SCA components to be invoked via Web 
+            Axis2/C version 0.96</A> and allows SCA components to be invoked via Web 
             Service calls.
          </P>
          <P>WS service currently supports Document/literal Wrapped style Web Services 
@@ -63,7 +63,15 @@
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
          <OL>
-            <LI><A HREF="#deploy">Deploying the Tuscany Web Service support to Axis2C..</A>
+            <LI><A HREF="#requirements">System Requirements</A></LI>
+            <LI><A HREF="#install">Installing the Tuscany SCA Axis2/C Web Services Extension..</A>
+                <UL>
+                    <LI><A HREF="#linuxbin">..from the binary release on Linux</A></LI>
+                    <LI><A HREF="#linuxsrc">..from the source release on Linux</A></LI>
+                    <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
+                    <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
+                </UL></LI>
+            <LI><A HREF="#deploy">Deploying the Tuscany Web Service support to Axis2/C..</A>
                 <UL>
                     <LI><A HREF="#autodeploy">..automatically via scripts</A></LI>
                     <LI><A HREF="#mandeploy">..manually</A></LI>
@@ -74,17 +82,102 @@
          </OL>
       </DIV>
 
+      <DIV CLASS="section"> 
+         <A NAME="requirements"><H2>System Requirements</H2></A>
+
+         <P>In order to install and use the Tuscany SCA Axis2/C Web Services Extension there are some
+         extra requirements in addition to the <A HREF="../GettingStarted.html#requirements">Tuscany 
+         SCA requirements</A>:</P> 
+         <TABLE CLASS="bodyTable">
+
+            <TBODY>
+            <TR CLASS="a">
+               <TD><B>Software</B></TD>
+               <TD><B>Download Link</B></TD>
+            </TR>
+            <TR CLASS="b">
+               <TD>Axis2/C version 0.96</TD>
+
+               <TD> 
+                  <A HREF="http://ws.apache.org/axis2/c/download.cgi"
+                     TARGET="_blank">http://ws.apache.org/axis2/c/download.cgi</A><BR/>
+                  Please download and follow the installation instructions. Ensure you can run 
+                  the Axis2/C samples.
+               </TD>
+            </TR>
+            </TBODY>
+         </TABLE>
+      </DIV> 
 
       <DIV CLASS="section"> 
-         <A NAME="deploy"><H2>Deploying the Tuscany Web Service support to Axis2C</H2></A>
+         <A NAME="install"><H2>Installing the Tuscany SCA Axis2/C Extension</H2></A>
+         <A NAME="linuxbin"><H3>Getting the Tuscany SCA Axis2/C Extension working with the binary release on Linux</H3></A>
+          <OL>
+              <LI>Ensure the AXIS2C_HOME environment variable is set to the Axis2/C installation</LI>
+              <LI>Deploy the Axis2/C Web Services extension by following the <A HREF="#deploy">deployment steps</A></LI>
+          </OL>
+         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Axis2/C Extension working with the source release on Linux</H3></A>
+          <OL>
+              <LI>You will need the Tuscany SCA and SDO libraries - follow the instructions 
+                  <A HREF="../GettingStarted.html">here</A> to build the SCA libraries and default extensions</LI>
+              <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to built Tuscany SCA&gt;</LI>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to Axis2/C installation&gt;</LI>
+                </UL></LI>
+              <LI>Build the Axis2/C source only with the following command sequence:
+                  <UL>
+                      <LI>cd &lt;tuscany_sca_install_dir&gt;</LI>
+                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-wsbinding --enable-cpp=no</LI>
+                      <LI>make</LI>
+                      <LI>make install</LI>
+                  </UL>
+	              NOTE: If you don't provide a --prefix configure option, it will by default install into
+                  /usr/local/tuscany/sca</LI>
+              </OL>
+           
+         <A NAME="winbin"><H3>Getting the Tuscany SCA Axis2/C Extension working with the binary release on Windows</H3></A>
+          <OL>
+              <LI>Ensure the AXIS2C_HOME environment variable is set to the Axis2/C installation</LI>
+              <LI>Deploy the Axis2/C Web Services extension by following the <A HREF="#deploy">deployment steps</A></LI>
+          </OL>
+        <A NAME="winsrc"><H3>Getting the Tuscany SCA Axis2/C Extension working with the source release on Windows</H3></A>
+           <OL>   
+              <LI>Unzip the supplied source zip file</LI>
+              <LI>The following environment variables are required:                                 
+                <UL>
+                  <LI>TUSCANY_SCACPP=&lt;path to built Tuscany SCA&gt;</LI>                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
+                  <LI>AXIS2C_HOME=&lt;path to Axis2/C installation&gt;</LI>
+                </UL></LI>
+              <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
+                  will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
+                  This will be where you installed the compiler.</LI>
+              <LI>Build the source:
+                  <UL>
+                      <LI>cd &lt;to where you unzipped the source&gt;</LI>
+                      <LI>build</LI>                      
+                  </UL>
+	              This will build all the projects and put the required output into the 'deploy' directory<BR/><BR/>
+                  Alternatively, open the workspace at &lt;tuscany_sca_install_dir&gt;/projects/tuscany_sca/tuscany_sca.dsw 
+                  in Visual Studio 6 or at at &lt;tuscany_sca_install_dir&gt;/projectsvc7/tuscany_sca/tuscany_sca.sln 
+                  in Visual Studio 7.1 - you can build projects individually
+                  or build the samples to rebuild all the projects</LI>
+          </OL>
+      </DIV>
+
+
+      <DIV CLASS="section"> 
+         <A NAME="deploy"><H2>Deploying the Tuscany Web Service support to Axis2/C</H2></A>
          <A NAME="autodeploy"><H3>Deploying via scripts</H3></A>
-         <P>Tuscany provides simple shell scripts to deploy the Web Service support to Axis2C.
-            However, the script <STRONG>will overwrite your Axis2C axis.xml file</STRONG>, so if you 
-            have altered your axis2.xml from the default provided by the Axis2C distribution, it is
+         <P>Tuscany provides simple shell scripts to deploy the Web Service support to Axis2/C.
+            However, the script <STRONG>will overwrite your Axis2/C axis.xml file</STRONG>, so if you 
+            have altered your axis2.xml from the default provided by the Axis2/C distribution, it is
             recommended that you follow the <A HREF="#mandeploy">manual deployment</A> steps 
             outlined below. 
          </P>
-         <P>To automatically deploy Tuscany Web Service support to Axis2C on Linux:
+         <P>To automatically deploy Tuscany Web Service support to Axis2/C on Linux:
            <OL> 
               <LI>The AXIS2C_HOME environment variable is required:                                 
                 <UL>
@@ -98,7 +191,7 @@
               </LI>
            </OL>
          </P>
-         <P>To automatically deploy Tuscany Web Service support to Axis2C on Windows:
+         <P>To automatically deploy Tuscany Web Service support to Axis2/C on Windows:
            <OL> 
               <LI>The AXIS2C_HOME environment variable is required:                                 
                 <UL>
@@ -115,7 +208,7 @@
 
 
          <A NAME="mandeploy"><H3>Deploying manually</H3></A>
-         <P>To deploy Tuscany Web Service support to Axis2C manually, use the following steps:
+         <P>To deploy Tuscany Web Service support to Axis2/C manually, use the following steps:
          </P>
          <OL>
            <LI>
@@ -213,10 +306,10 @@
     &lt;reference&gt;CalculatorComponent/CalculatorService&lt;/reference&gt;
 &lt;/service&gt;</PRE>
              </LI>         
-             <LI>You are now ready to start the Axis2C HTTP server. Remember you will need to have the 
+             <LI>You are now ready to start the Axis2/C HTTP server. Remember you will need to have the 
                  TUSCANY_SCACPP, TUSCANY_SDOCPP and AXIS2C_HOME environment variables set, 
-                 as well as the SCA and SDO bin directories and the Axis2C lib directory on 
-                 your PATH on Windows or the SCA, SDO and Axis2C lib directories on 
+                 as well as the SCA and SDO bin directories and the Axis2/C lib directory on 
+                 your PATH on Windows or the SCA, SDO and Axis2/C lib directories on 
                  your LD_LIBRARY_PATH on Linux. You will also need to set the TUSCANY_SCACPP_SYSTEM_ROOT
                  and TUSCANY_SCACPP_DEFAULT_COMPONENT environment variables to the 
                  path to your SCA component directory structure and the default component respectively.
@@ -244,8 +337,8 @@
                  </UL>
              </LI>
          </OL>
-         <P>Your component should now be exposed as an Axis2C Web Service, via the WS    
-            service you created. See the Axis2C documentation for writing clients to  
+         <P>Your component should now be exposed as an Axis2/C Web Service, via the WS    
+            service you created. See the Axis2/C documentation for writing clients to  
             invoke the Web Service, or you can use any other Web Service client platform 
             (e.g. <A HREF="http://ws.apache.org/axis2">Axis2 for Java</A>), or you can 
             invoke your service from another SCA application by using Tuscany's WS 
