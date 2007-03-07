@@ -19,23 +19,13 @@
 
 /* $Rev$ $Date$ */
 
-#include "tuscany/sca/php/PHPExtension.h"
-#include "tuscany/sca/util/Logging.h"
-#include "tuscany/sca/core/SCARuntime.h"
-#include "tuscany/sca/php/PHPImplementationExtension.h"
 #include "tuscany/sca/php/PHPInterfaceExtension.h"
+#include "tuscany/sca/php/model/PHPInterface.h"
+#include "tuscany/sca/util/Logging.h"
 
-
-extern "C"
-{
-#if defined(WIN32) || defined(_WINDOWS)
-    __declspec(dllexport) 
-#endif
-        void tuscany_sca_php_initialize()
-    {
-        tuscany::sca::php::PHPExtension::initialize();
-    }
-}
+using namespace std;
+using namespace commonj::sdo;
+using namespace tuscany::sca::model;
 
 namespace tuscany
 {
@@ -44,26 +34,41 @@ namespace tuscany
         namespace php
         {
             // ===================================================================
-            // Constructor for the PHPExtension class. 
+            // Constructor for the PHPInterfaceExtension class. 
             // ===================================================================
-            PHPExtension::PHPExtension()
+            PHPInterfaceExtension::PHPInterfaceExtension()
             { 
                 logentry();
             }
             
             // ===================================================================
-            // Destructor for the PHPExtension class.
+            // Destructor for the PHPInterfaceExtension class.
             // ===================================================================
-            PHPExtension::~PHPExtension()
+            PHPInterfaceExtension::~PHPInterfaceExtension()
             { 
                 logentry();
             }
 
-            void PHPExtension::initialize()
-            { 
+            const string PHPInterfaceExtension::extensionName("php");
+            const string PHPInterfaceExtension::typeQName("http://www.osoa.org/xmlns/sca/1.0#PHPInterface");
+
+            // ===================================================================
+            // loadModelElement - load the info from interface.php 
+            // ===================================================================
+            tuscany::sca::model::Interface* PHPInterfaceExtension::getInterface(Composite* composite, DataObjectPtr scdlInterface)
+            {
                 logentry();
-                SCARuntime::getCurrentRuntime()->registerImplementationExtension(new PHPImplementationExtension());
-                SCARuntime::getCurrentRuntime()->registerInterfaceExtension(new PHPInterfaceExtension());
+
+                // Determine the type
+                string ifType = scdlInterface->getType().getName();
+                if (ifType == "PHPInterface")
+                {
+                    bool remotable = scdlInterface->getBoolean("remotable");                    
+                    bool conversational = scdlInterface->getBoolean("conversational");                    
+
+                    return new PHPInterface(remotable, conversational);
+                }
+                return 0;
             }
 
         } // End namespace php

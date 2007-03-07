@@ -25,10 +25,12 @@ tuscany/sca/php/model/*.h
 libtuscany_sca_php_la_SOURCES = \
 tuscany/sca/php/PHPExtension.cpp \
 tuscany/sca/php/PHPImplementationExtension.cpp \
+tuscany/sca/php/PHPInterfaceExtension.cpp \
 tuscany/sca/php/PHPServiceWrapper.cpp \
 tuscany/sca/php/PHPServiceProxy.cpp \
 tuscany/sca/php/sca.cpp \
 tuscany/sca/php/model/PHPImplementation.cpp \
+tuscany/sca/php/model/PHPInterface.cpp \
 tuscany/sca/php/model/PHPReferenceBinding.cpp \
 tuscany/sca/php/model/PHPServiceBinding.cpp
 

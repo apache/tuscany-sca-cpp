@@ -45,7 +45,7 @@ echo "and PHP SCA and SDO installed at $PHP_SCA_SDO_LIB, $PHP_SCA_SDO_INCLUDE"
 #cd ${TUSCANY_SCACPP_HOME}/samples
 #./autogen.sh
 
-cd SCA_PHP_EXTENSION_HOME
+cd ${SCA_PHP_EXTENSION_HOME}
 ./autogen.sh
 
 

@@ -154,9 +154,6 @@ namespace tuscany
 				zval *params[5];
 
 				logentry();
-string temp;
-cout << "Press Key\n";
-cin >> temp;
 
 				// set the current component in the SCA runtime
 				// so that other things can get at it thorugh this
@@ -364,12 +361,16 @@ cin >> temp;
 							zend_eval_string((char *) script.c_str(), 
 								NULL, //&retval, 
 								"Include module" TSRMLS_CC);
+								
+							loginfo(">>>> About to call SCA_TuscanyWrapper->invoke()");
 
 							/* Now call SCA_TuscanyWrapper->invoke() ... */
 							ZVAL_STRING(&z_func_name, "invoke", 1);
 							call_user_function(EG(function_table), 
 								&pz_tuscany_wrapper, &z_func_name, 
 								&retval, 0, NULL TSRMLS_CC);
+									
+							loginfo("<<<< Return from SCA_TuscanyWrapper->invoke()");
 
 							zval_dtor(&z_func_name);
 

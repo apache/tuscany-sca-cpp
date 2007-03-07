@@ -70,6 +70,10 @@ AC_CHECK_FUNCS([getcwd putenv strdup])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
+                 samples/Makefile
+                 samples/PHPCalculator/Makefile
+                 samples/PHPCalculator/sample.calculator/Makefile
+                 samples/PHPCalculator/sample.calculator.client/Makefile
                  ])
 AC_OUTPUT
 
