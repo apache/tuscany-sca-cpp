@@ -30,14 +30,14 @@
 
     <LINK HREF="../doc/css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA for C++ Samples - C++ BigBank Sample</TITLE>
+   <TITLE>Tuscany SCA Native Samples - C++ BigBank Sample</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA for C++ Samples - C++ BigBank Sample</H2> 
+         <H2>Tuscany SCA Native Samples - C++ BigBank Sample</H2> 
 
          <P>This sample implements the "Simplified BigBank" scenario. A whitepaper describing
             the scenario based on the SCA 0.9 Assembly specification can be found 
@@ -82,8 +82,8 @@
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
          <OL>
-            <LI><A HREF="#linuxbld">Building the C++ samples on Linux</A></LI>
-            <LI><A HREF="#linuxrun">Running the C++ BigBank sample on Linux:</A></LI>
+            <LI><A HREF="#linuxbld">Building the C++ samples on Linux and Mac OSX</A></LI>
+            <LI><A HREF="#linuxrun">Running the C++ BigBank sample on Linux and Mac OSX:</A></LI>
                <UL>
                   <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
                   <LI><A HREF="#linuxphp">Installing and running the PHP web client</A></LI>
@@ -100,15 +100,14 @@
 
 
        <DIV CLASS="section"> 
-         <A NAME="linuxbld"><H2>Building the C++ samples on Linux</H2></A>
+         <A NAME="linuxbld"><H2>Building the C++ samples on Linux and Mac OSX</H2></A>
          <P>If using the binary distribution the samples are built and installed in
-            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux</A>.</P>
+            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux and Mac OSX</A>.</P>
          <OL>
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
              </LI>
              <LI>Build the C++ samples with the following command sequence:
@@ -124,14 +123,23 @@
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="linuxrun"><H2>Running the C++ BigBank sample on Linux</H2></A>
+         <A NAME="linuxrun"><H2>Running the C++ BigBank sample on Linux and Mac OSX</H2></A>
          <A NAME="linuxbasic"><H3>BigBank with basic client</H3></A>
          <OL>
+             <LI>The C++ BigBank sample requires the following extensions:
+                <UL>
+                   <LI><A HREF="../../doc/CppExtension.html">C++ Extension</A></LI>
+                   <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
+                </UL>
+                 Please follow the documentation to ensure you have these extensions built and installed
+                 on your system
+             </LI>
+
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.92&gt;</LI>
+                  <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
@@ -143,16 +151,24 @@
          </OL>                                                  
         <A NAME="linuxphp"><H3>BigBank with PHP web client</H3></A>
           <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
+             <LI>The C++ BigBank sample requires the following extensions:
+                <UL>
+                   <LI><A HREF="../../doc/CppExtension.html">C++ Extension</A></LI>
+                   <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
+                </UL>
+                 Please follow the documentation to ensure you have these extensions built and installed
+                 on your system
              </LI>
-             <LI>Start the Axis2C simple http server:
+             <LI>Ensure you have enabled Axis2/C to run Tuscany SCA services. Follow the instructions 
+                 found <A HREF="../../doc/Axis2CWSService.html#deploy">here</A>.
+             </LI>
+             <LI>Start the Axis2/C simple http server:
                 <OL>
                    <LI>The following environment variables are required:                                 
                       <UL>
                         <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                         <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                        <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
                       </UL>
                    </LI>
                    <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/CppBigBank/deploy/bin
@@ -204,7 +220,6 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL></LI>
              </LI>
              <LI>You must have set up the environment for Microsoft Visual C++ tools.
@@ -224,11 +239,18 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
          <A NAME="winrun"><H2>Running the C++ BigBank sample on Windows</H2></A>
          <A NAME="winbasic"><H3>BigBank with basic client</H3></A>
          <OL>
+             <LI>The C++ BigBank sample requires the following extensions:
+                <UL>
+                   <LI><A HREF="../../doc/CppExtension.html">C++ Extension</A></LI>
+                   <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
+                </UL>
+                 Please follow the documentation to ensure you have these extensions built and installed
+                 on your system
+             </LI>
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                  <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
                 </UL>
              </LI>
              <LI>Run the sample with the following commands:
@@ -240,16 +262,24 @@ PHPIniDir "/home/php/php5.1.6"</PRE>
          </OL>                                                  
         <A NAME="winphp"><H3>BigBank with PHP web client</H3></A>
           <OL>
-             <LI>Ensure you have enabled Axis2C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSService.html">here</A>.
+             <LI>The C++ BigBank sample requires the following extensions:
+                <UL>
+                   <LI><A HREF="../../doc/CppExtension.html">C++ Extension</A></LI>
+                   <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
+                </UL>
+                 Please follow the documentation to ensure you have these extensions built and installed
+                 on your system
              </LI>
-             <LI>Start the Axis2C simple http server:
+             <LI>Ensure you have enabled Axis2/C to run Tuscany SCA services. Follow the instructions 
+                 found <A HREF="../../doc/Axis2CWSService.html#deploy">here</A>.
+             </LI>
+             <LI>Start the Axis2/C simple http server:
                 <OL>
                    <LI>The following environment variables are required:                                 
                       <UL>
                         <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
                         <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to axis2c version 0.94&gt;</LI>
+                        <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
                       </UL>
                    </LI>
                    <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\CppBigBank\deploy\bigbank.account

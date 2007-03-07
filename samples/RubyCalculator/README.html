@@ -62,24 +62,24 @@
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
          <OL>
-            <LI><A HREF="#linuxbld">Building the Ruby samples on Linux</A></LI>
-            <LI><A HREF="#linuxrun">Running the Ruby Calculator sample on Linux:</A></LI>
+            <LI><A HREF="#linuxbld">Building the Ruby samples on Linux and Mac OSX</A></LI>
+            <LI><A HREF="#linuxrun">Running the Ruby Calculator sample on Linux and Mac OSX</A></LI>
             <LI><A HREF="#winbld">Building the Ruby Calculator sample on Windows</A></LI>
-            <LI><A HREF="#winrun">Running the Ruby Calculator sample on Windows:</A></LI>
+            <LI><A HREF="#winrun">Running the Ruby Calculator sample on Windows</A></LI>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
       </DIV>
 
 
        <DIV CLASS="section"> 
-         <A NAME="linuxbld"><H2>Building the Ruby samples on Linux</H2></A>
+         <A NAME="linuxbld"><H2>Building the Ruby samples on Linux and Mac OSX</H2></A>
          <P>If using the binary distribution the samples are built and installed in
-            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux</A>.</P>
+            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux and Mac OSX</A>.</P>
          <OL>
              <LI>The following environment variables are required:                                 
                 <UL>
-                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
+                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
                 </UL></LI>
              </LI>
              <LI>As the Ruby Calculator sample is based on Ruby scripts, a specific compilation step is not necessary - 
@@ -95,8 +95,16 @@
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="linuxrun"><H2>Running the Ruby Calculator sample on Linux</H2></A>
+         <A NAME="linuxrun"><H2>Running the Ruby Calculator sample on Linux and Mac OSX</H2></A>
          <OL>
+             <LI>The Ruby Calculator sample requires the following extension:
+                <UL>
+                   <LI><A HREF="../../doc/RubyExtension.html">Ruby Extension</A></LI>
+                </UL>
+                 Please follow the documentation to ensure you have this extension built and installed
+                 on your system
+             </LI>
+
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
@@ -136,6 +144,13 @@
        <DIV CLASS="section"> 
          <A NAME="winrun"><H2>Running the Ruby Calculator sample on Windows</H2></A>
          <OL>
+             <LI>The Ruby Calculator sample requires the following extension:
+                <UL>
+                   <LI><A HREF="../../doc/RubyExtension.html">Ruby Extension</A></LI>
+                </UL>
+                 Please follow the documentation to ensure you have this extension built and installed
+                 on your system
+             </LI>
              <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
