@@ -66,8 +66,8 @@
             <LI><A HREF="#requirements">System Requirements</A></LI>
             <LI><A HREF="#install">Installing the Tuscany SCA Axis2/C Web Services Extension..</A>
                 <UL>
-                    <LI><A HREF="#linuxbin">..from the binary release on Linux</A></LI>
-                    <LI><A HREF="#linuxsrc">..from the source release on Linux</A></LI>
+                    <LI><A HREF="#linuxbin">..from the binary release on Linux and Mac OSX</A></LI>
+                    <LI><A HREF="#linuxsrc">..from the source release on Linux and Mac OSX</A></LI>
                     <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
                     <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
                 </UL></LI>
@@ -76,6 +76,7 @@
                     <LI><A HREF="#autodeploy">..automatically via scripts</A></LI>
                     <LI><A HREF="#mandeploy">..manually</A></LI>
                 </UL></LI>
+            <LI><A HREF="#deployhttpd">Deploying Axis2/C to the Apache HTTPD server</A></LI>
             <LI><A HREF="#use">Defining an SCA Composite with a WS service</A></LI>
             <LI><A HREF="#maptable">XML Schema Type to C++ Type Mapping</A></LI>
             <LI><A HREF="#creatingwsdl">Notes on creating WSDL</A></LI>
@@ -111,12 +112,12 @@
 
       <DIV CLASS="section"> 
          <A NAME="install"><H2>Installing the Tuscany SCA Axis2/C Extension</H2></A>
-         <A NAME="linuxbin"><H3>Getting the Tuscany SCA Axis2/C Extension working with the binary release on Linux</H3></A>
+         <A NAME="linuxbin"><H3>Getting the Tuscany SCA Axis2/C Extension working with the binary release on Linux and Mac OSX</H3></A>
           <OL>
               <LI>Ensure the AXIS2C_HOME environment variable is set to the Axis2/C installation</LI>
               <LI>Deploy the Axis2/C Web Services extension by following the <A HREF="#deploy">deployment steps</A></LI>
           </OL>
-         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Axis2/C Extension working with the source release on Linux</H3></A>
+         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Axis2/C Extension working with the source release on Linux and Mac OSX</H3></A>
           <OL>
               <LI>You will need the Tuscany SCA and SDO libraries - follow the instructions 
                   <A HREF="../GettingStarted.html">here</A> to build the SCA libraries and default extensions</LI>
@@ -177,7 +178,7 @@
             recommended that you follow the <A HREF="#mandeploy">manual deployment</A> steps 
             outlined below. 
          </P>
-         <P>To automatically deploy Tuscany Web Service support to Axis2/C on Linux:
+         <P>To automatically deploy Tuscany Web Service support to Axis2/C on Linux and Mac OSX:
            <OL> 
               <LI>The AXIS2C_HOME environment variable is required:                                 
                 <UL>
@@ -212,7 +213,7 @@
          </P>
          <OL>
            <LI>
-             Linux:
+             Linux and Mac OSX:
              <OL>
                <LI>cd &lt;axis2c version 0.96&gt;/services</LI>
                <LI>ln -sf  &lt;tuscany_sca_install_dir&gt;/extensions/ws/service/services/tuscany</LI>
@@ -249,6 +250,14 @@
 
          </OL>
       </DIV>
+
+      <DIV CLASS="section"> 
+         <A NAME="deployhttpd"><H2>Deploying Axis2/C to the Apache HTTPD server</H2></A>
+         <P>Follow the <A HREF="http://ws.apache.org/axis2/c/docs/installationguide.html#installing-apache2">Axis2/C documentation</A> 
+            to deploy Axis2/C to Apache HTTPD. Also see the  <A HREF="../samples/HTTPDBigBank/README.html">HTTPDBigBank</A> 
+            sample, which demonstrates running Axis2/C under Apache HTTPD.</P>
+      </DIV>
+
 
       <DIV CLASS="section"> 
          <A NAME="use"><H2>Defining an SCA Composite with a WS service</H2></A>
@@ -310,7 +319,8 @@
                  TUSCANY_SCACPP, TUSCANY_SDOCPP and AXIS2C_HOME environment variables set, 
                  as well as the SCA and SDO bin directories and the Axis2/C lib directory on 
                  your PATH on Windows or the SCA, SDO and Axis2/C lib directories on 
-                 your LD_LIBRARY_PATH on Linux. You will also need to set the TUSCANY_SCACPP_SYSTEM_ROOT
+                 your LD_LIBRARY_PATH on Linux and your DYLD_LIBRARY_PATH on Mac OSX. 
+                 You will also need to set the TUSCANY_SCACPP_SYSTEM_ROOT
                  and TUSCANY_SCACPP_DEFAULT_COMPONENT environment variables to the 
                  path to your SCA component directory structure and the default component respectively.
                  E.g. on Windows run the following commands:

@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../../runtime/extensions/ws/service/axis2c/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include,$(AXIS2C_HOME)/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/ws/service/axis2c/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_BINDING_SERVICE_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"

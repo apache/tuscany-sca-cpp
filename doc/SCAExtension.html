@@ -30,54 +30,45 @@
 
     <LINK HREF="css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA Native - SCA Extension</TITLE>
+   <TITLE>Tuscany SCA Native - SCA Binding Extension</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H2>Tuscany SCA Native - SCA Extension</H2> 
+         <H1>Tuscany SCA Native - SCA Binding Extension</H1> 
 
          <P>This document describes the deployment and use of the SCA  
             binding support in the Apache Tuscany SCA Native runtime.
          </P>
-         <P>The Tuscany REST binding extension allows components to be invoked via REST
-            calls using the HTTP REST syntax.
+         <P>The SCA binding allows components to be invoked via an
+            implementation specific protocol. Currently, in the Tuscany SCA binding 
+            extension, the <A HREF="Axis2CWSExtension.html">Axis2/C Web Service binding extension</A>
+            is used to provide the implementaion, so calls use the SOAP protocol
          </P>
-         <P>The following samples demonstrate use of the REST extension:</P>
-         <UL>
-             <LI><A HREF="../samples/RestCalculator/README.html">RestCalculator</A></LI>
-             <LI><A HREF="../samples/RestCustomer/README.html">RestCustomer</A></LI>
-             <LI><A HREF="../samples/RestYahoo/README.html">RestYahoo</A></LI>
-             <LI><A HREF="../samples/HTTPDBigBank/README.html">HTTPDBigBank</A></LI>
-         </UL>
+         <P>The <A HREF="../samples/HTTPDBigBank/README.html">HTTPDBigBank</A> sample demonstrates the 
+            use of the SCA binding extension.
+         </P>
       </DIV>
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
          <OL>
             <LI><A HREF="#requirements">System Requirements</A></LI>
-            <LI><A HREF="#install">Installing the Tuscany SCA Ruby Extension..</A>
+            <LI><A HREF="#install">Installing the Tuscany SCA Binding Extension..</A>
                 <UL>
-                    <LI><A HREF="#linuxbin">..from the binary release on Linux</A></LI>
-                    <LI><A HREF="#linuxsrc">..from the source release on Linux</A></LI>
+                    <LI><A HREF="#linuxbin">..from the binary release on Linux and Mac OSX</A></LI>
+                    <LI><A HREF="#linuxsrc">..from the source release on Linux and Mac OSX</A></LI>
                     <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
                     <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
                 </UL></LI>
-            <LI><A HREF="#pm">The Tuscany Ruby Programming Model</A></LI>
-               <UL>
-                  <LI><A HREF="#clients">Clients</A></LI>
-                  <LI><A HREF="#components">SCA Components</A></LI>
-                  <LI><A HREF="#references">Component references</A></LI>
-                  <LI><A HREF="#properties">Component properties</A></LI>
-               </UL>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
       </DIV>
      <DIV CLASS="section"> 
          <A NAME="requirements"><H2>System Requirements</H2></A>
 
-         <P>In order to install and use the Tuscany SCA Ruby Extension there are some
+         <P>In order to install and use the Tuscany SCA Binding Extension there are some
          extra requirements in addition to the <A HREF="../GettingStarted.html#requirements">Tuscany 
          SCA requirements</A>:</P> 
          <TABLE CLASS="bodyTable">
@@ -85,20 +76,14 @@
             <TBODY>
             <TR CLASS="a">
                <TD><B>Software</B></TD>
-               <TD><B>Download Link</B></TD>
+               <TD><B>Details</B></TD>
             </TR>
             <TR CLASS="b">
-               <TD>Ruby version 1.8.x</TD>
+               <TD><A HREF="Axis2CWSExtension.html">Tuscany Axis2/C Web Service binding extension</A></TD>
 
                <TD> 
-                  <A HREF="http://www.ruby-lang.org"
-                     TARGET="_blank">http://www.ruby-lang.org</A><BR/>
-                  Please download and follow the installation instructions. You should
-                  be able to build the Tuscany SCA Ruby Extension with other versions of Ruby.
-                  The extension has been tested with the 
-                  <A HREF="http://rubyforge.org/frs/download.php/12751/ruby185-21.exe">Ruby 1.8.5 One-Click Installer</A>
-                  on Windows and the <A HREF="ftp://ftp.ruby-lang.org/pub/ruby/ruby-1.8.5-p12.tar.gz">1.8.5 source code</A> 
-                  (compiled locally) on Linux.
+                  Please follow the installation instructions. The Axis2/C Web Service extension requires 
+                  <A HREF="http://ws.apache.org/axis2/c">Axis2/C version 0.96</A>.
                </TD>
             </TR>
             </TBODY>
@@ -106,29 +91,27 @@
       </DIV> 
 
       <DIV CLASS="section"> 
-         <A NAME="install"><H2>Installing the Tuscany SCA Ruby Extension</H2></A>
-         <A NAME="linuxbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Linux</H3></A>
+         <A NAME="install"><H2>Installing the Tuscany SCA Binding Extension</H2></A>
+         <A NAME="linuxbin"><H3>Getting the Tuscany SCA Binding Extension working with the binary release on Linux and Mac OSX</H3></A>
           <OL>
-              <LI>Ensure the Ruby libraries are available on the PATH environment variable</LI>
+              <LI>Ensure the AXIS2C_HOME environment variable is set to the Axis2/C installation</LI>
+              <LI>Deploy the Axis2/C Web Services extension by following the <A HREF="Axis2CWSExtension.html#deploy">deployment steps</A></LI>
+              <LI>Ensure the Axis2/C Web Service extension and SCA Binding extension libraries are available 
+                  on the LD_LIBRARY_PATH environment variable on Linux and the DYLD_LIBRARY_PATH environment variable on Mac OSX</LI>
           </OL>
-         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Ruby Extension working with the source release on Linux</H3></A>
+         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Binding Extension working with the source release on Linux and Mac OSX</H3></A>
           <OL>
               <LI>You will need the Tuscany SCA and SDO libraries - follow the instructions 
                   <A HREF="../GettingStarted.html">here</A> to build the SCA libraries and default extensions</LI>
               <LI>The following environment variables are required:                                 
                 <UL>
-                  <LI>TUSCANY_SCACPP=&lt;path to built Tuscany SCA&gt;                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>RUBY_LIB=&lt;path to Ruby libraries&gt;</LI>
-                  <LI>RUBY_INCLUDE=&lt;path to Ruby includes&gt;<BR/>
-                   Note: If you are using a default installation of Ruby these are usually:<BR/>
-                   RUBY_LIB=/usr/lib<BR/>
-                   RUBY_INCLUDE=/usr/lib/ruby/1.8/i386-linux</LI>
+                  <LI>TUSCANY_SCACPP=&lt;path to built Tuscany SCA&gt;</LI>
+                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>
                 </UL></LI>
-              <LI>Build the Ruby source only with the following command sequence:
+              <LI>Build the SCA Binding source only with the following command sequence:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;</LI>
-                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-ruby --enable-cpp=no</LI>
+                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-scabinding --enable-cpp=no</LI>
                       <LI>make</LI>
                       <LI>make install</LI>
                   </UL>
@@ -136,18 +119,20 @@
                   /usr/local/tuscany/sca</LI>
               </OL>
            
-         <A NAME="winbin"><H3>Getting the Tuscany SCA Ruby Extension working with the binary release on Windows</H3></A>
+         <A NAME="winbin"><H3>Getting the Tuscany SCA Binding Extension working with the binary release on Windows</H3></A>
           <OL>
-              <LI>Ensure the Ruby libraries are available on the PATH environment variable</LI>
+              <LI>Ensure the AXIS2C_HOME environment variable is set to the Axis2/C installation</LI>
+              <LI>Deploy the Axis2/C Web Services extension by following the <A HREF="Axis2CWSExtension.html#deploy">deployment steps</A></LI>
+              <LI>Ensure the Axis2/C Web Services extension and SCA Binding extension libraries are available 
+                  on the PATH environment variable</LI>
           </OL>
-        <A NAME="winsrc"><H3>Getting the Tuscany SCA Ruby Extension working with the source release on Windows</H3></A>
+        <A NAME="winsrc"><H3>Getting the Tuscany SCA Binding Extension working with the source release on Windows</H3></A>
            <OL>   
               <LI>Unzip the supplied source zip file</LI>
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SCACPP=&lt;path to built Tuscany SCA&gt;                                      
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>RUBY_HOME=&lt;path to installed Ruby&gt;                                      
                 </UL></LI>
               <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
                   will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
@@ -163,13 +148,6 @@
                   in Visual Studio 7.1 - you can build projects individually
                   or build the samples to rebuild all the projects</LI>
           </OL>
-      </DIV>
-
-      <DIV CLASS="section"> 
-         <A NAME="pm"><H2>The Tuscany Ruby Programming Model</H2></A>
-         <P>This section will explain the Tuscany Ruby programming model to help you to 
-            write your own Ruby components and clients.
-         </P>
       </DIV>
 
       <DIV CLASS="section"> 
