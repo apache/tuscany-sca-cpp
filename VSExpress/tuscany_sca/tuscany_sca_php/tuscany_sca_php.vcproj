@@ -187,6 +187,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\model\PHPInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\model\PHPInterface.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\model\PHPReferenceBinding.cpp"
 				>
 			</File>
@@ -225,6 +233,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\PHPImplementationExtension.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\PHPInterfaceExtension.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\runtime\extensions\php\src\tuscany\sca\php\PHPInterfaceExtension.h"
 			>
 		</File>
 		<File
