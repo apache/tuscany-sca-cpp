@@ -30,37 +30,39 @@
 
     <LINK HREF="../doc/css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA Native Samples - Ruby BigBank Sample</TITLE>
+   <TITLE>Tuscany SCA Native Samples - HTTPD BigBank Sample</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H1>Tuscany SCA Native Samples - Ruby BigBank Sample</H1> 
+         <H1>Tuscany SCA Native Samples - HTTPD BigBank Sample</H1> 
 
          <P>This sample implements the "Simplified BigBank" scenario. A whitepaper describing
             the scenario based on the SCA 0.9 Assembly specification can be found 
             <A HREF="http://www.osoa.org/display/Main/SCA+-+Previously+Published+Specifications">here</A>.
-            This sample uses multiple Ruby components, calls out to an external Web Service via a reference 
-            and exposes the service as a Web Service.
+            This is a more modular version of the original Bigbank app, with the account
+            service and the account data service are in different composites.
          </P>
-         <P>The Ruby BigBank sample requires the following extensions:
+         <P>The HTTPD BigBank sample requires the following extensions:
             <UL>
                <LI><A HREF="../../doc/RubyExtension.html">Ruby Extension</A></LI>
                <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
+               <LI><A HREF="../../doc/SCAExtension.html">SCA Binding Extension</A></LI>
             </UL>
              Please follow the documentation to ensure you have these extensions built and installed
              on your system
          </P>
-         <P>There are three sub projects in this workspace:</P>
+         <P>There are three sub-projects in this workspace:</P>
          <UL>
             <LI>bigbank.account<BR/>
-                This contains the source code and SCDL artifacts for the SCA Ruby BigBank
+                This contains the source code and SCDL artifacts for the SCA HTTPD BigBank
                 composite implementing the account services.
             </LI>
-            <LI>bigbank.client<BR/>
-                A sample client which does a local call to the BigBank service.
+            <LI>bigbank.accountdata<BR/>
+                This contains the source code and SCDL artifacts for the SCA HTTPD BigBank
+                composite implementing the account data services.
             </LI>
             <LI>bigbank.wsclient<BR/>
                 A sample client which uses an SCA Web Service reference to make a remote 
@@ -76,25 +78,17 @@
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
          <OL>
-            <LI><A HREF="#linuxbld">Building the Ruby BigBank sample on Linux</A></LI>
-            <LI><A HREF="#linuxrun">Running the Ruby BigBank sample on Linux:</A></LI>
-               <UL>
-                  <LI><A HREF="#linuxbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#linuxws">Running with Web Service clients</A></LI>
-               </UL>
-            <LI><A HREF="#winbld">Building the Ruby BigBank sample on Windows</A></LI>
-            <LI><A HREF="#winrun">Running the Ruby BigBank sample on Windows:</A></LI>
-               <UL>
-                  <LI><A HREF="#winbasic">Running the basic client</A></LI>
-                  <LI><A HREF="#winws">Running with Web Service clients</A></LI>
-               </UL>
+            <LI><A HREF="#linuxbld">Building the HTTPD BigBank sample on Linux</A></LI>
+            <LI><A HREF="#linuxrun">Running the HTTPD BigBank sample on Linux</A></LI>
+            <LI><A HREF="#winbld">Building the HTTPD BigBank sample on Windows</A></LI>
+            <LI><A HREF="#winrun">Running the HTTPD BigBank sample on Windows</A></LI>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
       </DIV>
 
 
        <DIV CLASS="section"> 
-         <A NAME="linuxbld"><H2>Building the Ruby BigBank sample on Linux</H2></A>
+         <A NAME="linuxbld"><H2>Building the HTTPD BigBank sample on Linux</H2></A>
          <P>If using the binary distribution the samples are built and installed in
             &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux</A>.</P>
          <OL>
@@ -104,7 +98,7 @@
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
                 </UL></LI>
              </LI>
-             <LI>As the Ruby BigBank sample is based on Ruby scripts, a specific compilation step is not necessary - 
+             <LI>As the HTTPD BigBank sample is based on Ruby scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the Ruby samples only with the following command sequence:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples</LI>
@@ -112,42 +106,19 @@
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide the --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sca/samples/RubyBigBank
+                  /usr/local/tuscany/sca/samples/HttpdBigBank
              </LI>
          </OL>                                                  
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="linuxrun"><H2>Running the Ruby BigBank sample on Linux</H2></A>
-         <A NAME="linuxbasic"><H3>BigBank with basic client</H3></A>
+         <A NAME="linuxrun"><H2>Running the HTTPD BigBank sample on Linux</H2></A>
          <OL>
-             <LI>The Ruby BigBank sample requires the following extensions:
+             <LI>The HTTPD BigBank sample requires the following extensions:
                 <UL>
                    <LI><A HREF="../../doc/RubyExtension.html">Ruby Extension</A></LI>
                    <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
-                </UL>
-                 Please follow the documentation to ensure you have these extensions built and installed
-                 on your system
-             </LI>
-             <LI>The following environment variables are required:                                 
-                <UL>
-                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                </UL>
-             </LI>
-             <LI>Run the sample with the following commands:
-                <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyBigBank/deploy/bigbank.client</LI>
-                   <LI>./runclient.sh</LI>
-                </UL>
-             </LI>
-         </OL>                                                  
-         <A NAME="linuxws"><H3>BigBank with Web Service clients</H3></A>
-         <OL>
-             <LI>The Ruby BigBank sample requires the following extensions:
-                <UL>
-                   <LI><A HREF="../../doc/RubyExtension.html">Ruby Extension</A></LI>
-                   <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
+                   <LI><A HREF="../../doc/SCAExtension.html">SCA Binding Extension</A></LI>
                 </UL>
                  Please follow the documentation to ensure you have these extensions built and installed
                  on your system
@@ -155,7 +126,7 @@
              <LI>Ensure you have enabled Axis2/C to run Tuscany SCA services. Follow the instructions 
                  found <A HREF="../../doc/Axis2CWSExtension.html#deploy">here</A>.
              </LI>
-             <LI>Start the Axis2/C simple http server:
+             <LI>Start the Apache HTTPD server:
                 <OL>
                    <LI>The following environment variables are required:                                 
                       <UL>
@@ -164,8 +135,12 @@
                         <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyBigBank/deploy/bigbank.account</LI>
-                   <LI>./runwsserver.sh</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/HttpdBigBank/deploy/httpserver</LI>
+                   <LI>./startserver.sh<BR/>
+                       NOTE: Depending on your installation of Apache HTTPD you may need to log in as root before following 
+                       these steps. If so, you may also need to uncomment the User and Group directives in the
+                       &lt;tuscany_sca_install_dir&gt;/samples/HttpdBigBank/deploy/httpserver/conf/httpd.conf file
+                       and set these to the appropriate username and group that the server should run as</LI>
                 </OL>
              </LI>
              <LI>Now run the Web Service client:
@@ -179,7 +154,7 @@
                  </LI>
                  <LI>Run the sample with the following commands:
                     <UL>
-                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyBigBank/deploy/bigbank.wsclient</LI>
+                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/HttpdBigBank/deploy/bigbank.wsclient</LI>
                        <LI>./runwsclient.sh</LI>
                     </UL>
                  </LI>
@@ -187,13 +162,13 @@
             </LI>
             <LI>The PHP web client detailed in the 
                  <A HREF="../CppBigBank/README.html">CppBigBank</A> sample can also be used 
-                 with the Ruby BigBank service that is served by the Axis2/C http server started above.
+                 with the HTTPD BigBank service that is served by the HTTPD server started above.
              </LI>
          </OL>                                                  
         </DIV>
 
         <DIV CLASS="section">
-         <A NAME="winbld"><H2>Building the Ruby BigBank sample on Windows</H2></A>
+         <A NAME="winbld"><H2>Building the HTTPD BigBank sample on Windows</H2></A>
          <P>If using the binary distribution the samples are built and installed in
             &lt;tuscany_sca_install_dir&gt;\samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
          <OL>
@@ -203,10 +178,10 @@
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
                 </UL></LI>
              </LI>
-             <LI>As this sample is based on Ruby scripts, a specific compilation step is not necessary - 
+             <LI>As this sample is based on HTTPD scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the sample with the following commands:
                  <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyBigBank</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\HttpdBigBank</LI>
                    <LI>deploy.bat</LI>
                 </UL>
              </LI>
@@ -214,36 +189,13 @@
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="winrun"><H2>Running the Ruby BigBank sample on Windows</H2></A>
-         <A NAME="winbasic"><H3>BigBank with basic client</H3></A>
+         <A NAME="winrun"><H2>Running the HTTPD BigBank sample on Windows</H2></A>
          <OL>
-             <LI>The Ruby BigBank sample requires the following extensions:
+             <LI>The HTTPD BigBank sample requires the following extensions:
                 <UL>
-                   <LI><A HREF="../../doc/RubyExtension.html">Ruby Extension</A></LI>
+                   <LI><A HREF="../../doc/HttpdExtension.html">Ruby Extension</A></LI>
                    <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
-                </UL>
-                 Please follow the documentation to ensure you have these extensions built and installed
-                 on your system
-             </LI>
-             <LI>The following environment variables are required:                                 
-                <UL>
-                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                </UL>
-             </LI>
-             <LI>Run the sample with the following commands:
-                <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyBigBank\deploy\bigbank.client</LI>
-                   <LI>runclient.bat</LI>
-                </UL>
-             </LI>
-         </OL>                                                  
-         <A NAME="winws"><H3>BigBank with Web Service clients</H3></A>
-         <OL>
-             <LI>The Ruby BigBank sample requires the following extensions:
-                <UL>
-                   <LI><A HREF="../../doc/RubyExtension.html">Ruby Extension</A></LI>
-                   <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
+                   <LI><A HREF="../../doc/SCAExtension.html">SCA Binding Extension</A></LI>
                 </UL>
                  Please follow the documentation to ensure you have these extensions built and installed
                  on your system
@@ -251,7 +203,7 @@
              <LI>Ensure you have enabled Axis2/C to run Tuscany SCA services. Follow the instructions 
                  found <A HREF="../../doc/Axis2CWSExtension.html#deploy">here</A>.
              </LI>
-             <LI>Start the Axis2/C simple http server:
+             <LI>Start the Apache HTTPD server:
                 <OL>
                    <LI>The following environment variables are required:                                 
                       <UL>
@@ -260,9 +212,9 @@
                         <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RubyBigBank\deploy\bigbank.account
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\HttpdBigBank\deploy\httpserver
                    </LI>
-                   <LI>runwsserver.bat</LI>
+                   <LI>startserver.bat</LI>
                 </OL>
              </LI>
              <LI>Now run the Web Service client:
@@ -276,15 +228,15 @@
                  </LI>
                  <LI>Run the sample with the following commands:
                     <UL>
-                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RubyBigBank/deploy/bigbank.wsclient</LI>
+                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/HttpdBigBank/deploy/bigbank.wsclient</LI>
                        <LI>./runwsclient.bat</LI>
                     </UL>
                  </LI>
                 </OL>
             </LI>
-             <LI>The PHP web client detailed in the 
+            <LI>The PHP web client detailed in the 
                  <A HREF="../CppBigBank/README.html">CppBigBank</A> sample can also be used 
-                 with the Ruby BigBank service that is served by the Axis2/C http server started above.
+                 with the HTTPD BigBank service that is served by the HTTPD server started above.
              </LI>
          </OL>                                                  
       </DIV>
