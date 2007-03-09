@@ -145,26 +145,26 @@
                   be able to build the Tuscany SCA Ruby Extension with other versions of Ruby.
                </TD>
             </TR>
-            <TR CLASS="b">
-               <TD><STRONG>Optional:</STRONG> PHP version 5.2</TD>
-               <TD> 
-                  <A HREF="http://www.php.net"
-                     TARGET="_blank">http://www.php.net</A><BR/>
-                  This is required for building and running the Tuscany SCA PHP extension
-                  (see <A HREF="#extensions">below</A>).
-                  Please download and follow the installation instructions. 
-               </TD>
-            </TR>
-            <TR CLASS="a">
-               <TD><STRONG>Optional:</STRONG> PHP PECL SCA_SDO package version 1.1.2</TD>
-               <TD> 
-                  <A HREF="http://pecl.php.net/package/SCA_SDO"
-                     TARGET="_blank">http://pecl.php.net/package/SCA_SDO</A><BR/>
-                  This is required for running the Tuscany SCA PHP extension
-                  (see <A HREF="#extensions">below</A>).
-                  Please download and follow the installation instructions. 
-               </TD>
-            </TR>
+<!--             <TR CLASS="b">                                                                -->
+<!--                <TD><STRONG>Optional:</STRONG> PHP version 5.2</TD>                        -->
+<!--                <TD>                                                                       -->
+<!--                   <A HREF="http://www.php.net"                                            -->
+<!--                      TARGET="_blank">http://www.php.net</A><BR/>                          -->
+<!--                   This is required for building and running the Tuscany SCA PHP extension -->
+<!--                   (see <A HREF="#extensions">below</A>).                                  -->
+<!--                   Please download and follow the installation instructions.               -->
+<!--                </TD>                                                                      -->
+<!--             </TR>                                                                         -->
+<!--             <TR CLASS="a">                                                                -->
+<!--                <TD><STRONG>Optional:</STRONG> PHP PECL SCA_SDO package version 1.1.2</TD> -->
+<!--                <TD>                                                                       -->
+<!--                   <A HREF="http://pecl.php.net/package/SCA_SDO"                           -->
+<!--                      TARGET="_blank">http://pecl.php.net/package/SCA_SDO</A><BR/>         -->
+<!--                   This is required for running the Tuscany SCA PHP extension              -->
+<!--                   (see <A HREF="#extensions">below</A>).                                  -->
+<!--                   Please download and follow the installation instructions.               -->
+<!--                </TD>                                                                      -->
+<!--             </TR>                                                                         -->
             <TR CLASS="b">
                <TD><STRONG>Optional:</STRONG> Axis2/C Release 0.96</TD>
                <TD> 
@@ -206,7 +206,7 @@
           <OL>
               <LI>Extract the binary tar package to a folder</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the directory that was just extracted</LI>
-              <LI>Add the &lt;tuscany_sca_install_dir&gt;/lib directory to the LD_LIBRARY_PATH <!--(Linux) or DYLD_LIBRARY_PATH (MacOS X)--> environment variable</LI>
+              <LI>Add the &lt;tuscany_sca_install_dir&gt;/lib directory to the LD_LIBRARY_PATH (Linux) or DYLD_LIBRARY_PATH (Mac OS X) environment variable</LI>
           </OL>
          <A NAME="linuxsrc"><H3>Getting Tuscany SCA Native working with the source release on Linux</H3></A>
           <OL>
@@ -214,34 +214,17 @@
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
                 </UL></LI>
-              <LI>The following environment variables are optional if you wish to build the Python or Ruby extensions
-                  (see the <A HREF="doc/PythonExtension.html">Python extension</A> and 
-                  <A HREF="doc/RubyExtension.html">Ruby extension</A> documentation):
-                <UL>
-                  <LI>PYTHON_LIB=&lt;path to Python libraries&gt;</LI>
-                  <LI>PYTHON_INCLUDE=&lt;path to Python includes&gt;</LI>
-                  <LI>PYTHON_VERSION=&lt;name of the Python version&gt;<BR/>
-                   Note: If you are using a default installation of Python 2.5 these are usually:<BR/>
-                   PYTHON_LIB=/usr/lib<BR/>
-                   PYTHON_INCLUDE=/usr/include/python2.5<BR/>
-                   PYTHON_VERSION=python2.5<BR/></LI>
-                  <LI>RUBY_LIB=&lt;path to Ruby libraries&gt;</LI>
-                  <LI>RUBY_INCLUDE=&lt;path to Ruby includes&gt;<BR/>
-                   Note: If you are using a default installation of Ruby these are usually:<BR/>
-                   RUBY_LIB=/usr/lib<BR/>
-                   RUBY_INCLUDE=/usr/lib/ruby/1.8/i386-linux</LI>
-                </UL></LI>
-              <LI>Build the source with the following command sequence:
+              <LI>See the <A HREF="#extensions">extensions documentation</A> for other environment variables and
+                  configration flags that are required to build specific extensions.</LI>
+              <LI>To build only the Tuscany SCA Native kernel libraries use the following command sequence:
                   <UL>
-                      <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy --enable-static=no --enable-python=yes --enable-ruby=yes</LI>
+                      <LI>./configure --prefix=&lt;tuscany_sca_install_dir&gt;/deploy --enable-static=no --enable-cpp=no --enable-wsbinding=no</LI>
                       <LI>make</LI>
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sca. If you do not wish to build the Python or Ruby extensions, simply change the 
-                  --enable-python and --enable-ruby options to "no". Use ./configure --help to see all the available 
+                  /usr/local/tuscany/sca. Use ./configure --help to see all the available 
                   options</LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the &lt;tuscany_sca_install_dir&gt;/deploy
                   directory that contains the built Tuscany SCA distribution</LI>
@@ -259,18 +242,12 @@
               <LI>The following environment variables are required:                                 
                 <UL>
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                  <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
-                </UL></LI>
-              <LI>The following environment variables are optional if you wish to build the Python or Ruby extensions
-                  (see the <A HREF="doc/PythonExtension.html">Python extension</A> and 
-                  <A HREF="doc/RubyExtension.html">Ruby extension</A> documentation):
-                <UL>
-                  <LI>PYTHON_HOME=&lt;path to installed Python&gt;                                      
-                  <LI>RUBY_HOME=&lt;path to installed Ruby&gt;</LI>
                 </UL></LI>
               <LI>You must have set up the environment for Microsoft Visual C++ tools. The build command 
                   will call vcvars32 to set the environment. Ensure the directory containing this is on your path.
                   This will be where you installed the compiler.</LI>
+              <LI>See the <A HREF="#extensions">extensions documentation</A> for other environment variables 
+                  that are required to build specific extensions.</LI>
               <LI>Build the source:
                   <UL>
                       <LI>cd &lt;to where you unzipped the source&gt;</LI>
@@ -350,24 +327,24 @@
                 </UL>
                </TD>
             </TR>
+<!--             <TR CLASS="a">                                                                                                   -->
+<!--                <TD STYLE="vertical-align: top; white-space: nowrap;">                                                        -->
+<!--                 <A HREF="doc/PHPExtension.html">PHP</A>                                                                      -->
+<!--                </TD>                                                                                                         -->
+<!--                <TD>Provides a PHP SCA client API and enables PHP component implementations by integrating                    -->
+<!--                 with the <A HREF="http://pecl.php.net/package/SCA_SDO">PECL SCA_SDO package</A>.                             -->
+<!--                 See the <A HREF="doc/PHPExtension.html">PHP extension documentation</A> for                                  -->
+<!--                 more details. <BR/>                                                                                          -->
+<!--                 <STRONG>Requires:</STRONG>                                                                                   -->
+<!--                 <UL>                                                                                                         -->
+<!--                     <LI><A HREF="http://www.php.net" TARGET="_blank">PHP version 5.2</A>                                     -->
+<!--                         - for building and running the extension.</LI>                                                       -->
+<!--                     <LI><A HREF="http://pecl.php.net/package/SCA_SDO" TARGET="_blank">PECL SCA_SDO package version 1.1.2</A> -->
+<!--                         - for running the extension.</LI>                                                                    -->
+<!--                 </UL>                                                                                                        -->
+<!--                </TD>                                                                                                         -->
+<!--             </TR>                                                                                                            -->
             <TR CLASS="a">
-               <TD STYLE="vertical-align: top; white-space: nowrap;">
-                <A HREF="doc/PHPExtension.html">PHP</A>
-               </TD>
-               <TD>Provides a PHP SCA client API and enables PHP component implementations by integrating
-                with the <A HREF="http://pecl.php.net/package/SCA_SDO">PECL SCA_SDO package</A>. 
-                See the <A HREF="doc/PHPExtension.html">PHP extension documentation</A> for 
-                more details. <BR/> 
-                <STRONG>Requires:</STRONG>
-                <UL>
-                    <LI><A HREF="http://www.php.net" TARGET="_blank">PHP version 5.2</A>
-                        - for building and running the extension.</LI>
-                    <LI><A HREF="http://pecl.php.net/package/SCA_SDO" TARGET="_blank">PECL SCA_SDO package version 1.1.2</A>
-                        - for running the extension.</LI>
-                </UL>
-               </TD>
-            </TR>
-            <TR CLASS="b">
                <TD STYLE="vertical-align: top; white-space: nowrap;">
                 <A HREF="doc/Axis2CWSExtension.html">Axis2/C Web Services</A>
                </TD>
@@ -384,7 +361,7 @@
                 </UL>
                </TD>
             </TR>
-            <TR CLASS="a">
+            <TR CLASS="b">
                <TD STYLE="vertical-align: top; white-space: nowrap;">
                 <A HREF="doc/RESTExtension.html">REST</A>
                </TD>
@@ -400,7 +377,7 @@
                 </UL>
                </TD>
             </TR>
-            <TR CLASS="b">
+            <TR CLASS="a">
                <TD STYLE="vertical-align: top; white-space: nowrap;">
                 <A HREF="doc/SCAExtension.html">SCA</A>
                </TD>

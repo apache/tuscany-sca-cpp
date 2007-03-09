@@ -60,8 +60,8 @@
             <LI><A HREF="#requirements">System Requirements</A></LI>
             <LI><A HREF="#install">Installing the Tuscany SCA C++ Extension..</A>
                 <UL>
-                    <LI><A HREF="#linuxbin">..from the binary release on Linux and Mac OSX</A></LI>
-                    <LI><A HREF="#linuxsrc">..from the source release on Linux and Mac OSX</A></LI>
+                    <LI><A HREF="#linuxbin">..from the binary release on Linux and Mac OS X</A></LI>
+                    <LI><A HREF="#linuxsrc">..from the source release on Linux and Mac OS X</A></LI>
                     <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
                     <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
                 </UL></LI>
@@ -102,11 +102,11 @@
 
       <DIV CLASS="section"> 
          <A NAME="install"><H2>Installing the Tuscany SCA C++ Extension</H2></A>
-         <A NAME="linuxbin"><H3>Getting the Tuscany SCA C++ Extension working with the binary release on Linux and Mac OSX</H3></A>
+         <A NAME="linuxbin"><H3>Getting the Tuscany SCA C++ Extension working with the binary release on Linux and Mac OS X</H3></A>
           <OL>
               <LI>Add the &lt;tuscany_sca_install_dir&gt;/extensions/cpp/lib directory to the PATH environment variable</LI>
           </OL>
-         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA C++ Extension working with the source release on Linux and Mac OSX</H3></A>
+         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA C++ Extension working with the source release on Linux and Mac OS X</H3></A>
           <OL>
               <LI>You will need the Tuscany SCA kernel and SDO libraries - follow the instructions 
                   <A HREF="../GettingStarted.html">here</A> to build the SCA libraries and default extensions</LI>
@@ -118,7 +118,7 @@
               <LI>Build the C++ source only with the following command sequence:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;</LI>
-                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-cpp</LI>
+                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-cpp --enable-wsbinding=no</LI>
                       <LI>make</LI>
                       <LI>make install</LI>
                   </UL>
@@ -285,7 +285,7 @@ float CalculatorImpl::mul(float arg1, float arg2)
              </LI>
              <LI>Create a sample.calculator.composite file for your composite and define your 
                  component within it. The component definition specifies the implementation 
-                 library to use (a .dll file on Windows, a .so file on Linux and a .dylib file on Mac OSX) and the 
+                 library to use (a .dll file on Windows, a .so file on Linux and a .dylib file on Mac OS X) and the 
                  implementation header file (which describes the implementation class). Component 
                  properties and references to other services can also be specified here. E.g. the 
                  Calculator sample.calculator.composite file contains the following XML:<BR/>
@@ -336,7 +336,7 @@ float CalculatorImpl::mul(float arg1, float arg2)
                  <UL>
                      <LI>&lt;deploy_root&gt;/CompositeName/CompositeName.composite              </LI>
                      <LI>&lt;deploy_root&gt;/CompositeName/Implementation.componentType         </LI>
-                     <LI>&lt;deploy_root&gt;/CompositeName/Implementation.dll (or .so on Linux and .dylib on Mac OSX) </LI>
+                     <LI>&lt;deploy_root&gt;/CompositeName/Implementation.dll (or .so on Linux and .dylib on Mac OS X) </LI>
                      <LI>&lt;deploy_root&gt;/SolutionName.composite           </LI>
                  </UL>
                  E.g. for the Calculator sample the structure is:
@@ -379,7 +379,7 @@ catch (ServiceRuntimeException& ex)
                  TUSCANY_SCACPP and TUSCANY_SDOCPP environment variables set, 
                  as well as the SCA and SDO bin directories on 
                  your PATH on Windows or the SCA and SDO lib directories on your LD_LIBRARY_PATH on Linux 
-                 and your DYLD_LIBRARY_PATH on Mac OSX. You will also need to set the TUSCANY_SCACPP_SYSTEM_ROOT
+                 and your DYLD_LIBRARY_PATH on Mac OS X. You will also need to set the TUSCANY_SCACPP_SYSTEM_ROOT
                  and TUSCANY_SCACPP_DEFAULT_COMPONENT environment variables to the 
                  path to your SCA component directory structure and the default component respectively.
                  TUSCANY_SCACPP_SYSTEM_ROOT is the directory where the SCA runtime will look for any 

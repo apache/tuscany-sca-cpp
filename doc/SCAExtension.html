@@ -57,8 +57,8 @@
             <LI><A HREF="#requirements">System Requirements</A></LI>
             <LI><A HREF="#install">Installing the Tuscany SCA Binding Extension..</A>
                 <UL>
-                    <LI><A HREF="#linuxbin">..from the binary release on Linux and Mac OSX</A></LI>
-                    <LI><A HREF="#linuxsrc">..from the source release on Linux and Mac OSX</A></LI>
+                    <LI><A HREF="#linuxbin">..from the binary release on Linux and Mac OS X</A></LI>
+                    <LI><A HREF="#linuxsrc">..from the source release on Linux and Mac OS X</A></LI>
                     <LI><A HREF="#winbin">..from the binary release on Windows</A></LI>
                     <LI><A HREF="#winsrc">..from the source release on Windows</A></LI>
                 </UL></LI>
@@ -92,14 +92,14 @@
 
       <DIV CLASS="section"> 
          <A NAME="install"><H2>Installing the Tuscany SCA Binding Extension</H2></A>
-         <A NAME="linuxbin"><H3>Getting the Tuscany SCA Binding Extension working with the binary release on Linux and Mac OSX</H3></A>
+         <A NAME="linuxbin"><H3>Getting the Tuscany SCA Binding Extension working with the binary release on Linux and Mac OS X</H3></A>
           <OL>
               <LI>Ensure the AXIS2C_HOME environment variable is set to the Axis2/C installation</LI>
               <LI>Deploy the Axis2/C Web Services extension by following the <A HREF="Axis2CWSExtension.html#deploy">deployment steps</A></LI>
               <LI>Ensure the Axis2/C Web Service extension and SCA Binding extension libraries are available 
-                  on the LD_LIBRARY_PATH environment variable on Linux and the DYLD_LIBRARY_PATH environment variable on Mac OSX</LI>
+                  on the LD_LIBRARY_PATH environment variable on Linux and the DYLD_LIBRARY_PATH environment variable on Mac OS X</LI>
           </OL>
-         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Binding Extension working with the source release on Linux and Mac OSX</H3></A>
+         <A NAME="linuxsrc"><H3>Getting the Tuscany SCA Binding Extension working with the source release on Linux and Mac OS X</H3></A>
           <OL>
               <LI>You will need the Tuscany SCA and SDO libraries - follow the instructions 
                   <A HREF="../GettingStarted.html">here</A> to build the SCA libraries and default extensions</LI>
@@ -111,7 +111,7 @@
               <LI>Build the SCA Binding source only with the following command sequence:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;</LI>
-                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-scabinding --enable-cpp=no</LI>
+                      <LI>./configure --prefix=$TUSCANY_SCACPP --enable-scabinding --enable-cpp=no --enable-wsbinding=no</LI>
                       <LI>make</LI>
                       <LI>make install</LI>
                   </UL>

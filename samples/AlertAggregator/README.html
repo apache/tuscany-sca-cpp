@@ -30,20 +30,22 @@
 
     <LINK HREF="../doc/css/maven-theme.css" MEDIA="print" REL="stylesheet"
          TYPE="text/css">
-   <TITLE>Tuscany SCA Native Samples - REST Customer Sample</TITLE>
+   <TITLE>Tuscany SCA Native Samples - Alert Aggregator Sample</TITLE>
 </HEAD>
 
 <BODY>
 <DIV ID="bodyColumn"> 
    <DIV ID="contentBox"> 
       <DIV CLASS="section"> 
-         <H1>Tuscany SCA Native Samples - REST Customer Sample</H1> 
+         <H1>Tuscany SCA Native Samples - Alert Aggregator Sample</H1> 
 
-         <P>This is a very simple sample to show how to use the SCA REST binding to
-            implement a resource management service and make resources available
-            through HTTP.
-         </P>
-         <P>The REST Customer sample requires the following extensions:
+         <P>This is a more complex sample that shows how Tuscany and SCA can be used to 
+            develop and run mash-up style web applications.</P>
+         <P>The Alert Aggregator sample aggregates items of information from various data 
+            sources into a series of "alerts" that are displayed in an 
+            automatically updating web page. Alert sources can currently include RSS/Atom 
+            news feeds and POP3/IMAP email</P>
+         <P>The Alert Aggregator sample requires the following extensions:
             <UL>
                <LI><A HREF="../../doc/RESTExtension.html">REST Service and Reference Extensions</A></LI>
                <LI><A HREF="../../doc/PythonExtension.html">Python Extension</A></LI>
@@ -51,43 +53,49 @@
             Please follow the documentation to ensure you have these extensions built and installed
             on your system
          </P>
-         <P>There are three sub-projects in this workspace:</P>
+         <P>Additionally, the Alert Aggregator sample requires the Python FeedParser library, available from
+             <A HREF="http://feedparser.org" TARGET="_blank">http://feedparser.org</A>. Please download and
+             install the library by following the documentation.</P>
+         <P>There are three sub-projects in this workspace:
          <UL>
-            <LI>sample.customer<BR/>                
-                This contains the source code and SCDL artifacts for the SCA component
-                implementing the Customer resource management service.
+            <LI>sample.alerter<BR/>                
+                This contains the source code and SCDL artifacts for the SCA components
+                implementing the Alert Aggregator configuration and alert retrieval.
             </LI>
-            <LI>sample.customer.restclient<BR/>
-                A sample REST client which shows how to create, update, retrieve, and
-                delete Customer resources.
+            <LI>sample.display<BR/>
+                This contains the source code and SCDL artifacts for the SCA components
+                implementing the display and storage of the retrieved alerts.
             </LI>
             <LI>httpserver<BR/>
                 This contains a minimal configuration for the Apache HTTP server used
-                to host the REST service as well as scripts to start and stop the server.
+                to host the services as well as scripts to start and stop the server.
             </LI>
          </UL>
-         <P>Additionally, there is the sample.customer.app.composite file. This     
-            describes the configuration of the SCA Customer composite deployed to the SCA
-            runtime.                                                                       
-         </P>
+            Additionally, there is the sample.alerter.app.composite file. This     
+            describes the configuration of the SCA composites deployed to the SCA
+            runtime.</P>
+         <P>The following SCA diagram shows the different components and composites and how the
+            wiring between them is specified. Not all of these components are currently 
+            implemented in this sample.</P>
+         <IMG SRC="AlertAggregatorSCADiagram.png" ALT="Alert Aggregator SCA Diagram"/>
       </DIV>
 
       <DIV CLASS="section"> 
          <H2>Contents</H2> 
          <OL>
-            <LI><A HREF="#linuxbld">Building the REST Customer sample on Linux and Mac OS X</A></LI>
-            <LI><A HREF="#linuxrun">Running the REST Customer sample on Linux and Mac OS X</A></LI>
-            <LI><A HREF="#winbld">Building the REST Customer sample on Windows</A></LI>
-            <LI><A HREF="#winrun">Running the REST Customer sample on Windows</A></LI>
+            <LI><A HREF="#linuxbld">Building the Alert Aggregator sample on Linux and Mac OS X</A></LI>
+            <LI><A HREF="#linuxrun">Running the Alert Aggregator sample on Linux and Mac OS X</A></LI>
+            <LI><A HREF="#winbld">Building the Alert Aggregator sample on Windows</A></LI>
+            <LI><A HREF="#winrun">Running the Alert Aggregator sample on Windows</A></LI>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
       </DIV>
 
 
        <DIV CLASS="section"> 
-         <A NAME="linuxbld"><H2>Building the REST Customer sample on Linux and Mac OS X</H2></A>
+         <A NAME="linuxbld"><H2>Building the Alert Aggregator sample on Linux and Mac OS X</H2></A>
          <P>If using the binary distribution the samples are built and installed in
-            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the samples on Linux and Mac OS X</A>.</P>
+            &lt;tuscany_sca_install_dir&gt;/samples - go directly to <A HREF="#linuxrun">Running the sample on Linux and Mac OS X</A>.</P>
          <OL>
              <LI>The following environment variables are required:                                 
                 <UL>
@@ -95,7 +103,7 @@
                   <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>
                 </UL>
              </LI>
-             <LI>As the REST Customer sample is based on Python scripts, a specific compilation step is not necessary - 
+             <LI>As the Alert Aggregator sample is based on Python scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the Python samples only with the following command sequence:
                   <UL>
                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples</LI>
@@ -103,14 +111,14 @@
                       <LI>make install</LI>
                   </UL>
 	              NOTE: If you don't provide the --prefix configure option, it will by default install into
-                  /usr/local/tuscany/sca/samples/RestCustomer</LI>
+                  /usr/local/tuscany/sca/samples/AlertAggregator</LI>
          </OL>                                                  
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="linuxrun"><H2>Running the REST Customer sample on Linux and Mac OS X</H2></A>
+         <A NAME="linuxrun"><H2>Running the Alert Aggregator sample on Linux and Mac OS X</H2></A>
          <OL>
-             <LI>The REST Customer sample requires the following extensions:
+             <LI>The Alert Aggregator sample requires the following extensions:
                 <UL>
                    <LI><A HREF="../../doc/RESTExtension.html">REST Service and Reference Extensions</A></LI>
                    <LI><A HREF="../../doc/PythonExtension.html">Python Extension</A></LI>
@@ -118,6 +126,9 @@
                 Please follow the documentation to ensure you have these extensions built and installed
                 on your system
              </LI>
+             <LI>The Alert Aggregator sample requires the Python FeedParser library, available from
+                 <A HREF="http://feedparser.org" TARGET="_blank">http://feedparser.org</A>. Please download and
+                 install the library by following the documentation.</LI>
              <LI>Start the Apache HTTPD server:
                 <OL>
                    <LI>The following environment variables are required:                                 
@@ -128,33 +139,38 @@
                             Note: If you are using a default installation of Python 2.5 this is usually /usr/lib</LI>
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RestCustomer/deploy/httpserver</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/AlertAggregator/deploy/httpserver</LI>
                    <LI>./startserver.sh<BR/>
                        NOTE: Depending on your installation of Apache HTTPD you may need to log in as root before following 
                        these steps. If so, you may also need to uncomment the User and Group directives in the
-                       &lt;tuscany_sca_install_dir&gt;/samples/RestCustomer/deploy/httpserver/conf/httpd.conf file
+                       &lt;tuscany_sca_install_dir&gt;/samples/AlertAggregator/deploy/httpserver/conf/httpd.conf file
                        and set these to the appropriate username and group that the server should run as</LI>                   
                 </OL>
              </LI>
-             <LI>Run the client:
+             <LI>Run the client from your web browser:
                 <OL>
-                   <LI>The following environment variable is required:                                 
-                      <UL>                        
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                                              
-                        <LI>PYTHON_LIB=&lt;path to the Python library&gt;<BR/>
-                            Note: If you are using a default installation of Python 2.5 this is usually /usr/lib</LI>
-                      </UL>
+                   <LI>Point your browser at <A HREF="http://localhost:9090/index.html" TARGET="_blank">http://localhost:9090/index.html</A><BR/>
+                       NOTE: If plain text is diplayed by your browser, rather than a rendered web page, you may need
+                       to uncomment the LoadModule mime_module directive in the
+                       &lt;tuscany_sca_install_dir&gt;/samples/AlertAggregator/deploy/httpserver/conf/httpd.conf file. Set the correct path to 
+                       the mod_mime.so library and restart the server</LI>
+                   <LI>You should see the Alert Aggregator web interface that allows you to:
+                       <UL>
+                           <LI>Read new alerts</LI>
+                           <LI>Update alerts from all sources</LI>
+                           <LI>Update alerts from a specific source</LI>
+                           <LI>Edit the configuration of a data source</LI>
+                           <LI>Add a new RSS/Atom or POP email data source</LI>
+                           <LI>Remove a specific data source and all associated alerts</LI>
+                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/RestCustomer/deploy/sample.customer.restclient</LI>
-                   <LI>./runrestclient.sh</LI>
                 </OL>
              </LI>
          </OL>                                                  
         </DIV>
 
         <DIV CLASS="section">
-         <A NAME="winbld"><H2>Building the REST Customer sample on Windows</H2></A>
+         <A NAME="winbld"><H2>Building the Alert Aggregator sample on Windows</H2></A>
          <P>If using the binary distribution the samples are built and installed in
             &lt;tuscany_sca_install_dir&gt;\samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
          <OL>
@@ -167,7 +183,7 @@
              <LI>As this sample is based on Ruby scripts, a specific compilation step is not necessary - 
                  only deployment is required. Deploy the sample with the following commands:
                  <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestCustomer</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\AlertAggregator</LI>
                    <LI>deploy.bat</LI>
                 </UL>
              </LI>
@@ -175,8 +191,8 @@
         </DIV>
 
        <DIV CLASS="section"> 
-         <A NAME="winrun"><H2>Running the REST Customer sample on Windows</H2></A>
-             <LI>The REST Customer sample requires the following extensions:
+         <A NAME="winrun"><H2>Running the Alert Aggregator sample on Windows</H2></A>
+             <LI>The Alert Aggregator sample requires the following extensions:
                 <UL>
                    <LI><A HREF="../../doc/RESTExtension.html">REST Service and Reference Extensions</A></LI>
                    <LI><A HREF="../../doc/PythonExtension.html">Python Extension</A></LI>
@@ -193,21 +209,27 @@
                         <LI>HTTPD_HOME=&lt;path to installed Apache HTTPD server&gt;</LI>                                                              
                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestCustomer\deploy\httpserver</LI>
+                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\AlertAggregator\deploy\httpserver</LI>
                    <LI>startserver.bat</LI>
                 </OL>
              </LI>
-             <LI>Run the client:
+             <LI>Run the client from your web browser:
                 <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>LIBCURL_HOME=&lt;path to installed libcurl libraries&gt;</LI>
-                      </UL>
+                   <LI>Point your browser at <A HREF="http://localhost:9090/index.html" TARGET="_blank">http://localhost:9090/index.html</A><BR/>
+                       NOTE: If plain text is diplayed by your browser, rather than a rendered web page, you may need
+                       to uncomment the LoadModule mime_module directive in the
+                       &lt;tuscany_sca_install_dir&gt;\samples\AlertAggregator\deploy\httpserver\conf\httpd.conf file. Set the correct path to 
+                       the mod_mime.so library (e.g. C:\Apache2.2\modules\mod_mime.so) and restart the server</LI>
+                   <LI>You should see the Alert Aggregator web interface that allows you to:
+                       <UL>
+                           <LI>Read new alerts</LI>
+                           <LI>Update alerts from all sources</LI>
+                           <LI>Update alerts from a specific source</LI>
+                           <LI>Edit the configuration of a data source</LI>
+                           <LI>Add a new RSS/Atom or POP email data source</LI>
+                           <LI>Remove a specific data source and all associated alerts</LI>
+                       </UL>
                    </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\RestCustomer\deploy\sample.customer.restclient</LI>
-                   <LI>runrestclient.bat</LI>
                 </OL>
              </LI>
          </OL>                                                  
