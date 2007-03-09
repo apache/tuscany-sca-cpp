@@ -28,8 +28,8 @@
 	</component>
 
     <reference name="WeatherService">
-        <interface.wsdl interface="http://www.webservicex.net#wsdl.interface(WeatherForecastSoap)"/>
-        <binding.ws endpoint="http://www.webservicex.net#wsdl.endpoint(WeatherForecast/WeatherForecastSoap)"/>
+        <interface.wsdl interface="http://www.webservicex.net#wsdl.interface(WeatherForecastPortType)"/>
+        <binding.ws endpoint="http://www.webservicex.net#wsdl.endpoint(WeatherForecast/WeatherForecastPort)"/>
         <!--binding.ws uri="http://www.webservicex.net/WeatherForecast.asmx"/-->
     </reference>
 

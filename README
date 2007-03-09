@@ -1,5 +1,5 @@
-Apache Tuscany C++ M2 build (October, 2006)
-===========================================
+Apache Tuscany SCA Native M3 build (March, 2007)
+================================================
 
 http://incubator.apache.org/tuscany
 
@@ -34,20 +34,20 @@ support C++, Python and Ruby component implementation types.
 The specifications can be found at
 http://www.osoa.org/display/Main/Service+Component+Architecture+Specifications 
 
-It is possible to interoperate with Tuscany SCA Java via the Web Service bindings
-for services and references but restrictions apply. This is not yet a complete
-implementation and known restrictions are described below.
+It is possible to interoperate with Tuscany SCA Java via the Web Service 
+bindings for services and references but restrictions apply. This is not yet a 
+complete implementation and known restrictions are described below.
 
 Supported SCA Assembly Model features
-  *  All features are supported unless listed under the known restrictions
-     below. See SCA Assembly Model specification.
+  * All features are supported unless listed under the known restrictions
+    below. See SCA Assembly Model specification.
 
 Supported language bindings
   * Component implementations written in C++. See the SCA C++ Client and 
     Implementation Model specification.
-  * Component implementations written in Python. See the doc/PythonExtension.html 
-    documentation.
-  * Component implementations written in Python. See the doc/RubyExtension.html 
+  * Component implementations written in Python. See the 
+    doc/PythonExtension.html documentation.
+  * Component implementations written in Ruby. See the doc/RubyExtension.html 
     documentation.
   * Component interfaces described by C++ classes. See SCA Client and
     Implementation Model specification.
@@ -56,6 +56,11 @@ Supported service and reference bindings
   * The web service binding is supported. This implementation will support
     web services which using document literal SOAP bindings conforming to the
     WS-I basic profile (rpc/encoded is not yet supported).
+  * A REST binding is supported. This implementation supports HTTP calls using
+    a resource or RPC pattern depending on the use of a REST interface. See the
+    doc/RESTExtension.html documentation.
+  * A SCA binding is supported. This implementation uses the web services 
+    binding to provide the "default" binding.
 
 Known restrictions
   * Local service interfaces cannot use overloaded operations (the SCA
@@ -66,7 +71,11 @@ Known restrictions
   * No load time validation of the deployed SCA application (run time 
     validation only).
   * No metadata API. 
-
+  * Components implemented in Python and Ruby are restricted to passing
+    simple types and language-specific XML objects as parameters and return
+    values.
+  * Composites that use the Web Services, REST and SCA bindings are restricted 
+    to transporting simple types and XML.
 
 
 Thank you for using Tuscany!
