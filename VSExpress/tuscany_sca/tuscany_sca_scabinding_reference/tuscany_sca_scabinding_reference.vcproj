@@ -48,7 +48,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../runtime/extensions/sca/reference/src,../../../runtime/extensions/ws/reference/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/sca/reference/src;../../../runtime/extensions/ws/reference/src;../../../runtime/core/src;&quot;$(TUSCANY_SDOCPP)/include&quot;;$(NOINHERIT)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_BINDING_REFERENCE_EXPORTS;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -147,7 +147,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../../runtime/extensions/sca/reference/axis2c/src;../../../runtime/extensions/ws/reference/axis2c/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/sca/reference/src;../../../runtime/extensions/ws/reference/src;../../../runtime/core/src;&quot;$(TUSCANY_SDOCPP)/include&quot;;$(NOINHERIT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_BINDING_REFERENCE_EXPORTS;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"

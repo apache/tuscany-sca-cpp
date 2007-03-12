@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="../../../runtime/extensions/ws/service/axis2c/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/sca/service/src;../../../runtime/extensions/ws/service/axis2c/src;../../../runtime/core/src;&quot;$(TUSCANY_SDOCPP)/include&quot;;$(NOINHERIT)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_BINDING_SERVICE_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -78,7 +78,7 @@
 				OutputFile=".\Release/tuscany_sca_binding_service.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\..\deploy\lib,$(TUSCANY_SDOCPP)\lib,$(AXIS2C_HOME)\lib"
+				AdditionalLibraryDirectories="..\..\..\deploy\lib,..\..\..\deploy\extensions\ws\service\lib,$(TUSCANY_SDOCPP)\lib,"
 				ProgramDatabaseFile=".\Release/tuscany_sca_binding_service.pdb"
 				ImportLibrary=".\Release/tuscany_sca_binding_service.lib"
 				TargetMachine="1"
@@ -108,7 +108,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\..\..\runtime\extensions\ws\service\deploy.bat ..\..\..\ Release"
+				CommandLine="..\..\..\runtime\extensions\sca\service\deploy.bat ..\..\..\ Release"
 			/>
 		</Configuration>
 		<Configuration
@@ -145,7 +145,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../runtime/extensions/sca/service/src,../../../runtime/extensions/ws/service/src,../../../runtime/core/src,$(TUSCANY_SDOCPP)/include"
+				AdditionalIncludeDirectories="../../../runtime/extensions/sca/service/src;../../../runtime/extensions/ws/service/axis2c/src;../../../runtime/core/src;&quot;$(TUSCANY_SDOCPP)/include&quot;;$(NOINHERIT)"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TUSCANY_SCA_BINDING_SERVICE_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
