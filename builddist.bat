@@ -71,8 +71,6 @@ copy %FROM_DIR%\README    %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\GettingStarted.html  %TO_SRC%\%SRC_PACKAGE%
 copy %FROM_DIR%\build.bat  %TO_SRC%\%SRC_PACKAGE%
 
-if not exist %TO_SRC%\%SRC_PACKAGE%\deploy mkdir %TO_SRC%\%SRC_PACKAGE%\deploy
-xcopy /t /e  %FROM_DIR%\deploy %TO_SRC%\%SRC_PACKAGE%\deploy
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\VSExpress mkdir %TO_SRC%\%SRC_PACKAGE%\VSExpress
 xcopy/s %FROM_DIR%\VSExpress %TO_SRC%\%SRC_PACKAGE%\VSExpress
@@ -85,12 +83,16 @@ if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\cpp mkdir %TO_SRC%\%SRC_P
 if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ws mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ws
 if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\python mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\python
 if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ruby mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ruby
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\rest mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\rest
+if not exist %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\sca mkdir %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\sca
 
 xcopy/s %FROM_DIR%\runtime\core %TO_SRC%\%SRC_PACKAGE%\runtime\core
 xcopy/s %FROM_DIR%\runtime\extensions\cpp %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\cpp
 xcopy/s %FROM_DIR%\runtime\extensions\ws %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ws
 xcopy/s %FROM_DIR%\runtime\extensions\python %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\python
 xcopy/s %FROM_DIR%\runtime\extensions\ruby %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\ruby
+xcopy/s %FROM_DIR%\runtime\extensions\rest %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\rest
+xcopy/s %FROM_DIR%\runtime\extensions\sca %TO_SRC%\%SRC_PACKAGE%\runtime\extensions\sca
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\tools mkdir %TO_SRC%\%SRC_PACKAGE%\tools 
 xcopy/s %FROM_DIR%\tools %TO_SRC%\%SRC_PACKAGE%\tools
@@ -99,17 +101,29 @@ if not exist %TO_SRC%\%SRC_PACKAGE%\doc mkdir %TO_SRC%\%SRC_PACKAGE%\doc
 xcopy/s %FROM_DIR%\doc %TO_SRC%\%SRC_PACKAGE%\doc
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples                  mkdir %TO_SRC%\%SRC_PACKAGE%\samples 
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\AlertAggregator          mkdir %TO_SRC%\%SRC_PACKAGE%\samples\AlertAggregator
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\CppBigBank          mkdir %TO_SRC%\%SRC_PACKAGE%\samples\CppBigBank
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\CppCalculator       mkdir %TO_SRC%\%SRC_PACKAGE%\samples\CppCalculator
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\HttpdBigBank          mkdir %TO_SRC%\%SRC_PACKAGE%\samples\HttpdBigBank
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\PythonCalculator mkdir %TO_SRC%\%SRC_PACKAGE%\samples\PythonCalculator
-if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\PythonWeatherForecast mkdir %TO_SRC%\%SRC_PACKAGE%\samples\PythonWeatherForecast
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RestCalculator   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RestCalculator
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RestCustomer   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RestCustomer
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RestYahoo   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RestYahoo
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank         mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
 
+xcopy/s %FROM_DIR%\samples\AlertAggregator         %TO_SRC%\%SRC_PACKAGE%\samples\AlertAggregator
 xcopy/s %FROM_DIR%\samples\CppBigBank          %TO_SRC%\%SRC_PACKAGE%\samples\CppBigBank
 xcopy/s %FROM_DIR%\samples\CppCalculator       %TO_SRC%\%SRC_PACKAGE%\samples\CppCalculator
+xcopy/s %FROM_DIR%\samples\HttpdBigBank          %TO_SRC%\%SRC_PACKAGE%\samples\HttpdBigBank
 xcopy/s %FROM_DIR%\samples\PythonCalculator %TO_SRC%\%SRC_PACKAGE%\samples\PythonCalculator
-xcopy/s %FROM_DIR%\samples\RubyCalculator   %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
+xcopy/s %FROM_DIR%\samples\PythonWeatherForecast %TO_SRC%\%SRC_PACKAGE%\samples\PythonWeatherForecast
+xcopy/s %FROM_DIR%\samples\RestCalculator   %TO_SRC%\%SRC_PACKAGE%\samples\RestCalculator
+xcopy/s %FROM_DIR%\samples\RestCustomer   %TO_SRC%\%SRC_PACKAGE%\samples\RestCustomer
+xcopy/s %FROM_DIR%\samples\RestYahoo   %TO_SRC%\%SRC_PACKAGE%\samples\RestYahoo
 xcopy/s %FROM_DIR%\samples\RubyBank         %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank
+xcopy/s %FROM_DIR%\samples\RubyCalculator   %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
 copy %FROM_DIR%\samples\scagen.bat   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\INSTALL   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\LICENSE   %TO_SRC%\%SRC_PACKAGE%\samples
@@ -119,10 +133,16 @@ copy %FROM_DIR%\samples\README    %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\GettingStarted.html    %TO_SRC%\%SRC_PACKAGE%\samples
 
 if not exist %TO_SRC%\%SRC_PACKAGE%\xsd mkdir %TO_SRC%\%SRC_PACKAGE%\xsd 
-xcopy/s %FROM_DIR%\xsd %TO_SRC%\%SRC_PACKAGE%\xsd
+xcopy/s %FROM_DIR%\xsd %TO_SRC%\%SRC_PACKAGE%\xsd              
+
+goto end;
 
 cd %TO_SRC%\%SRC_PACKAGE%
 del /S Makefile.am
+
+echo Creating zip file: %TO_SRC%\%SRC_PACKAGE%.zip 
+jar -cMf %TO_SRC%\%SRC_PACKAGE%.zip -C %TO_SRC% %SRC_PACKAGE%
+
 
 echo Building SCA....
 
@@ -194,8 +214,7 @@ copy %FROM_DIR%\samples\GettingStarted.html    %TO_BIN%\%BIN_PACKAGE%\samples
 cd %TO_BIN%\%BIN_PACKAGE%
 del /S Makefile.am
 
-echo Creating zip file: %TO_SRC%\%SRC_PACKAGE%.zip 
-jar -cMf %TO_SRC%\%SRC_PACKAGE%.zip -C %TO_SRC% %SRC_PACKAGE%
+
 echo Creating zip file: %TO_BIN%\%BIN_PACKAGE%.zip
 jar -cMf %TO_BIN%\%BIN_PACKAGE%.zip -C %TO_BIN% %BIN_PACKAGE%
 
