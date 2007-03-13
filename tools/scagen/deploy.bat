@@ -26,7 +26,7 @@ goto usage
 )
 set rootdir=%1
 set deploydir=%rootdir%\deploy
-set srcdir=%rootdir%\tools\scagen\bld
+set srcdir=%rootdir%\tools\scagen
 
 
 echo Deploying SCAGEN to %deploydir%\bin
@@ -34,7 +34,7 @@ if not exist %deploydir% mkdir %deploydir%
 if not exist %deploydir%\bin mkdir %deploydir%\bin
 
 
-copy %srcdir%\scagen.jar  %deploydir%\bin
+copy %srcdir%\bld\scagen.jar  %deploydir%\bin
 copy %srcdir%\scagen.bat  %deploydir%\bin
 
 goto end
