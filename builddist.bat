@@ -135,8 +135,6 @@ copy %FROM_DIR%\samples\GettingStarted.html    %TO_SRC%\%SRC_PACKAGE%\samples
 if not exist %TO_SRC%\%SRC_PACKAGE%\xsd mkdir %TO_SRC%\%SRC_PACKAGE%\xsd 
 xcopy/s %FROM_DIR%\xsd %TO_SRC%\%SRC_PACKAGE%\xsd              
 
-goto end;
-
 cd %TO_SRC%\%SRC_PACKAGE%
 del /S Makefile.am
 
@@ -144,22 +142,21 @@ echo Creating zip file: %TO_SRC%\%SRC_PACKAGE%.zip
 jar -cMf %TO_SRC%\%SRC_PACKAGE%.zip -C %TO_SRC% %SRC_PACKAGE%
 
 
-echo Building SCA....
+echo Building SCA Native binary distribution
 
-set TUSCANY_SCACPP=%TO_SRC%%SRC_PACKAGE%\deploy
+set TUSCANY_SCACPP=%TO_SRC%\%SRC_PACKAGE%\deploy
 
-cd %TO_SRC%%SRC_PACKAGE%
+cd %TO_SRC%\%SRC_PACKAGE%
 call build
 
 echo Installing SCA....
 
 if not exist %TO_BIN% mkdir %TO_BIN%
 rmdir /S /Q %TO_BIN%\%BIN_PACKAGE%
-if not exist %TO_BIN%\%BIN_PACKAGE% mkdir %TO_BIN%\%BIN_PACKAGE%
-if not exist %TO_BIN%\%BIN_PACKAGE%\doc mkdir %TO_BIN%\%BIN_PACKAGE%\doc
 
-xcopy/s %FROM_DIR%\deploy %TO_BIN%\%BIN_PACKAGE%
-xcopy/s %FROM_DIR%\doc %TO_BIN%\%BIN_PACKAGE%\doc
+if not exist %TO_BIN%\%BIN_PACKAGE% mkdir %TO_BIN%\%BIN_PACKAGE%
+xcopy/s %TUSCANY_SCACPP%  %TO_BIN%\%BIN_PACKAGE%
+
 copy %FROM_DIR%\INSTALL   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\LICENSE   %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\COPYING   %TO_BIN%\%BIN_PACKAGE%
@@ -167,55 +164,75 @@ copy %FROM_DIR%\NOTICE    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\README    %TO_BIN%\%BIN_PACKAGE%
 copy %FROM_DIR%\GettingStarted.html   %TO_BIN%\%BIN_PACKAGE%
 
-set TUSCANY_SCACPP=%FROM_DIR%\deploy
-echo Building Cppcalculator....
-cd %FROM_DIR%\samples\CppCalculator
+if not exist %TO_BIN%\%BIN_PACKAGE%\doc mkdir %TO_BIN%\%BIN_PACKAGE%\doc
+xcopy/s %FROM_DIR%\doc    %TO_BIN%\%BIN_PACKAGE%\doc
+
+if not exist %TO_BIN%\%BIN_PACKAGE%\samples mkdir %TO_BIN%\%BIN_PACKAGE%\samples
+xcopy/s %TO_SRC%%SRC_PACKAGE%\samples    %TO_BIN%\%BIN_PACKAGE%\samples
+
+
+set TUSCANY_SCACPP=%TO_BIN%\%BIN_PACKAGE%
+
+echo Building and deploying samples
+
+echo Building CppCalculator....
+cd %TO_BIN%\%BIN_PACKAGE%\samples\CppCalculator
 call build
 
 echo Building CppBigBank....
-cd %FROM_DIR%\samples\CppBigBank
+cd %TO_BIN%\%BIN_PACKAGE%\samples\CppBigBank
 call build
 
-set TUSCANY_SCACPP=%TO_BIN%\%BIN_PACKAGE%
-echo Deploying Python & Ruby samples....
-cd %FROM_DIR%\samples\PythonCalculator
-call deploy
-cd %FROM_DIR%\samples\RubyCalculator
-call deploy
-cd %FROM_DIR%\samples\RubyBank
+echo Deploying HttpdBigBank
+cd %TO_BIN%\%BIN_PACKAGE%\samples\HttpdBigBank
 call deploy
 
+echo Deploying PythonCalculator
+cd %TO_BIN%\%BIN_PACKAGE%\samples\PythonCalculator
+call deploy
 
-if not exist %TO_BIN%\%BIN_PACKAGE%\samples mkdir %TO_BIN%\%BIN_PACKAGE%\samples
-if not exist %TO_BIN%\%BIN_PACKAGE%\samples\CppCalculator mkdir %TO_BIN%\%BIN_PACKAGE%\samples\CppCalculator
-if not exist %TO_BIN%\%BIN_PACKAGE%\samples\PythonCalculator mkdir %TO_BIN%\%BIN_PACKAGE%\samples\PythonCalculator
-if not exist %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator mkdir %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator
-if not exist %TO_BIN%\%BIN_PACKAGE%\samples\CppBigBank mkdir %TO_BIN%\%BIN_PACKAGE%\samples\CppBigBank
-if not exist %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank mkdir %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
+echo Deploying PythonWeatherForecast
+cd %TO_BIN%\%BIN_PACKAGE%\samples\PythonWeatherForecast
+call deploy
 
-xcopy/s %FROM_DIR%\samples\CppCalculator %TO_BIN%\%BIN_PACKAGE%\samples\CppCalculator
-xcopy/s %FROM_DIR%\samples\PythonCalculator %TO_BIN%\%BIN_PACKAGE%\samples\PythonCalculator
-xcopy/s %FROM_DIR%\samples\RubyCalculator %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator
-xcopy/s %FROM_DIR%\samples\CppBigBank %TO_BIN%\%BIN_PACKAGE%\samples\CppBigBank
-xcopy/s %FROM_DIR%\samples\RubyBank %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
+echo Deploying RubyCalculator
+cd %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
+call deploy
 
-xcopy/s %FROM_DIR%\deploy\samples\CppCalculator %TO_BIN%\%BIN_PACKAGE%\samples\CppCalculator
-xcopy/s %FROM_DIR%\deploy\samples\CppBigBank %TO_BIN%\%BIN_PACKAGE%\samples\CppBigBank
+echo Deploying RubyCalculator
+cd %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator
+call deploy
 
-copy %FROM_DIR%\samples\INSTALL   %TO_BIN%\%BIN_PACKAGE%\samples
-copy %FROM_DIR%\samples\LICENSE   %TO_BIN%\%BIN_PACKAGE%\samples
-copy %FROM_DIR%\samples\COPYING   %TO_BIN%\%BIN_PACKAGE%\samples
-copy %FROM_DIR%\samples\NOTICE    %TO_BIN%\%BIN_PACKAGE%\samples
-copy %FROM_DIR%\samples\README    %TO_BIN%\%BIN_PACKAGE%\samples
-copy %FROM_DIR%\samples\GettingStarted.html    %TO_BIN%\%BIN_PACKAGE%\samples
+echo Deploying RubyBank
+cd %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
+call deploy
+
+echo Deploying RestCalculator
+cd %TO_BIN%\%BIN_PACKAGE%\samples\RestCalculator
+call deploy
+
+echo Deploying RestCustomer
+cd %TO_BIN%\%BIN_PACKAGE%\samples\RestCustomer
+call deploy
+
+echo Deploying RestYahoo
+cd %TO_BIN%\%BIN_PACKAGE%\samples\RestYahoo
+call deploy
+
+echo Deploying AlertAggregator
+cd %TO_BIN%\%BIN_PACKAGE%\samples\AlertAggregator
+call deploy
+
+
+
 
 cd %TO_BIN%\%BIN_PACKAGE%
 del /S Makefile.am
-
 
 echo Creating zip file: %TO_BIN%\%BIN_PACKAGE%.zip
 jar -cMf %TO_BIN%\%BIN_PACKAGE%.zip -C %TO_BIN% %BIN_PACKAGE%
 
 :end
+
 echo SCA Build complete.
 endlocal
