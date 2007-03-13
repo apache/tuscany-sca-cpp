@@ -46,7 +46,7 @@ set BIN_PACKAGE=%PACKAGE%-%VERSION%-bin
 
 if "%TUSCANY_SDOCPP%" == "" (
 echo "TUSCANY_SDOCPP not set"
-set TUSCANY_SDOCPP=%CD%\tuscany_sdo_cpp-%VERSION%-bin
+set TUSCANY_SDOCPP=%CD%\..\tuscany_sdo_cpp-%VERSION%-bin
 )
  
 echo using TUSCANY_SDOCPP: %TUSCANY_SDOCPP%
