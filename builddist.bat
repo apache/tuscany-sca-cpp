@@ -146,12 +146,10 @@ jar -cMf %TO_SRC%\%SRC_PACKAGE%.zip -C %TO_SRC% %SRC_PACKAGE%
 
 echo Building SCA....
 
-set TUSCANY_SCACPP=%FROM_DIR%\deploy
-cd %FROM_DIR%
-call build
+set TUSCANY_SCACPP=%TO_SRC%%SRC_PACKAGE%\deploy
 
-copy %FROM_DIR%\tools\scagen\bld\scagen.jar  %FROM_DIR%\deploy\bin
-copy %FROM_DIR%\tools\scagen\bld\scagen.bat  %FROM_DIR%\deploy\bin
+cd %TO_SRC%%SRC_PACKAGE%
+call build
 
 echo Installing SCA....
 

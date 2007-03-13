@@ -108,7 +108,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="..\..\..\runtime\extensions\ruby\xtension\deploy.bat ..\..\..\ Release"
+				CommandLine="..\..\..\runtime\extensions\ruby\extension\deploy.bat ..\..\..\ Release"
 			/>
 		</Configuration>
 		<Configuration

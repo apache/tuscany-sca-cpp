@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcurl_imp.lib tuscany_sca_rest_interface.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib $(NOINHERIT)"
+				AdditionalDependencies="libcurl_imp.lib tuscany_sca_rest_interface.lib tuscany_sca.lib tuscany_sdo.lib $(NOINHERIT)"
 				OutputFile=".\Debug/tuscany_sca_rest_reference.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -172,7 +172,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libcurl_imp.lib tuscany_sca_rest_interface.lib tuscany_sdo_axiom.lib tuscany_sca.lib tuscany_sdo.lib $(NOINHERIT)"
+				AdditionalDependencies="libcurl_imp.lib tuscany_sca_rest_interface.lib tuscany_sca.lib tuscany_sdo.lib $(NOINHERIT)"
 				OutputFile=".\Release/tuscany_sca_rest_reference.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

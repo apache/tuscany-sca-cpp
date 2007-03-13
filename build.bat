@@ -34,12 +34,6 @@ goto end
 )
 echo using LIBXML2: %LIBXML2_HOME%
 
-if "%AXIS2C_HOME%" == "" (
-echo "AXIS2C_HOME not set"
-goto end
-)
-echo using Axis2C: %AXIS2C_HOME%"
-
 if "%TUSCANY_SDOCPP%" == "" (
 echo "TUSCANY_SDOCPP not set"
 goto end
@@ -47,15 +41,20 @@ goto end
 echo using Tuscany SDOCPP: %TUSCANY_SDOCPP%
 
 call vcvars32
-echo building Tuscany SCA C++ core + cpp and ws extensions
+
+echo building Tuscany Native core
 cd vsexpress\tuscany_sca
-call vcbuild tuscany_sca.sln "%config%|Win32"
+call vcbuild tuscany_sca\tuscany_sca.vcproj "%config%|Win32"
+
+echo building Tuscany Native cpp extension     
+call vcbuild tuscany_sca_cpp\tuscany_sca_cpp.vcproj "%config%|Win32"
+
 
 if "%PYTHON_HOME%" == "" (
 echo PYTHON_HOME not set. Skipping build of Python extension
 goto pythonend
 )
-echo building Python extension
+echo building Python extension using Python %PYTHON_HOME%
 call vcbuild tuscany_sca_python\tuscany_sca_python.vcproj "%config%|Win32"
 :pythonend
 
@@ -63,9 +62,46 @@ if "%RUBY_HOME%" == "" (
 echo RUBY_HOME not set. Skipping build of Ruby extension
 goto rubyend
 )
-echo building Ruby extension
+echo building Ruby extension using Ruby %RUBY_HOME
+call vcbuild tuscany_sca_ruby_lang\tuscany_sca_ruby_lang.vcproj "%config%|Win32"
 call vcbuild tuscany_sca_ruby\tuscany_sca_ruby.vcproj "%config%|Win32"
 :rubyend
+
+if "%AXIS2C_HOME%" == "" (
+echo AXIS2C_HOME not set.  Skipping build of ws and sca extensions
+goto wsend
+)
+echo using Axis2C: %AXIS2C_HOME%"
+echo building Tuscany Native ws extension    
+call vcbuild tuscany_sca_ws_reference\tuscany_sca_ws_reference.vcproj "%config%|Win32"
+call vcbuild tuscany_sca_ws_service\tuscany_sca_ws_service.vcproj "%config%|Win32"
+call vcbuild tuscany_sca_ws_dispatcher\tuscany_sca_ws_dispatcher.vcproj "%config%|Win32"
+
+
+call vcbuild tuscany_sca_scabinding_reference\tuscany_sca_scabinding_reference.vcproj "%config%|Win32"
+call vcbuild tuscany_sca_scabinding_service\tuscany_sca_scabinding_service.vcproj "%config%|Win32"
+
+:wsend
+
+if "%HTTPD_HOME%" == "" (
+echo HTTPD_HOME not set. Skipping build of REST extension
+goto restend
+)
+if "%LIBCURL_HOME%" == "" (
+echo LIBCURL_HOME not set. Skipping build of REST extension
+goto restend
+)
+
+echo building REST extension using HTTPD %HTTPD_HOME% and CURL %LIBCURL_HOME%
+call vcbuild tuscany_sca_rest_interface\tuscany_sca_rest_interface.vcproj "%config%|Win32"
+call vcbuild tuscany_sca_rest_reference\tuscany_sca_rest_reference.vcproj "%config%|Win32"
+call vcbuild tuscany_sca_rest_service\tuscany_sca_rest_service.vcproj "%config%|Win32"
+call vcbuild tuscany_sca_rest_mod_rest\tuscany_sca_rest_mod_rest.vcproj "%config%|Win32"
+
+
+:restend
+
+
 
 :end
 
