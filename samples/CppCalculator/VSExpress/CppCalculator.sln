@@ -3,11 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual C++ Express 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Build", "Build\Build.vcproj", "{4D8888D4-CC80-4008-B3B4-6772A0CA9010}"
 	ProjectSection(ProjectDependencies) = postProject
-		{8DD6E7A7-912D-49DD-9517-A91E8FB040D3} = {8DD6E7A7-912D-49DD-9517-A91E8FB040D3}
 		{799C40A9-9DDB-4DCD-806D-50205508AE0E} = {799C40A9-9DDB-4DCD-806D-50205508AE0E}
+		{8DD6E7A7-912D-49DD-9517-A91E8FB040D3} = {8DD6E7A7-912D-49DD-9517-A91E8FB040D3}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample.calculator", "sample.calculator\sample.calculator.vcproj", "{8DD6E7A7-912D-49DD-9517-A91E8FB040D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{799C40A9-9DDB-4DCD-806D-50205508AE0E} = {799C40A9-9DDB-4DCD-806D-50205508AE0E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample.calculator.client", "sample.calculator.client\sample.calculator.client.vcproj", "{799C40A9-9DDB-4DCD-806D-50205508AE0E}"
 EndProject
