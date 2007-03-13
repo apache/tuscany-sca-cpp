@@ -168,7 +168,7 @@ if not exist %TO_BIN%\%BIN_PACKAGE%\doc mkdir %TO_BIN%\%BIN_PACKAGE%\doc
 xcopy/s %FROM_DIR%\doc    %TO_BIN%\%BIN_PACKAGE%\doc
 
 if not exist %TO_BIN%\%BIN_PACKAGE%\samples mkdir %TO_BIN%\%BIN_PACKAGE%\samples
-xcopy/s %TO_SRC%%SRC_PACKAGE%\samples    %TO_BIN%\%BIN_PACKAGE%\samples
+xcopy/s %TO_SRC%\%SRC_PACKAGE%\samples    %TO_BIN%\%BIN_PACKAGE%\samples
 
 
 set TUSCANY_SCACPP=%TO_BIN%\%BIN_PACKAGE%
