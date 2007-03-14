@@ -18,7 +18,7 @@
 dnl run autogen.sh to generate the configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(tuscany_sca_cpp, 1.0-incubator-M3)
+AC_INIT(tuscany_sca_native, 1.0-incubator-M3)
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(tuscany_sca_config.h)
 AM_INIT_AUTOMAKE([tar-ustar])

@@ -19,6 +19,8 @@ SUBDIRS =
 libdir=$(prefix)/extensions/ruby/lib
 BUILT_SOURCES = extension_build
 
+EXTRA_DIST = src
+
 extension_build: src/Extension.cpp src/extconf.rb
 	cd src; ruby extconf.rb; make
 	touch extension_build

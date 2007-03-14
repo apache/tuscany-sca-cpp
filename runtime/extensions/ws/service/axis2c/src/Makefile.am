@@ -73,7 +73,7 @@ servicedir=$(rootdir)/services/tuscany
 service_DATA = services.xml
 
 modulesdir=$(rootdir)/modules/tuscany
-module_DATA = module.xml
+modules_DATA = module.xml
 
 EXTRA_DIST = axis2.xml services.xml module.xml deploy.sh
 
