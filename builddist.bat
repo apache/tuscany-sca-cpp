@@ -110,7 +110,7 @@ if not exist %TO_SRC%\%SRC_PACKAGE%\samples\PythonWeatherForecast mkdir %TO_SRC%
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RestCalculator   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RestCalculator
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RestCustomer   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RestCustomer
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RestYahoo   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RestYahoo
-if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank         mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank
+if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RubyBigBank      mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RubyBigBank
 if not exist %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator   mkdir %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
 
 xcopy/s %FROM_DIR%\samples\AlertAggregator         %TO_SRC%\%SRC_PACKAGE%\samples\AlertAggregator
@@ -122,7 +122,7 @@ xcopy/s %FROM_DIR%\samples\PythonWeatherForecast %TO_SRC%\%SRC_PACKAGE%\samples\
 xcopy/s %FROM_DIR%\samples\RestCalculator   %TO_SRC%\%SRC_PACKAGE%\samples\RestCalculator
 xcopy/s %FROM_DIR%\samples\RestCustomer   %TO_SRC%\%SRC_PACKAGE%\samples\RestCustomer
 xcopy/s %FROM_DIR%\samples\RestYahoo   %TO_SRC%\%SRC_PACKAGE%\samples\RestYahoo
-xcopy/s %FROM_DIR%\samples\RubyBank         %TO_SRC%\%SRC_PACKAGE%\samples\RubyBank
+xcopy/s %FROM_DIR%\samples\RubyBigBank         %TO_SRC%\%SRC_PACKAGE%\samples\RubyBigBank
 xcopy/s %FROM_DIR%\samples\RubyCalculator   %TO_SRC%\%SRC_PACKAGE%\samples\RubyCalculator
 copy %FROM_DIR%\samples\scagen.bat   %TO_SRC%\%SRC_PACKAGE%\samples
 copy %FROM_DIR%\samples\INSTALL   %TO_SRC%\%SRC_PACKAGE%\samples
@@ -196,15 +196,11 @@ cd %TO_BIN%\%BIN_PACKAGE%\samples\PythonWeatherForecast
 call deploy
 
 echo Deploying RubyCalculator
-cd %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
-call deploy
-
-echo Deploying RubyCalculator
 cd %TO_BIN%\%BIN_PACKAGE%\samples\RubyCalculator
 call deploy
 
-echo Deploying RubyBank
-cd %TO_BIN%\%BIN_PACKAGE%\samples\RubyBank
+echo Deploying RubyBigBank
+cd %TO_BIN%\%BIN_PACKAGE%\samples\RubyBigBank
 call deploy
 
 echo Deploying RestCalculator
