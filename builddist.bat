@@ -228,6 +228,7 @@ call deploy
 
 cd %TO_BIN%\%BIN_PACKAGE%
 del /S Makefile.am
+del /S BuildLog.htm
 
 echo Creating zip file: %TO_BIN%\%BIN_PACKAGE%.zip
 jar -cMf %TO_BIN%\%BIN_PACKAGE%.zip -C %TO_BIN% %BIN_PACKAGE%
