@@ -73,6 +73,8 @@
             describes the configuration of the SCA BigBank composite deployed to the SCA
             runtime.                                                                       
          </P>
+         <P>Note that this sample does not run on Windows, due to threading incompatibilities 
+            between Apache HTTPD and the Ruby runtime</P>
       </DIV>
 
       <DIV CLASS="section"> 
@@ -80,8 +82,7 @@
          <OL>
             <LI><A HREF="#linuxbld">Building the HTTPD BigBank sample on Linux and Mac OS X</A></LI>
             <LI><A HREF="#linuxrun">Running the HTTPD BigBank sample on Linux and Mac OS X</A></LI>
-            <LI><A HREF="#winbld">Building the HTTPD BigBank sample on Windows</A></LI>
-            <LI><A HREF="#winrun">Running the HTTPD BigBank sample on Windows</A></LI>
+            <LI><A HREF="#win">The HTTPD BigBank sample on Windows</A></LI>
             <LI><A HREF="#help">Getting help</A></LI>
          </OL>
       </DIV>
@@ -165,83 +166,15 @@
                  with the HTTPD BigBank service that is served by the HTTPD server started above.
              </LI>
          </OL>                                                  
-        </DIV>
-
-        <DIV CLASS="section">
-         <A NAME="winbld"><H2>Building the HTTPD BigBank sample on Windows</H2></A>
-         <P>If using the binary distribution the samples are built and installed in
-            &lt;tuscany_sca_install_dir&gt;\samples - go directly to <A HREF="#winrun">Running the samples on Windows</A>.</P>
-         <OL>
-             <LI>The following environment variables are required:                                 
-                <UL>
-                  <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;                                      
-                  <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;                                      
-                </UL></LI>
-             </LI>
-             <LI>As this sample is based on HTTPD scripts, a specific compilation step is not necessary - 
-                 only deployment is required. Deploy the sample with the following commands:
-                 <UL>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\HttpdBigBank</LI>
-                   <LI>deploy.bat</LI>
-                </UL>
-             </LI>
-         </OL>                                                  
-        </DIV>
-
-       <DIV CLASS="section"> 
-         <A NAME="winrun"><H2>Running the HTTPD BigBank sample on Windows</H2></A>
-         <OL>
-             <LI>The HTTPD BigBank sample requires the following extensions:
-                <UL>
-                   <LI><A HREF="../../doc/HttpdExtension.html">Ruby Extension</A></LI>
-                   <LI><A HREF="../../doc/Axis2CWSExtension.html">Axis2/C Web Services Extension</A></LI>
-                   <LI><A HREF="../../doc/SCAExtension.html">SCA Binding Extension</A></LI>
-                </UL>
-                 Please follow the documentation to ensure you have these extensions built and installed
-                 on your system
-             </LI>
-             <LI>Ensure you have enabled Axis2/C to run Tuscany SCA services. Follow the instructions 
-                 found <A HREF="../../doc/Axis2CWSExtension.html#deploy">here</A>.
-             </LI>
-             <LI>Start the Apache HTTPD server:
-                <OL>
-                   <LI>The following environment variables are required:                                 
-                      <UL>
-                        <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                        <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                        <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
-                      </UL>
-                   </LI>
-                   <LI>cd &lt;tuscany_sca_install_dir&gt;\samples\HttpdBigBank\deploy\httpserver
-                   </LI>
-                   <LI>startserver.bat</LI>
-                </OL>
-             </LI>
-             <LI>Now run the Web Service client:
-                <OL>                     
-                 <LI>The following environment variables are required:                                 
-                    <UL>
-                      <LI>TUSCANY_SCACPP=&lt;path to installed Tuscany SCA&gt;</LI>                                      
-                      <LI>TUSCANY_SDOCPP=&lt;path to installed Tuscany SDO&gt;</LI>                                      
-                      <LI>AXIS2C_HOME=&lt;path to Axis2/C version 0.96&gt;</LI>
-                    </UL>
-                 </LI>
-                 <LI>Run the sample with the following commands:
-                    <UL>
-                       <LI>cd &lt;tuscany_sca_install_dir&gt;/samples/HttpdBigBank/deploy/bigbank.wsclient</LI>
-                       <LI>./runwsclient.bat</LI>
-                    </UL>
-                 </LI>
-                </OL>
-            </LI>
-            <LI>The PHP web client detailed in the 
-                 <A HREF="../CppBigBank/README.html">CppBigBank</A> sample can also be used 
-                 with the HTTPD BigBank service that is served by the HTTPD server started above.
-             </LI>
-         </OL>                                                  
       </DIV>
 
-
+      <DIV CLASS="section">
+         <A NAME="win"><H2>The HTTPD BigBank sample on Windows</H2></A>
+         <P>The HttpdBigBank sample does not currently run on Windows, due to the sample being based on Ruby 
+            components running under Apache HTTPD. The Ruby runtime is single-threaded and, on Windows, HTTPD 
+            is multi-threaded, which means that Ruby throws "cross-thread violation" errors when Tuscany
+            attempts to run a Ruby script under HTTPD.</P>
+      </DIV>
               
       <DIV CLASS="section"> 
          <A NAME="help"><H2>Getting Help</H2></A>
