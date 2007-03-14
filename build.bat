@@ -56,6 +56,7 @@ goto pythonend
 )
 echo building Python extension using Python %PYTHON_HOME%
 call vcbuild tuscany_sca_python\tuscany_sca_python.vcproj "%config%|Win32"
+call vcbuild tuscany_sca_python_sca_module\tuscany_sca_python_sca_module.vcproj "%config%|Win32"
 :pythonend
 
 if "%RUBY_HOME%" == "" (
