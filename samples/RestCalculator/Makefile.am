@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestCalculator/deploy
+deploydir=$(prefix)/RestCalculator/deploy
 SUBDIRS = sample.calculator sample.calculator.restclient httpserver
 
 EXTRA_DIST = *.composite README.html

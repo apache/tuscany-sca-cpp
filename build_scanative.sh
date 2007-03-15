@@ -17,7 +17,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-
 TUSCANY_SCACPP_HOME=`pwd`
 
 if [ x$AXIS2C_HOME = x ]; then
@@ -69,15 +68,11 @@ echo "Building REST extension using HTTPD from $HTTPD_INCLUDE, APR from $APR_INC
 ENABLE_REST=--enable-restbinding
 fi
 
-cd ${TUSCANY_SCACPP_HOME}/samples
-./autogen.sh
-./configure --prefix=${TUSCANY_SCACPP}/samples --enable-static=no ${ENABLE_RUBY} ${ENABLE_PYTHON}
+if [ x$TUSCANY_SCACPP = x ]; then
+export TUSCANY_SCACPP=`pwd`/deploy
+fi
 
-cd $TUSCANY_SCACPP_HOME
-./autogen.sh
 ./configure --prefix=${TUSCANY_SCACPP} --enable-static=no  ${ENABLE_WS} ${ENABLE_SCABINDING} ${ENABLE_RUBY} ${ENABLE_PYTHON} ${ENABLE_REST}
-
-make bindist
-
-
+make
+make install
 

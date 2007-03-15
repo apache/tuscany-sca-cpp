@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/AlertAggregator/deploy
+deploydir=$(prefix)/AlertAggregator/deploy
 SUBDIRS = sample.alerter sample.display httpserver
 EXTRA_DIST = *.composite *.xml 
 deploy_DATA = *.composite *.xml

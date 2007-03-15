@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestCustomer/deploy
+deploydir=$(prefix)/RestCustomer/deploy
 SUBDIRS = sample.customer sample.customer.restclient httpserver
 
 EXTRA_DIST = *.composite README.html

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/HttpdBigBank/deploy
+deploydir=$(prefix)/HttpdBigBank/deploy
 SUBDIRS = bigbank.account bigbank.accountdata bigbank.wsclient httpserver
 EXTRA_DIST = *.composite 
 deploy_DATA = *.composite

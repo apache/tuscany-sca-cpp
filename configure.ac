@@ -102,7 +102,7 @@ AC_ARG_ENABLE(cpp, [AS_HELP_STRING([--enable-cpp],[build C++ component type exte
 AM_CONDITIONAL([WANT_CPP], [test x$want_cpp = xtrue])
 
 AC_MSG_CHECKING(whether to build Web Service binding extension)
-AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service binding extension [default=yes]])],
+AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service binding extension [default=no])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
@@ -113,8 +113,8 @@ AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service
     want_wsbinding=true
     ;;
   esac ],
-[ AC_MSG_RESULT(yes)
-  want_wsbinding=true ]
+[ AC_MSG_RESULT(no)
+  want_wsbinding=false ]
 )
 AM_CONDITIONAL([WANT_WSBINDING], [test x$want_wsbinding = xtrue])
 

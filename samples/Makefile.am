@@ -20,7 +20,6 @@ if WANT_ALL_SAMPLES
   PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
   PYTHON_RUBY_SAMPLES = RestYahoo
-  PHP_SAMPLES = PHPCalculator
 else
 if WANT_CPP_SAMPLES
     CPP_SAMPLES = CppCalculator CppBigBank
@@ -34,10 +33,7 @@ endif
 if WANT_RUBY_SAMPLES
     RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
 endif
-if WANT_PHP_SAMPLES
-    PHP_SAMPLES = PHPCalculator
 endif
-endif
-SUBDIRS = ${CPP_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PYTHON_RUBY_SAMPLES} ${PHP_SAMPLES}
+SUBDIRS = ${CPP_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PYTHON_RUBY_SAMPLES}
 
 EXTRA_DIST = GettingStarted.html

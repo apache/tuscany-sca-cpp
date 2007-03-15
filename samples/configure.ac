@@ -83,23 +83,6 @@ AC_ARG_ENABLE(all-samples, [AS_HELP_STRING([--enable-all-samples],[build all sam
 )
 AM_CONDITIONAL([WANT_ALL_SAMPLES], [test x$want_all_samples = xtrue])
 
-AC_MSG_CHECKING(whether to build WS samples)
-AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service binding samples [default=yes]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_wsbinding=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_wsbinding=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(yes)
-  want_wsbinding=true ]
-)
-AM_CONDITIONAL([WANT_WSBINDING], [test x$want_wsbinding = xtrue])
-
 AC_MSG_CHECKING(whether to build C++ samples)
 AC_ARG_ENABLE(cpp, [AS_HELP_STRING([--enable-cpp],[build C++ samples [default=yes]])],
 [ case "${enableval}" in
@@ -151,23 +134,6 @@ AC_ARG_ENABLE(ruby, [AS_HELP_STRING([--enable-ruby],[build Ruby samples [default
 )
 AM_CONDITIONAL([WANT_RUBY_SAMPLES], [test x$want_ruby_samples = xtrue])
 
-AC_MSG_CHECKING(whether to build PHP samples)
-AC_ARG_ENABLE(php, [AS_HELP_STRING([--enable-php],[build PHP samples [default=no]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_php_samples=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_php_samples=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-  want_php_samples=false ]
-)
-AM_CONDITIONAL([WANT_PHP_SAMPLES], [test x$want_php_samples = xtrue])
-
 AC_CONFIG_FILES([Makefile  
                  AlertAggregator/Makefile
                  AlertAggregator/sample.alerter/Makefile
@@ -209,7 +175,5 @@ AC_CONFIG_FILES([Makefile
                  HttpdBigBank/bigbank.accountdata/Makefile
                  HttpdBigBank/bigbank.wsclient/Makefile
                  HttpdBigBank/httpserver/Makefile
-                 PHPCalculator/Makefile
-                 PHPCalculator/sample.calculator/Makefile
                  ])
 AC_OUTPUT

@@ -51,7 +51,7 @@ echo "Building Ruby samples with Ruby installed at $RUBY_LIB, $RUBY_INCLUDE"
 ENABLE_RUBY=--enable-ruby
 fi
 
-./configure --prefix=${TUSCANY_SCACPP} --enable-static=no ${ENABLE_RUBY} ${ENABLE_PYTHON}
+./configure --prefix=${TUSCANY_SCACPP}/samples --enable-static=no ${ENABLE_RUBY} ${ENABLE_PYTHON}
 make
 make install
 

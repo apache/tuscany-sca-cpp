@@ -15,4 +15,11 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scagen
+if WANT_ALL
+  CPP_TOOLS = scagen
+endif
+if WANT_CPP
+  CPP_TOOLS = scagen
+endif
+
+SUBDIRS = ${CPP_TOOLS}

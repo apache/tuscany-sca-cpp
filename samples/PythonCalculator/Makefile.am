@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/PythonCalculator/deploy
+deploydir=$(prefix)/PythonCalculator/deploy
 SUBDIRS = sample.calculator sample.calculator.client
 EXTRA_DIST = *.composite README.html
 deploy_DATA = *.composite

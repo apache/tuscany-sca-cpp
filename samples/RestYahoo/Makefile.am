@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestYahoo/deploy
+deploydir=$(prefix)/RestYahoo/deploy
 SUBDIRS = sample.yahoo sample.yahoo.client
 
 EXTRA_DIST = *.composite README.html

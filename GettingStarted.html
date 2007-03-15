@@ -219,11 +219,22 @@
                   </UL>
 	              NOTE: If you don't provide a --prefix configure option, it will by default install into
                   /usr/local/tuscany/sca. Use ./configure --help to see all the available 
-                  options</LI>
+                  options:
+                  <xmp>  --enable-cpp            build C++ component type extension [default=yes]
+  --enable-wsbinding      build Web Service binding extension [default=no]
+  --enable-scabinding     build SCA default binding extension [default=no]
+  --enable-restbinding    build REST binding extension [default=no]
+  --enable-python         build Python component type extension [default=no]
+  --enable-ruby           build Ruby component type extension [default=no]</xmp>
+                  A script, <b>build_scanative.sh</b>, is provided that will build and install SCA Native. This script will install to the 
+                  location specified by the TUSCANY_SCACPP environment variable if set or into a deploy directory at &lt;tuscany_sca_install_dir&gt;/deploy.
+                  This script will check the environment variable settings and will build the extensions whose dependencies are set. For example if RUBY_LIB and 
+                  RUBY_HOME are set configure will be called with the --enable-ruby=yes option.
+              </LI>
               <LI>Set the TUSCANY_SCACPP environment variable to point to the &lt;tuscany_sca_install_dir&gt;/deploy
                   directory that contains the built Tuscany SCA distribution</LI>
-              </OL>
-           
+          </OL>
+                     
          <A NAME="winbin"><H3>Getting Tuscany SCA Native working with the binary release on Windows</H3></A>
           <OL>
               <LI>Unzip the supplied zip file to a folder</LI>
@@ -399,7 +410,7 @@
                </TD>
                <TD>Simple samples that emphasize how to to use
                   Service Component Architecture technology. Follow the 
-                  instructions on the samples <A HREF="samples/GettingStarted.html">Getting Started</A> 
+                  instructions on the <A HREF="samples/GettingStarted.html">samples Getting Started</A> 
                   page to build and run the Tuscany SCA samples 
                </TD>
             </TR>
@@ -443,11 +454,11 @@
          <A NAME="help"><H2>Getting Help</H2></A>
 
          <P>The first place to look is at the Tuscany FAQ at 
-         <A HREF="http://incubator.apache.org/tuscany/faq.html"
-            TARGET="_blank">http://incubator.apache.org/tuscany/faq.html</A> </P>
+         <A HREF="http://cwiki.apache.org/TUSCANY/sca-cpp.html"
+            TARGET="_blank"http://cwiki.apache.org/TUSCANY/sca-cpp.html</A> </P>
 
          <P>Any problem with this release can be reported to the Tuscany 
-         <A HREF="http://incubator.apache.org/tuscany/mail-lists.html"
+         <A HREF="http://cwiki.apache.org/TUSCANY/mailing-lists.html"
             TARGET="_blank">mailing lists</A> or create a JIRA issue at&nbsp;<A HREF="http://issues.apache.org/jira/browse/Tuscany"
                                                                                 TARGET="_blank">http://issues.apache.org/jira/browse/Tuscany</A>.</P>
          
