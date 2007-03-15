@@ -21,7 +21,7 @@ datadir=$(prefix)
 
 data_DATA = INSTALL README LICENSE COPYING NOTICE GettingStarted.html
 nobase_data_DATA = xsd/*.*
-EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE GettingStarted.html xsd
+EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE GettingStarted.html xsd build_scanative.sh
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`
 	rm -rf `find $(distdir)/ -type d -name .deps`
