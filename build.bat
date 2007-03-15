@@ -28,12 +28,6 @@ echo Building Debug version
 set config=Debug
 )
 
-if "%LIBXML2_HOME%" == "" (
-echo "LIBXML2_HOME not set"
-goto end
-)
-echo using LIBXML2: %LIBXML2_HOME%
-
 if "%TUSCANY_SDOCPP%" == "" (
 echo "TUSCANY_SDOCPP not set"
 goto end

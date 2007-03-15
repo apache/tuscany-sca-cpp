@@ -17,18 +17,6 @@
 @REM  specific language governing permissions and limitations
 @REM  under the License.
 
-setlocal
-if "%LIBXML2_HOME%" == "" (
-echo "LIBXML2_HOME not set"
-goto end
-)
-echo using LIBXML2: %LIBXML2_HOME%
-
-if "%ICONV_HOME%" == "" (
-echo "ICONV_HOME not set"
-goto end
-)
-echo using ICONV: %ICONV_HOME%"
 
 if "%AXIS2C_HOME%" == "" (
 echo "AXIS2C_HOME not set"
