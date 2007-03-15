@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/AlertAggregator/deploy
+deploydir=$(prefix)/AlertAggregator/deploy
 compositedir=$(deploydir)/sample.display
 
 composite_DATA = *.composite *.py *.xsd

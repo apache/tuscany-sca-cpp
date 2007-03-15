@@ -1,4 +1,4 @@
-deploydir=$(prefix)/samples/HttpdBigBank/deploy
+deploydir=$(prefix)/HttpdBigBank/deploy
 serverdir=$(deploydir)/httpserver
 
 server_SCRIPTS = startserver.sh stopserver.sh

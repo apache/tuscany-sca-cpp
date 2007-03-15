@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestYahoo/deploy
+deploydir=$(prefix)/RestYahoo/deploy
 compositedir=$(deploydir)/sample.yahoo
 
 composite_DATA = *.composite *.py *.xsd

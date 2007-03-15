@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/PythonWeatherForecast/deploy
+deploydir=$(prefix)/PythonWeatherForecast/deploy
 compositedir=$(deploydir)/sample.weather
 
 composite_DATA = *.composite *.wsdl *.py

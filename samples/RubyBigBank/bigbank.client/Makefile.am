@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RubyBigBank/deploy
+deploydir=$(prefix)/RubyBigBank/deploy
 clientdir=$(deploydir)/bigbank.client
 
 client_DATA = *.rb

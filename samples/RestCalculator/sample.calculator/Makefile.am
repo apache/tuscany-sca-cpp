@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestCalculator/deploy
+deploydir=$(prefix)/RestCalculator/deploy
 compositedir=$(deploydir)/sample.calculator
 
 composite_DATA = *.composite *.rb

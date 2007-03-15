@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestCalculator/deploy
+deploydir=$(prefix)/RestCalculator/deploy
 restclientdir=$(deploydir)/sample.calculator.restclient
 
 restclient_DATA = *.rb *.composite

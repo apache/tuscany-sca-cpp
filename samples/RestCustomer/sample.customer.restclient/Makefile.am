@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestCustomer/deploy
+deploydir=$(prefix)/RestCustomer/deploy
 restclientdir=$(deploydir)/sample.customer.restclient
 
 restclient_DATA = *.py *.composite *.xsd

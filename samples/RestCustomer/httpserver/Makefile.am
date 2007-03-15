@@ -1,4 +1,4 @@
-deploydir=$(prefix)/samples/RestCustomer/deploy
+deploydir=$(prefix)/RestCustomer/deploy
 serverdir=$(deploydir)/httpserver
 
 server_SCRIPTS = startserver.sh stopserver.sh

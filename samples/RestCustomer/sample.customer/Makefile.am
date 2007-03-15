@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestCustomer/deploy
+deploydir=$(prefix)/RestCustomer/deploy
 compositedir=$(deploydir)/sample.customer
 
 composite_DATA = *.composite *.py *.xsd *.xml

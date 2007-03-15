@@ -1,4 +1,4 @@
-deploydir=$(prefix)/samples/HttpdBigBank/deploy
+deploydir=$(prefix)/HttpdBigBank/deploy
 clientdir=$(deploydir)/bigbank.wsclient
 
 client_DATA = *.rb *.composite *.wsdl

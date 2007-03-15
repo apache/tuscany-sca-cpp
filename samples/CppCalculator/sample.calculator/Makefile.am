@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/CppCalculator/deploy
+deploydir=$(prefix)/CppCalculator/deploy
 compositedir=$(deploydir)/sample.calculator
 
 BUILT_SOURCES = scagen

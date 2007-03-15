@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/PHPCalculator/deploy
+deploydir=$(prefix)/PHPCalculator/deploy
 compositedir=$(deploydir)/sample.calculator
 
 BUILT_SOURCES = scagen

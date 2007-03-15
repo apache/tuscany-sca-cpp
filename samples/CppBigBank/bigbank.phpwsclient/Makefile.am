@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/CppBigBank/deploy
+deploydir=$(prefix)/CppBigBank/deploy
 phpwsclientdir=$(deploydir)/bigbank.phpwsclient
 
 phpwsclient_DATA = *.php *.wsdl README

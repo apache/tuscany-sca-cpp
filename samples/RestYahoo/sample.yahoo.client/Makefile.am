@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RestYahoo/deploy
+deploydir=$(prefix)/RestYahoo/deploy
 clientdir=$(deploydir)/sample.yahoo.client
 
 client_DATA = *.rb

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/HttpdBigBank/deploy
+deploydir=$(prefix)/HttpdBigBank/deploy
 compositedir=$(deploydir)/bigbank.account
 
 composite_DATA = *.composite *.wsdl *.xsd *.rb

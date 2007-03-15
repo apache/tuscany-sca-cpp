@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/CppBigBank/deploy
+deploydir=$(prefix)/CppBigBank/deploy
 clientdir=$(deploydir)/bigbank.client
 
 client_PROGRAMS = account_client

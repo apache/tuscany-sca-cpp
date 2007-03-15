@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-deploydir=$(prefix)/samples/RubyCalculator/deploy
+deploydir=$(prefix)/RubyCalculator/deploy
 compositedir=$(deploydir)/sample.calculator
 
 composite_DATA = *.composite *.wsdl *.rb
