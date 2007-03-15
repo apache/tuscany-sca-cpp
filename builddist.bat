@@ -18,6 +18,8 @@
 @REM  under the License.
 
 
+@setlocal
+
 if "%AXIS2C_HOME%" == "" (
 echo "AXIS2C_HOME not set"
 goto end
@@ -220,4 +222,4 @@ jar -cMf %TO_BIN%\%BIN_PACKAGE%.zip -C %TO_BIN% %BIN_PACKAGE%
 :end
 
 echo SCA Build complete.
-endlocal
+@endlocal
