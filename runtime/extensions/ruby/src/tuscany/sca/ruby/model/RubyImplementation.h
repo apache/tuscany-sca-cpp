@@ -88,7 +88,7 @@ namespace tuscany
                 /**
                  * Returns the Ruby REXML::Document class
                  */
-                 static VALUE getXMLDocumentClass() { return xmlDocumentClass; }
+                 static VALUE getXMLDocumentClass();
 
             private:
             

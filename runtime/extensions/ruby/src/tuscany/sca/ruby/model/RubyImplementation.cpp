@@ -57,8 +57,10 @@ namespace tuscany
             {
             }
             
-            void RubyImplementation::loadClass()
-            {
+            VALUE RubyImplementation::getXMLDocumentClass()
+            { 
+                logentry();
+
                 // Initialize the Ruby runtime
                 if (!initialized)
                 {
@@ -71,10 +73,23 @@ namespace tuscany
                     rb_eval_string("require(\"rexml/document\")");
 
                     xmlDocumentClass =  rb_path2class("REXML::Document");
-                    
                     initialized = true;
                 }
-    
+
+                return xmlDocumentClass; 
+            }
+
+            void RubyImplementation::loadClass()
+            {
+                logentry();
+
+                // Ensure xmlDocumentClass is initialized
+                getXMLDocumentClass();
+ 
+                ID to_s = rb_intern("to_s");
+                VALUE xstr = rb_funcall(xmlDocumentClass, to_s, 0);
+                loginfo("Got Ruby Rexml class: %s", rb_string_value_cstr(&xstr));
+
                 // Load the specified Ruby script
                 if (script != "")
                 {
