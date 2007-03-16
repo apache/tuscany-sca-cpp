@@ -308,10 +308,14 @@ def deleteAlertSource (sourceId):
     # Use the alertService reference    
     alertService.removeAlertSource(sourceId)
 
+
     # Remove all alerts with this sourceid
+    alertsElem = getSavedAlerts()
     for alert in alertsElem.findall(ns+"alert"):
         if alert.attrib["sourceid"]==sourceId:
             alertsElem.remove(alert)
+
+    saveAlerts(alertsElem)
 
 def addAlertSource(alertSourceElem):
     if xml.etree.ElementTree.iselement(alertSourceElem):
