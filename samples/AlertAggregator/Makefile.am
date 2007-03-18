@@ -17,5 +17,5 @@
 
 deploydir=$(prefix)/AlertAggregator/deploy
 SUBDIRS = sample.alerter sample.display httpserver
-EXTRA_DIST = *.composite *.xml 
+EXTRA_DIST = *.composite *.xml README.html
 deploy_DATA = *.composite *.xml
