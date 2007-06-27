@@ -335,7 +335,62 @@ namespace tuscany
                 throwException(SystemConfigurationException, message.c_str());
                 
             }
-            
+
+            ///
+            /// Get all of the PortType names defined in the wsdl
+            ///
+            std::list<std::string> WSDLDefinition::getPortTypes()
+            {
+                logentry();
+
+                std::list<std::string> ptList;
+                DataObjectPtr portType = 0;
+
+                // Find the binding
+                for (unsigned int m = 0; m < wsdlModels.size(); m++)
+                {
+                    DataObjectList& portTypeList = wsdlModels[m]->getList("portType");
+                    for (unsigned int i=0; i<portTypeList.size(); i++)
+                    {
+                        string namePortType(portTypeList[i]->getCString("name"));
+
+                        ptList.push_back( namePortType );
+                    }
+                }
+
+                return ptList;
+            }
+
+            ///
+            /// Get all of the operation names for the PortType specified
+            ///
+            std::list<std::string> WSDLDefinition::getOperations( const std::string &portTypeName )
+            {
+                logentry();
+
+                std::list<std::string> ptOpList;
+
+                // Get the portType
+                DataObjectPtr wsPortType = findPortType(portTypeName);
+                if (!wsPortType)
+                {
+                    string message = "Unable to find PortType ";
+                    message = message + portTypeName;
+                    message = message + " in the WSDL definition";
+                    throwException(SystemConfigurationException, message.c_str());
+                }
+
+                // Found the portType, find the operation
+                DataObjectList& operationList = wsPortType->getList("operation");
+                for (unsigned int i=0; i < operationList.size(); i++)
+                {
+                    string opName(operationList[i]->getCString("name"));
+                    ptOpList.push_back( opName );
+                }
+
+                return ptOpList;
+            }
+
             ///
             /// Find a service
             ///

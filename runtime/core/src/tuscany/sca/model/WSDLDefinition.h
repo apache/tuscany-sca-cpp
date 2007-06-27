@@ -92,6 +92,19 @@ namespace tuscany
                  */
                 SCA_API const WSDLOperation& findOperation(const std::string& portTypeName, 
                                         const std::string& operationName);
+
+                /**
+                 * Get all of the PortTypes in this WSDL definition.
+                 * @return A standard list of standard strings, each being a different PortType
+                 */
+                SCA_API std::list<std::string> getPortTypes();
+
+                /**
+                 * Get all of the Operations for a particular PortType in this WSDL definition.
+                 * @param portTypeName Get all of the operations for this portTypeName
+                 * @return A standard list of standard strings, each of which is a different operation
+                 */
+                SCA_API std::list<std::string> getOperations( const std::string &portTypeName );
                 
             private:
 

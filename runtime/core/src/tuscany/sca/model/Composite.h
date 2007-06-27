@@ -138,6 +138,24 @@ namespace tuscany
                  */
                 SCA_API WSDLDefinition* findWSDLDefinition(const std::string& wsdlNamespace);
 
+                /**
+                 * Get all loaded WSDL namespaces
+                 * @return A list of strings, each of which is a different project namespace
+                 */
+                SCA_API std::list<std::string> getWSDLNamespaces();
+
+                /**
+                 * Find an Included Composite by its name
+                 * @param compositeName The name of the included composite to find.
+                 */
+                SCA_API Composite* findIncludedComposite(const std::string& compositeName);
+
+                /**
+                 * Get all included composites
+                 * @return A list of Composite name strings
+                 */
+                SCA_API std::list<std::string> getIncludedComposites();
+
                  /**
                  * Initialize a component of this type.
                  * @param component The component to initialize.
@@ -190,9 +208,10 @@ namespace tuscany
                 COMPONENT_MAP components;
 
                 /**
-                 * Vector of all the composites included in this composite.
+                 * Map of all the composites included by this composite.
+                 * Map the Composite name to the Composite
                  */
-                typedef std::vector<Composite*> INCLUDES;
+                typedef std::map<std::string, Composite*> INCLUDES;
                 INCLUDES includes;
 
                 /**

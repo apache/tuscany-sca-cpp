@@ -158,7 +158,7 @@ namespace tuscany
             void Composite::addInclude(Composite* composite)
             {
                 logentry(); 
-                includes.push_back(composite);
+                includes[composite->getName()] = composite;
 
                 for (COMPONENT_MAP::iterator iter = composite->components.begin();
                 iter != composite->components.end();
@@ -223,6 +223,50 @@ namespace tuscany
                 logentry(); 
                 return wsdlDefinitions[wsdlNamespace];
 
+            }
+
+            std::list<std::string> Composite::getWSDLNamespaces()
+            {
+                logentry();
+                std::list<std::string> namespaceList;
+                WSDL_MAP::const_iterator iter = wsdlDefinitions.begin();
+                WSDL_MAP::const_iterator iterEnd = wsdlDefinitions.end();
+
+                for( ; iter != iterEnd; ++iter )
+                {
+                    namespaceList.push_back( iter->first );
+                }
+
+                return namespaceList;
+            }
+
+            Composite* Composite::findIncludedComposite(const std::string& compositeName)
+            {
+                logentry();
+
+                // remember the map operator[] inserts a blank object if key not found
+                INCLUDES::iterator iter = includes.find( compositeName );
+                if( iter == includes.end() )
+                {
+                  return NULL;
+                }
+
+                return iter->second;
+            }
+
+            std::list<std::string> Composite::getIncludedComposites()
+            {
+                logentry();
+                std::list<std::string> compositeList;
+                INCLUDES::const_iterator iter = includes.begin();
+                INCLUDES::const_iterator iterEnd = includes.end();
+
+                for( ; iter != iterEnd; ++iter )
+                {
+                    compositeList.push_back( iter->first );
+                }
+
+                return compositeList;
             }
 
             commonj::sdo::XSDHelperPtr Composite::getXSDHelper()
