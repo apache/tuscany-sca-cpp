@@ -221,8 +221,14 @@ namespace tuscany
             WSDLDefinition* Composite::findWSDLDefinition(const std::string& wsdlNamespace )
             {
                 logentry(); 
-                return wsdlDefinitions[wsdlNamespace];
+                // remember the map operator[] inserts a blank object if key not found
+                WSDL_MAP::iterator iter = wsdlDefinitions.find( wsdlNamespace );
+                if( iter == wsdlDefinitions.end() )
+                {
+                    return NULL;
+                }
 
+                return iter->second;
             }
 
             std::list<std::string> Composite::getWSDLNamespaces()
