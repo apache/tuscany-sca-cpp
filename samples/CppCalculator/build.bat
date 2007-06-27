@@ -36,12 +36,6 @@ goto end
 )
 echo using Tuscany SCACPP: %TUSCANY_SCACPP%
 
-if "%AXIS2C_HOME%" == "" (
-echo "AXIS2C_HOME not set"
-goto end
-)
-echo using Axis2C: %AXIS2C_HOME%"
-
 call vcvars32.bat
 cd VSExpress
 call vcbuild CppCalculator.sln "%config%|Win32"
