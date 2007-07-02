@@ -19,6 +19,8 @@
 
 /* $Rev$ $Date$ */
 
+#include <sstream>
+
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/WSDLOperation.h"
 #include "tuscany/sca/util/Logging.h"
@@ -42,6 +44,7 @@ namespace tuscany
                 logentry(); 
 
                 wsdlModels.insert(wsdlModels.end(), wsdlModel);
+                mapOperations( wsdlModel );
             }
 
             WSDLDefinition::~WSDLDefinition()
@@ -61,6 +64,7 @@ namespace tuscany
             {
                 logentry(); 
                 wsdlModels.insert(wsdlModels.end(), wsdlModel);
+                mapOperations( wsdlModel );
             }
 
             ///
@@ -72,179 +76,34 @@ namespace tuscany
             {
                 logentry(); 
 
-                string message;
-                
-                string operationKey = serviceName+"#"+portName+"#"+operationName;
-                OPERATION_MAP::iterator iter = operationMap.find(operationKey);
-                if (iter != operationMap.end())
+                string operationKey = serviceName+"#"+portName;
+                STR_OPERATION_MAP::const_iterator spIter = servicePortMap.find(operationKey);
+                if( spIter == servicePortMap.end() )
                 {
-                	return iter->second;
+                    stringstream errMessage;
+                    errMessage
+                      << "Unable to find Service and Port: "
+                      << serviceName << "," << portName
+                      << " in the WSDL definition";
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
-                
-                // Find the service
-                DataObjectPtr service = findService(serviceName);
-                if (!service)
+
+                OPERATION_MAP::const_iterator opIter = spIter->second.find(operationName);
+
+                if (opIter != spIter->second.end())
                 {
-                    // Service not found
-                    message = "Unable to find service ";
-                    message = message + serviceName;
-                    message = message + " in the WSDL definition";
-                    throwException(SystemConfigurationException, message.c_str());
+                    return opIter->second;
                 }
                 else
                 {
-                    
-                    
-                    // Found the service
-                    DataObjectList& portList = service->getList("port");
-                    for (unsigned int j=0; j<portList.size();j++)
-                    {
-                        string portListName(portList[j]->getCString("name"));
-                        if (portListName.compare(portName) == 0)
-                        {
-                            // found port
-                            // Add address at this point
-                            string targetAddress(portList[j]->getCString("address/location"));
-                            
-                            // find operation by traversing the binding, portType then operation
-                            string wsBindingName(portList[j]->getCString("binding"));
-                            
-                            DataObjectPtr wsBinding = findBinding(wsBindingName);
-                            if (!wsBinding)
-                            {
-                                message = "Unable to find binding ";
-                                message = message + wsBindingName;
-                                message = message + " in the WSDL definition";
-                                throwException(SystemConfigurationException, message.c_str());
-                            }
-                            
+                    stringstream errMessage;
+                    errMessage
+                      << "Unable to find operation "
+                      << serviceName << ":" << portName << ":" << operationName
+                      << " in the WSDL definition";
 
-                            string soapAction = "";
-                            bool documentStyle = true;
-                            bool wrappedStyle = true;
-                            bool useEncoded = false;
-                            WSDLOperation::soapVersion soapVer = WSDLOperation::SOAP11;
-
-                            // Find the binding operation
-                            DataObjectList& bindingOperationList = wsBinding->getList("operation");
-                            for (unsigned int i=0; i<bindingOperationList.size(); i++)
-                            {
-                                string name(bindingOperationList[i]->getCString("name"));
-                                
-                                if (name.compare(operationName) == 0)
-                                {
-                                    DataObjectPtr op = bindingOperationList[i]->getDataObject("operation");
-                                    string opType = op->getType().getURI();
-                                    if (opType == "http://schemas.xmlsoap.org/wsdl/soap12/")
-                                    {
-                                        soapVer = WSDLOperation::SOAP12;
-                                    }
- 
-                                    // Get the soapAction
-                                    soapAction = bindingOperationList[i]->getCString("operation/soapAction");
-                                    
-                                    // Get the style
-                                    string style = bindingOperationList[i]->getCString("operation/style");
-                                    if (style == "")
-                                    {
-                                        style = wsBinding->getCString("binding/style");
-                                    }
-                                    if (style != "document")
-                                    {
-                                        documentStyle = false;
-                                        wrappedStyle = false;
-                                    }
- 
-                                    // get the use
-                                    string use = bindingOperationList[i]->getCString("input/body/use");
-                                    if (use == "encoded")
-                                    {
-                                        useEncoded = true;
-                                    }
-                                }
-                            }
-
-                            
-                            // TODO - get the style from the binding or operation????
-                            
-                            // Found the binding, get the portType
-                            string wsPortTypeName(wsBinding->getCString("type"));
-                            DataObjectPtr wsPortType = findPortType(wsPortTypeName);
-                            if (!wsPortType)
-                            {
-                                message = "Unable to find PortType ";
-                                message = message + wsPortTypeName;
-                                message = message + " in the WSDL definition";
-                                throwException(SystemConfigurationException, message.c_str());
-                            }
-
-                            //Utils::printDO(wsPortType);
-                            
-                            // Found the portType, find the operation
-                            DataObjectList& operationList = wsPortType->getList("operation");
-                            for (unsigned int k=0; k< operationList.size(); k++)
-                            {
-                                string opName(operationList[k]->getCString("name"));
-                                if( opName.compare(operationName) == 0)
-                                {
-                                    // Found the operation
-
-                                    // Find the type of the request message
-                                    string inputMessageType =  string(operationList[k]->getCString("input/message"));
-
-                                    DataObjectPtr wsMessageIn = findMessage(inputMessageType);
-                                    if (!wsMessageIn)
-                                    {
-                                        message = "Unable to find message ";
-                                        message = message + inputMessageType;
-                                        message = message + " in the WSDL definition";
-                                        throwException(SystemConfigurationException, message.c_str());
-                                    }
-
-                                    string requestType(wsMessageIn->getList("part")[0]->getCString("element"));
-
-                                    // Find the type of the response message
-                                    string outputMessageType =  string(operationList[k]->getCString("output/message"));
-
-                                    DataObjectPtr wsMessageOut = findMessage(outputMessageType);
-                                    if (!wsMessageOut)
-                                    {
-                                        message = "Unable to find message ";
-                                        message = message + outputMessageType;
-                                        message = message + " in the WSDL definition";
-                                        throwException(SystemConfigurationException, message.c_str());
-                                    }
-
-                                    string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
-                                    
-                                    WSDLOperation& wsdlOp = operationMap[operationKey];
-                                    wsdlOp.setOperationName(operationName);
-                                    wsdlOp.setSoapAction(soapAction);
-                                    wsdlOp.setEndpoint(targetAddress);
-                                    wsdlOp.setSoapVersion(soapVer);
-                                    wsdlOp.setDocumentStyle(documentStyle);
-                                    wsdlOp.setWrappedStyle(wrappedStyle);
-                                    wsdlOp.setEncoded(useEncoded);
-                                    wsdlOp.setInputType(requestType);
-                                    wsdlOp.setOutputType(responseType);
-                                    return wsdlOp;
-                                }
-                                
-                            }
-                            
-                            message = "Unable to find Operation ";
-                            message = message + operationName;
-                            message = message + " in the WSDL definition";
-                            throwException(SystemConfigurationException, message.c_str());                           
-                        }
-                    }
-                    // cannot find the port
-                    message = "Unable to find port ";
-                    message = message + portName;
-                    message = message + " in the WSDL definition";
-                    throwException(SystemConfigurationException, message.c_str());
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
-                
             }
             
             ///
@@ -255,137 +114,73 @@ namespace tuscany
             {
                 logentry(); 
 
-                string operationKey = portTypeName+"#"+operationName;
-                OPERATION_MAP::iterator iter = operationMap.find(operationKey);
-                if (iter != operationMap.end())
+                STR_OPERATION_MAP::const_iterator ptIter = portTypeMap.find(portTypeName);
+                if( ptIter == portTypeMap.end() )
                 {
-                    return iter->second;
-                }
-                
-                string soapAction = getNamespace() + "#" + operationName;
-                bool documentStyle = true;
-                bool wrappedStyle = true;
-                bool useEncoded = false;
-                WSDLOperation::soapVersion soapVer = WSDLOperation::SOAP11;
-
-                // Get the portType
-                DataObjectPtr wsPortType = findPortType(portTypeName);
-                if (!wsPortType)
-                {
-                    string message = "Unable to find PortType ";
-                    message = message + portTypeName;
-                    message = message + " in the WSDL definition";
-                    throwException(SystemConfigurationException, message.c_str());
+                    stringstream errMessage;
+                    errMessage
+                      << "Unable to find PortType: "
+                      << portTypeName
+                      << " in the WSDL definition";
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
 
-                // Found the portType, find the operation
-                DataObjectList& operationList = wsPortType->getList("operation");
-                for (unsigned int k=0; k< operationList.size(); k++)
+                OPERATION_MAP::const_iterator opIter = ptIter->second.find(operationName);
+
+                if (opIter != ptIter->second.end())
                 {
-                    string opName(operationList[k]->getCString("name"));
-                    if( opName.compare(operationName) == 0)
-                    {
-                        // Found the operation
-
-                        // Find the type of the request message
-                        string inputMessageType =  string(operationList[k]->getCString("input/message"));
-
-                        DataObjectPtr wsMessageIn = findMessage(inputMessageType);
-                        if (!wsMessageIn)
-                        {
-                            string message = "Unable to find message ";
-                            message = message + inputMessageType;
-                            message = message + " in the WSDL definition";
-                            throwException(SystemConfigurationException, message.c_str());
-                        }
-
-                        string requestType(wsMessageIn->getList("part")[0]->getCString("element"));
-
-                        // Find the type of the response message
-                        string outputMessageType =  string(operationList[k]->getCString("output/message"));
-
-                        DataObjectPtr wsMessageOut = findMessage(outputMessageType);
-                        if (!wsMessageOut)
-                        {
-                            string message = "Unable to find message ";
-                            message = message + outputMessageType;
-                            message = message + " in the WSDL definition";
-                            throwException(SystemConfigurationException, message.c_str());
-                        }
-
-                        string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
-                        
-                        WSDLOperation& wsdlOp = operationMap[operationKey];
-                        wsdlOp.setOperationName(operationName);
-                        wsdlOp.setSoapAction(soapAction);
-                        wsdlOp.setEndpoint("");
-                        wsdlOp.setSoapVersion(soapVer);
-                        wsdlOp.setDocumentStyle(documentStyle);
-                        wsdlOp.setWrappedStyle(wrappedStyle);
-                        wsdlOp.setEncoded(useEncoded);
-                        wsdlOp.setInputType(requestType);
-                        wsdlOp.setOutputType(responseType);
-                        return wsdlOp;
-                    }
+                    return opIter->second;
                 }
-                
-                string message = "Unable to find Operation ";
-                message = message + operationName;
-                message = message + " in the WSDL definition";
-                throwException(SystemConfigurationException, message.c_str());
-                
+                else
+                {
+                    stringstream errMessage;
+                    errMessage
+                      << "Unable to find Operation "
+                      << portTypeName << ":" << operationName
+                      << " in the WSDL definition";
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
+                }
             }
 
-            ///
-            /// Get all of the PortType names defined in the wsdl
-            ///
             std::list<std::string> WSDLDefinition::getPortTypes()
             {
                 logentry();
 
                 std::list<std::string> ptList;
-                DataObjectPtr portType = 0;
+                STR_OPERATION_MAP::const_iterator ptIter    = portTypeMap.begin();
+                STR_OPERATION_MAP::const_iterator ptIterEnd = portTypeMap.end();
 
-                // Find the binding
-                for (unsigned int m = 0; m < wsdlModels.size(); m++)
+                for( ; ptIter != ptIterEnd; ++ptIter )
                 {
-                    DataObjectList& portTypeList = wsdlModels[m]->getList("portType");
-                    for (unsigned int i=0; i<portTypeList.size(); i++)
-                    {
-                        string namePortType(portTypeList[i]->getCString("name"));
-
-                        ptList.push_back( namePortType );
-                    }
+                  ptList.push_back( ptIter->first );
                 }
 
                 return ptList;
             }
 
-            ///
-            /// Get all of the operation names for the PortType specified
-            ///
             std::list<std::string> WSDLDefinition::getOperations( const std::string &portTypeName )
             {
                 logentry();
 
                 std::list<std::string> ptOpList;
+                STR_OPERATION_MAP::const_iterator ptIter = portTypeMap.find( portTypeName );
 
-                // Get the portType
-                DataObjectPtr wsPortType = findPortType(portTypeName);
-                if (!wsPortType)
+                if( ptIter == portTypeMap.end() )
                 {
-                    string message = "Unable to find PortType ";
-                    message = message + portTypeName;
-                    message = message + " in the WSDL definition";
-                    throwException(SystemConfigurationException, message.c_str());
+                    stringstream errMessage;
+                    errMessage
+                      << "Unable to find PortType: "
+                      << portTypeName
+                      << " in the WSDL definition";
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
 
-                // Found the portType, find the operation
-                DataObjectList& operationList = wsPortType->getList("operation");
-                for (unsigned int i=0; i < operationList.size(); i++)
+                OPERATION_MAP::const_iterator opIter    = ptIter->second.begin();
+                OPERATION_MAP::const_iterator opIterEnd = ptIter->second.end();
+
+                for( ; opIter != opIterEnd; ++opIter )
                 {
-                    string opName(operationList[i]->getCString("name"));
-                    ptOpList.push_back( opName );
+                  ptOpList.push_back( opIter->first );
                 }
 
                 return ptOpList;
@@ -511,7 +306,199 @@ namespace tuscany
 
                 return message;
             }
-            
-        } // End namespace model
-    } // End namespace sca
+
+            ///
+            /// Traverse the WSDL SDO and insert operations into the operationMap
+            ///
+            void WSDLDefinition::mapOperations( DataObjectPtr wsdlModel )
+            {
+                logentry(); 
+
+                DataObjectList& serviceList = wsdlModel->getList("service");
+
+                // Iterate through the WSDL services
+                for (unsigned int i=0; i < serviceList.size(); i++)
+                {
+                    string serviceName( serviceList[i]->getCString("name") );
+
+                    // Iterate through the WSDL service ports
+                    DataObjectList& portList = serviceList[i]->getList("port");
+                    for (unsigned int j=0; j < portList.size();j++)
+                    {
+                        string portName( portList[j]->getCString("name") );
+                        string targetAddress(portList[j]->getCString("address/location"));
+                        string wsBindingName(portList[j]->getCString("binding"));
+
+                        // get the binding specified in the WSDL service port
+                        DataObjectPtr wsBinding = findBinding(wsBindingName);
+                        if (!wsBinding)
+                        {
+                            // Invalid WSDL
+                            stringstream errMessage;
+                            errMessage
+                              << "Unable to find binding "
+                              << wsBindingName
+                              << " in the WSDL definition";
+                            throwException(SystemConfigurationException, errMessage.str().c_str());
+                        }
+
+                        // Check if its a SOAP binding, if not go on to the next binding
+                        // doing a find like this will work for SOAP11 and SOAP12
+                        DataObjectPtr wsBindingSubBinding = wsBinding->getDataObject("binding");
+                        string bindingURI(wsBindingSubBinding->getType().getURI());
+                        if (bindingURI.find("http://schemas.xmlsoap.org/wsdl/soap") == string::npos)
+                        {
+                            loginfo("Discarding non-SOAP Binding %s", wsBindingName.c_str() );
+                            continue;
+                        }
+
+                        // Get the port type specified the WSDL binding
+                        string wsBindingPortTypeName(wsBinding->getCString("type"));
+                        DataObjectPtr portType = findPortType(wsBindingPortTypeName);
+                        if (!portType)
+                        {
+                            // Invalid WSDL
+                            stringstream errMessage;
+                            errMessage
+                             << "Unable to find PortType "
+                             << wsBindingPortTypeName
+                             << " in the WSDL definition";
+                            throwException(SystemConfigurationException, errMessage.str().c_str());
+                        }
+                        string portTypeName( portType->getCString("name") );
+
+                        // Fill in this map with operation names to WSDLOperations
+                        // then after iterating through the operations, add the map
+                        // to the portTypeMap, keyed off of the portTypeName
+                        OPERATION_MAP operationMap;
+
+                        // For each binding and portType operation:
+                        // - get the soap action, style, and use from the binding
+                        // - get the input and/or output message types
+                        // its ok if not all of the PortType operations are not defined in the binding
+                        DataObjectList& bindingOperationList = wsBinding->getList("operation");
+                        DataObjectList& portTypeOperationList = portType->getList("operation");
+                        for (unsigned int k=0; k < bindingOperationList.size(); k++)
+                        {
+                            DataObjectPtr bindingOp = bindingOperationList[k];
+                            string operationName = bindingOp->getCString("name");
+
+                            // Get the corresponding PortType operation
+                            // I know this may not be very efficient, but its a necessary evil
+                            bool foundPortType = false;
+                            DataObjectPtr portTypeOp;
+                            for (unsigned int l=0;
+                                (!foundPortType && l < portTypeOperationList.size());
+                                l++)
+                            {
+                                //portTypeOp = portTypeOperationList[l]->getDataObject("operation");
+                                portTypeOp = portTypeOperationList[l];
+                                if (operationName == portTypeOp->getCString("name") )
+                                {
+                                    foundPortType = true;
+                                }
+                            }
+
+                            if( !foundPortType )
+                            {
+                                // Invalid WSDL
+                                stringstream errMessage;
+                                errMessage
+                                  << "Unable to find PortType operation for binding operation: "
+                                  << operationName
+                                  << " in the WSDL definition";
+                                throwException(SystemConfigurationException, errMessage.str().c_str());
+                            }
+
+                            string soapAction = "";
+                            bool documentStyle = true;
+                            bool wrappedStyle = true;
+                            // TODO there should be a useEncoded for input AND output
+                            bool useEncoded = false;
+                            WSDLOperation::soapVersion soapVer = WSDLOperation::SOAP11;
+
+                            string opType = bindingOp->getType().getURI();
+                            if (opType == "http://schemas.xmlsoap.org/wsdl/soap12/")
+                            {
+                                soapVer = WSDLOperation::SOAP12;
+                            }
+ 
+                            // Get the soapAction
+                            soapAction = bindingOp->getCString("operation/soapAction");
+
+                            // Get the style
+                            string style = bindingOp->getCString("operation/style");
+                            if (style == "")
+                            {
+                                style = wsBinding->getCString("binding/style");
+                            }
+                            if (style != "document")
+                            {
+                                documentStyle = false;
+                                wrappedStyle = false;
+                            }
+ 
+                            // get the use
+                            string use = bindingOp->getCString("input/body/use");
+                            if (use == "encoded")
+                            {
+                                useEncoded = true;
+                            }
+
+                            // Get the request message type from the PortType
+                            string inputMessageType( portTypeOp->getCString("input/message") );
+
+                            DataObjectPtr wsMessageIn = findMessage(inputMessageType);
+                            if (!wsMessageIn)
+                            {
+                                stringstream errMessage;
+                                errMessage
+                                  << "unable to find input message "
+                                  << inputMessageType
+                                  << " in the wsdl definition";
+                                throwException(SystemConfigurationException, errMessage.str().c_str());
+                            }
+
+                            string requestType(wsMessageIn->getList("part")[0]->getCString("element"));
+
+                            // Get the response message type from the PortType
+                            string outputMessageType( portTypeOp->getCString("output/message") );
+
+                            DataObjectPtr wsMessageOut = findMessage(outputMessageType);
+                            if (!wsMessageOut)
+                            {
+                                stringstream errMessage;
+                                errMessage
+                                  << "unable to find output message "
+                                  << outputMessageType
+                                  << " in the wsdl definition";
+                                throwException(SystemConfigurationException, errMessage.str().c_str());
+                            }
+
+                            string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
+
+                            WSDLOperation wsdlOp;
+                            wsdlOp.setOperationName(operationName);
+                            wsdlOp.setSoapAction(soapAction);
+                            wsdlOp.setEndpoint(targetAddress);
+                            wsdlOp.setSoapVersion(soapVer);
+                            wsdlOp.setDocumentStyle(documentStyle);
+                            wsdlOp.setWrappedStyle(wrappedStyle);
+                            wsdlOp.setEncoded(useEncoded);
+                            wsdlOp.setInputType(requestType);
+                            wsdlOp.setOutputType(responseType);
+
+                            operationMap[ operationName ] = wsdlOp;
+
+                        } // end bindingOperationList
+
+                        portTypeMap[portTypeName] = operationMap;
+                        servicePortMap[(serviceName+"#"+portName)] = operationMap;
+
+                    } // end portTypeList
+                } // end serviceList
+            } // end method mapOperations
+
+        } // end namespace model
+    } // end namespace sca
 } // End namespace tuscany

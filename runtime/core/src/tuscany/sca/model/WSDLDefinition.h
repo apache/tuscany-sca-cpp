@@ -140,15 +140,26 @@ namespace tuscany
                  */
                 commonj::sdo::DataObjectPtr findMessage(const std::string& messageName);
 
+                /**
+                 * Given a wsdl represented by an SDO, traverse the SDO and
+                 * extract all of the necessary information to populate the
+                 * operationMap with WSDLOperation objects.
+                 * This method is called each time a wsdl model is added: so
+                 * that would be be in the constructor and in addWSDLModel().
+                 * @param wsdlModel A wsdl represented by an SDO 
+                 */
+                void mapOperations( commonj::sdo::DataObjectPtr wsdlModel );
 
                 /**
                  * The data object representation of the WSDL document.
                  */
                 typedef std::vector<commonj::sdo::DataObjectPtr> MODEL_VECTOR;
                 MODEL_VECTOR wsdlModels;
-                
+
                 typedef std::map<std::string, WSDLOperation> OPERATION_MAP;
-                OPERATION_MAP operationMap;
+                typedef std::map<std::string, OPERATION_MAP> STR_OPERATION_MAP;
+                STR_OPERATION_MAP portTypeMap;
+                STR_OPERATION_MAP servicePortMap;
             };
 
          } // End namespace model
