@@ -213,7 +213,7 @@ namespace tuscany
                                 operation.addParameter(floatData); 
                             }
                             break;
-                        case Type::IntType:
+                        case Type::IntegerType:
                             {
                                 long* intData = new long;
                                 *intData = inputDataObject->getInteger(pl[i]);
