@@ -58,6 +58,7 @@
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/WSDLOperation.h"
+#include "tuscany/sca/model/WSDLMessagePart.h"
 #include "tuscany/sca/model/WSDLInterface.h" 
 #include "tuscany/sca/model/Interface.h" 
 #include "tuscany/sca/core/SCARuntime.h"
@@ -437,6 +438,8 @@ namespace tuscany
                         // Create a default document literal wrapped WSDL operation
                         if (wsdlNamespace == "")
                         {
+                            WSDLMessagePart inPart(op_name, "", "http://tempuri.org");
+                            WSDLMessagePart outPart((op_name+"Response"), "", "http://tempuri.org");
                             wsdlNamespace = compositeService->getName();
                             wsdlOperation = WSDLOperation();
                             wsdlOperation.setOperationName(op_name.c_str());
@@ -445,9 +448,10 @@ namespace tuscany
                             wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
                             wsdlOperation.setDocumentStyle(true);
                             wsdlOperation.setWrappedStyle(true);
-                            wsdlOperation.setEncoded(false);
-                            wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
-                            wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                            wsdlOperation.setInputEncoded(false);
+                            wsdlOperation.setOutputEncoded(false);
+                            wsdlOperation.setInputMessagePart(op_name, inPart);
+                            wsdlOperation.setOutputMessagePart((op_name+"Response"), outPart);
                         }
                         
                         // Create the input DataObject
@@ -646,6 +650,8 @@ namespace tuscany
                         // Create a default document literal wrapped WSDL operation
                         if (wsdlNamespace == "")
                         {
+                            WSDLMessagePart inPart(op_name, "", "http://tempuri.org");
+                            WSDLMessagePart outPart((op_name+"Response"), "", "http://tempuri.org");
                             wsdlNamespace = compositeService->getName();
                             wsdlOperation = WSDLOperation();
                             wsdlOperation.setOperationName(op_name.c_str());
@@ -654,9 +660,10 @@ namespace tuscany
                             wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
                             wsdlOperation.setDocumentStyle(true);
                             wsdlOperation.setWrappedStyle(true);
-                            wsdlOperation.setEncoded(false);
-                            wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
-                            wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                            wsdlOperation.setInputEncoded(false);
+                            wsdlOperation.setOutputEncoded(false);
+                            wsdlOperation.setInputMessagePart(op_name, inPart);
+                            wsdlOperation.setOutputMessagePart((op_name+"Response"), outPart);
                         }
                         
                         // Create the input DataObject
@@ -896,6 +903,8 @@ namespace tuscany
                         string uriArgs = uri;
                     
                         // Create a default document literal wrapped WSDL operation
+                        WSDLMessagePart inputPart(op_name, "", "http://tempuri.org");
+                        WSDLMessagePart outputPart((op_name+"Response"), "", "http://tempuri.org");
                         wsdlNamespace = compositeService->getName();
                         wsdlOperation = WSDLOperation();
                         wsdlOperation.setOperationName(op_name.c_str());
@@ -904,9 +913,10 @@ namespace tuscany
                         wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
                         wsdlOperation.setDocumentStyle(true);
                         wsdlOperation.setWrappedStyle(true);
-                        wsdlOperation.setEncoded(false);
-                        wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
-                        wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                        wsdlOperation.setInputEncoded(false);
+                        wsdlOperation.setOutputEncoded(false);
+                        wsdlOperation.setInputMessagePart(op_name, inputPart);
+                        wsdlOperation.setOutputMessagePart((op_name+"Response"), outputPart);
                         
                         // Create the input DataObject
                         Operation operation(op_name.c_str());
@@ -992,6 +1002,8 @@ namespace tuscany
                         string uriArgs = uri;
                     
                         // Create a default document literal wrapped WSDL operation
+                        WSDLMessagePart inPart(op_name, "", "http://tempuri.org");
+                        WSDLMessagePart outPart((op_name+"Response"), "", "http://tempuri.org");
                         wsdlNamespace = compositeService->getName();
                         wsdlOperation = WSDLOperation();
                         wsdlOperation.setOperationName(op_name.c_str());
@@ -1000,9 +1012,10 @@ namespace tuscany
                         wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
                         wsdlOperation.setDocumentStyle(true);
                         wsdlOperation.setWrappedStyle(true);
-                        wsdlOperation.setEncoded(false);
-                        wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
-                        wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                        wsdlOperation.setInputEncoded(false);
+                        wsdlOperation.setOutputEncoded(false);
+                        wsdlOperation.setInputMessagePart(op_name, inPart);
+                        wsdlOperation.setOutputMessagePart((op_name+"Response"), outPart);
                         
                         // Create the input DataObject
                         Operation operation(op_name.c_str());
@@ -1082,12 +1095,20 @@ namespace tuscany
                 logentry();
             
                 DataObjectPtr inputDataObject;
+                string inputTypeUri;
+                string inputTypeName;
                 try
                 {
+                    // Since its Document wrapped, there will only be one part
+                    std::list<std::string> partList = wsdlOperation.getInputMessagePartNames();
+                    const WSDLMessagePart &inputMessage =
+                      wsdlOperation.getInputMessagePart(partList.front());
+                    inputTypeName = inputMessage.getPartType();
+                    inputTypeUri = inputMessage.getPartUri();
                     
                     // Create the input wrapper
-                    const Type& rootType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), "RootType");
-                    const Property& prop = rootType.getProperty(wsdlOperation.getInputTypeName().c_str());
+                    const Type& rootType = dataFactory->getType(inputTypeUri.c_str(), "RootType");
+                    const Property& prop = rootType.getProperty(inputTypeName.c_str());
                     const Type& inputType = prop.getType();
                     inputDataObject = dataFactory->create(inputType);
                 }
@@ -1096,8 +1117,8 @@ namespace tuscany
                     try
                     {
                         // Create the input wrapper
-                        const Type& inputType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), 
-                            wsdlOperation.getInputTypeName().c_str());
+                        const Type& inputType =
+                          dataFactory->getType(inputTypeUri.c_str(), inputTypeName.c_str());
                         inputDataObject = dataFactory->create(inputType);
                     }
                     catch (SDORuntimeException&)

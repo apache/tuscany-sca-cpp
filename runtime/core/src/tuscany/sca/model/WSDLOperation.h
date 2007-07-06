@@ -22,11 +22,14 @@
 #ifndef tuscany_sca_model_wsdloperation_h
 #define tuscany_sca_model_wsdloperation_h
 
+#include <map>
+#include <list>
 #include <string>
 
 #include "commonj/sdo/SDO.h"
 
 #include "tuscany/sca/export.h"
+#include "tuscany/sca/model/WSDLMessagePart.h"
 
 
 namespace tuscany
@@ -46,11 +49,6 @@ namespace tuscany
             public:
                 /**
                  * Constructor.
-                 * @param operation The name of the operation.
-                 * @param soapAction The soapAction associated with this operation
-                 * in the SOAP binding of the operation.
-                 * @param endpoint The endpoint address of the operation.
-                 * @param responseName The name of the response message.
                  */
                  SCA_API WSDLOperation();
                  
@@ -96,17 +94,66 @@ namespace tuscany
                 SCA_API void setWrappedStyle(bool wrapStyle) {wrappedStyle = wrapStyle;}
                 SCA_API bool isWrappedStyle() const {return wrappedStyle;}
 
-                SCA_API void setEncoded(bool enc) {encoded = enc;}
-                SCA_API bool isEncoded() const {return encoded;}
+                SCA_API void setInputEncoded(bool enc) {inputEncoded = enc;}
+                SCA_API bool isInputEncoded() const {return inputEncoded;}
 
+                SCA_API void setOutputEncoded(bool enc) {outputEncoded = enc;}
+                SCA_API bool isOutputEncoded() const {return outputEncoded;}
                 
-                SCA_API void setInputType(const std::string& inputType);
-                SCA_API const std::string& getInputTypeUri() const {return inputTypeUri;}
-                SCA_API const std::string& getInputTypeName() const {return inputTypeName;}
-                SCA_API void setOutputType(const std::string& outputType);
-                SCA_API const std::string& getOutputTypeUri() const {return outputTypeUri;}
-                SCA_API const std::string& getOutputTypeName() const {return outputTypeName;}
-                
+                /**
+                 * Input Message URI and Name. To get the message part URI and name, you
+                 * will have to get the WSDLMessagePart by calling getInputMessagePart()
+                 */
+                SCA_API void setInputMessageType(const std::string& inputMessageType);
+                SCA_API const std::string& getInputMessageUri() const {return inputMessageUri;}
+                SCA_API const std::string& getInputMessageName() const {return inputMessageName;}
+
+                /**
+                 * Output Message URI and Name. To get the message part URI and name, you
+                 * will have to get the WSDLMessagePart by calling getOutputMessagePart()
+                 */
+                SCA_API void setOutputMessageType(const std::string& outputMessageType);
+                SCA_API const std::string& getOutputMessageUri() const {return outputMessageUri;}
+                SCA_API const std::string& getOutputMessageName() const {return outputMessageName;}
+
+                // TODO We should add an enum for REQUEST_ONLY, RESPONSE_ONLY, REQUEST_RESPONSE
+                //      and a setter/getter. The enum would be checked by getOutputXXX
+
+                /**
+                 *  Parse a WSDL message represented by an SDO into the input/outputPartMap
+                 *  @param inputMsg a data object which contains the WSDL message
+                 *         ie. <wsdl:message name="getAccountReportResponse">
+                 *                 <wsdl:part element="tns:getAccountReportResponse"
+                 *                            name="getAccountReportResponse" />
+                 *             </wsdl:message>
+                 */
+                SCA_API void setInputMessage( commonj::sdo::DataObjectPtr inputMsg );
+                SCA_API void setOutputMessage( commonj::sdo::DataObjectPtr outputMsg );
+
+                /**
+                 * Manually set the input/outputPartMap, as opposed to passing in an SDO WSDL message.
+                 * Populates the input/outputPartMap, setInput/OutputMessageType must still be called.
+                 * @param partName the name of the message part
+                 * @param part the message part
+                 */
+                SCA_API void setInputMessagePart( const std::string &partName, WSDLMessagePart part );
+                SCA_API void setOutputMessagePart( const std::string &partName, WSDLMessagePart part );
+
+                /**
+                 * Return a message part keyed off of the message part name
+                 * @param name the message part name
+                 * @return the message part in a WSDLMessagePart object
+                 */
+                SCA_API const WSDLMessagePart &getInputMessagePart( const std::string &name ) const;
+                SCA_API const WSDLMessagePart &getOutputMessagePart( const std::string &name ) const;
+
+                /**
+                 * Get all of the message part names
+                 * @return a list of strings, each being a different message part name
+                 */
+                SCA_API const std::list<std::string> getInputMessagePartNames() const;
+                SCA_API const std::list<std::string> getOutputMessagePartNames() const;
+
             private:
                 /**
                  * The name of the operation for use when serializing an
@@ -124,19 +171,21 @@ namespace tuscany
                  */
                 std::string endpoint;
 
-				bool documentStyle;
+                bool documentStyle;
                 bool wrappedStyle;
-				bool encoded;
-				soapVersion soapVer;
-				
-				std::string inputTypeUri;
-				std::string inputTypeName;
-				
-				std::string outputTypeUri;
-				std::string outputTypeName;
-				
-                commonj::sdo::DataObjectPtr inputMessage;
-                commonj::sdo::DataObjectPtr outputMessage;
+                bool inputEncoded;
+                bool outputEncoded;
+                soapVersion soapVer;
+
+                std::string inputMessageUri;
+                std::string inputMessageName;
+
+                std::string outputMessageUri;
+                std::string outputMessageName;
+
+                typedef std::map<std::string, WSDLMessagePart> PART_MAP;
+                PART_MAP inputPartMap;
+                PART_MAP outputPartMap;
             };
 
          } // End namespace model

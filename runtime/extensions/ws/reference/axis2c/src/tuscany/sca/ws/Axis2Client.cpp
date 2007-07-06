@@ -50,6 +50,7 @@
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/WSDLInterface.h"
 #include "tuscany/sca/model/WSDLOperation.h"
+#include "tuscany/sca/model/WSDLMessagePart.h"
 
 using namespace std;
 using namespace commonj::sdo;
@@ -152,6 +153,8 @@ namespace tuscany
                 {
                     
                     // Create a default document literal wrapped WSDL operation
+                    WSDLMessagePart inputPart(operationName, "", "http://tempuri.org");
+                    WSDLMessagePart outputPart((operationName+"Response"), "", "http://tempuri.org");
                     wsdlNamespace = compositeReference->getName();
                     wsdlOperation = WSDLOperation();
                     wsdlOperation.setOperationName(operationName);
@@ -160,9 +163,10 @@ namespace tuscany
                     wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
                     wsdlOperation.setDocumentStyle(true);
                     wsdlOperation.setWrappedStyle(true);
-                    wsdlOperation.setEncoded(false);
-                    wsdlOperation.setInputType(string("http://tempuri.org") + "#" + operationName);
-                    wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + operationName + "Response");
+                    wsdlOperation.setInputEncoded(false);
+                    wsdlOperation.setOutputEncoded(false);
+                    wsdlOperation.setInputMessagePart(operationName, inputPart);
+                    wsdlOperation.setOutputMessagePart((operationName+"Response"), outputPart);
                 }
                 else if (!wsdlOperation.isDocumentStyle() || !wsdlOperation.isWrappedStyle())
                 {
@@ -328,12 +332,21 @@ namespace tuscany
                 DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
                 
                 DataObjectPtr inputDataObject;
+                string inputTypeUri;
+                string inputTypeName;
+
                 try
                 {
-                    
+                    // Since its Document wrapped, there will only be one part
+                    std::list<std::string> partList = wsdlOperation.getInputMessagePartNames();
+                    const WSDLMessagePart &inputMessage =
+                      wsdlOperation.getInputMessagePart(partList.front());
+                    inputTypeName = inputMessage.getPartType();
+                    inputTypeUri = inputMessage.getPartUri();
+
                     // Create the input wrapper
-                    const Type& rootType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), "RootType");
-                    const Property& prop = rootType.getProperty(wsdlOperation.getInputTypeName().c_str());
+                    const Type& rootType = dataFactory->getType(inputTypeUri.c_str(), "RootType");
+                    const Property& prop = rootType.getProperty(inputTypeName.c_str());
                     const Type& inputType = prop.getType();
                     inputDataObject = dataFactory->create(inputType);
                 }
@@ -342,8 +355,8 @@ namespace tuscany
                     try
                     {
                         // Create the input wrapper
-                        const Type& inputType = dataFactory->getType(wsdlOperation.getInputTypeUri().c_str(), 
-                            wsdlOperation.getInputTypeName().c_str());
+                        const Type& inputType =
+                          dataFactory->getType(inputTypeUri.c_str(), inputTypeName.c_str());
                         inputDataObject = dataFactory->create(inputType);
                     }
                     catch (SDORuntimeException&)
@@ -533,7 +546,7 @@ namespace tuscany
                 // Create the Axiom object from the request dataobject
                 AxiomHelper* axiomHelper = AxiomHelper::getHelper();
                 request_node = axiomHelper->toAxiomNode(inputDataObject,
-                    wsdlOperation.getInputTypeUri().c_str(), wsdlOperation.getInputTypeName().c_str());
+                    inputTypeUri.c_str(), inputTypeName.c_str());
                 AxiomHelper::releaseHelper(axiomHelper);
 
                 char* str =  AXIOM_NODE_TO_STRING(request_node, env);

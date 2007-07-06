@@ -45,6 +45,7 @@
 #include "tuscany/sca/model/ReferenceType.h"
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/WSDLOperation.h"
+#include "tuscany/sca/model/WSDLMessagePart.h"
 #include "tuscany/sca/model/WSDLInterface.h" 
 #include "tuscany/sca/model/Interface.h" 
 #include "tuscany/sca/core/SCARuntime.h"
@@ -386,6 +387,8 @@ namespace tuscany
                                     // Create a default document literal wrapped WSDL operation
                                     if (wsdlNamespace == "")
                                     {
+                                        WSDLMessagePart inPart(op_name, "", "http://tempuri.org");
+                                        WSDLMessagePart outPart((op_name+"Response"), "", "http://tempuri.org");
                                         wsdlNamespace = compositeService->getName();
                                         wsdlOperation = WSDLOperation();
                                         wsdlOperation.setOperationName(op_name.c_str());
@@ -394,9 +397,10 @@ namespace tuscany
                                         wsdlOperation.setSoapVersion(WSDLOperation::SOAP11);
                                         wsdlOperation.setDocumentStyle(true);
                                         wsdlOperation.setWrappedStyle(true);
-                                        wsdlOperation.setEncoded(false);
-                                        wsdlOperation.setInputType(string("http://tempuri.org") + "#" + op_name);
-                                        wsdlOperation.setOutputType(string("http://tempuri.org") + "#" + op_name + "Response");
+                                        wsdlOperation.setInputEncoded(false);
+                                        wsdlOperation.setOutputEncoded(false);
+                                        wsdlOperation.setInputMessagePart(op_name, inPart);
+                                        wsdlOperation.setOutputMessagePart((op_name+"Response"), outPart);
                                     }
                                     else if (!wsdlOperation.isDocumentStyle() || !wsdlOperation.isWrappedStyle())
                                     {
@@ -471,9 +475,15 @@ namespace tuscany
                                     
                                     try
                                     {
+                                        std::list<std::string> partList =
+                                          wsdlOperation.getOutputMessagePartNames();
+                                        const WSDLMessagePart &outPart =
+                                          wsdlOperation.getOutputMessagePart(partList.front());
                                         // Convert the output DataObject to an Axiom node
-                                        axiom_node_t* outputNode = axiomHelper->toAxiomNode(outputDataObject,
-                                            wsdlOperation.getOutputTypeUri().c_str(), wsdlOperation.getOutputTypeName().c_str());
+                                        axiom_node_t* outputNode =
+                                          axiomHelper->toAxiomNode(outputDataObject,
+                                                                   outPart.getPartUri().c_str(),
+                                                                   outPart.getPartName().c_str());
                     
                                         AxiomHelper::releaseHelper(axiomHelper);                                                
                                         

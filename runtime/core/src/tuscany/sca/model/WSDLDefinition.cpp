@@ -413,8 +413,8 @@ namespace tuscany
                             string soapAction = "";
                             bool documentStyle = true;
                             bool wrappedStyle = true;
-                            // TODO there should be a useEncoded for input AND output
-                            bool useEncoded = false;
+                            bool useEncodedInput = false;
+                            bool useEncodedOutput = false;
                             WSDLOperation::soapVersion soapVer = WSDLOperation::SOAP11;
 
                             string opType = bindingOp->getType().getURI();
@@ -442,40 +442,53 @@ namespace tuscany
                             string use = bindingOp->getCString("input/body/use");
                             if (use == "encoded")
                             {
-                                useEncoded = true;
+                                useEncodedInput = true;
+                            }
+
+                            use = bindingOp->getCString("output/body/use");
+                            if (use == "encoded")
+                            {
+                                useEncodedOutput = true;
                             }
 
                             // Get the request message type from the PortType
-                            string inputMessageType( portTypeOp->getCString("input/message") );
-
-                            DataObjectPtr wsMessageIn = findMessage(inputMessageType);
+                            DataObjectPtr wsMessageIn =
+                              findMessage(portTypeOp->getCString("input/message"));
                             if (!wsMessageIn)
                             {
                                 stringstream errMessage;
                                 errMessage
-                                  << "unable to find input message "
-                                  << inputMessageType
+                                  << "unable to find PortType input message "
+                                  << portTypeOp->getCString("input/message")
                                   << " in the wsdl definition";
                                 throwException(SystemConfigurationException, errMessage.str().c_str());
                             }
-
-                            string requestType(wsMessageIn->getList("part")[0]->getCString("element"));
+                            string inputMessageType( wsMessageIn->getCString("name") );
+                            // If it doesnt have a namespace prefix, add the target namespace
+                            if (inputMessageType.find("#") == string::npos)
+                            {
+                                inputMessageType.insert(0, (getNamespace() + "#") );
+                            }
 
                             // Get the response message type from the PortType
-                            string outputMessageType( portTypeOp->getCString("output/message") );
-
-                            DataObjectPtr wsMessageOut = findMessage(outputMessageType);
+                            DataObjectPtr wsMessageOut =
+                              findMessage(portTypeOp->getCString("output/message"));
                             if (!wsMessageOut)
                             {
+                                // TODO this is ok for one way operations, right?
                                 stringstream errMessage;
                                 errMessage
-                                  << "unable to find output message "
-                                  << outputMessageType
+                                  << "unable to find PortType output message "
+                                  << portTypeOp->getCString("output/message")
                                   << " in the wsdl definition";
                                 throwException(SystemConfigurationException, errMessage.str().c_str());
                             }
-
-                            string responseType(wsMessageOut->getList("part")[0]->getCString("element"));
+                            string outputMessageType( wsMessageOut->getCString("name") );
+                            // If it doesnt have a namespace prefix, add the target namespace
+                            if (outputMessageType.find("#") == string::npos)
+                            {
+                                outputMessageType.insert(0, (getNamespace() + "#") );
+                            }
 
                             WSDLOperation wsdlOp;
                             wsdlOp.setOperationName(operationName);
@@ -484,9 +497,12 @@ namespace tuscany
                             wsdlOp.setSoapVersion(soapVer);
                             wsdlOp.setDocumentStyle(documentStyle);
                             wsdlOp.setWrappedStyle(wrappedStyle);
-                            wsdlOp.setEncoded(useEncoded);
-                            wsdlOp.setInputType(requestType);
-                            wsdlOp.setOutputType(responseType);
+                            wsdlOp.setInputEncoded(useEncodedInput);
+                            wsdlOp.setOutputEncoded(useEncodedOutput);
+                            wsdlOp.setInputMessageType(inputMessageType);
+                            wsdlOp.setOutputMessageType(outputMessageType);
+                            wsdlOp.setInputMessage(wsMessageIn);
+                            wsdlOp.setOutputMessage(wsMessageOut);
 
                             operationMap[ operationName ] = wsdlOp;
 

@@ -816,6 +816,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLMessagePart.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLMessagePart.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\model\WSDLOperation.cpp"
 					>
 					<FileConfiguration

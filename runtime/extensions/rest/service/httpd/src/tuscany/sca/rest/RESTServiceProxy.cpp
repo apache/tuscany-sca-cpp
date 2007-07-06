@@ -40,6 +40,7 @@
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/WSDLInterface.h"
 #include "tuscany/sca/model/WSDLOperation.h"
+#include "tuscany/sca/model/WSDLMessagePart.h"
 #include "model/RESTReferenceBinding.h"
 
 using namespace std;
@@ -108,13 +109,16 @@ namespace tuscany
                 RESTReferenceBinding* referenceBinding = (RESTReferenceBinding*)reference->getBinding();
                 DataFactoryPtr dataFactoryPtr = reference->getComponent()->getComposite()->getDataFactory();
                                     
-                const char* outputTypeURI = wsdlOperation.getOutputTypeUri().c_str();
-                const char* outputTypeName = wsdlOperation.getOutputTypeName().c_str();
+                // Since its Document wrapped, there will only be one message part
+                std::list<std::string> partList = wsdlOperation.getOutputMessagePartNames();
+                const WSDLMessagePart &part = wsdlOperation.getOutputMessagePart(partList.front());
+                const char* outputTypeURI = part.getPartUri().c_str();
+                const char* outputTypeName = part.getPartName().c_str();
 
-                loginfo("WSDLOperation inputType: %s#%s",
-                    wsdlOperation.getInputTypeUri().c_str(), 
-                    wsdlOperation.getInputTypeName().c_str());
-                loginfo("WSDLOperation outputType: %s#%s",
+                loginfo("WSDLOperation input message Type: %s#%s",
+                    wsdlOperation.getInputMessageUri().c_str(), 
+                    wsdlOperation.getInputMessageName().c_str());
+                loginfo("WSDLOperation output part Type: %s#%s",
                     outputTypeURI, 
                     outputTypeName);
                 
