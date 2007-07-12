@@ -127,6 +127,22 @@ namespace tuscany
                 Component* component = components[name];
                 return component;
             }
+
+            std::list<std::string> Composite::getComponents() const
+            {
+              logentry();
+
+              std::list<std::string> componentList;
+              COMPONENT_MAP::const_iterator iter = components.begin();
+              COMPONENT_MAP::const_iterator iterEnd = components.end();
+
+              for( ; iter != iterEnd; ++iter )
+              {
+                componentList.push_back( iter->first );
+              }
+
+              return componentList;
+            }
             
             Service* Composite::findComponentService(const std::string& name)
             {
@@ -231,7 +247,7 @@ namespace tuscany
                 return iter->second;
             }
 
-            std::list<std::string> Composite::getWSDLNamespaces()
+            std::list<std::string> Composite::getWSDLNamespaces() const
             {
                 logentry();
                 std::list<std::string> namespaceList;
@@ -260,7 +276,7 @@ namespace tuscany
                 return iter->second;
             }
 
-            std::list<std::string> Composite::getIncludedComposites()
+            std::list<std::string> Composite::getIncludedComposites() const
             {
                 logentry();
                 std::list<std::string> compositeList;

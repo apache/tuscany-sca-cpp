@@ -117,6 +117,12 @@ namespace tuscany
                 SCA_API Component* findComponent(const std::string& componentName);
 
                 /**
+                 * Get all included components
+                 * @return A list of Component name strings
+                 */
+                SCA_API std::list<std::string> getComponents() const;
+
+                /**
                  * Find a component and service by name.
                  * @param componentServiceName A string of the form 
                  * "componentName"/"serviceName" where the service name is optional
@@ -142,7 +148,7 @@ namespace tuscany
                  * Get all loaded WSDL namespaces
                  * @return A list of strings, each of which is a different project namespace
                  */
-                SCA_API std::list<std::string> getWSDLNamespaces();
+                SCA_API std::list<std::string> getWSDLNamespaces() const;
 
                 /**
                  * Find an Included Composite by its name
@@ -154,7 +160,7 @@ namespace tuscany
                  * Get all included composites
                  * @return A list of Composite name strings
                  */
-                SCA_API std::list<std::string> getIncludedComposites();
+                SCA_API std::list<std::string> getIncludedComposites() const;
 
                  /**
                  * Initialize a component of this type.
