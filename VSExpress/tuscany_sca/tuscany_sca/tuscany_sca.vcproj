@@ -1030,6 +1030,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\SDOUtils.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\SDOUtils.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\runtime\core\src\tuscany\sca\util\Thread.cpp"
 					>
 				</File>

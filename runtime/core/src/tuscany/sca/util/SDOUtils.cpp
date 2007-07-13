@@ -190,7 +190,7 @@ namespace tuscany
                                 case Type::DateType:
                                     {
                                         const SDODate date = sequence->getDateValue(i);
-                                        result = visitor.visit(dataObject, seqProperty, (const time_t)date.getTime());
+                                        result = visitor.visit(dataObject, seqProperty, (long)(const time_t)date.getTime());
                                     }
                                     break;
                                 case Type::BigDecimalType: 
@@ -307,7 +307,7 @@ namespace tuscany
                                         case Type::DateType:
                                             {
                                                 const SDODate date = doList.getDate(li);
-                                                result = visitor.visit(dataObject, pl[i], (const time_t)date.getTime());
+                                                result = visitor.visit(dataObject, pl[i], (long)(const time_t)date.getTime());
                                             }
                                             break;
                                         case Type::BigDecimalType: 
@@ -389,7 +389,7 @@ namespace tuscany
                                     case Type::DateType:
                                         {
                                             const SDODate date = dataObject->getDate(pl[i]);
-                                            result = visitor.visit(dataObject, pl[i], (const time_t)date.getTime());
+                                            result = visitor.visit(dataObject, pl[i], (long)(const time_t)date.getTime());
                                         }
                                         break;
                                     case Type::BigDecimalType: 
