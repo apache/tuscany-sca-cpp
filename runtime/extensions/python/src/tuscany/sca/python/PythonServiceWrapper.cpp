@@ -968,7 +968,7 @@ namespace tuscany
                                 break;
                             }
                         case Type::ShortType:
-                        case Type::IntegerType:
+                        case Type::IntType:
                             {
                                 property = PyInt_FromLong(properties->getInteger(pl[i]));
                                 break;

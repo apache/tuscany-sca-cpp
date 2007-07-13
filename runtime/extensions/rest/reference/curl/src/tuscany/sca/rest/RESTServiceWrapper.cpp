@@ -1116,7 +1116,7 @@ namespace tuscany
                         operation.setReturnValue(floatData); 
                     }
                     break;
-                case Type::IntegerType:
+                case Type::IntType:
                     {
                         long* intData = new long;
                         *intData = outputDataObject->getInteger(pl[i]);
