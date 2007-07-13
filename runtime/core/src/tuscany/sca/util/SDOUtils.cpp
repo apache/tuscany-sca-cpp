@@ -162,7 +162,7 @@ namespace tuscany
                                         result = visitor.visit(dataObject, seqProperty, (wchar_t)sequence->getCharacterValue(i));
                                     }
                                     break;
-                                case Type::IntegerType: 
+                                case Type::IntType: 
                                     {
                                         result = visitor.visit(dataObject, seqProperty, (long)sequence->getIntegerValue(i));
                                     }
@@ -279,7 +279,7 @@ namespace tuscany
                                                 result = visitor.visit(dataObject, pl[i], (wchar_t)doList.getCharacter(li));
                                             }
                                             break;
-                                        case Type::IntegerType: 
+                                        case Type::IntType: 
                                             {
                                                 result = visitor.visit(dataObject, pl[i], (long)doList.getInteger(li));
                                             }
@@ -361,7 +361,7 @@ namespace tuscany
                                             result = visitor.visit(dataObject, pl[i], (wchar_t)dataObject->getCharacter(pl[i]));
                                         }
                                         break;
-                                    case Type::IntegerType: 
+                                    case Type::IntType: 
                                         {
                                             result = visitor.visit(dataObject, pl[i], (long)dataObject->getInteger(pl[i]));
                                         }
