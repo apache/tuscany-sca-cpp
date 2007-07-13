@@ -25,7 +25,7 @@ noinst_HEADERS = *.h
 composite_SCRIPTS = runwsserver.sh
 
 scagen:
-	java -jar $(TUSCANY_SCACPP)/bin/scagen.jar -dir . -output .
+	java -jar $(TUSCANY_SCACPP)/extensions/cpp/bin/scagen.jar -dir . -output .
 
 composite_LTLIBRARIES = libAccount.la
 composite_DATA = *.composite *.componentType *.wsdl *.xsd

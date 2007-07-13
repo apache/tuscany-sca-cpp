@@ -27,7 +27,7 @@ goto usage
 )
 set srcdir=%1
 
-%TUSCANY_SCACPP%\bin\scagen.bat -dir %srcdir% -output %srcdir% -verbose
+%TUSCANY_SCACPP%\extensions\cpp\bin\scagen.bat -dir %srcdir% -output %srcdir% -verbose
 
 goto end
 :usage

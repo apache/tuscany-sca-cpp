@@ -27,7 +27,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Build scagen tool"
-				CommandLine="call ant -f ..\..\..\tools\scagen\build.xml;&#x0D;&#x0A;..\..\..\tools\scagen\deploy.bat ..\..\..\&#x0D;&#x0A;"
+				CommandLine="call ant -f ..\..\..\runtime\extensions\cpp\tools\scagen\build.xml"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -126,7 +126,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Build scagen tool"
-				CommandLine="call ant -f ..\..\..\tools\scagen\build.xml;&#x0D;&#x0A;..\..\..\tools\scagen\deploy.bat ..\..\..\&#x0D;&#x0A;"
+				CommandLine="call ant -f ..\..\..\runtime\extensions\cpp\tools\scagen\build.xml"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

@@ -29,6 +29,7 @@ set deploydir=%rootdir%\deploy
 set extdir=%deploydir%\extensions
 set cppextdir=%extdir%\cpp
 set srcdir=%rootdir%\runtime\extensions\cpp\src
+set toolsdir=%rootdir%\runtime\extensions\cpp\tools
 
 if . == .%2 (
 echo input directory not specified
@@ -68,6 +69,9 @@ copy %inpath%\tuscany_sca_cpp.dll %cppextdir%\module
 
 if exist %inpath%\tuscany_sca_cpp.pdb copy %inpath%\tuscany_sca_cpp.pdb %cppextdir%\bin
 if exist %inpath%\tuscany_sca_cpp.pdb copy %inpath%\tuscany_sca_cpp.pdb %cppextdir%\module
+
+copy %toolsdir%\scagen\bld\scagen.jar  %cppextdir%\bin
+copy %toolsdir%\scagen\scagen.bat  %cppextdir%\bin
 
 goto end
 :usage

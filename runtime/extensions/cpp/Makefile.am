@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = src
+SUBDIRS = src tools
 
 datadir=$(prefix)/extensions/cpp
 

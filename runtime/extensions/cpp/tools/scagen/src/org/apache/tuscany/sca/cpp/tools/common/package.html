@@ -1,0 +1,58 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+
+<html>
+
+<head>
+<title>Design documentation for org\apache\tuscany\sca\cpp\tools\common</title>
+</head>
+
+<body lang=EN-GB>
+
+<div class=Section1>
+
+<h1>Overview</h1>
+
+This package can be used to reflect across C++ source code. It can produce
+a network of descriptive objects describing C++ Headers, Signatures, Parameters and so
+on that it finds in a given location of the file system.
+Each of the descriptive objects has a set of getters that return either 
+the descriptive child objects, or for primitives, the string that represents the actual
+value such as "int" or "myFunction".
+<p>
+There are also various utility methods that help with navigating the information, for example the Signature
+class has an isConstructor method. The API Javadoc contains further details of these. 
+<p>
+The package can scan a directory using a file mask to identify what types
+of files are to be scanned. In this application we are interested only 
+in the function prototypes in the C++ header files. 
+<p>
+The implementation was originated using some java code that was also 
+contributed to the Apache org.apache.axis.tools.common package. Care
+has been taken that the original code was not sourced via Apache. If
+this project is adopted by Apache then it is very possible that this 
+package could be merged with or made obsolete by org.apache.axis.tools.common
+and because of this the design and interfaces have been preserved from
+the original code as much as possible.
+
+<p>
+</div>
+</body>
+
+</html>
