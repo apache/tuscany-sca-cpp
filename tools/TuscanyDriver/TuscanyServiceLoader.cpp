@@ -28,6 +28,12 @@
 #include <tuscany/sca/core/Exceptions.h>
 
 #include <tuscany/sca/model/Composite.h>
+#include <tuscany/sca/model/CompositeReference.h>
+#include <tuscany/sca/model/CompositeService.h>
+#include <tuscany/sca/model/Component.h>
+#include <tuscany/sca/model/Binding.h>
+#include <tuscany/sca/model/Service.h>
+#include <tuscany/sca/model/ServiceType.h>
 #include <tuscany/sca/model/WSDLDefinition.h>
 #include <tuscany/sca/model/WSDLOperation.h>
 #include <tuscany/sca/model/WSDLMessagePart.h>
@@ -116,13 +122,17 @@ namespace tuscany
 
             if( showWsdl_ )
             {
+              log( "WSDL Data:", DATA_WSDL );
               getOperationsFromComposite( includedComposite );
             }
 
             if( showModel_ )
             {
+              log( "MODEL Data:", DATA_WSDL );
               getComponentsFromComposite( includedComposite );
             }
+
+            log( "\nServices loaded correctly.\n", DATA_ALWAYS );
           }
         }
         catch (const tuscany::sca::TuscanyRuntimeException &tuscanyE)
@@ -258,6 +268,173 @@ namespace tuscany
       // private
       void TuscanyServiceLoader::getComponentsFromComposite( tuscany::sca::model::Composite *composite )
       {
+        std::stringstream logMsg;
+
+        std::list<std::string> topLevelComponentList = composite->getComponents();
+        if( topLevelComponentList.empty() )
+        {
+          logMsg << "Top level Composite has no Components to process: " << composite->getName();
+          log( logMsg, DATA_MODEL );
+
+          return;
+        }
+
+        std::list<std::string>::const_iterator tlclIter    = topLevelComponentList.begin();
+        std::list<std::string>::const_iterator tlclIterEnd = topLevelComponentList.end();
+
+        // Iterate through the top level composite components
+        for( ; tlclIter != tlclIterEnd; ++tlclIter )
+        {
+          tuscany::sca::model::Component *topLevelComponent = composite->findComponent( *tlclIter );
+          if( 0 == topLevelComponent )
+          {
+            logMsg << "Skipping NULL Component: " << *tlclIter;
+            log( logMsg, DATA_MODEL );
+
+            continue;
+          }
+
+          logMsg << "\t Top Level Component: " << topLevelComponent->getName();
+          log( logMsg, DATA_MODEL );
+
+          // Top level composites will just include lower composites
+          // Get the actual implementation composite
+          tuscany::sca::model::Composite *impComposite =
+            (tuscany::sca::model::Composite*)topLevelComponent->getType();
+          if( 0 == impComposite )
+          {
+            logMsg << "Couldn't get implemetation composite for top level component: " << *tlclIter;
+            log( logMsg, DATA_MODEL );
+
+            continue;
+          }
+
+          logMsg << "\t\t Implemetation Composite: " << topLevelComponent->getName();
+          log( logMsg, DATA_MODEL );
+
+          std::list<std::string> componentList = impComposite->getComponents();
+          if( componentList.empty() )
+          {
+            log( "\t\t Implemetation Composite has no components", DATA_MODEL );
+
+            continue;
+          }
+
+          std::list<std::string>::const_iterator clIter    = componentList.begin();
+          std::list<std::string>::const_iterator clIterEnd = componentList.end();
+
+          // Iterate through the components
+          for( ; clIter != clIterEnd; ++clIter )
+          {
+
+            tuscany::sca::model::Component *component = impComposite->findComponent( *clIter );
+            if( 0 == component )
+            {
+              logMsg << "Skipping NULL Component: " << *clIter;
+              log( logMsg, DATA_MODEL );
+
+              continue;
+            }
+
+            std::string bindingType;
+            std::string bindingURI;
+            std::string componentType = "\t\t\t Component: ";
+
+            tuscany::sca::model::CompositeService *compositeService =
+              dynamic_cast<tuscany::sca::model::CompositeService*>(component);
+            if (compositeService)
+            {
+              componentType = "\t\t\t Service: ";
+              tuscany::sca::model::Reference *reference = compositeService->getReference();
+              bindingType = reference->getBinding()->getType();
+              bindingURI = reference->getBinding()->getURI();
+            }
+            else
+            {
+              tuscany::sca::model::CompositeReference *compositeReference =
+                dynamic_cast<tuscany::sca::model::CompositeReference*>(component);
+              if (compositeReference)
+              {
+                componentType = "\t\t\t Reference: ";
+                tuscany::sca::model::Service *service = compositeReference->getService();
+                bindingType = service->getBinding()->getType();
+                bindingURI = service->getBinding()->getURI();
+
+              }
+            }
+
+            logMsg << componentType << component->getName();
+            log( logMsg, DATA_MODEL );
+            logMsg << "\t\t\t\t Component Type: " << component->getType()->getName();
+            log( logMsg, DATA_MODEL );
+
+            if (!bindingType.empty())
+            {
+              logMsg << "\t\t\t\t Binding Type: " << bindingType;
+              log( logMsg, DATA_MODEL );
+            }
+            if (!bindingURI.empty())
+            {
+              logMsg << "\t\t\t\t Binding URI: " << bindingURI;
+              log( logMsg, DATA_MODEL );
+            }
+
+            const tuscany::sca::model::Component::SERVICE_MAP &serviceMap = component->getServices();
+            if( serviceMap.empty() )
+            {
+
+              continue;
+            }
+
+            tuscany::sca::model::Component::SERVICE_MAP::const_iterator smIter = serviceMap.begin();
+            tuscany::sca::model::Component::SERVICE_MAP::const_iterator smIterEnd = serviceMap.end();
+
+            for( ; smIter != smIterEnd; ++smIter )
+            {
+              const tuscany::sca::model::Service *service = smIter->second;
+  
+              if( 0 == service )
+              {
+                logMsg << "Skipping NULL Service: " << smIter->second;
+                log( logMsg, DATA_MODEL );
+  
+                continue;
+              }
+  
+              // A ServiceType defines the characteristics of the Service
+              tuscany::sca::model::ServiceType *serviceType = service->getType();
+              logMsg << "\t\t\t\t Service: " << serviceType->getName();
+              log( logMsg, DATA_MODEL );
+            }
+            
+            const tuscany::sca::model::Component::REFERENCE_MAP &referenceMap = component->getReferences();
+            if( referenceMap.empty() )
+            {
+              continue;
+            }
+  
+            tuscany::sca::model::Component::REFERENCE_MAP::const_iterator rmIter = referenceMap.begin();
+            tuscany::sca::model::Component::REFERENCE_MAP::const_iterator rmIterEnd = referenceMap.end();
+  
+            for( ; rmIter != rmIterEnd; ++rmIter )
+            {
+              const tuscany::sca::model::Reference *reference = rmIter->second;
+  
+              if( 0 == reference )
+              {
+                logMsg << "Skipping NULL Reference: " << rmIter->second;
+                log( logMsg, DATA_MODEL );
+  
+                continue;
+              }
+  
+              // A ReferenceType defines the characteristics of the Service
+              logMsg << "\t\t\t\t Reference: " << reference->getType()->getName();
+              log( logMsg, DATA_MODEL );
+
+            }
+          }
+        }
       }
 
       // private
@@ -272,7 +449,11 @@ namespace tuscany
       {
         bool doLog = false;
 
-        if( type == DATA_BOTH && (showModel_ || showWsdl_) )
+        if( type == DATA_ALWAYS )
+        {
+          doLog = true;
+        } 
+        else if( type == DATA_BOTH && (showModel_ || showWsdl_) )
         {
           doLog = true;
         }
