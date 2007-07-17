@@ -71,11 +71,6 @@ namespace tuscany
                  */
                 SCA_API virtual ServiceProxy* getServiceProxy();
                                 
-                 /**
-                  * Returns the target service binding.
-                  */
-                  ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
-                                
                 /**
                  * Returns the binding URI.
                  * @return The binding URI.
@@ -89,11 +84,6 @@ namespace tuscany
                  * component.
                  */
                 ServiceProxy* serviceProxy;
-                
-                /**
-                 * The service binding of the target
-                 */
-                ServiceBinding* targetServiceBinding;
                 
                 /**
                  * The binding URI

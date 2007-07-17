@@ -51,7 +51,7 @@ namespace tuscany
             
             void PythonReferenceBinding::configure(ServiceBinding* binding)
             {
-                targetServiceBinding = binding;
+                setTargetServiceBinding(binding);
                 
                 serviceProxy = new PythonServiceProxy(getReference());
             }

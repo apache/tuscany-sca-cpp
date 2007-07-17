@@ -44,7 +44,7 @@ namespace tuscany
             
             void CompositeReferenceBinding::configure(ServiceBinding *binding)
             {
-                targetServiceBinding = binding;
+                setTargetServiceBinding(binding);
             }
             
             ServiceProxy* CompositeReferenceBinding::getServiceProxy()

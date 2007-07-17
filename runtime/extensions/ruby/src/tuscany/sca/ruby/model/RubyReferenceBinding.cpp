@@ -34,7 +34,7 @@ namespace tuscany
 
             // Constructor
             RubyReferenceBinding::RubyReferenceBinding(Reference* reference)
-                : ReferenceBinding(reference, ""), serviceProxy(NULL), targetServiceBinding(NULL)
+                : ReferenceBinding(reference, ""), serviceProxy(NULL)
             {
             }
             
@@ -50,7 +50,7 @@ namespace tuscany
             
             void RubyReferenceBinding::configure(ServiceBinding* binding)
             {
-                targetServiceBinding = binding;
+                setTargetServiceBinding(binding);
                 
                 serviceProxy = new RubyServiceProxy(getReference());
             }

@@ -83,14 +83,30 @@ namespace tuscany
                    * @return The reference.
                    */
                    SCA_API Reference* getReference() const { return reference; };
-                   
+
+                  /**
+                   * Returns the target service binding.
+                   */
+                   SCA_API ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
+
+            protected:
+
+                 /**
+                  * Sets the target service binding.
+                  */
+                  SCA_API void setTargetServiceBinding(ServiceBinding* binding) { targetServiceBinding = binding; };
+
             private:
             
                 /**
                  * The reference configured with the binding.
                  */
                 Reference* reference;
-            
+
+                /**
+                 * The service binding of the target
+                 */
+                ServiceBinding* targetServiceBinding;
             };
             
         } // End namespace model

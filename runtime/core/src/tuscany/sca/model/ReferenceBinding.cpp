@@ -39,7 +39,7 @@ namespace tuscany
 
             // Constructor
             ReferenceBinding::ReferenceBinding(Reference *reference, const string& uri) :
-                Binding(uri), reference(reference)
+                Binding(uri), reference(reference), targetServiceBinding(0)
             {
                 logentry(); 
             }

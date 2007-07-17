@@ -96,12 +96,7 @@ namespace tuscany
                  * @return The SOAP version to use.
                  */
                 std::string getSOAPVersion() const { return soapVersion; };
-                
-                 /**
-                  * Returns the target service binding.
-                  */
-                tuscany::sca::model::ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
-                                
+
             private:
             
                 /**
@@ -139,11 +134,6 @@ namespace tuscany
                  * component.
                  */
                 ServiceProxy* serviceProxy;
-                
-                /**
-                 * The service binding of the target
-                 */
-                tuscany::sca::model::ServiceBinding* targetServiceBinding; 
             };
             
         } // End namespace ws

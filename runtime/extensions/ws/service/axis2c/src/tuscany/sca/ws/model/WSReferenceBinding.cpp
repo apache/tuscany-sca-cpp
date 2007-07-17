@@ -134,7 +134,7 @@ namespace tuscany
             {
                 logentry();
                 
-                targetServiceBinding = binding;
+                setTargetServiceBinding(binding);
                 
                 serviceProxy = new WSServiceProxy(getReference());
             }

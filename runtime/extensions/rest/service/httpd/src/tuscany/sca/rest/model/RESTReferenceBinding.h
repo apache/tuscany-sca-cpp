@@ -63,12 +63,7 @@ namespace tuscany
                  * client component.
                  */
                  virtual ServiceProxy* getServiceProxy();
-                                
-                 /**
-                  * Returns the target service binding.
-                  */
-                  tuscany::sca::model::ServiceBinding* getTargetServiceBinding() const { return targetServiceBinding; };
-                                
+
             private:
             
                 /**
@@ -76,11 +71,6 @@ namespace tuscany
                  * component.
                  */
                 ServiceProxy* serviceProxy;
-                
-                /**
-                 * The service binding of the target
-                 */
-                tuscany::sca::model::ServiceBinding* targetServiceBinding; 
             };
             
         } // End namespace rest

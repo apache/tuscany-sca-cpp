@@ -51,7 +51,7 @@ namespace tuscany
             
             void PHPReferenceBinding::configure(ServiceBinding* binding)
             {
-                targetServiceBinding = binding;
+                setTargetServiceBinding(binding);
                 
                 serviceProxy = new PHPServiceProxy(getReference());
             }

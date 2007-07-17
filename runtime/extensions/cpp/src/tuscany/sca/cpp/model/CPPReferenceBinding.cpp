@@ -35,7 +35,7 @@ namespace tuscany
 
             // Constructor
             CPPReferenceBinding::CPPReferenceBinding(Reference* reference)
-                : ReferenceBinding(reference, ""), serviceProxy(NULL), targetServiceBinding(NULL)
+                : ReferenceBinding(reference, ""), serviceProxy(NULL)
             {
             }
             
@@ -51,7 +51,7 @@ namespace tuscany
             
             void CPPReferenceBinding::configure(ServiceBinding* binding)
             {
-                targetServiceBinding = binding;
+                setTargetServiceBinding(binding);
                 
                 serviceProxy = new CPPServiceProxy(getReference());
             }

@@ -49,7 +49,7 @@ namespace tuscany
             {
                 logentry();
 
-                targetServiceBinding = binding;
+                setTargetServiceBinding(binding);
                 
                 serviceProxy = new RESTServiceProxy(getReference());
             }
