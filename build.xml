@@ -27,8 +27,6 @@
     found in the ant subdirectory.
   -->
 
-  <import file="platform-properties.xml"/>
-
   <property name="src.dir" value="runtime/core/src"/>
   <property name="extensions.dir" value="runtime/extensions"/>
  	
@@ -65,10 +63,11 @@
   <!--
     Internal targets
     They can still be called, they're just not described, so wont show up in "ant -p"
+    Using antfile and inheritAll="false" to maintain the subdir build.xml basedir settings
   -->
 
   <target name="compile.core">
-    <ant target="compile" dir="${src.dir}"/>
+    <ant target="compile" antfile="${src.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="compile.extensions">
@@ -76,7 +75,7 @@
   </target>
 
   <target name="link.core">
-    <ant target="link" dir="${src.dir}"/>
+    <ant target="link" antfile="${src.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="link.extensions">
@@ -84,7 +83,7 @@
   </target>
 
   <target name="install.core">
-    <ant target="install" dir="${src.dir}"/>
+    <ant target="install" antfile="${src.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="install.extensions">
@@ -92,7 +91,7 @@
   </target>
 
   <target name="clean.core">
-    <ant target="clean" dir="${src.dir}"/>
+    <ant target="clean" antfile="${src.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean.extensions">

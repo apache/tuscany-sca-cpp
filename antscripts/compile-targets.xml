@@ -19,8 +19,7 @@
 -->
 <project name='compiler-targets'>
 
-  <property file="./platform.properties"/>
-  <import file="./compilers.xml"/>
+  <import file="./system.xml"/>
 
   <!--
     Do a cpp compilation.
@@ -65,7 +64,7 @@
     <attribute name="outfile" default="out"/>
     <attribute name="outdir" default="."/>
     <attribute name="indir" default="."/>
-    <attribute name="infiles" default="*${object_ext}"/>
+    <attribute name="infiles" default="*${object.ext}"/>
     <attribute name="linktype" default="shared"/>
     <element name="custom-ld-elements" optional="true"/>
     <sequential>
@@ -76,6 +75,40 @@
             <linker refid='${compiler.name}-Linker'/>
             <fileset dir='@{indir}' includes='@{infiles}'/>
             <custom-ld-elements/>
+      </cc>
+
+    </sequential>
+  </macrodef>
+
+  <!--
+    Do a cpp build which compiles and links, resulting in either a library (linktype
+    of plugin, shared, or static) or an executable (linktype of executable).
+    Inherits from both "Tuscany-BaseCompiler" and "Tuscany-BaseLinker"
+    @param srcdir  - directory where the source files are located.
+    @param infiles - a space seperated list of the source files to compile and link
+    @param outdir  - directory where the output file will be written
+    @param outfile - name of the library or binary to create, OS prefixes and suffixes may be added
+    @param outtype - executable, plugin, shared, static
+    @param custom-build-elements - any extra elements needed for compiling or linking
+                                   may also be extra <includepath> or <libset> elements
+  -->
+  <macrodef name="cpp-build">
+    <attribute name="srcdir" default="."/>
+    <attribute name="infiles" default="*.cpp"/>
+    <attribute name="outdir" default="."/>
+    <attribute name="outfile" default="out"/>
+    <attribute name="outtype" default="shared"/>
+    <element name="custom-build-elements" optional="true"/>
+    <sequential>
+      <mkdir dir='@{outdir}'/>
+      <cc outtype='@{outtype}'
+          subsystem='console'
+          objdir='@{outdir}'
+          outfile='@{outdir}/@{outfile}'>
+            <compiler refid='${compiler.name}-Compiler'/>
+            <linker refid='${compiler.name}-Linker'/>
+            <fileset dir='@{srcdir}' includes='@{infiles}'/>
+            <custom-build-elements/>
       </cc>
 
     </sequential>

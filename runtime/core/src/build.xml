@@ -17,16 +17,28 @@
    specific language governing permissions and limitations
    under the License.
 -->
-<project name="TuscanyScaNative_core" default="all" basedir=".">
-  <import file="../../../platform-properties.xml"/>
-  <import file="${tuscanySCA.antscripts.dir}/compile-targets.xml"/>
+<project name="TuscanyScaNative_core" default="all" basedir="../../..">
 
-  <property name="core.dir"          value="tuscany/sca/core"/>
-  <property name="extension.dir"     value="tuscany/sca/extension"/>
-  <property name="model.dir"         value="tuscany/sca/model"/>
-  <property name="util.dir"          value="tuscany/sca/util"/>
-  <property name="lib.dir"           value="./.libs"/>
-  <property name="tuscany.core.lib"  value="tuscany_sca"/>
+  <import file="${basedir}/antscripts/system.xml"/>
+  <import file="${basedir}/antscripts/compile-targets.xml"/>
+
+  <!--
+    Notice that the basedir for this project is set to the TuscanySCA root dir
+    This makes path setting in system.xml much simpler, but we'll just have to
+    set a property here to this directory.
+  -->
+  <property name="this.dir"           location="${basedir}/runtime/core/src"/>
+  <property name="core.dir"           value="tuscany/sca/core"/>
+  <property name="extension.dir"      value="tuscany/sca/extension"/>
+  <property name="model.dir"          value="tuscany/sca/model"/>
+  <property name="util.dir"           value="tuscany/sca/util"/>
+
+  <property name="core.abs.dir"       location="${this.dir}/${core.dir}"/>
+  <property name="extension.abs.dir"  location="${this.dir}/${extension.dir}"/>
+  <property name="model.abs.dir"      location="${this.dir}/${model.dir}"/>
+  <property name="util.abs.dir"       location="${this.dir}/${util.dir}"/>
+  <property name="lib.dir"            location="${this.dir}/.libs"/>
+  <property name="tuscany.core.lib"   value="tuscany_sca"/>
 
   <!--
     All the cpp and header files per subdirectory
@@ -91,7 +103,7 @@
     <antcall target="install.model"/>
     <antcall target="install.util"/>
     <cpp-install-headers
-        srcdir="tuscany/sca"
+        srcdir="${this.dir}/tuscany/sca"
         files="export.h"
         destdir="${tuscanySCA.install.dir}/include/tuscany/sca"/>
     <cpp-install-lib
@@ -101,12 +113,19 @@
   </target>
 
   <target name="clean" description="Clean all TuscanyScaNative core compiled source code">
-    <delete dir="${lib.dir}"/>
-    <!-- delete installed lib and dir -->
     <antcall target="clean.core"/>
     <antcall target="clean.extension"/>
     <antcall target="clean.model"/>
     <antcall target="clean.util"/>
+    <delete dir="${lib.dir}" quiet="true"/>
+    <delete
+        quiet="true"
+        dir="${tuscanySCA.install.dir}/include/tuscany/sca"
+        file="export.h"/>
+    <delete
+        quiet="true"
+        dir="${tuscanySCA.install.dir}/lib"
+        file="${lib.prefix}${tuscany.core.lib}${lib.ext}"/>
   </target>
 
   <!--
@@ -118,28 +137,28 @@
 
   <target name="compile.core">
     <cpp-compile
-        srcdir="${core.dir}"
+        srcdir="${core.abs.dir}"
         objdir="${lib.dir}"
         infiles="${core.cpp.files}"/>
   </target>
 
   <target name="compile.extension">
     <cpp-compile
-        srcdir="${extension.dir}"
+        srcdir="${extension.abs.dir}"
         objdir="${lib.dir}"
         infiles="${extension.cpp.files}"/>
   </target>
 
   <target name="compile.model">
     <cpp-compile
-        srcdir="${model.dir}"
+        srcdir="${model.abs.dir}"
         objdir="${lib.dir}"
         infiles="${model.cpp.files}"/>
   </target>
 
   <target name="compile.util">
     <cpp-compile
-        srcdir="${util.dir}"
+        srcdir="${util.abs.dir}"
         objdir="${lib.dir}"
         infiles="${util.cpp.files}"/>
   </target>
@@ -148,28 +167,28 @@
 
   <target name="install.core">
     <cpp-install-headers
-        srcdir="${core.dir}"
+        srcdir="${core.abs.dir}"
         files="${core.h.files}"
         destdir="${tuscanySCA.install.dir}/include/${core.dir}"/>
   </target>
 
   <target name="install.extension">
     <cpp-install-headers
-        srcdir="${extension.dir}"
+        srcdir="${extension.abs.dir}"
         files="${extension.h.files}"
         destdir="${tuscanySCA.install.dir}/include/${extension.dir}"/>
   </target>
 
   <target name="install.model">
     <cpp-install-headers
-        srcdir="${model.dir}"
+        srcdir="${model.abs.dir}"
         files="${model.h.files}"
         destdir="${tuscanySCA.install.dir}/include/${model.dir}"/>
   </target>
 
   <target name="install.util">
     <cpp-install-headers
-        srcdir="${util.dir}"
+        srcdir="${util.abs.dir}"
         files="${util.h.files}"
         destdir="${tuscanySCA.install.dir}/include/${util.dir}"/>
   </target>
@@ -177,19 +196,35 @@
     <!-- clean -->
 
   <target name="clean.core">
-    <!-- delete installed headers -->
+    <delete quiet="true">
+      <fileset
+          dir="${tuscanySCA.install.dir}/include/${core.dir}"
+          includes="${core.h.files}"/>
+    </delete>
   </target>
 
   <target name="clean.extension">
-    <!-- delete installed headers -->
+    <delete quiet="true">
+      <fileset
+          dir="${tuscanySCA.install.dir}/include/${extension.dir}"
+          includes="${extension.h.files}"/>
+    </delete>
   </target>
 
   <target name="clean.model">
-    <!-- delete installed headers -->
+    <delete quiet="true">
+      <fileset
+          dir="${tuscanySCA.install.dir}/include/${model.dir}"
+          includes="${model.h.files}"/>
+    </delete>
   </target>
 
   <target name="clean.util">
-    <!-- delete installed headers -->
+    <delete quiet="true">
+      <fileset
+          dir="${tuscanySCA.install.dir}/include/${util.dir}"
+          includes="${util.h.files}"/>
+    </delete>
   </target>
 
 </project>

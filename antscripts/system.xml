@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<project name="system-import">
+
+  <property file="./platform.properties"/>
+  <property environment="env"/>
+
+  <!-- These 3 lines pull in antcontrib and cctasks -->
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <taskdef resource="cpptasks.tasks"/>
+  <typedef resource="cpptasks.types"/>
+
+  <!--
+     Configure the tuscanySDO.install.dir, sdo.include.dir, and sdo.lib.dir
+     Take the override value from platform.properties if set
+     Else take it from the env var TUSCANY_SDOCPP
+     Else fail since we cant compile without it
+  -->
+  <if>
+    <isset property="platform.tuscanySDO.install.dir"/>
+    <then>
+      <property name="tuscanySDO.install.dir" location="${platform.tuscanySDO.install.dir}"/>
+    </then>
+    <elseif>
+      <isset property="env.TUSCANY_SDOCPP"/>
+      <then>
+        <property name="tuscanySDO.install.dir" location="${env.TUSCANY_SDOCPP}"/>
+      </then>
+    </elseif>
+    <else>
+      <fail message="Unable to find SDO installation, must be set by TUSCANY_SDOCPP or in platform.properties file"/>
+    </else>
+  </if>
+  <property name="sdo.include.dir" location="${tuscanySDO.install.dir}/include"/>
+  <property name="sdo.lib.dir"     location="${tuscanySDO.install.dir}/lib"/>
+
+  <!--
+     Configure the tuscanySCA.root.dir
+     Take the override value from platform.properties if set
+  -->
+  <if>
+    <isset property="platform.tuscanySCA.root.dir"/>
+    <then>
+      <property name="tuscanySCA.root.dir" location="${platform.tuscanySCA.root.dir}"/>
+    </then>
+    <else>
+      <property name="tuscanySCA.root.dir" location="."/>
+    </else>
+  </if>
+
+  <property name="tuscanySCA.root.src.dir" location="${tuscanySCA.root.dir}/runtime"/>
+
+  <!--
+     Configure the tuscanySCA.install.dir
+     Take the override value from platform.properties if set
+     Else take it from the env var TUSCANY_SCACPP
+     Else use a default of ${tuscanySCA.root.dir}/deploy
+  -->
+  <if>
+    <isset property="platform.tuscanySCA.install.dir"/>
+    <then>
+      <property name="tuscanySCA.install.dir" location="${platform.tuscanySCA.install.dir}"/>
+    </then>
+    <elseif>
+      <isset property="${env.TUSCANY_SCACPP}"/>
+      <then>
+        <property name="tuscanySCA.install.dir" location="${env.TUSCANY_SCACPP}"/>
+      </then>
+    </elseif>
+    <else>
+      <property name="tuscanySCA.install.dir" location="${tuscanySCA.root.dir}/deploy"/>
+    </else>
+  </if>
+
+  <!--
+     Configure the compiler.name
+     Take the override value from platform.properties if set
+     Else set it based on the OS
+  -->
+  <if>
+    <isset property="platform.compiler.name"/>
+    <then>
+      <property name="compiler.name" value="${platform.compiler.name}"/>
+    </then>
+    <else>
+      <condition property="compiler.name" value="msvc">
+        <os family="windows"/>
+      </condition>
+
+      <condition property="compiler.name" value="g++">
+        <or>
+          <os family="unix"/>
+          <os family="mac"/>
+        </or>
+      </condition>
+    </else>
+  </if>
+
+  <!--
+     Configure the lib.ext
+     Take the override value from platform.properties if set
+     Else set it based on the OS
+  -->
+  <if>
+    <isset property="platform.lib.ext"/>
+    <then>
+      <property name="lib.ext" value="${platform.lib.ext}"/>
+    </then>
+    <else>
+      <condition property="lib.ext" value=".dll">
+        <os family="windows"/>
+      </condition>
+
+      <condition property="lib.ext" value=".dylib">
+        <os family="mac"/>
+      </condition>
+
+      <condition property="lib.ext" value=".so">
+        <os family="unix"/>
+      </condition>
+    </else>
+  </if>
+
+  <!--
+     Configure the lib.prefix
+     Take the override value from platform.properties if set
+     Else set it based on the OS
+  -->
+  <if>
+    <isset property="platform.lib.prefix"/>
+    <then>
+      <property name="lib.prefix" value="${platform.lib.prefix}"/>
+    </then>
+    <else>
+      <condition property="lib.prefix" value="">
+        <os family="windows"/>
+      </condition>
+
+      <condition property="lib.prefix" value="lib">
+        <or>
+          <os family="unix"/>
+          <os family="mac"/>
+        </or>
+      </condition>
+    </else>
+  </if>
+
+
+  <!--
+     Configure the object.ext
+     Take the override value from platform.properties if set
+     Else set it based on the OS
+  -->
+  <if>
+    <isset property="platform.object.ext"/>
+    <then>
+      <property name="object.ext" value="${platform.object.ext}"/>
+    </then>
+    <else>
+      <condition property="object.ext" value=".obj">
+        <os family="windows"/>
+      </condition>
+
+      <condition property="object.ext" value=".o">
+        <or>
+          <os family="unix"/>
+          <os family="mac"/>
+        </or>
+      </condition>
+    </else>
+  </if>
+
+
+  <!--
+     Configure the exe.ext
+     Take the override value from platform.properties if set
+     Else set it based on the OS
+  -->
+  <if>
+    <isset property="platform.exe.ext"/>
+    <then>
+      <property name="exe.ext" value="${platform.exe.ext}"/>
+    </then>
+    <else>
+      <condition property="exe.ext" value=".exe">
+        <os family="windows"/>
+      </condition>
+
+      <condition property="exe.ext" value="">
+        <or>
+          <os family="unix"/>
+          <os family="mac"/>
+        </or>
+      </condition>
+    </else>
+  </if>
+
+  <condition property="windows" value="true">
+    <os family="windows"/>
+  </condition>
+
+  <!--
+     Base compiler definition
+    -->
+  <compiler id="Tuscany-BaseCompiler" multithreaded="true" exceptions="true" rtti="true">
+    <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE,SCA_EXPORTS"/>
+    <includepath path="${sdo.include.dir}"/>
+    <includepath path="${tuscanySCA.root.dir}"/> <!-- tuscany_sca_config.h -->
+    <includepath path="${tuscanySCA.root.src.dir}"/>
+    <includepath path="${tuscanySCA.root.src.dir}/core/src"/>
+  </compiler>
+
+  <!--
+     Specific compiler definitions
+    -->
+  <compiler id="msvc-Compiler" extends="Tuscany-BaseCompiler" name="msvc"/>
+  <compiler id="msvc8-Compiler" extends="Tuscany-BaseCompiler" name="msvc" exceptions="false">
+    <compilerarg value="/EHsc"/>
+  </compiler>
+  <compiler id="g++-Compiler" extends="Tuscany-BaseCompiler" name="g++"/>
+ 
+  <!-- Used for cross compilation with the -m32 flag -->
+  <compiler id="g++m32-Compiler" extends="Tuscany-BaseCompiler" name="g++">
+    <compilerarg value="-m32"/>
+  </compiler>
+
+  <!--
+     Base linker definition
+    -->
+  <linker id="Tuscany-BaseLinker">
+    <syslibset if="windows" libs="kernel32,user32,ws2_32"/>
+    <libset dir="${sdo.lib.dir}" libs="tuscany_sdo"/>
+  </linker>
+
+  <!--
+     Specific linker definitions
+    -->
+  <linker id="msvc-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
+  <linker id="msvc8-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
+  <linker id="g++-Linker" extends="Tuscany-BaseLinker" name="g++"/>
+  <linker id="g++m32-Linker" extends="Tuscany-BaseLinker" name="g++">
+    <linkerarg value="-m32"/>
+  </linker>
+
+</project>
