@@ -41,7 +41,10 @@
     <os family='windows'/>
   </condition>
 
-  <property name='objext.ext' value='.o'/>
+  <condition property='object.ext' value='.obj'>
+    <os family='windows'/>
+  </condition>
+  <property name='object.ext' value='.o'/>
 
 
 </project>
