@@ -216,11 +216,16 @@
     <os family="windows"/>
   </condition>
 
+  <condition property="mac" value="true">
+    <os family="mac"/>
+  </condition>
+
   <!--
      Base compiler definition
     -->
   <compiler id="Tuscany-BaseCompiler" multithreaded="true" exceptions="true" rtti="true">
     <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE,SCA_EXPORTS"/>
+    <defineset if="mac" define="IS_DARWIN"/>
     <includepath path="${sdo.include.dir}"/>
     <includepath path="${tuscanySCA.root.dir}"/> <!-- tuscany_sca_config.h -->
     <includepath path="${tuscanySCA.root.src.dir}"/>
