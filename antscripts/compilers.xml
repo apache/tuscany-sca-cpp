@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<project name='compiler-import'>
+
+  <property file="./platform.properties"/>
+  <property environment="env"/>
+  <property name="TUSCANY_SDOCPP"  value="${env.TUSCANY_SDOCPP}"/>
+  <property name="sdo.include.dir" location="${env.TUSCANY_SDOCPP}/include"/>
+  <property name="sdo.lib.dir"     location="${env.TUSCANY_SDOCPP}/lib"/>
+
+  <taskdef resource='net/sf/antcontrib/antlib.xml'/>
+  <taskdef resource='cpptasks.tasks'/>
+  <typedef resource='cpptasks.types'/>
+
+  <if>
+    <isset property="platform.compiler-definition"/>
+    <then>
+      <property name='compiler.name' value='${platform.compiler-definition}'/>
+    </then>
+    <else>
+      <condition property='compiler.name' value='msvc'>
+        <os family='windows'/>
+      </condition>
+
+      <condition property='compiler.name' value='g++'>
+        <os name='linux'/>
+      </condition>
+
+      <condition property='compiler.name' value='g++'>
+        <os name='SunOS'/>
+      </condition>
+  
+      <condition property='compiler.name' value='g++'>
+        <os name='HP-UX'/>
+      </condition>
+
+    </else>
+  </if>
+
+  <!-- Just in case it isn't set (should be set in platform properties file -->
+  <property name="lib.ext" value=""/>
+
+  <condition property="lib.prefix" value="">
+    <os family="windows"/>
+  </condition>
+  <property name="lib.prefix" value="lib"/>
+
+  <condition property='windows' value='true'>
+    <os family='windows'/>
+  </condition>
+
+  <!--
+     Base compiler definition
+    -->
+  <compiler id='Tuscany-BaseCompiler' multithreaded='true' exceptions='true' rtti='true'>
+    <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE,SCA_EXPORTS"/>
+    <includepath path="${sdo.include.dir}"/>
+    <includepath path="${tuscanySCA.root.dir}"/> <!-- tuscany_sca_config.h -->
+    <includepath path="${tuscanySCA.root.src.dir}"/>
+    <includepath path="${tuscanySCA.root.src.dir}/core/src"/>
+  </compiler>
+
+  <!--
+     Specific compiler definitions
+    -->
+  <compiler id='msvc-Compiler' extends='Tuscany-BaseCompiler' name='msvc'/>
+  <compiler id='msvc8-Compiler' extends='Tuscany-BaseCompiler' name='msvc' exceptions='false'>
+    <compilerarg value='/EHsc'/>
+  </compiler>
+  <compiler id='g++-Compiler' extends='Tuscany-BaseCompiler' name='g++'/>
+ 
+  <!-- Used for cross compilation with the -m32 flag -->
+  <compiler id='g++m32-Compiler' extends='Tuscany-BaseCompiler' name='g++'>
+    <compilerarg value='-m32'/>
+  </compiler>
+
+  <!--
+     Base linker definition
+    -->
+  <linker id='Tuscany-BaseLinker'>
+    <syslibset if='windows' libs='kernel32,user32,ws2_32'/>
+    <libset dir="${sdo.lib.dir}" libs="tuscany_sdo"/>
+  </linker>
+
+  <!--
+     Specific linker definitions
+    -->
+  <linker id='msvc-Linker' extends='Tuscany-BaseLinker' name='msvc'/>
+  <linker id='msvc8-Linker' extends='Tuscany-BaseLinker' name='msvc'/>
+  <linker id='g++-Linker' extends='Tuscany-BaseLinker' name='g++'/>
+  <linker id='g++m32-Linker' extends='Tuscany-BaseLinker' name='g++'>
+    <linkerarg value='-m32'/>
+  </linker>
+
+</project>

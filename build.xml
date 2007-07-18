@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+
+<project name="TuscanyScaNative" default="all" basedir=".">
+
+  <!--
+    This is the root level ant build.xml file for TuscanySCA Native
+    Nothing is actually performed here, it just delegates to subdirectory
+    build.xml files. Common scripts used by all ant build files can be
+    found in the ant subdirectory.
+  -->
+
+  <import file="platform-properties.xml"/>
+
+  <property name="src.dir" value="runtime/core/src"/>
+  <property name="extensions.dir" value="runtime/extensions"/>
+ 	
+  <!--
+    Public targets
+  -->
+
+  <target name="all" description="compile, link, and install all TuscanyScaNative source code">
+    <antcall target="compile"/>
+    <antcall target="link"/>
+    <antcall target="install"/>
+  </target>
+
+  <target name="compile" description="Compile all TuscanyScaNative source code">
+    <antcall target="compile.core"/>
+    <antcall target="compile.extensions"/>
+  </target>
+
+  <target name="link" description="Link all TuscanyScaNative source code">
+    <antcall target="link.core"/>
+    <antcall target="link.extensions"/>
+  </target>
+
+  <target name="install" description="Install TuscanyScaNative libraries and headers">
+    <antcall target="install.core"/>
+    <antcall target="install.extensions"/>
+  </target>
+
+  <target name="clean" description="Clean all TuscanyScaNative compiled source code">
+    <antcall target="clean.core"/>
+    <antcall target="clean.extensions"/>
+  </target>
+
+  <!--
+    Internal targets
+    They can still be called, they're just not described, so wont show up in "ant -p"
+  -->
+
+  <target name="compile.core">
+    <ant target="compile" dir="${src.dir}"/>
+  </target>
+
+  <target name="compile.extensions">
+    <!-- TODO finish this -->
+  </target>
+
+  <target name="link.core">
+    <ant target="link" dir="${src.dir}"/>
+  </target>
+
+  <target name="link.extensions">
+    <!-- TODO finish this -->
+  </target>
+
+  <target name="install.core">
+    <ant target="install" dir="${src.dir}"/>
+  </target>
+
+  <target name="install.extensions">
+    <!-- TODO finish this -->
+  </target>
+
+  <target name="clean.core">
+    <ant target="clean" dir="${src.dir}"/>
+  </target>
+
+  <target name="clean.extensions">
+    <!-- TODO finish this -->
+  </target>
+
+</project>

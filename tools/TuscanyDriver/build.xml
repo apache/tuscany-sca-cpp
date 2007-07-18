@@ -27,6 +27,10 @@
   <property name="TUSCANY_SCACPP" value="${env.TUSCANY_SCACPP}"/>
   <property name="TUSCANY_SDOCPP" value="${env.TUSCANY_SDOCPP}"/>
 
+  	<condition property="windows">
+		<os family="windows"/>
+  	</condition>
+
   <condition property='compiler-name' value='msvc'>
     <os family='windows'/>
   </condition>
@@ -62,6 +66,11 @@
           <includepath path='.'/>
           <includepath path='${TUSCANY_SDOCPP}/include/'/>
           <includepath path='${TUSCANY_SCACPP}/include/'/>
+		<defineset>
+			<define name="WIN32" if="windows"/>
+			<define name="_WINDOWS" if="windows"/>
+                        <define name="LINUX" if="linux"/>
+		</defineset>
           <fileset dir='.' includes='*.cpp'/>
       </cc>
     </sequential>

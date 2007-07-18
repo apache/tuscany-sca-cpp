@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<project name="TuscanyScaNative_core" default="all" basedir=".">
+  <import file="../../../platform-properties.xml"/>
+  <import file="${tuscanySCA.antscripts.dir}/compile-targets.xml"/>
+
+  <property name="core.dir"          value="tuscany/sca/core"/>
+  <property name="extension.dir"     value="tuscany/sca/extension"/>
+  <property name="model.dir"         value="tuscany/sca/model"/>
+  <property name="util.dir"          value="tuscany/sca/util"/>
+  <property name="lib.dir"           value="./.libs"/>
+  <property name="tuscany.core.lib"  value="tuscany_sca"/>
+
+  <!--
+    All the cpp and header files per subdirectory
+    New classes should be added to these properties
+  -->
+
+  <property
+    name="core.cpp.files"
+    value="Exceptions.cpp Operation.cpp SCARuntime.cpp ServiceProxy.cpp ServiceWrapper.cpp"/>
+  <property
+    name="core.h.files"
+    value="Exceptions.h Operation.h SCARuntime.h ServiceProxy.h ServiceWrapper.h"/>
+
+  <property
+    name="extension.cpp.files"
+    value="ImplementationExtension.cpp InterfaceExtension.cpp ReferenceBindingExtension.cpp ServiceBindingExtension.cpp"/>
+  <property
+    name="extension.h.files"
+    value="ImplementationExtension.h InterfaceExtension.h ReferenceBindingExtension.h ServiceBindingExtension.h"/>
+
+  <property
+    name="model.cpp.files"
+    value="Binding.cpp Component.cpp ComponentType.cpp Composite.cpp CompositeReferenceBinding.cpp CompositeReference.cpp CompositeService.cpp Contract.cpp Interface.cpp ModelLoader.cpp ReferenceBinding.cpp Reference.cpp ReferenceType.cpp ServiceBinding.cpp Service.cpp ServiceType.cpp Wire.cpp WSDLDefinition.cpp WSDLInterface.cpp WSDLMessagePart.cpp WSDLOperation.cpp"/>
+  <property
+    name="model.h.files"
+    value="Binding.h Component.h ComponentType.h Composite.h CompositeReferenceBinding.h CompositeReference.h CompositeService.h Contract.h Interface.h ModelLoader.h ReferenceBinding.h Reference.h ReferenceType.h ServiceBinding.h Service.h ServiceType.h Wire.h WSDLDefinition.h WSDLInterface.h WSDLMessagePart.h WSDLOperation.h"/>
+
+  <property
+    name="util.cpp.files"
+    value="DefaultLogWriter.cpp File.cpp FileLogWriter.cpp Library.cpp Logger.cpp LogWriter.cpp Mutex.cpp Queue.cpp SDOUtils.cpp Thread.cpp ThreadLocal.cpp Utils.cpp"/>
+  <property
+    name="util.h.files"
+    value="DefaultLogWriter.h File.h FileLogWriter.h Library.h Logger.h Logging.h LogWriter.h Mutex.h Queue.h SDOUtils.h Thread.h ThreadLocal.h Utils.h"/>
+
+  <!--
+    Public targets
+  -->
+  <target name="all" description="compile, link, and install all TuscanyScaNative core source code">
+    <antcall target="compile"/>
+    <antcall target="link"/>
+    <antcall target="install"/>
+  </target>
+
+  <target name="compile" description="Compile all TuscanyScaNative core source code">
+    <antcall target="compile.core"/>
+    <antcall target="compile.extension"/>
+    <antcall target="compile.model"/>
+    <antcall target="compile.util"/>
+  </target>
+
+  <target name="link" description="Link all TuscanyScaNative core source code">
+    <cpp-link
+        outfile="${tuscany.core.lib}"
+        outdir="${lib.dir}"
+        indir="${lib.dir}"
+        infiles="*${object.ext}"/>
+  </target>
+
+  <target name="install" description="Install TuscanyScaNative core libraries and headers">
+    <antcall target="install.core"/>
+    <antcall target="install.extension"/>
+    <antcall target="install.model"/>
+    <antcall target="install.util"/>
+    <cpp-install-headers
+        srcdir="tuscany/sca"
+        files="export.h"
+        destdir="${tuscanySCA.install.dir}/include/tuscany/sca"/>
+    <cpp-install-lib
+        libs="${lib.prefix}${tuscany.core.lib}${lib.ext}"
+        srclibdir="${lib.dir}"
+        destlibdir="${tuscanySCA.install.dir}/lib"/>
+  </target>
+
+  <target name="clean" description="Clean all TuscanyScaNative core compiled source code">
+    <delete dir="${lib.dir}"/>
+    <!-- delete installed lib and dir -->
+    <antcall target="clean.core"/>
+    <antcall target="clean.extension"/>
+    <antcall target="clean.model"/>
+    <antcall target="clean.util"/>
+  </target>
+
+  <!--
+    Internal targets
+    They can still be called, they're just not described, so wont show up in "ant -p"
+  -->
+
+    <!-- compile -->
+
+  <target name="compile.core">
+    <cpp-compile
+        srcdir="${core.dir}"
+        objdir="${lib.dir}"
+        infiles="${core.cpp.files}"/>
+  </target>
+
+  <target name="compile.extension">
+    <cpp-compile
+        srcdir="${extension.dir}"
+        objdir="${lib.dir}"
+        infiles="${extension.cpp.files}"/>
+  </target>
+
+  <target name="compile.model">
+    <cpp-compile
+        srcdir="${model.dir}"
+        objdir="${lib.dir}"
+        infiles="${model.cpp.files}"/>
+  </target>
+
+  <target name="compile.util">
+    <cpp-compile
+        srcdir="${util.dir}"
+        objdir="${lib.dir}"
+        infiles="${util.cpp.files}"/>
+  </target>
+
+    <!-- install -->
+
+  <target name="install.core">
+    <cpp-install-headers
+        srcdir="${core.dir}"
+        files="${core.h.files}"
+        destdir="${tuscanySCA.install.dir}/include/${core.dir}"/>
+  </target>
+
+  <target name="install.extension">
+    <cpp-install-headers
+        srcdir="${extension.dir}"
+        files="${extension.h.files}"
+        destdir="${tuscanySCA.install.dir}/include/${extension.dir}"/>
+  </target>
+
+  <target name="install.model">
+    <cpp-install-headers
+        srcdir="${model.dir}"
+        files="${model.h.files}"
+        destdir="${tuscanySCA.install.dir}/include/${model.dir}"/>
+  </target>
+
+  <target name="install.util">
+    <cpp-install-headers
+        srcdir="${util.dir}"
+        files="${util.h.files}"
+        destdir="${tuscanySCA.install.dir}/include/${util.dir}"/>
+  </target>
+
+    <!-- clean -->
+
+  <target name="clean.core">
+    <!-- delete installed headers -->
+  </target>
+
+  <target name="clean.extension">
+    <!-- delete installed headers -->
+  </target>
+
+  <target name="clean.model">
+    <!-- delete installed headers -->
+  </target>
+
+  <target name="clean.util">
+    <!-- delete installed headers -->
+  </target>
+
+</project>
