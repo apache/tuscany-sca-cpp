@@ -46,7 +46,7 @@ else
   AC_SUBST([libsuffix],[".so"])
   is_darwin=false
 fi
-AM_CONDITIONAL([DARWIN], [test x$is_darmin = xtrue])
+AM_CONDITIONAL([DARWIN], [test x$is_darwin = xtrue])
 
 # Checks for libraries.
 
