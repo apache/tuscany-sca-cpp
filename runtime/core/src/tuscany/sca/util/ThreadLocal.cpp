@@ -19,12 +19,6 @@
 
 /* $Rev$ $Date$ */
 
-#if defined(WIN32)  || defined (_WINDOWS)
-#pragma warning(disable: 4786)
-#else
-#include "tuscany_sca_config.h"
-#endif
-
 #include <errno.h>
 
 #include <sstream>

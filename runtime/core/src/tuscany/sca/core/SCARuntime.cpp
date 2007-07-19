@@ -19,12 +19,6 @@
 
 /* $Rev$ $Date$ */
 
-#if defined(WIN32)  || defined (_WINDOWS)
-#include <windows.h>
-#else
-#include "tuscany_sca_config.h"
-#endif
-
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"

@@ -19,13 +19,6 @@
 
 /* $Rev: 491752 $ $Date: 2007-01-01 22:22:23 -0800 (Mon, 01 Jan 2007) $ */
 
-#if defined(WIN32)  || defined (_WINDOWS)
-#pragma warning(disable: 4786)
-#include <process.h>
-#else
-#include "tuscany_sca_config.h"
-#endif
-
 #include <errno.h>
 
 #include <sstream>

@@ -16,6 +16,9 @@
 #  under the License.
 
 lib_LTLIBRARIES = libtuscany_sca.la
+if DARWIN
+  DARWIN_CPPFLAG = -DIS_DARWIN
+endif
 
 nobase_include_HEADERS = \
 tuscany/sca/*.h \
@@ -76,5 +79,5 @@ libtuscany_sca_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo -lpthread
 INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include
 
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
+AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG ${DARWIN_CPPFLAG)
                    
