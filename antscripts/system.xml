@@ -227,7 +227,6 @@
     <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE,SCA_EXPORTS"/>
     <defineset if="mac" define="IS_DARWIN"/>
     <includepath path="${sdo.include.dir}"/>
-    <includepath path="${tuscanySCA.root.dir}"/> <!-- tuscany_sca_config.h -->
     <includepath path="${tuscanySCA.root.src.dir}"/>
     <includepath path="${tuscanySCA.root.src.dir}/core/src"/>
   </compiler>
