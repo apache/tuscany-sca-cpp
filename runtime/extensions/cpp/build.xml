@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<project name="TuscanyScaNative_extension_cpp" default="all" basedir="../../..">
+
+  <import file="${basedir}/antscripts/system.xml"/>
+  <import file="${basedir}/antscripts/compile-targets.xml"/>
+
+  <!--
+    Notice that the basedir for this project is set to the TuscanySCA root dir
+    This makes path setting in system.xml much simpler, but we'll just have to
+    set a property here to this directory.
+  -->
+  <property name="osoa.dir"       value="osoa/sca"/>
+  <property name="cpp.core.dir"   value="tuscany/sca/cpp"/>
+  <property name="cpp.model.dir"  value="tuscany/sca/cpp/model"/>
+  <property name="xsd.dir"        value="xsd"/>
+
+  <property name="this.dir"           location="${basedir}/runtime/extensions/cpp"/>
+  <property name="this.src.dir"       location="${this.dir}/src"/>
+  <property name="osoa.abs.dir"       location="${this.src.dir}/${osoa.dir}"/>
+  <property name="cpp.core.abs.dir"   location="${this.src.dir}/${cpp.core.dir}"/>
+  <property name="cpp.model.abs.dir"  location="${this.src.dir}/${cpp.model.dir}"/>
+  <property name="lib.dir"            location="${this.src.dir}/.libs"/>
+  <property name="xsd.abs.dir"        location="${this.dir}/${xsd.dir}"/>
+
+  <property name="tuscany.cpp.extension.lib"   value="tuscany_sca_cpp"/>
+  <property name="cpp.extension.install.dir"   location="${tuscanySCA.install.dir}/extensions/cpp"/>
+
+  <!--
+    All the cpp and header files per subdirectory
+    New classes should be added to these properties
+  -->
+
+  <property
+    name="osoa.cpp.files"
+    value="ComponentContext.cpp CompositeContext.cpp"/>
+  <property
+    name="osoa.h.files"
+    value="ComponentContext.h
+           CompositeContext.h
+           export.h
+           sca.h
+           ServiceRuntimeException.h"/>
+
+  <property
+    name="cpp.core.cpp.files"
+    value="ComponentContextImpl.cpp
+           CompositeContextImpl.cpp
+           CPPExtension.cpp
+           CPPImplementationExtension.cpp
+           CPPInterfaceExtension.cpp
+           CPPServiceProxy.cpp
+           CPPServiceWrapper.cpp
+           TuscanyRuntime.cpp"/>
+  <property
+    name="cpp.core.h.files"
+    value="ComponentContextImpl.h
+           CompositeContextImpl.h
+           CPPExtension.h
+           CPPImplementationExtension.h
+           CPPInterfaceExtension.h
+           CPPServiceProxy.h
+           CPPServiceWrapper.h
+           TuscanyRuntime.h"/>
+
+  <property
+    name="cpp.model.cpp.files"
+    value="CPPImplementation.cpp
+           CPPInterface.cpp
+           CPPReferenceBinding.cpp
+           CPPServiceBinding.cpp"/>
+  <property
+    name="cpp.model.h.files"
+    value="CPPImplementation.h
+           CPPInterface.h
+           CPPReferenceBinding.h
+           CPPServiceBinding.h"/>
+
+  <property
+    name="xsd.files"
+    value="sca-implementation-cpp.xsd
+           sca-interface-cpp.xsd"/>
+  <!--
+    Public targets
+  -->
+  <target name="all" description="Compile, link, and install all TuscanyScaNative cpp extension source code">
+    <antcall target="compile"/>
+    <antcall target="link"/>
+    <antcall target="install"/>
+  </target>
+
+  <!-- TODO is tools/scagen included? I thought it moved to <root>/tools -->
+
+  <target name="build" description="Compile and link all TuscanyScaNative cpp extension source code">
+    <antcall target="compile"/>
+    <antcall target="link"/>
+  </target>
+
+  <target name="compile" description="Compile all TuscanyScaNative cpp extension source code">
+    <antcall target="compile.cpp.osoa"/>
+    <antcall target="compile.cpp.core"/>
+    <antcall target="compile.cpp.model"/>
+  </target>
+
+  <target name="link" description="Link all TuscanyScaNative cpp extension source code">
+    <cpp-link
+        outfile="${tuscany.cpp.extension.lib}"
+        outdir="${lib.dir}"
+        indir="${lib.dir}"
+        infiles="*${object.ext}"/>
+  </target>
+
+  <target name="install" description="Install TuscanyScaNative cpp extension libraries and headers">
+    <antcall target="install.cpp.osoa"/>
+    <antcall target="install.cpp.core"/>
+    <antcall target="install.cpp.model"/>
+    <antcall target="install.xsd"/>
+    <cpp-install-file
+        srcfile="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"
+        destfile="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+        srcdir="${lib.dir}"
+        destdir="${cpp.extension.install.dir}/lib"/>
+    <cpp-symlink
+        linkdir="${cpp.extension.install.dir}/lib"
+        link="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"
+        resource="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}${tuscanySCA.library.version}"/>
+    <cpp-symlink
+        linkdir="${cpp.extension.install.dir}/module"
+        link="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"
+        resourcedir="${cpp.extension.install.dir}/lib"
+        resource="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"/>
+  </target>
+
+  <target name="clean" description="Clean all TuscanyScaNative cpp extension compiled source code">
+    <antcall target="clean.cpp.osoa"/>
+    <antcall target="clean.cpp.core"/>
+    <antcall target="clean.cpp.model"/>
+    <antcall target="clean.xsd"/>
+    <delete dir="${lib.dir}" quiet="true"/>
+    <cpp-clean-files
+        dir="${cpp.extension.install.dir}/lib"
+        rmdir="true"/>
+    <cpp-clean-files
+        dir="${cpp.extension.install.dir}/module"
+        rmdir="true"/>
+    <cpp-clean-files
+        dir="${cpp.extension.install.dir}/include"
+        rmdir="true"/>
+  </target>
+
+  <!--
+    Internal targets
+    They can still be called, they're just not described, so wont show up in "ant -p"
+  -->
+
+    <!-- compile -->
+
+  <target name="compile.cpp.osoa">
+    <cpp-compile
+        srcdir="${osoa.abs.dir}"
+        objdir="${lib.dir}"
+        infiles="${osoa.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.src.dir}"/>
+      </custom-cc-elements>
+    </cpp-compile>
+  </target>
+
+  <target name="compile.cpp.core">
+    <cpp-compile
+        srcdir="${cpp.core.abs.dir}"
+        objdir="${lib.dir}"
+        infiles="${cpp.core.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.src.dir}"/>
+      </custom-cc-elements>
+    </cpp-compile>
+  </target>
+
+  <target name="compile.cpp.model">
+    <cpp-compile
+        srcdir="${cpp.model.abs.dir}"
+        objdir="${lib.dir}"
+        infiles="${cpp.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.src.dir}"/>
+      </custom-cc-elements>
+    </cpp-compile>
+  </target>
+
+    <!-- install -->
+
+  <target name="install.cpp.osoa">
+    <cpp-install-files
+        srcdir="${osoa.abs.dir}"
+        files="${osoa.h.files}"
+        destdir="${cpp.extension.install.dir}/include/${osoa.dir}"/>
+  </target>
+
+  <target name="install.cpp.core">
+    <cpp-install-files
+        srcdir="${cpp.core.abs.dir}"
+        files="${cpp.core.h.files}"
+        destdir="${cpp.extension.install.dir}/include/${cpp.core.dir}"/>
+  </target>
+
+  <target name="install.cpp.model">
+    <cpp-install-files
+        srcdir="${cpp.model.abs.dir}"
+        files="${cpp.model.h.files}"
+        destdir="${cpp.extension.install.dir}/include/${cpp.model.dir}"/>
+  </target>
+
+  <target name="install.xsd">
+    <cpp-install-files
+        srcdir="${xsd.abs.dir}"
+        files="${xsd.files}"
+        destdir="${cpp.extension.install.dir}/${xsd.dir}"/>
+  </target>
+
+    <!-- clean -->
+
+  <target name="clean.cpp.osoa">
+    <cpp-clean-files
+        dir="${cpp.extension.install.dir}/include/${osoa.dir}"
+        rmdir="true"/>
+  </target>
+
+  <target name="clean.cpp.core">
+    <cpp-clean-files
+        dir="${cpp.extension.install.dir}/include/${cpp.core.dir}"
+        rmdir="true"/>
+  </target>
+
+  <target name="clean.cpp.model">
+    <cpp-clean-files
+        dir="${cpp.extension.install.dir}/include/${cpp.model.dir}"
+        rmdir="true"/>
+  </target>
+
+  <target name="clean.xsd">
+    <cpp-clean-files
+        dir="${cpp.extension.install.dir}/${xsd.dir}"
+        rmdir="true"/>
+  </target>
+
+</project>

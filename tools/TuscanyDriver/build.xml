@@ -18,58 +18,56 @@
    under the License.
 -->
 
-<project name="tuscanyDriver" default="build">
+<project name="tuscanyDriver" default="all">
 
-  <taskdef resource='cpptasks.tasks'/>
-  <typedef resource='cpptasks.types'/>
+  <property file="../../antscripts/platform.properties"/>
+  <import file="${tuscanySCA.antscripts.dir}/compile-targets.xml"/>
 
-  <property environment="env"/>
-  <property name="TUSCANY_SCACPP" value="${env.TUSCANY_SCACPP}"/>
-  <property name="TUSCANY_SDOCPP" value="${env.TUSCANY_SDOCPP}"/>
+  <property name="tuscanyServiceLoader.app" value="tuscanyServiceLoader"/>
+  <property name="tuscanyServiceLoader.files" value="TuscanyServiceLoader.cpp main.cpp"/>
+  <property name="bin.dir" location="bin"/>
+  <property name="install.dir" location="${tuscanySCA.install.dir}/bin"/>
 
-  <condition property='compiler-name' value='msvc'>
-    <os family='windows'/>
-  </condition>
-  <condition property='compiler-name' value='g++'>
-    <os name='linux'/>
-  </condition>
+  <!--
+    Public targets
+  -->
+  <target name="all" description="Compile, Link, and Install the TuscanyServiceLoader">
+    <antcall target="build"/>
+    <antcall target="install"/>
+  </target>
 
-  <compiler id='msvc-Compiler' name='msvc'/>
-  <compiler id='g++-Compiler' name='g++'/>
-
-  <linker id='BaseLinker'>
-    <syslibset if='windows' libs='kernel32,user32'/>
-  </linker>
-
-  <linker id='msvc-Linker' extends='BaseLinker' name='msvc'/>
-  <linker id='g++-Linker' extends='BaseLinker' name='g++'/>
-
-  <target name="build">
+  <target name="clean" description="Remove the TuscanyServiceLoader installation">
     <sequential>
-      <mkdir dir="bin"/>
-      <cc
-        warnings='none'
-        debug='${debug}'
-        outtype='executable'
-        subsystem='console'
-        outfile='bin/tuscanyServiceLoader'
-        multithreaded='true'
-        exceptions='true'
-        objdir='bin'>
-          <compiler refid='${compiler-name}-Compiler'/>
-          <linker refid='${compiler-name}-Linker'/>
-          <libset dir='${TUSCANY_SCACPP}/lib' libs='tuscany_sca'/>
-          <includepath path='.'/>
-          <includepath path='${TUSCANY_SDOCPP}/include/'/>
-          <includepath path='${TUSCANY_SCACPP}/include/'/>
-          <fileset dir='.' includes='*.cpp'/>
-      </cc>
+      <delete dir="${bin.dir}"/>
+      <delete file="${install.dir}/${tuscanyServiceLoader.app}"/>
     </sequential>
   </target>
 
-  <target name="clean">
+  <!--
+    Internal targets
+  -->
+  <target name="build">
     <sequential>
-      <delete dir="bin"/>
+      <cpp-build
+          srcdir="."
+          infiles="${tuscanyServiceLoader.files}"
+          outdir="${bin.dir}"
+          outfile="${tuscanyServiceLoader.app}"
+          outtype="executable">
+        <custom-build-elements>
+          <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+        </custom-build-elements>
+      </cpp-build>
+    </sequential>
+  </target>
+
+  <target name="install">
+    <sequential>
+      <mkdir dir="${install.dir}"/>
+      <copy todir="${install.dir}" overwrite='true'>
+        <fileset dir="${bin.dir}" includes="${tuscanyServiceLoader.app}"/>
+      </copy>
+      <chmod file="${install.dir}/${tuscanyServiceLoader.app}" perm="755"/>
     </sequential>
   </target>
 

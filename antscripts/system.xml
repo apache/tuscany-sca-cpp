@@ -79,13 +79,164 @@
       <property name="tuscanySCA.install.dir" location="${platform.tuscanySCA.install.dir}"/>
     </then>
     <elseif>
-      <isset property="${env.TUSCANY_SCACPP}"/>
+      <isset property="env.TUSCANY_SCACPP"/>
       <then>
         <property name="tuscanySCA.install.dir" location="${env.TUSCANY_SCACPP}"/>
       </then>
     </elseif>
     <else>
       <property name="tuscanySCA.install.dir" location="${tuscanySCA.root.dir}/deploy"/>
+    </else>
+  </if>
+
+  <!--
+     Configure the version for all tuscanySCA libraries
+     If on windows, set it to empty
+     Else take the override value from platform.properties if set
+     Else default it to "0.0.0"
+  -->
+  <if>
+    <os family="windows"/>
+    <then>
+      <property name="tuscanySCA.library.version" value=""/>
+    </then>
+    <elseif>
+      <isset property="platform.tuscanySCA.library.version"/>
+      <then>
+        <property name="tuscanySCA.library.version" value="${platform.tuscanySCA.library.version}"/>
+      </then>
+    </elseif>
+    <else>
+      <property name="tuscanySCA.library.version" value=".0.0.0"/>
+    </else>
+  </if>
+
+  <!--
+     Configure ${enable_ws} and ${axis2c.home.dir}, which is needed to compile the ws extension
+     Take the override value from platform.properties if set
+     Else take it from the env var AXIS2C_HOME
+  -->
+  <if>
+    <isset property="platform.axis2c.home.dir"/>
+    <then>
+      <property name="enable_ws" value="true"/>
+      <property name="axis2c.home.dir" location="${platform.axis2c.home.dir}"/>
+    </then>
+    <elseif>
+      <isset property="env.AXIS2C_HOME"/>
+      <then>
+        <property name="enable_ws" value="true"/>
+        <property name="axis2c.home.dir" location="${env.AXIS2C_HOME}"/>
+      </then>
+    </elseif>
+    <else>
+      <property name="enable_ws" value="false"/>
+    </else>
+  </if>
+
+  <!--
+     Configure ${enable_python} and related python properties, which are needed
+     to compile the python extension
+     Take the override value from platform.properties if set
+     Else check env vars PYTHON_LIB, PYTHON_INCLUDE, and PYTHON_VERSION
+  -->
+  <if>
+    <and>
+      <isset property="platform.python.version"/>
+      <isset property="platform.python.include.dir"/>
+      <isset property="platform.python.lib.dir"/>
+    </and>
+    <then>
+      <property name="enable_python" value="true"/>
+      <property name="python.lib.dir"     location="${platform.python.lib.dir}"/>
+      <property name="python.include.dir" location="${platform.python.include.dir}"/>
+      <property name="python.version.dir" value="${platform.python.version}"/>
+    </then>
+    <elseif>
+      <and>
+        <isset property="env.PYTHON_LIB"/>
+        <isset property="env.PYTHON_INCLUDE"/>
+        <isset property="env.PYTHON_VERSION"/>
+      </and>
+      <then>
+        <property name="enable_python" value="true"/>
+        <property name="python.lib.dir"     location="${env.PYTHON_LIB}"/>
+        <property name="python.include.dir" location="${env.PYTHON_INCLUDE}"/>
+        <property name="python.version.dir" value="${env.PYTHON_VERSION}"/>
+      </then>
+    </elseif>
+    <else>
+      <property name="enable_python" value="false"/>
+    </else>
+  </if>
+
+  <!--
+     Configure ${enable_ruby} and related ruby properties, which are needed
+     to compile the ruby extension
+     Take the override value from platform.properties if set
+     Else check env vars RUBY_LIB and RUBY_INCLUDE
+  -->
+  <if>
+    <and>
+      <isset property="platform.ruby.include.dir"/>
+      <isset property="platform.ruby.lib.dir"/>
+    </and>
+    <then>
+      <property name="enable_ruby" value="true"/>
+      <property name="ruby.lib.dir"     location="${platform.ruby.lib.dir}"/>
+      <property name="ruby.include.dir" location="${platform.ruby.include.dir}"/>
+    </then>
+    <elseif>
+      <and>
+        <isset property="env.RUBY_LIB"/>
+        <isset property="env.RUBY_INCLUDE"/>
+      </and>
+      <then>
+        <property name="enable_ruby" value="true"/>
+        <property name="ruby.lib.dir"     location="${env.RUBY_LIB}"/>
+        <property name="ruby.include.dir" location="${env.RUBY_INCLUDE}"/>
+      </then>
+    </elseif>
+    <else>
+      <property name="enable_ruby" value="false"/>
+    </else>
+  </if>
+
+  <!--
+     Configure ${enable_rest} and related ruby properties, which are needed
+     to compile the rest extension
+     Take the override value from platform.properties if set
+     Else check env vars CURL_LIB, CURL_INCLUDE, HTTPD_INCLUDE, and APR_INCLUDE
+  -->
+  <if>
+    <and>
+      <isset property="platform.ruby.include.dir"/>
+      <isset property="platform.ruby.lib.dir"/>
+    </and>
+    <then>
+      <property name="enable_rest" value="true"/>
+      <property name="rest.curl.lib.dir"       location="${platform.rest.curl.lib.dir}"/>
+      <property name="rest.curl.include.dir"   location="${platform.rest.curl.include.dir}"/>
+      <property name="rest.httpd.include.dir"  location="${platform.rest.httpd.include.dir}"/>
+      <property name="rest.apr.include.dir"    location="${platform.rest.apr.include.dir}"/>
+    </then>
+    <elseif>
+      <and>
+        <isset property="env.CURL_LIB"/>
+        <isset property="env.CURL_INCLUDE"/>
+        <isset property="env.HTTPD_INCLUDE"/>
+        <isset property="env.APR_INCLUDE"/>
+      </and>
+      <then>
+        <property name="enable_rest" value="true"/>
+        <property name="rest.curl.lib.dir"       location="${env.CURL_LIB}"/>
+        <property name="rest.curl.include.dir"   location="${env.CURL_INCLUDE}"/>
+        <property name="rest.httpd.include.dir"  location="${env.HTTPD_INCLUDE}"/>
+        <property name="rest.apr.include.dir"    location="${env.APR_INCLUDE}"/>
+      </then>
+    </elseif>
+    <else>
+      <property name="enable_rest" value="false"/>
     </else>
   </if>
 
@@ -211,6 +362,32 @@
       </condition>
     </else>
   </if>
+
+
+  <!--
+     Configure the script.ext
+     Take the override value from platform.properties if set
+     Else set it based on the OS
+  -->
+  <if>
+    <isset property="platform.script.ext"/>
+    <then>
+      <property name="script.ext" value="${platform.script.ext}"/>
+    </then>
+    <else>
+      <condition property="script.ext" value=".bat">
+        <os family="windows"/>
+      </condition>
+
+      <condition property="script.ext" value=".sh">
+        <or>
+          <os family="unix"/>
+          <os family="mac"/>
+        </or>
+      </condition>
+    </else>
+  </if>
+
 
   <condition property="windows" value="true">
     <os family="windows"/>

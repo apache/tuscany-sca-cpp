@@ -34,20 +34,14 @@
     Public targets
   -->
 
-  <target name="all" description="compile, link, and install all TuscanyScaNative source code">
-    <antcall target="compile"/>
-    <antcall target="link"/>
+  <target name="all" description="build and install all TuscanyScaNative source code">
+    <antcall target="build"/>
     <antcall target="install"/>
   </target>
 
-  <target name="compile" description="Compile all TuscanyScaNative source code">
-    <antcall target="compile.core"/>
-    <antcall target="compile.extensions"/>
-  </target>
-
-  <target name="link" description="Link all TuscanyScaNative source code">
-    <antcall target="link.core"/>
-    <antcall target="link.extensions"/>
+  <target name="build" description="Build all TuscanyScaNative source code">
+    <antcall target="build.core"/>
+    <antcall target="build.extensions"/>
   </target>
 
   <target name="install" description="Install TuscanyScaNative libraries and headers">
@@ -66,20 +60,12 @@
     Using antfile and inheritAll="false" to maintain the subdir build.xml basedir settings
   -->
 
-  <target name="compile.core">
-    <ant target="compile" antfile="${src.dir}/build.xml" inheritAll="false"/>
+  <target name="build.core">
+    <ant target="build" antfile="${src.dir}/build.xml" inheritAll="false"/>
   </target>
 
-  <target name="compile.extensions">
-    <!-- TODO finish this -->
-  </target>
-
-  <target name="link.core">
-    <ant target="link" antfile="${src.dir}/build.xml" inheritAll="false"/>
-  </target>
-
-  <target name="link.extensions">
-    <!-- TODO finish this -->
+  <target name="build.extensions">
+    <ant target="build" antfile="${extensions.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="install.core">
@@ -87,7 +73,7 @@
   </target>
 
   <target name="install.extensions">
-    <!-- TODO finish this -->
+    <ant target="install" antfile="${extensions.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean.core">
@@ -95,7 +81,7 @@
   </target>
 
   <target name="clean.extensions">
-    <!-- TODO finish this -->
+    <ant target="clean" antfile="${extensions.dir}/build.xml" inheritAll="false"/>
   </target>
 
 </project>

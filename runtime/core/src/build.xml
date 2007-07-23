@@ -47,31 +47,108 @@
 
   <property
     name="core.cpp.files"
-    value="Exceptions.cpp Operation.cpp SCARuntime.cpp ServiceProxy.cpp ServiceWrapper.cpp"/>
+    value="Exceptions.cpp
+           Operation.cpp
+           SCARuntime.cpp
+           ServiceProxy.cpp
+           ServiceWrapper.cpp"/>
   <property
     name="core.h.files"
-    value="Exceptions.h Operation.h SCARuntime.h ServiceProxy.h ServiceWrapper.h"/>
+    value="Exceptions.h
+           Operation.h
+           SCARuntime.h
+           ServiceProxy.h
+           ServiceWrapper.h"/>
 
   <property
     name="extension.cpp.files"
-    value="ImplementationExtension.cpp InterfaceExtension.cpp ReferenceBindingExtension.cpp ServiceBindingExtension.cpp"/>
+    value="ImplementationExtension.cpp
+           InterfaceExtension.cpp
+           ReferenceBindingExtension.cpp
+           ServiceBindingExtension.cpp"/>
   <property
     name="extension.h.files"
-    value="ImplementationExtension.h InterfaceExtension.h ReferenceBindingExtension.h ServiceBindingExtension.h"/>
+    value="ImplementationExtension.h
+           InterfaceExtension.h
+           ReferenceBindingExtension.h
+           ServiceBindingExtension.h"/>
 
   <property
     name="model.cpp.files"
-    value="Binding.cpp Component.cpp ComponentType.cpp Composite.cpp CompositeReferenceBinding.cpp CompositeReference.cpp CompositeService.cpp Contract.cpp Interface.cpp ModelLoader.cpp ReferenceBinding.cpp Reference.cpp ReferenceType.cpp ServiceBinding.cpp Service.cpp ServiceType.cpp Wire.cpp WSDLDefinition.cpp WSDLInterface.cpp WSDLMessagePart.cpp WSDLOperation.cpp"/>
+    value="Binding.cpp
+           Component.cpp
+           ComponentType.cpp
+           Composite.cpp
+           CompositeReferenceBinding.cpp
+           CompositeReference.cpp
+           CompositeService.cpp
+           Contract.cpp
+           Interface.cpp
+           ModelLoader.cpp
+           ReferenceBinding.cpp
+           Reference.cpp
+           ReferenceType.cpp
+           ServiceBinding.cpp
+           Service.cpp
+           ServiceType.cpp
+           Wire.cpp
+           WSDLDefinition.cpp
+           WSDLInterface.cpp
+           WSDLMessagePart.cpp
+           WSDLOperation.cpp"/>
   <property
     name="model.h.files"
-    value="Binding.h Component.h ComponentType.h Composite.h CompositeReferenceBinding.h CompositeReference.h CompositeService.h Contract.h Interface.h ModelLoader.h ReferenceBinding.h Reference.h ReferenceType.h ServiceBinding.h Service.h ServiceType.h Wire.h WSDLDefinition.h WSDLInterface.h WSDLMessagePart.h WSDLOperation.h"/>
+    value="Binding.h
+           Component.h
+           ComponentType.h
+           Composite.h
+           CompositeReferenceBinding.h
+           CompositeReference.h
+           CompositeService.h
+           Contract.h
+           Interface.h
+           ModelLoader.h
+           ReferenceBinding.h
+           Reference.h
+           ReferenceType.h
+           ServiceBinding.h
+           Service.h
+           ServiceType.h
+           Wire.h
+           WSDLDefinition.h
+           WSDLInterface.h
+           WSDLMessagePart.h
+           WSDLOperation.h"/>
 
   <property
     name="util.cpp.files"
-    value="DefaultLogWriter.cpp File.cpp FileLogWriter.cpp Library.cpp Logger.cpp LogWriter.cpp Mutex.cpp Queue.cpp SDOUtils.cpp Thread.cpp ThreadLocal.cpp Utils.cpp"/>
+    value="DefaultLogWriter.cpp
+           File.cpp
+           FileLogWriter.cpp
+           Library.cpp
+           Logger.cpp
+           LogWriter.cpp
+           Mutex.cpp
+           Queue.cpp
+           SDOUtils.cpp
+           Thread.cpp
+           ThreadLocal.cpp
+           Utils.cpp"/>
   <property
     name="util.h.files"
-    value="DefaultLogWriter.h File.h FileLogWriter.h Library.h Logger.h Logging.h LogWriter.h Mutex.h Queue.h SDOUtils.h Thread.h ThreadLocal.h Utils.h"/>
+    value="DefaultLogWriter.h
+           File.h
+           FileLogWriter.h
+           Library.h
+           Logger.h
+           Logging.h
+           LogWriter.h
+           Mutex.h
+           Queue.h
+           SDOUtils.h
+           Thread.h
+           ThreadLocal.h
+           Utils.h"/>
 
   <!--
     Public targets
@@ -80,6 +157,11 @@
     <antcall target="compile"/>
     <antcall target="link"/>
     <antcall target="install"/>
+  </target>
+
+  <target name="build" description="compile and link all TuscanyScaNative core source code">
+    <antcall target="compile"/>
+    <antcall target="link"/>
   </target>
 
   <target name="compile" description="Compile all TuscanyScaNative core source code">
@@ -102,14 +184,19 @@
     <antcall target="install.extension"/>
     <antcall target="install.model"/>
     <antcall target="install.util"/>
-    <cpp-install-headers
+    <cpp-install-files
         srcdir="${this.dir}/tuscany/sca"
         files="export.h"
         destdir="${tuscanySCA.install.dir}/include/tuscany/sca"/>
-    <cpp-install-lib
-        libs="${lib.prefix}${tuscany.core.lib}${lib.ext}"
-        srclibdir="${lib.dir}"
-        destlibdir="${tuscanySCA.install.dir}/lib"/>
+    <cpp-install-file
+        srcfile="${lib.prefix}${tuscany.core.lib}${lib.ext}"
+        destfile="${lib.prefix}${tuscany.core.lib}${lib.ext}${tuscanySCA.library.version}"
+        srcdir="${lib.dir}"
+        destdir="${tuscanySCA.install.dir}/lib"/>
+    <cpp-symlink
+        linkdir="${tuscanySCA.install.dir}/lib"
+        link="${lib.prefix}${tuscany.core.lib}${lib.ext}"
+        resource="${lib.prefix}${tuscany.core.lib}${lib.ext}${tuscanySCA.library.version}"/>
   </target>
 
   <target name="clean" description="Clean all TuscanyScaNative core compiled source code">
@@ -118,14 +205,13 @@
     <antcall target="clean.model"/>
     <antcall target="clean.util"/>
     <delete dir="${lib.dir}" quiet="true"/>
-    <delete
-        quiet="true"
+    <cpp-clean-files
         dir="${tuscanySCA.install.dir}/include/tuscany/sca"
-        file="export.h"/>
-    <delete
-        quiet="true"
+        files="export.h"
+        rmdir="true"/>
+    <cpp-clean-files
         dir="${tuscanySCA.install.dir}/lib"
-        file="${lib.prefix}${tuscany.core.lib}${lib.ext}"/>
+        rmdir="true"/>
   </target>
 
   <!--
@@ -166,28 +252,28 @@
     <!-- install -->
 
   <target name="install.core">
-    <cpp-install-headers
+    <cpp-install-files
         srcdir="${core.abs.dir}"
         files="${core.h.files}"
         destdir="${tuscanySCA.install.dir}/include/${core.dir}"/>
   </target>
 
   <target name="install.extension">
-    <cpp-install-headers
+    <cpp-install-files
         srcdir="${extension.abs.dir}"
         files="${extension.h.files}"
         destdir="${tuscanySCA.install.dir}/include/${extension.dir}"/>
   </target>
 
   <target name="install.model">
-    <cpp-install-headers
+    <cpp-install-files
         srcdir="${model.abs.dir}"
         files="${model.h.files}"
         destdir="${tuscanySCA.install.dir}/include/${model.dir}"/>
   </target>
 
   <target name="install.util">
-    <cpp-install-headers
+    <cpp-install-files
         srcdir="${util.abs.dir}"
         files="${util.h.files}"
         destdir="${tuscanySCA.install.dir}/include/${util.dir}"/>
@@ -196,35 +282,27 @@
     <!-- clean -->
 
   <target name="clean.core">
-    <delete quiet="true">
-      <fileset
-          dir="${tuscanySCA.install.dir}/include/${core.dir}"
-          includes="${core.h.files}"/>
-    </delete>
+    <cpp-clean-files
+        dir="${tuscanySCA.install.dir}/include/${core.dir}"
+        rmdir="true"/>
   </target>
 
   <target name="clean.extension">
-    <delete quiet="true">
-      <fileset
-          dir="${tuscanySCA.install.dir}/include/${extension.dir}"
-          includes="${extension.h.files}"/>
-    </delete>
+    <cpp-clean-files
+        dir="${tuscanySCA.install.dir}/include/${extension.dir}"
+        rmdir="true"/>
   </target>
 
   <target name="clean.model">
-    <delete quiet="true">
-      <fileset
-          dir="${tuscanySCA.install.dir}/include/${model.dir}"
-          includes="${model.h.files}"/>
-    </delete>
+    <cpp-clean-files
+        dir="${tuscanySCA.install.dir}/include/${model.dir}"
+        rmdir="true"/>
   </target>
 
   <target name="clean.util">
-    <delete quiet="true">
-      <fileset
-          dir="${tuscanySCA.install.dir}/include/${util.dir}"
-          includes="${util.h.files}"/>
-    </delete>
+    <cpp-clean-files
+        dir="${tuscanySCA.install.dir}/include/${util.dir}"
+        rmdir="true"/>
   </target>
 
 </project>

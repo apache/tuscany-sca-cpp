@@ -115,39 +115,109 @@
   </macrodef>
 
   <!--
-    Install cpp library
-    @param libs - library files to install
-    @param srclibdir - location of library files to install
-    @param destlibdir - Where to install library files
+    Install a single file
+    @param file - file to install
+    @param srcdir - directory of file to install
+    @param destdir - Where to install the file
+    @param executable - set permissions to executable, defaults true
   -->
-  <macrodef name="cpp-install-lib">
-    <attribute name="libs" default="${lib.prefix}*${lib.ext}"/>
-    <attribute name="srclibdir" default="."/>
-    <attribute name="destlibdir" default="."/>
+  <macrodef name="cpp-install-file">
+    <attribute name="srcfile"/>
+    <attribute name="srcdir" default="."/>
+    <attribute name="destfile" default="@{srcfile}"/>
+    <attribute name="destdir"/>
+    <attribute name="executable" default="true"/>
     <sequential>
-      <mkdir dir="@{destlibdir}"/>
-      <copy todir="@{destlibdir}" overwrite='true'>
-        <fileset dir="@{srclibdir}" includes="@{libs}"/>
-      </copy>
-      <chmod file="@{destlibdir}/@{libs}" perm="755"/>
+      <mkdir dir="@{destdir}"/>
+      <copy file="@{srcdir}/@{srcfile}" tofile="@{destdir}/@{destfile}" overwrite='true'/>
+      <if>
+        <equals arg1="@{executable}" arg2="true"/>
+        <then>
+          <chmod file="@{destdir}/@{destfile}" perm="755"/>
+        </then>
+      </if>
     </sequential>
   </macrodef>
 
   <!--
-    Install cpp headers
-    @param files - header files to install
-    @param srcdir - location of header files to install
-    @param destdir - Where to install header files
+    Install multiple files
+    @param files - space seperated list of files to install
+    @param srcdir - location of files to install
+    @param destdir - Where to install files
+    @param executable - set permissions to executable, defaults false
   -->
-  <macrodef name="cpp-install-headers">
-    <attribute name="files" default="*.h"/>
+  <macrodef name="cpp-install-files">
+    <attribute name="files" default="*.*"/>
     <attribute name="srcdir" default="."/>
-    <attribute name="destdir" default="."/>
+    <attribute name="destdir"/>
+    <attribute name="executable" default="false"/>
     <sequential>
       <mkdir dir="@{destdir}"/>
       <copy todir="@{destdir}" overwrite='true'>
         <fileset dir="@{srcdir}" includes="@{files}"/>
       </copy>
+      <if>
+        <equals arg1="@{executable}" arg2="true"/>
+        <then>
+          <chmod file="@{destdir}/@{files}" perm="755"/>
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <!--
+    Create a symlink on unix and mac only
+    @param lib - library file to install
+    @param srclibdir - location of library files to install
+    @param destlibdir - Where to install library files
+  -->
+  <macrodef name="cpp-symlink">
+    <attribute name="linkdir" default=""/>
+    <attribute name="resourcedir" default="."/>
+    <attribute name="link"/>
+    <attribute name="resource"/>
+    <sequential>
+      <if>
+        <or>
+          <os family="unix"/>
+          <os family="mac"/>
+        </or>
+        <then>
+          <mkdir dir="@{linkdir}"/>
+          <symlink
+              link="@{linkdir}/@{link}"
+              resource="@{resourcedir}/@{resource}"
+              overwrite="true"/>
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <!--
+    Delete files from a directory, and possible delete the directory
+    @param files - space seperated list of files to delete
+    @param headerdir - directory where files to delete are
+    @param quiet - verbosity, "true" or "false"
+    @param rmdir - delete the directory after deleting files, "true" or "false"
+    @param custom-delete-elements - anything else you need done additionally
+  -->
+  <macrodef name="cpp-clean-files">
+    <attribute name="files" default="*.*"/>
+    <attribute name="dir" default="."/>
+    <attribute name="quiet" default="true"/>
+    <attribute name="rmdir" default="false"/>
+    <element name="custom-delete-elements" optional="true"/>
+    <sequential>
+      <delete quiet="@{quiet}">
+        <fileset dir="@{dir}" includes="@{files}"/>
+      </delete>
+      <if>
+        <equals arg1="@{rmdir}" arg2="true"/>
+        <then>
+          <delete dir="@{dir}"/>
+        </then>
+      </if>
+      <custom-delete-elements/>
     </sequential>
   </macrodef>
 
