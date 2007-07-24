@@ -84,27 +84,21 @@
   </target>
 
   <target name="build.extension.php">
-    <!-- TODO finish this
+    <!-- TODO PHP build.xml not ready yet
     <ant target="build" antfile="${php.dir}/build.xml" inheritAll="false"/>
     -->
   </target>
 
   <target name="build.extension.python">
-    <!-- TODO finish this
     <ant target="build" antfile="${python.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="build.extension.rest">
-    <!-- TODO finish this
     <ant target="build" antfile="${rest.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="build.extension.ruby">
-    <!-- TODO finish this
     <ant target="build" antfile="${ruby.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="build.extension.sca">
@@ -122,27 +116,21 @@
   </target>
 
   <target name="install.extension.php">
-    <!-- TODO finish this
+    <!-- TODO PHP build.xml not ready yet
     <ant target="install" antfile="${php.dir}/build.xml" inheritAll="false"/>
     -->
   </target>
 
   <target name="install.extension.python">
-    <!-- TODO finish this
     <ant target="install" antfile="${python.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="install.extension.rest">
-    <!-- TODO finish this
     <ant target="install" antfile="${rest.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="install.extension.ruby">
-    <!-- TODO finish this
     <ant target="install" antfile="${ruby.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="install.extension.sca">
@@ -160,27 +148,21 @@
   </target>
 
   <target name="clean.extension.php">
-    <!-- TODO finish this
+    <!-- TODO PHP build.xml not ready yet
     <ant target="clean" antfile="${php.dir}/build.xml" inheritAll="false"/>
     -->
   </target>
 
   <target name="clean.extension.python">
-    <!-- TODO finish this
     <ant target="clean" antfile="${python.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="clean.extension.rest">
-    <!-- TODO finish this
     <ant target="clean" antfile="${rest.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="clean.extension.ruby">
-    <!-- TODO finish this
     <ant target="clean" antfile="${ruby.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="clean.extension.sca">

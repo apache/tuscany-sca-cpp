@@ -225,28 +225,44 @@
     <cpp-compile
         srcdir="${core.abs.dir}"
         objdir="${lib.dir}"
-        infiles="${core.cpp.files}"/>
+        infiles="${core.cpp.files}">
+      <custom-cc-elements>
+        <defineset if="windows" define="SCA_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
   <target name="compile.extension">
     <cpp-compile
         srcdir="${extension.abs.dir}"
         objdir="${lib.dir}"
-        infiles="${extension.cpp.files}"/>
+        infiles="${extension.cpp.files}">
+      <custom-cc-elements>
+        <defineset if="windows" define="SCA_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
   <target name="compile.model">
     <cpp-compile
         srcdir="${model.abs.dir}"
         objdir="${lib.dir}"
-        infiles="${model.cpp.files}"/>
+        infiles="${model.cpp.files}">
+      <custom-cc-elements>
+        <defineset if="windows" define="SCA_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
   <target name="compile.util">
     <cpp-compile
         srcdir="${util.abs.dir}"
         objdir="${lib.dir}"
-        infiles="${util.cpp.files}"/>
+        infiles="${util.cpp.files}">
+      <custom-cc-elements>
+        <defineset if="windows" define="SCA_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
     <!-- install -->

@@ -150,7 +150,7 @@
       <property name="enable_python" value="true"/>
       <property name="python.lib.dir"     location="${platform.python.lib.dir}"/>
       <property name="python.include.dir" location="${platform.python.include.dir}"/>
-      <property name="python.version.dir" value="${platform.python.version}"/>
+      <property name="python.version"     value="${platform.python.version}"/>
     </then>
     <elseif>
       <and>
@@ -162,7 +162,7 @@
         <property name="enable_python" value="true"/>
         <property name="python.lib.dir"     location="${env.PYTHON_LIB}"/>
         <property name="python.include.dir" location="${env.PYTHON_INCLUDE}"/>
-        <property name="python.version.dir" value="${env.PYTHON_VERSION}"/>
+        <property name="python.version"     value="${env.PYTHON_VERSION}"/>
       </then>
     </elseif>
     <else>
@@ -401,7 +401,7 @@
      Base compiler definition
     -->
   <compiler id="Tuscany-BaseCompiler" multithreaded="true" exceptions="true" rtti="true">
-    <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE,SCA_EXPORTS"/>
+    <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE"/>
     <defineset if="mac" define="IS_DARWIN"/>
     <includepath path="${sdo.include.dir}"/>
     <includepath path="${tuscanySCA.root.src.dir}"/>
