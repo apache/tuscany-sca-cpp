@@ -193,9 +193,10 @@ namespace tuscany
 #ifdef ZTS
 						static void ***tsrm_ls;
 						loginfo("ZTS enabled");
-#endif
+
 						printf("tsrm_ls = %x, embedSAPIInitializeCount = %d\n",
 							tsrm_ls, embedSAPIInitializeCount);
+#endif
 
 						if ( embedSAPIInitializeCount == 0 )
 						{

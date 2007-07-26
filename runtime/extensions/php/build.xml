@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<project name="TuscanyScaNative_extension_php" default="all" basedir="../../..">
+
+  <import file="${basedir}/antscripts/system.xml"/>
+  <import file="${basedir}/antscripts/compile-targets.xml"/>
+
+  <!--
+    Notice that the basedir for this project is set to the TuscanySCA root dir
+    This makes path setting in system.xml much simpler, but we'll just have to
+    set a property here to this directory.
+  -->
+  <property name="this.dir"         location="${basedir}/runtime/extensions/php"/>
+  <property name="xsd.dir"          location="${this.dir}/xsd"/>
+  <property name="php.core.dir"     location="${this.dir}/src/tuscany/sca/php"/>
+  <property name="php.model.dir"    location="${this.dir}/src/tuscany/sca/php/model"/>
+  <property name="lib.dir"          location="${this.dir}/src/.libs"/>
+
+  <property name="php.extension.lib"          value="tuscany_sca_php"/>
+  <property name="php.extension.install.dir"  location="${tuscanySCA.install.dir}/extensions/php"/>
+
+  <!--
+    All the cpp files per subdirectory
+    New classes should be added to these properties
+  -->
+
+  <property
+    name="php.core.cpp.files"
+    value="PHPExtension.cpp
+           PHPImplementationExtension.cpp
+           PHPInterfaceExtension.cpp
+           PHPServiceProxy.cpp
+           PHPServiceWrapper.cpp
+           sca.cpp"/>
+
+  <property
+    name="php.model.cpp.files"
+    value="PHPImplementation.cpp
+           PHPInterface.cpp
+           PHPReferenceBinding.cpp
+           PHPServiceBinding.cpp"/>
+
+  <property
+    name="xsd.files"
+    value="sca-implementation-php.xsd"/>
+
+  <!--
+    Public targets
+  -->
+  <target name="all" description="Compile, link, and install all TuscanyScaNative php extension source code">
+    <antcall target="compile"/>
+    <antcall target="link"/>
+    <antcall target="install"/>
+  </target>
+
+  <target name="build" description="Compile and link all TuscanyScaNative php extension source code">
+    <antcall target="compile"/>
+    <antcall target="link"/>
+  </target>
+
+  <target name="compile" description="Compile all TuscanyScaNative php extension source code">
+    <antcall target="compile.php.core"/>
+    <antcall target="compile.php.model"/>
+  </target>
+
+  <target name="link" description="Link all TuscanyScaNative php extension source code">
+    <cpp-link
+        outfile="${php.extension.lib}"
+        outdir="${lib.dir}"
+        indir="${lib.dir}"
+        infiles="*${object.ext}">
+      <custom-ld-elements>
+        <libset dir="${php.lib.dir}" libs="php5"/>
+        <libset dir="${php.sca.sdo.lib.dir}" libs="sdo"/>
+      </custom-ld-elements>
+    </cpp-link>
+  </target>
+
+  <target name="install" description="Install TuscanyScaNative php extension libraries and headers">
+    <antcall target="install.php.core"/>
+    <antcall target="install.php.xsd"/>
+  </target>
+
+  <target name="clean" description="Clean all TuscanyScaNative php extension compiled source code">
+    <antcall target="clean.php.core"/>
+    <antcall target="clean.php.xsd"/>
+  </target>
+
+  <!--
+    Internal targets
+    They can still be called, they're just not described, so wont show up in "ant -p"
+  -->
+
+    <!-- compile -->
+
+  <target name="compile.php.core">
+    <if>
+      <equals arg1="${enable_php}" arg2="true"/>
+      <then>
+    <cpp-compile
+        srcdir="${php.core.dir}"
+        objdir="${lib.dir}"
+        infiles="${php.core.cpp.files}">
+          <custom-cc-elements>
+            <includepath path="${this.dir}/src"/>
+            <includepath path="${php.include.dir}"/>
+            <includepath path="${php.include.dir}/main"/>
+            <includepath path="${php.include.dir}/sapi/embed"/>
+            <includepath path="${php.include.dir}/TSRM"/>
+            <includepath path="${php.include.dir}/Zend"/>
+            <includepath path="${php.sca.sdo.include.dir}"/>
+            <defineset if="windows" define="TUSCANY_SCA_PHP_EXPORTS"/>
+          </custom-cc-elements>
+        </cpp-compile>
+      </then>
+      <else>
+        <echo
+            message="TuscanySCA php extension is not enabled"
+            level="warning"/>
+      </else>
+    </if>
+  </target>
+
+  <target name="compile.php.model">
+    <if>
+      <equals arg1="${enable_php}" arg2="true"/>
+      <then>
+        <cpp-compile
+            srcdir="${php.model.dir}"
+            objdir="${lib.dir}"
+            infiles="${php.model.cpp.files}">
+          <custom-cc-elements>
+            <includepath path="${this.dir}/src"/>
+            <includepath path="${php.include.dir}"/>
+            <includepath path="${php.include.dir}/TSRM"/>
+            <defineset if="windows" define="TUSCANY_SCA_PHP_EXPORTS"/>
+          </custom-cc-elements>
+        </cpp-compile>
+      </then>
+      <else>
+        <echo
+            message="TuscanySCA php extension is not enabled"
+            level="warning"/>
+      </else>
+    </if>
+  </target>
+
+    <!-- install -->
+
+  <target name="install.php.core">
+    <cpp-install-file
+        srcfile="${lib.prefix}${php.extension.lib}${lib.ext}"
+        destfile="${lib.prefix}${php.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+        srcdir="${lib.dir}"
+        destdir="${php.extension.install.dir}/lib"/>
+    <cpp-symlink
+        linkdir="${php.extension.install.dir}/lib"
+        link="${lib.prefix}${php.extension.lib}${lib.ext}"
+        resource="${lib.prefix}${php.extension.lib}${lib.ext}${tuscanySCA.library.version}"/>
+    <cpp-symlink
+        linkdir="${php.extension.install.dir}/module"
+        link="${lib.prefix}${php.extension.lib}${lib.ext}"
+        resourcedir="${php.extension.install.dir}/lib"
+        resource="${lib.prefix}${php.extension.lib}${lib.ext}"/>
+  </target>
+
+  <target name="install.php.xsd">
+    <cpp-install-files
+        files="${xsd.files}"
+        srcdir="${xsd.dir}"
+        destdir="${php.extension.install.dir}/xsd"/>
+  </target>
+
+    <!-- clean -->
+
+  <target name="clean.php.core">
+    <cpp-clean-files
+        dir="${php.extension.install.dir}/lib"
+        rmdir="true"/>
+    <cpp-clean-files
+        dir="${php.extension.install.dir}/module"
+        rmdir="true"/>
+    <delete dir="${lib.dir}" quiet="true"/>
+  </target>
+
+  <target name="clean.php.xsd">
+    <cpp-clean-files
+        dir="${php.extension.install.dir}/xsd"
+        rmdir="true"/>
+  </target>
+
+</project>

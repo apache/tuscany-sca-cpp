@@ -210,8 +210,8 @@
   -->
   <if>
     <and>
-      <isset property="platform.ruby.include.dir"/>
-      <isset property="platform.ruby.lib.dir"/>
+      <isset property="platform.rest.include.dir"/>
+      <isset property="platform.rest.lib.dir"/>
     </and>
     <then>
       <property name="enable_rest" value="true"/>
@@ -237,6 +237,46 @@
     </elseif>
     <else>
       <property name="enable_rest" value="false"/>
+    </else>
+  </if>
+
+  <!--
+     Configure ${enable_php} and related php properties, which are needed
+     to compile the php extension
+     Take the override value from platform.properties if set
+     Else check env vars CURL_LIB, CURL_INCLUDE, HTTPD_INCLUDE, and APR_INCLUDE
+  -->
+  <if>
+    <and>
+      <isset property="platform.php.include.dir"/>
+      <isset property="platform.php.lib.dir"/>
+      <isset property="platform.php.sca.sdo.include.dir"/>
+      <isset property="platform.php.sca.sdo.lib.dir"/>
+    </and>
+    <then>
+      <property name="enable_php" value="true"/>
+      <property name="php.include.dir"          location="${platform.php.include.dir}"/>
+      <property name="php.lib.dir"              location="${platform.php.lib.dir}"/>
+      <property name="php.sca.sdo.include.dir"  location="${platform.php.sca.sdo.include.dir}"/>
+      <property name="php.sca.sdo.lib.dir"      location="${platform.php.sca.sdo.lib.dir}"/>
+    </then>
+    <elseif>
+      <and>
+        <isset property="env.PHP_LIB"/>
+        <isset property="env.PHP_INCLUDE"/>
+        <isset property="env.PHP_SCA_SDO_LIB"/>
+        <isset property="env.PHP_SCA_SDO_INCLUDE"/>
+      </and>
+      <then>
+        <property name="enable_php" value="true"/>
+        <property name="php.include.dir"          location="${env.PHP_INCLUDE}"/>
+        <property name="php.lib.dir"              location="${env.PHP_LIB}"/>
+        <property name="php.sca.sdo.include.dir"  location="${env.PHP_SCA_SDO_INCLUDE}"/>
+        <property name="php.sca.sdo.lib.dir"      location="${env.PHP_SCA_SDO_LIB}"/>
+      </then>
+    </elseif>
+    <else>
+      <property name="enable_php" value="false"/>
     </else>
   </if>
 

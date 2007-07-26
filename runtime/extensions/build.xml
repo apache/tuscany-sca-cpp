@@ -75,6 +75,7 @@
   <!--
     Internal targets
     They can still be called, they're just not described, so wont show up in "ant -p"
+    Using antfile and inheritAll="false" to maintain the subdir build.xml basedir settings
   -->
 
     <!-- build -->
@@ -84,9 +85,7 @@
   </target>
 
   <target name="build.extension.php">
-    <!-- TODO PHP build.xml not ready yet
     <ant target="build" antfile="${php.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="build.extension.python">
@@ -116,9 +115,7 @@
   </target>
 
   <target name="install.extension.php">
-    <!-- TODO PHP build.xml not ready yet
     <ant target="install" antfile="${php.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="install.extension.python">
@@ -148,9 +145,7 @@
   </target>
 
   <target name="clean.extension.php">
-    <!-- TODO PHP build.xml not ready yet
     <ant target="clean" antfile="${php.dir}/build.xml" inheritAll="false"/>
-    -->
   </target>
 
   <target name="clean.extension.python">

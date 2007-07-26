@@ -179,6 +179,7 @@
         infiles="${osoa.cpp.files}">
       <custom-cc-elements>
         <includepath path="${this.src.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_CPP_EXPORTS"/>
       </custom-cc-elements>
     </cpp-compile>
   </target>
@@ -190,6 +191,7 @@
         infiles="${cpp.core.cpp.files}">
       <custom-cc-elements>
         <includepath path="${this.src.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_CPP_EXPORTS"/>
       </custom-cc-elements>
     </cpp-compile>
   </target>
@@ -201,6 +203,7 @@
         infiles="${cpp.model.cpp.files}">
       <custom-cc-elements>
         <includepath path="${this.src.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_CPP_EXPORTS"/>
       </custom-cc-elements>
     </cpp-compile>
   </target>

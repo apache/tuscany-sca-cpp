@@ -54,13 +54,14 @@
     Do a cpp link which results in either a library (linktype of plugin, shared, or static)
     or an executable (linktype of executable).
     Inherits from "Tuscany-BaseLinker"
+    cpp-link-core does not link in libtuscany_sca.so, whereas cpp-link does
     @param outfile - name of the library to create, OS prefixes and suffixes will be added
     @param destdir - directory where the library will be written
     @param infiles - a space seperated list of the object files to link
     @param linktype - executable, plugin, shared, static
     @param custom-ld-elements - any extra cpp elements, may also be extra <libset> elements
   -->
-  <macrodef name="cpp-link">
+  <macrodef name="cpp-link-core">
     <attribute name="outfile" default="out"/>
     <attribute name="outdir" default="."/>
     <attribute name="indir" default="."/>
@@ -76,7 +77,26 @@
             <fileset dir='@{indir}' includes='@{infiles}'/>
             <custom-ld-elements/>
       </cc>
+    </sequential>
+  </macrodef>
 
+  <macrodef name="cpp-link">
+    <attribute name="outfile" default="out"/>
+    <attribute name="outdir" default="."/>
+    <attribute name="indir" default="."/>
+    <attribute name="infiles" default="*${object.ext}"/>
+    <attribute name="linktype" default="shared"/>
+    <element name="custom-ld-elements" optional="true"/>
+    <sequential>
+      <mkdir dir='@{outdir}'/>
+      <cc link='@{linktype}'
+          subsystem='console'
+          outfile='@{outdir}/@{outfile}'>
+            <linker refid='${compiler.name}-Linker'/>
+            <fileset dir='@{indir}' includes='@{infiles}'/>
+            <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+            <custom-ld-elements/>
+      </cc>
     </sequential>
   </macrodef>
 

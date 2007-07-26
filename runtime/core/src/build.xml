@@ -172,7 +172,7 @@
   </target>
 
   <target name="link" description="Link all TuscanyScaNative core source code">
-    <cpp-link
+    <cpp-link-core
         outfile="${tuscany.core.lib}"
         outdir="${lib.dir}"
         indir="${lib.dir}"
