@@ -27,7 +27,7 @@
     found in the ant subdirectory.
   -->
 
-  <property name="src.dir" value="runtime/core/src"/>
+  <property name="core.dir" value="runtime/core"/>
   <property name="extensions.dir" value="runtime/extensions"/>
  	
   <!--
@@ -63,7 +63,7 @@
   -->
 
   <target name="build.core">
-    <ant target="build" antfile="${src.dir}/build.xml" inheritAll="false"/>
+    <ant target="build" antfile="${core.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="build.extensions">
@@ -71,7 +71,7 @@
   </target>
 
   <target name="install.core">
-    <ant target="install" antfile="${src.dir}/build.xml" inheritAll="false"/>
+    <ant target="install" antfile="${core.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="install.extensions">
@@ -79,7 +79,7 @@
   </target>
 
   <target name="clean.core">
-    <ant target="clean" antfile="${src.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${core.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean.extensions">

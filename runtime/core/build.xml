@@ -17,7 +17,7 @@
    specific language governing permissions and limitations
    under the License.
 -->
-<project name="TuscanyScaNative_core" default="all" basedir="../../..">
+<project name="TuscanyScaNative_core" default="all" basedir="../..">
 
   <import file="${basedir}/antscripts/system.xml"/>
   <import file="${basedir}/antscripts/compile-targets.xml"/>
