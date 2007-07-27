@@ -57,7 +57,7 @@ copy %srcdir%\tuscany\sca\extension\*.h %deploydir%\include\tuscany\sca\extensio
 copy %srcdir%\tuscany\sca\model\*.h %deploydir%\include\tuscany\sca\model
 copy %srcdir%\tuscany\sca\util\*.h %deploydir%\include\tuscany\sca\util
 
-copy %rootdir%\xsd\*.* %deploydir%\xsd
+copy %rootdir%\runtime\core\xsd\*.* %deploydir%\xsd
 
 copy %inpath%\tuscany_sca.lib %deploydir%\lib
 copy %inpath%\tuscany_sca.dll %deploydir%\bin

@@ -16,3 +16,5 @@
 #  under the License.
 
 SUBDIRS = src
+nobase_data_DATA = xsd/*.*
+EXTRA_DIST = xsd
