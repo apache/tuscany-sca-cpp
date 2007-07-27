@@ -32,11 +32,13 @@
   <property name="extension.dir"      value="tuscany/sca/extension"/>
   <property name="model.dir"          value="tuscany/sca/model"/>
   <property name="util.dir"           value="tuscany/sca/util"/>
+  <property name="xsd.dir"            value="${basedir}/xsd"/>
 
   <property name="core.abs.dir"       location="${this.dir}/${core.dir}"/>
   <property name="extension.abs.dir"  location="${this.dir}/${extension.dir}"/>
   <property name="model.abs.dir"      location="${this.dir}/${model.dir}"/>
   <property name="util.abs.dir"       location="${this.dir}/${util.dir}"/>
+  <property name="xsd.abs.dir"        location="${xsd.dir}"/>
   <property name="lib.dir"            location="${this.dir}/.libs"/>
   <property name="tuscany.core.lib"   value="tuscany_sca"/>
 
@@ -134,6 +136,7 @@
            Thread.cpp
            ThreadLocal.cpp
            Utils.cpp"/>
+
   <property
     name="util.h.files"
     value="DefaultLogWriter.h
@@ -149,6 +152,20 @@
            Thread.h
            ThreadLocal.h
            Utils.h"/>
+
+  <!--
+    All the xsd schema files
+    New schema should be added to this property
+  -->
+  <property
+    name="xsd.files"
+    value="sca.xsd
+           sca-core.xsd
+           sca-implementation-composite.xsd
+           sca-implementation-java.xsd
+           sca-interface-java.xsd
+           sca-interface-wsdl.xsd
+           tuscany.xsd"/>
 
   <!--
     Public targets
@@ -184,6 +201,7 @@
     <antcall target="install.extension"/>
     <antcall target="install.model"/>
     <antcall target="install.util"/>
+    <antcall target="install.xsd"/>
     <cpp-install-files
         srcdir="${this.dir}/tuscany/sca"
         files="export.h"
@@ -203,6 +221,7 @@
     <antcall target="clean.extension"/>
     <antcall target="clean.model"/>
     <antcall target="clean.util"/>
+    <antcall target="clean.xsd"/>
     <delete dir="${lib.dir}" quiet="true"/>
     <cpp-clean-files
         dir="${tuscanySCA.install.dir}/include/tuscany/sca"
@@ -294,6 +313,13 @@
         destdir="${tuscanySCA.install.dir}/include/${util.dir}"/>
   </target>
 
+  <target name="install.xsd">
+    <cpp-install-files
+        srcdir="${xsd.abs.dir}"
+        files="${xsd.files}"
+        destdir="${tuscanySCA.install.dir}/xsd"/>
+  </target>
+
     <!-- clean -->
 
   <target name="clean.core">
@@ -317,6 +343,12 @@
   <target name="clean.util">
     <cpp-clean-files
         dir="${tuscanySCA.install.dir}/include/${util.dir}"
+        rmdir="true"/>
+  </target>
+
+  <target name="clean.xsd">
+    <cpp-clean-files
+        dir="${tuscanySCA.install.dir}/xsd"
         rmdir="true"/>
   </target>
 
