@@ -110,83 +110,59 @@
 
     <!-- compile -->
 
-  <target name="compile.ruby.core">
-    <if>
-      <equals arg1="${enable_ruby}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${ruby.core.dir}"
-            objdir="${lib.dir}"
-            infiles="${ruby.core.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.src.dir}"/>
-            <includepath path="${ruby.include.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA ruby extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.ruby.core" depends="check.ruby" if="enable_ruby">
+    <cpp-compile
+        srcdir="${ruby.core.dir}"
+        objdir="${lib.dir}"
+        infiles="${ruby.core.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.src.dir}"/>
+        <includepath path="${ruby.include.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_RUBY_LANG_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.ruby.model">
-    <if>
-      <equals arg1="${enable_ruby}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${ruby.model.dir}"
-            objdir="${lib.dir}"
-            infiles="${ruby.model.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.src.dir}"/>
-            <includepath path="${ruby.include.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA ruby extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.ruby.model" depends="check.ruby" if="enable_ruby">
+    <cpp-compile
+        srcdir="${ruby.model.dir}"
+        objdir="${lib.dir}"
+        infiles="${ruby.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.src.dir}"/>
+        <includepath path="${ruby.include.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_RUBY_LANG_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.ruby.extension">
-    <if>
-      <equals arg1="${enable_ruby}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${ruby.extension.dir}"
-            objdir="${lib.extension.dir}"
-            infiles="${ruby.extension.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.src.dir}"/>
-            <includepath path="${ruby.include.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA ruby extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.ruby.extension" depends="check.ruby" if="enable_ruby">
+    <cpp-compile
+        srcdir="${ruby.extension.dir}"
+        objdir="${lib.extension.dir}"
+        infiles="${ruby.extension.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.src.dir}"/>
+        <includepath path="${ruby.include.dir}"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
     <!-- link -->
 
-  <target name="link.ruby.core">
+  <target name="link.ruby.core" depends="check.ruby" if="enable_ruby">
     <cpp-link
         outfile="${ruby.core.lib}"
         outdir="${lib.dir}"
         indir="${lib.dir}"
-        infiles="*${object.ext}"/>
+        infiles="*${object.ext}">
+      <custom-ld-elements>
+        <libset dir="${ruby.lib.dir}" libs="ruby"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
-  <target name="link.ruby.extension">
+  <target name="link.ruby.extension" depends="check.ruby" if="enable_ruby">
     <cpp-link
         outfile="${ruby.extension.lib}"
         outdir="${lib.extension.dir}"
@@ -196,12 +172,11 @@
 
     <!-- install -->
 
-  <target name="install.ruby.core">
-    <cpp-install-file
-        srcfile="${lib.prefix}${ruby.core.lib}${lib.ext}"
-        destfile="${lib.prefix}${ruby.core.lib}${lib.ext}${tuscanySCA.library.version}"
+  <target name="install.ruby.core" depends="check.ruby" if="enable_ruby">
+    <cpp-install-lib
+        lib="${ruby.core.lib}"
         srcdir="${lib.dir}"
-        destdir="${ruby.install.dir}/lib"/>
+        destrootdir="${ruby.install.dir}"/>
     <cpp-symlink
         linkdir="${ruby.install.dir}/lib"
         link="${lib.prefix}${ruby.core.lib}${lib.ext}"
@@ -213,7 +188,7 @@
         resource="${lib.prefix}${ruby.core.lib}${lib.ext}"/>
   </target>
 
-  <target name="install.ruby.extension">
+  <target name="install.ruby.extension" depends="check.ruby" if="enable_ruby">
     <cpp-install-file
         srcfile="${lib.prefix}${ruby.extension.lib}${lib.ext}"
         destfile="${ruby.extension.lib}${lib.ext}"
@@ -221,7 +196,7 @@
         destdir="${ruby.install.dir}/lib"/>
   </target>
 
-  <target name="install.ruby.xsd">
+  <target name="install.ruby.xsd" depends="check.ruby" if="enable_ruby">
     <cpp-install-files
         files="${ruby.xsd.files}"
         srcdir="${ruby.xsd.dir}"

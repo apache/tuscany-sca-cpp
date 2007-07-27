@@ -116,6 +116,7 @@
      Take the override value from platform.properties if set
      Else take it from the env var AXIS2C_HOME
   -->
+  <target name="check.ws">
   <if>
     <isset property="platform.axis2c.home.dir"/>
     <then>
@@ -130,9 +131,10 @@
       </then>
     </elseif>
     <else>
-      <property name="enable_ws" value="false"/>
+      <echo message="TuscanySCA ws extension is not enabled" level="warning"/>
     </else>
   </if>
+  </target>
 
   <!--
      Configure ${enable_python} and related python properties, which are needed
@@ -140,6 +142,7 @@
      Take the override value from platform.properties if set
      Else check env vars PYTHON_LIB, PYTHON_INCLUDE, and PYTHON_VERSION
   -->
+  <target name="check.python">
   <if>
     <and>
       <isset property="platform.python.version"/>
@@ -166,9 +169,10 @@
       </then>
     </elseif>
     <else>
-      <property name="enable_python" value="false"/>
+      <echo message="TuscanySCA python extension is not enabled" level="warning"/>
     </else>
   </if>
+  </target>
 
   <!--
      Configure ${enable_ruby} and related ruby properties, which are needed
@@ -176,6 +180,7 @@
      Take the override value from platform.properties if set
      Else check env vars RUBY_LIB and RUBY_INCLUDE
   -->
+  <target name="check.ruby">
   <if>
     <and>
       <isset property="platform.ruby.include.dir"/>
@@ -198,9 +203,10 @@
       </then>
     </elseif>
     <else>
-      <property name="enable_ruby" value="false"/>
+      <echo message="TuscanySCA ruby extension is not enabled" level="warning"/>
     </else>
   </if>
+  </target>
 
   <!--
      Configure ${enable_rest} and related ruby properties, which are needed
@@ -208,6 +214,7 @@
      Take the override value from platform.properties if set
      Else check env vars CURL_LIB, CURL_INCLUDE, HTTPD_INCLUDE, and APR_INCLUDE
   -->
+  <target name="check.rest">
   <if>
     <and>
       <isset property="platform.rest.include.dir"/>
@@ -236,9 +243,10 @@
       </then>
     </elseif>
     <else>
-      <property name="enable_rest" value="false"/>
+      <echo message="TuscanySCA rest extension is not enabled" level="warning"/>
     </else>
   </if>
+  </target>
 
   <!--
      Configure ${enable_php} and related php properties, which are needed
@@ -246,6 +254,7 @@
      Take the override value from platform.properties if set
      Else check env vars CURL_LIB, CURL_INCLUDE, HTTPD_INCLUDE, and APR_INCLUDE
   -->
+  <target name="check.php">
   <if>
     <and>
       <isset property="platform.php.include.dir"/>
@@ -276,9 +285,10 @@
       </then>
     </elseif>
     <else>
-      <property name="enable_php" value="false"/>
+      <echo message="TuscanySCA php extension is not enabled" level="warning"/>
     </else>
   </if>
+  </target>
 
   <!--
      Configure the compiler.name
@@ -315,7 +325,7 @@
       <property name="lib.ext" value="${platform.lib.ext}"/>
     </then>
     <else>
-      <condition property="lib.ext" value=".dll">
+      <condition property="lib.ext" value=".lib">
         <os family="windows"/>
       </condition>
 
@@ -326,6 +336,26 @@
       <condition property="lib.ext" value=".so">
         <os family="unix"/>
       </condition>
+    </else>
+  </if>
+
+  <!--
+     Configure the dll.ext, used for windows only
+     Take the override value from platform.properties if set
+     Else set it based on the OS
+  -->
+  <if>
+    <isset property="platform.dll.ext"/>
+    <then>
+      <property name="dll.ext" value="${platform.dll.ext}"/>
+    </then>
+    <else>
+      <condition property="dll.ext" value=".dll">
+        <os family="windows"/>
+      </condition>
+
+      <property name="dll.ext" value=""/>
+
     </else>
   </if>
 

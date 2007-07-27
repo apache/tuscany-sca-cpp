@@ -80,7 +80,8 @@
     <antcall target="compile.php.model"/>
   </target>
 
-  <target name="link" description="Link all TuscanyScaNative php extension source code">
+  <target name="link" depends="check.php" if="enable_php"
+          description="Link all TuscanyScaNative php extension source code">
     <cpp-link
         outfile="${php.extension.lib}"
         outdir="${lib.dir}"
@@ -110,66 +111,45 @@
 
     <!-- compile -->
 
-  <target name="compile.php.core">
-    <if>
-      <equals arg1="${enable_php}" arg2="true"/>
-      <then>
+  <target name="compile.php.core" depends="check.php" if="enable_php">
     <cpp-compile
         srcdir="${php.core.dir}"
         objdir="${lib.dir}"
         infiles="${php.core.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/src"/>
-            <includepath path="${php.include.dir}"/>
-            <includepath path="${php.include.dir}/main"/>
-            <includepath path="${php.include.dir}/sapi/embed"/>
-            <includepath path="${php.include.dir}/TSRM"/>
-            <includepath path="${php.include.dir}/Zend"/>
-            <includepath path="${php.sca.sdo.include.dir}"/>
-            <defineset if="windows" define="TUSCANY_SCA_PHP_EXPORTS"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA php extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+      <custom-cc-elements>
+        <includepath path="${this.dir}/src"/>
+        <includepath path="${php.include.dir}"/>
+        <includepath path="${php.include.dir}/main"/>
+        <includepath path="${php.include.dir}/sapi/embed"/>
+        <includepath path="${php.include.dir}/TSRM"/>
+        <includepath path="${php.include.dir}/Zend"/>
+        <includepath path="${php.sca.sdo.include.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_PHP_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.php.model">
-    <if>
-      <equals arg1="${enable_php}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${php.model.dir}"
-            objdir="${lib.dir}"
-            infiles="${php.model.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/src"/>
-            <includepath path="${php.include.dir}"/>
-            <includepath path="${php.include.dir}/TSRM"/>
-            <defineset if="windows" define="TUSCANY_SCA_PHP_EXPORTS"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA php extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.php.model" depends="check.php" if="enable_php">
+    <cpp-compile
+        srcdir="${php.model.dir}"
+        objdir="${lib.dir}"
+        infiles="${php.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/src"/>
+        <includepath path="${php.include.dir}"/>
+        <includepath path="${php.include.dir}/TSRM"/>
+        <defineset if="windows" define="TUSCANY_SCA_PHP_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
     <!-- install -->
 
-  <target name="install.php.core">
-    <cpp-install-file
-        srcfile="${lib.prefix}${php.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${php.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+  <target name="install.php.core" depends="check.php" if="enable_php">
+    <cpp-install-lib
+        lib="${php.extension.lib}"
         srcdir="${lib.dir}"
-        destdir="${php.extension.install.dir}/lib"/>
+        destrootdir="${php.extension.install.dir}"/>
     <cpp-symlink
         linkdir="${php.extension.install.dir}/lib"
         link="${lib.prefix}${php.extension.lib}${lib.ext}"
@@ -181,7 +161,7 @@
         resource="${lib.prefix}${php.extension.lib}${lib.ext}"/>
   </target>
 
-  <target name="install.php.xsd">
+  <target name="install.php.xsd" depends="check.php" if="enable_php">
     <cpp-install-files
         files="${xsd.files}"
         srcdir="${xsd.dir}"

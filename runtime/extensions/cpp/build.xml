@@ -132,11 +132,10 @@
     <antcall target="install.cpp.core"/>
     <antcall target="install.cpp.model"/>
     <antcall target="install.xsd"/>
-    <cpp-install-file
-        srcfile="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+    <cpp-install-lib
+        lib="${tuscany.cpp.extension.lib}"
         srcdir="${lib.dir}"
-        destdir="${cpp.extension.install.dir}/lib"/>
+        destrootdir="${cpp.extension.install.dir}"/>
     <cpp-symlink
         linkdir="${cpp.extension.install.dir}/lib"
         link="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"

@@ -35,8 +35,10 @@
   -->
 
   <target name="all" description="build and install all TuscanyScaNative source code">
-    <antcall target="build"/>
-    <antcall target="install"/>
+    <antcall target="build.core"/>
+    <antcall target="install.core"/>
+    <antcall target="build.extensions"/>
+    <antcall target="install.extensions"/>
   </target>
 
   <target name="build" description="Build all TuscanyScaNative source code">

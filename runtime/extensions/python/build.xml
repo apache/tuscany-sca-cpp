@@ -82,12 +82,17 @@
     <antcall target="compile.python.model"/>
   </target>
 
-  <target name="link" description="Link all TuscanyScaNative python extension source code">
+  <target name="link" depends="check.python" if="enable_python"
+          description="Link all TuscanyScaNative python extension source code">
     <cpp-link
         outfile="${python.extension.lib}"
         outdir="${lib.dir}"
         indir="${lib.dir}"
-        infiles="*${object.ext}"/>
+        infiles="*${object.ext}">
+      <custom-ld-elements>
+        <libset dir="${python.lib.dir}" libs="${python.version}"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
   <target name="install" description="Install TuscanyScaNative python extension libraries and headers">
@@ -107,58 +112,39 @@
 
     <!-- compile -->
 
-  <target name="compile.python.core">
-    <if>
-      <equals arg1="${enable_python}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${python.core.dir}"
-            objdir="${lib.dir}"
-            infiles="${python.core.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.src.dir}"/>
-            <includepath path="${python.include.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA python extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.python.core" depends="check.python" if="enable_python">
+    <cpp-compile
+        srcdir="${python.core.dir}"
+        objdir="${lib.dir}"
+        infiles="${python.core.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.src.dir}"/>
+        <includepath path="${python.include.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_PYTHON_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.python.model">
-    <if>
-      <equals arg1="${enable_python}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${python.model.dir}"
-            objdir="${lib.dir}"
-            infiles="${python.model.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.src.dir}"/>
-            <includepath path="${python.include.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA python extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.python.model" depends="check.python" if="enable_python">
+    <cpp-compile
+        srcdir="${python.model.dir}"
+        objdir="${lib.dir}"
+        infiles="${python.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.src.dir}"/>
+        <includepath path="${python.include.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_PYTHON_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
     <!-- install -->
 
-  <target name="install.python.core">
-    <cpp-install-file
-        srcfile="${lib.prefix}${python.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${python.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+  <target name="install.python.core" depends="check.python" if="enable_python">
+    <cpp-install-lib
+        lib="${python.extension.lib}"
         srcdir="${lib.dir}"
-        destdir="${python.extension.install.dir}/lib"/>
+        destrootdir="${python.extension.install.dir}"/>
     <cpp-symlink
         linkdir="${python.extension.install.dir}/lib"
         link="${lib.prefix}${python.extension.lib}${lib.ext}"
@@ -170,7 +156,7 @@
         resource="${lib.prefix}${python.extension.lib}${lib.ext}"/>
   </target>
 
-  <target name="install.python.xsd">
+  <target name="install.python.xsd" depends="check.python" if="enable_python">
     <cpp-install-files
         files="${python.xsd.files}"
         srcdir="${python.xsd.dir}"

@@ -145,136 +145,78 @@
 
     <!-- compile -->
 
-  <target name="compile.rest.interface.core">
-    <if>
-      <equals arg1="${enable_rest}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${interface.core.dir}"
-            objdir="${interface.lib.dir}"
-            infiles="${interface.core.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${interface.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA rest extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.rest.interface.core" depends="check.rest" if="enable_rest">
+    <cpp-compile
+        srcdir="${interface.core.dir}"
+        objdir="${interface.lib.dir}"
+        infiles="${interface.core.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${interface.dir}"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.rest.interface.model">
-    <if>
-      <equals arg1="${enable_rest}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${interface.model.dir}"
-            objdir="${interface.lib.dir}"
-            infiles="${interface.model.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${interface.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA rest extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.rest.interface.model" depends="check.rest" if="enable_rest">
+    <cpp-compile
+        srcdir="${interface.model.dir}"
+        objdir="${interface.lib.dir}"
+        infiles="${interface.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${interface.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_REST_INTERFACE_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.rest.reference.core">
-    <if>
-      <equals arg1="${enable_rest}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${reference.core.dir}"
-            objdir="${reference.lib.dir}"
-            infiles="${reference.core.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${interface.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA rest extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.rest.reference.core" depends="check.rest" if="enable_rest">
+    <cpp-compile
+        srcdir="${reference.core.dir}"
+        objdir="${reference.lib.dir}"
+        infiles="${reference.core.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${interface.dir}"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.rest.reference.model">
-    <if>
-      <equals arg1="${enable_rest}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${reference.model.dir}"
-            objdir="${reference.lib.dir}"
-            infiles="${reference.model.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${reference.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA rest extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.rest.reference.model" depends="check.rest" if="enable_rest">
+    <cpp-compile
+        srcdir="${reference.model.dir}"
+        objdir="${reference.lib.dir}"
+        infiles="${reference.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${reference.dir}"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.rest.service.core">
-    <if>
-      <equals arg1="${enable_rest}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${service.core.dir}"
-            objdir="${service.lib.dir}"
-            infiles="${service.core.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${rest.httpd.include.dir}"/>
-            <includepath path="${this.dir}/${interface.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA rest extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.rest.service.core" depends="check.rest" if="enable_rest">
+    <cpp-compile
+        srcdir="${service.core.dir}"
+        objdir="${service.lib.dir}"
+        infiles="${service.core.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${rest.httpd.include.dir}"/>
+        <includepath path="${this.dir}/${interface.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_REST_SERVICE_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.rest.service.model">
-    <if>
-      <equals arg1="${enable_rest}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${service.model.dir}"
-            objdir="${service.lib.dir}"
-            infiles="${service.model.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${service.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA rest extension is not enabled"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.rest.service.model" depends="check.rest" if="enable_rest">
+    <cpp-compile
+        srcdir="${service.model.dir}"
+        objdir="${service.lib.dir}"
+        infiles="${service.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${service.dir}"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
     <!-- link -->
 
-  <target name="link.rest.interface">
+  <target name="link.rest.interface" depends="check.rest" if="enable_rest">
     <cpp-link
         outfile="${interface.extension.lib}"
         outdir="${interface.lib.dir}"
@@ -282,35 +224,48 @@
         infiles="*${object.ext}"/>
   </target>
 
-  <target name="link.rest.reference">
+  <target name="link.rest.reference" depends="check.rest" if="enable_rest">
     <cpp-link
         outfile="${reference.extension.lib}"
         outdir="${reference.lib.dir}"
         indir="${reference.lib.dir}"
-        infiles="*${object.ext}"/>
+        infiles="*${object.ext}">
+      <custom-ld-elements>
+        <libset dir="${interface.lib.dir}" libs="${interface.extension.lib}"/>
+        <libset dir="${rest.curl.lib.dir}" libs="curl"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
-  <target name="link.rest.service">
+  <target name="link.rest.service" depends="check.rest" if="enable_rest">
     <cpp-link
         outfile="${service.extension.lib}"
         outdir="${service.lib.dir}"
         indir="${service.lib.dir}"
-        infiles="${service.core.object.files}"/>
+        infiles="${service.core.object.files}">
+      <custom-ld-elements>
+        <libset dir="${interface.lib.dir}" libs="${interface.extension.lib}"/>
+      </custom-ld-elements>
+    </cpp-link>
     <cpp-link
         outfile="${service.mod.lib}"
         outdir="${service.lib.dir}"
         indir="${service.lib.dir}"
-        infiles="${service.mod.object.files}"/>
+        infiles="${service.mod.object.files}">
+      <custom-ld-elements>
+        <libset dir="${service.lib.dir}" libs="${service.extension.lib}"/>
+        <libset dir="${interface.lib.dir}" libs="${interface.extension.lib}"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
     <!-- install -->
 
-  <target name="install.rest.interface">
-    <cpp-install-file
-        srcfile="${lib.prefix}${interface.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${interface.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+  <target name="install.rest.interface" depends="check.rest" if="enable_rest">
+    <cpp-install-lib
+        lib="${interface.extension.lib}"
         srcdir="${interface.lib.dir}"
-        destdir="${rest.extension.install.dir}/interface/lib"/>
+        destrootdir="${rest.extension.install.dir}/interface"/>
     <cpp-symlink
         linkdir="${rest.extension.install.dir}/interface/lib"
         link="${lib.prefix}${interface.extension.lib}${lib.ext}"
@@ -322,12 +277,11 @@
         resource="${lib.prefix}${interface.extension.lib}${lib.ext}"/>
   </target>
 
-  <target name="install.rest.reference">
-    <cpp-install-file
-        srcfile="${lib.prefix}${reference.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${reference.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+  <target name="install.rest.reference" depends="check.rest" if="enable_rest">
+    <cpp-install-lib
+        lib="${reference.extension.lib}"
         srcdir="${reference.lib.dir}"
-        destdir="${rest.extension.install.dir}/reference/lib"/>
+        destrootdir="${rest.extension.install.dir}/reference"/>
     <cpp-symlink
         linkdir="${rest.extension.install.dir}/reference/lib"
         link="${lib.prefix}${reference.extension.lib}${lib.ext}"
@@ -339,13 +293,12 @@
         resource="${lib.prefix}${reference.extension.lib}${lib.ext}"/>
   </target>
 
-  <target name="install.rest.service">
+  <target name="install.rest.service" depends="check.rest" if="enable_rest">
       <!-- install and link tuscany_sca_rest_service library -->
-    <cpp-install-file
-        srcfile="${lib.prefix}${service.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${service.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+    <cpp-install-lib
+        lib="${service.extension.lib}"
         srcdir="${service.lib.dir}"
-        destdir="${rest.extension.install.dir}/service/lib"/>
+        destrootdir="${rest.extension.install.dir}/service"/>
     <cpp-symlink
         linkdir="${rest.extension.install.dir}/service/lib"
         link="${lib.prefix}${service.extension.lib}${lib.ext}"
@@ -357,18 +310,17 @@
         resource="${lib.prefix}${service.extension.lib}${lib.ext}"/>
 
       <!-- install and link tuscany_sca_mod_rest library -->
-    <cpp-install-file
-        srcfile="${lib.prefix}${service.mod.lib}${lib.ext}"
-        destfile="${lib.prefix}${service.mod.lib}${lib.ext}${tuscanySCA.library.version}"
+    <cpp-install-lib
+        lib="${service.mod.lib}"
         srcdir="${service.lib.dir}"
-        destdir="${rest.extension.install.dir}/service/lib"/>
+        destrootdir="${rest.extension.install.dir}/service"/>
     <cpp-symlink
         linkdir="${rest.extension.install.dir}/service/lib"
         link="${lib.prefix}${service.mod.lib}${lib.ext}"
         resource="${lib.prefix}${service.mod.lib}${lib.ext}${tuscanySCA.library.version}"/>
   </target>
 
-  <target name="install.rest.xsd">
+  <target name="install.rest.xsd" depends="check.rest" if="enable_rest">
     <cpp-install-files
         files="${xsd.files}"
         srcdir="${xsd.dir}"

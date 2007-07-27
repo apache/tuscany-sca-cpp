@@ -186,6 +186,37 @@
   </macrodef>
 
   <!--
+    Install a library
+    @param lib - library to install
+    @param srcdir - directory of file to install
+    @param destdir - Where to install the file
+    @param executable - set permissions to executable, defaults true
+  -->
+  <macrodef name="cpp-install-lib">
+    <attribute name="lib"/>
+    <attribute name="srcdir" default="."/>
+    <attribute name="destrootdir"/>
+    <attribute name="version" default="${tuscanySCA.library.version}"/>
+    <sequential>
+      <cpp-install-file
+          srcfile="${lib.prefix}@{lib}${lib.ext}"
+          srcdir="@{srcdir}"
+          destfile="${lib.prefix}@{lib}${lib.ext}@{version}"
+          destdir="@{destrootdir}/lib"/>
+      <if>
+        <os family="windows"/>
+        <then>
+          <cpp-install-file
+              srcfile="${lib.prefix}@{lib}${dll.ext}"
+              srcdir="@{srcdir}"
+              destfile="${lib.prefix}@{lib}${dll.ext}@{version}"
+              destdir="@{destrootdir}/bin"/>
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <!--
     Create a symlink on unix and mac only
     @param lib - library file to install
     @param srclibdir - location of library files to install

@@ -188,11 +188,10 @@
         srcdir="${this.dir}/tuscany/sca"
         files="export.h"
         destdir="${tuscanySCA.install.dir}/include/tuscany/sca"/>
-    <cpp-install-file
-        srcfile="${lib.prefix}${tuscany.core.lib}${lib.ext}"
-        destfile="${lib.prefix}${tuscany.core.lib}${lib.ext}${tuscanySCA.library.version}"
+    <cpp-install-lib
+        lib="${tuscany.core.lib}"
         srcdir="${lib.dir}"
-        destdir="${tuscanySCA.install.dir}/lib"/>
+        destrootdir="${tuscanySCA.install.dir}"/>
     <cpp-symlink
         linkdir="${tuscanySCA.install.dir}/lib"
         link="${lib.prefix}${tuscany.core.lib}${lib.ext}"

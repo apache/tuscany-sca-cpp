@@ -112,14 +112,14 @@
 
     <!-- compile -->
 
-  <target name="compile.sca.reference.core">
+  <target name="compile.sca.reference.core" depends="check.ws" if="enable_ws">
     <cpp-compile
         srcdir="${reference.core.dir}"
         objdir="${reference.lib.dir}"
         infiles="${reference.core.cpp.files}"/>
   </target>
 
-  <target name="compile.sca.reference.model">
+  <target name="compile.sca.reference.model" depends="check.ws" if="enable_ws">
     <cpp-compile
         srcdir="${reference.model.dir}"
         objdir="${reference.lib.dir}"
@@ -130,14 +130,14 @@
     </cpp-compile>
   </target>
 
-  <target name="compile.sca.service.core">
+  <target name="compile.sca.service.core" depends="check.ws" if="enable_ws">
     <cpp-compile
         srcdir="${service.core.dir}"
         objdir="${service.lib.dir}"
         infiles="${service.core.cpp.files}"/>
   </target>
 
-  <target name="compile.sca.service.model">
+  <target name="compile.sca.service.model" depends="check.ws" if="enable_ws">
     <cpp-compile
         srcdir="${service.model.dir}"
         objdir="${service.lib.dir}"
@@ -150,30 +150,37 @@
 
     <!-- link -->
 
-  <target name="link.sca.reference">
+  <target name="link.sca.reference" depends="check.ws" if="enable_ws">
     <cpp-link
         outfile="${reference.extension.lib}"
         outdir="${reference.lib.dir}"
         indir="${reference.lib.dir}"
-        infiles="*${object.ext}"/>
+        infiles="*${object.ext}">
+      <custom-ld-elements>
+        <libset dir="${sdo.lib.dir}" libs="tuscany_sdo_axiom"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
-  <target name="link.sca.service">
+  <target name="link.sca.service" depends="check.ws" if="enable_ws">
     <cpp-link
         outfile="${service.extension.lib}"
         outdir="${service.lib.dir}"
         indir="${service.lib.dir}"
-        infiles="*${object.ext}"/>
+        infiles="*${object.ext}">
+      <custom-ld-elements>
+        <libset dir="${sdo.lib.dir}" libs="tuscany_sdo_axiom"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
     <!-- install -->
 
-  <target name="install.sca.reference">
-    <cpp-install-file
-        srcfile="${lib.prefix}${reference.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${reference.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+  <target name="install.sca.reference" depends="check.ws" if="enable_ws">
+    <cpp-install-lib
+        lib="${reference.extension.lib}"
         srcdir="${reference.lib.dir}"
-        destdir="${sca.extension.install.dir}/reference/lib"/>
+        destrootdir="${sca.extension.install.dir}/reference"/>
     <cpp-symlink
         linkdir="${sca.extension.install.dir}/reference/lib"
         link="${lib.prefix}${reference.extension.lib}${lib.ext}"
@@ -185,12 +192,11 @@
         resource="${lib.prefix}${reference.extension.lib}${lib.ext}"/>
   </target>
 
-  <target name="install.sca.service">
-    <cpp-install-file
-        srcfile="${lib.prefix}${service.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${service.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+  <target name="install.sca.service" depends="check.ws" if="enable_ws">
+    <cpp-install-lib
+        lib="${service.extension.lib}"
         srcdir="${service.lib.dir}"
-        destdir="${sca.extension.install.dir}/service/lib"/>
+        destrootdir="${sca.extension.install.dir}/service"/>
     <cpp-symlink
         linkdir="${sca.extension.install.dir}/service/lib"
         link="${lib.prefix}${service.extension.lib}${lib.ext}"
@@ -202,7 +208,7 @@
         resource="${lib.prefix}${service.extension.lib}${lib.ext}"/>
   </target>
 
-  <target name="install.sca.xsd">
+  <target name="install.sca.xsd" depends="check.ws" if="enable_ws">
     <cpp-install-files
         files="${xsd.files}"
         srcdir="${xsd.dir}"

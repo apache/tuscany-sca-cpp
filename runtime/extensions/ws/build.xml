@@ -51,7 +51,9 @@
 
   <property
     name="reference.core.cpp.files"
-    value="Axis2Client.cpp WSServiceBindingExtension.cpp WSServiceWrapper.cpp"/>
+    value="Axis2Client.cpp
+           WSServiceBindingExtension.cpp
+           WSServiceWrapper.cpp"/>
 
   <property
     name="reference.model.cpp.files"
@@ -67,20 +69,21 @@
            WSServiceProxy.cpp"/>
 
   <property
+    name="service.model.cpp.files"
+    value="WSReferenceBinding.cpp"/>
+
+  <property
     name="service.core.obj.files"
     value="Axis2Service${object.ext}
            Axis2Utils${object.ext}
            WSReferenceBindingExtension${object.ext}
+           WSReferenceBinding${object.ext}
            WSServiceProxy${object.ext}"/>
 
   <property
     name="service.core.dispatcher.obj.files"
     value="Axis2Dispatcher${object.ext}
            Axis2DispatcherModule${object.ext}"/>
-
-  <property
-    name="service.model.cpp.files"
-    value="WSReferenceBinding.cpp"/>
 
   <property
     name="xsd.files"
@@ -132,126 +135,128 @@
 
     <!-- compile -->
 
-  <target name="compile.ws.reference.core">
-    <if>
-      <equals arg1="${enable_ws}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${reference.core.dir}"
-            objdir="${reference.lib.dir}"
-            infiles="${reference.core.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${reference.dir}"/>
-            <includepath path="${axis2c.home.dir}/include"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA ws is not enabled since Axis2c has not been specified"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.ws.reference.core" depends="check.ws" if="enable_ws">
+    <cpp-compile
+        srcdir="${reference.core.dir}"
+        objdir="${reference.lib.dir}"
+        infiles="${reference.core.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${reference.dir}"/>
+        <includepath path="${axis2c.home.dir}/include"/>
+        <defineset if="windows" define="TUSCANY_SCA_WS_REFERENCE_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.ws.reference.model">
-    <if>
-      <equals arg1="${enable_ws}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${reference.model.dir}"
-            objdir="${reference.lib.dir}"
-            infiles="${reference.model.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${reference.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA ws is not enabled since Axis2c has not been specified"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.ws.reference.model" depends="check.ws" if="enable_ws">
+    <cpp-compile
+        srcdir="${reference.model.dir}"
+        objdir="${reference.lib.dir}"
+        infiles="${reference.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${reference.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_WS_REFERENCE_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.ws.service.core">
-    <if>
-      <equals arg1="${enable_ws}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${service.core.dir}"
-            objdir="${service.lib.dir}"
-            infiles="${service.core.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${service.dir}"/>
-            <includepath path="${axis2c.home.dir}/include"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA ws is not enabled since Axis2c has not been specified"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.ws.service.core" depends="check.ws" if="enable_ws">
+    <cpp-compile
+        srcdir="${service.core.dir}"
+        objdir="${service.lib.dir}"
+        infiles="${service.core.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${service.dir}"/>
+        <includepath path="${axis2c.home.dir}/include"/>
+        <defineset if="windows" define="TUSCANY_SCA_WS_SERVICE_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
-  <target name="compile.ws.service.model">
-    <if>
-      <equals arg1="${enable_ws}" arg2="true"/>
-      <then>
-        <cpp-compile
-            srcdir="${service.model.dir}"
-            objdir="${service.lib.dir}"
-            infiles="${service.model.cpp.files}">
-          <custom-cc-elements>
-            <includepath path="${this.dir}/${service.dir}"/>
-          </custom-cc-elements>
-        </cpp-compile>
-      </then>
-      <else>
-        <echo
-            message="TuscanySCA ws is not enabled since Axis2c has not been specified"
-            level="warning"/>
-      </else>
-    </if>
+  <target name="compile.ws.service.model" depends="check.ws" if="enable_ws">
+    <cpp-compile
+        srcdir="${service.model.dir}"
+        objdir="${service.lib.dir}"
+        infiles="${service.model.cpp.files}">
+      <custom-cc-elements>
+        <includepath path="${this.dir}/${service.dir}"/>
+        <defineset if="windows" define="TUSCANY_SCA_WS_SERVICE_EXPORTS"/>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
     <!-- link -->
 
-  <target name="link.ws.reference">
+  <target name="link.ws.reference" depends="check.ws" if="enable_ws">
     <cpp-link
         outfile="${reference.extension.lib}"
         outdir="${reference.lib.dir}"
         indir="${reference.lib.dir}"
-        infiles="*${object.ext}"/>
+        infiles="*${object.ext}">
+      <custom-ld-elements>
+        <libset dir="${sdo.lib.dir}" libs="tuscany_sdo_axiom"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_axiom"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_engine"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_minizip"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_parser"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_http_receiver"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_http_sender"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_util"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_wsdl"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="woden"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
-  <target name="link.ws.service">
+  <target name="link.ws.service" depends="check.ws" if="enable_ws">
     <cpp-link
         outfile="${service.extension.lib}"
         outdir="${service.lib.dir}"
         indir="${service.lib.dir}"
-        infiles="${service.core.obj.files}"/>
+        infiles="${service.core.obj.files}">
+      <custom-ld-elements>
+        <libset dir="${sdo.lib.dir}" libs="tuscany_sdo_axiom"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_axiom"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_engine"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_minizip"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_parser"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_http_receiver"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_http_sender"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_util"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_wsdl"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="woden"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
-  <target name="link.ws.service.dispatcher">
+  <target name="link.ws.service.dispatcher" depends="check.ws" if="enable_ws">
     <cpp-link
         outfile="${dispatcher.extension.lib}"
         outdir="${service.lib.dir}"
         indir="${service.lib.dir}"
-        infiles="${service.core.dispatcher.obj.files}"/>
+        infiles="${service.core.dispatcher.obj.files}">
+      <custom-ld-elements>
+        <libset dir="${sdo.lib.dir}" libs="tuscany_sdo_axiom"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_axiom"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_engine"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_minizip"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_parser"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_http_receiver"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_http_sender"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_util"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="axis2_wsdl"/>
+        <libset dir="${axis2c.home.dir}/lib" libs="woden"/>
+      </custom-ld-elements>
+    </cpp-link>
   </target>
 
     <!-- install -->
 
-  <target name="install.ws.reference">
-    <cpp-install-file
-        srcfile="${lib.prefix}${reference.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${reference.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+  <target name="install.ws.reference" depends="check.ws" if="enable_ws">
+    <cpp-install-lib
+        lib="${reference.extension.lib}"
         srcdir="${reference.lib.dir}"
-        destdir="${ws.extension.install.dir}/reference/lib"/>
+        destrootdir="${ws.extension.install.dir}/reference"/>
     <cpp-symlink
         linkdir="${ws.extension.install.dir}/reference/lib"
         link="${lib.prefix}${reference.extension.lib}${lib.ext}"
@@ -263,7 +268,7 @@
         resource="${lib.prefix}${reference.extension.lib}${lib.ext}"/>
   </target>
 
-  <target name="install.ws.service">
+  <target name="install.ws.service" depends="check.ws" if="enable_ws">
        <!-- install files in the root service extension directory -->
     <cpp-install-file
         srcfile="axis2.xml"
@@ -276,11 +281,10 @@
         destdir="${ws.extension.install.dir}/service"/>
 
        <!-- install and link service extenstion lib -->
-    <cpp-install-file
-        srcfile="${lib.prefix}${service.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${service.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+    <cpp-install-lib
+        lib="${service.extension.lib}"
         srcdir="${service.lib.dir}"
-        destdir="${ws.extension.install.dir}/service/lib"/>
+        destrootdir="${ws.extension.install.dir}/service"/>
     <cpp-symlink
         linkdir="${ws.extension.install.dir}/service/lib"
         link="${lib.prefix}${service.extension.lib}${lib.ext}"
@@ -292,11 +296,10 @@
         resource="${lib.prefix}${service.extension.lib}${lib.ext}"/>
 
        <!-- install and link service dispatcher extenstion lib -->
-    <cpp-install-file
-        srcfile="${lib.prefix}${dispatcher.extension.lib}${lib.ext}"
-        destfile="${lib.prefix}${dispatcher.extension.lib}${lib.ext}${tuscanySCA.library.version}"
+    <cpp-install-lib
+        lib="${dispatcher.extension.lib}"
         srcdir="${service.lib.dir}"
-        destdir="${ws.extension.install.dir}/service/lib"/>
+        destrootdir="${ws.extension.install.dir}/service"/>
     <cpp-symlink
         linkdir="${ws.extension.install.dir}/service/lib"
         link="${lib.prefix}${dispatcher.extension.lib}${lib.ext}"
@@ -327,7 +330,7 @@
         executable="false"/>
   </target>
 
-  <target name="install.ws.xsd">
+  <target name="install.ws.xsd" depends="check.ws" if="enable_ws">
     <cpp-install-files
         files="${xsd.files}"
         srcdir="${xsd.dir}"
