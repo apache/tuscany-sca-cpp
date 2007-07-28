@@ -53,6 +53,7 @@ copy %samplebbsrc%\*.wsdl %samplebb%
 copy %samplebbsrc%\*.composite %samplebb% 
 copy %samplebbsrc%\*.componentType %samplebb% 
 copy %samplebbsrc%\runwsserver.bat %samplebb% 
+copy %samplebbsrc%\*.xsd %samplebb%
 
 set library=Account
 copy %inpath%\%library%.dll %samplebb%
