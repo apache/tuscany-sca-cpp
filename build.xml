@@ -25,9 +25,11 @@
     Nothing is actually performed here, it just delegates to subdirectory
     build.xml files. Common scripts used by all ant build files can be
     found in the ant subdirectory.
-  -->
+  --> 
+    
+  <import file="antscripts/system.xml"/>
 
-  <property name="core.dir" value="runtime/core"/>
+  <property name="runtime.core.dir" value="runtime/core"/>
   <property name="extensions.dir" value="runtime/extensions"/>
  	
   <!--
@@ -63,7 +65,7 @@
   -->
 
   <target name="build.core">
-    <ant target="build" antfile="${core.dir}/build.xml" inheritAll="false"/>
+    <ant target="build" antfile="${runtime.core.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="build.extensions">
@@ -71,7 +73,7 @@
   </target>
 
   <target name="install.core">
-    <ant target="install" antfile="${core.dir}/build.xml" inheritAll="false"/>
+    <ant target="install" antfile="${runtime.core.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="install.extensions">
@@ -79,7 +81,7 @@
   </target>
 
   <target name="clean.core">
-    <ant target="clean" antfile="${core.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${runtime.core.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean.extensions">
