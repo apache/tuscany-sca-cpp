@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<project name="TuscanyScaNative_Sample_CppBigBank" default="all" basedir="../..">
+
+  <import file="${basedir}/antscripts/system.xml"/>
+  <import file="${basedir}/antscripts/compile-targets.xml"/>
+
+  <!--
+    Notice that the basedir for this project is set to the TuscanySCA root dir
+    This makes path setting in system.xml much simpler, but we'll just have to
+    set a property here to this directory.
+  -->
+
+  <target name="init">
+    <tstamp/>
+    <property name="this.dir"                   location="${basedir}/samples/CppBigBank"/>
+    <property name="bigbank.account.dir"        location="${this.dir}/bigbank.account"/>
+    <property name="bigbank.account.build.dir"  location="${bigbank.account.dir}/build"/>
+    <property name="bigbank.client.dir"         location="${this.dir}/bigbank.client"/>
+    <property name="bigbank.client.build.dir"   location="${bigbank.client.dir}/build"/>
+    <property name="bigbank.phpwsclient.dir"    location="${this.dir}/bigbank.phpwsclient"/>
+    <property name="scagen.jar"                 value="${tuscanySCA.install.dir}/extensions/cpp/bin/scagen.jar"/>
+    <property name="CppBigBank.install.dir"
+              location="${tuscanySCA.install.dir}/samples/CppBigBank/deploy"/>
+  </target>
+
+  <!--
+    Public targets
+  -->
+  <target name="all"
+          depends="init"
+          description="build and install the TuscanyScaNative CppBigBank sample">
+    <antcall target="build"/>
+    <antcall target="install"/>
+  </target>
+
+  <target name="build"
+          depends="init"
+          description="build the TuscanyScaNative CppBigBank sample">
+    <antcall target="build.bigbank.account"/>
+    <antcall target="build.bigbank.client"/>
+    <antcall target="build.bigbank.phpwsclient"/>
+  </target>
+
+  <target name="install"
+          depends="init"
+          description="Install the TuscanyScaNative CppBigBank sample">
+    <antcall target="install.bigbank.account"/>
+    <antcall target="install.bigbank.client"/>
+    <antcall target="install.bigbank.phpwsclient"/>
+    <cpp-install-file
+        srcfile="bigbank.app.composite"
+        srcdir="${this.dir}"
+        destdir="${CppBigBank.install.dir}"
+        executable="false"/>
+  </target>
+
+  <target name="clean"
+          depends="init"
+          description="Clean the TuscanyScaNative CppBigBank sample">
+    <antcall target="clean.bigbank.account"/>
+    <antcall target="clean.bigbank.client"/>
+    <antcall target="clean.bigbank.phpwsclient"/>
+    <delete dir="${CppBigBank.install.dir}" quiet="true"/>
+  </target>
+
+  <!--
+    Internal targets
+    They can still be called, they're just not described, so wont show up in "ant -p"
+  -->
+
+    <!-- build -->
+
+  <target name="build.bigbank.account" depends="init">
+       <!-- scagen -->
+    <mkdir dir="${bigbank.account.build.dir}"/>
+    <java jar="${scagen.jar}" fork="true">
+      <arg line="-dir ${bigbank.account.dir} -output ${bigbank.account.build.dir}"/>
+    </java>
+
+      <!-- put all the cpp/h files together with the scagen'd files to make the library -->
+    <copy todir="${bigbank.account.build.dir}">
+      <fileset dir="${bigbank.account.dir}" includes="*.h"/>
+      <fileset dir="${bigbank.account.dir}" includes="*.cpp"/>
+    </copy>
+
+      <!-- build the library -->
+    <cpp-build
+        srcdir="${bigbank.account.build.dir}"
+        infiles="*.cpp"
+        outdir="${bigbank.account.build.dir}/.libs"
+        outfile="Account">
+      <custom-build-elements>
+        <includepath path="${tuscanySCA.install.dir}/include"/>
+        <includepath path="${tuscanySCA.install.dir}/extensions/cpp/include"/>
+        <libset dir="${tuscanySCA.install.dir}/extensions/cpp/lib" libs="tuscany_sca_cpp"/>
+        <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+      </custom-build-elements>
+    </cpp-build>
+  </target>
+
+  <target name="build.bigbank.client" depends="init">
+    <cpp-build
+        srcdir="${bigbank.client.dir}"
+        infiles="AccountClient.cpp"
+        outdir="${bigbank.client.build.dir}"
+        outfile="AccountClient"
+        outtype="executable">
+      <custom-build-elements>
+        <includepath path="${tuscanySCA.install.dir}/include"/>
+        <includepath path="${tuscanySCA.install.dir}/extensions/cpp/include"/>
+        <includepath path="${bigbank.account.dir}"/>
+        <libset dir="${tuscanySCA.install.dir}/extensions/cpp/lib" libs="tuscany_sca_cpp"/>
+        <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+        <syslibset unless="windows" libs="dl"/>
+      </custom-build-elements>
+    </cpp-build>
+  </target>
+
+  <target name="build.bigbank.phpwsclient" depends="init">
+  </target>
+
+    <!-- install -->
+
+  <target name="install.bigbank.account" depends="init">
+
+      <!-- Install all the componentType files -->
+    <cpp-install-files
+        files="*.componentType"
+        srcdir="${bigbank.account.dir}"
+        destdir="${CppBigBank.install.dir}/bigbank.account"/>
+
+      <!-- Install the composite, the wsdls, and the xsds -->
+    <cpp-install-files
+        files="AccountService.wsdl StockQuoteWebService.wsdl StockQuoteTypes.xsd bigbank.account.composite"
+        srcdir="${bigbank.account.dir}"
+        destdir="${CppBigBank.install.dir}/bigbank.account"/>
+
+      <!-- Install the runwsserver script -->
+    <cpp-install-file
+        srcfile="runwsserver${script.ext}"
+        srcdir="${bigbank.account.dir}"
+        destdir="${CppBigBank.install.dir}/bigbank.account"/>
+
+      <!-- Install the library -->
+    <condition property="bigbank.lib.ext" value="${dll.ext}">
+      <os family="windows"/>
+    </condition>
+    <property name="bigbank.lib.ext" value="${lib.ext}"/>
+    <cpp-install-file
+        srcfile="${lib.prefix}Account${bigbank.lib.ext}"
+        destfile="${lib.prefix}Account${bigbank.lib.ext}${tuscanySCA.library.version}"
+        srcdir="${bigbank.account.dir}/build/.libs"
+        destdir="${CppBigBank.install.dir}/bigbank.account"/>
+    <cpp-symlink
+        linkdir="${CppBigBank.install.dir}/bigbank.account"
+        link="${lib.prefix}Account${bigbank.lib.ext}"
+        resource="${lib.prefix}Account${bigbank.lib.ext}${tuscanySCA.library.version}"/>
+  </target>
+
+  <target name="install.bigbank.client" depends="init">
+    <cpp-install-file
+        srcfile="runclient${script.ext}"
+        srcdir="${bigbank.client.dir}"
+        destdir="${CppBigBank.install.dir}/bigbank.client"/>
+    <cpp-install-file
+        srcfile="AccountClient${exe.ext}"
+        srcdir="${bigbank.client.build.dir}"
+        destdir="${CppBigBank.install.dir}/bigbank.client"/>
+  </target>
+
+  <target name="install.bigbank.phpwsclient" depends="init">
+  </target>
+
+    <!-- clean -->
+
+  <target name="clean.bigbank.account" depends="init">
+    <delete dir="${bigbank.account.build.dir}" quiet="true"/>
+    <delete dir="${CppBigBank.install.dir}/bigbank.account" quiet="true"/>
+  </target>
+
+  <target name="clean.bigbank.client" depends="init">
+    <delete dir="${bigbank.client.build.dir}" quiet="true"/>
+    <delete dir="${CppBigBank.install.dir}/bigbank.client" quiet="true"/>
+  </target>
+
+  <target name="clean.bigbank.phpwsclient" depends="init">
+  </target>
+
+</project>
