@@ -301,7 +301,7 @@
       <property name="compiler.name" value="${platform.compiler.name}"/>
     </then>
     <else>
-      <condition property="compiler.name" value="msvc">
+      <condition property="compiler.name" value="msvc8">
         <os family="windows"/>
       </condition>
 

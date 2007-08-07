@@ -19,133 +19,149 @@
 -->
 
 
-<project name="org.apache.tuscany.sca.cpp.tools" default="all" basedir=".">
+<project name="org.apache.tuscany.sca.cpp.tools" default="all" basedir="../../../../..">
 
-    <target name="init">
-        <property name="build.result.folder" value="${basedir}/bld" />
-        <property name="temp.folder" value="${basedir}/tmp" />
-        <property name="junit.jar.folder" value="${basedir}/lib" />
-        <property name="tool.name" value="scagen" />
-        <property name="bin.dir" value="${basedir}/../../../../../deploy/extensions/cpp/bin" />
-    </target>
-
-    <!-- Add "test" to the depends list below to add auto-testing to the build -->
-    <!-- a junit.jar is needed at ${junit.jar.folder}/junit.jar though         -->
-    <target name="all" depends="init,jars,doc,scripts,zip.all">
-    </target>
-
-    <target name="test" depends="init,jars,test.jar">
-        <java classname="org.apache.tuscany.sca.cpp.tools.junit.TestAllCompositesTest">
-            <classpath>
-                <pathelement location="${build.result.folder}/test.jar" />
-                <pathelement location="${junit.jar.folder}/junit.jar" />
-                <pathelement location="${build.result.folder}/scagen.jar" />
-                <pathelement path="${java.class.path}" />
-            </classpath>
-        </java>
-    </target>
-
-
-
-    <target name="doc">
-        <javadoc packagenames="org.apache.tuscany.sca.cpp.tools.*" sourcepath="src" defaultexcludes="yes" destdir="docs/api" author="true" version="true" use="true" windowtitle="SCA for C++ Tools">
-            <doctitle>
-                <![CDATA[<h1>SCA for C++ Tools</h1>]]>
-            </doctitle>
-        <bottom>
-            <![CDATA[<i>Copyright 2005 The Apache Software Foundation or its licensors, as applicable.</i>]]></bottom>
-    <group title="C++ Parser" packages="org.apache.tuscany.sca.cpp.tools.common" />
-    <group title="SCA Services Generator" packages="org.apache.tuscany.sca.cpp.tools.services" />
-    <link offline="true" href="http://java.sun.com/products/jdk/1.2/docs/api/" packagelistLoc="C:\tmp" />
-</javadoc>
-</target>
-
-<target name="jars" depends="init, scagen.jar, src.jar">
-</target>
-
-<target name="scripts" depends="init">
-<mkdir dir="${build.result.folder}" />
-</target>
-
-
-
-<target name="src.jar" depends="init">
-<delete dir="${temp.folder}/src.jar.bin" />
-<mkdir dir="${temp.folder}/src.jar.bin" />
-<!-- Copy necessary resources i.e XSL stylesheets, test input etc
-             for the src jar too
-         -->
-<copy todir="${temp.folder}/src.jar.bin" failonerror="true">
-    <fileset dir="src/" />
-</copy>
-<mkdir dir="${build.result.folder}" />
-<jar jarfile="${build.result.folder}/src.jar" basedir="${temp.folder}/src.jar.bin" />
-<delete dir="${temp.folder}/test.jar.bin" />
-</target>
-
-<target name="test.jar" depends="init, scagen.jar" unless="test.jar" description="Create jar for unit tests: test.jar.">
-<delete dir="${temp.folder}/test.jar.bin" />
-<mkdir dir="${temp.folder}/test.jar.bin" />
-<!-- compile the source code -->
-<javac srcdir="junit" destdir="${temp.folder}/test.jar.bin" failonerror="true" includeAntRuntime="no">
-    <src path="junit/" />
-    <classpath>
-        <pathelement path="${junit.jar.folder}/junit.jar" />
-        <pathelement path="${build.result.folder}/scagen.jar" />
-    </classpath>
-</javac>
-<!-- Copy necessary resources i.e XSL stylesheets, test input etc -->
-<copy todir="${temp.folder}/test.jar.bin" failonerror="true">
-    <fileset dir="junit/" excludes="testoutput/**" />
-</copy>
-<mkdir dir="${build.result.folder}" />
-<jar jarfile="${build.result.folder}/test.jar" basedir="${temp.folder}/test.jar.bin" />
-<delete dir="${temp.folder}/test.jar.bin" />
-</target>
-
-<target name="scagen.jar" depends="init" unless="scagen.jar" description="Create main jar: scagen.jar">
-<delete dir="${temp.folder}/scagen.jar.bin" />
-<mkdir dir="${temp.folder}/scagen.jar.bin" />
-<!-- compile the source code -->
-<javac srcdir="src" destdir="${temp.folder}/scagen.jar.bin" failonerror="true" includeAntRuntime="no">
-    <src path="src/" />
-</javac>
-<!-- Copy necessary resources i.e XSL stylesheets, test input etc -->
-<copy todir="${temp.folder}/scagen.jar.bin" failonerror="true">
-    <fileset dir="src/" excludes="**/*.java" />
-</copy>
+	<import file="${basedir}/antscripts/system.xml"/>
+	<import file="${basedir}/antscripts/compile-targets.xml"/>
 	
-<copy todir="${temp.folder}/scagen.jar.bin/META-INF" failonerror="true">
-    <fileset dir="META-INF/"/>
-</copy>
+	<target name="init">
+		<tstamp/>
+		<property name="this.dir"             location="${basedir}/runtime/extensions/cpp/tools/scagen"/>
+		<property name="build.result.folder"  location="${this.dir}/build" />
+		<property name="temp.folder"          location="${this.dir}/tmp" />
+		<property name="junit.jar.folder"     location="${this.dir}/lib" />
+	    <property name="java.src.dir"         location="${this.dir}/src" />
+		<property name="java.docs.dir"        location="${this.dir}/docs/api"/>
+		<property name="tool.name"            value="scagen" />
+		<property name="bin.dir"              location="${tuscanySCA.install.dir}/extensions/cpp/bin" />
+	</target>
+
+	<!-- Add "test" to the depends list below to add auto-testing to the build -->
+	<!-- a junit.jar is needed at ${junit.jar.folder}/junit.jar though         -->
+	<target name="all" depends="init,scagen.jar,tobin">
+	</target>
 	
-<mkdir dir="${build.result.folder}" />
-<jar jarfile="${build.result.folder}/scagen.jar" basedir="${temp.folder}/scagen.jar.bin">
-    <manifest>
-        <attribute name="Main-Class" value="org.apache.tuscany.sca.cpp.tools.services.Scagen" />
-    </manifest>
-</jar>
-<delete dir="${temp.folder}/scagen.jar.bin" />
-</target>
+	<target name="install" depends="tobin"/>
 
-<target name="tobin" depends="jars, scripts" description="move the desired stuff to bin">
-    <move file="${build.result.folder}/scagen.jar" todir="${bin.dir}" />
-</target>
+	<target name="test" depends="init,jars,test.jar">
+		<java classname="org.apache.tuscany.sca.cpp.tools.junit.TestAllCompositesTest">
+			<classpath>
+				<pathelement location="${build.result.folder}/test.jar" />
+				<pathelement location="${junit.jar.folder}/junit.jar" />
+				<pathelement location="${build.result.folder}/scagen.jar" />
+				<pathelement path="${java.class.path}" />
+			</classpath>
+		</java>
+	</target>
 
-    
+	<target name="doc">
+		<javadoc packagenames="org.apache.tuscany.sca.cpp.tools.*"
+			sourcepath="${java.src.dir}"
+			defaultexcludes="yes"
+			destdir="${java.docs.dir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="SCA for C++ Tools">
+		  <doctitle>
+              <![CDATA[<h1>SCA for C++ Tools</h1>]]>
+          </doctitle>
+		  <bottom>
+                <![CDATA[<i>Copyright 2005 The Apache Software Foundation or its licensors, as applicable.</i>]]></bottom>
+          <group title="C++ Parser" packages="org.apache.tuscany.sca.cpp.tools.common" />
+          <group title="SCA Services Generator" packages="org.apache.tuscany.sca.cpp.tools.services" />
+          <link offline="true" href="http://java.sun.com/products/jdk/1.2/docs/api/" packagelistLoc="C:\tmp" />
+        </javadoc>
+    </target>
 
-<target name="clean" depends="init" description="Clean of all the files created.">
-<delete file="${build.result.folder}/test.jar" />
-<delete file="${build.result.folder}/src.jar" />
-<delete file="${build.result.folder}/scagen.jar" />
-<delete file="${build.result.folder}/org.apache.tuscany.sca.cpp.tools.zip" />
-<delete dir="${temp.folder}" />
-</target>
+    <target name="jars" depends="init, scagen.jar, src.jar">
+    </target>
 
-<target name="zip.all" depends="jars" description="Create a zip containing everything">
-<delete file="${build.result.folder}/org.apache.tuscany.sca.cpp.tools.zip" />
-<zip zipfile="${build.result.folder}/org.apache.tuscany.sca.cpp.tools.zip" excludes="bin/**,tmp/**,lib/**,junit/testoutput/**" basedir="." filesonly="true" whenempty="skip" update="false" />
-<delete dir="${temp.folder}" />
-</target>
+    <target name="scripts" depends="init">
+        <mkdir dir="${build.result.folder}" />
+    </target>
+
+    <target name="src.jar" depends="init">
+        <delete dir="${temp.folder}/src.jar.bin" quiet="true"/>
+        <mkdir dir="${temp.folder}/src.jar.bin"/>
+        <!-- Copy necessary resources i.e XSL stylesheets, test input etc for the src jar too -->
+    	<copy todir="${temp.folder}/src.jar.bin" failonerror="true">
+	      <fileset dir="${java.src.dir}" />
+        </copy>
+        <mkdir dir="${build.result.folder}" />
+        <jar jarfile="${build.result.folder}/src.jar" basedir="${temp.folder}/src.jar.bin" />
+        <delete dir="${temp.folder}/test.jar.bin" />
+    </target>
+
+    <target name="test.jar" depends="init, scagen.jar" unless="test.jar" description="Create jar for unit tests: test.jar.">
+        <delete dir="${temp.folder}/test.jar.bin" />
+    	<mkdir dir="${temp.folder}/test.jar.bin" />
+    	<!-- compile the source code -->
+    	<javac srcdir="junit" destdir="${temp.folder}/test.jar.bin" failonerror="true" includeAntRuntime="no">
+	        <src path="junit/" />
+	        <classpath>
+	        	<pathelement path="${junit.jar.folder}/junit.jar" />
+	        	<pathelement path="${build.result.folder}/scagen.jar" />
+	        </classpath>
+    	</javac>
+    	<!-- Copy necessary resources i.e XSL stylesheets, test input etc -->
+    	<copy todir="${temp.folder}/test.jar.bin" failonerror="true">
+    		<fileset dir="junit/" excludes="testoutput/**" />
+    	</copy>
+    	<mkdir dir="${build.result.folder}" />
+    	<jar jarfile="${build.result.folder}/test.jar" basedir="${temp.folder}/test.jar.bin" />
+    	<delete dir="${temp.folder}/test.jar.bin" />
+    </target>
+
+	<target name="scagen.jar" depends="init" unless="scagen.jar" description="Create main jar: scagen.jar">
+		<mkdir dir="${temp.folder}/scagen.jar.bin" />
+		<!-- compile the source code -->
+		<javac srcdir="${java.src.dir}"
+			destdir="${temp.folder}/scagen.jar.bin"
+			failonerror="true"
+			includeAntRuntime="no">
+		  <src path="${java.src.dir}"/>
+		</javac>
+		<!-- Copy necessary resources i.e XSL stylesheets, test input etc -->
+		<copy todir="${temp.folder}/scagen.jar.bin" failonerror="true">
+			<fileset dir="${java.src.dir}" excludes="**/*.java" />
+		</copy>
+
+		<copy todir="${temp.folder}/scagen.jar.bin/META-INF" failonerror="true">
+			<fileset dir="${this.dir}/META-INF/" />
+		</copy>
+
+		<mkdir dir="${build.result.folder}" />
+		<jar jarfile="${build.result.folder}/scagen.jar" basedir="${temp.folder}/scagen.jar.bin">
+			<manifest>
+				<attribute name="Main-Class" value="org.apache.tuscany.sca.cpp.tools.services.Scagen" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="tobin" depends="scagen.jar, scripts" description="move the desired stuff to bin">
+		<copy file="${build.result.folder}/scagen.jar" todir="${bin.dir}" />
+        <copy file="${this.dir}/scagen${script.ext}" todir="${bin.dir}" />
+	</target>
+	
+	<target name="clean" depends="init" description="Clean of all the files created.">
+		<delete dir="${build.result.folder}" quiet="true"/>
+		<delete dir="${temp.folder}" quiet="true"/>
+		<delete dir="${java.docs.dir}" quiet="true"/>
+        <delete dir="${bin.dir}" file="scagen.jar" quiet="true"/>
+        <delete dir="${bin.dir}" file="scagen${script.ext}" quiet="true"/>
+	</target>
+
+	<target name="zip.all" depends="jars" description="Create a zip containing everything">
+		<delete file="${build.result.folder}/org.apache.tuscany.sca.cpp.tools.zip" />
+		<zip 
+			zipfile="${build.result.folder}/org.apache.tuscany.sca.cpp.tools.zip" 
+			excludes="bin/**,tmp/**,lib/**,junit/testoutput/**" 
+			basedir="." 
+			filesonly="true" 
+			whenempty="skip" 
+			update="false" />
+		<delete dir="${temp.folder}" />
+	</target>
 
 </project>

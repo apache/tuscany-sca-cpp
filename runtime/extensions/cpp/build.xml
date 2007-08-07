@@ -39,6 +39,7 @@
   <property name="cpp.model.abs.dir"  location="${this.src.dir}/${cpp.model.dir}"/>
   <property name="lib.dir"            location="${this.src.dir}/.libs"/>
   <property name="xsd.abs.dir"        location="${this.dir}/${xsd.dir}"/>
+  <property name="scagen.abs.dir"     location="${this.dir}/tools/scagen"/>
 
   <property name="tuscany.cpp.extension.lib"   value="tuscany_sca_cpp"/>
   <property name="cpp.extension.install.dir"   location="${tuscanySCA.install.dir}/extensions/cpp"/>
@@ -117,6 +118,7 @@
     <antcall target="compile.cpp.osoa"/>
     <antcall target="compile.cpp.core"/>
     <antcall target="compile.cpp.model"/>
+  	<ant target="scagen.jar" antfile="${scagen.abs.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="link" description="Link all TuscanyScaNative cpp extension source code">
@@ -145,6 +147,7 @@
         link="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"
         resourcedir="${cpp.extension.install.dir}/lib"
         resource="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"/>
+  	<ant target="install" antfile="${scagen.abs.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean" description="Clean all TuscanyScaNative cpp extension compiled source code">
@@ -162,6 +165,7 @@
     <cpp-clean-files
         dir="${cpp.extension.install.dir}/include"
         rmdir="true"/>
+  	<ant target="clean" antfile="${scagen.abs.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <!--
