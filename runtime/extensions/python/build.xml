@@ -166,9 +166,9 @@
     <!-- clean -->
 
   <target name="clean.python.core">
-    <cpp-clean-files
-        dir="${python.extension.install.dir}/lib"
-        rmdir="true"/>
+    <cpp-clean-lib
+    	lib="${python.extension.lib}"
+        librootdir="${python.extension.install.dir}"/>
     <cpp-clean-files
         dir="${python.extension.install.dir}/module"
         rmdir="true"/>

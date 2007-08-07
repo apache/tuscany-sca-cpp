@@ -156,9 +156,9 @@
     <antcall target="clean.cpp.model"/>
     <antcall target="clean.xsd"/>
     <delete dir="${lib.dir}" quiet="true"/>
-    <cpp-clean-files
-        dir="${cpp.extension.install.dir}/lib"
-        rmdir="true"/>
+    <cpp-clean-lib
+    	lib="${tuscany.cpp.extension.lib}"
+        librootdir="${cpp.extension.install.dir}"/>
     <cpp-clean-files
         dir="${cpp.extension.install.dir}/module"
         rmdir="true"/>

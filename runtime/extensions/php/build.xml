@@ -171,9 +171,9 @@
     <!-- clean -->
 
   <target name="clean.php.core">
-    <cpp-clean-files
-        dir="${php.extension.install.dir}/lib"
-        rmdir="true"/>
+    <cpp-clean-lib
+    	lib="${php.extension.lib}"
+        librootdir="${php.extension.install.dir}"/>
     <cpp-clean-files
         dir="${php.extension.install.dir}/module"
         rmdir="true"/>

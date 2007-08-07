@@ -206,10 +206,9 @@
     <!-- clean -->
 
   <target name="clean.ruby.core">
-    <cpp-clean-files
-        dir="${ruby.install.dir}/lib"
-        files="${lib.prefix}${ruby.core.lib}${lib.ext}*"
-        rmdir="true"/>
+    <cpp-clean-lib
+    	lib="${ruby.core.lib}"
+        librootdir="${ruby.install.dir}"/>
     <cpp-clean-files
         dir="${ruby.install.dir}/module"
         rmdir="true"/>

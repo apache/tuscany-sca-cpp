@@ -330,9 +330,9 @@
     <!-- clean -->
 
   <target name="clean.rest.interface">
-    <cpp-clean-files
-        dir="${rest.extension.install.dir}/interface/lib"
-        rmdir="true"/>
+    <cpp-clean-lib
+    	lib="${interface.extension.lib}"
+        librootdir="${rest.extension.install.dir}/interface"/>
     <cpp-clean-files
         dir="${rest.extension.install.dir}/interface/module"
         rmdir="true"/>
@@ -343,9 +343,9 @@
   </target>
 
   <target name="clean.rest.reference">
-    <cpp-clean-files
-        dir="${rest.extension.install.dir}/reference/lib"
-        rmdir="true"/>
+    <cpp-clean-lib
+    	lib="${reference.extension.lib}"
+        librootdir="${rest.extension.install.dir}/reference"/>
     <cpp-clean-files
         dir="${rest.extension.install.dir}/reference/module"
         rmdir="true"/>
@@ -356,15 +356,15 @@
   </target>
 
   <target name="clean.rest.service">
-    <cpp-clean-files
-        dir="${rest.extension.install.dir}/service/lib"
-        rmdir="true"/>
+    <cpp-clean-lib
+    	lib="${service.extension.lib}"
+        librootdir="${rest.extension.install.dir}/service"/>
     <cpp-clean-files
         dir="${rest.extension.install.dir}/service/module"
         rmdir="true"/>
-    <cpp-clean-files
-        dir="${rest.extension.install.dir}/service"
-        rmdir="true"/>
+    <cpp-clean-lib
+    	lib="${service.mod.lib}"
+        librootdir="${rest.extension.install.dir}/service"/>
     <delete dir="${service.lib.dir}" quiet="true"/>
   </target>
 

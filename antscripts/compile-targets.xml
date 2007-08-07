@@ -271,5 +271,29 @@
       <custom-delete-elements/>
     </sequential>
   </macrodef>
+    
+  <!--
+    Delete a library from a root library directory, and possible delete the directory
+    On windows, it will delete both bin/<library>.dll and lib/<library>.lib
+    On Unix, it will delete lib/<library>
+    @param lib - library to delete
+    @param librootdir - directory where the library to delete is located
+    @param quiet - verbosity, "true" or "false"
+  -->
+  <macrodef name="cpp-clean-lib">
+    <attribute name="lib"/>
+    <attribute name="librootdir"/>
+    <attribute name="quiet" default="true"/>
+    <attribute name="version" default="${tuscanySCA.library.version}"/>
+    <sequential>
+      <delete quiet="@{quiet}" file="@{librootdir}/lib/${lib.prefix}@{lib}${lib.ext}@{version}"/>
+      <if>
+        <os family="windows"/>
+        <then>
+          <delete quiet="@{quiet}" file="@{librootdir}/bin/${lib.prefix}@{lib}${dll.ext}@{version}"/>
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
 
 </project>
