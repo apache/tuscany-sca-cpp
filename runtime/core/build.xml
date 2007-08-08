@@ -28,17 +28,18 @@
     set a property here to this directory.
   -->
   <property name="this.dir"           location="${basedir}/runtime/core"/>
-  <property name="core.dir"           value="src/tuscany/sca/core"/>
-  <property name="extension.dir"      value="src/tuscany/sca/extension"/>
-  <property name="model.dir"          value="src/tuscany/sca/model"/>
-  <property name="util.dir"           value="src/tuscany/sca/util"/>
+  <property name="src.dir"            location="${basedir}/runtime/core/src"/>
+  <property name="core.dir"           value="tuscany/sca/core"/>
+  <property name="extension.dir"      value="tuscany/sca/extension"/>
+  <property name="model.dir"          value="tuscany/sca/model"/>
+  <property name="util.dir"           value="tuscany/sca/util"/>
 
-  <property name="core.abs.dir"       location="${this.dir}/${core.dir}"/>
-  <property name="extension.abs.dir"  location="${this.dir}/${extension.dir}"/>
-  <property name="model.abs.dir"      location="${this.dir}/${model.dir}"/>
-  <property name="util.abs.dir"       location="${this.dir}/${util.dir}"/>
+  <property name="core.abs.dir"       location="${src.dir}/${core.dir}"/>
+  <property name="extension.abs.dir"  location="${src.dir}/${extension.dir}"/>
+  <property name="model.abs.dir"      location="${src.dir}/${model.dir}"/>
+  <property name="util.abs.dir"       location="${src.dir}/${util.dir}"/>
   <property name="xsd.abs.dir"        location="${this.dir}/xsd"/>
-  <property name="lib.dir"            location="${this.dir}/src.libs"/>
+  <property name="lib.dir"            location="${src.dir}/.libs"/>
   <property name="tuscany.core.lib"   value="tuscany_sca"/>
 
   <!--
@@ -202,7 +203,7 @@
     <antcall target="install.util"/>
     <antcall target="install.xsd"/>
     <cpp-install-files
-        srcdir="${this.dir}/src/tuscany/sca"
+        srcdir="${src.dir}/tuscany/sca"
         files="export.h"
         destdir="${tuscanySCA.install.dir}/include/tuscany/sca"/>
     <cpp-install-lib
