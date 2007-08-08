@@ -388,7 +388,7 @@ namespace tuscany
 
                                         // Convert a DataObject to a xml.etree.ElementTree Element object
                                         Composite* composite = component->getComposite();                                    
-                                        XMLHelper* xmlHelper = composite->getXMLHelper();
+                                        XMLHelperPtr xmlHelper = composite->getXMLHelper();
                                         char* str = xmlHelper->save(
                                             dob,
                                             dob->getType().getURI(),
@@ -819,7 +819,7 @@ namespace tuscany
                                     loginfo("Converting Python ElementTree to SDO DataObject: %s", data);
 
                                     Composite* composite = component->getComposite();                                   
-                                    XMLHelper* xmlHelper = composite->getXMLHelper();
+                                    XMLHelperPtr xmlHelper = composite->getXMLHelper();
                                     XMLDocumentPtr xmlDoc = xmlHelper->load(data);
                                     DataObjectPtr* dataObjectData = new DataObjectPtr;
                                     if (xmlDoc != NULL)

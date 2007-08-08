@@ -111,7 +111,7 @@ namespace tuscany
                 const Type& type = dataObject->getType();
                 if (type.isSequencedType())
                 {
-                    Sequence* sequence = dataObject->getSequence();
+                    SequencePtr sequence = dataObject->getSequence();
                     int size = sequence->size();
                     for (int i = 0; i < size; i++)
                     {

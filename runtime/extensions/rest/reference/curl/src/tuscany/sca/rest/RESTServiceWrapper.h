@@ -75,12 +75,12 @@ namespace tuscany
                 /**
                  * Write a parameter into a URL
                  */
-                void writeParameter(commonj::sdo::XMLHelper* xmlHelper, std::ostringstream& os, const Operation::Parameter& parm);
+                void writeParameter(commonj::sdo::XMLHelperPtr xmlHelper, std::ostringstream& os, const Operation::Parameter& parm);
                 
                 /**
                  * Set the return value on the given operation
                  */
-                void setReturn(commonj::sdo::XMLHelper* xmlHelper, std::string& payload, Operation& operation);
+                void setReturn(commonj::sdo::XMLHelperPtr xmlHelper, std::string& payload, Operation& operation);
                 
             };
         } // End namespace rest

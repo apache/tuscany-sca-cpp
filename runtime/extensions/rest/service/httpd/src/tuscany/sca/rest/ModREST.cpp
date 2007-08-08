@@ -102,7 +102,7 @@ namespace tuscany
             DataObjectPtr createPayload(DataFactoryPtr dataFactory,
                 Operation& operation, const WSDLOperation& wsdlOperation);
 
-            void addPart(XMLHelper* xmlHelper, string& payload, Operation& operation);
+            void addPart(XMLHelperPtr xmlHelper, string& payload, Operation& operation);
              
             int logHeaders(void* request, const char* key, const char* value);
 
@@ -367,7 +367,7 @@ namespace tuscany
                         throwException(SystemConfigurationException,
                             "Failed to initialize SCA runtime, could not get DataFactory");
                     }
-                    XMLHelper* xmlHelper = composite->getXMLHelper();
+                    XMLHelperPtr xmlHelper = composite->getXMLHelper();
         
                     // Get the REST binding
                     Reference* reference = compositeService->getReference();
@@ -1195,7 +1195,7 @@ namespace tuscany
                 return inputDataObject;
              }
 
-             void addPart(XMLHelper* xmlHelper, string& payload, Operation& operation)
+             void addPart(XMLHelperPtr xmlHelper, string& payload, Operation& operation)
              {  
                 logentry();
                 

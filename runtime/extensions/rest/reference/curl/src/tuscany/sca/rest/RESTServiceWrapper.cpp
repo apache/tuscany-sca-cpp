@@ -211,7 +211,7 @@ namespace tuscany
                 Service* service = getService();
                 CompositeReference* compositeReference = (CompositeReference*)service->getComponent();
                 Composite* composite = compositeReference->getComposite();
-                XMLHelper* xmlHelper = composite->getXMLHelper();
+                XMLHelperPtr xmlHelper = composite->getXMLHelper();
 
                 // Get the REST binding
                 RESTServiceBinding* binding = (RESTServiceBinding *)service->getBinding();
@@ -927,7 +927,7 @@ namespace tuscany
             }
             
             
-            void RESTServiceWrapper::writeParameter(XMLHelper* xmlHelper, ostringstream& os, const Operation::Parameter& parm)
+            void RESTServiceWrapper::writeParameter(XMLHelperPtr xmlHelper, ostringstream& os, const Operation::Parameter& parm)
             {
                 logentry();
 
@@ -1007,7 +1007,7 @@ namespace tuscany
                 }
             }
 
-             void RESTServiceWrapper::setReturn(XMLHelper* xmlHelper, string& payload,
+             void RESTServiceWrapper::setReturn(XMLHelperPtr xmlHelper, string& payload,
                  Operation& operation)
              {  
                 logentry();

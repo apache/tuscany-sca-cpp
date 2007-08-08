@@ -333,7 +333,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
                 loginfo("Converting Python ElementTree to SDO DataObject: %s", data);
 
                 Composite* composite = component->getComposite();                                   
-                XMLHelper* xmlHelper = composite->getXMLHelper();
+                XMLHelperPtr xmlHelper = composite->getXMLHelper();
                 XMLDocumentPtr xmlDoc = xmlHelper->load(data);
 
                 DataObjectPtr* dataObjectData = new DataObjectPtr;
@@ -483,7 +483,7 @@ static PyObject* sca_invoke(PyObject *self, PyObject *args)
 
                     // Convert a DataObject to a xml.etree.ElementTree Element object
                     Composite* composite = component->getComposite();                                    
-                    XMLHelper* xmlHelper = composite->getXMLHelper();
+                    XMLHelperPtr xmlHelper = composite->getXMLHelper();
                     char* str = xmlHelper->save(
                         dob,
                         dob->getType().getURI(),

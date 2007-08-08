@@ -231,7 +231,7 @@ namespace tuscany
                                 loginfo("Converting Ruby Rexml document to SDO DataObject: %s", str.c_str());
                                                                 
                                 Composite* composite = getReference()->getComponent()->getComposite();                                   
-                                commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
+                                commonj::sdo::XMLHelperPtr xmlHelper = composite->getXMLHelper();
                                 commonj::sdo::XMLDocumentPtr xmlDoc = xmlHelper->load(str.c_str());
                                 
                                 DataObjectPtr dob;
@@ -342,7 +342,7 @@ namespace tuscany
 
                             // Convert a DataObject to a REXML Document object
                             Composite* composite = component->getComposite();                                   
-                            commonj::sdo::XMLHelper* xmlHelper = composite->getXMLHelper();
+                            commonj::sdo::XMLHelperPtr xmlHelper = composite->getXMLHelper();
                             char* str = xmlHelper->save(
                                 dob,
                                 dob->getType().getURI(),
