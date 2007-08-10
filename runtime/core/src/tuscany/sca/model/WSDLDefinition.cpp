@@ -225,7 +225,7 @@ namespace tuscany
                 string uri;
                 string name;
 
-                Utils::rTokeniseString(":", bindingName, uri, name);
+                Utils::rTokeniseString("#", bindingName, uri, name);
 
                 // Find the binding
                 for (unsigned int m = 0; m < wsdlModels.size(); m++)
@@ -256,7 +256,7 @@ namespace tuscany
                 string uri;
                 string name;
 
-                Utils::rTokeniseString(":", portTypeName, uri, name);
+                Utils::rTokeniseString("#", portTypeName, uri, name);
 
                 // Find the binding
                 for (unsigned int m = 0; m < wsdlModels.size(); m++)
@@ -287,7 +287,7 @@ namespace tuscany
                 string uri;
                 string name;
 
-                Utils::rTokeniseString(":", messageName, uri, name);
+                Utils::rTokeniseString("#", messageName, uri, name);
 
                 // Find the binding
                 for (unsigned int m = 0; m < wsdlModels.size(); m++)

@@ -85,7 +85,6 @@ namespace tuscany
                 
                 void loadXMLSchema(Composite* composite, const char *fileName);
                 void loadWSDLDefinition(Composite* composite, const char *fileName);
-                void initializeWSDLModel(commonj::sdo::XSDHelperPtr xsdHelper);
     
                 Interface* getInterface(Composite* composite, commonj::sdo::DataObjectPtr obj);
 
