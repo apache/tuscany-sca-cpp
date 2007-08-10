@@ -19,7 +19,7 @@
 -->
 <project name="system-import">
 
-  <property file="./platform.properties"/>
+  <property file="${basedir}/antscripts/platform.properties"/>
   <property environment="env"/>
 
   <!-- These 3 lines pull in antcontrib and cctasks -->
@@ -34,7 +34,10 @@
      Else fail since we cant compile without it
   -->
   <if>
-    <isset property="platform.tuscanySDO.install.dir"/>
+    <and>
+      <isset property="platform.tuscanySDO.install.dir"/>
+      <length string="${platform.tuscanySDO.install.dir}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="tuscanySDO.install.dir" location="${platform.tuscanySDO.install.dir}"/>
     </then>
@@ -56,7 +59,10 @@
      Take the override value from platform.properties if set
   -->
   <if>
-    <isset property="platform.tuscanySCA.root.dir"/>
+    <and>
+      <isset property="platform.tuscanySCA.root.dir"/>
+      <length string="${platform.tuscanySCA.root.dir}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="tuscanySCA.root.dir" location="${platform.tuscanySCA.root.dir}"/>
     </then>
@@ -74,7 +80,10 @@
      Else use a default of ${tuscanySCA.root.dir}/deploy
   -->
   <if>
-    <isset property="platform.tuscanySCA.install.dir"/>
+    <and>
+      <isset property="platform.tuscanySCA.install.dir"/>
+      <length string="${platform.tuscanySCA.install.dir}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="tuscanySCA.install.dir" location="${platform.tuscanySCA.install.dir}"/>
     </then>
@@ -101,7 +110,10 @@
       <property name="tuscanySCA.library.version" value=""/>
     </then>
     <elseif>
-      <isset property="platform.tuscanySCA.library.version"/>
+      <and>
+        <isset property="platform.tuscanySCA.library.version"/>
+        <length string="${platform.tuscanySCA.library.version}" when="greater" length="0" trim="true"/>
+      </and>
       <then>
         <property name="tuscanySCA.library.version" value="${platform.tuscanySCA.library.version}"/>
       </then>
@@ -118,7 +130,10 @@
   -->
   <target name="check.ws">
   <if>
-    <isset property="platform.axis2c.home.dir"/>
+    <and>
+      <isset property="platform.axis2c.home.dir"/>
+      <length string="${platform.axis2c.home.dir}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="enable_ws" value="true"/>
       <property name="axis2c.home.dir" location="${platform.axis2c.home.dir}"/>
@@ -148,6 +163,9 @@
       <isset property="platform.python.version"/>
       <isset property="platform.python.include.dir"/>
       <isset property="platform.python.lib.dir"/>
+      <length string="${platform.python.version}" when="greater" length="0" trim="true"/>
+      <length string="${platform.python.include.dir}" when="greater" length="0" trim="true"/>
+      <length string="${platform.python.lib.dir}" when="greater" length="0" trim="true"/>
     </and>
     <then>
       <property name="enable_python" value="true"/>
@@ -185,6 +203,8 @@
     <and>
       <isset property="platform.ruby.include.dir"/>
       <isset property="platform.ruby.lib.dir"/>
+      <length string="${platform.ruby.include.dir}" when="greater" length="0" trim="true"/>
+      <length string="${platform.ruby.lib.dir}" when="greater" length="0" trim="true"/>
     </and>
     <then>
       <property name="enable_ruby" value="true"/>
@@ -219,6 +239,8 @@
     <and>
       <isset property="platform.rest.include.dir"/>
       <isset property="platform.rest.lib.dir"/>
+      <length string="${platform.rest.include.dir}" when="greater" length="0" trim="true"/>
+      <length string="${platform.rest.lib.dir}" when="greater" length="0" trim="true"/>
     </and>
     <then>
       <property name="enable_rest" value="true"/>
@@ -261,6 +283,10 @@
       <isset property="platform.php.lib.dir"/>
       <isset property="platform.php.sca.sdo.include.dir"/>
       <isset property="platform.php.sca.sdo.lib.dir"/>
+      <length string="${platform.php.include.dir}" when="greater" length="0" trim="true"/>
+      <length string="${platform.php.lib.dir}" when="greater" length="0" trim="true"/>
+      <length string="${platform.php.sca.sdo.include.dir}" when="greater" length="0" trim="true"/>
+      <length string="${platform.php.sca.sdo.lib.dir}" when="greater" length="0" trim="true"/>
     </and>
     <then>
       <property name="enable_php" value="true"/>
@@ -291,12 +317,45 @@
   </target>
 
   <!--
+     Configure the debug.compile flag
+     Try looking first on the command line
+     Then take the override value from platform.properties if set
+     Else its false
+  -->
+  <if>
+    <isset property="debug"/>
+    <then>
+      <!-- Tests if its set on the ant command line "ant -Ddebug=true" -->
+      <if>
+        <istrue value="${debug}"/>
+        <then>
+          <property name="debug.compile" value="true"/>
+        </then>
+      </if>
+    </then>
+    <elseif>
+      <and>
+        <isset property="platform.debug.compile"/>
+        <istrue value="${platform.debug.compile}"/>
+        <length string="${platform.debug.compile}" when="greater" length="0" trim="true"/>
+      </and>
+    <then>
+      <property name="debug.compile" value="true"/>
+    </then>
+  </elseif>
+  </if>
+  <property name="debug.compile" value="false"/>
+
+  <!--
      Configure the compiler.name
      Take the override value from platform.properties if set
      Else set it based on the OS
   -->
   <if>
-    <isset property="platform.compiler.name"/>
+    <and>
+      <isset property="platform.compiler.name"/>
+      <length string="${platform.compiler.name}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="compiler.name" value="${platform.compiler.name}"/>
     </then>
@@ -320,7 +379,10 @@
      Else set it based on the OS
   -->
   <if>
-    <isset property="platform.lib.ext"/>
+    <and>
+      <isset property="platform.lib.ext"/>
+      <length string="${platform.lib.ext}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="lib.ext" value="${platform.lib.ext}"/>
     </then>
@@ -345,7 +407,10 @@
      Else set it based on the OS
   -->
   <if>
-    <isset property="platform.dll.ext"/>
+    <and>
+      <isset property="platform.dll.ext"/>
+      <length string="${platform.dll.ext}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="dll.ext" value="${platform.dll.ext}"/>
     </then>
@@ -365,7 +430,10 @@
      Else set it based on the OS
   -->
   <if>
-    <isset property="platform.lib.prefix"/>
+    <and>
+      <isset property="platform.lib.prefix"/>
+      <length string="${platform.lib.prefix}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="lib.prefix" value="${platform.lib.prefix}"/>
     </then>
@@ -390,7 +458,10 @@
      Else set it based on the OS
   -->
   <if>
-    <isset property="platform.object.ext"/>
+    <and>
+      <isset property="platform.object.ext"/>
+      <length string="${platform.object.ext}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="object.ext" value="${platform.object.ext}"/>
     </then>
@@ -415,7 +486,10 @@
      Else set it based on the OS
   -->
   <if>
-    <isset property="platform.exe.ext"/>
+    <and>
+      <isset property="platform.exe.ext"/>
+      <length string="${platform.exe.ext}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="exe.ext" value="${platform.exe.ext}"/>
     </then>
@@ -440,7 +514,10 @@
      Else set it based on the OS
   -->
   <if>
-    <isset property="platform.script.ext"/>
+    <and>
+      <isset property="platform.script.ext"/>
+      <length string="${platform.script.ext}" when="greater" length="0" trim="true"/>
+    </and>
     <then>
       <property name="script.ext" value="${platform.script.ext}"/>
     </then>
@@ -458,12 +535,80 @@
     </else>
   </if>
 
+  <condition property="windows" value="true">
+    <os family="windows"/>
+  </condition>
+
+  <condition property="mac" value="true">
+    <os family="mac"/>
+  </condition>
+
+  <condition property="unix" value="true">
+    <os family="unix"/>
+  </condition>
+
+  <!--
+     Base compiler definition
+    -->
+  <compiler id="Tuscany-BaseCompiler" multithreaded="true" exceptions="true" rtti="true">
+    <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE,_USRDLL,_WINDOWS"/>
+    <defineset if="mac" define="IS_DARWIN"/>
+    <includepath path="${sdo.include.dir}"/>
+    <includepath path="${tuscanySCA.root.src.dir}"/>
+    <includepath path="${tuscanySCA.root.src.dir}/core/src"/>
+  </compiler>
+
+  <!--
+     Specific compiler definitions
+    -->
+  <compiler id="msvc-Compiler" extends="Tuscany-BaseCompiler" name="msvc"/>
+  <compiler id="msvc8-Compiler" extends="Tuscany-BaseCompiler" name="msvc" exceptions="false">
+    <compilerarg value="/EHsc"/>
+  </compiler>
+  <compiler id="g++-Compiler" extends="Tuscany-BaseCompiler" name="g++"/>
+ 
+  <!-- Used for cross compilation with the -m32 flag -->
+  <compiler id="g++m32-Compiler" extends="Tuscany-BaseCompiler" name="g++">
+    <compilerarg value="-m32"/>
+  </compiler>
+
+  <!--
+     Base linker definition
+    -->
+  <linker id="Tuscany-BaseLinker">
+    <syslibset if="windows" libs="kernel32,user32,ws2_32"/>
+    <syslibset if="unix" libs="dl"/>
+    <libset dir="${sdo.lib.dir}" libs="tuscany_sdo"/>
+  </linker>
+
+  <!--
+     Specific linker definitions
+    -->
+  <linker id="msvc-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
+  <linker id="msvc8-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
+  <linker id="g++-Linker" extends="Tuscany-BaseLinker" name="g++"/>
+  <linker id="g++m32-Linker" extends="Tuscany-BaseLinker" name="g++">
+    <linkerarg value="-m32"/>
+  </linker>
+
+  <if>
+    <and>
+      <isset property="platform.external.definitions.file"/>
+      <length string="${platform.external.definitions.file}" when="greater" length="0" trim="true"/>
+    </and>
+    <then>
+      <property name="external.definitions.file" value="${platform.external.definitions.file}"/>
+      <import file="${external.definitions.file}"/>
+    </then>
+  </if>
+  <property name="external.definitions.file" value=""/>
+
   <target name="display.system" depends="check.ws,check.python,check.php,check.ruby,check.rest">
 
     <!-- Tuscany paths, etc -->
     <echo message=" "/>
     <echo message="TuscanySCA paths"/>
-    <echo message="  tuscanySDO.install.dir=      ${tuscanySDO.install.dir}"/>
+    <echo message="  tuscanySCA.install.dir=      ${tuscanySCA.install.dir}"/>
     <echo message="  tuscanySCA.root.dir=         ${tuscanySCA.root.dir}"/>
     <echo message="  tuscanySCA.root.src.dir=     ${tuscanySCA.root.src.dir}"/>
     <echo message="  tuscanySCA.install.dir=      ${tuscanySCA.install.dir}"/>
@@ -473,12 +618,14 @@
     <echo message=" "/>
     <echo message="TuscanySCA compiler configuration"/>
     <echo message="  compiler.name=               '${compiler.name}'"/>
+    <echo message="  debug.compile=               '${debug.compile}'"/>
     <echo message="  lib.ext=                     '${lib.ext}'"/>
     <echo message="  dll.ext=                     '${dll.ext}'"/>
     <echo message="  lib.prefix=                  '${lib.prefix}'"/>
     <echo message="  object.ext=                  '${object.ext}'"/>
     <echo message="  exe.ext=                     '${exe.ext}'"/>
     <echo message="  script.ext=                  '${script.ext}'"/>
+    <echo message="  external.definitions.file=   '${external.definitions.file}'"/>
 
     <!-- ws extention -->
     <if>
@@ -542,57 +689,5 @@
     <echo message=" "/>
 
   </target>
-
-
-  <condition property="windows" value="true">
-    <os family="windows"/>
-  </condition>
-
-  <condition property="mac" value="true">
-    <os family="mac"/>
-  </condition>
-
-  <!--
-     Base compiler definition
-    -->
-  <compiler id="Tuscany-BaseCompiler" multithreaded="true" exceptions="true" rtti="true">
-    <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE"/>
-    <defineset if="mac" define="IS_DARWIN"/>
-    <includepath path="${sdo.include.dir}"/>
-    <includepath path="${tuscanySCA.root.src.dir}"/>
-    <includepath path="${tuscanySCA.root.src.dir}/core/src"/>
-  </compiler>
-
-  <!--
-     Specific compiler definitions
-    -->
-  <compiler id="msvc-Compiler" extends="Tuscany-BaseCompiler" name="msvc"/>
-  <compiler id="msvc8-Compiler" extends="Tuscany-BaseCompiler" name="msvc" exceptions="false">
-    <compilerarg value="/EHsc"/>
-  </compiler>
-  <compiler id="g++-Compiler" extends="Tuscany-BaseCompiler" name="g++"/>
- 
-  <!-- Used for cross compilation with the -m32 flag -->
-  <compiler id="g++m32-Compiler" extends="Tuscany-BaseCompiler" name="g++">
-    <compilerarg value="-m32"/>
-  </compiler>
-
-  <!--
-     Base linker definition
-    -->
-  <linker id="Tuscany-BaseLinker">
-    <syslibset if="windows" libs="kernel32,user32,ws2_32"/>
-    <libset dir="${sdo.lib.dir}" libs="tuscany_sdo"/>
-  </linker>
-
-  <!--
-     Specific linker definitions
-    -->
-  <linker id="msvc-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
-  <linker id="msvc8-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
-  <linker id="g++-Linker" extends="Tuscany-BaseLinker" name="g++"/>
-  <linker id="g++m32-Linker" extends="Tuscany-BaseLinker" name="g++">
-    <linkerarg value="-m32"/>
-  </linker>
 
 </project>

@@ -41,7 +41,8 @@
     <sequential>
       <mkdir dir='@{objdir}'/>
       <cc subsystem='console'
-          objdir='@{objdir}'>
+          objdir='@{objdir}'
+          debug='${debug.compile}'>
             <compiler refid='${compiler.name}-Compiler'/>
             <fileset dir='@{srcdir}' includes='@{infiles}'/>
             <custom-cc-elements/>
@@ -72,7 +73,8 @@
       <mkdir dir='@{outdir}'/>
       <cc link='@{linktype}'
           subsystem='console'
-          outfile='@{outdir}/@{outfile}'>
+          outfile='@{outdir}/@{outfile}'
+          debug='${debug.compile}'>
             <linker refid='${compiler.name}-Linker'/>
             <fileset dir='@{indir}' includes='@{infiles}'/>
             <custom-ld-elements/>
@@ -91,7 +93,8 @@
       <mkdir dir='@{outdir}'/>
       <cc link='@{linktype}'
           subsystem='console'
-          outfile='@{outdir}/@{outfile}'>
+          outfile='@{outdir}/@{outfile}'
+          debug='${debug.compile}'>
             <linker refid='${compiler.name}-Linker'/>
             <fileset dir='@{indir}' includes='@{infiles}'/>
             <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
@@ -124,7 +127,8 @@
       <cc outtype='@{outtype}'
           subsystem='console'
           objdir='@{outdir}'
-          outfile='@{outdir}/@{outfile}'>
+          outfile='@{outdir}/@{outfile}'
+          debug='${debug.compile}'>
             <compiler refid='${compiler.name}-Compiler'/>
             <linker refid='${compiler.name}-Linker'/>
             <fileset dir='@{srcdir}' includes='@{infiles}'/>
