@@ -122,18 +122,19 @@ namespace tuscany
                     char tid[21];
                     formatThreadID(tid);
                     char messageBuffer[256];
-                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
 #if defined(WIN32)  || defined (_WINDOWS)
+                    int size = _vsnprintf(messageBuffer, 255, msg, variableArguments);
                     if (size == -1)
                     {
                         size = _vscprintf(msg, variableArguments);
                         char* bigMessageBuffer = new char[size+1];
-                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        _vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
                         logWriter->log(level, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #else
+                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
                     if (size > 255)
                     {
                         char* bigMessageBuffer = new char[size+1];
@@ -161,18 +162,19 @@ namespace tuscany
                     char tid[21];
                     formatThreadID(tid);
                     char messageBuffer[256];
-                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
 #if defined(WIN32)  || defined (_WINDOWS)
+                    int size = _vsnprintf(messageBuffer, 255, msg, variableArguments);
                     if (size == -1)
                     {
                         size = _vscprintf(msg, variableArguments);
                         char* bigMessageBuffer = new char[size+1];
-                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        _vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
                         logWriter->log(0, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #else
+                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
                     if (size > 255)
                     {
                         char* bigMessageBuffer = new char[size+1];
@@ -199,18 +201,19 @@ namespace tuscany
                     char tid[21];
                     formatThreadID(tid);
                     char messageBuffer[256];
-                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
 #if defined(WIN32)  || defined (_WINDOWS)
+                    int size = _vsnprintf(messageBuffer, 255, msg, variableArguments);
                     if (size == -1)
                     {
                         size = _vscprintf(msg, variableArguments);
                         char* bigMessageBuffer = new char[size+1];
-                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        _vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
                         logWriter->log(1, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #else
+                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
                     if (size > 255)
                     {
                         char* bigMessageBuffer = new char[size+1];
@@ -237,18 +240,19 @@ namespace tuscany
                     char tid[21];
                     formatThreadID(tid);
                     char messageBuffer[256];
-                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
 #if defined(WIN32)  || defined (_WINDOWS)
+                    int size = _vsnprintf(messageBuffer, 255, msg, variableArguments);
                     if (size == -1)
                     {
                         size = _vscprintf(msg, variableArguments);
                         char* bigMessageBuffer = new char[size+1];
-                        vsnprintf(bigMessageBuffer, size, msg, variableArguments);
+                        _vsnprintf(bigMessageBuffer, size, msg, variableArguments);
                         bigMessageBuffer[size] = '\0';
                         logWriter->log(2, tid, bigMessageBuffer);
                         delete bigMessageBuffer; 
                     }
 #else
+                    int size = vsnprintf(messageBuffer, 255, msg, variableArguments);
                     if (size > 255)
                     {
                         char* bigMessageBuffer = new char[size+1];
