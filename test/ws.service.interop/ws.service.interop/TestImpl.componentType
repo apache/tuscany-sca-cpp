@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<componentType xmlns="http://www.osoa.org/xmlns/sca/1.0">
-
-	<service name="TestService">
-		<interface.cpp header="Test.h"/>
-	</service>
-
-</componentType>
