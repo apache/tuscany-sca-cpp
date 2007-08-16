@@ -18,14 +18,15 @@
    under the License.
 -->
 
-<project name="tuscanyDriver" default="all">
+<project name="tuscanyDriver" default="all" basedir="../..">
 
-  <property file="../../antscripts/platform.properties"/>
-  <import file="${tuscanySCA.antscripts.dir}/compile-targets.xml"/>
+  <import file="${basedir}/antscripts/system.xml"/>
+  <import file="${basedir}/antscripts/compile-targets.xml"/>
 
   <property name="tuscanyServiceLoader.app" value="tuscanyServiceLoader"/>
   <property name="tuscanyServiceLoader.files" value="TuscanyServiceLoader.cpp main.cpp"/>
-  <property name="bin.dir" location="bin"/>
+  <property name="this.dir" location="${basedir}/tools/TuscanyDriver"/>
+  <property name="bin.dir" location="${this.dir}/bin"/>
   <property name="install.dir" location="${tuscanySCA.install.dir}/bin"/>
 
   <!--
@@ -49,26 +50,24 @@
   <target name="build">
     <sequential>
       <cpp-build
-          srcdir="."
+          srcdir="${this.dir}"
           infiles="${tuscanyServiceLoader.files}"
           outdir="${bin.dir}"
           outfile="${tuscanyServiceLoader.app}"
           outtype="executable">
         <custom-build-elements>
           <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+          <syslibset if="unix" libs="dl"/>
         </custom-build-elements>
       </cpp-build>
     </sequential>
   </target>
 
   <target name="install">
-    <sequential>
-      <mkdir dir="${install.dir}"/>
-      <copy todir="${install.dir}" overwrite='true'>
-        <fileset dir="${bin.dir}" includes="${tuscanyServiceLoader.app}"/>
-      </copy>
-      <chmod file="${install.dir}/${tuscanyServiceLoader.app}" perm="755"/>
-    </sequential>
+    <cpp-install-file
+        srcfile="${tuscanyServiceLoader.app}"
+        srcdir="${bin.dir}"
+        destdir="${install.dir}"/>
   </target>
 
 </project>

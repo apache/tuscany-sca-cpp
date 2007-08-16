@@ -132,7 +132,7 @@ namespace tuscany
               getComponentsFromComposite( includedComposite );
             }
 
-            log( "\nServices loaded correctly.\n", DATA_ALWAYS );
+            log( "\nServices loaded correctly.\n", DATA_BOTH );
           }
         }
         catch (const tuscany::sca::TuscanyRuntimeException &tuscanyE)
@@ -449,7 +449,7 @@ namespace tuscany
       {
         bool doLog = false;
 
-        if( type == DATA_ALWAYS )
+        if( type == DATA_BOTH )
         {
           doLog = true;
         } 
