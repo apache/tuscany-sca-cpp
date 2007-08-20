@@ -63,7 +63,7 @@ namespace tuscany
                 const char* msg_text = "");
             
             TuscanyRuntimeException(const TuscanyRuntimeException& c);
-            TuscanyRuntimeException(const SDORuntimeException& c);
+            TuscanyRuntimeException(const commonj::sdo::SDORuntimeException& c);
             
             // Destructor
             virtual  ~TuscanyRuntimeException();
@@ -202,7 +202,7 @@ namespace tuscany
             {
             }
             
-            SystemConfigurationException(const SDORuntimeException& c)
+            SystemConfigurationException(const commonj::sdo::SDORuntimeException& c)
                 : TuscanyRuntimeException(c)
             {
             }
@@ -228,7 +228,7 @@ namespace tuscany
             {
             }
             
-            ServiceInvocationException(const SDORuntimeException& c)
+            ServiceInvocationException(const commonj::sdo::SDORuntimeException& c)
                 : TuscanyRuntimeException(c)
             {
             }
@@ -256,7 +256,7 @@ namespace tuscany
             {
             }
             
-            ServiceDataException(const SDORuntimeException& c)
+            ServiceDataException(const commonj::sdo::SDORuntimeException& c)
                 : TuscanyRuntimeException(c)
             {
             }

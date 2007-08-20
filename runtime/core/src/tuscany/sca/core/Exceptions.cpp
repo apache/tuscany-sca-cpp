@@ -94,28 +94,13 @@ namespace tuscany
         // ========================================================================
         // Constructor
         // ========================================================================
-        TuscanyRuntimeException ::  TuscanyRuntimeException(const SDORuntimeException& c)
+        TuscanyRuntimeException ::  TuscanyRuntimeException(const commonj::sdo::SDORuntimeException& c)
         {
             class_name = new char[strlen(c.getEClassName()) + 1];
             strcpy(class_name, c.getEClassName());
             message_text = new char[strlen(c.getMessageText())+1];
             strcpy(message_text,c.getMessageText());
-            switch (c.getSeverity())
-            {
-                case SDORuntimeException::Normal:
-                    severity = Normal;
-                    break;
-                case SDORuntimeException::Warning:
-                    severity = Warning;
-                    break;
-                case SDORuntimeException::Error:
-                    severity = Error;
-                    break;
-                default:
-                    severity = Severe;
-                    break;
-            }
-
+            severity = Warning;
             const char* file = c.getFileName();
             unsigned long line = c.getLineNumber();
             const char* function = c.getFunctionName();
