@@ -115,37 +115,32 @@ namespace tuscany
                 DataObjectPtr props = getProperties();
 
                 // Get the property's type
-                try
+                PropertyPtr propProperty = props->getInstanceProperty(name);
+                if (!propProperty) {
+                  std::string msg("Property not found: ");
+                  msg += name;
+                  throwException(SystemConfigurationException, msg.c_str());
+                }
+                const Type& propType = propProperty->getType();
+                if (propType.isDataType())
                 {
-                    const Property& propProperty = props->getProperty(name);
-                    const Type& propType = propProperty.getType();
-                    if (propType.isDataType())
+                    if (propProperty->isMany())
                     {
-                        if (propProperty.isMany())
-                        {
-                            DataObjectList& dol = props->getList(propProperty);
-                            dol.append(value->getCString(""));
-                        }
-                        else
-                        {
-                            props->setCString(propProperty, value->getCString(""));
-                        }
+                        DataObjectList& dol = props->getList(*propProperty);
+                        dol.append(value->getCString(""));
                     }
                     else
                     {
-                        // Create a new instance of the DO
-                        // iterate over properties setting each one
-
-                        // for now:
-                        props->setDataObject(propProperty, value);
+                        props->setCString(*propProperty, value->getCString(""));
                     }
                 }
-                catch (SDORuntimeException& ex)
+                else
                 {
-                    // Configuration error: property is not defined
-                    throwException(SystemConfigurationException, ex);
+                    // Create a new instance of the DO
+                    // iterate over properties setting each one
+                    // for now:
+                    props->setDataObject(*propProperty, value);
                 }
-
             }
 
         } // End namespace model
