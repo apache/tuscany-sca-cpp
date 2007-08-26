@@ -107,7 +107,7 @@ namespace tuscany
                 
                 if (typeUri == "http://www.w3.org/2001/XMLSchema")                                
                 {
-                    typeUri = Type::SDOTypeNamespaceURI;
+                    typeUri = "commonj.sdo";
                     if (typeName == "string")
                     {
                         typeName = "String";
@@ -118,7 +118,7 @@ namespace tuscany
                     }
                     else if (typeName == "int")
                     {
-                        typeName = "Integer";
+                        typeName = "Int";
                     }
                     else if (typeName == "integer")
                     {

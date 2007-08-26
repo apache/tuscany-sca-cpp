@@ -27,6 +27,7 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
+#include "tuscany/sca/util/SDOUtils.h"
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/model/Reference.h"
 #include "tuscany/sca/model/ReferenceType.h"
@@ -46,6 +47,7 @@
 using namespace std;
 using namespace commonj::sdo;
 using namespace tuscany::sca::model;
+using namespace tuscany::sca::util;
 
 namespace tuscany
 {
@@ -194,7 +196,7 @@ namespace tuscany
                         case Type::IntType:
                             {
                                 long* intData = new long;
-                                *intData = inputDataObject->getInteger(pl[i]);
+                                *intData = inputDataObject->getInt(pl[i]);
                                 operation.addParameter(intData);
                             }
                             break;
@@ -230,6 +232,67 @@ namespace tuscany
                             break;
                         case Type::DataObjectType:
                             {
+                                if (!strcmp(pl[i].getType().getURI(), SDOUtils::sdoURI) &&
+                                    !strcmp(pl[i].getType().getName(), "OpenDataObject")) {
+                                    
+                                        /*
+                                     * This code deals with xsd:any element parameters
+                                     * Get each element as a DataObject and add in to the parameter list
+                                     */
+                
+                                    DataObjectList& dataObjectList = inputDataObject->getList(pl[i]);
+                                
+                                    for(int j=0; j<dataObjectList.size(); j++)
+                                    {
+                                        DataObjectPtr dob = dataObjectList[j];
+                                        if(!dob)
+                                        {
+                                        
+                                            // Add a null DataObject ptr
+                                            DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                            *dataObjectData = NULL; 
+                                            loginfo("Null OpenDataObject parameter named %s[%d]", name, j);
+                                            operation.addParameter(dataObjectData);
+                                        }
+                                        else
+                                        {
+                                        
+                                            SequencePtr sequence = dob->getSequence();
+                                            if (sequence->size()!=0)
+                                            {
+                                                // Add a text element        
+                                                if (sequence->isText(0))
+                                                {                                        
+                                                    string* stringData = new string(sequence->getCStringValue(0));
+                                                    operation.addParameter(stringData);
+                                                }
+                                                else
+                                                {
+                                                    // Add a complex element DataObject
+                                                    DataObjectPtr* dataObjectData =new DataObjectPtr;
+                                                    *dataObjectData = sequence->getDataObjectValue(0);
+                                                    if(!*dataObjectData)
+                                                    {
+                                                        loginfo("Null DataObject parameter named %s", name);
+                                                    }
+                                                    else
+                                                    {
+                                                        (*dataObjectData)->detach();
+                                                    }
+                                                    operation.addParameter(dataObjectData);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                // Empty content, add an empty string
+                                                loginfo("Empty OpenDataObject parameter named %s[%d]", name, j);
+                                                string* stringData = new string(""); 
+                                                operation.addParameter(stringData);
+                                            }    
+                                        }                       
+                                    }
+                                }
+                                else {
                                 DataObjectPtr* dataObjectData = new DataObjectPtr;
                                 if (pl[i].isMany())
                                 {
@@ -249,65 +312,6 @@ namespace tuscany
                                     (*dataObjectData)->detach();
                                 }
                                 operation.addParameter(dataObjectData);
-                            }
-                            break;
-                        case Type::OpenDataObjectType:
-                            {         
-                                /*
-                                 * This code deals with xsd:any element parameters
-                                 * Get each element as a DataObject and add in to the parameter list
-                                 */
-                
-                                DataObjectList& dataObjectList = inputDataObject->getList(pl[i]);
-                                
-                                for(int j=0; j<dataObjectList.size(); j++)
-                                {
-                                    DataObjectPtr dob = dataObjectList[j];
-                                    if(!dob)
-                                    {
-                                        
-                                        // Add a null DataObject ptr
-                                        DataObjectPtr* dataObjectData = new DataObjectPtr;
-                                        *dataObjectData = NULL; 
-                                        loginfo("Null OpenDataObject parameter named %s[%d]", name, j);
-                                        operation.addParameter(dataObjectData);
-                                    }
-                                    else
-                                    {
-                                        
-                                        SequencePtr sequence = dob->getSequence();
-                                        if (sequence->size()!=0)
-                                        {
-                                            // Add a text element        
-                                            if (sequence->isText(0))
-                                            {                                        
-                                                string* stringData = new string(sequence->getCStringValue(0));
-                                                operation.addParameter(stringData);
-                                            }
-                                            else
-                                            {
-                                                // Add a complex element DataObject
-                                                DataObjectPtr* dataObjectData =new DataObjectPtr;
-                                                *dataObjectData = sequence->getDataObjectValue(0);
-                                                if(!*dataObjectData)
-                                                {
-                                                    loginfo("Null DataObject parameter named %s", name);
-                                                }
-                                                else
-                                                {
-                                                    (*dataObjectData)->detach();
-                                                }
-                                                operation.addParameter(dataObjectData);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // Empty content, add an empty string
-                                            loginfo("Empty OpenDataObject parameter named %s[%d]", name, j);
-                                            string* stringData = new string(""); 
-                                            operation.addParameter(stringData);
-                                        }
-                                    }                       
                                 }
                             }
                             break;
@@ -480,27 +484,27 @@ namespace tuscany
                             }
                         case Operation::INT: 
                             {
-                                outputDataObject->setInteger(pl[i], *(int*)operation.getReturnValue());
+                                outputDataObject->setInt(pl[i], *(int*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::LONG: 
                             {
-                                outputDataObject->setInteger(pl[i], *(long*)operation.getReturnValue());
+                                outputDataObject->setInt(pl[i], *(long*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::USHORT: 
                             {
-                                outputDataObject->setInteger(pl[i], *(unsigned short*)operation.getReturnValue());
+                                outputDataObject->setInt(pl[i], *(unsigned short*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::UINT: 
                             {
-                                outputDataObject->setInteger(pl[i], *(unsigned int*)operation.getReturnValue());
+                                outputDataObject->setInt(pl[i], *(unsigned int*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::ULONG: 
                             {
-                                outputDataObject->setInteger(pl[i], *(unsigned long*)operation.getReturnValue());
+                                outputDataObject->setInt(pl[i], *(unsigned long*)operation.getReturnValue());
                                 break;
                             }
                         case Operation::FLOAT: 

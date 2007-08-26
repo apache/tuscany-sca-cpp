@@ -96,6 +96,7 @@ namespace tuscany
             public:
     
                 static SDOVisitor::RESULT accept(commonj::sdo::DataObjectPtr dataObject, SDOVisitor& visitor, SDOVisitor::DEPTH depth);
+                static const char* sdoURI;
     
             };
 

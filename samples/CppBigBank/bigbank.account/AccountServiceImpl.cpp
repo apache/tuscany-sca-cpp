@@ -101,7 +101,7 @@ namespace services
                     std::cout << "Fault from stock quote service" << e << std::endl;
                 }
                 stocks->setFloat("balance",
-                fromUSDollarToCurrency(stocks->getInteger("quantity") *
+                fromUSDollarToCurrency(stocks->getInt("quantity") *
                 value));
                 dl.append(stocks);
             }

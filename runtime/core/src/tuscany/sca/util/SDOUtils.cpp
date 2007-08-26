@@ -104,6 +104,8 @@ namespace tuscany
                 return SDOVisitor::RESULT_CONTINUE;
             }
             
+            const char* SDOUtils::sdoURI   = "commonj.sdo";        
+
             SDOVisitor::RESULT SDOUtils::accept(DataObjectPtr dataObject, SDOVisitor& visitor, SDOVisitor::DEPTH depth)
             {
                 SDOVisitor::RESULT result = SDOVisitor::RESULT_CONTINUE;
@@ -164,7 +166,7 @@ namespace tuscany
                                     break;
                                 case Type::IntType: 
                                     {
-                                        result = visitor.visit(dataObject, seqProperty, (long)sequence->getIntegerValue(i));
+                                        result = visitor.visit(dataObject, seqProperty, (long)sequence->getIntValue(i));
                                     }
                                     break;
                                 case Type::ShortType:
@@ -281,7 +283,7 @@ namespace tuscany
                                             break;
                                         case Type::IntType: 
                                             {
-                                                result = visitor.visit(dataObject, pl[i], (long)doList.getInteger(li));
+                                                result = visitor.visit(dataObject, pl[i], (long)doList.getInt(li));
                                             }
                                             break;
                                         case Type::ShortType:
@@ -363,7 +365,7 @@ namespace tuscany
                                         break;
                                     case Type::IntType: 
                                         {
-                                            result = visitor.visit(dataObject, pl[i], (long)dataObject->getInteger(pl[i]));
+                                            result = visitor.visit(dataObject, pl[i], (long)dataObject->getInt(pl[i]));
                                         }
                                         break;
                                     case Type::ShortType:

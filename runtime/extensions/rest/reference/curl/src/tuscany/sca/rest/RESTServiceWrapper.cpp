@@ -29,6 +29,7 @@
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/core/Exceptions.h"
 #include "tuscany/sca/util/Utils.h"
+#include "tuscany/sca/util/SDOUtils.h"
 #include "RESTServiceWrapper.h"
 #include "tuscany/sca/core/Operation.h"
 #include "tuscany/sca/core/SCARuntime.h"
@@ -1119,7 +1120,7 @@ namespace tuscany
                 case Type::IntType:
                     {
                         long* intData = new long;
-                        *intData = outputDataObject->getInteger(pl[i]);
+                        *intData = outputDataObject->getInt(pl[i]);
                         operation.setReturnValue(intData);
                     }
                     break;
@@ -1138,73 +1139,75 @@ namespace tuscany
                     break;
                 case Type::DataObjectType:
                     {
-                        DataObjectPtr* dataObjectData = new DataObjectPtr;
-                        *dataObjectData = outputDataObject->getDataObject(pl[i]);
-                        if(!*dataObjectData)
-                        {
-                            loginfo("Null SDO DataObject return value");
-                        }
-                        else
-                        {
-                            (*dataObjectData)->detach();
-                        }
-                        operation.setReturnValue(dataObjectData);
-                    }
-                    break;
-                case Type::OpenDataObjectType:
-                    {         
-                        /*
-                         * This code deals with xsd:any element parameters
-                         * Get each element as a DataObject and add in to the parameter list
-                         */
-                        DataObjectList& dataObjectList = outputDataObject->getList(pl[i]);
-                        
-                        for(unsigned int j=0; j<dataObjectList.size(); j++)
-                        {
-                            DataObjectPtr dob = dataObjectList[j];
-                            if(!dob)
+                        if (!strcmp(pl[0].getType().getURI(), SDOUtils::sdoURI) &&
+                            !strcmp(pl[0].getType().getName(), "OpenDataObject")) {
+
+                            /*
+                             * This code deals with xsd:any element parameters
+                             * Get each element as a DataObject and add in to the parameter list
+                             */
+                            DataObjectList& dataObjectList = outputDataObject->getList(pl[i]);
+                            
+                            for(unsigned int j=0; j<dataObjectList.size(); j++)
                             {
-                                DataObjectPtr* dataObjectData = new DataObjectPtr;
-                                *dataObjectData = NULL;
-                                operation.setReturnValue(dataObjectData);
-                                loginfo("Null OpenDataObject return value");
-                            }
-                            else 
-                            {
-                                
-                                SequencePtr sequence = dob->getSequence();
-                                if (sequence->size()!=0)
+                                DataObjectPtr dob = dataObjectList[j];
+                                if(!dob)
                                 {
-                                    // Return a text element        
-                                    if (sequence->isText(0))
-                                    {                                        
-                                        string* stringData = new string(sequence->getCStringValue(0));
-                                        operation.setReturnValue(stringData);
-                                    }
-                                    else
+                                    DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                    *dataObjectData = NULL;
+                                    operation.setReturnValue(dataObjectData);
+                                    loginfo("Null OpenDataObject return value");
+                                }
+                                else 
+                                {
+                                    
+                                    SequencePtr sequence = dob->getSequence();
+                                    if (sequence->size()!=0)
                                     {
-                                        // Return a DataObject representing a complex element
-                                        DataObjectPtr* dataObjectData = new DataObjectPtr;
-                                        *dataObjectData = sequence->getDataObjectValue(0);
-                                        if(!*dataObjectData)
-                                        {
-                                            loginfo("Null DataObject return value");
+                                        // Return a text element        
+                                        if (sequence->isText(0))
+                                        {                                        
+                                            string* stringData = new string(sequence->getCStringValue(0));
+                                            operation.setReturnValue(stringData);
                                         }
                                         else
                                         {
-                                            (*dataObjectData)->detach();
+                                            // Return a DataObject representing a complex element
+                                            DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                            *dataObjectData = sequence->getDataObjectValue(0);
+                                            if(!*dataObjectData)
+                                            {
+                                                loginfo("Null DataObject return value");
+                                            }
+                                            else
+                                            {
+                                                (*dataObjectData)->detach();
+                                            }
+                                            operation.setReturnValue(dataObjectData);
                                         }
-                                        operation.setReturnValue(dataObjectData);
+                                    }
+                                    else
+                                    {
+                                        // Empty content, add an empty string
+                                        loginfo("Null OpenDataObject return value");
+                                        string *stringData = new string(""); 
+                                        operation.setReturnValue(stringData);
                                     }
                                 }
-                                else
-                                {
-                                    // Empty content, add an empty string
-                                    loginfo("Null OpenDataObject return value");
-                                    string *stringData = new string(""); 
-                                    operation.setReturnValue(stringData);
-                                }
                             }
+                        }
+                        else {
+                            DataObjectPtr* dataObjectData = new DataObjectPtr;
+                            *dataObjectData = outputDataObject->getDataObject(pl[i]);
+                            if(!*dataObjectData)
+                            {
+                                loginfo("Null SDO DataObject return value");
+                            }
+                            else
+                            {
+                                (*dataObjectData)->detach();
+                            }
+                            operation.setReturnValue(dataObjectData);
                         }
                     }
                     break;

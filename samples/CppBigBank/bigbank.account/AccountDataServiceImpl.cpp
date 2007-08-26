@@ -122,7 +122,7 @@ namespace services
 
                 newaccount->setCString("symbol","IBM");
 
-                newaccount->setInteger("quantity",100);
+                newaccount->setInt("quantity",100);
 
                 return newaccount;
 

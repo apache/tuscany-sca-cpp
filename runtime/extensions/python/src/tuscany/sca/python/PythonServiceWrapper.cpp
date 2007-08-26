@@ -970,7 +970,7 @@ namespace tuscany
                         case Type::ShortType:
                         case Type::IntType:
                             {
-                                property = PyInt_FromLong(properties->getInteger(pl[i]));
+                                property = PyInt_FromLong(properties->getInt(pl[i]));
                                 break;
                             }
                         case Type::DoubleType:
@@ -980,7 +980,6 @@ namespace tuscany
                                 break;
                             }
                         case Type::DataObjectType:
-                        case Type::OpenDataObjectType:
                             {
                                 // Serialize a DataObject and create a python string object from the XML
                                 DataObjectPtr data = properties->getDataObject(pl[i]);                                

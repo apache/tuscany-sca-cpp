@@ -41,6 +41,7 @@
 #include "tuscany/sca/core/SCARuntime.h"
 #include "tuscany/sca/util/Logging.h"
 #include "tuscany/sca/util/Utils.h"
+#include "tuscany/sca/util/SDOUtils.h"
 #include "model/WSServiceBinding.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/Exceptions.h"
@@ -56,6 +57,7 @@ using namespace std;
 using namespace commonj::sdo;
 using namespace commonj::sdo_axiom;
 using namespace tuscany::sca::model;
+using namespace tuscany::sca::util;
 
 
 namespace tuscany
@@ -321,7 +323,7 @@ namespace tuscany
             axiom_node_t* Axis2Client::createPayload(Operation& operation, 
                 const WSDLOperation& wsdlOperation,
                 axis2_env_t* env)
-            {	
+            {    
                 logentry();
 
                 axiom_node_t* request_node = NULL;
@@ -364,7 +366,7 @@ namespace tuscany
                         
                         // The input wrapper type is not known, create an open DataObject 
                         //inputDataObject = dataFactory->create("http://tempuri.org", "Wrapper");
-                        inputDataObject = dataFactory->create(Type::SDOTypeNamespaceURI, "OpenDataObject");
+                        inputDataObject = dataFactory->create(SDOUtils::sdoURI, "OpenDataObject");
                     }
                 }
                         
@@ -482,7 +484,7 @@ namespace tuscany
                             }
                         case Operation::INT: 
                             {
-                                inputDataObject->setInteger(i, *(int*)parm.getValue());
+                                inputDataObject->setInt(i, *(int*)parm.getValue());
                                 break;
                             }
                         case Operation::LONG: 
@@ -492,17 +494,17 @@ namespace tuscany
                             }
                         case Operation::USHORT: 
                             {
-                                inputDataObject->setInteger(i, *(unsigned short*)parm.getValue());
+                                inputDataObject->setInt(i, *(unsigned short*)parm.getValue());
                                 break;
                             }
                         case Operation::UINT: 
                             {
-                                inputDataObject->setInteger(i, *(unsigned int*)parm.getValue());
+                                inputDataObject->setInt(i, *(unsigned int*)parm.getValue());
                                 break;
                             }
                         case Operation::ULONG: 
                             {
-                                inputDataObject->setInteger(i, *(unsigned long*)parm.getValue());
+                                inputDataObject->setInt(i, *(unsigned long*)parm.getValue());
                                 break;
                             }
                         case Operation::FLOAT: 
@@ -560,7 +562,7 @@ namespace tuscany
                  Operation& operation, 
                  const WSDLOperation& wsdlOperation,
                  axis2_env_t* env)
-             {	
+             {    
                 logentry();
                  
                 DataFactoryPtr dataFactory = compositeReference->getComposite()->getDataFactory();
@@ -712,7 +714,7 @@ namespace tuscany
                     case Type::IntType:
                         {
                             long* intData = new long;
-                            *intData = outputDataObject->getInteger(pl[0]);
+                            *intData = outputDataObject->getInt(pl[0]);
                             operation.setReturnValue(intData);
                         }
                         break;
@@ -731,73 +733,75 @@ namespace tuscany
                         break;
                     case Type::DataObjectType:
                         {
-                            DataObjectPtr* dataObjectData = new DataObjectPtr;
-                            *dataObjectData = outputDataObject->getDataObject(pl[0]);
-                            if(!*dataObjectData)
-                            {
-                                loginfo("Null DataObject return value");
-                            }
-                            else
-                            {
-                               (*dataObjectData)->detach();
-                            }
-                            operation.setReturnValue(dataObjectData);
-                        }
-                        break;
-                    case Type::OpenDataObjectType:
-                        {         
-                            /*
-                             * This code deals with xsd:any element parameters
-                             */
+                            if (!strcmp(pl[0].getType().getURI(), SDOUtils::sdoURI) &&
+                                !strcmp(pl[0].getType().getName(), "OpenDataObject")) {
+
+                                /*
+                                 * This code deals with xsd:any element parameters
+                                 */
             
-                            DataObjectList& dataObjectList = outputDataObject->getList(pl[0]);
+                                DataObjectList& dataObjectList = outputDataObject->getList(pl[0]);
                             
-                            for(unsigned int j=0; j<dataObjectList.size(); j++)
-                            {
-                                DataObjectPtr dob = dataObjectList[j];
-                                if(!dob)
+                                for(unsigned int j=0; j<dataObjectList.size(); j++)
                                 {
-                                    DataObjectPtr* dataObjectData = new DataObjectPtr;
-                                    *dataObjectData = NULL;
-                                    operation.setReturnValue(dataObjectData);
-                                    loginfo("Null OpenDataObject return value");
-                                }
-                                else 
-                                {
-                                    
-                                    SequencePtr sequence = dob->getSequence();
-                                    if (sequence->size()!=0)
+                                    DataObjectPtr dob = dataObjectList[j];
+                                    if(!dob)
                                     {
-                                        // Return a text element        
-                                        if (sequence->isText(0))
-                                        {                                        
-                                            string* stringData = new string(sequence->getCStringValue(0));
-                                            operation.setReturnValue(stringData);
-                                        }
-                                        else
+                                        DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                        *dataObjectData = NULL;
+                                        operation.setReturnValue(dataObjectData);
+                                        loginfo("Null OpenDataObject return value");
+                                    }
+                                    else 
+                                    {
+                                    
+                                        SequencePtr sequence = dob->getSequence();
+                                        if (sequence->size()!=0)
                                         {
-                                            // Return a DataObject representing a complex element
-                                            DataObjectPtr *dataObjectData = new DataObjectPtr;
-                                            *dataObjectData = sequence->getDataObjectValue(0);
-                                            if(!*dataObjectData)
-                                            {
-                                                loginfo("Null DataObject return value");
+                                            // Return a text element        
+                                            if (sequence->isText(0))
+                                            {                                        
+                                                string* stringData = new string(sequence->getCStringValue(0));
+                                                operation.setReturnValue(stringData);
                                             }
                                             else
                                             {
-                                                (*dataObjectData)->detach();
+                                                // Return a DataObject representing a complex element
+                                                DataObjectPtr *dataObjectData = new DataObjectPtr;
+                                                *dataObjectData = sequence->getDataObjectValue(0);
+                                                if(!*dataObjectData)
+                                                {
+                                                    loginfo("Null DataObject return value");
+                                                }
+                                                else
+                                                {
+                                                    (*dataObjectData)->detach();
+                                                }
+                                                operation.setReturnValue(dataObjectData);
                                             }
-                                            operation.setReturnValue(dataObjectData);
+                                        }    
+                                        else
+                                        {
+                                            // Empty content, add an empty string
+                                            loginfo("Null OpenDataObject return value");
+                                            string *stringData = new string(""); 
+                                            operation.setReturnValue(stringData);
                                         }
                                     }
-                                    else
-                                    {
-                                        // Empty content, add an empty string
-                                        loginfo("Null OpenDataObject return value");
-                                        string *stringData = new string(""); 
-                                        operation.setReturnValue(stringData);
-                                    }
                                 }
+                            }
+                            else {
+                                DataObjectPtr* dataObjectData = new DataObjectPtr;
+                                *dataObjectData = outputDataObject->getDataObject(pl[0]);
+                                if(!*dataObjectData)
+                                {
+                                    loginfo("Null DataObject return value");
+                                }
+                                else
+                                {
+                                (*dataObjectData)->detach();
+                                }
+                                operation.setReturnValue(dataObjectData);
                             }
                         }
                         break;
