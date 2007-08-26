@@ -114,7 +114,7 @@ namespace services
             // Get the "currency" property
             ComponentContext myContext = ComponentContext::getCurrent();
     
-            commonj::sdo::DataObjectInstance properties = myContext.getProperties();
+            commonj::sdo::DataObjectPtr properties = myContext.getProperties();
             if (properties)
             {
                 const char* currency = properties->getCString("currency");
