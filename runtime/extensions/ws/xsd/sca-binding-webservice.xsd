@@ -22,6 +22,8 @@
     targetNamespace="http://www.osoa.org/xmlns/sca/1.0"
     xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
     elementFormDefault="qualified">
+
+    <include schemaLocation="../../../../runtime/core/xsd/sca-core.xsd"/>
     
     <element name="binding.ws" type="sca:WebServiceBinding" substitutionGroup="sca:binding"/>
     <complexType name="WebServiceBinding">

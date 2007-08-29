@@ -23,6 +23,8 @@
     xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
     elementFormDefault="qualified">
     
+    <include schemaLocation="../../../../runtime/core/xsd/sca-core.xsd"/>
+    
     <element name="interface.rest" type="sca:RESTInterface" substitutionGroup="sca:interface"/>
     <complexType name="RESTInterface">
         <complexContent>

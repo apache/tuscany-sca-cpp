@@ -23,6 +23,8 @@
     xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
     elementFormDefault="qualified">
     
+    <include schemaLocation="../../../../runtime/core/xsd/sca-core.xsd"/>
+    
     <element name="interface.python" type="sca:PythonInterface" substitutionGroup="sca:interface"/>
     <complexType name="PythonInterface">
         <complexContent>
