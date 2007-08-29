@@ -19,8 +19,6 @@
 
 /* $Rev$ $Date$ */
 
-#include "commonj/sdo/TypeDefinitions.h"
-
 #include "tuscany/sca/export.h"
 #include "tuscany/sca/util/Utils.h"
 #include "tuscany/sca/core/Exceptions.h"
