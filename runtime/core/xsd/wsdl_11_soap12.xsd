@@ -20,7 +20,7 @@ No other rights are granted by implication, estoppel or otherwise.
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://schemas.xmlsoap.org/wsdl/soap12/">
 
-  <xs:import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+  <xs:import schemaLocation="wsdl_11.xsd" namespace="http://schemas.xmlsoap.org/wsdl/"/>
 
   <xs:complexType name="tExtensibilityElementOpenAttrs">
     <xs:complexContent>

@@ -31,7 +31,8 @@ No other rights are granted by implication, estoppel or otherwise.
   -->
 <schema targetNamespace="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://www.w3.org/2001/XMLSchema">
 
-	<import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+	<import schemaLocation="wsdl_11.xsd" namespace="http://schemas.xmlsoap.org/wsdl/"/>
+
    	<element name="content" type="mime:contentType"/>
    	<complexType name="contentType">
 		<complexContent>

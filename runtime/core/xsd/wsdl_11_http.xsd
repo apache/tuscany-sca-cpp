@@ -32,7 +32,7 @@ No other rights are granted by implication, estoppel or otherwise.
   -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://schemas.xmlsoap.org/wsdl/http/">
 
-	<import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+	<import schemaLocation="wsdl_11.xsd" namespace="http://schemas.xmlsoap.org/wsdl/"/>
 
    	<element name="address" type="http:addressType"/>
 
