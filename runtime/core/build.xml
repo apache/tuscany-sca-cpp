@@ -165,7 +165,12 @@
            sca-implementation-java.xsd
            sca-interface-java.xsd
            sca-interface-wsdl.xsd
-           tuscany.xsd"/>
+           tuscany.xsd
+           wsdl_11_http.xsd
+           wsdl_11_mime.xsd
+           wsdl_11_soap12.xsd
+           wsdl_11_soap.xsd
+           wsdl_11.xsd"/>
 
   <!--
     Public targets
