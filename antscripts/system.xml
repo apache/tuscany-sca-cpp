@@ -55,6 +55,23 @@
   <property name="sdo.lib.dir"     location="${tuscanySDO.install.dir}/lib"/>
 
   <!--
+     Configure the SDO impl library name which allows for sdo impls other than tuscanySDO
+     Take the override value from platform.properties if set
+  -->
+  <if>
+    <and>
+      <isset property="platform.sdo.impl.library.name"/>
+      <length string="${platform.sdo.impl.library.name}" when="greater" length="0" trim="true"/>
+    </and>
+    <then>
+      <property name="sdo.impl.library.name" value="${platform.sdo.impl.library.name}"/>
+    </then>
+    <else>
+      <property name="sdo.impl.library.name" value="tuscany_sdo"/>
+    </else>
+  </if>
+
+  <!--
      Configure the tuscanySCA.root.dir
      Take the override value from platform.properties if set
   -->
@@ -577,8 +594,6 @@
     -->
   <linker id="Tuscany-BaseLinker">
     <syslibset if="windows" libs="kernel32,user32,ws2_32"/>
-    <syslibset if="unix" libs="dl"/>
-    <libset dir="${sdo.lib.dir}" libs="tuscany_sdo"/>
   </linker>
 
   <!--
@@ -586,8 +601,11 @@
     -->
   <linker id="msvc-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
   <linker id="msvc8-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
-  <linker id="g++-Linker" extends="Tuscany-BaseLinker" name="g++"/>
+  <linker id="g++-Linker" extends="Tuscany-BaseLinker" name="g++">
+    <syslibset libs="dl"/>
+  </linker>
   <linker id="g++m32-Linker" extends="Tuscany-BaseLinker" name="g++">
+    <syslibset libs="dl"/>
     <linkerarg value="-m32"/>
   </linker>
 
@@ -613,6 +631,7 @@
     <echo message="  tuscanySCA.root.src.dir=     ${tuscanySCA.root.src.dir}"/>
     <echo message="  tuscanySCA.install.dir=      ${tuscanySCA.install.dir}"/>
     <echo message="  tuscanySCA.library.version=  '${tuscanySCA.library.version}'"/>
+    <echo message="  tuscanySDO.install.dir=      ${tuscanySDO.install.dir}"/>
 
     <!-- compilers, libs, etc -->
     <echo message=" "/>
@@ -626,6 +645,7 @@
     <echo message="  exe.ext=                     '${exe.ext}'"/>
     <echo message="  script.ext=                  '${script.ext}'"/>
     <echo message="  external.definitions.file=   '${external.definitions.file}'"/>
+    <echo message="  sdo.impl.library.name=       '${sdo.impl.library.name}'"/>
 
     <!-- ws extention -->
     <if>

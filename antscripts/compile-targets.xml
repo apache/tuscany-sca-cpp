@@ -77,6 +77,7 @@
           debug='${debug.compile}'>
             <linker refid='${compiler.name}-Linker'/>
             <fileset dir='@{indir}' includes='@{infiles}'/>
+            <libset dir="${sdo.lib.dir}" libs="${sdo.impl.library.name}"/>
             <custom-ld-elements/>
       </cc>
     </sequential>
@@ -98,6 +99,7 @@
             <linker refid='${compiler.name}-Linker'/>
             <fileset dir='@{indir}' includes='@{infiles}'/>
             <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+            <libset dir="${sdo.lib.dir}" libs="${sdo.impl.library.name}"/>
             <custom-ld-elements/>
       </cc>
     </sequential>
@@ -132,6 +134,8 @@
             <compiler refid='${compiler.name}-Compiler'/>
             <linker refid='${compiler.name}-Linker'/>
             <fileset dir='@{srcdir}' includes='@{infiles}'/>
+            <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+            <libset dir="${sdo.lib.dir}" libs="${sdo.impl.library.name}"/>
             <custom-build-elements/>
       </cc>
 
@@ -290,6 +294,7 @@
     <attribute name="quiet" default="true"/>
     <attribute name="version" default="${tuscanySCA.library.version}"/>
     <sequential>
+      <delete quiet="@{quiet}" file="@{librootdir}/lib/${lib.prefix}@{lib}${lib.ext}"/>
       <delete quiet="@{quiet}" file="@{librootdir}/lib/${lib.prefix}@{lib}${lib.ext}@{version}"/>
       <if>
         <os family="windows"/>
