@@ -80,6 +80,7 @@
             <libset dir="${sdo.lib.dir}" libs="${sdo.impl.library.name}"/>
             <custom-ld-elements/>
       </cc>
+      <cpp-embed-manifest dir="@{outdir}" file="@{outfile}" outtype="@{outtype}"/>
     </sequential>
   </macrodef>
 
@@ -102,6 +103,7 @@
             <libset dir="${sdo.lib.dir}" libs="${sdo.impl.library.name}"/>
             <custom-ld-elements/>
       </cc>
+      <cpp-embed-manifest dir="@{outdir}" file="@{outfile}" outtype="@{outtype}"/>
     </sequential>
   </macrodef>
 
@@ -138,7 +140,7 @@
             <libset dir="${sdo.lib.dir}" libs="${sdo.impl.library.name}"/>
             <custom-build-elements/>
       </cc>
-
+      <cpp-embed-manifest dir="@{outdir}" file="@{outfile}" outtype="@{outtype}"/>
     </sequential>
   </macrodef>
 
@@ -247,6 +249,37 @@
               link="@{linkdir}/@{link}"
               resource="@{resourcedir}/@{resource}"
               overwrite="true"/>
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
+
+  <!--
+    Embed the manifest in the library or executable on Windows only
+    Uses the Microsoft manifest tool "mt"
+    @param dir - the directory where the lib/exe resides
+    @param file - the filename with no suffixes or prefixes
+    @param outtype - the outtype that's passed to the cc task, used to create the filename
+    -->
+  <macrodef name="cpp-embed-manifest">
+    <attribute name="dir"/>
+    <attribute name="file"/>
+    <attribute name="outtype"/>
+      <sequential>
+      <if>
+        <os family="windows"/>
+        <then>
+          <if>
+            <equals arg1="@{outtype}" arg2="executable"/>
+            <then>
+              <property name="file.name" value="@{file}${exe.ext}"/>
+            </then>
+          </if>
+          <property name="file.name" value="${lib.prefix}@{file}${dll.ext}"/>
+
+          <exec executable="mt">
+            <arg line="-manifest @{dir}/${file.name}.manifest -outputresource:@{dir}/${file.name};2"/>
+          </exec>
         </then>
       </if>
     </sequential>
