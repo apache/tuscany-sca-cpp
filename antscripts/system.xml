@@ -382,10 +382,11 @@
       </condition>
 
       <condition property="compiler.name" value="g++">
-        <or>
-          <os family="unix"/>
-          <os family="mac"/>
-        </or>
+        <os family="unix"/>
+       </condition>
+
+      <condition property="compiler.name" value="mac_g++">
+        <os family="mac"/>
       </condition>
     </else>
   </if>
@@ -568,8 +569,6 @@
      Base compiler definition
     -->
   <compiler id="Tuscany-BaseCompiler" multithreaded="true" exceptions="true" rtti="true">
-    <defineset if="windows" define="WIN32,_CRT_SECURE_NO_DEPRECATE,_USRDLL,_WINDOWS"/>
-    <defineset if="mac" define="IS_DARWIN"/>
     <includepath path="${sdo.include.dir}"/>
     <includepath path="${tuscanySCA.root.src.dir}"/>
     <includepath path="${tuscanySCA.root.src.dir}/core/src"/>
@@ -577,38 +576,66 @@
 
   <!--
      Specific compiler definitions
+     The compilerarg location functionality completely omits the arg: antcontrib bug 1794857
     -->
-  <compiler id="msvc-Compiler" extends="Tuscany-BaseCompiler" name="msvc"/>
-  <compiler id="msvc8-Compiler" extends="Tuscany-BaseCompiler" name="msvc" exceptions="false">
-    <compilerarg value="/EHsc"/>
+  
+    <!-- MSVC compilers for windows -->
+  <compiler id="msvc-Compiler" extends="Tuscany-BaseCompiler" name="msvc">
+    <defineset define="WIN32,_CRT_SECURE_NO_DEPRECATE,_USRDLL,_WINDOWS"/>
   </compiler>
+
+    <!-- The standard msvc ant contrib cc task compiler doesnt work so well,
+         so we made our own until the bugs are resolved -->
+  <!--compiler id="msvc8-Compiler" extends="Tuscany-BaseCompiler" name="msvc"-->
+  <compiler id="msvc8-Compiler"
+            extends="Tuscany-BaseCompiler"
+            classname="tuscany.antCompilers.TuscanyMSVC8DevStudioCCompiler">
+    <defineset define="WIN32,_CRT_SECURE_NO_DEPRECATE,_USRDLL,_WINDOWS"/>
+  </compiler>
+
+     <!-- g++ compiler for most Unix platforms -->
   <compiler id="g++-Compiler" extends="Tuscany-BaseCompiler" name="g++"/>
  
-  <!-- Used for cross compilation with the -m32 flag -->
+    <!-- g++ 32 bit compiler for 64 bit platforms
+         Used for cross compilation with the -m32 flag -->
   <compiler id="g++m32-Compiler" extends="Tuscany-BaseCompiler" name="g++">
     <compilerarg value="-m32"/>
   </compiler>
 
-  <!--
-     Base linker definition
-    -->
-  <linker id="Tuscany-BaseLinker">
-    <syslibset if="windows" libs="kernel32,user32,ws2_32"/>
-  </linker>
+    <!-- g++ compiler for Apple mac -->
+  <compiler id="mac_g++-Compiler" extends="Tuscany-BaseCompiler" name="g++">
+    <defineset define="IS_DARWIN"/>
+  </compiler>
 
   <!--
      Specific linker definitions
+     The linker extends funcionality isnt working correctly: antcontrib bug 1794867
+     Specifically, the syslibset for dl was not working on Linux
     -->
-  <linker id="msvc-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
-  <linker id="msvc8-Linker" extends="Tuscany-BaseLinker" name="msvc"/>
-  <linker id="g++-Linker" extends="Tuscany-BaseLinker" name="g++">
+  <linker id="msvc-Linker" name="msvc">
+    <syslibset libs="kernel32,user32,ws2_32"/>
+  </linker>
+
+  <linker id="msvc8-Linker" name="msvc">
+    <syslibset libs="kernel32,user32,ws2_32"/>
+  </linker>
+
+  <linker id="g++-Linker" name="g++">
     <syslibset libs="dl"/>
   </linker>
-  <linker id="g++m32-Linker" extends="Tuscany-BaseLinker" name="g++">
+
+  <linker id="g++m32-Linker" name="g++">
     <syslibset libs="dl"/>
     <linkerarg value="-m32"/>
   </linker>
 
+  <linker id="mac_g++-Linker" name="g++">
+    <syslibset libs="dl"/>
+  </linker>
+
+  <!--
+    Setup the external definitions file, if there is one
+  -->
   <if>
     <and>
       <isset property="platform.external.definitions.file"/>

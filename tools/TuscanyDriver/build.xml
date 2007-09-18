@@ -40,7 +40,7 @@
   <target name="clean" description="Remove the TuscanyServiceLoader installation">
     <sequential>
       <delete dir="${bin.dir}"/>
-      <delete file="${install.dir}/${tuscanyServiceLoader.app}"/>
+      <delete file="${install.dir}/${tuscanyServiceLoader.app}${exe.ext}"/>
     </sequential>
   </target>
 
@@ -65,7 +65,7 @@
 
   <target name="install">
     <cpp-install-file
-        srcfile="${tuscanyServiceLoader.app}"
+        srcfile="${tuscanyServiceLoader.app}${exe.ext}"
         srcdir="${bin.dir}"
         destdir="${install.dir}"/>
   </target>

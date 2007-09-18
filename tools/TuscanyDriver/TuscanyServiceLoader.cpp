@@ -139,7 +139,7 @@ namespace tuscany
         {
           std::cerr << "Tuscany Runtime Exception: " << tuscanyE.getMessageText() << std::endl;
         }
-        catch (const SDORuntimeException &sdoE)
+        catch (const commonj::sdo::SDORuntimeException &sdoE)
         {
           std::cerr << "SDO Runtime Exception: " << sdoE.getMessageText() << std::endl;
         }
