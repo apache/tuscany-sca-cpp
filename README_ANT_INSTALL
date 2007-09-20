@@ -3,9 +3,12 @@ Using ant to build TuscanySCA Native
 This guide shows how to build TuscanySCA Native with apache ant. 
 Traditionally TuscanySCA was compiled with automake, but we decided
 it would be easier to maintain and more flexible if we switched to 
-ant. The ant build process is still in its beta and will be formalized
-for Release M4. Currently the only item remaining is to finish writing
-ant build files for the rest of the samples.
+ant. Above all, using ant will standardize the build system across 
+all platforms, obviating the need to support both automake and 
+microsoft VC projects.The ant build process is still in its beta 
+and will be formalized for Release M4. Currently the only item 
+remaining is to finish writing ant build files for the rest of the 
+samples.
 
 
 Required Software to build TuscanySCA Native with ant

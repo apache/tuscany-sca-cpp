@@ -117,6 +117,7 @@
         objdir="${lib.dir}"
         infiles="${php.core.cpp.files}">
       <custom-cc-elements>
+        <includepath path="${sdo.include.dir}"/>
         <includepath path="${this.dir}/src"/>
         <includepath path="${php.include.dir}"/>
         <includepath path="${php.include.dir}/main"/>
