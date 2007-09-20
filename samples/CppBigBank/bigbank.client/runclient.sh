@@ -42,5 +42,5 @@ export LD_LIBRARY_PATH=$TUSCANY_SCACPP/extensions/cpp/lib:$TUSCANY_SCACPP/lib:$T
 export TUSCANY_SCACPP_ROOT=$APFULLDIR/../
 export TUSCANY_SCACPP_COMPONENT=bigbank.AccountManagementComponent
 
-./account_client 1234
+./AccountClient 1234
 
