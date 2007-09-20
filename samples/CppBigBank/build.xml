@@ -38,7 +38,7 @@
     <property name="bigbank.phpwsclient.dir"    location="${this.dir}/bigbank.phpwsclient"/>
     <property name="scagen.jar"                 value="${tuscanySCA.install.dir}/extensions/cpp/bin/scagen.jar"/>
     <property name="CppBigBank.install.dir"
-              location="${tuscanySCA.install.dir}/samples/CppBigBank/deploy"/>
+              location="${tuscanySCA.install.dir}/samples/CppBigBank"/>
   </target>
 
   <!--

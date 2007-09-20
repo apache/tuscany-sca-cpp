@@ -29,8 +29,10 @@
     
   <import file="antscripts/system.xml"/>
 
-  <property name="runtime.core.dir" value="runtime/core"/>
-  <property name="extensions.dir" value="runtime/extensions"/>
+  <property name="runtime.core.dir"  location="runtime/core"/>
+  <property name="extensions.dir"    location="runtime/extensions"/>
+  <property name="samples.dir"       location="samples"/>
+  <property name="tools.dir"         location="tools"/>
  	
   <!--
     Public targets
@@ -53,9 +55,23 @@
     <antcall target="install.extensions"/>
   </target>
 
-  <target name="clean" description="Clean all TuscanyScaNative compiled source code">
+  <target name="samples" description="Build and Install all TuscanyScaNative samples">
+    <antcall target="build.samples"/>
+  </target>
+
+  <target name="tools" description="Build and Install all TuscanyScaNative tools">
+    <antcall target="build.tools"/>
+  </target>
+
+  <target name="tests" description="Build and run all TuscanyScaNative tests: Not implmented yet">
+    <!-- Complete this when the tests are ready -->
+  </target>
+
+  <target name="clean" description="Clean all TuscanyScaNative source code, samples, and tools">
     <antcall target="clean.core"/>
     <antcall target="clean.extensions"/>
+    <antcall target="clean.samples"/>
+    <antcall target="clean.tools"/>
   </target>
 
   <!--
@@ -80,12 +96,28 @@
     <ant target="install" antfile="${extensions.dir}/build.xml" inheritAll="false"/>
   </target>
 
+  <target name="build.samples">
+    <ant target="all" antfile="${samples.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="build.tools">
+    <ant target="all" antfile="${tools.dir}/build.xml" inheritAll="false"/>
+  </target>
+
   <target name="clean.core">
     <ant target="clean" antfile="${runtime.core.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean.extensions">
     <ant target="clean" antfile="${extensions.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="clean.tools">
+    <ant target="clean" antfile="${tools.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="clean.samples">
+    <ant target="clean" antfile="${samples.dir}/build.xml" inheritAll="false"/>
   </target>
 
 </project>

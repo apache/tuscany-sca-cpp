@@ -118,7 +118,7 @@
     <antcall target="compile.cpp.osoa"/>
     <antcall target="compile.cpp.core"/>
     <antcall target="compile.cpp.model"/>
-  	<ant target="scagen.jar" antfile="${scagen.abs.dir}/build.xml" inheritAll="false"/>
+    <ant target="scagen.jar" antfile="${scagen.abs.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="link" description="Link all TuscanyScaNative cpp extension source code">
@@ -147,7 +147,7 @@
         link="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"
         resourcedir="${cpp.extension.install.dir}/lib"
         resource="${lib.prefix}${tuscany.cpp.extension.lib}${lib.ext}"/>
-  	<ant target="install" antfile="${scagen.abs.dir}/build.xml" inheritAll="false"/>
+    <ant target="install" antfile="${scagen.abs.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean" description="Clean all TuscanyScaNative cpp extension compiled source code">

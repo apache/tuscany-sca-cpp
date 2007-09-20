@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<project name="TuscanyScaNative_Sample_CppCalculator" default="all" basedir="../..">
+
+  <import file="${basedir}/antscripts/system.xml"/>
+  <import file="${basedir}/antscripts/compile-targets.xml"/>
+
+  <!--
+    Notice that the basedir for this project is set to the TuscanySCA root dir
+    This makes path setting in system.xml much simpler, but we'll just have to
+    set a property here to this directory.
+  -->
+
+  <target name="init">
+    <tstamp/>
+    <property name="this.dir" location="${basedir}/samples/CppCalculator"/>
+    <property name="sample.calculator.dir"            location="${this.dir}/sample.calculator"/>
+    <property name="sample.calculator.build.dir"      location="${sample.calculator.dir}/build"/>
+    <property name="sample.calculator.client.dir"     location="${this.dir}/sample.calculator.client"/>
+    <property name="sample.calculator.client.build.dir"
+              location="${sample.calculator.client.dir}/build"/>
+    <property name="CppCalculator.install.dir"
+              location="${tuscanySCA.install.dir}/samples/CppCalculator"/>
+    <property name="scagen.jar"
+              value="${tuscanySCA.install.dir}/extensions/cpp/bin/scagen.jar"/>
+  </target>
+
+  <!--
+    Public targets
+  -->
+  <target name="all"
+          description="build and install the TuscanyScaNative CppCalculator sample">
+    <antcall target="build"/>
+    <antcall target="install"/>
+  </target>
+
+  <target name="build"
+          description="build the TuscanyScaNative CppCalculator sample">
+    <antcall target="build.sample.calculator"/>
+    <antcall target="build.sample.calculator.client"/>
+  </target>
+
+  <target name="install"
+          description="Install the TuscanyScaNative CppCalculator sample">
+    <antcall target="install.sample.calculator"/>
+    <antcall target="install.sample.calculator.client"/>
+  </target>
+
+  <target name="clean"
+          description="Clean the TuscanyScaNative CppCalculator sample">
+    <antcall target="clean.sample.calculator"/>
+    <antcall target="clean.sample.calculator.client"/>
+    <delete dir="${CppCalculator.install.dir}" quiet="true"/>
+  </target>
+
+  <!--
+    Internal targets
+    They can still be called, they're just not described, so wont show up in "ant -p"
+  -->
+
+    <!-- build -->
+
+  <target name="build.sample.calculator" depends="init">
+       <!-- scagen -->
+    <mkdir dir="${sample.calculator.build.dir}"/>
+    <java jar="${scagen.jar}" fork="true">
+      <arg line="-dir ${sample.calculator.dir} -output ${sample.calculator.build.dir}"/>
+    </java>
+
+    <!-- put all the cpp/h files together with the scagen'd files to make the library -->
+    <copy todir="${sample.calculator.build.dir}">
+      <fileset dir="${sample.calculator.dir}" includes="*.h"/>
+      <fileset dir="${sample.calculator.dir}" includes="*.cpp"/>
+    </copy>
+
+    <!-- build the library -->
+    <cpp-build
+        srcdir="${sample.calculator.build.dir}"
+        infiles="*.cpp"
+        outdir="${sample.calculator.build.dir}/.libs"
+        outfile="Calculator">
+      <custom-build-elements>
+        <includepath path="${tuscanySCA.install.dir}/include"/>
+        <includepath path="${tuscanySCA.install.dir}/extensions/cpp/include"/>
+        <libset dir="${tuscanySCA.install.dir}/extensions/cpp/lib" libs="tuscany_sca_cpp"/>
+        <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+      </custom-build-elements>
+    </cpp-build>
+  </target>
+
+  <target name="build.sample.calculator.client" depends="init">
+    <cpp-build
+        srcdir="${sample.calculator.client.dir}"
+        infiles="CalculatorClient.cpp"
+        outdir="${sample.calculator.client.build.dir}"
+        outfile="calculator_client"
+        outtype="executable">
+      <custom-build-elements>
+        <includepath path="${tuscanySCA.install.dir}/include"/>
+        <includepath path="${tuscanySCA.install.dir}/extensions/cpp/include"/>
+        <includepath path="${sample.calculator.dir}"/>
+        <libset dir="${tuscanySCA.install.dir}/extensions/cpp/lib" libs="tuscany_sca_cpp"/>
+        <libset dir="${tuscanySCA.install.dir}/lib" libs="tuscany_sca"/>
+        <syslibset unless="windows" libs="dl"/>
+      </custom-build-elements>
+    </cpp-build>
+  </target>
+
+    <!-- install -->
+
+  <target name="install.sample.calculator" depends="init">
+      <!-- Install all the componentType files -->
+    <cpp-install-files
+        files="*.componentType"
+        srcdir="${sample.calculator.dir}"
+        destdir="${CppCalculator.install.dir}/sample.calculator"/>
+
+      <!-- Install the composites -->
+    <cpp-install-files
+        files="sample.calculator.app.composite"
+        srcdir="${this.dir}"
+        destdir="${CppCalculator.install.dir}"/>
+
+    <cpp-install-files
+        files="sample.calculator.composite"
+        srcdir="${sample.calculator.dir}"
+        destdir="${CppCalculator.install.dir}/sample.calculator"/>
+
+      <!-- Install the library -->
+    <condition property="calculator.lib.ext" value="${dll.ext}">
+      <os family="windows"/>
+    </condition>
+    <property name="calculator.lib.ext" value="${lib.ext}"/>
+    <cpp-install-file
+        srcfile="${lib.prefix}Calculator${calculator.lib.ext}"
+        destfile="${lib.prefix}Calculator${calculator.lib.ext}${tuscanySCA.library.version}"
+        srcdir="${sample.calculator.build.dir}/.libs"
+        destdir="${CppCalculator.install.dir}/sample.calculator"/>
+    <cpp-symlink
+        linkdir="${CppCalculator.install.dir}/sample.calculator"
+        link="${lib.prefix}Calculator${calculator.lib.ext}"
+        resource="${lib.prefix}Calculator${calculator.lib.ext}${tuscanySCA.library.version}"/>
+  </target>
+
+  <target name="install.sample.calculator.client" depends="init">
+    <cpp-install-file
+        srcfile="runclient${script.ext}"
+        srcdir="${sample.calculator.client.dir}"
+        destdir="${CppCalculator.install.dir}/sample.calculator.client"/>
+    <cpp-install-file
+        srcfile="calculator_client${exe.ext}"
+        srcdir="${sample.calculator.client.build.dir}"
+        destdir="${CppCalculator.install.dir}/sample.calculator.client"/>
+  </target>
+
+    <!-- clean -->
+
+  <target name="clean.sample.calculator" depends="init">
+    <delete dir="${sample.calculator.build.dir}" quiet="true"/>
+    <delete dir="${CppCalculator.install.dir}/sample.calculator" quiet="true"/>
+    <delete file="${CppCalculator.install.dir}/sample.calculator.app.composite" quiet="true"/>
+  </target>
+
+  <target name="clean.sample.calculator.client" depends="init">
+    <delete dir="${sample.calculator.client.build.dir}" quiet="true"/>
+    <delete dir="${CppCalculator.install.dir}/sample.calculator.client" quiet="true"/>
+  </target>
+
+</project>

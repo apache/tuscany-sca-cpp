@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+
+<project name="TuscanyScaNative_samples" default="all" basedir="..">
+
+  <!--
+    This is the root level ant build.xml file for TuscanySCA Native samples
+    Nothing is actually performed here, it just delegates to subdirectory
+    build.xml files.
+  --> 
+    
+  <import file="${basedir}/antscripts/system.xml"/>
+  <import file="${basedir}/antscripts/compile-targets.xml"/>
+
+
+  <!--
+    Notice that the basedir for this project is set to the TuscanySCA root dir
+    This makes path setting in system.xml much simpler, but we'll just have to
+    set a property here to this directory.
+  -->
+  <property name="this.dir" location="${basedir}/samples"/>
+
+  <property name="AlertAggregator.dir"        location="${this.dir}/AlertAggregator"/>
+  <property name="CppBigBank.dir"             location="${this.dir}/CppBigBank"/>
+  <property name="CppCalculator.dir"          location="${this.dir}/CppCalculator"/>
+  <property name="HttpdBigBank.dir"           location="${this.dir}/HttpdBigBank"/>
+  <property name="PHPCalculator.dir"          location="${this.dir}/PHPCalculator"/>
+  <property name="PythonCalculator.dir"       location="${this.dir}/PythonCalculator"/>
+  <property name="PythonWeatherForecast.dir"  location="${this.dir}/PythonWeatherForecast"/>
+  <property name="RestCalculator.dir"         location="${this.dir}/RestCalculator"/>
+  <property name="RestCustomer.dir"           location="${this.dir}/RestCustomer"/>
+  <property name="RestYahoo.dir"              location="${this.dir}/RestYahoo"/>
+  <property name="RubyBigBank.dir"            location="${this.dir}/RubyBigBank"/>
+  <property name="RubyCalculator.dir"         location="${this.dir}/RubyCalculator"/>
+  <property name="SupplyChain.dir"            location="${this.dir}/SupplyChain"/>
+
+  <!--
+    Public targets
+  -->
+
+  <target name="all" description="Build and install all TuscanyScaNative samples">
+    <antcall target="AlertAggregator"/>
+    <antcall target="CppBigBank"/>
+    <antcall target="CppCalculator"/>
+    <antcall target="HttpdBigBank"/>
+    <antcall target="PHPCalculator"/>
+    <antcall target="PythonCalculator"/>
+    <antcall target="PythonWeatherForecast"/>
+    <antcall target="RestCalculator"/>
+    <antcall target="RestCustomer"/>
+    <antcall target="RestYahoo"/>
+    <antcall target="RubyBigBank"/>
+    <antcall target="RubyCalculator"/>
+    <antcall target="SupplyChain"/>
+  </target>
+
+       <!--
+         Using antfile and inheritAll="false" to maintain the subdir build.xml basedir settings
+       -->
+
+  <target name="AlertAggregator" description="Build and install the AlertAggregator sample">
+    <ant target="all" antfile="${AlertAggregator.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="CppBigBank" description="Build and install the CppBigBank sample">
+    <ant target="all" antfile="${CppBigBank.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="CppCalculator" description="Build and install the CppCalculator sample">
+    <ant target="all" antfile="${CppCalculator.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="HttpdBigBank" description="Build and install the HttpdBigBank sample">
+    <ant target="all" antfile="${HttpdBigBank.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="PHPCalculator" description="Build and install the PHPCalculator sample">
+    <ant target="all" antfile="${PHPCalculator.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="PythonCalculator" description="Build and install the PythonCalculator sample">
+    <ant target="all" antfile="${PythonCalculator.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="PythonWeatherForecast" description="Build and install the PythonWeatherForecast sample">
+    <ant target="all" antfile="${PythonWeatherForecast.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="RestCalculator" description="Build and install the RestCalculator sample">
+    <ant target="all" antfile="${RestCalculator.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="RestCustomer" description="Build and install the RestCustomer sample">
+    <ant target="all" antfile="${RestCustomer.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="RestYahoo" description="Build and install the RestYahoo sample">
+    <ant target="all" antfile="${RestYahoo.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="RubyBigBank" description="Build and install the RubyBigBank sample">
+    <ant target="all" antfile="${RubyBigBank.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="RubyCalculator" description="Build and install the RubyCalculator sample">
+    <ant target="all" antfile="${RubyCalculator.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="SupplyChain" description="Build and install the SupplyChain sample">
+    <ant target="all" antfile="${SupplyChain.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+    <!-- clean -->
+
+  <target name="clean" description="Clean all TuscanyScaNative samples">
+    <ant target="clean" antfile="${AlertAggregator.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${CppBigBank.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${CppCalculator.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${HttpdBigBank.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${PHPCalculator.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${PythonCalculator.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${PythonWeatherForecast.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${RestCalculator.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${RestCustomer.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${RestYahoo.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${RubyBigBank.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${RubyCalculator.dir}/build.xml" inheritAll="false"/>
+    <ant target="clean" antfile="${SupplyChain.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+</project>
