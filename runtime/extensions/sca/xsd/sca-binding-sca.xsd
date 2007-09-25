@@ -23,7 +23,7 @@
     xmlns:sca="http://www.osoa.org/xmlns/sca/1.0"
     elementFormDefault="qualified">
     
-    <include schemaLocation="../../../../runtime/core/xsd/sca-core.xsd"/>
+    <include schemaLocation="../../../xsd/sca-core.xsd"/>
     
     <element name="binding.sca" type="sca:SCABinding" substitutionGroup="sca:binding"/>
     <complexType name="SCABinding">
