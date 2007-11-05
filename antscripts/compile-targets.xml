@@ -103,7 +103,7 @@
             <libset dir="${sdo.lib.dir}" libs="${sdo.impl.library.name}"/>
             <custom-ld-elements/>
       </cc>
-      <cpp-embed-manifest dir="@{outdir}" file="@{outfile}" outtype="@{outtype}"/>
+      <cpp-embed-manifest dir="@{outdir}" file="@{outfile}" outtype="@{linktype}"/>
     </sequential>
   </macrodef>
 

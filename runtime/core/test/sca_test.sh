@@ -35,7 +35,6 @@ exit;
 fi
 
 export LD_LIBRARY_PATH=$TUSCANY_SCACPP/lib:$TUSCANY_SDOCPP/lib:$AXIS2C_HOME/lib:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=./build:./wsdlTests/build:./compositeTests/build:$LD_LIBRARY_PATH
 
 ./sca_test
 

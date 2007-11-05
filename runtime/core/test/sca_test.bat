@@ -23,28 +23,21 @@ if "%TUSCANY_SCACPP%" == "" (
 echo "TUSCANY_SCACPP not set"
 goto end
 )
-echo Using SCA installed at %TUSCANY_SCACPP%
 
 if "%TUSCANY_SDOCPP%" == "" (
 echo "TUSCANY_SDOCPP not set"
 goto end
 )
-echo Using SDO installed at %TUSCANY_SDOCPP%
 
 if "%AXIS2C_HOME%" == "" (
 echo "AXIS2C_HOME not set"
 goto end
 )
-echo Using Axis2C installed at %AXIS2C_HOME%
 
 rem Run the client
-set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SCACPP%\extensions\cpp\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
+set PATH=%TUSCANY_SCACPP%\bin;%TUSCANY_SDOCPP%\bin;%AXIS2C_HOME%\lib;%PATH%
 
-set APFULLDIR=%~d0%~p0
-set TUSCANY_SCACPP_ROOT=%~d0%~p0\..\
-set TUSCANY_SCACPP_COMPONENT=bigbank.AccountManagementComponent
-
-.\AccountClient.exe 1234
+.\sca_test.exe
 
 :end
 endlocal
