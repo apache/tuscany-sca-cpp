@@ -31,11 +31,7 @@
   <property name="sca.test.src.dir"              location="${this.dir}"/>
   <property name="sca.test.build.dir"            location="${this.dir}/build"/>
   <property name="sca.wsdl.test.src.dir"         location="${this.dir}/wsdlTests"/>
-  <property name="sca.wsdl.test.build.dir"       location="${this.dir}/wsdlTests/build"/>
   <property name="sca.composite.test.src.dir"    location="${this.dir}/compositeTests"/>
-  <property name="sca.composite.test.build.dir"  location="${this.dir}/compositeTests/build"/>
-  <property name="sca.wsdl.test.lib"             value="sca_wsdl_test"/>
-  <property name="sca.composite.test.lib"        value="sca_composite_test"/>
   <property name="sca.test.app"                  value="sca_test"/>
 
   <!--
@@ -68,17 +64,16 @@
     They can still be called, they're just not described, so wont show up in "ant -p"
   -->
   <target name="build.wsdl.tests">
-    <cpp-build
+    <cpp-compile
         srcdir="${sca.wsdl.test.src.dir}"
         infiles="BaseWsdlTest.cpp WSDLDefinitionTest.cpp"
-        outdir="${sca.wsdl.test.build.dir}"
-        outfile="${sca.wsdl.test.lib}">
-      <custom-build-elements>
+        objdir="${sca.test.build.dir}">
+      <custom-cc-elements>
         <defineset if="windows" define="_MBCS"/>
         <includepath path="${sca.test.src.dir}"/>
         <includepath path="${sca.wsdl.test.src.dir}"/>
-      </custom-build-elements>
-    </cpp-build>
+      </custom-cc-elements>
+    </cpp-compile>
   </target>
 
   <target name="build.composite.tests">
@@ -86,19 +81,23 @@
   </target>
 
   <target name="build.main">
-    <cpp-build
+    <!-- first compile the main.cpp -->
+    <cpp-compile
         srcdir="${sca.test.src.dir}"
         infiles="main.cpp"
-        outdir="${sca.test.build.dir}"
-        outfile="${sca.test.app}"
-        outtype="executable">
-      <custom-build-elements>
+        objdir="${sca.test.build.dir}">
+      <custom-cc-elements>
         <defineset if="windows" define="_MBCS"/>
         <includepath path="${sca.test.src.dir}"/>
-        <libset dir="${sca.wsdl.test.build.dir}" libs="${sca.wsdl.test.lib}"/>
-        <!--libset dir="${sca.composite.test.build.dir}" libs="${sca.composite.test.lib}"/-->
-      </custom-build-elements>
-    </cpp-build>
+      </custom-cc-elements>
+    </cpp-compile>
+
+    <cpp-link
+        outfile="${sca.test.app}"
+        outdir="${sca.test.build.dir}"
+        indir="${sca.test.build.dir}"
+        linktype="executable">
+    </cpp-link>
 
     <cpp-install-file
         srcfile="${sca.test.app}${exe.ext}"
