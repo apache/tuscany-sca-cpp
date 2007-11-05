@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<project name="TuscanySdoNative_test" default="all" basedir="../../..">
+
+  <import file="${basedir}/antscripts/system.xml"/>
+  <import file="${basedir}/antscripts/compile-targets.xml"/>
+
+  <!--
+    Notice that the basedir for this project is set to the TuscanySDO root dir
+    This makes path setting in system.xml much simpler, but we'll just have to
+    set a property here to this directory.
+  -->
+  <property name="this.dir"                      location="${basedir}/runtime/core/test"/>
+  <property name="sca.test.src.dir"              location="${this.dir}"/>
+  <property name="sca.test.build.dir"            location="${this.dir}/build"/>
+  <property name="sca.wsdl.test.src.dir"         location="${this.dir}/wsdlTests"/>
+  <property name="sca.wsdl.test.build.dir"       location="${this.dir}/wsdlTests/build"/>
+  <property name="sca.composite.test.src.dir"    location="${this.dir}/compositeTests"/>
+  <property name="sca.composite.test.build.dir"  location="${this.dir}/compositeTests/build"/>
+  <property name="sca.wsdl.test.lib"             value="sca_wsdl_test"/>
+  <property name="sca.composite.test.lib"        value="sca_composite_test"/>
+  <property name="sca.test.app"                  value="sca_test"/>
+
+  <!--
+    Public targets
+  -->
+  <target name="all" description="compile, link, and run TuscanyScaNative test suite">
+    <antcall target="build"/>
+    <antcall target="run"/>
+  </target>
+
+  <target name="build" description="compile and link TuscanyScaNative test suite">
+    <antcall target="build.wsdl.tests"/>
+    <antcall target="build.composite.tests"/>
+    <antcall target="build.main"/>
+  </target>
+
+  <target name="run" depends="build" description="Run TuscanyScaNative test suite">
+    <exec executable="${this.dir}/${sca.test.app}${script.ext}" dir="${this.dir}"/>
+  </target>
+
+  <target name="clean" description="Clean TuscanyScaNative test suite">
+    <delete dir="${sca.test.build.dir}" quiet="@{quiet}"/>
+    <delete dir="${sca.wsdl.test.build.dir}" quiet="@{quiet}"/>
+    <delete dir="${sca.composite.test.build.dir}" quiet="@{quiet}"/>
+    <delete file="${this.dir}/${sca.test.app}${exe.ext}" quiet="@{quiet}"/>
+  </target>
+
+  <!--
+    Internal targets
+    They can still be called, they're just not described, so wont show up in "ant -p"
+  -->
+  <target name="build.wsdl.tests">
+    <cpp-build
+        srcdir="${sca.wsdl.test.src.dir}"
+        infiles="BaseWsdlTest.cpp WSDLDefinitionTest.cpp"
+        outdir="${sca.wsdl.test.build.dir}"
+        outfile="${sca.wsdl.test.lib}">
+      <custom-build-elements>
+        <defineset if="windows" define="_MBCS"/>
+        <includepath path="${sca.test.src.dir}"/>
+        <includepath path="${sca.wsdl.test.src.dir}"/>
+      </custom-build-elements>
+    </cpp-build>
+  </target>
+
+  <target name="build.composite.tests">
+    <!-- Not implemented yet -->
+  </target>
+
+  <target name="build.main">
+    <cpp-build
+        srcdir="${sca.test.src.dir}"
+        infiles="main.cpp"
+        outdir="${sca.test.build.dir}"
+        outfile="${sca.test.app}"
+        outtype="executable">
+      <custom-build-elements>
+        <defineset if="windows" define="_MBCS"/>
+        <includepath path="${sca.test.src.dir}"/>
+        <libset dir="${sca.wsdl.test.build.dir}" libs="${sca.wsdl.test.lib}"/>
+        <!--libset dir="${sca.composite.test.build.dir}" libs="${sca.composite.test.lib}"/-->
+      </custom-build-elements>
+    </cpp-build>
+
+    <cpp-install-file
+        srcfile="${sca.test.app}${exe.ext}"
+        srcdir="${sca.test.build.dir}"
+        destdir="${this.dir}"/>
+  </target>
+
+</project>
