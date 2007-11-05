@@ -31,6 +31,7 @@
 
   <property name="runtime.core.dir"  location="runtime/core"/>
   <property name="extensions.dir"    location="runtime/extensions"/>
+  <property name="test.dir"          location="runtime/core/test"/>
   <property name="samples.dir"       location="samples"/>
   <property name="tools.dir"         location="tools"/>
  	
@@ -63,14 +64,15 @@
     <antcall target="build.tools"/>
   </target>
 
-  <target name="tests" description="Build and run all TuscanyScaNative tests: Not implmented yet">
-    <!-- Complete this when the tests are ready -->
+  <target name="tests" description="Build and run all TuscanyScaNative tests">
+    <ant target="all" antfile="${test.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean" description="Clean all TuscanyScaNative source code, samples, and tools">
     <antcall target="clean.core"/>
     <antcall target="clean.extensions"/>
     <antcall target="clean.samples"/>
+    <antcall target="clean.tests"/>
     <antcall target="clean.tools"/>
   </target>
 
@@ -110,6 +112,10 @@
 
   <target name="clean.extensions">
     <ant target="clean" antfile="${extensions.dir}/build.xml" inheritAll="false"/>
+  </target>
+
+  <target name="clean.tests">
+    <ant target="clean" antfile="${test.dir}/build.xml" inheritAll="false"/>
   </target>
 
   <target name="clean.tools">
