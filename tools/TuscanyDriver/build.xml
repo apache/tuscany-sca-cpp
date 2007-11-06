@@ -24,7 +24,7 @@
   <import file="${basedir}/antscripts/compile-targets.xml"/>
 
   <property name="tuscanyServiceLoader.app" value="tuscanyServiceLoader"/>
-  <property name="tuscanyServiceLoader.files" value="TuscanyServiceLoader.cpp main.cpp"/>
+  <property name="tuscanyServiceLoader.files" value="TuscanyServiceLoader.cpp CommandLineProcessor.cpp main.cpp"/>
   <property name="this.dir" location="${basedir}/tools/TuscanyDriver"/>
   <property name="bin.dir" location="${this.dir}/bin"/>
   <property name="install.dir" location="${tuscanySCA.install.dir}/bin"/>
