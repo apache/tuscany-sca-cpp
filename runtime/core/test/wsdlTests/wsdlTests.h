@@ -27,6 +27,7 @@
 // so the main doesnt have to know about all of them
 
 #include "wsdlTests/BaseWsdlTest.h"
+#include "wsdlTests/WSDLErrorsTest.h"
 #include "wsdlTests/WSDLDefinitionTest.h"
 
 #endif

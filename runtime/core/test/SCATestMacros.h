@@ -24,20 +24,29 @@
 
 #include <iostream>
 
+#define TEST_TRACE( message ) \
+    std::cout << "\tTRACE: " << message << std::endl;
+
 #define TEST_ASSERT( val ) \
     if( ! val ) { \
-      std::cerr << "Test failed in: " << __FILE__ << ": " << __LINE__ << std::endl; \
+      std::cout << "Test failed in: " << __FILE__ << ": " << __LINE__ << std::endl; \
       return false; \
     }
 
 #define TEST_ASSERT_EQUALS( val1, val2 ) \
     if( val1 != val2 ) { \
-      std::cerr << "Test failed in: " << __FILE__ << ": " << __LINE__ << std::endl; \
+      std::cout << "Test failed in: " << __FILE__ << ": " << __LINE__ << std::endl; \
+      return false; \
+    }
+
+#define TEST_ASSERT_NOT_EQUALS( val1, val2 ) \
+    if( val1 == val2 ) { \
+      std::cout << "Test failed in: " << __FILE__ << ": " << __LINE__ << std::endl; \
       return false; \
     }
 
 #define TEST_FAIL( message ) \
-    std::cerr << "Test failed in: " << __FILE__ << ": " << __LINE__ << std::endl; \
+    std::cout << "Test failed in: " << __FILE__ << ":" << __LINE__ << ": " << message << std::endl; \
     return false;
 
 // For this macro, you must have the following variables defined:
@@ -50,10 +59,10 @@
 #define TEST(testName) \
     ++testsTotal; \
     try { \
+      std::cout << "\nTest " << testsTotal << ": " << #testName << " ..... " << std::endl; \
       retval = testName; \
-      std::cout << "Test " << testsTotal << ": " << #testName << " ..... "; \
       if (retval) { \
-        std::cout << "OK" << std::endl; \
+        std::cout << "PASSED" << std::endl; \
         ++testsPassed; \
       } \
       else { \
@@ -61,16 +70,15 @@
       } \
     } \
     catch(const tuscany::sca::TuscanyRuntimeException &scaE) { \
-        std::cerr << "Test " << testsTotal << ": " << #testName << " ..... " \
-                  << "FAILED (unexpected SCA exception): " << scaE.getMessageText() << std::endl; \
+        std::cout << "FAILED (unexpected SCA exception): " << scaE.getMessageText() \
+                  << std::endl; \
     } \
     catch(const commonj::sdo::SDORuntimeException &sdoE) { \
-        std::cerr << "Test " << testsTotal << ": " << #testName << " ..... " \
-                  << "FAILED (unexpected SDO exception): " << sdoE.getMessageText() << std::endl; \
+        std::cout << "FAILED (unexpected SDO exception): " << sdoE.getMessageText() \
+                  << std::endl; \
     } \
     catch(...) { \
-        std::cerr << "Test " << testsTotal << ": " << #testName << " ..... " \
-                  << "FAILED (unexpected unknown exception)" << std::endl; \
+        std::cout << "FAILED (unexpected unknown exception)" << std::endl; \
     }
 
 #endif

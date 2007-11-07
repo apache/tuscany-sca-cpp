@@ -34,6 +34,10 @@
   <property name="sca.composite.test.src.dir"    location="${this.dir}/compositeTests"/>
   <property name="sca.test.app"                  value="sca_test"/>
 
+  <property name="wsdl.test.files"
+            value="BaseWsdlTest.cpp
+                   WSDLErrorsTest.cpp
+                   WSDLDefinitionTest.cpp"/>
   <!--
     Public targets
   -->
@@ -54,8 +58,6 @@
 
   <target name="clean" description="Clean TuscanyScaNative test suite">
     <delete dir="${sca.test.build.dir}" quiet="@{quiet}"/>
-    <delete dir="${sca.wsdl.test.build.dir}" quiet="@{quiet}"/>
-    <delete dir="${sca.composite.test.build.dir}" quiet="@{quiet}"/>
     <delete file="${this.dir}/${sca.test.app}${exe.ext}" quiet="@{quiet}"/>
   </target>
 
@@ -66,7 +68,7 @@
   <target name="build.wsdl.tests">
     <cpp-compile
         srcdir="${sca.wsdl.test.src.dir}"
-        infiles="BaseWsdlTest.cpp WSDLDefinitionTest.cpp"
+        infiles="${wsdl.test.files}"
         objdir="${sca.test.build.dir}">
       <custom-cc-elements>
         <defineset if="windows" define="_MBCS"/>
