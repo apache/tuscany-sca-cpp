@@ -83,9 +83,9 @@ namespace tuscany
                 {
                     stringstream errMessage;
                     errMessage
-                      << "Unable to find Service and Port: "
+                      << "Unable to find Service and Port: \""
                       << serviceName << "," << portName
-                      << " in the WSDL definition";
+                      << "\" in the WSDL definition";
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
 
@@ -99,9 +99,9 @@ namespace tuscany
                 {
                     stringstream errMessage;
                     errMessage
-                      << "Unable to find operation "
+                      << "Unable to find operation \""
                       << serviceName << ":" << portName << ":" << operationName
-                      << " in the WSDL definition";
+                      << "\" in the WSDL definition";
 
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
@@ -120,9 +120,9 @@ namespace tuscany
                 {
                     stringstream errMessage;
                     errMessage
-                      << "Unable to find PortType: "
+                      << "Unable to find PortType: \""
                       << portTypeName
-                      << " in the WSDL definition";
+                      << "\" in the WSDL definition";
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
 
@@ -136,9 +136,9 @@ namespace tuscany
                 {
                     stringstream errMessage;
                     errMessage
-                      << "Unable to find Operation "
+                      << "Unable to find Operation \""
                       << portTypeName << ":" << operationName
-                      << " in the WSDL definition";
+                      << "\" in the WSDL definition";
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
             }
@@ -170,9 +170,9 @@ namespace tuscany
                 {
                     stringstream errMessage;
                     errMessage
-                      << "Unable to find PortType: "
+                      << "Unable to find PortType: \""
                       << portTypeName
-                      << " in the WSDL definition";
+                      << "\" in the WSDL definition";
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                 }
 
@@ -343,9 +343,9 @@ namespace tuscany
                             // Invalid WSDL
                             stringstream errMessage;
                             errMessage
-                              << "service/port/address cannot be duplicated"
+                              << "service/port/address: \""
                               << portName
-                              << " in the WSDL definition";
+                              << "\" cannot be duplicated in the WSDL definition";
                             throwException(SystemConfigurationException, errMessage.str().c_str());
                         }
 */
@@ -359,9 +359,9 @@ namespace tuscany
                             // Invalid WSDL
                             stringstream errMessage;
                             errMessage
-                              << "Unable to find binding "
+                              << "Unable to find binding \""
                               << wsBindingName
-                              << " in the WSDL definition";
+                              << "\" in the WSDL definition";
                             throwException(SystemConfigurationException, errMessage.str().c_str());
                         }
 
@@ -383,9 +383,9 @@ namespace tuscany
                             // Invalid WSDL
                             stringstream errMessage;
                             errMessage
-                             << "Unable to find PortType "
+                             << "Unable to find PortType \""
                              << wsBindingPortTypeName
-                             << " in the WSDL definition";
+                             << "\" in the WSDL definition";
                             throwException(SystemConfigurationException, errMessage.str().c_str());
                         }
                         string portTypeName( portType->getCString("name") );
@@ -427,9 +427,9 @@ namespace tuscany
                                 // Invalid WSDL
                                 stringstream errMessage;
                                 errMessage
-                                  << "Unable to find PortType operation for binding operation: "
+                                  << "Unable to find PortType operation for binding operation: \""
                                   << operationName
-                                  << " in the WSDL definition";
+                                  << "\" in the WSDL definition";
                                 throwException(SystemConfigurationException, errMessage.str().c_str());
                             }
 
@@ -481,9 +481,9 @@ namespace tuscany
                             {
                                 stringstream errMessage;
                                 errMessage
-                                  << "unable to find PortType input message "
+                                  << "unable to find PortType input message \""
                                   << portTypeOp->getCString("input/message")
-                                  << " in the wsdl definition";
+                                  << "\" in the wsdl definition";
                                 throwException(SystemConfigurationException, errMessage.str().c_str());
                             }
                             string inputMessageType( wsMessageIn->getCString("name") );
@@ -501,9 +501,9 @@ namespace tuscany
                                 // TODO this is ok for one way operations, right?
                                 stringstream errMessage;
                                 errMessage
-                                  << "unable to find PortType output message "
+                                  << "unable to find PortType output message \""
                                   << portTypeOp->getCString("output/message")
-                                  << " in the wsdl definition";
+                                  << "\" in the wsdl definition";
                                 throwException(SystemConfigurationException, errMessage.str().c_str());
                             }
                             string outputMessageType( wsMessageOut->getCString("name") );
@@ -560,9 +560,9 @@ namespace tuscany
                     // Invalid WSDL
                     stringstream errMessage;
                     errMessage
-                      << "message/name: "
+                      << "message/name: \""
                       << messageList[i]->getCString("name")
-                      << " cannot be duplicated in the WSDL definition";
+                      << "\" cannot be duplicated in the WSDL definition";
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                   }
                 }
@@ -580,9 +580,9 @@ namespace tuscany
                     // Invalid WSDL
                     stringstream errMessage;
                     errMessage
-                      << "binding/name: "
+                      << "binding/name: \""
                       << bindingList[i]->getCString("name")
-                      << " cannot be duplicated in the WSDL definition";
+                      << "\" cannot be duplicated in the WSDL definition";
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                   }
                 }
@@ -600,9 +600,9 @@ namespace tuscany
                     // Invalid WSDL
                     stringstream errMessage;
                     errMessage
-                      << "portType/name: "
+                      << "portType/name: \""
                       << portTypeList[i]->getCString("name")
-                      << " cannot be duplicated in the WSDL definition";
+                      << "\" cannot be duplicated in the WSDL definition";
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                   }
                 }
@@ -620,9 +620,9 @@ namespace tuscany
                     // Invalid WSDL
                     stringstream errMessage;
                     errMessage
-                      << "service/name: "
+                      << "service/name: \""
                       << serviceList[i]->getCString("name")
-                      << " cannot be duplicated in the WSDL definition";
+                      << "\" cannot be duplicated in the WSDL definition";
                     throwException(SystemConfigurationException, errMessage.str().c_str());
                   }
                 }
