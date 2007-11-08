@@ -25,6 +25,8 @@ bool WSDLErrorsTest::testDuplicateWSDLInputOutputBinding()
 {
   TEST_TRACE( "Testing erroneous wsdl: duplicate_binding_input.wsdl" );
 
+  // This test fails because of JIRA 1900
+
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
@@ -33,7 +35,7 @@ bool WSDLErrorsTest::testDuplicateWSDLInputOutputBinding()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -54,7 +56,7 @@ bool WSDLErrorsTest::testDuplicateWSDLInputOutputBinding()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -69,19 +71,21 @@ bool WSDLErrorsTest::testDuplicateWSDLInputOutputBinding()
 }
 
 
-bool WSDLErrorsTest::testDuplicateWSDLBindings()
+bool WSDLErrorsTest::testDuplicateWSDLMessagePartNames()
 {
-  TEST_TRACE( "Testing erroneous wsdl: duplicate_bindings.wsdl" );
+  TEST_TRACE( "Testing erroneous wsdl: duplicate_partNames.wsdl" );
+
+  // This test fails because of JIRA 1900
 
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
-      loadWsdl( "wsdlTests/wsdls_erroneous/duplicate_bindings.wsdl" );
+      loadWsdl( "wsdlTests/wsdls_erroneous/duplicate_partNames.wsdl" );
     TEST_FAIL( "Wsdl should have thrown an exception" );
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -107,7 +111,10 @@ bool WSDLErrorsTest::testDuplicateWSDLMessages()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_TRACE( std::string( "Caught expected SCA Exception: " ) + scaE.getMessageText() );
+    std::string errorText( scaE.getMessageText() );
+    TEST_ASSERT_NOT_EQUALS( errorText.find( "message/name" ), std::string::npos );
+    TEST_ASSERT_NOT_EQUALS( errorText.find( "cannot be duplicated" ), std::string::npos );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -121,19 +128,51 @@ bool WSDLErrorsTest::testDuplicateWSDLMessages()
   return true;
 }
 
-bool WSDLErrorsTest::testDuplicateWSDLMessagePartNames()
+bool WSDLErrorsTest::testDuplicateWSDLPortTypes()
 {
-  TEST_TRACE( "Testing erroneous wsdl: duplicate_partNames.wsdl" );
+  TEST_TRACE( "Testing erroneous wsdl: duplicate_portTypes.wsdl" );
 
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
-      loadWsdl( "wsdlTests/wsdls_erroneous/duplicate_partNames.wsdl" );
+      loadWsdl( "wsdlTests/wsdls_erroneous/duplicate_portTypes.wsdl" );
     TEST_FAIL( "Wsdl should have thrown an exception" );
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_TRACE( std::string( "Caught expected SCA Exception: " ) + scaE.getMessageText() );
+    std::string errorText( scaE.getMessageText() );
+    TEST_ASSERT_NOT_EQUALS( errorText.find( "portType/name" ), std::string::npos );
+    TEST_ASSERT_NOT_EQUALS( errorText.find( "cannot be duplicated" ), std::string::npos );
+  }
+  catch( const commonj::sdo::SDORuntimeException &sdoE )
+  {
+    TEST_FAIL( std::string( "Caught unexpected SDO Exception: " ) + sdoE.getMessageText() );
+  }
+  catch( ... )
+  {
+    TEST_FAIL( "Caught unexpected unknown Exception: " );
+  }
+
+  return true;
+}
+
+bool WSDLErrorsTest::testDuplicateWSDLBindings()
+{
+  TEST_TRACE( "Testing erroneous wsdl: duplicate_bindings.wsdl" );
+
+  try
+  {
+    tuscany::sca::model::WSDLDefinition *wsdl =
+      loadWsdl( "wsdlTests/wsdls_erroneous/duplicate_bindings.wsdl" );
+    TEST_FAIL( "Wsdl should have thrown an exception" );
+  }
+  catch( const tuscany::sca::TuscanyRuntimeException &scaE )
+  {
+    TEST_TRACE( std::string( "Caught expected SCA Exception: " ) + scaE.getMessageText() );
+    std::string errorText( scaE.getMessageText() );
+    TEST_ASSERT_NOT_EQUALS( errorText.find( "binding/name" ), std::string::npos );
+    TEST_ASSERT_NOT_EQUALS( errorText.find( "cannot be duplicated" ), std::string::npos );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -159,7 +198,10 @@ bool WSDLErrorsTest::testDuplicateWSDLServices()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_TRACE( std::string( "Caught expected SCA Exception: " ) + scaE.getMessageText() );
+    std::string errorText( scaE.getMessageText() );
+    TEST_ASSERT_NOT_EQUALS( errorText.find( "service/name" ), std::string::npos );
+    TEST_ASSERT_NOT_EQUALS( errorText.find( "cannot be duplicated" ), std::string::npos );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -177,6 +219,13 @@ bool WSDLErrorsTest::testDuplicateSOAPAddress()
 {
   TEST_TRACE( "Testing erroneous wsdl: duplicate_soap_address.wsdl" );
 
+  // This test fails due to an SDO SPEC limitation:
+  //   According to XSD rules, if a global element xsd:any has
+  //   maxOccurs > 1 you can only have a single valued property
+  // The multiple SOAP addresses/bindings/bodies/operations should load
+  // and I should be able to get the list and throw if list.size() > 1
+  // but I cant because SDO says its a single value element
+
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
@@ -185,7 +234,7 @@ bool WSDLErrorsTest::testDuplicateSOAPAddress()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -203,6 +252,13 @@ bool WSDLErrorsTest::testDuplicateSOAPBinding()
 {
   TEST_TRACE( "Testing erroneous wsdl: duplicate_soap_binding.wsdl" );
 
+  // This test fails due to an SDO SPEC limitation:
+  //   According to XSD rules, if a global element xsd:any has
+  //   maxOccurs > 1 you can only have a single valued property
+  // The multiple SOAP addresses/bindings/bodies/operations should load
+  // and I should be able to get the list and throw if list.size() > 1
+  // but I cant because SDO says its a single value element
+
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
@@ -211,7 +267,7 @@ bool WSDLErrorsTest::testDuplicateSOAPBinding()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -229,6 +285,13 @@ bool WSDLErrorsTest::testDuplicateSOAPBody()
 {
   TEST_TRACE( "Testing erroneous wsdl: duplicate_soap_body.wsdl" );
 
+  // This test fails due to an SDO SPEC limitation:
+  //   According to XSD rules, if a global element xsd:any has
+  //   maxOccurs > 1 you can only have a single valued property
+  // The multiple SOAP addresses/bindings/bodies/operations should load
+  // and I should be able to get the list and throw if list.size() > 1
+  // but I cant because SDO says its a single value element
+
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
@@ -237,7 +300,7 @@ bool WSDLErrorsTest::testDuplicateSOAPBody()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -255,6 +318,13 @@ bool WSDLErrorsTest::testDuplicateSOAPOperation()
 {
   TEST_TRACE( "Testing erroneous wsdl: duplicate_soap_operation.wsdl" );
 
+  // This test fails due to an SDO SPEC limitation:
+  //   According to XSD rules, if a global element xsd:any has
+  //   maxOccurs > 1 you can only have a single valued property
+  // The multiple SOAP addresses/bindings/bodies/operations should load
+  // and I should be able to get the list and throw if list.size() > 1
+  // but I cant because SDO says its a single value element
+
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
@@ -263,7 +333,7 @@ bool WSDLErrorsTest::testDuplicateSOAPOperation()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -393,6 +463,8 @@ bool WSDLErrorsTest::testMissingMessagePartName()
 {
   TEST_TRACE( "Testing erroneous wsdl: missing_name_for_part.wsdl" );
 
+  // This test fails because of JIRA 1901
+
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
@@ -401,7 +473,7 @@ bool WSDLErrorsTest::testMissingMessagePartName()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -419,6 +491,8 @@ bool WSDLErrorsTest::testMissingPortName()
 {
   TEST_TRACE( "Testing erroneous wsdl: missing_name_for_port.wsdl" );
 
+  // This test fails because of JIRA 1901
+
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
@@ -427,7 +501,7 @@ bool WSDLErrorsTest::testMissingPortName()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {
@@ -445,6 +519,8 @@ bool WSDLErrorsTest::testMissingMessagePartType()
 {
   TEST_TRACE( "Testing erroneous wsdl: missing_type_for_part.wsdl" );
 
+  // This test fails because of JIRA 1901
+
   try
   {
     tuscany::sca::model::WSDLDefinition *wsdl =
@@ -453,7 +529,7 @@ bool WSDLErrorsTest::testMissingMessagePartType()
   }
   catch( const tuscany::sca::TuscanyRuntimeException &scaE )
   {
-    std::cout << "Caught SCA Exception: " << scaE.getMessageText() << std::endl;
+    TEST_FAIL( std::string( "Caught unexpected SCA Exception: " ) + scaE.getMessageText() );
   }
   catch( const commonj::sdo::SDORuntimeException &sdoE )
   {

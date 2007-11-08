@@ -20,6 +20,7 @@
 /* $Rev$ $Date$ */
 
 #include <sstream>
+#include <set>
 
 #include "tuscany/sca/model/WSDLDefinition.h"
 #include "tuscany/sca/model/WSDLOperation.h"
@@ -314,6 +315,11 @@ namespace tuscany
             {
                 logentry(); 
 
+                // check for duplicate message/binding/PortType/Service
+                // with equal name attributes. This cant be enforced by
+                // the schema, so it has to be enforced at the app level
+                checkForDuplicates( wsdlModel );
+
                 DataObjectList& serviceList = wsdlModel->getList("service");
 
                 // Iterate through the WSDL services
@@ -326,8 +332,25 @@ namespace tuscany
                     for (unsigned int j=0; j < portList.size();j++)
                     {
                         string portName( portList[j]->getCString("name") );
-                        string targetAddress(portList[j]->getCString("address/location"));
                         string wsBindingName(portList[j]->getCString("binding"));
+
+                        // There can only be one soap address and the check must be made
+                        // at the application level since it cant be specified in the xsd
+/*
+                        DataObjectList& soapAddressList = portList[j]->getList("address");
+                        if( soapAddressList.size() != 1 )
+                        {
+                            // Invalid WSDL
+                            stringstream errMessage;
+                            errMessage
+                              << "service/port/address cannot be duplicated"
+                              << portName
+                              << " in the WSDL definition";
+                            throwException(SystemConfigurationException, errMessage.str().c_str());
+                        }
+*/
+
+                        string targetAddress(portList[j]->getCString("address/location"));
 
                         // get the binding specified in the WSDL service port
                         DataObjectPtr wsBinding = findBinding(wsBindingName);
@@ -514,6 +537,96 @@ namespace tuscany
                     } // end portTypeList
                 } // end serviceList
             } // end method mapOperations
+
+            void WSDLDefinition::checkForDuplicates( DataObjectPtr wsdlModel )
+            {
+                logentry(); 
+
+                // check for duplicate message/binding/PortType/service
+                // with equal name attributes. This cant be enforced by
+                // the schema, so it has to be enforced at the app level
+
+                std::set<string> namesSet;
+
+                DataObjectList &messageList = wsdlModel->getList("message");
+                for( unsigned int i = 0; i < messageList.size(); i++ )
+                {
+                  if( namesSet.find( messageList[i]->getCString("name") ) == namesSet.end() )
+                  {
+                    namesSet.insert( messageList[i]->getCString("name") );
+                  }
+                  else
+                  {
+                    // Invalid WSDL
+                    stringstream errMessage;
+                    errMessage
+                      << "message/name: "
+                      << messageList[i]->getCString("name")
+                      << " cannot be duplicated in the WSDL definition";
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
+                  }
+                }
+
+                namesSet.clear();
+                DataObjectList &bindingList = wsdlModel->getList("binding");
+                for( unsigned int i = 0; i < bindingList.size(); i++ )
+                {
+                  if( namesSet.find( bindingList[i]->getCString("name") ) == namesSet.end() )
+                  {
+                    namesSet.insert( bindingList[i]->getCString("name") );
+                  }
+                  else
+                  {
+                    // Invalid WSDL
+                    stringstream errMessage;
+                    errMessage
+                      << "binding/name: "
+                      << bindingList[i]->getCString("name")
+                      << " cannot be duplicated in the WSDL definition";
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
+                  }
+                }
+
+                namesSet.clear();
+                DataObjectList &portTypeList = wsdlModel->getList("portType");
+                for( unsigned int i = 0; i < portTypeList.size(); i++ )
+                {
+                  if( namesSet.find( portTypeList[i]->getCString("name") ) == namesSet.end() )
+                  {
+                    namesSet.insert( portTypeList[i]->getCString("name") );
+                  }
+                  else
+                  {
+                    // Invalid WSDL
+                    stringstream errMessage;
+                    errMessage
+                      << "portType/name: "
+                      << portTypeList[i]->getCString("name")
+                      << " cannot be duplicated in the WSDL definition";
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
+                  }
+                }
+
+                namesSet.clear();
+                DataObjectList &serviceList = wsdlModel->getList("service");
+                for( unsigned int i = 0; i < serviceList.size(); i++ )
+                {
+                  if( namesSet.find( serviceList[i]->getCString("name") ) == namesSet.end() )
+                  {
+                    namesSet.insert( serviceList[i]->getCString("name") );
+                  }
+                  else
+                  {
+                    // Invalid WSDL
+                    stringstream errMessage;
+                    errMessage
+                      << "service/name: "
+                      << serviceList[i]->getCString("name")
+                      << " cannot be duplicated in the WSDL definition";
+                    throwException(SystemConfigurationException, errMessage.str().c_str());
+                  }
+                }
+            }
 
         } // end namespace model
     } // end namespace sca

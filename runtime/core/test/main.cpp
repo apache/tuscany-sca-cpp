@@ -43,34 +43,36 @@ int main (int argc, char** argv)
     try
     {
       WSDLDefinitionTest wsdlTest;
-      TEST ( wsdlTest.testSimple() );
+      TEST( wsdlTest.testSimple() );
 
       WSDLErrorsTest wsdlErrorsTest;
-//      TEST ( wsdlErrorsTest.testDuplicateWSDLInputOutputBinding() ); // fails, JIRA 1900 maxOccurs error
-//      TEST ( wsdlErrorsTest.testDuplicateWSDLMessagePartNames() );  // fails, JIRA 1900 maxOccurs error
-//      TEST ( wsdlErrorsTest.testDuplicateWSDLBindings() ); // fails, need to fix WSDLDefinition.cpp
-//      TEST ( wsdlErrorsTest.testDuplicateWSDLMessages() ); // fails, need to fix WSDLDefinition.cpp
-//      TEST ( wsdlErrorsTest.testDuplicateWSDLServices() ); // fails, need to fix WSDLDefinition.cpp
+//      TEST( wsdlErrorsTest.testDuplicateWSDLInputOutputBinding() ); // fails, JIRA 1900
+//      TEST( wsdlErrorsTest.testDuplicateWSDLMessagePartNames() );   // fails, JIRA 1900
 
-      // The following 4 fail due to an SDO SPEC limitation:
-      //   If xsd:any has maxOccurs > 1, and you use a global element 
-      //   for the any, you only have a single valued property
+      TEST( wsdlErrorsTest.testDuplicateWSDLBindings() );
+      TEST( wsdlErrorsTest.testDuplicateWSDLMessages() );
+      TEST( wsdlErrorsTest.testDuplicateWSDLServices() );
+      TEST( wsdlErrorsTest.testDuplicateWSDLPortTypes() );
+
+      // The following 4 tests fail due to an SDO SPEC limitation:
+      //   According to XSD rules, if a global element xsd:any has
+      //   maxOccurs > 1 you can only have a single valued property
       // The multiple SOAP addresses/bindings/bodies/operations should load
       // and I should be able to get the list and throw if list.size() > 1
       // but I cant because SDO says its a single value element
-//      TEST ( wsdlErrorsTest.testDuplicateSOAPAddress() );
-//      TEST ( wsdlErrorsTest.testDuplicateSOAPBinding() );
-//      TEST ( wsdlErrorsTest.testDuplicateSOAPBody() );
-//      TEST ( wsdlErrorsTest.testDuplicateSOAPOperation() );
+//      TEST( wsdlErrorsTest.testDuplicateSOAPAddress() );
+//      TEST( wsdlErrorsTest.testDuplicateSOAPBinding() );
+//      TEST( wsdlErrorsTest.testDuplicateSOAPBody() );
+//      TEST( wsdlErrorsTest.testDuplicateSOAPOperation() );
 
-      TEST ( wsdlErrorsTest.testMissingPortBinding() );
-      TEST ( wsdlErrorsTest.testMissingOperation() );
-      TEST ( wsdlErrorsTest.testMissingPortType() );
-      TEST ( wsdlErrorsTest.testMissingMessage() );
+      TEST( wsdlErrorsTest.testMissingPortBinding() );
+      TEST( wsdlErrorsTest.testMissingOperation() );
+      TEST( wsdlErrorsTest.testMissingPortType() );
+      TEST( wsdlErrorsTest.testMissingMessage() );
 
-//      TEST ( wsdlErrorsTest.testMissingMessagePartName() ); // fails, JIRA 1901
-//      TEST ( wsdlErrorsTest.testMissingPortName() );        // fails, JIRA 1901
-//      TEST ( wsdlErrorsTest.testMissingMessagePartType() ); // fails, JIRA 1901
+//      TEST( wsdlErrorsTest.testMissingMessagePartName() ); // fails, JIRA 1901
+//      TEST( wsdlErrorsTest.testMissingPortName() );        // fails, JIRA 1901
+//      TEST( wsdlErrorsTest.testMissingMessagePartType() ); // fails, JIRA 1901
     }
     catch(...)
     {

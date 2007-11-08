@@ -11,9 +11,10 @@ class WSDLErrorsTest : public BaseWsdlTest
     ~WSDLErrorsTest();
 
     bool testDuplicateWSDLInputOutputBinding();
-    bool testDuplicateWSDLBindings();
-    bool testDuplicateWSDLMessages();
     bool testDuplicateWSDLMessagePartNames();
+    bool testDuplicateWSDLMessages();
+    bool testDuplicateWSDLPortTypes();
+    bool testDuplicateWSDLBindings();
     bool testDuplicateWSDLServices();
     bool testDuplicateSOAPAddress();
     bool testDuplicateSOAPBinding();

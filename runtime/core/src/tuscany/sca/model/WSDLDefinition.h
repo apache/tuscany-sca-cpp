@@ -151,6 +151,16 @@ namespace tuscany
                 void mapOperations( commonj::sdo::DataObjectPtr wsdlModel );
 
                 /**
+                 * Given a wsdl represented by an SDO, check for duplicate
+                 * message/binding/PortType/service with equal name attributes.
+                 * This cant be enforced by the schema, so it has to be enforced
+                 * at the app level. If a duplicate is found, a
+                 * SystemConfigurationException exception is thrown.
+                 * @param wsdlModel A wsdl represented by an SDO
+                 */
+                void checkForDuplicates( commonj::sdo::DataObjectPtr wsdlModel );
+
+                /**
                  * The data object representation of the WSDL document.
                  */
                 typedef std::vector<commonj::sdo::DataObjectPtr> MODEL_VECTOR;
