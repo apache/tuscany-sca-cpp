@@ -30,7 +30,19 @@
 
   <target name="init">
     <tstamp/>
-    <property name="this.dir" location="${basedir}/samples/RubyBigBank"/>
+    <property name="this.dir"                      location="${basedir}/samples/RubyBigBank"/>
+    <property name="bigbank.account.dir"           location="${this.dir}/bigbank.account"/>
+    <property name="bigbank.account.client.dir"    location="${this.dir}/bigbank.client"/>
+    <property name="bigbank.account.wsclient.dir"  location="${this.dir}/bigbank.wsclient"/>
+
+    <property name="RubyBigBank.install.dir"
+              location="${tuscanySCA.install.dir}/samples/RubyBigBank"/>
+    <property name="bigbank.account.install.dir"
+              location="${RubyBigBank.install.dir}/bigbank.account"/>
+    <property name="bigbank.account.client.install.dir"
+              location="${RubyBigBank.install.dir}/bigbank.client"/>
+    <property name="bigbank.account.wsclient.install.dir"
+              location="${RubyBigBank.install.dir}/bigbank.wsclient"/>
   </target>
 
   <!--
@@ -38,32 +50,74 @@
   -->
   <target name="all"
           depends="init"
-          description="build and install the TuscanyScaNative RubyBigBank sample">
-    <antcall target="build"/>
+          description="install the TuscanyScaNative RubyBigBank sample">
     <antcall target="install"/>
-  </target>
-
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative RubyBigBank sample">
-    <echo> The RubyBigBank sample ant build.xml file has not been implemented yet </echo>
   </target>
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative RubyBigBank sample">
-    <echo> The RubyBigBank sample ant build.xml file has not been implemented yet </echo>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${RubyBigBank.install.dir}"/>
+
+       <!-- install bigbank.account.files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+    <cpp-install-files
+        files="*.wsdl"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+
+       <!-- install bigbank.account.client files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${bigbank.account.client.dir}"
+        destdir="${bigbank.account.client.install.dir}"/>
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${bigbank.account.client.dir}"
+        destdir="${bigbank.account.client.install.dir}"/>
+
+       <!-- install bigbank.account.wsclient files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${bigbank.account.wsclient.dir}"
+        destdir="${bigbank.account.wsclient.install.dir}"/>
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${bigbank.account.wsclient.dir}"
+        destdir="${bigbank.account.wsclient.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${bigbank.account.wsclient.dir}"
+        destdir="${bigbank.account.wsclient.install.dir}"/>
+    <cpp-install-files
+        files="*.wsdl"
+        srcdir="${bigbank.account.wsclient.dir}"
+        destdir="${bigbank.account.wsclient.install.dir}"/>
+
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative RubyBigBank sample">
-    <echo> The RubyBigBank sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${RubyBigBank.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>

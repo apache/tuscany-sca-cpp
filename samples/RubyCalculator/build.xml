@@ -31,6 +31,15 @@
   <target name="init">
     <tstamp/>
     <property name="this.dir" location="${basedir}/samples/RubyCalculator"/>
+    <property name="sample.calculator.dir"         location="${this.dir}/sample.calculator"/>
+    <property name="sample.calculator.client.dir"  location="${this.dir}/sample.calculator.client"/>
+
+    <property name="RubyCalculator.install.dir"
+              location="${tuscanySCA.install.dir}/samples/RubyCalculator"/>
+    <property name="sample.calculator.install.dir"
+              location="${RubyCalculator.install.dir}/sample.calculator"/>
+    <property name="sample.calculator.client.install.dir"
+              location="${RubyCalculator.install.dir}/sample.calculator.client"/>
   </target>
 
   <!--
@@ -38,32 +47,48 @@
   -->
   <target name="all"
           depends="init"
-          description="build and install the TuscanyScaNative RubyCalculator sample">
-    <antcall target="build"/>
+          description="install the TuscanyScaNative RubyCalculator sample">
     <antcall target="install"/>
-  </target>
-
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative RubyCalculator sample">
-    <echo> The RubyCalculator sample ant build.xml file has not been implemented yet </echo>
   </target>
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative RubyCalculator sample">
-    <echo> The RubyCalculator sample ant build.xml file has not been implemented yet </echo>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${RubyCalculator.install.dir}"/>
+
+       <!-- install sample.calculator.files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${sample.calculator.dir}"
+        destdir="${sample.calculator.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.calculator.dir}"
+        destdir="${sample.calculator.install.dir}"/>
+    <cpp-install-files
+        files="*.wsdl"
+        srcdir="${sample.calculator.dir}"
+        destdir="${sample.calculator.install.dir}"/>
+
+       <!-- install sample.calculator.client files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${sample.calculator.client.dir}"
+        destdir="${sample.calculator.client.install.dir}"/>
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${sample.calculator.client.dir}"
+        destdir="${sample.calculator.client.install.dir}"/>
+
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative RubyCalculator sample">
-    <echo> The RubyCalculator sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${RubyCalculator.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>
