@@ -30,7 +30,19 @@
 
   <target name="init">
     <tstamp/>
-    <property name="this.dir" location="${basedir}/samples/RestCalculator"/>
+    <property name="this.dir"                      location="${basedir}/samples/RestCalculator"/>
+    <property name="sample.calculator.dir"         location="${this.dir}/sample.calculator"/>
+    <property name="sample.calculator.client.dir"  location="${this.dir}/sample.calculator.restclient"/>
+    <property name="sample.httpserver.dir"         location="${this.dir}/httpserver"/>
+
+    <property name="RestCalculator.install.dir"
+              location="${tuscanySCA.install.dir}/samples/RestCalculator"/>
+    <property name="sample.calculator.install.dir"
+              location="${RestCalculator.install.dir}/sample.calculator"/>
+    <property name="sample.calculator.client.install.dir"
+              location="${RestCalculator.install.dir}/sample.calculator.restclient"/>
+    <property name="sample.httpserver.install.dir"
+              location="${RestCalculator.install.dir}/httpserver"/>
   </target>
 
   <!--
@@ -38,32 +50,67 @@
   -->
   <target name="all"
           depends="init"
-          description="build and install the TuscanyScaNative RestCalculator sample">
-    <antcall target="build"/>
+          description="install the TuscanyScaNative RestCalculator sample (no build necessary)">
     <antcall target="install"/>
   </target>
 
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative RestCalculator sample">
-    <echo> The RestCalculator sample ant build.xml file has not been implemented yet </echo>
-  </target>
+  <!-- This sample does not require building, just installation -->
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative RestCalculator sample">
-    <echo> The RestCalculator sample ant build.xml file has not been implemented yet </echo>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${RestCalculator.install.dir}"/>
+
+       <!-- install sample.calculatur files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${sample.calculator.dir}"
+        destdir="${sample.calculator.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.calculator.dir}"
+        destdir="${sample.calculator.install.dir}"/>
+
+       <!-- install sample.calculatur.restclient files -->
+    <cpp-install-file
+        srcfile="CalculatorRestClient.rb"
+        srcdir="${sample.calculator.client.dir}"
+        destdir="${sample.calculator.client.install.dir}"/>
+    <cpp-install-file
+        srcfile="sample.calculator.restclient.composite"
+        srcdir="${sample.calculator.client.dir}"
+        destdir="${sample.calculator.client.install.dir}"/>
+    <cpp-install-file
+        srcfile="runrestclient${script.ext}"
+        srcdir="${sample.calculator.client.dir}"
+        destdir="${sample.calculator.client.install.dir}"/>
+
+       <!-- install httpserver files -->
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${sample.httpserver.dir}"
+        destdir="${sample.httpserver.install.dir}"/>
+    <cpp-install-files
+        files="*.types"
+        srcdir="${sample.httpserver.dir}/conf"
+        destdir="${sample.httpserver.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.conf"
+        srcdir="${sample.httpserver.dir}/conf"
+        destdir="${sample.httpserver.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.html"
+        srcdir="${sample.httpserver.dir}/htdocs"
+        destdir="${sample.httpserver.install.dir}/htdocs"/>
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative RestCalculator sample">
-    <echo> The RestCalculator sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${RestCalculator.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>

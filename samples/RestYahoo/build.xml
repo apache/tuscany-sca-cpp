@@ -30,7 +30,16 @@
 
   <target name="init">
     <tstamp/>
-    <property name="this.dir" location="${basedir}/samples/RestYahoo"/>
+    <property name="this.dir"                 location="${basedir}/samples/RestYahoo"/>
+    <property name="sample.yahoo.dir"         location="${this.dir}/sample.yahoo"/>
+    <property name="sample.yahoo.client.dir"  location="${this.dir}/sample.yahoo.client"/>
+
+    <property name="RestYahoo.install.dir"
+              location="${tuscanySCA.install.dir}/samples/RestYahoo"/>
+    <property name="sample.yahoo.install.dir"
+              location="${RestYahoo.install.dir}/sample.yahoo"/>
+    <property name="sample.yahoo.client.install.dir"
+              location="${RestYahoo.install.dir}/sample.yahoo.client"/>
   </target>
 
   <!--
@@ -39,31 +48,49 @@
   <target name="all"
           depends="init"
           description="build and install the TuscanyScaNative RestYahoo sample">
-    <antcall target="build"/>
     <antcall target="install"/>
   </target>
 
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative RestYahoo sample">
-    <echo> The RestYahoo sample ant build.xml file has not been implemented yet </echo>
-  </target>
+  <!-- This sample does not require building, just installation -->
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative RestYahoo sample">
-    <echo> The RestYahoo sample ant build.xml file has not been implemented yet </echo>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${RestYahoo.install.dir}"/>
+
+       <!-- install sample.yahoo files -->
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.yahoo.dir}"
+        destdir="${sample.yahoo.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.yahoo.dir}"
+        destdir="${sample.yahoo.install.dir}"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${sample.yahoo.dir}"
+        destdir="${sample.yahoo.install.dir}"/>
+
+       <!-- install sample.yahoo.client files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${sample.yahoo.client.dir}"
+        destdir="${sample.yahoo.client.install.dir}"/>
+    <cpp-install-file
+        srcfile="runclient${script.ext}"
+        srcdir="${sample.yahoo.client.dir}"
+        destdir="${sample.yahoo.client.install.dir}"/>
+
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative RestYahoo sample">
-    <echo> The RestYahoo sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${RestYahoo.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>

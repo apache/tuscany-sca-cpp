@@ -31,6 +31,18 @@
   <target name="init">
     <tstamp/>
     <property name="this.dir" location="${basedir}/samples/RestCustomer"/>
+    <property name="sample.customer.dir"         location="${this.dir}/sample.customer"/>
+    <property name="sample.customer.client.dir"  location="${this.dir}/sample.customer.restclient"/>
+    <property name="sample.httpserver.dir"         location="${this.dir}/httpserver"/>
+
+    <property name="RestCustomer.install.dir"
+              location="${tuscanySCA.install.dir}/samples/RestCustomer"/>
+    <property name="sample.customer.install.dir"
+              location="${RestCustomer.install.dir}/sample.customer"/>
+    <property name="sample.customer.client.install.dir"
+              location="${RestCustomer.install.dir}/sample.customer.restclient"/>
+    <property name="sample.httpserver.install.dir"
+              location="${RestCustomer.install.dir}/httpserver"/>
   </target>
 
   <!--
@@ -38,32 +50,79 @@
   -->
   <target name="all"
           depends="init"
-          description="build and install the TuscanyScaNative RestCustomer sample">
-    <antcall target="build"/>
+          description="install the TuscanyScaNative RestCustomer sample (no build necessary)">
     <antcall target="install"/>
   </target>
 
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative RestCustomer sample">
-    <echo> The RestCustomer sample ant build.xml file has not been implemented yet </echo>
-  </target>
+  <!-- This sample does not require building, just installation -->
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative RestCustomer sample">
-    <echo> The RestCustomer sample ant build.xml file has not been implemented yet </echo>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${RestCustomer.install.dir}"/>
+
+       <!-- install sample.customer files -->
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.customer.dir}"
+        destdir="${sample.customer.install.dir}"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${sample.customer.dir}"
+        destdir="${sample.customer.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.customer.dir}"
+        destdir="${sample.customer.install.dir}"/>
+    <cpp-install-file
+        srcfile="2345.xml"
+        srcdir="${sample.customer.dir}"
+        destdir="${sample.customer.install.dir}"/>
+
+       <!-- install sample.customer.restclient files -->
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.customer.client.dir}"
+        destdir="${sample.customer.client.install.dir}"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${sample.customer.client.dir}"
+        destdir="${sample.customer.client.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.customer.client.dir}"
+        destdir="${sample.customer.client.install.dir}"/>
+    <cpp-install-file
+        srcfile="runrestclient${script.ext}"
+        srcdir="${sample.customer.client.dir}"
+        destdir="${sample.customer.client.install.dir}"/>
+
+       <!-- install httpserver files -->
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${sample.httpserver.dir}"
+        destdir="${sample.httpserver.install.dir}"/>
+    <cpp-install-files
+        files="*.types"
+        srcdir="${sample.httpserver.dir}/conf"
+        destdir="${sample.httpserver.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.conf"
+        srcdir="${sample.httpserver.dir}/conf"
+        destdir="${sample.httpserver.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.html"
+        srcdir="${sample.httpserver.dir}/htdocs"
+        destdir="${sample.httpserver.install.dir}/htdocs"/>
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative RestCustomer sample">
-    <echo> The RestCustomer sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${RestCustomer.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>
