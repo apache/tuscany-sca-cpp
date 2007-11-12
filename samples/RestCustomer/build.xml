@@ -104,7 +104,8 @@
     <cpp-install-files
         files="*${script.ext}"
         srcdir="${sample.httpserver.dir}"
-        destdir="${sample.httpserver.install.dir}"/>
+        destdir="${sample.httpserver.install.dir}"
+        executable="true"/>
     <cpp-install-files
         files="*.types"
         srcdir="${sample.httpserver.dir}/conf"

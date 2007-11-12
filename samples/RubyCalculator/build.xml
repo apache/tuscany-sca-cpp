@@ -81,7 +81,8 @@
     <cpp-install-files
         files="*${script.ext}"
         srcdir="${sample.calculator.client.dir}"
-        destdir="${sample.calculator.client.install.dir}"/>
+        destdir="${sample.calculator.client.install.dir}"
+        executable="true"/>
 
   </target>
 

@@ -30,7 +30,22 @@
 
   <target name="init">
     <tstamp/>
-    <property name="this.dir" location="${basedir}/samples/AlertAggregator"/>
+    <property name="this.dir"                  location="${basedir}/samples/AlertAggregator"/>
+    <property name="sample.alerter.dir"        location="${this.dir}/sample.alerter"/>
+    <property name="sample.display.dir"        location="${this.dir}/sample.display"/>
+    <property name="sample.httpserver.dir"     location="${this.dir}/httpserver"/>
+    <property name="sample.httpserver.php.dir" location="${this.dir}/httpserver.php"/>
+
+    <property name="AlertAggregator.install.dir"
+              location="${tuscanySCA.install.dir}/samples/AlertAggregator"/>
+    <property name="sample.alerter.install.dir"
+              location="${AlertAggregator.install.dir}/sample.alerter"/>
+    <property name="sample.display.install.dir"
+              location="${AlertAggregator.install.dir}/sample.display"/>
+    <property name="sample.httpserver.install.dir"
+              location="${AlertAggregator.install.dir}/httpserver"/>
+    <property name="sample.httpserver.php.install.dir"
+              location="${AlertAggregator.install.dir}/httpserver.php"/>
   </target>
 
   <!--
@@ -38,32 +53,127 @@
   -->
   <target name="all"
           depends="init"
-          description="build and install the TuscanyScaNative AlertAggregator sample">
-    <antcall target="build"/>
+          description="install the TuscanyScaNative AlertAggregator sample">
     <antcall target="install"/>
-  </target>
-
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative AlertAggregator sample">
-    <echo> The AlertAggregator sample ant build.xml file has not been implemented yet </echo>
   </target>
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative AlertAggregator sample">
-    <echo> The AlertAggregator sample ant build.xml file has not been implemented yet </echo>
+
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${AlertAggregator.install.dir}"/>
+    <cpp-install-files
+        files="config.xml"
+        srcdir="${this.dir}"
+        destdir="${AlertAggregator.install.dir}"/>
+
+       <!-- install sample.alerter files -->
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.alerter.dir}"
+        destdir="${sample.alerter.install.dir}"/>
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.alerter.dir}"
+        destdir="${sample.alerter.install.dir}"/>
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${sample.alerter.dir}"
+        destdir="${sample.alerter.install.dir}"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${sample.alerter.dir}"
+        destdir="${sample.alerter.install.dir}"/>
+
+       <!-- install sample.display files -->
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.display.dir}"
+        destdir="${sample.display.install.dir}"/>
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.display.dir}"
+        destdir="${sample.display.install.dir}"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${sample.display.dir}"
+        destdir="${sample.display.install.dir}"/>
+
+       <!-- install httpserver files -->
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${sample.httpserver.dir}"
+        destdir="${sample.httpserver.install.dir}"
+        executable="true"/>
+    <cpp-install-files
+        files="*.types"
+        srcdir="${sample.httpserver.dir}/conf"
+        destdir="${sample.httpserver.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.conf"
+        srcdir="${sample.httpserver.dir}/conf"
+        destdir="${sample.httpserver.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.html"
+        srcdir="${sample.httpserver.dir}/htdocs"
+        destdir="${sample.httpserver.install.dir}/htdocs"/>
+    <cpp-install-files
+        files="*.css"
+        srcdir="${sample.httpserver.dir}/htdocs"
+        destdir="${sample.httpserver.install.dir}/htdocs"/>
+    <cpp-install-files
+        files="*.png"
+        srcdir="${sample.httpserver.dir}/htdocs"
+        destdir="${sample.httpserver.install.dir}/htdocs"/>
+
+       <!-- install httpserver.php files -->
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${sample.httpserver.php.dir}"
+        destdir="${sample.httpserver.php.install.dir}"
+        executable="true"/>
+    <cpp-install-files
+        files="*.types"
+        srcdir="${sample.httpserver.php.dir}/conf"
+        destdir="${sample.httpserver.php.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.conf"
+        srcdir="${sample.httpserver.php.dir}/conf"
+        destdir="${sample.httpserver.php.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.html"
+        srcdir="${sample.httpserver.php.dir}/htdocs"
+        destdir="${sample.httpserver.php.install.dir}/htdocs"/>
+    <cpp-install-files
+        files="*.css"
+        srcdir="${sample.httpserver.php.dir}/htdocs"
+        destdir="${sample.httpserver.php.install.dir}/htdocs"/>
+    <cpp-install-files
+        files="*.png"
+        srcdir="${sample.httpserver.php.dir}/htdocs"
+        destdir="${sample.httpserver.php.install.dir}/htdocs"/>
+    <cpp-install-files
+        files="*.php"
+        srcdir="${sample.httpserver.php.dir}/htdocs"
+        destdir="${sample.httpserver.php.install.dir}/htdocs"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${sample.httpserver.php.dir}/htdocs"
+        destdir="${sample.httpserver.php.install.dir}/htdocs"/>
+    <cpp-install-files
+        files="*.xml"
+        srcdir="${sample.httpserver.php.dir}/htdocs"
+        destdir="${sample.httpserver.php.install.dir}/htdocs"/>
+
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative AlertAggregator sample">
-    <echo> The AlertAggregator sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${AlertAggregator.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>

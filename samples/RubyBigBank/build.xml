@@ -82,7 +82,8 @@
     <cpp-install-files
         files="*${script.ext}"
         srcdir="${bigbank.account.dir}"
-        destdir="${bigbank.account.install.dir}"/>
+        destdir="${bigbank.account.install.dir}"
+        executable="true"/>
 
        <!-- install bigbank.account.client files -->
     <cpp-install-files
@@ -92,7 +93,8 @@
     <cpp-install-files
         files="*${script.ext}"
         srcdir="${bigbank.account.client.dir}"
-        destdir="${bigbank.account.client.install.dir}"/>
+        destdir="${bigbank.account.client.install.dir}"
+        executable="true"/>
 
        <!-- install bigbank.account.wsclient files -->
     <cpp-install-files
@@ -102,7 +104,8 @@
     <cpp-install-files
         files="*${script.ext}"
         srcdir="${bigbank.account.wsclient.dir}"
-        destdir="${bigbank.account.wsclient.install.dir}"/>
+        destdir="${bigbank.account.wsclient.install.dir}"
+        executable="true"/>
     <cpp-install-files
         files="*.composite"
         srcdir="${bigbank.account.wsclient.dir}"

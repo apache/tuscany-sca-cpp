@@ -31,6 +31,15 @@
   <target name="init">
     <tstamp/>
     <property name="this.dir" location="${basedir}/samples/PythonWeatherForecast"/>
+    <property name="sample.weather.dir"         location="${this.dir}/sample.weather"/>
+    <property name="sample.weather.client.dir"  location="${this.dir}/sample.weather.client"/>
+
+    <property name="PythonWeather.install.dir"
+              location="${tuscanySCA.install.dir}/samples/PythonWeatherForecast"/>
+    <property name="sample.weather.install.dir"
+              location="${PythonWeather.install.dir}/sample.weather"/>
+    <property name="sample.weather.client.install.dir"
+              location="${PythonWeather.install.dir}/sample.weather.client"/>
   </target>
 
   <!--
@@ -38,32 +47,49 @@
   -->
   <target name="all"
           depends="init"
-          description="build and install the TuscanyScaNative PythonWeatherForecast sample">
-    <antcall target="build"/>
+          description="install the TuscanyScaNative PythonWeatherForecast sample">
     <antcall target="install"/>
-  </target>
-
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative PythonWeatherForecast sample">
-    <echo> The PythonWeatherForecast sample ant build.xml file has not been implemented yet </echo>
   </target>
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative PythonWeatherForecast sample">
-    <echo> The PythonWeatherForecast sample ant build.xml file has not been implemented yet </echo>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${PythonWeather.install.dir}"/>
+
+       <!-- install sample.weather.files -->
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.weather.dir}"
+        destdir="${sample.weather.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.weather.dir}"
+        destdir="${sample.weather.install.dir}"/>
+    <cpp-install-files
+        files="*.wsdl"
+        srcdir="${sample.weather.dir}"
+        destdir="${sample.weather.install.dir}"/>
+
+       <!-- install sample.weather.client files -->
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.weather.client.dir}"
+        destdir="${sample.weather.client.install.dir}"/>
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${sample.weather.client.dir}"
+        destdir="${sample.weather.client.install.dir}"
+        executable="true"/>
+
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative PythonWeatherForecast sample">
-    <echo> The PythonWeatherForecast sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${PythonWeather.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>

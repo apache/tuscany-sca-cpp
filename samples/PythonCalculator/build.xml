@@ -31,6 +31,15 @@
   <target name="init">
     <tstamp/>
     <property name="this.dir" location="${basedir}/samples/PythonCalculator"/>
+    <property name="sample.calculator.dir"         location="${this.dir}/sample.calculator"/>
+    <property name="sample.calculator.client.dir"  location="${this.dir}/sample.calculator.client"/>
+
+    <property name="PythonCalculator.install.dir"
+              location="${tuscanySCA.install.dir}/samples/PythonCalculator"/>
+    <property name="sample.calculator.install.dir"
+              location="${PythonCalculator.install.dir}/sample.calculator"/>
+    <property name="sample.calculator.client.install.dir"
+              location="${PythonCalculator.install.dir}/sample.calculator.client"/>
   </target>
 
   <!--
@@ -38,32 +47,45 @@
   -->
   <target name="all"
           depends="init"
-          description="build and install the TuscanyScaNative PythonCalculator sample">
-    <antcall target="build"/>
+          description="install the TuscanyScaNative PythonCalculator sample">
     <antcall target="install"/>
-  </target>
-
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative PythonCalculator sample">
-    <echo> The PythonCalculator sample ant build.xml file has not been implemented yet </echo>
   </target>
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative PythonCalculator sample">
-    <echo> The PythonCalculator sample ant build.xml file has not been implemented yet </echo>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${PythonCalculator.install.dir}"/>
+
+       <!-- install sample.calculator.files -->
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.calculator.dir}"
+        destdir="${sample.calculator.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${sample.calculator.dir}"
+        destdir="${sample.calculator.install.dir}"/>
+
+       <!-- install sample.calculator.client files -->
+    <cpp-install-files
+        files="*.py"
+        srcdir="${sample.calculator.client.dir}"
+        destdir="${sample.calculator.client.install.dir}"/>
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${sample.calculator.client.dir}"
+        destdir="${sample.calculator.client.install.dir}"
+        executable="true"/>
+
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative PythonCalculator sample">
-    <echo> The PythonCalculator sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${PythonCalculator.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>
