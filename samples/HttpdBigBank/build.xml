@@ -30,7 +30,22 @@
 
   <target name="init">
     <tstamp/>
-    <property name="this.dir" location="${basedir}/samples/HttpdBigBank"/>
+    <property name="this.dir"                 location="${basedir}/samples/HttpdBigBank"/>
+    <property name="bigbank.account.dir"      location="${this.dir}/bigbank.account"/>
+    <property name="bigbank.accountdata.dir"  location="${this.dir}/bigbank.accountdata"/>
+    <property name="bigbank.wsclient.dir"     location="${this.dir}/bigbank.wsclient"/>
+    <property name="httpserver.dir"           location="${this.dir}/httpserver"/>
+
+    <property name="HttpdBigBank.install.dir"
+              location="${tuscanySCA.install.dir}/samples/HttpdBigBank"/>
+    <property name="bigbank.account.install.dir"
+              location="${HttpdBigBank.install.dir}/bigbank.account"/>
+    <property name="bigbank.accountdata.install.dir"
+              location="${HttpdBigBank.install.dir}/bigbank.accountdata"/>
+    <property name="bigbank.wsclient.install.dir"
+              location="${HttpdBigBank.install.dir}/bigbank.wsclient"/>
+    <property name="httpserver.install.dir"
+              location="${HttpdBigBank.install.dir}/httpserver"/>
   </target>
 
   <!--
@@ -38,32 +53,95 @@
   -->
   <target name="all"
           depends="init"
-          description="build and install the TuscanyScaNative HttpdBigBank sample">
-    <antcall target="build"/>
+          description="install the TuscanyScaNative HttpdBigBank sample">
     <antcall target="install"/>
-  </target>
-
-  <target name="build"
-          depends="init"
-          description="build the TuscanyScaNative HttpdBigBank sample">
-    <echo> The HttpdBigBank sample ant build.xml file has not been implemented yet </echo>
   </target>
 
   <target name="install"
           depends="init"
           description="Install the TuscanyScaNative HttpdBigBank sample">
-    <echo> The HttpdBigBank sample ant build.xml file has not been implemented yet </echo>
+
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${this.dir}"
+        destdir="${HttpdBigBank.install.dir}"/>
+
+       <!-- install bigbank.account.files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+    <cpp-install-files
+        files="*.wsdl"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${bigbank.account.dir}"
+        destdir="${bigbank.account.install.dir}"/>
+
+       <!-- install bigbank.accountdata.files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${bigbank.accountdata.dir}"
+        destdir="${bigbank.accountdata.install.dir}"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${bigbank.accountdata.dir}"
+        destdir="${bigbank.accountdata.install.dir}"/>
+    <cpp-install-files
+        files="*.xsd"
+        srcdir="${bigbank.accountdata.dir}"
+        destdir="${bigbank.accountdata.install.dir}"/>
+
+       <!-- install bigbank.wsclient files -->
+    <cpp-install-files
+        files="*.rb"
+        srcdir="${bigbank.wsclient.dir}"
+        destdir="${bigbank.wsclient.install.dir}"/>
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${bigbank.wsclient.dir}"
+        destdir="${bigbank.wsclient.install.dir}"
+        executable="true"/>
+    <cpp-install-files
+        files="*.composite"
+        srcdir="${bigbank.wsclient.dir}"
+        destdir="${bigbank.wsclient.install.dir}"/>
+    <cpp-install-files
+        files="*.wsdl"
+        srcdir="${bigbank.wsclient.dir}"
+        destdir="${bigbank.wsclient.install.dir}"/>
+
+       <!-- install httpserver files -->
+    <cpp-install-files
+        files="*${script.ext}"
+        srcdir="${httpserver.dir}"
+        destdir="${httpserver.install.dir}"
+        executable="true"/>
+    <cpp-install-files
+        files="*.types"
+        srcdir="${httpserver.dir}/conf"
+        destdir="${httpserver.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.conf"
+        srcdir="${httpserver.dir}/conf"
+        destdir="${httpserver.install.dir}/conf"/>
+    <cpp-install-files
+        files="*.html"
+        srcdir="${httpserver.dir}/htdocs"
+        destdir="${httpserver.install.dir}/htdocs"/>
+
   </target>
 
   <target name="clean"
           depends="init"
           description="Clean the TuscanyScaNative HttpdBigBank sample">
-    <echo> The HttpdBigBank sample ant build.xml file has not been implemented yet </echo>
+    <delete dir="${HttpdBigBank.install.dir}" quiet="true"/>
   </target>
-
-  <!--
-    Internal targets
-    They can still be called, they're just not described, so wont show up in "ant -p"
-  -->
 
 </project>
