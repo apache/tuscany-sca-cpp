@@ -378,6 +378,7 @@ namespace tuscany
 
             // Get list of all directories named "module"
 			Files extensionModules(extensionsRoot, "module", true, true);
+                        loginfo("Found %i extension modules", extensionModules.size() );
 			for (unsigned int emI=0; emI < extensionModules.size(); emI++)
 			{
 				string extensionRoot = extensionModules[emI].getDirectory().c_str();
@@ -385,11 +386,13 @@ namespace tuscany
 				loginfo("Loading extension module: %s", extensionRoot.c_str() );
 			
 	            Files files(extensionRoot, pattern, true);
+                   loginfo("Found %i extension libraries", files.size() );
 	            for (unsigned int i=0; i < files.size(); i++)
 	            {
 	                try
 	                {
 	                	string filename = files[i].getFileName();
+                            loginfo("Loading extension library: %s", filename );
 	                    Library lib = Library( files[i].getDirectory() + "/" + filename);
 	                    
 	                    // Determine the name of the initialize method
