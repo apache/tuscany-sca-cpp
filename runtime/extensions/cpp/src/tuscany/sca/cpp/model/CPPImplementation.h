@@ -107,6 +107,16 @@ namespace tuscany
                  */
                  Scope getScope() { return scope; }
                 
+                /**
+                 * Returns the implementation instance (to be used if the scope is set to composite)
+                 */
+                 void* getStaticImplementation() { return staticImpl; }
+                
+                /**
+                 * Sets the implementation instance (to be used if the scope is set to composite)
+                 */
+                 void setStaticImplementation(void* staticImpl);
+                
             private:
                 
                 /**
@@ -139,6 +149,11 @@ namespace tuscany
                  * Scope of the implementation
                  */
                 Scope scope;
+    
+                /**
+                 * Holds the implementation instance if the scope is set to composite.
+                 */
+                void* staticImpl;
             };
             
         } // End namespace cpp

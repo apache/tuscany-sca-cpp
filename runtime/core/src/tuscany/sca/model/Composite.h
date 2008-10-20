@@ -31,6 +31,7 @@
 #include "tuscany/sca/export.h"
 #include "tuscany/sca/model/ComponentType.h"
 
+#define COPY_COMPOSITES_ON_INSTANCIATION
 
 namespace tuscany
 {
@@ -64,6 +65,15 @@ namespace tuscany
                  * @param root the root of the composite in the file system.
                  */
                 SCA_API Composite(const std::string& name, const std::string& root);
+
+#if defined(COPY_COMPOSITES_ON_INSTANCIATION) 
+                /**
+                 * Constructor to create a composite representing an instance by copying a template.
+                 * @param templateComposite the template copmosite that will be copied.
+                 * @param containerComposite the container of the instance.
+                 */
+                SCA_API Composite(Composite* templateComposite, Composite* containerComposite);
+#endif
 
                 /**
                  * Destructor.

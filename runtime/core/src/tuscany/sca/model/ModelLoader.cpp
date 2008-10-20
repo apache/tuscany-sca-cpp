@@ -318,14 +318,18 @@ namespace tuscany
                 if (implTypeQname == "http://www.osoa.org/xmlns/sca/1.0#SCAImplementation")
                 {
                     // Handle a composite implementation 
-                    Composite* composite = compositeModels[impl->getCString("name")];
-                    if (!composite)
+                    Composite* compositeComponentType = compositeModels[impl->getCString("name")];
+                    if (!compositeComponentType)
                     {
                         string message = "Composite not found: ";
                         message = message + impl->getCString("name");
                         throwException(SystemConfigurationException, message.c_str());
                     }
-                    componentType = composite;
+#if defined(COPY_COMPOSITES_ON_INSTANCIATION) 
+                    componentType = new Composite(compositeComponentType, composite);
+#else
+                    componentType = compositeComponentType;
+#endif
                 }
                 else
                 {

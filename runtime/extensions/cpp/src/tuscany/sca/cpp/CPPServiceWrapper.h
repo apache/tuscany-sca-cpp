@@ -120,11 +120,6 @@ namespace tuscany
     
             private:
                 /**
-                 * Holds an implementation instance if the scope is set to composite.
-                 */
-                static void* staticImpl;
-    
-                /**
                  * The component to which this wrapper refers.
                  */
                 tuscany::sca::model::Component* component;

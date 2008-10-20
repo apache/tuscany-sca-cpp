@@ -53,6 +53,109 @@ namespace tuscany
                 logentry(); 
             }
             
+#if defined(COPY_COMPOSITES_ON_INSTANCIATION) 
+            // Constructor
+            Composite::Composite(Composite* templateComposite, Composite* containerComposite)
+                : ComponentType(containerComposite, templateComposite->getName()), root(templateComposite->root)
+            {
+                logentry();
+                components = templateComposite->components;
+                includes = templateComposite->includes;
+                wires = templateComposite->wires;
+                wsdlDefinitions = templateComposite->wsdlDefinitions;
+                // Copy all services from the cloned template
+                SERVICETYPE_MAP serviceTypeMap = templateComposite->getServiceTypes();
+                for (SERVICETYPE_MAP::iterator serviter = serviceTypeMap.begin();
+                serviter != serviceTypeMap.end();
+                ++serviter)
+                {
+                    addServiceType(serviter->second);
+                }
+                // Copy all references from the cloned template
+                REFERENCETYPE_MAP referenceTypeMap = templateComposite->getReferenceTypes();
+                for (REFERENCETYPE_MAP::iterator refiter = referenceTypeMap.begin();
+                refiter != referenceTypeMap.end();
+                refiter++)
+                {
+                    addReferenceType(refiter->second);
+                }
+                // Copy the dataFactory from the cloned template
+                commonj::sdo::DataFactoryPtr propertyFactory = getPropertyDataFactory();
+                commonj::sdo::DataFactoryPtr dataFactory = templateComposite->getPropertyDataFactory();
+                commonj::sdo::TypeList typeList = dataFactory->getTypes();
+                for (int typeiter1=0;
+                typeiter1 < typeList.size();
+                ++typeiter1)
+                {
+                    const commonj::sdo::Type& type = typeList[typeiter1];
+                    propertyFactory->addType(
+                        type.getURI(),
+                        type.getName(),
+                        type.isSequencedType(),
+                        type.isOpenType(),
+                        type.isAbstractType(),
+                        type.isDataType());
+                }
+                for (int typeiter2=0;
+                typeiter2 < typeList.size();
+                ++typeiter2)
+                {
+                    const commonj::sdo::Type& type = typeList[typeiter2];
+                    commonj::sdo::PropertyList propertyList = type.getProperties();
+                    for (int propertyiter=0;
+                    propertyiter < propertyList.size();
+                    ++propertyiter)
+                    {
+                        const commonj::sdo::Property& property = propertyList[propertyiter];
+                        propertyFactory->addPropertyToType(
+                            type.getURI(),
+                            type.getName(),
+                            property.getName(),
+                            property.getType().getURI(),
+                            property.getType().getName(),
+                            property.isMany(),
+                            property.isReadOnly(),
+                            property.isContainment());
+                    }
+                    for (int propertyiter=0;
+                    propertyiter < propertyList.size();
+                    ++propertyiter)
+                    {
+                        const commonj::sdo::Property& property = propertyList[propertyiter];
+                        for (int aliasiter = 0;
+                        aliasiter < property.getAliasCount();
+                        ++aliasiter)
+                        {
+                            propertyFactory->setAlias(
+                                type.getURI(),
+                                type.getName(),
+                                property.getName(),
+                                property.getAlias(aliasiter));
+                        }
+                    }
+                    for (int aliasiter = 0;
+                    aliasiter < type.getAliasCount();
+                    ++aliasiter)
+                    {
+                        propertyFactory->setAlias(
+                            type.getURI(),
+                            type.getName(),
+                            type.getAlias(aliasiter));
+                    }
+                    if ( type.getBaseType() )
+                    {
+                        propertyFactory->setBaseType(
+                            type.getURI(),
+                            type.getName(),
+                            type.getBaseType()->getURI(),
+                            type.getBaseType()->getName(),
+                            false); //TODO: Where do we know if the cloned Type is a restriction ???
+                    }
+                }
+                
+            }
+#endif
+            
             // Destructor
             Composite::~Composite()
             {

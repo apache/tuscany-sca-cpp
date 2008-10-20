@@ -44,11 +44,6 @@ namespace tuscany
     {
         namespace cpp
         {
-            
-            // ===================
-            // Static data members
-            // ===================
-            void* CPPServiceWrapper::staticImpl = 0;
     
             // ===========
             // Constructor
@@ -80,11 +75,12 @@ namespace tuscany
                 logentry();
                 if (implementation->getScope() == CPPImplementation::COMPOSITE)
                 {
-                    if (!staticImpl)
+                    // fill the cache if needed
+                    if ( !implementation->getStaticImplementation() )
                     {
-                        staticImpl = newImplementation();
+                        implementation->setStaticImplementation(newImplementation());
                     }
-                    return staticImpl;
+                    return implementation->getStaticImplementation();
                 }
                 else // (scope == CPPInterface::STATELESS)
                 {

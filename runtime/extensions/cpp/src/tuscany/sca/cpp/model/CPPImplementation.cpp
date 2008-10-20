@@ -45,7 +45,7 @@ namespace tuscany
                     const string&headerPath, const string& headerStub, const string& className, Scope scope)
                 : ComponentType(composite, headerPath + headerStub),
                     library(library), header(header), headerPath(headerPath),
-                    headerStub(headerStub), className(className), scope(scope)
+                    headerStub(headerStub), className(className), scope(scope), staticImpl(0)
             {
             }
 
@@ -78,6 +78,11 @@ namespace tuscany
                     reference->setBinding(binding);
                     refiter++;
                 }
+            }
+            
+            void CPPImplementation::setStaticImplementation(void* staticImpl)
+            {
+              this->staticImpl = staticImpl; 
             }
             
         } // End namespace cpp
