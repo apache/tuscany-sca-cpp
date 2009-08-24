@@ -228,14 +228,14 @@ fi
 AM_CONDITIONAL([WANT_DOXYGEN], [test x$want_doxygen = xtrue])
 
 AC_CONFIG_FILES([Makefile
-                 tools/Makefile
-                 tools/scagen/Makefile
                  runtime/Makefile
                  runtime/core/Makefile
                  runtime/core/src/Makefile
                  runtime/extensions/Makefile
                  runtime/extensions/cpp/Makefile
                  runtime/extensions/cpp/src/Makefile
+                 runtime/extensions/cpp/tools/Makefile
+                 runtime/extensions/cpp/tools/scagen/Makefile
                  runtime/extensions/ws/Makefile
                  runtime/extensions/ws/reference/Makefile
                  runtime/extensions/ws/reference/axis2c/Makefile

@@ -15,12 +15,11 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = tools runtime doc
-DIST_SUBDIRS = tools runtime doc samples
+SUBDIRS = runtime doc
+DIST_SUBDIRS = runtime doc samples
 datadir=$(prefix)
 
 data_DATA = INSTALL README LICENSE COPYING NOTICE GettingStarted.html
-nobase_data_DATA = xsd/*.*
 EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE GettingStarted.html xsd build_scanative.sh
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`

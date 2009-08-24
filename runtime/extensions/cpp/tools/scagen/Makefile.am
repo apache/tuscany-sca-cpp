@@ -29,7 +29,7 @@ clean:
 	rm -f scagen_build
 	                    
 install-exec-hook:
-	cp bld/scagen.jar $(bindir)
+	cp build/scagen.jar $(bindir)
 	
 	 
     

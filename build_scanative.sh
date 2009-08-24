@@ -30,8 +30,7 @@ ENABLE_WS=--enable-wsbinding
 fi
 
 if [ x$TUSCANY_SDOCPP = x ]; then
-echo "TUSCANY_SDOCPP not set"
-exit;
+export TUSCANY_SDOCPP="$TUSCANY_SCACPP_HOME/../sdo/deploy"
 fi
 echo "Using SDO installed at $TUSCANY_SDOCPP"
 
@@ -69,7 +68,7 @@ ENABLE_REST=--enable-restbinding
 fi
 
 if [ x$TUSCANY_SCACPP = x ]; then
-export TUSCANY_SCACPP=`pwd`/deploy
+export TUSCANY_SCACPP="$TUSCANY_SCACPP_HOME/deploy"
 fi
 
 ./configure --prefix=${TUSCANY_SCACPP} --enable-static=no  ${ENABLE_WS} ${ENABLE_SCABINDING} ${ENABLE_RUBY} ${ENABLE_PYTHON} ${ENABLE_REST}
