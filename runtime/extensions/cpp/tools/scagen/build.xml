@@ -31,7 +31,7 @@
 
     <!-- Add "test" to the depends list below to add auto-testing to the build -->
     <!-- a junit.jar is needed at ${junit.jar.folder}/junit.jar though         -->
-    <target name="all" depends="init,jars,doc,scripts,zip.all">
+    <target name="all" depends="init,jars,scripts,zip.all">
     </target>
 
     <target name="test" depends="init,jars,test.jar">

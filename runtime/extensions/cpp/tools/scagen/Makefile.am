@@ -27,6 +27,7 @@ scagen_build:
 	
 clean:
 	rm -rf build
+	rm -rf docs
 	rm -f scagen_build
 	                    
 install-exec-hook:
