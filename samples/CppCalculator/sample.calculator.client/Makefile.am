@@ -22,7 +22,6 @@ client_PROGRAMS = calculator_client
 client_SCRIPTS = runclient.sh
 EXTRA_DIST = runclient.sh
 
-AM_CPPFLAGS = $(CPPFLAGS)
 calculator_client_SOURCES = \
 CalculatorClient.cpp
 

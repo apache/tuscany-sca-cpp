@@ -14,8 +14,6 @@ libtuscany_sca_rest_interface_la_LIBADD = \
 INCLUDES = -I$(top_builddir)/runtime/core/src \
   -I${TUSCANY_SDOCPP}/include
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-      
 moduledir=$(prefix)/extensions/rest/interface/module
 extension = libtuscany_sca_rest_interface$(libsuffix)
 	                    

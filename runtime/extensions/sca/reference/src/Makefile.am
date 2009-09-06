@@ -33,8 +33,6 @@ libtuscany_sca_binding_reference_la_LIBADD = \
 INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-
 moduledir=$(prefix)/extensions/sca/reference/module
 extension = libtuscany_sca_binding_reference$(libsuffix)
 	                    

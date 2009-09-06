@@ -19,9 +19,6 @@ INCLUDES = -I$(top_builddir)/runtime/core/src \
   -I${TUSCANY_SDOCPP}/include \
   -I${CURL_INCLUDE}
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-
-
 moduledir=$(prefix)/extensions/rest/reference/module
 extension = libtuscany_sca_rest_reference$(libsuffix)
 	                    

@@ -48,8 +48,6 @@ INCLUDES = -I${TUSCANY_SCACPP}/include \
            -I${PHP_INCLUDE}/sapi/embed \
            -I${PHP_SCA_SDO_INCLUDE}
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG 
-                   
 moduledir=$(prefix)/module
 extension = libtuscany_sca_php$(libsuffix)
 	                    

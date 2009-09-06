@@ -22,7 +22,6 @@ client_PROGRAMS = account_client
 client_SCRIPTS = runclient.sh
 EXTRA_DIST = runclient.sh
 
-AM_CPPFLAGS = $(CPPFLAGS)
 account_client_SOURCES = AccountClient.cpp
 
 account_client_LDADD   =  -L${TUSCANY_SCACPP}/lib -ltuscany_sca \

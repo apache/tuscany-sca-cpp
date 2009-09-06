@@ -91,6 +91,9 @@ if test "x$LIBXML2_LIB" = "x"; then
   AC_SUBST([LIBXML2_LIB], ["/usr/lib"])
 fi
 
+# Configure GCC C++ compile options
+AC_SUBST([CXXFLAGS], ["$(CXXFLAGS) -D_DEBUG -O0 -g3 -Wall -std=c++0x -fmessage-length=0"])
+
 AC_MSG_CHECKING(whether to build all component type and binding extensions)
 AC_ARG_ENABLE(all-extensions, [AS_HELP_STRING([--enable-all-extensions],[build all runtime extensions [default=no]])],
 [ case "${enableval}" in

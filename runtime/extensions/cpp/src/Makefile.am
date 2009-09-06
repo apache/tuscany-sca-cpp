@@ -46,8 +46,6 @@ libtuscany_sca_cpp_la_LIBADD = -L${TUSCANY_SDOCPP}/lib -ltuscany_sdo \
 INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-
 moduledir=$(prefix)/extensions/cpp/module
 extension = libtuscany_sca_cpp$(libsuffix)
 	                    

@@ -52,9 +52,6 @@ INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
            -I${PYTHON_INCLUDE}
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-                   
-
 moduledir=$(prefix)/extensions/python/module
 extension = libtuscany_sca_python$(libsuffix)
 	                    

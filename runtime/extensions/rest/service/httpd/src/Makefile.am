@@ -33,8 +33,6 @@ INCLUDES = -I$(top_builddir)/runtime/core/src \
   -I${TUSCANY_SDOCPP}/include \
   -I${HTTPD_INCLUDE} -I${APR_INCLUDE}
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-
 moduledir=$(prefix)/extensions/rest/service/module
 extension = libtuscany_sca_rest_service$(libsuffix)
 	                    

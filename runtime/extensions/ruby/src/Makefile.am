@@ -44,8 +44,6 @@ INCLUDES = -Imodel -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
            -I${RUBY_INCLUDE}
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG
-                   
 moduledir=$(prefix)/extensions/ruby/module
 extension = libtuscany_sca_ruby_lang$(libsuffix)
 	                    

@@ -45,8 +45,6 @@ INCLUDES = -I$(top_builddir)/runtime/core/src \
            -I${TUSCANY_SDOCPP}/include \
            -I${AXIS2C_HOME}/include
                    
-AM_CPPFLAGS = $(CPPFLAGS) -D_DEBUG                 
-
 moduledir=$(prefix)/extensions/ws/reference/module
 extension = libtuscany_sca_ws_reference$(libsuffix)
 	                    
