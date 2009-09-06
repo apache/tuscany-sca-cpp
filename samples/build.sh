@@ -17,41 +17,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-
-if [ x$TUSCANY_SCACPP = x ]; then
-echo "TUSCANY_SCACPP not set"
-exit;
-fi
-echo "Using SCA installed at $TUSCANY_SCACPP"
-
-if [ x$TUSCANY_SDOCPP = x ]; then
-echo "TUSCANY_SDOCPP not set"
-exit;
-fi
-echo "Using SDO installed at $TUSCANY_SDOCPP"
-
-
-if [ x$PYTHON_LIB = x ]; then
-echo "PYTHON_LIB not set. Python samples will not be built"
-elif [ x$PYTHON_INCLUDE = x ]; then
-echo "PYTHON_INCLUDE not set. Python samples will not be built"
-elif [ x$PYTHON_VERSION = x ]; then
-echo "PYTHON_VERSION not set. Python samples will not be built"
-else
-echo "Building PYTHON samples with Python $PYTHON_VERSION installed at $PYTHON_LIB, $PYTHON_INCLUDE"
-ENABLE_PYTHON=--enable-python
-fi
-
-if [ x$RUBY_LIB = x ]; then
-echo "RUBY_LIB not set. Ruby samples will not be built"
-elif [ x$RUBY_INCLUDE = x ]; then
-echo "RUBY_INCLUDE not set. Ruby samples will not be built"
-else
-echo "Building Ruby samples with Ruby installed at $RUBY_LIB, $RUBY_INCLUDE"
-ENABLE_RUBY=--enable-ruby
-fi
-
-./configure --prefix=${TUSCANY_SCACPP}/samples --enable-static=no ${ENABLE_RUBY} ${ENABLE_PYTHON}
-make
+./configure.sh
 make install
 

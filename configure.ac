@@ -18,9 +18,9 @@
 dnl run autogen.sh to generate the configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(tuscany_sca_native, 1.0-incubator-M3)
+AC_INIT(tuscany-sca, 1.0-M3)
 AC_CANONICAL_SYSTEM
-AM_CONFIG_HEADER(tuscany_sca_config.h)
+AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([tar-ustar])
 AC_PREFIX_DEFAULT(/usr/local/tuscany/sca)
 
@@ -66,6 +66,30 @@ AC_FUNC_STAT
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([getcwd putenv strdup])
 # AC_CONFIG_SUBDIRS([samples])
+
+# Configure TUSCANY_SCACPP and TUSCANY_SDOCPP
+TUSCANY_SCACPP=`echo "$TUSCANY_SCACPP"`
+if test "x$TUSCANY_SCACPP" = "x"; then
+  SCAPWD=`pwd`
+  AC_SUBST([TUSCANY_SCACPP], ["$SCAPWD"])
+fi
+
+TUSCANY_SDOCPP=`echo "$TUSCANY_SDOCPP"`
+if test "x$TUSCANY_SDOCPP" = "x"; then
+  SCAPWD=`pwd`
+  AC_SUBST([TUSCANY_SDOCPP], ["$SCAPWD/../sdo/deploy"])
+fi
+
+# Configure LIBXML2_INCLUDE and LIBXML2_LIB
+LIBXML2_INCLUDE=`echo "$LIBXML2_INCLUDE"`
+if test "x$LIBXML2_INCLUDE" = "x"; then
+  AC_SUBST([LIBXML2_INCLUDE], ["/usr/include/libxml2"])
+fi
+
+LIBXML2_LIB=`echo "$LIBXML2_LIB"`
+if test "x$LIBXML2_LIB" = "x"; then
+  AC_SUBST([LIBXML2_LIB], ["/usr/lib"])
+fi
 
 AC_MSG_CHECKING(whether to build all component type and binding extensions)
 AC_ARG_ENABLE(all-extensions, [AS_HELP_STRING([--enable-all-extensions],[build all runtime extensions [default=no]])],

@@ -18,7 +18,7 @@
 dnl run autogen.sh to generate the configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(tuscany_sca_samples, 1.0-incubator-M3)
+AC_INIT(tuscany-sca-samples, 1.0-M3)
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
@@ -65,6 +65,19 @@ AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_STAT
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([getcwd putenv strdup])
+
+# Configure TUSCANY_SCACPP and TUSCANY_SDOCPP
+TUSCANY_SCACPP=`echo "$TUSCANY_SCACPP"`
+if test "x$TUSCANY_SCACPP" = "x"; then
+  SCAPWD=`pwd`
+  AC_SUBST([TUSCANY_SCACPP], ["$SCAPWD/.."])
+fi
+
+TUSCANY_SDOCPP=`echo "$TUSCANY_SDOCPP"`
+if test "x$TUSCANY_SDOCPP" = "x"; then
+  SCAPWD=`pwd`
+  AC_SUBST([TUSCANY_SDOCPP], ["$SCAPWD/../../sdo/deploy"])
+fi
 
 AC_MSG_CHECKING(whether to build all samples)
 AC_ARG_ENABLE(all-samples, [AS_HELP_STRING([--enable-all-samples],[build all samples [default=no]])],

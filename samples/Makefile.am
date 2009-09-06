@@ -36,4 +36,5 @@ endif
 endif
 SUBDIRS = ${CPP_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PYTHON_RUBY_SAMPLES}
 
-EXTRA_DIST = GettingStarted.html
+EXTRA_DIST = autogen.sh build.sh GettingStarted.html
+

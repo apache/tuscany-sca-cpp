@@ -26,11 +26,9 @@ scagen_build:
 	touch scagen_build
 	
 clean:
+	rm -rf build
 	rm -f scagen_build
 	                    
 install-exec-hook:
 	cp build/scagen.jar $(bindir)
 	
-	 
-    
-
