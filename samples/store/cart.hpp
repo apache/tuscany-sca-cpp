@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef SCA_CART_HPP_
-#define SCA_CART_HPP_
+#ifndef store_cart_hpp
+#define store_cart_hpp
 
 #include <string.h>
 #include "tuscany/function.hpp"
@@ -29,7 +29,9 @@
 #include "item.hpp"
 #include "catalog.hpp"
 
-namespace tuscany
+using namespace tuscany;
+
+namespace store
 {
 
 const double accum(const double total, const Item& item) {
@@ -72,4 +74,4 @@ public:
 };
 
 }
-#endif /* SCA_CART_HPP_ */
+#endif /* store_cart_hpp */

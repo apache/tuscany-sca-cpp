@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef SCA_STORECOMPOSITE_HPP_
-#define SCA_STORECOMPOSITE_HPP_
+#ifndef store_storecomposite_hpp
+#define store_storecomposite_hpp
 
 #include <string.h>
 #include "tuscany/list.hpp"
@@ -31,7 +31,9 @@
 #include "cart.hpp"
 #include "store-ui.hpp"
 
-namespace tuscany
+using namespace tuscany;
+
+namespace store
 {
 
 class Store : public StoreUI {
@@ -66,4 +68,4 @@ public:
 };
 
 }
-#endif /* SCA_STORECOMPOSITE_HPP_ */
+#endif /* store_storecomposite_hpp */

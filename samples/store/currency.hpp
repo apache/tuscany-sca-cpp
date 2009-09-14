@@ -19,15 +19,16 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef SCA_CURRENCY_HPP_
-#define SCA_CURRENCY_HPP_
+#ifndef store_currency_hpp
+#define store_currency_hpp
 
 #include <string.h>
 #include <math.h>
 
 using std::string;
+using namespace tuscany;
 
-namespace tuscany
+namespace store
 {
 
 class CurrencyConverter {
@@ -59,4 +60,4 @@ public:
 };
 
 }
-#endif /* SCA_CURRENCY_HPP_ */
+#endif /* store_currency_hpp */

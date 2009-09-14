@@ -19,12 +19,14 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef SCA_ITEM_HPP_
-#define SCA_ITEM_HPP_
+#ifndef store_item_hpp
+#define store_item_hpp
 
 #include <string.h>
 
-namespace tuscany
+using namespace tuscany;
+
+namespace store
 {
 
 class Item {
@@ -44,4 +46,4 @@ public:
 };
 
 }
-#endif /* SCA_ITEM_HPP_ */
+#endif /* store_item_hpp */

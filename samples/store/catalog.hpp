@@ -19,15 +19,17 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef SCA_CATALOG_HPP_
-#define SCA_CATALOG_HPP_
+#ifndef store_catalog_hpp
+#define store_catalog_hpp
 
 #include <string.h>
 #include "tuscany/list.hpp"
 #include "currency.hpp"
 #include "item.hpp"
 
-namespace tuscany
+using namespace tuscany;
+
+namespace store
 {
 
 class Catalog {
@@ -62,4 +64,4 @@ public:
 };
 
 }
-#endif /* SCA_CATALOG_HPP_ */
+#endif /* store_catalog_hpp */

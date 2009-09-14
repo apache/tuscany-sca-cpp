@@ -19,14 +19,16 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef SCA_CURRENCYCOMPOSITE_HPP_
-#define SCA_CURRENCYCOMPOSITE_HPP_
+#ifndef store_currencycomposite_hpp
+#define store_currencycomposite_hpp
 
 #include <string.h>
 #include <math.h>
 #include "currency.hpp"
 
-namespace tuscany
+using namespace tuscany;
+
+namespace store
 {
 
 class Currency : public CurrencyConverter {
@@ -49,4 +51,4 @@ public:
 };
 
 }
-#endif /* SCA_CURRENCYCOMPOSITE_HPP_ */
+#endif /* store_currencycomposite_hpp */

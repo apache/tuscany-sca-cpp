@@ -31,7 +31,9 @@
 using std::cout;
 using std::endl;
 
-namespace tuscany
+using namespace tuscany;
+
+namespace store
 {
 
 bool testComponentAssembly() {
@@ -47,7 +49,7 @@ bool testComponentAssembly() {
 }
 
 int main() {
-    using namespace tuscany;
+    using namespace store;
 
     cout << "Testing..." << endl;
 

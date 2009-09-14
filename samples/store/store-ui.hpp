@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef SCA_STOREUI_HPP_
-#define SCA_STOREUI_HPP_
+#ifndef store_storeui_hpp
+#define store_storeui_hpp
 
 #include <string.h>
 #include "tuscany/list.hpp"
@@ -29,7 +29,9 @@
 #include "catalog.hpp"
 #include "cart.hpp"
 
-namespace tuscany
+using namespace tuscany;
+
+namespace store
 {
 
 class StoreUI {
@@ -70,4 +72,4 @@ public:
 };
 
 }
-#endif /* SCA_STOREUI_HPP_ */
+#endif /* store_storeui_hpp */

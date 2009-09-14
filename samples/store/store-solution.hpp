@@ -19,15 +19,17 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef SCA_STORESOLUTION_HPP_
-#define SCA_STORESOLUTION_HPP_
+#ifndef store_storesolution_hpp
+#define store_storesolution_hpp
 
 #include <string.h>
 #include "tuscany/list.hpp"
 #include "store-composite.hpp"
 #include "currency-composite.hpp"
 
-namespace tuscany
+using namespace tuscany;
+
+namespace store
 {
 
 class StoreSolution : public Store {
@@ -60,4 +62,4 @@ public:
 };
 
 }
-#endif /* SCA_STORESOLUTION_HPP_ */
+#endif /* store_storesolution_hpp */
