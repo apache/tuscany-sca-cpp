@@ -16,13 +16,13 @@
 #  under the License.
 
 if WANT_ALL_SAMPLES
-  CPP_SAMPLES = CppCalculator CppBigBank
+  CPP_SAMPLES = CppCalculator CppBigBank store
   PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
   PYTHON_RUBY_SAMPLES = RestYahoo
 else
 if WANT_CPP_SAMPLES
-    CPP_SAMPLES = CppCalculator CppBigBank
+    CPP_SAMPLES = CppCalculator CppBigBank store
 endif
 if WANT_PYTHON_SAMPLES
     PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator

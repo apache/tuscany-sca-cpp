@@ -79,6 +79,20 @@ if test "x$TUSCANY_SDOCPP" = "x"; then
   AC_SUBST([TUSCANY_SDOCPP], ["$SCAPWD/../../sdo/deploy"])
 fi
 
+# Configure LIBXML2_INCLUDE and LIBXML2_LIB
+LIBXML2_INCLUDE=`echo "$LIBXML2_INCLUDE"`
+if test "x$LIBXML2_INCLUDE" = "x"; then
+  AC_SUBST([LIBXML2_INCLUDE], ["/usr/include/libxml2"])
+fi
+
+LIBXML2_LIB=`echo "$LIBXML2_LIB"`
+if test "x$LIBXML2_LIB" = "x"; then
+  AC_SUBST([LIBXML2_LIB], ["/usr/lib"])
+fi
+
+# Configure GCC C++ compile options
+AC_SUBST([CXXFLAGS], ["$(CXXFLAGS) -D_DEBUG -O0 -g3 -Wall -std=c++0x -fmessage-length=0"])
+
 AC_MSG_CHECKING(whether to build all samples)
 AC_ARG_ENABLE(all-samples, [AS_HELP_STRING([--enable-all-samples],[build all samples [default=no]])],
 [ case "${enableval}" in
@@ -148,6 +162,7 @@ AC_ARG_ENABLE(ruby, [AS_HELP_STRING([--enable-ruby],[build Ruby samples [default
 AM_CONDITIONAL([WANT_RUBY_SAMPLES], [test x$want_ruby_samples = xtrue])
 
 AC_CONFIG_FILES([Makefile  
+                 store/Makefile
                  AlertAggregator/Makefile
                  AlertAggregator/sample.alerter/Makefile
                  AlertAggregator/sample.display/Makefile
