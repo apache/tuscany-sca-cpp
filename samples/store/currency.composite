@@ -17,10 +17,10 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://www.osoa.org/xmlns/sca/1.0"
-		xmlns:t="http://tuscany.apache.org/xmlns/sca/1.0"
-		targetNamespace="http://services"	
-		name="currency">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200903"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://services"	
+  name="currency">
 		
 	<component name="CurrencyConverterWebService">
 		<implementation.java class="services.CurrencyConverterImpl"/>

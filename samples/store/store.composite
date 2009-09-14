@@ -17,10 +17,10 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite	xmlns="http://www.osoa.org/xmlns/sca/1.0"
-		xmlns:t="http://tuscany.apache.org/xmlns/sca/1.0"
-		targetNamespace="http://store"
-		name="store">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200903"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://store"
+  name="store">
 		
     <component name="Store">
         <t:implementation.widget location="uiservices/store.html"/>
