@@ -16,7 +16,7 @@
 #  under the License.
 
 if WANT_ALL_SAMPLES
-  CPP_SAMPLES = CppCalculator CppBigBank store
+  CPP_SAMPLES = CppCalculator CppBigBank store store2
   PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator
   RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
   PYTHON_RUBY_SAMPLES = RestYahoo

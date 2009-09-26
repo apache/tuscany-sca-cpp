@@ -163,6 +163,7 @@ AM_CONDITIONAL([WANT_RUBY_SAMPLES], [test x$want_ruby_samples = xtrue])
 
 AC_CONFIG_FILES([Makefile  
                  store/Makefile
+                 store2/Makefile
                  AlertAggregator/Makefile
                  AlertAggregator/sample.alerter/Makefile
                  AlertAggregator/sample.display/Makefile
