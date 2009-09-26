@@ -258,6 +258,7 @@ AC_CONFIG_FILES([Makefile
                  runtime/Makefile
                  runtime/core/Makefile
                  runtime/core/src/Makefile
+                 runtime/core/test/Makefile
                  runtime/extensions/Makefile
                  runtime/extensions/cpp/Makefile
                  runtime/extensions/cpp/src/Makefile

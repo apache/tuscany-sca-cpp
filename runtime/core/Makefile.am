@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = src
+SUBDIRS = src test
 nobase_data_DATA = xsd/*.*
 
 EXTRA_DIST = xsd

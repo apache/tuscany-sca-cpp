@@ -15,4 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = ws.service.interop
+noinst_PROGRAMS = core-test xml-test
+
+INCLUDES = -I. -I$(top_builddir)/runtime/core/src -I${LIBXML2_INCLUDE}
+
+core_test_SOURCES = tuscany/core-test.cpp
+core_test_LDADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca
+
+xml_test_SOURCES = tuscany/xml-test.cpp
+xml_test_LDADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca
+
