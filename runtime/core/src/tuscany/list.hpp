@@ -29,8 +29,6 @@
 #include <iostream>
 #include "function.hpp"
 
-using std::ostream;
-
 namespace tuscany {
 
 long countlists = 0;
@@ -44,12 +42,10 @@ bool resetlistCounters() {
 }
 
 bool printlistCounters() {
-    using std::cout;
-    using std::endl;
-    cout << "countlists " << countlists << endl;
-    cout << "countElists " << countElists << endl;
-    cout << "countIlists " << countIlists << endl;
-    cout << "countClists " << countClists << endl;
+    std::cout << "countlists " << countlists << std::endl;
+    std::cout << "countElists " << countElists << std::endl;
+    std::cout << "countIlists " << countIlists << std::endl;
+    std::cout << "countClists " << countClists << std::endl;
     return true;
 }
 
@@ -57,12 +53,10 @@ bool printlistCounters() {
  * A car/cdr lisp-like pair, base structure to construct lists.
  */
 
-template<typename T> struct list {
-    bool nil;
-    T car;
-    lambda<list<T> ()> cdr;
+template<typename T> class list {
+public:
 
-    list(const T car, const lambda<list<T> ()> cdr) :
+    list(const T car, const lambda<list<T> ()>& cdr) :
         nil(false), car(car), cdr(cdr) {
         countlists++;
         countIlists++;
@@ -111,8 +105,11 @@ template<typename T> struct list {
         return !this->operator==(p);
     }
 
-    template<typename X> friend ostream& operator<<(ostream&, const list<X>&);
+    template<typename X> friend std::ostream& operator<<(std::ostream&, const list<X>&);
 
+    bool nil;
+    T car;
+    lambda<list<T> ()> cdr;
 };
 
 /**
@@ -125,7 +122,7 @@ template<typename T> const bool isNil(const list<T>& p) {
 /**
  * Write a list to an output stream.
  */
-template<typename X> ostream& operator<<(ostream& out, const list<X>& l) {
+template<typename X> std::ostream& operator<<(std::ostream& out, const list<X>& l) {
     if(l == list<X> ())
         return out << "()";
     return out << "(" << car(l) << ", " << cdr(l) << ")";
@@ -195,10 +192,24 @@ template<typename T> const T cadr(const list<T>& p) {
 }
 
 /**
+ * Returns the car of the cdr of the cdr of a list.
+ */
+template<typename T> const T caddr(const list<T>& p) {
+    return car(cdr(cdr(p)));
+}
+
+/**
  * Returns the cdr of a cdr of a list.
  */
 template<typename T> const list<T> cddr(const list<T>& p) {
     return cdr(cdr(p));
+}
+
+/**
+ * Returns the cdr of a cdr of the cdr of a list.
+ */
+template<typename T> const list<T> cdddr(const list<T>& p) {
+    return cdr(cdr(cdr(p)));
 }
 
 /**
@@ -258,7 +269,7 @@ template<typename T, typename R> const list<R> map(const lambda<R(T)>& f, const 
  */
 template<typename T, typename R> struct reduceAccumulate {
     const lambda<R(R, T)> f;
-    reduceAccumulate(const lambda<R(R, T)>& f) :
+    explicit reduceAccumulate(const lambda<R(R, T)>& f) :
         f(f) {
     }
     R operator()(const R& acc, const list<T>& p) const {
@@ -344,5 +355,25 @@ template<typename T> const list<T> assoc(const T& k, const list<list<T> >& p) {
     return assoc(k, cdr(p));
 }
 
+/**
+ * Pretty print a list.
+ */
+template<typename T> std::ostream& print(const list<T>& l, std::ostream& os) {
+    os << "(";
+    if (!isNil(l)) {
+        list<T> ml = l;
+        while(true) {
+            os << car(ml);
+            ml = cdr(ml);
+            if (isNil(ml))
+                break;
+            os << ", ";
+        }
+    }
+    os << ")";
+    return os;
 }
+
+}
+
 #endif /* tuscany_list_hpp */

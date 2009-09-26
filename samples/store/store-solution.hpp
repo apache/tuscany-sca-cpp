@@ -22,12 +22,9 @@
 #ifndef store_storesolution_hpp
 #define store_storesolution_hpp
 
-#include <string.h>
 #include "tuscany/list.hpp"
 #include "store-composite.hpp"
 #include "currency-composite.hpp"
-
-using namespace tuscany;
 
 namespace store
 {
@@ -44,11 +41,11 @@ public:
         currency(CurrencyImpl()), store(StoreImpl(currency)) {
     }
 
-    virtual const list<Item> getCatalog() const {
+    virtual const tuscany::list<Item> getCatalog() const {
         return store.getCatalog();
     }
 
-    virtual const list<Item> getCart() const {
+    virtual const tuscany::list<Item> getCart() const {
         return store.getCart();
     }
 

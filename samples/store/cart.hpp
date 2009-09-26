@@ -22,14 +22,12 @@
 #ifndef store_cart_hpp
 #define store_cart_hpp
 
-#include <string.h>
+#include <string>
 #include "tuscany/function.hpp"
 #include "tuscany/list.hpp"
 #include "currency.hpp"
 #include "item.hpp"
 #include "catalog.hpp"
-
-using namespace tuscany;
 
 namespace store
 {
@@ -40,7 +38,7 @@ const double accum(const double total, const Item& item) {
 
 class ShoppingCart {
 public:
-    virtual const list<Item> getAll() const = 0;
+    virtual const tuscany::list<Item> getAll() const = 0;
 
     virtual const bool post(const Item& item) = 0;
 
@@ -51,9 +49,9 @@ public:
 
 class ShoppingCartImpl : public ShoppingCart {
 public:
-    list<Item> cart;
+    tuscany::list<Item> cart;
 
-    virtual const list<Item> getAll() const {
+    virtual const tuscany::list<Item> getAll() const {
         return cart;
     }
 
@@ -63,12 +61,12 @@ public:
     }
 
     virtual const bool deleteAll() {
-        cart = list<Item>();
+        cart = tuscany::list<Item>();
         return true;
     }
 
     virtual const double getTotal() const {
-        lambda<double(double, Item)> a(accum);
+        tuscany::lambda<double(double, Item)> a(accum);
         return reduce(a, 0.0, cart);
     }
 };

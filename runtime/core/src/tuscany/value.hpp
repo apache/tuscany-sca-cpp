@@ -27,15 +27,10 @@
  */
 
 #include <string>
-#include <ostream>
+#include <iostream>
 #include "gc.hpp"
 #include "function.hpp"
 #include "list.hpp"
-
-using std::string;
-using std::ostream;
-using std::cout;
-using std::endl;
 
 namespace tuscany
 {
@@ -51,72 +46,70 @@ bool resetValueCounters() {
 }
 
 bool printValueCounters() {
-    using std::cout;
-    using std::endl;
-    cout << "countValues " << countValues << endl;
-    cout << "countEValues " << countEValues << endl;
-    cout << "countCValues " << countCValues << endl;
-    cout << "countVValues " << countVValues << endl;
+    std::cout << "countValues " << countValues << std::endl;
+    std::cout << "countEValues " << countEValues << std::endl;
+    std::cout << "countCValues " << countCValues << std::endl;
+    std::cout << "countVValues " << countVValues << std::endl;
     return true;
 }
 
-class Value;
+class value;
 
-class Value {
+class value {
 public:
 
     enum ValueType {
         Undefined, Symbol, String, List, Number, Boolean, Character, Lambda
     };
 
-    Value() :
-        type(Value::Undefined) {
+    value() :
+        type(value::Undefined) {
         countValues++;
         countEValues++;
     }
 
-    Value(const Value& v) {
+    value(const value& v) {
         countValues++;
         countCValues++;
         type = v.type;
         switch(type) {
-        case Value::List:
+        case value::List:
             lst() = v.lst();
-        case Value::Lambda:
+        case value::Lambda:
             func() = v.func();
-        case Value::Symbol:
+        case value::Symbol:
             str() = v.str();
-        case Value::String:
+        case value::String:
             str() = v.str();
-        case Value::Number:
+        case value::Number:
             num() = v.num();
-        case Value::Boolean:
+        case value::Boolean:
             boo() = v.boo();
-        case Value::Character:
+        case value::Character:
             chr() = v.chr();
         default:
             break;
         }
     }
 
-    const Value& operator=(const Value& v) {
+    const value& operator=(const value& v) {
         if(this == &v)
             return *this;
         type = v.type;
         switch(type) {
-        case Value::List:
+        case value::List:
             lst() = v.lst();
-        case Value::Lambda:
+        case value::Lambda:
             func() = v.func();
-        case Value::Symbol:
+        case value::Symbol:
             str() = v.str();
-        case Value::String:
+        case value::String:
             str() = v.str();
-        case Value::Number:
+        case value::Number:
             num() = v.num();
-        case Value::Boolean:
+        case value::Boolean:
             boo() = v.boo();
-        case Value::Character:
+        case value::Character:
             chr() = v.chr();
         default:
             break;
@@ -124,122 +117,122 @@ public:
         return *this;
     }
 
-    virtual ~Value() {
+    virtual ~value() {
         countValues--;
     }
 
-    Value(const lambda<Value(list<Value>&)>& func) :
-        type(Value::Lambda), data(vdata(func)) {
+    explicit value(const lambda<value(list<value>&)>& func) :
+        type(value::Lambda), data(vdata(func)) {
         countValues++;
         countVValues++;
     }
 
-    Value(const string& str) :
-        type(Value::String), data(vdata(unit(str))) {
+    explicit value(const std::string& str) :
+        type(value::String), data(vdata(unit(str))) {
         countValues++;
         countVValues++;
     }
 
-    Value(const char* str) :
-        type(Value::Symbol), data(vdata(unit(string(str)))) {
+    explicit value(const char* str) :
+        type(value::Symbol), data(vdata(unit(std::string(str)))) {
         countValues++;
         countVValues++;
     }
 
-    Value(const list<Value>& lst) :
-        type(Value::List), data(vdata(unit(lst))) {
+    explicit value(const list<value>& lst) :
+        type(value::List), data(vdata(unit(lst))) {
         countValues++;
         countVValues++;
     }
 
-    Value(const double num) :
-        type(Value::Number), data(vdata(unit(num))) {
+    explicit value(const double num) :
+        type(value::Number), data(vdata(unit(num))) {
         countValues++;
         countVValues++;
     }
 
-    Value(const int num) :
-        type(Value::Number), data(vdata(unit((double)num))) {
+    explicit value(const int num) :
+        type(value::Number), data(vdata(unit((double)num))) {
         countValues++;
         countVValues++;
     }
 
-    Value(const bool boo) :
-        type(Value::Boolean), data(vdata(unit(boo))) {
+    explicit value(const bool boo) :
+        type(value::Boolean), data(vdata(unit(boo))) {
         countValues++;
         countVValues++;
     }
 
-    Value(const char chr) :
-        type(Value::Character), data(vdata(unit(chr))) {
+    explicit value(const char chr) :
+        type(value::Character), data(vdata(unit(chr))) {
         countValues++;
         countVValues++;
     }
 
-    const bool operator!=(const Value& v) const {
+    const bool operator!=(const value& v) const {
         return !this->operator==(v);
     }
 
-    const bool operator==(const Value& v) const {
+    const bool operator==(const value& v) const {
         if(this == &v)
             return true;
         if(type != v.type)
             return false;
         switch(type) {
-        case Value::Undefined:
+        case value::Undefined:
             return true;
-        case Value::List:
+        case value::List:
             return lst()() == v.lst()();
-        case Value::Lambda:
+        case value::Lambda:
             return func() == v.func();
-        case Value::Symbol:
+        case value::Symbol:
             return str()() == v.str()();
-        case Value::String:
+        case value::String:
             return str()() == v.str()();
-        case Value::Number:
+        case value::Number:
             return num()() == v.num()();
-        case Value::Boolean:
+        case value::Boolean:
             return boo()() == v.boo()();
-        case Value::Character:
+        case value::Character:
             return chr()() == v.chr()();
         default:
             return false;
         }
     }
 
-    const Value operator()(list<Value>& args) const {
+    const value operator()(list<value>& args) const {
         return func()(args);
     }
 
-    operator string() const {
+    operator const std::string() const {
         return str()();
     }
 
-    operator double() const {
+    operator const double() const {
         return num()();
     }
 
-    operator int() const {
+    operator const int() const {
         return num()();
     }
 
-    operator bool() const {
+    operator const bool() const {
         return boo()();
     }
 
-    operator char() const {
+    operator const char() const {
         return chr()();
     }
 
-    operator list<Value>() const {
+    operator const list<value>() const {
         return lst()();
     }
 
-    operator lambda<Value(list<Value>&)>() const {
+    operator const lambda<value(list<value>&)>() const {
         return func();
     }
 
-    friend ostream& operator<<(ostream&, const Value&);
+    friend std::ostream& operator<<(std::ostream&, const value&);
 
     ValueType type;
     lambda<char()> data;
@@ -265,76 +258,99 @@ private:
         return vdata<char()> ();
     }
 
-    lambda<string()>& str() const {
-        return vdata<string()> ();
+    lambda<std::string()>& str() const {
+        return vdata<std::string()> ();
     }
 
-    lambda<list<Value>()>& lst() const {
-        return vdata<list<Value>()> ();
+    lambda<list<value>()>& lst() const {
+        return vdata<list<value>()> ();
     }
 
-    lambda<Value(list<Value>&)>& func() const {
-        return vdata<Value(list<Value>&)> ();
+    lambda<value(list<value>&)>& func() const {
+        return vdata<value(list<value>&)> ();
     }
 
 };
 
-ostream& operator<<(ostream& out, const Value& v) {
+std::ostream& operator<<(std::ostream& out, const value& v) {
     switch(v.type) {
-    case Value::List:
+    case value::List:
         return out << "List::" << v.lst()();
-    case Value::Lambda:
+    case value::Lambda:
         return out << "Lambda::" << v.func();
-    case Value::Symbol:
+    case value::Symbol:
         return out << "Symbol::" << v.str()();
-    case Value::String:
+    case value::String:
         return out << "String::" << '\'' << v.str()() << '\'';
-    case Value::Number:
+    case value::Number:
         return out << "Number::" << v.num()();
-    case Value::Boolean:
+    case value::Boolean:
         if(v.boo()())
             return out << "Boolean::" << "true";
         else
             return out << "Boolean::" << "false";
-    case Value::Character:
+    case value::Character:
         return out << "Character::" << v.chr()();
     default:
         return out << "Undefined";
     }
 }
 
-const bool isNull(const Value& value) {
-    return value.type == Value::Undefined;
+const bool isNil(const value& value) {
+    return value.type == value::Undefined;
 }
 
-const bool isString(const Value& value) {
-    return value.type == Value::String;
+const bool isString(const value& value) {
+    return value.type == value::String;
 }
 
-const bool isSymbol(const Value& value) {
-    return value.type == Value::Symbol;
+const bool isSymbol(const value& value) {
+    return value.type == value::Symbol;
 }
 
-const bool isList(const Value& value) {
-    return value.type == Value::List;
+const bool isList(const value& value) {
+    return value.type == value::List;
 }
 
-const bool isNumber(const Value& value) {
-    return value.type == Value::Number;
+const bool isNumber(const value& value) {
+    return value.type == value::Number;
 }
 
-const bool isBoolean(const Value& value) {
-    return value.type == Value::Boolean;
+const bool isBoolean(const value& value) {
+    return value.type == value::Boolean;
 }
 
-const bool isCharacter(const Value& value) {
-    return value.type == Value::Character;
+const bool isCharacter(const value& value) {
+    return value.type == value::Character;
 }
 
-const bool isTaggedList(const Value& exp, Value tag) {
+const bool isTaggedList(const value& exp, value tag) {
     if(isList(exp))
-        return car((list<Value> )exp) == tag;
+        return car((list<value> )exp) == tag;
     return false;
+}
+
+/**
+ * Pretty print a list of values.
+ */
+std::ostream& print(const list<value>& l, std::ostream& os) {
+    os << "(";
+    if (!isNil(l)) {
+        list<value> ml = l;
+        while(true) {
+            const value v = car(ml);
+            if (isList(v))
+                print(list<value>(v), os);
+            else
+                os << v;
+            ml = cdr(ml);
+            if (isNil(ml))
+                break;
+            os << ", ";
+        }
+    }
+    os << ")";
+    return os;
 }
 
 }

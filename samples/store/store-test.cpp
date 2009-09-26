@@ -23,15 +23,9 @@
  * Store Test case.
  */
 
-#include <iostream>
-#include <string>
 #include <assert.h>
+#include <iostream>
 #include "store-solution.hpp"
-
-using std::cout;
-using std::endl;
-
-using namespace tuscany;
 
 namespace store
 {
@@ -49,12 +43,10 @@ bool testComponentAssembly() {
 }
 
 int main() {
-    using namespace store;
+    std::cout << "Testing..." << std::endl;
 
-    cout << "Testing..." << endl;
-
-    testComponentAssembly();
-    cout << "OK" << endl;
+    store::testComponentAssembly();
+    std::cout << "OK" << std::endl;
 
     return 0;
 }

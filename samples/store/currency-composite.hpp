@@ -22,11 +22,8 @@
 #ifndef store_currencycomposite_hpp
 #define store_currencycomposite_hpp
 
-#include <string.h>
-#include <math.h>
+#include <string>
 #include "currency.hpp"
-
-using namespace tuscany;
 
 namespace store
 {
@@ -41,11 +38,11 @@ public:
     CurrencyImpl() : currencyConverter(CurrencyConverterImpl()) {
     }
 
-    virtual const double convert(const string& fromCurrencyCode, const string& toCurrencyCode, const double amount) const {
+    virtual const double convert(const std::string& fromCurrencyCode, const std::string& toCurrencyCode, const double amount) const {
         return currencyConverter.convert(fromCurrencyCode, toCurrencyCode, amount);
     }
 
-    virtual const string getSymbol(const string& currencyCode) const {
+    virtual const std::string getSymbol(const std::string& currencyCode) const {
         return currencyConverter.getSymbol(currencyCode);
     }
 };

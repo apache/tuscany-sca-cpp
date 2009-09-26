@@ -22,11 +22,8 @@
 #ifndef store_currency_hpp
 #define store_currency_hpp
 
-#include <string.h>
 #include <math.h>
-
-using std::string;
-using namespace tuscany;
+#include <string>
 
 namespace store
 {
@@ -34,15 +31,14 @@ namespace store
 class CurrencyConverter {
 public:
 
-    virtual const double convert(const string& fromCurrencyCode, const string& toCurrencyCode, const double amount) const = 0;
-
-    virtual const string getSymbol(const string& currencyCode) const = 0;
+    virtual const double convert(const std::string& fromCurrencyCode, const std::string& toCurrencyCode, const double amount) const = 0;
+    virtual const std::string getSymbol(const std::string& currencyCode) const = 0;
 };
 
 class CurrencyConverterImpl : public CurrencyConverter {
 public:
 
-    virtual const double convert(const string& fromCurrencyCode, const string& toCurrencyCode, const double amount) const {
+    virtual const double convert(const std::string& fromCurrencyCode, const std::string& toCurrencyCode, const double amount) const {
         if(toCurrencyCode == "USD")
             return amount;
         if(toCurrencyCode == "EUR")
@@ -50,7 +46,7 @@ public:
         return amount;
     }
 
-    virtual const string getSymbol(const string& currencyCode) const {
+    virtual const std::string getSymbol(const std::string& currencyCode) const {
         if(currencyCode == "USD")
             return "$";
         if(currencyCode == "EUR")

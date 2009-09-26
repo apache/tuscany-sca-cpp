@@ -22,24 +22,22 @@
 #ifndef store_item_hpp
 #define store_item_hpp
 
-#include <string.h>
-
-using namespace tuscany;
+#include <string>
 
 namespace store
 {
 
 class Item {
 public:
-    string name;
+    std::string name;
     double price;
-    string currencyCode;
-    string currencySymbol;
+    std::string currencyCode;
+    std::string currencySymbol;
 
     Item() {
     }
 
-    Item(const string& name, const string& currencyCode, const string& currencySymbol, const double price) :
+    Item(const std::string& name, const std::string& currencyCode, const std::string& currencySymbol, const double price) :
         name(name), price(price), currencyCode(currencyCode), currencySymbol(currencySymbol) {
     }
 

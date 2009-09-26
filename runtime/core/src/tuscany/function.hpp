@@ -23,13 +23,11 @@
 #define tuscany_function_hpp
 
 /**
- * Lambda function type, used to represent service operations.
+ * Lambda function type.
  */
 
 #include <iostream>
 #include "gc.hpp"
-
-using std::ostream;
 
 namespace tuscany {
 
@@ -50,15 +48,13 @@ bool resetLambdaCounters() {
 }
 
 bool printLambdaCounters() {
-    using std::cout;
-    using std::endl;
-    cout << "countLambdas " << countLambdas << endl;
-    cout << "countELambdas " << countELambdas << endl;
-    cout << "countFLambdas " << countFLambdas << endl;
-    cout << "countCLambdas " << countCLambdas << endl;
-    cout << "countProxies " << countProxies << endl;
-    cout << "countFProxies " << countFProxies << endl;
-    cout << "countCProxies " << countCProxies << endl;
+    std::cout << "countLambdas " << countLambdas << std::endl;
+    std::cout << "countELambdas " << countELambdas << std::endl;
+    std::cout << "countFLambdas " << countFLambdas << std::endl;
+    std::cout << "countCLambdas " << countCLambdas << std::endl;
+    std::cout << "countProxies " << countProxies << std::endl;
+    std::cout << "countFProxies " << countFProxies << std::endl;
+    std::cout << "countCProxies " << countCProxies << std::endl;
     return true;
 }
 
@@ -81,11 +77,11 @@ public:
     }
 
     unsigned int acquire() {
-        return ++refCount;
+        return __sync_add_and_fetch(&refCount, 1);
     }
 
     unsigned int release() {
-        return --refCount;
+        return __sync_sub_and_fetch(&refCount, 1);
     }
 
     template<typename F> class Proxy: public Callable {
@@ -95,7 +91,7 @@ public:
             countFProxies ++;
         }
 
-        Proxy(const Proxy& p) : function(p.function) {
+        explicit Proxy(const Proxy& p) : function(p.function) {
             countProxies++;
             countCProxies ++;
         }
@@ -166,14 +162,14 @@ public:
         return (*callable)(std::forward<P>(p)...);
     }
 
-    template<typename S> friend ostream& operator<<(ostream&, const lambda<S>&);
+    template<typename S> friend std::ostream& operator<<(std::ostream&, const lambda<S>&);
 
 private:
     typedef Callable<R,P...> CallableType;
     gc_counting_ptr<CallableType> callable;
 };
 
-template<typename S> ostream& operator<<(ostream& out, const lambda<S>& l) {
+template<typename S> std::ostream& operator<<(std::ostream& out, const lambda<S>& l) {
     return out << "lambda::" << l.callable;
 }
 
@@ -187,23 +183,22 @@ template<typename R, typename... P> lambda<R(P...)> makeLambda(const R (* const 
 /**
  * Curry a lambda function.
  */
-template<typename R, typename T, typename... P> class Curried {
-private:
-    const T v;
-    const lambda<R(T, P...)>f;
-
+template<typename R, typename T, typename... P> class curried {
 public:
-    Curried(const lambda<R(T, P...)>& f, const T& v): v(v), f(f) {
+    curried(const lambda<R(T, P...)>& f, const T& v): v(v), f(f) {
     }
 
     const R operator()(P... p) const {
         return f(v, std::forward<P>(p)...);
     }
 
+private:
+    const T v;
+    const lambda<R(T, P...)>f;
 };
 
 template<typename R, typename T, typename... P> const lambda<R(P...)> curry(const lambda<R(T, P...)>& f, const T& t) {
-    return (lambda<R(P...)>)Curried<R, T, P...>(f, t);
+    return (lambda<R(P...)>)curried<R, T, P...>(f, t);
 }
 
 template<typename R, typename T, typename U, typename... P> const lambda<R(P...)> curry(const lambda<R(T, U, P...)>& f, const T& t, const U& u) {
@@ -217,14 +212,16 @@ template<typename R, typename T, typename U, typename V, typename... P> const la
 /**
  * A lambda function that returns the given value.
  */
-template<typename T> struct unitReturn {
-    const T v;
-    unitReturn(const T& v) :
+template<typename T> class unitReturn {
+public:
+    explicit unitReturn(const T& v) :
         v(v) {
     }
     const T operator()() const {
         return v;
     }
+private:
+    const T v;
 };
 
 template<typename T> const lambda<T()> unit(const T& v) {

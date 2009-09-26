@@ -22,12 +22,10 @@
 #ifndef store_catalog_hpp
 #define store_catalog_hpp
 
-#include <string.h>
+#include <string>
 #include "tuscany/list.hpp"
 #include "currency.hpp"
 #include "item.hpp"
-
-using namespace tuscany;
 
 namespace store
 {
@@ -37,13 +35,13 @@ public:
 
     virtual const double convert(const double price) const = 0;
 
-    virtual const list<Item> get() const = 0;
+    virtual const tuscany::list<Item> get() const = 0;
 };
 
 class CatalogImpl : public Catalog {
 public:
 
-    const string currencyCode;
+    const std::string currencyCode;
     const CurrencyConverter& currencyConverter;
 
     CatalogImpl(const CurrencyConverter& currencyConverter) :
@@ -54,9 +52,9 @@ public:
         return currencyConverter.convert("USD", currencyCode, price);
     }
 
-    virtual const list<Item> get() const {
-        const string currencySymbol = currencyConverter.getSymbol(currencyCode);
-        return makeList(
+    virtual const tuscany::list<Item> get() const {
+        const std::string currencySymbol = currencyConverter.getSymbol(currencyCode);
+        return tuscany::makeList(
                 Item("Apple", currencyCode, currencySymbol, convert(2.99)),
                 Item("Orange", currencyCode, currencySymbol, convert(3.55)),
                 Item("Pear", currencyCode, currencySymbol, convert(1.55)));

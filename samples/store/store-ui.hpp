@@ -22,14 +22,11 @@
 #ifndef store_storeui_hpp
 #define store_storeui_hpp
 
-#include <string.h>
 #include "tuscany/list.hpp"
 #include "currency.hpp"
 #include "item.hpp"
 #include "catalog.hpp"
 #include "cart.hpp"
-
-using namespace tuscany;
 
 namespace store
 {
@@ -37,9 +34,9 @@ namespace store
 class StoreUI {
 public:
 
-    virtual const list<Item> getCatalog() const =0;
+    virtual const tuscany::list<Item> getCatalog() const =0;
 
-    virtual const list<Item> getCart() const = 0;
+    virtual const tuscany::list<Item> getCart() const = 0;
 
     virtual const double getTotal() const =0;
 
@@ -54,11 +51,11 @@ public:
     StoreUIImpl(const Catalog& catalog, ShoppingCart& cart) : catalog(catalog), cart(cart) {
     }
 
-    virtual const list<Item> getCatalog() const {
+    virtual const tuscany::list<Item> getCatalog() const {
         return catalog.get();
     }
 
-    virtual const list<Item> getCart() const {
+    virtual const tuscany::list<Item> getCart() const {
         return cart.getAll();
     }
 

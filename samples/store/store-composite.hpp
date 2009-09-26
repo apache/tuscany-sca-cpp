@@ -22,7 +22,6 @@
 #ifndef store_storecomposite_hpp
 #define store_storecomposite_hpp
 
-#include <string.h>
 #include "tuscany/list.hpp"
 #include "currency.hpp"
 #include "currency-composite.hpp"
@@ -30,8 +29,6 @@
 #include "catalog.hpp"
 #include "cart.hpp"
 #include "store-ui.hpp"
-
-using namespace tuscany;
 
 namespace store
 {
@@ -49,11 +46,11 @@ public:
         catalog(CatalogImpl(currency)), cart(ShoppingCartImpl()), storeUI(StoreUIImpl(catalog, cart)) {
     }
 
-    virtual const list<Item> getCatalog() const {
+    virtual const tuscany::list<Item> getCatalog() const {
         return storeUI.getCatalog();
     }
 
-    virtual const list<Item> getCart() const {
+    virtual const tuscany::list<Item> getCart() const {
         return storeUI.getCart();
     }
 

@@ -26,9 +26,7 @@
  * Garbage collected pointer.
  */
 
-#include <ostream>
-
-using std::ostream;
+#include <iostream>
 
 namespace tuscany
 {
@@ -81,7 +79,7 @@ public:
         return countingRef->ptr;
     }
 
-    template<typename X> friend ostream& operator<<(ostream&, const gc_ptr<X>&);
+    template<typename X> friend std::ostream& operator<<(std::ostream&, const gc_ptr<X>&);
 
 private:
     struct CountingRef {
@@ -95,12 +93,13 @@ private:
 
     void acquire(CountingRef* ref) throw() {
         if(ref)
-            ++ref->count;
+            __sync_add_and_fetch(&ref->count, 1);
     }
 
     void release() throw() {
         if(countingRef) {
-            if(--countingRef->count == 0) {
+            unsigned rc = __sync_sub_and_fetch(&countingRef->count, 1);
+            if(rc == 0) {
                 delete countingRef->ptr;
                 delete countingRef;
             }
@@ -108,7 +107,7 @@ private:
     }
 };
 
-template<typename T> ostream& operator<<(ostream& out, const gc_ptr<T>& p) {
+template<typename T> std::ostream& operator<<(std::ostream& out, const gc_ptr<T>& p) {
     return out << p.countingRef->ptr;
 }
 
@@ -163,7 +162,7 @@ public:
         return countingRef->ptr;
     }
 
-    template<typename X> friend ostream& operator<<(ostream&, const gc_aptr<X>&);
+    template<typename X> friend std::ostream& operator<<(std::ostream&, const gc_aptr<X>&);
 
 private:
     struct CountingRef {
@@ -177,12 +176,13 @@ private:
 
     void acquire(CountingRef* ref) throw() {
         if(ref)
-            ++ref->count;
+            __sync_add_and_fetch(&ref->count, 1);
     }
 
     void release() throw() {
         if(countingRef) {
-            if(--countingRef->count == 0) {
+            unsigned rc = __sync_sub_and_fetch(&countingRef->count, 1);
+            if(rc == 0) {
                 delete[] countingRef->ptr;
                 delete countingRef;
             }
@@ -190,7 +190,7 @@ private:
     }
 };
 
-template<typename T> ostream& operator<<(ostream& out, const gc_aptr<T>& p) {
+template<typename T> std::ostream& operator<<(std::ostream& out, const gc_aptr<T>& p) {
     return out << p.countingRef->ptr;
 }
 
@@ -242,7 +242,7 @@ public:
         return ptr;
     }
 
-    template<typename X> friend ostream& operator<<(ostream&, const gc_counting_ptr<X>&);
+    template<typename X> friend std::ostream& operator<<(std::ostream&, const gc_counting_ptr<X>&);
 
 private:
     T* ptr;
@@ -261,7 +261,7 @@ private:
     }
 };
 
-template<typename T> ostream& operator<<(ostream& out, const gc_counting_ptr<T>& p) {
+template<typename T> std::ostream& operator<<(std::ostream& out, const gc_counting_ptr<T>& p) {
     return out << p.ptr;
 }
 
