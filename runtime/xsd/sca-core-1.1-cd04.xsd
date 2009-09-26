@@ -33,10 +33,7 @@
       <complexContent>
          <extension base="sca:CommonExtensionBase">
             <sequence>
-               <!-- Comment out the sca:implementation to workaround http://www.mail-archive.com/dev@tuscany.apache.org/msg08924.html. -->
-               <!-- 
                <element ref="sca:implementation" minOccurs="0"/>
-                -->
                <choice minOccurs="0" maxOccurs="unbounded">
                   <element name="service" type="sca:ComponentService"/>
                   <element name="reference" 
@@ -290,8 +287,7 @@
       <complexContent>
          <extension base="sca:CommonExtensionBase">
             <sequence>
-               <!-- Set minOccurs="1" instead of "0" to workaround http://www.mail-archive.com/dev@tuscany.apache.org/msg08924.html. -->
-               <element ref="sca:implementation" minOccurs="1"/>
+               <element ref="sca:implementation" minOccurs="0"/>
                <choice minOccurs="0" maxOccurs="unbounded">
                   <element name="service" type="sca:ComponentService"/>
                   <element name="reference" type="sca:ComponentReference"/>
