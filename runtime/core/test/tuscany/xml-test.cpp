@@ -54,30 +54,33 @@ int xmlClose(void *context) {
 }
 
 bool readFile(const char*xsdfilename, const char *filename) {
-    std::cout << "Loading schemas\n";
+    std::cout << "Loading schemas...\n";
     const xmlDocPtr xsddoc = xmlReadFile(xsdfilename, NULL, XML_PARSE_NONET);
     const xmlSchemaParserCtxtPtr xsdctx = xmlSchemaNewDocParserCtxt(xsddoc);
     const xmlSchemaPtr xsd = xmlSchemaParse(xsdctx);
     const xmlSchemaValidCtxtPtr validctx = xmlSchemaNewValidCtxt(xsd);
-    std::cout << "Loaded schemas\n";
 
+    std::cout << "Reading file...\n";
     FILE* file = fopen(filename, "r");
-    const xmlTextReaderPtr reader = xmlReaderForIO(xmlRead, xmlClose, file, filename, NULL, XML_PARSE_NONET);
-    xmlTextReaderSetParserProp(reader, XML_PARSER_DEFAULTATTRS, 1);
-    xmlTextReaderSetParserProp(reader, XML_PARSER_SUBST_ENTITIES, 1);
+    if (file != NULL) {
+        const xmlTextReaderPtr reader = xmlReaderForIO(xmlRead, xmlClose, file, filename, NULL, XML_PARSE_NONET);
+        xmlTextReaderSetParserProp(reader, XML_PARSER_DEFAULTATTRS, 1);
+        xmlTextReaderSetParserProp(reader, XML_PARSER_SUBST_ENTITIES, 1);
 
-    if(reader != NULL) {
-        xmlTextReaderSchemaValidateCtxt(reader, validctx, 0);
+        if(reader != NULL) {
+            xmlTextReaderSchemaValidateCtxt(reader, validctx, 0);
 
-        int rc;
-        while((rc = xmlTextReaderRead(reader)) == 0) {
-            printNode(reader);
-        }
-        if(xmlTextReaderIsValid(reader) != 1)
-            std::cout << "Could not validate document" << std::endl;
-        xmlFreeTextReader(reader);
-        if(rc != 0)
-            std::cout << "Could not parse document" << std::endl;
+            int rc;
+            while((rc = xmlTextReaderRead(reader)) == 1) {
+                printNode(reader);
+            }
+            if(xmlTextReaderIsValid(reader) != 1)
+                std::cout << "Could not validate document" << std::endl;
+            xmlFreeTextReader(reader);
+            if(rc != 0)
+                std::cout << "Could not parse document" << std::endl;
+        } else
+            std::cout << "Could not create parser" << std::endl;
     } else
         std::cout << "Could not open document" << std::endl;
 
