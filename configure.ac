@@ -290,6 +290,9 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/ruby/Makefile
                  runtime/extensions/ruby/src/Makefile
                  runtime/extensions/ruby/extension/Makefile
+                 kernel/Makefile
+                 modules/Makefile
+                 modules/eval/Makefile
                  doc/Makefile
                  doc/Doxyfile
                  ])

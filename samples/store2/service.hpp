@@ -22,9 +22,9 @@
 #ifndef tuscany_service_hpp
 #define tuscany_service_hpp
 
-#include "tuscany/function.hpp"
-#include "tuscany/list.hpp"
-#include "tuscany/value.hpp"
+#include "function.hpp"
+#include "list.hpp"
+#include "value.hpp"
 
 namespace store
 {

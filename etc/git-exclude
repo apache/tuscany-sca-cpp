@@ -61,6 +61,6 @@ account_client
 calculator_client
 store-test
 store2-test
-core-test
+kernel-test
 xml-test
 

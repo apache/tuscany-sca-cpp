@@ -15,13 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-store_PROGRAMS = store-test
-storedir=$(prefix)/store/deploy
+noinst_PROGRAMS = kernel-test xml-test
 
-store_test_SOURCES = store-test.cpp
+nobase_include_HEADERS = *.hpp
 
-INCLUDES = -I. -I${TUSCANY_SCACPP}/include
-store_test_LDADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca -L${LIBXML2_LIB} -lxml2
-	
-EXTRA_DIST = *.composite
-store_DATA = *.composite
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE}
+
+kernel_test_SOURCES = kernel-test.cpp
+kernel_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
+
+xml_test_SOURCES = xml-test.cpp
+xml_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
+

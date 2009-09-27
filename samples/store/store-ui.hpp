@@ -22,7 +22,7 @@
 #ifndef store_storeui_hpp
 #define store_storeui_hpp
 
-#include "tuscany/list.hpp"
+#include "list.hpp"
 #include "currency.hpp"
 #include "item.hpp"
 #include "catalog.hpp"

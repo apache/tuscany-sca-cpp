@@ -29,11 +29,11 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "tuscany/function.hpp"
-#include "tuscany/list.hpp"
-#include "tuscany/parallel.hpp"
-#include "tuscany/value.hpp"
-#include "tuscany/xml.hpp"
+#include "function.hpp"
+#include "list.hpp"
+#include "parallel.hpp"
+#include "value.hpp"
+#include "xml.hpp"
 
 namespace tuscany {
 

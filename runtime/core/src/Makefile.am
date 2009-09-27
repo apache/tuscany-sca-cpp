@@ -18,7 +18,6 @@
 lib_LTLIBRARIES = libtuscany_sca.la
 
 nobase_include_HEADERS = \
-tuscany/*.hpp \
 tuscany/sca/*.h \
 tuscany/sca/core/*.h \
 tuscany/sca/model/*.h \

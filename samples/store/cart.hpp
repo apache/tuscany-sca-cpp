@@ -23,8 +23,8 @@
 #define store_cart_hpp
 
 #include <string>
-#include "tuscany/function.hpp"
-#include "tuscany/list.hpp"
+#include "function.hpp"
+#include "list.hpp"
 #include "currency.hpp"
 #include "item.hpp"
 #include "catalog.hpp"

@@ -21,7 +21,7 @@ store2dir=$(prefix)/store2/deploy
 store2_test_SOURCES = store2-test.cpp
 
 INCLUDES = -I. -I${TUSCANY_SCACPP}/include
-store2_test_LDADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca
+store2_test_LDADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca -L${LIBXML2_LIB} -lxml2
 	
 EXTRA_DIST = *.composite
 store2_DATA = *.composite

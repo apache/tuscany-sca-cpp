@@ -15,12 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = runtime doc
+SUBDIRS = runtime kernel modules doc
 DIST_SUBDIRS = runtime doc samples
 datadir=$(prefix)
-
 data_DATA = INSTALL README LICENSE COPYING NOTICE GettingStarted.html
-EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE autogen.sh build.sh builddist.sh configure.sh makebindist.sh GettingStarted.html
+nobase_data_DATA = xsd/*.*
+EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE autogen.sh build.sh builddist.sh configure.sh makebindist.sh GettingStarted.html xsd
 
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`

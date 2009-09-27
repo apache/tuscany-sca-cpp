@@ -23,7 +23,7 @@
 #define store_catalog_hpp
 
 #include <string>
-#include "tuscany/list.hpp"
+#include "list.hpp"
 #include "currency.hpp"
 #include "item.hpp"
 

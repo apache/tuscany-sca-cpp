@@ -22,7 +22,7 @@
 #ifndef store_storecomposite_hpp
 #define store_storecomposite_hpp
 
-#include "tuscany/list.hpp"
+#include "list.hpp"
 #include "currency.hpp"
 #include "currency-composite.hpp"
 #include "item.hpp"
