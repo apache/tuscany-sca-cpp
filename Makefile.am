@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = runtime kernel modules doc
-DIST_SUBDIRS = runtime doc samples
+SUBDIRS = kernel modules test doc runtime
+DIST_SUBDIRS = doc runtime samples
 datadir=$(prefix)
 data_DATA = INSTALL README LICENSE COPYING NOTICE GettingStarted.html
 nobase_data_DATA = xsd/*.*
@@ -47,7 +47,7 @@ bindist: dist
 	mv ${PACKAGE}-${PACKAGE_VERSION} ${PACKAGE}-${PACKAGE_VERSION}-src
 	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-src | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-src.tar.gz
 	cd ${PACKAGE}-${PACKAGE_VERSION}-src \
-	&&	sh ../makebindist.sh
+	&& sh ../makebindist.sh
 	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
 	cp -r ${PACKAGE}-${PACKAGE_VERSION}-src/deploy/* ${PACKAGE}-${PACKAGE_VERSION}-bin
 	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz

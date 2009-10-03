@@ -49,14 +49,14 @@ const bool storeUI_post(const service& cart, const ItemType& item) {
 }
 
 const tuscany::value storeUI_service(const service& catalog, const service& cart, const tuscany::list<tuscany::value>& args) {
-    if (car(args) == "getCatalog")
-        return storeUI_getCatalog(catalog);
-    if (car(args) == "getCart")
-        return storeUI_getCart(cart);
-    if (car(args) == "getTotal")
-        return storeUI_getTotal(cart);
-    if (car(args) == "post")
-        return storeUI_post(cart, cadr(args));
+    if (car(args) == tuscany::value("getCatalog"))
+        return tuscany::value(storeUI_getCatalog(catalog));
+    if (car(args) == tuscany::value("getCart"))
+        return tuscany::value(storeUI_getCart(cart));
+    if (car(args) == tuscany::value("getTotal"))
+        return tuscany::value(storeUI_getTotal(cart));
+    if (car(args) == tuscany::value("post"))
+        return tuscany::value(storeUI_post(cart, cadr(args)));
     return tuscany::value();
 }
 

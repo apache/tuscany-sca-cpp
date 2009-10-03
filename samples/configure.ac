@@ -162,8 +162,6 @@ AC_ARG_ENABLE(ruby, [AS_HELP_STRING([--enable-ruby],[build Ruby samples [default
 AM_CONDITIONAL([WANT_RUBY_SAMPLES], [test x$want_ruby_samples = xtrue])
 
 AC_CONFIG_FILES([Makefile  
-                 store/Makefile
-                 store2/Makefile
                  AlertAggregator/Makefile
                  AlertAggregator/sample.alerter/Makefile
                  AlertAggregator/sample.display/Makefile

@@ -45,8 +45,8 @@ const tuscany::list<ItemType> catalog_get(const service& currencyConverter) {
 }
 
 const tuscany::value catalog_service(const service& currencyConverter, const tuscany::list<tuscany::value>& args) {
-    if (car(args) == "get")
-        return catalog_get(currencyConverter);
+    if (car(args) == tuscany::value("get"))
+        return tuscany::value(catalog_get(currencyConverter));
     return tuscany::value();
 }
 

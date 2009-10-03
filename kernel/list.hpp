@@ -36,12 +36,12 @@ long countIlists = 0;
 long countClists = 0;
 long countElists = 0;
 
-bool resetlistCounters() {
+bool resetListCounters() {
     countlists = countIlists = countClists = countElists = 0;
     return true;
 }
 
-bool printlistCounters() {
+bool printListCounters() {
     std::cout << "countlists " << countlists << std::endl;
     std::cout << "countElists " << countElists << std::endl;
     std::cout << "countIlists " << countIlists << std::endl;

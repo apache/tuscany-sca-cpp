@@ -41,13 +41,16 @@ bool testEnv() {
 }
 
 bool testEnvGC() {
-    resetValueCounters();
     resetLambdaCounters();
-    resetlistCounters();
+    resetListCounters();
+    resetValueCounters();
     testEnv();
     assert(countValues == 0);
     assert(countLambdas == 0);
     assert(countlists == 0);
+    printLambdaCounters();
+    printListCounters();
+    printValueCounters();
     return true;
 }
 
@@ -138,13 +141,16 @@ bool testEvalExpr() {
 }
 
 bool testEvalGC() {
-    resetValueCounters();
     resetLambdaCounters();
-    resetlistCounters();
+    resetListCounters();
+    resetValueCounters();
     testEval();
     assert(countValues == 0);
     assert(countLambdas == 0);
     assert(countlists == 0);
+    printLambdaCounters();
+    printListCounters();
+    printValueCounters();
     return true;
 }
 

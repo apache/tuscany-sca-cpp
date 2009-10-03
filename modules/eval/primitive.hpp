@@ -57,6 +57,10 @@ const value valueCons(list<value>& args) {
     return value(cons(car(args), (list<value> )cadr(args)));
 }
 
+const value valueList(list<value>& args) {
+    return value(args);
+}
+
 const value valueNul(list<value>& args) {
     return value((bool)isNil(car(args)));
 }
@@ -66,10 +70,14 @@ const value valueEqual(list<value>& args) {
 }
 
 const value valueAdd(list<value>& args) {
+    if (cdr(args) == list<value>())
+        return value((double)car(args));
     return value((double)car(args) + (double)cadr(args));
 }
 
 const value valueSub(list<value>& args) {
+    if (cdr(args) == list<value>())
+        return value(0 - (double)car(args));
     return value((double)car(args) - (double)cadr(args));
 }
 
@@ -126,12 +134,14 @@ const list<value> primitiveProcedureNames() {
     list<value> l = makeList(value("car"));
     l = cons(value("cdr"), l);
     l = cons(value("cons"), l);
+    l = cons(value("list"), l);
     l = cons(value("nul"), l);
     l = cons(value("="), l);
     l = cons(value("+"), l);
     l = cons(value("-"), l);
     l = cons(value("*"), l);
     l = cons(value("/"), l);
+    l = cons(value("equal?"), l);
     l = cons(value("display"), l);
     return l;
 }
@@ -140,12 +150,14 @@ const list<value> primitiveProcedureObjects() {
     list<value> l = makeList(primitiveProcedure(valueCar));
     l = cons(primitiveProcedure(valueCdr), l);
     l = cons(primitiveProcedure(valueCons), l);
+    l = cons(primitiveProcedure(valueList), l);
     l = cons(primitiveProcedure(valueNul), l);
     l = cons(primitiveProcedure(valueEqual), l);
     l = cons(primitiveProcedure(valueAdd), l);
     l = cons(primitiveProcedure(valueSub), l);
     l = cons(primitiveProcedure(valueMul), l);
     l = cons(primitiveProcedure(valueDiv), l);
+    l = cons(primitiveProcedure(valueEqual), l);
     l = cons(primitiveProcedure(valueDisplay), l);
     return l;
 }

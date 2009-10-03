@@ -15,26 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_ALL_SAMPLES
-  CPP_SAMPLES = CppCalculator CppBigBank
-  PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator
-  RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
-  PYTHON_RUBY_SAMPLES = RestYahoo
-else
-if WANT_CPP_SAMPLES
-    CPP_SAMPLES = CppCalculator CppBigBank
-endif
-if WANT_PYTHON_SAMPLES
-    PYTHON_SAMPLES = PythonCalculator PythonWeatherForecast RestCustomer AlertAggregator
-if WANT_RUBY_SAMPLES
-      PYTHON_RUBY_SAMPLES = RestYahoo
-endif
-endif
-if WANT_RUBY_SAMPLES
-    RUBY_SAMPLES = RubyCalculator RubyBigBank HttpdBigBank RestCalculator
-endif
-endif
-SUBDIRS = ${CPP_SAMPLES} ${PYTHON_SAMPLES} ${RUBY_SAMPLES} ${PYTHON_RUBY_SAMPLES}
+store_object_PROGRAMS = store-object-test
+store_objectdir=$(prefix)/test/store-object/deploy
 
-EXTRA_DIST = autogen.sh build.sh GettingStarted.html
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE}
+
+store_object_test_SOURCES = store-object-test.cpp
+store_object_test_LDADD = -L${LIBXML2_LIB} -lxml2 -lpthread
+	
+EXTRA_DIST = *.composite
+store_object_DATA = *.composite
 

@@ -61,7 +61,7 @@ const bool isIdentifierPart(const char ch) {
 }
 
 const bool isDigit(const char ch) {
-    return isdigit(ch);
+    return isdigit(ch) || ch == '.';
 }
 
 const bool isLeftParenthesis(const value& token) {

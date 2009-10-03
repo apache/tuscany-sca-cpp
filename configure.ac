@@ -255,6 +255,15 @@ fi
 AM_CONDITIONAL([WANT_DOXYGEN], [test x$want_doxygen = xtrue])
 
 AC_CONFIG_FILES([Makefile
+                 kernel/Makefile
+                 modules/Makefile
+                 modules/eval/Makefile
+                 test/Makefile
+                 test/store-object/Makefile
+                 test/store-function/Makefile
+                 test/store-script/Makefile
+                 doc/Makefile
+                 doc/Doxyfile
                  runtime/Makefile
                  runtime/core/Makefile
                  runtime/core/src/Makefile
@@ -290,11 +299,6 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/ruby/Makefile
                  runtime/extensions/ruby/src/Makefile
                  runtime/extensions/ruby/extension/Makefile
-                 kernel/Makefile
-                 modules/Makefile
-                 modules/eval/Makefile
-                 doc/Makefile
-                 doc/Doxyfile
                  ])
 AC_OUTPUT
 

@@ -59,8 +59,10 @@ gmon.out
 sca/runtime/extensions/cpp/tools/scagen/docs/
 account_client
 calculator_client
-store-test
-store2-test
 kernel-test
 xml-test
+eval-test
+store-function-test
+store-object-test
+store-script-test
 

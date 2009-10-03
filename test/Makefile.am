@@ -15,13 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-store_PROGRAMS = store-test
-storedir=$(prefix)/store/deploy
+SUBDIRS = store-object store-function store-script
 
-store_test_SOURCES = store-test.cpp
-
-INCLUDES = -I. -I${TUSCANY_SCACPP}/include
-store_test_LDADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca -L${LIBXML2_LIB} -lxml2
-	
-EXTRA_DIST = *.composite
-store_DATA = *.composite

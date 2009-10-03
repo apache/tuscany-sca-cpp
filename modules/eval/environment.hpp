@@ -29,6 +29,7 @@
 #include <string>
 #include "list.hpp"
 #include "value.hpp"
+#include "primitive.hpp"
 
 namespace tuscany
 {
@@ -40,6 +41,7 @@ const value trueSymbol = value("true");
 const value falseSymbol = value("false");
 const value defineSymbol = value("define");
 const value setSymbol = value("set!");
+const value dotSymbol = value(".");
 
 const Env theEmptyEnvironment() {
     return list<value>();
@@ -73,8 +75,35 @@ list<value> frameValues(const Frame& frame) {
     return cdr((list<value> )frame);
 }
 
+const bool isDotVariable(const value& var) {
+    return var == dotSymbol;
+}
+
+const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, const list<value> values) {
+    if (variables == list<value>()) {
+        if (values != list<value>())
+            std::cout << "Too many arguments supplied " << values << "\n";
+        return frameSoFar;
+    }
+    if (isDotVariable(car(variables)))
+        return makeBinding(frameSoFar, cdr(variables), makeList(value(values)));
+
+    if (values == list<value>()) {
+        if (variables != list<value>())
+            std::cout << "Too few arguments supplied " << variables << "\n";
+        return frameSoFar;
+    }
+
+    const list<value> vars = cons(car(variables), frameVariables(frameSoFar));
+    const list<value> vals = cons(car(values), frameValues(frameSoFar));
+    const Frame newFrame = value(cons(value(vars), vals));
+
+    return makeBinding(newFrame, cdr(variables), cdr(values));
+}
+
 const Frame makeFrame(const list<value>& variables, const list<value> values) {
-    return value(cons((value)variables, values));
+    const Frame emptyFrame = value(cons((value)list<value>(), list<value>()));
+    return makeBinding(emptyFrame, variables, values);
 }
 
 const value definitionVariable(const value& exp) {
@@ -110,13 +139,13 @@ const Env defineVariable(const value& var, const value& val, Env& env) {
 }
 
 const Env extendEnvironment(const list<value>& vars, const list<value>& vals, const Env& baseEnv) {
-    if(length(vars) == length(vals))
-        return cons(makeFrame(vars, vals), baseEnv);
-    else if(length(vars) < length(vals))
-        std::cout << "Too many arguments supplied " << vars << " " << vals << "\n";
-    else
-        std::cout << "Too few arguments supplied " << vars << " " << vals << "\n";
-    return baseEnv;
+//    if(length(vars) == length(vals))
+//    else if(length(vars) < length(vals))
+//        std::cout << "Too many arguments supplied " << vars << " " << vals << "\n";
+//    else
+//        std::cout << "Too few arguments supplied " << vars << " " << vals << "\n";
+//    return baseEnv;
+    return cons(makeFrame(vars, vals), baseEnv);
 }
 
 const Env setupEnvironment() {

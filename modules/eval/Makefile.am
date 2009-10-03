@@ -22,11 +22,6 @@ nobase_data_DATA = *.xsd
 
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE}
 
-#libdir=$(prefix)/modules/eval/lib
-#lib_LTLIBRARIES = libtuscany_eval.la
-#libtuscany_eval_la_SOURCES = eval.cpp
-#libtuscany_eval_la_LIBADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca -lpthread
-
 eval_test_SOURCES = eval-test.cpp
 eval_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
 

@@ -105,9 +105,9 @@ bool testCons() {
     return true;
 }
 
-bool testlistGC() {
+bool testListGC() {
     resetLambdaCounters();
-    resetlistCounters();
+    resetListCounters();
     countElements = 0;
     testCons();
     assert(countLambdas == 0);
@@ -227,13 +227,13 @@ double testSeqReduce(double v, double accum) {
 }
 
 bool testSeq() {
-    //resetLambdaCounters();
-    //resetlistCounters();
+    resetLambdaCounters();
+    resetListCounters();
 
     list<double> s = seq(0.0, 1000.0);
     assert(1001 == length(s));
-    //printLambdaCounters();
-    //printlistCounters();
+    printLambdaCounters();
+    printListCounters();
 
     assert(1001 == length(map(lambda<double(double)>(testSeqMap), s)));
 
@@ -241,8 +241,8 @@ bool testSeq() {
     assert(201 == length(member(200.0, reverse(s))));
 
     assert(1001 == reduce(lambda<double(double, double)>(testSeqReduce), 0.0, s));
-    //printLambdaCounters();
-    //printlistCounters();
+    printLambdaCounters();
+    printListCounters();
 
     return true;
 }
@@ -262,9 +262,9 @@ bool testValue() {
 }
 
 bool testValueGC() {
-    resetValueCounters();
     resetLambdaCounters();
-    resetlistCounters();
+    resetListCounters();
+    resetValueCounters();
     testValue();
     assert(countValues == 0);
     assert(countLambdas == 0);
@@ -292,7 +292,7 @@ bool testCppPerf() {
     assert(1000 == length(r));
 
     gettimeofday(&end, NULL);
-    long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
+    //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
     //std::cout << "Fib cpp perf test " << t << " ms" << std::endl;
     return true;
 }
@@ -305,7 +305,7 @@ bool testAtomicPerf() {
         for(int i = 0; i < 10000000;)
             i = i + 1;
         gettimeofday(&end, NULL);
-        long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
+        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
         //std::cout << "Loop test " << t << " ms" << std::endl;
     }
     {
@@ -313,7 +313,7 @@ bool testAtomicPerf() {
         for(int i = 0; i < 10000000;)
             __sync_add_and_fetch(&i, 1);
         gettimeofday(&end, NULL);
-        long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
+        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
         //std::cout << "Loop atomic test " << t << " ms" << std::endl;
     }
     {
@@ -327,7 +327,7 @@ bool testAtomicPerf() {
         }
         gettimeofday(&end, NULL);
         pthread_mutex_destroy(&mutex);
-        long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
+        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
         //std::cout << "Loop mutex test " << t << " ms" << std::endl;
     }
     return true;
@@ -418,7 +418,7 @@ int main() {
     tuscany::testFunction();
     tuscany::testFunctionGC();
     tuscany::testCons();
-    tuscany::testlistGC();
+    tuscany::testListGC();
     tuscany::testOut();
     tuscany::testEquals();
     tuscany::testLength();

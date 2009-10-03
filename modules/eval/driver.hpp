@@ -33,16 +33,16 @@
 namespace tuscany
 {
 
-const std::string evalOutputPrompt(";;; Eval value: ");
-const std::string evalInputPrompt(";;; Eval input: ");
+const std::string evalOutputPrompt("; ");
+const std::string evalInputPrompt("=> ");
 
 const bool promptForInput(std::ostream& out, const std::string str) {
-    out << "\n\n" << str << "\n";
+    out << "\n\n" << str;
     return true;
 }
 
 const bool announceOutput(std::ostream& out, const std::string str) {
-    out << "\n" << str << "\n";
+    out << "\n" << str;
     return true;
 }
 

@@ -15,13 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-store2_PROGRAMS = store2-test
-store2dir=$(prefix)/store2/deploy
+store_script_PROGRAMS = store-script-test
+store_scriptdir=$(prefix)/test/store-script/deploy
 
-store2_test_SOURCES = store2-test.cpp
+INCLUDES = -I. -I$(top_builddir)/kernel -I$(top_builddir)/modules/eval -I${LIBXML2_INCLUDE}
 
-INCLUDES = -I. -I${TUSCANY_SCACPP}/include
-store2_test_LDADD = -L${TUSCANY_SCACPP}/lib -ltuscany_sca -L${LIBXML2_LIB} -lxml2
+store_script_test_SOURCES = store-script-test.cpp
+store_script_test_LDADD = -L${LIBXML2_LIB} -lxml2 -lpthread
 	
 EXTRA_DIST = *.composite
-store2_DATA = *.composite
+store_script_DATA = *.composite
+

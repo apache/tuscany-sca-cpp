@@ -55,14 +55,14 @@ const double shoppingCart_getTotal() {
 }
 
 const tuscany::value shoppingCart_service(const tuscany::list<tuscany::value>& args) {
-    if (car(args) == "getAll")
-        return shoppingCart_getAll();
-    if (car(args) == "post")
-        return shoppingCart_post(cadr(args));
-    if (car(args) == "deleteAll")
-        return shoppingCart_deleteAll();
-    if (car(args) == "getTotal")
-        return shoppingCart_getTotal();
+    if (car(args) == tuscany::value("getAll"))
+        return tuscany::value(shoppingCart_getAll());
+    if (car(args) == tuscany::value("post"))
+        return tuscany::value(shoppingCart_post(cadr(args)));
+    if (car(args) == tuscany::value("deleteAll"))
+        return tuscany::value(shoppingCart_deleteAll());
+    if (car(args) == tuscany::value("getTotal"))
+        return tuscany::value(shoppingCart_getTotal());
     return tuscany::value();
 }
 
