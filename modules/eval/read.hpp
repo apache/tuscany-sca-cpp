@@ -40,6 +40,7 @@ namespace tuscany
 
 const value rightParenthesis(makeList<value>(")"));
 const value leftParenthesis(makeList<value>("("));
+const value comment(makeList<value>(";"));
 
 const double stringToNumber(const std::string& str) {
     double d;

@@ -94,6 +94,11 @@ const value valueDisplay(list<value>& args) {
     return true;
 }
 
+const value valueComment(list<value>& args) {
+    *evalOut << "# " << car(args);
+    return true;
+}
+
 const value valueError(list<value>& args) {
     std::cerr << (std::string)car(args);
     return true;
@@ -143,6 +148,7 @@ const list<value> primitiveProcedureNames() {
     l = cons<value>("/", l);
     l = cons<value>("equal?", l);
     l = cons<value>("display", l);
+    l = cons<value>(";", l);
     return l;
 }
 
@@ -159,6 +165,7 @@ const list<value> primitiveProcedureObjects() {
     l = cons(primitiveProcedure(valueDiv), l);
     l = cons(primitiveProcedure(valueEqual), l);
     l = cons(primitiveProcedure(valueDisplay), l);
+    l = cons(primitiveProcedure(valueComment), l);
     return l;
 }
 

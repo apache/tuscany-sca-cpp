@@ -1,5 +1,5 @@
 
-(display "Currency implementation")
+(; "Currency implementation")
 
 (define (currency_convert from to amount) 
   (if (equal? to "EUR") (* amount 0.70) amount)
@@ -16,11 +16,11 @@
   )
 )
 
-(display "Currency composite")
+(; "Currency composite")
 
 (define (currency_service op . args) (currency_impl op args))
 
-(display "Catalog implementation")
+(; "Catalog implementation")
 
 (define (catalog_get converter)
   (define (convert price) (converter "convert" "USD" "USD" price))
@@ -40,11 +40,11 @@
   )
 )
 
-(display "Catalog composite")
+(; "Catalog composite")
 
 (define (catalog_service op . args) (catalog_impl currency_service op args))
 
-(display "Cart implementation")
+(; "Cart implementation")
 
 (define (cart_post content item)
   (cons item content)
@@ -61,7 +61,7 @@
   )
 )
 
-(display "Store UI implementation")
+(; "Store UI implementation")
 
 (define (storeui_post cart content item)
   (cart "post" content item)
@@ -83,13 +83,13 @@
   )
 )
 
-(display "Store UI composite")
+(; "Store UI composite")
 
 (define (cart_service op . args) (cart_impl op args))
 
 (define (storeui_service op . args) (storeui_impl cart_service catalog_service op args))
 
-(display "Store UI test case")
+(; "Store UI test case")
 
 (define catalog (storeui_service "getcatalog"))
 (define empty (list))
