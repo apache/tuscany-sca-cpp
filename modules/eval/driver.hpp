@@ -30,8 +30,7 @@
 #include <iostream>
 #include "eval.hpp"
 
-namespace tuscany
-{
+namespace tuscany {
 
 const std::string evalOutputPrompt("; ");
 const std::string evalInputPrompt("=> ");

@@ -48,9 +48,9 @@ bool testEnvGC() {
     assert(countValues == 0);
     assert(countLambdas == 0);
     assert(countlists == 0);
-    printLambdaCounters();
-    printListCounters();
-    printValueCounters();
+    //printLambdaCounters();
+    //printListCounters();
+    //printValueCounters();
     return true;
 }
 
@@ -148,9 +148,9 @@ bool testEvalGC() {
     assert(countValues == 0);
     assert(countLambdas == 0);
     assert(countlists == 0);
-    printLambdaCounters();
-    printListCounters();
-    printValueCounters();
+    //printLambdaCounters();
+    //printListCounters();
+    //printValueCounters();
     return true;
 }
 

@@ -232,8 +232,8 @@ bool testSeq() {
 
     list<double> s = seq(0.0, 1000.0);
     assert(1001 == length(s));
-    printLambdaCounters();
-    printListCounters();
+    //printLambdaCounters();
+    //printListCounters();
 
     assert(1001 == length(map(lambda<double(double)>(testSeqMap), s)));
 
@@ -241,8 +241,8 @@ bool testSeq() {
     assert(201 == length(member(200.0, reverse(s))));
 
     assert(1001 == reduce(lambda<double(double, double)>(testSeqReduce), 0.0, s));
-    printLambdaCounters();
-    printListCounters();
+    //printLambdaCounters();
+    //printListCounters();
 
     return true;
 }

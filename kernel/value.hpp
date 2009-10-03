@@ -281,7 +281,7 @@ std::ostream& operator<<(std::ostream& out, const value& v) {
     case value::Symbol:
         return out << "Symbol::" << v.str()();
     case value::String:
-        return out << "String::" << '\'' << v.str()() << '\'';
+        return out << "String::" << '\"' << v.str()() << '\"';
     case value::Number:
         return out << "Number::" << v.num()();
     case value::Boolean:
@@ -294,6 +294,10 @@ std::ostream& operator<<(std::ostream& out, const value& v) {
     default:
         return out << "Undefined";
     }
+}
+
+const value::ValueType type(const value& v) {
+    return v.type;
 }
 
 const bool isNil(const value& value) {

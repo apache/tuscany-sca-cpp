@@ -40,18 +40,18 @@ namespace tuscany {
 /**
  * Encapsulates a libxml2 xmlTextReader and its state.
  */
-class XmlReader {
+class XMLReader {
 public:
     enum TokenType {
         None = 0, Element = 1, Attribute = 2, EndElement = 15, Identifier = 100, Text = 101, End = 103
     };
 
-    XmlReader(xmlTextReaderPtr xml) : xml(xml), tokenType(None) {
+    XMLReader(xmlTextReaderPtr xml) : xml(xml), tokenType(None) {
         xmlTextReaderSetParserProp(xml, XML_PARSER_DEFAULTATTRS, 1);
         xmlTextReaderSetParserProp(xml, XML_PARSER_SUBST_ENTITIES, 1);
     }
 
-    ~XmlReader() {
+    ~XMLReader() {
         xmlFreeTextReader(xml);
     }
 
@@ -103,7 +103,7 @@ const value element("element");
 /**
  * Read an XML identifier.
  */
-const value readIdentifier(XmlReader& reader) {
+const value readIdentifier(XMLReader& reader) {
     const char* name = (const char*)xmlTextReaderConstName(reader);
     return value(name);
 }
@@ -111,7 +111,7 @@ const value readIdentifier(XmlReader& reader) {
 /**
  * Read XML text.
  */
-const value readText(XmlReader& reader) {
+const value readText(XMLReader& reader) {
     const char *val = (const char*)xmlTextReaderConstValue(reader);
     return value(std::string(val));
 }
@@ -119,7 +119,7 @@ const value readText(XmlReader& reader) {
 /**
  * Read an XML attribute.
  */
-const value readAttribute(XmlReader& reader) {
+const value readAttribute(XMLReader& reader) {
     const char *name = (const char*)xmlTextReaderConstName(reader);
     const char *val = (const char*)xmlTextReaderConstValue(reader);
     return value(makeList(attribute, value(name), value(std::string(val))));
@@ -128,19 +128,19 @@ const value readAttribute(XmlReader& reader) {
 /**
  * Read an XML token.
  */
-const value readToken(XmlReader& reader) {
+const value readToken(XMLReader& reader) {
     const int tokenType = reader.read();
-    if (tokenType == XmlReader::End)
+    if (tokenType == XMLReader::End)
         return value();
-    if (tokenType == XmlReader::Element)
+    if (tokenType == XMLReader::Element)
         return startElement;
-    if (tokenType == XmlReader::Identifier)
+    if (tokenType == XMLReader::Identifier)
         return readIdentifier(reader);
-    if (tokenType == XmlReader::Attribute)
+    if (tokenType == XMLReader::Attribute)
         return readAttribute(reader);
-    if (tokenType == XmlReader::Text)
+    if (tokenType == XMLReader::Text)
         return readText(reader);
-    if (tokenType == XmlReader::EndElement)
+    if (tokenType == XMLReader::EndElement)
         return endElement;
     return readToken(reader);
 }
@@ -148,7 +148,7 @@ const value readToken(XmlReader& reader) {
 /**
  * Read a list of XML tokens.
  */
-const list<value> readList(const list<value>& listSoFar, XmlReader& reader) {
+const list<value> readList(const list<value>& listSoFar, XMLReader& reader) {
     const value token = readToken(reader);
     if(isNil(token) || endElement == token)
         return reverse(listSoFar);
@@ -160,7 +160,7 @@ const list<value> readList(const list<value>& listSoFar, XmlReader& reader) {
 /**
  * Read an XML document from a libxml2 XML reader.
  */
-const list<value> read(XmlReader& reader) {
+const list<value> read(XMLReader& reader) {
     value nextToken = readToken(reader);
     if (startElement == nextToken)
         return makeList(value(readList(makeList(element), reader)));
@@ -173,8 +173,6 @@ const list<value> read(XmlReader& reader) {
 int readCallback(void *context, char* buffer, int len) {
     std::istream* is = static_cast<std::istream*>(context);
     is->read(buffer, len);
-    if (!is->eof() && (is->fail() || is->bad()))
-        return -1;
     const int n = is->gcount();
     return n;
 }
@@ -186,7 +184,7 @@ const list<value> readXML(std::istream& is) {
     xmlTextReaderPtr xml = xmlReaderForIO(readCallback, NULL, &is, NULL, NULL, XML_PARSE_NONET);
     if (xml == NULL)
         return list<value>();
-    XmlReader reader(xml);
+    XMLReader reader(xml);
     return read(reader);
 }
 
@@ -196,8 +194,6 @@ const list<value> readXML(std::istream& is) {
 int readFileCallback(void *context, char* buffer, int len) {
     std::ifstream* is = static_cast<std::ifstream*>(context);
     is->read(buffer, len);
-    if (is->fail() || is->bad())
-        return -1;
     return is->gcount();
 }
 
@@ -217,7 +213,7 @@ const list<value> readXML(std::ifstream& is) {
     xmlTextReaderPtr xml = xmlReaderForIO(readFileCallback, readCloseFileCallback, &is, NULL, NULL, XML_PARSE_NONET);
     if (xml == NULL)
         return list<value>();
-    XmlReader reader(xml);
+    XMLReader reader(xml);
     return read(reader);
 }
 
