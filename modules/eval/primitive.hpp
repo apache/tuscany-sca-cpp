@@ -50,53 +50,53 @@ const value valueCar(list<value>& args) {
 }
 
 const value valueCdr(list<value>& args) {
-    return value(cdr((list<value> )car(args)));
+    return cdr((list<value> )car(args));
 }
 
 const value valueCons(list<value>& args) {
-    return value(cons(car(args), (list<value> )cadr(args)));
+    return cons(car(args), (list<value> )cadr(args));
 }
 
 const value valueList(list<value>& args) {
-    return value(args);
+    return args;
 }
 
 const value valueNul(list<value>& args) {
-    return value((bool)isNil(car(args)));
+    return (bool)isNil(car(args));
 }
 
 const value valueEqual(list<value>& args) {
-    return value((bool)(car(args) == cadr(args)));
+    return (bool)(car(args) == cadr(args));
 }
 
 const value valueAdd(list<value>& args) {
     if (cdr(args) == list<value>())
-        return value((double)car(args));
-    return value((double)car(args) + (double)cadr(args));
+        return (double)car(args);
+    return (double)car(args) + (double)cadr(args);
 }
 
 const value valueSub(list<value>& args) {
     if (cdr(args) == list<value>())
-        return value(0 - (double)car(args));
-    return value((double)car(args) - (double)cadr(args));
+        return (double)0 - (double)car(args);
+    return (double)car(args) - (double)cadr(args);
 }
 
 const value valueMul(list<value>& args) {
-    return value((double)car(args) * (double)cadr(args));
+    return (double)car(args) * (double)cadr(args);
 }
 
 const value valueDiv(list<value>& args) {
-    return value((double)car(args) / (double)cadr(args));
+    return (double)car(args) / (double)cadr(args);
 }
 
 const value valueDisplay(list<value>& args) {
     *evalOut << car(args);
-    return value(true);
+    return true;
 }
 
 const value valueError(list<value>& args) {
     std::cerr << (std::string)car(args);
-    return value(true);
+    return true;
 }
 
 const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
@@ -127,22 +127,22 @@ const value primitiveImplementation(const list<value>& proc) {
 }
 
 template<typename F> const value primitiveProcedure(const F& f) {
-    return value(makeList(primitiveSymbol, value((lambda<value(list<value>&)>)f)));
+    return makeList<value>(primitiveSymbol, (lambda<value(list<value>&)>)f);
 }
 
 const list<value> primitiveProcedureNames() {
-    list<value> l = makeList(value("car"));
-    l = cons(value("cdr"), l);
-    l = cons(value("cons"), l);
-    l = cons(value("list"), l);
-    l = cons(value("nul"), l);
-    l = cons(value("="), l);
-    l = cons(value("+"), l);
-    l = cons(value("-"), l);
-    l = cons(value("*"), l);
-    l = cons(value("/"), l);
-    l = cons(value("equal?"), l);
-    l = cons(value("display"), l);
+    list<value> l = makeList<value>("car");
+    l = cons<value>("cdr", l);
+    l = cons<value>("cons", l);
+    l = cons<value>("list", l);
+    l = cons<value>("nul", l);
+    l = cons<value>("=", l);
+    l = cons<value>("+", l);
+    l = cons<value>("-", l);
+    l = cons<value>("*", l);
+    l = cons<value>("/", l);
+    l = cons<value>("equal?", l);
+    l = cons<value>("display", l);
     return l;
 }
 
@@ -179,7 +179,7 @@ const value textOfQuotation(const value& exp) {
 }
 
 const value makeLambda(const list<value>& parameters, const list<value>& body) {
-    return value(cons(lambdaSymbol, cons((value)parameters, body)));
+    return cons(lambdaSymbol, cons<value>(parameters, body));
 }
 
 }

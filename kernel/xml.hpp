@@ -46,7 +46,7 @@ public:
         None = 0, Element = 1, Attribute = 2, EndElement = 15, Identifier = 100, Text = 101, End = 103
     };
 
-    explicit XmlReader(xmlTextReaderPtr xml) : xml(xml), tokenType(None) {
+    XmlReader(xmlTextReaderPtr xml) : xml(xml), tokenType(None) {
         xmlTextReaderSetParserProp(xml, XML_PARSER_DEFAULTATTRS, 1);
         xmlTextReaderSetParserProp(xml, XML_PARSER_SUBST_ENTITIES, 1);
     }

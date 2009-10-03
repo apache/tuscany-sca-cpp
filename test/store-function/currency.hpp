@@ -47,10 +47,10 @@ const std::string currencyConverter_getSymbol(const std::string& currencyCode) {
 }
 
 const tuscany::value currencyConverter_service(const tuscany::list<tuscany::value>& args) {
-    if (car(args) == tuscany::value("convert"))
-        return tuscany::value(currencyConverter_convert(cadr(args), car(cdr(cdr(args))), car(cdr(cdr(cdr(args))))));
-    if (car(args) == tuscany::value("getSymbol"))
-        return tuscany::value(currencyConverter_getSymbol(cadr(args)));
+    if (car(args) == "convert")
+        return currencyConverter_convert(cadr(args), car(cdr(cdr(args))), car(cdr(cdr(cdr(args)))));
+    if (car(args) == "getSymbol")
+        return currencyConverter_getSymbol(cadr(args));
     return tuscany::value();
 }
 

@@ -48,8 +48,7 @@ const bool announceOutput(std::ostream& out, const std::string str) {
 
 const bool userPrint(std::ostream& out, const value object) {
     if(isCompoundProcedure(object))
-        out << makeList(compoundProcedureSymbol, value(procedureParameters(object)), value(procedureBody(object)), value(
-                "<procedure-env>"));
+        out << makeList<value>(compoundProcedureSymbol, procedureParameters(object), procedureBody(object), "<procedure-env>");
     out << object;
     return true;
 }

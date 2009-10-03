@@ -33,30 +33,30 @@ namespace store
 {
 
 const tuscany::list<ItemType> storeUI_getCatalog(const service& catalog) {
-    return catalog(makeList(tuscany::value("get")));
+    return catalog(tuscany::makeList<tuscany::value>("get"));
 }
 
 const tuscany::list<ItemType> storeUI_getCart(const service& cart) {
-    return cart(makeList(tuscany::value("getAll")));
+    return cart(tuscany::makeList<tuscany::value>("getAll"));
 }
 
 const double storeUI_getTotal(const service& cart) {
-    return cart(makeList(tuscany::value("getTotal")));
+    return cart(tuscany::makeList<tuscany::value>("getTotal"));
 }
 
 const bool storeUI_post(const service& cart, const ItemType& item) {
-    return cart(makeList(tuscany::value("post"), tuscany::value(item)));
+    return cart(tuscany::makeList<tuscany::value>("post", item));
 }
 
 const tuscany::value storeUI_service(const service& catalog, const service& cart, const tuscany::list<tuscany::value>& args) {
-    if (car(args) == tuscany::value("getCatalog"))
-        return tuscany::value(storeUI_getCatalog(catalog));
-    if (car(args) == tuscany::value("getCart"))
-        return tuscany::value(storeUI_getCart(cart));
-    if (car(args) == tuscany::value("getTotal"))
-        return tuscany::value(storeUI_getTotal(cart));
-    if (car(args) == tuscany::value("post"))
-        return tuscany::value(storeUI_post(cart, cadr(args)));
+    if (car(args) == "getCatalog")
+        return storeUI_getCatalog(catalog);
+    if (car(args) == "getCart")
+        return storeUI_getCart(cart);
+    if (car(args) == "getTotal")
+        return storeUI_getTotal(cart);
+    if (car(args) == "post")
+        return storeUI_post(cart, cadr(args));
     return tuscany::value();
 }
 

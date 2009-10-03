@@ -269,7 +269,7 @@ template<typename T, typename R> const list<R> map(const lambda<R(T)>& f, const 
  */
 template<typename T, typename R> struct reduceAccumulate {
     const lambda<R(R, T)> f;
-    explicit reduceAccumulate(const lambda<R(R, T)>& f) :
+    reduceAccumulate(const lambda<R(R, T)>& f) :
         f(f) {
     }
     R operator()(const R& acc, const list<T>& p) const {

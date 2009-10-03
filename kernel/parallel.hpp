@@ -139,7 +139,7 @@ public:
  */
 template<typename T> class queue {
 public:
-    explicit queue(int max) : max(max), size(0), tail(0), head(0), values(new T[max]) {
+    queue(int max) : max(max), size(0), tail(0), head(0), values(new T[max]) {
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&full, NULL);
         pthread_cond_init(&empty, NULL);
@@ -221,7 +221,7 @@ const list<pthread_t> makeWorkerThreads(queue<lambda<bool()> >& queue, const int
  */
 class worker {
 public:
-    explicit worker(int max) : work(queue<lambda<bool()> >(max)), threads(makeWorkerThreads(work, max)) {
+    worker(int max) : work(queue<lambda<bool()> >(max)), threads(makeWorkerThreads(work, max)) {
     }
 
 private:

@@ -33,7 +33,7 @@ namespace tuscany
 
 template<typename T> class gc_ptr {
 public:
-    explicit gc_ptr(T* p = 0) throw() : countingRef(p == 0? 0 : new CountingRef(p)) {
+    gc_ptr(T* p = 0) throw() : countingRef(p == 0? 0 : new CountingRef(p)) {
     }
 
     ~gc_ptr() throw() {
@@ -116,7 +116,7 @@ template<typename T> std::ostream& operator<<(std::ostream& out, const gc_ptr<T>
  */
 template<typename T> class gc_aptr {
 public:
-    explicit gc_aptr(T* p = 0) throw() : countingRef(p == 0? 0 : new CountingRef(p)) {
+    gc_aptr(T* p = 0) throw() : countingRef(p == 0? 0 : new CountingRef(p)) {
     }
 
     ~gc_aptr() throw() {
@@ -199,7 +199,7 @@ template<typename T> std::ostream& operator<<(std::ostream& out, const gc_aptr<T
  */
 template<typename T> class gc_counting_ptr {
 public:
-    explicit gc_counting_ptr(T* p = 0) throw() : ptr(p) {
+    gc_counting_ptr(T* p = 0) throw() : ptr(p) {
         acquire(p);
     }
 

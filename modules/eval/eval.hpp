@@ -67,7 +67,7 @@ static list<value> lambdaBody(const value& exp) {
 }
 
 const value makeProcedure(const list<value>& parameters, const value& body, const Env& env) {
-    return value(makeList(procedureSymbol, value(parameters), body, value(env)));
+    return makeList<value>(procedureSymbol, parameters, body, env);
 }
 
 const bool isApply(const value& exp) {
@@ -129,7 +129,7 @@ const list<value> restExp(const list<value>& seq) {
 }
 
 const value makeBegin(const list<value> seq) {
-    return value(cons(beginSymbol, seq));
+    return cons(beginSymbol, seq);
 }
 
 const value evalSequence(const list<value>& exps, Env& env) {
@@ -152,7 +152,7 @@ const value applyProcedure(const value& procedure, list<value>& arguments) {
 
 const value sequenceToExp(const list<value> exps) {
     if(exps == list<value> ())
-        return value(list<value>());
+        return list<value>();
     if(isLastExp(exps))
         return firstExp(exps);
     return makeBegin(exps);
@@ -181,7 +181,7 @@ const value ifConsequent(const value& exp) {
 const value ifAlternative(const value& exp) {
     if(cdr(cdr(cdr((list<value> )exp))) != list<value> ())
         return car(cdr(cdr(cdr((list<value> )exp))));
-    return value(false);
+    return false;
 }
 
 const bool isCond(const value& exp) {
@@ -197,12 +197,12 @@ const bool isIf(const value& exp) {
 }
 
 const value makeIf(value predicate, value consequent, value alternative) {
-    return value(makeList(ifSymbol, predicate, consequent, alternative));
+    return makeList(ifSymbol, predicate, consequent, alternative);
 }
 
 const value expandClauses(const list<value>& clauses) {
     if(clauses == list<value> ())
-        return value(false);
+        return false;
     const value first = car(clauses);
     const list<value> rest = cdr(clauses);
     if(isCondElseClause(first)) {
@@ -243,7 +243,7 @@ const value eval(const value& exp, Env& env) {
     if(isCond(exp))
         return eval(condToIf(exp), env);
     if(isLambda(exp))
-        return makeProcedure(lambdaParameters(exp), value(lambdaBody(exp)), env);
+        return makeProcedure(lambdaParameters(exp), lambdaBody(exp), env);
     if(isVariable(exp))
         return lookupVariableValue(exp, env);
     if(isApply(exp)) {

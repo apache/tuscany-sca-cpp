@@ -33,10 +33,10 @@ namespace tuscany {
 
 bool testEnv() {
     Env globalEnv = list<value>();
-    Env env = extendEnvironment(makeList(value("a")), makeList(value(1)), globalEnv);
-    defineVariable(value("x"), value(env), env);
+    Env env = extendEnvironment(makeList<value>("a"), makeList<value>(1), globalEnv);
+    defineVariable("x", env, env);
     //assert(lookupVariableValue(value("x"), env) == env);
-    assert(lookupVariableValue(value("a"), env) == value(1));
+    assert(lookupVariableValue("a", env) == value(1));
     return true;
 }
 
@@ -56,19 +56,19 @@ bool testEnvGC() {
 
 bool testRead() {
     std::istringstream is("abcd");
-    assert(read(is) == value("abcd"));
+    assert(read(is) == "abcd");
 
     std::istringstream is2("123");
     assert(read(is2) == value(123));
 
     std::istringstream is3("(abcd)");
-    assert(read(is3) == value(makeList(value("abcd"))));
+    assert(read(is3) == makeList(value("abcd")));
 
     std::istringstream is4("(abcd xyz)");
-    assert(read(is4) == value(makeList(value("abcd"), value("xyz"))));
+    assert(read(is4) == makeList<value>("abcd", "xyz"));
 
     std::istringstream is5("(abcd (xyz tuv))");
-    assert(read(is5) == value(makeList(value("abcd"), value(makeList(value("xyz"), value("tuv"))))));
+    assert(read(is5) == makeList<value>("abcd", makeList<value>("xyz", "tuv")));
 
     return true;
 }
@@ -133,10 +133,10 @@ bool testEval() {
 }
 
 bool testEvalExpr() {
-    const value exp = value(makeList(value("+"), value(2), value(3)));
+    const value exp = makeList<value>("+", 2, 3);
     Env env = setupEnvironment();
     const value r = eval(exp, env);
-    assert(value(5) == r);
+    assert(r == value(5));
     return true;
 }
 

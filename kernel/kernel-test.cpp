@@ -248,7 +248,7 @@ bool testSeq() {
 }
 
 value valueSquare(list<value> x) {
-    return value((int)car(x) * (int)car(x));
+    return (int)car(x) * (int)car(x);
 }
 
 bool testValue() {
@@ -257,7 +257,7 @@ bool testValue() {
     assert(value("abcd") == value("abcd"));
     lambda<value(list<value>&)> vl(valueSquare);
     assert(value(vl) == value(vl));
-    assert(value(makeList(value(1), value(2))) == value(makeList(value(1), value(2))));
+    assert(value(makeList<value>(1, 2)) == value(makeList<value>(1, 2)));
     return true;
 }
 
@@ -390,7 +390,7 @@ const bool isName(const value& token) {
 
 bool testReadXML() {
     std::istringstream is(currencyXML);
-    const list<value> currency = value(readXML(is));
+    const list<value> currency = readXML(is);
 
     const value composite = car(currency);
     assert(isElement(composite));
@@ -403,7 +403,7 @@ bool testReadXML() {
 
 bool testWriteXML() {
     std::istringstream is(currencyXML);
-    const list<value> currency = value(readXML(is));
+    const list<value> currency = readXML(is);
     std::ostringstream os;
     writeXML(currency, os);
     assert(os.str() == currencyXML);

@@ -37,11 +37,11 @@ namespace tuscany
 typedef value Frame;
 typedef list<value> Env;
 
-const value trueSymbol = value("true");
-const value falseSymbol = value("false");
-const value defineSymbol = value("define");
-const value setSymbol = value("set!");
-const value dotSymbol = value(".");
+const value trueSymbol("true");
+const value falseSymbol("false");
+const value defineSymbol("define");
+const value setSymbol("set!");
+const value dotSymbol(".");
 
 const Env theEmptyEnvironment() {
     return list<value>();
@@ -86,7 +86,7 @@ const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, c
         return frameSoFar;
     }
     if (isDotVariable(car(variables)))
-        return makeBinding(frameSoFar, cdr(variables), makeList(value(values)));
+        return makeBinding(frameSoFar, cdr(variables), makeList<value>(values));
 
     if (values == list<value>()) {
         if (variables != list<value>())
@@ -96,13 +96,13 @@ const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, c
 
     const list<value> vars = cons(car(variables), frameVariables(frameSoFar));
     const list<value> vals = cons(car(values), frameValues(frameSoFar));
-    const Frame newFrame = value(cons(value(vars), vals));
+    const Frame newFrame = cons(value(vars), vals);
 
     return makeBinding(newFrame, cdr(variables), cdr(values));
 }
 
 const Frame makeFrame(const list<value>& variables, const list<value> values) {
-    const Frame emptyFrame = value(cons((value)list<value>(), list<value>()));
+    const Frame emptyFrame = cons(value(list<value>()), list<value>());
     return makeBinding(emptyFrame, variables, values);
 }
 
@@ -131,11 +131,11 @@ const value assignmentValue(const value& exp) {
 }
 
 const Frame addBindingToFrame(const value& var, const value& val, const Frame& frame) {
-    return value(cons((value)cons(var, frameVariables(frame)), cons(val, frameValues(frame))));
+    return cons(value(cons(var, frameVariables(frame))), cons(val, frameValues(frame)));
 }
 
 const Env defineVariable(const value& var, const value& val, Env& env) {
-    return value(cons(addBindingToFrame(var, val, firstFrame(env)), cdr(env)));
+    return cons(addBindingToFrame(var, val, firstFrame(env)), cdr(env));
 }
 
 const Env extendEnvironment(const list<value>& vars, const list<value>& vals, const Env& baseEnv) {
@@ -150,8 +150,8 @@ const Env extendEnvironment(const list<value>& vars, const list<value>& vals, co
 
 const Env setupEnvironment() {
     Env env = extendEnvironment(primitiveProcedureNames(), primitiveProcedureObjects(), theEmptyEnvironment());
-    env = defineVariable(trueSymbol, value(true), env);
-    env = defineVariable(falseSymbol, value(false), env);
+    env = defineVariable(trueSymbol, true, env);
+    env = defineVariable(falseSymbol, false, env);
     return env;
 }
 

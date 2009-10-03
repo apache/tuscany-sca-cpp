@@ -121,49 +121,49 @@ public:
         countValues--;
     }
 
-    explicit value(const lambda<value(list<value>&)>& func) :
+    value(const lambda<value(list<value>&)>& func) :
         type(value::Lambda), data(vdata(func)) {
         countValues++;
         countVValues++;
     }
 
-    explicit value(const std::string& str) :
+    value(const std::string& str) :
         type(value::String), data(vdata(unit(str))) {
         countValues++;
         countVValues++;
     }
 
-    explicit value(const char* str) :
+    value(const char* str) :
         type(value::Symbol), data(vdata(unit(std::string(str)))) {
         countValues++;
         countVValues++;
     }
 
-    explicit value(const list<value>& lst) :
+    value(const list<value>& lst) :
         type(value::List), data(vdata(unit(lst))) {
         countValues++;
         countVValues++;
     }
 
-    explicit value(const double num) :
+    value(const double num) :
         type(value::Number), data(vdata(unit(num))) {
         countValues++;
         countVValues++;
     }
 
-    explicit value(const int num) :
+    value(const int num) :
         type(value::Number), data(vdata(unit((double)num))) {
         countValues++;
         countVValues++;
     }
 
-    explicit value(const bool boo) :
+    value(const bool boo) :
         type(value::Boolean), data(vdata(unit(boo))) {
         countValues++;
         countVValues++;
     }
 
-    explicit value(const char chr) :
+    value(const char chr) :
         type(value::Character), data(vdata(unit(chr))) {
         countValues++;
         countVValues++;

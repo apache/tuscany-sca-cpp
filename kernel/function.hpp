@@ -86,12 +86,12 @@ public:
 
     template<typename F> class Proxy: public Callable {
     public:
-        explicit Proxy(const F& f) : function(f) {
+        Proxy(const F& f) : function(f) {
             countProxies++;
             countFProxies ++;
         }
 
-        explicit Proxy(const Proxy& p) : function(p.function) {
+        Proxy(const Proxy& p) : function(p.function) {
             countProxies++;
             countCProxies ++;
         }
@@ -123,7 +123,7 @@ public:
         countELambdas++;
     }
 
-    template<typename F> explicit lambda(const F f) : callable(0) {
+    template<typename F> lambda(const F f) : callable(0) {
         typedef typename CallableType::template Proxy<F> ProxyType;
 
         countLambdas++;
@@ -214,7 +214,7 @@ template<typename R, typename T, typename U, typename V, typename... P> const la
  */
 template<typename T> class unitReturn {
 public:
-    explicit unitReturn(const T& v) :
+    unitReturn(const T& v) :
         v(v) {
     }
     const T operator()() const {
