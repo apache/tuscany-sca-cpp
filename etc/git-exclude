@@ -62,6 +62,7 @@ calculator_client
 kernel-test
 xml-test
 eval-test
+json-test
 store-function-test
 store-object-test
 store-script-test

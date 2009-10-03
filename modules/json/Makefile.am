@@ -15,4 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = eval json
+noinst_PROGRAMS = json-test
+
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${LIBMOZJS_INCLUDE}
+
+json_test_SOURCES = json-test.cpp
+json_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${LIBMOZJS_LIB} -lmozjs 
+

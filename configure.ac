@@ -85,10 +85,19 @@ LIBXML2_INCLUDE=`echo "$LIBXML2_INCLUDE"`
 if test "x$LIBXML2_INCLUDE" = "x"; then
   AC_SUBST([LIBXML2_INCLUDE], ["/usr/include/libxml2"])
 fi
-
 LIBXML2_LIB=`echo "$LIBXML2_LIB"`
 if test "x$LIBXML2_LIB" = "x"; then
   AC_SUBST([LIBXML2_LIB], ["/usr/lib"])
+fi
+
+# Configure LIBMOZJS_INCLUDE and LIBMOZJS_LIB
+LIBMOZJS_INCLUDE=`echo "$LIBMOZJS_INCLUDE"`
+if test "x$LIBMOZJS_INCLUDE" = "x"; then
+  AC_SUBST([LIBMOZJS_INCLUDE], ["/usr/include/xulrunner-1.9.1.3/unstable"])
+fi
+LIBMOZJS_LIB=`echo "$LIBMOZJS_LIB"`
+if test "x$LIBMOZJS_LIB" = "x"; then
+  AC_SUBST([LIBMOZJS_LIB], ["/usr/lib/xulrunner-1.9.1.3"])
 fi
 
 # Configure GCC C++ compile options
@@ -258,6 +267,7 @@ AC_CONFIG_FILES([Makefile
                  kernel/Makefile
                  modules/Makefile
                  modules/eval/Makefile
+                 modules/json/Makefile
                  test/Makefile
                  test/store-object/Makefile
                  test/store-function/Makefile
