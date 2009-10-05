@@ -31,6 +31,7 @@
 #include <sstream>
 #include "function.hpp"
 #include "list.hpp"
+#include "slist.hpp"
 #include "parallel.hpp"
 #include "value.hpp"
 #include "xml.hpp"
@@ -218,6 +219,15 @@ bool testReverse() {
     return true;
 }
 
+bool testTokenize() {
+    assert(tokenize("/", "aaa/bbb/ccc/ddd") == makeList<std::string>("aaa", "bbb", "ccc", "ddd"));
+    assert(tokenize("/", "/bbb/ccc/ddd") == makeList<std::string>("", "bbb", "ccc", "ddd"));
+    assert(tokenize("/", "/bbb/ccc/") == makeList<std::string>("", "bbb", "ccc"));
+    assert(tokenize("/", "/bbb//ccc/") == makeList<std::string>("", "bbb", "", "ccc"));
+    assert(tokenize("/", "abc/def/") == makeList<std::string>("abc", "def"));
+    return true;
+}
+
 double testSeqMap(double x) {
     return x;
 }
@@ -285,15 +295,42 @@ double fib(double n) {
 bool testCppPerf() {
     struct timeval start;
     struct timeval end;
-    gettimeofday(&start, NULL);
+    {
+        gettimeofday(&start, NULL);
 
-    list<double> s = seq(0.0, 999.0);
-    list<double> r = map((lambda<double(double)> )fib, s);
-    assert(1000 == length(r));
+        list<double> s = seq(0.0, 999.0);
+        list<double> r = map((lambda<double(double)> )fib, s);
+        assert(1000 == length(r));
 
-    gettimeofday(&end, NULL);
-    //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-    //std::cout << "Fib cpp perf test " << t << " ms" << std::endl;
+        gettimeofday(&end, NULL);
+        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
+        //std::cout << "Fib cpp function map perf test " << t << " ms" << std::endl;
+    }
+
+    {
+        struct nested {
+            static double fib(double n) {
+                struct nested {
+                    static double fib_aux(double n, double a, double b) {
+                        if(n == 0.0)
+                            return a;
+                        return fib_aux(n - 1.0, b, a + b);
+                    }
+                };
+                return nested::fib_aux(n, 0.0, 1.0);
+            }
+        };
+
+        gettimeofday(&start, NULL);
+
+        list<double> s = seq(0.0, 999.0);
+        list<double> r = map(lambda<double(double)>(nested::fib), s);
+        assert(1000 == length(r));
+
+        gettimeofday(&end, NULL);
+        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
+        //std::cout << "Fib cpp nested function map perf test " << t << " ms" << std::endl;
+    }
     return true;
 }
 
@@ -390,7 +427,7 @@ const bool isName(const value& token) {
 
 bool testReadXML() {
     std::istringstream is(currencyXML);
-    const list<value> currency = readXML(is);
+    const list<value> currency = readXML(makeStreamList(is));
 
     const value composite = car(currency);
     assert(isElement(composite));
@@ -401,12 +438,22 @@ bool testReadXML() {
     return true;
 }
 
+std::ostringstream* xmlWriter(std::ostringstream* os, const std::string& s) {
+    (*os) << s;
+    return os;
+}
+
 bool testWriteXML() {
     std::istringstream is(currencyXML);
-    const list<value> currency = readXML(is);
+    const list<std::string> il = makeStreamList(is);
+
+    const list<value> currency = readXML(il);
     std::ostringstream os;
-    writeXML(currency, os);
+    lambda<std::ostringstream*(std::ostringstream*, std::string)> writer(xmlWriter);
+    writeXML(writer, &os, currency);
     assert(os.str() == currencyXML);
+
+    assert(writeXML(currency) == il);
     return true;
 }
 
@@ -429,6 +476,7 @@ int main() {
     tuscany::testFilter();
     tuscany::testMember();
     tuscany::testReverse();
+    tuscany::testTokenize();
     tuscany::testSeq();
     tuscany::testValue();
     tuscany::testValueGC();

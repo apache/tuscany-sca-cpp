@@ -30,8 +30,6 @@
 #include <libxml/xmlwriter.h>
 #include <libxml/xmlschemas.h>
 #include <libxml/globals.h>
-#include <iostream>
-#include <fstream>
 #include <string>
 #include "list.hpp"
 
@@ -158,7 +156,7 @@ const list<value> readList(const list<value>& listSoFar, XMLReader& reader) {
 }
 
 /**
- * Read an XML document from a libxml2 XML reader.
+ * Read a list of values from a libxml2 XML reader.
  */
 const list<value> read(XMLReader& reader) {
     value nextToken = readToken(reader);
@@ -168,49 +166,35 @@ const list<value> read(XMLReader& reader) {
 }
 
 /**
- * Callback function called by libxml2 to read the XML input stream.
+ * Context passed to the read callback function.
+ */
+class XMLReadContext {
+public:
+    XMLReadContext(const list<std::string>& ilist) : ilist(ilist) {
+    }
+    list<std::string> ilist;
+};
+
+/**
+ * Callback function called by libxml2 to read XML.
  */
 int readCallback(void *context, char* buffer, int len) {
-    std::istream* is = static_cast<std::istream*>(context);
-    is->read(buffer, len);
-    const int n = is->gcount();
-    return n;
+    XMLReadContext& rc = *static_cast<XMLReadContext*>(context);
+    if (isNil(rc.ilist))
+        return 0;
+    rc.ilist = fragment(rc.ilist, len);
+    std::string s = car(rc.ilist);
+    rc.ilist = cdr(rc.ilist);
+    s.copy(buffer, s.length());
+    return s.length();
 }
 
 /**
- * Read an XML document from an input stream.
+ * Read a list values from a list of strings representing an XML document.
  */
-const list<value> readXML(std::istream& is) {
-    xmlTextReaderPtr xml = xmlReaderForIO(readCallback, NULL, &is, NULL, NULL, XML_PARSE_NONET);
-    if (xml == NULL)
-        return list<value>();
-    XMLReader reader(xml);
-    return read(reader);
-}
-
-/**
- * Callback function called by libxml2 to read the XML file input stream.
- */
-int readFileCallback(void *context, char* buffer, int len) {
-    std::ifstream* is = static_cast<std::ifstream*>(context);
-    is->read(buffer, len);
-    return is->gcount();
-}
-
-/**
- * Callback function called by libxml2 to close the XML file input stream.
- */
-int readCloseFileCallback(void *context) {
-    std::ifstream* fis = static_cast<std::ifstream*>(context);
-    fis->close();
-    return 0;
-}
-
-/**
- * Read an XML document from a file input stream.
- */
-const list<value> readXML(std::ifstream& is) {
-    xmlTextReaderPtr xml = xmlReaderForIO(readFileCallback, readCloseFileCallback, &is, NULL, NULL, XML_PARSE_NONET);
+const list<value> readXML(const list<std::string>& ilist) {
+    XMLReadContext cx(ilist);
+    xmlTextReaderPtr xml = xmlReaderForIO(readCallback, NULL, &cx, NULL, NULL, XML_PARSE_NONET);
     if (xml == NULL)
         return list<value>();
     XMLReader reader(xml);
@@ -313,7 +297,7 @@ const bool writeList(const list<value>& l, const xmlTextWriterPtr xml) {
 }
 
 /**
- * Write an XML document to a libxml2 XML writer.
+ * Write a list of values to a libxml2 XML writer.
  */
 const bool write(const list<value>& l, const xmlTextWriterPtr xml) {
     if (xmlTextWriterStartDocument(xml, NULL, encoding, NULL) < 0)
@@ -325,56 +309,47 @@ const bool write(const list<value>& l, const xmlTextWriterPtr xml) {
 }
 
 /**
- * Callback function called by libxml2 to write to the XML output stream.
+ * Context passed to the write callback function.
  */
-int writeCallback(void *context, const char* buffer, int len) {
-    std::ostream* os = static_cast<std::ostream*>(context);
-    os->write(buffer, len);
-    if (os->fail() || os->bad())
-        return -1;
+template<typename R> class XMLWriteContext {
+public:
+    XMLWriteContext(const lambda<R(R, std::string)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
+    }
+    const lambda<R(R, std::string)> reduce;
+    R accum;
+};
+
+/**
+ * Callback function called by libxml2 to write XML out.
+ */
+template<typename R> int writeCallback(void *context, const char* buffer, int len) {
+    XMLWriteContext<R>& cx = *static_cast<XMLWriteContext<R>*>(context);
+    cx.accum = cx.reduce(cx.accum, std::string(buffer, len));
     return len;
 }
 
 /**
- * Write an XML document to an output stream.
+ * Write a list of values as an XML document.
  */
-const bool writeXML(const list<value>& l, std::ostream& os) {
-    xmlOutputBufferPtr out = xmlOutputBufferCreateIO(writeCallback, NULL, &os, NULL);
+template<typename R> const R writeXML(const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
+    XMLWriteContext<R> cx(reduce, initial);
+    xmlOutputBufferPtr out = xmlOutputBufferCreateIO(writeCallback<R>, NULL, &cx, NULL);
     xmlTextWriterPtr xml = xmlNewTextWriter(out);
-    if (xml == NULL)
-        return false;
-    return write(l, xml);
+    if (xml != NULL)
+        write(l, xml);
+    return cx.accum;
+}
+
+const list<std::string> writeXMLList(const list<std::string>& listSoFar, const std::string& s) {
+    return cons(s, listSoFar);
 }
 
 /**
- * Callback function called by libxml2 to write to the XML file output stream.
+ * Write a list of values as an XML document represented as a list of strings.
  */
-int writeFileCallback(void *context, const char* buffer, int len) {
-    std::ofstream* os = static_cast<std::ofstream*>(context);
-    os->write(buffer, len);
-    if (os->fail() || os->bad())
-        return -1;
-    return len;
-}
-
-/**
- * Callback function called by libxml2 to close the XML file output stream.
- */
-int writeCloseFileCallback(void *context) {
-    std::ofstream* fos = static_cast<std::ofstream*>(context);
-    fos->close();
-    return 0;
-}
-
-/**
- * Write an XML document to a file output stream.
- */
-const bool writeXML(const list<value>& l, std::ofstream& os) {
-    xmlOutputBufferPtr out = xmlOutputBufferCreateIO(writeFileCallback, writeCloseFileCallback, &os, NULL);
-    xmlTextWriterPtr xml = xmlNewTextWriter(out);
-    if (xml == NULL)
-        return false;
-    return write(l, xml);
+const list<std::string> writeXML(const list<value>& l) {
+    lambda<list<std::string>(list<std::string>, std::string)> writer(writeXMLList);
+    return reverse(writeXML(writer, list<std::string>(), l));
 }
 
 }

@@ -27,6 +27,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include "slist.hpp"
 #include "json.hpp"
 
 namespace tuscany {
@@ -41,6 +42,11 @@ bool testJSEval() {
     return true;
 }
 
+std::ostringstream* jsonWriter(std::ostringstream* os, const std::string& s) {
+    (*os) << s;
+    return os;
+}
+
 bool testJSON() {
     JSONContext cx;
 
@@ -49,15 +55,21 @@ bool testJSON() {
     print(l, std::cout);
     std::cout << std::endl;
 
-    std::ostringstream sos;
-    writeJSON(cx, l, sos);
-    std::cout << sos.str() << std::endl;
+    std::ostringstream os;
+    lambda<std::ostringstream*(std::ostringstream*, std::string)> writer(jsonWriter);
+    writeJSON(cx, writer, &os, l);
+    std::cout << os.str() << std::endl;
 
-    std::istringstream is(sos.str());
-    list<value> r = readJSON(cx, is);
+    std::istringstream is(os.str());
+    list<std::string> il = makeStreamList(is);
+    list<value> r = readJSON(cx, il);
     print(r, std::cout);
     std::cout << std::endl;
     assert(r == l);
+
+    std::ostringstream wos;
+    write(writeJSON(cx, r), wos);
+    assert(wos.str() == os.str());
 
     return true;
 }

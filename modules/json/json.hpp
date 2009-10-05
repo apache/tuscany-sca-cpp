@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_eval_driver_hpp
-#define tuscany_eval_driver_hpp
+#ifndef tuscany_json_hpp
+#define tuscany_json_hpp
 
 /**
  * JSON read/write functions.
@@ -29,8 +29,6 @@
 #include <assert.h>
 #define XP_UNIX
 #include <jsapi.h>
-#include <iostream>
-#include <sstream>
 #include <string>
 #include "list.hpp"
 #include "value.hpp"
@@ -191,41 +189,27 @@ const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
 }
 
 /**
- * Reads characters from a JSON input stream.
+ * Consumes JSON strings and populates a JS object.
  */
-JSString* readCallback(const JSONContext& cx, std::istream& is) {
-    char buffer[1024];
-    if(is.eof())
-        return NULL;
-    is.read(buffer, 1024);
-    const int n = is.gcount();
-    if(n <= 0)
-        return NULL;
-    return JS_NewStringCopyN(cx, buffer, n);
-}
-
-/**
- * Consumes a JSON document and populates a JS object from it.
- */
-bool consumeJSON(const JSONContext& cx, JSONParser* parser, std::istream& is) {
-    JSString* jstr = readCallback(cx, is);
-    if(jstr == NULL)
+bool consumeJSON(const JSONContext& cx, JSONParser* parser, const list<std::string>& ilist) {
+    if (isNil(ilist))
         return true;
+    JSString* jstr = JS_NewStringCopyZ(cx, car(ilist).c_str());
     if(!JS_ConsumeJSONText(cx, parser, JS_GetStringChars(jstr), JS_GetStringLength(jstr)))
         return false;
-    return consumeJSON(cx, parser, is);
+    return consumeJSON(cx, parser, cdr(ilist));
 }
 
 /**
- * Read a JSON document from an input stream.
+ * Read JSON tokens from list of strings.
  */
-const list<value> readJSON(const JSONContext& cx, std::istream& is) {
+const list<value> readJSON(const JSONContext& cx, const list<std::string>& ilist) {
     jsval val;
     JSONParser* parser = JS_BeginJSONParse(cx, &val);
     if(parser == NULL)
         return list<value> ();
 
-    bool ok = consumeJSON(cx, parser, is);
+    bool ok = consumeJSON(cx, parser, ilist);
 
     if(!JS_FinishJSONParse(cx, parser, JSVAL_NULL))
         return list<value> ();
@@ -308,42 +292,47 @@ const jsval valueToJSVal(const JSONContext& cx, const value& val) {
 /**
  * Context passed to JSON write callback function.
  */
-class JSONWriteContext {
+template<typename R> class JSONWriteContext {
 public:
-    JSONWriteContext(const JSONContext& cx, std::ostream& os) :
-        os(os), cx(cx) {
+    JSONWriteContext(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& accum) : cx(cx), reduce(reduce), accum(accum) {
     }
-
-private:
-    std::ostream& os;
     const JSONContext& cx;
-
-    friend JSBool writeCallback(const jschar *buf, uint32 len, void *data);
+    const lambda<R(R, std::string)> reduce;
+    R accum;
 };
 
 /**
- * Called by JS_Stringify to write JSON document.
+ * Called by JS_Stringify to write JSON out.
  */
-JSBool writeCallback(const jschar *buf, uint32 len, void *data) {
-    JSONWriteContext& cx = *(static_cast<JSONWriteContext*> (data));
-    JSString* jstr = JS_NewUCStringCopyN(cx.cx, buf, len);
-    cx.os.write(JS_GetStringBytes(jstr), JS_GetStringLength(jstr));
-    if(cx.os.fail() || cx.os.bad())
-        return JS_FALSE;
+template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *data) {
+    JSONWriteContext<R>& wcx = *(static_cast<JSONWriteContext<R>*> (data));
+    JSString* jstr = JS_NewUCStringCopyN(wcx.cx, buf, len);
+    wcx.accum = wcx.reduce(wcx.accum, std::string(JS_GetStringBytes(jstr), JS_GetStringLength(jstr)));
     return JS_TRUE;
 }
 
 /**
- * Write a JSON document to an output stream.
+ * Write a list of values as a JSON document.
  */
-const bool writeJSON(const JSONContext& cx, const list<value>& l, std::ostream& os) {
+template<typename R> const R writeJSON(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
     jsval val = valueToJSVal(cx, l);
-    JSONWriteContext wcx(cx, os);
-    if(!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback, &wcx))
-        return false;
-    return true;
+    JSONWriteContext<R> wcx(cx, reduce, initial);
+    JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx);
+    return wcx.accum;
+}
+
+const list<std::string> writeJSONList(const list<std::string>& listSoFar, const std::string& s) {
+    return cons(s, listSoFar);
+}
+
+/**
+ * Write a list of values as a JSON document represented as a list of strings.
+ */
+const list<std::string> writeJSON(const JSONContext& cx, const list<value>& l) {
+    lambda<list<std::string>(list<std::string>, std::string)> writer(writeJSONList);
+    return reverse(writeJSON(cx, writer, list<std::string>(), l));
 }
 
 }
 
-#endif
+#endif /* tuscany_json_hpp */
