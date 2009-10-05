@@ -15,5 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = eval httpd json 
+libdir=$(prefix)/lib
+lib_LTLIBRARIES = libmod_tuscany.la
 
+INCLUDES = -I. -I$(top_builddir)/kernel -I${HTTPD_INCLUDE} -I${APR_INCLUDE}
+
+libmod_tuscany_la_SOURCES = mod.cpp
+libmod_tuscany_la_LIBADD = -lpthread 

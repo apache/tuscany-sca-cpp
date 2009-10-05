@@ -267,6 +267,7 @@ AC_CONFIG_FILES([Makefile
                  kernel/Makefile
                  modules/Makefile
                  modules/eval/Makefile
+                 modules/httpd/Makefile
                  modules/json/Makefile
                  test/Makefile
                  test/store-object/Makefile
@@ -311,4 +312,3 @@ AC_CONFIG_FILES([Makefile
                  runtime/extensions/ruby/extension/Makefile
                  ])
 AC_OUTPUT
-
