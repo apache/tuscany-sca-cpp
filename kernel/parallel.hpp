@@ -254,9 +254,9 @@ template<typename R> const future<R> submit(worker& w, const lambda<R()>& func) 
  * Enqueues shutdown requests.
  */
 const bool shutdownEnqueue(const list<pthread_t>& threads, queue<lambda<bool()> >& work) {
-    if (threads == list<pthread_t>())
+    if (isNil(threads))
         return true;
-    enqueue(work, unit(false));
+    enqueue(work, result(false));
     return shutdownEnqueue(cdr(threads), work);
 }
 
@@ -264,7 +264,7 @@ const bool shutdownEnqueue(const list<pthread_t>& threads, queue<lambda<bool()> 
  * Waits for shut down threads to terminate.
  */
 const bool shutdownJoin(const list<pthread_t>& threads) {
-    if (threads == list<pthread_t>())
+    if (isNil(threads))
         return true;
     pthread_join(car(threads), NULL);
     return shutdownJoin(cdr(threads));

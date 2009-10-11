@@ -80,16 +80,16 @@ const bool isDotVariable(const value& var) {
 }
 
 const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, const list<value> values) {
-    if (variables == list<value>()) {
-        if (values != list<value>())
+    if (isNil(variables)) {
+        if (!isNil(values))
             std::cout << "Too many arguments supplied " << values << "\n";
         return frameSoFar;
     }
     if (isDotVariable(car(variables)))
         return makeBinding(frameSoFar, cdr(variables), makeList<value>(values));
 
-    if (values == list<value>()) {
-        if (variables != list<value>())
+    if (isNil(values)) {
+        if (!isNil(variables))
             std::cout << "Too few arguments supplied " << variables << "\n";
         return frameSoFar;
     }
@@ -158,7 +158,7 @@ const Env setupEnvironment() {
 const value lookupEnvLoop(const value& var, const Env& env);
 
 const value lookupEnvScan(const value& var, const list<value>& vars, const list<value>& vals, const Env& env) {
-    if(vars == list<value> ())
+    if(isNil(vars))
         return lookupEnvLoop(var, enclosingEnvironment(env));
     if(var == car(vars))
         return car(vals);

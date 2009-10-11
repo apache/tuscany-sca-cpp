@@ -70,13 +70,13 @@ const value valueEqual(list<value>& args) {
 }
 
 const value valueAdd(list<value>& args) {
-    if (cdr(args) == list<value>())
+    if (isNil(cdr(args)))
         return (double)car(args);
     return (double)car(args) + (double)cadr(args);
 }
 
 const value valueSub(list<value>& args) {
-    if (cdr(args) == list<value>())
+    if (isNil(cdr(args)))
         return (double)0 - (double)car(args);
     return (double)car(args) - (double)cadr(args);
 }
@@ -95,7 +95,7 @@ const value valueDisplay(list<value>& args) {
 }
 
 const value valueComment(list<value>& args) {
-    *evalOut << "# " << car(args);
+    *evalOut << "; " << car(args);
     return true;
 }
 

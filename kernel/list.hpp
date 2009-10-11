@@ -123,7 +123,7 @@ template<typename T> const bool isNil(const list<T>& p) {
  * Write a list to an output stream.
  */
 template<typename X> std::ostream& operator<<(std::ostream& out, const list<X>& l) {
-    if(l == list<X> ())
+    if(isNil(l))
         return out << "()";
     return out << "(" << car(l) << ", " << cdr(l) << ")";
 }
@@ -139,14 +139,14 @@ template<typename T> const list<T> cons(const T& car, const lambda<list<T> ()>& 
  * Construct a list from a value and a cdr list.
  */
 template<typename T> const list<T> cons(const T& car, const list<T>& cdr) {
-    return list<T> (car, unit(cdr));
+    return list<T> (car, result(cdr));
 }
 
 /**
  * Construct a list of one value.
  */
 template<typename T> const list<T> makeList(const T& car) {
-    return list<T> (car, unit(list<T> ()));
+    return list<T> (car, result(list<T> ()));
 }
 
 /**
@@ -245,14 +245,14 @@ template<typename T> const list<T> append(const list<T>&a, const lambda<list<T> 
     if(isNil(a))
         return fb();
 
-    return cons(car(a), lambda<list<T> ()> (appendCdr<T> (cdr(a), fb)));
+    return cons<T>(car(a), appendCdr<T> (cdr(a), fb));
 }
 
 /**
  * Appends two lists.
  */
 template<typename T> const list<T> append(const list<T>&a, const list<T>& b) {
-    return append(a, unit(b));
+    return append(a, result(b));
 }
 
 /**
@@ -340,12 +340,12 @@ template<typename T> const list<T> seq(const T& start, const T& end) {
     if(start == end)
         return makeList(start);
     if(start < end)
-        return cons(start, lambda<list<T> ()> (seqGenerate<T> (start + 1, end)));
-    return cons(start, lambda<list<T> ()> (seqGenerate<T> (start - 1, end)));
+        return cons<T>(start, seqGenerate<T> (start + 1, end));
+    return cons<T>(start, seqGenerate<T> (start - 1, end));
 }
 
 /**
- * Equivalent of the list assoc function.
+ * Returns the first pair matching a key from a list of key value pairs.
  */
 template<typename T> const list<T> assoc(const T& k, const list<list<T> >& p) {
     if(isNil(p))
@@ -353,6 +353,34 @@ template<typename T> const list<T> assoc(const T& k, const list<list<T> >& p) {
     if(k == car(car(p)))
         return car(p);
     return assoc(k, cdr(p));
+}
+
+/**
+ * Returns a list of lists containing elements from two input lists.
+ */
+template<typename T> const list<list<T> > zip(const list<T>& a, const list<T>& b) {
+    if (isNil(a) || isNil(b))
+        return list<list<T> >();
+    return cons<list<T> >(makeList<T>(car(a), car(b)), zip(cdr(a), cdr(b)));
+}
+
+/**
+ * Converts a list of key value pairs to a list containing the list of keys and the list of values.
+ */
+template<typename T> const list<T> unzipKeys(const list<list<T> >& l) {
+    if (isNil(l))
+        return list<T>();
+    return cons(car(car(l)), unzipKeys(cdr(l)));
+}
+
+template<typename T> const list<T> unzipValues(const list<list<T> >& l) {
+    if (isNil(l))
+        return list<T>();
+    return cons(cadr(car(l)), unzipValues(cdr(l)));
+}
+
+template<typename T> const list<list<T> > unzip(const list<list<T> >& l) {
+    return makeList<list<T> >(unzipKeys(l), unzipValues(l));
 }
 
 /**

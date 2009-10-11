@@ -174,13 +174,6 @@ template<typename S> std::ostream& operator<<(std::ostream& out, const lambda<S>
 }
 
 /**
- * Creates a lambda function from a pointer to a function.
- */
-template<typename R, typename... P> lambda<R(P...)> makeLambda(const R (* const f)(P...)) {
-    return lambda<R(P...)>(f);
-}
-
-/**
  * Curry a lambda function.
  */
 template<typename R, typename T, typename... P> class curried {
@@ -198,7 +191,7 @@ private:
 };
 
 template<typename R, typename T, typename... P> const lambda<R(P...)> curry(const lambda<R(T, P...)>& f, const T& t) {
-    return (lambda<R(P...)>)curried<R, T, P...>(f, t);
+    return curried<R, T, P...>(f, t);
 }
 
 template<typename R, typename T, typename U, typename... P> const lambda<R(P...)> curry(const lambda<R(T, U, P...)>& f, const T& t, const U& u) {
@@ -212,9 +205,9 @@ template<typename R, typename T, typename U, typename V, typename... P> const la
 /**
  * A lambda function that returns the given value.
  */
-template<typename T> class unitReturn {
+template<typename T> class returnResult {
 public:
-    unitReturn(const T& v) :
+    returnResult(const T& v) :
         v(v) {
     }
     const T operator()() const {
@@ -224,8 +217,8 @@ private:
     const T v;
 };
 
-template<typename T> const lambda<T()> unit(const T& v) {
-    return lambda<T()> (unitReturn<T> (v));
+template<typename T> const lambda<T()> result(const T& v) {
+    return returnResult<T> (v);
 }
 
 }

@@ -128,43 +128,43 @@ public:
     }
 
     value(const std::string& str) :
-        type(value::String), data(vdata(unit(str))) {
+        type(value::String), data(vdata(result(str))) {
         countValues++;
         countVValues++;
     }
 
     value(const char* str) :
-        type(value::Symbol), data(vdata(unit(std::string(str)))) {
+        type(value::Symbol), data(vdata(result(std::string(str)))) {
         countValues++;
         countVValues++;
     }
 
     value(const list<value>& lst) :
-        type(value::List), data(vdata(unit(lst))) {
+        type(value::List), data(vdata(result(lst))) {
         countValues++;
         countVValues++;
     }
 
     value(const double num) :
-        type(value::Number), data(vdata(unit(num))) {
+        type(value::Number), data(vdata(result(num))) {
         countValues++;
         countVValues++;
     }
 
     value(const int num) :
-        type(value::Number), data(vdata(unit((double)num))) {
+        type(value::Number), data(vdata(result((double)num))) {
         countValues++;
         countVValues++;
     }
 
     value(const bool boo) :
-        type(value::Boolean), data(vdata(unit(boo))) {
+        type(value::Boolean), data(vdata(result(boo))) {
         countValues++;
         countVValues++;
     }
 
     value(const char chr) :
-        type(value::Character), data(vdata(unit(chr))) {
+        type(value::Character), data(vdata(result(chr))) {
         countValues++;
         countVValues++;
     }

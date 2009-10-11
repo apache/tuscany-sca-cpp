@@ -87,7 +87,7 @@ const list<value> operands(const value& exp) {
 }
 
 const list<value> listOfValues(const list<value> exps, Env& env) {
-    if(exps == list<value> ())
+    if(isNil(exps))
         return list<value> ();
     return cons(eval(car(exps), env), listOfValues(cdr(exps), env));
 }
@@ -117,7 +117,7 @@ const Env procedureEnvironment(const value& exp) {
 }
 
 const bool isLastExp(const list<value>& seq) {
-    return cdr(seq) == list<value> ();
+    return isNil(cdr(seq));
 }
 
 const value firstExp(const list<value>& seq) {
@@ -151,7 +151,7 @@ const value applyProcedure(const value& procedure, list<value>& arguments) {
 }
 
 const value sequenceToExp(const list<value> exps) {
-    if(exps == list<value> ())
+    if(isNil(exps))
         return list<value>();
     if(isLastExp(exps))
         return firstExp(exps);
@@ -179,7 +179,7 @@ const value ifConsequent(const value& exp) {
 }
 
 const value ifAlternative(const value& exp) {
-    if(cdr(cdr(cdr((list<value> )exp))) != list<value> ())
+    if(!isNil(cdr(cdr(cdr((list<value> )exp)))))
         return car(cdr(cdr(cdr((list<value> )exp))));
     return false;
 }
@@ -201,12 +201,12 @@ const value makeIf(value predicate, value consequent, value alternative) {
 }
 
 const value expandClauses(const list<value>& clauses) {
-    if(clauses == list<value> ())
+    if(isNil(clauses))
         return false;
     const value first = car(clauses);
     const list<value> rest = cdr(clauses);
     if(isCondElseClause(first)) {
-        if(rest == list<value> ())
+        if(isNil(rest))
             return sequenceToExp(condActions(first));
         std::cout << "else clause isn't last " << clauses << "\n";
         return value();

@@ -134,7 +134,7 @@ const list<value> readList(const list<value>& listSoFar, std::istream& in) {
 }
 
 const std::string listToString(const list<char>& l) {
-    if(l == list<char> ())
+    if(isNil(l))
         return "";
     return car(l) + listToString(cdr(l));
 }

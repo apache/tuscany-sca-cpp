@@ -50,8 +50,7 @@ const bool shoppingCart_deleteAll() {
 }
 
 const double shoppingCart_getTotal() {
-    tuscany::lambda<double(double, ItemType)> a(accumTotal);
-    return reduce(a, 0.0, cart);
+    return tuscany::reduce<ItemType, double>(accumTotal, 0.0, cart);
 }
 
 const tuscany::value shoppingCart_service(const tuscany::list<tuscany::value>& args) {

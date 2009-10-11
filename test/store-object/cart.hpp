@@ -66,8 +66,7 @@ public:
     }
 
     virtual const double getTotal() const {
-        tuscany::lambda<double(double, Item)> a(accum);
-        return reduce(a, 0.0, cart);
+        return tuscany::reduce<Item, double>(accum, 0.0, cart);
     }
 };
 

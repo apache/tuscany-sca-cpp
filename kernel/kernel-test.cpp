@@ -35,6 +35,7 @@
 #include "parallel.hpp"
 #include "value.hpp"
 #include "xml.hpp"
+#include "monad.hpp"
 
 namespace tuscany {
 
@@ -52,18 +53,26 @@ const int square(const int x) {
     return x * x;
 }
 
-bool testFunction() {
+int mapLambda(lambda<int(int)> f, int v) {
+    return f(v);
+}
+
+bool testLambda() {
     const lambda<int(int)> sq(square);
     assert(sq(2) == 4);
+    assert(mapLambda(sq, 2) == 4);
+    assert(mapLambda(square, 2) == 4);
 
-    const lambda<int(int i)> incf(inc(10));
+    const lambda<int(int)> incf(inc(10));
     assert(incf(1) == 11);
+    assert(mapLambda(incf, 1) == 11);
+    assert(mapLambda(inc(10), 1) == 11);
     return true;
 }
 
-bool testFunctionGC() {
+bool testLambdaGC() {
     resetLambdaCounters();
-    testFunction();
+    testLambda();
     assert(countLambdas == 0);
     return true;
 }
@@ -171,9 +180,9 @@ bool testComplex() {
 }
 
 bool testMap() {
-    assert(isNil(map((lambda<int(int)>)square, list<int>())));
+    assert(isNil(map<int, int>(square, list<int>())));
 
-    const list<int> m = map((lambda<int(int)> )square, makeList(2, 3));
+    const list<int> m = map<int, int>(square, makeList(2, 3));
     assert(car(m) == 4);
     assert(car(cdr(m)) == 9);
 
@@ -198,9 +207,8 @@ bool isPositive(int x) {
 }
 
 bool testFilter() {
-    lambda<bool(int)> f(isPositive);
-    assert(car(filter(f, makeList(1, -1, 2, -2))) == 1);
-    assert(cadr(filter(f, makeList(1, -1, 2, -2))) == 2);
+    assert(car(filter<int>(isPositive, makeList(1, -1, 2, -2))) == 1);
+    assert(cadr(filter<int>(isPositive, makeList(1, -1, 2, -2))) == 2);
     return true;
 }
 
@@ -216,6 +224,23 @@ bool testReverse() {
     assert(isNil(reverse(list<int>())));
     assert(car(reverse(makeList(1, 2, 3))) == 3);
     assert(cadr(reverse(makeList(1, 2, 3))) == 2);
+    return true;
+}
+
+bool testAssoc() {
+    const list<list<std::string> > l = makeList(makeList<std::string>("x", "X"), makeList<std::string>("a", "A"), makeList<std::string>("y", "Y"), makeList<std::string>("a", "AA"));
+    assert(assoc<std::string>("a", l) == makeList<std::string>("a", "A"));
+    assert(isNil(assoc<std::string>("z", l)));
+    return true;
+}
+
+bool testZip() {
+    const list<std::string> k = makeList<std::string>("x", "a", "y", "a");
+    const list<std::string> v = makeList<std::string>("X", "A", "Y", "AA");
+    const list<list<std::string> > z = makeList(k, v);
+    const list<list<std::string> > u = makeList(makeList<std::string>("x", "X"), makeList<std::string>("a", "A"), makeList<std::string>("y", "Y"), makeList<std::string>("a", "AA"));
+    assert(zip(k, v) == u);
+    assert(unzip(u) == z);
     return true;
 }
 
@@ -245,12 +270,12 @@ bool testSeq() {
     //printLambdaCounters();
     //printListCounters();
 
-    assert(1001 == length(map(lambda<double(double)>(testSeqMap), s)));
+    assert(1001 == length(map<double, double>(testSeqMap, s)));
 
     assert(801 == length(member(200.0, s)));
     assert(201 == length(member(200.0, reverse(s))));
 
-    assert(1001 == reduce(lambda<double(double, double)>(testSeqReduce), 0.0, s));
+    assert(1001 == (reduce<double, double>(testSeqReduce, 0.0, s)));
     //printLambdaCounters();
     //printListCounters();
 
@@ -299,7 +324,7 @@ bool testCppPerf() {
         gettimeofday(&start, NULL);
 
         list<double> s = seq(0.0, 999.0);
-        list<double> r = map((lambda<double(double)> )fib, s);
+        list<double> r = map<double, double>(fib, s);
         assert(1000 == length(r));
 
         gettimeofday(&end, NULL);
@@ -434,7 +459,7 @@ bool testReadXML() {
     assert(elementName(composite) == "composite");
     assert(!elementHasText(composite));
 
-    assert(attributeText(car(filter(lambda<bool(value)>(isName), elementChildren(composite)))) == "currency");
+    assert(attributeText(car(filter<value>(isName, elementChildren(composite)))) == "currency");
     return true;
 }
 
@@ -449,11 +474,112 @@ bool testWriteXML() {
 
     const list<value> currency = readXML(il);
     std::ostringstream os;
-    lambda<std::ostringstream*(std::ostringstream*, std::string)> writer(xmlWriter);
-    writeXML(writer, &os, currency);
+    writeXML<std::ostringstream*>(xmlWriter, &os, currency);
     assert(os.str() == currencyXML);
 
     assert(writeXML(currency) == il);
+    return true;
+}
+
+const id<int> idF(const int v) {
+    return v * 2;
+}
+
+const id<int> idG(const int v) {
+    return v * 3;
+}
+
+const id<int> idH(const int v) {
+    return idF(v) >> idG;
+}
+
+bool testIdMonad() {
+    const id<int> m(2);
+    assert(m >> idF == idF(2));
+    assert(m >> unit<int>() == m);
+    assert(m >> idF >> idG == m >> idH);
+    return true;
+}
+
+const maybe<int> maybeF(const int v) {
+    return v * 2;
+}
+
+const maybe<int> maybeG(const int v) {
+    return v * 3;
+}
+
+const maybe<int> maybeH(const int v) {
+    return maybeF(v) >> maybeG;
+}
+
+bool testMaybeMonad() {
+    const maybe<int> m(2);
+    assert(m >> maybeF == maybeF(2));
+    assert((m >> just<int>()) == m);
+    assert(m >> maybeF >> maybeG == m >> maybeH);
+
+    assert(maybe<int>() >> maybeF >> maybeG == maybe<int>());
+    return true;
+}
+
+const failable<int, std::string> failableF(const int v) {
+    return v * 2;
+}
+
+const failable<int, std::string> failableG(const int v) {
+    return v * 3;
+}
+
+const failable<int, std::string> failableH(const int v) {
+    return failableF(v) >> failableG;
+}
+
+bool testFailableMonad() {
+    const failable<int, std::string> m(2);
+    assert(m >> failableF == failableF(2));
+    assert((m >> success<int, std::string>()) == m);
+    assert(m >> failableF >> failableG == m >> failableH);
+
+    failable<int, std::string> ooops("ooops");
+    assert(ooops >> failableF >> failableG == ooops);
+    return true;
+}
+
+struct tickInc {
+    const double v;
+    tickInc(const double v) : v(v) {
+    }
+    const svp<int, double> operator()(int s) const {
+        return svp<int, double>(s + 1, v);
+    }
+};
+
+const state<int, double> tick(const double v) {
+    return transformer<int, double>(tickInc(v));
+}
+
+const state<int, double> stateF(const double v) {
+    return result<int, double>(v * 2.0) >> tick;
+}
+
+const state<int, double> stateG(const double v) {
+    return result<int, double>(v + 5);
+}
+
+const state<int, double> stateH(const double v) {
+    return stateF(v) >> stateG;
+}
+
+bool testStateMonad() {
+    const lambda<state<int, double>(double)> r(result<int, double>);
+
+    state<int, double> m = result<int, double>(2.0);
+    assert((m >> stateF)(0) == stateF(2.0)(0));
+    assert(1 == (int)(m >> stateF)(0));
+    assert((m >> r)(0) == m(0));
+    assert((m >> stateF >> stateG)(0) == (m >> stateH)(0));
+
     return true;
 }
 
@@ -462,8 +588,8 @@ bool testWriteXML() {
 int main() {
     std::cout << "Testing..." << std::endl;
 
-    tuscany::testFunction();
-    tuscany::testFunctionGC();
+    tuscany::testLambda();
+    tuscany::testLambdaGC();
     tuscany::testCons();
     tuscany::testListGC();
     tuscany::testOut();
@@ -476,6 +602,8 @@ int main() {
     tuscany::testFilter();
     tuscany::testMember();
     tuscany::testReverse();
+    tuscany::testAssoc();
+    tuscany::testZip();
     tuscany::testTokenize();
     tuscany::testSeq();
     tuscany::testValue();
@@ -485,6 +613,10 @@ int main() {
     tuscany::testWorker();
     tuscany::testReadXML();
     tuscany::testWriteXML();
+    tuscany::testIdMonad();
+    tuscany::testMaybeMonad();
+    tuscany::testFailableMonad();
+    tuscany::testStateMonad();
 
     std::cout << "OK" << std::endl;
 
