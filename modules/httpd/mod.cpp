@@ -26,6 +26,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include "apr_strings.h"
 #include "apr_fnmatch.h"
@@ -48,6 +49,10 @@
 
 #include "list.hpp"
 #include "slist.hpp"
+#include "value.hpp"
+#include "monad.hpp"
+#include "../json/json.hpp"
+#include "../eval/driver.hpp"
 
 extern "C" {
 extern module AP_MODULE_DECLARE_DATA mod_tuscany;
@@ -66,11 +71,36 @@ struct ServerConf {
  * Directory configuration.
  */
 struct DirConf {
-    const char* root;
-    const char* path;
-    const char* uri;
+    const char* contribution;
     const char* component;
+    const char* implementation;
 };
+
+/**
+ * Returns the server conf for a request.
+ */
+const ServerConf& serverConf(const request_rec* r) {
+    return *(ServerConf*)ap_get_module_config(r->server->module_config, &mod_tuscany);
+}
+const std::string home(request_rec* r) {
+    return serverConf(r).home;
+}
+
+/**
+ * Returns the dir conf for a request.
+ */
+const DirConf& dirConf(const request_rec* r) {
+    return *(DirConf*)ap_get_module_config(r->per_dir_config, &mod_tuscany);
+}
+const std::string contribution(request_rec* r) {
+    return dirConf(r).contribution;
+}
+const std::string component(request_rec* r) {
+    return dirConf(r).component;
+}
+const std::string implementation(request_rec* r) {
+    return dirConf(r).implementation;
+}
 
 /**
  * Returns an HTTP request path as a list of strings.
@@ -80,17 +110,6 @@ const list<std::string> path(const request_rec* r) {
     if (p == NULL || p[0] == '\0')
         return list<std::string>();
     return tokenize("/", p + 1);
-}
-
-/**
- * Returns an HTTP query string as a list of lists of strings.
- */
-const list<list<std::string> > args(const request_rec* r) {
-    const char* a = r->args;
-    if (a == NULL)
-        return list<list<std::string> >();
-    const lambda<list<std::string>(std::string, std::string)> tok(tokenize);
-    return map(curry(tok, std::string("=")), tokenize("&", a));
 }
 
 /**
@@ -109,12 +128,11 @@ const char* optional(const char* s) {
     return s;
 }
 
-const bool logRequest(request_rec* r, const ServerConf& sc, const DirConf& dc) {
+const bool logRequest(request_rec* r) {
     std::cout << "mod-tuscany..." << std::endl;
-    std::cout << "tuscany home: " << sc.home << std::endl;
-    std::cout << "tuscany root: " << dc.root << std::endl;
-    std::cout << "tuscany path: " << dc.path << std::endl;
-    std::cout << "component: " << dc.component << std::endl;
+    std::cout << "tuscany home: " << home(r) << std::endl;
+    std::cout << "contribution: " << contribution(r) << std::endl;
+    std::cout << "component: " << component(r) << std::endl;
     std::cout << "protocol: " << optional(r->protocol) << std::endl;
     std::cout << "method: " << optional(r->method) << std::endl;
     std::cout << "method number: " << r->method_number << std::endl;
@@ -124,41 +142,172 @@ const bool logRequest(request_rec* r, const ServerConf& sc, const DirConf& dc) {
     std::cout << "uri: " << optional(r->uri) << std::endl;
     std::cout << "path info: " << optional(r->path_info) << std::endl;
     std::cout << "path: " << path(r) << std::endl;
-    std::cout << "args info: " << optional(r->args) << std::endl;
-    std::cout << "args: " << args(r) << std::endl;
+    std::cout << "args: " << optional(r->args) << std::endl;
+    std::cout.flush();
     return true;
+}
+
+const value evalLoop(std::istream& is, const value& req, Env& globalEnv) {
+    value in = read(is);
+    if (isNil(in))
+        return eval(req, globalEnv);
+    eval(in, globalEnv);
+    return evalLoop(is, req, globalEnv);
+}
+
+/**
+ * Returns a list of key value pairs from the args in a query string.
+ */
+const list<value> queryArg(std::string s) {
+    const list<std::string> t = tokenize("=", s);
+    return makeList<value>(car(t).c_str(), cadr(t));
+}
+
+const list<list<value> > queryArgs(const request_rec* r) {
+    const char* a = r->args;
+    if (a == NULL)
+        return list<list<value> >();
+    return map<std::string, list<value>>(queryArg, tokenize("&", a));
+}
+
+/**
+ * Returns a list of param values other than the id and method args from a list
+ * of key value pairs.
+ */
+const list<value> queryParams(list<list<value> > a) {
+    if (isNil(a))
+        return list<value>();
+    if (car(a) == value("id") || car(a) == value("method"))
+        return queryParams(cdr(a));
+    return cons(cadr(car(a)), queryParams(cdr(a)));
 }
 
 /**
  * Handle an HTTP GET request.
  */
 const int get(request_rec* r) {
-    std::string str("<result>OK</result>");
-    if (false) {
-        r->status = HTTP_NOT_FOUND;
-        return OK;
-    }
 
-    // Handle a conditional GET
-    std::string etag(ap_md5(r->pool, (const unsigned char*)str.c_str()));
+    // Setup the script evaluator
+    Env globalEnv = setupEnvironment();
+    std::ostringstream nullos;
+    setupEvalOut(nullos);
+
+    // Open the component implementation
+    const std::string impl = contribution(r) + implementation(r);
+    std::ifstream is(impl.c_str(), std::ios_base::in);
+    if (is.fail() || is.bad())
+        return HTTP_NOT_FOUND;
+
+    // Extract the request id, method and params from the query string
+    const list<list<value> > args = queryArgs(r);
+    const value id = cadr(assoc(value("id"), args));
+    const value method = std::string(cadr(assoc(value("method"), args))).c_str();
+    const list<value> params = queryParams(args);
+
+    // Build expr to evaluate
+    const value expr = cons<value>(method, params);
+    std::cout<< "expr: " << expr << std::endl;
+    std::cout.flush();
+
+    // Evaluate the expr
+    const tuscany::value val = evalLoop(is, expr, globalEnv);
+    if (isNil(val))
+        return HTTP_INTERNAL_SERVER_ERROR;
+    std::cout<< "val: " << val << std::endl;
+    std::cout.flush();
+
+    // Convert the expr value to JSON
+    const JSONContext cx;
+    failable<list<std::string>, std::string> jsval = writeJSON(cx, makeList<value>(makeList<value>("id", id), makeList<value>("result", val)));
+    if (!hasValue(jsval))
+        return HTTP_INTERNAL_SERVER_ERROR;
+
+    // Send the response
+    ap_set_content_type(r, "application/json-rpc");
+    std::ostringstream os;
+    write(jsval, os);
+    std::string sval = os.str();
+    std::string etag(ap_md5(r->pool, (const unsigned char*)sval.c_str()));
     const char* match = apr_table_get(r->headers_in, "If-None-Match");
-    if (match != NULL && etag == match) {
+    if (match != NULL  && etag == match)
         r->status = HTTP_NOT_MODIFIED;
-        return OK;
-    }
-
-    // Send response
-    ap_set_content_type(r, "text/xml");
     apr_table_setn(r->headers_out, "ETag", etag.c_str());
-    ap_rputs(str.c_str(), r);
+    ap_rputs(sval.c_str(), r);
 
     return OK;
+}
+
+/**
+ * Read the content of a POST.
+ */
+const list<std::string> read(request_rec* r) {
+    char b[2048];
+    const int n = ap_get_client_block(r, b, 2048);
+    if (n <= 0)
+        return list<std::string>();
+    return cons(std::string(b, n), read(r));
+}
+
+/**
+ * Converts the args received in a POST to a list of key value pairs.
+ */
+const list<list<value> > postArgs(list<value> a) {
+    if (isNil(a))
+        return list<list<value> >();
+    const list<value> l = car(a);
+    return cons(l, postArgs(cdr(a)));
 }
 
 /**
  * Handle an HTTP POST request.
  */
 const int post(request_rec* r) {
+
+    // Setup the script evaluator
+    Env globalEnv = setupEnvironment();
+    std::ostringstream nullos;
+    setupEvalOut(nullos);
+
+    // Open the component implementation
+    const std::string impl = contribution(r) + implementation(r);
+    std::ifstream is(impl.c_str(), std::ios_base::in);
+    if (is.fail() || is.bad())
+        return HTTP_NOT_FOUND;
+
+    // Read the JSON request
+    const list<std::string> req = read(r);
+    JSONContext cx;
+    const list<value> json = readJSON(cx, req);
+    const list<list<value> > args = postArgs(json);
+
+    // Extract the request id, method and params
+    const value id = cadr(assoc(value("id"), args));
+    const value method = std::string(cadr(assoc(value("method"), args))).c_str();
+    const list<value> params = (list<value>)cadr(assoc(value("params"), args));
+
+    // Build expr to evaluate
+    const value expr = cons<value>(method, params);
+    std::cout<< "expr: " << expr << std::endl;
+    std::cout.flush();
+
+    // Evaluate the expr
+    const tuscany::value val = evalLoop(is, expr, globalEnv);
+    if (isNil(val))
+        return HTTP_INTERNAL_SERVER_ERROR;
+    std::cout<< "val: " << val << std::endl;
+    std::cout.flush();
+
+    // Convert the expr value to JSON
+    failable<list<std::string>, std::string> jsval = writeJSON(cx, makeList<value>(makeList<value>("id", id), makeList<value>("result", val)));
+    if (!hasValue(jsval))
+        return HTTP_INTERNAL_SERVER_ERROR;
+
+    // Send the JSON response
+    ap_set_content_type(r, "application/json-rpc");
+    std::ostringstream os;
+    write(jsval, os);
+    ap_rputs(os.str().c_str(), r);
+
     return OK;
 }
 
@@ -166,26 +315,6 @@ const int post(request_rec* r) {
  * Handle an HTTP PUT request.
  */
 const int put(request_rec* r) {
-    std::ostringstream sos;
-    char buffer[2049];
-    for ( ; ; )
-    {
-        int size = ap_get_client_block(r, buffer, 2048);
-        if (size > 0)
-        {
-            buffer[size] = '\0';
-            sos << buffer;
-        }
-        else if (size == 0)
-        {
-            break;
-        }
-        else if (size < 0)
-        {
-            return HTTP_INTERNAL_SERVER_ERROR;
-        }
-    }
-    std::string input = sos.str();
     return OK;
 }
 
@@ -203,13 +332,9 @@ int handler(request_rec *r) {
     if(strcmp(r->handler, "mod_tuscany"))
         return DECLINED;
 
-    // Get the server and dir config
-    ServerConf& serverConf = *(ServerConf*)ap_get_module_config(r->server->module_config, &mod_tuscany);
-    DirConf& dirConf = *(DirConf*)ap_get_module_config(r->per_dir_config, &mod_tuscany);
-
     // Log the request
     if(logRequests)
-        logRequest(r, serverConf, dirConf);
+        logRequest(r);
 
     // Set up the read policy
     const int rc = ap_setup_client_block(r, REQUEST_CHUNKED_DECHUNK);
@@ -220,10 +345,9 @@ int handler(request_rec *r) {
         r->chunked = true;
     apr_table_setn(r->headers_out, "Connection", "close");
 
+    // Handle HTTP method
     if (r->header_only)
          return OK;
-
-    // Handle HTTP method
     if(r->method_number == M_GET)
         return get(r);
     if(r->method_number == M_POST)
@@ -243,19 +367,9 @@ const char *confHome(cmd_parms *cmd, void *dummy, const char *arg) {
     conf->home = apr_pstrdup(cmd->pool, arg);
     return NULL;
 }
-const char *confPath(cmd_parms *cmd, void *c, const char *arg) {
+const char *confContribution(cmd_parms *cmd, void *c, const char *arg) {
     DirConf *conf = (DirConf*)c;
-    conf->path = apr_pstrdup(cmd->pool, arg);
-    return NULL;
-}
-const char *confRoot(cmd_parms *cmd, void *c, const char *arg) {
-    DirConf *conf = (DirConf*)c;
-    conf->root = apr_pstrdup(cmd->pool, arg);
-    return NULL;
-}
-const char *confURI(cmd_parms *cmd, void *c, const char *arg) {
-    DirConf *conf = (DirConf*)c;
-    conf->uri = apr_pstrdup(cmd->pool, arg);
+    conf->contribution = apr_pstrdup(cmd->pool, arg);
     return NULL;
 }
 const char *confComponent(cmd_parms *cmd, void *c, const char *arg) {
@@ -263,11 +377,14 @@ const char *confComponent(cmd_parms *cmd, void *c, const char *arg) {
     conf->component = apr_pstrdup(cmd->pool, arg);
     return NULL;
 }
+const char *confImplementation(cmd_parms *cmd, void *c, const char *arg) {
+    DirConf *conf = (DirConf*)c;
+    conf->implementation = apr_pstrdup(cmd->pool, arg);
+    return NULL;
+}
 void *makeDirConf(apr_pool_t *p, char *dirspec) {
     DirConf* conf = (DirConf*)apr_palloc(p, sizeof(*conf));
-    conf->path = "";
-    conf->root = "";
-    conf->uri = "";
+    conf->contribution = "";
     conf->component = "";
     return conf;
 }
@@ -281,11 +398,10 @@ void* makeServerConf(apr_pool_t *p, server_rec *s) {
  * HTTP server module declarations.
  */
 const command_rec commands[] = {
-    AP_INIT_TAKE1("home", (const char*(*)())confHome, NULL, RSRC_CONF, "Tuscany home directory"),
-    AP_INIT_TAKE1("path", (const char*(*)())confPath, NULL, ACCESS_CONF, "Tuscany SCA composite search path"),
-    AP_INIT_TAKE1("root", (const char*(*)())confRoot, NULL, ACCESS_CONF, "Tuscany root SCA configuration path"),
-    AP_INIT_TAKE1("uri", (const char*(*)())confURI, NULL, ACCESS_CONF, "Tuscany SCA system base URI"),
-    AP_INIT_TAKE1("component", (const char*(*)())confComponent, NULL, ACCESS_CONF, "SCA component name"),
+    AP_INIT_TAKE1("TuscanyHome", (const char*(*)())confHome, NULL, RSRC_CONF, "Tuscany home directory"),
+    AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, ACCESS_CONF, "SCA contribution location"),
+    AP_INIT_TAKE1("SCAComponent", (const char*(*)())confComponent, NULL, ACCESS_CONF, "SCA component name"),
+    AP_INIT_TAKE1("SCAImplementation", (const char*(*)())confImplementation, NULL, ACCESS_CONF, "SCA component implementation"),
     {NULL}
 };
 

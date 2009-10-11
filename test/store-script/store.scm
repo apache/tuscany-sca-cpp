@@ -28,9 +28,9 @@
   (define code "USD")
   (define symbol (converter "symbol" code))
 
-  (list (list "apple" code symbol (convert 2.99))
-    (list "orange" code symbol (convert 3.55))
-    (list "pear" code symbol (convert 1.55))
+  (list (list (list 'name "apple") (list 'currency code) (list 'symbol symbol) (list 'price (convert 2.99)))
+    (list (list 'name "orange") (list 'currency code) (list 'symbol symbol) (list 'price (convert 3.55)))
+    (list (list 'name "pear") (list 'currency code) (list 'symbol symbol) (list 'price (convert 1.55)))
    )
 )
 
@@ -96,4 +96,9 @@
 (define apple (car catalog))
 (define full (storeui_service "post" empty apple))
 (display (storeui_service "getall" full))
+
+(; "Store UI JSON-RPC interop test case")
+
+(define (system.listMethods) (list "Service.get"))
+(define (Service.get) (storeui_service "getcatalog"))
 

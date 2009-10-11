@@ -34,7 +34,7 @@ namespace tuscany {
 
 bool testJSEval() {
     JSONContext cx;
-    std::string script("(function testJSON(n){ return JSON.parse(JSON.stringify(n)) })(5)");
+    const std::string script("(function testJSON(n){ return JSON.parse(JSON.stringify(n)) })(5)");
     jsval rval;
     assert(JS_EvaluateScript(cx, cx.getGlobal(), script.c_str(), script.length(), "testJSON.js", 1, &rval));
     const std::string r(JS_GetStringBytes(JS_ValueToString(cx, rval)));
@@ -48,21 +48,20 @@ std::ostringstream* jsonWriter(std::ostringstream* os, const std::string& s) {
 }
 
 bool testJSON() {
-    JSONContext cx;
+    const JSONContext cx;
 
-    list<value> phones = makeList<value> (std::string("408-1234"), std::string("650-1234"));
-    list<value> l = makeList<value> (makeList<value> ("phones", phones), makeList<value> ("lastName", std::string("test\ttab")), makeList<value> ("firstName", std::string("test1")));
+    const list<value> phones = makeList<value> (std::string("408-1234"), std::string("650-1234"));
+    const list<value> l = makeList<value> (makeList<value> ("phones", phones), makeList<value> ("lastName", std::string("test\ttab")), makeList<value> ("firstName", std::string("test1")));
     print(l, std::cout);
     std::cout << std::endl;
 
     std::ostringstream os;
-    lambda<std::ostringstream*(std::ostringstream*, std::string)> writer(jsonWriter);
-    writeJSON(cx, writer, &os, l);
+    writeJSON<std::ostringstream*>(cx, jsonWriter, &os, l);
     std::cout << os.str() << std::endl;
 
     std::istringstream is(os.str());
-    list<std::string> il = makeStreamList(is);
-    list<value> r = readJSON(cx, il);
+    const list<std::string> il = makeStreamList(is);
+    const list<value> r = readJSON(cx, il);
     print(r, std::cout);
     std::cout << std::endl;
     assert(r == l);
@@ -74,6 +73,14 @@ bool testJSON() {
     return true;
 }
 
+bool testJSONRPC() {
+    const std::string lm("{\"id\": 1, \"method\": \"system.listMethods\", \"params\": []}");
+    JSONContext cx;
+    const list<value> v = readJSON(cx, makeList(lm));
+    std::cout << v << std::endl;
+    return true;
+}
+
 }
 
 int main() {
@@ -81,6 +88,7 @@ int main() {
 
     tuscany::testJSEval();
     tuscany::testJSON();
+    tuscany::testJSONRPC();
 
     std::cout << "OK" << std::endl;
 

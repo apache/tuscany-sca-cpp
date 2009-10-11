@@ -32,6 +32,7 @@
 #include <string>
 #include "list.hpp"
 #include "value.hpp"
+#include "monad.hpp"
 
 namespace tuscany {
 
@@ -172,8 +173,9 @@ const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
         return value((bool)JSVAL_TO_BOOLEAN(jsv));
     }
     case JSTYPE_NUMBER: {
-        jsdouble* jsd = JSVAL_TO_DOUBLE(jsv);
-        return value((double)*jsd);
+        jsdouble jsd;
+        JS_ValueToNumber(cx, jsv, &jsd);
+        return value((double)jsd);
     }
     case JSTYPE_OBJECT: {
         JSObject* o = JSVAL_TO_OBJECT(jsv);
@@ -191,39 +193,39 @@ const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
 /**
  * Consumes JSON strings and populates a JS object.
  */
-bool consumeJSON(const JSONContext& cx, JSONParser* parser, const list<std::string>& ilist) {
+failable<bool, std::string> consumeJSON(const JSONContext& cx, JSONParser* parser, const list<std::string>& ilist) {
     if (isNil(ilist))
         return true;
     JSString* jstr = JS_NewStringCopyZ(cx, car(ilist).c_str());
     if(!JS_ConsumeJSONText(cx, parser, JS_GetStringChars(jstr), JS_GetStringLength(jstr)))
-        return false;
+        return "JS_ConsumeJSONText failed";
     return consumeJSON(cx, parser, cdr(ilist));
 }
 
 /**
  * Read JSON tokens from list of strings.
  */
-const list<value> readJSON(const JSONContext& cx, const list<std::string>& ilist) {
+const failable<list<value>, std::string> readJSON(const JSONContext& cx, const list<std::string>& ilist) {
     jsval val;
     JSONParser* parser = JS_BeginJSONParse(cx, &val);
     if(parser == NULL)
-        return list<value> ();
+        return std::string("JS_BeginJSONParse failed");
 
-    bool ok = consumeJSON(cx, parser, ilist);
+    const failable<bool, std::string> consumed = consumeJSON(cx, parser, ilist);
 
     if(!JS_FinishJSONParse(cx, parser, JSVAL_NULL))
-        return list<value> ();
-    if(!ok)
-        return list<value> ();
+        return std::string("JS_FinishJSONParse failed");
+    if(!hasValue(consumed))
+        return std::string(consumed);
 
-    return jsValToValue(cx, val);
+    return list<value>(jsValToValue(cx, val));
 }
 
 /**
  * Returns true if a list represents a JS array.
  */
 const bool isJSArray(const list<value>& l) {
-    if(l == list<value> ())
+    if(isNil(l))
         return false;
     value v = car(l);
     if(isList(v)) {
@@ -240,8 +242,7 @@ const bool isJSArray(const list<value>& l) {
  */
 JSObject* valuesToJSElements(const JSONContext& cx, JSObject* a, const list<value>& l, int i) {
     const jsval valueToJSVal(const JSONContext& cx, const value& val);
-
-    if (l == list<value>())
+    if (isNil(l))
         return a;
     jsval pv = valueToJSVal(cx, car(l));
     JS_SetElement(cx, a, i, &pv);
@@ -253,8 +254,7 @@ JSObject* valuesToJSElements(const JSONContext& cx, JSObject* a, const list<valu
  */
 JSObject* valuesToJSProperties(const JSONContext& cx, JSObject* o, const list<value>& l) {
     const jsval valueToJSVal(const JSONContext& cx, const value& val);
-
-    if(l == list<value> ())
+    if(isNil(l))
         return o;
     const list<value> p = car(l);
     jsval pv = valueToJSVal(cx, cadr(p));
@@ -274,8 +274,7 @@ const jsval valueToJSVal(const JSONContext& cx, const value& val) {
         return BOOLEAN_TO_JSVAL((bool)val);
     }
     case value::Number: {
-        jsdouble d = (double)val;
-        return DOUBLE_TO_JSVAL(&d);
+        return DOUBLE_TO_JSVAL(JS_NewDouble(cx, (double)val));
     }
     case value::List: {
         if (isJSArray(val)) {
@@ -312,12 +311,13 @@ template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *d
 }
 
 /**
- * Write a list of values as a JSON document.
+ * Convert a list of values to a JSON document.
  */
-template<typename R> const R writeJSON(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> writeJSON(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
     jsval val = valueToJSVal(cx, l);
     JSONWriteContext<R> wcx(cx, reduce, initial);
-    JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx);
+    if (!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx))
+        return std::string("JS_Stringify failed");
     return wcx.accum;
 }
 
@@ -326,11 +326,13 @@ const list<std::string> writeJSONList(const list<std::string>& listSoFar, const 
 }
 
 /**
- * Write a list of values as a JSON document represented as a list of strings.
+ * Convert a list of values to a JSON document represented as a list of strings.
  */
-const list<std::string> writeJSON(const JSONContext& cx, const list<value>& l) {
-    lambda<list<std::string>(list<std::string>, std::string)> writer(writeJSONList);
-    return reverse(writeJSON(cx, writer, list<std::string>(), l));
+const failable<list<std::string>, std::string> writeJSON(const JSONContext& cx, const list<value>& l) {
+    const failable<list<std::string>, std::string> ls = writeJSON<list<std::string> >(cx, writeJSONList, list<std::string>(), l);
+    if (!hasValue(ls))
+        return ls;
+    return reverse(list<std::string>(ls));
 }
 
 }

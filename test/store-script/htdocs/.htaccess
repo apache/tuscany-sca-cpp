@@ -1,3 +1,4 @@
+#
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,10 +16,4 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-libdir=$(prefix)/lib
-lib_LTLIBRARIES = libmod_tuscany.la
-
-INCLUDES = -I. -I$(top_builddir)/kernel -I${HTTPD_INCLUDE} -I${APR_INCLUDE} -I${LIBXML2_INCLUDE} -I${LIBMOZJS_INCLUDE}
-
-libmod_tuscany_la_SOURCES = mod.cpp
-libmod_tuscany_la_LIBADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${LIBMOZJS_LIB} -lmozjs
+DirectoryIndex store.html
