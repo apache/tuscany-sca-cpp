@@ -15,5 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = atom eval httpd json 
+noinst_PROGRAMS = atom-test
 
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE}
+
+atom_test_SOURCES = atom-test.cpp
+atom_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 

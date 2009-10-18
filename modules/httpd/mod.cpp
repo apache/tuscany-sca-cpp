@@ -50,6 +50,7 @@
 #include "list.hpp"
 #include "slist.hpp"
 #include "value.hpp"
+#include "element.hpp"
 #include "monad.hpp"
 #include "../json/json.hpp"
 #include "../eval/driver.hpp"
@@ -160,7 +161,7 @@ const value evalLoop(std::istream& is, const value& req, Env& globalEnv) {
  */
 const list<value> queryArg(std::string s) {
     const list<std::string> t = tokenize("=", s);
-    return makeList<value>(car(t).c_str(), cadr(t));
+    return mklist<value>(car(t).c_str(), cadr(t));
 }
 
 const list<list<value> > queryArgs(const request_rec* r) {
@@ -218,7 +219,7 @@ const int get(request_rec* r) {
 
     // Convert the expr value to JSON
     const JSONContext cx;
-    failable<list<std::string>, std::string> jsval = writeJSON(cx, makeList<value>(makeList<value>("id", id), makeList<value>("result", val)));
+    failable<list<std::string>, std::string> jsval = writeJSON(cx, mklist<value>(mklist<value>("id", id), mklist<value>("result", val)));
     if (!hasValue(jsval))
         return HTTP_INTERNAL_SERVER_ERROR;
 
@@ -277,7 +278,7 @@ const int post(request_rec* r) {
     // Read the JSON request
     const list<std::string> req = read(r);
     JSONContext cx;
-    const list<value> json = readJSON(cx, req);
+    const list<value> json = elementsToValues(readJSON(cx, req));
     const list<list<value> > args = postArgs(json);
 
     // Extract the request id, method and params
@@ -298,7 +299,8 @@ const int post(request_rec* r) {
     std::cout.flush();
 
     // Convert the expr value to JSON
-    failable<list<std::string>, std::string> jsval = writeJSON(cx, makeList<value>(makeList<value>("id", id), makeList<value>("result", val)));
+    const list<value> result = valuesToElements(mklist<value>(mklist<value>("id", id), mklist<value>("result", val)));
+    failable<list<std::string>, std::string> jsval = writeJSON(cx, result);
     if (!hasValue(jsval))
         return HTTP_INTERNAL_SERVER_ERROR;
 

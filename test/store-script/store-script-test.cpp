@@ -52,19 +52,35 @@ const tuscany::value evalLoop(std::istream& is, const tuscany::value& req, tusca
 }
 
 bool testEval() {
-    std::ifstream is("store.scm", std::ios_base::in);
-    std::ostringstream os;
+    {
+        std::ifstream is("store.scm", std::ios_base::in);
+        std::ostringstream os;
 
-    tuscany::setupEvalOut(os);
-    tuscany::Env globalEnv = tuscany::setupEnvironment();
+        tuscany::setupEvalOut(os);
+        tuscany::Env globalEnv = tuscany::setupEnvironment();
 
-    const tuscany::value req(tuscany::makeList<tuscany::value>("storeui_service", std::string("getcatalog")));
-    const tuscany::value res = evalLoop(is, req, globalEnv);
+        const tuscany::value req(tuscany::mklist<tuscany::value>("storeui_service", std::string("getcatalog")));
+        const tuscany::value res = evalLoop(is, req, globalEnv);
 
-    std::ostringstream rs;
-    rs << res;
-    assert(contains(rs.str(), "List::(List::(List::(Symbol::name, (String::\"apple\", ())), (List::(Symbol::currency, (String::\"USD\", ())), (List::(Symbol::symbol, (String::\"$\", ())), (List::(Symbol::price, (Number::2.99, ())), ())))), (List::(List::(Symbol::name, (String::\"orange\", ())), (List::(Symbol::currency, (String::\"USD\", ())), (List::(Symbol::symbol, (String::\"$\", ())), (List::(Symbol::price, (Number::3.55, ())), ())))), (List::(List::(Symbol::name, (String::\"pear\", ())), (List::(Symbol::currency, (String::\"USD\", ())), (List::(Symbol::symbol, (String::\"$\", ())), (List::(Symbol::price, (Number::1.55, ())), ())))), ())))"));
+        std::ostringstream rs;
+        rs << res;
+        assert(contains(rs.str(), "List::(List::(List::(Symbol::name, (String::\"apple\", ())), (List::(Symbol::currency, (String::\"USD\", ())), (List::(Symbol::symbol, (String::\"$\", ())), (List::(Symbol::price, (Number::2.99, ())), ())))), (List::(List::(Symbol::name, (String::\"orange\", ())), (List::(Symbol::currency, (String::\"USD\", ())), (List::(Symbol::symbol, (String::\"$\", ())), (List::(Symbol::price, (Number::3.55, ())), ())))), (List::(List::(Symbol::name, (String::\"pear\", ())), (List::(Symbol::currency, (String::\"USD\", ())), (List::(Symbol::symbol, (String::\"$\", ())), (List::(Symbol::price, (Number::1.55, ())), ())))), ())))"));
+    }
 
+    {
+        std::ifstream is("store.scm", std::ios_base::in);
+        std::ostringstream os;
+
+        tuscany::setupEvalOut(os);
+        tuscany::Env globalEnv = tuscany::setupEnvironment();
+
+        const tuscany::value req(tuscany::mklist<tuscany::value>("storeui_service", std::string("gettotal")));
+        const tuscany::value res = evalLoop(is, req, globalEnv);
+
+        std::ostringstream rs;
+        rs << res;
+        assert(contains(rs.str(), "Number::10"));
+    }
     return true;
 }
 

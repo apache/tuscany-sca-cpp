@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test JSON read/write functions.
+ * Test JSON data conversion functions.
  */
 
 #include <assert.h>
@@ -50,34 +50,44 @@ std::ostringstream* jsonWriter(std::ostringstream* os, const std::string& s) {
 bool testJSON() {
     const JSONContext cx;
 
-    const list<value> phones = makeList<value> (std::string("408-1234"), std::string("650-1234"));
-    const list<value> l = makeList<value> (makeList<value> ("phones", phones), makeList<value> ("lastName", std::string("test\ttab")), makeList<value> ("firstName", std::string("test1")));
-    print(l, std::cout);
-    std::cout << std::endl;
+    {
+        const list<value> ad = mklist<value>(mklist<value>(attribute, "city", std::string("san francisco")), mklist<value>(attribute, "state", std::string("ca")));
+        const list<value> ac = mklist<value>(mklist<value>(element, "id", std::string("1234")), mklist<value>(attribute, "balance", 1000));
+        const list<value> cr = mklist<value>(mklist<value> (attribute, "name", std::string("jdoe")), cons<value>(element, cons<value>("address", ad)), cons<value>(element, cons<value>("account", ac)));
+        const list<value> c = mklist<value>(cons<value>(element, cons<value>("customer", cr)));
+        std::ostringstream os;
+        writeJSON<std::ostringstream*>(cx, jsonWriter, &os, c);
+        assert(os.str() == "{\"customer\":{\"name\":\"jdoe\",\"address\":{\"city\":\"san francisco\",\"state\":\"ca\"},\"account\":{\"id\":\"1234\",\"balance\":1000}}}");
+    }
+    {
+        const list<value> phones = mklist<value> (std::string("408-1234"), std::string("650-1234"));
+        const list<value> l = mklist<value> (mklist<value> (element, "phones", phones), mklist<value> (attribute, "lastName", std::string("test\ttab")), mklist<value> (attribute, "firstName", std::string("test1")));
 
-    std::ostringstream os;
-    writeJSON<std::ostringstream*>(cx, jsonWriter, &os, l);
-    std::cout << os.str() << std::endl;
+        std::ostringstream os;
+        writeJSON<std::ostringstream*>(cx, jsonWriter, &os, l);
+        assert(os.str() == "{\"phones\":[\"408-1234\",\"650-1234\"],\"lastName\":\"test\\u0009tab\",\"firstName\":\"test1\"}");
 
-    std::istringstream is(os.str());
-    const list<std::string> il = makeStreamList(is);
-    const list<value> r = readJSON(cx, il);
-    print(r, std::cout);
-    std::cout << std::endl;
-    assert(r == l);
+        std::istringstream is(os.str());
+        const list<std::string> il = streamList(is);
+        const list<value> r = readJSON(cx, il);
+        assert(r == l);
 
-    std::ostringstream wos;
-    write(writeJSON(cx, r), wos);
-    assert(wos.str() == os.str());
-
+        std::ostringstream wos;
+        write(writeJSON(cx, r), wos);
+        assert(wos.str() == os.str());
+    }
     return true;
 }
 
 bool testJSONRPC() {
     const std::string lm("{\"id\": 1, \"method\": \"system.listMethods\", \"params\": []}");
     JSONContext cx;
-    const list<value> v = readJSON(cx, makeList(lm));
-    std::cout << v << std::endl;
+    const list<value> e = readJSON(cx, mklist(lm));
+    const list<value> v = elementsToValues(e);
+
+    assert(assoc<value>("id", v) == mklist<value>("id", 1));
+    assert(assoc<value>("method", v) == mklist<value>("method", std::string("system.listMethods")));
+    assert(assoc<value>("params", v) == mklist<value>("params", list<value>()));
     return true;
 }
 

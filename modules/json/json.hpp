@@ -23,15 +23,15 @@
 #define tuscany_json_hpp
 
 /**
- * JSON read/write functions.
+ * JSON data conversion functions.
  */
 
-#include <assert.h>
 #define XP_UNIX
 #include <jsapi.h>
 #include <string>
 #include "list.hpp"
 #include "value.hpp"
+#include "element.hpp"
 #include "monad.hpp"
 
 namespace tuscany {
@@ -139,10 +139,9 @@ private:
 };
 
 /**
- * Converts JS properties to Tuscany values.
+ * Converts JS properties to values.
  */
-const list<value> jsPropertiesToValues(const JSONContext& cx, const list<value>& propertiesSoFar, JSObject* o,
-        JSObject* i) {
+const list<value> jsPropertiesToValues(const JSONContext& cx, const list<value>& propertiesSoFar, JSObject* o, JSObject* i) {
 
     const value jsValToValue(const JSONContext& cx, const jsval& jsv);
 
@@ -155,14 +154,15 @@ const list<value> jsPropertiesToValues(const JSONContext& cx, const list<value>&
     const value val = jsValToValue(cx, jsv);
     jsval idv;
     JS_IdToValue(cx, id, &idv);
-    if(JSVAL_IS_STRING(idv))
-        return jsPropertiesToValues(cx, cons<value> (makeList<value> (JS_GetStringBytes(JSVAL_TO_STRING(idv)), val),
-                propertiesSoFar), o, i);
+    if(JSVAL_IS_STRING(idv)) {
+        const value type = isList(val)? element : attribute;
+        return jsPropertiesToValues(cx, cons<value> (mklist<value> (type, JS_GetStringBytes(JSVAL_TO_STRING(idv)), val), propertiesSoFar), o, i);
+    }
     return jsPropertiesToValues(cx, cons(val, propertiesSoFar), o, i);
 }
 
 /**
- * Converts a JS value to a Tuscany value.
+ * Converts a JS val to a value.
  */
 const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
     switch(JS_TypeOfValue(cx, jsv)) {
@@ -182,7 +182,8 @@ const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
         JSObject* i = JS_NewPropertyIterator(cx, o);
         if(i == NULL)
             return value(list<value> ());
-        return jsPropertiesToValues(cx, list<value> (), o, i);
+        const value pv = jsPropertiesToValues(cx, list<value> (), o, i);
+        return pv;
     }
     default: {
         return value();
@@ -203,7 +204,7 @@ failable<bool, std::string> consumeJSON(const JSONContext& cx, JSONParser* parse
 }
 
 /**
- * Read JSON tokens from list of strings.
+ * Convert a list of strings representing a JSON document to a list of values.
  */
 const failable<list<value>, std::string> readJSON(const JSONContext& cx, const list<std::string>& ilist) {
     jsval val;
@@ -222,22 +223,6 @@ const failable<list<value>, std::string> readJSON(const JSONContext& cx, const l
 }
 
 /**
- * Returns true if a list represents a JS array.
- */
-const bool isJSArray(const list<value>& l) {
-    if(isNil(l))
-        return false;
-    value v = car(l);
-    if(isList(v)) {
-        const list<value> p = v;
-        if(isSymbol(car(p))) {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
  * Converts a list of values to JS array elements.
  */
 JSObject* valuesToJSElements(const JSONContext& cx, JSObject* a, const list<value>& l, int i) {
@@ -250,24 +235,12 @@ JSObject* valuesToJSElements(const JSONContext& cx, JSObject* a, const list<valu
 }
 
 /**
- * Converts a list of values to JS properties.
- */
-JSObject* valuesToJSProperties(const JSONContext& cx, JSObject* o, const list<value>& l) {
-    const jsval valueToJSVal(const JSONContext& cx, const value& val);
-    if(isNil(l))
-        return o;
-    const list<value> p = car(l);
-    jsval pv = valueToJSVal(cx, cadr(p));
-    JS_SetProperty(cx, o, ((std::string)car(p)).c_str(), &pv);
-    return valuesToJSProperties(cx, o, cdr(l));
-}
-
-/**
- * Converts a Tuscany value to a JS value.
+ * Converts a value to a JS val.
  */
 const jsval valueToJSVal(const JSONContext& cx, const value& val) {
     switch(type(val)) {
-    case value::String: {
+    case value::String:
+    case value::Symbol: {
         return STRING_TO_JSVAL(JS_NewStringCopyZ(cx, ((std::string)val).c_str()));
     }
     case value::Boolean: {
@@ -277,10 +250,7 @@ const jsval valueToJSVal(const JSONContext& cx, const value& val) {
         return DOUBLE_TO_JSVAL(JS_NewDouble(cx, (double)val));
     }
     case value::List: {
-        if (isJSArray(val)) {
-            return OBJECT_TO_JSVAL(valuesToJSElements(cx, JS_NewArrayObject(cx, 0, NULL), val, 0));
-        }
-        return OBJECT_TO_JSVAL(valuesToJSProperties(cx, JS_NewObject(cx, NULL, NULL, NULL), val));
+        return OBJECT_TO_JSVAL(valuesToJSElements(cx, JS_NewArrayObject(cx, 0, NULL), val, 0));
     }
     default: {
         return JSVAL_VOID;
@@ -288,8 +258,44 @@ const jsval valueToJSVal(const JSONContext& cx, const value& val) {
     }
 }
 
+const failable<bool, std::string> writeList(const JSONContext& cx, const list<value>& l, JSObject* o) {
+    if (isNil(l))
+        return true;
+
+    // Write an attribute
+    const value token(car(l));
+
+    if (isTaggedList(token, attribute)) {
+        jsval pv = valueToJSVal(cx, attributeValue(token));
+        JS_SetProperty(cx, o, std::string(attributeName(token)).c_str(), &pv);
+
+    } else if (isTaggedList(token, element)) {
+
+        // Write the value of an element
+        if (elementHasValue(token)) {
+            jsval pv = valueToJSVal(cx, elementValue(token));
+            JS_SetProperty(cx, o, std::string(elementName(token)).c_str(), &pv);
+
+        } else {
+
+            // Write a parent element
+            JSObject* child = JS_NewObject(cx, NULL, NULL, NULL);
+            jsval pv = OBJECT_TO_JSVAL(child);
+            JS_SetProperty(cx, o, std::string(elementName(token)).c_str(), &pv);
+
+            // Write its children
+            const failable<bool, std::string> w = writeList(cx, elementChildren(token), child);
+            if (!hasValue(w))
+                return w;
+        }
+    }
+
+    // Go on
+    return writeList(cx, cdr(l), o);
+}
+
 /**
- * Context passed to JSON write callback function.
+ * Context passed to the JSON write callback function.
  */
 template<typename R> class JSONWriteContext {
 public:
@@ -314,20 +320,25 @@ template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *d
  * Convert a list of values to a JSON document.
  */
 template<typename R> const failable<R, std::string> writeJSON(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
-    jsval val = valueToJSVal(cx, l);
+    JSObject* o = JS_NewObject(cx, NULL, NULL, NULL);
+    jsval val = OBJECT_TO_JSVAL(o);
+    const failable<bool, std::string> w = writeList(cx, l, o);
+    if (!hasValue(w))
+        return std::string(w);
+
     JSONWriteContext<R> wcx(cx, reduce, initial);
     if (!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx))
         return std::string("JS_Stringify failed");
     return wcx.accum;
 }
 
+/**
+ * Convert a list of values to a list of strings representing a JSON document.
+ */
 const list<std::string> writeJSONList(const list<std::string>& listSoFar, const std::string& s) {
     return cons(s, listSoFar);
 }
 
-/**
- * Convert a list of values to a JSON document represented as a list of strings.
- */
 const failable<list<std::string>, std::string> writeJSON(const JSONContext& cx, const list<value>& l) {
     const failable<list<std::string>, std::string> ls = writeJSON<list<std::string> >(cx, writeJSONList, list<std::string>(), l);
     if (!hasValue(ls))

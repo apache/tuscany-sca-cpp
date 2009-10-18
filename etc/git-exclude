@@ -60,8 +60,10 @@ sca/runtime/extensions/cpp/tools/scagen/docs/
 account_client
 calculator_client
 kernel-test
-xml-test
+xsd-test
+atom-test
 eval-test
+eval-shell
 json-test
 store-function-test
 store-object-test

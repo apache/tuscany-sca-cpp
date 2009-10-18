@@ -266,6 +266,7 @@ AM_CONDITIONAL([WANT_DOXYGEN], [test x$want_doxygen = xtrue])
 AC_CONFIG_FILES([Makefile
                  kernel/Makefile
                  modules/Makefile
+                 modules/atom/Makefile
                  modules/eval/Makefile
                  modules/httpd/Makefile
                  modules/json/Makefile

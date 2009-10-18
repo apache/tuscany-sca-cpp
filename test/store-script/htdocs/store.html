@@ -31,7 +31,7 @@
 	//var shoppingCart = new tuscany.sca.Reference("shoppingCart");
 
 	//@Reference
-	//var shoppingTotal = new tuscany.sca.Reference("shoppingTotal");
+	var shoppingTotal = new tuscany.sca.Reference("shoppingTotal");
 	
 	var catalogItems;
 
@@ -42,13 +42,16 @@
 		}
 		var catalog = "";
 		
-			for (var i=0; i<items.length; i++) {
-				var item = items[i].name + ' - ' + items[i].price;
-				catalog += '<input name="items" type="checkbox" value="' + 
-							item + '">' + item + ' <br>';
-			}
-			document.getElementById('catalog').innerHTML=catalog;
-			catalogItems = items;
+		for (var i=0; i<items.length; i++) {
+			var item = items[i].name + ' - ' + items[i].price;
+			catalog += '<input name="items" type="checkbox" value="' + 
+						item + '">' + item + ' <br>';
+		}
+		document.getElementById('catalog').innerHTML=catalog;
+		catalogItems = items;
+
+		// TEMP		
+		shoppingTotal.getTotal(shoppingTotal_getTotalResponse);
 	}
 	
 	function shoppingCart_getResponse(feed) {
@@ -65,7 +68,7 @@
 
 			if (entries.length != 0) {			
 					try	{
-						//shoppingTotal.getTotal(shoppingTotal_getTotalResponse);
+						shoppingTotal.getTotal(shoppingTotal_getTotalResponse);
 					}
 					catch(e){
 						alert(e);

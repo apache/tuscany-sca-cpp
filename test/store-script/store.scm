@@ -54,10 +54,15 @@
   content
 )
 
+(define (cart_gettotal)
+  10.0
+)
+
 (define (cart_impl op args)
   (cond
     ((equal? op "post") (apply cart_post args))
     ((equal? op "getall") (apply cart_getall args))
+    ((equal? op "gettotal") (apply cart_gettotal args))
   )
 )
 
@@ -75,11 +80,16 @@
   (catalog "get")
 )
 
+(define (storeui_gettotal cart)
+  (cart "gettotal")
+)
+
 (define (storeui_impl cart catalog op args)
   (cond
     ((equal? op "post") (apply storeui_post (cons cart args)))
     ((equal? op "getall") (apply storeui_getcart (cons cart args)))
     ((equal? op "getcatalog") (apply storeui_getcatalog (cons catalog args)))
+    ((equal? op "gettotal") (apply storeui_gettotal (cons cart args)))
   )
 )
 
@@ -96,9 +106,11 @@
 (define apple (car catalog))
 (define full (storeui_service "post" empty apple))
 (display (storeui_service "getall" full))
+(display (storeui_service "gettotal"))
 
 (; "Store UI JSON-RPC interop test case")
 
-(define (system.listMethods) (list "Service.get"))
+(define (system.listMethods) (list "Service.get" "Service.getTotal"))
 (define (Service.get) (storeui_service "getcatalog"))
+(define (Service.getTotal) (storeui_service "gettotal"))
 

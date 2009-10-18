@@ -1,0 +1,150 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* $Rev$ $Date$ */
+
+/**
+ * Test ATOM data conversion functions.
+ */
+
+#include <assert.h>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include "slist.hpp"
+#include "atom.hpp"
+
+namespace tuscany {
+
+std::ostringstream* atomWriter(std::ostringstream* os, const std::string& s) {
+    (*os) << s;
+    return os;
+}
+
+std::string itemEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<entry xmlns=\"http://www.w3.org/2005/Atom\">"
+        "<title type=\"text\">item</title>"
+        "<id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>"
+        "<content type=\"application/xml\">"
+        "<item>"
+        "<name>Apple</name><price>$2.99</price>"
+        "</item>"
+        "</content>"
+        "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>"
+        "</entry>\n");
+
+bool testATOMEntry() {
+    {
+        const list<value> i = list<value>() << element << "item"
+                << (list<value>() << element << "name" << std::string("Apple"))
+                << (list<value>() << element << "price" << std::string("$2.99"));
+        const list<value> a = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+        std::ostringstream os;
+        writeATOMEntry<std::ostringstream*>(atomWriter, &os, a);
+        assert(os.str() == itemEntry);
+    }
+    {
+        const list<value> a = readATOMEntry(mklist(itemEntry));
+        std::ostringstream os;
+        writeATOMEntry<std::ostringstream*>(atomWriter, &os, a);
+        assert(os.str() == itemEntry);
+    }
+    return true;
+}
+
+std::string emptyFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+        "<title type=\"text\">Feed</title>"
+        "<id>1234</id>"
+        "</feed>\n");
+
+std::string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+        "<title type=\"text\">Feed</title>"
+        "<id>1234</id>"
+        "<entry xmlns=\"http://www.w3.org/2005/Atom\">"
+        "<title type=\"text\">item</title>"
+        "<id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>"
+        "<content type=\"application/xml\">"
+        "<item>"
+        "<name>Apple</name><price>$2.99</price>"
+        "</item>"
+        "</content>"
+        "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>"
+        "</entry>"
+        "<entry xmlns=\"http://www.w3.org/2005/Atom\">"
+        "<title type=\"text\">item</title>"
+        "<id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c</id>"
+        "<content type=\"application/xml\">"
+        "<item>"
+        "<name>Orange</name><price>$3.55</price>"
+        "</item>"
+        "</content>"
+        "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c\"/>"
+        "</entry>"
+        "</feed>\n");
+
+bool testATOMFeed() {
+    {
+        std::ostringstream os;
+        writeATOMFeed<std::ostringstream*>(atomWriter, &os, mklist<value>("Feed", "1234"));
+        assert(os.str() == emptyFeed);
+    }
+    {
+        const list<value> a = readATOMFeed(mklist(emptyFeed));
+        std::ostringstream os;
+        writeATOMFeed<std::ostringstream*>(atomWriter, &os, a);
+        assert(os.str() == emptyFeed);
+    }
+    {
+        const list<value> i = list<value>()
+                << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
+                    << (list<value>() << element << "item"
+                        << (list<value>() << element << "name" << "Apple")
+                        << (list<value>() << element << "price" << "$2.99")))
+                << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
+                    << (list<value>() << element << "item"
+                        << (list<value>() << element << "name" << "Orange")
+                        << (list<value>() << element << "price" << "$3.55")));
+        const list<value> a = cons<value>("Feed", cons<value>("1234", i));
+        std::ostringstream os;
+        writeATOMFeed<std::ostringstream*>(atomWriter, &os, a);
+        assert(os.str() == itemFeed);
+    }
+    {
+        const list<value> a = readATOMFeed(mklist(itemFeed));
+        std::ostringstream os;
+        writeATOMFeed<std::ostringstream*>(atomWriter, &os, a);
+        assert(os.str() == itemFeed);
+    }
+    return true;
+}
+
+}
+
+int main() {
+    std::cout << "Testing..." << std::endl;
+
+    tuscany::testATOMEntry();
+    tuscany::testATOMFeed();
+
+    std::cout << "OK" << std::endl;
+
+    return 0;
+}
