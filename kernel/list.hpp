@@ -56,20 +56,19 @@ bool printListCounters() {
 template<typename T> class list {
 public:
 
-    list(const T car, const lambda<list<T> ()>& cdr) :
-        nil(false), car(car), cdr(cdr) {
-        countlists++;
-        countIlists++;
-    }
-
-    list() :
-        nil(true) {
+    list() {
         countlists++;
         countElists++;
     }
 
+    list(const T car, const lambda<list<T> ()>& cdr) :
+        car(car), cdr(cdr) {
+        countlists++;
+        countIlists++;
+    }
+
     list(const list& p) :
-        nil(p.nil), car(p.car), cdr(p.cdr) {
+        car(p.car), cdr(p.cdr) {
         countlists++;
         countClists++;
     }
@@ -77,7 +76,6 @@ public:
     const list& operator=(const list<T>& p) {
         if(this == &p)
             return *this;
-        nil = p.nil;
         car = p.car;
         cdr = p.cdr;
         return *this;
@@ -90,9 +88,9 @@ public:
     const bool operator==(const list<T>& p) const {
         if(this == &p)
             return true;
-        if(nil)
-            return p.nil;
-        if(p.nil)
+        if(isNil(cdr))
+            return isNil(p.cdr);
+        if(isNil(p.cdr))
             return false;
         if(!(car == p.car))
             return false;
@@ -105,9 +103,20 @@ public:
         return !this->operator==(p);
     }
 
-    template<typename X> friend std::ostream& operator<<(std::ostream&, const list<X>&);
+    operator const list<list<T> >() const {
+        return (list<list<T> >)T(*this);
+    }
 
-    bool nil;
+    list<T>& operator<<(const T& v) {
+        *this = append(*this, mklist(v));
+        return *this;
+    }
+
+    template<typename X> friend const bool isNil(const list<X>& p);
+    template<typename X> friend const X car(const list<X>& p);
+    template<typename X> friend list<X> const cdr(const list<X>& p);
+
+private:
     T car;
     lambda<list<T> ()> cdr;
 };
@@ -116,7 +125,7 @@ public:
  * Returns true if the given list is nil.
  */
 template<typename T> const bool isNil(const list<T>& p) {
-    return p.nil;
+    return isNil(p.cdr);
 }
 
 /**
@@ -143,31 +152,45 @@ template<typename T> const list<T> cons(const T& car, const list<T>& cdr) {
 }
 
 /**
+ * Construct a list from a single value.
+ */
+template<typename T> const list<T> cons(const T& car) {
+    return list<T> (car, result(list<T> ()));
+}
+
+/**
  * Construct a list of one value.
  */
-template<typename T> const list<T> makeList(const T& car) {
-    return list<T> (car, result(list<T> ()));
+template<typename T> const list<T> mklist(const T& car) {
+    return cons<T>(car);
 }
 
 /**
  * Construct a list of two values.
  */
-template<typename T> const list<T> makeList(const T& a, const T& b) {
-    return cons(a, makeList(b));
+template<typename T> const list<T> mklist(const T& a, const T& b) {
+    return cons(a, mklist(b));
 }
 
 /**
  * Construct a list of three values.
  */
-template<typename T> const list<T> makeList(const T& a, const T& b, const T& c) {
-    return cons(a, cons(b, makeList(c)));
+template<typename T> const list<T> mklist(const T& a, const T& b, const T& c) {
+    return cons(a, cons(b, mklist(c)));
 }
 
 /**
  * Construct a list of four values.
  */
-template<typename T> const list<T> makeList(const T& a, const T& b, const T& c, const T& d) {
-    return cons(a, cons(b, cons(c, makeList(d))));
+template<typename T> const list<T> mklist(const T& a, const T& b, const T& c, const T& d) {
+    return cons(a, cons(b, cons(c, mklist(d))));
+}
+
+/**
+ * Construct a list of five values.
+ */
+template<typename T> const list<T> mklist(const T& a, const T& b, const T& c, const T& d, const T& e) {
+    return cons(a, cons(b, cons(c, cons(d, mklist(e)))));
 }
 
 /**
@@ -338,10 +361,19 @@ template<typename T> struct seqGenerate {
  */
 template<typename T> const list<T> seq(const T& start, const T& end) {
     if(start == end)
-        return makeList(start);
+        return mklist(start);
     if(start < end)
         return cons<T>(start, seqGenerate<T> (start + 1, end));
     return cons<T>(start, seqGenerate<T> (start - 1, end));
+}
+
+/**
+ * Returns the i-th element of a list.
+ */
+template<typename T> const T listRef(const list<T>& l, const int i) {
+    if (i == 0)
+        return car(l);
+    return listRef(cdr(l), i - 1);
 }
 
 /**
@@ -361,7 +393,7 @@ template<typename T> const list<T> assoc(const T& k, const list<list<T> >& p) {
 template<typename T> const list<list<T> > zip(const list<T>& a, const list<T>& b) {
     if (isNil(a) || isNil(b))
         return list<list<T> >();
-    return cons<list<T> >(makeList<T>(car(a), car(b)), zip(cdr(a), cdr(b)));
+    return cons<list<T> >(mklist<T>(car(a), car(b)), zip(cdr(a), cdr(b)));
 }
 
 /**
@@ -380,7 +412,7 @@ template<typename T> const list<T> unzipValues(const list<list<T> >& l) {
 }
 
 template<typename T> const list<list<T> > unzip(const list<list<T> >& l) {
-    return makeList<list<T> >(unzipKeys(l), unzipValues(l));
+    return mklist<list<T> >(unzipKeys(l), unzipValues(l));
 }
 
 /**

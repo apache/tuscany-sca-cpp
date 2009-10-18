@@ -107,11 +107,11 @@ struct Element {
 };
 
 bool testCons() {
-    assert(car(cons(2, makeList(3))) == 2);
-    assert(car(cdr(cons(2, makeList(3)))) == 3);
-    assert(isNil(cdr(cdr(cons(2, makeList(3))))));
+    assert(car(cons(2, mklist(3))) == 2);
+    assert(car(cdr(cons(2, mklist(3)))) == 3);
+    assert(isNil(cdr(cdr(cons(2, mklist(3))))));
 
-    assert(cons(Element(1), makeList(Element(2))) == makeList(Element(1), Element(2)));
+    assert(cons(Element(1), mklist(Element(2))) == mklist(Element(1), Element(2)));
     return true;
 }
 
@@ -132,32 +132,37 @@ bool testOut() {
     assert(os1.str() == "()");
 
     std::ostringstream os2;
-    os2 << makeList(1, 2, 3);
+    os2 << mklist(1, 2, 3);
     assert(os2.str() == "(1, (2, (3, ())))");
     return true;
 }
 
 bool testEquals() {
     assert(list<int>() == list<int>());
-    assert(makeList(1, 2) == makeList(1, 2));
-    assert(list<int>() != makeList(1, 2));
-    assert(makeList(1, 2, 3) == makeList(1, 2, 3));
-    assert(makeList(1, 2) != makeList(1, 2, 3));
+    assert(mklist(1, 2) == mklist(1, 2));
+    assert(list<int>() != mklist(1, 2));
+    assert(mklist(1, 2, 3) == mklist(1, 2, 3));
+    assert(mklist(1, 2) != mklist(1, 2, 3));
     return true;
 }
 
 bool testLength() {
     assert(0 == length(list<int>()));
-    assert(1 == length(makeList(1)));
-    assert(2 == length(cons(1, makeList(2))));
+    assert(1 == length(mklist(1)));
+    assert(2 == length(cons(1, mklist(2))));
     return true;
 }
 
 bool testAppend() {
-    assert(car(append(makeList(1), makeList(2))) == 1);
-    assert(car(cdr(append(makeList(1), makeList(2)))) == 2);
-    assert(car(cdr(cdr(append(makeList(1), makeList(2, 3))))) == 3);
-    assert(isNil(cdr(cdr(cdr(append(makeList(1), makeList(2, 3)))))));
+    assert(car(append(mklist(1), mklist(2))) == 1);
+    assert(car(cdr(append(mklist(1), mklist(2)))) == 2);
+    assert(car(cdr(cdr(append(mklist(1), mklist(2, 3))))) == 3);
+    assert(isNil(cdr(cdr(cdr(append(mklist(1), mklist(2, 3)))))));
+
+    list<int> l;
+    l << 1 << 2 << 3;
+    assert(l == mklist(1, 2, 3));
+    assert(list<int>() << 1 << 2 << 3 == mklist(1, 2, 3));
     return true;
 }
 
@@ -172,7 +177,7 @@ struct Complex {
 };
 
 bool testComplex() {
-    const list<Complex> p = makeList(Complex(1, 2), Complex(3, 4));
+    const list<Complex> p = mklist(Complex(1, 2), Complex(3, 4));
     assert(car(p).x == 1);
     assert(car(cdr(p)).x == 3);
     assert(isNil(cdr(cdr(p))));
@@ -182,7 +187,7 @@ bool testComplex() {
 bool testMap() {
     assert(isNil(map<int, int>(square, list<int>())));
 
-    const list<int> m = map<int, int>(square, makeList(2, 3));
+    const list<int> m = map<int, int>(square, mklist(2, 3));
     assert(car(m) == 4);
     assert(car(cdr(m)) == 9);
 
@@ -195,7 +200,7 @@ const int add(const int x, const int y) {
 
 bool testReduce() {
     const lambda<int(int, int)> r(add);
-    assert(reduce(r, 0, makeList(1, 2, 3)) == 6);
+    assert(reduce(r, 0, mklist(1, 2, 3)) == 6);
     return true;
 }
 
@@ -207,49 +212,63 @@ bool isPositive(int x) {
 }
 
 bool testFilter() {
-    assert(car(filter<int>(isPositive, makeList(1, -1, 2, -2))) == 1);
-    assert(cadr(filter<int>(isPositive, makeList(1, -1, 2, -2))) == 2);
+    assert(car(filter<int>(isPositive, mklist(1, -1, 2, -2))) == 1);
+    assert(cadr(filter<int>(isPositive, mklist(1, -1, 2, -2))) == 2);
     return true;
 }
 
 bool testMember() {
-    assert(isNil(member(4, makeList(1, 2, 3))));
-    assert(car(member(1, makeList(1, 2, 3))) == 1);
-    assert(car(member(2, makeList(1, 2, 3))) == 2);
-    assert(car(member(3, makeList(1, 2, 3))) == 3);
+    assert(isNil(member(4, mklist(1, 2, 3))));
+    assert(car(member(1, mklist(1, 2, 3))) == 1);
+    assert(car(member(2, mklist(1, 2, 3))) == 2);
+    assert(car(member(3, mklist(1, 2, 3))) == 3);
     return true;
 }
 
 bool testReverse() {
     assert(isNil(reverse(list<int>())));
-    assert(car(reverse(makeList(1, 2, 3))) == 3);
-    assert(cadr(reverse(makeList(1, 2, 3))) == 2);
+    assert(car(reverse(mklist(1, 2, 3))) == 3);
+    assert(cadr(reverse(mklist(1, 2, 3))) == 2);
+    return true;
+}
+
+bool testListRef() {
+    assert(listRef(mklist(1), 0) == 1);
+    assert(listRef(mklist(1, 2, 3), 0) == 1);
+    assert(listRef(mklist(1, 2, 3), 1) == 2);
+    assert(listRef(mklist(1, 2, 3), 2) == 3);
     return true;
 }
 
 bool testAssoc() {
-    const list<list<std::string> > l = makeList(makeList<std::string>("x", "X"), makeList<std::string>("a", "A"), makeList<std::string>("y", "Y"), makeList<std::string>("a", "AA"));
-    assert(assoc<std::string>("a", l) == makeList<std::string>("a", "A"));
+    const list<list<std::string> > l = mklist(mklist<std::string>("x", "X"), mklist<std::string>("a", "A"), mklist<std::string>("y", "Y"), mklist<std::string>("a", "AA"));
+    assert(assoc<std::string>("a", l) == mklist<std::string>("a", "A"));
     assert(isNil(assoc<std::string>("z", l)));
+
+    const list<list<value> > u = mklist(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"), mklist<value>("a", "AA"));
+    assert(assoc<value>("a", u) == mklist<value>("a", "A"));
+
+    const list<value> v = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"), mklist<value>("a", "AA"));
+    assert(assoc<value>("a", v) == mklist<value>("a", "A"));
     return true;
 }
 
 bool testZip() {
-    const list<std::string> k = makeList<std::string>("x", "a", "y", "a");
-    const list<std::string> v = makeList<std::string>("X", "A", "Y", "AA");
-    const list<list<std::string> > z = makeList(k, v);
-    const list<list<std::string> > u = makeList(makeList<std::string>("x", "X"), makeList<std::string>("a", "A"), makeList<std::string>("y", "Y"), makeList<std::string>("a", "AA"));
+    const list<std::string> k = mklist<std::string>("x", "a", "y", "a");
+    const list<std::string> v = mklist<std::string>("X", "A", "Y", "AA");
+    const list<list<std::string> > z = mklist(k, v);
+    const list<list<std::string> > u = mklist(mklist<std::string>("x", "X"), mklist<std::string>("a", "A"), mklist<std::string>("y", "Y"), mklist<std::string>("a", "AA"));
     assert(zip(k, v) == u);
     assert(unzip(u) == z);
     return true;
 }
 
 bool testTokenize() {
-    assert(tokenize("/", "aaa/bbb/ccc/ddd") == makeList<std::string>("aaa", "bbb", "ccc", "ddd"));
-    assert(tokenize("/", "/bbb/ccc/ddd") == makeList<std::string>("", "bbb", "ccc", "ddd"));
-    assert(tokenize("/", "/bbb/ccc/") == makeList<std::string>("", "bbb", "ccc"));
-    assert(tokenize("/", "/bbb//ccc/") == makeList<std::string>("", "bbb", "", "ccc"));
-    assert(tokenize("/", "abc/def/") == makeList<std::string>("abc", "def"));
+    assert(tokenize("/", "aaa/bbb/ccc/ddd") == mklist<std::string>("aaa", "bbb", "ccc", "ddd"));
+    assert(tokenize("/", "/bbb/ccc/ddd") == mklist<std::string>("", "bbb", "ccc", "ddd"));
+    assert(tokenize("/", "/bbb/ccc/") == mklist<std::string>("", "bbb", "ccc"));
+    assert(tokenize("/", "/bbb//ccc/") == mklist<std::string>("", "bbb", "", "ccc"));
+    assert(tokenize("/", "abc/def/") == mklist<std::string>("abc", "def"));
     return true;
 }
 
@@ -292,7 +311,10 @@ bool testValue() {
     assert(value("abcd") == value("abcd"));
     lambda<value(list<value>&)> vl(valueSquare);
     assert(value(vl) == value(vl));
-    assert(value(makeList<value>(1, 2)) == value(makeList<value>(1, 2)));
+    assert(value(mklist<value>(1, 2)) == value(mklist<value>(1, 2)));
+
+    const list<value> v = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"));
+    assert(cadr((list<list<value> >)value(v)) == mklist<value>("a", "A"));
     return true;
 }
 
@@ -304,6 +326,18 @@ bool testValueGC() {
     assert(countValues == 0);
     assert(countLambdas == 0);
     assert(countlists == 0);
+    return true;
+}
+
+bool testElement() {
+    const list<value> ad = mklist<value>(mklist<value>(attribute, "city", std::string("san francisco")), mklist<value>(attribute, "state", std::string("ca")));
+    const list<value> ac = mklist<value>(mklist<value>(attribute, "id", std::string("1234")), mklist<value>(attribute, "balance", 1000));
+    const list<value> cr = mklist<value>(mklist<value> (attribute, "name", std::string("jdoe")), cons<value>(element, cons<value>("address", ad)), cons<value>(element, cons<value>("account", ac)));
+    const list<value> c = mklist<value>(cons<value>(element, cons<value>("customer", cr)));
+
+    const list<value> v = elementsToValues(c);
+    const list<value> e = valuesToElements(v);
+    assert(e == c);
     return true;
 }
 
@@ -442,24 +476,38 @@ const std::string currencyXML =
 "<service name=\"CurrencyConverter2\">"
 "<binding.atom/>"
 "</service>"
+"<property name=\"currency\">US</property>"
 "</component>"
 "</composite>"
 "\n";
 
+const std::string customerXML =
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+"<customer>"
+"<name>jdoe</name>"
+"<address><city>san francisco</city><state>ca</state></address>"
+"<account><id>1234</id><balance>1000</balance></account>"
+"</customer>"
+"\n";
+
 const bool isName(const value& token) {
-    return isAttribute(token) && attributeName(token) == "name";
+    return isTaggedList(token, attribute) && attributeName(token) == "name";
 }
 
 bool testReadXML() {
-    std::istringstream is(currencyXML);
-    const list<value> currency = readXML(makeStreamList(is));
+    {
+        std::istringstream is(customerXML);
+        const list<value> c = readXML(streamList(is));
+    }
+    {
+        std::istringstream is(currencyXML);
+        const list<value> c = readXML(streamList(is));
 
-    const value composite = car(currency);
-    assert(isElement(composite));
-    assert(elementName(composite) == "composite");
-    assert(!elementHasText(composite));
-
-    assert(attributeText(car(filter<value>(isName, elementChildren(composite)))) == "currency");
+        const value composite = car(c);
+        assert(isTaggedList(composite, element));
+        assert(elementName(composite) == "composite");
+        assert(attributeValue(car(filter<value>(isName, elementChildren(composite)))) == std::string("currency"));
+    }
     return true;
 }
 
@@ -469,15 +517,20 @@ std::ostringstream* xmlWriter(std::ostringstream* os, const std::string& s) {
 }
 
 bool testWriteXML() {
-    std::istringstream is(currencyXML);
-    const list<std::string> il = makeStreamList(is);
-
-    const list<value> currency = readXML(il);
-    std::ostringstream os;
-    writeXML<std::ostringstream*>(xmlWriter, &os, currency);
-    assert(os.str() == currencyXML);
-
-    assert(writeXML(currency) == il);
+    {
+        std::istringstream is(customerXML);
+        const list<value> c = readXML(streamList(is));
+        std::ostringstream os;
+        writeXML<std::ostringstream*>(xmlWriter, &os, c);
+        assert(os.str() == customerXML);
+    }
+    {
+        std::istringstream is(currencyXML);
+        const list<value> c = readXML(streamList(is));
+        std::ostringstream os;
+        writeXML<std::ostringstream*>(xmlWriter, &os, c);
+        assert(os.str() == currencyXML);
+    }
     return true;
 }
 
@@ -602,12 +655,14 @@ int main() {
     tuscany::testFilter();
     tuscany::testMember();
     tuscany::testReverse();
+    tuscany::testListRef();
     tuscany::testAssoc();
     tuscany::testZip();
     tuscany::testTokenize();
     tuscany::testSeq();
     tuscany::testValue();
     tuscany::testValueGC();
+    tuscany::testElement();
     tuscany::testCppPerf();
     tuscany::testAtomicPerf();
     tuscany::testWorker();

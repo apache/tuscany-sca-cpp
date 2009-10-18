@@ -33,7 +33,7 @@ namespace store
 
 bool testComponentAssembly() {
     const service store(storeSolution_service);
-    assert(length((tuscany::list<tuscany::value>)store(tuscany::makeList<tuscany::value>("getCatalog"))) == 3);
+    assert(length((tuscany::list<tuscany::value>)store(tuscany::mklist<tuscany::value>("getCatalog"))) == 3);
     return true;
 }
 

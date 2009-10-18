@@ -30,8 +30,8 @@ namespace store
 
 typedef tuscany::value ItemType;
 
-const ItemType makeItem(const std::string& name, const std::string& currencyCode, const std::string& currencySymbol, const double price) {
-    return tuscany::makeList<tuscany::value>(name, currencyCode, currencySymbol, price);
+const ItemType item(const std::string& name, const std::string& currencyCode, const std::string& currencySymbol, const double price) {
+    return tuscany::mklist<tuscany::value>(name, currencyCode, currencySymbol, price);
 }
 
 const std::string itemName(const ItemType& item) {

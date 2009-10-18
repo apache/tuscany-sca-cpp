@@ -54,7 +54,7 @@ public:
 
     virtual const tuscany::list<Item> get() const {
         const std::string currencySymbol = currencyConverter.getSymbol(currencyCode);
-        return tuscany::makeList(
+        return tuscany::mklist(
                 Item("Apple", currencyCode, currencySymbol, convert(2.99)),
                 Item("Orange", currencyCode, currencySymbol, convert(3.55)),
                 Item("Pear", currencyCode, currencySymbol, convert(1.55)));

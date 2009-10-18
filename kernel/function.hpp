@@ -163,6 +163,7 @@ public:
     }
 
     template<typename S> friend std::ostream& operator<<(std::ostream&, const lambda<S>&);
+    template<typename S> friend const bool isNil(const lambda<S>& l);
 
 private:
     typedef Callable<R,P...> CallableType;
@@ -171,6 +172,13 @@ private:
 
 template<typename S> std::ostream& operator<<(std::ostream& out, const lambda<S>& l) {
     return out << "lambda::" << l.callable;
+}
+
+/**
+ * Return true if a lambda is nil.
+ */
+template<typename S> const bool isNil(const lambda<S>& l) {
+    return ((void*)l.callable) == 0;
 }
 
 /**

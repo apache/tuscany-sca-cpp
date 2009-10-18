@@ -86,7 +86,7 @@ const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, c
         return frameSoFar;
     }
     if (isDotVariable(car(variables)))
-        return makeBinding(frameSoFar, cdr(variables), makeList<value>(values));
+        return makeBinding(frameSoFar, cdr(variables), mklist<value>(values));
 
     if (isNil(values)) {
         if (!isNil(variables))

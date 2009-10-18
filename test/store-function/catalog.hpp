@@ -33,15 +33,15 @@ namespace store
 std::string catalog_currencyCode = "USD";
 
 double catalog_convert(const service& currencyConverter, const double price) {
-    return currencyConverter(tuscany::makeList<tuscany::value>("convert", "USD", catalog_currencyCode, price));
+    return currencyConverter(tuscany::mklist<tuscany::value>("convert", "USD", catalog_currencyCode, price));
 }
 
 const tuscany::list<ItemType> catalog_get(const service& currencyConverter) {
-    const std::string currencySymbol = currencyConverter_service(tuscany::makeList<tuscany::value>("getSymbol", catalog_currencyCode));
-    return tuscany::makeList(
-            makeItem("Apple", catalog_currencyCode, currencySymbol, catalog_convert(currencyConverter, 2.99)),
-            makeItem("Orange", catalog_currencyCode, currencySymbol, catalog_convert(currencyConverter, 3.55)),
-            makeItem("Pear", catalog_currencyCode, currencySymbol, catalog_convert(currencyConverter, 1.55)));
+    const std::string currencySymbol = currencyConverter_service(tuscany::mklist<tuscany::value>("getSymbol", catalog_currencyCode));
+    return tuscany::mklist(
+            item("Apple", catalog_currencyCode, currencySymbol, catalog_convert(currencyConverter, 2.99)),
+            item("Orange", catalog_currencyCode, currencySymbol, catalog_convert(currencyConverter, 3.55)),
+            item("Pear", catalog_currencyCode, currencySymbol, catalog_convert(currencyConverter, 1.55)));
 }
 
 const tuscany::value catalog_service(const service& currencyConverter, const tuscany::list<tuscany::value>& args) {

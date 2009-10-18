@@ -208,12 +208,12 @@ void *workerThreadFunc(void *arg) {
 /**
  * Returns a list of worker threads.
  */
-const list<pthread_t> makeWorkerThreads(queue<lambda<bool()> >& queue, const int count) {
+const list<pthread_t> workerThreads(queue<lambda<bool()> >& queue, const int count) {
     if (count == 0)
         return list<pthread_t>();
     pthread_t thread;
     pthread_create(&thread, NULL, workerThreadFunc, &queue);
-    return cons(thread, makeWorkerThreads(queue, count - 1));
+    return cons(thread, workerThreads(queue, count - 1));
 }
 
 /**
@@ -221,7 +221,7 @@ const list<pthread_t> makeWorkerThreads(queue<lambda<bool()> >& queue, const int
  */
 class worker {
 public:
-    worker(int max) : work(queue<lambda<bool()> >(max)), threads(makeWorkerThreads(work, max)) {
+    worker(int max) : work(queue<lambda<bool()> >(max)), threads(workerThreads(work, max)) {
     }
 
 private:

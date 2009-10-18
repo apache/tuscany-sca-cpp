@@ -132,11 +132,11 @@ const value primitiveImplementation(const list<value>& proc) {
 }
 
 template<typename F> const value primitiveProcedure(const F& f) {
-    return makeList<value>(primitiveSymbol, (lambda<value(list<value>&)>)f);
+    return mklist<value>(primitiveSymbol, (lambda<value(list<value>&)>)f);
 }
 
 const list<value> primitiveProcedureNames() {
-    list<value> l = makeList<value>("car");
+    list<value> l = mklist<value>("car");
     l = cons<value>("cdr", l);
     l = cons<value>("cons", l);
     l = cons<value>("list", l);
@@ -153,7 +153,7 @@ const list<value> primitiveProcedureNames() {
 }
 
 const list<value> primitiveProcedureObjects() {
-    list<value> l = makeList(primitiveProcedure(valueCar));
+    list<value> l = mklist(primitiveProcedure(valueCar));
     l = cons(primitiveProcedure(valueCdr), l);
     l = cons(primitiveProcedure(valueCons), l);
     l = cons(primitiveProcedure(valueList), l);

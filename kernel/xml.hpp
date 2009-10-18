@@ -32,6 +32,8 @@
 #include <libxml/globals.h>
 #include <string>
 #include "list.hpp"
+#include "value.hpp"
+#include "element.hpp"
 #include "monad.hpp"
 
 namespace tuscany {
@@ -42,7 +44,7 @@ namespace tuscany {
 class XMLReader {
 public:
     enum TokenType {
-        None = 0, Element = 1, Attribute = 2, EndElement = 15, Identifier = 100, Text = 101, End = 103
+        None = 0, Element = 1, Attribute = 2, Text = 3, EndElement = 15, Identifier = 100, End = 101
     };
 
     XMLReader(xmlTextReaderPtr xml) : xml(xml), tokenType(None) {
@@ -55,24 +57,21 @@ public:
     }
 
     /**
-     * Read the next token and return its type.
+     * Read the next XML token and return its type.
      */
     int read() {
         if (tokenType == End)
             return tokenType;
         if (tokenType == Element) {
             isEmptyElement = xmlTextReaderIsEmptyElement(xml);
-            hasValue = xmlTextReaderHasValue(xml);
             hasAttributes = xmlTextReaderHasAttributes(xml);
             return tokenType = Identifier;
         }
-        if (hasValue && tokenType == Identifier)
-            return tokenType = Text;
-        if (hasAttributes && (tokenType == Identifier || tokenType == Text) && xmlTextReaderMoveToFirstAttribute(xml) == 1)
+        if (tokenType == Identifier && hasAttributes && xmlTextReaderMoveToFirstAttribute(xml) == 1)
             return tokenType = Attribute;
         if (tokenType == Attribute && xmlTextReaderMoveToNextAttribute(xml) == 1)
             return tokenType = Attribute;
-        if (isEmptyElement && (tokenType == Identifier || tokenType == Text || tokenType == Attribute))
+        if (isEmptyElement && (tokenType == Identifier || tokenType == Attribute))
             return tokenType = EndElement;
         if (!xmlTextReaderRead(xml))
             return tokenType = End;
@@ -96,15 +95,13 @@ private:
  */
 const value endElement("<");
 const value startElement(">");
-const value attribute("attribute");
-const value element("element");
 
 /**
  * Read an XML identifier.
  */
 const value readIdentifier(XMLReader& reader) {
     const char* name = (const char*)xmlTextReaderConstName(reader);
-    return value(name);
+    return name;
 }
 
 /**
@@ -112,7 +109,7 @@ const value readIdentifier(XMLReader& reader) {
  */
 const value readText(XMLReader& reader) {
     const char *val = (const char*)xmlTextReaderConstValue(reader);
-    return value(std::string(val));
+    return std::string(val);
 }
 
 /**
@@ -121,7 +118,7 @@ const value readText(XMLReader& reader) {
 const value readAttribute(XMLReader& reader) {
     const char *name = (const char*)xmlTextReaderConstName(reader);
     const char *val = (const char*)xmlTextReaderConstValue(reader);
-    return value(makeList(attribute, value(name), value(std::string(val))));
+    return mklist<value>(attribute, name, std::string(val));
 }
 
 /**
@@ -145,14 +142,14 @@ const value readToken(XMLReader& reader) {
 }
 
 /**
- * Read a list of XML tokens.
+ * Read a list of values from XML tokens.
  */
 const list<value> readList(const list<value>& listSoFar, XMLReader& reader) {
     const value token = readToken(reader);
     if(isNil(token) || endElement == token)
         return reverse(listSoFar);
     if(startElement == token)
-        return readList(cons(value(readList(makeList(element), reader)), listSoFar), reader);
+        return readList(cons<value>(readList(mklist(element), reader), listSoFar), reader);
     return readList(cons(token, listSoFar), reader);
 }
 
@@ -162,7 +159,7 @@ const list<value> readList(const list<value>& listSoFar, XMLReader& reader) {
 const list<value> read(XMLReader& reader) {
     value nextToken = readToken(reader);
     if (startElement == nextToken)
-        return makeList(value(readList(makeList(element), reader)));
+        return mklist<value>(readList(mklist(element), reader));
     return list<value>();
 }
 
@@ -203,64 +200,6 @@ const list<value> readXML(const list<std::string>& ilist) {
 }
 
 /**
- * Returns true if a value is an XML attribute.
- */
-const bool isAttribute(const list<value>& l) {
-    return !isNil(l) && car(l) == attribute;
-}
-
-/**
- * Returns the name of an XML attribute.
- */
-const std::string attributeName(const list<value>& l) {
-    return cadr(l);
-}
-
-/**
- * Returns the text value of an XML attribute.
- */
-const std::string attributeText(const list<value>& l) {
-    return caddr(l);
-}
-
-/**
- * Returns true if a value is an XML element.
- */
-const bool isElement(const list<value>& l) {
-    return !isNil(l) && car(l) == element;
-}
-
-/**
- * Returns the name of an XML element.
- */
-const std::string elementName(const list<value>& l) {
-    return cadr(l);
-}
-
-/**
- * Returns true if an XML element contains text content.
- */
-const bool elementHasText(const list<value>& l) {
-    if (isNil(cddr(l)))
-        return false;
-    return isString(caddr(l));
-}
-
-/**
- * Returns the text content of an XML element.
- */
-const std::string elementText(const list<value>& l) {
-    return caddr(l);
-}
-
-/**
- * Returns the children of an XML element.
- */
-const list<value> elementChildren(const list<value>& l) {
-    return cddr(l);
-}
-
-/**
  * Default encoding used to write XML documents.
  */
 const char* encoding = "UTF-8";
@@ -273,18 +212,16 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
         return true;
 
     // Write an attribute
-    const list<value> token(car(l));
-    if (isAttribute(token)) {
-        if (xmlTextWriterWriteAttribute(xml, (const xmlChar*)attributeName(token).c_str(), (const xmlChar*)attributeText(token).c_str()) < 0)
+    const value token(car(l));
+    if (isTaggedList(token, attribute)) {
+        if (xmlTextWriterWriteAttribute(xml, (const xmlChar*)std::string(attributeName(token)).c_str(), (const xmlChar*)std::string(attributeValue(token)).c_str()) < 0)
             return std::string("xmlTextWriterWriteAttribute failed");
 
-    } else if (isElement(token)) {
+    } else if (isTaggedList(token, element)) {
 
         // Write an element
-        if (xmlTextWriterStartElement(xml, (const xmlChar*)elementName(token).c_str()) < 0)
+        if (xmlTextWriterStartElement(xml, (const xmlChar*)std::string(elementName(token)).c_str()) < 0)
             return std::string("xmlTextWriterStartElement failed");
-        if (elementHasText(token) && xmlTextWriterWriteString(xml, (const xmlChar*)elementText(token).c_str()) < 0)
-            return std::string("xmlTextWriterWriteString failed");
 
         // Write its children
         const failable<bool, std::string> w = writeList(elementChildren(token), xml);
@@ -293,6 +230,12 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
 
         if (xmlTextWriterEndElement(xml) < 0)
             return std::string("xmlTextWriterEndElement failed");
+
+    } else {
+
+        // Write XML text
+        if (xmlTextWriterWriteString(xml, (const xmlChar*)std::string(token).c_str()) < 0)
+            return std::string("xmlTextWriterWriteString failed");
     }
 
     // Go on
@@ -336,7 +279,7 @@ template<typename R> int writeCallback(void *context, const char* buffer, int le
 }
 
 /**
- * Write a list of values as an XML document.
+ * Convert a list of values to an XML document.
  */
 template<typename R> const failable<R, std::string> writeXML(const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
     XMLWriteContext<R> cx(reduce, initial);
@@ -352,13 +295,13 @@ template<typename R> const failable<R, std::string> writeXML(const lambda<R(R, s
     return cx.accum;
 }
 
+/**
+ * Convert a list of values to a list of strings representing an XML document.
+ */
 const list<std::string> writeXMLList(const list<std::string>& listSoFar, const std::string& s) {
     return cons(s, listSoFar);
 }
 
-/**
- * Write a list of values as an XML document represented as a list of strings.
- */
 const failable<list<std::string>, std::string> writeXML(const list<value>& l) {
     const failable<list<std::string>, std::string> ls = writeXML<list<std::string> >(writeXMLList, list<std::string>(), l);
     if (!hasValue(ls))

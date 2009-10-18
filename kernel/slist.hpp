@@ -43,7 +43,7 @@ const list<std::string> tokenize(const std::string& sep, const std::string& str)
                 return list<std::string>();
             const unsigned int i = str.find_first_of(sep, start);
             if (i == std::string::npos)
-                return makeList(str.substr(start));
+                return mklist(str.substr(start));
             return cons(str.substr(start, i - start), tokenize(sep, str, i + 1));
         }
     };
@@ -67,7 +67,7 @@ struct ilistRead{
     }
 };
 
-const list<std::string> makeStreamList(std::istream& is) {
+const list<std::string> streamList(std::istream& is) {
     return ilistRead(is)();
 }
 

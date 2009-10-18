@@ -33,7 +33,7 @@ namespace tuscany {
 
 bool testEnv() {
     Env globalEnv = list<value>();
-    Env env = extendEnvironment(makeList<value>("a"), makeList<value>(1), globalEnv);
+    Env env = extendEnvironment(mklist<value>("a"), mklist<value>(1), globalEnv);
     defineVariable("x", env, env);
     //assert(lookupVariableValue(value("x"), env) == env);
     assert(lookupVariableValue("a", env) == value(1));
@@ -62,13 +62,13 @@ bool testRead() {
     assert(read(is2) == value(123));
 
     std::istringstream is3("(abcd)");
-    assert(read(is3) == makeList(value("abcd")));
+    assert(read(is3) == mklist(value("abcd")));
 
     std::istringstream is4("(abcd xyz)");
-    assert(read(is4) == makeList<value>("abcd", "xyz"));
+    assert(read(is4) == mklist<value>("abcd", "xyz"));
 
     std::istringstream is5("(abcd (xyz tuv))");
-    assert(read(is5) == makeList<value>("abcd", makeList<value>("xyz", "tuv")));
+    assert(read(is5) == mklist<value>("abcd", mklist<value>("xyz", "tuv")));
 
     return true;
 }
@@ -133,7 +133,7 @@ bool testEval() {
 }
 
 bool testEvalExpr() {
-    const value exp = makeList<value>("+", 2, 3);
+    const value exp = mklist<value>("+", 2, 3);
     Env env = setupEnvironment();
     const value r = eval(exp, env);
     assert(r == value(5));
@@ -172,8 +172,5 @@ int main() {
     tuscany::testEvalGC();
 
     std::cout << "OK" << std::endl;
-
-    tuscany::testEvalRun();
-
     return 0;
 }

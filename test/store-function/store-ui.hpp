@@ -33,19 +33,19 @@ namespace store
 {
 
 const tuscany::list<ItemType> storeUI_getCatalog(const service& catalog) {
-    return catalog(tuscany::makeList<tuscany::value>("get"));
+    return catalog(tuscany::mklist<tuscany::value>("get"));
 }
 
 const tuscany::list<ItemType> storeUI_getCart(const service& cart) {
-    return cart(tuscany::makeList<tuscany::value>("getAll"));
+    return cart(tuscany::mklist<tuscany::value>("getAll"));
 }
 
 const double storeUI_getTotal(const service& cart) {
-    return cart(tuscany::makeList<tuscany::value>("getTotal"));
+    return cart(tuscany::mklist<tuscany::value>("getTotal"));
 }
 
 const bool storeUI_post(const service& cart, const ItemType& item) {
-    return cart(tuscany::makeList<tuscany::value>("post", item));
+    return cart(tuscany::mklist<tuscany::value>("post", item));
 }
 
 const tuscany::value storeUI_service(const service& catalog, const service& cart, const tuscany::list<tuscany::value>& args) {

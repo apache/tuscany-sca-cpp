@@ -70,12 +70,12 @@ private:
 /**
  * Return an identity monad from a value.
  */
-template<typename V> const id<V> makeUnit(const V& v) {
+template<typename V> const id<V> mkunit(const V& v) {
     return id<V>(v);
 }
 
 template<typename V> const lambda<id<V>(V)> unit() {
-    return makeUnit<V>;
+    return mkunit<V>;
 }
 
 /**
@@ -136,12 +136,12 @@ private:
 /**
  * Return a maybe monad with a value in it.
  */
-template<typename V> const maybe<V> makeJust(const V& v) {
+template<typename V> const maybe<V> mkjust(const V& v) {
     return maybe<V>(v);
 }
 
 template<typename V> const lambda<maybe<V>(V)> just() {
-    return makeJust<V>;
+    return mkjust<V>;
 }
 
 /**
@@ -222,12 +222,12 @@ private:
 /**
  * Returns a failable monad with a success value in it.
  */
-template<typename V, typename F> const failable<V, F> makeSuccess(const V& v) {
+template<typename V, typename F> const failable<V, F> mksuccess(const V& v) {
     return failable<V, F>(v);
 }
 
 template<typename V, typename F> const lambda<failable<V, F>(V)> success() {
-    return makeSuccess<V, F>;
+    return mksuccess<V, F>;
 }
 
 /**

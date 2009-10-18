@@ -28,6 +28,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include "gc.hpp"
 #include "function.hpp"
 #include "list.hpp"
@@ -145,6 +146,12 @@ public:
         countVValues++;
     }
 
+    value(const list<list<value> >& l) :
+        type(value::List), data(vdata(result(listOfValues(l)))) {
+        countValues++;
+        countVValues++;
+    }
+
     value(const double num) :
         type(value::Number), data(vdata(result(num))) {
         countValues++;
@@ -205,7 +212,32 @@ public:
     }
 
     operator const std::string() const {
-        return str()();
+        switch(type) {
+        case value::List:
+        case value::Lambda:
+            return "";
+        case value::Symbol:
+        case value::String:
+            return str()();
+        case value::Number: {
+            std::ostringstream sos;
+            sos << num()();
+            return sos.str();
+        }
+        case value::Boolean: {
+            if(boo()())
+                return "true";
+            else
+                return "false";
+        }
+        case value::Character: {
+            std::ostringstream sos;
+            sos << chr()();
+            return sos.str();
+        }
+        default:
+            return "";
+        }
     }
 
     operator const double() const {
@@ -226,6 +258,10 @@ public:
 
     operator const list<value>() const {
         return lst()();
+    }
+
+    operator const list<list<value> >() const {
+        return listOfListOfValues(lst()());
     }
 
     operator const lambda<value(list<value>&)>() const {
@@ -270,7 +306,20 @@ private:
         return vdata<value(list<value>&)> ();
     }
 
+    const list<value> listOfValues(const list<list<value> >& l) const {
+        if (isNil(l))
+            return list<value>();
+        return cons<value>(car(l), listOfValues(cdr(l)));
+    }
+
+    const list<list<value> > listOfListOfValues(const list<value>& l) const {
+        if (isNil(l))
+            return list<list<value> >();
+        return cons<list<value> >(list<value>(car(l)), listOfListOfValues(cdr(l)));
+    }
+
 };
+
 
 std::ostream& operator<<(std::ostream& out, const value& v) {
     switch(v.type) {
@@ -329,8 +378,8 @@ const bool isCharacter(const value& value) {
 }
 
 const bool isTaggedList(const value& exp, value tag) {
-    if(isList(exp))
-        return car((list<value> )exp) == tag;
+    if(isList(exp) && !isNil((list<value>)exp))
+        return car((list<value>)exp) == tag;
     return false;
 }
 

@@ -38,9 +38,9 @@
 namespace tuscany
 {
 
-const value rightParenthesis(makeList<value>(")"));
-const value leftParenthesis(makeList<value>("("));
-const value comment(makeList<value>(";"));
+const value rightParenthesis(mklist<value>(")"));
+const value leftParenthesis(mklist<value>("("));
+const value comment(mklist<value>(";"));
 
 const double stringToNumber(const std::string& str) {
     double d;
@@ -121,7 +121,7 @@ const value readToken(std::istream& in) {
 }
 
 const value readQuoted(std::istream& in) {
-    return makeList(quoteSymbol, read(in));
+    return mklist(quoteSymbol, read(in));
 }
 
 const list<value> readList(const list<value>& listSoFar, std::istream& in) {
@@ -147,7 +147,7 @@ const list<char> readIdentifierHelper(const list<char>& listSoFar, std::istream&
 }
 
 const value readIdentifier(const char chr, std::istream& in) {
-    return listToString(readIdentifierHelper(makeList(chr), in)).c_str();
+    return listToString(readIdentifierHelper(mklist(chr), in)).c_str();
 }
 
 const list<char> readStringHelper(const list<char>& listSoFar, std::istream& in) {
@@ -169,7 +169,7 @@ const list<char> readNumberHelper(const list<char>& listSoFar, std::istream& in)
 }
 
 const value readNumber(const char chr, std::istream& in) {
-    return stringToNumber(listToString(readNumberHelper(makeList(chr), in)));
+    return stringToNumber(listToString(readNumberHelper(mklist(chr), in)));
 }
 
 const value read(std::istream& in) {

@@ -67,7 +67,7 @@ static list<value> lambdaBody(const value& exp) {
 }
 
 const value makeProcedure(const list<value>& parameters, const value& body, const Env& env) {
-    return makeList<value>(procedureSymbol, parameters, body, env);
+    return mklist<value>(procedureSymbol, parameters, body, env);
 }
 
 const bool isApply(const value& exp) {
@@ -197,7 +197,7 @@ const bool isIf(const value& exp) {
 }
 
 const value makeIf(value predicate, value consequent, value alternative) {
-    return makeList(ifSymbol, predicate, consequent, alternative);
+    return mklist(ifSymbol, predicate, consequent, alternative);
 }
 
 const value expandClauses(const list<value>& clauses) {
