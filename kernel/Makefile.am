@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = kernel-test xml-test
+noinst_PROGRAMS = kernel-test xsd-test
 
 nobase_include_HEADERS = *.hpp
 
@@ -24,6 +24,5 @@ INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE}
 kernel_test_SOURCES = kernel-test.cpp
 kernel_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
 
-xml_test_SOURCES = xml-test.cpp
-xml_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
-
+xsd_test_SOURCES = xsd-test.cpp
+xsd_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = eval-test
+noinst_PROGRAMS = eval-test eval-shell
 
 datadir=$(prefix)/modules/eval
 nobase_data_DATA = *.xsd
@@ -25,3 +25,5 @@ INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE}
 eval_test_SOURCES = eval-test.cpp
 eval_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
 
+eval_shell_SOURCES = eval-shell.cpp
+eval_shell_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
