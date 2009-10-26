@@ -35,8 +35,8 @@
 #include "value.hpp"
 #include "primitive.hpp"
 
-namespace tuscany
-{
+namespace tuscany {
+namespace eval {
 
 const value rightParenthesis(mklist<value>(")"));
 const value leftParenthesis(mklist<value>("("));
@@ -179,5 +179,6 @@ const value read(std::istream& in) {
     return nextToken;
 }
 
+}
 }
 #endif /* tuscany_eval_read_hpp */

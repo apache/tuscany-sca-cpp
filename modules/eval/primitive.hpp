@@ -31,8 +31,8 @@
 #include "list.hpp"
 #include "value.hpp"
 
-namespace tuscany
-{
+namespace tuscany {
+namespace eval {
 
 const value primitiveSymbol("primitive");
 const value quoteSymbol("'");
@@ -189,5 +189,6 @@ const value makeLambda(const list<value>& parameters, const list<value>& body) {
     return cons(lambdaSymbol, cons<value>(parameters, body));
 }
 
+}
 }
 #endif /* tuscany_eval_primitive_hpp */

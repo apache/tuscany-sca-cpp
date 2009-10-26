@@ -31,10 +31,10 @@
 #include "value.hpp"
 #include "primitive.hpp"
 
-namespace tuscany
-{
+namespace tuscany {
+namespace eval {
 
-typedef value Frame;
+typedef list<value> Frame;
 typedef list<value> Env;
 
 const value trueSymbol("true");
@@ -130,28 +130,37 @@ const value assignmentValue(const value& exp) {
     return car(cdr(cdr((list<value> )exp)));
 }
 
-const Frame addBindingToFrame(const value& var, const value& val, const Frame& frame) {
-    return cons(value(cons(var, frameVariables(frame))), cons(val, frameValues(frame)));
+const bool addBindingToFrame(const value& var, const value& val, Frame& frame) {
+    //frame = cons(value(cons(var, frameVariables(frame))), cons(val, frameValues(frame)));
+    setCar(frame, (value)cons(var, frameVariables(frame)));
+    setCdr(frame, cons(val, frameValues(frame)));
+    return true;
 }
 
-const Env defineVariable(const value& var, const value& val, Env& env) {
-    return cons(addBindingToFrame(var, val, firstFrame(env)), cdr(env));
+const bool defineVariable(const value& var, const value& val, Env& env) {
+    Frame frame = firstFrame(env);
+    addBindingToFrame(var, val, frame);
+    setCar(env, value(frame));
+    return true;
 }
+
+struct environmentReference {
+    const Env env;
+    environmentReference(const Env& env) : env(env) {
+    }
+    const Env& operator()() const {
+        return env;
+    }
+};
 
 const Env extendEnvironment(const list<value>& vars, const list<value>& vals, const Env& baseEnv) {
-//    if(length(vars) == length(vals))
-//    else if(length(vars) < length(vals))
-//        std::cout << "Too many arguments supplied " << vars << " " << vals << "\n";
-//    else
-//        std::cout << "Too few arguments supplied " << vars << " " << vals << "\n";
-//    return baseEnv;
-    return cons(makeFrame(vars, vals), baseEnv);
+    return cons(value(makeFrame(vars, vals)), lambda<list<value>()>(environmentReference(baseEnv)));
 }
 
 const Env setupEnvironment() {
     Env env = extendEnvironment(primitiveProcedureNames(), primitiveProcedureObjects(), theEmptyEnvironment());
-    env = defineVariable(trueSymbol, true, env);
-    env = defineVariable(falseSymbol, false, env);
+    defineVariable(trueSymbol, true, env);
+    defineVariable(falseSymbol, false, env);
     return env;
 }
 
@@ -177,5 +186,6 @@ const value lookupVariableValue(const value& var, const Env& env) {
     return lookupEnvLoop(var, env);
 }
 
+}
 }
 #endif /* tuscany_eval_environment_hpp */

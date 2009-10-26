@@ -32,6 +32,7 @@
 #include <libxml/globals.h>
 #include <string>
 #include "list.hpp"
+#include "slist.hpp"
 #include "value.hpp"
 #include "element.hpp"
 #include "monad.hpp"
@@ -47,7 +48,7 @@ public:
         None = 0, Element = 1, Attribute = 2, Text = 3, EndElement = 15, Identifier = 100, End = 101
     };
 
-    XMLReader(xmlTextReaderPtr xml) : xml(xml), tokenType(None) {
+    XMLReader(xmlTextReaderPtr xml) : xml(xml), tokenType(None), isEmptyElement(false), hasValue(false), hasAttributes(false) {
         xmlTextReaderSetParserProp(xml, XML_PARSER_DEFAULTATTRS, 1);
         xmlTextReaderSetParserProp(xml, XML_PARSER_SUBST_ENTITIES, 1);
     }
@@ -204,9 +205,16 @@ const list<value> readXML(const list<std::string>& ilist) {
  */
 const char* encoding = "UTF-8";
 
+
 /**
  * Write a list of XML element or attribute tokens.
  */
+const list<value> expandElementValues(const value& n, const list<value>& l) {
+    if (isNil(l))
+        return list<value>();
+    return cons<value>(value(cons<value>(element, cons<value>(n, (list<value>)car(l)))), expandElementValues(n, cdr(l)));
+}
+
 const failable<bool, std::string> writeList(const list<value>& l, const xmlTextWriterPtr xml) {
     if (isNil(l))
         return true;
@@ -219,23 +227,50 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
 
     } else if (isTaggedList(token, element)) {
 
-        // Write an element
-        if (xmlTextWriterStartElement(xml, (const xmlChar*)std::string(elementName(token)).c_str()) < 0)
-            return std::string("xmlTextWriterStartElement failed");
+        // Write an element containing a value
+        if (elementHasValue(token)) {
+            const value v = elementValue(token);
+            if (isList(v)) {
 
-        // Write its children
-        const failable<bool, std::string> w = writeList(elementChildren(token), xml);
-        if (!hasValue(w))
-            return w;
+                // Write an element per entry in a list of values
+                const list<value> e = expandElementValues(elementName(token), v);
+                writeList(e, xml);
 
-        if (xmlTextWriterEndElement(xml) < 0)
-            return std::string("xmlTextWriterEndElement failed");
+            } else {
 
+                // Write an element with a single value
+                if (xmlTextWriterStartElement(xml, (const xmlChar*)std::string(elementName(token)).c_str()) < 0)
+                    return std::string("xmlTextWriterStartElement failed");
+
+                // Write its children
+                const failable<bool, std::string> w = writeList(elementChildren(token), xml);
+                if (!hasValue(w))
+                    return w;
+
+                if (xmlTextWriterEndElement(xml) < 0)
+                    return std::string("xmlTextWriterEndElement failed");
+            }
+        }
+        else {
+
+            // Write an element
+            if (xmlTextWriterStartElement(xml, (const xmlChar*)std::string(elementName(token)).c_str()) < 0)
+                return std::string("xmlTextWriterStartElement failed");
+
+            // Write its children
+            const failable<bool, std::string> w = writeList(elementChildren(token), xml);
+            if (!hasValue(w))
+                return w;
+
+            if (xmlTextWriterEndElement(xml) < 0)
+                return std::string("xmlTextWriterEndElement failed");
+        }
     } else {
 
         // Write XML text
         if (xmlTextWriterWriteString(xml, (const xmlChar*)std::string(token).c_str()) < 0)
             return std::string("xmlTextWriterWriteString failed");
+
     }
 
     // Go on

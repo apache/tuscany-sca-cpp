@@ -31,6 +31,7 @@
 #include "eval.hpp"
 
 namespace tuscany {
+namespace eval {
 
 const std::string evalOutputPrompt("; ");
 const std::string evalInputPrompt("=> ");
@@ -57,7 +58,7 @@ const value evalDriverLoop(std::istream& in, std::ostream& out, Env& globalEnv) 
     value input = read(in);
     if (isNil(input))
         return input;
-    const value output = eval(input, globalEnv);
+    const value output = evalApply(input, globalEnv);
     announceOutput(out, evalOutputPrompt);
     userPrint(out, output);
     return evalDriverLoop(in, out, globalEnv);
@@ -70,5 +71,6 @@ const bool evalDriverRun(std::istream& in, std::ostream& out) {
     return true;
 }
 
+}
 }
 #endif /* tuscany_eval_driver_hpp */

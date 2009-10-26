@@ -30,6 +30,7 @@
 #include "driver.hpp"
 
 namespace tuscany {
+namespace eval {
 
 bool testEnv() {
     Env globalEnv = list<value>();
@@ -109,6 +110,11 @@ const std::string testSchemeLambda(
   "(define (testLambda) (if (= 4 (sqrt 2)) (display \"testLambda ok\") (error \"testLambda\"))) "
   "(testLambda)");
 
+const std::string testSchemeForward(
+  "(define (testLambda) (if (= 4 (sqrt 2)) (display \"testForward ok\") (error \"testForward\"))) "
+  "(define sqrt (lambda (x) (* x x))) "
+  "(testLambda)");
+
 bool contains(const std::string& str, const std::string& pattern) {
     return str.find(pattern) != str.npos;
 }
@@ -129,13 +135,14 @@ bool testEval() {
     assert(contains(evalOutput(testSchemeBegin), "testBegin1 ok"));
     assert(contains(evalOutput(testSchemeBegin), "testBegin2 ok"));
     assert(contains(evalOutput(testSchemeLambda), "testLambda ok"));
+    //assert(contains(evalOutput(testSchemeForward), "testForward ok"));
     return true;
 }
 
 bool testEvalExpr() {
     const value exp = mklist<value>("+", 2, 3);
     Env env = setupEnvironment();
-    const value r = eval(exp, env);
+    const value r = evalApply(exp, env);
     assert(r == value(5));
     return true;
 }
@@ -160,16 +167,17 @@ bool testEvalRun() {
 }
 
 }
+}
 
 int main() {
     std::cout << "Testing..." << std::endl;
 
-    tuscany::testEnv();
-    tuscany::testEnvGC();
-    tuscany::testRead();
-    tuscany::testEval();
-    tuscany::testEvalExpr();
-    tuscany::testEvalGC();
+    tuscany::eval::testEnv();
+    tuscany::eval::testEnvGC();
+    tuscany::eval::testRead();
+    tuscany::eval::testEval();
+    tuscany::eval::testEvalExpr();
+    tuscany::eval::testEvalGC();
 
     std::cout << "OK" << std::endl;
     return 0;

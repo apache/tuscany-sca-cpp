@@ -34,6 +34,7 @@
 #include "slist.hpp"
 #include "parallel.hpp"
 #include "value.hpp"
+#include "element.hpp"
 #include "xml.hpp"
 #include "monad.hpp"
 
@@ -67,6 +68,12 @@ bool testLambda() {
     assert(incf(1) == 11);
     assert(mapLambda(incf, 1) == 11);
     assert(mapLambda(inc(10), 1) == 11);
+
+    lambda<int(int)> l;
+    l = incf;
+    assert(l(1) == 11);
+    l = square;
+    assert(l(2) == 4);
     return true;
 }
 
@@ -115,11 +122,23 @@ bool testCons() {
     return true;
 }
 
+bool testSet() {
+    list<int> l = mklist(1, 2, 3);
+    setCar(l, 4);
+    setCdr(l, mklist(5, 6));
+    assert(car(l) == 4);
+    assert(cadr(l) == 5);
+    assert(caddr(l) == 6);
+    assert(isNil(cdddr(l)));
+    return true;
+}
+
 bool testListGC() {
     resetLambdaCounters();
     resetListCounters();
     countElements = 0;
     testCons();
+    testSet();
     assert(countLambdas == 0);
     assert(countlists == 0);
     assert(countElements == 0);
@@ -133,7 +152,7 @@ bool testOut() {
 
     std::ostringstream os2;
     os2 << mklist(1, 2, 3);
-    assert(os2.str() == "(1, (2, (3, ())))");
+    assert(os2.str() == "(1, 2, 3)");
     return true;
 }
 
@@ -329,18 +348,6 @@ bool testValueGC() {
     return true;
 }
 
-bool testElement() {
-    const list<value> ad = mklist<value>(mklist<value>(attribute, "city", std::string("san francisco")), mklist<value>(attribute, "state", std::string("ca")));
-    const list<value> ac = mklist<value>(mklist<value>(attribute, "id", std::string("1234")), mklist<value>(attribute, "balance", 1000));
-    const list<value> cr = mklist<value>(mklist<value> (attribute, "name", std::string("jdoe")), cons<value>(element, cons<value>("address", ad)), cons<value>(element, cons<value>("account", ac)));
-    const list<value> c = mklist<value>(cons<value>(element, cons<value>("customer", cr)));
-
-    const list<value> v = elementsToValues(c);
-    const list<value> e = valuesToElements(v);
-    assert(e == c);
-    return true;
-}
-
 double fib_aux(double n, double a, double b) {
     if(n == 0.0)
         return a;
@@ -487,8 +494,11 @@ const std::string customerXML =
 "<name>jdoe</name>"
 "<address><city>san francisco</city><state>ca</state></address>"
 "<account><id>1234</id><balance>1000</balance></account>"
+"<account><id>6789</id><balance>2000</balance></account>"
+"<account><id>4567</id><balance>3000</balance></account>"
 "</customer>"
 "\n";
+
 
 const bool isName(const value& token) {
     return isTaggedList(token, attribute) && attributeName(token) == "name";
@@ -530,6 +540,44 @@ bool testWriteXML() {
         std::ostringstream os;
         writeXML<std::ostringstream*>(xmlWriter, &os, c);
         assert(os.str() == currencyXML);
+    }
+    return true;
+}
+
+bool testElement() {
+    {
+        const list<value> ad = mklist<value>(mklist<value>("city", std::string("san francisco")), mklist<value>("state", std::string("ca")));
+        const list<value> ac1 = mklist<value>(mklist<value>("id", std::string("1234")), mklist<value>("balance", 1000));
+        const list<value> ac2 = mklist<value>(mklist<value>("id", std::string("6789")), mklist<value>("balance", 2000));
+        const list<value> ac3 = mklist<value>(mklist<value>("id", std::string("4567")), mklist<value>("balance", 3000));
+        {
+            const list<value> c = mklist<value>(mklist<value>("customer", mklist<value>("name", std::string("jdoe")), cons<value>("address", ad), mklist<value>("account", mklist<value>(ac1, ac2, ac3))));
+            const list<value> e = valuesToElements(c);
+            const list<value> v = elementsToValues(e);
+            assert(v == c);
+
+            std::ostringstream os;
+            writeXML<std::ostringstream*>(xmlWriter, &os, e);
+            assert(os.str() == customerXML);
+        }
+        {
+            const list<value> c = mklist<value>(mklist<value>("customer", mklist<value>("name", std::string("jdoe")), cons<value>("address", ad), cons<value>("account", ac1), cons<value>("account", ac2), cons<value>("account", ac3)));
+            const list<value> e = valuesToElements(c);
+            const list<value> v = elementsToValues(e);
+
+            std::ostringstream os;
+            writeXML<std::ostringstream*>(xmlWriter, &os, e);
+            assert(os.str() == customerXML);
+        }
+    }
+    {
+        std::istringstream is(customerXML);
+        const list<value> c = readXML(streamList(is));
+        const list<value> v = elementsToValues(c);
+        const list<value> e = valuesToElements(v);
+        std::ostringstream os;
+        writeXML<std::ostringstream*>(xmlWriter, &os, e);
+        assert(os.str() == customerXML);
     }
     return true;
 }
@@ -644,6 +692,7 @@ int main() {
     tuscany::testLambda();
     tuscany::testLambdaGC();
     tuscany::testCons();
+    tuscany::testSet();
     tuscany::testListGC();
     tuscany::testOut();
     tuscany::testEquals();

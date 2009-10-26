@@ -35,6 +35,7 @@
 #include "monad.hpp"
 
 namespace tuscany {
+namespace json {
 
 /**
  * Report JSON errors.
@@ -155,7 +156,7 @@ const list<value> jsPropertiesToValues(const JSONContext& cx, const list<value>&
     jsval idv;
     JS_IdToValue(cx, id, &idv);
     if(JSVAL_IS_STRING(idv)) {
-        const value type = isList(val)? element : attribute;
+        const value type = isList(val)? element : element;
         return jsPropertiesToValues(cx, cons<value> (mklist<value> (type, JS_GetStringBytes(JSVAL_TO_STRING(idv)), val), propertiesSoFar), o, i);
     }
     return jsPropertiesToValues(cx, cons(val, propertiesSoFar), o, i);
@@ -194,25 +195,25 @@ const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
 /**
  * Consumes JSON strings and populates a JS object.
  */
-failable<bool, std::string> consumeJSON(const JSONContext& cx, JSONParser* parser, const list<std::string>& ilist) {
+failable<bool, std::string> consume(const JSONContext& cx, JSONParser* parser, const list<std::string>& ilist) {
     if (isNil(ilist))
         return true;
     JSString* jstr = JS_NewStringCopyZ(cx, car(ilist).c_str());
     if(!JS_ConsumeJSONText(cx, parser, JS_GetStringChars(jstr), JS_GetStringLength(jstr)))
         return "JS_ConsumeJSONText failed";
-    return consumeJSON(cx, parser, cdr(ilist));
+    return consume(cx, parser, cdr(ilist));
 }
 
 /**
  * Convert a list of strings representing a JSON document to a list of values.
  */
-const failable<list<value>, std::string> readJSON(const JSONContext& cx, const list<std::string>& ilist) {
+const failable<list<value>, std::string> read(const JSONContext& cx, const list<std::string>& ilist) {
     jsval val;
     JSONParser* parser = JS_BeginJSONParse(cx, &val);
     if(parser == NULL)
         return std::string("JS_BeginJSONParse failed");
 
-    const failable<bool, std::string> consumed = consumeJSON(cx, parser, ilist);
+    const failable<bool, std::string> consumed = consume(cx, parser, ilist);
 
     if(!JS_FinishJSONParse(cx, parser, JSVAL_NULL))
         return std::string("JS_FinishJSONParse failed");
@@ -235,6 +236,36 @@ JSObject* valuesToJSElements(const JSONContext& cx, JSObject* a, const list<valu
 }
 
 /**
+ * Returns true if a list represents a JS array.
+ */
+const bool isJSArray(const list<value>& l) {
+    if(isNil(l))
+        return false;
+    const value v = car(l);
+    if(isList(v)) {
+        const list<value> p = v;
+        if(isSymbol(car(p)))
+            return false;
+    }
+    return true;
+}
+
+
+
+/**
+ * Converts a list of values to JS properties.
+ */
+JSObject* valuesToJSProperties(const JSONContext& cx, JSObject* o, const list<value>& l) {
+    const jsval valueToJSVal(const JSONContext& cx, const value& val);
+    if(isNil(l))
+        return o;
+    const list<value> p = car(l);
+    jsval pv = valueToJSVal(cx, caddr(p));
+    JS_SetProperty(cx, o, ((std::string)cadr(p)).c_str(), &pv);
+    return valuesToJSProperties(cx, o, cdr(l));
+}
+
+/**
  * Converts a value to a JS val.
  */
 const jsval valueToJSVal(const JSONContext& cx, const value& val) {
@@ -250,7 +281,9 @@ const jsval valueToJSVal(const JSONContext& cx, const value& val) {
         return DOUBLE_TO_JSVAL(JS_NewDouble(cx, (double)val));
     }
     case value::List: {
-        return OBJECT_TO_JSVAL(valuesToJSElements(cx, JS_NewArrayObject(cx, 0, NULL), val, 0));
+        if (isJSArray(val))
+            return OBJECT_TO_JSVAL(valuesToJSElements(cx, JS_NewArrayObject(cx, 0, NULL), val, 0));
+        return OBJECT_TO_JSVAL(valuesToJSProperties(cx, JS_NewObject(cx, NULL, NULL, NULL), val));
     }
     default: {
         return JSVAL_VOID;
@@ -297,9 +330,9 @@ const failable<bool, std::string> writeList(const JSONContext& cx, const list<va
 /**
  * Context passed to the JSON write callback function.
  */
-template<typename R> class JSONWriteContext {
+template<typename R> class WriteContext {
 public:
-    JSONWriteContext(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& accum) : cx(cx), reduce(reduce), accum(accum) {
+    WriteContext(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& accum) : cx(cx), reduce(reduce), accum(accum) {
     }
     const JSONContext& cx;
     const lambda<R(R, std::string)> reduce;
@@ -310,7 +343,7 @@ public:
  * Called by JS_Stringify to write JSON out.
  */
 template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *data) {
-    JSONWriteContext<R>& wcx = *(static_cast<JSONWriteContext<R>*> (data));
+    WriteContext<R>& wcx = *(static_cast<WriteContext<R>*> (data));
     JSString* jstr = JS_NewUCStringCopyN(wcx.cx, buf, len);
     wcx.accum = wcx.reduce(wcx.accum, std::string(JS_GetStringBytes(jstr), JS_GetStringLength(jstr)));
     return JS_TRUE;
@@ -319,14 +352,14 @@ template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *d
 /**
  * Convert a list of values to a JSON document.
  */
-template<typename R> const failable<R, std::string> writeJSON(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> write(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
     JSObject* o = JS_NewObject(cx, NULL, NULL, NULL);
     jsval val = OBJECT_TO_JSVAL(o);
     const failable<bool, std::string> w = writeList(cx, l, o);
     if (!hasValue(w))
         return std::string(w);
 
-    JSONWriteContext<R> wcx(cx, reduce, initial);
+    WriteContext<R> wcx(cx, reduce, initial);
     if (!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx))
         return std::string("JS_Stringify failed");
     return wcx.accum;
@@ -335,17 +368,18 @@ template<typename R> const failable<R, std::string> writeJSON(const JSONContext&
 /**
  * Convert a list of values to a list of strings representing a JSON document.
  */
-const list<std::string> writeJSONList(const list<std::string>& listSoFar, const std::string& s) {
+const list<std::string> writeStrings(const list<std::string>& listSoFar, const std::string& s) {
     return cons(s, listSoFar);
 }
 
-const failable<list<std::string>, std::string> writeJSON(const JSONContext& cx, const list<value>& l) {
-    const failable<list<std::string>, std::string> ls = writeJSON<list<std::string> >(cx, writeJSONList, list<std::string>(), l);
+const failable<list<std::string>, std::string> write(const JSONContext& cx, const list<value>& l) {
+    const failable<list<std::string>, std::string> ls = write<list<std::string> >(cx, writeStrings, list<std::string>(), l);
     if (!hasValue(ls))
         return ls;
     return reverse(list<std::string>(ls));
 }
 
+}
 }
 
 #endif /* tuscany_json_hpp */

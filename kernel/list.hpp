@@ -114,7 +114,10 @@ public:
 
     template<typename X> friend const bool isNil(const list<X>& p);
     template<typename X> friend const X car(const list<X>& p);
-    template<typename X> friend list<X> const cdr(const list<X>& p);
+    template<typename X> friend const list<X> cdr(const list<X>& p);
+    template<typename X> friend const bool setCar(list<X>& p, const X& car);
+    template<typename X> friend const bool setCdr(list<X>& p, const list<X>& cdr);
+    template<typename X> friend const bool setCdr(list<X>& p, const lambda<list<X> ()>& cdr);
 
 private:
     T car;
@@ -131,10 +134,19 @@ template<typename T> const bool isNil(const list<T>& p) {
 /**
  * Write a list to an output stream.
  */
-template<typename X> std::ostream& operator<<(std::ostream& out, const list<X>& l) {
+template<typename T> std::ostream& operator<<(std::ostream& out, const list<T>& l) {
     if(isNil(l))
         return out << "()";
-    return out << "(" << car(l) << ", " << cdr(l) << ")";
+    out << "(";
+    list<T> ml = l;
+    while(true) {
+        out << car(ml);
+        ml = cdr(ml);
+        if (isNil(ml))
+            break;
+        out << ", ";
+    }
+    return out << ")";
 }
 
 /**
@@ -194,6 +206,13 @@ template<typename T> const list<T> mklist(const T& a, const T& b, const T& c, co
 }
 
 /**
+ * Construct a list of six values.
+ */
+template<typename T> const list<T> mklist(const T& a, const T& b, const T& c, const T& d, const T& e, const T& f) {
+    return cons(a, cons(b, cons(c, cons(d, cons(e, mklist(f))))));
+}
+
+/**
  * Returns the car of a list.
  */
 template<typename T> const T car(const list<T>& p) {
@@ -203,9 +222,34 @@ template<typename T> const T car(const list<T>& p) {
 /**
  * Returns the cdr of a list.
  */
-template<typename T> list<T> const cdr(const list<T>& p) {
+template<typename T> const list<T> cdr(const list<T>& p) {
     return p.cdr();
 }
+
+/**
+ * Sets the car of a list.
+ */
+template<typename T> const bool setCar(list<T>& p, const T& car) {
+    p.car = car;
+    return true;
+}
+
+/**
+ * Sets the cdr of a list.
+ */
+template<typename T> const bool setCdr(list<T>& p, const list<T>& c) {
+    p.cdr = result(c);
+    return true;
+}
+
+/**
+ * Sets the cdr of a list to a lambda function.
+ */
+template<typename T> const bool setCdr(list<T>& p, const lambda<list<T> ()>& cdr) {
+    p.cdr = cdr;
+    return true;
+}
+
 
 /**
  * Returns the car of the cdr of a list.
@@ -413,25 +457,6 @@ template<typename T> const list<T> unzipValues(const list<list<T> >& l) {
 
 template<typename T> const list<list<T> > unzip(const list<list<T> >& l) {
     return mklist<list<T> >(unzipKeys(l), unzipValues(l));
-}
-
-/**
- * Pretty print a list.
- */
-template<typename T> std::ostream& print(const list<T>& l, std::ostream& os) {
-    os << "(";
-    if (!isNil(l)) {
-        list<T> ml = l;
-        while(true) {
-            os << car(ml);
-            ml = cdr(ml);
-            if (isNil(ml))
-                break;
-            os << ", ";
-        }
-    }
-    os << ")";
-    return os;
 }
 
 }

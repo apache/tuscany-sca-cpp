@@ -33,10 +33,10 @@
 #include "read.hpp"
 #include "environment.hpp"
 
-namespace tuscany
-{
+namespace tuscany {
+namespace eval {
 
-const value eval(const value& exp, Env& env);
+const value evalApply(const value& exp, Env& env);
 
 const value compoundProcedureSymbol("compound-procedure");
 const value procedureSymbol("procedure");
@@ -89,7 +89,7 @@ const list<value> operands(const value& exp) {
 const list<value> listOfValues(const list<value> exps, Env& env) {
     if(isNil(exps))
         return list<value> ();
-    return cons(eval(car(exps), env), listOfValues(cdr(exps), env));
+    return cons(evalApply(car(exps), env), listOfValues(cdr(exps), env));
 }
 
 const value applyOperat(const value& exp) {
@@ -134,8 +134,8 @@ const value makeBegin(const list<value> seq) {
 
 const value evalSequence(const list<value>& exps, Env& env) {
     if(isLastExp(exps))
-        return eval(firstExp(exps), env);
-    eval(firstExp(exps), env);
+        return evalApply(firstExp(exps), env);
+    evalApply(firstExp(exps), env);
     return evalSequence(restExp(exps), env);
 }
 
@@ -219,17 +219,17 @@ value condToIf(const value& exp) {
 }
 
 value evalIf(const value& exp, Env& env) {
-    if(isTrue(eval(ifPredicate(exp), env)))
-        return eval(ifConsequent(exp), env);
-    return eval(ifAlternative(exp), env);
+    if(isTrue(evalApply(ifPredicate(exp), env)))
+        return evalApply(ifConsequent(exp), env);
+    return evalApply(ifAlternative(exp), env);
 }
 
 const value evalDefinition(const value& exp, Env& env) {
-    env = defineVariable(definitionVariable(exp), eval(definitionValue(exp), env), env);
+    defineVariable(definitionVariable(exp), evalApply(definitionValue(exp), env), env);
     return definitionVariable(exp);
 }
 
-const value eval(const value& exp, Env& env) {
+const value evalApply(const value& exp, Env& env) {
     if(isSelfEvaluating(exp))
         return exp;
     if(isQuoted(exp))
@@ -241,22 +241,23 @@ const value eval(const value& exp, Env& env) {
     if(isBegin(exp))
         return evalSequence(beginActions(exp), env);
     if(isCond(exp))
-        return eval(condToIf(exp), env);
+        return evalApply(condToIf(exp), env);
     if(isLambda(exp))
         return makeProcedure(lambdaParameters(exp), lambdaBody(exp), env);
     if(isVariable(exp))
         return lookupVariableValue(exp, env);
     if(isApply(exp)) {
-        list<value> applyOperandValues = eval(applyOperand(exp), env);
-        return applyProcedure(eval(applyOperat(exp), env), applyOperandValues);
+        list<value> applyOperandValues = evalApply(applyOperand(exp), env);
+        return applyProcedure(evalApply(applyOperat(exp), env), applyOperandValues);
     }
     if(isApplication(exp)) {
         list<value> operandValues = listOfValues(operands(exp), env);
-        return applyProcedure(eval(operat(exp), env), operandValues);
+        return applyProcedure(evalApply(operat(exp), env), operandValues);
     }
     std::cout << "Unknown expression type " << exp << "\n";
     return value();
 }
 
+}
 }
 #endif /* tuscany_eval_eval_hpp */

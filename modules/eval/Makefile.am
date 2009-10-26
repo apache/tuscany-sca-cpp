@@ -27,3 +27,6 @@ eval_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
 
 eval_shell_SOURCES = eval-shell.cpp
 eval_shell_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
+
+TESTS = eval-test
+

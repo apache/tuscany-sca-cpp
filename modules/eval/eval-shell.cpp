@@ -30,6 +30,6 @@
 #include "driver.hpp"
 
 int main() {
-    tuscany::evalDriverRun(std::cin, std::cout);
+    tuscany::eval::evalDriverRun(std::cin, std::cout);
     return 0;
 }

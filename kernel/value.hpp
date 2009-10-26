@@ -324,24 +324,24 @@ private:
 std::ostream& operator<<(std::ostream& out, const value& v) {
     switch(v.type) {
     case value::List:
-        return out << "List::" << v.lst()();
+        return out << v.lst()();
     case value::Lambda:
-        return out << "Lambda::" << v.func();
+        return out << "lambda::" << v.func();
     case value::Symbol:
-        return out << "Symbol::" << v.str()();
+        return out << "symbol::" << v.str()();
     case value::String:
-        return out << "String::" << '\"' << v.str()() << '\"';
+        return out << "string::" << '\"' << v.str()() << '\"';
     case value::Number:
-        return out << "Number::" << v.num()();
+        return out << "number::" << v.num()();
     case value::Boolean:
         if(v.boo()())
-            return out << "Boolean::" << "true";
+            return out << "bool::" << "true";
         else
-            return out << "Boolean::" << "false";
+            return out << "bool::" << "false";
     case value::Character:
-        return out << "Character::" << v.chr()();
+        return out << "char::" << v.chr()();
     default:
-        return out << "Undefined";
+        return out << "undefined";
     }
 }
 
@@ -381,29 +381,6 @@ const bool isTaggedList(const value& exp, value tag) {
     if(isList(exp) && !isNil((list<value>)exp))
         return car((list<value>)exp) == tag;
     return false;
-}
-
-/**
- * Pretty print a list of values.
- */
-std::ostream& print(const list<value>& l, std::ostream& os) {
-    os << "(";
-    if (!isNil(l)) {
-        list<value> ml = l;
-        while(true) {
-            const value v = car(ml);
-            if (isList(v))
-                print(list<value>(v), os);
-            else
-                os << v;
-            ml = cdr(ml);
-            if (isNil(ml))
-                break;
-            os << ", ";
-        }
-    }
-    os << ")";
-    return os;
 }
 
 }

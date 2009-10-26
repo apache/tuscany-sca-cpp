@@ -60,6 +60,13 @@ const value elementName(const list<value>& l) {
 }
 
 /**
+ * Returns true if an element has children.
+ */
+const bool elementHasChildren(const list<value>& l) {
+    return !isNil(cddr(l));
+}
+
+/**
  * Returns the children of an element.
  */
 const list<value> elementChildren(const list<value>& l) {
@@ -70,15 +77,11 @@ const list<value> elementChildren(const list<value>& l) {
  * Returns true if an element has a value.
  */
 const value elementHasValue(const list<value>& l) {
-    if (isNil(cddr(l)))
-        return false;
     const list<value> r = reverse(l);
-    if(isList(car(r))) {
-        const list<value> v = car(r);
-        if(isSymbol(car(v))) {
+    if (isSymbol(car(r)))
+        return false;
+    if(isList(car(r)) && isSymbol(car<value>(car(r))))
             return false;
-        }
-    }
     return true;
 }
 
@@ -90,36 +93,122 @@ const value elementValue(const list<value>& l) {
 }
 
 /**
- * Converts a list of elements to a list of values.
+ * Convert an element to a value.
  */
-const list<value> elementsToValues(const list<value>& e) {
-    if (isNil(e))
-        return list<value>();
-    const value t = car(e);
+const bool elementToValueIsList(const value& v) {
+    if (!isList(v))
+        return false;
+    const list<value> l = v;
+    if(isNil(l))
+        return true;
+    return isList(car(l));
+}
+
+const value elementToValue(const value& t) {
+    const list<value> elementsToValues(const list<value>& e);
+
+    // Convert an attribute
     if (isTaggedList(t, attribute))
-        return cons<value>(mklist(attributeName(t), attributeValue(t)), elementsToValues(cdr(e)));
+        return mklist(attributeName(t), attributeValue(t));
+
+    // Convert an element
     if (isTaggedList(t, element)) {
-        if (elementHasValue(t))
-            return cons<value>(mklist(elementName(t), elementValue(t)), elementsToValues(cdr(e)));
-        return cons<value>(cons(elementName(t), elementsToValues(elementChildren(t))), elementsToValues(cdr(e)));
+
+        // Convert an element's value
+        if (elementHasValue(t)) {
+
+            // Convert a single value
+            if (!elementToValueIsList(elementValue(t)))
+                return mklist(elementName(t), elementValue(t));
+
+            // Convert a list value
+            return cons(elementName(t), mklist<value>(elementsToValues(elementValue(t))));
+        }
+
+        // Convert an element's children
+        return cons(elementName(t), elementsToValues(elementChildren(t)));
     }
-    return cons(t, elementsToValues(cdr(e)));
+
+    // Convert a value
+    if (!isList(t))
+        return t;
+    return elementsToValues(t);
 }
 
 /**
- * Converts a list of values to a list of elements.
+ * Convert a list of elements to a list of values.
  */
-const list<value> valuesToElements(const list<value>& e) {
+const bool elementToValueIsSymbol(const value& v) {
+    if (!isList(v))
+        return false;
+    const list<value> l = v;
+    if (isNil(l))
+        return false;
+    if (!isSymbol(car(l)))
+        return false;
+    return true;
+}
+
+const list<value> elementToValueGroupValues(const value& v, const list<value>& l) {
+    if (isNil(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l))) {
+        return cons(v, l);
+    }
+    if (car<value>(car(l)) != car<value>(v)) {
+        return cons(v, l);
+    }
+    if (!elementToValueIsList(cadr<value>(car(l)))) {
+        const value g = mklist<value>(car<value>(v), mklist<value>(cdr<value>(v), cdr<value>(car(l))));
+        return elementToValueGroupValues(g, cdr(l));
+    }
+    const value g = mklist<value>(car<value>(v), cons<value>(cdr<value>(v), (list<value>)cadr<value>(car(l))));
+    return elementToValueGroupValues(g, cdr(l));
+
+}
+
+const list<value> elementsToValues(const list<value>& e) {
     if (isNil(e))
         return list<value>();
-    const value t = car(e);
-    if (isList(t)) {
+    const value v = elementToValue(car(e));
+    const list<value> n = elementsToValues(cdr(e));
+    return elementToValueGroupValues(elementToValue(car(e)), elementsToValues(cdr(e)));
+}
+
+/**
+ * Convert a value to an element.
+ */
+const value valueToElement(const value& t) {
+    const list<value> valuesToElements(const list<value>& l);
+
+    // Convert a name value pair
+    if (isList(t) && isSymbol(car<value>(t))) {
+        const value n = car<value>(t);
         const value v = cadr<value>(t);
+
+        // Convert a single value
         if (!isList(v))
-            return cons<value>(mklist(attribute, car<value>(t), v), valuesToElements(cdr(e)));
-        return cons<value>(cons(element, cons(car<value>(t), valuesToElements(cdr<value>(t)))), valuesToElements(cdr(e)));
+            return mklist(element, n, v);
+
+        // Convert a list value
+        if (!isSymbol(car<value>(v)))
+            return cons(element, cons(n, mklist<value>(valuesToElements(v))));
+
+        // Convert a nested name value pair value
+        return cons(element, cons(n, valuesToElements(cdr<value>(t))));
     }
-    return cons(t, valuesToElements(cdr(e)));
+
+    // Convert a value
+    if (!isList(t))
+        return t;
+    return valuesToElements(t);
+}
+
+/**
+ * Convert a list of values to a list of elements.
+ */
+const list<value> valuesToElements(const list<value>& l) {
+    if (isNil(l))
+        return list<value>();
+    return cons<value>(valueToElement(car(l)), valuesToElements(cdr(l)));
 }
 
 /**
@@ -130,19 +219,19 @@ struct selectorLambda {
     const list<value> select;
     selectorLambda(const list<value>& s) : select(s) {
     }
-    const bool eval(const list<value>& s, const list<value> v) const {
+    const bool evalApply(const list<value>& s, const list<value> v) const {
         if (isNil(s))
             return true;
         if (isNil(v))
             return false;
         if (car(s) != car(v))
             return false;
-        return eval(cdr(s), cdr(v));
+        return evalApply(cdr(s), cdr(v));
     }
     const bool operator()(const value& v) const {
         if (!isList(v))
             return false;
-        return eval(select, v);
+        return evalApply(select, v);
     }
 };
 

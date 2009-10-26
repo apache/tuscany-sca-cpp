@@ -139,7 +139,7 @@ public:
 
     const lambda& operator=(const lambda& l) {
         if (this == &l)
-        return *this;
+            return *this;
         callable = l.callable;
         return *this;
     }
@@ -150,7 +150,7 @@ public:
 
     const bool operator==(const lambda& l) const {
         if (this == &l)
-        return true;
+            return true;
         return callable == l.callable;
     }
 
