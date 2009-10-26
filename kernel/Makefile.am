@@ -26,3 +26,6 @@ kernel_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
 
 xsd_test_SOURCES = xsd-test.cpp
 xsd_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
+
+TESTS = kernel-test
+

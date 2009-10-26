@@ -52,6 +52,7 @@
 #include "value.hpp"
 #include "element.hpp"
 #include "monad.hpp"
+#include "../atom/atom.hpp"
 #include "../json/json.hpp"
 #include "../eval/driver.hpp"
 
@@ -60,6 +61,7 @@ extern module AP_MODULE_DECLARE_DATA mod_tuscany;
 }
 
 namespace tuscany {
+namespace httpd {
 
 /**
  * Server configuration.
@@ -106,11 +108,34 @@ const std::string implementation(request_rec* r) {
 /**
  * Returns an HTTP request path as a list of strings.
  */
-const list<std::string> path(const request_rec* r) {
+const list<std::string> pathTokens(const request_rec* r) {
     const char* p = r->path_info;
     if (p == NULL || p[0] == '\0')
         return list<std::string>();
     return tokenize("/", p + 1);
+}
+
+const list<value> pathValues(const list<std::string>& l) {
+    if (isNil(l))
+        return list<value>();
+    return cons<value>(car(l), pathValues(cdr(l)));
+}
+
+const list<value> path(const request_rec* r) {
+    return pathValues(pathTokens(r));
+}
+
+/**
+ * Return the content type of a request.
+ */
+const char* optional(const char* s) {
+    if (s == NULL)
+        return "(null)";
+    return s;
+}
+
+const std::string contentType(const request_rec* r) {
+    return optional(apr_table_get(r->headers_in, "Content-Type"));
 }
 
 /**
@@ -123,12 +148,6 @@ int logHeader(void* r, const char* key, const char* value) {
     return 1;
 }
 
-const char* optional(const char* s) {
-    if (s == NULL)
-        return "(null)";
-    return s;
-}
-
 const bool logRequest(request_rec* r) {
     std::cout << "mod-tuscany..." << std::endl;
     std::cout << "tuscany home: " << home(r) << std::endl;
@@ -137,23 +156,49 @@ const bool logRequest(request_rec* r) {
     std::cout << "protocol: " << optional(r->protocol) << std::endl;
     std::cout << "method: " << optional(r->method) << std::endl;
     std::cout << "method number: " << r->method_number << std::endl;
-    std::cout << "content type: " << optional(apr_table_get(r->headers_in, "Content-Type")) << std::endl;
+    std::cout << "content type: " << contentType(r) << std::endl;
     std::cout << "content encoding: " << optional(r->content_encoding) << std::endl;
     apr_table_do(logHeader, r, r->headers_in, NULL);
     std::cout << "uri: " << optional(r->uri) << std::endl;
     std::cout << "path info: " << optional(r->path_info) << std::endl;
-    std::cout << "path: " << path(r) << std::endl;
+    std::cout << "path: " << pathTokens(r) << std::endl;
     std::cout << "args: " << optional(r->args) << std::endl;
     std::cout.flush();
     return true;
 }
 
-const value evalLoop(std::istream& is, const value& req, Env& globalEnv) {
-    value in = read(is);
+/**
+ * Evaluate an expression against a component implementation.
+ */
+const value evalExprLoop(std::istream& is, const value& req, eval::Env& globalEnv) {
+    value in = eval::read(is);
     if (isNil(in))
-        return eval(req, globalEnv);
-    eval(in, globalEnv);
-    return evalLoop(is, req, globalEnv);
+        return eval::evalApply(req, globalEnv);
+    eval::evalApply(in, globalEnv);
+    return evalExprLoop(is, req, globalEnv);
+}
+
+const failable<value, int> evalExpr(const value& expr, const std::string& contrib, const std::string& impl) {
+    // Setup the evaluator
+    eval::Env globalEnv = eval::setupEnvironment();
+    std::ostringstream nullos;
+    eval::setupEvalOut(nullos);
+
+    // Retrieve the component implementation
+    const std::string path = contrib + impl;
+    std::ifstream is(path.c_str(), std::ios_base::in);
+    if (is.fail() || is.bad())
+        return HTTP_NOT_FOUND;
+
+    // Evaluate the expr
+    std::cout<< "expr: " << expr << std::endl;
+    std::cout.flush();
+    const value val = evalExprLoop(is, expr, globalEnv);
+    std::cout<< "val: " << val << std::endl;
+    std::cout.flush();
+    if (isNil(val))
+        return HTTP_INTERNAL_SERVER_ERROR;
+    return val;
 }
 
 /**
@@ -178,64 +223,130 @@ const list<list<value> > queryArgs(const request_rec* r) {
 const list<value> queryParams(list<list<value> > a) {
     if (isNil(a))
         return list<value>();
-    if (car(a) == value("id") || car(a) == value("method"))
+    const list<value> p = car(a);
+    if (car(p) == value("id") || car(p) == value("method"))
         return queryParams(cdr(a));
-    return cons(cadr(car(a)), queryParams(cdr(a)));
+    return cons(cadr(p), queryParams(cdr(a)));
 }
 
 /**
- * Handle an HTTP GET request.
+ * Convert a value to a JSON result.
+ */
+const failable<list<std::string>, int> jsonResult(json::JSONContext& cx, const value& id, const failable<value, int>& val) {
+    if (!hasValue(val))
+        return int(val);
+    const list<value> r = mklist<value>(mklist<value>("id", id), mklist<value>("result", val));
+    failable<list<std::string>, std::string> ls = json::write(cx, valuesToElements(r));
+    if (!hasValue(ls))
+        return HTTP_INTERNAL_SERVER_ERROR;
+    std::cout<< "content: " << std::endl;
+    write(ls, std::cout);
+    std::cout<< std::endl;
+    std::cout.flush();
+    return list<std::string>(ls);
+}
+
+/**
+ * Convert a value to an ATOM entry.
+ */
+const list<value> feedEntryResult(const list<value> e) {
+    return cons(car(e), cons(cadr(e), valuesToElements(mklist<value>(cons<value>("item", (list<value>)caddr(e))))));
+}
+
+/**
+ * Convert a value to an ATOM feed.
+ */
+const list<value> feedEntriesResults(const list<value> e) {
+    if (isNil(e))
+        return list<value>();
+    return cons<value>(feedEntryResult(car(e)), feedEntriesResults(cdr(e)));
+}
+
+const failable<list<std::string>, int> feedResult(const failable<value, int>& val) {
+    if (!hasValue(val))
+        return int(val);
+    const value v = val;
+    list<value> f = cons(car<value>(v), cons<value>(cadr<value>(v), feedEntriesResults(cddr<value>(v))));
+    failable<list<std::string>, std::string> ls = atom::writeFeed(f);
+    if (!hasValue(ls))
+        return HTTP_INTERNAL_SERVER_ERROR;
+    return list<std::string>(ls);
+}
+
+/**
+ * Convert a value to an ATOM entry result.
+ */
+const failable<list<std::string>, int> entryResult(const failable<value, int>& val) {
+    if (!hasValue(val))
+        return int(val);
+    const value v = val;
+    list<value> e = feedEntryResult(v);
+    std::cout<< "entry: " << e << std::endl;
+    failable<list<std::string>, std::string> ls = atom::writeEntry(e);
+    if (!hasValue(ls))
+        return HTTP_INTERNAL_SERVER_ERROR;
+    return list<std::string>(ls);
+}
+
+/**
+ * Write an HTTP result.
+ */
+const int writeResult(const failable<list<std::string>, int> ls, const std::string& ct, request_rec* r) {
+    if (!hasValue(ls))
+        return ls;
+    std::ostringstream os;
+    write(ls, os);
+    std::cout<< "content: " << os.str() << std::endl;
+    std::cout.flush();
+
+    std::string etag(ap_md5(r->pool, (const unsigned char*)std::string(os.str()).c_str()));
+    const char* match = apr_table_get(r->headers_in, "If-None-Match");
+    apr_table_setn(r->headers_out, "ETag", etag.c_str());
+    if (match != NULL  && etag == match) {
+        r->status = HTTP_NOT_MODIFIED;
+        return OK;
+    }
+    ap_set_content_type(r, ct.c_str());
+    ap_rputs(std::string(os.str()).c_str(), r);
+    return OK;
+}
+
+/**
+ * Handle an HTTP GET.
  */
 const int get(request_rec* r) {
 
-    // Setup the script evaluator
-    Env globalEnv = setupEnvironment();
-    std::ostringstream nullos;
-    setupEvalOut(nullos);
-
-    // Open the component implementation
-    const std::string impl = contribution(r) + implementation(r);
-    std::ifstream is(impl.c_str(), std::ios_base::in);
-    if (is.fail() || is.bad())
-        return HTTP_NOT_FOUND;
-
-    // Extract the request id, method and params from the query string
+    // Inspect the query string
     const list<list<value> > args = queryArgs(r);
-    const value id = cadr(assoc(value("id"), args));
-    const value method = std::string(cadr(assoc(value("method"), args))).c_str();
-    const list<value> params = queryParams(args);
+    const list<value> ia = assoc(value("id"), args);
+    const list<value> ma = assoc(value("method"), args);
 
-    // Build expr to evaluate
-    const value expr = cons<value>(method, params);
-    std::cout<< "expr: " << expr << std::endl;
-    std::cout.flush();
+    // Evaluate a JSON-RPC request and return a JSON result
+    if (!isNil(ia) && !isNil(ma)) {
 
-    // Evaluate the expr
-    const tuscany::value val = evalLoop(is, expr, globalEnv);
-    if (isNil(val))
-        return HTTP_INTERNAL_SERVER_ERROR;
-    std::cout<< "val: " << val << std::endl;
-    std::cout.flush();
+        // Extract the request id, method and params
+        const value id = cadr(ia);
+        const value method = std::string(cadr(ma)).c_str();
+        const list<value> params = queryParams(args);
 
-    // Convert the expr value to JSON
-    const JSONContext cx;
-    failable<list<std::string>, std::string> jsval = writeJSON(cx, mklist<value>(mklist<value>("id", id), mklist<value>("result", val)));
-    if (!hasValue(jsval))
-        return HTTP_INTERNAL_SERVER_ERROR;
+        // Evaluate the request expression
+        const failable<value, int> val = evalExpr(cons(method, params), contribution(r), implementation(r));
 
-    // Send the response
-    ap_set_content_type(r, "application/json-rpc");
-    std::ostringstream os;
-    write(jsval, os);
-    std::string sval = os.str();
-    std::string etag(ap_md5(r->pool, (const unsigned char*)sval.c_str()));
-    const char* match = apr_table_get(r->headers_in, "If-None-Match");
-    if (match != NULL  && etag == match)
-        r->status = HTTP_NOT_MODIFIED;
-    apr_table_setn(r->headers_out, "ETag", etag.c_str());
-    ap_rputs(sval.c_str(), r);
+        // Return JSON result
+        json::JSONContext cx;
+        return writeResult(jsonResult(cx, id, val), "application/json-rpc", r);
+    }
 
-    return OK;
+    // Evaluate an ATOM GET request and return an ATOM feed
+    if (length(path(r)) < 2) {
+        const failable<value, int> val = evalExpr(cons<value>("getall"), contribution(r), implementation(r));
+        return writeResult(feedResult(val), "application/atom+xml", r);
+    }
+
+    // Evaluate an ATOM GET and return an ATOM entry
+    const failable<value, int> val = evalExpr(cons<value>("get", cdr(path(r))), contribution(r), implementation(r));
+    return writeResult(entryResult(val), "application/atom+xml", r);
+    
 }
 
 /**
@@ -259,71 +370,83 @@ const list<list<value> > postArgs(list<value> a) {
     return cons(l, postArgs(cdr(a)));
 }
 
+const char* url(const std::string& loc, request_rec* r) {
+    std::string u = r->uri;
+    u.append("/");
+    u.append(loc);
+    return ap_construct_url(r->pool, u.c_str(), r);
+}
+
 /**
- * Handle an HTTP POST request.
+ * Convert an ATOM entry to a value.
+ */
+const value feedEntry(const list<value> e) {
+    const list<value> v = elementsToValues(mklist<value>(caddr(e)));
+    return cons(car(e), mklist<value>(cadr(e), cdr<value>(car(v))));
+}
+
+/**
+ * Handle an HTTP POST.
  */
 const int post(request_rec* r) {
+    const std::string ct = contentType(r);
 
-    // Setup the script evaluator
-    Env globalEnv = setupEnvironment();
-    std::ostringstream nullos;
-    setupEvalOut(nullos);
+    // Evaluate a JSON-RPC request and return a JSON result
+    if (ct.find("application/json-rpc") != std::string::npos || ct.find("text/plain") != std::string::npos) {
+        json::JSONContext cx;
+        const list<value> json = elementsToValues(json::read(cx, read(r)));
+        const list<list<value> > args = postArgs(json);
 
-    // Open the component implementation
-    const std::string impl = contribution(r) + implementation(r);
-    std::ifstream is(impl.c_str(), std::ios_base::in);
-    if (is.fail() || is.bad())
-        return HTTP_NOT_FOUND;
+        // Extract the request id, method and params
+        const value id = cadr(assoc(value("id"), args));
+        const value method = std::string(cadr(assoc(value("method"), args))).c_str();
+        const list<value> params = (list<value>)cadr(assoc(value("params"), args));
 
-    // Read the JSON request
-    const list<std::string> req = read(r);
-    JSONContext cx;
-    const list<value> json = elementsToValues(readJSON(cx, req));
-    const list<list<value> > args = postArgs(json);
+        // Evaluate the request expression
+        const failable<value, int> val = evalExpr(cons(method, params), contribution(r), implementation(r));
 
-    // Extract the request id, method and params
-    const value id = cadr(assoc(value("id"), args));
-    const value method = std::string(cadr(assoc(value("method"), args))).c_str();
-    const list<value> params = (list<value>)cadr(assoc(value("params"), args));
+        // Return JSON result
+        return writeResult(jsonResult(cx, id, val), "application/json-rpc", r);
+    }
 
-    // Build expr to evaluate
-    const value expr = cons<value>(method, params);
-    std::cout<< "expr: " << expr << std::endl;
-    std::cout.flush();
+    // Evaluate an ATOM POST request and return the created resource location
+    if (ct.find("application/atom+xml") != std::string::npos) {
+        const list<std::string> c = read(r);
+        std::cout << "POST content: " << c << std::endl;
+        const list<value> e = atom::readEntry(c);
+        std::cout << "POST entry: " << e << std::endl;
+        const value v = feedEntry(e);
+        std::cout << "POST param: " << v << std::endl;
 
-    // Evaluate the expr
-    const tuscany::value val = evalLoop(is, expr, globalEnv);
-    if (isNil(val))
-        return HTTP_INTERNAL_SERVER_ERROR;
-    std::cout<< "val: " << val << std::endl;
-    std::cout.flush();
+        // Evaluate the request expression
+        const failable<value, int> val = evalExpr(mklist<value>("post", mklist(v)), contribution(r), implementation(r));
 
-    // Convert the expr value to JSON
-    const list<value> result = valuesToElements(mklist<value>(mklist<value>("id", id), mklist<value>("result", val)));
-    failable<list<std::string>, std::string> jsval = writeJSON(cx, result);
-    if (!hasValue(jsval))
-        return HTTP_INTERNAL_SERVER_ERROR;
+        const char* u = url("abcd", r);
+        apr_table_setn(r->headers_out, "Location", u);
+        apr_table_setn(r->headers_out, "Content-Location", u);
+        return HTTP_CREATED;
+    }
 
-    // Send the JSON response
-    ap_set_content_type(r, "application/json-rpc");
-    std::ostringstream os;
-    write(jsval, os);
-    ap_rputs(os.str().c_str(), r);
-
-    return OK;
+    return HTTP_NOT_IMPLEMENTED;
 }
 
 /**
- * Handle an HTTP PUT request.
+ * Handle an HTTP PUT.
  */
 const int put(request_rec* r) {
+    // TODO later
     return OK;
 }
 
 /**
- * Handle an HTTP DELETE request.
+ * Handle an HTTP DELETE.
  */
 const int del(request_rec* r) {
+
+    // Evaluate an ATOM delete request
+    const failable<value, int> val = evalExpr(cons<value>("delete", cdr(path(r))), contribution(r), implementation(r));
+    if (!hasValue(val))
+        return val;
     return OK;
 }
 
@@ -426,23 +549,24 @@ void registerHooks(apr_pool_t *p) {
 }
 
 }
+}
 
 extern "C" {
 
 module AP_MODULE_DECLARE_DATA mod_tuscany = {
     STANDARD20_MODULE_STUFF,
     // dir config
-    tuscany::makeDirConf,
+    tuscany::httpd::makeDirConf,
     // dir merger, default is to override
     NULL,
     // server config
-    tuscany::makeServerConf,
+    tuscany::httpd::makeServerConf,
     // merge server config
     NULL,
     // command table
-    tuscany::commands,
+    tuscany::httpd::commands,
     // register hooks
-    tuscany::registerHooks
+    tuscany::httpd::registerHooks
 };
 
 }

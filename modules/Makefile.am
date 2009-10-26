@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = atom eval httpd json 
+SUBDIRS = atom eval http json 
 

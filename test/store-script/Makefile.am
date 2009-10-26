@@ -18,11 +18,13 @@
 store_script_PROGRAMS = store-script-test
 store_scriptdir=$(prefix)/test/store-script/deploy
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I$(top_builddir)/modules/eval -I${LIBXML2_INCLUDE}
+INCLUDES = -I. -I$(top_builddir)/kernel -I$(top_builddir)/modules/eval -I${LIBXML2_INCLUDE} -I${LIBMOZJS_INCLUDE}
 
 store_script_test_SOURCES = store-script-test.cpp
-store_script_test_LDADD = -L${LIBXML2_LIB} -lxml2 -lpthread
+store_script_test_LDADD = -L${LIBXML2_LIB} -lxml2 -lpthread -L${LIBMOZJS_LIB} -lmozjs
 	
 EXTRA_DIST = *.composite
 store_script_DATA = *.composite
+
+TESTS = store-script-test
 

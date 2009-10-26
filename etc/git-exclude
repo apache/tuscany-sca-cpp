@@ -54,6 +54,8 @@ Doxyfile
 *_Wrapper.cpp
 *_Wrapper.h
 gmon.out
+*~
+valgrind.txt
 
 # Specific ignores
 sca/runtime/extensions/cpp/tools/scagen/docs/
@@ -65,6 +67,7 @@ atom-test
 eval-test
 eval-shell
 json-test
+curl-test
 store-function-test
 store-object-test
 store-script-test

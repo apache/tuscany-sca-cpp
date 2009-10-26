@@ -28,9 +28,10 @@
   (define code "USD")
   (define symbol (converter "symbol" code))
 
-  (list (list (list 'name "apple") (list 'currency code) (list 'symbol symbol) (list 'price (convert 2.99)))
-    (list (list 'name "orange") (list 'currency code) (list 'symbol symbol) (list 'price (convert 3.55)))
-    (list (list 'name "pear") (list 'currency code) (list 'symbol symbol) (list 'price (convert 1.55)))
+  (list
+    (list (list 'javaClass "services.Item") (list 'name "Apple") (list 'currency code) (list 'symbol symbol) (list 'price 2.99))
+    (list (list 'javaClass "services.Item") (list 'name "Orange") (list 'currency code) (list 'symbol symbol) (list 'price 3.55))
+    (list (list 'javaClass "services.Item") (list 'name "Pear") (list 'currency code) (list 'symbol symbol) (list 'price 1.55))
    )
 )
 
@@ -47,11 +48,16 @@
 (; "Cart implementation")
 
 (define (cart_post content item)
-  (cons item content)
+  (cons (cons "Item" (list "123456789" item)) content)
 )
 
 (define (cart_getall content)
-  content
+  (cons "Sample Feed" (cons "123" content))
+)
+
+(define (cart_getentry id)
+  (define entry (list (list 'name "Apple") (list 'currency "USD") (list 'symbol "$") (list 'price 2.99)))
+  (cons "Item" (list id entry))
 )
 
 (define (cart_gettotal)
@@ -62,6 +68,7 @@
   (cond
     ((equal? op "post") (apply cart_post args))
     ((equal? op "getall") (apply cart_getall args))
+    ((equal? op "getentry") (apply cart_getentry args))
     ((equal? op "gettotal") (apply cart_gettotal args))
   )
 )
@@ -76,6 +83,10 @@
   (cart "getall" content)
 )
 
+(define (storeui_getentry cart id)
+  (cart "getentry" id)
+)
+
 (define (storeui_getcatalog catalog)
   (catalog "get")
 )
@@ -88,6 +99,7 @@
   (cond
     ((equal? op "post") (apply storeui_post (cons cart args)))
     ((equal? op "getall") (apply storeui_getcart (cons cart args)))
+    ((equal? op "getentry") (apply storeui_getentry (cons cart args)))
     ((equal? op "getcatalog") (apply storeui_getcatalog (cons catalog args)))
     ((equal? op "gettotal") (apply storeui_gettotal (cons cart args)))
   )
@@ -104,13 +116,22 @@
 (define catalog (storeui_service "getcatalog"))
 (define empty (list))
 (define apple (car catalog))
-(define full (storeui_service "post" empty apple))
-(display (storeui_service "getall" full))
+(define orange (car (cdr catalog)))
+(define added1 (storeui_service "post" empty apple))
+(define added2 (storeui_service "post" added1 orange))
+(display (storeui_service "getall" added2))
 (display (storeui_service "gettotal"))
 
 (; "Store UI JSON-RPC interop test case")
 
 (define (system.listMethods) (list "Service.get" "Service.getTotal"))
 (define (Service.get) (storeui_service "getcatalog"))
+(define (.get) (storeui_service "getcatalog"))
 (define (Service.getTotal) (storeui_service "gettotal"))
+
+(; "Store UI ATOMPub interop test case")
+
+(define (getall) (storeui_service "getall" added2))
+(define (get id) (storeui_service "getentry" id))
+(define (post entry) (display entry))
 

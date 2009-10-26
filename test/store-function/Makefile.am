@@ -26,3 +26,5 @@ store_function_test_LDADD = -L${LIBXML2_LIB} -lxml2 -lpthread
 EXTRA_DIST = *.composite
 store_function_DATA = *.composite
 
+TESTS = store-function-test
+

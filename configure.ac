@@ -268,7 +268,7 @@ AC_CONFIG_FILES([Makefile
                  modules/Makefile
                  modules/atom/Makefile
                  modules/eval/Makefile
-                 modules/httpd/Makefile
+                 modules/http/Makefile
                  modules/json/Makefile
                  test/Makefile
                  test/store-object/Makefile

@@ -15,12 +15,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = json-test
+noinst_PROGRAMS = curl-test
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${LIBMOZJS_INCLUDE}
+libdir=$(prefix)/lib
+lib_LTLIBRARIES = libmod_tuscany.la
 
-json_test_SOURCES = json-test.cpp
-json_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${LIBMOZJS_LIB} -lmozjs 
+INCLUDES = -I. -I$(top_builddir)/kernel -I${HTTPD_INCLUDE} -I${APR_INCLUDE} -I${LIBXML2_INCLUDE} -I${LIBMOZJS_INCLUDE} -I${CURL_INCLUDE}
 
-TESTS = json-test
+libmod_tuscany_la_SOURCES = mod.cpp
+libmod_tuscany_la_LIBADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${LIBMOZJS_LIB} -lmozjs
+
+curl_test_SOURCES = curl-test.cpp
+curl_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${CURL_LIB} -lcurl
+
+TESTS = httpd-test http-test
 

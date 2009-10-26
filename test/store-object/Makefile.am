@@ -26,3 +26,5 @@ store_object_test_LDADD = -L${LIBXML2_LIB} -lxml2 -lpthread
 EXTRA_DIST = *.composite
 store_object_DATA = *.composite
 
+TESTS = store-object-test
+

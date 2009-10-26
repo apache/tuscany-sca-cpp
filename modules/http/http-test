@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,12 +17,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = json-test
-
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${LIBMOZJS_INCLUDE}
-
-json_test_SOURCES = json-test.cpp
-json_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${LIBMOZJS_LIB} -lmozjs 
-
-TESTS = json-test
-
+mkdir -p tmp
+mkdir -p tmp/conf
+cp test-conf/* tmp/conf
+cat >tmp/conf/httpd.conf <<EOF
+ServerName 127.0.0.1
+Listen 9091
+DocumentRoot `pwd`/test-htdocs
+EOF
+mkdir -p tmp/logs
+apachectl -k start -d `pwd`/tmp
+sleep 1
+./curl-test
+rc=$?
+apachectl -k stop -d `pwd`/tmp
+return $rc

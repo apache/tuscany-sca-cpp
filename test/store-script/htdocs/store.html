@@ -28,7 +28,7 @@
 	var catalog = new tuscany.sca.Reference("catalog");
 	
 	//@Reference
-	//var shoppingCart = new tuscany.sca.Reference("shoppingCart");
+	var shoppingCart = new tuscany.sca.Reference("shoppingCart");
 
 	//@Reference
 	var shoppingTotal = new tuscany.sca.Reference("shoppingTotal");
@@ -86,7 +86,7 @@
 	}
 	
 	function shoppingCart_postResponse(entry) {
-		//shoppingCart.get("", shoppingCart_getResponse);
+		shoppingCart.get("", shoppingCart_getResponse);
 	}				
 
 	function addToCart() {
@@ -127,7 +127,7 @@
 			
 			try	{
 				catalog.get(catalog_getResponse);
-				//shoppingCart.get("", shoppingCart_getResponse);
+				shoppingCart.get("", shoppingCart_getResponse);
 			}
 			catch(e){
 				alert(e);
