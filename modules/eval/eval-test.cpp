@@ -39,7 +39,6 @@ bool testEnv() {
     defineVariable("x", env, env);
     assert(lookupVariableValue(value("x"), env) == env);
     assert(lookupVariableValue("a", env) == value(1));
-    cleanupEnvironment(env);
     return true;
 }
 
@@ -59,20 +58,38 @@ bool testEnvGC() {
 
 bool testRead() {
     std::istringstream is("abcd");
-    assert(read(is) == "abcd");
+    assert(readValue(is) == "abcd");
 
     std::istringstream is2("123");
-    assert(read(is2) == value(123));
+    assert(readValue(is2) == value(123));
 
     std::istringstream is3("(abcd)");
-    assert(read(is3) == mklist(value("abcd")));
+    assert(readValue(is3) == mklist(value("abcd")));
 
     std::istringstream is4("(abcd xyz)");
-    assert(read(is4) == mklist<value>("abcd", "xyz"));
+    assert(readValue(is4) == mklist<value>("abcd", "xyz"));
 
     std::istringstream is5("(abcd (xyz tuv))");
-    assert(read(is5) == mklist<value>("abcd", mklist<value>("xyz", "tuv")));
+    assert(readValue(is5) == mklist<value>("abcd", mklist<value>("xyz", "tuv")));
 
+    return true;
+}
+
+bool testWrite() {
+    const list<value> i = list<value>()
+            << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
+                << (list<value>() << "item"
+                    << (list<value>() << "name" << "Apple")
+                    << (list<value>() << "price" << "$2.99")))
+            << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
+                << (list<value>() << "item"
+                    << (list<value>() << "name" << "Orange")
+                    << (list<value>() << "price" << "$3.55")));
+    const list<value> a = cons<value>("Feed", cons<value>("feed-1234", i));
+    std::ostringstream os;
+    writeValue(a, os);
+    std::istringstream is(os.str());
+    assert(readValue(is) == a);
     return true;
 }
 
@@ -178,6 +195,7 @@ int main() {
     tuscany::eval::testEnv();
     tuscany::eval::testEnvGC();
     tuscany::eval::testRead();
+    tuscany::eval::testWrite();
     tuscany::eval::testEval();
     tuscany::eval::testEvalExpr();
     tuscany::eval::testEvalGC();

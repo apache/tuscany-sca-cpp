@@ -17,18 +17,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-mkdir -p tmp
-mkdir -p tmp/conf
-cp test-conf/* tmp/conf
-cat >tmp/conf/httpd.conf <<EOF
-ServerName 127.0.0.1
-Listen 9091
-DocumentRoot `pwd`/test-htdocs
+# Setup
+./httpd-conf tmp 8091 htdocs
+cat >>tmp/conf/httpd.conf <<EOF
+<Location /test>
+SetHandler mod_tuscany
+SCAContribution `pwd`/
+SCAComponent httpd-test
+SCAImplementation httpd-test.scm
+</Location>
 EOF
-mkdir -p tmp/logs
 apachectl -k start -d `pwd`/tmp
 sleep 1
+
+# Test
 ./curl-test
 rc=$?
+
+# Cleanup
 apachectl -k stop -d `pwd`/tmp
+sleep 1
 return $rc

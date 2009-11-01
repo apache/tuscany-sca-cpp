@@ -142,9 +142,9 @@ private:
 /**
  * Converts JS properties to values.
  */
-const list<value> jsPropertiesToValues(const JSONContext& cx, const list<value>& propertiesSoFar, JSObject* o, JSObject* i) {
+const list<value> jsPropertiesToValues(const list<value>& propertiesSoFar, JSObject* o, JSObject* i, const JSONContext& cx) {
 
-    const value jsValToValue(const JSONContext& cx, const jsval& jsv);
+    const value jsValToValue(const jsval& jsv, const JSONContext& cx);
 
     jsid id;
     if(!JS_NextProperty(cx, i, &id) || id == JSVAL_VOID)
@@ -152,20 +152,20 @@ const list<value> jsPropertiesToValues(const JSONContext& cx, const list<value>&
     jsval jsv;
     if(!JS_GetPropertyById(cx, o, id, &jsv))
         return propertiesSoFar;
-    const value val = jsValToValue(cx, jsv);
+    const value val = jsValToValue(jsv, cx);
     jsval idv;
     JS_IdToValue(cx, id, &idv);
     if(JSVAL_IS_STRING(idv)) {
         const value type = isList(val)? element : element;
-        return jsPropertiesToValues(cx, cons<value> (mklist<value> (type, JS_GetStringBytes(JSVAL_TO_STRING(idv)), val), propertiesSoFar), o, i);
+        return jsPropertiesToValues(cons<value> (mklist<value> (type, JS_GetStringBytes(JSVAL_TO_STRING(idv)), val), propertiesSoFar), o, i, cx);
     }
-    return jsPropertiesToValues(cx, cons(val, propertiesSoFar), o, i);
+    return jsPropertiesToValues(cons(val, propertiesSoFar), o, i, cx);
 }
 
 /**
  * Converts a JS val to a value.
  */
-const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
+const value jsValToValue(const jsval& jsv, const JSONContext& cx) {
     switch(JS_TypeOfValue(cx, jsv)) {
     case JSTYPE_STRING: {
         return value(std::string(JS_GetStringBytes(JSVAL_TO_STRING(jsv))));
@@ -183,7 +183,7 @@ const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
         JSObject* i = JS_NewPropertyIterator(cx, o);
         if(i == NULL)
             return value(list<value> ());
-        const value pv = jsPropertiesToValues(cx, list<value> (), o, i);
+        const value pv = jsPropertiesToValues(list<value> (), o, i, cx);
         return pv;
     }
     default: {
@@ -195,44 +195,44 @@ const value jsValToValue(const JSONContext& cx, const jsval& jsv) {
 /**
  * Consumes JSON strings and populates a JS object.
  */
-failable<bool, std::string> consume(const JSONContext& cx, JSONParser* parser, const list<std::string>& ilist) {
+failable<bool, std::string> consume(JSONParser* parser, const list<std::string>& ilist, const JSONContext& cx) {
     if (isNil(ilist))
         return true;
     JSString* jstr = JS_NewStringCopyZ(cx, car(ilist).c_str());
     if(!JS_ConsumeJSONText(cx, parser, JS_GetStringChars(jstr), JS_GetStringLength(jstr)))
         return "JS_ConsumeJSONText failed";
-    return consume(cx, parser, cdr(ilist));
+    return consume(parser, cdr(ilist), cx);
 }
 
 /**
  * Convert a list of strings representing a JSON document to a list of values.
  */
-const failable<list<value>, std::string> read(const JSONContext& cx, const list<std::string>& ilist) {
+const failable<list<value>, std::string> readJSON(const list<std::string>& ilist, const JSONContext& cx) {
     jsval val;
     JSONParser* parser = JS_BeginJSONParse(cx, &val);
     if(parser == NULL)
         return std::string("JS_BeginJSONParse failed");
 
-    const failable<bool, std::string> consumed = consume(cx, parser, ilist);
+    const failable<bool, std::string> consumed = consume(parser, ilist, cx);
 
     if(!JS_FinishJSONParse(cx, parser, JSVAL_NULL))
         return std::string("JS_FinishJSONParse failed");
     if(!hasValue(consumed))
         return std::string(consumed);
 
-    return list<value>(jsValToValue(cx, val));
+    return list<value>(jsValToValue(val, cx));
 }
 
 /**
  * Converts a list of values to JS array elements.
  */
-JSObject* valuesToJSElements(const JSONContext& cx, JSObject* a, const list<value>& l, int i) {
-    const jsval valueToJSVal(const JSONContext& cx, const value& val);
+JSObject* valuesToJSElements(JSObject* a, const list<value>& l, int i, const JSONContext& cx) {
+    const jsval valueToJSVal(const value& val, const JSONContext& cx);
     if (isNil(l))
         return a;
-    jsval pv = valueToJSVal(cx, car(l));
+    jsval pv = valueToJSVal(car(l), cx);
     JS_SetElement(cx, a, i, &pv);
-    return valuesToJSElements(cx, a, cdr(l), ++i);
+    return valuesToJSElements(a, cdr(l), ++i, cx);
 }
 
 /**
@@ -255,26 +255,26 @@ const bool isJSArray(const list<value>& l) {
 /**
  * Converts a list of values to JS properties.
  */
-JSObject* valuesToJSProperties(const JSONContext& cx, JSObject* o, const list<value>& l) {
-    const jsval valueToJSVal(const JSONContext& cx, const value& val);
+JSObject* valuesToJSProperties(JSObject* o, const list<value>& l, const JSONContext& cx) {
+    const jsval valueToJSVal(const value& val, const JSONContext& cx);
     if(isNil(l))
         return o;
     const list<value> p = car(l);
-    jsval pv = valueToJSVal(cx, caddr(p));
+    jsval pv = valueToJSVal(caddr(p), cx);
     JS_SetProperty(cx, o, ((std::string)cadr(p)).c_str(), &pv);
-    return valuesToJSProperties(cx, o, cdr(l));
+    return valuesToJSProperties(o, cdr(l), cx);
 }
 
 /**
  * Converts a value to a JS val.
  */
-const jsval valueToJSVal(const JSONContext& cx, const value& val) {
+const jsval valueToJSVal(const value& val, const JSONContext& cx) {
     switch(type(val)) {
     case value::String:
     case value::Symbol: {
         return STRING_TO_JSVAL(JS_NewStringCopyZ(cx, ((std::string)val).c_str()));
     }
-    case value::Boolean: {
+    case value::Bool: {
         return BOOLEAN_TO_JSVAL((bool)val);
     }
     case value::Number: {
@@ -282,8 +282,8 @@ const jsval valueToJSVal(const JSONContext& cx, const value& val) {
     }
     case value::List: {
         if (isJSArray(val))
-            return OBJECT_TO_JSVAL(valuesToJSElements(cx, JS_NewArrayObject(cx, 0, NULL), val, 0));
-        return OBJECT_TO_JSVAL(valuesToJSProperties(cx, JS_NewObject(cx, NULL, NULL, NULL), val));
+            return OBJECT_TO_JSVAL(valuesToJSElements(JS_NewArrayObject(cx, 0, NULL), val, 0, cx));
+        return OBJECT_TO_JSVAL(valuesToJSProperties(JS_NewObject(cx, NULL, NULL, NULL), val, cx));
     }
     default: {
         return JSVAL_VOID;
@@ -291,7 +291,7 @@ const jsval valueToJSVal(const JSONContext& cx, const value& val) {
     }
 }
 
-const failable<bool, std::string> writeList(const JSONContext& cx, const list<value>& l, JSObject* o) {
+const failable<bool, std::string> writeList(const list<value>& l, JSObject* o, const JSONContext& cx) {
     if (isNil(l))
         return true;
 
@@ -299,14 +299,14 @@ const failable<bool, std::string> writeList(const JSONContext& cx, const list<va
     const value token(car(l));
 
     if (isTaggedList(token, attribute)) {
-        jsval pv = valueToJSVal(cx, attributeValue(token));
+        jsval pv = valueToJSVal(attributeValue(token), cx);
         JS_SetProperty(cx, o, std::string(attributeName(token)).c_str(), &pv);
 
     } else if (isTaggedList(token, element)) {
 
         // Write the value of an element
         if (elementHasValue(token)) {
-            jsval pv = valueToJSVal(cx, elementValue(token));
+            jsval pv = valueToJSVal(elementValue(token), cx);
             JS_SetProperty(cx, o, std::string(elementName(token)).c_str(), &pv);
 
         } else {
@@ -317,14 +317,14 @@ const failable<bool, std::string> writeList(const JSONContext& cx, const list<va
             JS_SetProperty(cx, o, std::string(elementName(token)).c_str(), &pv);
 
             // Write its children
-            const failable<bool, std::string> w = writeList(cx, elementChildren(token), child);
+            const failable<bool, std::string> w = writeList(elementChildren(token), child, cx);
             if (!hasValue(w))
                 return w;
         }
     }
 
     // Go on
-    return writeList(cx, cdr(l), o);
+    return writeList(cdr(l), o, cx);
 }
 
 /**
@@ -332,10 +332,10 @@ const failable<bool, std::string> writeList(const JSONContext& cx, const list<va
  */
 template<typename R> class WriteContext {
 public:
-    WriteContext(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& accum) : cx(cx), reduce(reduce), accum(accum) {
+    WriteContext(const lambda<R(std::string, R)>& reduce, const R& accum, const JSONContext& cx) : cx(cx), reduce(reduce), accum(accum) {
     }
     const JSONContext& cx;
-    const lambda<R(R, std::string)> reduce;
+    const lambda<R(std::string, R)> reduce;
     R accum;
 };
 
@@ -345,21 +345,21 @@ public:
 template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *data) {
     WriteContext<R>& wcx = *(static_cast<WriteContext<R>*> (data));
     JSString* jstr = JS_NewUCStringCopyN(wcx.cx, buf, len);
-    wcx.accum = wcx.reduce(wcx.accum, std::string(JS_GetStringBytes(jstr), JS_GetStringLength(jstr)));
+    wcx.accum = wcx.reduce(std::string(JS_GetStringBytes(jstr), JS_GetStringLength(jstr)), wcx.accum);
     return JS_TRUE;
 }
 
 /**
  * Convert a list of values to a JSON document.
  */
-template<typename R> const failable<R, std::string> write(const JSONContext& cx, const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> writeJSON(const lambda<R(std::string, R)>& reduce, const R& initial, const list<value>& l, const JSONContext& cx) {
     JSObject* o = JS_NewObject(cx, NULL, NULL, NULL);
     jsval val = OBJECT_TO_JSVAL(o);
-    const failable<bool, std::string> w = writeList(cx, l, o);
+    const failable<bool, std::string> w = writeList(l, o, cx);
     if (!hasValue(w))
         return std::string(w);
 
-    WriteContext<R> wcx(cx, reduce, initial);
+    WriteContext<R> wcx(reduce, initial, cx);
     if (!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx))
         return std::string("JS_Stringify failed");
     return wcx.accum;
@@ -368,15 +368,27 @@ template<typename R> const failable<R, std::string> write(const JSONContext& cx,
 /**
  * Convert a list of values to a list of strings representing a JSON document.
  */
-const list<std::string> writeStrings(const list<std::string>& listSoFar, const std::string& s) {
-    return cons(s, listSoFar);
-}
-
-const failable<list<std::string>, std::string> write(const JSONContext& cx, const list<value>& l) {
-    const failable<list<std::string>, std::string> ls = write<list<std::string> >(cx, writeStrings, list<std::string>(), l);
+const failable<list<std::string>, std::string> writeJSON(const list<value>& l, const JSONContext& cx) {
+    const failable<list<std::string>, std::string> ls = writeJSON<list<std::string> >(rcons<std::string>, list<std::string>(), l, cx);
     if (!hasValue(ls))
         return ls;
     return reverse(list<std::string>(ls));
+}
+
+/**
+ * Convert a function + params to a JSON request.
+ */
+const failable<list<std::string>, std::string> jsonRequest(const value& id, const value& func, const value& params, json::JSONContext& cx) {
+    const list<value> r = mklist<value>(mklist<value>("id", id), mklist<value>("method", func), mklist<value>("params", params));
+    failable<list<std::string>, std::string> ls = writeJSON(valuesToElements(r), cx);
+    return ls;
+}
+
+/**
+ * Convert a value to a JSON result.
+ */
+const failable<list<std::string>, std::string> jsonResult(const value& id, const value& val, JSONContext& cx) {
+    return writeJSON(valuesToElements(mklist<value>(mklist<value>("id", id), mklist<value>("result", val))), cx);
 }
 
 }

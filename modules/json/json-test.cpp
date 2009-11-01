@@ -43,7 +43,7 @@ bool testJSEval() {
     return true;
 }
 
-std::ostringstream* jsonWriter(std::ostringstream* os, const std::string& s) {
+std::ostringstream* jsonWriter(const std::string& s, std::ostringstream* os) {
     (*os) << s;
     return os;
 }
@@ -57,7 +57,7 @@ bool testJSON() {
         const list<value> cr = mklist<value>(mklist<value> (attribute, "name", std::string("jdoe")), cons<value>(element, cons<value>("address", ad)), cons<value>(element, cons<value>("account", ac)));
         const list<value> c = mklist<value>(cons<value>(element, cons<value>("customer", cr)));
         std::ostringstream os;
-        write<std::ostringstream*>(cx, jsonWriter, &os, c);
+        writeJSON<std::ostringstream*>(jsonWriter, &os, c, cx);
         assert(os.str() == "{\"customer\":{\"name\":\"jdoe\",\"address\":{\"city\":\"san francisco\",\"state\":\"ca\"},\"account\":{\"id\":\"1234\",\"balance\":1000}}}");
     }
     {
@@ -65,16 +65,16 @@ bool testJSON() {
         const list<value> l = mklist<value> (mklist<value> (element, "phones", phones), mklist<value> (element, "lastName", std::string("test\ttab")), mklist<value> (element, "firstName", std::string("test1")));
 
         std::ostringstream os;
-        write<std::ostringstream*>(cx, jsonWriter, &os, l);
+        writeJSON<std::ostringstream*>(jsonWriter, &os, l, cx);
         assert(os.str() == "{\"phones\":[\"408-1234\",\"650-1234\"],\"lastName\":\"test\\u0009tab\",\"firstName\":\"test1\"}");
 
         std::istringstream is(os.str());
         const list<std::string> il = streamList(is);
-        const list<value> r = read(cx, il);
+        const list<value> r = readJSON(il, cx);
         assert(r == l);
 
         std::ostringstream wos;
-        write(write(cx, r), wos);
+        write(writeJSON(r, cx), wos);
         assert(wos.str() == os.str());
     }
     return true;
@@ -84,7 +84,7 @@ bool testJSONRPC() {
     JSONContext cx;
     {
         const std::string lm("{\"id\": 1, \"method\": \"system.listMethods\", \"params\": []}");
-        const list<value> e = read(cx, mklist(lm));
+        const list<value> e = readJSON(mklist(lm), cx);
         const list<value> v = elementsToValues(e);
         assert(assoc<value>("id", v) == mklist<value>("id", 1));
         assert(assoc<value>("method", v) == mklist<value>("method", std::string("system.listMethods")));
@@ -92,16 +92,16 @@ bool testJSONRPC() {
     }
     {
         const std::string i("{\"id\":3,\"result\":[{\"price\":\"$2.99\",\"name\":\"Apple\"},{\"price\":\"$3.55\",\"name\":\"Orange\"},{\"price\":\"$1.55\",\"name\":\"Pear\"}]}");
-        const list<value> e = read(cx, mklist(i));
+        const list<value> e = readJSON(mklist(i), cx);
         const std::string i2("{\"id\":3,\"result\":{\"0\":{\"price\":\"$2.99\",\"name\":\"Apple\"},\"1\":{\"price\":\"$3.55\",\"name\":\"Orange\"},\"2\":{\"price\":\"$1.55\",\"name\":\"Pear\"}}}");
-        const list<value> e2 = read(cx, mklist(i));
+        const list<value> e2 = readJSON(mklist(i), cx);
         assert(e == e2);
     }
     {
         const std::string i("{\"id\":3,\"result\":[{\"price\":\"$2.99\",\"name\":\"Apple\"},{\"price\":\"$3.55\",\"name\":\"Orange\"},{\"price\":\"$1.55\",\"name\":\"Pear\"}]}");
-        const list<value> e = read(cx, mklist(i));
+        const list<value> e = readJSON(mklist(i), cx);
         std::ostringstream os;
-        write(write(cx, e), os);
+        write(writeJSON(e, cx), os);
         assert(os.str() == i);
         const list<value> v = elementsToValues(e);
         const list<value> r = valuesToElements(v);
@@ -111,7 +111,7 @@ bool testJSONRPC() {
         const list<value> r = mklist<value>(mklist<value>("id", 1), mklist<value>("result", mklist<value>(std::string("Service.get"), std::string("Service.getTotal"))));
         const list<value> e = valuesToElements(r);
         std::ostringstream os;
-        write(write(cx, e), os);
+        write(writeJSON(e, cx), os);
         assert(os.str() == "{\"id\":1,\"result\":[\"Service.get\",\"Service.getTotal\"]}");
     }
     return true;

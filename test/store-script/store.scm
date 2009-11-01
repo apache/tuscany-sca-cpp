@@ -32,7 +32,7 @@
     (list (list 'javaClass "services.Item") (list 'name "Apple") (list 'currency code) (list 'symbol symbol) (list 'price 2.99))
     (list (list 'javaClass "services.Item") (list 'name "Orange") (list 'currency code) (list 'symbol symbol) (list 'price 3.55))
     (list (list 'javaClass "services.Item") (list 'name "Pear") (list 'currency code) (list 'symbol symbol) (list 'price 1.55))
-   )
+  )
 )
 
 (define (catalog_impl converter op args)
@@ -48,11 +48,11 @@
 (; "Cart implementation")
 
 (define (cart_post content item)
-  (cons (cons "Item" (list "123456789" item)) content)
+  (cons (cons "Item" (list (uuid) item)) content)
 )
 
 (define (cart_getall content)
-  (cons "Sample Feed" (cons "123" content))
+  (cons "Sample Feed" (cons (uuid) content))
 )
 
 (define (cart_getentry id)
@@ -125,13 +125,26 @@
 (; "Store UI JSON-RPC interop test case")
 
 (define (system.listMethods) (list "Service.get" "Service.getTotal"))
+
 (define (Service.get) (storeui_service "getcatalog"))
+
 (define (.get) (storeui_service "getcatalog"))
+
 (define (Service.getTotal) (storeui_service "gettotal"))
 
 (; "Store UI ATOMPub interop test case")
 
 (define (getall) (storeui_service "getall" added2))
+
 (define (get id) (storeui_service "getentry" id))
-(define (post entry) (display entry))
+
+(define (post entry)
+  (display entry)
+  (uuid)
+)
+
+(define (delete . args)
+  (display args)
+  true
+)
 

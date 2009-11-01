@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,5 +17,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = atom cache eval http json
+# Generate a minimal httpd.conf
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
+port=$2
+htdocs=`readlink -f $3`
+
+mkdir -p $root
+mkdir -p $root/logs
+mkdir -p $root/conf
+cat >$root/conf/httpd.conf <<EOF
+ServerName 127.0.0.1
+Listen $port
+DocumentRoot $htdocs
+TypesConfig $here/conf/mime.types
+LoadModule mod_tuscany $here/.libs/libmod_tuscany.so
+EOF
 

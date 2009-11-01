@@ -38,7 +38,7 @@ namespace atom {
 /**
  * Convert a list of elements to a list of values representing an ATOM entry.
  */
-const list<value> entry(const list<value>& e) {
+const list<value> entryValue(const list<value>& e) {
     const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), e);
     const value t = isNil(lt)? value(std::string("")) : elementValue(car(lt));
     const list<value> li = filter<value>(selector(mklist<value>(element, "id")), e);
@@ -50,10 +50,10 @@ const list<value> entry(const list<value>& e) {
 /**
  * Convert a list of elements to a list of values representing ATOM entries.
  */
-const list<value> entries(const list<value>& e) {
+const list<value> entriesValues(const list<value>& e) {
     if (isNil(e))
         return list<value>();
-    return cons<value>(entry(car(e)), entries(cdr(e)));
+    return cons<value>(entryValue(car(e)), entriesValues(cdr(e)));
 }
 
 /**
@@ -63,7 +63,7 @@ const failable<list<value>, std::string> readEntry(const list<std::string>& ilis
     const list<value> e = readXML(ilist);
     if (isNil(e))
         return std::string("Empty entry");
-    return entry(car(e));
+    return entryValue(car(e));
 }
 
 /**
@@ -78,7 +78,7 @@ const failable<list<value>, std::string> readFeed(const list<std::string>& ilist
     const list<value> e = filter<value>(selector(mklist<value>(element, "entry")), car(f));
     if (isNil(e))
         return mklist<value>(elementValue(car(t)), elementValue(car(i)));
-    return cons<value>(elementValue(car(t)), cons(elementValue(car(i)), entries(e)));
+    return cons<value>(elementValue(car(t)), cons(elementValue(car(i)), entriesValues(e)));
 }
 
 /**
@@ -107,20 +107,12 @@ const list<value> entriesElements(const list<value>& l) {
  * Convert a list of values representing an ATOM entry to an ATOM entry.
  * The first two values in the list are the entry id and title.
  */
-template<typename R> const failable<R, std::string> writeEntry(const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> writeATOMEntry(const lambda<R(std::string, R)>& reduce, const R& initial, const list<value>& l) {
     return writeXML<R>(reduce, initial, mklist<value>(entryElement(l)));
 }
 
-/**
- * Convert a list of values representing an ATOM entry to a list of strings.
- * The first two values in the list are the entry id and title.
- */
-const list<std::string> writeStrings(const list<std::string>& listSoFar, const std::string& s) {
-    return cons(s, listSoFar);
-}
-
-const failable<list<std::string>, std::string> writeEntry(const list<value>& l) {
-    const failable<list<std::string>, std::string> ls = writeEntry<list<std::string> >(writeStrings, list<std::string>(), l);
+const failable<list<std::string>, std::string> writeATOMEntry(const list<value>& l) {
+    const failable<list<std::string>, std::string> ls = writeATOMEntry<list<std::string> >(rcons<std::string>, list<std::string>(), l);
     if (!hasValue(ls))
         return ls;
     return reverse(list<std::string>(ls));
@@ -130,7 +122,7 @@ const failable<list<std::string>, std::string> writeEntry(const list<value>& l) 
  * Convert a list of values representing an ATOM feed to an ATOM feed.
  * The first two values in the list are the feed id and title.
  */
-template<typename R> const failable<R, std::string> writeFeed(const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> writeATOMFeed(const lambda<R(std::string, R)>& reduce, const R& initial, const list<value>& l) {
     const list<value> f = list<value>()
         << element << "feed" << (list<value>() << attribute << "xmlns" << "http://www.w3.org/2005/Atom")
         << (list<value>() << element << "title" << (list<value>() << attribute << "type" << "text") << car(l))
@@ -145,11 +137,31 @@ template<typename R> const failable<R, std::string> writeFeed(const lambda<R(R, 
  * Convert a list of values representing an ATOM feed to a list of strings.
  * The first two values in the list are the feed id and title.
  */
-const failable<list<std::string>, std::string> writeFeed(const list<value>& l) {
-    const failable<list<std::string>, std::string> ls = writeFeed<list<std::string> >(writeStrings, list<std::string>(), l);
+const failable<list<std::string>, std::string> writeATOMFeed(const list<value>& l) {
+    const failable<list<std::string>, std::string> ls = writeATOMFeed<list<std::string> >(rcons<std::string>, list<std::string>(), l);
     if (!hasValue(ls))
         return ls;
     return reverse(list<std::string>(ls));
+}
+
+/**
+ * Convert an ATOM entry containing a value to an ATOM entry containing an item element.
+ */
+const list<value> entryValuesToElements(const list<value> val) {
+    return cons(car(val), cons(cadr(val), valuesToElements(mklist<value>(cons<value>("item", (list<value>)caddr(val))))));
+}
+
+/**
+ * Convert an ATOM feed containing values to an ATOM feed containing elements.
+ */
+const list<value> feedValuesToElementsLoop(const list<value> val) {
+    if (isNil(val))
+        return list<value>();
+    return cons<value>(entryValuesToElements(car(val)), feedValuesToElementsLoop(cdr(val)));
+}
+
+const list<value> feedValuesToElements(const list<value>& val) {
+    return cons(car<value>(val), cons<value>(cadr<value>(val), feedValuesToElementsLoop(cddr<value>(val))));
 }
 
 }

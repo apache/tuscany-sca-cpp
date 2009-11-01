@@ -33,7 +33,7 @@
 namespace tuscany {
 namespace atom {
 
-std::ostringstream* writer(std::ostringstream* os, const std::string& s) {
+std::ostringstream* writer(const std::string& s, std::ostringstream* os) {
     (*os) << s;
     return os;
 }
@@ -78,19 +78,19 @@ bool testEntry() {
                 << (list<value>() << element << "price" << std::string("$2.99"));
         const list<value> a = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
         std::ostringstream os;
-        writeEntry<std::ostringstream*>(writer, &os, a);
+        writeATOMEntry<std::ostringstream*>(writer, &os, a);
         assert(os.str() == itemEntry);
     }
     {
         const list<value> a = readEntry(mklist(itemEntry));
         std::ostringstream os;
-        writeEntry<std::ostringstream*>(writer, &os, a);
+        writeATOMEntry<std::ostringstream*>(writer, &os, a);
         assert(os.str() == itemEntry);
     }
     {
         const list<value> a = readEntry(mklist(incompleteEntry));
         std::ostringstream os;
-        writeEntry<std::ostringstream*>(writer, &os, a);
+        writeATOMEntry<std::ostringstream*>(writer, &os, a);
         assert(os.str() == completedEntry);
     }
     return true;
@@ -131,13 +131,13 @@ std::string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 bool testFeed() {
     {
         std::ostringstream os;
-        writeFeed<std::ostringstream*>(writer, &os, mklist<value>("Feed", "1234"));
+        writeATOMFeed<std::ostringstream*>(writer, &os, mklist<value>("Feed", "1234"));
         assert(os.str() == emptyFeed);
     }
     {
         const list<value> a = readFeed(mklist(emptyFeed));
         std::ostringstream os;
-        writeFeed<std::ostringstream*>(writer, &os, a);
+        writeATOMFeed<std::ostringstream*>(writer, &os, a);
         assert(os.str() == emptyFeed);
     }
     {
@@ -152,7 +152,7 @@ bool testFeed() {
                         << (list<value>() << element << "price" << "$3.55")));
         const list<value> a = cons<value>("Feed", cons<value>("1234", i));
         std::ostringstream os;
-        writeFeed<std::ostringstream*>(writer, &os, a);
+        writeATOMFeed<std::ostringstream*>(writer, &os, a);
         assert(os.str() == itemFeed);
     }
     {
@@ -167,13 +167,13 @@ bool testFeed() {
                         << (list<value>() << "price" << "$3.55")));
         const list<value> a = cons<value>("Feed", cons<value>("1234", i));
         std::ostringstream os;
-        writeFeed<std::ostringstream*>(writer, &os, a);
+        writeATOMFeed<std::ostringstream*>(writer, &os, a);
         assert(os.str() == itemFeed);
     }
     {
         const list<value> a = readFeed(mklist(itemFeed));
         std::ostringstream os;
-        writeFeed<std::ostringstream*>(writer, &os, a);
+        writeATOMFeed<std::ostringstream*>(writer, &os, a);
         assert(os.str() == itemFeed);
     }
     return true;

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,5 +17,44 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = atom cache eval http json
+echo "Testing..."
 
+# Setup
+../../modules/http/httpd-conf tmp 8092 htdocs
+cat >>tmp/conf/httpd.conf <<EOF
+<Location /Catalog>
+SetHandler mod_tuscany
+SCAContribution `pwd`/
+SCAComponent store
+SCAImplementation store.scm
+</Location>
+
+<Location /Total>
+SetHandler mod_tuscany
+SCAContribution `pwd`/
+SCAComponent store
+SCAImplementation store.scm
+</Location>
+
+<Location /ShoppingCart>
+SetHandler mod_tuscany
+SCAContribution `pwd`/
+SCAComponent store
+SCAImplementation store.scm
+</Location>
+EOF
+apachectl -k start -d `pwd`/tmp
+sleep 1
+
+# Test HTTP GET
+curl http://localhost:8092/store.html 2>/dev/null >tmp/store.html
+diff tmp/store.html htdocs/store.html
+rc=$?
+
+# Cleanup
+apachectl -k stop -d `pwd`/tmp
+sleep 1
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
+return $rc

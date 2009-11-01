@@ -15,5 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = atom cache eval http json
+noinst_PROGRAMS = cache-test
+
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
+
+cache_test_SOURCES = cache-test.cpp
+cache_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+
+TESTS = memcached-test
 

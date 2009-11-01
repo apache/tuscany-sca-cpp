@@ -151,14 +151,6 @@ const Env setupEnvironment(const gc_pool& pool) {
     return env;
 }
 
-const bool cleanupEnvironment(Env& env) {
-    if (isNil(env))
-        return true;
-    *firstFrame(env) = list<value>();
-    Env enclosing = enclosingEnvironment(env);
-    return cleanupEnvironment(enclosing);
-}
-
 const value lookupEnvLoop(const value& var, const Env& env);
 
 const value lookupEnvScan(const value& var, const list<value>& vars, const list<value>& vals, const Env& env) {

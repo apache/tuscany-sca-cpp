@@ -55,7 +55,7 @@ bool testScript() {
 }
 
 const value evalLoop(std::istream& is, const value& req, eval::Env& globalEnv, const gc_pool& pool) {
-    value in = eval::read(is);
+    value in = eval::readValue(is);
     if(isNil(in))
         return eval::evalExpr(req, globalEnv, pool);
     eval::evalExpr(in, globalEnv, pool);
@@ -66,13 +66,12 @@ bool testEval() {
     {
         std::ifstream is("store.scm", std::ios_base::in);
         std::ostringstream os;
-        eval::setupEvalOut(os);
+        eval::setupDisplay(os);
 
         gc_pool pool;
         eval::Env globalEnv = eval::setupEnvironment(pool);
         const value req(mklist<value>("storeui_service", std::string("getcatalog")));
         const value val = evalLoop(is, req, globalEnv, pool);
-        eval::cleanupEnvironment(globalEnv);
 
         std::ostringstream vs;
         vs << val;
@@ -82,13 +81,12 @@ bool testEval() {
     {
         std::ifstream is("store.scm", std::ios_base::in);
         std::ostringstream os;
-        eval::setupEvalOut(os);
+        eval::setupDisplay(os);
 
         gc_pool pool;
         eval::Env globalEnv = eval::setupEnvironment(pool);
         const value req(mklist<value>("storeui_service", std::string("gettotal")));
         const value res = evalLoop(is, req, globalEnv, pool);
-        eval::cleanupEnvironment(globalEnv);
 
         std::ostringstream rs;
         rs << res;

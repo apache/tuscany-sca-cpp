@@ -40,73 +40,67 @@ const value primitiveSymbol("primitive");
 const value quoteSymbol("'");
 const value lambdaSymbol("lambda");
 
-std::ostream* evalOut = &std::cout;
+std::ostream* displayOut = &std::cout;
 
-const bool setupEvalOut(std::ostream& out) {
-    evalOut = &out;
+const bool setupDisplay(std::ostream& out) {
+    displayOut = &out;
     return true;
 }
 
-const value valueCar(list<value>& args) {
+const value carProc(list<value>& args) {
     return car((list<value> )car(args));
 }
 
-const value valueCdr(list<value>& args) {
+const value cdrProc(list<value>& args) {
     return cdr((list<value> )car(args));
 }
 
-const value valueCons(list<value>& args) {
+const value consProc(list<value>& args) {
     return cons(car(args), (list<value> )cadr(args));
 }
 
-const value valueList(list<value>& args) {
+const value listProc(list<value>& args) {
     return args;
 }
 
-const value valueNul(list<value>& args) {
+const value nulProc(list<value>& args) {
     return (bool)isNil(car(args));
 }
 
-const value valueEqual(list<value>& args) {
+const value equalProc(list<value>& args) {
     return (bool)(car(args) == cadr(args));
 }
 
-const value valueAdd(list<value>& args) {
+const value addProc(list<value>& args) {
     if (isNil(cdr(args)))
         return (double)car(args);
     return (double)car(args) + (double)cadr(args);
 }
 
-const value valueSub(list<value>& args) {
+const value subProc(list<value>& args) {
     if (isNil(cdr(args)))
         return (double)0 - (double)car(args);
     return (double)car(args) - (double)cadr(args);
 }
 
-const value valueMul(list<value>& args) {
+const value mulProc(list<value>& args) {
     return (double)car(args) * (double)cadr(args);
 }
 
-const value valueDiv(list<value>& args) {
+const value divProc(list<value>& args) {
     return (double)car(args) / (double)cadr(args);
 }
 
-const value valueDisplay(list<value>& args) {
-    *evalOut << car(args);
+const value displayProc(list<value>& args) {
+    *displayOut << car(args);
     return true;
 }
 
-const value valueComment(list<value>& args) {
-    *evalOut << "; " << car(args);
+const value commentProc(list<value>& args) {
     return true;
 }
 
-const value valueError(list<value>& args) {
-    std::cerr << (std::string)car(args);
-    return true;
-}
-
-const value valueUuid(list<value>& args) {
+const value uuidProc(list<value>& args) {
     apr_uuid_t uuid;
     apr_uuid_get(&uuid);
     char buf[APR_UUID_FORMATTED_LENGTH];
@@ -164,20 +158,20 @@ const list<value> primitiveProcedureNames() {
 }
 
 const list<value> primitiveProcedureObjects() {
-    list<value> l = mklist(primitiveProcedure(valueCar));
-    l = cons(primitiveProcedure(valueCdr), l);
-    l = cons(primitiveProcedure(valueCons), l);
-    l = cons(primitiveProcedure(valueList), l);
-    l = cons(primitiveProcedure(valueNul), l);
-    l = cons(primitiveProcedure(valueEqual), l);
-    l = cons(primitiveProcedure(valueAdd), l);
-    l = cons(primitiveProcedure(valueSub), l);
-    l = cons(primitiveProcedure(valueMul), l);
-    l = cons(primitiveProcedure(valueDiv), l);
-    l = cons(primitiveProcedure(valueEqual), l);
-    l = cons(primitiveProcedure(valueDisplay), l);
-    l = cons(primitiveProcedure(valueUuid), l);
-    l = cons(primitiveProcedure(valueComment), l);
+    list<value> l = mklist(primitiveProcedure(carProc));
+    l = cons(primitiveProcedure(cdrProc), l);
+    l = cons(primitiveProcedure(consProc), l);
+    l = cons(primitiveProcedure(listProc), l);
+    l = cons(primitiveProcedure(nulProc), l);
+    l = cons(primitiveProcedure(equalProc), l);
+    l = cons(primitiveProcedure(addProc), l);
+    l = cons(primitiveProcedure(subProc), l);
+    l = cons(primitiveProcedure(mulProc), l);
+    l = cons(primitiveProcedure(divProc), l);
+    l = cons(primitiveProcedure(equalProc), l);
+    l = cons(primitiveProcedure(displayProc), l);
+    l = cons(primitiveProcedure(uuidProc), l);
+    l = cons(primitiveProcedure(commentProc), l);
     return l;
 }
 

@@ -267,6 +267,7 @@ AC_CONFIG_FILES([Makefile
                  kernel/Makefile
                  modules/Makefile
                  modules/atom/Makefile
+                 modules/cache/Makefile
                  modules/eval/Makefile
                  modules/http/Makefile
                  modules/json/Makefile

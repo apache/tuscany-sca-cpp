@@ -19,11 +19,11 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_eval_read_hpp
-#define tuscany_eval_read_hpp
+#ifndef tuscany_eval_io_hpp
+#define tuscany_eval_io_hpp
 
 /**
- * Script evaluator read functions.
+ * Script evaluator IO functions.
  */
 
 #include <iostream>
@@ -96,7 +96,7 @@ const value readQuoted(std::istream& in);
 const value readIdentifier(const char chr, std::istream& in);
 const value readString(const char chr, std::istream& in);
 const value readNumber(const char chr, std::istream& in);
-const value read(std::istream& in);
+const value readValue(std::istream& in);
 
 const value readToken(std::istream& in) {
     const char firstChar = readChar(in);
@@ -121,7 +121,7 @@ const value readToken(std::istream& in) {
 }
 
 const value readQuoted(std::istream& in) {
-    return mklist(quoteSymbol, read(in));
+    return mklist(quoteSymbol, readValue(in));
 }
 
 const list<value> readList(const list<value>& listSoFar, std::istream& in) {
@@ -172,13 +172,17 @@ const value readNumber(const char chr, std::istream& in) {
     return stringToNumber(listToString(readNumberHelper(mklist(chr), in)));
 }
 
-const value read(std::istream& in) {
+const value readValue(std::istream& in) {
     const value nextToken = readToken(in);
     if(isLeftParenthesis(nextToken))
         return readList(list<value> (), in);
     return nextToken;
 }
 
+const bool writeValue(const value& val, std::ostream& out) {
+    out << val;
+}
+
 }
 }
-#endif /* tuscany_eval_read_hpp */
+#endif /* tuscany_eval_io_hpp */

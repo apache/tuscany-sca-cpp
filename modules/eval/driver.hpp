@@ -36,40 +36,39 @@ namespace eval {
 const std::string evalOutputPrompt("; ");
 const std::string evalInputPrompt("=> ");
 
-const bool promptForInput(std::ostream& out, const std::string str) {
+const bool promptForInput(const std::string str, std::ostream& out) {
     out << "\n\n" << str;
     return true;
 }
 
-const bool announceOutput(std::ostream& out, const std::string str) {
+const bool announceOutput(const std::string str, std::ostream& out) {
     out << "\n" << str;
     return true;
 }
 
-const bool userPrint(std::ostream& out, const value object) {
-    if(isCompoundProcedure(object))
-        out << mklist<value>(compoundProcedureSymbol, procedureParameters(object), procedureBody(object), "<procedure-env>");
-    out << object;
+const bool userPrint(const value val, std::ostream& out) {
+    if(isCompoundProcedure(val))
+        writeValue(mklist<value>(compoundProcedureSymbol, procedureParameters(val), procedureBody(val), "<procedure-env>"), out);
+    writeValue(val, out);
     return true;
 }
 
 const value evalDriverLoop(std::istream& in, std::ostream& out, Env& globalEnv, const gc_pool& pool) {
-    promptForInput(out, evalInputPrompt);
-    value input = read(in);
+    promptForInput(evalInputPrompt, out);
+    value input = readValue(in);
     if (isNil(input))
         return input;
     const value output = evalExpr(input, globalEnv, pool);
-    announceOutput(out, evalOutputPrompt);
-    userPrint(out, output);
+    announceOutput(evalOutputPrompt, out);
+    userPrint(output, out);
     return evalDriverLoop(in, out, globalEnv, pool);
 }
 
 const bool evalDriverRun(std::istream& in, std::ostream& out) {
     gc_pool pool;
-    setupEvalOut(out);
+    setupDisplay(out);
     Env globalEnv = setupEnvironment(pool);
     evalDriverLoop(in, out, globalEnv, pool);
-    cleanupEnvironment(globalEnv);
     return true;
 }
 
