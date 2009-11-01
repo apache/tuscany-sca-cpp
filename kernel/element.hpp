@@ -219,19 +219,19 @@ struct selectorLambda {
     const list<value> select;
     selectorLambda(const list<value>& s) : select(s) {
     }
-    const bool evalApply(const list<value>& s, const list<value> v) const {
+    const bool evalExpr(const list<value>& s, const list<value> v) const {
         if (isNil(s))
             return true;
         if (isNil(v))
             return false;
         if (car(s) != car(v))
             return false;
-        return evalApply(cdr(s), cdr(v));
+        return evalExpr(cdr(s), cdr(v));
     }
     const bool operator()(const value& v) const {
         if (!isList(v))
             return false;
-        return evalApply(select, v);
+        return evalExpr(select, v);
     }
 };
 

@@ -64,8 +64,6 @@ bool printLambdaCounters() {
 
 template<typename R, typename... P> class Callable {
 public:
-    unsigned int refCount;
-
     Callable() : refCount(0) {
     }
 
@@ -74,14 +72,6 @@ public:
     virtual const R operator()(P... p) const = 0;
 
     virtual ~Callable() {
-    }
-
-    unsigned int acquire() {
-        return __sync_add_and_fetch(&refCount, 1);
-    }
-
-    unsigned int release() {
-        return __sync_sub_and_fetch(&refCount, 1);
     }
 
     template<typename F> class Proxy: public Callable {
@@ -112,6 +102,18 @@ public:
         const F function;
     };
 
+private:
+    friend class gc_counting_ptr<Callable>;
+
+    unsigned int refCount;
+
+    unsigned int acquire() {
+        return __sync_add_and_fetch(&refCount, 1);
+    }
+
+    unsigned int release() {
+        return __sync_sub_and_fetch(&refCount, 1);
+    }
 };
 
 template<typename S> class lambda;

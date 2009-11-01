@@ -26,6 +26,8 @@
  * Script evaluator primitive functions.
  */
 
+#include <apr_general.h>
+#include <apr_uuid.h>
 #include <iostream>
 #include "function.hpp"
 #include "list.hpp"
@@ -104,6 +106,14 @@ const value valueError(list<value>& args) {
     return true;
 }
 
+const value valueUuid(list<value>& args) {
+    apr_uuid_t uuid;
+    apr_uuid_get(&uuid);
+    char buf[APR_UUID_FORMATTED_LENGTH];
+    apr_uuid_format(buf, &uuid);
+    return std::string(buf, APR_UUID_FORMATTED_LENGTH);
+}
+
 const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
     const lambda<value(list<value>&)> func(cadr((list<value>)proc));
     return func(args);
@@ -120,9 +130,9 @@ const bool isSelfEvaluating(const value& exp) {
         return true;
     if(isString(exp))
         return true;
-    if(isBoolean(exp))
+    if(isBool(exp))
         return true;
-    if(isCharacter(exp))
+    if(isChar(exp))
         return true;
     return false;
 }
@@ -148,6 +158,7 @@ const list<value> primitiveProcedureNames() {
     l = cons<value>("/", l);
     l = cons<value>("equal?", l);
     l = cons<value>("display", l);
+    l = cons<value>("uuid", l);
     l = cons<value>(";", l);
     return l;
 }
@@ -165,6 +176,7 @@ const list<value> primitiveProcedureObjects() {
     l = cons(primitiveProcedure(valueDiv), l);
     l = cons(primitiveProcedure(valueEqual), l);
     l = cons(primitiveProcedure(valueDisplay), l);
+    l = cons(primitiveProcedure(valueUuid), l);
     l = cons(primitiveProcedure(valueComment), l);
     return l;
 }

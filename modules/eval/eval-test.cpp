@@ -33,11 +33,13 @@ namespace tuscany {
 namespace eval {
 
 bool testEnv() {
+    gc_pool pool;
     Env globalEnv = list<value>();
-    Env env = extendEnvironment(mklist<value>("a"), mklist<value>(1), globalEnv);
+    Env env = extendEnvironment(mklist<value>("a"), mklist<value>(1), globalEnv, pool);
     defineVariable("x", env, env);
-    //assert(lookupVariableValue(value("x"), env) == env);
+    assert(lookupVariableValue(value("x"), env) == env);
     assert(lookupVariableValue("a", env) == value(1));
+    cleanupEnvironment(env);
     return true;
 }
 
@@ -135,14 +137,15 @@ bool testEval() {
     assert(contains(evalOutput(testSchemeBegin), "testBegin1 ok"));
     assert(contains(evalOutput(testSchemeBegin), "testBegin2 ok"));
     assert(contains(evalOutput(testSchemeLambda), "testLambda ok"));
-    //assert(contains(evalOutput(testSchemeForward), "testForward ok"));
+    assert(contains(evalOutput(testSchemeForward), "testForward ok"));
     return true;
 }
 
 bool testEvalExpr() {
+    gc_pool pool;
     const value exp = mklist<value>("+", 2, 3);
-    Env env = setupEnvironment();
-    const value r = evalApply(exp, env);
+    Env env = setupEnvironment(pool);
+    const value r = evalExpr(exp, env, pool);
     assert(r == value(5));
     return true;
 }

@@ -152,7 +152,7 @@ bool testOut() {
 
     std::ostringstream os2;
     os2 << mklist(1, 2, 3);
-    assert(os2.str() == "(1, 2, 3)");
+    assert(os2.str() == "(1 2 3)");
     return true;
 }
 
@@ -334,6 +334,14 @@ bool testValue() {
 
     const list<value> v = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"));
     assert(cadr((list<list<value> >)value(v)) == mklist<value>("a", "A"));
+
+    const value pv(gc_ptr<value>(new value(1)));
+    assert(*(gc_ptr<value>)pv == value(1));
+
+    const list<value> lpv = mklist<value>(gc_ptr<value>(new value(1)), gc_ptr<value>(new value(2)));
+    assert(*(gc_ptr<value>)car(lpv) == value(1));
+    *(gc_ptr<value>)cadr(lpv) = value(3);
+    assert(*(gc_ptr<value>)cadr(lpv) == value(3));
     return true;
 }
 
@@ -521,7 +529,7 @@ bool testReadXML() {
     return true;
 }
 
-std::ostringstream* xmlWriter(std::ostringstream* os, const std::string& s) {
+std::ostringstream* xmlWriter(const std::string& s, std::ostringstream* os) {
     (*os) << s;
     return os;
 }

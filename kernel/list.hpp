@@ -144,7 +144,7 @@ template<typename T> std::ostream& operator<<(std::ostream& out, const list<T>& 
         ml = cdr(ml);
         if (isNil(ml))
             break;
-        out << ", ";
+        out << " ";
     }
     return out << ")";
 }
@@ -161,6 +161,17 @@ template<typename T> const list<T> cons(const T& car, const lambda<list<T> ()>& 
  */
 template<typename T> const list<T> cons(const T& car, const list<T>& cdr) {
     return list<T> (car, result(cdr));
+}
+
+/**
+ * Cons variations for use with the reduce and reduceRight functions.
+ */
+template<typename T> const list<T> lcons(const list<T>& cdr, const T& car) {
+    return cons<T>(car, cdr);
+}
+
+template<typename T> const list<T> rcons(const T& car, const list<T>& cdr) {
+    return cons<T>(car, cdr);
 }
 
 /**
@@ -348,6 +359,22 @@ template<typename T, typename R> struct reduceAccumulate {
 
 template<typename T, typename R> const R reduce(const lambda<R(R, T)>& f, const R& initial, const list<T>& p) {
     return reduceAccumulate<T, R> (f)(initial, p);
+}
+
+template<typename T, typename R> struct reduceRightAccumulate {
+    const lambda<R(T, R)> f;
+    reduceRightAccumulate(const lambda<R(T, R)>& f) :
+        f(f) {
+    }
+    R operator()(const list<T>& p, const R& acc) const {
+        if(isNil(p))
+            return acc;
+        return (*this)(cdr(p), f(car(p), acc));
+    }
+};
+
+template<typename T, typename R> const R reduceRight(const lambda<R(T, R)>& f, const R& initial, const list<T>& p) {
+    return reduceRightAccumulate<T, R> (f)(p, initial);
 }
 
 /**

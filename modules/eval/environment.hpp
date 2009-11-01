@@ -34,7 +34,7 @@
 namespace tuscany {
 namespace eval {
 
-typedef list<value> Frame;
+typedef value Frame;
 typedef list<value> Env;
 
 const value trueSymbol("true");
@@ -63,7 +63,7 @@ const Env enclosingEnvironment(const Env& env) {
     return cdr(env);
 }
 
-const value firstFrame(const Env& env) {
+const gc_pool_ptr<Frame> firstFrame(const Env& env) {
     return car(env);
 }
 
@@ -101,9 +101,10 @@ const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, c
     return makeBinding(newFrame, cdr(variables), cdr(values));
 }
 
-const Frame makeFrame(const list<value>& variables, const list<value> values) {
-    const Frame emptyFrame = cons(value(list<value>()), list<value>());
-    return makeBinding(emptyFrame, variables, values);
+const gc_pool_ptr<Frame> makeFrame(const list<value>& variables, const list<value> values, const gc_pool& pool) {
+    gc_pool_ptr<Frame> frame = gc_pool_new<Frame>(pool);
+    *frame = value(makeBinding(cons(value(list<value>()), list<value>()), variables, values));
+    return frame;
 }
 
 const value definitionVariable(const value& exp) {
@@ -130,38 +131,32 @@ const value assignmentValue(const value& exp) {
     return car(cdr(cdr((list<value> )exp)));
 }
 
-const bool addBindingToFrame(const value& var, const value& val, Frame& frame) {
-    //frame = cons(value(cons(var, frameVariables(frame))), cons(val, frameValues(frame)));
-    setCar(frame, (value)cons(var, frameVariables(frame)));
-    setCdr(frame, cons(val, frameValues(frame)));
-    return true;
+const Frame addBindingToFrame(const value& var, const value& val, const Frame& frame) {
+    return cons(value(cons(var, frameVariables(frame))), cons(val, frameValues(frame)));
 }
 
 const bool defineVariable(const value& var, const value& val, Env& env) {
-    Frame frame = firstFrame(env);
-    addBindingToFrame(var, val, frame);
-    setCar(env, value(frame));
+    *firstFrame(env) = addBindingToFrame(var, val, *firstFrame(env));
     return true;
 }
 
-struct environmentReference {
-    const Env env;
-    environmentReference(const Env& env) : env(env) {
-    }
-    const Env& operator()() const {
-        return env;
-    }
-};
-
-const Env extendEnvironment(const list<value>& vars, const list<value>& vals, const Env& baseEnv) {
-    return cons(value(makeFrame(vars, vals)), lambda<list<value>()>(environmentReference(baseEnv)));
+const Env extendEnvironment(const list<value>& vars, const list<value>& vals, const Env& baseEnv, const gc_pool& pool) {
+    return cons<value>(makeFrame(vars, vals, pool), baseEnv);
 }
 
-const Env setupEnvironment() {
-    Env env = extendEnvironment(primitiveProcedureNames(), primitiveProcedureObjects(), theEmptyEnvironment());
+const Env setupEnvironment(const gc_pool& pool) {
+    Env env = extendEnvironment(primitiveProcedureNames(), primitiveProcedureObjects(), theEmptyEnvironment(), pool);
     defineVariable(trueSymbol, true, env);
     defineVariable(falseSymbol, false, env);
     return env;
+}
+
+const bool cleanupEnvironment(Env& env) {
+    if (isNil(env))
+        return true;
+    *firstFrame(env) = list<value>();
+    Env enclosing = enclosingEnvironment(env);
+    return cleanupEnvironment(enclosing);
 }
 
 const value lookupEnvLoop(const value& var, const Env& env);
@@ -179,7 +174,7 @@ const value lookupEnvLoop(const value& var, const Env& env) {
         std::cout << "Unbound variable " << var << "\n";
         return value();
     }
-    return lookupEnvScan(var, frameVariables(firstFrame(env)), frameValues(firstFrame(env)), env);
+    return lookupEnvScan(var, frameVariables(*firstFrame(env)), frameValues(*firstFrame(env)), env);
 }
 
 const value lookupVariableValue(const value& var, const Env& env) {

@@ -40,6 +40,22 @@
 namespace tuscany {
 
 /**
+ * Initializes the libxml2 library.
+ */
+class XMLParser {
+public:
+    XMLParser() {
+        xmlInitParser();
+    }
+
+    ~XMLParser() {
+        xmlCleanupParser();
+    }
+};
+
+XMLParser xmlParser;
+
+/**
  * Encapsulates a libxml2 xmlTextReader and its state.
  */
 class XMLReader {
@@ -54,6 +70,7 @@ public:
     }
 
     ~XMLReader() {
+        xmlTextReaderClose(xml);
         xmlFreeTextReader(xml);
     }
 
@@ -298,9 +315,9 @@ const failable<bool, std::string> write(const list<value>& l, const xmlTextWrite
  */
 template<typename R> class XMLWriteContext {
 public:
-    XMLWriteContext(const lambda<R(R, std::string)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
+    XMLWriteContext(const lambda<R(std::string, R)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
     }
-    const lambda<R(R, std::string)> reduce;
+    const lambda<R(std::string, R)> reduce;
     R accum;
 };
 
@@ -309,36 +326,35 @@ public:
  */
 template<typename R> int writeCallback(void *context, const char* buffer, int len) {
     XMLWriteContext<R>& cx = *static_cast<XMLWriteContext<R>*>(context);
-    cx.accum = cx.reduce(cx.accum, std::string(buffer, len));
+    cx.accum = cx.reduce(std::string(buffer, len), cx.accum);
     return len;
 }
 
 /**
  * Convert a list of values to an XML document.
  */
-template<typename R> const failable<R, std::string> writeXML(const lambda<R(R, std::string)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> writeXML(const lambda<R(std::string, R)>& reduce, const R& initial, const list<value>& l) {
     XMLWriteContext<R> cx(reduce, initial);
     xmlOutputBufferPtr out = xmlOutputBufferCreateIO(writeCallback<R>, NULL, &cx, NULL);
+    if (out == NULL)
+        return std::string("xmlOutputBufferCreateIO failed");
     xmlTextWriterPtr xml = xmlNewTextWriter(out);
     if (xml == NULL)
         return std::string("xmlNewTextWriter failed");
 
     const failable<bool, std::string> w = write(l, xml);
-    if (!hasValue(w))
+    xmlFreeTextWriter(xml);
+    if (!hasValue(w)) {
         return std::string(w);
-
+    }
     return cx.accum;
 }
 
 /**
  * Convert a list of values to a list of strings representing an XML document.
  */
-const list<std::string> writeXMLList(const list<std::string>& listSoFar, const std::string& s) {
-    return cons(s, listSoFar);
-}
-
 const failable<list<std::string>, std::string> writeXML(const list<value>& l) {
-    const failable<list<std::string>, std::string> ls = writeXML<list<std::string> >(writeXMLList, list<std::string>(), l);
+    const failable<list<std::string>, std::string> ls = writeXML<list<std::string> >(rcons<std::string>, list<std::string>(), l);
     if (!hasValue(ls))
         return ls;
     return reverse(list<std::string>(ls));

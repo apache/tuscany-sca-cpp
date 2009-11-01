@@ -53,21 +53,23 @@ const bool userPrint(std::ostream& out, const value object) {
     return true;
 }
 
-const value evalDriverLoop(std::istream& in, std::ostream& out, Env& globalEnv) {
+const value evalDriverLoop(std::istream& in, std::ostream& out, Env& globalEnv, const gc_pool& pool) {
     promptForInput(out, evalInputPrompt);
     value input = read(in);
     if (isNil(input))
         return input;
-    const value output = evalApply(input, globalEnv);
+    const value output = evalExpr(input, globalEnv, pool);
     announceOutput(out, evalOutputPrompt);
     userPrint(out, output);
-    return evalDriverLoop(in, out, globalEnv);
+    return evalDriverLoop(in, out, globalEnv, pool);
 }
 
 const bool evalDriverRun(std::istream& in, std::ostream& out) {
+    gc_pool pool;
     setupEvalOut(out);
-    Env globalEnv = setupEnvironment();
-    evalDriverLoop(in, out, globalEnv);
+    Env globalEnv = setupEnvironment(pool);
+    evalDriverLoop(in, out, globalEnv, pool);
+    cleanupEnvironment(globalEnv);
     return true;
 }
 

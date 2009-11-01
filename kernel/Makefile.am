@@ -19,13 +19,13 @@ noinst_PROGRAMS = kernel-test xsd-test
 
 nobase_include_HEADERS = *.hpp
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE}
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 kernel_test_SOURCES = kernel-test.cpp
-kernel_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
+kernel_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 
 xsd_test_SOURCES = xsd-test.cpp
-xsd_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2
+xsd_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 
 TESTS = kernel-test
 

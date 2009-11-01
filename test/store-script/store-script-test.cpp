@@ -24,6 +24,7 @@
  */
 
 #include <assert.h>
+#include <regex.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -38,23 +39,27 @@ namespace store {
 using namespace tuscany;
 
 bool contains(const std::string& str, const std::string& pattern) {
-    return str.find(pattern) != str.npos;
+    return str.find(pattern) != std::string::npos;
 }
 
 bool testScript() {
     std::ifstream is("store.scm", std::ios_base::in);
     std::ostringstream os;
     eval::evalDriverRun(is, os);
-    assert(contains(os.str(), "(string::\"Sample Feed\", string::\"123\", (string::\"Item\", string::\"123456789\", ((symbol::javaClass, string::\"services.Item\"), (symbol::name, string::\"Orange\"), (symbol::currency, string::\"USD\"), (symbol::symbol, string::\"$\"), (symbol::price, number::3.55))), (string::\"Item\", string::\"123456789\", ((symbol::javaClass, string::\"services.Item\"), (symbol::name, string::\"Apple\"), (symbol::currency, string::\"USD\"), (symbol::symbol, string::\"$\"), (symbol::price, number::2.99))))"));
+
+    assert(contains(os.str(), "(\"Sample Feed\" \""));
+    assert(contains(os.str(), "\" (\"Item\" \""));
+    assert(contains(os.str(), "\" ((javaClass \"services.Item\") (name \"Orange\") (currency \"USD\") (symbol \"$\") (price 3.55))) (\"Item\" \""));
+    assert(contains(os.str(), "\" ((javaClass \"services.Item\") (name \"Apple\") (currency \"USD\") (symbol \"$\") (price 2.99))))"));
     return true;
 }
 
-const value evalLoop(std::istream& is, const value& req, eval::Env& globalEnv) {
+const value evalLoop(std::istream& is, const value& req, eval::Env& globalEnv, const gc_pool& pool) {
     value in = eval::read(is);
     if(isNil(in))
-        return eval::evalApply(req, globalEnv);
-    eval::evalApply(in, globalEnv);
-    return evalLoop(is, req, globalEnv);
+        return eval::evalExpr(req, globalEnv, pool);
+    eval::evalExpr(in, globalEnv, pool);
+    return evalLoop(is, req, globalEnv, pool);
 }
 
 bool testEval() {
@@ -62,29 +67,32 @@ bool testEval() {
         std::ifstream is("store.scm", std::ios_base::in);
         std::ostringstream os;
         eval::setupEvalOut(os);
-        eval::Env globalEnv = eval::setupEnvironment();
 
+        gc_pool pool;
+        eval::Env globalEnv = eval::setupEnvironment(pool);
         const value req(mklist<value>("storeui_service", std::string("getcatalog")));
-        const value val = evalLoop(is, req, globalEnv);
+        const value val = evalLoop(is, req, globalEnv, pool);
+        eval::cleanupEnvironment(globalEnv);
 
         std::ostringstream vs;
         vs << val;
-        assert(contains(vs.str(),"(((symbol::javaClass, string::\"services.Item\"), (symbol::name, string::\"Apple\"), (symbol::currency, string::\"USD\"), (symbol::symbol, string::\"$\"), (symbol::price, number::2.99)), ((symbol::javaClass, string::\"services.Item\"), (symbol::name, string::\"Orange\"), (symbol::currency, string::\"USD\"), (symbol::symbol, string::\"$\"), (symbol::price, number::3.55)), ((symbol::javaClass, string::\"services.Item\"), (symbol::name, string::\"Pear\"), (symbol::currency, string::\"USD\"), (symbol::symbol, string::\"$\"), (symbol::price, number::1.55)))"));
+        assert(contains(vs.str(), "(((javaClass \"services.Item\") (name \"Apple\") (currency \"USD\") (symbol \"$\") (price 2.99)) ((javaClass \"services.Item\") (name \"Orange\") (currency \"USD\") (symbol \"$\") (price 3.55)) ((javaClass \"services.Item\") (name \"Pear\") (currency \"USD\") (symbol \"$\") (price 1.55)))"));
     }
 
     {
         std::ifstream is("store.scm", std::ios_base::in);
         std::ostringstream os;
-
         eval::setupEvalOut(os);
-        eval::Env globalEnv = eval::setupEnvironment();
 
+        gc_pool pool;
+        eval::Env globalEnv = eval::setupEnvironment(pool);
         const value req(mklist<value>("storeui_service", std::string("gettotal")));
-        const value res = evalLoop(is, req, globalEnv);
+        const value res = evalLoop(is, req, globalEnv, pool);
+        eval::cleanupEnvironment(globalEnv);
 
         std::ostringstream rs;
         rs << res;
-        assert(contains(rs.str(), "number::10"));
+        assert(contains(rs.str(), "10"));
     }
     return true;
 }
