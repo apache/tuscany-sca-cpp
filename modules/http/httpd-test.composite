@@ -19,25 +19,24 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200903"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://services"
-  name="catalogs">
-		
-	<component name="FruitsCatalogWebService">
-		<implementation.java class="services.FruitsCatalogImpl"/>
-		<service name="Catalog">
-			<binding.ws/>
-		</service> 
-		<property name="currencyCode">USD</property>
-		<reference name="currencyConverter" target="CurrencyConverterWebService">
-			<binding.ws/>
-		</reference>
-	</component> 
- 	
-	<component name="VegetablesCatalogWebService">
-		<implementation.java class="services.VegetablesCatalogImpl"/>
-		<service name="Catalog">
-			<binding.ws/>
-		</service> 
-	</component>
- 	
+  targetNamespace="http://test"
+  name="httpd-test">
+        
+    <component name="httpd-test">
+        <t:implementation.scheme uri="httpd-test.scm"/>
+        <service name="test">
+            <t:binding.http uri="test"/>
+        </service>
+    </component>     
+
+    <component name="httpd-client">
+        <t:implementation.scheme uri="httpd-client.scm"/>
+        <service name="client">
+            <t:binding.http uri="client"/>
+        </service>
+        <reference name="ref" target="test">
+            <t:binding.http/>
+        </reference>
+    </component>
+
 </composite>

@@ -20,40 +20,55 @@
 echo "Testing..."
 
 # Setup
-../../modules/http/httpd-conf tmp 8092 htdocs
+../../modules/http/httpd-conf tmp 8093 htdocs
 cat >>tmp/conf/httpd.conf <<EOF
+
 <Location /Catalog>
-SetHandler mod_tuscany
+SetHandler mod_tuscany_eval
 SCAContribution `pwd`/
-SCAComponent store
-SCAImplementation store.scm
+SCAComposite store.composite
+SCAComponent Catalog
 </Location>
 
 <Location /Total>
-SetHandler mod_tuscany
+SetHandler mod_tuscany_eval
 SCAContribution `pwd`/
-SCAComponent store
-SCAImplementation store.scm
+SCAComposite store.composite
+SCAComponent ShoppingCart
 </Location>
 
 <Location /ShoppingCart>
-SetHandler mod_tuscany
+SetHandler mod_tuscany_eval
 SCAContribution `pwd`/
-SCAComponent store
-SCAImplementation store.scm
+SCAComposite store.composite
+SCAComponent ShoppingCart
+</Location>
+
+<Location /CurrencyConverter>
+SetHandler mod_tuscany_eval
+SCAContribution `pwd`/
+SCAComposite store.composite
+SCAComponent CurrencyConverter
+</Location>
+
+<Location /references>
+SetHandler mod_tuscany_wiring
+SCAContribution `pwd`/
+SCAComposite store.composite
 </Location>
 EOF
+
 apachectl -k start -d `pwd`/tmp
 sleep 1
 
 # Test HTTP GET
-curl http://localhost:8092/store.html 2>/dev/null >tmp/store.html
+curl http://localhost:8093/store.html 2>/dev/null >tmp/store.html
 diff tmp/store.html htdocs/store.html
 rc=$?
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 1
+sleep 2
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi

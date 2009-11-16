@@ -114,6 +114,15 @@ bool testJSONRPC() {
         write(writeJSON(e, cx), os);
         assert(os.str() == "{\"id\":1,\"result\":[\"Service.get\",\"Service.getTotal\"]}");
     }
+    {
+        const std::string f("{\"id\":1,\"result\":[\"Sample Feed\",\"123456789\",[\"Item\",\"111\",{\"javaClass\":\"services.Item\",\"name\":\"Apple\",\"currencyCode\":\"USD\",\"currencySymbol\":\"$\",\"price\":2.99}],[\"Item\",\"222\",{\"javaClass\":\"services.Item\",\"name\":\"Orange\",\"currencyCode\":\"USD\",\"currencySymbol\":\"$\",\"price\":3.55}],[\"Item\",\"333\",{\"javaClass\":\"services.Item\",\"name\":\"Pear\",\"currencyCode\":\"USD\",\"currencySymbol\":\"$\",\"price\":1.55}]]}");
+        const list<value> r = readJSON(mklist(f), cx);
+        const list<value> v = elementsToValues(r);
+        const list<value> e = valuesToElements(v);
+        std::ostringstream os;
+        write(writeJSON(e, cx), os);
+        assert(os.str() == f);
+    }
     return true;
 }
 

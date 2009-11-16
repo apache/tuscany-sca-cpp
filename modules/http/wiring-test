@@ -20,7 +20,7 @@
 echo "Testing..."
 
 # Setup
-./httpd-conf tmp 8090 htdocs
+./httpd-conf tmp 8092 htdocs
 cat >>tmp/conf/httpd.conf <<EOF
 
 <Location /test>
@@ -29,43 +29,56 @@ SCAContribution `pwd`/
 SCAComposite httpd-test.composite
 SCAComponent httpd-test
 </Location>
+
+<Location /client>
+SetHandler mod_tuscany_eval
+SCAContribution /home/delfinoj/SCAZone/Source/tuscany-cpp/sca/modules/http/
+SCAComposite httpd-test.composite
+SCAComponent httpd-client
+</Location>
+
+<Location /references>
+SetHandler mod_tuscany_wiring
+SCAContribution `pwd`/
+SCAComposite httpd-test.composite
+</Location>
 EOF
 
 apachectl -k start -d `pwd`/tmp
 sleep 1
 
 # Test HTTP GET
-curl http://localhost:8090/index.html 2>/dev/null >tmp/index.html
+curl http://localhost:8092/index.html 2>/dev/null >tmp/index.html
 diff tmp/index.html htdocs/index.html
 rc=$?
 
 # Test ATOMPub
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/ >tmp/feed.xml 2>/dev/null
+    curl http://localhost:8092/client/ >tmp/feed.xml 2>/dev/null
     diff tmp/feed.xml htdocs/feed.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/111 >tmp/entry.xml 2>/dev/null
+    curl http://localhost:8092/client/111 >tmp/entry.xml 2>/dev/null
     diff tmp/entry.xml htdocs/entry.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/ -X POST -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
+    curl http://localhost:8092/client/ -X POST -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/111 -X PUT -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
+    curl http://localhost:8092/client/111 -X PUT -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/111 -X DELETE 2>/dev/null
+    curl http://localhost:8092/client/111 -X DELETE 2>/dev/null
     rc=$?
 fi
 
 # Test JSON-RPC
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/ -X POST -H "Content-type: application/json-rpc" --data @htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
+    curl http://localhost:8092/client/ -X POST -H "Content-type: application/json-rpc" --data @htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
     diff tmp/json-result.txt htdocs/json-result.txt
     rc=$?
 fi

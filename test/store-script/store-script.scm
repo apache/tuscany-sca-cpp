@@ -1,0 +1,149 @@
+; Currency implementation
+
+(define (currency_convert from to amount) 
+  (if (equal? to "EUR") (* amount 0.70) amount)
+)
+
+(define (currency_symbol currency) 
+  (if (equal? currency "EUR") "E" "$")
+)
+
+(define (currency_impl op args)
+  (cond
+    ((equal? op "convert") (apply currency_convert args))
+    ((equal? op "symbol") (apply currency_symbol args))
+  )
+)
+
+; Currency composite
+
+(define (currency_service op . args) (currency_impl op args))
+
+; Catalog implementation
+
+(define (catalog_get converter)
+  (define (convert price) (converter "convert" "USD" "USD" price))
+
+  (define code "USD")
+  (define symbol (converter "symbol" code))
+
+  (list
+    (list (list 'javaClass "services.Item") (list 'name "Apple") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 2.99))
+    (list (list 'javaClass "services.Item") (list 'name "Orange") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 3.55))
+    (list (list 'javaClass "services.Item") (list 'name "Pear") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 1.55))
+  )
+)
+
+(define (catalog_impl converter op args)
+  (cond
+    ((equal? op "get") (apply catalog_get (cons converter args)))
+  )
+)
+
+; Catalog composite
+
+(define (catalog_service op . args) (catalog_impl currency_service op args))
+
+; Cart implementation
+
+(define (cart_post content item)
+  (cons (cons "Item" (list (uuid) item)) content)
+)
+
+(define (cart_getall content)
+  (cons "Sample Feed" (cons (uuid) content))
+)
+
+(define (cart_getentry id)
+  (define entry (list (list 'name "Apple") (list 'currencyCode "USD") (list 'currencySymbol "$") (list 'price 2.99)))
+  (cons "Item" (list id entry))
+)
+
+(define (cart_gettotal)
+  10.0
+)
+
+(define (cart_impl op args)
+  (cond
+    ((equal? op "post") (apply cart_post args))
+    ((equal? op "getall") (apply cart_getall args))
+    ((equal? op "getentry") (apply cart_getentry args))
+    ((equal? op "gettotal") (apply cart_gettotal args))
+  )
+)
+
+; Store UI implementation
+
+(define (storeui_post cart content item)
+  (cart "post" content item)
+)
+
+(define (storeui_getcart cart content)
+  (cart "getall" content)
+)
+
+(define (storeui_getentry cart id)
+  (cart "getentry" id)
+)
+
+(define (storeui_getcatalog catalog)
+  (catalog "get")
+)
+
+(define (storeui_gettotal cart)
+  (cart "gettotal")
+)
+
+(define (storeui_impl cart catalog op args)
+  (cond
+    ((equal? op "post") (apply storeui_post (cons cart args)))
+    ((equal? op "getall") (apply storeui_getcart (cons cart args)))
+    ((equal? op "getentry") (apply storeui_getentry (cons cart args)))
+    ((equal? op "getcatalog") (apply storeui_getcatalog (cons catalog args)))
+    ((equal? op "gettotal") (apply storeui_gettotal (cons cart args)))
+  )
+)
+
+; Store UI composite
+
+(define (cart_service op . args) (cart_impl op args))
+
+(define (storeui_service op . args) (storeui_impl cart_service catalog_service op args))
+
+; Store UI test case
+
+(define catalog (storeui_service "getcatalog"))
+(define empty (list))
+(define apple (car catalog))
+(define orange (car (cdr catalog)))
+(define added1 (storeui_service "post" empty apple))
+(define added2 (storeui_service "post" added1 orange))
+(display (storeui_service "getall" added2))
+(display (storeui_service "gettotal"))
+
+; Store UI JSON-RPC interop test case
+
+(define (system.listMethods) (list "Service.get" "Service.getTotal"))
+
+(define (Service.get) (storeui_service "getcatalog"))
+
+(define (.get) (storeui_service "getcatalog"))
+
+(define (Service.getTotal) (storeui_service "gettotal"))
+
+; Store UI ATOMPub interop test case
+
+(define (getall) (storeui_service "getall" added2))
+
+(define (get id) (storeui_service "getentry" id))
+
+(define (post entry)
+  (display entry)
+  (uuid)
+)
+
+(define (delete id)
+  (display id)
+  true
+)
+

@@ -20,13 +20,15 @@
 # Setup
 ./httpd-conf tmp 8091 htdocs
 cat >>tmp/conf/httpd.conf <<EOF
+
 <Location /test>
-SetHandler mod_tuscany
+SetHandler mod_tuscany_eval
 SCAContribution `pwd`/
+SCAComposite httpd-test.composite
 SCAComponent httpd-test
-SCAImplementation httpd-test.scm
 </Location>
 EOF
+
 apachectl -k start -d `pwd`/tmp
 sleep 1
 
@@ -36,5 +38,5 @@ rc=$?
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 1
+sleep 2
 return $rc

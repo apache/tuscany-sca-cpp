@@ -43,50 +43,42 @@ bool contains(const std::string& str, const std::string& pattern) {
 }
 
 bool testScript() {
-    std::ifstream is("store.scm", std::ios_base::in);
+    std::ifstream is("store-script.scm", std::ios_base::in);
     std::ostringstream os;
     eval::evalDriverRun(is, os);
 
     assert(contains(os.str(), "(\"Sample Feed\" \""));
     assert(contains(os.str(), "\" (\"Item\" \""));
-    assert(contains(os.str(), "\" ((javaClass \"services.Item\") (name \"Orange\") (currency \"USD\") (symbol \"$\") (price 3.55))) (\"Item\" \""));
-    assert(contains(os.str(), "\" ((javaClass \"services.Item\") (name \"Apple\") (currency \"USD\") (symbol \"$\") (price 2.99))))"));
+    assert(contains(os.str(), "\" ((javaClass \"services.Item\") (name \"Orange\") (currencyCode \"USD\") (currencySymbol \"$\") (price 3.55))) (\"Item\" \""));
+    assert(contains(os.str(), "\" ((javaClass \"services.Item\") (name \"Apple\") (currencyCode \"USD\") (currencySymbol \"$\") (price 2.99))))"));
     return true;
-}
-
-const value evalLoop(std::istream& is, const value& req, eval::Env& globalEnv, const gc_pool& pool) {
-    value in = eval::readValue(is);
-    if(isNil(in))
-        return eval::evalExpr(req, globalEnv, pool);
-    eval::evalExpr(in, globalEnv, pool);
-    return evalLoop(is, req, globalEnv, pool);
 }
 
 bool testEval() {
     {
-        std::ifstream is("store.scm", std::ios_base::in);
+        std::ifstream is("store-script.scm", std::ios_base::in);
         std::ostringstream os;
         eval::setupDisplay(os);
 
         gc_pool pool;
         eval::Env globalEnv = eval::setupEnvironment(pool);
-        const value req(mklist<value>("storeui_service", std::string("getcatalog")));
-        const value val = evalLoop(is, req, globalEnv, pool);
+        const value exp(mklist<value>("storeui_service", std::string("getcatalog")));
+        const value val = eval::evalScript(exp, is, globalEnv, pool);
 
         std::ostringstream vs;
         vs << val;
-        assert(contains(vs.str(), "(((javaClass \"services.Item\") (name \"Apple\") (currency \"USD\") (symbol \"$\") (price 2.99)) ((javaClass \"services.Item\") (name \"Orange\") (currency \"USD\") (symbol \"$\") (price 3.55)) ((javaClass \"services.Item\") (name \"Pear\") (currency \"USD\") (symbol \"$\") (price 1.55)))"));
+        assert(contains(vs.str(), "(((javaClass \"services.Item\") (name \"Apple\") (currencyCode \"USD\") (currencySymbol \"$\") (price 2.99)) ((javaClass \"services.Item\") (name \"Orange\") (currencyCode \"USD\") (currencySymbol \"$\") (price 3.55)) ((javaClass \"services.Item\") (name \"Pear\") (currencyCode \"USD\") (currencySymbol \"$\") (price 1.55)))"));
     }
 
     {
-        std::ifstream is("store.scm", std::ios_base::in);
+        std::ifstream is("store-script.scm", std::ios_base::in);
         std::ostringstream os;
         eval::setupDisplay(os);
 
         gc_pool pool;
         eval::Env globalEnv = eval::setupEnvironment(pool);
-        const value req(mklist<value>("storeui_service", std::string("gettotal")));
-        const value res = evalLoop(is, req, globalEnv, pool);
+        const value exp(mklist<value>("storeui_service", std::string("gettotal")));
+        const value res = eval::evalScript(exp, is, globalEnv, pool);
 
         std::ostringstream rs;
         rs << res;

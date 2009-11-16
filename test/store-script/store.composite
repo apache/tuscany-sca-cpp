@@ -21,44 +21,49 @@
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://store"
   name="store">
-		
+        
     <component name="Store">
-        <t:implementation.widget location="uiservices/store.html"/>
+	    <!-- <t:implementation.widget location="store.html"/> -->
+        <t:implementation.scheme uri="store.scm"/>
+        
         <service name="Widget">
-        	<t:binding.http uri="/ui"/>
+            <t:binding.http uri="store"/>
         </service>
-		<reference name="catalog" target="StoreCatalog">
-		 	<t:binding.jsonrpc/>
-		 </reference>
-		 <reference name="shoppingCart" target="StoreShoppingCart/Cart">
-		 	<t:binding.atom/>
-		 </reference>
-		 <reference name="shoppingTotal" target="StoreShoppingCart/Total">
-		 	<t:binding.jsonrpc/>
-		 </reference>
+        <reference name="catalog" target="Catalog">
+             <t:binding.jsonrpc uri="Catalog"/>
+         </reference>
+         <reference name="shoppingCart" target="ShoppingCart/Cart">
+             <t:binding.atom/>
+         </reference>
+         <reference name="shoppingTotal" target="ShoppingCart/Total">
+             <t:binding.jsonrpc/>
+         </reference>
     </component>
     
-	<component name="StoreCatalog">
-		<implementation.java class="services.FruitsCatalogImpl"/> 
-		<property name="currencyCode">USD</property>
-		<service name="Catalog">
-			<t:binding.jsonrpc/>
-   		</service>
-		<reference name="currencyConverter" target="StoreCurrencyConverter"/>	
-	</component> 
- 	
-	<component name="StoreShoppingCart">
-		<implementation.java class="services.ShoppingCartImpl"/>
-		<service name="Cart">
-			<t:binding.atom uri="/ShoppingCart/Cart"/>
-		</service>    	
-		<service name="Total">
-			<t:binding.jsonrpc/>
-		</service>    	
-	</component>
+    <component name="Catalog">
+        <t:implementation.scheme uri="fruits-catalog.scm"/> 
+        <property name="currencyCode">USD</property>
+        <service name="Catalog">
+            <t:binding.jsonrpc uri="Catalog"/>
+        </service>
+        <reference name="currencyConverter" target="CurrencyConverter"/>
+    </component> 
+     
+    <component name="ShoppingCart">
+        <t:implementation.scheme uri="shopping-cart.scm"/>
+        <service name="ShoppingCart">
+            <t:binding.atom uri="ShoppingCart"/>
+        </service>        
+        <service name="Total">
+            <t:binding.jsonrpc uri="Total"/>
+        </service>        
+    </component>
     
-	<component name="StoreCurrencyConverter">
-		<implementation.java class="services.CurrencyConverterImpl"/>
-	</component>     
+    <component name="CurrencyConverter">
+        <t:implementation.scheme uri="currency-converter.scm"/>
+        <service name="CurrencyConverter">
+            <t:binding.jsonrpc uri="CurrencyConverter"/>
+        </service>        
+    </component>     
 
 </composite>

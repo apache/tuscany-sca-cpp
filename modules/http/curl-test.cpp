@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test JSON data conversion functions.
+ * Test HTTP client functions.
  */
 
 #include <assert.h>
@@ -35,13 +35,64 @@
 namespace tuscany {
 namespace http {
 
-bool contains(const std::string& str, const std::string& pattern) {
+const bool contains(const std::string& str, const std::string& pattern) {
     return str.find(pattern) != str.npos;
+}
+
+const double duration(struct timeval start, struct timeval end, int count) {
+    long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
+    return (double)t / (double)count;
 }
 
 std::ostringstream* curlWriter(const std::string& s, std::ostringstream* os) {
     (*os) << s;
     return os;
+}
+
+const bool testGet() {
+    CURLHandle ch;
+    {
+        std::ostringstream os;
+        const failable<list<std::ostringstream*>, std::string> r = get<std::ostringstream*>(curlWriter, &os, "http://localhost:8091", ch);
+        assert(hasValue(r));
+        assert(contains(os.str(), "HTTP/1.1 200 OK"));
+        assert(contains(os.str(), "It works"));
+    }
+    {
+        const failable<value, std::string> r = get("http://localhost:8091", ch);
+        assert(hasValue(r));
+        const value val = r;
+        assert(contains(val, "It works"));
+    }
+    return true;
+}
+
+const bool testGetLoop(const int count, CURLHandle& ch) {
+    if (count == 0)
+        return true;
+    const failable<value, std::string> r = get("http://localhost:8091", ch);
+    assert(hasValue(r));
+    const value val = r;
+    assert(contains(val, "It works"));
+    return testGetLoop(count - 1, ch);
+}
+
+const bool testGetPerf() {
+    const int count = 50;
+    CURLHandle ch;
+    struct timeval start;
+    struct timeval end;
+    {
+        testGetLoop(5, ch);
+
+        gettimeofday(&start, NULL);
+
+        testGetLoop(count, ch);
+
+        gettimeofday(&end, NULL);
+        std::cout << "Static GET test " << duration(start, end, count) << " ms" << std::endl;
+    }
+    return true;
 }
 
 const bool testEval() {
@@ -83,8 +134,7 @@ const bool testEvalPerf() {
         testEvalLoop(count, ch);
 
         gettimeofday(&end, NULL);
-        long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        std::cout << "JSON-RPC eval echo test " << (t / count) << " ms" << std::endl;
+        std::cout << "JSON-RPC eval echo test " << duration(start, end, count) << " ms" << std::endl;
     }
     {
         testBlobEvalLoop(5, ch);
@@ -94,25 +144,7 @@ const bool testEvalPerf() {
         testBlobEvalLoop(count, ch);
 
         gettimeofday(&end, NULL);
-        long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        std::cout << "JSON-RPC eval blob test " << (t / count) << " ms" << std::endl;
-    }
-}
-
-const bool testGet() {
-    CURLHandle ch;
-    {
-        std::ostringstream os;
-        const failable<list<std::ostringstream*>, std::string> r = get<std::ostringstream*>(curlWriter, &os, "http://localhost:8091", ch);
-        assert(hasValue(r));
-        assert(contains(os.str(), "HTTP/1.1 200 OK"));
-        assert(contains(os.str(), "It works"));
-    }
-    {
-        const failable<value, std::string> r = get("http://localhost:8091", ch);
-        assert(hasValue(r));
-        const value val = r;
-        assert(contains(val, "It works"));
+        std::cout << "JSON-RPC eval blob test " << duration(start, end, count) << " ms" << std::endl;
     }
     return true;
 }
@@ -157,8 +189,7 @@ const bool testPostPerf() {
         testPostLoop(count, val, ch);
 
         gettimeofday(&end, NULL);
-        long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        std::cout << "ATOMPub POST small test " << (t / count) << " ms" << std::endl;
+        std::cout << "ATOMPub POST small test " << duration(start, end, count) << " ms" << std::endl;
     }
     {
         const list<value> i = list<value>()
@@ -177,9 +208,9 @@ const bool testPostPerf() {
         testPostLoop(count, val, ch);
 
         gettimeofday(&end, NULL);
-        long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        std::cout << "ATOMPub POST blob test  " << (t / count) << " ms" << std::endl;
+        std::cout << "ATOMPub POST blob test  " << duration(start, end, count) << " ms" << std::endl;
     }
+    return true;
 }
 
 const bool testPut() {
@@ -188,7 +219,7 @@ const bool testPut() {
             << (list<value>() << "price" << std::string("$2.99"));
     const list<value> a = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
     CURLHandle ch;
-    value rc = put(a, "http://localhost:8091/test", ch);
+    value rc = put(a, "http://localhost:8091/test/111", ch);
     assert(rc == value(true));
     return true;
 }
@@ -207,10 +238,11 @@ int main() {
     std::cout << "Testing..." << std::endl;
 
     tuscany::http::testGet();
+    tuscany::http::testGetPerf();
     tuscany::http::testPost();
-    //tuscany::http::testPostPerf();
+    tuscany::http::testPostPerf();
     tuscany::http::testEval();
-    //tuscany::http::testEvalPerf();
+    tuscany::http::testEvalPerf();
     tuscany::http::testFeed();
     tuscany::http::testPut();
     tuscany::http::testDel();
