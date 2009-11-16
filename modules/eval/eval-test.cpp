@@ -167,22 +167,56 @@ bool testEvalExpr() {
     return true;
 }
 
+bool testEvalRun() {
+    evalDriverRun(std::cin, std::cout);
+    return true;
+}
+
+const value mult(const list<value>& args) {
+    const double x = car(args);
+    const double y = cadr(args);
+    return x * y;
+}
+
+const std::string testReturnLambda(
+  "(define (testReturnLambda) * )");
+
+const std::string testCallLambda(
+  "(define (testCallLambda l x y) (l x y))");
+
+bool testEvalLambda() {
+    gc_pool pool;
+    Env env = setupEnvironment(pool);
+
+    const value trl = mklist<value>("testReturnLambda");
+    std::istringstream trlis(testReturnLambda);
+    const value trlv = evalScript(trl, trlis, env, pool);
+
+    std::istringstream tclis(testCallLambda);
+    const value tcl = cons<value>("testCallLambda", quotedParameters(mklist<value>(trlv, 2, 3)));
+    const value tclv = evalScript(tcl, tclis, env, pool);
+    assert(tclv == value(6));
+
+    std::istringstream tcelis(testCallLambda);
+    const value tcel = cons<value>("testCallLambda", quotedParameters(mklist<value>(primitiveProcedure(mult), 3, 4)));
+    const value tcelv = evalScript(tcel, tcelis, env, pool);
+    assert(tcelv == value(12));
+    return true;
+}
+
 bool testEvalGC() {
     resetLambdaCounters();
     resetListCounters();
     resetValueCounters();
     testEval();
+    testEvalExpr();
+    testEvalLambda();
     assert(countValues == 0);
     assert(countLambdas == 0);
     assert(countlists == 0);
     //printLambdaCounters();
     //printListCounters();
     //printValueCounters();
-    return true;
-}
-
-bool testEvalRun() {
-    evalDriverRun(std::cin, std::cout);
     return true;
 }
 
@@ -198,6 +232,7 @@ int main() {
     tuscany::eval::testWrite();
     tuscany::eval::testEval();
     tuscany::eval::testEvalExpr();
+    tuscany::eval::testEvalLambda();
     tuscany::eval::testEvalGC();
 
     std::cout << "OK" << std::endl;

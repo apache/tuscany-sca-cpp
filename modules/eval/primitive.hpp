@@ -47,60 +47,57 @@ const bool setupDisplay(std::ostream& out) {
     return true;
 }
 
-const value carProc(list<value>& args) {
+const value carProc(const list<value>& args) {
     return car((list<value> )car(args));
 }
 
-const value cdrProc(list<value>& args) {
+const value cdrProc(const list<value>& args) {
     return cdr((list<value> )car(args));
 }
 
-const value consProc(list<value>& args) {
+const value consProc(const list<value>& args) {
     return cons(car(args), (list<value> )cadr(args));
 }
 
-const value listProc(list<value>& args) {
+const value listProc(const list<value>& args) {
     return args;
 }
 
-const value nulProc(list<value>& args) {
+const value nulProc(const list<value>& args) {
     return (bool)isNil(car(args));
 }
 
-const value equalProc(list<value>& args) {
+const value equalProc(const list<value>& args) {
     return (bool)(car(args) == cadr(args));
 }
 
-const value addProc(list<value>& args) {
+const value addProc(const list<value>& args) {
     if (isNil(cdr(args)))
         return (double)car(args);
     return (double)car(args) + (double)cadr(args);
 }
 
-const value subProc(list<value>& args) {
+const value subProc(const list<value>& args) {
     if (isNil(cdr(args)))
         return (double)0 - (double)car(args);
     return (double)car(args) - (double)cadr(args);
 }
 
-const value mulProc(list<value>& args) {
+const value mulProc(const list<value>& args) {
     return (double)car(args) * (double)cadr(args);
 }
 
-const value divProc(list<value>& args) {
+const value divProc(const list<value>& args) {
     return (double)car(args) / (double)cadr(args);
 }
 
-const value displayProc(list<value>& args) {
+const value displayProc(const list<value>& args) {
     *displayOut << car(args);
+    (*displayOut).flush();
     return true;
 }
 
-const value commentProc(list<value>& args) {
-    return true;
-}
-
-const value uuidProc(list<value>& args) {
+const value uuidProc(const list<value>& args) {
     apr_uuid_t uuid;
     apr_uuid_get(&uuid);
     char buf[APR_UUID_FORMATTED_LENGTH];
@@ -108,7 +105,7 @@ const value uuidProc(list<value>& args) {
     return std::string(buf, APR_UUID_FORMATTED_LENGTH);
 }
 
-const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
+const value applyPrimitiveProcedure(const value& proc, list<value>& args, const gc_pool& pool) {
     const lambda<value(list<value>&)> func(cadr((list<value>)proc));
     return func(args);
 }
@@ -127,6 +124,8 @@ const bool isSelfEvaluating(const value& exp) {
     if(isBool(exp))
         return true;
     if(isChar(exp))
+        return true;
+    if(isLambda(exp))
         return true;
     return false;
 }
@@ -153,7 +152,6 @@ const list<value> primitiveProcedureNames() {
     l = cons<value>("equal?", l);
     l = cons<value>("display", l);
     l = cons<value>("uuid", l);
-    l = cons<value>(";", l);
     return l;
 }
 
@@ -171,7 +169,6 @@ const list<value> primitiveProcedureObjects() {
     l = cons(primitiveProcedure(equalProc), l);
     l = cons(primitiveProcedure(displayProc), l);
     l = cons(primitiveProcedure(uuidProc), l);
-    l = cons(primitiveProcedure(commentProc), l);
     return l;
 }
 

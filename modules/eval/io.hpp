@@ -92,6 +92,7 @@ const bool isQuote(const value& token) {
     return token == quoteSymbol;
 }
 
+const value skipComment(std::istream& in);
 const value readQuoted(std::istream& in);
 const value readIdentifier(const char chr, std::istream& in);
 const value readString(const char chr, std::istream& in);
@@ -102,6 +103,8 @@ const value readToken(std::istream& in) {
     const char firstChar = readChar(in);
     if(isWhitespace(firstChar))
         return readToken(in);
+    if(firstChar == ';')
+        return skipComment(in);
     if(firstChar == '\'')
         return readQuoted(in);
     if(firstChar == '(')
@@ -118,6 +121,13 @@ const value readToken(std::istream& in) {
         return value();
     std::cout << "Illegal lexical syntax '" << firstChar << "'" << "\n";
     return readToken(in);
+}
+
+const value skipComment(std::istream& in) {
+    const char nextChar = readChar(in);
+    if (nextChar == '\n')
+        return readToken(in);
+    return skipComment(in);
 }
 
 const value readQuoted(std::istream& in) {
@@ -181,6 +191,14 @@ const value readValue(std::istream& in) {
 
 const bool writeValue(const value& val, std::ostream& out) {
     out << val;
+    return true;
+}
+
+const value readScript(std::istream& in) {
+    const value val = readValue(in);
+    if (isNil(val))
+        return list<value>();
+    return cons(val, (list<value>)readScript(in));
 }
 
 }

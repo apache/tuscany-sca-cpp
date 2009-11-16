@@ -54,7 +54,7 @@ const list<value> beginActions(const value& exp) {
     return cdr((list<value> )exp);
 }
 
-const bool isLambda(const value& exp) {
+const bool isLambdaExpr(const value& exp) {
     return isTaggedList(exp, lambdaSymbol);
 }
 
@@ -141,7 +141,7 @@ const value evalSequence(const list<value>& exps, Env& env, const gc_pool& pool)
 
 const value applyProcedure(const value& procedure, list<value>& arguments, const gc_pool& pool) {
     if(isPrimitiveProcedure(procedure))
-        return applyPrimitiveProcedure(procedure, arguments);
+        return applyPrimitiveProcedure(procedure, arguments, pool);
     if(isCompoundProcedure(procedure)) {
         Env env = extendEnvironment(procedureParameters(procedure), arguments, procedureEnvironment(procedure), pool);
         return evalSequence(procedureBody(procedure), env, pool);
@@ -152,7 +152,7 @@ const value applyProcedure(const value& procedure, list<value>& arguments, const
 
 const value sequenceToExp(const list<value> exps) {
     if(isNil(exps))
-        return list<value>();
+        return exps;
     if(isLastExp(exps))
         return firstExp(exps);
     return makeBegin(exps);
@@ -242,7 +242,7 @@ const value evalExpr(const value& exp, Env& env, const gc_pool& pool) {
         return evalSequence(beginActions(exp), env, pool);
     if(isCond(exp))
         return evalExpr(condToIf(exp), env, pool);
-    if(isLambda(exp))
+    if(isLambdaExpr(exp))
         return makeProcedure(lambdaParameters(exp), lambdaBody(exp), env);
     if(isVariable(exp))
         return lookupVariableValue(exp, env);
@@ -262,6 +262,27 @@ const list<value> quotedParameters(const list<value>& p) {
     if (isNil(p))
         return p;
     return cons<value>(mklist<value>(quoteSymbol, car(p)), quotedParameters(cdr(p)));
+}
+
+/**
+ * Evaluate an expression against a script provided as a list of values.
+ */
+const value evalScriptLoop(const value& expr, const list<value>& script, eval::Env& globalEnv, const gc_pool& pool) {
+    if (isNil(script))
+        return eval::evalExpr(expr, globalEnv, pool);
+    eval::evalExpr(car(script), globalEnv, pool);
+    return evalScriptLoop(expr, cdr(script), globalEnv, pool);
+}
+
+const value evalScript(const value& expr, const value& script, Env& env, const gc_pool& pool) {
+    return evalScriptLoop(expr, script, env, pool);
+}
+
+/**
+ * Evaluate an expression against a script provided as an input stream.
+ */
+const value evalScript(const value& expr, std::istream& is, Env& env, const gc_pool& pool) {
+    return evalScript(expr, readScript(is), env, pool);
 }
 
 }
