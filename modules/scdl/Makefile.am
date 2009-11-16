@@ -15,17 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = diskcache-test memcache-test
+noinst_PROGRAMS = scdl-test
 
 nobase_include_HEADERS = *.hpp
 
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
-diskcache_test_SOURCES = diskcache-test.cpp
-diskcache_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+scdl_test_SOURCES = scdl-test.cpp
+scdl_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 
-memcache_test_SOURCES = memcache-test.cpp
-memcache_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
-
-TESTS = memcached-test diskcached-test
+TESTS = scdl-test
 

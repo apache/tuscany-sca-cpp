@@ -17,6 +17,8 @@
 
 noinst_PROGRAMS = json-test
 
+nobase_include_HEADERS = *.hpp
+
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${LIBMOZJS_INCLUDE}
 
 json_test_SOURCES = json-test.cpp

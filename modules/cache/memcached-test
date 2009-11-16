@@ -23,7 +23,7 @@ $cmd &
 sleep 1
 
 # Test
-./cache-test
+./memcache-test
 rc=$?
 
 # Cleanup

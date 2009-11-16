@@ -20,28 +20,50 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test Memcached access functions.
+ * Test cache functions.
  */
 
 #include <assert.h>
+#include <sys/time.h>
+#include <time.h>
 #include <iostream>
 #include <string>
+#include <fstream>
+#include "slist.hpp"
 #include "cache.hpp"
 
 namespace tuscany {
 namespace cache {
 
+const std::string fileRead(const std::string path) {
+    std::ifstream is(path);
+    return car(streamList(is));
+}
+
 bool testCache() {
-    Cache cache;
-    addServer("localhost", 11311, cache);
+    const std::string p("tmp/test.txt");
+    const lambda<std::string(std::string)> fr(fileRead);
+    const lambda<time_t(std::string)> ft(latestFileTime);
 
-    assert(hasValue(post("a", "AAA", cache)));
-    assert(get("a", cache) == value(std::string("AAA")));
-    assert(hasValue(put("a", "aaa", cache)));
-    assert(get("a", cache) == value(std::string("aaa")));
-    assert(hasValue(del("a", cache)));
-    assert(!hasValue(get("a", cache)));
+    const cached<std::string> c(curry(fr, p), curry(ft, p));
 
+    {
+        std::ofstream os(p);
+        os << "initial";
+        os.close();
+        assert(std::string(latest(c)) == std::string("initial"));
+    }
+
+    usleep(1000000);
+
+    {
+        std::ofstream os(p);
+        os << "updated";
+        os.close();
+        assert(latest(c) != c);
+        assert(std::string(latest(c)) == std::string("updated"));
+        assert(latest(c) == latest(c));
+    }
     return true;
 }
 

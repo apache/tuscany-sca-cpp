@@ -23,100 +23,97 @@
 #define tuscany_cache_hpp
 
 /**
- * Memcached access functions.
+ * Simple cache monad implementation.
  */
 
-#include "apr.h"
-#include "apu.h"
-#include "apr_general.h"
-#include "apr_strings.h"
-#include "apr_hash.h"
-#include "apr_memcache.h"
-#include "apr_network_io.h"
+#include <sys/stat.h>
 
 #include <string>
-#include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
 
 namespace tuscany {
 namespace cache {
 
-class Cache {
+/**
+ * Cached monad. Used to represent a value that can be cached.
+ * To get the value in the monad, just cast it to the value type.
+ */
+template<typename V> class cached {
 public:
-    Cache() {
-        apr_pool_create(&pool, NULL);
-        apr_memcache_create(pool, 1, 0, &mc);
-    }
-    ~Cache() {
-        apr_pool_destroy(pool);
+    cached() : mtime(0) {
     }
 
-    operator apr_memcache_t*() const {
-        return mc;
+    cached(const lambda<V()>& lvalue, const lambda<unsigned long()> ltime) : lvalue(lvalue), ltime(ltime), mtime(0) {
     }
 
-    operator apr_pool_t*() const {
-        return pool;
+    cached(const lambda<V()>& lvalue, const lambda<unsigned long()> ltime, const unsigned long mtime, const V& v) : lvalue(lvalue), ltime(ltime), mtime(mtime), v(v) {
+    }
+
+    cached(const cached<V>& c) : lvalue(c.lvalue), ltime(c.ltime), mtime(c.mtime), v(c.v) {
+    }
+
+    operator const V() const {
+        return v;
+    }
+
+    const cached<V>& operator=(const cached<V>& c) {
+        if(this == &c)
+            return *this;
+        this->lvalue = c.lvalue;
+        this->ltime = c.ltime;
+        this->mtime = c.mtime;
+        this->v = c.v;
+        return *this;
+    }
+
+    const bool operator!=(const cached<V>& m) const {
+        return !this->operator==(m);
+    }
+
+    const bool operator==(const cached<V>& m) const {
+        if (this == &m)
+            return true;
+        return mtime == m.mtime && v == m.v;
     }
 
 private:
-    apr_pool_t* pool;
-    apr_memcache_t* mc;
+    lambda<V()> lvalue;
+    lambda<time_t()> ltime;
+    unsigned long mtime;
+    V v;
 
+    template<typename X> friend const cached<X> latest(const cached<X>& c);
+    template<typename X> friend std::ostream& operator<<(std::ostream& out, const cached<X>& c);
 };
 
-const failable<bool, std::string> addServer(const std::string& host, const int port, Cache& cache) {
-    apr_memcache_server_t *server;
-    const apr_status_t sc = apr_memcache_server_create(cache, host.c_str(), port, 0, 1, 1, 60, &server);
-    if (sc != APR_SUCCESS)
-        return "Could not create server";
-    const apr_status_t as = apr_memcache_add_server(cache, server);
-    if (as != APR_SUCCESS)
-        return "Could not add server";
-    return true;
+/**
+ * Write a cached monad to a stream.
+ */
+template<typename V> std::ostream& operator<<(std::ostream& out, const cached<V>& c) {
+    out << c.v;
+    return out;
 }
 
-const failable<bool, std::string> post(const value& key, const value& val, Cache& cache) {
-    const std::string v(val);
-    const apr_status_t rc = apr_memcache_add(cache, std::string(key).c_str(), const_cast<char*>(v.c_str()), v.size(), 0, 27);
-    if (rc != APR_SUCCESS)
-        return "Could not add entry";
-    return true;
+/**
+ * Returns the latest value of a cached monad.
+ */
+template<typename V> const cached<V> latest(const cached<V>& c) {
+    unsigned long nt = c.ltime();
+    if (nt == c.mtime)
+        return c;
+    return cached<V>(c.lvalue, c.ltime, nt, c.lvalue());
 }
 
-const failable<bool, std::string> put(const value& key, const value& val, Cache& cache) {
-    const std::string v(val);
-    const apr_status_t rc = apr_memcache_replace(cache, std::string(key).c_str(), const_cast<char*>(v.c_str()), v.size(), 0, 27);
-    if (rc != APR_SUCCESS)
-        return "Could not add entry";
-    return true;
-}
-
-const failable<value, std::string> get(const value& key, Cache& cache) {
-    apr_pool_t* vpool;
-    const apr_status_t pc = apr_pool_create(&vpool, cache);
-    if (pc != APR_SUCCESS)
-        return std::string("Could not allocate memory");
-
-    char *data;
-    apr_size_t size;
-    const apr_status_t rc = apr_memcache_getp(cache, cache, std::string(key).c_str(), &data, &size, NULL);
-    if (rc != APR_SUCCESS) {
-        apr_pool_destroy(vpool);
-        return std::string("Could not get entry");
-    }
-
-    const value val(std::string(data, size));
-    apr_pool_destroy(vpool);
-    return val;
-}
-
-const failable<bool, std::string> del(const value& key, Cache& cache) {
-    const apr_status_t rc = apr_memcache_delete(cache, std::string(key).c_str(), 0);
-    if (rc != APR_SUCCESS)
-        return "Could not add entry";
-    return true;
+/**
+ * Returns the latest modification time of a file.
+ */
+const unsigned long latestFileTime(const std::string& path) {
+    struct stat st;
+    int rc = stat(path.c_str(), &st);
+    if (rc < 0)
+        return 0;
+    return st.st_mtim.tv_nsec;
 }
 
 }

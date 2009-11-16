@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = atom cache eval http json
+SUBDIRS = atom cache eval http json scdl
 

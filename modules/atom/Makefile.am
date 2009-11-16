@@ -17,6 +17,8 @@
 
 noinst_PROGRAMS = atom-test
 
+nobase_include_HEADERS = *.hpp
+
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 atom_test_SOURCES = atom-test.cpp

@@ -93,11 +93,11 @@ fi
 # Configure LIBMOZJS_INCLUDE and LIBMOZJS_LIB
 LIBMOZJS_INCLUDE=`echo "$LIBMOZJS_INCLUDE"`
 if test "x$LIBMOZJS_INCLUDE" = "x"; then
-  AC_SUBST([LIBMOZJS_INCLUDE], ["/usr/include/xulrunner-1.9.1.3/unstable"])
+  AC_SUBST([LIBMOZJS_INCLUDE], ["/usr/include/xulrunner-1.9.1.5/unstable"])
 fi
 LIBMOZJS_LIB=`echo "$LIBMOZJS_LIB"`
 if test "x$LIBMOZJS_LIB" = "x"; then
-  AC_SUBST([LIBMOZJS_LIB], ["/usr/lib/xulrunner-1.9.1.3"])
+  AC_SUBST([LIBMOZJS_LIB], ["/usr/lib/xulrunner-1.9.1.5"])
 fi
 
 # Configure GCC C++ compile options
@@ -263,6 +263,10 @@ if test x$want_doxygen = xyes; then
 fi
 AM_CONDITIONAL([WANT_DOXYGEN], [test x$want_doxygen = xtrue])
 
+# Configure exuberant ctags
+TAGSFILE="`pwd`/tags"
+AC_SUBST([CTAGSFLAGS], ["$(CTAGSFLAGS) --c++-kinds=+p --fields=+iaS --extra=+q --append --tag-relative=yes -f $TAGSFILE"])
+
 AC_CONFIG_FILES([Makefile
                  kernel/Makefile
                  modules/Makefile
@@ -271,6 +275,7 @@ AC_CONFIG_FILES([Makefile
                  modules/eval/Makefile
                  modules/http/Makefile
                  modules/json/Makefile
+                 modules/scdl/Makefile
                  test/Makefile
                  test/store-object/Makefile
                  test/store-function/Makefile

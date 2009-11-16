@@ -18,6 +18,8 @@
 store_function_PROGRAMS = store-function-test
 store_functiondir=$(prefix)/test/store-function/deploy
 
+nobase_include_HEADERS = *.hpp
+
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 store_function_test_SOURCES = store-function-test.cpp

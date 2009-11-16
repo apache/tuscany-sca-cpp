@@ -18,6 +18,8 @@
 store_object_PROGRAMS = store-object-test
 store_objectdir=$(prefix)/test/store-object/deploy
 
+nobase_include_HEADERS = *.hpp
+
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 store_object_test_SOURCES = store-object-test.cpp
