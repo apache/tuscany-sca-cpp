@@ -362,7 +362,9 @@ private:
 
 };
 
-
+/**
+ * Write a value to a stream.
+ */
 std::ostream& operator<<(std::ostream& out, const value& v) {
     switch(v.type) {
     case value::List:
@@ -399,46 +401,86 @@ std::ostream& operator<<(std::ostream& out, const value& v) {
     }
 }
 
+/**
+ * Returns the type of a value.
+ */
 const value::ValueType type(const value& v) {
     return v.type;
 }
 
+/**
+ * Returns true if a value is nil.
+ */
 const bool isNil(const value& value) {
     return value.type == value::Undefined;
 }
 
+/**
+ * Returns true if a value is a lambda.
+ */
+const bool isLambda(const value& value) {
+    return value.type == value::Lambda;
+}
+
+/**
+ * Returns true if a value is a string.
+ */
 const bool isString(const value& value) {
     return value.type == value::String;
 }
 
+/**
+ * Returns true if a value is a symbol.
+ */
 const bool isSymbol(const value& value) {
     return value.type == value::Symbol;
 }
 
+/**
+ * Returns true if a value is a list.
+ */
 const bool isList(const value& value) {
     return value.type == value::List;
 }
 
+/**
+ * Returns true if a value is a number.
+ */
 const bool isNumber(const value& value) {
     return value.type == value::Number;
 }
 
+/**
+ * Returns true if a value is a boolean.
+ */
 const bool isBool(const value& value) {
     return value.type == value::Bool;
 }
 
+/**
+ * Returns true if a value is a character.
+ */
 const bool isChar(const value& value) {
     return value.type == value::Char;
 }
 
+/**
+ * Returns true if a value is a pointer.
+ */
 const bool isPtr(const value& value) {
     return value.type == value::Ptr;
 }
 
+/**
+ * Returns true if a value is a pooled pointer.
+ */
 const bool isPoolPtr(const value& value) {
     return value.type == value::PoolPtr;
 }
 
+/**
+ * Returns true if a value is a tagged list.
+ */
 const bool isTaggedList(const value& exp, value tag) {
     if(isList(exp) && !isNil((list<value>)exp))
         return car((list<value>)exp) == tag;

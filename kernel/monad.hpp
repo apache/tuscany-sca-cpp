@@ -68,6 +68,14 @@ private:
 };
 
 /**
+ * Write an identity monad to a stream.
+ */
+template<typename V> std::ostream& operator<<(std::ostream& out, const id<V>& m) {
+    out << (V)m;
+    return out;
+}
+
+/**
  * Return an identity monad from a value.
  */
 template<typename V> const id<V> mkunit(const V& v) {
@@ -134,6 +142,18 @@ private:
 };
 
 /**
+ * Write a maybe monad to a stream.
+ */
+template<typename V> std::ostream& operator<<(std::ostream& out, const maybe<V>& m) {
+    if (!hasValue(m)) {
+        out << "nothing";
+        return out;
+    }
+    out << (V)m;
+    return out;
+}
+
+/**
  * Return a maybe monad with a value in it.
  */
 template<typename V> const maybe<V> mkjust(const V& v) {
@@ -174,18 +194,21 @@ template<typename R, typename V> const maybe<R> operator>>(const maybe<V>& m, co
  */
 template<typename V, typename F> class failable {
 public:
+    failable() : hasv(false) {
+    }
+
     failable(const V& v) : hasv(true), v(v) {
     }
 
-    failable(const F& f) : hasv(false), f(f) {
+    failable(const failable<V, F>& m) : hasv(m.hasv) {
+        if (hasv)
+            v = m.v;
+        else
+            f = m.f;
     }
 
     operator const V() const {
         return v;
-    }
-
-    operator const F() const {
-        return f;
     }
 
     const failable<V, F>& operator=(const failable<V, F>& m) {
@@ -212,12 +235,30 @@ public:
     }
 
 private:
-    const bool hasv;
+    bool hasv;
     V v;
     F f;
 
+    failable(const bool hasv, const F& f) : hasv(hasv), f(f) {
+    }
+
     template<typename A, typename B> friend const bool hasValue(const failable<A, B>& m);
+    template<typename A, typename B> friend const B reason(const failable<A, B>& m);
+    template<typename A, typename B> friend const failable<A, B> mkfailure(const B& f);
 };
+
+/**
+ * Write a failable monad to a stream.
+ */
+template<typename V, typename F> std::ostream& operator<<(std::ostream& out, const failable<V, F>& m) {
+    if (!hasValue(m)) {
+        out << reason(m);
+        return out;
+    }
+    const V v = m;
+    out << v;
+    return out;
+}
 
 /**
  * Returns a failable monad with a success value in it.
@@ -231,10 +272,28 @@ template<typename V, typename F> const lambda<failable<V, F>(V)> success() {
 }
 
 /**
+ * Returns a failable monad with a failure in it.
+ */
+template<typename V, typename F> const failable<V, F> mkfailure(const F& f) {
+    return failable<V, F>(false, f);
+}
+
+template<typename V, typename F> const lambda<failable<V, F>(V)> failure() {
+    return mkfailure<V, F>;
+}
+
+/**
  * Returns true if the monad contains a value.
  */
 template<typename V, typename F> const bool hasValue(const failable<V, F>& m) {
     return m.hasv;
+}
+
+/**
+ * Returns the reason for failure of a failable monad.
+ */
+template<typename V, typename F> const F reason(const failable<V, F>& m) {
+    return m.f;
 }
 
 /**
@@ -328,6 +387,16 @@ public:
 private:
     const lambda<svp<S, V>(S)> f;
 };
+
+/**
+ * Write a state monad to a stream.
+ */
+template<typename S, typename V> std::ostream& operator<<(std::ostream& out, const state<S, V>& m) {
+    const S s = m;
+    const V v = m;
+    out << '(' << s << ' ' << v << ')';
+    return out;
+}
 
 /**
  * Return a state monad carrying a result value.

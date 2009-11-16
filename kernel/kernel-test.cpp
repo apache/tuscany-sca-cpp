@@ -650,7 +650,8 @@ bool testFailableMonad() {
     assert((m >> success<int, std::string>()) == m);
     assert(m >> failableF >> failableG == m >> failableH);
 
-    failable<int, std::string> ooops("ooops");
+    failable<int, std::string> ooops = mkfailure<int, std::string>("ooops");
+    assert(reason(ooops) == "ooops");
     assert(ooops >> failableF >> failableG == ooops);
     return true;
 }

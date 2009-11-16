@@ -137,13 +137,13 @@ template<typename R> size_t headerCallback(void *ptr, size_t size, size_t nmemb,
  * Apply an HTTP verb to a list containing a list of headers and a list of content, and
  * a reduce function used to process the response.
  */
-curl_slist* headers(curl_slist* cl, const list<std::string> h) {
+curl_slist* headers(curl_slist* cl, const list<std::string>& h) {
     if (isNil(h))
         return cl;
     return headers(curl_slist_append(cl, std::string(car(h)).c_str()), cdr(h));
 }
 
-template<typename R> const failable<list<R>, std::string> apply(const list<list<std::string> > req, const lambda<R(std::string, R)>& reduce, const R& initial, const std::string& url, const std::string& verb, CURLHandle& ch) {
+template<typename R> const failable<list<R>, std::string> apply(const list<list<std::string> >& req, const lambda<R(std::string, R)>& reduce, const R& initial, const std::string& url, const std::string& verb, const CURLHandle& ch) {
 
     // Init the curl session
     curl_easy_reset(ch);
@@ -190,13 +190,13 @@ template<typename R> const failable<list<R>, std::string> apply(const list<list<
 
     // Return the HTTP return code or content
     if (rc)
-        return std::string(curl_easy_strerror(rc));
+        return mkfailure<list<R>, std::string>(curl_easy_strerror(rc));
     long httprc;
     curl_easy_getinfo (ch, CURLINFO_RESPONSE_CODE, &httprc);
     if (httprc != 200 && httprc != 201) {
         std::ostringstream es;
         es << "HTTP code " << httprc;
-        return es.str();
+        return mkfailure<list<R>, std::string>(es.str());
     }
     return mklist<R>(hcx.accum, wcx.accum);
 }
@@ -204,13 +204,13 @@ template<typename R> const failable<list<R>, std::string> apply(const list<list<
 /**
  * Evaluate an expression remotely, at the given URL.
  */
-const failable<value, std::string>  evalExpr(const value expr, const std::string& url, CURLHandle& ch) {
+const failable<value, std::string> evalExpr(const value& expr, const std::string& url, const CURLHandle& ch) {
 
     // Convert expression to a JSON-RPC request
     json::JSONContext cx;
     const failable<list<std::string>, std::string> jsreq = jsonRequest(1, car<value>(expr), cdr<value>(expr), cx);
     if (!hasValue(jsreq))
-        return std::string(jsreq);
+        return mkfailure<value, std::string>(reason(jsreq));
 
     if (logContent) {
         std::cout<< "content: " << std::endl;
@@ -223,7 +223,7 @@ const failable<value, std::string>  evalExpr(const value expr, const std::string
     const list<std::string> h = mklist<std::string>("Content-Type: application/json-rpc");
     const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(mklist<list<std::string> >(h, jsreq), rcons<std::string>, list<std::string>(), url, "POST", ch);
     if (!hasValue(res))
-        return std::string(res);
+        return mkfailure<value, std::string>(reason(res));
 
     // Return result
     if (logContent) {
@@ -238,7 +238,7 @@ const failable<value, std::string>  evalExpr(const value expr, const std::string
 /**
  * HTTP GET, return the resource at the given URL.
  */
-template<typename R> const failable<list<R>, std::string> get(const lambda<R(std::string, R)>& reduce, const R& initial, const std::string& url, CURLHandle& ch) {
+template<typename R> const failable<list<R>, std::string> get(const lambda<R(std::string, R)>& reduce, const R& initial, const std::string& url, const CURLHandle& ch) {
     const list<list<std::string> > req = mklist(list<std::string>(), list<std::string>());
     return apply(req, reduce, initial, url, "GET", ch);
 }
@@ -246,17 +246,17 @@ template<typename R> const failable<list<R>, std::string> get(const lambda<R(std
 /**
  * HTTP GET, return a list of values representing the resource at the given URL.
  */
-const failable<value, std::string> get(const std::string& url, CURLHandle& ch) {
+const failable<value, std::string> get(const std::string& url, const CURLHandle& ch) {
 
     // Get the contents of the resource at the given URL
     const failable<list<list<std::string> >, std::string> res = get<list<std::string> >(rcons<std::string>, list<std::string>(), url, ch);
     if (!hasValue(res))
-        return std::string(res);
+        return mkfailure<value, std::string>(reason(res));
     const list<list<std::string> > ls = res;
 
-    // TODO Return an ATOM feed
     const std::string ct;
     if (ct.find("application/atom+xml") != std::string::npos) {
+        // TODO Return an ATOM feed
     }
 
     // Return the content as a string value
@@ -268,12 +268,12 @@ const failable<value, std::string> get(const std::string& url, CURLHandle& ch) {
 /**
  * HTTP POST.
  */
-const failable<value, std::string> post(const value& val, const std::string& url, CURLHandle& ch) {
+const failable<value, std::string> post(const value& val, const std::string& url, const CURLHandle& ch) {
 
     // Convert value to an ATOM entry
     const failable<list<std::string>, std::string> entry = atom::writeATOMEntry(atom::entryValuesToElements(val));
     if (!hasValue(entry))
-        return std::string(entry);
+        return mkfailure<value, std::string>(reason(entry));
     if (logContent) {
         std::cout << "content:" << std::endl;
         write(list<std::string>(entry), std::cout);
@@ -285,44 +285,62 @@ const failable<value, std::string> post(const value& val, const std::string& url
     const list<list<std::string> > req = mklist<list<std::string> >(h, entry);
     const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(req, rcons<std::string>, list<std::string>(), url, "POST", ch);
     if (!hasValue(res))
-        return std::string(res);
+        return mkfailure<value, std::string>(reason(res));
     return value(true);
 }
 
 /**
  * HTTP PUT.
  */
-const failable<value, std::string> put(const value& val, const std::string& url, CURLHandle& ch) {
+const failable<value, std::string> put(const value& val, const std::string& url, const CURLHandle& ch) {
 
     // Convert value to an ATOM entry
     const failable<list<std::string>, std::string> entry = atom::writeATOMEntry(atom::entryValuesToElements(val));
     if (!hasValue(entry))
-        return std::string(entry);
+        return mkfailure<value, std::string>(reason(entry));
     if (logContent) {
         std::cout << "content:" << std::endl;
         write(list<std::string>(entry), std::cout);
         std::cout << std::endl;
     }
 
-    // POST it to the URL
+    // PUT it to the URL
     const list<std::string> h = mklist<std::string>("Content-Type: application/atom+xml");
     const list<list<std::string> > req = mklist<list<std::string> >(h, entry);
     const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(req, rcons<std::string>, list<std::string>(), url, "PUT", ch);
     if (!hasValue(res))
-        return std::string(res);
+        return mkfailure<value, std::string>(reason(res));
     return value(true);
 }
 
 /**
  * HTTP DELETE.
  */
-const failable<value, std::string> del(const std::string& url, CURLHandle& ch) {
+const failable<value, std::string> del(const std::string& url, const CURLHandle& ch) {
     const list<list<std::string> > req = mklist(list<std::string>(), list<std::string>());
     const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(req, rcons<std::string>, list<std::string>(), url, "DELETE", ch);
     if (!hasValue(res))
-        return std::string(res);
+        return mkfailure<value, std::string>(reason(res));
     return value(true);
 }
+
+/**
+ * HTTP client proxy function.
+ */
+struct proxy {
+    proxy(const std::string& url, const CURLHandle& ch) : url(url), ch(ch) {
+    }
+
+    const value operator()(const list<value>& args) const {
+        failable<value, std::string> val = evalExpr(args, url, ch);
+        if (!hasValue(val))
+            return value();
+        return val;
+    }
+
+    const std::string url;
+    const CURLHandle& ch;
+};
 
 }
 }

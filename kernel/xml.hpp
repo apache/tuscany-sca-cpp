@@ -144,7 +144,7 @@ const value readAttribute(XMLReader& reader) {
  */
 const value readToken(XMLReader& reader) {
     const int tokenType = reader.read();
-    if (tokenType == XMLReader::End)
+    if (tokenType == XMLReader::None || tokenType == XMLReader::End)
         return value();
     if (tokenType == XMLReader::Element)
         return startElement;
@@ -228,7 +228,7 @@ const char* encoding = "UTF-8";
  */
 const list<value> expandElementValues(const value& n, const list<value>& l) {
     if (isNil(l))
-        return list<value>();
+        return l;
     return cons<value>(value(cons<value>(element, cons<value>(n, (list<value>)car(l)))), expandElementValues(n, cdr(l)));
 }
 
@@ -240,7 +240,7 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
     const value token(car(l));
     if (isTaggedList(token, attribute)) {
         if (xmlTextWriterWriteAttribute(xml, (const xmlChar*)std::string(attributeName(token)).c_str(), (const xmlChar*)std::string(attributeValue(token)).c_str()) < 0)
-            return std::string("xmlTextWriterWriteAttribute failed");
+            return mkfailure<bool, std::string>("xmlTextWriterWriteAttribute failed");
 
     } else if (isTaggedList(token, element)) {
 
@@ -257,7 +257,7 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
 
                 // Write an element with a single value
                 if (xmlTextWriterStartElement(xml, (const xmlChar*)std::string(elementName(token)).c_str()) < 0)
-                    return std::string("xmlTextWriterStartElement failed");
+                    return mkfailure<bool, std::string>("xmlTextWriterStartElement failed");
 
                 // Write its children
                 const failable<bool, std::string> w = writeList(elementChildren(token), xml);
@@ -265,14 +265,14 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
                     return w;
 
                 if (xmlTextWriterEndElement(xml) < 0)
-                    return std::string("xmlTextWriterEndElement failed");
+                    return mkfailure<bool, std::string>("xmlTextWriterEndElement failed");
             }
         }
         else {
 
             // Write an element
             if (xmlTextWriterStartElement(xml, (const xmlChar*)std::string(elementName(token)).c_str()) < 0)
-                return std::string("xmlTextWriterStartElement failed");
+                return mkfailure<bool, std::string>("xmlTextWriterStartElement failed");
 
             // Write its children
             const failable<bool, std::string> w = writeList(elementChildren(token), xml);
@@ -280,13 +280,13 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
                 return w;
 
             if (xmlTextWriterEndElement(xml) < 0)
-                return std::string("xmlTextWriterEndElement failed");
+                return mkfailure<bool, std::string>("xmlTextWriterEndElement failed");
         }
     } else {
 
         // Write XML text
         if (xmlTextWriterWriteString(xml, (const xmlChar*)std::string(token).c_str()) < 0)
-            return std::string("xmlTextWriterWriteString failed");
+            return mkfailure<bool, std::string>("xmlTextWriterWriteString failed");
 
     }
 
@@ -299,14 +299,14 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
  */
 const failable<bool, std::string> write(const list<value>& l, const xmlTextWriterPtr xml) {
     if (xmlTextWriterStartDocument(xml, NULL, encoding, NULL) < 0)
-        return std::string("xmlTextWriterStartDocument failed");
+        return mkfailure<bool, std::string>("xmlTextWriterStartDocument failed");
 
     const failable<bool, std::string> w = writeList(l, xml);
     if (!hasValue(w))
         return w;
 
     if (xmlTextWriterEndDocument(xml) < 0)
-        return std::string("xmlTextWriterEndDocument failed");
+        return mkfailure<bool, std::string>("xmlTextWriterEndDocument failed");
     return true;
 }
 
@@ -337,15 +337,15 @@ template<typename R> const failable<R, std::string> writeXML(const lambda<R(std:
     XMLWriteContext<R> cx(reduce, initial);
     xmlOutputBufferPtr out = xmlOutputBufferCreateIO(writeCallback<R>, NULL, &cx, NULL);
     if (out == NULL)
-        return std::string("xmlOutputBufferCreateIO failed");
+        return mkfailure<R, std::string>("xmlOutputBufferCreateIO failed");
     xmlTextWriterPtr xml = xmlNewTextWriter(out);
     if (xml == NULL)
-        return std::string("xmlNewTextWriter failed");
+        return mkfailure<R, std::string>("xmlNewTextWriter failed");
 
     const failable<bool, std::string> w = write(l, xml);
     xmlFreeTextWriter(xml);
     if (!hasValue(w)) {
-        return std::string(w);
+        return mkfailure<R, std::string>(reason(w));
     }
     return cx.accum;
 }

@@ -175,17 +175,10 @@ template<typename T> const list<T> rcons(const T& car, const list<T>& cdr) {
 }
 
 /**
- * Construct a list from a single value.
- */
-template<typename T> const list<T> cons(const T& car) {
-    return list<T> (car, result(list<T> ()));
-}
-
-/**
  * Construct a list of one value.
  */
 template<typename T> const list<T> mklist(const T& car) {
-    return cons<T>(car);
+    return list<T> (car, result(list<T> ()));
 }
 
 /**

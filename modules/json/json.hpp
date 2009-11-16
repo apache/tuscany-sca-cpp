@@ -200,7 +200,7 @@ failable<bool, std::string> consume(JSONParser* parser, const list<std::string>&
         return true;
     JSString* jstr = JS_NewStringCopyZ(cx, car(ilist).c_str());
     if(!JS_ConsumeJSONText(cx, parser, JS_GetStringChars(jstr), JS_GetStringLength(jstr)))
-        return "JS_ConsumeJSONText failed";
+        return mkfailure<bool, std::string>("JS_ConsumeJSONText failed");
     return consume(parser, cdr(ilist), cx);
 }
 
@@ -211,14 +211,14 @@ const failable<list<value>, std::string> readJSON(const list<std::string>& ilist
     jsval val;
     JSONParser* parser = JS_BeginJSONParse(cx, &val);
     if(parser == NULL)
-        return std::string("JS_BeginJSONParse failed");
+        return mkfailure<list<value>, std::string>("JS_BeginJSONParse failed");
 
     const failable<bool, std::string> consumed = consume(parser, ilist, cx);
 
     if(!JS_FinishJSONParse(cx, parser, JSVAL_NULL))
-        return std::string("JS_FinishJSONParse failed");
+        return mkfailure<list<value>, std::string>("JS_FinishJSONParse failed");
     if(!hasValue(consumed))
-        return std::string(consumed);
+        return mkfailure<list<value>, std::string>(reason(consumed));
 
     return list<value>(jsValToValue(val, cx));
 }
@@ -357,11 +357,11 @@ template<typename R> const failable<R, std::string> writeJSON(const lambda<R(std
     jsval val = OBJECT_TO_JSVAL(o);
     const failable<bool, std::string> w = writeList(l, o, cx);
     if (!hasValue(w))
-        return std::string(w);
+        return mkfailure<R, std::string>(reason(w));
 
     WriteContext<R> wcx(reduce, initial, cx);
     if (!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx))
-        return std::string("JS_Stringify failed");
+        return mkfailure<R, std::string>("JS_Stringify failed");
     return wcx.accum;
 }
 
@@ -380,8 +380,7 @@ const failable<list<std::string>, std::string> writeJSON(const list<value>& l, c
  */
 const failable<list<std::string>, std::string> jsonRequest(const value& id, const value& func, const value& params, json::JSONContext& cx) {
     const list<value> r = mklist<value>(mklist<value>("id", id), mklist<value>("method", func), mklist<value>("params", params));
-    failable<list<std::string>, std::string> ls = writeJSON(valuesToElements(r), cx);
-    return ls;
+    return writeJSON(valuesToElements(r), cx);
 }
 
 /**

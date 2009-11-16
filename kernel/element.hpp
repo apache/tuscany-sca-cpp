@@ -39,6 +39,24 @@ const value attribute("attribute");
 const value element("element");
 
 /**
+ * Returns true if a value is an element.
+ */
+bool isElement(const value& v) {
+    if (!isList(v) || isNil(v) || element != car<value>(v))
+        return false;
+    return true;
+}
+
+/**
+ * Returns true if a value is an attribute.
+ */
+bool isAttribute(const value& v) {
+    if (!isList(v) || isNil(v) || attribute != car<value>(v))
+        return false;
+    return true;
+}
+
+/**
  * Returns the name of an attribute.
  */
 const value attributeName(const list<value>& l) {
@@ -99,9 +117,7 @@ const bool elementToValueIsList(const value& v) {
     if (!isList(v))
         return false;
     const list<value> l = v;
-    if(isNil(l))
-        return true;
-    return isList(car(l));
+    return (isNil(l) || !isSymbol(car(l)));
 }
 
 const value elementToValue(const value& t) {
@@ -150,12 +166,10 @@ const bool elementToValueIsSymbol(const value& v) {
 }
 
 const list<value> elementToValueGroupValues(const value& v, const list<value>& l) {
-    if (isNil(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l))) {
+    if (isNil(l) || !elementToValueIsSymbol(v) || !elementToValueIsSymbol(car(l)))
         return cons(v, l);
-    }
-    if (car<value>(car(l)) != car<value>(v)) {
+    if (car<value>(car(l)) != car<value>(v))
         return cons(v, l);
-    }
     if (!elementToValueIsList(cadr<value>(car(l)))) {
         const value g = mklist<value>(car<value>(v), mklist<value>(cdr<value>(v), cdr<value>(car(l))));
         return elementToValueGroupValues(g, cdr(l));
@@ -167,9 +181,7 @@ const list<value> elementToValueGroupValues(const value& v, const list<value>& l
 
 const list<value> elementsToValues(const list<value>& e) {
     if (isNil(e))
-        return list<value>();
-    const value v = elementToValue(car(e));
-    const list<value> n = elementsToValues(cdr(e));
+        return e;
     return elementToValueGroupValues(elementToValue(car(e)), elementsToValues(cdr(e)));
 }
 
@@ -207,7 +219,7 @@ const value valueToElement(const value& t) {
  */
 const list<value> valuesToElements(const list<value>& l) {
     if (isNil(l))
-        return list<value>();
+        return l;
     return cons<value>(valueToElement(car(l)), valuesToElements(cdr(l)));
 }
 
@@ -219,24 +231,69 @@ struct selectorLambda {
     const list<value> select;
     selectorLambda(const list<value>& s) : select(s) {
     }
-    const bool evalExpr(const list<value>& s, const list<value> v) const {
+    const bool evalSelect(const list<value>& s, const list<value> v) const {
         if (isNil(s))
             return true;
         if (isNil(v))
             return false;
         if (car(s) != car(v))
             return false;
-        return evalExpr(cdr(s), cdr(v));
+        return evalSelect(cdr(s), cdr(v));
     }
     const bool operator()(const value& v) const {
         if (!isList(v))
             return false;
-        return evalExpr(select, v);
+        return evalSelect(select, v);
     }
 };
 
 const lambda<bool(value)> selector(const list<value> s) {
     return selectorLambda(s);
+}
+
+/**
+ * Returns the value of the attribute with the given name.
+ */
+struct filterAttribute {
+    const value name;
+    filterAttribute(const value& n) : name(n) {
+    }
+    const bool operator()(const value& v) const {
+        return isAttribute(v) && attributeName((list<value>)v) == name;
+    }
+};
+
+const value attributeValue(const value& name, const value& l) {
+    const list<value> f = filter<value>(filterAttribute(name), list<value>(l));
+    if (isNil(f))
+        return value();
+    return caddr<value>(car(f));
+}
+
+/**
+ * Returns child elements with the given name.
+ */
+struct filterElement {
+    const value name;
+    filterElement(const value& n) : name(n) {
+    }
+    const bool operator()(const value& v) const {
+        return isElement(v) && elementName((list<value>)v) == name;
+    }
+};
+
+const value elementChildren(const value& name, const value& l) {
+    return filter<value>(filterElement(name), list<value>(l));
+}
+
+/**
+ * Return the child element with the given name.
+ */
+const value elementChild(const value& name, const value& l) {
+    const list<value> f = elementChildren(name, l);
+    if (isNil(f))
+        return value();
+    return car(f);
 }
 
 }

@@ -52,7 +52,7 @@ const list<value> entryValue(const list<value>& e) {
  */
 const list<value> entriesValues(const list<value>& e) {
     if (isNil(e))
-        return list<value>();
+        return e;
     return cons<value>(entryValue(car(e)), entriesValues(cdr(e)));
 }
 
@@ -62,7 +62,7 @@ const list<value> entriesValues(const list<value>& e) {
 const failable<list<value>, std::string> readEntry(const list<std::string>& ilist) {
     const list<value> e = readXML(ilist);
     if (isNil(e))
-        return std::string("Empty entry");
+        return mkfailure<list<value>, std::string>("Empty entry");
     return entryValue(car(e));
 }
 
@@ -72,7 +72,7 @@ const failable<list<value>, std::string> readEntry(const list<std::string>& ilis
 const failable<list<value>, std::string> readFeed(const list<std::string>& ilist) {
     const list<value> f = readXML(ilist);
     if (isNil(f))
-        return std::string("Empty feed");
+        return mkfailure<list<value>, std::string>("Empty feed");
     const list<value> t = filter<value>(selector(mklist<value>(element, "title")), car(f));
     const list<value> i = filter<value>(selector(mklist<value>(element, "id")), car(f));
     const list<value> e = filter<value>(selector(mklist<value>(element, "entry")), car(f));
@@ -99,7 +99,7 @@ const list<value> entryElement(const list<value>& l) {
  */
 const list<value> entriesElements(const list<value>& l) {
     if (isNil(l))
-        return list<value>();
+        return l;
     return cons<value>(entryElement(car(l)), entriesElements(cdr(l)));
 }
 
@@ -156,7 +156,7 @@ const list<value> entryValuesToElements(const list<value> val) {
  */
 const list<value> feedValuesToElementsLoop(const list<value> val) {
     if (isNil(val))
-        return list<value>();
+        return val;
     return cons<value>(entryValuesToElements(car(val)), feedValuesToElementsLoop(cdr(val)));
 }
 
