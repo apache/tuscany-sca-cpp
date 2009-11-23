@@ -15,16 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-store_script_PROGRAMS = store-script-test
-store_scriptdir=$(prefix)/test/store-script/deploy
+noinst_PROGRAMS = store-script-test
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I$(top_builddir)/modules/eval -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${LIBMOZJS_INCLUDE}
+INCLUDES = -I. -I$(top_builddir)/kernel -I$(top_builddir)/modules/eval -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${JS_INCLUDE}
 
 store_script_test_SOURCES = store-script-test.cpp
-store_script_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${LIBMOZJS_LIB} -lmozjs
+store_script_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${JS_LIB} -lmozjs
 	
-EXTRA_DIST = *.composite
-store_script_DATA = *.composite
-
 TESTS = store-script-test store-http-test
 

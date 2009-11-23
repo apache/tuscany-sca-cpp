@@ -20,8 +20,6 @@ noinst_PROGRAMS = eval-test eval-shell
 datadir=$(prefix)/modules/eval
 nobase_data_DATA = *.xsd
 
-nobase_include_HEADERS = *.hpp
-
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 eval_test_SOURCES = eval-test.cpp

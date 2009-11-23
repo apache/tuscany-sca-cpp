@@ -18,14 +18,17 @@
 dnl run autogen.sh to generate the configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(tuscany-sca, 1.0-M3)
+AC_INIT(tuscany-sca, 1.0, dev@tuscany.apache.org)
+AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([tar-ustar])
 AC_PREFIX_DEFAULT(/usr/local/tuscany/sca)
 
 # Checks for programs.
+AC_MSG_NOTICE([checking for programs])
 AC_PROG_CXX
+AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
@@ -34,7 +37,7 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
 # Check for running on Darwin
-AC_MSG_CHECKING([Checking if running on Darwin])
+AC_MSG_CHECKING([if running on Darwin])
 UNAME=`uname -s`
 if test "x$UNAME" = "xDarwin"; then
   AC_DEFINE([IS_DARWIN], [1], [Set to 1 when running on Darwin - Mac OSX])
@@ -48,274 +51,163 @@ else
 fi
 AM_CONDITIONAL([DARWIN], [test x$is_darmin = xtrue])
 
+# Configure CURL_INCLUDE and CURL_LIB
+AC_MSG_CHECKING([for curl])
+AC_ARG_WITH([curl], [AC_HELP_STRING([--with-curl=PATH], [path to installed curl [default=/usr]])], [
+  CURL_INCLUDE="$withval/include"
+  CURL_LIB="$withval/lib"
+  AC_MSG_RESULT("$withval")
+], [
+  CURL_INCLUDE="/usr/include"
+  CURL_LIB="/usr/lib"
+  AC_MSG_RESULT(/usr)
+])
+AC_SUBST(CURL_INCLUDE)
+AC_SUBST(CURL_LIB)
+
+# Configure LIBXML2_INCLUDE and LIBXML2_LIB
+AC_MSG_CHECKING([for libxml2])
+AC_ARG_WITH([libxml2], [AC_HELP_STRING([--with-libxml2=PATH], [path to installed libxml2 [default=/usr]])], [
+  LIBXML2_INCLUDE="$withval/include/libxml2"
+  LIBXML2_LIB="$withval/lib"
+  AC_MSG_RESULT("$withval")
+], [
+  LIBXML2_INCLUDE="/usr/include/libxml2"
+  LIBXML2_LIB="/usr/lib"
+  AC_MSG_RESULT(/usr)
+])
+AC_SUBST(LIBXML2_INCLUDE)
+AC_SUBST(LIBXML2_LIB)
+
+# Configure LIBMOZJS_INCLUDE and LIBMOZJS_LIB
+AC_MSG_CHECKING([for js-include])
+AC_ARG_WITH([js-include], [AC_HELP_STRING([--with-js-include=PATH], [path to installed SpiderMonkey include dir
+             [default=/usr/include/xulrunner-1.9.1.5/unstable]])], [
+  JS_INCLUDE="$withval"
+  AC_MSG_RESULT("$withval")
+], [
+  JS_INCLUDE="/usr/include/xulrunner-1.9.1.5/unstable"
+  AC_MSG_RESULT(/usr/include/xulrunner-1.9.1.5/unstable)
+])
+AC_MSG_CHECKING([for js-lib])
+AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib/xulrunner-1.9.1.5]])], [
+  JS_LIB="$withval"
+  AC_MSG_RESULT("$withval")
+], [
+  JS_LIB="/usr/lib/xulrunner-1.9.1.5"
+  AC_MSG_RESULT(/usr/lib/xulrunner-1.9.1.5)
+])
+AC_SUBST(JS_INCLUDE)
+AC_SUBST(JS_LIB)
+
+# Configure APR and HTTPD
+AC_MSG_CHECKING([for apr])
+AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed apr [default=/usr/local/apache2]])], [
+  APR_INCLUDE="$withval/include"
+  APR_LIB="$withval/lib"
+  AC_MSG_RESULT("$withval")
+], [
+  APR_INCLUDE="/usr/local/apache2/include"
+  APR_LIB="/usr/local/apache2/lib"
+  AC_MSG_RESULT(/usr/local/apache2/lib)
+])
+AC_SUBST(APR_INCLUDE)
+AC_SUBST(APR_LIB)
+
+AC_MSG_CHECKING([for httpd])
+AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed httpd [default=/usr/local/apache2]])], [
+  HTTPD_INCLUDE="$withval/include"
+  AC_MSG_RESULT("$withval")
+], [
+  HTTPD_INCLUDE="/usr/local/apache2/include"
+  AC_MSG_RESULT(/usr/local/apache2/lib)
+])
+AC_SUBST(HTTPD_INCLUDE)
+
 # Checks for libraries.
+original_LIBS="$LIBS"
+AC_MSG_NOTICE([checking for libraries])
+LIBS="-L$CURL_LIB $original_LIBS"
+AC_CHECK_LIB([curl], [curl_global_init], [], [AC_MSG_ERROR([couldn't find a suitable libcurl, use --with-curl=PATH])])
+LIBS="-L$JS_LIB $original_LIBS"
+AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitable libmozjs, use --with-js-lib=PATH])])
+LIBS="$original_LIBS"
+AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([couldn't find a suitable libpthread])])
+LIBS="-L$LIBXML2_LIB $original_LIBS"
+AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitable libxml2, use --with-libxml2=PATH])])
+LIBS="-L$APR_LIB $original_LIBS"
+AC_CHECK_LIB([apr-1], [apr_pool_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
+AC_CHECK_LIB([aprutil-1], [apr_memcache_replace], [], [AC_MSG_ERROR([couldn't find a suitable libaprutil-1, use --with-apr=PATH])])
+LIBS="$original_LIBS"
 
 # Checks for header files.
+AC_MSG_NOTICE([checking for header files])
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([inttypes.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([string.h sys/time.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
+AC_MSG_NOTICE([checking for typedefs, structures, and compiler characteristics])
 AC_HEADER_STDBOOL
 AC_C_CONST
 AC_C_INLINE
+AC_TYPE_SIZE_T
 
 # Checks for library functions.
-AC_FUNC_CLOSEDIR_VOID
-AC_FUNC_STAT
-AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([getcwd putenv strdup])
-# AC_CONFIG_SUBDIRS([samples])
+AC_MSG_NOTICE([checking for library functions])
+AC_CHECK_FUNCS([gettimeofday select])
 
-# Configure TUSCANY_SCACPP and TUSCANY_SDOCPP
+# Configure GCC C++ compile options
+AC_SUBST([CXXFLAGS], ["${CXXFLAGS} -D_DEBUG -O0 -g3 -Wall -std=c++0x -fmessage-length=0"])
+
+# Configure exuberant ctags
+TAGSFILE="`pwd`/tags"
+AC_SUBST([CTAGSFLAGS], ["${CTAGSFLAGS} --c++-kinds=+p --fields=+iaS --extra=+q --append --tag-relative=yes -f $TAGSFILE"])
+
+# Configure TUSCANY_SCACPP
 TUSCANY_SCACPP=`echo "$TUSCANY_SCACPP"`
 if test "x$TUSCANY_SCACPP" = "x"; then
   SCAPWD=`pwd`
   AC_SUBST([TUSCANY_SCACPP], ["$SCAPWD"])
 fi
 
-TUSCANY_SDOCPP=`echo "$TUSCANY_SDOCPP"`
-if test "x$TUSCANY_SDOCPP" = "x"; then
-  SCAPWD=`pwd`
-  AC_SUBST([TUSCANY_SDOCPP], ["$SCAPWD/../sdo/deploy"])
-fi
-
-# Configure LIBXML2_INCLUDE and LIBXML2_LIB
-LIBXML2_INCLUDE=`echo "$LIBXML2_INCLUDE"`
-if test "x$LIBXML2_INCLUDE" = "x"; then
-  AC_SUBST([LIBXML2_INCLUDE], ["/usr/include/libxml2"])
-fi
-LIBXML2_LIB=`echo "$LIBXML2_LIB"`
-if test "x$LIBXML2_LIB" = "x"; then
-  AC_SUBST([LIBXML2_LIB], ["/usr/lib"])
-fi
-
-# Configure LIBMOZJS_INCLUDE and LIBMOZJS_LIB
-LIBMOZJS_INCLUDE=`echo "$LIBMOZJS_INCLUDE"`
-if test "x$LIBMOZJS_INCLUDE" = "x"; then
-  AC_SUBST([LIBMOZJS_INCLUDE], ["/usr/include/xulrunner-1.9.1.5/unstable"])
-fi
-LIBMOZJS_LIB=`echo "$LIBMOZJS_LIB"`
-if test "x$LIBMOZJS_LIB" = "x"; then
-  AC_SUBST([LIBMOZJS_LIB], ["/usr/lib/xulrunner-1.9.1.5"])
-fi
-
-# Configure GCC C++ compile options
-AC_SUBST([CXXFLAGS], ["$(CXXFLAGS) -D_DEBUG -O0 -g3 -Wall -std=c++0x -fmessage-length=0"])
-
-AC_MSG_CHECKING(whether to build all component type and binding extensions)
-AC_ARG_ENABLE(all-extensions, [AS_HELP_STRING([--enable-all-extensions],[build all runtime extensions [default=no]])],
+# Configure Doxygen build
+AC_MSG_CHECKING([whether to build Doxygen documentation])
+AC_ARG_ENABLE(doxygen, [AS_HELP_STRING([--enable-doxygen], [build Doxygen documentation [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
-    want_all=false
     ;;
   *)
     AC_MSG_RESULT(yes)
-    want_all=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-  want_all=false ]
-)
-AM_CONDITIONAL([WANT_ALL], [test x$want_all = xtrue])
-
-AC_MSG_CHECKING(whether to build C++ component type extension)
-AC_ARG_ENABLE(cpp, [AS_HELP_STRING([--enable-cpp],[build C++ component type extension [default=yes]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_cpp=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_cpp=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(yes)
-  want_cpp=true ]
-)
-AM_CONDITIONAL([WANT_CPP], [test x$want_cpp = xtrue])
-
-AC_MSG_CHECKING(whether to build Web Service binding extension)
-AC_ARG_ENABLE(wsbinding, [AS_HELP_STRING([--enable-wsbinding],[build Web Service binding extension [default=no]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_wsbinding=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_wsbinding=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-  want_wsbinding=false ]
-)
-AM_CONDITIONAL([WANT_WSBINDING], [test x$want_wsbinding = xtrue])
-
-AC_MSG_CHECKING(whether to build SCA default binding extension)
-AC_ARG_ENABLE(scabinding, [AS_HELP_STRING([--enable-scabinding],[build SCA default binding extension [default=no]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_scabinding=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_scabinding=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-  want_scabinding=false ]
-)
-AM_CONDITIONAL([WANT_SCABINDING], [test x$want_scabinding = xtrue])
-
-AC_MSG_CHECKING(whether to build REST binding extension)
-AC_ARG_ENABLE(restbinding, [AS_HELP_STRING([--enable-restbinding],[build REST binding extension [default=no]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_restbinding=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_restbinding=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-  want_restbinding=false ]
-)
-AM_CONDITIONAL([WANT_RESTBINDING], [test x$want_restbinding = xtrue])
-
-AC_MSG_CHECKING(whether to build Python component type extension)
-AC_ARG_ENABLE(python, [AS_HELP_STRING([--enable-python],[build Python component type extension [default=no]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_python=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_python=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-  want_python=false ]
-)
-AM_CONDITIONAL([WANT_PYTHON], [test x$want_python = xtrue])
-
-AC_MSG_CHECKING(whether to build Ruby component type extension)
-AC_ARG_ENABLE(ruby, [AS_HELP_STRING([--enable-ruby],[build Ruby component type extension [default=no]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_ruby=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_ruby=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-  want_ruby=false ]
-)
-AM_CONDITIONAL([WANT_RUBY], [test x$want_ruby = xtrue])
-
-AC_MSG_CHECKING(whether to build PHP component type extension)
-AC_ARG_ENABLE(php, [AS_HELP_STRING([--enable-php],[build PHP component type extension [default=no]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_php=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    want_php=true
-    ;;
-  esac ],
-[ AC_MSG_RESULT(no)
-  want_php=false ]
-)
-AM_CONDITIONAL([WANT_PHP], [test x$want_php = xtrue])
-
-AC_MSG_CHECKING(whether to build Doxygen documentation)
-AC_ARG_ENABLE(doxygen, [AS_HELP_STRING([--enable-doxygen],[build Doxygen documentation [default=no]])],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    want_doxygen=false
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
+    AC_PATH_PROG(DOXYGEN, doxygen, , $PATH)
+    if test x$DOXYGEN = x; then
+      AC_MSG_ERROR([could not find doxygen])
+    fi
     want_doxygen=true
     ;;
   esac ],
-[ AC_MSG_RESULT(no)
-  want_doxygen=false ]
-)
-if test x$want_doxygen = xyes; then
-  AC_PATH_PROG(DOXYGEN, doxygen, , $PATH)
-  if test x$DOXYGEN = x; then
-    AC_MSG_ERROR([could not find doxygen])
-    want_doxygen=no
-  fi
-fi
+[ AC_MSG_RESULT(no)])
 AM_CONDITIONAL([WANT_DOXYGEN], [test x$want_doxygen = xtrue])
-
-# Configure exuberant ctags
-TAGSFILE="`pwd`/tags"
-AC_SUBST([CTAGSFLAGS], ["$(CTAGSFLAGS) --c++-kinds=+p --fields=+iaS --extra=+q --append --tag-relative=yes -f $TAGSFILE"])
 
 AC_CONFIG_FILES([Makefile
                  kernel/Makefile
                  modules/Makefile
                  modules/atom/Makefile
-                 modules/cache/Makefile
                  modules/eval/Makefile
                  modules/http/Makefile
                  modules/json/Makefile
                  modules/scdl/Makefile
+                 modules/server/Makefile
+                 components/Makefile
+                 components/cache/Makefile
+                 components/store/Makefile
                  test/Makefile
                  test/store-object/Makefile
                  test/store-function/Makefile
                  test/store-script/Makefile
                  doc/Makefile
                  doc/Doxyfile
-                 runtime/Makefile
-                 runtime/core/Makefile
-                 runtime/core/src/Makefile
-                 runtime/core/test/Makefile
-                 runtime/extensions/Makefile
-                 runtime/extensions/cpp/Makefile
-                 runtime/extensions/cpp/src/Makefile
-                 runtime/extensions/cpp/tools/Makefile
-                 runtime/extensions/cpp/tools/scagen/Makefile
-                 runtime/extensions/ws/Makefile
-                 runtime/extensions/ws/reference/Makefile
-                 runtime/extensions/ws/reference/axis2c/Makefile
-                 runtime/extensions/ws/reference/axis2c/src/Makefile
-                 runtime/extensions/ws/service/Makefile
-                 runtime/extensions/ws/service/axis2c/Makefile
-                 runtime/extensions/ws/service/axis2c/src/Makefile
-                 runtime/extensions/sca/Makefile
-                 runtime/extensions/sca/reference/Makefile
-                 runtime/extensions/sca/reference/src/Makefile
-                 runtime/extensions/sca/service/Makefile
-                 runtime/extensions/sca/service/src/Makefile
-                 runtime/extensions/rest/Makefile
-                 runtime/extensions/rest/interface/Makefile
-                 runtime/extensions/rest/interface/src/Makefile
-                 runtime/extensions/rest/reference/Makefile
-                 runtime/extensions/rest/reference/curl/Makefile
-                 runtime/extensions/rest/reference/curl/src/Makefile
-                 runtime/extensions/rest/service/Makefile
-                 runtime/extensions/rest/service/httpd/Makefile
-                 runtime/extensions/rest/service/httpd/src/Makefile
-                 runtime/extensions/python/Makefile
-                 runtime/extensions/python/src/Makefile
-                 runtime/extensions/ruby/Makefile
-                 runtime/extensions/ruby/src/Makefile
-                 runtime/extensions/ruby/extension/Makefile
                  ])
 AC_OUTPUT
+

@@ -30,6 +30,7 @@ surefire*.properties
 Makefile
 .deps/
 .libs/
+m4/
 *.m4
 config.guess
 config.sub
@@ -56,6 +57,7 @@ Doxyfile
 gmon.out
 *~
 tags
+doxygen
 
 # Specific ignores
 sca/runtime/extensions/cpp/tools/scagen/docs/
@@ -67,8 +69,9 @@ atom-test
 eval-test
 eval-shell
 json-test
-diskcache-test
-memcache-test
+cache-test
+client-test
+mcache-test
 curl-test
 scdl-test
 store-function-test

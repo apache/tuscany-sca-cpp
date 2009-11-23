@@ -26,10 +26,5 @@ endif
 
 datadir=$(prefix)/doc
 
-data_DATA = *.html
-nobase_data_DATA = css/*.*
-
-EXTRA_DIST = css *.html
-
 clean:
 	rm -rf doxygen

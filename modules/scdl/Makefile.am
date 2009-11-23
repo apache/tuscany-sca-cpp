@@ -17,8 +17,6 @@
 
 noinst_PROGRAMS = scdl-test
 
-nobase_include_HEADERS = *.hpp
-
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 scdl_test_SOURCES = scdl-test.cpp

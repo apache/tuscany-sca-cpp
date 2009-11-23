@@ -15,16 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = kernel modules test doc runtime
-DIST_SUBDIRS = doc runtime samples
-datadir=$(prefix)
-data_DATA = INSTALL README LICENSE COPYING NOTICE GettingStarted.html
-nobase_data_DATA = xsd/*.*
-EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE autogen.sh build.sh builddist.sh configure.sh makebindist.sh GettingStarted.html xsd
+ACLOCAL_AMFLAGS = -I m4
 
-dist-hook:
-	rm -rf `find $(distdir)/ -type d -name .svn`
-	rm -rf `find $(distdir)/ -type d -name .deps`
+SUBDIRS = kernel modules components test doc
+
+datadir=$(prefix)
+data_DATA = INSTALL README LICENSE COPYING NOTICE
+nobase_data_DATA = xsd/*.*
+
+DIST_SUBDIRS = kernel modules components test doc samples
+EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE autogen.sh xsd
 
 install-data-hook:
 	rm -rf $(prefix)/doc
@@ -38,17 +38,15 @@ install-data-hook:
 	rm -rf `find $(prefix)/samples -type d -name .svn`
 	rm -rf `find $(prefix)/samples -type d -name .deps`
 	
-bindist: dist
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-src
+dist-hook:
+	rm -rf `find $(distdir)/ -type d -name .svn`
+	rm -rf `find $(distdir)/ -type d -name .deps`
+
+bindist: install
 	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
-	gunzip -f ${PACKAGE}-${PACKAGE_VERSION}.tar.gz
-	tar -xf ${PACKAGE}-${PACKAGE_VERSION}.tar
-	mv ${PACKAGE}-${PACKAGE_VERSION} ${PACKAGE}-${PACKAGE_VERSION}-src
-	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-src | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-src.tar.gz
-	cd ${PACKAGE}-${PACKAGE_VERSION}-src \
-	&& sh ../makebindist.sh
 	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
-	cp -r ${PACKAGE}-${PACKAGE_VERSION}-src/deploy/* ${PACKAGE}-${PACKAGE_VERSION}-bin
+	cp -r $(prefix)/* ${PACKAGE}-${PACKAGE_VERSION}-bin
+	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin/test
 	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz
+	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
 	

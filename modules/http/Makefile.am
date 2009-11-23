@@ -17,21 +17,9 @@
 
 noinst_PROGRAMS = curl-test
 
-libdir=$(prefix)/lib
-lib_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
-
-nobase_include_HEADERS = *.hpp
-
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${HTTPD_INCLUDE} -I${APR_INCLUDE} -I${LIBMOZJS_INCLUDE} -I${CURL_INCLUDE}
-
-libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
-libmod_tuscany_eval_la_LIBADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${CURL_LIB} -lcurl -L${LIBMOZJS_LIB} -lmozjs
-
-libmod_tuscany_wiring_la_SOURCES = mod-wiring.cpp
-libmod_tuscany_wiring_la_LIBADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${CURL_LIB} -lcurl -L${LIBMOZJS_LIB} -lmozjs
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${HTTPD_INCLUDE} -I${APR_INCLUDE} -I${JS_INCLUDE} -I${CURL_INCLUDE}
 
 curl_test_SOURCES = curl-test.cpp
-curl_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${CURL_LIB} -lcurl -L${LIBMOZJS_LIB} -lmozjs
+curl_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${CURL_LIB} -lcurl -L${JS_LIB} -lmozjs
 
-TESTS = httpd-test http-test wiring-test
-
+TESTS = httpd-test http-test

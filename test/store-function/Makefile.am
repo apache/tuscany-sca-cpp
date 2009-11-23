@@ -15,18 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-store_function_PROGRAMS = store-function-test
-store_functiondir=$(prefix)/test/store-function/deploy
+noinst_PROGRAMS = store-function-test
 
-nobase_include_HEADERS = *.hpp
+noinst_HEADERS = *.hpp
 
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 store_function_test_SOURCES = store-function-test.cpp
 store_function_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 	
-EXTRA_DIST = *.composite
-store_function_DATA = *.composite
-
 TESTS = store-function-test
 

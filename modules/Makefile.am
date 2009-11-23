@@ -15,5 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = atom cache eval http json scdl
+SUBDIRS = atom eval http json scdl server
+
+includedir = $(prefix)/include/modules
+nobase_include_HEADERS = */*.hpp
 

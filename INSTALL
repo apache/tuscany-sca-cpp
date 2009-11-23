@@ -1,2 +1,50 @@
-Please read the GettingStarted.html document for information on 
-building and installing Tuscany SCA Native
+Apache Tuscany SCA Runtime
+==========================
+
+Building
+========
+
+First get the following dependencies:
+
+HTTP server and APR
+httpd-2.2-13
+libapr-1-0.3.8
+libaprutil-1-0.3.9
+(the easiest is to build httpd using configure --with-included-apr)
+
+XML
+libxml2-2.7.5
+
+JSON
+SpiderMonkey libmozjs
+(included in xulrunner-1.9.1.5)
+
+To configure the build do this:
+./autogen.sh
+./configure --prefix=<install dir>
+
+To configure where to find dependencies, see:
+./configure --help
+
+To build the runtime, do this:
+make
+
+To run the tests, do this:
+make check
+
+To build doxygen documentation, do this:
+./configure --prefix=<install dir> --enable-doxygen
+make
+
+To build ctags for the source, do this:
+make ctags
+
+To build a source distribution, do this:
+make dist
+
+To build a binary distribution, do this:
+make bindist
+
+Layout
+======
+

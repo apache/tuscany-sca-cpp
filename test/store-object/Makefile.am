@@ -15,18 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-store_object_PROGRAMS = store-object-test
-store_objectdir=$(prefix)/test/store-object/deploy
+noinst_PROGRAMS = store-object-test
 
-nobase_include_HEADERS = *.hpp
+noinst_HEADERS = *.hpp
 
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 store_object_test_SOURCES = store-object-test.cpp
 store_object_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 	
-EXTRA_DIST = *.composite
-store_object_DATA = *.composite
-
 TESTS = store-object-test
 
