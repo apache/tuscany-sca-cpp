@@ -38,3 +38,5 @@ build
 Debug
 Release
 gmon.out
+m4
+*.tar.gz
