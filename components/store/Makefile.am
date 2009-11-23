@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,15 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-cmd="memcached -l 127.0.0.1 -m 4 -p 11311"
-$cmd &
-sleep 1
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
-# Test
-./memcache-test
-rc=$?
-
-# Cleanup
-ps -f | grep -v grep | grep "$cmd" | awk '{ print $2 }' | xargs kill
-return $rc

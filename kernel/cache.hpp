@@ -23,7 +23,7 @@
 #define tuscany_cache_hpp
 
 /**
- * Simple cache monad implementation.
+ * Simple local cache monad implementation.
  */
 
 #include <sys/stat.h>
@@ -33,7 +33,6 @@
 #include "monad.hpp"
 
 namespace tuscany {
-namespace cache {
 
 /**
  * Cached monad. Used to represent a value that can be cached.
@@ -51,10 +50,6 @@ public:
     }
 
     cached(const cached<V>& c) : lvalue(c.lvalue), ltime(c.ltime), mtime(c.mtime), v(c.v) {
-    }
-
-    operator const V() const {
-        return v;
     }
 
     const cached<V>& operator=(const cached<V>& c) {
@@ -84,6 +79,7 @@ private:
     V v;
 
     template<typename X> friend const cached<X> latest(const cached<X>& c);
+    template<typename X> friend const X content(const cached<X>& c);
     template<typename X> friend std::ostream& operator<<(std::ostream& out, const cached<X>& c);
 };
 
@@ -106,6 +102,13 @@ template<typename V> const cached<V> latest(const cached<V>& c) {
 }
 
 /**
+ * Returns the content of a cached monad.
+ */
+template<typename V> const V content(const cached<V>& c) {
+    return c.v;
+}
+
+/**
  * Returns the latest modification time of a file.
  */
 const unsigned long latestFileTime(const std::string& path) {
@@ -116,7 +119,6 @@ const unsigned long latestFileTime(const std::string& path) {
     return st.st_mtim.tv_nsec;
 }
 
-}
 }
 
 #endif /* tuscany_cache_hpp */

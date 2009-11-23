@@ -18,10 +18,14 @@
 #  under the License.
 
 # Setup
-mkdir -p tmp
+cmd="memcached -l 127.0.0.1 -m 4 -p 11311"
+$cmd &
+sleep 1
 
 # Test
-./diskcache-test
+./mcache-test
 rc=$?
 
+# Cleanup
+ps -f | grep -v grep | grep "$cmd" | awk '{ print $2 }' | xargs kill
 return $rc

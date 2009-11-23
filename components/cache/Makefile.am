@@ -15,27 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = kernel-test cache-test xsd-test
-
-testdir=$(prefix)/test
-test_LTLIBRARIES = libdynlib-test.la
-
-includedir = $(prefix)/include/kernel
-include_HEADERS = *.hpp
+noinst_PROGRAMS = mcache-test
 
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
-kernel_test_SOURCES = kernel-test.cpp
-kernel_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+compdir=$(prefix)/components/cache
+comp_LTLIBRARIES = libmcache.la
 
-libdynlib_test_la_SOURCES = dynlib-test.cpp
-libdynlib_test_la_LIBADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+libmcache_la_SOURCES = mcache.cpp
+libmcache_la_LIBADD = -lpthread -L${APR_LIB} -lapr-1 -laprutil-1
 
-cache_test_SOURCES = cache-test.cpp
-cache_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+mcache_test_SOURCES = mcache-test.cpp
+mcache_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 
-xsd_test_SOURCES = xsd-test.cpp
-xsd_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
-
-TESTS = kernel-test diskcache-test
-
+TESTS = memcached-test

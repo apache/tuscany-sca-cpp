@@ -29,21 +29,20 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "memcached.hpp"
+#include "mcache.hpp"
 
 namespace tuscany {
 namespace cache {
 
 bool testMemCached() {
-    memcached::Cache cache;
-    memcached::addServer("localhost", 11311, cache);
+    MemCached ch("localhost", 11311);
 
-    assert(hasValue(memcached::post("a", "AAA", cache)));
-    assert(memcached::get("a", cache) == value(std::string("AAA")));
-    assert(hasValue(memcached::put("a", "aaa", cache)));
-    assert(memcached::get("a", cache) == value(std::string("aaa")));
-    assert(hasValue(memcached::del("a", cache)));
-    assert(!hasValue(memcached::get("a", cache)));
+    assert(hasContent(post("a", "AAA", ch)));
+    assert(get("a", ch) == value(std::string("AAA")));
+    assert(hasContent(put("a", "aaa", ch)));
+    assert(get("a", ch) == value(std::string("aaa")));
+    assert(hasContent(del("a", ch)));
+    assert(!hasContent(get("a", ch)));
 
     return true;
 }
@@ -53,11 +52,11 @@ const double duration(struct timeval start, struct timeval end, int count) {
     return (double)t / (double)count;
 }
 
-bool testGetLoop(const int count, memcached::Cache& cache) {
+bool testGetLoop(const int count, MemCached& ch) {
     if (count == 0)
         return true;
-    assert(memcached::get("c", cache) == value(std::string("CCC")));
-    return testGetLoop(count - 1, cache);
+    assert(get("c", ch) == value(std::string("CCC")));
+    return testGetLoop(count - 1, ch);
 }
 
 bool testGetPerf() {
@@ -65,15 +64,14 @@ bool testGetPerf() {
     struct timeval start;
     struct timeval end;
     {
-        memcached::Cache cache;
-        memcached::addServer("localhost", 11311, cache);
-        assert(hasValue(memcached::post("c", "CCC", cache)));
+        MemCached ch("localhost", 11311);
+        assert(hasContent(post("c", "CCC", ch)));
 
-        testGetLoop(5, cache);
+        testGetLoop(5, ch);
 
         gettimeofday(&start, NULL);
 
-        testGetLoop(count, cache);
+        testGetLoop(count, ch);
 
         gettimeofday(&end, NULL);
         std::cout << "Memcached get test " << duration(start, end, count) << " ms" << std::endl;

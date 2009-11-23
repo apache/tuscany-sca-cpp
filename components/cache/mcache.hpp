@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_memcached_hpp
-#define tuscany_memcached_hpp
+#ifndef tuscany_mcache_hpp
+#define tuscany_mcache_hpp
 
 /**
  * Memcached access functions.
@@ -40,55 +40,60 @@
 #include "monad.hpp"
 
 namespace tuscany {
-namespace memcached {
+namespace cache {
 
 /**
  * Represents a memcached context.
  */
-class Cache {
+class MemCached {
 public:
-    Cache() {
+    MemCached() {
         apr_pool_create(&pool, NULL);
         apr_memcache_create(pool, 1, 0, &mc);
+        init("localhost", 11211);
     }
-    ~Cache() {
+
+    MemCached(const std::string host, const int port) {
+        apr_pool_create(&pool, NULL);
+        apr_memcache_create(pool, 1, 0, &mc);
+        init(host, port);
+    }
+
+    ~MemCached() {
         apr_pool_destroy(pool);
-    }
-
-    operator apr_memcache_t*() const {
-        return mc;
-    }
-
-    operator apr_pool_t*() const {
-        return pool;
     }
 
 private:
     apr_pool_t* pool;
     apr_memcache_t* mc;
 
-};
+    friend const failable<bool, std::string> post(const value& key, const value& val, const MemCached& cache);
+    friend const failable<bool, std::string> put(const value& key, const value& val, const MemCached& cache);
+    friend const failable<value, std::string> get(const value& key, const MemCached& cache);
+    friend const failable<bool, std::string> del(const value& key, const MemCached& cache);
 
-/**
- * Add a server to the memcached context.
- */
-const failable<bool, std::string> addServer(const std::string& host, const int port, const Cache& cache) {
-    apr_memcache_server_t *server;
-    const apr_status_t sc = apr_memcache_server_create(cache, host.c_str(), port, 0, 1, 1, 60, &server);
-    if (sc != APR_SUCCESS)
-        return mkfailure<bool, std::string>("Could not create server");
-    const apr_status_t as = apr_memcache_add_server(cache, server);
-    if (as != APR_SUCCESS)
-        return mkfailure<bool, std::string>("Could not add server");
-    return true;
-}
+    /**
+     * Initialize the memcached context.
+     */
+    const failable<bool, std::string> init(const std::string& host, const int port) {
+        apr_memcache_server_t *server;
+        const apr_status_t sc = apr_memcache_server_create(pool, host.c_str(), port, 0, 1, 1, 60, &server);
+        if (sc != APR_SUCCESS)
+            return mkfailure<bool, std::string>("Could not create server");
+        const apr_status_t as = apr_memcache_add_server(mc, server);
+        if (as != APR_SUCCESS)
+            return mkfailure<bool, std::string>("Could not add server");
+        return true;
+    }
+
+};
 
 /**
  * Post a new item to the cache.
  */
-const failable<bool, std::string> post(const value& key, const value& val, const Cache& cache) {
+const failable<bool, std::string> post(const value& key, const value& val, const MemCached& cache) {
     const std::string v(val);
-    const apr_status_t rc = apr_memcache_add(cache, std::string(key).c_str(), const_cast<char*>(v.c_str()), v.size(), 0, 27);
+    const apr_status_t rc = apr_memcache_add(cache.mc, std::string(key).c_str(), const_cast<char*>(v.c_str()), v.size(), 0, 27);
     if (rc != APR_SUCCESS)
         return mkfailure<bool, std::string>("Could not add entry");
     return true;
@@ -97,9 +102,9 @@ const failable<bool, std::string> post(const value& key, const value& val, const
 /**
  * Update an item in the cache.
  */
-const failable<bool, std::string> put(const value& key, const value& val, const Cache& cache) {
+const failable<bool, std::string> put(const value& key, const value& val, const MemCached& cache) {
     const std::string v(val);
-    const apr_status_t rc = apr_memcache_replace(cache, std::string(key).c_str(), const_cast<char*>(v.c_str()), v.size(), 0, 27);
+    const apr_status_t rc = apr_memcache_replace(cache.mc, std::string(key).c_str(), const_cast<char*>(v.c_str()), v.size(), 0, 27);
     if (rc != APR_SUCCESS)
         return mkfailure<bool, std::string>("Could not add entry");
     return true;
@@ -108,15 +113,15 @@ const failable<bool, std::string> put(const value& key, const value& val, const 
 /**
  * Get an item from the cache.
  */
-const failable<value, std::string> get(const value& key, const Cache& cache) {
+const failable<value, std::string> get(const value& key, const MemCached& cache) {
     apr_pool_t* vpool;
-    const apr_status_t pc = apr_pool_create(&vpool, cache);
+    const apr_status_t pc = apr_pool_create(&vpool, cache.pool);
     if (pc != APR_SUCCESS)
         return mkfailure<value, std::string>("Could not allocate memory");
 
     char *data;
     apr_size_t size;
-    const apr_status_t rc = apr_memcache_getp(cache, cache, std::string(key).c_str(), &data, &size, NULL);
+    const apr_status_t rc = apr_memcache_getp(cache.mc, cache.pool, std::string(key).c_str(), &data, &size, NULL);
     if (rc != APR_SUCCESS) {
         apr_pool_destroy(vpool);
         return mkfailure<value, std::string>("Could not get entry");
@@ -130,8 +135,8 @@ const failable<value, std::string> get(const value& key, const Cache& cache) {
 /**
  * Delete an item from the cache
  */
-const failable<bool, std::string> del(const value& key, const Cache& cache) {
-    const apr_status_t rc = apr_memcache_delete(cache, std::string(key).c_str(), 0);
+const failable<bool, std::string> del(const value& key, const MemCached& cache) {
+    const apr_status_t rc = apr_memcache_delete(cache.mc, std::string(key).c_str(), 0);
     if (rc != APR_SUCCESS)
         return mkfailure<bool, std::string>("Could not add entry");
     return true;
@@ -140,4 +145,4 @@ const failable<bool, std::string> del(const value& key, const Cache& cache) {
 }
 }
 
-#endif /* tuscany_memcached_hpp */
+#endif /* tuscany_mcache_hpp */

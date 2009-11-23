@@ -33,7 +33,6 @@
 #include "cache.hpp"
 
 namespace tuscany {
-namespace cache {
 
 const std::string fileRead(const std::string path) {
     std::ifstream is(path);
@@ -51,7 +50,7 @@ bool testCache() {
         std::ofstream os(p);
         os << "initial";
         os.close();
-        assert(std::string(latest(c)) == std::string("initial"));
+        assert(content(latest(c)) == std::string("initial"));
     }
 
     usleep(1000000);
@@ -61,19 +60,18 @@ bool testCache() {
         os << "updated";
         os.close();
         assert(latest(c) != c);
-        assert(std::string(latest(c)) == std::string("updated"));
+        assert(content(latest(c)) == std::string("updated"));
         assert(latest(c) == latest(c));
     }
     return true;
 }
 
 }
-}
 
 int main() {
     std::cout << "Testing..." << std::endl;
 
-    tuscany::cache::testCache();
+    tuscany::testCache();
 
     std::cout << "OK" << std::endl;
 
