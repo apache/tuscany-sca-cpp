@@ -202,6 +202,7 @@ AC_CONFIG_FILES([Makefile
                  components/Makefile
                  components/cache/Makefile
                  components/store/Makefile
+                 samples/Makefile
                  test/Makefile
                  test/store-object/Makefile
                  test/store-function/Makefile

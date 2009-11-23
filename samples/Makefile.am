@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -16,16 +14,4 @@
 #  KIND, either express or implied.  See the License for the
 #  specific language governing permissions and limitations
 #  under the License.
-
-# Generate a server conf
-here=`readlink -f $0`; here=`dirname $here`
-root=`readlink -f $1`
-
-mkdir -p $root
-mkdir -p $root/logs
-mkdir -p $root/conf
-cat >>$root/conf/httpd.conf <<EOF
-LoadModule mod_tuscany_eval $here/.libs/libmod_tuscany_eval.so
-LoadModule mod_tuscany_wiring $here/.libs/libmod_tuscany_wiring.so
-EOF
 
