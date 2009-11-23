@@ -17,16 +17,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-./httpd-conf tmp 8090 htdocs
-apachectl -k start -d `pwd`/tmp
-sleep 1
+# Generate a server conf
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
 
-# Test
-./curl-test
-rc=$?
+mkdir -p $root
+mkdir -p $root/logs
+mkdir -p $root/conf
+cat >>$root/conf/httpd.conf <<EOF
+LoadModule mod_tuscany_eval $here/.libs/libmod_tuscany_eval.so
+LoadModule mod_tuscany_wiring $here/.libs/libmod_tuscany_wiring.so
+LoadModule mod_tuscany_cache $here/.libs/libmod_tuscany_cache.so
+EOF
 
-# Cleanup
-apachectl -k stop -d `pwd`/tmp
-sleep 2
-return $rc

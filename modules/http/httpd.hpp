@@ -23,7 +23,7 @@
 #define tuscany_httpd_hpp
 
 /**
- * HTTPD module utility functions.
+ * HTTPD module implementation functions.
  */
 
 #include <string>
@@ -60,6 +60,32 @@ namespace httpd {
  */
 bool logRequests = false;
 bool logContent = false;
+
+/**
+ * Returns a server-scoped module configuration.
+ */
+template<typename C> void* makeServerConf(apr_pool_t *p, server_rec *s) {
+    C* c = new (apr_palloc(p, sizeof(C))) C(s);
+    apr_pool_cleanup_register(p, c, gc_pool_cleanupCallback<C>, apr_pool_cleanup_null) ;
+    return c;
+}
+
+template<typename C> const C& serverConf(const request_rec* r, const module* mod) {
+    return *(C*)ap_get_module_config(r->server->module_config, mod);
+}
+
+/**
+ * Returns a directory-scoped module configuration.
+ */
+template<typename C> void *makeDirConf(apr_pool_t *p, char *dirspec) {
+    C* c = new (apr_palloc(p, sizeof(C))) C(dirspec);
+    apr_pool_cleanup_register(p, c, gc_pool_cleanupCallback<C>, apr_pool_cleanup_null) ;
+    return c;
+}
+
+template<typename C> C& dirConf(const request_rec* r, const module* mod) {
+    return *(C*)ap_get_module_config(r->per_dir_config, mod);
+}
 
 /**
  * Convert a path string to a list of values.
@@ -111,6 +137,8 @@ int logHeader(void* r, const char* key, const char* value) {
 }
 
 const bool logRequest(request_rec* r, const std::string& msg) {
+    if (!logRequests)
+        return true;
     std::cout << msg << std::endl;
     std::cout << "protocol: " << optional(r->protocol) << std::endl;
     std::cout << "method: " << optional(r->method) << std::endl;
@@ -124,6 +152,32 @@ const bool logRequest(request_rec* r, const std::string& msg) {
     std::cout << "filename: " << optional(r->filename) << std::endl;
     std::cout << "path tokens: " << pathTokens(r->uri) << std::endl;
     std::cout << "args: " << optional(r->args) << std::endl;
+    std::cout.flush();
+    return true;
+}
+
+const bool logValue(const value& v, const std::string& msg) {
+    if (!logContent)
+        return true;
+    std::cout<< msg << ": " << v << std::endl;
+    std::cout.flush();
+    return true;
+}
+
+const bool logValue(const failable<value, std::string>& v, const std::string& msg) {
+    if (!logContent)
+        return true;
+    std::cout<< msg << ": " << v << std::endl;
+    std::cout.flush();
+    return true;
+}
+
+const bool logStrings(const list<std::string>& ls, const std::string& msg) {
+    if (!logContent)
+        return true;
+    std::cout<< msg << ": " << std::endl;
+    write(ls, std::cout);
+    std::cout<< std::endl;
     std::cout.flush();
     return true;
 }
@@ -144,6 +198,19 @@ const list<list<value> > queryArgs(const request_rec* r) {
 }
 
 /**
+ * Returns a list of param values other than the id and method args from a list
+ * of key value pairs.
+ */
+const list<value> queryParams(const list<list<value> >& a) {
+    if (isNil(a))
+        return list<value>();
+    const list<value> p = car(a);
+    if (car(p) == value("id") || car(p) == value("method"))
+        return queryParams(cdr(a));
+    return cons(cadr(p), queryParams(cdr(a)));
+}
+
+/**
  * Converts the args received in a POST to a list of key value pairs.
  */
 const list<list<value> > postArgs(const list<value>& a) {
@@ -151,6 +218,83 @@ const list<list<value> > postArgs(const list<value>& a) {
         return list<list<value> >();
     const list<value> l = car(a);
     return cons(l, postArgs(cdr(a)));
+}
+
+/**
+ * Setup the HTTP read policy.
+ */
+const int setupReadPolicy(request_rec* r) {
+    const int rc = ap_setup_client_block(r, REQUEST_CHUNKED_DECHUNK);
+    if(rc != OK)
+        return rc;
+    ap_should_client_block(r);
+    if(r->read_chunked == true && r->remaining == 0)
+        r->chunked = true;
+    //apr_table_setn(r->headers_out, "Connection", "close");
+    return OK;
+}
+
+/**
+ * Read the content of a POST or PUT.
+ */
+const list<std::string> read(request_rec* r) {
+    char b[2048];
+    const int n = ap_get_client_block(r, b, 2048);
+    if (n <= 0)
+        return list<std::string>();
+    return cons(std::string(b, n), read(r));
+}
+
+/**
+ * Convert a URI value to an absolute URL.
+ */
+const char* url(const value& v, request_rec* r) {
+    std::string u = r->uri;
+    u.append("/");
+    u.append(v);
+    return ap_construct_url(r->pool, u.c_str(), r);
+}
+
+/**
+ * Convert an ATOM entry to a value.
+ */
+const value feedEntry(const list<value>& e) {
+    const list<value> v = elementsToValues(mklist<value>(caddr(e)));
+    return cons(car(e), mklist<value>(cadr(e), cdr<value>(car(v))));
+}
+
+/**
+ * Write an HTTP result.
+ */
+const failable<int, std::string> writeResult(const failable<list<std::string>, std::string>& ls, const std::string& ct, request_rec* r) {
+    if (!hasContent(ls))
+        return mkfailure<int, std::string>(reason(ls));
+    std::ostringstream os;
+    write(content(ls), os);
+    if (logContent) {
+        std::cout<< "content: " << std::endl << os.str() << std::endl;
+        std::cout.flush();
+    }
+
+    const std::string etag(ap_md5(r->pool, (const unsigned char*)std::string(os.str()).c_str()));
+    const char* match = apr_table_get(r->headers_in, "If-None-Match");
+    apr_table_setn(r->headers_out, "ETag", apr_pstrdup(r->pool, etag.c_str()));
+    if (match != NULL  && etag == match) {
+        r->status = HTTP_NOT_MODIFIED;
+        return OK;
+    }
+    ap_set_content_type(r, ct.c_str());
+    ap_rputs(std::string(os.str()).c_str(), r);
+    return OK;
+}
+
+/**
+ * Report request execution status.
+ */
+const int reportStatus(const failable<int, std::string>& rc) {
+    if (!hasContent(rc))
+        return HTTP_INTERNAL_SERVER_ERROR;
+    return content(rc);
 }
 
 }

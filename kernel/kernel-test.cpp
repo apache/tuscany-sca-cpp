@@ -37,6 +37,7 @@
 #include "element.hpp"
 #include "xml.hpp"
 #include "monad.hpp"
+#include "dynlib.hpp"
 
 namespace tuscany {
 
@@ -660,8 +661,8 @@ struct tickInc {
     const double v;
     tickInc(const double v) : v(v) {
     }
-    const svp<int, double> operator()(int s) const {
-        return svp<int, double>(s + 1, v);
+    const scp<int, double> operator()(int s) const {
+        return scp<int, double>(s + 1, v);
     }
 };
 
@@ -690,6 +691,21 @@ bool testStateMonad() {
     assert((m >> r)(0) == m(0));
     assert((m >> stateF >> stateG)(0) == (m >> stateH)(0));
 
+    return true;
+}
+
+bool testDynLib() {
+    const failable<lib, std::string> dl(dynlib(".libs/libdynlib-test" + dynlibExt));
+    assert(hasContent(dl));
+    const failable<lambda<int(int)>, std::string> sq(dynlambda<int(int)>("csquare", content(dl)));
+    assert(hasContent(sq));
+    lambda<int(int)> l(content(sq));
+    assert(l(2) == 4);
+
+    const failable<lambda<lambda<int(int)>()>, std::string> sql(dynlambda<lambda<int(int)>()>("csquarel", content(dl)));
+    assert(hasContent(sql));
+    lambda<lambda<int(int)>()> ll(content(sql));
+    assert(ll()(3) == 9);
     return true;
 }
 
@@ -730,6 +746,7 @@ int main() {
     tuscany::testMaybeMonad();
     tuscany::testFailableMonad();
     tuscany::testStateMonad();
+    tuscany::testDynLib();
 
     std::cout << "OK" << std::endl;
 

@@ -113,9 +113,9 @@ template<typename R> const failable<R, std::string> writeATOMEntry(const lambda<
 
 const failable<list<std::string>, std::string> writeATOMEntry(const list<value>& l) {
     const failable<list<std::string>, std::string> ls = writeATOMEntry<list<std::string> >(rcons<std::string>, list<std::string>(), l);
-    if (!hasValue(ls))
+    if (!hasContent(ls))
         return ls;
-    return reverse(list<std::string>(ls));
+    return reverse(list<std::string>(content(ls)));
 }
 
 /**
@@ -139,9 +139,9 @@ template<typename R> const failable<R, std::string> writeATOMFeed(const lambda<R
  */
 const failable<list<std::string>, std::string> writeATOMFeed(const list<value>& l) {
     const failable<list<std::string>, std::string> ls = writeATOMFeed<list<std::string> >(rcons<std::string>, list<std::string>(), l);
-    if (!hasValue(ls))
+    if (!hasContent(ls))
         return ls;
-    return reverse(list<std::string>(ls));
+    return reverse(list<std::string>(content(ls)));
 }
 
 /**

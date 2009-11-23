@@ -209,29 +209,29 @@ const failable<value, std::string> evalExpr(const value& expr, const std::string
     // Convert expression to a JSON-RPC request
     json::JSONContext cx;
     const failable<list<std::string>, std::string> jsreq = jsonRequest(1, car<value>(expr), cdr<value>(expr), cx);
-    if (!hasValue(jsreq))
+    if (!hasContent(jsreq))
         return mkfailure<value, std::string>(reason(jsreq));
 
     if (logContent) {
         std::cout<< "content: " << std::endl;
-        write(jsreq, std::cout);
+        write(content(jsreq), std::cout);
         std::cout<< std::endl;
         std::cout.flush();
     }
 
     // POST it to the URL
     const list<std::string> h = mklist<std::string>("Content-Type: application/json-rpc");
-    const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(mklist<list<std::string> >(h, jsreq), rcons<std::string>, list<std::string>(), url, "POST", ch);
-    if (!hasValue(res))
+    const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(mklist<list<std::string> >(h, content(jsreq)), rcons<std::string>, list<std::string>(), url, "POST", ch);
+    if (!hasContent(res))
         return mkfailure<value, std::string>(reason(res));
 
     // Return result
     if (logContent) {
         std::cout << "content:" << std::endl;
-        write(cadr<list<std::string> >(res), std::cout);
+        write(cadr<list<std::string> >(content(res)), std::cout);
         std::cout << std::endl;
     }
-    const list<value> val = elementsToValues(json::readJSON(cadr<list<std::string> >(res), cx));
+    const list<value> val = elementsToValues(content(json::readJSON(cadr<list<std::string> >(content(res)), cx)));
     return cadr<value>(cadr<value>(val));
 }
 
@@ -250,9 +250,8 @@ const failable<value, std::string> get(const std::string& url, const CURLHandle&
 
     // Get the contents of the resource at the given URL
     const failable<list<list<std::string> >, std::string> res = get<list<std::string> >(rcons<std::string>, list<std::string>(), url, ch);
-    if (!hasValue(res))
+    if (!hasContent(res))
         return mkfailure<value, std::string>(reason(res));
-    const list<list<std::string> > ls = res;
 
     const std::string ct;
     if (ct.find("application/atom+xml") != std::string::npos) {
@@ -261,7 +260,7 @@ const failable<value, std::string> get(const std::string& url, const CURLHandle&
 
     // Return the content as a string value
     std::ostringstream os;
-    write(reverse(cadr(ls)), os);
+    write(reverse(cadr(content(res))), os);
     return value(os.str());
 }
 
@@ -272,19 +271,19 @@ const failable<value, std::string> post(const value& val, const std::string& url
 
     // Convert value to an ATOM entry
     const failable<list<std::string>, std::string> entry = atom::writeATOMEntry(atom::entryValuesToElements(val));
-    if (!hasValue(entry))
+    if (!hasContent(entry))
         return mkfailure<value, std::string>(reason(entry));
     if (logContent) {
         std::cout << "content:" << std::endl;
-        write(list<std::string>(entry), std::cout);
+        write(list<std::string>(content(entry)), std::cout);
         std::cout << std::endl;
     }
 
     // POST it to the URL
     const list<std::string> h = mklist<std::string>("Content-Type: application/atom+xml");
-    const list<list<std::string> > req = mklist<list<std::string> >(h, entry);
+    const list<list<std::string> > req = mklist<list<std::string> >(h, content(entry));
     const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(req, rcons<std::string>, list<std::string>(), url, "POST", ch);
-    if (!hasValue(res))
+    if (!hasContent(res))
         return mkfailure<value, std::string>(reason(res));
     return value(true);
 }
@@ -296,19 +295,19 @@ const failable<value, std::string> put(const value& val, const std::string& url,
 
     // Convert value to an ATOM entry
     const failable<list<std::string>, std::string> entry = atom::writeATOMEntry(atom::entryValuesToElements(val));
-    if (!hasValue(entry))
+    if (!hasContent(entry))
         return mkfailure<value, std::string>(reason(entry));
     if (logContent) {
         std::cout << "content:" << std::endl;
-        write(list<std::string>(entry), std::cout);
+        write(list<std::string>(content(entry)), std::cout);
         std::cout << std::endl;
     }
 
     // PUT it to the URL
     const list<std::string> h = mklist<std::string>("Content-Type: application/atom+xml");
-    const list<list<std::string> > req = mklist<list<std::string> >(h, entry);
+    const list<list<std::string> > req = mklist<list<std::string> >(h, content(entry));
     const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(req, rcons<std::string>, list<std::string>(), url, "PUT", ch);
-    if (!hasValue(res))
+    if (!hasContent(res))
         return mkfailure<value, std::string>(reason(res));
     return value(true);
 }
@@ -319,7 +318,7 @@ const failable<value, std::string> put(const value& val, const std::string& url,
 const failable<value, std::string> del(const std::string& url, const CURLHandle& ch) {
     const list<list<std::string> > req = mklist(list<std::string>(), list<std::string>());
     const failable<list<list<std::string> >, std::string> res = apply<list<std::string> >(req, rcons<std::string>, list<std::string>(), url, "DELETE", ch);
-    if (!hasValue(res))
+    if (!hasContent(res))
         return mkfailure<value, std::string>(reason(res));
     return value(true);
 }
@@ -333,9 +332,9 @@ struct proxy {
 
     const value operator()(const list<value>& args) const {
         failable<value, std::string> val = evalExpr(args, url, ch);
-        if (!hasValue(val))
+        if (!hasContent(val))
             return value();
-        return val;
+        return content(val);
     }
 
     const std::string url;

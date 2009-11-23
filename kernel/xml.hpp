@@ -261,7 +261,7 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
 
                 // Write its children
                 const failable<bool, std::string> w = writeList(elementChildren(token), xml);
-                if (!hasValue(w))
+                if (!hasContent(w))
                     return w;
 
                 if (xmlTextWriterEndElement(xml) < 0)
@@ -276,7 +276,7 @@ const failable<bool, std::string> writeList(const list<value>& l, const xmlTextW
 
             // Write its children
             const failable<bool, std::string> w = writeList(elementChildren(token), xml);
-            if (!hasValue(w))
+            if (!hasContent(w))
                 return w;
 
             if (xmlTextWriterEndElement(xml) < 0)
@@ -302,7 +302,7 @@ const failable<bool, std::string> write(const list<value>& l, const xmlTextWrite
         return mkfailure<bool, std::string>("xmlTextWriterStartDocument failed");
 
     const failable<bool, std::string> w = writeList(l, xml);
-    if (!hasValue(w))
+    if (!hasContent(w))
         return w;
 
     if (xmlTextWriterEndDocument(xml) < 0)
@@ -344,7 +344,7 @@ template<typename R> const failable<R, std::string> writeXML(const lambda<R(std:
 
     const failable<bool, std::string> w = write(l, xml);
     xmlFreeTextWriter(xml);
-    if (!hasValue(w)) {
+    if (!hasContent(w)) {
         return mkfailure<R, std::string>(reason(w));
     }
     return cx.accum;
@@ -355,9 +355,9 @@ template<typename R> const failable<R, std::string> writeXML(const lambda<R(std:
  */
 const failable<list<std::string>, std::string> writeXML(const list<value>& l) {
     const failable<list<std::string>, std::string> ls = writeXML<list<std::string> >(rcons<std::string>, list<std::string>(), l);
-    if (!hasValue(ls))
+    if (!hasContent(ls))
         return ls;
-    return reverse(list<std::string>(ls));
+    return reverse(list<std::string>(content(ls)));
 }
 
 }

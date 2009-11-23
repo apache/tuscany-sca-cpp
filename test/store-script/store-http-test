@@ -20,7 +20,8 @@
 echo "Testing..."
 
 # Setup
-../../modules/http/httpd-conf tmp 8093 htdocs
+../../modules/http/httpd-conf tmp 8090 htdocs
+../../modules/server/server-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 
 <Location /Catalog>
@@ -62,7 +63,7 @@ apachectl -k start -d `pwd`/tmp
 sleep 1
 
 # Test HTTP GET
-curl http://localhost:8093/store.html 2>/dev/null >tmp/store.html
+curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
 diff tmp/store.html htdocs/store.html
 rc=$?
 

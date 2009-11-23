@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * HTTPD module used to wire components.
+ * HTTPD module used to wire component references.
  */
 
 #include <sys/stat.h>
@@ -34,16 +34,16 @@
 #include "slist.hpp"
 #include "value.hpp"
 #include "monad.hpp"
+#include "cache.hpp"
 #include "../scdl/scdl.hpp"
-#include "../cache/cache.hpp"
-#include "httpd.hpp"
+#include "../http/httpd.hpp"
 
 extern "C" {
 extern module AP_MODULE_DECLARE_DATA mod_tuscany_wiring;
 }
 
 namespace tuscany {
-namespace httpd {
+namespace server {
 namespace modwiring {
 
 /**
@@ -51,14 +51,11 @@ namespace modwiring {
  */
 class ServerConf {
 public:
-    std::string home;
-    ServerConf() : home("") {
+    ServerConf(server_rec* s) : home("") {
     }
+    server_rec* s;
+    std::string home;
 };
-
-const ServerConf& serverConf(const request_rec* r) {
-    return *(ServerConf*)ap_get_module_config(r->server->module_config, &mod_tuscany_wiring);
-}
 
 /**
  * Set to true to wire using mod_proxy, false to wire using HTTP client redirects.
@@ -70,16 +67,13 @@ const bool useModProxy = true;
  */
 class DirConf {
 public:
-    DirConf() : contributionPath(""), compositeName("") {
+    DirConf(char* dirspec) : contributionPath(""), compositeName("") {
     }
+    char* dirspec;
     std::string contributionPath;
     std::string compositeName;
-    cache::cached<failable<list<value>, std::string> > components;
+    cached<failable<list<value>, std::string> > components;
 };
-
-DirConf& dirConf(const request_rec* r) {
-    return *(DirConf*)ap_get_module_config(r->per_dir_config, &mod_tuscany_wiring);
-}
 
 /**
  * Read the SCDL configuration of the deployed components.
@@ -91,11 +85,11 @@ const failable<list<value>, std::string> readComponents(const std::string& path)
     return scdl::components(readXML(streamList(is)));
 }
 
-const cache::cached<failable<list<value>, std::string> > components(DirConf* conf) {
+const cached<failable<list<value>, std::string> > components(DirConf* conf) {
     const std::string path(conf->contributionPath + conf->compositeName);
     const lambda<failable<list<value>, std::string>(std::string)> rc(readComponents);
-    const lambda<unsigned long(std::string)> ft(cache::latestFileTime);
-    return cache::cached<failable<list<value>, std::string> >(curry(rc, path), curry(ft, path));
+    const lambda<unsigned long(std::string)> ft(latestFileTime);
+    return cached<failable<list<value>, std::string> >(curry(rc, path), curry(ft, path));
 }
 
 /**
@@ -112,19 +106,16 @@ const bool isAbsolute(const std::string& uri) {
 int translate(request_rec *r) {
     if (strncmp(r->uri, "/references/", 12) != 0)
         return DECLINED;
-    const list<value> rpath(path(r->uri));
-
-    // Log the request
-    if(logRequests)
-        logRequest(r, "mod_tuscany_wiring::translate");
+    httpd::logRequest(r, "mod_tuscany_wiring::translate");
 
     // Find the requested component, reference and its target configuration
-    DirConf&  conf = dirConf(r);
-    conf.components = cache::latest(conf.components);
-    const failable<list<value>, std::string> comps(conf.components);
-    if (!hasValue(comps))
+    DirConf& conf = httpd::dirConf<DirConf>(r, &mod_tuscany_wiring);
+    conf.components = latest(conf.components);
+    const failable<list<value>, std::string> comps(content(conf.components));
+    if (!hasContent(comps))
         return HTTP_INTERNAL_SERVER_ERROR;
-    const value comp(scdl::named(cadr(rpath), list<value>(comps)));
+    const list<value> rpath(httpd::path(r->uri));
+    const value comp(scdl::named(cadr(rpath), list<value>(content(comps))));
     if (isNil(comp))
         return HTTP_NOT_FOUND;
     const value ref(scdl::named(caddr(rpath), scdl::references(comp)));
@@ -174,10 +165,7 @@ const std::string redirect(const std::string& file, const std::string& pi, const
 int handler(request_rec *r) {
     if(strcmp(r->handler, "mod_tuscany_wiring"))
         return DECLINED;
-
-    // Log the request
-    if(logRequests)
-        logRequest(r, "mod_tuscany_wiring::handler");
+    httpd::logRequest(r, "mod_tuscany_wiring::handler");
 
     // Do an internal redirect
     if (r->filename == NULL || strncmp(r->filename, "/redirect:", 10) != 0)
@@ -209,17 +197,6 @@ const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
     conf->compositeName = arg;
     conf->components = components(conf);
     return NULL;
-}
-
-void *makeDirConf(apr_pool_t *p, char *dirspec) {
-    DirConf* c = new (apr_palloc(p, sizeof(DirConf))) DirConf();
-    apr_pool_cleanup_register(p, c, gc_pool_cleanupCallback<DirConf>, apr_pool_cleanup_null) ;
-    return c;
-}
-void* makeServerConf(apr_pool_t *p, server_rec *s) {
-    ServerConf* c = new (apr_palloc(p, sizeof(ServerConf))) ServerConf();
-    apr_pool_cleanup_register(p, c, gc_pool_cleanupCallback<ServerConf>, apr_pool_cleanup_null) ;
-    return c;
 }
 
 /**
@@ -259,18 +236,12 @@ extern "C" {
 
 module AP_MODULE_DECLARE_DATA mod_tuscany_wiring = {
     STANDARD20_MODULE_STUFF,
-    // dir config
-    tuscany::httpd::modwiring::makeDirConf,
-    // dir merger, default is to override
-    NULL,
-    // server config
-    tuscany::httpd::modwiring::makeServerConf,
-    // merge server config
-    NULL,
-    // command table
-    tuscany::httpd::modwiring::commands,
-    // register hooks
-    tuscany::httpd::modwiring::registerHooks
+    // dir config and merger
+    tuscany::httpd::makeDirConf<tuscany::server::modwiring::DirConf>, NULL,
+    // server config and merger
+    tuscany::httpd::makeServerConf<tuscany::server::modwiring::ServerConf>, NULL,
+    // commands and hooks
+    tuscany::server::modwiring::commands, tuscany::server::modwiring::registerHooks
 };
 
 }

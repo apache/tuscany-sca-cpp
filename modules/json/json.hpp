@@ -217,7 +217,7 @@ const failable<list<value>, std::string> readJSON(const list<std::string>& ilist
 
     if(!JS_FinishJSONParse(cx, parser, JSVAL_NULL))
         return mkfailure<list<value>, std::string>("JS_FinishJSONParse failed");
-    if(!hasValue(consumed))
+    if(!hasContent(consumed))
         return mkfailure<list<value>, std::string>(reason(consumed));
 
     return list<value>(jsValToValue(val, cx));
@@ -318,7 +318,7 @@ const failable<bool, std::string> writeList(const list<value>& l, JSObject* o, c
 
             // Write its children
             const failable<bool, std::string> w = writeList(elementChildren(token), child, cx);
-            if (!hasValue(w))
+            if (!hasContent(w))
                 return w;
         }
     }
@@ -356,7 +356,7 @@ template<typename R> const failable<R, std::string> writeJSON(const lambda<R(std
     JSObject* o = JS_NewObject(cx, NULL, NULL, NULL);
     jsval val = OBJECT_TO_JSVAL(o);
     const failable<bool, std::string> w = writeList(l, o, cx);
-    if (!hasValue(w))
+    if (!hasContent(w))
         return mkfailure<R, std::string>(reason(w));
 
     WriteContext<R> wcx(reduce, initial, cx);
@@ -370,9 +370,9 @@ template<typename R> const failable<R, std::string> writeJSON(const lambda<R(std
  */
 const failable<list<std::string>, std::string> writeJSON(const list<value>& l, const JSONContext& cx) {
     const failable<list<std::string>, std::string> ls = writeJSON<list<std::string> >(rcons<std::string>, list<std::string>(), l, cx);
-    if (!hasValue(ls))
+    if (!hasContent(ls))
         return ls;
-    return reverse(list<std::string>(ls));
+    return reverse(list<std::string>(content(ls)));
 }
 
 /**
