@@ -33,6 +33,7 @@
 #include "list.hpp"
 #include "slist.hpp"
 #include "value.hpp"
+#include "debug.hpp"
 #include "monad.hpp"
 #include "cache.hpp"
 #include "../scdl/scdl.hpp"
@@ -51,10 +52,11 @@ namespace modwiring {
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : home("") {
+    ServerConf(server_rec* s) : s(s), home(""), wiringHost("") {
     }
-    server_rec* s;
+    const server_rec* s;
     std::string home;
+    std::string wiringHost;
 };
 
 /**
@@ -67,9 +69,9 @@ const bool useModProxy = true;
  */
 class DirConf {
 public:
-    DirConf(char* dirspec) : contributionPath(""), compositeName("") {
+    DirConf(char* dirspec) : dirspec(dirspec), contributionPath(""), compositeName("") {
     }
-    char* dirspec;
+    const char* dirspec;
     std::string contributionPath;
     std::string compositeName;
     cached<failable<list<value>, std::string> > components;
@@ -106,7 +108,8 @@ const bool isAbsolute(const std::string& uri) {
 int translate(request_rec *r) {
     if (strncmp(r->uri, "/references/", 12) != 0)
         return DECLINED;
-    httpd::logRequest(r, "mod_tuscany_wiring::translate");
+    httpdDebugRequest(r, "modwiring::translate::input");
+    debug(r->uri, "modwiring::translate::uri");
 
     // Find the requested component, reference and its target configuration
     DirConf& conf = httpd::dirConf<DirConf>(r, &mod_tuscany_wiring);
@@ -165,11 +168,14 @@ const std::string redirect(const std::string& file, const std::string& pi, const
 int handler(request_rec *r) {
     if(strcmp(r->handler, "mod_tuscany_wiring"))
         return DECLINED;
-    httpd::logRequest(r, "mod_tuscany_wiring::handler");
+    httpdDebugRequest(r, "modwiring::handler::input");
 
     // Do an internal redirect
     if (r->filename == NULL || strncmp(r->filename, "/redirect:", 10) != 0)
         return DECLINED;
+    debug(r->uri, "modwiring::handler::uri");
+    debug(r->filename, "modwiring::handler::filename");
+
     if (r->args == NULL) {
         ap_internal_redirect(apr_pstrdup(r->pool, redirect(r->filename + 10, r->path_info).c_str()), r);
         return OK;
@@ -181,18 +187,23 @@ int handler(request_rec *r) {
 /**
  * Configuration commands.
  */
-const char *confHome(cmd_parms *cmd, void *dummy, const char *arg) {
+const char *confHome(cmd_parms *cmd, unused void *dummy, const char *arg) {
     ServerConf *c = (ServerConf*)ap_get_module_config(cmd->server->module_config, &mod_tuscany_wiring);
     c->home = arg;
     return NULL;
 }
-const char *confContribution(cmd_parms *cmd, void *c, const char *arg) {
+const char *confWiringHost(cmd_parms *cmd, unused void *dummy, const char *arg) {
+    ServerConf *c = (ServerConf*)ap_get_module_config(cmd->server->module_config, &mod_tuscany_wiring);
+    c->wiringHost = arg;
+    return NULL;
+}
+const char *confContribution(unused cmd_parms *cmd, void *c, const char *arg) {
     DirConf* conf = (DirConf*)c;
     conf->contributionPath = arg;
     conf->components = components(conf);
     return NULL;
 }
-const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
+const char *confComposite(unused cmd_parms *cmd, void *c, const char *arg) {
     DirConf* conf = (DirConf*)c;
     conf->compositeName = arg;
     conf->components = components(conf);
@@ -204,16 +215,17 @@ const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
  */
 const command_rec commands[] = {
     AP_INIT_TAKE1("TuscanyHome", (const char*(*)())confHome, NULL, RSRC_CONF, "Tuscany home directory"),
+    AP_INIT_TAKE1("SCAWiringHost", (const char*(*)())confWiringHost, NULL, RSRC_CONF, "SCA wiring host"),
     AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, ACCESS_CONF, "SCA contribution location"),
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, ACCESS_CONF, "SCA composite location"),
-    {NULL}
+    {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 
-int postConfig(apr_pool_t *p, apr_pool_t *plog, apr_pool_t *ptemp, server_rec *s) {
+int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, unused server_rec *s) {
    return OK;
 }
 
-void childInit(apr_pool_t* p, server_rec* svr_rec) {
+void childInit(unused apr_pool_t* p, server_rec* svr_rec) {
     ServerConf *conf = (ServerConf*)ap_get_module_config(svr_rec->module_config, &mod_tuscany_wiring);
     if(conf == NULL) {
         std::cerr << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << std::endl;
@@ -221,7 +233,7 @@ void childInit(apr_pool_t* p, server_rec* svr_rec) {
     }
 }
 
-void registerHooks(apr_pool_t *p) {
+void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_handler(handler, NULL, NULL, APR_HOOK_MIDDLE);

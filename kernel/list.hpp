@@ -28,26 +28,45 @@
 
 #include <iostream>
 #include "function.hpp"
+#include "debug.hpp"
 
 namespace tuscany {
 
-long countlists = 0;
-long countIlists = 0;
-long countClists = 0;
-long countElists = 0;
+#ifdef _DEBUG
+
+/**
+ * Debug counters.
+ */
+long countLists = 0;
+long countILists = 0;
+long countCLists = 0;
+long countELists = 0;
 
 bool resetListCounters() {
-    countlists = countIlists = countClists = countElists = 0;
+    countLists = countILists = countCLists = countELists = 0;
     return true;
+}
+
+bool checkListCounters() {
+    return countLists == 0;
 }
 
 bool printListCounters() {
-    std::cout << "countlists " << countlists << std::endl;
-    std::cout << "countElists " << countElists << std::endl;
-    std::cout << "countIlists " << countIlists << std::endl;
-    std::cout << "countClists " << countClists << std::endl;
+    std::cout << "countLists " << countLists << std::endl;
+    std::cout << "countELists " << countELists << std::endl;
+    std::cout << "countILists " << countILists << std::endl;
+    std::cout << "countCLists " << countCLists << std::endl;
     return true;
 }
+
+#else
+
+#define resetListCounters()
+#define checkListCounters() true
+#define printListCounters()
+
+#endif
+
 
 /**
  * A car/cdr lisp-like pair, base structure to construct lists.
@@ -57,20 +76,20 @@ template<typename T> class list {
 public:
 
     list() {
-        countlists++;
-        countElists++;
+        debug_inc(countLists);
+        debug_inc(countELists);
     }
 
     list(const T car, const lambda<list<T> ()>& cdr) :
         car(car), cdr(cdr) {
-        countlists++;
-        countIlists++;
+        debug_inc(countLists);
+        debug_inc(countILists);
     }
 
     list(const list& p) :
         car(p.car), cdr(p.cdr) {
-        countlists++;
-        countClists++;
+        debug_inc(countLists);
+        debug_inc(countCLists);
     }
 
     const list& operator=(const list<T>& p) {
@@ -82,7 +101,7 @@ public:
     }
 
     ~list() {
-        countlists--;
+        debug_dec(countLists);
     }
 
     const bool operator==(const list<T>& p) const {

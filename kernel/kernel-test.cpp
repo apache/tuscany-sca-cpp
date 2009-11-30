@@ -81,7 +81,7 @@ bool testLambda() {
 bool testLambdaGC() {
     resetLambdaCounters();
     testLambda();
-    assert(countLambdas == 0);
+    assert(checkLambdaCounters());
     return true;
 }
 
@@ -140,8 +140,8 @@ bool testListGC() {
     countElements = 0;
     testCons();
     testSet();
-    assert(countLambdas == 0);
-    assert(countlists == 0);
+    assert(checkLambdaCounters());
+    assert(checkListCounters());
     assert(countElements == 0);
     return true;
 }
@@ -296,7 +296,7 @@ double testSeqMap(double x) {
     return x;
 }
 
-double testSeqReduce(double v, double accum) {
+double testSeqReduce(unused double v, double accum) {
     return accum + 1.0;
 }
 
@@ -351,9 +351,9 @@ bool testValueGC() {
     resetListCounters();
     resetValueCounters();
     testValue();
-    assert(countValues == 0);
-    assert(countLambdas == 0);
-    assert(countlists == 0);
+    assert(checkValueCounters());
+    assert(checkLambdaCounters());
+    assert(checkListCounters());
     return true;
 }
 

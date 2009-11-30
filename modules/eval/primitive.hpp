@@ -40,11 +40,25 @@ const value primitiveSymbol("primitive");
 const value quoteSymbol("'");
 const value lambdaSymbol("lambda");
 
-std::ostream* displayOut = &std::cout;
+std::ostream* displayOutStream = &std::cout;
+std::ostream* logOutStream = &std::cerr;
 
 const bool setupDisplay(std::ostream& out) {
-    displayOut = &out;
+    displayOutStream = &out;
     return true;
+}
+
+std::ostream& displayStream() {
+    return *displayOutStream;
+}
+
+const bool setupLog(std::ostream& out) {
+    logOutStream = &out;
+    return true;
+}
+
+std::ostream& logStream() {
+    return *logOutStream;
 }
 
 const value carProc(const list<value>& args) {
@@ -64,7 +78,12 @@ const value listProc(const list<value>& args) {
 }
 
 const value nulProc(const list<value>& args) {
-    return (bool)isNil(car(args));
+    const value v(car(args));
+    if (isNil(v))
+        return true;
+    if (isList(v))
+        return isNil(list<value>(v));
+    return false;
 }
 
 const value equalProc(const list<value>& args) {
@@ -92,12 +111,24 @@ const value divProc(const list<value>& args) {
 }
 
 const value displayProc(const list<value>& args) {
-    *displayOut << car(args);
-    (*displayOut).flush();
-    return true;
+    if (isNil(args)) {
+        displayStream() << std::endl;
+        return true;
+    }
+    displayStream() << car(args);
+    return displayProc(cdr(args));
 }
 
-const value uuidProc(const list<value>& args) {
+const value logProc(const list<value>& args) {
+    if (isNil(args)) {
+        logStream() << std::endl;
+        return true;
+    }
+    logStream() << car(args);
+    return logProc(cdr(args));
+}
+
+const value uuidProc(unused const list<value>& args) {
     apr_uuid_t uuid;
     apr_uuid_get(&uuid);
     char buf[APR_UUID_FORMATTED_LENGTH];
@@ -105,7 +136,7 @@ const value uuidProc(const list<value>& args) {
     return std::string(buf, APR_UUID_FORMATTED_LENGTH);
 }
 
-const value applyPrimitiveProcedure(const value& proc, list<value>& args, const gc_pool& pool) {
+const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
     const lambda<value(list<value>&)> func(cadr((list<value>)proc));
     return func(args);
 }
@@ -151,6 +182,7 @@ const list<value> primitiveProcedureNames() {
     l = cons<value>("/", l);
     l = cons<value>("equal?", l);
     l = cons<value>("display", l);
+    l = cons<value>("log", l);
     l = cons<value>("uuid", l);
     return l;
 }
@@ -168,6 +200,7 @@ const list<value> primitiveProcedureObjects() {
     l = cons(primitiveProcedure(divProc), l);
     l = cons(primitiveProcedure(equalProc), l);
     l = cons(primitiveProcedure(displayProc), l);
+    l = cons(primitiveProcedure(logProc), l);
     l = cons(primitiveProcedure(uuidProc), l);
     return l;
 }

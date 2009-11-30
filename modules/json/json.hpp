@@ -40,7 +40,7 @@ namespace json {
 /**
  * Report JSON errors.
  */
-void reportError(JSContext *cx, const char *message, JSErrorReport *report) {
+void reportError(unused JSContext *cx, const char *message, JSErrorReport *report) {
     std::cerr << (const char*)(report->filename? report->filename : "<no filename>") << ":"
             << (unsigned int)report->lineno << ":" << message << std::endl;
 }

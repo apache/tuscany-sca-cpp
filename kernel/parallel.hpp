@@ -28,6 +28,7 @@
 
 #include <pthread.h>
 #include <sys/syscall.h>
+
 #include "function.hpp"
 
 namespace tuscany {
@@ -59,11 +60,11 @@ private:
         }
 
         unsigned int acquire() {
-            return __sync_add_and_fetch(&refCount, 1);
+            return __sync_add_and_fetch(&refCount, (unsigned int)1);
         }
 
         unsigned int release() {
-            return __sync_sub_and_fetch(&refCount, 1);
+            return __sync_sub_and_fetch(&refCount, (unsigned int)1);
         }
 
         bool set(const T& v) {

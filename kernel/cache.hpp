@@ -26,6 +26,9 @@
  * Simple local cache monad implementation.
  */
 
+#ifdef _REENTRANT
+#include <pthread.h>
+#endif
 #include <sys/stat.h>
 
 #include <string>
@@ -40,25 +43,37 @@ namespace tuscany {
  */
 template<typename V> class cached {
 public:
-    cached() : mtime(0) {
+    cached() : mutex(mutex_init()), mtime(0) {
     }
 
-    cached(const lambda<V()>& lvalue, const lambda<unsigned long()> ltime) : lvalue(lvalue), ltime(ltime), mtime(0) {
+    cached(const lambda<V()>& lvalue, const lambda<unsigned long()> ltime) : mutex(mutex_init()), lvalue(lvalue), ltime(ltime), mtime(0) {
     }
 
-    cached(const lambda<V()>& lvalue, const lambda<unsigned long()> ltime, const unsigned long mtime, const V& v) : lvalue(lvalue), ltime(ltime), mtime(mtime), v(v) {
+    cached(const lambda<V()>& lvalue, const lambda<unsigned long()> ltime, const unsigned long mtime, const V& v) : mutex(mutex_init()), lvalue(lvalue), ltime(ltime), mtime(mtime), v(v) {
     }
 
-    cached(const cached<V>& c) : lvalue(c.lvalue), ltime(c.ltime), mtime(c.mtime), v(c.v) {
+    cached(const cached<V>& c) : mutex(mutex_init()), lvalue(c.lvalue), ltime(c.ltime), mtime(c.mtime), v(c.v) {
+    }
+
+    ~cached() {
+#ifdef _REENTRANT
+        pthread_mutex_destroy(mutex);
+#endif
     }
 
     const cached<V>& operator=(const cached<V>& c) {
         if(this == &c)
             return *this;
+#ifdef _REENTRANT
+        pthread_mutex_lock(mutex);
+#endif
         this->lvalue = c.lvalue;
         this->ltime = c.ltime;
         this->mtime = c.mtime;
         this->v = c.v;
+#ifdef _REENTRANT
+        pthread_mutex_unlock(mutex);
+#endif
         return *this;
     }
 
@@ -69,10 +84,31 @@ public:
     const bool operator==(const cached<V>& m) const {
         if (this == &m)
             return true;
-        return mtime == m.mtime && v == m.v;
+#ifdef _REENTRANT
+        pthread_mutex_lock(mutex);
+#endif
+        const bool r = mtime == m.mtime && v == m.v;
+#ifdef _REENTRANT
+        pthread_mutex_unlock(mutex);
+#endif
+        return r;
     }
 
 private:
+#ifdef _REENTRANT
+    pthread_mutex_t* mutex;
+    pthread_mutex_t* mutex_init() {
+        pthread_mutex_t* mx = new pthread_mutex_t();
+        pthread_mutex_init(mx, NULL);
+        return mx;
+    }
+#else
+    void* mutex;
+    void* mutex_init() {
+        return NULL;
+    }
+#endif
+
     lambda<V()> lvalue;
     lambda<time_t()> ltime;
     unsigned long mtime;

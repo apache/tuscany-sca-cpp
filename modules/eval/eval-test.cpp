@@ -47,9 +47,9 @@ bool testEnvGC() {
     resetListCounters();
     resetValueCounters();
     testEnv();
-    assert(countValues == 0);
-    assert(countLambdas == 0);
-    assert(countlists == 0);
+    assert(checkValueCounters());
+    assert(checkLambdaCounters());
+    assert(checkListCounters());
     //printLambdaCounters();
     //printListCounters();
     //printValueCounters();
@@ -211,9 +211,9 @@ bool testEvalGC() {
     testEval();
     testEvalExpr();
     testEvalLambda();
-    assert(countValues == 0);
-    assert(countLambdas == 0);
-    assert(countlists == 0);
+    assert(checkValueCounters());
+    assert(checkLambdaCounters());
+    assert(checkListCounters());
     //printLambdaCounters();
     //printListCounters();
     //printValueCounters();

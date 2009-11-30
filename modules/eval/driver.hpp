@@ -37,12 +37,12 @@ const std::string evalOutputPrompt("; ");
 const std::string evalInputPrompt("=> ");
 
 const bool promptForInput(const std::string str, std::ostream& out) {
-    out << "\n\n" << str;
+    out << std::endl << std::endl << str;
     return true;
 }
 
 const bool announceOutput(const std::string str, std::ostream& out) {
-    out << "\n" << str;
+    out << std::endl << str;
     return true;
 }
 

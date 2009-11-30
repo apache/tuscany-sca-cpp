@@ -24,6 +24,7 @@
 
 #include <math.h>
 #include <string>
+#include "debug.hpp"
 
 namespace store
 {
@@ -38,7 +39,7 @@ public:
 class CurrencyConverterImpl : public CurrencyConverter {
 public:
 
-    virtual const double convert(const std::string& fromCurrencyCode, const std::string& toCurrencyCode, const double amount) const {
+    virtual const double convert(unused const std::string& fromCurrencyCode, const std::string& toCurrencyCode, const double amount) const {
         if(toCurrencyCode == "USD")
             return amount;
         if(toCurrencyCode == "EUR")

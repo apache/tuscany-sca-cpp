@@ -28,7 +28,9 @@
 
 #include <string>
 #include <iostream>
+
 #include "function.hpp"
+#include "debug.hpp"
 
 namespace tuscany
 {
@@ -280,6 +282,7 @@ template<typename V, typename F> const lambda<failable<V, F>(V)> success() {
  * Returns a failable monad with a failure in it.
  */
 template<typename V, typename F> const failable<V, F> mkfailure(const F& f) {
+    debug(f, "failable::mkfailure");
     return failable<V, F>(false, f);
 }
 

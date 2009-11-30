@@ -77,14 +77,14 @@ const char readChar(std::istream& in) {
     if(in.eof()) {
         return -1;
     }
-    char c = in.get();
+    char c = (char)in.get();
     return c;
 }
 
 const char peekChar(std::istream& in) {
     if(in.eof())
         return -1;
-    char c = in.peek();
+    char c = (char)in.peek();
     return c;
 }
 
@@ -95,7 +95,7 @@ const bool isQuote(const value& token) {
 const value skipComment(std::istream& in);
 const value readQuoted(std::istream& in);
 const value readIdentifier(const char chr, std::istream& in);
-const value readString(const char chr, std::istream& in);
+const value readString(std::istream& in);
 const value readNumber(const char chr, std::istream& in);
 const value readValue(std::istream& in);
 
@@ -112,14 +112,14 @@ const value readToken(std::istream& in) {
     if(firstChar == ')')
         return rightParenthesis;
     if(firstChar == '"')
-        return readString(firstChar, in);
+        return readString(in);
     if(isIdentifierStart(firstChar))
         return readIdentifier(firstChar, in);
     if(isDigit(firstChar))
         return readNumber(firstChar, in);
     if(firstChar == -1)
         return value();
-    std::cout << "Illegal lexical syntax '" << firstChar << "'" << "\n";
+    logStream() << "Illegal lexical syntax '" << firstChar << "'" << std::endl;
     return readToken(in);
 }
 
@@ -167,7 +167,7 @@ const list<char> readStringHelper(const list<char>& listSoFar, std::istream& in)
     return reverse(listSoFar);
 }
 
-const value readString(const char chr, std::istream& in) {
+const value readString(std::istream& in) {
     return listToString(readStringHelper(list<char>(), in));
 }
 
@@ -189,9 +189,23 @@ const value readValue(std::istream& in) {
     return nextToken;
 }
 
+const value readValue(const std::string s) {
+    std::istringstream in(s);
+    const value nextToken = readToken(in);
+    if(isLeftParenthesis(nextToken))
+        return readList(list<value> (), in);
+    return nextToken;
+}
+
 const bool writeValue(const value& val, std::ostream& out) {
     out << val;
     return true;
+}
+
+const std::string writeValue(const value& val) {
+    std::ostringstream out;
+    out << val;
+    return out.str();
 }
 
 const value readScript(std::istream& in) {

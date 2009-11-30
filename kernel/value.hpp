@@ -32,10 +32,16 @@
 #include "gc.hpp"
 #include "function.hpp"
 #include "list.hpp"
+#include "debug.hpp"
 
 namespace tuscany
 {
 
+#ifdef _DEBUG
+
+/**
+ * Debug counters.
+ */
 long int countValues = 0;
 long int countEValues = 0;
 long int countCValues = 0;
@@ -46,6 +52,10 @@ bool resetValueCounters() {
     return true;
 }
 
+bool checkValueCounters() {
+    return countValues == 0;
+}
+
 bool printValueCounters() {
     std::cout << "countValues " << countValues << std::endl;
     std::cout << "countEValues " << countEValues << std::endl;
@@ -53,6 +63,14 @@ bool printValueCounters() {
     std::cout << "countVValues " << countVValues << std::endl;
     return true;
 }
+
+#else
+
+#define resetValueCounters()
+#define checkValueCounters() true
+#define printValueCounters()
+
+#endif
 
 class value;
 
@@ -65,13 +83,13 @@ public:
 
     value() :
         type(value::Undefined) {
-        countValues++;
-        countEValues++;
+        debug_inc(countValues);
+        debug_inc(countEValues);
     }
 
     value(const value& v) {
-        countValues++;
-        countCValues++;
+        debug_inc(countValues);
+        debug_inc(countCValues);
         type = v.type;
         switch(type) {
         case value::List:
@@ -127,73 +145,73 @@ public:
     }
 
     virtual ~value() {
-        countValues--;
+        debug_dec(countValues);
     }
 
     value(const lambda<value(list<value>&)>& func) :
         type(value::Lambda), data(vdata(func)) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const std::string& str) :
         type(value::String), data(vdata(result(str))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const char* str) :
         type(value::Symbol), data(vdata(result(std::string(str)))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const list<value>& lst) :
         type(value::List), data(vdata(result(lst))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const list<list<value> >& l) :
         type(value::List), data(vdata(result(listOfValues(l)))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const double num) :
         type(value::Number), data(vdata(result(num))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const int num) :
         type(value::Number), data(vdata(result((double)num))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const bool boo) :
         type(value::Bool), data(vdata(result(boo))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const char chr) :
         type(value::Char), data(vdata(result(chr))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const gc_ptr<value> ptr) :
         type(value::Ptr), data(vdata(result(ptr))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     value(const gc_pool_ptr<value> ptr) :
         type(value::PoolPtr), data(vdata(result(ptr))) {
-        countValues++;
-        countVValues++;
+        debug_inc(countValues);
+        debug_inc(countVValues);
     }
 
     const bool operator!=(const value& v) const {
@@ -237,11 +255,6 @@ public:
 
     operator const std::string() const {
         switch(type) {
-        case value::List:
-        case value::Lambda:
-        case value::Ptr:
-        case value::PoolPtr:
-            return "";
         case value::Symbol:
         case value::String:
             return str()();
@@ -250,12 +263,8 @@ public:
             sos << num()();
             return sos.str();
         }
-        case value::Bool: {
-            if(boo()())
-                return "true";
-            else
-                return "false";
-        }
+        case value::Bool:
+            return boo()()? "true" : "false";
         case value::Char: {
             std::ostringstream sos;
             sos << chr()();
@@ -267,19 +276,67 @@ public:
     }
 
     operator const double() const {
-        return num()();
+        switch(type) {
+        case value::Symbol:
+        case value::String:
+            return atof(str()().c_str());
+        case value::Number:
+            return (double)num()();
+        case value::Bool:
+            return boo()()? 1.0 : 0.0;
+        case value::Char:
+            return (double)chr()();
+        default:
+            return 0.0;
+        }
     }
 
     operator const int() const {
-        return num()();
+        switch(type) {
+        case value::Symbol:
+        case value::String:
+            return atoi(str()().c_str());
+        case value::Number:
+            return (int)num()();
+        case value::Bool:
+            return boo()()? 1 : 0;
+        case value::Char:
+            return (int)chr()();
+        default:
+            return 0;
+        }
     }
 
     operator const bool() const {
-        return boo()();
+        switch(type) {
+        case value::Symbol:
+        case value::String:
+            return str()() == "true";
+        case value::Number:
+            return (int)num()() != 0;
+        case value::Bool:
+            return boo()();
+        case value::Char:
+            return (int)chr()() != 0;
+        default:
+            return 0;
+        }
     }
 
     operator const char() const {
-        return chr()();
+        switch(type) {
+        case value::Symbol:
+        case value::String:
+            return 0;
+        case value::Number:
+            return (char)num()();
+        case value::Bool:
+            return (char)boo()();
+        case value::Char:
+            return chr()();
+        default:
+            return 0;
+        }
     }
 
     operator const gc_ptr<value>() const {

@@ -141,12 +141,12 @@ const value evalSequence(const list<value>& exps, Env& env, const gc_pool& pool)
 
 const value applyProcedure(const value& procedure, list<value>& arguments, const gc_pool& pool) {
     if(isPrimitiveProcedure(procedure))
-        return applyPrimitiveProcedure(procedure, arguments, pool);
+        return applyPrimitiveProcedure(procedure, arguments);
     if(isCompoundProcedure(procedure)) {
         Env env = extendEnvironment(procedureParameters(procedure), arguments, procedureEnvironment(procedure), pool);
         return evalSequence(procedureBody(procedure), env, pool);
     }
-    std::cout << "Unknown procedure type " << procedure << "\n";
+    logStream() << "Unknown procedure type " << procedure << std::endl;
     return value();
 }
 
@@ -208,7 +208,7 @@ const value expandClauses(const list<value>& clauses) {
     if(isCondElseClause(first)) {
         if(isNil(rest))
             return sequenceToExp(condActions(first));
-        std::cout << "else clause isn't last " << clauses << "\n";
+        logStream() << "else clause isn't last " << clauses << std::endl;
         return value();
     }
     return makeIf(condPredicate(first), sequenceToExp(condActions(first)), expandClauses(rest));
@@ -254,7 +254,7 @@ const value evalExpr(const value& exp, Env& env, const gc_pool& pool) {
         list<value> operandValues = listOfValues(operands(exp), env, pool);
         return applyProcedure(evalExpr(operat(exp), env, pool), operandValues, pool);
     }
-    std::cout << "Unknown expression type " << exp << "\n";
+    logStream() << "Unknown expression type " << exp << std::endl;
     return value();
 }
 

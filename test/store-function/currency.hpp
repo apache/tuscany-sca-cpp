@@ -24,13 +24,14 @@
 
 #include <math.h>
 #include <string>
+#include "debug.hpp"
 #include "service.hpp"
 #include "item.hpp"
 
 namespace store
 {
 
-const double currencyConverter_convert(const std::string& fromCurrencyCode, const std::string& toCurrencyCode, const double amount) {
+const double currencyConverter_convert(unused const std::string& fromCurrencyCode, const std::string& toCurrencyCode, const double amount) {
     if(toCurrencyCode == "USD")
         return amount;
     if(toCurrencyCode == "EUR")

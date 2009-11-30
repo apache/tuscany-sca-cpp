@@ -19,31 +19,50 @@
 
 /* $Rev$ $Date$ */
 
+#ifndef tuscany_debug_hpp
+#define tuscany_debug_hpp
+
 /**
- * Test library.
+ * Functions to help log and debug.
  */
 
-#include "function.hpp"
-#include "debug.hpp"
+namespace tuscany
+{
 
-namespace tuscany {
-namespace test {
+#ifdef _DEBUG
 
-    const int cppsquare(int x) {
-        return x * x;
-    }
+/**
+ * Debug log.
+ */
+template<typename V> const bool debug(const V& v, const std::string& msg) {
+    std::cerr<< msg << ": " << v << std::endl;
+    return true;
+}
+
+/**
+ * Increment / decrement a debug counter.
+ */
+bool debug_inc(long int& c) {
+    c++;
+    return true;
+}
+
+bool debug_dec(long int& c) {
+    c--;
+    return true;
+}
+
+#define unused __attribute__ ((unused))
+
+#else
+
+#define debug(v, msg)
+
+#define debug_inc(c)
+#define debug_dec(c)
+#define unused
+
+#endif
 
 }
-}
-
-extern "C" {
-
-    const int csquare(const int x) {
-        return tuscany::test::cppsquare(x);
-    }
-
-    const tuscany::lambda<int(int)> csquarel() {
-        return tuscany::lambda<int(int)>(tuscany::test::cppsquare);
-    }
-
-}
+#endif /* tuscany_debug_hpp */

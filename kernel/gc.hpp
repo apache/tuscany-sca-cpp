@@ -33,6 +33,24 @@
 namespace tuscany
 {
 
+/**
+ * Macros used to add or subtract values to reference counters.
+ * In a multithreaded environment, define MTHREAD_GC to use
+ * the GCC __sync_add_and_fetch and __sync_sub_and_fetch built
+ * in functions.
+ */
+#ifdef MTHREAD_GC
+
+#define gc_add_and_fetch(t, v) __sync_add_and_fetch(&(t), v)
+#define gc_sub_and_fetch(t, v) __sync_sub_and_fetch(&(t), v)
+
+#else
+
+#define gc_add_and_fetch(t, v) ((t) = (t) + (v))
+#define gc_sub_and_fetch(t, v) ((t) = (t) - (v))
+
+#endif
+
 template<typename T> class gc_ptr {
 public:
     gc_ptr(T* p = 0) throw() : countingRef(p == 0? 0 : new CountingRef(p)) {
@@ -95,12 +113,12 @@ private:
 
     void acquire(CountingRef* ref) throw() {
         if(ref)
-            __sync_add_and_fetch(&ref->count, 1);
+            gc_add_and_fetch(ref->count, (unsigned int)1);
     }
 
     void release() throw() {
         if(countingRef) {
-            unsigned rc = __sync_sub_and_fetch(&countingRef->count, 1);
+            unsigned rc = gc_sub_and_fetch(countingRef->count, (unsigned int)1);
             if(rc == 0) {
                 delete countingRef->ptr;
                 delete countingRef;
@@ -178,12 +196,12 @@ private:
 
     void acquire(CountingRef* ref) throw() {
         if(ref)
-            __sync_add_and_fetch(&ref->count, 1);
+            gc_add_and_fetch(ref->count, (unsigned int)1);
     }
 
     void release() throw() {
         if(countingRef) {
-            unsigned rc = __sync_sub_and_fetch(&countingRef->count, 1);
+            unsigned rc = gc_sub_and_fetch(countingRef->count, (unsigned int)1);
             if(rc == 0) {
                 delete[] countingRef->ptr;
                 delete countingRef;
@@ -311,11 +329,11 @@ private:
         }
 
         unsigned int acquire() {
-            return __sync_add_and_fetch(&refCount, 1);
+            return gc_add_and_fetch(refCount, (unsigned int)1);
         }
 
         unsigned int release() {
-            return __sync_sub_and_fetch(&refCount, 1);
+            return gc_sub_and_fetch(refCount, (unsigned int)1);
         }
     };
 

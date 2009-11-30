@@ -28,8 +28,11 @@
 
 #include <iostream>
 #include "gc.hpp"
+#include "debug.hpp"
 
 namespace tuscany {
+
+#ifdef _DEBUG
 
 /**
  * Debug counters.
@@ -47,6 +50,10 @@ bool resetLambdaCounters() {
     return true;
 }
 
+bool checkLambdaCounters() {
+    return countLambdas == 0;
+}
+
 bool printLambdaCounters() {
     std::cout << "countLambdas " << countLambdas << std::endl;
     std::cout << "countELambdas " << countELambdas << std::endl;
@@ -57,6 +64,14 @@ bool printLambdaCounters() {
     std::cout << "countCProxies " << countCProxies << std::endl;
     return true;
 }
+
+#else
+
+#define resetLambdaCounters()
+#define checkLambdaCounters() true
+#define printLambdaCounters()
+
+#endif
 
 /**
  * Lambda function type.
@@ -77,17 +92,17 @@ public:
     template<typename F> class Proxy: public Callable {
     public:
         Proxy(const F& f) : function(f) {
-            countProxies++;
-            countFProxies ++;
+            debug_inc(countProxies);
+            debug_inc(countFProxies);
         }
 
         Proxy(const Proxy& p) : function(p.function) {
-            countProxies++;
-            countCProxies ++;
+            debug_inc(countProxies);
+            debug_inc(countCProxies);
         }
 
         ~Proxy() {
-            countProxies--;
+            debug_dec(countProxies);
         }
 
         virtual const R operator() (P... p) const {
@@ -108,11 +123,11 @@ private:
     unsigned int refCount;
 
     unsigned int acquire() {
-        return __sync_add_and_fetch(&refCount, 1);
+        return gc_add_and_fetch(refCount, (unsigned int)1);
     }
 
     unsigned int release() {
-        return __sync_sub_and_fetch(&refCount, 1);
+        return gc_sub_and_fetch(refCount, (unsigned int)1);
     }
 };
 
@@ -121,21 +136,21 @@ template<typename S> class lambda;
 template<typename R, typename... P> class lambda<R(P...)> {
 public:
     lambda() : callable(0) {
-        countLambdas++;
-        countELambdas++;
+        debug_inc(countLambdas);
+        debug_inc(countELambdas);
     }
 
     template<typename F> lambda(const F f) : callable(0) {
         typedef typename CallableType::template Proxy<F> ProxyType;
 
-        countLambdas++;
-        countFLambdas++;
+        debug_inc(countLambdas);
+        debug_inc(countFLambdas);
         callable = gc_counting_ptr<CallableType>(new ProxyType(f));
     }
 
     lambda(const lambda& l) {
-        countLambdas++;
-        countCLambdas++;
+        debug_inc(countLambdas);
+        debug_inc(countCLambdas);
         callable = l.callable;
     }
 
@@ -147,7 +162,7 @@ public:
     }
 
     ~lambda() {
-        countLambdas--;
+        debug_dec(countLambdas);
     }
 
     const bool operator==(const lambda& l) const {
