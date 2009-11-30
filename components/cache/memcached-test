@@ -23,7 +23,7 @@ $mc &
 sleep 1
 
 # Test
-./mcache-test
+./mcache-test 2>/dev/null
 rc=$?
 
 # Cleanup
