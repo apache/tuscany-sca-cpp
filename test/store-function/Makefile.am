@@ -22,7 +22,7 @@ noinst_HEADERS = *.hpp
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 store_function_test_SOURCES = store-function-test.cpp
-store_function_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+store_function_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 	
 TESTS = store-function-test
 

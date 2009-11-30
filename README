@@ -1,8 +1,8 @@
 Apache Tuscany SCA Runtime
 ==========================
 
-Getting the code
-================
+Getting the source code
+=======================
 
 To checkout the source code with commit access, do this:
 git svn init -s https://svn.apache.org/repos/asf/tuscany/sca-cpp tuscany-sca-cpp
@@ -19,16 +19,55 @@ or
 svn checkout http://svn.apache.org/repos/asf/tuscany/sca-cpp tuscany-sca-cpp
 
 
+Layout
+======
+
+Here's a rough guide to the Tuscany SCA source tree:
+
+ /
+ |-- trunk                    Master development branch
+ |   |
+ |   |-- kernel               SCA runtime kernel
+ |   |
+ |   |-- modules              Modules that plug into the runtime
+ |   |   |-- atom             AtomPub encoding support
+ |   |   |-- json             JSON-RPC encoding support
+ |   |   |-- http             HTTP protocol support
+ |   |   |-- eval             Scheme script evaluator
+ |   |   |-- server           HTTPD server integration
+ |   |
+ |   |-- components           Useful SCA components
+ |   |   |-- cache            Memcached-based cache component
+ |   |   |-- store            Persistent store component
+ |   |
+ |   |-- test                 Integration tests
+ |   |
+ |   |-- samples              Sample Applications
+ |   |
+ |   |-- contrib              Various contributions to the project
+ |
+ |-- branches                 Topic and release branches
+ |
+ |-- tags                     Release tags
+
+
+Building
+========
+
+See the INSTALL file.
+
+
 Contributing to the project
 ===========================
 
-To contribute to the project or report issues see the mailing list:
+To contribute to the project or report issues see the Tuscany development
+mailing list:
 dev@tuscany.apache.org
 
 Archives:
 http://www.mail-archive.com/dev@tuscany.apache.org
 http://marc.info/?l=tuscany-dev
 
-To subscribe:
+To subscribe send an email to:
 dev-subscribe@tuscany.apache.org
 

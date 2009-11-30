@@ -10,7 +10,10 @@ HTTP server and APR
 httpd-2.2-13
 libapr-1-0.3.8
 libaprutil-1-0.3.9
-(the easiest is to build httpd using configure --with-included-apr)
+
+Recommended httpd configure options:
+--with-included-apr to build httpd with the included APR distribution,
+--with-mpm=worker to run the Tuscany httpd modules in multiple threads.
 
 XML
 libxml2-2.7.5
@@ -19,11 +22,14 @@ JSON
 SpiderMonkey libmozjs
 (included in xulrunner-1.9.1.5)
 
-To configure the build do this:
+To configure the Tuscany build do this:
 ./autogen.sh
 ./configure --prefix=<install dir>
 
-To configure where to find dependencies, see:
+To turn on debugging, profiling and strict warning compile options:
+./configure --enable-maintainer-mode
+
+To configure where to find dependencies, see the configure help:
 ./configure --help
 
 To build the runtime, do this:
@@ -44,7 +50,4 @@ make dist
 
 To build a binary distribution, do this:
 make bindist
-
-Layout
-======
 

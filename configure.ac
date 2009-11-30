@@ -158,7 +158,25 @@ AC_MSG_NOTICE([checking for library functions])
 AC_CHECK_FUNCS([gettimeofday select])
 
 # Configure GCC C++ compile options
-AC_SUBST([CXXFLAGS], ["${CXXFLAGS} -D_DEBUG -O0 -g3 -Wall -std=c++0x -fmessage-length=0"])
+# Configure debugging, profiling and compile-time warnings
+AC_MSG_CHECKING([whether to compile for debugging and profiling])
+AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [compile for debugging and profiling [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_maintainer_mode=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "$want_maintainer_mode" = "true"; then
+  AC_SUBST([CXXFLAGS], ["-D_DEBUG -O0 -g3 -pg -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"])
+  AC_SUBST([LDFLAGS], ["${LDFLAGS} -pg"])
+else
+  AC_SUBST([CXXFLAGS], ["-O3 -std=c++0x -fmessage-length=0"])
+fi
 
 # Configure exuberant ctags
 TAGSFILE="`pwd`/tags"
@@ -166,7 +184,7 @@ AC_SUBST([CTAGSFLAGS], ["${CTAGSFLAGS} --c++-kinds=+p --fields=+iaS --extra=+q -
 
 # Configure TUSCANY_SCACPP
 TUSCANY_SCACPP=`echo "$TUSCANY_SCACPP"`
-if test "x$TUSCANY_SCACPP" = "x"; then
+if test "$TUSCANY_SCACPP" = ""; then
   SCAPWD=`pwd`
   AC_SUBST([TUSCANY_SCACPP], ["$SCAPWD"])
 fi
@@ -181,14 +199,14 @@ AC_ARG_ENABLE(doxygen, [AS_HELP_STRING([--enable-doxygen], [build Doxygen docume
   *)
     AC_MSG_RESULT(yes)
     AC_PATH_PROG(DOXYGEN, doxygen, , $PATH)
-    if test x$DOXYGEN = x; then
+    if test "$DOXYGEN" = ""; then
       AC_MSG_ERROR([could not find doxygen])
     fi
     want_doxygen=true
     ;;
   esac ],
 [ AC_MSG_RESULT(no)])
-AM_CONDITIONAL([WANT_DOXYGEN], [test x$want_doxygen = xtrue])
+AM_CONDITIONAL([WANT_DOXYGEN], [test "$want_doxygen" = "true"])
 
 AC_CONFIG_FILES([Makefile
                  kernel/Makefile

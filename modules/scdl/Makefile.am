@@ -20,7 +20,7 @@ noinst_PROGRAMS = scdl-test
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 scdl_test_SOURCES = scdl-test.cpp
-scdl_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+scdl_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 
 TESTS = scdl-test
 

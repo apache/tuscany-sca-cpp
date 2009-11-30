@@ -60,9 +60,6 @@ tags
 doxygen
 
 # Specific ignores
-sca/runtime/extensions/cpp/tools/scagen/docs/
-account_client
-calculator_client
 kernel-test
 xsd-test
 atom-test
@@ -72,6 +69,7 @@ json-test
 cache-test
 client-test
 mcache-test
+mcache-client-test
 curl-test
 scdl-test
 store-function-test

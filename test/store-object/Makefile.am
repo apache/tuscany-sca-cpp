@@ -22,7 +22,7 @@ noinst_HEADERS = *.hpp
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 store_object_test_SOURCES = store-object-test.cpp
-store_object_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+store_object_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 	
 TESTS = store-object-test
 
