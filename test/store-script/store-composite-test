@@ -52,6 +52,13 @@ SCAComposite store.composite
 SCAComponent CurrencyConverter
 </Location>
 
+<Location /Cache>
+SetHandler mod_tuscany_eval
+SCAContribution `pwd`/
+SCAComposite store.composite
+SCAComponent Cache
+</Location>
+
 <Location /references>
 SetHandler mod_tuscany_wiring
 SCAContribution `pwd`/
@@ -60,6 +67,9 @@ SCAComposite store.composite
 EOF
 
 apachectl -k start -d `pwd`/tmp
+
+mc="memcached -l 127.0.0.1 -m 4 -p 11211"
+$mc &
 sleep 1
 
 # Test HTTP GET
@@ -69,7 +79,8 @@ rc=$?
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 2
+kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`
+sleep 1
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi

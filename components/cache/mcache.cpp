@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * memcached-based cache component implementation.
+ * Memcached-based cache component implementation.
  */
 
 #include <apr_uuid.h>
@@ -45,6 +45,9 @@ const failable<value, std::string> get(const list<value>& params) {
     return cache::get(car(params), ch);
 }
 
+/**
+ * Post an item to the cache.
+ */
 const value uuidValue() {
     apr_uuid_t uuid;
     apr_uuid_get(&uuid);
@@ -53,9 +56,6 @@ const value uuidValue() {
     return value(std::string(buf, APR_UUID_FORMATTED_LENGTH));
 }
 
-/**
- * Post an item to the cache.
- */
 const failable<value, std::string> post(const list<value>& params) {
     const value id = uuidValue();
     const failable<bool, std::string> val = cache::post(id, car(params), ch);
@@ -96,7 +96,7 @@ const tuscany::failable<tuscany::value, std::string> eval(const tuscany::value& 
         return tuscany::cache::post(params);
     if (func == "put")
         return tuscany::cache::put(params);
-    if (func == "del")
+    if (func == "delete")
         return tuscany::cache::del(params);
     return tuscany::mkfailure<tuscany::value, std::string>(std::string("Function not supported: ") + std::string(func));
 }

@@ -94,11 +94,15 @@
 		var j = 0;
 		for (var i=0; i<items.length; i++)
 			if (items[i].checked) {
-					
-				var entry = '<entry xmlns="http://www.w3.org/2005/Atom"><title>item</title><content type="text/xml">' +
-                	'<Item xmlns="http://services/">' +
-                	'<name xmlns="">' + catalogItems[i].name + '</name>' + '<price xmlns="">' + catalogItems[i].price + '</price>' +
-                 	'</Item>' + '</content></entry>';
+				var entry = '<entry xmlns="http://www.w3.org/2005/Atom"><title type="text">Item</title><content type="application/xml">' +
+                '<item>' +
+                '<javaClass>' + catalogItems[i].javaClass + '</javaClass>' +
+                '<name>' + catalogItems[i].name + '</name>' +
+                '<currencyCode>' + catalogItems[i].currencyCode + '</currencyCode>' +
+                '<currencySymbol>' + catalogItems[i].currencySymbol + '</currencySymbol>' +
+                '<price>' + catalogItems[i].price + '</price>' +
+                '</item>' +
+                '</content></entry>';
 				shoppingCart.post(entry, shoppingCart_postResponse);
 				items[i].checked = false;
 			}

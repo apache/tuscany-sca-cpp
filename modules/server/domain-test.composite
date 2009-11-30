@@ -19,18 +19,25 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200903"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://test"
-  name="httpd-test">
+  targetNamespace="http://domain/test"
+  name="domain-test">
         
-    <component name="httpd-test">
-        <t:implementation.scheme uri="httpd-test.scm"/>
+    <component name="server-test">
+        <t:implementation.scheme uri="server-test.scm"/>
         <service name="test">
             <t:binding.http uri="test"/>
         </service>
     </component>     
 
-    <component name="httpd-client">
-        <t:implementation.scheme uri="httpd-client.scm"/>
+    <component name="cpp-test">
+        <t:implementation.cpp uri=".libs/libimpl-test"/>
+        <service name="cpp">
+            <t:binding.http uri="cpp"/>
+        </service>
+    </component>
+
+    <component name="client-test">
+        <t:implementation.scheme uri="client-test.scm"/>
         <service name="client">
             <t:binding.http uri="client"/>
         </service>

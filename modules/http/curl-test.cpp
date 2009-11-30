@@ -50,7 +50,7 @@ std::ostringstream* curlWriter(const std::string& s, std::ostringstream* os) {
 }
 
 const bool testGet() {
-    CURLHandle ch;
+    CURLSession ch;
     {
         std::ostringstream os;
         const failable<list<std::ostringstream*>, std::string> r = get<std::ostringstream*>(curlWriter, &os, "http://localhost:8090", ch);
@@ -66,7 +66,7 @@ const bool testGet() {
     return true;
 }
 
-const bool testGetLoop(const int count, CURLHandle& ch) {
+const bool testGetLoop(const int count, CURLSession& ch) {
     if (count == 0)
         return true;
     const failable<value, std::string> r = get("http://localhost:8090", ch);
@@ -77,7 +77,7 @@ const bool testGetLoop(const int count, CURLHandle& ch) {
 
 const bool testGetPerf() {
     const int count = 50;
-    CURLHandle ch;
+    CURLSession ch;
     struct timeval start;
     struct timeval end;
     {

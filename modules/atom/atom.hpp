@@ -38,7 +38,7 @@ namespace atom {
 /**
  * Convert a list of elements to a list of values representing an ATOM entry.
  */
-const list<value> entryValue(const list<value>& e) {
+const list<value> entryValues(const list<value>& e) {
     const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), e);
     const value t = isNil(lt)? value(std::string("")) : elementValue(car(lt));
     const list<value> li = filter<value>(selector(mklist<value>(element, "id")), e);
@@ -53,7 +53,7 @@ const list<value> entryValue(const list<value>& e) {
 const list<value> entriesValues(const list<value>& e) {
     if (isNil(e))
         return e;
-    return cons<value>(entryValue(car(e)), entriesValues(cdr(e)));
+    return cons<value>(entryValues(car(e)), entriesValues(cdr(e)));
 }
 
 /**
@@ -63,7 +63,15 @@ const failable<list<value>, std::string> readEntry(const list<std::string>& ilis
     const list<value> e = readXML(ilist);
     if (isNil(e))
         return mkfailure<list<value>, std::string>("Empty entry");
-    return entryValue(car(e));
+    return entryValues(car(e));
+}
+
+/**
+ * Convert a list of values representing an ATOM entry to a value.
+ */
+const value entryValue(const list<value>& e) {
+    const list<value> v = elementsToValues(mklist<value>(caddr(e)));
+    return cons(car(e), mklist<value>(cadr(e), cdr<value>(car(v))));
 }
 
 /**

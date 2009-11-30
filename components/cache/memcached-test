@@ -18,8 +18,8 @@
 #  under the License.
 
 # Setup
-cmd="memcached -l 127.0.0.1 -m 4 -p 11311"
-$cmd &
+mc="memcached -l 127.0.0.1 -m 4 -p 11211"
+$mc &
 sleep 1
 
 # Test
@@ -27,5 +27,5 @@ sleep 1
 rc=$?
 
 # Cleanup
-ps -f | grep -v grep | grep "$cmd" | awk '{ print $2 }' | xargs kill
+kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`
 return $rc

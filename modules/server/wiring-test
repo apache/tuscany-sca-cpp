@@ -27,21 +27,21 @@ cat >>tmp/conf/httpd.conf <<EOF
 <Location /test>
 SetHandler mod_tuscany_eval
 SCAContribution `pwd`/
-SCAComposite httpd-test.composite
-SCAComponent httpd-test
+SCAComposite domain-test.composite
+SCAComponent server-test
 </Location>
 
 <Location /client>
 SetHandler mod_tuscany_eval
-SCAContribution /home/delfinoj/SCAZone/Source/tuscany-cpp/sca/modules/http/
-SCAComposite httpd-test.composite
-SCAComponent httpd-client
+SCAContribution `pwd`/
+SCAComposite domain-test.composite
+SCAComponent client-test
 </Location>
 
 <Location /references>
 SetHandler mod_tuscany_wiring
 SCAContribution `pwd`/
-SCAComposite httpd-test.composite
+SCAComposite domain-test.composite
 </Location>
 EOF
 
@@ -86,7 +86,7 @@ fi
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 2
+sleep 1
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi

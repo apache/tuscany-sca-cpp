@@ -57,6 +57,9 @@
         <service name="Total">
             <t:binding.jsonrpc uri="Total"/>
         </service>        
+        <reference name="cache" target="Cache">
+            <t:binding.atom/>
+        </reference>
     </component>
     
     <component name="CurrencyConverter">
@@ -64,6 +67,13 @@
         <service name="CurrencyConverter">
             <t:binding.jsonrpc uri="CurrencyConverter"/>
         </service>        
+    </component>     
+
+    <component name="Cache">
+        <t:implementation.cpp uri="../../components/cache/.libs/libmcache"/>
+        <service name="Cache">
+            <t:binding.atom uri="Cache"/>
+        </service>
     </component>     
 
 </composite>

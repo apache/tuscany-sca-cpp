@@ -18,12 +18,30 @@
 #  under the License.
 
 # Setup
-./httpd-conf tmp 8090 htdocs
+../http/httpd-conf tmp 8090 htdocs
+./server-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+
+<Location /test>
+SetHandler mod_tuscany_eval
+SCAContribution `pwd`/
+SCAComposite domain-test.composite
+SCAComponent server-test
+</Location>
+
+<Location /cpp>
+SetHandler mod_tuscany_eval
+SCAContribution `pwd`/
+SCAComposite domain-test.composite
+SCAComponent cpp-test
+</Location>
+EOF
+
 apachectl -k start -d `pwd`/tmp
 sleep 1
 
 # Test
-./curl-test
+./client-test 2>/dev/null
 rc=$?
 
 # Cleanup

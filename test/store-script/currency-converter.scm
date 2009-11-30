@@ -7,3 +7,4 @@
 (define (symbol currency) 
   (if (equal? currency "EUR") "E" "$")
 )
+

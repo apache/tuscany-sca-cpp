@@ -34,6 +34,7 @@
 #include "function.hpp"
 #include "list.hpp"
 #include "value.hpp"
+#include "debug.hpp"
 #include "monad.hpp"
 #include "dynlib.hpp"
 #include "cache.hpp"
@@ -52,12 +53,13 @@ namespace cpp {
 struct evalImplementation {
     const lib ilib;
     const ilambda impl;
-    evalImplementation(const lib& ilib, const ilambda& impl) : ilib(ilib), impl(impl) {
+    const list<value> px;
+    evalImplementation(const lib& ilib, const ilambda& impl, const list<value>& px) : ilib(ilib), impl(impl), px(px) {
     }
     const failable<value, std::string> operator()(const value& func, const list<value>& params) const {
-        httpd::logValue(cons<value>(func, params), "expr");
-        const failable<value, std::string> val = impl(func, params);
-        httpd::logValue(content(val), "val");
+        debug(cons<value>(func, params), "modeval::cpp::evalImplementation::input");
+        const failable<value, std::string> val = impl(func, append(params, px));
+        debug(content(val), "modeval::cpp::evalImplementation::result");
         return val;
     }
 };
@@ -65,7 +67,7 @@ struct evalImplementation {
 /**
  * Read a C++ component implementation.
  */
-const failable<ilambda, std::string> readLatestImplementation(const std::string path) {
+const failable<ilambda, std::string> readLatestImplementation(const std::string path, const list<value>& px) {
     const failable<lib, std::string> ilib(dynlib(path));
     if (!hasContent(ilib))
         return mkfailure<ilambda, std::string>(reason(ilib));
@@ -73,14 +75,14 @@ const failable<ilambda, std::string> readLatestImplementation(const std::string 
     const failable<ilambda, std::string> impl(dynlambda<failable<value, std::string>(value, list<value>)>("eval", content(ilib)));
     if (!hasContent(impl))
         return impl;
-    return ilambda(evalImplementation(content(ilib), content(impl)));
+    return ilambda(evalImplementation(content(ilib), content(impl), px));
 }
 
-const cached<failable<ilambda, std::string> > readImplementation(const std::string& path) {
-    const lambda<failable<ilambda, std::string>(std::string)> ri(readLatestImplementation);
+const cached<failable<ilambda, std::string> > readImplementation(const std::string& path, const list<value>& px) {
+    const lambda<failable<ilambda, std::string>(std::string, list<value>)> ri(readLatestImplementation);
     const lambda<unsigned long(std::string)> ft(latestFileTime);
     const std::string p(path + dynlibExt);
-    return cached<failable<ilambda, std::string> >(curry(ri, p), curry(ft, p));
+    return cached<failable<ilambda, std::string> >(curry(ri, p, px), curry(ft, p));
 }
 
 }

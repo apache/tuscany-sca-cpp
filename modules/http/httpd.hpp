@@ -50,16 +50,11 @@
 
 #include "list.hpp"
 #include "value.hpp"
+#include "debug.hpp"
 
 
 namespace tuscany {
 namespace httpd {
-
-/**
- * Set to true to log requests and content.
- */
-bool logRequests = false;
-bool logContent = false;
 
 /**
  * Returns a server-scoped module configuration.
@@ -120,7 +115,7 @@ const std::string path(const list<value>& p) {
  */
 const char* optional(const char* s) {
     if (s == NULL)
-        return "(null)";
+        return "";
     return s;
 }
 
@@ -128,59 +123,40 @@ const std::string contentType(const request_rec* r) {
     return optional(apr_table_get(r->headers_in, "Content-Type"));
 }
 
+#ifdef _DEBUG
+
 /**
- * Log HTTP request info.
+ * Debug log.
  */
-int logHeader(void* r, const char* key, const char* value) {
-    std::cout << "header key: " << key << ", value: " << value << std::endl;
+int debugHeader(unused void* r, const char* key, const char* value) {
+    std::cerr << "  header key: " << key << ", value: " << value << std::endl;
     return 1;
 }
 
-const bool logRequest(request_rec* r, const std::string& msg) {
-    if (!logRequests)
-        return true;
-    std::cout << msg << std::endl;
-    std::cout << "protocol: " << optional(r->protocol) << std::endl;
-    std::cout << "method: " << optional(r->method) << std::endl;
-    std::cout << "method number: " << r->method_number << std::endl;
-    std::cout << "content type: " << contentType(r) << std::endl;
-    std::cout << "content encoding: " << optional(r->content_encoding) << std::endl;
-    apr_table_do(logHeader, r, r->headers_in, NULL);
-    std::cout << "uri: " << optional(r->unparsed_uri) << std::endl;
-    std::cout << "path: " << optional(r->uri) << std::endl;
-    std::cout << "path info: " << optional(r->path_info) << std::endl;
-    std::cout << "filename: " << optional(r->filename) << std::endl;
-    std::cout << "path tokens: " << pathTokens(r->uri) << std::endl;
-    std::cout << "args: " << optional(r->args) << std::endl;
-    std::cout.flush();
+const bool debugRequest(request_rec* r, const std::string& msg) {
+    std::cerr << msg << ":" << std::endl;
+    std::cerr << "  protocol: " << optional(r->protocol) << std::endl;
+    std::cerr << "  method: " << optional(r->method) << std::endl;
+    std::cerr << "  method number: " << r->method_number << std::endl;
+    std::cerr << "  content type: " << contentType(r) << std::endl;
+    std::cerr << "  content encoding: " << optional(r->content_encoding) << std::endl;
+    apr_table_do(debugHeader, r, r->headers_in, NULL);
+    std::cerr << "  uri: " << optional(r->unparsed_uri) << std::endl;
+    std::cerr << "  path: " << optional(r->uri) << std::endl;
+    std::cerr << "  path info: " << optional(r->path_info) << std::endl;
+    std::cerr << "  filename: " << optional(r->filename) << std::endl;
+    std::cerr << "  path tokens: " << pathTokens(r->uri) << std::endl;
+    std::cerr << "  args: " << optional(r->args) << std::endl;
     return true;
 }
 
-const bool logValue(const value& v, const std::string& msg) {
-    if (!logContent)
-        return true;
-    std::cout<< msg << ": " << v << std::endl;
-    std::cout.flush();
-    return true;
-}
+#define httpdDebugRequest(r, msg) httpd::debugRequest(r, msg)
 
-const bool logValue(const failable<value, std::string>& v, const std::string& msg) {
-    if (!logContent)
-        return true;
-    std::cout<< msg << ": " << v << std::endl;
-    std::cout.flush();
-    return true;
-}
+#else
 
-const bool logStrings(const list<std::string>& ls, const std::string& msg) {
-    if (!logContent)
-        return true;
-    std::cout<< msg << ": " << std::endl;
-    write(ls, std::cout);
-    std::cout<< std::endl;
-    std::cout.flush();
-    return true;
-}
+#define httpdDebugRequest(r, msg)
+
+#endif
 
 /**
  * Returns a list of key value pairs from the args in a query string.
@@ -256,14 +232,6 @@ const char* url(const value& v, request_rec* r) {
 }
 
 /**
- * Convert an ATOM entry to a value.
- */
-const value feedEntry(const list<value>& e) {
-    const list<value> v = elementsToValues(mklist<value>(caddr(e)));
-    return cons(car(e), mklist<value>(cadr(e), cdr<value>(car(v))));
-}
-
-/**
  * Write an HTTP result.
  */
 const failable<int, std::string> writeResult(const failable<list<std::string>, std::string>& ls, const std::string& ct, request_rec* r) {
@@ -271,10 +239,7 @@ const failable<int, std::string> writeResult(const failable<list<std::string>, s
         return mkfailure<int, std::string>(reason(ls));
     std::ostringstream os;
     write(content(ls), os);
-    if (logContent) {
-        std::cout<< "content: " << std::endl << os.str() << std::endl;
-        std::cout.flush();
-    }
+    debug(os.str(), "httpd::result");
 
     const std::string etag(ap_md5(r->pool, (const unsigned char*)std::string(os.str()).c_str()));
     const char* match = apr_table_get(r->headers_in, "If-None-Match");
@@ -283,7 +248,7 @@ const failable<int, std::string> writeResult(const failable<list<std::string>, s
         r->status = HTTP_NOT_MODIFIED;
         return OK;
     }
-    ap_set_content_type(r, ct.c_str());
+    ap_set_content_type(r, apr_pstrdup(r->pool, ct.c_str()));
     ap_rputs(std::string(os.str()).c_str(), r);
     return OK;
 }

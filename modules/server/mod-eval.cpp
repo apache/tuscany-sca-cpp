@@ -57,10 +57,11 @@ namespace modeval {
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : s(s), home("") {
+    ServerConf(server_rec* s) : s(s), home(""), wiringHost("") {
     }
-    server_rec* s;
+    const server_rec* s;
     std::string home;
+    std::string wiringHost;
 };
 
 /**
@@ -77,7 +78,7 @@ class DirConf {
 public:
     DirConf(char* dirspec) : dirspec(dirspec), contributionPath(""), compositeName(""), componentName(""), implementationPath("") {
     }
-    char* dirspec;
+    const char* dirspec;
     std::string contributionPath;
     std::string compositeName;
     std::string componentName;
@@ -89,7 +90,8 @@ public:
 /**
  * Handle an HTTP GET.
  */
-const failable<int, std::string> get(request_rec* r, const ilambda& impl, const list<value>& px) {
+const failable<int, std::string> get(request_rec* r, const ilambda& impl) {
+    debug(r->uri, "modeval::get::url");
 
     // Inspect the query string
     const list<list<value> > args = httpd::queryArgs(r);
@@ -105,7 +107,7 @@ const failable<int, std::string> get(request_rec* r, const ilambda& impl, const 
         const list<value> params = httpd::queryParams(args);
 
         // Apply the requested function
-        const failable<value, std::string> val = impl(func, append(params, px));
+        const failable<value, std::string> val = impl(func, params);
         if (!hasContent(val))
             return mkfailure<int, std::string>(reason(val));
 
@@ -117,14 +119,14 @@ const failable<int, std::string> get(request_rec* r, const ilambda& impl, const 
     // Evaluate an ATOM GET request and return an ATOM feed
     const list<value> id(httpd::path(r->path_info));
     if (isNil(id)) {
-        const failable<value, std::string> val = impl("getall", px);
+        const failable<value, std::string> val = impl("getall", list<value>());
         if (!hasContent(val))
             return mkfailure<int, std::string>(reason(val));
         return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(content(val))), "application/atom+xml;type=feed", r);
     }
 
     // Evaluate an ATOM GET and return an ATOM entry
-    const failable<value, std::string> val = impl("get", cons<value>(car(id), px));
+    const failable<value, std::string> val = impl("get", mklist<value>(car(id)));
     if (!hasContent(val))
         return mkfailure<int, std::string>(reason(val));
     return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(content(val))), "application/atom+xml;type=entry", r);
@@ -133,9 +135,10 @@ const failable<int, std::string> get(request_rec* r, const ilambda& impl, const 
 /**
  * Handle an HTTP POST.
  */
-const failable<int, std::string> post(request_rec* r, const ilambda& impl, const list<value>& px) {
+const failable<int, std::string> post(request_rec* r, const ilambda& impl) {
     const list<std::string> ls = httpd::read(r);
-    httpd::logStrings(ls, "content");
+    debug(r->uri, "modeval::post::url");
+    debug(ls, "modeval::post::input");
 
     // Evaluate a JSON-RPC request and return a JSON result
     const std::string ct = httpd::contentType(r);
@@ -150,7 +153,7 @@ const failable<int, std::string> post(request_rec* r, const ilambda& impl, const
         const list<value> params = (list<value>)cadr(assoc(value("params"), args));
 
         // Evaluate the request expression
-        const failable<value, std::string> val = impl(func, append(params, px));
+        const failable<value, std::string> val = impl(func, params);
         if (!hasContent(val))
             return mkfailure<int, std::string>(reason(val));
 
@@ -162,8 +165,8 @@ const failable<int, std::string> post(request_rec* r, const ilambda& impl, const
     if (ct.find("application/atom+xml") != std::string::npos) {
 
         // Evaluate the request expression
-        const value entry = httpd::feedEntry(content(atom::readEntry(ls)));
-        const failable<value, std::string> val = impl("post", cons<value>(entry, px));
+        const value entry = atom::entryValue(content(atom::readEntry(ls)));
+        const failable<value, std::string> val = impl("post", mklist<value>(entry));
         if (!hasContent(val))
             return mkfailure<int, std::string>(reason(val));
 
@@ -179,14 +182,15 @@ const failable<int, std::string> post(request_rec* r, const ilambda& impl, const
 /**
  * Handle an HTTP PUT.
  */
-const failable<int, std::string> put(request_rec* r, const ilambda& impl, const list<value>& px) {
+const failable<int, std::string> put(request_rec* r, const ilambda& impl) {
     const list<std::string> ls = httpd::read(r);
-    httpd::logStrings(ls, "content");
+    debug(r->uri, "modeval::put::url");
+    debug(ls, "modeval::put::input");
 
     // Evaluate an ATOM PUT request
     const list<value> id(httpd::path(r->path_info));
-    const value entry = httpd::feedEntry(content(atom::readEntry(ls)));
-    const failable<value, std::string> val = impl("put", append(mklist<value>(entry, car(id)), px));
+    const value entry = atom::entryValue(content(atom::readEntry(ls)));
+    const failable<value, std::string> val = impl("put", mklist<value>(car(id), entry));
     if (!hasContent(val))
         return mkfailure<int, std::string>(reason(val));
     if (val == value(false))
@@ -197,11 +201,12 @@ const failable<int, std::string> put(request_rec* r, const ilambda& impl, const 
 /**
  * Handle an HTTP DELETE.
  */
-const failable<int, std::string> del(request_rec* r, const ilambda& impl, const list<value>& px) {
+const failable<int, std::string> del(request_rec* r, const ilambda& impl) {
+    debug(r->uri, "modeval::delete::url");
 
     // Evaluate an ATOM delete request
     const list<value> id(httpd::path(r->path_info));
-    const failable<value, std::string> val = impl("delete", cons<value>(car(id), px));
+    const failable<value, std::string> val = impl("delete", mklist<value>(car(id)));
     if (!hasContent(val))
         return mkfailure<int, std::string>(reason(val));
     if (val == value(false))
@@ -237,11 +242,11 @@ const cached<failable<value, std::string> > component(DirConf* conf) {
 /**
  * Convert a list of component references to a list of HTTP proxy lambdas.
  */
-const value mkproxy(const value& ref, const std::string& base, const http::CURLHandle& ch) {
-    return eval::primitiveProcedure(http::proxy(base + std::string(scdl::name(ref)), ch));
+const value mkproxy(const value& ref, const std::string& base, const http::CURLSession& ch) {
+    return lambda<value(list<value>&)>(http::proxy(base + std::string(scdl::name(ref)), ch));
 }
 
-const list<value> proxies(const list<value>& refs, const std::string& base, const http::CURLHandle& ch) {
+const list<value> proxies(const list<value>& refs, const std::string& base, const http::CURLSession& ch) {
     if (isNil(refs))
         return refs;
     return cons(mkproxy(car(refs), base, ch), proxies(cdr(refs), base, ch));
@@ -251,11 +256,11 @@ const list<value> proxies(const list<value>& refs, const std::string& base, cons
  * Returns the component implementation with the given implementation type and path.
  * For now only Scheme and C++ implementations are supported.
  */
-const cached<failable<ilambda, std::string> > implementation(const std::string& itype, const std::string& path) {
+const cached<failable<ilambda, std::string> > implementation(const std::string& itype, const std::string& path, const list<value>& px) {
     if (itype.find(".scheme") != std::string::npos)
-        return latest(scm::readImplementation(path));
+        return latest(scm::readImplementation(path, px));
     if (itype.find(".cpp") != std::string::npos)
-        return latest(cpp::readImplementation(path));
+        return latest(cpp::readImplementation(path, px));
     return cached<failable<ilambda, std::string> >();
 }
 
@@ -265,7 +270,7 @@ const cached<failable<ilambda, std::string> > implementation(const std::string& 
 int handler(request_rec *r) {
     if(strcmp(r->handler, "mod_tuscany_eval"))
         return DECLINED;
-    httpd::logRequest(r, "mod_tuscany_eval::handler");
+    httpdDebugRequest(r, "modeval::handler::input");
 
     // Set up the read policy
     const int rc = httpd::setupReadPolicy(r);
@@ -283,8 +288,19 @@ int handler(request_rec *r) {
     const value ielement= scdl::implementation(content(comp));
     const std::string path = conf.contributionPath + std::string(scdl::uri(ielement));
     if (path != conf.implementationPath) {
+
+        // Convert component references to configured proxy lambdas
+        const ServerConf& sconf = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
+        std::ostringstream base;
+        if (sconf.wiringHost == "")
+            base << "http://localhost:" << ap_get_server_port(r) << "/references/" << std::string(scdl::name(content(comp))) << "/";
+        else
+            base << "http://" << sconf.wiringHost << "/references/" << std::string(scdl::name(content(comp))) << "/";
+        http::CURLSession ch;
+        const list<value> px(proxies(scdl::references(content(comp)), base.str(), ch));
+
+        conf.implementation = implementation(elementName(ielement), path, px);
         conf.implementationPath = path;
-        conf.implementation = implementation(elementName(ielement), path);
     }
     else
         conf.implementation = latest(conf.implementation);
@@ -292,47 +308,46 @@ int handler(request_rec *r) {
     if (!hasContent(impl))
         return HTTP_NOT_FOUND;
 
-    // Convert component references to configured proxy lambdas
-    std::ostringstream base;
-    base << "http://localhost:" << (debugWiringPort == 0? ap_get_server_port(r) : debugWiringPort) << "/references/" << std::string(scdl::name(content(comp))) << "/";
-    http::CURLHandle ch;
-    const list<value> px(proxies(scdl::references(content(comp)), base.str(), ch));
-
     // Handle HTTP method
     if (r->header_only)
          return OK;
     if(r->method_number == M_GET)
-        return httpd::reportStatus(get(r, content(impl), px));
+        return httpd::reportStatus(get(r, content(impl)));
     if(r->method_number == M_POST)
-        return httpd::reportStatus(post(r, content(impl), px));
+        return httpd::reportStatus(post(r, content(impl)));
     if(r->method_number == M_PUT)
-        return httpd::reportStatus(put(r, content(impl), px));
+        return httpd::reportStatus(put(r, content(impl)));
     if(r->method_number == M_DELETE)
-        return httpd::reportStatus(del(r, content(impl), px));
+        return httpd::reportStatus(del(r, content(impl)));
     return HTTP_NOT_IMPLEMENTED;
 }
 
 /**
  * Configuration commands.
  */
-const char *confHome(cmd_parms *cmd, void *dummy, const char *arg) {
+const char *confHome(cmd_parms *cmd, unused void *dummy, const char *arg) {
     ServerConf *c = (ServerConf*)ap_get_module_config(cmd->server->module_config, &mod_tuscany_eval);
     c->home = arg;
     return NULL;
 }
-const char *confContribution(cmd_parms *cmd, void *c, const char *arg) {
+const char *confWiringHost(cmd_parms *cmd, unused void *dummy, const char *arg) {
+    ServerConf *c = (ServerConf*)ap_get_module_config(cmd->server->module_config, &mod_tuscany_eval);
+    c->wiringHost = arg;
+    return NULL;
+}
+const char *confContribution(unused cmd_parms *cmd, void *c, const char *arg) {
     DirConf* conf = (DirConf*)c;
     conf->contributionPath = arg;
     conf->component = component(conf);
     return NULL;
 }
-const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
+const char *confComposite(unused cmd_parms *cmd, void *c, const char *arg) {
     DirConf* conf = (DirConf*)c;
     conf->compositeName = arg;
     conf->component = component(conf);
     return NULL;
 }
-const char *confComponent(cmd_parms *cmd, void *c, const char *arg) {
+const char *confComponent(unused cmd_parms *cmd, void *c, const char *arg) {
     DirConf* conf = (DirConf*)c;
     conf->componentName = arg;
     conf->component = component(conf);
@@ -344,17 +359,18 @@ const char *confComponent(cmd_parms *cmd, void *c, const char *arg) {
  */
 const command_rec commands[] = {
     AP_INIT_TAKE1("TuscanyHome", (const char*(*)())confHome, NULL, RSRC_CONF, "Tuscany home directory"),
+    AP_INIT_TAKE1("SCAWiringHost", (const char*(*)())confWiringHost, NULL, RSRC_CONF, "SCA wiring host"),
     AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, ACCESS_CONF, "SCA contribution location"),
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, ACCESS_CONF, "SCA composite location"),
     AP_INIT_TAKE1("SCAComponent", (const char*(*)())confComponent, NULL, ACCESS_CONF, "SCA component name"),
-    {NULL}
+    {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 
-int postConfig(apr_pool_t *p, apr_pool_t *plog, apr_pool_t *ptemp, server_rec *s) {
+int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, unused server_rec *s) {
    return OK;
 }
 
-void childInit(apr_pool_t* p, server_rec* svr_rec) {
+void childInit(unused apr_pool_t* p, server_rec* svr_rec) {
     ServerConf *c = (ServerConf*)ap_get_module_config(svr_rec->module_config, &mod_tuscany_eval);
     if(c == NULL) {
         std::cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << std::endl;
@@ -362,7 +378,7 @@ void childInit(apr_pool_t* p, server_rec* svr_rec) {
     }
 }
 
-void registerHooks(apr_pool_t *p) {
+void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_handler(handler, NULL, NULL, APR_HOOK_MIDDLE);

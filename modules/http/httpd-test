@@ -31,7 +31,7 @@ rc=$?
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 2
+sleep 1
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi

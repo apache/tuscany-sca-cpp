@@ -34,8 +34,10 @@
 #include "function.hpp"
 #include "list.hpp"
 #include "value.hpp"
+#include "debug.hpp"
 #include "monad.hpp"
 #include "cache.hpp"
+#include "../eval/primitive.hpp"
 #include "../eval/driver.hpp"
 #include "../http/httpd.hpp"
 #include "mod-eval.hpp"
@@ -46,19 +48,29 @@ namespace modeval {
 namespace scm {
 
 /**
+ * Convert proxy lambdas to evaluator primitive procedures.
+ */
+const list<value> primitiveProcedures(const list<value>& l) {
+    if (isNil(l))
+        return l;
+    return cons<value>(mklist<value>(eval::primitiveSymbol, car(l)), primitiveProcedures(cdr(l)));
+}
+
+/**
  * Evaluate a script component implementation function.
  */
 struct evalImplementation {
     const value impl;
-    evalImplementation(const value& impl) : impl(impl) {
+    const list<value> px;
+    evalImplementation(const value& impl, const list<value>& px) : impl(impl), px(eval::quotedParameters(primitiveProcedures(px))) {
     }
     const failable<value, std::string> operator()(const value& func, const list<value>& params) const {
-        const value expr = cons<value>(func, eval::quotedParameters(params));
-        httpd::logValue(expr, "expr");
+        const value expr = cons<value>(func, append(eval::quotedParameters(params), px));
+        debug(expr, "modeval::scm::evalImplementation::input");
         gc_pool pool;
         eval::Env globalEnv = eval::setupEnvironment(pool);
         const value val = eval::evalScript(expr, impl, globalEnv, pool);
-        httpd::logValue(val, "val");
+        debug(val, "modeval::scm::evalImplementation::result");
         if (isNil(val))
             return mkfailure<value, std::string>("Could not evaluate expression");
         return val;
@@ -68,20 +80,20 @@ struct evalImplementation {
 /**
  * Read a script component implementation.
  */
-const failable<ilambda, std::string> readLatestImplementation(const std::string path) {
+const failable<ilambda, std::string> readLatestImplementation(const std::string path, const list<value>& px) {
     std::ifstream is(path.c_str(), std::ios_base::in);
     if (is.fail() || is.bad())
         return mkfailure<ilambda, std::string>("Could not read implementation: " + path);
     const value impl = eval::readScript(is);
     if (isNil(impl))
         return mkfailure<ilambda, std::string>("Could not read implementation: " + path);
-    return ilambda(evalImplementation(impl));
+    return ilambda(evalImplementation(impl, px));
 }
 
-const cached<failable<ilambda, std::string> > readImplementation(const std::string& path) {
-    const lambda<failable<ilambda, std::string>(std::string)> ri(readLatestImplementation);
+const cached<failable<ilambda, std::string> > readImplementation(const std::string& path, const list<value>& px) {
+    const lambda<failable<ilambda, std::string>(std::string, list<value>)> ri(readLatestImplementation);
     const lambda<unsigned long(std::string)> ft(latestFileTime);
-    return cached<failable<ilambda, std::string> >(curry(ri, path), curry(ft, path));
+    return cached<failable<ilambda, std::string> >(curry(ri, path, px), curry(ft, path));
 }
 
 }

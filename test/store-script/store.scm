@@ -24,8 +24,8 @@
   (shoppingCart "delete" id)
 )
 
-(define (system.listMethods) (list "Service.get" "Service.getTotal"))
-
+; TODO remove these JSON-RPC specific functions
+(define (system.listMethods catalog shoppingCart shoppingTotal) (list "Service.get" "Service.getTotal"))
 (define Service.getCatalog getcatalog)
-
 (define Service.getTotal gettotal)
+

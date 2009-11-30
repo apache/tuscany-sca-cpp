@@ -27,8 +27,8 @@ cat >>tmp/conf/httpd.conf <<EOF
 <Location /test>
 SetHandler mod_tuscany_eval
 SCAContribution `pwd`/
-SCAComposite httpd-test.composite
-SCAComponent httpd-test
+SCAComposite domain-test.composite
+SCAComponent server-test
 </Location>
 EOF
 
@@ -73,7 +73,7 @@ fi
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 2
+sleep 1
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi

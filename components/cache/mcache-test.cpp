@@ -35,11 +35,11 @@ namespace tuscany {
 namespace cache {
 
 bool testMemCached() {
-    MemCached ch("localhost", 11311);
+    MemCached ch;
 
-    assert(hasContent(post("a", "AAA", ch)));
+    assert(hasContent(post("a", std::string("AAA"), ch)));
     assert(get("a", ch) == value(std::string("AAA")));
-    assert(hasContent(put("a", "aaa", ch)));
+    assert(hasContent(put("a", std::string("aaa"), ch)));
     assert(get("a", ch) == value(std::string("aaa")));
     assert(hasContent(del("a", ch)));
     assert(!hasContent(get("a", ch)));
@@ -64,8 +64,8 @@ bool testGetPerf() {
     struct timeval start;
     struct timeval end;
     {
-        MemCached ch("localhost", 11311);
-        assert(hasContent(post("c", "CCC", ch)));
+        MemCached ch;
+        assert(hasContent(post("c", std::string("CCC"), ch)));
 
         testGetLoop(5, ch);
 
