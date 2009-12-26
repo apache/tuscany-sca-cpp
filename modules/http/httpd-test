@@ -22,7 +22,7 @@ echo "Testing..."
 # Setup
 ./httpd-conf tmp 8090 htdocs
 apachectl -k start -d `pwd`/tmp
-sleep 1
+sleep 2
 
 # Test HTTP GET
 curl http://localhost:8090/index.html 2>/dev/null >tmp/index.html
@@ -31,7 +31,7 @@ rc=$?
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 1
+sleep 2
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi

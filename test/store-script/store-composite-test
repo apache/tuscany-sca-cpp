@@ -24,43 +24,7 @@ echo "Testing..."
 ../../modules/server/server-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 
-<Location /Catalog>
-SetHandler mod_tuscany_eval
-SCAContribution `pwd`/
-SCAComposite store.composite
-SCAComponent Catalog
-</Location>
-
-<Location /Total>
-SetHandler mod_tuscany_eval
-SCAContribution `pwd`/
-SCAComposite store.composite
-SCAComponent ShoppingCart
-</Location>
-
-<Location /ShoppingCart>
-SetHandler mod_tuscany_eval
-SCAContribution `pwd`/
-SCAComposite store.composite
-SCAComponent ShoppingCart
-</Location>
-
-<Location /CurrencyConverter>
-SetHandler mod_tuscany_eval
-SCAContribution `pwd`/
-SCAComposite store.composite
-SCAComponent CurrencyConverter
-</Location>
-
-<Location /Cache>
-SetHandler mod_tuscany_eval
-SCAContribution `pwd`/
-SCAComposite store.composite
-SCAComponent Cache
-</Location>
-
-<Location /references>
-SetHandler mod_tuscany_wiring
+<Location />
 SCAContribution `pwd`/
 SCAComposite store.composite
 </Location>
@@ -70,7 +34,7 @@ apachectl -k start -d `pwd`/tmp
 
 mc="memcached -l 127.0.0.1 -m 4 -p 11211"
 $mc &
-sleep 1
+sleep 2
 
 # Test HTTP GET
 curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
@@ -80,7 +44,7 @@ rc=$?
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
 kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`
-sleep 1
+sleep 2
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi

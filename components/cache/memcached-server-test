@@ -22,11 +22,9 @@
 ../../modules/server/server-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 
-<Location /mcache>
-SetHandler mod_tuscany_eval
+<Location />
 SCAContribution `pwd`/
 SCAComposite mcache.composite
-SCAComponent mcache
 </Location>
 EOF
 
@@ -34,7 +32,7 @@ apachectl -k start -d `pwd`/tmp
 
 mc="memcached -l 127.0.0.1 -m 4 -p 11211"
 $mc &
-sleep 1
+sleep 2
 
 # Test
 ./mcache-client-test 2>/dev/null
@@ -43,5 +41,5 @@ rc=$?
 # Cleanup
 kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`
 apachectl -k stop -d `pwd`/tmp
-sleep 1
+sleep 2
 return $rc

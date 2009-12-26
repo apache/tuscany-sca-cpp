@@ -24,16 +24,14 @@ echo "Testing..."
 ./server-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 
-<Location /test>
-SetHandler mod_tuscany_eval
+<Location />
 SCAContribution `pwd`/
 SCAComposite domain-test.composite
-SCAComponent server-test
 </Location>
 EOF
 
 apachectl -k start -d `pwd`/tmp
-sleep 1
+sleep 2
 
 # Test HTTP GET
 curl http://localhost:8090/index.html 2>/dev/null >tmp/index.html
@@ -73,7 +71,7 @@ fi
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 1
+sleep 2
 if [ "$rc" = "0" ]; then
     echo "OK"
 fi

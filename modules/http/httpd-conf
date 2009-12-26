@@ -27,7 +27,7 @@ mkdir -p $root
 mkdir -p $root/logs
 mkdir -p $root/conf
 cat >$root/conf/httpd.conf <<EOF
-ServerName 127.0.0.1
+ServerName http://127.0.0.1:$port
 Listen $port
 DocumentRoot $htdocs
 TypesConfig $here/conf/mime.types

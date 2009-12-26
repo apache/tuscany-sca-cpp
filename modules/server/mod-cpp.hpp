@@ -37,10 +37,8 @@
 #include "debug.hpp"
 #include "monad.hpp"
 #include "dynlib.hpp"
-#include "cache.hpp"
 #include "../eval/driver.hpp"
 #include "../http/httpd.hpp"
-#include "mod-eval.hpp"
 
 namespace tuscany {
 namespace server {
@@ -52,14 +50,14 @@ namespace cpp {
  */
 struct evalImplementation {
     const lib ilib;
-    const ilambda impl;
+    const lambda<value(const list<value>&)> impl;
     const list<value> px;
-    evalImplementation(const lib& ilib, const ilambda& impl, const list<value>& px) : ilib(ilib), impl(impl), px(px) {
+    evalImplementation(const lib& ilib, const lambda<value(const list<value>&)>& impl, const list<value>& px) : ilib(ilib), impl(impl), px(px) {
     }
-    const failable<value, std::string> operator()(const value& func, const list<value>& params) const {
-        debug(cons<value>(func, params), "modeval::cpp::evalImplementation::input");
-        const failable<value, std::string> val = impl(func, append(params, px));
-        debug(content(val), "modeval::cpp::evalImplementation::result");
+    const value operator()(const list<value>& params) const {
+        debug(params, "modeval::cpp::evalImplementation::input");
+        const value val = impl(append(params, px));
+        debug(val, "modeval::cpp::evalImplementation::result");
         return val;
     }
 };
@@ -67,22 +65,15 @@ struct evalImplementation {
 /**
  * Read a C++ component implementation.
  */
-const failable<ilambda, std::string> readLatestImplementation(const std::string path, const list<value>& px) {
-    const failable<lib, std::string> ilib(dynlib(path));
+const failable<lambda<value(const list<value>&)>, std::string> readImplementation(const std::string path, const list<value>& px) {
+    const failable<lib, std::string> ilib(dynlib(path + dynlibExt));
     if (!hasContent(ilib))
-        return mkfailure<ilambda, std::string>(reason(ilib));
+        return mkfailure<lambda<value(const list<value>&)>, std::string>(reason(ilib));
 
-    const failable<ilambda, std::string> impl(dynlambda<failable<value, std::string>(value, list<value>)>("eval", content(ilib)));
+    const failable<lambda<value(const list<value>&)>, std::string> impl(dynlambda<value(const list<value>&)>("eval", content(ilib)));
     if (!hasContent(impl))
         return impl;
-    return ilambda(evalImplementation(content(ilib), content(impl), px));
-}
-
-const cached<failable<ilambda, std::string> > readImplementation(const std::string& path, const list<value>& px) {
-    const lambda<failable<ilambda, std::string>(std::string, list<value>)> ri(readLatestImplementation);
-    const lambda<unsigned long(std::string)> ft(latestFileTime);
-    const std::string p(path + dynlibExt);
-    return cached<failable<ilambda, std::string> >(curry(ri, p, px), curry(ft, p));
+    return lambda<value(const list<value>&)>(evalImplementation(content(ilib), content(impl), px));
 }
 
 }

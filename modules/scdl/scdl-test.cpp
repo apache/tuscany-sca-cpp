@@ -28,7 +28,9 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include "list.hpp"
 #include "slist.hpp"
+#include "tree.hpp"
 #include "scdl.hpp"
 
 namespace tuscany {
@@ -53,6 +55,9 @@ bool testComponents() {
 
     const value catalog = named(std::string("Catalog"), c);
     assert(name(catalog) == std::string("Catalog"));
+
+    const list<value> t = mkbtree(sort(nameToElementAssoc(c)));
+    assert(assoctree<value>("Catalog", t) == mklist<value>("Catalog" , cadr(c)));
     return true;
 }
 
@@ -86,6 +91,9 @@ bool testReferences() {
     const value binding = car(bindings(catalog));
     assert(uri(binding) == value());
     assert(bindingType(binding) == "t:binding.jsonrpc");
+
+    const list<value> t = mkbtree(sort(referenceToTargetAssoc(references(store))));
+    assert(assoctree<value>("shoppingCart", t) == mklist<value>(std::string("shoppingCart"), std::string("ShoppingCart/Cart")));
     return true;
 }
 

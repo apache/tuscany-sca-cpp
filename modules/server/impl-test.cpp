@@ -51,7 +51,7 @@ const failable<value, std::string> del(unused const list<value>& params) {
 }
 
 const failable<value, std::string> hello(const list<value>& params) {
-    return value("hello " + std::string(car(params)));
+    return value(std::string("hello ") + std::string(car(params)));
 }
 
 }
@@ -59,17 +59,18 @@ const failable<value, std::string> hello(const list<value>& params) {
 
 extern "C" {
 
-const tuscany::failable<tuscany::value, std::string> eval(const tuscany::value& func, const tuscany::list<tuscany::value>& params) {
+const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
+    const tuscany::value func(car(params));
     if (func == "get")
-        return tuscany::server::get(params);
+        return tuscany::server::get(cdr(params));
     if (func == "post")
-        return tuscany::server::post(params);
+        return tuscany::server::post(cdr(params));
     if (func == "put")
-        return tuscany::server::put(params);
+        return tuscany::server::put(cdr(params));
     if (func == "del")
-        return tuscany::server::del(params);
+        return tuscany::server::del(cdr(params));
     if (func == "hello")
-        return tuscany::server::hello(params);
+        return tuscany::server::hello(cdr(params));
     return tuscany::mkfailure<tuscany::value, std::string>(std::string("Function not supported: ") + std::string(func));
 }
 

@@ -69,6 +69,11 @@ template<typename C> const C& serverConf(const request_rec* r, const module* mod
     return *(C*)ap_get_module_config(r->server->module_config, mod);
 }
 
+template<typename C> C& serverConf(const cmd_parms *cmd, const module* mod) {
+    return *(C*)ap_get_module_config(cmd->server->module_config, mod);
+}
+
+
 /**
  * Returns a directory-scoped module configuration.
  */
@@ -88,7 +93,9 @@ template<typename C> C& dirConf(const request_rec* r, const module* mod) {
 const list<std::string> pathTokens(const char* p) {
     if (p == NULL || p[0] == '\0')
         return list<std::string>();
-    return tokenize("/", p + 1);
+    if (p[0] == '/')
+        return tokenize("/", p + 1);
+    return tokenize("/", p);
 }
 
 const list<value> pathValues(const list<std::string>& l) {
@@ -107,7 +114,7 @@ const list<value> path(const char* p) {
 const std::string path(const list<value>& p) {
     if (isNil(p))
         return "";
-    return "/" + car(p) + path(cdr(p));
+    return std::string("/") + std::string(car(p)) + path(cdr(p));
 }
 
 /**
@@ -141,11 +148,11 @@ const bool debugRequest(request_rec* r, const std::string& msg) {
     std::cerr << "  content type: " << contentType(r) << std::endl;
     std::cerr << "  content encoding: " << optional(r->content_encoding) << std::endl;
     apr_table_do(debugHeader, r, r->headers_in, NULL);
-    std::cerr << "  uri: " << optional(r->unparsed_uri) << std::endl;
-    std::cerr << "  path: " << optional(r->uri) << std::endl;
+    std::cerr << "  unparsed uri: " << optional(r->unparsed_uri) << std::endl;
+    std::cerr << "  uri: " << optional(r->uri) << std::endl;
     std::cerr << "  path info: " << optional(r->path_info) << std::endl;
     std::cerr << "  filename: " << optional(r->filename) << std::endl;
-    std::cerr << "  path tokens: " << pathTokens(r->uri) << std::endl;
+    std::cerr << "  uri tokens: " << pathTokens(r->uri) << std::endl;
     std::cerr << "  args: " << optional(r->args) << std::endl;
     return true;
 }
@@ -157,6 +164,15 @@ const bool debugRequest(request_rec* r, const std::string& msg) {
 #define httpdDebugRequest(r, msg)
 
 #endif
+
+/**
+ * Return the remaining part of a uri after the given path (aka the path info.)
+ */
+const list<value> pathInfo(const list<value>& uri, const list<value>& path) {
+    if (isNil(path))
+        return uri;
+    return pathInfo(cdr(uri), cdr(path));
+}
 
 /**
  * Returns a list of key value pairs from the args in a query string.

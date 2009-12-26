@@ -77,6 +77,10 @@ const value listProc(const list<value>& args) {
     return args;
 }
 
+const value assocProc(const list<value>& args) {
+    return assoc(car(args), (list<list<value> >)cadr(args));
+}
+
 const value nulProc(const list<value>& args) {
     const value v(car(args));
     if (isNil(v))
@@ -136,8 +140,28 @@ const value uuidProc(unused const list<value>& args) {
     return std::string(buf, APR_UUID_FORMATTED_LENGTH);
 }
 
+const value cadrProc(unused const list<value>& args) {
+    return cadr((list<value> )car(args));
+}
+
+const value caddrProc(unused const list<value>& args) {
+    return caddr((list<value> )car(args));
+}
+
+const value cadddrProc(unused const list<value>& args) {
+    return cadddr((list<value> )car(args));
+}
+
+const value cddrProc(unused const list<value>& args) {
+    return cddr((list<value> )car(args));
+}
+
+const value cdddrProc(unused const list<value>& args) {
+    return cdddr((list<value> )car(args));
+}
+
 const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
-    const lambda<value(list<value>&)> func(cadr((list<value>)proc));
+    const lambda<value(const list<value>&)> func(cadr((list<value>)proc));
     return func(args);
 }
 
@@ -166,7 +190,7 @@ const value primitiveImplementation(const list<value>& proc) {
 }
 
 template<typename F> const value primitiveProcedure(const F& f) {
-    return mklist<value>(primitiveSymbol, (lambda<value(list<value>&)>)f);
+    return mklist<value>(primitiveSymbol, (lambda<value(const list<value>&)>)f);
 }
 
 const list<value> primitiveProcedureNames() {
@@ -176,11 +200,17 @@ const list<value> primitiveProcedureNames() {
     l = cons<value>("list", l);
     l = cons<value>("nul", l);
     l = cons<value>("=", l);
+    l = cons<value>("equal?", l);
     l = cons<value>("+", l);
     l = cons<value>("-", l);
     l = cons<value>("*", l);
     l = cons<value>("/", l);
-    l = cons<value>("equal?", l);
+    l = cons<value>("assoc", l);
+    l = cons<value>("cadr", l);
+    l = cons<value>("caddr", l);
+    l = cons<value>("cadddr", l);
+    l = cons<value>("cddr", l);
+    l = cons<value>("cdddr", l);
     l = cons<value>("display", l);
     l = cons<value>("log", l);
     l = cons<value>("uuid", l);
@@ -194,11 +224,17 @@ const list<value> primitiveProcedureObjects() {
     l = cons(primitiveProcedure(listProc), l);
     l = cons(primitiveProcedure(nulProc), l);
     l = cons(primitiveProcedure(equalProc), l);
+    l = cons(primitiveProcedure(equalProc), l);
     l = cons(primitiveProcedure(addProc), l);
     l = cons(primitiveProcedure(subProc), l);
     l = cons(primitiveProcedure(mulProc), l);
     l = cons(primitiveProcedure(divProc), l);
-    l = cons(primitiveProcedure(equalProc), l);
+    l = cons(primitiveProcedure(assocProc), l);
+    l = cons(primitiveProcedure(cadrProc), l);
+    l = cons(primitiveProcedure(caddrProc), l);
+    l = cons(primitiveProcedure(cadddrProc), l);
+    l = cons(primitiveProcedure(cddrProc), l);
+    l = cons(primitiveProcedure(cdddrProc), l);
     l = cons(primitiveProcedure(displayProc), l);
     l = cons(primitiveProcedure(logProc), l);
     l = cons(primitiveProcedure(uuidProc), l);

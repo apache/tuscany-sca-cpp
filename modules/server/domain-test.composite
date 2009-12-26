@@ -41,7 +41,7 @@
         <service name="client">
             <t:binding.http uri="client"/>
         </service>
-        <reference name="ref" target="test">
+        <reference name="ref" target="server-test">
             <t:binding.http/>
         </reference>
     </component>

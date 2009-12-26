@@ -53,6 +53,16 @@ const value name(const value& l) {
 }
 
 /**
+ * Convert a list of elements to a name -> element assoc list.
+ */
+const list<value> nameToElementAssoc(const list<value>& l) {
+    if (isNil(l))
+        return l;
+    const value e(car(l));
+    return cons<value>(mklist<value>(name(e), e), nameToElementAssoc(cdr(l)));
+}
+
+/**
  * Returns the scdl declaration with the given name.
  */
 struct filterName {
@@ -107,17 +117,20 @@ const list<value> references(const value& l) {
 }
 
 /**
- * Returns a list of properties in a component.
- */
-const list<value> properties(const value& l) {
-    return elementChildren("property", l);
-}
-
-/**
  * Returns the target of a reference.
  */
 const value target(const value& l) {
     return attributeValue("target", l);
+}
+
+/**
+ * Convert a list of references to a reference name -> target assoc list.
+ */
+const list<value> referenceToTargetAssoc(const list<value>& r) {
+    if (isNil(r))
+        return r;
+    const value ref(car(r));
+    return cons<value>(mklist<value>(scdl::name(ref), scdl::target(ref)), referenceToTargetAssoc(cdr(r)));
 }
 
 /**
@@ -129,6 +142,13 @@ const bool filterBinding(const value& v) {
 
 const list<value> bindings(const value& l) {
     return filter<value>(filterBinding, l);
+}
+
+/**
+ * Returns a list of properties in a component.
+ */
+const list<value> properties(const value& l) {
+    return elementChildren("property", l);
 }
 
 /**

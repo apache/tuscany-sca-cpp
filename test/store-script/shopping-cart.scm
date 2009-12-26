@@ -14,21 +14,29 @@
 ; Post a new item to the cart, create a new cart if necessary
 (define (post item cache)
   (define id (uuid))
-  (define cart (cons item (getcart cartId cache)))
+  (define newItem (list (car item) id (caddr item)))
+  (define cart (cons newItem (getcart cartId cache)))
   (cache "put" cartId cart)
   id
 )
 
 ; Return the content of the cart
 (define (getall cache)
-  (define cart (getcart cartId cache))
-  (cons "Your Cart" (cons cartId cart))
+  (cons "Your Cart" (cons cartId (getcart cartId cache)))
+)
+
+; Find an item in the cart
+(define (find id cart)
+  (if (nul cart)
+    (cons "Item" (list "0" (list)))
+    (if (= id (cadr (car cart)))
+      (car cart)
+      (find id (cdr cart))))
 )
 
 ; Get an item from the cart
 (define (get id cache)
-  (define entry (list (list 'name "Apple") (list 'currencyCode "USD") (list 'currencySymbol "$") (list 'price 2.99)))
-  (cons "Item" (list id entry))
+  (find id (getcart cartId cache))
 )
 
 ; Delete the cart
@@ -38,12 +46,14 @@
 
 ; Return the price of an item
 (define (price item)
-  (car (cdr (car (cdr (cdr (cdr (cdr (car (cdr (cdr item))))))))))
+  (cadr (assoc 'price (caddr item)))
 )
 
 ; Sum the prices of a list of items
 (define (sum items)
-  (if (nul items) 0 (+ (price (car items)) (sum (cdr items))))
+  (if (nul items)
+    0
+    (+ (price (car items)) (sum (cdr items))))
 )
 
 ; Return the total price of the items in the cart

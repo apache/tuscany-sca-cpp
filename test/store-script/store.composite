@@ -25,26 +25,19 @@
     <component name="Store">
 	    <!-- <t:implementation.widget location="store.html"/> -->
         <t:implementation.scheme uri="store.scm"/>
-        
         <service name="Widget">
             <t:binding.http uri="store"/>
         </service>
-        <reference name="catalog" target="Catalog">
-             <t:binding.jsonrpc uri="Catalog"/>
-         </reference>
-         <reference name="shoppingCart" target="ShoppingCart/Cart">
-             <t:binding.atom/>
-         </reference>
-         <reference name="shoppingTotal" target="ShoppingCart/Total">
-             <t:binding.jsonrpc/>
-         </reference>
+        <reference name="catalog" target="Catalog"/>
+        <reference name="shoppingCart" target="ShoppingCart/Cart"/>
+        <reference name="shoppingTotal" target="ShoppingCart/Total"/>
     </component>
     
     <component name="Catalog">
         <t:implementation.scheme uri="fruits-catalog.scm"/> 
         <property name="currencyCode">USD</property>
         <service name="Catalog">
-            <t:binding.jsonrpc uri="Catalog"/>
+            <t:binding.jsonrpc uri="catalog"/>
         </service>
         <reference name="currencyConverter" target="CurrencyConverter"/>
     </component> 
@@ -52,27 +45,25 @@
     <component name="ShoppingCart">
         <t:implementation.scheme uri="shopping-cart.scm"/>
         <service name="ShoppingCart">
-            <t:binding.atom uri="ShoppingCart"/>
+            <t:binding.atom uri="shoppingCart"/>
         </service>        
         <service name="Total">
-            <t:binding.jsonrpc uri="Total"/>
+            <t:binding.jsonrpc uri="total"/>
         </service>        
-        <reference name="cache" target="Cache">
-            <t:binding.atom/>
-        </reference>
+        <reference name="cache" target="Cache"/>
     </component>
     
     <component name="CurrencyConverter">
         <t:implementation.scheme uri="currency-converter.scm"/>
         <service name="CurrencyConverter">
-            <t:binding.jsonrpc uri="CurrencyConverter"/>
+            <t:binding.jsonrpc uri="currencyConverter"/>
         </service>        
     </component>     
 
     <component name="Cache">
         <t:implementation.cpp uri="../../components/cache/.libs/libmcache"/>
         <service name="Cache">
-            <t:binding.atom uri="Cache"/>
+            <t:binding.atom uri="cache"/>
         </service>
     </component>     
 

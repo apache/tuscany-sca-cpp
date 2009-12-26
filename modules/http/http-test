@@ -20,7 +20,7 @@
 # Setup
 ./httpd-conf tmp 8090 htdocs
 apachectl -k start -d `pwd`/tmp
-sleep 1
+sleep 2
 
 # Test
 ./curl-test
@@ -28,5 +28,5 @@ rc=$?
 
 # Cleanup
 apachectl -k stop -d `pwd`/tmp
-sleep 1
+sleep 2
 return $rc

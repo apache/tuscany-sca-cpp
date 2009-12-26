@@ -650,9 +650,9 @@ tuscany.sca.Property = function (name) {
 }
 
 tuscany.sca.referenceMap = new Object();
-tuscany.sca.referenceMap.catalog = new JSONRpcClient("/Catalog").Service;
-tuscany.sca.referenceMap.shoppingCart = new AtomClient("/ShoppingCart");
-tuscany.sca.referenceMap.shoppingTotal = new JSONRpcClient("/Total").Service;
+tuscany.sca.referenceMap.catalog = new JSONRpcClient("/catalog").Service;
+tuscany.sca.referenceMap.shoppingCart = new AtomClient("/shoppingCart");
+tuscany.sca.referenceMap.shoppingTotal = new JSONRpcClient("/total").Service;
 tuscany.sca.Reference = function (name) {
     return tuscany.sca.referenceMap[name];
 }

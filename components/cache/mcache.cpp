@@ -89,15 +89,16 @@ const failable<value, std::string> del(const list<value>& params) {
 
 extern "C" {
 
-const tuscany::failable<tuscany::value, std::string> eval(const tuscany::value& func, const tuscany::list<tuscany::value>& params) {
+const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
+    const tuscany::value func(car(params));
     if (func == "get")
-        return tuscany::cache::get(params);
+        return tuscany::cache::get(cdr(params));
     if (func == "post")
-        return tuscany::cache::post(params);
+        return tuscany::cache::post(cdr(params));
     if (func == "put")
-        return tuscany::cache::put(params);
+        return tuscany::cache::put(cdr(params));
     if (func == "delete")
-        return tuscany::cache::del(params);
+        return tuscany::cache::del(cdr(params));
     return tuscany::mkfailure<tuscany::value, std::string>(std::string("Function not supported: ") + std::string(func));
 }
 
