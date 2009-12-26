@@ -247,7 +247,7 @@ struct selectorLambda {
     }
 };
 
-const lambda<bool(value)> selector(const list<value> s) {
+const lambda<bool(const value&)> selector(const list<value> s) {
     return selectorLambda(s);
 }
 

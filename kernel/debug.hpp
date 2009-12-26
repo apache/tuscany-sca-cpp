@@ -26,6 +26,9 @@
  * Functions to help log and debug.
  */
 
+#include <string>
+#include <ostream>
+
 namespace tuscany
 {
 
@@ -35,7 +38,7 @@ namespace tuscany
  * Debug log.
  */
 template<typename V> const bool debug(const V& v, const std::string& msg) {
-    std::cerr<< msg << ": " << v << std::endl;
+    std::cerr << msg << ": " << v << std::endl;
     return true;
 }
 
@@ -52,6 +55,9 @@ bool debug_dec(long int& c) {
     return true;
 }
 
+/**
+ * Attribute used to mark unused parameters.
+ */
 #define unused __attribute__ ((unused))
 
 #else
@@ -60,6 +66,7 @@ bool debug_dec(long int& c) {
 
 #define debug_inc(c)
 #define debug_dec(c)
+
 #define unused
 
 #endif

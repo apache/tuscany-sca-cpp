@@ -246,7 +246,7 @@ template<typename R> bool submitFunc(const lambda<R()>& func, const future<R>& f
  */
 template<typename R> const future<R> submit(worker& w, const lambda<R()>& func) {
     const future<R> fut;
-    const lambda<bool()> f = curry(lambda<bool(lambda<R()>, future<R>)>(submitFunc<R>), func, fut);
+    const lambda<bool()> f = curry(lambda<bool(const lambda<R()>, future<R>)>(submitFunc<R>), func, fut);
     enqueue(w.work, f);
     return fut;
 }

@@ -332,10 +332,10 @@ const failable<bool, std::string> writeList(const list<value>& l, JSObject* o, c
  */
 template<typename R> class WriteContext {
 public:
-    WriteContext(const lambda<R(std::string, R)>& reduce, const R& accum, const JSONContext& cx) : cx(cx), reduce(reduce), accum(accum) {
+    WriteContext(const lambda<R(const std::string&, const R)>& reduce, const R& accum, const JSONContext& cx) : cx(cx), reduce(reduce), accum(accum) {
     }
     const JSONContext& cx;
-    const lambda<R(std::string, R)> reduce;
+    const lambda<R(const std::string&, const R)> reduce;
     R accum;
 };
 
@@ -352,7 +352,7 @@ template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *d
 /**
  * Convert a list of values to a JSON document.
  */
-template<typename R> const failable<R, std::string> writeJSON(const lambda<R(std::string, R)>& reduce, const R& initial, const list<value>& l, const JSONContext& cx) {
+template<typename R> const failable<R, std::string> writeJSON(const lambda<R(const std::string&, const R)>& reduce, const R& initial, const list<value>& l, const JSONContext& cx) {
     JSObject* o = JS_NewObject(cx, NULL, NULL, NULL);
     jsval val = OBJECT_TO_JSVAL(o);
     const failable<bool, std::string> w = writeList(l, o, cx);

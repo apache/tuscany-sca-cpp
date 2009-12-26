@@ -35,11 +35,10 @@ namespace tuscany
 
 /**
  * Macros used to add or subtract values to reference counters.
- * In a multithreaded environment, define MTHREAD_GC to use
- * the GCC __sync_add_and_fetch and __sync_sub_and_fetch built
- * in functions.
+ * In a multithreaded environment, use the GCC __sync_add_and_fetch
+ * and __sync_sub_and_fetch built in functions.
  */
-#ifdef MTHREAD_GC
+#ifdef _REENTRANT
 
 #define gc_add_and_fetch(t, v) __sync_add_and_fetch(&(t), v)
 #define gc_sub_and_fetch(t, v) __sync_sub_and_fetch(&(t), v)

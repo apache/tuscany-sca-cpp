@@ -315,9 +315,9 @@ const failable<bool, std::string> write(const list<value>& l, const xmlTextWrite
  */
 template<typename R> class XMLWriteContext {
 public:
-    XMLWriteContext(const lambda<R(std::string, R)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
+    XMLWriteContext(const lambda<R(const std::string&, const R)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
     }
-    const lambda<R(std::string, R)> reduce;
+    const lambda<R(const std::string&, const R)> reduce;
     R accum;
 };
 
@@ -333,7 +333,7 @@ template<typename R> int writeCallback(void *context, const char* buffer, int le
 /**
  * Convert a list of values to an XML document.
  */
-template<typename R> const failable<R, std::string> writeXML(const lambda<R(std::string, R)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> writeXML(const lambda<R(const std::string&, const R)>& reduce, const R& initial, const list<value>& l) {
     XMLWriteContext<R> cx(reduce, initial);
     xmlOutputBufferPtr out = xmlOutputBufferCreateIO(writeCallback<R>, NULL, &cx, NULL);
     if (out == NULL)

@@ -26,6 +26,8 @@
  * Simple list functions.
  */
 
+#include <string>
+#include <sstream>
 #include <iostream>
 #include "function.hpp"
 #include "debug.hpp"
@@ -35,7 +37,9 @@ namespace tuscany {
 #ifdef _DEBUG
 
 /**
- * Debug counters.
+ * Debug utilities. Counters used to track instances of lists, and
+ * macro used to write the contents of a list in a string, easier to
+ * watch in a debugger than the list itself.
  */
 long countLists = 0;
 long countILists = 0;
@@ -59,11 +63,17 @@ bool printListCounters() {
     return true;
 }
 
+#define debug_watchList() do { \
+        this->watch = watchList(*this); \
+    } while (0)
+
 #else
 
 #define resetListCounters()
 #define checkListCounters() true
 #define printListCounters()
+
+#define debug_watchList();
 
 #endif
 
@@ -78,18 +88,23 @@ public:
     list() {
         debug_inc(countLists);
         debug_inc(countELists);
+        debug_watchList();
     }
 
-    list(const T car, const lambda<list<T> ()>& cdr) :
+    list(const T car, const lambda<list<T>()>& cdr) :
         car(car), cdr(cdr) {
         debug_inc(countLists);
         debug_inc(countILists);
+        debug_watchList();
     }
 
     list(const list& p) :
         car(p.car), cdr(p.cdr) {
         debug_inc(countLists);
         debug_inc(countCLists);
+#ifdef _DEBUG
+        watch = p.watch;
+#endif
     }
 
     const list& operator=(const list<T>& p) {
@@ -97,6 +112,9 @@ public:
             return *this;
         car = p.car;
         cdr = p.cdr;
+#ifdef _DEBUG
+        watch = p.watch;
+#endif
         return *this;
     }
 
@@ -118,6 +136,34 @@ public:
         return cdr() == p.cdr();
     }
 
+    const bool operator<(const list<T>& p) const {
+        if(this == &p)
+            return false;
+        if (isNil(cdr))
+            return !isNil(p.cdr);
+        if (isNil(p.cdr))
+            return false;
+        if (car < p.car)
+            return true;
+        if (car != p.car)
+            return false;
+        return cdr() < p.cdr();
+    }
+
+    const bool operator>(const list<T>& p) const {
+        if(this == &p)
+            return false;
+        if (isNil(cdr))
+            return false;
+        if (isNil(p.cdr))
+            return true;
+        if (car > p.car)
+            return true;
+        if (car != p.car)
+            return false;
+        return cdr() > p.cdr();
+    }
+
     const bool operator!=(const list<T>& p) const {
         return !this->operator==(p);
     }
@@ -136,12 +182,32 @@ public:
     template<typename X> friend const list<X> cdr(const list<X>& p);
     template<typename X> friend const bool setCar(list<X>& p, const X& car);
     template<typename X> friend const bool setCdr(list<X>& p, const list<X>& cdr);
-    template<typename X> friend const bool setCdr(list<X>& p, const lambda<list<X> ()>& cdr);
+    template<typename X> friend const bool setCdr(list<X>& p, const lambda<list<X>()>& cdr);
 
 private:
+#ifdef _DEBUG
+    template<typename X> friend const std::string watchList(const list<X>& p);
+    std::string watch;
+#endif
+
     T car;
-    lambda<list<T> ()> cdr;
+    lambda<list<T>()> cdr;
 };
+
+#ifdef _DEBUG
+
+/**
+ * Debug utility used to write the contents of a list to a string, easier
+ * to watch than the list itself in a debugger.
+ */
+template<typename T> const std::string watchList(const list<T>& p) {
+    if(isNil(p))
+        return "()";
+    std::ostringstream os;
+    os << "(" << car(p) << " ...)";
+    return os.str();
+}
+#endif
 
 /**
  * Returns true if the given list is nil.
@@ -153,25 +219,25 @@ template<typename T> const bool isNil(const list<T>& p) {
 /**
  * Write a list to an output stream.
  */
+template<typename T> std::ostream& writeHelper(std::ostream& out, const list<T>& l) {
+    if (isNil(l))
+        return out;
+    out << " " << car(l);
+    return writeHelper(out, cdr(l));
+}
+
 template<typename T> std::ostream& operator<<(std::ostream& out, const list<T>& l) {
     if(isNil(l))
         return out << "()";
-    out << "(";
-    list<T> ml = l;
-    while(true) {
-        out << car(ml);
-        ml = cdr(ml);
-        if (isNil(ml))
-            break;
-        out << " ";
-    }
+    out << "(" << car(l);
+    writeHelper<T>(out, cdr(l));
     return out << ")";
 }
 
 /**
  * Construct a (lazy) list from a value and a lambda function that returns the cdr.
  */
-template<typename T> const list<T> cons(const T& car, const lambda<list<T> ()>& cdr) {
+template<typename T> const list<T> cons(const T& car, const lambda<list<T>()>& cdr) {
     return list<T> (car, cdr);
 }
 
@@ -268,7 +334,7 @@ template<typename T> const bool setCdr(list<T>& p, const list<T>& c) {
 /**
  * Sets the cdr of a list to a lambda function.
  */
-template<typename T> const bool setCdr(list<T>& p, const lambda<list<T> ()>& cdr) {
+template<typename T> const bool setCdr(list<T>& p, const lambda<list<T>()>& cdr) {
     p.cdr = cdr;
     return true;
 }
@@ -286,6 +352,13 @@ template<typename T> const T cadr(const list<T>& p) {
  */
 template<typename T> const T caddr(const list<T>& p) {
     return car(cdr(cdr(p)));
+}
+
+/**
+ * Returns the car of the cdr of the cdr of the cdr of a list.
+ */
+template<typename T> const T cadddr(const list<T>& p) {
+    return car(cdr(cdr(cdr(p))));
 }
 
 /**
@@ -322,8 +395,8 @@ template<typename T> const int length(const list<T>& p) {
  */
 template<typename T> struct appendCdr {
     const list<T> a;
-    const lambda<list<T> ()> fb;
-    appendCdr(const list<T>& a, const lambda<list<T> ()>& fb) :
+    const lambda<list<T>()> fb;
+    appendCdr(const list<T>& a, const lambda<list<T>()>& fb) :
         a(a), fb(fb) {
     }
     const list<T> operator()() const {
@@ -331,7 +404,7 @@ template<typename T> struct appendCdr {
     }
 };
 
-template<typename T> const list<T> append(const list<T>&a, const lambda<list<T> ()>& fb) {
+template<typename T> const list<T> append(const list<T>&a, const lambda<list<T>()>& fb) {
     if(isNil(a))
         return fb();
 
@@ -348,7 +421,7 @@ template<typename T> const list<T> append(const list<T>&a, const list<T>& b) {
 /**
  * Map a lambda function on a list.
  */
-template<typename T, typename R> const list<R> map(const lambda<R(T)>& f, const list<T>& p) {
+template<typename T, typename R> const list<R> map(const lambda<R(const T)>& f, const list<T>& p) {
     if(isNil(p))
         return list<R> ();
     return cons(f(car(p)), map(f, cdr(p)));
@@ -358,8 +431,8 @@ template<typename T, typename R> const list<R> map(const lambda<R(T)>& f, const 
  * Run a reduce lambda function on a list.
  */
 template<typename T, typename R> struct reduceAccumulate {
-    const lambda<R(R, T)> f;
-    reduceAccumulate(const lambda<R(R, T)>& f) :
+    const lambda<R(const R&, const T&)> f;
+    reduceAccumulate(const lambda<R(const R, const T)>& f) :
         f(f) {
     }
     R operator()(const R& acc, const list<T>& p) const {
@@ -369,13 +442,13 @@ template<typename T, typename R> struct reduceAccumulate {
     }
 };
 
-template<typename T, typename R> const R reduce(const lambda<R(R, T)>& f, const R& initial, const list<T>& p) {
+template<typename T, typename R> const R reduce(const lambda<R(const R, const T)>& f, const R& initial, const list<T>& p) {
     return reduceAccumulate<T, R> (f)(initial, p);
 }
 
 template<typename T, typename R> struct reduceRightAccumulate {
-    const lambda<R(T, R)> f;
-    reduceRightAccumulate(const lambda<R(T, R)>& f) :
+    const lambda<R(const T&, const R&)> f;
+    reduceRightAccumulate(const lambda<R(const T, const R)>& f) :
         f(f) {
     }
     R operator()(const list<T>& p, const R& acc) const {
@@ -385,18 +458,18 @@ template<typename T, typename R> struct reduceRightAccumulate {
     }
 };
 
-template<typename T, typename R> const R reduceRight(const lambda<R(T, R)>& f, const R& initial, const list<T>& p) {
+template<typename T, typename R> const R reduceRight(const lambda<R(const T, const R)>& f, const R& initial, const list<T>& p) {
     return reduceRightAccumulate<T, R> (f)(p, initial);
 }
 
 /**
  * Run a filter lambda function on a list.
  */
-template<typename T> const list<T> filter(const lambda<bool(T)>& f, const list<T>& p) {
+template<typename T> const list<T> filter(const lambda<bool(const T)>& f, const list<T>& p) {
     if(isNil(p))
         return list<T> ();
     if(f(car(p))) {
-        const lambda<list<T> (lambda<bool(T)> , list<T> )> ff(filter<T> );
+        const lambda<list<T>(const lambda<bool(const T)>, const list<T>)> ff(filter<T>);
         return cons(car(p), curry(ff, f, cdr(p)));
     }
     return filter(f, cdr(p));

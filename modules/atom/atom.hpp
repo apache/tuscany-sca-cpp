@@ -115,7 +115,7 @@ const list<value> entriesElements(const list<value>& l) {
  * Convert a list of values representing an ATOM entry to an ATOM entry.
  * The first two values in the list are the entry id and title.
  */
-template<typename R> const failable<R, std::string> writeATOMEntry(const lambda<R(std::string, R)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> writeATOMEntry(const lambda<R(const std::string&, const R)>& reduce, const R& initial, const list<value>& l) {
     return writeXML<R>(reduce, initial, mklist<value>(entryElement(l)));
 }
 
@@ -130,7 +130,7 @@ const failable<list<std::string>, std::string> writeATOMEntry(const list<value>&
  * Convert a list of values representing an ATOM feed to an ATOM feed.
  * The first two values in the list are the feed id and title.
  */
-template<typename R> const failable<R, std::string> writeATOMFeed(const lambda<R(std::string, R)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R, std::string> writeATOMFeed(const lambda<R(const std::string&, const R)>& reduce, const R& initial, const list<value>& l) {
     const list<value> f = list<value>()
         << element << "feed" << (list<value>() << attribute << "xmlns" << "http://www.w3.org/2005/Atom")
         << (list<value>() << element << "title" << (list<value>() << attribute << "type" << "text") << car(l))

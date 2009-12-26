@@ -35,6 +35,7 @@
 #include "value.hpp"
 #include "element.hpp"
 #include "monad.hpp"
+#include "parallel.hpp"
 #include "../atom/atom.hpp"
 #include "../json/json.hpp"
 
@@ -126,9 +127,9 @@ size_t readCallback(void *ptr, size_t size, size_t nmemb, void *data) {
  */
 template<typename R> class CURLWriteContext {
 public:
-    CURLWriteContext(const lambda<R(std::string, R)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
+    CURLWriteContext(const lambda<R(const std::string&, const R)>& reduce, const R& accum) : reduce(reduce), accum(accum) {
     }
-    const lambda<R(std::string, R)> reduce;
+    const lambda<R(const std::string&, const R)> reduce;
     R accum;
 };
 
@@ -162,7 +163,7 @@ curl_slist* headers(curl_slist* cl, const list<std::string>& h) {
     return headers(curl_slist_append(cl, std::string(car(h)).c_str()), cdr(h));
 }
 
-template<typename R> const failable<list<R>, std::string> apply(const list<list<std::string> >& req, const lambda<R(std::string, R)>& reduce, const R& initial, const std::string& url, const std::string& verb, const CURLSession& cs) {
+template<typename R> const failable<list<R>, std::string> apply(const list<list<std::string> >& req, const lambda<R(const std::string&, const R)>& reduce, const R& initial, const std::string& url, const std::string& verb, const CURLSession& cs) {
 
     // Init the curl session
     CURL* ch = handle(cs);
@@ -174,8 +175,6 @@ template<typename R> const failable<list<R>, std::string> apply(const list<list<
     write(cadr(req), os);
     const std::string s = os.str();
     const int sz = s.length();
-    if (sz < 1400)
-        curl_easy_setopt(ch, CURLOPT_TCP_NODELAY, true);
 
     // Setup the read, header and write callbacks
     CURLReadContext rcx(mklist(s));
@@ -187,6 +186,7 @@ template<typename R> const failable<list<R>, std::string> apply(const list<list<
     CURLWriteContext<R> wcx(reduce, initial);
     curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, (size_t (*)(void*, size_t, size_t, void*))writeCallback<R>);
     curl_easy_setopt(ch, CURLOPT_WRITEDATA, &wcx);
+    curl_easy_setopt(ch, CURLOPT_TCP_NODELAY, true);
 
     // Set the request headers
     curl_slist* hl = headers(NULL, car(req));
@@ -291,7 +291,7 @@ const failable<std::string, std::string> contentType(const list<std::string>& h)
 /**
  * HTTP GET, return the resource at the given URL.
  */
-template<typename R> const failable<list<R>, std::string> get(const lambda<R(std::string, R)>& reduce, const R& initial, const std::string& url, const CURLSession& ch) {
+template<typename R> const failable<list<R>, std::string> get(const lambda<R(const std::string&, const R)>& reduce, const R& initial, const std::string& url, const CURLSession& ch) {
     debug(url, "http::get::url");
     const list<list<std::string> > req = mklist(list<std::string>(), list<std::string>());
     return apply(req, reduce, initial, url, "GET", ch);
@@ -391,18 +391,18 @@ const failable<value, std::string> del(const std::string& url, const CURLSession
  * HTTP client proxy function.
  */
 struct proxy {
-    proxy(const std::string& url, const CURLSession& ch) : url(url), ch(ch) {
+    proxy(const std::string& url) : url(url) {
     }
 
     const value operator()(const list<value>& args) const {
-        failable<value, std::string> val = evalExpr(args, url, ch);
+        CURLSession cs;
+        failable<value, std::string> val = evalExpr(args, url, cs);
         if (!hasContent(val))
             return value();
         return content(val);
     }
 
     const std::string url;
-    const CURLSession ch;
 };
 
 }

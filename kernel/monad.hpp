@@ -89,14 +89,14 @@ template<typename V> const id<V> mkunit(const V& v) {
     return id<V>(v);
 }
 
-template<typename V> const lambda<id<V>(V)> unit() {
+template<typename V> const lambda<id<V>(const V)> unit() {
     return mkunit<V>;
 }
 
 /**
  * Bind a function to an identity monad. Pass the value in the monad to the function.
  */
-template<typename R, typename V> const id<R> operator>>(const id<V>& m, const lambda<id<R>(V)>& f) {
+template<typename R, typename V> const id<R> operator>>(const id<V>& m, const lambda<id<R>(const V)>& f) {
     return f(content(m));
 }
 
@@ -164,7 +164,7 @@ template<typename V> const maybe<V> mkjust(const V& v) {
     return maybe<V>(v);
 }
 
-template<typename V> const lambda<maybe<V>(V)> just() {
+template<typename V> const lambda<maybe<V>(const V)> just() {
     return mkjust<V>;
 }
 
@@ -186,7 +186,7 @@ template<typename V> const V content(const maybe<V>& m) {
  * Bind a function to a maybe monad. Passes the value in the monad to the function
  * if present, or does nothing if there's no value.
  */
-template<typename R, typename V> const maybe<R> operator>>(const maybe<V>& m, const lambda<maybe<R>(V)>& f) {
+template<typename R, typename V> const maybe<R> operator>>(const maybe<V>& m, const lambda<maybe<R>(const V)>& f) {
     if (!hasContent(m))
         return m;
     return f(content(m));
@@ -274,7 +274,7 @@ template<typename V, typename F> const failable<V, F> mksuccess(const V& v) {
     return failable<V, F>(v);
 }
 
-template<typename V, typename F> const lambda<failable<V, F>(V)> success() {
+template<typename V, typename F> const lambda<failable<V, F>(const V)> success() {
     return mksuccess<V, F>;
 }
 
@@ -286,7 +286,7 @@ template<typename V, typename F> const failable<V, F> mkfailure(const F& f) {
     return failable<V, F>(false, f);
 }
 
-template<typename V, typename F> const lambda<failable<V, F>(V)> failure() {
+template<typename V, typename F> const lambda<failable<V, F>(const V)> failure() {
     return mkfailure<V, F>;
 }
 
@@ -316,7 +316,7 @@ template<typename V, typename F> const F reason(const failable<V, F>& m) {
  * if present, or does nothing if there's no value and a failure instead.
  */
 template<typename R, typename FR, typename V, typename FV>
-const failable<R, FR> operator>>(const failable<V, FV>& m, const lambda<failable<R, FR>(V)>& f) {
+const failable<R, FR> operator>>(const failable<V, FV>& m, const lambda<failable<R, FR>(const V)>& f) {
     if (!hasContent(m))
         return m;
     return f(content(m));
@@ -390,7 +390,7 @@ template<typename S, typename V> const S content(const scp<S, V>& m) {
  */
 template<typename S, typename V> class state {
 public:
-    state(const lambda<scp<S, V>(S)>& f) : f(f) {
+    state(const lambda<scp<S, V>(const S)>& f) : f(f) {
     }
 
     const scp<S, V> operator()(const S& s) const {
@@ -415,7 +415,7 @@ public:
     }
 
 private:
-    const lambda<scp<S, V>(S)> f;
+    const lambda<scp<S, V>(const S)> f;
 };
 
 /**
@@ -449,7 +449,7 @@ template<typename S, typename V> const state<S, V> result(const V& v) {
  * A transformer function takes a state and returns an scp pair carrying a content and a
  * new (transformed) state.
  */
-template<typename S, typename V> const state<S, V> transformer(const lambda<scp<S, V>(S)>& f) {
+template<typename S, typename V> const state<S, V> transformer(const lambda<scp<S, V>(const S)>& f) {
     return state<S, V>(f);
 }
 
@@ -459,9 +459,9 @@ template<typename S, typename V> const state<S, V> transformer(const lambda<scp<
  */
 template<typename S, typename A, typename B> struct stateBind {
     const state<S, A> st;
-    const lambda<state<S, B>(A)>f;
+    const lambda<state<S, B>(const A)>f;
 
-    stateBind(const state<S, A>& st, const lambda<state<S, B>(A)>& f) : st(st), f(f) {
+    stateBind(const state<S, A>& st, const lambda<state<S, B>(const A)>& f) : st(st), f(f) {
     }
 
     const scp<S, B> operator()(const S& is) const {
@@ -472,7 +472,7 @@ template<typename S, typename A, typename B> struct stateBind {
 };
 
 template<typename S, typename A, typename B>
-const state<S, B> operator>>(const state<S, A>& st, const lambda<state<S, B>(A)>& f) {
+const state<S, B> operator>>(const state<S, A>& st, const lambda<state<S, B>(const A)>& f) {
     return state<S, B>(stateBind<S, A , B>(st, f));
 }
 

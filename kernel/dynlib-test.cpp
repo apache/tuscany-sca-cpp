@@ -42,8 +42,8 @@ extern "C" {
         return tuscany::test::cppsquare(x);
     }
 
-    const tuscany::lambda<int(int)> csquarel() {
-        return tuscany::lambda<int(int)>(tuscany::test::cppsquare);
+    const tuscany::lambda<int(const int)> csquarel() {
+        return tuscany::lambda<int(const int)>(tuscany::test::cppsquare);
     }
 
 }

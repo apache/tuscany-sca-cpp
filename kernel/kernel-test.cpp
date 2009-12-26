@@ -20,24 +20,21 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test core utils.
+ * Test kernel functions.
  */
 
 #include <assert.h>
-#include <sys/time.h>
-#include <time.h>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include "function.hpp"
 #include "list.hpp"
 #include "slist.hpp"
-#include "parallel.hpp"
+#include "tree.hpp"
 #include "value.hpp"
-#include "element.hpp"
-#include "xml.hpp"
 #include "monad.hpp"
 #include "dynlib.hpp"
+#include "perf.hpp"
 
 namespace tuscany {
 
@@ -55,22 +52,22 @@ const int square(const int x) {
     return x * x;
 }
 
-int mapLambda(lambda<int(int)> f, int v) {
+int mapLambda(lambda<int(const int)> f, int v) {
     return f(v);
 }
 
 bool testLambda() {
-    const lambda<int(int)> sq(square);
+    const lambda<int(const int)> sq(square);
     assert(sq(2) == 4);
     assert(mapLambda(sq, 2) == 4);
     assert(mapLambda(square, 2) == 4);
 
-    const lambda<int(int)> incf(inc(10));
+    const lambda<int(const int)> incf(inc(10));
     assert(incf(1) == 11);
     assert(mapLambda(incf, 1) == 11);
     assert(mapLambda(inc(10), 1) == 11);
 
-    lambda<int(int)> l;
+    lambda<int(const int)> l;
     l = incf;
     assert(l(1) == 11);
     l = square;
@@ -113,6 +110,10 @@ struct Element {
         return o.i == i;
     }
 };
+std::ostream& operator<<(std::ostream& out, const Element& v) {
+    out << v.i ;
+    return out;
+}
 
 bool testCons() {
     assert(car(cons(2, mklist(3))) == 2);
@@ -195,6 +196,10 @@ struct Complex {
         x(x), y(y) {
     }
 };
+std::ostream& operator<<(std::ostream& out, const Complex& v) {
+    out << "[" << v.x << ":" << v.y << "]";
+    return out;
+}
 
 bool testComplex() {
     const list<Complex> p = mklist(Complex(1, 2), Complex(3, 4));
@@ -219,12 +224,12 @@ const int add(const int x, const int y) {
 }
 
 bool testReduce() {
-    const lambda<int(int, int)> r(add);
+    const lambda<int(const int, const int)> r(add);
     assert(reduce(r, 0, mklist(1, 2, 3)) == 6);
     return true;
 }
 
-bool isPositive(int x) {
+bool isPositive(const int x) {
     if(x >= 0)
         return true;
     else
@@ -306,8 +311,6 @@ bool testSeq() {
 
     list<double> s = seq(0.0, 1000.0);
     assert(1001 == length(s));
-    //printLambdaCounters();
-    //printListCounters();
 
     assert(1001 == length(map<double, double>(testSeqMap, s)));
 
@@ -315,9 +318,6 @@ bool testSeq() {
     assert(201 == length(member(200.0, reverse(s))));
 
     assert(1001 == (reduce<double, double>(testSeqReduce, 0.0, s)));
-    //printLambdaCounters();
-    //printListCounters();
-
     return true;
 }
 
@@ -329,7 +329,7 @@ bool testValue() {
     assert(value(true) == value(true));
     assert(value(1) == value(1));
     assert(value("abcd") == value("abcd"));
-    lambda<value(list<value>&)> vl(valueSquare);
+    lambda<value(const list<value>&)> vl(valueSquare);
     assert(value(vl) == value(vl));
     assert(value(mklist<value>(1, 2)) == value(mklist<value>(1, 2)));
 
@@ -357,6 +357,40 @@ bool testValueGC() {
     return true;
 }
 
+bool testTree() {
+    const list<value> t = mktree<value>("a", list<value>(), list<value>());
+    const list<value> ct = constree<value>("d", constree<value>("f", constree<value>("c", constree<value>("e", constree<value>("b", t)))));
+    const list<value> mt = mktree(mklist<value>("d", "f", "c", "e", "b", "a"));
+    assert(mt == ct);
+    const list<value> l = flatten<value>(mt);
+    assert(length(l) == 6);
+    assert(car(l) == "a");
+    assert(car(reverse(l)) == "f");
+    const list<value> bt = mkbtree<value>(l);
+    assert(car(bt) == "c");
+    return true;
+}
+
+const list<value> lta(const std::string& x) {
+    return mklist<value>(x.c_str(), (x + x).c_str());
+}
+
+bool testTreeAssoc() {
+    const list<value> t = mktree<value>(lta("a"), list<value>(), list<value>());
+    const list<value> at = constree<value>(lta("d"), constree<value>(lta("f"), constree<value>(lta("c"), constree<value>(lta("e"), constree<value>(lta("b"), t)))));
+    const list<value> l = flatten<value>(at);
+    assert(length(l) == 6);
+    assert(car(l) == mklist<value>("a", "aa"));
+    assert(car(reverse(l)) == mklist<value>("f", "ff"));
+    const list<value> bt = mkbtree<value>(l);
+    assert(car(bt) == mklist<value>("c", "cc"));
+    assert(assoctree<value>("a", bt) == mklist<value>("a", "aa"));
+    assert(assoctree<value>("b", bt) == mklist<value>("b", "bb"));
+    assert(assoctree<value>("f", bt) == mklist<value>("f", "ff"));
+    assert(isNil(assoctree<value>("x", bt)));
+    return true;
+}
+
 double fib_aux(double n, double a, double b) {
     if(n == 0.0)
         return a;
@@ -367,19 +401,31 @@ double fib(double n) {
     return fib_aux(n, 0.0, 1.0);
 }
 
-bool testCppPerf() {
-    struct timeval start;
-    struct timeval end;
-    {
-        gettimeofday(&start, NULL);
-
+struct fibMapPerf {
+    const bool operator()() const {
         list<double> s = seq(0.0, 999.0);
         list<double> r = map<double, double>(fib, s);
         assert(1000 == length(r));
+        return true;
+    }
+};
 
-        gettimeofday(&end, NULL);
-        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        //std::cout << "Fib cpp function map perf test " << t << " ms" << std::endl;
+struct nestedFibMapPerf {
+    const lambda<double(const double)> fib;
+    nestedFibMapPerf(const lambda<double(const double)>& fib) : fib(fib) {
+    }
+    const bool operator()() const {
+        list<double> s = seq(0.0, 999.0);
+        list<double> r = map<double, double>(fib, s);
+        assert(1000 == length(r));
+        return true;
+    }
+};
+
+bool testCppPerf() {
+    {
+        const lambda<bool()> fml = fibMapPerf();
+        std::cout << "Fibonacci map test " << (time(fml, 1, 1) / 1000) << " ms" << std::endl;
     }
 
     {
@@ -396,197 +442,8 @@ bool testCppPerf() {
             }
         };
 
-        gettimeofday(&start, NULL);
-
-        list<double> s = seq(0.0, 999.0);
-        list<double> r = map(lambda<double(double)>(nested::fib), s);
-        assert(1000 == length(r));
-
-        gettimeofday(&end, NULL);
-        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        //std::cout << "Fib cpp nested function map perf test " << t << " ms" << std::endl;
-    }
-    return true;
-}
-
-bool testAtomicPerf() {
-    struct timeval start;
-    struct timeval end;
-    {
-        gettimeofday(&start, NULL);
-        for(int i = 0; i < 10000000;)
-            i = i + 1;
-        gettimeofday(&end, NULL);
-        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        //std::cout << "Loop test " << t << " ms" << std::endl;
-    }
-    {
-        gettimeofday(&start, NULL);
-        for(int i = 0; i < 10000000;)
-            __sync_add_and_fetch(&i, 1);
-        gettimeofday(&end, NULL);
-        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        //std::cout << "Loop atomic test " << t << " ms" << std::endl;
-    }
-    {
-        pthread_mutex_t mutex;
-        pthread_mutex_init(&mutex, NULL);
-        gettimeofday(&start, NULL);
-        for(int i = 0; i < 10000000;) {
-            pthread_mutex_lock(&mutex);
-            i = i + 1;
-            pthread_mutex_unlock(&mutex);
-        }
-        gettimeofday(&end, NULL);
-        pthread_mutex_destroy(&mutex);
-        //long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-        //std::cout << "Loop mutex test " << t << " ms" << std::endl;
-    }
-    return true;
-}
-
-const int mtsquare(const int x) {
-    //std::cout << "thread " << threadId() << " mtsquare(" << x << ")\n";
-    for(int i = 0; i < 10000000; i++)
-        ;
-    return x * x;
-}
-
-bool testWorker() {
-    worker w(10);
-    {
-        const lambda<int()> func = curry(lambda<int(int)> (mtsquare), 2);
-        assert(submit(w, func) == 4);
-    }
-    {
-        const int max = 10;
-
-        list<future<int> > r;
-        for(int i = 0; i < max; i++) {
-            const lambda<int()> func = curry(lambda<int(int)> (mtsquare), i);
-            r = cons(submit(w, func), r);
-        }
-        for(int i = max - 1; i >= 0; i--) {
-            assert(car(r) == i * i);
-            r = cdr(r);
-        }
-    }
-    shutdown(w);
-    return true;
-}
-
-const std::string currencyXML =
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<composite xmlns=\"http://docs.oasis-open.org/ns/opencsa/sca/200903\" "
-"xmlns:t=\"http://tuscany.apache.org/xmlns/sca/1.1\" "
-"targetNamespace=\"http://services\" "
-"name=\"currency\">"
-"<component name=\"CurrencyConverterWebService\">"
-"<implementation.java class=\"services.CurrencyConverterImpl\"/>"
-"<service name=\"CurrencyConverter\">"
-"<binding.ws/>"
-"</service>"
-"</component>"
-"<component name=\"CurrencyConverterWebService2\">"
-"<implementation.java class=\"services.CurrencyConverterImpl2\"/>"
-"<service name=\"CurrencyConverter2\">"
-"<binding.atom/>"
-"</service>"
-"<property name=\"currency\">US</property>"
-"</component>"
-"</composite>"
-"\n";
-
-const std::string customerXML =
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<customer>"
-"<name>jdoe</name>"
-"<address><city>san francisco</city><state>ca</state></address>"
-"<account><id>1234</id><balance>1000</balance></account>"
-"<account><id>6789</id><balance>2000</balance></account>"
-"<account><id>4567</id><balance>3000</balance></account>"
-"</customer>"
-"\n";
-
-
-const bool isName(const value& token) {
-    return isTaggedList(token, attribute) && attributeName(token) == "name";
-}
-
-bool testReadXML() {
-    {
-        std::istringstream is(customerXML);
-        const list<value> c = readXML(streamList(is));
-    }
-    {
-        std::istringstream is(currencyXML);
-        const list<value> c = readXML(streamList(is));
-
-        const value composite = car(c);
-        assert(isTaggedList(composite, element));
-        assert(elementName(composite) == "composite");
-        assert(attributeValue(car(filter<value>(isName, elementChildren(composite)))) == std::string("currency"));
-    }
-    return true;
-}
-
-std::ostringstream* xmlWriter(const std::string& s, std::ostringstream* os) {
-    (*os) << s;
-    return os;
-}
-
-bool testWriteXML() {
-    {
-        std::istringstream is(customerXML);
-        const list<value> c = readXML(streamList(is));
-        std::ostringstream os;
-        writeXML<std::ostringstream*>(xmlWriter, &os, c);
-        assert(os.str() == customerXML);
-    }
-    {
-        std::istringstream is(currencyXML);
-        const list<value> c = readXML(streamList(is));
-        std::ostringstream os;
-        writeXML<std::ostringstream*>(xmlWriter, &os, c);
-        assert(os.str() == currencyXML);
-    }
-    return true;
-}
-
-bool testElement() {
-    {
-        const list<value> ad = mklist<value>(mklist<value>("city", std::string("san francisco")), mklist<value>("state", std::string("ca")));
-        const list<value> ac1 = mklist<value>(mklist<value>("id", std::string("1234")), mklist<value>("balance", 1000));
-        const list<value> ac2 = mklist<value>(mklist<value>("id", std::string("6789")), mklist<value>("balance", 2000));
-        const list<value> ac3 = mklist<value>(mklist<value>("id", std::string("4567")), mklist<value>("balance", 3000));
-        {
-            const list<value> c = mklist<value>(mklist<value>("customer", mklist<value>("name", std::string("jdoe")), cons<value>("address", ad), mklist<value>("account", mklist<value>(ac1, ac2, ac3))));
-            const list<value> e = valuesToElements(c);
-            const list<value> v = elementsToValues(e);
-            assert(v == c);
-
-            std::ostringstream os;
-            writeXML<std::ostringstream*>(xmlWriter, &os, e);
-            assert(os.str() == customerXML);
-        }
-        {
-            const list<value> c = mklist<value>(mklist<value>("customer", mklist<value>("name", std::string("jdoe")), cons<value>("address", ad), cons<value>("account", ac1), cons<value>("account", ac2), cons<value>("account", ac3)));
-            const list<value> e = valuesToElements(c);
-            const list<value> v = elementsToValues(e);
-
-            std::ostringstream os;
-            writeXML<std::ostringstream*>(xmlWriter, &os, e);
-            assert(os.str() == customerXML);
-        }
-    }
-    {
-        std::istringstream is(customerXML);
-        const list<value> c = readXML(streamList(is));
-        const list<value> v = elementsToValues(c);
-        const list<value> e = valuesToElements(v);
-        std::ostringstream os;
-        writeXML<std::ostringstream*>(xmlWriter, &os, e);
-        assert(os.str() == customerXML);
+        const lambda<bool()> nfml = nestedFibMapPerf(lambda<double(const double)>(nested::fib));
+        std::cout << "Nested Fibonacci map test " << (time(nfml, 1, 1) / 1000) << " ms" << std::endl;
     }
     return true;
 }
@@ -651,8 +508,9 @@ bool testFailableMonad() {
     assert((m >> success<int, std::string>()) == m);
     assert(m >> failableF >> failableG == m >> failableH);
 
-    failable<int, std::string> ooops = mkfailure<int, std::string>("ooops");
-    assert(reason(ooops) == "ooops");
+    std::cout << "Failable monad test... ";
+    failable<int, std::string> ooops = mkfailure<int, std::string>("test");
+    assert(reason(ooops) == "test");
     assert(ooops >> failableF >> failableG == ooops);
     return true;
 }
@@ -683,7 +541,7 @@ const state<int, double> stateH(const double v) {
 }
 
 bool testStateMonad() {
-    const lambda<state<int, double>(double)> r(result<int, double>);
+    const lambda<state<int, double>(const double)> r(result<int, double>);
 
     state<int, double> m = result<int, double>(2.0);
     assert((m >> stateF)(0) == stateF(2.0)(0));
@@ -697,14 +555,14 @@ bool testStateMonad() {
 bool testDynLib() {
     const failable<lib, std::string> dl(dynlib(".libs/libdynlib-test" + dynlibExt));
     assert(hasContent(dl));
-    const failable<lambda<int(int)>, std::string> sq(dynlambda<int(int)>("csquare", content(dl)));
+    const failable<lambda<int(const int)>, std::string> sq(dynlambda<int(const int)>("csquare", content(dl)));
     assert(hasContent(sq));
-    lambda<int(int)> l(content(sq));
+    lambda<int(const int)> l(content(sq));
     assert(l(2) == 4);
 
-    const failable<lambda<lambda<int(int)>()>, std::string> sql(dynlambda<lambda<int(int)>()>("csquarel", content(dl)));
+    const failable<lambda<lambda<int(const int)>()>, std::string> sql(dynlambda<lambda<int(const int)>()>("csquarel", content(dl)));
     assert(hasContent(sql));
-    lambda<lambda<int(int)>()> ll(content(sql));
+    lambda<lambda<int(const int)>()> ll(content(sql));
     assert(ll()(3) == 9);
     return true;
 }
@@ -736,12 +594,9 @@ int main() {
     tuscany::testSeq();
     tuscany::testValue();
     tuscany::testValueGC();
-    tuscany::testElement();
+    tuscany::testTree();
+    tuscany::testTreeAssoc();
     tuscany::testCppPerf();
-    tuscany::testAtomicPerf();
-    tuscany::testWorker();
-    tuscany::testReadXML();
-    tuscany::testWriteXML();
     tuscany::testIdMonad();
     tuscany::testMaybeMonad();
     tuscany::testFailableMonad();

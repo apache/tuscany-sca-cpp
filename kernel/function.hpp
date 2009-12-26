@@ -140,11 +140,11 @@ public:
         debug_inc(countELambdas);
     }
 
-    template<typename F> lambda(const F f) : callable(0) {
-        typedef typename CallableType::template Proxy<F> ProxyType;
-
+    template<typename F> lambda(const F f) {
         debug_inc(countLambdas);
         debug_inc(countFLambdas);
+
+        typedef typename CallableType::template Proxy<F> ProxyType;
         callable = gc_counting_ptr<CallableType>(new ProxyType(f));
     }
 

@@ -32,6 +32,7 @@
 #include "gc.hpp"
 #include "function.hpp"
 #include "list.hpp"
+#include "monad.hpp"
 #include "debug.hpp"
 
 namespace tuscany
@@ -40,7 +41,9 @@ namespace tuscany
 #ifdef _DEBUG
 
 /**
- * Debug counters.
+ * Debug utilities. Counters used to track instances of values, and
+ * macro used to write the contents of a value in a string, easier to
+ * watch in a debugger than the value itself.
  */
 long int countValues = 0;
 long int countEValues = 0;
@@ -64,11 +67,17 @@ bool printValueCounters() {
     return true;
 }
 
+#define debug_watchValue() do { \
+        this->watch = watchValue(*this); \
+    } while (0)
+
 #else
 
 #define resetValueCounters()
 #define checkValueCounters() true
 #define printValueCounters()
+
+#define debug_watchValue()
 
 #endif
 
@@ -85,6 +94,7 @@ public:
         type(value::Undefined) {
         debug_inc(countValues);
         debug_inc(countEValues);
+        debug_watchValue();
     }
 
     value(const value& v) {
@@ -113,6 +123,9 @@ public:
         default:
             break;
         }
+#ifdef _DEBUG
+        watch = v.watch;
+#endif
     }
 
     const value& operator=(const value& v) {
@@ -141,6 +154,9 @@ public:
         default:
             break;
         }
+#ifdef _DEBUG
+        watch = v.watch;
+#endif
         return *this;
     }
 
@@ -148,70 +164,84 @@ public:
         debug_dec(countValues);
     }
 
-    value(const lambda<value(list<value>&)>& func) :
-        type(value::Lambda), data(vdata(func)) {
+    value(const lambda<value(const list<value>&)>& func) : type(value::Lambda), data(vdata(func)) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const std::string& str) :
-        type(value::String), data(vdata(result(str))) {
+    value(const std::string& str) : type(value::String), data(vdata(result(str))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const char* str) :
-        type(value::Symbol), data(vdata(result(std::string(str)))) {
+    value(const char* str) : type(value::Symbol), data(vdata(result(std::string(str)))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const list<value>& lst) :
-        type(value::List), data(vdata(result(lst))) {
+    value(const list<value>& lst) : type(value::List), data(vdata(result(lst))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const list<list<value> >& l) :
-        type(value::List), data(vdata(result(listOfValues(l)))) {
+    value(const list<list<value> >& l) : type(value::List), data(vdata(result(listOfValues(l)))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const double num) :
-        type(value::Number), data(vdata(result(num))) {
+    value(const double num) : type(value::Number), data(vdata(result(num))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const int num) :
-        type(value::Number), data(vdata(result((double)num))) {
+    value(const int num) : type(value::Number), data(vdata(result((double)num))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const bool boo) :
-        type(value::Bool), data(vdata(result(boo))) {
+    value(const bool boo) : type(value::Bool), data(vdata(result(boo))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const char chr) :
-        type(value::Char), data(vdata(result(chr))) {
+    value(const char chr) : type(value::Char), data(vdata(result(chr))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const gc_ptr<value> ptr) :
-        type(value::Ptr), data(vdata(result(ptr))) {
+    value(const gc_ptr<value> ptr) : type(value::Ptr), data(vdata(result(ptr))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
     }
 
-    value(const gc_pool_ptr<value> ptr) :
-        type(value::PoolPtr), data(vdata(result(ptr))) {
+    value(const gc_pool_ptr<value> ptr) : type(value::PoolPtr), data(vdata(result(ptr))) {
         debug_inc(countValues);
         debug_inc(countVValues);
+        debug_watchValue();
+    }
+
+    value(const failable<value, std::string>& m) : type(value::List),
+        data(vdata(result(hasContent(m)? mklist<value>(content(m)) : mklist<value>(value(), reason(m))))) {
+        debug_inc(countValues);
+        debug_inc(countVValues);
+        debug_watchValue();
+    }
+
+    value(const maybe<value>& m) : type(value::List),
+        data(vdata(result(hasContent(m)? mklist<value>(content(m)) : list<value>()))) {
+        debug_inc(countValues);
+        debug_inc(countVValues);
+        debug_watchValue();
     }
 
     const bool operator!=(const value& v) const {
@@ -221,35 +251,75 @@ public:
     const bool operator==(const value& v) const {
         if(this == &v)
             return true;
-        if(type != v.type)
-            return false;
         switch(type) {
         case value::Undefined:
             return true;
         case value::List:
-            return lst()() == v.lst()();
+            return v.type == value::List && lst()() == v.lst()();
         case value::Lambda:
-            return func() == v.func();
+            return v.type == value::Lambda && func() == v.func();
         case value::Symbol:
-            return str()() == v.str()();
+            return str()() == (std::string)v;
         case value::String:
-            return str()() == v.str()();
+            return str()() == (std::string)v;
         case value::Number:
-            return num()() == v.num()();
+            return num()() == (double)v;
         case value::Bool:
-            return boo()() == v.boo()();
+            return boo()() == (bool)v;
         case value::Char:
-            return chr()() == v.chr()();
+            return chr()() == (char)v;
         case value::Ptr:
-            return ptr()() == v.ptr()();
+            return v.type == value::Ptr && ptr()() == v.ptr()();
         case value::PoolPtr:
-            return poolptr()() == v.poolptr()();
+            return v.type == value::PoolPtr && poolptr()() == v.poolptr()();
         default:
             return false;
         }
     }
 
-    const value operator()(list<value>& args) const {
+    const bool operator<(const value& v) const {
+        if(this == &v)
+            return false;
+        switch(type) {
+        case value::List:
+            return v.type == value::List && lst()() < v.lst()();
+        case value::Symbol:
+        case value::String:
+            return str()() < (std::string)v;
+            return str()() < (std::string)v;
+        case value::Bool:
+            return boo()() < (bool)v;
+        case value::Number:
+            return num()() < (double)v;
+        case value::Char:
+            return chr()() < (char)v;
+        default:
+            return false;
+        }
+    }
+
+    const bool operator>(const value& v) const {
+        if(this == &v)
+            return false;
+        switch(type) {
+        case value::List:
+            return v.type == value::List && lst()() > v.lst()();
+        case value::Symbol:
+        case value::String:
+            return str()() > (std::string)v;
+            return str()() > (std::string)v;
+        case value::Bool:
+            return boo()() > (bool)v;
+        case value::Number:
+            return num()() > (double)v;
+        case value::Char:
+            return chr()() > (char)v;
+        default:
+            return false;
+        }
+    }
+
+    const value operator()(const list<value>& args) const {
         return func()(args);
     }
 
@@ -355,17 +425,12 @@ public:
         return listOfListOfValues(lst()());
     }
 
-    operator const lambda<value(list<value>&)>() const {
+    operator const lambda<value(const list<value>&)>() const {
         return func();
     }
 
-    friend std::ostream& operator<<(std::ostream&, const value&);
-
-    ValueType type;
-    lambda<char()> data;
-
 private:
-    template<typename T> lambda<T>& vdata() const {
+     template<typename T> lambda<T>& vdata() const {
         return *reinterpret_cast<lambda<T> *> (const_cast<lambda<char()> *> (&data));
     }
 
@@ -401,8 +466,8 @@ private:
         return vdata<list<value>()> ();
     }
 
-    lambda<value(list<value>&)>& func() const {
-        return vdata<value(list<value>&)> ();
+    lambda<value(const list<value>&)>& func() const {
+        return vdata<value(const list<value>&)> ();
     }
 
     const list<value> listOfValues(const list<list<value> >& l) const {
@@ -417,7 +482,32 @@ private:
         return cons<list<value> >(list<value>(car(l)), listOfListOfValues(cdr(l)));
     }
 
+    friend std::ostream& operator<<(std::ostream&, const value&);
+    friend const value::ValueType type(const value& v);
+
+#ifdef _DEBUG
+    friend const std::string watchValue(const value& v);
+    std::string watch;
+#endif
+
+    ValueType type;
+     lambda<char()> data;
 };
+
+#ifdef _DEBUG
+
+/**
+ * Debug utility used to write the contents of a value to a string, easier
+ * to watch than the value itself in a debugger.
+ */
+const std::string watchValue(const value& v) {
+    if (v.type == value::List)
+        return watchList<value>(v);
+    std::ostringstream os;
+    os << v;
+    return os.str();
+}
+#endif
 
 /**
  * Write a value to a stream.
@@ -444,14 +534,14 @@ std::ostream& operator<<(std::ostream& out, const value& v) {
     case value::Ptr: {
         const gc_ptr<value> p =  v.ptr()();
         if (p == gc_ptr<value>(NULL))
-            return out << "pointer::null";
-        return out << "pointer::" << *p;
+            return out << "gc_ptr::null";
+        return out << "gc_ptr::" << p;
     }
     case value::PoolPtr: {
         const gc_pool_ptr<value> p =  v.poolptr()();
         if (p == gc_pool_ptr<value>(NULL))
-            return out << "pointer::null";
-        return out << "pointer::" << *p;
+            return out << "pool_ptr::null";
+        return out << "pool_ptr::" << p;
     }
     default:
         return out << "undefined";
@@ -468,71 +558,71 @@ const value::ValueType type(const value& v) {
 /**
  * Returns true if a value is nil.
  */
-const bool isNil(const value& value) {
-    return value.type == value::Undefined;
+const bool isNil(const value& v) {
+    return type(v) == value::Undefined;
 }
 
 /**
  * Returns true if a value is a lambda.
  */
-const bool isLambda(const value& value) {
-    return value.type == value::Lambda;
+const bool isLambda(const value& v) {
+    return type(v) == value::Lambda;
 }
 
 /**
  * Returns true if a value is a string.
  */
-const bool isString(const value& value) {
-    return value.type == value::String;
+const bool isString(const value& v) {
+    return type(v) == value::String;
 }
 
 /**
  * Returns true if a value is a symbol.
  */
-const bool isSymbol(const value& value) {
-    return value.type == value::Symbol;
+const bool isSymbol(const value& v) {
+    return type(v) == value::Symbol;
 }
 
 /**
  * Returns true if a value is a list.
  */
-const bool isList(const value& value) {
-    return value.type == value::List;
+const bool isList(const value& v) {
+    return type(v) == value::List;
 }
 
 /**
  * Returns true if a value is a number.
  */
-const bool isNumber(const value& value) {
-    return value.type == value::Number;
+const bool isNumber(const value& v) {
+    return type(v) == value::Number;
 }
 
 /**
  * Returns true if a value is a boolean.
  */
-const bool isBool(const value& value) {
-    return value.type == value::Bool;
+const bool isBool(const value& v) {
+    return type(v) == value::Bool;
 }
 
 /**
  * Returns true if a value is a character.
  */
-const bool isChar(const value& value) {
-    return value.type == value::Char;
+const bool isChar(const value& v) {
+    return type(v) == value::Char;
 }
 
 /**
  * Returns true if a value is a pointer.
  */
-const bool isPtr(const value& value) {
-    return value.type == value::Ptr;
+const bool isPtr(const value& v) {
+    return type(v) == value::Ptr;
 }
 
 /**
  * Returns true if a value is a pooled pointer.
  */
-const bool isPoolPtr(const value& value) {
-    return value.type == value::PoolPtr;
+const bool isPoolPtr(const value& v) {
+    return type(v) == value::PoolPtr;
 }
 
 /**
