@@ -172,10 +172,11 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "$want_maintainer_mode" = "true"; then
-  AC_SUBST([CXXFLAGS], ["-D_DEBUG -O0 -g3 -pg -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"])
-  AC_SUBST([LDFLAGS], ["${LDFLAGS} -pg"])
+  AC_SUBST([CXXFLAGS], [" -D_REENTRANT -D_DEBUG -O0 -g3 -pg -Werror -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"])
+  AC_SUBST([LDFLAGS], ["${LDFLAGS} -lpthread -pg"])
 else
-  AC_SUBST([CXXFLAGS], ["-O3 -std=c++0x -fmessage-length=0"])
+  AC_SUBST([CXXFLAGS], [" -D_REENTRANT -O3 -std=c++0x -fmessage-length=0"])
+  AC_SUBST([LDFLAGS], ["${LDFLAGS} -lpthread -pg"])
 fi
 
 # Configure exuberant ctags
@@ -222,8 +223,6 @@ AC_CONFIG_FILES([Makefile
                  components/store/Makefile
                  samples/Makefile
                  test/Makefile
-                 test/store-object/Makefile
-                 test/store-function/Makefile
                  test/store-script/Makefile
                  doc/Makefile
                  doc/Doxyfile

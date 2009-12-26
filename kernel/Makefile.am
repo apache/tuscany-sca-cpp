@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = kernel-test cache-test xsd-test
+noinst_PROGRAMS = kernel-test parallel-test xml-test xsd-test
 
 testdir=$(prefix)/test
 test_LTLIBRARIES = libdynlib-test.la
@@ -26,18 +26,18 @@ include_HEADERS = *.hpp
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
 
 kernel_test_SOURCES = kernel-test.cpp
-kernel_test_CXXFLAGS = $(CXXFLAGS) -D_REENTRANT
-kernel_test_LDADD = -lpthread -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+kernel_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 
 libdynlib_test_la_SOURCES = dynlib-test.cpp
-libdynlib_test_la_CXXFLAGS = $(CXXFLAGS) -D_REENTRANT
-libdynlib_test_la_LIBADD = -lpthread -L${APR_LIB} -lapr-1 -laprutil-1
+libdynlib_test_la_LIBADD = -L${APR_LIB} -lapr-1 -laprutil-1
 
-cache_test_SOURCES = cache-test.cpp
-cache_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+parallel_test_SOURCES = parallel-test.cpp
+parallel_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+
+xml_test_SOURCES = xml-test.cpp
+xml_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 
 xsd_test_SOURCES = xsd-test.cpp
 xsd_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
 
-TESTS = kernel-test diskcache-test
-
+TESTS = kernel-test parallel-test xml-test

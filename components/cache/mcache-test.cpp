@@ -24,11 +24,9 @@
  */
 
 #include <assert.h>
-#include <sys/time.h>
-#include <time.h>
 #include <iostream>
 #include <string>
-#include <fstream>
+#include "perf.hpp"
 #include "mcache.hpp"
 
 namespace tuscany {
@@ -47,35 +45,23 @@ bool testMemCached() {
     return true;
 }
 
-const double duration(struct timeval start, struct timeval end, int count) {
-    long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-    return (double)t / (double)count;
-}
-
-bool testGetLoop(const int count, MemCached& ch) {
-    if (count == 0)
+struct getLoop {
+    MemCached& ch;
+    getLoop(MemCached& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        assert(get("c", ch) == value(std::string("CCC")));
         return true;
-    assert(get("c", ch) == value(std::string("CCC")));
-    return testGetLoop(count - 1, ch);
-}
+    }
+};
 
 bool testGetPerf() {
-    const int count = 50;
-    struct timeval start;
-    struct timeval end;
-    {
-        MemCached ch;
-        assert(hasContent(post("c", std::string("CCC"), ch)));
+    MemCached ch;
+    assert(hasContent(post("c", std::string("CCC"), ch)));
 
-        testGetLoop(5, ch);
+    const lambda<bool()> gl = getLoop(ch);
+    std::cout << "Memcached get test " << time(gl, 5, 200) << " ms" << std::endl;
 
-        gettimeofday(&start, NULL);
-
-        testGetLoop(count, ch);
-
-        gettimeofday(&end, NULL);
-        std::cout << "Memcached get test " << duration(start, end, count) << " ms" << std::endl;
-    }
     return true;
 }
 

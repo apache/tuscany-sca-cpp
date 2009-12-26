@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-object store-function store-script
+SUBDIRS = store-script
 

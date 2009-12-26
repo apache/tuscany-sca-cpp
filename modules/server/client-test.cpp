@@ -24,12 +24,12 @@
  */
 
 #include <assert.h>
-#include <sys/time.h>
-#include <time.h>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include "slist.hpp"
+#include "parallel.hpp"
+#include "perf.hpp"
 #include "../http/curl.hpp"
 
 namespace tuscany {
@@ -37,11 +37,6 @@ namespace server {
 
 const bool contains(const std::string& str, const std::string& pattern) {
     return str.find(pattern) != str.npos;
-}
-
-const double duration(struct timeval start, struct timeval end, int count) {
-    long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-    return (double)t / (double)count;
 }
 
 std::ostringstream* curlWriter(const std::string& s, std::ostringstream* os) {
@@ -66,27 +61,22 @@ const bool testGet() {
     return true;
 }
 
-const bool testGetLoop(const int count, http::CURLSession& ch) {
-    if (count == 0)
+struct getLoop {
+    http::CURLSession ch;
+    getLoop(http::CURLSession& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        const failable<value, std::string> r = get("http://localhost:8090", ch);
+        assert(hasContent(r));
+        assert(contains(content(r), "It works"));
         return true;
-    const failable<value, std::string> r = get("http://localhost:8090", ch);
-    assert(hasContent(r));
-    assert(contains(content(r), "It works"));
-    return testGetLoop(count - 1, ch);
-}
+    }
+};
 
 const bool testGetPerf() {
-    const int count = 50;
     http::CURLSession ch;
-    struct timeval start;
-    struct timeval end;
-    {
-        testGetLoop(5, ch);
-        gettimeofday(&start, NULL);
-        testGetLoop(count, ch);
-        gettimeofday(&end, NULL);
-        std::cout << "Static GET test " << duration(start, end, count) << " ms" << std::endl;
-    }
+    const lambda<bool()> gl = getLoop(ch);
+    std::cout << "Static GET test " << time(gl, 5, 200) << " ms" << std::endl;
     return true;
 }
 
@@ -97,48 +87,37 @@ const bool testEval() {
     return true;
 }
 
-const bool testEvalLoop(const int count, http::CURLSession& ch) {
-    if (count == 0)
+struct evalLoop {
+    http::CURLSession ch;
+    evalLoop(http::CURLSession& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        const value val = content(http::evalExpr(mklist<value>(std::string("echo"), std::string("Hello")), "http://localhost:8090/test", ch));
+        assert(val == std::string("Hello"));
         return true;
-    const value val = content(http::evalExpr(mklist<value>(std::string("echo"), std::string("Hello")), "http://localhost:8090/test", ch));
-    assert(val == std::string("Hello"));
-    return testEvalLoop(count - 1, ch);
-}
+    }
+};
 
 const value blob(std::string(3000, 'A'));
 const list<value> blobs = mklist(blob, blob, blob, blob, blob);
 
-const bool testBlobEvalLoop(const int count, http::CURLSession& ch) {
-    if (count == 0)
+struct blobEvalLoop {
+    http::CURLSession ch;
+    blobEvalLoop(http::CURLSession& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        const value val = content(http::evalExpr(mklist<value>(std::string("echo"), blobs), "http://localhost:8090/test", ch));
+        assert(val == blobs);
         return true;
-    const value val = content(http::evalExpr(mklist<value>(std::string("echo"), blobs), "http://localhost:8090/test", ch));
-    assert(val == blobs);
-    return testBlobEvalLoop(count - 1, ch);
-}
+    }
+};
 
 const bool testEvalPerf() {
-    const int count = 50;
     http::CURLSession ch;
-    struct timeval start;
-    struct timeval end;
-    {
-        testEvalLoop(5, ch);
-        gettimeofday(&start, NULL);
-        testEvalLoop(count, ch);
-        gettimeofday(&end, NULL);
-        std::cout << "JSON-RPC eval echo test " << duration(start, end, count) << " ms" << std::endl;
-    }
-    {
-        testBlobEvalLoop(5, ch);
-        gettimeofday(&start, NULL);
-        testBlobEvalLoop(count, ch);
-        gettimeofday(&end, NULL);
-        std::cout << "JSON-RPC eval blob test " << duration(start, end, count) << " ms" << std::endl;
-    }
-    return true;
-}
-
-const bool testFeed() {
+    const lambda<bool()> el = evalLoop(ch);
+    std::cout << "JSON-RPC eval echo test " << time(el, 5, 200) << " ms" << std::endl;
+    const lambda<bool()> bel = blobEvalLoop(ch);
+    std::cout << "JSON-RPC eval blob test " << time(bel, 5, 200) << " ms" << std::endl;
     return true;
 }
 
@@ -153,29 +132,27 @@ bool testPost() {
     return true;
 }
 
-const bool testPostLoop(const int count, const value& val, http::CURLSession& ch) {
-    if (count == 0)
+struct postLoop {
+    const value val;
+    http::CURLSession ch;
+    postLoop(const value& val, http::CURLSession& ch) : val(val), ch(ch) {
+    }
+    const bool operator()() const {
+        const failable<value, std::string> id = http::post(val, "http://localhost:8090/test", ch);
+        assert(hasContent(id));
         return true;
-    const failable<value, std::string> id = http::post(val, "http://localhost:8090/test", ch);
-    assert(hasContent(id));
-    return testPostLoop(count - 1, val, ch);
-}
+    }
+};
 
 const bool testPostPerf() {
-    const int count = 50;
     http::CURLSession ch;
-    struct timeval start;
-    struct timeval end;
     {
         const list<value> i = list<value>()
             << (list<value>() << "name" << std::string("Apple"))
             << (list<value>() << "price" << std::string("$2.99"));
         const list<value> val = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
-        testPostLoop(5, val, ch);
-        gettimeofday(&start, NULL);
-        testPostLoop(count, val, ch);
-        gettimeofday(&end, NULL);
-        std::cout << "ATOMPub POST small test " << duration(start, end, count) << " ms" << std::endl;
+        const lambda<bool()> pl = postLoop(val, ch);
+        std::cout << "ATOMPub POST small test " << time(pl, 5, 200) << " ms" << std::endl;
     }
     {
         const list<value> i = list<value>()
@@ -187,12 +164,59 @@ const bool testPostPerf() {
             << (list<value>() << "blob5" << blob)
             << (list<value>() << "price" << std::string("$2.99"));
         const list<value> val = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
-        testPostLoop(5, val, ch);
-        gettimeofday(&start, NULL);
-        testPostLoop(count, val, ch);
-        gettimeofday(&end, NULL);
-        std::cout << "ATOMPub POST blob test  " << duration(start, end, count) << " ms" << std::endl;
+        const lambda<bool()> pl = postLoop(val, ch);
+        std::cout << "ATOMPub POST blob test  " << time(pl, 5, 200) << " ms" << std::endl;
     }
+    return true;
+}
+
+const bool postThread(const int count, const value& val) {
+    http::CURLSession ch;
+    const lambda<bool()> pl = postLoop(val, ch);
+    time(pl, 0, count);
+    return true;
+}
+
+const list<future<bool> > startPost(worker& w, const int threads, const lambda<bool()>& l) {
+    if (threads == 0)
+        return list<future<bool> >();
+    return cons(submit(w, l), startPost(w, threads - 1, l));
+}
+
+const bool checkPost(const list<future<bool> >& r) {
+    if (isNil(r))
+        return true;
+    assert(car(r) == true);
+    return checkPost(cdr(r));
+}
+
+struct postThreadLoop {
+    const lambda<bool()> l;
+    const int threads;
+    const gc_ptr<worker> w;
+    postThreadLoop(const lambda<bool()>& l, const int threads) : l(l), threads(threads), w(new worker(threads)) {
+    }
+    const bool operator()() const {
+        list<future<bool> > r = startPost(*w, threads, l);
+        checkPost(r);
+        return true;
+    }
+};
+
+const bool testPostThreadPerf() {
+    const int count = 50;
+    const int threads = 10;
+
+    const list<value> i = list<value>()
+        << (list<value>() << "name" << std::string("Apple"))
+        << (list<value>() << "price" << std::string("$2.99"));
+    const value val = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+
+    const lambda<bool()> pl= curry(lambda<bool(const int, const value)>(postThread), count, val);
+    const lambda<bool()> ptl = postThreadLoop(pl, threads);
+    double t = time(ptl, 0, 1) / (threads * count);
+    std::cout << "ATOMPub POST thread test " << t << " ms" << std::endl;
+
     return true;
 }
 
@@ -221,26 +245,21 @@ const bool testEvalCpp() {
     return true;
 }
 
-const bool testEvalCppLoop(const int count, http::CURLSession& ch) {
-    if (count == 0)
+struct evalCppLoop {
+    http::CURLSession ch;
+    evalCppLoop(http::CURLSession& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        const value val = content(http::evalExpr(mklist<value>(std::string("hello"), std::string("world")), "http://localhost:8090/cpp", ch));
+        assert(val == std::string("hello world"));
         return true;
-    const value val = content(http::evalExpr(mklist<value>(std::string("hello"), std::string("world")), "http://localhost:8090/cpp", ch));
-    assert(val == std::string("hello world"));
-    return testEvalCppLoop(count - 1, ch);
-}
+    }
+};
 
 const bool testEvalCppPerf() {
-    const int count = 50;
     http::CURLSession ch;
-    struct timeval start;
-    struct timeval end;
-    {
-        testEvalCppLoop(5, ch);
-        gettimeofday(&start, NULL);
-        testEvalCppLoop(count, ch);
-        gettimeofday(&end, NULL);
-        std::cout << "JSON-RPC C++ eval test " << duration(start, end, count) << " ms" << std::endl;
-    }
+    const lambda<bool()> el = evalCppLoop(ch);
+    std::cout << "JSON-RPC C++ eval test " << time(el, 5, 200) << " ms" << std::endl;
     return true;
 }
 
@@ -254,9 +273,9 @@ int main() {
     tuscany::server::testGetPerf();
     tuscany::server::testPost();
     tuscany::server::testPostPerf();
+    tuscany::server::testPostThreadPerf();
     tuscany::server::testEval();
     tuscany::server::testEvalPerf();
-    tuscany::server::testFeed();
     tuscany::server::testPut();
     tuscany::server::testDel();
     tuscany::server::testEvalCpp();

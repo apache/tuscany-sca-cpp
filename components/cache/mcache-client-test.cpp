@@ -24,14 +24,13 @@
  */
 
 #include <assert.h>
-#include <sys/time.h>
-#include <time.h>
 #include <iostream>
 #include <string>
 
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
+#include "perf.hpp"
 #include "../../modules/http/curl.hpp"
 
 namespace tuscany {
@@ -83,43 +82,33 @@ bool testCache() {
     return true;
 }
 
-const double duration(struct timeval start, struct timeval end, int count) {
-    long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-    return (double)t / (double)count;
-}
-
-bool testGetLoop(const int count, const value& id, const value& entry, http::CURLSession& cs) {
-    if (count == 0)
+struct getLoop {
+    const value id;
+    const value entry;
+    http::CURLSession cs;
+    getLoop(const value& id, const value& entry, http::CURLSession cs) : id(id), entry(entry), cs(cs) {
+    }
+    const bool operator()() const {
+        const failable<value, std::string> val = http::get(url + "/" + std::string(id), cs);
+        assert(hasContent(val));
+        assert(content(val) == entry);
         return true;
-    const failable<value, std::string> val = http::get(url + "/" + std::string(id), cs);
-    assert(hasContent(val));
-    assert(content(val) == entry);
-    return testGetLoop(count - 1, id, entry, cs);
-}
+    }
+};
 
 bool testGetPerf() {
-    const int count = 50;
-    struct timeval start;
-    struct timeval end;
-    {
-        const list<value> i = list<value>()
-                << (list<value>() << "name" << std::string("Apple"))
-                << (list<value>() << "price" << std::string("$4.55"));
-        const list<value> a = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+    const list<value> i = list<value>()
+            << (list<value>() << "name" << std::string("Apple"))
+            << (list<value>() << "price" << std::string("$4.55"));
+    const value a = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
-        http::CURLSession cs;
-        const failable<value, std::string> id = http::post(a, url, cs);
-        assert(hasContent(id));
+    http::CURLSession cs;
+    const failable<value, std::string> id = http::post(a, url, cs);
+    assert(hasContent(id));
 
-        testGetLoop(5, content(id), a, cs);
+    const lambda<bool()> gl = getLoop(content(id), a, cs);
+    std::cout << "Cache get test " << time(gl, 5, 200) << " ms" << std::endl;
 
-        gettimeofday(&start, NULL);
-
-        testGetLoop(count, content(id), a, cs);
-
-        gettimeofday(&end, NULL);
-        std::cout << "Cache get test " << duration(start, end, count) << " ms" << std::endl;
-    }
     return true;
 }
 

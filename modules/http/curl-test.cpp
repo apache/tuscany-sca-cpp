@@ -24,12 +24,11 @@
  */
 
 #include <assert.h>
-#include <sys/time.h>
-#include <time.h>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include "slist.hpp"
+#include "perf.hpp"
 #include "curl.hpp"
 
 namespace tuscany {
@@ -37,11 +36,6 @@ namespace http {
 
 const bool contains(const std::string& str, const std::string& pattern) {
     return str.find(pattern) != str.npos;
-}
-
-const double duration(struct timeval start, struct timeval end, int count) {
-    long t = (end.tv_sec * 1000 + end.tv_usec / 1000) - (start.tv_sec * 1000 + start.tv_usec / 1000);
-    return (double)t / (double)count;
 }
 
 std::ostringstream* curlWriter(const std::string& s, std::ostringstream* os) {
@@ -66,30 +60,22 @@ const bool testGet() {
     return true;
 }
 
-const bool testGetLoop(const int count, CURLSession& ch) {
-    if (count == 0)
+struct getLoop {
+    CURLSession& ch;
+    getLoop(CURLSession& ch) : ch(ch) {
+    }
+    const bool operator()() const {
+        const failable<value, std::string> r = get("http://localhost:8090", ch);
+        assert(hasContent(r));
+        assert(contains(content(r), "It works"));
         return true;
-    const failable<value, std::string> r = get("http://localhost:8090", ch);
-    assert(hasContent(r));
-    assert(contains(content(r), "It works"));
-    return testGetLoop(count - 1, ch);
-}
+    }
+};
 
 const bool testGetPerf() {
-    const int count = 50;
     CURLSession ch;
-    struct timeval start;
-    struct timeval end;
-    {
-        testGetLoop(5, ch);
-
-        gettimeofday(&start, NULL);
-
-        testGetLoop(count, ch);
-
-        gettimeofday(&end, NULL);
-        std::cout << "Static GET test " << duration(start, end, count) << " ms" << std::endl;
-    }
+    lambda<bool()> gl = getLoop(ch);
+    std::cout << "Static GET test " << time(gl, 5, 200) << " ms" << std::endl;
     return true;
 }
 
