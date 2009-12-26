@@ -62,17 +62,16 @@ doxygen
 # Specific ignores
 kernel-test
 xsd-test
+parallel-test
+xml-test
 atom-test
 eval-test
 eval-shell
 json-test
-cache-test
 client-test
 mcache-test
 mcache-client-test
 curl-test
 scdl-test
-store-function-test
-store-object-test
 store-script-test
 

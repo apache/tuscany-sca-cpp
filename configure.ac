@@ -176,7 +176,7 @@ if test "$want_maintainer_mode" = "true"; then
   AC_SUBST([LDFLAGS], ["${LDFLAGS} -lpthread -pg"])
 else
   AC_SUBST([CXXFLAGS], [" -D_REENTRANT -O3 -std=c++0x -fmessage-length=0"])
-  AC_SUBST([LDFLAGS], ["${LDFLAGS} -lpthread -pg"])
+  AC_SUBST([LDFLAGS], ["${LDFLAGS} -lpthread"])
 fi
 
 # Configure exuberant ctags
