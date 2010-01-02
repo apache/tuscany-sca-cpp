@@ -225,7 +225,7 @@ template<typename T> T* gc_new() {
 template<typename T> apr_status_t gc_pool_acleanup(void* v) {
     int* m = static_cast<int*>(v);
     int n = *m;
-    T* t = static_cast<T*>(m + 1);
+    T* t = (T*)(m + 1);
     for (int i = 0; i < n; i++, t++)
         t->~T();
     return APR_SUCCESS;
@@ -235,7 +235,7 @@ template<typename T> T* gc_anew(apr_pool_t* p, int n) {
     int* m = static_cast<int*>(apr_palloc(p, sizeof(int) + sizeof(T[n])));
     *m = n;
     apr_pool_cleanup_register(p, m, gc_pool_acleanup<T>, apr_pool_cleanup_null) ;
-    return static_cast<T*>(m + 1);
+    return (T*)(m + 1);
 }
 
 template<typename T> T* gc_anew(int n) {

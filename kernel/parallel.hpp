@@ -33,6 +33,7 @@
 #endif
 
 #include "function.hpp"
+#include "list.hpp"
 
 namespace tuscany {
 
