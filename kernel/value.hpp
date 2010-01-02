@@ -509,7 +509,7 @@ private:
 const string watchValue(const value& v) {
     if (v.type == value::List)
         return watchList<value>(v);
-    ostringstream<string::npos> os;
+    odebugstream os;
     os << v;
     return str(os);
 }

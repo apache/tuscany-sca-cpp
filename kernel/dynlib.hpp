@@ -48,52 +48,40 @@ const string dynlibExt(".so");
  */
 class lib {
 public:
-    lib() : dl(NULL) {
+    lib() : h(NULL), owner(false) {
     }
 
-    lib(const string& name) : dl(new (gc_new<DynLib>()) DynLib(name)) {
+    lib(const string& name) : name(name), h(dlopen(c_str(name), RTLD_NOW)), owner(true) {
+        if (h == NULL)
+            h = mkfailure<void*>(string("Could not load library: ") + name + ": " + dlerror());
+    }
+
+    lib(const lib& l) : name(l.name), h(l.h), owner(false) {
     }
 
     ~lib() {
+        if (!owner)
+            return;
+        if (!hasContent(h) || content(h) == NULL)
+            return;
+        dlclose(content(h));
     }
 
 private:
-    class DynLib {
-    public:
-        DynLib(const string& name) : name(name), h(dlopen(c_str(name), RTLD_NOW)) {
-        }
-
-        ~DynLib() {
-            if (h == NULL)
-                return;
-            dlclose(h);
-        }
-
-        const string name;
-        void* h;
-    };
-
-    gc_ptr<DynLib> dl;
-
-    friend const failable<lib> dynlib(const string& name);
     template<typename S> friend const failable<lambda<S> > dynlambda(const string& name, const lib& l);
-};
 
-/**
- * Load a dynamic library.
- */
-const failable<lib> dynlib(const string& name) {
-    const lib l(name);
-    if (l.dl->h == NULL)
-        return mkfailure<lib>(string("Could not load library: ") + name + ": " + dlerror());
-    return l;
-}
+    const string name;
+    failable<void*> h;
+    bool owner;
+};
 
 /**
  * Find a lambda function in a dynamic library.
  */
 template<typename S> const failable<lambda<S> > dynlambda(const string& name, const lib& l) {
-    const void* s = dlsym(l.dl->h, c_str(name));
+    if (!hasContent(l.h))
+        return mkfailure<lambda<S> >(reason(l.h));
+    const void* s = dlsym(content(l.h), c_str(name));
     if (s == NULL)
         return mkfailure<lambda<S> >(string("Could not load symbol: ") + name);
     return lambda<S>((S*)s);

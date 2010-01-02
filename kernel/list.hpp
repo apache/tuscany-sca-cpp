@@ -198,7 +198,7 @@ private:
 template<typename T> const string watchList(const list<T>& p) {
     if(isNil(p))
         return "()";
-    ostringstream<string::npos> os;
+    odebugstream os;
     os << "(" << car(p) << " ...)";
     return str(os);
 }

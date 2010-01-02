@@ -71,6 +71,12 @@ public:
         return *this;
     }
 
+    ostringstream& write(const string& s) {
+        buf = cons(s, buf);
+        len += s.len;
+        return *this;
+    }
+
     ostringstream& flush() {
         return *this;
     }

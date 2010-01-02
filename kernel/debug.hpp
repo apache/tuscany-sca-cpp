@@ -31,7 +31,10 @@ namespace tuscany
 
 #ifdef _DEBUG
 
-//#define _DEBUG_WATCH
+/**
+ * Add string watch members to important classes to help watch them in a debugger.
+ */
+#define _DEBUG_WATCH
 
 /**
  * Increment / decrement a debug counter.

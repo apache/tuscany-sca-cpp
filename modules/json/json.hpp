@@ -46,7 +46,7 @@ void reportError(unused JSContext *cx, const char *message, JSErrorReport *repor
 }
 
 /**
- * Encapsulates a JavaScript runtime. Can be shared by multiple threads in
+ * Encapsulates a JavaScript runtime. Shared by multiple threads in
  * a process.
  */
 class JSONRuntime {
@@ -56,9 +56,6 @@ public:
         rt = JS_NewRuntime(8L * 1024L * 1024L);
         if(rt == NULL)
             cleanup();
-    }
-
-    ~JSONRuntime() {
     }
 
     operator JSRuntime*() const {
@@ -75,16 +72,10 @@ private:
     }
 
     JSRuntime* rt;
-};
-
-/**
- * Global JavaScript runtime instance.
- */
-JSONRuntime jsRuntime;
+} jsRuntime;
 
 JSClass jsGlobalClass = { "global", JSCLASS_GLOBAL_FLAGS, JS_PropertyStub, JS_PropertyStub, JS_PropertyStub,
         JS_PropertyStub, JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub, JS_FinalizeStub, JSCLASS_NO_OPTIONAL_MEMBERS};
-
 
 /**
  * Represents a JavaScript context. Create one per thread.

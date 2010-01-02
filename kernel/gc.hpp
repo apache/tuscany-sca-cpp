@@ -103,12 +103,8 @@ public:
         return *this;
     }
 
-    operator apr_pool_t*() const {
-        return p;
-    }
-
 private:
-    friend const bool destroy(gc_pool& pool);
+    friend apr_pool_t* pool(const gc_pool& pool);
     friend class gc_global_pool_t;
     friend class gc_scoped_pool;
 
@@ -116,40 +112,29 @@ private:
 };
 
 /**
+ * Return APR pool used by a gc_pool.
+ */
+apr_pool_t* pool(const gc_pool& pool) {
+    return pool.p;
+}
+
+/**
  * Destroy a memory pool.
  */
-const bool destroy(gc_pool& pool) {
-    apr_pool_destroy(pool.p);
+const bool destroy(const gc_pool& p) {
+    apr_pool_destroy(pool(p));
     return true;
 }
 
 /**
- * Default global memory pool.
+ * Initialize APR.
  */
 class gc_apr_context_t {
 public:
     gc_apr_context_t() {
         apr_initialize();
     }
-    ~gc_apr_context_t() {
-        //apr_terminate();
-    }
-};
-
-gc_apr_context_t gc_apr_context;
-
-class gc_global_pool_t : public gc_pool {
-public:
-    gc_global_pool_t() {
-        apr_pool_create(&p, NULL);
-    }
-
-    ~gc_global_pool_t() {
-        //apr_pool_destroy(p);
-    }
-};
-
-gc_global_pool_t gc_global_pool;
+} gc_apr_context;
 
 /**
  * Maintain a stack of memory pools.
@@ -166,9 +151,29 @@ apr_pool_t* gc_current_pool() {
     apr_pool_t* p = gc_pool_stack;
     if (p != NULL)
         return p;
-    apr_pool_t* g = gc_global_pool;
-    gc_pool_stack = g;
-    return g;
+
+    // Create a parent pool for the current thread
+    apr_pool_create(&p, NULL);
+    gc_pool_stack = p;
+    return p;
+}
+
+/**
+ * Push a pool onto the stack.
+ */
+apr_pool_t* gc_push_pool(apr_pool_t* pool) {
+    apr_pool_t* p = gc_pool_stack;
+    gc_pool_stack = pool;
+    return p;
+}
+
+/**
+ * Pop a pool from the stack.
+ */
+apr_pool_t* gc_pop_pool(apr_pool_t* pool) {
+    apr_pool_t* p = gc_pool_stack;
+    gc_pool_stack = pool;
+    return p;
 }
 
 /**
@@ -178,28 +183,27 @@ apr_pool_t* gc_current_pool() {
 class gc_scoped_pool : public gc_pool {
 public:
 
-    gc_scoped_pool() : gc_pool(NULL), prev(gc_current_pool()), owned(true) {
+    gc_scoped_pool() : gc_pool(NULL), prev(gc_current_pool()), owner(true) {
         apr_pool_create(&p, NULL);
-        gc_pool_stack = p;
+        gc_push_pool(p);
     }
 
-    gc_scoped_pool(apr_pool_t* pool) : gc_pool(pool), prev(gc_current_pool()), owned(false) {
-        gc_pool_stack = p;
+    gc_scoped_pool(apr_pool_t* pool) : gc_pool(pool), prev(gc_current_pool()), owner(false) {
+        gc_push_pool(p);
     }
 
     ~gc_scoped_pool() {
-        if (owned)
+        if (owner)
             apr_pool_destroy(p);
-        if (prev != NULL)
-            gc_pool_stack = prev;
+        gc_pop_pool(prev);
     }
 
 private:
-    gc_scoped_pool(const unused gc_scoped_pool& pool) : gc_pool(pool.p), prev(NULL), owned(false) {
+    gc_scoped_pool(const unused gc_scoped_pool& pool) : gc_pool(pool.p), prev(NULL), owner(false) {
     }
 
     apr_pool_t* prev;
-    bool owned;
+    bool owner;
 };
 
 /**
@@ -216,6 +220,10 @@ template<typename T> T* gc_new(apr_pool_t* p) {
     void* m = apr_palloc(p, sizeof(T));
     apr_pool_cleanup_register(p, m, gc_pool_cleanup<T>, apr_pool_cleanup_null) ;
     return static_cast<T*>(m);
+}
+
+template<typename T> T* gc_new(const gc_pool& p) {
+    return gc_new<T>(pool(p));
 }
 
 template<typename T> T* gc_new() {
@@ -236,6 +244,10 @@ template<typename T> T* gc_anew(apr_pool_t* p, int n) {
     *m = n;
     apr_pool_cleanup_register(p, m, gc_pool_acleanup<T>, apr_pool_cleanup_null) ;
     return (T*)(m + 1);
+}
+
+template<typename T> T* gc_anew(const gc_pool& p, int n) {
+    return gc_anew<T>(pool(p), n);
 }
 
 template<typename T> T* gc_anew(int n) {

@@ -47,13 +47,7 @@ public:
     XMLParser() {
         xmlInitParser();
     }
-
-    ~XMLParser() {
-        xmlCleanupParser();
-    }
-};
-
-XMLParser xmlParser;
+} xmlParser;
 
 /**
  * Encapsulates a libxml2 xmlTextReader and its state.

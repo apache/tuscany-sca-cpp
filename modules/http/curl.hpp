@@ -43,50 +43,37 @@ namespace tuscany {
 namespace http {
 
 /**
- * CURL library context, one per process.
+ * CURL library runtime, one per process.
  */
-class CURLContext {
+class CURLRuntime {
 public:
-    CURLContext() {
+    CURLRuntime() {
         curl_global_init(CURL_GLOBAL_ALL);
     }
-    ~CURLContext() {
-        curl_global_cleanup();
-    }
-};
-
-CURLContext curlContext;
+} curlRuntime;
 
 /**
  * Represents a CURL session handle.
  */
 class CURLSession {
 public:
-    CURLSession() : ch(new (gc_new<CURLHandle>()) CURLHandle()) {
+    CURLSession() : h(curl_easy_init()), owner(true) {
+    }
+
+    CURLSession(const CURLSession& c) : h(c.h), owner(false) {
     }
 
     ~CURLSession() {
-    }
-
-    CURLSession(const CURLSession& c) : ch(c.ch) {
+        if (!owner)
+            return;
+        if (h == NULL)
+            return;
+        curl_easy_cleanup(h);
     }
 
 private:
-    class CURLHandle {
-    public:
-        CURLHandle() : h(curl_easy_init()) {
-        }
-        ~CURLHandle() {
-            curl_easy_cleanup(h);
-            h = NULL;
-        }
-    private:
-        CURL* h;
-
-        friend CURL* handle(const CURLSession& c);
-    };
-
-    const gc_ptr<CURLHandle> ch;
+    CURL* h;
+    bool owner;
 
     friend CURL* handle(const CURLSession& c);
 };
@@ -95,7 +82,7 @@ private:
  * Returns the CURL handle used by a CURL session.
  */
 CURL* handle(const CURLSession& c) {
-    return c.ch->h;
+    return c.h;
 }
 
 /**

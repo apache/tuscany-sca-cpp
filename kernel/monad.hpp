@@ -213,6 +213,15 @@ public:
     failable(const failable<V, F>& m) : hasv(m.hasv), v(m.v), f(m.f) {
     }
 
+    const failable<V, F>& operator=(const failable<V, F>& m) {
+        if (&m == this)
+            return *this;
+        hasv = m.hasv;
+        v = m.v;
+        f = m.f;
+        return *this;
+    }
+
     const bool operator!=(const failable<V, F>& m) const {
         return !this->operator==(m);
     }
@@ -227,11 +236,6 @@ public:
 
 private:
     failable(const bool hasv, const F& f) : hasv(hasv), f(f) {
-    }
-
-    // Prevent mutation
-    const failable<V, F>& operator=(const failable<V, F>& m) {
-        return *this;
     }
 
     template<typename A, typename B> friend const bool hasContent(const failable<A, B>& m);

@@ -65,14 +65,11 @@ struct evalImplementation {
  * Read a C++ component implementation.
  */
 const failable<lambda<value(const list<value>&)> > readImplementation(const string& path, const list<value>& px) {
-    const failable<lib> ilib(dynlib(path + dynlibExt));
-    if (!hasContent(ilib))
-        return mkfailure<lambda<value(const list<value>&)> >(reason(ilib));
-
-    const failable<lambda<value(const list<value>&)> > impl(dynlambda<value(const list<value>&)>("eval", content(ilib)));
+    const lib ilib(*(new (gc_new<lib>()) lib(path + dynlibExt)));
+    const failable<lambda<value(const list<value>&)> > impl(dynlambda<value(const list<value>&)>("eval", ilib));
     if (!hasContent(impl))
         return impl;
-    return lambda<value(const list<value>&)>(evalImplementation(content(ilib), content(impl), px));
+    return lambda<value(const list<value>&)>(evalImplementation(ilib, content(impl), px));
 }
 
 }

@@ -39,6 +39,7 @@ namespace tuscany {
 class ostream {
 public:
     virtual ostream& vprintf(const char* fmt, ...) = 0;
+    virtual ostream& write(const string& s) = 0;
     virtual ostream& flush() = 0;
 };
 
@@ -68,8 +69,16 @@ ostream& operator<<(ostream& os, const int v) {
     return os.vprintf("%d", v);
 }
 
+ostream& operator<<(ostream& os, const unsigned int v) {
+    return os.vprintf("%u", v);
+}
+
 ostream& operator<<(ostream& os, const long int v) {
     return os.vprintf("%ld", v);
+}
+
+ostream& operator<<(ostream& os, const long unsigned int v) {
+    return os.vprintf("%lu", v);
 }
 
 ostream& operator<<(ostream& os, const double v) {
@@ -81,7 +90,7 @@ ostream& operator<<(ostream& os, const void* v) {
 }
 
 ostream& operator<<(ostream& os, const string& v) {
-    return os.vprintf("%s", c_str(v));
+    return os.write(v);
 }
 
 class stream_endl {
@@ -142,6 +151,49 @@ const int peek(istream& is) {
 template<typename T> ostream& operator<<(ostream& out, const gc_ptr<T>& p) {
     return out << p.ptr;
 }
+
+#ifdef _DEBUG
+
+/**
+ * Debug stream implementation with no dependencies on anything else.
+ */
+class odebugstream : public ostream {
+public:
+    odebugstream() {
+    }
+
+    odebugstream& vprintf(const char* fmt, ...) {
+        va_list args;
+        va_start (args, fmt);
+        string s;
+        s.len = vsnprintf(NULL, 0, fmt, args);
+        s.buf = gc_cnew(s.len + 1);
+        vsnprintf(s.buf, s.len + 1, fmt, args);
+        buf = buf + s;
+        va_end (args);
+        return *this;
+    }
+
+    odebugstream& write(const string& s) {
+        buf = buf + s;
+        return *this;
+    }
+
+    odebugstream& flush() {
+        return *this;
+    }
+
+private:
+    friend const string str(odebugstream& os);
+
+    string buf;
+};
+
+const string str(odebugstream& os) {
+    return os.buf;
+}
+
+#endif
 
 }
 

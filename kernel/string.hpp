@@ -172,6 +172,9 @@ public:
     }
 
 private:
+#ifdef _DEBUG
+    friend class odebugstream;
+#endif
     friend class ostringstream;
     friend const string operator+(const string& a, const string& b);
     friend const string operator+(const string& a, const char* b);

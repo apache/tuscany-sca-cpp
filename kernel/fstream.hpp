@@ -38,17 +38,17 @@ namespace tuscany {
  */
 class ofstream : public ostream {
 public:
-    ofstream(const string& path) : file(fopen(c_str(path), "wb")), owned(true) {
+    ofstream(const string& path) : file(fopen(c_str(path), "wb")), owner(true) {
     }
 
-    ofstream(FILE* file) : file(file), owned(false) {
+    ofstream(FILE* file) : file(file), owner(false) {
     }
 
-    ofstream(const ofstream& os) : file(os.file), owned(false) {
+    ofstream(const ofstream& os) : file(os.file), owner(false) {
     }
 
     ~ofstream() {
-        if (!owned)
+        if (!owner)
             return;
         if (file == NULL)
             return;
@@ -63,6 +63,11 @@ public:
         return *this;
     }
 
+    ofstream& write(const string& s) {
+        fwrite(c_str(s), 1, length(s), file);
+        return *this;
+    }
+
     ofstream& flush() {
         fflush(file);
         return *this;
@@ -70,7 +75,7 @@ public:
 
 private:
     FILE* file;
-    bool owned;
+    bool owner;
 };
 
 /*
@@ -78,17 +83,17 @@ private:
  */
 class ifstream : public istream {
 public:
-    ifstream(const string& path) : file(fopen(c_str(path), "rb")), owned(true) {
+    ifstream(const string& path) : file(fopen(c_str(path), "rb")), owner(true) {
     }
 
-    ifstream(FILE* file) : file(file), owned(false) {
+    ifstream(FILE* file) : file(file), owner(false) {
     }
 
-    ifstream(const ifstream& is) : file(is.file), owned(false) {
+    ifstream(const ifstream& is) : file(is.file), owner(false) {
     }
 
     ~ifstream() {
-        if (!owned)
+        if (!owner)
             return;
         if (file == NULL)
             return;
@@ -121,7 +126,7 @@ public:
 
 private:
     FILE* file;
-    bool owned;
+    bool owner;
 };
 
 /**

@@ -540,14 +540,13 @@ bool testStateMonad() {
 }
 
 bool testDynLib() {
-    const failable<lib> dl(dynlib(string(".libs/libdynlib-test") + dynlibExt));
-    assert(hasContent(dl));
-    const failable<lambda<int(const int)>> sq(dynlambda<int(const int)>("csquare", content(dl)));
+    const lib dl(string(".libs/libdynlib-test") + dynlibExt);
+    const failable<lambda<int(const int)> > sq(dynlambda<int(const int)>("csquare", dl));
     assert(hasContent(sq));
     lambda<int(const int)> l(content(sq));
     assert(l(2) == 4);
 
-    const failable<lambda<lambda<int(const int)>()>> sql(dynlambda<lambda<int(const int)>()>("csquarel", content(dl)));
+    const failable<lambda<lambda<int(const int)>()> > sql(dynlambda<lambda<int(const int)>()>("csquarel", dl));
     assert(hasContent(sql));
     lambda<lambda<int(const int)>()> ll(content(sql));
     assert(ll()(3) == 9);
