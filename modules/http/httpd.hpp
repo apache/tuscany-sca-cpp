@@ -26,8 +26,8 @@
  * HTTPD module implementation functions.
  */
 
-#include <string>
-#include <iostream>
+#include "string.hpp"
+#include "stream.hpp"
 
 #include "apr_strings.h"
 #include "apr_fnmatch.h"
@@ -60,9 +60,7 @@ namespace httpd {
  * Returns a server-scoped module configuration.
  */
 template<typename C> void* makeServerConf(apr_pool_t *p, server_rec *s) {
-    C* c = new (apr_palloc(p, sizeof(C))) C(s);
-    apr_pool_cleanup_register(p, c, gc_pool_cleanupCallback<C>, apr_pool_cleanup_null) ;
-    return c;
+    return new (gc_new<C>(p)) C(s);
 }
 
 template<typename C> const C& serverConf(const request_rec* r, const module* mod) {
@@ -78,9 +76,7 @@ template<typename C> C& serverConf(const cmd_parms *cmd, const module* mod) {
  * Returns a directory-scoped module configuration.
  */
 template<typename C> void *makeDirConf(apr_pool_t *p, char *dirspec) {
-    C* c = new (apr_palloc(p, sizeof(C))) C(dirspec);
-    apr_pool_cleanup_register(p, c, gc_pool_cleanupCallback<C>, apr_pool_cleanup_null) ;
-    return c;
+    return new (gc_new<C>(p)) C(dirspec);
 }
 
 template<typename C> C& dirConf(const request_rec* r, const module* mod) {
@@ -90,31 +86,25 @@ template<typename C> C& dirConf(const request_rec* r, const module* mod) {
 /**
  * Convert a path string to a list of values.
  */
-const list<std::string> pathTokens(const char* p) {
+const list<string> pathTokens(const char* p) {
     if (p == NULL || p[0] == '\0')
-        return list<std::string>();
+        return list<string>();
     if (p[0] == '/')
         return tokenize("/", p + 1);
     return tokenize("/", p);
 }
 
-const list<value> pathValues(const list<std::string>& l) {
-    if (isNil(l))
-        return list<value>();
-    return cons<value>(car(l), pathValues(cdr(l)));
-}
-
-const list<value> path(const char* p) {
-    return pathValues(pathTokens(p));
+const list<value> pathValues(const char* p) {
+    return mkvalues(pathTokens(p));
 }
 
 /**
  * Convert a path represented as a list of values to a string.
  */
-const std::string path(const list<value>& p) {
+const string path(const list<value>& p) {
     if (isNil(p))
         return "";
-    return std::string("/") + std::string(car(p)) + path(cdr(p));
+    return string("/") + car(p) + path(cdr(p));
 }
 
 /**
@@ -126,7 +116,7 @@ const char* optional(const char* s) {
     return s;
 }
 
-const std::string contentType(const request_rec* r) {
+const string contentType(const request_rec* r) {
     return optional(apr_table_get(r->headers_in, "Content-Type"));
 }
 
@@ -136,24 +126,24 @@ const std::string contentType(const request_rec* r) {
  * Debug log.
  */
 int debugHeader(unused void* r, const char* key, const char* value) {
-    std::cerr << "  header key: " << key << ", value: " << value << std::endl;
+    cerr << "  header key: " << key << ", value: " << value << endl;
     return 1;
 }
 
-const bool debugRequest(request_rec* r, const std::string& msg) {
-    std::cerr << msg << ":" << std::endl;
-    std::cerr << "  protocol: " << optional(r->protocol) << std::endl;
-    std::cerr << "  method: " << optional(r->method) << std::endl;
-    std::cerr << "  method number: " << r->method_number << std::endl;
-    std::cerr << "  content type: " << contentType(r) << std::endl;
-    std::cerr << "  content encoding: " << optional(r->content_encoding) << std::endl;
+const bool debugRequest(request_rec* r, const string& msg) {
+    cerr << msg << ":" << endl;
+    cerr << "  protocol: " << optional(r->protocol) << endl;
+    cerr << "  method: " << optional(r->method) << endl;
+    cerr << "  method number: " << r->method_number << endl;
+    cerr << "  content type: " << contentType(r) << endl;
+    cerr << "  content encoding: " << optional(r->content_encoding) << endl;
     apr_table_do(debugHeader, r, r->headers_in, NULL);
-    std::cerr << "  unparsed uri: " << optional(r->unparsed_uri) << std::endl;
-    std::cerr << "  uri: " << optional(r->uri) << std::endl;
-    std::cerr << "  path info: " << optional(r->path_info) << std::endl;
-    std::cerr << "  filename: " << optional(r->filename) << std::endl;
-    std::cerr << "  uri tokens: " << pathTokens(r->uri) << std::endl;
-    std::cerr << "  args: " << optional(r->args) << std::endl;
+    cerr << "  unparsed uri: " << optional(r->unparsed_uri) << endl;
+    cerr << "  uri: " << optional(r->uri) << endl;
+    cerr << "  path info: " << optional(r->path_info) << endl;
+    cerr << "  filename: " << optional(r->filename) << endl;
+    cerr << "  uri tokens: " << pathTokens(r->uri) << endl;
+    cerr << "  args: " << optional(r->args) << endl;
     return true;
 }
 
@@ -177,16 +167,16 @@ const list<value> pathInfo(const list<value>& uri, const list<value>& path) {
 /**
  * Returns a list of key value pairs from the args in a query string.
  */
-const list<value> queryArg(const std::string& s) {
-    const list<std::string> t = tokenize("=", s);
-    return mklist<value>(car(t).c_str(), cadr(t));
+const list<value> queryArg(const string& s) {
+    const list<string> t = tokenize("=", s);
+    return mklist<value>(c_str(car(t)), cadr(t));
 }
 
 const list<list<value> > queryArgs(const request_rec* r) {
     const char* a = r->args;
     if (a == NULL)
         return list<list<value> >();
-    return map<std::string, list<value>>(queryArg, tokenize("&", a));
+    return map<string, list<value>>(queryArg, tokenize("&", a));
 }
 
 /**
@@ -229,50 +219,49 @@ const int setupReadPolicy(request_rec* r) {
 /**
  * Read the content of a POST or PUT.
  */
-const list<std::string> read(request_rec* r) {
-    char b[2048];
-    const int n = ap_get_client_block(r, b, 2048);
+const list<string> read(request_rec* r) {
+    char b[1024];
+    const int n = ap_get_client_block(r, b, sizeof(b));
     if (n <= 0)
-        return list<std::string>();
-    return cons(std::string(b, n), read(r));
+        return list<string>();
+    return cons(string(b, n), read(r));
 }
 
 /**
  * Convert a URI value to an absolute URL.
  */
 const char* url(const value& v, request_rec* r) {
-    std::string u = r->uri;
-    u.append("/");
-    u.append(v);
-    return ap_construct_url(r->pool, u.c_str(), r);
+    const string u = string(r->uri) + "/" + v;
+    return ap_construct_url(r->pool, c_str(u), r);
 }
 
 /**
  * Write an HTTP result.
  */
-const failable<int, std::string> writeResult(const failable<list<std::string>, std::string>& ls, const std::string& ct, request_rec* r) {
+const failable<int> writeResult(const failable<list<string> >& ls, const string& ct, request_rec* r) {
     if (!hasContent(ls))
-        return mkfailure<int, std::string>(reason(ls));
-    std::ostringstream os;
+        return mkfailure<int>(reason(ls));
+    ostringstream os;
     write(content(ls), os);
-    debug(os.str(), "httpd::result");
+    const string ob(str(os));
+    debug(ob, "httpd::result");
 
-    const std::string etag(ap_md5(r->pool, (const unsigned char*)std::string(os.str()).c_str()));
+    const string etag(ap_md5(r->pool, (const unsigned char*)c_str(ob)));
     const char* match = apr_table_get(r->headers_in, "If-None-Match");
-    apr_table_setn(r->headers_out, "ETag", apr_pstrdup(r->pool, etag.c_str()));
+    apr_table_setn(r->headers_out, "ETag", apr_pstrdup(r->pool, c_str(etag)));
     if (match != NULL  && etag == match) {
         r->status = HTTP_NOT_MODIFIED;
         return OK;
     }
-    ap_set_content_type(r, apr_pstrdup(r->pool, ct.c_str()));
-    ap_rputs(std::string(os.str()).c_str(), r);
+    ap_set_content_type(r, apr_pstrdup(r->pool, c_str(ct)));
+    ap_rputs(c_str(ob), r);
     return OK;
 }
 
 /**
  * Report request execution status.
  */
-const int reportStatus(const failable<int, std::string>& rc) {
+const int reportStatus(const failable<int>& rc) {
     if (!hasContent(rc))
         return HTTP_INTERNAL_SERVER_ERROR;
     return content(rc);

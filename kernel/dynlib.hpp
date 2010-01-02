@@ -38,9 +38,9 @@ namespace tuscany {
  * OS specific dynamic library file extension.
  */
 #ifdef IS_DARWIN
-const std::string dynlibExt(".dylib");
+const string dynlibExt(".dylib");
 #else
-const std::string dynlibExt(".so");
+const string dynlibExt(".so");
 #endif
 
 /**
@@ -51,7 +51,7 @@ public:
     lib() : dl(NULL) {
     }
 
-    lib(const std::string& name) : dl(new DynLib(name)) {
+    lib(const string& name) : dl(new (gc_new<DynLib>()) DynLib(name)) {
     }
 
     ~lib() {
@@ -60,41 +60,42 @@ public:
 private:
     class DynLib {
     public:
-        DynLib(const std::string& name) : name(name), h(dlopen(name.c_str(), RTLD_NOW)) {
+        DynLib(const string& name) : name(name), h(dlopen(c_str(name), RTLD_NOW)) {
         }
+
         ~DynLib() {
             if (h == NULL)
                 return;
             dlclose(h);
         }
 
-        const std::string name;
+        const string name;
         void* h;
     };
 
     gc_ptr<DynLib> dl;
 
-    friend const failable<lib, std::string> dynlib(const std::string& name);
-    template<typename S> friend const failable<lambda<S>, std::string> dynlambda(const std::string& name, const lib& l);
+    friend const failable<lib> dynlib(const string& name);
+    template<typename S> friend const failable<lambda<S> > dynlambda(const string& name, const lib& l);
 };
 
 /**
  * Load a dynamic library.
  */
-const failable<lib, std::string> dynlib(const std::string& name) {
+const failable<lib> dynlib(const string& name) {
     const lib l(name);
     if (l.dl->h == NULL)
-        return mkfailure<lib, std::string>("Could not load library: " + name + ": " + dlerror());
+        return mkfailure<lib>(string("Could not load library: ") + name + ": " + dlerror());
     return l;
 }
 
 /**
  * Find a lambda function in a dynamic library.
  */
-template<typename S> const failable<lambda<S>, std::string> dynlambda(const std::string& name, const lib& l) {
-    const void* s = dlsym(l.dl->h, name.c_str());
+template<typename S> const failable<lambda<S> > dynlambda(const string& name, const lib& l) {
+    const void* s = dlsym(l.dl->h, c_str(name));
     if (s == NULL)
-        return mkfailure<lambda<S>, std::string>(std::string("Could not load symbol: " + name));
+        return mkfailure<lambda<S> >(string("Could not load symbol: ") + name);
     return lambda<S>((S*)s);
 }
 

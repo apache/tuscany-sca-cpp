@@ -34,8 +34,7 @@
 #include "apr_memcache.h"
 #include "apr_network_io.h"
 
-#include <string>
-#include <sstream>
+#include "string.hpp"
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
@@ -56,7 +55,7 @@ public:
         init("localhost", 11211);
     }
 
-    MemCached(const std::string host, const int port) {
+    MemCached(const string host, const int port) {
         apr_pool_create(&pool, NULL);
         apr_memcache_create(pool, 1, 0, &mc);
         init(host, port);
@@ -70,22 +69,22 @@ private:
     apr_pool_t* pool;
     apr_memcache_t* mc;
 
-    friend const failable<bool, std::string> post(const value& key, const value& val, const MemCached& cache);
-    friend const failable<bool, std::string> put(const value& key, const value& val, const MemCached& cache);
-    friend const failable<value, std::string> get(const value& key, const MemCached& cache);
-    friend const failable<bool, std::string> del(const value& key, const MemCached& cache);
+    friend const failable<bool> post(const value& key, const value& val, const MemCached& cache);
+    friend const failable<bool> put(const value& key, const value& val, const MemCached& cache);
+    friend const failable<value> get(const value& key, const MemCached& cache);
+    friend const failable<bool> del(const value& key, const MemCached& cache);
 
     /**
      * Initialize the memcached context.
      */
-    const failable<bool, std::string> init(const std::string& host, const int port) {
+    const failable<bool> init(const string& host, const int port) {
         apr_memcache_server_t *server;
-        const apr_status_t sc = apr_memcache_server_create(pool, host.c_str(), (apr_port_t)port, 0, 1, 1, 60, &server);
+        const apr_status_t sc = apr_memcache_server_create(pool, c_str(host), (apr_port_t)port, 0, 1, 1, 60, &server);
         if (sc != APR_SUCCESS)
-            return mkfailure<bool, std::string>("Could not create server");
+            return mkfailure<bool>("Could not create server");
         const apr_status_t as = apr_memcache_add_server(mc, server);
         if (as != APR_SUCCESS)
-            return mkfailure<bool, std::string>("Could not add server");
+            return mkfailure<bool>("Could not add server");
         return true;
     }
 
@@ -94,15 +93,15 @@ private:
 /**
  * Post a new item to the cache.
  */
-const failable<bool, std::string> post(const value& key, const value& val, const MemCached& cache) {
+const failable<bool> post(const value& key, const value& val, const MemCached& cache) {
     debug(key, "cache::post::key");
     debug(val, "cache::post::value");
 
-    const std::string ks(eval::writeValue(key));
-    const std::string vs(eval::writeValue(val));
-    const apr_status_t rc = apr_memcache_add(cache.mc, ks.c_str(), const_cast<char*>(vs.c_str()), vs.size(), 0, 27);
+    const string ks(eval::writeValue(key));
+    const string vs(eval::writeValue(val));
+    const apr_status_t rc = apr_memcache_add(cache.mc, c_str(ks), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
-        return mkfailure<bool, std::string>("Could not add entry");
+        return mkfailure<bool>("Could not add entry");
 
     debug(true, "cache::post::result");
     return true;
@@ -111,15 +110,15 @@ const failable<bool, std::string> post(const value& key, const value& val, const
 /**
  * Update an item in the cache. If the item doesn't exist it is added.
  */
-const failable<bool, std::string> put(const value& key, const value& val, const MemCached& cache) {
+const failable<bool> put(const value& key, const value& val, const MemCached& cache) {
     debug(key, "cache::put::key");
     debug(val, "cache::put::value");
 
-    const std::string ks(eval::writeValue(key));
-    const std::string vs(eval::writeValue(val));
-    const apr_status_t rc = apr_memcache_set(cache.mc, ks.c_str(), const_cast<char*>(vs.c_str()), vs.size(), 0, 27);
+    const string ks(eval::writeValue(key));
+    const string vs(eval::writeValue(val));
+    const apr_status_t rc = apr_memcache_set(cache.mc, c_str(ks), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
-        return mkfailure<bool, std::string>("Could not add entry");
+        return mkfailure<bool>("Could not add entry");
 
     debug(true, "cache::put::result");
     return true;
@@ -128,25 +127,24 @@ const failable<bool, std::string> put(const value& key, const value& val, const 
 /**
  * Get an item from the cache.
  */
-const failable<value, std::string> get(const value& key, const MemCached& cache) {
+const failable<value> get(const value& key, const MemCached& cache) {
     debug(key, "cache::get::key");
 
-    const std::string ks(eval::writeValue(key));
-
+    const string ks(eval::writeValue(key));
     apr_pool_t* vpool;
     const apr_status_t pc = apr_pool_create(&vpool, cache.pool);
     if (pc != APR_SUCCESS)
-        return mkfailure<value, std::string>("Could not allocate memory");
+        return mkfailure<value>("Could not allocate memory");
 
     char *data;
     apr_size_t size;
-    const apr_status_t rc = apr_memcache_getp(cache.mc, cache.pool, ks.c_str(), &data, &size, NULL);
+    const apr_status_t rc = apr_memcache_getp(cache.mc, cache.pool, c_str(ks), &data, &size, NULL);
     if (rc != APR_SUCCESS) {
         apr_pool_destroy(vpool);
-        return mkfailure<value, std::string>("Could not get entry");
+        return mkfailure<value>("Could not get entry");
     }
 
-    const value val(eval::readValue(std::string(data, size)));
+    const value val(eval::readValue(string(data, size)));
     apr_pool_destroy(vpool);
 
     debug(val, "cache::get::result");
@@ -156,14 +154,13 @@ const failable<value, std::string> get(const value& key, const MemCached& cache)
 /**
  * Delete an item from the cache
  */
-const failable<bool, std::string> del(const value& key, const MemCached& cache) {
+const failable<bool> del(const value& key, const MemCached& cache) {
     debug(key, "cache::delete::key");
 
-    std::ostringstream kos;
-    kos << key;
-    const apr_status_t rc = apr_memcache_delete(cache.mc, kos.str().c_str(), 0);
+    const string ks(eval::writeValue(key));
+    const apr_status_t rc = apr_memcache_delete(cache.mc, c_str(ks), 0);
     if (rc != APR_SUCCESS)
-        return mkfailure<bool, std::string>("Could not delete entry");
+        return mkfailure<bool>("Could not delete entry");
 
     debug(true, "cache::delete::result");
     return true;

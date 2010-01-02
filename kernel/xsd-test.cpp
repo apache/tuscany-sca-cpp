@@ -23,8 +23,8 @@
  * Test validation of a composite file against an SCDL schema.
  */
 
-#include <iostream>
-#include <string>
+#include "string.hpp"
+#include "fstream.hpp"
 #include <libxml/xmlreader.h>
 #include <libxml/xmlschemas.h>
 
@@ -35,12 +35,12 @@ bool printNode(xmlTextReaderPtr reader) {
     if(name == NULL)
         name = (xmlChar *)"<unknown>";
     const xmlChar* value = xmlTextReaderConstValue(reader);
-    std::cout << xmlTextReaderDepth(reader) << " " << xmlTextReaderNodeType(reader) << " " << name << " "
+    cout << xmlTextReaderDepth(reader) << " " << xmlTextReaderNodeType(reader) << " " << name << " "
             << xmlTextReaderIsEmptyElement(reader) << " " << xmlTextReaderHasValue(reader);
     if(value == NULL)
-        std::cout << std::endl;
+        cout << endl;
     else
-        std::cout << value << std::endl;
+        cout << value << endl;
     return true;
 }
 
@@ -54,13 +54,13 @@ int xmlClose(void *context) {
 }
 
 bool readFile(const char*xsdfilename, const char *filename) {
-    std::cout << "Loading schemas...\n";
+    cout << "Loading schemas...\n";
     const xmlDocPtr xsddoc = xmlReadFile(xsdfilename, NULL, XML_PARSE_NONET);
     const xmlSchemaParserCtxtPtr xsdctx = xmlSchemaNewDocParserCtxt(xsddoc);
     const xmlSchemaPtr xsd = xmlSchemaParse(xsdctx);
     const xmlSchemaValidCtxtPtr validctx = xmlSchemaNewValidCtxt(xsd);
 
-    std::cout << "Reading file...\n";
+    cout << "Reading file...\n";
     FILE* file = fopen(filename, "r");
     if (file != NULL) {
         const xmlTextReaderPtr reader = xmlReaderForIO(xmlRead, xmlClose, file, filename, NULL, XML_PARSE_NONET);
@@ -75,14 +75,14 @@ bool readFile(const char*xsdfilename, const char *filename) {
                 printNode(reader);
             }
             if(xmlTextReaderIsValid(reader) != 1)
-                std::cout << "Could not validate document" << std::endl;
+                cout << "Could not validate document" << endl;
             xmlFreeTextReader(reader);
             if(rc != 0)
-                std::cout << "Could not parse document" << std::endl;
+                cout << "Could not parse document" << endl;
         } else
-            std::cout << "Could not create parser" << std::endl;
+            cout << "Could not create parser" << endl;
     } else
-        std::cout << "Could not open document" << std::endl;
+        cout << "Could not open document" << endl;
 
     xmlSchemaFreeValidCtxt(validctx);
     xmlSchemaFree(xsd);
@@ -94,7 +94,7 @@ bool readFile(const char*xsdfilename, const char *filename) {
 }
 
 int main(int argc, char **argv) {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
     if(argc != 3)
         return 1;
 
@@ -102,6 +102,6 @@ int main(int argc, char **argv) {
 
     xmlCleanupParser();
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
     return 0;
 }

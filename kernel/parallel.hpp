@@ -26,12 +26,17 @@
  * Simple parallel work execution functions.
  */
 
+#ifdef _REENTRANT
 #include <pthread.h>
 #include <sys/syscall.h>
+#include <unistd.h>
+#endif
 
 #include "function.hpp"
 
 namespace tuscany {
+
+#ifdef _REENTRANT
 
 /**
  * Returns the current thread id.
@@ -48,8 +53,7 @@ template<typename T> class future {
 private:
     template<typename X> class futureValue {
     public:
-        futureValue() :
-            refCount(0), hasValue(false) {
+        futureValue() : hasValue(false) {
             pthread_mutex_init(&valueMutex, NULL);
             pthread_cond_init(&valueCond, NULL);
         }
@@ -57,14 +61,6 @@ private:
         ~futureValue() {
             pthread_mutex_destroy(&valueMutex);
             pthread_cond_destroy(&valueCond);
-        }
-
-        unsigned int acquire() {
-            return __sync_add_and_fetch(&refCount, (unsigned int)1);
-        }
-
-        unsigned int release() {
-            return __sync_sub_and_fetch(&refCount, (unsigned int)1);
         }
 
         bool set(const T& v) {
@@ -91,33 +87,28 @@ private:
         }
 
     private:
-        unsigned refCount;
         pthread_mutex_t valueMutex;
         pthread_cond_t valueCond;
         bool hasValue;
         X value;
     };
 
-    gc_counting_ptr<futureValue<T> > fvalue;
+    gc_ptr<futureValue<T> > fvalue;
 
     template<typename X> friend const X get(const future<X>& f);
     template<typename X> friend bool set(const future<X>& f, const X& v);
 
 public:
-    future() : fvalue(new futureValue<T>()) {
-        //std::cout << "future() threadId " << threadId() << "\n";
+    future() : fvalue(new (gc_new<futureValue<T> >()) futureValue<T>()) {
     }
 
     ~future() {
-        //std::cout << "~future() threadId " << threadId() << "\n";
     }
 
     future(const future& f) : fvalue(f.fvalue) {
-        //std::cout << "future(const future& f) threadId " << threadId() << "\n";
     }
 
     const future& operator=(const future& f) {
-        //std::cout << "future::operator=(const future& f) threadId " << threadId() << "\n";
         if (&f == this)
             return *this;
         fvalue = f.fvalue;
@@ -132,7 +123,6 @@ public:
     operator const T() const {
         return fvalue->get();
     }
-
 };
 
 /**
@@ -140,7 +130,7 @@ public:
  */
 template<typename T> class queue {
 public:
-    queue(int max) : max(max), size(0), tail(0), head(0), values(new T[max]) {
+    queue(int max) : max(max), size(0), tail(0), head(0), values(new (gc_anew<T>(max)) T[max]) {
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&full, NULL);
         pthread_cond_init(&empty, NULL);
@@ -160,7 +150,7 @@ private:
     pthread_mutex_t mutex;
     pthread_cond_t full;
     pthread_cond_t empty;
-    gc_aptr<T> values;
+    gc_ptr<T> values;
 
     template<typename X> friend const int enqueue(queue<X>& q, const X& v);
     template<typename X> friend const X dequeue(queue<X>& q);
@@ -279,6 +269,8 @@ const bool shutdown(worker& w) {
     shutdownJoin(w.threads);
     return true;
 }
+
+#endif
 
 }
 #endif /* tuscany_parallel_hpp */

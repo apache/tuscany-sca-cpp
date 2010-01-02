@@ -39,7 +39,7 @@ AC_PROG_LIBTOOL
 # Check for running on Darwin
 AC_MSG_CHECKING([if running on Darwin])
 UNAME=`uname -s`
-if test "x$UNAME" = "xDarwin"; then
+if test "${UNAME}" = "Darwin"; then
   AC_DEFINE([IS_DARWIN], [1], [Set to 1 when running on Darwin - Mac OSX])
   AC_MSG_RESULT(yes)
   AC_SUBST([libsuffix],[".dylib"])
@@ -49,14 +49,14 @@ else
   AC_SUBST([libsuffix],[".so"])
   is_darwin=false
 fi
-AM_CONDITIONAL([DARWIN], [test x$is_darmin = xtrue])
+AM_CONDITIONAL([DARWIN], [test "${is_darmin}" = "true"])
 
 # Configure CURL_INCLUDE and CURL_LIB
 AC_MSG_CHECKING([for curl])
 AC_ARG_WITH([curl], [AC_HELP_STRING([--with-curl=PATH], [path to installed curl [default=/usr]])], [
-  CURL_INCLUDE="$withval/include"
-  CURL_LIB="$withval/lib"
-  AC_MSG_RESULT("$withval")
+  CURL_INCLUDE="${withval}/include"
+  CURL_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
 ], [
   CURL_INCLUDE="/usr/include"
   CURL_LIB="/usr/lib"
@@ -68,9 +68,9 @@ AC_SUBST(CURL_LIB)
 # Configure LIBXML2_INCLUDE and LIBXML2_LIB
 AC_MSG_CHECKING([for libxml2])
 AC_ARG_WITH([libxml2], [AC_HELP_STRING([--with-libxml2=PATH], [path to installed libxml2 [default=/usr]])], [
-  LIBXML2_INCLUDE="$withval/include/libxml2"
-  LIBXML2_LIB="$withval/lib"
-  AC_MSG_RESULT("$withval")
+  LIBXML2_INCLUDE="${withval}/include/libxml2"
+  LIBXML2_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
 ], [
   LIBXML2_INCLUDE="/usr/include/libxml2"
   LIBXML2_LIB="/usr/lib"
@@ -83,16 +83,16 @@ AC_SUBST(LIBXML2_LIB)
 AC_MSG_CHECKING([for js-include])
 AC_ARG_WITH([js-include], [AC_HELP_STRING([--with-js-include=PATH], [path to installed SpiderMonkey include dir
              [default=/usr/include/xulrunner-1.9.1.5/unstable]])], [
-  JS_INCLUDE="$withval"
-  AC_MSG_RESULT("$withval")
+  JS_INCLUDE="${withval}"
+  AC_MSG_RESULT("${withval}")
 ], [
   JS_INCLUDE="/usr/include/xulrunner-1.9.1.5/unstable"
   AC_MSG_RESULT(/usr/include/xulrunner-1.9.1.5/unstable)
 ])
 AC_MSG_CHECKING([for js-lib])
 AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib/xulrunner-1.9.1.5]])], [
-  JS_LIB="$withval"
-  AC_MSG_RESULT("$withval")
+  JS_LIB="${withval}"
+  AC_MSG_RESULT("${withval}")
 ], [
   JS_LIB="/usr/lib/xulrunner-1.9.1.5"
   AC_MSG_RESULT(/usr/lib/xulrunner-1.9.1.5)
@@ -103,9 +103,9 @@ AC_SUBST(JS_LIB)
 # Configure APR and HTTPD
 AC_MSG_CHECKING([for apr])
 AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed apr [default=/usr/local/apache2]])], [
-  APR_INCLUDE="$withval/include"
-  APR_LIB="$withval/lib"
-  AC_MSG_RESULT("$withval")
+  APR_INCLUDE="${withval}/include"
+  APR_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
 ], [
   APR_INCLUDE="/usr/local/apache2/include"
   APR_LIB="/usr/local/apache2/lib"
@@ -116,8 +116,8 @@ AC_SUBST(APR_LIB)
 
 AC_MSG_CHECKING([for httpd])
 AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed httpd [default=/usr/local/apache2]])], [
-  HTTPD_INCLUDE="$withval/include"
-  AC_MSG_RESULT("$withval")
+  HTTPD_INCLUDE="${withval}/include"
+  AC_MSG_RESULT("${withval}")
 ], [
   HTTPD_INCLUDE="/usr/local/apache2/include"
   AC_MSG_RESULT(/usr/local/apache2/lib)
@@ -125,20 +125,20 @@ AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed htt
 AC_SUBST(HTTPD_INCLUDE)
 
 # Checks for libraries.
-original_LIBS="$LIBS"
+original_LIBS="${LIBS}"
 AC_MSG_NOTICE([checking for libraries])
-LIBS="-L$CURL_LIB $original_LIBS"
+LIBS="-L${CURL_LIB} ${original_LIBS}"
 AC_CHECK_LIB([curl], [curl_global_init], [], [AC_MSG_ERROR([couldn't find a suitable libcurl, use --with-curl=PATH])])
-LIBS="-L$JS_LIB $original_LIBS"
+LIBS="-L${JS_LIB} ${original_LIBS}"
 AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitable libmozjs, use --with-js-lib=PATH])])
-LIBS="$original_LIBS"
+LIBS="${original_LIBS}"
 AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([couldn't find a suitable libpthread])])
-LIBS="-L$LIBXML2_LIB $original_LIBS"
+LIBS="-L${LIBXML2_LIB} ${original_LIBS}"
 AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitable libxml2, use --with-libxml2=PATH])])
-LIBS="-L$APR_LIB $original_LIBS"
+LIBS="-L${APR_LIB} ${original_LIBS}"
 AC_CHECK_LIB([apr-1], [apr_pool_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
 AC_CHECK_LIB([aprutil-1], [apr_memcache_replace], [], [AC_MSG_ERROR([couldn't find a suitable libaprutil-1, use --with-apr=PATH])])
-LIBS="$original_LIBS"
+LIBS="${original_LIBS}"
 
 # Checks for header files.
 AC_MSG_NOTICE([checking for header files])
@@ -158,9 +158,12 @@ AC_MSG_NOTICE([checking for library functions])
 AC_CHECK_FUNCS([gettimeofday select])
 
 # Configure GCC C++ compile options
-# Configure debugging, profiling and compile-time warnings
-AC_MSG_CHECKING([whether to compile for debugging and profiling])
-AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [compile for debugging and profiling [default=no]])],
+cxxflags=""
+ldflags="${LDFLAGS}"
+
+# Configure debugging and compile-time warnings
+AC_MSG_CHECKING([whether to compile with debugging and compile-time warnings])
+AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [compile with debugging and compile-time warnings [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
@@ -171,23 +174,63 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
     ;;
   esac ],
 [ AC_MSG_RESULT(no)])
-if test "$want_maintainer_mode" = "true"; then
-  AC_SUBST([CXXFLAGS], [" -D_REENTRANT -D_DEBUG -O0 -g3 -pg -Werror -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"])
-  AC_SUBST([LDFLAGS], ["${LDFLAGS} -lpthread -pg"])
+if test "${want_maintainer_mode}" = "true"; then
+  cxxflags="${cxxflags} -D_DEBUG -O0 -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"
+  ldflags="${ldflags} -pg"
 else
-  AC_SUBST([CXXFLAGS], [" -D_REENTRANT -O3 -std=c++0x -fmessage-length=0"])
-  AC_SUBST([LDFLAGS], ["${LDFLAGS} -lpthread"])
+  cxxflags="${cxxflags} -O3 -std=c++0x -fmessage-length=0"
 fi
+
+# Configure profiling
+AC_MSG_CHECKING([whether to compile with profiling])
+AC_ARG_ENABLE(profiling, [AS_HELP_STRING([--enable-profiling], [compile with profiling [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_profiling=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_profiling}" = "true"; then
+  cxxflags="${cxxflags} -pg"
+  ldflags="${ldflags} -pg"
+fi
+
+# Configure multi-threading support
+AC_MSG_CHECKING([whether to compile for multi-threaded execution])
+AC_ARG_ENABLE(threads, [AS_HELP_STRING([--enable-threads], [compile for multi-threaded execution [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_threads=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_threads}" = "true"; then
+  LIBS="${original_LIBS}"
+  AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([couldn't find a suitable libpthread])])
+  LIBS="${original_LIBS}"
+  cxxflags="${cxxflags} -D_REENTRANT"
+  ldflags="${ldflags} -lpthread"
+fi
+AC_SUBST([CXXFLAGS], ["${cxxflags}"])
+AC_SUBST([LDFLAGS], ["${ldflags}"])
 
 # Configure exuberant ctags
 TAGSFILE="`pwd`/tags"
-AC_SUBST([CTAGSFLAGS], ["${CTAGSFLAGS} --c++-kinds=+p --fields=+iaS --extra=+q --append --tag-relative=yes -f $TAGSFILE"])
+AC_SUBST([CTAGSFLAGS], ["${CTAGSFLAGS} --c++-kinds=+p --fields=+iaS --extra=+q --append --tag-relative=yes -f ${TAGSFILE}"])
 
 # Configure TUSCANY_SCACPP
-TUSCANY_SCACPP=`echo "$TUSCANY_SCACPP"`
-if test "$TUSCANY_SCACPP" = ""; then
+TUSCANY_SCACPP=`echo "${TUSCANY_SCACPP}"`
+if test "${TUSCANY_SCACPP}" = ""; then
   SCAPWD=`pwd`
-  AC_SUBST([TUSCANY_SCACPP], ["$SCAPWD"])
+  AC_SUBST([TUSCANY_SCACPP], ["${SCAPWD}"])
 fi
 
 # Configure Doxygen build
@@ -199,15 +242,15 @@ AC_ARG_ENABLE(doxygen, [AS_HELP_STRING([--enable-doxygen], [build Doxygen docume
     ;;
   *)
     AC_MSG_RESULT(yes)
-    AC_PATH_PROG(DOXYGEN, doxygen, , $PATH)
-    if test "$DOXYGEN" = ""; then
+    AC_PATH_PROG(DOXYGEN, doxygen, , ${PATH})
+    if test "${DOXYGEN}" = ""; then
       AC_MSG_ERROR([could not find doxygen])
     fi
     want_doxygen=true
     ;;
   esac ],
 [ AC_MSG_RESULT(no)])
-AM_CONDITIONAL([WANT_DOXYGEN], [test "$want_doxygen" = "true"])
+AM_CONDITIONAL([WANT_DOXYGEN], [test "${want_doxygen}" = "true"])
 
 AC_CONFIG_FILES([Makefile
                  kernel/Makefile

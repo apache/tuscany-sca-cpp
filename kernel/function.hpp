@@ -26,7 +26,8 @@
  * Lambda function type.
  */
 
-#include <iostream>
+#include <bits/move.h>
+#include "fstream.hpp"
 #include "gc.hpp"
 #include "debug.hpp"
 
@@ -55,13 +56,13 @@ bool checkLambdaCounters() {
 }
 
 bool printLambdaCounters() {
-    std::cout << "countLambdas " << countLambdas << std::endl;
-    std::cout << "countELambdas " << countELambdas << std::endl;
-    std::cout << "countFLambdas " << countFLambdas << std::endl;
-    std::cout << "countCLambdas " << countCLambdas << std::endl;
-    std::cout << "countProxies " << countProxies << std::endl;
-    std::cout << "countFProxies " << countFProxies << std::endl;
-    std::cout << "countCProxies " << countCProxies << std::endl;
+    cout << "countLambdas " << countLambdas << endl;
+    cout << "countELambdas " << countELambdas << endl;
+    cout << "countFLambdas " << countFLambdas << endl;
+    cout << "countCLambdas " << countCLambdas << endl;
+    cout << "countProxies " << countProxies << endl;
+    cout << "countFProxies " << countFProxies << endl;
+    cout << "countCProxies " << countCProxies << endl;
     return true;
 }
 
@@ -79,7 +80,7 @@ bool printLambdaCounters() {
 
 template<typename R, typename... P> class Callable {
 public:
-    Callable() : refCount(0) {
+    Callable() {
     }
 
     virtual const int size() const = 0;
@@ -116,19 +117,6 @@ public:
     private:
         const F function;
     };
-
-private:
-    friend class gc_counting_ptr<Callable>;
-
-    unsigned int refCount;
-
-    unsigned int acquire() {
-        return gc_add_and_fetch(refCount, (unsigned int)1);
-    }
-
-    unsigned int release() {
-        return gc_sub_and_fetch(refCount, (unsigned int)1);
-    }
 };
 
 template<typename S> class lambda;
@@ -145,7 +133,7 @@ public:
         debug_inc(countFLambdas);
 
         typedef typename CallableType::template Proxy<F> ProxyType;
-        callable = gc_counting_ptr<CallableType>(new ProxyType(f));
+        callable = gc_ptr<CallableType>(new (gc_new<ProxyType>()) ProxyType(f));
     }
 
     lambda(const lambda& l) {
@@ -179,15 +167,15 @@ public:
         return (*callable)(std::forward<P>(p)...);
     }
 
-    template<typename S> friend std::ostream& operator<<(std::ostream&, const lambda<S>&);
+    template<typename S> friend ostream& operator<<(ostream&, const lambda<S>&);
     template<typename S> friend const bool isNil(const lambda<S>& l);
 
 private:
     typedef Callable<R,P...> CallableType;
-    gc_counting_ptr<CallableType> callable;
+    gc_ptr<CallableType> callable;
 };
 
-template<typename S> std::ostream& operator<<(std::ostream& out, const lambda<S>& l) {
+template<typename S> ostream& operator<<(ostream& out, const lambda<S>& l) {
     return out << "lambda::" << l.callable;
 }
 

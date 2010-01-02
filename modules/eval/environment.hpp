@@ -26,10 +26,11 @@
  * Script evaluator environment implementation.
  */
 
-#include <string>
+#include "string.hpp"
 #include "list.hpp"
 #include "value.hpp"
 #include "primitive.hpp"
+#include <string>
 
 namespace tuscany {
 namespace eval {
@@ -63,7 +64,7 @@ const Env enclosingEnvironment(const Env& env) {
     return cdr(env);
 }
 
-const gc_pool_ptr<Frame> firstFrame(const Env& env) {
+const gc_ptr<Frame> firstFrame(const Env& env) {
     return car(env);
 }
 
@@ -82,7 +83,7 @@ const bool isDotVariable(const value& var) {
 const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, const list<value> values) {
     if (isNil(variables)) {
         if (!isNil(values))
-            logStream() << "Too many arguments supplied " << values << std::endl;
+            logStream() << "Too many arguments supplied " << values << endl;
         return frameSoFar;
     }
     if (isDotVariable(car(variables)))
@@ -90,7 +91,7 @@ const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, c
 
     if (isNil(values)) {
         if (!isNil(variables))
-            logStream() << "Too few arguments supplied " << variables << std::endl;
+            logStream() << "Too few arguments supplied " << variables << endl;
         return frameSoFar;
     }
 
@@ -101,8 +102,8 @@ const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, c
     return makeBinding(newFrame, cdr(variables), cdr(values));
 }
 
-const gc_pool_ptr<Frame> makeFrame(const list<value>& variables, const list<value> values, const gc_pool& pool) {
-    gc_pool_ptr<Frame> frame = gc_pool_new<Frame>(pool);
+const gc_ptr<Frame> makeFrame(const list<value>& variables, const list<value> values, const gc_pool& pool) {
+    gc_ptr<Frame> frame = new (gc_new<Frame>(pool)) Frame();
     *frame = value(makeBinding(cons(value(list<value>()), list<value>()), variables, values));
     return frame;
 }
@@ -163,7 +164,7 @@ const value lookupEnvScan(const value& var, const list<value>& vars, const list<
 
 const value lookupEnvLoop(const value& var, const Env& env) {
     if(env == theEmptyEnvironment()) {
-        logStream() << "Unbound variable " << var << std::endl;
+        logStream() << "Unbound variable " << var << endl;
         return value();
     }
     return lookupEnvScan(var, frameVariables(*firstFrame(env)), frameValues(*firstFrame(env)), env);

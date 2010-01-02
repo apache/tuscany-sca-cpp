@@ -24,8 +24,8 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <string>
+#include "stream.hpp"
+#include "string.hpp"
 #include "perf.hpp"
 #include "mcache.hpp"
 
@@ -35,10 +35,10 @@ namespace cache {
 bool testMemCached() {
     MemCached ch;
 
-    assert(hasContent(post("a", std::string("AAA"), ch)));
-    assert(get("a", ch) == value(std::string("AAA")));
-    assert(hasContent(put("a", std::string("aaa"), ch)));
-    assert(get("a", ch) == value(std::string("aaa")));
+    assert(hasContent(post("a", string("AAA"), ch)));
+    assert((get("a", ch)) == value(string("AAA")));
+    assert(hasContent(put("a", string("aaa"), ch)));
+    assert((get("a", ch)) == value(string("aaa")));
     assert(hasContent(del("a", ch)));
     assert(!hasContent(get("a", ch)));
 
@@ -50,18 +50,17 @@ struct getLoop {
     getLoop(MemCached& ch) : ch(ch) {
     }
     const bool operator()() const {
-        assert(get("c", ch) == value(std::string("CCC")));
+        assert((get("c", ch)) == value(string("CCC")));
         return true;
     }
 };
 
 bool testGetPerf() {
     MemCached ch;
-    assert(hasContent(post("c", std::string("CCC"), ch)));
+    assert(hasContent(post("c", string("CCC"), ch)));
 
     const lambda<bool()> gl = getLoop(ch);
-    std::cout << "Memcached get test " << time(gl, 5, 200) << " ms" << std::endl;
-
+    cout << "Memcached get test " << time(gl, 5, 200) << " ms" << endl;
     return true;
 }
 
@@ -69,12 +68,12 @@ bool testGetPerf() {
 }
 
 int main() {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::cache::testMemCached();
     tuscany::cache::testGetPerf();
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
 
     return 0;
 }

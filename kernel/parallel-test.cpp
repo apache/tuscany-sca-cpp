@@ -24,14 +24,16 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <string>
+#include "stream.hpp"
+#include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"
 #include "perf.hpp"
 #include "parallel.hpp"
 
 namespace tuscany {
+
+#ifdef _REENTRANT
 
 int inci = 0;
 
@@ -84,25 +86,25 @@ bool testAtomicPerf() {
     const int count = 100000;
     {
         const lambda<bool()> l = incPerf();
-        std::cout << "Non-atomic inc test " << time(l, 1000, count) << " ms" << std::endl;
+        cout << "Non-atomic inc test " << time(l, 1000, count) << " ms" << endl;
         assert(inci == count + 1000);
     }
     {
         const lambda<bool()> l = addAndFetchPerf();
-        std::cout << "Atomic inc test " << time(l, 1000, count) << " ms" << std::endl;
+        cout << "Atomic inc test " << time(l, 1000, count) << " ms" << endl;
         assert(addi == count + 1000);
     }
     {
         pthread_mutex_t mutex;
         pthread_mutex_init(&mutex, NULL);
         const lambda<bool()> l = mutexPerf(&mutex);
-        std::cout << "Locked inc test " << time(l, 1000, count) << " ms" << std::endl;
+        cout << "Locked inc test " << time(l, 1000, count) << " ms" << endl;
         assert(muxi == count + 1000);
         pthread_mutex_destroy(&mutex);
     }
     {
         const lambda<bool()> l = tlsPerf();
-        std::cout << "Thread local inc test " << time(l, 1000, count) << " ms" << std::endl;
+        cout << "Thread local inc test " << time(l, 1000, count) << " ms" << endl;
         assert(tlsi == count + 1000);
     }
     return true;
@@ -114,38 +116,51 @@ const int mtsquare(const int x) {
     return x * x;
 }
 
+bool checkResults(const list<future<int> > r, int i) {
+    if (isNil(r))
+        return true;
+    assert(car(r) == i * i);
+    checkResults(cdr(r), i + 1);
+    return true;
+}
+
+const list<future<int> > submitSquares(worker& w, const int max, const int i) {
+    if (i == max)
+        return list<future<int> >();
+    const lambda<int()> func = curry(lambda<int(const int)> (mtsquare), i);
+    return cons(submit(w, func), submitSquares(w, max, i + 1));
+}
+
 bool testWorker() {
-    worker w(10);
+    worker w(20);
     {
         const lambda<int()> func = curry(lambda<int(const int)> (mtsquare), 2);
         assert(submit(w, func) == 4);
     }
     {
-        const int max = 10;
-
-        list<future<int> > r;
-        for(int i = 0; i < max; i++) {
-            const lambda<int()> func = curry(lambda<int(const int)> (mtsquare), i);
-            r = cons(submit(w, func), r);
-        }
-        for(int i = max - 1; i >= 0; i--) {
-            assert(car(r) == i * i);
-            r = cdr(r);
-        }
+        const int max = 20;
+        const list<future<int> > r(submitSquares(w, max, 0));
+        checkResults(r, 0);
     }
     shutdown(w);
     return true;
 }
 
+#endif
+
 }
 
 int main() {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
 
+#ifdef _REENTRANT
     tuscany::testAtomicPerf();
     tuscany::testWorker();
+#else
+    tuscany::cout << "Skipped multi-thread tests" << tuscany::endl;
+#endif
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
 
     return 0;
 }

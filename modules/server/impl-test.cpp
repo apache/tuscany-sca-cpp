@@ -23,7 +23,7 @@
  * Test component implementation.
  */
 
-#include <string>
+#include "string.hpp"
 
 #include "function.hpp"
 #include "list.hpp"
@@ -34,24 +34,24 @@
 namespace tuscany {
 namespace server {
 
-const failable<value, std::string> get(unused const list<value>& params) {
-    return value(std::string("Hey"));
+const failable<value> get(unused const list<value>& params) {
+    return value(string("Hey"));
 }
 
-const failable<value, std::string> post(unused const list<value>& params) {
-    return value(std::string("1234"));
+const failable<value> post(unused const list<value>& params) {
+    return value(string("1234"));
 }
 
-const failable<value, std::string> put(unused const list<value>& params) {
+const failable<value> put(unused const list<value>& params) {
     return value(true);
 }
 
-const failable<value, std::string> del(unused const list<value>& params) {
+const failable<value> del(unused const list<value>& params) {
     return value(true);
 }
 
-const failable<value, std::string> hello(const list<value>& params) {
-    return value(std::string("hello ") + std::string(car(params)));
+const failable<value> hello(const list<value>& params) {
+    return value(string("hello ") + string(car(params)));
 }
 
 }
@@ -71,7 +71,7 @@ const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
         return tuscany::server::del(cdr(params));
     if (func == "hello")
         return tuscany::server::hello(cdr(params));
-    return tuscany::mkfailure<tuscany::value, std::string>(std::string("Function not supported: ") + std::string(func));
+    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
 }
 
 }

@@ -24,12 +24,10 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <string>
-#include <sstream>
+#include "string.hpp"
+#include "sstream.hpp"
 #include "function.hpp"
 #include "list.hpp"
-#include "slist.hpp"
 #include "tree.hpp"
 #include "value.hpp"
 #include "monad.hpp"
@@ -77,7 +75,10 @@ bool testLambda() {
 
 bool testLambdaGC() {
     resetLambdaCounters();
-    testLambda();
+    {
+        gc_scoped_pool gc;
+        testLambda();
+    }
     assert(checkLambdaCounters());
     return true;
 }
@@ -87,18 +88,15 @@ int countElements = 0;
 struct Element {
     int i;
 
-    Element() :
-        i(0) {
+    Element() : i(0) {
         countElements++;
     }
 
-    Element(int i) :
-        i(i) {
+    Element(int i) : i(i) {
         countElements++;
     }
 
-    Element(const Element& o) :
-        i(o.i) {
+    Element(const Element& o) : i(o.i) {
         countElements++;
     }
 
@@ -110,7 +108,7 @@ struct Element {
         return o.i == i;
     }
 };
-std::ostream& operator<<(std::ostream& out, const Element& v) {
+ostream& operator<<(ostream& out, const Element& v) {
     out << v.i ;
     return out;
 }
@@ -124,23 +122,14 @@ bool testCons() {
     return true;
 }
 
-bool testSet() {
-    list<int> l = mklist(1, 2, 3);
-    setCar(l, 4);
-    setCdr(l, mklist(5, 6));
-    assert(car(l) == 4);
-    assert(cadr(l) == 5);
-    assert(caddr(l) == 6);
-    assert(isNil(cdddr(l)));
-    return true;
-}
-
 bool testListGC() {
     resetLambdaCounters();
     resetListCounters();
     countElements = 0;
-    testCons();
-    testSet();
+    {
+        gc_scoped_pool gc;
+        testCons();
+    }
     assert(checkLambdaCounters());
     assert(checkListCounters());
     assert(countElements == 0);
@@ -148,13 +137,13 @@ bool testListGC() {
 }
 
 bool testOut() {
-    std::ostringstream os1;
+    ostringstream os1;
     os1 << list<int> ();
-    assert(os1.str() == "()");
+    assert(str(os1) == "()");
 
-    std::ostringstream os2;
+    ostringstream os2;
     os2 << mklist(1, 2, 3);
-    assert(os2.str() == "(1 2 3)");
+    assert(str(os2) == "(1 2 3)");
     return true;
 }
 
@@ -180,10 +169,7 @@ bool testAppend() {
     assert(car(cdr(cdr(append(mklist(1), mklist(2, 3))))) == 3);
     assert(isNil(cdr(cdr(cdr(append(mklist(1), mklist(2, 3)))))));
 
-    list<int> l;
-    l << 1 << 2 << 3;
-    assert(l == mklist(1, 2, 3));
-    assert(list<int>() << 1 << 2 << 3 == mklist(1, 2, 3));
+    assert(list<int>() + 1 + 2 + 3 == mklist(1, 2, 3));
     return true;
 }
 
@@ -196,7 +182,7 @@ struct Complex {
         x(x), y(y) {
     }
 };
-std::ostream& operator<<(std::ostream& out, const Complex& v) {
+ostream& operator<<(ostream& out, const Complex& v) {
     out << "[" << v.x << ":" << v.y << "]";
     return out;
 }
@@ -266,9 +252,9 @@ bool testListRef() {
 }
 
 bool testAssoc() {
-    const list<list<std::string> > l = mklist(mklist<std::string>("x", "X"), mklist<std::string>("a", "A"), mklist<std::string>("y", "Y"), mklist<std::string>("a", "AA"));
-    assert(assoc<std::string>("a", l) == mklist<std::string>("a", "A"));
-    assert(isNil(assoc<std::string>("z", l)));
+    const list<list<string> > l = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("y", "Y"), mklist<string>("a", "AA"));
+    assert(assoc<string>("a", l) == mklist<string>("a", "A"));
+    assert(isNil(assoc<string>("z", l)));
 
     const list<list<value> > u = mklist(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"), mklist<value>("a", "AA"));
     assert(assoc<value>("a", u) == mklist<value>("a", "A"));
@@ -279,21 +265,21 @@ bool testAssoc() {
 }
 
 bool testZip() {
-    const list<std::string> k = mklist<std::string>("x", "a", "y", "a");
-    const list<std::string> v = mklist<std::string>("X", "A", "Y", "AA");
-    const list<list<std::string> > z = mklist(k, v);
-    const list<list<std::string> > u = mklist(mklist<std::string>("x", "X"), mklist<std::string>("a", "A"), mklist<std::string>("y", "Y"), mklist<std::string>("a", "AA"));
+    const list<string> k = mklist<string>("x", "a", "y", "a");
+    const list<string> v = mklist<string>("X", "A", "Y", "AA");
+    const list<list<string> > z = mklist(k, v);
+    const list<list<string> > u = mklist(mklist<string>("x", "X"), mklist<string>("a", "A"), mklist<string>("y", "Y"), mklist<string>("a", "AA"));
     assert(zip(k, v) == u);
     assert(unzip(u) == z);
     return true;
 }
 
 bool testTokenize() {
-    assert(tokenize("/", "aaa/bbb/ccc/ddd") == mklist<std::string>("aaa", "bbb", "ccc", "ddd"));
-    assert(tokenize("/", "/bbb/ccc/ddd") == mklist<std::string>("", "bbb", "ccc", "ddd"));
-    assert(tokenize("/", "/bbb/ccc/") == mklist<std::string>("", "bbb", "ccc"));
-    assert(tokenize("/", "/bbb//ccc/") == mklist<std::string>("", "bbb", "", "ccc"));
-    assert(tokenize("/", "abc/def/") == mklist<std::string>("abc", "def"));
+    assert(tokenize("/", "aaa/bbb/ccc/ddd") == mklist<string>("aaa", "bbb", "ccc", "ddd"));
+    assert(tokenize("/", "/bbb/ccc/ddd") == mklist<string>("", "bbb", "ccc", "ddd"));
+    assert(tokenize("/", "/bbb/ccc/") == mklist<string>("", "bbb", "ccc"));
+    assert(tokenize("/", "/bbb//ccc/") == mklist<string>("", "bbb", "", "ccc"));
+    assert(tokenize("/", "abc/def/") == mklist<string>("abc", "def"));
     return true;
 }
 
@@ -336,13 +322,11 @@ bool testValue() {
     const list<value> v = mklist<value>(mklist<value>("x", "X"), mklist<value>("a", "A"), mklist<value>("y", "Y"));
     assert(cadr((list<list<value> >)value(v)) == mklist<value>("a", "A"));
 
-    const value pv(gc_ptr<value>(new value(1)));
+    const value pv(gc_ptr<value>(new (gc_new<value>()) value(1)));
     assert(*(gc_ptr<value>)pv == value(1));
 
-    const list<value> lpv = mklist<value>(gc_ptr<value>(new value(1)), gc_ptr<value>(new value(2)));
+    const list<value> lpv = mklist<value>(gc_ptr<value>(new (gc_new<value>()) value(1)), gc_ptr<value>(new (gc_new<value>()) value(2)));
     assert(*(gc_ptr<value>)car(lpv) == value(1));
-    *(gc_ptr<value>)cadr(lpv) = value(3);
-    assert(*(gc_ptr<value>)cadr(lpv) == value(3));
     return true;
 }
 
@@ -350,7 +334,10 @@ bool testValueGC() {
     resetLambdaCounters();
     resetListCounters();
     resetValueCounters();
-    testValue();
+    {
+        gc_scoped_pool gc;
+        testValue();
+    }
     assert(checkValueCounters());
     assert(checkLambdaCounters());
     assert(checkListCounters());
@@ -371,8 +358,8 @@ bool testTree() {
     return true;
 }
 
-const list<value> lta(const std::string& x) {
-    return mklist<value>(x.c_str(), (x + x).c_str());
+const list<value> lta(const string& x) {
+    return mklist<value>(c_str(x), c_str(x + x));
 }
 
 bool testTreeAssoc() {
@@ -425,7 +412,7 @@ struct nestedFibMapPerf {
 bool testCppPerf() {
     {
         const lambda<bool()> fml = fibMapPerf();
-        std::cout << "Fibonacci map test " << (time(fml, 1, 1) / 1000) << " ms" << std::endl;
+        cout << "Fibonacci map test " << (time(fml, 1, 1) / 1000) << " ms" << endl;
     }
 
     {
@@ -443,7 +430,7 @@ bool testCppPerf() {
         };
 
         const lambda<bool()> nfml = nestedFibMapPerf(lambda<double(const double)>(nested::fib));
-        std::cout << "Nested Fibonacci map test " << (time(nfml, 1, 1) / 1000) << " ms" << std::endl;
+        cout << "Nested Fibonacci map test " << (time(nfml, 1, 1) / 1000) << " ms" << endl;
     }
     return true;
 }
@@ -490,26 +477,26 @@ bool testMaybeMonad() {
     return true;
 }
 
-const failable<int, std::string> failableF(const int v) {
+const failable<int> failableF(const int v) {
     return v * 2;
 }
 
-const failable<int, std::string> failableG(const int v) {
+const failable<int> failableG(const int v) {
     return v * 3;
 }
 
-const failable<int, std::string> failableH(const int v) {
+const failable<int> failableH(const int v) {
     return failableF(v) >> failableG;
 }
 
 bool testFailableMonad() {
-    const failable<int, std::string> m(2);
+    const failable<int> m(2);
     assert(m >> failableF == failableF(2));
-    assert((m >> success<int, std::string>()) == m);
+    assert((m >> success<int, string>()) == m);
     assert(m >> failableF >> failableG == m >> failableH);
 
-    std::cout << "Failable monad test... ";
-    failable<int, std::string> ooops = mkfailure<int, std::string>("test");
+    cout << "Failable monad test... " << endl;
+    failable<int> ooops = mkfailure<int>("test");
     assert(reason(ooops) == "test");
     assert(ooops >> failableF >> failableG == ooops);
     return true;
@@ -553,14 +540,14 @@ bool testStateMonad() {
 }
 
 bool testDynLib() {
-    const failable<lib, std::string> dl(dynlib(".libs/libdynlib-test" + dynlibExt));
+    const failable<lib> dl(dynlib(string(".libs/libdynlib-test") + dynlibExt));
     assert(hasContent(dl));
-    const failable<lambda<int(const int)>, std::string> sq(dynlambda<int(const int)>("csquare", content(dl)));
+    const failable<lambda<int(const int)>> sq(dynlambda<int(const int)>("csquare", content(dl)));
     assert(hasContent(sq));
     lambda<int(const int)> l(content(sq));
     assert(l(2) == 4);
 
-    const failable<lambda<lambda<int(const int)>()>, std::string> sql(dynlambda<lambda<int(const int)>()>("csquarel", content(dl)));
+    const failable<lambda<lambda<int(const int)>()>> sql(dynlambda<lambda<int(const int)>()>("csquarel", content(dl)));
     assert(hasContent(sql));
     lambda<lambda<int(const int)>()> ll(content(sql));
     assert(ll()(3) == 9);
@@ -570,12 +557,11 @@ bool testDynLib() {
 }
 
 int main() {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::testLambda();
     tuscany::testLambdaGC();
     tuscany::testCons();
-    tuscany::testSet();
     tuscany::testListGC();
     tuscany::testOut();
     tuscany::testEquals();
@@ -603,7 +589,7 @@ int main() {
     tuscany::testStateMonad();
     tuscany::testDynLib();
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
 
     return 0;
 }

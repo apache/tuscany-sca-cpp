@@ -24,21 +24,15 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include "slist.hpp"
+#include "stream.hpp"
+#include "string.hpp"
 #include "perf.hpp"
 #include "curl.hpp"
 
 namespace tuscany {
 namespace http {
 
-const bool contains(const std::string& str, const std::string& pattern) {
-    return str.find(pattern) != str.npos;
-}
-
-std::ostringstream* curlWriter(const std::string& s, std::ostringstream* os) {
+ostream* curlWriter(const string& s, ostream* os) {
     (*os) << s;
     return os;
 }
@@ -46,16 +40,16 @@ std::ostringstream* curlWriter(const std::string& s, std::ostringstream* os) {
 const bool testGet() {
     CURLSession ch;
     {
-        std::ostringstream os;
-        const failable<list<std::ostringstream*>, std::string> r = get<std::ostringstream*>(curlWriter, &os, "http://localhost:8090", ch);
+        ostringstream os;
+        const failable<list<ostream*> > r = get<ostream*>(curlWriter, &os, "http://localhost:8090", ch);
         assert(hasContent(r));
-        assert(contains(os.str(), "HTTP/1.1 200 OK"));
-        assert(contains(os.str(), "It works"));
+        assert(contains(str(os), "HTTP/1.1 200 OK"));
+        assert(contains(str(os), "It works"));
     }
     {
-        const failable<value, std::string> r = get("http://localhost:8090", ch);
+        const failable<value> r = getcontent("http://localhost:8090", ch);
         assert(hasContent(r));
-        assert(contains(content(r), "It works"));
+        assert(contains(car(reverse(list<value>(content(r)))), "It works"));
     }
     return true;
 }
@@ -65,9 +59,9 @@ struct getLoop {
     getLoop(CURLSession& ch) : ch(ch) {
     }
     const bool operator()() const {
-        const failable<value, std::string> r = get("http://localhost:8090", ch);
+        const failable<value> r = getcontent("http://localhost:8090", ch);
         assert(hasContent(r));
-        assert(contains(content(r), "It works"));
+        assert(contains(car(reverse(list<value>(content(r)))), "It works"));
         return true;
     }
 };
@@ -75,7 +69,7 @@ struct getLoop {
 const bool testGetPerf() {
     CURLSession ch;
     lambda<bool()> gl = getLoop(ch);
-    std::cout << "Static GET test " << time(gl, 5, 200) << " ms" << std::endl;
+    cout << "Static GET test " << time(gl, 5, 200) << " ms" << endl;
     return true;
 }
 
@@ -83,12 +77,12 @@ const bool testGetPerf() {
 }
 
 int main() {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::http::testGet();
     tuscany::http::testGetPerf();
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
 
     return 0;
 }

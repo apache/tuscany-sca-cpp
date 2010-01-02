@@ -27,10 +27,8 @@
  * component implementations.
  */
 
-#include <string>
-#include <iostream>
-#include <fstream>
-
+#include "string.hpp"
+#include "stream.hpp"
 #include "function.hpp"
 #include "list.hpp"
 #include "value.hpp"
@@ -65,12 +63,12 @@ struct evalImplementation {
     const value operator()(const list<value>& params) const {
         const value expr = cons<value>(car(params), append(eval::quotedParameters(cdr(params)), px));
         debug(expr, "modeval::scm::evalImplementation::input");
-        gc_pool pool;
+        gc_pool pool(gc_current_pool());
         eval::Env globalEnv = eval::setupEnvironment(pool);
         const value val = eval::evalScript(expr, impl, globalEnv, pool);
         debug(val, "modeval::scm::evalImplementation::result");
         if (isNil(val))
-            return mklist<value>(value(), std::string("Could not evaluate expression"));
+            return mklist<value>(value(), string("Could not evaluate expression"));
         return mklist<value>(val);
     }
 };
@@ -78,13 +76,13 @@ struct evalImplementation {
 /**
  * Read a script component implementation.
  */
-const failable<lambda<value(const list<value>&)>, std::string> readImplementation(const std::string path, const list<value>& px) {
-    std::ifstream is(path.c_str(), std::ios_base::in);
-    if (is.fail() || is.bad())
-        return mkfailure<lambda<value(const list<value>&)>, std::string>("Could not read implementation: " + path);
+const failable<lambda<value(const list<value>&)> > readImplementation(const string& path, const list<value>& px) {
+    ifstream is(path);
+    if (fail(is))
+        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
     const value impl = eval::readScript(is);
     if (isNil(impl))
-        return mkfailure<lambda<value(const list<value>&)>, std::string>("Could not read implementation: " + path);
+        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
     return lambda<value(const list<value>&)>(evalImplementation(impl, px));
 }
 

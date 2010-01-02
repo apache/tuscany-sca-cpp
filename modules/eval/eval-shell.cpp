@@ -24,12 +24,13 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <string>
-#include <sstream>
+#include "gc.hpp"
+#include "stream.hpp"
+#include "string.hpp"
 #include "driver.hpp"
 
 int main() {
-    tuscany::eval::evalDriverRun(std::cin, std::cout);
+    tuscany::gc_scoped_pool pool;
+    tuscany::eval::evalDriverRun(tuscany::cin, tuscany::cout, pool);
     return 0;
 }

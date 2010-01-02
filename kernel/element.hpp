@@ -98,7 +98,7 @@ const value elementHasValue(const list<value>& l) {
     const list<value> r = reverse(l);
     if (isSymbol(car(r)))
         return false;
-    if(isList(car(r)) && isSymbol(car<value>(car(r))))
+    if(isList(car(r)) && !isNil((list<value>)car(r)) && isSymbol(car<value>(car(r))))
             return false;
     return true;
 }
@@ -201,7 +201,7 @@ const value valueToElement(const value& t) {
             return mklist(element, n, v);
 
         // Convert a list value
-        if (!isSymbol(car<value>(v)))
+        if (isNil((list<value>)v) || !isSymbol(car<value>(v)))
             return cons(element, cons(n, mklist<value>(valuesToElements(v))));
 
         // Convert a nested name value pair value

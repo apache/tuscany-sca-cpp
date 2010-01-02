@@ -28,7 +28,7 @@
 
 #include <apr_general.h>
 #include <apr_uuid.h>
-#include <iostream>
+#include "stream.hpp"
 #include "function.hpp"
 #include "list.hpp"
 #include "value.hpp"
@@ -40,24 +40,24 @@ const value primitiveSymbol("primitive");
 const value quoteSymbol("'");
 const value lambdaSymbol("lambda");
 
-std::ostream* displayOutStream = &std::cout;
-std::ostream* logOutStream = &std::cerr;
+ostream* displayOutStream = &cout;
+ostream* logOutStream = &cerr;
 
-const bool setupDisplay(std::ostream& out) {
+const bool setupDisplay(ostream& out) {
     displayOutStream = &out;
     return true;
 }
 
-std::ostream& displayStream() {
+ostream& displayStream() {
     return *displayOutStream;
 }
 
-const bool setupLog(std::ostream& out) {
+const bool setupLog(ostream& out) {
     logOutStream = &out;
     return true;
 }
 
-std::ostream& logStream() {
+ostream& logStream() {
     return *logOutStream;
 }
 
@@ -116,7 +116,7 @@ const value divProc(const list<value>& args) {
 
 const value displayProc(const list<value>& args) {
     if (isNil(args)) {
-        displayStream() << std::endl;
+        displayStream() << endl;
         return true;
     }
     displayStream() << car(args);
@@ -125,7 +125,7 @@ const value displayProc(const list<value>& args) {
 
 const value logProc(const list<value>& args) {
     if (isNil(args)) {
-        logStream() << std::endl;
+        logStream() << endl;
         return true;
     }
     logStream() << car(args);
@@ -137,7 +137,7 @@ const value uuidProc(unused const list<value>& args) {
     apr_uuid_get(&uuid);
     char buf[APR_UUID_FORMATTED_LENGTH];
     apr_uuid_format(buf, &uuid);
-    return std::string(buf, APR_UUID_FORMATTED_LENGTH);
+    return string(buf, APR_UUID_FORMATTED_LENGTH);
 }
 
 const value cadrProc(unused const list<value>& args) {
@@ -194,51 +194,49 @@ template<typename F> const value primitiveProcedure(const F& f) {
 }
 
 const list<value> primitiveProcedureNames() {
-    list<value> l = mklist<value>("car");
-    l = cons<value>("cdr", l);
-    l = cons<value>("cons", l);
-    l = cons<value>("list", l);
-    l = cons<value>("nul", l);
-    l = cons<value>("=", l);
-    l = cons<value>("equal?", l);
-    l = cons<value>("+", l);
-    l = cons<value>("-", l);
-    l = cons<value>("*", l);
-    l = cons<value>("/", l);
-    l = cons<value>("assoc", l);
-    l = cons<value>("cadr", l);
-    l = cons<value>("caddr", l);
-    l = cons<value>("cadddr", l);
-    l = cons<value>("cddr", l);
-    l = cons<value>("cdddr", l);
-    l = cons<value>("display", l);
-    l = cons<value>("log", l);
-    l = cons<value>("uuid", l);
-    return l;
+    return mklist<value>("car")
+    + "cdr"
+    + "cons"
+    + "list"
+    + "nul"
+    + "="
+    + "equal?"
+    + "+"
+    + "-"
+    + "*"
+    + "/"
+    + "assoc"
+    + "cadr"
+    + "caddr"
+    + "cadddr"
+    + "cddr"
+    + "cdddr"
+    + "display"
+    + "log"
+    + "uuid";
 }
 
 const list<value> primitiveProcedureObjects() {
-    list<value> l = mklist(primitiveProcedure(carProc));
-    l = cons(primitiveProcedure(cdrProc), l);
-    l = cons(primitiveProcedure(consProc), l);
-    l = cons(primitiveProcedure(listProc), l);
-    l = cons(primitiveProcedure(nulProc), l);
-    l = cons(primitiveProcedure(equalProc), l);
-    l = cons(primitiveProcedure(equalProc), l);
-    l = cons(primitiveProcedure(addProc), l);
-    l = cons(primitiveProcedure(subProc), l);
-    l = cons(primitiveProcedure(mulProc), l);
-    l = cons(primitiveProcedure(divProc), l);
-    l = cons(primitiveProcedure(assocProc), l);
-    l = cons(primitiveProcedure(cadrProc), l);
-    l = cons(primitiveProcedure(caddrProc), l);
-    l = cons(primitiveProcedure(cadddrProc), l);
-    l = cons(primitiveProcedure(cddrProc), l);
-    l = cons(primitiveProcedure(cdddrProc), l);
-    l = cons(primitiveProcedure(displayProc), l);
-    l = cons(primitiveProcedure(logProc), l);
-    l = cons(primitiveProcedure(uuidProc), l);
-    return l;
+    return mklist(primitiveProcedure(carProc))
+    + primitiveProcedure(cdrProc)
+    + primitiveProcedure(consProc)
+    + primitiveProcedure(listProc)
+    + primitiveProcedure(nulProc)
+    + primitiveProcedure(equalProc)
+    + primitiveProcedure(equalProc)
+    + primitiveProcedure(addProc)
+    + primitiveProcedure(subProc)
+    + primitiveProcedure(mulProc)
+    + primitiveProcedure(divProc)
+    + primitiveProcedure(assocProc)
+    + primitiveProcedure(cadrProc)
+    + primitiveProcedure(caddrProc)
+    + primitiveProcedure(cadddrProc)
+    + primitiveProcedure(cddrProc)
+    + primitiveProcedure(cdddrProc)
+    + primitiveProcedure(displayProc)
+    + primitiveProcedure(logProc)
+    + primitiveProcedure(uuidProc);
 }
 
 const bool isFalse(const value& exp) {

@@ -24,21 +24,19 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include "slist.hpp"
+#include "stream.hpp"
+#include "string.hpp"
 #include "atom.hpp"
 
 namespace tuscany {
 namespace atom {
 
-std::ostringstream* writer(const std::string& s, std::ostringstream* os) {
+ostream* writer(const string& s, ostream* os) {
     (*os) << s;
     return os;
 }
 
-std::string itemEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+string itemEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<entry xmlns=\"http://www.w3.org/2005/Atom\">"
         "<title type=\"text\">item</title>"
         "<id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>"
@@ -50,7 +48,7 @@ std::string itemEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>"
         "</entry>\n");
 
-std::string incompleteEntry("<entry xmlns=\"http://www.w3.org/2005/Atom\">"
+string incompleteEntry("<entry xmlns=\"http://www.w3.org/2005/Atom\">"
         "<title>item</title><content type=\"text/xml\">"
         "<Item xmlns=\"http://services/\">"
         "<name xmlns=\"\">Orange</name>"
@@ -59,7 +57,7 @@ std::string incompleteEntry("<entry xmlns=\"http://www.w3.org/2005/Atom\">"
         "</content>"
         "</entry>");
 
-std::string completedEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+string completedEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<entry xmlns=\"http://www.w3.org/2005/Atom\">"
         "<title type=\"text\">item</title>"
         "<id></id>"
@@ -73,36 +71,36 @@ std::string completedEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 
 bool testEntry() {
     {
-        const list<value> i = list<value>() << element << "item"
-                << (list<value>() << element << "name" << std::string("Apple"))
-                << (list<value>() << element << "price" << std::string("$2.99"));
-        const list<value> a = mklist<value>(std::string("item"), std::string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
-        std::ostringstream os;
-        writeATOMEntry<std::ostringstream*>(writer, &os, a);
-        assert(os.str() == itemEntry);
+        const list<value> i = list<value>() + element + value("item")
+                + value(list<value>() + element + value("name") + value(string("Apple")))
+                + value(list<value>() + element + value("price") + value(string("$2.99")));
+        const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+        ostringstream os;
+        writeATOMEntry<ostream*>(writer, &os, a);
+        assert(str(os) == itemEntry);
     }
     {
         const list<value> a = content(readEntry(mklist(itemEntry)));
-        std::ostringstream os;
-        writeATOMEntry<std::ostringstream*>(writer, &os, a);
-        assert(os.str() == itemEntry);
+        ostringstream os;
+        writeATOMEntry<ostream*>(writer, &os, a);
+        assert(str(os) == itemEntry);
     }
     {
         const list<value> a = content(readEntry(mklist(incompleteEntry)));
-        std::ostringstream os;
-        writeATOMEntry<std::ostringstream*>(writer, &os, a);
-        assert(os.str() == completedEntry);
+        ostringstream os;
+        writeATOMEntry<ostream*>(writer, &os, a);
+        assert(str(os) == completedEntry);
     }
     return true;
 }
 
-std::string emptyFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+string emptyFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<feed xmlns=\"http://www.w3.org/2005/Atom\">"
         "<title type=\"text\">Feed</title>"
         "<id>1234</id>"
         "</feed>\n");
 
-std::string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<feed xmlns=\"http://www.w3.org/2005/Atom\">"
         "<title type=\"text\">Feed</title>"
         "<id>1234</id>"
@@ -130,51 +128,51 @@ std::string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 
 bool testFeed() {
     {
-        std::ostringstream os;
-        writeATOMFeed<std::ostringstream*>(writer, &os, mklist<value>("Feed", "1234"));
-        assert(os.str() == emptyFeed);
+        ostringstream os;
+        writeATOMFeed<ostream*>(writer, &os, mklist<value>("Feed", "1234"));
+        assert(str(os) == emptyFeed);
     }
     {
         const list<value> a = content(readFeed(mklist(emptyFeed)));
-        std::ostringstream os;
-        writeATOMFeed<std::ostringstream*>(writer, &os, a);
-        assert(os.str() == emptyFeed);
+        ostringstream os;
+        writeATOMFeed<ostream*>(writer, &os, a);
+        assert(str(os) == emptyFeed);
     }
     {
         const list<value> i = list<value>()
-                << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                    << (list<value>() << element << "item"
-                        << (list<value>() << element << "name" << "Apple")
-                        << (list<value>() << element << "price" << "$2.99")))
-                << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                    << (list<value>() << element << "item"
-                        << (list<value>() << element << "name" << "Orange")
-                        << (list<value>() << element << "price" << "$3.55")));
+                + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
+                    + (list<value>() + element + "item"
+                        + (list<value>() + element + "name" + "Apple")
+                        + (list<value>() + element + "price" + "$2.99")))
+                + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
+                    + (list<value>() + element + "item"
+                        + (list<value>() + element + "name" + "Orange")
+                        + (list<value>() + element + "price" + "$3.55")));
         const list<value> a = cons<value>("Feed", cons<value>("1234", i));
-        std::ostringstream os;
-        writeATOMFeed<std::ostringstream*>(writer, &os, a);
-        assert(os.str() == itemFeed);
+        ostringstream os;
+        writeATOMFeed<ostream*>(writer, &os, a);
+        assert(str(os) == itemFeed);
     }
     {
         const list<value> i = list<value>()
-                << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                    << valueToElement(list<value>() << "item"
-                        << (list<value>() << "name" << "Apple")
-                        << (list<value>() << "price" << "$2.99")))
-                << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                    << valueToElement(list<value>() << "item"
-                        << (list<value>() << "name" << "Orange")
-                        << (list<value>() << "price" << "$3.55")));
+                + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
+                    + valueToElement(list<value>() + "item"
+                        + (list<value>() + "name" + "Apple")
+                        + (list<value>() + "price" + "$2.99")))
+                + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
+                    + valueToElement(list<value>() + "item"
+                        + (list<value>() + "name" + "Orange")
+                        + (list<value>() + "price" + "$3.55")));
         const list<value> a = cons<value>("Feed", cons<value>("1234", i));
-        std::ostringstream os;
-        writeATOMFeed<std::ostringstream*>(writer, &os, a);
-        assert(os.str() == itemFeed);
+        ostringstream os;
+        writeATOMFeed<ostream*>(writer, &os, a);
+        assert(str(os) == itemFeed);
     }
     {
         const list<value> a = content(readFeed(mklist(itemFeed)));
-        std::ostringstream os;
-        writeATOMFeed<std::ostringstream*>(writer, &os, a);
-        assert(os.str() == itemFeed);
+        ostringstream os;
+        writeATOMFeed<ostream*>(writer, &os, a);
+        assert(str(os) == itemFeed);
     }
     return true;
 }
@@ -183,12 +181,12 @@ bool testFeed() {
 }
 
 int main() {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::atom::testEntry();
     tuscany::atom::testFeed();
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
 
     return 0;
 }

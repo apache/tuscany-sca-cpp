@@ -26,13 +26,9 @@
 
 #include <sys/stat.h>
 
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-
+#include "string.hpp"
+#include "stream.hpp"
 #include "list.hpp"
-#include "slist.hpp"
 #include "tree.hpp"
 #include "value.hpp"
 #include "debug.hpp"
@@ -56,8 +52,8 @@ public:
     ServerConf(server_rec* s) : s(s), home(""), wiringServerName("") {
     }
     const server_rec* s;
-    std::string home;
-    std::string wiringServerName;
+    string home;
+    string wiringServerName;
 };
 
 /**
@@ -73,8 +69,8 @@ public:
     DirConf(char* dirspec) : dirspec(dirspec), contributionPath(""), compositeName("") {
     }
     const char* dirspec;
-    std::string contributionPath;
-    std::string compositeName;
+    string contributionPath;
+    string compositeName;
     list<value> references;
     list<value> services;
 };
@@ -82,8 +78,8 @@ public:
 /**
  * Returns true if a URI is absolute.
  */
-const bool isAbsolute(const std::string& uri) {
-    return uri.find("://") != std::string::npos;
+const bool isAbsolute(const string& uri) {
+    return contains(uri, "://");
 }
 
 /**
@@ -96,7 +92,7 @@ int translateReference(request_rec *r) {
 
     // Find the requested component
     DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_wiring);
-    const list<value> rpath(httpd::path(r->uri));
+    const list<value> rpath(httpd::pathValues(r->uri));
     const list<value> comp(assoctree(cadr(rpath), dc.references));
     if (isNil(comp))
         return HTTP_NOT_FOUND;
@@ -105,26 +101,26 @@ int translateReference(request_rec *r) {
     const list<value> ref(assoctree<value>(caddr(rpath), cadr(comp)));
     if (isNil(ref))
         return HTTP_NOT_FOUND;
-    const std::string target(cadr(ref));
+    const string target(cadr(ref));
     debug(target, "modwiring::translateReference::target");
 
     // Route to an absolute target URI using mod_proxy or an HTTP client redirect
     if (isAbsolute(target)) {
         if (useModProxy) {
-            r->filename = apr_pstrdup(r->pool, std::string("proxy:" + target).c_str());
+            r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + target));
             r->proxyreq = PROXYREQ_REVERSE;
             r->handler = "proxy-server";
             return OK;
         }
 
         r->status = HTTP_MOVED_TEMPORARILY;
-        apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, target.c_str()));
+        apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(target)));
         r->handler = "mod_tuscany_wiring";
         return OK;
     }
 
     // Route to a relative target URI using a local internal redirect
-    r->filename = apr_pstrdup(r->pool, std::string("/redirect:/components/" + target).c_str());
+    r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/components/") + target));
     r->handler = "mod_tuscany_wiring";
     return OK;
 }
@@ -161,7 +157,7 @@ int translateService(request_rec *r) {
 
     // Find the requested component
     DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_wiring);
-    const list<value> path(httpd::path(r->uri));
+    const list<value> path(httpd::pathValues(r->uri));
     const list<value> svc(assocPath(path, dc.services));
     if (isNil(svc))
         return DECLINED;
@@ -172,9 +168,11 @@ int translateService(request_rec *r) {
     debug(target, "modwiring::translateService::target");
 
     // Dispatch to the target component using a local internal redirect
-    const std::string redir(std::string("/redirect:/components") + httpd::path(target));
+    const string p(httpd::path(target));
+    debug(p, "modwiring::translateService::path");
+    const string redir(string("/redirect:/components") + httpd::path(target));
     debug(redir, "modwiring::translateService::redirect");
-    r->filename = apr_pstrdup(r->pool, redir.c_str());
+    r->filename = apr_pstrdup(r->pool, c_str(redir));
     r->handler = "mod_tuscany_wiring";
     return OK;
 }
@@ -184,6 +182,7 @@ int translateService(request_rec *r) {
  * to the target component.
  */
 int translate(request_rec *r) {
+    gc_scoped_pool pool(r->pool);
     if (!strncmp(r->uri, "/components/", 12) != 0)
         return DECLINED;
 
@@ -198,11 +197,11 @@ int translate(request_rec *r) {
 /**
  * Construct a redirect URI.
  */
-const std::string redirect(const std::string& file, const std::string& pi) {
+const string redirect(const string& file, const string& pi) {
     return file + pi;
 }
 
-const std::string redirect(const std::string& file, const std::string& pi, const std::string& args) {
+const string redirect(const string& file, const string& pi, const string& args) {
     return file + pi + "?" + args;
 }
 
@@ -210,6 +209,7 @@ const std::string redirect(const std::string& file, const std::string& pi, const
  * HTTP request handler, redirect to a target component.
  */
 int handler(request_rec *r) {
+    gc_scoped_pool pool(r->pool);
     if(strcmp(r->handler, "mod_tuscany_wiring"))
         return DECLINED;
     httpdDebugRequest(r, "modwiring::handler::input");
@@ -222,20 +222,20 @@ int handler(request_rec *r) {
     debug(r->path_info, "modwiring::handler::path info");
 
     if (r->args == NULL) {
-        ap_internal_redirect(apr_pstrdup(r->pool, redirect(r->filename + 10, r->path_info).c_str()), r);
+        ap_internal_redirect(apr_pstrdup(r->pool, c_str(redirect(string(r->filename + 10), string(r->path_info)))), r);
         return OK;
     }
-    ap_internal_redirect(apr_pstrdup(r->pool, redirect(r->filename + 10, r->path_info, r->args).c_str()), r);
+    ap_internal_redirect(apr_pstrdup(r->pool, c_str(redirect(string(r->filename + 10), string(r->path_info), string(r->args)))), r);
     return OK;
 }
 
 /**
  * Read the components declared in a composite.
  */
-const failable<list<value>, std::string> readComponents(const std::string& path) {
-    std::ifstream is(path);
-    if (is.fail() || is.bad())
-        return mkfailure<list<value>, std::string>("Could not read composite: " + path);
+const failable<list<value> > readComponents(const string& path) {
+    ifstream is(path);
+    if (fail(is))
+        return mkfailure<list<value> >(string("Could not read composite: ") + path);
     return scdl::components(readXML(streamList(is)));
 }
 
@@ -261,23 +261,23 @@ const list<value> componentReferenceToTargetTree(const list<value>& c) {
  * Return a tree of service-URI-path + component-name pairs. Service-URI-paths are
  * represented as lists of URI path fragments.
  */
-const list<value> defaultBindingURI(const std::string& cn, const std::string& sn) {
+const list<value> defaultBindingURI(const string& cn, const string& sn) {
     return mklist<value>(cn, sn);
 }
 
-const list<value> bindingToComponentAssoc(const std::string& cn, const std::string& sn, const list<value>& b) {
+const list<value> bindingToComponentAssoc(const string& cn, const string& sn, const list<value>& b) {
     if (isNil(b))
         return b;
     const value uri(scdl::uri(car(b)));
     if (isNil(uri))
         return cons<value>(mklist<value>(defaultBindingURI(cn, sn), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
-    return cons<value>(mklist<value>(httpd::path(std::string(uri).c_str()), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
+    return cons<value>(mklist<value>(httpd::pathValues(c_str(string(uri))), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
 }
 
-const list<value> serviceToComponentAssoc(const std::string& cn, const list<value>& s) {
+const list<value> serviceToComponentAssoc(const string& cn, const list<value>& s) {
     if (isNil(s))
         return s;
-    const std::string sn(scdl::name(car(s)));
+    const string sn(scdl::name(car(s)));
     const list<value> btoc(bindingToComponentAssoc(cn, sn, scdl::bindings(car(s))));
     if (isNil(btoc))
         return cons<value>(mklist<value>(defaultBindingURI(cn, sn), cn), serviceToComponentAssoc(cn, cdr(s)));
@@ -300,7 +300,7 @@ const list<value> uriToComponentTree(const list<value>& c) {
 const bool confComponents(DirConf& dc) {
     if (dc.contributionPath == "" || dc.compositeName == "")
         return true;
-    const failable<list<value>, std::string> comps = readComponents(dc.contributionPath + dc.compositeName);
+    const failable<list<value> > comps = readComponents(dc.contributionPath + dc.compositeName);
     if (!hasContent(comps))
         return true;
     dc.references = componentReferenceToTargetTree(content(comps));
@@ -314,22 +314,26 @@ const bool confComponents(DirConf& dc) {
  * Configuration commands.
  */
 const char *confHome(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_wiring);
     sc.home = arg;
     return NULL;
 }
 const char *confWiringServerName(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_wiring);
     sc.wiringServerName = arg;
     return NULL;
 }
-const char *confContribution(unused cmd_parms *cmd, void *c, const char *arg) {
+const char *confContribution(cmd_parms *cmd, void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
     DirConf& dc = *(DirConf*)c;
     dc.contributionPath = arg;
     confComponents(dc);
     return NULL;
 }
-const char *confComposite(unused cmd_parms *cmd, void *c, const char *arg) {
+const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
     DirConf& dc = *(DirConf*)c;
     dc.compositeName = arg;
     confComponents(dc);
@@ -351,10 +355,11 @@ int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t 
    return OK;
 }
 
-void childInit(unused apr_pool_t* p, server_rec* svr_rec) {
+void childInit(apr_pool_t* p, server_rec* svr_rec) {
+    gc_scoped_pool pool(p);
     ServerConf *conf = (ServerConf*)ap_get_module_config(svr_rec->module_config, &mod_tuscany_wiring);
     if(conf == NULL) {
-        std::cerr << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << std::endl;
+        cerr << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
 }

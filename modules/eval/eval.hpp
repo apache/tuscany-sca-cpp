@@ -146,7 +146,7 @@ const value applyProcedure(const value& procedure, list<value>& arguments, const
         Env env = extendEnvironment(procedureParameters(procedure), arguments, procedureEnvironment(procedure), pool);
         return evalSequence(procedureBody(procedure), env, pool);
     }
-    logStream() << "Unknown procedure type " << procedure << std::endl;
+    logStream() << "Unknown procedure type " << procedure << endl;
     return value();
 }
 
@@ -208,7 +208,7 @@ const value expandClauses(const list<value>& clauses) {
     if(isCondElseClause(first)) {
         if(isNil(rest))
             return sequenceToExp(condActions(first));
-        logStream() << "else clause isn't last " << clauses << std::endl;
+        logStream() << "else clause isn't last " << clauses << endl;
         return value();
     }
     return makeIf(condPredicate(first), sequenceToExp(condActions(first)), expandClauses(rest));
@@ -254,7 +254,7 @@ const value evalExpr(const value& exp, Env& env, const gc_pool& pool) {
         list<value> operandValues = listOfValues(operands(exp), env, pool);
         return applyProcedure(evalExpr(operat(exp), env, pool), operandValues, pool);
     }
-    logStream() << "Unknown expression type " << exp << std::endl;
+    logStream() << "Unknown expression type " << exp << endl;
     return value();
 }
 
@@ -281,7 +281,7 @@ const value evalScript(const value& expr, const value& script, Env& env, const g
 /**
  * Evaluate an expression against a script provided as an input stream.
  */
-const value evalScript(const value& expr, std::istream& is, Env& env, const gc_pool& pool) {
+const value evalScript(const value& expr, istream& is, Env& env, const gc_pool& pool) {
     return evalScript(expr, readScript(is), env, pool);
 }
 

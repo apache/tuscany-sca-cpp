@@ -24,9 +24,8 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <string>
-#include <sstream>
+#include "stream.hpp"
+#include "string.hpp"
 #include "list.hpp"
 #include "value.hpp"
 #include "element.hpp"
@@ -34,7 +33,7 @@
 
 namespace tuscany {
 
-const std::string currencyXML =
+const string currencyXML =
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<composite xmlns=\"http://docs.oasis-open.org/ns/opencsa/sca/200903\" "
 "xmlns:t=\"http://tuscany.apache.org/xmlns/sca/1.1\" "
@@ -56,7 +55,7 @@ const std::string currencyXML =
 "</composite>"
 "\n";
 
-const std::string customerXML =
+const string customerXML =
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<customer>"
 "<name>jdoe</name>"
@@ -74,78 +73,78 @@ const bool isName(const value& token) {
 
 bool testReadXML() {
     {
-        std::istringstream is(customerXML);
+        istringstream is(customerXML);
         const list<value> c = readXML(streamList(is));
     }
     {
-        std::istringstream is(currencyXML);
+        istringstream is(currencyXML);
         const list<value> c = readXML(streamList(is));
 
         const value composite = car(c);
         assert(isTaggedList(composite, element));
         assert(elementName(composite) == "composite");
-        assert(attributeValue(car(filter<value>(isName, elementChildren(composite)))) == std::string("currency"));
+        assert(attributeValue(car(filter<value>(isName, elementChildren(composite)))) == string("currency"));
     }
     return true;
 }
 
-std::ostringstream* xmlWriter(const std::string& s, std::ostringstream* os) {
+ostream* xmlWriter(const string& s, ostream* os) {
     (*os) << s;
     return os;
 }
 
 bool testWriteXML() {
     {
-        std::istringstream is(customerXML);
+        istringstream is(customerXML);
         const list<value> c = readXML(streamList(is));
-        std::ostringstream os;
-        writeXML<std::ostringstream*>(xmlWriter, &os, c);
-        assert(os.str() == customerXML);
+        ostringstream os;
+        writeXML<ostream*>(xmlWriter, &os, c);
+        assert(str(os) == customerXML);
     }
     {
-        std::istringstream is(currencyXML);
+        istringstream is(currencyXML);
         const list<value> c = readXML(streamList(is));
-        std::ostringstream os;
-        writeXML<std::ostringstream*>(xmlWriter, &os, c);
-        assert(os.str() == currencyXML);
+        ostringstream os;
+        writeXML<ostream*>(xmlWriter, &os, c);
+        assert(str(os) == currencyXML);
     }
     return true;
 }
 
 bool testElement() {
     {
-        const list<value> ad = mklist<value>(mklist<value>("city", std::string("san francisco")), mklist<value>("state", std::string("ca")));
-        const list<value> ac1 = mklist<value>(mklist<value>("id", std::string("1234")), mklist<value>("balance", 1000));
-        const list<value> ac2 = mklist<value>(mklist<value>("id", std::string("6789")), mklist<value>("balance", 2000));
-        const list<value> ac3 = mklist<value>(mklist<value>("id", std::string("4567")), mklist<value>("balance", 3000));
+        const list<value> ad = mklist<value>(mklist<value>("city", string("san francisco")), mklist<value>("state", string("ca")));
+        const list<value> ac1 = mklist<value>(mklist<value>("id", string("1234")), mklist<value>("balance", 1000));
+        const list<value> ac2 = mklist<value>(mklist<value>("id", string("6789")), mklist<value>("balance", 2000));
+        const list<value> ac3 = mklist<value>(mklist<value>("id", string("4567")), mklist<value>("balance", 3000));
         {
-            const list<value> c = mklist<value>(mklist<value>("customer", mklist<value>("name", std::string("jdoe")), cons<value>("address", ad), mklist<value>("account", mklist<value>(ac1, ac2, ac3))));
+            const list<value> c = mklist<value>(mklist<value>("customer", mklist<value>("name", string("jdoe")), cons<value>("address", ad), mklist<value>("account", mklist<value>(ac1, ac2, ac3))));
             const list<value> e = valuesToElements(c);
             const list<value> v = elementsToValues(e);
             assert(v == c);
 
-            std::ostringstream os;
-            writeXML<std::ostringstream*>(xmlWriter, &os, e);
-            assert(os.str() == customerXML);
+            ostringstream os;
+            writeXML<ostream*>(xmlWriter, &os, e);
+            assert(str(os) == customerXML);
         }
         {
-            const list<value> c = mklist<value>(mklist<value>("customer", mklist<value>("name", std::string("jdoe")), cons<value>("address", ad), cons<value>("account", ac1), cons<value>("account", ac2), cons<value>("account", ac3)));
+            const list<value> c = mklist<value>(mklist<value>("customer", mklist<value>("name", string("jdoe")), cons<value>("address", ad), cons<value>("account", ac1), cons<value>("account", ac2), cons<value>("account", ac3)));
             const list<value> e = valuesToElements(c);
             const list<value> v = elementsToValues(e);
 
-            std::ostringstream os;
-            writeXML<std::ostringstream*>(xmlWriter, &os, e);
-            assert(os.str() == customerXML);
+            ostringstream os;
+            writeXML<ostream*>(xmlWriter, &os, e);
+            assert(str(os) == customerXML);
         }
     }
     {
-        std::istringstream is(customerXML);
+        istringstream is(customerXML);
         const list<value> c = readXML(streamList(is));
         const list<value> v = elementsToValues(c);
         const list<value> e = valuesToElements(v);
-        std::ostringstream os;
-        writeXML<std::ostringstream*>(xmlWriter, &os, e);
-        assert(os.str() == customerXML);
+        ostringstream os;
+        writeXML<ostream*>(xmlWriter, &os, e);
+        assert(str(os) == customerXML);
     }
     return true;
 }
@@ -153,13 +152,13 @@ bool testElement() {
 }
 
 int main() {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::testReadXML();
     tuscany::testWriteXML();
     tuscany::testElement();
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
 
     return 0;
 }

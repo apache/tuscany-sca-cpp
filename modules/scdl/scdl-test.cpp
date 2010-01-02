@@ -24,12 +24,9 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
+#include "stream.hpp"
+#include "string.hpp"
 #include "list.hpp"
-#include "slist.hpp"
 #include "tree.hpp"
 #include "scdl.hpp"
 
@@ -37,24 +34,24 @@ namespace tuscany {
 namespace scdl {
 
 bool testComposite() {
-    std::ifstream is("test.composite");
+    ifstream is("test.composite");
     const list<value> c = readXML(streamList(is));
     return true;
 }
 
 bool testComponents() {
-    std::ifstream is("test.composite");
+    ifstream is("test.composite");
     const list<value> c = components(readXML(streamList(is)));
     assert(length(c) == 4);
 
     const value store = car(c);
-    assert(name(store) == std::string("Store"));
+    assert(name(store) == string("Store"));
     const value impl = implementation(store);
-    assert(uri(impl) == std::string("store.html"));
+    assert(uri(impl) == string("store.html"));
     assert(implementationType(impl) == "t:implementation.widget");
 
-    const value catalog = named(std::string("Catalog"), c);
-    assert(name(catalog) == std::string("Catalog"));
+    const value catalog = named(string("Catalog"), c);
+    assert(name(catalog) == string("Catalog"));
 
     const list<value> t = mkbtree(sort(nameToElementAssoc(c)));
     assert(assoctree<value>("Catalog", t) == mklist<value>("Catalog" , cadr(c)));
@@ -62,30 +59,30 @@ bool testComponents() {
 }
 
 bool testServices() {
-    std::ifstream is("test.composite");
+    ifstream is("test.composite");
     const list<value> c = components(readXML(streamList(is)));
     const value store = car(c);
 
     assert(length(services(store)) == 1);
     const value widget = car(services(store));
-    assert(name(widget) == std::string("Widget"));
+    assert(name(widget) == string("Widget"));
 
     assert(length(bindings(widget)) == 1);
     const value binding = car(bindings(widget));
-    assert(uri(binding) == std::string("/store"));
+    assert(uri(binding) == string("/store"));
     assert(bindingType(binding) == "t:binding.http");
     return true;
 }
 
 bool testReferences() {
-    std::ifstream is("test.composite");
+    ifstream is("test.composite");
     const list<value> c = components(readXML(streamList(is)));
     const value store = car(c);
 
     assert(length(references(store)) == 3);
     const value catalog = car(references(store));
-    assert(name(catalog) == std::string("catalog"));
-    assert(target(catalog) == std::string("Catalog"));
+    assert(name(catalog) == string("catalog"));
+    assert(target(catalog) == string("Catalog"));
 
     assert(length(bindings(catalog)) == 1);
     const value binding = car(bindings(catalog));
@@ -93,19 +90,19 @@ bool testReferences() {
     assert(bindingType(binding) == "t:binding.jsonrpc");
 
     const list<value> t = mkbtree(sort(referenceToTargetAssoc(references(store))));
-    assert(assoctree<value>("shoppingCart", t) == mklist<value>(std::string("shoppingCart"), std::string("ShoppingCart/Cart")));
+    assert(assoctree<value>("shoppingCart", t) == mklist<value>(string("shoppingCart"), string("ShoppingCart/Cart")));
     return true;
 }
 
 bool testProperties() {
-    std::ifstream is("test.composite");
+    ifstream is("test.composite");
     const list<value> c = components(readXML(streamList(is)));
-    const value catalog = named(std::string("Catalog"), c);
+    const value catalog = named(string("Catalog"), c);
 
     assert(length(properties(catalog)) == 1);
     const value currencyCode = car(properties(catalog));
-    assert(name(currencyCode) == std::string("currencyCode"));
-    assert(propertyValue(currencyCode) == std::string("USD"));
+    assert(name(currencyCode) == string("currencyCode"));
+    assert(propertyValue(currencyCode) == string("USD"));
     return true;
 }
 
@@ -113,7 +110,7 @@ bool testProperties() {
 }
 
 int main() {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::scdl::testComposite();
     tuscany::scdl::testComponents();
@@ -121,7 +118,7 @@ int main() {
     tuscany::scdl::testReferences();
     tuscany::scdl::testProperties();
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
 
     return 0;
 }

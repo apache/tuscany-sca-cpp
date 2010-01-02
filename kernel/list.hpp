@@ -26,9 +26,9 @@
  * Simple list functions.
  */
 
-#include <string>
-#include <sstream>
-#include <iostream>
+#include <assert.h>
+#include "string.hpp"
+#include "fstream.hpp"
 #include "function.hpp"
 #include "debug.hpp"
 
@@ -56,16 +56,12 @@ bool checkListCounters() {
 }
 
 bool printListCounters() {
-    std::cout << "countLists " << countLists << std::endl;
-    std::cout << "countELists " << countELists << std::endl;
-    std::cout << "countILists " << countILists << std::endl;
-    std::cout << "countCLists " << countCLists << std::endl;
+    cout << "countLists " << countLists << endl;
+    cout << "countELists " << countELists << endl;
+    cout << "countILists " << countILists << endl;
+    cout << "countCLists " << countCLists << endl;
     return true;
 }
-
-#define debug_watchList() do { \
-        this->watch = watchList(*this); \
-    } while (0)
 
 #else
 
@@ -73,10 +69,19 @@ bool printListCounters() {
 #define checkListCounters() true
 #define printListCounters()
 
+#endif
+
+#ifdef _DEBUG_WATCH
+
+#define debug_watchList() do { \
+        this->watch = watchList(*this); \
+    } while (0)
+
+#else
+
 #define debug_watchList();
 
 #endif
-
 
 /**
  * A car/cdr lisp-like pair, base structure to construct lists.
@@ -91,28 +96,26 @@ public:
         debug_watchList();
     }
 
-    list(const T car, const lambda<list<T>()>& cdr) :
-        car(car), cdr(cdr) {
+    list(const T car, const lambda<list<T>()>& cdr) : car(car), cdr(cdr) {
         debug_inc(countLists);
         debug_inc(countILists);
         debug_watchList();
     }
 
-    list(const list& p) :
-        car(p.car), cdr(p.cdr) {
+    list(const list& p) : car(p.car), cdr(p.cdr) {
         debug_inc(countLists);
         debug_inc(countCLists);
-#ifdef _DEBUG
+#ifdef _DEBUG_WATCH
         watch = p.watch;
 #endif
     }
 
-    const list& operator=(const list<T>& p) {
+    const list<T>& operator=(const list<T>& p) {
         if(this == &p)
             return *this;
         car = p.car;
         cdr = p.cdr;
-#ifdef _DEBUG
+#ifdef _DEBUG_WATCH
         watch = p.watch;
 #endif
         return *this;
@@ -172,41 +175,34 @@ public:
         return (list<list<T> >)T(*this);
     }
 
-    list<T>& operator<<(const T& v) {
-        *this = append(*this, mklist(v));
-        return *this;
-    }
+private:
+#ifdef _DEBUG_WATCH
+    template<typename X> friend const string watchList(const list<X>& p);
+    string watch;
+#endif
 
     template<typename X> friend const bool isNil(const list<X>& p);
     template<typename X> friend const X car(const list<X>& p);
     template<typename X> friend const list<X> cdr(const list<X>& p);
-    template<typename X> friend const bool setCar(list<X>& p, const X& car);
-    template<typename X> friend const bool setCdr(list<X>& p, const list<X>& cdr);
-    template<typename X> friend const bool setCdr(list<X>& p, const lambda<list<X>()>& cdr);
-
-private:
-#ifdef _DEBUG
-    template<typename X> friend const std::string watchList(const list<X>& p);
-    std::string watch;
-#endif
 
     T car;
     lambda<list<T>()> cdr;
 };
 
-#ifdef _DEBUG
+#ifdef _DEBUG_WATCH
 
 /**
  * Debug utility used to write the contents of a list to a string, easier
  * to watch than the list itself in a debugger.
  */
-template<typename T> const std::string watchList(const list<T>& p) {
+template<typename T> const string watchList(const list<T>& p) {
     if(isNil(p))
         return "()";
-    std::ostringstream os;
+    ostringstream<string::npos> os;
     os << "(" << car(p) << " ...)";
-    return os.str();
+    return str(os);
 }
+
 #endif
 
 /**
@@ -219,14 +215,14 @@ template<typename T> const bool isNil(const list<T>& p) {
 /**
  * Write a list to an output stream.
  */
-template<typename T> std::ostream& writeHelper(std::ostream& out, const list<T>& l) {
+template<typename T> ostream& writeHelper(ostream& out, const list<T>& l) {
     if (isNil(l))
         return out;
     out << " " << car(l);
     return writeHelper(out, cdr(l));
 }
 
-template<typename T> std::ostream& operator<<(std::ostream& out, const list<T>& l) {
+template<typename T> ostream& operator<<(ostream& out, const list<T>& l) {
     if(isNil(l))
         return out << "()";
     out << "(" << car(l);
@@ -305,6 +301,8 @@ template<typename T> const list<T> mklist(const T& a, const T& b, const T& c, co
  * Returns the car of a list.
  */
 template<typename T> const T car(const list<T>& p) {
+    // Abort if trying to access the car of a nil list
+    assert(!isNil(p.cdr));
     return p.car;
 }
 
@@ -314,31 +312,6 @@ template<typename T> const T car(const list<T>& p) {
 template<typename T> const list<T> cdr(const list<T>& p) {
     return p.cdr();
 }
-
-/**
- * Sets the car of a list.
- */
-template<typename T> const bool setCar(list<T>& p, const T& car) {
-    p.car = car;
-    return true;
-}
-
-/**
- * Sets the cdr of a list.
- */
-template<typename T> const bool setCdr(list<T>& p, const list<T>& c) {
-    p.cdr = result(c);
-    return true;
-}
-
-/**
- * Sets the cdr of a list to a lambda function.
- */
-template<typename T> const bool setCdr(list<T>& p, const lambda<list<T>()>& cdr) {
-    p.cdr = cdr;
-    return true;
-}
-
 
 /**
  * Returns the car of the cdr of a list.
@@ -416,6 +389,17 @@ template<typename T> const list<T> append(const list<T>&a, const lambda<list<T>(
  */
 template<typename T> const list<T> append(const list<T>&a, const list<T>& b) {
     return append(a, result(b));
+}
+
+/**
+ * Append a value to a list.
+ */
+template<typename T> const list<T> operator+(const list<T>& l, const T& v) {
+    return append(l, mklist(v));
+}
+
+template<typename T, typename V> const list<T> operator+(const list<T>& l, const V& v) {
+    return append(l, mklist<T>(v));
 }
 
 /**

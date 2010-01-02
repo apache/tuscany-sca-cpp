@@ -25,7 +25,7 @@
 
 #include <apr_uuid.h>
 
-#include <string>
+#include "string.hpp"
 
 #include "function.hpp"
 #include "list.hpp"
@@ -41,7 +41,7 @@ cache::MemCached ch;
 /**
  * Get an item from the cache.
  */
-const failable<value, std::string> get(const list<value>& params) {
+const failable<value> get(const list<value>& params) {
     return cache::get(car(params), ch);
 }
 
@@ -53,34 +53,34 @@ const value uuidValue() {
     apr_uuid_get(&uuid);
     char buf[APR_UUID_FORMATTED_LENGTH];
     apr_uuid_format(buf, &uuid);
-    return value(std::string(buf, APR_UUID_FORMATTED_LENGTH));
+    return value(string(buf, APR_UUID_FORMATTED_LENGTH));
 }
 
-const failable<value, std::string> post(const list<value>& params) {
+const failable<value> post(const list<value>& params) {
     const value id = uuidValue();
-    const failable<bool, std::string> val = cache::post(id, car(params), ch);
+    const failable<bool> val = cache::post(id, car(params), ch);
     if (!hasContent(val))
-        return mkfailure<value, std::string>(reason(val));
+        return mkfailure<value>(reason(val));
     return id;
 }
 
 /**
  * Put an item into the cache.
  */
-const failable<value, std::string> put(const list<value>& params) {
-    const failable<bool, std::string> val = cache::put(car(params), cadr(params), ch);
+const failable<value> put(const list<value>& params) {
+    const failable<bool> val = cache::put(car(params), cadr(params), ch);
     if (!hasContent(val))
-        return mkfailure<value, std::string>(reason(val));
+        return mkfailure<value>(reason(val));
     return value(content(val));
 }
 
 /**
  * Delete an item from the cache.
  */
-const failable<value, std::string> del(const list<value>& params) {
-    const failable<bool, std::string> val = cache::del(car(params), ch);
+const failable<value> del(const list<value>& params) {
+    const failable<bool> val = cache::del(car(params), ch);
     if (!hasContent(val))
-        return mkfailure<value, std::string>(reason(val));
+        return mkfailure<value>(reason(val));
     return value(content(val));
 }
 
@@ -99,7 +99,7 @@ const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
         return tuscany::cache::put(cdr(params));
     if (func == "delete")
         return tuscany::cache::del(cdr(params));
-    return tuscany::mkfailure<tuscany::value, std::string>(std::string("Function not supported: ") + std::string(func));
+    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
 }
 
 }

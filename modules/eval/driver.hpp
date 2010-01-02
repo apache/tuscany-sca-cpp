@@ -26,34 +26,34 @@
  * Script evaluator main driver loop.
  */
 
-#include <string>
-#include <iostream>
+#include "string.hpp"
+#include "stream.hpp"
 #include "eval.hpp"
 
 namespace tuscany {
 namespace eval {
 
-const std::string evalOutputPrompt("; ");
-const std::string evalInputPrompt("=> ");
+const string evalOutputPrompt("; ");
+const string evalInputPrompt("=> ");
 
-const bool promptForInput(const std::string str, std::ostream& out) {
-    out << std::endl << std::endl << str;
+const bool promptForInput(const string& str, ostream& out) {
+    out << endl << endl << str;
     return true;
 }
 
-const bool announceOutput(const std::string str, std::ostream& out) {
-    out << std::endl << str;
+const bool announceOutput(const string str, ostream& out) {
+    out << endl << str;
     return true;
 }
 
-const bool userPrint(const value val, std::ostream& out) {
+const bool userPrint(const value val, ostream& out) {
     if(isCompoundProcedure(val))
         writeValue(mklist<value>(compoundProcedureSymbol, procedureParameters(val), procedureBody(val), "<procedure-env>"), out);
     writeValue(val, out);
     return true;
 }
 
-const value evalDriverLoop(std::istream& in, std::ostream& out, Env& globalEnv, const gc_pool& pool) {
+const value evalDriverLoop(istream& in, ostream& out, Env& globalEnv, const gc_pool& pool) {
     promptForInput(evalInputPrompt, out);
     value input = readValue(in);
     if (isNil(input))
@@ -64,8 +64,7 @@ const value evalDriverLoop(std::istream& in, std::ostream& out, Env& globalEnv, 
     return evalDriverLoop(in, out, globalEnv, pool);
 }
 
-const bool evalDriverRun(std::istream& in, std::ostream& out) {
-    gc_pool pool;
+const bool evalDriverRun(istream& in, ostream& out, const gc_pool& pool) {
     setupDisplay(out);
     Env globalEnv = setupEnvironment(pool);
     evalDriverLoop(in, out, globalEnv, pool);

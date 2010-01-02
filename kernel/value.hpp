@@ -26,9 +26,9 @@
  * Generic value type.
  */
 
-#include <string>
-#include <iostream>
-#include <sstream>
+#include <stdlib.h>
+#include "string.hpp"
+#include "sstream.hpp"
 #include "gc.hpp"
 #include "function.hpp"
 #include "list.hpp"
@@ -60,22 +60,28 @@ bool checkValueCounters() {
 }
 
 bool printValueCounters() {
-    std::cout << "countValues " << countValues << std::endl;
-    std::cout << "countEValues " << countEValues << std::endl;
-    std::cout << "countCValues " << countCValues << std::endl;
-    std::cout << "countVValues " << countVValues << std::endl;
+    cout << "countValues " << countValues << endl;
+    cout << "countEValues " << countEValues << endl;
+    cout << "countCValues " << countCValues << endl;
+    cout << "countVValues " << countVValues << endl;
     return true;
 }
-
-#define debug_watchValue() do { \
-        this->watch = watchValue(*this); \
-    } while (0)
 
 #else
 
 #define resetValueCounters()
 #define checkValueCounters() true
 #define printValueCounters()
+
+#endif
+
+#ifdef _DEBUG_WATCH
+
+#define debug_watchValue() do { \
+        this->watch = watchValue(*this); \
+    } while (0)
+
+#else
 
 #define debug_watchValue()
 
@@ -90,8 +96,7 @@ public:
         Undefined, Symbol, String, List, Number, Bool, Char, Lambda, Ptr, PoolPtr
     };
 
-    value() :
-        type(value::Undefined) {
+    value() : type(value::Undefined) {
         debug_inc(countValues);
         debug_inc(countEValues);
         debug_watchValue();
@@ -123,41 +128,9 @@ public:
         default:
             break;
         }
-#ifdef _DEBUG
+#ifdef _DEBUG_WATCH
         watch = v.watch;
 #endif
-    }
-
-    const value& operator=(const value& v) {
-        if(this == &v)
-            return *this;
-        type = v.type;
-        switch(type) {
-        case value::List:
-            lst() = v.lst();
-        case value::Lambda:
-            func() = v.func();
-        case value::Symbol:
-            str() = v.str();
-        case value::String:
-            str() = v.str();
-        case value::Number:
-            num() = v.num();
-        case value::Bool:
-            boo() = v.boo();
-        case value::Char:
-            chr() = v.chr();
-        case value::Ptr:
-            ptr() = v.ptr();
-        case value::PoolPtr:
-            poolptr() = v.poolptr();
-        default:
-            break;
-        }
-#ifdef _DEBUG
-        watch = v.watch;
-#endif
-        return *this;
     }
 
     virtual ~value() {
@@ -170,13 +143,13 @@ public:
         debug_watchValue();
     }
 
-    value(const std::string& str) : type(value::String), data(vdata(result(str))) {
+    value(const string& str) : type(value::String), data(vdata(result(str))) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const char* str) : type(value::Symbol), data(vdata(result(std::string(str)))) {
+    value(const char* str) : type(value::Symbol), data(vdata(result(string(str)))) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
@@ -218,19 +191,21 @@ public:
         debug_watchValue();
     }
 
+#ifdef _GC_REFCOUNT
     value(const gc_ptr<value> ptr) : type(value::Ptr), data(vdata(result(ptr))) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
+#endif
 
-    value(const gc_pool_ptr<value> ptr) : type(value::PoolPtr), data(vdata(result(ptr))) {
+    value(const gc_ptr<value> ptr) : type(value::PoolPtr), data(vdata(result(ptr))) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
     }
 
-    value(const failable<value, std::string>& m) : type(value::List),
+    value(const failable<value>& m) : type(value::List),
         data(vdata(result(hasContent(m)? mklist<value>(content(m)) : mklist<value>(value(), reason(m))))) {
         debug_inc(countValues);
         debug_inc(countVValues);
@@ -242,6 +217,38 @@ public:
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
+    }
+
+    const value& operator=(const value& v) {
+        if(this == &v)
+            return *this;
+        type = v.type;
+        switch(type) {
+        case value::List:
+            lst() = v.lst();
+        case value::Lambda:
+            func() = v.func();
+        case value::Symbol:
+            str() = v.str();
+        case value::String:
+            str() = v.str();
+        case value::Number:
+            num() = v.num();
+        case value::Bool:
+            boo() = v.boo();
+        case value::Char:
+            chr() = v.chr();
+        case value::Ptr:
+            ptr() = v.ptr();
+        case value::PoolPtr:
+            poolptr() = v.poolptr();
+        default:
+            break;
+        }
+#ifdef _DEBUG_WATCH
+        watch = v.watch;
+#endif
+        return *this;
     }
 
     const bool operator!=(const value& v) const {
@@ -259,9 +266,8 @@ public:
         case value::Lambda:
             return v.type == value::Lambda && func() == v.func();
         case value::Symbol:
-            return str()() == (std::string)v;
         case value::String:
-            return str()() == (std::string)v;
+            return str()() == (string)v;
         case value::Number:
             return num()() == (double)v;
         case value::Bool:
@@ -285,8 +291,7 @@ public:
             return v.type == value::List && lst()() < v.lst()();
         case value::Symbol:
         case value::String:
-            return str()() < (std::string)v;
-            return str()() < (std::string)v;
+            return str()() < (string)v;
         case value::Bool:
             return boo()() < (bool)v;
         case value::Number:
@@ -306,8 +311,7 @@ public:
             return v.type == value::List && lst()() > v.lst()();
         case value::Symbol:
         case value::String:
-            return str()() > (std::string)v;
-            return str()() > (std::string)v;
+            return str()() > (string)v;
         case value::Bool:
             return boo()() > (bool)v;
         case value::Number:
@@ -323,25 +327,25 @@ public:
         return func()(args);
     }
 
-    operator const std::string() const {
+    operator const string() const {
         switch(type) {
         case value::Symbol:
         case value::String:
             return str()();
         case value::Number: {
-            std::ostringstream sos;
-            sos << num()();
-            return sos.str();
+            ostringstream os;
+            os << num()();
+            return tuscany::str(os);
         }
         case value::Bool:
-            return boo()()? "true" : "false";
+            return boo()()? trueString : falseString;
         case value::Char: {
-            std::ostringstream sos;
-            sos << chr()();
-            return sos.str();
+            ostringstream os;
+            os << chr()();
+            return tuscany::str(os);
         }
         default:
-            return "";
+            return emptyString;
         }
     }
 
@@ -349,7 +353,7 @@ public:
         switch(type) {
         case value::Symbol:
         case value::String:
-            return atof(str()().c_str());
+            return atof(c_str(str()()));
         case value::Number:
             return (double)num()();
         case value::Bool:
@@ -365,7 +369,7 @@ public:
         switch(type) {
         case value::Symbol:
         case value::String:
-            return atoi(str()().c_str());
+            return atoi(c_str(str()()));
         case value::Number:
             return (int)num()();
         case value::Bool:
@@ -381,7 +385,7 @@ public:
         switch(type) {
         case value::Symbol:
         case value::String:
-            return str()() == "true";
+            return str()() == string("true");
         case value::Number:
             return (int)num()() != 0;
         case value::Bool:
@@ -409,11 +413,13 @@ public:
         }
     }
 
+#ifdef _GC_REFCOUNT
     operator const gc_ptr<value>() const {
         return ptr()();
     }
+#endif
 
-    operator const gc_pool_ptr<value>() const {
+    operator const gc_ptr<value>() const {
         return poolptr()();
     }
 
@@ -454,12 +460,12 @@ private:
         return vdata<gc_ptr<value>()> ();
     }
 
-    lambda<gc_pool_ptr<value>()>& poolptr() const {
-        return vdata<gc_pool_ptr<value>()> ();
+    lambda<gc_ptr<value>()>& poolptr() const {
+        return vdata<gc_ptr<value>()> ();
     }
 
-    lambda<std::string()>& str() const {
-        return vdata<std::string()> ();
+    lambda<string()>& str() const {
+        return vdata<string()> ();
     }
 
     lambda<list<value>()>& lst() const {
@@ -482,37 +488,38 @@ private:
         return cons<list<value> >(list<value>(car(l)), listOfListOfValues(cdr(l)));
     }
 
-    friend std::ostream& operator<<(std::ostream&, const value&);
+    friend ostream& operator<<(ostream&, const value&);
     friend const value::ValueType type(const value& v);
 
-#ifdef _DEBUG
-    friend const std::string watchValue(const value& v);
-    std::string watch;
+#ifdef _DEBUG_WATCH
+    friend const string watchValue(const value& v);
+    string watch;
 #endif
 
     ValueType type;
      lambda<char()> data;
 };
 
-#ifdef _DEBUG
+#ifdef _DEBUG_WATCH
 
 /**
  * Debug utility used to write the contents of a value to a string, easier
  * to watch than the value itself in a debugger.
  */
-const std::string watchValue(const value& v) {
+const string watchValue(const value& v) {
     if (v.type == value::List)
         return watchList<value>(v);
-    std::ostringstream os;
+    ostringstream<string::npos> os;
     os << v;
-    return os.str();
+    return str(os);
 }
+
 #endif
 
 /**
  * Write a value to a stream.
  */
-std::ostream& operator<<(std::ostream& out, const value& v) {
+ostream& operator<<(ostream& out, const value& v) {
     switch(v.type) {
     case value::List:
         return out << v.lst()();
@@ -538,8 +545,8 @@ std::ostream& operator<<(std::ostream& out, const value& v) {
         return out << "gc_ptr::" << p;
     }
     case value::PoolPtr: {
-        const gc_pool_ptr<value> p =  v.poolptr()();
-        if (p == gc_pool_ptr<value>(NULL))
+        const gc_ptr<value> p =  v.poolptr()();
+        if (p == gc_ptr<value>(NULL))
             return out << "pool_ptr::null";
         return out << "pool_ptr::" << p;
     }
@@ -632,6 +639,15 @@ const bool isTaggedList(const value& exp, value tag) {
     if(isList(exp) && !isNil((list<value>)exp))
         return car((list<value>)exp) == tag;
     return false;
+}
+
+/**
+ * Make a list of values from a list of other things.
+ */
+template<typename T> const list<value> mkvalues(const list<T>& l) {
+    if (isNil(l))
+        return list<value>();
+    return cons<value>(car(l), mkvalues(cdr(l)));
 }
 
 }

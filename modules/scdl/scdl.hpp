@@ -26,7 +26,7 @@
  * SCDL read functions.
  */
 
-#include <string>
+#include "string.hpp"
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
@@ -85,7 +85,7 @@ const value named(const value& name, const value& l) {
  * Returns the implementation of a component.
  */
 const bool filterImplementation(const value& v) {
-    return isElement(v) && std::string(cadr<value>(v)).find("implementation.") != std::string::npos;
+    return isElement(v) && contains(string(cadr<value>(v)), "implementation.");
 }
 
 const value implementation(const value& l) {
@@ -137,7 +137,7 @@ const list<value> referenceToTargetAssoc(const list<value>& r) {
  * Returns a list of bindings in a service or reference.
  */
 const bool filterBinding(const value& v) {
-    return isElement(v) && std::string(cadr<value>(v)).find("binding.") != std::string::npos;
+    return isElement(v) && contains(string(cadr<value>(v)), "binding.");
 }
 
 const list<value> bindings(const value& l) {

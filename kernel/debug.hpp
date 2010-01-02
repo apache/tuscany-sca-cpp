@@ -23,24 +23,15 @@
 #define tuscany_debug_hpp
 
 /**
- * Functions to help log and debug.
+ * Debug functions and macros.
  */
-
-#include <string>
-#include <ostream>
 
 namespace tuscany
 {
 
 #ifdef _DEBUG
 
-/**
- * Debug log.
- */
-template<typename V> const bool debug(const V& v, const std::string& msg) {
-    std::cerr << msg << ": " << v << std::endl;
-    return true;
-}
+//#define _DEBUG_WATCH
 
 /**
  * Increment / decrement a debug counter.
@@ -55,20 +46,18 @@ bool debug_dec(long int& c) {
     return true;
 }
 
-/**
- * Attribute used to mark unused parameters.
- */
-#define unused __attribute__ ((unused))
-
 #else
-
-#define debug(v, msg)
 
 #define debug_inc(c)
 #define debug_dec(c)
 
-#define unused
+#endif
 
+/**
+ * Attribute used to mark unused parameters.
+ */
+#ifndef unused
+#define unused __attribute__ ((unused))
 #endif
 
 }

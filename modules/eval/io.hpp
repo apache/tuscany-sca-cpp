@@ -26,10 +26,9 @@
  * Script evaluator IO functions.
  */
 
-#include <iostream>
-#include <string>
-#include <sstream>
 #include <ctype.h>
+#include "stream.hpp"
+#include "string.hpp"
 
 #include "list.hpp"
 #include "value.hpp"
@@ -42,11 +41,8 @@ const value rightParenthesis(mklist<value>(")"));
 const value leftParenthesis(mklist<value>("("));
 const value comment(mklist<value>(";"));
 
-const double stringToNumber(const std::string& str) {
-    double d;
-    std::istringstream is(str);
-    is >> d;
-    return d;
+const double stringToNumber(const string& str) {
+    return atof(c_str(str));
 }
 
 const bool isWhitespace(const char ch) {
@@ -73,18 +69,18 @@ const bool isRightParenthesis(const value& token) {
     return rightParenthesis == token;
 }
 
-const char readChar(std::istream& in) {
+const char readChar(istream& in) {
     if(in.eof()) {
         return -1;
     }
-    char c = (char)in.get();
+    char c = (char)get(in);
     return c;
 }
 
-const char peekChar(std::istream& in) {
-    if(in.eof())
+const char peekChar(istream& in) {
+    if(eof(in))
         return -1;
-    char c = (char)in.peek();
+    char c = (char)peek(in);
     return c;
 }
 
@@ -92,14 +88,14 @@ const bool isQuote(const value& token) {
     return token == quoteSymbol;
 }
 
-const value skipComment(std::istream& in);
-const value readQuoted(std::istream& in);
-const value readIdentifier(const char chr, std::istream& in);
-const value readString(std::istream& in);
-const value readNumber(const char chr, std::istream& in);
-const value readValue(std::istream& in);
+const value skipComment(istream& in);
+const value readQuoted(istream& in);
+const value readIdentifier(const char chr, istream& in);
+const value readString(istream& in);
+const value readNumber(const char chr, istream& in);
+const value readValue(istream& in);
 
-const value readToken(std::istream& in) {
+const value readToken(istream& in) {
     const char firstChar = readChar(in);
     if(isWhitespace(firstChar))
         return readToken(in);
@@ -119,22 +115,22 @@ const value readToken(std::istream& in) {
         return readNumber(firstChar, in);
     if(firstChar == -1)
         return value();
-    logStream() << "Illegal lexical syntax '" << firstChar << "'" << std::endl;
+    logStream() << "Illegal lexical syntax '" << firstChar << "'" << endl;
     return readToken(in);
 }
 
-const value skipComment(std::istream& in) {
+const value skipComment(istream& in) {
     const char nextChar = readChar(in);
     if (nextChar == '\n')
         return readToken(in);
     return skipComment(in);
 }
 
-const value readQuoted(std::istream& in) {
+const value readQuoted(istream& in) {
     return mklist(quoteSymbol, readValue(in));
 }
 
-const list<value> readList(const list<value>& listSoFar, std::istream& in) {
+const list<value> readList(const list<value>& listSoFar, istream& in) {
     const value token = readToken(in);
     if(isNil(token) || isRightParenthesis(token))
         return reverse(listSoFar);
@@ -143,72 +139,73 @@ const list<value> readList(const list<value>& listSoFar, std::istream& in) {
     return readList(cons(token, listSoFar), in);
 }
 
-const std::string listToString(const list<char>& l) {
+const string listToString(const list<char>& l) {
     if(isNil(l))
         return "";
-    return car(l) + listToString(cdr(l));
+    const char buf[1] = { car(l) };
+    return string(buf, 1) + listToString(cdr(l));
 }
 
-const list<char> readIdentifierHelper(const list<char>& listSoFar, std::istream& in) {
+const list<char> readIdentifierHelper(const list<char>& listSoFar, istream& in) {
     const char nextChar = peekChar(in);
     if(isIdentifierPart(nextChar))
         return readIdentifierHelper(cons(readChar(in), listSoFar), in);
     return reverse(listSoFar);
 }
 
-const value readIdentifier(const char chr, std::istream& in) {
-    return listToString(readIdentifierHelper(mklist(chr), in)).c_str();
+const value readIdentifier(const char chr, istream& in) {
+    return c_str(listToString(readIdentifierHelper(mklist(chr), in)));
 }
 
-const list<char> readStringHelper(const list<char>& listSoFar, std::istream& in) {
+const list<char> readStringHelper(const list<char>& listSoFar, istream& in) {
     const char nextChar = readChar(in);
     if(nextChar != -1 && nextChar != '"')
         return readStringHelper(cons(nextChar, listSoFar), in);
     return reverse(listSoFar);
 }
 
-const value readString(std::istream& in) {
+const value readString(istream& in) {
     return listToString(readStringHelper(list<char>(), in));
 }
 
-const list<char> readNumberHelper(const list<char>& listSoFar, std::istream& in) {
+const list<char> readNumberHelper(const list<char>& listSoFar, istream& in) {
     const char nextChar = peekChar(in);
     if(isDigit(nextChar))
         return readNumberHelper(cons(readChar(in), listSoFar), in);
     return reverse(listSoFar);
 }
 
-const value readNumber(const char chr, std::istream& in) {
+const value readNumber(const char chr, istream& in) {
     return stringToNumber(listToString(readNumberHelper(mklist(chr), in)));
 }
 
-const value readValue(std::istream& in) {
+const value readValue(istream& in) {
     const value nextToken = readToken(in);
     if(isLeftParenthesis(nextToken))
         return readList(list<value> (), in);
     return nextToken;
 }
 
-const value readValue(const std::string s) {
-    std::istringstream in(s);
+const value readValue(const string s) {
+    istringstream in(s);
     const value nextToken = readToken(in);
     if(isLeftParenthesis(nextToken))
         return readList(list<value> (), in);
     return nextToken;
 }
 
-const bool writeValue(const value& val, std::ostream& out) {
+const bool writeValue(const value& val, ostream& out) {
     out << val;
     return true;
 }
 
-const std::string writeValue(const value& val) {
-    std::ostringstream out;
+const string writeValue(const value& val) {
+    ostringstream out;
     out << val;
-    return out.str();
+    return str(out);
 }
 
-const value readScript(std::istream& in) {
+const value readScript(istream& in) {
     const value val = readValue(in);
     if (isNil(val))
         return list<value>();

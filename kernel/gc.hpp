@@ -23,230 +23,48 @@
 #define tuscany_gc_hpp
 
 /**
- * Garbage collected pointer.
+ * Garbage collected memory management, using APR memory pools.
  */
 
+#include <stdlib.h>
 #include <apr_general.h>
 #include <apr_pools.h>
-#include <iostream>
+#include <assert.h>
+#include <new>
+#include "debug.hpp"
 
 namespace tuscany
 {
 
 /**
- * Macros used to add or subtract values to reference counters.
- * In a multithreaded environment, use the GCC __sync_add_and_fetch
- * and __sync_sub_and_fetch built in functions.
+ * Pointer to a value.
  */
-#ifdef _REENTRANT
-
-#define gc_add_and_fetch(t, v) __sync_add_and_fetch(&(t), v)
-#define gc_sub_and_fetch(t, v) __sync_sub_and_fetch(&(t), v)
-
-#else
-
-#define gc_add_and_fetch(t, v) ((t) = (t) + (v))
-#define gc_sub_and_fetch(t, v) ((t) = (t) - (v))
-
-#endif
-
 template<typename T> class gc_ptr {
 public:
-    gc_ptr(T* p = 0) throw() : countingRef(p == 0? 0 : new CountingRef(p)) {
+    gc_ptr(T* ptr = NULL) throw() : ptr(ptr) {
     }
 
     ~gc_ptr() throw() {
-        release();
     }
 
-    gc_ptr(const gc_ptr& r) throw() : countingRef(r.countingRef) {
-        acquire(r.countingRef);
+    gc_ptr(const gc_ptr& r) throw() : ptr(r.ptr) {
     }
 
     gc_ptr& operator=(const gc_ptr& r) throw() {
         if(this == &r)
             return *this;
-        acquire(r.countingRef);
-        release();
-        countingRef = r.countingRef;
+        ptr = r.ptr;
         return *this;
     }
 
     const bool operator==(const gc_ptr& r) const throw() {
         if (this == &r)
             return true;
-        if (countingRef == NULL)
-            return r.countingRef == NULL;
-        if (r.countingRef == NULL)
-            return false;
-        return countingRef-> ptr == r.countingRef->ptr;
+        return ptr == r.ptr;
     }
 
     const bool operator!=(const gc_ptr& r) const throw() {
-        return !this->operator ==(r);
-    }
-
-    T& operator*() const throw() {
-        return *countingRef->ptr;
-    }
-
-    T* operator->() const throw() {
-        return countingRef->ptr;
-    }
-
-    operator T*() const throw() {
-        return countingRef->ptr;
-    }
-
-    template<typename X> friend std::ostream& operator<<(std::ostream&, const gc_ptr<X>&);
-
-private:
-    struct CountingRef {
-        T* ptr;
-        unsigned count;
-
-        CountingRef(T* p) throw() :
-            ptr(p), count(1) {
-        }
-    }* countingRef;
-
-    void acquire(CountingRef* ref) throw() {
-        if(ref)
-            gc_add_and_fetch(ref->count, (unsigned int)1);
-    }
-
-    void release() throw() {
-        if(countingRef) {
-            unsigned rc = gc_sub_and_fetch(countingRef->count, (unsigned int)1);
-            if(rc == 0) {
-                delete countingRef->ptr;
-                delete countingRef;
-            }
-        }
-    }
-};
-
-template<typename T> std::ostream& operator<<(std::ostream& out, const gc_ptr<T>& p) {
-    return out << p.countingRef->ptr;
-}
-
-/**
- * Garbage collected pointer to an array.
- */
-template<typename T> class gc_aptr {
-public:
-    gc_aptr(T* p = 0) throw() : countingRef(p == 0? 0 : new CountingRef(p)) {
-    }
-
-    ~gc_aptr() throw() {
-        release();
-    }
-
-    gc_aptr(const gc_aptr& r) throw() : countingRef(r.countingRef) {
-        acquire(r.countingRef);
-    }
-
-    gc_aptr& operator=(const gc_aptr& r) throw() {
-        if(this == &r)
-            return *this;
-        acquire(r.countingRef);
-        release();
-        countingRef = r.countingRef;
-        return *this;
-    }
-
-    const bool operator==(const gc_aptr& r) const throw() {
-        if (this == &r)
-            return true;
-        if (countingRef == NULL)
-            return r.countingRef == NULL;
-        if (r.countingRef == NULL)
-            return false;
-        return countingRef-> ptr == r.countingRef->ptr;
-    }
-
-    const bool operator!=(const gc_aptr& r) const throw() {
-        return !this->operator ==(r);
-    }
-
-    T& operator*() const throw() {
-        return *countingRef->ptr;
-    }
-
-    T* operator->() const throw() {
-        return countingRef->ptr;
-    }
-
-    operator T*() const throw() {
-        return countingRef->ptr;
-    }
-
-    template<typename X> friend std::ostream& operator<<(std::ostream&, const gc_aptr<X>&);
-
-private:
-    struct CountingRef {
-        T* ptr;
-        unsigned count;
-
-        CountingRef(T* p) throw() :
-            ptr(p), count(1) {
-        }
-    }* countingRef;
-
-    void acquire(CountingRef* ref) throw() {
-        if(ref)
-            gc_add_and_fetch(ref->count, (unsigned int)1);
-    }
-
-    void release() throw() {
-        if(countingRef) {
-            unsigned rc = gc_sub_and_fetch(countingRef->count, (unsigned int)1);
-            if(rc == 0) {
-                delete[] countingRef->ptr;
-                delete countingRef;
-            }
-        }
-    }
-};
-
-template<typename T> std::ostream& operator<<(std::ostream& out, const gc_aptr<T>& p) {
-    return out << p.countingRef->ptr;
-}
-
-/**
- * Garbage collected pointer to a reference counting object.
- */
-template<typename T> class gc_counting_ptr {
-public:
-    gc_counting_ptr(T* p = 0) throw() : ptr(p) {
-        acquire(p);
-    }
-
-    ~gc_counting_ptr() throw() {
-        release();
-    }
-
-    gc_counting_ptr(const gc_counting_ptr& r) throw() : ptr(r.ptr) {
-        acquire(ptr);
-    }
-
-    gc_counting_ptr& operator=(const gc_counting_ptr& r) throw() {
-        if(this == &r)
-            return *this;
-        acquire(r.ptr);
-        release();
-        ptr = r.ptr;
-        return *this;
-    }
-
-    const bool operator==(const gc_counting_ptr& r) const throw() {
-        if (this == &r)
-            return true;
-        return ptr == r.ptr;
-    }
-
-    const bool operator!=(const gc_counting_ptr& r) const throw() {
-        return !this->operator ==(r);
+        return !this->operator==(r);
     }
 
     T& operator*() const throw() {
@@ -261,161 +79,180 @@ public:
         return ptr;
     }
 
-    template<typename X> friend std::ostream& operator<<(std::ostream&, const gc_counting_ptr<X>&);
-
-private:
     T* ptr;
-
-    void acquire(T* p) throw() {
-        if(p)
-            p->acquire();
-    }
-
-    void release() throw() {
-        if(ptr) {
-            if(ptr->release() == 0) {
-                delete ptr;
-            }
-        }
-    }
 };
 
-template<typename T> std::ostream& operator<<(std::ostream& out, const gc_counting_ptr<T>& p) {
-    return out << p.ptr;
-}
-
 /**
- * Apache Portable Runtime library context
- */
-class APRContext {
-public:
-    APRContext() {
-        apr_initialize();
-    }
-    ~APRContext() {
-        apr_terminate();
-    }
-};
-
-APRContext aprContext;
-
-/**
- * Garbage collected memory pool, using an APR pool.
+ * Garbage collected APR memory pool.
  */
 class gc_pool {
 public:
-    gc_pool() : aprPool(new APRPool) {
+    gc_pool() : p(NULL) {
     }
 
-    operator apr_pool_t*() const {
-        return aprPool->p;
+    gc_pool(apr_pool_t* p) : p(p) {
     }
 
-private:
-    class APRPool {
-        friend class gc_pool;
-        friend class gc_counting_ptr<APRPool>;
-
-        unsigned int refCount;
-        apr_pool_t* p;
-
-        APRPool() : refCount(0) {
-            apr_pool_create(&p, NULL);
-        }
-
-        ~APRPool() {
-            apr_pool_destroy(p);
-        }
-
-        unsigned int acquire() {
-            return gc_add_and_fetch(refCount, (unsigned int)1);
-        }
-
-        unsigned int release() {
-            return gc_sub_and_fetch(refCount, (unsigned int)1);
-        }
-    };
-
-    const gc_counting_ptr<APRPool> aprPool;
-};
-
-/**
- * Garbage collected pointer to pooled memory.
- */
-template<typename T> class gc_pool_ptr {
-public:
-    gc_pool_ptr(T* ptr = 0) throw() : ptr(ptr) {
+    gc_pool(const gc_pool& pool) : p(pool.p) {
     }
 
-    ~gc_pool_ptr() throw() {
-    }
-
-    gc_pool_ptr(const gc_pool_ptr& r) throw() : ptr(r.ptr) {
-    }
-
-    gc_pool_ptr& operator=(const gc_pool_ptr& r) throw() {
-        if(this == &r)
+    gc_pool& operator=(const gc_pool& pool) {
+        if (this == &pool)
             return *this;
-        ptr = r.ptr;
+        p = pool.p;
         return *this;
     }
 
-    const bool operator==(const gc_pool_ptr& r) const throw() {
-        if (this == &r)
-            return true;
-        return ptr == r.ptr;
+    operator apr_pool_t*() const {
+        return p;
     }
-
-    const bool operator!=(const gc_pool_ptr& r) const throw() {
-        return !this->operator ==(r);
-    }
-
-    T& operator*() const throw() {
-        return *ptr;
-    }
-
-    T* operator->() const throw() {
-        return ptr;
-    }
-
-    operator T*() const throw() {
-        return ptr;
-    }
-
-    template<typename X> friend std::ostream& operator<<(std::ostream&, const gc_pool_ptr<X>&);
 
 private:
-    T* ptr;
+    friend const bool destroy(gc_pool& pool);
+    friend class gc_global_pool_t;
+    friend class gc_scoped_pool;
+
+    apr_pool_t* p;
 };
 
-template<typename T> std::ostream& operator<<(std::ostream& out, const gc_pool_ptr<T>& p) {
-    return out << p.ptr;
+/**
+ * Destroy a memory pool.
+ */
+const bool destroy(gc_pool& pool) {
+    apr_pool_destroy(pool.p);
+    return true;
 }
 
 /**
- * Cleanup function, called by the APR pool to cleanup registered resources.
- * Calls the allocated object's destructor.
+ * Default global memory pool.
  */
-template<typename T> apr_status_t gc_pool_cleanupCallback(void* v) {
+class gc_apr_context_t {
+public:
+    gc_apr_context_t() {
+        apr_initialize();
+    }
+    ~gc_apr_context_t() {
+        //apr_terminate();
+    }
+};
+
+gc_apr_context_t gc_apr_context;
+
+class gc_global_pool_t : public gc_pool {
+public:
+    gc_global_pool_t() {
+        apr_pool_create(&p, NULL);
+    }
+
+    ~gc_global_pool_t() {
+        //apr_pool_destroy(p);
+    }
+};
+
+gc_global_pool_t gc_global_pool;
+
+/**
+ * Maintain a stack of memory pools.
+ */
+#ifdef _REENTRANT
+__thread
+#endif
+apr_pool_t* gc_pool_stack = NULL;
+
+/**
+ * Return the current memory pool.
+ */
+apr_pool_t* gc_current_pool() {
+    apr_pool_t* p = gc_pool_stack;
+    if (p != NULL)
+        return p;
+    apr_pool_t* g = gc_global_pool;
+    gc_pool_stack = g;
+    return g;
+}
+
+/**
+ * A memory pool scope, used to setup a scope in which a particular pool
+ * will be used for all allocations.
+ */
+class gc_scoped_pool : public gc_pool {
+public:
+
+    gc_scoped_pool() : gc_pool(NULL), prev(gc_current_pool()), owned(true) {
+        apr_pool_create(&p, NULL);
+        gc_pool_stack = p;
+    }
+
+    gc_scoped_pool(apr_pool_t* pool) : gc_pool(pool), prev(gc_current_pool()), owned(false) {
+        gc_pool_stack = p;
+    }
+
+    ~gc_scoped_pool() {
+        if (owned)
+            apr_pool_destroy(p);
+        if (prev != NULL)
+            gc_pool_stack = prev;
+    }
+
+private:
+    gc_scoped_pool(const unused gc_scoped_pool& pool) : gc_pool(pool.p), prev(NULL), owned(false) {
+    }
+
+    apr_pool_t* prev;
+    bool owned;
+};
+
+/**
+ * Allocates a pointer to an object allocated from a memory pool and
+ * register a cleanup callback for it.
+ */
+template<typename T> apr_status_t gc_pool_cleanup(void* v) {
     T* t = static_cast<T*>(v);
     t->~T();
     return APR_SUCCESS;
 }
 
+template<typename T> T* gc_new(apr_pool_t* p) {
+    void* m = apr_palloc(p, sizeof(T));
+    apr_pool_cleanup_register(p, m, gc_pool_cleanup<T>, apr_pool_cleanup_null) ;
+    return static_cast<T*>(m);
+}
+
+template<typename T> T* gc_new() {
+    return gc_new<T>(gc_current_pool());
+}
+
+template<typename T> apr_status_t gc_pool_acleanup(void* v) {
+    int* m = static_cast<int*>(v);
+    int n = *m;
+    T* t = static_cast<T*>(m + 1);
+    for (int i = 0; i < n; i++, t++)
+        t->~T();
+    return APR_SUCCESS;
+}
+
+template<typename T> T* gc_anew(apr_pool_t* p, int n) {
+    int* m = static_cast<int*>(apr_palloc(p, sizeof(int) + sizeof(T[n])));
+    *m = n;
+    apr_pool_cleanup_register(p, m, gc_pool_acleanup<T>, apr_pool_cleanup_null) ;
+    return static_cast<T*>(m + 1);
+}
+
+template<typename T> T* gc_anew(int n) {
+    return gc_anew<T>(gc_current_pool(), n);
+}
+
 /**
- * Returns a pointer to an object allocated from a memory pool.
+ * Allocate an array of chars.
  */
-template<typename T> gc_pool_ptr<T> gc_pool_new(const gc_pool& mp) {
+char* gc_cnew(apr_pool_t* p, int n) {
+    return static_cast<char*>(apr_palloc(p, n));
+}
 
-    // Allocate memory from the pool
-    void* m = apr_palloc(mp, sizeof(T));
-
-    // Register a cleanup callback
-    apr_pool_cleanup_register(mp, m, gc_pool_cleanupCallback<T>, apr_pool_cleanup_null) ;
-
-    // Run the requested type's constructor over the allocated memory
-    return new (m) T();
+char* gc_cnew(int n) {
+    return gc_cnew(gc_current_pool(), n);
 }
 
 }
+
 #endif /* tuscany_gc_hpp */

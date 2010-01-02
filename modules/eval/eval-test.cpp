@@ -24,16 +24,15 @@
  */
 
 #include <assert.h>
-#include <iostream>
-#include <string>
-#include <sstream>
+#include "stream.hpp"
+#include "string.hpp"
 #include "driver.hpp"
 
 namespace tuscany {
 namespace eval {
 
 bool testEnv() {
-    gc_pool pool;
+    gc_scoped_pool pool;
     Env globalEnv = list<value>();
     Env env = extendEnvironment(mklist<value>("a"), mklist<value>(1), globalEnv, pool);
     defineVariable("x", env, env);
@@ -50,26 +49,23 @@ bool testEnvGC() {
     assert(checkValueCounters());
     assert(checkLambdaCounters());
     assert(checkListCounters());
-    //printLambdaCounters();
-    //printListCounters();
-    //printValueCounters();
     return true;
 }
 
 bool testRead() {
-    std::istringstream is("abcd");
+    istringstream is("abcd");
     assert(readValue(is) == "abcd");
 
-    std::istringstream is2("123");
+    istringstream is2("123");
     assert(readValue(is2) == value(123));
 
-    std::istringstream is3("(abcd)");
+    istringstream is3("(abcd)");
     assert(readValue(is3) == mklist(value("abcd")));
 
-    std::istringstream is4("(abcd xyz)");
+    istringstream is4("(abcd xyz)");
     assert(readValue(is4) == mklist<value>("abcd", "xyz"));
 
-    std::istringstream is5("(abcd (xyz tuv))");
+    istringstream is5("(abcd (xyz tuv))");
     assert(readValue(is5) == mklist<value>("abcd", mklist<value>("xyz", "tuv")));
 
     return true;
@@ -77,43 +73,43 @@ bool testRead() {
 
 bool testWrite() {
     const list<value> i = list<value>()
-            << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                << (list<value>() << "item"
-                    << (list<value>() << "name" << "Apple")
-                    << (list<value>() << "price" << "$2.99")))
-            << (list<value>() << "item" << "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                << (list<value>() << "item"
-                    << (list<value>() << "name" << "Orange")
-                    << (list<value>() << "price" << "$3.55")));
+            + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
+                + (list<value>() + "item"
+                    + (list<value>() + "name" + "Apple")
+                    + (list<value>() + "price" + "$2.99")))
+            + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
+                + (list<value>() + "item"
+                    + (list<value>() + "name" + "Orange")
+                    + (list<value>() + "price" + "$3.55")));
     const list<value> a = cons<value>("Feed", cons<value>("feed-1234", i));
-    std::ostringstream os;
+    ostringstream os;
     writeValue(a, os);
-    std::istringstream is(os.str());
+    istringstream is(str(os));
     assert(readValue(is) == a);
     return true;
 }
 
-const std::string testSchemeNumber(
+const string testSchemeNumber(
   "(define (testNumber) (if (= 1 1) (display \"testNumber ok\") (error \"testNumber\"))) "
   "(testNumber)");
 
-const std::string testSchemeString(
+const string testSchemeString(
   "(define (testString) (if (= \"abc\" \"abc\") (display \"testString ok\") (error \"testString\"))) "
   "(testString)");
 
-const std::string testSchemeDefinition(
+const string testSchemeDefinition(
   "(define a \"abc\") (define (testDefinition) (if (= a \"abc\") (display \"testDefinition ok\") (error \"testDefinition\"))) "
   "(testDefinition)");
 
-const std::string testSchemeIf(
+const string testSchemeIf(
   "(define (testIf) (if (= \"abc\" \"abc\") (if (= \"xyz\" \"xyz\") (display \"testIf ok\") (error \"testNestedIf\")) (error \"testIf\"))) "
   "(testIf)");
 
-const std::string testSchemeCond(
+const string testSchemeCond(
   "(define (testCond) (cond ((= \"abc\" \"abc\") (display \"testCond ok\")) (else (error \"testIf\"))))"
   "(testCond)");
 
-const std::string testSchemeBegin(
+const string testSchemeBegin(
   "(define (testBegin) "
     "(begin "
         "(define a \"abc\") "
@@ -124,42 +120,39 @@ const std::string testSchemeBegin(
   ") "
   "(testBegin)");
 
-const std::string testSchemeLambda(
+const string testSchemeLambda(
   "(define sqrt (lambda (x) (* x x))) "
   "(define (testLambda) (if (= 4 (sqrt 2)) (display \"testLambda ok\") (error \"testLambda\"))) "
   "(testLambda)");
 
-const std::string testSchemeForward(
+const string testSchemeForward(
   "(define (testLambda) (if (= 4 (sqrt 2)) (display \"testForward ok\") (error \"testForward\"))) "
   "(define sqrt (lambda (x) (* x x))) "
   "(testLambda)");
 
-bool contains(const std::string& str, const std::string& pattern) {
-    return str.find(pattern) != str.npos;
-}
-
-const std::string evalOutput(const std::string& scm) {
-    std::istringstream is(scm);
-    std::ostringstream os;
-    evalDriverRun(is, os);
-    return os.str();
+const string evalOutput(const string& scm, const gc_pool& pool) {
+    istringstream is(scm);
+    ostringstream os;
+    evalDriverRun(is, os, pool);
+    return str(os);
 }
 
 bool testEval() {
-    assert(contains(evalOutput(testSchemeNumber), "testNumber ok"));
-    assert(contains(evalOutput(testSchemeString), "testString ok"));
-    assert(contains(evalOutput(testSchemeDefinition), "testDefinition ok"));
-    assert(contains(evalOutput(testSchemeIf), "testIf ok"));
-    assert(contains(evalOutput(testSchemeCond), "testCond ok"));
-    assert(contains(evalOutput(testSchemeBegin), "testBegin1 ok"));
-    assert(contains(evalOutput(testSchemeBegin), "testBegin2 ok"));
-    assert(contains(evalOutput(testSchemeLambda), "testLambda ok"));
-    assert(contains(evalOutput(testSchemeForward), "testForward ok"));
+    gc_scoped_pool pool;
+    assert(contains(evalOutput(testSchemeNumber, pool), "testNumber ok"));
+    assert(contains(evalOutput(testSchemeString, pool), "testString ok"));
+    assert(contains(evalOutput(testSchemeDefinition, pool), "testDefinition ok"));
+    assert(contains(evalOutput(testSchemeIf, pool), "testIf ok"));
+    assert(contains(evalOutput(testSchemeCond, pool), "testCond ok"));
+    assert(contains(evalOutput(testSchemeBegin, pool), "testBegin1 ok"));
+    assert(contains(evalOutput(testSchemeBegin, pool), "testBegin2 ok"));
+    assert(contains(evalOutput(testSchemeLambda, pool), "testLambda ok"));
+    assert(contains(evalOutput(testSchemeForward, pool), "testForward ok"));
     return true;
 }
 
 bool testEvalExpr() {
-    gc_pool pool;
+    gc_scoped_pool pool;
     const value exp = mklist<value>("+", 2, 3);
     Env env = setupEnvironment(pool);
     const value r = evalExpr(exp, env, pool);
@@ -168,7 +161,8 @@ bool testEvalExpr() {
 }
 
 bool testEvalRun() {
-    evalDriverRun(std::cin, std::cout);
+    gc_scoped_pool pool;
+    evalDriverRun(cin, cout, pool);
     return true;
 }
 
@@ -178,26 +172,26 @@ const value mult(const list<value>& args) {
     return x * y;
 }
 
-const std::string testReturnLambda(
+const string testReturnLambda(
   "(define (testReturnLambda) * )");
 
-const std::string testCallLambda(
+const string testCallLambda(
   "(define (testCallLambda l x y) (l x y))");
 
 bool testEvalLambda() {
-    gc_pool pool;
+    gc_scoped_pool pool;
     Env env = setupEnvironment(pool);
 
     const value trl = mklist<value>("testReturnLambda");
-    std::istringstream trlis(testReturnLambda);
+    istringstream trlis(testReturnLambda);
     const value trlv = evalScript(trl, trlis, env, pool);
 
-    std::istringstream tclis(testCallLambda);
+    istringstream tclis(testCallLambda);
     const value tcl = cons<value>("testCallLambda", quotedParameters(mklist<value>(trlv, 2, 3)));
     const value tclv = evalScript(tcl, tclis, env, pool);
     assert(tclv == value(6));
 
-    std::istringstream tcelis(testCallLambda);
+    istringstream tcelis(testCallLambda);
     const value tcel = cons<value>("testCallLambda", quotedParameters(mklist<value>(primitiveProcedure(mult), 3, 4)));
     const value tcelv = evalScript(tcel, tcelis, env, pool);
     assert(tcelv == value(12));
@@ -214,9 +208,6 @@ bool testEvalGC() {
     assert(checkValueCounters());
     assert(checkLambdaCounters());
     assert(checkListCounters());
-    //printLambdaCounters();
-    //printListCounters();
-    //printValueCounters();
     return true;
 }
 
@@ -224,7 +215,7 @@ bool testEvalGC() {
 }
 
 int main() {
-    std::cout << "Testing..." << std::endl;
+    tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::eval::testEnv();
     tuscany::eval::testEnvGC();
@@ -235,6 +226,6 @@ int main() {
     tuscany::eval::testEvalLambda();
     tuscany::eval::testEvalGC();
 
-    std::cout << "OK" << std::endl;
+    tuscany::cout << "OK" << tuscany::endl;
     return 0;
 }

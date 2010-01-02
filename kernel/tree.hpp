@@ -26,8 +26,8 @@
  * Functions to work with trees.
  */
 
-#include <iostream>
-#include <string>
+#include "stream.hpp"
+#include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"
 #include "monad.hpp"
