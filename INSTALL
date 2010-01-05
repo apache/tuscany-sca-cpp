@@ -4,16 +4,25 @@ Apache Tuscany SCA Runtime
 Building
 ========
 
-First get the following dependencies:
+The Tuscany SCA Linux build uses the GNU Autotools tool chain.
+
+First get the following tools:
+autoconf-2.64
+automake-1.4
+gcc-4.4.1
+libtool-2.2.6
+doxygen-1.6.1
+
+Then get the following development dependencies:
 
 HTTP server and APR
 httpd-2.2-13
 libapr-1-0.3.8
 libaprutil-1-0.3.9
 
-Recommended httpd configure options:
---with-included-apr to build httpd with the included APR distribution,
---with-mpm=worker to run the Tuscany httpd modules in multiple threads.
+Recommended HTTPD configure options:
+--with-included-apr to build HTTPD with the included APR distribution,
+--with-mpm=worker to run HTTPD modules in multiple threads.
 
 XML
 libxml2-2.7.5
@@ -22,25 +31,46 @@ JSON
 SpiderMonkey libmozjs
 (included in xulrunner-1.9.1.5)
 
-To configure the Tuscany build do this:
+Python
+libpython2.6
+
+To configure the Tuscany SCA build do this:
 ./autogen.sh
 ./configure --prefix=<install dir>
 
-To turn on debugging, profiling and strict warning compile options:
-./configure --enable-maintainer-mode
+To enable debugging and strict warning compile options, add:
+--enable-maintainer-mode
 
-To configure where to find dependencies, see the configure help:
+To enable gprof profiling, add:
+--enable-profiling
+
+To enable multi-threading with the HTTPD worker MPM, add:
+--enable-threads
+
+To generate doxygen documentation, add:
+--enable-doxygen
+
+To configure where to find dependencies, see the --with-* options described
+in the configure help:
 ./configure --help
+
+Here's an example configuration, tested on Ubuntu 9.10, with development
+dependencies installed in the standard directories and a build of the
+HTTPD worker MPM in $HOME/httpd-2-2.13-bin:
+
+./configure --prefix=$HOME/tuscany-sca-cpp-bin \
+--with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
+--with-js-include=/usr/include/xulrunner-1.9.1.5/unstable \
+--with-js-lib=/usr/lib/xulrunner-1.9.1.5 \
+--with-python=/usr \
+--with-curl=/usr --with-libxml2=/usr \
+--enable-threads --enable-maintainer-mode
 
 To build the runtime, do this:
 make
 
 To run the tests, do this:
 make check
-
-To build doxygen documentation, do this:
-./configure --prefix=<install dir> --enable-doxygen
-make
 
 To build ctags for the source, do this:
 make ctags
@@ -50,4 +80,10 @@ make dist
 
 To build a binary distribution, do this:
 make bindist
+
+Installing
+==========
+
+To install the binaries, do this:
+make install
 
