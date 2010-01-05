@@ -150,10 +150,6 @@ PyObject* valueToPyObject(const value& v) {
         return PyFloat_FromDouble((double)v);
     case value::Bool:
         return (bool)v? Py_True : Py_False;
-    case value::Char:
-        return PyInt_FromLong((long)((char)v));
-    case value::Ptr:
-        return NULL;
     default:
         return NULL;
     }

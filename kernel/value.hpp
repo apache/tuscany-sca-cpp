@@ -93,7 +93,7 @@ class value {
 public:
 
     enum ValueType {
-        Undefined, Symbol, String, List, Number, Bool, Char, Lambda, Ptr, PoolPtr
+        Undefined, Symbol, String, List, Number, Bool, Lambda, Ptr
     };
 
     value() : type(value::Undefined) {
@@ -119,12 +119,8 @@ public:
             num() = v.num();
         case value::Bool:
             boo() = v.boo();
-        case value::Char:
-            chr() = v.chr();
         case value::Ptr:
             ptr() = v.ptr();
-        case value::PoolPtr:
-            poolptr() = v.poolptr();
         default:
             break;
         }
@@ -185,21 +181,7 @@ public:
         debug_watchValue();
     }
 
-    value(const char chr) : type(value::Char), data(vdata(result(chr))) {
-        debug_inc(countValues);
-        debug_inc(countVValues);
-        debug_watchValue();
-    }
-
-#ifdef _GC_REFCOUNT
     value(const gc_ptr<value> ptr) : type(value::Ptr), data(vdata(result(ptr))) {
-        debug_inc(countValues);
-        debug_inc(countVValues);
-        debug_watchValue();
-    }
-#endif
-
-    value(const gc_ptr<value> ptr) : type(value::PoolPtr), data(vdata(result(ptr))) {
         debug_inc(countValues);
         debug_inc(countVValues);
         debug_watchValue();
@@ -236,12 +218,8 @@ public:
             num() = v.num();
         case value::Bool:
             boo() = v.boo();
-        case value::Char:
-            chr() = v.chr();
         case value::Ptr:
             ptr() = v.ptr();
-        case value::PoolPtr:
-            poolptr() = v.poolptr();
         default:
             break;
         }
@@ -272,12 +250,8 @@ public:
             return num()() == (double)v;
         case value::Bool:
             return boo()() == (bool)v;
-        case value::Char:
-            return chr()() == (char)v;
         case value::Ptr:
             return v.type == value::Ptr && ptr()() == v.ptr()();
-        case value::PoolPtr:
-            return v.type == value::PoolPtr && poolptr()() == v.poolptr()();
         default:
             return false;
         }
@@ -296,8 +270,6 @@ public:
             return boo()() < (bool)v;
         case value::Number:
             return num()() < (double)v;
-        case value::Char:
-            return chr()() < (char)v;
         default:
             return false;
         }
@@ -316,8 +288,6 @@ public:
             return boo()() > (bool)v;
         case value::Number:
             return num()() > (double)v;
-        case value::Char:
-            return chr()() > (char)v;
         default:
             return false;
         }
@@ -339,11 +309,6 @@ public:
         }
         case value::Bool:
             return boo()()? trueString : falseString;
-        case value::Char: {
-            ostringstream os;
-            os << chr()();
-            return tuscany::str(os);
-        }
         default:
             return emptyString;
         }
@@ -358,8 +323,6 @@ public:
             return (double)num()();
         case value::Bool:
             return boo()()? 1.0 : 0.0;
-        case value::Char:
-            return (double)chr()();
         default:
             return 0.0;
         }
@@ -374,8 +337,6 @@ public:
             return (int)num()();
         case value::Bool:
             return boo()()? 1 : 0;
-        case value::Char:
-            return (int)chr()();
         default:
             return 0;
         }
@@ -390,37 +351,13 @@ public:
             return (int)num()() != 0;
         case value::Bool:
             return boo()();
-        case value::Char:
-            return (int)chr()() != 0;
         default:
             return 0;
         }
     }
 
-    operator const char() const {
-        switch(type) {
-        case value::Symbol:
-        case value::String:
-            return 0;
-        case value::Number:
-            return (char)num()();
-        case value::Bool:
-            return (char)boo()();
-        case value::Char:
-            return chr()();
-        default:
-            return 0;
-        }
-    }
-
-#ifdef _GC_REFCOUNT
     operator const gc_ptr<value>() const {
         return ptr()();
-    }
-#endif
-
-    operator const gc_ptr<value>() const {
-        return poolptr()();
     }
 
     operator const list<value>() const {
@@ -452,15 +389,7 @@ private:
         return vdata<bool()> ();
     }
 
-    lambda<char()>& chr() const {
-        return vdata<char()> ();
-    }
-
     lambda<gc_ptr<value>()>& ptr() const {
-        return vdata<gc_ptr<value>()> ();
-    }
-
-    lambda<gc_ptr<value>()>& poolptr() const {
         return vdata<gc_ptr<value>()> ();
     }
 
@@ -536,19 +465,11 @@ ostream& operator<<(ostream& out, const value& v) {
             return out << "true";
         else
             return out << "false";
-    case value::Char:
-        return out << v.chr()();
     case value::Ptr: {
         const gc_ptr<value> p =  v.ptr()();
         if (p == gc_ptr<value>(NULL))
             return out << "gc_ptr::null";
         return out << "gc_ptr::" << p;
-    }
-    case value::PoolPtr: {
-        const gc_ptr<value> p =  v.poolptr()();
-        if (p == gc_ptr<value>(NULL))
-            return out << "pool_ptr::null";
-        return out << "pool_ptr::" << p;
     }
     default:
         return out << "undefined";
@@ -612,24 +533,10 @@ const bool isBool(const value& v) {
 }
 
 /**
- * Returns true if a value is a character.
- */
-const bool isChar(const value& v) {
-    return type(v) == value::Char;
-}
-
-/**
  * Returns true if a value is a pointer.
  */
 const bool isPtr(const value& v) {
     return type(v) == value::Ptr;
-}
-
-/**
- * Returns true if a value is a pooled pointer.
- */
-const bool isPoolPtr(const value& v) {
-    return type(v) == value::PoolPtr;
 }
 
 /**

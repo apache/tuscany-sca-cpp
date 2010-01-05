@@ -189,8 +189,6 @@ const bool isSelfEvaluating(const value& exp) {
         return true;
     if(isBool(exp))
         return true;
-    if(isChar(exp))
-        return true;
     if(isLambda(exp))
         return true;
     return false;
