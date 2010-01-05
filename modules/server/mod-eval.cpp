@@ -36,7 +36,7 @@
 #include "../scdl/scdl.hpp"
 #include "../http/curl.hpp"
 #include "../http/httpd.hpp"
-#include "mod-scm.hpp"
+#include "mod-scheme.hpp"
 #include "mod-cpp.hpp"
 
 extern "C" {
@@ -275,9 +275,9 @@ const list<value> proxies(const list<value>& refs, const string& base) {
  */
 const failable<lambda<value(const list<value>&)> > readImplementation(const string& itype, const string& path, const list<value>& px) {
     if (contains(itype, ".scheme"))
-        return scm::readImplementation(path, px);
+        return modscheme::readImplementation(path, px);
     if (contains(itype, ".cpp"))
-        return cpp::readImplementation(path, px);
+        return modcpp::readImplementation(path, px);
     return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
 }
 

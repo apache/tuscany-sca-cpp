@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_eval_primitive_hpp
-#define tuscany_eval_primitive_hpp
+#ifndef tuscany_scheme_primitive_hpp
+#define tuscany_scheme_primitive_hpp
 
 /**
  * Script evaluator primitive functions.
@@ -34,14 +34,21 @@
 #include "value.hpp"
 
 namespace tuscany {
-namespace eval {
+namespace scheme {
 
 const value primitiveSymbol("primitive");
 const value quoteSymbol("'");
 const value lambdaSymbol("lambda");
 
-ostream* displayOutStream = &cout;
-ostream* logOutStream = &cerr;
+#ifdef _REENTRANT
+__thread
+#endif
+ostream* displayOutStream = NULL;
+
+#ifdef _REENTRANT
+__thread
+#endif
+ostream* logOutStream = NULL;
 
 const bool setupDisplay(ostream& out) {
     displayOutStream = &out;
@@ -49,6 +56,8 @@ const bool setupDisplay(ostream& out) {
 }
 
 ostream& displayStream() {
+    if (displayOutStream == NULL)
+        return cout;
     return *displayOutStream;
 }
 
@@ -58,6 +67,8 @@ const bool setupLog(ostream& out) {
 }
 
 ostream& logStream() {
+    if (logOutStream == NULL)
+        return cerr;
     return *logOutStream;
 }
 
@@ -261,4 +272,4 @@ const value makeLambda(const list<value>& parameters, const list<value>& body) {
 
 }
 }
-#endif /* tuscany_eval_primitive_hpp */
+#endif /* tuscany_scheme_primitive_hpp */

@@ -39,7 +39,7 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "debug.hpp"
-#include "../../modules/eval/eval.hpp"
+#include "../../modules/scheme/eval.hpp"
 
 namespace tuscany {
 namespace cache {
@@ -97,8 +97,8 @@ const failable<bool> post(const value& key, const value& val, const MemCached& c
     debug(key, "cache::post::key");
     debug(val, "cache::post::value");
 
-    const string ks(eval::writeValue(key));
-    const string vs(eval::writeValue(val));
+    const string ks(scheme::writeValue(key));
+    const string vs(scheme::writeValue(val));
     const apr_status_t rc = apr_memcache_add(cache.mc, c_str(ks), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not add entry");
@@ -114,8 +114,8 @@ const failable<bool> put(const value& key, const value& val, const MemCached& ca
     debug(key, "cache::put::key");
     debug(val, "cache::put::value");
 
-    const string ks(eval::writeValue(key));
-    const string vs(eval::writeValue(val));
+    const string ks(scheme::writeValue(key));
+    const string vs(scheme::writeValue(val));
     const apr_status_t rc = apr_memcache_set(cache.mc, c_str(ks), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not add entry");
@@ -130,7 +130,7 @@ const failable<bool> put(const value& key, const value& val, const MemCached& ca
 const failable<value> get(const value& key, const MemCached& cache) {
     debug(key, "cache::get::key");
 
-    const string ks(eval::writeValue(key));
+    const string ks(scheme::writeValue(key));
     apr_pool_t* vpool;
     const apr_status_t pc = apr_pool_create(&vpool, cache.pool);
     if (pc != APR_SUCCESS)
@@ -144,7 +144,7 @@ const failable<value> get(const value& key, const MemCached& cache) {
         return mkfailure<value>("Could not get entry");
     }
 
-    const value val(eval::readValue(string(data, size)));
+    const value val(scheme::readValue(string(data, size)));
     apr_pool_destroy(vpool);
 
     debug(val, "cache::get::result");
@@ -157,7 +157,7 @@ const failable<value> get(const value& key, const MemCached& cache) {
 const failable<bool> del(const value& key, const MemCached& cache) {
     debug(key, "cache::delete::key");
 
-    const string ks(eval::writeValue(key));
+    const string ks(scheme::writeValue(key));
     const apr_status_t rc = apr_memcache_delete(cache.mc, c_str(ks), 0);
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not delete entry");

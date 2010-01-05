@@ -36,13 +36,12 @@
 #include "debug.hpp"
 #include "monad.hpp"
 #include "dynlib.hpp"
-#include "../eval/driver.hpp"
+#include "../scheme/driver.hpp"
 #include "../http/httpd.hpp"
 
 namespace tuscany {
 namespace server {
-namespace modeval {
-namespace cpp {
+namespace modcpp {
 
 /**
  * Evaluate a C++ component implementation function.
@@ -72,7 +71,6 @@ const failable<lambda<value(const list<value>&)> > readImplementation(const stri
     return lambda<value(const list<value>&)>(evalImplementation(ilib, content(impl), px));
 }
 
-}
 }
 }
 }

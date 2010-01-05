@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_eval_io_hpp
-#define tuscany_eval_io_hpp
+#ifndef tuscany_scheme_io_hpp
+#define tuscany_scheme_io_hpp
 
 /**
  * Script evaluator IO functions.
@@ -35,7 +35,7 @@
 #include "primitive.hpp"
 
 namespace tuscany {
-namespace eval {
+namespace scheme {
 
 const value rightParenthesis(mklist<value>(")"));
 const value leftParenthesis(mklist<value>("("));
@@ -214,4 +214,4 @@ const value readScript(istream& in) {
 
 }
 }
-#endif /* tuscany_eval_io_hpp */
+#endif /* tuscany_scheme_io_hpp */

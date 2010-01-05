@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_eval_driver_hpp
-#define tuscany_eval_driver_hpp
+#ifndef tuscany_scheme_driver_hpp
+#define tuscany_scheme_driver_hpp
 
 /**
  * Script evaluator main driver loop.
@@ -31,7 +31,7 @@
 #include "eval.hpp"
 
 namespace tuscany {
-namespace eval {
+namespace scheme {
 
 const string evalOutputPrompt("; ");
 const string evalInputPrompt("=> ");
@@ -53,15 +53,15 @@ const bool userPrint(const value val, ostream& out) {
     return true;
 }
 
-const value evalDriverLoop(istream& in, ostream& out, Env& globalEnv, const gc_pool& pool) {
+const value evalDriverLoop(istream& in, ostream& out, Env& env, const gc_pool& pool) {
     promptForInput(evalInputPrompt, out);
     value input = readValue(in);
     if (isNil(input))
         return input;
-    const value output = evalExpr(input, globalEnv, pool);
+    const value output = evalExpr(input, env, pool);
     announceOutput(evalOutputPrompt, out);
     userPrint(output, out);
-    return evalDriverLoop(in, out, globalEnv, pool);
+    return evalDriverLoop(in, out, env, pool);
 }
 
 const bool evalDriverRun(istream& in, ostream& out, const gc_pool& pool) {
@@ -73,4 +73,4 @@ const bool evalDriverRun(istream& in, ostream& out, const gc_pool& pool) {
 
 }
 }
-#endif /* tuscany_eval_driver_hpp */
+#endif /* tuscany_scheme_driver_hpp */

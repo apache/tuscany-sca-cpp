@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_eval_environment_hpp
-#define tuscany_eval_environment_hpp
+#ifndef tuscany_scheme_environment_hpp
+#define tuscany_scheme_environment_hpp
 
 /**
  * Script evaluator environment implementation.
@@ -33,7 +33,7 @@
 #include <string>
 
 namespace tuscany {
-namespace eval {
+namespace scheme {
 
 typedef value Frame;
 typedef list<value> Env;
@@ -176,4 +176,4 @@ const value lookupVariableValue(const value& var, const Env& env) {
 
 }
 }
-#endif /* tuscany_eval_environment_hpp */
+#endif /* tuscany_scheme_environment_hpp */

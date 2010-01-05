@@ -17,7 +17,7 @@
 
 noinst_PROGRAMS = store-script-test
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I$(top_builddir)/modules/eval -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${JS_INCLUDE}
+INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${JS_INCLUDE}
 
 store_script_test_SOURCES = store-script-test.cpp
 store_script_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${JS_LIB} -lmozjs

@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_eval_eval_hpp
-#define tuscany_eval_eval_hpp
+#ifndef tuscany_scheme_eval_hpp
+#define tuscany_scheme_eval_hpp
 
 /**
  * Core script evaluation logic.
@@ -34,7 +34,7 @@
 #include "environment.hpp"
 
 namespace tuscany {
-namespace eval {
+namespace scheme {
 
 const value evalExpr(const value& exp, Env& env, const gc_pool& pool);
 
@@ -267,11 +267,11 @@ const list<value> quotedParameters(const list<value>& p) {
 /**
  * Evaluate an expression against a script provided as a list of values.
  */
-const value evalScriptLoop(const value& expr, const list<value>& script, eval::Env& globalEnv, const gc_pool& pool) {
+const value evalScriptLoop(const value& expr, const list<value>& script, scheme::Env& env, const gc_pool& pool) {
     if (isNil(script))
-        return eval::evalExpr(expr, globalEnv, pool);
-    eval::evalExpr(car(script), globalEnv, pool);
-    return evalScriptLoop(expr, cdr(script), globalEnv, pool);
+        return scheme::evalExpr(expr, env, pool);
+    scheme::evalExpr(car(script), env, pool);
+    return evalScriptLoop(expr, cdr(script), env, pool);
 }
 
 const value evalScript(const value& expr, const value& script, Env& env, const gc_pool& pool) {
@@ -287,4 +287,4 @@ const value evalScript(const value& expr, istream& is, Env& env, const gc_pool& 
 
 }
 }
-#endif /* tuscany_eval_eval_hpp */
+#endif /* tuscany_scheme_eval_hpp */

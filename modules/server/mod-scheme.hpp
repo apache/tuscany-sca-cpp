@@ -34,14 +34,13 @@
 #include "value.hpp"
 #include "debug.hpp"
 #include "monad.hpp"
-#include "../eval/primitive.hpp"
-#include "../eval/driver.hpp"
+#include "../scheme/primitive.hpp"
+#include "../scheme/driver.hpp"
 #include "../http/httpd.hpp"
 
 namespace tuscany {
 namespace server {
-namespace modeval {
-namespace scm {
+namespace modscheme {
 
 /**
  * Convert proxy lambdas to evaluator primitive procedures.
@@ -49,7 +48,7 @@ namespace scm {
 const list<value> primitiveProcedures(const list<value>& l) {
     if (isNil(l))
         return l;
-    return cons<value>(mklist<value>(eval::primitiveSymbol, car(l)), primitiveProcedures(cdr(l)));
+    return cons<value>(mklist<value>(scheme::primitiveSymbol, car(l)), primitiveProcedures(cdr(l)));
 }
 
 /**
@@ -58,14 +57,14 @@ const list<value> primitiveProcedures(const list<value>& l) {
 struct evalImplementation {
     const value impl;
     const list<value> px;
-    evalImplementation(const value& impl, const list<value>& px) : impl(impl), px(eval::quotedParameters(primitiveProcedures(px))) {
+    evalImplementation(const value& impl, const list<value>& px) : impl(impl), px(scheme::quotedParameters(primitiveProcedures(px))) {
     }
     const value operator()(const list<value>& params) const {
-        const value expr = cons<value>(car(params), append(eval::quotedParameters(cdr(params)), px));
+        const value expr = cons<value>(car(params), append(scheme::quotedParameters(cdr(params)), px));
         debug(expr, "modeval::scm::evalImplementation::input");
         gc_pool pool(gc_current_pool());
-        eval::Env globalEnv = eval::setupEnvironment(pool);
-        const value val = eval::evalScript(expr, impl, globalEnv, pool);
+        scheme::Env globalEnv = scheme::setupEnvironment(pool);
+        const value val = scheme::evalScript(expr, impl, globalEnv, pool);
         debug(val, "modeval::scm::evalImplementation::result");
         if (isNil(val))
             return mklist<value>(value(), string("Could not evaluate expression"));
@@ -80,13 +79,12 @@ const failable<lambda<value(const list<value>&)> > readImplementation(const stri
     ifstream is(path);
     if (fail(is))
         return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
-    const value impl = eval::readScript(is);
+    const value impl = scheme::readScript(is);
     if (isNil(impl))
         return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
     return lambda<value(const list<value>&)>(evalImplementation(impl, px));
 }
 
-}
 }
 }
 }

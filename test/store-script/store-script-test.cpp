@@ -28,9 +28,9 @@
 #include "stream.hpp"
 #include "string.hpp"
 #include "list.hpp"
-#include "driver.hpp"
 #include "xml.hpp"
-#include "../json/json.hpp"
+#include "../../modules/scheme/driver.hpp"
+#include "../../modules/json/json.hpp"
 
 namespace store {
 
@@ -41,7 +41,7 @@ bool testScript() {
 
     ifstream is("store-script.scm");
     ostringstream os;
-    eval::evalDriverRun(is, os, pool);
+    scheme::evalDriverRun(is, os, pool);
     assert(contains(str(os), "(\"Sample Feed\" \""));
     assert(contains(str(os), "\" (\"Item\" \""));
     assert(contains(str(os), "\" ((javaClass \"services.Item\") (name \"Orange\") (currencyCode \"USD\") (currencySymbol \"$\") (price 3.55))) (\"Item\" \""));
@@ -54,10 +54,10 @@ bool testEval() {
         gc_scoped_pool pool;
         ifstream is("store-script.scm");
         ostringstream os;
-        eval::setupDisplay(os);
-        eval::Env globalEnv = eval::setupEnvironment(pool);
+        scheme::setupDisplay(os);
+        scheme::Env globalEnv = scheme::setupEnvironment(pool);
         const value exp(mklist<value>("storeui_service", string("getcatalog")));
-        const value val = eval::evalScript(exp, is, globalEnv, pool);
+        const value val = scheme::evalScript(exp, is, globalEnv, pool);
 
         ostringstream vs;
         vs << val;
@@ -68,11 +68,11 @@ bool testEval() {
         gc_scoped_pool pool;
         ifstream is("store-script.scm");
         ostringstream os;
-        eval::setupDisplay(os);
+        scheme::setupDisplay(os);
 
-        eval::Env globalEnv = eval::setupEnvironment(pool);
+        scheme::Env globalEnv = scheme::setupEnvironment(pool);
         const value exp(mklist<value>("storeui_service", string("gettotal")));
-        const value res = eval::evalScript(exp, is, globalEnv, pool);
+        const value res = scheme::evalScript(exp, is, globalEnv, pool);
 
         ostringstream rs;
         rs << res;

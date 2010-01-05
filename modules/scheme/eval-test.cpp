@@ -29,7 +29,7 @@
 #include "driver.hpp"
 
 namespace tuscany {
-namespace eval {
+namespace scheme {
 
 bool testEnv() {
     gc_scoped_pool pool;
@@ -217,14 +217,14 @@ bool testEvalGC() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::eval::testEnv();
-    tuscany::eval::testEnvGC();
-    tuscany::eval::testRead();
-    tuscany::eval::testWrite();
-    tuscany::eval::testEval();
-    tuscany::eval::testEvalExpr();
-    tuscany::eval::testEvalLambda();
-    tuscany::eval::testEvalGC();
+    tuscany::scheme::testEnv();
+    tuscany::scheme::testEnvGC();
+    tuscany::scheme::testRead();
+    tuscany::scheme::testWrite();
+    tuscany::scheme::testEval();
+    tuscany::scheme::testEvalExpr();
+    tuscany::scheme::testEvalLambda();
+    tuscany::scheme::testEvalGC();
 
     tuscany::cout << "OK" << tuscany::endl;
     return 0;
