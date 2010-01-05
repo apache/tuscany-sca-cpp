@@ -20,6 +20,10 @@
   (shoppingCart "gettotal")
 )
 
+(define (deleteall catalog shoppingCart shoppingTotal)
+  (shoppingCart "deleteall")
+)
+
 (define (delete id catalog shoppingCart shoppingTotal)
   (shoppingCart "delete" id)
 )

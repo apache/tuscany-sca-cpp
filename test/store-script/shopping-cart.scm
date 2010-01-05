@@ -39,9 +39,14 @@
   (find id (getcart cartId cache))
 )
 
-; Delete the cart
-(define (delete id cache)
+; Delete the whole cart
+(define (deleteall cache)
   (cache "delete" cartId)
+)
+
+; Delete an item from the  cart
+(define (delete id cache)
+  true
 )
 
 ; Return the price of an item

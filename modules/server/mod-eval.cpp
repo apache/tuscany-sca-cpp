@@ -111,7 +111,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
         return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc", r);
     }
 
-    // Evaluate an ATOM GET request and return an ATOM feed
+    // Evaluate an ATOM GET request and return an ATOM feed representing a collection of resources
     const list<value> path(httpd::pathValues(r->uri));
     if (isNil(cddr(path))) {
         const failable<value> val = failableResult(impl(cons<value>("getall", list<value>())));
@@ -120,7 +120,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
         return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(content(val))), "application/atom+xml;type=feed", r);
     }
 
-    // Evaluate an ATOM GET and return an ATOM entry
+    // Evaluate an ATOM GET and return an ATOM entry representing a resource
     const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(caddr(path)))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
@@ -156,7 +156,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
         return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc", r);
     }
 
-    // Evaluate an ATOM POST request and return the created resource location
+    // Evaluate an ATOM POST request and return the location of the corresponding created resource
     if (contains(ct, "application/atom+xml")) {
 
         // Evaluate the request expression
@@ -182,7 +182,7 @@ const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>&
     debug(r->uri, "modeval::put::url");
     debug(ls, "modeval::put::input");
 
-    // Evaluate an ATOM PUT request
+    // Evaluate an ATOM PUT request and update the corresponding resource
     const list<value> path(httpd::pathValues(r->uri));
     const value entry = atom::entryValue(content(atom::readEntry(ls)));
     const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(caddr(path), entry))));
@@ -201,6 +201,18 @@ const failable<int> del(request_rec* r, const lambda<value(const list<value>&)>&
 
     // Evaluate an ATOM delete request
     const list<value> path(httpd::pathValues(r->uri));
+    if (isNil(cddr(path))) {
+
+        // Delete a collection of resources
+        const failable<value> val = failableResult(impl(cons<value>("deleteall", list<value>())));
+        if (!hasContent(val))
+            return mkfailure<int>(reason(val));
+        if (val == value(false))
+            return HTTP_NOT_FOUND;
+        return OK;
+    }
+
+    // Delete a resource
     const failable<value> val = failableResult(impl(cons<value>("delete", mklist<value>(caddr(path)))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
