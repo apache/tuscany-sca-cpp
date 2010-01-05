@@ -20,6 +20,10 @@
   (ref "put" id entry)
 )
 
+(define (deleteall ref)
+  (ref deleteall)
+)
+
 (define (delete id ref)
   (ref "delete" id)
 )

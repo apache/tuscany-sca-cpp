@@ -24,6 +24,10 @@
   true
 )
 
+(define (deleteall)
+  true
+)
+
 (define (delete id)
   true
 )

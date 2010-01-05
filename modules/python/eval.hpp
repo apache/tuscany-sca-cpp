@@ -144,6 +144,7 @@ PyObject* valueToPyObject(const value& v) {
     case value::Lambda:
         return mkPyLambda(v);
     case value::Symbol:
+        return PyString_FromString(c_str(string("'") + v));
     case value::String:
         return PyString_FromString(c_str(v));
     case value::Number:
@@ -197,8 +198,12 @@ struct pyCallable {
  * Convert a python object to a value.
  */
 const value pyObjectToValue(PyObject *o) {
-    if (PyString_Check(o))
-        return value(string(PyString_AsString(o)));
+    if (PyString_Check(o)) {
+        const char* s = PyString_AsString(o);
+        if (*s == '\'')
+            return value(s + 1);
+        return value(string(s));
+    }
     if (PyBool_Check(o))
         return value(o == Py_True);
     if (PyInt_Check(o))

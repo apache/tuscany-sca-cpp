@@ -38,6 +38,7 @@
 #include "../http/httpd.hpp"
 #include "mod-scheme.hpp"
 #include "mod-cpp.hpp"
+#include "mod-python.hpp"
 
 extern "C" {
 extern module AP_MODULE_DECLARE_DATA mod_tuscany_eval;
@@ -288,6 +289,8 @@ const list<value> proxies(const list<value>& refs, const string& base) {
 const failable<lambda<value(const list<value>&)> > readImplementation(const string& itype, const string& path, const list<value>& px) {
     if (contains(itype, ".scheme"))
         return modscheme::readImplementation(path, px);
+    if (contains(itype, ".python"))
+        return modpython::readImplementation(path, px);
     if (contains(itype, ".cpp"))
         return modcpp::readImplementation(path, px);
     return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);

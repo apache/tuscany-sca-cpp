@@ -19,11 +19,11 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_modscheme_hpp
-#define tuscany_modscheme_hpp
+#ifndef tuscany_modpython_hpp
+#define tuscany_modpython_hpp
 
 /**
- * Evaluation functions used by mod-eval to evaluate implementation.scheme
+ * Evaluation functions used by mod-eval to evaluate implementation.python
  * component implementations.
  */
 
@@ -34,58 +34,48 @@
 #include "value.hpp"
 #include "debug.hpp"
 #include "monad.hpp"
-#include "../scheme/eval.hpp"
+#include "../python/eval.hpp"
 #include "../http/httpd.hpp"
 
 namespace tuscany {
 namespace server {
-namespace modscheme {
+namespace modpython {
 
 /**
- * Convert proxy lambdas to evaluator primitive procedures.
- */
-const list<value> primitiveProcedures(const list<value>& l) {
-    if (isNil(l))
-        return l;
-    return cons<value>(mklist<value>(scheme::primitiveSymbol, car(l)), primitiveProcedures(cdr(l)));
-}
-
-/**
- * Evaluate a scheme component implementation function.
+ * Evaluate a script component implementation function.
  */
 struct evalImplementation {
-    const value impl;
+    PyObject* impl;
     const list<value> px;
-    evalImplementation(const value& impl, const list<value>& px) : impl(impl), px(scheme::quotedParameters(primitiveProcedures(px))) {
+    evalImplementation(PyObject* impl, const list<value>& px) : impl(impl), px(px) {
     }
     const value operator()(const list<value>& params) const {
-        const value expr = cons<value>(car(params), append(scheme::quotedParameters(cdr(params)), px));
-        debug(expr, "modeval::scheme::evalImplementation::input");
+        const value expr = append<value>(params, px);
+        debug(expr, "modeval::python::evalImplementation::input");
         gc_pool pool(gc_current_pool());
-        scheme::Env globalEnv = scheme::setupEnvironment(pool);
-        const value val = scheme::evalScript(expr, impl, globalEnv, pool);
-        debug(val, "modeval::scheme::evalImplementation::result");
-        if (isNil(val))
-            return mklist<value>(value(), string("Could not evaluate expression"));
-        return mklist<value>(val);
+        const failable<value> val = python::evalScript(expr, impl, pool);
+        debug(val, "modeval::python::evalImplementation::result");
+        if (!hasContent(val))
+            return mklist<value>(value(), reason(val));
+        return mklist<value>(content(val));
     }
 };
 
 /**
- * Read a scheme component implementation.
+ * Read a script component implementation.
  */
 const failable<lambda<value(const list<value>&)> > readImplementation(const string& path, const list<value>& px) {
     ifstream is(path);
     if (fail(is))
         return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
-    const value impl = scheme::readScript(is);
-    if (isNil(impl))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
-    return lambda<value(const list<value>&)>(evalImplementation(impl, px));
+    const failable<PyObject*> impl = python::readScript(path, is);
+    if (!hasContent(impl))
+        return mkfailure<lambda<value(const list<value>&)> >(reason(impl));
+    return lambda<value(const list<value>&)>(evalImplementation(content(impl), px));
 }
 
 }
 }
 }
 
-#endif /* tuscany_modscheme_hpp */
+#endif /* tuscany_modpython_hpp */

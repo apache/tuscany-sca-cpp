@@ -37,7 +37,8 @@
     </component>
 
     <component name="client-test">
-        <t:implementation.scheme uri="client-test.scm"/>
+        <!-- <t:implementation.scheme uri="client-test.scm"/> -->
+        <t:implementation.python uri="client-test.py"/>
         <service name="client">
             <t:binding.http uri="client"/>
         </service>
