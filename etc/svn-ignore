@@ -1,6 +1,5 @@
 configure
 Makefile.in
-config.log
 depcomp
 config.guess
 config.h
@@ -40,3 +39,11 @@ Release
 gmon.out
 m4
 *.tar.gz
+*.pyc
+*.log
+*-bin
+*-src
+Doxyfile
+*~
+tags
+doxygen
