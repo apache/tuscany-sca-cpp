@@ -124,6 +124,20 @@ AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed htt
 ])
 AC_SUBST(HTTPD_INCLUDE)
 
+# Configure PYTHON_INCLUDE and PYTHON_LIB
+AC_MSG_CHECKING([for python])
+AC_ARG_WITH([curl], [AC_HELP_STRING([--with-python=PATH], [path to installed python 2.6 [default=/usr]])], [
+  PYTHON_INCLUDE="${withval}/include"
+  PYTHON_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  PYTHON_INCLUDE="/usr/include"
+  PYTHON_LIB="/usr/lib"
+  AC_MSG_RESULT(/usr)
+])
+AC_SUBST(PYTHON_INCLUDE)
+AC_SUBST(PYTHON_LIB)
+
 # Checks for libraries.
 original_LIBS="${LIBS}"
 AC_MSG_NOTICE([checking for libraries])
@@ -138,6 +152,8 @@ AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitabl
 LIBS="-L${APR_LIB} ${original_LIBS}"
 AC_CHECK_LIB([apr-1], [apr_pool_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
 AC_CHECK_LIB([aprutil-1], [apr_memcache_replace], [], [AC_MSG_ERROR([couldn't find a suitable libaprutil-1, use --with-apr=PATH])])
+LIBS="-L${PYTHON_LIB} ${original_LIBS}"
+AC_CHECK_LIB([python2.6], [Py_Initialize], [], [AC_MSG_ERROR([couldn't find a suitable libpython2.6, use --with-python=PATH])])
 LIBS="${original_LIBS}"
 
 # Checks for header files.
@@ -175,7 +191,7 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_maintainer_mode}" = "true"; then
-  cxxflags="${cxxflags} -D_DEBUG -O0 -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"
+  cxxflags="${cxxflags} -D_DEBUG -O0 -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"
   ldflags="${ldflags} -pg"
 else
   cxxflags="${cxxflags} -O3 -std=c++0x -fmessage-length=0"
@@ -256,9 +272,10 @@ AC_CONFIG_FILES([Makefile
                  kernel/Makefile
                  modules/Makefile
                  modules/atom/Makefile
-                 modules/eval/Makefile
+                 modules/scheme/Makefile
                  modules/http/Makefile
                  modules/json/Makefile
+                 modules/python/Makefile
                  modules/scdl/Makefile
                  modules/server/Makefile
                  components/Makefile
