@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-scheme store-python
+TESTS = store-composite-test
 

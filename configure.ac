@@ -283,7 +283,8 @@ AC_CONFIG_FILES([Makefile
                  components/store/Makefile
                  samples/Makefile
                  test/Makefile
-                 test/store-script/Makefile
+                 test/store-scheme/Makefile
+                 test/store-python/Makefile
                  doc/Makefile
                  doc/Doxyfile
                  ])

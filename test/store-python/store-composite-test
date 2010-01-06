@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,5 +17,35 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-scheme store-python
+echo "Testing..."
 
+# Setup
+../../modules/http/httpd-conf tmp 8090 htdocs
+../../modules/server/server-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+
+<Location />
+SCAContribution `pwd`/
+SCAComposite store.composite
+</Location>
+EOF
+
+apachectl -k start -d `pwd`/tmp
+
+mc="memcached -l 127.0.0.1 -m 4 -p 11211"
+$mc &
+sleep 2
+
+# Test HTTP GET
+curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
+diff tmp/store.html htdocs/store.html
+rc=$?
+
+# Cleanup
+apachectl -k stop -d `pwd`/tmp
+kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`
+sleep 2
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
+return $rc
