@@ -77,19 +77,27 @@ const bool testGetPerf() {
     return true;
 }
 
-const bool testEval() {
+const bool testEval(const string& uri) {
     http::CURLSession ch;
-    const value val = content(http::evalExpr(mklist<value>(string("echo"), string("Hello")), "http://localhost:8090/test", ch));
+    const value val = content(http::evalExpr(mklist<value>(string("echo"), string("Hello")), uri, ch));
     assert(val == string("Hello"));
     return true;
 }
 
+const bool testEval() {
+    testEval("http://localhost:8090/test");
+    //testEval("http://localhost:8090/cpp");
+    testEval("http://localhost:8090/python");
+    return true;
+}
+
 struct evalLoop {
+    const string uri;
     http::CURLSession ch;
-    evalLoop(http::CURLSession& ch) : ch(ch) {
+    evalLoop(const string& uri, http::CURLSession& ch) : uri(uri), ch(ch) {
     }
     const bool operator()() const {
-        const value val = content(http::evalExpr(mklist<value>(string("echo"), string("Hello")), "http://localhost:8090/test", ch));
+        const value val = content(http::evalExpr(mklist<value>(string("echo"), string("Hello")), uri, ch));
         assert(val == string("Hello"));
         return true;
     }
@@ -99,57 +107,73 @@ const value blob(string(3000, 'A'));
 const list<value> blobs = mklist(blob, blob, blob, blob, blob);
 
 struct blobEvalLoop {
+    const string uri;
     http::CURLSession ch;
-    blobEvalLoop(http::CURLSession& ch) : ch(ch) {
+    blobEvalLoop(const string& uri, http::CURLSession& ch) : uri(uri), ch(ch) {
     }
     const bool operator()() const {
-        const value val = content(http::evalExpr(mklist<value>(string("echo"), blobs), "http://localhost:8090/test", ch));
+        const value val = content(http::evalExpr(mklist<value>(string("echo"), blobs), uri, ch));
         assert(val == blobs);
         return true;
     }
 };
 
-const bool testEvalPerf() {
+const bool testEvalPerf(const string& type, const string& uri) {
     http::CURLSession ch;
-    const lambda<bool()> el = evalLoop(ch);
-    cout << "JSON-RPC eval echo test " << time(el, 5, 200) << " ms" << endl;
-    const lambda<bool()> bel = blobEvalLoop(ch);
-    cout << "JSON-RPC eval blob test " << time(bel, 5, 200) << " ms" << endl;
+    const lambda<bool()> el = evalLoop(uri, ch);
+    cout << type << " JSON-RPC eval echo test " << time(el, 5, 200) << " ms" << endl;
+    const lambda<bool()> bel = blobEvalLoop(uri, ch);
+    cout << type << " JSON-RPC eval blob test " << time(bel, 5, 200) << " ms" << endl;
     return true;
 }
 
-bool testPost() {
+const bool testEvalPerf() {
+    testEvalPerf("Scheme", "http://localhost:8090/test");
+    //testEvalPerf("C++", "http://localhost:8090/cpp");
+    testEvalPerf("Python", "http://localhost:8090/python");
+    return true;
+}
+
+bool testPost(const string& uri) {
     const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "price" + string("$2.99"));
     const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
     http::CURLSession ch;
-    const failable<value> id = http::post(a, "http://localhost:8090/test", ch);
+    const failable<value> id = http::post(a, uri, ch);
     assert(hasContent(id));
     return true;
 }
 
+const bool testPost() {
+    testPost("http://localhost:8090/test");
+    //testPost("http://localhost:8090/cpp");
+    testPost("http://localhost:8090/python");
+    return true;
+}
+
 struct postLoop {
+    const string uri;
     const value val;
     http::CURLSession ch;
-    postLoop(const value& val, http::CURLSession& ch) : val(val), ch(ch) {
+    postLoop(const string& uri, const value& val, http::CURLSession& ch) : uri(uri), val(val), ch(ch) {
     }
     const bool operator()() const {
-        const failable<value> id = http::post(val, "http://localhost:8090/test", ch);
+        const failable<value> id = http::post(val, uri, ch);
         assert(hasContent(id));
         return true;
     }
 };
 
-const bool testPostPerf() {
+const bool testPostPerf(const string& type, const string& uri) {
     http::CURLSession ch;
     {
         const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "price" + string("$2.99"));
         const list<value> val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
-        const lambda<bool()> pl = postLoop(val, ch);
-        cout << "ATOMPub POST small test " << time(pl, 5, 200) << " ms" << endl;
+        const lambda<bool()> pl = postLoop(uri, val, ch);
+        cout << type << " ATOMPub POST small test " << time(pl, 5, 200) << " ms" << endl;
     }
     {
         const list<value> i = list<value>()
@@ -161,17 +185,24 @@ const bool testPostPerf() {
             + (list<value>() + "blob5" + blob)
             + (list<value>() + "price" + string("$2.99"));
         const list<value> val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
-        const lambda<bool()> pl = postLoop(val, ch);
-        cout << "ATOMPub POST blob test  " << time(pl, 5, 200) << " ms" << endl;
+        const lambda<bool()> pl = postLoop(uri, val, ch);
+        cout << type << " ATOMPub POST blob test  " << time(pl, 5, 200) << " ms" << endl;
     }
+    return true;
+}
+
+const bool testPostPerf() {
+    testPostPerf("Scheme", "http://localhost:8090/test");
+    //testPostPerf("C++", "http://localhost:8090/cpp");
+    testPostPerf("Python", "http://localhost:8090/python");
     return true;
 }
 
 #ifdef _REENTRANT
 
-const bool postThread(const int count, const value& val) {
+const bool postThread(const string& uri, const int count, const value& val) {
     http::CURLSession ch;
-    const lambda<bool()> pl = postLoop(val, ch);
+    const lambda<bool()> pl = postLoop(uri, val, ch);
     time(pl, 0, count);
     return true;
 }
@@ -202,7 +233,7 @@ struct postThreadLoop {
     }
 };
 
-const bool testPostThreadPerf() {
+const bool testPostThreadPerf(const string& type, const string& uri) {
     const int count = 50;
     const int threads = 10;
 
@@ -211,11 +242,18 @@ const bool testPostThreadPerf() {
         + (list<value>() + "price" + string("$2.99"));
     const value val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
-    const lambda<bool()> pl= curry(lambda<bool(const int, const value)>(postThread), count, val);
+    const lambda<bool()> pl= curry(lambda<bool(const string, const int, const value)>(postThread), uri, count, val);
     const lambda<bool()> ptl = postThreadLoop(pl, threads);
     double t = time(ptl, 0, 1) / (threads * count);
-    cout << "ATOMPub POST thread test " << t << " ms" << endl;
+    cout << type << " ATOMPub POST thread test " << t << " ms" << endl;
 
+    return true;
+}
+
+const bool testPostThreadPerf() {
+    testPostThreadPerf("Scheme", "http://localhost:8090/test");
+    //testPostThreadPerf("C++", "http://localhost:8090/cpp");
+    //testPostThreadPerf("Python", "http://localhost:8090/python");
     return true;
 }
 
@@ -260,7 +298,7 @@ struct postForkLoop {
     }
 };
 
-const bool testPostForkPerf() {
+const bool testPostForkPerf(const string& type, const string& uri) {
     const int count = 50;
     const int procs = 10;
 
@@ -269,7 +307,7 @@ const bool testPostForkPerf() {
         + (list<value>() + "price" + string("$2.99"));
     const value val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
-    const lambda<bool()> pl= curry(lambda<bool(const int, const value)>(postProc), count, val);
+    const lambda<bool()> pl= curry(lambda<bool(const string, const int, const value)>(postProc), uri, count, val);
     const lambda<bool()> ptl = postForkLoop(pl, procs);
     double t = time(ptl, 0, 1) / (procs * count);
     cout << "ATOMPub POST fork test " << t << " ms" << endl;
@@ -277,48 +315,44 @@ const bool testPostForkPerf() {
     return true;
 }
 
+const bool testPostForkPerf() {
+    testPostThreadPerf("Scheme", "http://localhost:8090/test");
+    //testPostThreadPerf("C++", "http://localhost:8090/cpp");
+    testPostThreadPerf("Python", "http://localhost:8090/python");
+    return true;
+}
+
 #endif
 
-const bool testPut() {
+const bool testPut(const string& uri) {
     const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "price" + string("$2.99"));
     const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
     http::CURLSession ch;
-    value rc = content(http::put(a, "http://localhost:8090/test/111", ch));
+    value rc = content(http::put(a, uri, ch));
+    assert(rc == value(true));
+    return true;
+}
+
+const bool testPut() {
+    testPut("http://localhost:8090/test/111");
+    testPut("http://localhost:8090/cpp/111");
+    testPut("http://localhost:8090/python/111");
+    return true;
+}
+
+const bool testDel(const string& uri) {
+    http::CURLSession ch;
+    value rc = content(http::del(uri, ch));
     assert(rc == value(true));
     return true;
 }
 
 const bool testDel() {
-    http::CURLSession ch;
-    value rc = content(http::del("http://localhost:8090/test/123456789", ch));
-    assert(rc == value(true));
-    return true;
-}
-
-const bool testEvalCpp() {
-    http::CURLSession ch;
-    const value val = content(http::evalExpr(mklist<value>(string("hello"), string("world")), "http://localhost:8090/cpp", ch));
-    assert(val == string("hello world"));
-    return true;
-}
-
-struct evalCppLoop {
-    http::CURLSession ch;
-    evalCppLoop(http::CURLSession& ch) : ch(ch) {
-    }
-    const bool operator()() const {
-        const value val = content(http::evalExpr(mklist<value>(string("hello"), string("world")), "http://localhost:8090/cpp", ch));
-        assert(val == string("hello world"));
-        return true;
-    }
-};
-
-const bool testEvalCppPerf() {
-    http::CURLSession ch;
-    const lambda<bool()> el = evalCppLoop(ch);
-    cout << "JSON-RPC C++ eval test " << time(el, 5, 200) << " ms" << endl;
+    testDel("http://localhost:8090/test/123456789");
+    testDel("http://localhost:8090/cpp/123456789");
+    testDel("http://localhost:8090/python/123456789");
     return true;
 }
 
@@ -341,8 +375,6 @@ int main() {
     tuscany::server::testEvalPerf();
     tuscany::server::testPut();
     tuscany::server::testDel();
-    tuscany::server::testEvalCpp();
-    tuscany::server::testEvalCppPerf();
 
     tuscany::cout << "OK" << tuscany::endl;
 

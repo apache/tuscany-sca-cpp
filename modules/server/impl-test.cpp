@@ -39,7 +39,7 @@ const failable<value> get(unused const list<value>& params) {
 }
 
 const failable<value> post(unused const list<value>& params) {
-    return value(string("1234"));
+    return value(string("123456789"));
 }
 
 const failable<value> put(unused const list<value>& params) {
@@ -50,8 +50,8 @@ const failable<value> del(unused const list<value>& params) {
     return value(true);
 }
 
-const failable<value> hello(const list<value>& params) {
-    return value(string("hello ") + string(car(params)));
+const failable<value> echo(const list<value>& params) {
+    return value(car(params));
 }
 
 }
@@ -69,8 +69,8 @@ const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
         return tuscany::server::put(cdr(params));
     if (func == "delete")
         return tuscany::server::del(cdr(params));
-    if (func == "hello")
-        return tuscany::server::hello(cdr(params));
+    if (func == "echo")
+        return tuscany::server::echo(cdr(params));
     return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
 }
 

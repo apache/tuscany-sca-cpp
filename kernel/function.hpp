@@ -211,7 +211,7 @@ template<typename R, typename T, typename U, typename... P> const lambda<R(P...)
     return curry(curry(f, t), u);
 }
 
-template<typename R, typename T, typename U, typename V, typename... P> const lambda<R(P...)> curry(const lambda<R(T, U, P...)>& f, const T& t, const U& u, const V& v) {
+template<typename R, typename T, typename U, typename V, typename... P> const lambda<R(P...)> curry(const lambda<R(T, U, V, P...)>& f, const T& t, const U& u, const V& v) {
     return curry(curry(curry(f, t), u), v);
 }
 

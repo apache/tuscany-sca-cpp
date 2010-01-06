@@ -22,7 +22,7 @@
   targetNamespace="http://domain/test"
   name="domain-test">
         
-    <component name="server-test">
+    <component name="scheme-test">
         <t:implementation.scheme uri="server-test.scm"/>
         <service name="test">
             <t:binding.http uri="test"/>
@@ -36,13 +36,20 @@
         </service>
     </component>
 
+    <component name="python-test">
+        <t:implementation.python uri="server-test.py"/>
+        <service name="test">
+            <t:binding.http uri="python"/>
+        </service>
+    </component>     
+
     <component name="client-test">
         <!-- <t:implementation.scheme uri="client-test.scm"/> -->
         <t:implementation.python uri="client-test.py"/>
         <service name="client">
             <t:binding.http uri="client"/>
         </service>
-        <reference name="ref" target="server-test">
+        <reference name="ref" target="scheme-test">
             <t:binding.http/>
         </reference>
     </component>
