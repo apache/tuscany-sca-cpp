@@ -61,9 +61,8 @@ struct evalImplementation {
     const value operator()(const list<value>& params) const {
         const value expr = cons<value>(car(params), append(scheme::quotedParameters(cdr(params)), px));
         debug(expr, "modeval::scheme::evalImplementation::input");
-        gc_pool pool(gc_current_pool());
-        scheme::Env globalEnv = scheme::setupEnvironment(pool);
-        const value val = scheme::evalScript(expr, impl, globalEnv, pool);
+        scheme::Env env = scheme::setupEnvironment();
+        const value val = scheme::evalScript(expr, impl, env);
         debug(val, "modeval::scheme::evalImplementation::result");
         if (isNil(val))
             return mklist<value>(value(), string("Could not evaluate expression"));

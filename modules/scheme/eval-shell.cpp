@@ -31,6 +31,6 @@
 
 int main() {
     tuscany::gc_scoped_pool pool;
-    tuscany::scheme::evalDriverRun(tuscany::cin, tuscany::cout, pool);
+    tuscany::scheme::evalDriverRun(tuscany::cin, tuscany::cout);
     return 0;
 }

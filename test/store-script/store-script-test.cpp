@@ -41,7 +41,7 @@ bool testScript() {
 
     ifstream is("store-script-test.scm");
     ostringstream os;
-    scheme::evalDriverRun(is, os, pool);
+    scheme::evalDriverRun(is, os);
     assert(contains(str(os), "(\"Sample Feed\" \""));
     assert(contains(str(os), "\" (\"Item\" \""));
     assert(contains(str(os), "\" ((javaClass \"services.Item\") (name \"Orange\") (currencyCode \"USD\") (currencySymbol \"$\") (price 3.55))) (\"Item\" \""));
@@ -55,9 +55,9 @@ bool testEval() {
         ifstream is("store-script-test.scm");
         ostringstream os;
         scheme::setupDisplay(os);
-        scheme::Env globalEnv = scheme::setupEnvironment(pool);
+        scheme::Env globalEnv = scheme::setupEnvironment();
         const value exp(mklist<value>("storeui_service", string("getcatalog")));
-        const value val = scheme::evalScript(exp, is, globalEnv, pool);
+        const value val = scheme::evalScript(exp, is, globalEnv);
 
         ostringstream vs;
         vs << val;
@@ -70,9 +70,9 @@ bool testEval() {
         ostringstream os;
         scheme::setupDisplay(os);
 
-        scheme::Env globalEnv = scheme::setupEnvironment(pool);
+        scheme::Env globalEnv = scheme::setupEnvironment();
         const value exp(mklist<value>("storeui_service", string("gettotal")));
-        const value res = scheme::evalScript(exp, is, globalEnv, pool);
+        const value res = scheme::evalScript(exp, is, globalEnv);
 
         ostringstream rs;
         rs << res;

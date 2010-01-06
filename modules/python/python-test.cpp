@@ -31,10 +31,10 @@
 namespace tuscany {
 namespace python {
 
-const value evalBuiltin(const string& py, const gc_pool& pool) {
+const value evalBuiltin(const string& py) {
     istringstream is(py);
     ostringstream os;
-    evalDriverRun(is, os, pool);
+    evalDriverRun(is, os);
     return str(os);
 }
 
@@ -43,7 +43,7 @@ const string testPythonPrint(
 
 bool testEval() {
     gc_scoped_pool pool;
-    assert(contains(evalBuiltin(testPythonPrint, pool), "testPrint ok"));
+    assert(contains(evalBuiltin(testPythonPrint), "testPrint ok"));
     return true;
 }
 
@@ -55,7 +55,7 @@ bool testEvalExpr() {
     gc_scoped_pool pool;
     {
         const value exp = mklist<value>("abs", -5);
-        const failable<value> r = evalExpr(exp, pool);
+        const failable<value> r = evalExpr(exp);
         assert(hasContent(r));
         assert(content(r) == value(5));
     }
@@ -64,7 +64,7 @@ bool testEvalExpr() {
         failable<PyObject*> script = readScript("script", is);
         assert(hasContent(script));
         const value exp = mklist<value>("add", 2, 3);
-        const failable<value> r = evalScript(exp, content(script), pool);
+        const failable<value> r = evalScript(exp, content(script));
         assert(hasContent(r));
         assert(content(r) == value(5));
     }
@@ -73,7 +73,7 @@ bool testEvalExpr() {
 
 bool testEvalRun() {
     gc_scoped_pool pool;
-    evalDriverRun(cin, cout, pool);
+    evalDriverRun(cin, cout);
     return true;
 }
 
@@ -99,7 +99,7 @@ bool testEvalLambda() {
 
     const value trl = mklist<value>("testReturnLambda");
     istringstream trlis(testReturnLambda);
-    const failable<value> trlv = evalScript(trl, trlis, pool);
+    const failable<value> trlv = evalScript(trl, trlis);
 
     assert(hasContent(trlv));
     assert(isLambda(content(trlv)));
@@ -108,13 +108,13 @@ bool testEvalLambda() {
 
     istringstream tclis(testCallLambda);
     const value tcl = mklist<value>("testCallLambda", content(trlv), 2, 3);
-    const failable<value> tclv = evalScript(tcl, tclis, pool);
+    const failable<value> tclv = evalScript(tcl, tclis);
     assert(hasContent(tclv));
     assert(content(tclv) == value(6));
 
     istringstream tcelis(testCallLambda);
     const value tcel = mklist<value>("testCallLambda", lambda<value(const list<value>&)>(mult), 3, 4);
-    const failable<value> tcelv = evalScript(tcel, tcelis, pool);
+    const failable<value> tcelv = evalScript(tcel, tcelis);
     assert(hasContent(tcelv));
     assert(content(tcelv) == value(12));
     return true;

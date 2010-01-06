@@ -52,30 +52,30 @@ const bool userPrint(const value val, ostream& out) {
     return true;
 }
 
-const value evalDriverLoop(PyObject* script, istream& in, ostream& out, const gc_pool& pool) {
+const value evalDriverLoop(PyObject* script, istream& in, ostream& out) {
     promptForInput(evalInputPrompt, out);
     value input = readValue(in);
     if (isNil(input))
         return input;
-    const value output = evalScript(input, script, pool);
+    const value output = evalScript(input, script);
     announceOutput(evalOutputPrompt, out);
     userPrint(output, out);
-    return evalDriverLoop(script, in, out, pool);
+    return evalDriverLoop(script, in, out);
 }
 
-const bool evalDriverRun(istream& in, ostream& out, const gc_pool& pool) {
+const bool evalDriverRun(istream& in, ostream& out) {
     setupDisplay(out);
-    evalDriverLoop(builtin(pythonRuntime), in, out, pool);
+    evalDriverLoop(builtin(pythonRuntime), in, out);
     return true;
 }
 
-const bool evalDriverRun(const char* path, istream& in, ostream& out, const gc_pool& pool) {
+const bool evalDriverRun(const char* path, istream& in, ostream& out) {
     setupDisplay(out);
     ifstream is(path);
     failable<PyObject*> script = readScript(path, is);
     if (!hasContent(script))
         return true;
-    evalDriverLoop(content(script), in, out, pool);
+    evalDriverLoop(content(script), in, out);
     Py_DECREF(content(script));
     return true;
 }

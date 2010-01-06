@@ -102,8 +102,8 @@ const Frame makeBinding(const Frame& frameSoFar, const list<value>& variables, c
     return makeBinding(newFrame, cdr(variables), cdr(values));
 }
 
-const gc_ptr<Frame> makeFrame(const list<value>& variables, const list<value> values, const gc_pool& pool) {
-    gc_ptr<Frame> frame = new (gc_new<Frame>(pool)) Frame();
+const gc_ptr<Frame> makeFrame(const list<value>& variables, const list<value> values) {
+    gc_ptr<Frame> frame = new (gc_new<Frame>()) Frame();
     *frame = value(makeBinding(cons(value(list<value>()), list<value>()), variables, values));
     return frame;
 }
@@ -141,12 +141,12 @@ const bool defineVariable(const value& var, const value& val, Env& env) {
     return true;
 }
 
-const Env extendEnvironment(const list<value>& vars, const list<value>& vals, const Env& baseEnv, const gc_pool& pool) {
-    return cons<value>(makeFrame(vars, vals, pool), baseEnv);
+const Env extendEnvironment(const list<value>& vars, const list<value>& vals, const Env& baseEnv) {
+    return cons<value>(makeFrame(vars, vals), baseEnv);
 }
 
-const Env setupEnvironment(const gc_pool& pool) {
-    Env env = extendEnvironment(primitiveProcedureNames(), primitiveProcedureObjects(), theEmptyEnvironment(), pool);
+const Env setupEnvironment() {
+    Env env = extendEnvironment(primitiveProcedureNames(), primitiveProcedureObjects(), theEmptyEnvironment());
     defineVariable(trueSymbol, true, env);
     defineVariable(falseSymbol, false, env);
     return env;

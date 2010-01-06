@@ -238,7 +238,7 @@ const failable<PyObject*> readScript(const string& path, istream& is) {
 /**
  * Evaluate an expression against a script provided as a python object.
  */
-const failable<value> evalScript(const value& expr, PyObject* script, unused const gc_pool& pool) {
+const failable<value> evalScript(const value& expr, PyObject* script) {
 
     // Get the requested function
     PyObject* func = PyObject_GetAttrString(script, c_str(car<value>(expr)));
@@ -268,18 +268,18 @@ const failable<value> evalScript(const value& expr, PyObject* script, unused con
 /**
  * Evaluate an expression against a script provided as an input stream.
  */
-const failable<value> evalScript(const value& expr, istream& is, unused const gc_pool& pool) {
+const failable<value> evalScript(const value& expr, istream& is) {
     failable<PyObject*> script = readScript("script", is);
     if (!hasContent(script))
         return mkfailure<value>(reason(script));
-    return evalScript(expr, content(script), pool);
+    return evalScript(expr, content(script));
 }
 
 /**
  * Evaluate an expression against the python builtin module, no script is provided.
  */
-const failable<value> evalExpr(const value& expr, const gc_pool& pool) {
-    return  evalScript(expr, builtin(pythonRuntime), pool);
+const failable<value> evalExpr(const value& expr) {
+    return  evalScript(expr, builtin(pythonRuntime));
 }
 
 }

@@ -34,7 +34,7 @@ namespace scheme {
 bool testEnv() {
     gc_scoped_pool pool;
     Env globalEnv = list<value>();
-    Env env = extendEnvironment(mklist<value>("a"), mklist<value>(1), globalEnv, pool);
+    Env env = extendEnvironment(mklist<value>("a"), mklist<value>(1), globalEnv);
     defineVariable("x", env, env);
     assert(lookupVariableValue(value("x"), env) == env);
     assert(lookupVariableValue("a", env) == value(1));
@@ -130,39 +130,39 @@ const string testSchemeForward(
   "(define sqrt (lambda (x) (* x x))) "
   "(testLambda)");
 
-const string evalOutput(const string& scm, const gc_pool& pool) {
+const string evalOutput(const string& scm) {
     istringstream is(scm);
     ostringstream os;
-    evalDriverRun(is, os, pool);
+    evalDriverRun(is, os);
     return str(os);
 }
 
 bool testEval() {
     gc_scoped_pool pool;
-    assert(contains(evalOutput(testSchemeNumber, pool), "testNumber ok"));
-    assert(contains(evalOutput(testSchemeString, pool), "testString ok"));
-    assert(contains(evalOutput(testSchemeDefinition, pool), "testDefinition ok"));
-    assert(contains(evalOutput(testSchemeIf, pool), "testIf ok"));
-    assert(contains(evalOutput(testSchemeCond, pool), "testCond ok"));
-    assert(contains(evalOutput(testSchemeBegin, pool), "testBegin1 ok"));
-    assert(contains(evalOutput(testSchemeBegin, pool), "testBegin2 ok"));
-    assert(contains(evalOutput(testSchemeLambda, pool), "testLambda ok"));
-    assert(contains(evalOutput(testSchemeForward, pool), "testForward ok"));
+    assert(contains(evalOutput(testSchemeNumber), "testNumber ok"));
+    assert(contains(evalOutput(testSchemeString), "testString ok"));
+    assert(contains(evalOutput(testSchemeDefinition), "testDefinition ok"));
+    assert(contains(evalOutput(testSchemeIf), "testIf ok"));
+    assert(contains(evalOutput(testSchemeCond), "testCond ok"));
+    assert(contains(evalOutput(testSchemeBegin), "testBegin1 ok"));
+    assert(contains(evalOutput(testSchemeBegin), "testBegin2 ok"));
+    assert(contains(evalOutput(testSchemeLambda), "testLambda ok"));
+    assert(contains(evalOutput(testSchemeForward), "testForward ok"));
     return true;
 }
 
 bool testEvalExpr() {
     gc_scoped_pool pool;
     const value exp = mklist<value>("+", 2, 3);
-    Env env = setupEnvironment(pool);
-    const value r = evalExpr(exp, env, pool);
+    Env env = setupEnvironment();
+    const value r = evalExpr(exp, env);
     assert(r == value(5));
     return true;
 }
 
 bool testEvalRun() {
     gc_scoped_pool pool;
-    evalDriverRun(cin, cout, pool);
+    evalDriverRun(cin, cout);
     return true;
 }
 
@@ -180,20 +180,20 @@ const string testCallLambda(
 
 bool testEvalLambda() {
     gc_scoped_pool pool;
-    Env env = setupEnvironment(pool);
+    Env env = setupEnvironment();
 
     const value trl = mklist<value>("testReturnLambda");
     istringstream trlis(testReturnLambda);
-    const value trlv = evalScript(trl, trlis, env, pool);
+    const value trlv = evalScript(trl, trlis, env);
 
     istringstream tclis(testCallLambda);
     const value tcl = cons<value>("testCallLambda", quotedParameters(mklist<value>(trlv, 2, 3)));
-    const value tclv = evalScript(tcl, tclis, env, pool);
+    const value tclv = evalScript(tcl, tclis, env);
     assert(tclv == value(6));
 
     istringstream tcelis(testCallLambda);
     const value tcel = cons<value>("testCallLambda", quotedParameters(mklist<value>(primitiveProcedure(mult), 3, 4)));
-    const value tcelv = evalScript(tcel, tcelis, env, pool);
+    const value tcelv = evalScript(tcel, tcelis, env);
     assert(tcelv == value(12));
     return true;
 }

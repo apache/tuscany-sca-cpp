@@ -52,8 +52,7 @@ struct evalImplementation {
     const value operator()(const list<value>& params) const {
         const value expr = append<value>(params, px);
         debug(expr, "modeval::python::evalImplementation::input");
-        gc_pool pool(gc_current_pool());
-        const failable<value> val = python::evalScript(expr, impl, pool);
+        const failable<value> val = python::evalScript(expr, impl);
         debug(val, "modeval::python::evalImplementation::result");
         if (!hasContent(val))
             return mklist<value>(value(), reason(val));
