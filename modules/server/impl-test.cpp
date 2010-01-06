@@ -67,7 +67,7 @@ const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
         return tuscany::server::post(cdr(params));
     if (func == "put")
         return tuscany::server::put(cdr(params));
-    if (func == "del")
+    if (func == "delete")
         return tuscany::server::del(cdr(params));
     if (func == "hello")
         return tuscany::server::hello(cdr(params));
