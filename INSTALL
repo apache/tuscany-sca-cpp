@@ -9,7 +9,7 @@ The Tuscany SCA Linux build uses the GNU Autotools tool chain.
 First get the following tools:
 autoconf-2.64
 automake-1.4
-gcc-4.4.1
+g++-4.4.1
 libtool-2.2.6
 doxygen-1.6.1
 
@@ -26,6 +26,9 @@ Recommended HTTPD configure options:
 
 XML
 libxml2-2.7.5
+
+CURL
+libcurl4-7.19.5
 
 JSON
 SpiderMonkey libmozjs
