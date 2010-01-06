@@ -6,14 +6,19 @@ Building
 
 The Tuscany SCA Linux build uses the GNU Autotools tool chain.
 
-First get the following tools:
+First install the following development tools:
 autoconf-2.64
 automake-1.4
 g++-4.4.1
 libtool-2.2.6
 doxygen-1.6.1
 
-Then get the following development dependencies:
+Install the following binaries:
+curl-7.19.5
+memcached-1.2.8
+
+
+Then install the following development dependencies:
 
 HTTP server and APR
 httpd-2.2-13
@@ -37,6 +42,7 @@ SpiderMonkey libmozjs
 Python
 libpython2.6
 
+
 To configure the Tuscany SCA build do this:
 ./autogen.sh
 ./configure --prefix=<install dir>
@@ -57,6 +63,7 @@ To configure where to find dependencies, see the --with-* options described
 in the configure help:
 ./configure --help
 
+
 Here's an example configuration, tested on Ubuntu 9.10, with development
 dependencies installed in the standard directories and a build of the
 HTTPD worker MPM in $HOME/httpd-2-2.13-bin:
@@ -69,7 +76,8 @@ HTTPD worker MPM in $HOME/httpd-2-2.13-bin:
 --with-curl=/usr --with-libxml2=/usr \
 --enable-threads --enable-maintainer-mode
 
-To build the runtime, do this:
+
+To build the Tuscany SCA runtime, do this:
 make
 
 To run the tests, do this:
@@ -84,9 +92,11 @@ make dist
 To build a binary distribution, do this:
 make bindist
 
+
 Installing
 ==========
 
-To install the binaries, do this:
+To install the Tuscany SCA binaries, do this:
 make install
+
 
