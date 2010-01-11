@@ -16,12 +16,12 @@
 #  under the License.
 
 datadir=$(prefix)/modules/python
+libdir=$(prefix)/lib
 
 if WANT_PYTHON
 
 noinst_PROGRAMS = python-test python-shell client-test
 
-libdir=$(prefix)/lib
 lib_LTLIBRARIES = libmod_tuscany_python.la
 
 nobase_data_DATA = *.xsd

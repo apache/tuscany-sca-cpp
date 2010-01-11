@@ -47,3 +47,5 @@ Doxyfile
 *~
 tags
 doxygen
+*.stamp
+*.class
