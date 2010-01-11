@@ -35,7 +35,7 @@ $mc &
 sleep 2
 
 # Test
-./mcache-client-test
+./client-test
 rc=$?
 
 # Cleanup

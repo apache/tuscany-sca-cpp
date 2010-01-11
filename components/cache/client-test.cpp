@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test Memcached access functions.
+ * Test cache component.
  */
 
 #include <assert.h>
