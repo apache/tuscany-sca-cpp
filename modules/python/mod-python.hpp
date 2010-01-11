@@ -34,7 +34,7 @@
 #include "value.hpp"
 #include "debug.hpp"
 #include "monad.hpp"
-#include "../python/eval.hpp"
+#include "eval.hpp"
 #include "../http/httpd.hpp"
 
 namespace tuscany {

@@ -30,11 +30,10 @@
 #include "string.hpp"
 #include "fstream.hpp"
 #include "function.hpp"
-#include "debug.hpp"
 
 namespace tuscany {
 
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
 
 /**
  * Debug utilities. Counters used to track instances of lists, and
@@ -71,7 +70,7 @@ bool printListCounters() {
 
 #endif
 
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
 
 #define debug_watchList() do { \
         this->watch = watchList(*this); \
@@ -105,7 +104,7 @@ public:
     list(const list& p) : car(p.car), cdr(p.cdr) {
         debug_inc(countLists);
         debug_inc(countCLists);
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
         watch = p.watch;
 #endif
     }
@@ -115,7 +114,7 @@ public:
             return *this;
         car = p.car;
         cdr = p.cdr;
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
         watch = p.watch;
 #endif
         return *this;
@@ -176,7 +175,7 @@ public:
     }
 
 private:
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
     template<typename X> friend const string watchList(const list<X>& p);
     string watch;
 #endif
@@ -189,7 +188,7 @@ private:
     lambda<list<T>()> cdr;
 };
 
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
 
 /**
  * Debug utility used to write the contents of a list to a string, easier

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,10 +17,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache store webservice
+# Generate a server conf
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
 
-includedir = $(prefix)/include/components
-nobase_include_HEADERS = */*.hpp
-
-compdir = $(prefix)/components
-nobase_comp_DATA = */*.composite
+mkdir -p $root
+mkdir -p $root/logs
+mkdir -p $root/conf
+cat >>$root/conf/httpd.conf <<EOF
+LoadModule mod_tuscany_eval $here/.libs/libmod_tuscany_python.so
+EOF

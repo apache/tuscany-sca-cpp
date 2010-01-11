@@ -32,7 +32,6 @@
 #include "function.hpp"
 #include "list.hpp"
 #include "value.hpp"
-#include "debug.hpp"
 #include "monad.hpp"
 #include "../scheme/eval.hpp"
 #include "../http/httpd.hpp"

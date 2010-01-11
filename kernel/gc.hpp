@@ -31,7 +31,7 @@
 #include <apr_pools.h>
 #include <assert.h>
 #include <new>
-#include "debug.hpp"
+#include "config.hpp"
 
 namespace tuscany
 {
@@ -139,7 +139,7 @@ public:
 /**
  * Maintain a stack of memory pools.
  */
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
 __thread
 #endif
 apr_pool_t* gc_pool_stack = NULL;

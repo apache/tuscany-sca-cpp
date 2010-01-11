@@ -40,12 +40,12 @@ const value primitiveSymbol("primitive");
 const value quoteSymbol("'");
 const value lambdaSymbol("lambda");
 
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
 __thread
 #endif
 ostream* displayOutStream = NULL;
 
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
 __thread
 #endif
 ostream* logOutStream = NULL;

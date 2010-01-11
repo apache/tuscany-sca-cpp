@@ -31,7 +31,6 @@
 #include "list.hpp"
 #include "tree.hpp"
 #include "value.hpp"
-#include "debug.hpp"
 #include "monad.hpp"
 #include "../scdl/scdl.hpp"
 #include "../http/httpd.hpp"

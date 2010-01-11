@@ -25,7 +25,5 @@ mkdir -p $root
 mkdir -p $root/logs
 mkdir -p $root/conf
 cat >>$root/conf/httpd.conf <<EOF
-LoadModule mod_tuscany_eval $here/.libs/libmod_tuscany_eval.so
 LoadModule mod_tuscany_wiring $here/.libs/libmod_tuscany_wiring.so
 EOF
-

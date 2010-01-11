@@ -22,26 +22,19 @@
   targetNamespace="http://domain/test"
   name="domain-test">
         
-    <component name="scheme-test">
-        <t:implementation.scheme uri="server-test.scm"/>
+    <component name="python-test">
+        <t:implementation.python uri="server-test.py"/>
         <service name="test">
-            <t:binding.http uri="test"/>
+            <t:binding.http uri="python"/>
         </service>
     </component>     
 
-    <component name="cpp-test">
-        <t:implementation.cpp uri=".libs/libimpl-test"/>
-        <service name="cpp">
-            <t:binding.http uri="cpp"/>
-        </service>
-    </component>
-
     <component name="client-test">
-        <t:implementation.scheme uri="client-test.scm"/>
+        <t:implementation.python uri="client-test.py"/>
         <service name="client">
             <t:binding.http uri="client"/>
         </service>
-        <reference name="ref" target="scheme-test">
+        <reference name="ref" target="python-test">
             <t:binding.http/>
         </reference>
     </component>

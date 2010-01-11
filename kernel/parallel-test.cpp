@@ -33,7 +33,7 @@
 
 namespace tuscany {
 
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
 
 int inci = 0;
 
@@ -153,7 +153,7 @@ bool testWorker() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
     tuscany::testAtomicPerf();
     tuscany::testWorker();
 #else

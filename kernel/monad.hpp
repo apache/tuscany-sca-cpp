@@ -27,7 +27,6 @@
  */
 
 #include "function.hpp"
-#include "debug.hpp"
 #include "string.hpp"
 #include "stream.hpp"
 

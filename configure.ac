@@ -25,7 +25,7 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([tar-ustar])
 AC_PREFIX_DEFAULT(/usr/local/tuscany/sca)
 
-# Checks for programs.
+# Check for required programs.
 AC_MSG_NOTICE([checking for programs])
 AC_PROG_CXX
 AC_PROG_AWK
@@ -35,23 +35,26 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
+AC_PATH_PROG(MEMCACHED, memcached, , ${PATH})
+if test "${MEMCACHED}" = ""; then
+  AC_MSG_ERROR([could not find memcached])
+fi
 
-# Check for running on Darwin
+# Check for running on Darwin.
 AC_MSG_CHECKING([if running on Darwin])
 UNAME=`uname -s`
 if test "${UNAME}" = "Darwin"; then
-  AC_DEFINE([IS_DARWIN], [1], [Set to 1 when running on Darwin - Mac OSX])
+  AC_DEFINE([IS_DARWIN], 1, [running on Darwin])
   AC_MSG_RESULT(yes)
   AC_SUBST([libsuffix],[".dylib"])
-  is_darwin=true
+  AM_CONDITIONAL([DARWIN], true)
 else
   AC_MSG_RESULT(no)
   AC_SUBST([libsuffix],[".so"])
-  is_darwin=false
+  AM_CONDITIONAL([DARWIN], false)
 fi
-AM_CONDITIONAL([DARWIN], [test "${is_darmin}" = "true"])
 
-# Configure CURL_INCLUDE and CURL_LIB
+# Configure path to CURL includes and lib.
 AC_MSG_CHECKING([for curl])
 AC_ARG_WITH([curl], [AC_HELP_STRING([--with-curl=PATH], [path to installed curl [default=/usr]])], [
   CURL_INCLUDE="${withval}/include"
@@ -65,7 +68,7 @@ AC_ARG_WITH([curl], [AC_HELP_STRING([--with-curl=PATH], [path to installed curl 
 AC_SUBST(CURL_INCLUDE)
 AC_SUBST(CURL_LIB)
 
-# Configure LIBXML2_INCLUDE and LIBXML2_LIB
+# Configure path to libxml2 includes and lib.
 AC_MSG_CHECKING([for libxml2])
 AC_ARG_WITH([libxml2], [AC_HELP_STRING([--with-libxml2=PATH], [path to installed libxml2 [default=/usr]])], [
   LIBXML2_INCLUDE="${withval}/include/libxml2"
@@ -79,7 +82,7 @@ AC_ARG_WITH([libxml2], [AC_HELP_STRING([--with-libxml2=PATH], [path to installed
 AC_SUBST(LIBXML2_INCLUDE)
 AC_SUBST(LIBXML2_LIB)
 
-# Configure LIBMOZJS_INCLUDE and LIBMOZJS_LIB
+# Configure path to libmozjs includes and lib.
 AC_MSG_CHECKING([for js-include])
 AC_ARG_WITH([js-include], [AC_HELP_STRING([--with-js-include=PATH], [path to installed SpiderMonkey include dir
              [default=/usr/include/xulrunner-1.9.1.5/unstable]])], [
@@ -100,9 +103,9 @@ AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed S
 AC_SUBST(JS_INCLUDE)
 AC_SUBST(JS_LIB)
 
-# Configure APR and HTTPD
+# Configure path to APR and HTTPD includes and libs.
 AC_MSG_CHECKING([for apr])
-AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed apr [default=/usr/local/apache2]])], [
+AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed APR [default=/usr/local/apache2]])], [
   APR_INCLUDE="${withval}/include"
   APR_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
@@ -115,7 +118,7 @@ AC_SUBST(APR_INCLUDE)
 AC_SUBST(APR_LIB)
 
 AC_MSG_CHECKING([for httpd])
-AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed httpd [default=/usr/local/apache2]])], [
+AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed HTTPD [default=/usr/local/apache2]])], [
   HTTPD_INCLUDE="${withval}/include"
   AC_MSG_RESULT("${withval}")
 ], [
@@ -124,60 +127,57 @@ AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed htt
 ])
 AC_SUBST(HTTPD_INCLUDE)
 
-# Configure PYTHON_INCLUDE and PYTHON_LIB
-AC_MSG_CHECKING([for python])
-AC_ARG_WITH([curl], [AC_HELP_STRING([--with-python=PATH], [path to installed python 2.6 [default=/usr]])], [
-  PYTHON_INCLUDE="${withval}/include"
-  PYTHON_LIB="${withval}/lib"
-  AC_MSG_RESULT("${withval}")
-], [
-  PYTHON_INCLUDE="/usr/include"
-  PYTHON_LIB="/usr/lib"
-  AC_MSG_RESULT(/usr)
-])
-AC_SUBST(PYTHON_INCLUDE)
-AC_SUBST(PYTHON_LIB)
+# Configure TUSCANY_SCACPP path variable.
+TUSCANY_SCACPP=`echo "${TUSCANY_SCACPP}"`
+if test "${TUSCANY_SCACPP}" = ""; then
+  pwd=`pwd`
+  AC_SUBST([TUSCANY_SCACPP], ["${pwd}"])
+fi
 
-# Checks for libraries.
-original_LIBS="${LIBS}"
-AC_MSG_NOTICE([checking for libraries])
-LIBS="-L${CURL_LIB} ${original_LIBS}"
-AC_CHECK_LIB([curl], [curl_global_init], [], [AC_MSG_ERROR([couldn't find a suitable libcurl, use --with-curl=PATH])])
-LIBS="-L${JS_LIB} ${original_LIBS}"
-AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitable libmozjs, use --with-js-lib=PATH])])
-LIBS="${original_LIBS}"
-AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([couldn't find a suitable libpthread])])
-LIBS="-L${LIBXML2_LIB} ${original_LIBS}"
-AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitable libxml2, use --with-libxml2=PATH])])
-LIBS="-L${APR_LIB} ${original_LIBS}"
+# Initialize default GCC C++ and LD options.
+cxxflags=""
+ldflags="${LDFLAGS}"
+
+# Configure default includes.
+cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE} -I${LIBXML2_INCLUDE} -I${JS_INCLUDE} -I${CURL_INCLUDE}"
+
+# Check for libraries required by all modules and add them to default LIBS variable  
+AC_MSG_NOTICE([checking for required libraries])
+LIBS="-L${APR_LIB} ${LIBS}"
 AC_CHECK_LIB([apr-1], [apr_pool_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
 AC_CHECK_LIB([aprutil-1], [apr_memcache_replace], [], [AC_MSG_ERROR([couldn't find a suitable libaprutil-1, use --with-apr=PATH])])
-LIBS="-L${PYTHON_LIB} ${original_LIBS}"
-AC_CHECK_LIB([python2.6], [Py_Initialize], [], [AC_MSG_ERROR([couldn't find a suitable libpython2.6, use --with-python=PATH])])
-LIBS="${original_LIBS}"
+default_LIBS="${LIBS}"
 
-# Checks for header files.
+# Check for libraries only required by some modules.  
+LIBS="-L${CURL_LIB} ${default_LIBS}"
+AC_CHECK_LIB([curl], [curl_global_init], [], [AC_MSG_ERROR([couldn't find a suitable libcurl, use --with-curl=PATH])])
+LIBS="-L${JS_LIB} ${default_LIBS}"
+AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitable libmozjs, use --with-js-lib=PATH])])
+LIBS="-L${LIBXML2_LIB} ${default_LIBS}"
+AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitable libxml2, use --with-libxml2=PATH])])
+
+# Configure default search path for these libraries.
+LIBS="-L${CURL_LIB} -L${JS_LIB} -L${LIBXML2_LIB} ${default_LIBS}"
+default_LIBS="${LIBS}"
+
+# Check for required header files.
 AC_MSG_NOTICE([checking for header files])
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS([string.h sys/time.h])
 
-# Checks for typedefs, structures, and compiler characteristics.
+# Check for typedefs, structures, and compiler characteristics.
 AC_MSG_NOTICE([checking for typedefs, structures, and compiler characteristics])
 AC_HEADER_STDBOOL
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
 
-# Checks for library functions.
+# Check for required library functions.
 AC_MSG_NOTICE([checking for library functions])
 AC_CHECK_FUNCS([gettimeofday select])
 
-# Configure GCC C++ compile options
-cxxflags=""
-ldflags="${LDFLAGS}"
-
-# Configure debugging and compile-time warnings
+# Enable debugging and compile-time warnings.
 AC_MSG_CHECKING([whether to compile with debugging and compile-time warnings])
 AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [compile with debugging and compile-time warnings [default=no]])],
 [ case "${enableval}" in
@@ -193,11 +193,14 @@ AC_ARG_ENABLE(maintainer-mode, [AS_HELP_STRING([--enable-maintainer-mode], [comp
 if test "${want_maintainer_mode}" = "true"; then
   cxxflags="${cxxflags} -D_DEBUG -O0 -ggdb -g3 -Werror -Wall -Wextra -Wno-ignored-qualifiers -Winit-self -Wmissing-include-dirs -Wcast-qual -Wcast-align -Wwrite-strings -Wpointer-arith -Wconversion -Waddress -Wlogical-op -Wredundant-decls -std=c++0x -fmessage-length=0"
   ldflags="${ldflags} -pg"
+  AM_CONDITIONAL([WANT_MAINTAINER_MODE], true)
+  AC_DEFINE([WANT_MAINTAINER_MODE], 1, [compile with debugging and compile-time warnings])
 else
   cxxflags="${cxxflags} -O3 -std=c++0x -fmessage-length=0"
+  AM_CONDITIONAL([WANT_MAINTAINER_MODE], false)
 fi
 
-# Configure profiling
+# Enable profiling with gprof.
 AC_MSG_CHECKING([whether to compile with profiling])
 AC_ARG_ENABLE(profiling, [AS_HELP_STRING([--enable-profiling], [compile with profiling [default=no]])],
 [ case "${enableval}" in
@@ -213,9 +216,13 @@ AC_ARG_ENABLE(profiling, [AS_HELP_STRING([--enable-profiling], [compile with pro
 if test "${want_profiling}" = "true"; then
   cxxflags="${cxxflags} -pg"
   ldflags="${ldflags} -pg"
+  AM_CONDITIONAL([WANT_PROFILING], true)
+  AC_DEFINE([WANT_PROFILING], 1, [compile with profiling])
+else
+  AM_CONDITIONAL([WANT_PROFILING], false)
 fi
 
-# Configure multi-threading support
+# Enable multi-threading support.
 AC_MSG_CHECKING([whether to compile for multi-threaded execution])
 AC_ARG_ENABLE(threads, [AS_HELP_STRING([--enable-threads], [compile for multi-threaded execution [default=no]])],
 [ case "${enableval}" in
@@ -229,27 +236,26 @@ AC_ARG_ENABLE(threads, [AS_HELP_STRING([--enable-threads], [compile for multi-th
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_threads}" = "true"; then
-  LIBS="${original_LIBS}"
+  LIBS="${default_LIBS}"
   AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([couldn't find a suitable libpthread])])
-  LIBS="${original_LIBS}"
+  LIBS="${default_LIBS}"
   cxxflags="${cxxflags} -D_REENTRANT"
   ldflags="${ldflags} -lpthread"
+  AM_CONDITIONAL([WANT_THREADS], true)
+  AC_DEFINE([WANT_THREADS], 1, [compile for multi-threaded execution])
+else
+  AM_CONDITIONAL([WANT_THREADS], false)
 fi
+
+# Configure GCC C++ and LD options.
 AC_SUBST([CXXFLAGS], ["${cxxflags}"])
 AC_SUBST([LDFLAGS], ["${ldflags}"])
 
-# Configure exuberant ctags
+# Configure exuberant ctags.
 TAGSFILE="`pwd`/tags"
 AC_SUBST([CTAGSFLAGS], ["${CTAGSFLAGS} --c++-kinds=+p --fields=+iaS --extra=+q --append --tag-relative=yes -f ${TAGSFILE}"])
 
-# Configure TUSCANY_SCACPP
-TUSCANY_SCACPP=`echo "${TUSCANY_SCACPP}"`
-if test "${TUSCANY_SCACPP}" = ""; then
-  SCAPWD=`pwd`
-  AC_SUBST([TUSCANY_SCACPP], ["${SCAPWD}"])
-fi
-
-# Configure Doxygen build
+# Enable Doxygen documentation.
 AC_MSG_CHECKING([whether to build Doxygen documentation])
 AC_ARG_ENABLE(doxygen, [AS_HELP_STRING([--enable-doxygen], [build Doxygen documentation [default=no]])],
 [ case "${enableval}" in
@@ -258,29 +264,149 @@ AC_ARG_ENABLE(doxygen, [AS_HELP_STRING([--enable-doxygen], [build Doxygen docume
     ;;
   *)
     AC_MSG_RESULT(yes)
-    AC_PATH_PROG(DOXYGEN, doxygen, , ${PATH})
-    if test "${DOXYGEN}" = ""; then
-      AC_MSG_ERROR([could not find doxygen])
-    fi
     want_doxygen=true
     ;;
   esac ],
 [ AC_MSG_RESULT(no)])
-AM_CONDITIONAL([WANT_DOXYGEN], [test "${want_doxygen}" = "true"])
+if test "${want_doxygen}" = "true"; then
+    AC_PATH_PROG(DOXYGEN, doxygen, , ${PATH})
+    if test "${DOXYGEN}" = ""; then
+      AC_MSG_ERROR([could not find doxygen])
+    fi
+  AM_CONDITIONAL([WANT_DOXYGEN], true)
+  AC_DEFINE([WANT_DOXYGEN], 1, [build Doxygen documentation])
+else
+  AM_CONDITIONAL([WANT_DOXYGEN], false)
+fi
+
+# Configure path to Python 2.6 includes and lib.
+AC_MSG_CHECKING([for python])
+AC_ARG_WITH([python], [AC_HELP_STRING([--with-python=PATH], [path to installed Python 2.6 [default=/usr]])], [
+  PYTHON_INCLUDE="${withval}/include"
+  PYTHON_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  PYTHON_INCLUDE="/usr/include"
+  PYTHON_LIB="/usr/lib"
+  AC_MSG_RESULT(/usr)
+])
+AC_SUBST(PYTHON_INCLUDE)
+AC_SUBST(PYTHON_LIB)
+
+# Enable Python 2.6 support.
+AC_MSG_CHECKING([whether to enable Python support])
+AC_ARG_ENABLE(python, [AS_HELP_STRING([--enable-python], [enable Python support [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_python=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_python}" = "true"; then
+  LIBS="-L${PYTHON_LIB} ${default_LIBS}"
+  AC_CHECK_LIB([python2.6], [Py_Initialize], [], [AC_MSG_ERROR([couldn't find a suitable libpython2.6, use --with-python=PATH])])
+  LIBS="${default_LIBS}"
+  AM_CONDITIONAL([WANT_PYTHON], true)
+  AC_DEFINE([WANT_PYTHON], 1, [enable Python support])
+else
+  AM_CONDITIONAL([WANT_PYTHON], false)
+fi
+
+# Configure path to Java includes and lib.
+AC_MSG_CHECKING([for java])
+AC_ARG_WITH([java], [AC_HELP_STRING([--with-java=PATH], [path to installed Java [default=/usr/lib/jvm/default-java]])], [
+  JAVA_INCLUDE="${withval}/include"
+  JAVA_LIB="${withval}/jre/lib/i386"
+  AC_MSG_RESULT("${withval}")
+], [
+  JAVA_INCLUDE="/usr/lib/jvm/default-java/include"
+  JAVA_LIB="/usr/lib/jvm/default-java/jre/lib/i386"
+  AC_MSG_RESULT(/usr/lib/jvm/default-java)
+])
+AC_SUBST(JAVA_INCLUDE)
+AC_SUBST(JAVA_LIB)
+
+# Enable Java support.
+AC_MSG_CHECKING([whether to enable Java support])
+AC_ARG_ENABLE(java, [AS_HELP_STRING([--enable-java], [enable Java support [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_java=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_java}" = "true"; then
+  LIBS="-L${JAVA_LIB} ${default_LIBS}"
+  #AC_CHECK_LIB([java], [JNI_OnLoad], [], [AC_MSG_ERROR([couldn't find a suitable libjava, use --with-java=PATH])])
+  LIBS="${default_LIBS}"
+  AC_PROG_JAVAC
+  AC_PROG_JAR
+  AM_CONDITIONAL([WANT_JAVA], true)
+  AC_DEFINE([WANT_JAVA], 1, [enable Java support])
+else
+  AM_CONDITIONAL([WANT_JAVA], false)
+fi
+
+# Configure path to Axis2C includes and lib.
+AC_MSG_CHECKING([for axis2c])
+AC_ARG_WITH([axis2c], [AC_HELP_STRING([--with-axis2c=PATH], [path to installed Axis2C [default=/usr/local/axis2c]])], [
+  AXIS2C_INCLUDE="${withval}/include"
+  AXIS2C_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  AXIS2C_INCLUDE="/usr/local/axis2c/include"
+  AXIS2C_LIB="/usr/local/axis2c/lib"
+  AC_MSG_RESULT(/usr/local/axis2c)
+])
+AC_SUBST(AXIS2C_INCLUDE)
+AC_SUBST(AXIS2C_LIB)
+
+# Enable Web service support.
+AC_MSG_CHECKING([whether to enable Web service support])
+AC_ARG_ENABLE(webservice, [AS_HELP_STRING([--enable-webservice], [enable Web service support [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_webservice=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_webservice}" = "true"; then
+  LIBS="-L${AXIS2C_LIB} ${default_LIBS}"
+  AC_CHECK_LIB([axis2_engine], [axis2_svc_client_create], [], [AC_MSG_ERROR([couldn't find a suitable libaxis2_engine, use --with-axis2c=PATH])])
+  LIBS="${default_LIBS}"
+  AM_CONDITIONAL([WANT_WEBSERVICE], true)
+  AC_DEFINE([WANT_WEBSERVICE], 1, [enable Web service support])
+else
+  AM_CONDITIONAL([WANT_WEBSERVICE], false)
+fi
 
 AC_CONFIG_FILES([Makefile
                  kernel/Makefile
                  modules/Makefile
-                 modules/atom/Makefile
                  modules/scheme/Makefile
-                 modules/http/Makefile
+                 modules/atom/Makefile
                  modules/json/Makefile
-                 modules/python/Makefile
                  modules/scdl/Makefile
+                 modules/http/Makefile
+                 modules/python/Makefile
+                 modules/java/Makefile
                  modules/server/Makefile
                  components/Makefile
                  components/cache/Makefile
                  components/store/Makefile
+                 components/webservice/Makefile
                  samples/Makefile
                  test/Makefile
                  test/store-scheme/Makefile
@@ -289,4 +415,3 @@ AC_CONFIG_FILES([Makefile
                  doc/Doxyfile
                  ])
 AC_OUTPUT
-

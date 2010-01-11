@@ -20,6 +20,7 @@
 # Setup
 ../http/httpd-conf tmp 8090 htdocs
 ./server-conf tmp
+./scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 
 <Location />

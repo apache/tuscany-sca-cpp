@@ -15,20 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = mcache-test mcache-client-test
-
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${JS_INCLUDE} -I${CURL_INCLUDE}
+noinst_PROGRAMS = mcache-test client-test
 
 compdir=$(prefix)/components/cache
 comp_LTLIBRARIES = libmcache.la
 
 libmcache_la_SOURCES = mcache.cpp
-libmcache_la_LIBADD = -L${APR_LIB} -lapr-1 -laprutil-1
 
 mcache_test_SOURCES = mcache-test.cpp
-mcache_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+mcache_test_LDADD = -lxml2
 
-mcache_client_test_SOURCES = mcache-client-test.cpp
-mcache_client_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${CURL_LIB} -lcurl -L${JS_LIB} -lmozjs
+client_test_SOURCES = client-test.cpp
+client_test_LDADD = -lxml2 -lcurl -lmozjs
 
-TESTS = memcached-test memcached-server-test
+TESTS = memcached-test server-test

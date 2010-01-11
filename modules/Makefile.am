@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = atom scheme json python scdl http server
+SUBDIRS = scheme atom json scdl http server python java
 
 includedir = $(prefix)/include/modules
 nobase_include_HEADERS = */*.hpp

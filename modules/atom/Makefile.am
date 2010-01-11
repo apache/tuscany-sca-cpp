@@ -17,10 +17,7 @@
 
 noinst_PROGRAMS = atom-test
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE}
-
 atom_test_SOURCES = atom-test.cpp
-atom_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1
+atom_test_LDADD = -lxml2
 
 TESTS = atom-test
-

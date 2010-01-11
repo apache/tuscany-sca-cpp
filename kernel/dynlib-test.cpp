@@ -24,7 +24,6 @@
  */
 
 #include "function.hpp"
-#include "debug.hpp"
 
 namespace tuscany {
 namespace test {

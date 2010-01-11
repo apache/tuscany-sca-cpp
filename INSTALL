@@ -56,6 +56,15 @@ To enable gprof profiling, add:
 To enable multi-threading with the HTTPD worker MPM, add:
 --enable-threads
 
+To enable support for Python component implementations:
+--enable-python
+
+To enable support for Java component implementations:
+--enable-java
+
+To build the Web service utility component (using Axis2C):
+--enable-webservice
+
 To generate doxygen documentation, add:
 --enable-doxygen
 
@@ -70,10 +79,12 @@ HTTPD worker MPM in $HOME/httpd-2-2.13-bin:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
+--with-curl=/usr --with-libxml2=/usr \
 --with-js-include=/usr/include/xulrunner-1.9.1.5/unstable \
 --with-js-lib=/usr/lib/xulrunner-1.9.1.5 \
---with-python=/usr \
---with-curl=/usr --with-libxml2=/usr \
+--enable-python --with-python=/usr \
+--enable-java --with-java=/usr/lib/jvm/default-java \
+--enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
 --enable-threads --enable-maintainer-mode
 
 
@@ -98,5 +109,4 @@ Installing
 
 To install the Tuscany SCA binaries, do this:
 make install
-
 

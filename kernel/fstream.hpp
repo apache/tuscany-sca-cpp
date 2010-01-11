@@ -139,7 +139,7 @@ ifstream cin(stdin);
 /**
  * Debug log stream.
  */
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
 
 template<typename V> const bool debug(const V& v, const string& msg) {
     cerr << msg << ": " << v << endl;

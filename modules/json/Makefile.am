@@ -17,10 +17,7 @@
 
 noinst_PROGRAMS = json-test
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${JS_INCLUDE}
-
 json_test_SOURCES = json-test.cpp
-json_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${JS_LIB} -lmozjs 
+json_test_LDADD = -lmozjs 
 
 TESTS = json-test
-

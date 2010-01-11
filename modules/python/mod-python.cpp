@@ -20,27 +20,34 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test HTTP client functions.
+ * HTTPD module used to eval Python component implementations.
  */
 
-#include "stream.hpp"
 #include "string.hpp"
-#include "client-test.hpp"
+#include "function.hpp"
+#include "list.hpp"
+#include "value.hpp"
+#include "monad.hpp"
+#include "../server/mod-cpp.hpp"
+#include "../server/mod-eval.hpp"
+#include "mod-python.hpp"
 
 namespace tuscany {
 namespace server {
+namespace modeval {
 
-string testURI = "http://localhost:8090/test";
+/**
+ * Return a configured component implementation.
+ * For now only Scheme and C++ implementations are supported.
+ */
+const failable<lambda<value(const list<value>&)> > readImplementation(const string& itype, const string& path, const list<value>& px) {
+    if (contains(itype, ".python"))
+        return modpython::readImplementation(path, px);
+    if (contains(itype, ".cpp"))
+        return modcpp::readImplementation(path, px);
+    return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
+}
 
 }
 }
-
-int main() {
-    tuscany::cout << "Testing..." << tuscany::endl;
-
-    tuscany::server::testServer();
-
-    tuscany::cout << "OK" << tuscany::endl;
-
-    return 0;
 }

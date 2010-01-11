@@ -33,7 +33,6 @@
 #include "function.hpp"
 #include "list.hpp"
 #include "value.hpp"
-#include "debug.hpp"
 #include "monad.hpp"
 #include "dynlib.hpp"
 #include "../scheme/driver.hpp"

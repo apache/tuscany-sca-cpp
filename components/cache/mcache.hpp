@@ -38,7 +38,6 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
-#include "debug.hpp"
 #include "../../modules/scheme/eval.hpp"
 
 namespace tuscany {

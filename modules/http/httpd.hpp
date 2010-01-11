@@ -26,15 +26,11 @@
  * HTTPD module implementation functions.
  */
 
-#include "string.hpp"
-#include "stream.hpp"
-
 #include "apr_strings.h"
 #include "apr_fnmatch.h"
 #include "apr_lib.h"
 #define APR_WANT_STRFUNC
 #include "apr_want.h"
-#include "ap_config.h"
 
 #include "httpd.h"
 #include "http_config.h"
@@ -48,9 +44,10 @@
 
 #include "mod_core.h"
 
+#include "string.hpp"
+#include "stream.hpp"
 #include "list.hpp"
 #include "value.hpp"
-#include "debug.hpp"
 
 
 namespace tuscany {
@@ -120,7 +117,7 @@ const string contentType(const request_rec* r) {
     return optional(apr_table_get(r->headers_in, "Content-Type"));
 }
 
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
 
 /**
  * Debug log.

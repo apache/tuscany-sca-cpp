@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,10 +17,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache store webservice
+# Setup
+../http/httpd-conf tmp 8090 htdocs
+../server/server-conf tmp
+./python-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
 
-includedir = $(prefix)/include/components
-nobase_include_HEADERS = */*.hpp
+<Location />
+SCAContribution `pwd`/
+SCAComposite domain-test.composite
+</Location>
+EOF
 
-compdir = $(prefix)/components
-nobase_comp_DATA = */*.composite
+apachectl -k start -d `pwd`/tmp
+sleep 2
+
+# Test
+./client-test 2>/dev/null
+rc=$?
+
+# Cleanup
+apachectl -k stop -d `pwd`/tmp
+sleep 2
+return $rc

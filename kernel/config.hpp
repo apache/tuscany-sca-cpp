@@ -19,22 +19,31 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_debug_hpp
-#define tuscany_debug_hpp
+#ifndef tuscany_config_hpp
+#define tuscany_config_hpp
+
+#include "ap_config.h"
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+
+#include "../config.h"
 
 /**
- * Debug functions and macros.
+ * Platform configuration and debug functions.
  */
 
 namespace tuscany
 {
 
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
 
 /**
  * Add string watch members to important classes to help watch them in a debugger.
  */
-#define _DEBUG_WATCH
+#define WANT_MAINTAINER_WATCH
 
 /**
  * Increment / decrement a debug counter.
@@ -64,4 +73,4 @@ bool debug_dec(long int& c) {
 #endif
 
 }
-#endif /* tuscany_debug_hpp */
+#endif /* tuscany_config_hpp */

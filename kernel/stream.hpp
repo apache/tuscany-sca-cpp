@@ -27,7 +27,7 @@
  */
 
 #include <stdarg.h>
-#include "debug.hpp"
+#include "config.hpp"
 #include "gc.hpp"
 #include "string.hpp"
 
@@ -152,7 +152,7 @@ template<typename T> ostream& operator<<(ostream& out, const gc_ptr<T>& p) {
     return out << p.ptr;
 }
 
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
 
 /**
  * Debug stream implementation with no dependencies on anything else.

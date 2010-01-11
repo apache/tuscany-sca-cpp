@@ -29,11 +29,11 @@
 #include <utility>
 #include "fstream.hpp"
 #include "gc.hpp"
-#include "debug.hpp"
+#include "config.hpp"
 
 namespace tuscany {
 
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
 
 /**
  * Debug counters.

@@ -26,7 +26,7 @@
  * Simple parallel work execution functions.
  */
 
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
 #include <pthread.h>
 #include <sys/syscall.h>
 #include <unistd.h>
@@ -37,7 +37,7 @@
 
 namespace tuscany {
 
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
 
 /**
  * Returns the current thread id.

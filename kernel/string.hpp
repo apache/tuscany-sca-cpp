@@ -34,7 +34,7 @@
 
 namespace tuscany {
 
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
 
 /**
  * Debug utilities. Counters used to track string copies.
@@ -67,7 +67,7 @@ bool printStringCopyCounters() {
  * Instrumented memcpy.
  */
 void* string_memcpy(void* t, const void* s, const size_t n) {
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
     countStringCopies += 1;
 #endif
     return memcpy(t, s, n);
@@ -172,7 +172,7 @@ public:
     }
 
 private:
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
     friend class odebugstream;
 #endif
     friend class ostringstream;

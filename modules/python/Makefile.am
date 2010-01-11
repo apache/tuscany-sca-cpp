@@ -15,17 +15,31 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = python-test python-shell
-
 datadir=$(prefix)/modules/python
+
+if WANT_PYTHON
+
+noinst_PROGRAMS = python-test python-shell client-test
+
+libdir=$(prefix)/lib
+lib_LTLIBRARIES = libmod_tuscany_python.la
+
 nobase_data_DATA = *.xsd
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${PYTHON_INCLUDE}
+INCLUDES = -I${PYTHON_INCLUDE}
+
+libmod_tuscany_python_la_SOURCES = mod-python.cpp
+libmod_tuscany_python_la_LIBADD = -lxml2 -lcurl -lmozjs -L${PYTHON_LIB} -lpython2.6
 
 python_test_SOURCES = python-test.cpp
-python_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${PYTHON_LIB} -lpython2.6
+python_test_LDADD = -L${PYTHON_LIB} -lpython2.6
 
 python_shell_SOURCES = python-shell.cpp
-python_shell_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${PYTHON_LIB} -lpython2.6
+python_shell_LDADD = -L${PYTHON_LIB} -lpython2.6
 
-TESTS = python-test
+client_test_SOURCES = client-test.cpp
+client_test_LDADD = -lxml2 -lcurl -lmozjs
+
+TESTS = python-test server-test
+
+endif

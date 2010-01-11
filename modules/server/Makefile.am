@@ -20,21 +20,20 @@ noinst_PROGRAMS = client-test
 libdir=$(prefix)/lib
 lib_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
 
-INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${HTTPD_INCLUDE} -I${APR_INCLUDE} -I${JS_INCLUDE} -I${CURL_INCLUDE}
+INCLUDES = -I${HTTPD_INCLUDE}
 
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
-libmod_tuscany_eval_la_LIBADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${CURL_LIB} -lcurl -L${JS_LIB} -lmozjs -L${PYTHON_LIB} -lpython2.6
+libmod_tuscany_eval_la_LIBADD = -lxml2 -lcurl -lmozjs
 
 libmod_tuscany_wiring_la_SOURCES = mod-wiring.cpp
-libmod_tuscany_wiring_la_LIBADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${CURL_LIB} -lcurl -L${JS_LIB} -lmozjs
+libmod_tuscany_wiring_la_LIBADD = -lxml2 -lcurl -lmozjs
 
 testdir=$(prefix)/test
 test_LTLIBRARIES = libimpl-test.la
 
 libimpl_test_la_SOURCES = impl-test.cpp
-libimpl_test_la_LIBADD = -L${APR_LIB} -lapr-1 -laprutil-1
 
 client_test_SOURCES = client-test.cpp
-client_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${CURL_LIB} -lcurl -L${JS_LIB} -lmozjs
+client_test_LDADD = -lxml2 -lcurl -lmozjs
 
 TESTS = httpd-test server-test wiring-test

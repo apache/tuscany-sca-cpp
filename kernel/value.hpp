@@ -33,12 +33,11 @@
 #include "function.hpp"
 #include "list.hpp"
 #include "monad.hpp"
-#include "debug.hpp"
 
 namespace tuscany
 {
 
-#ifdef _DEBUG
+#ifdef WANT_MAINTAINER_MODE
 
 /**
  * Debug utilities. Counters used to track instances of values, and
@@ -75,7 +74,7 @@ bool printValueCounters() {
 
 #endif
 
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
 
 #define debug_watchValue() do { \
         this->watch = watchValue(*this); \
@@ -124,7 +123,7 @@ public:
         default:
             break;
         }
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
         watch = v.watch;
 #endif
     }
@@ -223,7 +222,7 @@ public:
         default:
             break;
         }
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
         watch = v.watch;
 #endif
         return *this;
@@ -420,7 +419,7 @@ private:
     friend ostream& operator<<(ostream&, const value&);
     friend const value::ValueType type(const value& v);
 
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
     friend const string watchValue(const value& v);
     string watch;
 #endif
@@ -429,7 +428,7 @@ private:
      lambda<char()> data;
 };
 
-#ifdef _DEBUG_WATCH
+#ifdef WANT_MAINTAINER_WATCH
 
 /**
  * Debug utility used to write the contents of a value to a string, easier
