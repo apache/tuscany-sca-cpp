@@ -42,6 +42,7 @@ ostream* curlWriter(const string& s, ostream* os) {
 }
 
 const bool testGet() {
+    gc_scoped_pool pool;
     http::CURLSession ch;
     {
         ostringstream os;
@@ -71,6 +72,7 @@ struct getLoop {
 };
 
 const bool testGetPerf() {
+    gc_scoped_pool pool;
     http::CURLSession ch;
     const lambda<bool()> gl = getLoop(ch);
     cout << "Static GET test " << time(gl, 5, 200) << " ms" << endl;
@@ -78,6 +80,7 @@ const bool testGetPerf() {
 }
 
 const bool testEval(const string& uri) {
+    gc_scoped_pool pool;
     http::CURLSession ch;
     const value val = content(http::evalExpr(mklist<value>(string("echo"), string("Hello")), uri, ch));
     assert(val == string("Hello"));
@@ -119,6 +122,7 @@ struct blobEvalLoop {
 };
 
 const bool testEvalPerf(const string& type, const string& uri) {
+    gc_scoped_pool pool;
     http::CURLSession ch;
     const lambda<bool()> el = evalLoop(uri, ch);
     cout << type << " JSON-RPC eval echo test " << time(el, 5, 200) << " ms" << endl;
@@ -135,6 +139,7 @@ const bool testEvalPerf() {
 }
 
 bool testPost(const string& uri) {
+    gc_scoped_pool pool;
     const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "price" + string("$2.99"));
@@ -165,7 +170,22 @@ struct postLoop {
     }
 };
 
+struct postBlobLoop {
+    const string uri;
+    const value val;
+    http::CURLSession ch;
+    postBlobLoop(const string& uri, const value& val, http::CURLSession& ch) : uri(uri), val(val), ch(ch) {
+    }
+    const bool operator()() const {
+        gc_scoped_pool pool;
+        const failable<value> id = http::post(val, uri, ch);
+        assert(hasContent(id));
+        return true;
+    }
+};
+
 const bool testPostPerf(const string& type, const string& uri) {
+    gc_scoped_pool pool;
     http::CURLSession ch;
     {
         const list<value> i = list<value>()
@@ -185,7 +205,7 @@ const bool testPostPerf(const string& type, const string& uri) {
             + (list<value>() + "blob5" + blob)
             + (list<value>() + "price" + string("$2.99"));
         const list<value> val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
-        const lambda<bool()> pl = postLoop(uri, val, ch);
+        const lambda<bool()> pl = postBlobLoop(uri, val, ch);
         cout << type << " ATOMPub POST blob test  " << time(pl, 5, 200) << " ms" << endl;
     }
     return true;
@@ -198,9 +218,10 @@ const bool testPostPerf() {
     return true;
 }
 
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
 
 const bool postThread(const string& uri, const int count, const value& val) {
+    gc_scoped_pool pool;
     http::CURLSession ch;
     const lambda<bool()> pl = postLoop(uri, val, ch);
     time(pl, 0, count);
@@ -234,6 +255,7 @@ struct postThreadLoop {
 };
 
 const bool testPostThreadPerf(const string& type, const string& uri) {
+    gc_scoped_pool pool;
     const int count = 50;
     const int threads = 10;
 
@@ -260,6 +282,7 @@ const bool testPostThreadPerf() {
 #else
 
 const bool postProc(const string& uri, const int count, const value& val) {
+    gc_scoped_pool pool;
     http::CURLSession ch;
     const lambda<bool()> pl = postLoop(uri, val, ch);
     time(pl, 0, count);
@@ -299,6 +322,7 @@ struct postForkLoop {
 };
 
 const bool testPostForkPerf(const string& type, const string& uri) {
+    gc_scoped_pool pool;
     const int count = 50;
     const int procs = 10;
 
@@ -310,14 +334,14 @@ const bool testPostForkPerf(const string& type, const string& uri) {
     const lambda<bool()> pl= curry(lambda<bool(const string, const int, const value)>(postProc), uri, count, val);
     const lambda<bool()> ptl = postForkLoop(pl, procs);
     double t = time(ptl, 0, 1) / (procs * count);
-    cout << "ATOMPub POST fork test " << t << " ms" << endl;
+    cout << type << "ATOMPub POST fork test " << t << " ms" << endl;
 
     return true;
 }
 
 const bool testPostForkPerf() {
     testPostForkPerf("Scheme", "http://localhost:8090/test");
-    //testPostForkPerf("C++", "http://localhost:8090/cpp");
+    testPostForkPerf("C++", "http://localhost:8090/cpp");
     testPostForkPerf("Python", "http://localhost:8090/python");
     return true;
 }
@@ -325,6 +349,7 @@ const bool testPostForkPerf() {
 #endif
 
 const bool testPut(const string& uri) {
+    gc_scoped_pool pool;
     const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "price" + string("$2.99"));
@@ -343,6 +368,7 @@ const bool testPut() {
 }
 
 const bool testDel(const string& uri) {
+    gc_scoped_pool pool;
     http::CURLSession ch;
     value rc = content(http::del(uri, ch));
     assert(rc == value(true));
@@ -369,7 +395,7 @@ int main() {
     tuscany::server::testEval();
     tuscany::server::testGetPerf();
     tuscany::server::testPostPerf();
-#ifdef _REENTRANT
+#ifdef WANT_THREADS
     tuscany::server::testPostThreadPerf();
 #else
     tuscany::server::testPostForkPerf();
