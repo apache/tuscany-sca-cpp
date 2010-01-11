@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_python_pydriver_hpp
-#define tuscany_python_pydriver_hpp
+#ifndef tuscany_python_driver_hpp
+#define tuscany_python_driver_hpp
 
 /**
  * Python evaluator main driver loop.
@@ -29,48 +29,25 @@
 #include "string.hpp"
 #include "stream.hpp"
 #include "monad.hpp"
+#include "../scheme/driver.hpp"
 #include "eval.hpp"
 
 namespace tuscany {
 namespace python {
 
-const string evalOutputPrompt("; ");
-const string evalInputPrompt("=> ");
-
-const bool promptForInput(const string& str, ostream& out) {
-    out << endl << endl << str;
-    return true;
-}
-
-const bool announceOutput(const string str, ostream& out) {
-    out << endl << str;
-    return true;
-}
-
-const bool userPrint(const value val, ostream& out) {
-    writeValue(val, out);
-    return true;
-}
-
 const value evalDriverLoop(PyObject* script, istream& in, ostream& out) {
-    promptForInput(evalInputPrompt, out);
-    value input = readValue(in);
+    scheme::promptForInput(scheme::evalInputPrompt, out);
+    value input = scheme::readValue(in);
     if (isNil(input))
         return input;
-    const value output = evalScript(input, script);
-    announceOutput(evalOutputPrompt, out);
-    userPrint(output, out);
+    const failable<value> output = evalScript(input, script);
+    scheme::announceOutput(scheme::evalOutputPrompt, out);
+    scheme::userPrint(content(output), out);
     return evalDriverLoop(script, in, out);
 }
 
-const bool evalDriverRun(istream& in, ostream& out) {
-    setupDisplay(out);
-    evalDriverLoop(builtin(pythonRuntime), in, out);
-    return true;
-}
-
 const bool evalDriverRun(const char* path, istream& in, ostream& out) {
-    setupDisplay(out);
+    scheme::setupDisplay(out);
     ifstream is(path);
     failable<PyObject*> script = readScript(path, is);
     if (!hasContent(script))
@@ -82,4 +59,4 @@ const bool evalDriverRun(const char* path, istream& in, ostream& out) {
 
 }
 }
-#endif /* tuscany_scheme_pydriver_hpp */
+#endif /* tuscany_python_driver_hpp */

@@ -31,49 +31,22 @@
 namespace tuscany {
 namespace python {
 
-const value evalBuiltin(const string& py) {
-    istringstream is(py);
-    ostringstream os;
-    evalDriverRun(is, os);
-    return str(os);
-}
-
-const string testPythonPrint(
-    "(print \"testPrint ok\")");
-
-bool testEval() {
-    gc_scoped_pool pool;
-    assert(contains(evalBuiltin(testPythonPrint), "testPrint ok"));
-    return true;
-}
-
 const string testPythonAdd =
         "def add(x, y):\n"
         "    return x + y\n";
 
 bool testEvalExpr() {
     gc_scoped_pool pool;
-    {
-        const value exp = mklist<value>("abs", -5);
-        const failable<value> r = evalExpr(exp);
-        assert(hasContent(r));
-        assert(content(r) == value(5));
-    }
-    {
-        istringstream is(testPythonAdd);
-        failable<PyObject*> script = readScript("script", is);
-        assert(hasContent(script));
-        const value exp = mklist<value>("add", 2, 3);
-        const failable<value> r = evalScript(exp, content(script));
-        assert(hasContent(r));
-        assert(content(r) == value(5));
-    }
-    return true;
-}
 
-bool testEvalRun() {
-    gc_scoped_pool pool;
-    evalDriverRun(cin, cout);
+    istringstream is(testPythonAdd);
+    failable<PyObject*> script = readScript("script", is);
+    assert(hasContent(script));
+
+    const value exp = mklist<value>("add", 2, 3);
+    const failable<value> r = evalScript(exp, content(script));
+    assert(hasContent(r));
+    assert(content(r) == value(5));
+
     return true;
 }
 
@@ -126,7 +99,6 @@ bool testEvalLambda() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::python::testEval();
     tuscany::python::testEvalExpr();
     tuscany::python::testEvalLambda();
 

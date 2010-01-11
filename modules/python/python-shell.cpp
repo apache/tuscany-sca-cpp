@@ -31,9 +31,9 @@
 
 int main(const int argc, char** argv) {
     tuscany::gc_scoped_pool pool;
-    if (argc == 1) {
-        tuscany::python::evalDriverRun(tuscany::cin, tuscany::cout);
-        return 0;
+    if (argc != 2) {
+        tuscany::cerr << "Usage: python-shell <script.py>" << tuscany::endl;
+        return 1;
     }
     tuscany::python::evalDriverRun(argv[1], tuscany::cin, tuscany::cout);
     return 0;

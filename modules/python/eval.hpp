@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_python_pyeval_hpp
-#define tuscany_python_pyeval_hpp
+#ifndef tuscany_python_eval_hpp
+#define tuscany_python_eval_hpp
 
 /**
  * Python script evaluation logic.
@@ -42,28 +42,13 @@ public:
     PythonRuntime() {
         Py_Initialize();
 
-        // Import the builtin module
-        PyObject* p = PyString_FromString("__builtin__");
-        builtin = PyImport_Import(p);
-        Py_DECREF(p);
-
         setupIO();
     }
 
     ~PythonRuntime() {
-        Py_DECREF(builtin);
     }
 
-private:
-    friend PyObject* builtin(const PythonRuntime& r);
-
-    PyObject* builtin;
-
 } pythonRuntime;
-
-PyObject* builtin(const PythonRuntime& r) {
-    return r.builtin;
-}
 
 /**
  * Declare conversion functions.
@@ -111,7 +96,7 @@ PyTypeObject pyLambda_type = {
 /**
  * Create a new python object representing a lambda expression.
  */
-PyObject *mkPyLambda(const lambda<value(const list<value>&)> l) {
+PyObject *mkPyLambda(const lambda<value(const list<value>&)>& l) {
     pyLambda* pyl = NULL;
     pyl = PyObject_NEW(pyLambda, &pyLambda_type);
     if (pyl != NULL)
@@ -160,7 +145,7 @@ PyObject* valueToPyObject(const value& v) {
  * Convert a python tuple to a list of values.
  */
 
-const list<value> pyTupleToValuesHelper(PyObject* o, int i, int size) {
+const list<value> pyTupleToValuesHelper(PyObject* o, const int i, const int size) {
     if (i == size)
         return list<value>();
     return cons(pyObjectToValue(PyTuple_GetItem(o, i)), pyTupleToValuesHelper(o, i + 1, size));
@@ -220,22 +205,6 @@ const value pyObjectToValue(PyObject *o) {
 }
 
 /**
- * Read a python script from an input stream.
- */
-const failable<PyObject*> readScript(const string& path, istream& is) {
-    const list<string> ls = streamList(is);
-    ostringstream os;
-    write(ls, os);
-    PyObject* code = Py_CompileStringFlags(c_str(str(os)), c_str(path), Py_file_input, NULL);
-    if (code == NULL)
-        return mkfailure<PyObject*>(string("Couldn't compile script: ") + path + " : " + lastError());
-    PyObject* mod = PyImport_ExecCodeModule(const_cast<char*>(c_str(path)), code);
-    if (mod == NULL)
-        return mkfailure<PyObject*>(string("Couldn't import module: ") + path + " : " + lastError());
-    return mod;
-}
-
-/**
  * Evaluate an expression against a script provided as a python object.
  */
 const failable<value> evalScript(const value& expr, PyObject* script) {
@@ -266,6 +235,22 @@ const failable<value> evalScript(const value& expr, PyObject* script) {
 }
 
 /**
+ * Read a python script from an input stream.
+ */
+const failable<PyObject*> readScript(const string& path, istream& is) {
+    const list<string> ls = streamList(is);
+    ostringstream os;
+    write(ls, os);
+    PyObject* code = Py_CompileStringFlags(c_str(str(os)), c_str(path), Py_file_input, NULL);
+    if (code == NULL)
+        return mkfailure<PyObject*>(string("Couldn't compile script: ") + path + " : " + lastError());
+    PyObject* mod = PyImport_ExecCodeModule(const_cast<char*>(c_str(path)), code);
+    if (mod == NULL)
+        return mkfailure<PyObject*>(string("Couldn't import module: ") + path + " : " + lastError());
+    return mod;
+}
+
+/**
  * Evaluate an expression against a script provided as an input stream.
  */
 const failable<value> evalScript(const value& expr, istream& is) {
@@ -275,13 +260,6 @@ const failable<value> evalScript(const value& expr, istream& is) {
     return evalScript(expr, content(script));
 }
 
-/**
- * Evaluate an expression against the python builtin module, no script is provided.
- */
-const failable<value> evalExpr(const value& expr) {
-    return  evalScript(expr, builtin(pythonRuntime));
-}
-
 }
 }
-#endif /* tuscany_python_pyeval_hpp */
+#endif /* tuscany_python_eval_hpp */

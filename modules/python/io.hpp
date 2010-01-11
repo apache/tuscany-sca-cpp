@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_python_pyio_hpp
-#define tuscany_python_pyio_hpp
+#ifndef tuscany_python_io_hpp
+#define tuscany_python_io_hpp
 
 /**
  * Hooks used to capture python stdout and stderr.
@@ -33,46 +33,6 @@
 namespace tuscany {
 namespace python {
 
-#ifdef _REENTRANT
-__thread
-#endif
-ostream* displayOutStream = NULL;
-
-#ifdef _REENTRANT
-__thread
-#endif
-ostream* logOutStream = NULL;
-
-/**
- * Setup the display stream.
- */
-const bool setupDisplay(ostream& out) {
-    scheme::setupDisplay(out);
-    displayOutStream = &out;
-    return true;
-}
-
-ostream& displayStream() {
-    if (displayOutStream == NULL)
-        return cout;
-    return *displayOutStream;
-}
-
-/**
- * Setup the log stream.
- */
-const bool setupLog(ostream& out) {
-    scheme::setupLog(out);
-    logOutStream = &out;
-    return true;
-}
-
-ostream& logStream() {
-    if (logOutStream == NULL)
-        return cerr;
-    return *logOutStream;
-}
-
 /**
  * Hook method used to redirect python output to a stream.
  */
@@ -81,7 +41,7 @@ PyObject* display(unused PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "s", &s))
         return NULL;
 
-    displayStream() << s;
+    scheme::displayStream() << s;
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -99,7 +59,7 @@ PyObject* log(unused PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "s", &s))
         return NULL;
 
-    logStream() << s;
+    scheme::logStream() << s;
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -141,12 +101,12 @@ bool setupIO() {
  * Return the last python error.
  */
 const string lastError() {
-    ostream* pos = logOutStream;
+    ostream* pos = scheme::logOutStream;
     ostringstream eos;
-    logOutStream = &eos;
+    scheme::logOutStream = &eos;
     if (PyErr_Occurred())
         PyErr_Print();
-    logOutStream = pos;
+    scheme::logOutStream = pos;
     return str(eos);
 }
 
@@ -164,4 +124,4 @@ const bool writeValue(const value& val, ostream& out) {
 
 }
 }
-#endif /* tuscany_python_pyio_hpp */
+#endif /* tuscany_python_io_hpp */
