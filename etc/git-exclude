@@ -75,7 +75,5 @@ mcache-test
 mcache-client-test
 curl-test
 scdl-test
-store-function-test
-store-object-test
-store-script-test
+script-test
 

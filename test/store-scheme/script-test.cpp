@@ -39,7 +39,7 @@ using namespace tuscany;
 bool testScript() {
     gc_scoped_pool pool;
 
-    ifstream is("store-script-test.scm");
+    ifstream is("script-test.scm");
     ostringstream os;
     scheme::evalDriverRun(is, os);
     assert(contains(str(os), "(\"Sample Feed\" \""));
@@ -52,7 +52,7 @@ bool testScript() {
 bool testEval() {
     {
         gc_scoped_pool pool;
-        ifstream is("store-script-test.scm");
+        ifstream is("script-test.scm");
         ostringstream os;
         scheme::setupDisplay(os);
         scheme::Env globalEnv = scheme::setupEnvironment();
@@ -66,7 +66,7 @@ bool testEval() {
 
     {
         gc_scoped_pool pool;
-        ifstream is("store-script-test.scm");
+        ifstream is("script-test.scm");
         ostringstream os;
         scheme::setupDisplay(os);
 

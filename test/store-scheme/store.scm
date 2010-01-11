@@ -29,7 +29,5 @@
 )
 
 ; TODO remove these JSON-RPC specific functions
-(define (system.listMethods catalog shoppingCart shoppingTotal) (list "Service.get" "Service.getTotal"))
-(define Service.getCatalog getcatalog)
-(define Service.getTotal gettotal)
+(define (listMethods catalog shoppingCart shoppingTotal) (list "Service.getcatalog" "Service.gettotal"))
 

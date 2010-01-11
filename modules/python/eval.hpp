@@ -152,7 +152,7 @@ PyObject* valueToPyObject(const value& v) {
     case value::Bool:
         return (bool)v? Py_True : Py_False;
     default:
-        return NULL;
+        return Py_None;
     }
 }
 

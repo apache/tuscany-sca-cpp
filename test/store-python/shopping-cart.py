@@ -1,77 +1,65 @@
 # Shopping cart implementation
+import uuid
+import sys
 
 cartId = "1234"
 
-#TODO finish conversion from scheme to python
-
 # Get the shopping cart from the cache
 # Return an empty cart if not found
-(define (getcart id cache)
-  (define cart (cache "get" id))
-  (if (nul cart)
-    (list)
-    cart)
-)
+def getcart(id, cache):
+    cart = cache("get", id)
+    if cart is None:
+        return ()
+    return cart
 
 # Post a new item to the cart, create a new cart if necessary
-(define (post item cache)
-  (define id (uuid))
-  (define newItem (list (car item) id (caddr item)))
-  (define cart (cons newItem (getcart cartId cache)))
-  (cache "put" cartId cart)
-  id
-)
+def post(item, cache):
+    id = str(uuid.uuid1())
+    cart = ((item[0], id, item[2]),) + getcart(cartId, cache)
+    cache("put", cartId, cart)
+    return id
 
 # Return the content of the cart
-(define (getall cache)
-  (cons "Your Cart" (cons cartId (getcart cartId cache)))
-)
+def getall(cache):
+    return ("Your Cart", cartId) + getcart(cartId, cache)
 
 # Find an item in the cart
-(define (find id cart)
-  (if (nul cart)
-    (cons "Item" (list "0" (list)))
-    (if (= id (cadr (car cart)))
-      (car cart)
-      (find id (cdr cart))))
-)
+def find(id, cart):
+    if cart == ():
+        return ("Item", "0", ())
+    elif id == cart[0][1]:
+        return cart[0]
+    else:
+        return find(id, cart[1:])
 
 # Get an item from the cart
-(define (get id cache)
-  (find id (getcart cartId cache))
-)
+def get(id, cache):
+    return find(id, getcart(cartId, cache))
 
 # Delete the whole cart
-(define (deleteall cache)
-  (cache "delete" cartId)
-)
+def deleteall(cache):
+    return cache("delete", cartId)
 
 # Delete an item from the  cart
-(define (delete id cache)
-  true
-)
+def delete(id, cache):
+    return true
 
 # Return the price of an item
-(define (price item)
-  (cadr (assoc 'price (caddr item)))
-)
+def price(item):
+    return float(filter(lambda x: x[0] == "'price", item[2])[0][1])
 
 # Sum the prices of a list of items
-(define (sum items)
-  (if (nul items)
-    0
-    (+ (price (car items)) (sum (cdr items))))
-)
+def sum(items):
+    if items == ():
+        return 0
+    return price(items[0]) + sum(items[1:])
 
 # Return the total price of the items in the cart
-(define (gettotal cache)
-  (define cart (getcart cartId cache))
-  (sum cart)
-)
+def gettotal(cache):
+    cart = getcart(cartId, cache)
+    return sum(cart)
 
 # TODO remove these JSON-RPC specific functions
-def system.listMethods(cache):
-    return ("Service.getTotal")
-
-Service.getTotal = gettotal
+def listMethods(cache):
+    return ("Service.gettotal",)
 

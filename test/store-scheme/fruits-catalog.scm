@@ -12,6 +12,5 @@
 )
 
 ; TODO remove these JSON-RPC specific functions
-(define (system.listMethods converter) (list "Service.get"))
-(define Service.get get)
+(define (listMethods converter) (list "Service.get"))
 

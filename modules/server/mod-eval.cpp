@@ -100,7 +100,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
 
         // Extract the request id, method and params
         const value id = cadr(ia);
-        const value func = c_str(string(cadr(ma)));
+        const value func = c_str(json::funcName(string(cadr(ma))));
 
         // Apply the requested function
         const failable<value> val = failableResult(impl(cons(func, httpd::queryParams(args))));
@@ -145,7 +145,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
 
         // Extract the request id, method and params
         const value id = cadr(assoc(value("id"), args));
-        const value func = c_str(cadr(assoc(value("method"), args)));
+        const value func = c_str(json::funcName(cadr(assoc(value("method"), args))));
         const list<value> params = (list<value>)cadr(assoc(value("params"), args));
 
         // Evaluate the request expression

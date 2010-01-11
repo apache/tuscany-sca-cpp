@@ -68,6 +68,5 @@
 )
 
 ; TODO remove these JSON-RPC specific functions
-(define (system.listMethods cache) (list "Service.getTotal"))
-(define Service.getTotal gettotal)
+(define (listMethods cache) (list "Service.gettotal"))
 

@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-TESTS = store-composite-test
+TESTS = server-test
 

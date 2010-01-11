@@ -51,7 +51,7 @@
 		catalogItems = items;
 
 		// TEMP		
-		shoppingTotal.getTotal(shoppingTotal_getTotalResponse);
+		shoppingTotal.gettotal(shoppingTotal_getTotalResponse);
 	}
 	
 	function shoppingCart_getResponse(feed) {
@@ -68,7 +68,7 @@
 
 			if (entries.length != 0) {			
 					try	{
-						shoppingTotal.getTotal(shoppingTotal_getTotalResponse);
+						shoppingTotal.gettotal(shoppingTotal_getTotalResponse);
 					}
 					catch(e){
 						alert(e);

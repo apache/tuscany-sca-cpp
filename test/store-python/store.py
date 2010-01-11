@@ -22,9 +22,6 @@ def delete(id, catalog, shoppingCart, shoppingTotal):
     return shoppingCart("delete", id)
 
 # TODO remove these JSON-RPC specific functions
-def system.listMethods(catalog, shoppingCart, shoppingTotal):
-    return ("Service.get", "Service.getTotal")
-
-Service.getCatalog = getcatalog
-Service.getTotal = gettotal
+def listMethods(catalog, shoppingCart, shoppingTotal):
+    return ("Service.get", "Service.gettotal")
 

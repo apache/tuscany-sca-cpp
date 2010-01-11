@@ -381,6 +381,18 @@ const failable<list<string> > jsonResult(const value& id, const value& val, JSON
     return writeJSON(valuesToElements(mklist<value>(mklist<value>("id", id), mklist<value>("result", val))), cx);
 }
 
+/**
+ * Return a portable function name from a JSON-RPC function name.
+ * Strip the "system." and "Service." prefixes added by some JSON-RPC clients.
+ */
+const string funcName(const string& f) {
+    if (length(f) > 7 && find(f, "system.", 0) == 0)
+        return c_str(f) + 7;
+    if (length(f) > 8 && find(f, "Service.", 0) == 0)
+        return c_str(f) + 8;
+    return f;
+}
+
 }
 }
 

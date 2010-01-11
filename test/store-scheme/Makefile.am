@@ -15,12 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = store-script-test
+noinst_PROGRAMS = script-test
 
 INCLUDES = -I. -I$(top_builddir)/kernel -I${LIBXML2_INCLUDE} -I${APR_INCLUDE} -I${JS_INCLUDE}
 
-store_script_test_SOURCES = store-script-test.cpp
-store_script_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${JS_LIB} -lmozjs
-	
-TESTS = store-script-test store-composite-test
+script_test_SOURCES = script-test.cpp
+script_test_LDADD = -L${LIBXML2_LIB} -lxml2 -L${APR_LIB} -lapr-1 -laprutil-1 -L${JS_LIB} -lmozjs
+
+TESTS = script-test server-test
 

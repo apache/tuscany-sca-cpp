@@ -86,7 +86,7 @@ const bool testEval(const string& uri) {
 
 const bool testEval() {
     testEval("http://localhost:8090/test");
-    //testEval("http://localhost:8090/cpp");
+    testEval("http://localhost:8090/cpp");
     testEval("http://localhost:8090/python");
     return true;
 }
@@ -129,7 +129,7 @@ const bool testEvalPerf(const string& type, const string& uri) {
 
 const bool testEvalPerf() {
     testEvalPerf("Scheme", "http://localhost:8090/test");
-    //testEvalPerf("C++", "http://localhost:8090/cpp");
+    testEvalPerf("C++", "http://localhost:8090/cpp");
     testEvalPerf("Python", "http://localhost:8090/python");
     return true;
 }
@@ -147,7 +147,7 @@ bool testPost(const string& uri) {
 
 const bool testPost() {
     testPost("http://localhost:8090/test");
-    //testPost("http://localhost:8090/cpp");
+    testPost("http://localhost:8090/cpp");
     testPost("http://localhost:8090/python");
     return true;
 }
@@ -193,7 +193,7 @@ const bool testPostPerf(const string& type, const string& uri) {
 
 const bool testPostPerf() {
     testPostPerf("Scheme", "http://localhost:8090/test");
-    //testPostPerf("C++", "http://localhost:8090/cpp");
+    testPostPerf("C++", "http://localhost:8090/cpp");
     testPostPerf("Python", "http://localhost:8090/python");
     return true;
 }
@@ -252,16 +252,16 @@ const bool testPostThreadPerf(const string& type, const string& uri) {
 
 const bool testPostThreadPerf() {
     testPostThreadPerf("Scheme", "http://localhost:8090/test");
-    //testPostThreadPerf("C++", "http://localhost:8090/cpp");
-    //testPostThreadPerf("Python", "http://localhost:8090/python");
+    testPostThreadPerf("C++", "http://localhost:8090/cpp");
+    testPostThreadPerf("Python", "http://localhost:8090/python");
     return true;
 }
 
 #else
 
-const bool postProc(const int count, const value& val) {
+const bool postProc(const string& uri, const int count, const value& val) {
     http::CURLSession ch;
-    const lambda<bool()> pl = postLoop(val, ch);
+    const lambda<bool()> pl = postLoop(uri, val, ch);
     time(pl, 0, count);
     return true;
 }
@@ -316,9 +316,9 @@ const bool testPostForkPerf(const string& type, const string& uri) {
 }
 
 const bool testPostForkPerf() {
-    testPostThreadPerf("Scheme", "http://localhost:8090/test");
-    //testPostThreadPerf("C++", "http://localhost:8090/cpp");
-    testPostThreadPerf("Python", "http://localhost:8090/python");
+    testPostForkPerf("Scheme", "http://localhost:8090/test");
+    //testPostForkPerf("C++", "http://localhost:8090/cpp");
+    testPostForkPerf("Python", "http://localhost:8090/python");
     return true;
 }
 
@@ -363,18 +363,18 @@ int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::server::testGet();
-    tuscany::server::testGetPerf();
     tuscany::server::testPost();
+    tuscany::server::testPut();
+    tuscany::server::testDel();
+    tuscany::server::testEval();
+    tuscany::server::testGetPerf();
     tuscany::server::testPostPerf();
 #ifdef _REENTRANT
     tuscany::server::testPostThreadPerf();
 #else
     tuscany::server::testPostForkPerf();
 #endif
-    tuscany::server::testEval();
     tuscany::server::testEvalPerf();
-    tuscany::server::testPut();
-    tuscany::server::testDel();
 
     tuscany::cout << "OK" << tuscany::endl;
 

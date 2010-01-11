@@ -121,29 +121,3 @@
 (display (storeui_service "getall" added2))
 (display (storeui_service "gettotal"))
 
-; Store UI JSON-RPC interop test case
-
-(define (system.listMethods) (list "Service.get" "Service.getTotal"))
-
-(define (Service.get) (storeui_service "getcatalog"))
-
-(define (.get) (storeui_service "getcatalog"))
-
-(define (Service.getTotal) (storeui_service "gettotal"))
-
-; Store UI ATOMPub interop test case
-
-(define (getall) (storeui_service "getall" added2))
-
-(define (get id) (storeui_service "getentry" id))
-
-(define (post entry)
-  (display entry)
-  (uuid)
-)
-
-(define (delete id)
-  (display id)
-  true
-)
-
