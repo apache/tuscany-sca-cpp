@@ -23,8 +23,7 @@
   name="store">
         
     <component name="Store">
-	    <!-- <t:implementation.widget location="store.html"/> -->
-        <t:implementation.scheme uri="store.scm"/>
+        <t:implementation.scheme script="store.scm"/>
         <service name="Widget">
             <t:binding.http uri="store"/>
         </service>
@@ -34,7 +33,7 @@
     </component>
     
     <component name="Catalog">
-        <t:implementation.scheme uri="fruits-catalog.scm"/> 
+        <t:implementation.scheme script="fruits-catalog.scm"/> 
         <property name="currencyCode">USD</property>
         <service name="Catalog">
             <t:binding.jsonrpc uri="catalog"/>
@@ -43,7 +42,7 @@
     </component> 
      
     <component name="ShoppingCart">
-        <t:implementation.scheme uri="shopping-cart.scm"/>
+        <t:implementation.scheme script="shopping-cart.scm"/>
         <service name="ShoppingCart">
             <t:binding.atom uri="shoppingCart"/>
         </service>        
@@ -54,14 +53,14 @@
     </component>
     
     <component name="CurrencyConverter">
-        <t:implementation.scheme uri="currency-converter.scm"/>
+        <t:implementation.scheme script="currency-converter.scm"/>
         <service name="CurrencyConverter">
             <t:binding.jsonrpc uri="currencyConverter"/>
         </service>        
     </component>     
 
     <component name="Cache">
-        <t:implementation.cpp uri="../../components/cache/.libs/libmcache"/>
+        <implementation.cpp path="../../components/cache/.libs" library="libmcache"/>
         <service name="Cache">
             <t:binding.atom uri="cache"/>
         </service>

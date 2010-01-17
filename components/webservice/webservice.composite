@@ -23,7 +23,7 @@
   name="webservice">
         
     <component name="webservice">
-        <t:implementation.cpp uri=".libs/libwebservice"/>
+        <implementation.cpp path=".libs" library="libwebservice"/>
         <service name="webservice">
             <t:binding.http uri="webservice"/>
         </service>

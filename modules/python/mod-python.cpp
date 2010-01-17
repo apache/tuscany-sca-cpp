@@ -37,14 +37,15 @@ namespace server {
 namespace modeval {
 
 /**
- * Return a configured component implementation.
- * For now only Scheme and C++ implementations are supported.
+ * Evaluate a Python component implementation and convert it to an applicable
+ * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > readImplementation(const string& itype, const string& path, const list<value>& px) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+    const string itype(elementName(impl));
     if (contains(itype, ".python"))
-        return modpython::readImplementation(path, px);
+        return modpython::evalImplementation(path, impl, px);
     if (contains(itype, ".cpp"))
-        return modcpp::readImplementation(path, px);
+        return modcpp::evalImplementation(path, impl, px);
     return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
 }
 

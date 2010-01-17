@@ -23,21 +23,21 @@
   name="domain-test">
         
     <component name="scheme-test">
-        <t:implementation.scheme uri="server-test.scm"/>
+        <t:implementation.scheme script="server-test.scm"/>
         <service name="test">
             <t:binding.http uri="test"/>
         </service>
     </component>     
 
     <component name="cpp-test">
-        <t:implementation.cpp uri=".libs/libimpl-test"/>
+        <implementation.cpp path=".libs" library="libimpl-test"/>
         <service name="cpp">
             <t:binding.http uri="cpp"/>
         </service>
     </component>
 
     <component name="client-test">
-        <t:implementation.scheme uri="client-test.scm"/>
+        <t:implementation.scheme script="client-test.scm"/>
         <service name="client">
             <t:binding.http uri="client"/>
         </service>

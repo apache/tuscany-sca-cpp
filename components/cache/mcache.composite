@@ -23,7 +23,7 @@
   name="mcache">
         
     <component name="mcache">
-        <t:implementation.cpp uri=".libs/libmcache"/>
+        <implementation.cpp path=".libs" library="libmcache"/>
         <service name="mcache">
             <t:binding.http uri="mcache"/>
         </service>

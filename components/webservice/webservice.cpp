@@ -34,9 +34,9 @@ namespace tuscany {
 namespace webservice {
 
 /**
- * Evaluate a Web service function / operation.
+ * Apply a Web service function / operation.
  */
-const failable<value> eval(const value& func, unused const list<value>& params) {
+const failable<value> apply(const value& func, unused const list<value>& params) {
     return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
 }
 
@@ -45,8 +45,8 @@ const failable<value> eval(const value& func, unused const list<value>& params) 
 
 extern "C" {
 
-const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
-    return tuscany::webservice::eval(car(params), cdr(params));
+const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
+    return tuscany::webservice::apply(car(params), cdr(params));
 }
 
 }

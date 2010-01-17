@@ -23,7 +23,7 @@
 #define tuscany_modcpp_hpp
 
 /**
- * Evaluation functions used by mod-eval to evaluate implementation.cpp
+ * Evaluation functions used by mod-eval to evaluate C++
  * component implementations.
  */
 
@@ -32,6 +32,7 @@
 
 #include "function.hpp"
 #include "list.hpp"
+#include "element.hpp"
 #include "value.hpp"
 #include "monad.hpp"
 #include "dynlib.hpp"
@@ -43,31 +44,35 @@ namespace server {
 namespace modcpp {
 
 /**
- * Evaluate a C++ component implementation function.
+ * Apply a C++ component implementation function.
  */
-struct evalImplementation {
+struct applyImplementation {
     const lib ilib;
     const lambda<value(const list<value>&)> impl;
     const list<value> px;
-    evalImplementation(const lib& ilib, const lambda<value(const list<value>&)>& impl, const list<value>& px) : ilib(ilib), impl(impl), px(px) {
+    applyImplementation(const lib& ilib, const lambda<value(const list<value>&)>& impl, const list<value>& px) : ilib(ilib), impl(impl), px(px) {
     }
     const value operator()(const list<value>& params) const {
-        debug(params, "modeval::cpp::evalImplementation::input");
+        debug(params, "modeval::cpp::applyImplementation::input");
         const value val = impl(append(params, px));
-        debug(val, "modeval::cpp::evalImplementation::result");
+        debug(val, "modeval::cpp::applyImplementation::result");
         return val;
     }
 };
 
 /**
- * Read a C++ component implementation.
+ * Evaluate a C++ component implementation and convert it to
+ * an applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > readImplementation(const string& path, const list<value>& px) {
-    const lib ilib(*(new (gc_new<lib>()) lib(path + dynlibExt)));
-    const failable<lambda<value(const list<value>&)> > impl(dynlambda<value(const list<value>&)>("eval", ilib));
-    if (!hasContent(impl))
-        return impl;
-    return lambda<value(const list<value>&)>(evalImplementation(ilib, content(impl), px));
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+    const value ipath(attributeValue("path", impl));
+    const value iname(attributeValue("library", impl));
+    const string fpath(isNil(ipath)? path + iname : path + ipath + "/" + iname);
+    const lib ilib(*(new (gc_new<lib>()) lib(fpath + dynlibExt)));
+    const failable<lambda<value(const list<value>&)> > evalf(dynlambda<value(const list<value>&)>("apply", ilib));
+    if (!hasContent(evalf))
+        return evalf;
+    return lambda<value(const list<value>&)>(applyImplementation(ilib, content(evalf), px));
 }
 
 }

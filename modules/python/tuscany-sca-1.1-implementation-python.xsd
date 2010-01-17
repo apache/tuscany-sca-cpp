@@ -34,7 +34,7 @@
                     <any namespace="##targetNamespace" processContents="lax" 
                     	minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="location" type="anyURI" use="required"/>
+                <attribute name="script" type="anyURI" use="required"/>
                 <anyAttribute namespace="##any" processContents="lax"/>
             </extension>
         </complexContent>

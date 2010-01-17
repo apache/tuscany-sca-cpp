@@ -25,16 +25,16 @@
 
     <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200903" schemaLocation="sca-1.1-cd04.xsd"/>
 
-    <element name="implementation.eval" type="t:EvalImplementation" substitutionGroup="sca:implementation"/>
+    <element name="implementation.scheme" type="t:SchemeImplementation" substitutionGroup="sca:implementation"/>
     	
-    <complexType name="EvalImplementation">
+    <complexType name="SchemeImplementation">
         <complexContent>
             <extension base="sca:Implementation">
                 <sequence>
                     <any namespace="##targetNamespace" processContents="lax" 
                     	minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
-                <attribute name="location" type="anyURI" use="required"/>
+                <attribute name="script" type="anyURI" use="required"/>
                 <anyAttribute namespace="##any" processContents="lax"/>
             </extension>
         </complexContent>

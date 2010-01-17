@@ -23,7 +23,7 @@
 #define tuscany_modpython_hpp
 
 /**
- * Evaluation functions used by mod-eval to evaluate implementation.python
+ * Evaluation functions used by mod-eval to evaluate Python
  * component implementations.
  */
 
@@ -41,18 +41,18 @@ namespace server {
 namespace modpython {
 
 /**
- * Evaluate a script component implementation function.
+ * Apply a Python component implementation function.
  */
-struct evalImplementation {
+struct applyImplementation {
     PyObject* impl;
     const list<value> px;
-    evalImplementation(PyObject* impl, const list<value>& px) : impl(impl), px(px) {
+    applyImplementation(PyObject* impl, const list<value>& px) : impl(impl), px(px) {
     }
     const value operator()(const list<value>& params) const {
         const value expr = append<value>(params, px);
-        debug(expr, "modeval::python::evalImplementation::input");
+        debug(expr, "modeval::python::applyImplementation::input");
         const failable<value> val = python::evalScript(expr, impl);
-        debug(val, "modeval::python::evalImplementation::result");
+        debug(val, "modeval::python::applyImplementation::result");
         if (!hasContent(val))
             return mklist<value>(value(), reason(val));
         return mklist<value>(content(val));
@@ -60,16 +60,18 @@ struct evalImplementation {
 };
 
 /**
- * Read a script component implementation.
+ * Evaluate a Python component implementation and convert it to an applicable
+ * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > readImplementation(const string& path, const list<value>& px) {
-    ifstream is(path);
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+    const string fpath(path + attributeValue("script", impl));
+    ifstream is(fpath);
     if (fail(is))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
-    const failable<PyObject*> impl = python::readScript(path, is);
-    if (!hasContent(impl))
-        return mkfailure<lambda<value(const list<value>&)> >(reason(impl));
-    return lambda<value(const list<value>&)>(evalImplementation(content(impl), px));
+        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
+    const failable<PyObject*> script = python::readScript(fpath, is);
+    if (!hasContent(script))
+        return mkfailure<lambda<value(const list<value>&)> >(reason(script));
+    return lambda<value(const list<value>&)>(applyImplementation(content(script), px));
 }
 
 }

@@ -23,14 +23,14 @@
   name="domain-test">
         
     <component name="python-test">
-        <t:implementation.python uri="server-test.py"/>
+        <t:implementation.python script="server-test.py"/>
         <service name="test">
             <t:binding.http uri="python"/>
         </service>
     </component>     
 
     <component name="client-test">
-        <t:implementation.python uri="client-test.py"/>
+        <t:implementation.python script="client-test.py"/>
         <service name="client">
             <t:binding.http uri="client"/>
         </service>

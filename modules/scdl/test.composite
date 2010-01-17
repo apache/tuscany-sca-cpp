@@ -23,7 +23,7 @@
   name="store">
         
     <component name="Store">
-        <t:implementation.widget uri="store.html"/>
+        <t:implementation.scheme script="store.scm"/>
         <service name="Widget">
             <t:binding.http uri="/store"/>
         </service>
@@ -39,7 +39,7 @@
     </component>
     
     <component name="Catalog">
-        <t:implementation.scheme uri="fruits-catalog.scm"/> 
+        <t:implementation.scheme script="fruits-catalog.scm"/> 
         <property name="currencyCode">USD</property>
         <service name="Catalog">
             <t:binding.jsonrpc/>
@@ -48,20 +48,17 @@
     </component> 
      
     <component name="ShoppingCart">
-        <t:implementation.scheme uri="shopping-cart.scm"/>
+        <t:implementation.scheme script="shopping-cart.scm"/>
         <service name="Cart">
             <t:binding.atom uri="/ShoppingCart"/>
         </service>        
         <service name="Total">
             <t:binding.jsonrpc/>
         </service>        
-        <reference name="cache">
-            <binding.memcached uri="localhost:11311"/>
-        </reference>
     </component>
     
     <component name="CurrencyConverter">
-        <t:implementation.scheme uri="currency-converter.scm"/>
+        <t:implementation.scheme script="currency-converter.scm"/>
     </component>     
 
 </composite>

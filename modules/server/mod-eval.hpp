@@ -279,11 +279,10 @@ const list<value> proxies(const list<value>& refs, const string& base) {
     return cons(mkproxy(car(refs), base), proxies(cdr(refs), base));
 }
 
-extern const failable<lambda<value(const list<value>&)> > readImplementation(const string& itype, const string& path, const list<value>& px);
+extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px);
 
 const value confImplementation(DirConf& dc, ServerConf& sc, server_rec& server, const value& comp) {
     const value impl = scdl::implementation(comp);
-    const string path = dc.contributionPath + string(scdl::uri(impl));
 
     // Convert component references to configured proxy lambdas
     ostringstream base;
@@ -296,8 +295,9 @@ const value confImplementation(DirConf& dc, ServerConf& sc, server_rec& server, 
         base << sc.wiringServerName << "/references/" << string(scdl::name(comp)) << "/";
     const list<value> px(proxies(scdl::references(comp), str(base)));
 
-    // Read and configure the implementation
-    const failable<lambda<value(const list<value>&)> > cimpl(readImplementation(elementName(impl), path, px));
+    // Evaluate the component implementation and convert it to an
+    // applicable lambda function
+    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(dc.contributionPath, impl, px));
     if (!hasContent(cimpl))
         return reason(cimpl);
     return content(cimpl);

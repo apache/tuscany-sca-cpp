@@ -23,7 +23,7 @@
 #define tuscany_modscheme_hpp
 
 /**
- * Evaluation functions used by mod-eval to evaluate implementation.scheme
+ * Evaluation functions used by mod-eval to evaluate Scheme
  * component implementations.
  */
 
@@ -50,19 +50,19 @@ const list<value> primitiveProcedures(const list<value>& l) {
 }
 
 /**
- * Evaluate a scheme component implementation function.
+ * Apply a Scheme component implementation function.
  */
-struct evalImplementation {
+struct applyImplementation {
     const value impl;
     const list<value> px;
-    evalImplementation(const value& impl, const list<value>& px) : impl(impl), px(scheme::quotedParameters(primitiveProcedures(px))) {
+    applyImplementation(const value& impl, const list<value>& px) : impl(impl), px(scheme::quotedParameters(primitiveProcedures(px))) {
     }
     const value operator()(const list<value>& params) const {
         const value expr = cons<value>(car(params), append(scheme::quotedParameters(cdr(params)), px));
-        debug(expr, "modeval::scheme::evalImplementation::input");
+        debug(expr, "modeval::scheme::applyImplementation::input");
         scheme::Env env = scheme::setupEnvironment();
         const value val = scheme::evalScript(expr, impl, env);
-        debug(val, "modeval::scheme::evalImplementation::result");
+        debug(val, "modeval::scheme::applyImplementation::result");
         if (isNil(val))
             return mklist<value>(value(), string("Could not evaluate expression"));
         return mklist<value>(val);
@@ -70,16 +70,18 @@ struct evalImplementation {
 };
 
 /**
- * Read a scheme component implementation.
+ * Evaluate a Scheme component implementation and convert it to an
+ * applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > readImplementation(const string& path, const list<value>& px) {
-    ifstream is(path);
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+    const string fpath(path + attributeValue("script", impl));
+    ifstream is(fpath);
     if (fail(is))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
-    const value impl = scheme::readScript(is);
-    if (isNil(impl))
-        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + path);
-    return lambda<value(const list<value>&)>(evalImplementation(impl, px));
+        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
+    const value script = scheme::readScript(is);
+    if (isNil(script))
+        return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
+    return lambda<value(const list<value>&)>(applyImplementation(script, px));
 }
 
 }

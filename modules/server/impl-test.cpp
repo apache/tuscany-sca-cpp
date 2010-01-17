@@ -58,7 +58,7 @@ const failable<value> echo(const list<value>& params) {
 
 extern "C" {
 
-const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
+const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
     if (func == "get")
         return tuscany::server::get(cdr(params));

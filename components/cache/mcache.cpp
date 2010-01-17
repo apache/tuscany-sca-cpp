@@ -89,7 +89,7 @@ const failable<value> del(const list<value>& params) {
 
 extern "C" {
 
-const tuscany::value eval(const tuscany::list<tuscany::value>& params) {
+const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
     if (func == "get")
         return tuscany::cache::get(cdr(params));
