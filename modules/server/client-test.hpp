@@ -101,8 +101,8 @@ struct evalLoop {
     }
 };
 
-const value blob(string(3000, 'A'));
-const list<value> blobs = mklist(blob, blob, blob, blob, blob);
+const value blob(string(2048, 'A'));
+const list<value> blobs = mklist(blob, blob);
 
 struct blobEvalLoop {
     const string uri;
@@ -181,9 +181,6 @@ const bool testPostPerf() {
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "blob1" + blob)
             + (list<value>() + "blob2" + blob)
-            + (list<value>() + "blob3" + blob)
-            + (list<value>() + "blob4" + blob)
-            + (list<value>() + "blob5" + blob)
             + (list<value>() + "price" + string("$2.99"));
         const list<value> val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
         const lambda<bool()> pl = postBlobLoop(testURI, val, ch);

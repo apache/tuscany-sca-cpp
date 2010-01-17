@@ -87,19 +87,19 @@ public:
  */
 class gc_pool {
 public:
-    gc_pool() : p(NULL) {
+    gc_pool() : apr_pool(NULL) {
     }
 
-    gc_pool(apr_pool_t* p) : p(p) {
+    gc_pool(apr_pool_t* p) : apr_pool(p) {
     }
 
-    gc_pool(const gc_pool& pool) : p(pool.p) {
+    gc_pool(const gc_pool& pool) : apr_pool(pool.apr_pool) {
     }
 
     gc_pool& operator=(const gc_pool& pool) {
         if (this == &pool)
             return *this;
-        p = pool.p;
+        apr_pool = pool.apr_pool;
         return *this;
     }
 
@@ -108,14 +108,14 @@ private:
     friend class gc_global_pool_t;
     friend class gc_scoped_pool;
 
-    apr_pool_t* p;
+    apr_pool_t* apr_pool;
 };
 
 /**
  * Return APR pool used by a gc_pool.
  */
 apr_pool_t* pool(const gc_pool& pool) {
-    return pool.p;
+    return pool.apr_pool;
 }
 
 /**
@@ -148,14 +148,15 @@ apr_pool_t* gc_pool_stack = NULL;
  * Return the current memory pool.
  */
 apr_pool_t* gc_current_pool() {
-    apr_pool_t* p = gc_pool_stack;
-    if (p != NULL)
-        return p;
+    apr_pool_t* apr_pool = gc_pool_stack;
+    if (apr_pool != NULL)
+        return apr_pool;
 
     // Create a parent pool for the current thread
-    apr_pool_create(&p, NULL);
-    gc_pool_stack = p;
-    return p;
+    apr_pool_create(&apr_pool, NULL);
+    assert(apr_pool != NULL);
+    gc_pool_stack = apr_pool;
+    return apr_pool;
 }
 
 /**
@@ -184,22 +185,23 @@ class gc_scoped_pool : public gc_pool {
 public:
 
     gc_scoped_pool() : gc_pool(NULL), prev(gc_current_pool()), owner(true) {
-        apr_pool_create(&p, NULL);
-        gc_push_pool(p);
+        apr_pool_create(&apr_pool, NULL);
+        assert(apr_pool != NULL);
+        gc_push_pool(apr_pool);
     }
 
     gc_scoped_pool(apr_pool_t* pool) : gc_pool(pool), prev(gc_current_pool()), owner(false) {
-        gc_push_pool(p);
+        gc_push_pool(apr_pool);
     }
 
     ~gc_scoped_pool() {
         if (owner)
-            apr_pool_destroy(p);
+            apr_pool_destroy(apr_pool);
         gc_pop_pool(prev);
     }
 
 private:
-    gc_scoped_pool(const unused gc_scoped_pool& pool) : gc_pool(pool.p), prev(NULL), owner(false) {
+    gc_scoped_pool(const unused gc_scoped_pool& pool) : gc_pool(pool.apr_pool), prev(NULL), owner(false) {
     }
 
     apr_pool_t* prev;
@@ -217,9 +219,10 @@ template<typename T> apr_status_t gc_pool_cleanup(void* v) {
 }
 
 template<typename T> T* gc_new(apr_pool_t* p) {
-    void* m = apr_palloc(p, sizeof(T));
-    apr_pool_cleanup_register(p, m, gc_pool_cleanup<T>, apr_pool_cleanup_null) ;
-    return static_cast<T*>(m);
+    void* gc_new_ptr = apr_palloc(p, sizeof(T));
+    assert(gc_new_ptr != NULL);
+    apr_pool_cleanup_register(p, gc_new_ptr, gc_pool_cleanup<T>, apr_pool_cleanup_null) ;
+    return static_cast<T*>(gc_new_ptr);
 }
 
 template<typename T> T* gc_new(const gc_pool& p) {
@@ -240,10 +243,11 @@ template<typename T> apr_status_t gc_pool_acleanup(void* v) {
 }
 
 template<typename T> T* gc_anew(apr_pool_t* p, int n) {
-    int* m = static_cast<int*>(apr_palloc(p, sizeof(int) + sizeof(T[n])));
-    *m = n;
-    apr_pool_cleanup_register(p, m, gc_pool_acleanup<T>, apr_pool_cleanup_null) ;
-    return (T*)(m + 1);
+    int* gc_anew_ptr = static_cast<int*>(apr_palloc(p, sizeof(int) + sizeof(T[n])));
+    assert(gc_anew_ptr != NULL);
+    *gc_anew_ptr = n;
+    apr_pool_cleanup_register(p, gc_anew_ptr, gc_pool_acleanup<T>, apr_pool_cleanup_null) ;
+    return (T*)(gc_anew_ptr + 1);
 }
 
 template<typename T> T* gc_anew(const gc_pool& p, int n) {
@@ -258,7 +262,9 @@ template<typename T> T* gc_anew(int n) {
  * Allocate an array of chars.
  */
 char* gc_cnew(apr_pool_t* p, int n) {
-    return static_cast<char*>(apr_palloc(p, n));
+    char* gc_cnew_ptr = static_cast<char*>(apr_palloc(p, n));
+    assert(gc_cnew_ptr != NULL);
+    return gc_cnew_ptr;
 }
 
 char* gc_cnew(int n) {

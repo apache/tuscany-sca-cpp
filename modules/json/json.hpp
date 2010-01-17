@@ -370,7 +370,7 @@ const failable<list<string> > writeJSON(const list<value>& l, const JSONContext&
  * Convert a function + params to a JSON request.
  */
 const failable<list<string> > jsonRequest(const value& id, const value& func, const value& params, json::JSONContext& cx) {
-    const list<value> r = mklist<value>(mklist<value>("id", id), mklist<value>("method", func), mklist<value>("params", params));
+    const list<value> r = mklist<value>(mklist<value>("id", id), mklist<value>("method", string(func)), mklist<value>("params", params));
     return writeJSON(valuesToElements(r), cx);
 }
 
