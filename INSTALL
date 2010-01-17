@@ -37,7 +37,7 @@ libcurl4-7.19.5
 
 JSON
 SpiderMonkey libmozjs
-(included in xulrunner-1.9.1.5)
+(included in xulrunner-1.9.1.7)
 
 Python
 libpython2.6
@@ -80,8 +80,8 @@ HTTPD worker MPM in $HOME/httpd-2-2.13-bin:
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
 --with-curl=/usr --with-libxml2=/usr \
---with-js-include=/usr/include/xulrunner-1.9.1.5/unstable \
---with-js-lib=/usr/lib/xulrunner-1.9.1.5 \
+--with-js-include=/usr/include/xulrunner-1.9.1.7/unstable \
+--with-js-lib=/usr/lib/xulrunner-1.9.1.7 \
 --enable-python --with-python=/usr \
 --enable-java --with-java=/usr/lib/jvm/default-java \
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
