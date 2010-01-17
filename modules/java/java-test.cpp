@@ -53,9 +53,6 @@ bool testEvalExpr() {
 }
 
 const value add(const list<value>& args) {
-    if (car(args) == "interface")
-        return "test.Adder";
-
     assert(car(args) == "add");
     const double x = cadr(args);
     const double y = caddr(args);

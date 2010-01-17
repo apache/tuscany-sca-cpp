@@ -1,4 +1,5 @@
-/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,25 +16,27 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- */
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200903"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://domain/test"
+  name="domain-test">
+        
+    <component name="java-test">
+        <implementation.java class="test.ServerImpl"/>
+        <service name="test">
+            <t:binding.http uri="java"/>
+        </service>
+    </component>     
 
-package org.apache.tuscany;
+    <component name="client-test">
+        <implementation.java class="test.ClientImpl"/>
+        <service name="client">
+            <t:binding.http uri="client"/>
+        </service>
+        <reference name="ref" target="java-test">
+            <t:binding.http/>
+        </reference>
+    </component>
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
-public class InvocationHandler implements java.lang.reflect.InvocationHandler {
-    final long lambda;
-
-    InvocationHandler(final long lambda) {
-        this.lambda = lambda;
-    }
-    
-    public static Object valueOf(final Class<?> iface, final long lambda) {
-        return Proxy.newProxyInstance(iface.getClassLoader(), new Class[]{iface}, new InvocationHandler(lambda));
-    }
-
-    @Override
-    public native Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable;
-
-}
+</composite>

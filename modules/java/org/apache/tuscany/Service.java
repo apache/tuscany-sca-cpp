@@ -19,21 +19,20 @@
 
 package org.apache.tuscany;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
-public class InvocationHandler implements java.lang.reflect.InvocationHandler {
-    final long lambda;
-
-    InvocationHandler(final long lambda) {
-        this.lambda = lambda;
-    }
+public interface Service {
     
-    public static Object valueOf(final Class<?> iface, final long lambda) {
-        return Proxy.newProxyInstance(iface.getClassLoader(), new Class[]{iface}, new InvocationHandler(lambda));
-    }
-
-    @Override
-    public native Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable;
-
+    String post(Object[] item);
+    
+    Object[] get(String id);
+    
+    Object[] getall();
+    
+    boolean put(String id, Object[] item);
+    
+    boolean delete(String id);
+    
+    boolean deleteall();
+    
+    <T> T apply(Object... params);
+    
 }

@@ -17,23 +17,36 @@
  * under the License.    
  */
 
-package org.apache.tuscany;
+package test;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+public class ClientImpl {
 
-public class InvocationHandler implements java.lang.reflect.InvocationHandler {
-    final long lambda;
-
-    InvocationHandler(final long lambda) {
-        this.lambda = lambda;
+    public String echo(String x, Server server) {
+        return server.echo(x);
     }
     
-    public static Object valueOf(final Class<?> iface, final long lambda) {
-        return Proxy.newProxyInstance(iface.getClassLoader(), new Class[]{iface}, new InvocationHandler(lambda));
+    public Object[] getall(Server server) {
+        return server.getall();
     }
-
-    @Override
-    public native Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable;
-
+    
+    public Object[] get(String id, Server server) {
+        return server.get(id);
+    }
+    
+    public String post(Object[] item, Server server) {
+        return server.post(item);
+    }
+    
+    public Boolean put(String id, Object[] item, Server server) {
+        return server.put(id, item);
+    }
+    
+    public Boolean deleteall(Server server) {
+        return server.deleteall();
+    }
+    
+    public Boolean delete(String id, Server server) {
+        return server.delete(id);
+    }
+    
 }

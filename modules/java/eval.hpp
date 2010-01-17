@@ -43,20 +43,40 @@ class JavaRuntime {
 public:
     JavaRuntime() {
 
-        // Create a JVM
-        JavaVMInitArgs args;
-        args.version = JNI_VERSION_1_6;
-        args.ignoreUnrecognized = JNI_FALSE;
-        JavaVMOption options[1];
-        options[0].optionString = const_cast<char*>("-Djava.class.path=.");
-        args.options = options;
-        args.nOptions = 1;
-        JNI_CreateJavaVM(&jvm, (void**)&env, &args);
+        // Get existing JVM
+        jsize nvms = 0;
+        JNI_GetCreatedJavaVMs(&jvm, 1, &nvms);
+        if (nvms == 0) {
+
+            // Create a new JVM
+            JavaVMInitArgs args;
+            args.version = JNI_VERSION_1_6;
+            args.ignoreUnrecognized = JNI_FALSE;
+            JavaVMOption options[1];
+            options[0].optionString = const_cast<char*>("-Djava.class.path=.");
+            args.options = options;
+            args.nOptions = 1;
+            JNI_CreateJavaVM(&jvm, (void**)&env, &args);
+
+            // Register our native invocation handler function
+            invokerClass = env->FindClass("org/apache/tuscany/InvocationHandler");
+            JNINativeMethod nm;
+            nm.name = const_cast<char*>("invoke");
+            nm.signature = const_cast<char*>("(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;");
+            nm.fnPtr = (void*)nativeInvoke;
+            env->RegisterNatives(invokerClass, &nm, 1);
+
+        } else {
+
+            // Just hook to existing JVM
+            jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
+            invokerClass = env->FindClass("org/apache/tuscany/InvocationHandler");
+        }
 
         // Capture JVM standard IO
         setupIO();
 
-        // Lookup the system classes and methods we need
+        // Lookup the classes and methods we need
         classClass = env->FindClass("java/lang/Class");
         methodClass = env->FindClass("java/lang/reflect/Method");
         objectClass = env->FindClass("java/lang/Object");
@@ -70,22 +90,9 @@ public:
         booleanValue = env->GetMethodID(booleanClass, "booleanValue", "()Z");
         declaredMethods = env->GetMethodID(classClass, "getDeclaredMethods", "()[Ljava/lang/reflect/Method;");
         methodName = env->GetMethodID(methodClass, "getName", "()Ljava/lang/String;");
-
-        // Register our native invocation handler native
-        invokerClass = env->FindClass("org/apache/tuscany/InvocationHandler");
+        parameterTypes = env->GetMethodID(methodClass, "getParameterTypes", "()[Ljava/lang/Class;");
         invokerValueOf = env->GetStaticMethodID(invokerClass, "valueOf", "(Ljava/lang/Class;J)Ljava/lang/Object;");
         invokerLambda = env->GetFieldID(invokerClass, "lambda", "J");
-        JNINativeMethod nm;
-        nm.name = const_cast<char*>("invoke");
-        nm.signature = const_cast<char*>("(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;");
-        nm.fnPtr = (void*)nativeInvoke;
-        env->RegisterNatives(invokerClass, &nm, 1);
-    }
-
-    ~JavaRuntime() {
-        if (jvm == NULL)
-            return;
-        jvm->DestroyJavaVM();
     }
 
     JavaVM* jvm;
@@ -104,6 +111,7 @@ public:
     jmethodID booleanValue;
     jmethodID declaredMethods;
     jmethodID methodName;
+    jmethodID parameterTypes;
 
     jclass invokerClass;
     jmethodID invokerValueOf;
@@ -125,7 +133,7 @@ string lastException(const JavaRuntime& jr) {
 /**
  * Declare conversion functions.
  */
-const jobject valueToJobject(const JavaRuntime& jr, const value& v);
+const jobject valueToJobject(const JavaRuntime& jr, const value& jtype, const value& v);
 const value jobjectToValue(const JavaRuntime& jr, const jobject o);
 const jobjectArray valuesToJarray(const JavaRuntime& jr, const list<value>& v);
 const list<value> jarrayToValues(const JavaRuntime& jr, const jobjectArray o);
@@ -156,6 +164,22 @@ public:
     javaLambda(const JavaRuntime& jr, const value& iface, const lambda<value(const list<value>&)>& func) : jr(jr), iface(iface), func(func) {
     }
 
+    const value operator()(const list<value>& expr) const {
+        const value& op(car(expr));
+        if (op == "toString") {
+            ostringstream os;
+            os << this;
+            return value(string("org.apache.tuscany.InvocationHandler@") + (c_str(str(os)) + 2));
+        }
+        if (op == "hashCode") {
+            return value((double)(long)this);
+        }
+        if (op == "equals") {
+            return value(cadr(expr) == this);
+        }
+        return func(expr);
+    }
+
     const JavaRuntime& jr;
     const value iface;
     const lambda<value(const list<value>&)> func;
@@ -182,23 +206,18 @@ jobject JNICALL nativeInvoke(JNIEnv* env, jobject self, unused jobject proxy, jo
     const list<value> expr = cons<value>(func, jarrayToValues(jl.jr, args));
 
     // Invoke the lambda function
-    value result = jl.func(expr);
+    value result = jl(expr);
 
     // Convert result to a jobject
-    return valueToJobject(jl.jr, result);
+    return valueToJobject(jl.jr, value(), result);
 }
 
-const jobject mkJavaLambda(const JavaRuntime& jr, const lambda<value(const list<value>&)>& l) {
-
-    // The lambda function is given the opportunity to give us a
-    // Java interface name that it implements, and which will be
-    // used as the type of the Java proxy representing it. If the
-    // lambda function doesn't specify an interface, then the
-    // proxy implements javax.script.Invocable.
-    const value iface = l(mklist<value>("interface"));
+/**
+ * Convert a lambda function to Java proxy.
+ */
+const jobject mkJavaLambda(const JavaRuntime& jr, unused const value& iface, const lambda<value(const list<value>&)>& l) {
     const gc_ptr<javaLambda> jl = new (gc_new<javaLambda>()) javaLambda(jr, iface, l);
-
-    jclass jc = jr.env->FindClass(c_str(jniClassName(string(iface))));
+    jclass jc = (jclass)(long)(double)iface;
     const jobject obj = jr.env->CallStaticObjectMethod(jr.invokerClass, jr.invokerValueOf, jc, (long)(javaLambda*)jl);
     return obj;
 }
@@ -209,7 +228,7 @@ const jobject mkJavaLambda(const JavaRuntime& jr, const lambda<value(const list<
 const jobjectArray valuesToJarrayHelper(const JavaRuntime& jr, jobjectArray a, const list<value>& v, const int i) {
     if (isNil(v))
         return a;
-    jr.env->SetObjectArrayElement(a, i, valueToJobject(jr, car(v)));
+    jr.env->SetObjectArrayElement(a, i, valueToJobject(jr, value(), car(v)));
     return valuesToJarrayHelper(jr, a, cdr(v), i + 1);
 }
 
@@ -221,12 +240,12 @@ const jobjectArray valuesToJarray(const JavaRuntime& jr, const list<value>& v) {
 /**
  * Convert a value to a Java jobject.
  */
-const jobject valueToJobject(const JavaRuntime& jr, const value& v) {
+const jobject valueToJobject(const JavaRuntime& jr, const value& jtype, const value& v) {
     switch (type(v)) {
     case value::List:
         return valuesToJarray(jr, v);
     case value::Lambda:
-        return mkJavaLambda(jr, v);
+        return mkJavaLambda(jr, jtype, v);
     case value::Symbol:
         return jr.env->NewStringUTF(c_str(string("'") + v));
     case value::String:
@@ -243,17 +262,17 @@ const jobject valueToJobject(const JavaRuntime& jr, const value& v) {
 /**
  * Convert a list of values to an array of jvalues.
  */
-const jvalue* valuesToJvaluesHelper(const JavaRuntime& jr, jvalue* a, const list<value>& v) {
+const jvalue* valuesToJvaluesHelper(const JavaRuntime& jr, jvalue* a, const list<value>& types, const list<value>& v) {
     if (isNil(v))
         return a;
-    a->l = valueToJobject(jr, car(v));
-    return valuesToJvaluesHelper(jr, a + 1, cdr(v));
+    a->l = valueToJobject(jr, car(types), car(v));
+    return valuesToJvaluesHelper(jr, a + 1, cdr(types), cdr(v));
 }
 
-const jvalue* valuesToJvalues(const JavaRuntime& jr, const list<value>& v) {
+const jvalue* valuesToJvalues(const JavaRuntime& jr, const list<value>& types, const list<value>& v) {
     const int n = length(v);
     jvalue* a = new (gc_anew<jvalue>(n)) jvalue[n];
-    valuesToJvaluesHelper(jr, a, v);
+    valuesToJvaluesHelper(jr, a, types, v);
     return a;
 }
 
@@ -267,6 +286,8 @@ const list<value> jarrayToValuesHelper(const JavaRuntime& jr, jobjectArray a, co
 }
 
 const list<value> jarrayToValues(const JavaRuntime& jr, jobjectArray o) {
+    if (o == NULL)
+        return list<value>();
     return jarrayToValuesHelper(jr, o, 0, jr.env->GetArrayLength(o));
 }
 
@@ -315,15 +336,30 @@ const value jobjectToValue(const JavaRuntime& jr, const jobject o) {
 }
 
 /**
- * Returns a balanced tree of a class' methods.
+ * Returns a balanced tree of the methods of a class.
  */
+const value parameterTypeToValue(const jobject t) {
+    return value((double)(long)t);
+}
+
+const list<value> parameterTypesToValues(const JavaRuntime& jr, const jobjectArray t, const int i) {
+    if (i == 0)
+        return list<value>();
+    return cons<value>(parameterTypeToValue(jr.env->GetObjectArrayElement(t, i - 1)), parameterTypesToValues(jr, t, i - 1));
+}
+
 const value methodToValue(const JavaRuntime& jr, const jobject m) {
     const jobject s = jr.env->CallObjectMethod(m, jr.methodName);
     const char* c = jr.env->GetStringUTFChars((jstring)s, NULL);
     const string& name = string(c);
     jr.env->ReleaseStringUTFChars((jstring)s, c);
+
     const jmethodID mid = jr.env->FromReflectedMethod(m);
-    return mklist<value>(c_str(name), (double)(long)mid);
+
+    const jobjectArray t = (jobjectArray)jr.env->CallObjectMethod(m, jr.parameterTypes);
+    const list<value> types = reverse(parameterTypesToValues(jr, t, jr.env->GetArrayLength(t)));
+
+    return cons<value>(c_str(name), cons<value>((double)(long)mid, types));
 }
 
 const list<value> methodsToValues(const JavaRuntime& jr, const jobjectArray m, const int i) {
@@ -382,7 +418,7 @@ const failable<value> evalClass(const JavaRuntime& jr, const value& expr, const 
     const jmethodID fid = (jmethodID)(long)(double)cadr(func);
 
     // Convert args to Java jvalues
-    const jvalue *args = valuesToJvalues(jr, cdr<value>(expr));
+    const jvalue *args = valuesToJvalues(jr, cddr(func), cdr<value>(expr));
 
     // Call the Java function
     const jobject result = jr.env->CallObjectMethodA(jc.obj, fid, args);
