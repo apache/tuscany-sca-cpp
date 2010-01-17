@@ -15,11 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = curl-test
+if WANT_JAVA
 
-INCLUDES = -I${HTTPD_INCLUDE}
-
-curl_test_SOURCES = curl-test.cpp
-curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
-
-TESTS = httpd-test http-test
+endif

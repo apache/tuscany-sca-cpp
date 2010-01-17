@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,11 +17,19 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = curl-test
+../../modules/http/httpd-conf tmp 8090 htdocs
+../../modules/server/server-conf tmp
+../../modules/python/python-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
 
-INCLUDES = -I${HTTPD_INCLUDE}
+<Location />
+SCAContribution `pwd`/
+SCAComposite store.composite
+</Location>
+EOF
 
-curl_test_SOURCES = curl-test.cpp
-curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+apachectl -k start -d `pwd`/tmp
 
-TESTS = httpd-test http-test
+mc="memcached -l 127.0.0.1 -m 4 -p 11211"
+$mc &
+

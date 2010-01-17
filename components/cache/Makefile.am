@@ -23,9 +23,9 @@ comp_LTLIBRARIES = libmcache.la
 libmcache_la_SOURCES = mcache.cpp
 
 mcache_test_SOURCES = mcache-test.cpp
-mcache_test_LDADD = -lxml2
+mcache_test_LDFLAGS = -lxml2
 
 client_test_SOURCES = client-test.cpp
-client_test_LDADD = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 TESTS = memcached-test server-test

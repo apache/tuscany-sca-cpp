@@ -18,6 +18,6 @@
 noinst_PROGRAMS = script-test
 
 script_test_SOURCES = script-test.cpp
-script_test_LDADD = -lxml2 -lmozjs
+script_test_LDFLAGS = -lxml2 -lmozjs
 
 TESTS = script-test server-test

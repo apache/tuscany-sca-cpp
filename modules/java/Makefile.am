@@ -17,23 +17,30 @@
 
 datadir=$(prefix)/modules/java
 JAVAROOT = $(top_builddir)/modules/java
+libdir=$(prefix)/lib
 
 if WANT_JAVA
 
-noinst_PROGRAMS = java-test java-shell
+noinst_PROGRAMS = java-test java-shell client-test
+
+lib_LTLIBRARIES = libmod_tuscany_java.la
 
 INCLUDES = -I${JAVA_INCLUDE}
 
+libmod_tuscany_java_la_SOURCES = mod-java.cpp
+libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -lmozjs -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
+
 java_test_SOURCES = java-test.cpp
-java_test_LDADD =  -L${JAVA_LIB} -ljava
-java_test_LDFLAGS = -rpath ${JAVA_LIB} -rpath ${JAVA_LIB}/server
+java_test_LDFLAGS = -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
 
 java_shell_SOURCES = java-shell.cpp
-java_shell_LDADD = -L${JAVA_LIB} -ljava
-java_shell_LDFLAGS = -rpath ${JAVA_LIB} -rpath ${JAVA_LIB}/server
+java_shell_LDFLAGS = -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
 
 noinst_JAVA = org/apache/tuscany/*.java test/*.java
 
-TESTS = java-test
+client_test_SOURCES = client-test.cpp
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+TESTS = java-test server-test
 
 endif

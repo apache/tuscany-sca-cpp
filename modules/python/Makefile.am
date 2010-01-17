@@ -29,16 +29,16 @@ nobase_data_DATA = *.xsd
 INCLUDES = -I${PYTHON_INCLUDE}
 
 libmod_tuscany_python_la_SOURCES = mod-python.cpp
-libmod_tuscany_python_la_LIBADD = -lxml2 -lcurl -lmozjs -L${PYTHON_LIB} -lpython2.6
+libmod_tuscany_python_la_LDFLAGS = -lxml2 -lcurl -lmozjs -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
 
 python_test_SOURCES = python-test.cpp
-python_test_LDADD = -L${PYTHON_LIB} -lpython2.6
+python_test_LDFLAGS = -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
 
 python_shell_SOURCES = python-shell.cpp
-python_shell_LDADD = -L${PYTHON_LIB} -lpython2.6
+python_shell_LDFLAGS = -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
 
 client_test_SOURCES = client-test.cpp
-client_test_LDADD = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 TESTS = python-test server-test
 

@@ -15,11 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = curl-test
+testdir=$(prefix)/test/store-cpp
+test_LTLIBRARIES = libcurrency-converter.la libfruits-catalog.la libshopping-cart.la
 
-INCLUDES = -I${HTTPD_INCLUDE}
+libcurrency_converter_la_SOURCES = currency-converter.cpp
 
-curl_test_SOURCES = curl-test.cpp
-curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+libfruits_catalog_la_SOURCES = fruits-catalog.cpp
 
-TESTS = httpd-test http-test
+libshopping_cart_la_SOURCES = shopping-cart.cpp
+
+TESTS = server-test

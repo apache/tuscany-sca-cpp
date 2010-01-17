@@ -17,13 +17,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Generate a server conf
+# Generate a Python server conf
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 
-mkdir -p $root
-mkdir -p $root/logs
-mkdir -p $root/conf
 cat >>$root/conf/httpd.conf <<EOF
 LoadModule mod_tuscany_eval $here/.libs/libmod_tuscany_python.so
 EOF

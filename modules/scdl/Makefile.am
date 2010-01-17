@@ -18,6 +18,6 @@
 noinst_PROGRAMS = scdl-test
 
 scdl_test_SOURCES = scdl-test.cpp
-scdl_test_LDADD = -lxml2
+scdl_test_LDFLAGS = -lxml2
 
 TESTS = scdl-test

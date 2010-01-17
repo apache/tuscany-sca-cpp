@@ -137,28 +137,26 @@ fi
 # Initialize default GCC C++ and LD options.
 cxxflags=""
 ldflags="${LDFLAGS}"
+defaultlibs="${LIBS}"
 
 # Configure default includes.
 cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE} -I${LIBXML2_INCLUDE} -I${JS_INCLUDE} -I${CURL_INCLUDE}"
 
-# Check for libraries required by all modules and add them to default LIBS variable  
+# Check for libraries required by all modules and add them to LD options.
 AC_MSG_NOTICE([checking for required libraries])
-LIBS="-L${APR_LIB} ${LIBS}"
-AC_CHECK_LIB([apr-1], [apr_pool_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
-AC_CHECK_LIB([aprutil-1], [apr_memcache_replace], [], [AC_MSG_ERROR([couldn't find a suitable libaprutil-1, use --with-apr=PATH])])
-default_LIBS="${LIBS}"
+LIBS="-L${APR_LIB} ${defaultlibs}"
+AC_CHECK_LIB([apr-1], [apr_pool_initialize], [AC_MSG_NOTICE([found])], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
+AC_CHECK_LIB([aprutil-1], [apr_memcache_replace], [AC_MSG_NOTICE([found])], [AC_MSG_ERROR([couldn't find a suitable libaprutil-1, use --with-apr=PATH])])
+ldflags="${ldflags} -L${APR_LIB} -R${APR_LIB} -lapr-1 -laprutil-1"
 
-# Check for libraries only required by some modules.  
-LIBS="-L${CURL_LIB} ${default_LIBS}"
+# Check for libraries only required by some modules and add their search path to LD options.  
+LIBS="-L${CURL_LIB} ${defaultlibs}"
 AC_CHECK_LIB([curl], [curl_global_init], [], [AC_MSG_ERROR([couldn't find a suitable libcurl, use --with-curl=PATH])])
-LIBS="-L${JS_LIB} ${default_LIBS}"
+LIBS="-L${JS_LIB} ${defaultlibs}"
 AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitable libmozjs, use --with-js-lib=PATH])])
-LIBS="-L${LIBXML2_LIB} ${default_LIBS}"
+LIBS="-L${LIBXML2_LIB} ${defaultlibs}"
 AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitable libxml2, use --with-libxml2=PATH])])
-
-# Configure default search path for these libraries.
-LIBS="-L${CURL_LIB} -L${JS_LIB} -L${LIBXML2_LIB} ${default_LIBS}"
-default_LIBS="${LIBS}"
+ldflags="${ldflags} -L${CURL_LIB} -R${CURL_LIB} -L${JS_LIB} -R${JS_LIB} -L${LIBXML2_LIB} -R${LIBXML2_LIB}"
 
 # Check for required header files.
 AC_MSG_NOTICE([checking for header files])
@@ -236,9 +234,8 @@ AC_ARG_ENABLE(threads, [AS_HELP_STRING([--enable-threads], [compile for multi-th
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_threads}" = "true"; then
-  LIBS="${default_LIBS}"
   AC_CHECK_LIB([pthread], [pthread_create], [], [AC_MSG_ERROR([couldn't find a suitable libpthread])])
-  LIBS="${default_LIBS}"
+  LIBS="${defaultlibs}"
   cxxflags="${cxxflags} -D_REENTRANT"
   ldflags="${ldflags} -lpthread"
   AM_CONDITIONAL([WANT_THREADS], true)
@@ -246,10 +243,6 @@ if test "${want_threads}" = "true"; then
 else
   AM_CONDITIONAL([WANT_THREADS], false)
 fi
-
-# Configure GCC C++ and LD options.
-AC_SUBST([CXXFLAGS], ["${cxxflags}"])
-AC_SUBST([LDFLAGS], ["${ldflags}"])
 
 # Configure exuberant ctags.
 TAGSFILE="`pwd`/tags"
@@ -309,7 +302,6 @@ AC_ARG_ENABLE(python, [AS_HELP_STRING([--enable-python], [enable Python support 
 if test "${want_python}" = "true"; then
   LIBS="-L${PYTHON_LIB} ${default_LIBS}"
   AC_CHECK_LIB([python2.6], [Py_Initialize], [], [AC_MSG_ERROR([couldn't find a suitable libpython2.6, use --with-python=PATH])])
-  LIBS="${default_LIBS}"
   AM_CONDITIONAL([WANT_PYTHON], true)
   AC_DEFINE([WANT_PYTHON], 1, [enable Python support])
 else
@@ -346,7 +338,6 @@ AC_ARG_ENABLE(java, [AS_HELP_STRING([--enable-java], [enable Java support [defau
 if test "${want_java}" = "true"; then
   LIBS="-L${JAVA_LIB} ${default_LIBS}"
   #AC_CHECK_LIB([java], [JNI_OnLoad], [], [AC_MSG_ERROR([couldn't find a suitable libjava, use --with-java=PATH])])
-  LIBS="${default_LIBS}"
   AC_PROG_JAVAC
   AC_PROG_JAR
   AM_CONDITIONAL([WANT_JAVA], true)
@@ -385,12 +376,16 @@ AC_ARG_ENABLE(webservice, [AS_HELP_STRING([--enable-webservice], [enable Web ser
 if test "${want_webservice}" = "true"; then
   LIBS="-L${AXIS2C_LIB} ${default_LIBS}"
   AC_CHECK_LIB([axis2_engine], [axis2_svc_client_create], [], [AC_MSG_ERROR([couldn't find a suitable libaxis2_engine, use --with-axis2c=PATH])])
-  LIBS="${default_LIBS}"
   AM_CONDITIONAL([WANT_WEBSERVICE], true)
   AC_DEFINE([WANT_WEBSERVICE], 1, [enable Web service support])
 else
   AM_CONDITIONAL([WANT_WEBSERVICE], false)
 fi
+
+# Configure GCC C++ and LD options.
+AC_SUBST([CXXFLAGS], ["${cxxflags}"])
+AC_SUBST([LDFLAGS], ["${ldflags}"])
+LIBS="${defaultlibs}"
 
 AC_CONFIG_FILES([Makefile
                  kernel/Makefile
@@ -410,8 +405,11 @@ AC_CONFIG_FILES([Makefile
                  samples/Makefile
                  test/Makefile
                  test/store-scheme/Makefile
+                 test/store-cpp/Makefile
                  test/store-python/Makefile
+                 test/store-java/Makefile
                  doc/Makefile
                  doc/Doxyfile
                  ])
 AC_OUTPUT
+

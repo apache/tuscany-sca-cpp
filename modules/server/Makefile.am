@@ -23,10 +23,10 @@ lib_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
 INCLUDES = -I${HTTPD_INCLUDE}
 
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
-libmod_tuscany_eval_la_LIBADD = -lxml2 -lcurl -lmozjs
+libmod_tuscany_eval_la_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 libmod_tuscany_wiring_la_SOURCES = mod-wiring.cpp
-libmod_tuscany_wiring_la_LIBADD = -lxml2 -lcurl -lmozjs
+libmod_tuscany_wiring_la_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 testdir=$(prefix)/test
 test_LTLIBRARIES = libimpl-test.la
@@ -34,6 +34,6 @@ test_LTLIBRARIES = libimpl-test.la
 libimpl_test_la_SOURCES = impl-test.cpp
 
 client_test_SOURCES = client-test.cpp
-client_test_LDADD = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 TESTS = httpd-test server-test wiring-test

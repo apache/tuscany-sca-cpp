@@ -18,6 +18,6 @@
 noinst_PROGRAMS = atom-test
 
 atom_test_SOURCES = atom-test.cpp
-atom_test_LDADD = -lxml2
+atom_test_LDFLAGS = -lxml2
 
 TESTS = atom-test

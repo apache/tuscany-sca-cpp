@@ -34,9 +34,9 @@ mem_test_SOURCES = mem-test.cpp
 parallel_test_SOURCES = parallel-test.cpp
 
 xml_test_SOURCES = xml-test.cpp
-xml_test_LDADD = -lxml2
+xml_test_LDFLAGS = -lxml2
 
 xsd_test_SOURCES = xsd-test.cpp
-xsd_test_LDADD = -lxml2
+xsd_test_LDFLAGS = -lxml2
 
 TESTS = string-test kernel-test mem-test parallel-test xml-test

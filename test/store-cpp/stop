@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,11 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = curl-test
+apachectl -k stop -d `pwd`/tmp
+mc="memcached -l 127.0.0.1 -m 4 -p 11211"
+kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`
 
-INCLUDES = -I${HTTPD_INCLUDE}
-
-curl_test_SOURCES = curl-test.cpp
-curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
-
-TESTS = httpd-test http-test

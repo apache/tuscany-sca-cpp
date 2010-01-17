@@ -25,13 +25,13 @@ compdir=$(prefix)/components/webservice
 comp_LTLIBRARIES = libwebservice.la
 
 libwebservice_la_SOURCES = webservice.cpp
-libwebservice_la_LIBADD = -lxml2 -L${AXIS2C_LIB} -laxis2_engine
+libwebservice_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
 
 webservice_test_SOURCES = webservice-test.cpp
-webservice_test_LDADD = -lxml2 -L${AXIS2C_LIB} -laxis2_engine
+webservice_test_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
 
 client_test_SOURCES = client-test.cpp
-client_test_LDADD = -lxml2 -lcurl -lmozjs
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 TESTS = webservice-test client-test
 

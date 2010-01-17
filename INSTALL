@@ -39,8 +39,11 @@ JSON
 SpiderMonkey libmozjs
 (included in xulrunner-1.9.1.7)
 
-Python
+Python (optional)
 libpython2.6
+
+Java (optional)
+a Java 6 development kit including jni.h and libjava
 
 
 To configure the Tuscany SCA build do this:
@@ -74,8 +77,8 @@ in the configure help:
 
 
 Here's an example configuration, tested on Ubuntu 9.10, with development
-dependencies installed in the standard directories and a build of the
-HTTPD worker MPM in $HOME/httpd-2-2.13-bin:
+dependencies installed in the standard directories and HTTPD and Axis2C
+installed under $HOME:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \

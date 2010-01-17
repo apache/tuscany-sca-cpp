@@ -18,6 +18,6 @@
 noinst_PROGRAMS = json-test
 
 json_test_SOURCES = json-test.cpp
-json_test_LDADD = -lmozjs 
+json_test_LDFLAGS = -lmozjs 
 
 TESTS = json-test

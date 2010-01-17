@@ -33,12 +33,15 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- atom             AtomPub encoding support
  |   |   |-- json             JSON-RPC encoding support
  |   |   |-- http             HTTP protocol support
- |   |   |-- eval             Scheme script evaluator
+ |   |   |-- java             Support for Java components
+ |   |   |-- python           Support for Python components
+ |   |   |-- scheme           Support for Scheme components
  |   |   |-- server           HTTPD server integration
  |   |
  |   |-- components           Useful SCA components
  |   |   |-- cache            Memcached-based cache component
  |   |   |-- store            Persistent store component
+ |   |   |-- webservice       Web service gateway component using Axis2C
  |   |
  |   |-- test                 Integration tests
  |   |
