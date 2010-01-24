@@ -15,6 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+JAVAROOT = ${top_builddir}/test/store-java
+
 if WANT_JAVA
+
+AM_JAVACFLAGS = -classpath ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_VERSION}.jar
+
+noinst_JAVA = store/*.java
+
+CLEANFILES = store/*.class
+
+TESTS = server-test
 
 endif

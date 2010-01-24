@@ -22,14 +22,21 @@ package org.apache.tuscany;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-public class InvocationHandler implements java.lang.reflect.InvocationHandler {
+/**
+ * Proxy Invocation handler used to represent SCA component references. 
+ */
+class InvocationHandler implements java.lang.reflect.InvocationHandler {
     final long lambda;
 
     InvocationHandler(final long lambda) {
         this.lambda = lambda;
     }
     
-    public static Object valueOf(final Class<?> iface, final long lambda) {
+    /**
+     * Create a proxy for an interface and the lambda function representing
+     * an SCA component reference.
+     */
+    static Object valueOf(final Class<?> iface, final long lambda) {
         return Proxy.newProxyInstance(iface.getClassLoader(), new Class[]{iface}, new InvocationHandler(lambda));
     }
 

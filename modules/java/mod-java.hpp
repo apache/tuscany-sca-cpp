@@ -63,9 +63,9 @@ struct applyImplementation {
  * Evaluate a Java component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(unused const string& path, const value& impl, const list<value>& px) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
     const string cn(attributeValue("class", impl));
-    const failable<java::JavaClass> jc = java::readClass(java::javaRuntime, cn);
+    const failable<java::JavaClass> jc = java::readClass(java::javaRuntime, path, cn);
     if (!hasContent(jc))
         return mkfailure<lambda<value(const list<value>&)> >(reason(jc));
     return lambda<value(const list<value>&)>(applyImplementation(content(jc), px));

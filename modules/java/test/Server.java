@@ -23,13 +23,13 @@ public interface Server {
 
     String echo(String x);
     
-    Object[] getall();
+    Iterable<?> getall();
     
-    Object[] get(String id);
+    Iterable<?> get(String id);
     
-    String post(Object[] item);
+    String post(Iterable<?> item);
     
-    Boolean put(String id, Object[] entry);
+    Boolean put(String id, Iterable<?> entry);
     
     Boolean deleteall();
     

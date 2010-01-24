@@ -24,3 +24,4 @@ root=`readlink -f $1`
 cat >>$root/conf/httpd.conf <<EOF
 LoadModule mod_tuscany_eval $here/.libs/libmod_tuscany_java.so
 EOF
+

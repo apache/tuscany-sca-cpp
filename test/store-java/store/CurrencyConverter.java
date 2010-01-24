@@ -17,30 +17,12 @@
  * under the License.    
  */
 
-package test;
+package store;
 
-import java.util.List;
-import java.util.ArrayList;
+public interface CurrencyConverter {
+    
+    Double convert(String from, String to, Double amount);
 
-public class CalcImpl {
-    
-    public Double add(Double x, Double y, Adder adder) {
-        return adder.add(x, y);
-    }
-    
-    public Double mult(Double x, Double y) {
-        return x * y;
-    }
-    
-    public Boolean even(Double x) {
-        return (double)(((int)(double)x / 2) * 2) == (double)x;
-    }
-    
-    public Iterable<Double> square(Iterable<Double> l) {
-        List r = new ArrayList();
-        for (Double x: l)
-            r.add(x * x);
-        return r;
-    }
+    String symbol(String currency);
     
 }

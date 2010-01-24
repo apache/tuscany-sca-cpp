@@ -19,20 +19,45 @@
 
 package org.apache.tuscany;
 
+/**
+ * Interface used to represent SCA component references providing both REST
+ * access to a resource and function application.
+ */
 public interface Service {
     
-    String post(Object[] item);
+    /**
+     * Post a new item to a resource.
+     */
+    String post(Iterable<?> item);
     
-    Object[] get(String id);
+    /**
+     * Return an item.
+     */
+    Iterable<?> get(String id);
     
-    Object[] getall();
+    /**
+     * Return all items in the resource.
+     */
+    Iterable<?> getall();
     
-    boolean put(String id, Object[] item);
+    /**
+     * Update am item.
+     */
+    boolean put(String id, Iterable<?> item);
     
+    /**
+     * Delete an item.
+     */
     boolean delete(String id);
     
+    /**
+     * Delete all items in the resource.
+     */
     boolean deleteall();
     
+    /**
+     * Apply a function.
+     */
     <T> T apply(Object... params);
     
 }

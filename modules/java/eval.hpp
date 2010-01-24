@@ -52,31 +52,45 @@ public:
             JavaVMInitArgs args;
             args.version = JNI_VERSION_1_6;
             args.ignoreUnrecognized = JNI_FALSE;
-            JavaVMOption options[1];
-            options[0].optionString = const_cast<char*>("-Djava.class.path=.");
+            JavaVMOption options[3];
             args.options = options;
-            args.nOptions = 1;
-            JNI_CreateJavaVM(&jvm, (void**)&env, &args);
+            args.nOptions = 0;
 
-            // Register our native invocation handler function
-            invokerClass = env->FindClass("org/apache/tuscany/InvocationHandler");
-            JNINativeMethod nm;
-            nm.name = const_cast<char*>("invoke");
-            nm.signature = const_cast<char*>("(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;");
-            nm.fnPtr = (void*)nativeInvoke;
-            env->RegisterNatives(invokerClass, &nm, 1);
+            // Configure classpath
+            const char* envcp = getenv("CLASSPATH");
+            const string cp = string("-Djava.class.path=") + (envcp == NULL? "." : envcp);
+            options[args.nOptions++].optionString = const_cast<char*>(c_str(cp));
+
+#ifdef WANT_MAINTAINER_MODE
+            // Enable assertions
+            options[args.nOptions++].optionString = const_cast<char*>("-ea");
+#endif
+
+            // Configure Java debugging
+            const char* jpdaopts = getenv("JPDA_OPTS");
+            if (jpdaopts != NULL) {
+                options[args.nOptions++].optionString = const_cast<char*>(jpdaopts);
+            } else {
+                const char* jpdaaddr = getenv("JPDA_ADDRESS");
+                if (jpdaaddr != NULL) {
+                    const string jpda = string("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=") + jpdaaddr;
+                    options[args.nOptions++].optionString = const_cast<char*>(c_str(jpda));
+                }
+            }
+
+            // Create the JVM
+            JNI_CreateJavaVM(&jvm, (void**)&env, &args);
 
         } else {
 
-            // Just hook to existing JVM
+            // Just point to existing JVM
             jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
-            invokerClass = env->FindClass("org/apache/tuscany/InvocationHandler");
         }
 
         // Capture JVM standard IO
         setupIO();
 
-        // Lookup the classes and methods we need
+        // Lookup System classes and methods
         classClass = env->FindClass("java/lang/Class");
         methodClass = env->FindClass("java/lang/reflect/Method");
         objectClass = env->FindClass("java/lang/Object");
@@ -84,6 +98,8 @@ public:
         booleanClass = env->FindClass("java/lang/Boolean");
         stringClass = env->FindClass("java/lang/String");
         objectArrayClass = env->FindClass("[Ljava/lang/Object;");
+        iterableClass = env->FindClass("Ljava/lang/Iterable;");
+        classForName = env->GetStaticMethodID(classClass, "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;");
         doubleValueOf = env->GetStaticMethodID(doubleClass, "valueOf", "(D)Ljava/lang/Double;");
         doubleValue = env->GetMethodID(doubleClass, "doubleValue", "()D");
         booleanValueOf = env->GetStaticMethodID(booleanClass, "valueOf", "(Z)Ljava/lang/Boolean;");
@@ -91,8 +107,27 @@ public:
         declaredMethods = env->GetMethodID(classClass, "getDeclaredMethods", "()[Ljava/lang/reflect/Method;");
         methodName = env->GetMethodID(methodClass, "getName", "()Ljava/lang/String;");
         parameterTypes = env->GetMethodID(methodClass, "getParameterTypes", "()[Ljava/lang/Class;");
+
+        // Lookup Tuscany classes and methods
+        loaderClass = env->FindClass("org/apache/tuscany/ClassLoader");
+        loaderValueOf = env->GetStaticMethodID(loaderClass, "valueOf", "(Ljava/lang/String;)Ljava/lang/ClassLoader;");
+        loaderForName = env->GetStaticMethodID(loaderClass, "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;");
+        invokerClass = env->FindClass("org/apache/tuscany/InvocationHandler");
         invokerValueOf = env->GetStaticMethodID(invokerClass, "valueOf", "(Ljava/lang/Class;J)Ljava/lang/Object;");
         invokerLambda = env->GetFieldID(invokerClass, "lambda", "J");
+        iterableUtilClass = env->FindClass("org/apache/tuscany/IterableUtil");
+        iterableValueOf = env->GetStaticMethodID(iterableUtilClass, "list", "([Ljava/lang/Object;)Ljava/lang/Iterable;");
+        iterableIsNil = env->GetStaticMethodID(iterableUtilClass, "isNil", "(Ljava/lang/Object;)Z");
+        iterableCar = env->GetStaticMethodID(iterableUtilClass, "car", "(Ljava/lang/Object;)Ljava/lang/Object;");
+        iterableCdr = env->GetStaticMethodID(iterableUtilClass, "cdr", "(Ljava/lang/Object;)Ljava/lang/Iterable;");
+
+        // Register our native invocation handler function
+        JNINativeMethod nm;
+        nm.name = const_cast<char*>("invoke");
+        nm.signature = const_cast<char*>("(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;");
+        nm.fnPtr = (void*)nativeInvoke;
+        env->RegisterNatives(invokerClass, &nm, 1);
+
     }
 
     JavaVM* jvm;
@@ -105,6 +140,7 @@ public:
     jclass booleanClass;
     jclass stringClass;
     jclass objectArrayClass;
+    jclass iterableClass;
     jmethodID doubleValueOf;
     jmethodID doubleValue;
     jmethodID booleanValueOf;
@@ -112,10 +148,18 @@ public:
     jmethodID declaredMethods;
     jmethodID methodName;
     jmethodID parameterTypes;
-
+    jmethodID classForName;
+    jclass loaderClass;
+    jmethodID loaderValueOf;
+    jmethodID loaderForName;
     jclass invokerClass;
     jmethodID invokerValueOf;
     jfieldID invokerLambda;
+    jclass iterableUtilClass;
+    jmethodID iterableValueOf;
+    jmethodID iterableCar;
+    jmethodID iterableCdr;
+    jmethodID iterableIsNil;
 
 } javaRuntime;
 
@@ -137,6 +181,7 @@ const jobject valueToJobject(const JavaRuntime& jr, const value& jtype, const va
 const value jobjectToValue(const JavaRuntime& jr, const jobject o);
 const jobjectArray valuesToJarray(const JavaRuntime& jr, const list<value>& v);
 const list<value> jarrayToValues(const JavaRuntime& jr, const jobjectArray o);
+const list<value> jiterableToValues(const JavaRuntime& jr, const jobject o);
 
 /**
  * Convert a Java class name to a JNI class name.
@@ -204,9 +249,11 @@ jobject JNICALL nativeInvoke(JNIEnv* env, jobject self, unused jobject proxy, jo
 
     // Build the expression to evaluate
     const list<value> expr = cons<value>(func, jarrayToValues(jl.jr, args));
+    debug(expr, "java::nativeInvoke::expr");
 
     // Invoke the lambda function
     value result = jl(expr);
+    debug(result, "java::nativeInvoke::result");
 
     // Convert result to a jobject
     return valueToJobject(jl.jr, value(), result);
@@ -238,12 +285,19 @@ const jobjectArray valuesToJarray(const JavaRuntime& jr, const list<value>& v) {
 }
 
 /**
+ * Convert a Java jobjectArray to a Java iterable.
+ */
+const jobject jarrayToJiterable(const JavaRuntime& jr, jobjectArray a) {
+    return jr.env->CallStaticObjectMethod(jr.iterableClass, jr.iterableValueOf, a);
+}
+
+/**
  * Convert a value to a Java jobject.
  */
 const jobject valueToJobject(const JavaRuntime& jr, const value& jtype, const value& v) {
     switch (type(v)) {
     case value::List:
-        return valuesToJarray(jr, v);
+        return jarrayToJiterable(jr, valuesToJarray(jr, v));
     case value::Lambda:
         return mkJavaLambda(jr, jtype, v);
     case value::Symbol:
@@ -253,7 +307,7 @@ const jobject valueToJobject(const JavaRuntime& jr, const value& jtype, const va
     case value::Number:
         return jr.env->CallStaticObjectMethod(jr.doubleClass, jr.doubleValueOf, (double)v);
     case value::Bool:
-        return jr.env->CallStaticObjectMethod(jr.booleanClass, jr.booleanValueOf, (double)v);
+        return jr.env->CallStaticObjectMethod(jr.booleanClass, jr.booleanValueOf, (bool)v);
     default:
         return NULL;
     }
@@ -289,6 +343,23 @@ const list<value> jarrayToValues(const JavaRuntime& jr, jobjectArray o) {
     if (o == NULL)
         return list<value>();
     return jarrayToValuesHelper(jr, o, 0, jr.env->GetArrayLength(o));
+}
+
+/**
+ * Convert a Java Iterable to a list of values.
+ */
+const list<value> jiterableToValuesHelper(const JavaRuntime& jr, jobject o) {
+    if ((bool)jr.env->CallStaticBooleanMethod(jr.iterableUtilClass, jr.iterableIsNil, o))
+        return list<value>();
+    jobject car = jr.env->CallStaticObjectMethod(jr.iterableUtilClass, jr.iterableCar, o);
+    jobject cdr = jr.env->CallStaticObjectMethod(jr.iterableUtilClass, jr.iterableCdr, o);
+    return cons(jobjectToValue(jr, car), jiterableToValuesHelper(jr, cdr));
+}
+
+const list<value> jiterableToValues(const JavaRuntime& jr, jobject o) {
+    if (o == NULL)
+        return list<value>();
+    return jiterableToValuesHelper(jr, o);
 }
 
 /**
@@ -330,8 +401,8 @@ const value jobjectToValue(const JavaRuntime& jr, const jobject o) {
         return value((bool)jr.env->CallBooleanMethod(o, jr.booleanValue));
     if (jr.env->IsSameObject(clazz, jr.doubleClass))
         return value((double)jr.env->CallDoubleMethod(o, jr.doubleValue));
-    if ((jr.env->IsSameObject(clazz, jr.objectArrayClass)))
-        return jarrayToValues(jr, (jobjectArray)o);
+    if ((jr.env->IsAssignableFrom(clazz, jr.iterableClass)))
+        return jiterableToValues(jr, o);
     return lambda<value(const list<value>&)>(javaCallable(jr, o));
 }
 
@@ -378,12 +449,12 @@ const list<value> methodsToValues(const JavaRuntime& jr, const jclass clazz) {
  */
 class JavaClass {
 public:
-    JavaClass() : clazz(NULL), obj(NULL) {
+    JavaClass() : loader(NULL), clazz(NULL), obj(NULL) {
+    }
+    JavaClass(const jobject loader, const jclass clazz, const jobject obj, const list<value> m) : loader(loader), clazz(clazz), obj(obj), m(m) {
     }
 
-    JavaClass(const jclass clazz, const jobject obj, const list<value> m) : clazz(clazz), obj(obj), m(m) {
-    }
-
+    const jobject loader;
     const jclass clazz;
     const jobject obj;
     const list<value> m;
@@ -392,24 +463,34 @@ public:
 /**
  * Read a class.
  */
-const failable<JavaClass> readClass(const JavaRuntime& jr, const string& name) {
-    const string jname = jniClassName(name);
-    const jclass clazz = jr.env->FindClass(c_str(jname));
+const failable<JavaClass> readClass(const JavaRuntime& jr, const string& path, const string& name) {
+
+    // Create a class loader from the given path
+    const jobject jpath = jr.env->NewStringUTF(c_str(path));
+    jobject loader = jr.env->CallStaticObjectMethod(jr.loaderClass, jr.loaderValueOf, jpath);
+
+    // Load the class
+    const jobject jname = jr.env->NewStringUTF(c_str(name));
+    const jclass clazz = (jclass)jr.env->CallStaticObjectMethod(jr.loaderClass, jr.loaderForName, jname, JNI_TRUE, loader);
     if (clazz == NULL)
         return mkfailure<JavaClass>(string("Couldn't load class: ") + name + " : " + lastException(jr));
+
+    // Create an instance
     const jmethodID constr = jr.env->GetMethodID(clazz, "<init>", "()V");
     if (constr == NULL)
         return mkfailure<JavaClass>(string("Couldn't find constructor: ") + name + " : " + lastException(jr));
     const jobject obj = jr.env->NewObject(clazz, constr);
     if (obj == NULL)
         return mkfailure<JavaClass>(string("Couldn't construct object: ") + name + " : " + lastException(jr));
-    return JavaClass(clazz, obj, methodsToValues(jr, clazz));
+
+    return JavaClass(loader, clazz, obj, methodsToValues(jr, clazz));
 }
 
 /**
  * Evaluate an expression against a Java class.
  */
 const failable<value> evalClass(const JavaRuntime& jr, const value& expr, const JavaClass jc) {
+    debug(expr, "java::evalClass::expr");
 
     // Lookup the Java function named as the expression operand
     const list<value> func = assoc<value>(car<value>(expr), jc.m);
@@ -426,7 +507,9 @@ const failable<value> evalClass(const JavaRuntime& jr, const value& expr, const 
         return mkfailure<value>(string("Function call failed: ") + car<value>(expr) + " : " + lastException(jr));
 
     // Convert Java result to a value
-    return jobjectToValue(jr, result);
+    const value v = jobjectToValue(jr, result);
+    debug(v, "java::evalClass::result");
+    return v;
 }
 
 }

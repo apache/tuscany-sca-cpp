@@ -17,6 +17,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+export CLASSPATH=`pwd`/../../modules/java/libmod-tuscany-java-1.0.jar:`pwd`
+
 apachectl -k stop -d `pwd`/tmp
 mc="memcached -l 127.0.0.1 -m 4 -p 11211"
 kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`

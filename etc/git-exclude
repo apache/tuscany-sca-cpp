@@ -61,6 +61,7 @@ doxygen
 *.pyc
 *.class
 *.stamp
+*.jar
 
 # Specific ignores
 kernel-test

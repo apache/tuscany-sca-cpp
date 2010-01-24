@@ -38,6 +38,15 @@ java_shell_LDFLAGS = -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
 
 noinst_JAVA = org/apache/tuscany/*.java test/*.java
 
+jarfile = libmod-tuscany-java-${PACKAGE_VERSION}.jar
+jardir = ${libdir}
+jar_DATA = ${jarfile}
+
+${jarfile}: ${noinst_JAVA}
+	${JAR} cf $@ org/apache/tuscany/*.class
+
+CLEANFILES = ${jarfile} org/apache/tuscany/*.class	test/*.class
+
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 

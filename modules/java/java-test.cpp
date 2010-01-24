@@ -34,7 +34,7 @@ namespace java {
 bool testEvalExpr() {
     gc_scoped_pool pool;
     {
-        const failable<JavaClass> obj = readClass(javaRuntime, "test.CalcImpl");
+        const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
         assert(hasContent(obj));
         const value exp = mklist<value>("mult", 2, 3);
         const failable<value> r = evalClass(javaRuntime, exp, content(obj));
@@ -42,12 +42,28 @@ bool testEvalExpr() {
         assert(content(r) == value(6));
     }
     {
-        const failable<JavaClass> obj = readClass(javaRuntime, "test.AdderImpl");
+        const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
+        assert(hasContent(obj));
+        const value exp = mklist<value>("even", 2);
+        const failable<value> r = evalClass(javaRuntime, exp, content(obj));
+        assert(hasContent(r));
+        assert(content(r) == value(true));
+    }
+    {
+        const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.AdderImpl");
         assert(hasContent(obj));
         const value exp = mklist<value>("add", 2, 3);
         const failable<value> r = evalClass(javaRuntime, exp, content(obj));
         assert(hasContent(r));
         assert(content(r) == value(5));
+    }
+    {
+        const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
+        assert(hasContent(obj));
+        const value exp = mklist<value>("square", mklist<value>(1, 2, 3));
+        const failable<value> r = evalClass(javaRuntime, exp, content(obj));
+        assert(hasContent(r));
+        assert(content(r) == mklist<value>(1, 4, 9));
     }
     return true;
 }
@@ -61,12 +77,34 @@ const value add(const list<value>& args) {
 
 bool testEvalLambda() {
     gc_scoped_pool pool;
-    const failable<JavaClass> obj = readClass(javaRuntime, "test.CalcImpl");
+    const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
     assert(hasContent(obj));
     const value tcel = mklist<value>("add", 3, 4, lambda<value(const list<value>&)>(add));
     const failable<value> r = evalClass(javaRuntime, tcel, content(obj));
     assert(hasContent(r));
     assert(content(r) == value(7));
+    return true;
+}
+
+bool testClassLoader() {
+    gc_scoped_pool pool;
+    const failable<JavaClass> obj = readClass(javaRuntime, ".", "org.apache.tuscany.ClassLoader$Test");
+    assert(hasContent(obj));
+    const value exp = mklist<value>("testClassLoader");
+    const failable<value> r = evalClass(javaRuntime, exp, content(obj));
+    assert(hasContent(r));
+    assert(content(r) == value(true));
+    return true;
+}
+
+bool testIterableUtil() {
+    gc_scoped_pool pool;
+    const failable<JavaClass> obj = readClass(javaRuntime, ".", "org.apache.tuscany.IterableUtil$Test");
+    assert(hasContent(obj));
+    const value exp = mklist<value>("testList");
+    const failable<value> r = evalClass(javaRuntime, exp, content(obj));
+    assert(hasContent(r));
+    assert(content(r) == value(true));
     return true;
 }
 
@@ -76,8 +114,10 @@ bool testEvalLambda() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    //tuscany::java::testEvalExpr();
+    tuscany::java::testEvalExpr();
     tuscany::java::testEvalLambda();
+    tuscany::java::testClassLoader();
+    tuscany::java::testIterableUtil();
 
     tuscany::cout << "OK" << tuscany::endl;
     return 0;

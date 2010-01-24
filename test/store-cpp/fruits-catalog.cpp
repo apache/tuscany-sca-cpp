@@ -33,7 +33,7 @@ namespace tuscany {
 namespace store {
 
 /**
- * Returns a catalog.
+ * Returns the catalog.
  */
 struct convert {
     const lambda<value(const list<value>&)> converter;
@@ -61,6 +61,9 @@ const failable<value> get(const lambda<value(const list<value>&)> converter) {
         mkfruit("Pear", currency, symbol, conv(1.55)));
 }
 
+/**
+ * TODO remove this JSON-RPC specific function.
+ */
 const failable<value> listMethods(unused const lambda<value(const list<value>&)> converter) {
     return value(mklist<value>(string("Service.get")));
 }

@@ -25,19 +25,19 @@ public class ClientImpl {
         return server.echo(x);
     }
     
-    public Object[] getall(Server server) {
+    public Iterable<?> getall(Server server) {
         return server.getall();
     }
     
-    public Object[] get(String id, Server server) {
+    public Iterable<?> get(String id, Server server) {
         return server.get(id);
     }
     
-    public String post(Object[] item, Server server) {
+    public String post(Iterable<?> item, Server server) {
         return server.post(item);
     }
     
-    public Boolean put(String id, Object[] item, Server server) {
+    public Boolean put(String id, Iterable<?> item, Server server) {
         return server.put(id, item);
     }
     

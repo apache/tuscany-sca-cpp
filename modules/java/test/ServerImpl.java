@@ -19,33 +19,31 @@
 
 package test;
 
+import static org.apache.tuscany.IterableUtil.*;
+
 public class ServerImpl {
     
-    Object[] list(Object... o) {
-        return o;
-    }
-
     public String echo(String x) {
         return x;
     }
     
-    public Object[] getall() {
+    public Iterable<?> getall() {
         return list("Sample Feed", "123456789",
                 list("Item", "111", list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99))),
                 list("Item", "222", list(list("'javaClass", "services.Item"), list("'name", "Orange"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 3.55))),
-                list("Item", "333", list(list("'javaClass", "services.Item"), list("name", "Pear"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 1.55))));
+                list("Item", "333", list(list("'javaClass", "services.Item"), list("'name", "Pear"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 1.55))));
     }
     
-    public Object[] get(String id) {
-        Object[] entry = list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99));
+    public Iterable<?> get(String id) {
+        Iterable<?> entry = list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99));
         return list("Item", id, entry);
     }
 
-    public String post(Object[] item) {
+    public String post(Iterable<?> item) {
         return "123456789";
     }
     
-    public Boolean put(String id, Object[] entry) {
+    public Boolean put(String id, Iterable<?> entry) {
         return true;
     }
 

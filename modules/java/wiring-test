@@ -31,6 +31,8 @@ SCAComposite domain-test.composite
 </Location>
 EOF
 
+export CLASSPATH="`pwd`/libmod-tuscany-java-1.0.jar:`pwd`"
+
 apachectl -k start -d `pwd`/tmp
 sleep 2
 
