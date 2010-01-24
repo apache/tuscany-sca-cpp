@@ -73,7 +73,7 @@ public:
 
 private:
     CURL* h;
-    bool owner;
+    const bool owner;
 
     friend CURL* handle(const CURLSession& c);
 };
@@ -217,15 +217,12 @@ const failable<value> evalExpr(const value& expr, const string& url, const CURLS
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
 
-    // Return result
-    failable<list<value> > jsres = json::readJSON(cadr<list<string> >(content(res)), cx);
-    if (!hasContent(jsres))
-        return mkfailure<value>(reason(jsres));
-    const list<value> val = elementsToValues(content(jsres));
-
-    const value rval(cadr<value>(cadr<value>(val)));
-    debug(rval, "http::evalExpr::result");
-    return rval;
+    // Parse and return JSON-RPC result
+    const failable<value> rval = json::jsonResultValue(cadr<list<string> >(content(res)), cx);
+    if (!hasContent(rval))
+        return mkfailure<value>(reason(rval));
+    debug(content(rval), "http::evalExpr::result");
+    return content(rval);
 }
 
 /**

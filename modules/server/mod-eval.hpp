@@ -269,19 +269,45 @@ int handler(request_rec *r) {
 /**
  * Convert a list of component references to a list of HTTP proxy lambdas.
  */
-const value mkproxy(const value& ref, const string& base) {
+const value mkrefProxy(const value& ref, const string& base) {
     return lambda<value(const list<value>&)>(http::proxy(base + string(scdl::name(ref))));
 }
 
-const list<value> proxies(const list<value>& refs, const string& base) {
+const list<value> refProxies(const list<value>& refs, const string& base) {
     if (isNil(refs))
         return refs;
-    return cons(mkproxy(car(refs), base), proxies(cdr(refs), base));
+    return cons(mkrefProxy(car(refs), base), refProxies(cdr(refs), base));
 }
 
-extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px);
+/**
+ * Convert a list of component properties to a list of lambda functions that just return
+ * the property value.
+ */
+struct propProxy {
+    const value v;
+    propProxy(const value& v) : v(v) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        return v;
+    }
+};
 
-const value confImplementation(DirConf& dc, ServerConf& sc, server_rec& server, const value& comp) {
+const value mkpropProxy(const value& prop) {
+    return lambda<value(const list<value>&)>(propProxy(elementValue(prop)));
+}
+
+const list<value> propProxies(const list<value>& props) {
+    if (isNil(props))
+        return props;
+    return cons(mkpropProxy(car(props)), propProxies(cdr(props)));
+}
+
+/**
+ * Evaluate a component and convert it to an applicable lambda function.
+ */
+const value evalComponent(DirConf& dc, ServerConf& sc, server_rec& server, const value& comp) {
+    extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px);
+
     const value impl = scdl::implementation(comp);
 
     // Convert component references to configured proxy lambdas
@@ -293,11 +319,13 @@ const value confImplementation(DirConf& dc, ServerConf& sc, server_rec& server, 
             << "/references/" << string(scdl::name(comp)) << "/";
     else
         base << sc.wiringServerName << "/references/" << string(scdl::name(comp)) << "/";
-    const list<value> px(proxies(scdl::references(comp), str(base)));
+    const list<value> rpx(refProxies(scdl::references(comp), str(base)));
 
-    // Evaluate the component implementation and convert it to an
-    // applicable lambda function
-    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(dc.contributionPath, impl, px));
+    // Convert component proxies to configured proxy lambdas
+    const list<value> ppx(propProxies(scdl::properties(comp)));
+
+    // Evaluate the component implementation and convert it to an applicable lambda function
+    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(dc.contributionPath, impl, append(rpx, ppx)));
     if (!hasContent(cimpl))
         return reason(cimpl);
     return content(cimpl);
@@ -309,7 +337,7 @@ const value confImplementation(DirConf& dc, ServerConf& sc, server_rec& server, 
 const list<value> componentToImplementationAssoc(DirConf& dc, ServerConf& sc, server_rec& server, const list<value>& c) {
     if (isNil(c))
         return c;
-    return cons<value>(mklist<value>(scdl::name(car(c)), confImplementation(dc, sc, server, car(c))), componentToImplementationAssoc(dc, sc, server, cdr(c)));
+    return cons<value>(mklist<value>(scdl::name(car(c)), evalComponent(dc, sc, server, car(c))), componentToImplementationAssoc(dc, sc, server, cdr(c)));
 }
 
 const list<value> componentToImplementationTree(DirConf& dc, ServerConf& sc, server_rec& server, const list<value>& c) {

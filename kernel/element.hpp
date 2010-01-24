@@ -37,6 +37,7 @@ namespace tuscany
  */
 const value attribute("attribute");
 const value element("element");
+const string atsign("@");
 
 /**
  * Returns true if a value is an element.
@@ -125,7 +126,7 @@ const value elementToValue(const value& t) {
 
     // Convert an attribute
     if (isTaggedList(t, attribute))
-        return mklist(attributeName(t), attributeValue(t));
+        return mklist<value>(c_str(atsign + attributeName(t)), attributeValue(t));
 
     // Convert an element
     if (isTaggedList(t, element)) {
@@ -196,9 +197,12 @@ const value valueToElement(const value& t) {
         const value n = car<value>(t);
         const value v = cadr<value>(t);
 
-        // Convert a single value
-        if (!isList(v))
+        // Convert a single value to an attribute or an element
+        if (!isList(v)) {
+            if (substr(n, 0, 1) == atsign)
+                return mklist<value>(attribute, substr(n, 1), v);
             return mklist(element, n, v);
+        }
 
         // Convert a list value
         if (isNil((list<value>)v) || !isSymbol(car<value>(v)))

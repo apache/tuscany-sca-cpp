@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,27 +17,19 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_WEBSERVICE
+# Setup
+axis2="${AXIS2C_HOME}/bin/axis2_http_server"
+pwd=`pwd`
+cd $AXIS2C_HOME/bin
+$axis2 &
+cd $pwd
+sleep 1
 
-noinst_PROGRAMS = axiom-test axis2-test client-test
+# Test
+./axis2-test
+rc=$?
 
-INCLUDES = -I${AXIS2C_INCLUDE}
-
-compdir=$(prefix)/components/webservice
-comp_LTLIBRARIES = libwebservice.la
-
-libwebservice_la_SOURCES = webservice.cpp
-libwebservice_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
-
-axiom_test_SOURCES = axiom-test.cpp
-axiom_test_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
-
-axis2_test_SOURCES = axis2-test.cpp
-axis2_test_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
-
-client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs 
-
-TESTS = axiom-test echo-test server-test
-
-endif
+# Cleanup
+kill `ps -f | grep -v grep | grep "${axis2}" | awk '{ print $2 }'`
+sleep 1
+return $rc

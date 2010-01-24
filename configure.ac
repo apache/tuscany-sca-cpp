@@ -349,11 +349,11 @@ fi
 # Configure path to Axis2C includes and lib.
 AC_MSG_CHECKING([for axis2c])
 AC_ARG_WITH([axis2c], [AC_HELP_STRING([--with-axis2c=PATH], [path to installed Axis2C [default=/usr/local/axis2c]])], [
-  AXIS2C_INCLUDE="${withval}/include"
+  AXIS2C_INCLUDE="${withval}/include/axis2-1.6.0"
   AXIS2C_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
-  AXIS2C_INCLUDE="/usr/local/axis2c/include"
+  AXIS2C_INCLUDE="/usr/local/axis2c/include/axis2-1.6.0"
   AXIS2C_LIB="/usr/local/axis2c/lib"
   AC_MSG_RESULT(/usr/local/axis2c)
 ])

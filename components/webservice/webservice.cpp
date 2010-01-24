@@ -34,10 +34,20 @@ namespace tuscany {
 namespace webservice {
 
 /**
- * Apply a Web service function / operation.
+ * Apply a Web service function / operation using Axis2.
  */
-const failable<value> apply(const value& func, unused const list<value>& params) {
-    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
+const failable<value> apply(const value& func, const list<value>& params) {
+    const Axis2Context ax;
+
+    // Extract parameters
+    const value doc = car<value>(params);
+    const lambda<value(const list<value>&)> l = cadr<value>(params);
+
+    // Call the URI property lambda function to get the configured URI
+    const value uri = l(list<value>());
+
+    // Evaluate using Axis2
+    return evalExpr(mklist<value>(func, doc, uri), ax);
 }
 
 }

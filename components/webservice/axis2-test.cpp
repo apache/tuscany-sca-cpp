@@ -20,13 +20,16 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test WebService component.
+ * Test WebService Axis2 client support functions.
  */
 
 #include <assert.h>
 #include "stream.hpp"
 #include "string.hpp"
 #include "list.hpp"
+#include "element.hpp"
+#include "monad.hpp"
+#include "value.hpp"
 #include "perf.hpp"
 #include "webservice.hpp"
 
@@ -34,6 +37,23 @@ namespace tuscany {
 namespace webservice {
 
 bool testEval() {
+    const Axis2Context ax;
+
+    const value func = "http://ws.apache.org/axis2/c/samples/echoString";
+    const list<value> arg = mklist<value>(
+            list<value>() + "ns1:echoString"
+            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+            + (list<value>() + "text" + string("Hello World!")));
+
+    const failable<value> rval = evalExpr(mklist<value>(func, arg, string("http://localhost:9090/axis2/services/echo")), ax);
+    assert(hasContent(rval));
+
+    const list<value> r = mklist<value>(
+            list<value>() + "ns1:echoString"
+            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/c/samples"))
+            + (list<value>() + "text" + string("Hello World!")));
+    assert(content(rval) == r);
+
     return true;
 }
 

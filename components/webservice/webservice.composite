@@ -24,6 +24,7 @@
         
     <component name="webservice">
         <implementation.cpp path=".libs" library="libwebservice"/>
+        <property name="uri">http://localhost:9090/axis2/services/echo</property>
         <service name="webservice">
             <t:binding.http uri="webservice"/>
         </service>

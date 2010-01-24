@@ -27,6 +27,7 @@
 #include "stream.hpp"
 #include "string.hpp"
 #include "list.hpp"
+#include "element.hpp"
 #include "value.hpp"
 #include "monad.hpp"
 #include "perf.hpp"
@@ -35,9 +36,25 @@
 namespace tuscany {
 namespace webservice {
 
-const string url("http://localhost:8090/echo");
+const string url("http://localhost:8090/webservice");
 
 bool testEval() {
+    http::CURLSession cs;
+
+    const value func = "http://ws.apache.org/axis2/c/samples/echoString";
+    const list<value> arg = mklist<value>(
+            list<value>() + "ns1:echoString"
+            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+            + (list<value>() + "text" + string("Hello World!")));
+
+    const failable<value> rval = http::evalExpr(mklist<value>(func, arg), url, cs);
+    assert(hasContent(rval));
+
+    const list<value> r = mklist<value>(
+            list<value>() + "ns1:echoString"
+            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/c/samples"))
+            + (list<value>() + "text" + string("Hello World!")));
+    assert(content(rval) == r);
     return true;
 }
 

@@ -54,17 +54,18 @@ bool testJSON() {
         const list<value> ac = mklist<value>(mklist<value>(element, "id", string("1234")), mklist<value>(attribute, "balance", 1000));
         const list<value> cr = mklist<value>(mklist<value> (attribute, "name", string("jdoe")), cons<value>(element, cons<value>("address", ad)), cons<value>(element, cons<value>("account", ac)));
         const list<value> c = mklist<value>(cons<value>(element, cons<value>("customer", cr)));
+
         ostringstream os;
         writeJSON<ostream*>(jsonWriter, &os, c, cx);
-        assert(str(os) == "{\"customer\":{\"name\":\"jdoe\",\"address\":{\"city\":\"san francisco\",\"state\":\"ca\"},\"account\":{\"id\":\"1234\",\"balance\":1000}}}");
+        assert(str(os) == "{\"customer\":{\"@name\":\"jdoe\",\"address\":{\"@city\":\"san francisco\",\"@state\":\"ca\"},\"account\":{\"id\":\"1234\",\"@balance\":1000}}}");
     }
     {
         const list<value> phones = mklist<value> (string("408-1234"), string("650-1234"));
-        const list<value> l = mklist<value> (mklist<value> (element, "phones", phones), mklist<value> (element, "lastName", string("test\ttab")), mklist<value> (element, "firstName", string("test1")));
+        const list<value> l = mklist<value> (mklist<value> (element, "phones", phones), mklist<value> (element, "lastName", string("test\ttab")), mklist<value> (attribute, "firstName", string("test1")));
 
         ostringstream os;
         writeJSON<ostream*>(jsonWriter, &os, l, cx);
-        assert(str(os) == "{\"phones\":[\"408-1234\",\"650-1234\"],\"lastName\":\"test\\u0009tab\",\"firstName\":\"test1\"}");
+        assert(str(os) == "{\"phones\":[\"408-1234\",\"650-1234\"],\"lastName\":\"test\\u0009tab\",\"@firstName\":\"test1\"}");
 
         istringstream is(str(os));
         const list<string> il = streamList(is);
@@ -74,6 +75,18 @@ bool testJSON() {
         ostringstream wos;
         write(content(writeJSON(r, cx)), wos);
         assert(str(wos) == str(os));
+    }
+    {
+        const list<value> l = mklist<value>(list<value>() + "ns1:echoString" + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo")) + (list<value>() + "text" + string("Hello World!")));
+        cout << "l: " << l << endl;
+        ostringstream wos;
+        write(content(writeJSON(valuesToElements(l), cx)), wos);
+        assert(str(wos) == "{\"ns1:echoString\":{\"@xmlns:ns1\":\"http://ws.apache.org/axis2/services/echo\",\"text\":\"Hello World!\"}}");
+
+        istringstream is(str(wos));
+        const list<string> il = streamList(is);
+        const list<value> r = elementsToValues(content(readJSON(il, cx)));
+        assert(r == l);
     }
     return true;
 }
@@ -120,6 +133,30 @@ bool testJSONRPC() {
         ostringstream os;
         write(content(writeJSON(e, cx)), os);
         assert(str(os) == f);
+    }
+    {
+        const list<value> arg = mklist<value>(list<value>() + "ns1:echoString" + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo")) + (list<value>() + "text" + string("Hello World!")));
+        const failable<list<string> > r = jsonRequest(1, "echo", mklist<value>(arg), cx);
+        ostringstream os;
+        write(content(r), os);
+        assert(str(os) == "{\"id\":1,\"method\":\"echo\",\"params\":[{\"ns1:echoString\":{\"@xmlns:ns1\":\"http://ws.apache.org/axis2/services/echo\",\"text\":\"Hello World!\"}}]}");
+
+        istringstream is(str(os));
+        const list<string> il = streamList(is);
+        const list<value> ir = elementsToValues(content(readJSON(il, cx)));
+        assert(car<value>(cadr<value>(caddr<value>(ir))) == arg);
+    }
+    {
+        const list<value> res = mklist<value>(list<value>() + "ns1:echoString" + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/c/samples")) + (list<value>() + "text" + string("Hello World!")));
+        const failable<list<string> > r = jsonResult(1, res, cx);
+        ostringstream os;
+        write(content(r), os);
+        assert(str(os) == "{\"id\":1,\"result\":{\"ns1:echoString\":{\"@xmlns:ns1\":\"http://ws.apache.org/axis2/c/samples\",\"text\":\"Hello World!\"}}}");
+
+        istringstream is(str(os));
+        const list<string> il = streamList(is);
+        const list<value> ir = elementsToValues(content(readJSON(il, cx)));
+        assert(cdr<value>(cadr<value>(ir)) == res);
     }
     return true;
 }

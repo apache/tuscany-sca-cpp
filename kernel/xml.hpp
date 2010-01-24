@@ -290,16 +290,20 @@ const failable<bool> writeList(const list<value>& l, const xmlTextWriterPtr xml)
 /**
  * Write a list of values to a libxml2 XML writer.
  */
-const failable<bool> write(const list<value>& l, const xmlTextWriterPtr xml) {
-    if (xmlTextWriterStartDocument(xml, NULL, encoding, NULL) < 0)
-        return mkfailure<bool>(string("xmlTextWriterStartDocument failed"));
+const failable<bool> write(const list<value>& l, const xmlTextWriterPtr xml, bool xmlTag) {
+    if (xmlTag) {
+        if (xmlTextWriterStartDocument(xml, NULL, encoding, NULL) < 0)
+            return mkfailure<bool>(string("xmlTextWriterStartDocument failed"));
+    }
 
     const failable<bool> w = writeList(l, xml);
     if (!hasContent(w))
         return w;
 
-    if (xmlTextWriterEndDocument(xml) < 0)
-        return mkfailure<bool>("xmlTextWriterEndDocument failed");
+    if (xmlTag) {
+        if (xmlTextWriterEndDocument(xml) < 0)
+            return mkfailure<bool>("xmlTextWriterEndDocument failed");
+    }
     return true;
 }
 
@@ -326,7 +330,7 @@ template<typename R> int writeCallback(void *context, const char* buffer, int le
 /**
  * Convert a list of values to an XML document.
  */
-template<typename R> const failable<R> writeXML(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R> writeXML(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l, const bool xmlTag) {
     XMLWriteContext<R> cx(reduce, initial);
     xmlOutputBufferPtr out = xmlOutputBufferCreateIO(writeCallback<R>, NULL, &cx, NULL);
     if (out == NULL)
@@ -335,7 +339,7 @@ template<typename R> const failable<R> writeXML(const lambda<R(const string&, co
     if (xml == NULL)
         return mkfailure<R>("xmlNewTextWriter failed");
 
-    const failable<bool> w = write(l, xml);
+    const failable<bool> w = write(l, xml, xmlTag);
     xmlFreeTextWriter(xml);
     if (!hasContent(w)) {
         return mkfailure<R>(reason(w));
@@ -343,14 +347,22 @@ template<typename R> const failable<R> writeXML(const lambda<R(const string&, co
     return cx.accum;
 }
 
+template<typename R> const failable<R> writeXML(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l) {
+    return writeXML(reduce, initial, l, true);
+}
+
 /**
  * Convert a list of values to a list of strings representing an XML document.
  */
-const failable<list<string> > writeXML(const list<value>& l) {
-    const failable<list<string> > ls = writeXML<list<string> >(rcons<string>, list<string>(), l);
+const failable<list<string> > writeXML(const list<value>& l, const bool xmlTag) {
+    const failable<list<string> > ls = writeXML<list<string> >(rcons<string>, list<string>(), l, xmlTag);
     if (!hasContent(ls))
         return ls;
     return reverse(list<string>(content(ls)));
+}
+
+const failable<list<string> > writeXML(const list<value>& l) {
+    return writeXML(l, true);
 }
 
 }

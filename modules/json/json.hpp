@@ -131,6 +131,22 @@ private:
 };
 
 /**
+ * Returns true if a list represents a JS array.
+ */
+const bool isJSArray(const list<value>& l) {
+    if(isNil(l))
+        return true;
+    const value v = car(l);
+    if (isSymbol(v))
+        return false;
+    if(isList(v)) {
+        if(isSymbol(car<value>(v)))
+            return false;
+    }
+    return true;
+}
+
+/**
  * Converts JS properties to values.
  */
 const list<value> jsPropertiesToValues(const list<value>& propertiesSoFar, JSObject* o, JSObject* i, const JSONContext& cx) {
@@ -144,11 +160,16 @@ const list<value> jsPropertiesToValues(const list<value>& propertiesSoFar, JSObj
     if(!JS_GetPropertyById(cx, o, id, &jsv))
         return propertiesSoFar;
     const value val = jsValToValue(jsv, cx);
+
     jsval idv;
     JS_IdToValue(cx, id, &idv);
     if(JSVAL_IS_STRING(idv)) {
-        const value type = isList(val)? element : element;
-        return jsPropertiesToValues(cons<value> (mklist<value> (type, JS_GetStringBytes(JSVAL_TO_STRING(idv)), val), propertiesSoFar), o, i, cx);
+        const string name = JS_GetStringBytes(JSVAL_TO_STRING(idv));
+        if (substr(name, 0, 1) == atsign)
+            return jsPropertiesToValues(cons<value>(mklist<value>(attribute, c_str(substr(name, 1)), val), propertiesSoFar), o, i, cx);
+        if (isList(val) && !isJSArray(val))
+            return jsPropertiesToValues(cons<value>(cons<value>(element, cons<value>(c_str(name), list<value>(val))), propertiesSoFar), o, i, cx);
+        return jsPropertiesToValues(cons<value> (mklist<value> (element, c_str(name), val), propertiesSoFar), o, i, cx);
     }
     return jsPropertiesToValues(cons(val, propertiesSoFar), o, i, cx);
 }
@@ -227,39 +248,11 @@ JSObject* valuesToJSElements(JSObject* a, const list<value>& l, int i, const JSO
 }
 
 /**
- * Returns true if a list represents a JS array.
- */
-const bool isJSArray(const list<value>& l) {
-    if(isNil(l))
-        return false;
-    const value v = car(l);
-    if(isList(v)) {
-        const list<value> p = v;
-        if(isSymbol(car(p)))
-            return false;
-    }
-    return true;
-}
-
-
-
-/**
- * Converts a list of values to JS properties.
- */
-JSObject* valuesToJSProperties(JSObject* o, const list<value>& l, const JSONContext& cx) {
-    const jsval valueToJSVal(const value& val, const JSONContext& cx);
-    if(isNil(l))
-        return o;
-    const list<value> p = car(l);
-    jsval pv = valueToJSVal(caddr(p), cx);
-    JS_SetProperty(cx, o, c_str((string)cadr(p)), &pv);
-    return valuesToJSProperties(o, cdr(l), cx);
-}
-
-/**
  * Converts a value to a JS val.
  */
 const jsval valueToJSVal(const value& val, const JSONContext& cx) {
+    JSObject* valuesToJSProperties(JSObject* o, const list<value>& l, const JSONContext& cx);
+
     switch(type(val)) {
     case value::String:
     case value::Symbol: {
@@ -282,16 +275,19 @@ const jsval valueToJSVal(const value& val, const JSONContext& cx) {
     }
 }
 
-const failable<bool> writeList(const list<value>& l, JSObject* o, const JSONContext& cx) {
+/**
+ * Converts a list of values to JS properties.
+ */
+JSObject* valuesToJSProperties(JSObject* o, const list<value>& l, const JSONContext& cx) {
     if (isNil(l))
-        return true;
+        return o;
 
     // Write an attribute
     const value token(car(l));
 
     if (isTaggedList(token, attribute)) {
         jsval pv = valueToJSVal(attributeValue(token), cx);
-        JS_SetProperty(cx, o, c_str(string(attributeName(token))), &pv);
+        JS_SetProperty(cx, o, c_str(atsign + string(attributeName(token))), &pv);
 
     } else if (isTaggedList(token, element)) {
 
@@ -308,14 +304,12 @@ const failable<bool> writeList(const list<value>& l, JSObject* o, const JSONCont
             JS_SetProperty(cx, o, c_str(string(elementName(token))), &pv);
 
             // Write its children
-            const failable<bool> w = writeList(elementChildren(token), child, cx);
-            if (!hasContent(w))
-                return w;
+            valuesToJSProperties(child, elementChildren(token), cx);
         }
     }
 
     // Go on
-    return writeList(cdr(l), o, cx);
+    return valuesToJSProperties(o, cdr(l), cx);
 }
 
 /**
@@ -344,11 +338,7 @@ template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *d
  * Convert a list of values to a JSON document.
  */
 template<typename R> const failable<R> writeJSON(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l, const JSONContext& cx) {
-    JSObject* o = JS_NewObject(cx, NULL, NULL, NULL);
-    jsval val = OBJECT_TO_JSVAL(o);
-    const failable<bool> w = writeList(l, o, cx);
-    if (!hasContent(w))
-        return mkfailure<R>(reason(w));
+    jsval val = OBJECT_TO_JSVAL(valuesToJSProperties(JS_NewObject(cx, NULL, NULL, NULL), l, cx));
 
     WriteContext<R> wcx(reduce, initial, cx);
     if (!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx))
@@ -367,7 +357,7 @@ const failable<list<string> > writeJSON(const list<value>& l, const JSONContext&
 }
 
 /**
- * Convert a function + params to a JSON request.
+ * Convert a list of function + params to a JSON-RPC request.
  */
 const failable<list<string> > jsonRequest(const value& id, const value& func, const value& params, json::JSONContext& cx) {
     const list<value> r = mklist<value>(mklist<value>("id", id), mklist<value>("method", string(func)), mklist<value>("params", params));
@@ -375,10 +365,24 @@ const failable<list<string> > jsonRequest(const value& id, const value& func, co
 }
 
 /**
- * Convert a value to a JSON result.
+ * Convert a value to a JSON-RPC result.
  */
 const failable<list<string> > jsonResult(const value& id, const value& val, JSONContext& cx) {
     return writeJSON(valuesToElements(mklist<value>(mklist<value>("id", id), mklist<value>("result", val))), cx);
+}
+
+/**
+ * Convert a JSON-RPC result to a value.
+ */
+const failable<value> jsonResultValue(const list<string>& s, JSONContext& cx) {
+    const failable<list<value> > jsres = json::readJSON(s, cx);
+    if (!hasContent(jsres))
+        return mkfailure<value>(reason(jsres));
+    const list<value> rval(cadr<value>(elementsToValues(content(jsres))));
+    const value val = cadr(rval);
+    if (isList(val) && !isJSArray(val))
+        return value(mklist<value>(val));
+    return val;
 }
 
 /**

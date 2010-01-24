@@ -81,5 +81,6 @@ scdl-test
 java-test
 java-shell
 script-test
-webservice-test
+axiom-test
+axis2-test
 

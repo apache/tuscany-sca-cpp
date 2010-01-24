@@ -111,7 +111,7 @@ bool testWriteXML() {
     return true;
 }
 
-bool testElement() {
+bool testElements() {
     {
         const list<value> ad = mklist<value>(mklist<value>("city", string("san francisco")), mklist<value>("state", string("ca")));
         const list<value> ac1 = mklist<value>(mklist<value>("id", string("1234")), mklist<value>("balance", 1000));
@@ -149,6 +149,21 @@ bool testElement() {
     return true;
 }
 
+bool testValues() {
+    {
+        const list<value> l = mklist<value>(list<value>() + "ns1:echoString" + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo")) + (list<value>() + "text" + string("Hello World!")));
+        const list<value> e = valuesToElements(l);
+        const failable<list<string> > lx = writeXML(e);
+        ostringstream os;
+        write(content(lx), os);
+        istringstream is(str(os));
+        const list<value> x = readXML(streamList(is));
+        const list<value> v = elementsToValues(x);
+        assert(v == l);
+    }
+    return true;
+}
+
 }
 
 int main() {
@@ -156,7 +171,8 @@ int main() {
 
     tuscany::testReadXML();
     tuscany::testWriteXML();
-    tuscany::testElement();
+    tuscany::testElements();
+    tuscany::testValues();
 
     tuscany::cout << "OK" << tuscany::endl;
 
