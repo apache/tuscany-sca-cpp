@@ -169,7 +169,12 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
         return OK;
     }
 
-    return HTTP_NOT_IMPLEMENTED;
+    // Unknown content type, wrap the HTTP request struct in a value and pass it to
+    // the component implementation function
+    const failable<value> val = failableResult(impl(cons<value>("handle", mklist<value>(httpd::requestValue(r)))));
+    if (!hasContent(val))
+        return mkfailure<int>(reason(val));
+    return OK;
 }
 
 /**

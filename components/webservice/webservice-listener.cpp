@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * Web service component implementation.
+ * Web service listener component implementation.
  */
 
 #include "string.hpp"
@@ -28,26 +28,24 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
-#include "webservice.hpp"
+#include "../../modules/http/httpd.hpp"
+#include "axis2.hpp"
 
 namespace tuscany {
 namespace webservice {
 
 /**
- * Apply a Web service function / operation using Axis2.
+ * Handle an HTTP request.
  */
-const failable<value> apply(const value& func, const list<value>& params) {
-    const Axis2Context ax;
+const failable<value> handle(const list<value>& params) {
 
-    // Extract parameters
-    const value doc = car<value>(params);
-    const lambda<value(const list<value>&)> l = cadr<value>(params);
+    // Extract HTTPD request and relay reference
+    unused request_rec* r = httpd::request(car(params));
+    const lambda<value(const list<value>&)> relay = cadr(params);
 
-    // Call the URI property lambda function to get the configured URI
-    const value uri = l(list<value>());
+    //TODO Hook Axis2/C server module here
 
-    // Evaluate using Axis2
-    return evalExpr(mklist<value>(func, doc, uri), ax);
+    return value(true);
 }
 
 }
@@ -56,7 +54,10 @@ const failable<value> apply(const value& func, const list<value>& params) {
 extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
-    return tuscany::webservice::apply(car(params), cdr(params));
+    const tuscany::value func(car(params));
+    if (func == "handle")
+        return tuscany::webservice::handle(cdr(params));
+    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
 }
 
 }

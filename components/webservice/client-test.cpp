@@ -36,7 +36,6 @@
 namespace tuscany {
 namespace webservice {
 
-const string url("http://localhost:8090/webservice");
 
 bool testEval() {
     http::CURLSession cs;
@@ -47,7 +46,7 @@ bool testEval() {
             + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
             + (list<value>() + "text" + string("Hello World!")));
 
-    const failable<value> rval = http::evalExpr(mklist<value>(func, arg), url, cs);
+    const failable<value> rval = http::evalExpr(mklist<value>(func, arg), "http://localhost:8090/echo-client", cs);
     assert(hasContent(rval));
 
     const list<value> r = mklist<value>(

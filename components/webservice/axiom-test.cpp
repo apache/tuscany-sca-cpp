@@ -31,7 +31,7 @@
 #include "monad.hpp"
 #include "value.hpp"
 #include "perf.hpp"
-#include "webservice.hpp"
+#include "axis2.hpp"
 
 namespace tuscany {
 namespace webservice {

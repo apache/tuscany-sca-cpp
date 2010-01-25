@@ -360,9 +360,9 @@ AC_ARG_WITH([axis2c], [AC_HELP_STRING([--with-axis2c=PATH], [path to installed A
 AC_SUBST(AXIS2C_INCLUDE)
 AC_SUBST(AXIS2C_LIB)
 
-# Enable Web service support.
-AC_MSG_CHECKING([whether to enable Web service support])
-AC_ARG_ENABLE(webservice, [AS_HELP_STRING([--enable-webservice], [enable Web service support [default=no]])],
+# Enable Web service component.
+AC_MSG_CHECKING([whether to enable the Web service component])
+AC_ARG_ENABLE(webservice, [AS_HELP_STRING([--enable-webservice], [enable Web service component [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
@@ -377,9 +377,69 @@ if test "${want_webservice}" = "true"; then
   LIBS="-L${AXIS2C_LIB} ${default_LIBS}"
   AC_CHECK_LIB([axis2_engine], [axis2_svc_client_create], [], [AC_MSG_ERROR([couldn't find a suitable libaxis2_engine, use --with-axis2c=PATH])])
   AM_CONDITIONAL([WANT_WEBSERVICE], true)
-  AC_DEFINE([WANT_WEBSERVICE], 1, [enable Web service support])
+  AC_DEFINE([WANT_WEBSERVICE], 1, [enable Web service component])
 else
   AM_CONDITIONAL([WANT_WEBSERVICE], false)
+fi
+
+# Enable Store component.
+AC_MSG_CHECKING([whether to enable the Store component])
+AC_ARG_ENABLE(store, [AS_HELP_STRING([--enable-store], [enable Store component [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_store=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_store}" = "true"; then
+  AM_CONDITIONAL([WANT_STORE], true)
+  AC_DEFINE([WANT_STORE], 1, [enable Store component])
+else
+  AM_CONDITIONAL([WANT_STORE], false)
+fi
+
+# Enable Queue component.
+AC_MSG_CHECKING([whether to enable the Queue component])
+AC_ARG_ENABLE(queue, [AS_HELP_STRING([--enable-queue], [enable Queue component [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_queue=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_queue}" = "true"; then
+  AM_CONDITIONAL([WANT_QUEUE], true)
+  AC_DEFINE([WANT_QUEUE], 1, [enable Queue component])
+else
+  AM_CONDITIONAL([WANT_QUEUE], false)
+fi
+
+# Enable Chat component.
+AC_MSG_CHECKING([whether to enable the Chat component])
+AC_ARG_ENABLE(chat, [AS_HELP_STRING([--enable-chat], [enable Chat component [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_chat=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_chat}" = "true"; then
+  AM_CONDITIONAL([WANT_CHAT], true)
+  AC_DEFINE([WANT_CHAT], 1, [enable Chat component])
+else
+  AM_CONDITIONAL([WANT_CHAT], false)
 fi
 
 # Configure GCC C++ and LD options.
@@ -400,6 +460,9 @@ AC_CONFIG_FILES([Makefile
                  modules/server/Makefile
                  components/Makefile
                  components/cache/Makefile
+                 components/log/Makefile
+                 components/chat/Makefile
+                 components/queue/Makefile
                  components/store/Makefile
                  components/webservice/Makefile
                  samples/Makefile

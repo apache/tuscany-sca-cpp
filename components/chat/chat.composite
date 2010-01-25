@@ -20,28 +20,13 @@
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
-  name="webservice-client">
+  name="chat">
         
-    <component name="webservice-client">
-        <implementation.cpp path=".libs" library="libwebservice-client"/>
-        <property name="uri">http://localhost:9090/axis2/services/echo</property>
-        <service name="webservice-client">
-            <t:binding.jsonrpc uri="echo-client"/>
-        </service>
-    </component>     
-
-    <component name="webservice-listener">
-        <implementation.cpp path=".libs" library="libwebservice-listener"/>
-        <service name="webservice-listener">
-            <t:binding.http uri="echo-listener"/>
-        </service>
-        <reference name="relay" target="echo"/>
-    </component>
-
-    <component name="echo">
-        <t:implementation.scheme script="echo.scm"/>
-        <service name="echo">
-            <t:binding.jsonrpc uri="echo"/>
+    <component name="chat">
+        <implementation.cpp path=".libs" library="libchat"/>
+        <property name="jid">sample@apache.org</property>
+        <service name="chat">
+            <t:binding.http uri="chat"/>
         </service>
     </component>     
 

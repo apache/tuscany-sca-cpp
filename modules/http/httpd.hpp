@@ -264,6 +264,20 @@ const int reportStatus(const failable<int>& rc) {
     return content(rc);
 }
 
+/**
+ * Convert an HTTPD request struct to a value
+ */
+const value requestValue(request_rec* r) {
+    return value((const value*)r);
+}
+
+/**
+ * Convert a value to an HTTPD request struc
+ */
+request_rec* request(const value& v) {
+    return (request_rec*)(const value*)gc_ptr<value>(v);
+}
+
 }
 }
 

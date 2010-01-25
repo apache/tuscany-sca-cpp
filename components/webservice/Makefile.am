@@ -22,10 +22,13 @@ noinst_PROGRAMS = axiom-test axis2-test client-test
 INCLUDES = -I${AXIS2C_INCLUDE}
 
 compdir=$(prefix)/components/webservice
-comp_LTLIBRARIES = libwebservice.la
+comp_LTLIBRARIES = libwebservice-client.la libwebservice-listener.la
 
-libwebservice_la_SOURCES = webservice.cpp
-libwebservice_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
+libwebservice_client_la_SOURCES = webservice-client.cpp
+libwebservice_client_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
+
+libwebservice_listener_la_SOURCES = webservice-listener.cpp
+libwebservice_listener_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
 
 axiom_test_SOURCES = axiom-test.cpp
 axiom_test_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
