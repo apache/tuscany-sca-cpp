@@ -49,3 +49,4 @@ tags
 doxygen
 *.stamp
 *.class
+*.jar
