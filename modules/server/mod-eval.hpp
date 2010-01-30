@@ -129,13 +129,18 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
  * Handle an HTTP POST.
  */
 const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>& impl) {
-    const list<string> ls = httpd::read(r);
     debug(r->uri, "modeval::post::url");
-    debug(ls, "modeval::post::input");
 
     // Evaluate a JSON-RPC request and return a JSON result
     const string ct = httpd::contentType(r);
     if (contains(ct, "application/json-rpc") || contains(ct, "text/plain")) {
+
+        // Read the JSON request
+        const int rc = httpd::setupReadPolicy(r);
+        if(rc != OK)
+            return rc;
+        const list<string> ls = httpd::read(r);
+        debug(ls, "modeval::post::input");
         json::JSONContext cx;
         const list<value> json = elementsToValues(content(json::readJSON(ls, cx)));
         const list<list<value> > args = httpd::postArgs(json);
@@ -157,8 +162,15 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
     // Evaluate an ATOM POST request and return the location of the corresponding created resource
     if (contains(ct, "application/atom+xml")) {
 
-        // Evaluate the request expression
+        // Read the ATOM entry
+        const int rc = httpd::setupReadPolicy(r);
+        if(rc != OK)
+            return rc;
+        const list<string> ls = httpd::read(r);
+        debug(ls, "modeval::post::input");
         const value entry = atom::entryValue(content(atom::readEntry(ls)));
+
+        // Evaluate the request expression
         const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(entry))));
         if (!hasContent(val))
             return mkfailure<int>(reason(val));
@@ -174,20 +186,25 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
     const failable<value> val = failableResult(impl(cons<value>("handle", mklist<value>(httpd::requestValue(r)))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
-    return OK;
+    return (int)content(val);
 }
 
 /**
  * Handle an HTTP PUT.
  */
 const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>& impl) {
-    const list<string> ls = httpd::read(r);
     debug(r->uri, "modeval::put::url");
-    debug(ls, "modeval::put::input");
 
-    // Evaluate an ATOM PUT request and update the corresponding resource
+    // Read the ATOM entry
     const list<value> path(httpd::pathValues(r->uri));
+    const int rc = httpd::setupReadPolicy(r);
+    if(rc != OK)
+        return rc;
+    const list<string> ls = httpd::read(r);
+    debug(ls, "modeval::put::input");
     const value entry = atom::entryValue(content(atom::readEntry(ls)));
+
+    // Evaluate the ATOM PUT request and update the corresponding resource
     const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(caddr(path), entry))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
@@ -243,11 +260,6 @@ int handler(request_rec *r) {
     if(strcmp(r->handler, "mod_tuscany_eval"))
         return DECLINED;
     httpdDebugRequest(r, "modeval::handler::input");
-
-    // Set up the read policy
-    const int rc = httpd::setupReadPolicy(r);
-    if(rc != OK)
-        return rc;
 
     // Get the component implementation lambda
     DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_eval);

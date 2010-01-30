@@ -18,7 +18,7 @@
 #  under the License.
 
 # Setup
-axis2="${AXIS2C_HOME}/bin/axis2_http_server"
+axis2="$AXIS2C_HOME/bin/axis2_http_server"
 pwd=`pwd`
 cd $AXIS2C_HOME/bin
 $axis2 &
@@ -30,6 +30,6 @@ sleep 1
 rc=$?
 
 # Cleanup
-kill `ps -f | grep -v grep | grep "${axis2}" | awk '{ print $2 }'`
+kill `ps -f | grep -v grep | grep "$axis2" | awk '{ print $2 }'`
 sleep 1
 return $rc

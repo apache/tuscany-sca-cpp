@@ -39,7 +39,7 @@
     </component>
 
     <component name="echo">
-        <t:implementation.scheme script="echo.scm"/>
+        <t:implementation.scheme script="server-test.scm"/>
         <service name="echo">
             <t:binding.jsonrpc uri="echo"/>
         </service>

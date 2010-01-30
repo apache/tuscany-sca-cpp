@@ -194,17 +194,6 @@ int translate(request_rec *r) {
 }
 
 /**
- * Construct a redirect URI.
- */
-const string redirect(const string& file, const string& pi) {
-    return file + pi;
-}
-
-const string redirect(const string& file, const string& pi, const string& args) {
-    return file + pi + "?" + args;
-}
-
-/**
  * HTTP request handler, redirect to a target component.
  */
 int handler(request_rec *r) {
@@ -220,12 +209,9 @@ int handler(request_rec *r) {
     debug(r->filename, "modwiring::handler::filename");
     debug(r->path_info, "modwiring::handler::path info");
 
-    if (r->args == NULL) {
-        ap_internal_redirect(apr_pstrdup(r->pool, c_str(redirect(string(r->filename + 10), string(r->path_info)))), r);
-        return OK;
-    }
-    ap_internal_redirect(apr_pstrdup(r->pool, c_str(redirect(string(r->filename + 10), string(r->path_info), string(r->args)))), r);
-    return OK;
+    if (r->args == NULL)
+        return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info)), r);
+    return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info), string(r->args)), r);
 }
 
 /**

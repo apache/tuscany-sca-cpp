@@ -21,6 +21,7 @@
 ../../modules/http/httpd-conf tmp 8090 ../../modules/http/htdocs
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
+./axis2-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 
 <Location />
@@ -31,7 +32,7 @@ EOF
 
 apachectl -k start -d `pwd`/tmp
 
-axis2="${AXIS2C_HOME}/bin/axis2_http_server"
+axis2="$AXIS2C_HOME/bin/axis2_http_server"
 pwd=`pwd`
 cd $AXIS2C_HOME/bin
 $axis2 &
@@ -43,7 +44,7 @@ sleep 2
 rc=$?
 
 # Cleanup
-kill `ps -f | grep -v grep | grep "${axis2}" | awk '{ print $2 }'`
+kill `ps -f | grep -v grep | grep "$axis2" | awk '{ print $2 }'`
 apachectl -k stop -d `pwd`/tmp
 sleep 2
 return $rc

@@ -78,7 +78,6 @@ bool testJSON() {
     }
     {
         const list<value> l = mklist<value>(list<value>() + "ns1:echoString" + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo")) + (list<value>() + "text" + string("Hello World!")));
-        cout << "l: " << l << endl;
         ostringstream wos;
         write(content(writeJSON(valuesToElements(l), cx)), wos);
         assert(str(wos) == "{\"ns1:echoString\":{\"@xmlns:ns1\":\"http://ws.apache.org/axis2/services/echo\",\"text\":\"Hello World!\"}}");

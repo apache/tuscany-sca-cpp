@@ -146,7 +146,6 @@ cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE
 AC_MSG_NOTICE([checking for required libraries])
 LIBS="-L${APR_LIB} ${defaultlibs}"
 AC_CHECK_LIB([apr-1], [apr_pool_initialize], [AC_MSG_NOTICE([found])], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
-AC_CHECK_LIB([aprutil-1], [apr_memcache_replace], [AC_MSG_NOTICE([found])], [AC_MSG_ERROR([couldn't find a suitable libaprutil-1, use --with-apr=PATH])])
 ldflags="${ldflags} -L${APR_LIB} -R${APR_LIB} -lapr-1 -laprutil-1"
 
 # Check for libraries only required by some modules and add their search path to LD options.  

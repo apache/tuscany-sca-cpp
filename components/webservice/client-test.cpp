@@ -32,10 +32,32 @@
 #include "monad.hpp"
 #include "perf.hpp"
 #include "../../modules/http/curl.hpp"
+#include "axis2.hpp"
 
 namespace tuscany {
 namespace webservice {
 
+
+bool testModAxis2() {
+    const Axis2Context ax;
+
+    const value func = "http://ws.apache.org/axis2/c/samples/echoString";
+    const list<value> arg = mklist<value>(
+            list<value>() + "ns1:echoString"
+            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+            + (list<value>() + "text" + string("Hello World!")));
+
+    const failable<value> rval = evalExpr(mklist<value>(func, arg, string("http://localhost:8090/echo-listener")), ax);
+    assert(hasContent(rval));
+
+    const list<value> r = mklist<value>(
+            list<value>() + "ns1:echoString"
+            + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo"))
+            + (list<value>() + "text" + string("Hello World!")));
+    assert(content(rval) == r);
+
+    return true;
+}
 
 bool testEval() {
     http::CURLSession cs;
@@ -63,6 +85,7 @@ bool testEval() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
+    tuscany::webservice::testModAxis2();
     tuscany::webservice::testEval();
 
     tuscany::cout << "OK" << tuscany::endl;

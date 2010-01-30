@@ -25,10 +25,6 @@ httpd-2.2-13
 libapr-1-0.3.8
 libaprutil-1-0.3.9
 
-Recommended HTTPD configure options:
---with-included-apr to build HTTPD with the included APR distribution,
---with-mpm=worker to run HTTPD modules in multiple threads.
-
 XML
 libxml2-2.7.5
 
@@ -39,11 +35,11 @@ JSON
 SpiderMonkey libmozjs
 (included in xulrunner-1.9.1.7)
 
-Python (optional)
-libpython2.6
+Optional dependencies:
 
-Java (optional)
-a Java 6 development kit including jni.h and libjava
+Axis2/C 1.6.0
+Python 2.6
+a Java 6 SDK
 
 
 To configure the Tuscany SCA build do this:
@@ -88,7 +84,7 @@ installed under $HOME:
 --enable-python --with-python=/usr \
 --enable-java --with-java=/usr/lib/jvm/default-java \
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
---enable-threads --enable-maintainer-mode
+--enable-maintainer-mode
 
 
 To build the Tuscany SCA runtime, do this:
@@ -112,4 +108,22 @@ Installing
 
 To install the Tuscany SCA binaries, do this:
 make install
+
+
+Building dependencies from source
+=================================
+
+Here are example build and install steps for HTTPD (including APR) and Axis2/C:
+
+./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr \
+--with-mpm=prefork --prefix=$HOME/httpd-2.2.13-bin
+make
+make install
+export PATH=$HOME/httpd-2-2.13-bin/bin:$PATH
+
+./configure --enable-libxml2 --enable-openssl --enable-libcurl \
+--with-apache2=$HOME/httpd-2.2.13-bin/include --prefix=$HOME/axis2c-1.6.0-bin
+make
+make install
+export AXIS2C_HOME=$HOME/axis2c-1.6.0-bin
 

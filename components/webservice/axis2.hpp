@@ -25,6 +25,7 @@
 /**
  * Web service invocation functions using Axis2.
  */
+#include "config.hpp"
 
 // Ignore redundant declarations in Axiom headers
 #ifdef WANT_MAINTAINER_MODE
@@ -32,6 +33,11 @@
 #endif
 #include <axiom.h>
 #include <axis2_client.h>
+#include <axis2_module.h>
+#include <axis2_addr_mod.h>
+#include <axis2_conf_ctx.h>
+#include <axis2_disp.h>
+#include <axis2_http_out_transport_info.h>
 #ifdef WANT_MAINTAINER_MODE
 #pragma GCC diagnostic warning "-Wredundant-decls"
 #endif
@@ -55,6 +61,9 @@ public:
     }
 
     Axis2Context(const Axis2Context& ax) : env(ax.env), owner(false) {
+    }
+
+    Axis2Context(const axutil_env_t* env) : env(const_cast<axutil_env_t*>(env)), owner(false) {
     }
 
     ~Axis2Context() {

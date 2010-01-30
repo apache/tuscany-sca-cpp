@@ -36,12 +36,16 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- java             Support for Java components
  |   |   |-- python           Support for Python components
  |   |   |-- scheme           Support for Scheme components
- |   |   |-- server           HTTPD server integration
+ |   |   |-- server           Apache HTTPD server integration
+ |   |   |-- xmpp             XMPP protocol support
  |   |
  |   |-- components           Useful SCA components
- |   |   |-- cache            Memcached-based cache component
- |   |   |-- store            Persistent store component
- |   |   |-- webservice       Web service gateway component using Axis2C
+ |   |   |-- cache            Key/value cache (requires Memcached)
+ |   |   |-- chat             XMPP chat
+ |   |   |-- log              Logger
+ |   |   |-- queue            AMQP message queue (requires Apache Qpid/C++)
+ |   |   |-- store            Persistent store
+ |   |   |-- webservice       Web service gateway (requires Apache Axis2/C)
  |   |
  |   |-- test                 Integration tests
  |   |

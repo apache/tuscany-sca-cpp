@@ -41,6 +41,7 @@
 #include "http_main.h"
 #include "util_script.h"
 #include "util_md5.h"
+#include "http_config.h"
 
 #include "mod_core.h"
 
@@ -265,17 +266,142 @@ const int reportStatus(const failable<int>& rc) {
 }
 
 /**
- * Convert an HTTPD request struct to a value
+ * Construct a redirect URI.
  */
-const value requestValue(request_rec* r) {
-    return value((const value*)r);
+const string redirectURI(const string& file, const string& pi) {
+    return file + pi;
+}
+
+const string redirectURI(const string& file, const string& pi, const string& args) {
+    return file + pi + "?" + args;
 }
 
 /**
  * Convert a value to an HTTPD request struc
  */
 request_rec* request(const value& v) {
-    return (request_rec*)(const value*)gc_ptr<value>(v);
+    return (request_rec*)(long)(double)v;
+}
+
+/**
+ * Convert an HTTPD request struct to a value
+ */
+const value requestValue(request_rec* r) {
+    return value((double)(long)r);
+}
+
+/**
+ * Update filters in an HTTPD redirect request.
+ * Similar to httpd/modules/http/http_request.c::update_r_in_filters.
+ */
+const bool redirectFilters(ap_filter_t* f, request_rec* from, request_rec* to) {
+    if (f == NULL)
+        return true;
+    if (f->r == from)
+        f->r = to;
+    return redirectFilters(f->next, from, to);
+}
+
+/**
+ * Create an HTTPD redirect request.
+ * Similar to httpd/modules/http/http_request.c::internal_internal_redirect.
+ */
+extern "C" {
+    AP_DECLARE(ap_conf_vector_t*) ap_create_request_config(apr_pool_t *p);
+}
+
+const failable<request_rec*, int> internalRedirectRequest(const string& nr_uri, request_rec* r) {
+    if (ap_is_recursion_limit_exceeded(r))
+        return mkfailure<request_rec*, int>(HTTP_INTERNAL_SERVER_ERROR);
+
+    // Create a new request
+    request_rec* nr = (request_rec*)apr_pcalloc(r->pool, sizeof(request_rec));
+    nr->connection = r->connection;
+    nr->server = r->server;
+    nr->pool = r->pool;
+    nr->method = r->method;
+    nr->method_number = r->method_number;
+    nr->allowed_methods = ap_make_method_list(nr->pool, 2);
+    ap_parse_uri(nr, apr_pstrdup(nr->pool, c_str(nr_uri)));
+    nr->request_config = ap_create_request_config(r->pool);
+    nr->per_dir_config = r->server->lookup_defaults;
+    nr->prev = r;
+    r->next   = nr;
+
+    // Run create request hook
+    ap_run_create_request(nr);
+
+    // Inherit protocol info from the original request
+    nr->the_request = r->the_request;
+    nr->allowed = r->allowed;
+    nr->status = r->status;
+    nr->assbackwards = r->assbackwards;
+    nr->header_only = r->header_only;
+    nr->protocol = r->protocol;
+    nr->proto_num = r->proto_num;
+    nr->hostname = r->hostname;
+    nr->request_time = r->request_time;
+    nr->main = r->main;
+    nr->headers_in = r->headers_in;
+    nr->headers_out = apr_table_make(r->pool, 12);
+    nr->err_headers_out = r->err_headers_out;
+    nr->subprocess_env = r->subprocess_env;
+    nr->notes = apr_table_make(r->pool, 5);
+    nr->allowed_methods = ap_make_method_list(nr->pool, 2);
+    nr->htaccess = r->htaccess;
+    nr->no_cache = r->no_cache;
+    nr->expecting_100 = r->expecting_100;
+    nr->no_local_copy = r->no_local_copy;
+    nr->read_length = r->read_length;
+    nr->vlist_validator = r->vlist_validator;
+
+    // Setup input and output filters
+    nr->proto_output_filters  = r->proto_output_filters;
+    nr->proto_input_filters   = r->proto_input_filters;
+    nr->output_filters  = nr->proto_output_filters;
+    nr->input_filters   = nr->proto_input_filters;
+    if (nr->main)
+        ap_add_output_filter_handle(ap_subreq_core_filter_handle, NULL, nr, nr->connection);
+    redirectFilters(nr->input_filters, r, nr);
+    redirectFilters(nr->output_filters, r, nr);
+    const int rrc = ap_run_post_read_request(nr);
+    if (rrc != OK && rrc != DECLINED)
+        return mkfailure<request_rec*, int>(rrc);
+
+    return nr;
+}
+
+/**
+ * Process an HTTPD internal redirect request.
+ * Similar to httpd/modules/http/http_request.c::ap_internal_redirect.
+ */
+extern "C" {
+    AP_DECLARE(int) ap_invoke_handler(request_rec *r);
+}
+
+const int internalRedirect(request_rec* nr) {
+    int status = ap_run_quick_handler(nr, 0);
+    if (status == DECLINED) {
+        status = ap_process_request_internal(nr);
+        if (status == OK)
+            status = ap_invoke_handler(nr);
+    }
+    if (status != OK) {
+        nr->status = status;
+        return OK;
+    }
+    ap_finalize_request_protocol(nr);
+    return OK;
+}
+
+/**
+ * Create and process an HTTPD redirect request.
+ */
+const int internalRedirect(const string& uri, request_rec* r) {
+    const failable<request_rec*, int> nr = httpd::internalRedirectRequest(uri, r);
+    if (!hasContent(nr))
+        return reason(nr);
+    return httpd::internalRedirect(content(nr));
 }
 
 }
