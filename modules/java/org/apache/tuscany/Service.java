@@ -56,8 +56,8 @@ public interface Service {
     boolean deleteall();
     
     /**
-     * Apply a function.
+     * Evaluate an expression.
      */
-    <T> T apply(Object... params);
+    <T> T eval(Object... params);
     
 }

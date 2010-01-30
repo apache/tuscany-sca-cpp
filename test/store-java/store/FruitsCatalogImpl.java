@@ -19,6 +19,7 @@
 
 package store;
 
+import org.apache.tuscany.Service;
 import static org.apache.tuscany.IterableUtil.list;
 
 /**
@@ -29,15 +30,16 @@ public class FruitsCatalogImpl {
     /**
      * Returns the catalog.
      */
-    public Iterable<?> get(final CurrencyConverter converter) {
+    public Iterable<?> get(final CurrencyConverter converter, final Service currencyCode) {
+        final String code = currencyCode.eval();
+        
         class Converter {
             Double convert(Double price) {
-                return converter.convert("USD", "USD", price);
+                return converter.convert(code, "USD", price);
             }
         };
+
         Converter c = new Converter();
-        
-        String code = "USD";
         String symbol = converter.symbol(code);
         
         return list(
@@ -50,7 +52,7 @@ public class FruitsCatalogImpl {
     /**
      * TODO remove this JSON-RPC specific function.
      */
-    public Iterable<?> listMethods(final CurrencyConverter converter) {
+    public Iterable<?> listMethods(final CurrencyConverter converter, final Service currencyCode) {
         return list("Service.get");
     }
     

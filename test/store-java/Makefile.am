@@ -19,7 +19,7 @@ JAVAROOT = ${top_builddir}/test/store-java
 
 if WANT_JAVA
 
-AM_JAVACFLAGS = -classpath ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_VERSION}.jar
+AM_JAVACFLAGS = -cp ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_VERSION}.jar:${JAVAROOT}
 
 noinst_JAVA = store/*.java
 

@@ -211,16 +211,14 @@ public:
 
     const value operator()(const list<value>& expr) const {
         const value& op(car(expr));
+        if (op == "equals")
+            return value(cadr(expr) == this);
+        if (op == "hashCode")
+            return value((double)(long)this);
         if (op == "toString") {
             ostringstream os;
             os << this;
             return value(string("org.apache.tuscany.InvocationHandler@") + (c_str(str(os)) + 2));
-        }
-        if (op == "hashCode") {
-            return value((double)(long)this);
-        }
-        if (op == "equals") {
-            return value(cadr(expr) == this);
         }
         return func(expr);
     }
@@ -247,8 +245,9 @@ jobject JNICALL nativeInvoke(JNIEnv* env, jobject self, unused jobject proxy, jo
     const value func(c);
     env->ReleaseStringUTFChars(s, c);
 
-    // Build the expression to evaluate
-    const list<value> expr = cons<value>(func, jarrayToValues(jl.jr, args));
+    // Build the expression to evaluate, either (func, args[0], args[1], args[2]...)
+    // or just args[0] for the special eval(...) function
+    const list<value> expr = func == "eval"? (list<value>)car<value>(jarrayToValues(jl.jr, args)) : cons<value>(func, jarrayToValues(jl.jr, args));
     debug(expr, "java::nativeInvoke::expr");
 
     // Invoke the lambda function
@@ -401,8 +400,10 @@ const value jobjectToValue(const JavaRuntime& jr, const jobject o) {
         return value((bool)jr.env->CallBooleanMethod(o, jr.booleanValue));
     if (jr.env->IsSameObject(clazz, jr.doubleClass))
         return value((double)jr.env->CallDoubleMethod(o, jr.doubleValue));
-    if ((jr.env->IsAssignableFrom(clazz, jr.iterableClass)))
+    if (jr.env->IsAssignableFrom(clazz, jr.iterableClass))
         return jiterableToValues(jr, o);
+    if (jr.env->IsAssignableFrom(clazz, jr.objectArrayClass))
+        return jarrayToValues(jr, (jobjectArray)o);
     return lambda<value(const list<value>&)>(javaCallable(jr, o));
 }
 

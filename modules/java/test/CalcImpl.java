@@ -21,11 +21,16 @@ package test;
 
 import java.util.List;
 import java.util.ArrayList;
+import org.apache.tuscany.Service;
 
 public class CalcImpl {
     
     public Double add(Double x, Double y, Adder adder) {
         return adder.add(x, y);
+    }
+    
+    public Double addEval(Double x, Double y, Service adder) {
+        return adder.eval("add", x, y);
     }
     
     public Double mult(Double x, Double y) {

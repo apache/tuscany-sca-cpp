@@ -77,12 +77,22 @@ const value add(const list<value>& args) {
 
 bool testEvalLambda() {
     gc_scoped_pool pool;
-    const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
-    assert(hasContent(obj));
-    const value tcel = mklist<value>("add", 3, 4, lambda<value(const list<value>&)>(add));
-    const failable<value> r = evalClass(javaRuntime, tcel, content(obj));
-    assert(hasContent(r));
-    assert(content(r) == value(7));
+    {
+        const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
+        assert(hasContent(obj));
+        const value tcel = mklist<value>("add", 3, 4, lambda<value(const list<value>&)>(add));
+        const failable<value> r = evalClass(javaRuntime, tcel, content(obj));
+        assert(hasContent(r));
+        assert(content(r) == value(7));
+    }
+    {
+        const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
+        assert(hasContent(obj));
+        const value tcel = mklist<value>("addEval", 3, 4, lambda<value(const list<value>&)>(add));
+        const failable<value> r = evalClass(javaRuntime, tcel, content(obj));
+        assert(hasContent(r));
+        assert(content(r) == value(7));
+    }
     return true;
 }
 
