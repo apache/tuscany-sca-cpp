@@ -17,4 +17,15 @@
 
 if WANT_QUEUE
 
+INCLUDES = -I${QPIDC_INCLUDE}
+
+compdir=$(prefix)/components/queue
+comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
+
+libqueue_sender_la_SOURCES = queue-sender.cpp
+libqueue_sender_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
+
+libqueue_listener_la_SOURCES = queue-listener.cpp
+libqueue_listener_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
+
 endif

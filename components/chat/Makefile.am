@@ -15,6 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_STORE
+if WANT_CHAT
+
+INCLUDES = -I${LIBSTROPHE_INCLUDE}
+
+compdir=$(prefix)/components/chat
+comp_LTLIBRARIES = libchat-sender.la libchat-listener.la
+
+libchat_sender_la_SOURCES = chat-sender.cpp
+libchat_sender_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
+
+libchat_listener_la_SOURCES = chat-listener.cpp
+libchat_listener_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
 
 endif

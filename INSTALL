@@ -14,32 +14,44 @@ libtool-2.2.6
 doxygen-1.6.1
 
 Install the following binaries:
-curl-7.19.5
-memcached-1.2.8
+curl-7.19.5 (http://curl.haxx.se)
+memcached-1.2.8 (http://memcached.org/)
 
 
 Then install the following development dependencies:
 
-HTTP server and APR
-httpd-2.2-13
-libapr-1-0.3.8
+Apache HTTP server and APR:
+httpd-2.2-13 (http://httpd.apache.org/)
+libapr-1-0.3.8 (http://apr.apache.org/)
 libaprutil-1-0.3.9
 
-XML
-libxml2-2.7.5
+XML:
+libxml2-2.7.5 (http://xmlsoft.org/)
 
-CURL
-libcurl4-7.19.5
+CURL:
+libcurl4-7.19.5 (http://curl.haxx.se)
 
-JSON
-SpiderMonkey libmozjs
-(included in xulrunner-1.9.1.7)
+JSON:
+Mozilla SpiderMonkey libmozjs (http://www.mozilla.org/js/spidermonkey/)
+included in xulrunner-1.9.1.7
 
 Optional dependencies:
 
-Axis2/C 1.6.0
-Python 2.6
-a Java 6 SDK
+Web Services:
+Apache Axis2/C 1.6.0 (http://ws.apache.org/axis2/c/)
+
+Queueing:
+Apache Qpid/C++ 0.6 (http://qpid.apache.org/)
+
+Python:
+Python 2.6 (http://www.python.org/)
+
+Java:
+a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
+
+XMPP Chat:
+Libstrophe (http://code.stanziq.com/cgit/strophe/libstrophe/)
+build it from source at git://code.stanziq.com//libstrophe
 
 
 To configure the Tuscany SCA build do this:
@@ -61,8 +73,14 @@ To enable support for Python component implementations:
 To enable support for Java component implementations:
 --enable-java
 
-To build the Web service utility component (using Axis2C):
+To build the Web service utility component (requires Apache Axis2/C):
 --enable-webservice
+
+To build the Queue utility component (requires Apache Qpid/C++):
+--enable-queue
+
+To build the Chat utility component (requires Libstrophe):
+--enable-chat
 
 To generate doxygen documentation, add:
 --enable-doxygen
@@ -72,18 +90,20 @@ in the configure help:
 ./configure --help
 
 
-Here's an example configuration, tested on Ubuntu 9.10, with development
-dependencies installed in the standard directories and HTTPD and Axis2C
-installed under $HOME:
+Here's an example configuration, tested on Ubuntu 9.10, with the system
+dependencies installed in the standard system directories and some of the
+dependencies installed under $HOME:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
---with-curl=/usr --with-libxml2=/usr \
+--with-libcurl=/usr --with-libxml2=/usr \
 --with-js-include=/usr/include/xulrunner-1.9.1.7/unstable \
 --with-js-lib=/usr/lib/xulrunner-1.9.1.7 \
 --enable-python --with-python=/usr \
 --enable-java --with-java=/usr/lib/jvm/default-java \
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
+--enable-queue --with-qpidc=$HOME/qpidc-0.6-bin \
+--enable-chat --with-libstrophe=$HOME/libstrophe \
 --enable-maintainer-mode
 
 
@@ -113,17 +133,35 @@ make install
 Building dependencies from source
 =================================
 
-Here are example build and install steps for HTTPD (including APR) and Axis2/C:
+Here are example build and install steps for some of the dependencies.
 
+Apache HTTPD, including APR:
 ./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr \
 --with-mpm=prefork --prefix=$HOME/httpd-2.2.13-bin
 make
 make install
 export PATH=$HOME/httpd-2-2.13-bin/bin:$PATH
 
+Apache Axis2/C:
 ./configure --enable-libxml2 --enable-openssl --enable-libcurl \
 --with-apache2=$HOME/httpd-2.2.13-bin/include --prefix=$HOME/axis2c-1.6.0-bin
 make
 make install
 export AXIS2C_HOME=$HOME/axis2c-1.6.0-bin
+
+Apache Qpid/C++:
+./configure --prefix=$HOME/qpidc-0.6-bin
+make
+make install
+
+Libstrophe:
+git clone git://code.stanziq.com/libstrophe
+cd libstrophe
+git submodule init
+git submodule update
+aclocal
+automake --add-missing --foreign --copy
+autoconf
+./configure
+make
 

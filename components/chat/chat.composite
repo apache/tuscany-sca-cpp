@@ -22,11 +22,24 @@
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="chat">
         
-    <component name="chat">
-        <implementation.cpp path=".libs" library="libchat"/>
+    <component name="chat-sender">
+        <implementation.cpp path=".libs" library="libchat-sender"/>
         <property name="jid">sample@apache.org</property>
-        <service name="chat">
-            <t:binding.http uri="chat"/>
+        <service name="chat-sender">
+            <t:binding.http uri="print-sender"/>
+        </service>
+    </component>
+
+    <component name="chat-listener">
+        <implementation.cpp path=".libs" library="libchat-listener"/>
+        <property name="jid">sample@apache.org</property>
+        <reference name="relay" target="print"/>
+    </component>
+
+    <component name="print">
+        <t:implementation.scheme script="server-test.scm"/>
+        <service name="print">
+            <t:binding.http uri="print"/>
         </service>
     </component>     
 

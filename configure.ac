@@ -54,19 +54,19 @@ else
   AM_CONDITIONAL([DARWIN], false)
 fi
 
-# Configure path to CURL includes and lib.
-AC_MSG_CHECKING([for curl])
-AC_ARG_WITH([curl], [AC_HELP_STRING([--with-curl=PATH], [path to installed curl [default=/usr]])], [
-  CURL_INCLUDE="${withval}/include"
-  CURL_LIB="${withval}/lib"
+# Configure path to LIBCURL includes and lib.
+AC_MSG_CHECKING([for libcurl])
+AC_ARG_WITH([libcurl], [AC_HELP_STRING([--with-libcurl=PATH], [path to installed libcurl [default=/usr]])], [
+  LIBCURL_INCLUDE="${withval}/include"
+  LIBCURL_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
-  CURL_INCLUDE="/usr/include"
-  CURL_LIB="/usr/lib"
+  LIBCURL_INCLUDE="/usr/include"
+  LIBCURL_LIB="/usr/lib"
   AC_MSG_RESULT(/usr)
 ])
-AC_SUBST(CURL_INCLUDE)
-AC_SUBST(CURL_LIB)
+AC_SUBST(LIBCURL_INCLUDE)
+AC_SUBST(LIBCURL_LIB)
 
 # Configure path to libxml2 includes and lib.
 AC_MSG_CHECKING([for libxml2])
@@ -103,9 +103,9 @@ AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed S
 AC_SUBST(JS_INCLUDE)
 AC_SUBST(JS_LIB)
 
-# Configure path to APR and HTTPD includes and libs.
+# Configure path to Apache APR and HTTPD includes and libs.
 AC_MSG_CHECKING([for apr])
-AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed APR [default=/usr/local/apache2]])], [
+AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed Apache APR [default=/usr/local/apache2]])], [
   APR_INCLUDE="${withval}/include"
   APR_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
@@ -118,7 +118,7 @@ AC_SUBST(APR_INCLUDE)
 AC_SUBST(APR_LIB)
 
 AC_MSG_CHECKING([for httpd])
-AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed HTTPD [default=/usr/local/apache2]])], [
+AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed Apache HTTPD [default=/usr/local/apache2]])], [
   HTTPD_INCLUDE="${withval}/include"
   AC_MSG_RESULT("${withval}")
 ], [
@@ -140,7 +140,7 @@ ldflags="${LDFLAGS}"
 defaultlibs="${LIBS}"
 
 # Configure default includes.
-cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE} -I${LIBXML2_INCLUDE} -I${JS_INCLUDE} -I${CURL_INCLUDE}"
+cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE} -I${LIBXML2_INCLUDE} -I${JS_INCLUDE} -I${LIBCURL_INCLUDE}"
 
 # Check for libraries required by all modules and add them to LD options.
 AC_MSG_NOTICE([checking for required libraries])
@@ -149,13 +149,13 @@ AC_CHECK_LIB([apr-1], [apr_pool_initialize], [AC_MSG_NOTICE([found])], [AC_MSG_E
 ldflags="${ldflags} -L${APR_LIB} -R${APR_LIB} -lapr-1 -laprutil-1"
 
 # Check for libraries only required by some modules and add their search path to LD options.  
-LIBS="-L${CURL_LIB} ${defaultlibs}"
-AC_CHECK_LIB([curl], [curl_global_init], [], [AC_MSG_ERROR([couldn't find a suitable libcurl, use --with-curl=PATH])])
+LIBS="-L${LIBCURL_LIB} ${defaultlibs}"
+AC_CHECK_LIB([curl], [curl_global_init], [], [AC_MSG_ERROR([couldn't find a suitable libcurl, use --with-libcurl=PATH])])
 LIBS="-L${JS_LIB} ${defaultlibs}"
 AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitable libmozjs, use --with-js-lib=PATH])])
 LIBS="-L${LIBXML2_LIB} ${defaultlibs}"
 AC_CHECK_LIB([xml2], [xmlInitParser], [], [AC_MSG_ERROR([couldn't find a suitable libxml2, use --with-libxml2=PATH])])
-ldflags="${ldflags} -L${CURL_LIB} -R${CURL_LIB} -L${JS_LIB} -R${JS_LIB} -L${LIBXML2_LIB} -R${LIBXML2_LIB}"
+ldflags="${ldflags} -L${LIBCURL_LIB} -R${LIBCURL_LIB} -L${JS_LIB} -R${JS_LIB} -L${LIBXML2_LIB} -R${LIBXML2_LIB}"
 
 # Check for required header files.
 AC_MSG_NOTICE([checking for header files])
@@ -345,9 +345,9 @@ else
   AM_CONDITIONAL([WANT_JAVA], false)
 fi
 
-# Configure path to Axis2C includes and lib.
+# Configure path to Apache Axis2C includes and lib.
 AC_MSG_CHECKING([for axis2c])
-AC_ARG_WITH([axis2c], [AC_HELP_STRING([--with-axis2c=PATH], [path to installed Axis2C [default=/usr/local/axis2c]])], [
+AC_ARG_WITH([axis2c], [AC_HELP_STRING([--with-axis2c=PATH], [path to installed Apache Axis2C [default=/usr/local/axis2c]])], [
   AXIS2C_INCLUDE="${withval}/include/axis2-1.6.0"
   AXIS2C_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
@@ -401,6 +401,20 @@ else
   AM_CONDITIONAL([WANT_STORE], false)
 fi
 
+# Configure path to Apache Qpid/C++ includes and lib.
+AC_MSG_CHECKING([for qpidc])
+AC_ARG_WITH([qpidc], [AC_HELP_STRING([--with-qpidc=PATH], [path to installed Apache Qpid/C++ [default=/usr/local]])], [
+  QPIDC_INCLUDE="${withval}/include"
+  QPIDC_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  QPIDC_INCLUDE="/usr/local/include"
+  QPIDC_LIB="/usr/local/lib"
+  AC_MSG_RESULT(/usr/local)
+])
+AC_SUBST(QPIDC_INCLUDE)
+AC_SUBST(QPIDC_LIB)
+
 # Enable Queue component.
 AC_MSG_CHECKING([whether to enable the Queue component])
 AC_ARG_ENABLE(queue, [AS_HELP_STRING([--enable-queue], [enable Queue component [default=no]])],
@@ -415,11 +429,27 @@ AC_ARG_ENABLE(queue, [AS_HELP_STRING([--enable-queue], [enable Queue component [
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_queue}" = "true"; then
+  LIBS="-L${QPIDC_LIB} ${default_LIBS}"
+  #AC_CHECK_LIB([qpidclient], [], [], [AC_MSG_ERROR([couldn't find a suitable libqpidclient, use --with-qpidc=PATH])])
   AM_CONDITIONAL([WANT_QUEUE], true)
   AC_DEFINE([WANT_QUEUE], 1, [enable Queue component])
 else
   AM_CONDITIONAL([WANT_QUEUE], false)
 fi
+
+# Configure path to Libstrophe includes and lib.
+AC_MSG_CHECKING([for libstrophe])
+AC_ARG_WITH([libstrophe], [AC_HELP_STRING([--with-libstrophe=PATH], [path to libstrophe source build [default=${HOME}/libstrophe]])], [
+  LIBSTROPHE_INCLUDE="${withval}"
+  LIBSTROPHE_LIB="${withval}"
+  AC_MSG_RESULT("${withval}")
+], [
+  LIBSTROPHE_INCLUDE="${HOME}/libstrophe"
+  LIBSTROPHE_LIB="${HOME}/libstrophe"
+  AC_MSG_RESULT(${HOME}/libstrophe)
+])
+AC_SUBST(LIBSTROPHE_INCLUDE)
+AC_SUBST(LIBSTROPHE_LIB)
 
 # Enable Chat component.
 AC_MSG_CHECKING([whether to enable the Chat component])
@@ -435,6 +465,8 @@ AC_ARG_ENABLE(chat, [AS_HELP_STRING([--enable-chat], [enable Chat component [def
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_chat}" = "true"; then
+  LIBS="-L${LIBSTROPHE_LIB} ${default_LIBS}"
+  AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lexpat -lssl -lresolv])
   AM_CONDITIONAL([WANT_CHAT], true)
   AC_DEFINE([WANT_CHAT], 1, [enable Chat component])
 else
