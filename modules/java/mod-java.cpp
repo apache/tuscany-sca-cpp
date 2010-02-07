@@ -37,15 +37,38 @@ namespace server {
 namespace modeval {
 
 /**
+ * Start the module.
+ */
+const failable<bool> start(unused ServerConf& sc) {
+    // Start a Java runtime
+    sc.moduleConf =  new (gc_new<java::JavaRuntime>()) java::JavaRuntime();
+    return true;
+}
+
+/**
+ * Stop the module.
+ */
+const failable<bool> stop(unused ServerConf& sc) {
+    return true;
+}
+
+/**
+ * Restart the module.
+ */
+const failable<bool> restart(unused ServerConf& sc) {
+    return true;
+}
+
+/**
  * Evaluate a Java component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, modeval::ServerConf& sc) {
     const string itype(elementName(impl));
     if (contains(itype, ".java"))
-        return modjava::evalImplementation(path, impl, px);
+        return modjava::evalImplementation(path, impl, px, sc);
     if (contains(itype, ".cpp"))
-        return modcpp::evalImplementation(path, impl, px);
+        return modcpp::evalImplementation(path, impl, px, sc);
     return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
 }
 

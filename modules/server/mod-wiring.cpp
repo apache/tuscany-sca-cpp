@@ -48,31 +48,22 @@ namespace modwiring {
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : s(s), home(""), wiringServerName("") {
+    ServerConf(server_rec* s) : s(s), start(false), home(""), wiringServerName(""), contributionPath(""), compositeName("") {
     }
     const server_rec* s;
+    bool start;
     string home;
     string wiringServerName;
+    string contributionPath;
+    string compositeName;
+    list<value> references;
+    list<value> services;
 };
 
 /**
  * Set to true to wire using mod_proxy, false to wire using HTTP client redirects.
  */
 const bool useModProxy = true;
-
-/**
- * Directory configuration.
- */
-class DirConf {
-public:
-    DirConf(char* dirspec) : dirspec(dirspec), contributionPath(""), compositeName("") {
-    }
-    const char* dirspec;
-    string contributionPath;
-    string compositeName;
-    list<value> references;
-    list<value> services;
-};
 
 /**
  * Returns true if a URI is absolute.
@@ -90,9 +81,9 @@ int translateReference(request_rec *r) {
     debug(r->uri, "modwiring::translateReference::uri");
 
     // Find the requested component
-    DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_wiring);
+    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
     const list<value> rpath(httpd::pathValues(r->uri));
-    const list<value> comp(assoctree(cadr(rpath), dc.references));
+    const list<value> comp(assoctree(cadr(rpath), sc.references));
     if (isNil(comp))
         return HTTP_NOT_FOUND;
 
@@ -155,9 +146,9 @@ int translateService(request_rec *r) {
     debug(r->uri, "modwiring::translateService::uri");
 
     // Find the requested component
-    DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_wiring);
+    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
     const list<value> path(httpd::pathValues(r->uri));
-    const list<value> svc(assocPath(path, dc.services));
+    const list<value> svc(assocPath(path, sc.services));
     if (isNil(svc))
         return DECLINED;
     debug(svc, "modwiring::translateService::service");
@@ -282,16 +273,19 @@ const list<value> uriToComponentTree(const list<value>& c) {
 /**
  * Configure the components declared in the server's deployment composite.
  */
-const bool confComponents(DirConf& dc) {
-    if (dc.contributionPath == "" || dc.compositeName == "")
+const bool confComponents(ServerConf& sc) {
+    if (sc.contributionPath == "" || sc.compositeName == "")
         return true;
-    const failable<list<value> > comps = readComponents(dc.contributionPath + dc.compositeName);
+
+    // Read the component configuration and store the references and service
+    // URIs in trees for fast retrieval later
+    const failable<list<value> > comps = readComponents(sc.contributionPath + sc.compositeName);
     if (!hasContent(comps))
         return true;
-    dc.references = componentReferenceToTargetTree(content(comps));
-    debug(dc.references, "modwiring::confComponents::references");
-    dc.services = uriToComponentTree(content(comps));
-    debug(dc.services, "modwiring::confComponents::services");
+    sc.references = componentReferenceToTargetTree(content(comps));
+    debug(sc.references, "modwiring::confComponents::references");
+    sc.services = uriToComponentTree(content(comps));
+    debug(sc.services, "modwiring::confComponents::services");
     return true;
 }
 
@@ -310,18 +304,16 @@ const char *confWiringServerName(cmd_parms *cmd, unused void *c, const char *arg
     sc.wiringServerName = arg;
     return NULL;
 }
-const char *confContribution(cmd_parms *cmd, void *c, const char *arg) {
+const char *confContribution(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
-    DirConf& dc = *(DirConf*)c;
-    dc.contributionPath = arg;
-    confComponents(dc);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_wiring);
+    sc.contributionPath = arg;
     return NULL;
 }
-const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
+const char *confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
-    DirConf& dc = *(DirConf*)c;
-    dc.compositeName = arg;
-    confComponents(dc);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_wiring);
+    sc.compositeName = arg;
     return NULL;
 }
 
@@ -330,14 +322,28 @@ const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
  */
 const command_rec commands[] = {
     AP_INIT_TAKE1("TuscanyHome", (const char*(*)())confHome, NULL, RSRC_CONF, "Tuscany home directory"),
-    AP_INIT_TAKE1("SCAWiringServerName", (const char*(*)())confWiringServerName, NULL, ACCESS_CONF, "SCA wiring server name"),
-    AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, ACCESS_CONF, "SCA contribution location"),
-    AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, ACCESS_CONF, "SCA composite location"),
+    AP_INIT_TAKE1("SCAWiringServerName", (const char*(*)())confWiringServerName, NULL, RSRC_CONF, "SCA wiring server name"),
+    AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, RSRC_CONF, "SCA contribution location"),
+    AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 
-int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, unused server_rec *s) {
-   return OK;
+int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
+    // Count the calls to post config, skip the first one as
+    // postConfig is always called twice
+    const string k("tuscany::modwiring::postConfig");
+    const int count = httpd::userData(k, s);
+    httpd::putUserData(k, count +1, s);
+    if (count == 0)
+        return OK;
+
+    // Configure the wiring for the deployed components
+    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
+    debug(sc.wiringServerName, "modwiring::postConfig::wiringServerName");
+    debug(sc.contributionPath, "modwiring::postConfig::contributionPath");
+    debug(sc.compositeName, "modwiring::postConfig::compositeName");
+    confComponents(sc);
+    return OK;
 }
 
 void childInit(apr_pool_t* p, server_rec* svr_rec) {
@@ -365,7 +371,7 @@ extern "C" {
 module AP_MODULE_DECLARE_DATA mod_tuscany_wiring = {
     STANDARD20_MODULE_STUFF,
     // dir config and merger
-    tuscany::httpd::makeDirConf<tuscany::server::modwiring::DirConf>, NULL,
+    NULL, NULL,
     // server config and merger
     tuscany::httpd::makeServerConf<tuscany::server::modwiring::ServerConf>, NULL,
     // commands and hooks

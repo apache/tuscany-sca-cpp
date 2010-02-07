@@ -19,6 +19,9 @@
 
 /* $Rev$ $Date$ */
 
+#ifndef tuscany_modeval_hpp
+#define tuscany_modeval_hpp
+
 /**
  * HTTPD module used to eval component implementations.
  */
@@ -50,22 +53,13 @@ namespace modeval {
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : s(s), home(""), wiringServerName("") {
+    ServerConf(server_rec* s) : s(s), moduleConf(NULL), home(""), wiringServerName(""), contributionPath(""), compositeName("") {
     }
 
     const server_rec* s;
+    void* moduleConf;
     string home;
     string wiringServerName;
-};
-
-/**
- * Directory configuration.
- */
-class DirConf {
-public:
-    DirConf(char* dirspec) : dirspec(dirspec), contributionPath(""), compositeName("") {
-    }
-    const char* dirspec;
     string contributionPath;
     string compositeName;
     list<value> implementations;
@@ -262,9 +256,9 @@ int handler(request_rec *r) {
     httpdDebugRequest(r, "modeval::handler::input");
 
     // Get the component implementation lambda
-    DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_eval);
+    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
     const list<value> path(httpd::pathValues(r->uri));
-    const list<value> impl(assoctree<value>(cadr(path), dc.implementations));
+    const list<value> impl(assoctree<value>(cadr(path), sc.implementations));
     if (isNil(impl))
         return HTTP_NOT_FOUND;
 
@@ -322,8 +316,8 @@ const list<value> propProxies(const list<value>& props) {
 /**
  * Evaluate a component and convert it to an applicable lambda function.
  */
-const value evalComponent(DirConf& dc, ServerConf& sc, server_rec& server, const value& comp) {
-    extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px);
+const value evalComponent(ServerConf& sc, server_rec& server, const value& comp) {
+    extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px, ServerConf& sc);
 
     const value impl = scdl::implementation(comp);
 
@@ -342,23 +336,19 @@ const value evalComponent(DirConf& dc, ServerConf& sc, server_rec& server, const
     const list<value> ppx(propProxies(scdl::properties(comp)));
 
     // Evaluate the component implementation and convert it to an applicable lambda function
-    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(dc.contributionPath, impl, append(rpx, ppx)));
+    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(sc.contributionPath, impl, append(rpx, ppx), sc));
     if (!hasContent(cimpl))
         return reason(cimpl);
     return content(cimpl);
 }
 
 /**
- * Return a tree of component-name + configured-implementation pairs.
+ * Return a list of component-name + configured-implementation pairs.
  */
-const list<value> componentToImplementationAssoc(DirConf& dc, ServerConf& sc, server_rec& server, const list<value>& c) {
+const list<value> componentToImplementationAssoc(ServerConf& sc, server_rec& server, const list<value>& c) {
     if (isNil(c))
         return c;
-    return cons<value>(mklist<value>(scdl::name(car(c)), evalComponent(dc, sc, server, car(c))), componentToImplementationAssoc(dc, sc, server, cdr(c)));
-}
-
-const list<value> componentToImplementationTree(DirConf& dc, ServerConf& sc, server_rec& server, const list<value>& c) {
-    return mkbtree(sort(componentToImplementationAssoc(dc, sc, server, c)));
+    return cons<value>(mklist<value>(scdl::name(car(c)), evalComponent(sc, server, car(c))), componentToImplementationAssoc(sc, server, cdr(c)));
 }
 
 /**
@@ -372,48 +362,73 @@ const failable<list<value> > readComponents(const string& path) {
 }
 
 /**
+ * Apply a list of component implementations to a (start, stop or restart) lifecycle expression.
+ */
+const failable<bool> applyLifecycleExpr(const list<value> impls, const list<value>& expr) {
+    if (isNil(impls))
+        return true;
+
+    // Evaluate lifecycle expression against a component implementation lambda
+    const lambda<value(const list<value>&)> l(cadr<value>(car(impls)));
+    const failable<value> r = failableResult(l(expr));
+    if (!hasContent(r))
+        return mkfailure<bool>(reason(r));
+
+    return applyLifecycleExpr(cdr(impls), expr);
+}
+
+/**
  * Configure the components declared in the deployed composite.
  */
-const bool confComponents(DirConf& dc, ServerConf& sc, server_rec& server) {
-    if (dc.contributionPath == "" || dc.compositeName == "")
-        return true;
-    const failable<list<value> > comps = readComponents(dc.contributionPath + dc.compositeName);
+const failable<bool> confComponents(const string& lifecycle, ServerConf& sc, server_rec& server) {
+    if (sc.contributionPath == "" || sc.compositeName == "")
+        return false;
+
+    // Read the components and get their implementation lambda functions
+    const failable<list<value> > comps = readComponents(sc.contributionPath + sc.compositeName);
     if (!hasContent(comps))
-        return true;
-    dc.implementations = componentToImplementationTree(dc, sc, server, content(comps));
-    debug(dc.implementations, "modeval::confComponents::implementations");
-    return true;
+        return mkfailure<bool>(reason(comps));
+    const list<value> impls = componentToImplementationAssoc(sc, server, content(comps));
+
+    // Store the implementation lambda functions in a tree for fast retrieval
+    sc.implementations = mkbtree(sort(impls));
+    debug(sc.implementations, "modeval::confComponents::implementations");
+
+    // Start or restart the component implementations
+    return applyLifecycleExpr(impls, mklist<value>(lifecycle));
 }
 
 /**
  * Configuration commands.
  */
-const char *confHome(cmd_parms *cmd, unused void *c, const char *arg) {
+const char* confHome(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
     sc.home = arg;
     return NULL;
 }
-const char *confWiringServerName(cmd_parms *cmd, unused void *c, const char *arg) {
+const char* confWiringServerName(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
     sc.wiringServerName = arg;
     return NULL;
 }
-const char *confContribution(cmd_parms *cmd, void *c, const char *arg) {
+const char* confContribution(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    DirConf& dc = *(DirConf*)c;
-    dc.contributionPath = arg;
-    confComponents(dc, sc, *cmd->server);
+    sc.contributionPath = arg;
     return NULL;
 }
-const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
+const char* confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    DirConf& dc = *(DirConf*)c;
-    dc.compositeName = arg;
-    confComponents(dc, sc, *cmd->server);
+    sc.compositeName = arg;
+    return NULL;
+}
+
+const char* confEnv(unused cmd_parms *cmd, unused void *c, const char *name, const char *value) {
+    gc_scoped_pool pool(cmd->pool);
+    setenv(name, value != NULL? value : "", 1);
     return NULL;
 }
 
@@ -423,15 +438,49 @@ const char *confComposite(cmd_parms *cmd, void *c, const char *arg) {
 const command_rec commands[] = {
     AP_INIT_TAKE1("TuscanyHome", (const char*(*)())confHome, NULL, RSRC_CONF, "Tuscany home directory"),
     AP_INIT_TAKE1("SCAWiringServerName", (const char*(*)())confWiringServerName, NULL, RSRC_CONF, "SCA wiring server name"),
-    AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, ACCESS_CONF, "SCA contribution location"),
-    AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, ACCESS_CONF, "SCA composite location"),
+    AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, RSRC_CONF, "SCA contribution location"),
+    AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
+    AP_INIT_TAKE12("SetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 
-int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, unused server_rec *s) {
+int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
+    extern const failable<bool> start(ServerConf& sc);
+    extern const failable<bool> restart(ServerConf& sc);
+    gc_scoped_pool pool(p);
+    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
+
+    // Count the calls to post config
+    const string k("tuscany::modeval::postConfig");
+    const int count = httpd::userData(k, s);
+    httpd::putUserData(k, count +1, s);
+
+    // Count == 0, do nothing as post config is always called twice,
+    // count == 1 is the first start, count > 1 is a restart
+    if (count == 0)
+        return OK;
+    if (count == 1) {
+        debug("modeval::postConfig::start");
+        start(sc);
+    }
+    if (count > 1) {
+        debug("modeval::postConfig::restart");
+        restart(sc);
+    }
+
+    // Configure the components deployed to the server
+    debug(sc.wiringServerName, "modeval::postConfig::wiringServerName");
+    debug(sc.contributionPath, "modeval::postConfig::contributionPath");
+    debug(sc.compositeName, "modeval::postConfig::compositeName");
+    const failable<bool> res = confComponents(count > 1? "restart" : "start", sc, *s);
+    if (!hasContent(res))
+        return -1;
     return OK;
 }
 
+/**
+ * Child process initialization.
+ */
 void childInit(apr_pool_t* p, server_rec* svr_rec) {
     gc_scoped_pool pool(p);
     ServerConf* c = (ServerConf*)ap_get_module_config(svr_rec->module_config, &mod_tuscany_eval);
@@ -457,7 +506,7 @@ extern "C" {
 module AP_MODULE_DECLARE_DATA mod_tuscany_eval = {
     STANDARD20_MODULE_STUFF,
     // dir config and merger
-    tuscany::httpd::makeDirConf<tuscany::server::modeval::DirConf>, NULL,
+    NULL, NULL,
     // server config and merger
     tuscany::httpd::makeServerConf<tuscany::server::modeval::ServerConf>, NULL,
     // commands and hooks
@@ -465,3 +514,5 @@ module AP_MODULE_DECLARE_DATA mod_tuscany_eval = {
 };
 
 }
+
+#endif

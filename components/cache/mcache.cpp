@@ -99,7 +99,7 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
         return tuscany::cache::put(cdr(params));
     if (func == "delete")
         return tuscany::cache::del(cdr(params));
-    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
+    return tuscany::mkfailure<tuscany::value>();
 }
 
 }

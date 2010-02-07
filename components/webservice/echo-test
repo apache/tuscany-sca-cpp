@@ -18,9 +18,11 @@
 #  under the License.
 
 # Setup
-axis2="$AXIS2C_HOME/bin/axis2_http_server"
+axis2_prefix=`cat axis2c.prefix`
+export AXIS2C_HOME=$axis2_prefix
+axis2="$axis2_prefix/bin/axis2_http_server"
 pwd=`pwd`
-cd $AXIS2C_HOME/bin
+cd "$axis2_prefix/bin"
 $axis2 &
 cd $pwd
 sleep 1

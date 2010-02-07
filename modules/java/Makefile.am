@@ -15,9 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-datadir=$(prefix)/modules/java
 JAVAROOT = $(top_builddir)/modules/java
-libdir=$(prefix)/lib
+libdir = $(prefix)/lib
 
 if WANT_JAVA
 
@@ -49,6 +48,12 @@ CLEANFILES = ${jarfile} org/apache/tuscany/*.class	test/*.class
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+prefixdir = $(top_builddir)/modules/java
+prefix_DATA = java.prefix
+
+java.prefix: $(top_builddir)/config.status
+	echo ${JAVA_PREFIX} >java.prefix
 
 TESTS = java-test server-test
 

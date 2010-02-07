@@ -48,6 +48,7 @@ const value evalDriverLoop(const JavaRuntime& jr, const JavaClass jc, istream& i
 
 const bool evalDriverRun(const char* name, istream& in, ostream& out) {
     scheme::setupDisplay(out);
+    JavaRuntime javaRuntime;
     const failable<JavaClass> jc = readClass(javaRuntime, ".", name);
     if (!hasContent(jc))
         return true;

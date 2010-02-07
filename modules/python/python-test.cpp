@@ -37,6 +37,7 @@ const string testPythonAdd =
 
 bool testEvalExpr() {
     gc_scoped_pool pool;
+    PythonRuntime py;
 
     istringstream is(testPythonAdd);
     failable<PyObject*> script = readScript("script", is);
@@ -69,6 +70,7 @@ const string testCallLambda(
 
 bool testEvalLambda() {
     gc_scoped_pool pool;
+    PythonRuntime py;
 
     const value trl = mklist<value>("testReturnLambda");
     istringstream trlis(testReturnLambda);

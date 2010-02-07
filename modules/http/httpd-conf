@@ -27,6 +27,7 @@ mkdir -p $root
 mkdir -p $root/logs
 mkdir -p $root/conf
 cat >$root/conf/httpd.conf <<EOF
+ErrorLog $root/logs/error_log
 ServerName http://127.0.0.1:$port
 Listen $port
 DocumentRoot $htdocs

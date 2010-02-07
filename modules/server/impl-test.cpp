@@ -70,7 +70,7 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
         return tuscany::server::del(cdr(params));
     if (func == "echo")
         return tuscany::server::echo(cdr(params));
-    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
+    return tuscany::mkfailure<tuscany::value>();
 }
 
 }

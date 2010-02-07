@@ -24,14 +24,11 @@ echo "Testing..."
 ./server-conf tmp
 ./scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
-
-<Location />
 SCAContribution `pwd`/
 SCAComposite domain-test.composite
-</Location>
 EOF
 
-apachectl -k start -d `pwd`/tmp
+../http/httpd-start tmp
 sleep 2
 
 # Test HTTP GET
@@ -71,7 +68,7 @@ if [ "$rc" = "0" ]; then
 fi
 
 # Cleanup
-apachectl -k stop -d `pwd`/tmp
+../http/httpd-stop tmp
 sleep 2
 if [ "$rc" = "0" ]; then
     echo "OK"

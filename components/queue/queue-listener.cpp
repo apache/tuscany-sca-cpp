@@ -44,7 +44,7 @@ QpidConnection qc;
 /**
  * Initialize the component.
  */
-const failable<value> init(const list<value>& params) {
+const failable<value> start(const list<value>& params) {
     QpidSession qs(qc);
 
     // Declare the configured AMQP key / queue pair
@@ -64,9 +64,9 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "init")
-        return tuscany::queue::init(cdr(params));
-    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
+    if (func == "start")
+        return tuscany::queue::start(cdr(params));
+    return tuscany::mkfailure<tuscany::value>();
 }
 
 }

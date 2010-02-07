@@ -47,6 +47,7 @@ const value evalDriverLoop(PyObject* script, istream& in, ostream& out) {
 }
 
 const bool evalDriverRun(const char* path, istream& in, ostream& out) {
+    PythonRuntime py;
     scheme::setupDisplay(out);
     ifstream is(path);
     failable<PyObject*> script = readScript(path, is);

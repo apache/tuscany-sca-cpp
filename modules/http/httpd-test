@@ -21,7 +21,7 @@ echo "Testing..."
 
 # Setup
 ./httpd-conf tmp 8090 htdocs
-apachectl -k start -d `pwd`/tmp
+./httpd-start tmp
 sleep 2
 
 # Test HTTP GET
@@ -30,7 +30,7 @@ diff tmp/index.html htdocs/index.html
 rc=$?
 
 # Cleanup
-apachectl -k stop -d `pwd`/tmp
+./httpd-stop tmp
 sleep 2
 if [ "$rc" = "0" ]; then
     echo "OK"

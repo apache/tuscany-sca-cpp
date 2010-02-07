@@ -171,6 +171,18 @@ const value cdddrProc(unused const list<value>& args) {
     return cdddr((list<value> )car(args));
 }
 
+const value startProc(unused const list<value>& args) {
+    return false;
+}
+
+const value stopProc(unused const list<value>& args) {
+    return false;
+}
+
+const value restartProc(unused const list<value>& args) {
+    return false;
+}
+
 const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
     const lambda<value(const list<value>&)> func(cadr((list<value>)proc));
     return func(args);
@@ -222,7 +234,10 @@ const list<value> primitiveProcedureNames() {
     + "cdddr"
     + "display"
     + "log"
-    + "uuid";
+    + "uuid"
+    + "start"
+    + "stop"
+    + "restart";
 }
 
 const list<value> primitiveProcedureObjects() {
@@ -245,7 +260,10 @@ const list<value> primitiveProcedureObjects() {
     + primitiveProcedure(cdddrProc)
     + primitiveProcedure(displayProc)
     + primitiveProcedure(logProc)
-    + primitiveProcedure(uuidProc);
+    + primitiveProcedure(uuidProc)
+    + primitiveProcedure(startProc)
+    + primitiveProcedure(stopProc)
+    + primitiveProcedure(restartProc);
 }
 
 const bool isFalse(const value& exp) {

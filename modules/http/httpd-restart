@@ -17,16 +17,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-conf tmp 8090 htdocs
-../../modules/server/server-conf tmp
-../../modules/server/cpp-conf tmp
-cat >>tmp/conf/httpd.conf <<EOF
-SCAContribution `pwd`/
-SCAComposite store.composite
-EOF
+# Restart httpd server
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
 
-../../modules/http/httpd-start tmp
-
-mc="memcached -l 127.0.0.1 -m 4 -p 11211"
-$mc &
-
+httpd_prefix=`cat $here/httpd.prefix`
+$httpd_prefix/bin/apachectl -k graceful -d $root

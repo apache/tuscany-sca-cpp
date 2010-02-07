@@ -24,16 +24,13 @@ echo "Testing..."
 ../server/server-conf tmp
 ./java-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
-
-<Location />
 SCAContribution `pwd`/
 SCAComposite domain-test.composite
-</Location>
 EOF
 
 export CLASSPATH="`pwd`/libmod-tuscany-java-1.0.jar:`pwd`"
 
-apachectl -k start -d `pwd`/tmp
+../http/httpd-start tmp
 sleep 2
 
 # Test HTTP GET
@@ -73,7 +70,7 @@ if [ "$rc" = "0" ]; then
 fi
 
 # Cleanup
-apachectl -k stop -d `pwd`/tmp
+../http/httpd-stop tmp
 sleep 2
 if [ "$rc" = "0" ]; then
     echo "OK"

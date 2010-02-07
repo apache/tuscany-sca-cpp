@@ -62,6 +62,7 @@ doxygen
 *.class
 *.stamp
 *.jar
+*.prefix
 
 # Specific ignores
 kernel-test
@@ -83,4 +84,5 @@ java-shell
 script-test
 axiom-test
 axis2-test
+qpid-test
 

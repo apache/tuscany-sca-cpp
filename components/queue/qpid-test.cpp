@@ -20,50 +20,45 @@
 /* $Rev$ $Date$ */
 
 /**
- * AMQP queue sender component implementation.
+ * Test Qpid support functions.
  */
 
+#include <assert.h>
+#include "stream.hpp"
 #include "string.hpp"
-#include "function.hpp"
 #include "list.hpp"
-#include "value.hpp"
+#include "element.hpp"
 #include "monad.hpp"
+#include "value.hpp"
+#include "perf.hpp"
 #include "qpid.hpp"
-
-// Ignore conversion issues and redundant declarations in Qpid headers
-#ifdef WANT_MAINTAINER_MODE
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wredundant-decls"
-#endif
 
 namespace tuscany {
 namespace queue {
 
-QpidConnection qc;
+bool testPost() {
+    QpidConnection qc;
 
-/**
- * Post an item to a queue.
- */
-const failable<value> post(const list<value>& params) {
     QpidSession qs(qc);
 
     // Post the item
+    const list<value> params;
     const value key = ((lambda<value(list<value>)>)cadr(params))(list<value>());
     post(key, car(params), qs);
 
     return value(true);
+    return true;
 }
 
 }
 }
 
-extern "C" {
+int main() {
+    tuscany::cout << "Testing..." << tuscany::endl;
 
-const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
-    const tuscany::value func(car(params));
-    if (func == "post")
-        return tuscany::queue::post(cdr(params));
-    return tuscany::mkfailure<tuscany::value>();
-}
+    tuscany::queue::testPost();
 
+    tuscany::cout << "OK" << tuscany::endl;
+
+    return 0;
 }

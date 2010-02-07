@@ -36,7 +36,7 @@ namespace chat {
 /**
  * Initialize the component.
  */
-const failable<value> init(unused const list<value>& params) {
+const failable<value> start(unused const list<value>& params) {
     //TODO establish a session with an XMPP server for a JID and mark the current server instance busy
 
     return value(true);
@@ -49,9 +49,9 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "init")
-        return tuscany::chat::init(cdr(params));
-    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
+    if (func == "start")
+        return tuscany::chat::start(cdr(params));
+    return tuscany::mkfailure<tuscany::value>();
 }
 
 }

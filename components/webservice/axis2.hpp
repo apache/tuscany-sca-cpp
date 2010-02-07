@@ -57,7 +57,7 @@ namespace webservice {
  */
 class Axis2Context {
 public:
-    Axis2Context() : env(axutil_env_create_all("tuscany.log", AXIS2_LOG_LEVEL_WARNING)), owner(true) {
+    Axis2Context() : env(axutil_env_create_all("axis2.log", AXIS2_LOG_LEVEL_WARNING)), owner(true) {
     }
 
     Axis2Context(const Axis2Context& ax) : env(ax.env), owner(false) {
@@ -144,8 +144,6 @@ const failable<const list<value> > axiomNodeToValues(axiom_node_t* node, const A
  * Evaluate an expression in the form (soap-action-string, document, uri). Send the
  * SOAP action and document to the Web Service at the given URI using Axis2.
  */
-const char* axis2Home = getenv("AXIS2C_HOME");
-
 const failable<value> evalExpr(const value& expr, const Axis2Context& ax) {
     debug(expr, "webservice::evalExpr::input");
 
@@ -155,16 +153,13 @@ const failable<value> evalExpr(const value& expr, const Axis2Context& ax) {
     const value uri(caddr<value>(expr));
 
     // Create Axis2 client
+    axis2_svc_client_t *client = axis2_svc_client_create(env(ax), getenv("AXIS2C_HOME"));
+    if (client == NULL)
+        return mkfailure<value>("Couldn't create Axis2 client: " + axis2Error(ax));
     axis2_endpoint_ref_t *epr = axis2_endpoint_ref_create(env(ax), c_str(uri));
     axis2_options_t *opt = axis2_options_create(env(ax));
     axis2_options_set_to(opt, env(ax), epr);
     axis2_options_set_action(opt, env(ax), (const axis2_char_t*)c_str(func));
-    axis2_svc_client_t *client = axis2_svc_client_create(env(ax), axis2Home);
-    if (client == NULL) {
-        axis2_endpoint_ref_free(epr, env(ax));
-        axis2_options_free(opt, env(ax));
-        return mkfailure<value>("Couldn't create Axis2 client: " + axis2Error(ax));
-    }
     axis2_svc_client_set_options(client, env(ax), opt);
     axis2_svc_client_engage_module(client, env(ax), AXIS2_MODULE_ADDRESSING);
 

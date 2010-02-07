@@ -80,7 +80,7 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
     if (func == "handle")
         return tuscany::webservice::handle(cdr(params));
-    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
+    return tuscany::mkfailure<tuscany::value>();
 }
 
 }

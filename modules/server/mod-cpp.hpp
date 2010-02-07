@@ -37,7 +37,7 @@
 #include "monad.hpp"
 #include "dynlib.hpp"
 #include "../scheme/driver.hpp"
-#include "../http/httpd.hpp"
+#include "mod-eval.hpp"
 
 namespace tuscany {
 namespace server {
@@ -46,6 +46,21 @@ namespace modcpp {
 /**
  * Apply a C++ component implementation function.
  */
+const list<value> failableResult(const value& func, const list<value>& v) {
+    if (isNil(cdr(v)))
+        return v;
+
+    // Report a failure with an empty reason as 'function not supported'
+    // Except for the start, stop, and restart functions, which are optional
+    const value reason = cadr(v);
+    if (length(reason) == 0) {
+        if (func == "start" || func == "stop" || func == "restart")
+            return mklist<value>(false);
+        return mklist<value>(value(), string("Function not supported: ") + func);
+    }
+    return v;
+}
+
 struct applyImplementation {
     const lib ilib;
     const lambda<value(const list<value>&)> impl;
@@ -54,7 +69,10 @@ struct applyImplementation {
     }
     const value operator()(const list<value>& params) const {
         debug(params, "modeval::cpp::applyImplementation::input");
-        const value val = impl(append(params, px));
+
+        // Apply the component implementation function
+        const value val = failableResult(car(params), impl(append(params, px)));
+
         debug(val, "modeval::cpp::applyImplementation::result");
         return val;
     }
@@ -64,7 +82,9 @@ struct applyImplementation {
  * Evaluate a C++ component implementation and convert it to
  * an applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, unused modeval::ServerConf& sc) {
+
+    // Configure the implementation's lambda function
     const value ipath(attributeValue("path", impl));
     const value iname(attributeValue("library", impl));
     const string fpath(isNil(ipath)? path + iname : path + ipath + "/" + iname);
@@ -72,7 +92,8 @@ const failable<lambda<value(const list<value>&)> > evalImplementation(const stri
     const failable<lambda<value(const list<value>&)> > evalf(dynlambda<value(const list<value>&)>("apply", ilib));
     if (!hasContent(evalf))
         return evalf;
-    return lambda<value(const list<value>&)>(applyImplementation(ilib, content(evalf), px));
+    const lambda<value(const list<value>&)> l(applyImplementation(ilib, content(evalf), px));
+    return l;
 }
 
 }

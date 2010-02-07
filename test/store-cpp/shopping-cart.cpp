@@ -157,7 +157,7 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
         return tuscany::store::gettotal(cadr(params));
     if (func == "listMethods")
         return tuscany::store::listMethods(cadr(params));
-    return tuscany::mkfailure<tuscany::value>(tuscany::string("Function not supported: ") + func);
+    return tuscany::mkfailure<tuscany::value>();
 }
 
 }

@@ -34,7 +34,7 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "eval.hpp"
-#include "../http/httpd.hpp"
+#include "../server/mod-eval.hpp"
 
 namespace tuscany {
 namespace server {
@@ -63,7 +63,7 @@ struct applyImplementation {
  * Evaluate a Python component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, unused modeval::ServerConf& sc) {
     const string fpath(path + attributeValue("script", impl));
     ifstream is(fpath);
     if (fail(is))

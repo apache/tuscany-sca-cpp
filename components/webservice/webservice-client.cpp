@@ -56,7 +56,10 @@ const failable<value> apply(const value& func, const list<value>& params) {
 extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
-    return tuscany::webservice::apply(car(params), cdr(params));
+    const tuscany::value func(car(params));
+    if (func == "start" || func == "stop" || func == "restart")
+        return tuscany::mkfailure<tuscany::value>();
+    return tuscany::webservice::apply(func, cdr(params));
 }
 
 }

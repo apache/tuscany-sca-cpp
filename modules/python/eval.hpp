@@ -39,16 +39,23 @@ namespace python {
  */
 class PythonRuntime {
 public:
-    PythonRuntime() {
-        Py_Initialize();
-
+    PythonRuntime() : owner(true) {
+        Py_InitializeEx(0);
         setupIO();
     }
 
-    ~PythonRuntime() {
+    PythonRuntime(unused const PythonRuntime& r) : owner(false) {
     }
 
-} pythonRuntime;
+    ~PythonRuntime() {
+        if (!owner)
+            return;
+        //Py_Finalize();
+    }
+
+private:
+    const bool owner;
+};
 
 /**
  * Declare conversion functions.
@@ -211,8 +218,15 @@ const failable<value> evalScript(const value& expr, PyObject* script) {
 
     // Get the requested function
     PyObject* func = PyObject_GetAttrString(script, c_str(car<value>(expr)));
-    if (func == NULL)
+    if (func == NULL) {
+
+        // The start, stop, and restart functions are optional
+        const value fn = car<value>(expr);
+        if (fn == "start" || fn == "stop" || fn == "restart")
+            return value(false);
+
         return mkfailure<value>(string("Couldn't find function: ") + car<value>(expr) + " : " + lastError());
+    }
     if (!PyCallable_Check(func)) {
         Py_DECREF(func);
         return mkfailure<value>(string("Couldn't find callable function: ") + car<value>(expr));

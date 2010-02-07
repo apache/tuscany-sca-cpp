@@ -23,18 +23,17 @@
 ../../modules/server/scheme-conf tmp
 ./axis2-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
-
-<Location />
 SCAContribution `pwd`/
 SCAComposite webservice.composite
-</Location>
 EOF
 
-apachectl -k start -d `pwd`/tmp
+../../modules/http/httpd-start tmp
 
-axis2="$AXIS2C_HOME/bin/axis2_http_server"
+axis2_prefix=`cat axis2c.prefix`
+export AXIS2C_HOME=$axis2_prefix
+axis2="$axis2_prefix/bin/axis2_http_server"
 pwd=`pwd`
-cd $AXIS2C_HOME/bin
+cd "$axis2_prefix/bin"
 $axis2 &
 cd $pwd
 sleep 2
@@ -44,7 +43,7 @@ sleep 2
 rc=$?
 
 # Cleanup
-kill `ps -f | grep -v grep | grep "$axis2" | awk '{ print $2 }'`
-apachectl -k stop -d `pwd`/tmp
+kill `ps -f | grep -v grep | grep "${axis2}" | awk '{ print $2 }'`
+../../modules/http/httpd-stop tmp
 sleep 2
 return $rc

@@ -21,16 +21,13 @@
 ../../modules/server/server-conf tmp
 ../../modules/java/java-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
-
-<Location />
 SCAContribution `pwd`/
 SCAComposite store.composite
-</Location>
 EOF
 
 export CLASSPATH=`pwd`/../../modules/java/libmod-tuscany-java-1.0.jar:`pwd`
 
-apachectl -k start -d `pwd`/tmp
+../../modules/http/httpd-start tmp
 
 mc="memcached -l 127.0.0.1 -m 4 -p 11211"
 $mc &

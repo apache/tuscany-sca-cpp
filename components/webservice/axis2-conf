@@ -20,14 +20,15 @@
 # Generate an Axis2 server conf
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
+axis2_prefix=`cat axis2c.prefix`
 
 # Create an Axis2 home directory
 mkdir -p $root/axis2c
-ln -f -s $AXIS2C_HOME/lib $root/axis2c/lib
+ln -f -s $axis2_prefix/lib $root/axis2c/lib
 mkdir -p $root/axis2c/logs
 mkdir -p $root/axis2c/modules
-ln -f -s $AXIS2C_HOME/modules/addressing $root/axis2c/modules/addressing
-ln -f -s $AXIS2C_HOME/modules/logging $root/axis2c/modules/logging
+ln -f -s $axis2_prefix/modules/addressing $root/axis2c/modules/addressing
+ln -f -s $axis2_prefix/modules/logging $root/axis2c/modules/logging
 mkdir -p $root/axis2c/services
 
 # Install Tuscany Axis2 module and service
@@ -41,6 +42,7 @@ cp $here/axis2.xml $root/axis2c/axis2.xml
 
 # Configure HTTPD Axis2 module
 cat >>$root/conf/httpd.conf <<EOF
+SetEnv AXIS2C_HOME $root/axis2c
 LoadModule axis2_module $root/axis2c/lib/libmod_axis2.so
 Axis2RepoPath $root/axis2c
 Axis2LogFile $root/axis2c/logs/mod_axis2.log

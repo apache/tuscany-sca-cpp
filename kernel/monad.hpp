@@ -241,6 +241,7 @@ private:
     template<typename A, typename B> friend const A content(const failable<A, B>& m);
     template<typename A, typename B> friend const B reason(const failable<A, B>& m);
     template<typename A, typename B> friend const failable<A, B> mkfailure(const B& f);
+    template<typename A> friend const failable<A, string> mkfailure();
 
     bool hasv;
     V v;
@@ -280,6 +281,10 @@ template<typename V, typename F> const failable<V, F> mkfailure(const F& f) {
 
 template<typename V> const failable<V> mkfailure(const char* f) {
     return mkfailure<V, string>(string(f));
+}
+
+template<typename V> const failable<V> mkfailure() {
+    return failable<V, string>(false, string());
 }
 
 template<typename V, typename F> const lambda<failable<V, F>(const V)> failure() {

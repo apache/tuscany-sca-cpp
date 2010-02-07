@@ -19,7 +19,7 @@
 
 # Setup
 ./httpd-conf tmp 8090 htdocs
-apachectl -k start -d `pwd`/tmp
+./httpd-start tmp
 sleep 2
 
 # Test
@@ -27,6 +27,6 @@ sleep 2
 rc=$?
 
 # Cleanup
-apachectl -k stop -d `pwd`/tmp
+./httpd-stop tmp
 sleep 2
 return $rc

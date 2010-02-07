@@ -42,7 +42,7 @@
 #include "util_script.h"
 #include "util_md5.h"
 #include "http_config.h"
-
+#include "ap_mpm.h"
 #include "mod_core.h"
 
 #include "string.hpp"
@@ -65,21 +65,14 @@ template<typename C> const C& serverConf(const request_rec* r, const module* mod
     return *(C*)ap_get_module_config(r->server->module_config, mod);
 }
 
+template<typename C> C& serverConf(const server_rec* s, const module* mod) {
+    return *(C*)ap_get_module_config(s->module_config, mod);
+}
+
 template<typename C> C& serverConf(const cmd_parms *cmd, const module* mod) {
     return *(C*)ap_get_module_config(cmd->server->module_config, mod);
 }
 
-
-/**
- * Returns a directory-scoped module configuration.
- */
-template<typename C> void *makeDirConf(apr_pool_t *p, char *dirspec) {
-    return new (gc_new<C>(p)) C(dirspec);
-}
-
-template<typename C> C& dirConf(const request_rec* r, const module* mod) {
-    return *(C*)ap_get_module_config(r->per_dir_config, mod);
-}
 
 /**
  * Convert a path string to a list of values.
@@ -402,6 +395,23 @@ const int internalRedirect(const string& uri, request_rec* r) {
     if (!hasContent(nr))
         return reason(nr);
     return httpd::internalRedirect(content(nr));
+}
+
+/**
+ * Put a value in the process user data.
+ */
+const bool putUserData(const string& k, const int v, const server_rec* s) {
+    apr_pool_userdata_set((const void *)v, c_str(k), apr_pool_cleanup_null, s->process->pool);
+    return true;
+}
+
+/**
+ * Return a user data value.
+ */
+const int userData(const string& k, const server_rec* s) {
+    void* v = (int)0;
+    apr_pool_userdata_get(&v, c_str(k), s->process->pool);
+    return (int)v;
 }
 
 }

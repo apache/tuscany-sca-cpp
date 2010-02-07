@@ -161,7 +161,7 @@ public:
     jmethodID iterableCdr;
     jmethodID iterableIsNil;
 
-} javaRuntime;
+};
 
 /**
  * Return the last exception that occurred in a JVM.
@@ -210,6 +210,8 @@ public:
     }
 
     const value operator()(const list<value>& expr) const {
+        if (isNil(expr))
+            return func(expr);
         const value& op(car(expr));
         if (op == "equals")
             return value(cadr(expr) == this);
@@ -495,8 +497,15 @@ const failable<value> evalClass(const JavaRuntime& jr, const value& expr, const 
 
     // Lookup the Java function named as the expression operand
     const list<value> func = assoc<value>(car<value>(expr), jc.m);
-    if (isNil(func))
+    if (isNil(func)) {
+
+        // The start, stop, and restart functions are optional
+        const value fn = car<value>(expr);
+        if (fn == "start" || fn == "stop" || fn == "restart")
+            return value(false);
+
         return mkfailure<value>(string("Couldn't find function: ") + car<value>(expr) + " : " + lastException(jr));
+    }
     const jmethodID fid = (jmethodID)(long)(double)cadr(func);
 
     // Convert args to Java jvalues

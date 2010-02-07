@@ -146,9 +146,15 @@ template<typename V> const bool debug(const V& v, const string& msg) {
     return true;
 }
 
+const bool debug(const string& msg) {
+    cerr << msg << endl;
+    return true;
+}
+
 #else
 
 #define debug(v, msg)
+#define debug(msg)
 
 #endif
 

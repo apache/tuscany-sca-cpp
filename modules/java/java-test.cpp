@@ -33,6 +33,7 @@ namespace java {
 
 bool testEvalExpr() {
     gc_scoped_pool pool;
+    JavaRuntime javaRuntime;
     {
         const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
         assert(hasContent(obj));
@@ -77,6 +78,7 @@ const value add(const list<value>& args) {
 
 bool testEvalLambda() {
     gc_scoped_pool pool;
+    JavaRuntime javaRuntime;
     {
         const failable<JavaClass> obj = readClass(javaRuntime, ".", "test.CalcImpl");
         assert(hasContent(obj));
@@ -98,6 +100,7 @@ bool testEvalLambda() {
 
 bool testClassLoader() {
     gc_scoped_pool pool;
+    JavaRuntime javaRuntime;
     const failable<JavaClass> obj = readClass(javaRuntime, ".", "org.apache.tuscany.ClassLoader$Test");
     assert(hasContent(obj));
     const value exp = mklist<value>("testClassLoader");
@@ -109,6 +112,7 @@ bool testClassLoader() {
 
 bool testIterableUtil() {
     gc_scoped_pool pool;
+    JavaRuntime javaRuntime;
     const failable<JavaClass> obj = readClass(javaRuntime, ".", "org.apache.tuscany.IterableUtil$Test");
     assert(hasContent(obj));
     const value exp = mklist<value>("testList");

@@ -34,11 +34,18 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "eval.hpp"
-#include "../http/httpd.hpp"
+#include "../server/mod-eval.hpp"
 
 namespace tuscany {
 namespace server {
 namespace modjava {
+
+/**
+ * Return the Java runtime configured in a server.
+ */
+java::JavaRuntime& javaRuntime(modeval::ServerConf sc) {
+    return *(java::JavaRuntime*)sc.moduleConf;
+}
 
 /**
  * Apply a Java component implementation function.
@@ -46,12 +53,13 @@ namespace modjava {
 struct applyImplementation {
     java::JavaClass impl;
     const list<value> px;
-    applyImplementation(const java::JavaClass& impl, const list<value>& px) : impl(impl), px(px) {
+    java::JavaRuntime& jr;
+    applyImplementation(const java::JavaClass& impl, const list<value>& px, java::JavaRuntime& jr) : impl(impl), px(px), jr(jr) {
     }
     const value operator()(const list<value>& params) const {
         const value expr = append<value>(params, px);
         debug(expr, "modeval::java::applyImplementation::input");
-        const failable<value> val = java::evalClass(java::javaRuntime, expr, impl);
+        const failable<value> val = java::evalClass(jr, expr, impl);
         debug(val, "modeval::java::applyImplementation::result");
         if (!hasContent(val))
             return mklist<value>(value(), reason(val));
@@ -63,12 +71,12 @@ struct applyImplementation {
  * Evaluate a Java component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, modeval::ServerConf& sc) {
     const string cn(attributeValue("class", impl));
-    const failable<java::JavaClass> jc = java::readClass(java::javaRuntime, path, cn);
+    const failable<java::JavaClass> jc = java::readClass(javaRuntime(sc), path, cn);
     if (!hasContent(jc))
         return mkfailure<lambda<value(const list<value>&)> >(reason(jc));
-    return lambda<value(const list<value>&)>(applyImplementation(content(jc), px));
+    return lambda<value(const list<value>&)>(applyImplementation(content(jc), px, javaRuntime(sc)));
 }
 
 }

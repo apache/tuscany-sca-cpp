@@ -22,14 +22,11 @@
 ./server-conf tmp
 ./scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
-
-<Location />
 SCAContribution `pwd`/
 SCAComposite domain-test.composite
-</Location>
 EOF
 
-apachectl -k start -d `pwd`/tmp
+../http/httpd-start tmp
 sleep 2
 
 # Test
@@ -37,6 +34,6 @@ sleep 2
 rc=$?
 
 # Cleanup
-apachectl -k stop -d `pwd`/tmp
+../http/httpd-stop tmp
 sleep 2
 return $rc

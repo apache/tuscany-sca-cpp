@@ -22,16 +22,13 @@
 ../server/server-conf tmp
 ./java-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
-
-<Location />
 SCAContribution `pwd`/
 SCAComposite domain-test.composite
-</Location>
 EOF
 
 export CLASSPATH="`pwd`/libmod-tuscany-java-1.0.jar:`pwd`"
 
-apachectl -k start -d `pwd`/tmp
+../http/httpd-start tmp
 sleep 2
 
 # Test
@@ -39,6 +36,6 @@ sleep 2
 rc=$?
 
 # Cleanup
-apachectl -k stop -d `pwd`/tmp
+../http/httpd-stop tmp
 sleep 2
 return $rc

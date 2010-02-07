@@ -119,12 +119,15 @@ AC_SUBST(APR_LIB)
 
 AC_MSG_CHECKING([for httpd])
 AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed Apache HTTPD [default=/usr/local/apache2]])], [
+  HTTPD_PREFIX="${withval}"
   HTTPD_INCLUDE="${withval}/include"
   AC_MSG_RESULT("${withval}")
 ], [
+  HTTPD_PREFIX="/usr/local/apache2"
   HTTPD_INCLUDE="/usr/local/apache2/include"
   AC_MSG_RESULT(/usr/local/apache2/lib)
 ])
+AC_SUBST(HTTPD_PREFIX)
 AC_SUBST(HTTPD_INCLUDE)
 
 # Configure TUSCANY_SCACPP path variable.
@@ -310,14 +313,17 @@ fi
 # Configure path to Java includes and lib.
 AC_MSG_CHECKING([for java])
 AC_ARG_WITH([java], [AC_HELP_STRING([--with-java=PATH], [path to installed Java [default=/usr/lib/jvm/default-java]])], [
+  JAVA_PREFIX="${withval}"
   JAVA_INCLUDE="${withval}/include"
   JAVA_LIB="${withval}/jre/lib/i386"
   AC_MSG_RESULT("${withval}")
 ], [
+  JAVA_PREFIX="/usr/lib/jvm/default-java"
   JAVA_INCLUDE="/usr/lib/jvm/default-java/include"
   JAVA_LIB="/usr/lib/jvm/default-java/jre/lib/i386"
   AC_MSG_RESULT(/usr/lib/jvm/default-java)
 ])
+AC_SUBST(JAVA_PREFIX)
 AC_SUBST(JAVA_INCLUDE)
 AC_SUBST(JAVA_LIB)
 
@@ -348,14 +354,17 @@ fi
 # Configure path to Apache Axis2C includes and lib.
 AC_MSG_CHECKING([for axis2c])
 AC_ARG_WITH([axis2c], [AC_HELP_STRING([--with-axis2c=PATH], [path to installed Apache Axis2C [default=/usr/local/axis2c]])], [
+  AXIS2C_PREFIX="${withval}"
   AXIS2C_INCLUDE="${withval}/include/axis2-1.6.0"
   AXIS2C_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
+  AXIS2C_PREFIX="/usr/local/axis2c"
   AXIS2C_INCLUDE="/usr/local/axis2c/include/axis2-1.6.0"
   AXIS2C_LIB="/usr/local/axis2c/lib"
   AC_MSG_RESULT(/usr/local/axis2c)
 ])
+AC_SUBST(AXIS2C_PREFIX)
 AC_SUBST(AXIS2C_INCLUDE)
 AC_SUBST(AXIS2C_LIB)
 
@@ -404,14 +413,17 @@ fi
 # Configure path to Apache Qpid/C++ includes and lib.
 AC_MSG_CHECKING([for qpidc])
 AC_ARG_WITH([qpidc], [AC_HELP_STRING([--with-qpidc=PATH], [path to installed Apache Qpid/C++ [default=/usr/local]])], [
+  QPIDC_PREFIX="${withval}"
   QPIDC_INCLUDE="${withval}/include"
   QPIDC_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
+  QPIDC_PREFIX="/usr/local"
   QPIDC_INCLUDE="/usr/local/include"
   QPIDC_LIB="/usr/local/lib"
   AC_MSG_RESULT(/usr/local)
 ])
+AC_SUBST(QPIDC_PREFIX)
 AC_SUBST(QPIDC_INCLUDE)
 AC_SUBST(QPIDC_LIB)
 
@@ -466,7 +478,7 @@ AC_ARG_ENABLE(chat, [AS_HELP_STRING([--enable-chat], [enable Chat component [def
 [ AC_MSG_RESULT(no)])
 if test "${want_chat}" = "true"; then
   LIBS="-L${LIBSTROPHE_LIB} ${default_LIBS}"
-  AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lexpat -lssl -lresolv])
+  #AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lexpat -lssl -lresolv])
   AM_CONDITIONAL([WANT_CHAT], true)
   AC_DEFINE([WANT_CHAT], 1, [enable Chat component])
 else

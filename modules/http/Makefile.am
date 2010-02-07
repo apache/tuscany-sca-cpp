@@ -19,7 +19,13 @@ noinst_PROGRAMS = curl-test
 
 INCLUDES = -I${HTTPD_INCLUDE}
 
+httpdir=$(prefix)/modules/http
+http_DATA = httpd.prefix
+
 curl_test_SOURCES = curl-test.cpp
 curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+httpd.prefix: $(top_builddir)/config.status
+	echo ${HTTPD_PREFIX} >httpd.prefix
 
 TESTS = httpd-test http-test
