@@ -19,6 +19,8 @@
 
 package org.apache.tuscany;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -40,7 +42,19 @@ class InvocationHandler implements java.lang.reflect.InvocationHandler {
         return Proxy.newProxyInstance(iface.getClassLoader(), new Class[]{iface}, new InvocationHandler(lambda));
     }
 
+    /**
+     * Proxy invocation of a C++ function.
+     */
     @Override
     public native Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable;
 
+    /**
+     * Return the stack trace of an exception.
+     */
+    static String stackTrace(final Throwable e) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
+    }
 }

@@ -56,6 +56,8 @@ const failable<bool> stop(unused ServerConf& sc) {
  * Restart the module.
  */
 const failable<bool> restart(unused ServerConf& sc) {
+    // Start a Python runtime
+    sc.moduleConf =  new (gc_new<python::PythonRuntime>()) python::PythonRuntime();
     return true;
 }
 

@@ -29,13 +29,12 @@
 
 #include "list.hpp"
 #include "value.hpp"
-#include "io.hpp"
 
 namespace tuscany {
 namespace java {
 
 /**
- * Initialize a JVM.
+ * Represent a Java VM runtime.
  */
 jobject JNICALL nativeInvoke(JNIEnv *env, jobject self, jobject proxy, jobject method, jobjectArray args);
 
@@ -87,9 +86,6 @@ public:
             jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
         }
 
-        // Capture JVM standard IO
-        setupIO();
-
         // Lookup System classes and methods
         classClass = env->FindClass("java/lang/Class");
         methodClass = env->FindClass("java/lang/reflect/Method");
@@ -114,6 +110,7 @@ public:
         loaderForName = env->GetStaticMethodID(loaderClass, "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;");
         invokerClass = env->FindClass("org/apache/tuscany/InvocationHandler");
         invokerValueOf = env->GetStaticMethodID(invokerClass, "valueOf", "(Ljava/lang/Class;J)Ljava/lang/Object;");
+        invokerStackTrace = env->GetStaticMethodID(invokerClass, "stackTrace", "(Ljava/lang/Throwable;)Ljava/lang/String;");
         invokerLambda = env->GetFieldID(invokerClass, "lambda", "J");
         iterableUtilClass = env->FindClass("org/apache/tuscany/IterableUtil");
         iterableValueOf = env->GetStaticMethodID(iterableUtilClass, "list", "([Ljava/lang/Object;)Ljava/lang/Iterable;");
@@ -127,7 +124,6 @@ public:
         nm.signature = const_cast<char*>("(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;");
         nm.fnPtr = (void*)nativeInvoke;
         env->RegisterNatives(invokerClass, &nm, 1);
-
     }
 
     JavaVM* jvm;
@@ -154,13 +150,13 @@ public:
     jmethodID loaderForName;
     jclass invokerClass;
     jmethodID invokerValueOf;
+    jmethodID invokerStackTrace;
     jfieldID invokerLambda;
     jclass iterableUtilClass;
     jmethodID iterableValueOf;
     jmethodID iterableCar;
     jmethodID iterableCdr;
     jmethodID iterableIsNil;
-
 };
 
 /**
@@ -169,9 +165,13 @@ public:
 string lastException(const JavaRuntime& jr) {
     if (!jr.env->ExceptionCheck())
         return "No Exception";
-    jr.env->ExceptionDescribe();
+    const jthrowable ex = jr.env->ExceptionOccurred();
+    const jstring trace = (jstring)jr.env->CallStaticObjectMethod(jr.invokerClass, jr.invokerStackTrace, ex);
+    const char* c = jr.env->GetStringUTFChars(trace, NULL);
+    const string msg(c);
+    jr.env->ReleaseStringUTFChars(trace, c);
     jr.env->ExceptionClear();
-    return "UnknownException";
+    return msg;
 }
 
 /**

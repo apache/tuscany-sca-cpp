@@ -395,7 +395,7 @@ const failable<bool> confComponents(const string& lifecycle, ServerConf& sc, ser
     debug(sc.implementations, "modeval::confComponents::implementations");
 
     // Start or restart the component implementations
-    return applyLifecycleExpr(impls, mklist<value>(lifecycle));
+    return applyLifecycleExpr(impls, mklist<value>(c_str(lifecycle)));
 }
 
 /**

@@ -312,7 +312,7 @@ const bool testPut() {
             + (list<value>() + "price" + string("$2.99"));
     const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
     http::CURLSession ch;
-    value rc = content(http::put(a, testURI, ch));
+    value rc = content(http::put(a, testURI + "/111", ch));
     assert(rc == value(true));
     return true;
 }
@@ -320,7 +320,7 @@ const bool testPut() {
 const bool testDel() {
     gc_scoped_pool pool;
     http::CURLSession ch;
-    value rc = content(http::del(testURI, ch));
+    value rc = content(http::del(testURI + "/111", ch));
     assert(rc == value(true));
     return true;
 }

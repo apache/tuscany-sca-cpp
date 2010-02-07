@@ -55,7 +55,9 @@ const failable<bool> stop(unused ServerConf& sc) {
 /**
  * Restart the module.
  */
-const failable<bool> restart(unused ServerConf& sc) {
+const failable<bool> restart(ServerConf& sc) {
+    // Start a Java runtime
+    sc.moduleConf =  new (gc_new<java::JavaRuntime>()) java::JavaRuntime();
     return true;
 }
 

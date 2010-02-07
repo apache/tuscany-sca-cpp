@@ -29,33 +29,52 @@
 
 #include "list.hpp"
 #include "value.hpp"
-#include "io.hpp"
 
 namespace tuscany {
 namespace python {
 
 /**
- * Initialize the Python runtime.
+ * Represent a Python runtime.
  */
 class PythonRuntime {
 public:
-    PythonRuntime() : owner(true) {
-        Py_InitializeEx(0);
-        setupIO();
-    }
-
-    PythonRuntime(unused const PythonRuntime& r) : owner(false) {
-    }
-
-    ~PythonRuntime() {
-        if (!owner)
+    PythonRuntime() {
+        if (Py_IsInitialized())
             return;
-        //Py_Finalize();
+        Py_InitializeEx(0);
     }
-
-private:
-    const bool owner;
 };
+
+/**
+ * Return the last python error.
+ */
+const string lastError() {
+    if(PyErr_Occurred()) {
+        PyObject* type;
+        PyObject* val;
+        PyObject* trace;
+        PyErr_Fetch(&type, &val, &trace);
+        if (type != NULL && val != NULL) {
+            PyObject* stype = PyObject_Str(type);    
+            PyObject* sval = PyObject_Str(val);    
+            string msg = string() + PyString_AsString(stype) + " : " + PyString_AsString(sval);
+            Py_DECREF(stype);
+            Py_DECREF(sval);                                    
+            Py_DECREF(type);
+            Py_DECREF(val);
+            Py_XDECREF(trace);
+            PyErr_Print();
+            return msg;
+        }
+        PyErr_Print();
+        Py_XDECREF(type);
+        Py_XDECREF(val);
+        Py_XDECREF(trace);
+        PyErr_Print();
+        return "Unknown Python error";
+    }
+    return "";
+}
 
 /**
  * Declare conversion functions.
@@ -222,8 +241,10 @@ const failable<value> evalScript(const value& expr, PyObject* script) {
 
         // The start, stop, and restart functions are optional
         const value fn = car<value>(expr);
-        if (fn == "start" || fn == "stop" || fn == "restart")
+        if (fn == "start" || fn == "stop" || fn == "restart") {
+            PyErr_Clear();
             return value(false);
+        }
 
         return mkfailure<value>(string("Couldn't find function: ") + car<value>(expr) + " : " + lastError());
     }
