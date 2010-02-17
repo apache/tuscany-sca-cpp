@@ -22,15 +22,15 @@
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="queue">
         
-    <component name="queue-sender">
+    <component name="print-sender">
         <implementation.cpp path=".libs" library="libqueue-sender"/>
         <property name="key">print</property>
-        <service name="queue-sender">
+        <service name="print-sender">
             <t:binding.http uri="print-sender"/>
         </service>
     </component>
 
-    <component name="queue-listener">
+    <component name="print-listener">
         <implementation.cpp path=".libs" library="libqueue-listener"/>
         <property name="key">print</property>
         <property name="queue">printq</property>
@@ -41,6 +41,15 @@
         <t:implementation.scheme script="server-test.scm"/>
         <service name="print">
             <t:binding.http uri="print"/>
+        </service>
+        <reference name="report" target="report-sender"/>
+    </component>     
+
+    <component name="report-sender">
+        <implementation.cpp path=".libs" library="libqueue-sender"/>
+        <property name="key">report</property>
+        <service name="report-sender">
+            <t:binding.http uri="report-sender"/>
         </service>
     </component>     
 

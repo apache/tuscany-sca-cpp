@@ -25,8 +25,5 @@ SCAContribution `pwd`/
 SCAComposite store.composite
 EOF
 
+../../components/cache/memcached-start
 ../../modules/http/httpd-start tmp
-
-mc="memcached -l 127.0.0.1 -m 4 -p 11211"
-$mc &
-

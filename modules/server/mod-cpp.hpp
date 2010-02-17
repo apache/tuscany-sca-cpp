@@ -37,7 +37,6 @@
 #include "monad.hpp"
 #include "dynlib.hpp"
 #include "../scheme/driver.hpp"
-#include "mod-eval.hpp"
 
 namespace tuscany {
 namespace server {
@@ -54,8 +53,8 @@ const list<value> failableResult(const value& func, const list<value>& v) {
     // Except for the start, stop, and restart functions, which are optional
     const value reason = cadr(v);
     if (length(reason) == 0) {
-        if (func == "start" || func == "stop" || func == "restart")
-            return mklist<value>(false);
+        if (func == "start" || func == "restart" || func == "stop")
+            return mklist<value>(lambda<value(const list<value>&)>());
         return mklist<value>(value(), string("Function not supported: ") + func);
     }
     return v;
@@ -82,7 +81,7 @@ struct applyImplementation {
  * Evaluate a C++ component implementation and convert it to
  * an applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, unused modeval::ServerConf& sc) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
 
     // Configure the implementation's lambda function
     const value ipath(attributeValue("path", impl));

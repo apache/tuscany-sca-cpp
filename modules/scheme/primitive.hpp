@@ -172,15 +172,15 @@ const value cdddrProc(unused const list<value>& args) {
 }
 
 const value startProc(unused const list<value>& args) {
-    return false;
+    return lambda<value(const list<value>&)>();
 }
 
 const value stopProc(unused const list<value>& args) {
-    return false;
+    return lambda<value(const list<value>&)>();
 }
 
 const value restartProc(unused const list<value>& args) {
-    return false;
+    return lambda<value(const list<value>&)>();
 }
 
 const value applyPrimitiveProcedure(const value& proc, list<value>& args) {

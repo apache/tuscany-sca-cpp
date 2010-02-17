@@ -55,7 +55,7 @@ build it from source at git://code.stanziq.com//libstrophe
 
 
 To configure the Tuscany SCA build do this:
-./autogen.sh
+./bootstrap
 ./configure --prefix=<install dir>
 
 To enable debugging and strict warning compile options, add:
@@ -64,7 +64,8 @@ To enable debugging and strict warning compile options, add:
 To enable gprof profiling, add:
 --enable-profiling
 
-To enable multi-threading with the HTTPD worker MPM, add:
+To enable multi-threading (required by the Queue and Chat components and
+for running with the HTTPD worker or event multi-threaded MPMs):
 --enable-threads
 
 To enable support for Python component implementations:
@@ -99,6 +100,7 @@ dependencies installed under $HOME:
 --with-libcurl=/usr --with-libxml2=/usr \
 --with-js-include=/usr/include/xulrunner-1.9.1.7/unstable \
 --with-js-lib=/usr/lib/xulrunner-1.9.1.7 \
+--enable-threads \
 --enable-python --with-python=/usr \
 --enable-java --with-java=/usr/lib/jvm/default-java \
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
@@ -135,7 +137,7 @@ Building dependencies from source
 
 Here are example build and install steps for some of the dependencies.
 
-Apache HTTPD, including APR:
+Apache HTTPD, including APR, using the HTTP prefork MPM (recommended):
 ./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr \
 --with-mpm=prefork --prefix=$HOME/httpd-2.2.13-bin
 make
@@ -150,6 +152,11 @@ make install
 export AXIS2C_HOME=$HOME/axis2c-1.6.0-bin
 
 Apache Qpid/C++:
+git clone git://git.apache.org/qpid.git
+cd qpid
+git checkout -b 0.6-release origin/0.6-release
+cd qpid/cpp
+./bootstrap
 ./configure --prefix=$HOME/qpidc-0.6-bin
 make
 make install
@@ -162,6 +169,7 @@ git submodule update
 aclocal
 automake --add-missing --foreign --copy
 autoconf
-./configure
+./configure --prefix=$HOME/libstrophe-bin
 make
+make install
 

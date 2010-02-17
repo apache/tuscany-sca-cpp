@@ -341,8 +341,8 @@ AC_ARG_ENABLE(java, [AS_HELP_STRING([--enable-java], [enable Java support [defau
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_java}" = "true"; then
-  LIBS="-L${JAVA_LIB} ${default_LIBS}"
-  #AC_CHECK_LIB([java], [JNI_OnLoad], [], [AC_MSG_ERROR([couldn't find a suitable libjava, use --with-java=PATH])])
+  LIBS="-L${JAVA_LIB} -L${JAVA_LIB}/server ${default_LIBS}"
+  AC_CHECK_LIB([java], [JNI_CreateJavaVM], [], [AC_MSG_ERROR([couldn't find a suitable libjava, use --with-java=PATH])], [-ljvm -lverify])
   AC_PROG_JAVAC
   AC_PROG_JAR
   AM_CONDITIONAL([WANT_JAVA], true)
@@ -441,8 +441,11 @@ AC_ARG_ENABLE(queue, [AS_HELP_STRING([--enable-queue], [enable Queue component [
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_queue}" = "true"; then
+  if test "${want_threads}" != "true"; then
+    AC_MSG_ERROR([--enable-queue requires multi-threading, use --enable-threads])
+  fi
   LIBS="-L${QPIDC_LIB} ${default_LIBS}"
-  #AC_CHECK_LIB([qpidclient], [], [], [AC_MSG_ERROR([couldn't find a suitable libqpidclient, use --with-qpidc=PATH])])
+  AC_CHECK_LIB([qpidclient], [_init], [], [AC_MSG_ERROR([couldn't find a suitable libqpidclient, use --with-qpidc=PATH])])
   AM_CONDITIONAL([WANT_QUEUE], true)
   AC_DEFINE([WANT_QUEUE], 1, [enable Queue component])
 else
@@ -451,7 +454,7 @@ fi
 
 # Configure path to Libstrophe includes and lib.
 AC_MSG_CHECKING([for libstrophe])
-AC_ARG_WITH([libstrophe], [AC_HELP_STRING([--with-libstrophe=PATH], [path to libstrophe source build [default=${HOME}/libstrophe]])], [
+AC_ARG_WITH([libstrophe], [AC_HELP_STRING([--with-libstrophe=PATH], [path to libstrophe source [default=${HOME}/libstrophe]])], [
   LIBSTROPHE_INCLUDE="${withval}"
   LIBSTROPHE_LIB="${withval}"
   AC_MSG_RESULT("${withval}")
@@ -477,8 +480,11 @@ AC_ARG_ENABLE(chat, [AS_HELP_STRING([--enable-chat], [enable Chat component [def
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_chat}" = "true"; then
+  if test "${want_threads}" != "true"; then
+    AC_MSG_ERROR([--enable-chat requires multi-threading, use --enable-threads])
+  fi
   LIBS="-L${LIBSTROPHE_LIB} ${default_LIBS}"
-  #AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lexpat -lssl -lresolv])
+  AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lexpat -lssl -lresolv])
   AM_CONDITIONAL([WANT_CHAT], true)
   AC_DEFINE([WANT_CHAT], 1, [enable Chat component])
 else

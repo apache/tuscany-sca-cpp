@@ -36,7 +36,7 @@
 namespace tuscany {
 namespace cache {
 
-const string url("http://localhost:8090/mcache");
+const string uri("http://localhost:8090/mcache");
 
 bool testCache() {
     http::CURLSession cs;
@@ -46,10 +46,12 @@ bool testCache() {
             + (list<value>() + "price" + string("$2.99"));
     const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
-    const failable<value> id = http::post(a, url, cs);
+    const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
+
+    const string p = path(content(id));
     {
-        const failable<value> val = http::get(url + "/" + content(id), cs);
+        const failable<value> val = http::get(uri + p, cs);
         assert(hasContent(val));
         assert(content(val) == a);
     }
@@ -60,22 +62,22 @@ bool testCache() {
     const list<value> b = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), j);
 
     {
-        const failable<value> r = http::put(b, url + "/" + content(id), cs);
+        const failable<value> r = http::put(b, uri + p, cs);
         assert(hasContent(r));
         assert(content(r) == value(true));
     }
     {
-        const failable<value> val = http::get(url + "/" + content(id), cs);
+        const failable<value> val = http::get(uri + p, cs);
         assert(hasContent(val));
         assert(content(val) == b);
     }
     {
-        const failable<value> r = http::del(url + "/" + content(id), cs);
+        const failable<value> r = http::del(uri + p, cs);
         assert(hasContent(r));
         assert(content(r) == value(true));
     }
     {
-        const failable<value> val = http::get(url + "/" + content(id), cs);
+        const failable<value> val = http::get(uri + p, cs);
         assert(!hasContent(val));
     }
 
@@ -83,13 +85,13 @@ bool testCache() {
 }
 
 struct getLoop {
-    const value id;
+    const string path;
     const value entry;
     http::CURLSession cs;
-    getLoop(const value& id, const value& entry, http::CURLSession cs) : id(id), entry(entry), cs(cs) {
+    getLoop(const string& path, const value& entry, http::CURLSession cs) : path(path), entry(entry), cs(cs) {
     }
     const bool operator()() const {
-        const failable<value> val = http::get(url + "/" + id, cs);
+        const failable<value> val = http::get(uri + path, cs);
         assert(hasContent(val));
         assert(content(val) == entry);
         return true;
@@ -103,10 +105,11 @@ bool testGetPerf() {
     const value a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
     http::CURLSession cs;
-    const failable<value> id = http::post(a, url, cs);
+    const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
+    const string p = path(content(id));
 
-    const lambda<bool()> gl = getLoop(content(id), a, cs);
+    const lambda<bool()> gl = getLoop(p, a, cs);
     cout << "Cache get test " << time(gl, 5, 200) << " ms" << endl;
 
     return true;

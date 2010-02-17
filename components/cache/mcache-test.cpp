@@ -33,33 +33,36 @@ namespace tuscany {
 namespace cache {
 
 bool testMemCached() {
-    MemCached ch;
+    MemCached ch("127.0.0.1", 11211);
+    const value k = mklist<value>("a");
 
-    assert(hasContent(post("a", string("AAA"), ch)));
-    assert((get("a", ch)) == value(string("AAA")));
-    assert(hasContent(put("a", string("aaa"), ch)));
-    assert((get("a", ch)) == value(string("aaa")));
-    assert(hasContent(del("a", ch)));
-    assert(!hasContent(get("a", ch)));
+    assert(hasContent(post(k, string("AAA"), ch)));
+    assert((get(k, ch)) == value(string("AAA")));
+    assert(hasContent(put(k, string("aaa"), ch)));
+    assert((get(k, ch)) == value(string("aaa")));
+    assert(hasContent(del(k, ch)));
+    assert(!hasContent(get(k, ch)));
 
     return true;
 }
 
 struct getLoop {
+    const value k;
     MemCached& ch;
-    getLoop(MemCached& ch) : ch(ch) {
+    getLoop(const value& k, MemCached& ch) : k(k), ch(ch) {
     }
     const bool operator()() const {
-        assert((get("c", ch)) == value(string("CCC")));
+        assert((get(k, ch)) == value(string("CCC")));
         return true;
     }
 };
 
 bool testGetPerf() {
-    MemCached ch;
-    assert(hasContent(post("c", string("CCC"), ch)));
+    const value k = mklist<value>("c");
+    MemCached ch("127.0.0.1", 11211);
+    assert(hasContent(post(k, string("CCC"), ch)));
 
-    const lambda<bool()> gl = getLoop(ch);
+    const lambda<bool()> gl = getLoop(k, ch);
     cout << "Memcached get test " << time(gl, 5, 200) << " ms" << endl;
     return true;
 }

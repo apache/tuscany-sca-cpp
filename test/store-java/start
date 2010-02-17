@@ -27,8 +27,5 @@ EOF
 
 export CLASSPATH=`pwd`/../../modules/java/libmod-tuscany-java-1.0.jar:`pwd`
 
+../../components/cache/memcached-start
 ../../modules/http/httpd-start tmp
-
-mc="memcached -l 127.0.0.1 -m 4 -p 11211"
-$mc &
-

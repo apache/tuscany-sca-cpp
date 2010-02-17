@@ -48,23 +48,28 @@ namespace cache {
  */
 class MemCached {
 public:
-    MemCached() {
-        apr_pool_create(&pool, NULL);
-        apr_memcache_create(pool, 1, 0, &mc);
-        init("localhost", 11211);
+    MemCached() : owner(false) {
     }
 
-    MemCached(const string host, const int port) {
+    MemCached(const string host, const int port) : owner(true) {
         apr_pool_create(&pool, NULL);
         apr_memcache_create(pool, 1, 0, &mc);
         init(host, port);
     }
 
+    MemCached(const MemCached& c) : owner(false) {
+        pool = c.pool;
+        mc = c.mc;
+    }
+
     ~MemCached() {
+        if (!owner)
+            return;
         apr_pool_destroy(pool);
     }
 
 private:
+    bool owner;
     apr_pool_t* pool;
     apr_memcache_t* mc;
 
@@ -86,7 +91,6 @@ private:
             return mkfailure<bool>("Could not add server");
         return true;
     }
-
 };
 
 /**

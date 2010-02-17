@@ -28,7 +28,7 @@ cd $pwd
 sleep 1
 
 # Test
-./axis2-test
+./axis2-test 2>/dev/null
 rc=$?
 
 # Cleanup

@@ -82,7 +82,7 @@ int translateReference(request_rec *r) {
 
     // Find the requested component
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
-    const list<value> rpath(httpd::pathValues(r->uri));
+    const list<value> rpath(pathValues(r->uri));
     const list<value> comp(assoctree(cadr(rpath), sc.references));
     if (isNil(comp))
         return HTTP_NOT_FOUND;
@@ -147,20 +147,20 @@ int translateService(request_rec *r) {
 
     // Find the requested component
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
-    const list<value> path(httpd::pathValues(r->uri));
-    const list<value> svc(assocPath(path, sc.services));
+    const list<value> p(pathValues(r->uri));
+    const list<value> svc(assocPath(p, sc.services));
     if (isNil(svc))
         return DECLINED;
     debug(svc, "modwiring::translateService::service");
 
     // Build a component-name + path-info URI
-    const list<value> target(cons<value>(cadr(svc), httpd::pathInfo(path, car(svc))));
+    const list<value> target(cons<value>(cadr(svc), httpd::pathInfo(p, car(svc))));
     debug(target, "modwiring::translateService::target");
 
     // Dispatch to the target component using a local internal redirect
-    const string p(httpd::path(target));
-    debug(p, "modwiring::translateService::path");
-    const string redir(string("/redirect:/components") + httpd::path(target));
+    const string tp(path(target));
+    debug(tp, "modwiring::translateService::path");
+    const string redir(string("/redirect:/components") + tp);
     debug(redir, "modwiring::translateService::redirect");
     r->filename = apr_pstrdup(r->pool, c_str(redir));
     r->handler = "mod_tuscany_wiring";
@@ -216,7 +216,7 @@ const failable<list<value> > readComponents(const string& path) {
 }
 
 /**
- * Return a tree of component-name + references pairs. The references are
+ * Return a list of component-name + references pairs. The references are
  * arranged in trees of reference-name + reference-target pairs.
  */
 const list<value> componentReferenceToTargetTree(const value& c) {
@@ -229,12 +229,8 @@ const list<value> componentReferenceToTargetAssoc(const list<value>& c) {
     return cons<value>(componentReferenceToTargetTree(car(c)), componentReferenceToTargetAssoc(cdr(c)));
 }
 
-const list<value> componentReferenceToTargetTree(const list<value>& c) {
-    return mkbtree(sort(componentReferenceToTargetAssoc(c)));
-}
-
 /**
- * Return a tree of service-URI-path + component-name pairs. Service-URI-paths are
+ * Return a list of service-URI-path + component-name pairs. Service-URI-paths are
  * represented as lists of URI path fragments.
  */
 const list<value> defaultBindingURI(const string& cn, const string& sn) {
@@ -247,7 +243,7 @@ const list<value> bindingToComponentAssoc(const string& cn, const string& sn, co
     const value uri(scdl::uri(car(b)));
     if (isNil(uri))
         return cons<value>(mklist<value>(defaultBindingURI(cn, sn), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
-    return cons<value>(mklist<value>(httpd::pathValues(c_str(string(uri))), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
+    return cons<value>(mklist<value>(pathValues(c_str(string(uri))), cn), bindingToComponentAssoc(cn, sn, cdr(b)));
 }
 
 const list<value> serviceToComponentAssoc(const string& cn, const list<value>& s) {
@@ -266,10 +262,6 @@ const list<value> uriToComponentAssoc(const list<value>& c) {
     return append<value>(serviceToComponentAssoc(scdl::name(car(c)), scdl::services(car(c))), uriToComponentAssoc(cdr(c)));
 }
 
-const list<value> uriToComponentTree(const list<value>& c) {
-    return mkbtree(sort(uriToComponentAssoc(c)));
-}
-
 /**
  * Configure the components declared in the server's deployment composite.
  */
@@ -277,16 +269,53 @@ const bool confComponents(ServerConf& sc) {
     if (sc.contributionPath == "" || sc.compositeName == "")
         return true;
 
-    // Read the component configuration and store the references and service
-    // URIs in trees for fast retrieval later
+    // Read the component configuration and store the references and service URIs
+    // in trees for fast retrieval later
     const failable<list<value> > comps = readComponents(sc.contributionPath + sc.compositeName);
     if (!hasContent(comps))
         return true;
-    sc.references = componentReferenceToTargetTree(content(comps));
-    debug(sc.references, "modwiring::confComponents::references");
-    sc.services = uriToComponentTree(content(comps));
-    debug(sc.services, "modwiring::confComponents::services");
+    const list<value> refs = componentReferenceToTargetAssoc(content(comps));
+    debug(refs, "modwiring::confComponents::references");
+    sc.references = mkbtree(sort(refs));
+
+    const list<value> svcs = uriToComponentAssoc(content(comps));
+    debug(svcs, "modwiring::confComponents::services");
+    sc.services = mkbtree(sort(svcs));
     return true;
+}
+
+/**
+ * Called after all the configuration commands have been run.
+ * Process the server configuration and configure the wiring for the deployed components.
+ */
+int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
+    // Count the calls to post config, skip the first one as
+    // postConfig is always called twice
+    const string k("tuscany::modwiring::postConfig");
+    const int count = (int)httpd::userData(k, s);
+    httpd::putUserData(k, (void*)(count + 1), s);
+    if (count == 0)
+        return OK;
+
+    // Configure the wiring for the deployed components
+    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
+    debug(sc.wiringServerName, "modwiring::postConfig::wiringServerName");
+    debug(sc.contributionPath, "modwiring::postConfig::contributionPath");
+    debug(sc.compositeName, "modwiring::postConfig::compositeName");
+    confComponents(sc);
+    return OK;
+}
+
+/**
+ * Child process initialization.
+ */
+void childInit(apr_pool_t* p, server_rec* svr_rec) {
+    gc_scoped_pool pool(p);
+    ServerConf *conf = (ServerConf*)ap_get_module_config(svr_rec->module_config, &mod_tuscany_wiring);
+    if(conf == NULL) {
+        cerr << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << endl;
+        exit(APEXIT_CHILDFATAL);
+    }
 }
 
 /**
@@ -327,33 +356,6 @@ const command_rec commands[] = {
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
-
-int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
-    // Count the calls to post config, skip the first one as
-    // postConfig is always called twice
-    const string k("tuscany::modwiring::postConfig");
-    const int count = httpd::userData(k, s);
-    httpd::putUserData(k, count +1, s);
-    if (count == 0)
-        return OK;
-
-    // Configure the wiring for the deployed components
-    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
-    debug(sc.wiringServerName, "modwiring::postConfig::wiringServerName");
-    debug(sc.contributionPath, "modwiring::postConfig::contributionPath");
-    debug(sc.compositeName, "modwiring::postConfig::compositeName");
-    confComponents(sc);
-    return OK;
-}
-
-void childInit(apr_pool_t* p, server_rec* svr_rec) {
-    gc_scoped_pool pool(p);
-    ServerConf *conf = (ServerConf*)ap_get_module_config(svr_rec->module_config, &mod_tuscany_wiring);
-    if(conf == NULL) {
-        cerr << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << endl;
-        exit(APEXIT_CHILDFATAL);
-    }
-}
 
 void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);

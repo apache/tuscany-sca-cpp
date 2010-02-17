@@ -193,7 +193,7 @@ const value valueToElement(const value& t) {
     const list<value> valuesToElements(const list<value>& l);
 
     // Convert a name value pair
-    if (isList(t) && isSymbol(car<value>(t))) {
+    if (isList(t) && !isNil((list<value>)t) && isSymbol(car<value>(t))) {
         const value n = car<value>(t);
         const value v = cadr<value>(t);
 

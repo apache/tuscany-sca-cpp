@@ -25,27 +25,19 @@ public class ClientImpl {
         return server.echo(x);
     }
     
-    public Iterable<?> getall(Server server) {
-        return server.getall();
-    }
-    
-    public Iterable<?> get(String id, Server server) {
+    public Iterable<?> get(Iterable<String> id, Server server) {
         return server.get(id);
     }
     
-    public String post(Iterable<?> item, Server server) {
-        return server.post(item);
+    public Iterable<String> post(Iterable<String> collection, Iterable<?> item, Server server) {
+        return server.post(collection, item);
     }
     
-    public Boolean put(String id, Iterable<?> item, Server server) {
+    public Boolean put(Iterable<String> id, Iterable<?> item, Server server) {
         return server.put(id, item);
     }
     
-    public Boolean deleteall(Server server) {
-        return server.deleteall();
-    }
-    
-    public Boolean delete(String id, Server server) {
+    public Boolean delete(Iterable<String> id, Server server) {
         return server.delete(id);
     }
     

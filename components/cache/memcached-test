@@ -18,14 +18,13 @@
 #  under the License.
 
 # Setup
-mc="memcached -l 127.0.0.1 -m 4 -p 11211"
-$mc &
+./memcached-start
 sleep 1
 
 # Test
-./mcache-test
+./mcache-test 2>/dev/null
 rc=$?
 
 # Cleanup
-kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`
+./memcached-stop
 return $rc

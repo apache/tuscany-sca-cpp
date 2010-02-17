@@ -21,24 +21,16 @@
 
 ; ATOMPub test case
 
-(define (getall ref)
-  (ref "getall")
-)
-
 (define (get id ref)
   (ref "get" id)
 )
 
-(define (post entry ref)
-  (ref "post" entry)
+(define (post coll entry ref)
+  (ref "post" coll entry)
 )
 
 (define (put id entry ref)
   (ref "put" id entry)
-)
-
-(define (deleteall ref)
-  (ref deleteall)
 )
 
 (define (delete id ref)

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,31 +17,23 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_QUEUE
+# Setup
+../../modules/http/httpd-conf tmp 8090 ../../modules/http/htdocs
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+SCAContribution `pwd`/
+SCAComposite chat.composite
+EOF
 
-noinst_PROGRAMS = qpid-test client-test
+../../modules/http/httpd-start tmp
+sleep 2
 
-INCLUDES = -I${QPIDC_INCLUDE}
+# Test
+./client-test 2>/dev/null
+rc=$?
 
-compdir=$(prefix)/components/queue
-comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
-comp_DATA = qpidc.prefix
-
-libqueue_sender_la_SOURCES = queue-sender.cpp
-libqueue_sender_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
-
-libqueue_listener_la_SOURCES = queue-listener.cpp
-libqueue_listener_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
-
-qpid_test_SOURCES = qpid-test.cpp
-qpid_test_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
-
-client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
-
-qpidc.prefix: $(top_builddir)/config.status
-	echo ${QPIDC_PREFIX} >qpidc.prefix
-
-TESTS = send-test server-test
-
-endif
+# Cleanup
+../../modules/http/httpd-stop tmp
+sleep 1
+return $rc

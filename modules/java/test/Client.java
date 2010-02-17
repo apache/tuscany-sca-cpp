@@ -23,16 +23,12 @@ public interface Client {
 
     String echo(String x);
     
-    Iterable<?> getall();
+    Iterable<?> get(Iterable<String> id);
     
-    Iterable<?> get(String id);
+    Iterable<String> post(Iterable<String> collection, Iterable<?> item);
     
-    String post(Iterable<?> item);
+    Boolean put(Iterable<String> id, Iterable<?> item);
     
-    Boolean put(String id, Iterable<?> entry);
-    
-    Boolean deleteall();
-    
-    Boolean delete(String id);
+    Boolean delete(Iterable<String> id);
     
 }

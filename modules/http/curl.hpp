@@ -252,7 +252,7 @@ const failable<value> entryId(const failable<string> l) {
     if (!hasContent(l))
         return mkfailure<value>(reason(l));
     const string ls(content(l));
-    return value(string(substr(ls, find_last(ls, '/') + 1)));
+    return value(mklist<value>(string(substr(ls, find_last(ls, '/') + 1))));
 }
 
 /**
@@ -381,18 +381,18 @@ const failable<value, string> del(const string& url, const CURLSession& ch) {
  * HTTP client proxy function.
  */
 struct proxy {
-    proxy(const string& url) : url(url) {
+    proxy(const string& uri) : uri(uri) {
     }
 
     const value operator()(const list<value>& args) const {
         CURLSession cs;
-        failable<value> val = evalExpr(args, url, cs);
+        failable<value> val = evalExpr(args, uri, cs);
         if (!hasContent(val))
             return value();
         return content(val);
     }
 
-    const string url;
+    const string uri;
 };
 
 }

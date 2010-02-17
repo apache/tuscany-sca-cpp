@@ -34,14 +34,12 @@
 #include "mcache.hpp"
 
 namespace tuscany {
-namespace cache {
-
-cache::MemCached ch;
+namespace mcache {
 
 /**
  * Get an item from the cache.
  */
-const failable<value> get(const list<value>& params) {
+const failable<value> get(const list<value>& params, cache::MemCached& ch) {
     return cache::get(car(params), ch);
 }
 
@@ -56,9 +54,9 @@ const value uuidValue() {
     return value(string(buf, APR_UUID_FORMATTED_LENGTH));
 }
 
-const failable<value> post(const list<value>& params) {
-    const value id = uuidValue();
-    const failable<bool> val = cache::post(id, car(params), ch);
+const failable<value> post(const list<value>& params, cache::MemCached& ch) {
+    const value id = append<value>(car(params), mklist(uuidValue()));
+    const failable<bool> val = cache::post(id, cadr(params), ch);
     if (!hasContent(val))
         return mkfailure<value>(reason(val));
     return id;
@@ -67,7 +65,7 @@ const failable<value> post(const list<value>& params) {
 /**
  * Put an item into the cache.
  */
-const failable<value> put(const list<value>& params) {
+const failable<value> put(const list<value>& params, cache::MemCached& ch) {
     const failable<bool> val = cache::put(car(params), cadr(params), ch);
     if (!hasContent(val))
         return mkfailure<value>(reason(val));
@@ -77,11 +75,47 @@ const failable<value> put(const list<value>& params) {
 /**
  * Delete an item from the cache.
  */
-const failable<value> del(const list<value>& params) {
+const failable<value> del(const list<value>& params, cache::MemCached& ch) {
     const failable<bool> val = cache::del(car(params), ch);
     if (!hasContent(val))
         return mkfailure<value>(reason(val));
     return value(content(val));
+}
+
+/**
+ * Component implementation lambda function.
+ */
+class applyCache {
+public:
+    applyCache(cache::MemCached& ch) : ch(ch) {
+    }
+
+    const value operator()(const list<value>& params) const {
+        const value func(car(params));
+        if (func == "get")
+            return get(cdr(params), ch);
+        if (func == "post")
+            return post(cdr(params), ch);
+        if (func == "put")
+            return put(cdr(params), ch);
+        if (func == "delete")
+            return del(cdr(params), ch);
+        return tuscany::mkfailure<tuscany::value>();
+    }
+
+private:
+    cache::MemCached& ch;
+};
+
+/**
+ * Start the component.
+ */
+const failable<value> start(unused const list<value>& params) {
+    // Connect to memcached
+    cache::MemCached& ch = *(new (gc_new<cache::MemCached>()) cache::MemCached("127.0.0.1", 11211));
+
+    // Return the component implementation lambda function
+    return value(lambda<value(const list<value>&)>(applyCache(ch)));
 }
 
 }
@@ -91,14 +125,8 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "get")
-        return tuscany::cache::get(cdr(params));
-    if (func == "post")
-        return tuscany::cache::post(cdr(params));
-    if (func == "put")
-        return tuscany::cache::put(cdr(params));
-    if (func == "delete")
-        return tuscany::cache::del(cdr(params));
+    if (func == "start" || func == "restart")
+        return tuscany::mcache::start(cdr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 

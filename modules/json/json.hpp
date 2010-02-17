@@ -140,7 +140,7 @@ const bool isJSArray(const list<value>& l) {
     if (isSymbol(v))
         return false;
     if(isList(v)) {
-        if(isSymbol(car<value>(v)))
+        if(!isNil((list<value>)v) && isSymbol(car<value>(v)))
             return false;
     }
     return true;

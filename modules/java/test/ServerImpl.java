@@ -27,31 +27,25 @@ public class ServerImpl {
         return x;
     }
     
-    public Iterable<?> getall() {
-        return list("Sample Feed", "123456789",
-                list("Item", "111", list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99))),
-                list("Item", "222", list(list("'javaClass", "services.Item"), list("'name", "Orange"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 3.55))),
-                list("Item", "333", list(list("'javaClass", "services.Item"), list("'name", "Pear"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 1.55))));
-    }
-    
-    public Iterable<?> get(String id) {
+    public Iterable<?> get(Iterable<String> id) {
+        if (isNil(id))
+            return list("Sample Feed", "123456789",
+                    list("Item", "111", list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99))),
+                    list("Item", "222", list(list("'javaClass", "services.Item"), list("'name", "Orange"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 3.55))),
+                    list("Item", "333", list(list("'javaClass", "services.Item"), list("'name", "Pear"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 1.55))));
         Iterable<?> entry = list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99));
         return list("Item", id, entry);
     }
 
-    public String post(Iterable<?> item) {
-        return "123456789";
+    public Iterable<String> post(Iterable<String> collection, Iterable<?> item) {
+        return list("123456789");
     }
     
-    public Boolean put(String id, Iterable<?> entry) {
+    public Boolean put(Iterable<String> id, Iterable<?> item) {
         return true;
     }
 
-    public Boolean deleteall() {
-        return true;
-    }
-
-    public Boolean delete(String id) {
+    public Boolean delete(Iterable<String> id) {
         return true;
     }
 }

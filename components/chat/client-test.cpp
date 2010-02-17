@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test queue component.
+ * Test chat component.
  */
 
 #include <assert.h>
@@ -31,55 +31,67 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "perf.hpp"
+#include "parallel.hpp"
 #include "../../modules/http/curl.hpp"
-#include "qpid.hpp"
-
-// Ignore conversion issues and redundant declarations in Qpid headers
-#ifdef WANT_MAINTAINER_MODE
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wredundant-decls"
-#endif
+#include "xmpp.hpp"
 
 namespace tuscany {
-namespace queue {
+namespace chat {
 
-const value key(mklist<value>(string("report")));
-const string qname("reportq");
+const value jid1("sca1@localhost");
+const value pass1("sca1");
+const value jid2("sca2@localhost");
+const value pass2("sca2");
+const value jid3("sca3@localhost");
+const value pass3("sca3");
 
 const list<value> item = list<value>()
         + (list<value>() + "name" + string("Apple"))
         + (list<value>() + "price" + string("$2.99"));
 const list<value> entry = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), item);
 
-bool testDeclareQueue() {
-    QpidConnection qc;
-    QpidSession qs(qc);
-    const failable<bool> r = declareQueue(key, qname, qs);
-    assert(hasContent(r));
-    return true;
-}
+worker w(2);
+bool received;
 
-const bool listener(const value& k, const value& v) {
-    cerr << "k " << k << " v " << v << endl;
-    assert(k == key);
-    assert(v == entry);
+const failable<bool> listener(const value& from, const value& val, unused XMPPClient& xc) {
+    assert(contains(from, "sca2@localhost"));
+    assert(val == entry);
+    received = true;
     return false;
 }
 
+struct subscribe {
+    XMPPClient& xc;
+    subscribe(XMPPClient& xc) : xc(xc) {
+    }
+    const failable<bool> operator()() const {
+        const lambda<failable<bool>(const value&, const value&, XMPPClient&)> l(listener);
+        listen(l, xc);
+        return true;
+    }
+};
+
 bool testListen() {
-    QpidConnection qc;
-    QpidSession qs(qc);
-    QpidSubscription qsub(qs);
-    const lambda<bool(const value&, const value&)> l(listener);
-    listen(qname, l, qsub);
+    received = false;
+    XMPPClient& xc = *(new (gc_new<XMPPClient>()) XMPPClient(jid3, pass3));
+    const failable<bool> c = connect(xc);
+    assert(hasContent(c));
+    const lambda<failable<bool>()> subs = subscribe(xc);
+    submit(w, subs);
     return true;
 }
 
 bool testPost() {
     gc_scoped_pool pool;
     http::CURLSession ch;
-    const failable<value> id = http::post(entry, "http://localhost:8090/print-sender", ch);
+    const failable<value> id = http::post(entry, "http://localhost:8090/print-sender/sca2@localhost", ch);
     assert(hasContent(id));
+    return true;
+}
+
+bool testReceived() {
+    shutdown(w);
+    assert(received == true);
     return true;
 }
 
@@ -89,9 +101,9 @@ bool testPost() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::queue::testDeclareQueue();
-    tuscany::queue::testPost();
-    tuscany::queue::testListen();
+    tuscany::chat::testListen();
+    tuscany::chat::testPost();
+    tuscany::chat::testReceived();
 
     tuscany::cout << "OK" << tuscany::endl;
 

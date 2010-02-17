@@ -241,9 +241,9 @@ const failable<value> evalScript(const value& expr, PyObject* script) {
 
         // The start, stop, and restart functions are optional
         const value fn = car<value>(expr);
-        if (fn == "start" || fn == "stop" || fn == "restart") {
+        if (fn == "start" || fn == "restart" || fn == "stop") {
             PyErr_Clear();
-            return value(false);
+            return value(lambda<value(const list<value>&)>());
         }
 
         return mkfailure<value>(string("Couldn't find function: ") + car<value>(expr) + " : " + lastError());

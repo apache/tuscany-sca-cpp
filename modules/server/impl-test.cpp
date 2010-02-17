@@ -38,7 +38,7 @@ const failable<value> get(unused const list<value>& params) {
 }
 
 const failable<value> post(unused const list<value>& params) {
-    return value(string("123456789"));
+    return value(mklist<value>(string("123456789")));
 }
 
 const failable<value> put(unused const list<value>& params) {

@@ -17,4 +17,4 @@
 
 ; Queue test case
 
-(define (print x) (display x))
+(define (post key val report) (report "post" '() val))

@@ -26,34 +26,24 @@ package org.apache.tuscany;
 public interface Service {
     
     /**
-     * Post a new item to a resource.
+     * Post a new item to a collection of items.
      */
-    String post(Iterable<?> item);
+    Iterable<String> post(Iterable<String> collection, Iterable<?> item);
     
     /**
      * Return an item.
      */
-    Iterable<?> get(String id);
+    Iterable<?> get(Iterable<String> id);
     
     /**
-     * Return all items in the resource.
+     * Update an item.
      */
-    Iterable<?> getall();
-    
-    /**
-     * Update am item.
-     */
-    boolean put(String id, Iterable<?> item);
+    boolean put(Iterable<String> id, Iterable<?> item);
     
     /**
      * Delete an item.
      */
-    boolean delete(String id);
-    
-    /**
-     * Delete all items in the resource.
-     */
-    boolean deleteall();
+    boolean delete(Iterable<String> id);
     
     /**
      * Evaluate an expression.

@@ -17,15 +17,20 @@
 
 if WANT_CHAT
 
-INCLUDES = -I${LIBSTROPHE_INCLUDE}
+noinst_PROGRAMS = xmpp-test client-test
+
+INCLUDES = -I${LIBSTROPHE_INCLUDE} -I${LIBSTROPHE_INCLUDE}/src
 
 compdir=$(prefix)/components/chat
-comp_LTLIBRARIES = libchat-sender.la libchat-listener.la
+comp_LTLIBRARIES = libchatter.la
 
-libchat_sender_la_SOURCES = chat-sender.cpp
-libchat_sender_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
+libchatter_la_SOURCES = chatter.cpp
+libchatter_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
 
-libchat_listener_la_SOURCES = chat-listener.cpp
-libchat_listener_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
+xmpp_test_SOURCES = xmpp-test.cpp
+xmpp_test_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
+
+client_test_SOURCES = client-test.cpp
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
 
 endif

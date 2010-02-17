@@ -39,19 +39,22 @@
 namespace tuscany {
 namespace queue {
 
-QpidConnection qc;
-
 /**
  * Post an item to a queue.
  */
 const failable<value> post(const list<value>& params) {
+    QpidConnection qc;
     QpidSession qs(qc);
 
     // Post the item
-    const value key = ((lambda<value(list<value>)>)cadr(params))(list<value>());
-    post(key, car(params), qs);
-
-    return value(true);
+    const value pk = ((lambda<value(list<value>)>)caddr(params))(list<value>());
+    const value key = isList(pk)? append<value>(pk, (list<value>)car(params)) : cons<value>(pk, (list<value>)car(params));
+    debug(key, "queue::post::key");
+    debug(cadr(params), "queue::post::value");
+    const failable<bool> r = post(key, cadr(params), qs);
+    if (!hasContent(r))
+        return mkfailure<value>(reason(r));
+    return key;
 }
 
 }

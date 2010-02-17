@@ -22,18 +22,14 @@ def echo(x, ref):
 
 # ATOMPub test case
 
-def getall(ref):
-    return ref("getall")
-
 def get(id, ref):
     return ref("get", id)
 
-def post(entry, ref):
-    return ref("post", entry)
+def post(collection, item, ref):
+    return ref("post", collection, item)
 
-def put(id, entry, ref):
-    return ref("put", id, entry)
+def put(id, item, ref):
+    return ref("put", id, item)
 
 def delete(id, ref):
     return ref("delete", id)
-

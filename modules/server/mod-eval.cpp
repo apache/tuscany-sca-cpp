@@ -37,36 +37,23 @@ namespace server {
 namespace modeval {
 
 /**
- * Start the module.
+ * Apply a lifecycle start or restart event.
  */
-const failable<bool> start(unused ServerConf& sc) {
-    return true;
-}
-
-/**
- * Stop the module.
- */
-const failable<bool> stop(unused ServerConf& sc) {
-    return true;
-}
-
-/**
- * Restart the module.
- */
-const failable<bool> restart(unused ServerConf& sc) {
-    return true;
+const value applyLifecycle(unused const list<value>& params) {
+    // Return a nil function as we don't need to handle any subsequent events
+    return failable<value>(lambda<value(const list<value>&)>());
 }
 
 /**
  * Evaluate a Scheme or C++ component implementation and convert it to an
  * applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, ServerConf& sc) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, unused const lambda<value(const list<value>&)>& lifecycle) {
     const string itype(elementName(impl));
     if (contains(itype, ".scheme"))
-        return modscheme::evalImplementation(path, impl, px, sc);
+        return modscheme::evalImplementation(path, impl, px);
     if (contains(itype, ".cpp"))
-        return modcpp::evalImplementation(path, impl, px, sc);
+        return modcpp::evalImplementation(path, impl, px);
     return mkfailure<lambda<value(const list<value>&)> >(string("Unsupported implementation type: ") + itype);
 }
 

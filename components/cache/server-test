@@ -26,18 +26,16 @@ SCAContribution `pwd`/
 SCAComposite mcache.composite
 EOF
 
+./memcached-start
 ../../modules/http/httpd-start tmp
-
-mc="memcached -l 127.0.0.1 -m 4 -p 11211"
-$mc &
 sleep 2
 
 # Test
-./client-test
+./client-test 2>/dev/null
 rc=$?
 
 # Cleanup
-kill `ps -f | grep -v grep | grep "$mc" | awk '{ print $2 }'`
 ../../modules/http/httpd-stop tmp
+./memcached-stop
 sleep 2
 return $rc

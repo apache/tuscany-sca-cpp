@@ -39,7 +39,7 @@ cd $pwd
 sleep 2
 
 # Test
-./client-test
+./client-test 2>/dev/null
 rc=$?
 
 # Cleanup

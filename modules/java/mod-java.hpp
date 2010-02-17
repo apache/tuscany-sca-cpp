@@ -34,18 +34,10 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "eval.hpp"
-#include "../server/mod-eval.hpp"
 
 namespace tuscany {
 namespace server {
 namespace modjava {
-
-/**
- * Return the Java runtime configured in a server.
- */
-java::JavaRuntime& javaRuntime(modeval::ServerConf sc) {
-    return *(java::JavaRuntime*)sc.moduleConf;
-}
 
 /**
  * Apply a Java component implementation function.
@@ -59,11 +51,10 @@ struct applyImplementation {
     const value operator()(const list<value>& params) const {
         const value expr = append<value>(params, px);
         debug(expr, "modeval::java::applyImplementation::input");
-        const failable<value> val = java::evalClass(jr, expr, impl);
+        const failable<value> res = java::evalClass(jr, expr, impl);
+        const value val = !hasContent(res)? mklist<value>(value(), reason(res)) : mklist<value>(content(res));
         debug(val, "modeval::java::applyImplementation::result");
-        if (!hasContent(val))
-            return mklist<value>(value(), reason(val));
-        return mklist<value>(content(val));
+        return val;
     }
 };
 
@@ -71,12 +62,12 @@ struct applyImplementation {
  * Evaluate a Java component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, modeval::ServerConf& sc) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, java::JavaRuntime& jr) {
     const string cn(attributeValue("class", impl));
-    const failable<java::JavaClass> jc = java::readClass(javaRuntime(sc), path, cn);
+    const failable<java::JavaClass> jc = java::readClass(jr, path, cn);
     if (!hasContent(jc))
         return mkfailure<lambda<value(const list<value>&)> >(reason(jc));
-    return lambda<value(const list<value>&)>(applyImplementation(content(jc), px, javaRuntime(sc)));
+    return lambda<value(const list<value>&)>(applyImplementation(content(jc), px, jr));
 }
 
 }

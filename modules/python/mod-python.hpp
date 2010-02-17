@@ -34,7 +34,6 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "eval.hpp"
-#include "../server/mod-eval.hpp"
 
 namespace tuscany {
 namespace server {
@@ -51,11 +50,10 @@ struct applyImplementation {
     const value operator()(const list<value>& params) const {
         const value expr = append<value>(params, px);
         debug(expr, "modeval::python::applyImplementation::input");
-        const failable<value> val = python::evalScript(expr, impl);
+        const failable<value> res = python::evalScript(expr, impl);
+        const value val = !hasContent(res)? mklist<value>(value(), reason(res)) : mklist<value>(content(res));
         debug(val, "modeval::python::applyImplementation::result");
-        if (!hasContent(val))
-            return mklist<value>(value(), reason(val));
-        return mklist<value>(content(val));
+        return val;
     }
 };
 
@@ -63,7 +61,7 @@ struct applyImplementation {
  * Evaluate a Python component implementation and convert it to an applicable
  * lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, unused modeval::ServerConf& sc) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
     const string fpath(path + attributeValue("script", impl));
     ifstream is(fpath);
     if (fail(is))

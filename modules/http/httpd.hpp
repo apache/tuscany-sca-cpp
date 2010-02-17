@@ -75,30 +75,6 @@ template<typename C> C& serverConf(const cmd_parms *cmd, const module* mod) {
 
 
 /**
- * Convert a path string to a list of values.
- */
-const list<string> pathTokens(const char* p) {
-    if (p == NULL || p[0] == '\0')
-        return list<string>();
-    if (p[0] == '/')
-        return tokenize("/", p + 1);
-    return tokenize("/", p);
-}
-
-const list<value> pathValues(const char* p) {
-    return mkvalues(pathTokens(p));
-}
-
-/**
- * Convert a path represented as a list of values to a string.
- */
-const string path(const list<value>& p) {
-    if (isNil(p))
-        return "";
-    return string("/") + car(p) + path(cdr(p));
-}
-
-/**
  * Return the content type of a request.
  */
 const char* optional(const char* s) {
@@ -219,10 +195,10 @@ const list<string> read(request_rec* r) {
 }
 
 /**
- * Convert a URI value to an absolute URL.
+ * Convert a URI represented as a list to an absolute URL.
  */
-const char* url(const value& v, request_rec* r) {
-    const string u = string(r->uri) + "/" + v;
+const char* url(const list<value>& v, request_rec* r) {
+    const string u = string(r->uri) + path(v);
     return ap_construct_url(r->pool, c_str(u), r);
 }
 
@@ -400,7 +376,7 @@ const int internalRedirect(const string& uri, request_rec* r) {
 /**
  * Put a value in the process user data.
  */
-const bool putUserData(const string& k, const int v, const server_rec* s) {
+const bool putUserData(const string& k, const void* v, const server_rec* s) {
     apr_pool_userdata_set((const void *)v, c_str(k), apr_pool_cleanup_null, s->process->pool);
     return true;
 }
@@ -408,10 +384,10 @@ const bool putUserData(const string& k, const int v, const server_rec* s) {
 /**
  * Return a user data value.
  */
-const int userData(const string& k, const server_rec* s) {
-    void* v = (int)0;
+const void* userData(const string& k, const server_rec* s) {
+    void* v = NULL;
     apr_pool_userdata_get(&v, c_str(k), s->process->pool);
-    return (int)v;
+    return v;
 }
 
 }

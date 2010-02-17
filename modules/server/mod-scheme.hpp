@@ -34,7 +34,6 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "../scheme/eval.hpp"
-#include "../server/mod-eval.hpp"
 
 namespace tuscany {
 namespace server {
@@ -61,11 +60,10 @@ struct applyImplementation {
         const value expr = cons<value>(car(params), append(scheme::quotedParameters(cdr(params)), px));
         debug(expr, "modeval::scheme::applyImplementation::input");
         scheme::Env env = scheme::setupEnvironment();
-        const value val = scheme::evalScript(expr, impl, env);
+        const value res = scheme::evalScript(expr, impl, env);
+        const value val = isNil(res)? mklist<value>(value(), string("Could not evaluate expression")) : mklist<value>(res);
         debug(val, "modeval::scheme::applyImplementation::result");
-        if (isNil(val))
-            return mklist<value>(value(), string("Could not evaluate expression"));
-        return mklist<value>(val);
+        return val;
     }
 };
 
@@ -73,7 +71,7 @@ struct applyImplementation {
  * Evaluate a Scheme component implementation and convert it to an
  * applicable lambda function.
  */
-const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px, unused modeval::ServerConf& sc) {
+const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
     const string fpath(path + attributeValue("script", impl));
     ifstream is(fpath);
     if (fail(is))

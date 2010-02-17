@@ -33,20 +33,51 @@
 #include "perf.hpp"
 #include "qpid.hpp"
 
+// Ignore conversion issues and redundant declarations in Qpid headers
+#ifdef WANT_MAINTAINER_MODE
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wredundant-decls"
+#endif
+
 namespace tuscany {
 namespace queue {
 
+const value key(mklist<value>("test"));
+const string qname("testq");
+
+bool testDeclareQueue() {
+    QpidConnection qc;
+    QpidSession qs(qc);
+    const failable<bool> r = declareQueue(key, qname, qs);
+    assert(hasContent(r));
+    return true;
+}
+
+const list<value> item = list<value>()
+        + (list<value>() + "name" + string("Apple"))
+        + (list<value>() + "price" + string("$2.99"));
+const list<value> entry = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), item);
+
 bool testPost() {
     QpidConnection qc;
-
     QpidSession qs(qc);
+    const failable<bool> r = post(key, entry, qs);
+    assert(hasContent(r));
+    return true;
+}
 
-    // Post the item
-    const list<value> params;
-    const value key = ((lambda<value(list<value>)>)cadr(params))(list<value>());
-    post(key, car(params), qs);
+const bool listener(const value& k, const value& v) {
+    assert(k == key);
+    assert(v == entry);
+    return false;
+}
 
-    return value(true);
+bool testListen() {
+    QpidConnection qc;
+    QpidSession qs(qc);
+    QpidSubscription qsub(qs);
+    const lambda<bool(const value&, const value&)> l(listener);
+    listen(qname, l, qsub);
     return true;
 }
 
@@ -56,7 +87,9 @@ bool testPost() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
+    tuscany::queue::testDeclareQueue();
     tuscany::queue::testPost();
+    tuscany::queue::testListen();
 
     tuscany::cout << "OK" << tuscany::endl;
 

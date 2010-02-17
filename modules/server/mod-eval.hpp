@@ -53,16 +53,17 @@ namespace modeval {
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : s(s), moduleConf(NULL), home(""), wiringServerName(""), contributionPath(""), compositeName("") {
+    ServerConf(server_rec* s) : s(s), home(""), wiringServerName(""), contributionPath(""), compositeName("") {
     }
 
     const server_rec* s;
-    void* moduleConf;
+    lambda<value(const list<value>&)> lifecycle;
     string home;
     string wiringServerName;
     string contributionPath;
     string compositeName;
     list<value> implementations;
+    list<value> implTree;
 };
 
 /**
@@ -103,20 +104,15 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
         return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc", r);
     }
 
-    // Evaluate an ATOM GET request and return an ATOM feed representing a collection of resources
-    const list<value> path(httpd::pathValues(r->uri));
-    if (isNil(cddr(path))) {
-        const failable<value> val = failableResult(impl(cons<value>("getall", list<value>())));
-        if (!hasContent(val))
-            return mkfailure<int>(reason(val));
-        return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(content(val))), "application/atom+xml;type=feed", r);
-    }
-
-    // Evaluate an ATOM GET and return an ATOM entry representing a resource
-    const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(caddr(path)))));
+    // Evaluate the GET expression and return an ATOM entry or feed representing a resource
+    const list<value> path(pathValues(r->uri));
+    const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(cddr(path)))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
-    return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(content(val))), "application/atom+xml;type=entry", r);
+    if (isNil(cddr(path)))
+        return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(content(val))), "application/atom+xml;type=feed", r);
+    else
+        return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(content(val))), "application/atom+xml;type=entry", r);
 }
 
 /**
@@ -157,6 +153,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
     if (contains(ct, "application/atom+xml")) {
 
         // Read the ATOM entry
+        const list<value> path(pathValues(r->uri));
         const int rc = httpd::setupReadPolicy(r);
         if(rc != OK)
             return rc;
@@ -164,12 +161,13 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
         debug(ls, "modeval::post::input");
         const value entry = atom::entryValue(content(atom::readEntry(ls)));
 
-        // Evaluate the request expression
-        const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(entry))));
+        // Evaluate the POST expression
+        const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(path), entry))));
         if (!hasContent(val))
             return mkfailure<int>(reason(val));
 
         // Return the created resource location
+        debug(content(val), "modeval::post::location");
         apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, httpd::url(content(val), r)));
         r->status = HTTP_CREATED;
         return OK;
@@ -190,7 +188,7 @@ const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>&
     debug(r->uri, "modeval::put::url");
 
     // Read the ATOM entry
-    const list<value> path(httpd::pathValues(r->uri));
+    const list<value> path(pathValues(r->uri));
     const int rc = httpd::setupReadPolicy(r);
     if(rc != OK)
         return rc;
@@ -198,8 +196,8 @@ const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>&
     debug(ls, "modeval::put::input");
     const value entry = atom::entryValue(content(atom::readEntry(ls)));
 
-    // Evaluate the ATOM PUT request and update the corresponding resource
-    const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(caddr(path), entry))));
+    // Evaluate the PUT expression and update the corresponding resource
+    const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(path), entry))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
     if (val == value(false))
@@ -214,20 +212,8 @@ const failable<int> del(request_rec* r, const lambda<value(const list<value>&)>&
     debug(r->uri, "modeval::delete::url");
 
     // Evaluate an ATOM delete request
-    const list<value> path(httpd::pathValues(r->uri));
-    if (isNil(cddr(path))) {
-
-        // Delete a collection of resources
-        const failable<value> val = failableResult(impl(cons<value>("deleteall", list<value>())));
-        if (!hasContent(val))
-            return mkfailure<int>(reason(val));
-        if (val == value(false))
-            return HTTP_NOT_FOUND;
-        return OK;
-    }
-
-    // Delete a resource
-    const failable<value> val = failableResult(impl(cons<value>("delete", mklist<value>(caddr(path)))));
+    const list<value> path(pathValues(r->uri));
+    const failable<value> val = failableResult(impl(cons<value>("delete", mklist<value>(cddr(path)))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
     if (val == value(false))
@@ -257,8 +243,8 @@ int handler(request_rec *r) {
 
     // Get the component implementation lambda
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
-    const list<value> path(httpd::pathValues(r->uri));
-    const list<value> impl(assoctree<value>(cadr(path), sc.implementations));
+    const list<value> path(pathValues(r->uri));
+    const list<value> impl(assoctree<value>(cadr(path), sc.implTree));
     if (isNil(impl))
         return HTTP_NOT_FOUND;
 
@@ -317,7 +303,7 @@ const list<value> propProxies(const list<value>& props) {
  * Evaluate a component and convert it to an applicable lambda function.
  */
 const value evalComponent(ServerConf& sc, server_rec& server, const value& comp) {
-    extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px, ServerConf& sc);
+    extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px, const lambda<value(const list<value>&)>& lifecycle);
 
     const value impl = scdl::implementation(comp);
 
@@ -336,7 +322,7 @@ const value evalComponent(ServerConf& sc, server_rec& server, const value& comp)
     const list<value> ppx(propProxies(scdl::properties(comp)));
 
     // Evaluate the component implementation and convert it to an applicable lambda function
-    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(sc.contributionPath, impl, append(rpx, ppx), sc));
+    const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(sc.contributionPath, impl, append(rpx, ppx), sc.lifecycle));
     if (!hasContent(cimpl))
         return reason(cimpl);
     return content(cimpl);
@@ -362,19 +348,28 @@ const failable<list<value> > readComponents(const string& path) {
 }
 
 /**
- * Apply a list of component implementations to a (start, stop or restart) lifecycle expression.
+ * Apply a list of component implementations to a start or restart lifecycle expression.
+ * Return the functions returned by the component implementations.
  */
-const failable<bool> applyLifecycleExpr(const list<value> impls, const list<value>& expr) {
+const failable<list<value> > applyLifecycleExpr(const list<value>& impls, const list<value>& expr) {
     if (isNil(impls))
-        return true;
+        return list<value>();
 
     // Evaluate lifecycle expression against a component implementation lambda
-    const lambda<value(const list<value>&)> l(cadr<value>(car(impls)));
+    const lambda<value(const list<value>&)> l = cadr<value>(car(impls));
     const failable<value> r = failableResult(l(expr));
     if (!hasContent(r))
-        return mkfailure<bool>(reason(r));
+        return mkfailure<list<value> >(reason(r));
+    const lambda<value(const list<value>&)> rl = content(r);
 
-    return applyLifecycleExpr(cdr(impls), expr);
+    // Use the returned lambda function, if any, from now on
+    const lambda<value(const list<value>&)> al = isNil(rl)? l : rl;
+
+    // Continue with the rest of the list
+    const failable<list<value> > nr = applyLifecycleExpr(cdr(impls), expr);
+    if (!hasContent(nr))
+        return nr;
+    return cons<value>(mklist<value>(car<value>(car(impls)), value(al)), content(nr));
 }
 
 /**
@@ -388,14 +383,106 @@ const failable<bool> confComponents(const string& lifecycle, ServerConf& sc, ser
     const failable<list<value> > comps = readComponents(sc.contributionPath + sc.compositeName);
     if (!hasContent(comps))
         return mkfailure<bool>(reason(comps));
-    const list<value> impls = componentToImplementationAssoc(sc, server, content(comps));
-
-    // Store the implementation lambda functions in a tree for fast retrieval
-    sc.implementations = mkbtree(sort(impls));
-    debug(sc.implementations, "modeval::confComponents::implementations");
+    const list<value> starts = componentToImplementationAssoc(sc, server, content(comps));
 
     // Start or restart the component implementations
-    return applyLifecycleExpr(impls, mklist<value>(c_str(lifecycle)));
+    // Record the returned lambda functions
+    debug(starts, "modeval::confComponents::start");
+    const failable<list<value> > impls = applyLifecycleExpr(starts, mklist<value>(c_str(lifecycle)));
+    if (!hasContent(impls))
+        return mkfailure<bool>(reason(impls));
+    sc.implementations = content(impls);
+    debug(sc.implementations, "modeval::confComponents::implementations");
+
+    // Store the implementation lambda functions in a tree for fast retrieval
+    sc.implTree = mkbtree(sort(sc.implementations));
+
+    return true;
+}
+
+/**
+ * Cleanup callback, called when the server is stopped or restarted.
+ */
+apr_status_t serverCleanup(void* v) {
+    gc_pool pool;
+    ServerConf& sc = *(ServerConf*)v;
+    debug("modeval::serverCleanup");
+
+    // Stop the component implementations
+    applyLifecycleExpr(sc.implementations, mklist<value>("stop"));
+
+    // Call the module lifecycle function
+    if (isNil(sc.lifecycle))
+        return APR_SUCCESS;
+    debug("modeval::serverCleanup::stop");
+    sc.lifecycle(mklist<value>("stop"));
+
+    return APR_SUCCESS;
+}
+
+/**
+ * Called after all the configuration commands have been run.
+ * Process the server configuration and configure the deployed components.
+ */
+int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
+    extern const value applyLifecycle(const list<value>&);
+
+    gc_scoped_pool pool(p);
+    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
+
+    // Count the calls to post config
+    const string k("tuscany::modeval::postConfig");
+    const int count = (int)httpd::userData(k, s);
+    httpd::putUserData(k, (void*)(count + 1), s);
+
+    // Count == 0, do nothing as post config is always called twice,
+    // count == 1 is the first start, count > 1 is a restart
+    if (count == 0)
+        return OK;
+    if (count == 1) {
+        debug("modeval::postConfig::start");
+        const failable<value> r = failableResult(applyLifecycle(mklist<value>("start")));
+        if (!hasContent(r))
+            return -1;
+        sc.lifecycle = content(r);
+    }
+    if (count > 1) {
+        debug("modeval::postConfig::restart");
+        const failable<value> r = failableResult(applyLifecycle(mklist<value>("restart")));
+        if (!hasContent(r))
+            return -1;
+        sc.lifecycle = content(r);
+    }
+
+    // Configure the deployed components
+    debug(sc.wiringServerName, "modeval::postConfig::wiringServerName");
+    debug(sc.contributionPath, "modeval::postConfig::contributionPath");
+    debug(sc.compositeName, "modeval::postConfig::compositeName");
+    const failable<bool> res = confComponents(count > 1? "restart" : "start", sc, *s);
+    if (!hasContent(res)) {
+        cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
+        return -1;
+    }
+
+    // Register a cleanup callback, called when the server is stopped or restarted
+    apr_pool_pre_cleanup_register(p, (void*)&sc, serverCleanup);
+
+    return OK;
+}
+
+/**
+ * Child process initialization.
+ */
+void childInit(apr_pool_t* p, server_rec* s) {
+    gc_scoped_pool pool(p);
+    ServerConf* sc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_eval);
+    if(sc == NULL) {
+        cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
+        exit(APEXIT_CHILDFATAL);
+    }
+
+    // Register a cleanup callback, called when the child is stopped or restarted
+    apr_pool_pre_cleanup_register(p, (void*)sc, serverCleanup);
 }
 
 /**
@@ -444,51 +531,6 @@ const command_rec commands[] = {
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 
-int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
-    extern const failable<bool> start(ServerConf& sc);
-    extern const failable<bool> restart(ServerConf& sc);
-    gc_scoped_pool pool(p);
-    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
-
-    // Count the calls to post config
-    const string k("tuscany::modeval::postConfig");
-    const int count = httpd::userData(k, s);
-    httpd::putUserData(k, count +1, s);
-
-    // Count == 0, do nothing as post config is always called twice,
-    // count == 1 is the first start, count > 1 is a restart
-    if (count == 0)
-        return OK;
-    if (count == 1) {
-        debug("modeval::postConfig::start");
-        start(sc);
-    }
-    if (count > 1) {
-        debug("modeval::postConfig::restart");
-        restart(sc);
-    }
-
-    // Configure the components deployed to the server
-    debug(sc.wiringServerName, "modeval::postConfig::wiringServerName");
-    debug(sc.contributionPath, "modeval::postConfig::contributionPath");
-    debug(sc.compositeName, "modeval::postConfig::compositeName");
-    const failable<bool> res = confComponents(count > 1? "restart" : "start", sc, *s);
-    if (!hasContent(res))
-        return -1;
-    return OK;
-}
-
-/**
- * Child process initialization.
- */
-void childInit(apr_pool_t* p, server_rec* svr_rec) {
-    gc_scoped_pool pool(p);
-    ServerConf* c = (ServerConf*)ap_get_module_config(svr_rec->module_config, &mod_tuscany_eval);
-    if(c == NULL) {
-        cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
-        exit(APEXIT_CHILDFATAL);
-    }
-}
 
 void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);

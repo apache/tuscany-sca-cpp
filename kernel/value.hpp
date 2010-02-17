@@ -556,5 +556,29 @@ template<typename T> const list<value> mkvalues(const list<T>& l) {
     return cons<value>(car(l), mkvalues(cdr(l)));
 }
 
+/**
+ * Convert a path string value to a list of values.
+ */
+const list<string> pathTokens(const char* p) {
+    if (p == NULL || p[0] == '\0')
+        return list<string>();
+    if (p[0] == '/')
+        return tokenize("/", p + 1);
+    return tokenize("/", p);
+}
+
+const list<value> pathValues(const value& p) {
+    return mkvalues(pathTokens(c_str(p)));
+}
+
+/**
+ * Convert a path represented as a list of values to a string value.
+ */
+const value path(const list<value>& p) {
+    if (isNil(p))
+        return "";
+    return string("/") + car(p) + path(cdr(p));
+}
+
 }
 #endif /* tuscany_value_hpp */

@@ -20,6 +20,7 @@ surefire*.properties
 .settings/
 .deployables/
 .wtpmodules/
+.pydevproject
 .svn/
 .cvs/
 .dotest/
@@ -85,4 +86,5 @@ script-test
 axiom-test
 axis2-test
 qpid-test
+xmpp-test
 
