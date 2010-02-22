@@ -31,11 +31,11 @@
     '("Item" "111" ((javaClass "services.Item") (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))
 )
 
-(define (post coll entry)
+(define (post collection item)
   '("123456789")
 )
 
-(define (put id entry)
+(define (put id item)
   true
 )
 

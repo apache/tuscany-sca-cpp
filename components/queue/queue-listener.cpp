@@ -100,9 +100,9 @@ public:
         debug("queue::listener::stop");
 
         // TODO check why stop() and close() hang in child processes
-        //stop(const_cast<QpidSubscription&>(qsub));
-        //close(const_cast<QpidSession&>(qs));
-        //close(const_cast<QpidConnection&>(qc));
+        stop(const_cast<QpidSubscription&>(qsub));
+        close(const_cast<QpidSession&>(qs));
+        close(const_cast<QpidConnection&>(qc));
         cancel(const_cast<worker&>(w));
 
         debug("queue::listener::stopped");
@@ -150,7 +150,7 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "start" || func == "restart")
+    if (func == "start")
         return tuscany::queue::start(cdr(params));
     return tuscany::mkfailure<tuscany::value>();
 }

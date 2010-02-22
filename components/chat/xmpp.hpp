@@ -318,7 +318,8 @@ const failable<bool> listen(const lambda<failable<bool>(const value&, const valu
     debug("chat::listen");
     xc.listener = listener;
     xmpp_handler_add(xc.conn, messageHandler, NULL, "message", NULL, &xc);
-    while(xc.connected && !isNil(xc.listener))
+    xc.ctx->loop_status = XMPP_LOOP_RUNNING;
+    while(xc.connected && !isNil(xc.listener) && xc.ctx->loop_status == XMPP_LOOP_RUNNING)
         xmpp_run_once(xc.ctx, 1000L);
     return true;
 }

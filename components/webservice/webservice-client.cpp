@@ -57,7 +57,7 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "start" || func == "restart")
+    if (func == "start")
         return tuscany::mkfailure<tuscany::value>();
     return tuscany::webservice::apply(func, cdr(params));
 }

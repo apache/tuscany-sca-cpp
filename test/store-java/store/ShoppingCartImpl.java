@@ -19,25 +19,26 @@
 
 package store;
 
-import org.apache.tuscany.Service;
-import java.lang.System;
-import java.util.UUID;
 import static org.apache.tuscany.IterableUtil.*;
+
+import java.util.UUID;
+
+import org.apache.tuscany.Service;
 
 /**
  * Shopping cart component implementation.
  */
 public class ShoppingCartImpl {
-    
+
     static String cartId = "1234";
-    
+
     /**
-     * Get the shopping cart from the cache. Return an empty
-     * cart if not found.
+     * Get the shopping cart from the cache. Return an empty cart if not found.
      */
-    public Iterable<?> getcart(String id, Service cache) {
-        Iterable<?> cart = cache.get(id);
-        if (cart == null)
+    public Iterable<?> getcart(final String id, final Service cache) {
+        final Iterable<String> iid = list(id);
+        final Iterable<?> cart = cache.get(iid);
+        if(cart == null)
             return list();
         return cart;
     }
@@ -52,72 +53,68 @@ public class ShoppingCartImpl {
     /**
      * Post a new item to the cart. Create a new cart if necessary.
      */
-    public String post(Iterable<?> item, Service cache) {
-        String id = uuid();
-        Iterable<?> newItem = list(car(item), id, caddr(item));
-        Iterable<?> cart = cons(newItem, getcart(cartId, cache));
-        cache.put(cartId, cart);
-        return id;
-    }
-
-    /**
-     * Return the contents of the cart.
-     */
-    public Iterable<?> getall(Service cache) {
-        return cons("Your Cart", cons(cartId, getcart(cartId, cache)));
+    public Iterable<String> post(final Iterable<String> collection, final Iterable<?> item, final Service cache) {
+        final String id = this.uuid();
+        final Iterable<?> newItem = list(car(item), id, caddr(item));
+        final Iterable<?> cart = cons(newItem, this.getcart(cartId, cache));
+        final Iterable<String> iid = list(cartId);
+        cache.put(iid, cart);
+        return list(id);
     }
 
     /**
      * Find an item in the cart.
      */
-    public Iterable<?> find(String id, Iterable<?> cart) {
-        if (isNil(cart))
+    public Iterable<?> find(final String id, final Iterable<?> cart) {
+        if(isNil(cart))
             return cons("Item", list("0", list()));
-        if (id.equals(cadr(car(cart))))
+        if(id.equals(cadr(car(cart))))
             return car(cart);
-        return find(id, cdr(cart));
-    }
-
-    public Iterable<?> get(String id, Service cache) {
-        return find(id, getcart(cartId, cache));
+        return this.find(id, cdr(cart));
     }
 
     /**
-     * Delete the whole cart.
+     * Return items from the cart.
      */
-    public Boolean deleteall(Service cache) {
-        return cache.delete(cartId);
+    public Iterable<?> get(final Iterable<String> id, final Service cache) {
+        if(isNil(id))
+            return cons("Your Cart", cons(cartId, this.getcart(cartId, cache)));
+        return this.find((String)car(id), this.getcart(cartId, cache));
     }
 
     /**
-     * Delete an item from the cart.
+     * Delete items from the cart.
      */
-    public Boolean delete(String id, Service cache) {
+    public Boolean delete(final Iterable<String> id, final Service cache) {
+        if(isNil(id)) {
+            final Iterable<String> iid = list(cartId);
+            return cache.delete(iid);
+        }
         return true;
     }
 
     /**
      * Return the price of an item.
      */
-    Double price(Iterable<?> item) {
+    Double price(final Iterable<?> item) {
         return Double.valueOf((String)cadr(assoc("'price", caddr(item))));
     }
 
     /**
      * Sum the prices of a list of items.
      */
-    Double sum(Iterable<?> items) {
-        if (isNil(items))
+    Double sum(final Iterable<?> items) {
+        if(isNil(items))
             return 0.0;
-        return price((Iterable<?>)car(items)) + sum(cdr(items));
+        return this.price((Iterable<?>)car(items)) + this.sum(cdr(items));
     }
 
     /**
      * Return the total price of the items in the cart.
      */
-    public Double gettotal(Service cache) {
-        Iterable<?> cart = getcart(cartId, cache);
-        return sum(cart);
+    public Double gettotal(final Service cache) {
+        final Iterable<?> cart = this.getcart(cartId, cache);
+        return this.sum(cart);
     }
 
     /**
@@ -126,5 +123,5 @@ public class ShoppingCartImpl {
     public Iterable<?> listMethods(final Service cache) {
         return list("Service.gettotal");
     }
-    
+
 }

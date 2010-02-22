@@ -110,7 +110,7 @@ public:
 
         // Disconnect and shutdown the worker thread
         disconnect(const_cast<XMPPClient&>(xc));
-        shutdown(const_cast<worker&>(w));
+        cancel(const_cast<worker&>(w));
         debug("chat::chatter::stopped");
 
         return failable<value>(value(lambda<value(const list<value>&)>()));
@@ -154,7 +154,7 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "start" || func == "restart")
+    if (func == "start")
         return tuscany::chat::start(cdr(params));
     return tuscany::mkfailure<tuscany::value>();
 }

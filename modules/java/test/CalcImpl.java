@@ -19,33 +19,34 @@
 
 package test;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.tuscany.Service;
 
 public class CalcImpl {
-    
-    public Double add(Double x, Double y, Adder adder) {
+
+    public Double add(final Double x, final Double y, final Adder adder) {
         return adder.add(x, y);
     }
-    
-    public Double addEval(Double x, Double y, Service adder) {
+
+    public Double addEval(final Double x, final Double y, final Service adder) {
         return adder.eval("add", x, y);
     }
-    
-    public Double mult(Double x, Double y) {
+
+    public Double mult(final Double x, final Double y) {
         return x * y;
     }
-    
-    public Boolean even(Double x) {
-        return (double)(((int)(double)x / 2) * 2) == (double)x;
+
+    public Boolean even(final Double x) {
+        return (double)((int)(double)x / 2 * 2) == (double)x;
     }
-    
-    public Iterable<Double> square(Iterable<Double> l) {
-        List r = new ArrayList();
-        for (Double x: l)
+
+    public Iterable<Double> square(final Iterable<Double> l) {
+        final List<Double> r = new ArrayList<Double>();
+        for(final Double x : l)
             r.add(x * x);
         return r;
     }
-    
+
 }

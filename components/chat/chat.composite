@@ -46,7 +46,7 @@
         <service name="print">
             <t:binding.http uri="print"/>
         </service>
-        <reference name="report" target="print-sender"/>
+        <reference name="report" target="print-chatter"/>
     </component>     
 
 </composite>

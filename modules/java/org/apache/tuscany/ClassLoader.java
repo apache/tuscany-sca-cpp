@@ -19,8 +19,6 @@
 
 package org.apache.tuscany;
 
-import static org.apache.tuscany.ClassLoader.Test.*;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,7 +34,7 @@ class ClassLoader extends URLClassLoader {
     }
 
     /**
-     * Create a class loader for an SCA contribution path. 
+     * Create a class loader for an SCA contribution path.
      */
     static java.lang.ClassLoader valueOf(final String path) throws MalformedURLException {
         return new ClassLoader(new File(path).toURI().toURL());

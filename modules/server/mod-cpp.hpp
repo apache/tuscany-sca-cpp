@@ -50,10 +50,10 @@ const list<value> failableResult(const value& func, const list<value>& v) {
         return v;
 
     // Report a failure with an empty reason as 'function not supported'
-    // Except for the start, stop, and restart functions, which are optional
+    // Except for the start, and stop functions, which are optional
     const value reason = cadr(v);
     if (length(reason) == 0) {
-        if (func == "start" || func == "restart" || func == "stop")
+        if (func == "start" || func == "stop")
             return mklist<value>(lambda<value(const list<value>&)>());
         return mklist<value>(value(), string("Function not supported: ") + func);
     }

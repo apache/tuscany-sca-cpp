@@ -34,7 +34,7 @@ namespace tuscany {
 namespace server {
 
 const failable<value> get(unused const list<value>& params) {
-    return value(string("Hey"));
+    return value(mklist<value>("text/html", mklist<value>("Hey")));
 }
 
 const failable<value> post(unused const list<value>& params) {

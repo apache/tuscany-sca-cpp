@@ -125,7 +125,7 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "start" || func == "restart")
+    if (func == "start")
         return tuscany::mcache::start(cdr(params));
     return tuscany::mkfailure<tuscany::value>();
 }

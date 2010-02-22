@@ -179,10 +179,6 @@ const value stopProc(unused const list<value>& args) {
     return lambda<value(const list<value>&)>();
 }
 
-const value restartProc(unused const list<value>& args) {
-    return lambda<value(const list<value>&)>();
-}
-
 const value applyPrimitiveProcedure(const value& proc, list<value>& args) {
     const lambda<value(const list<value>&)> func(cadr((list<value>)proc));
     return func(args);
@@ -236,8 +232,7 @@ const list<value> primitiveProcedureNames() {
     + "log"
     + "uuid"
     + "start"
-    + "stop"
-    + "restart";
+    + "stop";
 }
 
 const list<value> primitiveProcedureObjects() {
@@ -262,8 +257,7 @@ const list<value> primitiveProcedureObjects() {
     + primitiveProcedure(logProc)
     + primitiveProcedure(uuidProc)
     + primitiveProcedure(startProc)
-    + primitiveProcedure(stopProc)
-    + primitiveProcedure(restartProc);
+    + primitiveProcedure(stopProc);
 }
 
 const bool isFalse(const value& exp) {

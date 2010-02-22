@@ -20,7 +20,6 @@
 package org.apache.tuscany;
 
 import static java.util.Arrays.*;
-import static org.apache.tuscany.IterableUtil.Test.*;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -369,10 +368,10 @@ public class IterableUtil {
 
     public static void main(final String[] args) {
         System.out.println("Testing...");
-        
+
         Test.class.getClassLoader().setDefaultAssertionStatus(true);
         new Test().testList();
-        
+
         System.out.println("OK");
     }
 

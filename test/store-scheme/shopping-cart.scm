@@ -22,24 +22,19 @@
 ; Get the shopping cart from the cache
 ; Return an empty cart if not found
 (define (getcart id cache)
-  (define cart (cache "get" id))
+  (define cart (cache "get" (list id)))
   (if (nul cart)
     (list)
     cart)
 )
 
 ; Post a new item to the cart, create a new cart if necessary
-(define (post item cache)
+(define (post collection item cache)
   (define id (uuid))
   (define newItem (list (car item) id (caddr item)))
   (define cart (cons newItem (getcart cartId cache)))
-  (cache "put" cartId cart)
-  id
-)
-
-; Return the content of the cart
-(define (getall cache)
-  (cons "Your Cart" (cons cartId (getcart cartId cache)))
+  (cache "put" (list cartId) cart)
+  (list id)
 )
 
 ; Find an item in the cart
@@ -51,19 +46,20 @@
       (find id (cdr cart))))
 )
 
-; Get an item from the cart
+; Get items from the cart
 (define (get id cache)
-  (find id (getcart cartId cache))
+  (if (nul id)
+    (cons "Your Cart" (cons cartId (getcart cartId cache)))
+    (find (car id) (getcart cartId cache))
+  )
 )
 
-; Delete the whole cart
-(define (deleteall cache)
-  (cache "delete" cartId)
-)
-
-; Delete an item from the  cart
+; Delete items from the  cart
 (define (delete id cache)
-  true
+  (if (nul id)
+    (cache "delete" (list cartId))
+    true
+  )
 )
 
 ; Return the price of an item
@@ -86,4 +82,3 @@
 
 ; TODO remove these JSON-RPC specific functions
 (define (listMethods cache) (list "Service.gettotal"))
-

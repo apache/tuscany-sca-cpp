@@ -501,7 +501,7 @@ const failable<value> evalClass(const JavaRuntime& jr, const value& expr, const 
 
         // The start, stop, and restart functions are optional
         const value fn = car<value>(expr);
-        if (fn == "start" || fn == "restart" || "stop")
+        if (fn == "start" || fn == "stop")
             return value(lambda<value(const list<value>&)>());
 
         return mkfailure<value>(string("Couldn't find function: ") + car<value>(expr) + " : " + lastException(jr));

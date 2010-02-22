@@ -24,21 +24,18 @@ cartId = "1234"
 # Get the shopping cart from the cache
 # Return an empty cart if not found
 def getcart(id, cache):
-    cart = cache("get", id)
+    cart = cache("get", (id,))
     if cart is None:
         return ()
     return cart
 
 # Post a new item to the cart, create a new cart if necessary
-def post(item, cache):
+def post(collection, item, cache):
     id = str(uuid.uuid1())
     cart = ((item[0], id, item[2]),) + getcart(cartId, cache)
-    cache("put", cartId, cart)
-    return id
+    cache("put", (cartId,), cart)
+    return (id,)
 
-# Return the content of the cart
-def getall(cache):
-    return ("Your Cart", cartId) + getcart(cartId, cache)
 
 # Find an item in the cart
 def find(id, cart):
@@ -49,16 +46,16 @@ def find(id, cart):
     else:
         return find(id, cart[1:])
 
-# Get an item from the cart
+# Get items from the cart
 def get(id, cache):
-    return find(id, getcart(cartId, cache))
+    if id == ():
+        return ("Your Cart", cartId) + getcart(cartId, cache)
+    return find(id[0], getcart(cartId, cache))
 
-# Delete the whole cart
-def deleteall(cache):
-    return cache("delete", cartId)
-
-# Delete an item from the  cart
+# Delete items from the  cart
 def delete(id, cache):
+    if id == ():
+        return cache("delete", (cartId,))
     return true
 
 # Return the price of an item
@@ -79,4 +76,3 @@ def gettotal(cache):
 # TODO remove these JSON-RPC specific functions
 def listMethods(cache):
     return ("Service.gettotal",)
-

@@ -19,34 +19,33 @@
 
 package store;
 
+import static org.apache.tuscany.IterableUtil.*;
+
 import org.apache.tuscany.Service;
-import static org.apache.tuscany.IterableUtil.list;
 
 /**
  * Catalog component implementation.
  */
 public class FruitsCatalogImpl {
-    
+
     /**
      * Returns the catalog.
      */
     public Iterable<?> get(final CurrencyConverter converter, final Service currencyCode) {
         final String code = currencyCode.eval();
-        
+
         class Converter {
-            Double convert(Double price) {
+            Double convert(final Double price) {
                 return converter.convert(code, "USD", price);
             }
-        };
+        }
 
-        Converter c = new Converter();
-        String symbol = converter.symbol(code);
-        
-        return list(
-                list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(2.99))),
+        final Converter c = new Converter();
+        final String symbol = converter.symbol(code);
+
+        return list(list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(2.99))),
                 list(list("'javaClass", "services.Item"), list("'name", "Orange"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(3.55))),
-                list(list("'javaClass", "services.Item"), list("'name", "Pear"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(1.55)))
-              );
+                list(list("'javaClass", "services.Item"), list("'name", "Pear"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(1.55))));
     }
 
     /**
@@ -55,5 +54,5 @@ public class FruitsCatalogImpl {
     public Iterable<?> listMethods(final CurrencyConverter converter, final Service currencyCode) {
         return list("Service.get");
     }
-    
+
 }

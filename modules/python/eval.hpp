@@ -241,7 +241,7 @@ const failable<value> evalScript(const value& expr, PyObject* script) {
 
         // The start, stop, and restart functions are optional
         const value fn = car<value>(expr);
-        if (fn == "start" || fn == "restart" || fn == "stop") {
+        if (fn == "start" || fn == "stop") {
             PyErr_Clear();
             return value(lambda<value(const list<value>&)>());
         }

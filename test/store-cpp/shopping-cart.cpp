@@ -41,7 +41,7 @@ const string cartId("1234");
  * cart if not found.
  */
 const list<value> getcart(const value& id, const lambda<value(const list<value>&)> cache) {
-    const value cart = cache(mklist<value>("get", id));
+    const value cart = cache(mklist<value>("get", mklist<value>(id)));
     if (isNil(cart))
         return value(list<value>());
     return (list<value>)cart;
@@ -61,19 +61,12 @@ const value uuid() {
 /**
  * Post a new item to the cart. Create a new cart if necessary.
  */
-const failable<value> post(const value& item, const lambda<value(const list<value>&)> cache) {
+const failable<value> post(unused const list<value>& collection, const value& item, const lambda<value(const list<value>&)> cache) {
     const value id(uuid());
     const list<value> newItem(mklist<value>(car<value>(item), id, caddr<value>(item)));
     const list<value> cart(cons<value>(newItem, getcart(cartId, cache)));
-    cache(mklist<value>("put", cartId, cart));
-    return id;
-}
-
-/**
- * Return the contents of the cart.
- */
-const failable<value> getall(const lambda<value(const list<value>&)> cache) {
-    return value(append(mklist<value>(string("Your Cart"), cartId), getcart(cartId, cache)));
+    cache(mklist<value>("put", mklist<value>(cartId), cart));
+    return value(mklist<value>(id));
 }
 
 /**
@@ -87,21 +80,21 @@ const value find(const value& id, const list<value>& cart) {
     return find(id, cdr(cart));
 }
 
-const failable<value> get(const value& id, const lambda<value(const list<value>&)> cache) {
-    return find(id, getcart(cartId, cache));
+/**
+ * Return items from the cart.
+ */
+const failable<value> get(const list<value>& id, const lambda<value(const list<value>&)> cache) {
+    if (isNil(id))
+        return value(append(mklist<value>(string("Your Cart"), cartId), getcart(cartId, cache)));
+    return find(car(id), getcart(cartId, cache));
 }
 
 /**
- * Delete the whole cart.
+ * Delete items from the cart.
  */
-const failable<value> delall(const lambda<value(const list<value>&)> cache) {
-    return cache(mklist<value>("delete", cartId));
-}
-
-/**
- * Delete an item from the cart.
- */
-const failable<value> del(unused const value& id, unused const lambda<value(const list<value>&)> cache) {
+const failable<value> del(const list<value>& id, unused const lambda<value(const list<value>&)> cache) {
+    if (isNil(id))
+        return cache(mklist<value>("delete", mklist<value>(cartId)));
     return value(true);
 }
 
@@ -144,13 +137,9 @@ extern "C" {
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
     if (func == "post")
-        return tuscany::store::post(cadr(params), caddr(params));
-    if (func == "getall")
-        return tuscany::store::getall(cadr(params));
+        return tuscany::store::post(cadr(params), caddr(params), cadddr(params));
     if (func == "get")
         return tuscany::store::get(cadr(params), caddr(params));
-    if (func == "deleteall")
-        return tuscany::store::delall(cadr(params));
     if (func == "delete")
         return tuscany::store::del(cadr(params), caddr(params));
     if (func == "gettotal")

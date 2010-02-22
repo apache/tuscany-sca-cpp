@@ -557,6 +557,15 @@ template<typename T> const list<value> mkvalues(const list<T>& l) {
 }
 
 /**
+ * Convert a list of values to a list of other things.
+ */
+template<typename T> const list<T> convertValues(const list<value>& l) {
+    if (isNil(l))
+        return list<T>();
+    return cons<T>(car(l), convertValues<T>(cdr(l)));
+}
+
+/**
  * Convert a path string value to a list of values.
  */
 const list<string> pathTokens(const char* p) {
