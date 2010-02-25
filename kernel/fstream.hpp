@@ -153,8 +153,7 @@ const bool debug(const string& msg) {
 
 #else
 
-#define debug(v, msg)
-#define debug(msg)
+#define debug(...)
 
 #endif
 

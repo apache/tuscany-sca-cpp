@@ -316,16 +316,22 @@ AC_ARG_WITH([java], [AC_HELP_STRING([--with-java=PATH], [path to installed Java 
   JAVA_PREFIX="${withval}"
   JAVA_INCLUDE="${withval}/include"
   JAVA_LIB="${withval}/jre/lib/i386"
+  JAVAC="${withval}/bin/javac"
+  JAR="${withval}/bin/jar" 
   AC_MSG_RESULT("${withval}")
 ], [
   JAVA_PREFIX="/usr/lib/jvm/default-java"
   JAVA_INCLUDE="/usr/lib/jvm/default-java/include"
   JAVA_LIB="/usr/lib/jvm/default-java/jre/lib/i386"
+  JAVAC="/usr/lib/jvm/default-java/bin/javac"
+  JAR="/usr/lib/jvm/default-java/bin/jar" 
   AC_MSG_RESULT(/usr/lib/jvm/default-java)
 ])
 AC_SUBST(JAVA_PREFIX)
 AC_SUBST(JAVA_INCLUDE)
 AC_SUBST(JAVA_LIB)
+AC_SUBST(JAVAC)
+AC_SUBST(JAR)
 
 # Enable Java support.
 AC_MSG_CHECKING([whether to enable Java support])
@@ -343,8 +349,18 @@ AC_ARG_ENABLE(java, [AS_HELP_STRING([--enable-java], [enable Java support [defau
 if test "${want_java}" = "true"; then
   LIBS="-L${JAVA_LIB} -L${JAVA_LIB}/server ${default_LIBS}"
   AC_CHECK_LIB([java], [JNI_CreateJavaVM], [], [AC_MSG_ERROR([couldn't find a suitable libjava, use --with-java=PATH])], [-ljvm -lverify])
-  AC_PROG_JAVAC
-  AC_PROG_JAR
+  AC_MSG_CHECKING([for javac])
+  if test -x "${JAVAC}"; then
+    AC_MSG_RESULT("${JAVAC}")
+  else
+    AC_MSG_ERROR([couldn't find a suitable javac tool, use --with-java=PATH])
+  fi
+  AC_MSG_CHECKING([for jar])
+  if test -x "${JAR}"; then
+    AC_MSG_RESULT("${JAR}")
+  else
+    AC_MSG_ERROR([couldn't find a suitable jar tool, use --with-java=PATH])
+  fi 
   AM_CONDITIONAL([WANT_JAVA], true)
   AC_DEFINE([WANT_JAVA], 1, [enable Java support])
 else
