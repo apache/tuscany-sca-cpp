@@ -1,0 +1,69 @@
+#!/bin/sh
+
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+echo "Testing..."
+
+# Setup
+./wsgi-start 8090
+sleep 2
+
+# Test HTTP GET
+#curl http://localhost:8090/index.html 2>/dev/null >tmp/index.html
+#diff tmp/index.html ../server/htdocs/index.html
+#rc=$?
+rc="0"
+
+# Test ATOMPub
+if [ "$rc" = "0" ]; then
+    curl http://localhost:8090/client/ >tmp/feed.xml 2>/dev/null
+    diff tmp/feed.xml ../server/htdocs/feed.xml
+    rc=$?
+fi
+if [ "$rc" = "0" ]; then
+    curl http://localhost:8090/client/111 >tmp/entry.xml 2>/dev/null
+    diff tmp/entry.xml ../server/htdocs/entry.xml
+    rc=$?
+fi
+if [ "$rc" = "0" ]; then
+    curl http://localhost:8090/client/ -X POST -H "Content-type: application/atom+xml" --data @../server/htdocs/entry.xml 2>/dev/null
+    rc=$?
+fi
+if [ "$rc" = "0" ]; then
+    curl http://localhost:8090/client/111 -X PUT -H "Content-type: application/atom+xml" --data @../server/htdocs/entry.xml 2>/dev/null
+    rc=$?
+fi
+if [ "$rc" = "0" ]; then
+    curl http://localhost:8090/client/111 -X DELETE 2>/dev/null
+    rc=$?
+fi
+
+# Test JSON-RPC
+if [ "$rc" = "0" ]; then
+    curl http://localhost:8090/client/ -X POST -H "Content-type: application/json-rpc" --data @../server/htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
+    diff tmp/json-result.txt ../server/htdocs/json-result.txt
+    rc=$?
+fi
+
+# Cleanup
+./wsgi-stop 8090
+sleep 2
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
+return $rc

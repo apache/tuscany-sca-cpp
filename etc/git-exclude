@@ -21,6 +21,7 @@ surefire*.properties
 .deployables/
 .wtpmodules/
 .pydevproject
+.buildpath
 .svn/
 .cvs/
 .dotest/

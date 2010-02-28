@@ -277,14 +277,17 @@ fi
 # Configure path to Python 2.6 includes and lib.
 AC_MSG_CHECKING([for python])
 AC_ARG_WITH([python], [AC_HELP_STRING([--with-python=PATH], [path to installed Python 2.6 [default=/usr]])], [
+  PYTHON_PREFIX="${withval}"
   PYTHON_INCLUDE="${withval}/include"
   PYTHON_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
+  PYTHON_PREFIX="/usr"
   PYTHON_INCLUDE="/usr/include"
   PYTHON_LIB="/usr/lib"
   AC_MSG_RESULT(/usr)
 ])
+AC_SUBST(PYTHON_PREFIX)
 AC_SUBST(PYTHON_INCLUDE)
 AC_SUBST(PYTHON_LIB)
 
@@ -523,6 +526,7 @@ AC_CONFIG_FILES([Makefile
                  modules/python/Makefile
                  modules/java/Makefile
                  modules/server/Makefile
+                 modules/wsgi/Makefile
                  components/Makefile
                  components/cache/Makefile
                  components/log/Makefile

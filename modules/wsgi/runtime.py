@@ -15,8 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom json scdl http server python wsgi java
+# Component invocation functions
 
-includedir = $(prefix)/include/modules
-nobase_include_HEADERS = */*.hpp
+from util import *
 
+def apply(impl, refs, func, params):
+    m = __import__(impl)
+    f = m.__getattribute__(func)
+    p = refs + params
+    return f(*p)
+
+def refapply(comps, target):
+    return comps["target"]
+    

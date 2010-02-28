@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,8 +17,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom json scdl http server python wsgi java
+# Start WSGI server
+here=`readlink -f $0`; here=`dirname $here`
+port=$1
 
-includedir = $(prefix)/include/modules
-nobase_include_HEADERS = */*.hpp
+python_prefix=`cat $here/../python/python.prefix`
+$python_prefix/bin/python composite.py $port &
 

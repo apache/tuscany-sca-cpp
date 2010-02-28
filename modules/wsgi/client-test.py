@@ -15,8 +15,21 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom json scdl http server python wsgi java
+# JSON-RPC test case
 
-includedir = $(prefix)/include/modules
-nobase_include_HEADERS = */*.hpp
+def echo(x, ref):
+    return ref("echo", x)
 
+# ATOMPub test case
+
+def get(id, ref):
+    return ref("get", id)
+
+def post(collection, item, ref):
+    return ref("post", collection, item)
+
+def put(id, item, ref):
+    return ref("put", id, item)
+
+def delete(id, ref):
+    return ref("delete", id)
