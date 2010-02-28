@@ -30,7 +30,7 @@ def get(id):
             ("Item", "333", (("'javaClass", "services.Item"), ("name", "Pear"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 1.55))))
         
     entry = (("'javaClass", "services.Item"), ("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99))
-    return ("Item", id, entry)
+    return ("Item", id[0], entry)
 
 def post(collection, item):
     return ("123456789",)

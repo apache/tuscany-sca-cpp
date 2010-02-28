@@ -27,8 +27,8 @@
       ("Item" "111" ((javaClass "services.Item") (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99)))
       ("Item" "222" ((javaClass "services.Item") (name "Orange") (currencyCode "USD") (currencySymbol "$") (price 3.55)))
       ("Item" "333" ((javaClass "services.Item") (name "Pear") (currencyCode "USD") (currencySymbol "$") (price 1.55))))
-      
-    '("Item" "111" ((javaClass "services.Item") (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))
+    
+    (list "Item" (car id) '((javaClass "services.Item") (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))
 )
 
 (define (post collection item)

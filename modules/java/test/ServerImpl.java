@@ -14,7 +14,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 package test;
@@ -22,30 +22,30 @@ package test;
 import static org.apache.tuscany.IterableUtil.*;
 
 public class ServerImpl {
-    
-    public String echo(String x) {
+
+    public String echo(final String x) {
         return x;
     }
-    
-    public Iterable<?> get(Iterable<String> id) {
+
+    public Iterable<?> get(final Iterable<String> id) {
         if (isNil(id))
             return list("Sample Feed", "123456789",
                     list("Item", "111", list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99))),
                     list("Item", "222", list(list("'javaClass", "services.Item"), list("'name", "Orange"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 3.55))),
                     list("Item", "333", list(list("'javaClass", "services.Item"), list("'name", "Pear"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 1.55))));
-        Iterable<?> entry = list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99));
-        return list("Item", id, entry);
+        final Iterable<?> entry = list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99));
+        return list("Item", car(id), entry);
     }
 
-    public Iterable<String> post(Iterable<String> collection, Iterable<?> item) {
+    public Iterable<String> post(final Iterable<String> collection, final Iterable<?> item) {
         return list("123456789");
     }
-    
-    public Boolean put(Iterable<String> id, Iterable<?> item) {
+
+    public Boolean put(final Iterable<String> id, final Iterable<?> item) {
         return true;
     }
 
-    public Boolean delete(Iterable<String> id) {
+    public Boolean delete(final Iterable<String> id) {
         return true;
     }
 }
