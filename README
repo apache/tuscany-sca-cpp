@@ -30,13 +30,14 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |-- kernel               SCA runtime kernel
  |   |
  |   |-- modules              Modules that plug into the runtime
- |   |   |-- atom             AtomPub encoding support
- |   |   |-- json             JSON-RPC encoding support
- |   |   |-- http             HTTP protocol support
+ |   |   |-- atom             AtomPub encoding
+ |   |   |-- json             JSON-RPC encoding
+ |   |   |-- http             HTTP protocol
  |   |   |-- java             Support for Java components
  |   |   |-- python           Support for Python components
  |   |   |-- scheme           Support for Scheme components
  |   |   |-- server           Apache HTTPD server integration
+ |   |   |-- wsgi             Python WSGI server integration
  |   |
  |   |-- components           Useful SCA components
  |   |   |-- cache            Key/value cache
@@ -49,8 +50,6 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |-- test                 Integration tests
  |   |
  |   |-- samples              Sample Applications
- |   |
- |   |-- contrib              Various contributions to the project
  |
  |-- branches                 Topic and release branches
  |
