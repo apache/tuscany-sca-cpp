@@ -20,5 +20,3 @@ SUBDIRS = cache chat log queue store webservice
 includedir = $(prefix)/include/components
 nobase_include_HEADERS = */*.hpp
 
-compdir = $(prefix)/components
-nobase_comp_DATA = */*.composite

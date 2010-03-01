@@ -15,16 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = string-test kernel-test mem-test parallel-test xml-test xsd-test
 
-testdir=$(prefix)/test
-test_LTLIBRARIES = libdynlib-test.la
 
 includedir = $(prefix)/include/kernel
 include_HEADERS = *.hpp
 
 string_test_SOURCES = string-test.cpp
 
+test_LTLIBRARIES = libdynlib-test.la
+testdir = $(prefix)/test
 libdynlib_test_la_SOURCES = dynlib-test.cpp
 
 kernel_test_SOURCES = kernel-test.cpp
@@ -39,4 +38,6 @@ xml_test_LDFLAGS = -lxml2
 xsd_test_SOURCES = xsd-test.cpp
 xsd_test_LDFLAGS = -lxml2
 
+noinst_PROGRAMS = string-test kernel-test mem-test parallel-test xml-test xsd-test
 TESTS = string-test kernel-test mem-test parallel-test xml-test
+

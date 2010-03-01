@@ -15,25 +15,32 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = client-test
-
-libdir=$(prefix)/lib
-lib_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
-
 INCLUDES = -I${HTTPD_INCLUDE}
+
+mod_SCRIPTS = cpp-conf scheme-conf server-conf
+moddir = $(prefix)/modules/server
+
+lib_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
+libdir=$(prefix)/modules/server
+noinst_DATA = libmod_tuscany_eval.so libmod_tuscany_wiring.so
 
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
 libmod_tuscany_eval_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_eval.so:
+	ln -s .libs/libmod_tuscany_eval.so libmod_tuscany_eval.so
 
 libmod_tuscany_wiring_la_SOURCES = mod-wiring.cpp
 libmod_tuscany_wiring_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_wiring.so:
+	ln -s .libs/libmod_tuscany_wiring.so libmod_tuscany_wiring.so
 
-testdir=$(prefix)/test
-test_LTLIBRARIES = libimpl-test.la
-
+noinst_testdir = $(prefix)/test
+noinst_test_LTLIBRARIES = libimpl-test.la
 libimpl_test_la_SOURCES = impl-test.cpp
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+noinst_PROGRAMS = client-test
 TESTS = httpd-test server-test wiring-test
+

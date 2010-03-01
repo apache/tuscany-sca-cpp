@@ -15,17 +15,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = curl-test
-
 INCLUDES = -I${HTTPD_INCLUDE}
 
-httpdir=$(prefix)/modules/http
-http_DATA = httpd.prefix
+moddir=$(prefix)/modules/http
+mod_SCRIPTS = httpd-conf httpd-start httpd-stop httpd-restart
 
 curl_test_SOURCES = curl-test.cpp
 curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+prefix_DATA = httpd.prefix
+prefixdir=$(prefix)/modules/http
 httpd.prefix: $(top_builddir)/config.status
 	echo ${HTTPD_PREFIX} >httpd.prefix
 
+noinst_PROGRAMS = curl-test
 TESTS = httpd-test http-test

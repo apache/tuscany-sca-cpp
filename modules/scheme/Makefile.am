@@ -15,13 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = eval-test eval-shell
-
-datadir=$(prefix)/modules/eval
-nobase_data_DATA = *.xsd
+xsddir=$(prefix)/xsd
+nobase_xsd_DATA = *.xsd
 
 eval_test_SOURCES = eval-test.cpp
 
 eval_shell_SOURCES = eval-shell.cpp
 
+noinst_PROGRAMS = eval-test eval-shell
 TESTS = eval-test

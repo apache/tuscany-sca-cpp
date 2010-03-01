@@ -15,19 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-datadir=$(prefix)/modules/wsgi
-
 if WANT_PYTHON
 
-noinst_PROGRAMS = client-test
-
-nobase_data_DATA = *.yaml
-
 INCLUDES = -I${PYTHON_INCLUDE}
+
+mod_SCRIPTS = composite.py runtime.py scdl.py util.py wsgi-start wsgi-stop
+moddir = $(prefix)/modules/wsgi
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-TESTS = server-test
+noinst_PROGRAMS = client-test
+#TESTS = server-test
 
 endif

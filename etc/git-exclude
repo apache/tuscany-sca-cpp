@@ -29,6 +29,7 @@ surefire*.properties
 *.lo
 *.o
 *.in
+*.so
 Makefile
 .deps/
 .libs/

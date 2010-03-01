@@ -15,25 +15,29 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-datadir=$(prefix)/modules/python
-libdir=$(prefix)/lib
+libdir=$(prefix)/modules/python
 
 if WANT_PYTHON
 
-noinst_PROGRAMS = python-test python-shell client-test
-
-lib_LTLIBRARIES = libmod_tuscany_python.la
-
-nobase_data_DATA = *.xsd
-data_DATA = python.prefix
-
 INCLUDES = -I${PYTHON_INCLUDE}
 
+mod_SCRIPTS = python-conf
+moddir = $(prefix)/modules/python
+
+nobase_xsd_DATA = *.xsd
+xsddir = $(prefix)/xsd
+
+prefix_DATA = python.prefix
+prefixdir=$(prefix)/modules/python
 python.prefix: $(top_builddir)/config.status
 	echo ${PYTHON_PREFIX} >python.prefix
 
+lib_LTLIBRARIES = libmod_tuscany_python.la
 libmod_tuscany_python_la_SOURCES = mod-python.cpp
 libmod_tuscany_python_la_LDFLAGS = -lxml2 -lcurl -lmozjs -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
+noinst_DATA = libmod_tuscany_python.so
+libmod_tuscany_python.so:
+	ln -s .libs/libmod_tuscany_python.so libmod_tuscany_python.so
 
 python_test_SOURCES = python-test.cpp
 python_test_LDFLAGS = -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
@@ -44,6 +48,7 @@ python_shell_LDFLAGS = -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+noinst_PROGRAMS = python-test python-shell client-test
 TESTS = python-test server-test
 
 endif

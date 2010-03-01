@@ -17,13 +17,14 @@
 
 if WANT_WEBSERVICE
 
-noinst_PROGRAMS = axiom-test axis2-test client-test
-
 INCLUDES = -I${AXIS2C_INCLUDE}
 
-compdir=$(prefix)/components/webservice
-comp_LTLIBRARIES = libwebservice-client.la libwebservice-listener.la libaxis2-dispatcher.la libaxis2-service.la
 comp_DATA = axis2c.prefix
+compdir=$(prefix)/components/webservice
+axis2c.prefix: $(top_builddir)/config.status
+	echo ${AXIS2C_PREFIX} >axis2c.prefix
+
+comp_LTLIBRARIES = libwebservice-client.la libwebservice-listener.la libaxis2-dispatcher.la libaxis2-service.la
 
 libwebservice_client_la_SOURCES = webservice-client.cpp
 libwebservice_client_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
@@ -46,9 +47,7 @@ axis2_test_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine
 
-axis2c.prefix: $(top_builddir)/config.status
-	echo ${AXIS2C_PREFIX} >axis2c.prefix
-
+noinst_PROGRAMS = axiom-test axis2-test client-test
 TESTS = axiom-test echo-test server-test
 
 endif

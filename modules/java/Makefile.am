@@ -15,19 +15,27 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+libdir = $(prefix)/modules/java
 JAVAROOT = $(top_builddir)/modules/java
-libdir = $(prefix)/lib
 
 if WANT_JAVA
 
-noinst_PROGRAMS = java-test java-shell client-test
-
-lib_LTLIBRARIES = libmod_tuscany_java.la
-
 INCLUDES = -I${JAVA_INCLUDE}
 
+mod_SCRIPTS = java-conf
+moddir = $(prefix)/modules/java
+
+prefix_DATA = java.prefix
+prefixdir = $(prefix)/modules/java
+java.prefix: $(top_builddir)/config.status
+	echo ${JAVA_PREFIX} >java.prefix
+
+lib_LTLIBRARIES = libmod_tuscany_java.la
 libmod_tuscany_java_la_SOURCES = mod-java.cpp
 libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -lmozjs -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
+noinst_DATA = libmod_tuscany_java.so
+libmod_tuscany_java.so:
+	ln -s .libs/libmod_tuscany_java.so libmod_tuscany_java.so
 
 java_test_SOURCES = java-test.cpp
 java_test_LDFLAGS = -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
@@ -36,11 +44,9 @@ java_shell_SOURCES = java-shell.cpp
 java_shell_LDFLAGS = -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
 
 noinst_JAVA = org/apache/tuscany/*.java test/*.java
-
+jardir = ${prefix}/modules/java
 jarfile = libmod-tuscany-java-${PACKAGE_VERSION}.jar
-jardir = ${libdir}
 jar_DATA = ${jarfile}
-
 ${jarfile}: ${noinst_JAVA}
 	${JAR} cf $@ org/apache/tuscany/*.class
 
@@ -49,12 +55,7 @@ CLEANFILES = ${jarfile} org/apache/tuscany/*.class	test/*.class
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-prefixdir = $(top_builddir)/modules/java
-prefix_DATA = java.prefix
-
-java.prefix: $(top_builddir)/config.status
-	echo ${JAVA_PREFIX} >java.prefix
-
+noinst_PROGRAMS = java-test java-shell client-test
 TESTS = java-test server-test
 
 endif

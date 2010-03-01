@@ -17,14 +17,11 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = kernel modules components test doc
+SUBDIRS = kernel modules components test doc samples
 
 datadir=$(prefix)
 data_DATA = INSTALL README LICENSE COPYING NOTICE
-nobase_data_DATA = xsd/*.*
-
-DIST_SUBDIRS = kernel modules components test doc samples
-EXTRA_DIST = LICENSE COPYING INSTALL README NOTICE autogen.sh xsd
+nobase_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
 
 install-data-hook:
 	rm -rf $(prefix)/doc
@@ -32,12 +29,8 @@ install-data-hook:
 	rm -f $(prefix)/doc/Makefile* $(prefix)/doc/Doxyfile*
 	rm -rf `find $(prefix)/doc -type d -name .svn`
 	rm -rf `find $(prefix)/doc -type d -name .deps`
+	rm -rf $(prefix)/test
 
-	rm -rf $(prefix)/samples
-	cp -r samples $(prefix)
-	rm -rf `find $(prefix)/samples -type d -name .svn`
-	rm -rf `find $(prefix)/samples -type d -name .deps`
-	
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`
 	rm -rf `find $(distdir)/ -type d -name .deps`

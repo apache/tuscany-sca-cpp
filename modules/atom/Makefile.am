@@ -15,9 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = atom-test
-
 atom_test_SOURCES = atom-test.cpp
 atom_test_LDFLAGS = -lxml2
 
+noinst_PROGRAMS = atom-test
 TESTS = atom-test

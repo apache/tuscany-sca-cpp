@@ -15,11 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = mcache-test client-test
-
+comp_SCRIPTS = memcached-start memcached-stop
 compdir=$(prefix)/components/cache
-comp_LTLIBRARIES = libmcache.la
 
+comp_LTLIBRARIES = libmcache.la
 libmcache_la_SOURCES = mcache.cpp
 
 mcache_test_SOURCES = mcache-test.cpp
@@ -28,4 +27,5 @@ mcache_test_LDFLAGS = -lxml2
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+noinst_PROGRAMS = mcache-test client-test
 TESTS = memcached-test server-test

@@ -15,9 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = json-test
-
 json_test_SOURCES = json-test.cpp
 json_test_LDFLAGS = -lmozjs 
 
+noinst_PROGRAMS = json-test
 TESTS = json-test

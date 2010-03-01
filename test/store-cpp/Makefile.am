@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-testdir=$(prefix)/test/store-cpp
 test_LTLIBRARIES = libcurrency-converter.la libfruits-catalog.la libshopping-cart.la
+testdir = $(prefix)/test
 
 libcurrency_converter_la_SOURCES = currency-converter.cpp
 

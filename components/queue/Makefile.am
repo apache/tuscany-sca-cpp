@@ -17,13 +17,16 @@
 
 if WANT_QUEUE
 
-noinst_PROGRAMS = qpid-test client-test
-
 INCLUDES = -I${QPIDC_INCLUDE}
 
+comp_SCRIPTS = qpidd-start qpidd-stop
 compdir=$(prefix)/components/queue
-comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
+
 comp_DATA = qpidc.prefix
+qpidc.prefix: $(top_builddir)/config.status
+	echo ${QPIDC_PREFIX} >qpidc.prefix
+
+comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
 
 libqueue_sender_la_SOURCES = queue-sender.cpp
 libqueue_sender_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
@@ -37,9 +40,7 @@ qpid_test_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient
 
-qpidc.prefix: $(top_builddir)/config.status
-	echo ${QPIDC_PREFIX} >qpidc.prefix
-
+noinst_PROGRAMS = qpid-test client-test
 TESTS = send-test server-test
 
 endif

@@ -15,9 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-noinst_PROGRAMS = scdl-test
-
 scdl_test_SOURCES = scdl-test.cpp
 scdl_test_LDFLAGS = -lxml2
 
+noinst_PROGRAMS = scdl-test
 TESTS = scdl-test
