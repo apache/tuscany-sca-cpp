@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-libdir = $(prefix)/modules/java
 JAVAROOT = $(top_builddir)/modules/java
+libdir = $(prefix)/modules/java
 
 if WANT_JAVA
 

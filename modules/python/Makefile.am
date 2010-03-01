@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-libdir=$(prefix)/modules/python
+libdir = $(prefix)/modules/python
 
 if WANT_PYTHON
 
@@ -28,7 +28,7 @@ nobase_xsd_DATA = *.xsd
 xsddir = $(prefix)/xsd
 
 prefix_DATA = python.prefix
-prefixdir=$(prefix)/modules/python
+prefixdir = $(prefix)/modules/python
 python.prefix: $(top_builddir)/config.status
 	echo ${PYTHON_PREFIX} >python.prefix
 

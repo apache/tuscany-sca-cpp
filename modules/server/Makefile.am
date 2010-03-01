@@ -21,7 +21,7 @@ mod_SCRIPTS = cpp-conf scheme-conf server-conf
 moddir = $(prefix)/modules/server
 
 lib_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
-libdir=$(prefix)/modules/server
+libdir = $(prefix)/modules/server
 noinst_DATA = libmod_tuscany_eval.so libmod_tuscany_wiring.so
 
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
