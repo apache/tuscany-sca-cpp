@@ -27,6 +27,7 @@ build
 *_Wrapper.cpp
 *_Wrapper.h
 .pydevproject
+.buildpath
 *.lib
 *.dll
 *.exe
@@ -50,3 +51,4 @@ doxygen
 *.stamp
 *.class
 *.jar
+*.prefix
