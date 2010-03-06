@@ -19,13 +19,13 @@ if WANT_PYTHON
 
 INCLUDES = -I${PYTHON_INCLUDE}
 
-mod_SCRIPTS = composite.py runtime.py scdl.py util.py wsgi-start wsgi-stop
+mod_SCRIPTS = composite.py scdl.py util.py elemutil.py xmlutil.py atomutil.py jsonutil.py wsgi-start wsgi-stop
 moddir = $(prefix)/modules/wsgi
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 noinst_PROGRAMS = client-test
-#TESTS = server-test
+TESTS = util-test wsgi-test wiring-test server-test
 
 endif

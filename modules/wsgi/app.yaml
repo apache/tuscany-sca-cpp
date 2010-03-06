@@ -15,10 +15,30 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-application: wsgi-app
+application: sca-wsgi
 version: 1
 runtime: python
 api_version: 1
+skip_files:
+- ^(.*/)?app\.yaml
+- ^(.*/)?app\.yml
+- ^(.*/)?index\.yaml
+- ^(.*/)?index\.yml
+- ^(.*/)?#.*#
+- ^(.*/)?.*~
+- ^(.*/)?.*\.py[co]
+- ^(.*/)?.*/RCS/.*
+- ^(.*/)?\..*
+- ^(.*/)?.*-test$
+- ^(.*/)?.*\.cpp$
+- ^(.*/)?.*\.o$
+- ^(.*/)?core$
+- ^(.*/)?.*\.out$
+- ^(.*/)?.*\.log$
+- ^(.*/)?Makefile.*
+- ^(.*/)?tmp/.*
+- ^(.*/)?wsgi-start
+- ^(.*/)?wsgi-stop
 
 handlers:
 - url: /.*

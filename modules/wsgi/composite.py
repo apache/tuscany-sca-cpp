@@ -20,70 +20,130 @@
 
 from wsgiref.simple_server import make_server
 from wsgiref.handlers import CGIHandler
+from wsgiref.util import request_uri
 from os import environ
 from sys import stderr, argv
 from util import *
 from scdl import *
+from atomutil import *
+from jsonutil import *
 
+# Return the path of an HTTP request
 def requestPath(e):
     return e.get("PATH_INFO", "")
 
+# Return the method of an HTTP request
 def requestMethod(e):
     return e.get("REQUEST_METHOD", "")
 
-def contentType(ct):
-    if ct == None:
-        return []
-    return [("Content-type", ct)]
+# Return the method of an HTTP request
+def requestContentType(e):
+    return e.get("CONTENT_TYPE", "")
 
-def status(st):
+# Return the request body input stream
+def requestBody(e):
+    i = e.get("wsgi.input", None)
+    if i == None:
+        return ()
+    l = int(e.get("CONTENT_LENGTH", "0"))
+    return (i.read(l),)
+
+# Return an HTTP status
+def errstatus(st):
+    return (st, "<html><head><title>"+ st + "</title></head><body><h1>" + st[4:] + "</h1></body></html>")
+
+def status(st, b):
     if st == 200:
-        return "200 OK"
+        return cons("200 OK", b)
     if st == 404:
-        return "404 Not Found"
+        return errstatus("404 Not Found")
     if st == 201:
-        return "201 Created"
-    return "500 Internal Server Error"
+        return cons("201 Created", b)
+    return errstatus("500 Internal Server Error")
 
-def result(r, st, ct = None, b = ()):
-    r(status(st), contentType(ct))
-    return b
+# Return an HTTP result
+def result(r, st, h = (), b = ()):
+    s = status(st, b)
+    r(car(s), list(h))
+    return cdr(s)
+
+
+# Converts the args received in a POST to a list of key value pairs
+def postArgs(a):
+    if isNil(a):
+        return ((),)
+    l = car(a);
+    return cons(l, postArgs(cdr(a)))
 
 # WSGI application function
 def application(e, r):
 
     # Read the deployed composite
-    comps = components(parse("domain-test.composite"))
-    print >> stderr, comps
+    compos = components(parse("domain-test.composite"))
+    #print >> stderr, compos
+
+    # Evaluate the deployed components
+    comps = evalComponents(compos)
     
-    # Find the requested component
+    # Get the request path and method
     path = tokens(requestPath(e))
+    m = requestMethod(e)
+    if (isNil(path) or path == ("index.html",)) and m == "GET":
+        return result(r, 200, (("Content-type", "text/html"),), ("<html><body><h1>It works!</h1></body></html>",))
+
+    # Find the requested component
     uc = uriToComponent(path, comps)
     uri = car(uc)
     if uri == None:
         return result(r, 404)
-    comp =  cadr(uc)
-    mod = __import__(cadr(comp))
-    
+    comp = cadr(uc)
+
     # Call the requested component function
     id = path[len(uri):]
-    print >> stderr, id
-    m = requestMethod(e)
     if (m == "GET"):
-        v = mod.get(id)
-        print >> stderr, v
+        v = comp("get", id)
         
-        # write returned content-type / content pair
+        # Write returned content-type / content pair
         if not isinstance(cadr(v), basestring):
-            return result(r, 200, car(v), cadr(v))
+            return result(r, 200, (("Content-type", car(v)),), cadr(v))
         
-        # TODO write an ATOM feed or entry
-        if nil(id):
-            return result(r, 200, "application/atom+xml;type=feed", ("Atom feed"))
-        return result(r, 200, "application/atom+xml;type=entry", ("Atom entry"))
+        # Write an ATOM feed or entry
+        if isNil(id):
+            return result(r, 200, (("Content-type", "application/atom+xml;type=feed"),), writeATOMFeed(feedValuesToElements(v)))
+        return result(r, 200, (("Content-type", "application/atom+xml;type=entry"),), writeATOMEntry(entryValuesToElements(v)))
 
+    if m == "POST":
+        ct = requestContentType(e)
+
+        # Handle a JSON-RPC function call
+        if ct.find("application/json-rpc") != -1 or ct.find("text/plain") != -1:
+            json = elementsToValues(readJSON(requestBody(e)))
+            args = postArgs(json)
+            jid = cadr(assoc("'id", args))
+            func = funcName(cadr(assoc("'method", args)))
+            params = cadr(assoc("'params", args))
+            v = comp(func, *params)
+            return result(r, 200, (("Content-type", "application/json-rpc"),), jsonResult(jid, v))
+
+        # Handle an ATOM entry POST
+        if ct.find("application/atom+xml") != -1:
+            ae = entryValue(readATOMEntry(requestBody(e)))
+            v = comp("post", id, ae)
+            if isNil(v):
+                return result(r, 500)
+            return result(r, 201, (("Location", request_uri(e) + "/" + "/".join(v)),))
+        return result(r, 500)
+    
+    if m == "PUT":
+        # Handle an ATOM entry PUT
+        ae = entryValue(readATOMEntry(requestBody(e)))
+        v = comp("put", id, ae)
+        if v == False:
+            return result(r, 404)
+        return result(r, 200)
+    
     if m == "DELETE":
-        v = mod.delete(id)
+        v = comp("delete", id)
         if v == False:
             return result(r, 404)
         return result(r, 200)
@@ -91,6 +151,7 @@ def application(e, r):
     # TODO implement POST and PUT methods
     return result(r, 500)
 
+# Return the WSGI server type
 def serverType(e):
     return e.get("SERVER_SOFTWARE", "")
 
@@ -99,5 +160,9 @@ if __name__ == "__main__":
     st = serverType(environ)
     if st == "":
         make_server("", int(argv[1]), application).serve_forever()
+    elif st == "Development/1.0":
+        from google.appengine.ext.webapp.util import run_wsgi_app
+        run_wsgi_app(application)
     else:
         CGIHandler().run(application)
+

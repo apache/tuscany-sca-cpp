@@ -66,6 +66,7 @@ doxygen
 *.stamp
 *.jar
 *.prefix
+index.yaml
 
 # Specific ignores
 kernel-test

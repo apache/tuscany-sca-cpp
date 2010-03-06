@@ -56,7 +56,7 @@ def get(id, cache):
 def delete(id, cache):
     if id == ():
         return cache("delete", (cartId,))
-    return true
+    return True
 
 # Return the price of an item
 def price(item):

@@ -17,8 +17,6 @@
 
 # Simple utility functions
 
-from xml.etree.cElementTree import iterparse
-
 # Scheme-like lists
 def cons(a, b):
     return (a,) + b
@@ -38,13 +36,32 @@ def cddr(l):
 def caddr(l):
     return car(cddr(l))
 
-def nil(l):
+def reverse(l):
+    r = list(l)
+    r.reverse()
+    return tuple(r)
+
+def isNil(l):
     return l == ()
+
+def isSymbol(v):
+    return isinstance(v, basestring) and v[0:1] == "'"
+
+def isList(v):
+    if getattr(v, '__iter__', False) == False:
+        return False
+    if isinstance(v, basestring) or isinstance(v, dict):
+        return False
+    return True
+
+def isTaggedList(v, t):
+    return isList(v) and not isNil(v) and car(v) == t
 
 # Scheme-like associations
 def assoc(k, l):
     if l == ():
         return None
+
     if k == car(car(l)):
         return car(l)
     return assoc(k, cdr(l))
@@ -53,22 +70,14 @@ def assoc(k, l):
 def curry(f, *args):
     return lambda *a: f(*(args + a))
 
-# Element tree utility functions
-def parse(file):
-    return map(lambda x: x, iterparse(file, events=("start", "end")))
-
-def evt(e):
-    return car(e)
-
-def elt(e):
-    return cadr(e)
-
-def att(e):
-    return elt(e).attrib
-
-def match(e, ev, tag):
-    return evt(e) == ev and elt(e).tag.find("}" + tag) != -1
-
-# Split a path
+# Split a path into a list of segments
 def tokens(path):
     return tuple(filter(lambda s: len(s) != 0, path.split("/")))
+
+# Write a list of strings to a stream
+def writeStrings(l, os):
+    if l == ():
+        return os
+    os.write(car(l))
+    return writeStrings(cdr(l), os)
+

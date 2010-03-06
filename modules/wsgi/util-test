@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,16 +17,11 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Component invocation functions
+# Run Python util test cases
+here=`readlink -f $0`; here=`dirname $here`
+python_prefix=`cat $here/../python/python.prefix`
 
-from util import *
+$python_prefix/bin/python xml-test.py
+$python_prefix/bin/python atom-test.py
+$python_prefix/bin/python json-test.py
 
-def apply(impl, refs, func, params):
-    m = __import__(impl)
-    f = m.__getattribute__(func)
-    p = refs + params
-    return f(*p)
-
-def refapply(comps, target):
-    return comps["target"]
-    

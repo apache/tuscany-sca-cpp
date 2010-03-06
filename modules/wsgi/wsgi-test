@@ -18,10 +18,6 @@
 #  under the License.
 
 echo "Testing..."
-uri=$1
-if [ "$uri" = "" ]; then
-    uri="http://localhost:8090"
-fi
 
 # Setup
 mkdir -p tmp
@@ -29,37 +25,37 @@ mkdir -p tmp
 sleep 2
 
 # Test HTTP GET
-curl $uri/index.html 2>/dev/null >tmp/index.html
+curl http://localhost:8090/index.html 2>/dev/null >tmp/index.html
 diff tmp/index.html htdocs/index.html
 rc=$?
 
 # Test ATOMPub
 if [ "$rc" = "0" ]; then
-    curl $uri/client/ >tmp/feed.xml 2>/dev/null
+    curl http://localhost:8090/wsgi/ >tmp/feed.xml 2>/dev/null
     diff tmp/feed.xml htdocs/feed.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl $uri/client/111 >tmp/entry.xml 2>/dev/null
+    curl http://localhost:8090/wsgi/111 >tmp/entry.xml 2>/dev/null
     diff tmp/entry.xml htdocs/entry.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl $uri/client/ -X POST -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
+    curl http://localhost:8090/wsgi/ -X POST -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl $uri/client/111 -X PUT -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
+    curl http://localhost:8090/wsgi/111 -X PUT -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl $uri/client/111 -X DELETE 2>/dev/null
+    curl http://localhost:8090/wsgi/111 -X DELETE 2>/dev/null
     rc=$?
 fi
 
 # Test JSON-RPC
 if [ "$rc" = "0" ]; then
-    curl $uri/client/ -X POST -H "Content-type: application/json-rpc" --data @htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
+    curl http://localhost:8090/wsgi/ -X POST -H "Content-type: application/json-rpc" --data @htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
     diff tmp/json-result.txt htdocs/json-result.txt
     rc=$?
 fi

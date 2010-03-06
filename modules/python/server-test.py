@@ -36,7 +36,7 @@ def post(collection, item):
     return ("123456789",)
 
 def put(id, item):
-    return true
+    return True
 
 def delete(id):
-    return true
+    return True

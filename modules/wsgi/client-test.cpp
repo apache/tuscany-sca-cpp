@@ -27,9 +27,9 @@
 #include "string.hpp"
 #include "../server/client-test.hpp"
 
-int main() {
+int main(const int argc, const char** argv) {
     tuscany::cout << "Testing..." << tuscany::endl;
-    tuscany::server::testURI = "http://localhost:8090/wsgi";
+    tuscany::server::testURI = argc < 2? "http://localhost:8090/wsgi" : argv[1];
     tuscany::server::testBlobs = false;
 
     tuscany::server::testServer();
