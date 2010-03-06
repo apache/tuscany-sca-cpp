@@ -38,7 +38,7 @@ namespace atom {
 /**
  * Convert a list of elements to a list of values representing an ATOM entry.
  */
-const list<value> entryValues(const list<value>& e) {
+const list<value> entryElementsToValues(const list<value>& e) {
     const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), e);
     const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
     const list<value> li = filter<value>(selector(mklist<value>(element, "id")), e);
@@ -50,20 +50,20 @@ const list<value> entryValues(const list<value>& e) {
 /**
  * Convert a list of elements to a list of values representing ATOM entries.
  */
-const list<value> entriesValues(const list<value>& e) {
+const list<value> entriesElementsToValues(const list<value>& e) {
     if (isNil(e))
         return e;
-    return cons<value>(entryValues(car(e)), entriesValues(cdr(e)));
+    return cons<value>(entryElementsToValues(car(e)), entriesElementsToValues(cdr(e)));
 }
 
 /**
  * Convert a list of strings to a list of values representing an ATOM entry.
  */
-const failable<list<value> > readEntry(const list<string>& ilist) {
+const failable<list<value> > readATOMEntry(const list<string>& ilist) {
     const list<value> e = readXML(ilist);
     if (isNil(e))
         return mkfailure<list<value> >("Empty entry");
-    return entryValues(car(e));
+    return entryElementsToValues(car(e));
 }
 
 /**
@@ -77,7 +77,7 @@ const value entryValue(const list<value>& e) {
 /**
  * Convert a list of strings to a list of values representing an ATOM feed.
  */
-const failable<list<value> > readFeed(const list<string>& ilist) {
+const failable<list<value> > readATOMFeed(const list<string>& ilist) {
     const list<value> f = readXML(ilist);
     if (isNil(f))
         return mkfailure<list<value> >("Empty feed");
@@ -86,7 +86,7 @@ const failable<list<value> > readFeed(const list<string>& ilist) {
     const list<value> e = filter<value>(selector(mklist<value>(element, "entry")), car(f));
     if (isNil(e))
         return mklist<value>(elementValue(car(t)), elementValue(car(i)));
-    return cons<value>(elementValue(car(t)), cons(elementValue(car(i)), entriesValues(e)));
+    return cons<value>(elementValue(car(t)), cons(elementValue(car(i)), entriesElementsToValues(e)));
 }
 
 /**

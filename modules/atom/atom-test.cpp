@@ -80,13 +80,13 @@ bool testEntry() {
         assert(str(os) == itemEntry);
     }
     {
-        const list<value> a = content(readEntry(mklist(itemEntry)));
+        const list<value> a = content(readATOMEntry(mklist(itemEntry)));
         ostringstream os;
         writeATOMEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemEntry);
     }
     {
-        const list<value> a = content(readEntry(mklist(incompleteEntry)));
+        const list<value> a = content(readATOMEntry(mklist(incompleteEntry)));
         ostringstream os;
         writeATOMEntry<ostream*>(writer, &os, a);
         assert(str(os) == completedEntry);
@@ -133,7 +133,7 @@ bool testFeed() {
         assert(str(os) == emptyFeed);
     }
     {
-        const list<value> a = content(readFeed(mklist(emptyFeed)));
+        const list<value> a = content(readATOMFeed(mklist(emptyFeed)));
         ostringstream os;
         writeATOMFeed<ostream*>(writer, &os, a);
         assert(str(os) == emptyFeed);
@@ -169,7 +169,7 @@ bool testFeed() {
         assert(str(os) == itemFeed);
     }
     {
-        const list<value> a = content(readFeed(mklist(itemFeed)));
+        const list<value> a = content(readATOMFeed(mklist(itemFeed)));
         ostringstream os;
         writeATOMFeed<ostream*>(writer, &os, a);
         assert(str(os) == itemFeed);

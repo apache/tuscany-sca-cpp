@@ -27,16 +27,9 @@
 #include "string.hpp"
 #include "../server/client-test.hpp"
 
-namespace tuscany {
-namespace server {
-
-string testURI = "http://localhost:8090/java";
-
-}
-}
-
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
+    tuscany::server::testURI = "http://localhost:8090/java";
 
     tuscany::server::testServer();
 

@@ -303,7 +303,7 @@ const failable<value> get(const string& url, const CURLSession& ch) {
 
     const string ct(content(contentType(car(content(res)))));
     if (ct == "application/atom+xml;type=entry") {
-        const value val(atom::entryValue(content(atom::readEntry(ls))));
+        const value val(atom::entryValue(content(atom::readATOMEntry(ls))));
         debug(val, "http::get::result");
         return val;
     }

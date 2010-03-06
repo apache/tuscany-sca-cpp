@@ -36,7 +36,8 @@
 namespace tuscany {
 namespace server {
 
-extern string testURI;
+string testURI = "http://localhost:8090/test";
+bool testBlobs = true;
 
 ostream* curlWriter(const string& s, ostream* os) {
     (*os) << s;
@@ -50,7 +51,7 @@ const bool testGet() {
         ostringstream os;
         const failable<list<ostream*> > r = http::get<ostream*>(curlWriter, &os, "http://localhost:8090", ch);
         assert(hasContent(r));
-        assert(contains(str(os), "HTTP/1.1 200 OK"));
+        assert(contains(str(os), "HTTP/1.1 200 OK") || contains(str(os), "HTTP/1.0 200 OK"));
         assert(contains(str(os), "It works"));
     }
     {
@@ -121,8 +122,11 @@ const bool testEvalPerf() {
     http::CURLSession ch;
     const lambda<bool()> el = evalLoop(testURI, ch);
     cout << "JSON-RPC eval echo test " << time(el, 5, 200) << " ms" << endl;
-    const lambda<bool()> bel = blobEvalLoop(testURI, ch);
-    cout << "JSON-RPC eval blob test " << time(bel, 5, 200) << " ms" << endl;
+
+    if (testBlobs) {
+        const lambda<bool()> bel = blobEvalLoop(testURI, ch);
+        cout << "JSON-RPC eval blob test " << time(bel, 5, 200) << " ms" << endl;
+    }
     return true;
 }
 
@@ -176,7 +180,7 @@ const bool testPostPerf() {
         const lambda<bool()> pl = postLoop(testURI, val, ch);
         cout << "ATOMPub POST small test " << time(pl, 5, 200) << " ms" << endl;
     }
-    {
+    if (testBlobs) {
         const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "blob1" + blob)

@@ -166,7 +166,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
             return rc;
         const list<string> ls = httpd::read(r);
         debug(ls, "modeval::post::input");
-        const value entry = atom::entryValue(content(atom::readEntry(ls)));
+        const value entry = atom::entryValue(content(atom::readATOMEntry(ls)));
 
         // Evaluate the POST expression
         const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(path), entry))));
@@ -201,7 +201,7 @@ const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>&
         return rc;
     const list<string> ls = httpd::read(r);
     debug(ls, "modeval::put::input");
-    const value entry = atom::entryValue(content(atom::readEntry(ls)));
+    const value entry = atom::entryValue(content(atom::readATOMEntry(ls)));
 
     // Evaluate the PUT expression and update the corresponding resource
     const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(path), entry))));
