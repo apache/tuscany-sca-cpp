@@ -318,21 +318,18 @@ AC_MSG_CHECKING([for java])
 AC_ARG_WITH([java], [AC_HELP_STRING([--with-java=PATH], [path to installed Java [default=/usr/lib/jvm/default-java]])], [
   JAVA_PREFIX="${withval}"
   JAVA_INCLUDE="${withval}/include"
-  JAVA_LIB="${withval}/jre/lib/i386"
   JAVAC="${withval}/bin/javac"
   JAR="${withval}/bin/jar" 
   AC_MSG_RESULT("${withval}")
 ], [
   JAVA_PREFIX="/usr/lib/jvm/default-java"
   JAVA_INCLUDE="/usr/lib/jvm/default-java/include"
-  JAVA_LIB="/usr/lib/jvm/default-java/jre/lib/i386"
   JAVAC="/usr/lib/jvm/default-java/bin/javac"
   JAR="/usr/lib/jvm/default-java/bin/jar" 
   AC_MSG_RESULT(/usr/lib/jvm/default-java)
 ])
 AC_SUBST(JAVA_PREFIX)
 AC_SUBST(JAVA_INCLUDE)
-AC_SUBST(JAVA_LIB)
 AC_SUBST(JAVAC)
 AC_SUBST(JAR)
 
@@ -350,8 +347,44 @@ AC_ARG_ENABLE(java, [AS_HELP_STRING([--enable-java], [enable Java support [defau
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_java}" = "true"; then
-  LIBS="-L${JAVA_LIB} -L${JAVA_LIB}/server ${default_LIBS}"
-  AC_CHECK_LIB([java], [JNI_CreateJavaVM], [], [AC_MSG_ERROR([couldn't find a suitable libjava, use --with-java=PATH])], [-ljvm -lverify])
+  # Detect most common Java VMs
+  if test -f "${JAVA_PREFIX}/jre/lib/i386/libjava.so"; then
+    if test -f "${JAVA_PREFIX}/jre/lib/i386/server/libjvm.so"; then
+      # Server VM
+      AC_MSG_NOTICE([checking for server Java VM])
+      JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/lib/i386 -R${JAVA_PREFIX}/jre/lib/i386 -L${JAVA_PREFIX}/jre/lib/i386/server -R${JAVA_PREFIX}/jre/lib/i386/server"
+      LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
+      AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava"], [], [-ljvm -lverify])
+      if test "${JAVA_LDFLAGS}" != ""; then
+        AC_DEFINE([JAVA_SERVER_VM], 1, [Server Java VM])
+      fi
+    else
+      if test -f "${JAVA_PREFIX}/jre/lib/i386/j9vm/libjvm.so"; then
+        # J9 VM
+        AC_MSG_NOTICE([checking for J9 Java VM])
+        JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/lib/i386 -R${JAVA_PREFIX}/jre/lib/i386 -L${JAVA_PREFIX}/jre/lib/i386/j9vm -R${JAVA_PREFIX}/jre/lib/i386/j9vm"
+        LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
+        AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava"], [], [-ljvm -ljsig])
+        if test "${JAVA_LDFLAGS}" != ""; then
+          AC_DEFINE([JAVA_J9_VM], 1, [J9 Java VM])
+        fi
+      fi
+    fi
+  else
+    if test -f "${JAVA_PREFIX}/jre/bin/default/libharmonyvm.so"; then
+      # Apache Harmony VM
+      AC_MSG_NOTICE([checking for Apache Harmony Java VM])
+      JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/bin -R${JAVA_PREFIX}/jre/bin -L${JAVA_PREFIX}/jre/bin/default -R${JAVA_PREFIX}/jre/bin/default"
+      LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
+      AC_CHECK_LIB([harmonyvm], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -lharmonyvm"], [], [-lhythr -licuuc -lch ${JAVA_PREFIX}/jre/bin/default/libicudata.so.34])
+      if test "${JAVA_LDFLAGS}" != ""; then
+        AC_DEFINE([JAVA_HARMONY_VM], 1, [Apache Harmony Java VM])
+      fi
+    fi
+  fi
+  if test "${JAVA_LDFLAGS}" = ""; then
+    AC_MSG_ERROR([couldn't find a suitable Java JNI library, use --with-java=PATH])
+  fi
   AC_MSG_CHECKING([for javac])
   if test -x "${JAVAC}"; then
     AC_MSG_RESULT("${JAVAC}")
@@ -368,7 +401,9 @@ if test "${want_java}" = "true"; then
   AC_DEFINE([WANT_JAVA], 1, [enable Java support])
 else
   AM_CONDITIONAL([WANT_JAVA], false)
+  JAVA_LDFLAGS="-L${JAVA_PREFIX}/jre/lib -R${JAVA_PREFIX}/jre/lib -ljava"
 fi
+AC_SUBST(JAVA_LDFLAGS)
 
 # Configure path to Apache Axis2C includes and lib.
 AC_MSG_CHECKING([for axis2c])

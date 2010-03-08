@@ -32,16 +32,19 @@ java.prefix: $(top_builddir)/config.status
 
 lib_LTLIBRARIES = libmod_tuscany_java.la
 libmod_tuscany_java_la_SOURCES = mod-java.cpp
-libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -lmozjs -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
+libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -lmozjs ${JAVA_LDFLAGS}
 noinst_DATA = libmod_tuscany_java.so
 libmod_tuscany_java.so:
 	ln -s .libs/libmod_tuscany_java.so libmod_tuscany_java.so
 
+jni_test_SOURCES = jni-test.cpp
+jni_test_LDFLAGS = ${JAVA_LDFLAGS}
+
 java_test_SOURCES = java-test.cpp
-java_test_LDFLAGS = -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
+java_test_LDFLAGS = ${JAVA_LDFLAGS}
 
 java_shell_SOURCES = java-shell.cpp
-java_shell_LDFLAGS = -L${JAVA_LIB} -R${JAVA_LIB} -R${JAVA_LIB}/server -ljava
+java_shell_LDFLAGS = ${JAVA_LDFLAGS}
 
 noinst_JAVA = org/apache/tuscany/*.java test/*.java
 jardir = ${prefix}/modules/java
@@ -55,7 +58,7 @@ CLEANFILES = ${jarfile} org/apache/tuscany/*.class	test/*.class
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-noinst_PROGRAMS = java-test java-shell client-test
-TESTS = java-test server-test
+noinst_PROGRAMS = jni-test java-test java-shell client-test
+TESTS = jni-test java-test server-test
 
 endif

@@ -34,6 +34,15 @@ namespace tuscany {
 namespace java {
 
 /**
+ * Handle differences between various JNI APIs.
+ */
+#ifdef JAVA_HARMONY_VM
+#define JNI_VERSION JNI_VERSION_1_4
+#else
+#define JNI_VERSION JNI_VERSION_1_6
+#endif
+
+/**
  * Represent a Java VM runtime.
  */
 jobject JNICALL nativeInvoke(JNIEnv *env, jobject self, jobject proxy, jobject method, jobjectArray args);
@@ -49,7 +58,7 @@ public:
 
             // Create a new JVM
             JavaVMInitArgs args;
-            args.version = JNI_VERSION_1_6;
+            args.version = JNI_VERSION;
             args.ignoreUnrecognized = JNI_FALSE;
             JavaVMOption options[3];
             args.options = options;
@@ -58,7 +67,8 @@ public:
             // Configure classpath
             const char* envcp = getenv("CLASSPATH");
             const string cp = string("-Djava.class.path=") + (envcp == NULL? "." : envcp);
-            options[args.nOptions++].optionString = const_cast<char*>(c_str(cp));
+            options[args.nOptions].optionString = const_cast<char*>(c_str(cp));
+            options[args.nOptions++].extraInfo = NULL;
 
 #ifdef WANT_MAINTAINER_MODE
             // Enable assertions
@@ -68,22 +78,28 @@ public:
             // Configure Java debugging
             const char* jpdaopts = getenv("JPDA_OPTS");
             if (jpdaopts != NULL) {
-                options[args.nOptions++].optionString = const_cast<char*>(jpdaopts);
+                options[args.nOptions].optionString = const_cast<char*>(jpdaopts);
+                options[args.nOptions++].extraInfo = NULL;
             } else {
                 const char* jpdaaddr = getenv("JPDA_ADDRESS");
                 if (jpdaaddr != NULL) {
                     const string jpda = string("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=") + jpdaaddr;
-                    options[args.nOptions++].optionString = const_cast<char*>(c_str(jpda));
+                    options[args.nOptions].optionString = const_cast<char*>(c_str(jpda));
+                    options[args.nOptions++].extraInfo = NULL;
                 }
             }
 
             // Create the JVM
+#ifdef JAVA_HARMONY_VM
+            JNI_CreateJavaVM(&jvm, &env, &args);
+#else
             JNI_CreateJavaVM(&jvm, (void**)&env, &args);
+#endif
 
         } else {
 
             // Just point to existing JVM
-            jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
+            jvm->GetEnv((void**)&env, JNI_VERSION);
         }
 
         // Lookup System classes and methods
@@ -94,7 +110,7 @@ public:
         booleanClass = env->FindClass("java/lang/Boolean");
         stringClass = env->FindClass("java/lang/String");
         objectArrayClass = env->FindClass("[Ljava/lang/Object;");
-        iterableClass = env->FindClass("Ljava/lang/Iterable;");
+        iterableClass = env->FindClass("java/lang/Iterable");
         classForName = env->GetStaticMethodID(classClass, "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;");
         doubleValueOf = env->GetStaticMethodID(doubleClass, "valueOf", "(D)Ljava/lang/Double;");
         doubleValue = env->GetMethodID(doubleClass, "doubleValue", "()D");
@@ -509,10 +525,10 @@ const failable<value> evalClass(const JavaRuntime& jr, const value& expr, const 
     const jmethodID fid = (jmethodID)(long)(double)cadr(func);
 
     // Convert args to Java jvalues
-    const jvalue *args = valuesToJvalues(jr, cddr(func), cdr<value>(expr));
+    const jvalue* args = valuesToJvalues(jr, cddr(func), cdr<value>(expr));
 
     // Call the Java function
-    const jobject result = jr.env->CallObjectMethodA(jc.obj, fid, args);
+    const jobject result = jr.env->CallObjectMethodA(jc.obj, fid, const_cast<jvalue*>(args));
     if (result == NULL)
         return mkfailure<value>(string("Function call failed: ") + car<value>(expr) + " : " + lastException(jr));
 

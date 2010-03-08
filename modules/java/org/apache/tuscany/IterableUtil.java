@@ -14,7 +14,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 package org.apache.tuscany;
@@ -93,7 +93,6 @@ public class IterableUtil {
         if(l instanceof Collection<?>)
             return new ArrayIterable<T>(((Collection<?>)l).toArray(), 1);
         return new Iterable<T>() {
-            @Override
             public Iterator<T> iterator() {
                 final Iterator<T> i = ((Iterable<T>)l).iterator();
                 i.next();
@@ -148,7 +147,7 @@ public class IterableUtil {
 
         @Override
         public int size() {
-            throw new UnsupportedOperationException();
+            return this.isNil()? 0 : 1 + ((List<T>)this.cdr()).size();
         }
 
         @Override
@@ -190,18 +189,15 @@ public class IterableUtil {
             return new Iterator<T>() {
                 int i = ArrayIterable.this.start;
 
-                @Override
                 public boolean hasNext() {
                     return this.i < ArrayIterable.this.a.length;
                 }
 
                 @SuppressWarnings("unchecked")
-                @Override
                 public T next() {
                     return (T)ArrayIterable.this.a[this.i++];
                 }
 
-                @Override
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
@@ -242,18 +238,15 @@ public class IterableUtil {
             return new Iterator<T>() {
                 int i = ListIterable.this.start;
 
-                @Override
                 public boolean hasNext() {
                     return this.i < ListIterable.this.l.size();
                 }
 
                 @SuppressWarnings("unchecked")
-                @Override
                 public T next() {
                     return (T)ListIterable.this.l.get(this.i++);
                 }
 
-                @Override
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }
@@ -296,7 +289,6 @@ public class IterableUtil {
                 boolean carIterator = true;
                 Iterator<?> cdrIterator = PairIterable.this.cdr.iterator();
 
-                @Override
                 public boolean hasNext() {
                     if(this.carIterator)
                         return true;
@@ -304,7 +296,6 @@ public class IterableUtil {
                 }
 
                 @SuppressWarnings("unchecked")
-                @Override
                 public T next() {
                     if(this.carIterator) {
                         this.carIterator = false;
@@ -313,7 +304,6 @@ public class IterableUtil {
                     return (T)this.cdrIterator.next();
                 }
 
-                @Override
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }

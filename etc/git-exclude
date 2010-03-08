@@ -83,6 +83,7 @@ client-test
 mcache-test
 curl-test
 scdl-test
+jni-test
 java-test
 java-shell
 script-test

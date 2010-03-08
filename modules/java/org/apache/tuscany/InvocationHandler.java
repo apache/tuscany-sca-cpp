@@ -14,7 +14,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 package org.apache.tuscany;
@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * Proxy Invocation handler used to represent SCA component references. 
+ * Proxy Invocation handler used to represent SCA component references.
  */
 class InvocationHandler implements java.lang.reflect.InvocationHandler {
     final long lambda;
@@ -33,7 +33,7 @@ class InvocationHandler implements java.lang.reflect.InvocationHandler {
     InvocationHandler(final long lambda) {
         this.lambda = lambda;
     }
-    
+
     /**
      * Create a proxy for an interface and the lambda function representing
      * an SCA component reference.
@@ -45,7 +45,6 @@ class InvocationHandler implements java.lang.reflect.InvocationHandler {
     /**
      * Proxy invocation of a C++ function.
      */
-    @Override
     public native Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable;
 
     /**
