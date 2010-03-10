@@ -14,14 +14,13 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 
 package store;
 
 import static org.apache.tuscany.IterableUtil.*;
-
-import java.util.UUID;
+import static org.apache.tuscany.UUIDUtil.*;
 
 import org.apache.tuscany.Service;
 
@@ -44,17 +43,10 @@ public class ShoppingCartImpl {
     }
 
     /**
-     * Returns a UUID.
-     */
-    String uuid() {
-        return UUID.randomUUID().toString();
-    }
-
-    /**
      * Post a new item to the cart. Create a new cart if necessary.
      */
     public Iterable<String> post(final Iterable<String> collection, final Iterable<?> item, final Service cache) {
-        final String id = this.uuid();
+        final String id = uuid();
         final Iterable<?> newItem = list(car(item), id, caddr(item));
         final Iterable<?> cart = cons(newItem, this.getcart(cartId, cache));
         final Iterable<String> iid = list(cartId);
@@ -65,7 +57,7 @@ public class ShoppingCartImpl {
     /**
      * Find an item in the cart.
      */
-    public Iterable<?> find(final String id, final Iterable<?> cart) {
+    Iterable<?> find(final String id, final Iterable<?> cart) {
         if(isNil(cart))
             return cons("Item", list("0", list()));
         if(id.equals(cadr(car(cart))))

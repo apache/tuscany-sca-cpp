@@ -23,4 +23,4 @@ here=`readlink -f $0`; here=`dirname $here`
 qpid_prefix=`cat $here/qpidc.prefix`
 qpidd="$qpid_prefix/sbin/qpidd"
 
-kill `ps -f | grep -v grep | grep "${qpidd}" | awk '{ print $2 }'`
+kill `ps -ef | grep -v grep | grep "${qpidd}" | awk '{ print $2 }'`

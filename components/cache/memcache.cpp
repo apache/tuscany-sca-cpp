@@ -31,10 +31,10 @@
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
-#include "mcache.hpp"
+#include "memcache.hpp"
 
 namespace tuscany {
-namespace mcache {
+namespace memcache {
 
 /**
  * Get an item from the cache.
@@ -126,7 +126,7 @@ extern "C" {
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
     if (func == "start")
-        return tuscany::mcache::start(cdr(params));
+        return tuscany::memcache::start(cdr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 

@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_mcache_hpp
-#define tuscany_mcache_hpp
+#ifndef tuscany_memcache_hpp
+#define tuscany_memcache_hpp
 
 /**
  * Memcached access functions.
@@ -121,7 +121,7 @@ const failable<bool> put(const value& key, const value& val, const MemCached& ca
     const string vs(scheme::writeValue(val));
     const apr_status_t rc = apr_memcache_set(cache.mc, c_str(ks), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
-        return mkfailure<bool>("Could not add entry");
+        return mkfailure<bool>("Could not set entry");
 
     debug(true, "cache::put::result");
     return true;
@@ -172,4 +172,4 @@ const failable<bool> del(const value& key, const MemCached& cache) {
 }
 }
 
-#endif /* tuscany_mcache_hpp */
+#endif /* tuscany_memcache_hpp */

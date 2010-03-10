@@ -18,14 +18,14 @@
 comp_SCRIPTS = memcached-start memcached-stop
 compdir=$(prefix)/components/cache
 
-comp_LTLIBRARIES = libmcache.la
-libmcache_la_SOURCES = mcache.cpp
+comp_LTLIBRARIES = libmemcache.la
+libmemcache_la_SOURCES = memcache.cpp
 
-mcache_test_SOURCES = mcache-test.cpp
-mcache_test_LDFLAGS = -lxml2
+memcache_test_SOURCES = memcache-test.cpp
+memcache_test_LDFLAGS = -lxml2
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-noinst_PROGRAMS = mcache-test client-test
+noinst_PROGRAMS = memcache-test client-test
 TESTS = memcached-test server-test

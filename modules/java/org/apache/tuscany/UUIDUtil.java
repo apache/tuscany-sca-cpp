@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -15,18 +14,19 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
--->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
-  name="mcache">
-        
-    <component name="mcache">
-        <implementation.cpp path=".libs" library="libmcache"/>
-        <service name="mcache">
-            <t:binding.http uri="mcache"/>
-        </service>
-    </component>     
+ * under the License.
+ */
 
-</composite>
+package org.apache.tuscany;
+
+/**
+ * A fast and portable UUID generator function.
+ */
+public class UUIDUtil {
+
+    /**
+     * Return a UUID.
+     */
+    public static native String uuid();
+
+}

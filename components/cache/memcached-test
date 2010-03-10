@@ -22,7 +22,7 @@
 sleep 1
 
 # Test
-./mcache-test 2>/dev/null
+./memcache-test 2>/dev/null
 rc=$?
 
 # Cleanup

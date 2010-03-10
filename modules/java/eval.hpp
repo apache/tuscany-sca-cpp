@@ -26,6 +26,7 @@
  * Java component implementation evaluation logic.
  */
 #include <jni.h>
+#include <apr_uuid.h>
 
 #include "list.hpp"
 #include "value.hpp"
@@ -46,6 +47,7 @@ namespace java {
  * Represent a Java VM runtime.
  */
 jobject JNICALL nativeInvoke(JNIEnv *env, jobject self, jobject proxy, jobject method, jobjectArray args);
+jobject JNICALL nativeUUID(JNIEnv *env);
 
 class JavaRuntime {
 public:
@@ -133,13 +135,21 @@ public:
         iterableIsNil = env->GetStaticMethodID(iterableUtilClass, "isNil", "(Ljava/lang/Object;)Z");
         iterableCar = env->GetStaticMethodID(iterableUtilClass, "car", "(Ljava/lang/Object;)Ljava/lang/Object;");
         iterableCdr = env->GetStaticMethodID(iterableUtilClass, "cdr", "(Ljava/lang/Object;)Ljava/lang/Iterable;");
+        uuidClass = env->FindClass("org/apache/tuscany/UUIDUtil");
 
         // Register our native invocation handler function
-        JNINativeMethod nm;
-        nm.name = const_cast<char*>("invoke");
-        nm.signature = const_cast<char*>("(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;");
-        nm.fnPtr = (void*)nativeInvoke;
-        env->RegisterNatives(invokerClass, &nm, 1);
+        JNINativeMethod invokenm;
+        invokenm.name = const_cast<char*>("invoke");
+        invokenm.signature = const_cast<char*>("(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;");
+        invokenm.fnPtr = (void*)nativeInvoke;
+        env->RegisterNatives(invokerClass, &invokenm, 1);
+
+        // Register our native UUID function
+        JNINativeMethod uuidnm;
+        uuidnm.name = const_cast<char*>("uuid");
+        uuidnm.signature = const_cast<char*>("()Ljava/lang/String;");
+        uuidnm.fnPtr = (void*)nativeUUID;
+        env->RegisterNatives(uuidClass, &uuidnm, 1);
     }
 
     JavaVM* jvm;
@@ -173,6 +183,7 @@ public:
     jmethodID iterableCar;
     jmethodID iterableCdr;
     jmethodID iterableIsNil;
+    jclass uuidClass;
 };
 
 /**
@@ -247,8 +258,8 @@ public:
 };
 
 /**
- * Invocation handler invoke method, dispatches to the lambda function wrapped
- * in the invocation handler.
+ * Native implementation of the InvocationHandler.invoke Java method.
+ * Dispatches the call to the lambda function wrapped in the invocation handler.
  */
 jobject JNICALL nativeInvoke(JNIEnv* env, jobject self, unused jobject proxy, jobject method, jobjectArray args) {
 
@@ -274,6 +285,19 @@ jobject JNICALL nativeInvoke(JNIEnv* env, jobject self, unused jobject proxy, jo
 
     // Convert result to a jobject
     return valueToJobject(jl.jr, value(), result);
+}
+
+/**
+ * Native implementation of IterableUtil.uuid. We are providing a native implementation
+ * of this function as java.util.UUID seems to behave differently with different JDKs.
+ */
+jobject JNICALL nativeUUID(JNIEnv* env) {
+    apr_uuid_t uuid;
+    apr_uuid_get(&uuid);
+    char buf[APR_UUID_FORMATTED_LENGTH];
+    apr_uuid_format(buf, &uuid);
+    string s(buf, APR_UUID_FORMATTED_LENGTH);
+    return env->NewStringUTF(c_str(s));
 }
 
 /**

@@ -24,4 +24,4 @@ port=$1
 python_prefix=`cat $here/../python/python.prefix`
 py="$python_prefix/bin/python composite.py $port"
 
-kill `ps -f | grep -v grep | grep "${py}" | awk '{ print $2 }'`
+kill `ps -ef | grep -v grep | grep "${py}" | awk '{ print $2 }'`

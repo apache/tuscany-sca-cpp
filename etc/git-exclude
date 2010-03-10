@@ -80,7 +80,7 @@ eval-shell
 json-test
 cache-test
 client-test
-mcache-test
+memcache-test
 curl-test
 scdl-test
 jni-test

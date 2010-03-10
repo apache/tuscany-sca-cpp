@@ -36,7 +36,7 @@
 namespace tuscany {
 namespace cache {
 
-const string uri("http://localhost:8090/mcache");
+const string uri("http://localhost:8090/memcache");
 
 bool testCache() {
     http::CURLSession cs;

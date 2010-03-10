@@ -27,7 +27,7 @@
 #include "stream.hpp"
 #include "string.hpp"
 #include "perf.hpp"
-#include "mcache.hpp"
+#include "memcache.hpp"
 
 namespace tuscany {
 namespace cache {

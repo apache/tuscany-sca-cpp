@@ -23,7 +23,7 @@
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 SCAContribution `pwd`/
-SCAComposite mcache.composite
+SCAComposite memcache.composite
 EOF
 
 ./memcached-start
