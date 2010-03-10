@@ -21,12 +21,17 @@
 from wsgiref.simple_server import make_server
 from wsgiref.handlers import CGIHandler
 from wsgiref.util import request_uri
+from wsgiref.util import FileWrapper
 from os import environ
+import os.path
 from sys import stderr, argv
 from util import *
 from scdl import *
 from atomutil import *
 from jsonutil import *
+
+# Cache the deployed components between requests
+comps = None
 
 # Return the path of an HTTP request
 def requestPath(e):
@@ -67,6 +72,9 @@ def result(r, st, h = (), b = ()):
     r(car(s), list(h))
     return cdr(s)
 
+# Send a file
+def fileresult(f):
+    return tuple(FileWrapper(open("htdocs" + f)))
 
 # Converts the args received in a POST to a list of key value pairs
 def postArgs(a):
@@ -77,21 +85,24 @@ def postArgs(a):
 
 # WSGI application function
 def application(e, r):
-
-    # Read the deployed composite
-    compos = components(parse("domain-test.composite"))
-    #print >> stderr, compos
-
-    # Evaluate the deployed components
-    comps = evalComponents(compos)
-    
-    # Get the request path and method
-    path = tokens(requestPath(e))
     m = requestMethod(e)
-    if (isNil(path) or path == ("index.html",)) and m == "GET":
-        return result(r, 200, (("Content-type", "text/html"),), ("<html><body><h1>It works!</h1></body></html>",))
+    fpath = requestPath(e)
+
+    # Debug hook
+    if fpath == "/debug":
+        return result(r, 200, (("Content-type", "text/plain"),), ("Debug",))
+
+    # Serve static files
+    if m == "GET":
+        if fpath.endswith(".html"):
+            return result(r, 200, (("Content-type", "text/html"),), fileresult(fpath))
+        if fpath.endswith(".js"):
+            return result(r, 200, (("Content-type", "application/x-javascript"),), fileresult(fpath))
+        if fpath.endswith(".png"):
+            return result(r, 200, (("Content-type", "image/png"),), fileresult(fpath))
 
     # Find the requested component
+    path = tokens(fpath)
     uc = uriToComponent(path, comps)
     uri = car(uc)
     if uri == None:
@@ -100,7 +111,7 @@ def application(e, r):
 
     # Call the requested component function
     id = path[len(uri):]
-    if (m == "GET"):
+    if m == "GET":
         v = comp("get", id)
         
         # Write returned content-type / content pair
@@ -148,21 +159,30 @@ def application(e, r):
             return result(r, 404)
         return result(r, 200)
     
-    # TODO implement POST and PUT methods
     return result(r, 500)
 
 # Return the WSGI server type
 def serverType(e):
     return e.get("SERVER_SOFTWARE", "")
 
-# Run the WSGI application
-if __name__ == "__main__":
+def main():
+    # Read the deployed composite and evaluate the configured components
+    global comps
+    if comps == None:
+        domain = "domain.composite" if os.path.exists("domain.composite") else "domain-test.composite"
+        comps = evalComponents(components(parse(domain)))
+
+    # Handle the WSGI request with the WSGI runtime
     st = serverType(environ)
-    if st == "":
-        make_server("", int(argv[1]), application).serve_forever()
-    elif st == "Development/1.0":
+    if st.find("App Engine") != -1 or st.find("Development") != -1:
         from google.appengine.ext.webapp.util import run_wsgi_app
         run_wsgi_app(application)
-    else:
+    elif st != "":
         CGIHandler().run(application)
+    else:
+        make_server("", int(argv[1]), application).serve_forever()
+
+# Run the WSGI application
+if __name__ == "__main__":
+    main()
 

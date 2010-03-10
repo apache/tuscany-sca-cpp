@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-application: sca-wsgi
+application: sca-store
 version: 1
 runtime: python
 api_version: 1
@@ -41,9 +41,9 @@ skip_files:
 - ^(.*/)?wsgi-stop
 
 handlers:
-- url: /(.*\.(html|js|png))
+- url: /(.*\.(html|png))
   static_files: htdocs/\1
-  upload: htdocs/(.*\.(html|js|png))
+  upload: htdocs/(.*\.(html|png))
 
 - url: /.*
   script: composite.py

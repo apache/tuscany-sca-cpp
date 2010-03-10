@@ -45,7 +45,7 @@ def readATOMEntry(l):
 
 # Convert a list of values representy an ATOM entry to a value
 def entryValue(e):
-    v = elementsToValues((caddr(e)))
+    v = elementsToValues((caddr(e),))
     return cons(car(e), (cadr(e), cdr(car(v))))
 
 # Convert a list of strings to a list of values representing an ATOM feed

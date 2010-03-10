@@ -33,27 +33,31 @@ def elt(e):
 def att(e):
     return elt(e).attrib
 
+def text(e):
+    return elt(e).text
+
 def match(e, ev, tag):
     return evt(e) == ev and elt(e).tag.find("}" + tag) != -1
 
 # Make a callable component
 class component:
-    def __init__(self, name, impl, svcs, refs):
+    def __init__(self, name, impl, svcs, refs, props):
         self.name = name
         self.impl = impl
         self.mod = None
         self.svcs = svcs
         self.refs = refs
+        self.props = props
         self.proxies = ()
 
     def __call__(self, func, *args):
         return self.mod.__getattribute__(func)(*(args + self.proxies))
 
     def __repr__(self):
-        return repr((self.name, self.impl, self.mod, self.svcs, self.refs, self.proxies))
+        return repr((self.name, self.impl, self.mod, self.svcs, self.refs, self.props, self.proxies))
 
-def mkcomponent(name, impl, svcs, refs):
-    return component(name, impl, svcs, refs)
+def mkcomponent(name, impl, svcs, refs, props):
+    return component(name, impl, svcs, refs, props)
 
 # Return the Python module name of a component implementation
 def implementation(e):
@@ -81,8 +85,16 @@ def references(e):
     if match(car(e), "start", "reference") == False:
         return references(cdr(e))
     if "target" in att(car(e)):
-        return (att(car(e))["target"],) + references(cdr(e))
+        return cons(att(car(e))["target"], references(cdr(e)))
     return cons(binding(e), references(cdr(e)))
+
+# Return the list of properties under a SCDL component element
+def properties(e):
+    if len(e) == 0 or match(car(e), "end", "component") == True:
+        return ()
+    if match(car(e), "start", "property") == False:
+        return properties(cdr(e))
+    return cons(text(car(e)), properties(cdr(e)))
 
 # Return the list of services under a SCDL component element
 def services(e):
@@ -103,7 +115,7 @@ def components(e):
     if match(car(e), "start", "component") == False:
         return components(cdr(e))
     n = name(e)
-    return cons(mkcomponent(n, implementation(e), cons(("components", n), services(e)), references(e)), components(cdr(e)))
+    return cons(mkcomponent(n, implementation(e), cons(("components", n), services(e)), references(e), properties(e)), components(cdr(e)))
 
 # Find a component with a given name
 def nameToComponent(name, comps):
@@ -133,7 +145,12 @@ def uriToComponent(u, comps):
 # Evaluate a component, resolve its implementation and references
 def evalComponent(comp, comps):
     comp.mod = __import__(comp.impl)
-    comp.proxies = tuple(map(lambda r: nameToComponent(r, comps), comp.refs))
+
+    # Make a list of proxy lambda functions for the component references and properties
+    # A reference proxy is the callable lambda function of the component wired to the reference
+    # A property proxy is a lambda function that returns the value of the property
+    comp.proxies = tuple(map(lambda r: nameToComponent(r, comps), comp.refs)) + tuple(map(lambda v: lambda: v, comp.props))
+
     return comp
 
 # Evaluate a list of components
