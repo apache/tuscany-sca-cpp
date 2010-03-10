@@ -85,20 +85,20 @@ AC_SUBST(LIBXML2_LIB)
 # Configure path to libmozjs includes and lib.
 AC_MSG_CHECKING([for js-include])
 AC_ARG_WITH([js-include], [AC_HELP_STRING([--with-js-include=PATH], [path to installed SpiderMonkey include dir
-             [default=/usr/include/xulrunner-1.9.1.7/unstable]])], [
+             [default=/usr/include/xulrunner-1.9.1.8/unstable]])], [
   JS_INCLUDE="${withval}"
   AC_MSG_RESULT("${withval}")
 ], [
-  JS_INCLUDE="/usr/include/xulrunner-1.9.1.7/unstable"
-  AC_MSG_RESULT(/usr/include/xulrunner-1.9.1.7/unstable)
+  JS_INCLUDE="/usr/include/xulrunner-1.9.1.8/unstable"
+  AC_MSG_RESULT(/usr/include/xulrunner-1.9.1.8/unstable)
 ])
 AC_MSG_CHECKING([for js-lib])
-AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib/xulrunner-1.9.1.7]])], [
+AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib/xulrunner-1.9.1.8]])], [
   JS_LIB="${withval}"
   AC_MSG_RESULT("${withval}")
 ], [
-  JS_LIB="/usr/lib/xulrunner-1.9.1.7"
-  AC_MSG_RESULT(/usr/lib/xulrunner-1.9.1.7)
+  JS_LIB="/usr/lib/xulrunner-1.9.1.8"
+  AC_MSG_RESULT(/usr/lib/xulrunner-1.9.1.8)
 ])
 AC_SUBST(JS_INCLUDE)
 AC_SUBST(JS_LIB)
@@ -520,6 +520,17 @@ AC_ARG_WITH([libstrophe], [AC_HELP_STRING([--with-libstrophe=PATH], [path to lib
 AC_SUBST(LIBSTROPHE_INCLUDE)
 AC_SUBST(LIBSTROPHE_LIB)
 
+# Configure path to Vysper
+AC_MSG_CHECKING([for vysper])
+AC_ARG_WITH([vysper], [AC_HELP_STRING([--with-vysper=PATH], [path to Apache Vysper [default=${HOME}/vysper-1.0.0]])], [
+  VYSPER_PREFIX="${withval}"
+  AC_MSG_RESULT("${withval}")
+], [
+  VYSPER_PREFIX="${HOME}/vysper-1.0.0"
+  AC_MSG_RESULT(${HOME}/vysper-1.0.0)
+])
+AC_SUBST(VYSPER_PREFIX)
+
 # Enable Chat component.
 AC_MSG_CHECKING([whether to enable the Chat component])
 AC_ARG_ENABLE(chat, [AS_HELP_STRING([--enable-chat], [enable Chat component [default=no]])],
@@ -541,8 +552,17 @@ if test "${want_chat}" = "true"; then
   AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lexpat -lssl -lresolv])
   AM_CONDITIONAL([WANT_CHAT], true)
   AC_DEFINE([WANT_CHAT], 1, [enable Chat component])
+
+  # Check for Vysper
+  AC_CHECK_FILE([${VYSPER_PREFIX}/lib/vysper-core-1.0.0-SNAPSHOT.jar], [want_vysper=true], [])
+  if test "${want_vysper}" = "true"; then
+    AM_CONDITIONAL([WANT_VYSPER], true)
+  else
+    AM_CONDITIONAL([WANT_VYSPER], false)
+  fi
 else
   AM_CONDITIONAL([WANT_CHAT], false)
+  AM_CONDITIONAL([WANT_VYSPER], false)
 fi
 
 # Configure GCC C++ and LD options.

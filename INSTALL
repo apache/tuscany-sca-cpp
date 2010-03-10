@@ -53,6 +53,10 @@ XMPP Chat:
 Libstrophe (http://code.stanziq.com/cgit/strophe/libstrophe/)
 build it from source at git://code.stanziq.com//libstrophe
 
+XMPP Chat tests: Apache Vysper (http://mina.apache.org/)
+build from source at http://svn.apache.org/repos/asf/mina/sandbox/vysper/trunk
+or download a build from http://hudson.zones.apache.org/hudson/view/Vysper
+
 
 To configure the Tuscany SCA build do this:
 ./bootstrap
@@ -80,7 +84,8 @@ To build the Web service utility component (requires Apache Axis2/C):
 To build the Queue utility component (requires Apache Qpid/C++):
 --enable-queue
 
-To build the Chat utility component (requires Libstrophe):
+To build the Chat utility component (requires Libstrophe and optionally Apache
+Vysper if you want to run the tests with a local Vysper XMPP server):
 --enable-chat
 
 To generate doxygen documentation, add:
@@ -106,6 +111,7 @@ dependencies installed under $HOME:
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
 --enable-queue --with-qpidc=$HOME/qpidc-0.6-bin \
 --enable-chat --with-libstrophe=$HOME/libstrophe \
+--with-vysper=$HOME/vysper-1.0.0 \
 --enable-maintainer-mode
 
 
