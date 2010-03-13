@@ -213,10 +213,18 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
     const string ob(str(os));
     debug(ob, "httpd::result");
 
+    // Make sure browsers come back and check for updated dynamic content
+    apr_table_setn(r->headers_out, "Expires", "Tue, 01 Jan 1980 00:00:00 GMT");
+
+    // Compute and return an Etag for the returned content
     const string etag(ap_md5(r->pool, (const unsigned char*)c_str(ob)));
+
+    // Check for an If-None-Match header and just return a 304 not-modified status
+    // if the Etag matches the Etag presented by the client, to save bandwith
     const char* match = apr_table_get(r->headers_in, "If-None-Match");
     apr_table_setn(r->headers_out, "ETag", apr_pstrdup(r->pool, c_str(etag)));
     if (match != NULL  && etag == match) {
+
         r->status = HTTP_NOT_MODIFIED;
         return OK;
     }

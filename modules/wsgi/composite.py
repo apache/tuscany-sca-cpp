@@ -24,6 +24,7 @@ from wsgiref.util import request_uri
 from wsgiref.util import FileWrapper
 from os import environ
 import os.path
+import hashlib
 from sys import stderr, argv
 from util import *
 from scdl import *
@@ -53,28 +54,59 @@ def requestBody(e):
     l = int(e.get("CONTENT_LENGTH", "0"))
     return (i.read(l),)
 
-# Return an HTTP status
-def errstatus(st):
-    return (st, "<html><head><title>"+ st + "</title></head><body><h1>" + st[4:] + "</h1></body></html>")
+def requestIfNoneMatch(e):
+    return e.get("HTTP_IF_NONE_MATCH", "");
 
-def status(st, b):
-    if st == 200:
-        return cons("200 OK", b)
-    if st == 404:
-        return errstatus("404 Not Found")
+# Hash a list of strings into an MD5 signature
+def md5update(md, s):
+    if isNil(s):
+        return md.hexdigest()
+    md.update(car(s))
+    return md5update(md, cdr(s))
+
+def md5(s):
+    return md5update(hashlib.md5(), s)
+
+# Return an HTTP success result
+def result(e, r, st, h = (), b = None):
     if st == 201:
-        return cons("201 Created", b)
-    return errstatus("500 Internal Server Error")
+        r("201 Created", list(h))
+        return ()
 
-# Return an HTTP result
-def result(r, st, h = (), b = ()):
-    s = status(st, b)
-    r(car(s), list(h))
-    return cdr(s)
+    if st == 200:
+        if b == None:
+            r("200 OK", list(h))
+            return ()
 
-# Send a file
-def fileresult(f):
-    return tuple(FileWrapper(open("htdocs" + f)))
+        # Handle etags to minimize bandwidth usage
+        md = md5(b)
+        if (md == requestIfNoneMatch(e)):
+            r("304 Not Modified", list((("Etag", md), ("Expires", "Tue, 01 Jan 1980 00:00:00 GMT"))))
+            return ()
+        r("200 OK", list(h + (("Etag", md), ("Expires", "Tue, 01 Jan 1980 00:00:00 GMT"))))
+        return b
+
+    return failure(e, r, 500)
+
+# Return an HTTP failure result
+def failure(e, r, st):
+    s = "404 Not Found" if st == 404 else str(st) + " " + "Internal Server Error"
+    r(s, list((("Content-type", "text/html"),)))
+    return ("<html><head><title>"+ s + "</title></head><body><h1>" + s[4:] + "</h1></body></html>",)
+
+# Return a static file
+def fileresult(e, r, ct, f):
+
+    # Read the file, return a 404 if not found
+    p = "htdocs" + f
+    if not os.path.exists(p):
+        return failure(e, r, 404)
+    c = tuple(FileWrapper(open("htdocs" + f)))
+
+    # Handle etags to minimize bandwidth usage
+    md = md5(c)
+    r("200 OK", list((("Content-type", ct),("Etag", md))))
+    return c
 
 # Converts the args received in a POST to a list of key value pairs
 def postArgs(a):
@@ -90,23 +122,23 @@ def application(e, r):
 
     # Debug hook
     if fpath == "/debug":
-        return result(r, 200, (("Content-type", "text/plain"),), ("Debug",))
+        return result(e, r, 200, (("Content-type", "text/plain"),), ("Debug",))
 
     # Serve static files
     if m == "GET":
         if fpath.endswith(".html"):
-            return result(r, 200, (("Content-type", "text/html"),), fileresult(fpath))
+            return fileresult(e, r, "text/html", fpath)
         if fpath.endswith(".js"):
-            return result(r, 200, (("Content-type", "application/x-javascript"),), fileresult(fpath))
+            return fileresult(e, r, "application/x-javascript", fpath)
         if fpath.endswith(".png"):
-            return result(r, 200, (("Content-type", "image/png"),), fileresult(fpath))
+            return fileresult(e, r, "image/png", fpath)
 
     # Find the requested component
     path = tokens(fpath)
     uc = uriToComponent(path, comps)
     uri = car(uc)
     if uri == None:
-        return result(r, 404)
+        return failure(e, r, 404)
     comp = cadr(uc)
 
     # Call the requested component function
@@ -116,12 +148,12 @@ def application(e, r):
         
         # Write returned content-type / content pair
         if not isinstance(cadr(v), basestring):
-            return result(r, 200, (("Content-type", car(v)),), cadr(v))
+            return result(e, r, 200, (("Content-type", car(v)),), cadr(v))
         
         # Write an ATOM feed or entry
         if isNil(id):
-            return result(r, 200, (("Content-type", "application/atom+xml;type=feed"),), writeATOMFeed(feedValuesToElements(v)))
-        return result(r, 200, (("Content-type", "application/atom+xml;type=entry"),), writeATOMEntry(entryValuesToElements(v)))
+            return result(e, r, 200, (("Content-type", "application/atom+xml;type=feed"),), writeATOMFeed(feedValuesToElements(v)))
+        return result(e, r, 200, (("Content-type", "application/atom+xml;type=entry"),), writeATOMEntry(entryValuesToElements(v)))
 
     if m == "POST":
         ct = requestContentType(e)
@@ -134,32 +166,32 @@ def application(e, r):
             func = funcName(cadr(assoc("'method", args)))
             params = cadr(assoc("'params", args))
             v = comp(func, *params)
-            return result(r, 200, (("Content-type", "application/json-rpc"),), jsonResult(jid, v))
+            return result(e, r, 200, (("Content-type", "application/json-rpc"),), jsonResult(jid, v))
 
         # Handle an ATOM entry POST
         if ct.find("application/atom+xml") != -1:
             ae = entryValue(readATOMEntry(requestBody(e)))
             v = comp("post", id, ae)
             if isNil(v):
-                return result(r, 500)
-            return result(r, 201, (("Location", request_uri(e) + "/" + "/".join(v)),))
-        return result(r, 500)
+                return failure(e, r, 500)
+            return result(e, r, 201, (("Location", request_uri(e) + "/" + "/".join(v)),))
+        return failure(e, r, 500)
     
     if m == "PUT":
         # Handle an ATOM entry PUT
         ae = entryValue(readATOMEntry(requestBody(e)))
         v = comp("put", id, ae)
         if v == False:
-            return result(r, 404)
-        return result(r, 200)
+            return failure(e, r, 404)
+        return result(e, r, 200)
     
     if m == "DELETE":
         v = comp("delete", id)
         if v == False:
-            return result(r, 404)
-        return result(r, 200)
+            return failure(e, r, 404)
+        return result(e, r, 200)
     
-    return result(r, 500)
+    return failure(e, r, 500)
 
 # Return the WSGI server type
 def serverType(e):
