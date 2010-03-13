@@ -1,6 +1,31 @@
 Apache Tuscany SCA Runtime
 ==========================
 
+Automated installation from scratch on Ubuntu Server 9.10
+=========================================================
+
+Tuscany provides an automated install script for Ubuntu Server 9.10. You can
+even start with a fresh Ubuntu Server 9.10 system, the ubuntu-install script
+takes care of all the download, build and installation steps for you.
+
+The required system tools and libraries are downloaded and installed using
+apt-get. The Tuscany project and its dependencies (Apache HTTPD server, Apache
+Axis2/C etc) are downloaded, built and installed in the current directory.
+
+To run the automated installation:
+mkdir tuscany
+cd tuscany
+wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu-install
+sudo ./ubuntu-install
+
+That's all you need to do to build and install the Tuscany SCA runtime on
+Ubuntu Server 9.10.
+
+
+For manual build and install steps on other systems or if you need to customize
+your installation, read on...
+
+
 Building
 ========
 
@@ -8,7 +33,7 @@ The Tuscany SCA Linux build uses the GNU Autotools tool chain.
 
 First install the following development tools:
 autoconf-2.64
-automake-1.4
+automake-1.11
 g++-4.4.1
 libtool-2.2.6
 doxygen-1.6.1
@@ -21,19 +46,19 @@ memcached-1.2.8 (http://memcached.org/)
 Then install the following development dependencies:
 
 Apache HTTP server and APR:
-httpd-2.2-13 (http://httpd.apache.org/)
-libapr-1-0.3.8 (http://apr.apache.org/)
-libaprutil-1-0.3.9
+httpd-2.2-15 (http://httpd.apache.org/)
+with included libapr and libaprutil
+built with OpenSSL libssl-0.9.8g
 
 XML:
 libxml2-2.7.5 (http://xmlsoft.org/)
 
 CURL:
-libcurl4-7.19.5 (http://curl.haxx.se)
+libcurl4-openssl-7.19.5
 
 JSON:
 Mozilla SpiderMonkey libmozjs (http://www.mozilla.org/js/spidermonkey/)
-included in xulrunner-1.9.1.7
+included in xulrunner-1.9.1.8
 
 Optional dependencies:
 
@@ -42,9 +67,11 @@ Apache Axis2/C 1.6.0 (http://ws.apache.org/axis2/c/)
 
 Queueing:
 Apache Qpid/C++ 0.6 (http://qpid.apache.org/)
+built with libuuid-2.16, libboost-1.38.1, libboost-program-options-1.38.1 and
+libboost-filesystem-1.38.1
 
 Python:
-Python 2.6 (http://www.python.org/)
+Python 2.6.4 (http://www.python.org/)
 
 Java:
 a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
@@ -52,6 +79,7 @@ a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
 XMPP Chat:
 Libstrophe (http://code.stanziq.com/cgit/strophe/libstrophe/)
 build it from source at git://code.stanziq.com//libstrophe
+requires libcheck-0.9.6
 
 XMPP Chat tests: Apache Vysper (http://mina.apache.org/)
 build from source at http://svn.apache.org/repos/asf/mina/sandbox/vysper/trunk
@@ -103,8 +131,8 @@ dependencies installed under $HOME:
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
 --with-libcurl=/usr --with-libxml2=/usr \
---with-js-include=/usr/include/xulrunner-1.9.1.7/unstable \
---with-js-lib=/usr/lib/xulrunner-1.9.1.7 \
+--with-js-include=/usr/include/xulrunner-1.9.1.8/unstable \
+--with-js-lib=/usr/lib/xulrunner-1.9.1.8 \
 --enable-threads \
 --enable-python --with-python=/usr \
 --enable-java --with-java=/usr/lib/jvm/default-java \
@@ -151,18 +179,13 @@ make install
 export PATH=$HOME/httpd-2-2.13-bin/bin:$PATH
 
 Apache Axis2/C:
-./configure --enable-libxml2 --enable-openssl --enable-libcurl \
+./configure --enable-libxml2 --enable-openssl \
 --with-apache2=$HOME/httpd-2.2.13-bin/include --prefix=$HOME/axis2c-1.6.0-bin
 make
 make install
 export AXIS2C_HOME=$HOME/axis2c-1.6.0-bin
 
 Apache Qpid/C++:
-git clone git://git.apache.org/qpid.git
-cd qpid
-git checkout -b 0.6-release origin/0.6-release
-cd qpid/cpp
-./bootstrap
 ./configure --prefix=$HOME/qpidc-0.6-bin
 make
 make install

@@ -20,6 +20,10 @@
 # Compute a classpath for running a Vysper server
 here=`readlink -f $0`; here=`dirname $here`
 
-vysper_prefix=`cat $here/vysper.prefix`
+if [ "$1" = "" ]; then
+  vysper_prefix=`cat $here/vysper.prefix`
+else
+  vysper_prefix=$1
+fi
 jars=`find $vysper_prefix/lib -name "*.jar" | awk '{ printf "%s:", $1 }'`
 echo "$vysper_prefix/config:$jars"

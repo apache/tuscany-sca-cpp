@@ -42,7 +42,7 @@ noinst_PROGRAMS = xmpp-test client-test
 
 if WANT_VYSPER
 
-AM_JAVACFLAGS = -cp `${top_builddir}/components/chat/vysper-classpath`${JAVAROOT}
+AM_JAVACFLAGS = -cp `${top_builddir}/components/chat/vysper-classpath ${VYSPER_PREFIX}`${JAVAROOT}
 
 noinst_JAVA = test/*.java
 

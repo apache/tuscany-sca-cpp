@@ -17,6 +17,17 @@
 
 if WANT_PYTHON
 
+noinst_DATA = target.stamp 
+
+target.stamp: app.yaml *.py *.composite $(top_builddir)/modules/wsgi/*.py htdocs/*
+	mkdir -p target
+	cp app.yaml *.py *.composite `ls $(top_builddir)/modules/wsgi/*.py | grep -v "\-test"` target
+	cp -R htdocs target/htdocs
+	touch target.stamp
+
+clean-local:
+	rm -rf target.stamp target
+
 #TESTS = server-test
 
 endif

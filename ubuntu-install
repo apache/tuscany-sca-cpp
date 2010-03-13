@@ -1,0 +1,88 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Install the required system tools and libraries, the runtime dependencies and
+# the Tuscany SCA runtime on a fresh Ubuntu Server 9.10 system
+pwd=`pwd`
+
+# Install GIT and core dev tools
+sudo apt-get -y install git-core
+sudo apt-get -y install autoconf automake g++ libtool
+
+# Install the required binaries
+sudo apt-get -y install curl memcached
+
+# Build Apache HTTP server
+sudo apt-get -y install libssl-dev
+curl -o httpd-2.2.15.tar.gz http://www.apache.org/dist/httpd/httpd-2.2.15.tar.gz
+tar xzf httpd-2.2.15.tar.gz
+cd httpd-2.2.15
+./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr --with-mpm=prefork --prefix=$pwd/httpd-2.2.15-bin
+make
+make install
+cd ..
+
+# Build Apache Axis2/C
+sudo apt-get -y libxml2-dev
+curl -o axis2c-src-1.6.0.tar.gz http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
+tar xzf axis2c-src-1.6.0.tar.gz
+cd axis2c-src-1.6.0
+./configure --enable-libxml2 --enable-openssl --with-apache2=$pwd/httpd-2.2.15-bin/include --prefix=$pwd/axis2c-1.6.0-bin
+make
+make install
+cd ..
+
+# Build Apache Qpid/C++
+sudo apt-get -y libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
+sudo -s ln -s /usr/lib/libboost_program_options-mt.so /usr/lib/libboost_program_options.so
+sudo -s ln -s /usr/lib/libboost_filesystem-mt.so /usr/lib/libboost_filesystem.so
+curl -o qpid-cpp-0.6.tar.gz http://qpid.apache.org/dist/qpid-0.6rc7/qpid-cpp-0.6rc7.tar.gz
+cd qpidc-0.6
+./configure --prefix=$pwd/qpidc-0.6-bin
+make
+make install
+cd ..
+
+# Build Libstrophe
+sudo apt-get -y install check
+git clone git://code.stanziq.com/libstrophe
+cd libstrophe
+git submodule init
+git submodule update
+aclocal
+automake --add-missing --foreign --copy
+autoconf
+./configure --prefix=$pwd/libstrophe-bin
+make
+make install
+cd ..
+
+# Install Apache Vysper
+sudo apt-get -y install openjdk-6-jdk
+curl -o vysper-1.0.0-bin.tar.gz 'http://hudson.zones.apache.org/hudson/view/Vysper/job/vysper-trunk-jdk1.6-ubuntu/org.apache.vysper$vysper/lastSuccessfulBuild/artifact/org.apache.vysper/vysper/1.0.0-SNAPSHOT/vysper-1.0.0-SNAPSHOT-bin.tar.gz'
+tar xzf vysper-1.0.0-bin.tar.gz
+
+# Build Tuscany SCA
+sudo apt-get -y install libcurl4-openssl-dev xulrunner-dev
+git clone git://git.apache.org/tuscany-sca-cpp
+cd tuscany-sca-cpp
+cp etc/git-exclude .git/info/exclude
+./bootstrap
+./configure --prefix=$pwd/tuscany-sca-cpp-bin --with-apr=$pwd/httpd-2.2.15-bin --with-httpd=$pwd/httpd-2.2.15-bin --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-axis2c=$pwd/axis2c-1.6.0-bin --enable-queue --with-qpidc=$pwd/qpidc-0.6-bin --enable-chat --with-libstrophe=$pwd/libstrophe --with-vysper=$pwd/vysper-1.0.0
+make
+make install
+

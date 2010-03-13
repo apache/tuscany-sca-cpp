@@ -22,6 +22,17 @@ INCLUDES = -I${PYTHON_INCLUDE}
 mod_SCRIPTS = composite.py scdl.py util.py elemutil.py xmlutil.py atomutil.py jsonutil.py wsgi-start wsgi-stop
 moddir = $(prefix)/modules/wsgi
 
+noinst_DATA = target.stamp
+
+target.stamp: app.yaml *.py *.composite htdocs/*
+	mkdir -p target
+	cp app.yaml *.py *.composite target
+	cp -R htdocs target/htdocs
+	touch target.stamp
+
+clean-local:
+	rm -rf target.stamp target
+
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
