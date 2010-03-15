@@ -67,22 +67,25 @@ doxygen
 *.jar
 *.prefix
 index.yaml
+core
 
 # Specific ignores
 kernel-test
 string-test
 mem-test
+parallel-test
 xml-test
 xsd-test
 atom-test
 eval-test
 eval-shell
 json-test
-cache-test
 client-test
 memcache-test
 curl-test
 scdl-test
+python-test
+python-shell
 jni-test
 java-test
 java-shell

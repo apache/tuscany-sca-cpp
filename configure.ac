@@ -84,21 +84,25 @@ AC_SUBST(LIBXML2_LIB)
 
 # Configure path to libmozjs includes and lib.
 AC_MSG_CHECKING([for js-include])
+xulrunner=`ls /usr/include | grep "xulrunner" | tail -1`
+if test "$xulrunner" = ""; then
+  xulrunner="xulrunner-1.9.1.8"
+fi
 AC_ARG_WITH([js-include], [AC_HELP_STRING([--with-js-include=PATH], [path to installed SpiderMonkey include dir
-             [default=/usr/include/xulrunner-1.9.1.8/unstable]])], [
+             [default=/usr/include/$xulrunner/unstable]])], [
   JS_INCLUDE="${withval}"
   AC_MSG_RESULT("${withval}")
 ], [
-  JS_INCLUDE="/usr/include/xulrunner-1.9.1.8/unstable"
-  AC_MSG_RESULT(/usr/include/xulrunner-1.9.1.8/unstable)
+  JS_INCLUDE="/usr/include/$xulrunner/unstable"
+  AC_MSG_RESULT(/usr/include/$xulrunner/unstable)
 ])
 AC_MSG_CHECKING([for js-lib])
-AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib/xulrunner-1.9.1.8]])], [
+AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib/$xulrunner]])], [
   JS_LIB="${withval}"
   AC_MSG_RESULT("${withval}")
 ], [
-  JS_LIB="/usr/lib/xulrunner-1.9.1.8"
-  AC_MSG_RESULT(/usr/lib/xulrunner-1.9.1.8)
+  JS_LIB="/usr/lib/$xulrunner"
+  AC_MSG_RESULT(/usr/lib/$xulrunner)
 ])
 AC_SUBST(JS_INCLUDE)
 AC_SUBST(JS_LIB)

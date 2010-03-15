@@ -17,48 +17,88 @@
 
 # Install the required system tools and libraries, the runtime dependencies and
 # the Tuscany SCA runtime on a fresh Ubuntu Server 9.10 system
-pwd=`pwd`
+
+# Display commands as they are executed
+set -x
+
+# Build and install in the current directory
+build=`pwd`
 
 # Install GIT and core dev tools
-sudo apt-get -y install git-core
-sudo apt-get -y install autoconf automake g++ libtool
+sudo apt-get -y install git-core autoconf automake g++ libtool
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 
 # Install the required binaries
 sudo apt-get -y install curl memcached
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 
 # Build Apache HTTP server
 sudo apt-get -y install libssl-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 curl -o httpd-2.2.15.tar.gz http://www.apache.org/dist/httpd/httpd-2.2.15.tar.gz
 tar xzf httpd-2.2.15.tar.gz
 cd httpd-2.2.15
-./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr --with-mpm=prefork --prefix=$pwd/httpd-2.2.15-bin
+./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr --with-mpm=prefork --prefix=$build/httpd-2.2.15-bin
 make
 make install
-cd ..
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
 
 # Build Apache Axis2/C
-sudo apt-get -y libxml2-dev
+sudo apt-get -y install libxml2-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 curl -o axis2c-src-1.6.0.tar.gz http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
 tar xzf axis2c-src-1.6.0.tar.gz
 cd axis2c-src-1.6.0
-./configure --enable-libxml2 --enable-openssl --with-apache2=$pwd/httpd-2.2.15-bin/include --prefix=$pwd/axis2c-1.6.0-bin
+./configure --enable-libxml2 --enable-openssl --with-apache2=$build/httpd-2.2.15-bin/include --prefix=$build/axis2c-1.6.0-bin
 make
 make install
-cd ..
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+export AXIS2C_HOME=$build/axis2c-1.6.0-bin
+cd samples
+./configure --prefix=$build/axis2c-1.6.0-bin --with-axis2=$build/axis2c-1.6.0-bin/include/axis2-1.6.0
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
 
 # Build Apache Qpid/C++
-sudo apt-get -y libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
+sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 sudo -s ln -s /usr/lib/libboost_program_options-mt.so /usr/lib/libboost_program_options.so
 sudo -s ln -s /usr/lib/libboost_filesystem-mt.so /usr/lib/libboost_filesystem.so
 curl -o qpid-cpp-0.6.tar.gz http://qpid.apache.org/dist/qpid-0.6rc7/qpid-cpp-0.6rc7.tar.gz
+tar xzf qpid-cpp-0.6.tar.gz
 cd qpidc-0.6
-./configure --prefix=$pwd/qpidc-0.6-bin
+./configure --prefix=$build/qpidc-0.6-bin
 make
 make install
-cd ..
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
 
 # Build Libstrophe
 sudo apt-get -y install check
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 git clone git://code.stanziq.com/libstrophe
 cd libstrophe
 git submodule init
@@ -66,23 +106,36 @@ git submodule update
 aclocal
 automake --add-missing --foreign --copy
 autoconf
-./configure --prefix=$pwd/libstrophe-bin
+./configure --prefix=$build/libstrophe-bin
 make
 make install
-cd ..
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
 
 # Install Apache Vysper
 sudo apt-get -y install openjdk-6-jdk
 curl -o vysper-1.0.0-bin.tar.gz 'http://hudson.zones.apache.org/hudson/view/Vysper/job/vysper-trunk-jdk1.6-ubuntu/org.apache.vysper$vysper/lastSuccessfulBuild/artifact/org.apache.vysper/vysper/1.0.0-SNAPSHOT/vysper-1.0.0-SNAPSHOT-bin.tar.gz'
 tar xzf vysper-1.0.0-bin.tar.gz
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 
 # Build Tuscany SCA
 sudo apt-get -y install libcurl4-openssl-dev xulrunner-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 git clone git://git.apache.org/tuscany-sca-cpp
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
-./configure --prefix=$pwd/tuscany-sca-cpp-bin --with-apr=$pwd/httpd-2.2.15-bin --with-httpd=$pwd/httpd-2.2.15-bin --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-axis2c=$pwd/axis2c-1.6.0-bin --enable-queue --with-qpidc=$pwd/qpidc-0.6-bin --enable-chat --with-libstrophe=$pwd/libstrophe --with-vysper=$pwd/vysper-1.0.0
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe --with-vysper=$build/vysper-1.0.0
 make
 make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
 

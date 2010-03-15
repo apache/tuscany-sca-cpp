@@ -1,12 +1,12 @@
 Apache Tuscany SCA Runtime
 ==========================
 
-Automated installation from scratch on Ubuntu Server 9.10
-=========================================================
+Automated installation from scratch on Ubuntu 9.10
+==================================================
 
-Tuscany provides an automated install script for Ubuntu Server 9.10. You can
-even start with a fresh Ubuntu Server 9.10 system, the ubuntu-install script
-takes care of all the download, build and installation steps for you.
+Tuscany provides an automated install script for Ubuntu 9.10. You can start
+with a fresh Ubuntu Server 9.10 system, the ubuntu-install script takes care
+of all the download, build and installation steps for you.
 
 The required system tools and libraries are downloaded and installed using
 apt-get. The Tuscany project and its dependencies (Apache HTTPD server, Apache
@@ -16,10 +16,12 @@ To run the automated installation:
 mkdir tuscany
 cd tuscany
 wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu-install
-sudo ./ubuntu-install
+./ubuntu-install
+
+The script will display each command as it's executed.
 
 That's all you need to do to build and install the Tuscany SCA runtime on
-Ubuntu Server 9.10.
+Ubuntu 9.10.
 
 
 For manual build and install steps on other systems or if you need to customize
