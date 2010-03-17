@@ -15,7 +15,8 @@ Axis2/C etc) are downloaded, built and installed in the current directory.
 To run the automated installation:
 mkdir tuscany
 cd tuscany
-wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu-install
+wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install
+chmod +x ./ubuntu-install
 ./ubuntu-install
 
 The script will display each command as it's executed.
@@ -43,6 +44,10 @@ doxygen-1.6.1
 Install the following binaries:
 curl-7.19.5 (http://curl.haxx.se)
 memcached-1.2.8 (http://memcached.org/)
+
+Optional:
+privbind-1.1 (http://manpages.ubuntu.com/manpages/karmic/man1/privbind.1.html)
+will help you bind to port 80 for example without running as root
 
 
 Then install the following development dependencies:
