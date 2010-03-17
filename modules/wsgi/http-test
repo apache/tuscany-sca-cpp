@@ -17,19 +17,23 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Run Python util test cases
+uri=$1
+if [ "$uri" = "" ]; then
+    uri="http://localhost:8090"
+fi
+
+# Setup
+mkdir -p tmp
+./wsgi-start 8090 2>/dev/null
+sleep 2
+
+# Test JSON-RPC
 here=`readlink -f $0`; here=`dirname $here`
 python_prefix=`cat $here/../python/python.prefix`
-
-$python_prefix/bin/python xml-test.py
+$python_prefix/bin/python http-test.py
 rc=$?
-if [ "$rc" = "0" ]; then
-    $python_prefix/bin/python atom-test.py
-    rc=$?
-fi
-if [ "$rc" = "0" ]; then
-    $python_prefix/bin/python json-test.py
-    rc=$?
-fi
 
+# Cleanup
+./wsgi-stop 8090
+sleep 2
 return $rc

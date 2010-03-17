@@ -37,6 +37,6 @@ client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 noinst_PROGRAMS = client-test
-TESTS = util-test wsgi-test wiring-test server-test
+TESTS = util-test wsgi-test wiring-test http-test server-test
 
 endif

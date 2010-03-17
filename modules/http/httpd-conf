@@ -28,6 +28,8 @@ mkdir -p $root/logs
 mkdir -p $root/conf
 cat >$root/conf/httpd.conf <<EOF
 ErrorLog $root/logs/error_log
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" combined
+CustomLog $root/logs/access_log combined
 ServerName http://127.0.0.1:$port
 Listen $port
 DocumentRoot $htdocs

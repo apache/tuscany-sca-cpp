@@ -124,13 +124,13 @@ def jsonResult(id, val):
 # Convert a JSON-RPC result to a value
 def jsonResultValue(s):
     jsres = readJSON(s)
-    rval = cadr(elementsToValues(jsres))
-    val = cadr(rval)
+    res = elementsToValues(jsres)
+    val = cadr(assoc("'result", res))
     if isList(val) and not isJSArray(val):
         return (val,)
     return val
 
-# Return a portalbe function name from a JSON-RPC function name
+# Return a portable function name from a JSON-RPC function name
 def funcName(f):
     if len(f) > 7 and f.find("system.") == 0:
         return f[7:]

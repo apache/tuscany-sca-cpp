@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!/usr/bin/python
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,19 +16,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Run Python util test cases
-here=`readlink -f $0`; here=`dirname $here`
-python_prefix=`cat $here/../python/python.prefix`
+# HTTP client proxy functions
 
-$python_prefix/bin/python xml-test.py
-rc=$?
-if [ "$rc" = "0" ]; then
-    $python_prefix/bin/python atom-test.py
-    rc=$?
-fi
-if [ "$rc" = "0" ]; then
-    $python_prefix/bin/python json-test.py
-    rc=$?
-fi
+from httputil import *
 
-return $rc
+def testClient():
+    c = mkclient("http://localhost:8090/wsgi")
+    assert c("echo", "Hey") == "Hey"
+    return True
+
+if __name__ == "__main__":
+    print "Testing..."
+    testClient()
+    print "OK"
+

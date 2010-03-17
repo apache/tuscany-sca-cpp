@@ -19,6 +19,7 @@
 
 from xml.etree.cElementTree import iterparse
 from util import *
+from httputil import *
 
 # Element tree utility functions, used to parse SCDL documents
 def parse(file):
@@ -142,6 +143,13 @@ def uriToComponent(u, comps):
         return (m, car(comps))
     return uriToComponent(u, cdr(comps))
 
+# Evaluate a reference, return a proxy to the resolved component or an
+# HTTP client configured with the reference target uri
+def evalReference(r, comps):
+    if not r.startswith("http://"):
+        return nameToComponent(r, comps)
+    return mkclient(r)
+
 # Evaluate a component, resolve its implementation and references
 def evalComponent(comp, comps):
     comp.mod = __import__(comp.impl)
@@ -149,7 +157,7 @@ def evalComponent(comp, comps):
     # Make a list of proxy lambda functions for the component references and properties
     # A reference proxy is the callable lambda function of the component wired to the reference
     # A property proxy is a lambda function that returns the value of the property
-    comp.proxies = tuple(map(lambda r: nameToComponent(r, comps), comp.refs)) + tuple(map(lambda v: lambda: v, comp.props))
+    comp.proxies = tuple(map(lambda r: evalReference(r, comps), comp.refs)) + tuple(map(lambda v: lambda: v, comp.props))
 
     return comp
 
