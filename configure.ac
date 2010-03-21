@@ -558,7 +558,7 @@ if test "${want_chat}" = "true"; then
   AC_DEFINE([WANT_CHAT], 1, [enable Chat component])
 
   # Check for Vysper
-  AC_CHECK_FILE([${VYSPER_PREFIX}/lib/vysper-core-1.0.0-SNAPSHOT.jar], [want_vysper=true], [])
+  AC_CHECK_FILE([${VYSPER_PREFIX}/lib/vysper-core-0.5.jar], [want_vysper=true], [])
   if test "${want_vysper}" = "true"; then
     AM_CONDITIONAL([WANT_VYSPER], true)
   else

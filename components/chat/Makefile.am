@@ -47,6 +47,8 @@ AM_JAVACFLAGS = -cp `${top_builddir}/components/chat/vysper-classpath ${VYSPER_P
 noinst_JAVA = test/*.java
 
 CLEANFILES = test/*.class
+
+TESTS = echo-test 
 endif
 
 endif

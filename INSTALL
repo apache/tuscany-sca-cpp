@@ -84,13 +84,11 @@ Java:
 a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
 
 XMPP Chat:
+Apache Vysper 0.5 (http://mina.apache.org/)
+
 Libstrophe (http://code.stanziq.com/cgit/strophe/libstrophe/)
 build it from source at git://code.stanziq.com//libstrophe
 requires libcheck-0.9.6
-
-XMPP Chat tests: Apache Vysper (http://mina.apache.org/)
-build from source at http://svn.apache.org/repos/asf/mina/sandbox/vysper/trunk
-or download a build from http://hudson.zones.apache.org/hudson/view/Vysper
 
 
 To configure the Tuscany SCA build do this:

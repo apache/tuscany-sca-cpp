@@ -22,4 +22,4 @@ here=`readlink -f $0`; here=`dirname $here`
 
 java_prefix=`cat $here/../../modules/java/java.prefix`
 mkdir -p $here/tmp/logs
-${java_prefix}/bin/java -cp `$here/vysper-classpath`$here test.TestVysperServer 2>&1 1>>$here/tmp/logs/vysper.log &
+${java_prefix}/jre/bin/java -cp `$here/vysper-classpath`$here test.TestVysperServer 2>&1 1>>$here/tmp/logs/vysper.log &
