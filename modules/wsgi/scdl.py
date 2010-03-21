@@ -77,7 +77,7 @@ def binding(e):
         return ()
     if match(car(e), "start", "binding.") == False:
         return binding(cdr(e))
-    return tokens(att(car(e))["uri"])
+    return att(car(e))["uri"]
 
 # Return the list of references under a SCDL component element
 def references(e):
@@ -86,7 +86,7 @@ def references(e):
     if match(car(e), "start", "reference") == False:
         return references(cdr(e))
     if "target" in att(car(e)):
-        return cons(att(car(e))["target"], references(cdr(e)))
+        return cons(car(tokens(att(car(e))["target"])), references(cdr(e)))
     return cons(binding(e), references(cdr(e)))
 
 # Return the list of properties under a SCDL component element
@@ -103,7 +103,7 @@ def services(e):
         return ()
     if match(car(e), "start", "service") == False:
         return services(cdr(e))
-    return cons(binding(e), services(cdr(e)))
+    return cons(tokens(binding(e)), services(cdr(e)))
 
 # Return the name attribute of a SCDL element
 def name(e):

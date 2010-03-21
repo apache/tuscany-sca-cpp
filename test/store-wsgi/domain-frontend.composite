@@ -27,9 +27,15 @@
         <service name="Widget">
             <t:binding.http uri="store"/>
         </service>
-        <reference name="catalog" target="http://sca-store-backend/catalog"/>
-        <reference name="shoppingCart" target="http://sca-store-backend/shoppingCart"/>
-        <reference name="shoppingTotal" target="http://sca-store-backend/shoppingCart"/>
+        <reference name="catalog">
+            <t:binding.http uri="http://sca-store-backend/catalog"/>
+        </reference>
+        <reference name="shoppingCart">
+            <t:binding.http uri="http://sca-store-backend/shoppingCart"/>
+        </reference>
+        <reference name="shoppingTotal">
+            <t:binding.http uri="http://sca-store-backend/shoppingCart"/>
+        </reference>
     </component>
     
     <component name="Catalog">
@@ -49,7 +55,9 @@
         <service name="Total">
             <t:binding.jsonrpc uri="total"/>
         </service>        
-        <reference name="cache" target="http://sca-store-backend.appspot.com/cache"/>
+        <reference name="cache">
+            <t:binding.http uri="http://sca-store-backend.appspot.com/cache"/>
+        </reference>
     </component>
     
     <component name="CurrencyConverter">
