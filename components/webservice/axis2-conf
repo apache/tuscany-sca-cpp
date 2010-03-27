@@ -42,7 +42,8 @@ cp $here/axis2.xml $root/axis2c/axis2.xml
 
 # Configure HTTPD Axis2 module
 cat >>$root/conf/httpd.conf <<EOF
-SetEnv AXIS2C_HOME $root/axis2c
+# Support for Web Services
+SCASetEnv AXIS2C_HOME $root/axis2c
 LoadModule axis2_module $root/axis2c/lib/libmod_axis2.so
 Axis2RepoPath $root/axis2c
 Axis2LogFile $root/axis2c/logs/mod_axis2.log
@@ -50,4 +51,5 @@ Axis2LogLevel debug
 <Location /axis2>
     SetHandler axis2_module
 </Location>
+
 EOF

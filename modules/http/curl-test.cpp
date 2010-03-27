@@ -32,6 +32,8 @@
 namespace tuscany {
 namespace http {
 
+string testURI = "http://localhost:8090";
+
 ostream* curlWriter(const string& s, ostream* os) {
     (*os) << s;
     return os;
@@ -41,13 +43,13 @@ const bool testGet() {
     CURLSession ch;
     {
         ostringstream os;
-        const failable<list<ostream*> > r = get<ostream*>(curlWriter, &os, "http://localhost:8090", ch);
+        const failable<list<ostream*> > r = get<ostream*>(curlWriter, &os, testURI, ch);
         assert(hasContent(r));
         assert(contains(str(os), "HTTP/1.1 200 OK"));
         assert(contains(str(os), "It works"));
     }
     {
-        const failable<value> r = getcontent("http://localhost:8090", ch);
+        const failable<value> r = getcontent(testURI, ch);
         assert(hasContent(r));
         assert(contains(car(reverse(list<value>(content(r)))), "It works"));
     }
@@ -59,7 +61,7 @@ struct getLoop {
     getLoop(CURLSession& ch) : ch(ch) {
     }
     const bool operator()() const {
-        const failable<value> r = getcontent("http://localhost:8090", ch);
+        const failable<value> r = getcontent(testURI, ch);
         assert(hasContent(r));
         assert(contains(car(reverse(list<value>(content(r)))), "It works"));
         return true;
@@ -78,6 +80,7 @@ const bool testGetPerf() {
 
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
+    tuscany::http::testURI = tuscany::string("http://") + tuscany::http::hostname() + ":8090";
 
     tuscany::http::testGet();
     tuscany::http::testGetPerf();

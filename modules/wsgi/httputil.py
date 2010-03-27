@@ -18,9 +18,10 @@
 
 # HTTP client proxy functions
 
-from httplib import HTTPConnection
+from httplib import HTTPConnection, HTTPSConnection
 from urlparse import urlparse
 from StringIO import StringIO
+import os.path
 from util import *
 from atomutil import *
 from jsonutil import *
@@ -37,9 +38,20 @@ class client:
         req = StringIO()
         writeStrings(jsonRequest(id, func, args), req)
         id = id + 1
-        c = HTTPConnection(self.uri.hostname, 80 if self.uri.port == None else self.uri.port)
+        print "HTTP connect:", self.uri.hostname
+        c = None
+        if self.uri.scheme == "https":
+            if os.path.exists("server.key"):
+                c = HTTPSConnection(self.uri.hostname, 443 if self.uri.port == None else self.uri.port, "server.key", "server.crt")
+            else:
+                c = HTTPSConnection(self.uri.hostname, 443 if self.uri.port == None else self.uri.port)
+        else:
+            c = HTTPConnection(self.uri.hostname, 80 if self.uri.port == None else self.uri.port)
+        print "HTTP connection:", c
         c.request("POST", self.uri.path, req.getvalue(), {"Content-type": "application/json-rpc"})
         res = c.getresponse()
+        print "HTTP response:", res
+        print "HTTP status:", res.status
         if res.status != 200:
             return None
         return jsonResultValue((res.read(),))

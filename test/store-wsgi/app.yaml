@@ -44,7 +44,9 @@ handlers:
 - url: /(.*\.(html|png))
   static_files: htdocs/\1
   upload: htdocs/(.*\.(html|png))
+  secure: always
 
 - url: /.*
   script: composite.py
+  secure: always
 

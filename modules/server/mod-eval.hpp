@@ -53,15 +53,17 @@ namespace modeval {
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : s(s), home(""), wiringServerName(""), contributionPath(""), compositeName("") {
+    ServerConf(server_rec* s) : s(s), wiringServerName(""), contributionPath(""), compositeName(""), ca(""), cert(""), key("") {
     }
 
     const server_rec* s;
     lambda<value(const list<value>&)> lifecycle;
-    string home;
     string wiringServerName;
     string contributionPath;
     string compositeName;
+    string ca;
+    string cert;
+    string key;
     list<value> implementations;
     list<value> implTree;
 };
@@ -253,7 +255,7 @@ int handler(request_rec *r) {
     const list<value> path(pathValues(r->uri));
     const list<value> impl(assoctree<value>(cadr(path), sc.implTree));
     if (isNil(impl))
-        return HTTP_NOT_FOUND;
+        return httpd::reportStatus(mkfailure<int>(string("Couldn't find component implementation")));
 
     // Handle HTTP method
     const lambda<value(const list<value>&)> l(cadr<value>(impl));
@@ -273,14 +275,14 @@ int handler(request_rec *r) {
 /**
  * Convert a list of component references to a list of HTTP proxy lambdas.
  */
-const value mkrefProxy(const value& ref, const string& base) {
-    return lambda<value(const list<value>&)>(http::proxy(base + string(scdl::name(ref))));
+const value mkrefProxy(const value& ref, const string& base, const string& ca, const string& cert, const string& key) {
+    return lambda<value(const list<value>&)>(http::proxy(base + string(scdl::name(ref)), ca, cert, key));
 }
 
-const list<value> refProxies(const list<value>& refs, const string& base) {
+const list<value> refProxies(const list<value>& refs, const string& base, const string& ca, const string& cert, const string& key) {
     if (isNil(refs))
         return refs;
-    return cons(mkrefProxy(car(refs), base), refProxies(cdr(refs), base));
+    return cons(mkrefProxy(car(refs), base, ca, cert, key), refProxies(cdr(refs), base, ca, cert, key));
 }
 
 /**
@@ -323,7 +325,7 @@ const value evalComponent(ServerConf& sc, server_rec& server, const value& comp)
             << "/references/" << string(scdl::name(comp)) << "/";
     else
         base << sc.wiringServerName << "/references/" << string(scdl::name(comp)) << "/";
-    const list<value> rpx(refProxies(scdl::references(comp), str(base)));
+    const list<value> rpx(refProxies(scdl::references(comp), str(base), sc.ca, sc.cert, sc.key));
 
     // Convert component proxies to configured proxy lambdas
     const list<value> ppx(propProxies(scdl::properties(comp)));
@@ -440,6 +442,21 @@ apr_status_t serverCleanup(void* v) {
  * Called after all the configuration commands have been run.
  * Process the server configuration and configure the deployed components.
  */
+const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
+    if (s == NULL)
+        return OK;
+    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
+    sc.wiringServerName = mainsc.wiringServerName;
+    sc.contributionPath = mainsc.contributionPath;
+    sc.compositeName = mainsc.compositeName;
+    sc.ca = mainsc.ca;
+    sc.cert = mainsc.cert;
+    sc.key = mainsc.key;
+    sc.implementations = mainsc.implementations;
+    sc.implTree = mainsc.implTree;
+    return postConfigMerge(mainsc, s->next);
+}
+
 int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
     extern const value applyLifecycle(const list<value>&);
 
@@ -483,7 +500,8 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     // Register a cleanup callback, called when the server is stopped or restarted
     apr_pool_pre_cleanup_register(p, (void*)&sc, serverCleanup);
 
-    return OK;
+    // Merge the config into any virtual hosts
+    return postConfigMerge(sc, s->next);
 }
 
 /**
@@ -511,12 +529,6 @@ void childInit(apr_pool_t* p, server_rec* s) {
 /**
  * Configuration commands.
  */
-const char* confHome(cmd_parms *cmd, unused void *c, const char *arg) {
-    gc_scoped_pool pool(cmd->pool);
-    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
-    sc.home = arg;
-    return NULL;
-}
 const char* confWiringServerName(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
     ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
@@ -535,6 +547,24 @@ const char* confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     sc.compositeName = arg;
     return NULL;
 }
+const char* confCAFile(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
+    sc.ca = arg;
+    return NULL;
+}
+const char* confCertFile(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
+    sc.cert = arg;
+    return NULL;
+}
+const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_eval);
+    sc.key = arg;
+    return NULL;
+}
 
 const char* confEnv(unused cmd_parms *cmd, unused void *c, const char *name, const char *value) {
     gc_scoped_pool pool(cmd->pool);
@@ -546,11 +576,13 @@ const char* confEnv(unused cmd_parms *cmd, unused void *c, const char *name, con
  * HTTP server module declaration.
  */
 const command_rec commands[] = {
-    AP_INIT_TAKE1("TuscanyHome", (const char*(*)())confHome, NULL, RSRC_CONF, "Tuscany home directory"),
     AP_INIT_TAKE1("SCAWiringServerName", (const char*(*)())confWiringServerName, NULL, RSRC_CONF, "SCA wiring server name"),
     AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, RSRC_CONF, "SCA contribution location"),
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
-    AP_INIT_TAKE12("SetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),
+    AP_INIT_TAKE12("SCASetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),
+    AP_INIT_TAKE1("SCASSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "SSL CA certificate file"),
+    AP_INIT_TAKE1("SCASSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "SSL certificate file"),
+    AP_INIT_TAKE1("SCASSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "SSL certificate key file"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 

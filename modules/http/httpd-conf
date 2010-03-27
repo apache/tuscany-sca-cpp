@@ -17,22 +17,77 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Generate a minimal httpd.conf
+# Generate a minimal HTTPD configuration
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 port=$2
 htdocs=`readlink -f $3`
+host=`hostname -f`
+user=`id -un`
+group=`id -gn`
 
 mkdir -p $root
 mkdir -p $root/logs
 mkdir -p $root/conf
 cat >$root/conf/httpd.conf <<EOF
+# Apache HTTPD server configuration
+
+# Set server name
+ServerName $host
+
+# Basic security precautions
+User $user
+Group $group
+ServerSignature Off
+ServerTokens Prod
+Timeout 45
+LimitRequestBody 1048576
+HostNameLookups Off
+
+# Logging
 ErrorLog $root/logs/error_log
 LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" combined
 CustomLog $root/logs/access_log combined
-ServerName http://127.0.0.1:$port
-Listen $port
-DocumentRoot $htdocs
+LogLevel warn
+
+# Configure Mime types
+DefaultType text/plain
 TypesConfig $here/conf/mime.types
+
+# Set document root
+DocumentRoot $htdocs
+DirectoryIndex index.html
+
+# Protect server files
+<Directory />
+Options None
+AllowOverride None
+Order deny,allow  
+Deny from all
+</Directory>
+<FilesMatch "^\.ht">
+Order deny,allow
+Deny from all
+Satisfy Any
+</FilesMatch>
+
+# Allow access to document root
+<Directory "$htdocs">
+Options +SymLinksIfOwnerMatch
+Allow from all
+</Directory>
+
+# Allow access to service components
+<Location />
+Options +SymLinksIfOwnerMatch
+Allow from all
+</Location>
+
+# Setup HTTP virtual host
+Listen $port
+<VirtualHost _default_:$port>
+
+</VirtualHost>
+
 EOF
 

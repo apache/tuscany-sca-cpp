@@ -146,9 +146,9 @@ def uriToComponent(u, comps):
 # Evaluate a reference, return a proxy to the resolved component or an
 # HTTP client configured with the reference target uri
 def evalReference(r, comps):
-    if not r.startswith("http://"):
-        return nameToComponent(r, comps)
-    return mkclient(r)
+    if r.startswith("http://") or r.startswith("https://"):
+        return mkclient(r)
+    return nameToComponent(r, comps)
 
 # Evaluate a component, resolve its implementation and references
 def evalComponent(comp, comps):

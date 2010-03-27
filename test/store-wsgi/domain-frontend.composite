@@ -28,13 +28,13 @@
             <t:binding.http uri="store"/>
         </service>
         <reference name="catalog">
-            <t:binding.http uri="http://sca-store-backend/catalog"/>
+            <t:binding.http uri="https://sca-store-backend.appspot.com/catalog"/>
         </reference>
         <reference name="shoppingCart">
-            <t:binding.http uri="http://sca-store-backend/shoppingCart"/>
+            <t:binding.http uri="https://sca-store-backend.appspot.com/shoppingCart"/>
         </reference>
         <reference name="shoppingTotal">
-            <t:binding.http uri="http://sca-store-backend/shoppingCart"/>
+            <t:binding.http uri="https://sca-store-backend.appspot.com/shoppingCart"/>
         </reference>
     </component>
     
@@ -56,7 +56,7 @@
             <t:binding.jsonrpc uri="total"/>
         </service>        
         <reference name="cache">
-            <t:binding.http uri="http://sca-store-backend.appspot.com/cache"/>
+            <t:binding.http uri="https://sca-store-backend.appspot.com/cache"/>
         </reference>
     </component>
     

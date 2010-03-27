@@ -57,10 +57,10 @@ public:
  */
 class CURLSession {
 public:
-    CURLSession() : h(curl_easy_init()), owner(true) {
+    CURLSession(const string& ca = "", const string& cert = "", const string& key = "") : h(curl_easy_init()), owner(true), ca(ca), cert(cert), key(key) {
     }
 
-    CURLSession(const CURLSession& c) : h(c.h), owner(false) {
+    CURLSession(const CURLSession& c) : h(c.h), owner(false), ca(c.ca), cert(c.cert), key(c.key) {
     }
 
     ~CURLSession() {
@@ -76,6 +76,11 @@ private:
     const bool owner;
 
     friend CURL* handle(const CURLSession& c);
+
+public:
+    const string ca;
+    const string cert;
+    const string key;
 };
 
 /**
@@ -163,7 +168,29 @@ template<typename R> const failable<list<R> > apply(const list<list<string> >& h
     CURLWriteContext<R> wcx(reduce, initial);
     curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, (size_t (*)(void*, size_t, size_t, void*))(writeCallback<R>));
     curl_easy_setopt(ch, CURLOPT_WRITEDATA, &wcx);
+
+    // Setup protocol options
     curl_easy_setopt(ch, CURLOPT_TCP_NODELAY, true);
+    curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_easy_setopt(ch, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
+
+    // Setup SSL options
+    if (cs.ca != "") {
+        debug(cs.ca, "http::apply::ca");
+        curl_easy_setopt(ch, CURLOPT_CAINFO, c_str(cs.ca));
+        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYHOST, 2);
+    }
+    if (cs.cert != "") {
+        debug(cs.cert, "http::apply::cert");
+        curl_easy_setopt(ch, CURLOPT_SSLCERT, c_str(cs.cert));
+        curl_easy_setopt(ch, CURLOPT_SSLCERTTYPE, "PEM");
+    }
+    if (cs.key != "") {
+        debug(cs.key, "http::apply::key");
+        curl_easy_setopt(ch, CURLOPT_SSLKEY, c_str(cs.key));
+        curl_easy_setopt(ch, CURLOPT_SSLKEYTYPE, "PEM");
+    }
 
     // Set the request headers
     curl_slist* hl = headers(NULL, car(hdr));
@@ -378,14 +405,24 @@ const failable<value, string> del(const string& url, const CURLSession& ch) {
 }
 
 /**
+ * Returns the current host name.
+ */
+const string hostname() {
+    char h[256];
+    if (gethostname(h, 256) == -1)
+        return "localhost";
+    return h;
+}
+
+/**
  * HTTP client proxy function.
  */
 struct proxy {
-    proxy(const string& uri) : uri(uri) {
+    proxy(const string& uri, const string& ca, const string& cert, const string& key) : uri(uri), ca(ca), cert(cert), key(key) {
     }
 
     const value operator()(const list<value>& args) const {
-        CURLSession cs;
+        CURLSession cs(ca, cert, key);
         failable<value> val = evalExpr(args, uri, cs);
         if (!hasContent(val))
             return value();
@@ -393,6 +430,9 @@ struct proxy {
     }
 
     const string uri;
+    const string ca;
+    const string cert;
+    const string key;
 };
 
 }

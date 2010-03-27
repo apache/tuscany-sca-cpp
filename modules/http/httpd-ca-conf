@@ -1,0 +1,92 @@
+#!/bin/sh
+
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Generate a test certificate of authority
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
+host=$2
+if [ "$host" = "" ]; then
+    host=`hostname -f`
+fi
+
+# Don't regenerate the certificate if it already exists
+if [ -f $root/conf/ca.crt ]; then
+    return 0
+fi
+
+# Generate openssl configuration
+mkdir -p $root/conf
+umask 0007
+cat >$root/conf/openssl-ca.conf <<EOF
+[ req ]
+default_bits = 1024
+encrypt_key = no
+prompt = no
+distinguished_name = req_distinguished_name
+x509_extensions = v3_ca
+
+[ req_distinguished_name ]
+C = US
+ST = CA
+L = San Francisco
+O = Test Authority Organization
+OU = Test Authority Unit
+CN = $host
+emailAddress = root@$host
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints = CA:true
+
+[ca]
+default_ca = ca_default
+
+[ca_default]
+certificate = $root/conf/ca.crt
+private_key = $root/conf/ca.key
+serial = $root/conf/ca-serial
+database = $root/conf/ca-database
+new_certs_dir = $root/conf
+default_md = sha1
+email_in_dn = no
+default_days = 365
+default_crl_days = 30
+policy = policy_any
+copy_extensions = none
+
+[ policy_any ]
+countryName = supplied
+stateOrProvinceName = optional
+localityName = optional
+organizationName = optional
+organizationalUnitName = optional
+commonName = supplied
+emailAddress = optional
+
+EOF
+
+rm -rf $root/conf/*.pem
+rm -f $root/conf/ca-database
+echo 1000 > $root/conf/ca-serial
+touch $root/conf/ca-database
+
+# Generate the certificate of authority
+openssl req -new -x509 -config $root/conf/openssl-ca.conf -out $root/conf/ca.crt -keyout $root/conf/ca.key
+

@@ -17,7 +17,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+../../modules/http/httpd-ca-conf tmp
+../../modules/http/httpd-cert-conf tmp
 ../../modules/http/httpd-conf tmp 8090 htdocs
+../../modules/http/httpd-ssl-conf tmp 8090
 ../../modules/server/server-conf tmp
 ../../modules/python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

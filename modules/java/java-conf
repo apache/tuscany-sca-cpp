@@ -22,6 +22,8 @@ here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 
 cat >>$root/conf/httpd.conf <<EOF
+# Support for Java SCA components
 LoadModule mod_tuscany_eval $here/libmod_tuscany_java.so
+
 EOF
 

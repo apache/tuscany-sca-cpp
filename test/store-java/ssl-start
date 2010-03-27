@@ -17,15 +17,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+../../modules/http/httpd-ca-conf tmp
+../../modules/http/httpd-cert-conf tmp
 ../../modules/http/httpd-conf tmp 8090 htdocs
+../../modules/http/httpd-ssl-conf tmp 8090
 ../../modules/server/server-conf tmp
-../../modules/python/python-conf tmp
+../../modules/java/java-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 # Configure SCA Composite
 SCAContribution `pwd`/
 SCAComposite store.composite
 
 EOF
+
+export CLASSPATH=`pwd`/../../modules/java/libmod-tuscany-java-1.0.jar:`pwd`
 
 ../../components/cache/memcached-start
 ../../modules/http/httpd-start tmp

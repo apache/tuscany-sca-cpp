@@ -21,9 +21,18 @@
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 
-mkdir -p $root
-mkdir -p $root/logs
-mkdir -p $root/conf
+host=`cat $root/conf/httpd.conf | grep ServerName | awk '{ print $2 }'`
+port=`cat $root/conf/httpd.conf | grep Listen | tail -1 | awk '{ print $2 }'`
+ssl=`cat $root/conf/httpd.conf | grep "SSLEngine" | awk '{ print $2 }'`
+if [ "$ssl" = "on" ]; then
+    protocol="https"
+else
+    protocol="http"
+fi
+
 cat >>$root/conf/httpd.conf <<EOF
+# Support for SCA component wiring
 LoadModule mod_tuscany_wiring $here/libmod_tuscany_wiring.so
+SCAWiringServerName $protocol://$host:$port
+
 EOF

@@ -1,0 +1,99 @@
+#!/bin/sh
+
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Generate a minimal HTTPD SSL configuration
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
+port=$2
+if [ "$port" != "80" ]; then
+    sslport=`echo "$port + 443" | bc`
+else
+    sslport="443"
+fi
+host=`hostname -f`
+
+# Extract organization name from our CA certificate
+org=`openssl x509 -noout -subject -nameopt multiline -in $root/conf/ca.crt | grep organizationName | awk -F "= " '{ print $2 }'`
+
+# Generate HTTPD configuration
+cat >>$root/conf/httpd.conf <<EOF
+# Redirect all HTTP traffic to HTTPS
+<Location />
+RewriteEngine on
+RewriteCond %{SERVER_PORT} !^$sslport$  
+RewriteRule .* https://%{SERVER_NAME}:$sslport%{REQUEST_URI} [R,L]
+</Location>
+
+# Setup SSL support
+AddType application/x-x509-ca-cert .crt
+AddType application/x-pkcs7-crl .crl
+SSLPassPhraseDialog  builtin
+SSLSessionCache "shmcb:$root/logs/ssl_scache(512000)"
+SSLSessionCacheTimeout 300
+SSLMutex "file:$root/logs/ssl_mutex"
+SSLRandomSeed startup builtin
+SSLRandomSeed connect builtin
+
+# HTTPS virtual host
+Listen $sslport
+<VirtualHost _default_:$sslport>
+
+# Enable SSL
+SSLEngine on
+SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+SSLCACertificateFile "$root/conf/ca.crt"
+SSLCertificateFile "$root/conf/server.crt"
+SSLCertificateKeyFile "$root/conf/server.key"
+BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
+CustomLog "$root/logs/ssl_request_log" "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+
+# Require clients to present either:
+# a certificate signed with our CA certificate of authority
+# or a userid + password for HTTP basic authentication
+<Location />
+Satisfy Any
+
+SSLVerifyClient optional
+SSLVerifyDepth 1
+SSLOptions +FakeBasicAuth
+SSLRequireSSL
+SSLRequire %{SSL_CIPHER_USEKEYSIZE} >= 128 and %{SSL_CLIENT_I_DN_O} == "$org"
+
+AuthType Basic
+AuthName "$host"
+AuthUserFile "$root/conf/httpd.passwd"
+Require valid-user
+</location>
+
+</VirtualHost>
+
+# Configure SCA SSL support
+SCASSLCACertificateFile "$root/conf/ca.crt"
+SCASSLCertificateFile "$root/conf/server.crt"
+SCASSLCertificateKeyFile "$root/conf/server.key"
+
+EOF
+
+# Create test users for HTTP basic authentication
+htpasswd -bc $root/conf/httpd.passwd admin admin 2>/dev/null
+htpasswd -b $root/conf/httpd.passwd user password 2>/dev/null
+htpasswd -b $root/conf/httpd.passwd test test 2>/dev/null
+htpasswd -b $root/conf/httpd.passwd foo foo 2>/dev/null
+htpasswd -b $root/conf/httpd.passwd bar bar 2>/dev/null
+
