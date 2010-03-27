@@ -135,7 +135,7 @@ dependencies installed under $HOME:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
---with-libcurl=/usr --with-libxml2=/usr \
+--with-libcurl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
 --with-js-include=/usr/include/xulrunner-1.9.1.8/unstable \
 --with-js-lib=/usr/lib/xulrunner-1.9.1.8 \
 --enable-threads \
@@ -144,7 +144,7 @@ dependencies installed under $HOME:
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
 --enable-queue --with-qpidc=$HOME/qpidc-0.6-bin \
 --enable-chat --with-libstrophe=$HOME/libstrophe \
---with-vysper=$HOME/vysper-1.0.0 \
+--with-vysper=$HOME/vysper-0.5 \
 --enable-maintainer-mode
 
 
@@ -192,6 +192,11 @@ export AXIS2C_HOME=$HOME/axis2c-1.6.0-bin
 
 Apache Qpid/C++:
 ./configure --prefix=$HOME/qpidc-0.6-bin
+make
+make install
+
+CURL
+./configure --prefix=$HOME/qpid-7.19.5-bin
 make
 make install
 

@@ -125,8 +125,20 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 
+# Build Libcurl
+curl -o curl-7.19.5.tar.gz http://curl.haxx.se/download/curl-7.19.5.tar.gz
+tar xzf curl-7.19.5.tar.gz
+cd curl-7.19.5
+./configure --prefix=$build/curl-7.19.5-bin
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
 # Build Tuscany SCA
-sudo apt-get -y install libcurl4-openssl-dev xulrunner-dev
+sudo apt-get -y install xulrunner-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -134,7 +146,7 @@ git clone git://git.apache.org/tuscany-sca-cpp
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe --with-vysper=$build/vysper-0.5
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-libcurl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe --with-vysper=$build/vysper-0.5
 make
 make install
 if [ "$?" != "0" ]; then

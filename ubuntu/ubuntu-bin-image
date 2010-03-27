@@ -59,7 +59,7 @@ sudo apt-get -y install openjdk-6-jdk
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install libcurl4-openssl-dev xulrunner-dev
+sudo apt-get -y install xulrunner-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
