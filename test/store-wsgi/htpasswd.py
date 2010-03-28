@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,16 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-./httpd-conf tmp localhost 8090 htdocs
-./httpd-start tmp
-sleep 2
+# Configure the user and password used for HTTP basic authentication
+user = "foo"
+passwd = "foo"
 
-# Test
-./curl-test
-rc=$?
-
-# Cleanup
-./httpd-stop tmp
-sleep 2
-return $rc

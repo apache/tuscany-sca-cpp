@@ -17,7 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-conf tmp 8090 htdocs
+../../modules/http/httpd-conf tmp localhost 8090 htdocs
 ../../modules/server/server-conf tmp
 ../../modules/java/java-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

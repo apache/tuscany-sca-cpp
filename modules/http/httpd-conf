@@ -20,9 +20,9 @@
 # Generate a minimal HTTPD configuration
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
-port=$2
-htdocs=`readlink -f $3`
-host=`hostname -f`
+host=$2
+port=$3
+htdocs=`readlink -f $4`
 user=`id -un`
 group=`id -gn`
 

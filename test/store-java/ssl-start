@@ -17,10 +17,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-ca-conf tmp
-../../modules/http/httpd-cert-conf tmp
-../../modules/http/httpd-conf tmp 8090 htdocs
-../../modules/http/httpd-ssl-conf tmp 8090
+../../modules/http/httpd-ca-conf tmp localhost
+../../modules/http/httpd-cert-conf tmp localhost
+../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/http/httpd-ssl-conf tmp localhost 8453 htdocs
 ../../modules/server/server-conf tmp
 ../../modules/java/java-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

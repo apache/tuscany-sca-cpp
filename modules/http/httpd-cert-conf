@@ -21,9 +21,6 @@
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 host=$2
-if [ "$host" = "" ]; then
-    host=`hostname -f`
-fi
 
 # Don't regenerate the certificate if it already exists
 if [ -f $root/conf/server.crt ]; then

@@ -22,6 +22,9 @@ from httplib import HTTPConnection, HTTPSConnection
 from urlparse import urlparse
 from StringIO import StringIO
 import os.path
+from string import strip
+from base64 import b64encode
+from sys import stderr
 from util import *
 from atomutil import *
 from jsonutil import *
@@ -34,24 +37,35 @@ class client:
         self.uri = urlparse(uri)
 
     def __call__(self, func, *args):
-        global id
-        req = StringIO()
-        writeStrings(jsonRequest(id, func, args), req)
-        id = id + 1
-        print "HTTP connect:", self.uri.hostname
+
+        # Connect to the configured URI
+        print >> stderr, "Client POST", self.uri.geturl()
         c = None
+        headers = {"Content-type": "application/json-rpc"}
         if self.uri.scheme == "https":
+
+            # With HTTPS, use a cerficate or HTTP basic authentication
             if os.path.exists("server.key"):
                 c = HTTPSConnection(self.uri.hostname, 443 if self.uri.port == None else self.uri.port, "server.key", "server.crt")
             else:
                 c = HTTPSConnection(self.uri.hostname, 443 if self.uri.port == None else self.uri.port)
+
+                # For HTTP basic authentication the user and password are
+                # provided by htpasswd.py
+                import htpasswd
+                auth =  'Basic ' + b64encode(htpasswd.user + ':' + htpasswd.passwd)
+                headers["Authorization"] = auth
         else:
             c = HTTPConnection(self.uri.hostname, 80 if self.uri.port == None else self.uri.port)
-        print "HTTP connection:", c
-        c.request("POST", self.uri.path, req.getvalue(), {"Content-type": "application/json-rpc"})
+
+        # POST the JSON-RPC request
+        global id
+        req = StringIO()
+        writeStrings(jsonRequest(id, func, args), req)
+        id = id + 1
+        c.request("POST", self.uri.path, req.getvalue(), headers)
         res = c.getresponse()
-        print "HTTP response:", res
-        print "HTTP status:", res.status
+        print >> stderr, "Client status", res.status
         if res.status != 200:
             return None
         return jsonResultValue((res.read(),))

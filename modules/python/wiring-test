@@ -20,7 +20,7 @@
 echo "Testing..."
 
 # Setup
-../http/httpd-conf tmp 8090 ../server/htdocs
+../http/httpd-conf tmp localhost 8090 ../server/htdocs
 ../server/server-conf tmp
 ./python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

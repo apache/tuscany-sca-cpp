@@ -20,7 +20,7 @@
 echo "Testing..."
 
 # Setup
-./httpd-conf tmp 8090 htdocs
+./httpd-conf tmp localhost 8090 htdocs
 ./httpd-start tmp
 sleep 2
 
