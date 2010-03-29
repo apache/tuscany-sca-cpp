@@ -35,10 +35,6 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
-AC_PATH_PROG(MEMCACHED, memcached, , ${PATH})
-if test "${MEMCACHED}" = ""; then
-  AC_MSG_ERROR([could not find memcached])
-fi
 
 # Check for running on Darwin.
 AC_MSG_CHECKING([if running on Darwin])
