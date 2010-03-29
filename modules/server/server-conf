@@ -26,6 +26,15 @@ port=`cat $root/conf/httpd.conf | grep Listen | tail -1 | awk '{ print $2 }'`
 ssl=`cat $root/conf/httpd.conf | grep "SSLEngine" | awk '{ print $2 }'`
 if [ "$ssl" = "on" ]; then
     protocol="https"
+
+cat >>$root/conf/httpd.conf <<EOF
+# Configure SCA SSL support
+SCASSLCACertificateFile "$root/conf/ca.crt"
+SCASSLCertificateFile "$root/conf/server.crt"
+SCASSLCertificateKeyFile "$root/conf/server.key"
+
+EOF
+
 else
     protocol="http"
 fi

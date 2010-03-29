@@ -84,11 +84,6 @@ Require valid-user
 
 </VirtualHost>
 
-# Configure SCA SSL support
-SCASSLCACertificateFile "$root/conf/ca.crt"
-SCASSLCertificateFile "$root/conf/server.crt"
-SCASSLCertificateKeyFile "$root/conf/server.key"
-
 EOF
 
 # Create test users for HTTP basic authentication
