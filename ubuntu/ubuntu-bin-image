@@ -35,7 +35,7 @@ sudo apt-get -y install git-core autoconf automake g++ libtool
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install curl memcached privbind
+sudo apt-get -y install curl privbind
 if [ "$?" != "0" ]; then
     exit $?
 fi

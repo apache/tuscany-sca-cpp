@@ -50,7 +50,7 @@ EOF
 # Generate a certificate request
 openssl req -new -config $root/conf/openssl-cert.conf -out $root/conf/server-req.crt -keyout $root/conf/server.key
 
-# Generate a certificate, signed with our test certificate of authority
+# Generate a certificate, signed with our test certification authority certificate
 openssl ca -batch -config $root/conf/openssl-ca.conf -out $root/conf/server.crt -infiles $root/conf/server-req.crt
 
 # Export it to PKCS12 format, that's the format Web browsers want to import

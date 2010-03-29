@@ -18,4 +18,8 @@
 #  under the License.
 
 # Start memcached
-memcached -d -l 127.0.0.1 -m 4 -p 11211
+here=`readlink -f $0`; here=`dirname $here`
+
+memcached_prefix=`cat $here/memcached.prefix`
+$memcached_prefix/bin/memcached -d -l 127.0.0.1 -m 4 -p 11211
+

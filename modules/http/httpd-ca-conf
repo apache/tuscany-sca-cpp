@@ -17,7 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Generate a test certificate of authority
+# Generate a test certification authority certificate
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 host=$2
@@ -84,6 +84,6 @@ rm -f $root/conf/ca-database
 echo 1000 > $root/conf/ca-serial
 touch $root/conf/ca-database
 
-# Generate the certificate of authority
+# Generate the certification authority certificate
 openssl req -new -x509 -config $root/conf/openssl-ca.conf -out $root/conf/ca.crt -keyout $root/conf/ca.key
 

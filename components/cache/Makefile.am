@@ -18,6 +18,10 @@
 comp_SCRIPTS = memcached-start memcached-stop
 compdir=$(prefix)/components/cache
 
+comp_DATA = memcached.prefix
+memcached.prefix: $(top_builddir)/config.status
+	echo ${MEMCACHED_PREFIX} >memcached.prefix
+
 comp_LTLIBRARIES = libmemcache.la
 libmemcache_la_SOURCES = memcache.cpp
 

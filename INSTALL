@@ -43,11 +43,7 @@ doxygen-1.6.1
 
 Install the following binaries:
 curl-7.19.5 (http://curl.haxx.se)
-memcached-1.2.8 (http://memcached.org/)
-
-Optional:
 privbind-1.1 (http://manpages.ubuntu.com/manpages/karmic/man1/privbind.1.html)
-will help you bind to port 80 for example without running as root
 
 
 Then install the following development dependencies:
@@ -56,6 +52,10 @@ Apache HTTP server and APR:
 httpd-2.2-15 (http://httpd.apache.org/)
 with included libapr and libaprutil
 built with OpenSSL libssl-0.9.8g
+
+Memcached:
+memcached-1.4.4 (http://memcached.org/)
+built with libevent-1.4.11
 
 XML:
 libxml2-2.7.5 (http://xmlsoft.org/)
@@ -135,6 +135,7 @@ dependencies installed under $HOME:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
+--with-memcached=$HOME/memcached-1.4.4-bin \
 --with-libcurl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
 --with-js-include=/usr/include/xulrunner-1.9.1.8/unstable \
 --with-js-lib=/usr/lib/xulrunner-1.9.1.8 \
@@ -182,6 +183,11 @@ Apache HTTPD, including APR, using the HTTP prefork MPM (recommended):
 make
 make install
 export PATH=$HOME/httpd-2-2.13-bin/bin:$PATH
+
+Memcached:
+./configure --prefix=$HOME/memcached-1.4.4-bin
+make
+make install
 
 Apache Axis2/C:
 ./configure --enable-libxml2 --enable-openssl \

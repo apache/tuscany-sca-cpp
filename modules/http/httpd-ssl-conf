@@ -65,7 +65,7 @@ CustomLog $root/logs/ssl_access_log sslcombined
 LogLevel warn
 
 # Require clients to present either:
-# a certificate signed with our CA certificate of authority
+# a certificate signed with our certification authority certificate
 # or a userid + password for HTTP basic authentication
 <Location />
 Satisfy Any

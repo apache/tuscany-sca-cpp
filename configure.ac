@@ -54,7 +54,7 @@ else
   AM_CONDITIONAL([DARWIN], false)
 fi
 
-# Configure path to LIBCURL includes and lib.
+# Configure path to libcurl includes and lib.
 AC_MSG_CHECKING([for libcurl])
 AC_ARG_WITH([libcurl], [AC_HELP_STRING([--with-libcurl=PATH], [path to installed libcurl [default=/usr]])], [
   LIBCURL_INCLUDE="${withval}/include"
@@ -133,6 +133,17 @@ AC_ARG_WITH([httpd], [AC_HELP_STRING([--with-httpd=PATH], [path to installed Apa
 ])
 AC_SUBST(HTTPD_PREFIX)
 AC_SUBST(HTTPD_INCLUDE)
+
+# Configure path to memcached.
+AC_MSG_CHECKING([for memcached])
+AC_ARG_WITH([memcached], [AC_HELP_STRING([--with-memcached=PATH], [path to installed memcached [default=/usr]])], [
+  MEMCACHED_PREFIX="${withval}"
+  AC_MSG_RESULT("${withval}")
+], [
+  MEMCACHED_PREFIX="/usr"
+  AC_MSG_RESULT(/usr)
+])
+AC_SUBST(MEMCACHED_PREFIX)
 
 # Configure TUSCANY_SCACPP path variable.
 TUSCANY_SCACPP=`echo "${TUSCANY_SCACPP}"`
