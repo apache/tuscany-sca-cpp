@@ -18,13 +18,15 @@
 #  under the License.
 
 echo "Testing..."
+here=`readlink -f $0`; here=`dirname $here`
+curl_prefix=`cat $here/../../modules/http/curl.prefix`
 
 # Setup
 ./start
 sleep 2
 
 # Test HTTP GET
-curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
+$curl_prefix/bin/curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
 diff tmp/store.html htdocs/store.html
 rc=$?
 

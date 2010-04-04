@@ -18,6 +18,8 @@
 #  under the License.
 
 echo "Testing..."
+here=`readlink -f $0`; here=`dirname $here`
+curl_prefix=`cat $here/../http/curl.prefix`
 
 # Setup
 ../http/httpd-conf tmp localhost 8090 htdocs
@@ -32,37 +34,37 @@ EOF
 sleep 2
 
 # Test HTTP GET
-curl http://localhost:8090/index.html 2>/dev/null >tmp/index.html
+$curl_prefix/bin/curl http://localhost:8090/index.html 2>/dev/null >tmp/index.html
 diff tmp/index.html htdocs/index.html
 rc=$?
 
 # Test ATOMPub
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/ >tmp/feed.xml 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/test/ >tmp/feed.xml 2>/dev/null
     diff tmp/feed.xml htdocs/feed.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/111 >tmp/entry.xml 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/test/111 >tmp/entry.xml 2>/dev/null
     diff tmp/entry.xml htdocs/entry.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/ -X POST -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/test/ -X POST -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/111 -X PUT -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/test/111 -X PUT -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/111 -X DELETE 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/test/111 -X DELETE 2>/dev/null
     rc=$?
 fi
 
 # Test JSON-RPC
 if [ "$rc" = "0" ]; then
-    curl http://localhost:8090/test/ -X POST -H "Content-type: application/json-rpc" --data @htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/test/ -X POST -H "Content-type: application/json-rpc" --data @htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
     diff tmp/json-result.txt htdocs/json-result.txt
     rc=$?
 fi

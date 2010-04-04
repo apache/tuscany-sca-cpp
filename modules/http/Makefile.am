@@ -23,10 +23,12 @@ mod_SCRIPTS = httpd-conf httpd-start httpd-stop httpd-restart
 curl_test_SOURCES = curl-test.cpp
 curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-prefix_DATA = httpd.prefix
+prefix_DATA = httpd.prefix curl.prefix
 prefixdir=$(prefix)/modules/http
 httpd.prefix: $(top_builddir)/config.status
 	echo ${HTTPD_PREFIX} >httpd.prefix
+curl.prefix: $(top_builddir)/config.status
+	echo ${CURL_PREFIX} >curl.prefix
 
 noinst_PROGRAMS = curl-test
 TESTS = httpd-test http-test
