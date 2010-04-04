@@ -42,7 +42,7 @@ libtool-2.2.6
 doxygen-1.6.1
 
 Install the following binaries:
-curl-7.19.5 (http://curl.haxx.se)
+curl-7-19-5
 privbind-1.1 (http://manpages.ubuntu.com/manpages/karmic/man1/privbind.1.html)
 
 
@@ -58,14 +58,17 @@ memcached-1.4.4 (http://memcached.org/)
 built with libevent-1.4.11
 
 XML:
-libxml2-2.7.5 (http://xmlsoft.org/)
+libxml2-2.7.7 (http://xmlsoft.org/)
 
 CURL:
 libcurl4-openssl-7.19.5
 
 JSON:
-Mozilla SpiderMonkey libmozjs (http://www.mozilla.org/js/spidermonkey/)
-included in xulrunner-1.9.1.8
+Mozilla TraceMonkey libmozjs (https://wiki.mozilla.org/JavaScript:TraceMonkey)
+also included in xulrunner-1.9.1.8
+
+Key/value store:
+tinycdb-0.77 (http://www.corpit.ru/mjt/tinycdb.html)
 
 Optional dependencies:
 
@@ -89,6 +92,9 @@ Apache Vysper 0.5 (http://mina.apache.org/)
 Libstrophe (http://code.stanziq.com/cgit/strophe/libstrophe/)
 build it from source at git://code.stanziq.com//libstrophe
 requires libcheck-0.9.6
+
+SQL Database:
+postgresql-9.0 (http://www.postgresql.org/)
 
 
 To configure the Tuscany SCA build do this:
@@ -121,6 +127,9 @@ To build the Chat utility component (requires Libstrophe and optionally Apache
 Vysper if you want to run the tests with a local Vysper XMPP server):
 --enable-chat
 
+To build the SQL Database utility component (requires PostgreSQL):
+--enable-sqldb
+
 To generate doxygen documentation, add:
 --enable-doxygen
 
@@ -136,16 +145,19 @@ dependencies installed under $HOME:
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
 --with-memcached=$HOME/memcached-1.4.4-bin \
---with-libcurl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
+--with-tinycdb=$HOME/tinycdb-0.77-bin \
+--with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
 --with-js-include=/usr/include/xulrunner-1.9.1.8/unstable \
 --with-js-lib=/usr/lib/xulrunner-1.9.1.8 \
 --enable-threads \
 --enable-python --with-python=/usr \
 --enable-java --with-java=/usr/lib/jvm/default-java \
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
+--with-libxml2=$HOME/libxml2-2.7.7-bin \
 --enable-queue --with-qpidc=$HOME/qpidc-0.6-bin \
 --enable-chat --with-libstrophe=$HOME/libstrophe \
 --with-vysper=$HOME/vysper-0.5 \
+--enable-sqldb --with-pgsql=$HOME/postgresql-9.0-bin \
 --enable-maintainer-mode
 
 
@@ -178,31 +190,70 @@ Building dependencies from source
 Here are example build and install steps for some of the dependencies.
 
 Apache HTTPD, including APR, using the HTTP prefork MPM (recommended):
+wget http://www.apache.org/dist/httpd/httpd-2.2.15.tar.gz
+tar xzf httpd-2.2.15.tar.gz
+cd httpd-2.2.15
 ./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr \
---with-mpm=prefork --prefix=$HOME/httpd-2.2.13-bin
+--with-mpm=prefork --prefix=$HOME/httpd-2.2.15-bin
 make
 make install
-export PATH=$HOME/httpd-2-2.13-bin/bin:$PATH
+export PATH=$HOME/httpd-2-2.15-bin/bin:$PATH
 
 Memcached:
+wget http://memcached.googlecode.com/files/memcached-1.4.4.tar.gz
+tar xzf memcached-1.4.4.tar.gz
+cd memcached-1.4.4
 ./configure --prefix=$HOME/memcached-1.4.4-bin
 make
 make install
 
+CURL:
+wget http://curl.haxx.se/download/curl-7.19.5.tar.gz
+tar xzf curl-7.19.5.tar.gz
+cd curl-7.19.5
+./configure --prefix=$HOME/curl-7.19.5-bin
+make
+make install
+
+Libxml2:
+wget ftp://xmlsoft.org/libxml2/libxml2-sources-2.7.7.tar.gz
+tar xzf libxml2-sources-2.7.7.tar.gz
+cd libxml2-2.7.7
+./configure --prefix=$HOME/libxml2-2.7.7-bin 
+make
+make install
+
+TraceMonkey:
+wget http://hg.mozilla.org/tracemonkey/archive/e4364736e170.tar.gz
+tar xzf tracemonkey-e4364736e170.tar.gz
+cd tracemonkey-e4364736e170/js/src
+autoconf2.13
+./configure --prefix=$HOME/tracemonkey-bin
+make
+make install
+
+TinyCDB:
+wget http://www.corpit.ru/mjt/tinycdb/tinycdb_0.77.tar.gz
+tar xzf tinycdb_0.77.tar.gz
+cd tinycdb-0.77
+make
+make prefix=$HOME/tinycdb-0.77-bin install
+
 Apache Axis2/C:
+wget http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
+tar xzf axis2c-src-1.6.0.tar.gz
+cd axis2c-src-1.6.0
 ./configure --enable-libxml2 --enable-openssl \
---with-apache2=$HOME/httpd-2.2.13-bin/include --prefix=$HOME/axis2c-1.6.0-bin
+--with-apache2=$HOME/httpd-2.2.15-bin/include --prefix=$HOME/axis2c-1.6.0-bin
 make
 make install
 export AXIS2C_HOME=$HOME/axis2c-1.6.0-bin
 
 Apache Qpid/C++:
+wget http://www.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
+tar xzf qpid-cpp-0.6.tar.gz
+cd qpidc-0.6
 ./configure --prefix=$HOME/qpidc-0.6-bin
-make
-make install
-
-CURL
-./configure --prefix=$HOME/qpid-7.19.5-bin
 make
 make install
 
@@ -215,6 +266,14 @@ aclocal
 automake --add-missing --foreign --copy
 autoconf
 ./configure --prefix=$HOME/libstrophe-bin
+make
+make install
+
+PostgreSQL:
+wget http://wwwmaster.postgresql.org/download/mirrors-ftp/source/9.0alpha5/postgresql-9.0alpha5.tar.gz
+tar xzf postgresql-9.0alpha5.tar.gz
+cd postgresql-9.0alpha5
+./configure --prefix=$HOME/postgresql-9.0-bin
 make
 make install
 

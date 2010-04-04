@@ -31,11 +31,11 @@ sudo chgrp ubuntu /mnt/tuscany
 cd /mnt/tuscany
 
 # Install system tools and libraries
-sudo apt-get -y install git-core autoconf automake g++ libtool
+sudo apt-get -y install wget git-core autoconf automake g++ libtool
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install curl privbind
+sudo apt-get -y install privbind
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -43,7 +43,7 @@ sudo apt-get -y install libssl-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install pkg-config libxml2-dev
+sudo apt-get -y install pkg-config
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -59,12 +59,8 @@ sudo apt-get -y install openjdk-6-jdk
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install xulrunner-dev
-if [ "$?" != "0" ]; then
-    exit $?
-fi
 
 # Download and install the runtime
-curl -o tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz http://people.apache.org/~jsdelfino/tuscany/test/tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz
+wget http://people.apache.org/~jsdelfino/tuscany/test/tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz
 tar xzf tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz
 

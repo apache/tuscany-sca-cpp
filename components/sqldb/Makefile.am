@@ -15,24 +15,29 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Install the required system tools and libraries, the runtime dependencies and
-# the Tuscany SCA runtime on a fresh Ubuntu Server 9.10 image.
+if WANT_SQLDB
 
-# Display commands as they are executed
-set -x
+INCLUDES = -I${PGSQL_INCLUDE}
 
-# First update the system
-sudo apt-get update
+#comp_SCRIPTS = pgsql-start pgsql-stop
+compdir=$(prefix)/components/sqldb
 
-# Create install directory
-sudo mkdir -p /mnt/tuscany
-sudo chown ubuntu /mnt/tuscany
-sudo chgrp ubuntu /mnt/tuscany
-cd /mnt/tuscany
+comp_DATA = pgsql.prefix
+pgsql.prefix: $(top_builddir)/config.status
+	echo ${PGSQL_PREFIX} >pgsql.prefix
 
-# Download and run install script
-sudo apt-get -y install wget
-wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install
-chmod +x ./ubuntu-install
-./ubuntu-install
+#comp_LTLIBRARIES = libsqldb.la libqueue-listener.la
 
+#libsqldb_la_SOURCES = sqldb.cpp
+#libsqldb_la_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpgsql
+
+#pgsql_test_SOURCES = pgsql-test.cpp
+#pgsql_test_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpgsql
+
+#client_test_SOURCES = client-test.cpp
+#client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+#noinst_PROGRAMS = pgsql-test client-test
+#TESTS = sql-test server-test
+
+endif

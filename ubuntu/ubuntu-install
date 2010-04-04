@@ -24,14 +24,14 @@ set -x
 # Build and install in the current directory
 build=`pwd`
 
-# Install GIT and core dev tools
-sudo apt-get -y install git-core autoconf automake g++ libtool
+# Install core dev tools
+sudo apt-get -y install wget git-core autoconf automake g++ libtool
 if [ "$?" != "0" ]; then
     exit $?
 fi
 
 # Install the required binaries
-sudo apt-get -y install curl privbind
+sudo apt-get -y install privbind
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -41,7 +41,7 @@ sudo apt-get -y install libssl-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-curl -o httpd-2.2.15.tar.gz http://www.apache.org/dist/httpd/httpd-2.2.15.tar.gz
+wget http://www.apache.org/dist/httpd/httpd-2.2.15.tar.gz
 tar xzf httpd-2.2.15.tar.gz
 cd httpd-2.2.15
 ./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr --with-mpm=prefork --prefix=$build/httpd-2.2.15-bin
@@ -57,7 +57,7 @@ sudo apt-get install libevent-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-curl -o memcached-1.4.4.tar.gz http://memcached.googlecode.com/files/memcached-1.4.4.tar.gz
+wget http://memcached.googlecode.com/files/memcached-1.4.4.tar.gz
 tar xzf memcached-1.4.4.tar.gz
 cd memcached-1.4.4
 ./configure --prefix=$build/memcached-1.4.4-bin
@@ -68,12 +68,64 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build Apache Axis2/C
-sudo apt-get -y install pkg-config libxml2-dev
+# Build tinycdb
+wget http://www.corpit.ru/mjt/tinycdb/tinycdb_0.77.tar.gz
+tar xzf tinycdb_0.77.tar.gz
+cd tinycdb-0.77
+make
+make prefix=$build/tinycdb-0.77-bin install
 if [ "$?" != "0" ]; then
     exit $?
 fi
-curl -o axis2c-src-1.6.0.tar.gz http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
+cd $build
+
+# Build Libcurl
+wget http://curl.haxx.se/download/curl-7.19.5.tar.gz
+tar xzf curl-7.19.5.tar.gz
+cd curl-7.19.5
+./configure --prefix=$build/curl-7.19.5-bin
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
+# Build Libxml2
+wget ftp://xmlsoft.org/libxml2/libxml2-sources-2.7.7.tar.gz
+tar xzf libxml2-sources-2.7.7.tar.gz
+cd libxml2-2.7.7
+./configure --prefix=$build/libxml2-2.7.7-bin
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
+# Build TraceMonkey
+sudo apt-get -y install autoconf2.13
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+wget -O tracemonkey-e4364736e170.tar.gz http://hg.mozilla.org/tracemonkey/archive/e4364736e170.tar.gz
+tar xzf tracemonkey-e4364736e170.tar.gz
+cd tracemonkey-e4364736e170/js/src
+autoconf2.13
+./configure --prefix=$build/tracemonkey-bin
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
+# Build Apache Axis2/C
+sudo apt-get -y install pkg-config
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+wget http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
 tar xzf axis2c-src-1.6.0.tar.gz
 cd axis2c-src-1.6.0
 ./configure --enable-libxml2 --enable-openssl --with-apache2=$build/httpd-2.2.15-bin/include --prefix=$build/axis2c-1.6.0-bin
@@ -99,7 +151,7 @@ if [ "$?" != "0" ]; then
 fi
 sudo -s ln -s /usr/lib/libboost_program_options-mt.so /usr/lib/libboost_program_options.so
 sudo -s ln -s /usr/lib/libboost_filesystem-mt.so /usr/lib/libboost_filesystem.so
-curl -o qpid-cpp-0.6.tar.gz http://www.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
+wget http://www.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
 tar xzf qpid-cpp-0.6.tar.gz
 cd qpidc-0.6
 ./configure --prefix=$build/qpidc-0.6-bin
@@ -135,17 +187,21 @@ sudo apt-get -y install openjdk-6-jdk
 if [ "$?" != "0" ]; then
     exit $?
 fi
-curl -o vysper-0.5-bin.tar.gz https://repository.apache.org/content/repositories/orgapachemina-019/org/apache/vysper/vysper/0.5/vysper-0.5-bin.tar.gz
+wget http://www.apache.org/dist/mina/vysper/0.5/vysper-0.5-bin.tar.gz
 tar xzf vysper-0.5-bin.tar.gz
 if [ "$?" != "0" ]; then
     exit $?
 fi
 
-# Build Libcurl
-curl -o curl-7.19.5.tar.gz http://curl.haxx.se/download/curl-7.19.5.tar.gz
-tar xzf curl-7.19.5.tar.gz
-cd curl-7.19.5
-./configure --prefix=$build/curl-7.19.5-bin
+# Build PostgreSQL
+sudo apt-get -y install libreadline-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+wget http://wwwmaster.postgresql.org/redir/198/f/source/9.0alpha4/postgresql-9.0alpha4.tar.gz
+tar xzf postgresql-9.0alpha4.tar.gz
+cd postgresql-9.0alpha4
+./configure --prefix=$build/postgresql-9.0-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -154,19 +210,19 @@ fi
 cd $build
 
 # Build Tuscany SCA
-sudo apt-get -y install xulrunner-dev
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-git clone git://git.apache.org/tuscany-sca-cpp
+#git clone git://git.apache.org/tuscany-sca-cpp
+git clone ssh://delfinoj@10.1.1.58/home/delfinoj/SCAZone/Source/tuscany-sca-cpp/.git
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-libcurl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe --with-vysper=$build/vysper-0.5
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin
 make
 make install
 if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
+
+# Create bin archive
+tar czf tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin axis2c-1.6.0-bin libxml2-2.7.7-bin curl-7.19.5-bin httpd-2.2.15-bin tracemonkey-bin libstrophe-bin memcached-1.4.4-bin tinycdb-0.77-bin qpidc-0.6-bin vysper-0.5 postgresql-9.0-bin
 

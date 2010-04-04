@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_queue_hpp
-#define tuscany_queue_hpp
+#ifndef tuscany_qpid_hpp
+#define tuscany_qpid_hpp
 
 /**
  * AMQP queue access functions.

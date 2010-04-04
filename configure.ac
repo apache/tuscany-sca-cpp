@@ -50,17 +50,20 @@ else
   AM_CONDITIONAL([DARWIN], false)
 fi
 
-# Configure path to libcurl includes and lib.
-AC_MSG_CHECKING([for libcurl])
-AC_ARG_WITH([libcurl], [AC_HELP_STRING([--with-libcurl=PATH], [path to installed libcurl [default=/usr]])], [
+# Configure path to CURL.
+AC_MSG_CHECKING([for curl])
+AC_ARG_WITH([curl], [AC_HELP_STRING([--with-curl=PATH], [path to installed curl [default=/usr]])], [
+  CURL_PREFIX="${withval}"
   LIBCURL_INCLUDE="${withval}/include"
   LIBCURL_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
+  CURL_PREFIX="/usr"
   LIBCURL_INCLUDE="/usr/include"
   LIBCURL_LIB="/usr/lib"
   AC_MSG_RESULT(/usr)
 ])
+AC_SUBST(CURL_PREFIX)
 AC_SUBST(LIBCURL_INCLUDE)
 AC_SUBST(LIBCURL_LIB)
 
@@ -140,6 +143,23 @@ AC_ARG_WITH([memcached], [AC_HELP_STRING([--with-memcached=PATH], [path to insta
   AC_MSG_RESULT(/usr)
 ])
 AC_SUBST(MEMCACHED_PREFIX)
+
+# Configure path to tinycdb.
+AC_MSG_CHECKING([for tinycdb])
+AC_ARG_WITH([tinycdb], [AC_HELP_STRING([--with-tinycdb=PATH], [path to installed tinycdb [default=/usr]])], [
+  TINYCDB_PREFIX="${withval}"
+  TINYCDB_INCLUDE="${withval}/include"
+  TINYCDB_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  TINYCDB_PREFIX="/usr"
+  TINYCDB_INCLUDE="/usr/include"
+  TINYCDB_LIB="/usr/lib"
+  AC_MSG_RESULT(/usr)
+])
+AC_SUBST(TINYCDB_PREFIX)
+AC_SUBST(TINYCDB_INCLUDE)
+AC_SUBST(TINYCDB_LIB)
 
 # Configure TUSCANY_SCACPP path variable.
 TUSCANY_SCACPP=`echo "${TUSCANY_SCACPP}"`
@@ -475,7 +495,44 @@ else
   AM_CONDITIONAL([WANT_STORE], false)
 fi
 
-# Configure path to Apache Qpid/C++ includes and lib.
+# Configure path to PostgreSQL.
+AC_MSG_CHECKING([for pgsql])
+AC_ARG_WITH([pgsql], [AC_HELP_STRING([--with-pgsql=PATH], [path to installed PostgreSQL [default=/usr/local/pgsql]])], [
+  PGSQL_PREFIX="${withval}"
+  PGSQL_INCLUDE="${withval}/include"
+  PGSQL_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  PGSQL_PREFIX="/usr/local/pgsql"
+  PGSQL_INCLUDE="/usr/local/pgsql/include"
+  PGSQL_LIB="/usr/local/pgsql/lib"
+  AC_MSG_RESULT(/usr/local)
+])
+AC_SUBST(PGSQL_PREFIX)
+AC_SUBST(PGSQL_INCLUDE)
+AC_SUBST(PGSQL_LIB)
+
+# Enable SQL Database component.
+AC_MSG_CHECKING([whether to enable the SQL Database component])
+AC_ARG_ENABLE(sqldb, [AS_HELP_STRING([--enable-sqldb], [enable SQL Database component [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_sqldb=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_sqldb}" = "true"; then
+  AM_CONDITIONAL([WANT_SQLDB], true)
+  AC_DEFINE([WANT_SQLDB], 1, [enable SQL Database component])
+else
+  AM_CONDITIONAL([WANT_SQLDB], false)
+fi
+
+# Configure path to Apache Qpid/C++.
 AC_MSG_CHECKING([for qpidc])
 AC_ARG_WITH([qpidc], [AC_HELP_STRING([--with-qpidc=PATH], [path to installed Apache Qpid/C++ [default=/usr/local]])], [
   QPIDC_PREFIX="${withval}"
@@ -598,6 +655,7 @@ AC_CONFIG_FILES([Makefile
                  components/log/Makefile
                  components/chat/Makefile
                  components/queue/Makefile
+                 components/sqldb/Makefile
                  components/store/Makefile
                  components/webservice/Makefile
                  samples/Makefile

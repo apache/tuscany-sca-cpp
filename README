@@ -40,11 +40,12 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- wsgi             Python WSGI server integration
  |   |
  |   |-- components           Useful SCA components
- |   |   |-- cache            Key/value cache
+ |   |   |-- cache            Key/value memory cache
  |   |   |-- chat             XMPP chat
  |   |   |-- log              Logger
  |   |   |-- queue            AMQP message queue
- |   |   |-- store            Persistent store
+ |   |   |-- sqldb            SQL database
+ |   |   |-- store            Key/value persistent store
  |   |   |-- webservice       Web service gateway
  |   |
  |   |-- test                 Integration tests

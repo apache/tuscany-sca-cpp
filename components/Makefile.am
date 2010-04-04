@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat log queue store webservice
+SUBDIRS = cache chat log queue sqldb store webservice
 
 includedir = $(prefix)/include/components
 nobase_include_HEADERS = */*.hpp
