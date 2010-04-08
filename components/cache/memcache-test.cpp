@@ -30,7 +30,7 @@
 #include "memcache.hpp"
 
 namespace tuscany {
-namespace cache {
+namespace memcache {
 
 bool testMemCached() {
     MemCached ch("127.0.0.1", 11211);
@@ -73,8 +73,8 @@ bool testGetPerf() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::cache::testMemCached();
-    tuscany::cache::testGetPerf();
+    tuscany::memcache::testMemCached();
+    tuscany::memcache::testGetPerf();
 
     tuscany::cout << "OK" << tuscany::endl;
 

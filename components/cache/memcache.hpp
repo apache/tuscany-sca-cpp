@@ -41,7 +41,7 @@
 #include "../../modules/scheme/eval.hpp"
 
 namespace tuscany {
-namespace cache {
+namespace memcache {
 
 /**
  * Represents a memcached context.
@@ -97,8 +97,8 @@ private:
  * Post a new item to the cache.
  */
 const failable<bool> post(const value& key, const value& val, const MemCached& cache) {
-    debug(key, "cache::post::key");
-    debug(val, "cache::post::value");
+    debug(key, "memcache::post::key");
+    debug(val, "memcache::post::value");
 
     const string ks(scheme::writeValue(key));
     const string vs(scheme::writeValue(val));
@@ -106,7 +106,7 @@ const failable<bool> post(const value& key, const value& val, const MemCached& c
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not add entry");
 
-    debug(true, "cache::post::result");
+    debug(true, "memcache::post::result");
     return true;
 }
 
@@ -114,8 +114,8 @@ const failable<bool> post(const value& key, const value& val, const MemCached& c
  * Update an item in the cache. If the item doesn't exist it is added.
  */
 const failable<bool> put(const value& key, const value& val, const MemCached& cache) {
-    debug(key, "cache::put::key");
-    debug(val, "cache::put::value");
+    debug(key, "memcache::put::key");
+    debug(val, "memcache::put::value");
 
     const string ks(scheme::writeValue(key));
     const string vs(scheme::writeValue(val));
@@ -123,7 +123,7 @@ const failable<bool> put(const value& key, const value& val, const MemCached& ca
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not set entry");
 
-    debug(true, "cache::put::result");
+    debug(true, "memcache::put::result");
     return true;
 }
 
@@ -131,7 +131,7 @@ const failable<bool> put(const value& key, const value& val, const MemCached& ca
  * Get an item from the cache.
  */
 const failable<value> get(const value& key, const MemCached& cache) {
-    debug(key, "cache::get::key");
+    debug(key, "memcache::get::key");
 
     const string ks(scheme::writeValue(key));
     apr_pool_t* vpool;
@@ -150,7 +150,7 @@ const failable<value> get(const value& key, const MemCached& cache) {
     const value val(scheme::readValue(string(data, size)));
     apr_pool_destroy(vpool);
 
-    debug(val, "cache::get::result");
+    debug(val, "memcache::get::result");
     return val;
 }
 
@@ -158,14 +158,14 @@ const failable<value> get(const value& key, const MemCached& cache) {
  * Delete an item from the cache
  */
 const failable<bool> del(const value& key, const MemCached& cache) {
-    debug(key, "cache::delete::key");
+    debug(key, "memcache::delete::key");
 
     const string ks(scheme::writeValue(key));
     const apr_status_t rc = apr_memcache_delete(cache.mc, c_str(ks), 0);
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not delete entry");
 
-    debug(true, "cache::delete::result");
+    debug(true, "memcache::delete::result");
     return true;
 }
 
