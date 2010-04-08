@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,29 +17,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_SQLDB
+# Stop postgresql
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
 
-INCLUDES = -I${PGSQL_INCLUDE}
+pgsql_prefix=`cat $here/pgsql.prefix`
+mkdir -p $root/sqldb
+mkdir -p $root/logs
+$pgsql_prefix/bin/pg_ctl stop -D $root/sqldb
 
-#comp_SCRIPTS = pgsql-start pgsql-stop
-compdir=$(prefix)/components/sqldb
-
-comp_DATA = pgsql.prefix
-pgsql.prefix: $(top_builddir)/config.status
-	echo ${PGSQL_PREFIX} >pgsql.prefix
-
-comp_LTLIBRARIES = libsqldb.la
-
-libsqldb_la_SOURCES = sqldb.cpp
-libsqldb_la_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
-
-pgsql_test_SOURCES = pgsql-test.cpp
-pgsql_test_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
-
-client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
-
-noinst_PROGRAMS = pgsql-test client-test
-TESTS = sqldb-test server-test
-
-endif

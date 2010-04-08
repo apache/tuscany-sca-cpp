@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,29 +17,27 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_SQLDB
+# Setup
+../../modules/http/httpd-conf tmp localhost 8090 ../../modules/http/htdocs
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+SCAContribution `pwd`/
+SCAComposite sqldb.composite
+EOF
 
-INCLUDES = -I${PGSQL_INCLUDE}
+./pgsql-start tmp
+./pgsql "drop table test" 1>/dev/null 2>&1
+./pgsql "create table test(key varchar(80), value varchar(200));" 1>/dev/null 2>&1
+../../modules/http/httpd-start tmp
+sleep 2
 
-#comp_SCRIPTS = pgsql-start pgsql-stop
-compdir=$(prefix)/components/sqldb
+# Test
+./client-test 2>/dev/null
+rc=$?
 
-comp_DATA = pgsql.prefix
-pgsql.prefix: $(top_builddir)/config.status
-	echo ${PGSQL_PREFIX} >pgsql.prefix
-
-comp_LTLIBRARIES = libsqldb.la
-
-libsqldb_la_SOURCES = sqldb.cpp
-libsqldb_la_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
-
-pgsql_test_SOURCES = pgsql-test.cpp
-pgsql_test_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
-
-client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
-
-noinst_PROGRAMS = pgsql-test client-test
-TESTS = sqldb-test server-test
-
-endif
+# Cleanup
+../../modules/http/httpd-stop tmp
+./pgsql-stop tmp
+sleep 2
+return $rc

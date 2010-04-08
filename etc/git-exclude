@@ -94,4 +94,5 @@ axiom-test
 axis2-test
 qpid-test
 xmpp-test
+pgsql-test
 
