@@ -17,15 +17,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-./pgsql-start tmp
-./pgsql "drop table test;" 1>/dev/null 2>&1
-./pgsql "create table test(key text, value text);" 1>/dev/null 2>&1
+../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+# Configure SCA Composite
+SCAContribution `pwd`/
+SCAComposite store.composite
 
-# Test
-./pgsql-test 2>/dev/null
-rc=$?
+EOF
 
-# Cleanup
-./pgsql-stop tmp
-return $rc
+../../components/sqldb/pgsql-start tmp
+../../components/sqldb/pgsql "create table store(key text, value text);" 1>/dev/null 2>&1
+../../modules/http/httpd-start tmp

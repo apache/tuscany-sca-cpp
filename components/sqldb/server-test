@@ -27,8 +27,8 @@ SCAComposite sqldb.composite
 EOF
 
 ./pgsql-start tmp
-./pgsql "drop table test" 1>/dev/null 2>&1
-./pgsql "create table test(key varchar(80), value varchar(200));" 1>/dev/null 2>&1
+./pgsql "drop table test;" 1>/dev/null 2>&1
+./pgsql "create table test(key text, value text);" 1>/dev/null 2>&1
 ../../modules/http/httpd-start tmp
 sleep 2
 

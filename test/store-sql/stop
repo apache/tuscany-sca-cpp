@@ -17,15 +17,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-./pgsql-start tmp
-./pgsql "drop table test;" 1>/dev/null 2>&1
-./pgsql "create table test(key text, value text);" 1>/dev/null 2>&1
-
-# Test
-./pgsql-test 2>/dev/null
-rc=$?
-
-# Cleanup
-./pgsql-stop tmp
-return $rc
+../../modules/http/httpd-stop tmp
+../../components/sqldb/pgsql-stop tmp

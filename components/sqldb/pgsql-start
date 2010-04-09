@@ -25,13 +25,13 @@ pgsql_prefix=`cat $here/pgsql.prefix`
 mkdir -p $root/sqldb
 mkdir -p $root/logs
 if [ ! -f $root/sqldb/postgresql.conf ]; then
-    $pgsql_prefix/bin/pg_ctl init -D $root/sqldb
+    $pgsql_prefix/bin/pg_ctl init -D $root/sqldb 1>/dev/null 2>&1
     createdb="true"
 fi
 
-$pgsql_prefix/bin/pg_ctl start -D $root/sqldb -l $root/logs/postgresql
-sleep 1
+$pgsql_prefix/bin/pg_ctl start -D $root/sqldb -l $root/logs/postgresql 1>/dev/null 2>&1
+sleep 2
 if [ "$createdb" = "true" ]; then
-    $pgsql_prefix/bin/createdb db
+    $pgsql_prefix/bin/createdb db 1>/dev/null 2>&1
 fi
 

@@ -162,7 +162,18 @@ const failable<bool> put(const value& key, const value& val, const PGSql& pgsql)
     PGresult* r = PQexecPrepared(pgsql.conn, "put", 2, params, NULL, NULL, 0);
     if (PQresultStatus(r) != PGRES_COMMAND_OK)
         return mkfailure<bool>(string("Could not execute put SQL statement: ") + pgfailure(r));
+    const string t = PQcmdTuples(r);
+    if (t != "0") {
+        PQclear(r);
+        debug(true, "pgsql::put::result");
+        return true;
+    }
     PQclear(r);
+
+    PGresult* pr = PQexecPrepared(pgsql.conn, "post", 2, params, NULL, NULL, 0);
+    if (PQresultStatus(pr) != PGRES_COMMAND_OK)
+        return mkfailure<bool>(string("Could not execute post SQL statement: ") + pgfailure(pr));
+    PQclear(pr);
 
     debug(true, "pgsql::put::result");
     return true;

@@ -24,6 +24,8 @@
         
     <component name="sqldb">
         <implementation.cpp path=".libs" library="libsqldb"/>
+        <property name="conninfo">dbname=db</property>
+        <property name="table">test</property>
         <service name="sqldb">
             <t:binding.http uri="sqldb"/>
         </service>

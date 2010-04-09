@@ -17,15 +17,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-./pgsql-start tmp
-./pgsql "drop table test;" 1>/dev/null 2>&1
-./pgsql "create table test(key text, value text);" 1>/dev/null 2>&1
+echo "Testing..."
+here=`readlink -f $0`; here=`dirname $here`
+curl_prefix=`cat $here/../../modules/http/curl.prefix`
 
-# Test
-./pgsql-test 2>/dev/null
+# Setup
+./start
+sleep 2
+
+# Test HTTP GET
+$curl_prefix/bin/curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
+diff tmp/store.html htdocs/store.html
 rc=$?
 
 # Cleanup
-./pgsql-stop tmp
+./stop
+sleep 2
+
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
 return $rc

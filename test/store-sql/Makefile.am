@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,15 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-./pgsql-start tmp
-./pgsql "drop table test;" 1>/dev/null 2>&1
-./pgsql "create table test(key text, value text);" 1>/dev/null 2>&1
+TESTS = server-test
 
-# Test
-./pgsql-test 2>/dev/null
-rc=$?
-
-# Cleanup
-./pgsql-stop tmp
-return $rc

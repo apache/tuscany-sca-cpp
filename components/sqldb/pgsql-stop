@@ -24,5 +24,5 @@ root=`readlink -f $1`
 pgsql_prefix=`cat $here/pgsql.prefix`
 mkdir -p $root/sqldb
 mkdir -p $root/logs
-$pgsql_prefix/bin/pg_ctl stop -D $root/sqldb
+$pgsql_prefix/bin/pg_ctl stop -D $root/sqldb 1>/dev/null 2>&1
 

@@ -111,8 +111,10 @@ private:
  * Start the component.
  */
 const failable<value> start(unused const list<value>& params) {
-    // Connect to the database
-    pgsql::PGSql& pg = *(new (gc_new<pgsql::PGSql>()) pgsql::PGSql("dbname=db", "test"));
+    // Connect to the configured database and table
+    const value conninfo = ((lambda<value(list<value>)>)car(params))(list<value>());
+    const value table = ((lambda<value(list<value>)>)cadr(params))(list<value>());
+    pgsql::PGSql& pg = *(new (gc_new<pgsql::PGSql>()) pgsql::PGSql(conninfo, table));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applySqldb(pg)));

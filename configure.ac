@@ -665,6 +665,7 @@ AC_CONFIG_FILES([Makefile
                  test/store-python/Makefile
                  test/store-java/Makefile
                  test/store-wsgi/Makefile
+                 test/store-sql/Makefile
                  doc/Makefile
                  doc/Doxyfile
                  ])
