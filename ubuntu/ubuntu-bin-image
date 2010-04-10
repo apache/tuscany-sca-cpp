@@ -35,11 +35,11 @@ sudo apt-get -y install wget git-core autoconf automake g++ libtool
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install privbind
+sudo apt-get -y install libssl-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install libssl-dev
+sudo apt-get -y install libevent-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi

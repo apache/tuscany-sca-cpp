@@ -576,14 +576,14 @@ fi
 
 # Configure path to Libstrophe includes and lib.
 AC_MSG_CHECKING([for libstrophe])
-AC_ARG_WITH([libstrophe], [AC_HELP_STRING([--with-libstrophe=PATH], [path to libstrophe source [default=${HOME}/libstrophe]])], [
-  LIBSTROPHE_INCLUDE="${withval}"
-  LIBSTROPHE_LIB="${withval}"
+AC_ARG_WITH([libstrophe], [AC_HELP_STRING([--with-libstrophe=PATH], [path to libstrophe [default=${HOME}/libstrophe-bin]])], [
+  LIBSTROPHE_INCLUDE="${withval}/include"
+  LIBSTROPHE_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
 ], [
-  LIBSTROPHE_INCLUDE="${HOME}/libstrophe"
-  LIBSTROPHE_LIB="${HOME}/libstrophe"
-  AC_MSG_RESULT(${HOME}/libstrophe)
+  LIBSTROPHE_INCLUDE="${HOME}/libstrophe-bin/include"
+  LIBSTROPHE_LIB="${HOME}/libstrophe-bin/lib"
+  AC_MSG_RESULT(${HOME}/libstrophe-bin)
 ])
 AC_SUBST(LIBSTROPHE_INCLUDE)
 AC_SUBST(LIBSTROPHE_LIB)

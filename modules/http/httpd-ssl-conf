@@ -23,6 +23,7 @@ root=`readlink -f $1`
 host=$2
 sslport=$3
 htdocs=`readlink -f $4`
+httpd_prefix=`cat $here/httpd.prefix`
 
 # Extract organization name from our CA certificate
 org=`openssl x509 -noout -subject -nameopt multiline -in $root/conf/ca.crt | grep organizationName | awk -F "= " '{ print $2 }'`
@@ -87,7 +88,7 @@ Require valid-user
 EOF
 
 # Create test users for HTTP basic authentication
-htpasswd -bc $root/conf/httpd.passwd test test 2>/dev/null
-htpasswd -b $root/conf/httpd.passwd foo foo 2>/dev/null
-htpasswd -b $root/conf/httpd.passwd bar bar 2>/dev/null
+$httpd_prefix/bin/htpasswd -bc $root/conf/httpd.passwd test test 2>/dev/null
+$httpd_prefix/bin/htpasswd -b $root/conf/httpd.passwd foo foo 2>/dev/null
+$httpd_prefix/bin/htpasswd -b $root/conf/httpd.passwd bar bar 2>/dev/null
 

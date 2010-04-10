@@ -30,12 +30,6 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 
-# Install the required binaries
-sudo apt-get -y install privbind
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-
 # Build Apache HTTP server
 sudo apt-get -y install libssl-dev
 if [ "$?" != "0" ]; then
@@ -68,7 +62,7 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build tinycdb
+# Build Tinycdb
 wget http://www.corpit.ru/mjt/tinycdb/tinycdb_0.77.tar.gz
 tar xzf tinycdb_0.77.tar.gz
 cd tinycdb-0.77
@@ -181,6 +175,9 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
+mkdir -p $build/libstrophe-bin/include
+cp $build/libstrophe/*.h $build/libstrophe-bin/include
+cp $build/libstrophe/src/*.h $build/libstrophe-bin/include
 
 # Install Apache Vysper
 sudo apt-get -y install openjdk-6-jdk
@@ -210,12 +207,11 @@ fi
 cd $build
 
 # Build Tuscany SCA
-#git clone git://git.apache.org/tuscany-sca-cpp
-git clone ssh://delfinoj@10.1.1.58/home/delfinoj/SCAZone/Source/tuscany-sca-cpp/.git
+git clone git://git.apache.org/tuscany-sca-cpp
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --enable-threads --enable-python --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin
 make
 make install
 if [ "$?" != "0" ]; then

@@ -43,7 +43,6 @@ doxygen-1.6.1
 
 Install the following binaries:
 curl-7-19-5
-privbind-1.1 (http://manpages.ubuntu.com/manpages/karmic/man1/privbind.1.html)
 
 
 Then install the following development dependencies:
@@ -155,7 +154,7 @@ dependencies installed under $HOME:
 --enable-webservice --with-axis2c=$HOME/axis2c-1.6.0-bin \
 --with-libxml2=$HOME/libxml2-2.7.7-bin \
 --enable-queue --with-qpidc=$HOME/qpidc-0.6-bin \
---enable-chat --with-libstrophe=$HOME/libstrophe \
+--enable-chat --with-libstrophe=$HOME/libstrophe-bin \
 --with-vysper=$HOME/vysper-0.5 \
 --enable-sqldb --with-pgsql=$HOME/postgresql-9.0-bin \
 --enable-maintainer-mode
@@ -268,6 +267,10 @@ autoconf
 ./configure --prefix=$HOME/libstrophe-bin
 make
 make install
+cd ..
+mkdir -p libstrophe-bin/include
+cp libstrophe/*.h libstrophe-bin/include
+cp libstrophe/src/*.h libstrophe-bin/include
 
 PostgreSQL:
 wget http://wwwmaster.postgresql.org/download/mirrors-ftp/source/9.0alpha5/postgresql-9.0alpha5.tar.gz

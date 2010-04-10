@@ -19,7 +19,7 @@ JAVAROOT = $(top_builddir)/components/chat
 
 if WANT_CHAT
 
-INCLUDES = -I${LIBSTROPHE_INCLUDE} -I${LIBSTROPHE_INCLUDE}/src
+INCLUDES = -I${LIBSTROPHE_INCLUDE}
 
 comp_SCRIPTS = vysper-start vysper-stop vysper-classpath
 compdir=$(prefix)/components/chat

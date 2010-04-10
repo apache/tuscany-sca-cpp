@@ -1,0 +1,34 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Configure EC2 environment variables
+export JAVA_HOME=/usr/lib/jvm/java-6-openjdk
+
+# Expect to find your EC2 private key and X.509 certificate in $HOME/.ec2
+key=`ls $HOME/.ec2/pk-*.pem`
+if [ "$key" = "" ]; then
+    echo "Couldn't find EC2 private key $HOME/.ec2/pk-*.pem"
+    exit 1
+fi
+cert=`ls $HOME/.ec2/cert-*.pem`
+if [ "$cert" = "" ]; then
+    echo "Couldn't find EC2 X.509 certificate $HOME/.ec2/pk-*.pem"
+    exit 1
+fi
+export EC2_PRIVATE_KEY=$key
+export EC2_CERT=$cert
+
