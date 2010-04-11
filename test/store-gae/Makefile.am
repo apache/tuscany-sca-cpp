@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,23 +15,21 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-uri=$1
-if [ "$uri" = "" ]; then
-    uri="http://localhost:8090"
-fi
+if WANT_PYTHON
+if WANT_GAE
 
-# Setup
-mkdir -p tmp
-./wsgi-start target 8090 2>/dev/null
-sleep 2
+noinst_DATA = target.stamp 
 
-# Test JSON-RPC
-here=`readlink -f $0`; here=`dirname $here`
-python_prefix=`cat $here/../python/python.prefix`
-$python_prefix/bin/python http-test.py
-rc=$?
+target.stamp: app.yaml *.py *.composite $(top_builddir)/modules/wsgi/*.py htdocs/*
+	mkdir -p target
+	cp app.yaml *.py *.composite `ls $(top_builddir)/modules/wsgi/*.py | grep -v "\-test"` target
+	cp -R htdocs target/htdocs
+	touch target.stamp
 
-# Cleanup
-./wsgi-stop target 8090
-sleep 2
-return $rc
+clean-local:
+	rm -rf target.stamp target
+
+TESTS = server-test
+
+endif
+endif

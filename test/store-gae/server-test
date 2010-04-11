@@ -17,23 +17,25 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-uri=$1
-if [ "$uri" = "" ]; then
-    uri="http://localhost:8090"
-fi
+echo "Testing..."
+here=`readlink -f $0`; here=`dirname $here`
+curl_prefix=`cat $here/../../modules/http/curl.prefix`
 
 # Setup
-mkdir -p tmp
-./wsgi-start target 8090 2>/dev/null
+./start 2>/dev/null
 sleep 2
 
-# Test JSON-RPC
-here=`readlink -f $0`; here=`dirname $here`
-python_prefix=`cat $here/../python/python.prefix`
-$python_prefix/bin/python http-test.py
+# Test HTTP GET
+mkdir -p tmp
+$curl_prefix/bin/curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
+diff tmp/store.html htdocs/store.html
 rc=$?
 
 # Cleanup
-./wsgi-stop target 8090
+./stop
 sleep 2
+
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
 return $rc

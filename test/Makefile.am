@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-scheme store-cpp store-python store-java store-wsgi store-sql
+SUBDIRS = store-scheme store-cpp store-python store-java store-gae store-sql
 

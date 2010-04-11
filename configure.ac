@@ -436,6 +436,38 @@ else
 fi
 AC_SUBST(JAVA_LDFLAGS)
 
+# Configure path to Google AppEngine SDK.
+AC_MSG_CHECKING([for gae])
+AC_ARG_WITH([gae], [AC_HELP_STRING([--with-gae=PATH], [path to installed Google AppEngine 1.3.2 [default=$HOME/google_appengine]])], [
+  GAE_PREFIX="${withval}"
+  AC_MSG_RESULT("${withval}")
+], [
+  GAE_PREFIX="$HOME/google_appengine"
+  AC_MSG_RESULT($HOME/google_appengine)
+])
+AC_SUBST(GAE_PREFIX)
+
+# Enable support for Google AppEngine.
+AC_MSG_CHECKING([whether to enable Google AppEngine support])
+AC_ARG_ENABLE(gae, [AS_HELP_STRING([--enable-gae], [enable Google AppEngine support [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_gae=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_gae}" = "true"; then
+  AM_CONDITIONAL([WANT_GAE], true)
+  AC_DEFINE([WANT_GAE], 1, [enable Google AppEngine support])
+else
+  AM_CONDITIONAL([WANT_GAE], false)
+fi
+
+# Configure path to Java includes and lib.
 # Configure path to Apache Axis2C includes and lib.
 AC_MSG_CHECKING([for axis2c])
 AC_ARG_WITH([axis2c], [AC_HELP_STRING([--with-axis2c=PATH], [path to installed Apache Axis2C [default=/usr/local/axis2c]])], [
@@ -664,7 +696,7 @@ AC_CONFIG_FILES([Makefile
                  test/store-cpp/Makefile
                  test/store-python/Makefile
                  test/store-java/Makefile
-                 test/store-wsgi/Makefile
+                 test/store-gae/Makefile
                  test/store-sql/Makefile
                  doc/Makefile
                  doc/Doxyfile

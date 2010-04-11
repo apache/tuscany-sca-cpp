@@ -17,23 +17,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-uri=$1
-if [ "$uri" = "" ]; then
-    uri="http://localhost:8090"
-fi
-
-# Setup
-mkdir -p tmp
-./wsgi-start target 8090 2>/dev/null
-sleep 2
-
-# Test JSON-RPC
+# Start Google AppEngine server
 here=`readlink -f $0`; here=`dirname $here`
-python_prefix=`cat $here/../python/python.prefix`
-$python_prefix/bin/python http-test.py
-rc=$?
+root=`readlink -f $1`
+port=$2
 
-# Cleanup
-./wsgi-stop target 8090
-sleep 2
-return $rc
+python_prefix=`cat $here/../python/python.prefix`
+gae_prefix=`cat $here/gae.prefix`
+cd $root
+$python_prefix/bin/python $gae_prefix/dev_appserver.py -p $port $root &
+

@@ -33,10 +33,20 @@ target.stamp: app.yaml *.py *.composite htdocs/*
 clean-local:
 	rm -rf target.stamp target
 
+prefix_DATA = gae.prefix
+prefixdir=$(prefix)/modules/wsgi
+gae.prefix: $(top_builddir)/config.status
+	echo ${GAE_PREFIX} >gae.prefix
+
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 noinst_PROGRAMS = client-test
+
+if WANT_GAE
+TESTS = util-test wsgi-test wiring-test http-test server-test gae-test
+else
 TESTS = util-test wsgi-test wiring-test http-test server-test
+endif
 
 endif
