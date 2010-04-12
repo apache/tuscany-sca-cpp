@@ -73,6 +73,7 @@ core
 kernel-test
 string-test
 mem-test
+hash-test
 parallel-test
 xml-test
 xsd-test
