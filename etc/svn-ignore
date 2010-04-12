@@ -52,3 +52,4 @@ doxygen
 *.class
 *.jar
 *.prefix
+target
