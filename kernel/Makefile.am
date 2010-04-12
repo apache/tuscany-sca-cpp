@@ -38,6 +38,8 @@ xml_test_LDFLAGS = -lxml2
 xsd_test_SOURCES = xsd-test.cpp
 xsd_test_LDFLAGS = -lxml2
 
-noinst_PROGRAMS = string-test kernel-test mem-test parallel-test xml-test xsd-test
-TESTS = string-test kernel-test mem-test parallel-test xml-test
+hash_test_SOURCES = hash-test.cpp
+
+noinst_PROGRAMS = string-test kernel-test hash-test mem-test parallel-test xml-test xsd-test
+TESTS = string-test kernel-test hash-test mem-test parallel-test xml-test
 
