@@ -25,6 +25,13 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([tar-ustar])
 AC_PREFIX_DEFAULT(/usr/local/tuscany/sca)
 
+# Use GCC 4.5 if available
+if test -x "/usr/bin/gcc-4.5"; then
+    CXX=/usr/bin/g++-4.5
+    CPP=/usr/bin/cpp-4.5
+    CC=/usr/bin/gcc-4.5
+fi
+
 # Check for required programs.
 AC_MSG_NOTICE([checking for programs])
 AC_PROG_CXX
@@ -180,7 +187,7 @@ cxxflags="${cxxflags} ${INCLUDES} -I. -I${TUSCANY_SCACPP}/kernel -I${APR_INCLUDE
 AC_MSG_NOTICE([checking for required libraries])
 LIBS="-L${APR_LIB} ${defaultlibs}"
 AC_CHECK_LIB([apr-1], [apr_pool_initialize], [AC_MSG_NOTICE([found])], [AC_MSG_ERROR([couldn't find a suitable libapr-1, use --with-apr=PATH])])
-ldflags="${ldflags} -L${APR_LIB} -R${APR_LIB} -lapr-1 -laprutil-1"
+ldflags="${ldflags} -ldl -L${APR_LIB} -R${APR_LIB} -lapr-1 -laprutil-1"
 
 # Check for libraries only required by some modules and add their search path to LD options.  
 LIBS="-L${LIBCURL_LIB} ${defaultlibs}"
@@ -385,7 +392,7 @@ if test "${want_java}" = "true"; then
       AC_MSG_NOTICE([checking for server Java VM])
       JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/lib/i386 -R${JAVA_PREFIX}/jre/lib/i386 -L${JAVA_PREFIX}/jre/lib/i386/server -R${JAVA_PREFIX}/jre/lib/i386/server"
       LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
-      AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava"], [], [-ljvm -lverify])
+      AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -lverify"], [], [-ljvm -lverify])
       if test "${JAVA_LDFLAGS}" != ""; then
         AC_DEFINE([JAVA_SERVER_VM], 1, [Server Java VM])
       fi
@@ -395,7 +402,7 @@ if test "${want_java}" = "true"; then
         AC_MSG_NOTICE([checking for J9 Java VM])
         JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/lib/i386 -R${JAVA_PREFIX}/jre/lib/i386 -L${JAVA_PREFIX}/jre/lib/i386/j9vm -R${JAVA_PREFIX}/jre/lib/i386/j9vm"
         LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
-        AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava"], [], [-ljvm -ljsig])
+        AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -ljsig"], [], [-ljvm -ljsig])
         if test "${JAVA_LDFLAGS}" != ""; then
           AC_DEFINE([JAVA_J9_VM], 1, [J9 Java VM])
         fi
@@ -407,7 +414,7 @@ if test "${want_java}" = "true"; then
       AC_MSG_NOTICE([checking for Apache Harmony Java VM])
       JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/bin -R${JAVA_PREFIX}/jre/bin -L${JAVA_PREFIX}/jre/bin/default -R${JAVA_PREFIX}/jre/bin/default"
       LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
-      AC_CHECK_LIB([harmonyvm], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -lharmonyvm"], [], [-lhythr -licuuc -lch ${JAVA_PREFIX}/jre/bin/default/libicudata.so.34])
+      AC_CHECK_LIB([harmonyvm], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -lharmonyvm -lhythr -licuuc -lch ${JAVA_PREFIX}/jre/bin/default/libicudata.so.34"], [], [-lhythr -licuuc -lch ${JAVA_PREFIX}/jre/bin/default/libicudata.so.34])
       if test "${JAVA_LDFLAGS}" != ""; then
         AC_DEFINE([JAVA_HARMONY_VM], 1, [Apache Harmony Java VM])
       fi
@@ -432,7 +439,7 @@ if test "${want_java}" = "true"; then
   AC_DEFINE([WANT_JAVA], 1, [enable Java support])
 else
   AM_CONDITIONAL([WANT_JAVA], false)
-  JAVA_LDFLAGS="-L${JAVA_PREFIX}/jre/lib -R${JAVA_PREFIX}/jre/lib -ljava"
+  JAVA_LDFLAGS=""
 fi
 AC_SUBST(JAVA_LDFLAGS)
 
@@ -507,24 +514,24 @@ else
   AM_CONDITIONAL([WANT_WEBSERVICE], false)
 fi
 
-# Enable Store component.
-AC_MSG_CHECKING([whether to enable the Store component])
-AC_ARG_ENABLE(store, [AS_HELP_STRING([--enable-store], [enable Store component [default=no]])],
+# Enable NoSQL database component.
+AC_MSG_CHECKING([whether to enable the NoSQL database component])
+AC_ARG_ENABLE(nosqldb, [AS_HELP_STRING([--enable-nosqldb], [enable NoSQL database component [default=no]])],
 [ case "${enableval}" in
   no)
     AC_MSG_RESULT(no)
     ;;
   *)
     AC_MSG_RESULT(yes)
-    want_store=true
+    want_nosqldb=true
     ;;
   esac ],
 [ AC_MSG_RESULT(no)])
-if test "${want_store}" = "true"; then
-  AM_CONDITIONAL([WANT_STORE], true)
-  AC_DEFINE([WANT_STORE], 1, [enable Store component])
+if test "${want_nosqldb}" = "true"; then
+  AM_CONDITIONAL([WANT_NOSQLDB], true)
+  AC_DEFINE([WANT_NOSQLDB], 1, [enable NoSQL database component])
 else
-  AM_CONDITIONAL([WANT_STORE], false)
+  AM_CONDITIONAL([WANT_NOSQLDB], false)
 fi
 
 # Configure path to PostgreSQL.

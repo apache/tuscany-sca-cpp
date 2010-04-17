@@ -15,6 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_STORE
+if WANT_NOSQLDB
 
 endif
