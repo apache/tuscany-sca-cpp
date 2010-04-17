@@ -697,9 +697,9 @@ AC_CONFIG_FILES([Makefile
                  components/cache/Makefile
                  components/log/Makefile
                  components/chat/Makefile
+                 components/nosqldb/Makefile
                  components/queue/Makefile
                  components/sqldb/Makefile
-                 components/store/Makefile
                  components/webservice/Makefile
                  samples/Makefile
                  test/Makefile

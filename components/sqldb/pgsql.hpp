@@ -22,6 +22,10 @@
 #ifndef tuscany_pgsql_hpp
 #define tuscany_pgsql_hpp
 
+/**
+ * PostgreSQL access functions.
+ */
+
 #include <libpq-fe.h>
 
 #include "string.hpp"

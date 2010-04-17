@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,8 +17,27 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat log nosqldb queue sqldb webservice
+# Setup
+../../modules/http/httpd-conf tmp localhost 8090 ../../modules/http/htdocs
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+SCAContribution `pwd`/
+SCAComposite sqldb.composite
+EOF
 
-includedir = $(prefix)/include/components
-nobase_include_HEADERS = */*.hpp
+./pgsql-start tmp
+./pgsql "drop table test;" 1>/dev/null 2>&1
+./pgsql "create table test(key text, value text);" 1>/dev/null 2>&1
+../../modules/http/httpd-start tmp
+sleep 2
 
+# Test
+./client-test 2>/dev/null
+rc=$?
+
+# Cleanup
+../../modules/http/httpd-stop tmp
+./pgsql-stop tmp
+sleep 2
+return $rc

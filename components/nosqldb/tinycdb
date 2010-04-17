@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,8 +17,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat log nosqldb queue sqldb webservice
+here=`readlink -f $0`; here=`dirname $here`
+tinycdb_prefix=`cat $here/tinycdb.prefix`
 
-includedir = $(prefix)/include/components
-nobase_include_HEADERS = */*.hpp
+$tinycdb_prefix/bin/cdb $*
 

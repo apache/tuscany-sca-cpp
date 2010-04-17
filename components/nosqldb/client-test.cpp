@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test SQL database component.
+ * Test NoSQL database component.
  */
 
 #include <assert.h>
@@ -34,11 +34,11 @@
 #include "../../modules/http/curl.hpp"
 
 namespace tuscany {
-namespace sqldb {
+namespace nosqldb {
 
-const string uri("http://localhost:8090/sqldb");
+const string uri("http://localhost:8090/nosqldb");
 
-bool testSqlDb() {
+bool testNoSqlDb() {
     http::CURLSession cs;
 
     const list<value> i = list<value>()
@@ -110,7 +110,7 @@ bool testGetPerf() {
     const string p = path(content(id));
 
     const lambda<bool()> gl = getLoop(p, a, cs);
-    cout << "Sqldb get test " << time(gl, 5, 200) << " ms" << endl;
+    cout << "NoSqldb get test " << time(gl, 5, 200) << " ms" << endl;
 
     return true;
 }
@@ -121,8 +121,8 @@ bool testGetPerf() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::sqldb::testSqlDb();
-    tuscany::sqldb::testGetPerf();
+    tuscany::nosqldb::testNoSqlDb();
+    tuscany::nosqldb::testGetPerf();
 
     tuscany::cout << "OK" << tuscany::endl;
 

@@ -15,8 +15,28 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat log nosqldb queue sqldb webservice
+if WANT_NOSQLDB
 
-includedir = $(prefix)/include/components
-nobase_include_HEADERS = */*.hpp
+INCLUDES = -I${TINYCDB_INCLUDE}
 
+compdir=$(prefix)/components/nosqldb
+
+comp_DATA = tinycdb.prefix
+tinycdb.prefix: $(top_builddir)/config.status
+	echo ${TINYCDB_PREFIX} >tinycdb.prefix
+
+#comp_LTLIBRARIES = libnosqldb.la
+
+#libnosqldb_la_SOURCES = nosqldb.cpp
+#libnosqldb_la_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb
+
+tinycdb_test_SOURCES = tinycdb-test.cpp
+tinycdb_test_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb
+
+client_test_SOURCES = client-test.cpp
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+noinst_PROGRAMS = tinycdb-test client-test
+TESTS = nosqldb-test 
+
+endif

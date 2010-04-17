@@ -19,7 +19,7 @@ if WANT_SQLDB
 
 INCLUDES = -I${PGSQL_INCLUDE}
 
-#comp_SCRIPTS = pgsql-start pgsql-stop
+comp_SCRIPTS = pgsql-start pgsql-stop
 compdir=$(prefix)/components/sqldb
 
 comp_DATA = pgsql.prefix
