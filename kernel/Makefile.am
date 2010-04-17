@@ -28,6 +28,8 @@ libdynlib_test_la_SOURCES = dynlib-test.cpp
 
 kernel_test_SOURCES = kernel-test.cpp
 
+lambda_test_SOURCES = lambda-test.cpp
+
 mem_test_SOURCES = mem-test.cpp
 
 parallel_test_SOURCES = parallel-test.cpp
@@ -40,6 +42,6 @@ xsd_test_LDFLAGS = -lxml2
 
 hash_test_SOURCES = hash-test.cpp
 
-noinst_PROGRAMS = string-test kernel-test hash-test mem-test parallel-test xml-test xsd-test
-TESTS = string-test kernel-test hash-test mem-test parallel-test xml-test
+noinst_PROGRAMS = string-test kernel-test lambda-test hash-test mem-test parallel-test xml-test xsd-test
+TESTS = string-test kernel-test lambda-test hash-test mem-test parallel-test xml-test
 

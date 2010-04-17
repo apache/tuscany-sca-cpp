@@ -74,6 +74,7 @@ kernel-test
 string-test
 mem-test
 hash-test
+lambda-test
 parallel-test
 xml-test
 xsd-test
