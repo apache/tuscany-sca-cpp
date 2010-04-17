@@ -25,10 +25,31 @@ set -x
 build=`pwd`
 
 # Install core dev tools
-sudo apt-get -y install wget git-core autoconf automake g++ libtool
+sudo apt-get -y install wget git-core autoconf automake libtool
 if [ "$?" != "0" ]; then
     exit $?
 fi
+
+# Install GCC 4.5
+mkdir -p gcc-4.5
+cd gcc-4.5
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/cpp-4.5_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/fixincludes_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/g++-4.5_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/gcc-4.5_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/gcc-4.5-base_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/lib64gcc1_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/lib64gomp1_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/lib64mudflap0_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/lib64stdc++6_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libgcc1_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libgomp1_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libmudflap0-4.5-dev_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libmudflap0_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libstdc++6_4.5.0-1_i386.deb
+wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libstdc++6-4.5-dev_4.5.0-1_i386.deb
+sudo dpkg -i cpp-4.5_4.5.0-1_i386.deb fixincludes_4.5.0-1_i386.deb g++-4.5_4.5.0-1_i386.deb gcc-4.5_4.5.0-1_i386.deb gcc-4.5-base_4.5.0-1_i386.deb lib64gcc1_4.5.0-1_i386.deb lib64gomp1_4.5.0-1_i386.deb lib64mudflap0_4.5.0-1_i386.deb lib64stdc++6_4.5.0-1_i386.deb libgcc1_4.5.0-1_i386.deb libgomp1_4.5.0-1_i386.deb libmudflap0-4.5-dev_4.5.0-1_i386.deb libmudflap0_4.5.0-1_i386.deb libstdc++6_4.5.0-1_i386.deb libstdc++6-4.5-dev_4.5.0-1_i386.deb 
+cd $build
 
 # Build Apache HTTP server
 sudo apt-get -y install libssl-dev
