@@ -138,6 +138,7 @@ private:
 const failable<bool> post(const value& key, const value& val, const PGSql& pgsql) {
     debug(key, "pgsql::post::key");
     debug(val, "pgsql::post::value");
+    debug(pgsql.conninfo, "pgsql::post::conninfo");
     debug(pgsql.table, "pgsql::post::table");
 
     const string ks(scheme::writeValue(key));
@@ -158,6 +159,7 @@ const failable<bool> post(const value& key, const value& val, const PGSql& pgsql
 const failable<bool> put(const value& key, const value& val, const PGSql& pgsql) {
     debug(key, "pgsql::put::key");
     debug(val, "pgsql::put::value");
+    debug(pgsql.conninfo, "pgsql::put::conninfo");
     debug(pgsql.table, "pgsql::put::table");
 
     const string ks(scheme::writeValue(key));
@@ -188,6 +190,7 @@ const failable<bool> put(const value& key, const value& val, const PGSql& pgsql)
  */
 const failable<value> get(const value& key, const PGSql& pgsql) {
     debug(key, "pgsql::get::key");
+    debug(pgsql.conninfo, "pgsql::get::conninfo");
     debug(pgsql.table, "pgsql::get::table");
 
     const string ks(scheme::writeValue(key));
@@ -212,6 +215,7 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
  */
 const failable<bool> del(const value& key, const PGSql& pgsql) {
     debug(key, "pgsql::delete::key");
+    debug(pgsql.conninfo, "pgsql::delete::conninfo");
     debug(pgsql.table, "pgsql::delete::table");
 
     const string ks(scheme::writeValue(key));

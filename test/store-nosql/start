@@ -17,13 +17,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-mkdir -p tmp
-./tinycdb -c -m tmp/test.cdb </dev/null
+../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+# Configure SCA Composite
+SCAContribution `pwd`/
+SCAComposite store.composite
 
-# Test
-./tinycdb-test 2>/dev/null
-rc=$?
+EOF
 
-# Cleanup
-return $rc
+../../components/nosqldb/tinycdb -c -m tmp/store.cdb </dev/null
+../../modules/http/httpd-start tmp

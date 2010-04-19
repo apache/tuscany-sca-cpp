@@ -17,13 +17,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-mkdir -p tmp
-./tinycdb -c -m tmp/test.cdb </dev/null
+echo "Testing..."
+here=`readlink -f $0`; here=`dirname $here`
+curl_prefix=`cat $here/../../modules/http/curl.prefix`
 
-# Test
-./tinycdb-test 2>/dev/null
+# Setup
+./start
+sleep 2
+
+# Test HTTP GET
+$curl_prefix/bin/curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
+diff tmp/store.html htdocs/store.html
 rc=$?
 
 # Cleanup
+./stop
+sleep 2
+
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
 return $rc

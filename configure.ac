@@ -709,6 +709,7 @@ AC_CONFIG_FILES([Makefile
                  test/store-java/Makefile
                  test/store-gae/Makefile
                  test/store-sql/Makefile
+                 test/store-nosql/Makefile
                  doc/Makefile
                  doc/Doxyfile
                  ])

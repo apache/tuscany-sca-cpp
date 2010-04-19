@@ -33,7 +33,7 @@ namespace tuscany {
 namespace tinycdb {
 
 bool testTinyCDB() {
-    TinyCDB cdb("tmp/db.cdb");
+    TinyCDB cdb("tmp/test.cdb");
     const value k = mklist<value>("a");
 
     assert(hasContent(post(k, string("AAA"), cdb)));
@@ -59,7 +59,7 @@ struct getLoop {
 
 bool testGetPerf() {
     const value k = mklist<value>("c");
-    TinyCDB cdb("tmp/db.cdb");
+    TinyCDB cdb("tmp/test.cdb");
     assert(hasContent(post(k, string("CCC"), cdb)));
 
     const lambda<bool()> gl = getLoop(k, cdb);

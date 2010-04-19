@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,13 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-mkdir -p tmp
-./tinycdb -c -m tmp/test.cdb </dev/null
+TESTS = server-test
 
-# Test
-./tinycdb-test 2>/dev/null
-rc=$?
-
-# Cleanup
-return $rc

@@ -20,12 +20,13 @@
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
-  name="store">
+  name="nosqldb">
         
-    <component name="store">
-        <implementation.cpp path=".libs" library="libstore"/>
-        <service name="store">
-            <t:binding.http uri="store"/>
+    <component name="nosqldb">
+        <implementation.cpp path=".libs" library="libnosqldb"/>
+        <property name="dbname">tmp/test.cdb</property>
+        <service name="nosqldb">
+            <t:binding.http uri="nosqldb"/>
         </service>
     </component>     
 

@@ -17,13 +17,4 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-mkdir -p tmp
-./tinycdb -c -m tmp/test.cdb </dev/null
-
-# Test
-./tinycdb-test 2>/dev/null
-rc=$?
-
-# Cleanup
-return $rc
+../../modules/http/httpd-stop tmp
