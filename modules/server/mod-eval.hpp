@@ -388,6 +388,10 @@ const failable<bool> confComponents(ServerConf& sc, server_rec& server) {
     if (sc.contributionPath == "" || sc.compositeName == "")
         return false;
 
+    // Chdir to the deployed contribution
+    if (chdir(c_str(sc.contributionPath)) != 0)
+        return mkfailure<bool>("Couldn't chdir to the deployed contribution");
+
     // Read the components and get their implementation lambda functions
     const failable<list<value> > comps = readComponents(sc.contributionPath + sc.compositeName);
     if (!hasContent(comps))
