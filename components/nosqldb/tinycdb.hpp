@@ -143,19 +143,50 @@ const string dbname(const TinyCDB& cdb) {
  * Open a database.
  */
 const failable<int> cdbopen(TinyCDB& cdb) {
+
+    // Get database file serial number
     struct stat st;
-    int s = stat(c_str(cdb.name), &st);
+    const int s = stat(c_str(cdb.name), &st);
     if (s == -1)
         return mkfailure<int>(string("Couldn't read database stat ") + cdb.name);
-    if (st.st_ino != cdb.st.st_ino || cdb.fd == -1) {
-        if (cdb.fd != -1)
-            close(cdb.fd);
+
+    // Open database for the first time
+    if (cdb.fd == -1) {
         cdb.fd = open(c_str(cdb.name), O_RDONLY);
         if (cdb.fd == -1)
             return mkfailure<int>(string("Couldn't open database file ") + cdb.name);
         debug(cdb.fd, "tinycdb::open::fd");
         cdb.st = st;
+        return cdb.fd;
     }
+
+    // Close and reopen database after a change
+    if (st.st_ino != cdb.st.st_ino) {
+
+        // Close current fd
+        close(cdb.fd);
+
+        // Reopen database
+        const int newfd = open(c_str(cdb.name), O_RDONLY);
+        if (newfd == -1)
+            return mkfailure<int>(string("Couldn't open database file ") + cdb.name);
+        if (newfd == cdb.fd) {
+            debug(cdb.fd, "tinycdb::open::fd");
+            cdb.st = st;
+            return cdb.fd;
+        }
+
+        // We got a different fd, dup it to the current fd then close it
+        if (fcntl(newfd, F_DUPFD, cdb.fd) == -1)
+            return mkfailure<int>(string("Couldn't dup database file handle ") + cdb.name);
+        close(newfd);
+
+        debug(cdb.fd, "tinycdb::open::fd");
+        cdb.st = st;
+        return cdb.fd;
+    }
+
+    // No change, just return the current fd
     return cdb.fd;
 }
 
