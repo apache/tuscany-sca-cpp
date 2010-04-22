@@ -37,12 +37,16 @@ The Tuscany SCA Linux build uses the GNU Autotools tool chain.
 First install the following development tools:
 autoconf-2.64
 automake-1.11
-g++-4.4.1
 libtool-2.2.6
 doxygen-1.6.1
+gcc-g++-4.5
 
-Install the following binaries:
-curl-7-19-5
+As of April 2010, the GCC 4.5 compiler is not yet included in all Linux
+distributions. GCC 4.5 Ubuntu / Debian packages can be downloaded from:
+http://ftp.debian.org/debian/pool/main/g/gcc-4.5/
+
+To download and setup GCC 4.5 on Ubuntu, run this script:
+http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
 
 
 Then install the following development dependencies:
@@ -60,6 +64,7 @@ XML:
 libxml2-2.7.7 (http://xmlsoft.org/)
 
 CURL:
+curl-7-19-5
 libcurl4-openssl-7.19.5
 
 JSON:
