@@ -5,13 +5,14 @@ Getting the source code
 =======================
 
 To checkout the source code with commit access, do this:
-git svn init -s https://svn.apache.org/repos/asf/tuscany/sca-cpp tuscany-sca-cpp
+git clone git://git.apache.org/tuscany-sca-cpp
 cd tuscany-sca-cpp
 wget -P .git http://git.apache.org/authors.txt
 git config svn.authorsfile .git/authors.txt
 git config user.email <you>@apache.org
 git config svn.rmdir true
-git svn fetch --log-window-size 10000
+git svn init --prefix=origin/ -s https://svn.apache.org/repos/asf/tuscany/sca-cpp
+git svn rebase
 
 To checkout the source without commit access, do this:
 git clone git://git.apache.org/tuscany-sca-cpp
