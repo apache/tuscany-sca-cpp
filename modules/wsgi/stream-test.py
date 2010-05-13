@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!/usr/bin/python
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,23 +16,32 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Run Python util test cases
-here=`readlink -f $0`; here=`dirname $here`
-python_prefix=`cat $here/../python/python.prefix`
+# Test stream functions
 
-$python_prefix/bin/python stream-test.py
-rc=$?
-if [ "$rc" = "0" ]; then
-    $python_prefix/bin/python xml-test.py
-    rc=$?
-fi
-if [ "$rc" = "0" ]; then
-    $python_prefix/bin/python atom-test.py
-    rc=$?
-fi
-if [ "$rc" = "0" ]; then
-    $python_prefix/bin/python json-test.py
-    rc=$?
-fi
+import unittest
+from util import *
 
-return $rc
+def testStream():
+
+    s = cons_stream(0, lambda: cons_stream(1, lambda: cons(2, ())))
+    assert len(s) == 3
+    assert car(s) == 0
+    assert cadr(s) == 1
+    assert len(cdr(s)) == 2
+    assert s[0] == 0
+    assert s[1] == 1
+    assert s[2] == 2
+    assert s[:1] == (0, 1)
+    assert s[:5] == (0, 1, 2)
+    assert s[2:5] == (2,)
+    assert s[4:5] == ()
+    assert s[0:] == (0, 1, 2)
+    assert (0, 1, 2) == s[0:]
+
+    return True
+
+if __name__ == "__main__":
+    print "Testing..."
+    testStream()
+    print "OK"
+
