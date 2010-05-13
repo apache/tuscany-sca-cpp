@@ -17,7 +17,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = kernel modules components test doc samples
+SUBDIRS = kernel modules components doc samples
 
 datadir=$(prefix)
 data_DATA = INSTALL README LICENSE COPYING NOTICE
@@ -29,7 +29,6 @@ install-data-hook:
 	rm -f $(prefix)/doc/Makefile* $(prefix)/doc/Doxyfile*
 	rm -rf `find $(prefix)/doc -type d -name .svn`
 	rm -rf `find $(prefix)/doc -type d -name .deps`
-	rm -rf $(prefix)/test
 
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`
@@ -39,7 +38,6 @@ bindist: install
 	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
 	mkdir ${PACKAGE}-${PACKAGE_VERSION}-bin
 	cp -r $(prefix)/* ${PACKAGE}-${PACKAGE_VERSION}-bin
-	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin/test
 	tar -cf - ${PACKAGE}-${PACKAGE_VERSION}-bin | gzip -c > ${PACKAGE}-${PACKAGE_VERSION}-bin.tar.gz
 	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin
 	

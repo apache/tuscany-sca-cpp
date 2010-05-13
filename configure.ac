@@ -702,14 +702,13 @@ AC_CONFIG_FILES([Makefile
                  components/sqldb/Makefile
                  components/webservice/Makefile
                  samples/Makefile
-                 test/Makefile
-                 test/store-scheme/Makefile
-                 test/store-cpp/Makefile
-                 test/store-python/Makefile
-                 test/store-java/Makefile
-                 test/store-gae/Makefile
-                 test/store-sql/Makefile
-                 test/store-nosql/Makefile
+                 samples/store-scheme/Makefile
+                 samples/store-cpp/Makefile
+                 samples/store-python/Makefile
+                 samples/store-java/Makefile
+                 samples/store-gae/Makefile
+                 samples/store-sql/Makefile
+                 samples/store-nosql/Makefile
                  doc/Makefile
                  doc/Doxyfile
                  ])

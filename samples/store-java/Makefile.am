@@ -15,13 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-test_LTLIBRARIES = libcurrency-converter.la libfruits-catalog.la libshopping-cart.la
-testdir = $(prefix)/test
+JAVAROOT = ${top_builddir}/samples/store-java
 
-libcurrency_converter_la_SOURCES = currency-converter.cpp
+if WANT_JAVA
 
-libfruits_catalog_la_SOURCES = fruits-catalog.cpp
+AM_JAVACFLAGS = -cp ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_VERSION}.jar:${JAVAROOT}
 
-libshopping_cart_la_SOURCES = shopping-cart.cpp
+noinst_JAVA = store/*.java
+
+CLEANFILES = store/*.class
 
 TESTS = server-test
+
+endif

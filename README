@@ -48,8 +48,6 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- store            Key/value persistent store
  |   |   |-- webservice       Web service gateway
  |   |
- |   |-- test                 Integration tests
- |   |
  |   |-- samples              Sample Applications
  |   |
  |   |-- ubuntu               Automated install on Ubuntu 9.10
