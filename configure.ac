@@ -676,6 +676,73 @@ else
   AM_CONDITIONAL([WANT_VYSPER], false)
 fi
 
+# Configure path to Apache Thrift (and Facebook fb303).
+AC_MSG_CHECKING([for thrift])
+AC_ARG_WITH([thrift], [AC_HELP_STRING([--with-thrift=PATH], [path to installed Apache Thrift [default=/usr/local]])], [
+  THRIFT_PREFIX="${withval}"
+  THRIFT_INCLUDE="${withval}/include"
+  THRIFT_LIB="${withval}/lib"
+  FB303_PREFIX="${withval}/contrib/fb303"
+  FB303_INCLUDE="${withval}/contrib/fb303/include"
+  FB303_LIB="${withval}/contrib/fb303/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  THRIFT_PREFIX="/usr/local"
+  THRIFT_INCLUDE="/usr/local/include"
+  THRIFT_LIB="/usr/local/lib"
+  FB303_PREFIX="/usr/local"
+  FB303_INCLUDE="/usr/local/include"
+  FB303_LIB="/usr/local/lib"
+  AC_MSG_RESULT(/usr/local)
+])
+AC_SUBST(THRIFT_PREFIX)
+AC_SUBST(THRIFT_INCLUDE)
+AC_SUBST(THRIFT_LIB)
+AC_SUBST(FB303_PREFIX)
+AC_SUBST(FB303_INCLUDE)
+AC_SUBST(FB303_LIB)
+
+# Configure path to Facebook Scribe.
+AC_MSG_CHECKING([for scribe])
+AC_ARG_WITH([scribe], [AC_HELP_STRING([--with-scribe=PATH], [path to installed Facebook Scribe [default=/usr/local]])], [
+  SCRIBE_PREFIX="${withval}"
+  SCRIBE_INCLUDE="${withval}/include"
+  SCRIBE_LIB="${withval}/lib"
+  AC_MSG_RESULT("${withval}")
+], [
+  SCRIBE_PREFIX="/usr/local"
+  SCRIBE_INCLUDE="/usr/local/include"
+  SCRIBE_LIB="/usr/local/lib"
+  AC_MSG_RESULT(/usr/local)
+])
+AC_SUBST(SCRIBE_PREFIX)
+AC_SUBST(SCRIBE_INCLUDE)
+AC_SUBST(SCRIBE_LIB)
+
+# Enable Log component.
+AC_MSG_CHECKING([whether to enable the Log component])
+AC_ARG_ENABLE(log, [AS_HELP_STRING([--enable-log], [enable Log component [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_log=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_log}" = "true"; then
+  LIBS="-L${THRIFT_LIB} -L${FB303_LIB} -L${SCRIBE_LIB} ${default_LIBS}"
+  AC_CHECK_LIB([thrift], [_init], [], [AC_MSG_ERROR([couldn't find a suitable libthrift, use --with-thrift=PATH])])
+  AC_CHECK_LIB([fb303], [_init], [], [AC_MSG_ERROR([couldn't find a suitable libfb303, use --with-thrift=PATH])])
+  AC_CHECK_LIB([scribe], [_init], [], [AC_MSG_ERROR([couldn't find a suitable libscribe, use --with-scribe=PATH])])
+  AM_CONDITIONAL([WANT_LOG], true)
+  AC_DEFINE([WANT_LOG], 1, [enable Log component])
+else
+  AM_CONDITIONAL([WANT_LOG], false)
+fi
+
 # Configure GCC C++ and LD options.
 AC_SUBST([CXXFLAGS], ["${cxxflags}"])
 AC_SUBST([LDFLAGS], ["${ldflags}"])

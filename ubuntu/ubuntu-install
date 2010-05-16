@@ -231,12 +231,50 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
+# Build Apache Thrift
+wget http://www.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-incubating.tar.gz
+tar xzf thrift-0.2.0-incubating.tar.gz
+cd thrift-0.2.0
+./bootstrap.sh
+./configure --prefix=$build/thrift-0.2.0-bin --with-java=no --with-erlang=no --with-py=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
+# Build Facebook fb303
+cd thrift-0.2.0/contrib/fb303
+./bootstrap.sh
+./configure --prefix=$build/thrift-0.2.0-bin/contrib/fb303 PY_PREFIX=$build/thrift-0.2.0-bin/contrib/fb303 --with-thriftpath=$build/thrift-0.2.0-bin --disable-static
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cp cpp/lib/libfb303.so $build/thrift-0.2.0-bin/contrib/fb303/lib
+cd $build
+
+# Build Facebook Scribe
+wget http://github.com/downloads/facebook/scribe/scribe-2.2.tar.gz
+tar xzf scribe-2.2.tar.gz
+cd scribe
+./bootstrap.sh --prefix=$build/scribe-2.2-bin PY_PREFIX=$build/scribe-2.2-bin --with-thriftpath=$build/thrift-0.2.0-bin --with-fb303path=$build/thrift-0.2.0-bin/contrib/fb303 --disable-static
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cp src/lib/libscribe.so $HOME/scribe-2.2-bin/lib
+cd $build
+
 # Build Tuscany SCA
 git clone git://git.apache.org/tuscany-sca-cpp
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --enable-threads --enable-python --enable-gae --with-gae=$build/google_appengine --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --enable-threads --enable-python --enable-gae --with-gae=$build/google_appengine --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin
 make
 make install
 if [ "$?" != "0" ]; then

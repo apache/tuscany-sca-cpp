@@ -101,6 +101,9 @@ requires libcheck-0.9.6
 SQL Database:
 postgresql-9.0 (http://www.postgresql.org/)
 
+Logging:
+Apache Thrift-0.2.0 (http://incubator.apache.org/thrift/)
+Facebook Scribe-2.2 (http://github.com/facebook/scribe/downloads)
 
 To configure the Tuscany SCA build do this:
 ./bootstrap
@@ -164,6 +167,8 @@ dependencies installed under $HOME:
 --enable-chat --with-libstrophe=$HOME/libstrophe-bin \
 --with-vysper=$HOME/vysper-0.5 \
 --enable-sqldb --with-pgsql=$HOME/postgresql-9.0-bin \
+--enable-log --with-thrift=$HOME/thrift-0.2.0-bin \
+--with-scribe=$HOME/scribe-2.2-bin \
 --enable-maintainer-mode
 
 
@@ -286,4 +291,34 @@ cd postgresql-9.0alpha5
 ./configure --prefix=$HOME/postgresql-9.0-bin
 make
 make install
+
+Apache Thrift (including Facebook fb303):
+wget http://www.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-incubating.tar.gz
+tar xzf thrift-0.2.0-incubating.tar.gz
+cd thrift-0.2.0
+./bootstrap.sh
+./configure --prefix=$HOME/thrift-0.2.0-bin --with-java=no --with-erlang=no \
+--with-py=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
+make
+make install
+cd contrib/fb303
+./bootstrap.sh
+./configure --prefix=$HOME/thrift-0.2.0-bin/contrib/fb303 \
+PY_PREFIX=$HOME/thrift-0.2.0-bin/contrib/fb303 \
+--with-thriftpath=$HOME/thrift-0.2.0-bin
+make
+make install
+cp cpp/lib/libfb303.so $HOME/thrift-0.2.0-bin/contrib/fb303/lib
+
+Facebook Scribe:
+wget http://github.com/downloads/facebook/scribe/scribe-2.2.tar.gz
+tar xzf scribe-2.2.tar.gz
+cd scribe
+./bootstrap.sh --prefix=$HOME/scribe-2.2-bin PY_PREFIX=$HOME/scribe-2.2-bin \
+--with-thriftpath=$HOME/thrift-0.2.0-bin \
+--with-fb303path=$HOME/thrift-0.2.0-bin/contrib/fb303 \
+--disable-static
+make
+make install
+cp src/lib/libscribe.so $HOME/scribe-2.2-bin/lib
 

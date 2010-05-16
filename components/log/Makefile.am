@@ -15,3 +15,32 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+if WANT_LOG
+
+INCLUDES = -I${SCRIBE_INCLUDE}
+
+#comp_SCRIPTS = qpidd-start qpidd-stop
+compdir=$(prefix)/components/log
+
+comp_DATA = scribe.prefix
+scribe.prefix: $(top_builddir)/config.status
+	echo ${SCRIBE_PREFIX} >scribe.prefix
+
+#comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
+#
+#libqueue_sender_la_SOURCES = queue-sender.cpp
+#libqueue_sender_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
+#
+#libqueue_listener_la_SOURCES = queue-listener.cpp
+#libqueue_listener_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
+#
+#qpid_test_SOURCES = qpid-test.cpp
+#qpid_test_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
+#
+#client_test_SOURCES = client-test.cpp
+#client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
+#
+#noinst_PROGRAMS = qpid-test client-test
+#TESTS = send-test server-test
+
+endif
