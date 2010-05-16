@@ -266,7 +266,18 @@ make install
 if [ "$?" != "0" ]; then
     exit $?
 fi
-cp src/lib/libscribe.so $HOME/scribe-2.2-bin/lib
+cp src/lib/libscribe.so $build/scribe-2.2-bin/lib
+cd $build
+
+# Build Apache Libcloud
+wget http://www.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.3.1.tar.bz2
+tar xjf apache-libcloud-incubating-0.3.1.tar.bz2
+cd apache-libcloud-0.3.1
+python setup.py build
+python setup.py install --home $build/libcloud-0.3.1-bin
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 cd $build
 
 # Build Tuscany SCA
@@ -274,7 +285,7 @@ git clone git://git.apache.org/tuscany-sca-cpp
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --enable-threads --enable-python --enable-gae --with-gae=$build/google_appengine --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --with-libcloud=$build/libcloud-0.3.1-bin --enable-threads --enable-python --enable-gae --with-gae=$build/google_appengine --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin
 make
 make install
 if [ "$?" != "0" ]; then

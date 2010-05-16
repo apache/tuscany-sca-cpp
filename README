@@ -4,6 +4,11 @@ Apache Tuscany SCA Runtime
 Getting the source code
 =======================
 
+To checkout the source code, do this:
+git clone git://git.apache.org/tuscany-sca-cpp
+or
+svn checkout http://svn.apache.org/repos/asf/tuscany/sca-cpp tuscany-sca-cpp
+
 To checkout the source code with commit access, do this:
 git clone git://git.apache.org/tuscany-sca-cpp
 cd tuscany-sca-cpp
@@ -13,11 +18,6 @@ git config user.email <you>@apache.org
 git config svn.rmdir true
 git svn init --prefix=origin/ -s https://svn.apache.org/repos/asf/tuscany/sca-cpp
 git svn rebase
-
-To checkout the source without commit access, do this:
-git clone git://git.apache.org/tuscany-sca-cpp
-or
-svn checkout http://svn.apache.org/repos/asf/tuscany/sca-cpp tuscany-sca-cpp
 
 
 Layout

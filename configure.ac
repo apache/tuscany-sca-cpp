@@ -478,7 +478,17 @@ else
   AM_CONDITIONAL([WANT_GAE], false)
 fi
 
-# Configure path to Java includes and lib.
+# Configure path to Apache Libcloud.
+AC_MSG_CHECKING([for libcloud])
+AC_ARG_WITH([libcloud], [AC_HELP_STRING([--with-libcloud=PATH], [path to installed Apache Libcloud [default=/usr/local]])], [
+  LIBCLOUD_LIB="${withval}/lib/python"
+  AC_MSG_RESULT("${withval}")
+], [
+  LIBCLOUD_LIB="/usr/local/lib/python2.6/site-packages"
+  AC_MSG_RESULT(/usr/local)
+])
+AC_SUBST(LIBCLOUD_LIB)
+
 # Configure path to Apache Axis2C includes and lib.
 AC_MSG_CHECKING([for axis2c])
 AC_ARG_WITH([axis2c], [AC_HELP_STRING([--with-axis2c=PATH], [path to installed Apache Axis2C [default=/usr/local/axis2c]])], [

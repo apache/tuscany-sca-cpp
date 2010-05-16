@@ -41,11 +41,11 @@ libtool-2.2.6
 doxygen-1.6.1
 gcc-g++-4.5
 
-As of April 2010, the GCC 4.5 compiler is not yet included in all Linux
-distributions. GCC 4.5 Ubuntu / Debian packages can be downloaded from:
+The GCC 4.5 compiler may not yet be included in your Linux distribution.
+GCC 4.5 Ubuntu / Debian packages can be downloaded from:
 http://ftp.debian.org/debian/pool/main/g/gcc-4.5/
 
-To download and setup GCC 4.5 on Ubuntu, run this script:
+To download and setup GCC 4.5 on Ubuntu 9.10, run this script:
 http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
 
 
@@ -102,8 +102,12 @@ SQL Database:
 postgresql-9.0 (http://www.postgresql.org/)
 
 Logging:
-Apache Thrift-0.2.0 (http://incubator.apache.org/thrift/)
-Facebook Scribe-2.2 (http://github.com/facebook/scribe/downloads)
+Apache Thrift 0.2.0 (http://incubator.apache.org/thrift/)
+Facebook Scribe 2.2 (http://github.com/facebook/scribe/downloads)
+
+Cloud deployment:
+Apache Libcloud 0.3.1 (http://incubator.apache.org/libcloud/)
+
 
 To configure the Tuscany SCA build do this:
 ./bootstrap
@@ -157,6 +161,7 @@ dependencies installed under $HOME:
 --with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
 --with-js-include=/usr/include/xulrunner-1.9.1.8/unstable \
 --with-js-lib=/usr/lib/xulrunner-1.9.1.8 \
+--with-libcloud=$HOME/libcloud-0.3.1-bin \
 --enable-threads \
 --enable-python --with-python=/usr \
 --enable-gae --with-gae=$HOME/google_appengine \
@@ -321,4 +326,11 @@ cd scribe
 make
 make install
 cp src/lib/libscribe.so $HOME/scribe-2.2-bin/lib
+
+Apache Libcloud:
+wget http://www.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.3.1.tar.bz2
+tar xjf apache-libcloud-incubating-0.3.1.tar.bz2
+cd apache-libcloud-0.3.1
+python setup.py build
+python setup.py install --home $HOME/libcloud-0.3.1-bin
 
