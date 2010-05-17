@@ -294,5 +294,5 @@ fi
 cd $build
 
 # Create bin archive
-tar czf tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin axis2c-1.6.0-bin libxml2-2.7.7-bin curl-7.19.5-bin httpd-2.2.15-bin tracemonkey-bin google_appengine libstrophe-bin memcached-1.4.4-bin tinycdb-0.77-bin qpidc-0.6-bin vysper-0.5 postgresql-9.0-bin
+tar czf tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin axis2c-1.6.0-bin libxml2-2.7.7-bin curl-7.19.5-bin httpd-2.2.15-bin tracemonkey-bin google_appengine libstrophe-bin memcached-1.4.4-bin tinycdb-0.77-bin qpidc-0.6-bin vysper-0.5 postgresql-9.0-bin thrift-0.2.0-bin scribe-2.2-bin libcloud-0.3.1-bin
 
