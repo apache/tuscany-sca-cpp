@@ -31,12 +31,12 @@ sudo chgrp ubuntu /mnt/tuscany
 cd /mnt/tuscany
 
 # Install system tools and libraries
-sudo apt-get -y install wget git-core autoconf automake libtool
+sudo apt-get -y install wget git-core autoconf automake libtool g++
 if [ "$?" != "0" ]; then
     exit $?
 fi
 wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
-chmod +x ubuntu-gcc-4.5
+chmod +x ./ubuntu-gcc-4.5
 ./ubuntu-gcc-4.5
 if [ "$?" != "0" ]; then
     exit $?
@@ -62,6 +62,10 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 sudo apt-get -y install openjdk-6-jdk
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+sudo apt-get -y install bison flex
 if [ "$?" != "0" ]; then
     exit $?
 fi

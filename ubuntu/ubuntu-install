@@ -25,14 +25,14 @@ set -x
 build=`pwd`
 
 # Install core dev tools
-sudo apt-get -y install wget git-core autoconf automake libtool
+sudo apt-get -y install wget git-core autoconf automake libtool g++
 if [ "$?" != "0" ]; then
     exit $?
 fi
 
 # Install GCC 4.5
 wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
-chmod +x ubuntu-gcc-4.5
+chmod +x ./ubuntu-gcc-4.5
 ./ubuntu-gcc-4.5
 if [ "$?" != "0" ]; then
     exit $?
@@ -106,7 +106,7 @@ fi
 cd $build
 
 # Build TraceMonkey
-sudo apt-get -y install autoconf2.13
+sudo apt-get -y install autoconf2.13 zip
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -134,7 +134,7 @@ fi
 wget http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
 tar xzf axis2c-src-1.6.0.tar.gz
 cd axis2c-src-1.6.0
-./configure --enable-libxml2 --enable-openssl --with-apache2=$build/httpd-2.2.15-bin/include --prefix=$build/axis2c-1.6.0-bin
+./configure --enable-libxml2 LIBXML2_CFLAGS="-I$build/libxml2-2.7.7-bin/include/libxml2" LIBXML2_LIBS="-L$build/libxml2-2.7.7-bin/lib -lxml2" --enable-openssl --with-apache2=$build/httpd-2.2.15-bin/include --prefix=$build/axis2c-1.6.0-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -207,9 +207,9 @@ sudo apt-get -y install libreadline-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-wget http://wwwmaster.postgresql.org/redir/198/f/source/9.0alpha4/postgresql-9.0alpha4.tar.gz
-tar xzf postgresql-9.0alpha4.tar.gz
-cd postgresql-9.0alpha4
+wget ftp://ftp9.us.postgresql.org/pub/mirrors/postgresql/source/v9.0beta1/postgresql-9.0beta1.tar.gz
+tar xzf postgresql-9.0beta1.tar.gz
+cd postgresql-9.0beta1
 ./configure --prefix=$build/postgresql-9.0-bin
 make
 make install
@@ -219,6 +219,10 @@ fi
 cd $build
 
 # Build Apache Thrift
+sudo apt-get -y install bison flex
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 wget http://www.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-incubating.tar.gz
 tar xzf thrift-0.2.0-incubating.tar.gz
 cd thrift-0.2.0
@@ -268,7 +272,7 @@ fi
 cd $build
 
 # Build Tuscany SCA
-git clone git://git.apache.org/tuscany-sca-cpp
+git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
