@@ -31,28 +31,12 @@ if [ "$?" != "0" ]; then
 fi
 
 # Install GCC 4.5
-mkdir -p gcc-4.5
-cd gcc-4.5
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/cpp-4.5_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/fixincludes_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/g++-4.5_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/gcc-4.5_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/gcc-4.5-base_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/lib64gcc1_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/lib64gomp1_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/lib64mudflap0_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/lib64stdc++6_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libgcc1_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libgomp1_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libmudflap0-4.5-dev_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libmudflap0_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libstdc++6_4.5.0-2_i386.deb
-wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libstdc++6-4.5-dev_4.5.0-2_i386.deb
-sudo dpkg -i *.deb
+wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
+chmod +x ubuntu-gcc-4.5
+./ubuntu-gcc-4.5
 if [ "$?" != "0" ]; then
     exit $?
 fi
-cd $build
 
 # Build Apache HTTP server
 sudo apt-get -y install libssl-dev
@@ -71,7 +55,7 @@ fi
 cd $build
 
 # Build Memcached
-sudo apt-get install libevent-dev
+sudo apt-get -y install libevent-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi

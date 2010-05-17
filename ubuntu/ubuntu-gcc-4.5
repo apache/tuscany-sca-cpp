@@ -23,6 +23,10 @@ set -x
 # Install GCC 4.5 binaries
 mkdir -p gcc-4.5
 cd gcc-4.5
+sudo apt-get -y install libcloog-ppl0 libelfg0 libgmpxx4ldbl libmpc2 libppl-c2 libppl7
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/cpp-4.5_4.5.0-2_i386.deb
 wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/fixincludes_4.5.0-2_i386.deb
 wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/g++-4.5_4.5.0-2_i386.deb
@@ -38,6 +42,7 @@ wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libmudflap0-4.5-dev_4.5.0-
 wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libmudflap0_4.5.0-2_i386.deb
 wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libstdc++6_4.5.0-2_i386.deb
 wget http://ftp.debian.org/debian/pool/main/g/gcc-4.5/libstdc++6-4.5-dev_4.5.0-2_i386.deb
+wget http://ftp.debian.org/debian/pool/main/b/binutils/binutils_2.20.51.20100418-1_i386.deb
 sudo dpkg -i *.deb
 if [ "$?" != "0" ]; then
     exit $?
