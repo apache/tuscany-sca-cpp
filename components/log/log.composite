@@ -24,7 +24,7 @@
         
     <component name="log">
         <implementation.cpp path=".libs" library="liblog"/>
-        <property name="file">sample.log</property>property>
+        <property name="category">default</property>
         <service name="log">
             <t:binding.http uri="log"/>
         </service>

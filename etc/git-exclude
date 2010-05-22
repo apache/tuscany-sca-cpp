@@ -68,6 +68,7 @@ doxygen
 *.prefix
 index.yaml
 core
+gen-cpp/
 
 # Specific ignores
 kernel-test

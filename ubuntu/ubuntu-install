@@ -227,7 +227,7 @@ wget http://www.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-i
 tar xzf thrift-0.2.0-incubating.tar.gz
 cd thrift-0.2.0
 ./bootstrap.sh
-./configure --prefix=$build/thrift-0.2.0-bin --with-java=no --with-erlang=no --with-py=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
+./configure --prefix=$build/thrift-0.2.0-bin --with-java=no --with-erlang=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
 make
 make install
 if [ "$?" != "0" ]; then

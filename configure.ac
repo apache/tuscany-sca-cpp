@@ -690,10 +690,10 @@ fi
 AC_MSG_CHECKING([for thrift])
 AC_ARG_WITH([thrift], [AC_HELP_STRING([--with-thrift=PATH], [path to installed Apache Thrift [default=/usr/local]])], [
   THRIFT_PREFIX="${withval}"
-  THRIFT_INCLUDE="${withval}/include"
+  THRIFT_INCLUDE="${withval}/include/thrift"
   THRIFT_LIB="${withval}/lib"
   FB303_PREFIX="${withval}/contrib/fb303"
-  FB303_INCLUDE="${withval}/contrib/fb303/include"
+  FB303_INCLUDE="${withval}/contrib/fb303/include/thrift"
   FB303_LIB="${withval}/contrib/fb303/lib"
   AC_MSG_RESULT("${withval}")
 ], [

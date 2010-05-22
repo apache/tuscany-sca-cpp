@@ -303,7 +303,7 @@ tar xzf thrift-0.2.0-incubating.tar.gz
 cd thrift-0.2.0
 ./bootstrap.sh
 ./configure --prefix=$HOME/thrift-0.2.0-bin --with-java=no --with-erlang=no \
---with-py=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
+--with-perl=no --with-ruby=no --with-csharp=no --disable-static
 make
 make install
 cd contrib/fb303

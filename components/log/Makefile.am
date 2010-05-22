@@ -17,30 +17,34 @@
 
 if WANT_LOG
 
-INCLUDES = -I${SCRIBE_INCLUDE}
+INCLUDES = -I${THRIFT_INCLUDE} -I${FB303_INCLUDE}
 
-#comp_SCRIPTS = qpidd-start qpidd-stop
+comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop
 compdir=$(prefix)/components/log
 
-comp_DATA = scribe.prefix
+comp_DATA = scribe.prefix thrift.prefix
 scribe.prefix: $(top_builddir)/config.status
 	echo ${SCRIBE_PREFIX} >scribe.prefix
 
-#comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
-#
-#libqueue_sender_la_SOURCES = queue-sender.cpp
-#libqueue_sender_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
-#
-#libqueue_listener_la_SOURCES = queue-listener.cpp
-#libqueue_listener_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
-#
-#qpid_test_SOURCES = qpid-test.cpp
-#qpid_test_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
-#
-#client_test_SOURCES = client-test.cpp
-#client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
-#
-#noinst_PROGRAMS = qpid-test client-test
-#TESTS = send-test server-test
+thrift.prefix: $(top_builddir)/config.status
+	echo ${THRIFT_PREFIX} >thrift.prefix
+
+BUILT_SOURCES=gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
+gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h: scribe.thrift
+	${THRIFT_PREFIX}/bin/thrift -r --gen cpp scribe.thrift
+
+CLEANFILES = gen-cpp/*
+
+comp_LTLIBRARIES = liblog.la
+nodist_liblog_la_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
+liblog_la_CXXFLAGS = -Wno-unused-parameter
+liblog_la_SOURCES = log.cpp
+liblog_la_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
+
+client_test_SOURCES = client-test.cpp
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+noinst_PROGRAMS = client-test
+TESTS = scribe-test server-test
 
 endif
