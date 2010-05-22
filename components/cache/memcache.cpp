@@ -112,7 +112,7 @@ private:
  */
 const failable<value> start(unused const list<value>& params) {
     // Connect to memcached
-    memcache::MemCached& ch = *(new (gc_new<memcache::MemCached>()) memcache::MemCached("127.0.0.1", 11211));
+    memcache::MemCached& ch = *(new (gc_new<memcache::MemCached>()) memcache::MemCached("localhost", 11211));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applyCache(ch)));
