@@ -39,8 +39,17 @@ sleep 2
 ./client-test 2>/dev/null
 rc=$?
 if [ "$rc" = "0" ]; then
+    echo "Testing..."
     sleep 4
-    grep "Apple" tmp/scribe/logs/central/default/* >/dev/null
+    grep "Apple" tmp/scribe/logs/central/default/default_current >/dev/null
+    rc=$?
+fi
+if [ "$rc" = "0" ]; then
+    grep "(add 33 22)" tmp/scribe/logs/central/default/default_current >/dev/null
+    rc=$?
+fi
+if [ "$rc" = "0" ]; then
+    grep "55" tmp/scribe/logs/central/default/default_current >/dev/null
     rc=$?
 fi
 
@@ -50,4 +59,7 @@ sleep 1
 ./scribed-client-stop tmp
 ./scribed-central-stop tmp
 sleep 1
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
 return $rc

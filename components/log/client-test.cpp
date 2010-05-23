@@ -68,7 +68,7 @@ struct logLoop {
 bool testLogPerf() {
     const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$4.55"));
+            + (list<value>() + "price" + string("$2.99"));
     const value a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
     http::CURLSession cs;
@@ -81,6 +81,16 @@ bool testLogPerf() {
     return true;
 }
 
+bool testLogger() {
+    http::CURLSession cs;
+
+    const failable<value> res = http::evalExpr(mklist<value>(string("sum"), 33, 22), string("http://localhost:8090/client"), cs);
+    assert(hasContent(res));
+    assert((int)content(res) == 55);
+
+    return true;
+}
+
 }
 }
 
@@ -89,6 +99,7 @@ int main() {
 
     tuscany::log::testLog();
     tuscany::log::testLogPerf();
+    tuscany::log::testLogger();
 
     tuscany::cout << "OK" << tuscany::endl;
 

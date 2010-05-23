@@ -30,7 +30,7 @@ sleep 1
 # Test logging a message
 echo test | ./scribe-cat
 sleep 4
-grep test tmp/scribe/logs/central/default/* >/dev/null
+grep test tmp/scribe/logs/central/default/default_current >/dev/null
 rc=$?
 
 # Cleanup

@@ -30,4 +30,28 @@
         </service>
     </component>     
 
+    <component name="client">
+        <implementation.scheme script="client-test.scm"/>
+        <service name="client">
+            <t:binding.http uri="client"/>
+        </service>
+        <reference name="adder" target="logger"/>
+    </component>     
+
+    <component name="logger">
+        <implementation.cpp path=".libs" library="liblogger"/>
+        <property name="category">default</property>
+        <service name="logger">
+            <t:binding.http uri="logger"/>
+        </service>
+        <reference name="relay" target="adder"/>
+    </component>     
+
+    <component name="adder">
+        <implementation.scheme script="adder-test.scm"/>
+        <service name="adder">
+            <t:binding.http uri="adder"/>
+        </service>
+    </component>     
+
 </composite>
