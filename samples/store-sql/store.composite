@@ -60,7 +60,7 @@
     </component>     
 
     <component name="Sqldb">
-        <implementation.cpp path="../../components/sqldb/.libs" library="libsqldb"/>
+        <implementation.cpp path="../../components/sqldb" library="libsqldb"/>
         <property name="conninfo">dbname=db</property>
         <property name="table">store</property>
         <service name="Sqldb">

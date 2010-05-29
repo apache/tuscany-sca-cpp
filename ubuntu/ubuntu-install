@@ -30,13 +30,13 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 
-# Install GCC 4.5
-wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
-chmod +x ./ubuntu-gcc-4.5
-./ubuntu-gcc-4.5
-if [ "$?" != "0" ]; then
-    exit $?
-fi
+# Uncomment to install GCC 4.5
+#wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
+#chmod +x ./ubuntu-gcc-4.5
+#./ubuntu-gcc-4.5
+#if [ "$?" != "0" ]; then
+#    exit $?
+#fi
 
 # Build Apache HTTP server
 sudo apt-get -y install libssl-dev
@@ -227,7 +227,7 @@ wget http://www.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-i
 tar xzf thrift-0.2.0-incubating.tar.gz
 cd thrift-0.2.0
 ./bootstrap.sh
-./configure --prefix=$build/thrift-0.2.0-bin --with-java=no --with-erlang=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
+./configure --prefix=$build/thrift-0.2.0-bin PY_PREFIX=$build/thrift-0.2.0-bin --with-java=no --with-erlang=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
 make
 make install
 if [ "$?" != "0" ]; then

@@ -23,7 +23,7 @@
   name="sqldb">
         
     <component name="sqldb">
-        <implementation.cpp path=".libs" library="libsqldb"/>
+        <implementation.cpp path="." library="libsqldb"/>
         <property name="conninfo">dbname=db</property>
         <property name="table">test</property>
         <service name="sqldb">

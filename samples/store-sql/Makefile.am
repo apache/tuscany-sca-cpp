@@ -15,5 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+if WANT_SQLDB
+
+sample_SCRIPTS = start stop ssl-start
+sampledir = $(prefix)/samples/store-sql
+
+nobase_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-cart.scm store.scm store.composite htdocs/*
+
 TESTS = server-test
 
+endif

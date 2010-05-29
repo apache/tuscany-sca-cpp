@@ -60,7 +60,7 @@
     </component>     
 
     <component name="NoSqldb">
-        <implementation.cpp path="../../components/nosqldb/.libs" library="libnosqldb"/>
+        <implementation.cpp path="../../components/nosqldb" library="libnosqldb"/>
         <property name="dbname">tmp/store.cdb</property>
         <service name="NoSqldb">
             <t:binding.atom uri="nosqldb"/>

@@ -19,24 +19,36 @@ if WANT_WEBSERVICE
 
 INCLUDES = -I${AXIS2C_INCLUDE}
 
-comp_DATA = axis2c.prefix
+comp_SCRIPTS = axis2-conf
 compdir=$(prefix)/components/webservice
+
+comp_DATA = axis2c.prefix axis2.xml services.xml module.xml
+
 axis2c.prefix: $(top_builddir)/config.status
 	echo ${AXIS2C_PREFIX} >axis2c.prefix
 
 comp_LTLIBRARIES = libwebservice-client.la libwebservice-listener.la libaxis2-dispatcher.la libaxis2-service.la
+noinst_DATA = libwebservice-client.so libwebservice-listener.so libaxis2-dispatcher.so libaxis2-service.so
 
 libwebservice_client_la_SOURCES = webservice-client.cpp
 libwebservice_client_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil
+libwebservice-client.so:
+	ln -s .libs/libwebservice-client.so
 
 libwebservice_listener_la_SOURCES = webservice-listener.cpp
 libwebservice_listener_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil
+libwebservice-listener.so:
+	ln -s .libs/libwebservice-listener.so
 
 libaxis2_dispatcher_la_SOURCES = axis2-dispatcher.cpp
 libaxis2_dispatcher_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil
+libaxis2-dispatcher.so:
+	ln -s .libs/libaxis2-dispatcher.so
 
 libaxis2_service_la_SOURCES = axis2-service.cpp
 libaxis2_service_la_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil
+libaxis2-service.so:
+	ln -s .libs/libaxis2-service.so
 
 axiom_test_SOURCES = axiom-test.cpp
 axiom_test_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil

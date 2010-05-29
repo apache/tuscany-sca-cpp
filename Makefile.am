@@ -20,15 +20,8 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = kernel modules components doc samples
 
 datadir=$(prefix)
-data_DATA = INSTALL README LICENSE COPYING NOTICE
+data_DATA = README LICENSE COPYING NOTICE
 nobase_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
-
-install-data-hook:
-	rm -rf $(prefix)/doc
-	cp -r doc $(prefix)
-	rm -f $(prefix)/doc/Makefile* $(prefix)/doc/Doxyfile*
-	rm -rf `find $(prefix)/doc -type d -name .svn`
-	rm -rf `find $(prefix)/doc -type d -name .deps`
 
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`

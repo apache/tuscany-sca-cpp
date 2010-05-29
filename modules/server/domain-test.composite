@@ -30,7 +30,7 @@
     </component>     
 
     <component name="cpp-test">
-        <implementation.cpp path=".libs" library="libimpl-test"/>
+        <implementation.cpp path="." library="libimpl-test"/>
         <service name="cpp">
             <t:binding.http uri="cpp"/>
         </service>

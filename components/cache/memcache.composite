@@ -23,7 +23,7 @@
   name="memcache">
         
     <component name="memcache">
-        <implementation.cpp path=".libs" library="libmemcache"/>
+        <implementation.cpp path="." library="libmemcache"/>
         <service name="memcache">
             <t:binding.http uri="memcache"/>
         </service>

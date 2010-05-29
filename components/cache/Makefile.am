@@ -24,6 +24,9 @@ memcached.prefix: $(top_builddir)/config.status
 
 comp_LTLIBRARIES = libmemcache.la
 libmemcache_la_SOURCES = memcache.cpp
+noinst_DATA = libmemcache.so
+libmemcache.so:
+	ln -s .libs/libmemcache.so
 
 memcache_test_SOURCES = memcache-test.cpp
 memcache_test_LDFLAGS = -lxml2

@@ -1,6 +1,29 @@
 Apache Tuscany SCA Runtime
 ==========================
 
+Tuscany SCA Native is an SCA (Service Component Architecture) runtime written
+in C++ and integrated with the Apache HTTPD server.
+
+It supports SCA components written in C++ and Python. Experimental support
+for other programming languages is under construction. SCA bindings are
+available for the JSON-RPC and ATOMPub protocols.
+
+Several useful SCA components are provided on top of the SCA runtime, which
+can be used to help assemble distributed SCA composite applications:
+
+Cache: Key/value memory cache, using Memcached;
+Chat: XMPP chat, using Apache Vysper and Libstrophe;
+Log: distributed logger, using Facebook Scribe.
+Queue: AMQP queuing, using Apache Qpid/C;
+Sqldb: SQL database, using PostgreSQL;
+Store: Key/value persistent store, using TinyCDB;
+Webservice: Web service gateway, using Apache Axis2/C;
+
+These components present a simple ATOMPub REST interface, allowing you to send
+a message to a queue, a chat connection, or add an entry to a cache or a
+database for example, using a simple HTTP POST. 
+
+
 Getting the source code
 =======================
 
@@ -61,7 +84,7 @@ Here's a rough guide to the Tuscany SCA source tree:
 Building
 ========
 
-See the INSTALL file.
+See the INSTALL file at the root of the source tree.
 
 
 Contributing to the project

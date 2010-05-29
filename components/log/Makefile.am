@@ -19,10 +19,10 @@ if WANT_LOG
 
 INCLUDES = -I${THRIFT_INCLUDE} -I${FB303_INCLUDE}
 
-comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop
+comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop scribe-cat
 compdir=$(prefix)/components/log
 
-comp_DATA = scribe.prefix thrift.prefix
+comp_DATA = scribe.prefix thrift.prefix scribecat.py
 scribe.prefix: $(top_builddir)/config.status
 	echo ${SCRIBE_PREFIX} >scribe.prefix
 
@@ -36,16 +36,21 @@ gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp
 CLEANFILES = gen-cpp/*
 
 comp_LTLIBRARIES = liblog.la liblogger.la
+noinst_DATA = liblog.so liblogger.so
 
 nodist_liblog_la_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
 liblog_la_CXXFLAGS = -Wno-unused-parameter
 liblog_la_SOURCES = log.cpp
 liblog_la_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
+liblog.so:
+	ln -s .libs/liblog.so
 
 nodist_liblogger_la_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
 liblogger_la_CXXFLAGS = -Wno-unused-parameter
 liblogger_la_SOURCES = logger.cpp
 liblogger_la_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
+liblogger.so:
+	ln -s .libs/liblogger.so
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

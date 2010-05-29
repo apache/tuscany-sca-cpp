@@ -27,12 +27,17 @@ qpidc.prefix: $(top_builddir)/config.status
 	echo ${QPIDC_PREFIX} >qpidc.prefix
 
 comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
+noinst_DATA = libqueue-sender.so libqueue-listener.so
 
 libqueue_sender_la_SOURCES = queue-sender.cpp
 libqueue_sender_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
+libqueue-sender.so:
+	ln -s .libs/libqueue-sender.so
 
 libqueue_listener_la_SOURCES = queue-listener.cpp
 libqueue_listener_la_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
+libqueue-listener.so:
+	ln -s .libs/libqueue-listener.so
 
 qpid_test_SOURCES = qpid-test.cpp
 qpid_test_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon

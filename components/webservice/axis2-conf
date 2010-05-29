@@ -33,10 +33,10 @@ mkdir -p $root/axis2c/services
 
 # Install Tuscany Axis2 module and service
 mkdir -p $root/axis2c/modules/tuscany
-ln -f -s $here/.libs/libaxis2-dispatcher.so $root/axis2c/modules/tuscany/libaxis2-dispatcher.so
+ln -f -s $here/libaxis2-dispatcher.so $root/axis2c/modules/tuscany/libaxis2-dispatcher.so
 ln -f -s $here/module.xml $root/axis2c/modules/tuscany/module.xml
 mkdir -p $root/axis2c/services/tuscany
-ln -f -s $here/.libs/libaxis2-service.so $root/axis2c/services/tuscany/libaxis2-service.so
+ln -f -s $here/libaxis2-service.so $root/axis2c/services/tuscany/libaxis2-service.so
 ln -f -s $here/services.xml $root/axis2c/services/tuscany/services.xml
 cp $here/axis2.xml $root/axis2c/axis2.xml
 

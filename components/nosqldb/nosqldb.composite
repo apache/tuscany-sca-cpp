@@ -23,7 +23,7 @@
   name="nosqldb">
         
     <component name="nosqldb">
-        <implementation.cpp path=".libs" library="libnosqldb"/>
+        <implementation.cpp path="." library="libnosqldb"/>
         <property name="dbname">tmp/test.cdb</property>
         <service name="nosqldb">
             <t:binding.http uri="nosqldb"/>

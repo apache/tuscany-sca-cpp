@@ -23,7 +23,7 @@
   name="webservice-client">
         
     <component name="webservice-client">
-        <implementation.cpp path=".libs" library="libwebservice-client"/>
+        <implementation.cpp path="." library="libwebservice-client"/>
         <property name="uri">http://localhost:9090/axis2/services/echo</property>
         <service name="webservice-client">
             <t:binding.jsonrpc uri="echo-client"/>
@@ -31,7 +31,7 @@
     </component>     
 
     <component name="webservice-listener">
-        <implementation.cpp path=".libs" library="libwebservice-listener"/>
+        <implementation.cpp path="." library="libwebservice-listener"/>
         <service name="webservice-listener">
             <t:binding.http uri="echo-listener"/>
         </service>

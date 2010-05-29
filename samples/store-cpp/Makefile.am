@@ -15,8 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-sample_LTLIBRARIES = libcurrency-converter.la libfruits-catalog.la libshopping-cart.la
+
+sample_SCRIPTS = start stop ssl-start
 sampledir = $(prefix)/samples/store-cpp
+
+nobase_sample_DATA = currency-converter.cpp fruits-catalog.cpp shopping-cart.cpp store.composite htdocs/*
+
+sample_LTLIBRARIES = libcurrency-converter.la libfruits-catalog.la libshopping-cart.la
 
 libcurrency_converter_la_SOURCES = currency-converter.cpp
 

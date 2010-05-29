@@ -19,8 +19,10 @@ if WANT_PYTHON
 
 INCLUDES = -I${PYTHON_INCLUDE}
 
-mod_SCRIPTS = composite.py scdl.py util.py elemutil.py xmlutil.py atomutil.py jsonutil.py wsgi-start wsgi-stop
+mod_SCRIPTS = composite.py wsgi-start wsgi-stop gae-start gae-stop
 moddir = $(prefix)/modules/wsgi
+
+mod_DATA = app.yaml scdl.py util.py elemutil.py xmlutil.py atomutil.py jsonutil.py
 
 noinst_DATA = target.stamp
 

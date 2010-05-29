@@ -22,9 +22,12 @@ include_HEADERS = *.hpp
 
 string_test_SOURCES = string-test.cpp
 
-test_LTLIBRARIES = libdynlib-test.la
-testdir = $(prefix)/test
+noinst_test_LTLIBRARIES = libdynlib-test.la
+noinst_testdir = `pwd`/tmp
 libdynlib_test_la_SOURCES = dynlib-test.cpp
+noinst_DATA = libdynlib-test.so
+libdynlib-test.so:
+	ln -s .libs/libdynlib-test.so
 
 kernel_test_SOURCES = kernel-test.cpp
 

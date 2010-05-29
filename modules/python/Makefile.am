@@ -37,7 +37,7 @@ libmod_tuscany_python_la_SOURCES = mod-python.cpp
 libmod_tuscany_python_la_LDFLAGS = -lxml2 -lcurl -lmozjs -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
 noinst_DATA = libmod_tuscany_python.so
 libmod_tuscany_python.so:
-	ln -s .libs/libmod_tuscany_python.so libmod_tuscany_python.so
+	ln -s .libs/libmod_tuscany_python.so
 
 python_test_SOURCES = python-test.cpp
 python_test_LDFLAGS = -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6

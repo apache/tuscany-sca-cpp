@@ -27,8 +27,11 @@
 #include "function.hpp"
 #include "sstream.hpp"
 #include "fstream.hpp"
+#include "perf.hpp"
 
 namespace tuscany {
+
+#ifdef WANT_GCC45
 
 const lambda<const int(const int)> inc(const int i) {
     return [=](const int x)->const int {
@@ -64,12 +67,34 @@ bool testLambda() {
     return true;
 }
 
+const double fib_aux(const double n, const double a, const double b) {
+    return n == 0.0? a : fib_aux(n - 1.0, b, a + b);
+}
+
+const bool fibMapPerf() {
+    list<double> s = seq(0.0, 4999.0);
+    list<double> r = map<double, double>([](const double n)->const double { return fib_aux(n, 0.0, 1.0); }, s);
+    assert(5000 == length(r));
+    return true;
+}
+
+bool testCppPerf() {
+    cout << "Fibonacci map test " << (time([]()->const bool { return fibMapPerf(); }, 1, 1) / 5000) << " ms" << endl;
+    return true;
+}
+
+#endif
 }
 
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
+#ifdef WANT_GCC45
     tuscany::testLambda();
+    tuscany::testCppPerf();
+#else
+    tuscany::cout << "Skipped GCC 4.5 tests" << tuscany::endl;
+#endif
 
     tuscany::cout << "OK" << tuscany::endl;
 

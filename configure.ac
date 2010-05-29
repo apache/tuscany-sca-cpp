@@ -25,19 +25,20 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([tar-ustar])
 AC_PREFIX_DEFAULT(/usr/local/tuscany/sca)
 
-# Require GCC 4.5
+# Check for required programs.
+AC_MSG_NOTICE([checking for programs])
 AC_MSG_CHECKING([for gcc-4.5])
-if test -x "/usr/bin/gcc-4.5"; then
+if test -x "/usr/bin/g++-4.5"; then
+    # Use GCC 4.5 if available
     CXX=/usr/bin/g++-4.5
     CPP=/usr/bin/cpp-4.5
     CC=/usr/bin/gcc-4.5
     AC_MSG_RESULT(/usr/bin/gcc-4.5)
+    AM_CONDITIONAL([WANT_GCC45], true)
+    AC_DEFINE([WANT_GCC45], 1, [compile with gcc-4.5])
 else
-    AC_MSG_ERROR([could not find gcc-4.5])
+    AM_CONDITIONAL([WANT_GCC45], false)
 fi
-
-# Check for required programs.
-AC_MSG_NOTICE([checking for programs])
 AC_PROG_CXX
 AC_PROG_AWK
 AC_PROG_CC

@@ -23,7 +23,7 @@
   name="queue">
         
     <component name="print-sender">
-        <implementation.cpp path=".libs" library="libqueue-sender"/>
+        <implementation.cpp path="." library="libqueue-sender"/>
         <property name="key">print</property>
         <service name="print-sender">
             <t:binding.http uri="print-sender"/>
@@ -31,7 +31,7 @@
     </component>
 
     <component name="print-listener">
-        <implementation.cpp path=".libs" library="libqueue-listener"/>
+        <implementation.cpp path="." library="libqueue-listener"/>
         <property name="key">print</property>
         <property name="queue">printq</property>
         <reference name="relay" target="print"/>
@@ -46,7 +46,7 @@
     </component>     
 
     <component name="report-sender">
-        <implementation.cpp path=".libs" library="libqueue-sender"/>
+        <implementation.cpp path="." library="libqueue-sender"/>
         <property name="key">report</property>
         <service name="report-sender">
             <t:binding.http uri="report-sender"/>

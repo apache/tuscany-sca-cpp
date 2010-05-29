@@ -17,3 +17,6 @@
 
 SUBDIRS = store-scheme store-cpp store-python store-java store-gae store-sql store-nosql
 
+sample_DATA = README
+sampledir=$(prefix)/samples
+

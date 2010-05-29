@@ -27,9 +27,12 @@ tinycdb.prefix: $(top_builddir)/config.status
 	echo ${TINYCDB_PREFIX} >tinycdb.prefix
 
 comp_LTLIBRARIES = libnosqldb.la
+noinst_DATA = libnosqldb.so
 
 libnosqldb_la_SOURCES = nosqldb.cpp
 libnosqldb_la_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb
+libnosqldb.so:
+	ln -s .libs/libnosqldb.so
 
 tinycdb_test_SOURCES = tinycdb-test.cpp
 tinycdb_test_LDFLAGS = -L${TINYCDB_LIB} -R${TINYCDB_LIB} -lcdb

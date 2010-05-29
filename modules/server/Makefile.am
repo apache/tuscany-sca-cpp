@@ -27,16 +27,20 @@ noinst_DATA = libmod_tuscany_eval.so libmod_tuscany_wiring.so
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp
 libmod_tuscany_eval_la_LDFLAGS = -lxml2 -lcurl -lmozjs
 libmod_tuscany_eval.so:
-	ln -s .libs/libmod_tuscany_eval.so libmod_tuscany_eval.so
+	ln -s .libs/libmod_tuscany_eval.so
 
 libmod_tuscany_wiring_la_SOURCES = mod-wiring.cpp
 libmod_tuscany_wiring_la_LDFLAGS = -lxml2 -lcurl -lmozjs
 libmod_tuscany_wiring.so:
-	ln -s .libs/libmod_tuscany_wiring.so libmod_tuscany_wiring.so
+	ln -s .libs/libmod_tuscany_wiring.so
 
-noinst_testdir = $(prefix)/test
 noinst_test_LTLIBRARIES = libimpl-test.la
+noinst_testdir = `pwd`/tmp
+noinst_DATA += libimpl-test.so
+
 libimpl_test_la_SOURCES = impl-test.cpp
+libimpl-test.so:
+	ln -s .libs/libimpl-test.so
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

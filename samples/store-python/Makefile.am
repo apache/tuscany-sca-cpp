@@ -17,6 +17,11 @@
 
 if WANT_PYTHON
 
+sample_SCRIPTS = start stop ssl-start
+sampledir = $(prefix)/samples/store-python
+
+nobase_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*
+
 TESTS = server-test
 
 endif

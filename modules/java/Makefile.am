@@ -35,7 +35,7 @@ libmod_tuscany_java_la_SOURCES = mod-java.cpp
 libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -lmozjs ${JAVA_LDFLAGS}
 noinst_DATA = libmod_tuscany_java.so
 libmod_tuscany_java.so:
-	ln -s .libs/libmod_tuscany_java.so libmod_tuscany_java.so
+	ln -s .libs/libmod_tuscany_java.so
 
 jni_test_SOURCES = jni-test.cpp
 jni_test_LDFLAGS = ${JAVA_LDFLAGS}
@@ -53,7 +53,7 @@ jar_DATA = ${jarfile}
 ${jarfile}: ${noinst_JAVA}
 	${JAR} cf $@ org/apache/tuscany/*.class
 
-CLEANFILES = ${jarfile} org/apache/tuscany/*.class	test/*.class
+CLEANFILES = classnoinst.stamp ${jarfile} org/apache/tuscany/*.class	test/*.class
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

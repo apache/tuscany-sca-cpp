@@ -120,13 +120,6 @@ private:
     int fd;
     struct stat st;
 
-    //friend const failable<bool> post(const value& key, const value& val, TinyCDB& cdb);
-    //friend const failable<bool> put(const value& key, const value& val, TinyCDB& cdb);
-    //friend const failable<value> get(const value& key, const TinyCDB& cdb);
-    //friend const failable<bool> del(const value& key, TinyCDB& cdb);
-    //friend const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsigned int klen, const unsigned int vlen)>& update, const lambda<failable<bool>(struct cdb_make&)>& finish, TinyCDB& cdb);
-    //friend const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsigned int klen, const unsigned int vlen)>& update, const lambda<failable<bool>(struct cdb_make&)>& finish, buffer& buf, const int fd, TinyCDB& cdb);
-
     friend const string dbname(const TinyCDB& cdb);
     friend const failable<int> cdbopen(TinyCDB& cdb);
     friend const failable<bool> cdbclose(TinyCDB& cdb);
@@ -306,6 +299,29 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
 /**
  * Post a new item to the database.
  */
+struct postUpdate {
+    const string ks;
+    postUpdate(const string& ks) : ks(ks) {
+    }
+    const failable<bool> operator()(buffer& buf, const unsigned int klen, unused const unsigned int vlen) const {
+        if (ks == string((char*)buf, klen))
+            return mkfailure<bool>("Key already exists");
+        return true;
+    }
+};
+
+struct postFinish {
+    const string ks;
+    const string vs;
+    postFinish(const string& ks, const string& vs) : ks(ks), vs(vs) {
+    }
+    const failable<bool> operator()(struct cdb_make& cdbm) const {
+        if (cdb_make_add(&cdbm, c_str(ks), length(ks), c_str(vs), length(vs)) == -1)
+            return mkfailure<bool>("Could not add entry");
+        return true;
+    }
+};
+
 const failable<bool> post(const value& key, const value& val, TinyCDB& cdb) {
     debug(key, "tinycdb::post::key");
     debug(val, "tinycdb::post::value");
@@ -315,18 +331,10 @@ const failable<bool> post(const value& key, const value& val, TinyCDB& cdb) {
     const string vs(scheme::writeValue(val));
 
     // Process each entry and detect existing key
-    auto update = [=](buffer& buf, const unsigned int klen, unused const unsigned int vlen)->const failable<bool> {
-        if (ks == string((char*)buf, klen))
-            return mkfailure<bool>("Key already exists");
-        return true;
-    };
+    const lambda<failable<bool>(buffer& buf, const unsigned int klen, const unsigned int vlen)> update = postUpdate(ks);
 
     // Add the new entry to the db
-    auto finish = [=](struct cdb_make& cdbm)->const failable<bool> {
-        if (cdb_make_add(&cdbm, c_str(ks), length(ks), c_str(vs), length(vs)) == -1)
-            return mkfailure<bool>("Could not add entry");
-        return true;
-    };
+    const lambda<failable<bool>(struct cdb_make& cdbm)> finish = postFinish(ks, vs);
 
     // Rewrite the db
     const failable<bool> r = rewrite(update, finish, cdb);
@@ -337,6 +345,29 @@ const failable<bool> post(const value& key, const value& val, TinyCDB& cdb) {
 /**
  * Update an item in the database. If the item doesn't exist it is added.
  */
+struct putUpdate {
+    const string ks;
+    putUpdate(const string& ks) : ks(ks) {
+    }
+    const failable<bool> operator()(buffer& buf, const unsigned int klen, unused const unsigned int vlen) const {
+        if (ks == string((char*)buf, klen))
+            return false;
+        return true;
+    }
+};
+
+struct putFinish {
+    const string ks;
+    const string vs;
+    putFinish(const string& ks, const string& vs) : ks(ks), vs(vs) {
+    }
+    const failable<bool> operator()(struct cdb_make& cdbm) const {
+        if (cdb_make_add(&cdbm, c_str(ks), length(ks), c_str(vs), length(vs)) == -1)
+            return mkfailure<bool>("Could not add entry");
+        return true;
+    }
+};
+
 const failable<bool> put(const value& key, const value& val, TinyCDB& cdb) {
     debug(key, "tinycdb::put::key");
     debug(val, "tinycdb::put::value");
@@ -346,18 +377,10 @@ const failable<bool> put(const value& key, const value& val, TinyCDB& cdb) {
     const string vs(scheme::writeValue(val));
 
     // Process each entry and skip existing key
-    auto update = [&](buffer& buf, const unsigned int klen, unused const unsigned int vlen)->const failable<bool> {
-        if (ks == string((char*)buf, klen))
-            return false;
-        return true;
-    };
+    const lambda<failable<bool>(buffer& buf, const unsigned int klen, const unsigned int vlen)> update = putUpdate(ks);
 
     // Add the new entry to the db
-    auto finish = [&](struct cdb_make& cdbm)->const failable<bool> {
-        if (cdb_make_add(&cdbm, c_str(ks), length(ks), c_str(vs), length(vs)) == -1)
-            return mkfailure<bool>("Could not add entry");
-        return true;
-    };
+    const lambda<failable<bool>(struct cdb_make& cdbm)> finish = putFinish(ks, vs);
 
     // Rewrite the db
     const failable<bool> r = rewrite(update, finish, cdb);
@@ -394,6 +417,25 @@ const failable<value> get(const value& key, TinyCDB& cdb) {
 /**
  * Delete an item from the database
  */
+struct delUpdate {
+    const string ks;
+    delUpdate(const string& ks) : ks(ks) {
+    }
+    const failable<bool> operator()(buffer& buf, const unsigned int klen, unused const unsigned int vlen) const {
+        if (ks == string((char*)buf, klen))
+            return false;
+        return true;
+    }
+};
+
+struct delFinish {
+    delFinish() {
+    }
+    const failable<bool> operator()(unused struct cdb_make& cdbm) const {
+        return true;
+    }
+};
+
 const failable<bool> del(const value& key, TinyCDB& cdb) {
     debug(key, "tinycdb::delete::key");
     debug(dbname(cdb), "tinycdb::delete::dbname");
@@ -401,18 +443,10 @@ const failable<bool> del(const value& key, TinyCDB& cdb) {
     const string ks(scheme::writeValue(key));
 
     // Process each entry and skip existing key
-    auto update = [=](buffer& buf, const unsigned int klen, unused const unsigned int vlen)->const failable<bool> {
-        if (ks == string((char*)buf, klen))
-            return false;
-        return true;
-    };
+    const lambda<failable<bool>(buffer& buf, const unsigned int klen, const unsigned int vlen)> update = delUpdate(ks);
 
     // Nothing to do to finish
-    auto finish = [=](unused struct cdb_make& cdbm)->const failable<bool> {
-        // hack: reference a variable from outer scope to workaround GCC internal error
-        const string xs(ks);
-        return true;
-    };
+    const lambda<failable<bool>(struct cdb_make& cdbm)> finish = delFinish();
 
     // Rewrite the db
     const failable<bool> r = rewrite(update, finish, cdb);

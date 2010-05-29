@@ -31,6 +31,9 @@ vysper.prefix: $(top_builddir)/config.status
 comp_LTLIBRARIES = libchatter.la
 libchatter_la_SOURCES = chatter.cpp
 libchatter_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
+noinst_DATA = libchatter.so
+libchatter.so:
+	ln -s .libs/libchatter.so
 
 xmpp_test_SOURCES = xmpp-test.cpp
 xmpp_test_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
@@ -43,9 +46,7 @@ noinst_PROGRAMS = xmpp-test client-test
 if WANT_VYSPER
 
 AM_JAVACFLAGS = -cp `${top_builddir}/components/chat/vysper-classpath ${VYSPER_PREFIX}`${JAVAROOT}
-
 noinst_JAVA = test/*.java
-
 CLEANFILES = test/*.class
 
 TESTS = echo-test 

@@ -18,8 +18,10 @@
 if WANT_PYTHON
 if WANT_GAE
 
-noinst_DATA = target.stamp 
+sample_SCRIPTS = start stop
+sampledir = $(prefix)/samples/store-gae
 
+BUILT_SOURCES = target.stamp 
 target.stamp: app.yaml *.py *.composite $(top_builddir)/modules/wsgi/*.py htdocs/*
 	mkdir -p target
 	cp app.yaml *.py *.composite `ls $(top_builddir)/modules/wsgi/*.py | grep -v "\-test"` target
@@ -28,6 +30,8 @@ target.stamp: app.yaml *.py *.composite $(top_builddir)/modules/wsgi/*.py htdocs
 
 clean-local:
 	rm -rf target.stamp target
+
+nobase_sample_DATA = target/app.yaml target/*.py target/*.composite target/htdocs/*
 
 TESTS = server-test
 

@@ -23,7 +23,7 @@
   name="log">
         
     <component name="log">
-        <implementation.cpp path=".libs" library="liblog"/>
+        <implementation.cpp path="." library="liblog"/>
         <property name="category">default</property>
         <service name="log">
             <t:binding.http uri="log"/>
@@ -39,7 +39,7 @@
     </component>     
 
     <component name="logger">
-        <implementation.cpp path=".libs" library="liblogger"/>
+        <implementation.cpp path="." library="liblogger"/>
         <property name="category">default</property>
         <service name="logger">
             <t:binding.http uri="logger"/>
