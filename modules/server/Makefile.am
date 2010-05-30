@@ -17,8 +17,10 @@
 
 INCLUDES = -I${HTTPD_INCLUDE}
 
-mod_SCRIPTS = cpp-conf scheme-conf server-conf
+dist_mod_SCRIPTS = cpp-conf scheme-conf server-conf
 moddir = $(prefix)/modules/server
+
+EXTRA_DIST = domain-test.composite client-test.scm server-test.scm htdocs/*.xml htdocs/*.txt htdocs/*.html
 
 lib_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
 libdir = $(prefix)/modules/server
@@ -45,6 +47,7 @@ libimpl-test.so:
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+dist_noinst_SCRIPTS = httpd-test server-test wiring-test
 noinst_PROGRAMS = client-test
 TESTS = httpd-test server-test wiring-test
 

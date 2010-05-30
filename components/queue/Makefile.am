@@ -19,12 +19,14 @@ if WANT_QUEUE
 
 INCLUDES = -I${QPIDC_INCLUDE}
 
-comp_SCRIPTS = qpidd-start qpidd-stop
+dist_comp_SCRIPTS = qpidd-start qpidd-stop
 compdir=$(prefix)/components/queue
 
 comp_DATA = qpidc.prefix
 qpidc.prefix: $(top_builddir)/config.status
 	echo ${QPIDC_PREFIX} >qpidc.prefix
+
+EXTRA_DIST = queue.composite *.scm
 
 comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
 noinst_DATA = libqueue-sender.so libqueue-listener.so
@@ -45,6 +47,7 @@ qpid_test_LDFLAGS = -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${QPIDC_LIB} -R${QPIDC_LIB} -lqpidclient -lqpidcommon
 
+dist_noinst_SCRIPTS = send-test server-test
 noinst_PROGRAMS = qpid-test client-test
 TESTS = send-test server-test
 

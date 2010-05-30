@@ -15,12 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-comp_SCRIPTS = memcached-start memcached-stop
+dist_comp_SCRIPTS = memcached-start memcached-stop
 compdir=$(prefix)/components/cache
 
 comp_DATA = memcached.prefix
 memcached.prefix: $(top_builddir)/config.status
 	echo ${MEMCACHED_PREFIX} >memcached.prefix
+
+EXTRA_DIST = memcache.composite
 
 comp_LTLIBRARIES = libmemcache.la
 libmemcache_la_SOURCES = memcache.cpp
@@ -34,5 +36,6 @@ memcache_test_LDFLAGS = -lxml2
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+dist_noinst_SCRIPTS = memcached-test server-test
 noinst_PROGRAMS = memcache-test client-test
 TESTS = memcached-test server-test

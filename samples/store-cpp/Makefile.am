@@ -16,10 +16,10 @@
 #  under the License.
 
 
-sample_SCRIPTS = start stop ssl-start
+dist_sample_SCRIPTS = start stop ssl-start
 sampledir = $(prefix)/samples/store-cpp
 
-nobase_sample_DATA = currency-converter.cpp fruits-catalog.cpp shopping-cart.cpp store.composite htdocs/*
+nobase_dist_sample_DATA = currency-converter.cpp fruits-catalog.cpp shopping-cart.cpp store.composite htdocs/.htaccess htdocs/*.html htdocs/*.js
 
 sample_LTLIBRARIES = libcurrency-converter.la libfruits-catalog.la libshopping-cart.la
 
@@ -29,4 +29,5 @@ libfruits_catalog_la_SOURCES = fruits-catalog.cpp
 
 libshopping_cart_la_SOURCES = shopping-cart.cpp
 
+dist_noinst_SCRIPTS = server-test
 TESTS = server-test

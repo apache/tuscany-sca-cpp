@@ -22,13 +22,15 @@ if WANT_JAVA
 
 INCLUDES = -I${JAVA_INCLUDE}
 
-mod_SCRIPTS = java-conf
+dist_mod_SCRIPTS = java-conf
 moddir = $(prefix)/modules/java
 
 prefix_DATA = java.prefix
 prefixdir = $(prefix)/modules/java
 java.prefix: $(top_builddir)/config.status
 	echo ${JAVA_PREFIX} >java.prefix
+
+EXTRA_DIST = domain-test.composite
 
 lib_LTLIBRARIES = libmod_tuscany_java.la
 libmod_tuscany_java_la_SOURCES = mod-java.cpp
@@ -46,7 +48,7 @@ java_test_LDFLAGS = ${JAVA_LDFLAGS}
 java_shell_SOURCES = java-shell.cpp
 java_shell_LDFLAGS = ${JAVA_LDFLAGS}
 
-noinst_JAVA = org/apache/tuscany/*.java test/*.java
+dist_noinst_JAVA = org/apache/tuscany/*.java test/*.java
 jardir = ${prefix}/modules/java
 jarfile = libmod-tuscany-java-${PACKAGE_VERSION}.jar
 jar_DATA = ${jarfile}
@@ -58,6 +60,7 @@ CLEANFILES = classnoinst.stamp ${jarfile} org/apache/tuscany/*.class	test/*.clas
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+dist_noinst_SCRIPTS = server-test wiring-test
 noinst_PROGRAMS = jni-test java-test java-shell client-test
 TESTS = jni-test java-test server-test
 

@@ -19,12 +19,14 @@ if WANT_SQLDB
 
 INCLUDES = -I${PGSQL_INCLUDE}
 
-comp_SCRIPTS = pgsql-start pgsql-stop pgsql
+dist_comp_SCRIPTS = pgsql-start pgsql-stop pgsql
 compdir=$(prefix)/components/sqldb
 
 comp_DATA = pgsql.prefix
 pgsql.prefix: $(top_builddir)/config.status
 	echo ${PGSQL_PREFIX} >pgsql.prefix
+
+EXTRA_DIST = sqldb.composite
 
 comp_LTLIBRARIES = libsqldb.la
 noinst_DATA = libsqldb.so
@@ -40,6 +42,7 @@ pgsql_test_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+dist_noinst_SCRIPTS = sqldb-test server-test
 noinst_PROGRAMS = pgsql-test client-test
 TESTS = sqldb-test server-test
 

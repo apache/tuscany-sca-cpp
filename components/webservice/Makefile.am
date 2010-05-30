@@ -19,10 +19,12 @@ if WANT_WEBSERVICE
 
 INCLUDES = -I${AXIS2C_INCLUDE}
 
-comp_SCRIPTS = axis2-conf
+dist_comp_SCRIPTS = axis2-conf
 compdir=$(prefix)/components/webservice
 
 comp_DATA = axis2c.prefix axis2.xml services.xml module.xml
+
+EXTRA_DIST = webservice.composite axis2.xml services.xml module.xml *.scm
 
 axis2c.prefix: $(top_builddir)/config.status
 	echo ${AXIS2C_PREFIX} >axis2c.prefix
@@ -59,6 +61,7 @@ axis2_test_LDFLAGS = -lxml2 -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxi
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${AXIS2C_LIB} -R${AXIS2C_LIB} -laxis2_engine -laxis2_axiom -laxutil
 
+dist_noinst_SCRIPTS = echo-test server-test
 noinst_PROGRAMS = axiom-test axis2-test client-test
 TESTS = axiom-test echo-test server-test
 

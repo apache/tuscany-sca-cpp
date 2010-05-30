@@ -19,15 +19,16 @@ JAVAROOT = ${top_builddir}/samples/store-java
 
 if WANT_JAVA
 
-sample_SCRIPTS = start stop ssl-start
+dist_sample_SCRIPTS = start stop ssl-start
 sampledir=$(prefix)/samples/store-java
 
 AM_JAVACFLAGS = -cp ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_VERSION}.jar:${JAVAROOT}
-noinst_JAVA = store/*.java
+dist_noinst_JAVA = store/*.java
 CLEANFILES = classnoinst.stamp store/*.class
 
-nobase_sample_DATA = store.composite htdocs/* store/*
+nobase_dist_sample_DATA = store.composite htdocs/.htaccess htdocs/*.html htdocs/*.js store/*.class store/*.java
 
+dist_noinst_SCRIPTS = server-test
 TESTS = server-test
 
 endif

@@ -15,12 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-xsddir=$(prefix)/xsd
-nobase_dist_xsd_DATA = *.xsd
+EXTRA_DIST = git-exclude svn-config svn-ignore
 
-eval_test_SOURCES = eval-test.cpp
+dist_noinst_SCRIPTS = httpd-ipcrm memgrind
 
-eval_shell_SOURCES = eval-shell.cpp
-
-noinst_PROGRAMS = eval-test eval-shell
-TESTS = eval-test

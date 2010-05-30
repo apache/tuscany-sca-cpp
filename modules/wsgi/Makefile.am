@@ -19,10 +19,10 @@ if WANT_PYTHON
 
 INCLUDES = -I${PYTHON_INCLUDE}
 
-mod_SCRIPTS = composite.py wsgi-start wsgi-stop gae-start gae-stop
+dist_mod_SCRIPTS = composite.py wsgi-start wsgi-stop gae-start gae-stop
 moddir = $(prefix)/modules/wsgi
 
-mod_DATA = app.yaml scdl.py util.py elemutil.py xmlutil.py atomutil.py jsonutil.py
+dist_mod_DATA = app.yaml scdl.py util.py elemutil.py xmlutil.py atomutil.py jsonutil.py
 
 noinst_DATA = target.stamp
 
@@ -40,15 +40,19 @@ prefixdir=$(prefix)/modules/wsgi
 gae.prefix: $(top_builddir)/config.status
 	echo ${GAE_PREFIX} >gae.prefix
 
+EXTRA_DIST = domain-test.composite *.py htdocs/*.xml htdocs/*.txt htdocs/*.html
+
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 noinst_PROGRAMS = client-test
 
-if WANT_GAE
-TESTS = util-test wsgi-test wiring-test http-test server-test gae-test
-else
+dist_noinst_SCRIPTS = util-test wsgi-test wiring-test http-test server-test
 TESTS = util-test wsgi-test wiring-test http-test server-test
+
+if WANT_GAE
+dist_noinst_SCRIPTS += gae-test
+TESTS += gae-test
 endif
 
 endif

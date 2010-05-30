@@ -15,11 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-sample_SCRIPTS = start stop ssl-start
+dist_sample_SCRIPTS = start stop ssl-start
 sampledir = $(prefix)/samples/store-scheme
 
-nobase_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-cart.scm store.scm store.composite htdocs/*
+nobase_dist_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-cart.scm store.scm store.composite htdocs/.htaccess htdocs/*.html htdocs/*.js
 
+EXTRA_DIST = script-test.scm
+
+dist_noinst_SCRIPTS = server-test
 noinst_PROGRAMS = script-test
 script_test_SOURCES = script-test.cpp
 script_test_LDFLAGS = -lxml2 -lmozjs

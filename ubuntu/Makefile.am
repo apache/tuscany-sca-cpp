@@ -15,12 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-xsddir=$(prefix)/xsd
-nobase_dist_xsd_DATA = *.xsd
+dist_noinst_SCRIPTS = ubuntu-bin-image ubuntu-dev-image ubuntu-gcc-4.5 ubuntu-install uec2-bin-image uec2-conf uec2-setenv uec2-start uec2-status uec2-stop
 
-eval_test_SOURCES = eval-test.cpp
-
-eval_shell_SOURCES = eval-shell.cpp
-
-noinst_PROGRAMS = eval-test eval-shell
-TESTS = eval-test

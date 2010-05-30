@@ -17,11 +17,12 @@
 
 if WANT_NOSQLDB
 
-sample_SCRIPTS = start stop ssl-start
+dist_sample_SCRIPTS = start stop ssl-start
 sampledir = $(prefix)/samples/store-nosql
 
-nobase_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-cart.scm store.scm store.composite htdocs/*
+nobase_dist_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-cart.scm store.scm store.composite htdocs/.htaccess htdocs/*.html htdocs/*.js
 
+dist_noinst_SCRIPTS = server-test
 TESTS = server-test
 
 endif

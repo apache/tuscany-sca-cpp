@@ -21,12 +21,14 @@ if WANT_CHAT
 
 INCLUDES = -I${LIBSTROPHE_INCLUDE}
 
-comp_SCRIPTS = vysper-start vysper-stop vysper-classpath
+dist_comp_SCRIPTS = vysper-start vysper-stop vysper-classpath
 compdir=$(prefix)/components/chat
 
 comp_DATA = vysper.prefix
 vysper.prefix: $(top_builddir)/config.status
 	echo ${VYSPER_PREFIX} >vysper.prefix
+
+EXTRA_DIST = chat.composite *.scm
 
 comp_LTLIBRARIES = libchatter.la
 libchatter_la_SOURCES = chatter.cpp
@@ -42,13 +44,15 @@ client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
 
 noinst_PROGRAMS = xmpp-test client-test
+dist_noinst_SCRIPTS = server-test
 
 if WANT_VYSPER
 
 AM_JAVACFLAGS = -cp `${top_builddir}/components/chat/vysper-classpath ${VYSPER_PREFIX}`${JAVAROOT}
-noinst_JAVA = test/*.java
+dist_noinst_JAVA = test/*.java
 CLEANFILES = test/*.class
 
+dist_noinst_SCRIPTS += echo-test
 TESTS = echo-test 
 endif
 

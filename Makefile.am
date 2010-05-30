@@ -17,15 +17,17 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = kernel modules components doc samples
+SUBDIRS = etc kernel modules components samples doc ubuntu
 
 datadir=$(prefix)
-data_DATA = README LICENSE COPYING NOTICE
-nobase_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
+dist_data_DATA = README LICENSE COPYING NOTICE
+nobase_dist_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
+EXTRA_DIST = INSTALL bootstrap
 
 dist-hook:
 	rm -rf `find $(distdir)/ -type d -name .svn`
 	rm -rf `find $(distdir)/ -type d -name .deps`
+	rm -rf $(distdir)/.git
 
 bindist: install
 	rm -rf ${PACKAGE}-${PACKAGE_VERSION}-bin

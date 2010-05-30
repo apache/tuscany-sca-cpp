@@ -760,6 +760,7 @@ AC_SUBST([LDFLAGS], ["${ldflags}"])
 LIBS="${defaultlibs}"
 
 AC_CONFIG_FILES([Makefile
+                 etc/Makefile
                  kernel/Makefile
                  modules/Makefile
                  modules/scheme/Makefile
@@ -789,6 +790,7 @@ AC_CONFIG_FILES([Makefile
                  samples/store-nosql/Makefile
                  doc/Makefile
                  doc/Doxyfile
+                 ubuntu/Makefile
                  ])
 AC_OUTPUT
 

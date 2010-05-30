@@ -19,7 +19,7 @@ if WANT_LOG
 
 INCLUDES = -I${THRIFT_INCLUDE} -I${FB303_INCLUDE}
 
-comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop scribe-cat
+dist_comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop scribe-cat
 compdir=$(prefix)/components/log
 
 comp_DATA = scribe.prefix thrift.prefix scribecat.py
@@ -28,6 +28,8 @@ scribe.prefix: $(top_builddir)/config.status
 
 thrift.prefix: $(top_builddir)/config.status
 	echo ${THRIFT_PREFIX} >thrift.prefix
+
+EXTRA_DIST = log.composite *.py *.scm *.thrift
 
 BUILT_SOURCES=gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
 gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h: scribe.thrift
@@ -55,6 +57,7 @@ liblogger.so:
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+dist_noinst_SCRIPTS = scribe-test server-test
 noinst_PROGRAMS = client-test
 TESTS = scribe-test server-test
 

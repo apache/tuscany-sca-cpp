@@ -21,16 +21,18 @@ if WANT_PYTHON
 
 INCLUDES = -I${PYTHON_INCLUDE}
 
-mod_SCRIPTS = python-conf
+dist_mod_SCRIPTS = python-conf
 moddir = $(prefix)/modules/python
 
-nobase_xsd_DATA = *.xsd
+nobase_dist_xsd_DATA = *.xsd
 xsddir = $(prefix)/xsd
 
 prefix_DATA = python.prefix
 prefixdir = $(prefix)/modules/python
 python.prefix: $(top_builddir)/config.status
 	echo ${PYTHON_PREFIX} >python.prefix
+
+EXTRA_DIST = domain-test.composite client-test.py server-test.py
 
 lib_LTLIBRARIES = libmod_tuscany_python.la
 libmod_tuscany_python_la_SOURCES = mod-python.cpp
@@ -48,6 +50,7 @@ python_shell_LDFLAGS = -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
+dist_noinst_SCRIPTS = server-test wiring-test
 noinst_PROGRAMS = python-test python-shell client-test
 TESTS = python-test server-test
 
