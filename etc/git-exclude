@@ -99,4 +99,6 @@ qpid-test
 xmpp-test
 pgsql-test
 tinycdb-test
+curl-get
+rss-test
 

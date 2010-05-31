@@ -48,6 +48,14 @@ string itemEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>"
         "</entry>\n");
 
+string itemTextEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<entry xmlns=\"http://www.w3.org/2005/Atom\">"
+        "<title type=\"text\">item</title>"
+        "<id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>"
+        "<content type=\"text\">Apple</content>"
+        "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\"/>"
+        "</entry>\n");
+
 string incompleteEntry("<entry xmlns=\"http://www.w3.org/2005/Atom\">"
         "<title>item</title><content type=\"text/xml\">"
         "<Item xmlns=\"http://services/\">"
@@ -80,10 +88,22 @@ bool testEntry() {
         assert(str(os) == itemEntry);
     }
     {
+        const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), string("Apple"));
+        ostringstream os;
+        writeATOMEntry<ostream*>(writer, &os, a);
+        assert(str(os) == itemTextEntry);
+    }
+    {
         const list<value> a = content(readATOMEntry(mklist(itemEntry)));
         ostringstream os;
         writeATOMEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemEntry);
+    }
+    {
+        const list<value> a = content(readATOMEntry(mklist(itemTextEntry)));
+        ostringstream os;
+        writeATOMEntry<ostream*>(writer, &os, a);
+        assert(str(os) == itemTextEntry);
     }
     {
         const list<value> a = content(readATOMEntry(mklist(incompleteEntry)));

@@ -200,6 +200,15 @@ int readCallback(void *context, char* buffer, int len) {
 }
 
 /**
+ * Return true if a list of strings contains an XML document.
+ */
+const bool isXML(const list<string>& ls) {
+    if (isNil(ls))
+        return false;
+    return substr(car(ls), 0, 5) == "<?xml";
+}
+
+/**
  * Read a list of values from a list of strings representing an XML document.
  */
 const list<value> readXML(const list<string>& ilist) {

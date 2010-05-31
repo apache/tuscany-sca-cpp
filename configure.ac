@@ -770,6 +770,7 @@ AC_CONFIG_FILES([Makefile
                  modules/http/Makefile
                  modules/python/Makefile
                  modules/java/Makefile
+                 modules/rss/Makefile
                  modules/server/Makefile
                  modules/wsgi/Makefile
                  components/Makefile
