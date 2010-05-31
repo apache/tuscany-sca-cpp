@@ -671,7 +671,7 @@ if test "${want_chat}" = "true"; then
     AC_MSG_ERROR([--enable-chat requires multi-threading, use --enable-threads])
   fi
   LIBS="-L${LIBSTROPHE_LIB} ${default_LIBS}"
-  AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lexpat -lssl -lresolv])
+  AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lssl -lresolv])
   AM_CONDITIONAL([WANT_CHAT], true)
   AC_DEFINE([WANT_CHAT], 1, [enable Chat component])
 

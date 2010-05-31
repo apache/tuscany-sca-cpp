@@ -94,16 +94,16 @@ a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
 XMPP Chat:
 Apache Vysper 0.5 (http://mina.apache.org/)
 
-Libstrophe (http://code.stanziq.com/cgit/strophe/libstrophe/)
-build it from source at git://code.stanziq.com//libstrophe
-requires libcheck-0.9.6
+Libstrophe (http://code.stanziq.com/strophe/)
+build it from source at git://github.com/jsdelfino/libstrophe.git
+requires Expat 2.0.1 (http://sourceforge.net/projects/expat/)
 
 SQL Database:
 postgresql-9.0 (http://www.postgresql.org/)
 
 Logging:
-Apache Thrift 0.2.0 (http://incubator.apache.org/thrift/)
 Facebook Scribe 2.2 (http://github.com/facebook/scribe/downloads)
+requires Apache Thrift 0.2.0 (http://incubator.apache.org/thrift/)
 
 Cloud deployment:
 Apache Libcloud 0.3.1 (http://incubator.apache.org/libcloud/)

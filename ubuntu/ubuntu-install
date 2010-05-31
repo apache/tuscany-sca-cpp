@@ -168,28 +168,28 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
-# Build Libstrophe
-sudo apt-get -y install check
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-git clone git://code.stanziq.com/libstrophe
-cd libstrophe
-git submodule init
-git submodule update
-aclocal
-automake --add-missing --foreign --copy
-autoconf
-./configure --prefix=$build/libstrophe-bin
+# Build Libexpat
+wget http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
+tar xzf expat-2.0.1.tar.gz
+cd expat-2.0.1
+./configure --prefix=$build/expat-2.0.1-bin
 make
 make install
 if [ "$?" != "0" ]; then
     exit $?
 fi
 cd $build
-mkdir -p $build/libstrophe-bin/include
-cp $build/libstrophe/*.h $build/libstrophe-bin/include
-cp $build/libstrophe/src/*.h $build/libstrophe-bin/include
+
+# Build Libstrophe
+git clone git://github.com/jsdelfino/libstrophe.git
+cd libstrophe
+./bootstrap.sh
+./configure --prefix=$build/libstrophe-bin --with-expat=$build/expat-2.0.1-bin
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 
 # Install Apache Vysper
 sudo apt-get -y install openjdk-6-jdk

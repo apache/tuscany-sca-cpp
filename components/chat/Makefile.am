@@ -32,16 +32,16 @@ EXTRA_DIST = chat.composite *.scm
 
 comp_LTLIBRARIES = libchatter.la
 libchatter_la_SOURCES = chatter.cpp
-libchatter_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
+libchatter_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
 noinst_DATA = libchatter.so
 libchatter.so:
 	ln -s .libs/libchatter.so
 
 xmpp_test_SOURCES = xmpp-test.cpp
-xmpp_test_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
+xmpp_test_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
 
 client_test_SOURCES = client-test.cpp
-client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lexpat -lssl -lresolv
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
 
 noinst_PROGRAMS = xmpp-test client-test
 dist_noinst_SCRIPTS = server-test

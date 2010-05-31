@@ -58,10 +58,6 @@ sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-files
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install check
-if [ "$?" != "0" ]; then
-    exit $?
-fi
 sudo apt-get -y install openjdk-6-jdk
 if [ "$?" != "0" ]; then
     exit $?
