@@ -24,9 +24,6 @@ INCLUDES = -I${PYTHON_INCLUDE}
 dist_mod_SCRIPTS = python-conf
 moddir = $(prefix)/modules/python
 
-nobase_dist_xsd_DATA = *.xsd
-xsddir = $(prefix)/xsd
-
 prefix_DATA = python.prefix
 prefixdir = $(prefix)/modules/python
 python.prefix: $(top_builddir)/config.status

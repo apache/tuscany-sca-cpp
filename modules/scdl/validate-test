@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,9 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-eval_test_SOURCES = eval-test.cpp
-
-eval_shell_SOURCES = eval-shell.cpp
-
-noinst_PROGRAMS = eval-test eval-shell
-TESTS = eval-test
+# Validate test composite
+../../kernel/xsd-test ../../xsd/tuscany-sca-1.1.xsd test.composite 2>/dev/null
+rc=$?
+return $rc

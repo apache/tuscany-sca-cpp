@@ -21,4 +21,4 @@ scdl_test_LDFLAGS = -lxml2
 EXTRA_DIST = test.composite
 
 noinst_PROGRAMS = scdl-test
-TESTS = scdl-test
+TESTS = scdl-test validate-test

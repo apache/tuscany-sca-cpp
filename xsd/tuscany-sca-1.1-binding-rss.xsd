@@ -23,18 +23,20 @@
     xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" 
     elementFormDefault="qualified">
 
-    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" schemaLocation="sca-1.1-cd04.xsd"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" schemaLocation="sca-1.1-cd05.xsd"/>
 
-    <element name="binding.dwr" type="t:DWRBinding"/>
+    <element name="binding.rss" type="t:RSSBinding" substitutionGroup="sca:binding"/>
     
-    <complexType name="DWRBinding">
+    <complexType name="RSSBinding">
         <complexContent>
             <extension base="sca:Binding">
-                <sequence>
+                <!--sequence>
                     <any namespace="##targetNamespace" processContents="lax" minOccurs="0"
                          maxOccurs="unbounded"/>
-                </sequence>
-                <anyAttribute namespace="##any" processContents="lax"/>
+                </sequence -->
+                <attribute name="title" type="string" use="optional"/>
+                <attribute name="description" type="string" use="optional"/>
+                <!--anyAttribute namespace="##any" processContents="lax"/-->
             </extension>
         </complexContent>
     </complexType>

@@ -35,12 +35,12 @@ bool printNode(xmlTextReaderPtr reader) {
     if(name == NULL)
         name = (xmlChar *)"<unknown>";
     const xmlChar* value = xmlTextReaderConstValue(reader);
-    cout << xmlTextReaderDepth(reader) << " " << xmlTextReaderNodeType(reader) << " " << name << " "
+    cerr << xmlTextReaderDepth(reader) << " " << xmlTextReaderNodeType(reader) << " " << name << " "
             << xmlTextReaderIsEmptyElement(reader) << " " << xmlTextReaderHasValue(reader);
     if(value == NULL)
-        cout << endl;
+        cerr << endl;
     else
-        cout << value << endl;
+        cerr << value << endl;
     return true;
 }
 
@@ -54,13 +54,13 @@ int xmlClose(void *context) {
 }
 
 bool readFile(const char*xsdfilename, const char *filename) {
-    cout << "Loading schemas...\n";
+    cout << "Loading schema " << xsdfilename << endl;
     const xmlDocPtr xsddoc = xmlReadFile(xsdfilename, NULL, XML_PARSE_NONET);
     const xmlSchemaParserCtxtPtr xsdctx = xmlSchemaNewDocParserCtxt(xsddoc);
     const xmlSchemaPtr xsd = xmlSchemaParse(xsdctx);
     const xmlSchemaValidCtxtPtr validctx = xmlSchemaNewValidCtxt(xsd);
 
-    cout << "Reading file...\n";
+    cout << "Reading file " << filename << endl;
     FILE* file = fopen(filename, "r");
     if (file != NULL) {
         const xmlTextReaderPtr reader = xmlReaderForIO(xmlRead, xmlClose, file, filename, NULL, XML_PARSE_NONET);

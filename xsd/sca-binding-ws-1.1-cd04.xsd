@@ -9,11 +9,11 @@
     elementFormDefault="qualified">
 
     <import namespace="http://www.w3.org/ns/wsdl-instance"
-            schemaLocation="http://www.w3.org/2007/05/wsdl/wsdl20-instance.xsd"/>
+            schemaLocation="external/wsdl20-instance.xsd"/>
     <import namespace="http://www.w3.org/2005/08/addressing"
-            schemaLocation="http://www.w3.org/2006/03/addressing/ws-addr.xsd"/>
+            schemaLocation="external/ws-addr.xsd"/>
 
-    <include schemaLocation="sca-core-1.1-cd04.xsd"/>
+    <include schemaLocation="sca-core-1.1-cd05.xsd"/>
 
     <element name="binding.ws" type="sca:WebServiceBinding"
              substitutionGroup="sca:binding"/>
@@ -22,10 +22,10 @@
         <complexContent>
             <extension base="sca:Binding">
                 <sequence>
-                    <element name="endpointReference" type="wsa:EndpointReferenceType"
+                    <element ref="wsa:EndpointReference"
                              minOccurs="0" maxOccurs="unbounded"/>
-                    <any namespace="##other" processContents="lax"
-                         minOccurs="0" maxOccurs="unbounded"/>
+                    <!-- any namespace="##other" processContents="lax"
+                         minOccurs="0" maxOccurs="unbounded"/-->
                 </sequence>
                 <attribute name="wsdlElement" type="anyURI" use="optional"/>
                 <attribute ref="wsdli:wsdlLocation" use="optional"/>

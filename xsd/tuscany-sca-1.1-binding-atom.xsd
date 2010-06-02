@@ -17,27 +17,27 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://tuscany.apache.org/xmlns/sca/1.1"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://tuscany.apache.org/xmlns/sca/1.1" 
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-    xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+    xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" 
     elementFormDefault="qualified">
 
-    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" schemaLocation="sca-1.1-cd04.xsd"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" schemaLocation="sca-1.1-cd05.xsd"/>
 
-    <element name="implementation.scheme" type="t:SchemeImplementation" substitutionGroup="sca:implementation"/>
-    	
-    <complexType name="SchemeImplementation">
+    <element name="binding.atom" type="t:AtomBinding" substitutionGroup="sca:binding"/>
+    
+    <complexType name="AtomBinding">
         <complexContent>
-            <extension base="sca:Implementation">
-                <sequence>
-                    <any namespace="##targetNamespace" processContents="lax" 
-                    	minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-                <attribute name="script" type="anyURI" use="required"/>
-                <anyAttribute namespace="##any" processContents="lax"/>
+            <extension base="sca:Binding">
+                <!-- sequence>
+                    <any namespace="##targetNamespace" processContents="lax" minOccurs="0"
+                         maxOccurs="unbounded"/>
+                </sequence -->
+                <attribute name="title" type="string" use="optional"/>
+                <attribute name="description" type="string" use="optional"/>
+                <!-- anyAttribute namespace="##any" processContents="lax"/ -->
             </extension>
         </complexContent>
     </complexType>
-
 </schema>
