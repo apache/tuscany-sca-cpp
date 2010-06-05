@@ -15,6 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/components/cache
+
 dist_comp_SCRIPTS = memcached-start memcached-stop
 compdir=$(prefix)/components/cache
 

@@ -23,10 +23,10 @@ dist_sample_SCRIPTS = start stop ssl-start
 sampledir=$(prefix)/samples/store-java
 
 AM_JAVACFLAGS = -cp ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_VERSION}.jar:${JAVAROOT}
-dist_noinst_JAVA = store/*.java
-CLEANFILES = classnoinst.stamp store/*.class
+dist_sample_JAVA = store/*.java
+CLEANFILES = *.stamp store/*.class
 
-nobase_dist_sample_DATA = store.composite htdocs/.htaccess htdocs/*.html htdocs/*.js store/*.class store/*.java
+nobase_dist_sample_DATA = store.composite htdocs/.htaccess htdocs/*.html htdocs/*.js store/*.*
 
 dist_noinst_SCRIPTS = server-test
 TESTS = server-test

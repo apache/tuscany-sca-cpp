@@ -68,6 +68,6 @@ if [ "$?" != "0" ]; then
 fi
 
 # Download and install the Tuscany runtime
-wget http://people.apache.org/~jsdelfino/tuscany/test/tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz
-tar xzf tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz
+wget http://people.apache.org/~jsdelfino/tuscany/test/tuscany-sca-cpp-1.0.tar.gz
+tar xzf tuscany-sca-cpp-1.0.tar.gz
 

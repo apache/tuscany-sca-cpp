@@ -15,6 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/scheme
+
 eval_test_SOURCES = eval-test.cpp
 
 eval_shell_SOURCES = eval-shell.cpp

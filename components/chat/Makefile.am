@@ -21,6 +21,9 @@ if WANT_CHAT
 
 INCLUDES = -I${LIBSTROPHE_INCLUDE}
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/components/chat
+
 dist_comp_SCRIPTS = vysper-start vysper-stop vysper-classpath
 compdir=$(prefix)/components/chat
 

@@ -17,6 +17,3 @@
 
 SUBDIRS = cache chat log nosqldb queue sqldb webservice
 
-includedir = $(prefix)/include/components
-nobase_include_HEADERS = */*.hpp
-

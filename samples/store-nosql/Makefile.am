@@ -15,8 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_NOSQLDB
-
 dist_sample_SCRIPTS = start stop ssl-start
 sampledir = $(prefix)/samples/store-nosql
 
@@ -25,4 +23,3 @@ nobase_dist_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-car
 dist_noinst_SCRIPTS = server-test
 TESTS = server-test
 
-endif

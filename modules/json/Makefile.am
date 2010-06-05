@@ -15,6 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/json
+
 json_test_SOURCES = json-test.cpp
 json_test_LDFLAGS = -lmozjs 
 

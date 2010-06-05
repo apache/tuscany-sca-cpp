@@ -1,16 +1,22 @@
 Apache Tuscany SCA Runtime
 ==========================
 
-Automated installation from scratch on Ubuntu 9.10
-==================================================
+Automated installation on Ubuntu 9.10
+=====================================
 
-Tuscany provides an automated install script for Ubuntu 9.10. You can start
-with a fresh Ubuntu Server 9.10 system, the ubuntu-install script takes care
-of all the download, build and installation steps for you.
+Tuscany provides two automated install scripts for Ubuntu 9.10. You can start
+with a fresh Ubuntu Server 9.10 system and these scripts will take care of all
+the download, build and installation steps for you.
 
-The required system tools and libraries are downloaded and installed using
-apt-get. The Tuscany project and its dependencies (Apache HTTPD server, Apache
-Axis2/C etc) are downloaded, built and installed in the current directory.
+ubuntu/ubuntu-install:
+Minimum build and installation using dependencies (Apache HTTPD server,
+Memcached etc) from your Ubuntu 9.10 system.
+
+ubuntu/ubuntu-install-all:
+Complete build and installation with most dependencies built from source.
+
+System dependencies are downloaded and installed using sudo apt-get. Source
+dependencies are downloaded and built in the current directory.
 
 To run the automated installation:
 mkdir tuscany
@@ -19,11 +25,10 @@ wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install
 chmod +x ./ubuntu-install
 ./ubuntu-install
 
-The script will display each command as it's executed.
+The installation script will display each command as it's executed.
 
 That's all you need to do to build and install the Tuscany SCA runtime on
 Ubuntu 9.10.
-
 
 For manual build and install steps on other systems or if you need to customize
 your installation, read on...
@@ -129,9 +134,6 @@ To enable support for Python component implementations:
 To enable support for Java component implementations:
 --enable-java
 
-To build the Web service utility component (requires Apache Axis2/C):
---enable-webservice
-
 To build the Queue utility component (requires Apache Qpid/C++):
 --enable-queue
 
@@ -139,8 +141,14 @@ To build the Chat utility component (requires Libstrophe and optionally Apache
 Vysper if you want to run the tests with a local Vysper XMPP server):
 --enable-chat
 
+To build the Log utility component (requires Facebook Scribe and Apache Thrift):
+--enable-log
+
 To build the SQL Database utility component (requires PostgreSQL):
 --enable-sqldb
+
+To build the Web service utility component (requires Apache Axis2/C):
+--enable-webservice
 
 To generate doxygen documentation, add:
 --enable-doxygen
@@ -161,6 +169,7 @@ dependencies installed under $HOME:
 --with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
 --with-js-include=/usr/include/xulrunner-1.9.1.8/unstable \
 --with-js-lib=/usr/lib/xulrunner-1.9.1.8 \
+--enable-libcloud \
 --with-libcloud=$HOME/libcloud-0.3.1-bin \
 --enable-threads \
 --enable-python --with-python=/usr \
@@ -209,8 +218,8 @@ Apache HTTPD, including APR, using the HTTP prefork MPM (recommended):
 wget http://www.apache.org/dist/httpd/httpd-2.2.15.tar.gz
 tar xzf httpd-2.2.15.tar.gz
 cd httpd-2.2.15
-./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr \
---with-mpm=prefork --prefix=$HOME/httpd-2.2.15-bin
+./configure --enable-ssl --enable-proxy --enable-mods-shared=most \
+--with-included-apr --with-mpm=prefork --prefix=$HOME/httpd-2.2.15-bin
 make
 make install
 export PATH=$HOME/httpd-2-2.15-bin/bin:$PATH

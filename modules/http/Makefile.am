@@ -17,6 +17,9 @@
 
 INCLUDES = -I${HTTPD_INCLUDE}
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/http
+
 dist_mod_SCRIPTS = httpd-conf httpd-start httpd-stop httpd-restart httpd-ca-conf httpd-cert-conf httpd-ssl-conf
 moddir=$(prefix)/modules/http
 
@@ -26,16 +29,21 @@ curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 curl_get_SOURCES = curl-get.cpp
 curl_get_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-mod_DATA = httpd.prefix curl.prefix
+mod_DATA = httpd.prefix httpd-apachectl.prefix httpd-modules.prefix curl.prefix
 nobase_dist_mod_DATA = conf/*
 
 EXTRA_DIST = htdocs/index.html
 
 httpd.prefix: $(top_builddir)/config.status
 	echo ${HTTPD_PREFIX} >httpd.prefix
+httpd-apachectl.prefix: $(top_builddir)/config.status
+	echo ${HTTPD_APACHECTL_PREFIX} >httpd-apachectl.prefix
+httpd-modules.prefix: $(top_builddir)/config.status
+	echo ${HTTPD_MODULES_PREFIX} >httpd-modules.prefix
 curl.prefix: $(top_builddir)/config.status
 	echo ${CURL_PREFIX} >curl.prefix
 
 dist_noinst_SCRIPTS = httpd-test http-test
 noinst_PROGRAMS = curl-test curl-get
 TESTS = httpd-test http-test
+

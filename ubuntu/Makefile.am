@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-dist_noinst_SCRIPTS = ubuntu-bin-image ubuntu-dev-image ubuntu-gcc-4.5 ubuntu-install uec2-bin-image uec2-conf uec2-setenv uec2-start uec2-status uec2-stop
+dist_noinst_SCRIPTS = ubuntu-bin-image ubuntu-dev-image ubuntu-gcc-4.5 ubuntu-install ubuntu-install-all uec2-bin-image uec2-conf uec2-setenv uec2-start uec2-status uec2-stop
 

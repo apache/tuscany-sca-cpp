@@ -19,6 +19,9 @@ if WANT_LOG
 
 INCLUDES = -I${THRIFT_INCLUDE} -I${FB303_INCLUDE}
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/components/log
+
 dist_comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop scribe-cat
 compdir=$(prefix)/components/log
 

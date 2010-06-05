@@ -15,6 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/rss
+
 rss_test_SOURCES = rss-test.cpp
 rss_test_LDFLAGS = -lxml2
 

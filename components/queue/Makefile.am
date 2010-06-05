@@ -19,6 +19,9 @@ if WANT_QUEUE
 
 INCLUDES = -I${QPIDC_INCLUDE}
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/components/queue
+
 dist_comp_SCRIPTS = qpidd-start qpidd-stop
 compdir=$(prefix)/components/queue
 

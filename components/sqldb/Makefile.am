@@ -19,6 +19,9 @@ if WANT_SQLDB
 
 INCLUDES = -I${PGSQL_INCLUDE}
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/components/sqldb
+
 dist_comp_SCRIPTS = pgsql-start pgsql-stop pgsql
 compdir=$(prefix)/components/sqldb
 

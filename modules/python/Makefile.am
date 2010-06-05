@@ -15,11 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-libdir = $(prefix)/modules/python
 
 if WANT_PYTHON
 
 INCLUDES = -I${PYTHON_INCLUDE}
+
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/python
 
 dist_mod_SCRIPTS = python-conf
 moddir = $(prefix)/modules/python
@@ -31,7 +33,7 @@ python.prefix: $(top_builddir)/config.status
 
 EXTRA_DIST = domain-test.composite client-test.py server-test.py
 
-lib_LTLIBRARIES = libmod_tuscany_python.la
+mod_LTLIBRARIES = libmod_tuscany_python.la
 libmod_tuscany_python_la_SOURCES = mod-python.cpp
 libmod_tuscany_python_la_LDFLAGS = -lxml2 -lcurl -lmozjs -L${PYTHON_LIB} -R${PYTHON_LIB} -lpython2.6
 noinst_DATA = libmod_tuscany_python.so

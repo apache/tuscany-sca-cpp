@@ -17,6 +17,3 @@
 
 SUBDIRS = scheme atom rss json scdl http rss server python wsgi java
 
-includedir = $(prefix)/include/modules
-nobase_include_HEADERS = */*.hpp
-

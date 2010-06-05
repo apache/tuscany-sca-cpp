@@ -16,11 +16,13 @@
 #  under the License.
 
 JAVAROOT = $(top_builddir)/modules/java
-libdir = $(prefix)/modules/java
 
 if WANT_JAVA
 
 INCLUDES = -I${JAVA_INCLUDE}
+
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/java
 
 dist_mod_SCRIPTS = java-conf
 moddir = $(prefix)/modules/java
@@ -32,7 +34,7 @@ java.prefix: $(top_builddir)/config.status
 
 EXTRA_DIST = domain-test.composite
 
-lib_LTLIBRARIES = libmod_tuscany_java.la
+mod_LTLIBRARIES = libmod_tuscany_java.la
 libmod_tuscany_java_la_SOURCES = mod-java.cpp
 libmod_tuscany_java_la_LDFLAGS = -lxml2 -lcurl -lmozjs ${JAVA_LDFLAGS}
 noinst_DATA = libmod_tuscany_java.so
@@ -48,14 +50,14 @@ java_test_LDFLAGS = ${JAVA_LDFLAGS}
 java_shell_SOURCES = java-shell.cpp
 java_shell_LDFLAGS = ${JAVA_LDFLAGS}
 
-dist_noinst_JAVA = org/apache/tuscany/*.java test/*.java
+dist_mod_JAVA = org/apache/tuscany/*.java test/*.java
 jardir = ${prefix}/modules/java
 jarfile = libmod-tuscany-java-${PACKAGE_VERSION}.jar
 jar_DATA = ${jarfile}
-${jarfile}: ${noinst_JAVA}
+${jarfile}: ${dist_mod_JAVA}
 	${JAR} cf $@ org/apache/tuscany/*.class
 
-CLEANFILES = classnoinst.stamp ${jarfile} org/apache/tuscany/*.class	test/*.class
+CLEANFILES = *.stamp ${jarfile} org/apache/tuscany/*.class	test/*.class
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

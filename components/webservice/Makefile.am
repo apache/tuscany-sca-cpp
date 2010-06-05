@@ -19,6 +19,9 @@ if WANT_WEBSERVICE
 
 INCLUDES = -I${AXIS2C_INCLUDE}
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/components/webservice
+
 dist_comp_SCRIPTS = axis2-conf
 compdir=$(prefix)/components/webservice
 

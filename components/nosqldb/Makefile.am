@@ -15,9 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_NOSQLDB
-
 INCLUDES = -I${TINYCDB_INCLUDE}
+
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/components/nosqldb
 
 dist_comp_SCRIPTS = tinycdb
 compdir=$(prefix)/components/nosqldb
@@ -46,4 +47,3 @@ dist_noinst_SCRIPTS = nosqldb-test server-test
 noinst_PROGRAMS = tinycdb-test client-test
 TESTS = nosqldb-test server-test
 
-endif

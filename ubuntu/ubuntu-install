@@ -18,6 +18,9 @@
 # Install the required system tools and libraries, the runtime dependencies and
 # the Tuscany SCA runtime on a fresh Ubuntu Server 9.10 system.
 
+# Build a minimal distribution including only the core runtime, support for
+# Python and C++ components, memcached and tinycdb.
+
 # Display commands as they are executed
 set -x
 
@@ -38,245 +41,48 @@ fi
 #    exit $?
 #fi
 
-# Build Apache HTTP server
-sudo apt-get -y install libssl-dev
+# Install Apache HTTP server
+sudo apt-get -y install libssl-dev apache2 apache2-utils apache2-prefork-dev libaprutil1-dev libapr1-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-wget http://www.apache.org/dist/httpd/httpd-2.2.15.tar.gz
-tar xzf httpd-2.2.15.tar.gz
-cd httpd-2.2.15
-./configure --enable-ssl --enable-proxy --enable-rewrite --with-included-apr --with-mpm=prefork --prefix=$build/httpd-2.2.15-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
 
-# Build Memcached
-sudo apt-get -y install libevent-dev
+# Install Memcached
+sudo apt-get -y install memcached
 if [ "$?" != "0" ]; then
     exit $?
 fi
-wget http://memcached.googlecode.com/files/memcached-1.4.4.tar.gz
-tar xzf memcached-1.4.4.tar.gz
-cd memcached-1.4.4
-./configure --prefix=$build/memcached-1.4.4-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
 
-# Build Tinycdb
-wget http://www.corpit.ru/mjt/tinycdb/tinycdb_0.77.tar.gz
-tar xzf tinycdb_0.77.tar.gz
-cd tinycdb-0.77
-make
-make prefix=$build/tinycdb-0.77-bin install
+# Install Tinycdb
+sudo apt-get -y install tinycdb libcdb-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-cd $build
 
-# Build Libcurl
-wget http://curl.haxx.se/download/curl-7.19.5.tar.gz
-tar xzf curl-7.19.5.tar.gz
-cd curl-7.19.5
-./configure --prefix=$build/curl-7.19.5-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Libxml2
-wget ftp://xmlsoft.org/libxml2/libxml2-sources-2.7.7.tar.gz
-tar xzf libxml2-sources-2.7.7.tar.gz
-cd libxml2-2.7.7
-./configure --prefix=$build/libxml2-2.7.7-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build TraceMonkey
-sudo apt-get -y install autoconf2.13 zip
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-wget -O tracemonkey-e4364736e170.tar.gz http://hg.mozilla.org/tracemonkey/archive/e4364736e170.tar.gz
-tar xzf tracemonkey-e4364736e170.tar.gz
-cd tracemonkey-e4364736e170/js/src
-autoconf2.13
-./configure --prefix=$build/tracemonkey-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Install Google AppEngine SDK
-wget http://googleappengine.googlecode.com/files/google_appengine_1.3.2.zip
-unzip google_appengine_1.3.2.zip
-
-# Build Apache Axis2/C
-sudo apt-get -y install pkg-config
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-wget http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
-tar xzf axis2c-src-1.6.0.tar.gz
-cd axis2c-src-1.6.0
-./configure --enable-libxml2 LIBXML2_CFLAGS="-I$build/libxml2-2.7.7-bin/include/libxml2" LIBXML2_LIBS="-L$build/libxml2-2.7.7-bin/lib -lxml2" --enable-openssl --with-apache2=$build/httpd-2.2.15-bin/include --prefix=$build/axis2c-1.6.0-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-export AXIS2C_HOME=$build/axis2c-1.6.0-bin
-cd samples
-./configure --prefix=$build/axis2c-1.6.0-bin --with-axis2=$build/axis2c-1.6.0-bin/include/axis2-1.6.0
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Apache Qpid/C++
-sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-sudo -s ln -s /usr/lib/libboost_program_options-mt.so /usr/lib/libboost_program_options.so
-sudo -s ln -s /usr/lib/libboost_filesystem-mt.so /usr/lib/libboost_filesystem.so
-wget http://www.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
-tar xzf qpid-cpp-0.6.tar.gz
-cd qpidc-0.6
-./configure --prefix=$build/qpidc-0.6-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Libexpat
-wget http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
-tar xzf expat-2.0.1.tar.gz
-cd expat-2.0.1
-./configure --prefix=$build/expat-2.0.1-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Libstrophe
-git clone git://github.com/jsdelfino/libstrophe.git
-cd libstrophe
-./bootstrap.sh
-./configure --prefix=$build/libstrophe-bin --with-expat=$build/expat-2.0.1-bin
-make
-make install
+# Install Libcurl
+sudo apt-get -y install curl libcurl4-openssl-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
 
-# Install Apache Vysper
-sudo apt-get -y install openjdk-6-jdk
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-wget http://www.apache.org/dist/mina/vysper/0.5/vysper-0.5-bin.tar.gz
-tar xzf vysper-0.5-bin.tar.gz
+# Build Libxml2
+sudo apt-get -y install libxml2 libxml2-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
 
-# Build PostgreSQL
-sudo apt-get -y install libreadline-dev
+# Install TraceMonkey
+sudo apt-get -y install xulrunner-1.9.1 xulrunner-1.9.1-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-wget ftp://ftp9.us.postgresql.org/pub/mirrors/postgresql/source/v9.0beta1/postgresql-9.0beta1.tar.gz
-tar xzf postgresql-9.0beta1.tar.gz
-cd postgresql-9.0beta1
-./configure --prefix=$build/postgresql-9.0-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Apache Thrift
-sudo apt-get -y install bison flex
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-wget http://www.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-incubating.tar.gz
-tar xzf thrift-0.2.0-incubating.tar.gz
-cd thrift-0.2.0
-./bootstrap.sh
-./configure --prefix=$build/thrift-0.2.0-bin PY_PREFIX=$build/thrift-0.2.0-bin --with-java=no --with-erlang=no --with-perl=no --with-ruby=no --with-csharp=no --disable-static
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Facebook fb303
-cd thrift-0.2.0/contrib/fb303
-./bootstrap.sh
-./configure --prefix=$build/thrift-0.2.0-bin/contrib/fb303 PY_PREFIX=$build/thrift-0.2.0-bin/contrib/fb303 --with-thriftpath=$build/thrift-0.2.0-bin --disable-static
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cp cpp/lib/libfb303.so $build/thrift-0.2.0-bin/contrib/fb303/lib
-cd $build
-
-# Build Facebook Scribe
-wget http://github.com/downloads/facebook/scribe/scribe-2.2.tar.gz
-tar xzf scribe-2.2.tar.gz
-cd scribe
-./bootstrap.sh --prefix=$build/scribe-2.2-bin PY_PREFIX=$build/scribe-2.2-bin --with-thriftpath=$build/thrift-0.2.0-bin --with-fb303path=$build/thrift-0.2.0-bin/contrib/fb303 --disable-static
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cp src/lib/libscribe.so $build/scribe-2.2-bin/lib
-cd $build
-
-# Build Apache Libcloud
-wget http://www.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.3.1.tar.bz2
-tar xjf apache-libcloud-incubating-0.3.1.tar.bz2
-cd apache-libcloud-0.3.1
-python setup.py build
-python setup.py install --home $build/libcloud-0.3.1-bin
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
 
 # Build Tuscany SCA
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.15-bin --with-httpd=$build/httpd-2.2.15-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --with-libcloud=$build/libcloud-0.3.1-bin --enable-threads --enable-python --enable-gae --with-gae=$build/google_appengine --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin
+./configure --prefix=$build/tuscany-sca-cpp-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -285,5 +91,5 @@ fi
 cd $build
 
 # Create bin archive
-tar czf tuscany-sca-cpp-1.0.0-SNAPSHOT.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin axis2c-1.6.0-bin libxml2-2.7.7-bin curl-7.19.5-bin httpd-2.2.15-bin tracemonkey-bin google_appengine libstrophe-bin memcached-1.4.4-bin tinycdb-0.77-bin qpidc-0.6-bin vysper-0.5 postgresql-9.0-bin thrift-0.2.0-bin scribe-2.2-bin libcloud-0.3.1-bin
+tar czf tuscany-sca-cpp-1.0.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin
 

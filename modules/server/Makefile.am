@@ -17,13 +17,15 @@
 
 INCLUDES = -I${HTTPD_INCLUDE}
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/server
+
 dist_mod_SCRIPTS = cpp-conf scheme-conf server-conf
 moddir = $(prefix)/modules/server
 
 EXTRA_DIST = domain-test.composite client-test.scm server-test.scm htdocs/*.xml htdocs/*.txt htdocs/*.html
 
-lib_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
-libdir = $(prefix)/modules/server
+mod_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
 noinst_DATA = libmod_tuscany_eval.so libmod_tuscany_wiring.so
 
 libmod_tuscany_eval_la_SOURCES = mod-eval.cpp

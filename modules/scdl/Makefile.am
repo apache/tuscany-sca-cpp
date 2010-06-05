@@ -15,6 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/scdl
+
 scdl_test_SOURCES = scdl-test.cpp
 scdl_test_LDFLAGS = -lxml2
 

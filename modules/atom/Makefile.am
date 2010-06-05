@@ -15,6 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/atom
+
 atom_test_SOURCES = atom-test.cpp
 atom_test_LDFLAGS = -lxml2
 
