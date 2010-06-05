@@ -35,6 +35,17 @@ itemEntry = \
     "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\" />" \
     "</entry>\n"
 
+textEntry = \
+    "<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n" \
+    "<entry xmlns=\"http://www.w3.org/2005/Atom\">" \
+    "<title type=\"text\">item</title>" \
+    "<id>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</id>" \
+    "<content type=\"text\">" \
+    "Apple" \
+    "</content>" \
+    "<link href=\"cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b\" />" \
+    "</entry>\n"
+
 incompleteEntry = \
     "<entry xmlns=\"http://www.w3.org/2005/Atom\">" \
     "<title>item</title><content type=\"text/xml\">" \
@@ -68,9 +79,13 @@ def testEntry():
     s2 = writeATOMEntry(a2)
     assert car(s2) == itemEntry
 
-    a3 = readATOMEntry((incompleteEntry,))
+    a3 = readATOMEntry((textEntry,))
     s3 = writeATOMEntry(a3)
-    assert car(s3) == completedEntry
+    assert car(s3) == textEntry
+
+    a4 = readATOMEntry((incompleteEntry,))
+    s4 = writeATOMEntry(a4)
+    assert car(s4) == completedEntry
     return True
 
 emptyFeed = \

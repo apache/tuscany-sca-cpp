@@ -32,6 +32,10 @@ if [ "$rc" = "0" ]; then
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
+    $python_prefix/bin/python rss-test.py
+    rc=$?
+fi
+if [ "$rc" = "0" ]; then
     $python_prefix/bin/python json-test.py
     rc=$?
 fi

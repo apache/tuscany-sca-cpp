@@ -41,9 +41,9 @@ string itemEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<title>fruit</title>"
         "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>"
         "<description>"
-        "<fruit>"
+        "<item>"
         "<name>Apple</name><price>$2.99</price>"
-        "</fruit>"
+        "</item>"
         "</description>"
         "</item>\n");
 
@@ -56,10 +56,10 @@ string itemTextEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 
 string incompleteEntry("<item>"
         "<title>fruit</title><description>"
-        "<fruit xmlns=\"http://services/\">"
+        "<Item xmlns=\"http://services/\">"
         "<name xmlns=\"\">Orange</name>"
         "<price xmlns=\"\">3.55</price>"
-        "</fruit>"
+        "</Item>"
         "</description>"
         "</item>");
 
@@ -68,16 +68,16 @@ string completedEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<title>fruit</title>"
         "<link></link>"
         "<description>"
-        "<fruit xmlns=\"http://services/\">"
+        "<Item xmlns=\"http://services/\">"
         "<name xmlns=\"\">Orange</name>"
         "<price xmlns=\"\">3.55</price>"
-        "</fruit>"
+        "</Item>"
         "</description>"
         "</item>\n");
 
 bool testEntry() {
     {
-        const list<value> i = list<value>() + element + value("fruit")
+        const list<value> i = list<value>() + element + value("item")
                 + value(list<value>() + element + value("name") + value(string("Apple")))
                 + value(list<value>() + element + value("price") + value(string("$2.99")));
         const list<value> a = mklist<value>(string("fruit"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
@@ -131,18 +131,18 @@ string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<title>fruit</title>"
         "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>"
         "<description>"
-        "<fruit>"
+        "<item>"
         "<name>Apple</name><price>$2.99</price>"
-        "</fruit>"
+        "</item>"
         "</description>"
         "</item>"
         "<item>"
         "<title>fruit</title>"
         "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c</link>"
         "<description>"
-        "<fruit>"
+        "<item>"
         "<name>Orange</name><price>$3.55</price>"
-        "</fruit>"
+        "</item>"
         "</description>"
         "</item>"
         "</channel>"
@@ -163,11 +163,11 @@ bool testFeed() {
     {
         const list<value> i = list<value>()
                 + (list<value>() + "fruit" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                    + (list<value>() + element + "fruit"
+                    + (list<value>() + element + "item"
                         + (list<value>() + element + "name" + "Apple")
                         + (list<value>() + element + "price" + "$2.99")))
                 + (list<value>() + "fruit" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                    + (list<value>() + element + "fruit"
+                    + (list<value>() + element + "item"
                         + (list<value>() + element + "name" + "Orange")
                         + (list<value>() + element + "price" + "$3.55")));
         const list<value> a = cons<value>("Feed", cons<value>("1234", i));
@@ -178,11 +178,11 @@ bool testFeed() {
     {
         const list<value> i = list<value>()
                 + (list<value>() + "fruit" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                    + valueToElement(list<value>() + "fruit"
+                    + valueToElement(list<value>() + "item"
                         + (list<value>() + "name" + "Apple")
                         + (list<value>() + "price" + "$2.99")))
                 + (list<value>() + "fruit" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                    + valueToElement(list<value>() + "fruit"
+                    + valueToElement(list<value>() + "item"
                         + (list<value>() + "name" + "Orange")
                         + (list<value>() + "price" + "$3.55")));
         const list<value> a = cons<value>("Feed", cons<value>("1234", i));

@@ -29,41 +29,27 @@ from util import *
 from atomutil import *
 from jsonutil import *
 
+# JSON request id
 id = 1
 
 # Make a callable HTTP client
 class client:
-    def __init__(self, uri):
-        self.uri = urlparse(uri)
+    def __init__(self, url):
+        self.url = urlparse(url)
 
     def __call__(self, func, *args):
 
-        # Connect to the configured URI
-        print >> stderr, "Client POST", self.uri.geturl()
-        c = None
-        headers = {"Content-type": "application/json-rpc"}
-        if self.uri.scheme == "https":
+        # Connect to the configured URL
+        print >> stderr, "Client POST", self.url.geturl()
+        c, headers = connect(self.url)
 
-            # With HTTPS, use a cerficate or HTTP basic authentication
-            if os.path.exists("server.key"):
-                c = HTTPSConnection(self.uri.hostname, 443 if self.uri.port == None else self.uri.port, "server.key", "server.crt")
-            else:
-                c = HTTPSConnection(self.uri.hostname, 443 if self.uri.port == None else self.uri.port)
-
-                # For HTTP basic authentication the user and password are
-                # provided by htpasswd.py
-                import htpasswd
-                auth =  'Basic ' + b64encode(htpasswd.user + ':' + htpasswd.passwd)
-                headers["Authorization"] = auth
-        else:
-            c = HTTPConnection(self.uri.hostname, 80 if self.uri.port == None else self.uri.port)
-
-        # POST the JSON-RPC request
+        # POST a JSON-RPC request
         global id
         req = StringIO()
         writeStrings(jsonRequest(id, func, args), req)
         id = id + 1
-        c.request("POST", self.uri.path, req.getvalue(), headers)
+        headers["Content-type"] = "application/json-rpc"
+        c.request("POST", self.url.path, req.getvalue(), headers)
         res = c.getresponse()
         print >> stderr, "Client status", res.status
         if res.status != 200:
@@ -71,8 +57,28 @@ class client:
         return jsonResultValue((res.read(),))
 
     def __repr__(self):
-        return repr((self.uri,))
+        return repr((self.url,))
 
-def mkclient(uri):
-    return client(uri)
+def mkclient(url):
+    return client(url)
+
+# Connect to a URL, return a connection and any authorization headers
+def connect(url):
+    if url.scheme == "https":
+
+        # With HTTPS, use a cerficate or HTTP basic authentication
+        if os.path.exists("server.key"):
+            c = HTTPSConnection(url.hostname, 443 if url.port == None else url.port, "server.key", "server.crt")
+            return c, {}
+        else:
+            c = HTTPSConnection(url.hostname, 443 if url.port == None else url.port)
+
+            # For HTTP basic authentication the user and password are
+            # provided by htpasswd.py
+            import htpasswd
+            auth =  'Basic ' + b64encode(htpasswd.user + ':' + htpasswd.passwd)
+            return c, {"Authorization": auth}
+    else:
+        c = HTTPConnection(url.hostname, 80 if url.port == None else url.port)
+        return c, {}
 
