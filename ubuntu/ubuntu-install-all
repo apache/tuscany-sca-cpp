@@ -15,11 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Install the required system tools and libraries, the runtime dependencies and
-# the Tuscany SCA runtime on a fresh Ubuntu Server 9.10 system.
-
-# Build a complete distribution including the core runtime, all modules and
-# components and dependencies from source.
+# Install a complete distribution, the required system tools and libraries, the
+# runtime dependencies and the Tuscany SCA runtime on a fresh Ubuntu Server
+# 9.10 system.
 
 # Display commands as they are executed
 set -x
@@ -275,6 +273,10 @@ fi
 cd $build
 
 # Build Tuscany SCA
+sudo apt-get -y install python-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude

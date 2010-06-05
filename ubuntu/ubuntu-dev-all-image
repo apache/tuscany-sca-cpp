@@ -33,7 +33,7 @@ cd /mnt/tuscany
 
 # Download and run install script
 sudo apt-get -y install wget
-wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install
-chmod +x ./ubuntu-install
-./ubuntu-install
+wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install-all
+chmod +x ./ubuntu-install-all
+./ubuntu-install-all
 

@@ -15,8 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Install the required system tools and libraries, the runtime dependencies and
-# the Tuscany SCA runtime on a fresh Ubuntu Server 9.10 image.
+# Install a minimal distribution including only the core runtime, support for
+# Python and C++ components, memcached and tinycdb on a fresh Ubuntu Server
+# 9.10 image.
 
 # Display commands as they are executed
 set -x
@@ -42,27 +43,31 @@ fi
 #if [ "$?" != "0" ]; then
 #    exit $?
 #fi
-sudo apt-get -y install libssl-dev
+sudo apt-get -y install libssl-dev apache2 apache2-utils apache2-prefork-dev libaprutil1-dev libapr1-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install libevent-dev
+sudo apt-get -y install curl libcurl4-openssl-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install pkg-config
+sudo apt-get -y install libxml2 libxml2-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
+sudo apt-get -y install xulrunner-1.9.1 xulrunner-1.9.1-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install openjdk-6-jdk
+sudo apt-get -y install python-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install bison flex
+sudo apt-get -y install memcached
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+sudo apt-get -y install tinycdb libcdb-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
