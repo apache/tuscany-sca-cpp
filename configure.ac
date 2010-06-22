@@ -330,7 +330,7 @@ AC_ARG_WITH([tinycdb], [AC_HELP_STRING([--with-tinycdb=PATH], [path to installed
 AC_SUBST(TINYCDB_PREFIX)
 AC_SUBST(TINYCDB_INCLUDE)
 AC_SUBST(TINYCDB_LIB)
-LIBS="-L${TINYCDB_LIB} ${default_LIBS}"
+LIBS="-L${TINYCDB_LIB} ${defaultlibs}"
 AC_CHECK_LIB([cdb], [cdb_make_start], [], [AC_MSG_ERROR([couldn't find a suitable libcdb, use --with-tinycdb=PATH])])
 
 # Configure default includes and ldflags
@@ -372,7 +372,7 @@ if test "${want_python}" = "true"; then
   AC_SUBST(PYTHON_PREFIX)
   AC_SUBST(PYTHON_INCLUDE)
   AC_SUBST(PYTHON_LIB)
-  LIBS="-L${PYTHON_LIB} ${default_LIBS}"
+  LIBS="-L${PYTHON_LIB} ${defaultlibs}"
   AC_CHECK_LIB([python2.6], [Py_Initialize], [], [AC_MSG_ERROR([couldn't find a suitable libpython2.6, use --with-python=PATH])])
 
   AM_CONDITIONAL([WANT_PYTHON], true)
@@ -423,7 +423,7 @@ if test "${want_java}" = "true"; then
       # Server VM
       AC_MSG_NOTICE([checking for server Java VM])
       JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/lib/i386 -R${JAVA_PREFIX}/jre/lib/i386 -L${JAVA_PREFIX}/jre/lib/i386/server -R${JAVA_PREFIX}/jre/lib/i386/server"
-      LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
+      LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
       AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -lverify"], [], [-ljvm -lverify])
       if test "${JAVA_LDFLAGS}" != ""; then
         AC_DEFINE([JAVA_SERVER_VM], 1, [Server Java VM])
@@ -433,7 +433,7 @@ if test "${want_java}" = "true"; then
         # J9 VM
         AC_MSG_NOTICE([checking for J9 Java VM])
         JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/lib/i386 -R${JAVA_PREFIX}/jre/lib/i386 -L${JAVA_PREFIX}/jre/lib/i386/j9vm -R${JAVA_PREFIX}/jre/lib/i386/j9vm"
-        LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
+        LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
         AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -ljsig"], [], [-ljvm -ljsig])
         if test "${JAVA_LDFLAGS}" != ""; then
           AC_DEFINE([JAVA_J9_VM], 1, [J9 Java VM])
@@ -445,7 +445,7 @@ if test "${want_java}" = "true"; then
       # Apache Harmony VM
       AC_MSG_NOTICE([checking for Apache Harmony Java VM])
       JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/bin -R${JAVA_PREFIX}/jre/bin -L${JAVA_PREFIX}/jre/bin/default -R${JAVA_PREFIX}/jre/bin/default"
-      LIBS="${JAVA_CHECK_LIB} ${default_LIBS}"
+      LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
       AC_CHECK_LIB([harmonyvm], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -lharmonyvm -lhythr -licuuc -lch ${JAVA_PREFIX}/jre/bin/default/libicudata.so.34"], [], [-lhythr -licuuc -lch ${JAVA_PREFIX}/jre/bin/default/libicudata.so.34])
       if test "${JAVA_LDFLAGS}" != ""; then
         AC_DEFINE([JAVA_HARMONY_VM], 1, [Apache Harmony Java VM])
@@ -570,7 +570,7 @@ if test "${want_webservice}" = "true"; then
   AC_SUBST(AXIS2C_PREFIX)
   AC_SUBST(AXIS2C_INCLUDE)
   AC_SUBST(AXIS2C_LIB)
-  LIBS="-L${AXIS2C_LIB} ${default_LIBS}"
+  LIBS="-L${AXIS2C_LIB} ${defaultlibs}"
   AC_CHECK_LIB([axis2_engine], [axis2_svc_client_create], [], [AC_MSG_ERROR([couldn't find a suitable libaxis2_engine, use --with-axis2c=PATH])])
 
   AM_CONDITIONAL([WANT_WEBSERVICE], true)
@@ -653,7 +653,7 @@ if test "${want_queue}" = "true"; then
   if test "${want_threads}" != "true"; then
     AC_MSG_ERROR([--enable-queue requires multi-threading, use --enable-threads])
   fi
-  LIBS="-L${QPIDC_LIB} ${default_LIBS}"
+  LIBS="-L${QPIDC_LIB} ${defaultlibs}"
   AC_CHECK_LIB([qpidclient], [_init], [], [AC_MSG_ERROR([couldn't find a suitable libqpidclient, use --with-qpidc=PATH])])
 
   AM_CONDITIONAL([WANT_QUEUE], true)
@@ -693,7 +693,7 @@ if test "${want_chat}" = "true"; then
   if test "${want_threads}" != "true"; then
     AC_MSG_ERROR([--enable-chat requires multi-threading, use --enable-threads])
   fi
-  LIBS="-L${LIBSTROPHE_LIB} ${default_LIBS}"
+  LIBS="-L${LIBSTROPHE_LIB} ${defaultlibs}"
   AC_CHECK_LIB([strophe], [xmpp_initialize], [], [AC_MSG_ERROR([couldn't find a suitable libstrophe, use --with-libstrophe=PATH])], [-lssl -lresolv])
   
   # Configure path to Vysper
@@ -779,7 +779,7 @@ if test "${want_log}" = "true"; then
   AC_SUBST(SCRIBE_INCLUDE)
   AC_SUBST(SCRIBE_LIB)
 
-  LIBS="-L${THRIFT_LIB} -L${FB303_LIB} -L${SCRIBE_LIB} ${default_LIBS}"
+  LIBS="-L${THRIFT_LIB} -L${FB303_LIB} -L${SCRIBE_LIB} ${defaultlibs}"
   AC_CHECK_LIB([thrift], [_init], [], [AC_MSG_ERROR([couldn't find a suitable libthrift, use --with-thrift=PATH])])
   AC_CHECK_LIB([fb303], [_init], [], [AC_MSG_ERROR([couldn't find a suitable libfb303, use --with-thrift=PATH])])
   AC_CHECK_LIB([scribe], [_init], [], [AC_MSG_ERROR([couldn't find a suitable libscribe, use --with-scribe=PATH])])
