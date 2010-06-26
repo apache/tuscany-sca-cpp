@@ -20,7 +20,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = etc kernel modules components samples doc ubuntu
 
 datadir=$(prefix)
-dist_data_DATA = README LICENSE COPYING NOTICE
+dist_data_DATA = AUTHORS README LICENSE COPYING NOTICE
 nobase_dist_data_DATA = xsd/*.xsd xsd/external/*.xsd xsd/external/*.dtd
 EXTRA_DIST = INSTALL bootstrap
 

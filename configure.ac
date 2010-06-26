@@ -252,7 +252,7 @@ AC_CHECK_LIB([mozjs], [JS_NewContext], [], [AC_MSG_ERROR([couldn't find a suitab
 
 # Configure path to Apache APR and HTTPD includes and libs.
 AC_MSG_CHECKING([for apr])
-AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed Apache APR [default=/usr/apache2]])], [
+AC_ARG_WITH([apr], [AC_HELP_STRING([--with-apr=PATH], [path to installed Apache APR [default=/usr]])], [
   APR_INCLUDE="${withval}/include"
   APR_LIB="${withval}/lib"
   AC_MSG_RESULT("${withval}")
