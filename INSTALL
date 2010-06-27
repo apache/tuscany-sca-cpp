@@ -96,6 +96,13 @@ Google AppEngine 1.3.2 (http://code.google.com/appengine/)
 Java:
 a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
 
+OpenID user sign in:
+Mod_auth_openid (http://trac.butterfat.net/public/mod_auth_openid)
+build it from source at http://github.com/jsdelfino/mod_auth_openid
+requires Libopkele (http://kin.klever.net/libopkele/ or
+http://github.com/jsdelfino/libopkele)
+and HTML Tidy (http://tidy.sourceforge.net/)
+
 XMPP Chat:
 Apache Vysper 0.5 (http://mina.apache.org/)
 
@@ -183,6 +190,7 @@ dependencies installed under $HOME:
 --enable-sqldb --with-pgsql=$HOME/postgresql-9.0-bin \
 --enable-log --with-thrift=$HOME/thrift-0.2.0-bin \
 --with-scribe=$HOME/scribe-2.2-bin \
+--enable-openid --with-mod-auth-openid=$HOME/mod-auth-openid-bin \
 --enable-maintainer-mode
 
 
@@ -282,21 +290,46 @@ cd qpidc-0.6
 make
 make install
 
-Libstrophe:
-git clone git://code.stanziq.com/libstrophe
-cd libstrophe
-git submodule init
-git submodule update
-aclocal
-automake --add-missing --foreign --copy
-autoconf
-./configure --prefix=$HOME/libstrophe-bin
+Libexpat:
+wget http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
+tar xzf expat-2.0.1.tar.gz
+cd expat-2.0.1
+./configure --prefix=$HOME/expat-2.0.1-bin
 make
 make install
-cd ..
-mkdir -p libstrophe-bin/include
-cp libstrophe/*.h libstrophe-bin/include
-cp libstrophe/src/*.h libstrophe-bin/include
+
+Libstrophe:
+git clone git://github.com/jsdelfino/libstrophe.git
+cd libstrophe
+./bootstrap.sh
+./configure --prefix=$HOME/libstrophe-bin --with-expat=$HOME/expat-2.0.1-bin
+make
+make install
+
+HTML Tidy:
+cvs -z3 -d:pserver:anonymous@tidy.cvs.sourceforge.net:/cvsroot/tidy co -P tidy
+cd tidy
+build/gnuauto/setup.sh
+./configure --prefix=$HOME/htmltidy-bin
+make
+make install
+
+Libopkele:
+git clone git://github.com/jsdelfino/libopkele.git
+cd libopkele
+./autogen.bash
+./configure --prefix=$HOME/libopkele-bin --with-curl=$HOME/curl-7.19.5-bin \
+--with-expat=$HOME/expat-2.0.1-bin --with-htmltidy=$HOME/htmltidy-bin
+
+Mod_auth_openid:
+git clone git://github.com/jsdelfino/mod_auth_openid.git
+cd mod_auth_openid
+./autogen.sh
+./configure --prefix=$HOME/mod-auth-openid-bin \
+--with-apr=$HOME/httpd-2.2.15-bin --with-httpd=$HOME/httpd-2.2.15-bin \
+--with-curl=$HOME/curl-7.19.5-bin --with-libopkele=$HOME/libopkele-bin
+make
+make install
 
 PostgreSQL:
 wget http://wwwmaster.postgresql.org/download/mirrors-ftp/source/9.0alpha5/postgresql-9.0alpha5.tar.gz
