@@ -97,8 +97,19 @@ int debugHeader(unused void* r, const char* key, const char* value) {
     return 1;
 }
 
+int debugEnv(unused void* r, const char* key, const char* value) {
+    cerr << "  var key: " << key << ", value: " << value << endl;
+    return 1;
+}
+
+int debugNote(unused void* r, const char* key, const char* value) {
+    cerr << "  note key: " << key << ", value: " << value << endl;
+    return 1;
+}
+
 const bool debugRequest(request_rec* r, const string& msg) {
     cerr << msg << ":" << endl;
+    cerr << "  server: " << optional(r->server->server_hostname) << endl;
     cerr << "  protocol: " << optional(r->protocol) << endl;
     cerr << "  method: " << optional(r->method) << endl;
     cerr << "  method number: " << r->method_number << endl;
@@ -111,6 +122,10 @@ const bool debugRequest(request_rec* r, const string& msg) {
     cerr << "  filename: " << optional(r->filename) << endl;
     cerr << "  uri tokens: " << pathTokens(r->uri) << endl;
     cerr << "  args: " << optional(r->args) << endl;
+    cerr << "  user: " << optional(r->user) << endl;
+    cerr << "  auth type: " << optional(r->ap_auth_type) << endl;
+    apr_table_do(debugEnv, r, r->subprocess_env, NULL);
+    apr_table_do(debugEnv, r, r->notes, NULL);
     return true;
 }
 
@@ -331,6 +346,7 @@ const failable<request_rec*, int> internalRedirectRequest(const string& nr_uri, 
     nr->no_local_copy = r->no_local_copy;
     nr->read_length = r->read_length;
     nr->vlist_validator = r->vlist_validator;
+    nr->user = r->user;
 
     // Setup input and output filters
     nr->proto_output_filters  = r->proto_output_filters;

@@ -475,6 +475,39 @@ else
 fi
 AC_SUBST(JAVA_LDFLAGS)
 
+# Enable support for OpenID.
+AC_MSG_CHECKING([whether to enable OpenID support])
+AC_ARG_ENABLE(openid, [AS_HELP_STRING([--enable-openid], [enable OpenID support [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_openid=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_openid}" = "true"; then
+
+  # Configure path to mod-auth-openid
+  AC_MSG_CHECKING([for mod-auth-openid])
+  AC_ARG_WITH([mod-auth-openid], [AC_HELP_STRING([--with-mod-auth-openid=PATH], [path to installed mod-auth-openid [default=/usr]])], [
+    MODAUTHOPENID_PREFIX="${withval}"
+    AC_MSG_RESULT("${withval}")
+  ], [
+    MODAUTHOPENID_PREFIX="/usr/local/"
+    AC_MSG_RESULT(/usr/local)
+  ])
+  AC_SUBST(MODAUTHOPENID_PREFIX)
+
+  AM_CONDITIONAL([WANT_OPENID], true)
+  AC_DEFINE([WANT_OPENID], 1, [enable OpenID support])
+
+else
+  AM_CONDITIONAL([WANT_OPENID], false)
+fi
+
 # Enable support for Google AppEngine.
 AC_MSG_CHECKING([whether to enable Google AppEngine support])
 AC_ARG_ENABLE(gae, [AS_HELP_STRING([--enable-gae], [enable Google AppEngine support [default=no]])],
@@ -801,13 +834,14 @@ AC_CONFIG_FILES([Makefile
                  modules/Makefile
                  modules/scheme/Makefile
                  modules/atom/Makefile
+                 modules/rss/Makefile
                  modules/json/Makefile
                  modules/scdl/Makefile
                  modules/http/Makefile
+                 modules/server/Makefile
                  modules/python/Makefile
                  modules/java/Makefile
-                 modules/rss/Makefile
-                 modules/server/Makefile
+                 modules/openid/Makefile
                  modules/wsgi/Makefile
                  components/Makefile
                  components/cache/Makefile

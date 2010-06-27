@@ -15,5 +15,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom rss json scdl http server python java openid wsgi
 
+if WANT_OPENID
+
+dist_mod_SCRIPTS = openid-conf
+moddir = $(prefix)/modules/openid
+
+mod_DATA = openid.prefix
+openid.prefix: $(top_builddir)/config.status
+	echo ${MODAUTHOPENID_PREFIX} >openid.prefix
+
+EXTRA_DIST = openid.composite server-test.scm htdocs/index.html htdocs/login.html htdocs/protected/index.html
+
+dist_noinst_SCRIPTS = server-test
+
+endif

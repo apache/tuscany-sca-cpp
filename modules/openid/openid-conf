@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,5 +17,25 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom rss json scdl http server python java openid wsgi
+# Generate an Axis2 server conf
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
+htdocs=`readlink -f $2`
+openid_prefix=`cat openid.prefix`
 
+# Configure HTTPD mod_auth_openid module
+cat >>$root/conf/httpd.conf <<EOF
+# Support for OpenID authentication
+LoadModule authopenid_module  $openid_prefix/modules/mod_auth_openid.so
+
+<Location /protected>
+AuthOpenIDEnabled On
+AuthOpenIDLoginPage /login
+AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
+</Location>
+
+<Location /login>
+AuthOpenIDEnabled Off
+</Location>
+
+EOF

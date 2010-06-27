@@ -57,6 +57,7 @@ LoadModule asis_module ${modules_prefix}/modules/mod_asis.so
 LoadModule negotiation_module ${modules_prefix}/modules/mod_negotiation.so
 LoadModule dir_module ${modules_prefix}/modules/mod_dir.so
 LoadModule rewrite_module ${modules_prefix}/modules/mod_rewrite.so
+LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
 <IfModule !log_config_module>
 LoadModule log_config_module ${modules_prefix}/modules/mod_log_config.so
 </IfModule>

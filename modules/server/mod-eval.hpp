@@ -234,7 +234,6 @@ const failable<int> del(request_rec* r, const lambda<value(const list<value>&)>&
  * Translate a component request.
  */
 int translate(request_rec *r) {
-    gc_scoped_pool pool(r->pool);
     if (strncmp(r->uri, "/components/", 12) != 0)
         return DECLINED;
     r->handler = "mod_tuscany_eval";
@@ -242,12 +241,32 @@ int translate(request_rec *r) {
 }
 
 /**
+ * Store current HTTP request for access from property lambda functions.
+ */
+#ifdef WANT_THREADS
+__thread
+#endif
+const request_rec* currentRequest = NULL;
+
+class scoped_request {
+public:
+    scoped_request(const request_rec* r) {
+        currentRequest = r;
+    }
+
+    ~scoped_request() {
+        currentRequest = NULL;
+    }
+};
+
+/**
  * HTTP request handler.
  */
 int handler(request_rec *r) {
-    gc_scoped_pool pool(r->pool);
     if(strcmp(r->handler, "mod_tuscany_eval"))
         return DECLINED;
+    gc_scoped_pool pool(r->pool);
+    scoped_request sr(r);
     httpdDebugRequest(r, "modeval::handler::input");
 
     // Get the component implementation lambda
@@ -287,7 +306,8 @@ const list<value> refProxies(const list<value>& refs, const string& base, const 
 
 /**
  * Convert a list of component properties to a list of lambda functions that just return
- * the property value.
+ * the property value. The user and email properties are configured with the values
+ * from the HTTP request, if any.
  */
 struct propProxy {
     const value v;
@@ -298,7 +318,34 @@ struct propProxy {
     }
 };
 
+struct emailPropProxy {
+    const value v;
+    emailPropProxy(const value& v) : v(v) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        const char* email = apr_table_get(currentRequest->subprocess_env, "EMAIL");
+        if (email == NULL || *email == '\0')
+            return v;
+        return string(email);
+    }
+};
+
+struct userPropProxy {
+    const value v;
+    userPropProxy(const value& v) : v(v) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        if (currentRequest->user == NULL)
+            return v;
+        return string(currentRequest->user);
+    }
+};
+
 const value mkpropProxy(const value& prop) {
+    if (scdl::name(prop) == "email")
+        return lambda<value(const list<value>&)>(emailPropProxy(elementValue(prop)));
+    if (scdl::name(prop) == "user")
+        return lambda<value(const list<value>&)>(userPropProxy(elementValue(prop)));
     return lambda<value(const list<value>&)>(propProxy(elementValue(prop)));
 }
 
