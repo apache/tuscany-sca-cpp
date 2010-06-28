@@ -18,21 +18,45 @@
 -->
 
 <html><body>
-<h1>Sign in using an OpenID provider</h1>
-<form action="/protected" method="GET">
+<h1>Sign in with an OpenID provider</h1>
+
+<form "googleSignin" action="/protected" method="GET">
 <input type="hidden" name="openid_identifier" value="https://www.google.com/accounts/o8/id"/>
 <input type="submit" value="Sign in with your Google account"/>
 </form>
-<form action="/protected" method="GET">
+
+<form name="yahooSignin" action="/protected" method="GET">
 <input type="hidden" name="openid_identifier" value="https://me.yahoo.com/"/>
 <input type="submit" value="Sign in with your Yahoo account"/>
+
 </form>
-<form action="/protected" method="GET">
-<input type="hidden" name="openid_identifier" value="https://me.myopenid.com"/>
+
+<form name="myOpenIDSignin" action="/protected" method="GET">
+<input type="hidden" name="openid_identifier" value="http://www.myopenid.com/xrds"/>
 <input type="submit" value="Sign in with your MyOpenID account"/>
 </form>
-<form action="/protected" method="GET">
+
+<form name="verisignSignin" action="/protected" method="GET">
 <input type="hidden" name="openid_identifier" value="https://pip.verisignlabs.com/"/>
 <input type="submit" value="Sign in with your Verisign account"/>
+</form>
+
+<form name="googleAppsSignin" action="/protected" method="GET">
+<script type="text/javascript">
+function initOpenIDIdentifier() {
+    document.googleAppsSignin.openid_identifier.value = 'https://www.google.com/accounts/o8/site-xrds?ns=2&hd=' + document.googleAppsSignin.domain.value;
+    return true;
+}
+</script>
+<!-- Enter your Google apps domain, e.g example.com -->
+<input type="text" size="20" name="domain" value="example.com"/><br/>
+<input type="hidden" size=50 name="openid_identifier" value=""/>
+<input type="submit" onclick="initOpenIDIdentifier()" value="Sign in with a Google Apps domain"/>
+</form>
+
+<form name="xrdsEndpointSignin" action="/protected" method="GET">
+<!-- Enter your OpenID XRDS endpoint, e.g. https://www.google.com/accounts/o8/id -->
+<input type="text" size="50" name="openid_identifier" value="https://www.google.com/accounts/o8/id"/><br/>
+<input type="submit" value="Sign in with an OpenID XRDS endpoint"/>
 </form>
 </body></html>

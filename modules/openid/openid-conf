@@ -30,7 +30,7 @@ LoadModule authopenid_module  $openid_prefix/modules/mod_auth_openid.so
 
 <Location /protected>
 AuthOpenIDEnabled On
-AuthOpenIDLoginPage /login
+AuthOpenIDLoginPage /login.html
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
 </Location>
 

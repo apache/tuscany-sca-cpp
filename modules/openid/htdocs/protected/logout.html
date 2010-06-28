@@ -18,7 +18,17 @@
 -->
 
 <html><body>
-<h1>Protected area - It works!</h1>
-<p><a href="hello">Hello component</a></p>
-<p><a href="logout.html">Sign out</a></p>
+<h1>Sign out</h1>
+
+<form "Signout" action="/" method="GET">
+<script type="text/javascript">
+function deleteOpenIDSessionCookie() {
+    alert(document.cookie);
+    document.cookie = 'open_id_session_id=;expires=' + new Date(1970,01,01).toGMTString();
+    alert(document.cookie);
+    return true;
+}
+</script>
+<input type="submit" onclick="deleteOpenIDSessionCookie()" value="Sign out"/>
+</form>
 </body></html>
