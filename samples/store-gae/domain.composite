@@ -43,7 +43,7 @@
      
     <component name="ShoppingCart">
         <t:implementation.python script="shopping-cart.py"/>
-        <service name="ShoppingCart">
+        <service name="Cart">
             <t:binding.atom uri="shoppingCart"/>
         </service>        
         <service name="Total">

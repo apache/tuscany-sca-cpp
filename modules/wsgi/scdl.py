@@ -18,6 +18,7 @@
 # SCDL parsing functions
 
 from xml.etree.cElementTree import iterparse
+from sys import stderr
 from util import *
 from httputil import *
 
@@ -86,8 +87,8 @@ def references(e):
     if match(car(e), "start", "reference") == False:
         return references(cdr(e))
     if "target" in att(car(e)):
-        return cons(car(tokens(att(car(e))["target"])), references(cdr(e)))
-    return cons(binding(e), references(cdr(e)))
+        return cons((att(car(e))["name"], car(tokens(att(car(e))["target"]))), references(cdr(e)))
+    return cons((att(car(e))["name"], binding(e)), references(cdr(e)))
 
 # Return the list of properties under a SCDL component element
 def properties(e):
@@ -116,7 +117,7 @@ def components(e):
     if match(car(e), "start", "component") == False:
         return components(cdr(e))
     n = name(e)
-    return cons(mkcomponent(n, implementation(e), cons(("components", n), services(e)), references(e), properties(e)), components(cdr(e)))
+    return cons(mkcomponent(n, implementation(e), services(e), references(e), properties(e)), components(cdr(e)))
 
 # Find a component with a given name
 def nameToComponent(name, comps):
@@ -136,28 +137,80 @@ def matchingURI(u, svcs):
 
 # Return the (service URI, component) pair matching a given URI
 def uriToComponent(u, comps):
+    if car(u) == "components":
+        return componentURIToComponent(u, comps)
+    if car(u) == "references":
+        return referenceURIToComponent(u, comps)
+    return serviceURIToComponent(u, comps)
+
+def serviceURIToComponent(u, comps):
     if comps == ():
         return (None, None)
     m = matchingURI(u, car(comps).svcs)
     if m != None:
         return (m, car(comps))
-    return uriToComponent(u, cdr(comps))
+    return serviceURIToComponent(u, cdr(comps))
+
+def componentURIToComponent(u, comps):
+    comp = nameToComponent(cadr(u), comps)
+    if comps == None:
+        return (None, None)
+    return (u[0:2], comp)
+
+def referenceURIToComponent(u, comps):
+    sc = nameToComponent(cadr(u), comps)
+    if sc == None:
+        return (None, None)
+    
+    def referenceToComponent(r, refs):
+        if refs == ():
+            return None
+        if r == car(car(refs)):
+            return cadr(car(refs))
+        return referenceToComponent(r, cdr(refs))
+
+    tn = referenceToComponent(caddr(u), sc.refs)
+    if tn == None:
+        return (None, None)
+    tc = nameToComponent(tn, comps)
+    if tc == None:
+        return (None, None)
+    return (u[0:3], tc)
 
 # Evaluate a reference, return a proxy to the resolved component or an
 # HTTP client configured with the reference target uri
 def evalReference(r, comps):
-    if r.startswith("http://") or r.startswith("https://"):
-        return mkclient(r)
-    return nameToComponent(r, comps)
+    t = cadr(r)
+    if t.startswith("http://") or t.startswith("https://"):
+        return mkclient(t)
+    return nameToComponent(t, comps)
 
-# Evaluate a component, resolve its implementation and references
+# Evaluate a property, return a lambda function returning the property
+# value. The user and email properties are configured with the values
+# from the HTTP request, if any
+def evalProperty(p):
+    if (isTaggedList(p, "user")):
+        return lambda: userProperty(cadr(p))
+    if (isTaggedList(p, "email")):
+        return lambda: emailProperty(cadr(p))
+    return lambda: p
+
+def userProperty(v):
+    return "nobody"
+
+def emailProperty(v):
+    return "nobody@nowhere.com"
+
+# Evaluate a component, resolve its implementation, references and
+# properties
 def evalComponent(comp, comps):
     comp.mod = __import__(comp.impl)
 
     # Make a list of proxy lambda functions for the component references and properties
     # A reference proxy is the callable lambda function of the component wired to the reference
     # A property proxy is a lambda function that returns the value of the property
-    comp.proxies = tuple(map(lambda r: evalReference(r, comps), comp.refs)) + tuple(map(lambda v: lambda: v, comp.props))
+    print >> stderr, "evalComponent", comp.impl, comp.svcs, comp.refs, comp.props
+    comp.proxies = tuple(map(lambda r: evalReference(r, comps), comp.refs)) + tuple(map(lambda p: evalProperty(p), comp.props))
 
     return comp
 

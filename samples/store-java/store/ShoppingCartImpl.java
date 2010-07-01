@@ -109,11 +109,4 @@ public class ShoppingCartImpl {
         return this.sum(cart);
     }
 
-    /**
-     * TODO remove this JSON-RPC specific function.
-     */
-    public Iterable<?> listMethods(final Service cache) {
-        return list("Service.gettotal");
-    }
-
 }

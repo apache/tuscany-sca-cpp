@@ -22,6 +22,16 @@
   targetNamespace="http://store"
   name="store">
         
+    <component name="Store">
+        <t:implementation.widget location="store.html"/>
+        <service name="Widget">
+            <t:binding.http uri="store"/>
+        </service>
+        <reference name="catalog" target="Catalog"/>
+        <reference name="shoppingCart" target="ShoppingCart/Cart"/>
+        <reference name="shoppingTotal" target="ShoppingCart/Total"/>
+    </component>
+    
     <component name="Catalog">
         <implementation.cpp path="." library="libfruits-catalog"/> 
         <property name="currencyCode">USD</property>

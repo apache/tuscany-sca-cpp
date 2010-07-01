@@ -358,6 +358,22 @@ const list<value> propProxies(const list<value>& props) {
 /**
  * Evaluate a component and convert it to an applicable lambda function.
  */
+struct implementationFailure {
+    const value reason;
+    implementationFailure(const value& r) : reason(r) {
+    }
+
+    // Default implementation representing an implementation that
+    // couldn't be evaluated. Report the evaluation error on all
+    // subsequent calls expect start/stop.
+    const value operator()(unused const list<value>& params) const {
+        const value func = car(params);
+        if (func == "start" || func == "stop")
+            return mklist<value>(lambda<value(const list<value>&)>());
+        return mklist<value>(value(), reason);
+    }
+};
+
 const value evalComponent(ServerConf& sc, server_rec& server, const value& comp) {
     extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px, const lambda<value(const list<value>&)>& lifecycle);
 
@@ -380,7 +396,7 @@ const value evalComponent(ServerConf& sc, server_rec& server, const value& comp)
     // Evaluate the component implementation and convert it to an applicable lambda function
     const failable<lambda<value(const list<value>&)> > cimpl(evalImplementation(sc.contributionPath, impl, append(rpx, ppx), sc.lifecycle));
     if (!hasContent(cimpl))
-        return reason(cimpl);
+        return lambda<value(const list<value>&)>(implementationFailure(reason(cimpl)));
     return content(cimpl);
 }
 

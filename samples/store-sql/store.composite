@@ -43,7 +43,7 @@
      
     <component name="ShoppingCart">
         <t:implementation.scheme script="shopping-cart.scm"/>
-        <service name="ShoppingCart">
+        <service name="Cart">
             <t:binding.atom uri="shoppingCart"/>
         </service>        
         <service name="Total">

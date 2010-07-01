@@ -30,7 +30,7 @@
 )
 
 (define (getcatalog catalog shoppingCart shoppingTotal)
-  (catalog "get")
+  (catalog "getcatalog")
 )
 
 (define (gettotal catalog shoppingCart shoppingTotal)
@@ -44,7 +44,4 @@
 (define (delete id catalog shoppingCart shoppingTotal)
   (shoppingCart "delete" id)
 )
-
-; TODO remove these JSON-RPC specific functions
-(define (listMethods catalog shoppingCart shoppingTotal) (list "Service.getcatalog" "Service.gettotal"))
 

@@ -80,5 +80,3 @@
   (sum cart)
 )
 
-; TODO remove these JSON-RPC specific functions
-(define (listMethods cache) (list "Service.gettotal"))

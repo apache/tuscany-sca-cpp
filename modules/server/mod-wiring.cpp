@@ -107,7 +107,7 @@ int translateReference(request_rec *r) {
     }
 
     // Route to a relative target URI using a local internal redirect
-    r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/components/") + target));
+    r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/components/") + substr(target, 0, find(target, '/'))));
     r->handler = "mod_tuscany_wiring";
     return OK;
 }

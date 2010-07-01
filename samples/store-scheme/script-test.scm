@@ -53,7 +53,7 @@
 
 (define (catalog_impl converter op args)
   (cond
-    ((equal? op "get") (apply catalog_get (cons converter args)))
+    ((equal? op "getcatalog") (apply catalog_get (cons converter args)))
   )
 )
 
@@ -104,7 +104,7 @@
 )
 
 (define (storeui_getcatalog catalog)
-  (catalog "get")
+  (catalog "getcatalog")
 )
 
 (define (storeui_gettotal cart)

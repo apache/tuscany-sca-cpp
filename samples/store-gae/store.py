@@ -27,7 +27,7 @@ def get(id, catalog, shoppingCart, shoppingTotal):
     return shoppingCart("get", id)
 
 def getcatalog(catalog, shoppingCart, shoppingTotal):
-    return catalog("get")
+    return catalog("getcatalog")
 
 def gettotal(catalog, shoppingCart, shoppingTotal):
     return shoppingCart("gettotal")
@@ -37,8 +37,4 @@ def deleteall(catalog, shoppingCart, shoppingTotal):
 
 def delete(id, catalog, shoppingCart, shoppingTotal):
     return shoppingCart("delete", id)
-
-# TODO remove these JSON-RPC specific functions
-def listMethods(catalog, shoppingCart, shoppingTotal):
-    return ("Service.get", "Service.gettotal")
 

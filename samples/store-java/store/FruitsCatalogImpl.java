@@ -31,7 +31,7 @@ public class FruitsCatalogImpl {
     /**
      * Returns the catalog.
      */
-    public Iterable<?> get(final CurrencyConverter converter, final Service currencyCode) {
+    public Iterable<?> getcatalog(final CurrencyConverter converter, final Service currencyCode) {
         final String code = currencyCode.eval();
 
         class Converter {
@@ -46,13 +46,6 @@ public class FruitsCatalogImpl {
         return list(list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(2.99))),
                 list(list("'javaClass", "services.Item"), list("'name", "Orange"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(3.55))),
                 list(list("'javaClass", "services.Item"), list("'name", "Pear"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(1.55))));
-    }
-
-    /**
-     * TODO remove this JSON-RPC specific function.
-     */
-    public Iterable<?> listMethods(final CurrencyConverter converter, final Service currencyCode) {
-        return list("Service.get");
     }
 
 }

@@ -72,6 +72,3 @@ def gettotal(cache):
     cart = getcart(cartId, cache)
     return sum(cart)
 
-# TODO remove these JSON-RPC specific functions
-def listMethods(cache):
-    return ("Service.gettotal",)

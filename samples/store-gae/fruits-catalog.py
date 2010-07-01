@@ -17,7 +17,7 @@
 
 # Catalog implementation
 
-def get(converter, currencyCode):
+def getcatalog(converter, currencyCode):
   code = currencyCode()
   def convert(price):
       return converter("convert", "USD", code, price)
@@ -27,8 +27,4 @@ def get(converter, currencyCode):
     (("'javaClass", "services.Item"), ("'name", "Orange"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(3.55))),
     (("'javaClass", "services.Item"), ("'name", "Pear"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(1.55)))
   )
-
-# TODO remove these JSON-RPC specific functions
-def listMethods(converter, currencyCode):
-    return ("Service.get",)
 

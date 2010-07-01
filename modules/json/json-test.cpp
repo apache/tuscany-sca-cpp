@@ -93,11 +93,11 @@ bool testJSON() {
 bool testJSONRPC() {
     JSONContext cx;
     {
-        const string lm("{\"id\": 1, \"method\": \"system.listMethods\", \"params\": []}");
+        const string lm("{\"id\": 1, \"method\": \"test\", \"params\": []}");
         const list<value> e = content(readJSON(mklist(lm), cx));
         const list<value> v = elementsToValues(e);
         assert(assoc<value>("id", v) == mklist<value>("id", 1));
-        assert(assoc<value>("method", v) == mklist<value>("method", string("system.listMethods")));
+        assert(assoc<value>("method", v) == mklist<value>("method", string("test")));
         assert(assoc<value>("params", v) == mklist<value>("params", list<value>()));
     }
     {

@@ -241,6 +241,9 @@ const int find(const string& s1, const char* s2) {
     return find(s1, s2, 0);
 }
 
+/**
+ * Return true if string s1 contains s2.
+ */
 const bool contains(const string& s1, const char* s2) {
     return find(s1, s2) != length(s1);
 }
@@ -250,6 +253,17 @@ const bool contains(const string& s1, const char* s2) {
  */
 const int find_first_of(const string& s1, const string& s2) {
     return strcspn(c_str(s1), c_str(s2));
+}
+
+/**
+ * Find the first occurence of a character in a string.
+ */
+const int find(const string& s, const char c) {
+    const char* cs = c_str(s);
+    const char* f = strchr(cs, c);
+    if (f == NULL)
+        return length(s);
+    return f - cs;
 }
 
 /**

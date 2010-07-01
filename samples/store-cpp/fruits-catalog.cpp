@@ -50,7 +50,7 @@ const list<value> mkfruit(const string& name, const string& code, const string& 
         mklist<value>("javaClass", string("services.Item")) + mklist<value>("name", name) + mklist<value>("currencyCode", code) + mklist<value>("currencySymbol", symbol) + mklist<value>("price", price);
 }
 
-const failable<value> get(const lambda<value(const list<value>&)> converter, const lambda<value(const list<value>&)> currencyCode) {
+const failable<value> getcatalog(const lambda<value(const list<value>&)> converter, const lambda<value(const list<value>&)> currencyCode) {
     const string currency(currencyCode(list<value>()));
     const string symbol(converter(mklist<value>("symbol", currency)));
     const lambda<value(const value&)> conv(convert(converter, currency));
@@ -61,13 +61,6 @@ const failable<value> get(const lambda<value(const list<value>&)> converter, con
         mkfruit("Pear", currency, symbol, conv(1.55)));
 }
 
-/**
- * TODO remove this JSON-RPC specific function.
- */
-const failable<value> listMethods(unused const lambda<value(const list<value>&)> converter, unused const lambda<value(const list<value>&)> currencyCode) {
-    return value(mklist<value>(string("Service.get")));
-}
-
 }
 }
 
@@ -75,10 +68,8 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "get")
-        return tuscany::store::get(cadr(params), caddr(params));
-    if (func == "listMethods")
-        return tuscany::store::listMethods(cadr(params), caddr(params));
+    if (func == "getcatalog")
+        return tuscany::store::getcatalog(cadr(params), caddr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 

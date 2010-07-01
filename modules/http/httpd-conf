@@ -38,6 +38,7 @@ ServerName $host
 PidFile $root/logs/httpd.pid
 
 # Minimal set of modules
+LoadModule alias_module ${modules_prefix}/modules/mod_alias.so
 LoadModule authn_file_module ${modules_prefix}/modules/mod_authn_file.so
 LoadModule authn_default_module ${modules_prefix}/modules/mod_authn_default.so
 LoadModule authz_host_module ${modules_prefix}/modules/mod_authz_host.so

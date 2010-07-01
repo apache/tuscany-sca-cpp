@@ -122,13 +122,6 @@ const failable<value> gettotal(const lambda<value(const list<value>&)> cache) {
     return value(sum(cart));
 }
 
-/**
- * TODO remove this JSON-RPC specific function.
- */
-const failable<value> listMethods(unused const lambda<value(const list<value>&)> converter) {
-    return value(mklist<value>(string("Service.gettotal")));
-}
-
 }
 }
 
@@ -144,8 +137,6 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
         return tuscany::store::del(cadr(params), caddr(params));
     if (func == "gettotal")
         return tuscany::store::gettotal(cadr(params));
-    if (func == "listMethods")
-        return tuscany::store::listMethods(cadr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 
