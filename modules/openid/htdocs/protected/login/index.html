@@ -1,0 +1,97 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+
+<html><body><h1>Sign in with an OpenID provider</h1>
+
+<script type="text/javascript">
+function queryParams() {
+    qp = new Array();
+    qs = window.location.search.substring(1).split('&');
+    for (i = 0; i < qs.length; i++) {
+        e = qs[i].indexOf('=');
+        if (e > 0)
+            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
+    }
+    return qp;
+}
+
+function openidReferrer() {
+    r = queryParams()['modauthopenid.referrer'];
+    if (typeof(r) == 'undefined')
+        return r;
+    q = r.indexOf('?');
+    if (q > 0)
+        return r.substring(0, q);
+    return r;
+}
+
+if (typeof(openidReferrer()) == 'undefined') {
+    document.location = '/protected';
+}
+
+function submitSignin(w) {
+    document.signin.openid_identifier.value = w();
+    document.signin.action = openidReferrer();
+    document.signin.submit();
+}
+
+
+function withGoogle() {
+    return 'https://www.google.com/accounts/o8/id';
+}
+
+function withYahoo() {
+    return 'https://me.yahoo.com/';
+}
+
+function withMyOpenID() {
+    return 'http://www.myopenid.com/xrds';
+}
+
+function withVerisign() {
+    return 'https://pip.verisignlabs.com/';
+}
+
+function withGoogleApps() {
+    return 'https://www.google.com/accounts/o8/site-xrds?ns=2&hd=' + document.fields.domain.value;
+}
+
+function withXRDSEndpoint() {
+    return document.fields.endpoint.value;
+}
+</script>
+
+<form name="signin" action="/protected" method="GET">
+<input type="hidden" name="openid_identifier" value="https://www.google.com/accounts/o8/id"/>
+</form>
+
+<form name="fields">
+<p>Sign in with your Google account<br/><input type="button" onclick="submitSignin(withGoogle)" value="Sign in"/></p>
+<p>Sign in with your Yahoo account<br/><input type="button" onclick="submitSignin(withYahoo)" value="Sign in"/></p>
+<p>Sign in with your MyOpenID account<br/><input type="button" onclick="submitSignin(withMyOpenID)" value="Sign in"/></p>
+<p>Sign in with your Verisign account<br/><input type="button" onclick="submitSignin(withVerisign)" value="Sign in"/></p>
+<p>Sign in with a Google apps domain<br/>
+<input type="text" size="20" name="domain" value="example.com"/><br/>
+<input type="button" onclick="submitSignin(withGoogleApps)" value="Sign in"/></p>
+<p>Sign in with an OpenID endpoint<br/>
+<input type="text" size="50" name="endpoint" value="https://www.google.com/accounts/o8/id"/><br/>
+<input type="button" onclick="submitSignin(withXRDSEndpoint)" value="Sign in"/></p>
+</form>
+
+</body></html>

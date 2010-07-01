@@ -30,11 +30,30 @@ LoadModule authopenid_module  $openid_prefix/modules/mod_auth_openid.so
 
 <Location /protected>
 AuthOpenIDEnabled On
-AuthOpenIDLoginPage /login.html
+AuthOpenIDCookiePath /
+AuthOpenIDLoginPage /protected/login
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
 </Location>
 
-<Location /login>
+<Location /components>
+AuthOpenIDEnabled On
+AuthOpenIDCookiePath /
+AuthOpenIDLoginPage /protected/login
+AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
+</Location>
+
+<Location /references>
+AuthOpenIDEnabled On
+AuthOpenIDCookiePath /
+AuthOpenIDLoginPage /protected/login
+AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
+</Location>
+
+<Location /protected/login>
+AuthOpenIDEnabled Off
+</Location>
+
+<Location /protected/logout>
 AuthOpenIDEnabled Off
 </Location>
 

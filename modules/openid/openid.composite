@@ -22,13 +22,18 @@
   targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
   name="openid">
         
-    <component name="hello">
-        <t:implementation.scheme script="server-test.scm"/>
-        <service name="hello">
-            <t:binding.jsonrpc uri="protected/hello"/>
+    <component name="Protected">
+        <t:implementation.widget location="protected/index.html"/>
+        <reference name="userInfo" target="UserInfo"/>
+    </component>     
+
+    <component name="UserInfo">
+        <t:implementation.scheme script="user-info.scm"/>
+        <service name="info">
+            <t:binding.jsonrpc uri="protected/info"/>
         </service>
-        <property name="user">nobody</property>
-        <property name="email">nobody@nowhere.org</property>
+        <property name="user">anonymous</property>
+        <property name="email">anonymous@example.com</property>
     </component>     
 
 </composite>

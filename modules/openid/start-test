@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,18 +17,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# Setup
+../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+./openid-conf tmp htdocs
+cat >>tmp/conf/httpd.conf <<EOF
+SCAContribution `pwd`/
+SCAComposite openid.composite
+EOF
 
-if WANT_OPENID
+../../modules/http/httpd-start tmp
 
-dist_mod_SCRIPTS = openid-conf
-moddir = $(prefix)/modules/openid
-
-mod_DATA = openid.prefix
-openid.prefix: $(top_builddir)/config.status
-	echo ${MODAUTHOPENID_PREFIX} >openid.prefix
-
-EXTRA_DIST = openid.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/protected/index.html
-
-dist_noinst_SCRIPTS = start-test stop-test
-
-endif

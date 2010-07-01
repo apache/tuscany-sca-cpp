@@ -20,15 +20,15 @@
 <html><body>
 <h1>Sign out</h1>
 
-<form "Signout" action="/" method="GET">
+<form name="signout" action="/" method="GET">
 <script type="text/javascript">
-function deleteOpenIDSessionCookie() {
-    alert(document.cookie);
-    document.cookie = 'open_id_session_id=;expires=' + new Date(1970,01,01).toGMTString();
-    alert(document.cookie);
+function submitSignout() {
+    document.cookie = 'open_id_session_id=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/';
+    document.signout.action = document.referrer;
+    document.signout.submit();
     return true;
 }
 </script>
-<input type="submit" onclick="deleteOpenIDSessionCookie()" value="Sign out"/>
+<input type="button" onclick="submitSignout()" value="Sign out"/>
 </form>
 </body></html>
