@@ -51,8 +51,14 @@
 		}
 		document.getElementById('catalog').innerHTML=catalog;
 		catalogItems = items;
-
-		shoppingTotal.apply("gettotal", shoppingTotal_gettotalResponse);
+	}
+	
+	function shoppingCart_getemailResponse(email, exception) {
+		if(exception) { 
+			alert(exception.message); 
+			return;
+		}
+		document.getElementById('email').innerHTML = email;
 	}
 	
 	function shoppingCart_getResponse(feed) {
@@ -76,6 +82,8 @@
 					}
 			}
 		}
+
+		shoppingTotal.apply("gettotal", shoppingTotal_gettotalResponse);
 	}
 	
 	function shoppingTotal_gettotalResponse(total,exception) {
@@ -132,6 +140,7 @@
 			
 			try	{
 				catalog.apply("getcatalog", catalog_getcatalogResponse);
+				shoppingCart.apply("getemail", shoppingCart_getemailResponse);
 				shoppingCart.get("", shoppingCart_getResponse);
 			}
 			catch(e){
@@ -145,6 +154,7 @@
 
 <body onload="init()">
 <h1>Store</h1>
+<p>You're signed in as: <span id="email"></span><br/><a href="/_ah/login?continue=/store.html&action=Logout">Sign out</a></p>
   <div id="store">
    	<h2>Catalog</h2>
    	<form name="catalogForm">
@@ -155,7 +165,7 @@
  
  	<br>
   
-   	<h2>Your Shopping Cart</h2>
+    <h2>Your Shopping Cart</h2>
    	<form name="shoppingCartForm">
 		<div id="shoppingCart"></div>
 		<br>

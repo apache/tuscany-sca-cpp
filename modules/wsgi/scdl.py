@@ -96,7 +96,7 @@ def properties(e):
         return ()
     if match(car(e), "start", "property") == False:
         return properties(cdr(e))
-    return cons(text(car(e)), properties(cdr(e)))
+    return cons((att(car(e))["name"], text(car(e))), properties(cdr(e)))
 
 # Return the list of services under a SCDL component element
 def services(e):
@@ -189,17 +189,26 @@ def evalReference(r, comps):
 # value. The user and email properties are configured with the values
 # from the HTTP request, if any
 def evalProperty(p):
-    if (isTaggedList(p, "user")):
+    if car(p) == "user":
         return lambda: userProperty(cadr(p))
-    if (isTaggedList(p, "email")):
+    if car(p) == "email":
         return lambda: emailProperty(cadr(p))
-    return lambda: p
+    return lambda: cadr(p)
+
+def currentUser():
+    try:
+        from google.appengine.api import users
+        return users.get_current_user()
+    except:
+        return None
 
 def userProperty(v):
-    return "nobody"
+    user = currentUser()
+    return user.user_id() if user else v
 
 def emailProperty(v):
-    return "nobody@nowhere.com"
+    user = currentUser()
+    return user.email() if user else v
 
 # Evaluate a component, resolve its implementation, references and
 # properties

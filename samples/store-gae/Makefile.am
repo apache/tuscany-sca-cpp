@@ -27,7 +27,7 @@ target.stamp: app.yaml *.py *.composite $(top_builddir)/modules/wsgi/*.py htdocs
 	cp app.yaml *.py *.composite `ls $(top_builddir)/modules/wsgi/*.py | grep -v "\-test"` target
 	mkdir -p target/htdocs
 	cp -R htdocs/* target/htdocs
-	mkdir target/htdocs/js
+	mkdir -p target/htdocs/js
 	cp -R $(top_builddir)/modules/server/htdocs/js/* target/htdocs/js
 	touch target.stamp
 

@@ -50,6 +50,7 @@
             <t:binding.jsonrpc uri="total"/>
         </service>        
         <reference name="cache" target="Cache"/>
+        <property name="email">anonymous@example.com</property>
     </component>
     
     <component name="CurrencyConverter">

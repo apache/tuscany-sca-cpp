@@ -30,7 +30,7 @@ def getcart(id, cache):
     return cart
 
 # Post a new item to the cart, create a new cart if necessary
-def post(collection, item, cache):
+def post(collection, item, cache, email):
     id = str(uuid.uuid1())
     cart = ((item[0], id, item[2]),) + getcart(cartId, cache)
     cache("put", (cartId,), cart)
@@ -46,13 +46,13 @@ def find(id, cart):
         return find(id, cart[1:])
 
 # Get items from the cart
-def get(id, cache):
+def get(id, cache, email):
     if id == ():
         return ("Your Cart", cartId) + getcart(cartId, cache)
     return find(id[0], getcart(cartId, cache))
 
 # Delete items from the  cart
-def delete(id, cache):
+def delete(id, cache, email):
     if id == ():
         return cache("delete", (cartId,))
     return True
@@ -68,7 +68,11 @@ def sum(items):
     return price(items[0]) + sum(items[1:])
 
 # Return the total price of the items in the cart
-def gettotal(cache):
+def gettotal(cache, email):
     cart = getcart(cartId, cache)
     return sum(cart)
+
+# Return the email of the cart owner
+def getemail(cache, email):
+    return email()
 

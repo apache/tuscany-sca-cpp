@@ -45,8 +45,10 @@ handlers:
   static_files: htdocs/\1
   upload: htdocs/(.*\.(html|png))
   secure: always
+  login: required
 
 - url: /.*
   script: composite.py
   secure: always
+  login: required
 
