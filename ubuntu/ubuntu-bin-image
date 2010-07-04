@@ -26,9 +26,11 @@ set -x
 sudo apt-get update
 
 # Create install directory
+u=`id -un`
+g=`id -gn`
 sudo mkdir -p /mnt/tuscany
-sudo chown ubuntu /mnt/tuscany
-sudo chgrp ubuntu /mnt/tuscany
+sudo chown $u /mnt/tuscany
+sudo chgrp $g /mnt/tuscany
 cd /mnt/tuscany
 
 # Install system tools and libraries

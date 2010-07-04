@@ -26,9 +26,11 @@ set -x
 sudo apt-get update
 
 # Create install directory
+u=`id -un`
+g=`id -gn`
 sudo mkdir -p /mnt/tuscany
-sudo chown ubuntu /mnt/tuscany
-sudo chgrp ubuntu /mnt/tuscany
+sudo chown $u /mnt/tuscany
+sudo chgrp $g /mnt/tuscany
 cd /mnt/tuscany
 
 # Install system tools and libraries
@@ -48,6 +50,10 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 sudo apt-get -y install python-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+sudo apt-get -y install libpcre3-dev libsqlite3-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi

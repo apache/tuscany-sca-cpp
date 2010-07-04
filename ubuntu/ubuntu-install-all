@@ -233,6 +233,7 @@ fi
 cd $build
 
 # Build Mod_auth_openid
+sudo apt-get -y install libpcre3-dev libsqlite3-dev
 git clone git://github.com/jsdelfino/mod_auth_openid.git
 cd mod_auth_openid
 ./autogen.sh

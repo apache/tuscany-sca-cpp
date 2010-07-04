@@ -27,8 +27,8 @@ sleep 2
 
 # Test HTTP GET
 mkdir -p tmp
-$curl_prefix/bin/curl http://localhost:8090/store.html 2>/dev/null >tmp/store.html
-diff tmp/store.html htdocs/store.html
+$curl_prefix/bin/curl -L http://localhost:8090/store.html 2>/dev/null >tmp/login.html
+grep "Login" tmp/login.html >/dev/null
 rc=$?
 
 # Cleanup
