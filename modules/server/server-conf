@@ -21,7 +21,8 @@
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 
-host=`cat $root/conf/httpd.conf | grep ServerName | awk '{ print $2 }'`
+servername=`cat $root/conf/httpd.conf | grep ServerName | tail -1 | awk '{ print $2 }'`
+host=`echo $servername | awk -F ":" '{ print $1 }'`
 port=`cat $root/conf/httpd.conf | grep Listen | tail -1 | awk '{ print $2 }'`
 
 ssl=`cat $root/conf/httpd.conf | grep "SSLEngine" | awk '{ print $2 }'`

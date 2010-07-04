@@ -23,6 +23,14 @@ root=`readlink -f $1`
 htdocs=`readlink -f $2`
 openid_prefix=`cat openid.prefix`
 
+servername=`cat $root/conf/httpd.conf | grep ServerName | tail -1 | awk '{ print $2 }'`
+ssl=`cat $root/conf/httpd.conf | grep "SSLEngine" | awk '{ print $2 }'`
+if [ "$ssl" = "on" ]; then
+    protocol="https"
+else
+    protocol="http"
+fi
+
 # Configure HTTPD mod_auth_openid module
 cat >>$root/conf/httpd.conf <<EOF
 # Support for OpenID authentication
@@ -33,6 +41,7 @@ AuthOpenIDEnabled On
 AuthOpenIDCookiePath /
 AuthOpenIDLoginPage /protected/login
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
+AuthOpenIDServerName $servername
 </Location>
 
 <Location /components>
@@ -40,6 +49,7 @@ AuthOpenIDEnabled On
 AuthOpenIDCookiePath /
 AuthOpenIDLoginPage /protected/login
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
+AuthOpenIDServerName $servername
 </Location>
 
 <Location /references>
@@ -47,6 +57,7 @@ AuthOpenIDEnabled On
 AuthOpenIDCookiePath /
 AuthOpenIDLoginPage /protected/login
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
+AuthOpenIDServerName $servername
 </Location>
 
 <Location /protected/login>

@@ -21,7 +21,11 @@
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 host=$2
-port=$3
+port=`echo $3 | awk -F "/" '{ print $1 }'`
+pport=`echo $3 | awk -F "/" '{ print $2 }'`
+if [ "$pport" = "" ]; then
+    pport=$port
+fi
 htdocs=`readlink -f $4`
 user=`id -un`
 group=`id -gn`
@@ -34,7 +38,9 @@ cat >$root/conf/httpd.conf <<EOF
 # Apache HTTPD server configuration
 
 # Set server name
-ServerName $host
+ServerName $host:$pport
+UseCanonicalName On
+UseCanonicalPhysicalPort off
 PidFile $root/logs/httpd.pid
 
 # Minimal set of modules
@@ -114,7 +120,7 @@ Allow from all
 # Setup HTTP virtual host
 Listen $port
 <VirtualHost _default_:$port>
-
+ServerName $host:$pport
 </VirtualHost>
 
 EOF

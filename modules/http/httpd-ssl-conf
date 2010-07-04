@@ -21,7 +21,11 @@
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 host=$2
-sslport=$3
+sslport=`echo $3 | awk -F "/" '{ print $1 }'`
+sslpport=`echo $3 | awk -F "/" '{ print $2 }'`
+if [ "$sslpport" = "" ]; then
+    sslpport=$sslport
+fi
 htdocs=`readlink -f $4`
 httpd_prefix=`cat $here/httpd.prefix`
 
@@ -33,8 +37,8 @@ cat >>$root/conf/httpd.conf <<EOF
 # Redirect all HTTP traffic to HTTPS
 <Location />
 RewriteEngine on
-RewriteCond %{SERVER_PORT} !^$sslport$  
-RewriteRule .* https://%{SERVER_NAME}:$sslport%{REQUEST_URI} [R,L]
+RewriteCond %{SERVER_PORT} !^$sslpport$  
+RewriteRule .* https://%{SERVER_NAME}:$sslpport%{REQUEST_URI} [R,L]
 </Location>
 
 # Setup SSL support
@@ -50,6 +54,9 @@ SSLRandomSeed connect builtin
 # HTTPS virtual host
 Listen $sslport
 <VirtualHost _default_:$sslport>
+ServerName $host:$sslpport
+UseCanonicalName On
+UseCanonicalPhysicalPort off
 
 # Enable SSL
 SSLEngine on
