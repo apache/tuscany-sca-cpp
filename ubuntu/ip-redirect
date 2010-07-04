@@ -1,0 +1,32 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Redirect TCP/IP traffic from one port to another port, useful to handle
+# incoming traffic on standard reserved ports like 80 or 443 for example
+# in an unprivileged user server process bound to a non-reserved port
+# Example: ip-redirect 80 8090 eth0
+
+source=$1
+target=$2
+if [ "$3" != "" ]; then
+    intf=$3
+else
+    intf="eth0"
+fi
+
+sudo /sbin/iptables -t nat -A PREROUTING -i $intf -p tcp --dport $source -j REDIRECT --to-port $target
+
