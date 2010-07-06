@@ -15,14 +15,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
+# Store implementation
 
-dist_sample_SCRIPTS = start stop ssl-start uec2-start
-sampledir = $(prefix)/samples/store-python
+def post(item, catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("post", item)
 
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html
+def getall(catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("getall")
 
-dist_noinst_SCRIPTS = server-test
-TESTS = server-test
+def get(id, catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("get", id)
 
-endif
+def getcatalog(catalog, shoppingCart, shoppingTotal):
+    return catalog("getcatalog")
+
+def gettotal(catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("gettotal")
+
+def deleteall(catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("deleteall")
+
+def delete(id, catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("delete", id)
+

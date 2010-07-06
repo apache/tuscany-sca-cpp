@@ -75,6 +75,31 @@ template<typename C> C& serverConf(const cmd_parms *cmd, const module* mod) {
 
 
 /**
+ * Return the name of a server.
+ */
+const string serverName(const server_rec* s) {
+    ostringstream n;
+    n << (s->server_scheme != NULL? s->server_scheme : "http") << "://"
+        << (s->server_hostname != NULL? s->server_hostname : "localhost") << ":"
+        << (s->port != 0? s->port : 80)
+        << (s->path != NULL? string(s->path, s->pathlen) : "");
+    return str(n);
+}
+
+/**
+ * Determine the name of a server from an HTTP request.
+ */
+const string serverName(request_rec* r) {
+    ostringstream n;
+    const char* hn = ap_get_server_name(r);
+    n << (r->server->server_scheme != NULL? r->server->server_scheme : "http") << "://"
+        << (hn != NULL? hn : (r->server->server_hostname != NULL? r->server->server_hostname : "localhost")) << ":"
+        << (r->server->port != 0? r->server->port : 80)
+        << (r->server->path != NULL? string(r->server->path, r->server->pathlen) : "");
+    return str(n);
+}
+
+/**
  * Return the content type of a request.
  */
 const char* optional(const char* s) {
@@ -295,7 +320,7 @@ const bool redirectFilters(ap_filter_t* f, request_rec* from, request_rec* to) {
 }
 
 /**
- * Create an HTTPD redirect request.
+ * Create an HTTPD internal redirect request.
  * Similar to httpd/modules/http/http_request.c::internal_internal_redirect.
  */
 extern "C" {
@@ -388,7 +413,7 @@ const int internalRedirect(request_rec* nr) {
 }
 
 /**
- * Create and process an HTTPD redirect request.
+ * Create and process an HTTPD internal redirect request.
  */
 const int internalRedirect(const string& uri, request_rec* r) {
     const failable<request_rec*, int> nr = httpd::internalRedirectRequest(uri, r);

@@ -39,8 +39,9 @@ fi
 cat >>$root/conf/httpd.conf <<EOF
 # Support for SCA component wiring
 LoadModule mod_tuscany_wiring $here/libmod_tuscany_wiring.so
-SCAWiringServerName $host:$port
+#SCAWiringServerName $host:$port
 
+# Serve HTTP binding JavaScript client code
 Alias /js/tuscany-ref.js $here/htdocs/js/tuscany-ref.js
 
 EOF

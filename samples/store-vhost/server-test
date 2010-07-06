@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,14 +17,27 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
+echo "Testing..."
+here=`readlink -f $0`; here=`dirname $here`
+curl_prefix=`cat $here/../../modules/http/curl.prefix`
 
-dist_sample_SCRIPTS = start stop ssl-start uec2-start
-sampledir = $(prefix)/samples/store-python
+# Setup
+./start
+sleep 2
 
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html
+# For this test to work, add the following line to your etc/hosts
+127.0.0.1 jane.store.com joe.store.com
 
-dist_noinst_SCRIPTS = server-test
-TESTS = server-test
+# Test HTTP GET
+$curl_prefix/bin/curl http://jane.store.com:8090/ 2>/dev/null >tmp/jane.html
+diff tmp/jane.html htdocs/domains/jane/index.html
+rc=$?
 
-endif
+# Cleanup
+./stop
+sleep 2
+
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
+return $rc

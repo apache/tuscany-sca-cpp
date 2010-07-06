@@ -30,6 +30,13 @@ htdocs=`readlink -f $4`
 user=`id -un`
 group=`id -gn`
 modules_prefix=`cat $here/httpd-modules.prefix`
+if [ "$5" = "vhost" ]; then
+    vhost="VirtualDocumentRoot $htdocs/domains/%1/"
+    maxr="MaxRequestsPerChild 1"
+else
+    vhost="#VirtualDocumentRoot $htdocs/domains/%1/"
+    maxr="#MaxRequestsPerChild 1"
+fi
 
 mkdir -p $root
 mkdir -p $root/logs
@@ -39,8 +46,6 @@ cat >$root/conf/httpd.conf <<EOF
 
 # Set server name
 ServerName http://$host:$pport
-UseCanonicalName On
-UseCanonicalPhysicalPort off
 PidFile $root/logs/httpd.pid
 
 # Minimal set of modules
@@ -68,6 +73,7 @@ LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
 <IfModule !log_config_module>
 LoadModule log_config_module ${modules_prefix}/modules/mod_log_config.so
 </IfModule>
+LoadModule vhost_alias_module ${modules_prefix}/modules/mod_vhost_alias.so
 
 # Basic security precautions
 User $user
@@ -121,7 +127,15 @@ Allow from all
 Listen $port
 <VirtualHost _default_:$port>
 ServerName http://$host:$pport
+UseCanonicalName Off
+UseCanonicalPhysicalPort Off
+
+# Setup mass dynamic virtual hosting
+$vhost
 </VirtualHost>
+
+# Isolate dynamic virtual hosts
+$maxr
 
 EOF
 

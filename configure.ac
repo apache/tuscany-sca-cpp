@@ -859,6 +859,7 @@ AC_CONFIG_FILES([Makefile
                  samples/store-gae/Makefile
                  samples/store-sql/Makefile
                  samples/store-nosql/Makefile
+                 samples/store-vhost/Makefile
                  doc/Makefile
                  doc/Doxyfile
                  ubuntu/Makefile

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,14 +17,30 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
+# Pass your EC2 public host name
+if [ "$1" != "" ]; then
+    host=$1
+else
+    host="localhost"
+fi
 
-dist_sample_SCRIPTS = start stop ssl-start uec2-start
-sampledir = $(prefix)/samples/store-python
+# Ports 80, 443, 8090, 8453 need to be open
+sudo ../../ubuntu/ip-redirect 80 8090
+sudo ../../ubuntu/ip-redirect 443 8453
 
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html
+../../modules/http/httpd-ca-conf tmp $host
+../../modules/http/httpd-cert-conf tmp $host
+../../modules/http/httpd-conf tmp $host 8090/80 htdocs
+../../modules/http/httpd-ssl-conf tmp $host 8453/443 htdocs
+../../modules/server/server-conf tmp
+../../modules/python/python-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+# Configure SCA Composite
+SCAContribution `pwd`/
+SCAComposite store.composite
 
-dist_noinst_SCRIPTS = server-test
-TESTS = server-test
+EOF
 
-endif
+../../components/cache/memcached-start
+../../modules/http/httpd-start tmp
+

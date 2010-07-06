@@ -44,23 +44,32 @@ namespace server {
 namespace modwiring {
 
 /**
+ * Set to true to wire using mod_proxy, false to wire using HTTP client redirects.
+ */
+const bool useModProxy = true;
+
+/**
  * Server configuration.
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : s(s), contributionPath(""), compositeName("") {
+    ServerConf(server_rec* s) : server(s), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName("") {
     }
-    const server_rec* s;
+    server_rec* server;
     string contributionPath;
     string compositeName;
+    string virtualHostContributionPath;
+    string virtualHostCompositeName;
     list<value> references;
     list<value> services;
 };
 
 /**
- * Set to true to wire using mod_proxy, false to wire using HTTP client redirects.
+ * Return true if a server contains a composite configuration.
  */
-const bool useModProxy = true;
+const bool hasCompositeConf(const ServerConf& sc) {
+    return sc.contributionPath != "" && sc.compositeName != "";
+}
 
 /**
  * Returns true if a URI is absolute.
@@ -73,12 +82,11 @@ const bool isAbsolute(const string& uri) {
  * Route a /references/component-name/reference-name request,
  * to the target of the component reference.
  */
-int translateReference(request_rec *r) {
+int translateReference(const ServerConf& sc, request_rec *r) {
     httpdDebugRequest(r, "modwiring::translateReference::input");
     debug(r->uri, "modwiring::translateReference::uri");
 
     // Find the requested component
-    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
     const list<value> rpath(pathValues(r->uri));
     const list<value> comp(assoctree(cadr(rpath), sc.references));
     if (isNil(comp))
@@ -138,12 +146,11 @@ const list<value> assocPath(const value& k, const list<value>& tree) {
 /**
  * Route a service request to the component providing the requested service.
  */
-int translateService(request_rec *r) {
+int translateService(const ServerConf& sc, request_rec *r) {
     httpdDebugRequest(r, "modwiring::translateService::input");
     debug(r->uri, "modwiring::translateService::uri");
 
     // Find the requested component
-    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
     debug(sc.services, "modwiring::translateService::services");
     const list<value> p(pathValues(r->uri));
     const list<value> svc(assocPath(p, sc.services));
@@ -163,44 +170,6 @@ int translateService(request_rec *r) {
     r->filename = apr_pstrdup(r->pool, c_str(redir));
     r->handler = "mod_tuscany_wiring";
     return OK;
-}
-
-/**
- * Translate an HTTP service or reference request and route it
- * to the target component.
- */
-int translate(request_rec *r) {
-    gc_scoped_pool pool(r->pool);
-    if (!strncmp(r->uri, "/components/", 12) != 0)
-        return DECLINED;
-
-    // Translate a component reference request
-    if (!strncmp(r->uri, "/references/", 12) != 0)
-        return translateReference(r);
-
-    // Translate a service request
-    return translateService(r);
-}
-
-/**
- * HTTP request handler, redirect to a target component.
- */
-int handler(request_rec *r) {
-    gc_scoped_pool pool(r->pool);
-    if(strcmp(r->handler, "mod_tuscany_wiring"))
-        return DECLINED;
-    httpdDebugRequest(r, "modwiring::handler::input");
-
-    // Do an internal redirect
-    if (r->filename == NULL || strncmp(r->filename, "/redirect:", 10) != 0)
-        return DECLINED;
-    debug(r->uri, "modwiring::handler::uri");
-    debug(r->filename, "modwiring::handler::filename");
-    debug(r->path_info, "modwiring::handler::path info");
-
-    if (r->args == NULL)
-        return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info)), r);
-    return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info), string(r->args)), r);
 }
 
 /**
@@ -264,7 +233,7 @@ const list<value> uriToComponentAssoc(const list<value>& c) {
  * Configure the components declared in the server's deployment composite.
  */
 const bool confComponents(ServerConf& sc) {
-    if (sc.contributionPath == "" || sc.compositeName == "")
+    if (!hasCompositeConf(sc))
         return true;
 
     // Read the component configuration and store the references and service URIs
@@ -283,21 +252,109 @@ const bool confComponents(ServerConf& sc) {
 }
 
 /**
+ * Virtual host scoped server configuration.
+ */
+class VirtualHostConf {
+public:
+    VirtualHostConf(const ServerConf& ssc) : sc(ssc.server) {
+        sc.contributionPath = ssc.virtualHostContributionPath;
+        sc.compositeName = ssc.virtualHostCompositeName;
+    }
+
+    ~VirtualHostConf() {
+    }
+
+    ServerConf sc;
+};
+
+/**
+ * Configure and start the components deployed in a virtual host.
+ */
+const failable<bool> virtualHostConfig(ServerConf& sc, request_rec* r) {
+    debug(httpd::serverName(sc.server), "modwiring::virtualHostConfig::serverName");
+    debug(httpd::serverName(r), "modwiring::virtualHostConfig::virtualHostName");
+
+    // Configure the wiring for the deployed components
+    debug(sc.contributionPath, "modwiring::virtualHostConfig::contributionPath");
+    debug(sc.compositeName, "modwiring::virtualHostConfig::compositeName");
+    confComponents(sc);
+    return true;
+}
+
+/**
+ * Translate an HTTP service or reference request and route it
+ * to the target component.
+ */
+int translate(request_rec *r) {
+    gc_scoped_pool pool(r->pool);
+
+    // No translation needed for a component request
+    if (!strncmp(r->uri, "/components/", 12))
+        return DECLINED;
+
+    // Get the server configuration
+    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
+
+    // Process dynamic virtual host configuration, if any
+    VirtualHostConf vhc(sc);
+    const bool hasv = hasCompositeConf(vhc.sc);
+    if (hasv) {
+        const failable<bool> cr = virtualHostConfig(vhc.sc, r);
+        if (!hasContent(cr))
+            return -1;
+    }
+
+    // Translate a component reference request
+    if (!strncmp(r->uri, "/references/", 12))
+        return translateReference(hasv? vhc.sc: sc, r);
+
+    // Translate a service request
+    return translateService(hasv? vhc.sc : sc, r);
+}
+
+/**
+ * HTTP request handler, redirect to a target component.
+ */
+int handler(request_rec *r) {
+    gc_scoped_pool pool(r->pool);
+    if(strcmp(r->handler, "mod_tuscany_wiring"))
+        return DECLINED;
+    httpdDebugRequest(r, "modwiring::handler::input");
+
+    // Do an internal redirect
+    if (r->filename == NULL || strncmp(r->filename, "/redirect:", 10) != 0)
+        return DECLINED;
+    debug(r->uri, "modwiring::handler::uri");
+    debug(r->filename, "modwiring::handler::filename");
+    debug(r->path_info, "modwiring::handler::path info");
+
+    if (r->args == NULL)
+        return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info)), r);
+    return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info), string(r->args)), r);
+}
+
+/**
  * Called after all the configuration commands have been run.
  * Process the server configuration and configure the wiring for the deployed components.
  */
 const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     if (s == NULL)
         return OK;
+    ostringstream sname;
+    debug(httpd::serverName(s), "modwiring::postConfigMerge::serverName");
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
     sc.contributionPath = mainsc.contributionPath;
     sc.compositeName = mainsc.compositeName;
+    sc.virtualHostContributionPath = mainsc.virtualHostContributionPath;
+    sc.virtualHostCompositeName = mainsc.virtualHostCompositeName;
     sc.references = mainsc.references;
     sc.services = mainsc.services;
     return postConfigMerge(mainsc, s->next);
 }
 
 int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
+    gc_scoped_pool pool(p);
+
     // Count the calls to post config, skip the first one as
     // postConfig is always called twice
     const string k("tuscany::modwiring::postConfig");
@@ -308,6 +365,7 @@ int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t 
 
     // Configure the wiring for the deployed components
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
+    debug(httpd::serverName(s), "modwiring::postConfig::serverName");
     debug(sc.contributionPath, "modwiring::postConfig::contributionPath");
     debug(sc.compositeName, "modwiring::postConfig::compositeName");
     confComponents(sc);
@@ -319,9 +377,9 @@ int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t 
 /**
  * Child process initialization.
  */
-void childInit(apr_pool_t* p, server_rec* svr_rec) {
+void childInit(apr_pool_t* p, server_rec* s) {
     gc_scoped_pool pool(p);
-    ServerConf *conf = (ServerConf*)ap_get_module_config(svr_rec->module_config, &mod_tuscany_wiring);
+    ServerConf *conf = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_wiring);
     if(conf == NULL) {
         cerr << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
@@ -343,6 +401,18 @@ const char *confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
     sc.compositeName = arg;
     return NULL;
 }
+const char *confVirtualContribution(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_wiring);
+    sc.virtualHostContributionPath = arg;
+    return NULL;
+}
+const char *confVirtualComposite(cmd_parms *cmd, unused void *c, const char *arg) {
+    gc_scoped_pool pool(cmd->pool);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_wiring);
+    sc.virtualHostCompositeName = arg;
+    return NULL;
+}
 
 /**
  * HTTP server module declaration.
@@ -350,6 +420,8 @@ const char *confComposite(cmd_parms *cmd, unused void *c, const char *arg) {
 const command_rec commands[] = {
     AP_INIT_TAKE1("SCAContribution", (const char*(*)())confContribution, NULL, RSRC_CONF, "SCA contribution location"),
     AP_INIT_TAKE1("SCAComposite", (const char*(*)())confComposite, NULL, RSRC_CONF, "SCA composite location"),
+    AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution location"),
+    AP_INIT_TAKE1("SCAVirtualComposite", (const char*(*)())confVirtualComposite, NULL, RSRC_CONF, "SCA virtual host composite location"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 

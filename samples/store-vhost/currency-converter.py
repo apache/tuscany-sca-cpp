@@ -15,14 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
+# Currency converter implementation
 
-dist_sample_SCRIPTS = start stop ssl-start uec2-start
-sampledir = $(prefix)/samples/store-python
+def convert(fr, to, amount):
+    if to == "EUR":
+        return amount * 0.70
+    return amount
 
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html
+def symbol(currency):
+    if currency == "EUR":
+        return "E"
+    return "$"
 
-dist_noinst_SCRIPTS = server-test
-TESTS = server-test
-
-endif

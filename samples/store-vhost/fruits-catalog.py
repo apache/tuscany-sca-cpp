@@ -15,14 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
+# Catalog implementation
 
-dist_sample_SCRIPTS = start stop ssl-start uec2-start
-sampledir = $(prefix)/samples/store-python
+def getcatalog(converter, currencyCode):
+  code = currencyCode()
+  def convert(price):
+      return converter("convert", "USD", code, price)
+  symbol = converter("symbol", code)
+  return (
+    (("'javaClass", "services.Item"), ("'name", "Apple"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(2.99))),
+    (("'javaClass", "services.Item"), ("'name", "Orange"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(3.55))),
+    (("'javaClass", "services.Item"), ("'name", "Pear"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(1.55)))
+  )
 
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html
-
-dist_noinst_SCRIPTS = server-test
-TESTS = server-test
-
-endif

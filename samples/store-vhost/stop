@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,14 +17,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
-
-dist_sample_SCRIPTS = start stop ssl-start uec2-start
-sampledir = $(prefix)/samples/store-python
-
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html
-
-dist_noinst_SCRIPTS = server-test
-TESTS = server-test
-
-endif
+../../modules/http/httpd-stop tmp
+../../components/cache/memcached-stop

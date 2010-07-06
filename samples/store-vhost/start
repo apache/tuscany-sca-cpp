@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,14 +17,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
+../../modules/http/httpd-conf tmp localhost 8090 htdocs vhost
+../../modules/server/server-conf tmp
+../../modules/python/python-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+# Configure SCA Composite for mass dynamic virtual Hosting
+SCAVirtualContribution `pwd`/
+SCAVirtualComposite store.composite
 
-dist_sample_SCRIPTS = start stop ssl-start uec2-start
-sampledir = $(prefix)/samples/store-python
+EOF
 
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html
-
-dist_noinst_SCRIPTS = server-test
-TESTS = server-test
-
-endif
+../../components/cache/memcached-start
+../../modules/http/httpd-start tmp

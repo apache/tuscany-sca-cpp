@@ -55,8 +55,8 @@ SSLRandomSeed connect builtin
 Listen $sslport
 <VirtualHost _default_:$sslport>
 ServerName https://$host:$sslpport
-UseCanonicalName On
-UseCanonicalPhysicalPort off
+UseCanonicalName Off
+UseCanonicalPhysicalPort Off
 
 # Enable SSL
 SSLEngine on
