@@ -18,7 +18,7 @@
 dist_sample_SCRIPTS = start stop ssl-start
 sampledir = $(prefix)/samples/store-nosql
 
-nobase_dist_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-cart.scm store.scm store.composite htdocs/.htaccess htdocs/*.html
+nobase_dist_sample_DATA = currency-converter.scm fruits-catalog.scm shopping-cart.scm store.scm store.composite htdocs/*.html
 
 dist_noinst_SCRIPTS = server-test
 TESTS = server-test

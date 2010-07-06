@@ -38,7 +38,7 @@ cat >$root/conf/httpd.conf <<EOF
 # Apache HTTPD server configuration
 
 # Set server name
-ServerName $host:$pport
+ServerName http://$host:$pport
 UseCanonicalName On
 UseCanonicalPhysicalPort off
 PidFile $root/logs/httpd.pid
@@ -107,20 +107,20 @@ Satisfy Any
 
 # Allow access to document root
 <Directory "$htdocs">
-Options +SymLinksIfOwnerMatch
+Options FollowSymLinks
 Allow from all
 </Directory>
 
 # Allow access to service components
 <Location />
-Options +SymLinksIfOwnerMatch
+Options FollowSymLinks
 Allow from all
 </Location>
 
 # Setup HTTP virtual host
 Listen $port
 <VirtualHost _default_:$port>
-ServerName $host:$pport
+ServerName http://$host:$pport
 </VirtualHost>
 
 EOF

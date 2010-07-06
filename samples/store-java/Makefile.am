@@ -26,7 +26,7 @@ AM_JAVACFLAGS = -cp ${top_builddir}/modules/java/libmod-tuscany-java-${PACKAGE_V
 dist_sample_JAVA = store/*.java
 CLEANFILES = *.stamp store/*.class
 
-nobase_dist_sample_DATA = store.composite htdocs/.htaccess htdocs/*.html store/*.*
+nobase_dist_sample_DATA = store.composite htdocs/*.html store/*.*
 
 dist_noinst_SCRIPTS = server-test
 TESTS = server-test

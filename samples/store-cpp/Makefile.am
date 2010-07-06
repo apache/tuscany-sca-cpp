@@ -19,7 +19,7 @@
 dist_sample_SCRIPTS = start stop ssl-start
 sampledir = $(prefix)/samples/store-cpp
 
-nobase_dist_sample_DATA = currency-converter.cpp fruits-catalog.cpp shopping-cart.cpp store.composite htdocs/.htaccess htdocs/*.html
+nobase_dist_sample_DATA = currency-converter.cpp fruits-catalog.cpp shopping-cart.cpp store.composite htdocs/*.html
 
 sample_LTLIBRARIES = libcurrency-converter.la libfruits-catalog.la libshopping-cart.la
 
