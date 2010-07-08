@@ -25,11 +25,11 @@ curl_prefix=`cat $here/../../modules/http/curl.prefix`
 ./start
 sleep 2
 
-# For this test to work, add the following line to your etc/hosts
-127.0.0.1 jane.store.com joe.store.com
+# For this test to work, add the test domain to your etc/hosts as follows:
+# 127.0.0.1 sca-store.com jane.sca-store.com joe.sca-store.com
 
 # Test HTTP GET
-$curl_prefix/bin/curl http://jane.store.com:8090/ 2>/dev/null >tmp/jane.html
+$curl_prefix/bin/curl http://jane.sca-store.com:8090/ 2>/dev/null >tmp/jane.html
 diff tmp/jane.html htdocs/domains/jane/index.html
 rc=$?
 

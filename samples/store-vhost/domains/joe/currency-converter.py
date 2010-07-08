@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,15 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs vhost
-../../modules/server/server-conf tmp
-../../modules/python/python-conf tmp
-cat >>tmp/conf/httpd.conf <<EOF
-# Configure SCA Composite for mass dynamic virtual hosting
-SCAVirtualContribution `pwd`/domains/
-SCAVirtualComposite store.composite
+# Currency converter implementation
 
-EOF
+def convert(fr, to, amount):
+    if to == "EUR":
+        return amount * 0.70
+    return amount
 
-../../components/cache/memcached-start
-../../modules/http/httpd-start tmp
+def symbol(currency):
+    if currency == "EUR":
+        return "E"
+    return "$"
+

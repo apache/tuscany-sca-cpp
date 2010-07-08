@@ -78,6 +78,13 @@ const bool hasCompositeConf(const ServerConf& sc) {
 }
 
 /**
+ * Return true if a server contains a virtual host composite configuration.
+ */
+const bool hasVirtualCompositeConf(const ServerConf& sc) {
+    return sc.virtualHostContributionPath != "" && sc.virtualHostCompositeName != "";
+}
+
+/**
  * Convert a result represented as a content + failure pair to a
  * failable monad.
  */
@@ -421,6 +428,11 @@ const failable<list<value> > applyLifecycleExpr(const list<value>& impls, const 
 const failable<bool> confComponents(ServerConf& sc) {
     if (!hasCompositeConf(sc))
         return false;
+    debug(sc.contributionPath, "modeval::confComponents::contributionPath");
+    debug(sc.compositeName, "modeval::confComponents::compositeName");
+    if (sc.ca != "") debug(sc.ca, "modeval::confComponents::sslCA");
+    if (sc.cert != "") debug(sc.cert, "modeval::confComponents::sslCert");
+    if (sc.key != "") debug(sc.key, "modeval::confComponents::sslKey");
 
     // Chdir to the deployed contribution
     if (chdir(c_str(sc.contributionPath)) != 0)
@@ -462,9 +474,8 @@ const failable<bool> startComponents(ServerConf& sc) {
 class VirtualHostConf {
 public:
     VirtualHostConf(const ServerConf& ssc) : sc(ssc.server) {
-        sc.contributionPath = ssc.virtualHostContributionPath;
-        sc.compositeName = ssc.virtualHostCompositeName;
-        sc.wiringServerName = ssc.wiringServerName;
+        sc.virtualHostContributionPath = ssc.virtualHostContributionPath;
+        sc.virtualHostCompositeName = ssc.virtualHostCompositeName;
         sc.ca = ssc.ca;
         sc.cert = ssc.cert;
         sc.key = ssc.key;
@@ -489,10 +500,14 @@ const failable<bool> virtualHostConfig(ServerConf& sc, request_rec* r) {
     debug(httpd::serverName(r), "modeval::virtualHostConfig::virtualHostName");
     sc.wiringServerName = httpd::serverName(r);
     debug(sc.wiringServerName, "modeval::virtualHostConfig::wiringServerName");
+    debug(sc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
+
+    // Resolve the configured virtual contribution under
+    // the virtual host's SCA contribution root
+    sc.contributionPath = sc.virtualHostContributionPath + httpd::subdomain(httpd::hostName(r)) + "/";
+    sc.compositeName = sc.virtualHostCompositeName;
 
     // Configure the deployed components
-    debug(sc.contributionPath, "modeval::virtualHostConfig::contributionPath");
-    debug(sc.compositeName, "modeval::virtualHostConfig::compositeName");
     const failable<bool> cr = confComponents(sc);
     if (!hasContent(cr))
         return cr;
@@ -529,8 +544,8 @@ int handler(request_rec *r) {
 
     // Process dynamic virtual host configuration, if any
     VirtualHostConf vhc(sc);
-    const bool hasv = hasCompositeConf(vhc.sc);
-    if (hasv) {
+    const bool usevh = hasVirtualCompositeConf(vhc.sc) && httpd::isVirtualHostRequest(sc.server, r);
+    if (usevh) {
         const failable<bool> cr = virtualHostConfig(vhc.sc, r);
         if (!hasContent(cr))
             return httpd::reportStatus(mkfailure<int>(reason(cr)));
@@ -538,7 +553,7 @@ int handler(request_rec *r) {
 
     // Get the component implementation lambda
     const list<value> path(pathValues(r->uri));
-    const list<value> impl(assoctree<value>(cadr(path), hasv? vhc.sc.implTree : sc.implTree));
+    const list<value> impl(assoctree<value>(cadr(path), usevh? vhc.sc.implTree : sc.implTree));
     if (isNil(impl))
         return httpd::reportStatus(mkfailure<int>(string("Couldn't find component implementation")));
 
@@ -584,17 +599,17 @@ apr_status_t serverCleanup(void* v) {
 const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     if (s == NULL)
         return OK;
-    ostringstream sname;
-    debug(httpd::serverName(s), "modeval::postConfigMerge::serverName");
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
-    sc.wiringServerName = mainsc.wiringServerName;
+    debug(httpd::serverName(s), "modeval::postConfigMerge::serverName");
+    if (sc.wiringServerName == "") sc.wiringServerName = httpd::serverName(s);
+    debug(httpd::serverName(s), "modeval::postConfigMerge::wiringServerName");
     sc.contributionPath = mainsc.contributionPath;
     sc.compositeName = mainsc.compositeName;
     sc.virtualHostContributionPath = mainsc.virtualHostContributionPath;
     sc.virtualHostCompositeName = mainsc.virtualHostCompositeName;
-    sc.ca = mainsc.ca;
-    sc.cert = mainsc.cert;
-    sc.key = mainsc.key;
+    if (sc.ca == "") sc.ca = mainsc.ca;
+    if (sc.cert == "") sc.cert = mainsc.cert;
+    if (sc.key == "") sc.key = mainsc.key;
     sc.implementations = mainsc.implementations;
     sc.implTree = mainsc.implTree;
     return postConfigMerge(mainsc, s->next);
@@ -608,8 +623,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     // Get the server configuration and determine the wiring server name
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
     debug(httpd::serverName(s), "modeval::postConfig::serverName");
-    if (sc.wiringServerName == "")
-        sc.wiringServerName = httpd::serverName(s);
+    if (sc.wiringServerName == "") sc.wiringServerName = httpd::serverName(s);
     debug(sc.wiringServerName, "modeval::postConfig::wiringServerName");
 
     // Count the calls to post config
@@ -638,8 +652,6 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     }
 
     // Configure the deployed components
-    debug(sc.contributionPath, "modeval::postConfig::contributionPath");
-    debug(sc.compositeName, "modeval::postConfig::compositeName");
     const failable<bool> res = confComponents(sc);
     if (!hasContent(res)) {
         cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
@@ -649,7 +661,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     // Register a cleanup callback, called when the server is stopped or restarted
     apr_pool_pre_cleanup_register(p, (void*)&sc, serverCleanup);
 
-    // Merge the config into any virtual hosts
+    // Merge the configuration into the virtual hosts
     return postConfigMerge(sc, s->next);
 }
 
@@ -670,6 +682,9 @@ void childInit(apr_pool_t* p, server_rec* s) {
         cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
+    
+    // Merge the updated configuration into the virtual hosts
+    postConfigMerge(*sc, s->next);
 
     // Register a cleanup callback, called when the child is stopped or restarted
     apr_pool_pre_cleanup_register(p, (void*)sc, serverCleanup);
@@ -743,9 +758,9 @@ const command_rec commands[] = {
     AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution location"),
     AP_INIT_TAKE1("SCAVirtualComposite", (const char*(*)())confVirtualComposite, NULL, RSRC_CONF, "SCA virtual composite location"),
     AP_INIT_TAKE12("SCASetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),
-    AP_INIT_TAKE1("SCASSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "SSL CA certificate file"),
-    AP_INIT_TAKE1("SCASSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "SSL certificate file"),
-    AP_INIT_TAKE1("SCASSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "SSL certificate key file"),
+    AP_INIT_TAKE1("SSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "SSL CA certificate file"),
+    AP_INIT_TAKE1("SSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "SSL certificate file"),
+    AP_INIT_TAKE1("SSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "SSL certificate key file"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 

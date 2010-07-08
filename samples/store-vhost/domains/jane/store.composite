@@ -60,7 +60,7 @@
     </component>     
 
     <component name="Cache">
-        <implementation.cpp path="../../components/cache" library="libmemcache"/>
+        <implementation.cpp path="../../../../components/cache" library="libmemcache"/>
         <service name="Cache">
             <t:binding.atom uri="cache"/>
         </service>

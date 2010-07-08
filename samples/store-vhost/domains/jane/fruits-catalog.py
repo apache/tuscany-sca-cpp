@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,15 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs vhost
-../../modules/server/server-conf tmp
-../../modules/python/python-conf tmp
-cat >>tmp/conf/httpd.conf <<EOF
-# Configure SCA Composite for mass dynamic virtual hosting
-SCAVirtualContribution `pwd`/domains/
-SCAVirtualComposite store.composite
+# Catalog implementation
 
-EOF
+def getcatalog(converter, currencyCode):
+  code = currencyCode()
+  def convert(price):
+      return converter("convert", "USD", code, price)
+  symbol = converter("symbol", code)
+  return (
+    (("'javaClass", "services.Item"), ("'name", "Passion"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(2.99))),
+    (("'javaClass", "services.Item"), ("'name", "Mango"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(3.55))),
+    (("'javaClass", "services.Item"), ("'name", "Pineapple"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(1.55)))
+  )
 
-../../components/cache/memcached-start
-../../modules/http/httpd-start tmp

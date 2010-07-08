@@ -17,16 +17,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-ca-conf tmp localhost
-../../modules/http/httpd-cert-conf tmp localhost
-../../modules/http/httpd-conf tmp localhost 8090 htdocs
-../../modules/http/httpd-ssl-conf tmp localhost 8453 htdocs
+# For this sample to work, add the sample domain to your /etc/hosts as follows:
+# 127.0.0.1 sca-store.com jane.sca-store.com joe.sca-store.com
+
+../../modules/http/ssl-ca-conf tmp sca-store.com
+../../modules/http/ssl-cert-conf tmp sca-store.com server
+../../modules/http/ssl-cert-conf tmp *.sca-store.com vhost
+../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs vhost
+../../modules/http/httpd-ssl-conf tmp sca-store.com 8453 htdocs vhost
 ../../modules/server/server-conf tmp
 ../../modules/python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
-# Configure SCA Composite
-SCAContribution `pwd`/
-SCAComposite store.composite
+# Configure SCA Composite for mass dynamic virtual Hosting
+SCAVirtualContribution `pwd`/domains/
+SCAVirtualComposite store.composite
 
 EOF
 

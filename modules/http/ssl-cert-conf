@@ -21,16 +21,21 @@
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 host=$2
+if [ "$3" != "" ]; then
+    certname=$3
+else
+    certname="server"
+fi
 
 # Don't regenerate the certificate if it already exists
-if [ -f $root/conf/server.crt ]; then
+if [ -f $root/conf/$certname.crt ]; then
     return 0
 fi
 
 # Generate openssl configuration
 mkdir -p $root/conf
 umask 0007
-cat >$root/conf/openssl-cert.conf <<EOF
+cat >$root/conf/openssl-cert-$certname.conf <<EOF
 [ req ]
 default_bits = 1024
 encrypt_key = no
@@ -48,11 +53,11 @@ emailAddress = root@$host
 EOF
 
 # Generate a certificate request
-openssl req -new -config $root/conf/openssl-cert.conf -out $root/conf/server-req.crt -keyout $root/conf/server.key
+openssl req -new -config $root/conf/openssl-cert-$certname.conf -out $root/conf/$certname-req.crt -keyout $root/conf/$certname.key
 
 # Generate a certificate, signed with our test certification authority certificate
-openssl ca -batch -config $root/conf/openssl-ca.conf -out $root/conf/server.crt -infiles $root/conf/server-req.crt
+openssl ca -batch -config $root/conf/openssl-ca.conf -out $root/conf/$certname.crt -infiles $root/conf/$certname-req.crt
 
 # Export it to PKCS12 format, that's the format Web browsers want to import
-openssl pkcs12 -export -passout pass: -out $root/conf/server.p12 -inkey $root/conf/server.key -in $root/conf/server.crt -certfile $root/conf/ca.crt
+openssl pkcs12 -export -passout pass: -out $root/conf/$certname.p12 -inkey $root/conf/$certname.key -in $root/conf/$certname.crt -certfile $root/conf/ca.crt
 

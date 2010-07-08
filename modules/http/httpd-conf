@@ -30,13 +30,7 @@ htdocs=`readlink -f $4`
 user=`id -un`
 group=`id -gn`
 modules_prefix=`cat $here/httpd-modules.prefix`
-if [ "$5" = "vhost" ]; then
-    vhost="VirtualDocumentRoot $htdocs/domains/%1/"
-    maxr="MaxRequestsPerChild 1"
-else
-    vhost="#VirtualDocumentRoot $htdocs/domains/%1/"
-    maxr="#MaxRequestsPerChild 1"
-fi
+vhost=$5
 
 mkdir -p $root
 mkdir -p $root/logs
@@ -123,19 +117,34 @@ Options FollowSymLinks
 Allow from all
 </Location>
 
-# Setup HTTP virtual host
+# Setup HTTP virtual hosts
 Listen $port
-<VirtualHost _default_:$port>
+
+<VirtualHost *:$port>
 ServerName http://$host:$pport
 UseCanonicalName Off
-UseCanonicalPhysicalPort Off
-
-# Setup mass dynamic virtual hosting
-$vhost
 </VirtualHost>
 
-# Isolate dynamic virtual hosts
-$maxr
+EOF
+
+# Generate mass dynamic virtual hosting configuration
+if [ "$vhost" = "vhost" ]; then
+
+cat >>$root/conf/httpd.conf <<EOF
+# Setup mass dynamic virtual hosting
+NameVirtualHost *:$port
+
+<VirtualHost *:$port>
+ServerName http://vhost.$host:$pport
+ServerAlias *.$host
+UseCanonicalName Off
+VirtualDocumentRoot $htdocs/domains/%1/
+</VirtualHost>
+
+# Isolate virtual host based requests
+MaxRequestsPerChild 1
 
 EOF
+
+fi
 

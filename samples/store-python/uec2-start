@@ -28,8 +28,8 @@ fi
 sudo ../../ubuntu/ip-redirect 80 8090
 sudo ../../ubuntu/ip-redirect 443 8453
 
-../../modules/http/httpd-ca-conf tmp $host
-../../modules/http/httpd-cert-conf tmp $host
+../../modules/http/ssl-ca-conf tmp $host
+../../modules/http/ssl-cert-conf tmp $host
 ../../modules/http/httpd-conf tmp $host 8090/80 htdocs
 ../../modules/http/httpd-ssl-conf tmp $host 8453/443 htdocs
 ../../modules/server/server-conf tmp

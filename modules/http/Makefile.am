@@ -20,7 +20,7 @@ INCLUDES = -I${HTTPD_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/http
 
-dist_mod_SCRIPTS = httpd-conf httpd-start httpd-stop httpd-restart httpd-ca-conf httpd-cert-conf httpd-ssl-conf
+dist_mod_SCRIPTS = httpd-conf httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf httpd-ssl-conf
 moddir=$(prefix)/modules/http
 
 curl_test_SOURCES = curl-test.cpp

@@ -72,6 +72,13 @@ const bool hasCompositeConf(const ServerConf& sc) {
 }
 
 /**
+ * Return true if a server contains a virtual host composite configuration.
+ */
+const bool hasVirtualCompositeConf(const ServerConf& sc) {
+    return sc.virtualHostContributionPath != "" && sc.virtualHostCompositeName != "";
+}
+
+/**
  * Returns true if a URI is absolute.
  */
 const bool isAbsolute(const string& uri) {
@@ -235,6 +242,8 @@ const list<value> uriToComponentAssoc(const list<value>& c) {
 const bool confComponents(ServerConf& sc) {
     if (!hasCompositeConf(sc))
         return true;
+    debug(sc.contributionPath, "modwiring::confComponents::contributionPath");
+    debug(sc.compositeName, "modwiring::confComponents::compositeName");
 
     // Read the component configuration and store the references and service URIs
     // in trees for fast retrieval later
@@ -257,8 +266,8 @@ const bool confComponents(ServerConf& sc) {
 class VirtualHostConf {
 public:
     VirtualHostConf(const ServerConf& ssc) : sc(ssc.server) {
-        sc.contributionPath = ssc.virtualHostContributionPath;
-        sc.compositeName = ssc.virtualHostCompositeName;
+        sc.virtualHostContributionPath = ssc.virtualHostContributionPath;
+        sc.virtualHostCompositeName = ssc.virtualHostCompositeName;
     }
 
     ~VirtualHostConf() {
@@ -273,10 +282,14 @@ public:
 const failable<bool> virtualHostConfig(ServerConf& sc, request_rec* r) {
     debug(httpd::serverName(sc.server), "modwiring::virtualHostConfig::serverName");
     debug(httpd::serverName(r), "modwiring::virtualHostConfig::virtualHostName");
+    debug(sc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
+
+    // Resolve the configured virtual contribution under
+    // the virtual host's SCA contribution root
+    sc.contributionPath = sc.virtualHostContributionPath + httpd::subdomain(httpd::hostName(r)) + "/";
+    sc.compositeName = sc.virtualHostCompositeName;
 
     // Configure the wiring for the deployed components
-    debug(sc.contributionPath, "modwiring::virtualHostConfig::contributionPath");
-    debug(sc.compositeName, "modwiring::virtualHostConfig::compositeName");
     confComponents(sc);
     return true;
 }
@@ -297,8 +310,8 @@ int translate(request_rec *r) {
 
     // Process dynamic virtual host configuration, if any
     VirtualHostConf vhc(sc);
-    const bool hasv = hasCompositeConf(vhc.sc);
-    if (hasv) {
+    const bool usevh = hasVirtualCompositeConf(vhc.sc) && httpd::isVirtualHostRequest(sc.server, r);
+    if (usevh) {
         const failable<bool> cr = virtualHostConfig(vhc.sc, r);
         if (!hasContent(cr))
             return -1;
@@ -306,10 +319,10 @@ int translate(request_rec *r) {
 
     // Translate a component reference request
     if (!strncmp(r->uri, "/references/", 12))
-        return translateReference(hasv? vhc.sc: sc, r);
+        return translateReference(usevh? vhc.sc: sc, r);
 
     // Translate a service request
-    return translateService(hasv? vhc.sc : sc, r);
+    return translateService(usevh? vhc.sc : sc, r);
 }
 
 /**
@@ -340,7 +353,6 @@ int handler(request_rec *r) {
 const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     if (s == NULL)
         return OK;
-    ostringstream sname;
     debug(httpd::serverName(s), "modwiring::postConfigMerge::serverName");
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
     sc.contributionPath = mainsc.contributionPath;
@@ -364,10 +376,8 @@ int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t 
         return OK;
 
     // Configure the wiring for the deployed components
-    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
     debug(httpd::serverName(s), "modwiring::postConfig::serverName");
-    debug(sc.contributionPath, "modwiring::postConfig::contributionPath");
-    debug(sc.compositeName, "modwiring::postConfig::compositeName");
+    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_wiring);
     confComponents(sc);
 
     // Merge the config into any virtual hosts

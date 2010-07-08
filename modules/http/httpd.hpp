@@ -100,6 +100,35 @@ const string serverName(request_rec* r) {
 }
 
 /**
+ * Return the host name for a server.
+ */
+const string hostName(const server_rec* s) {
+    return s->server_hostname != NULL? s->server_hostname : "localhost";
+}
+
+/**
+ * Return the host name from an HTTP request.
+ */
+const string hostName(request_rec* r) {
+    const char* hn = ap_get_server_name(r);
+    return hn != NULL? hn : (r->server->server_hostname != NULL? r->server->server_hostname : "localhost");
+}
+
+/**
+ * Return the first subdomain name in a host name.
+ */
+const string subdomain(const string& host) {
+    return substr(host, 0, find(host, '.'));
+}
+
+/**
+ * Return true if a request is targeting a virtual host.
+ */
+const bool isVirtualHostRequest(const server_rec* s, request_rec* r) {
+    return serverName(r) != serverName(s);
+}
+
+/**
  * Return the content type of a request.
  */
 const char* optional(const char* s) {

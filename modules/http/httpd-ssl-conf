@@ -28,6 +28,7 @@ if [ "$sslpport" = "" ]; then
 fi
 htdocs=`readlink -f $4`
 httpd_prefix=`cat $here/httpd.prefix`
+vhost=$5
 
 # Extract organization name from our CA certificate
 org=`openssl x509 -noout -subject -nameopt multiline -in $root/conf/ca.crt | grep organizationName | awk -F "= " '{ print $2 }'`
@@ -51,19 +52,31 @@ SSLMutex "file:$root/logs/ssl_mutex"
 SSLRandomSeed startup builtin
 SSLRandomSeed connect builtin
 
-# HTTPS virtual host
+# Setup HTTPS virtual hosts
 Listen $sslport
-<VirtualHost _default_:$sslport>
-ServerName https://$host:$sslpport
-UseCanonicalName Off
-UseCanonicalPhysicalPort Off
 
-# Enable SSL
-SSLEngine on
-SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
 SSLCACertificateFile "$root/conf/ca.crt"
 SSLCertificateFile "$root/conf/server.crt"
 SSLCertificateKeyFile "$root/conf/server.key"
+
+<VirtualHost *:$sslport>
+ServerName https://$host:$sslpport
+UseCanonicalName Off
+
+# Enable SSL
+Include conf/ssl-vhost.conf
+</VirtualHost>
+
+# Route all wiring through HTTPS
+SCAWiringServerName https://$host:$sslpport
+
+EOF
+
+# Generate VirtualHost SSL configuration
+cat >$root/conf/ssl-vhost.conf <<EOF
+# Enable SSL
+SSLEngine on
+SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
 BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
 
 # Logging
@@ -88,11 +101,34 @@ AuthType Basic
 AuthName "$host"
 AuthUserFile "$root/conf/httpd.passwd"
 Require valid-user
-</location>
+</Location>
 
+EOF
+
+# Generate mass dynamic virtual hosting configuration
+if [ "$vhost" = "vhost" ]; then
+
+cat >>$root/conf/httpd.conf <<EOF
+# Setup mass dynamic virtual hosting
+NameVirtualHost *:$sslport
+SSLStrictSNIVHostCheck Off
+
+<VirtualHost *:$sslport>
+ServerName https://vhost.$host:$sslpport
+ServerAlias *.$host
+UseCanonicalName Off
+VirtualDocumentRoot $htdocs/domains/%1/
+
+# Enable SSL
+SSLCACertificateFile "$root/conf/ca.crt"
+SSLCertificateFile "$root/conf/vhost.crt"
+SSLCertificateKeyFile "$root/conf/vhost.key"
+Include conf/ssl-vhost.conf
 </VirtualHost>
 
 EOF
+
+fi
 
 # Create test users for HTTP basic authentication
 $httpd_prefix/bin/htpasswd -bc $root/conf/httpd.passwd test test 2>/dev/null

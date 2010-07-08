@@ -1,5 +1,3 @@
-#!/bin/sh
-
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -17,15 +15,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs vhost
-../../modules/server/server-conf tmp
-../../modules/python/python-conf tmp
-cat >>tmp/conf/httpd.conf <<EOF
-# Configure SCA Composite for mass dynamic virtual hosting
-SCAVirtualContribution `pwd`/domains/
-SCAVirtualComposite store.composite
+# Store implementation
 
-EOF
+def post(item, catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("post", item)
 
-../../components/cache/memcached-start
-../../modules/http/httpd-start tmp
+def getall(catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("getall")
+
+def get(id, catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("get", id)
+
+def getcatalog(catalog, shoppingCart, shoppingTotal):
+    return catalog("getcatalog")
+
+def gettotal(catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("gettotal")
+
+def deleteall(catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("deleteall")
+
+def delete(id, catalog, shoppingCart, shoppingTotal):
+    return shoppingCart("delete", id)
+

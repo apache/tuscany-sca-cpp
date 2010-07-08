@@ -20,7 +20,7 @@ if WANT_PYTHON
 dist_sample_SCRIPTS = start stop ssl-start uec2-start
 sampledir = $(prefix)/samples/store-vhost
 
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html htdocs/domains/joe/*.html htdocs/domains/jane/*.html
+nobase_dist_sample_DATA = htdocs/*.html htdocs/domains/*/*.html domains/*/*.py domains/*/*.composite
 
 dist_noinst_SCRIPTS = server-test
 #TESTS = server-test

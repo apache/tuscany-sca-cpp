@@ -21,25 +21,9 @@
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 
-servername=`cat $root/conf/httpd.conf | grep ServerName | tail -1 | awk '{ print $2 }'`
-host=`echo $servername | awk -F ":" '{ printf "%s:%s", $1, $2 }'`
-port=`cat $root/conf/httpd.conf | grep Listen | tail -1 | awk '{ print $2 }'`
-
-ssl=`cat $root/conf/httpd.conf | grep "SSLEngine" | awk '{ print $2 }'`
-if [ "$ssl" = "on" ]; then
-cat >>$root/conf/httpd.conf <<EOF
-# Configure SCA SSL support
-SCASSLCACertificateFile "$root/conf/ca.crt"
-SCASSLCertificateFile "$root/conf/server.crt"
-SCASSLCertificateKeyFile "$root/conf/server.key"
-
-EOF
-fi
-
 cat >>$root/conf/httpd.conf <<EOF
 # Support for SCA component wiring
 LoadModule mod_tuscany_wiring $here/libmod_tuscany_wiring.so
-#SCAWiringServerName $host:$port
 
 # Serve HTTP binding JavaScript client code
 Alias /js/tuscany-ref.js $here/htdocs/js/tuscany-ref.js
