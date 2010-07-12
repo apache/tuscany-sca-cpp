@@ -65,7 +65,21 @@ UseCanonicalName Off
 
 # Enable SSL
 Include conf/ssl-vhost.conf
+
+# Allow the server admin to view the server status
+<Location /server-status>
+SetHandler server-status
+HostnameLookups on
+Deny from All
+Allow from localhost
+Allow from $host
+Require user admin
+</Location>
+
 </VirtualHost>
+
+# Report extended server status
+ExtendedStatus On
 
 # Route all wiring through HTTPS
 SCAWiringServerName https://$host:$sslpport
@@ -132,6 +146,7 @@ fi
 
 # Create test users for HTTP basic authentication
 $httpd_prefix/bin/htpasswd -bc $root/conf/httpd.passwd test test 2>/dev/null
+$httpd_prefix/bin/htpasswd -b $root/conf/httpd.passwd admin admin 2>/dev/null
 $httpd_prefix/bin/htpasswd -b $root/conf/httpd.passwd foo foo 2>/dev/null
 $httpd_prefix/bin/htpasswd -b $root/conf/httpd.passwd bar bar 2>/dev/null
 
