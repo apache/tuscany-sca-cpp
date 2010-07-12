@@ -275,11 +275,11 @@ const list<value> refProxies(const list<value>& refs, const string& base, const 
 #ifdef WANT_THREADS
 __thread
 #endif
-const request_rec* currentRequest = NULL;
+request_rec* currentRequest = NULL;
 
 class ScopedRequest {
 public:
-    ScopedRequest(const request_rec* r) {
+    ScopedRequest(request_rec* r) {
         currentRequest = r;
     }
 
@@ -290,7 +290,7 @@ public:
 
 /**
  * Convert a list of component properties to a list of lambda functions that just return
- * the property value. The user and email properties are configured with the values
+ * the property value. The host, user and email properties are configured with the values
  * from the HTTP request, if any.
  */
 struct propProxy {
@@ -299,6 +299,15 @@ struct propProxy {
     }
     const value operator()(unused const list<value>& params) const {
         return v;
+    }
+};
+
+struct hostPropProxy {
+    const value v;
+    hostPropProxy(const value& v) : v(v) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        return httpd::hostName(currentRequest, v);
     }
 };
 
@@ -326,6 +335,8 @@ struct userPropProxy {
 };
 
 const value mkpropProxy(const value& prop) {
+    if (scdl::name(prop) == "host")
+        return lambda<value(const list<value>&)>(hostPropProxy(elementValue(prop)));
     if (scdl::name(prop) == "email")
         return lambda<value(const list<value>&)>(emailPropProxy(elementValue(prop)));
     if (scdl::name(prop) == "user")

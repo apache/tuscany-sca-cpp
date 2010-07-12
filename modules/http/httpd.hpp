@@ -77,10 +77,10 @@ template<typename C> C& serverConf(const cmd_parms *cmd, const module* mod) {
 /**
  * Return the name of a server.
  */
-const string serverName(const server_rec* s) {
+const string serverName(const server_rec* s, const string& def = "localhost") {
     ostringstream n;
     n << (s->server_scheme != NULL? s->server_scheme : "http") << "://"
-        << (s->server_hostname != NULL? s->server_hostname : "localhost") << ":"
+        << (s->server_hostname != NULL? s->server_hostname : def) << ":"
         << (s->port != 0? s->port : 80)
         << (s->path != NULL? string(s->path, s->pathlen) : "");
     return str(n);
@@ -89,11 +89,11 @@ const string serverName(const server_rec* s) {
 /**
  * Determine the name of a server from an HTTP request.
  */
-const string serverName(request_rec* r) {
+const string serverName(request_rec* r, const string& def = "localhost") {
     ostringstream n;
     const char* hn = ap_get_server_name(r);
     n << (r->server->server_scheme != NULL? r->server->server_scheme : "http") << "://"
-        << (hn != NULL? hn : (r->server->server_hostname != NULL? r->server->server_hostname : "localhost")) << ":"
+        << (hn != NULL? hn : (r->server->server_hostname != NULL? r->server->server_hostname : def)) << ":"
         << (r->server->port != 0? r->server->port : 80)
         << (r->server->path != NULL? string(r->server->path, r->server->pathlen) : "");
     return str(n);
@@ -102,16 +102,16 @@ const string serverName(request_rec* r) {
 /**
  * Return the host name for a server.
  */
-const string hostName(const server_rec* s) {
-    return s->server_hostname != NULL? s->server_hostname : "localhost";
+const string hostName(const server_rec* s, const string& def = "localhost") {
+    return s->server_hostname != NULL? s->server_hostname : def;
 }
 
 /**
  * Return the host name from an HTTP request.
  */
-const string hostName(request_rec* r) {
+const string hostName(request_rec* r, const string& def = "localhost") {
     const char* hn = ap_get_server_name(r);
-    return hn != NULL? hn : (r->server->server_hostname != NULL? r->server->server_hostname : "localhost");
+    return hn != NULL? hn : (r->server->server_hostname != NULL? r->server->server_hostname : def);
 }
 
 /**
