@@ -19,6 +19,7 @@
 
 from xml.etree.cElementTree import iterparse
 from sys import stderr
+from os import environ
 from util import *
 from httputil import *
 
@@ -186,9 +187,11 @@ def evalReference(r, comps):
     return nameToComponent(t, comps)
 
 # Evaluate a property, return a lambda function returning the property
-# value. The user and email properties are configured with the values
-# from the HTTP request, if any
+# value. The host, user and email properties are configured with the
+# values from the HTTP request, if any
 def evalProperty(p):
+    if car(p) == "host":
+        return lambda: hostProperty(cadr(p), environ)
     if car(p) == "user":
         return lambda: userProperty(cadr(p))
     if car(p) == "email":
@@ -205,6 +208,9 @@ def currentUser():
 def userProperty(v):
     user = currentUser()
     return user.user_id() if user else v
+
+def hostProperty(v, e):
+    return e.get("HTTP_HOST", e.get("SERVER_NAME", v)).split(":")[0]
 
 def emailProperty(v):
     user = currentUser()

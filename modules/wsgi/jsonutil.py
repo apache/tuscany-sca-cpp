@@ -132,9 +132,11 @@ def jsonResultValue(s):
 
 # Return a portable function name from a JSON-RPC function name
 def funcName(f):
-    if len(f) > 7 and f.find("system.") == 0:
+    if f.startswith("."):
+        return f[1:]
+    if f.startswith("system."):
         return f[7:]
-    if len(f) > 8 and f.find("Service.") == 0:
+    if f.startswith("Service."):
         return f[8:]
     return f
 

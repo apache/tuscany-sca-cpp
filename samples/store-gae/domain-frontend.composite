@@ -52,6 +52,7 @@
         <reference name="cache">
             <t:binding.http uri="https://sca-store-backend.appspot.com/cache"/>
         </reference>
+        <property name="host">localhost</property>
         <property name="email">anonymous@example.com</property>
     </component>
     

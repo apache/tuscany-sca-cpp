@@ -86,6 +86,9 @@ def result(e, r, st, h = (), b = None):
         r("200 OK", list(h + (("Etag", md), ("Expires", "Tue, 01 Jan 1980 00:00:00 GMT"))))
         return b
 
+    if st == 301:
+        r("301 Moved Permanently", list(h))
+
     return failure(e, r, 500)
 
 # Return an HTTP failure result
@@ -115,6 +118,14 @@ def postArgs(a):
     l = car(a);
     return cons(l, postArgs(cdr(a)))
 
+# Return the URL of the logout page
+def logout(ruri):
+    try:
+        from google.appengine.api import users
+        return users.create_logout_url(ruri)
+    except:
+        return None
+
 # WSGI application function
 def application(e, r):
     m = requestMethod(e)
@@ -132,6 +143,14 @@ def application(e, r):
             return fileresult(e, r, "application/x-javascript", fpath)
         if fpath.endswith(".png"):
             return fileresult(e, r, "image/png", fpath)
+        if fpath == "/":
+            return result(e, r, 301, (("Location", "/index.html"),))
+
+    # Logout
+    if fpath == "/logout":
+        redir = logout("/")
+        if redir:
+            return result(e, r, 301, (("Location", redir),))
 
     # Find the requested component
     path = tokens(fpath)

@@ -51,6 +51,14 @@ function catalog_getcatalogResponse(items, exception) {
     catalogItems = items;
 }
 
+function shoppingCart_gethostResponse(host, exception) {
+    if (exception) { 
+        alert(exception.message); 
+        return;
+    }
+    document.getElementById('host').innerHTML = host;
+}
+
 function shoppingCart_getemailResponse(email, exception) {
     if (exception) { 
         alert(exception.message); 
@@ -131,6 +139,7 @@ function init() {
     try {
         catalog.apply("getcatalog", catalog_getcatalogResponse);
         shoppingCart.apply("getemail", shoppingCart_getemailResponse);
+        shoppingCart.apply("gethost", shoppingCart_gethostResponse);
         shoppingCart.get("", shoppingCart_getResponse);
     } catch(e){
         alert(e);
@@ -141,7 +150,7 @@ function init() {
 
 <body onload="init()">
 <h1>Store</h1>
-<p>You're signed in as: <span id="email"></span><br/><a href="/_ah/login?continue=/store.html&action=Logout">Sign out</a></p>
+<p>Welcome to: <span id="host"></span>, you're signed in as: <span id="email"></span><br/><a href="/logout">Sign out</a></p>
 <div id="store">
 <h2>Catalog</h2>
 <form name="catalogForm">
