@@ -34,20 +34,20 @@ rc=$?
 # Test ATOMPub
 if [ "$rc" = "0" ]; then
     $curl_prefix/bin/curl http://localhost:8090/wsgi/ >tmp/feed.xml 2>/dev/null
-    diff tmp/feed.xml htdocs/feed.xml
+    diff tmp/feed.xml htdocs/test/feed.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
     $curl_prefix/bin/curl http://localhost:8090/wsgi/111 >tmp/entry.xml 2>/dev/null
-    diff tmp/entry.xml htdocs/entry.xml
+    diff tmp/entry.xml htdocs/test/entry.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://localhost:8090/wsgi/ -X POST -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/wsgi/ -X POST -H "Content-type: application/atom+xml" --data @htdocs/test/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://localhost:8090/wsgi/111 -X PUT -H "Content-type: application/atom+xml" --data @htdocs/entry.xml 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/wsgi/111 -X PUT -H "Content-type: application/atom+xml" --data @htdocs/test/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
@@ -57,8 +57,8 @@ fi
 
 # Test JSON-RPC
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://localhost:8090/wsgi/ -X POST -H "Content-type: application/json-rpc" --data @htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
-    diff tmp/json-result.txt htdocs/json-result.txt
+    $curl_prefix/bin/curl http://localhost:8090/wsgi/ -X POST -H "Content-type: application/json-rpc" --data @htdocs/test/json-request.txt >tmp/json-result.txt 2>/dev/null
+    diff tmp/json-result.txt htdocs/test/json-result.txt
     rc=$?
 fi
 

@@ -30,6 +30,24 @@ $curl_prefix/bin/curl http://localhost:8090/ 2>/dev/null >tmp/index.html
 diff tmp/index.html htdocs/index.html
 rc=$?
 
+# Test Catalog
+if [ "$rc" = "0" ]; then
+    $curl_prefix/bin/curl http://localhost:8090/references/Store/catalog -X POST -H "Content-type: application/json-rpc" --data @htdocs/test/getcatalog-request.txt >tmp/getcatalog-result.txt 2>/dev/null
+    diff tmp/getcatalog-result.txt htdocs/test/getcatalog-result.txt
+    rc=$?
+fi
+
+# Test Shopping Cart
+if [ "$rc" = "0" ]; then
+    $curl_prefix/bin/curl http://localhost:8090/references/Store/shoppingCart -X POST -H "Content-type: application/atom+xml" --data @htdocs/test/shopping-cart-entry.xml 2>/dev/null
+    rc=$?
+fi
+if [ "$rc" = "0" ]; then
+    $curl_prefix/bin/curl http://localhost:8090/references/Store/shoppingCart >tmp/shopping-cart-feed.xml 2>/dev/null
+    grep "3.55" tmp/shopping-cart-feed.xml >/dev/null
+    rc=$?
+fi
+
 # Cleanup
 ./stop
 sleep 2

@@ -41,20 +41,20 @@ rc=$?
 # Test ATOMPub
 if [ "$rc" = "0" ]; then
     $curl_prefix/bin/curl http://localhost:8090/client/ >tmp/feed.xml 2>/dev/null
-    diff tmp/feed.xml ../server/htdocs/feed.xml
+    diff tmp/feed.xml ../server/htdocs/test/feed.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
     $curl_prefix/bin/curl http://localhost:8090/client/111 >tmp/entry.xml 2>/dev/null
-    diff tmp/entry.xml ../server/htdocs/entry.xml
+    diff tmp/entry.xml ../server/htdocs/test/entry.xml
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://localhost:8090/client/ -X POST -H "Content-type: application/atom+xml" --data @../server/htdocs/entry.xml 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/client/ -X POST -H "Content-type: application/atom+xml" --data @../server/htdocs/test/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://localhost:8090/client/111 -X PUT -H "Content-type: application/atom+xml" --data @../server/htdocs/entry.xml 2>/dev/null
+    $curl_prefix/bin/curl http://localhost:8090/client/111 -X PUT -H "Content-type: application/atom+xml" --data @../server/htdocs/test/entry.xml 2>/dev/null
     rc=$?
 fi
 if [ "$rc" = "0" ]; then
@@ -64,8 +64,8 @@ fi
 
 # Test JSON-RPC
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://localhost:8090/client/ -X POST -H "Content-type: application/json-rpc" --data @../server/htdocs/json-request.txt >tmp/json-result.txt 2>/dev/null
-    diff tmp/json-result.txt ../server/htdocs/json-result.txt
+    $curl_prefix/bin/curl http://localhost:8090/client/ -X POST -H "Content-type: application/json-rpc" --data @../server/htdocs/test/json-request.txt >tmp/json-result.txt 2>/dev/null
+    diff tmp/json-result.txt ../server/htdocs/test/json-result.txt
     rc=$?
 fi
 
