@@ -118,11 +118,19 @@ def postArgs(a):
     l = car(a);
     return cons(l, postArgs(cdr(a)))
 
-# Return the URL of the logout page
-def logout(ruri):
+# Return the URL used to sign out
+def signout(ruri):
     try:
         from google.appengine.api import users
         return users.create_logout_url(ruri)
+    except:
+        return None
+
+# Return the URL used to sign in
+def signin(ruri):
+    try:
+        from google.appengine.api import users
+        return users.create_login_url(ruri)
     except:
         return None
 
@@ -130,10 +138,6 @@ def logout(ruri):
 def application(e, r):
     m = requestMethod(e)
     fpath = requestPath(e)
-
-    # Debug hook
-    if fpath == "/debug":
-        return result(e, r, 200, (("Content-type", "text/plain"),), ("Debug",))
 
     # Serve static files
     if m == "GET":
@@ -146,11 +150,19 @@ def application(e, r):
         if fpath == "/":
             return result(e, r, 301, (("Location", "/index.html"),))
 
-    # Logout
-    if fpath == "/logout":
-        redir = logout("/")
-        if redir:
-            return result(e, r, 301, (("Location", redir),))
+        # Debug hook
+        if fpath == "/debug":
+            return result(e, r, 200, (("Content-type", "text/plain"),), ("Debug",))
+
+        # Sign in and out
+        if fpath == "/login":
+            redir = signin("/")
+            if redir:
+                return result(e, r, 301, (("Location", redir),))
+        if fpath == "/logout":
+            redir = signout(signin("/"))
+            if redir:
+                return result(e, r, 301, (("Location", redir),))
 
     # Find the requested component
     path = tokens(fpath)
