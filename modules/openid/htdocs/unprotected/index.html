@@ -17,18 +17,11 @@
    under the License.
 -->
 
-<html><body>
-<h1>Sign out</h1>
-
-<form name="signout" action="/" method="GET">
-<script type="text/javascript">
-function submitSignout() {
-    document.cookie = 'open_id_session_id=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/';
-    document.signout.action = document.referrer;
-    document.signout.submit();
-    return true;
-}
-</script>
-<input type="button" onclick="submitSignout()" value="Sign out"/>
-</form>
+<html>
+<body>
+<h1>Unprotected area - It works!</h1>
+<p><a href="/info">User info</a></p>
+<p><a href="/login">Sign in</a></p>
+<p><a href="/logout">Sign out</a></p>
+<p><a href="/">Protected area</a></p>
 </body></html>

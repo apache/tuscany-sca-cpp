@@ -42,7 +42,7 @@ function openidReferrer() {
 }
 
 if (typeof(openidReferrer()) == 'undefined') {
-    document.location = '/protected';
+    document.location = '/';
 }
 
 function submitSignin(w) {
@@ -77,7 +77,7 @@ function withXRDSEndpoint() {
 }
 </script>
 
-<form name="signin" action="/protected" method="GET">
+<form name="signin" action="/" method="GET">
 <input type="hidden" name="openid_identifier" value="https://www.google.com/accounts/o8/id"/>
 </form>
 

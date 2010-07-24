@@ -17,49 +17,41 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Generate an Axis2 server conf
+# Generate an OpenID server conf
 here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
-htdocs=`readlink -f $2`
+host=$2
+port=`echo $3 | awk -F "/" '{ print $1 }'`
+pport=`echo $3 | awk -F "/" '{ print $2 }'`
+if [ "$pport" = "" ]; then
+    pport=$port
+fi
+htdocs=`readlink -f $4`
 openid_prefix=`cat openid.prefix`
-
-servername=`cat $root/conf/httpd.conf | grep ServerName | tail -1 | awk '{ print $2 }'`
 
 # Configure HTTPD mod_auth_openid module
 cat >>$root/conf/httpd.conf <<EOF
 # Support for OpenID authentication
 LoadModule authopenid_module  $openid_prefix/modules/mod_auth_openid.so
 
-<Location /protected>
+<Location />
 AuthOpenIDEnabled On
 AuthOpenIDCookiePath /
-AuthOpenIDLoginPage /protected/login
+AuthOpenIDLoginPage /login
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
-AuthOpenIDServerName $servername
 </Location>
 
-<Location /components>
-AuthOpenIDEnabled On
-AuthOpenIDCookiePath /
-AuthOpenIDLoginPage /protected/login
-AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
-AuthOpenIDServerName $servername
-</Location>
-
-<Location /references>
-AuthOpenIDEnabled On
-AuthOpenIDCookiePath /
-AuthOpenIDLoginPage /protected/login
-AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
-AuthOpenIDServerName $servername
-</Location>
-
-<Location /protected/login>
+<Location /unprotected>
 AuthOpenIDEnabled Off
 </Location>
 
-<Location /protected/logout>
+<Location /login>
+AuthOpenIDEnabled Off
+</Location>
+
+<Location /logout>
 AuthOpenIDEnabled Off
 </Location>
 
 EOF
+

@@ -30,10 +30,10 @@
     <component name="UserInfo">
         <t:implementation.scheme script="user-info.scm"/>
         <service name="info">
-            <t:binding.jsonrpc uri="protected/info"/>
+            <t:binding.jsonrpc uri="info"/>
         </service>
         <property name="user">anonymous</property>
         <property name="email">anonymous@example.com</property>
-    </component>     
+    </component>
 
 </composite>
