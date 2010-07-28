@@ -19,8 +19,8 @@
 
 # Setup
 ../../modules/http/httpd-conf tmp localhost 8090 htdocs
-./openid-conf tmp localhost 8090 htdocs
-./openid-step2-conf tmp localhost 8090 htdocs
+./openid-conf tmp
+./openid-step2-conf tmp
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

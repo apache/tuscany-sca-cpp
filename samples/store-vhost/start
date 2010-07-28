@@ -17,7 +17,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs vhost
+../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
+../../modules/http/vhost-conf tmp
 ../../modules/server/server-conf tmp
 ../../modules/python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

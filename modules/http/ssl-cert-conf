@@ -19,6 +19,7 @@
 
 # Generate a test certificate 
 here=`readlink -f $0`; here=`dirname $here`
+mkdir -p $1
 root=`readlink -f $1`
 host=$2
 if [ "$3" != "" ]; then
@@ -60,4 +61,9 @@ openssl ca -batch -config $root/conf/openssl-ca.conf -out $root/conf/$certname.c
 
 # Export it to PKCS12 format, that's the format Web browsers want to import
 openssl pkcs12 -export -passout pass: -out $root/conf/$certname.p12 -inkey $root/conf/$certname.key -in $root/conf/$certname.crt -certfile $root/conf/ca.crt
+
+# Convert the certificate to PEM format and concatenate the key to it, for use
+# by mod_proxy
+openssl x509 -in $root/conf/$certname.crt -out $root/conf/$certname.pem
+cat $root/conf/$certname.key >> $root/conf/$certname.pem
 

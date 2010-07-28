@@ -18,7 +18,6 @@
 #  under the License.
 
 # Redirect ports 80 and 443
-intf=$1
-../../ubuntu/ip-redirect 80 8090 $intf
-../../ubuntu/ip-redirect 443 8453 $intf
+../../ubuntu/ip-redirect-all 80 8090
+../../ubuntu/ip-redirect-all 443 8453
 

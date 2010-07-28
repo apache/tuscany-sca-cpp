@@ -20,11 +20,10 @@
 <html><body>
 <h1>Sign out</h1>
 
-<form name="signout" action="/" method="GET">
+<form name="signout" action="/login" method="GET">
 <script type="text/javascript">
 function submitSignout() {
     document.cookie = 'open_id_session_id=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/';
-    document.signout.action = "/login";
     document.signout.submit();
     return true;
 }

@@ -1,0 +1,113 @@
+#!/bin/sh
+
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Generate SSL certificates
+../../modules/http/ssl-ca-conf tmp/ssl sca-store.com
+../../modules/http/ssl-cert-conf tmp/ssl sca-store.com server
+../../modules/http/ssl-cert-conf tmp/ssl *.sca-store.com vhost
+
+# Start three identical app servers
+../../modules/http/httpd-conf tmp/server1 sca-store.com 8101/80 htdocs
+../../modules/http/vhost-conf tmp/server1
+cp `../../modules/http/ssl-ls tmp/ssl` tmp/server1/conf
+../../modules/http/httpd-ssl-conf tmp/server1 8441/443
+../../modules/http/vhost-ssl-conf tmp/server1
+../../modules/server/server-conf tmp/server1
+../../modules/python/python-conf tmp/server1
+cat >>tmp/server1/conf/httpd.conf <<EOF
+# Configure SCA Composite for mass dynamic virtual hosting
+SCAVirtualContribution `pwd`/domains/
+SCAVirtualComposite store.composite
+
+EOF
+../../modules/http/httpd-start tmp/server1
+
+../../modules/http/httpd-conf tmp/server2 sca-store.com 8102/80 htdocs
+../../modules/http/vhost-conf tmp/server2
+cp `../../modules/http/ssl-ls tmp/ssl` tmp/server2/conf
+../../modules/http/httpd-ssl-conf tmp/server2 8442/443
+../../modules/http/vhost-ssl-conf tmp/server2
+../../modules/server/server-conf tmp/server2
+../../modules/python/python-conf tmp/server2
+cat >>tmp/server2/conf/httpd.conf <<EOF
+# Configure SCA Composite for mass dynamic virtual hosting
+SCAVirtualContribution `pwd`/domains/
+SCAVirtualComposite store.composite
+
+EOF
+../../modules/http/httpd-start tmp/server2
+
+../../modules/http/httpd-conf tmp/server3 sca-store.com 8103/80 htdocs
+../../modules/http/vhost-conf tmp/server3
+cp `../../modules/http/ssl-ls tmp/ssl` tmp/server3/conf
+../../modules/http/httpd-ssl-conf tmp/server3 8443/443
+../../modules/http/vhost-ssl-conf tmp/server3
+../../modules/server/server-conf tmp/server3
+../../modules/python/python-conf tmp/server3
+cat >>tmp/server3/conf/httpd.conf <<EOF
+# Configure SCA Composite for mass dynamic virtual hosting
+SCAVirtualContribution `pwd`/domains/
+SCAVirtualComposite store.composite
+
+EOF
+../../modules/http/httpd-start tmp/server3
+
+# Start two identical proxy balancers
+../../modules/http/httpd-conf tmp/proxy1 sca-store.com 8091/80 tmp/proxy1/htdocs
+../../modules/http/vhost-conf tmp/proxy1
+../../modules/http/proxy-conf tmp/proxy1 sca-store.com 8091/80 tmp/proxy1/htdocs
+cp `../../modules/http/ssl-ls tmp/ssl` tmp/proxy1/conf
+../../modules/http/httpd-ssl-conf tmp/proxy1 8093/443
+../../modules/http/vhost-ssl-conf tmp/proxy1
+../../modules/http/proxy-ssl-conf tmp/proxy1
+../../modules/http/proxy-member-conf tmp/proxy1 localhost 8101
+../../modules/http/proxy-ssl-member-conf tmp/proxy1 localhost 8441
+../../modules/http/proxy-member-conf tmp/proxy1 localhost 8102
+../../modules/http/proxy-ssl-member-conf tmp/proxy1 localhost 8442
+../../modules/http/proxy-member-conf tmp/proxy1 localhost 8103
+../../modules/http/proxy-ssl-member-conf tmp/proxy1 localhost 8443
+../../modules/http/httpd-start tmp/proxy1
+
+../../modules/http/httpd-conf tmp/proxy2 sca-store.com 8092/80 tmp/proxy2/htdocs
+../../modules/http/vhost-conf tmp/proxy2
+../../modules/http/proxy-conf tmp/proxy2 sca-store.com 8092/80 tmp/proxy2/htdocs
+cp `../../modules/http/ssl-ls tmp/ssl` tmp/proxy2/conf
+../../modules/http/httpd-ssl-conf tmp/proxy2 8094/443
+../../modules/http/vhost-ssl-conf tmp/proxy2
+../../modules/http/proxy-ssl-conf tmp/proxy2
+../../modules/http/proxy-member-conf tmp/proxy2 localhost 8101
+../../modules/http/proxy-ssl-member-conf tmp/proxy2 localhost 8441
+../../modules/http/proxy-member-conf tmp/proxy2 localhost 8102
+../../modules/http/proxy-ssl-member-conf tmp/proxy2 localhost 8442
+../../modules/http/proxy-member-conf tmp/proxy2 localhost 8103
+../../modules/http/proxy-ssl-member-conf tmp/proxy2 localhost 8443
+../../modules/http/httpd-start tmp/proxy2
+
+# Start a shared memcached
+# Todo change to one per server
+../../components/cache/memcached-start
+
+# Redirect traffic from port 80 to 8091 and use proxy1
+#../../ubuntu/ip-redirect-all 80 8091
+#../../ubuntu/ip-redirect-all 443 8093
+
+# Redirect traffic from port 80 to 8092 and use proxy2
+#../../ubuntu/ip-redirect-all 80 8092
+#../../ubuntu/ip-redirect-all 443 8094
+

@@ -25,13 +25,13 @@ else
 fi
 
 # Ports 80, 443, 8090, 8453 need to be open
-sudo ../../ubuntu/ip-redirect 80 8090
-sudo ../../ubuntu/ip-redirect 443 8453
+sudo ../../ubuntu/ip-redirect-all 80 8090
+sudo ../../ubuntu/ip-redirect-all 443 8453
 
 ../../modules/http/ssl-ca-conf tmp $host
 ../../modules/http/ssl-cert-conf tmp $host
 ../../modules/http/httpd-conf tmp $host 8090/80 htdocs
-../../modules/http/httpd-ssl-conf tmp $host 8453/443 htdocs
+../../modules/http/httpd-ssl-conf tmp 8453/443
 ../../modules/server/server-conf tmp
 ../../modules/python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

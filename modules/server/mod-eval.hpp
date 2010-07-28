@@ -769,9 +769,9 @@ const command_rec commands[] = {
     AP_INIT_TAKE1("SCAVirtualContribution", (const char*(*)())confVirtualContribution, NULL, RSRC_CONF, "SCA virtual host contribution location"),
     AP_INIT_TAKE1("SCAVirtualComposite", (const char*(*)())confVirtualComposite, NULL, RSRC_CONF, "SCA virtual composite location"),
     AP_INIT_TAKE12("SCASetEnv", (const char*(*)())confEnv, NULL, OR_FILEINFO, "Environment variable name and optional value"),
-    AP_INIT_TAKE1("SSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "SSL CA certificate file"),
-    AP_INIT_TAKE1("SSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "SSL certificate file"),
-    AP_INIT_TAKE1("SSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "SSL certificate key file"),
+    AP_INIT_TAKE1("SCAWiringSSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "SCA wiring SSL CA certificate file"),
+    AP_INIT_TAKE1("SCAWiringSSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "SCA wiring SSL certificate file"),
+    AP_INIT_TAKE1("SCAWiringSSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "SCA wiring SSL certificate key file"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 
