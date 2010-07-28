@@ -64,6 +64,7 @@
         <service name="Cache">
             <t:binding.atom uri="cache"/>
         </service>
+        <property name="servers">localhost:11211</property>
     </component>     
 
 </composite>

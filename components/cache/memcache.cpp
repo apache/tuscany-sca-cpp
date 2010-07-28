@@ -112,7 +112,8 @@ private:
  */
 const failable<value> start(unused const list<value>& params) {
     // Connect to memcached
-    memcache::MemCached& ch = *(new (gc_new<memcache::MemCached>()) memcache::MemCached("localhost", 11211));
+    const value servers = ((lambda<value(list<value>)>)car(params))(list<value>());
+    memcache::MemCached& ch = *(new (gc_new<memcache::MemCached>()) memcache::MemCached(tokenize(",", servers)));
 
     // Return the component implementation lambda function
     return value(lambda<value(const list<value>&)>(applyCache(ch)));

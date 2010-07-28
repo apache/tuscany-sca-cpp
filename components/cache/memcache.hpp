@@ -54,7 +54,13 @@ public:
     MemCached(const string host, const int port) : owner(true) {
         apr_pool_create(&pool, NULL);
         apr_memcache_create(pool, 1, 0, &mc);
-        init(host, port);
+        addServer(host, port);
+    }
+
+    MemCached(const list<string>& servers) : owner(true) {
+        apr_pool_create(&pool, NULL);
+        apr_memcache_create(pool, 1, 0, &mc);
+        addServers(servers);
     }
 
     MemCached(const MemCached& c) : owner(false) {
@@ -79,9 +85,9 @@ private:
     friend const failable<bool> del(const value& key, const MemCached& cache);
 
     /**
-     * Initialize the memcached context.
+     * Add servers to the memcached context.
      */
-    const failable<bool> init(const string& host, const int port) {
+    const failable<bool> addServer(const string& host, const int port) {
         apr_memcache_server_t *server;
         const apr_status_t sc = apr_memcache_server_create(pool, c_str(host), (apr_port_t)port, 0, 1, 1, 60, &server);
         if (sc != APR_SUCCESS)
@@ -91,7 +97,28 @@ private:
             return mkfailure<bool>("Could not add server");
         return true;
     }
+
+    const failable<bool> addServers(const list<string>& servers) {
+        if (isNil(servers))
+            return true;
+        const list<string> toks = tokenize(":", car(servers));
+        const failable<bool> r = addServer(car(toks), isNil(cdr(toks))? 11211 : atoi(c_str(cadr(toks))));
+        if (!hasContent(r))
+            return r;
+        return addServers(cdr(servers));
+    }
 };
+
+/**
+ * Replace spaces by tabs (as spaces are not allowed in memcached keys).
+ */
+const char* nospaces(const char* s) {
+    char* c = const_cast<char*>(s);
+    for (; *c; c++)
+        if (*c == ' ')
+            *c = '\t';
+    return s;
+}
 
 /**
  * Post a new item to the cache.
@@ -102,7 +129,7 @@ const failable<bool> post(const value& key, const value& val, const MemCached& c
 
     const string ks(scheme::writeValue(key));
     const string vs(scheme::writeValue(val));
-    const apr_status_t rc = apr_memcache_add(cache.mc, c_str(ks), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
+    const apr_status_t rc = apr_memcache_add(cache.mc, nospaces(c_str(ks)), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not add entry");
 
@@ -119,7 +146,7 @@ const failable<bool> put(const value& key, const value& val, const MemCached& ca
 
     const string ks(scheme::writeValue(key));
     const string vs(scheme::writeValue(val));
-    const apr_status_t rc = apr_memcache_set(cache.mc, c_str(ks), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
+    const apr_status_t rc = apr_memcache_set(cache.mc, nospaces(c_str(ks)), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not set entry");
 
@@ -141,7 +168,7 @@ const failable<value> get(const value& key, const MemCached& cache) {
 
     char *data;
     apr_size_t size;
-    const apr_status_t rc = apr_memcache_getp(cache.mc, cache.pool, c_str(ks), &data, &size, NULL);
+    const apr_status_t rc = apr_memcache_getp(cache.mc, cache.pool, nospaces(c_str(ks)), &data, &size, NULL);
     if (rc != APR_SUCCESS) {
         apr_pool_destroy(vpool);
         return mkfailure<value>("Could not get entry");
@@ -161,7 +188,7 @@ const failable<bool> del(const value& key, const MemCached& cache) {
     debug(key, "memcache::delete::key");
 
     const string ks(scheme::writeValue(key));
-    const apr_status_t rc = apr_memcache_delete(cache.mc, c_str(ks), 0);
+    const apr_status_t rc = apr_memcache_delete(cache.mc, nospaces(c_str(ks)), 0);
     if (rc != APR_SUCCESS)
         return mkfailure<bool>("Could not delete entry");
 

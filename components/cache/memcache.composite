@@ -27,6 +27,7 @@
         <service name="memcache">
             <t:binding.http uri="memcache"/>
         </service>
+        <property name="servers">localhost,localhost:11212,localhost:11213</property>
     </component>     
 
 </composite>

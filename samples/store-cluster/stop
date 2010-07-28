@@ -22,4 +22,6 @@
 ../../modules/http/httpd-stop tmp/server3
 ../../modules/http/httpd-stop tmp/proxy1
 ../../modules/http/httpd-stop tmp/proxy2
-../../components/cache/memcached-stop
+../../components/cache/memcached-stop 11211
+../../components/cache/memcached-stop 11212
+../../components/cache/memcached-stop 11213

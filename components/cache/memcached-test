@@ -18,7 +18,9 @@
 #  under the License.
 
 # Setup
-./memcached-start
+./memcached-start 11211
+./memcached-start 11212
+./memcached-start 11213
 sleep 1
 
 # Test
@@ -26,5 +28,7 @@ sleep 1
 rc=$?
 
 # Cleanup
-./memcached-stop
+./memcached-stop 11211
+./memcached-stop 11212
+./memcached-stop 11213
 return $rc

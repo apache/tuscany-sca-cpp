@@ -99,9 +99,10 @@ cp `../../modules/http/ssl-ls tmp/ssl` tmp/proxy2/conf
 ../../modules/http/proxy-ssl-member-conf tmp/proxy2 localhost 8443
 ../../modules/http/httpd-start tmp/proxy2
 
-# Start a shared memcached
-# Todo change to one per server
-../../components/cache/memcached-start
+# Start three memcached servers
+../../components/cache/memcached-start 11211
+../../components/cache/memcached-start 11212
+../../components/cache/memcached-start 11213
 
 # Redirect traffic from port 80 to 8091 and use proxy1
 #../../ubuntu/ip-redirect-all 80 8091

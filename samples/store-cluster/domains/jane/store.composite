@@ -43,6 +43,8 @@
      
     <component name="ShoppingCart">
         <t:implementation.python script="shopping-cart.py"/>
+        <property name="host">localhost</property>
+        <property name="email">anonymous@localhost</property>
         <service name="ShoppingCart">
             <t:binding.atom uri="shoppingCart"/>
         </service>        
@@ -64,6 +66,7 @@
         <service name="Cache">
             <t:binding.atom uri="cache"/>
         </service>
+        <property name="servers">localhost:11211,localhost:11212,localhost:11213</property>
     </component>     
 
 </composite>

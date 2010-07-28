@@ -19,21 +19,23 @@
 import uuid
 import sys
 
-cartId = "1234"
+# Convert a particular host and user email to a cart id
+def cartid(host, email):
+    return ("cart", host(), email())
 
 # Get the shopping cart from the cache
 # Return an empty cart if not found
 def getcart(id, cache):
-    cart = cache("get", (id,))
+    cart = cache("get", id)
     if cart is None:
         return ()
     return cart
 
 # Post a new item to the cart, create a new cart if necessary
-def post(collection, item, cache):
+def post(collection, item, cache, host, email):
     id = str(uuid.uuid1())
-    cart = ((item[0], id, item[2]),) + getcart(cartId, cache)
-    cache("put", (cartId,), cart)
+    cart = ((item[0], id, item[2]),) + getcart(cartid(host, email), cache)
+    cache("put", cartid(host, email), cart)
     return (id,)
 
 
@@ -47,15 +49,15 @@ def find(id, cart):
         return find(id, cart[1:])
 
 # Get items from the cart
-def get(id, cache):
+def get(id, cache, host, email):
     if id == ():
-        return ("Your Cart", cartId) + getcart(cartId, cache)
-    return find(id[0], getcart(cartId, cache))
+        return ("Your Cart", email()) + getcart(cartid(host, email), cache)
+    return find(id[0], getcart(cartid(host, email), cache))
 
 # Delete items from the  cart
-def delete(id, cache):
+def delete(id, cache, host, email):
     if id == ():
-        return cache("delete", (cartId,))
+        return cache("delete", cartid(host, email))
     return True
 
 # Return the price of an item
@@ -69,7 +71,6 @@ def sum(items):
     return price(items[0]) + sum(items[1:])
 
 # Return the total price of the items in the cart
-def gettotal(cache):
-    cart = getcart(cartId, cache)
-    return sum(cart)
+def gettotal(cache, host, email):
+    return sum(getcart(cartid(host, email), cache))
 

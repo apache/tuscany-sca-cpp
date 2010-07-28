@@ -26,7 +26,9 @@ SCAContribution `pwd`/
 SCAComposite memcache.composite
 EOF
 
-./memcached-start
+./memcached-start 11211
+./memcached-start 11212
+./memcached-start 11213
 ../../modules/http/httpd-start tmp
 sleep 2
 
@@ -36,6 +38,8 @@ rc=$?
 
 # Cleanup
 ../../modules/http/httpd-stop tmp
-./memcached-stop
+./memcached-stop 11211
+./memcached-stop 11212
+./memcached-stop 11213
 sleep 2
 return $rc

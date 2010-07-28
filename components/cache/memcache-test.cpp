@@ -33,7 +33,7 @@ namespace tuscany {
 namespace memcache {
 
 bool testMemCached() {
-    MemCached ch("localhost", 11211);
+    MemCached ch(mklist<string>("localhost:11211", "localhost:11212", "localhost:11213"));
     const value k = mklist<value>("a");
 
     assert(hasContent(post(k, string("AAA"), ch)));
@@ -59,7 +59,7 @@ struct getLoop {
 
 bool testGetPerf() {
     const value k = mklist<value>("c");
-    MemCached ch("localhost", 11211);
+    MemCached ch(mklist<string>("localhost:11211", "localhost:11212", "localhost:11213"));
     assert(hasContent(post(k, string("CCC"), ch)));
 
     const lambda<bool()> gl = getLoop(k, ch);
