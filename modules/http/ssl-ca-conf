@@ -43,10 +43,10 @@ x509_extensions = v3_ca
 C = US
 ST = CA
 L = San Francisco
-O = Test Authority Organization
-OU = Test Authority Unit
+O = $host
+OU = authority
 CN = $host
-emailAddress = root@$host
+emailAddress = admin@$host
 
 [ v3_ca ]
 subjectKeyIdentifier = hash

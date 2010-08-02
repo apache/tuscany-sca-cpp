@@ -21,6 +21,7 @@
 ../../modules/http/ssl-ca-conf tmp/ssl sca-store.com
 ../../modules/http/ssl-cert-conf tmp/ssl sca-store.com server
 ../../modules/http/ssl-cert-conf tmp/ssl *.sca-store.com vhost
+../../modules/http/ssl-cert-conf tmp/ssl sca-store.com proxy
 
 # Start three identical app servers
 ../../modules/http/httpd-conf tmp/server1 sca-store.com 8101/80 htdocs
@@ -28,6 +29,8 @@
 cp `../../modules/http/ssl-ls tmp/ssl` tmp/server1/conf
 ../../modules/http/httpd-ssl-conf tmp/server1 8441/443
 ../../modules/http/vhost-ssl-conf tmp/server1
+../../modules/openid/openid-conf tmp/server1
+../../modules/openid/openid-step2-conf tmp/server1
 ../../modules/server/server-conf tmp/server1
 ../../modules/python/python-conf tmp/server1
 cat >>tmp/server1/conf/httpd.conf <<EOF
@@ -43,6 +46,8 @@ EOF
 cp `../../modules/http/ssl-ls tmp/ssl` tmp/server2/conf
 ../../modules/http/httpd-ssl-conf tmp/server2 8442/443
 ../../modules/http/vhost-ssl-conf tmp/server2
+../../modules/openid/openid-conf tmp/server2
+../../modules/openid/openid-step2-conf tmp/server2
 ../../modules/server/server-conf tmp/server2
 ../../modules/python/python-conf tmp/server2
 cat >>tmp/server2/conf/httpd.conf <<EOF
@@ -58,6 +63,8 @@ EOF
 cp `../../modules/http/ssl-ls tmp/ssl` tmp/server3/conf
 ../../modules/http/httpd-ssl-conf tmp/server3 8443/443
 ../../modules/http/vhost-ssl-conf tmp/server3
+../../modules/openid/openid-conf tmp/server3
+../../modules/openid/openid-step2-conf tmp/server3
 ../../modules/server/server-conf tmp/server3
 ../../modules/python/python-conf tmp/server3
 cat >>tmp/server3/conf/httpd.conf <<EOF

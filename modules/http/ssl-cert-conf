@@ -47,10 +47,10 @@ distinguished_name = req_distinguished_name
 C = US
 ST = CA
 L = San Francisco
-O = Test Organization
-OU = Test Unit
+O = $host
+OU = $certname
 CN = $host
-emailAddress = root@$host
+emailAddress = admin@$host
 EOF
 
 # Generate a certificate request

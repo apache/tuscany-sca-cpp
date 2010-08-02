@@ -44,7 +44,9 @@ cat >$root/conf/httpd.conf <<EOF
 ServerName http://$host:$pport
 PidFile $root/logs/httpd.pid
 
-# Minimal set of modules
+# Load a minimal set of modules, the load order is important
+# (e.g. load mod_headers before mod_rewrite, so its hooks execute
+# after mod_rewrite's hooks)
 LoadModule alias_module ${modules_prefix}/modules/mod_alias.so
 LoadModule authn_file_module ${modules_prefix}/modules/mod_authn_file.so
 LoadModule authn_default_module ${modules_prefix}/modules/mod_authn_default.so
@@ -58,13 +60,14 @@ LoadModule proxy_module ${modules_prefix}/modules/mod_proxy.so
 LoadModule proxy_connect_module ${modules_prefix}/modules/mod_proxy_connect.so
 LoadModule proxy_http_module ${modules_prefix}/modules/mod_proxy_http.so
 LoadModule proxy_balancer_module ${modules_prefix}/modules/mod_proxy_balancer.so
+LoadModule headers_module ${modules_prefix}/modules/mod_headers.so
 LoadModule ssl_module ${modules_prefix}/modules/mod_ssl.so
+LoadModule rewrite_module ${modules_prefix}/modules/mod_rewrite.so
 LoadModule mime_module ${modules_prefix}/modules/mod_mime.so
 LoadModule status_module ${modules_prefix}/modules/mod_status.so
 LoadModule asis_module ${modules_prefix}/modules/mod_asis.so
 LoadModule negotiation_module ${modules_prefix}/modules/mod_negotiation.so
 LoadModule dir_module ${modules_prefix}/modules/mod_dir.so
-LoadModule rewrite_module ${modules_prefix}/modules/mod_rewrite.so
 LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
 <IfModule !log_config_module>
 LoadModule log_config_module ${modules_prefix}/modules/mod_log_config.so
@@ -80,17 +83,17 @@ Timeout 45
 LimitRequestBody 1048576
 HostNameLookups Off
 
-# Logging
+# Log HTTP requests
+LogLevel info
 ErrorLog $root/logs/error_log
 LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" combined
 CustomLog $root/logs/access_log combined
-LogLevel warn
 
 # Configure Mime types
 DefaultType text/plain
 TypesConfig $here/conf/mime.types
 
-# Set document root
+# Set default document root
 DocumentRoot $htdocs
 DirectoryIndex index.html
 
@@ -113,16 +116,17 @@ Options FollowSymLinks
 Allow from all
 </Directory>
 
-# Allow access to service components
+# Allow access to root location
 <Location />
 Options FollowSymLinks
 Order deny,allow  
 Allow from all
 </Location>
 
-# Setup HTTP virtual host
+# Listen on HTTP port
 Listen $port
 
+# Setup HTTP virtual host
 <VirtualHost *:$port>
 ServerName http://$host:$pport
 

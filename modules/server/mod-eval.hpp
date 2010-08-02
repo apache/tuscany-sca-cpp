@@ -612,8 +612,9 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
         return OK;
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_eval);
     debug(httpd::serverName(s), "modeval::postConfigMerge::serverName");
-    if (sc.wiringServerName == "") sc.wiringServerName = httpd::serverName(s);
-    debug(httpd::serverName(s), "modeval::postConfigMerge::wiringServerName");
+    if (sc.wiringServerName == "")
+        sc.wiringServerName = mainsc.wiringServerName != ""? mainsc.wiringServerName : httpd::serverName(s);
+    debug(sc.wiringServerName, "modeval::postConfigMerge::wiringServerName");
     sc.contributionPath = mainsc.contributionPath;
     sc.compositeName = mainsc.compositeName;
     sc.virtualHostContributionPath = mainsc.virtualHostContributionPath;

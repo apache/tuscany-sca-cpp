@@ -18,7 +18,10 @@
 #  under the License.
 
 # Setup
+../../modules/http/ssl-ca-conf tmp localhost
+../../modules/http/ssl-cert-conf tmp localhost
 ../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/http/httpd-ssl-conf tmp 8453
 ./openid-conf tmp
 ./openid-step2-conf tmp
 ../../modules/server/server-conf tmp
