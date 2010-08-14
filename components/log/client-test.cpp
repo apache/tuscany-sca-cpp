@@ -31,7 +31,7 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "perf.hpp"
-#include "../../modules/http/curl.hpp"
+#include "../../modules/http/http.hpp"
 
 namespace tuscany {
 namespace log {

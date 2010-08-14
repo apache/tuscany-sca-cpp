@@ -19,8 +19,8 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_curl_hpp
-#define tuscany_curl_hpp
+#ifndef tuscany_http_hpp
+#define tuscany_http_hpp
 
 /**
  * CURL HTTP client functions.
@@ -30,6 +30,10 @@
 #include <curl/curl.h>
 #include <curl/types.h>
 #include <curl/easy.h>
+#include <apr_network_io.h>
+#include <apr_portable.h>
+#include <apr_poll.h>
+
 #include "string.hpp"
 #include "gc.hpp"
 #include "list.hpp"
@@ -59,10 +63,10 @@ public:
  */
 class CURLSession {
 public:
-    CURLSession(const string& ca = "", const string& cert = "", const string& key = "") : h(curl_easy_init()), owner(true), ca(ca), cert(cert), key(key) {
+    CURLSession(const string& ca = "", const string& cert = "", const string& key = "") : h(curl_easy_init()), p(gc_pool(mkpool())), sock(NULL), wpollset(NULL), wpollfd(NULL), rpollset(NULL), rpollfd(NULL), owner(true), ca(ca), cert(cert), key(key) {
     }
 
-    CURLSession(const CURLSession& c) : h(c.h), owner(false), ca(c.ca), cert(c.cert), key(c.key) {
+    CURLSession(const CURLSession& c) : h(c.h), p(c.p), sock(c.sock), wpollset(c.wpollset), wpollfd(c.wpollfd), rpollset(c.rpollset), rpollfd(c.rpollfd), owner(false), ca(c.ca), cert(c.cert), key(c.key) {
     }
 
     ~CURLSession() {
@@ -71,13 +75,24 @@ public:
         if (h == NULL)
             return;
         curl_easy_cleanup(h);
+        destroy(p);
     }
 
 private:
     CURL* h;
+    gc_pool p;
+    apr_socket_t* sock;
+    apr_pollset_t* wpollset;
+    apr_pollfd_t* wpollfd;
+    apr_pollset_t* rpollset;
+    apr_pollfd_t* rpollfd;
     const bool owner;
 
-    friend CURL* handle(const CURLSession& c);
+    friend CURL* handle(const CURLSession& cs);
+    friend apr_socket_t* sock(const CURLSession& cs);
+    friend const failable<bool> connect(const string& url, CURLSession& cs);
+    friend const failable<bool> send(const char* c, const int l, const CURLSession& cs);
+    friend const failable<int> recv(char* c, const int l, const CURLSession& cs);
 
 public:
     const string ca;
@@ -88,8 +103,80 @@ public:
 /**
  * Returns the CURL handle used by a CURL session.
  */
-CURL* handle(const CURLSession& c) {
-    return c.h;
+CURL* handle(const CURLSession& cs) {
+    return cs.h;
+}
+
+/**
+ * Return an apr_socket_t for the socket used by a CURL session.
+ */
+apr_socket_t* sock(const CURLSession& cs) {
+    return cs.sock;
+}
+
+/**
+ * Convert a socket fd to an apr_socket_t.
+ */
+apr_socket_t* sock(const int sd, const gc_pool& p) {
+    int fd = sd;
+    apr_socket_t* s = NULL;
+    apr_os_sock_put(&s, &fd, pool(p));
+    return s;
+}
+
+/**
+ * Convert a CURL return code to an error string.
+ */
+const string curlreason(CURLcode rc) {
+    return curl_easy_strerror(rc);
+}
+
+/**
+ * Convert an APR status to an error string.
+ */
+const string apreason(apr_status_t rc) {
+    char buf[256];
+    return apr_strerror(rc, buf, sizeof(buf));
+}
+
+/**
+ * Setup a CURL session
+ */
+const failable<CURL*> setup(const string& url, const CURLSession& cs) {
+
+    // Init CURL session
+    CURL* ch = handle(cs);
+    curl_easy_reset(ch);
+    curl_easy_setopt(ch, CURLOPT_USERAGENT, "libcurl/1.0");
+
+    // Setup protocol options
+    curl_easy_setopt(ch, CURLOPT_TCP_NODELAY, true);
+    curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_easy_setopt(ch, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
+
+    // Setup SSL options
+    if (cs.ca != "") {
+        debug(cs.ca, "http::apply::ca");
+        curl_easy_setopt(ch, CURLOPT_CAINFO, c_str(cs.ca));
+        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYHOST, 2);
+    } else
+        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
+    if (cs.cert != "") {
+        debug(cs.cert, "http::apply::cert");
+        curl_easy_setopt(ch, CURLOPT_SSLCERT, c_str(cs.cert));
+        curl_easy_setopt(ch, CURLOPT_SSLCERTTYPE, "PEM");
+    }
+    if (cs.key != "") {
+        debug(cs.key, "http::apply::key");
+        curl_easy_setopt(ch, CURLOPT_SSLKEY, c_str(cs.key));
+        curl_easy_setopt(ch, CURLOPT_SSLKEYTYPE, "PEM");
+    }
+
+    // Set target URL
+    curl_easy_setopt(ch, CURLOPT_URL, c_str(url));
+
+    return ch;
 }
 
 /**
@@ -149,18 +236,25 @@ curl_slist* headers(curl_slist* cl, const list<string>& h) {
 
 template<typename R> const failable<list<R> > apply(const list<list<string> >& hdr, const lambda<R(const string&, const R)>& reduce, const R& initial, const string& url, const string& verb, const CURLSession& cs) {
 
-    // Init the curl session
-    CURL* ch = handle(cs);
-    curl_easy_reset(ch);
-    curl_easy_setopt(ch, CURLOPT_USERAGENT, "libcurl/1.0");
+    // Setup the CURL session
+    const failable<CURL*> fch = setup(url, cs);
+    if (!hasContent(fch))
+        return mkfailure<list<R>>(reason(fch));
+    CURL* ch = content(fch);
 
-    //TODO use HTTP chunking, for now just convert request to a single string
+    // Set the request headers
+    curl_slist* hl = headers(NULL, car(hdr));
+    if (hl != NULL)
+        curl_easy_setopt(ch, CURLOPT_HTTPHEADER, hl);
+
+    // Convert request body to a string
+    // TODO use HTTP chunking instead
     ostringstream os;
     write(cadr(hdr), os);
     const string s = str(os);
     const int sz = length(s);
 
-    // Setup the read, header and write callbacks
+    // Setup the read, write header and write data callbacks
     CURLReadContext rcx(mklist(s));
     curl_easy_setopt(ch, CURLOPT_READFUNCTION, (size_t (*)(void*, size_t, size_t, void*))readCallback);
     curl_easy_setopt(ch, CURLOPT_READDATA, &rcx);
@@ -171,36 +265,7 @@ template<typename R> const failable<list<R> > apply(const list<list<string> >& h
     curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, (size_t (*)(void*, size_t, size_t, void*))(writeCallback<R>));
     curl_easy_setopt(ch, CURLOPT_WRITEDATA, &wcx);
 
-    // Setup protocol options
-    curl_easy_setopt(ch, CURLOPT_TCP_NODELAY, true);
-    curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_easy_setopt(ch, CURLOPT_POSTREDIR, CURL_REDIR_POST_ALL);
-
-    // Setup SSL options
-    if (cs.ca != "") {
-        debug(cs.ca, "http::apply::ca");
-        curl_easy_setopt(ch, CURLOPT_CAINFO, c_str(cs.ca));
-        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, true);
-        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYHOST, 2);
-    }
-    if (cs.cert != "") {
-        debug(cs.cert, "http::apply::cert");
-        curl_easy_setopt(ch, CURLOPT_SSLCERT, c_str(cs.cert));
-        curl_easy_setopt(ch, CURLOPT_SSLCERTTYPE, "PEM");
-    }
-    if (cs.key != "") {
-        debug(cs.key, "http::apply::key");
-        curl_easy_setopt(ch, CURLOPT_SSLKEY, c_str(cs.key));
-        curl_easy_setopt(ch, CURLOPT_SSLKEYTYPE, "PEM");
-    }
-
-    // Set the request headers
-    curl_slist* hl = headers(NULL, car(hdr));
-    if (hl != NULL)
-        curl_easy_setopt(ch, CURLOPT_HTTPHEADER, hl);
-
     // Apply the HTTP verb
-    curl_easy_setopt(ch, CURLOPT_URL, c_str(url));
     if (verb == "POST") {
         curl_easy_setopt(ch, CURLOPT_POST, true);
         curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, sz);
@@ -211,6 +276,7 @@ template<typename R> const failable<list<R> > apply(const list<list<string> >& h
         curl_easy_setopt(ch, CURLOPT_CUSTOMREQUEST, "DELETE");
     const CURLcode rc = curl_easy_perform(ch);
 
+    // Free the headers
     if (hl != NULL)
         curl_slist_free_all(hl);
 
@@ -230,7 +296,7 @@ template<typename R> const failable<list<R> > apply(const list<list<string> >& h
 /**
  * Evaluate an expression remotely, at the given URL.
  */
-const failable<value> evalExpr(const value& expr, const string& url, const CURLSession& ch) {
+const failable<value> evalExpr(const value& expr, const string& url, const CURLSession& cs) {
     debug(url, "http::evalExpr::url");
     debug(expr, "http::evalExpr::input");
 
@@ -242,7 +308,7 @@ const failable<value> evalExpr(const value& expr, const string& url, const CURLS
 
     // POST it to the URL
     const list<string> h = mklist<string>("Content-Type: application/json-rpc");
-    const failable<list<list<string> > > res = apply<list<string> >(mklist<list<string> >(h, content(jsreq)), rcons<string>, list<string>(), url, "POST", ch);
+    const failable<list<list<string> > > res = apply<list<string> >(mklist<list<string> >(h, content(jsreq)), rcons<string>, list<string>(), url, "POST", cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
 
@@ -294,20 +360,20 @@ const failable<string> contentType(const list<string>& h) {
 /**
  * HTTP GET, return the resource at the given URL.
  */
-template<typename R> const failable<list<R> > get(const lambda<R(const string&, const R)>& reduce, const R& initial, const string& url, const CURLSession& ch) {
+template<typename R> const failable<list<R> > get(const lambda<R(const string&, const R)>& reduce, const R& initial, const string& url, const CURLSession& cs) {
     debug(url, "http::get::url");
     const list<list<string> > req = mklist(list<string>(), list<string>());
-    return apply(req, reduce, initial, url, "GET", ch);
+    return apply(req, reduce, initial, url, "GET", cs);
 }
 
 /**
  * HTTP GET, return a list of values representing the resource at the given URL.
  */
-const failable<value> getcontent(const string& url, const CURLSession& ch) {
+const failable<value> getcontent(const string& url, const CURLSession& cs) {
     debug(url, "http::get::url");
 
     // Get the contents of the resource at the given URL
-    const failable<list<list<string> > > res = get<list<string>>(rcons<string>, list<string>(), url, ch);
+    const failable<list<list<string> > > res = get<list<string>>(rcons<string>, list<string>(), url, cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
     const list<string> ls(reverse(cadr(content(res))));
@@ -321,11 +387,11 @@ const failable<value> getcontent(const string& url, const CURLSession& ch) {
 /**
  * HTTP GET, return a list of values representing the resource at the given URL.
  */
-const failable<value> get(const string& url, const CURLSession& ch) {
+const failable<value> get(const string& url, const CURLSession& cs) {
     debug(url, "http::get::url");
 
     // Get the contents of the resource at the given URL
-    const failable<list<list<string> > > res = get<list<string> >(rcons<string>, list<string>(), url, ch);
+    const failable<list<list<string> > > res = get<list<string> >(rcons<string>, list<string>(), url, cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
     const list<string> ls(reverse(cadr(content(res))));
@@ -359,7 +425,7 @@ const failable<value> get(const string& url, const CURLSession& ch) {
 /**
  * HTTP POST.
  */
-const failable<value> post(const value& val, const string& url, const CURLSession& ch) {
+const failable<value> post(const value& val, const string& url, const CURLSession& cs) {
 
     // Convert value to an ATOM entry
     const failable<list<string> > entry = atom::writeATOMEntry(atom::entryValuesToElements(val));
@@ -371,7 +437,7 @@ const failable<value> post(const value& val, const string& url, const CURLSessio
     // POST it to the URL
     const list<string> h = mklist<string>("Content-Type: application/atom+xml");
     const list<list<string> > req = mklist<list<string> >(h, content(entry));
-    const failable<list<list<string> > > res = apply<list<string>>(req, rcons<string>, list<string>(), url, "POST", ch);
+    const failable<list<list<string> > > res = apply<list<string>>(req, rcons<string>, list<string>(), url, "POST", cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
 
@@ -384,7 +450,7 @@ const failable<value> post(const value& val, const string& url, const CURLSessio
 /**
  * HTTP PUT.
  */
-const failable<value> put(const value& val, const string& url, const CURLSession& ch) {
+const failable<value> put(const value& val, const string& url, const CURLSession& cs) {
 
     // Convert value to an ATOM entry
     const failable<list<string> > entry = atom::writeATOMEntry(atom::entryValuesToElements(val));
@@ -396,7 +462,7 @@ const failable<value> put(const value& val, const string& url, const CURLSession
     // PUT it to the URL
     const list<string> h = mklist<string>("Content-Type: application/atom+xml");
     const list<list<string> > req = mklist<list<string> >(h, content(entry));
-    const failable<list<list<string> > > res = apply<list<string> >(req, rcons<string>, list<string>(), url, "PUT", ch);
+    const failable<list<list<string> > > res = apply<list<string> >(req, rcons<string>, list<string>(), url, "PUT", cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
 
@@ -407,11 +473,11 @@ const failable<value> put(const value& val, const string& url, const CURLSession
 /**
  * HTTP DELETE.
  */
-const failable<value, string> del(const string& url, const CURLSession& ch) {
+const failable<value, string> del(const string& url, const CURLSession& cs) {
     debug(url, "http::delete::url");
 
     const list<list<string> > req = mklist(list<string>(), list<string>());
-    const failable<list<list<string> > > res = apply<list<string> >(req, rcons<string>, list<string>(), url, "DELETE", ch);
+    const failable<list<list<string> > > res = apply<list<string> >(req, rcons<string>, list<string>(), url, "DELETE", cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
 
@@ -427,6 +493,109 @@ const string hostname() {
     if (gethostname(h, 256) == -1)
         return "localhost";
     return h;
+}
+
+/**
+ * Create an APR pollfd for a socket.
+ */
+apr_pollfd_t* pollfd(apr_socket_t* s, const int e, const gc_pool& p) {
+    apr_pollfd_t* pfd = gc_new<apr_pollfd_t>(p);
+    pfd->p = pool(p);
+    pfd->desc_type = APR_POLL_SOCKET;
+    pfd->reqevents = (apr_int16_t)e;
+    pfd->rtnevents = (apr_int16_t)e;
+    pfd->desc.s = s;
+    pfd->client_data = NULL;
+    return pfd;
+}
+
+/**
+ * Connect to a URL.
+ */
+const failable<bool> connect(const string& url, CURLSession& cs) {
+
+    // Setup the CURL session
+    const failable<CURL*> fch = setup(url, cs);
+    if (!hasContent(fch))
+        return mkfailure<bool>(reason(fch));
+    CURL* ch = content(fch);
+
+    // Connect
+    curl_easy_setopt(ch, CURLOPT_CONNECT_ONLY, true);
+    const CURLcode rc = curl_easy_perform(ch);
+    if (rc)
+        return mkfailure<bool>(string(curl_easy_strerror(rc)));
+
+    // Convert the connected socket to an apr_socket_t
+    int sd;
+    const CURLcode grc = curl_easy_getinfo(ch, CURLINFO_LASTSOCKET, &sd);
+    if (grc)
+        return mkfailure<bool>(string(curl_easy_strerror(grc)));
+    cs.sock = sock(sd, cs.p);
+
+    // Create pollsets and pollfds which can be used to poll the socket
+    apr_status_t rpcrc = apr_pollset_create(&cs.rpollset, 1, pool(cs.p), 0);
+    if (rpcrc != APR_SUCCESS)
+        return mkfailure<bool>(apreason(rpcrc));
+    cs.rpollfd = pollfd(cs.sock, APR_POLLIN, cs.p);
+    apr_pollset_add(cs.rpollset, cs.rpollfd);
+    apr_status_t wpcrc = apr_pollset_create(&cs.wpollset, 1, pool(cs.p), 0);
+    if (wpcrc != APR_SUCCESS)
+        return mkfailure<bool>(apreason(wpcrc));
+    cs.wpollfd = pollfd(cs.sock, APR_POLLOUT, cs.p);
+    apr_pollset_add(cs.wpollset, cs.wpollfd);
+
+    return true;
+}
+
+/**
+ * Send an array of chars.
+ */
+const failable<bool> send(const char* c, const int l, const CURLSession& cs) {
+
+    // Send the data
+    size_t wl = 0;
+    const CURLcode rc = curl_easy_send(cs.h, c, (size_t)l, &wl);
+    if (rc == CURLE_OK && wl == (size_t)l)
+        return true;
+    if (rc != CURLE_AGAIN)
+        return mkfailure<bool>(curlreason(rc));
+
+    // If the socket was not ready, wait for it to become ready
+    const apr_pollfd_t* pollfds;
+    apr_int32_t pollcount;
+    apr_status_t pollrc = apr_pollset_poll(cs.wpollset, -1, &pollcount, &pollfds);
+    if (pollrc != APR_SUCCESS)
+        return mkfailure<bool>(apreason(pollrc));
+
+    // Send what's left
+    return send(c + wl, (int)((size_t)l - wl), cs);
+}
+
+/**
+ * Receive an array of chars.
+ */
+const failable<int> recv(char* c, const int l, const CURLSession& cs) {
+
+    // Receive data
+    size_t rl;
+    const CURLcode rc = curl_easy_recv(cs.h, c, (size_t)l, &rl);
+    if (rc == CURLE_OK)
+        return (int)rl;
+    if (rc == 1)
+        return 0;
+    if (rc != CURLE_AGAIN)
+        return mkfailure<int>(curlreason(rc));
+
+    // If the socket was not ready, wait for it to become ready
+    const apr_pollfd_t* pollfds;
+    apr_int32_t pollcount;
+    apr_status_t pollrc = apr_pollset_poll(cs.rpollset, -1, &pollcount, &pollfds);
+    if (pollrc != APR_SUCCESS)
+        return mkfailure<int>(apreason(pollrc));
+
+    // Receive again
+    return recv(c, l, cs);
 }
 
 /**
@@ -453,4 +622,4 @@ struct proxy {
 }
 }
 
-#endif /* tuscany_curl_hpp */
+#endif /* tuscany_http_hpp */

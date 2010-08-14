@@ -21,6 +21,7 @@
 ../../modules/http/ssl-cert-conf tmp localhost
 ../../modules/http/httpd-conf tmp localhost 8090 htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
+../../modules/http/httpd-auth-conf tmp
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,22 +17,38 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
-if WANT_SQLDB
-if WANT_OPENID
-if WANT_LOG
-if WANT_QUEUE
+# Parse a string in the form ip-addr:local-port/public-port
+addr=`echo $2 | awk -F "/" '{ print $1 }'`
+ip=`echo $addr | awk -F ":" '{ print $1 }'`
+port=`echo $addr | awk -F ":" '{ print $2 }'`
+if [ "$port" = "" ]; then
+    port=$ip
+    ip=""
+    listen=$port
+    vhost="*:$port"
+else
+    listen="$ip:$port"
+    vhost="$ip:$port"
+fi
+pport=`echo $2 | awk -F "/" '{ print $2 }'`
+if [ "$pport" = "" ]; then
+    pport=$port
+fi
 
-dist_sample_SCRIPTS = start stop ssl-start ssl-stop proxy-conf proxy-ssl-conf server-conf server-ssl-conf tunnel-ssl-conf
-sampledir = $(prefix)/samples/store-cluster
-
-nobase_dist_sample_DATA = htdocs/*.html htdocs/domains/*/*.html domains/*/*.py domains/*/*.composite
-
-dist_noinst_SCRIPTS = server-test
-#TESTS = server-test
-
-endif
-endif
-endif
-endif
-endif
+# Return the requested part
+if [ "$1" = "ip" ]; then
+    echo $ip
+fi
+if [ "$1" = "port" ]; then
+    echo $port
+fi
+if [ "$1" = "pport" ]; then
+    echo $pport
+fi
+if [ "$1" = "listen" ]; then
+    echo $listen
+fi
+if [ "$1" = "vhost" ]; then
+    echo $vhost
+fi
+return 0

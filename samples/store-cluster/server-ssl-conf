@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,22 +17,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
-if WANT_SQLDB
-if WANT_OPENID
-if WANT_LOG
-if WANT_QUEUE
+root=$1
+port=$2
+sslport=$3
 
-dist_sample_SCRIPTS = start stop ssl-start ssl-stop proxy-conf proxy-ssl-conf server-conf server-ssl-conf tunnel-ssl-conf
-sampledir = $(prefix)/samples/store-cluster
+# Configure an SSL-enabled app server
+../../modules/http/httpd-conf $root sca-store.com $port/80 htdocs
+../../modules/http/vhost-conf $root
+tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
+../../modules/http/httpd-ssl-conf $root $sslport/443
+../../modules/http/vhost-ssl-conf $root
+../../modules/openid/openid-conf $root
+../../modules/openid/openid-step2-conf $root
+../../modules/server/server-conf $root
+../../modules/python/python-conf $root
+cat >>$root/conf/httpd.conf <<EOF
+# Configure SCA Composite for mass dynamic virtual hosting
+SCAVirtualContribution `pwd`/domains/
+SCAVirtualComposite store.composite
 
-nobase_dist_sample_DATA = htdocs/*.html htdocs/domains/*/*.html domains/*/*.py domains/*/*.composite
+EOF
 
-dist_noinst_SCRIPTS = server-test
-#TESTS = server-test
-
-endif
-endif
-endif
-endif
-endif

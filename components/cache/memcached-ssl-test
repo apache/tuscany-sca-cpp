@@ -1,0 +1,52 @@
+#!/bin/sh
+
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Setup
+../../modules/http/ssl-ca-conf tmp/ssl localhost
+../../modules/http/ssl-cert-conf tmp/ssl localhost server
+../../modules/http/ssl-cert-conf tmp/ssl localhost tunnel
+
+./memcached-start 11411
+./memcached-start 11412
+./memcached-start 11413
+
+../../modules/http/httpd-conf tmp/tunnel localhost 8089 htdocs
+tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C tmp/tunnel -x
+../../modules/http/tunnel-ssl-conf tmp/tunnel 11211 localhost 8453 11411
+../../modules/http/tunnel-ssl-conf tmp/tunnel 11212 localhost 8453 11412
+../../modules/http/tunnel-ssl-conf tmp/tunnel 11213 localhost 8453 11413
+../../modules/http/httpd-start tmp/tunnel
+
+../../modules/http/httpd-conf tmp/server localhost 8090 htdocs
+tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C tmp/server -x
+../../modules/http/httpd-ssl-conf tmp/server 8453
+../../modules/http/httpd-start tmp/server
+sleep 1
+
+# Test
+./memcache-test 2>/dev/null
+rc=$?
+
+# Cleanup
+../../modules/http/httpd-stop tmp/tunnel
+../../modules/http/httpd-stop tmp/server
+./memcached-stop 11411
+./memcached-stop 11412
+./memcached-stop 11413
+return $rc

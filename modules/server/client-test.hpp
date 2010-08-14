@@ -31,7 +31,7 @@
 #include "string.hpp"
 #include "parallel.hpp"
 #include "perf.hpp"
-#include "../http/curl.hpp"
+#include "../http/http.hpp"
 
 namespace tuscany {
 namespace server {

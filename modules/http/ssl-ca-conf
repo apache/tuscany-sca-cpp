@@ -21,17 +21,18 @@
 here=`readlink -f $0`; here=`dirname $here`
 mkdir -p $1
 root=`readlink -f $1`
+
 host=$2
 
 # Don't override existing certificate
-if [ -f $root/conf/ca.crt ]; then
+if [ -f $root/cert/ca.crt ]; then
     return 0
 fi
 
 # Generate openssl configuration
-mkdir -p $root/conf
+mkdir -p $root/cert
 umask 0007
-cat >$root/conf/openssl-ca.conf <<EOF
+cat >$root/cert/openssl-ca.conf <<EOF
 [ req ]
 default_bits = 1024
 encrypt_key = no
@@ -57,11 +58,11 @@ basicConstraints = CA:true
 default_ca = ca_default
 
 [ca_default]
-certificate = $root/conf/ca.crt
-private_key = $root/conf/ca.key
-serial = $root/conf/ca-serial
-database = $root/conf/ca-database
-new_certs_dir = $root/conf
+certificate = $root/cert/ca.crt
+private_key = $root/cert/ca.key
+serial = $root/cert/ca-serial
+database = $root/cert/ca-database
+new_certs_dir = $root/cert
 default_md = sha1
 email_in_dn = no
 default_days = 365
@@ -80,11 +81,16 @@ emailAddress = optional
 
 EOF
 
-rm -rf $root/conf/*.pem
-rm -f $root/conf/ca-database
-echo 1000 > $root/conf/ca-serial
-touch $root/conf/ca-database
+rm -rf $root/cert/*.crt $root/cert/*.pem $root/cert/hash
+rm -f $root/cert/ca-database
+echo 1000 > $root/cert/ca-serial
+touch $root/cert/ca-database
 
 # Generate the certification authority certificate
-openssl req -new -x509 -config $root/conf/openssl-ca.conf -out $root/conf/ca.crt -keyout $root/conf/ca.key
+openssl req -new -x509 -config $root/cert/openssl-ca.conf -out $root/cert/ca.crt -keyout $root/cert/ca.key
+
+# Add to the hash directory and rehash
+mkdir -p $root/cert/hash
+cp $root/cert/ca.crt $root/cert/hash
+c_rehash $root/cert/hash
 

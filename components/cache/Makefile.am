@@ -39,6 +39,6 @@ memcache_test_LDFLAGS = -lxml2
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-dist_noinst_SCRIPTS = memcached-test server-test
+dist_noinst_SCRIPTS = memcached-test memcached-ssl-test server-test
 noinst_PROGRAMS = memcache-test client-test
-TESTS = memcached-test server-test
+TESTS = memcached-test memcached-ssl-test server-test

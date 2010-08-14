@@ -32,7 +32,7 @@
 #include "monad.hpp"
 #include "perf.hpp"
 #include "parallel.hpp"
-#include "../../modules/http/curl.hpp"
+#include "../../modules/http/http.hpp"
 #include "xmpp.hpp"
 
 namespace tuscany {

@@ -112,7 +112,17 @@ private:
 };
 
 /**
- * Return APR pool used by a gc_pool.
+ * Make a new APR pool.
+ */
+apr_pool_t* mkpool() {
+    apr_pool_t* p = NULL;
+    apr_pool_create(&p, NULL);
+    assert(p != NULL);
+    return p;
+}
+
+/**
+ * Return the APR pool used by a gc_pool.
  */
 apr_pool_t* pool(const gc_pool& pool) {
     return pool.apr_pool;

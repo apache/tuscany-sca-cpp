@@ -89,7 +89,7 @@ private:
      */
     const failable<bool> addServer(const string& host, const int port) {
         apr_memcache_server_t *server;
-        const apr_status_t sc = apr_memcache_server_create(pool, c_str(host), (apr_port_t)port, 0, 1, 1, 60, &server);
+        const apr_status_t sc = apr_memcache_server_create(pool, c_str(host), (apr_port_t)port, 1, 1, 1, 600, &server);
         if (sc != APR_SUCCESS)
             return mkfailure<bool>("Could not create server");
         const apr_status_t as = apr_memcache_add_server(mc, server);
@@ -161,21 +161,13 @@ const failable<value> get(const value& key, const MemCached& cache) {
     debug(key, "memcache::get::key");
 
     const string ks(scheme::writeValue(key));
-    apr_pool_t* vpool;
-    const apr_status_t pc = apr_pool_create(&vpool, cache.pool);
-    if (pc != APR_SUCCESS)
-        return mkfailure<value>("Could not allocate memory");
-
     char *data;
     apr_size_t size;
     const apr_status_t rc = apr_memcache_getp(cache.mc, cache.pool, nospaces(c_str(ks)), &data, &size, NULL);
     if (rc != APR_SUCCESS) {
-        apr_pool_destroy(vpool);
         return mkfailure<value>("Could not get entry");
     }
-
     const value val(scheme::readValue(string(data, size)));
-    apr_pool_destroy(vpool);
 
     debug(val, "memcache::get::result");
     return val;

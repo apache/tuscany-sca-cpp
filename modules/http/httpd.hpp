@@ -26,24 +26,25 @@
  * HTTPD module implementation functions.
  */
 
-#include "apr_strings.h"
-#include "apr_fnmatch.h"
-#include "apr_lib.h"
+#include <apr_strings.h>
+#include <apr_fnmatch.h>
+#include <apr_lib.h>
 #define APR_WANT_STRFUNC
-#include "apr_want.h"
+#include <apr_want.h>
 
-#include "httpd.h"
-#include "http_config.h"
-#include "http_core.h"
-#include "http_request.h"
-#include "http_protocol.h"
-#include "http_log.h"
-#include "http_main.h"
-#include "util_script.h"
-#include "util_md5.h"
-#include "http_config.h"
-#include "ap_mpm.h"
-#include "mod_core.h"
+#include <httpd.h>
+#include <http_config.h>
+#include <http_core.h>
+#include <http_connection.h>
+#include <http_request.h>
+#include <http_protocol.h>
+#include <http_log.h>
+#include <http_main.h>
+#include <util_script.h>
+#include <util_md5.h>
+#include <http_config.h>
+#include <ap_mpm.h>
+#include <mod_core.h>
 
 #include "string.hpp"
 #include "stream.hpp"
@@ -131,65 +132,12 @@ const bool isVirtualHostRequest(const server_rec* s, request_rec* r) {
 /**
  * Return the content type of a request.
  */
-const char* optional(const char* s) {
-    if (s == NULL)
-        return "";
-    return s;
-}
-
 const string contentType(const request_rec* r) {
-    return optional(apr_table_get(r->headers_in, "Content-Type"));
+    const char* ct = apr_table_get(r->headers_in, "Content-Type");
+    if (ct == NULL)
+        return "";
+    return ct;
 }
-
-#ifdef WANT_MAINTAINER_MODE
-
-/**
- * Debug log.
- */
-int debugHeader(unused void* r, const char* key, const char* value) {
-    cerr << "  header key: " << key << ", value: " << value << endl;
-    return 1;
-}
-
-int debugEnv(unused void* r, const char* key, const char* value) {
-    cerr << "  var key: " << key << ", value: " << value << endl;
-    return 1;
-}
-
-int debugNote(unused void* r, const char* key, const char* value) {
-    cerr << "  note key: " << key << ", value: " << value << endl;
-    return 1;
-}
-
-const bool debugRequest(request_rec* r, const string& msg) {
-    cerr << msg << ":" << endl;
-    cerr << "  server: " << optional(r->server->server_hostname) << endl;
-    cerr << "  protocol: " << optional(r->protocol) << endl;
-    cerr << "  method: " << optional(r->method) << endl;
-    cerr << "  method number: " << r->method_number << endl;
-    cerr << "  content type: " << contentType(r) << endl;
-    cerr << "  content encoding: " << optional(r->content_encoding) << endl;
-    apr_table_do(debugHeader, r, r->headers_in, NULL);
-    cerr << "  unparsed uri: " << optional(r->unparsed_uri) << endl;
-    cerr << "  uri: " << optional(r->uri) << endl;
-    cerr << "  path info: " << optional(r->path_info) << endl;
-    cerr << "  filename: " << optional(r->filename) << endl;
-    cerr << "  uri tokens: " << pathTokens(r->uri) << endl;
-    cerr << "  args: " << optional(r->args) << endl;
-    cerr << "  user: " << optional(r->user) << endl;
-    cerr << "  auth type: " << optional(r->ap_auth_type) << endl;
-    apr_table_do(debugEnv, r, r->subprocess_env, NULL);
-    apr_table_do(debugEnv, r, r->notes, NULL);
-    return true;
-}
-
-#define httpdDebugRequest(r, msg) httpd::debugRequest(r, msg)
-
-#else
-
-#define httpdDebugRequest(r, msg)
-
-#endif
 
 /**
  * Return the remaining part of a uri after the given path (aka the path info.)
@@ -213,19 +161,6 @@ const list<list<value> > queryArgs(const request_rec* r) {
     if (a == NULL)
         return list<list<value> >();
     return map<string, list<value>>(queryArg, tokenize("&", a));
-}
-
-/**
- * Returns a list of param values other than the id and method args from a list
- * of key value pairs.
- */
-const list<value> queryParams(const list<list<value> >& a) {
-    if (isNil(a))
-        return list<value>();
-    const list<value> p = car(a);
-    if (car(p) == value("id") || car(p) == value("method"))
-        return queryParams(cdr(a));
-    return cons(cadr(p), queryParams(cdr(a)));
 }
 
 /**
@@ -303,7 +238,7 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
 }
 
 /**
- * Report request execution status.
+ * Report a request execution status.
  */
 const int reportStatus(const failable<int>& rc) {
     if (!hasContent(rc))
@@ -337,7 +272,7 @@ const value requestValue(request_rec* r) {
 }
 
 /**
- * Update filters in an HTTPD redirect request.
+ * Update request filters  in an HTTPD redirect request.
  * Similar to httpd/modules/http/http_request.c::update_r_in_filters.
  */
 const bool redirectFilters(ap_filter_t* f, request_rec* from, request_rec* to) {
@@ -467,6 +402,62 @@ const void* userData(const string& k, const server_rec* s) {
     apr_pool_userdata_get(&v, c_str(k), s->process->pool);
     return v;
 }
+
+#ifdef WANT_MAINTAINER_MODE
+
+/**
+ * Debug log.
+ */
+const char* debugOptional(const char* s) {
+    if (s == NULL)
+        return "";
+    return s;
+}
+
+int debugHeader(unused void* r, const char* key, const char* value) {
+    cerr << "  header key: " << key << ", value: " << value << endl;
+    return 1;
+}
+
+int debugEnv(unused void* r, const char* key, const char* value) {
+    cerr << "  var key: " << key << ", value: " << value << endl;
+    return 1;
+}
+
+int debugNote(unused void* r, const char* key, const char* value) {
+    cerr << "  note key: " << key << ", value: " << value << endl;
+    return 1;
+}
+
+const bool debugRequest(request_rec* r, const string& msg) {
+    cerr << msg << ":" << endl;
+    cerr << "  server: " << debugOptional(r->server->server_hostname) << endl;
+    cerr << "  protocol: " << debugOptional(r->protocol) << endl;
+    cerr << "  method: " << debugOptional(r->method) << endl;
+    cerr << "  method number: " << r->method_number << endl;
+    cerr << "  content type: " << contentType(r) << endl;
+    cerr << "  content encoding: " << debugOptional(r->content_encoding) << endl;
+    apr_table_do(debugHeader, r, r->headers_in, NULL);
+    cerr << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
+    cerr << "  uri: " << debugOptional(r->uri) << endl;
+    cerr << "  path info: " << debugOptional(r->path_info) << endl;
+    cerr << "  filename: " << debugOptional(r->filename) << endl;
+    cerr << "  uri tokens: " << pathTokens(r->uri) << endl;
+    cerr << "  args: " << debugOptional(r->args) << endl;
+    cerr << "  user: " << debugOptional(r->user) << endl;
+    cerr << "  auth type: " << debugOptional(r->ap_auth_type) << endl;
+    apr_table_do(debugEnv, r, r->subprocess_env, NULL);
+    apr_table_do(debugEnv, r, r->notes, NULL);
+    return true;
+}
+
+#define httpdDebugRequest(r, msg) httpd::debugRequest(r, msg)
+
+#else
+
+#define httpdDebugRequest(r, msg)
+
+#endif
 
 }
 }

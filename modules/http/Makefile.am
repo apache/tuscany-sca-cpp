@@ -20,7 +20,7 @@ INCLUDES = -I${HTTPD_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/modules/http
 
-dist_mod_SCRIPTS = httpd-conf httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf httpd-ssl-conf httpd-auth-conf proxy-conf proxy-ssl-conf proxy-member-conf proxy-ssl-member-conf vhost-conf vhost-ssl-conf
+dist_mod_SCRIPTS = httpd-conf httpd-start httpd-stop httpd-restart ssl-ca-conf ssl-cert-conf ssl-cert-find httpd-ssl-conf httpd-auth-conf proxy-conf proxy-ssl-conf proxy-member-conf proxy-ssl-member-conf vhost-conf vhost-ssl-conf tunnel-ssl-conf
 moddir=$(prefix)/modules/http
 
 curl_test_SOURCES = curl-test.cpp
@@ -28,6 +28,17 @@ curl_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
 curl_get_SOURCES = curl-get.cpp
 curl_get_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+curl_connect_SOURCES = curl-connect.cpp
+curl_connect_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+mod_LTLIBRARIES = libmod_tuscany_ssltunnel.la
+noinst_DATA = libmod_tuscany_ssltunnel.so
+
+libmod_tuscany_ssltunnel_la_SOURCES = mod-ssltunnel.cpp
+libmod_tuscany_ssltunnel_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_ssltunnel.so:
+	ln -s .libs/libmod_tuscany_ssltunnel.so
 
 mod_DATA = httpd.prefix httpd-apachectl.prefix httpd-modules.prefix curl.prefix
 nobase_dist_mod_DATA = conf/*
@@ -44,6 +55,6 @@ curl.prefix: $(top_builddir)/config.status
 	echo ${CURL_PREFIX} >curl.prefix
 
 dist_noinst_SCRIPTS = httpd-test http-test proxy-test
-noinst_PROGRAMS = curl-test curl-get
+noinst_PROGRAMS = curl-test curl-get curl-connect
 TESTS = httpd-test http-test proxy-test
 

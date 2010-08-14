@@ -299,13 +299,15 @@ const failable<bool> virtualHostConfig(ServerConf& sc, request_rec* r) {
  * to the target component.
  */
 int translate(request_rec *r) {
-    gc_scoped_pool pool(r->pool);
+    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
+        return DECLINED;
 
-    // No translation needed for a component request
+    // No translation needed for a component or tunnel request
     if (!strncmp(r->uri, "/components/", 12))
         return DECLINED;
 
     // Get the server configuration
+    gc_scoped_pool pool(r->pool);
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
 
     // Process dynamic virtual host configuration, if any
@@ -329,14 +331,17 @@ int translate(request_rec *r) {
  * HTTP request handler, redirect to a target component.
  */
 int handler(request_rec *r) {
-    gc_scoped_pool pool(r->pool);
+    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
+        return DECLINED;
     if(strcmp(r->handler, "mod_tuscany_wiring"))
         return DECLINED;
+    if (r->filename == NULL || strncmp(r->filename, "/redirect:", 10) != 0)
+        return DECLINED;
+
+    gc_scoped_pool pool(r->pool);
     httpdDebugRequest(r, "modwiring::handler::input");
 
     // Do an internal redirect
-    if (r->filename == NULL || strncmp(r->filename, "/redirect:", 10) != 0)
-        return DECLINED;
     debug(r->uri, "modwiring::handler::uri");
     debug(r->filename, "modwiring::handler::filename");
     debug(r->path_info, "modwiring::handler::path info");
@@ -364,7 +369,7 @@ const int postConfigMerge(const ServerConf& mainsc, server_rec* s) {
     return postConfigMerge(mainsc, s->next);
 }
 
-int postConfig(unused apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
+int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp, server_rec *s) {
     gc_scoped_pool pool(p);
 
     // Count the calls to post config, skip the first one as

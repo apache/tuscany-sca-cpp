@@ -19,11 +19,20 @@
 
 # Start memcached
 here=`readlink -f $0`; here=`dirname $here`
-port=$1
-if [ "$port" = "" ]; then
+
+addr=$1
+if [ "$addr" = "" ]; then
+    ip=""
     port="11211"
+else
+    ip=`$here/../../modules/http/httpd-addr ip $addr`
+    port=`$here/../../modules/http/httpd-addr port $addr`
 fi
 
 memcached_prefix=`cat $here/memcached.prefix`
-$memcached_prefix/bin/memcached -d -l 127.0.0.1 -m 4 -p $port
+if [ "$ip" = "" ]; then
+    $memcached_prefix/bin/memcached -d -m 4 -p $port
+else
+    $memcached_prefix/bin/memcached -d -l $ip -m 4 -p $port
+fi
 

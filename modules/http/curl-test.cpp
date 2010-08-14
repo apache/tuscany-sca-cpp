@@ -27,7 +27,7 @@
 #include "stream.hpp"
 #include "string.hpp"
 #include "perf.hpp"
-#include "curl.hpp"
+#include "http.hpp"
 
 namespace tuscany {
 namespace http {

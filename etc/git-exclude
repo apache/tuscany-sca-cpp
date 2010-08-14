@@ -100,5 +100,6 @@ xmpp-test
 pgsql-test
 tinycdb-test
 curl-get
+curl-connect
 rss-test
 

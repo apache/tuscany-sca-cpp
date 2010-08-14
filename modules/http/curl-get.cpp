@@ -20,20 +20,20 @@
 /* $Rev$ $Date$ */
 
 /**
- * HTTP client command line test tool.
+ * HTTP GET command line test tool.
  */
 
 #include <assert.h>
 #include "stream.hpp"
 #include "string.hpp"
 #include "perf.hpp"
-#include "curl.hpp"
+#include "http.hpp"
 
 namespace tuscany {
 namespace http {
 
-const bool testGet(const string& url) {
-    CURLSession ch;
+const bool testGet(const string& url, const string& ca = "", const string& cert = "", const string& key = "") {
+    CURLSession ch(ca, cert, key);
     const failable<value> val = get(url, ch);
     assert(hasContent(val));
     cout << val << endl;
@@ -44,7 +44,10 @@ const bool testGet(const string& url) {
 }
 
 int main(unused const int argc, const char** argv) {
-    tuscany::http::testGet(tuscany::string(argv[1]));
+    if (argc > 2)
+        tuscany::http::testGet(tuscany::string(argv[1]), tuscany::string(argv[2]), tuscany::string(argv[3]), tuscany::string(argv[4]));
+    else
+        tuscany::http::testGet(tuscany::string(argv[1]));
     return 0;
 }
 

@@ -21,6 +21,7 @@
 here=`readlink -f $0`; here=`dirname $here`
 mkdir -p $1
 root=`readlink -f $1`
+
 host=$2
 if [ "$3" != "" ]; then
     certname=$3
@@ -29,14 +30,14 @@ else
 fi
 
 # Don't regenerate the certificate if it already exists
-if [ -f $root/conf/$certname.crt ]; then
+if [ -f $root/cert/$certname.crt ]; then
     return 0
 fi
 
 # Generate openssl configuration
-mkdir -p $root/conf
+mkdir -p $root/cert
 umask 0007
-cat >$root/conf/openssl-cert-$certname.conf <<EOF
+cat >$root/cert/openssl-cert-$certname.conf <<EOF
 [ req ]
 default_bits = 1024
 encrypt_key = no
@@ -54,16 +55,22 @@ emailAddress = admin@$host
 EOF
 
 # Generate a certificate request
-openssl req -new -config $root/conf/openssl-cert-$certname.conf -out $root/conf/$certname-req.crt -keyout $root/conf/$certname.key
+openssl req -new -config $root/cert/openssl-cert-$certname.conf -out $root/cert/$certname-req.crt -keyout $root/cert/$certname.key
 
 # Generate a certificate, signed with our test certification authority certificate
-openssl ca -batch -config $root/conf/openssl-ca.conf -out $root/conf/$certname.crt -infiles $root/conf/$certname-req.crt
+openssl ca -batch -config $root/cert/openssl-ca.conf -out $root/cert/$certname.crt -infiles $root/cert/$certname-req.crt
 
 # Export it to PKCS12 format, that's the format Web browsers want to import
-openssl pkcs12 -export -passout pass: -out $root/conf/$certname.p12 -inkey $root/conf/$certname.key -in $root/conf/$certname.crt -certfile $root/conf/ca.crt
+openssl pkcs12 -export -passout pass: -out $root/cert/$certname.p12 -inkey $root/cert/$certname.key -in $root/cert/$certname.crt -certfile $root/cert/ca.crt
 
 # Convert the certificate to PEM format and concatenate the key to it, for use
 # by mod_proxy
-openssl x509 -in $root/conf/$certname.crt -out $root/conf/$certname.pem
-cat $root/conf/$certname.key >> $root/conf/$certname.pem
+openssl x509 -in $root/cert/$certname.crt -out $root/cert/$certname.pem
+cat $root/cert/$certname.key >> $root/cert/$certname.pem
+
+# Add to the hash directory and rehash
+mkdir -p $root/cert/hash
+cp $root/cert/$certname.crt $root/cert/hash
+cp $root/cert/$certname.pem $root/cert/hash
+c_rehash $root/cert/hash
 

@@ -57,7 +57,7 @@ http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
 Then install the following development dependencies:
 
 Apache HTTP server and APR:
-httpd-2.2-15 (http://httpd.apache.org/)
+httpd-2.2.16 (http://httpd.apache.org/)
 with included libapr and libaprutil
 built with OpenSSL libssl-0.9.8g
 
@@ -223,14 +223,14 @@ Building dependencies from source
 Here are example build and install steps for some of the dependencies.
 
 Apache HTTPD, including APR, using the HTTP prefork MPM (recommended):
-wget http://www.apache.org/dist/httpd/httpd-2.2.15.tar.gz
-tar xzf httpd-2.2.15.tar.gz
-cd httpd-2.2.15
+wget http://www.apache.org/dist/httpd/httpd-2.2.16.tar.gz
+tar xzf httpd-2.2.16.tar.gz
+cd httpd-2.2.16
 ./configure --enable-ssl --enable-proxy --enable-mods-shared=most \
---with-included-apr --with-mpm=prefork --prefix=$HOME/httpd-2.2.15-bin
+--with-included-apr --with-mpm=prefork --prefix=$HOME/httpd-2.2.16-bin
 make
 make install
-export PATH=$HOME/httpd-2-2.15-bin/bin:$PATH
+export PATH=$HOME/httpd-2.2.16-bin/bin:$PATH
 
 Memcached:
 wget http://memcached.googlecode.com/files/memcached-1.4.4.tar.gz
@@ -277,7 +277,7 @@ wget http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
 tar xzf axis2c-src-1.6.0.tar.gz
 cd axis2c-src-1.6.0
 ./configure --enable-libxml2 --enable-openssl \
---with-apache2=$HOME/httpd-2.2.15-bin/include --prefix=$HOME/axis2c-1.6.0-bin
+--with-apache2=$HOME/httpd-2.2.16-bin/include --prefix=$HOME/axis2c-1.6.0-bin
 make
 make install
 export AXIS2C_HOME=$HOME/axis2c-1.6.0-bin
@@ -326,7 +326,7 @@ git clone git://github.com/jsdelfino/mod_auth_openid.git
 cd mod_auth_openid
 ./autogen.sh
 ./configure --prefix=$HOME/mod-auth-openid-bin \
---with-apr=$HOME/httpd-2.2.15-bin --with-httpd=$HOME/httpd-2.2.15-bin \
+--with-apr=$HOME/httpd-2.2.16-bin --with-httpd=$HOME/httpd-2.2.16-bin \
 --with-curl=$HOME/curl-7.19.5-bin --with-libopkele=$HOME/libopkele-bin
 make
 make install

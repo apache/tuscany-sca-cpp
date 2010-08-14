@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,22 +17,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-if WANT_PYTHON
-if WANT_SQLDB
-if WANT_OPENID
-if WANT_LOG
-if WANT_QUEUE
+root=$1
+port=$2
 
-dist_sample_SCRIPTS = start stop ssl-start ssl-stop proxy-conf proxy-ssl-conf server-conf server-ssl-conf tunnel-ssl-conf
-sampledir = $(prefix)/samples/store-cluster
-
-nobase_dist_sample_DATA = htdocs/*.html htdocs/domains/*/*.html domains/*/*.py domains/*/*.composite
-
-dist_noinst_SCRIPTS = server-test
-#TESTS = server-test
-
-endif
-endif
-endif
-endif
-endif
+# Configure a proxy balancer
+../../modules/http/httpd-conf $root sca-store.com $port/80 $root/htdocs
+../../modules/http/vhost-conf $root
+../../modules/http/proxy-conf $root

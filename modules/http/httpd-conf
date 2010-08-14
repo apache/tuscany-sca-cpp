@@ -21,16 +21,19 @@
 here=`readlink -f $0`; here=`dirname $here`
 mkdir -p $1
 root=`readlink -f $1`
+
 host=$2
-port=`echo $3 | awk -F "/" '{ print $1 }'`
-pport=`echo $3 | awk -F "/" '{ print $2 }'`
-if [ "$pport" = "" ]; then
-    pport=$port
-fi
+port=`$here/httpd-addr port $3`
+pport=`$here/httpd-addr pport $3`
+listen=`$here/httpd-addr listen $3`
+vhost=`$here/httpd-addr vhost $3`
+
 mkdir -p $4
 htdocs=`readlink -f $4`
+
 user=`id -un`
 group=`id -gn`
+
 modules_prefix=`cat $here/httpd-modules.prefix`
 
 mkdir -p $root
@@ -73,6 +76,8 @@ LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
 LoadModule log_config_module ${modules_prefix}/modules/mod_log_config.so
 </IfModule>
 LoadModule vhost_alias_module ${modules_prefix}/modules/mod_vhost_alias.so
+
+LoadModule mod_tuscany_ssltunnel $here/libmod_tuscany_ssltunnel.so
 
 # Basic security precautions
 User $user
@@ -124,10 +129,10 @@ Allow from all
 </Location>
 
 # Listen on HTTP port
-Listen $port
+Listen $listen
 
 # Setup HTTP virtual host
-<VirtualHost *:$port>
+<VirtualHost $vhost>
 ServerName http://$host:$pport
 
 Include conf/svhost.conf

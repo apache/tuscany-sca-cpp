@@ -397,6 +397,19 @@ const string funcName(const string& f) {
     return f;
 }
 
+/**
+ * Returns a list of param values other than the id and method args from a list
+ * of key value pairs.
+ */
+const list<value> queryParams(const list<list<value> >& a) {
+    if (isNil(a))
+        return list<value>();
+    const list<value> p = car(a);
+    if (car(p) == value("id") || car(p) == value("method"))
+        return queryParams(cdr(a));
+    return cons(cadr(p), queryParams(cdr(a)));
+}
+
 }
 }
 

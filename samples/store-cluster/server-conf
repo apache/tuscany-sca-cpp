@@ -17,9 +17,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Generate a test certification authority certificate
-here=`readlink -f $0`; here=`dirname $here`
-root=`readlink -f $1`
+root=$1
+port=$2
 
-ls $root/conf/*.crt $root/conf/*.key $root/conf/*.pem $root/conf/*.p12 2>/dev/null
+# Configure an app server
+../../modules/http/httpd-conf $root sca-store.com $port/80 htdocs
+../../modules/http/vhost-conf $root
+../../modules/server/server-conf $root
+../../modules/python/python-conf $root
+cat >>$root/conf/httpd.conf <<EOF
+# Configure SCA Composite for mass dynamic virtual hosting
+SCAVirtualContribution `pwd`/domains/
+SCAVirtualComposite store.composite
+
+EOF
 

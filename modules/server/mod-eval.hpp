@@ -37,7 +37,7 @@
 #include "../atom/atom.hpp"
 #include "../json/json.hpp"
 #include "../scdl/scdl.hpp"
-#include "../http/curl.hpp"
+#include "../http/http.hpp"
 #include "../http/httpd.hpp"
 
 extern "C" {
@@ -113,7 +113,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
         const value func = c_str(json::funcName(string(cadr(ma))));
 
         // Apply the requested function
-        const failable<value> val = failableResult(impl(cons(func, httpd::queryParams(args))));
+        const failable<value> val = failableResult(impl(cons(func, json::queryParams(args))));
         if (!hasContent(val))
             return mkfailure<int>(reason(val));
 
@@ -250,6 +250,8 @@ const failable<int> del(request_rec* r, const lambda<value(const list<value>&)>&
  * Translate a component request.
  */
 int translate(request_rec *r) {
+    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
+        return DECLINED;
     if (strncmp(r->uri, "/components/", 12) != 0)
         return DECLINED;
     r->handler = "mod_tuscany_eval";
@@ -544,8 +546,11 @@ const failable<bool> virtualHostCleanup(const ServerConf& sc) {
  * HTTP request handler.
  */
 int handler(request_rec *r) {
+    if(r->method_number != M_GET && r->method_number != M_POST && r->method_number != M_PUT && r->method_number != M_DELETE)
+        return DECLINED;
     if(strcmp(r->handler, "mod_tuscany_eval"))
         return DECLINED;
+
     gc_scoped_pool pool(r->pool);
     ScopedRequest sr(r);
     httpdDebugRequest(r, "modeval::handler::input");

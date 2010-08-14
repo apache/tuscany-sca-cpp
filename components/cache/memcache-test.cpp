@@ -37,9 +37,9 @@ bool testMemCached() {
     const value k = mklist<value>("a");
 
     assert(hasContent(post(k, string("AAA"), ch)));
-    assert((get(k, ch)) == value(string("AAA")));
+    assert(get(k, ch) == value(string("AAA")));
     assert(hasContent(put(k, string("aaa"), ch)));
-    assert((get(k, ch)) == value(string("aaa")));
+    assert(get(k, ch) == value(string("aaa")));
     assert(hasContent(del(k, ch)));
     assert(!hasContent(get(k, ch)));
 
@@ -52,7 +52,7 @@ struct getLoop {
     getLoop(const value& k, MemCached& ch) : k(k), ch(ch) {
     }
     const bool operator()() const {
-        assert((get(k, ch)) == value(string("CCC")));
+        assert(get(k, ch) == value(string("CCC")));
         return true;
     }
 };
