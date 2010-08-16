@@ -21,7 +21,7 @@ if WANT_OPENID
 if WANT_LOG
 if WANT_QUEUE
 
-dist_sample_SCRIPTS = start stop ssl-start ssl-stop proxy-conf proxy-ssl-conf server-conf server-ssl-conf tunnel-ssl-conf
+dist_sample_SCRIPTS = start stop ssl-start ssl-stop proxy-conf proxy-ssl-conf server-conf server-ssl-conf tunnel-ssl-conf sqldb-master-conf sqldb-standby-conf
 sampledir = $(prefix)/samples/store-cluster
 
 nobase_dist_sample_DATA = htdocs/*.html htdocs/domains/*/*.html domains/*/*.py domains/*/*.composite

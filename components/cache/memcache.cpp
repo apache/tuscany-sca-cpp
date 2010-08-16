@@ -23,10 +23,7 @@
  * Memcached-based cache component implementation.
  */
 
-#include <apr_uuid.h>
-
 #include "string.hpp"
-
 #include "function.hpp"
 #include "list.hpp"
 #include "value.hpp"
@@ -46,16 +43,8 @@ const failable<value> get(const list<value>& params, memcache::MemCached& ch) {
 /**
  * Post an item to the cache.
  */
-const value uuidValue() {
-    apr_uuid_t uuid;
-    apr_uuid_get(&uuid);
-    char buf[APR_UUID_FORMATTED_LENGTH];
-    apr_uuid_format(buf, &uuid);
-    return value(string(buf, APR_UUID_FORMATTED_LENGTH));
-}
-
 const failable<value> post(const list<value>& params, memcache::MemCached& ch) {
-    const value id = append<value>(car(params), mklist(uuidValue()));
+    const value id = append<value>(car(params), mklist(mkuuid()));
     const failable<bool> val = memcache::post(id, cadr(params), ch);
     if (!hasContent(val))
         return mkfailure<value>(reason(val));

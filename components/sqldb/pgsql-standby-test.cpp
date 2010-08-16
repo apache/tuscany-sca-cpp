@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * Test PostgreSQL access functions.
+ * Test PostgreSQL hot standby support.
  */
 
 #include <assert.h>
@@ -33,15 +33,19 @@ namespace tuscany {
 namespace pgsql {
 
 bool testPGSql() {
-    PGSql pg("host=localhost port=5432 dbname=db", "test");
+    PGSql wpg("host=localhost port=5432 dbname=db", "test");
+    PGSql rpg("host=localhost port=5433 dbname=db", "test");
     const value k = mklist<value>("a");
 
-    assert(hasContent(post(k, string("AAA"), pg)));
-    assert((get(k, pg)) == value(string("AAA")));
-    assert(hasContent(put(k, string("aaa"), pg)));
-    assert((get(k, pg)) == value(string("aaa")));
-    assert(hasContent(del(k, pg)));
-    assert(!hasContent(get(k, pg)));
+    assert(hasContent(post(k, string("AAA"), wpg)));
+    sleep(1);
+    assert((get(k, rpg)) == value(string("AAA")));
+    assert(hasContent(put(k, string("aaa"), wpg)));
+    sleep(1);
+    assert((get(k, rpg)) == value(string("aaa")));
+    assert(hasContent(del(k, wpg)));
+    sleep(1);
+    assert(!hasContent(get(k, rpg)));
 
     return true;
 }
@@ -59,10 +63,12 @@ struct getLoop {
 
 bool testGetPerf() {
     const value k = mklist<value>("c");
-    PGSql pg("host=localhost port=5432 dbname=db", "test");
-    assert(hasContent(post(k, string("CCC"), pg)));
+    PGSql wpg("host=localhost port=5432 dbname=db", "test");
+    PGSql rpg("host=localhost port=5433 dbname=db", "test");
+    assert(hasContent(post(k, string("CCC"), wpg)));
+    sleep(1);
 
-    const lambda<bool()> gl = getLoop(k, pg);
+    const lambda<bool()> gl = getLoop(k, rpg);
     cout << "PGSql get test " << time(gl, 5, 200) << " ms" << endl;
     return true;
 }

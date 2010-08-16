@@ -17,6 +17,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-stop tmp
-../../components/sqldb/pgsql-stop tmp
-../../components/cache/memcached-stop
+root=$1
+mhost=$2
+mport=$3
+mhttpport=$4
+port=$5
+
+# Configure a standby database server
+../../components/sqldb/pgsql-standby-conf $root $mhost $mport $mhttpport $port
+

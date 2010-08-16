@@ -22,7 +22,6 @@ here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 
 pgsql_prefix=`cat $here/pgsql.prefix`
-mkdir -p $root/sqldb
 mkdir -p $root/logs
-$pgsql_prefix/bin/pg_ctl stop -D $root/sqldb 1>/dev/null 2>&1
+$pgsql_prefix/bin/pg_ctl stop -w -D $root/sqldb/data 1>>$root/logs/postgresql 2>&1
 

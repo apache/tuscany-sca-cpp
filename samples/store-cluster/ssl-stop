@@ -20,9 +20,12 @@
 ../../modules/http/httpd-stop tmp/server1
 ../../modules/http/httpd-stop tmp/server2
 ../../modules/http/httpd-stop tmp/server3
+
 ../../modules/http/httpd-stop tmp/proxy1
 ../../modules/http/httpd-stop tmp/proxy2
+
 ../../components/cache/memcached-stop 127.0.0.1:11411
 ../../components/cache/memcached-stop 127.0.0.1:11412
 ../../components/cache/memcached-stop 127.0.0.1:11413
+
 ../../modules/http/httpd-stop tmp/tunnel1

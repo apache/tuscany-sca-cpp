@@ -40,10 +40,13 @@ namespace pgsql {
 /**
  * Return and clear a Postgres result failure.
  */
-const string pgfailure(PGresult* r) {
-    const string e = PQresultErrorMessage(r);
+const string pgfailure(PGresult* r, PGconn* conn) {
+    const string re = PQresultErrorMessage(r);
     PQclear(r);
-    return e;
+    if (length(re) != 0)
+        return re;
+    const string ce = PQerrorMessage(conn);
+    return ce;
 }
 
 /**
@@ -54,18 +57,22 @@ public:
     PGSql() : owner(false) {
     }
 
-    PGSql(const string& conninfo, const string& table) : owner(true), conninfo(conninfo), table(table) {
-        init();
+    PGSql(const string& conninfo, const string& table) : owner(true), conn(NULL), conninfo(conninfo), table(table) {
+        conn = PQconnectdb(c_str(conninfo));
+        if (PQstatus(conn) != CONNECTION_OK) {
+            mkfailure<bool>(string("Could not connect to postgresql database: ") + PQerrorMessage(conn));
+            return;
+        }
+        setup(true);
     }
 
-    PGSql(const PGSql& c) : owner(false) {
-        conninfo = c.conninfo;
-        conn = c.conn;
-        table = c.table;
+    PGSql(const PGSql& c) : owner(false), conn(c.conn), conninfo(c.conninfo), table(c.table) {
     }
 
     ~PGSql() {
         if (!owner)
+            return;
+        if (conn == NULL)
             return;
         PQfinish(conn);
     }
@@ -76,28 +83,37 @@ private:
     string conninfo;
     string table;
 
+    friend const failable<bool> setup(const PGSql& pgsql);
     friend const failable<bool> post(const value& key, const value& val, const PGSql& pgsql);
     friend const failable<bool> put(const value& key, const value& val, const PGSql& pgsql);
     friend const failable<value> get(const value& key, const PGSql& pgsql);
     friend const failable<bool> del(const value& key, const PGSql& pgsql);
 
     /**
-     * Initialize the database connection
+     * Setup the database connection.
      */
-    const failable<bool> init() {
-        conn = PQconnectdb(c_str(conninfo));
-        if (PQstatus(conn) != CONNECTION_OK)
-            return mkfailure<bool>(string("Could not connect to database: ") + PQerrorMessage(conn));
+    const failable<bool> setup(const bool init) const {
+
+        // Check the status of the connection and reconnect if necessary
+        if (!init) {
+            if (PQstatus(conn) == CONNECTION_OK)
+                return true;
+            debug("pgsql::setup::reset");
+            PQreset(conn);
+            if (PQstatus(conn) != CONNECTION_OK)
+                return mkfailure<bool>(string("Could not reconnect to postgresql database: ") + PQerrorMessage(conn));
+        }
+        debug("pgsql::setup::init");
 
         // Find the name of the first column in the target table
         // Assume that's the key we need to use
         string ks = string("select a.attname from pg_attribute a, pg_class c where a.attrelid = c.relfilenode and c.relname = '") + table + string("' and a.attnum in (1, 2) order by a.attnum;");
         PGresult* kr = PQexec(conn, c_str(ks));
         if (PQresultStatus(kr) != PGRES_TUPLES_OK)
-            return mkfailure<bool>(string("Could not execute column select statement: ") + pgfailure(kr));
+            return mkfailure<bool>(string("Could not execute postgresql column select statement: ") + pgfailure(kr, conn));
         if (PQntuples(kr) != 2) {
             PQclear(kr);
-            return mkfailure<bool>(string("Could not find table key and value column names"));
+            return mkfailure<bool>(string("Could not find postgresql table key and value column names"));
         }
         const string kname = PQgetvalue(kr, 0, 0);
         const string vname = PQgetvalue(kr, 1, 0);
@@ -107,30 +123,37 @@ private:
         {
             PGresult* r = PQprepare(conn, "post", c_str(string("insert into ") + table + string(" values($1, $2);")), 2, NULL);
             if (PQresultStatus(r) != PGRES_COMMAND_OK)
-                return mkfailure<bool>(string("Could not prepare post SQL statement: ") + pgfailure(r));
+                return mkfailure<bool>(string("Could not prepare post postgresql SQL statement: ") + pgfailure(r, conn));
             PQclear(r);
         }
         {
             PGresult* r = PQprepare(conn, "put", c_str(string("update ") + table + string(" set ") + vname + string(" = $2 where ") + kname + string(" = $1;")), 2, NULL);
             if (PQresultStatus(r) != PGRES_COMMAND_OK)
-                return mkfailure<bool>(string("Could not prepare put SQL statement: ") + pgfailure(r));
+                return mkfailure<bool>(string("Could not prepare put postgresql SQL statement: ") + pgfailure(r, conn));
             PQclear(r);
         }
         {
             PGresult* r = PQprepare(conn, "get", c_str(string("select * from ") + table + string(" where ") + kname + string(" = $1;")), 1, NULL);
             if (PQresultStatus(r) != PGRES_COMMAND_OK)
-                return mkfailure<bool>(string("Could not prepare get SQL statement: ") + pgfailure(r));
+                return mkfailure<bool>(string("Could not prepare get postgresql SQL statement: ") + pgfailure(r, conn));
             PQclear(r);
         }
         {
             PGresult* r = PQprepare(conn, "delete", c_str(string("delete from ") + table + string(" where ") + kname + string(" = $1;")), 1, NULL);
             if (PQresultStatus(r) != PGRES_COMMAND_OK)
-                return mkfailure<bool>(string("Could not prepare delete SQL statement: ") + pgfailure(r));
+                return mkfailure<bool>(string("Could not prepare delete postgresql SQL statement: ") + pgfailure(r, conn));
             PQclear(r);
         }
         return true;
     }
 };
+
+/**
+ * Setup the database connection if necessary.
+ */
+const failable<bool> setup(const PGSql& pgsql) {
+    return pgsql.setup(false);
+}
 
 /**
  * Post a new item to the database.
@@ -140,13 +163,14 @@ const failable<bool> post(const value& key, const value& val, const PGSql& pgsql
     debug(val, "pgsql::post::value");
     debug(pgsql.conninfo, "pgsql::post::conninfo");
     debug(pgsql.table, "pgsql::post::table");
+    setup(pgsql);
 
     const string ks(scheme::writeValue(key));
     const string vs(scheme::writeValue(val));
     const char* params[2] = { c_str(ks), c_str(vs) };
     PGresult* r = PQexecPrepared(pgsql.conn, "post", 2, params, NULL, NULL, 0);
     if (PQresultStatus(r) != PGRES_COMMAND_OK)
-        return mkfailure<bool>(string("Could not execute post SQL statement: ") + pgfailure(r));
+        return mkfailure<bool>(string("Could not execute insert postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
     PQclear(r);
 
     debug(true, "pgsql::post::result");
@@ -161,13 +185,14 @@ const failable<bool> put(const value& key, const value& val, const PGSql& pgsql)
     debug(val, "pgsql::put::value");
     debug(pgsql.conninfo, "pgsql::put::conninfo");
     debug(pgsql.table, "pgsql::put::table");
+    setup(pgsql);
 
     const string ks(scheme::writeValue(key));
     const string vs(scheme::writeValue(val));
     const char* params[2] = { c_str(ks), c_str(vs) };
     PGresult* r = PQexecPrepared(pgsql.conn, "put", 2, params, NULL, NULL, 0);
     if (PQresultStatus(r) != PGRES_COMMAND_OK)
-        return mkfailure<bool>(string("Could not execute put SQL statement: ") + pgfailure(r));
+        return mkfailure<bool>(string("Could not execute update postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
     const string t = PQcmdTuples(r);
     if (t != "0") {
         PQclear(r);
@@ -178,7 +203,7 @@ const failable<bool> put(const value& key, const value& val, const PGSql& pgsql)
 
     PGresult* pr = PQexecPrepared(pgsql.conn, "post", 2, params, NULL, NULL, 0);
     if (PQresultStatus(pr) != PGRES_COMMAND_OK)
-        return mkfailure<bool>(string("Could not execute post SQL statement: ") + pgfailure(pr));
+        return mkfailure<bool>(string("Could not execute insert postgresql SQL statement: ") + pgfailure(pr, pgsql.conn));
     PQclear(pr);
 
     debug(true, "pgsql::put::result");
@@ -192,15 +217,16 @@ const failable<value> get(const value& key, const PGSql& pgsql) {
     debug(key, "pgsql::get::key");
     debug(pgsql.conninfo, "pgsql::get::conninfo");
     debug(pgsql.table, "pgsql::get::table");
+    setup(pgsql);
 
     const string ks(scheme::writeValue(key));
     const char* params[1] = { c_str(ks) };
     PGresult* r = PQexecPrepared(pgsql.conn, "get", 1, params, NULL, NULL, 0);
     if (PQresultStatus(r) != PGRES_TUPLES_OK)
-        return mkfailure<value>(string("Could not execute get SQL statement: ") + pgfailure(r));
+        return mkfailure<value>(string("Could not execute select postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
     if (PQntuples(r) < 1) {
         PQclear(r);
-        return mkfailure<value>(string("Could not get entry: ") + PQerrorMessage(pgsql.conn));
+        return mkfailure<value>(string("Could not get postgresql entry: ") + PQerrorMessage(pgsql.conn));
     }
     const char* data = PQgetvalue(r, 0, 1);
     const value val(scheme::readValue(string(data)));
@@ -217,12 +243,13 @@ const failable<bool> del(const value& key, const PGSql& pgsql) {
     debug(key, "pgsql::delete::key");
     debug(pgsql.conninfo, "pgsql::delete::conninfo");
     debug(pgsql.table, "pgsql::delete::table");
+    setup(pgsql);
 
     const string ks(scheme::writeValue(key));
     const char* params[1] = { c_str(ks) };
     PGresult* r = PQexecPrepared(pgsql.conn, "delete", 1, params, NULL, NULL, 0);
     if (PQresultStatus(r) != PGRES_COMMAND_OK)
-        return mkfailure<bool>(string("Could not execute delete SQL statement: ") + pgfailure(r));
+        return mkfailure<bool>(string("Could not execute delete postgresql SQL statement: ") + pgfailure(r, pgsql.conn));
     PQclear(r);
 
     debug(true, "pgsql::delete::result");

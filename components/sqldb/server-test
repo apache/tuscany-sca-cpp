@@ -19,6 +19,11 @@
 
 # Setup
 ../../modules/http/httpd-conf tmp localhost 8090 ../../modules/http/htdocs
+./pgsql-conf tmp
+./pgsql-start tmp
+./pgsql "drop table test;" 1>/dev/null 2>&1
+./pgsql "create table test(key text, value text);" 1>/dev/null 2>&1
+
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
@@ -26,9 +31,6 @@ SCAContribution `pwd`/
 SCAComposite sqldb.composite
 EOF
 
-./pgsql-start tmp
-./pgsql "drop table test;" 1>/dev/null 2>&1
-./pgsql "create table test(key text, value text);" 1>/dev/null 2>&1
 ../../modules/http/httpd-start tmp
 sleep 2
 
@@ -39,5 +41,4 @@ rc=$?
 # Cleanup
 ../../modules/http/httpd-stop tmp
 ./pgsql-stop tmp
-sleep 2
 return $rc

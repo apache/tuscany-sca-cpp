@@ -36,9 +36,10 @@
 namespace tuscany {
 namespace cache {
 
-const string uri("http://localhost:8090/memcache");
+const string memcacheuri("http://localhost:8090/memcache");
+const string frontcacheuri("http://localhost:8090/frontcache");
 
-bool testCache() {
+bool testCache(const string& uri) {
     http::CURLSession cs;
 
     const list<value> i = list<value>()
@@ -84,6 +85,14 @@ bool testCache() {
     return true;
 }
 
+bool testMemcache() {
+    return testCache(memcacheuri);
+}
+
+bool testFrontcache() {
+    return testCache(frontcacheuri);
+}
+
 struct getLoop {
     const string path;
     const value entry;
@@ -91,7 +100,7 @@ struct getLoop {
     getLoop(const string& path, const value& entry, http::CURLSession cs) : path(path), entry(entry), cs(cs) {
     }
     const bool operator()() const {
-        const failable<value> val = http::get(uri + path, cs);
+        const failable<value> val = http::get(memcacheuri + path, cs);
         assert(hasContent(val));
         assert(content(val) == entry);
         return true;
@@ -105,7 +114,7 @@ bool testGetPerf() {
     const value a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
     http::CURLSession cs;
-    const failable<value> id = http::post(a, uri, cs);
+    const failable<value> id = http::post(a, memcacheuri, cs);
     assert(hasContent(id));
     const string p = path(content(id));
 
@@ -121,7 +130,8 @@ bool testGetPerf() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::cache::testCache();
+    tuscany::cache::testMemcache();
+    tuscany::cache::testFrontcache();
     tuscany::cache::testGetPerf();
 
     tuscany::cout << "OK" << tuscany::endl;

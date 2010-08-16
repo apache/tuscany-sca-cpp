@@ -76,6 +76,7 @@ LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
 LoadModule log_config_module ${modules_prefix}/modules/mod_log_config.so
 </IfModule>
 LoadModule vhost_alias_module ${modules_prefix}/modules/mod_vhost_alias.so
+LoadModule cgi_module ${modules_prefix}/modules/mod_cgi.so
 
 LoadModule mod_tuscany_ssltunnel $here/libmod_tuscany_ssltunnel.so
 

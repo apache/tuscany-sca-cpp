@@ -26,7 +26,6 @@
  * Java component implementation evaluation logic.
  */
 #include <jni.h>
-#include <apr_uuid.h>
 
 #include "list.hpp"
 #include "value.hpp"
@@ -292,12 +291,8 @@ jobject JNICALL nativeInvoke(JNIEnv* env, jobject self, unused jobject proxy, jo
  * of this function as java.util.UUID seems to behave differently with different JDKs.
  */
 jobject JNICALL nativeUUID(JNIEnv* env) {
-    apr_uuid_t uuid;
-    apr_uuid_get(&uuid);
-    char buf[APR_UUID_FORMATTED_LENGTH];
-    apr_uuid_format(buf, &uuid);
-    string s(buf, APR_UUID_FORMATTED_LENGTH);
-    return env->NewStringUTF(c_str(s));
+    const value uuid = mkuuid();
+    return env->NewStringUTF(c_str(uuid));
 }
 
 /**

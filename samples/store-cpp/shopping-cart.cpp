@@ -23,8 +23,6 @@
  * Shopping cart component implementation.
  */
 
-#include <apr_general.h>
-#include <apr_uuid.h>
 #include "string.hpp"
 #include "function.hpp"
 #include "list.hpp"
@@ -42,27 +40,21 @@ const string cartId("1234");
  */
 const list<value> getcart(const value& id, const lambda<value(const list<value>&)> cache) {
     const value cart = cache(mklist<value>("get", mklist<value>(id)));
+    cerr << "cart value: " << cart << "\n";
+    const failable<value> fcart = cart;
+    cerr << "cart fvalue: " << fcart << "\n";
+    cerr << "cart content: " << content(fcart) << "\n";
+    cerr << "cart reason: " << reason(fcart) << "\n";
     if (isNil(cart))
         return value(list<value>());
     return (list<value>)cart;
 }
 
 /**
- * Returns a UUID.
- */
-const value uuid() {
-    apr_uuid_t uuid;
-    apr_uuid_get(&uuid);
-    char buf[APR_UUID_FORMATTED_LENGTH];
-    apr_uuid_format(buf, &uuid);
-    return string(buf, APR_UUID_FORMATTED_LENGTH);
-}
-
-/**
  * Post a new item to the cart. Create a new cart if necessary.
  */
 const failable<value> post(unused const list<value>& collection, const value& item, const lambda<value(const list<value>&)> cache) {
-    const value id(uuid());
+    const value id(mkuuid());
     const list<value> newItem(mklist<value>(car<value>(item), id, caddr<value>(item)));
     const list<value> cart(cons<value>(newItem, getcart(cartId, cache)));
     cache(mklist<value>("put", mklist<value>(cartId), cart));

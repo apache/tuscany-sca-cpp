@@ -21,5 +21,15 @@
 here=`readlink -f $0`; here=`dirname $here`
 pgsql_prefix=`cat $here/pgsql.prefix`
 
-$pgsql_prefix/bin/psql -c "$1" db
+if [ "$2" = "" ]; then
+    host="localhost"
+    port="5432"
+    cmd="$1"
+else
+    host="$1"
+    port="$2"
+    cmd="$3"
+fi
+
+$pgsql_prefix/bin/psql -h $host -p $port -c "$cmd" db
 

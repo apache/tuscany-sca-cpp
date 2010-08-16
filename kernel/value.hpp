@@ -27,6 +27,7 @@
  */
 
 #include <stdlib.h>
+#include <apr_uuid.h>
 #include "string.hpp"
 #include "sstream.hpp"
 #include "gc.hpp"
@@ -587,6 +588,17 @@ const value path(const list<value>& p) {
     if (isNil(p))
         return "";
     return string("/") + car(p) + path(cdr(p));
+}
+
+/**
+ * Make a uuid value.
+ */
+const value mkuuid() {
+    apr_uuid_t id;
+    apr_uuid_get(&id);
+    char buf[APR_UUID_FORMATTED_LENGTH];
+    apr_uuid_format(buf, &id);
+    return value(string(buf, APR_UUID_FORMATTED_LENGTH));
 }
 
 }

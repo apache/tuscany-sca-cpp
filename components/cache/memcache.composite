@@ -28,6 +28,25 @@
             <t:binding.http uri="memcache"/>
         </service>
         <property name="servers">localhost,localhost:11212,localhost:11213</property>
-    </component>     
+    </component>
+
+    <component name="l2cache">
+        <implementation.cpp path="." library="libmemcache"/>
+        <service name="l2cache">
+            <t:binding.http uri="l2cache"/>
+        </service>
+        <property name="servers">localhost:11411,localhost:11412,localhost:11413</property>
+    </component>
+
+    <component name="frontcache">
+        <implementation.cpp path="." library="libfrontcache"/>
+        <service name="frontcache">
+            <t:binding.http uri="frontcache"/>
+        </service>
+        <reference name="l1reader" target="memcache"/>
+        <reference name="l1writer" target="memcache"/>
+        <reference name="l2reader" target="l2cache"/>
+        <reference name="l2writer" target="l2cache"/>
+    </component>
 
 </composite>

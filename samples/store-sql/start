@@ -27,6 +27,8 @@ SCAComposite store.composite
 
 EOF
 
+../../components/cache/memcached-start
+../../components/sqldb/pgsql-conf tmp
 ../../components/sqldb/pgsql-start tmp
 ../../components/sqldb/pgsql "create table store(key text, value text);" 1>/dev/null 2>&1
 ../../modules/http/httpd-start tmp

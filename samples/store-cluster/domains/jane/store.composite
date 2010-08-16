@@ -58,15 +58,44 @@
         <t:implementation.python script="currency-converter.py"/>
         <service name="CurrencyConverter">
             <t:binding.jsonrpc uri="currencyConverter"/>
-        </service>        
-    </component>     
+        </service>
+    </component>
 
     <component name="Cache">
-        <implementation.cpp path="../../../../components/cache" library="libmemcache"/>
+        <implementation.cpp path="../../../../components/cache" library="libfrontcache"/>
         <service name="Cache">
             <t:binding.atom uri="cache"/>
         </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="Standbydb"/>
+        <reference name="l2writer" target="Masterdb"/>
+    </component>
+
+    <component name="Memcache">
+        <implementation.cpp path="../../../../components/cache" library="libmemcache"/>
+        <service name="Memcache">
+            <t:binding.atom uri="memcache"/>
+        </service>
         <property name="servers">localhost:11211,localhost:11212,localhost:11213</property>
-    </component>     
+    </component>
+
+    <component name="Masterdb">
+        <implementation.cpp path="../../../../components/sqldb" library="libsqldb"/>
+        <property name="conninfo">host=localhost port=5432 dbname=db</property>
+        <property name="table">store</property>
+        <service name="Masterdb">
+            <t:binding.atom uri="masterdb"/>
+        </service>
+    </component>
+
+    <component name="Standbydb">
+        <implementation.cpp path="../../../../components/sqldb" library="libsqldb"/>
+        <property name="conninfo">host=localhost port=5433 dbname=db</property>
+        <property name="table">store</property>
+        <service name="Standbydb">
+            <t:binding.atom uri="standbydb"/>
+        </service>
+    </component>
 
 </composite>

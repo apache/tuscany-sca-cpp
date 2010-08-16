@@ -17,6 +17,19 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-stop tmp
-../../components/sqldb/pgsql-stop tmp
-../../components/cache/memcached-stop
+root=$1
+port=$2
+
+# Configure a database server
+if [ ! -f $root/sqldb/data/postgresql.conf ]; then
+    create="true"
+else
+    create="false"
+fi
+../../components/sqldb/pgsql-conf $root $port
+if [ "$create" = "true" ]; then
+    ../../components/sqldb/pgsql-start $root
+    ../../components/sqldb/pgsql localhost $port "create table store(key text, value text);" 1>/dev/null 2>&1
+    ../../components/sqldb/pgsql-stop $root
+fi
+

@@ -313,24 +313,52 @@ template<typename T> const list<T> cdr(const list<T>& p) {
 }
 
 /**
- * Returns the car of the cdr of a list.
+ * Returns the car of the cdr (the 2nd element) of a list.
  */
 template<typename T> const T cadr(const list<T>& p) {
     return car(cdr(p));
 }
 
 /**
- * Returns the car of the cdr of the cdr of a list.
+ * Returns the 3rd element of a list.
  */
 template<typename T> const T caddr(const list<T>& p) {
     return car(cdr(cdr(p)));
 }
 
 /**
- * Returns the car of the cdr of the cdr of the cdr of a list.
+ * Returns the 4th element of a list.
  */
 template<typename T> const T cadddr(const list<T>& p) {
     return car(cdr(cdr(cdr(p))));
+}
+
+/**
+ * Returns the 5th element of a list.
+ */
+template<typename T> const T caddddr(const list<T>& p) {
+    return car(cdr(cdr(cdr(cdr(p)))));
+}
+
+/**
+ * Returns the 6th element of a list.
+ */
+template<typename T> const T cadddddr(const list<T>& p) {
+    return car(cdr(cdr(cdr(cdr(cdr(p))))));
+}
+
+/**
+ * Returns the 7th element of a list.
+ */
+template<typename T> const T caddddddr(const list<T>& p) {
+    return car(cdr(cdr(cdr(cdr(cdr(cdr(p)))))));
+}
+
+/**
+ * Returns the 8th element of a list.
+ */
+template<typename T> const T cadddddddr(const list<T>& p) {
+    return car(cdr(cdr(cdr(cdr(cdr(cdr(cdr(p))))))));
 }
 
 /**

@@ -22,7 +22,7 @@ INCLUDES = -I${PGSQL_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/components/sqldb
 
-dist_comp_SCRIPTS = pgsql-start pgsql-stop pgsql
+dist_comp_SCRIPTS = pgsql-conf pgsql-start pgsql-stop pgsql pgsql-standby-conf
 compdir=$(prefix)/components/sqldb
 
 comp_DATA = pgsql.prefix
@@ -42,11 +42,14 @@ libsqldb.so:
 pgsql_test_SOURCES = pgsql-test.cpp
 pgsql_test_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
 
+pgsql_standby_test_SOURCES = pgsql-standby-test.cpp
+pgsql_standby_test_LDFLAGS = -L${PGSQL_LIB} -R${PGSQL_LIB} -lpq
+
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-dist_noinst_SCRIPTS = sqldb-test server-test
-noinst_PROGRAMS = pgsql-test client-test
-TESTS = sqldb-test server-test
+dist_noinst_SCRIPTS = sqldb-test standby-test server-test
+noinst_PROGRAMS = pgsql-test pgsql-standby-test client-test
+TESTS = sqldb-test standby-test server-test
 
 endif

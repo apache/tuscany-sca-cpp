@@ -26,8 +26,6 @@
  * XMPP support functions.
  */
 
-#include <apr_uuid.h>
-
 #include "strophe.h"
 extern "C" {
 #include "common.h"
@@ -64,18 +62,10 @@ private:
 /**
  * Represents an XMPP client.
  */
-const string resourceUUID() {
-    apr_uuid_t uuid;
-    apr_uuid_get(&uuid);
-    char buf[APR_UUID_FORMATTED_LENGTH];
-    apr_uuid_format(buf, &uuid);
-    return string(buf, APR_UUID_FORMATTED_LENGTH);
-}
-
 class XMPPClient {
 public:
     XMPPClient(const string& jid, const string& pass, bool owner = true) : owner(owner), ctx(xmpp_ctx_new(NULL, xmppRuntime.log)), conn(xmpp_conn_new(ctx)), connecting(false), connected(false), disconnecting(false) {
-        xmpp_conn_set_jid(conn, c_str(jid + "/" + resourceUUID()));
+        xmpp_conn_set_jid(conn, c_str(jid + "/" + mkuuid()));
         xmpp_conn_set_pass(conn, c_str(pass));
     }
 

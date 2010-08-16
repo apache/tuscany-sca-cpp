@@ -141,13 +141,13 @@ const failable<int> cdbopen(TinyCDB& cdb) {
     struct stat st;
     const int s = stat(c_str(cdb.name), &st);
     if (s == -1)
-        return mkfailure<int>(string("Couldn't read database stat ") + cdb.name);
+        return mkfailure<int>(string("Couldn't tinycdb read database stat ") + cdb.name);
 
     // Open database for the first time
     if (cdb.fd == -1) {
         cdb.fd = open(c_str(cdb.name), O_RDONLY);
         if (cdb.fd == -1)
-            return mkfailure<int>(string("Couldn't open database file ") + cdb.name);
+            return mkfailure<int>(string("Couldn't open tinycdb database file ") + cdb.name);
         debug(cdb.fd, "tinycdb::open::fd");
         cdb.st = st;
         return cdb.fd;
@@ -162,7 +162,7 @@ const failable<int> cdbopen(TinyCDB& cdb) {
         // Reopen database
         const int newfd = open(c_str(cdb.name), O_RDONLY);
         if (newfd == -1)
-            return mkfailure<int>(string("Couldn't open database file ") + cdb.name);
+            return mkfailure<int>(string("Couldn't open tinycdb database file ") + cdb.name);
         if (newfd == cdb.fd) {
             debug(cdb.fd, "tinycdb::open::fd");
             cdb.st = st;
@@ -171,7 +171,7 @@ const failable<int> cdbopen(TinyCDB& cdb) {
 
         // We got a different fd, dup it to the current fd then close it
         if (fcntl(newfd, F_DUPFD, cdb.fd) == -1)
-            return mkfailure<int>(string("Couldn't dup database file handle ") + cdb.name);
+            return mkfailure<int>(string("Couldn't dup tinycdb database file handle ") + cdb.name);
         close(newfd);
 
         debug(cdb.fd, "tinycdb::open::fd");
@@ -212,9 +212,9 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
     // Read the db header
     unsigned int pos = 0;
     if (lseek(fd, 0, SEEK_SET) != 0)
-        return mkfailure<bool>("Could not seek to database start");
+        return mkfailure<bool>("Could not seek to tinycdb database start");
     if (::read(fd, buf, 2048) != 2048)
-        return mkfailure<bool>("Could not read database header");
+        return mkfailure<bool>("Could not read tinycdb database header");
     pos += 2048;
     unsigned int eod = cdb_unpack(buf);
     debug(pos, "tinycdb::rewrite::eod");
@@ -222,9 +222,9 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
     // Read and add the existing entries
     while(pos < eod) {
         if (eod - pos < 8)
-            return mkfailure<bool>("Invalid database format, couldn't read entry header");
+            return mkfailure<bool>("Invalid tinycdb database format, couldn't read entry header");
         if (::read(fd, buf, 8) != 8)
-            return mkfailure<bool>("Couldn't read entry header");
+            return mkfailure<bool>("Couldn't read tinycdb entry header");
         pos += 8;
         unsigned int klen = cdb_unpack(buf);
         unsigned int vlen = cdb_unpack(((unsigned char*)buf) + 4);
@@ -233,9 +233,9 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
         // Read existing entry
         buf = mkbuffer(buf, elen);
         if (eod - pos < elen)
-            return mkfailure<bool>("Invalid database format, couldn't read entry");
+            return mkfailure<bool>("Invalid tinycdb database format, couldn't read entry");
         if ((unsigned int)::read(fd, buf, elen) != elen)
-            return mkfailure<bool>("Couldn't read entry");
+            return mkfailure<bool>("Couldn't read tinycdb entry");
         pos += elen;
 
         // Apply the update function to the entry
@@ -251,10 +251,10 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
 
         // Add the entry to the new db
         if (cdb_make_add(&cdbm, buf, klen, ((unsigned char*)buf)+klen, vlen) == -1)
-            return mkfailure<bool>("Could not add entry");
+            return mkfailure<bool>("Could not add tinycdb entry");
     }
     if (pos != eod)
-        return mkfailure<bool>("Invalid database format");
+        return mkfailure<bool>("Invalid tinycdb database format");
 
     // Call the finish function
     const failable<bool> f = finish(cdbm);
@@ -263,7 +263,7 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
 
     // Save the new db
     if (cdb_make_finish(&cdbm) == -1)
-        return mkfailure<bool>("Could not save database");
+        return mkfailure<bool>("Could not save tinycdb database");
 
     return true;
 }
@@ -274,7 +274,7 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
     string tmpname = dbname(cdb) + ".XXXXXX";
     int tmpfd = mkstemp(const_cast<char*>(c_str(tmpname)));
     if (tmpfd == -1)
-        return mkfailure<bool>("Could not create temporary database");
+        return mkfailure<bool>("Could not create temporary tinycdb database");
 
     // Rewrite the db, apply the update function to each entry
     buffer buf = mkbuffer(2048);
@@ -287,7 +287,7 @@ const failable<bool> rewrite(const lambda<failable<bool>(buffer& buf, const unsi
 
     // Atomically replace the db and reopen it in read mode
     if (rename(c_str(tmpname), c_str(dbname(cdb))) == -1)
-        return mkfailure<bool>("Could not rename temporary database");
+        return mkfailure<bool>("Could not rename temporary tinycdb database");
     cdbclose(cdb);
     failable<int> ffd = cdbopen(cdb);
     if (!hasContent(ffd))
@@ -305,7 +305,7 @@ struct postUpdate {
     }
     const failable<bool> operator()(buffer& buf, const unsigned int klen, unused const unsigned int vlen) const {
         if (ks == string((char*)buf, klen))
-            return mkfailure<bool>("Key already exists");
+            return mkfailure<bool>("Key already exists in tinycdb database");
         return true;
     }
 };
@@ -317,7 +317,7 @@ struct postFinish {
     }
     const failable<bool> operator()(struct cdb_make& cdbm) const {
         if (cdb_make_add(&cdbm, c_str(ks), length(ks), c_str(vs), length(vs)) == -1)
-            return mkfailure<bool>("Could not add entry");
+            return mkfailure<bool>("Could not add tinycdb entry");
         return true;
     }
 };
@@ -363,7 +363,7 @@ struct putFinish {
     }
     const failable<bool> operator()(struct cdb_make& cdbm) const {
         if (cdb_make_add(&cdbm, c_str(ks), length(ks), c_str(vs), length(vs)) == -1)
-            return mkfailure<bool>("Could not add entry");
+            return mkfailure<bool>("Could not add tinycdb entry");
         return true;
     }
 };
@@ -404,7 +404,7 @@ const failable<value> get(const value& key, TinyCDB& cdb) {
 
     cdbi_t vlen;
     if (cdb_seek(fd, c_str(ks), length(ks), &vlen) <= 0)
-        return mkfailure<value>("Could not get entry");
+        return mkfailure<value>("Could not get tinycdb entry");
     char* data = gc_cnew(vlen + 1);
     cdb_bread(fd, data, vlen);
     data[vlen] = '\0';

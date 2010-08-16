@@ -91,10 +91,10 @@ private:
         apr_memcache_server_t *server;
         const apr_status_t sc = apr_memcache_server_create(pool, c_str(host), (apr_port_t)port, 1, 1, 1, 600, &server);
         if (sc != APR_SUCCESS)
-            return mkfailure<bool>("Could not create server");
+            return mkfailure<bool>("Could not create memcached server");
         const apr_status_t as = apr_memcache_add_server(mc, server);
         if (as != APR_SUCCESS)
-            return mkfailure<bool>("Could not add server");
+            return mkfailure<bool>("Could not add memcached server");
         return true;
     }
 
@@ -131,7 +131,7 @@ const failable<bool> post(const value& key, const value& val, const MemCached& c
     const string vs(scheme::writeValue(val));
     const apr_status_t rc = apr_memcache_add(cache.mc, nospaces(c_str(ks)), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
-        return mkfailure<bool>("Could not add entry");
+        return mkfailure<bool>("Could not add memcached entry");
 
     debug(true, "memcache::post::result");
     return true;
@@ -148,7 +148,7 @@ const failable<bool> put(const value& key, const value& val, const MemCached& ca
     const string vs(scheme::writeValue(val));
     const apr_status_t rc = apr_memcache_set(cache.mc, nospaces(c_str(ks)), const_cast<char*>(c_str(vs)), length(vs), 0, 27);
     if (rc != APR_SUCCESS)
-        return mkfailure<bool>("Could not set entry");
+        return mkfailure<bool>("Could not set memcached entry");
 
     debug(true, "memcache::put::result");
     return true;
@@ -164,9 +164,8 @@ const failable<value> get(const value& key, const MemCached& cache) {
     char *data;
     apr_size_t size;
     const apr_status_t rc = apr_memcache_getp(cache.mc, cache.pool, nospaces(c_str(ks)), &data, &size, NULL);
-    if (rc != APR_SUCCESS) {
-        return mkfailure<value>("Could not get entry");
-    }
+    if (rc != APR_SUCCESS)
+        return mkfailure<value>("Could not get memcached entry");
     const value val(scheme::readValue(string(data, size)));
 
     debug(val, "memcache::get::result");
@@ -182,7 +181,7 @@ const failable<bool> del(const value& key, const MemCached& cache) {
     const string ks(scheme::writeValue(key));
     const apr_status_t rc = apr_memcache_delete(cache.mc, nospaces(c_str(ks)), 0);
     if (rc != APR_SUCCESS)
-        return mkfailure<bool>("Could not delete entry");
+        return mkfailure<bool>("Could not delete memcached entry");
 
     debug(true, "memcache::delete::result");
     return true;

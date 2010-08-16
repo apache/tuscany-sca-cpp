@@ -26,8 +26,6 @@
  * Script evaluator primitive functions.
  */
 
-#include <apr_general.h>
-#include <apr_uuid.h>
 #include "stream.hpp"
 #include "function.hpp"
 #include "list.hpp"
@@ -144,11 +142,7 @@ const value logProc(const list<value>& args) {
 }
 
 const value uuidProc(unused const list<value>& args) {
-    apr_uuid_t uuid;
-    apr_uuid_get(&uuid);
-    char buf[APR_UUID_FORMATTED_LENGTH];
-    apr_uuid_format(buf, &uuid);
-    return string(buf, APR_UUID_FORMATTED_LENGTH);
+    return mkuuid();
 }
 
 const value cadrProc(unused const list<value>& args) {

@@ -49,7 +49,7 @@
         <service name="Total">
             <t:binding.jsonrpc uri="total"/>
         </service>        
-        <reference name="cache" target="Sqldb"/>
+        <reference name="cache" target="Cache"/>
     </component>
     
     <component name="CurrencyConverter">
@@ -59,9 +59,28 @@
         </service>        
     </component>     
 
+    <component name="Cache">
+        <implementation.cpp path="../../components/cache" library="libfrontcache"/>
+        <service name="Cache">
+            <t:binding.atom uri="cache"/>
+        </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="Sqldb"/>
+        <reference name="l2writer" target="Sqldb"/>
+    </component>     
+
+    <component name="Memcache">
+        <implementation.cpp path="../../components/cache" library="libmemcache"/>
+        <service name="Memcache">
+            <t:binding.atom uri="memcache"/>
+        </service>
+        <property name="servers">localhost:11211</property>
+    </component>     
+
     <component name="Sqldb">
         <implementation.cpp path="../../components/sqldb" library="libsqldb"/>
-        <property name="conninfo">dbname=db</property>
+        <property name="conninfo">host=localhost port=5432 dbname=db</property>
         <property name="table">store</property>
         <service name="Sqldb">
             <t:binding.atom uri="sqldb"/>

@@ -24,14 +24,6 @@ root=`readlink -f $1`
 pgsql_prefix=`cat $here/pgsql.prefix`
 mkdir -p $root/sqldb
 mkdir -p $root/logs
-if [ ! -f $root/sqldb/postgresql.conf ]; then
-    $pgsql_prefix/bin/pg_ctl init -D $root/sqldb 1>/dev/null 2>&1
-    createdb="true"
-fi
-
-$pgsql_prefix/bin/pg_ctl start -D $root/sqldb -l $root/logs/postgresql 1>/dev/null 2>&1
-sleep 2
-if [ "$createdb" = "true" ]; then
-    $pgsql_prefix/bin/createdb db 1>/dev/null 2>&1
-fi
+$pgsql_prefix/bin/pg_ctl start -w -D $root/sqldb/data -l $root/logs/postgresql 1>>$root/logs/postgresql 2>&1
+sleep 1
 

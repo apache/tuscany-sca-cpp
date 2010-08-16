@@ -17,6 +17,25 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-stop tmp
-../../components/sqldb/pgsql-stop tmp
-../../components/cache/memcached-stop
+# Backup postgresql data directory
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
+
+if [ "$2" = "" ]; then
+    host="localhost"
+    port="5432"
+else
+    host="$2"
+    port="$3"
+fi
+
+pgsql_prefix=`cat $here/pgsql.prefix`
+$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_start_backup('backup', true)" db 1>>$root/logs/postgresql 2>&1
+
+echo "Content-type: application/x-compressed"
+echo
+
+tar -C $root/sqldb -cz data
+
+$pgsql_prefix/bin/psql -h $host -p $port -c "SELECT pg_stop_backup()" db 1>>$root/logs/postgresql 2>&1
+

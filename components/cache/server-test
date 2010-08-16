@@ -29,6 +29,9 @@ EOF
 ./memcached-start 11211
 ./memcached-start 11212
 ./memcached-start 11213
+./memcached-start 11411
+./memcached-start 11412
+./memcached-start 11413
 ../../modules/http/httpd-start tmp
 sleep 2
 
@@ -41,5 +44,8 @@ rc=$?
 ./memcached-stop 11211
 ./memcached-stop 11212
 ./memcached-stop 11213
+./memcached-stop 11411
+./memcached-stop 11412
+./memcached-stop 11413
 sleep 2
 return $rc

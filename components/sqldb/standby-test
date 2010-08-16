@@ -17,6 +17,23 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/httpd-stop tmp
-../../components/sqldb/pgsql-stop tmp
-../../components/cache/memcached-stop
+# Setup
+../../modules/http/httpd-conf tmp/master localhost 8090 tmp/master/htdocs
+./pgsql-conf tmp/master 5432
+./pgsql-start tmp/master
+./pgsql localhost 5432 "drop table test;" 1>/dev/null 2>&1
+./pgsql localhost 5432 "create table test(key text, value text);" 1>/dev/null 2>&1
+../../modules/http/httpd-start tmp/master
+sleep 2
+./pgsql-standby-conf tmp/standby localhost 5432 8090 5433
+./pgsql-start tmp/standby
+
+# Test
+./pgsql-standby-test 2>/dev/null
+rc=$?
+
+# Cleanup
+../../modules/http/httpd-stop tmp/master
+./pgsql-stop tmp/standby
+./pgsql-stop tmp/master
+return $rc
