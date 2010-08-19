@@ -19,6 +19,16 @@
 
 root=$1
 port=$2
+httpport=$3
+
+# Aggregate database server logs
+category=`basename $root`
+../../components/log/scribe-tail-start $category "sqldb" $root/logs/postgresql
+../../components/log/scribe-tail-start $category $root/logs/error_log
+../../components/log/scribe-tail-start $category $root/logs/access_log
+
+# Configure a database backup HTTP server
+../../modules/http/httpd-conf $root localhost $httpport $root/htdocs
 
 # Configure a database server
 if [ ! -f $root/sqldb/data/postgresql.conf ]; then
@@ -29,7 +39,7 @@ fi
 ../../components/sqldb/pgsql-conf $root $port
 if [ "$create" = "true" ]; then
     ../../components/sqldb/pgsql-start $root
-    ../../components/sqldb/pgsql localhost $port "create table store(key text, value text);" 1>/dev/null 2>&1
+    ../../components/sqldb/pgsql localhost $port "create table store(key text, value text);" 1>>$root/logs/postgresql 2>&1
     ../../components/sqldb/pgsql-stop $root
 fi
 

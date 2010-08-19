@@ -21,7 +21,12 @@
 here=`readlink -f $0`; here=`dirname $here`
 mkdir -p $1
 root=`readlink -f $1`
+
 central=$2
+cport=$3
+if [ "$cport" = "" ]; then
+    cport="1463"
+fi
 
 mkdir -p $root/scribe/conf
 mkdir -p $root/scribe/logs/client-secondary
@@ -47,8 +52,8 @@ retry_interval_range=10
 
 <primary>
 type=network
-remote_host=$2
-remote_port=1463
+remote_host=$central
+remote_port=$cport
 </primary>
 
 <secondary>

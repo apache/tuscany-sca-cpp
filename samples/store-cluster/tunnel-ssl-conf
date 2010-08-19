@@ -18,16 +18,11 @@
 #  under the License.
 
 root=$1
+port=$2
+sslport=$3
 
-# Configure SSL tunnels to the memcached servers
-../../modules/http/httpd-conf $root localhost 127.0.0.1:11210 htdocs
+# Configure an SSL-enabled tunnel server
+../../modules/http/httpd-conf $root sca-store.com $port/119 $root/htdocs
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
-../../modules/http/tunnel-ssl-conf $root 11211 localhost 8441 11411
-../../modules/http/tunnel-ssl-conf $root 11212 localhost 8442 11412
-../../modules/http/tunnel-ssl-conf $root 11213 localhost 8443 11413
-
-# Configure SSL tunnels to the postgresql servers
-../../modules/http/tunnel-ssl-conf $root 5532 localhost 8441 5432
-../../modules/http/tunnel-ssl-conf $root 5533 localhost 8441 5433
-../../modules/http/tunnel-ssl-conf $root 5534 localhost 8441 5433
+../../modules/http/httpd-ssl-conf $root $sslport/563
 

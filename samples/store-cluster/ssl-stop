@@ -17,6 +17,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+set -x
+
 ../../modules/http/httpd-stop tmp/server1
 ../../modules/http/httpd-stop tmp/server2
 ../../modules/http/httpd-stop tmp/server3
@@ -28,4 +30,15 @@
 ../../components/cache/memcached-stop 127.0.0.1:11412
 ../../components/cache/memcached-stop 127.0.0.1:11413
 
-../../modules/http/httpd-stop tmp/tunnel1
+../../components/sqldb/pgsql-stop tmp/sqldb3
+../../modules/http/httpd-stop tmp/sqldb3
+../../components/sqldb/pgsql-stop tmp/sqldb2
+../../modules/http/httpd-stop tmp/sqldb2
+../../components/sqldb/pgsql-stop tmp/sqldb1
+../../modules/http/httpd-stop tmp/sqldb1
+
+../../modules/http/httpd-stop tmp/tunnel
+
+../../components/log/scribed-client-stop tmp/monitor
+../../components/log/scribed-central-stop tmp/monitor
+../../components/log/scribe-tail-stop tmp

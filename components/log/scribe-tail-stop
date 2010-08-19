@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,30 +17,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Write messages to Scribe
+# Stop tailing a file
+here=`readlink -f $0`; here=`dirname $here`
 
-import sys
-from scribe import scribe
-from thrift.transport import TTransport, TSocket
-from thrift.protocol import TBinaryProtocol
+category=""
+type=""
+file=""
+if [ "$3" != "" ]; then
+    category=$1
+    type=$2
+    file=$3
+else
+    if [ "$2" != "" ]; then
+        category=$1
+        file=$2
+    else
+        file=$1
+    fi
+fi
+file=`readlink -f $file`
 
-category = sys.argv[1]
-host = 'localhost'
-port = 1464
-
-entry = scribe.LogEntry(category=category, message=sys.stdin.read())
-socket = TSocket.TSocket(host=host, port=port)
-transport = TTransport.TFramedTransport(socket)
-protocol = TBinaryProtocol.TBinaryProtocol(trans=transport, strictRead=False, strictWrite=False)
-client = scribe.Client(iprot=protocol, oprot=protocol)
-transport.open()
-result = client.Log(messages=[entry])
-transport.close()
-
-if result == scribe.ResultCode.OK:
-  sys.exit()
-if result == scribe.ResultCode.TRY_LATER:
-  print >> sys.stderr, "Try later"
-  sys.exit(84)
-sys.exit(result)
+cmd="tail -f -n 0 $file"
+kill `ps -ef | grep -v grep | grep "${cmd}" | awk '{ print $2 }'`
 

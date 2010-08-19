@@ -24,3 +24,9 @@ port=$2
 ../../modules/http/httpd-conf $root sca-store.com $port/80 $root/htdocs
 ../../modules/http/vhost-conf $root
 ../../modules/http/proxy-conf $root
+
+# Aggregate proxy balancer logs
+category=`basename $root`
+../../components/log/scribe-tail-start $category $root/logs/error_log
+../../components/log/scribe-tail-start $category $root/logs/access_log
+

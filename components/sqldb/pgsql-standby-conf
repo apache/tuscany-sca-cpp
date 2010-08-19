@@ -22,19 +22,8 @@ here=`readlink -f $0`; here=`dirname $here`
 mkdir -p $1
 root=`readlink -f $1`
 
-# Master server address
-if [ "$2" = "" ]; then
-    mhost="localhost"
-    mport="5432"
-    mhttpport="80"
-else
-    mhost="$2"
-    mport="$3"
-    mhttpport="$4"
-fi
-
 # Server address
-addr=$5
+addr=$2
 if [ "$addr" = "" ]; then
     ip="*"
     port="5432"
@@ -44,6 +33,17 @@ else
         ip="*"
     fi
     port=`$here/../../modules/http/httpd-addr port $addr`
+fi
+
+# Master server address
+if [ "$3" = "" ]; then
+    mhost="localhost"
+    mport="5432"
+    mhttpport="80"
+else
+    mhost="$3"
+    mport="$4"
+    mhttpport="$5"
 fi
 
 pgsql_prefix=`cat $here/pgsql.prefix`

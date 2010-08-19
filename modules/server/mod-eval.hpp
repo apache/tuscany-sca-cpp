@@ -671,7 +671,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     // Configure the deployed components
     const failable<bool> res = confComponents(sc);
     if (!hasContent(res)) {
-        cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
+        cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         return -1;
     }
 
@@ -689,14 +689,14 @@ void childInit(apr_pool_t* p, server_rec* s) {
     gc_scoped_pool pool(p);
     ServerConf* sc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_eval);
     if(sc == NULL) {
-        cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
+        cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
 
     // Start the components in the child process
     const failable<bool> res = startComponents(*sc);
     if (!hasContent(res)) {
-        cerr << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
+        cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
     

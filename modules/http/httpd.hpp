@@ -43,6 +43,7 @@
 #include <util_script.h>
 #include <util_md5.h>
 #include <http_config.h>
+#include <http_log.h>
 #include <ap_mpm.h>
 #include <mod_core.h>
 
@@ -50,6 +51,7 @@
 #include "stream.hpp"
 #include "list.hpp"
 #include "value.hpp"
+#include "monad.hpp"
 
 
 namespace tuscany {
@@ -408,44 +410,60 @@ const void* userData(const string& k, const server_rec* s) {
 /**
  * Debug log.
  */
+
+/**
+ * Log an optional value.
+ */
 const char* debugOptional(const char* s) {
     if (s == NULL)
         return "";
     return s;
 }
 
+/**
+ * Log a header
+ */
 int debugHeader(unused void* r, const char* key, const char* value) {
-    cerr << "  header key: " << key << ", value: " << value << endl;
+    cdebug << "  header key: " << key << ", value: " << value << endl;
     return 1;
 }
 
+/**
+ * Log an environment variable
+ */
 int debugEnv(unused void* r, const char* key, const char* value) {
-    cerr << "  var key: " << key << ", value: " << value << endl;
+    cdebug << "  var key: " << key << ", value: " << value << endl;
     return 1;
 }
 
+/**
+ * Log a note.
+ */
 int debugNote(unused void* r, const char* key, const char* value) {
-    cerr << "  note key: " << key << ", value: " << value << endl;
+    cdebug << "  note key: " << key << ", value: " << value << endl;
     return 1;
 }
 
+/**
+ * Log a request.
+ */
 const bool debugRequest(request_rec* r, const string& msg) {
-    cerr << msg << ":" << endl;
-    cerr << "  server: " << debugOptional(r->server->server_hostname) << endl;
-    cerr << "  protocol: " << debugOptional(r->protocol) << endl;
-    cerr << "  method: " << debugOptional(r->method) << endl;
-    cerr << "  method number: " << r->method_number << endl;
-    cerr << "  content type: " << contentType(r) << endl;
-    cerr << "  content encoding: " << debugOptional(r->content_encoding) << endl;
+    cdebug << msg << ":" << endl;
+    cdebug << "  server: " << debugOptional(r->server->server_hostname) << endl;
+    cdebug << "  protocol: " << debugOptional(r->protocol) << endl;
+    cdebug << "  method: " << debugOptional(r->method) << endl;
+    cdebug << "  method number: " << r->method_number << endl;
+    cdebug << "  content type: " << contentType(r) << endl;
+    cdebug << "  content encoding: " << debugOptional(r->content_encoding) << endl;
     apr_table_do(debugHeader, r, r->headers_in, NULL);
-    cerr << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
-    cerr << "  uri: " << debugOptional(r->uri) << endl;
-    cerr << "  path info: " << debugOptional(r->path_info) << endl;
-    cerr << "  filename: " << debugOptional(r->filename) << endl;
-    cerr << "  uri tokens: " << pathTokens(r->uri) << endl;
-    cerr << "  args: " << debugOptional(r->args) << endl;
-    cerr << "  user: " << debugOptional(r->user) << endl;
-    cerr << "  auth type: " << debugOptional(r->ap_auth_type) << endl;
+    cdebug << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
+    cdebug << "  uri: " << debugOptional(r->uri) << endl;
+    cdebug << "  path info: " << debugOptional(r->path_info) << endl;
+    cdebug << "  filename: " << debugOptional(r->filename) << endl;
+    cdebug << "  uri tokens: " << pathTokens(r->uri) << endl;
+    cdebug << "  args: " << debugOptional(r->args) << endl;
+    cdebug << "  user: " << debugOptional(r->user) << endl;
+    cdebug << "  auth type: " << debugOptional(r->ap_auth_type) << endl;
     apr_table_do(debugEnv, r, r->subprocess_env, NULL);
     apr_table_do(debugEnv, r, r->notes, NULL);
     return true;

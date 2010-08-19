@@ -25,7 +25,7 @@
 ./pgsql localhost 5432 "create table test(key text, value text);" 1>/dev/null 2>&1
 ../../modules/http/httpd-start tmp/master
 sleep 2
-./pgsql-standby-conf tmp/standby localhost 5432 8090 5433
+./pgsql-standby-conf tmp/standby 5433 localhost 5432 8090
 ./pgsql-start tmp/standby
 
 # Test

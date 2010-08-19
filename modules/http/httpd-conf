@@ -92,7 +92,7 @@ HostNameLookups Off
 # Log HTTP requests
 LogLevel info
 ErrorLog $root/logs/error_log
-LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" combined
+LogFormat "[%{%a %b %d %H:%M:%S %Y}t] [access] %h %l %u \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" combined
 CustomLog $root/logs/access_log combined
 
 # Configure Mime types

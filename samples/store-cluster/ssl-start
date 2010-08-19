@@ -17,6 +17,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+set -x
+
 # Generate SSL certificates
 ../../modules/http/ssl-ca-conf tmp/ssl sca-store.com
 ../../modules/http/ssl-cert-conf tmp/ssl sca-store.com server
@@ -24,22 +26,65 @@
 ../../modules/http/ssl-cert-conf tmp/ssl sca-store.com proxy
 ../../modules/http/ssl-cert-conf tmp/ssl sca-store.com tunnel
 
-# Start three memcached servers and a tunnel server
+# Start an SSL tunnel
+./tunnel-ssl-conf tmp/tunnel 8119 8563
+../../modules/http/httpd-start tmp/tunnel
+sleep 1
+
+# Start scribe logging
+../../modules/http/tunnel-ssl-conf tmp/tunnel 1465 localhost 563 1463
+../../modules/http/httpd-restart tmp/tunnel
+../../components/log/scribed-central-conf tmp/monitor
+../../components/log/scribed-client-conf tmp/monitor localhost 1465
+../../components/log/scribed-central-start tmp/monitor
+../../components/log/scribed-client-start tmp/monitor
+sleep 1
+
+# Start three memcached servers
+../../modules/http/tunnel-ssl-conf tmp/tunnel 11211 localhost 563 11411
 ../../components/cache/memcached-start 127.0.0.1:11411
+../../modules/http/tunnel-ssl-conf tmp/tunnel 11212 localhost 563 11412
 ../../components/cache/memcached-start 127.0.0.1:11412
+../../modules/http/tunnel-ssl-conf tmp/tunnel 11213 localhost 563 11413
 ../../components/cache/memcached-start 127.0.0.1:11413
-./tunnel-ssl-conf tmp/tunnel1
-../../modules/http/httpd-start tmp/tunnel1
+../../modules/http/httpd-restart tmp/tunnel
+sleep 1
+
+# Start a master and two hot standby databases
+../../modules/http/tunnel-ssl-conf tmp/tunnel 5432 localhost 563 5532
+../../modules/http/tunnel-ssl-conf tmp/tunnel 8502 localhost 563 8602
+../../modules/http/httpd-restart tmp/tunnel
+./sqldb-master-conf tmp/sqldb1 127.0.0.1:5532 127.0.0.1:8602
+../../components/sqldb/pgsql-start tmp/sqldb1
+../../modules/http/httpd-start tmp/sqldb1
+sleep 1
+
+../../modules/http/tunnel-ssl-conf tmp/tunnel 5433 localhost 563 5533
+../../modules/http/tunnel-ssl-conf tmp/tunnel 8503 localhost 563 8603
+../../modules/http/httpd-restart tmp/tunnel
+./sqldb-standby-conf tmp/sqldb2 127.0.0.1:5533 127.0.0.1:8603 localhost 5432 8502
+../../components/sqldb/pgsql-start tmp/sqldb2
+../../modules/http/httpd-start tmp/sqldb2
+
+../../modules/http/tunnel-ssl-conf tmp/tunnel 5434 localhost 563 5534
+../../modules/http/tunnel-ssl-conf tmp/tunnel 8504 localhost 563 8604
+../../modules/http/httpd-restart tmp/tunnel
+./sqldb-standby-conf tmp/sqldb3 127.0.0.1:5534 127.0.0.1:8604 localhost 5432 8502
+../../components/sqldb/pgsql-start tmp/sqldb3
+../../modules/http/httpd-start tmp/sqldb3
 
 # Start three app servers
 ./server-ssl-conf tmp/server1 8101 8441
 ../../modules/http/httpd-start tmp/server1
+sleep 1
 
 ./server-ssl-conf tmp/server2 8102 8442
 ../../modules/http/httpd-start tmp/server2
+sleep 1
 
 ./server-ssl-conf tmp/server3 8103 8443
 ../../modules/http/httpd-start tmp/server3
+sleep 1
 
 # Start two proxy balancers
 ./proxy-ssl-conf tmp/proxy1 8091 8093
@@ -60,11 +105,15 @@
 ../../modules/http/proxy-ssl-member-conf tmp/proxy2 localhost 8443
 ../../modules/http/httpd-start tmp/proxy2
 
-# Redirect traffic from port 80 to 8091 and use proxy1
+# Redirect traffic from ports 80 and 443 to proxy1
 #../../ubuntu/ip-redirect-all 80 8091
 #../../ubuntu/ip-redirect-all 443 8093
 
-# Redirect traffic from port 80 to 8092 and use proxy2
+# Redirect traffic from ports 80 and 443 to proxy2
 #../../ubuntu/ip-redirect-all 80 8092
 #../../ubuntu/ip-redirect-all 443 8094
+
+# Redirect traffic from ports 119 and 563 to tunnel
+#../../ubuntu/ip-redirect-all 119 8119
+#../../ubuntu/ip-redirect-all 563 8563
 

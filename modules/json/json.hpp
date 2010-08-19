@@ -41,8 +41,10 @@ namespace json {
  * Report JSON errors.
  */
 void reportError(unused JSContext *cx, const char *message, JSErrorReport *report) {
-    cerr << (const char*)(report->filename? report->filename : "<no filename>") << ":"
+#ifdef WANT_MAINTAINER_MODE
+    cdebug << (const char*)(report->filename? report->filename : "<no filename>") << ":"
             << (int)report->lineno << ":" << message << endl;
+#endif
 }
 
 /**

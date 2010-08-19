@@ -22,17 +22,17 @@ INCLUDES = -I${THRIFT_INCLUDE} -I${FB303_INCLUDE}
 incl_HEADERS = *.hpp
 incldir = $(prefix)/include/components/log
 
-dist_comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop scribe-cat
+dist_comp_SCRIPTS = scribed-central-conf scribed-client-conf scribed-central-start scribed-central-stop scribed-client-start scribed-client-stop scribe-tail-start scribe-tail-stop
 compdir=$(prefix)/components/log
 
-comp_DATA = scribe.prefix thrift.prefix scribecat.py
+comp_DATA = scribe.prefix thrift.prefix
 scribe.prefix: $(top_builddir)/config.status
 	echo ${SCRIBE_PREFIX} >scribe.prefix
 
 thrift.prefix: $(top_builddir)/config.status
 	echo ${THRIFT_PREFIX} >thrift.prefix
 
-EXTRA_DIST = log.composite *.py *.scm *.thrift
+EXTRA_DIST = log.composite *.scm *.thrift
 
 BUILT_SOURCES=gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
 gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h: scribe.thrift
@@ -56,6 +56,13 @@ liblogger_la_SOURCES = logger.cpp
 liblogger_la_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
 liblogger.so:
 	ln -s .libs/liblogger.so
+
+comp_PROGRAMS = scribe-cat
+
+nodist_scribe_cat_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
+scribe_cat_CXXFLAGS = -Wno-unused-parameter
+scribe_cat_SOURCES = scribe-cat.cpp
+scribe_cat_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

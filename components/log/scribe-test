@@ -28,7 +28,7 @@ rm -rf tmp
 sleep 1
 
 # Test logging a message
-echo test | ./scribe-cat
+echo test | ./scribe-cat >/dev/null
 sleep 4
 grep test tmp/scribe/logs/central/default/default_current >/dev/null
 rc=$?

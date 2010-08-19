@@ -17,6 +17,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+set -x
+
 ../../components/sqldb/pgsql-stop tmp/server2
 ../../components/sqldb/pgsql-stop tmp/server3
 ../../components/sqldb/pgsql-stop tmp/server1
@@ -32,3 +34,6 @@
 ../../components/cache/memcached-stop 11212
 ../../components/cache/memcached-stop 11213
 
+../../components/log/scribed-client-stop tmp/monitor
+../../components/log/scribed-central-stop tmp/monitor
+../../components/log/scribe-tail-stop tmp

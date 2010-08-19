@@ -17,16 +17,28 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Write messages to Scribe
+# Tail a file and pipe into scribe-cat
 here=`readlink -f $0`; here=`dirname $here`
-category=$1
-if [ "$category" = "" ]; then
-    category="default"
+
+category=""
+type=""
+file=""
+if [ "$3" != "" ]; then
+    category=$1
+    type=$2
+    file=$3
+else
+    if [ "$2" != "" ]; then
+        category=$1
+        file=$2
+    else
+        file=$1
+    fi
 fi
 
-python_prefix=`cat $here/../../modules/python/python.prefix`
-scribe_prefix=`cat $here/scribe.prefix`
-thrift_prefix=`cat $here/thrift.prefix`
-export PYTHONPATH=$PYTHONPATH:${thrift_prefix}/lib/python2.6/site-packages:${thrift_prefix}/contrib/fb303/lib/python2.6/site-packages:${scribe_prefix}/lib/python2.6/site-packages
-$python_prefix/bin/python $here/scribecat.py $category
+mkdir -p `dirname $file`
+touch $file
+file=`readlink -f $file`
+
+tail -f -n 0 $file | $here/scribe-cat $category $type &
 

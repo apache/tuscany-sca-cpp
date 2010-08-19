@@ -38,3 +38,8 @@ SCAVirtualComposite store.composite
 
 EOF
 
+# Aggregate app server logs
+category=`basename $root`
+../../components/log/scribe-tail-start $category $root/logs/error_log
+../../components/log/scribe-tail-start $category $root/logs/access_log
+

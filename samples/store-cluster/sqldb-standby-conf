@@ -18,11 +18,21 @@
 #  under the License.
 
 root=$1
-mhost=$2
-mport=$3
-mhttpport=$4
-port=$5
+port=$2
+httpport=$3
+mhost=$4
+mport=$5
+mhttpport=$6
+
+# Aggregate database server logs
+category=`basename $root`
+../../components/log/scribe-tail-start $category "sqldb" $root/logs/postgresql
+../../components/log/scribe-tail-start $category $root/logs/error_log
+../../components/log/scribe-tail-start $category $root/logs/access_log
+
+# Configure a database backup HTTP server
+../../modules/http/httpd-conf $root localhost $httpport $root/htdocs
 
 # Configure a standby database server
-../../components/sqldb/pgsql-standby-conf $root $mhost $mport $mhttpport $port
+../../components/sqldb/pgsql-standby-conf $root $port $mhost $mport $mhttpport
 

@@ -97,7 +97,7 @@ class stream_endl {
 } endl;
 
 ostream& operator<<(ostream& os, unused const stream_endl e) {
-    os.vprintf("%s", "\n");
+    os.write("\n");
     return os.flush();
 }
 

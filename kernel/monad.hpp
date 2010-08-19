@@ -29,6 +29,8 @@
 #include "function.hpp"
 #include "string.hpp"
 #include "stream.hpp"
+#include "sstream.hpp"
+#include "fstream.hpp"
 
 namespace tuscany
 {
@@ -275,7 +277,12 @@ template<typename V, typename F> const lambda<failable<V, F>(const V)> success()
  * Returns a failable monad with a failure in it.
  */
 template<typename V, typename F> const failable<V, F> mkfailure(const F& f) {
-    debug(f, "failable::mkfailure");
+#ifdef WANT_MAINTAINER_MODE
+    ostringstream os;
+    os << f;
+    if (length(str(os)) != 0)
+        debug(f, "failable::mkfailure");
+#endif
     return failable<V, F>(false, f);
 }
 

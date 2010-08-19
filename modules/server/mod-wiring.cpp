@@ -396,7 +396,7 @@ void childInit(apr_pool_t* p, server_rec* s) {
     gc_scoped_pool pool(p);
     ServerConf *conf = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_wiring);
     if(conf == NULL) {
-        cerr << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << endl;
+        cfailure << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
 }

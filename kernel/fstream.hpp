@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <time.h>
 #include "string.hpp"
 #include "stream.hpp"
 
@@ -137,19 +138,106 @@ ofstream cerr(stderr);
 ifstream cin(stdin);
 
 /**
- * Debug log stream.
+ * Streams used for logging.
  */
+
+/**
+ * Format the current time.
+ */
+const string logTime() {
+    const time_t t = ::time(NULL);
+    const tm* lt = localtime(&t);
+    char ft[32];
+    strftime(ft, 31, "%a %b %d %H:%M:%S %Y", lt);
+    return ft;
+}
+
+/*
+ * Log stream.
+ */
+class logfstream : public ostream {
+public:
+    logfstream(FILE* file, const string& type) : file(file), type(type), owner(false), head(false) {
+    }
+
+    logfstream(const logfstream& os) : file(os.file), type(type), owner(false), head(os.head) {
+    }
+
+    ~logfstream() {
+        if (!owner)
+            return;
+        if (file == NULL)
+            return;
+        fclose(file);
+    }
+
+    logfstream& vprintf(const char* fmt, ...) {
+        whead();
+        va_list args;
+        va_start (args, fmt);
+        vfprintf (file, fmt, args);
+        va_end (args);
+        return *this;
+    }
+
+    logfstream& write(const string& s) {
+        whead();
+        fwrite(c_str(s), 1, length(s), file);
+        if (s == "\n")
+            head = false;
+        return *this;
+    }
+
+    logfstream& flush() {
+        fflush(file);
+        return *this;
+    }
+
+private:
+    FILE* file;
+    const string type;
+    bool owner;
+    bool head;
+
+    logfstream& whead() {
+        if (head)
+            return *this;
+        head = true;
+        *this << "[" << logTime() << "] [" << type << "] ";
+        return *this;
+    }
+};
+
+/**
+ * Info and failure log streams.
+ */
+logfstream cinfo(stderr, "info");
+logfstream cfailure(stderr, "error");
+
 #ifdef WANT_MAINTAINER_MODE
 
-template<typename V> const bool debug(const V& v, const string& msg) {
-    cerr << msg << ": " << v << endl;
+/**
+ * Debug log stream and debug functions.
+ */
+logfstream cdebug(stderr, "debug");
+
+/**
+ * Log a debug message.
+ */
+const bool debugLog(const string& msg) {
+    cdebug << msg << endl;
     return true;
 }
 
-const bool debug(const string& msg) {
-    cerr << msg << endl;
+/**
+ * Log a debug message and a value.
+ */
+template<typename V> const bool debugLog(const V& v, const string& msg) {
+    cdebug << msg << ": " << v << endl;
     return true;
 }
+
+#define debug(...) tuscany::debugLog(__VA_ARGS__)
 
 #else
 

@@ -17,28 +17,44 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+set -x
+
+# Start scribe logging
+../../components/log/scribed-central-conf tmp/monitor
+../../components/log/scribed-client-conf tmp/monitor localhost
+../../components/log/scribed-central-start tmp/monitor
+../../components/log/scribed-client-start tmp/monitor
+sleep 1
+
 # Start three memcached servers
 ../../components/cache/memcached-start 11211
 ../../components/cache/memcached-start 11212
 ../../components/cache/memcached-start 11213
 
-# Start three app servers, with a master database and
-# two hot standby databases
+# Start a master and two hot standby databases
+./sqldb-master-conf tmp/sqldb1 5432 8502
+../../components/sqldb/pgsql-start tmp/sqldb1
+../../modules/http/httpd-start tmp/sqldb1
+sleep 1
+
+./sqldb-standby-conf tmp/sqldb2 5433 8503 localhost 5432 8502
+../../components/sqldb/pgsql-start tmp/sqldb2
+../../modules/http/httpd-start tmp/sqldb2
+
+./sqldb-standby-conf tmp/sqldb3 5434 8504 localhost 5432 8502
+../../components/sqldb/pgsql-start tmp/sqldb3
+../../modules/http/httpd-start tmp/sqldb3
+
+# Start three app servers
 ./server-conf tmp/server1 8101
-./sqldb-master-conf tmp/server1 5432
-../../components/sqldb/pgsql-start tmp/server1
 ../../modules/http/httpd-start tmp/server1
 sleep 1
 
 ./server-conf tmp/server2 8102
-./sqldb-standby-conf tmp/server2 localhost 5432 8101 5433
-../../components/sqldb/pgsql-start tmp/server2
 ../../modules/http/httpd-start tmp/server2
 sleep 1
 
 ./server-conf tmp/server3 8103
-./sqldb-standby-conf tmp/server3 localhost 5432 8101 5434
-../../components/sqldb/pgsql-start tmp/server3
 ../../modules/http/httpd-start tmp/server3
 sleep 1
 
@@ -55,9 +71,9 @@ sleep 1
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8103
 ../../modules/http/httpd-start tmp/proxy2
 
-# Redirect traffic from port 80 to 8091 and use proxy1
+# Redirect traffic from port 80 to proxy1
 #../../ubuntu/ip-redirect-all 80 8091
 
-# Redirect traffic from port 80 to 8092 and use proxy2
+# Redirect traffic from port 80 to proxy2
 #../../ubuntu/ip-redirect-all 80 8092
 
