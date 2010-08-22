@@ -64,8 +64,10 @@ struct applyImplementation {
     const lib ilib;
     const lambda<value(const list<value>&)> impl;
     const list<value> px;
+
     applyImplementation(const lib& ilib, const lambda<value(const list<value>&)>& impl, const list<value>& px) : ilib(ilib), impl(impl), px(px) {
     }
+
     const value operator()(const list<value>& params) const {
         debug(params, "modeval::cpp::applyImplementation::input");
 

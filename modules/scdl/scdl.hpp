@@ -117,10 +117,33 @@ const list<value> references(const value& l) {
 }
 
 /**
+ * Returns a list of bindings in a service or reference.
+ */
+const bool filterBinding(const value& v) {
+    return isElement(v) && contains(string(cadr<value>(v)), "binding.");
+}
+
+const list<value> bindings(const value& l) {
+    return filter<value>(filterBinding, l);
+}
+
+/**
  * Returns the target of a reference.
  */
+const value bindingsTarget(const list<value>& l) {
+    if (isNil(l))
+        return value();
+    const value u = uri(car(l));
+    if (!isNil(u))
+        return u;
+    return bindingsTarget(cdr(l));
+}
+
 const value target(const value& l) {
-    return attributeValue("target", l);
+    const value target = attributeValue("target", l);
+    if (!isNil(target))
+        return target;
+    return bindingsTarget(bindings(l));
 }
 
 /**
@@ -131,17 +154,6 @@ const list<value> referenceToTargetAssoc(const list<value>& r) {
         return r;
     const value ref(car(r));
     return cons<value>(mklist<value>(scdl::name(ref), scdl::target(ref)), referenceToTargetAssoc(cdr(r)));
-}
-
-/**
- * Returns a list of bindings in a service or reference.
- */
-const bool filterBinding(const value& v) {
-    return isElement(v) && contains(string(cadr<value>(v)), "binding.");
-}
-
-const list<value> bindings(const value& l) {
-    return filter<value>(filterBinding, l);
 }
 
 /**

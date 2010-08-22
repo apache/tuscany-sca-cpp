@@ -314,9 +314,9 @@ const failable<value> evalExpr(const value& expr, const string& url, const CURLS
 
     // Parse and return JSON-RPC result
     const failable<value> rval = json::jsonResultValue(cadr<list<string> >(content(res)), cx);
+    debug(rval, "http::evalExpr::result");
     if (!hasContent(rval))
         return mkfailure<value>(reason(rval));
-    debug(content(rval), "http::evalExpr::result");
     return content(rval);
 }
 
@@ -602,21 +602,22 @@ const failable<int> recv(char* c, const int l, const CURLSession& cs) {
  * HTTP client proxy function.
  */
 struct proxy {
-    proxy(const string& uri, const string& ca, const string& cert, const string& key) : uri(uri), ca(ca), cert(cert), key(key) {
+    proxy(const string& uri, const string& ca, const string& cert, const string& key, const gc_pool& p) : p(p), uri(uri), ca(ca), cert(cert), key(key), cs(*(new (gc_new<CURLSession>(p)) CURLSession(ca, cert, key))) {
     }
 
     const value operator()(const list<value>& args) const {
-        CURLSession cs(ca, cert, key);
         failable<value> val = evalExpr(args, uri, cs);
         if (!hasContent(val))
             return value();
         return content(val);
     }
 
+    const gc_pool p;
     const string uri;
     const string ca;
     const string cert;
     const string key;
+    const CURLSession& cs;
 };
 
 }

@@ -53,8 +53,10 @@ const bool useModProxy = true;
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : server(s), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName("") {
+    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName("") {
     }
+
+    const gc_pool p;
     server_rec* server;
     string contributionPath;
     string compositeName;
@@ -79,13 +81,6 @@ const bool hasVirtualCompositeConf(const ServerConf& sc) {
 }
 
 /**
- * Returns true if a URI is absolute.
- */
-const bool isAbsolute(const string& uri) {
-    return contains(uri, "://");
-}
-
-/**
  * Route a /references/component-name/reference-name request,
  * to the target of the component reference.
  */
@@ -107,7 +102,7 @@ int translateReference(const ServerConf& sc, request_rec *r) {
     debug(target, "modwiring::translateReference::target");
 
     // Route to an absolute target URI using mod_proxy or an HTTP client redirect
-    if (isAbsolute(target)) {
+    if (httpd::isAbsolute(target)) {
         if (useModProxy) {
             // Build proxy URI using current request's protocol scheme
             r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + httpd::scheme(r) + substr(target, find(target, "://"))));
@@ -270,7 +265,7 @@ const bool confComponents(ServerConf& sc) {
  */
 class VirtualHostConf {
 public:
-    VirtualHostConf(const ServerConf& ssc) : sc(ssc.server) {
+    VirtualHostConf(const gc_pool& p, const ServerConf& ssc) : sc(pool(p), ssc.server) {
         sc.virtualHostContributionPath = ssc.virtualHostContributionPath;
         sc.virtualHostCompositeName = ssc.virtualHostCompositeName;
     }
@@ -316,7 +311,7 @@ int translate(request_rec *r) {
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
 
     // Process dynamic virtual host configuration
-    VirtualHostConf vhc(sc);
+    VirtualHostConf vhc(gc_pool(r->pool), sc);
     const bool usevh = hasVirtualCompositeConf(vhc.sc) && httpd::isVirtualHostRequest(sc.server, r);
     if (usevh) {
         const failable<bool> cr = virtualHostConfig(vhc.sc, r);

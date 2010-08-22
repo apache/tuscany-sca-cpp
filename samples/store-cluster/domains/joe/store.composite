@@ -51,7 +51,9 @@
         <service name="Total">
             <t:binding.jsonrpc uri="total"/>
         </service>        
-        <reference name="cache" target="http://sca-store.com/cache"/>
+        <reference name="cache">
+            <t:binding.jsonrpc uri="http://sca-store.com/cache"/>
+        </reference>
     </component>
     
     <component name="CurrencyConverter">

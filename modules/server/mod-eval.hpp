@@ -53,9 +53,10 @@ namespace modeval {
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : server(s), wiringServerName(""), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(""), cert(""), key("") {
+    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s), wiringServerName(""), contributionPath(""), compositeName(""), virtualHostContributionPath(""), virtualHostCompositeName(""), ca(""), cert(""), key("") {
     }
 
+    const gc_pool p;
     server_rec* server;
     lambda<value(const list<value>&)> lifecycle;
     string wiringServerName;
@@ -259,16 +260,68 @@ int translate(request_rec *r) {
 }
 
 /**
- * Convert a list of component references to a list of HTTP proxy lambdas.
+ * Make an HTTP proxy lambda.
  */
-const value mkrefProxy(const value& ref, const string& base, const string& ca, const string& cert, const string& key) {
-    return lambda<value(const list<value>&)>(http::proxy(base + string(scdl::name(ref)), ca, cert, key));
+const value mkhttpProxy(const ServerConf& sc, const string& ref, const string& base) {
+    const string uri = base + ref;
+    debug(uri, "modeval::mkhttpProxy::uri");
+    return lambda<value(const list<value>&)>(http::proxy(uri, sc.ca, sc.cert, sc.key, sc.p));
 }
 
-const list<value> refProxies(const list<value>& refs, const string& base, const string& ca, const string& cert, const string& key) {
+/**
+ * Return a component implementation proxy lambda.
+ */
+class implProxy {
+public:
+    implProxy(const ServerConf& sc, const value& name) : sc(sc), name(name) {
+    }
+
+    const value operator()(const list<value>& params) const {
+        debug(params, "modeval::implProxy::input");
+
+        // Lookup the component implementation
+        const list<value> impl(assoctree<value>(name, sc.implTree));
+        if (isNil(impl))
+            return mkfailure<value>(string("Couldn't find component implementation: ") + name);
+
+        // Call its lambda function
+        const lambda<value(const list<value>&)> l(cadr<value>(impl));
+        const value func = c_str(car(params));
+        const failable<value> val = failableResult(l(cons(func, cdr(params))));
+        debug(val, "modeval::implProxy::result");
+        if (!hasContent(val))
+            return value();
+        return content(val);
+    }
+
+private:
+    const ServerConf& sc;
+    const value name;
+};
+
+const value mkimplProxy(const ServerConf& sc, const value& name) {
+    debug(name, "modeval::implProxy::impl");
+    return lambda<value(const list<value>&)>(implProxy(sc, name));
+}
+
+/**
+ * Convert a list of component references to a list of proxy lambdas.
+ */
+const value mkrefProxy(const ServerConf& sc, const value& ref, const string& base) {
+    const value target = scdl::target(ref);
+    debug(ref, "modeval::mkrefProxy::ref");
+    debug(target, "modeval::mkrefProxy::target");
+
+    // Use an HTTP proxy or an internal proxy to the component implementation
+    if (isNil(target) || httpd::isAbsolute(target))
+        return mkhttpProxy(sc, scdl::name(ref), base);
+    return mkimplProxy(sc, car(pathValues(target)));
+}
+
+const list<value> refProxies(const ServerConf& sc, const list<value>& refs, const string& base) {
     if (isNil(refs))
         return refs;
-    return cons(mkrefProxy(car(refs), base, ca, cert, key), refProxies(cdr(refs), base, ca, cert, key));
+    return cons(mkrefProxy(sc, car(refs), base), refProxies(sc, cdr(refs), base));
 }
 
 /**
@@ -375,11 +428,13 @@ const value evalComponent(ServerConf& sc, const value& comp) {
     extern const failable<lambda<value(const list<value>&)> > evalImplementation(const string& cpath, const value& impl, const list<value>& px, const lambda<value(const list<value>&)>& lifecycle);
 
     const value impl = scdl::implementation(comp);
+    debug(comp, "modeval::evalComponent::comp");
+    debug(impl, "modeval::evalComponent::impl");
 
     // Convert component references to configured proxy lambdas
     ostringstream base;
     base << sc.wiringServerName << "/references/" << string(scdl::name(comp)) << "/";
-    const list<value> rpx(refProxies(scdl::references(comp), str(base), sc.ca, sc.cert, sc.key));
+    const list<value> rpx(refProxies(sc, scdl::references(comp), str(base)));
 
     // Convert component proxies to configured proxy lambdas
     const list<value> ppx(propProxies(scdl::properties(comp)));
@@ -486,7 +541,7 @@ const failable<bool> startComponents(ServerConf& sc) {
  */
 class VirtualHostConf {
 public:
-    VirtualHostConf(const ServerConf& ssc) : sc(ssc.server) {
+    VirtualHostConf(const gc_pool& p, const ServerConf& ssc) : sc(pool(p), ssc.server) {
         sc.virtualHostContributionPath = ssc.virtualHostContributionPath;
         sc.virtualHostCompositeName = ssc.virtualHostCompositeName;
         sc.ca = ssc.ca;
@@ -559,7 +614,7 @@ int handler(request_rec *r) {
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_eval);
 
     // Process dynamic virtual host configuration, if any
-    VirtualHostConf vhc(sc);
+    VirtualHostConf vhc(gc_pool(r->pool), sc);
     const bool usevh = hasVirtualCompositeConf(vhc.sc) && httpd::isVirtualHostRequest(sc.server, r);
     if (usevh) {
         const failable<bool> cr = virtualHostConfig(vhc.sc, r);
@@ -571,7 +626,7 @@ int handler(request_rec *r) {
     const list<value> path(pathValues(r->uri));
     const list<value> impl(assoctree<value>(cadr(path), usevh? vhc.sc.implTree : sc.implTree));
     if (isNil(impl))
-        return httpd::reportStatus(mkfailure<int>(string("Couldn't find component implementation")));
+        return httpd::reportStatus(mkfailure<int>(string("Couldn't find component implementation: ") + cadr(path)));
 
     // Handle HTTP method
     const lambda<value(const list<value>&)> l(cadr<value>(impl));

@@ -61,7 +61,7 @@ namespace httpd {
  * Returns a server-scoped module configuration.
  */
 template<typename C> void* makeServerConf(apr_pool_t *p, server_rec *s) {
-    return new (gc_new<C>(p)) C(s);
+    return new (gc_new<C>(p)) C(p, s);
 }
 
 template<typename C> const C& serverConf(const request_rec* r, const module* mod) {
@@ -129,6 +129,13 @@ const string subdomain(const string& host) {
  */
 const bool isVirtualHostRequest(const server_rec* s, request_rec* r) {
     return hostName(r) != hostName(s);
+}
+
+/**
+ * Return true if a URI is absolute.
+ */
+const bool isAbsolute(const string& uri) {
+    return contains(uri, "://");
 }
 
 /**
@@ -402,6 +409,72 @@ const int internalRedirect(const string& uri, request_rec* r) {
     if (!hasContent(nr))
         return reason(nr);
     return httpd::internalRedirect(content(nr));
+}
+
+/**
+ * Create an HTTPD sub request.
+ * Similar to httpd/server/request.c::make_sub_request
+ */
+const failable<request_rec*, int> internalSubRequest(const string& nr_uri, request_rec* r) {
+    if (ap_is_recursion_limit_exceeded(r))
+        return mkfailure<request_rec*, int>(HTTP_INTERNAL_SERVER_ERROR);
+
+    // Create a new sub pool
+    apr_pool_t *nrp;
+    apr_pool_create(&nrp, r->pool);
+    apr_pool_tag(nrp, "subrequest");
+
+    // Create a new POST request
+    request_rec* nr = (request_rec*)apr_pcalloc(nrp, sizeof(request_rec));
+    nr->connection = r->connection;
+    nr->server = r->server;
+    nr->pool = nrp;
+    nr->method = "POST";
+    nr->method_number = M_POST;
+    nr->allowed_methods = ap_make_method_list(nr->pool, 2);
+    ap_parse_uri(nr, apr_pstrdup(nr->pool, c_str(nr_uri)));
+    nr->filename = apr_pstrdup(nr->pool, c_str(string("/subreq:") + nr_uri));
+    nr->request_config = ap_create_request_config(r->pool);
+    nr->per_dir_config = r->server->lookup_defaults;
+
+    // Inherit some of the protocol info from the parent request
+    nr->the_request = r->the_request;
+    nr->hostname = r->hostname;
+    nr->request_time = r->request_time;
+    nr->allowed = r->allowed;
+    nr->status = HTTP_OK;
+    nr->assbackwards = r->assbackwards;
+    nr->header_only = r->header_only;
+    nr->protocol = const_cast<char*>("INCLUDED");
+    nr->hostname = r->hostname;
+    nr->request_time = r->request_time;
+    nr->main = r;
+    nr->headers_in = apr_table_make(r->pool, 12);
+    nr->headers_out = apr_table_make(r->pool, 12);
+    nr->err_headers_out = apr_table_make(nr->pool, 5);
+    nr->subprocess_env = r->subprocess_env;
+    nr->subprocess_env  = apr_table_copy(nr->pool, r->subprocess_env);
+    nr->notes = apr_table_make(r->pool, 5);
+    nr->htaccess = r->htaccess;
+    nr->no_cache = r->no_cache;
+    nr->expecting_100 = r->expecting_100;
+    nr->no_local_copy = r->no_local_copy;
+    nr->read_length = 0;
+    nr->vlist_validator = r->vlist_validator;
+    nr->user = r->user;
+
+    // Setup input and output filters
+    nr->proto_output_filters = r->proto_output_filters;
+    nr->proto_input_filters = r->proto_input_filters;
+    nr->output_filters = nr->proto_output_filters;
+    nr->input_filters = nr->proto_input_filters;
+    ap_add_output_filter_handle(ap_subreq_core_filter_handle, NULL, nr, nr->connection);
+
+    // Run create request hook
+    ap_run_create_request(nr);
+    nr->used_path_info = AP_REQ_DEFAULT_PATH_INFO;
+
+    return nr;
 }
 
 /**

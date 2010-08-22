@@ -47,8 +47,10 @@ namespace modssltunnel {
  */
 class ServerConf {
 public:
-    ServerConf(server_rec* s) : server(s) {
+    ServerConf(apr_pool_t* p, server_rec* s) : p(p), server(s) {
     }
+
+    const gc_pool p;
     server_rec* server;
     string pass;
     string host;

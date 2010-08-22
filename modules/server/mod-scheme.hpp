@@ -54,8 +54,10 @@ const list<value> primitiveProcedures(const list<value>& l) {
 struct applyImplementation {
     const value impl;
     const list<value> px;
+
     applyImplementation(const value& impl, const list<value>& px) : impl(impl), px(scheme::quotedParameters(primitiveProcedures(px))) {
     }
+
     const value operator()(const list<value>& params) const {
         const value expr = cons<value>(car(params), append(scheme::quotedParameters(cdr(params)), px));
         debug(expr, "modeval::scheme::applyImplementation::input");
