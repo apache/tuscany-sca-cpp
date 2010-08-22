@@ -26,6 +26,10 @@ port=$2
 ../../modules/server/server-conf $root
 ../../modules/python/python-conf $root
 cat >>$root/conf/httpd.conf <<EOF
+# Configure SCA Composite
+SCAContribution `pwd`/shared/
+SCAComposite shared.composite
+
 # Configure SCA Composite for mass dynamic virtual hosting
 SCAVirtualContribution `pwd`/domains/
 SCAVirtualComposite store.composite

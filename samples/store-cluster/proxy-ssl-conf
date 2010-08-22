@@ -30,3 +30,8 @@ tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
 ../../modules/http/vhost-ssl-conf $root
 ../../modules/http/proxy-ssl-conf $root
 
+# Aggregate proxy balancer logs
+category=`basename $root`
+../../components/log/scribe-tail-start $category $root/logs/error_log
+../../components/log/scribe-tail-start $category $root/logs/access_log
+

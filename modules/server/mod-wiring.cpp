@@ -109,7 +109,9 @@ int translateReference(const ServerConf& sc, request_rec *r) {
     // Route to an absolute target URI using mod_proxy or an HTTP client redirect
     if (isAbsolute(target)) {
         if (useModProxy) {
-            r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + target));
+            // Build proxy URI using current request's protocol scheme
+            r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + httpd::scheme(r) + substr(target, find(target, "://"))));
+            debug(r->filename, "modwiring::translateReference::filename");
             r->proxyreq = PROXYREQ_REVERSE;
             r->handler = "proxy-server";
             return OK;
@@ -117,12 +119,15 @@ int translateReference(const ServerConf& sc, request_rec *r) {
 
         r->status = HTTP_MOVED_TEMPORARILY;
         apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(target)));
+        r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/") + target));
+        debug(target, "modwiring::translateReference::location");
         r->handler = "mod_tuscany_wiring";
         return OK;
     }
 
     // Route to a relative target URI using a local internal redirect
     r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/components/") + substr(target, 0, find(target, '/'))));
+    debug(r->filename, "modwiring::translateReference::filename");
     r->handler = "mod_tuscany_wiring";
     return OK;
 }
@@ -310,7 +315,7 @@ int translate(request_rec *r) {
     gc_scoped_pool pool(r->pool);
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
 
-    // Process dynamic virtual host configuration, if any
+    // Process dynamic virtual host configuration
     VirtualHostConf vhc(sc);
     const bool usevh = hasVirtualCompositeConf(vhc.sc) && httpd::isVirtualHostRequest(sc.server, r);
     if (usevh) {
@@ -338,14 +343,17 @@ int handler(request_rec *r) {
     if (r->filename == NULL || strncmp(r->filename, "/redirect:", 10) != 0)
         return DECLINED;
 
+    // Nothing to do for an external redirect
+    if (r->status == HTTP_MOVED_TEMPORARILY)
+        return OK;
+
+    // Do an internal redirect
     gc_scoped_pool pool(r->pool);
     httpdDebugRequest(r, "modwiring::handler::input");
 
-    // Do an internal redirect
     debug(r->uri, "modwiring::handler::uri");
     debug(r->filename, "modwiring::handler::filename");
     debug(r->path_info, "modwiring::handler::path info");
-
     if (r->args == NULL)
         return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info)), r);
     return httpd::internalRedirect(httpd::redirectURI(string(r->filename + 10), string(r->path_info), string(r->args)), r);

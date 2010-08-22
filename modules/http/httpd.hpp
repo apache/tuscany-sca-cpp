@@ -128,7 +128,21 @@ const string subdomain(const string& host) {
  * Return true if a request is targeting a virtual host.
  */
 const bool isVirtualHostRequest(const server_rec* s, request_rec* r) {
-    return serverName(r) != serverName(s);
+    return hostName(r) != hostName(s);
+}
+
+/**
+ * Return the protocol scheme for a server.
+ */
+const string scheme(const server_rec* s, const string& def = "http") {
+    return s->server_scheme != NULL? s->server_scheme : def;
+}
+
+/**
+ * Return the protocol scheme from an HTTP request.
+ */
+const string scheme(request_rec* r, const string& def = "http") {
+    return r->server->server_scheme != NULL? r->server->server_scheme : def;
 }
 
 /**
@@ -306,10 +320,11 @@ const failable<request_rec*, int> internalRedirectRequest(const string& nr_uri, 
     nr->method_number = r->method_number;
     nr->allowed_methods = ap_make_method_list(nr->pool, 2);
     ap_parse_uri(nr, apr_pstrdup(nr->pool, c_str(nr_uri)));
+    nr->filename = apr_pstrdup(nr->pool, c_str(string("/redirected:") + nr_uri));
     nr->request_config = ap_create_request_config(r->pool);
     nr->per_dir_config = r->server->lookup_defaults;
     nr->prev = r;
-    r->next   = nr;
+    r->next = nr;
 
     // Run create request hook
     ap_run_create_request(nr);
@@ -382,6 +397,7 @@ const int internalRedirect(request_rec* nr) {
  * Create and process an HTTPD internal redirect request.
  */
 const int internalRedirect(const string& uri, request_rec* r) {
+    debug(uri, "httpd::internalRedirect");
     const failable<request_rec*, int> nr = httpd::internalRedirectRequest(uri, r);
     if (!hasContent(nr))
         return reason(nr);

@@ -27,11 +27,16 @@ sslport=$3
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
 ../../modules/http/httpd-ssl-conf $root $sslport/443
 ../../modules/http/vhost-ssl-conf $root
+#../../modules/http/httpd-auth-conf $root
 ../../modules/openid/openid-conf $root
 ../../modules/openid/openid-step2-conf $root
 ../../modules/server/server-conf $root
 ../../modules/python/python-conf $root
 cat >>$root/conf/httpd.conf <<EOF
+# Configure SCA Composite
+SCAContribution `pwd`/shared/
+SCAComposite shared.composite
+
 # Configure SCA Composite for mass dynamic virtual hosting
 SCAVirtualContribution `pwd`/domains/
 SCAVirtualComposite store.composite
