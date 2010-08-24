@@ -512,9 +512,6 @@ const failable<bool> confComponents(ServerConf& sc) {
         return mkfailure<bool>(reason(comps));
     sc.implementations = componentToImplementationAssoc(sc, content(comps));
     debug(sc.implementations, "modeval::confComponents::implementations");
-
-    // Store the implementation lambda functions in a tree for fast retrieval
-    sc.implTree = mkbtree(sort(sc.implementations));
     return true;
 }
 
@@ -530,9 +527,6 @@ const failable<bool> startComponents(ServerConf& sc) {
         return mkfailure<bool>(reason(impls));
     sc.implementations = content(impls);
     debug(sc.implementations, "modeval::startComponents::implementations");
-
-    // Store the implementation lambda functions in a tree for fast retrieval
-    sc.implTree = mkbtree(sort(sc.implementations));
     return true;
 }
 
@@ -560,40 +554,47 @@ public:
 /**
  * Configure and start the components deployed in a virtual host.
  */
-const failable<bool> virtualHostConfig(ServerConf& sc, request_rec* r) {
+const failable<bool> virtualHostConfig(ServerConf& vsc, const ServerConf& sc, request_rec* r) {
     extern const value applyLifecycle(const list<value>&);
 
     // Determine the server name and wiring server name
-    debug(httpd::serverName(sc.server), "modeval::virtualHostConfig::serverName");
+    debug(httpd::serverName(vsc.server), "modeval::virtualHostConfig::serverName");
     debug(httpd::serverName(r), "modeval::virtualHostConfig::virtualHostName");
-    sc.wiringServerName = httpd::serverName(r);
-    debug(sc.wiringServerName, "modeval::virtualHostConfig::wiringServerName");
-    debug(sc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
+    vsc.wiringServerName = httpd::serverName(r);
+    debug(vsc.wiringServerName, "modeval::virtualHostConfig::wiringServerName");
+    debug(vsc.virtualHostContributionPath, "modwiring::virtualHostConfig::virtualHostContributionPath");
 
     // Resolve the configured virtual contribution under
     // the virtual host's SCA contribution root
-    sc.contributionPath = sc.virtualHostContributionPath + httpd::subdomain(httpd::hostName(r)) + "/";
-    sc.compositeName = sc.virtualHostCompositeName;
+    vsc.contributionPath = vsc.virtualHostContributionPath + httpd::subdomain(httpd::hostName(r)) + "/";
+    vsc.compositeName = vsc.virtualHostCompositeName;
 
     // Configure the deployed components
-    const failable<bool> cr = confComponents(sc);
+    const failable<bool> cr = confComponents(vsc);
     if (!hasContent(cr))
         return cr;
 
     // Start the configured components
-    return startComponents(sc);
+    const failable<bool> sr = startComponents(vsc);
+    if (!hasContent(sr))
+        return sr;
+
+    // Store the implementation lambda functions (from both the virtual host and the
+    // main server) in a tree for fast retrieval
+    vsc.implTree = mkbtree(sort(append(vsc.implementations, sc.implementations)));
+    return true;
 }
 
 /**
  * Cleanup a virtual host.
  */
-const failable<bool> virtualHostCleanup(const ServerConf& sc) {
-    if (!hasCompositeConf(sc))
+const failable<bool> virtualHostCleanup(const ServerConf& vsc) {
+    if (!hasCompositeConf(vsc))
         return true;
     debug("modeval::virtualHostCleanup");
 
     // Stop the component implementations
-    applyLifecycleExpr(sc.implementations, mklist<value>("stop"));
+    applyLifecycleExpr(vsc.implementations, mklist<value>("stop"));
     return true;
 }
 
@@ -617,7 +618,7 @@ int handler(request_rec *r) {
     VirtualHostConf vhc(gc_pool(r->pool), sc);
     const bool usevh = hasVirtualCompositeConf(vhc.sc) && httpd::isVirtualHostRequest(sc.server, r);
     if (usevh) {
-        const failable<bool> cr = virtualHostConfig(vhc.sc, r);
+        const failable<bool> cr = virtualHostConfig(vhc.sc, sc, r);
         if (!hasContent(cr))
             return httpd::reportStatus(mkfailure<int>(reason(cr)));
     }
@@ -742,24 +743,28 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
  */
 void childInit(apr_pool_t* p, server_rec* s) {
     gc_scoped_pool pool(p);
-    ServerConf* sc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_eval);
-    if(sc == NULL) {
+    ServerConf* psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_eval);
+    if(psc == NULL) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
+    ServerConf& sc = *psc;
 
     // Start the components in the child process
-    const failable<bool> res = startComponents(*sc);
+    const failable<bool> res = startComponents(sc);
     if (!hasContent(res)) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_eval loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
     
+    // Store the implementation lambda functions in a tree for fast retrieval
+    sc.implTree = mkbtree(sort(sc.implementations));
+
     // Merge the updated configuration into the virtual hosts
-    postConfigMerge(*sc, s->next);
+    postConfigMerge(sc, s->next);
 
     // Register a cleanup callback, called when the child is stopped or restarted
-    apr_pool_pre_cleanup_register(p, (void*)sc, serverCleanup);
+    apr_pool_pre_cleanup_register(p, (void*)psc, serverCleanup);
 }
 
 /**
