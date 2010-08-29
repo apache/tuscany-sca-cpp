@@ -196,6 +196,24 @@ const list<string> tokenize(const char* sep, const string& str) {
 }
 
 /**
+ * Join a list of strings into a single string.
+ */
+const string join(const char* sep, const list<string>& l) {
+    struct nested {
+        static ostringstream& join(const char* sep, const list<string>& l, ostringstream& os) {
+            if (isNil(l))
+                return os;
+            os << car(l);
+            if (!isNil(cdr(l)))
+                os << sep;
+            return join(sep, cdr(l), os);
+        }
+    };
+    ostringstream os;
+    return str(nested::join(sep, l, os));
+}
+
+/**
  * Returns a lazy list view of an input stream.
  */
 struct ilistRead{

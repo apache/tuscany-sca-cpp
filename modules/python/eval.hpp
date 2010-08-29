@@ -42,6 +42,8 @@ public:
         if (Py_IsInitialized())
             return;
         Py_InitializeEx(0);
+        const char* arg0 = "";
+        PySys_SetArgv(0, const_cast<char**>(&arg0));
     }
 };
 
@@ -133,7 +135,6 @@ PyObject *mkPyLambda(const lambda<value(const list<value>&)>& l) {
 /**
  * Convert a list of values to a python list.
  */
-
 PyObject* valuesToPyListHelper(PyObject* l, const list<value>& v) {
     if (isNil(v))
         return l;
@@ -231,6 +232,13 @@ const value pyObjectToValue(PyObject *o) {
 }
 
 /**
+ * Convert a python script path to a module name.
+ */
+const string moduleName(const string& path) {
+    return join(".", tokenize("/", substr(path, 0, length(path) -3)));
+}
+
+/**
  * Evaluate an expression against a script provided as a python object.
  */
 const failable<value> evalScript(const value& expr, PyObject* script) {
@@ -272,14 +280,14 @@ const failable<value> evalScript(const value& expr, PyObject* script) {
 /**
  * Read a python script from an input stream.
  */
-const failable<PyObject*> readScript(const string& path, istream& is) {
+const failable<PyObject*> readScript(const string& name, const string& path, istream& is) {
     const list<string> ls = streamList(is);
     ostringstream os;
     write(ls, os);
     PyObject* code = Py_CompileStringFlags(c_str(str(os)), c_str(path), Py_file_input, NULL);
     if (code == NULL)
         return mkfailure<PyObject*>(string("Couldn't compile script: ") + path + " : " + lastError());
-    PyObject* mod = PyImport_ExecCodeModule(const_cast<char*>(c_str(path)), code);
+    PyObject* mod = PyImport_ExecCodeModuleEx(const_cast<char*>(c_str(name)), code, const_cast<char*>(c_str(path)));
     if (mod == NULL)
         return mkfailure<PyObject*>(string("Couldn't import module: ") + path + " : " + lastError());
     return mod;
@@ -289,7 +297,7 @@ const failable<PyObject*> readScript(const string& path, istream& is) {
  * Evaluate an expression against a script provided as an input stream.
  */
 const failable<value> evalScript(const value& expr, istream& is) {
-    failable<PyObject*> script = readScript("script", is);
+    failable<PyObject*> script = readScript("script", "script.py", is);
     if (!hasContent(script))
         return mkfailure<value>(reason(script));
     return evalScript(expr, content(script));

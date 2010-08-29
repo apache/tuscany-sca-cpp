@@ -40,7 +40,7 @@ bool testEvalExpr() {
     PythonRuntime py;
 
     istringstream is(testPythonAdd);
-    failable<PyObject*> script = readScript("script", is);
+    failable<PyObject*> script = readScript("script", "script.py", is);
     assert(hasContent(script));
 
     const value exp = mklist<value>("add", 2, 3);

@@ -50,7 +50,7 @@ const bool evalDriverRun(const char* path, istream& in, ostream& out) {
     PythonRuntime py;
     scheme::setupDisplay(out);
     ifstream is(path);
-    failable<PyObject*> script = readScript(path, is);
+    failable<PyObject*> script = readScript(moduleName(path), path, is);
     if (!hasContent(script))
         return true;
     evalDriverLoop(content(script), in, out);

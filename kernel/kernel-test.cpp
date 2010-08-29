@@ -275,11 +275,20 @@ bool testZip() {
 }
 
 bool testTokenize() {
+    assert(tokenize("/", "") == list<string>());
+    assert(tokenize("/", "aaa") == mklist<string>("aaa"));
     assert(tokenize("/", "aaa/bbb/ccc/ddd") == mklist<string>("aaa", "bbb", "ccc", "ddd"));
     assert(tokenize("/", "/bbb/ccc/ddd") == mklist<string>("", "bbb", "ccc", "ddd"));
     assert(tokenize("/", "/bbb/ccc/") == mklist<string>("", "bbb", "ccc"));
     assert(tokenize("/", "/bbb//ccc/") == mklist<string>("", "bbb", "", "ccc"));
     assert(tokenize("/", "abc/def/") == mklist<string>("abc", "def"));
+
+    assert(join("/", list<string>()) == "");
+    assert(join("/", mklist<string>("aaa")) == "aaa");
+    assert(join("/", mklist<string>("aaa", "bbb", "ccc", "ddd")) == "aaa/bbb/ccc/ddd");
+    assert(join("/", mklist<string>("", "bbb", "ccc", "ddd")) == "/bbb/ccc/ddd");
+    assert(join("/", mklist<string>("bbb", "ccc", "")) == "bbb/ccc/");
+    assert(join("/", mklist<string>("bbb", "", "ccc")) == "bbb//ccc");
     return true;
 }
 

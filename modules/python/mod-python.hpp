@@ -62,11 +62,12 @@ struct applyImplementation {
  * lambda function.
  */
 const failable<lambda<value(const list<value>&)> > evalImplementation(const string& path, const value& impl, const list<value>& px) {
-    const string fpath(path + attributeValue("script", impl));
+    const string spath(attributeValue("script", impl));
+    const string fpath(path + spath);
     ifstream is(fpath);
     if (fail(is))
         return mkfailure<lambda<value(const list<value>&)> >(string("Could not read implementation: ") + fpath);
-    const failable<PyObject*> script = python::readScript(fpath, is);
+    const failable<PyObject*> script = python::readScript(python::moduleName(spath), fpath, is);
     if (!hasContent(script))
         return mkfailure<lambda<value(const list<value>&)> >(reason(script));
     return lambda<value(const list<value>&)>(applyImplementation(content(script), px));

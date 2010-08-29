@@ -502,10 +502,6 @@ const failable<bool> confComponents(ServerConf& sc) {
     if (sc.cert != "") debug(sc.cert, "modeval::confComponents::sslCert");
     if (sc.key != "") debug(sc.key, "modeval::confComponents::sslKey");
 
-    // Chdir to the deployed contribution
-    if (chdir(c_str(sc.contributionPath)) != 0)
-        return mkfailure<bool>("Couldn't chdir to the deployed contribution");
-
     // Read the components and get their implementation lambda functions
     const failable<list<value> > comps = readComponents(sc.contributionPath + sc.compositeName);
     if (!hasContent(comps))
@@ -535,27 +531,27 @@ const failable<bool> startComponents(ServerConf& sc) {
  */
 class VirtualHostConf {
 public:
-    VirtualHostConf(const gc_pool& p, const ServerConf& ssc) : sc(pool(p), ssc.server) {
-        sc.virtualHostContributionPath = ssc.virtualHostContributionPath;
-        sc.virtualHostCompositeName = ssc.virtualHostCompositeName;
-        sc.ca = ssc.ca;
-        sc.cert = ssc.cert;
-        sc.key = ssc.key;
+    VirtualHostConf(const gc_pool& p, const ServerConf& sc) : sc(sc), vsc(pool(p), sc.server) {
+        vsc.virtualHostContributionPath = sc.virtualHostContributionPath;
+        vsc.virtualHostCompositeName = sc.virtualHostCompositeName;
+        vsc.ca = sc.ca;
+        vsc.cert = sc.cert;
+        vsc.key = sc.key;
     }
 
     ~VirtualHostConf() {
-        extern const failable<bool> virtualHostCleanup(const ServerConf& sc);
-        virtualHostCleanup(sc);
+        extern const failable<bool> virtualHostCleanup(const ServerConf& vsc, const ServerConf& sc);
+        virtualHostCleanup(vsc, sc);
     }
 
-    ServerConf sc;
+    const ServerConf& sc;
+    ServerConf vsc;
 };
 
 /**
  * Configure and start the components deployed in a virtual host.
  */
 const failable<bool> virtualHostConfig(ServerConf& vsc, const ServerConf& sc, request_rec* r) {
-    extern const value applyLifecycle(const list<value>&);
 
     // Determine the server name and wiring server name
     debug(httpd::serverName(vsc.server), "modeval::virtualHostConfig::serverName");
@@ -568,6 +564,10 @@ const failable<bool> virtualHostConfig(ServerConf& vsc, const ServerConf& sc, re
     // the virtual host's SCA contribution root
     vsc.contributionPath = vsc.virtualHostContributionPath + httpd::subdomain(httpd::hostName(r)) + "/";
     vsc.compositeName = vsc.virtualHostCompositeName;
+
+    // Chdir to the virtual host's contribution
+    if (chdir(c_str(sc.contributionPath)) != 0)
+        return mkfailure<bool>("Couldn't chdir to the deployed contribution");
 
     // Configure the deployed components
     const failable<bool> cr = confComponents(vsc);
@@ -588,13 +588,17 @@ const failable<bool> virtualHostConfig(ServerConf& vsc, const ServerConf& sc, re
 /**
  * Cleanup a virtual host.
  */
-const failable<bool> virtualHostCleanup(const ServerConf& vsc) {
+const failable<bool> virtualHostCleanup(const ServerConf& vsc, const ServerConf& sc) {
     if (!hasCompositeConf(vsc))
         return true;
     debug("modeval::virtualHostCleanup");
 
     // Stop the component implementations
     applyLifecycleExpr(vsc.implementations, mklist<value>("stop"));
+
+    // Chdir back to the main server's contribution
+    if (chdir(c_str(sc.contributionPath)) != 0)
+        return mkfailure<bool>("Couldn't chdir to the deployed contribution");
     return true;
 }
 
@@ -616,16 +620,16 @@ int handler(request_rec *r) {
 
     // Process dynamic virtual host configuration, if any
     VirtualHostConf vhc(gc_pool(r->pool), sc);
-    const bool usevh = hasVirtualCompositeConf(vhc.sc) && httpd::isVirtualHostRequest(sc.server, r);
+    const bool usevh = hasVirtualCompositeConf(vhc.vsc) && httpd::isVirtualHostRequest(sc.server, r);
     if (usevh) {
-        const failable<bool> cr = virtualHostConfig(vhc.sc, sc, r);
+        const failable<bool> cr = virtualHostConfig(vhc.vsc, sc, r);
         if (!hasContent(cr))
             return httpd::reportStatus(mkfailure<int>(reason(cr)));
     }
 
     // Get the component implementation lambda
     const list<value> path(pathValues(r->uri));
-    const list<value> impl(assoctree<value>(cadr(path), usevh? vhc.sc.implTree : sc.implTree));
+    const list<value> impl(assoctree<value>(cadr(path), usevh? vhc.vsc.implTree : sc.implTree));
     if (isNil(impl))
         return httpd::reportStatus(mkfailure<int>(string("Couldn't find component implementation: ") + cadr(path)));
 
@@ -710,6 +714,12 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
         return OK;
 
     if (count == 1) {
+        // Chdir to the deployed contribution
+        if (chdir(c_str(sc.contributionPath)) != 0) {
+            mkfailure<bool>("Couldn't chdir to the deployed contribution");
+            return -1;
+        }
+
         debug("modeval::postConfig::start");
         const failable<value> r = failableResult(applyLifecycle(mklist<value>("start")));
         if (!hasContent(r))
