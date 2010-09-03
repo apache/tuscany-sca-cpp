@@ -21,15 +21,23 @@ root=$1
 port=$2
 sslport=$3
 
+set -x
+
 # Configure an SSL-enabled app server
 ../../modules/http/httpd-conf $root sca-store.com $port/80 htdocs
 ../../modules/http/vhost-conf $root
+
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
 ../../modules/http/httpd-ssl-conf $root $sslport/443
 ../../modules/http/vhost-ssl-conf $root
+
 #../../modules/http/httpd-auth-conf $root
 ../../modules/openid/openid-conf $root
 ../../modules/openid/openid-step2-conf $root
+../../modules/openid/openid-memcached-conf $root localhost 11211
+../../modules/openid/openid-memcached-conf $root localhost 11212
+../../modules/openid/openid-memcached-conf $root localhost 11213
+
 ../../modules/server/server-conf $root
 ../../modules/python/python-conf $root
 cat >>$root/conf/httpd.conf <<EOF

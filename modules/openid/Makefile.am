@@ -18,7 +18,7 @@
 
 if WANT_OPENID
 
-dist_mod_SCRIPTS = openid-conf openid-step2-conf
+dist_mod_SCRIPTS = openid-conf openid-step2-conf openid-memcached-conf
 moddir = $(prefix)/modules/openid
 
 mod_DATA = openid.prefix

@@ -24,6 +24,8 @@ mhost=$4
 mport=$5
 mhttpport=$6
 
+set -x
+
 # Aggregate database server logs
 category=`basename $root`
 ../../components/log/scribe-tail-start $category "sqldb" $root/logs/postgresql

@@ -63,9 +63,7 @@ public:
         addServers(servers);
     }
 
-    MemCached(const MemCached& c) : owner(false) {
-        pool = c.pool;
-        mc = c.mc;
+    MemCached(const MemCached& c) : owner(false), pool(c.pool), mc(c.mc) {
     }
 
     ~MemCached() {

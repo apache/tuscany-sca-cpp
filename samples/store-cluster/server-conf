@@ -20,6 +20,8 @@
 root=$1
 port=$2
 
+set -x
+
 # Configure an app server
 ../../modules/http/httpd-conf $root sca-store.com $port/80 htdocs
 ../../modules/http/vhost-conf $root

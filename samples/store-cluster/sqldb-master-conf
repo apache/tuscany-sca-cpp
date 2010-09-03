@@ -21,6 +21,8 @@ root=$1
 port=$2
 httpport=$3
 
+set -x
+
 # Aggregate database server logs
 category=`basename $root`
 ../../components/log/scribe-tail-start $category "sqldb" $root/logs/postgresql

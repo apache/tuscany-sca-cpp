@@ -20,3 +20,5 @@
 # Cleanup
 ../../modules/http/httpd-stop tmp
 
+../../components/cache/memcached-stop 11212
+../../components/cache/memcached-stop 11213
