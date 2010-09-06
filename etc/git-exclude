@@ -103,4 +103,5 @@ tinycdb-test
 curl-get
 curl-connect
 rss-test
+scribe-cat
 
