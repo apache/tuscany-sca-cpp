@@ -37,6 +37,8 @@ LoadModule authopenid_module  $openid_prefix/modules/mod_auth_openid.so
 AuthType OpenID
 AuthOpenIDEnabled On
 AuthOpenIDCookiePath /
+AuthOpenIDCookieName TuscanyOpenIDAuth
+AuthOpenIDSecureCookie On
 AuthOpenIDLoginPage /login
 AuthOpenIDAXAdd EMAIL http://axschema.org/contact/email
 </Location>
