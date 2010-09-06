@@ -32,6 +32,11 @@ tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
 ../../modules/http/vhost-ssl-conf $root
 
 #../../modules/http/httpd-auth-conf $root
+../../modules/oauth/oauth-conf $root
+../../modules/oauth/oauth-memcached-conf $root localhost 11211
+../../modules/oauth/oauth-memcached-conf $root localhost 11212
+../../modules/oauth/oauth-memcached-conf $root localhost 11213
+../../modules/oauth/oauth-app-conf $root app1234 secret6789
 ../../modules/openid/openid-conf $root
 ../../modules/openid/openid-step2-conf $root
 ../../modules/openid/openid-memcached-conf $root localhost 11211

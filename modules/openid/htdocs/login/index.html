@@ -32,7 +32,7 @@ function queryParams() {
 }
 
 function openidReferrer() {
-    r = queryParams()['modauthopenid.referrer'];
+    r = queryParams()['openauth_referrer'];
     if (typeof(r) == 'undefined')
         return r;
     q = r.indexOf('?');
@@ -76,6 +76,18 @@ function withGoogleApps() {
     return 'https://www.google.com/accounts/o8/site-xrds?ns=2&hd=' + document.fields.domain.value;
 }
 
+function withLivejournal() {
+    return 'http://' + document.fields.ljuser.value + '.livejournal.com';
+}
+
+function withBlogspot() {
+    return 'http://' + document.fields.bsuser.value + '.blogspot.com';
+}
+
+function withBlogger() {
+    return 'http://' + document.fields.bguser.value + '.blogger.com';
+}
+
 function withXRDSEndpoint() {
     return document.fields.endpoint.value;
 }
@@ -91,9 +103,23 @@ function withXRDSEndpoint() {
 <p>Sign in with your MyOpenID account<br/><input type="button" onclick="submitSignin(withMyOpenID)" value="Sign in"/></p>
 <p>Sign in with your Verisign account<br/><input type="button" onclick="submitSignin(withVerisign)" value="Sign in"/></p>
 <p>Sign in with your MySpace account<br/><input type="button" onclick="submitSignin(withMySpace)" value="Sign in"/></p>
+
 <p>Sign in with a Google apps domain<br/>
 <input type="text" size="20" name="domain" value="example.com"/><br/>
 <input type="button" onclick="submitSignin(withGoogleApps)" value="Sign in"/></p>
+
+<p>Sign in with your Livejournal account<br/>
+<input type="text" size="10" name="ljuser" value=""/><br/>
+<input type="button" onclick="submitSignin(withLivejournal)" value="Sign in"/></p>
+
+<p>Sign in with your Blogspot account<br/>
+<input type="text" size="10" name="bsuser" value=""/><br/>
+<input type="button" onclick="submitSignin(withBlogspot)" value="Sign in"/></p>
+
+<p>Sign in with your Blogger account<br/>
+<input type="text" size="10" name="bguser" value=""/><br/>
+<input type="button" onclick="submitSignin(withBlogger)" value="Sign in"/></p>
+
 <p>Sign in with an OpenID endpoint<br/>
 <input type="text" size="50" name="endpoint" value="https://www.google.com/accounts/o8/id"/><br/>
 <input type="button" onclick="submitSignin(withXRDSEndpoint)" value="Sign in"/></p>

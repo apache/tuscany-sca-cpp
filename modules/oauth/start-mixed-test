@@ -1,0 +1,52 @@
+#!/bin/sh
+
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#  
+#    http://www.apache.org/licenses/LICENSE-2.0
+#    
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Test supporting both OpenID and OAuth in the same app
+here=`readlink -f $0`; here=`dirname $here`
+
+# Setup
+../../components/cache/memcached-start 11212
+../../components/cache/memcached-start 11213
+
+../../modules/http/ssl-ca-conf tmp localhost
+../../modules/http/ssl-cert-conf tmp localhost
+../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/http/httpd-ssl-conf tmp 8453
+
+./oauth-conf tmp
+./oauth-memcached-conf tmp localhost 11212
+./oauth-memcached-conf tmp localhost 11213
+./oauth-app-conf tmp app1234 secret6789
+
+../openid/openid-conf tmp
+../openid/openid-step2-conf tmp
+../openid/openid-memcached-conf tmp localhost 11212
+../openid/openid-memcached-conf tmp localhost 11213
+
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+SCAContribution `pwd`/
+SCAComposite oauth.composite
+
+Alias /login/index.html $here/htdocs/login/mixed.html
+EOF
+
+../../modules/http/httpd-start tmp
+

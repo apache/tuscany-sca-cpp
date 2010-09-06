@@ -152,7 +152,7 @@ const failable<int> authenticated(const list<list<value> >& info, request_rec* r
  * Redirect to the configured login page.
  */
 const failable<int> login(const string& page, request_rec* r) {
-    const list<list<value> > largs = mklist<list<value> >(mklist<value>("mod_oauth_referrer", httpd::escape(httpd::url(r->uri, r))));
+    const list<list<value> > largs = mklist<list<value> >(mklist<value>("openauth_referrer", httpd::escape(httpd::url(r->uri, r))));
     const string loc = httpd::url(page, r) + string("?") + httpd::queryString(largs);
     debug(loc, "modoauth::login::uri");
     return httpd::externalRedirect(loc, r);
@@ -220,6 +220,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     debug(tv, "modoauth::access_token::token");
 
     // Request user info
+    // TODO Make this step configurable
     const list<list<value> > iargs = mklist<list<value> >(tv);
     const string iuri = httpd::unescape(cadr(info)) + string("?") + httpd::queryString(iargs);
     debug(iuri, "modoauth::access_token::infouri");
@@ -227,7 +228,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     debug(iv, "modoauth::access_token::info");
 
     // Store user info in memcached keyed by session ID
-    const value sid = mkrand();
+    const value sid = string("OAuth_") + mkrand();
     memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), sc.mc);
 
     // Send session ID to the client in a cookie
@@ -251,24 +252,36 @@ int handler(request_rec* r) {
     httpdDebugRequest(r, "modoauth::handler::input");
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_oauth);
 
-    // Nothing to do if we're already authenticated
+    // Get session id from the request
     const maybe<string> sid = sessionID(r);
     if (hasContent(sid)) {
+        // Decline if the session id was not created by this module
+        if (substr(content(sid), 0, 6) != "OAuth_")
+            return DECLINED;
+
+        // If we're authenticated store the user info in the request
         const failable<value> info = userInfo(content(sid), sc);
         if (hasContent(info))
             return httpd::reportStatus(authenticated(content(info), r));
     }
 
-    // Get the current protocol flow step from the query string
+    // Get the request args
     const list<list<value> > args = httpd::queryArgs(r);
+
+    // Decline if the request is for OpenID authentication
+    if (!isNil(assoc<value>("openid_identifier", args)))
+        return DECLINED;
+
+    // Determine the OAuth protocol flow step, conveniently passed
+    // around in a request arg
     const list<value> sl = assoc<value>("mod_oauth_step", args);
     const value step = !isNil(sl) && !isNil(cdr(sl))? cadr(sl) : "";
 
-    // Handle an authorize request
+    // Handle OAuth authorize request step
     if (step == "authorize")
         return httpd::reportStatus(authorize(args, r));
 
-    // Handle an access_token request
+    // Handle OAuth access_token request step
     if (step == "access_token")
         return httpd::reportStatus(access_token(args, r, sc));
 
@@ -347,8 +360,6 @@ const char* confEnabled(cmd_parms *cmd, void *c, const int arg) {
     gc_scoped_pool pool(cmd->pool);
     DirConf& dc = httpd::dirConf<DirConf>(c);
     dc.enabled = (bool)arg;
-    debug(dc.dir, "modoauth::confEnabled::dir");
-    debug(dc.enabled, "modoauth::confEnabled::enabled");
     return NULL;
 }
 const char* confLogin(cmd_parms *cmd, void *c, const char* arg) {
@@ -394,7 +405,7 @@ void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_check_user_id(checkUserID, NULL, NULL, APR_HOOK_MIDDLE);
-    ap_hook_handler(handler, NULL, NULL, APR_HOOK_MIDDLE);
+    ap_hook_handler(handler, NULL, NULL, APR_HOOK_FIRST);
 }
 
 }

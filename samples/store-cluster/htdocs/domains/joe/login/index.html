@@ -17,7 +17,7 @@
    under the License.
 -->
 
-<html><body><h1>Sign in with an OpenID provider</h1>
+<html><body><h1>Sign in with an OpenID or OAuth 2.0 provider</h1>
 
 <script type="text/javascript">
 function queryParams() {
@@ -31,8 +31,8 @@ function queryParams() {
     return qp;
 }
 
-function openidReferrer() {
-    r = queryParams()['modauthopenid.referrer'];
+function openauthReferrer() {
+    r = queryParams()['openauth_referrer'];
     if (typeof(r) == 'undefined')
         return r;
     q = r.indexOf('?');
@@ -41,16 +41,15 @@ function openidReferrer() {
     return r;
 }
 
-if (typeof(openidReferrer()) == 'undefined') {
+if (typeof(openauthReferrer()) == 'undefined') {
     document.location = '/';
 }
 
-function submitSignin(w) {
-    document.signin.openid_identifier.value = w();
-    document.signin.action = openidReferrer();
-    document.signin.submit();
+function submitOpenIDSignin(w) {
+    document.openIDSignin.openid_identifier.value = w();
+    document.openIDSignin.action = openauthReferrer();
+    document.openIDSignin.submit();
 }
-
 
 function withGoogle() {
     return 'https://www.google.com/accounts/o8/id';
@@ -76,27 +75,84 @@ function withGoogleApps() {
     return 'https://www.google.com/accounts/o8/site-xrds?ns=2&hd=' + document.fields.domain.value;
 }
 
+function withLivejournal() {
+    return 'http://' + document.fields.ljuser.value + '.livejournal.com';
+}
+
+function withBlogspot() {
+    return 'http://' + document.fields.bsuser.value + '.blogspot.com';
+}
+
+function withBlogger() {
+    return 'http://' + document.fields.bguser.value + '.blogger.com';
+}
+
 function withXRDSEndpoint() {
     return document.fields.endpoint.value;
 }
+
+function submitOAuthSignin(w) {
+    parms = w();
+    document.oauthSignin.mod_oauth_authorize.value = parms[0];
+    document.oauthSignin.mod_oauth_access_token.value = parms[1];
+    document.oauthSignin.mod_oauth_client_id.value = parms[2];
+    document.oauthSignin.mod_oauth_info.value = parms[3];
+    document.oauthSignin.action = openauthReferrer();
+    document.oauthSignin.submit();
+}
+
+function withFacebook() {
+    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'app1234', 'https://graph.facebook.com/me'];
+    return parms;
+}
+
+function withGithub() {
+    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'app2345', 'https://github.com/api/v2/json/user/show'];
+    return parms;
+}
 </script>
 
-<form name="signin" action="/" method="GET">
-<input type="hidden" name="openid_identifier" value="https://www.google.com/accounts/o8/id"/>
-</form>
-
 <form name="fields">
-<p>Sign in with your Google account<br/><input type="button" onclick="submitSignin(withGoogle)" value="Sign in"/></p>
-<p>Sign in with your Yahoo account<br/><input type="button" onclick="submitSignin(withYahoo)" value="Sign in"/></p>
-<p>Sign in with your MyOpenID account<br/><input type="button" onclick="submitSignin(withMyOpenID)" value="Sign in"/></p>
-<p>Sign in with your Verisign account<br/><input type="button" onclick="submitSignin(withVerisign)" value="Sign in"/></p>
-<p>Sign in with your MySpace account<br/><input type="button" onclick="submitSignin(withMySpace)" value="Sign in"/></p>
+<p>Sign in with your Google account<br/><input type="button" onclick="submitOpenIDSignin(withGoogle)" value="Sign in"/></p>
+<p>Sign in with your Yahoo account<br/><input type="button" onclick="submitOpenIDSignin(withYahoo)" value="Sign in"/></p>
+<p>Sign in with your MyOpenID account<br/><input type="button" onclick="submitOpenIDSignin(withMyOpenID)" value="Sign in"/></p>
+<p>Sign in with your Verisign account<br/><input type="button" onclick="submitOpenIDSignin(withVerisign)" value="Sign in"/></p>
+<p>Sign in with your MySpace account<br/><input type="button" onclick="submitOpenIDSignin(withMySpace)" value="Sign in"/></p>
+
 <p>Sign in with a Google apps domain<br/>
 <input type="text" size="20" name="domain" value="example.com"/><br/>
-<input type="button" onclick="submitSignin(withGoogleApps)" value="Sign in"/></p>
+<input type="button" onclick="submitOpenIDSignin(withGoogleApps)" value="Sign in"/></p>
+
+<p>Sign in with your Livejournal account<br/>
+<input type="text" size="10" name="ljuser" value=""/><br/>
+<input type="button" onclick="submitOpenIDSignin(withLivejournal)" value="Sign in"/></p>
+
+<p>Sign in with your Blogspot account<br/>
+<input type="text" size="10" name="bsuser" value=""/><br/>
+<input type="button" onclick="submitOpenIDSignin(withBlogspot)" value="Sign in"/></p>
+
+<p>Sign in with your Blogger account<br/>
+<input type="text" size="10" name="bguser" value=""/><br/>
+<input type="button" onclick="submitOpenIDSignin(withBlogger)" value="Sign in"/></p>
+
 <p>Sign in with an OpenID endpoint<br/>
 <input type="text" size="50" name="endpoint" value="https://www.google.com/accounts/o8/id"/><br/>
-<input type="button" onclick="submitSignin(withXRDSEndpoint)" value="Sign in"/></p>
+<input type="button" onclick="submitOpenIDSignin(withXRDSEndpoint)" value="Sign in"/></p>
+
+<p>Sign in with your Facebook account<br/><input type="button" onclick="submitOAuthSignin(withFacebook)" value="Sign in"/></p>
+<p>Sign in with your Github account<br/><input type="button" onclick="submitOAuthSignin(withGithub)" value="Sign in"/></p>
+</form>
+
+<form name="openIDSignin" action="/" method="GET">
+<input type="hidden" name="openid_identifier" value=""/>
+</form>
+
+<form name="oauthSignin" action="/" method="GET">
+<input type="hidden" name="mod_oauth_authorize" value=""/>
+<input type="hidden" name="mod_oauth_access_token" value=""/>
+<input type="hidden" name="mod_oauth_client_id" value=""/>
+<input type="hidden" name="mod_oauth_info" value=""/>
+<input type="hidden" name="mod_oauth_step" value="authorize"/>
 </form>
 
 </body></html>

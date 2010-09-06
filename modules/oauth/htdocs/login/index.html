@@ -32,7 +32,7 @@ function queryParams() {
 }
 
 function oauthReferrer() {
-    r = queryParams()['mod_oauth_referrer'];
+    r = queryParams()['openauth_referrer'];
     if (typeof(r) == 'undefined')
         return r;
     q = r.indexOf('?');
@@ -67,10 +67,10 @@ function withGithub() {
 </script>
 
 <form name="signin" action="/" method="GET">
-<input type="hidden" name="mod_oauth_authorize" value="https://graph.facebook.com/oauth/authorize"/>
-<input type="hidden" name="mod_oauth_access_token" value="https://graph.facebook.com/oauth/access_token"/>
-<input type="hidden" name="mod_oauth_client_id" value="app1234"/>
-<input type="hidden" name="mod_oauth_info" value="https://graph.facebook.com/me"/>
+<input type="hidden" name="mod_oauth_authorize" value=""/>
+<input type="hidden" name="mod_oauth_access_token" value=""/>
+<input type="hidden" name="mod_oauth_client_id" value=""/>
+<input type="hidden" name="mod_oauth_info" value=""/>
 <input type="hidden" name="mod_oauth_step" value="authorize"/>
 </form>
 
