@@ -1,0 +1,82 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+
+<html><body><h1>Sign in with an OAuth 2.0 provider</h1>
+
+<script type="text/javascript">
+function queryParams() {
+    qp = new Array();
+    qs = window.location.search.substring(1).split('&');
+    for (i = 0; i < qs.length; i++) {
+        e = qs[i].indexOf('=');
+        if (e > 0)
+            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
+    }
+    return qp;
+}
+
+function oauthReferrer() {
+    r = queryParams()['mod_oauth_referrer'];
+    if (typeof(r) == 'undefined')
+        return r;
+    q = r.indexOf('?');
+    if (q > 0)
+        return r.substring(0, q);
+    return r;
+}
+
+if (typeof(oauthReferrer()) == 'undefined') {
+    document.location = '/';
+}
+
+function submitSignin(w) {
+    parms = w();
+    document.signin.mod_oauth_authorize.value = parms[0];
+    document.signin.mod_oauth_access_token.value = parms[1];
+    document.signin.mod_oauth_client_id.value = parms[2];
+    document.signin.mod_oauth_info.value = parms[3];
+    document.signin.action = oauthReferrer();
+    document.signin.submit();
+}
+
+function withFacebook() {
+    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'app1234', 'https://graph.facebook.com/me'];
+    return parms;
+}
+
+function withGithub() {
+    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'app2345', 'https://github.com/api/v2/json/user/show'];
+    return parms;
+}
+</script>
+
+<form name="signin" action="/" method="GET">
+<input type="hidden" name="mod_oauth_authorize" value="https://graph.facebook.com/oauth/authorize"/>
+<input type="hidden" name="mod_oauth_access_token" value="https://graph.facebook.com/oauth/access_token"/>
+<input type="hidden" name="mod_oauth_client_id" value="app1234"/>
+<input type="hidden" name="mod_oauth_info" value="https://graph.facebook.com/me"/>
+<input type="hidden" name="mod_oauth_step" value="authorize"/>
+</form>
+
+<form name="fields">
+<p>Sign in with your Facebook account<br/><input type="button" onclick="submitSignin(withFacebook)" value="Sign in"/></p>
+<p>Sign in with your Github account<br/><input type="button" onclick="submitSignin(withGithub)" value="Sign in"/></p>
+</form>
+
+</body></html>

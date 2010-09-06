@@ -112,12 +112,9 @@ int translateReference(const ServerConf& sc, request_rec *r) {
             return OK;
         }
 
-        r->status = HTTP_MOVED_TEMPORARILY;
-        apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(target)));
-        r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/") + target));
         debug(target, "modwiring::translateReference::location");
         r->handler = "mod_tuscany_wiring";
-        return OK;
+        return httpd::externalRedirect(target, r);
     }
 
     // Route to a relative target URI using a local internal redirect
@@ -397,8 +394,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
  */
 void childInit(apr_pool_t* p, server_rec* s) {
     gc_scoped_pool pool(p);
-    ServerConf *conf = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_wiring);
-    if(conf == NULL) {
+    if(ap_get_module_config(s->module_config, &mod_tuscany_wiring) == NULL) {
         cfailure << "[Tuscany] Due to one or more errors mod_tuscany_wiring loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }

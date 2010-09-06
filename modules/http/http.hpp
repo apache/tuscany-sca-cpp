@@ -63,7 +63,10 @@ public:
  */
 class CURLSession {
 public:
-    CURLSession(const string& ca = "", const string& cert = "", const string& key = "") : h(curl_easy_init()), p(gc_pool(mkpool())), sock(NULL), wpollset(NULL), wpollfd(NULL), rpollset(NULL), rpollfd(NULL), owner(true), ca(ca), cert(cert), key(key) {
+    CURLSession() : h(NULL), p(NULL), sock(NULL), wpollset(NULL), wpollfd(NULL), rpollset(NULL), rpollfd(NULL), owner(false), ca(""), cert(""), key("") {
+    }
+
+    CURLSession(const string& ca, const string& cert, const string& key) : h(curl_easy_init()), p(gc_pool(mkpool())), sock(NULL), wpollset(NULL), wpollfd(NULL), rpollset(NULL), rpollfd(NULL), owner(true), ca(ca), cert(cert), key(key) {
     }
 
     CURLSession(const CURLSession& c) : h(c.h), p(c.p), sock(c.sock), wpollset(c.wpollset), wpollfd(c.wpollfd), rpollset(c.rpollset), rpollfd(c.rpollfd), owner(false), ca(c.ca), cert(c.cert), key(c.key) {
@@ -86,7 +89,7 @@ private:
     apr_pollfd_t* wpollfd;
     apr_pollset_t* rpollset;
     apr_pollfd_t* rpollfd;
-    const bool owner;
+    bool owner;
 
     friend CURL* handle(const CURLSession& cs);
     friend apr_socket_t* sock(const CURLSession& cs);
@@ -95,9 +98,9 @@ private:
     friend const failable<int> recv(char* c, const int l, const CURLSession& cs);
 
 public:
-    const string ca;
-    const string cert;
-    const string key;
+    string ca;
+    string cert;
+    string key;
 };
 
 /**
@@ -397,21 +400,28 @@ const failable<value> get(const string& url, const CURLSession& cs) {
     const list<string> ls(reverse(cadr(content(res))));
 
     const string ct(content(contentType(car(content(res)))));
-    if (ct == "application/atom+xml;type=entry") {
+    debug(ct, "http::get::contentType");
+    if (contains(ct, "application/atom+xml;type=entry")) {
         // Read an ATOM entry
         const value val(atom::entryValue(content(atom::readATOMEntry(ls))));
         debug(val, "http::get::result");
         return val;
     }
-    if (ct == "application/atom+xml;type=feed" || atom::isATOMFeed(ls)) {
+    if (contains(ct, "application/atom+xml;type=feed") || atom::isATOMFeed(ls)) {
         // Read an ATOM feed
         const value val(atom::feedValues(content(atom::readATOMFeed(ls))));
         debug(val, "http::get::result");
         return val;
     }
-    if (ct == "application/rss+xml" || rss::isRSSFeed(ls)) {
+    if (contains(ct, "application/rss+xml") || rss::isRSSFeed(ls)) {
         // Read an RSS feed
         const value val(rss::feedValues(content(rss::readRSSFeed(ls))));
+        debug(val, "http::get::result");
+        return val;
+    }
+    if (contains(ct, "text/javascript") || contains(ct, "application/json-rpc")) {
+        json::JSONContext cx;
+        const value val(json::jsonValues(content(json::readJSON(ls, cx))));
         debug(val, "http::get::result");
         return val;
     }

@@ -388,6 +388,13 @@ const failable<value> jsonResultValue(const list<string>& s, JSONContext& cx) {
 }
 
 /**
+ * Convert a JSON payload to a list of values.
+ */
+const list<value> jsonValues(const list<value>& e) {
+    return elementsToValues(e);
+}
+
+/**
  * Return a portable function name from a JSON-RPC function name.
  * Strip the "system." and "Service." prefixes added by some JSON-RPC clients.
  */

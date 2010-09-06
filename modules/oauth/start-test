@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,18 +17,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# Setup
+../../components/cache/memcached-start 11212
+../../components/cache/memcached-start 11213
 
-if WANT_OPENID
+../../modules/http/ssl-ca-conf tmp localhost
+../../modules/http/ssl-cert-conf tmp localhost
+../../modules/http/httpd-conf tmp localhost 8090 htdocs
+../../modules/http/httpd-ssl-conf tmp 8453
 
-dist_mod_SCRIPTS = openid-conf openid-step2-conf openid-memcached-conf
-moddir = $(prefix)/modules/openid
+./oauth-conf tmp
+./oauth-memcached-conf tmp localhost 11212
+./oauth-memcached-conf tmp localhost 11213
+./oauth-app-conf tmp app1234 secret6789
 
-mod_DATA = openid.prefix
-openid.prefix: $(top_builddir)/config.status
-	echo ${MODAUTHOPENID_PREFIX} >openid.prefix
+../../modules/server/server-conf tmp
+../../modules/server/scheme-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+SCAContribution `pwd`/
+SCAComposite oauth.composite
+EOF
 
-EXTRA_DIST = openid.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/unprotected/index.html
+../../modules/http/httpd-start tmp
 
-dist_noinst_SCRIPTS = start-test stop-test
-
-endif

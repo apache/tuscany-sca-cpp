@@ -508,6 +508,27 @@ else
   AM_CONDITIONAL([WANT_OPENID], false)
 fi
 
+# Enable support for OAuth.
+AC_MSG_CHECKING([whether to enable OAuth support])
+AC_ARG_ENABLE(oauth, [AS_HELP_STRING([--enable-oauth], [enable OAuth support [default=no]])],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    want_oauth=true
+    ;;
+  esac ],
+[ AC_MSG_RESULT(no)])
+if test "${want_oauth}" = "true"; then
+  AM_CONDITIONAL([WANT_OAUTH], true)
+  AC_DEFINE([WANT_OAUTH], 1, [enable OAuth support])
+
+else
+  AM_CONDITIONAL([WANT_OAUTH], false)
+fi
+
 # Enable support for Google AppEngine.
 AC_MSG_CHECKING([whether to enable Google AppEngine support])
 AC_ARG_ENABLE(gae, [AS_HELP_STRING([--enable-gae], [enable Google AppEngine support [default=no]])],
@@ -842,6 +863,7 @@ AC_CONFIG_FILES([Makefile
                  modules/python/Makefile
                  modules/java/Makefile
                  modules/openid/Makefile
+                 modules/oauth/Makefile
                  modules/wsgi/Makefile
                  components/Makefile
                  components/cache/Makefile

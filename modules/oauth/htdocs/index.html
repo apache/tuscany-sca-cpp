@@ -17,17 +17,27 @@
    under the License.
 -->
 
-<html><body>
-<h1>Sign out</h1>
-
-<form name="signout" action="/login" method="GET">
+<html>
+<head>
+<script type="text/javascript" src="/js/tuscany-ref.js"></script>
 <script type="text/javascript">
-function submitSignout() {
-    document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
-    document.signout.submit();
-    return true;
-}
+var component = new tuscany.sca.Component("Protected");
+var userInfo = new tuscany.sca.Reference("userInfo");
+var user = userInfo.apply("getuser");
+var email = userInfo.apply("getemail");
 </script>
-<input type="button" onclick="submitSignout()" value="Sign out"/>
-</form>
+</head>
+<body>
+<h1>Protected area - It works!</h1>
+<p>The following info is returned by a JSONRPC service:</p>
+<div id="user"></div>
+<div id="email"></div>
+<script type="text/javascript">
+document.getElementById('user').innerHTML="User: " + user;
+document.getElementById('email').innerHTML="Email: " + email;
+</script>
+<p><a href="info">User info</a></p>
+<p><a href="login">Sign in</a></p>
+<p><a href="logout">Sign out</a></p>
+<p><a href="unprotected">Unprotected area</a></p>
 </body></html>

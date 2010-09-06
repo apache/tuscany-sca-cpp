@@ -39,7 +39,7 @@ namespace log {
 const string uri("http://localhost:8090/log");
 
 bool testLog() {
-    http::CURLSession cs;
+    http::CURLSession cs("", "", "");
 
     const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
@@ -71,7 +71,7 @@ bool testLogPerf() {
             + (list<value>() + "price" + string("$2.99"));
     const value a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
-    http::CURLSession cs;
+    http::CURLSession cs("", "", "");
     const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
 
@@ -82,7 +82,7 @@ bool testLogPerf() {
 }
 
 bool testLogger() {
-    http::CURLSession cs;
+    http::CURLSession cs("", "", "");
 
     const failable<value> res = http::evalExpr(mklist<value>(string("sum"), 33, 22), string("http://localhost:8090/client"), cs);
     assert(hasContent(res));

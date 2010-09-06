@@ -15,17 +15,22 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+if WANT_OAUTH
 
-if WANT_OPENID
+INCLUDES = -I${HTTPD_INCLUDE}
 
-dist_mod_SCRIPTS = openid-conf openid-step2-conf openid-memcached-conf
-moddir = $(prefix)/modules/openid
+dist_mod_SCRIPTS = oauth-conf oauth-memcached-conf oauth-app-conf
+moddir=$(prefix)/modules/oauth
 
-mod_DATA = openid.prefix
-openid.prefix: $(top_builddir)/config.status
-	echo ${MODAUTHOPENID_PREFIX} >openid.prefix
+mod_LTLIBRARIES = libmod_tuscany_oauth.la
+noinst_DATA = libmod_tuscany_oauth.so
 
-EXTRA_DIST = openid.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/unprotected/index.html
+libmod_tuscany_oauth_la_SOURCES = mod-oauth.cpp
+libmod_tuscany_oauth_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_oauth.so:
+	ln -s .libs/libmod_tuscany_oauth.so
+
+EXTRA_DIST = oauth.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/unprotected/index.html
 
 dist_noinst_SCRIPTS = start-test stop-test
 

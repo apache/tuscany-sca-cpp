@@ -23,7 +23,7 @@
 <form name="signout" action="/login" method="GET">
 <script type="text/javascript">
 function submitSignout() {
-    document.cookie = 'TuscanyOpenIDAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
+    document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
     document.signout.submit();
     return true;
 }

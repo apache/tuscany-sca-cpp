@@ -39,7 +39,7 @@ namespace nosqldb {
 const string uri("http://localhost:8090/nosqldb");
 
 bool testNoSqlDb() {
-    http::CURLSession cs;
+    http::CURLSession cs("", "", "");
 
     const list<value> i = list<value>()
             + (list<value>() + "name" + string("Apple"))
@@ -104,7 +104,7 @@ bool testGetPerf() {
             + (list<value>() + "price" + string("$4.55"));
     const value a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
 
-    http::CURLSession cs;
+    http::CURLSession cs("", "", "");
     const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
     const string p = path(content(id));

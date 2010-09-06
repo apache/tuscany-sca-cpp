@@ -49,6 +49,7 @@
 
 #include "string.hpp"
 #include "stream.hpp"
+#include "sstream.hpp"
 #include "list.hpp"
 #include "value.hpp"
 #include "monad.hpp"
@@ -60,7 +61,7 @@ namespace httpd {
 /**
  * Returns a server-scoped module configuration.
  */
-template<typename C> void* makeServerConf(apr_pool_t *p, server_rec *s) {
+template<typename C> void* makeServerConf(apr_pool_t* p, server_rec* s) {
     return new (gc_new<C>(p)) C(p, s);
 }
 
@@ -72,10 +73,24 @@ template<typename C> C& serverConf(const server_rec* s, const module* mod) {
     return *(C*)ap_get_module_config(s->module_config, mod);
 }
 
-template<typename C> C& serverConf(const cmd_parms *cmd, const module* mod) {
+template<typename C> C& serverConf(const cmd_parms* cmd, const module* mod) {
     return *(C*)ap_get_module_config(cmd->server->module_config, mod);
 }
 
+/**
+ * Returns a directory-scoped module configuration.
+ */
+template<typename C> void* makeDirConf(apr_pool_t *p, char* d) {
+    return new (gc_new<C>(p)) C(p, d);
+}
+
+template<typename C> const C& dirConf(const request_rec* r, const module* mod) {
+    return *(C*)ap_get_module_config(r->per_dir_config, mod);
+}
+
+template<typename C> C& dirConf(const void* c) {
+    return *(C*)c;
+}
 
 /**
  * Return the name of a server.
@@ -172,18 +187,96 @@ const list<value> pathInfo(const list<value>& uri, const list<value>& path) {
 }
 
 /**
+ * Convert a URI and a path to an absolute URL.
+ */
+const string url(const string& uri, const list<value>& p, request_rec* r) {
+    const string u = uri + path(p);
+    return ap_construct_url(r->pool, c_str(u), r);
+}
+
+/**
+ * Convert a URI to an absolute URL.
+ */
+const string url(const string& uri, request_rec* r) {
+    return ap_construct_url(r->pool, c_str(uri), r);
+}
+
+/**
+ * Escape a URI.
+ */
+const char escape_c2x[] = "0123456789abcdef";
+const string escape(const string& uri) {
+    debug(uri, "httpd::escape::uri");
+    char* copy = (char*)apr_palloc(gc_current_pool(), 3 * length(uri) + 3);
+    const unsigned char* s = (const unsigned char *)c_str(uri);
+    unsigned char* d = (unsigned char*)copy;
+    unsigned c;
+    while ((c = *s)) {
+        if (apr_isalnum(c) || c == '_')
+            *d++ = (unsigned char)c;
+        else if (c == ' ')
+            *d++ = '+';
+        else {
+            *d++ = '%';
+            *d++ = escape_c2x[c >> 4];
+            *d++ = escape_c2x[c & 0xf];
+        }
+        ++s;
+    }
+    *d = '\0';
+    debug(copy, "httpd::escape::result");
+    return copy;
+}
+
+/**
+ * Unescape a URI.
+ */
+const string unescape(const string& uri) {
+    debug(uri, "httpd::unescape::uri");
+    char* b = const_cast<char*>(c_str(string(c_str(uri))));
+    ap_unescape_url(b);
+    debug(b, "httpd::unescape::result");
+    return b;
+}
+
+/**
  * Returns a list of key value pairs from the args in a query string.
  */
 const list<value> queryArg(const string& s) {
+    debug(s, "httpd::queryArg::string");
     const list<string> t = tokenize("=", s);
     return mklist<value>(c_str(car(t)), cadr(t));
 }
 
-const list<list<value> > queryArgs(const request_rec* r) {
-    const char* a = r->args;
-    if (a == NULL)
-        return list<list<value> >();
+const list<list<value> > queryArgs(const string& a) {
     return map<string, list<value>>(queryArg, tokenize("&", a));
+}
+
+/**
+ * Returns a list of key value pairs from the args in an HTTP request.
+ */
+const list<list<value> > queryArgs(const request_rec* r) {
+    if (r->args == NULL)
+        return list<list<value> >();
+    return queryArgs(r->args);
+}
+
+/**
+ * Converts a list of key value pairs to a query string.
+ */
+ostringstream& queryString(const list<list<value> > args, ostringstream& os) {
+    if (isNil(args))
+        return os;
+    debug(car(args), "httpd::queryString::arg");
+    os << car(car(args)) << "=" << c_str(cadr(car(args)));
+    if (!isNil(cdr(args)))
+        os << "&";
+    return queryString(cdr(args), os);
+}
+
+const string queryString(const list<list<value> > args) {
+    ostringstream os;
+    return str(queryString(args, os));
 }
 
 /**
@@ -222,14 +315,6 @@ const list<string> read(request_rec* r) {
 }
 
 /**
- * Convert a URI represented as a list to an absolute URL.
- */
-const char* url(const list<value>& v, request_rec* r) {
-    const string u = string(r->uri) + path(v);
-    return ap_construct_url(r->pool, c_str(u), r);
-}
-
-/**
  * Write an HTTP result.
  */
 const failable<int> writeResult(const failable<list<string> >& ls, const string& ct, request_rec* r) {
@@ -238,7 +323,7 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
     ostringstream os;
     write(content(ls), os);
     const string ob(str(os));
-    debug(ob, "httpd::result");
+    debug(ob, "httpd::writeResult");
 
     // Make sure browsers come back and check for updated dynamic content
     apr_table_setn(r->headers_out, "Expires", "Tue, 01 Jan 1980 00:00:00 GMT");
@@ -475,6 +560,16 @@ const failable<request_rec*, int> internalSubRequest(const string& nr_uri, reque
     nr->used_path_info = AP_REQ_DEFAULT_PATH_INFO;
 
     return nr;
+}
+
+/**
+ * Return an HTTP external redirect request.
+ */
+const int externalRedirect(const string& uri, request_rec* r) {
+    r->status = HTTP_MOVED_TEMPORARILY;
+    apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(uri)));
+    r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/") + uri));
+    return OK;
 }
 
 /**

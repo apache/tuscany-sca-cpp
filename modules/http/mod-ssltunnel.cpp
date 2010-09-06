@@ -68,11 +68,11 @@ extern module AP_DECLARE_DATA core_module;
  * Process the module configuration.
  */
 int M_SSLTUNNEL;
-int postConfigParse(ServerConf& mainsc, apr_pool_t* p, server_rec* s) {
+int postConfigMerge(ServerConf& mainsc, apr_pool_t* p, server_rec* s) {
     if (s == NULL)
         return OK;
     ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_ssltunnel);
-    debug(httpd::serverName(s), "modwiring::postConfigParse::serverName");
+    debug(httpd::serverName(s), "modwiring::postConfigMerge::serverName");
 
     // Merge configuration from main server
     if (length(sc.ca) == 0 && length(mainsc.ca) !=0)
@@ -93,7 +93,7 @@ int postConfigParse(ServerConf& mainsc, apr_pool_t* p, server_rec* s) {
         sc.host = uri.hostname;
         sc.path = uri.path;
     }
-    return postConfigParse(mainsc, p, s->next);
+    return postConfigMerge(mainsc, p, s->next);
 }
 
 int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp, server_rec* s) {
@@ -104,8 +104,8 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
     // Register the SSLTUNNEL method
     M_SSLTUNNEL = ap_method_register(p, "SSLTUNNEL");
 
-    // Parse the configured TunnelPass URI
-    return postConfigParse(sc, p, s);
+    // Merge and process server configurations
+    return postConfigMerge(sc, p, s);
 }
 
 /**
@@ -296,7 +296,7 @@ int handler(request_rec* r) {
     debug(url, "modssltunnel::handler::target");
 
     // Create the target connection
-    http::CURLSession cs;
+    http::CURLSession cs("", "", "");
 
     // Run the tunnel
     return tunnel(r->connection, cs, url, "", gc_pool(r->pool), connectionFilter(r->proto_input_filters), connectionFilter(r->proto_output_filters));

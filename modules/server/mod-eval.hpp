@@ -194,7 +194,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
 
         // Return the created resource location
         debug(content(val), "modeval::post::location");
-        apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, httpd::url(content(val), r)));
+        apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(httpd::url(r->uri, content(val), r))));
         r->status = HTTP_CREATED;
         return OK;
     }
@@ -366,15 +366,16 @@ struct hostPropProxy {
     }
 };
 
-struct emailPropProxy {
+struct envPropProxy {
+    const string name;
     const value v;
-    emailPropProxy(const value& v) : v(v) {
+    envPropProxy(const string& name, const value& v) : name(name), v(v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const char* email = apr_table_get(currentRequest->subprocess_env, "EMAIL");
-        if (email == NULL || *email == '\0')
+        const char* env = apr_table_get(currentRequest->subprocess_env, c_str(name));
+        if (env == NULL || *env == '\0')
             return v;
-        return string(email);
+        return string(env);
     }
 };
 
@@ -392,10 +393,18 @@ struct userPropProxy {
 const value mkpropProxy(const value& prop) {
     if (scdl::name(prop) == "host")
         return lambda<value(const list<value>&)>(hostPropProxy(elementValue(prop)));
-    if (scdl::name(prop) == "email")
-        return lambda<value(const list<value>&)>(emailPropProxy(elementValue(prop)));
     if (scdl::name(prop) == "user")
         return lambda<value(const list<value>&)>(userPropProxy(elementValue(prop)));
+    if (scdl::name(prop) == "email")
+        return lambda<value(const list<value>&)>(envPropProxy("EMAIL", elementValue(prop)));
+    if (scdl::name(prop) == "nickname")
+        return lambda<value(const list<value>&)>(envPropProxy("NICKNAME", elementValue(prop)));
+    if (scdl::name(prop) == "fullname")
+        return lambda<value(const list<value>&)>(envPropProxy("FULLNAME", elementValue(prop)));
+    if (scdl::name(prop) == "firstname")
+        return lambda<value(const list<value>&)>(envPropProxy("FIRSTNAME", elementValue(prop)));
+    if (scdl::name(prop) == "lastname")
+        return lambda<value(const list<value>&)>(envPropProxy("LASTNAME", elementValue(prop)));
     return lambda<value(const list<value>&)>(propProxy(elementValue(prop)));
 }
 
@@ -828,7 +837,6 @@ const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
     sc.key = arg;
     return NULL;
 }
-
 const char* confEnv(unused cmd_parms *cmd, unused void *c, const char *name, const char *value) {
     gc_scoped_pool pool(cmd->pool);
     setenv(name, value != NULL? value : "", 1);

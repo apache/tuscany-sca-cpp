@@ -28,6 +28,8 @@
 
 #include <stdlib.h>
 #include <apr_uuid.h>
+#include <apr_time.h>
+
 #include "string.hpp"
 #include "sstream.hpp"
 #include "gc.hpp"
@@ -599,6 +601,23 @@ const value mkuuid() {
     char buf[APR_UUID_FORMATTED_LENGTH];
     apr_uuid_format(buf, &id);
     return value(string(buf, APR_UUID_FORMATTED_LENGTH));
+}
+
+/**
+ * Make a random alphanumeric value.
+ */
+const int intrand() {
+    const apr_uint64_t now = apr_time_now();
+    srand((unsigned int)(((now >> 32) ^ now) & 0xffffffff));
+    return rand() & 0x0FFFF;
+}       
+
+const value mkrand() {
+    char buf[32];
+    const char* an = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for (int i =0; i < 32; i++)
+        buf[i] = an[intrand() % 62];
+    return value(string(buf, 32));
 }
 
 }

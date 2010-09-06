@@ -157,6 +157,12 @@ To build the SQL Database utility component (requires PostgreSQL):
 To build the Web service utility component (requires Apache Axis2/C):
 --enable-webservice
 
+To build the support for OAuth authentication:
+--enable-oauth
+
+To build the support for OpenID authentication:
+--enable-openid
+
 To generate doxygen documentation, add:
 --enable-doxygen
 

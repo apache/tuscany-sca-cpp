@@ -60,7 +60,7 @@ bool testModAxis2() {
 }
 
 bool testEval() {
-    http::CURLSession cs;
+    http::CURLSession cs("", "", "");
 
     const value func = "http://ws.apache.org/axis2/c/samples/echoString";
     const list<value> arg = mklist<value>(

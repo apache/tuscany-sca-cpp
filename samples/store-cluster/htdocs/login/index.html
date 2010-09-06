@@ -68,6 +68,10 @@ function withVerisign() {
     return 'https://pip.verisignlabs.com/';
 }
 
+function withMySpace() {
+    return 'https://api.myspace.com/openid';
+}
+
 function withGoogleApps() {
     return 'https://www.google.com/accounts/o8/site-xrds?ns=2&hd=' + document.fields.domain.value;
 }
@@ -86,6 +90,7 @@ function withXRDSEndpoint() {
 <p>Sign in with your Yahoo account<br/><input type="button" onclick="submitSignin(withYahoo)" value="Sign in"/></p>
 <p>Sign in with your MyOpenID account<br/><input type="button" onclick="submitSignin(withMyOpenID)" value="Sign in"/></p>
 <p>Sign in with your Verisign account<br/><input type="button" onclick="submitSignin(withVerisign)" value="Sign in"/></p>
+<p>Sign in with your MySpace account<br/><input type="button" onclick="submitSignin(withMySpace)" value="Sign in"/></p>
 <p>Sign in with a Google apps domain<br/>
 <input type="text" size="20" name="domain" value="example.com"/><br/>
 <input type="button" onclick="submitSignin(withGoogleApps)" value="Sign in"/></p>
