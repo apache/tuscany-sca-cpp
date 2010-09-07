@@ -419,7 +419,7 @@ const failable<value> get(const string& url, const CURLSession& cs) {
         debug(val, "http::get::result");
         return val;
     }
-    if (contains(ct, "text/javascript") || contains(ct, "application/json-rpc")) {
+    if (contains(ct, "text/javascript") || contains(ct, "application/json")) {
         json::JSONContext cx;
         const value val(json::jsonValues(content(json::readJSON(ls, cx))));
         debug(val, "http::get::result");

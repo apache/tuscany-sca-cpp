@@ -204,7 +204,7 @@ const string url(const string& uri, request_rec* r) {
 /**
  * Escape a URI.
  */
-const char escape_c2x[] = "0123456789abcdef";
+const char escape_c2x[] = "0123456789ABCDEF";
 const string escape(const string& uri) {
     debug(uri, "httpd::escape::uri");
     char* copy = (char*)apr_palloc(gc_current_pool(), 3 * length(uri) + 3);
@@ -248,8 +248,15 @@ const list<value> queryArg(const string& s) {
     return mklist<value>(c_str(car(t)), cadr(t));
 }
 
+const string fixupQueryArgs(const string& a) {
+    const list<string> t = tokenize("?", a);
+    if (isNil(t) || isNil(cdr(t)))
+        return a;
+    return join("&", t);
+}
+
 const list<list<value> > queryArgs(const string& a) {
-    return map<string, list<value>>(queryArg, tokenize("&", a));
+    return map<string, list<value>>(queryArg, tokenize("&", fixupQueryArgs(a)));
 }
 
 /**
