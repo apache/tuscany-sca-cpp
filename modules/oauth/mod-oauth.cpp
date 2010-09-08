@@ -128,20 +128,27 @@ const failable<int> authenticated(const list<list<value> >& info, request_rec* r
     debug(info, "modoauth::authenticated::info");
 
     const list<value> id = assoc<value>("id", info);
+    if (isNil(id) || isNil(cdr(id)))
+        return mkfailure<int>("Couldn't retrieve user id");
     r->user = apr_pstrdup(r->pool, c_str(cadr(id)));
 
     const list<value> email = assoc<value>("email", info);
-    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "EMAIL"), apr_pstrdup(r->pool, c_str(cadr(email))));
+    if (!isNil(email) && !isNil(cdr(email)))
+        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "EMAIL"), apr_pstrdup(r->pool, c_str(cadr(email))));
 
     const list<value> fullname = assoc<value>("name", info);
-    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "NICKNAME"), apr_pstrdup(r->pool, c_str(cadr(fullname))));
-    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "FULLNAME"), apr_pstrdup(r->pool, c_str(cadr(fullname))));
+    if (!isNil(fullname) && !isNil(cdr(fullname))) {
+        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "NICKNAME"), apr_pstrdup(r->pool, c_str(cadr(fullname))));
+        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "FULLNAME"), apr_pstrdup(r->pool, c_str(cadr(fullname))));
+    }
 
     const list<value> firstname = assoc<value>("first_name", info);
-    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "FIRSTNAME"), apr_pstrdup(r->pool, c_str(cadr(firstname))));
+    if (!isNil(firstname) && !isNil(cdr(firstname)))
+        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "FIRSTNAME"), apr_pstrdup(r->pool, c_str(cadr(firstname))));
 
     const list<value> lastname = assoc<value>("last_name", info);
-    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "LASTNAME"), apr_pstrdup(r->pool, c_str(cadr(lastname))));
+    if (!isNil(lastname) && !isNil(cdr(lastname)))
+        apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "LASTNAME"), apr_pstrdup(r->pool, c_str(cadr(lastname))));
 
     if(r->ap_auth_type == NULL)
         r->ap_auth_type = const_cast<char*>("OAuth");
@@ -162,11 +169,19 @@ const failable<int> login(const string& page, request_rec* r) {
  * Handle an authorize request.
  */
 const failable<int> authorize(const list<list<value> >& args, request_rec* r) {
-    // Extract authorize URI, access_token URI and client ID
+    // Extract authorize, access_token, client ID and info URIs
     const list<value> auth = assoc<value>("mod_oauth_authorize", args);
+    if (isNil(auth) || isNil(cdr(auth)))
+        return mkfailure<int>("Missing mod_oauth_authorize parameter");
     const list<value> tok = assoc<value>("mod_oauth_access_token", args);
+    if (isNil(tok) || isNil(cdr(tok)))
+        return mkfailure<int>("Missing mod_oauth_access_token parameter");
     const list<value> cid = assoc<value>("mod_oauth_client_id", args);
+    if (isNil(cid) || isNil(cdr(cid)))
+        return mkfailure<int>("Missing mod_oauth_client_id parameter");
     const list<value> info = assoc<value>("mod_oauth_info", args);
+    if (isNil(info) || isNil(cdr(info)))
+        return mkfailure<int>("Missing mod_oauth_info parameter");
 
     // Build the redirect URI
     const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth_step", "access_token"), tok, cid, info);
@@ -198,12 +213,22 @@ const string cookie(const string& sid) {
 const failable<int> access_token(const list<list<value> >& args, request_rec* r, const ServerConf& sc) {
     // Extract access_token URI, client ID and authorization code
     const list<value> tok = assoc<value>("mod_oauth_access_token", args);
+    if (isNil(tok) || isNil(cdr(tok)))
+        return mkfailure<int>("Missing mod_oauth_access_token parameter");
     const list<value> cid = assoc<value>("mod_oauth_client_id", args);
+    if (isNil(cid) || isNil(cdr(cid)))
+        return mkfailure<int>("Missing mod_oauth_client_id parameter");
     const list<value> info = assoc<value>("mod_oauth_info", args);
+    if (isNil(info) || isNil(cdr(info)))
+        return mkfailure<int>("Missing mod_oauth_info parameter");
     const list<value> code = assoc<value>("code", args);
+    if (isNil(code) || isNil(cdr(code)))
+        return mkfailure<int>("Missing code parameter");
 
     // Lookup client app configuration
     const list<value> app = assoc<value>(cadr(cid), sc.apps);
+    if (isNil(app) || isNil(cdr(app)))
+        return mkfailure<int>(string("client id not found: ") + cadr(cid));
 
     // Build the redirect URI
     const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth_step", "access_token"), tok, cid, info);
@@ -215,8 +240,12 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     const string turi = httpd::unescape(cadr(tok)) + string("?") + httpd::queryString(targs);
     debug(turi, "modoauth::access_token::tokenuri");
     const failable<value> tr = http::get(turi, sc.cs);
+    if (!hasContent(tr))
+        return mkfailure<int>(reason(tr));
     debug(tr, "modoauth::access_token::response");
     const list<value> tv = assoc<value>("access_token", httpd::queryArgs(join("", convertValues<string>(content(tr)))));
+    if (isNil(app) || isNil(cdr(app)))
+        return mkfailure<int>("Couldn't retrieve access_token");
     debug(tv, "modoauth::access_token::token");
 
     // Request user info
@@ -225,11 +254,15 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     const string iuri = httpd::unescape(cadr(info)) + string("?") + httpd::queryString(iargs);
     debug(iuri, "modoauth::access_token::infouri");
     const failable<value> iv = http::get(iuri, sc.cs);
+    if (isNil(app) || isNil(cdr(app)))
+        return mkfailure<int>("Couldn't retrieve user info");
     debug(iv, "modoauth::access_token::info");
 
     // Store user info in memcached keyed by session ID
     const value sid = string("OAuth_") + mkrand();
-    memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), sc.mc);
+    const failable<bool> prc = memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), sc.mc);
+    if (!hasContent(prc))
+        return mkfailure<int>(reason(prc));
 
     // Send session ID to the client in a cookie
     apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie(sid)));
