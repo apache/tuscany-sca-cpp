@@ -194,6 +194,8 @@ def evalProperty(p):
         return lambda: hostProperty(cadr(p), environ)
     if car(p) == "user":
         return lambda: userProperty(cadr(p))
+    if car(p) == "nickname":
+        return lambda: nicknameProperty(cadr(p))
     if car(p) == "email":
         return lambda: emailProperty(cadr(p))
     return lambda: cadr(p)
@@ -207,7 +209,11 @@ def currentUser():
 
 def userProperty(v):
     user = currentUser()
-    return user.user_id() if user else v
+    return user.federated_identity() if user else v
+
+def nicknameProperty(v):
+    user = currentUser()
+    return user.nickname() if user else v
 
 def hostProperty(v, e):
     return e.get("HTTP_HOST", e.get("SERVER_NAME", v)).split(":")[0]
