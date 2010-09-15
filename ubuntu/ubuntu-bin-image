@@ -25,6 +25,9 @@ set -x
 # First update the system
 sudo apt-get update
 
+# Get the Ubuntu version
+osver=`cat /etc/issue | awk '{ print $2 }'`
+
 # Create install directory
 u=`id -un`
 g=`id -gn`
@@ -57,9 +60,16 @@ sudo apt-get -y install libxml2 libxml2-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install xulrunner-1.9.1 xulrunner-1.9.1-dev
-if [ "$?" != "0" ]; then
-    exit $?
+if [ "$osver" = "9.10" ]; then
+    sudo apt-get -y install xulrunner-1.9.1 xulrunner-1.9.1-dev
+    if [ "$?" != "0" ]; then
+        exit $?
+    fi
+else
+    sudo apt-get -y install xulrunner-1.9.2 xulrunner-1.9.2-dev
+    if [ "$?" != "0" ]; then
+        exit $?
+    fi
 fi
 sudo apt-get -y install python-dev
 if [ "$?" != "0" ]; then

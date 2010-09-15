@@ -24,6 +24,6 @@ port=$2
 
 python_prefix=`cat $here/../python/python.prefix`
 gae_prefix=`cat $here/gae.prefix`
-py="$python_prefix/bin/python $gae_prefix/dev_appserver.py -p $port $root"
+py="$python_prefix/bin/python $gae_prefix/dev_appserver.py -a 0.0.0.0 -p $port $root"
 
 kill `ps -ef | grep -v grep | grep "${py}" | awk '{ print $2 }'`

@@ -1,16 +1,16 @@
 Apache Tuscany SCA Runtime
 ==========================
 
-Automated installation on Ubuntu 9.10
-=====================================
+Automated installation on Ubuntu 10.04
+======================================
 
-Tuscany provides two automated install scripts for Ubuntu 9.10. You can start
-with a fresh Ubuntu Server 9.10 system and these scripts will take care of all
-the download, build and installation steps for you.
+Tuscany provides two automated install scripts for Ubuntu. You can start with
+a fresh Ubuntu Server 10.04 system and these scripts will take care of all the
+download, build and installation steps for you.
 
 ubuntu/ubuntu-install:
 Minimum build and installation using dependencies (Apache HTTPD server,
-Memcached etc) from your Ubuntu 9.10 system.
+Memcached etc) from your Ubuntu 10.04 system.
 
 ubuntu/ubuntu-install-all:
 Complete build and installation with most dependencies built from source.
@@ -28,7 +28,7 @@ chmod +x ./ubuntu-install
 The installation script will display each command as it's executed.
 
 That's all you need to do to build and install the Tuscany SCA runtime on
-Ubuntu 9.10.
+Ubuntu 10.04.
 
 For manual build and install steps on other systems or if you need to customize
 your installation, read on...
@@ -50,7 +50,7 @@ The GCC 4.5 compiler may not yet be included in your Linux distribution.
 GCC 4.5 Ubuntu / Debian packages can be downloaded from:
 http://ftp.debian.org/debian/pool/main/g/gcc-4.5/
 
-To download and setup GCC 4.5 on Ubuntu 9.10, run this script:
+To download and setup GCC 4.5 on Ubuntu 10.04, run this script:
 http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
 
 
@@ -171,12 +171,12 @@ in the configure help:
 ./configure --help
 
 
-Here's an example configuration, tested on Ubuntu 9.10, with the system
+Here's an example configuration, tested on Ubuntu 10.04, with the system
 dependencies installed in the standard system directories and some of the
 dependencies installed under $HOME:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
---with-apr=$HOME/httpd-2.2.13-bin --with-httpd=$HOME/httpd-2.2.13-bin \
+--with-apr=$HOME/httpd-2.2.16-bin --with-httpd=$HOME/httpd-2.2.16-bin \
 --with-memcached=$HOME/memcached-1.4.4-bin \
 --with-tinycdb=$HOME/tinycdb-0.77-bin \
 --with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
@@ -197,6 +197,7 @@ dependencies installed under $HOME:
 --enable-log --with-thrift=$HOME/thrift-0.2.0-bin \
 --with-scribe=$HOME/scribe-2.2-bin \
 --enable-openid --with-mod-auth-openid=$HOME/mod-auth-openid-bin \
+--enable-oauth \
 --enable-maintainer-mode
 
 

@@ -6,7 +6,8 @@ in C++ and integrated with the Apache HTTPD server.
 
 It supports SCA components written in C++ and Python. Experimental support
 for other programming languages is under construction. SCA bindings are
-available for the JSON-RPC and ATOMPub protocols.
+available for the JSON-RPC, ATOMPub and RSS protocols. User authentication
+is supported using OpenID and OAuth.
 
 Several useful SCA components are provided on top of the SCA runtime, which
 can be used to help assemble distributed SCA composite applications:
@@ -14,9 +15,9 @@ can be used to help assemble distributed SCA composite applications:
 Cache: Key/value memory cache, using Memcached;
 Chat: XMPP chat, using Apache Vysper and Libstrophe;
 Log: distributed logger, using Facebook Scribe.
+Nosqldb: Key/value 'NoSQL' persistent store, using TinyCDB;
 Queue: AMQP queuing, using Apache Qpid/C;
 Sqldb: SQL database, using PostgreSQL;
-Store: Key/value persistent store, using TinyCDB;
 Webservice: Web service gateway, using Apache Axis2/C;
 
 These components present a simple ATOMPub REST interface, allowing you to send
@@ -55,24 +56,35 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |
  |   |-- modules              Modules that plug into the runtime
  |   |   |-- atom             AtomPub encoding
- |   |   |-- json             JSON-RPC encoding
  |   |   |-- http             HTTP protocol
  |   |   |-- java             Support for Java components
+ |   |   |-- json             JSON-RPC encoding
+ |   |   |-- oauth            OAuth authentication
+ |   |   |-- openid           OpenID authentication
  |   |   |-- python           Support for Python components
  |   |   |-- scheme           Support for Scheme components
  |   |   |-- server           Apache HTTPD server integration
  |   |   |-- wsgi             Python WSGI server integration
  |   |
  |   |-- components           Useful SCA components
- |   |   |-- cache            Key/value memory cache
+ |   |   |-- cache            Memcached key/value cache
  |   |   |-- chat             XMPP chat
- |   |   |-- log              Logger
+ |   |   |-- log              Scribe logger
+ |   |   |-- nosqldb          TinyCDB NoSQL database
  |   |   |-- queue            AMQP message queue
- |   |   |-- sqldb            SQL database
- |   |   |-- store            Key/value persistent store
- |   |   |-- webservice       Web service gateway
+ |   |   |-- sqldb            PostgreSQL database
+ |   |   |-- webservice       Axis2 Web service gateway
  |   |
  |   |-- samples              Sample Applications
+ |   |   |-- store-cluster    Online store on a proxy + server + db cluster
+ |   |   |-- store-cpp        Online store written in C++
+ |   |   |-- store-gae        Online store written in Python, working on GAE
+ |   |   |-- store-java       Online store written in Java
+ |   |   |-- store-nosql      Online store using a NoSQL database
+ |   |   |-- store-python     Online store written in Python
+ |   |   |-- store-scheme     Online store written in Scheme
+ |   |   |-- store-sql        Online store using an SQL database
+ |   |   |-- store-vhost      Online store on virtual hosts
  |   |
  |   |-- ubuntu               Automated install on Ubuntu 9.10
  |

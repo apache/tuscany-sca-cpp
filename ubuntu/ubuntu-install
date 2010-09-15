@@ -22,6 +22,9 @@
 # Display commands as they are executed
 set -x
 
+# Get the Ubuntu version
+osver=`cat /etc/issue | awk '{ print $2 }'`
+
 # Build and install in the current directory
 build=`pwd`
 
@@ -58,9 +61,16 @@ if [ "$?" != "0" ]; then
 fi
 
 # Install TraceMonkey
-sudo apt-get -y install xulrunner-1.9.1 xulrunner-1.9.1-dev
-if [ "$?" != "0" ]; then
-    exit $?
+if [ "$osver" = "9.10" ]; then
+    sudo apt-get -y install xulrunner-1.9.1 xulrunner-1.9.1-dev
+    if [ "$?" != "0" ]; then
+        exit $?
+    fi
+else
+    sudo apt-get -y install xulrunner-1.9.2 xulrunner-1.9.2-dev
+    if [ "$?" != "0" ]; then
+        exit $?
+    fi
 fi
 
 # Install Python

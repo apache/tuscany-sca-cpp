@@ -25,5 +25,5 @@ port=$2
 python_prefix=`cat $here/../python/python.prefix`
 gae_prefix=`cat $here/gae.prefix`
 cd $root
-$python_prefix/bin/python $gae_prefix/dev_appserver.py -p $port $root &
+$python_prefix/bin/python $gae_prefix/dev_appserver.py -a 0.0.0.0 -p $port $root &
 

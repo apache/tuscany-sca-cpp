@@ -171,6 +171,7 @@ cd $build
 
 # Build Libexpat
 wget http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
+mv download expat-2.0.1.tar.gz
 tar xzf expat-2.0.1.tar.gz
 cd expat-2.0.1
 ./configure --prefix=$build/expat-2.0.1-bin
@@ -262,7 +263,7 @@ fi
 cd $build
 
 # Build Apache Thrift
-sudo apt-get -y install bison flex
+sudo apt-get -y install bison flex python-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
@@ -315,7 +316,7 @@ fi
 cd $build
 
 # Build Tuscany SCA
-sudo apt-get -y install python-dev
+sudo apt-get -y install
 if [ "$?" != "0" ]; then
     exit $?
 fi

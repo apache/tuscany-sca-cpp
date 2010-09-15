@@ -229,13 +229,19 @@ xulrunner=`ls /usr/include | grep "xulrunner" | tail -1`
 if test "$xulrunner" = ""; then
   xulrunner="xulrunner-1.9.1.8"
 fi
+xulunstable=`ls /usr/include/$xulrunner | grep "unstable"`
+if test "$xulunstable" = ""; then
+  xulinclude="$xulrunner"
+else
+  xulinclude="$xulrunner/unstable"
+fi
 AC_ARG_WITH([js-include], [AC_HELP_STRING([--with-js-include=PATH], [path to installed SpiderMonkey include dir
-             [default=/usr/include/$xulrunner/unstable]])], [
+             [default=/usr/include/$xulinclude]])], [
   JS_INCLUDE="${withval}"
   AC_MSG_RESULT("${withval}")
 ], [
-  JS_INCLUDE="/usr/include/$xulrunner/unstable"
-  AC_MSG_RESULT(/usr/include/$xulrunner/unstable)
+  JS_INCLUDE="/usr/include/$xulinclude"
+  AC_MSG_RESULT(/usr/include/$xulinclude)
 ])
 AC_MSG_CHECKING([for js-lib])
 AC_ARG_WITH([js-lib], [AC_HELP_STRING([--with-js-lib=PATH], [path to installed SpiderMonkey lib dir [default=/usr/lib/$xulrunner]])], [
