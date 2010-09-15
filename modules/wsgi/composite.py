@@ -190,7 +190,7 @@ def application(e, r):
         ct = requestContentType(e)
 
         # Handle a JSON-RPC function call
-        if ct.find("application/json-rpc") != -1 or ct.find("text/plain") != -1:
+        if ct.find("application/json-rpc") != -1 or ct.find("text/plain") != -1 or ct.find("application/x-www-form-urlencoded") != -1:
             json = elementsToValues(readJSON(requestBody(e)))
             args = postArgs(json)
             jid = cadr(assoc("'id", args))

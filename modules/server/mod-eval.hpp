@@ -149,7 +149,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
 
     // Evaluate a JSON-RPC request and return a JSON result
     const string ct = httpd::contentType(r);
-    if (contains(ct, "application/json-rpc") || contains(ct, "text/plain")) {
+    if (contains(ct, "application/json-rpc") || contains(ct, "text/plain") || contains(ct, "application/x-www-form-urlencoded")) {
 
         // Read the JSON request
         const int rc = httpd::setupReadPolicy(r);
