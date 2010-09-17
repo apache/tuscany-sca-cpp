@@ -375,7 +375,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     // Count the calls to post config, skip the first one as
     // postConfig is always called twice
     const string k("tuscany::modwiring::postConfig");
-    const int count = (int)httpd::userData(k, s);
+    const long int count = (long int)httpd::userData(k, s);
     httpd::putUserData(k, (void*)(count + 1), s);
     if (count == 0)
         return OK;

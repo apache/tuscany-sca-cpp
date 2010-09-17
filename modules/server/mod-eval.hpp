@@ -714,7 +714,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
 
     // Count the calls to post config
     const string k("tuscany::modeval::postConfig");
-    const int count = (int)httpd::userData(k, s);
+    const long int count = (long int)httpd::userData(k, s);
     httpd::putUserData(k, (void*)(count + 1), s);
 
     // Count == 0, do nothing as post config is always called twice,
