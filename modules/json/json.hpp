@@ -166,6 +166,8 @@ const list<value> jsPropertiesToValues(const list<value>& propertiesSoFar, JSObj
     jsval idv;
     JS_IdToValue(cx, id, &idv);
     if(JSVAL_IS_STRING(idv)) {
+        if (isNil(val) && !isList(val))
+            return jsPropertiesToValues(propertiesSoFar, o, i, cx);
         const string name = JS_GetStringBytes(JSVAL_TO_STRING(idv));
         if (substr(name, 0, 1) == atsign)
             return jsPropertiesToValues(cons<value>(mklist<value>(attribute, c_str(substr(name, 1)), val), propertiesSoFar), o, i, cx);
@@ -194,6 +196,8 @@ const value jsValToValue(const jsval& jsv, const JSONContext& cx) {
     }
     case JSTYPE_OBJECT: {
         JSObject* o = JSVAL_TO_OBJECT(jsv);
+        if (o == NULL)
+            return value();
         JSObject* i = JS_NewPropertyIterator(cx, o);
         if(i == NULL)
             return value(list<value> ());

@@ -17,7 +17,7 @@
    under the License.
 -->
 
-<html><body><h1>Sign in with an OAuth 2.0 provider</h1>
+<html><body><h1>Sign in with an OAuth provider</h1>
 
 <script type="text/javascript">
 function queryParams() {
@@ -45,38 +45,70 @@ if (typeof(oauthReferrer()) == 'undefined') {
     document.location = '/';
 }
 
-function submitSignin(w) {
+function submitSignin2(w) {
     parms = w();
-    document.signin.mod_oauth_authorize.value = parms[0];
-    document.signin.mod_oauth_access_token.value = parms[1];
-    document.signin.mod_oauth_client_id.value = parms[2];
-    document.signin.mod_oauth_info.value = parms[3];
-    document.signin.action = oauthReferrer();
-    document.signin.submit();
+    document.signin2.mod_oauth2_authorize.value = parms[0];
+    document.signin2.mod_oauth2_access_token.value = parms[1];
+    document.signin2.mod_oauth2_client_id.value = parms[2];
+    document.signin2.mod_oauth2_info.value = parms[3];
+    document.signin2.action = oauthReferrer();
+    document.signin2.submit();
 }
 
 function withFacebook() {
-    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'app1234', 'https://graph.facebook.com/me'];
+    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'testfacebookapp', 'https://graph.facebook.com/me'];
     return parms;
 }
 
 function withGithub() {
-    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'app2345', 'https://github.com/api/v2/json/user/show'];
+    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'testgithubapp', 'https://github.com/api/v2/json/user/show'];
+    return parms;
+}
+
+function submitSignin1(w) {
+    parms = w();
+    document.signin1.mod_oauth1_request_token.value = parms[0];
+    document.signin1.mod_oauth1_authorize.value = parms[1];
+    document.signin1.mod_oauth1_access_token.value = parms[2];
+    document.signin1.mod_oauth1_client_id.value = parms[3];
+    document.signin1.mod_oauth1_info.value = parms[4];
+    document.signin1.action = oauthReferrer();
+    document.signin1.submit();
+}
+
+function withLinkedin() {
+    var parms = ['https://api.linkedin.com/uas/oauth/requestToken', 'https://www.linkedin.com/uas/oauth/authorize', 'https://api.linkedin.com/uas/oauth/accessToken', 'testlinkedinapp', 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,public-profile-url)'];
+    return parms;
+}
+
+function withTwitter() {
+    var parms = ['https://api.twitter.com/oauth/request_token', 'https://api.twitter.com/oauth/authorize', 'https://api.twitter.com/oauth/access_token', 'testtwitterapp', 'https://api.twitter.com/1/statuses/user_timeline.json'];
     return parms;
 }
 </script>
 
-<form name="signin" action="/" method="GET">
-<input type="hidden" name="mod_oauth_authorize" value=""/>
-<input type="hidden" name="mod_oauth_access_token" value=""/>
-<input type="hidden" name="mod_oauth_client_id" value=""/>
-<input type="hidden" name="mod_oauth_info" value=""/>
-<input type="hidden" name="mod_oauth_step" value="authorize"/>
+<form name="fields">
+<p>Sign in with your Facebook account<br/><input type="button" onclick="submitSignin2(withFacebook)" value="Sign in"/></p>
+<p>Sign in with your Github account<br/><input type="button" onclick="submitSignin2(withGithub)" value="Sign in"/></p>
+<p>Sign in with your Linkedin account<br/><input type="button" onclick="submitSignin1(withLinkedin)" value="Sign in"/></p>
+<p>Sign in with your Twitter account<br/><input type="button" onclick="submitSignin1(withTwitter)" value="Sign in"/></p>
 </form>
 
-<form name="fields">
-<p>Sign in with your Facebook account<br/><input type="button" onclick="submitSignin(withFacebook)" value="Sign in"/></p>
-<p>Sign in with your Github account<br/><input type="button" onclick="submitSignin(withGithub)" value="Sign in"/></p>
+<form name="signin2" action="/" method="GET">
+<input type="hidden" name="mod_oauth2_authorize" value=""/>
+<input type="hidden" name="mod_oauth2_access_token" value=""/>
+<input type="hidden" name="mod_oauth2_client_id" value=""/>
+<input type="hidden" name="mod_oauth2_info" value=""/>
+<input type="hidden" name="mod_oauth2_step" value="authorize"/>
+</form>
+
+<form name="signin1" action="/" method="GET">
+<input type="hidden" name="mod_oauth1_request_token" value=""/>
+<input type="hidden" name="mod_oauth1_authorize" value=""/>
+<input type="hidden" name="mod_oauth1_access_token" value=""/>
+<input type="hidden" name="mod_oauth1_client_id" value=""/>
+<input type="hidden" name="mod_oauth1_info" value=""/>
+<input type="hidden" name="mod_oauth1_step" value="authorize"/>
 </form>
 
 </body></html>

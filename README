@@ -6,8 +6,8 @@ in C++ and integrated with the Apache HTTPD server.
 
 It supports SCA components written in C++ and Python. Experimental support
 for other programming languages is under construction. SCA bindings are
-available for the JSON-RPC, ATOMPub and RSS protocols. User authentication
-is supported using OpenID and OAuth.
+available for the JSON-RPC, ATOMPub and RSS protocols. User signin is
+implemented using OpenID and OAuth.
 
 Several useful SCA components are provided on top of the SCA runtime, which
 can be used to help assemble distributed SCA composite applications:
@@ -59,8 +59,8 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- http             HTTP protocol
  |   |   |-- java             Support for Java components
  |   |   |-- json             JSON-RPC encoding
- |   |   |-- oauth            OAuth authentication
- |   |   |-- openid           OpenID authentication
+ |   |   |-- oauth            User signin using OAuth
+ |   |   |-- openid           User signin using OpenID
  |   |   |-- python           Support for Python components
  |   |   |-- scheme           Support for Scheme components
  |   |   |-- server           Apache HTTPD server integration

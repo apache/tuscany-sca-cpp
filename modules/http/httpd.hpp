@@ -245,6 +245,8 @@ const string unescape(const string& uri) {
 const list<value> queryArg(const string& s) {
     debug(s, "httpd::queryArg::string");
     const list<string> t = tokenize("=", s);
+    if (isNil(cdr(t)))
+        return mklist<value>(c_str(car(t)), "");
     return mklist<value>(c_str(car(t)), cadr(t));
 }
 

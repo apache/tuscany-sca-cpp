@@ -32,8 +32,12 @@
         <service name="info">
             <t:binding.jsonrpc uri="info"/>
         </service>
-        <property name="user">anonymous</property>
-        <property name="email">anonymous@example.com</property>
+        <property name="user">?</property>
+        <property name="email">?</property>
+        <property name="nickname">?</property>
+        <property name="fullname">?</property>
+        <property name="firstname">?</property>
+        <property name="lastname">?</property>
     </component>
 
 </composite>

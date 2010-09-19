@@ -17,18 +17,23 @@
 
 if WANT_OAUTH
 
-INCLUDES = -I${HTTPD_INCLUDE}
+INCLUDES = -I${HTTPD_INCLUDE} -I${LIBOAUTH_INCLUDE}
 
-dist_mod_SCRIPTS = oauth-conf oauth-memcached-conf oauth-app-conf
+dist_mod_SCRIPTS = oauth-conf oauth-memcached-conf oauth1-appkey-conf oauth2-appkey-conf
 moddir=$(prefix)/modules/oauth
 
-mod_LTLIBRARIES = libmod_tuscany_oauth.la
-noinst_DATA = libmod_tuscany_oauth.so
+mod_LTLIBRARIES = libmod_tuscany_oauth1.la libmod_tuscany_oauth2.la
+noinst_DATA = libmod_tuscany_oauth1.so libmod_tuscany_oauth2.so
 
-libmod_tuscany_oauth_la_SOURCES = mod-oauth.cpp
-libmod_tuscany_oauth_la_LDFLAGS = -lxml2 -lcurl -lmozjs
-libmod_tuscany_oauth.so:
-	ln -s .libs/libmod_tuscany_oauth.so
+libmod_tuscany_oauth1_la_SOURCES = mod-oauth1.cpp
+libmod_tuscany_oauth1_la_LDFLAGS = -L${LIBOAUTH_LIB} -R${LIBOAUTH_LIB} -loauth -lxml2 -lcurl -lmozjs
+libmod_tuscany_oauth1.so:
+	ln -s .libs/libmod_tuscany_oauth1.so
+
+libmod_tuscany_oauth2_la_SOURCES = mod-oauth2.cpp
+libmod_tuscany_oauth2_la_LDFLAGS = -lxml2 -lcurl -lmozjs
+libmod_tuscany_oauth2.so:
+	ln -s .libs/libmod_tuscany_oauth2.so
 
 EXTRA_DIST = oauth.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/unprotected/index.html
 

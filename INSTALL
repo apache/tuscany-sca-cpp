@@ -96,12 +96,15 @@ Google AppEngine 1.3.2 (http://code.google.com/appengine/)
 Java:
 a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
 
-OpenID user sign in:
+OpenID authentication:
 Mod_auth_openid (http://trac.butterfat.net/public/mod_auth_openid)
 build it from source at http://github.com/jsdelfino/mod_auth_openid
 requires Libopkele (http://kin.klever.net/libopkele/ or
 http://github.com/jsdelfino/libopkele)
 and HTML Tidy (http://tidy.sourceforge.net/)
+
+OAuth authorization:
+Liboauth 0.9.1 (http://liboauth.sourceforge.net/)
 
 XMPP Chat:
 Apache Vysper 0.5 (http://mina.apache.org/)
@@ -157,7 +160,7 @@ To build the SQL Database utility component (requires PostgreSQL):
 To build the Web service utility component (requires Apache Axis2/C):
 --enable-webservice
 
-To build the support for OAuth authentication:
+To build the support for OAuth authorization:
 --enable-oauth
 
 To build the support for OpenID authentication:
@@ -197,7 +200,7 @@ dependencies installed under $HOME:
 --enable-log --with-thrift=$HOME/thrift-0.2.0-bin \
 --with-scribe=$HOME/scribe-2.2-bin \
 --enable-openid --with-mod-auth-openid=$HOME/mod-auth-openid-bin \
---enable-oauth \
+--enable-oauth --with-liboauth=$HOME/liboauth-0.9.1-bin \
 --enable-maintainer-mode
 
 

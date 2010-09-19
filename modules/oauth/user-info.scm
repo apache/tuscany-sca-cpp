@@ -17,10 +17,18 @@
 
 ; OAuth support test case
 
-(define (get id user email) (list "text/html" (list
-    "<html><body><p>The following info is generated on the server:</p><div>User: " (user) "</div><div>Email: " (email) "</div></body></html>")))
+(define (get id user email nickname fullname firstname lastname) (list "text/html" (list
+    "<html><body><p>The following info is generated on the server:</p><div>User: " (user) "</div><div>Email: " (email) "</div><div>Nickname: " (nickname) "</div><div>Fullname: " (fullname) "</div><div>Firstname: " (firstname) "</div><div>Lastname: " (lastname) "</div></body></html>")))
 
-(define (getuser user email) (user))
+(define (getuser user email nickname fullname firstname lastname) (user))
 
-(define (getemail user email) (email))
+(define (getemail user email nickname fullname firstname lastname) (email))
+
+(define (getnickname user email nickname fullname firstname lastname) (nickname))
+
+(define (getfullname user email nickname fullname firstname lastname) (fullname))
+
+(define (getfirstname user email nickname fullname firstname lastname) (firstname))
+
+(define (getlastname user email nickname fullname firstname lastname) (lastname))
 

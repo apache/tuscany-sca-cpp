@@ -246,6 +246,18 @@ if [ "$?" != "0" ]; then
 fi
 cd $build
 
+# Build Liboauth
+wget http://liboauth.sourceforge.net/pool/liboauth-0.9.1.tar.gz
+tar xzf liboauth-0.9.1.tar.gz
+cd liboauth-0.9.1
+./configure --prefix=$build/liboauth-0.9.1-bin CURL_CFLAGS="-I$build/curl-7.19.5-bin/include" CURL_LIBS="-L$build/curl-7.19.5-bin/lib -R$build/curl-7.19.5-bin/lib -lcurl"
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
+
 # Build PostgreSQL
 sudo apt-get -y install libreadline-dev
 if [ "$?" != "0" ]; then
@@ -324,7 +336,7 @@ git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude
 ./bootstrap
-./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.16-bin --with-httpd=$build/httpd-2.2.16-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --with-libcloud=$build/libcloud-0.3.1-bin --enable-threads --enable-python --enable-gae --with-gae=$build/google_appengine --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth
+./configure --prefix=$build/tuscany-sca-cpp-bin --with-curl=$build/curl-7.19.5-bin --with-apr=$build/httpd-2.2.16-bin --with-httpd=$build/httpd-2.2.16-bin --with-memcached=$build/memcached-1.4.4-bin --with-tinycdb=$build/tinycdb-0.77-bin --with-js-include=$build/tracemonkey-bin/include/js --with-js-lib=$build/tracemonkey-bin/lib --with-libcloud=$build/libcloud-0.3.1-bin --enable-threads --enable-python --enable-gae --with-gae=$build/google_appengine --enable-java --with-java=/usr/lib/jvm/java-6-openjdk --enable-webservice --with-libxml2=$build/libxml2-2.7.7-bin --with-axis2c=$build/axis2c-1.6.0-bin --enable-queue --with-qpidc=$build/qpidc-0.6-bin --enable-chat --with-libstrophe=$build/libstrophe-bin --with-vysper=$build/vysper-0.5 --enable-sqldb --with-pgsql=$build/postgresql-9.0-bin --enable-log --with-thrift=$build/thrift-0.2.0-bin --with-scribe=$build/scribe-2.2-bin --enable-openid --with-mod-auth-openid=$build/mod-auth-openid-bin --enable-oauth --with-liboauth=$build/liboauth-0.9.1-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -333,5 +345,5 @@ fi
 cd $build
 
 # Create bin archive
-tar czf tuscany-sca-cpp-all-1.0.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin axis2c-1.6.0-bin libxml2-2.7.7-bin curl-7.19.5-bin httpd-2.2.16-bin tracemonkey-bin google_appengine libstrophe-bin memcached-1.4.4-bin tinycdb-0.77-bin qpidc-0.6-bin vysper-0.5 postgresql-9.0-bin thrift-0.2.0-bin scribe-2.2-bin libcloud-0.3.1-bin htmltidy-bin libopkele-bin mod-auth-openid-bin
+tar czf tuscany-sca-cpp-all-1.0.tar.gz tuscany-sca-cpp tuscany-sca-cpp-bin axis2c-1.6.0-bin libxml2-2.7.7-bin curl-7.19.5-bin httpd-2.2.16-bin tracemonkey-bin google_appengine libstrophe-bin memcached-1.4.4-bin tinycdb-0.77-bin qpidc-0.6-bin vysper-0.5 postgresql-9.0-bin thrift-0.2.0-bin scribe-2.2-bin libcloud-0.3.1-bin htmltidy-bin libopkele-bin mod-auth-openid-bin liboauth-0.9.1-bin
 

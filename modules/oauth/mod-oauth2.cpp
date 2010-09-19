@@ -34,13 +34,14 @@
 #include "../http/httpd.hpp"
 #include "../http/http.hpp"
 #include "../../components/cache/memcache.hpp"
+#include "oauth.hpp"
 
 extern "C" {
-extern module AP_MODULE_DECLARE_DATA mod_tuscany_oauth;
+extern module AP_MODULE_DECLARE_DATA mod_tuscany_oauth2;
 }
 
 namespace tuscany {
-namespace oauth {
+namespace oauth2 {
 
 /**
  * Server configuration.
@@ -55,7 +56,7 @@ public:
     string ca;
     string cert;
     string key;
-    list<list<value> > apps;
+    list<list<value> > appkeys;
     list<string> mcaddrs;
     memcache::MemCached mc;
     http::CURLSession cs;
@@ -80,7 +81,7 @@ public:
  */
 static int checkUserID(request_rec *r) {
     // Decline if we're not enabled or AuthType is not set to Open
-    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_oauth);
+    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_oauth2);
     if (!dc.enabled)
         return DECLINED;
     const char* atype = ap_auth_type(r);
@@ -88,44 +89,15 @@ static int checkUserID(request_rec *r) {
         return DECLINED;
 
     gc_scoped_pool pool(r->pool);
-    httpdDebugRequest(r, "modoauth::checkUserID::input");
+    httpdDebugRequest(r, "modoauth2::checkUserID::input");
     return OK;
-}
-
-/**
- * Return the session id from a request.
- */
-const maybe<string> sessionID(const list<string> c) {
-    if (isNil(c))
-        return maybe<string>();
-    const list<string> kv = tokenize("=", car(c));
-    if (!isNil(kv) && !isNil(cdr(kv))) {
-        if (car(kv) == "TuscanyOpenAuth")
-            return cadr(kv);
-    }
-    return sessionID(cdr(c));
-}
-
-const maybe<string> sessionID(const request_rec* r) {
-    const char* c = apr_table_get(r->headers_in, "Cookie");
-    debug(c, "modoauth::sessionid::cookies");
-    if (c == NULL)
-        return maybe<string>();
-    return sessionID(tokenize(";", c));
-}
-
-/**
- * Return the user info for a session.
- */
-const failable<value> userInfo(const value& sid, const ServerConf& sc) {
-    return memcache::get(mklist<value>("tuscanyOpenAuth", sid), sc.mc);
 }
 
 /**
  * Handle an authenticated request.
  */
 const failable<int> authenticated(const list<list<value> >& info, request_rec* r) {
-    debug(info, "modoauth::authenticated::info");
+    debug(info, "modoauth2::authenticated::info");
 
     const list<value> id = assoc<value>("id", info);
     if (isNil(id) || isNil(cdr(id)))
@@ -156,55 +128,39 @@ const failable<int> authenticated(const list<list<value> >& info, request_rec* r
 }
 
 /**
- * Redirect to the configured login page.
- */
-const failable<int> login(const string& page, request_rec* r) {
-    const list<list<value> > largs = mklist<list<value> >(mklist<value>("openauth_referrer", httpd::escape(httpd::url(r->uri, r))));
-    const string loc = httpd::url(page, r) + string("?") + httpd::queryString(largs);
-    debug(loc, "modoauth::login::uri");
-    return httpd::externalRedirect(loc, r);
-}
-
-/**
  * Handle an authorize request.
  */
-const failable<int> authorize(const list<list<value> >& args, request_rec* r) {
+const failable<int> authorize(const list<list<value> >& args, request_rec* r, const ServerConf& sc) {
     // Extract authorize, access_token, client ID and info URIs
-    const list<value> auth = assoc<value>("mod_oauth_authorize", args);
+    const list<value> auth = assoc<value>("mod_oauth2_authorize", args);
     if (isNil(auth) || isNil(cdr(auth)))
-        return mkfailure<int>("Missing mod_oauth_authorize parameter");
-    const list<value> tok = assoc<value>("mod_oauth_access_token", args);
+        return mkfailure<int>("Missing mod_oauth2_authorize parameter");
+    const list<value> tok = assoc<value>("mod_oauth2_access_token", args);
     if (isNil(tok) || isNil(cdr(tok)))
-        return mkfailure<int>("Missing mod_oauth_access_token parameter");
-    const list<value> cid = assoc<value>("mod_oauth_client_id", args);
+        return mkfailure<int>("Missing mod_oauth2_access_token parameter");
+    const list<value> cid = assoc<value>("mod_oauth2_client_id", args);
     if (isNil(cid) || isNil(cdr(cid)))
-        return mkfailure<int>("Missing mod_oauth_client_id parameter");
-    const list<value> info = assoc<value>("mod_oauth_info", args);
+        return mkfailure<int>("Missing mod_oauth2_client_id parameter");
+    const list<value> info = assoc<value>("mod_oauth2_info", args);
     if (isNil(info) || isNil(cdr(info)))
-        return mkfailure<int>("Missing mod_oauth_info parameter");
+        return mkfailure<int>("Missing mod_oauth2_info parameter");
 
     // Build the redirect URI
-    const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth_step", "access_token"), tok, cid, info);
+    const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth2_step", "access_token"), tok, cid, info);
     const string redir = httpd::url(r->uri, r) + string("?") + httpd::queryString(rargs);
-    debug(redir, "modoauth::authorize::redir");
+    debug(redir, "modoauth2::authorize::redir");
+
+    // Lookup client app configuration
+    const list<value> app = assoc<value>(cadr(cid), sc.appkeys);
+    if (isNil(app) || isNil(cdr(app)))
+        return mkfailure<int>(string("client id not found: ") + cadr(cid));
+    list<value> appkey = cadr(app);
 
     // Redirect to the authorize URI
-    const list<list<value> > aargs = mklist<list<value> >(mklist<value>("client_id", cadr(cid)), mklist<value>("scope", "email"), mklist<value>("redirect_uri", httpd::escape(redir)));
+    const list<list<value> > aargs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("scope", "email"), mklist<value>("redirect_uri", httpd::escape(redir)));
     const string uri = httpd::unescape(cadr(auth)) + string("?") + httpd::queryString(aargs);
-    debug(uri, "modoauth::authorize::uri");
+    debug(uri, "modoauth2::authorize::uri");
     return httpd::externalRedirect(uri, r);
-}
-
-/**
- * Convert a session id to a cookie string.
- */
-const string cookie(const string& sid) {
-    const time_t t = time(NULL) + 86400;
-    char exp[32];
-    strftime(exp, 32, "%a, %d-%b-%Y %H:%M:%S GMT", gmtime(&t));
-    const string c = string("TuscanyOpenAuth=") + sid + string(";path=/;expires=" + string(exp)) + ";secure=TRUE";
-    debug(c, "modoauth::cookie");
-    return c;
 }
 
 /**
@@ -212,60 +168,61 @@ const string cookie(const string& sid) {
  */
 const failable<int> access_token(const list<list<value> >& args, request_rec* r, const ServerConf& sc) {
     // Extract access_token URI, client ID and authorization code
-    const list<value> tok = assoc<value>("mod_oauth_access_token", args);
+    const list<value> tok = assoc<value>("mod_oauth2_access_token", args);
     if (isNil(tok) || isNil(cdr(tok)))
-        return mkfailure<int>("Missing mod_oauth_access_token parameter");
-    const list<value> cid = assoc<value>("mod_oauth_client_id", args);
+        return mkfailure<int>("Missing mod_oauth2_access_token parameter");
+    const list<value> cid = assoc<value>("mod_oauth2_client_id", args);
     if (isNil(cid) || isNil(cdr(cid)))
-        return mkfailure<int>("Missing mod_oauth_client_id parameter");
-    const list<value> info = assoc<value>("mod_oauth_info", args);
+        return mkfailure<int>("Missing mod_oauth2_client_id parameter");
+    const list<value> info = assoc<value>("mod_oauth2_info", args);
     if (isNil(info) || isNil(cdr(info)))
-        return mkfailure<int>("Missing mod_oauth_info parameter");
+        return mkfailure<int>("Missing mod_oauth2_info parameter");
     const list<value> code = assoc<value>("code", args);
     if (isNil(code) || isNil(cdr(code)))
         return mkfailure<int>("Missing code parameter");
 
     // Lookup client app configuration
-    const list<value> app = assoc<value>(cadr(cid), sc.apps);
+    const list<value> app = assoc<value>(cadr(cid), sc.appkeys);
     if (isNil(app) || isNil(cdr(app)))
         return mkfailure<int>(string("client id not found: ") + cadr(cid));
+    list<value> appkey = cadr(app);
 
     // Build the redirect URI
-    const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth_step", "access_token"), tok, cid, info);
+    const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth2_step", "access_token"), tok, cid, info);
     const string redir = httpd::url(r->uri, r) + string("?") + httpd::queryString(rargs);
-    debug(redir, "modoauth::access_token::redir");
+    debug(redir, "modoauth2::access_token::redir");
 
     // Request access token
-    const list<list<value> > targs = mklist<list<value> >(mklist<value>("client_id", cadr(cid)), mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("client_secret", cadr(app)), code);
+    const list<list<value> > targs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("client_secret", cadr(appkey)), code);
     const string turi = httpd::unescape(cadr(tok)) + string("?") + httpd::queryString(targs);
-    debug(turi, "modoauth::access_token::tokenuri");
+    debug(turi, "modoauth2::access_token::tokenuri");
     const failable<value> tr = http::get(turi, sc.cs);
     if (!hasContent(tr))
         return mkfailure<int>(reason(tr));
-    debug(tr, "modoauth::access_token::response");
+    debug(tr, "modoauth2::access_token::response");
     const list<value> tv = assoc<value>("access_token", httpd::queryArgs(join("", convertValues<string>(content(tr)))));
-    if (isNil(app) || isNil(cdr(app)))
+    if (isNil(tv) || isNil(cdr(tv)))
         return mkfailure<int>("Couldn't retrieve access_token");
-    debug(tv, "modoauth::access_token::token");
+    debug(tv, "modoauth2::access_token::token");
 
     // Request user info
     // TODO Make this step configurable
     const list<list<value> > iargs = mklist<list<value> >(tv);
     const string iuri = httpd::unescape(cadr(info)) + string("?") + httpd::queryString(iargs);
-    debug(iuri, "modoauth::access_token::infouri");
+    debug(iuri, "modoauth2::access_token::infouri");
     const failable<value> iv = http::get(iuri, sc.cs);
-    if (isNil(app) || isNil(cdr(app)))
+    if (!hasContent(iv))
         return mkfailure<int>("Couldn't retrieve user info");
-    debug(iv, "modoauth::access_token::info");
+    debug(content(iv), "modoauth2::access_token::info");
 
     // Store user info in memcached keyed by session ID
-    const value sid = string("OAuth_") + mkrand();
+    const value sid = string("OAuth2_") + mkrand();
     const failable<bool> prc = memcache::put(mklist<value>("tuscanyOpenAuth", sid), content(iv), sc.mc);
     if (!hasContent(prc))
         return mkfailure<int>(reason(prc));
 
     // Send session ID to the client in a cookie
-    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(cookie(sid)));
+    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(oauth::cookie(sid)));
     return httpd::externalRedirect(httpd::url(r->uri, r), r);
 }
 
@@ -275,25 +232,25 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
 int handler(request_rec* r) {
     // Decline if we're not enabled or if the user is already 
     // authenticated by another module
-    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_oauth);
+    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_oauth2);
     if(!dc.enabled)
         return DECLINED;
     if (r->user != NULL || apr_table_get(r->subprocess_env, "SSL_REMOTE_USER") != NULL)
         return DECLINED;
 
     gc_scoped_pool pool(r->pool);
-    httpdDebugRequest(r, "modoauth::handler::input");
-    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_oauth);
+    httpdDebugRequest(r, "modoauth2::handler::input");
+    const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_oauth2);
 
     // Get session id from the request
-    const maybe<string> sid = sessionID(r);
+    const maybe<string> sid = oauth::sessionID(r);
     if (hasContent(sid)) {
         // Decline if the session id was not created by this module
-        if (substr(content(sid), 0, 6) != "OAuth_")
+        if (substr(content(sid), 0, 7) != "OAuth2_")
             return DECLINED;
 
         // If we're authenticated store the user info in the request
-        const failable<value> info = userInfo(content(sid), sc);
+        const failable<value> info = oauth::userInfo(content(sid), sc.mc);
         if (hasContent(info))
             return httpd::reportStatus(authenticated(content(info), r));
     }
@@ -305,21 +262,25 @@ int handler(request_rec* r) {
     if (!isNil(assoc<value>("openid_identifier", args)))
         return DECLINED;
 
+    // Decline if the request is for OAuth1 authentication
+    if (!isNil(assoc<value>("mod_oauth1_step", args)))
+        return DECLINED;
+
     // Determine the OAuth protocol flow step, conveniently passed
     // around in a request arg
-    const list<value> sl = assoc<value>("mod_oauth_step", args);
+    const list<value> sl = assoc<value>("mod_oauth2_step", args);
     const value step = !isNil(sl) && !isNil(cdr(sl))? cadr(sl) : "";
 
     // Handle OAuth authorize request step
     if (step == "authorize")
-        return httpd::reportStatus(authorize(args, r));
+        return httpd::reportStatus(authorize(args, r, sc));
 
     // Handle OAuth access_token request step
     if (step == "access_token")
         return httpd::reportStatus(access_token(args, r, sc));
 
     // Redirect to the login page
-    return httpd::reportStatus(login(dc.login, r));
+    return httpd::reportStatus(oauth::login(dc.login, r));
 }
 
 /**
@@ -328,12 +289,12 @@ int handler(request_rec* r) {
 int postConfigMerge(ServerConf& mainsc, server_rec* s) {
     if (s == NULL)
         return OK;
-    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_oauth);
-    debug(httpd::serverName(s), "modoauth::postConfigMerge::serverName");
+    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_oauth2);
+    debug(httpd::serverName(s), "modoauth2::postConfigMerge::serverName");
 
     // Merge configuration from main server
-    if (isNil(sc.apps))
-        sc.apps = mainsc.apps;
+    if (isNil(sc.appkeys))
+        sc.appkeys = mainsc.appkeys;
     sc.mc = mainsc.mc;
     sc.cs = mainsc.cs;
 
@@ -342,8 +303,8 @@ int postConfigMerge(ServerConf& mainsc, server_rec* s) {
 
 int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp, server_rec* s) {
     gc_scoped_pool pool(p);
-    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_oauth);
-    debug(httpd::serverName(s), "modoauth::postConfig::serverName");
+    ServerConf& sc = httpd::serverConf<ServerConf>(s, &mod_tuscany_oauth2);
+    debug(httpd::serverName(s), "modoauth2::postConfig::serverName");
 
     // Merge server configurations
     return postConfigMerge(sc, s);
@@ -354,9 +315,9 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
  */
 void childInit(apr_pool_t* p, server_rec* s) {
     gc_scoped_pool pool(p);
-    ServerConf* psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_oauth);
+    ServerConf* psc = (ServerConf*)ap_get_module_config(s->module_config, &mod_tuscany_oauth2);
     if(psc == NULL) {
-        cfailure << "[Tuscany] Due to one or more errors mod_tuscany_oauth loading failed. Causing apache to stop loading." << endl;
+        cfailure << "[Tuscany] Due to one or more errors mod_tuscany_oauth2 loading failed. Causing apache to stop loading." << endl;
         exit(APEXIT_CHILDFATAL);
     }
     ServerConf& sc = *psc;
@@ -377,15 +338,15 @@ void childInit(apr_pool_t* p, server_rec* s) {
 /**
  * Configuration commands.
  */
-const char* confApp(cmd_parms *cmd, unused void *c, const char *arg1, const char* arg2) {
+const char* confAppKey(cmd_parms *cmd, unused void *c, const char *arg1, const char* arg2, const char* arg3) {
     gc_scoped_pool pool(cmd->pool);
-    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth);
-    sc.apps = cons<list<value> >(mklist<value>(arg1, arg2), sc.apps);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
+    sc.appkeys = cons<list<value> >(mklist<value>(arg1, mklist<value>(arg2, arg3)), sc.appkeys);
     return NULL;
 }
 const char* confMemcached(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
-    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
     sc.mcaddrs = cons<string>(arg, sc.mcaddrs);
     return NULL;
 }
@@ -403,19 +364,19 @@ const char* confLogin(cmd_parms *cmd, void *c, const char* arg) {
 }
 const char* confCAFile(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
-    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
     sc.ca = arg;
     return NULL;
 }
 const char* confCertFile(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
-    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
     sc.cert = arg;
     return NULL;
 }
 const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
     gc_scoped_pool pool(cmd->pool);
-    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth);
+    ServerConf& sc = httpd::serverConf<ServerConf>(cmd, &mod_tuscany_oauth2);
     sc.key = arg;
     return NULL;
 }
@@ -424,13 +385,13 @@ const char* confCertKeyFile(cmd_parms *cmd, unused void *c, const char *arg) {
  * HTTP server module declaration.
  */
 const command_rec commands[] = {
-    AP_INIT_ITERATE2("AddAuthOAuthApp", (const char*(*)())confApp, NULL, RSRC_CONF, "OAuth app-id app-secret"),
+    AP_INIT_TAKE3("AddAuthOAuth2AppKey", (const char*(*)())confAppKey, NULL, RSRC_CONF, "OAuth 2.0 name app-id app-key"),
     AP_INIT_ITERATE("AddAuthOAuthMemcached", (const char*(*)())confMemcached, NULL, RSRC_CONF, "Memcached server host:port"),
-    AP_INIT_FLAG("AuthOAuth", (const char*(*)())confEnabled, NULL, OR_AUTHCFG, "OAuth authentication On | Off"),
-    AP_INIT_TAKE1("AuthOAuthLoginPage", (const char*(*)())confLogin, NULL, OR_AUTHCFG, "OAuth login page"),
-    AP_INIT_TAKE1("AuthOAuthSSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "OAUth SSL CA certificate file"),
-    AP_INIT_TAKE1("AuthOAuthSSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "OAuth SSL certificate file"),
-    AP_INIT_TAKE1("AuthOAuthSSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "OAuth SSL certificate key file"),
+    AP_INIT_FLAG("AuthOAuth", (const char*(*)())confEnabled, NULL, OR_AUTHCFG, "OAuth 2.0 authentication On | Off"),
+    AP_INIT_TAKE1("AuthOAuthLoginPage", (const char*(*)())confLogin, NULL, OR_AUTHCFG, "OAuth 2.0 login page"),
+    AP_INIT_TAKE1("AuthOAuthSSLCACertificateFile", (const char*(*)())confCAFile, NULL, RSRC_CONF, "OAUth 2.0 SSL CA certificate file"),
+    AP_INIT_TAKE1("AuthOAuthSSLCertificateFile", (const char*(*)())confCertFile, NULL, RSRC_CONF, "OAuth 2.0 SSL certificate file"),
+    AP_INIT_TAKE1("AuthOAuthSSLCertificateKeyFile", (const char*(*)())confCertKeyFile, NULL, RSRC_CONF, "OAuth 2.0 SSL certificate key file"),
     {NULL, NULL, NULL, 0, NO_ARGS, NULL}
 };
 
@@ -446,14 +407,14 @@ void registerHooks(unused apr_pool_t *p) {
 
 extern "C" {
 
-module AP_MODULE_DECLARE_DATA mod_tuscany_oauth = {
+module AP_MODULE_DECLARE_DATA mod_tuscany_oauth2 = {
     STANDARD20_MODULE_STUFF,
     // dir config and merger
-    tuscany::httpd::makeDirConf<tuscany::oauth::DirConf>, NULL,
+    tuscany::httpd::makeDirConf<tuscany::oauth2::DirConf>, NULL,
     // server config and merger
-    tuscany::httpd::makeServerConf<tuscany::oauth::ServerConf>, NULL,
+    tuscany::httpd::makeServerConf<tuscany::oauth2::ServerConf>, NULL,
     // commands and hooks
-    tuscany::oauth::commands, tuscany::oauth::registerHooks
+    tuscany::oauth2::commands, tuscany::oauth2::registerHooks
 };
 
 }

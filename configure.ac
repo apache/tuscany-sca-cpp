@@ -528,6 +528,23 @@ AC_ARG_ENABLE(oauth, [AS_HELP_STRING([--enable-oauth], [enable OAuth support [de
   esac ],
 [ AC_MSG_RESULT(no)])
 if test "${want_oauth}" = "true"; then
+
+  # Configure path to Liboauth includes and lib.
+  AC_MSG_CHECKING([for liboauth])
+  AC_ARG_WITH([liboauth], [AC_HELP_STRING([--with-liboauth=PATH], [path to liboauth [default=/usr/local]])], [
+    LIBOAUTH_INCLUDE="${withval}/include"
+    LIBOAUTH_LIB="${withval}/lib"
+    AC_MSG_RESULT("${withval}")
+  ], [
+    LIBOAUTH_INCLUDE="/usr/local/include"
+    LIBOAUTH_LIB="/usr/local/lib"
+    AC_MSG_RESULT(/usr/local)
+  ])
+  AC_SUBST(LIBOAUTH_INCLUDE)
+  AC_SUBST(LIBOAUTH_LIB)
+  LIBS="-L${LIBOAUTH_LIB} ${defaultlibs}"
+  AC_CHECK_LIB([oauth], [oauth_sign_url2], [], [AC_MSG_ERROR([couldn't find a suitable liboauth, use --with-liboauth=PATH])], [-lssl])
+  
   AM_CONDITIONAL([WANT_OAUTH], true)
   AC_DEFINE([WANT_OAUTH], 1, [enable OAuth support])
 
@@ -739,14 +756,14 @@ if test "${want_chat}" = "true"; then
 
   # Configure path to Libstrophe includes and lib.
   AC_MSG_CHECKING([for libstrophe])
-  AC_ARG_WITH([libstrophe], [AC_HELP_STRING([--with-libstrophe=PATH], [path to libstrophe [default=${HOME}/libstrophe-bin]])], [
+  AC_ARG_WITH([libstrophe], [AC_HELP_STRING([--with-libstrophe=PATH], [path to libstrophe [default=/usr/local]])], [
     LIBSTROPHE_INCLUDE="${withval}/include"
     LIBSTROPHE_LIB="${withval}/lib"
     AC_MSG_RESULT("${withval}")
   ], [
-    LIBSTROPHE_INCLUDE="${HOME}/libstrophe-bin/include"
-    LIBSTROPHE_LIB="${HOME}/libstrophe-bin/lib"
-    AC_MSG_RESULT(${HOME}/libstrophe-bin)
+    LIBSTROPHE_INCLUDE="/usr/local/include"
+    LIBSTROPHE_LIB="/usr/local/lib"
+    AC_MSG_RESULT(/usr/local)
   ])
   AC_SUBST(LIBSTROPHE_INCLUDE)
   AC_SUBST(LIBSTROPHE_LIB)

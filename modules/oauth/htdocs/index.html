@@ -25,16 +25,28 @@ var component = new tuscany.sca.Component("Protected");
 var userInfo = new tuscany.sca.Reference("userInfo");
 var user = userInfo.apply("getuser");
 var email = userInfo.apply("getemail");
+var nickname = userInfo.apply("getnickname");
+var fullname = userInfo.apply("getfullname");
+var firstname = userInfo.apply("getfirstname");
+var lastname = userInfo.apply("getlastname");
 </script>
 </head>
 <body>
 <h1>Protected area - It works!</h1>
 <p>The following info is returned by a JSONRPC service:</p>
-<div id="user"></div>
-<div id="email"></div>
+<div>User: <span id="user"></span></div>
+<div>Email: <span id="email"></span></div>
+<div>Nickname: <span id="nickname"></span></div>
+<div>Fullname: <span id="fullname"></span></div>
+<div>Firstname: <span id="firstname"></span></div>
+<div>Lastname: <span id="lastname"></span></div>
 <script type="text/javascript">
-document.getElementById('user').innerHTML="User: " + user;
-document.getElementById('email').innerHTML="Email: " + email;
+document.getElementById('user').innerHTML=user;
+document.getElementById('email').innerHTML=email;
+document.getElementById('nickname').innerHTML=nickname;
+document.getElementById('fullname').innerHTML=fullname;
+document.getElementById('firstname').innerHTML=firstname;
+document.getElementById('lastname').innerHTML=lastname;
 </script>
 <p><a href="info">User info</a></p>
 <p><a href="login">Sign in</a></p>

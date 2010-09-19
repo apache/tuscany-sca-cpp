@@ -29,7 +29,12 @@
 ./oauth-conf tmp
 ./oauth-memcached-conf tmp localhost 11212
 ./oauth-memcached-conf tmp localhost 11213
-./oauth-app-conf tmp app1234 secret6789
+
+# Configure your app keys here
+./oauth1-appkey-conf tmp testtwitterapp app2345 secret7890
+./oauth1-appkey-conf tmp testlinkedinapp app3456 secret4567
+./oauth2-appkey-conf tmp testfacebookapp app1234 secret6789
+./oauth2-appkey-conf tmp testgithubapp app5678 secret8901
 
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
