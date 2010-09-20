@@ -36,7 +36,7 @@ var shoppingTotal = new tuscany.sca.Reference("shoppingTotal");
 
 var catalogItems;
 
-function catalog_getcatalogResponse(items, exception) {
+function catalog_itemsResponse(items, exception) {
     if (exception) {
         alert(exception.message);
         return;
@@ -137,7 +137,7 @@ function deleteCart() {
 
 function init() {
     try {
-        catalog.apply("getcatalog", catalog_getcatalogResponse);
+        catalog.apply("items", catalog_itemsResponse);
         shoppingCart.apply("getemail", shoppingCart_getemailResponse);
         shoppingCart.apply("gethost", shoppingCart_gethostResponse);
         shoppingCart.get("", shoppingCart_getResponse);

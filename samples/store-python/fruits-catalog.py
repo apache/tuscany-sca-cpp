@@ -17,7 +17,7 @@
 
 # Catalog implementation
 
-def getcatalog(converter, currencyCode):
+def items(converter, currencyCode):
   code = currencyCode()
   def convert(price):
       return converter("convert", "USD", code, price)

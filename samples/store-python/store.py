@@ -26,8 +26,8 @@ def getall(catalog, shoppingCart, shoppingTotal):
 def get(id, catalog, shoppingCart, shoppingTotal):
     return shoppingCart("get", id)
 
-def getcatalog(catalog, shoppingCart, shoppingTotal):
-    return catalog("getcatalog")
+def items(catalog, shoppingCart, shoppingTotal):
+    return catalog("items")
 
 def gettotal(catalog, shoppingCart, shoppingTotal):
     return shoppingCart("gettotal")
