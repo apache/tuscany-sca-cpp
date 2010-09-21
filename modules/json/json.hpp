@@ -400,9 +400,11 @@ const list<value> jsonValues(const list<value>& e) {
 
 /**
  * Return a portable function name from a JSON-RPC function name.
- * Strip the "system." and "Service." prefixes added by some JSON-RPC clients.
+ * Strip the ".", "system." and "Service." prefixes added by some JSON-RPC clients.
  */
 const string funcName(const string& f) {
+    if (length(f) > 1 && find(f, ".", 0) == 0)
+        return c_str(f) + 1;
     if (length(f) > 7 && find(f, "system.", 0) == 0)
         return c_str(f) + 7;
     if (length(f) > 8 && find(f, "Service.", 0) == 0)
