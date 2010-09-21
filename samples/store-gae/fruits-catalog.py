@@ -23,8 +23,8 @@ def items(converter, currencyCode):
       return converter("convert", "USD", code, price)
   symbol = converter("symbol", code)
   return (
-    (("'name", "Apple"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(2.99))),
-    (("'name", "Orange"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(3.55))),
-    (("'name", "Pear"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(1.55)))
+    (("'name", "Platano"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(2.99))),
+    (("'name", "Banana"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(3.55))),
+    (("'name", "Guanabana"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(1.55)))
   )
 
