@@ -47,7 +47,7 @@ struct convert {
 
 const list<value> mkfruit(const string& name, const string& code, const string& symbol, const double price) {
     return list<value>() +
-        mklist<value>("javaClass", string("services.Item")) + mklist<value>("name", name) + mklist<value>("currencyCode", code) + mklist<value>("currencySymbol", symbol) + mklist<value>("price", price);
+        mklist<value>("name", name) + mklist<value>("currencyCode", code) + mklist<value>("currencySymbol", symbol) + mklist<value>("price", price);
 }
 
 const failable<value> getcatalog(const lambda<value(const list<value>&)> converter, const lambda<value(const list<value>&)> currencyCode) {

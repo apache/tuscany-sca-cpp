@@ -43,9 +43,9 @@ public class FruitsCatalogImpl {
         final Converter c = new Converter();
         final String symbol = converter.symbol(code);
 
-        return list(list(list("'javaClass", "services.Item"), list("'name", "Apple"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(2.99))),
-                list(list("'javaClass", "services.Item"), list("'name", "Orange"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(3.55))),
-                list(list("'javaClass", "services.Item"), list("'name", "Pear"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(1.55))));
+        return list(list(list("'name", "Apple"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(2.99))),
+                list(list("'name", "Orange"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(3.55))),
+                list(list("'name", "Pear"), list("'currencyCode", code), list("'currencySymbol", symbol), list("'price", c.convert(1.55))));
     }
 
 }

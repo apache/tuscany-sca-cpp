@@ -1,2 +1,2 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<entry xmlns="http://www.w3.org/2005/Atom"><title type="text">Item</title><id>111</id><content type="application/xml"><item><javaClass>services.Item</javaClass><name>Apple</name><currencyCode>USD</currencyCode><currencySymbol>$</currencySymbol><price>2.99</price></item></content><link href="111" /></entry>
+<entry xmlns="http://www.w3.org/2005/Atom"><title type="text">Item</title><id>111</id><content type="application/xml"><item><name>Apple</name><currencyCode>USD</currencyCode><currencySymbol>$</currencySymbol><price>2.99</price></item></content><link href="111" /></entry>

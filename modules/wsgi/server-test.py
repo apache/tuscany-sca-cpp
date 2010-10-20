@@ -27,11 +27,11 @@ def get(id):
         return ("text/plain", ("It works!",))
     if id == ():
         return ("Sample Feed", "123456789",
-            ("Item", "111", (("'javaClass", "services.Item"), ("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99))),
-            ("Item", "222", (("'javaClass", "services.Item"), ("'name", "Orange"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 3.55))),
-            ("Item", "333", (("'javaClass", "services.Item"), ("name", "Pear"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 1.55))))
+            ("Item", "111", (("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99))),
+            ("Item", "222", (("'name", "Orange"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 3.55))),
+            ("Item", "333", (("'name", "Pear"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 1.55))))
         
-    entry = (("'javaClass", "services.Item"), ("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99))
+    entry = (("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99))
     return ("Item", id[0], entry)
 
 def post(collection, item):

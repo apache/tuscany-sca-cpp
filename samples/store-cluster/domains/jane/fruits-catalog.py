@@ -23,8 +23,8 @@ def getcatalog(converter, currencyCode):
       return converter("convert", "USD", code, price)
   symbol = converter("symbol", code)
   return (
-    (("'javaClass", "services.Item"), ("'name", "Passion"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(2.99))),
-    (("'javaClass", "services.Item"), ("'name", "Mango"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(3.55))),
-    (("'javaClass", "services.Item"), ("'name", "Pineapple"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(1.55)))
+    (("'name", "Passion"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(2.99))),
+    (("'name", "Mango"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(3.55))),
+    (("'name", "Pineapple"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(1.55)))
   )
 

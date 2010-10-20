@@ -45,9 +45,9 @@
   (define symbol (converter "symbol" code))
 
   (list
-    (list (list 'javaClass "services.Item") (list 'name "Apple") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 2.99))
-    (list (list 'javaClass "services.Item") (list 'name "Orange") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 3.55))
-    (list (list 'javaClass "services.Item") (list 'name "Pear") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 1.55))
+    (list (list 'name "Apple") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 2.99))
+    (list (list 'name "Orange") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 3.55))
+    (list (list 'name "Pear") (list 'currencyCode code) (list 'currencySymbol symbol) (list 'price 1.55))
   )
 )
 

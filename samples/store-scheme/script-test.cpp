@@ -44,8 +44,8 @@ bool testScript() {
     scheme::evalDriverRun(is, os);
     assert(contains(str(os), "(\"Sample Feed\" \""));
     assert(contains(str(os), "\" (\"Item\" \""));
-    assert(contains(str(os), "\" ((javaClass \"services.Item\") (name \"Orange\") (currencyCode \"USD\") (currencySymbol \"$\") (price 3.55))) (\"Item\" \""));
-    assert(contains(str(os), "\" ((javaClass \"services.Item\") (name \"Apple\") (currencyCode \"USD\") (currencySymbol \"$\") (price 2.99))))"));
+    assert(contains(str(os), "\" ((name \"Orange\") (currencyCode \"USD\") (currencySymbol \"$\") (price 3.55))) (\"Item\" \""));
+    assert(contains(str(os), "\" ((name \"Apple\") (currencyCode \"USD\") (currencySymbol \"$\") (price 2.99))))"));
     return true;
 }
 
@@ -61,7 +61,7 @@ bool testEval() {
 
         ostringstream vs;
         vs << val;
-        assert(contains(str(vs), "(((javaClass \"services.Item\") (name \"Apple\") (currencyCode \"USD\") (currencySymbol \"$\") (price 2.99)) ((javaClass \"services.Item\") (name \"Orange\") (currencyCode \"USD\") (currencySymbol \"$\") (price 3.55)) ((javaClass \"services.Item\") (name \"Pear\") (currencyCode \"USD\") (currencySymbol \"$\") (price 1.55)))"));
+        assert(contains(str(vs), "(((name \"Apple\") (currencyCode \"USD\") (currencySymbol \"$\") (price 2.99)) ((name \"Orange\") (currencyCode \"USD\") (currencySymbol \"$\") (price 3.55)) ((name \"Pear\") (currencyCode \"USD\") (currencySymbol \"$\") (price 1.55)))"));
     }
 
     {
