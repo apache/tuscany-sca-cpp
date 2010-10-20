@@ -20,7 +20,7 @@ if WANT_PYTHON
 dist_sample_SCRIPTS = start stop ssl-start uec2-start
 sampledir = $(prefix)/samples/store-vhost
 
-nobase_dist_sample_DATA = htdocs/*.html htdocs/domains/*/*.html domains/*/*.py domains/*/*.composite
+nobase_dist_sample_DATA = htdocs/*.html htdocs/domains/*/*.html domains/*/*.py domains/*/*.composite shared/*.composite
 
 dist_noinst_SCRIPTS = server-test
 #TESTS = server-test

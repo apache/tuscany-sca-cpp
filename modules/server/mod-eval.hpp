@@ -576,7 +576,7 @@ const failable<bool> virtualHostConfig(ServerConf& vsc, const ServerConf& sc, re
 
     // Chdir to the virtual host's contribution
     if (chdir(c_str(sc.contributionPath)) != 0)
-        return mkfailure<bool>("Couldn't chdir to the deployed contribution");
+        return mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + sc.contributionPath);
 
     // Configure the deployed components
     const failable<bool> cr = confComponents(vsc);
@@ -607,7 +607,7 @@ const failable<bool> virtualHostCleanup(const ServerConf& vsc, const ServerConf&
 
     // Chdir back to the main server's contribution
     if (chdir(c_str(sc.contributionPath)) != 0)
-        return mkfailure<bool>("Couldn't chdir to the deployed contribution");
+        return mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + sc.contributionPath);
     return true;
 }
 
@@ -725,7 +725,7 @@ int postConfig(apr_pool_t *p, unused apr_pool_t *plog, unused apr_pool_t *ptemp,
     if (count == 1) {
         // Chdir to the deployed contribution
         if (chdir(c_str(sc.contributionPath)) != 0) {
-            mkfailure<bool>("Couldn't chdir to the deployed contribution");
+            mkfailure<bool>(string("Couldn't chdir to the deployed contribution: ") + sc.contributionPath);
             return -1;
         }
 

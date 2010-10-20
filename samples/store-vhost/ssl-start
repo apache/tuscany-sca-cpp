@@ -31,6 +31,10 @@
 ../../modules/server/server-conf tmp
 ../../modules/python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
+# Configure SCA Composite
+SCAContribution `pwd`/shared/
+SCAComposite shared.composite
+
 # Configure SCA Composite for mass dynamic virtual Hosting
 SCAVirtualContribution `pwd`/domains/
 SCAVirtualComposite store.composite
