@@ -62,7 +62,7 @@ with included libapr and libaprutil
 built with OpenSSL libssl-0.9.8g
 
 Memcached:
-memcached-1.4.4 (http://memcached.org/)
+memcached-1.4.5 (http://memcached.org/)
 built with libevent-1.4.11
 
 XML:
@@ -74,7 +74,7 @@ libcurl4-openssl-7.19.5
 
 JSON:
 Mozilla TraceMonkey libmozjs (https://wiki.mozilla.org/JavaScript:TraceMonkey)
-also included in xulrunner-1.9.1.8
+also included in xulrunner-1.9.2
 
 Key/value store:
 tinycdb-0.77 (http://www.corpit.ru/mjt/tinycdb.html)
@@ -91,7 +91,7 @@ libboost-filesystem-1.38.1
 
 Python:
 Python 2.6.4 (http://www.python.org/)
-Google AppEngine 1.3.2 (http://code.google.com/appengine/)
+Google AppEngine 1.3.7 (http://code.google.com/appengine/)
 
 Java:
 a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
@@ -114,7 +114,7 @@ build it from source at git://github.com/jsdelfino/libstrophe.git
 requires Expat 2.0.1 (http://sourceforge.net/projects/expat/)
 
 SQL Database:
-postgresql-9.0 (http://www.postgresql.org/)
+postgresql-9.0.1 (http://www.postgresql.org/)
 
 Logging:
 Facebook Scribe 2.2 (http://github.com/facebook/scribe/downloads)
@@ -180,11 +180,11 @@ dependencies installed under $HOME:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
 --with-apr=$HOME/httpd-2.2.16-bin --with-httpd=$HOME/httpd-2.2.16-bin \
---with-memcached=$HOME/memcached-1.4.4-bin \
+--with-memcached=$HOME/memcached-1.4.5-bin \
 --with-tinycdb=$HOME/tinycdb-0.77-bin \
 --with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
---with-js-include=/usr/include/xulrunner-1.9.1.8/unstable \
---with-js-lib=/usr/lib/xulrunner-1.9.1.8 \
+--with-js-include=/usr/include/xulrunner-1.9.2 \
+--with-js-lib=/usr/lib/xulrunner-1.9.2 \
 --enable-libcloud \
 --with-libcloud=$HOME/libcloud-0.3.1-bin \
 --enable-threads \
@@ -196,7 +196,7 @@ dependencies installed under $HOME:
 --enable-queue --with-qpidc=$HOME/qpidc-0.6-bin \
 --enable-chat --with-libstrophe=$HOME/libstrophe-bin \
 --with-vysper=$HOME/vysper-0.5 \
---enable-sqldb --with-pgsql=$HOME/postgresql-9.0-bin \
+--enable-sqldb --with-pgsql=$HOME/postgresql-9.0.1-bin \
 --enable-log --with-thrift=$HOME/thrift-0.2.0-bin \
 --with-scribe=$HOME/scribe-2.2-bin \
 --enable-openid --with-mod-auth-openid=$HOME/mod-auth-openid-bin \
@@ -243,10 +243,10 @@ make install
 export PATH=$HOME/httpd-2.2.16-bin/bin:$PATH
 
 Memcached:
-wget http://memcached.googlecode.com/files/memcached-1.4.4.tar.gz
-tar xzf memcached-1.4.4.tar.gz
-cd memcached-1.4.4
-./configure --prefix=$HOME/memcached-1.4.4-bin
+wget http://memcached.googlecode.com/files/memcached-1.4.5.tar.gz
+tar xzf memcached-1.4.5.tar.gz
+cd memcached-1.4.5
+./configure --prefix=$HOME/memcached-1.4.5-bin
 make
 make install
 
@@ -342,10 +342,10 @@ make
 make install
 
 PostgreSQL:
-wget http://wwwmaster.postgresql.org/download/mirrors-ftp/source/9.0alpha5/postgresql-9.0alpha5.tar.gz
-tar xzf postgresql-9.0alpha5.tar.gz
-cd postgresql-9.0alpha5
-./configure --prefix=$HOME/postgresql-9.0-bin
+wget ftp://ftp9.us.postgresql.org/pub/mirrors/postgresql/source/v9.0.1/postgresql-9.0.1.tar.gz
+tar xzf postgresql-9.0.1.tar.gz
+cd postgresql-9.0.1
+./configure --prefix=$HOME/postgresql-9.0.1-bin
 make
 make install
 
