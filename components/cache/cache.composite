@@ -38,15 +38,31 @@
         <property name="servers">localhost:11411,localhost:11412,localhost:11413</property>
     </component>
 
-    <component name="frontcache">
-        <implementation.cpp path="." library="libfrontcache"/>
-        <service name="frontcache">
-            <t:binding.http uri="frontcache"/>
+    <component name="datacache">
+        <implementation.cpp path="." library="libdatacache"/>
+        <service name="datacache">
+            <t:binding.http uri="datacache"/>
         </service>
         <reference name="l1reader" target="memcache"/>
         <reference name="l1writer" target="memcache"/>
         <reference name="l2reader" target="l2cache"/>
         <reference name="l2writer" target="l2cache"/>
     </component>
+
+    <component name="memocache">
+        <implementation.cpp path="." library="libmemocache"/>
+        <service name="memocache">
+            <t:binding.http uri="memocache"/>
+        </service>
+        <reference name="relay" target="adder"/>
+        <reference name="cache" target="memcache"/>
+    </component>
+
+    <component name="adder">
+        <implementation.scheme script="adder-test.scm"/>
+        <service name="adder">
+            <t:binding.http uri="adder"/>
+        </service>
+    </component>     
 
 </composite>

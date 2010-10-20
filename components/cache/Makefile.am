@@ -25,18 +25,22 @@ comp_DATA = memcached.prefix
 memcached.prefix: $(top_builddir)/config.status
 	echo ${MEMCACHED_PREFIX} >memcached.prefix
 
-EXTRA_DIST = memcache.composite
+EXTRA_DIST = cache.composite
 
-comp_LTLIBRARIES = libmemcache.la libfrontcache.la
-noinst_DATA = libmemcache.so libfrontcache.so
+comp_LTLIBRARIES = libmemcache.la libdatacache.la libmemocache.la
+noinst_DATA = libmemcache.so libdatacache.so libmemocache.so
 
 libmemcache_la_SOURCES = memcache.cpp
 libmemcache.so:
 	ln -s .libs/libmemcache.so
 
-libfrontcache_la_SOURCES = frontcache.cpp
-libfrontcache.so:
-	ln -s .libs/libfrontcache.so
+libdatacache_la_SOURCES = datacache.cpp
+libdatacache.so:
+	ln -s .libs/libdatacache.so
+
+libmemocache_la_SOURCES = memocache.cpp
+libmemocache.so:
+	ln -s .libs/libmemocache.so
 
 memcache_test_SOURCES = memcache-test.cpp
 memcache_test_LDFLAGS = -lxml2

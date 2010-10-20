@@ -20,14 +20,14 @@
 /* $Rev$ $Date$ */
 
 /**
- * A front cache component implementation which coordinates access to two
+ * A data cache component implementation which coordinates access to two
  * levels of backend read/write caches or stores. Each cache or store is
  * accessed through two references: a writer reference and a reader reference.
  *
  * This is useful if your level2 store is made of a master and slave
  * replicated databases, you can then wire the writer reference to the master
  * database and the reader reference to one your slave databases (assuming
- * that the updates eventually get replicated to the slave database,in the
+ * that the updates eventually get replicated to the slave database, in the
  * meantime the updates will be retrieved from the level1 cache).
  */
 
@@ -38,7 +38,7 @@
 #include "monad.hpp"
 
 namespace tuscany {
-namespace frontcache {
+namespace datacache {
 
 /**
  * Get an item from the cache.
@@ -112,13 +112,13 @@ extern "C" {
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
     if (func == "get")
-        return tuscany::frontcache::get(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params));
+        return tuscany::datacache::get(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params));
     if (func == "post")
-        return tuscany::frontcache::post(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params), caddddddr(params));
+        return tuscany::datacache::post(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params), caddddddr(params));
     if (func == "put")
-        return tuscany::frontcache::put(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params), caddddddr(params));
+        return tuscany::datacache::put(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params), caddddddr(params));
     if (func == "delete")
-        return tuscany::frontcache::del(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params));
+        return tuscany::datacache::del(cadr(params), caddr(params), cadddr(params), caddddr(params), cadddddr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 

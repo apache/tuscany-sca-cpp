@@ -37,7 +37,8 @@ namespace tuscany {
 namespace cache {
 
 const string memcacheuri("http://localhost:8090/memcache");
-const string frontcacheuri("http://localhost:8090/frontcache");
+const string datacacheuri("http://localhost:8090/datacache");
+const string memocacheuri("http://localhost:8090/memocache");
 
 bool testCache(const string& uri) {
     http::CURLSession cs("", "", "");
@@ -89,8 +90,22 @@ bool testMemcache() {
     return testCache(memcacheuri);
 }
 
-bool testFrontcache() {
-    return testCache(frontcacheuri);
+bool testDatacache() {
+    return testCache(datacacheuri);
+}
+
+bool testMemocache() {
+    http::CURLSession cs("", "", "");
+
+    const failable<value> res = http::evalExpr(mklist<value>(string("add"), 33, 22), memocacheuri, cs);
+    assert(hasContent(res));
+    assert((int)content(res) == 55);
+
+    const failable<value> res2 = http::evalExpr(mklist<value>(string("add"), 33, 22), memocacheuri, cs);
+    assert(hasContent(res2));
+    assert((int)content(res2) == 55);
+
+    return true;
 }
 
 struct getLoop {
@@ -131,7 +146,8 @@ int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
     tuscany::cache::testMemcache();
-    tuscany::cache::testFrontcache();
+    tuscany::cache::testDatacache();
+    tuscany::cache::testMemocache();
     tuscany::cache::testGetPerf();
 
     tuscany::cout << "OK" << tuscany::endl;
