@@ -233,7 +233,7 @@ Building dependencies from source
 Here are example build and install steps for some of the dependencies.
 
 Apache HTTPD, including APR, using the HTTP prefork MPM (recommended):
-wget http://www.apache.org/dist/httpd/httpd-2.2.16.tar.gz
+wget http://archive.apache.org/dist/httpd/httpd-2.2.16.tar.gz
 tar xzf httpd-2.2.16.tar.gz
 cd httpd-2.2.16
 ./configure --enable-ssl --enable-proxy --enable-mods-shared=most \
