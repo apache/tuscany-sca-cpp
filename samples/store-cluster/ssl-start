@@ -106,14 +106,14 @@ sleep 1
 ../../modules/http/httpd-start tmp/proxy2
 
 # Redirect traffic from ports 80 and 443 to proxy1
-#../../ubuntu/ip-redirect-all 80 8091
-#../../ubuntu/ip-redirect-all 443 8093
+#sudo ../../ubuntu/ip-redirect-all 80 8091
+#sudo ../../ubuntu/ip-redirect-all 443 8093
 
 # Redirect traffic from ports 80 and 443 to proxy2
-#../../ubuntu/ip-redirect-all 80 8092
-#../../ubuntu/ip-redirect-all 443 8094
+#sudo ../../ubuntu/ip-redirect-all 80 8092
+#sudo ../../ubuntu/ip-redirect-all 443 8094
 
 # Redirect traffic from ports 119 and 563 to tunnel
-#../../ubuntu/ip-redirect-all 119 8119
-#../../ubuntu/ip-redirect-all 563 8563
+#sudo ../../ubuntu/ip-redirect-all 119 8119
+#sudo ../../ubuntu/ip-redirect-all 563 8563
 

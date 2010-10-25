@@ -72,8 +72,8 @@ sleep 1
 ../../modules/http/httpd-start tmp/proxy2
 
 # Redirect traffic from port 80 to proxy1
-#../../ubuntu/ip-redirect-all 80 8091
+#sudo ../../ubuntu/ip-redirect-all 80 8091
 
 # Redirect traffic from port 80 to proxy2
-#../../ubuntu/ip-redirect-all 80 8092
+#sudo ../../ubuntu/ip-redirect-all 80 8092
 
