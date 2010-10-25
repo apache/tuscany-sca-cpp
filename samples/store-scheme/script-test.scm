@@ -53,7 +53,7 @@
 
 (define (catalog_impl converter op args)
   (cond
-    ((equal? op "getcatalog") (apply catalog_get (cons converter args)))
+    ((equal? op "items") (apply catalog_get (cons converter args)))
   )
 )
 
@@ -76,7 +76,7 @@
   (cons "Item" (list id entry))
 )
 
-(define (cart_gettotal)
+(define (cart_total)
   10.0
 )
 
@@ -85,7 +85,7 @@
     ((equal? op "post") (apply cart_post args))
     ((equal? op "getall") (apply cart_getall args))
     ((equal? op "getentry") (apply cart_getentry args))
-    ((equal? op "gettotal") (apply cart_gettotal args))
+    ((equal? op "total") (apply cart_total args))
   )
 )
 
@@ -103,12 +103,12 @@
   (cart "getentry" id)
 )
 
-(define (storeui_getcatalog catalog)
-  (catalog "getcatalog")
+(define (storeui_items catalog)
+  (catalog "items")
 )
 
-(define (storeui_gettotal cart)
-  (cart "gettotal")
+(define (storeui_total cart)
+  (cart "total")
 )
 
 (define (storeui_impl cart catalog op args)
@@ -116,8 +116,8 @@
     ((equal? op "post") (apply storeui_post (cons cart args)))
     ((equal? op "getall") (apply storeui_getcart (cons cart args)))
     ((equal? op "getentry") (apply storeui_getentry (cons cart args)))
-    ((equal? op "getcatalog") (apply storeui_getcatalog (cons catalog args)))
-    ((equal? op "gettotal") (apply storeui_gettotal (cons cart args)))
+    ((equal? op "items") (apply storeui_items (cons catalog args)))
+    ((equal? op "total") (apply storeui_total (cons cart args)))
   )
 )
 
@@ -129,12 +129,12 @@
 
 ; Store UI test case
 
-(define catalog (storeui_service "getcatalog"))
+(define catalog (storeui_service "items"))
 (define empty (list))
 (define apple (car catalog))
 (define orange (car (cdr catalog)))
 (define added1 (storeui_service "post" empty apple))
 (define added2 (storeui_service "post" added1 orange))
 (display (storeui_service "getall" added2))
-(display (storeui_service "gettotal"))
+(display (storeui_service "total"))
 

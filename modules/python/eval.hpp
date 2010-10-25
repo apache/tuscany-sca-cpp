@@ -94,15 +94,54 @@ typedef struct {
   lambda<value(const list<value>&)> func;
 } pyLambda;
 
+PyObject *mkPyLambda(const lambda<value(const list<value>&)>& l);
+
 void pyLambda_dealloc(PyObject* self) {
     PyMem_DEL(self);
 }
 
+const string pyRepr(PyObject * o) {
+    return PyString_AsString(PyObject_Repr(o));
+}
+
 PyObject* pyLambda_call(PyObject* self, PyObject* args, unused PyObject* kwds) {
+    debug("python::call");
     const pyLambda* pyl = (pyLambda*)self;
     const value result = pyl->func(pyTupleToValues(args));
+    debug(result, "python::call::result");
     Py_DECREF(args);
     PyObject *pyr = valueToPyObject(result);
+    Py_INCREF(pyr);
+    return pyr;
+}
+
+struct pyProxy {
+    const value name;
+    const lambda<value(const list<value>&)> func;
+
+    pyProxy(const value& name, const lambda<value(const list<value>&)>& func) : name(name), func(func) {
+    }
+
+    const value operator()(const list<value>& args) const {
+        debug(name, "python::proxy::name");
+        const value result = func(cons<value>(name, args));
+        debug(result, "python::proxy::result");
+        return result;
+    }
+};
+
+PyObject* pyLambda_getattr(PyObject *self, PyObject *attrname) {
+    const string name = PyString_AsString(attrname);
+    if (substr(name, 0, 1) == "_")
+        return PyObject_GenericGetAttr(self, attrname);
+
+    if (name == "eval")
+        return self;
+
+    const pyLambda* pyl = (pyLambda*)self;
+    debug(name, "python::getattr::name");
+    PyObject* pyr = mkPyLambda(pyProxy(name, pyl->func));
+    Py_INCREF(pyr);
     return pyr;
 }
 
@@ -115,7 +154,9 @@ PyTypeObject pyLambda_type = {
     (destructor)pyLambda_dealloc,
     0, 0, 0, 0, 0, 0, 0, 0, 0,
     (ternaryfunc)pyLambda_call,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 
+    (binaryfunc)pyLambda_getattr,
+    0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0
@@ -179,6 +220,7 @@ const list<value> pyTupleToValuesHelper(PyObject* o, const int i, const int size
 }
 
 const list<value> pyTupleToValues(PyObject* o) {
+    debug(pyRepr(o), "python::pyTupleToValues");
     return pyTupleToValuesHelper(o, 0, PyTuple_Size(o));
 }
 

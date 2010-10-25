@@ -56,6 +56,15 @@ class component:
     def __call__(self, func, *args):
         return self.mod.__getattribute__(func)(*(args + self.proxies))
 
+    def __getattr__(self, name):
+        if name[0] == '_':
+            raise AttributeError()
+        if name == "eval":
+            return self
+        l = lambda *args: self.__call__(name, *args)
+        self.__dict__[name] = l
+        return l
+
     def __repr__(self):
         return repr((self.name, self.impl, self.mod, self.svcs, self.refs, self.props, self.proxies))
 
@@ -186,19 +195,39 @@ def evalReference(r, comps):
         return mkclient(t)
     return nameToComponent(t, comps)
 
+# Make a callable property
+class property:
+    def __init__(self, name, l):
+        self.name = name
+        self.l = l
+
+    def __call__(self, *args):
+        return self.l(*args)
+
+    def __getattr__(self, name):
+        if name == "eval":
+            return self
+        raise AttributeError()
+
+    def __repr__(self):
+        return repr((self.name, self.l()))
+
+def mkproperty(name, l):
+    return property(name, l)
+
 # Evaluate a property, return a lambda function returning the property
 # value. The host, user and email properties are configured with the
 # values from the HTTP request, if any
 def evalProperty(p):
     if car(p) == "host":
-        return lambda: hostProperty(cadr(p), environ)
+        return mkproperty(car(p), lambda: hostProperty(cadr(p), environ))
     if car(p) == "user":
-        return lambda: userProperty(cadr(p))
+        return mkproperty(car(p), lambda: userProperty(cadr(p)))
     if car(p) == "nickname":
-        return lambda: nicknameProperty(cadr(p))
+        return mkproperty(car(p), lambda: nicknameProperty(cadr(p)))
     if car(p) == "email":
-        return lambda: emailProperty(cadr(p))
-    return lambda: cadr(p)
+        return mkproperty(car(p), lambda: emailProperty(cadr(p)))
+    return mkproperty(car(p), lambda: cadr(p))
 
 def currentUser():
     try:

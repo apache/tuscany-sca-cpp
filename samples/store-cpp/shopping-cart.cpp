@@ -109,7 +109,7 @@ const double sum(const list<value>& items) {
 /**
  * Return the total price of the items in the cart.
  */
-const failable<value> gettotal(const lambda<value(const list<value>&)> cache) {
+const failable<value> total(const lambda<value(const list<value>&)> cache) {
     const list<value> cart(getcart(cartId, cache));
     return value(sum(cart));
 }
@@ -127,8 +127,8 @@ const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
         return tuscany::store::get(cadr(params), caddr(params));
     if (func == "delete")
         return tuscany::store::del(cadr(params), caddr(params));
-    if (func == "gettotal")
-        return tuscany::store::gettotal(cadr(params));
+    if (func == "total")
+        return tuscany::store::total(cadr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 

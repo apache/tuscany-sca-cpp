@@ -33,7 +33,7 @@ rc=$?
 # Test Catalog
 if [ "$rc" = "0" ]; then
     $curl_prefix/bin/curl http://localhost:8090/references/Store/catalog -X POST -H "Content-type: application/json-rpc" --data @../store-cpp/htdocs/test/items-request.txt >tmp/items-result.txt 2>/dev/null
-    diff tmp/items-result.txt ../store-cpp/htdocs/test/items-result.txt
+    diff tmp/items-result.txt htdocs/test/items-result.txt
     rc=$?
 fi
 

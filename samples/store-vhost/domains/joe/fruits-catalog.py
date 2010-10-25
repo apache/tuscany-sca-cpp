@@ -17,11 +17,11 @@
 
 # Catalog implementation
 
-def getcatalog(converter, currencyCode):
-  code = currencyCode()
+def items(converter, currencyCode):
+  code = currencyCode.eval()
   def convert(price):
-      return converter("convert", "USD", code, price)
-  symbol = converter("symbol", code)
+      return converter.convert("USD", code, price)
+  symbol = converter.symbol(code)
   return (
     (("'name", "Apple"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(2.99))),
     (("'name", "Orange"), ("'currencyCode", code), ("'currencySymbol", symbol), ("'price", convert(3.55))),

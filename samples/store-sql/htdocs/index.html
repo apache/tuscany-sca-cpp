@@ -36,7 +36,7 @@ var shoppingTotal = new tuscany.sca.Reference("shoppingTotal");
 
 var catalogItems;
 
-function catalog_getcatalogResponse(items, exception) {
+function catalog_itemsResponse(items, exception) {
     if (exception){
         alert(exception.message);
         return;
@@ -64,11 +64,11 @@ function shoppingCart_getResponse(feed) {
         }
         document.getElementById("shoppingCart").innerHTML = list;
 
-        shoppingTotal.apply("gettotal", shoppingTotal_gettotalResponse);
+        shoppingTotal.apply("total", shoppingTotal_totalResponse);
     }
 }
 
-function shoppingTotal_gettotalResponse(total, exception) {
+function shoppingTotal_totalResponse(total, exception) {
     if (exception) { 
         alert(exception.message); 
         return;
@@ -119,7 +119,7 @@ function deleteCart() {
 
 function init() {
     try {
-        catalog.apply("getcatalog", catalog_getcatalogResponse);
+        catalog.apply("items", catalog_itemsResponse);
         shoppingCart.get("", shoppingCart_getResponse);
     } catch(e){
         alert(e);

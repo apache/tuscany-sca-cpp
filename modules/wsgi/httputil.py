@@ -56,6 +56,15 @@ class client:
             return None
         return jsonResultValue((res.read(),))
 
+    def __getattr__(self, name):
+        if name[0] == '_':
+            raise AttributeError()
+        if name == "eval":
+            return self
+        l = lambda *args: self.__call__(name, *args)
+        self.__dict__[name] = l
+        return l
+
     def __repr__(self):
         return repr((self.url,))
 

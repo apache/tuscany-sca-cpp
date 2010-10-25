@@ -50,7 +50,7 @@ const list<value> mkfruit(const string& name, const string& code, const string& 
         mklist<value>("name", name) + mklist<value>("currencyCode", code) + mklist<value>("currencySymbol", symbol) + mklist<value>("price", price);
 }
 
-const failable<value> getcatalog(const lambda<value(const list<value>&)> converter, const lambda<value(const list<value>&)> currencyCode) {
+const failable<value> items(const lambda<value(const list<value>&)> converter, const lambda<value(const list<value>&)> currencyCode) {
     const string currency(currencyCode(list<value>()));
     const string symbol(converter(mklist<value>("symbol", currency)));
     const lambda<value(const value&)> conv(convert(converter, currency));
@@ -68,8 +68,8 @@ extern "C" {
 
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
-    if (func == "getcatalog")
-        return tuscany::store::getcatalog(cadr(params), caddr(params));
+    if (func == "items")
+        return tuscany::store::items(cadr(params), caddr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 

@@ -24,7 +24,7 @@ cartId = "1234"
 # Get the shopping cart from the cache
 # Return an empty cart if not found
 def getcart(id, cache):
-    cart = cache("get", (id,))
+    cart = cache.get((id,))
     if cart is None:
         return ()
     return cart
@@ -33,7 +33,7 @@ def getcart(id, cache):
 def post(collection, item, cache, host, email):
     id = str(uuid.uuid1())
     cart = ((item[0], id, item[2]),) + getcart(cartId, cache)
-    cache("put", (cartId,), cart)
+    cache.put((cartId,), cart)
     return (id,)
 
 # Find an item in the cart
@@ -54,7 +54,7 @@ def get(id, cache, host, email):
 # Delete items from the  cart
 def delete(id, cache, host, email):
     if id == ():
-        return cache("delete", (cartId,))
+        return cache.delete((cartId,))
     return True
 
 # Return the price of an item
@@ -68,15 +68,15 @@ def sum(items):
     return price(items[0]) + sum(items[1:])
 
 # Return the total price of the items in the cart
-def gettotal(cache, host, email):
+def total(cache, host, email):
     cart = getcart(cartId, cache)
     return sum(cart)
 
 # Return the email of the cart owner
 def getemail(cache, host, email):
-    return email()
+    return email.eval()
 
 # Return the host that the app is running on
 def gethost(cache, host, email):
-    return host()
+    return host.eval()
 

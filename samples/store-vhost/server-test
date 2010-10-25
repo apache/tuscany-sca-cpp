@@ -35,8 +35,8 @@ rc=$?
 
 # Test Catalog
 if [ "$rc" = "0" ]; then
-    $curl_prefix/bin/curl http://joe.sca-store.com:8090/references/Store/catalog -X POST -H "Content-type: application/json-rpc" --data @../store-cpp/htdocs/test/getcatalog-request.txt >tmp/getcatalog-result.txt 2>/dev/null
-    diff tmp/getcatalog-result.txt ../store-cpp/htdocs/test/getcatalog-result.txt
+    $curl_prefix/bin/curl http://joe.sca-store.com:8090/references/Store/catalog -X POST -H "Content-type: application/json-rpc" --data @../store-cpp/htdocs/test/items-request.txt >tmp/items-result.txt 2>/dev/null
+    diff tmp/items-result.txt ../store-cpp/htdocs/test/items-result.txt
     rc=$?
 fi
 

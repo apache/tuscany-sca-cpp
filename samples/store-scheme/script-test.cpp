@@ -56,7 +56,7 @@ bool testEval() {
         ostringstream os;
         scheme::setupDisplay(os);
         scheme::Env globalEnv = scheme::setupEnvironment();
-        const value exp(mklist<value>("storeui_service", string("getcatalog")));
+        const value exp(mklist<value>("storeui_service", string("items")));
         const value val = scheme::evalScript(exp, is, globalEnv);
 
         ostringstream vs;
@@ -71,7 +71,7 @@ bool testEval() {
         scheme::setupDisplay(os);
 
         scheme::Env globalEnv = scheme::setupEnvironment();
-        const value exp(mklist<value>("storeui_service", string("gettotal")));
+        const value exp(mklist<value>("storeui_service", string("total")));
         const value res = scheme::evalScript(exp, is, globalEnv);
 
         ostringstream rs;

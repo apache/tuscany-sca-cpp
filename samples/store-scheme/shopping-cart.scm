@@ -75,7 +75,7 @@
 )
 
 ; Return the total price of the items in the cart
-(define (gettotal cache)
+(define (total cache)
   (define cart (getcart cartId cache))
   (sum cart)
 )

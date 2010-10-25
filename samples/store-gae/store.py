@@ -18,23 +18,23 @@
 # Store implementation
 
 def post(item, catalog, shoppingCart, shoppingTotal):
-    return shoppingCart("post", item)
+    return shoppingCart.post(item)
 
 def getall(catalog, shoppingCart, shoppingTotal):
-    return shoppingCart("getall")
+    return shoppingCart.getall()
 
 def get(id, catalog, shoppingCart, shoppingTotal):
-    return shoppingCart("get", id)
+    return shoppingCart.get(id)
 
 def items(catalog, shoppingCart, shoppingTotal):
-    return catalog("items")
+    return catalog.items()
 
-def gettotal(catalog, shoppingCart, shoppingTotal):
-    return shoppingCart("gettotal")
+def total(catalog, shoppingCart, shoppingTotal):
+    return shoppingCart.total()
 
 def deleteall(catalog, shoppingCart, shoppingTotal):
-    return shoppingCart("deleteall")
+    return shoppingCart.deleteall()
 
 def delete(id, catalog, shoppingCart, shoppingTotal):
-    return shoppingCart("delete", id)
+    return shoppingCart.delete(id)
 

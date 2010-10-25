@@ -64,11 +64,11 @@ function shoppingCart_getResponse(feed) {
         }
         document.getElementById("shoppingCart").innerHTML = list;
 
-        shoppingTotal.apply("gettotal", shoppingTotal_gettotalResponse);
+        shoppingTotal.apply("total", shoppingTotal_totalResponse);
     }
 }
 
-function shoppingTotal_gettotalResponse(total, exception) {
+function shoppingTotal_totalResponse(total, exception) {
     if (exception) { 
         alert(exception.message); 
         return;

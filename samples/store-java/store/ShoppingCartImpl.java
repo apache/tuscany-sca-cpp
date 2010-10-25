@@ -104,7 +104,7 @@ public class ShoppingCartImpl {
     /**
      * Return the total price of the items in the cart.
      */
-    public Double gettotal(final Service cache) {
+    public Double total(final Service cache) {
         final Iterable<?> cart = this.getcart(cartId, cache);
         return this.sum(cart);
     }

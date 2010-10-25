@@ -15,21 +15,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import unittest
+
 # JSON-RPC test case
 
 def echo(x, ref):
-    return ref("echo", x)
+    e1 = ref("echo", x)
+    e2 = ref.echo(x)
+    assert e1 == e2
+    return e1
 
 # ATOMPub test case
 
 def get(id, ref):
-    return ref("get", id)
+    return ref.get(id)
 
 def post(collection, item, ref):
-    return ref("post", collection, item)
+    return ref.post(collection, item)
 
 def put(id, item, ref):
-    return ref("put", id, item)
+    return ref.put(id, item)
 
 def delete(id, ref):
-    return ref("delete", id)
+    return ref.delete(id)

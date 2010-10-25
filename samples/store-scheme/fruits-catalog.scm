@@ -17,7 +17,7 @@
 
 ; Catalog implementation
 
-(define (getcatalog converter currencyCode)
+(define (items converter currencyCode)
   (define code (currencyCode))
   (define (convert price) (converter "convert" "USD" code price))
   (define symbol (converter "symbol" code))

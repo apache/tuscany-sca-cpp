@@ -22,7 +22,7 @@ from httputil import *
 
 def testClient():
     c = mkclient("http://localhost:8090/wsgi")
-    assert c("echo", "Hey") == "Hey"
+    assert c.echo("Hey") == "Hey"
     return True
 
 if __name__ == "__main__":

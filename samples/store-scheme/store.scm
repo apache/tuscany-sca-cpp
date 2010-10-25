@@ -29,12 +29,12 @@
   (shoppingCart "get" id)
 )
 
-(define (getcatalog catalog shoppingCart shoppingTotal)
-  (catalog "getcatalog")
+(define (items catalog shoppingCart shoppingTotal)
+  (catalog "items")
 )
 
-(define (gettotal catalog shoppingCart shoppingTotal)
-  (shoppingCart "gettotal")
+(define (total catalog shoppingCart shoppingTotal)
+  (shoppingCart "total")
 )
 
 (define (deleteall catalog shoppingCart shoppingTotal)

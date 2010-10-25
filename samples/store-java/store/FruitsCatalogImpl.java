@@ -31,7 +31,7 @@ public class FruitsCatalogImpl {
     /**
      * Returns the catalog.
      */
-    public Iterable<?> getcatalog(final CurrencyConverter converter, final Service currencyCode) {
+    public Iterable<?> items(final CurrencyConverter converter, final Service currencyCode) {
         final String code = currencyCode.eval();
 
         class Converter {
