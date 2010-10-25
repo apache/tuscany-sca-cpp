@@ -111,7 +111,11 @@ SSLProxyVerify require
 SSLProxyVerifyDepth 1
 
 # Log SSL requests
-LogFormat "[%{%a %b %d %H:%M:%S %Y}t] [sslaccess] %h %l %u %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" \"%{SSL_CLIENT_I_DN}x\" \"%{SSL_CLIENT_S_DN}x\"" sslcombined
+# [timestamp] [sslaccess] remote-host remote-ident remote-user SSL-protocol
+# SSL-cipher "request-line" status response-size "referrer" "user-agent"
+# "SSL-client-I-DN" "SSL-client-S-DN" "user-track" local-IP virtual-host
+# response-time bytes-received bytes-sent
+LogFormat "[%{%a %b %d %H:%M:%S %Y}t] [sslaccess] %h %l %u %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" \"%{SSL_CLIENT_I_DN}x\" \"%{SSL_CLIENT_S_DN}x\" \"%{cookie}n\" %A %V %D %I %O" sslcombined
 CustomLog $root/logs/ssl_access_log sslcombined
 
 EOF

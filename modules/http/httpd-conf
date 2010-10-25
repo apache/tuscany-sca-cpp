@@ -75,6 +75,8 @@ LoadModule setenvif_module ${modules_prefix}/modules/mod_setenvif.so
 <IfModule !log_config_module>
 LoadModule log_config_module ${modules_prefix}/modules/mod_log_config.so
 </IfModule>
+LoadModule logio_module ${modules_prefix}/modules/mod_logio.so
+LoadModule usertrack_module ${modules_prefix}/modules/mod_usertrack.so
 LoadModule vhost_alias_module ${modules_prefix}/modules/mod_vhost_alias.so
 LoadModule cgi_module ${modules_prefix}/modules/mod_cgi.so
 
@@ -90,10 +92,15 @@ LimitRequestBody 1048576
 HostNameLookups Off
 
 # Log HTTP requests
+# [timestamp] [access] remote-host remote-ident remote-user "request-line"
+# status response-size "referrer" "user-agent" "user-track" local-IP
+# virtual-host response-time bytes-received bytes-sent
 LogLevel info
 ErrorLog $root/logs/error_log
-LogFormat "[%{%a %b %d %H:%M:%S %Y}t] [access] %h %l %u \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" combined
+LogFormat "[%{%a %b %d %H:%M:%S %Y}t] [access] %h %l %u \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" \"%{cookie}n\" %A %V %D %I %O" combined
 CustomLog $root/logs/access_log combined
+CookieTracking on
+CookieName TuscanyVisitorId
 
 # Configure Mime types
 DefaultType text/plain

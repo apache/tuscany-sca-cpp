@@ -236,8 +236,9 @@ Apache HTTPD, including APR, using the HTTP prefork MPM (recommended):
 wget http://archive.apache.org/dist/httpd/httpd-2.2.16.tar.gz
 tar xzf httpd-2.2.16.tar.gz
 cd httpd-2.2.16
-./configure --enable-ssl --enable-proxy --enable-mods-shared=most \
---with-included-apr --with-mpm=prefork --prefix=$HOME/httpd-2.2.16-bin
+./configure --enable-ssl --enable-proxy --enable-usertrack \
+--enable-mods-shared=most --with-included-apr --with-mpm=prefork \
+--prefix=$HOME/httpd-2.2.16-bin
 make
 make install
 export PATH=$HOME/httpd-2.2.16-bin/bin:$PATH
