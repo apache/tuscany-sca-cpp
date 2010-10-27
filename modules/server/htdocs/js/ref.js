@@ -30,7 +30,9 @@
 /**
  * Escape a character.
  */
-function escapeJSONChar(c) {
+var JSONClient = new Object();
+
+JSONClient.escapeJSONChar = function(c) {
     if(c == "\"" || c == "\\") return "\\" + c;
     else if (c == "\b") return "\\b";
     else if (c == "\f") return "\\f";
@@ -42,16 +44,16 @@ function escapeJSONChar(c) {
     else if(hex.length == 2) return "\\u00" + hex;
     else if(hex.length == 3) return "\\u0" + hex;
     else return "\\u" + hex;
-}
+};
 
 /**
  * Encode a string into JSON format.
  */
-function escapeJSONString(s) {
+JSONClient.escapeJSONString = function(s) {
     /* The following should suffice but Safari's regex is broken
        (doesn't support callback substitutions)
        return "\"" + s.replace(/([^\u0020-\u007f]|[\\\"])/g,
-       escapeJSONChar) + "\"";
+       JSONClient.escapeJSONChar) + "\"";
     */
 
     /* Rather inefficient way to do it */
@@ -62,19 +64,19 @@ function escapeJSONString(s) {
        c == '\\' ||
        c.charCodeAt(0) < 32 ||
        c.charCodeAt(0) >= 128)
-        parts[i] = escapeJSONChar(parts[i]);
+        parts[i] = JSONClient.escapeJSONChar(parts[i]);
     }
     return "\"" + parts.join("") + "\"";
-}
+};
 
 /**
  * Marshall objects to JSON format.
  */
-function toJSON(o) {
+JSONClient.toJSON = function(o) {
     if(o == null) {
         return "null";
     } else if(o.constructor == String) {
-        return escapeJSONString(o);
+        return JSONClient.escapeJSONString(o);
     } else if(o.constructor == Number) {
         return o.toString();
     } else if(o.constructor == Boolean) {
@@ -83,21 +85,21 @@ function toJSON(o) {
         return '{javaClass: "java.util.Date", time: ' + o.valueOf() +'}';
     } else if(o.constructor == Array) {
         var v = [];
-        for(var i = 0; i < o.length; i++) v.push(toJSON(o[i]));
+        for(var i = 0; i < o.length; i++) v.push(JSONClient.toJSON(o[i]));
         return "[" + v.join(", ") + "]";
     } else {
         var v = [];
         for(attr in o) {
             if(o[attr] == null) v.push("\"" + attr + "\": null");
             else if(typeof o[attr] == "function"); /* skip */
-            else v.push(escapeJSONString(attr) + ": " + toJSON(o[attr]));
+            else v.push(JSONClient.escapeJSONString(attr) + ": " + JSONClient.toJSON(o[attr]));
         }
         return "{" + v.join(", ") + "}";
     }
-}
+};
 
 /**
- * HTTPBindingClient.Exception
+ * HTTPBindingClient.Exception.
  */
 HTTPBindingClient.Exception = function(code, message, javaStack) {
     this.code = code;
@@ -120,16 +122,16 @@ HTTPBindingClient.Exception.CODE_ERR_UNMARSHALL = 592;
 HTTPBindingClient.Exception.CODE_ERR_MARSHALL = 593;
 
 HTTPBindingClient.Exception.prototype = new Error();
-HTTPBindingClient.Exception.prototype.toString = function(code, msg)
-{
+HTTPBindingClient.Exception.prototype.toString = function(code, msg) {
     return this.name + ": " + this.message;
 };
 
 /**
- * Default top level exception handler
+ * Default top level exception handler.
  */
-HTTPBindingClient.default_ex_handler = function(e) { alert(e); };
-
+HTTPBindingClient.default_ex_handler = function(e) {
+    alert(e);
+};
 
 /**
  * Client settable variables
@@ -138,7 +140,6 @@ HTTPBindingClient.toplevel_ex_handler = HTTPBindingClient.default_ex_handler;
 HTTPBindingClient.profile_async = false;
 HTTPBindingClient.max_req_active = 1;
 HTTPBindingClient.requestId = 1;
-
 
 /**
  * HTTPBindingClient implementation
@@ -258,7 +259,7 @@ HTTPBindingClient.prototype._makeRequest = function(methodName, args, cb) {
     if (cb) req.cb = cb;
     if (HTTPBindingClient.profile_async)
         req.profile = { "submit": new Date() };
-    req.data = toJSON(obj);
+    req.data = JSONClient.toJSON(obj);
 
     return req;
 };
@@ -424,7 +425,7 @@ HTTPBindingClient.prototype.get = function(id, responseFunction) {
     }
     xhr.open("GET", this.uri + '/' + id, true);
     xhr.send(null);
-}    
+};
 
 HTTPBindingClient.prototype.post = function (entry, responseFunction) {
     var xhr = this.createXMLHttpRequest();
@@ -445,7 +446,7 @@ HTTPBindingClient.prototype.post = function (entry, responseFunction) {
     xhr.open("POST", this.uri, true);
     xhr.setRequestHeader("Content-Type", "application/atom+xml");
     xhr.send(entry);
-}    
+};
 
 HTTPBindingClient.prototype.put = function (id, entry, responseFunction) {
     var xhr = this.createXMLHttpRequest();
@@ -466,7 +467,7 @@ HTTPBindingClient.prototype.put = function (id, entry, responseFunction) {
     xhr.open("PUT", this.uri + '/' + id, true);
     xhr.setRequestHeader("Content-Type", "application/atom+xml");
     xhr.send(entry);
-}    
+};
 
 HTTPBindingClient.prototype.del = function (id, responseFunction) {       
     var xhr = this.createXMLHttpRequest();
@@ -481,7 +482,7 @@ HTTPBindingClient.prototype.del = function (id, responseFunction) {
     }
     xhr.open("DELETE", this.uri + '/' + id, true);        
     xhr.send(null);
-}
+};
 
 HTTPBindingClient.prototype.createXMLHttpRequest = function () {
     /* Mozilla XMLHttpRequest */
@@ -493,25 +494,6 @@ HTTPBindingClient.prototype.createXMLHttpRequest = function () {
     }
     alert("XML http request not supported");
     return null;
-}
-
-/**
- * Create Tuscany namespace.
- */
-var tuscany;
-if (!tuscany) 
-    tuscany = {}; 
-if (!tuscany.sca)
-    tuscany.sca = {}; 
-
-/**
- * Configure component name
- */
-tuscany.sca.componentName = "Default";
-
-tuscany.sca.Component = function(name) {
-    tuscany.sca.componentName = name;
-    return name
 }
 
 /**
@@ -540,14 +522,53 @@ function HTTPBindingClient(cname, uri, objectID) {
              req.send(null);
              return req.responseXML;
           }
-      }
-   }
+       }
+    }
 };
 
 /**
- * Construct a reference proxy
+ * Construct a component.
  */
-tuscany.sca.Reference = function(name) {
-    return new HTTPBindingClient(tuscany.sca.componentName, name);
+function ClientComponent(name) {
+    this.name = name;
 }
+
+/**
+ * Public API.
+ */
+
+/**
+ * Return a component.
+ */
+function component(name) {
+    return new ClientComponent(name);
+}
+
+/**
+ * Return a reference proxy.
+ */
+function reference(comp, name) {
+    return new HTTPBindingClient(comp.name, name);
+};
+
+/**
+ * Add proxy functions to a reference proxy.
+ */
+function defun(ref) {
+    function defapply(name) {
+        return function() {
+            var args = new Array();
+            args[0] = name;
+            for (i = 0, n = arguments.length; i < n; i++)
+                args[i + 1] = arguments[i];
+            this.apply.apply(this, args);
+        };
+    }
+
+    for (f = 1; f < arguments.length; f++) {
+        var fn = arguments[f];
+        ref[fn]= defapply(fn);
+    }
+    return ref;
+};
 

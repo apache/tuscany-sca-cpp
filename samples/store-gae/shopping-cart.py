@@ -73,10 +73,10 @@ def total(cache, host, email):
     return sum(cart)
 
 # Return the email of the cart owner
-def getemail(cache, host, email):
-    return email.eval()
+def email(cache, host, email_):
+    return email_.eval()
 
 # Return the host that the app is running on
-def gethost(cache, host, email):
-    return host.eval()
+def host(cache, host_, email):
+    return host_.eval()
 

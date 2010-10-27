@@ -19,10 +19,10 @@
 
 <html>
 <head>
-<script type="text/javascript" src="/js/tuscany-ref.js"></script>
+<script type="text/javascript" src="/js/ref.js"></script>
 <script type="text/javascript">
-var component = new tuscany.sca.Component("Protected");
-var userInfo = new tuscany.sca.Reference("userInfo");
+var protected = component("Protected");
+var userInfo = reference(protected, "userInfo");
 var user = userInfo.apply("getuser");
 var email = userInfo.apply("getemail");
 </script>

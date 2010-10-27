@@ -20,19 +20,13 @@
 <head>
 <title>Store</title>
 
-<script type="text/javascript" src="/js/tuscany-ref.js"></script>
+<script type="text/javascript" src="/js/ref.js"></script>
 
 <script type="text/javascript">
-var component = new tuscany.sca.Component("Store");
-
-//@Reference
-var catalog = new tuscany.sca.Reference("catalog");
-
-//@Reference
-var shoppingCart = new tuscany.sca.Reference("shoppingCart");
-
-//@Reference
-var shoppingTotal = new tuscany.sca.Reference("shoppingTotal");
+var store = component("Store");
+var catalog = defun(reference(store, "catalog"), "items");
+var shoppingCart = defun(reference(store, "shoppingCart"), "email", "host");
+var shoppingTotal = defun(reference(store, "shoppingTotal"), "total");
 
 var catalogItems;
 
@@ -51,7 +45,7 @@ function catalog_itemsResponse(items, exception) {
     catalogItems = items;
 }
 
-function shoppingCart_gethostResponse(host, exception) {
+function shoppingCart_hostResponse(host, exception) {
     if (exception) { 
         alert(exception.message); 
         return;
@@ -59,7 +53,7 @@ function shoppingCart_gethostResponse(host, exception) {
     document.getElementById('host').innerHTML = host;
 }
 
-function shoppingCart_getemailResponse(email, exception) {
+function shoppingCart_emailResponse(email, exception) {
     if (exception) { 
         alert(exception.message); 
         return;
@@ -79,7 +73,7 @@ function shoppingCart_getResponse(feed) {
         }
         document.getElementById("shoppingCart").innerHTML = list;
 
-        shoppingTotal.apply("total", shoppingTotal_totalResponse);
+        shoppingTotal.total(shoppingTotal_totalResponse);
     }
 }
 
@@ -136,9 +130,9 @@ function deleteCart() {
 
 function init() {
     try {
-        catalog.apply("items", catalog_itemsResponse);
-        shoppingCart.apply("getemail", shoppingCart_getemailResponse);
-        shoppingCart.apply("gethost", shoppingCart_gethostResponse);
+        catalog.items(catalog_itemsResponse);
+        shoppingCart.email(shoppingCart_emailResponse);
+        shoppingCart.host(shoppingCart_hostResponse);
         shoppingCart.get("", shoppingCart_getResponse);
     } catch(e){
         alert(e);
