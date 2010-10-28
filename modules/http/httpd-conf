@@ -143,6 +143,10 @@ Listen $listen
 <VirtualHost $vhost>
 ServerName http://$host:$pport
 
+RewriteEngine on
+RewriteCond %{HTTP_HOST} !^$host [NC]
+RewriteRule .* http://$host:$pport%{REQUEST_URI} [R,L]
+
 Include conf/svhost.conf
 </VirtualHost>
 
