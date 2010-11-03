@@ -561,7 +561,7 @@ function defun(ref) {
             args[0] = name;
             for (i = 0, n = arguments.length; i < n; i++)
                 args[i + 1] = arguments[i];
-            this.apply.apply(this, args);
+            return this.apply.apply(this, args);
         };
     }
 
