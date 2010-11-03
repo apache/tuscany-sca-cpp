@@ -43,10 +43,15 @@ namespace oauth {
 /**
  * Return the session id from a request.
  */
+const char* cookieName(const char* cs) {
+    if (*cs != ' ')
+        return cs;
+    return cookieName(cs + 1);
+}
 const maybe<string> sessionID(const list<string> c) {
     if (isNil(c))
         return maybe<string>();
-    const list<string> kv = tokenize("=", car(c));
+    const list<string> kv = tokenize("=", cookieName(c_str(car(c))));
     if (!isNil(kv) && !isNil(cdr(kv))) {
         if (car(kv) == "TuscanyOpenAuth")
             return cadr(kv);

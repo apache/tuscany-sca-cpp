@@ -47,14 +47,17 @@ AuthOpenIDAXAdd FIRSTNAME http://axschema.org/namePerson/first
 AuthOpenIDAXAdd LASTNAME http://axschema.org/namePerson/last
 </Location>
 
-# Enable unauthenticated access to unprotected areas
+# Enable unauthenticated access to public areas
 <Location /login>
 AuthOpenIDEnabled Off
 </Location>
 <Location /logout>
 AuthOpenIDEnabled Off
 </Location>
-<Location /unprotected>
+<Location /public>
+AuthOpenIDEnabled Off
+</Location>
+<Location /ui>
 AuthOpenIDEnabled Off
 </Location>
 

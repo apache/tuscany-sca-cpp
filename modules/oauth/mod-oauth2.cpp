@@ -164,6 +164,15 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
 }
 
 /**
+ * Extract user info from a profile/info response.
+ * TODO This currently only works for Facebook and Gowalla.
+ * User profile parsing needs to be made configurable.
+ */
+const failable<list<value> > profileUserInfo(const value& cid, const list<value>& info) {
+    return cons<value>(mklist<value>("realm", cid), info);
+}
+
+/**
  * Handle an access_token request.
  */
 const failable<int> access_token(const list<list<value> >& args, request_rec* r, const ServerConf& sc) {
@@ -210,10 +219,15 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     const list<list<value> > iargs = mklist<list<value> >(tv);
     const string iuri = httpd::unescape(cadr(info)) + string("?") + httpd::queryString(iargs);
     debug(iuri, "modoauth2::access_token::infouri");
-    const failable<value> iv = http::get(iuri, sc.cs);
-    if (!hasContent(iv))
+    const failable<value> profres = http::get(iuri, sc.cs);
+    if (!hasContent(profres))
         return mkfailure<int>("Couldn't retrieve user info");
-    debug(content(iv), "modoauth2::access_token::info");
+    debug(content(profres), "modoauth2::access_token::info");
+
+    // Retrieve the user info from the profile
+    const failable<list<value> > iv = profileUserInfo(cadr(cid), content(profres));
+    if (!hasContent(iv))
+        return mkfailure<int>(reason(iv));
 
     // Store user info in memcached keyed by session ID
     const value sid = string("OAuth2_") + mkrand();

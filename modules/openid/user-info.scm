@@ -17,10 +17,12 @@
 
 ; OpenID support test case
 
-(define (get id user email) (list "text/html" (list
-    "<html><body><p>The following info is generated on the server:</p><div>User: " (user) "</div><div>Email: " (email) "</div></body></html>")))
+(define (get id user email realm) (list "text/html" (list
+    "<html><body><p>The following info is generated on the server:</p><div>User: " (user) "</div><div>Email: " (email) "</div><div>Realm: " (realm) "</div></body></html>")))
 
-(define (getuser user email) (user))
+(define (getuser user email realm) (user))
 
-(define (getemail user email) (email))
+(define (getemail user email realm) (email))
+
+(define (getrealm user email realm) (realm))
 

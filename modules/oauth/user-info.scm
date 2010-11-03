@@ -17,18 +17,20 @@
 
 ; OAuth support test case
 
-(define (get id user email nickname fullname firstname lastname) (list "text/html" (list
-    "<html><body><p>The following info is generated on the server:</p><div>User: " (user) "</div><div>Email: " (email) "</div><div>Nickname: " (nickname) "</div><div>Fullname: " (fullname) "</div><div>Firstname: " (firstname) "</div><div>Lastname: " (lastname) "</div></body></html>")))
+(define (get id user email nickname fullname firstname lastname realm) (list "text/html" (list
+    "<html><body><p>The following info is generated on the server:</p><div>User: " (user) "</div><div>Email: " (email) "</div><div>Nickname: " (nickname) "</div><div>Fullname: " (fullname) "</div><div>Firstname: " (firstname) "</div><div>Lastname: " (lastname) "</div><div>Realm: " (realm) "</div></body></html>")))
 
-(define (getuser user email nickname fullname firstname lastname) (user))
+(define (getuser user email nickname fullname firstname lastname realm) (user))
 
-(define (getemail user email nickname fullname firstname lastname) (email))
+(define (getemail user email nickname fullname firstname lastname realm) (email))
 
-(define (getnickname user email nickname fullname firstname lastname) (nickname))
+(define (getnickname user email nickname fullname firstname lastname realm) (nickname))
 
-(define (getfullname user email nickname fullname firstname lastname) (fullname))
+(define (getfullname user email nickname fullname firstname lastname realm) (fullname))
 
-(define (getfirstname user email nickname fullname firstname lastname) (firstname))
+(define (getfirstname user email nickname fullname firstname lastname realm) (firstname))
 
-(define (getlastname user email nickname fullname firstname lastname) (lastname))
+(define (getlastname user email nickname fullname firstname lastname realm) (lastname))
+
+(define (getrealm user email nickname fullname firstname lastname realm) (realm))
 

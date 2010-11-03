@@ -22,13 +22,14 @@
 <script type="text/javascript" src="/js/ref.js"></script>
 <script type="text/javascript">
 var protected = component("Protected");
-var userInfo = reference(protected, "userInfo");
-var user = userInfo.apply("getuser");
+var userInfo = defun(reference(protected, "userInfo"), "getuser", "getemail", "getnickname", "getfullname", "getfirstname", "getlastname", "getrealm");
+var user = userInfo.getuser();
 var email = userInfo.apply("getemail");
 var nickname = userInfo.apply("getnickname");
 var fullname = userInfo.apply("getfullname");
 var firstname = userInfo.apply("getfirstname");
 var lastname = userInfo.apply("getlastname");
+var realm = userInfo.apply("getrealm");
 </script>
 </head>
 <body>
@@ -40,6 +41,7 @@ var lastname = userInfo.apply("getlastname");
 <div>Fullname: <span id="fullname"></span></div>
 <div>Firstname: <span id="firstname"></span></div>
 <div>Lastname: <span id="lastname"></span></div>
+<div>Realm: <span id="realm"></span></div>
 <script type="text/javascript">
 document.getElementById('user').innerHTML=user;
 document.getElementById('email').innerHTML=email;
@@ -47,9 +49,10 @@ document.getElementById('nickname').innerHTML=nickname;
 document.getElementById('fullname').innerHTML=fullname;
 document.getElementById('firstname').innerHTML=firstname;
 document.getElementById('lastname').innerHTML=lastname;
+document.getElementById('realm').innerHTML=realm;
 </script>
 <p><a href="info">User info</a></p>
 <p><a href="login">Sign in</a></p>
 <p><a href="logout">Sign out</a></p>
-<p><a href="unprotected">Unprotected area</a></p>
+<p><a href="public">Public area</a></p>
 </body></html>

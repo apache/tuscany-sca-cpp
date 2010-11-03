@@ -17,7 +17,7 @@
    under the License.
 -->
 
-<html><body><h1>Sign in with an OpenID or OAuth 2.0 provider</h1>
+<html><body><h1>Sign in with an OpenID or OAuth provider</h1>
 
 <script type="text/javascript">
 function queryParams() {
@@ -91,23 +91,44 @@ function withXRDSEndpoint() {
     return document.fields.endpoint.value;
 }
 
-function submitOAuthSignin(w) {
+function submitOAuth2Signin(w) {
     parms = w();
-    document.oauthSignin.mod_oauth_authorize.value = parms[0];
-    document.oauthSignin.mod_oauth_access_token.value = parms[1];
-    document.oauthSignin.mod_oauth_client_id.value = parms[2];
-    document.oauthSignin.mod_oauth_info.value = parms[3];
-    document.oauthSignin.action = openauthReferrer();
-    document.oauthSignin.submit();
+    document.oauth2Signin.mod_oauth2_authorize.value = parms[0];
+    document.oauth2Signin.mod_oauth2_access_token.value = parms[1];
+    document.oauth2Signin.mod_oauth2_client_id.value = parms[2];
+    document.oauth2Signin.mod_oauth2_info.value = parms[3];
+    document.oauth2Signin.action = openauthReferrer();
+    document.oauth2Signin.submit();
 }
 
 function withFacebook() {
-    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'app1234', 'https://graph.facebook.com/me'];
+    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'testfacebookapp', 'https://graph.facebook.com/me'];
     return parms;
 }
 
 function withGithub() {
-    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'app2345', 'https://github.com/api/v2/json/user/show'];
+    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'testgithubapp', 'https://github.com/api/v2/json/user/show'];
+    return parms;
+}
+
+function submitOAuth1Signin(w) {
+    parms = w();
+    document.oauth1Signin.mod_oauth1_request_token.value = parms[0];
+    document.oauth1Signin.mod_oauth1_authorize.value = parms[1];
+    document.oauth1Signin.mod_oauth1_access_token.value = parms[2];
+    document.oauth1Signin.mod_oauth1_client_id.value = parms[3];
+    document.oauth1Signin.mod_oauth1_info.value = parms[4];
+    document.oauth1Signin.action = openauthReferrer();
+    document.oauth1Signin.submit();
+}
+
+function withLinkedin() {
+    var parms = ['https://api.linkedin.com/uas/oauth/requestToken', 'https://www.linkedin.com/uas/oauth/authorize', 'https://api.linkedin.com/uas/oauth/accessToken', 'testlinkedinapp', 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,public-profile-url)'];
+    return parms;
+}
+
+function withTwitter() {
+    var parms = ['https://api.twitter.com/oauth/request_token', 'https://api.twitter.com/oauth/authorize', 'https://api.twitter.com/oauth/access_token', 'testtwitterapp', 'https://api.twitter.com/1/statuses/user_timeline.json'];
     return parms;
 }
 </script>
@@ -139,20 +160,32 @@ function withGithub() {
 <input type="text" size="50" name="endpoint" value="https://www.google.com/accounts/o8/id"/><br/>
 <input type="button" onclick="submitOpenIDSignin(withXRDSEndpoint)" value="Sign in"/></p>
 
-<p>Sign in with your Facebook account<br/><input type="button" onclick="submitOAuthSignin(withFacebook)" value="Sign in"/></p>
-<p>Sign in with your Github account<br/><input type="button" onclick="submitOAuthSignin(withGithub)" value="Sign in"/></p>
+<p>Sign in with your Facebook account<br/><input type="button" onclick="submitOAuth2Signin(withFacebook)" value="Sign in"/></p>
+<p>Sign in with your Github account<br/><input type="button" onclick="submitOAuth2Signin(withGithub)" value="Sign in"/></p>
+
+<p>Sign in with your Linkedin account<br/><input type="button" onclick="submitOAuth1Signin(withLinkedin)" value="Sign in"/></p>
+<p>Sign in with your Twitter account<br/><input type="button" onclick="submitOAuth1Signin(withTwitter)" value="Sign in"/></p>
 </form>
 
 <form name="openIDSignin" action="/" method="GET">
 <input type="hidden" name="openid_identifier" value=""/>
 </form>
 
-<form name="oauthSignin" action="/" method="GET">
-<input type="hidden" name="mod_oauth_authorize" value=""/>
-<input type="hidden" name="mod_oauth_access_token" value=""/>
-<input type="hidden" name="mod_oauth_client_id" value=""/>
-<input type="hidden" name="mod_oauth_info" value=""/>
-<input type="hidden" name="mod_oauth_step" value="authorize"/>
+<form name="oauth2Signin" action="/" method="GET">
+<input type="hidden" name="mod_oauth2_authorize" value=""/>
+<input type="hidden" name="mod_oauth2_access_token" value=""/>
+<input type="hidden" name="mod_oauth2_client_id" value=""/>
+<input type="hidden" name="mod_oauth2_info" value=""/>
+<input type="hidden" name="mod_oauth2_step" value="authorize"/>
+</form>
+
+<form name="oauth1Signin" action="/" method="GET">
+<input type="hidden" name="mod_oauth1_request_token" value=""/>
+<input type="hidden" name="mod_oauth1_authorize" value=""/>
+<input type="hidden" name="mod_oauth1_access_token" value=""/>
+<input type="hidden" name="mod_oauth1_client_id" value=""/>
+<input type="hidden" name="mod_oauth1_info" value=""/>
+<input type="hidden" name="mod_oauth1_step" value="authorize"/>
 </form>
 
 </body></html>

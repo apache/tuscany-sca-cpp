@@ -19,22 +19,28 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://tuscany.apache.org/xmlns/sca/components"
-  name="openid">
+  targetNamespace="http://store"
+  name="store">
         
-    <component name="Protected">
-        <t:implementation.widget location="protected/index.html"/>
-        <reference name="userInfo" target="UserInfo"/>
-    </component>     
-
-    <component name="UserInfo">
-        <t:implementation.scheme script="user-info.scm"/>
-        <service name="info">
-            <t:binding.jsonrpc uri="info"/>
-        </service>
-        <property name="user">anonymous</property>
-        <property name="email">anonymous@example.com</property>
-        <property name="realm">example.com</property>
+    <component name="LoanApprovalUI">
+        <t:implementation.widget/>
+        <reference name="loanApproval" target="LoanApproval"/>
     </component>
+    
+    <component name="LoanApproval">
+        <t:implementation.python script="loan-approval.py"/>
+        <service name="LoanApproval">
+            <t:binding.atom uri="loan-approval"/>
+        </service>        
+        <reference name="cache" target="Cache"/>
+    </component>
+    
+    <component name="Cache">
+        <implementation.cpp path="../../components/cache" library="libmemcache"/>
+        <service name="Cache">
+            <t:binding.atom uri="cache"/>
+        </service>
+        <property name="servers">localhost:11211</property>
+    </component>     
 
 </composite>

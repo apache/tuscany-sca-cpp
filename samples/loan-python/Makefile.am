@@ -15,18 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+if WANT_PYTHON
 
-if WANT_OPENID
+dist_sample_SCRIPTS = start stop
+sampledir = $(prefix)/samples/loan-python
 
-dist_mod_SCRIPTS = openid-conf openid-step2-conf openid-memcached-conf
-moddir = $(prefix)/modules/openid
+nobase_dist_sample_DATA = loan.py loan-approval.py util.py loan.composite htdocs/*.html
 
-mod_DATA = openid.prefix
-openid.prefix: $(top_builddir)/config.status
-	echo ${MODAUTHOPENID_PREFIX} >openid.prefix
-
-EXTRA_DIST = openid.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/public/index.html
-
-dist_noinst_SCRIPTS = start-test stop-test
+dist_noinst_SCRIPTS = server-test
+TESTS = server-test
 
 endif

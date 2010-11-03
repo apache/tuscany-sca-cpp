@@ -35,7 +35,7 @@ libmod_tuscany_oauth2_la_LDFLAGS = -lxml2 -lcurl -lmozjs
 libmod_tuscany_oauth2.so:
 	ln -s .libs/libmod_tuscany_oauth2.so
 
-EXTRA_DIST = oauth.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/unprotected/index.html
+EXTRA_DIST = oauth.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/public/index.html
 
 dist_noinst_SCRIPTS = start-test stop-test
 

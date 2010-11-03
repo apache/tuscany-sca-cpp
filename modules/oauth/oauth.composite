@@ -38,6 +38,7 @@
         <property name="fullname">?</property>
         <property name="firstname">?</property>
         <property name="lastname">?</property>
+        <property name="realm">?</property>
     </component>
 
 </composite>

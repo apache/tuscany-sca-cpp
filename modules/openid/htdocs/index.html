@@ -22,9 +22,10 @@
 <script type="text/javascript" src="/js/ref.js"></script>
 <script type="text/javascript">
 var protected = component("Protected");
-var userInfo = reference(protected, "userInfo");
-var user = userInfo.apply("getuser");
-var email = userInfo.apply("getemail");
+var userInfo = defun(reference(protected, "userInfo"), "getuser", "getemail", "getrealm");
+var user = userInfo.getuser();
+var email = userInfo.getemail();
+var realm = userInfo.getrealm();
 </script>
 </head>
 <body>
@@ -32,12 +33,14 @@ var email = userInfo.apply("getemail");
 <p>The following info is returned by a JSONRPC service:</p>
 <div id="user"></div>
 <div id="email"></div>
+<div id="realm"></div>
 <script type="text/javascript">
 document.getElementById('user').innerHTML="User: " + user;
 document.getElementById('email').innerHTML="Email: " + email;
+document.getElementById('realm').innerHTML="Realm: " + realm;
 </script>
 <p><a href="info">User info</a></p>
 <p><a href="login">Sign in</a></p>
 <p><a href="logout">Sign out</a></p>
-<p><a href="unprotected">Unprotected area</a></p>
+<p><a href="public">Public area</a></p>
 </body></html>

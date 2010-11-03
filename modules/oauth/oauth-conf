@@ -39,14 +39,17 @@ AuthOAuth On
 AuthOAuthLoginPage /login
 </Location>
 
-# Enable unauthenticated access to unprotected areas
+# Enable unauthenticated access to public areas
 <Location /login>
 AuthOAuth Off
 </Location>
 <Location /logout>
 AuthOAuth Off
 </Location>
-<Location /unprotected>
+<Location /public>
+AuthOAuth Off
+</Location>
+<Location /ui>
 AuthOAuth Off
 </Location>
 

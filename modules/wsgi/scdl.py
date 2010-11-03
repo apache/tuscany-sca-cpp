@@ -216,13 +216,15 @@ def mkproperty(name, l):
     return property(name, l)
 
 # Evaluate a property, return a lambda function returning the property
-# value. The host, user and email properties are configured with the
-# values from the HTTP request, if any
+# value. The host, user, realm, nickname and email properties are configured
+# with the values from the HTTP request, if any.
 def evalProperty(p):
     if car(p) == "host":
         return mkproperty(car(p), lambda: hostProperty(cadr(p), environ))
     if car(p) == "user":
         return mkproperty(car(p), lambda: userProperty(cadr(p)))
+    if car(p) == "realm":
+        return mkproperty(car(p), lambda: hostProperty(cadr(p), environ))
     if car(p) == "nickname":
         return mkproperty(car(p), lambda: nicknameProperty(cadr(p)))
     if car(p) == "email":

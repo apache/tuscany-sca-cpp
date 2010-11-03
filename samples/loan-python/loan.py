@@ -15,18 +15,31 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from util import *
 
-if WANT_OPENID
+# Loan data type
 
-dist_mod_SCRIPTS = openid-conf openid-step2-conf openid-memcached-conf
-moddir = $(prefix)/modules/openid
+def firstName(loan):
+    return assoc("'firstName", loan)
 
-mod_DATA = openid.prefix
-openid.prefix: $(top_builddir)/config.status
-	echo ${MODAUTHOPENID_PREFIX} >openid.prefix
+def lastName(loan):
+    return assoc("'lastName", loan)
 
-EXTRA_DIST = openid.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/public/index.html
+def ssn(loan):
+    return assoc("'ssn", loan)
 
-dist_noinst_SCRIPTS = start-test stop-test
+def amount(loan):
+    return assoc("'amount", loan)
 
-endif
+def approver(loan):
+    return assoc("'approver", loan)
+
+def approval(loan):
+    return assoc("'approval", loan)
+
+def assessor(loan):
+    return assoc("'assessor", loan)
+
+def risk(loan):
+    return assoc("'risk", loan)
+

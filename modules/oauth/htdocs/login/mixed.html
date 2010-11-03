@@ -102,12 +102,12 @@ function submitOAuth2Signin(w) {
 }
 
 function withFacebook() {
-    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'testfacebookapp', 'https://graph.facebook.com/me'];
+    var parms = ['https://graph.facebook.com/oauth/authorize', 'https://graph.facebook.com/oauth/access_token', 'facebook.com', 'https://graph.facebook.com/me'];
     return parms;
 }
 
 function withGithub() {
-    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'testgithubapp', 'https://github.com/api/v2/json/user/show'];
+    var parms = ['https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'github.com', 'https://github.com/api/v2/json/user/show'];
     return parms;
 }
 
@@ -123,12 +123,12 @@ function submitOAuth1Signin(w) {
 }
 
 function withLinkedin() {
-    var parms = ['https://api.linkedin.com/uas/oauth/requestToken', 'https://www.linkedin.com/uas/oauth/authorize', 'https://api.linkedin.com/uas/oauth/accessToken', 'testlinkedinapp', 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,public-profile-url)'];
+    var parms = ['https://api.linkedin.com/uas/oauth/requestToken', 'https://www.linkedin.com/uas/oauth/authorize', 'https://api.linkedin.com/uas/oauth/accessToken', 'linkedin.com', 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name,public-profile-url)'];
     return parms;
 }
 
 function withTwitter() {
-    var parms = ['https://api.twitter.com/oauth/request_token', 'https://api.twitter.com/oauth/authorize', 'https://api.twitter.com/oauth/access_token', 'testtwitterapp', 'https://api.twitter.com/1/statuses/user_timeline.json'];
+    var parms = ['https://api.twitter.com/oauth/request_token', 'https://api.twitter.com/oauth/authorize', 'https://api.twitter.com/oauth/access_token', 'twitter.com', 'https://api.twitter.com/1/statuses/user_timeline.json'];
     return parms;
 }
 </script>

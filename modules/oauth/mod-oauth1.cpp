@@ -105,6 +105,12 @@ static int checkUserID(request_rec *r) {
 const failable<int> authenticated(const list<list<value> >& info, request_rec* r) {
     debug(info, "modoauth1::authenticated::info");
 
+    // Store user info in the request
+    const list<value> realm = assoc<value>("realm", info);
+    if (isNil(realm) || isNil(cdr(realm)))
+        return mkfailure<int>("Couldn't retrieve realm");
+    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "REALM"), apr_pstrdup(r->pool, c_str(cadr(realm))));
+
     const list<value> id = assoc<value>("id", info);
     if (isNil(id) || isNil(cdr(id)))
         return mkfailure<int>("Couldn't retrieve user id");
@@ -250,35 +256,53 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
 
 /**
  * Extract user info from a profile/info response.
- * TODO This currently only works for twitter and linkedin profiles and
- * needs to be made configurable.
+ * TODO This currently only works for Twitter, Foursquare and LinkedIn.
+ * User profile parsing needs to be made configurable.
  */
-const failable<list<value> > profileUserInfo(const string& info) {
-    if (substr(info, 0, 1) == "[") {
-        // JSON profile
+const failable<list<value> > profileUserInfo(const value& cid, const string& info) {
+    string b = substr(info, 0, 1);
+    if (b == "[") {
+        // Twitter JSON profile
         json::JSONContext cx;
         const list<value> infov(json::jsonValues(content(json::readJSON(mklist<string>(info), cx))));
         if (isNil(infov))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         debug(infov, "modoauth1::access_token::info");
         const list<value> uv = assoc<value>("user", car(infov));
+        debug(uv, "modoauth1::access_token::userInfo");
         if (isNil(uv) || isNil(cdr(uv)))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         const list<value> iv = cdr(uv);
-        return iv;
-
-    } else {
+        return cons<value>(mklist<value>("realm", cid), iv);
+    }
+    if (b == "{") {
+        // Foursquare JSON profile
+        json::JSONContext cx;
+        const list<value> infov(json::jsonValues(content(json::readJSON(mklist<string>(info), cx))));
+        if (isNil(infov))
+            return mkfailure<list<value> >("Couldn't retrieve user info");
+        debug(infov, "modoauth1::access_token::info");
+        const list<value> uv = assoc<value>("user", infov);
+        debug(uv, "modoauth1::access_token::userInfo");
+        if (isNil(uv) || isNil(cdr(uv)))
+            return mkfailure<list<value> >("Couldn't retrieve user info");
+        const list<value> iv = cdr(uv);
+        return cons<value>(mklist<value>("realm", cid), iv);
+    }
+    if (b == "<") {
         // XML profile
         const list<value> infov = elementsToValues(readXML(mklist<string>(info)));
         if (isNil(infov))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         debug(infov, "modoauth1::access_token::info");
         const list<value> pv = car(infov);
+        debug(pv, "modoauth1::access_token::userInfo");
         if (isNil(pv) || isNil(cdr(pv)))
             return mkfailure<list<value> >("Couldn't retrieve user info");
         const list<value> iv = cdr(pv);
-        return iv;
+        return cons<value>(mklist<value>("realm", cid), iv);
     }
+    return mkfailure<list<value> >("Couldn't retrieve user info");
 }
 
 /**
@@ -356,7 +380,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     debug(profres, "modoauth1::access_token::profres");
 
     // Retrieve the user info from the profile
-    const failable<list<value> > iv = profileUserInfo(profres);
+    const failable<list<value> > iv = profileUserInfo(cadr(cid), profres);
     if (!hasContent(iv))
         return mkfailure<int>(reason(iv));
 

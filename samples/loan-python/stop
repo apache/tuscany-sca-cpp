@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,18 +17,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-
-if WANT_OPENID
-
-dist_mod_SCRIPTS = openid-conf openid-step2-conf openid-memcached-conf
-moddir = $(prefix)/modules/openid
-
-mod_DATA = openid.prefix
-openid.prefix: $(top_builddir)/config.status
-	echo ${MODAUTHOPENID_PREFIX} >openid.prefix
-
-EXTRA_DIST = openid.composite user-info.scm htdocs/index.html htdocs/login/index.html htdocs/logout/index.html htdocs/public/index.html
-
-dist_noinst_SCRIPTS = start-test stop-test
-
-endif
+../../modules/http/httpd-stop tmp
+../../components/cache/memcached-stop

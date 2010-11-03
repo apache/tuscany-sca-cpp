@@ -395,6 +395,8 @@ const value mkpropProxy(const value& prop) {
         return lambda<value(const list<value>&)>(hostPropProxy(elementValue(prop)));
     if (scdl::name(prop) == "user")
         return lambda<value(const list<value>&)>(userPropProxy(elementValue(prop)));
+    if (scdl::name(prop) == "realm")
+        return lambda<value(const list<value>&)>(envPropProxy("REALM", elementValue(prop)));
     if (scdl::name(prop) == "email")
         return lambda<value(const list<value>&)>(envPropProxy("EMAIL", elementValue(prop)));
     if (scdl::name(prop) == "nickname")

@@ -117,7 +117,7 @@ BrowserMatch ".*MSIE.*" nokeepalive ssl-unclean-shutdown downgrade-1.0 force-res
 SSLOptions -StrictRequire +OptRenegotiate
 
 # Verify client certificates
-SSLVerifyClient optional
+SSLVerifyClient none
 SSLVerifyDepth 1
 
 # Enable SSL proxy engine
@@ -195,7 +195,7 @@ SSLRequire %{SSL_CIPHER_USEKEYSIZE} >= 128 and ( \
 ( %{SSL_CLIENT_I_DN_O} == "$org" and %{SSL_CLIENT_S_DN_OU} == "tunnel" ) or \
 ( %{SSL_CLIENT_I_DN_O} == "$org" and %{SSL_CLIENT_S_DN_OU} == "proxy" and \
   %{HTTP:X-Forwarded-SSL-Issuer-DN-O} == "$org" and %{HTTP:X-Forwarded-SSL-Client-DN-OU} == "server" ) or \
-%{REQUEST_URI} =~ m/^.(login|logout|openid|unprotected).*$/ )
+%{REQUEST_URI} =~ m/^.(login|logout|openid|public|ui).*$/ )
 
 # Record received SSL client certificate info in environment vars
 RewriteEngine on
