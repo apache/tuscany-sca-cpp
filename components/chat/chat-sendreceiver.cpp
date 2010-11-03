@@ -20,7 +20,7 @@
 /* $Rev$ $Date$ */
 
 /**
- * XMPP chatter component implementation.
+ * XMPP chat sender/receiver component implementation.
  */
 
 #include "string.hpp"
@@ -33,6 +33,7 @@
 
 namespace tuscany {
 namespace chat {
+namespace sendreceiver {
 
 /**
  * Post an item to an XMPP JID.
@@ -91,11 +92,11 @@ private:
 };
 
 /**
- * Chatter component lambda function
+ * Chat sender/receiver component lambda function
  */
-class chatter {
+class chatSenderReceiver {
 public:
-    chatter(XMPPClient& xc, worker& w) : xc(xc), w(w) {
+    chatSenderReceiver(XMPPClient& xc, worker& w) : xc(xc), w(w) {
     }
 
     const value operator()(const list<value>& params) const {
@@ -103,15 +104,15 @@ public:
         if (func == "post")
             return post(cdr(params), const_cast<XMPPClient&>(xc));
 
-        // Stop the chatter component
+        // Stop the chat sender/receiver component
         if (func != "stop")
             return tuscany::mkfailure<tuscany::value>();
-        debug("chat::chatter::stop");
+        debug("chat::sendreceiver::stop");
 
         // Disconnect and shutdown the worker thread
         disconnect(const_cast<XMPPClient&>(xc));
         cancel(const_cast<worker&>(w));
-        debug("chat::chatter::stopped");
+        debug("chat::sendreceiver::stopped");
 
         return failable<value>(value(lambda<value(const list<value>&)>()));
     }
@@ -143,10 +144,11 @@ const failable<value> start(const list<value>& params) {
     const lambda<failable<bool>(const value&, const value&, XMPPClient&)> rl = relay(rel);
     submit<failable<bool> >(w, lambda<failable<bool>()>(subscribe(rl, xc)));
 
-    // Return the chatter component lambda function
-    return value(lambda<value(const list<value>&)>(chatter(xc, w)));
+    // Return the chat sender/receiver component lambda function
+    return value(lambda<value(const list<value>&)>(chatSenderReceiver(xc, w)));
 }
 
+}
 }
 }
 
@@ -155,7 +157,7 @@ extern "C" {
 const tuscany::value apply(const tuscany::list<tuscany::value>& params) {
     const tuscany::value func(car(params));
     if (func == "start")
-        return tuscany::chat::start(cdr(params));
+        return tuscany::chat::sendreceiver::start(cdr(params));
     return tuscany::mkfailure<tuscany::value>();
 }
 

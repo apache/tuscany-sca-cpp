@@ -27,7 +27,7 @@ compdir=$(prefix)/components/webservice
 
 comp_DATA = axis2c.prefix axis2.xml services.xml module.xml
 
-EXTRA_DIST = webservice.composite axis2.xml services.xml module.xml *.scm
+EXTRA_DIST = webservice.composite webservice-client.componentType webservice-listener.componentType axis2.xml services.xml module.xml *.scm
 
 axis2c.prefix: $(top_builddir)/config.status
 	echo ${AXIS2C_PREFIX} >axis2c.prefix

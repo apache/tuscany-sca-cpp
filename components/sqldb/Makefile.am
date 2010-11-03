@@ -29,7 +29,7 @@ comp_DATA = pgsql.prefix
 pgsql.prefix: $(top_builddir)/config.status
 	echo ${PGSQL_PREFIX} >pgsql.prefix
 
-EXTRA_DIST = sqldb.composite
+EXTRA_DIST = sqldb.composite sqldb.componentType
 
 comp_LTLIBRARIES = libsqldb.la
 noinst_DATA = libsqldb.so

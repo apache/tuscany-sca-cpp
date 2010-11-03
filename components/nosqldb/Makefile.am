@@ -27,7 +27,7 @@ comp_DATA = tinycdb.prefix
 tinycdb.prefix: $(top_builddir)/config.status
 	echo ${TINYCDB_PREFIX} >tinycdb.prefix
 
-EXTRA_DIST = nosqldb.composite
+EXTRA_DIST = nosqldb.composite nosqldb.componentType
 
 comp_LTLIBRARIES = libnosqldb.la
 noinst_DATA = libnosqldb.so

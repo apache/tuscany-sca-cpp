@@ -25,7 +25,7 @@ comp_DATA = memcached.prefix
 memcached.prefix: $(top_builddir)/config.status
 	echo ${MEMCACHED_PREFIX} >memcached.prefix
 
-EXTRA_DIST = cache.composite
+EXTRA_DIST = cache.composite memcache.componentType datacache.componentType memocache.componentType *.scm
 
 comp_LTLIBRARIES = libmemcache.la libdatacache.la libmemocache.la
 noinst_DATA = libmemcache.so libdatacache.so libmemocache.so

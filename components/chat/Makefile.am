@@ -31,14 +31,20 @@ comp_DATA = vysper.prefix
 vysper.prefix: $(top_builddir)/config.status
 	echo ${VYSPER_PREFIX} >vysper.prefix
 
-EXTRA_DIST = chat.composite *.scm
+EXTRA_DIST = chat.composite chat-sendreceiver.componentType chat-sender.componentType *.scm
 
-comp_LTLIBRARIES = libchatter.la
-libchatter_la_SOURCES = chatter.cpp
-libchatter_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
-noinst_DATA = libchatter.so
-libchatter.so:
-	ln -s .libs/libchatter.so
+comp_LTLIBRARIES = libchat-sendreceiver.la libchat-sender.la
+noinst_DATA = libchat-sendreceiver.so libchat-sender.so
+
+libchat_sendreceiver_la_SOURCES = chat-sendreceiver.cpp
+libchat_sendreceiver_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
+libchat-sendreceiver.so:
+	ln -s .libs/libchat-sendreceiver.so
+
+libchat_sender_la_SOURCES = chat-sender.cpp
+libchat_sender_la_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv
+libchat-sender.so:
+	ln -s .libs/libchat-sender.so
 
 xmpp_test_SOURCES = xmpp-test.cpp
 xmpp_test_LDFLAGS = -L${LIBSTROPHE_LIB} -R${LIBSTROPHE_LIB} -lstrophe -lssl -lresolv

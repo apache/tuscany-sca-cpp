@@ -32,7 +32,7 @@ scribe.prefix: $(top_builddir)/config.status
 thrift.prefix: $(top_builddir)/config.status
 	echo ${THRIFT_PREFIX} >thrift.prefix
 
-EXTRA_DIST = log.composite *.scm *.thrift
+EXTRA_DIST = log.composite log.componentType logger.componentType *.scm *.thrift
 
 BUILT_SOURCES=gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
 gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h: scribe.thrift

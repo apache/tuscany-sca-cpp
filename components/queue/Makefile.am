@@ -29,7 +29,7 @@ comp_DATA = qpidc.prefix
 qpidc.prefix: $(top_builddir)/config.status
 	echo ${QPIDC_PREFIX} >qpidc.prefix
 
-EXTRA_DIST = queue.composite *.scm
+EXTRA_DIST = queue.composite queue-sender.componentType queue-listener.componentType *.scm
 
 comp_LTLIBRARIES = libqueue-sender.la libqueue-listener.la
 noinst_DATA = libqueue-sender.so libqueue-listener.so
