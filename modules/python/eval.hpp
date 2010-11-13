@@ -135,8 +135,10 @@ PyObject* pyLambda_getattr(PyObject *self, PyObject *attrname) {
     if (substr(name, 0, 1) == "_")
         return PyObject_GenericGetAttr(self, attrname);
 
-    if (name == "eval")
+    if (name == "eval") {
+        Py_INCREF(self);
         return self;
+    }
 
     const pyLambda* pyl = (pyLambda*)self;
     debug(name, "python::getattr::name");

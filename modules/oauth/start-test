@@ -21,14 +21,14 @@
 ../../components/cache/memcached-start 11212
 ../../components/cache/memcached-start 11213
 
-../../modules/http/ssl-ca-conf tmp jsdelfino.com
-../../modules/http/ssl-cert-conf tmp jsdelfino.com
-../../modules/http/httpd-conf tmp jsdelfino.com 8090/80 htdocs
+../../modules/http/ssl-ca-conf tmp localhost
+../../modules/http/ssl-cert-conf tmp localhost
+../../modules/http/httpd-conf tmp localhost 8090/80 htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453/443
 
 ./oauth-conf tmp
-./oauth-memcached-conf tmp jsdelfino.com 11212
-./oauth-memcached-conf tmp jsdelfino.com 11213
+./oauth-memcached-conf tmp localhost 11212
+./oauth-memcached-conf tmp localhost 11213
 
 # Configure your app keys here
 ./oauth1-appkey-conf tmp twitter.com app2345 secret7890

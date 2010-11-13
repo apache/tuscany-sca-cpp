@@ -20,7 +20,7 @@ if WANT_PYTHON
 dist_sample_SCRIPTS = start stop ssl-start uec2-start
 sampledir = $(prefix)/samples/store-python
 
-nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html
+nobase_dist_sample_DATA = currency-converter.py fruits-catalog.py shopping-cart.py store.py store.composite htdocs/*.html htdocs/login/*.html htdocs/logout/*.html
 
 dist_noinst_SCRIPTS = server-test
 TESTS = server-test

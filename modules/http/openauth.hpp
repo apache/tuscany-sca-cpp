@@ -19,11 +19,11 @@
 
 /* $Rev$ $Date$ */
 
-#ifndef tuscany_oauth_hpp
-#define tuscany_oauth_hpp
+#ifndef tuscany_openauth_hpp
+#define tuscany_openauth_hpp
 
 /**
- * OAuth support utility functions.
+ * Tuscany Open auth support utility functions.
  */
 
 #include "string.hpp"
@@ -35,10 +35,9 @@
 #include "../json/json.hpp"
 #include "../http/httpd.hpp"
 #include "../http/http.hpp"
-#include "../../components/cache/memcache.hpp"
 
 namespace tuscany {
-namespace oauth {
+namespace openauth {
 
 /**
  * Return the session id from a request.
@@ -51,27 +50,24 @@ const char* cookieName(const char* cs) {
 const maybe<string> sessionID(const list<string> c) {
     if (isNil(c))
         return maybe<string>();
-    const list<string> kv = tokenize("=", cookieName(c_str(car(c))));
-    if (!isNil(kv) && !isNil(cdr(kv))) {
-        if (car(kv) == "TuscanyOpenAuth")
-            return cadr(kv);
+    const string cn = cookieName(c_str(car(c)));
+    const int i = find(cn, "=");
+    if (i < length(cn)) {
+        const list<string> kv = mklist<string>(substr(cn, 0, i), substr(cn, i+1));
+        if (!isNil(kv) && !isNil(cdr(kv))) {
+            if (car(kv) == "TuscanyOpenAuth")
+                return cadr(kv);
+        }
     }
     return sessionID(cdr(c));
 }
 
 const maybe<string> sessionID(const request_rec* r) {
     const char* c = apr_table_get(r->headers_in, "Cookie");
-    debug(c, "oauth::sessionid::cookies");
+    debug(c, "openauth::sessionid::cookies");
     if (c == NULL)
         return maybe<string>();
     return sessionID(tokenize(";", c));
-}
-
-/**
- * Return the user info for a session.
- */
-const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) {
-    return memcache::get(mklist<value>("tuscanyOpenAuth", sid), mc);
 }
 
 /**
@@ -82,7 +78,7 @@ const string cookie(const string& sid) {
     char exp[32];
     strftime(exp, 32, "%a, %d-%b-%Y %H:%M:%S GMT", gmtime(&t));
     const string c = string("TuscanyOpenAuth=") + sid + string(";path=/;expires=" + string(exp)) + ";secure=TRUE";
-    debug(c, "oauth::cookie");
+    debug(c, "openauth::cookie");
     return c;
 }
 
@@ -92,11 +88,11 @@ const string cookie(const string& sid) {
 const failable<int> login(const string& page, request_rec* r) {
     const list<list<value> > largs = mklist<list<value> >(mklist<value>("openauth_referrer", httpd::escape(httpd::url(r->uri, r))));
     const string loc = httpd::url(page, r) + string("?") + httpd::queryString(largs);
-    debug(loc, "oauth::login::uri");
+    debug(loc, "openauth::login::uri");
     return httpd::externalRedirect(loc, r);
 }
 
 }
 }
 
-#endif /* tuscany_oauth_hpp */
+#endif /* tuscany_openauth_hpp */

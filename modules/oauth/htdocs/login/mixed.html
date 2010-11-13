@@ -17,9 +17,14 @@
    under the License.
 -->
 
-<html><body><h1>Sign in with an OpenID or OAuth provider</h1>
+<html><body><h1>Sign in with a Form, an OpenID provider or an OAuth provider</h1>
 
 <script type="text/javascript">
+function submitFormSignin() {
+    document.formSignin.httpd_location.value = '/';
+    document.formSignin.submit();
+}
+
 function queryParams() {
     qp = new Array();
     qs = window.location.search.substring(1).split('&');
@@ -132,6 +137,17 @@ function withTwitter() {
     return parms;
 }
 </script>
+
+<form name="formSignin" method="POST" action="/login/dologin">
+<p>Sign in with your user id and password<br/>
+<table border="0">
+<tr><td>Username:</td><td><input type="text" name="httpd_username" value=""/></td></tr>
+<tr><td>Password:</td><td><input type="password" name="httpd_password" value=""/></td></tr>
+<tr><td><input type="button" onclick="submitFormSignin()" value="Sign in"/></td><td></td></tr>
+</table>
+</p>
+<input type="hidden" name="httpd_location" value="/"/>
+</form>
 
 <form name="fields">
 <p>Sign in with your Google account<br/><input type="button" onclick="submitOpenIDSignin(withGoogle)" value="Sign in"/></p>

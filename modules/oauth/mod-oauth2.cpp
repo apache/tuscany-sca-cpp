@@ -33,8 +33,8 @@
 #include "monad.hpp"
 #include "../http/httpd.hpp"
 #include "../http/http.hpp"
+#include "../http/openauth.hpp"
 #include "../../components/cache/memcache.hpp"
-#include "oauth.hpp"
 
 extern "C" {
 extern module AP_MODULE_DECLARE_DATA mod_tuscany_oauth2;
@@ -77,20 +77,10 @@ public:
 };
 
 /**
- * Check user authentication.
+ * Return the user info for a session.
  */
-static int checkUserID(request_rec *r) {
-    // Decline if we're not enabled or AuthType is not set to Open
-    const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_oauth2);
-    if (!dc.enabled)
-        return DECLINED;
-    const char* atype = ap_auth_type(r);
-    if (atype == NULL || strcasecmp(atype, "Open"))
-        return DECLINED;
-
-    gc_scoped_pool pool(r->pool);
-    httpdDebugRequest(r, "modoauth2::checkUserID::input");
-    return OK;
+const failable<value> userInfo(const value& sid, const memcache::MemCached& mc) {
+    return memcache::get(mklist<value>("tuscanyOpenAuth", sid), mc);
 }
 
 /**
@@ -98,6 +88,12 @@ static int checkUserID(request_rec *r) {
  */
 const failable<int> authenticated(const list<list<value> >& info, request_rec* r) {
     debug(info, "modoauth2::authenticated::info");
+
+    // Store user info in the request
+    const list<value> realm = assoc<value>("realm", info);
+    if (isNil(realm) || isNil(cdr(realm)))
+        return mkfailure<int>("Couldn't retrieve realm");
+    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "REALM"), apr_pstrdup(r->pool, c_str(cadr(realm))));
 
     const list<value> id = assoc<value>("id", info);
     if (isNil(id) || isNil(cdr(id)))
@@ -122,9 +118,7 @@ const failable<int> authenticated(const list<list<value> >& info, request_rec* r
     if (!isNil(lastname) && !isNil(cdr(lastname)))
         apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "LASTNAME"), apr_pstrdup(r->pool, c_str(cadr(lastname))));
 
-    if(r->ap_auth_type == NULL)
-        r->ap_auth_type = const_cast<char*>("OAuth");
-    return DECLINED;
+    return OK;
 }
 
 /**
@@ -236,47 +230,47 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
         return mkfailure<int>(reason(prc));
 
     // Send session ID to the client in a cookie
-    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(oauth::cookie(sid)));
+    apr_table_set(r->err_headers_out, "Set-Cookie", c_str(openauth::cookie(sid)));
     return httpd::externalRedirect(httpd::url(r->uri, r), r);
 }
 
 /**
- * Handle a request.
+ * Check user authentication.
  */
-int handler(request_rec* r) {
-    // Decline if we're not enabled or if the user is already 
-    // authenticated by another module
+static int checkAuthn(request_rec *r) {
+    // Decline if we're not enabled or AuthType is not set to Open
     const DirConf& dc = httpd::dirConf<DirConf>(r, &mod_tuscany_oauth2);
-    if(!dc.enabled)
+    if (!dc.enabled)
         return DECLINED;
-    if (r->user != NULL || apr_table_get(r->subprocess_env, "SSL_REMOTE_USER") != NULL)
+    const char* atype = ap_auth_type(r);
+    if (atype == NULL || strcasecmp(atype, "Open"))
         return DECLINED;
 
     gc_scoped_pool pool(r->pool);
-    httpdDebugRequest(r, "modoauth2::handler::input");
+    httpdDebugRequest(r, "modoauth2::checkAuthn::input");
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_oauth2);
 
     // Get session id from the request
-    const maybe<string> sid = oauth::sessionID(r);
+    const maybe<string> sid = openauth::sessionID(r);
     if (hasContent(sid)) {
         // Decline if the session id was not created by this module
         if (substr(content(sid), 0, 7) != "OAuth2_")
             return DECLINED;
 
         // If we're authenticated store the user info in the request
-        const failable<value> info = oauth::userInfo(content(sid), sc.mc);
-        if (hasContent(info))
+        const failable<value> info = userInfo(content(sid), sc.mc);
+        if (hasContent(info)) {
+            r->ap_auth_type = const_cast<char*>(atype);
             return httpd::reportStatus(authenticated(content(info), r));
+        }
     }
 
     // Get the request args
     const list<list<value> > args = httpd::queryArgs(r);
 
-    // Decline if the request is for OpenID authentication
+    // Decline if the request is for another authentication provider
     if (!isNil(assoc<value>("openid_identifier", args)))
         return DECLINED;
-
-    // Decline if the request is for OAuth1 authentication
     if (!isNil(assoc<value>("mod_oauth1_step", args)))
         return DECLINED;
 
@@ -286,15 +280,20 @@ int handler(request_rec* r) {
     const value step = !isNil(sl) && !isNil(cdr(sl))? cadr(sl) : "";
 
     // Handle OAuth authorize request step
-    if (step == "authorize")
+    if (step == "authorize") {
+        r->ap_auth_type = const_cast<char*>(atype);
         return httpd::reportStatus(authorize(args, r, sc));
+    }
 
     // Handle OAuth access_token request step
-    if (step == "access_token")
+    if (step == "access_token") {
+        r->ap_auth_type = const_cast<char*>(atype);
         return httpd::reportStatus(access_token(args, r, sc));
+    }
 
     // Redirect to the login page
-    return httpd::reportStatus(oauth::login(dc.login, r));
+    r->ap_auth_type = const_cast<char*>(atype);
+    return httpd::reportStatus(openauth::login(dc.login, r));
 }
 
 /**
@@ -412,8 +411,7 @@ const command_rec commands[] = {
 void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
-    ap_hook_check_user_id(checkUserID, NULL, NULL, APR_HOOK_MIDDLE);
-    ap_hook_handler(handler, NULL, NULL, APR_HOOK_FIRST);
+    ap_hook_check_authn(checkAuthn, NULL, NULL, APR_HOOK_MIDDLE, AP_AUTH_INTERNAL_PER_CONF);
 }
 
 }

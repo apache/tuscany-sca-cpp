@@ -34,8 +34,7 @@ ProxyPass /balancer-manager !
 ProxyPass / balancer://sslcluster/
 
 <Proxy balancer://sslcluster>
-Order deny,allow
-Allow from all
+Require all granted
 ProxySet lbmethod=byrequests
 </Proxy>
 
@@ -43,8 +42,6 @@ ProxySet lbmethod=byrequests
 <Location /balancer-manager>
 SetHandler balancer-manager
 HostnameLookups on
-Deny from all
-Allow from all
 Require user admin
 </Location> 
 

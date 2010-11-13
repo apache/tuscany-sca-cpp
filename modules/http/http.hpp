@@ -159,19 +159,19 @@ const failable<CURL*> setup(const string& url, const CURLSession& cs) {
 
     // Setup SSL options
     if (cs.ca != "") {
-        debug(cs.ca, "http::apply::ca");
+        debug(cs.ca, "http::setup::ca");
         curl_easy_setopt(ch, CURLOPT_CAINFO, c_str(cs.ca));
         curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_easy_setopt(ch, CURLOPT_SSL_VERIFYHOST, 2);
     } else
         curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, false);
     if (cs.cert != "") {
-        debug(cs.cert, "http::apply::cert");
+        debug(cs.cert, "http::setup::cert");
         curl_easy_setopt(ch, CURLOPT_SSLCERT, c_str(cs.cert));
         curl_easy_setopt(ch, CURLOPT_SSLCERTTYPE, "PEM");
     }
     if (cs.key != "") {
-        debug(cs.key, "http::apply::key");
+        debug(cs.key, "http::setup::key");
         curl_easy_setopt(ch, CURLOPT_SSLKEY, c_str(cs.key));
         curl_easy_setopt(ch, CURLOPT_SSLKEYTYPE, "PEM");
     }
@@ -238,6 +238,8 @@ curl_slist* headers(curl_slist* cl, const list<string>& h) {
 }
 
 template<typename R> const failable<list<R> > apply(const list<list<string> >& hdr, const lambda<R(const string&, const R)>& reduce, const R& initial, const string& url, const string& verb, const CURLSession& cs) {
+    debug(url, "http::apply::url");
+    debug(verb, "http::apply::verb");
 
     // Setup the CURL session
     const failable<CURL*> fch = setup(url, cs);
@@ -523,6 +525,7 @@ apr_pollfd_t* pollfd(apr_socket_t* s, const int e, const gc_pool& p) {
  * Connect to a URL.
  */
 const failable<bool> connect(const string& url, CURLSession& cs) {
+    debug(url, "http::connect::url");
 
     // Setup the CURL session
     const failable<CURL*> fch = setup(url, cs);

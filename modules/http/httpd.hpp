@@ -31,14 +31,23 @@
 #include <apr_lib.h>
 #define APR_WANT_STRFUNC
 #include <apr_want.h>
+#include <apr_base64.h>
 
 #include <httpd.h>
+// Hack to workaround compile error with HTTPD 2.3.8
+#define new new_
 #include <http_config.h>
+#undef new
 #include <http_core.h>
 #include <http_connection.h>
 #include <http_request.h>
 #include <http_protocol.h>
+// Hack to workaround compile error with HTTPD 2.3.8
+#define aplog_module_index aplog_module_index = 0
 #include <http_log.h>
+#undef aplog_module_index
+#undef APLOG_MODULE_INDEX
+#define APLOG_MODULE_INDEX (aplog_module_index ? *aplog_module_index : APLOG_NO_MODULE)
 #include <http_main.h>
 #include <util_script.h>
 #include <util_md5.h>
@@ -46,6 +55,8 @@
 #include <http_log.h>
 #include <ap_mpm.h>
 #include <mod_core.h>
+#include <ap_provider.h>
+#include <mod_auth.h>
 
 #include "string.hpp"
 #include "stream.hpp"
@@ -358,6 +369,7 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
  * Report a request execution status.
  */
 const int reportStatus(const failable<int>& rc) {
+    debug(rc, "httpd::reportStatus::rc");
     if (!hasContent(rc))
         return HTTP_INTERNAL_SERVER_ERROR;
     return content(rc);
@@ -575,10 +587,11 @@ const failable<request_rec*, int> internalSubRequest(const string& nr_uri, reque
  * Return an HTTP external redirect request.
  */
 const int externalRedirect(const string& uri, request_rec* r) {
+    debug(uri, "httpd::externalRedirect");
     r->status = HTTP_MOVED_TEMPORARILY;
     apr_table_setn(r->headers_out, "Location", apr_pstrdup(r->pool, c_str(uri)));
     r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/") + uri));
-    return OK;
+    return HTTP_MOVED_TEMPORARILY;
 }
 
 /**
@@ -642,6 +655,12 @@ int debugNote(unused void* r, const char* key, const char* value) {
  */
 const bool debugRequest(request_rec* r, const string& msg) {
     cdebug << msg << ":" << endl;
+    cdebug << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
+    cdebug << "  uri: " << debugOptional(r->uri) << endl;
+    cdebug << "  path info: " << debugOptional(r->path_info) << endl;
+    cdebug << "  filename: " << debugOptional(r->filename) << endl;
+    cdebug << "  uri tokens: " << pathTokens(r->uri) << endl;
+    cdebug << "  args: " << debugOptional(r->args) << endl;
     cdebug << "  server: " << debugOptional(r->server->server_hostname) << endl;
     cdebug << "  protocol: " << debugOptional(r->protocol) << endl;
     cdebug << "  method: " << debugOptional(r->method) << endl;
@@ -649,16 +668,10 @@ const bool debugRequest(request_rec* r, const string& msg) {
     cdebug << "  content type: " << contentType(r) << endl;
     cdebug << "  content encoding: " << debugOptional(r->content_encoding) << endl;
     apr_table_do(debugHeader, r, r->headers_in, NULL);
-    cdebug << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
-    cdebug << "  uri: " << debugOptional(r->uri) << endl;
-    cdebug << "  path info: " << debugOptional(r->path_info) << endl;
-    cdebug << "  filename: " << debugOptional(r->filename) << endl;
-    cdebug << "  uri tokens: " << pathTokens(r->uri) << endl;
-    cdebug << "  args: " << debugOptional(r->args) << endl;
     cdebug << "  user: " << debugOptional(r->user) << endl;
     cdebug << "  auth type: " << debugOptional(r->ap_auth_type) << endl;
     apr_table_do(debugEnv, r, r->subprocess_env, NULL);
-    apr_table_do(debugEnv, r, r->notes, NULL);
+    apr_table_do(debugNote, r, r->notes, NULL);
     return true;
 }
 

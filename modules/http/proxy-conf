@@ -33,8 +33,7 @@ ProxyStatus On
 ProxyPass / balancer://cluster/
 
 <Proxy balancer://cluster>
-Order deny,allow
-Allow from all
+Require all granted
 ProxySet lbmethod=byrequests
 </Proxy>
 

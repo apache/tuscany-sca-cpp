@@ -59,21 +59,21 @@ sleep 1
 sleep 1
 
 # Start two proxy balancers
-./proxy-conf tmp/proxy1 8091
+./proxy-conf tmp/proxy1 8090
 ../../modules/http/proxy-member-conf tmp/proxy1 localhost 8101
 ../../modules/http/proxy-member-conf tmp/proxy1 localhost 8102
 ../../modules/http/proxy-member-conf tmp/proxy1 localhost 8103
 ../../modules/http/httpd-start tmp/proxy1
 
-./proxy-conf tmp/proxy2 8092
+./proxy-conf tmp/proxy2 8091
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8101
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8102
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8103
 ../../modules/http/httpd-start tmp/proxy2
 
 # Redirect traffic from port 80 to proxy1
-#sudo ../../ubuntu/ip-redirect-all 80 8091
+#sudo ../../ubuntu/ip-redirect-all 80 8090
 
 # Redirect traffic from port 80 to proxy2
-#sudo ../../ubuntu/ip-redirect-all 80 8092
+#sudo ../../ubuntu/ip-redirect-all 80 8091
 

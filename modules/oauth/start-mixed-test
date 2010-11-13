@@ -44,6 +44,8 @@ here=`readlink -f $0`; here=`dirname $here`
 ../openid/openid-memcached-conf tmp localhost 11212
 ../openid/openid-memcached-conf tmp localhost 11213
 
+../http/open-auth-conf tmp
+
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
@@ -51,6 +53,7 @@ SCAContribution `pwd`/
 SCAComposite oauth.composite
 
 Alias /login/index.html $here/htdocs/login/mixed.html
+
 EOF
 
 ../../modules/http/httpd-start tmp
