@@ -35,7 +35,7 @@ bool testJSEval() {
     JSONContext cx;
     const string script("(function testJSON(n){ return JSON.parse(JSON.stringify(n)) })(5)");
     jsval rval;
-    assert(JS_EvaluateScript(cx, cx.getGlobal(), c_str(script), length(script), "testJSON.js", 1, &rval));
+    assert(JS_EvaluateScript(cx, cx.getGlobal(), c_str(script), (uintN)length(script), "testJSON.js", 1, &rval));
     const string r(JS_GetStringBytes(JS_ValueToString(cx, rval)));
     assert(r == "5");
     return true;

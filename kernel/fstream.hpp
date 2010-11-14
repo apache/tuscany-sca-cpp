@@ -101,7 +101,7 @@ public:
         fclose(file);
     }
 
-    const int read(void* buf, int size) {
+    const size_t read(void* buf, size_t size) {
         return fread(buf, 1, size, file);
     }
 

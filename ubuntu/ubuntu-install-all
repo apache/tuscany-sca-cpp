@@ -17,7 +17,7 @@
 
 # Install a complete distribution, the required system tools and libraries, the
 # runtime dependencies and the Tuscany SCA runtime on a fresh Ubuntu Server
-# 9.10 system.
+# 10.10 64-bit system.
 
 # Display commands as they are executed
 set -x
@@ -31,23 +31,28 @@ if [ "$?" != "0" ]; then
     exit $?
 fi
 
-# Uncomment to install GCC 4.5
-#wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
-#chmod +x ./ubuntu-gcc-4.5
-#./ubuntu-gcc-4.5
-#if [ "$?" != "0" ]; then
-#    exit $?
-#fi
+# Build Libexpat
+wget http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
+mv download expat-2.0.1.tar.gz
+tar xzf expat-2.0.1.tar.gz
+cd expat-2.0.1
+./configure --prefix=$build/expat-2.0.1-bin
+make
+make install
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+cd $build
 
 # Build Apache HTTP server
-sudo apt-get -y install libssl-dev
+sudo apt-get -y install libssl-dev libpcre3-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
 wget http://archive.apache.org/dist/httpd/httpd-2.3.8.tar.gz
 tar xzf httpd-2.3.8.tar.gz
 cd httpd-2.3.8
-./configure --enable-ssl --enable-proxy --enable-usertrack --enable-mods-shared=most --with-included-apr --with-mpm=prefork --prefix=$build/httpd-2.3.8-bin
+./configure --enable-ssl --enable-proxy --enable-usertrack --enable-mods-shared=most --with-included-apr --with-expat=$build/expat-2.0.1-bin --with-mpm=prefork --prefix=$build/httpd-2.3.8-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -124,8 +129,8 @@ fi
 cd $build
 
 # Install Google AppEngine SDK
-wget http://googleappengine.googlecode.com/files/google_appengine_1.3.7.zip
-unzip google_appengine_1.3.7.zip
+wget http://googleappengine.googlecode.com/files/google_appengine_1.3.8.zip
+unzip google_appengine_1.3.8.zip
 
 # Build Apache Axis2/C
 sudo apt-get -y install pkg-config
@@ -156,25 +161,10 @@ sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-files
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo -s ln -s /usr/lib/libboost_program_options-mt.so /usr/lib/libboost_program_options.so
-sudo -s ln -s /usr/lib/libboost_filesystem-mt.so /usr/lib/libboost_filesystem.so
 wget http://www.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
 tar xzf qpid-cpp-0.6.tar.gz
 cd qpidc-0.6
 ./configure --prefix=$build/qpidc-0.6-bin
-make
-make install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-cd $build
-
-# Build Libexpat
-wget http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
-mv download expat-2.0.1.tar.gz
-tar xzf expat-2.0.1.tar.gz
-cd expat-2.0.1
-./configure --prefix=$build/expat-2.0.1-bin
 make
 make install
 if [ "$?" != "0" ]; then
@@ -234,7 +224,6 @@ fi
 cd $build
 
 # Build Mod_auth_openid
-sudo apt-get -y install libpcre3-dev
 git clone git://github.com/jsdelfino/mod_auth_openid.git
 cd mod_auth_openid
 ./autogen.sh
@@ -304,6 +293,10 @@ cp cpp/lib/libfb303.so $build/thrift-0.2.0-bin/contrib/fb303/lib
 cd $build
 
 # Build Facebook Scribe
+sudo apt-get -y install gawk
+if [ "$?" != "0" ]; then
+    exit $?
+fi
 wget http://github.com/downloads/facebook/scribe/scribe-2.2.tar.gz
 tar xzf scribe-2.2.tar.gz
 cd scribe
@@ -328,10 +321,6 @@ fi
 cd $build
 
 # Build Tuscany SCA
-sudo apt-get -y install
-if [ "$?" != "0" ]; then
-    exit $?
-fi
 git clone git://git.apache.org/tuscany-sca-cpp.git
 cd tuscany-sca-cpp
 cp etc/git-exclude .git/info/exclude

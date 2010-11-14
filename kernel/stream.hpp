@@ -106,7 +106,7 @@ ostream& operator<<(ostream& os, unused const stream_endl e) {
  */
 class istream {
 public:
-    virtual const int read(void* buf, int size) = 0;
+    virtual const size_t read(void* buf, size_t size) = 0;
     virtual const bool eof() = 0;
     virtual const bool fail() = 0;
     virtual const int get() = 0;
@@ -116,7 +116,7 @@ public:
 /**
  * Read from an input stream.
  */
-const int read(istream& is, void * buf, int size) {
+const size_t read(istream& is, void * buf, size_t size) {
     return is.read(buf, size);
 }
 
@@ -164,10 +164,11 @@ public:
 
     odebugstream& vprintf(const char* fmt, ...) {
         va_list args;
-        va_start (args, fmt);
         string s;
+        va_start (args, fmt);
         s.len = vsnprintf(NULL, 0, fmt, args);
         s.buf = gc_cnew(s.len + 1);
+        va_start (args, fmt);
         vsnprintf(s.buf, s.len + 1, fmt, args);
         buf = buf + s;
         va_end (args);

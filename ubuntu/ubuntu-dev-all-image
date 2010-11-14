@@ -17,7 +17,7 @@
 
 # Install a complete distribution, the required system tools and libraries,
 # the runtime dependencies and the Tuscany SCA runtime on a fresh Ubuntu
-# Server 9.10 image.
+# Server 10.10 64-bit image.
 
 # Display commands as they are executed
 set -x

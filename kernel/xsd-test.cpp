@@ -45,7 +45,7 @@ bool printNode(xmlTextReaderPtr reader) {
 }
 
 int xmlRead(void *context, char* buffer, int len) {
-    return fread(buffer, 1, len, (FILE*)context);
+    return (int)fread(buffer, 1, len, (FILE*)context);
 }
 
 int xmlClose(void *context) {

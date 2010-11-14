@@ -1,16 +1,12 @@
 Apache Tuscany SCA Runtime
 ==========================
 
-Automated installation on Ubuntu 10.04
-======================================
+Automated installation on Ubuntu 10.10 64-bit
+=============================================
 
 Tuscany provides two automated install scripts for Ubuntu. You can start with
-a fresh Ubuntu Server 10.04 system and these scripts will take care of all the
-download, build and installation steps for you.
-
-ubuntu/ubuntu-install:
-Minimum build and installation using dependencies (Apache HTTPD server,
-Memcached etc) from your Ubuntu 10.04 system.
+a fresh Ubuntu Server 10.10 64-bit system and these scripts will take care of
+all the download, build and installation steps for you.
 
 ubuntu/ubuntu-install-all:
 Complete build and installation with most dependencies built from source.
@@ -21,14 +17,14 @@ dependencies are downloaded and built in the current directory.
 To run the automated installation:
 mkdir tuscany
 cd tuscany
-wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install
-chmod +x ./ubuntu-install
-./ubuntu-install
+wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-install-all
+chmod +x ./ubuntu-install-all
+./ubuntu-install-all
 
 The installation script will display each command as it's executed.
 
 That's all you need to do to build and install the Tuscany SCA runtime on
-Ubuntu 10.04.
+Ubuntu 10.10 64-bit.
 
 For manual build and install steps on other systems or if you need to customize
 your installation, read on...
@@ -40,30 +36,23 @@ Building
 The Tuscany SCA Linux build uses the GNU Autotools tool chain.
 
 First install the following development tools:
-autoconf-2.64
+autoconf-2.67
 automake-1.11
 libtool-2.2.6
-doxygen-1.6.1
-gcc-g++-4.5
-
-The GCC 4.5 compiler may not yet be included in your Linux distribution.
-GCC 4.5 Ubuntu / Debian packages can be downloaded from:
-http://ftp.debian.org/debian/pool/main/g/gcc-4.5/
-
-To download and setup GCC 4.5 on Ubuntu 10.04, run this script:
-http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
-
+doxygen-1.7.1
+gcc-g++-4.4.5
 
 Then install the following development dependencies:
 
 Apache HTTP server and APR:
 httpd-2.3.8 (http://httpd.apache.org/)
 with included libapr and libaprutil
-built with OpenSSL libssl-0.9.8g
+built with OpenSSL libssl-0.9.8, libpcre3-8.02,
+and expat 2.0.1
 
 Memcached:
 memcached-1.4.5 (http://memcached.org/)
-built with libevent-1.4.11
+built with libevent-1.4.13
 
 XML:
 libxml2-2.7.7 (http://xmlsoft.org/)
@@ -86,12 +75,12 @@ Apache Axis2/C 1.6.0 (http://ws.apache.org/axis2/c/)
 
 Queueing:
 Apache Qpid/C++ 0.6 (http://qpid.apache.org/)
-built with libuuid-2.16, libboost-1.38.1, libboost-program-options-1.38.1 and
-libboost-filesystem-1.38.1
+built with libuuid-2.17.2, libboost-1.42.0, libboost-program-options-1.42.0 and
+libboost-filesystem-1.42.0
 
 Python:
-Python 2.6.4 (http://www.python.org/)
-Google AppEngine 1.3.7 (http://code.google.com/appengine/)
+Python 2.6.6 (http://www.python.org/)
+Google AppEngine 1.3.8 (http://code.google.com/appengine/)
 
 Java:
 a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
@@ -111,7 +100,6 @@ Apache Vysper 0.5 (http://mina.apache.org/)
 
 Libstrophe (http://code.stanziq.com/strophe/)
 build it from source at git://github.com/jsdelfino/libstrophe.git
-requires Expat 2.0.1 (http://sourceforge.net/projects/expat/)
 
 SQL Database:
 postgresql-9.0.1 (http://www.postgresql.org/)
@@ -174,7 +162,7 @@ in the configure help:
 ./configure --help
 
 
-Here's an example configuration, tested on Ubuntu 10.04, with the system
+Here's an example configuration tested on Ubuntu 10.10 64-bit, with the system
 dependencies installed in the standard system directories and some of the
 dependencies installed under $HOME:
 
@@ -225,164 +213,4 @@ Installing
 
 To install the Tuscany SCA binaries, do this:
 make install
-
-
-Building dependencies from source
-=================================
-
-Here are example build and install steps for some of the dependencies.
-
-Apache HTTPD, including APR, using the HTTP prefork MPM (recommended):
-wget http://archive.apache.org/dist/httpd/httpd-2.3.8.tar.gz
-tar xzf httpd-2.3.8.tar.gz
-cd httpd-2.3.8
-./configure --enable-ssl --enable-proxy --enable-usertrack \
---with-included-apr --with-mpm=prefork --prefix=$HOME/httpd-2.3.8-bin
-make
-make install
-export PATH=$HOME/httpd-2.3.8-bin/bin:$PATH
-
-Memcached:
-wget http://memcached.googlecode.com/files/memcached-1.4.5.tar.gz
-tar xzf memcached-1.4.5.tar.gz
-cd memcached-1.4.5
-./configure --prefix=$HOME/memcached-1.4.5-bin
-make
-make install
-
-TinyCDB:
-wget http://www.corpit.ru/mjt/tinycdb/tinycdb_0.77.tar.gz
-tar xzf tinycdb_0.77.tar.gz
-cd tinycdb-0.77
-make
-make prefix=$HOME/tinycdb-0.77-bin install
-
-CURL:
-wget http://curl.haxx.se/download/curl-7.19.5.tar.gz
-tar xzf curl-7.19.5.tar.gz
-cd curl-7.19.5
-./configure --prefix=$HOME/curl-7.19.5-bin
-make
-make install
-
-Libxml2:
-wget ftp://xmlsoft.org/libxml2/libxml2-sources-2.7.7.tar.gz
-tar xzf libxml2-sources-2.7.7.tar.gz
-cd libxml2-2.7.7
-./configure --prefix=$HOME/libxml2-2.7.7-bin 
-make
-make install
-
-TraceMonkey:
-wget http://hg.mozilla.org/tracemonkey/archive/e4364736e170.tar.gz
-tar xzf tracemonkey-e4364736e170.tar.gz
-cd tracemonkey-e4364736e170/js/src
-autoconf2.13
-./configure --prefix=$HOME/tracemonkey-bin
-make
-make install
-
-Apache Axis2/C:
-wget http://www.apache.org/dist/ws/axis2-c/1_6_0/axis2c-src-1.6.0.tar.gz
-tar xzf axis2c-src-1.6.0.tar.gz
-cd axis2c-src-1.6.0
-./configure --enable-libxml2 --enable-openssl \
---with-apache2=$HOME/httpd-2.3.8-bin/include --prefix=$HOME/axis2c-1.6.0-bin
-make
-make install
-export AXIS2C_HOME=$HOME/axis2c-1.6.0-bin
-
-Apache Qpid/C++:
-wget http://www.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
-tar xzf qpid-cpp-0.6.tar.gz
-cd qpidc-0.6
-./configure --prefix=$HOME/qpidc-0.6-bin
-make
-make install
-
-Libexpat:
-wget http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
-tar xzf expat-2.0.1.tar.gz
-cd expat-2.0.1
-./configure --prefix=$HOME/expat-2.0.1-bin
-make
-make install
-
-Libstrophe:
-git clone git://github.com/jsdelfino/libstrophe.git
-cd libstrophe
-./bootstrap.sh
-./configure --prefix=$HOME/libstrophe-bin --with-expat=$HOME/expat-2.0.1-bin
-make
-make install
-
-HTML Tidy:
-cvs -z3 -d:pserver:anonymous@tidy.cvs.sourceforge.net:/cvsroot/tidy co -P tidy
-cd tidy
-build/gnuauto/setup.sh
-./configure --prefix=$HOME/htmltidy-bin
-make
-make install
-
-Libopkele:
-git clone git://github.com/jsdelfino/libopkele.git
-cd libopkele
-./autogen.bash
-./configure --prefix=$HOME/libopkele-bin --with-curl=$HOME/curl-7.19.5-bin \
---with-expat=$HOME/expat-2.0.1-bin --with-htmltidy=$HOME/htmltidy-bin
-
-Mod_auth_openid:
-git clone git://github.com/jsdelfino/mod_auth_openid.git
-cd mod_auth_openid
-./autogen.sh
-./configure --prefix=$HOME/mod-auth-openid-bin \
---with-apr=$HOME/httpd-2.3.8-bin --with-httpd=$HOME/httpd-2.3.8-bin \
---with-curl=$HOME/curl-7.19.5-bin --with-libopkele=$HOME/libopkele-bin
-make
-make install
-
-PostgreSQL:
-wget ftp://ftp9.us.postgresql.org/pub/mirrors/postgresql/source/v9.0.1/postgresql-9.0.1.tar.gz
-tar xzf postgresql-9.0.1.tar.gz
-cd postgresql-9.0.1
-./configure --prefix=$HOME/postgresql-9.0.1-bin
-make
-make install
-
-Apache Thrift (including Facebook fb303):
-wget http://www.apache.org/dist/incubator/thrift/0.2.0-incubating/thrift-0.2.0-incubating.tar.gz
-tar xzf thrift-0.2.0-incubating.tar.gz
-cd thrift-0.2.0
-./bootstrap.sh
-./configure --prefix=$HOME/thrift-0.2.0-bin --with-java=no --with-erlang=no \
---with-perl=no --with-ruby=no --with-csharp=no --disable-static
-make
-make install
-cd contrib/fb303
-./bootstrap.sh
-./configure --prefix=$HOME/thrift-0.2.0-bin/contrib/fb303 \
-PY_PREFIX=$HOME/thrift-0.2.0-bin/contrib/fb303 \
---with-thriftpath=$HOME/thrift-0.2.0-bin
-make
-make install
-cp cpp/lib/libfb303.so $HOME/thrift-0.2.0-bin/contrib/fb303/lib
-
-Facebook Scribe:
-wget http://github.com/downloads/facebook/scribe/scribe-2.2.tar.gz
-tar xzf scribe-2.2.tar.gz
-cd scribe
-./bootstrap.sh --prefix=$HOME/scribe-2.2-bin PY_PREFIX=$HOME/scribe-2.2-bin \
---with-thriftpath=$HOME/thrift-0.2.0-bin \
---with-fb303path=$HOME/thrift-0.2.0-bin/contrib/fb303 \
---disable-static
-make
-make install
-cp src/lib/libscribe.so $HOME/scribe-2.2-bin/lib
-
-Apache Libcloud:
-wget http://www.apache.org/dist/incubator/libcloud/apache-libcloud-incubating-0.3.1.tar.bz2
-tar xjf apache-libcloud-incubating-0.3.1.tar.bz2
-cd apache-libcloud-0.3.1
-python setup.py build
-python setup.py install --home $HOME/libcloud-0.3.1-bin
 

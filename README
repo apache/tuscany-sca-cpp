@@ -86,7 +86,7 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |   |-- store-sql        Online store using an SQL database
  |   |   |-- store-vhost      Online store on virtual hosts
  |   |
- |   |-- ubuntu               Automated install on Ubuntu 9.10
+ |   |-- ubuntu               Automated install on Ubuntu 10.10 64-bit
  |
  |-- branches                 Topic and release branches
  |

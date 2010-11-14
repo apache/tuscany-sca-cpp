@@ -316,7 +316,7 @@ struct postFinish {
     postFinish(const string& ks, const string& vs) : ks(ks), vs(vs) {
     }
     const failable<bool> operator()(struct cdb_make& cdbm) const {
-        if (cdb_make_add(&cdbm, c_str(ks), length(ks), c_str(vs), length(vs)) == -1)
+        if (cdb_make_add(&cdbm, c_str(ks), (unsigned int)length(ks), c_str(vs), (unsigned int)length(vs)) == -1)
             return mkfailure<bool>("Could not add tinycdb entry");
         return true;
     }
@@ -362,7 +362,7 @@ struct putFinish {
     putFinish(const string& ks, const string& vs) : ks(ks), vs(vs) {
     }
     const failable<bool> operator()(struct cdb_make& cdbm) const {
-        if (cdb_make_add(&cdbm, c_str(ks), length(ks), c_str(vs), length(vs)) == -1)
+        if (cdb_make_add(&cdbm, c_str(ks), (unsigned int)length(ks), c_str(vs), (unsigned int)length(vs)) == -1)
             return mkfailure<bool>("Could not add tinycdb entry");
         return true;
     }
@@ -403,7 +403,7 @@ const failable<value> get(const value& key, TinyCDB& cdb) {
     const string ks(scheme::writeValue(key));
 
     cdbi_t vlen;
-    if (cdb_seek(fd, c_str(ks), length(ks), &vlen) <= 0)
+    if (cdb_seek(fd, c_str(ks), (unsigned int)length(ks), &vlen) <= 0)
         return mkfailure<value>("Could not get tinycdb entry");
     char* data = gc_cnew(vlen + 1);
     cdb_bread(fd, data, vlen);

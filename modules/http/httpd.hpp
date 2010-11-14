@@ -328,7 +328,7 @@ const int setupReadPolicy(request_rec* r) {
  */
 const list<string> read(request_rec* r) {
     char b[1024];
-    const int n = ap_get_client_block(r, b, sizeof(b));
+    const size_t n = ap_get_client_block(r, b, sizeof(b));
     if (n <= 0)
         return list<string>();
     return cons(string(b, n), read(r));

@@ -379,14 +379,14 @@ template<typename T> const list<T> cdddr(const list<T>& p) {
  * Returns the length of a list.
  */
 template<typename T> struct lengthRef {
-    const int operator()(const int c, const list<T>& p) {
+    const size_t operator()(const size_t c, const list<T>& p) {
         if(isNil(p))
             return c;
         return (*this)(c + 1, cdr(p));
     }
 };
 
-template<typename T> const int length(const list<T>& p) {
+template<typename T> const size_t length(const list<T>& p) {
     return lengthRef<T> ()(0, p);
 }
 
@@ -537,7 +537,7 @@ template<typename T> const list<T> seq(const T& start, const T& end) {
 /**
  * Returns the i-th element of a list.
  */
-template<typename T> const T listRef(const list<T>& l, const int i) {
+template<typename T> const T listRef(const list<T>& l, const size_t i) {
     if (i == 0)
         return car(l);
     return listRef(cdr(l), i - 1);

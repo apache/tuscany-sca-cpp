@@ -94,7 +94,7 @@ public:
         string_memcpy(buf, s, len + 1);
     }
 
-    string(const char* s, const int n) {
+    string(const char* s, const size_t n) {
         len = n;
         if (len == 0) {
             buf = stringEmptyBuffer;
@@ -105,7 +105,7 @@ public:
         buf[len] = '\0';
     }
 
-    string(const int n, const char c) {
+    string(const size_t n, const char c) {
         len = n;
         if (len == 0) {
             buf = stringEmptyBuffer;
@@ -152,7 +152,7 @@ public:
     }
 
     const bool operator<(const string& s) const {
-        const int n = len < s.len? len : s.len;
+        const size_t n = len < s.len? len : s.len;
         const int c = memcmp(buf, s.buf, n);
         if (c < 0)
             return true;
@@ -162,7 +162,7 @@ public:
     }
 
     const bool operator>(const string& s) const {
-        const int n = len < s.len? len : s.len;
+        const size_t n = len < s.len? len : s.len;
         int c = memcmp(buf, s.buf, n);
         if (c > 0)
             return true;
@@ -178,12 +178,12 @@ private:
     friend class ostringstream;
     friend const string operator+(const string& a, const string& b);
     friend const string operator+(const string& a, const char* b);
-    friend const int length(const string& s);
+    friend const size_t length(const string& s);
     friend const char* c_str(const string& s);
-    friend const int find(const string& s1, const char* s2, const int start);
-    friend const string substr(const string& s, const int pos, const int n);
+    friend const size_t find(const string& s1, const char* s2, const size_t start);
+    friend const string substr(const string& s, const size_t pos, const size_t n);
 
-    int len;
+    size_t len;
     char* buf;
 };
 
@@ -202,7 +202,7 @@ const string operator+(const string& a, const string& b) {
 
 const string operator+(const string& a, const char* b) {
     string s;
-    const int blen = strlen(b);
+    const size_t blen = strlen(b);
     s.len = a.len + blen;
     s.buf = gc_cnew(s.len + 1);
     string_memcpy(s.buf, a.buf, a.len);
@@ -214,7 +214,7 @@ const string operator+(const string& a, const char* b) {
 /**
  * Returns the length of a string.
  */
-const int length(const string& s) {
+const size_t length(const string& s) {
     return s.len;
 }
 
@@ -228,7 +228,7 @@ const char* c_str(const string& s) {
 /**
  * Find the first occurrence of string s2 in s1, starting at the given position.
  */
-const int find(const string& s1, const char* s2, const int start) {
+const size_t find(const string& s1, const char* s2, const size_t start) {
     if (start >= s1.len)
         return s1.len;
     const char *f = strstr(s1.buf + start, s2);
@@ -237,7 +237,7 @@ const int find(const string& s1, const char* s2, const int start) {
     return f - s1.buf;
 }
 
-const int find(const string& s1, const char* s2) {
+const size_t find(const string& s1, const char* s2) {
     return find(s1, s2, 0);
 }
 
@@ -251,14 +251,14 @@ const bool contains(const string& s1, const char* s2) {
 /**
  * Find the first occurence of any character from a string in a string.
  */
-const int find_first_of(const string& s1, const string& s2) {
+const size_t find_first_of(const string& s1, const string& s2) {
     return strcspn(c_str(s1), c_str(s2));
 }
 
 /**
  * Find the first occurence of a character in a string.
  */
-const int find(const string& s, const char c) {
+const size_t find(const string& s, const char c) {
     const char* cs = c_str(s);
     const char* f = strchr(cs, c);
     if (f == NULL)
@@ -269,7 +269,7 @@ const int find(const string& s, const char c) {
 /**
  * Find the last occurence of a character in a string.
  */
-const int find_last(const string& s, const char c) {
+const size_t find_last(const string& s, const char c) {
     const char* cs = c_str(s);
     const char* f = strrchr(cs, c);
     if (f == NULL)
@@ -280,7 +280,7 @@ const int find_last(const string& s, const char c) {
 /**
  * Return a substring of a string.
  */
-const string substr(const string& s, const int pos, const int n) {
+const string substr(const string& s, const size_t pos, const size_t n) {
     if (pos >= s.len)
         return string();
     if (pos + n > s.len)
@@ -288,7 +288,7 @@ const string substr(const string& s, const int pos, const int n) {
     return string(s.buf + pos, n);
 }
 
-const string substr(const string& s, const int pos) {
+const string substr(const string& s, const size_t pos) {
     return substr(s, pos, length(s));
 }
 

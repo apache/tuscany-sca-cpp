@@ -96,14 +96,14 @@ template<typename T> const list<T> sort(const list<T>& l) {
 /**
  * Make a balanced tree from an ordered list of leaves.
  */
-template<typename T> const list<T> btreeHelper(const list<T>& elements, const int n) {
+template<typename T> const list<T> btreeHelper(const list<T>& elements, const size_t n) {
     if (n == 0)
         return cons<T>(list<T>(), elements);
-    const int leftSize = (n - 1) / 2; {
+    const size_t leftSize = (n - 1) / 2; {
         const list<T> leftResult = btreeHelper<T>(elements, leftSize); {
             const list<T> leftTree = car(leftResult);
             const list<T> nonLeftElements = cdr(leftResult);
-            const int rightSize = n - (leftSize + 1); {
+            const size_t rightSize = n - (leftSize + 1); {
                 const T thisEntry = car(nonLeftElements);
                 const list<T> rightResult = btreeHelper<T>(cdr(nonLeftElements), rightSize); {
                     const list<T> rightTree = car(rightResult);

@@ -51,7 +51,7 @@ const maybe<string> sessionID(const list<string> c) {
     if (isNil(c))
         return maybe<string>();
     const string cn = cookieName(c_str(car(c)));
-    const int i = find(cn, "=");
+    const size_t i = find(cn, "=");
     if (i < length(cn)) {
         const list<string> kv = mklist<string>(substr(cn, 0, i), substr(cn, i+1));
         if (!isNil(kv) && !isNil(cdr(kv))) {

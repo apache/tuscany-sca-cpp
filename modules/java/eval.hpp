@@ -316,7 +316,7 @@ const jobjectArray valuesToJarrayHelper(const JavaRuntime& jr, jobjectArray a, c
 }
 
 const jobjectArray valuesToJarray(const JavaRuntime& jr, const list<value>& v) {
-    jobjectArray a = jr.env->NewObjectArray(length(v), jr.objectClass, NULL);
+    jobjectArray a = jr.env->NewObjectArray((jsize)length(v), jr.objectClass, NULL);
     return valuesToJarrayHelper(jr, a, v, 0);
 }
 
@@ -360,7 +360,7 @@ const jvalue* valuesToJvaluesHelper(const JavaRuntime& jr, jvalue* a, const list
 }
 
 const jvalue* valuesToJvalues(const JavaRuntime& jr, const list<value>& types, const list<value>& v) {
-    const int n = length(v);
+    const size_t n = length(v);
     jvalue* a = new (gc_anew<jvalue>(n)) jvalue[n];
     valuesToJvaluesHelper(jr, a, types, v);
     return a;

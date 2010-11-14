@@ -203,10 +203,10 @@ int tunnel(conn_rec* conn, http::CURLSession& cs, const string& url, const strin
 
                     // Receive from target
                     char data[8192];
-                    const failable<int> frl = http::recv(data, sizeof(data), cs);
+                    const failable<size_t> frl = http::recv(data, sizeof(data), cs);
                     if (!hasContent(frl))
                         return abort(conn, string("Couldn't receive from target") + reason(frl));
-                    const int rl = content(frl);
+                    const size_t rl = content(frl);
 
                     // Target connection closed
                     if (rl == 0)

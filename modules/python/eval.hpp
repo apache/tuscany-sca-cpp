@@ -215,7 +215,7 @@ PyObject* valueToPyObject(const value& v) {
  * Convert a python tuple to a list of values.
  */
 
-const list<value> pyTupleToValuesHelper(PyObject* o, const int i, const int size) {
+const list<value> pyTupleToValuesHelper(PyObject* o, const size_t i, const size_t size) {
     if (i == size)
         return list<value>();
     return cons(pyObjectToValue(PyTuple_GetItem(o, i)), pyTupleToValuesHelper(o, i + 1, size));

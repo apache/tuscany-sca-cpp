@@ -60,10 +60,11 @@ public:
 
     ostringstream& vprintf(const char* fmt, ...) {
         va_list args;
-        va_start (args, fmt);
         string s;
+        va_start (args, fmt);
         s.len = vsnprintf(NULL, 0, fmt, args);
         s.buf = gc_cnew(s.len + 1);
+        va_start (args, fmt);
         vsnprintf(s.buf, s.len + 1, fmt, args);
         buf = cons(s, buf);
         len += s.len;
@@ -104,7 +105,7 @@ private:
 
     friend const string str(ostringstream& os);
 
-    int len;
+    size_t len;
     list<string> buf;
 };
 
@@ -122,7 +123,7 @@ class istringstream : public istream {
 public:
     istringstream(const string& s) {
         cur = 0;
-        const int slen = length(s);
+        const size_t slen = length(s);
         len = slen;
         buf = c_str(s);
       }
@@ -136,8 +137,8 @@ public:
         buf = is.buf;
     }
 
-    const int read(void* b, int size) {
-        const int n = len - cur;
+    const size_t read(void* b, size_t size) {
+        const size_t n = len - cur;
         if (n == 0)
             return 0;
         if (n > size) {
@@ -173,8 +174,8 @@ public:
     }
 
 private:
-    int len;
-    int cur;
+    size_t len;
+    size_t cur;
     const char* buf;
 };
 
@@ -183,10 +184,10 @@ private:
  */
 const list<string> tokenize(const char* sep, const string& str) {
     struct nested {
-        static const list<string> tokenize(const char* sep, const string& str, const int start = 0) {
+        static const list<string> tokenize(const char* sep, const string& str, const size_t start = 0) {
             if (start >= length(str))
                 return list<string>();
-            const int i = find(str, sep, start);
+            const size_t i = find(str, sep, start);
             if (i == length(str))
                 return mklist(string(substr(str, start)));
             return cons(string(substr(str, start, i - start)), tokenize(sep, str, i + 1));
@@ -222,7 +223,7 @@ struct ilistRead{
     }
     const list<string> operator()() {
         char buffer[1024];
-        const int n = read(is, buffer, sizeof(buffer));
+        const size_t n = read(is, buffer, sizeof(buffer));
         if (n ==0)
             return list<string>();
         return cons(string(buffer, n), (*this)());
@@ -236,7 +237,7 @@ const list<string> streamList(istream& is) {
 /**
  * Fragment the first element of a list of strings to fit the given max length.
  */
-const list<string> fragment(list<string> l, int max) {
+const list<string> fragment(list<string> l, size_t max) {
     const string s = car(l);
     if (length(s) <= max)
         return l;

@@ -94,8 +94,8 @@ private:
     friend CURL* handle(const CURLSession& cs);
     friend apr_socket_t* sock(const CURLSession& cs);
     friend const failable<bool> connect(const string& url, CURLSession& cs);
-    friend const failable<bool> send(const char* c, const int l, const CURLSession& cs);
-    friend const failable<int> recv(char* c, const int l, const CURLSession& cs);
+    friend const failable<bool> send(const char* c, const size_t l, const CURLSession& cs);
+    friend const failable<size_t> recv(char* c, const size_t l, const CURLSession& cs);
 
 public:
     string ca;
@@ -257,7 +257,7 @@ template<typename R> const failable<list<R> > apply(const list<list<string> >& h
     ostringstream os;
     write(cadr(hdr), os);
     const string s = str(os);
-    const int sz = length(s);
+    const size_t sz = length(s);
 
     // Setup the read, write header and write data callbacks
     CURLReadContext rcx(mklist(s));
@@ -564,7 +564,7 @@ const failable<bool> connect(const string& url, CURLSession& cs) {
 /**
  * Send an array of chars.
  */
-const failable<bool> send(const char* c, const int l, const CURLSession& cs) {
+const failable<bool> send(const char* c, const size_t l, const CURLSession& cs) {
 
     // Send the data
     size_t wl = 0;
@@ -582,30 +582,30 @@ const failable<bool> send(const char* c, const int l, const CURLSession& cs) {
         return mkfailure<bool>(apreason(pollrc));
 
     // Send what's left
-    return send(c + wl, (int)((size_t)l - wl), cs);
+    return send(c + wl, l - wl, cs);
 }
 
 /**
  * Receive an array of chars.
  */
-const failable<int> recv(char* c, const int l, const CURLSession& cs) {
+const failable<size_t> recv(char* c, const size_t l, const CURLSession& cs) {
 
     // Receive data
     size_t rl;
     const CURLcode rc = curl_easy_recv(cs.h, c, (size_t)l, &rl);
     if (rc == CURLE_OK)
-        return (int)rl;
+        return (size_t)rl;
     if (rc == 1)
         return 0;
     if (rc != CURLE_AGAIN)
-        return mkfailure<int>(curlreason(rc));
+        return mkfailure<size_t>(curlreason(rc));
 
     // If the socket was not ready, wait for it to become ready
     const apr_pollfd_t* pollfds;
     apr_int32_t pollcount;
     apr_status_t pollrc = apr_pollset_poll(cs.rpollset, -1, &pollcount, &pollfds);
     if (pollrc != APR_SUCCESS)
-        return mkfailure<int>(apreason(pollrc));
+        return mkfailure<size_t>(apreason(pollrc));
 
     // Receive again
     return recv(c, l, cs);

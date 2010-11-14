@@ -217,7 +217,7 @@ failable<bool> consume(JSONParser* parser, const list<string>& ilist, const JSON
     if (isNil(ilist))
         return true;
     JSString* jstr = JS_NewStringCopyZ(cx, c_str(car(ilist)));
-    if(!JS_ConsumeJSONText(cx, parser, JS_GetStringChars(jstr), JS_GetStringLength(jstr)))
+    if(!JS_ConsumeJSONText(cx, parser, JS_GetStringChars(jstr), (uint32)JS_GetStringLength(jstr)))
         return mkfailure<bool>("JS_ConsumeJSONText failed");
     return consume(parser, cdr(ilist), cx);
 }

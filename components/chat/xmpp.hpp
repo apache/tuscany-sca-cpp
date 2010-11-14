@@ -87,8 +87,8 @@ private:
     friend void connHandler(xmpp_conn_t * const conn, const xmpp_conn_event_t status, const int err, xmpp_stream_error_t* const errstream, void *const udata);
     friend int messageHandler(xmpp_conn_t* const conn, xmpp_stanza_t* const stanza, void* const udata);
     friend const failable<bool> connect(XMPPClient& xc);
-    friend const failable<int> send(const char* data, const int len, XMPPClient& xc);
-    friend const failable<int> send(xmpp_stanza_t* const stanza, XMPPClient& xc);
+    friend const failable<size_t> send(const char* data, const size_t len, XMPPClient& xc);
+    friend const failable<size_t> send(xmpp_stanza_t* const stanza, XMPPClient& xc);
     friend const failable<bool> post(const value& to, const value& val, XMPPClient& xc);
     friend const failable<bool> disconnect(XMPPClient& xc);
     friend const failable<bool> listen(const lambda<failable<bool>(const value&, const value&, XMPPClient&)>& listener, XMPPClient& xc);
@@ -227,13 +227,13 @@ const failable<bool> connect(XMPPClient& xc) {
 /**
  * Send a buffer on an XMPP session.
  */
-const failable<int> send(const char* data, const int len, XMPPClient& xc) {
+const failable<size_t> send(const char* data, const size_t len, XMPPClient& xc) {
     if (len == 0)
         return 0;
-    const int written = xc.conn->tls? tls_write(xc.conn->tls, data, len) : sock_write(xc.conn->sock, data, len);
-    if (written < 0) {
+    const size_t written = xc.conn->tls? tls_write(xc.conn->tls, data, len) : sock_write(xc.conn->sock, data, len);
+    if (written == (size_t)-1) {
         xc.conn->error = xc.conn->tls? tls_error(xc.conn->tls) : sock_error();
-        return mkfailure<int>("Couldn't send stanza to XMPP server");
+        return mkfailure<size_t>("Couldn't send stanza to XMPP server");
     }
     return send(data + written, len - written, xc);
 }
@@ -241,20 +241,20 @@ const failable<int> send(const char* data, const int len, XMPPClient& xc) {
 /**
  * Send a string on an XMPP session.
  */
-const failable<int> send(const string& data, XMPPClient& xc) {
+const failable<size_t> send(const string& data, XMPPClient& xc) {
     return send(c_str(data), length(data), xc);
 }
 
 /**
  * Send a stanza on an XMPP session.
  */
-const failable<int> send(xmpp_stanza_t* const stanza, XMPPClient& xc) {
+const failable<size_t> send(xmpp_stanza_t* const stanza, XMPPClient& xc) {
     char *buf;
     size_t len;
     const int rc = xmpp_stanza_to_text(stanza, &buf, &len);
      if (rc != 0)
-         return mkfailure<int>("Couldn't convert stanza to text");
-     const failable<int> r = send(buf, len, xc);
+         return mkfailure<size_t>("Couldn't convert stanza to text");
+     const failable<size_t> r = send(buf, len, xc);
      if (!hasContent(r)) {
          xmpp_free(xc.conn->ctx, buf);
          return r;
@@ -283,7 +283,7 @@ const failable<bool> post(const value& to, const value& val, XMPPClient& xc) {
     xmpp_stanza_add_child(body, textStanza(c_str(vs), xc.ctx));
 
     // Send it
-    const failable<int> r = send(stanza, xc);
+    const failable<size_t> r = send(stanza, xc);
     xmpp_stanza_release(stanza);
     if (!hasContent(r))
         return mkfailure<bool>(reason(r));
@@ -295,7 +295,7 @@ const failable<bool> post(const value& to, const value& val, XMPPClient& xc) {
  */
 const failable<bool> disconnect(XMPPClient& xc) {
     xc.disconnecting = true;
-    const failable<int> r = send("</stream:stream>", xc);
+    const failable<size_t> r = send("</stream:stream>", xc);
     if (!hasContent(r))
         return mkfailure<bool>(reason(r));
     return true;

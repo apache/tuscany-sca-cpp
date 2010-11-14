@@ -42,7 +42,7 @@ namespace tuscany {
 /**
  * Returns the current thread id.
  */
-unsigned int threadId() {
+long int threadId() {
     return syscall(__NR_gettid);
 }
 
@@ -134,7 +134,7 @@ public:
  */
 template<typename T> class wqueue {
 public:
-    wqueue(int max) : max(max), size(0), tail(0), head(0), values(new (gc_anew<T>(max)) T[max]) {
+    wqueue(size_t max) : max(max), size(0), tail(0), head(0), values(new (gc_anew<T>(max)) T[max]) {
         pthread_mutex_init(&mutex, NULL);
         pthread_cond_init(&full, NULL);
         pthread_cond_init(&empty, NULL);
@@ -150,23 +150,23 @@ public:
     }
 
 private:
-    const int max;
-    int size;
-    int tail;
-    int head;
+    const size_t max;
+    size_t size;
+    size_t tail;
+    size_t head;
     pthread_mutex_t mutex;
     pthread_cond_t full;
     pthread_cond_t empty;
     gc_ptr<T> values;
 
-    template<typename X> friend const int enqueue(wqueue<X>& q, const X& v);
+    template<typename X> friend const size_t enqueue(wqueue<X>& q, const X& v);
     template<typename X> friend const X dequeue(wqueue<X>& q);
 };
 
 /**
  * Adds an element to the tail of the queue.
  */
-template<typename T> const int enqueue(wqueue<T>&q, const T& v) {
+template<typename T> const size_t enqueue(wqueue<T>&q, const T& v) {
     pthread_mutex_lock(&q.mutex);
     while(q.size == q.max)
         pthread_cond_wait(&q.full, &q.mutex);
@@ -211,7 +211,7 @@ void *workerThreadFunc(void *arg) {
 /**
  * Returns a list of worker threads.
  */
-const list<pthread_t> workerThreads(wqueue<lambda<bool()> >& wqueue, const int count) {
+const list<pthread_t> workerThreads(wqueue<lambda<bool()> >& wqueue, const size_t count) {
     if (count == 0)
         return list<pthread_t>();
     pthread_t thread;
@@ -229,7 +229,7 @@ private:
     // copies of the queue and thread pool when a worker is copied 
     class sharedWorker {
     public:
-        sharedWorker(int max) : work(wqueue<lambda<bool()> >(max)), threads(workerThreads(work, max)) {
+        sharedWorker(size_t max) : work(wqueue<lambda<bool()> >(max)), threads(workerThreads(work, max)) {
         }
 
         wqueue<lambda<bool()> > work;
@@ -237,7 +237,7 @@ private:
     };
 
 public:
-    worker(int max) : w(*(new (gc_new<sharedWorker>()) sharedWorker(max))) {
+    worker(size_t max) : w(*(new (gc_new<sharedWorker>()) sharedWorker(max))) {
     }
 
     worker(const worker& wk) : w(wk.w) {

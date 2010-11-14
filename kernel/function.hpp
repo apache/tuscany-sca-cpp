@@ -83,7 +83,7 @@ public:
     Callable() {
     }
 
-    virtual const int size() const = 0;
+    virtual const size_t size() const = 0;
 
     virtual const R operator()(P... p) const = 0;
 
@@ -110,7 +110,7 @@ public:
             return function(std::forward<P>(p)...);
         }
 
-        virtual const int size() const {
+        virtual const size_t size() const {
             return sizeof(function);
         }
 

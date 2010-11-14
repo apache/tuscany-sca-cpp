@@ -244,40 +244,40 @@ template<typename T> T* gc_new() {
 }
 
 template<typename T> apr_status_t gc_pool_acleanup(void* v) {
-    int* m = static_cast<int*>(v);
-    int n = *m;
+    size_t* m = static_cast<size_t*>(v);
+    size_t n = *m;
     T* t = (T*)(m + 1);
-    for (int i = 0; i < n; i++, t++)
+    for (size_t i = 0; i < n; i++, t++)
         t->~T();
     return APR_SUCCESS;
 }
 
-template<typename T> T* gc_anew(apr_pool_t* p, int n) {
-    int* gc_anew_ptr = static_cast<int*>(apr_palloc(p, sizeof(int) + sizeof(T[n])));
+template<typename T> T* gc_anew(apr_pool_t* p, size_t n) {
+    size_t* gc_anew_ptr = static_cast<size_t*>(apr_palloc(p, sizeof(size_t) + sizeof(T[n])));
     assert(gc_anew_ptr != NULL);
     *gc_anew_ptr = n;
     apr_pool_cleanup_register(p, gc_anew_ptr, gc_pool_acleanup<T>, apr_pool_cleanup_null) ;
     return (T*)(gc_anew_ptr + 1);
 }
 
-template<typename T> T* gc_anew(const gc_pool& p, int n) {
+template<typename T> T* gc_anew(const gc_pool& p, size_t n) {
     return gc_anew<T>(pool(p), n);
 }
 
-template<typename T> T* gc_anew(int n) {
+template<typename T> T* gc_anew(size_t n) {
     return gc_anew<T>(gc_current_pool(), n);
 }
 
 /**
  * Allocate an array of chars.
  */
-char* gc_cnew(apr_pool_t* p, int n) {
+char* gc_cnew(apr_pool_t* p, size_t n) {
     char* gc_cnew_ptr = static_cast<char*>(apr_palloc(p, n));
     assert(gc_cnew_ptr != NULL);
     return gc_cnew_ptr;
 }
 
-char* gc_cnew(int n) {
+char* gc_cnew(size_t n) {
     return gc_cnew(gc_current_pool(), n);
 }
 

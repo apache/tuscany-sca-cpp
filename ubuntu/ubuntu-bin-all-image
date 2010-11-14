@@ -17,7 +17,7 @@
 
 # Install a complete distribution, the required system tools and libraries,
 # the runtime dependencies and the Tuscany SCA runtime on a fresh Ubuntu Server
-# 9.10 image.
+# 10.10 64-bit image.
 
 # Display commands as they are executed
 set -x
@@ -33,47 +33,58 @@ sudo chown $u /mnt/tuscany
 sudo chgrp $g /mnt/tuscany
 cd /mnt/tuscany
 
-# Install system tools and libraries
+# Install core dev tools
 sudo apt-get -y install wget git-core autoconf automake libtool g++
 if [ "$?" != "0" ]; then
     exit $?
 fi
-# Uncomment to install GCC 4.5
-#wget http://svn.apache.org/repos/asf/tuscany/sca-cpp/trunk/ubuntu/ubuntu-gcc-4.5
-#chmod +x ./ubuntu-gcc-4.5
-#./ubuntu-gcc-4.5
-#if [ "$?" != "0" ]; then
-#    exit $?
-#fi
-sudo apt-get -y install libssl-dev
+# Required by Apache HTTP server
+sudo apt-get -y install libssl-dev libpcre3-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install python-dev
-if [ "$?" != "0" ]; then
-    exit $?
-fi
-sudo apt-get -y install libpcre3-dev
-if [ "$?" != "0" ]; then
-    exit $?
-fi
+# Required by Memcached
 sudo apt-get -y install libevent-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
+# Required by TraceMonkey
+sudo apt-get -y install autoconf2.13 zip
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+# Required by Apache Axis2/C
 sudo apt-get -y install pkg-config
 if [ "$?" != "0" ]; then
     exit $?
 fi
+# Required by Apache Qpid/C++
 sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-filesystem-dev uuid-dev
 if [ "$?" != "0" ]; then
     exit $?
 fi
+# Required by Apache Vysper
 sudo apt-get -y install openjdk-6-jdk
 if [ "$?" != "0" ]; then
     exit $?
 fi
-sudo apt-get -y install bison flex
+# Require by HTML Tidy
+sudo apt-get -y install cvs
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+# Required by PostgreSQL
+sudo apt-get -y install libreadline-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+# Required by Apache Thrift
+sudo apt-get -y install bison flex python-dev
+if [ "$?" != "0" ]; then
+    exit $?
+fi
+# Required by Facebook Scribe
+sudo apt-get -y install gawk
 if [ "$?" != "0" ]; then
     exit $?
 fi

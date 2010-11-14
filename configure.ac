@@ -424,35 +424,44 @@ if test "${want_java}" = "true"; then
   AC_SUBST(JAR)
 
   # Detect most common Java VMs
-  if test -f "${JAVA_PREFIX}/jre/lib/i386/libjava.so"; then
-    if test -f "${JAVA_PREFIX}/jre/lib/i386/server/libjvm.so"; then
-      # Server VM
-      AC_MSG_NOTICE([checking for server Java VM])
-      JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/lib/i386 -R${JAVA_PREFIX}/jre/lib/i386 -L${JAVA_PREFIX}/jre/lib/i386/server -R${JAVA_PREFIX}/jre/lib/i386/server"
+  JAVA_LIBJAVA_SO=`find ${JAVA_PREFIX}/jre/lib -name libjava.so`
+  if test "${JAVA_LIBJAVA_SO}" != ""; then
+    JAVA_LIBJAVA=`dirname "${JAVA_LIBJAVA_SO}"`
+    JAVA_LIBJVM_SO=`find ${JAVA_PREFIX}/jre/lib -name libjvm.so`
+    JAVA_J9_VM=`echo "${JAVA_LIBJVM}" | grep "j9vm"`
+    if test "${JAVA_J9_VM}" != ""; then
+      # IBM J9 VM
+      AC_MSG_NOTICE([checking for J9 Java VM])
+      JAVA_LIBJVM=`dirname "${JAVA_LIBJVM_SO}"`
+      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -R${JAVA_LIBJAVA} -L${JAVA_LIBJVM} -R${JAVA_LIBJVM}"
+      LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
+      AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -ljsig"], [], [-ljvm -ljsig])
+      if test "${JAVA_LDFLAGS}" != ""; then
+        AC_DEFINE([JAVA_J9_VM], 1, [J9 Java VM])
+      fi
+    else
+      # SUN JDK or OpenJDK VM
+      AC_MSG_NOTICE([checking for OpenJDK Java VM])
+      JAVA_LIBJVM_SO=`find ${JAVA_PREFIX}/jre/lib -name libjvm.so | grep server`
+      JAVA_LIBJVM=`dirname "${JAVA_LIBJVM_SO}"`
+      AC_MSG_NOTICE([libjava ${JAVA_LIBJAVA} libjvm ${LIBJVM}])
+      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -R${JAVA_LIBJAVA} -L${JAVA_LIBJVM} -R${JAVA_LIBJVM}"
       LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
       AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -lverify"], [], [-ljvm -lverify])
       if test "${JAVA_LDFLAGS}" != ""; then
-        AC_DEFINE([JAVA_SERVER_VM], 1, [Server Java VM])
-      fi
-    else
-      if test -f "${JAVA_PREFIX}/jre/lib/i386/j9vm/libjvm.so"; then
-        # J9 VM
-        AC_MSG_NOTICE([checking for J9 Java VM])
-        JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/lib/i386 -R${JAVA_PREFIX}/jre/lib/i386 -L${JAVA_PREFIX}/jre/lib/i386/j9vm -R${JAVA_PREFIX}/jre/lib/i386/j9vm"
-        LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
-        AC_CHECK_LIB([java], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -ljava -ljvm -ljsig"], [], [-ljvm -ljsig])
-        if test "${JAVA_LDFLAGS}" != ""; then
-          AC_DEFINE([JAVA_J9_VM], 1, [J9 Java VM])
-        fi
+        AC_DEFINE([JAVA_OPENJDK_VM], 1, [OpenJDK Java VM])
       fi
     fi
   else
-    if test -f "${JAVA_PREFIX}/jre/bin/default/libharmonyvm.so"; then
+    JAVA_LIBHARMONYVM_SO=`find ${JAVA_PREFIX}/jre/bin -name libharmonyvm.so`
+    if test "${JAVA_LIBHARMONYVM_SO}" != ""; then
       # Apache Harmony VM
+      JAVA_LIBHARMONYVM=`dirname "${JAVA_LIBHARMONYVM_SO}"`
+      JAVA_LIBJAVA=`dirname "${JAVA_LIBHARMONYVM}"`
       AC_MSG_NOTICE([checking for Apache Harmony Java VM])
-      JAVA_CHECK_LIB="-L${JAVA_PREFIX}/jre/bin -R${JAVA_PREFIX}/jre/bin -L${JAVA_PREFIX}/jre/bin/default -R${JAVA_PREFIX}/jre/bin/default"
+      JAVA_CHECK_LIB="-L${JAVA_LIBJAVA} -R${JAVA_LIBJAVA} -L${JAVA_LIBHARMONYVM} -R${JAVA_LIBHARMONYVM}"
       LIBS="${JAVA_CHECK_LIB} ${defaultlibs}"
-      AC_CHECK_LIB([harmonyvm], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -lharmonyvm -lhythr -licuuc -lch ${JAVA_PREFIX}/jre/bin/default/libicudata.so.34"], [], [-lhythr -licuuc -lch ${JAVA_PREFIX}/jre/bin/default/libicudata.so.34])
+      AC_CHECK_LIB([harmonyvm], [JNI_CreateJavaVM], [JAVA_LDFLAGS="${JAVA_CHECK_LIB} -lharmonyvm -lhythr -licuuc -lch ${JAVA_LIBHARMONYVM}/libicudata.so.34"], [], [-lhythr -licuuc -lch ${JAVA_LIBHARMONYVM}/libicudata.so.34])
       if test "${JAVA_LDFLAGS}" != ""; then
         AC_DEFINE([JAVA_HARMONY_VM], 1, [Apache Harmony Java VM])
       fi
@@ -868,8 +877,10 @@ else
 fi
 
 # Configure GCC C++ and LD options.
+AC_SUBST([DEFAULT_CXXFLAGS], ["${cxxflags}"])
 AC_SUBST([CXXFLAGS], ["${cxxflags}"])
 AC_SUBST([LDFLAGS], ["${ldflags}"])
+AC_SUBST([DEFAULT_LDFLAGS], ["${ldflags}"])
 LIBS="${defaultlibs}"
 
 AC_CONFIG_FILES([Makefile

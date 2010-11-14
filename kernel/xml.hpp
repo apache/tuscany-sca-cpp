@@ -196,7 +196,7 @@ int readCallback(void *context, char* buffer, int len) {
     const string s(car(f));
     rc.ilist = cdr(f);
     memcpy(buffer, c_str(s), length(s));
-    return length(s);
+    return (int)length(s);
 }
 
 /**

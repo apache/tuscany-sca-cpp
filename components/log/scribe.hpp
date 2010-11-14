@@ -35,11 +35,20 @@
 #undef PACKAGE_VERSION
 #undef VERSION
 
+// Ignore integer conversion issues in Thrift and Scribe headers
+#ifdef WANT_MAINTAINER_MODE
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+
 #include <protocol/TBinaryProtocol.h>
 #include <transport/TSocket.h>
 #include <transport/TTransportUtils.h>
 
 #include "gen-cpp/scribe.h"
+
+#ifdef WANT_MAINTAINER_MODE
+#pragma GCC diagnostic warning "-Wconversion"
+#endif
 
 #include "string.hpp"
 #include "list.hpp"

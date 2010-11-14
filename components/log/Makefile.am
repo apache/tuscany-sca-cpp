@@ -43,15 +43,17 @@ CLEANFILES = gen-cpp/*
 comp_LTLIBRARIES = liblog.la liblogger.la
 noinst_DATA = liblog.so liblogger.so
 
+CXXFLAGS = ${DEFAULT_CXXFLAGS} -Wno-unused-parameter -Wno-conversion
+
 nodist_liblog_la_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
-liblog_la_CXXFLAGS = -Wno-unused-parameter
+liblog_la_CXXFLAGS = -Wno-unused-parameter -Wno-conversion
 liblog_la_SOURCES = log.cpp
 liblog_la_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
 liblog.so:
 	ln -s .libs/liblog.so
 
 nodist_liblogger_la_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
-liblogger_la_CXXFLAGS = -Wno-unused-parameter
+liblogger_la_CXXFLAGS = -Wno-unused-parameter -Wno-conversion
 liblogger_la_SOURCES = logger.cpp
 liblogger_la_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
 liblogger.so:
@@ -60,7 +62,7 @@ liblogger.so:
 comp_PROGRAMS = scribe-cat
 
 nodist_scribe_cat_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
-scribe_cat_CXXFLAGS = -Wno-unused-parameter
+scribe_cat_CXXFLAGS = -Wno-unused-parameter -Wno-conversion
 scribe_cat_SOURCES = scribe-cat.cpp
 scribe_cat_LDFLAGS = -L${THRIFT_LIB} -R${THRIFT_LIB} -lthrift -L${FB303_LIB} -R${FB303_LIB} -lfb303 -L${SCRIBE_LIB} -R${SCRIBE_LIB} -lscribe
 

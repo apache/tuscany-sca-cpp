@@ -60,8 +60,8 @@ const bool testConnect(const string& url, const string& ca = "", const string& c
             if (pollfds->rtnevents & APR_POLLIN) {
                 char data[8192];
                 if (pollfds->desc.s == csock) {
-                    const int rl = ::read(0, data, sizeof(data));
-                    if (rl == -1)
+                    const size_t rl = ::read(0, data, sizeof(data));
+                    if (rl == (size_t)-1)
                         return false;
                     if (rl > 0) {
                         const failable<bool> src = http::send(data, rl, cs);
@@ -69,12 +69,12 @@ const bool testConnect(const string& url, const string& ca = "", const string& c
                     }
                 }
                 else {
-                    const failable<int> frl = http::recv(data, sizeof(data), cs);
+                    const failable<size_t> frl = http::recv(data, sizeof(data), cs);
                     assert(hasContent(frl));
-                    const int rl = content(frl);
+                    const size_t rl = content(frl);
                     if (rl == 0)
                         return true;
-                    const int wl = ::write(0, data, rl);
+                    const size_t wl = ::write(0, data, rl);
                     assert(wl == rl);
                 }
                 continue;

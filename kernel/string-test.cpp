@@ -122,11 +122,11 @@ string add(string& x, string& y) {
 char charBuffer[16384];
 
 struct addStrings{
-    const int size;
-    addStrings(const int size) : size(size) {
+    const size_t size;
+    addStrings(const size_t size) : size(size) {
     }
     bool operator()() const {
-        const int sz = size / 4;
+        const size_t sz = size / 4;
         string x(charBuffer, sz);
         string y(charBuffer, sz);
         assert(length(add(x, y)) == sz * 2);
@@ -135,11 +135,11 @@ struct addStrings{
 };
 
 struct addStdStrings{
-    const int size;
-    addStdStrings(const int size) : size(size) {
+    const size_t size;
+    addStdStrings(const size_t size) : size(size) {
     }
     bool operator()() const {
-        const int sz = size / 4;
+        const size_t sz = size / 4;
         std::string x(charBuffer, sz);
         std::string y(charBuffer, sz);
         assert(stdAdd(x, y).length() == (unsigned int)(sz * 2));
