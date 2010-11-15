@@ -80,8 +80,8 @@ cd $build
 wget http://www.corpit.ru/mjt/tinycdb/tinycdb_0.77.tar.gz
 tar xzf tinycdb_0.77.tar.gz
 cd tinycdb-0.77
-make
-make prefix=$build/tinycdb-0.77-bin install
+make all shared
+make prefix=$build/tinycdb-0.77-bin install-all install-sharedlib
 if [ "$?" != "0" ]; then
     exit $?
 fi
