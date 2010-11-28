@@ -27,6 +27,7 @@
 ./memcached-start 11413
 
 ../../modules/http/httpd-conf tmp/tunnel localhost 8089 htdocs
+../../modules/http/httpd-event-conf tmp/tunnel
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C tmp/tunnel -x
 ../../modules/http/tunnel-ssl-conf tmp/tunnel 11211 localhost 8453 11411
 ../../modules/http/tunnel-ssl-conf tmp/tunnel 11212 localhost 8453 11412
@@ -36,6 +37,7 @@ tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C tmp/tunnel
 ../../modules/http/httpd-conf tmp/server localhost 8090 htdocs
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C tmp/server -x
 ../../modules/http/httpd-ssl-conf tmp/server 8453
+../../modules/http/cert-auth-conf tmp/server
 ../../modules/http/httpd-start tmp/server
 sleep 1
 

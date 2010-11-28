@@ -44,6 +44,21 @@ ServerAlias *.$host
 VirtualDocumentRoot $htdocs/domains/%1/
 
 Include conf/dvhost.conf
+
+# Allow access to document root
+<Directory "$htdocs">
+Options FollowSymLinks
+AuthType None
+Require all granted
+</Directory>
+
+# Allow access to root location
+<Location />
+Options FollowSymLinks
+AuthType None
+Require all granted
+</Location>
+
 </VirtualHost>
 
 EOF

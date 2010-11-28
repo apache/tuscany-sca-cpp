@@ -111,55 +111,55 @@ int postConfig(apr_pool_t* p, unused apr_pool_t* plog, unused apr_pool_t* ptemp,
 /**
  * Close a connection.
  */
-extern "C" {
-    AP_DECLARE(void) ap_lingering_close(conn_rec *c);
-}
-
-const int close(conn_rec* conn) {
+const int close(conn_rec* conn, apr_socket_t* csock) {
     debug("modssltunnel::close");
-    ap_lingering_close(conn);
+    apr_socket_close(csock);
+    conn->aborted = 1;
     return OK;
 }
 
 /**
  * Abort a connection.
  */
-const int abort(unused conn_rec* conn, const string& reason) {
+const int abort(conn_rec* conn, apr_socket_t* csock, const string& reason) {
     debug("modssltunnel::abort");
+    apr_socket_close(csock);
+    conn->aborted = 1;
     return httpd::reportStatus(mkfailure<int>(reason));
 }
 
 /**
  * Tunnel traffic from a client connection to a target URL.
  */
-int tunnel(conn_rec* conn, http::CURLSession& cs, const string& url, const string& preamble, const gc_pool& p, unused ap_filter_t* ifilter, ap_filter_t* ofilter) {
-
-    // Get client connection socket
-    apr_socket_t* csock = (apr_socket_t*)ap_get_module_config(conn->conn_config, &core_module);
-
-    // Open connection to target
-    const failable<bool> crc = http::connect(url, cs);
-    if (!hasContent(crc))
-        return abort(conn, reason(crc));
-    apr_socket_t* tsock = http::sock(cs);
-
-    // Send preamble string
-    if (length(preamble) != 0) {
-        debug(preamble, "modssltunnel::tunnel::sendToTarget");
-        const failable<bool> src = http::send(c_str(preamble), length(preamble), cs);
-        if (!hasContent(src))
-            return abort(conn, string("Couldn't send to target: ") + reason(src));
-    }
+int tunnel(conn_rec* conn, const string& ca, const string& cert, const string& key, const string& url, const string& preamble, const gc_pool& p, unused ap_filter_t* ifilter, ap_filter_t* ofilter) {
 
     // Create input/output bucket brigades
     apr_bucket_brigade* ib = apr_brigade_create(pool(p), conn->bucket_alloc);
     apr_bucket_brigade* ob = apr_brigade_create(pool(p), conn->bucket_alloc);
 
+    // Get client connection socket
+    apr_socket_t* csock = (apr_socket_t*)ap_get_module_config(conn->conn_config, &core_module);
+
+    // Open connection to target
+    http::CURLSession cs(ca, cert, key);
+    const failable<bool> crc = http::connect(url, cs);
+    if (!hasContent(crc))
+        return abort(conn, csock, reason(crc));
+    apr_socket_t* tsock = http::sock(cs);
+
+    // Send preamble
+    if (length(preamble) != 0) {
+        debug(preamble, "modssltunnel::tunnel::sendPreambleToTarget");
+        const failable<bool> src = http::send(c_str(preamble), length(preamble), cs);
+        if (!hasContent(src))
+            return abort(conn, csock, string("Couldn't send to target: ") + reason(src));
+    }
+
     // Create a pollset for the client and target sockets
     apr_pollset_t* pollset;
     apr_status_t cprc = apr_pollset_create(&pollset, 2, pool(p), 0);
     if (cprc != APR_SUCCESS)
-        return abort(conn, http::apreason(cprc));
+        return abort(conn, csock, http::apreason(cprc));
     const apr_pollfd_t* cpollfd = http::pollfd(csock, APR_POLLIN, p);
     apr_pollset_add(pollset, cpollfd);
     const apr_pollfd_t* tpollfd = http::pollfd(tsock, APR_POLLIN, p);
@@ -176,7 +176,7 @@ int tunnel(conn_rec* conn, http::CURLSession& cs, const string& url, const strin
                     // Receive buckets from client
                     const apr_status_t getrc = ap_get_brigade(conn->input_filters, ib, AP_MODE_READBYTES, APR_BLOCK_READ, HUGE_STRING_LEN);
                     if (getrc != APR_SUCCESS)
-                        return OK;
+                        return abort(conn, csock, string("Couldn't receive from client"));
 
                     for (apr_bucket* bucket = APR_BRIGADE_FIRST(ib); bucket != APR_BRIGADE_SENTINEL(ib); bucket = APR_BUCKET_NEXT(bucket)) {
                         if (APR_BUCKET_IS_FLUSH(bucket))
@@ -184,7 +184,7 @@ int tunnel(conn_rec* conn, http::CURLSession& cs, const string& url, const strin
 
                         // Client connection closed
                         if (APR_BUCKET_IS_EOS(bucket))
-                            return close(conn);
+                            return close(conn, csock);
 
                         const char *data;
                         apr_size_t rl;
@@ -195,7 +195,7 @@ int tunnel(conn_rec* conn, http::CURLSession& cs, const string& url, const strin
                             // Send to target
                             const failable<bool> src = http::send(data, rl, cs);
                             if (!hasContent(src))
-                                return abort(conn, string("Couldn't send to target: ") + reason(src));
+                                return abort(conn, csock, string("Couldn't send to target: ") + reason(src));
                         }
                     }
                     apr_brigade_cleanup(ib);
@@ -205,18 +205,19 @@ int tunnel(conn_rec* conn, http::CURLSession& cs, const string& url, const strin
                     char data[8192];
                     const failable<size_t> frl = http::recv(data, sizeof(data), cs);
                     if (!hasContent(frl))
-                        return abort(conn, string("Couldn't receive from target") + reason(frl));
+                        return abort(conn, csock, string("Couldn't receive from target") + reason(frl));
                     const size_t rl = content(frl);
 
                     // Target connection closed
                     if (rl == 0)
-                        return close(conn);
+                        return close(conn, csock);
 
                     // Send bucket to client
+                    debug(string(data, rl), "modssltunnel::tunnel::sendToClient");
                     APR_BRIGADE_INSERT_TAIL(ob, apr_bucket_transient_create(data, rl, conn->bucket_alloc));
                     APR_BRIGADE_INSERT_TAIL(ob, apr_bucket_flush_create(conn->bucket_alloc));
                     if (ap_pass_brigade(ofilter, ob) != APR_SUCCESS)
-                        return abort(conn, "Couldn't send data bucket to client");
+                        return abort(conn, csock, "Couldn't send data bucket to client");
                     apr_brigade_cleanup(ob);
                 }
             }
@@ -224,9 +225,9 @@ int tunnel(conn_rec* conn, http::CURLSession& cs, const string& url, const strin
             // Error
             if (pollfds->rtnevents & (APR_POLLERR | APR_POLLHUP | APR_POLLNVAL)) {
                 if (pollfds->desc.s == csock) 
-                    return abort(conn, "Couldn't receive from client");
+                    return abort(conn, csock, "Couldn't receive from client");
                 else
-                    return abort(conn, "Couldn't receive from target");
+                    return abort(conn, csock, "Couldn't receive from target");
             }
         }
 
@@ -234,12 +235,12 @@ int tunnel(conn_rec* conn, http::CURLSession& cs, const string& url, const strin
         debug("modssltunnel::tunnel::poll");
         apr_status_t pollrc = apr_pollset_poll(pollset, -1, &pollcount, &pollfds);
         if (pollrc != APR_SUCCESS)
-            return abort(conn, "Couldn't poll sockets");
+            return abort(conn, csock, "Couldn't poll sockets");
         debug(pollcount, "modssltunnel::tunnel::pollfds");
     }
 
     // Close client connection
-    return close(conn);
+    return close(conn, csock);
 }
 
 /**
@@ -269,13 +270,10 @@ int processConnection(conn_rec *conn) {
         return DECLINED;
     debug(sc.pass, "modssltunnel::processConnection::pass");
 
-    // Create the target connection
-    http::CURLSession cs(sc.ca, sc.cert, sc.key);
-
     // Run the tunnel
     const string preamble = string("SSLTUNNEL ") + sc.path + string(" HTTP/1.1\r\nHost: ") + sc.host + string("\r\n\r\n");
     debug(preamble, "modssltunnel::processConnection::preamble");
-    return tunnel(conn, cs, sc.pass, preamble, gc_pool(conn->pool), connectionFilter(conn->input_filters), connectionFilter(conn->output_filters));
+    return tunnel(conn, sc.ca, sc.cert, sc.key, sc.pass, preamble, gc_pool(conn->pool), connectionFilter(conn->input_filters), connectionFilter(conn->output_filters));
 }
 
 /**
@@ -295,11 +293,8 @@ int handler(request_rec* r) {
     const string url = string(cadr(path)) + ":" + caddr(path);
     debug(url, "modssltunnel::handler::target");
 
-    // Create the target connection
-    http::CURLSession cs("", "", "");
-
     // Run the tunnel
-    return tunnel(r->connection, cs, url, "", gc_pool(r->pool), connectionFilter(r->proto_input_filters), connectionFilter(r->proto_output_filters));
+    return tunnel(r->connection, "", "", "", url, "", gc_pool(r->pool), connectionFilter(r->proto_input_filters), connectionFilter(r->proto_output_filters));
 }
 
 /**

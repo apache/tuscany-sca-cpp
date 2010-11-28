@@ -17,6 +17,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# For this test to work, add the test domain to your etc/hosts as follows:
+# 127.0.0.1 sca-store.com joe.sca-store.com joe.sca-store.com
+
 echo "Testing..."
 here=`readlink -f $0`; here=`dirname $here`
 curl_prefix=`cat $here/../../modules/http/curl.prefix`
@@ -24,10 +27,6 @@ curl_prefix=`cat $here/../../modules/http/curl.prefix`
 # Setup
 ./start
 sleep 2
-
-# For this test to work, add the test domain to your etc/hosts as follows:
-# 127.0.0.1 sca-store.com joe.sca-store.com joe.sca-store.com
-# then run ../../ubuntu/ip-redirect-all 80 8091
 
 # Test HTTP GET
 $curl_prefix/bin/curl http://joe.sca-store.com/ 2>/dev/null >tmp/index.html

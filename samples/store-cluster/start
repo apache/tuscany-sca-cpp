@@ -19,6 +19,12 @@
 
 set -x
 
+# Redirect traffic from port 80 to proxy1
+sudo ../../ubuntu/ip-redirect-all 80 8090
+
+# Redirect traffic from port 80 to proxy2
+#sudo ../../ubuntu/ip-redirect-all 80 8091
+
 # Start scribe logging
 ../../components/log/scribed-central-conf tmp/monitor
 ../../components/log/scribed-client-conf tmp/monitor localhost
@@ -70,10 +76,4 @@ sleep 1
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8102
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8103
 ../../modules/http/httpd-start tmp/proxy2
-
-# Redirect traffic from port 80 to proxy1
-#sudo ../../ubuntu/ip-redirect-all 80 8090
-
-# Redirect traffic from port 80 to proxy2
-#sudo ../../ubuntu/ip-redirect-all 80 8091
 

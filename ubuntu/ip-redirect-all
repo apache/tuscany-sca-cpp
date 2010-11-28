@@ -22,5 +22,10 @@ here=`readlink -f $0`; here=`dirname $here`
 sport=$1
 tport=$2
 
+# Cleanup existing rules
+sudo /sbin/iptables -t nat -S PREROUTING | grep "\-p tcp" | grep "\-\-dport $sport" | grep "\-j REDIRECT" | sed "s/^-A/-D/" | awk -F "\t" '{ printf "sudo /sbin/iptables -t nat %s\n", $1 }' | /bin/sh
+sudo /sbin/iptables -t nat -S OUTPUT | grep "\-p tcp" | grep "\-\-dport $sport" | grep "\-j REDIRECT" | sed "s/^-A/-D/" | awk -F "\t" '{ printf "sudo /sbin/iptables -t nat %s\n", $1 }' | /bin/sh
+
+# Redirect traffic
 /sbin/ifconfig | grep "inet addr:" | awk -F ":" '{ print $2 }' | awk '{ print $1 }' | xargs -i $here/ip-redirect $sport $tport {}
 

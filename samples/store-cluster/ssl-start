@@ -19,15 +19,29 @@
 
 set -x
 
+# Redirect traffic from ports 80, 443 and 444 to proxy1
+sudo ../../ubuntu/ip-redirect-all 80 8090
+sudo ../../ubuntu/ip-redirect-all 443 8091
+sudo ../../ubuntu/ip-redirect-all 444 8092
+
+# Redirect traffic from ports 80, 443 and 444 to proxy2
+#sudo ../../ubuntu/ip-redirect-all 80 8093
+#sudo ../../ubuntu/ip-redirect-all 443 8094
+#sudo ../../ubuntu/ip-redirect-all 444 8095
+
+# Redirect traffic from ports 119 and 563 to tunnel
+sudo ../../ubuntu/ip-redirect-all 119 8119
+sudo ../../ubuntu/ip-redirect-all 563 8563
+
 # Generate SSL certificates
 ../../modules/http/ssl-ca-conf tmp/ssl sca-store.com
-../../modules/http/ssl-cert-conf tmp/ssl sca-store.com server
+../../modules/http/ssl-cert-conf tmp/ssl localhost server
 ../../modules/http/ssl-cert-conf tmp/ssl *.sca-store.com vhost
 ../../modules/http/ssl-cert-conf tmp/ssl sca-store.com proxy
-../../modules/http/ssl-cert-conf tmp/ssl sca-store.com tunnel
+../../modules/http/ssl-cert-conf tmp/ssl localhost tunnel
 
 # Start an SSL tunnel
-./tunnel-ssl-conf tmp/tunnel 8119 8563
+./tunnel-ssl-conf tmp/tunnel 8119/119 8563/563
 ../../modules/http/httpd-start tmp/tunnel
 sleep 1
 
@@ -74,20 +88,20 @@ sleep 1
 ../../modules/http/httpd-start tmp/sqldb3
 
 # Start three app servers
-./server-ssl-conf tmp/server1 8101 8441
+./server-ssl-conf tmp/server1 8101/80 8441/443
 ../../modules/http/httpd-start tmp/server1
 sleep 1
 
-./server-ssl-conf tmp/server2 8102 8442
+./server-ssl-conf tmp/server2 8102/80 8442/443
 ../../modules/http/httpd-start tmp/server2
 sleep 1
 
-./server-ssl-conf tmp/server3 8103 8443
+./server-ssl-conf tmp/server3 8103/80 8443/443
 ../../modules/http/httpd-start tmp/server3
 sleep 1
 
 # Start two proxy balancers
-./proxy-ssl-conf tmp/proxy1 8091 8093
+./proxy-ssl-conf tmp/proxy1 8090/80 8091/443
 ../../modules/http/proxy-member-conf tmp/proxy1 localhost 8101
 ../../modules/http/proxy-ssl-member-conf tmp/proxy1 localhost 8441
 ../../modules/http/proxy-member-conf tmp/proxy1 localhost 8102
@@ -96,7 +110,7 @@ sleep 1
 ../../modules/http/proxy-ssl-member-conf tmp/proxy1 localhost 8443
 ../../modules/http/httpd-start tmp/proxy1
 
-./proxy-ssl-conf tmp/proxy2 8092 8094
+./proxy-ssl-conf tmp/proxy2 8093/80 8094/443
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8101
 ../../modules/http/proxy-ssl-member-conf tmp/proxy2 localhost 8441
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8102
@@ -104,16 +118,4 @@ sleep 1
 ../../modules/http/proxy-member-conf tmp/proxy2 localhost 8103
 ../../modules/http/proxy-ssl-member-conf tmp/proxy2 localhost 8443
 ../../modules/http/httpd-start tmp/proxy2
-
-# Redirect traffic from ports 80 and 443 to proxy1
-#sudo ../../ubuntu/ip-redirect-all 80 8091
-#sudo ../../ubuntu/ip-redirect-all 443 8093
-
-# Redirect traffic from ports 80 and 443 to proxy2
-#sudo ../../ubuntu/ip-redirect-all 80 8092
-#sudo ../../ubuntu/ip-redirect-all 443 8094
-
-# Redirect traffic from ports 119 and 563 to tunnel
-#sudo ../../ubuntu/ip-redirect-all 119 8119
-#sudo ../../ubuntu/ip-redirect-all 563 8563
 

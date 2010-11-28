@@ -54,7 +54,7 @@ tar xzf httpd-2.3.8.tar.gz
 wget http://archive.apache.org/dist/httpd/httpd-2.3.8-deps.tar.gz
 tar xzf httpd-2.3.8-deps.tar.gz
 cd httpd-2.3.8
-./configure --enable-ssl --enable-proxy --enable-usertrack --enable-mods-shared=most --with-included-apr --with-expat=$build/expat-2.0.1-bin --with-mpm=prefork --prefix=$build/httpd-2.3.8-bin
+./configure --enable-ssl --enable-proxy --enable-usertrack --enable-mods-shared=most --enable-mpms-shared="prefork worker event" --with-included-apr --with-expat=$build/expat-2.0.1-bin --with-mpm=prefork --prefix=$build/httpd-2.3.8-bin
 make
 make install
 if [ "$?" != "0" ]; then

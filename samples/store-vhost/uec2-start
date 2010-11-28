@@ -25,7 +25,7 @@ else
     host="sca-store.com"
 fi
 
-# Ports 80, 443, 8090, 8453 need to be open
+# Ports 80, 443, 444, 8090, 8453, 8454 need to be open
 sudo ../../ubuntu/ip-redirect-all 80 8090
 sudo ../../ubuntu/ip-redirect-all 443 8453
 

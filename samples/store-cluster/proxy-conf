@@ -26,6 +26,7 @@ set -x
 ../../modules/http/httpd-conf $root sca-store.com $port/80 $root/htdocs
 ../../modules/http/vhost-conf $root
 ../../modules/http/proxy-conf $root
+../../modules/http/httpd-event-conf $root
 
 # Aggregate proxy balancer logs
 category=`basename $root`

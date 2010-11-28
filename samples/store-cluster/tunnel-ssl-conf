@@ -24,7 +24,9 @@ sslport=$3
 set -x
 
 # Configure an SSL-enabled tunnel server
-../../modules/http/httpd-conf $root sca-store.com $port/119 $root/htdocs
+../../modules/http/httpd-conf $root sca-store.com $port $root/htdocs
+../../modules/http/httpd-event-conf $root
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
-../../modules/http/httpd-ssl-conf $root $sslport/563
+../../modules/http/httpd-ssl-conf $root $sslport
+../../modules/http/cert-auth-conf $root
 
