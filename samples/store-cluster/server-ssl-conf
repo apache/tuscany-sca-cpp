@@ -41,6 +41,7 @@ tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
 ../../modules/openid/openid-memcached-conf $root localhost 11212
 ../../modules/openid/openid-memcached-conf $root localhost 11213
 ../../modules/http/open-auth-conf $root
+../../modules/http/passwd-auth-conf $root foo foo
 
 ../../modules/server/server-conf $root
 ../../modules/python/python-conf $root

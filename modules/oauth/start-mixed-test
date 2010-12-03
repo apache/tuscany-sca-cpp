@@ -45,6 +45,13 @@ here=`readlink -f $0`; here=`dirname $here`
 ../openid/openid-memcached-conf tmp localhost 11213
 
 ../http/open-auth-conf tmp
+../http/passwd-auth-conf tmp foo foo
+
+# For this test to work you need to add your form, oauth and open id ids
+# to the authorized user group
+../../modules/http/group-auth-conf tmp foo
+../../modules/http/group-auth-conf tmp 123456
+../../modules/http/group-auth-conf tmp https://www.google.com/accounts/o8/id?id=12345678
 
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp

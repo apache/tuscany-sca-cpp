@@ -31,6 +31,10 @@
 ./openid-memcached-conf tmp localhost 11213
 ./openid-step2-conf tmp
 
+# For this test to work you need to add your openid to the
+# the authorized user group
+../../modules/http/group-auth-conf tmp https://www.google.com/accounts/o8/id?id=1234567
+
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

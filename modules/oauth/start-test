@@ -18,6 +18,9 @@
 #  under the License.
 
 # Setup
+../../ubuntu/ip-redirect-all 80 8090
+../../ubuntu/ip-redirect-all 443 8453
+
 ../../components/cache/memcached-start 11212
 ../../components/cache/memcached-start 11213
 
@@ -35,6 +38,10 @@
 ./oauth1-appkey-conf tmp linkedin.com app3456 secret4567
 ./oauth2-appkey-conf tmp facebook.com app1234 secret6789
 ./oauth2-appkey-conf tmp github.com app5678 secret8901
+
+# For this test to work you need to add your oauth user id to the
+# authorized user group
+../../modules/http/group-auth-conf tmp 123456
 
 ../../modules/server/server-conf tmp
 ../../modules/server/scheme-conf tmp

@@ -22,6 +22,7 @@
 ../../modules/http/httpd-conf tmp localhost 8090 htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
 ../../modules/http/basic-auth-conf tmp
+../../modules/http/passwd-auth-conf tmp foo foo
 ../../modules/server/server-conf tmp
 ../../modules/java/java-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

@@ -36,8 +36,6 @@ htdocs=`echo $conf | awk '{ print $8 }'`
 mkdir -p $htdocs
 htdocs=`readlink -f $htdocs`
 
-httpd_prefix=`cat $here/httpd.prefix`
-
 # Extract organization name from our CA certificate
 org=`openssl x509 -noout -subject -nameopt multiline -in $root/cert/ca.crt | grep organizationName | awk -F "= " '{ print $2 }'`
 

@@ -17,20 +17,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/ssl-ca-conf tmp localhost
-../../modules/http/ssl-cert-conf tmp localhost
-../../modules/http/httpd-conf tmp localhost 8090 htdocs
-../../modules/http/httpd-ssl-conf tmp 8453
-../../modules/http/basic-auth-conf tmp
-../../modules/http/passwd-auth-conf tmp foo foo
-../../modules/server/server-conf tmp
-../../modules/server/cpp-conf tmp
-cat >>tmp/conf/httpd.conf <<EOF
-# Configure SCA Composite
-SCAContribution `pwd`/
-SCAComposite store.composite
+here=`readlink -f $0`; here=`dirname $here`
+mkdir -p $1
+root=`readlink -f $1`
+user=$2
+pass=$3
 
-EOF
+httpd_prefix=`cat $here/httpd.prefix`
 
-../../components/cache/memcached-start
-../../modules/http/httpd-start tmp
+# Create password file
+touch $root/conf/httpd.passwd
+$httpd_prefix/bin/htpasswd -b $root/conf/httpd.passwd $user $pass 2>/dev/null
+
