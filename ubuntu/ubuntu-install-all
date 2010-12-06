@@ -131,8 +131,8 @@ fi
 cd $build
 
 # Install Google AppEngine SDK
-wget http://googleappengine.googlecode.com/files/google_appengine_1.3.8.zip
-unzip google_appengine_1.3.8.zip
+wget http://googleappengine.googlecode.com/files/google_appengine_1.4.0.zip
+unzip google_appengine_1.4.0.zip
 
 # Build Apache Axis2/C
 sudo apt-get -y install pkg-config

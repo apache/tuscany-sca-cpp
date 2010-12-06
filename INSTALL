@@ -80,7 +80,7 @@ libboost-filesystem-1.42.0
 
 Python:
 Python 2.6.6 (http://www.python.org/)
-Google AppEngine 1.3.8 (http://code.google.com/appengine/)
+Google AppEngine 1.4.0 (http://code.google.com/appengine/)
 
 Java:
 a Java 5+ JDK (http://openjdk.java.net/, http://harmony.apache.org/)
