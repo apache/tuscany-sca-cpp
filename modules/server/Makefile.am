@@ -23,9 +23,7 @@ incldir = $(prefix)/include/modules/server
 dist_mod_SCRIPTS = cpp-conf scheme-conf server-conf
 moddir = $(prefix)/modules/server
 
-nobase_dist_mod_DATA = htdocs/wiring/*.js
-
-EXTRA_DIST = domain-test.composite client-test.scm server-test.scm htdocs/*.xml htdocs/*.txt htdocs/*.html htdocs/wiring/*.js
+EXTRA_DIST = domain-test.composite client-test.scm server-test.scm htdocs/*.xml htdocs/*.txt htdocs/*.html
 
 mod_LTLIBRARIES = libmod_tuscany_eval.la libmod_tuscany_wiring.la
 noinst_DATA = libmod_tuscany_eval.so libmod_tuscany_wiring.so

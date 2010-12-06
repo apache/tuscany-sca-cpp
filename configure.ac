@@ -890,6 +890,7 @@ AC_CONFIG_FILES([Makefile
                  modules/scheme/Makefile
                  modules/atom/Makefile
                  modules/rss/Makefile
+                 modules/js/Makefile
                  modules/json/Makefile
                  modules/scdl/Makefile
                  modules/http/Makefile

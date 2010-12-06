@@ -15,5 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom rss js json scdl http server python java openid oauth wsgi
+moddir = $(prefix)/modules/js
+nobase_dist_mod_DATA = htdocs/*.js
+EXTRA_DIST = htdocs/*.js
 
