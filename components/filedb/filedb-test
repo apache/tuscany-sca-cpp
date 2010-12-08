@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,5 +17,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat log nosqldb filedb queue sqldb webservice
+# Setup
+mkdir -p tmp
+mkdir -p tmp/testdb
 
+# Test
+./file-test 2>/dev/null
+rc=$?
+
+# Cleanup
+return $rc

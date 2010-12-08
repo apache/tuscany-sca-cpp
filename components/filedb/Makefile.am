@@ -15,5 +15,30 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat log nosqldb filedb queue sqldb webservice
+INCLUDES = -I${TINYCDB_INCLUDE}
+
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/components/filedb
+
+compdir=$(prefix)/components/filedb
+
+EXTRA_DIST = filedb.composite filedb.componentType
+
+comp_LTLIBRARIES = libfiledb.la
+noinst_DATA = libfiledb.so
+
+libfiledb_la_SOURCES = filedb.cpp
+libfiledb_la_LDFLAGS = 
+libfiledb.so:
+	ln -s .libs/libfiledb.so
+
+file_test_SOURCES = file-test.cpp
+file_test_LDFLAGS = 
+
+client_test_SOURCES = client-test.cpp
+client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
+
+dist_noinst_SCRIPTS = filedb-test server-test
+noinst_PROGRAMS = file-test client-test
+TESTS = filedb-test server-test
 
