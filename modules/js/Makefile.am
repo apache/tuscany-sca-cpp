@@ -16,6 +16,6 @@
 #  under the License.
 
 moddir = $(prefix)/modules/js
-nobase_dist_mod_DATA = htdocs/*.js
-EXTRA_DIST = htdocs/*.js
+nobase_dist_mod_DATA = htdocs/*.js htdocs/*.css
+EXTRA_DIST = htdocs/*.js htdocs/*.css
 
