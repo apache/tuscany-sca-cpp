@@ -250,7 +250,7 @@ const failable<list<value> > profileUserInfo(const value& cid, const string& inf
     string b = substr(info, 0, 1);
     if (b == "[") {
         // Twitter JSON profile
-        json::JSONContext cx;
+        js::JSContext cx;
         const list<value> infov(json::jsonValues(content(json::readJSON(mklist<string>(info), cx))));
         if (isNil(infov))
             return mkfailure<list<value> >("Couldn't retrieve user info");
@@ -264,7 +264,7 @@ const failable<list<value> > profileUserInfo(const value& cid, const string& inf
     }
     if (b == "{") {
         // Foursquare JSON profile
-        json::JSONContext cx;
+        js::JSContext cx;
         const list<value> infov(json::jsonValues(content(json::readJSON(mklist<string>(info), cx))));
         if (isNil(infov))
             return mkfailure<list<value> >("Couldn't retrieve user info");

@@ -31,23 +31,13 @@
 namespace tuscany {
 namespace json {
 
-bool testJSEval() {
-    JSONContext cx;
-    const string script("(function testJSON(n){ return JSON.parse(JSON.stringify(n)) })(5)");
-    jsval rval;
-    assert(JS_EvaluateScript(cx, cx.getGlobal(), c_str(script), (uintN)length(script), "testJSON.js", 1, &rval));
-    const string r(JS_GetStringBytes(JS_ValueToString(cx, rval)));
-    assert(r == "5");
-    return true;
-}
-
 ostream* jsonWriter(const string& s, ostream* os) {
     (*os) << s;
     return os;
 }
 
 bool testJSON() {
-    const JSONContext cx;
+    const js::JSContext cx;
 
     {
         const list<value> ad = mklist<value>(mklist<value>(attribute, "city", string("san francisco")), mklist<value>(attribute, "state", string("ca")));
@@ -91,7 +81,7 @@ bool testJSON() {
 }
 
 bool testJSONRPC() {
-    JSONContext cx;
+    js::JSContext cx;
     {
         const string lm("{\"id\": 1, \"method\": \"test\", \"params\": []}");
         const list<value> e = content(readJSON(mklist(lm), cx));
@@ -166,7 +156,6 @@ bool testJSONRPC() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::json::testJSEval();
     tuscany::json::testJSON();
     tuscany::json::testJSONRPC();
 

@@ -306,7 +306,7 @@ const failable<value> evalExpr(const value& expr, const string& url, const CURLS
     debug(expr, "http::evalExpr::input");
 
     // Convert expression to a JSON-RPC request
-    json::JSONContext cx;
+    js::JSContext cx;
     const failable<list<string> > jsreq = json::jsonRequest(1, car<value>(expr), cdr<value>(expr), cx);
     if (!hasContent(jsreq))
         return mkfailure<value>(reason(jsreq));
@@ -422,7 +422,7 @@ const failable<value> get(const string& url, const CURLSession& cs) {
         return val;
     }
     if (contains(ct, "text/javascript") || contains(ct, "application/json")) {
-        json::JSONContext cx;
+        js::JSContext cx;
         const value val(json::jsonValues(content(json::readJSON(ls, cx))));
         debug(val, "http::get::result");
         return val;

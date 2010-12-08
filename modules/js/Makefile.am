@@ -15,7 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+incl_HEADERS = *.hpp
+incldir = $(prefix)/include/modules/js
+
 moddir = $(prefix)/modules/js
 nobase_dist_mod_DATA = htdocs/*.js htdocs/*.css
 EXTRA_DIST = htdocs/*.js htdocs/*.css
 
+js_test_SOURCES = js-test.cpp
+js_test_LDFLAGS = -lmozjs 
+
+noinst_PROGRAMS = js-test
+TESTS = js-test

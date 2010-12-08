@@ -119,7 +119,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
             return mkfailure<int>(reason(val));
 
         // Return JSON result
-        json::JSONContext cx;
+        js::JSContext cx;
         return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc", r);
     }
 
@@ -157,7 +157,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
             return rc;
         const list<string> ls = httpd::read(r);
         debug(ls, "modeval::post::input");
-        json::JSONContext cx;
+        js::JSContext cx;
         const list<value> json = elementsToValues(content(json::readJSON(ls, cx)));
         const list<list<value> > args = httpd::postArgs(json);
 
