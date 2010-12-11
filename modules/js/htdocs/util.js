@@ -18,11 +18,11 @@
  */
 
 /**
- * Utility functions.
+ * Simple utility functions.
  */
 
 /**
- * Simple scheme-like lists.
+ * Scheme-like lists.
  */
 function cons(car, cdr) {
     return new Array(car).concat(cdr);
@@ -32,8 +32,74 @@ function car(l) {
     return l[0];
 }
 
+function first(l) {
+    return car(l);
+}
+
 function cdr(l) {
     return l.slice(1);
+}
+
+function rest(l) {
+    return cdr(l);
+}
+
+function cadr(l) {
+    return car(cdr(l));
+}
+
+function cddr(l) {
+    return cdr(cdr(l));
+}
+
+function caddr(l) {
+    return car(cddr(l));
+}
+
+function append(a, b) {
+    return a.concat(b);
+}
+
+function reverse(l) {
+    return l.slice(0).reverse();
+}
+
+function isNil(v) {
+    if (v == null)
+        return true;
+    if ('' + v == 'undefined')
+        return true;
+    try {
+        if (isList(v) && v.length == 0)
+            return true;
+    } catch (e) {}
+    return false;
+}
+
+function isSymbol(v) {
+    if (typeof v == 'string' && v.slice(0, 1) == "'")
+        return true;
+    return false;
+}
+
+function isString(v) {
+    if (typeof v == 'string')
+        return true;
+    return false;
+}
+
+function isList(v) {
+    try {
+        if (v.constructor == Array)
+            return true;
+    } catch (e) {}
+    return false;
+}
+
+function isTaggedList(v, t) {
+    if (isList(v) && !isNil(v) && car(v) == t)
+        return true;
+    return false;
 }
 
 function mklist() {
@@ -43,43 +109,76 @@ function mklist() {
     return a;
 }
 
-function isList(v) {
-    return toString.call(v) === '[object Array]';
-}
-
-function isNil(v) {
-    return v == 'undefined' || v == null;
-}
-
-function isEmpty(l) {
-    return l.length == 0;
-}
-
 /**
- * convert an array or object to a non-sparse array.
- */ 
-function array(obj) {
-    if (isNil(obj.length)) {
-        var a = new Array();
-        a[0] = obj;
-        return a;
-    } else {
-        var a = new Array();
-        var n = 0;
-        for (var i in obj)
-            a[n++] = obj[i];
-        return a;
-    }
-}
-
-/**
- * Dump an object to the console.
+ * Scheme-like associations.
  */
-function dump(o) {
+function assoc(k, l) {
+    if (isNil(l))
+        return mklist();
+    if (k == car(car(l)))
+        return car(l);
+    return assoc(k, cdr(l));
+}
+
+/**
+ * Map and filter functions.
+ */
+function map(f, l) {
+    if (isNil(l))
+        return l;
+    return cons(f(car(l)), map(f, cdr(l)));
+}
+
+function filter(f, l) {
+    if (isNil(l))
+        return l;
+    if (f(car(l)))
+        return cons(car(l), filter(f, cdr(l)));
+    return filter(f, cdr(l));
+}
+
+/**
+ * Dump an object to the debug console.
+ */
+function debug(o) {
     for (f in o) {
         try {
             console.log(f + '=' + o[f]);
         } catch (e) {}
     }
+}
+
+/**
+ * Write a list of strings.
+ */
+function writeStrings(l) {
+    if (isNil(l))
+        return '';
+    return car(l) + writeStrings(cdr(l));
+}
+
+/**
+ * Write a value using a Scheme-like syntax.
+ */
+function writeValue(v) {
+    function writePrimitive(p) {
+        if (isSymbol(p))
+            return '' + p.substring(1);
+        if (isString(p))
+            return '"' + p + '"';
+        return '' + p;
+    }
+
+    function writeList(l) {
+        if (isNil(l))
+            return '';
+        return ' ' + writeValue(car(l)) + writeList(cdr(l));
+    }
+
+    if (!isList(v))
+        return writePrimitive(v);
+    if (isNil(v))
+        return '()';
+    return '(' + writeValue(car(v)) + writeList(cdr(v)) + ')';
 }
 

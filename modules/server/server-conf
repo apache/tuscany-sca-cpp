@@ -57,10 +57,14 @@ SCAWiringServerName $servername
 
 # Serve JavaScript client scripts
 Alias /component.js $jsprefix/htdocs/component.js
-Alias /scdl.js $jsprefix/htdocs/scdl.js
 Alias /util.js $jsprefix/htdocs/util.js
+Alias /elemutil.js $jsprefix/htdocs/elemutil.js
+Alias /xmlutil.js $jsprefix/htdocs/xmlutil.js
+Alias /atomutil.js $jsprefix/htdocs/atomutil.js
 Alias /ui.js $jsprefix/htdocs/ui.js
 Alias /ui.css $jsprefix/htdocs/ui.css
+Alias /scdl.js $jsprefix/htdocs/scdl.js
+Alias /graph.js $jsprefix/htdocs/graph.js
 
 <Location /component.js>
 AuthType None
