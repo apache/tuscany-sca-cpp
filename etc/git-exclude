@@ -106,4 +106,8 @@ rss-test
 scribe-cat
 js-test
 file-test
+xml-value
+value-xml
+json-value
+value-json
 

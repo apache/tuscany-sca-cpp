@@ -22,5 +22,17 @@ eval_test_SOURCES = eval-test.cpp
 
 eval_shell_SOURCES = eval-shell.cpp
 
-noinst_PROGRAMS = eval-test eval-shell
+xml_value_SOURCES = xml-value.cpp
+xml_value_LDFLAGS =  -lxml2
+
+value_xml_SOURCES = value-xml.cpp
+value_xml_LDFLAGS =  -lxml2
+
+json_value_SOURCES = json-value.cpp
+json_value_LDFLAGS = -lmozjs 
+
+value_json_SOURCES = value-json.cpp
+value_json_LDFLAGS = -lmozjs 
+
+noinst_PROGRAMS = eval-test eval-shell xml-value value-xml json-value value-json
 TESTS = eval-test
