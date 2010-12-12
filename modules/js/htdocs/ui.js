@@ -21,10 +21,12 @@
  * UI utility functions.
  */
 
+var ui = new Object();
+
 /**
  * Build a menu bar.
  */ 
-function menu(name, href) {
+ui.menu = function(name, href) {
     function Menu(n, h) {
         this.name = n;
         this.href = h;
@@ -44,9 +46,9 @@ function menu(name, href) {
         };
     }
     return new Menu(name, href);
-}
+};
 
-function menubar(left, right) {
+ui.menubar = function(left, right) {
     var bar = '<table cellpadding="0" cellspacing="0" width="100%" class=tbar><tr>' +
     '<td class=ltbar><table border="0" cellspacing="0" cellpadding="0"><tr>';
     for (i in left)
@@ -59,8 +61,7 @@ function menubar(left, right) {
 
     bar = bar + '</tr></table></td></tr></table>';
     return bar;
-}
-
+};
  
 /**
  * Autocomplete / suggest support for input fields
@@ -71,22 +72,22 @@ function menubar(left, right) {
  * then hook it to an input field as follows:
  * suggest(document.yourForm.yourInputField, suggestItems);
  */ 
-function selectSuggestion(node, value) {
+ui.selectSuggestion = function(node, value) {
     for (;;) {
         node = node.parentNode;
         if (node.tagName.toLowerCase() == 'div')
               break;
     }
     node.selectSuggestion(value);
-}
+};
 
-function hilightSuggestion(node, over) {
+ui.hilightSuggestion = function(node, over) {
     if (over)
         node.className = 'suggestHilighted';
     node.className = 'suggestItem';
-}
+};
 
-function suggest(input, suggestFunction) {
+ui.suggest = function(input, suggestFunction) {
     input.suggest = suggestFunction;
       
     input.selectSuggestion = function(value) {
@@ -122,8 +123,8 @@ function suggest(input, suggestFunction) {
             if (items.length == 0)
                 items += '<table class=suggestTable>';
             items += '<tr><td class="suggestItem" ' +
-            'onmouseover="hilightSuggestion(this, true)" onmouseout="hilightSuggestion(this, false)" ' +
-            'onmousedown="selectSuggestion(this, \'' + values[i] + '\')">' + values[i] + '</td></tr>';
+            'onmouseover="ui.hilightSuggestion(this, true)" onmouseout="ui.hilightSuggestion(this, false)" ' +
+            'onmousedown="ui.selectSuggestion(this, \'' + values[i] + '\')">' + values[i] + '</td></tr>';
         }
         if (items.length != 0)
             items += '</table>';
@@ -162,33 +163,33 @@ function suggest(input, suggestFunction) {
     input.onblur = function(event) {
         setTimeout(function() { input.hideSuggestDiv(); }, 50);
     };
-}
+};
 
 /**
  * Return the content document of a window.
  */
-function content(win) {
+ui.content = function(win) {
     if (!isNil(win.document))
         return win.document;
     if (!isNil(win.contentDocument))
         return win.contentDocument;
     return null;
-}
+};
 
 /**
  * Return a child element of a node with the given id.
  */
-function elementByID(node, id) {
+ui.elementByID = function(node, id) {
     for (var i in node.childNodes) {
         var child = node.childNodes[i];
         if (child.id == id)
             return child;
-        var gchild = elementByID(child, id);
+        var gchild = ui.elementByID(child, id);
         if (gchild != null)
             return gchild;
     }
     return null;
-}
+};
 
 /**
  * Return the current document, or a child element with the given id.
@@ -199,34 +200,34 @@ function $(id) {
             return widget;
         return document;
     }
-    return elementByID($(document), id);
-}
+    return ui.elementByID($(document), id);
+};
 
 /**
  * Initialize a widget.
  */
-function onloadwidget() {
-    if (isNil(window.parent) || isNil(window.parent.widgets))
+ui.onloadwidget = function() {
+    if (isNil(window.parent) || isNil(window.parent.ui) || isNil(window.parent.ui.widgets))
         return true;
-    var pdoc = content(window.parent);
-    for (w in window.parent.widgets) {
-        var ww = elementByID(pdoc, w).contentWindow;
+    var pdoc = ui.content(window.parent);
+    for (w in window.parent.ui.widgets) {
+        var ww = ui.elementByID(pdoc, w).contentWindow;
         if (ww == window) {
-            document.widget = elementByID(pdoc, window.parent.widgets[w]);
+            document.widget = ui.elementByID(pdoc, window.parent.ui.widgets[w]);
             document.widget.innerHTML = document.body.innerHTML;
             return true;
         }
     }
     return true;
-}
+};
 
 /**
  * Load a widget into an element.
  */
-var widgets = new Array();
+ui.widgets = new Array();
 
-function bindwidget(f, el) {
-    window.widgets[f] = el;
+ui.bindwidget = function(f, el) {
+    window.ui.widgets[f] = el;
     return f;
-}
+};
 

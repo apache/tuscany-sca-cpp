@@ -20,28 +20,36 @@
 /**
  * SCDL parsing functions.
  */
+var scdl = new Object();
 
 /**
  * Returns a list of components in a composite.
  */
-function components(l) {
+scdl.components = function(l) {
     var cs = namedElementChildren("'composite", l);
     if (isNil(cs))
         return cs;
     return namedElementChildren("'component", car(cs));
-}
+};
 
 /**
  * Returns the name of a component, service or reference.
  */
-function name(l) {
+scdl.name = function(l) {
     return namedAttributeValue("'name", l);
-}
+};
+
+/**
+ * Returns the color of a component.
+ */
+scdl.color = function(l) {
+    return namedAttributeValue("'color", l);
+};
 
 /**
  * Returns the implementation of a component.
  */
-function implementation(l) {
+scdl.implementation = function(l) {
     function filterImplementation(v) {
         return isElement(v) && cadr(v).match("implementation.") != null;
     }
@@ -50,58 +58,65 @@ function implementation(l) {
     if (isNil(n))
         return null;
     return car(n);
-}
+};
 
 /**
  * Returns the type of an implementation.
  */
-function implementationType(l) {
+scdl.implementationType = function(l) {
     return elementName(l).substring(1);
-}
+};
 
 /**
  * Returns the URI of a service, reference or implementation.
  */
-function uri(l) {
+scdl.uri = function(l) {
     return namedAttributeValue("'uri", l);
-}
+};
+
+/**
+ * Returns the align attribute of a service or reference.
+ */
+scdl.align = function(l) {
+    return namedAttributeValue("'align", l);
+};
 
 /**
  * Returns a list of services in a component.
  */
-function services(l) {
+scdl.services = function(l) {
     return namedElementChildren("'service", l);
-}
+};
 
 /**
  * Returns a list of references in a component.
  */
-function references(l) {
+scdl.references = function(l) {
     return namedElementChildren("'reference", l);
-}
+};
 
 /**
  * Returns a list of bindings in a service or reference.
  */
-function bindings(l) {
+scdl.bindings = function(l) {
     function filterBinding(v) {
         return isElement(v) && cadr(v).match("binding.") != null;
     }
 
     return filter(filterBinding, l);
-}
+};
 
 /**
  * Returns the type of a binding.
  */
-function bindingType(l) {
+scdl.bindingType = function(l) {
     return elementName(l).substring(1);
-}
+};
 
 /**
  * Returns the target of a reference.
  */
-function target(l) {
+scdl.target = function(l) {
     function bindingsTarget(l) {
         if (isNil(l))
             return null;
@@ -114,20 +129,20 @@ function target(l) {
     var t = namedAttributeValue("'target", l);
     if (!isNil(t))
         return t;
-    return bindingsTarget(bindings(l));
-}
+    return bindingsTarget(scdl.bindings(l));
+};
 
 /**
  * Returns a list of properties in a component.
  */
-function properties(l) {
+scdl.properties = function(l) {
     return namedElementChildren("'property", l);
-}
+};
 
 /**
  * Returns the value of a property.
  */
-function propertyValue(l) {
+scdl.propertyValue = function(l) {
     return elementValue(l);
-}
+};
 

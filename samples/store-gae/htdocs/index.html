@@ -23,10 +23,10 @@
 <script type="text/javascript" src="/component.js"></script>
 
 <script type="text/javascript">
-var store = component("Store");
-var catalog = defun(reference(store, "catalog"), "items");
-var shoppingCart = defun(reference(store, "shoppingCart"), "email", "host");
-var shoppingTotal = defun(reference(store, "shoppingTotal"), "total");
+var store = sca.component("Store");
+var catalog = sca.defun(sca.reference(store, "catalog"), "items");
+var shoppingCart = sca.defun(sca.reference(store, "shoppingCart"), "email", "host");
+var shoppingTotal = sca.defun(sca.reference(store, "shoppingTotal"), "total");
 
 var catalogItems;
 

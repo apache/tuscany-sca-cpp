@@ -103,6 +103,36 @@ JSONClient.toJSON = function(o) {
 };
 
 /**
+ * Construct an HTTPBindingClient.
+ */
+function HTTPBindingClient(cname, uri, objectID) {
+    this.uri = "/references/" + cname + "/" + uri;
+    this.objectID = objectID;
+    this.apply = this._createApplyMethod();
+
+    if (typeof DOMParser == "undefined") {
+       DOMParser = function () {}
+    
+       DOMParser.prototype.parseFromString = function (str, contentType) {
+          if (typeof ActiveXObject != "undefined") {
+             var d = new ActiveXObject("MSXML.DomDocument");
+             d.loadXML(str);
+             return d;
+          } else if (typeof XMLHttpRequest != "undefined") {
+             var req = new XMLHttpRequest;
+             req.open("GET", "data:" + (contentType || "application/xml") +
+                             ";charset=utf-8," + encodeURIComponent(str), false);
+             if (req.overrideMimeType) {
+                req.overrideMimeType(contentType);
+             }
+             req.send(null);
+             return req.responseXML;
+          }
+       }
+    }
+}
+
+/**
  * HTTPBindingClient.Exception.
  */
 HTTPBindingClient.Exception = function(code, message, javaStack) {
@@ -498,67 +528,36 @@ HTTPBindingClient.prototype.createXMLHttpRequest = function () {
     }
     alert("XML http request not supported");
     return null;
-}
-
-/**
- * Construct an HTTPBindingClient.
- */
-function HTTPBindingClient(cname, uri, objectID) {
-    this.uri = "/references/" + cname + "/" + uri;
-    this.objectID = objectID;
-    this.apply = this._createApplyMethod();
-
-    if (typeof DOMParser == "undefined") {
-       DOMParser = function () {}
-    
-       DOMParser.prototype.parseFromString = function (str, contentType) {
-          if (typeof ActiveXObject != "undefined") {
-             var d = new ActiveXObject("MSXML.DomDocument");
-             d.loadXML(str);
-             return d;
-          } else if (typeof XMLHttpRequest != "undefined") {
-             var req = new XMLHttpRequest;
-             req.open("GET", "data:" + (contentType || "application/xml") +
-                             ";charset=utf-8," + encodeURIComponent(str), false);
-             if (req.overrideMimeType) {
-                req.overrideMimeType(contentType);
-             }
-             req.send(null);
-             return req.responseXML;
-          }
-       }
-    }
 };
-
-/**
- * Construct a component.
- */
-function ClientComponent(name) {
-    this.name = name;
-}
 
 /**
  * Public API.
  */
 
+var sca = new Object();
+
 /**
  * Return a component.
  */
-function component(name) {
+sca.component = function(name) {
+    function ClientComponent(name) {
+        this.name = name;
+    }
+
     return new ClientComponent(name);
-}
+};
 
 /**
  * Return a reference proxy.
  */
-function reference(comp, name) {
+sca.reference = function(comp, name) {
     return new HTTPBindingClient(comp.name, name);
 };
 
 /**
  * Add proxy functions to a reference proxy.
  */
-function defun(ref) {
+sca.defun = function(ref) {
     function defapply(name) {
         return function() {
             var args = new Array();

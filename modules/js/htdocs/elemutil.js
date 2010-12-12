@@ -188,17 +188,17 @@ function valuesToElements(l) {
 /**
  * Return a selector lambda function which can be used to filter elements.
  */
-function evalSelect(s, v) {
-    if (isNil(s))
-        return true;
-    if (isNil(v))
-        return false;
-    if (car(s) != car(v))
-        return false;
-    return evalSelect(cdr(s), cdr(v));
-}
-
 function selector(s) {
+    function evalSelect(s, v) {
+        if (isNil(s))
+            return true;
+        if (isNil(v))
+            return false;
+        if (car(s) != car(v))
+            return false;
+        return evalSelect(cdr(s), cdr(v));
+    }
+
     return function(v) { return evalSelect(s, v); };
 }
 

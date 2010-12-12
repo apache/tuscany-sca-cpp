@@ -21,40 +21,42 @@
  * SVG and VML component rendering functions.
  */
 
+var graph = new Object();
+
 /**
  * Detect browser VML support.
  */
-function supportsVML() {
-    if (typeof supportsVML.supported != 'undefined')
-        return supportsVML.supported;
-    supportsVML.supported = navigator.appName == 'Microsoft Internet Explorer';
-    return supportsVML.supported;
-}
+graph.supportsVML = function() {
+    if (typeof graph.supportsVML.supported != 'undefined')
+        return graph.supportsVML.supported;
+    graph.supportsVML.supported = navigator.appName == 'Microsoft Internet Explorer';
+    return graph.supportsVML.supported;
+};
 
 /**
  * Detect browser SVG support.
  */
-function supportsSVG() {
-    if (typeof supportsSVG.supported != 'undefined')
-        return supportsSVG.supported;
-    supportsSVG.supported = navigator.appName != 'Microsoft Internet Explorer';
-    return supportsSVG.supported;
-}
+graph.supportsSVG = function() {
+    if (typeof graph.supportsSVG.supported != 'undefined')
+        return graph.supportsSVG.supported;
+    graph.supportsSVG.supported = navigator.appName != 'Microsoft Internet Explorer';
+    return graph.supportsSVG.supported;
+};
 
 /**
  * Basic colors
  */
-var red = 'red';
-var green = 'green';
-var blue = 'blue';
-var yellow = 'yellow';
-var orange = '#ffa500';
-var gray = 'gray'
+graph.red = 'red';
+graph.green = 'green';
+graph.blue = 'blue';
+graph.yellow = 'yellow';
+graph.orange = '#ffa500';
+graph.gray = 'gray'
 
 /**
  * Base path class.
  */
-function BasePath() {
+graph.BasePath = function() {
     this.path = '';
     this.x = 0;
     this.y = 0;
@@ -88,28 +90,26 @@ function BasePath() {
     this.str = function() {
         return this.path;
     };
-}
+};
 
 /**
  * Rendering functions that work both with VML and SVG.
  */
-var mkgraph;
-var mkcompshape;
 var graph;
 
 /**
  * VML rendering.
  */
-if (supportsVML()) {
+if (graph.supportsVML()) {
 
-    var vmlns='urn:schemas-microsoft-com:vml';
+    graph.vmlns='urn:schemas-microsoft-com:vml';
 
     /**
      * Make a shape path.
      */
-    var mkpath = function() {
+    graph.mkpath = function() {
         function Path() {
-            this.BasePath = BasePath;
+            this.BasePath = graph.BasePath;
             this.BasePath();
 
             this.move = function(x, y) {
@@ -134,12 +134,12 @@ if (supportsVML()) {
         }
 
         return new Path();
-    }
+    };
 
     /**
      * Make a title element.
      */
-    var mktitle = function(t) {
+    graph.mktitle = function(t) {
         var title = document.createElement('v:textbox');
         title.style.left = '40';
         title.style.top = '30';
@@ -147,28 +147,26 @@ if (supportsVML()) {
         var tnode = document.createTextNode(t);
         title.appendChild(tnode);
         return title;
-    }
+    };
 
     /**
      * Return the width of a title.
      */
-    var textWidthDiv;
-
-    var titlewidth = function(t) {
-        textWidthDiv.innerHTML = t;
+    graph.titlewidth = function(t) {
+        graph.textWidthDiv.innerHTML = t;
         var twidth = textWidthDiv.offsetWidth + 10;
-        textWidthDiv.innerHTML = '';
+        graph.textWidthDiv.innerHTML = '';
         return twidth;
-    }
+    };
 
     /**
      * Make a component shape.
      */
-    mkcompshape = function(name, color, tsvcs, lsvcs, brefs, rrefs) {
-        var title = mktitle(name);
-        var twidth = titlewidth(name);
+    graph.mkcompshape = function(name, color, tsvcs, lsvcs, brefs, rrefs) {
+        var title = graph.mktitle(name);
+        var twidth = graph.titlewidth(name);
 
-        var d = mkcomppath(twidth, tsvcs, lsvcs, brefs, rrefs).str();
+        var d = graph.mkcomppath(twidth, tsvcs, lsvcs, brefs, rrefs).str();
 
         var shape = document.createElement('v:shape');
         shape.style.width = 500;
@@ -184,7 +182,7 @@ if (supportsVML()) {
         contour.coordsize = '500,500';
         contour.setAttribute('path', d);
         contour.filled = 'false';
-        contour.strokecolor = gray;
+        contour.strokecolor = graph.gray;
         contour.strokeweight = '3';
         contour.style.top = 1;
         contour.style.left = 1;
@@ -200,32 +198,27 @@ if (supportsVML()) {
         g.appendChild(contour);
         g.appendChild(title);
         return g;
-    }
-
-    /**
-     * Drag and drop support.
-     */
-    var dragX;
-    var dragY;
-    var dragging = null;
+    };
 
     /**
      * Make a graph.
      */
-    mkgraph = function() {
+    graph.mkgraph = function() {
         var div = document.createElement('div');
         div.id = 'vmldiv';
         document.body.appendChild(div);
 
-        textWidthDiv = document.createElement('span');
-        textWidthDiv.style.visibility = 'hidden'
-        div.appendChild(textWidthDiv);
+        graph.textWidthDiv = document.createElement('span');
+        graph.textWidthDiv.style.visibility = 'hidden'
+        div.appendChild(graph.textWidthDiv);
 
         var vmlg = document.createElement('v:group');
         vmlg.style.width = 500;
         vmlg.style.height = 500;
         vmlg.coordsize = '500,500';
         div.appendChild(vmlg);
+
+        graph.dragging = null;
 
         function draggable(n) {
             if (n == vmlg)
@@ -237,40 +230,40 @@ if (supportsVML()) {
 
         vmlg.onmousedown = function() {
             window.event.returnValue = false;
-            dragging = draggable(window.event.srcElement);
-            if (dragging == null)
+            graph.dragging = draggable(window.event.srcElement);
+            if (graph.dragging == null)
                 return false;
-            dragging.parentNode.appendChild(dragging);
-            dragX = window.event.clientX;
-            dragY = window.event.clientY;
+            graph.dragging.parentNode.appendChild(graph.dragging);
+            graph.dragX = window.event.clientX;
+            graph.dragY = window.event.clientY;
             vmlg.setCapture();
             return false;
         };
 
         vmlg.onmouseup = function() {
-            if (dragging == null)
+            if (graph.dragging == null)
                 return false;
-            dragging = null;
+            graph.dragging = null;
             vmlg.releaseCapture();
             return false;
         };
 
         vmlg.onmousemove = function() {
-            if (dragging == null)
+            if (graph.dragging == null)
                 return false;
-            var origX = dragging.coordorigin.X;
-            var origY = dragging.coordorigin.Y;
-            var newX = origX - (window.event.clientX - dragX);
-            var newY = origY - (window.event.clientY - dragY);
-            dragX = window.event.clientX;
-            dragY = window.event.clientY;
-            dragging.setAttribute('coordorigin', newX + ' ' + newY);
+            var origX = graph.dragging.coordorigin.X;
+            var origY = graph.dragging.coordorigin.Y;
+            var newX = origX - (window.event.clientX - graph.dragX);
+            var newY = origY - (window.event.clientY - graph.dragY);
+            graph.dragX = window.event.clientX;
+            graph.dragY = window.event.clientY;
+            graph.dragging.setAttribute('coordorigin', newX + ' ' + newY);
             return false;
         };
 
-        graph = vmlg;
+        graph.g = vmlg;
         return vmlg;
-    }
+    };
 
     document.write('<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />');
 }
@@ -278,16 +271,16 @@ if (supportsVML()) {
 /**
  * SVG rendering.
  */
-if (supportsSVG()) {
+if (graph.supportsSVG()) {
 
-    var svgns='http://www.w3.org/2000/svg';
+    graph.svgns='http://www.w3.org/2000/svg';
 
     /**
      * Make a shape path.
      */
-    var mkpath = function() {
+    graph.mkpath = function() {
         function Path() {
-            this.BasePath = BasePath;
+            this.BasePath = graph.BasePath;
             this.BasePath();
 
             this.move = function(x, y) {
@@ -312,68 +305,63 @@ if (supportsSVG()) {
         }
 
         return new Path();
-    }
+    };
 
     /**
      * Make a title element.
      */
-    var mktitle = function(t) {
-        var title = document.createElementNS(svgns, 'text');
+    graph.mktitle = function(t) {
+        var title = document.createElementNS(graph.svgns, 'text');
         title.setAttribute('text-anchor', 'start');
         title.setAttribute('x', 40);
         title.setAttribute('y', 50);
         title.appendChild(document.createTextNode(t));
-        graph.appendChild(title);
+        graph.g.appendChild(title);
         return title;
-    }
+    };
 
     /**
      * Make a component shape.
      */
-    mkcompshape = function(name, color, tsvcs, lsvcs, brefs, rrefs) {
-        var title = mktitle(name);
+    graph.mkcompshape = function(name, color, tsvcs, lsvcs, brefs, rrefs) {
+        var title = graph.mktitle(name);
         var twidth = title.getBBox().width;
 
-        var d = mkcomppath(twidth, tsvcs, lsvcs, brefs, rrefs).str();
+        var d = graph.mkcomppath(twidth, tsvcs, lsvcs, brefs, rrefs).str();
 
-        var shape = document.createElementNS(svgns, 'path');
+        var shape = document.createElementNS(graph.svgns, 'path');
         shape.setAttribute('d', d);
         shape.setAttribute('fill', color);
 
-        var contour = document.createElementNS(svgns, 'path');
+        var contour = document.createElementNS(graph.svgns, 'path');
         contour.setAttribute('d', d);
         contour.setAttribute('fill', 'none');
-        contour.setAttribute('stroke', gray);
+        contour.setAttribute('stroke', graph.gray);
         contour.setAttribute('stroke-width', '4');
         contour.setAttribute('stroke-opacity', '0.20');
         contour.setAttribute('transform', 'translate(1,1)');
 
-        var g = document.createElementNS(svgns, 'g');
+        var g = document.createElementNS(graph.svgns, 'g');
         g.appendChild(shape);
         g.appendChild(contour);
         g.appendChild(title);
         return g;
-    }
-
-    /**
-     * Drag and drop support.
-     */
-    var dragX;
-    var dragY;
-    var dragging = null;
+    };
 
     /**
      * Make a graph.
      */
-    mkgraph = function() {
+    graph.mkgraph = function() {
         var div = document.createElement('div');
         div.id = 'svgdiv';
         document.body.appendChild(div);
 
-        var svg = document.createElementNS(svgns, 'svg');
+        var svg = document.createElementNS(graph.svgns, 'svg');
         svg.style.height = '100%';
         svg.style.width = '100%';
         div.appendChild(svg);
+
+        graph.dragging = null;
 
         function draggable(n) {
             if (n == svg)
@@ -388,102 +376,102 @@ if (supportsSVG()) {
                 e.preventDefault();
             else
                 e.returnValue= false;
-            dragging = draggable(e.target);
-            if (dragging == null)
+            graph.dragging = draggable(e.target);
+            if (graph.dragging == null)
                 return false;
-            dragging.parentNode.appendChild(dragging);
+            graph.dragging.parentNode.appendChild(graph.dragging);
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
-            dragX = pos.clientX;
-            dragY = pos.clientY;
+            graph.dragX = pos.clientX;
+            graph.dragY = pos.clientY;
             return false;
         };
 
         svg.ontouchstart = svg.onmousedown;
 
         svg.onmouseup = function(e) {
-            if (dragging == null)
+            if (graph.dragging == null)
                 return false;
-            dragging = null;
+            graph.dragging = null;
             return false;
         };
 
         svg.ontouchend = svg.onmouseup;
 
         svg.onmousemove = function(e) {
-            if (dragging == null)
+            if (graph.dragging == null)
                 return false;
-            var matrix = dragging.getCTM();
+            var matrix = graph.dragging.getCTM();
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
-            var newX = Number(matrix.e) + (pos.clientX - dragX);
-            var newY = Number(matrix.f) + (pos.clientY - dragY);
-            dragX = pos.clientX;
-            dragY = pos.clientY;
-            dragging.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
+            var newX = Number(matrix.e) + (pos.clientX - graph.dragX);
+            var newY = Number(matrix.f) + (pos.clientY - graph.dragY);
+            graph.dragX = pos.clientX;
+            graph.dragY = pos.clientY;
+            graph.dragging.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
             return false;
         };
 
         svg.ontouchmove = svg.onmousemove;
 
-        graph = svg;
+        graph.g = svg;
         return svg;
-    }
+    };
 }
 
 /**
  * Make a reference shape path, positioned to the right of a component shape.
  */
-function mkrrefpath(path) {
+graph.mkrrefpath = function(path) {
     return path.rline(0,10).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rline(0,20).rcurve(0,5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,5).rline(0,10);
-}
+};
 
 /**
  * Make a reference shape path, positioned at the bottom of a component shape.
  */
-function mkbrefpath(path) {
+graph.mkbrefpath = function(path) {
     return path.rline(-10,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rline(-20,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).rline(-10,0);
-}
+};
 
 /**
  * Make a service shape path, positioned to the left of a component shape.
  */
-function mklsvcpath(path) {
+graph.mklsvcpath = function(path) {
     return path.rline(0,-10).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rline(0,-20).rcurve(0,-5,5,0).rcurve(5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,-5).rline(0,-10);
-}
+};
 
 /**
  * Make a service shape path, positioned at the top of a component shape.
  */
-function mktsvcpath(path) {
+graph.mktsvcpath = function(path) {
     return path.rline(10,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rline(20,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).rline(10,0);
-}
+};
 
 
 /**
 * Make a component shape path.
 */
-function mkcomppath(twidth, tsvcs, lsvcs, brefs, rrefs) {
+graph.mkcomppath = function(twidth, tsvcs, lsvcs, brefs, rrefs) {
     var height = Math.max(lsvcs, rrefs) * 40 + 60;
     var width = Math.max(Math.max(tsvcs, brefs) * 40 + 60, twidth + 20);
 
-    var path = mkpath().rmove(40,30).rline(20,0);
+    var path = graph.mkpath().rmove(40,30).rline(20,0);
     for (var s = 0; s < tsvcs; s++)
-        path = mktsvcpath(path);
+        path = graph.mktsvcpath(path);
 
     path = path.line(20 + width,path.ypos()).rcurve(10,0,0,10).rline(0,20);
     for (var r = 0; r < rrefs; r++)
-        path = mkrrefpath(path);
+        path = graph.mkrrefpath(path);
 
     var boffset = 10 + 30 + (brefs * 40);
-    path = path.line(path.xpos(),20 + height).rcurve(0,10,-10,0).line(20 + boffset,path.ypos());
+    path = path.line(path.xpos(),20 + height).rcurve(0,10,-10,0).line(20 + boffset, path.ypos());
     for (var r = 0; r < brefs; r++)
-        path = mkbrefpath(path);
+        path = graph.mkbrefpath(path);
 
     var loffset = 10 + 30 + (lsvcs * 40);
     path = path.line(40,path.ypos()).rcurve(-10,0,0,-10).line(path.xpos(), 20 + loffset);
     for (var s = 0; s < lsvcs; s++)
-        path = mklsvcpath(path);
+        path = graph.mklsvcpath(path);
 
     path = path.line(30,40).rcurve(0,-10,10,0);
     return path.end();
-}
+};
 

@@ -21,8 +21,8 @@
 <head>
 <script type="text/javascript" src="/component.js"></script>
 <script type="text/javascript">
-var protected = component("Protected");
-var userInfo = defun(reference(protected, "userInfo"), "getuser", "getemail", "getrealm");
+var protected = sca.component("Protected");
+var userInfo = sca.defun(sca.reference(protected, "userInfo"), "getuser", "getemail", "getrealm");
 var user = userInfo.getuser();
 var email = userInfo.getemail();
 var realm = userInfo.getrealm();
