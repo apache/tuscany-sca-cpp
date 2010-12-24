@@ -109,6 +109,10 @@ function mklist() {
     return a;
 }
 
+function length(l) {
+    return l.length;
+}
+
 /**
  * Scheme-like associations.
  */
@@ -138,14 +142,34 @@ function filter(f, l) {
 }
 
 /**
+ * Split a path into a list of segments.
+ */
+function tokens(path) {
+    return filter(function(s) { return length(s) != 0; }, path.split("/"));
+}
+
+/**
+ * Log a value.
+ */
+function log(v) {
+    try {
+        console.log(v);
+    } catch (e) {}
+    return true;
+}
+
+/**
  * Dump an object to the debug console.
  */
 function debug(o) {
-    for (f in o) {
-        try {
-            console.log(f + '=' + o[f]);
-        } catch (e) {}
-    }
+    try {
+        for (f in o) {
+            try {
+                console.log(f + '=' + o[f]);
+            } catch (e) {}
+        }
+    } catch (e) {}
+    return true;
 }
 
 /**

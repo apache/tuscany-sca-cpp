@@ -103,102 +103,7 @@ var graph;
 if (graph.supportsVML()) {
 
     graph.vmlns='urn:schemas-microsoft-com:vml';
-
-    /**
-     * Make a shape path.
-     */
-    graph.mkpath = function() {
-        function Path() {
-            this.BasePath = graph.BasePath;
-            this.BasePath();
-
-            this.move = function(x, y) {
-                this.path += 'M ' + x + ',' + y + ' '; 
-                return this.pos(x, y);
-            };
-
-            this.line = function(x, y) {
-                this.path += 'L ' + x + ',' + y + ' ';
-                return this.pos(x, y);
-            };
-
-            this.curve = function(x1, y1, x, y) {
-                this.path += 'QB ' + x1 + ',' + y1 + ',' + x + ',' + y + ' ';
-                return this.pos(x, y);
-            };
-
-            this.end = function() {
-                this.path += 'X E';
-                return this;
-            };
-        }
-
-        return new Path();
-    };
-
-    /**
-     * Make a title element.
-     */
-    graph.mktitle = function(t) {
-        var title = document.createElement('v:textbox');
-        title.style.left = '40';
-        title.style.top = '30';
-        title.style.position = 'absolute';
-        var tnode = document.createTextNode(t);
-        title.appendChild(tnode);
-        return title;
-    };
-
-    /**
-     * Return the width of a title.
-     */
-    graph.titlewidth = function(t) {
-        graph.textWidthDiv.innerHTML = t;
-        var twidth = textWidthDiv.offsetWidth + 10;
-        graph.textWidthDiv.innerHTML = '';
-        return twidth;
-    };
-
-    /**
-     * Make a component shape.
-     */
-    graph.mkcompshape = function(name, color, tsvcs, lsvcs, brefs, rrefs) {
-        var title = graph.mktitle(name);
-        var twidth = graph.titlewidth(name);
-
-        var d = graph.mkcomppath(twidth, tsvcs, lsvcs, brefs, rrefs).str();
-
-        var shape = document.createElement('v:shape');
-        shape.style.width = 500;
-        shape.style.height = 500;
-        shape.coordsize = '500,500';
-        shape.path = d;
-        shape.fillcolor = color;
-        shape.stroked = 'false';
-
-        var contour = document.createElement('v:shape');
-        contour.style.width = 500;
-        contour.style.height = 500;
-        contour.coordsize = '500,500';
-        contour.setAttribute('path', d);
-        contour.filled = 'false';
-        contour.strokecolor = graph.gray;
-        contour.strokeweight = '3';
-        contour.style.top = 1;
-        contour.style.left = 1;
-        var stroke = document.createElement('v:stroke');
-        stroke.opacity = '20%';
-        contour.appendChild(stroke);
-
-        var g = document.createElement('v:group');
-        g.style.width = 500;
-        g.style.height = 500;
-        g.coordsize = '500,500';
-        g.appendChild(shape);
-        g.appendChild(contour);
-        g.appendChild(title);
-        return g;
-    };
+    document.write('<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />');
 
     /**
      * Make a graph.
@@ -207,10 +112,6 @@ if (graph.supportsVML()) {
         var div = document.createElement('div');
         div.id = 'vmldiv';
         document.body.appendChild(div);
-
-        graph.textWidthDiv = document.createElement('span');
-        graph.textWidthDiv.style.visibility = 'hidden'
-        div.appendChild(graph.textWidthDiv);
 
         var vmlg = document.createElement('v:group');
         vmlg.style.width = 500;
@@ -261,19 +162,12 @@ if (graph.supportsVML()) {
             return false;
         };
 
-        graph.g = vmlg;
+        graph.textWidthDiv = document.createElement('span');
+        graph.textWidthDiv.style.visibility = 'hidden'
+        div.appendChild(graph.textWidthDiv);
+
         return vmlg;
     };
-
-    document.write('<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />');
-}
-
-/**
- * SVG rendering.
- */
-if (graph.supportsSVG()) {
-
-    graph.svgns='http://www.w3.org/2000/svg';
 
     /**
      * Make a shape path.
@@ -284,22 +178,22 @@ if (graph.supportsSVG()) {
             this.BasePath();
 
             this.move = function(x, y) {
-                this.path += 'M' + x + ',' + y + ' '; 
+                this.path += 'M ' + x + ',' + y + ' '; 
                 return this.pos(x, y);
             };
 
             this.line = function(x, y) {
-                this.path += 'L' + x + ',' + y + ' ';
+                this.path += 'L ' + x + ',' + y + ' ';
                 return this.pos(x, y);
             };
 
             this.curve = function(x1, y1, x, y) {
-                this.path += 'Q' + x1 + ',' + y1 + ' ' + x + ',' + y + ' ';
+                this.path += 'QB ' + x1 + ',' + y1 + ',' + x + ',' + y + ' ';
                 return this.pos(x, y);
             };
 
             this.end = function() {
-                this.path += 'Z';
+                this.path += 'X E';
                 return this;
             };
         }
@@ -311,42 +205,73 @@ if (graph.supportsSVG()) {
      * Make a title element.
      */
     graph.mktitle = function(t) {
-        var title = document.createElementNS(graph.svgns, 'text');
-        title.setAttribute('text-anchor', 'start');
-        title.setAttribute('x', 40);
-        title.setAttribute('y', 50);
-        title.appendChild(document.createTextNode(t));
-        graph.g.appendChild(title);
+        var title = document.createElement('v:textbox');
+        title.style.left = '25';
+        title.style.top = '5';
+        title.style.position = 'absolute';
+        var tnode = document.createTextNode(t);
+        title.appendChild(tnode);
         return title;
+    };
+
+    /**
+     * Return the width of a title.
+     */
+    graph.titlewidth = function(t) {
+        graph.textWidthDiv.innerHTML = t;
+        var twidth = graph.textWidthDiv.offsetWidth;
+        graph.textWidthDiv.innerHTML = '';
+        return twidth;
     };
 
     /**
      * Make a component shape.
      */
-    graph.mkcompshape = function(name, color, tsvcs, lsvcs, brefs, rrefs) {
+    graph.mkcompshape = function(comp, cassoc) {
+        var name = scdl.name(comp);
         var title = graph.mktitle(name);
-        var twidth = title.getBBox().width;
 
-        var d = graph.mkcomppath(twidth, tsvcs, lsvcs, brefs, rrefs).str();
+        var d = graph.mkcomppath(comp, cassoc).str();
 
-        var shape = document.createElementNS(graph.svgns, 'path');
-        shape.setAttribute('d', d);
-        shape.setAttribute('fill', color);
+        var shape = document.createElement('v:shape');
+        shape.style.width = 500;
+        shape.style.height = 500;
+        shape.coordsize = '500,500';
+        shape.path = d;
+        shape.fillcolor = graph.color(comp);
+        shape.stroked = 'false';
 
-        var contour = document.createElementNS(graph.svgns, 'path');
-        contour.setAttribute('d', d);
-        contour.setAttribute('fill', 'none');
-        contour.setAttribute('stroke', graph.gray);
-        contour.setAttribute('stroke-width', '4');
-        contour.setAttribute('stroke-opacity', '0.20');
-        contour.setAttribute('transform', 'translate(1,1)');
+        var contour = document.createElement('v:shape');
+        contour.style.width = 500;
+        contour.style.height = 500;
+        contour.coordsize = '500,500';
+        contour.setAttribute('path', d);
+        contour.filled = 'false';
+        contour.strokecolor = graph.gray;
+        contour.strokeweight = '3';
+        contour.style.top = 1;
+        contour.style.left = 1;
+        var stroke = document.createElement('v:stroke');
+        stroke.opacity = '20%';
+        contour.appendChild(stroke);
 
-        var g = document.createElementNS(graph.svgns, 'g');
+        var g = document.createElement('v:group');
+        g.style.width = 500;
+        g.style.height = 500;
+        g.coordsize = '500,500';
         g.appendChild(shape);
         g.appendChild(contour);
         g.appendChild(title);
         return g;
     };
+}
+
+/**
+ * SVG rendering.
+ */
+if (graph.supportsSVG()) {
+
+    graph.svgns='http://www.w3.org/2000/svg';
 
     /**
      * Make a graph.
@@ -412,66 +337,302 @@ if (graph.supportsSVG()) {
 
         svg.ontouchmove = svg.onmousemove;
 
-        graph.g = svg;
+        graph.textWidthSvg = document.createElementNS(graph.svgns, 'svg');
+        graph.textWidthSvg.style.visibility = 'hidden';
+        graph.textWidthSvg.style.height = '0px';
+        graph.textWidthSvg.style.width = '0px';
+        div.appendChild(graph.textWidthSvg);
+
         return svg;
+    };
+
+    /**
+     * Make a shape path.
+     */
+    graph.mkpath = function() {
+        function Path() {
+            this.BasePath = graph.BasePath;
+            this.BasePath();
+
+            this.move = function(x, y) {
+                this.path += 'M' + x + ',' + y + ' '; 
+                return this.pos(x, y);
+            };
+
+            this.line = function(x, y) {
+                this.path += 'L' + x + ',' + y + ' ';
+                return this.pos(x, y);
+            };
+
+            this.curve = function(x1, y1, x, y) {
+                this.path += 'Q' + x1 + ',' + y1 + ' ' + x + ',' + y + ' ';
+                return this.pos(x, y);
+            };
+
+            this.end = function() {
+                this.path += 'Z';
+                return this;
+            };
+        }
+
+        return new Path();
+    };
+
+    /**
+     * Make a title element.
+     */
+    graph.mktitle = function(t) {
+        var title = document.createElementNS(graph.svgns, 'text');
+        title.setAttribute('text-anchor', 'start');
+        title.setAttribute('x', 5);
+        title.setAttribute('y', 15);
+        title.appendChild(document.createTextNode(t));
+        graph.textWidthSvg.appendChild(title);
+        return title;
+    };
+
+    /**
+     * Return a width of a title.
+     */
+    graph.titlewidth = function(t) {
+        var title = graph.mktitle(t);
+        var width = title.getBBox().width;
+        graph.textWidthSvg.removeChild(title);
+        return width;
+    };
+
+    /**
+     * Make a component shape.
+     */
+    graph.mkcompshape = function(comp, cassoc) {
+        var name = scdl.name(comp);
+        var title = graph.mktitle(name);
+
+        var d = graph.mkcomppath(comp, cassoc).str();
+
+        var shape = document.createElementNS(graph.svgns, 'path');
+        shape.setAttribute('d', d);
+        shape.setAttribute('fill', graph.color(comp));
+
+        var contour = document.createElementNS(graph.svgns, 'path');
+        contour.setAttribute('d', d);
+        contour.setAttribute('fill', 'none');
+        contour.setAttribute('stroke', graph.gray);
+        contour.setAttribute('stroke-width', '4');
+        contour.setAttribute('stroke-opacity', '0.20');
+        contour.setAttribute('transform', 'translate(1,1)');
+
+        var g = document.createElementNS(graph.svgns, 'g');
+        g.appendChild(shape);
+        g.appendChild(contour);
+        g.appendChild(title);
+        return g;
     };
 }
 
 /**
  * Make a reference shape path, positioned to the right of a component shape.
  */
-graph.mkrrefpath = function(path) {
-    return path.rline(0,10).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rline(0,20).rcurve(0,5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,5).rline(0,10);
+graph.mkrrefpath = function(ref, cassoc, path) {
+    var height = graph.refheight(ref, cassoc);
+    var ypos = path.ypos();
+    return path.rline(0,10).rline(0,10).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rline(0,20).rcurve(0,5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,5).line(path.xpos(),ypos + height);
 };
 
 /**
  * Make a reference shape path, positioned at the bottom of a component shape.
  */
-graph.mkbrefpath = function(path) {
-    return path.rline(-10,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rline(-20,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).rline(-10,0);
+graph.mkbrefpath = function(ref, cassoc, path) {
+    var width = graph.refwidth(ref, cassoc);
+    var xpos = path.xpos();
+    return path.line(xpos - width + 60,path.ypos()).rline(-10,0).rline(-10,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rline(-20,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).line(xpos - width,path.ypos());
 };
 
 /**
  * Make a service shape path, positioned to the left of a component shape.
  */
-graph.mklsvcpath = function(path) {
-    return path.rline(0,-10).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rline(0,-20).rcurve(0,-5,5,0).rcurve(5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,-5).rline(0,-10);
+graph.mklsvcpath = function(svc, path) {
+    var height = 60;
+    var ypos = path.ypos();
+    return path.rline(0,-10).rline(0, -10).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rline(0,-20).rcurve(0,-5,5,0).rcurve(5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,-5).line(path.xpos(), ypos - height);
 };
 
 /**
  * Make a service shape path, positioned at the top of a component shape.
  */
-graph.mktsvcpath = function(path) {
-    return path.rline(10,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rline(20,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).rline(10,0);
+graph.mktsvcpath = function(svc, path) {
+    var width = 60;
+    var xpos = path.xpos();
+    return path.rline(10,0).rline(10,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rline(20,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).line(xpos + width,path.ypos());
 };
 
 
 /**
+ * Return the services and references of a component.
+ */
+graph.tsvcs = function(comp) {
+    return filter(function(s) { return scdl.align(s) == 'top'; }, scdl.services(comp));
+};
+
+graph.lsvcs = function(comp) {
+    return filter(function(s) { var a = scdl.align(s); return a == null || a == 'left'; }, scdl.services(comp));
+};
+
+graph.brefs = function(comp) {
+    return filter(function(r) { return scdl.align(r) == 'bottom'; }, scdl.references(comp));
+};
+
+graph.rrefs = function(comp) {
+    return filter(function(r) { var a = scdl.align(r); return a == null || a == 'right'; }, scdl.references(comp));
+};
+
+/**
+ * Return the color of a component.
+ */
+graph.color = function(comp) {
+    var c = scdl.color(comp);
+    return c == null? graph.blue : c;
+}
+
+/**
+ * Return the height of a reference.
+ */
+graph.refheight = function(ref, cassoc) {
+    var target = assoc(scdl.target(ref), cassoc);
+    if (isNil(target))
+        return 60;
+    return graph.compheight(cadr(target), cassoc);
+}
+
+/**
+ * Return the total height of a list of references.
+ */
+graph.refsheight = function(refs, cassoc) {
+    if (isNil(refs))
+        return 0;
+    return graph.refheight(car(refs), cassoc) + graph.refsheight(cdr(refs), cassoc);
+}
+
+/**
+ * Return the height of a component.
+ */
+graph.compheight = function(comp, cassoc) {
+    var lsvcs = graph.lsvcs(comp);
+    var lsvcsh = Math.max(1, length(lsvcs)) * 60 + 20;
+    var rrefs = graph.rrefs(comp);
+    var rrefsh = graph.refsheight(rrefs, cassoc) + 20;
+    var height = Math.max(lsvcsh, rrefsh);
+    return height;
+};
+
+/**
+ * Return the width of a reference.
+ */
+graph.refwidth = function(ref, cassoc) {
+    var target = assoc(scdl.target(ref), cassoc);
+    if (isNil(target))
+        return 60;
+    return graph.compwidth(cadr(target), cassoc);
+}
+
+/**
+ * Return the total width of a list of references.
+ */
+graph.refswidth = function(refs, cassoc) {
+    if (isNil(refs))
+        return 0;
+    return graph.refwidth(car(refs), cassoc) + graph.refswidth(cdr(refs), cassoc);
+}
+
+/**
+ * Return the width of a component.
+ */
+graph.compwidth = function(comp, cassoc) {
+    var twidth = graph.titlewidth(scdl.name(comp)) + 20;
+    var tsvcs = graph.tsvcs(comp);
+    var tsvcsw = Math.max(1, length(tsvcs)) * 60 + 20;
+    var brefs = graph.brefs(comp);
+    var brefsw = graph.refswidth(brefs, cassoc) + 20;
+    var width = Math.max(twidth, Math.max(tsvcsw, brefsw));
+    return width;
+};
+
+/**
 * Make a component shape path.
 */
-graph.mkcomppath = function(twidth, tsvcs, lsvcs, brefs, rrefs) {
-    var height = Math.max(lsvcs, rrefs) * 40 + 60;
-    var width = Math.max(Math.max(tsvcs, brefs) * 40 + 60, twidth + 20);
+graph.mkcomppath = function(comp, cassoc) {
+    var tsvcs = graph.tsvcs(comp);
+    var lsvcs = graph.lsvcs(comp);
+    var brefs = graph.brefs(comp);
+    var rrefs = graph.rrefs(comp);
 
-    var path = graph.mkpath().rmove(40,30).rline(20,0);
-    for (var s = 0; s < tsvcs; s++)
-        path = graph.mktsvcpath(path);
+    var height = graph.compheight(comp, cassoc);
+    var width = graph.compwidth(comp, cassoc);
 
-    path = path.line(20 + width,path.ypos()).rcurve(10,0,0,10).rline(0,20);
-    for (var r = 0; r < rrefs; r++)
-        path = graph.mkrrefpath(path);
+    var path = graph.mkpath().move(10,0);
+    for (var s = 0; s < length(tsvcs); s++)
+        path = graph.mktsvcpath(tsvcs[s], path);
 
-    var boffset = 10 + 30 + (brefs * 40);
-    path = path.line(path.xpos(),20 + height).rcurve(0,10,-10,0).line(20 + boffset, path.ypos());
-    for (var r = 0; r < brefs; r++)
-        path = graph.mkbrefpath(path);
+    path = path.line(width - 10,path.ypos()).rcurve(10,0,0,10);
+    for (var r = 0; r < length(rrefs); r++)
+        path = graph.mkrrefpath(rrefs[r], cassoc, path);
 
-    var loffset = 10 + 30 + (lsvcs * 40);
-    path = path.line(40,path.ypos()).rcurve(-10,0,0,-10).line(path.xpos(), 20 + loffset);
-    for (var s = 0; s < lsvcs; s++)
-        path = graph.mklsvcpath(path);
+    var boffset = 10 + graph.refswidth(brefs, cassoc);
+    path = path.line(path.xpos(),height - 10).rcurve(0,10,-10,0).line(boffset, path.ypos());
+    for (var r = 0; r < length(brefs); r++)
+        path = graph.mkbrefpath(brefs[r], cassoc, path);
 
-    path = path.line(30,40).rcurve(0,-10,10,0);
+    var loffset = 10 + (length(lsvcs) * 60);
+    path = path.line(10,path.ypos()).rcurve(-10,0,0,-10).line(path.xpos(), loffset);
+    for (var s = 0; s < length(lsvcs); s++)
+        path = graph.mklsvcpath(lsvcs[s], path);
+
+    path = path.line(0,10).rcurve(0,-10,10,0);
     return path.end();
+};
+
+/**
+ * Render a component.
+ */
+graph.component = function(comp, cassoc) {
+    return graph.mkcompshape(comp, cassoc);
+};
+
+/**
+ * Render a composite.
+ */
+graph.composite = function(compos) {
+    var name = scdl.name(compos);
+    var comps = scdl.components(compos);
+    var cassoc = scdl.nameToElementAssoc(comps);
+
+    function renderReference(ref, cassoc) {
+        var target = assoc(scdl.target(ref), cassoc);
+        if (isNil(target))
+            return mklist();
+        return renderComponent(cadr(target), cassoc);
+    }
+
+    function renderReferences(refs, cassoc) {
+        if (isNil(refs))
+            return mklist();
+        var rref = renderReference(car(refs), cassoc);
+        if (isNil(rref))
+            return renderReferences(cdr(refs), cassoc);
+        return append(rref, renderReferences(cdr(refs), cassoc));
+    }
+
+    function renderComponent(comp, cassoc) {
+        return append(renderReferences(scdl.references(comp), cassoc), mklist(graph.component(comp, cassoc)));
+    }
+
+    function renderComponents(comps, cassoc) {
+        if (isNil(comps))
+            return mklist();
+        return append(renderComponent(car(comps), cassoc), renderComponents(cdr(comps), cassoc));
+    }
+
+    var rcomps = renderComponents(comps, cassoc);
+    return rcomps;
 };
 

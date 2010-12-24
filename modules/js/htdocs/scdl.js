@@ -117,19 +117,25 @@ scdl.bindingType = function(l) {
  * Returns the target of a reference.
  */
 scdl.target = function(l) {
-    function bindingsTarget(l) {
-        if (isNil(l))
-            return null;
-        var u = uri(car(l));
-        if (!isNil(u))
-            return u;
-        return bindingsTarget(cdr(l));
+    function targetURI() {
+        function bindingsTarget(l) {
+            if (isNil(l))
+                return null;
+            var u = uri(car(l));
+            if (!isNil(u))
+                return u;
+            return bindingsTarget(cdr(l));
+        }
+    
+        var t = namedAttributeValue("'target", l);
+        if (!isNil(t))
+            return t;
+        return bindingsTarget(scdl.bindings(l));
     }
-
-    var t = namedAttributeValue("'target", l);
-    if (!isNil(t))
-        return t;
-    return bindingsTarget(scdl.bindings(l));
+    var turi = targetURI();
+    if (isNil(turi))
+        return turi;
+    return car(tokens(turi));
 };
 
 /**
@@ -144,5 +150,14 @@ scdl.properties = function(l) {
  */
 scdl.propertyValue = function(l) {
     return elementValue(l);
+};
+
+/**
+ * Convert a list of elements to a name -> element assoc list.
+ */
+scdl.nameToElementAssoc = function(l) {
+    if (isNil(l))
+        return l;
+    return cons(mklist(scdl.name(car(l)), car(l)), scdl.nameToElementAssoc(cdr(l)));
 };
 
