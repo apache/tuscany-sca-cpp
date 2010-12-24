@@ -57,12 +57,12 @@ const list<value> entriesElementsToValues(const list<value>& e) {
 }
 
 /**
- * Return true if a list of strings contains an RSS feed.
+ * Return true if a list of strings contains an ATOM feed.
  */
 const bool isATOMFeed(const list<string>& ls) {
     if (!isXML(ls))
         return false;
-    return contains(car(ls), "<feed");
+    return contains(car(ls), "<feed") && contains(car(ls), "=\"http://www.w3.org/2005/Atom\"");
 }
 
 /**
@@ -179,7 +179,9 @@ const failable<list<string> > writeATOMFeed(const list<value>& l) {
  * Convert an ATOM entry containing a value to an ATOM entry containing an item element.
  */
 const list<value> entryValuesToElements(const list<value> val) {
-    return cons(car(val), cons(cadr(val), valuesToElements(mklist<value>(cons<value>("item", (list<value>)caddr(val))))));
+    if (isList(caddr(val)))
+        return cons(car(val), cons(cadr(val), valuesToElements(mklist<value>(cons<value>("item", (list<value>)caddr(val))))));
+    return cons(car(val), cons(cadr(val), valuesToElements(mklist<value>(mklist<value>("item", caddr(val))))));
 }
 
 /**

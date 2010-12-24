@@ -100,7 +100,7 @@ const value elementHasValue(const list<value>& l) {
     if (isSymbol(car(r)))
         return false;
     if(isList(car(r)) && !isNil((list<value>)car(r)) && isSymbol(car<value>(car(r))))
-            return false;
+        return false;
     return true;
 }
 
@@ -195,7 +195,7 @@ const value valueToElement(const value& t) {
     // Convert a name value pair
     if (isList(t) && !isNil((list<value>)t) && isSymbol(car<value>(t))) {
         const value n = car<value>(t);
-        const value v = cadr<value>(t);
+        const value v = isNil(cdr<value>(t))? value() : cadr<value>(t);
 
         // Convert a single value to an attribute or an element
         if (!isList(v)) {

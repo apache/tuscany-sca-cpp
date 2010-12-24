@@ -37,6 +37,16 @@ namespace tuscany {
 namespace json {
 
 /**
+ * Return true if a list of strings contains a JSON document.
+ */
+const bool isJSON(const list<string>& ls) {
+    if (isNil(ls))
+        return false;
+    const string s = substr(car(ls), 0, 1);
+    return s == "[" || s == "{";
+}
+
+/**
  * Consumes JSON strings and populates a JS object.
  */
 failable<bool> consume(JSONParser* parser, const list<string>& ilist, const js::JSContext& cx) {
@@ -93,7 +103,11 @@ template<typename R> JSBool writeCallback(const jschar *buf, uint32 len, void *d
  * Convert a list of values to a JSON document.
  */
 template<typename R> const failable<R> writeJSON(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l, const js::JSContext& cx) {
-    jsval val = OBJECT_TO_JSVAL(valuesToJSProperties(JS_NewObject(cx, NULL, NULL, NULL), l, cx));
+    jsval val;
+    if (js::isJSArray(l))
+        val = OBJECT_TO_JSVAL(valuesToJSElements(JS_NewArrayObject(cx, 0, NULL), l, 0, cx));
+    else
+        val = OBJECT_TO_JSVAL(valuesToJSProperties(JS_NewObject(cx, NULL, NULL, NULL), l, cx));
 
     WriteContext<R> wcx(reduce, initial, cx);
     if (!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx))

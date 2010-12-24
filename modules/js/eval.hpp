@@ -229,7 +229,9 @@ const jsval valueToJSVal(const value& val, const js::JSContext& cx) {
     JSObject* valuesToJSProperties(JSObject* o, const list<value>& l, const js::JSContext& cx);
 
     switch(type(val)) {
-    case value::String:
+    case value::String: {
+        return STRING_TO_JSVAL(JS_NewStringCopyZ(cx, c_str((string)val)));
+    }
     case value::Symbol: {
         return STRING_TO_JSVAL(JS_NewStringCopyZ(cx, c_str((string)val)));
     }

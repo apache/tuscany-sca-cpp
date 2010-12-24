@@ -222,7 +222,6 @@ const list<value> pyTupleToValuesHelper(PyObject* o, const size_t i, const size_
 }
 
 const list<value> pyTupleToValues(PyObject* o) {
-    debug(pyRepr(o), "python::pyTupleToValues");
     return pyTupleToValuesHelper(o, 0, PyTuple_Size(o));
 }
 

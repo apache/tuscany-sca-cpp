@@ -154,7 +154,12 @@ const list<char> readIdentifierHelper(const list<char>& listSoFar, istream& in) 
 }
 
 const value readIdentifier(const char chr, istream& in) {
-    return c_str(listToString(readIdentifierHelper(mklist(chr), in)));
+    const value val = c_str(listToString(readIdentifierHelper(mklist(chr), in)));
+    if (val == "false")
+        return value((bool)false);
+    if (val == "true")
+        return value((bool)true);
+    return val;
 }
 
 const list<char> readStringHelper(const list<char>& listSoFar, istream& in) {

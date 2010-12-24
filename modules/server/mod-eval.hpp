@@ -130,15 +130,21 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
         return mkfailure<int>(reason(val));
     const value c = content(val);
 
-    // Write returned content-type / content-list pair
-    if (isList(cadr<value>(c)))
+    // Write content-type / content-list pair
+    if (isString(car<value>(c)) && isList(cadr<value>(c)))
         return httpd::writeResult(convertValues<string>(cadr<value>(c)), car<value>(c), r);
 
-    // Write returned ATOM feed or entry
-    if (isNil(cddr(path)))
-        return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(c)), "application/atom+xml;type=feed", r);
-    else
-        return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(c)), "application/atom+xml;type=entry", r);
+    // Write ATOM feed or entry
+    if (isString(car<value>(c)) && isString(cadr<value>(c))) {
+        if (isNil(cddr(path)))
+            return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(c)), "application/atom+xml;type=feed", r);
+        else
+            return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(c)), "application/atom+xml;type=entry", r);
+    }
+
+    // Write JSON value
+    js::JSContext cx;
+    return httpd::writeResult(json::writeJSON(valuesToElements(c), cx), "application/json", r);
 }
 
 /**

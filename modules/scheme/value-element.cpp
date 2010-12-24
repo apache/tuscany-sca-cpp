@@ -20,34 +20,27 @@
 /* $Rev$ $Date$ */
 
 /**
- * HTTP GET command line test tool.
+ * Convert a scheme value to a value representing an element.
  */
 
-#include <assert.h>
-#include "stream.hpp"
+#include "fstream.hpp"
 #include "string.hpp"
-#include "perf.hpp"
-#include "http.hpp"
+#include "element.hpp"
+#include "eval.hpp"
 
 namespace tuscany {
-namespace http {
+namespace scheme {
 
-const bool testGet(const string& url, const string& ca = "", const string& cert = "", const string& key = "") {
-    CURLSession ch(ca, cert, key);
-    const failable<value> val = get(url, ch);
-    assert(hasContent(val));
-    cout << content(val) << endl;
-    return true;
-}
-
-}
-}
-
-int main(unused const int argc, const char** argv) {
-    if (argc > 2)
-        tuscany::http::testGet(tuscany::string(argv[1]), tuscany::string(argv[2]), tuscany::string(argv[3]), tuscany::string(argv[4]));
-    else
-        tuscany::http::testGet(tuscany::string(argv[1]));
+int valueElement() {
+    const value v = valuesToElements(readValue(cin));
+    cout << writeValue(v);
     return 0;
+}
+
+}
+}
+
+int main() {
+    return tuscany::scheme::valueElement();
 }
 

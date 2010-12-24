@@ -399,10 +399,12 @@ const failable<value> get(const string& url, const CURLSession& cs) {
     const failable<list<list<string> > > res = get<list<string> >(rcons<string>, list<string>(), url, cs);
     if (!hasContent(res))
         return mkfailure<value>(reason(res));
-    const list<string> ls(reverse(cadr(content(res))));
-
     const string ct(content(contentType(car(content(res)))));
     debug(ct, "http::get::contentType");
+
+    const list<string> ls(reverse(cadr(content(res))));
+    debug(ls, "http::get::content");
+
     if (contains(ct, "application/atom+xml;type=entry")) {
         // Read an ATOM entry
         const value val(atom::entryValue(content(atom::readATOMEntry(ls))));
@@ -421,15 +423,22 @@ const failable<value> get(const string& url, const CURLSession& cs) {
         debug(val, "http::get::result");
         return val;
     }
-    if (contains(ct, "text/javascript") || contains(ct, "application/json")) {
+    if (contains(ct, "text/javascript") || contains(ct, "application/json") || json::isJSON(ls)) {
+        // Read a JSON document
         js::JSContext cx;
         const value val(json::jsonValues(content(json::readJSON(ls, cx))));
         debug(val, "http::get::result");
         return val;
     }
+    if (contains(ct, "text/xml") || contains(ct, "application/xml") || isXML(ls)) {
+        // Read an XML document
+        const value val(elementsToValues(readXML(ls)));
+        debug(val, "http::get::result");
+        return val;
+    }
 
-    // Return the content as a list of values
-    const value val(mkvalues(ls));
+    // Return the content type and a content list
+    const value val(mklist<value>(ct, mkvalues(ls)));
     debug(val, "http::get::result");
     return val;
 }
@@ -617,11 +626,26 @@ const failable<size_t> recv(char* c, const size_t l, const CURLSession& cs) {
 struct proxy {
     proxy(const string& uri, const string& ca, const string& cert, const string& key, const gc_pool& p) : p(p), uri(uri), ca(ca), cert(cert), key(key), cs(*(new (gc_new<CURLSession>(p)) CURLSession(ca, cert, key))) {
     }
-
+    
     const value operator()(const list<value>& args) const {
-        failable<value> val = evalExpr(args, uri, cs);
-        if (!hasContent(val))
-            return value();
+        const value fun = car(args);
+        if (fun == "get") {
+            const failable<value> val = get(uri + path(cadr(args)), cs);
+            return content(val);
+        }
+        if (fun == "post") {
+            const failable<value> val = post(caddr(args), uri + path(cadr(args)), cs);
+            return content(val);
+        }
+        if (fun == "put") {
+            const failable<value> val = put(caddr(args), uri + path(cadr(args)), cs);
+            return content(val);
+        }
+        if (fun == "delete") {
+            const failable<value> val = del(uri + path(cadr(args)), cs);
+            return content(val);
+        }
+        const failable<value> val = evalExpr(args, uri, cs);
         return content(val);
     }
 

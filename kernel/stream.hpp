@@ -82,7 +82,7 @@ ostream& operator<<(ostream& os, const long unsigned int v) {
 }
 
 ostream& operator<<(ostream& os, const double v) {
-    return os.vprintf("%g", v);
+    return os.vprintf("%.10g", v);
 }
 
 ostream& operator<<(ostream& os, const void* v) {
