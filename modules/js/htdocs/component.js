@@ -307,11 +307,7 @@ HTTPBindingClient.prototype._sendRequest = function(req) {
 
     /* Send the request */
     http.open("POST", this.uri, (req.cb != null));
-
-    /* setRequestHeader is missing in Opera 8 Beta */
-    try {
-        http.setRequestHeader("Content-type", "text/plain");
-    } catch(e) {}
+    http.setRequestHeader("Content-type", "application/json-rpc");
 
     /* Construct call back if we have one */
     if(req.cb) {
@@ -442,7 +438,7 @@ HTTPBindingClient.getHTTPRequest = function() {
 
 
 HTTPBindingClient.prototype.get = function(id, responseFunction) {
-    var xhr = this.createXMLHttpRequest();
+    var xhr = HTTPBindingClient.getHTTPRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
             if (xhr.status == 200) {
@@ -462,7 +458,7 @@ HTTPBindingClient.prototype.get = function(id, responseFunction) {
 };
 
 HTTPBindingClient.prototype.post = function (entry, responseFunction) {
-    var xhr = this.createXMLHttpRequest();
+    var xhr = HTTPBindingClient.getHTTPRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
             if (xhr.status == 201) {
@@ -478,12 +474,12 @@ HTTPBindingClient.prototype.post = function (entry, responseFunction) {
         }
     }
     xhr.open("POST", this.uri, true);
-    xhr.setRequestHeader("Content-Type", "application/atom+xml");
+    xhr.setRequestHeader("Content-Type", "application/atom+xml;type=entry");
     xhr.send(entry);
 };
 
 HTTPBindingClient.prototype.put = function (id, entry, responseFunction) {
-    var xhr = this.createXMLHttpRequest();
+    var xhr = HTTPBindingClient.getHTTPRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
             if (xhr.status == 200) {
@@ -499,12 +495,12 @@ HTTPBindingClient.prototype.put = function (id, entry, responseFunction) {
         }
     }
     xhr.open("PUT", this.uri + '/' + id, true);
-    xhr.setRequestHeader("Content-Type", "application/atom+xml");
+    xhr.setRequestHeader("Content-Type", "application/atom+xml;type=entry");
     xhr.send(entry);
 };
 
 HTTPBindingClient.prototype.del = function (id, responseFunction) {       
-    var xhr = this.createXMLHttpRequest();
+    var xhr = HTTPBindingClient.getHTTPRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
             if (xhr.status == 200) {
@@ -516,18 +512,6 @@ HTTPBindingClient.prototype.del = function (id, responseFunction) {
     }
     xhr.open("DELETE", this.uri + '/' + id, true);        
     xhr.send(null);
-};
-
-HTTPBindingClient.prototype.createXMLHttpRequest = function () {
-    /* Mozilla XMLHttpRequest */
-    try { return new XMLHttpRequest(); } catch(e) {}      
-    
-    /* Microsoft MSXML ActiveX */
-    for (var i = 0; i < HTTPBindingClient.msxmlNames.length; i++) {
-        try { return new ActiveXObject(HTTPBindingClient.msxmlNames[i]); } catch (e) {}
-    }
-    alert("XML http request not supported");
-    return null;
 };
 
 /**
