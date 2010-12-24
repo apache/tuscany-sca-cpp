@@ -161,7 +161,7 @@ function elementsToValues(e) {
 function valueToElement(t) {
     if (isList(t) && !isNil(t) && isSymbol(car(t))) {
         var n = car(t);
-        var v = cadr(t)
+        var v = isNil(cdr(t))? mklist() : cadr(t);
         if (!isList(v)) {
             if (n.substring(0, 2) == atsign)
                 return mklist(attribute, n.substring(1), v);

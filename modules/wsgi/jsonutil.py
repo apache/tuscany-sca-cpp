@@ -64,7 +64,14 @@ def jsValToValue(jsv):
     if isinstance(jsv, basestring):
         return str(jsv)
     return jsv
-    
+
+# Return true if a list of strings contains a JSON document
+def isJSON(l):
+    if isNil(l):
+        return False
+    s = car(l)[0:1]
+    return s == "[" or s == "{"
+
 # Convert a list of strings representing a JSON document to a list of values
 def readJSON(l):
     s = StringIO()
@@ -108,7 +115,10 @@ def valuesToJSProperties(o, l):
 
 # Convert a list of values to a list of strings representing a JSON document
 def writeJSON(l):
-    jsv = valuesToJSProperties({}, l)
+    if isJSArray(l):
+        jsv = valuesToJSElements(list(range(0, len(l))), l, 0)
+    else:
+        jsv = valuesToJSProperties({}, l)
     s = json.dumps(jsv, separators=(',',':'))
     return (s,)
 

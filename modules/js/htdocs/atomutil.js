@@ -65,11 +65,9 @@ atom.entryValue = function(e) {
  * Return true if a list of strings represents an ATOM feed.
  */
 atom.isATOMFeed = function(l) {
-    if (isNil(l))
+    if (!isXML(l))
         return false;
-    if (car(l).substring(0, 5) != "<?xml")
-        return false;
-    return car(l).match("<feed") != null;
+    return car(l).match('<feed') != null && car(l).match('="http://www.w3.org/2005/Atom"') != null;
 };
 
 /**
@@ -151,7 +149,9 @@ atom.writeATOMFeed = function(l) {
  * Convert an ATOM entry containing a value to an ATOM entry containing an item element.
  */
 atom.entryValuesToElements = function(v) {
-    return cons(car(v), cons(cadr(v), valuesToElements(mklist(cons("'item", caddr(v))))));
+    if (isList(caddr(v)))
+        return cons(car(v), cons(cadr(v), valuesToElements(mklist(cons("'item", caddr(v))))));
+    return cons(car(v), cons(cadr(v), valuesToElements(mklist(mklist("'item", caddr(v))))));
 };
 
 /**

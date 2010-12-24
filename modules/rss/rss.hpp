@@ -62,7 +62,7 @@ const list<value> entriesElementsToValues(const list<value>& e) {
 const bool isRSSFeed(const list<string>& ls) {
     if (!isXML(ls))
         return false;
-    return contains(car(ls), "<rss") && contains(car(ls), "");
+    return contains(car(ls), "<rss");
 }
 
 /**

@@ -84,6 +84,15 @@ function readElements(l) {
 }
 
 /**
+ * Return true if a list of strings contains an XML document.
+ */
+function isXML(l) {
+    if (isNil(l))
+        return false;
+    return car(l).substring(0, 5) == '<?xml';
+}
+
+/**
  * Parse a list of strings representing an XML document.
  */
 function parseXML(l) {
@@ -107,7 +116,7 @@ function parseXML(l) {
  * Read a list of values from an XML document.
  */
 function readXMLDocument(doc) {
-    var root = nodeList(doc.childNodes);
+    var root = childElements(doc);
     if (isNil(root))
         return mklist();
     return mklist(readElement(car(root)));

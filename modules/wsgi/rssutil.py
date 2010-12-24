@@ -50,9 +50,7 @@ def entryValue(e):
 
 # Return true if a list of strings represents an RSS feed
 def isRSSFeed(l):
-    if isNil(l):
-        return False
-    if car(l)[0:5] != "<?xml":
+    if not isXML(l):
         return False
     return contains(car(l), "<rss")
 

@@ -117,7 +117,7 @@ def elementsToValues(e):
 def valueToElement(t):
     if isList(t) and not isNil(t) and isSymbol(car(t)):
         n = car(t)
-        v = cadr(t)
+        v = () if isNil(cdr(t)) else cadr(t)
         if not isList(v):
             if n[0:2] == atsign:
                 return (attribute, n[1:], v)

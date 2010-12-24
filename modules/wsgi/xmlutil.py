@@ -42,6 +42,14 @@ def readElements(l):
         return l
     return cons(readElement(car(l)), readElements(cdr(l)))
 
+# Return true if a list of strings represents an XML document
+def isXML(l):
+    if isNil(l):
+        return False
+    if car(l)[0:5] != "<?xml":
+        return False
+    return True
+
 # Parse a list of strings representing an XML document
 class NamespaceParser(et.XMLTreeBuilder):
     def __init__(self):

@@ -50,11 +50,9 @@ def entryValue(e):
 
 # Return true if a list of strings represents an ATOM feed
 def isATOMFeed(l):
-    if isNil(l):
+    if not isXML(l):
         return False
-    if car(l)[0:5] != "<?xml":
-        return False
-    return contains(car(l), "<feed")
+    return contains(car(l), "<feed") and contains(car(l), "=\"http://www.w3.org/2005/Atom\"")
 
 # Convert a list of strings to a list of values representing an ATOM feed
 def readATOMFeed(l):
@@ -107,7 +105,9 @@ def writeATOMFeed(l):
 
 # Convert an ATOM entry containing a value to an ATOM entry containing an item element
 def entryValuesToElements(v):
-    return cons(car(v), cons(cadr(v), valuesToElements((cons("'item", caddr(v)),))))
+    if isList(caddr(v)):
+        return cons(car(v), cons(cadr(v), valuesToElements((cons("'item", caddr(v)),))))
+    return cons(car(v), cons(cadr(v), valuesToElements((("'item", caddr(v)),))))
 
 # Convert an ATOM feed containing values to an ATOM feed containing elements
 def feedValuesToElementsLoop(v):

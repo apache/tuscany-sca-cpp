@@ -22,19 +22,18 @@ dist_sample_SCRIPTS = start stop
 sampledir = $(prefix)/samples/store-gae
 
 BUILT_SOURCES = target.stamp 
-target.stamp: app.yaml *.py *.composite $(top_builddir)/modules/wsgi/*.py htdocs/* $(top_builddir)/modules/server/htdocs/wiring/*
+target.stamp: app.yaml *.py *.composite $(top_builddir)/modules/wsgi/*.py htdocs/* $(top_builddir)/modules/js/htdocs/*
 	mkdir -p target
 	cp app.yaml *.py *.composite `ls $(top_builddir)/modules/wsgi/*.py | grep -v "\-test"` target
 	mkdir -p target/htdocs
 	cp -R htdocs/* target/htdocs
-	mkdir -p target/htdocs/wiring
-	cp -R $(top_builddir)/modules/server/htdocs/wiring/* target/htdocs/wiring
+	cp -R $(top_builddir)/modules/js/htdocs/* target/htdocs
 	touch target.stamp
 
 clean-local:
 	rm -rf target.stamp target
 
-nobase_sample_DATA = target/app.yaml target/*.py target/*.composite target/htdocs/*.html target/htdocs/wiring/*.js
+nobase_sample_DATA = target/app.yaml target/*.py target/*.composite target/htdocs/*.html target/htdocs/*.js
 
 EXTRA_DIST = app.yaml *.composite *.py htdocs/*.html
 
