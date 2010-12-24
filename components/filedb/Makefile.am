@@ -28,12 +28,12 @@ comp_LTLIBRARIES = libfiledb.la
 noinst_DATA = libfiledb.so
 
 libfiledb_la_SOURCES = filedb.cpp
-libfiledb_la_LDFLAGS = 
+libfiledb_la_LDFLAGS = -lxml2 -lmozjs
 libfiledb.so:
 	ln -s .libs/libfiledb.so
 
 file_test_SOURCES = file-test.cpp
-file_test_LDFLAGS = 
+file_test_LDFLAGS = -lxml2 -lmozjs
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

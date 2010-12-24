@@ -25,6 +25,7 @@
     <component name="filedb">
         <implementation.cpp path="." library="libfiledb"/>
         <property name="dbname">tmp/testdb</property>
+        <property name="format">scheme</property>
         <service name="filedb">
             <t:binding.http uri="filedb"/>
         </service>

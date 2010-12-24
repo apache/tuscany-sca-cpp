@@ -56,6 +56,10 @@ public:
         fclose(file);
     }
 
+    const bool fail() {
+        return file == NULL;
+    }
+
     ofstream& vprintf(const char* fmt, ...) {
         va_list args;
         va_start (args, fmt);

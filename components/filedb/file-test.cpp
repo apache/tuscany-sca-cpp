@@ -32,16 +32,20 @@
 namespace tuscany {
 namespace filedb {
 
-bool testFileDB() {
-    FileDB db("tmp/testdb");
-    const value k = mklist<value>("a");
+bool testFileDB(const string& dbname, const string& format) {
+    FileDB db(dbname, format);
+    const value k = mklist<value>("a", "b");
 
-    assert(hasContent(post(k, string("AAA"), db)));
-    assert((get(k, db)) == value(string("AAA")));
-    assert(hasContent(put(k, string("aaa"), db)));
-    assert((get(k, db)) == value(string("aaa")));
+    const list<value> a = mklist<value>(list<value>() + "ns1:a" + (list<value>() + "@xmlns:ns1" + string("http://aaa")) + (list<value>() + "text" + string("Hey!")));
+    const list<value> b = mklist<value>(list<value>() + "ns1:b" + (list<value>() + "@xmlns:ns1" + string("http://bbb")) + (list<value>() + "text" + string("Hey!")));
+
+    assert(hasContent(post(k, a, db)));
+    assert((get(k, db)) == value(a));
+    assert(hasContent(put(k, b, db)));
+    assert((get(k, db)) == value(b));
     assert(hasContent(del(k, db)));
     assert(!hasContent(get(k, db)));
+    assert(hasContent(post(k, a, db)));
 
     return true;
 }
@@ -49,21 +53,25 @@ bool testFileDB() {
 struct getLoop {
     const value k;
     FileDB& db;
-    getLoop(const value& k, FileDB& db) : k(k), db(db) {
+    const list<value> c;
+    getLoop(const value& k, FileDB& db) : k(k), db(db),
+        c(mklist<value>(list<value>() + "ns1:c" + (list<value>() + "@xmlns:ns1" + string("http://ccc")) + (list<value>() + "text" + string("Hey!")))) {
     }
     const bool operator()() const {
-        assert((get(k, db)) == value(string("CCC")));
+        assert((get(k, db)) == value(c));
         return true;
     }
 };
 
-bool testGetPerf() {
+bool testGetPerf(const string& dbname, const string& format) {
+    FileDB db(dbname, format);
+
     const value k = mklist<value>("c");
-    FileDB db("tmp/testdb");
-    assert(hasContent(post(k, string("CCC"), db)));
+    const list<value> c = mklist<value>(list<value>() + "ns1:c" + (list<value>() + "@xmlns:ns1" + string("http://ccc")) + (list<value>() + "text" + string("Hey!")));
+    assert(hasContent(post(k, c, db)));
 
     const lambda<bool()> gl = getLoop(k, db);
-    cout << "FileDB get test " << time(gl, 5, 10000) << " ms" << endl;
+    cout << "FileDB get test " << time(gl, 5, 5000) << " ms" << endl;
     return true;
 }
 
@@ -73,8 +81,12 @@ bool testGetPerf() {
 int main() {
     tuscany::cout << "Testing..." << tuscany::endl;
 
-    tuscany::filedb::testFileDB();
-    tuscany::filedb::testGetPerf();
+    tuscany::filedb::testFileDB("tmp/schemedb", "scheme");
+    tuscany::filedb::testGetPerf("tmp/schemedb", "scheme");
+    tuscany::filedb::testFileDB("tmp/xmldb", "xml");
+    tuscany::filedb::testGetPerf("tmp/xmldb", "xml");
+    tuscany::filedb::testFileDB("tmp/jsondb", "json");
+    tuscany::filedb::testGetPerf("tmp/jsondb", "json");
 
     tuscany::cout << "OK" << tuscany::endl;
 

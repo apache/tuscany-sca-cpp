@@ -31,7 +31,10 @@
 #include "value.hpp"
 #include "monad.hpp"
 #include "fstream.hpp"
+#include "element.hpp"
+#include "xml.hpp"
 #include "../../modules/scheme/eval.hpp"
+#include "../../modules/json/json.hpp"
 
 namespace tuscany {
 namespace filedb {
@@ -41,13 +44,13 @@ namespace filedb {
  */
 class FileDB {
 public:
-    FileDB() : owner(false) {
+    FileDB() : owner(false), jscx(*jscontext("")) {
     }
 
-    FileDB(const string& name) : owner(true), name(name) {
+    FileDB(const string& name, const string& format) : owner(true), name(name), format(format), jscx(*jscontext(format)) {
     }
 
-    FileDB(const FileDB& c) : owner(false), name(c.name) {
+    FileDB(const FileDB& c) : owner(false), name(c.name), format(c.format), jscx(c.jscx) {
     }
 
     ~FileDB() {
@@ -56,22 +59,95 @@ public:
 private:
     bool owner;
     string name;
+    string format;
+    js::JSContext& jscx;
 
-    friend const string dbname(const FileDB& db);
+    js::JSContext* jscontext(const string& format) {
+        if (format != "json")
+            return NULL;
+        return new (gc_new<js::JSContext>()) js::JSContext();
+    }
+
+    friend const failable<bool> write(const value& v, ostream& os, const string& format, FileDB& db);
+    friend const failable<value> read(istream& is, const string& format, FileDB& db);
+    friend const failable<bool> post(const value& key, const value& val, FileDB& db);
+    friend const failable<bool> put(const value& key, const value& val, FileDB& db);
+    friend const failable<value> get(const value& key, FileDB& db);
+    friend const failable<bool> del(const value& key, FileDB& db);
 };
-
-/**
- * Return the name of the database.
- */
-const string dbname(const FileDB& db) {
-    return db.name;
-}
 
 /**
  * Convert a key to a file name.
  */
-const string filename(const value& key, const FileDB& db) {
-    return dbname(db) + "/" + scheme::writeValue(key);
+const string filename(const list<value>& path, const string& root) {
+    if (isNil(path))
+        return root;
+    string name = root + "/" + scheme::writeValue(car(path));
+    return filename(cdr(path), name);
+}
+
+const string filename(const value& key, const string& root) {
+    if (!isList(key))
+        return filename(mklist(key), root);
+    return filename((list<value>)key, root);
+}
+
+/**
+ * Make the parent directories of a keyed file.
+ */
+const failable<bool> mkdirs(const list<value>& path, const string& root) {
+    if (isNil(cdr(path)))
+        return true;
+    string dir = root + "/" + scheme::writeValue(car(path));
+    mkdir(c_str(dir), S_IRWXU);
+    return mkdirs(cdr(path), dir);
+}
+
+/**
+ * Write a value to a database file.
+ */
+const failable<bool> write(const value& v, ostream& os, const string& format, FileDB& db) {
+    if (format == "scheme") {
+        const string vs(scheme::writeValue(v));
+        os << vs;
+        return true;
+    }
+    if (format == "xml") {
+        failable<list<string> > s = writeXML(valuesToElements(v));
+        if (!hasContent(s))
+            return mkfailure<bool>(reason(s));
+        write(content(s), os);
+        return true;
+    }
+    if (format == "json") {
+        failable<list<string> > s = json::writeJSON(valuesToElements(v), db.jscx);
+        if (!hasContent(s))
+            return mkfailure<bool>(reason(s));
+        write(content(s), os);
+        return true;
+    }
+    return mkfailure<bool>(string("Unsupported database format: ") + format);
+}
+
+/**
+ * Read a value from a database file.
+ */
+const failable<value> read(istream& is, const string& format, FileDB& db) {
+    if (format == "scheme") {
+        return scheme::readValue(is);
+    }
+    if (format == "xml") {
+        const value v = elementsToValues(readXML(streamList(is)));
+        return v;
+    }
+    if (format == "json") {
+        const failable<list<value> > fv = json::readJSON(streamList(is), db.jscx);
+        if (!hasContent(fv))
+            return mkfailure<value>(reason(fv));
+        const value v = elementsToValues(content(fv));
+        return v;
+    }
+    return mkfailure<value>(string("Unsupported database format: ") + format);
 }
 
 /**
@@ -80,14 +156,17 @@ const string filename(const value& key, const FileDB& db) {
 const failable<bool> post(const value& key, const value& val, FileDB& db) {
     debug(key, "filedb::post::key");
     debug(val, "filedb::post::value");
-    debug(dbname(db), "filedb::post::dbname");
+    debug(db.name, "filedb::post::dbname");
 
-    ofstream os(filename(key, db));
-    const string vs(scheme::writeValue(val));
-    os << vs;
+    if (isList(key))
+        mkdirs(key, db.name);
+    ofstream os(filename(key, db.name));
+    if (os.fail())
+        return mkfailure<bool>("Couldn't post file database entry.");
+    const failable<bool> r = write(val, os, db.format, db);
 
-    debug(true, "filedb::post::result");
-    return true;
+    debug(r, "filedb::post::result");
+    return r;
 }
 
 /**
@@ -96,14 +175,17 @@ const failable<bool> post(const value& key, const value& val, FileDB& db) {
 const failable<bool> put(const value& key, const value& val, FileDB& db) {
     debug(key, "filedb::put::key");
     debug(val, "filedb::put::value");
-    debug(dbname(db), "filedb::put::dbname");
+    debug(db.name, "filedb::put::dbname");
 
-    ofstream os(filename(key, db));
-    const string vs(scheme::writeValue(val));
-    os << vs;
+    if (isList(key))
+        mkdirs(key, db.name);
+    ofstream os(filename(key, db.name));
+    if (os.fail())
+        return mkfailure<bool>("Couldn't put file database entry.");
+    const failable<bool> r = write(val, os, db.format, db);
 
-    debug(true, "filedb::put::result");
-    return true;
+    debug(r, "filedb::put::result");
+    return r;
 }
 
 /**
@@ -111,12 +193,12 @@ const failable<bool> put(const value& key, const value& val, FileDB& db) {
  */
 const failable<value> get(const value& key, FileDB& db) {
     debug(key, "filedb::get::key");
-    debug(dbname(db), "filedb::get::dbname");
+    debug(db.name, "filedb::get::dbname");
 
-    ifstream is(filename(key, db));
+    ifstream is(filename(key, db.name));
     if (is.fail())
         return mkfailure<value>("Couldn't get file database entry.");
-    const value val(scheme::readValue(is));
+    const failable<value> val = read(is, db.format, db);
 
     debug(val, "filedb::get::result");
     return val;
@@ -127,11 +209,12 @@ const failable<value> get(const value& key, FileDB& db) {
  */
 const failable<bool> del(const value& key, FileDB& db) {
     debug(key, "filedb::delete::key");
-    debug(dbname(db), "filedb::delete::dbname");
+    debug(db.name, "filedb::delete::dbname");
 
-    const int rc = unlink(c_str(filename(key, db)));
+    const int rc = unlink(c_str(filename(key, db.name)));
     if (rc == -1)
         return mkfailure<bool>("Couldn't delete file database entry.");
+
     debug(true, "filedb::delete::result");
     return true;
 }

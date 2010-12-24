@@ -19,7 +19,9 @@
 
 # Setup
 mkdir -p tmp
-mkdir -p tmp/testdb
+mkdir -p tmp/schemedb
+mkdir -p tmp/xmldb
+mkdir -p tmp/jsondb
 
 # Test
 ./file-test 2>/dev/null
