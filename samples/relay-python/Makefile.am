@@ -15,8 +15,11 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-scheme store-cpp store-python store-java store-gae store-sql store-nosql store-vhost store-cluster relay-python
+if WANT_PYTHON
 
-sample_DATA = README
-sampledir=$(prefix)/samples
+dist_sample_SCRIPTS = start stop
+sampledir = $(prefix)/samples/relay-python
 
+nobase_dist_sample_DATA = html.py json.py xml.py rss.py relay.composite htdocs/*.html htdocs/test/*.html
+
+endif

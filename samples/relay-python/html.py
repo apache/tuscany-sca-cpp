@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-scheme store-cpp store-python store-java store-gae store-sql store-nosql store-vhost store-cluster relay-python
-
-sample_DATA = README
-sampledir=$(prefix)/samples
+# Content relay implementation
+def get(id, target):
+    #return ("text/plain", ("It works!",))
+    return target.get(id)
 

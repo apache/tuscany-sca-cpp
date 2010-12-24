@@ -15,8 +15,11 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-scheme store-cpp store-python store-java store-gae store-sql store-nosql store-vhost store-cluster relay-python
+import sys
 
-sample_DATA = README
-sampledir=$(prefix)/samples
+# Feed relay implementation
+def get(id, target):
+    v = target.get(id)
+    print >> sys.stderr, v
+    return v
 
