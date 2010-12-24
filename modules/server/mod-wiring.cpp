@@ -112,6 +112,7 @@ int translateReference(const ServerConf& sc, request_rec *r) {
             debug(r->filename, "modwiring::translateReference::filename");
             r->proxyreq = PROXYREQ_REVERSE;
             r->handler = "proxy-server";
+            apr_table_setn(r->notes, "proxy-nocanon", "1");
             return OK;
         }
 
