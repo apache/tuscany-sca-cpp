@@ -45,7 +45,7 @@ gcc-g++-4.4.5
 Then install the following development dependencies:
 
 Apache HTTP server and APR:
-httpd-2.3.8 (http://httpd.apache.org/)
+httpd-2.3.10 (http://httpd.apache.org/)
 with included libapr and libaprutil
 built with OpenSSL libssl-0.9.8, libpcre3-8.02,
 and expat 2.0.1
@@ -167,7 +167,7 @@ dependencies installed in the standard system directories and some of the
 dependencies installed under $HOME:
 
 ./configure --prefix=$HOME/tuscany-sca-cpp-bin \
---with-apr=$HOME/httpd-2.3.8-bin --with-httpd=$HOME/httpd-2.3.8-bin \
+--with-apr=$HOME/httpd-2.3.10-bin --with-httpd=$HOME/httpd-2.3.10-bin \
 --with-memcached=$HOME/memcached-1.4.5-bin \
 --with-tinycdb=$HOME/tinycdb-0.77-bin \
 --with-curl=$HOME/curl-7.19.5-bin --with-libxml2=/usr \
