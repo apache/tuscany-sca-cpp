@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,8 +17,4 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-scheme store-cpp store-python store-java store-gae store-sql store-nosql store-vhost store-cluster relay-python relay-gae
-
-sample_DATA = README
-sampledir=$(prefix)/samples
-
+../../modules/wsgi/gae-stop target 8090

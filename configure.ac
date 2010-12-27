@@ -920,6 +920,7 @@ AC_CONFIG_FILES([Makefile
                  samples/store-vhost/Makefile
                  samples/store-cluster/Makefile
                  samples/relay-python/Makefile
+                 samples/relay-gae/Makefile
                  doc/Makefile
                  doc/Doxyfile
                  ubuntu/Makefile

@@ -15,8 +15,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = store-scheme store-cpp store-python store-java store-gae store-sql store-nosql store-vhost store-cluster relay-python relay-gae
+if WANT_PYTHON
+if WANT_GAE
 
-sample_DATA = README
-sampledir=$(prefix)/samples
+dist_sample_SCRIPTS = start stop
+sampledir = $(prefix)/samples/relay-gae
 
+BUILT_SOURCES = target.stamp 
+target.stamp: app.yaml *.py *.composite $(top_builddir)/modules/wsgi/*.py htdocs/*.html
+	mkdir -p target
+	cp app.yaml *.py *.composite `ls $(top_builddir)/modules/wsgi/*.py | grep -v "\-test"` target
+	mkdir -p target/htdocs
+	cp -R htdocs/* target/htdocs
+	touch target.stamp
+
+clean-local:
+	rm -rf target.stamp target
+
+nobase_sample_DATA = target/app.yaml target/*.py target/*.composite target/htdocs/*.html
+
+EXTRA_DIST = app.yaml *.composite *.py htdocs/*.html
+
+endif
+endif

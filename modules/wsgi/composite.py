@@ -177,20 +177,25 @@ def application(e, r):
     if m == "GET":
         v = comp("get", id)
         
-        # Write returned content-type / content pair
-        if not isinstance(cadr(v), basestring):
+        # Write content-type / content-list pair
+        if isString(car(v)) and isList(cadr(v)):
             return result(e, r, 200, (("Content-type", car(v)),), cadr(v))
         
         # Write an ATOM feed or entry
-        if isNil(id):
-            return result(e, r, 200, (("Content-type", "application/atom+xml;type=feed"),), writeATOMFeed(feedValuesToElements(v)))
-        return result(e, r, 200, (("Content-type", "application/atom+xml;type=entry"),), writeATOMEntry(entryValuesToElements(v)))
+        if isString(car(v)) and isString(cadr(v)):
+            if isNil(id):
+                return result(e, r, 200, (("Content-type", "application/atom+xml;type=feed"),), writeATOMFeed(feedValuesToElements(v)))
+            return result(e, r, 200, (("Content-type", "application/atom+xml;type=entry"),), writeATOMEntry(entryValuesToElements(v)))
+
+        # Write a JSON value
+        return result(e, r, 200, (("Content-type", "application/json"),), writeJSON(valuesToElements(v)))
 
     if m == "POST":
         ct = requestContentType(e)
 
         # Handle a JSON-RPC function call
-        if ct.find("application/json-rpc") != -1 or ct.find("text/plain") != -1 or ct.find("application/x-www-form-urlencoded") != -1:
+        if contains(ct, "application/json-rpc") or contains(ct, "text/plain") or contains(ct, "application/x-www-form-urlencoded"):
+            print >> stderr, "Handling JSON-RPC request"
             json = elementsToValues(readJSON(requestBody(e)))
             args = postArgs(json)
             jid = cadr(assoc("'id", args))
@@ -200,7 +205,7 @@ def application(e, r):
             return result(e, r, 200, (("Content-type", "application/json-rpc"),), jsonResult(jid, v))
 
         # Handle an ATOM entry POST
-        if ct.find("application/atom+xml") != -1:
+        if contains(ct, "application/atom+xml"):
             ae = entryValue(readATOMEntry(requestBody(e)))
             v = comp("post", id, ae)
             if isNil(v):
@@ -237,7 +242,7 @@ def main():
 
     # Handle the WSGI request with the WSGI runtime
     st = serverType(environ)
-    if st.find("App Engine") != -1 or st.find("Development") != -1:
+    if contains(st, "App Engine") or contains(st, "Development"):
         from google.appengine.ext.webapp.util import run_wsgi_app
         run_wsgi_app(application)
     elif st != "":

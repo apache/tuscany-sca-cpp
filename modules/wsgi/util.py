@@ -59,6 +59,9 @@ def isNil(l):
 def isSymbol(v):
     return isinstance(v, basestring) and v[0:1] == "'"
 
+def isString(v):
+    return isinstance(v, basestring) and v[0:1] != "'"
+
 def isList(v):
     if getattr(v, '__iter__', False) == False:
         return False
@@ -132,9 +135,19 @@ def assoc(k, l):
 def curry(f, *args):
     return lambda *a: f(*(args + a))
 
+# Convert a path represented as a list of values to a string
+def path(p):
+    if isNil(p):
+        return ""
+    return "/" + car(p) + path(cdr(p))
+
 # Split a path into a list of segments
 def tokens(path):
     return tuple(filter(lambda s: len(s) != 0, path.split("/")))
+
+# Return true if s1 contains s2
+def contains(s1, s2):
+    return s1.find(s2) != -1
 
 # Write a list of strings to a stream
 def writeStrings(l, os):

@@ -17,11 +17,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-uri=$1
-if [ "$uri" = "" ]; then
-    uri="http://localhost:8090"
-fi
-
 # Setup
 mkdir -p tmp
 ./wsgi-start target 8090 2>/dev/null

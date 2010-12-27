@@ -26,8 +26,11 @@ from string import strip
 from base64 import b64encode
 from sys import stderr
 from util import *
-from atomutil import *
-from jsonutil import *
+from elemutil import *
+import atomutil
+import jsonutil
+import rssutil
+import xmlutil
 
 # JSON request id
 id = 1
@@ -38,23 +41,116 @@ class client:
         self.url = urlparse(url)
 
     def __call__(self, func, *args):
+        print >> stderr, "Client proxy call", func, args
 
         # Connect to the configured URL
-        print >> stderr, "Client POST", self.url.geturl()
         c, headers = connect(self.url)
 
-        # POST a JSON-RPC request
+        # handle a GET request
+        if func == "get":
+            u = requesturi(self.url, car(args))
+            print >> stderr, "Client GET request", u
+            c.request("GET", u, None, headers)
+            res = c.getresponse()
+            print >> stderr, "Client status", res.status
+            if res.status != 200:
+                return None
+            ct = res.getheader("Content-type", "text/plain")
+            ls = (res.read(),)
+
+            if contains(ct, "application/atom+xml;type=entry"):
+                # Read an ATOM entry
+                v = atomutil.entryValue(atomutil.readATOMEntry(ls))
+                print >> stderr, "Client result", v
+                return v
+
+            if contains(ct, "application/atom+xml;type=feed"):
+                # Read an ATOM feed
+                v = atomutil.feedValues(atomutil.readATOMFeed(ls))
+                print >> stderr, "Client result", v
+                return v
+
+            if contains(ct, "application/rss+xml") or rssutil.isRSSFeed(ls):
+                # Read an RSS feed
+                v = rssutil.feedValues(rssutil.readRSSFeed(ls))
+                print >> stderr, "Client result", v
+                return v
+
+            if contains(ct, "text/javascript") or contains(ct, "application/json") or jsonutil.isJSON(ls):
+                # Read a JSON document
+                v = elementsToValues(jsonutil.readJSON(ls))
+                print >> stderr, "Client result", v
+                return v
+
+            if contains(ct, "text/xml") or contains(ct, "application/xml") or xmlutil.isXML(ls):
+                # Read an XML document
+                v = elementsToValues(xmlutil.readXML(ls))
+                print >> stderr, "Client result", v
+                return v
+
+            # Return the content type and a content list
+            v = (ct, ls)
+            print >> stderr, "Client result", v
+            return v
+
+        # handle a POST request
+        if func == "post":
+            u = requesturi(self.url, car(args))
+            print >> stderr, "Client POST request", u
+            req = StringIO()
+            writeStrings(atomutil.writeATOMEntry(atomutil.entryValuesToElements(cadr(args))), req)
+            headers["Content-type"] = "application/atom+xml"
+            c.request("POST", u, req.getvalue(), headers)
+            res = c.getresponse()
+            print >> stderr, "Client status", res.status
+            if res.status != 200 and res.status != 201:
+                return None
+            loc = res.getheader("Location")
+            if loc == None:
+                return None
+            return loc[(loc.rfind('/') + 1):]
+
+        # handle a PUT request
+        if func == "put":
+            u = requesturi(self.url, car(args))
+            print >> stderr, "Client PUT request", u
+            req = StringIO()
+            writeStrings(atomutil.writeATOMEntry(atomutil.entryValuesToElements(cadr(args))), req)
+            headers["Content-type"] = "application/atom+xml"
+            c.request("PUT", u, req.getvalue(), headers)
+            res = c.getresponse()
+            print >> stderr, "Client status", res.status
+            if res.status != 200:
+                return None
+            return True
+
+        # handle a DELETE request
+        if func == "delete":
+            u = requesturi(self.url, car(args))
+            print >> stderr, "Client DELETE request", u
+            c.request("DELETE", u, None, headers)
+            res = c.getresponse()
+            print >> stderr, "Client status", res.status
+            if res.status != 200:
+                return None
+            return True
+
+        # handle a JSON-RPC request
+        u = requesturi(self.url, ())
+        print >> stderr, "Client JSON-RPC request", u
         global id
         req = StringIO()
-        writeStrings(jsonRequest(id, func, args), req)
+        writeStrings(jsonutil.jsonRequest(id, func, args), req)
         id = id + 1
         headers["Content-type"] = "application/json-rpc"
-        c.request("POST", self.url.path, req.getvalue(), headers)
+        c.request("POST", u, req.getvalue(), headers)
         res = c.getresponse()
         print >> stderr, "Client status", res.status
         if res.status != 200:
             return None
-        return jsonResultValue((res.read(),))
+        v = jsonutil.jsonResultValue((res.read(),))
+        print >> stderr, "Client result", v
+        return v
 
     def __getattr__(self, name):
         if name[0] == '_':
@@ -82,12 +178,19 @@ def connect(url):
         else:
             c = HTTPSConnection(url.hostname, 443 if url.port == None else url.port)
 
-            # For HTTP basic authentication the user and password are
+            # For HTTP basic authentication the user and password may be
             # provided by htpasswd.py
-            import htpasswd
-            auth =  'Basic ' + b64encode(htpasswd.user + ':' + htpasswd.passwd)
-            return c, {"Authorization": auth}
+            try:
+                import htpasswd
+                auth =  'Basic ' + b64encode(htpasswd.user + ':' + htpasswd.passwd)
+                return c, {"Authorization": auth}
+            except:
+                return c, {}
     else:
         c = HTTPConnection(url.hostname, 80 if url.port == None else url.port)
         return c, {}
+
+# Convert a URL and arg to a request URI
+def requesturi(url, arg):
+    return url.path + path(arg) + ("" if url.query == "" else "?" + url.query)
 

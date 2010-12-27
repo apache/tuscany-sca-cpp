@@ -31,8 +31,10 @@ def readAttributes(a):
 
 # Read an XML element
 def readElement(e):
-    l = (element, "'" + e.tag) + readAttributes(tuple(e.items())) + readElements(tuple(e.getchildren()))
-    if e.text == None:
+    a = tuple(e.items())
+    c = tuple(e.getchildren())
+    l = (element, "'" + e.tag) + readAttributes(a) + readElements(c)
+    if e.text == None or c != ():
         return l
     return l + (e.text,)
 
