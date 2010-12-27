@@ -16,9 +16,6 @@
 #  under the License.
 
 # Relay implementation
-import uuid
-import sys
-
 def get(id, target):
     return target.get(id)
 

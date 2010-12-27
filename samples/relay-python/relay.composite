@@ -23,7 +23,7 @@
   name="relay">
         
     <component name="JSONTwit">
-        <t:implementation.python script="json.py"/>
+        <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="jsontwit"/>
         </service>        
@@ -33,7 +33,7 @@
     </component>
     
     <component name="XMLTwit">
-        <t:implementation.python script="xml.py"/>
+        <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="xmltwit"/>
         </service>        
@@ -43,7 +43,7 @@
     </component>
     
     <component name="RSSTwit">
-        <t:implementation.python script="rss.py"/>
+        <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="rsstwit"/>
         </service>        
@@ -53,17 +53,17 @@
     </component>
     
     <component name="HTML">
-        <t:implementation.python script="html.py"/>
+        <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="html"/>
         </service>        
         <reference name="target">
-            <t:binding.http uri="http://localhost:8090/test"/>
+            <t:binding.http uri="http://people.apache.org/~jsdelfino/"/>
         </reference>
     </component>
     
     <component name="JSONFB">
-        <t:implementation.python script="json.py"/>
+        <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="jsonfb"/>
         </service>        

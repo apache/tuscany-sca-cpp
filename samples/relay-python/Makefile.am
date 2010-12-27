@@ -20,6 +20,6 @@ if WANT_PYTHON
 dist_sample_SCRIPTS = start stop
 sampledir = $(prefix)/samples/relay-python
 
-nobase_dist_sample_DATA = html.py json.py xml.py rss.py relay.composite htdocs/*.html htdocs/test/*.html
+nobase_dist_sample_DATA = relay.py relay.composite htdocs/*.html
 
 endif
