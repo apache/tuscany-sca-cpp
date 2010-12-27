@@ -191,7 +191,7 @@ LoadModule vhost_alias_module ${modules_prefix}/modules/mod_vhost_alias.so
 LoadModule cgi_module ${modules_prefix}/modules/mod_cgi.so
 LoadModule unixd_module ${modules_prefix}/modules/mod_unixd.so
 LoadModule session_module ${modules_prefix}/modules/mod_session.so
-#LoadModule session_crypto_module ${modules_prefix}/modules/mod_session_crypto.so
+LoadModule session_crypto_module ${modules_prefix}/modules/mod_session_crypto.so
 LoadModule session_cookie_module ${modules_prefix}/modules/mod_session_cookie.so
 LoadModule slotmem_shm_module ${modules_prefix}/modules/mod_slotmem_shm.so
 LoadModule ratelimit_module ${modules_prefix}/modules/mod_ratelimit.so

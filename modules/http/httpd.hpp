@@ -57,6 +57,7 @@
 #include <mod_core.h>
 #include <ap_provider.h>
 #include <mod_auth.h>
+#include <mod_session.h>
 
 #include "string.hpp"
 #include "stream.hpp"

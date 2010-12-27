@@ -77,14 +77,51 @@ public:
 };
 
 /**
+ * Log a session entry.
+ */
+int debugSession(unused void* r, const char* key, const char* value) {
+    cdebug << "  session key: " << key << ", value: " << value << endl;
+    return 1;
+}
+
+/**
+ * Return the user info from a form auth encrypted session cookie.
+ */
+static int (*ap_session_load_fn) (request_rec * r, session_rec ** z) = NULL;
+static void (*ap_session_get_fn) (request_rec * r, session_rec * z, const char *key, const char **value) = NULL;
+
+const failable<value> userInfoFromSession(const string& realm, request_rec* r) {
+    debug("modopenauth::userInfoFromSession");
+    if (ap_session_load_fn == NULL)
+        ap_session_load_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_load);
+    session_rec *z = NULL;
+    ap_session_load_fn(r, &z);
+    if (z == NULL)
+        return mkfailure<value>("Couldn't retrieve user session");
+    apr_table_do(debugSession, r, z->entries, NULL);
+
+    if (ap_session_get_fn == NULL)
+        ap_session_get_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_get);
+    const char* user = NULL;
+    ap_session_get_fn(r, z, c_str(realm + "-user"), &user);
+    if (user == NULL)
+        return mkfailure<value>("Couldn't retrieve user id");
+    const char* pw = NULL;
+    ap_session_get_fn(r, z, c_str(realm + "-pw"), &pw);
+    if (pw == NULL)
+        return mkfailure<value>("Couldn't retrieve password");
+    return value(mklist<value>(mklist<value>("realm", realm), mklist<value>("id", string(user)), mklist<value>("password", string(pw))));
+}
+
+/**
  * Return the user info from a form auth session cookie.
  */
-const failable<value> userInfo(const value& sid, const string& realm) {
+const failable<value> userInfoFromCookie(const value& sid, const string& realm, request_rec* r) {
     const list<list<value>> info = httpd::queryArgs(sid);
-    debug(info, "modopenauth::userInfo::info");
+    debug(info, "modopenauth::userInfoFromCookie::info");
     const list<value> user = assoc<value>(realm + "-user", info);
     if (isNil(user))
-        return mkfailure<value>("Couldn't retrieve user id");
+        return userInfoFromSession(realm, r);
     const list<value> pw = assoc<value>(realm + "-pw", info);
     if (isNil(pw))
         return mkfailure<value>("Couldn't retrieve password");
@@ -94,8 +131,8 @@ const failable<value> userInfo(const value& sid, const string& realm) {
 /**
  * Return the user info from a basic auth header.
  */
-const failable<value> userInfo(const char* header, const string& realm, request_rec* r) {
-    debug(header, "modopenauth::userInfo::header");
+const failable<value> userInfoFromHeader(const char* header, const string& realm, request_rec* r) {
+    debug(header, "modopenauth::userInfoFromHeader::header");
     if (strcasecmp(ap_getword(r->pool, &header, ' '), "Basic"))
         return mkfailure<value>("Wrong authentication scheme");
 
@@ -176,7 +213,7 @@ static int checkAuthn(request_rec *r) {
             return httpd::reportStatus(mkfailure<int>("Missing AuthName"));
 
         // Extract user info from the session id
-        const failable<value> info = userInfo(content(sid), aname);
+        const failable<value> info = userInfoFromCookie(content(sid), aname, r);
         if (hasContent(info)) {
 
             // Try to authenticate the request
@@ -205,7 +242,7 @@ static int checkAuthn(request_rec *r) {
             return httpd::reportStatus(mkfailure<int>("Missing AuthName"));
 
         // Extract user info from the session id
-        const failable<value> info = userInfo(header, aname, r);
+        const failable<value> info = userInfoFromHeader(header, aname, r);
         if (hasContent(info)) {
 
             // Try to authenticate the request
