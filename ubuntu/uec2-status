@@ -17,7 +17,7 @@
 
 # Display the status of EC2 instances
 here=`readlink -f $0`; here=`dirname $here`
-$here/uec2-setenv
+. $here/uec2-setenv
 
 ec2-describe-instances --region us-west-1
 

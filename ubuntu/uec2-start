@@ -18,7 +18,7 @@
 # Start an Ubuntu 10.10 64-bit EC2 instance for use with Tuscany
 
 here=`readlink -f $0`; here=`dirname $here`
-$here/uec2-setenv
+. $here/uec2-setenv
 
 # Here are the AMI IDs you can use in the different EC2 regions:
 # Ubuntu 10.10 64-bit (elastic block storage)
@@ -32,7 +32,7 @@ $here/uec2-setenv
 # t1.micro
 # m1.large
 
-#ec2-run-instances "ami-ca1f4f8f" -t m1.large -k ec2-tuscany-keypair --region us-west-1
-#ec2-run-instances "ami-ca1f4f8f" -t t1.micro -k ec2-tuscany-keypair --region us-west-1
-ec2-run-instances "ami-ca1f4f8f" -t t1.micro -k ec2-tuscany-keypair --region us-west-1
+#ec2-run-instances "ami-ca1f4f8f" -t m1.large -k ec2-keypair --region us-west-1
+#ec2-run-instances "ami-ca1f4f8f" -t t1.micro -k ec2-keypair --region us-west-1
+ec2-run-instances "ami-ca1f4f8f" -t t1.micro -k ec2-keypair --region us-west-1
 

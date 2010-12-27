@@ -17,7 +17,7 @@
 
 # Configure EC2 for use with Tuscany SCA
 here=`readlink -f $0`; here=`dirname $here`
-$here/uec2-setenv
+. $here/uec2-setenv
 
 # Display commands as they are executed
 set -x
@@ -27,9 +27,9 @@ set -x
 sudo apt-get install ec2-api-tools
 
 # Create an EC2 SSH keypair if necessary
-if [ ! -f $HOME/.ec2/ec2-tuscany-keypair.pem ]; then
-    ec2-add-keypair ec2-tuscany-keypair --region us-west-1 > $HOME/.ec2/ec2-tuscany-keypair.pem
-    chmod 600 $HOME/.ec2/ec2-tuscany-keypair.pem
+if [ ! -f $HOME/.ec2/ec2-keypair.pem ]; then
+    ec2-add-keypair ec2-keypair --region us-west-1 > $HOME/.ec2/ec2-keypair.pem
+    chmod 600 $HOME/.ec2/ec2-keypair.pem
 fi
 
 # Authorize SSH, HTTP and HTTPS access to EC2 instances

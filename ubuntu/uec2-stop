@@ -18,7 +18,7 @@
 # Terminate an EC2 instance
 instance=$1
 here=`readlink -f $0`; here=`dirname $here`
-$here/uec2-setenv
+. $here/uec2-setenv
 
 ec2-terminate-instances $instance --region us-west-1
 
