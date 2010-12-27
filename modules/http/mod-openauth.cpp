@@ -76,6 +76,8 @@ public:
     string login;
 };
 
+#ifdef WANT_MAINTAINER_MODE
+
 /**
  * Log a session entry.
  */
@@ -83,6 +85,8 @@ int debugSession(unused void* r, const char* key, const char* value) {
     cdebug << "  session key: " << key << ", value: " << value << endl;
     return 1;
 }
+
+#endif
 
 /**
  * Return the user info from a form auth encrypted session cookie.
@@ -98,7 +102,9 @@ const failable<value> userInfoFromSession(const string& realm, request_rec* r) {
     ap_session_load_fn(r, &z);
     if (z == NULL)
         return mkfailure<value>("Couldn't retrieve user session");
+#ifdef WANT_MAINTAINER_MODE
     apr_table_do(debugSession, r, z->entries, NULL);
+#endif
 
     if (ap_session_get_fn == NULL)
         ap_session_get_fn = APR_RETRIEVE_OPTIONAL_FN(ap_session_get);
