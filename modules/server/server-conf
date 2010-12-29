@@ -64,17 +64,24 @@ Alias /atomutil.js $jsprefix/htdocs/atomutil.js
 Alias /ui.js $jsprefix/htdocs/ui.js
 Alias /ui.css $jsprefix/htdocs/ui.css
 Alias /scdl.js $jsprefix/htdocs/scdl.js
-Alias /graph.js $jsprefix/htdocs/graph.js
 
 <Location /component.js>
 AuthType None
 Require all granted
 </Location>
-<Location /scdl.js>
+<Location /util.js>
 AuthType None
 Require all granted
 </Location>
-<Location /util.js>
+<Location /elemutil.js>
+AuthType None
+Require all granted
+</Location>
+<Location /xmlutil.js>
+AuthType None
+Require all granted
+</Location>
+<Location /atomutil.js>
 AuthType None
 Require all granted
 </Location>
@@ -83,6 +90,10 @@ AuthType None
 Require all granted
 </Location>
 <Location /ui.css>
+AuthType None
+Require all granted
+</Location>
+<Location /scdl.js>
 AuthType None
 Require all granted
 </Location>

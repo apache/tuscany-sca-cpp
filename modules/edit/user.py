@@ -15,5 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom rss js json scdl http server python java openid oauth wsgi edit
+# User info service component
+
+# Return the user id
+def id(user, email, nick, full, first, last, realm):
+    if email.eval() != '?':
+        return email.eval()
+    if nick.eval() != '?':
+        return nick.eval() + '@' + realm.eval()
+    return user.eval() + '@' + realm.eval()
 

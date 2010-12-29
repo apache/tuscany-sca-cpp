@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,5 +17,19 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom rss js json scdl http server python java openid oauth wsgi edit
+# Setup
+../../components/cache/memcached-start 11211
+
+../http/httpd-conf tmp localhost 8090 htdocs
+../server/server-conf tmp
+../python/python-conf tmp
+./edit-conf tmp
+cat >>tmp/conf/httpd.conf <<EOF
+# Configure SCA Composite
+SCAContribution `pwd`/
+SCAComposite edit.composite
+
+EOF
+
+../http/httpd-start tmp
 

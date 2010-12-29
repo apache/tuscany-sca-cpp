@@ -44,13 +44,29 @@ atom.entriesElementsToValues = function(e) {
 };
 
 /**
- * Convert a list of strings to a list of values representing an ATOM entry.
+ * Return true if a list of strings represents an ATOM entry.
  */
-atom.readATOMEntry = function(l) {
-    var e = readXML(l);
+atom.isATOMEntry = function(l) {
+    if (!isXML(l))
+        return false;
+    return car(l).match('<entry') != null && car(l).match('<feed') == null && car(l).match('="http://www.w3.org/2005/Atom"') != null;
+};
+
+/**
+ * Convert a DOM Document to a list of values representing an ATOM entry.
+ */
+atom.readATOMEntryDocument = function(doc) {
+    var e = readXMLDocument(doc);
     if (isNil(e))
         return mklist();
     return atom.entryElementsToValues(car(e));
+};
+
+/**
+ * Convert a list of strings to a list of values representing an ATOM entry.
+ */
+atom.readATOMEntry = function(l) {
+    return atom.readATOMEntryDocument(parseXML(l));
 };
 
 /**

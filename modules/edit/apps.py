@@ -15,5 +15,34 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = scheme atom rss js json scdl http server python java openid oauth wsgi edit
+# Workspace collection implementation
+import uuid
+import sys
+from util import *
+
+# Convert an id to an app id
+def appid(id):
+    return ("'" + car(id), "'app.composite")
+
+# Post a new app to the domains db
+def post(collection, app, cache):
+    id = appid((str(uuid.uuid1()),))
+    cache.put((id,), app)
+    return id
+
+# Put an app into the domains db
+def put(id, app, cache):
+    cache.put(appid(id), app)
+    return True
+
+# Get an app from the domains db
+def get(id, cache):
+    if isNil(id):
+        return ("Apps", "apps")
+    return (car(id), car(id), cache.get(appid(id)))
+
+# Delete an app from the domains db
+def delete(id, cache):
+    cache.delete(appid(id))
+    return True
 

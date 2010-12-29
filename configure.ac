@@ -900,6 +900,7 @@ AC_CONFIG_FILES([Makefile
                  modules/openid/Makefile
                  modules/oauth/Makefile
                  modules/wsgi/Makefile
+                 modules/edit/Makefile
                  components/Makefile
                  components/cache/Makefile
                  components/log/Makefile

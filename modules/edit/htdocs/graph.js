@@ -46,12 +46,19 @@ graph.supportsSVG = function() {
 /**
  * Basic colors
  */
-graph.red = 'red';
-graph.green = 'green';
-graph.blue = 'blue';
-graph.yellow = 'yellow';
-graph.orange = '#ffa500';
-graph.gray = 'gray'
+graph.colors = new Object();
+graph.colors.black = '#000000';
+graph.colors.blue = '#0000ff';
+graph.colors.cyan = '#00ffff';
+graph.colors.gray = '#808080'
+graph.colors.green = '#008000';
+graph.colors.magenta = '#008000';
+graph.colors.orange = '#ffa500';
+graph.colors.pink = '#ffc0cb';
+graph.colors.purple = '#800080';
+graph.colors.red = '#ff0000';
+graph.colors.white = '#ffffff';
+graph.colors.yellow = '#ffff00';
 
 /**
  * Base path class.
@@ -204,10 +211,13 @@ if (graph.supportsVML()) {
     /**
      * Make a title element.
      */
-    graph.mktitle = function(t) {
+    graph.mktitle = function(comp) {
+        var t = scdl.name(comp);
+        var tsvcs = graph.tsvcs(comp);
+        var lsvcs = graph.lsvcs(comp);
         var title = document.createElement('v:textbox');
-        title.style.left = '25';
-        title.style.top = '5';
+        title.style.left = '' + (isNil(lsvcs)? 7 : 27);
+        title.style.top = '' + (isNil(tsvcs)? 5 : 25);
         title.style.position = 'absolute';
         var tnode = document.createTextNode(t);
         title.appendChild(tnode);
@@ -217,7 +227,8 @@ if (graph.supportsVML()) {
     /**
      * Return the width of a title.
      */
-    graph.titlewidth = function(t) {
+    graph.titlewidth = function(comp) {
+        var t = scdl.name(comp);
         graph.textWidthDiv.innerHTML = t;
         var twidth = graph.textWidthDiv.offsetWidth;
         graph.textWidthDiv.innerHTML = '';
@@ -228,8 +239,7 @@ if (graph.supportsVML()) {
      * Make a component shape.
      */
     graph.mkcompshape = function(comp, cassoc) {
-        var name = scdl.name(comp);
-        var title = graph.mktitle(name);
+        var title = graph.mktitle(comp);
 
         var d = graph.mkcomppath(comp, cassoc).str();
 
@@ -247,8 +257,8 @@ if (graph.supportsVML()) {
         contour.coordsize = '500,500';
         contour.setAttribute('path', d);
         contour.filled = 'false';
-        contour.strokecolor = graph.gray;
-        contour.strokeweight = '3';
+        contour.strokecolor = graph.colors.gray;
+        contour.strokeweight = '2';
         contour.style.top = 1;
         contour.style.left = 1;
         var stroke = document.createElement('v:stroke');
@@ -381,7 +391,8 @@ if (graph.supportsSVG()) {
     /**
      * Make a title element.
      */
-    graph.mktitle = function(t) {
+    graph.mktitle = function(comp) {
+        var t = scdl.name(comp);
         var title = document.createElementNS(graph.svgns, 'text');
         title.setAttribute('text-anchor', 'start');
         title.setAttribute('x', 5);
@@ -394,8 +405,8 @@ if (graph.supportsSVG()) {
     /**
      * Return a width of a title.
      */
-    graph.titlewidth = function(t) {
-        var title = graph.mktitle(t);
+    graph.titlewidth = function(comp) {
+        var title = graph.mktitle(comp);
         var width = title.getBBox().width;
         graph.textWidthSvg.removeChild(title);
         return width;
@@ -405,8 +416,7 @@ if (graph.supportsSVG()) {
      * Make a component shape.
      */
     graph.mkcompshape = function(comp, cassoc) {
-        var name = scdl.name(comp);
-        var title = graph.mktitle(name);
+        var title = graph.mktitle(comp);
 
         var d = graph.mkcomppath(comp, cassoc).str();
 
@@ -417,7 +427,7 @@ if (graph.supportsSVG()) {
         var contour = document.createElementNS(graph.svgns, 'path');
         contour.setAttribute('d', d);
         contour.setAttribute('fill', 'none');
-        contour.setAttribute('stroke', graph.gray);
+        contour.setAttribute('stroke', graph.colors.gray);
         contour.setAttribute('stroke-width', '4');
         contour.setAttribute('stroke-opacity', '0.20');
         contour.setAttribute('transform', 'translate(1,1)');
@@ -491,7 +501,7 @@ graph.rrefs = function(comp) {
  */
 graph.color = function(comp) {
     var c = scdl.color(comp);
-    return c == null? graph.blue : c;
+    return c == null? graph.colors.blue : graph.colors[c];
 }
 
 /**
@@ -548,7 +558,7 @@ graph.refswidth = function(refs, cassoc) {
  * Return the width of a component.
  */
 graph.compwidth = function(comp, cassoc) {
-    var twidth = graph.titlewidth(scdl.name(comp)) + 20;
+    var twidth = graph.titlewidth(comp) + 20;
     var tsvcs = graph.tsvcs(comp);
     var tsvcsw = Math.max(1, length(tsvcs)) * 60 + 20;
     var brefs = graph.brefs(comp);

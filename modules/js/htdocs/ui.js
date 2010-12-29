@@ -197,16 +197,26 @@ ui.elementByID = function(node, id) {
 function $(id) {
     if (id == document) {
         if (!isNil(document.widget))
-            return widget;
+            return document.widget;
         return document;
     }
     return ui.elementByID($(document), id);
 };
 
 /**
- * Initialize a widget.
+ * Bind a widget iframe to an element.
  */
-ui.onloadwidget = function() {
+ui.widgets = new Array();
+
+ui.bindwidget = function(f, el) {
+    window.ui.widgets[f] = el;
+    return f;
+};
+
+/**
+ * Install a widget into the element bound to its iframe.
+ */
+ui.installwidget = function() {
     if (isNil(window.parent) || isNil(window.parent.ui) || isNil(window.parent.ui.widgets))
         return true;
     var pdoc = ui.content(window.parent);
@@ -219,15 +229,5 @@ ui.onloadwidget = function() {
         }
     }
     return true;
-};
-
-/**
- * Load a widget into an element.
- */
-ui.widgets = new Array();
-
-ui.bindwidget = function(f, el) {
-    window.ui.widgets[f] = el;
-    return f;
 };
 

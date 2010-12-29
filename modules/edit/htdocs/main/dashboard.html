@@ -1,0 +1,104 @@
+<!--
+    * Licensed to the Apache Software Foundation (ASF) under one
+    * or more contributor license agreements.  See the NOTICE file
+    * distributed with this work for additional information
+    * regarding copyright ownership.  The ASF licenses this file
+    * to you under the Apache License, Version 2.0 (the
+    * "License"); you may not use this file except in compliance
+    * with the License.  You may obtain a copy of the License at
+    * 
+    *   http://www.apache.org/licenses/LICENSE-2.0
+    * 
+    * Unless required by applicable law or agreed to in writing,
+    * software distributed under the License is distributed on an
+    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    * KIND, either express or implied.  See the License for the
+    * specific language governing permissions and limitations
+    * under the License.    
+-->
+<html>
+<head>  
+<link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/elemutil.js"></script>
+<script type="text/javascript" src="/xmlutil.js"></script>
+<script type="text/javascript" src="/atomutil.js"></script>
+<script type="text/javascript" src="/scdl.js"></script>
+<script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/component.js"></script>
+</head>  
+<body>
+<div id="dashboard">
+
+<form id="appsForm">
+<div id="apps"></div>
+<br/>
+&gt;<a href="" id="addAppLink">Add</a>&nbsp;<a href="" id="deleteAppLink">Delete</a>
+</form>
+
+<div id="newApp" style="visibility: hidden;">
+<form id="newAppForm">
+<table width="100%">
+<tr><th>Add a New App</th></tr>
+<tr><td>Add a new App to your dashboard.</td></tr>
+</table>
+<br>
+
+<table>
+<tr><td>App name:</td><td><input type="text" name="appName" size="50"/></td></td><td>e.g. mycoolapp</td></tr>
+<tr><td>Title:</td><td><input type="text" name="appTitle" size="50"/></td></td><td>e.g. My really cool app</td></tr>
+</table>
+<input id="addAppButton" type="button" value="Add"/>
+</form>
+</div>
+
+</div>
+
+<script type="text/javascript">
+ui.installwidget();
+
+var editWidget = sca.component("EditWidget");
+var dashboard = sca.reference(editWidget, "dashboard");
+
+// Get and display list of apps
+dashboard.get('', function(doc) {
+    var apps = '';
+    apps += '<table width="100%">';
+    apps += '<tr><th>App</th><th>Title</th></tr>';
+
+    var entries = cddr(atom.readATOMFeedDocument(doc));
+    for (var i = 0; i < length(entries); i++) {
+        var entry = entries[i];
+        var item = caddr(entry);
+        var composite = cddr(item);
+        var comps = scdl.components(composite);
+
+        name = cadr(entry);
+        title = car(entry);
+
+        apps += '<tr>';
+        apps += '<td><input name="apps" type="checkbox" value="' + name + '">' + '<a href=\"' + '/edit/?app=' + name + '\">' + name + '</a></td>';
+        apps += '<td class="tdw">' + title + '</td>';
+        apps += '</tr>';
+    }
+    apps += '</table>';
+    $('apps').innerHTML = apps;
+
+});
+
+// Toggle new app form
+$('addAppLink').onclick = function() {
+    var div = $('newApp');
+    div.style.visibility = div.style.visibility == 'hidden'? 'visible' : 'hidden';
+    return false;
+};
+
+// Add a new app
+$('addAppButton').onclick = function() {
+    alert('Add new app');
+    return false;
+};
+
+</script>
+</body>
+</html>

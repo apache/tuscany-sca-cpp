@@ -1,0 +1,69 @@
+<!--
+    * Licensed to the Apache Software Foundation (ASF) under one
+    * or more contributor license agreements.  See the NOTICE file
+    * distributed with this work for additional information
+    * regarding copyright ownership.  The ASF licenses this file
+    * to you under the Apache License, Version 2.0 (the
+    * "License"); you may not use this file except in compliance
+    * with the License.  You may obtain a copy of the License at
+    * 
+    *   http://www.apache.org/licenses/LICENSE-2.0
+    * 
+    * Unless required by applicable law or agreed to in writing,
+    * software distributed under the License is distributed on an
+    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    * KIND, either express or implied.  See the License for the
+    * specific language governing permissions and limitations
+    * under the License.    
+-->
+<html>
+<head>  
+<link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/elemutil.js"></script>
+<script type="text/javascript" src="/xmlutil.js"></script>
+<script type="text/javascript" src="/atomutil.js"></script>
+<script type="text/javascript" src="/scdl.js"></script>
+<script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/component.js"></script>
+<script type="text/javascript" src="/graph.js"></script>
+</head>  
+<body>
+
+<script type="text/javascript">
+var editWidget = sca.component("EditWidget");
+var dashboard = sca.reference(editWidget, "dashboard");
+var apps = sca.reference(editWidget, "apps");
+
+if (false) {
+dashboard.get('', function(doc) {
+    var entries = cddr(atom.readATOMFeedDocument(doc));
+    var entry = car(entries);
+    var item = caddr(entry);
+    var composite = cddr(item);
+    var comps = scdl.components(composite);
+
+    var g = graph.mkgraph();
+    var shapes = graph.composite(composite);
+    log(shapes);
+    for (var s in shapes)
+        g.appendChild(shapes[s]);
+});
+}
+
+apps.get('store', function(doc) {
+    var entry = atom.readATOMEntryDocument(doc);
+    var item = caddr(entry);
+    var composite = cddr(item);
+    var comps = scdl.components(composite);
+
+    var g = graph.mkgraph();
+    var shapes = graph.composite(composite);
+    log(shapes);
+    for (var s in shapes)
+        g.appendChild(shapes[s]);
+});
+
+</script>
+</body>
+</html>

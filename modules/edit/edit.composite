@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://edit"
+  name="edit">
+        
+    <component name="User">
+        <t:implementation.python script="user.py"/>
+        <property name="user">?</property>
+        <property name="email">joe@localhost</property>
+        <property name="nickname">?</property>
+        <property name="fullname">?</property>
+        <property name="firstname">?</property>
+        <property name="lastname">?</property>
+        <property name="realm">?</property>
+        <service name="User">
+            <t:binding.http uri="user"/>
+        </service>
+    </component>
+    
+    <component name="EditWidget">
+        <t:implementation.widget location="/index.html"/>
+        <reference name="dashboard" target="Dashboard"/>
+        <reference name="apps" target="Apps"/>
+    </component>
+    
+    <component name="Dashboard">
+        <t:implementation.python script="dashboard.py"/>
+        <service name="Dashboard">
+            <t:binding.http uri="dashboard"/>
+        </service>        
+        <reference name="user" target="User"/>
+        <reference name="cache" target="WorkspaceCache"/>
+    </component>
+    
+    <component name="Apps">
+        <t:implementation.python script="apps.py"/>
+        <service name="Apps">
+            <t:binding.http uri="apps"/>
+        </service>
+        <reference name="cache" target="DomainCache"/>
+    </component>
+    
+    <component name="WorkspaceCache">
+        <implementation.cpp path="../../components/cache" library="libdatacache"/>
+        <service name="WorkspaceCache">
+            <t:binding.http uri="workspacecache"/>
+        </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="WorkspaceDB"/>
+        <reference name="l2writer" target="WorkspaceDB"/>
+    </component>
+
+    <component name="WorkspaceDB">
+        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
+        <property name="dbname">workspaces</property>
+        <property name="format">scheme</property>
+        <service name="WorkspaceDB">
+            <t:binding.http uri="workspaces"/>
+        </service>
+    </component>
+
+    <component name="DomainCache">
+        <implementation.cpp path="../../components/cache" library="libdatacache"/>
+        <service name="DomainCache">
+            <t:binding.http uri="domaincache"/>
+        </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="DomainDB"/>
+        <reference name="l2writer" target="DomainDB"/>
+    </component>
+
+    <component name="DomainDB">
+        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
+        <property name="dbname">domains</property>
+        <property name="format">xml</property>
+        <service name="DomainDB">
+            <t:binding.http uri="domains"/>
+        </service>
+    </component>
+
+    <component name="Memcache">
+        <implementation.cpp path="../../components/cache" library="libmemcache"/>
+        <service name="Memcache">
+            <t:binding.http uri="memcache"/>
+        </service>
+        <property name="servers">localhost:11211</property>
+    </component>
+
+</composite>
