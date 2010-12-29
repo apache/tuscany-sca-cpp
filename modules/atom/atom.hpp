@@ -66,6 +66,15 @@ const bool isATOMFeed(const list<string>& ls) {
 }
 
 /**
+ * Return true if a list of strings contains an ATOM entry.
+ */
+const bool isATOMEntry(const list<string>& ls) {
+    if (!isXML(ls))
+        return false;
+    return contains(car(ls), "<entry") && !contains(car(ls), "<feed") && contains(car(ls), "=\"http://www.w3.org/2005/Atom\"");
+}
+
+/**
  * Convert a list of strings to a list of values representing an ATOM entry.
  */
 const failable<list<value> > readATOMEntry(const list<string>& ilist) {

@@ -184,8 +184,8 @@ def application(e, r):
         # Write an ATOM feed or entry
         if isString(car(v)) and isString(cadr(v)):
             if isNil(id):
-                return result(e, r, 200, (("Content-type", "application/atom+xml;type=feed"),), writeATOMFeed(feedValuesToElements(v)))
-            return result(e, r, 200, (("Content-type", "application/atom+xml;type=entry"),), writeATOMEntry(entryValuesToElements(v)))
+                return result(e, r, 200, (("Content-type", "application/atom+xml"),), writeATOMFeed(feedValuesToElements(v)))
+            return result(e, r, 200, (("Content-type", "application/atom+xml"),), writeATOMEntry(entryValuesToElements(v)))
 
         # Write a JSON value
         return result(e, r, 200, (("Content-type", "application/json"),), writeJSON(valuesToElements(v)))

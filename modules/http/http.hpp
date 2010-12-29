@@ -405,13 +405,13 @@ const failable<value> get(const string& url, const CURLSession& cs) {
     const list<string> ls(reverse(cadr(content(res))));
     debug(ls, "http::get::content");
 
-    if (contains(ct, "application/atom+xml;type=entry")) {
+    if (atom::isATOMEntry(ls)) {
         // Read an ATOM entry
         const value val(atom::entryValue(content(atom::readATOMEntry(ls))));
         debug(val, "http::get::result");
         return val;
     }
-    if (contains(ct, "application/atom+xml;type=feed") || atom::isATOMFeed(ls)) {
+    if (contains(ct, "application/atom+xml") || atom::isATOMFeed(ls)) {
         // Read an ATOM feed
         const value val(atom::feedValues(content(atom::readATOMFeed(ls))));
         debug(val, "http::get::result");

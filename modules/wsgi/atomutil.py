@@ -54,6 +54,12 @@ def isATOMFeed(l):
         return False
     return contains(car(l), "<feed") and contains(car(l), "=\"http://www.w3.org/2005/Atom\"")
 
+# Return true if a list of strings represents an ATOM entry
+def isATOMEntry(l):
+    if not isXML(l):
+        return False
+    return contains(car(l), "<entry") and not contains(car(l), "<feed") and contains(car(l), "=\"http://www.w3.org/2005/Atom\"")
+
 # Convert a list of strings to a list of values representing an ATOM feed
 def readATOMFeed(l):
     f = readXML(l)

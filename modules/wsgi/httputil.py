@@ -58,13 +58,13 @@ class client:
             ct = res.getheader("Content-type", "text/plain")
             ls = (res.read(),)
 
-            if contains(ct, "application/atom+xml;type=entry"):
+            if atomutil.isATOMEntry(ls):
                 # Read an ATOM entry
                 v = atomutil.entryValue(atomutil.readATOMEntry(ls))
                 print >> stderr, "Client result", v
                 return v
 
-            if contains(ct, "application/atom+xml;type=feed"):
+            if contains(ct, "application/atom+xml") or atomutil.isATOMFeed(ls):
                 # Read an ATOM feed
                 v = atomutil.feedValues(atomutil.readATOMFeed(ls))
                 print >> stderr, "Client result", v

@@ -137,9 +137,9 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     // Write ATOM feed or entry
     if (isString(car<value>(c)) && isString(cadr<value>(c))) {
         if (isNil(cddr(path)))
-            return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(c)), "application/atom+xml;type=feed", r);
+            return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(c)), "application/atom+xml", r);
         else
-            return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(c)), "application/atom+xml;type=entry", r);
+            return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(c)), "application/atom+xml", r);
     }
 
     // Write JSON value
