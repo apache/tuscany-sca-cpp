@@ -130,9 +130,6 @@ function readXML(l) {
 }
 
 /**
- * Make an XML document.
- */
-/**
  * Return a list of strings representing an XML document.
  */
 function writeXMLDocument(doc) {
@@ -153,27 +150,49 @@ function expandElementValues(n, l) {
 function writeList(l, node, doc) {
     if (isNil(l))
         return node;
+
     var token = car(l);
     if (isTaggedList(token, attribute)) {
         node.setAttribute(attributeName(token).substring(1), '' + attributeValue(token));
+
     } else if (isTaggedList(token, element)) {
+
+        function mkelem(tok, doc) {
+            function xmlns(l) {
+                if (isNil(l))
+                    return null;
+                var t = car(l);
+                if (isTaggedList(t, attribute)) {
+                    if (attributeName(t).substring(1) == 'xmlns')
+                        return attributeValue(t);
+                }
+                return xmlns(cdr(l));
+            }
+
+            var ns = xmlns(elementChildren(tok));
+            if (ns == null || !doc.createElementNS)
+                return doc.createElement(elementName(tok).substring(1));
+            return doc.createElementNS(ns, elementName(tok).substring(1));
+        }
+
         if (elementHasValue(token)) {
             var v = elementValue(token);
             if (isList(v)) {
                 var e = expandElementValues(elementName(token), v);
                 writeList(e, node, doc);
             } else {
-                var child = doc.createElement(elementName(token).substring(1));
+                var child = mkelem(token, doc);
                 writeList(elementChildren(token), child, doc);
                 node.appendChild(child);
             }
         } else {
-            var child = doc.createElement(elementName(token).substring(1));
+            var child = mkelem(token, doc);
             writeList(elementChildren(token), child, doc);
             node.appendChild(child);
         }
     } else
         node.appendChild(doc.createTextNode('' + token));
+
     writeList(cdr(l), node, doc);
     return node;
 }
