@@ -44,7 +44,7 @@ const list<value> entryElementsToValues(const list<value>& e) {
     const list<value> li = filter<value>(selector(mklist<value>(element, "link")), e);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> ld = filter<value>(selector(mklist<value>(element, "description")), e);
-    return mklist<value>(t, i, elementValue(car(ld)));
+    return mklist<value>(t, i, isNil(ld)? (value)list<value>() : elementValue(car(ld)));
 }
 
 /**
@@ -80,7 +80,7 @@ const failable<list<value> > readRSSEntry(const list<string>& ilist) {
  */
 const value entryValue(const list<value>& e) {
     const list<value> v = elementsToValues(mklist<value>(caddr(e)));
-    return cons(car(e), mklist<value>(cadr(e), isList(car(v))? (value)cdr<value>(car(v)) : car(v)));
+    return cons(car(e), mklist<value>(cadr(e), isList(car(v))? (isNil((list<value>)car(v))? car(v) : (value)cdr<value>(car(v))) : car(v)));
 }
 
 /**
@@ -121,7 +121,7 @@ const list<value> entryElement(const list<value>& l) {
         + element + "item"
         + (list<value>() + element + "title" + car(l))
         + (list<value>() + element + "link" + cadr(l))
-        + (list<value>() + element + "description" + caddr(l));
+        + (isNil(cddr(l))? list<value>() : list<value>() + element + "description" + caddr(l));
 }
 
 /**

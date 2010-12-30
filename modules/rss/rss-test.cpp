@@ -54,6 +54,12 @@ string itemTextEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<description>Apple</description>"
         "</item>\n");
 
+string itemNoDescriptionEntry("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        "<item>"
+        "<title>fruit</title>"
+        "<link>cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b</link>"
+        "</item>\n");
+
 string incompleteEntry("<item>"
         "<title>fruit</title><description>"
         "<Item xmlns=\"http://services/\">"
@@ -92,6 +98,12 @@ bool testEntry() {
         assert(str(os) == itemTextEntry);
     }
     {
+        const list<value> a = mklist<value>(string("fruit"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), list<value>());
+        ostringstream os;
+        writeRSSEntry<ostream*>(writer, &os, a);
+        assert(str(os) == itemNoDescriptionEntry);
+    }
+    {
         const list<value> a = content(readRSSEntry(mklist(itemEntry)));
         ostringstream os;
         writeRSSEntry<ostream*>(writer, &os, a);
@@ -102,6 +114,12 @@ bool testEntry() {
         ostringstream os;
         writeRSSEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemTextEntry);
+    }
+    {
+        const list<value> a = content(readRSSEntry(mklist(itemNoDescriptionEntry)));
+        ostringstream os;
+        writeRSSEntry<ostream*>(writer, &os, a);
+        assert(str(os) == itemNoDescriptionEntry);
     }
     {
         const list<value> a = content(readRSSEntry(mklist(incompleteEntry)));

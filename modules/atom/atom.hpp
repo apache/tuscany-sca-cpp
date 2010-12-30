@@ -44,7 +44,7 @@ const list<value> entryElementsToValues(const list<value>& e) {
     const list<value> li = filter<value>(selector(mklist<value>(element, "id")), e);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> lc = filter<value>(selector(mklist<value>(element, "content")), e);
-    return mklist<value>(t, i, elementValue(car(lc)));
+    return mklist<value>(t, i, isNil(lc)? (value)list<value>() : elementValue(car(lc)));
 }
 
 /**
@@ -89,7 +89,7 @@ const failable<list<value> > readATOMEntry(const list<string>& ilist) {
  */
 const value entryValue(const list<value>& e) {
     const list<value> v = elementsToValues(mklist<value>(caddr(e)));
-    return cons(car(e), mklist<value>(cadr(e), isList(car(v))? (value)cdr<value>(car(v)) : car(v)));
+    return cons(car(e), mklist<value>(cadr(e), isList(car(v))? (isNil((list<value>)car(v))? car(v) : (value)cdr<value>(car(v))) : car(v)));
 }
 
 /**
@@ -129,8 +129,9 @@ const list<value> entryElement(const list<value>& l) {
         + element + "entry" + (list<value>() + attribute + "xmlns" + "http://www.w3.org/2005/Atom")
         + (list<value>() + element + "title" + (list<value>() + attribute + "type" + "text") + car(l))
         + (list<value>() + element + "id" + cadr(l))
-        + (list<value>() + element + "content"
-        + (list<value>() + attribute + "type" + (isList(caddr(l))? "application/xml" : "text")) + caddr(l))
+        + (isNil(cddr(l))?
+            list<value>() :
+            list<value>() + element + "content" + (list<value>() + attribute + "type" + (isList(caddr(l))? "application/xml" : "text")) + caddr(l))
         + (list<value>() + element + "link" + (list<value>() + attribute + "href" + cadr(l)));
 }
 
