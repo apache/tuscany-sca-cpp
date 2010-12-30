@@ -24,9 +24,39 @@
 <script type="text/javascript" src="/ui.js"></script>
 </head>
 <body>
-<iframe id="editFrame" src="edit.html" style="visibility: visible; height: 100%; width: 100%; border: 0px;" scrolling="no" frameborder="0"></iframe>
+<h1><span id="titleDiv"></span></h1>
+<div id="editDiv"></div>
 
 <script type="text/javascript">
+/**
+ * Return the current app name.
+ */
+function appname() {
+    var qs = window.location.toString().split('?');
+    if (isNil(cdr(qs)))
+        return null;
+    var p = cadr(qs).split('=');
+    if (isNil(p) || isNil(cdr(p)))
+        return null;
+    return cadr(p);
+}
+
+/**
+ * Display the editor for an app.
+ */
+function editapp(name) {
+    if (name == null)
+        return;
+    $('titleDiv').innerHTML = 'Editing: ' + name;
+    $('editDiv').innerHTML =
+        '<iframe id="editFrame" style="visibility: visible; height: 100%; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="edit.html?' +
+        'app=' + name +
+        '"></iframe>';
+}
+
+// Display the editor for the current app
+editapp(appname());
+
 </script>
 </body>
 </html>

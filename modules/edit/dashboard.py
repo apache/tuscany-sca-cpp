@@ -34,7 +34,7 @@ def getworkspace(id, cache):
 # Post a new app to the user's workspace
 def post(collection, app, user, cache):
     id = (str(uuid.uuid1()),)
-    workspace = cons((car(app), id, caddr(app)), getworkspace(workspaceid(user), cache))
+    workspace = cons((car(app), car(id), caddr(app)), getworkspace(workspaceid(user), cache))
     cache.put(workspaceid(user), workspace)
     return id
 
@@ -56,13 +56,13 @@ def get(id, user, cache):
     def findapp(id, workspace):
         if isNil(workspace):
             return None
-        if id == cadr(car(workspace)):
+        if car(id) == cadr(car(workspace)):
             return car(workspace)
         return findapp(id, cdr(workspace))
 
     if isNil(id):
         return ("Your Apps", user.id()) + getworkspace(workspaceid(user), cache)
-    return findapp(car(id), getworkspace(workspaceid(user), cache))
+    return findapp(id, getworkspace(workspaceid(user), cache))
 
 # Delete apps from the user's workspace
 def delete(id, user, cache):
@@ -72,7 +72,7 @@ def delete(id, user, cache):
     def deleteapp(id, workspace):
         if isNil(workspace):
             return ()
-        if id == cadr(car(workspace)):
+        if car(id) == cadr(car(workspace)):
             return cdr(workspace)
         return cons(car(workspace), deleteapp(id, cdr(workspace)))
 

@@ -45,8 +45,8 @@
 <br>
 
 <table>
-<tr><td>App name:</td><td><input type="text" name="appName" size="50"/></td></td><td>e.g. mycoolapp</td></tr>
-<tr><td>Title:</td><td><input type="text" name="appTitle" size="50"/></td></td><td>e.g. My really cool app</td></tr>
+<tr><td>App name:</td><td><input type="text" id="appName" size="50"/></td></td><td>e.g. mycoolapp</td></tr>
+<tr><td>Title:</td><td><input type="text" id="appTitle" size="50"/></td></td><td>e.g. My really cool app</td></tr>
 </table>
 <input id="addAppButton" type="button" value="Add"/>
 </form>
@@ -55,49 +55,93 @@
 </div>
 
 <script type="text/javascript">
+// Install the widget
 ui.installwidget();
 
+// Init service references
 var editWidget = sca.component("EditWidget");
 var dashboard = sca.reference(editWidget, "dashboard");
 
-// Get and display list of apps
-dashboard.get('', function(doc) {
-    var apps = '';
-    apps += '<table width="100%">';
-    apps += '<tr><th>App</th><th>Title</th></tr>';
+/**
+ * Get and display list of apps.
+ */
+function getapps(sync) {
+    function display(doc) {
+        var apps = '';
+        apps += '<table width="100%">';
+        apps += '<tr><th>App</th><th>Title</th></tr>';
 
-    var entries = cddr(atom.readATOMFeedDocument(doc));
-    for (var i = 0; i < length(entries); i++) {
-        var entry = entries[i];
-        var item = caddr(entry);
-        var composite = cddr(item);
-        var comps = scdl.components(composite);
+        var entries = cddr(atom.readATOMFeedDocument(doc));
+        for (var i = 0; i < length(entries); i++) {
+            var entry = entries[i];
+            var item = caddr(entry);
+            var composite = cddr(item);
+            var comps = scdl.components(composite);
 
-        name = cadr(entry);
-        title = car(entry);
+            name = cadr(entry);
+            title = car(entry);
 
-        apps += '<tr>';
-        apps += '<td><input name="apps" type="checkbox" value="' + name + '">' + '<a href=\"' + '/edit/?app=' + name + '\">' + name + '</a></td>';
-        apps += '<td class="tdw">' + title + '</td>';
-        apps += '</tr>';
+            apps += '<tr>';
+            apps += '<td><input name="apps" type="checkbox" value="' + name + '">' + '<a href=\"' + '/edit/?app=' + name + '\">' + name + '</a></td>';
+            apps += '<td class="tdw">' + title + '</td>';
+            apps += '</tr>';
+        }
+        apps += '</table>';
+        $('apps').innerHTML = apps;
     }
-    apps += '</table>';
-    $('apps').innerHTML = apps;
 
-});
+    if (sync) {
+        display(dashboard.get(''));
+    } else {
+        dashboard.get('', function(doc) {
+            display(doc);
+        });
+    }
+}
 
-// Toggle new app form
+/**
+ * Toggle new app form link event.
+ */
 $('addAppLink').onclick = function() {
     var div = $('newApp');
     div.style.visibility = div.style.visibility == 'hidden'? 'visible' : 'hidden';
     return false;
 };
 
-// Add a new app
+/**
+ * Add a new app button event.
+ */
 $('addAppButton').onclick = function() {
-    alert('Add new app');
+    var name = $('appName').value;
+    var title = $('appTitle').value;
+    var app = mklist(title, name, mklist());
+    var entry = atom.writeATOMEntry(app);
+    dashboard.put(name, car(entry));
+    getapps();
     return false;
 };
+
+/**
+ * Delete apps event.
+ */
+$('deleteAppLink').onclick = function() {
+    var apps = $('appsForm').apps;
+    if (isNil(apps))
+        return false;
+    if (isNil(apps.length))
+        apps = mklist(apps);
+    for (var i = 0; i < length(apps); i++) {
+        if (apps[i].checked) {
+            var name = apps[i].value;
+            dashboard.del(name);
+        }
+    }
+    getapps();
+    return false;
+};
+
+// Get and display the list of apps
+getapps(true);
 
 </script>
 </body>

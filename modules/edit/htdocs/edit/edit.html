@@ -35,34 +35,41 @@ var editWidget = sca.component("EditWidget");
 var dashboard = sca.reference(editWidget, "dashboard");
 var apps = sca.reference(editWidget, "apps");
 
-if (false) {
-dashboard.get('', function(doc) {
-    var entries = cddr(atom.readATOMFeedDocument(doc));
-    var entry = car(entries);
-    var item = caddr(entry);
-    var composite = cddr(item);
-    var comps = scdl.components(composite);
-
-    var g = graph.mkgraph();
-    var shapes = graph.composite(composite);
-    log(shapes);
-    for (var s in shapes)
-        g.appendChild(shapes[s]);
-});
+/**
+ * Return the current app name.
+ */
+function appname() {
+    var qs = window.location.toString().split('?');
+    if (isNil(cdr(qs)))
+        return null;
+    var p = cadr(qs).split('=');
+    if (isNil(p) || isNil(cdr(p)))
+        return null;
+    return cadr(p);
 }
 
-apps.get('store', function(doc) {
-    var entry = atom.readATOMEntryDocument(doc);
-    var item = caddr(entry);
-    var composite = cddr(item);
-    var comps = scdl.components(composite);
+/**
+ * Get an app and display it.
+ */
+function getapp(name) {
+    if (name == null)
+        return;
+    apps.get(name, function(doc) {
+        var entry = atom.readATOMEntryDocument(doc);
+        var item = caddr(entry);
+        var composite = cddr(item);
+        var comps = scdl.components(composite);
 
-    var g = graph.mkgraph();
-    var shapes = graph.composite(composite);
-    log(shapes);
-    for (var s in shapes)
-        g.appendChild(shapes[s]);
-});
+        var g = graph.mkgraph();
+        var shapes = graph.composite(composite);
+        log(shapes);
+        for (var s in shapes)
+            g.appendChild(shapes[s]);
+    });
+}
+
+// Display the current app
+getapp(appname());
 
 </script>
 </body>
