@@ -36,14 +36,12 @@ EXTRA_DIST = log.composite log.componentType logger.componentType *.scm *.thrift
 
 BUILT_SOURCES=gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
 gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h: scribe.thrift
-	${THRIFT_PREFIX}/bin/thrift -r --gen cpp scribe.thrift
+	${THRIFT_PREFIX}/bin/thrift -r --gen cpp scribe.thrift; sed -i -e '1i#pragma GCC diagnostic ignored "-Wconversion"\n#pragma GCC diagnostic ignored "-Wunused"\n' gen-cpp/*.cpp
 
 CLEANFILES = gen-cpp/*
 
 comp_LTLIBRARIES = liblog.la liblogger.la
 noinst_DATA = liblog.so liblogger.so
-
-CXXFLAGS = ${DEFAULT_CXXFLAGS} -Wno-unused-parameter -Wno-conversion
 
 nodist_liblog_la_SOURCES = gen-cpp/fb303_constants.cpp gen-cpp/fb303_types.cpp gen-cpp/scribe_constants.cpp gen-cpp/scribe.cpp gen-cpp/scribe_types.cpp gen-cpp/FacebookService.cpp gen-cpp/scribe.h
 liblog_la_CXXFLAGS = -Wno-unused-parameter -Wno-conversion
