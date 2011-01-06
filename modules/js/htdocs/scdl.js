@@ -33,6 +33,26 @@ scdl.components = function(l) {
 };
 
 /**
+ * Returns a list of service promotions in a composite.
+ */
+scdl.promotions = function(l) {
+    var cs = namedElementChildren("'composite", l);
+    if (isNil(cs))
+        return cs;
+    return namedElementChildren("'service", car(cs));
+};
+
+/**
+ * Returns the target of a service promotion.
+ */
+scdl.promote = function(l) {
+    var puri = namedAttributeValue("'promote", l);
+    if (isNil(puri))
+        return puri;
+    return car(tokens(puri));
+};
+
+/**
  * Returns the name of a component, service or reference.
  */
 scdl.name = function(l) {
@@ -121,7 +141,7 @@ scdl.target = function(l) {
         function bindingsTarget(l) {
             if (isNil(l))
                 return null;
-            var u = uri(car(l));
+            var u = scdl.uri(car(l));
             if (!isNil(u))
                 return u;
             return bindingsTarget(cdr(l));

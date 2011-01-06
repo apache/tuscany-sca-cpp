@@ -22,7 +22,13 @@
   targetNamespace="http://relay"
   name="relay">
         
-    <component name="JSONTwit">
+    <service name="JSONTwit" promote="JSONTwit"/>
+    <service name="XMLTwit" promote="XMLTwit"/>
+    <service name="RSSTwit" promote="RSSTwit"/>
+    <service name="HTML" promote="HTML"/>
+    <service name="JSONFB" promote="JSONFB"/>
+
+    <component name="JSONTwit" color="red">
         <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="jsontwit"/>
@@ -32,7 +38,7 @@
         </reference>
     </component>
     
-    <component name="XMLTwit">
+    <component name="XMLTwit" color="green">
         <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="xmltwit"/>
@@ -42,7 +48,7 @@
         </reference>
     </component>
     
-    <component name="RSSTwit">
+    <component name="RSSTwit" color="blue">
         <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="rsstwit"/>
@@ -52,7 +58,7 @@
         </reference>
     </component>
     
-    <component name="HTML">
+    <component name="HTML" color="yellow">
         <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="html"/>
@@ -62,7 +68,7 @@
         </reference>
     </component>
     
-    <component name="JSONFB">
+    <component name="JSONFB" color="orange">
         <t:implementation.python script="relay.py"/>
         <service name="Relay">
             <t:binding.http uri="jsonfb"/>

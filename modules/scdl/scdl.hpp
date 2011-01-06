@@ -46,6 +46,23 @@ const list<value> components(const value& l) {
 }
 
 /**
+ * Returns a list of service promotions in a composite.
+ */
+const list<value> promotions(const value& l) {
+    const list<value> cs = elementChildren("composite", l);
+    if (isNil(cs))
+        return cs;
+    return elementChildren("service", car(cs));
+}
+
+/**
+ * Returns the target or a service promotion.
+ */
+const value promote(const value& l) {
+    return attributeValue("promote", l);
+}
+
+/**
  * Returns the name of a component, service or reference.
  */
 const value name(const value& l) {

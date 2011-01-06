@@ -26,7 +26,7 @@
 <script type="text/javascript" src="/scdl.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 <script type="text/javascript" src="/component.js"></script>
-<script type="text/javascript" src="/graph.js"></script>
+<script type="text/javascript" src="/edit/graph.js"></script>
 </head>  
 <body>
 
@@ -39,20 +39,14 @@ var apps = sca.reference(editWidget, "apps");
  * Return the current app name.
  */
 function appname() {
-    var qs = window.location.toString().split('?');
-    if (isNil(cdr(qs)))
-        return null;
-    var p = cadr(qs).split('=');
-    if (isNil(p) || isNil(cdr(p)))
-        return null;
-    return cadr(p);
+    return ui.queryParams()['app'];
 }
 
 /**
  * Get an app and display it.
  */
 function getapp(name) {
-    if (name == null)
+    if (isNil(name))
         return;
     apps.get(name, function(doc) {
         var entry = atom.readATOMEntryDocument(doc);
@@ -62,7 +56,6 @@ function getapp(name) {
 
         var g = graph.mkgraph();
         var shapes = graph.composite(composite);
-        log(shapes);
         for (var s in shapes)
             g.appendChild(shapes[s]);
     });

@@ -17,6 +17,6 @@
 
 
 moddir = $(prefix)/modules/js
-nobase_dist_mod_DATA = htdocs/*.js htdocs/*.html
-EXTRA_DIST = htdocs/*.js htdocs/*.html
+nobase_dist_mod_DATA = htdocs/*.html htdocs/main/*.html htdocs/edit/*.html htdocs/edit/*.js
+EXTRA_DIST = htdocs/*.html htdocs/main/*.html htdocs/edit/*.html htdocs/edit/*.js
 

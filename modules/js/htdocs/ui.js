@@ -204,6 +204,20 @@ function $(id) {
 };
 
 /**
+ * Return a dictionary of the query parameters.
+ */
+ui.queryParams = function() {
+    var qp = new Array();
+    var qs = window.location.search.substring(1).split('&');
+    for (var i = 0; i < qs.length; i++) {
+        var e = qs[i].indexOf('=');
+        if (e > 0)
+            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
+    }
+    return qp;
+}
+
+/**
  * Bind a widget iframe to an element.
  */
 ui.widgets = new Array();
