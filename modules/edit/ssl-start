@@ -17,13 +17,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Setup
-../../components/cache/memcached-start 11211
-
+../../modules/http/ssl-ca-conf tmp localhost
+../../modules/http/ssl-cert-conf tmp localhost
 ../http/httpd-conf tmp localhost 8090 htdocs
+../../modules/http/httpd-ssl-conf tmp 8453
+../../modules/http/open-auth-conf tmp
+../../modules/http/passwd-auth-conf tmp foo foo
 ../server/server-conf tmp
 ../python/python-conf tmp
-./edit-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF
 # Configure SCA Composite
 SCAContribution `pwd`/
@@ -31,5 +32,6 @@ SCAComposite edit.composite
 
 EOF
 
+../../components/cache/memcached-start 11211
 ../http/httpd-start tmp
 

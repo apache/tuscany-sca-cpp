@@ -18,8 +18,6 @@
 -->
 <html>
 <head>
-<title>App Editor</title>
-<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/> 
 <link rel="stylesheet" type="text/css" href="/ui.css">
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
@@ -27,38 +25,11 @@
 <body>
 <div id="menu"></div>
 
-<h1><span id="titleDiv"></span></h1>
-<div id="editDiv"></div>
-
-<iframe id="menuFrame" src="/menu.html"></iframe>
-
 <script type="text/javascript">
-ui.bindwidget('menuFrame', 'menu');
+ui.installwidget();
 
-/**
- * Return the current app name.
- */
-function appname() {
-    return ui.queryParams()['app'];
-}
-
-/**
- * Display the editor for an app.
- */
-function editapp(name) {
-    if (isNil(name))
-        return;
-    $('titleDiv').innerHTML = 'Editing: ' + name;
-    $('editDiv').innerHTML =
-        '<iframe id="editFrame" style="visibility: visible; height: 100%; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="edit.html?' +
-        'app=' + name +
-        '"></iframe>';
-}
-
-// Display the editor for the current app
-editapp(appname());
-
+var mdiv = $('menu'); 
+mdiv.innerHTML = ui.menubar(mklist(ui.menu('Home', '/'), ui.menu('Dashboard', '/dash'), ui.menu('Editor', '/edit?app=store')), mklist(ui.menu('Sign out', '/logout')));
 </script>
 </body>
 </html>
-

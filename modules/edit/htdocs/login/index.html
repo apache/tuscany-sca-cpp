@@ -1,0 +1,40 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+   
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+
+<html><body><h1>Sign in</h1>
+
+<script type="text/javascript">
+function submitFormSignin() {
+    document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
+    document.formSignin.httpd_location.value = '/';
+    document.formSignin.submit();
+}
+</script>
+
+<form name="formSignin" method="POST" action="/login/dologin">
+<table border="0">
+<tr><td>Username:</td><td><input type="text" name="httpd_username" value=""/></td></tr>
+<tr><td>Password:</td><td><input type="password" name="httpd_password" value=""/></td></tr>
+<tr><td><input type="button" onclick="submitFormSignin()" value="Sign in"/></td><td></td></tr>
+</table>
+<input type="hidden" name="httpd_location" value="/"/>
+</form>
+
+</body>
+</html>

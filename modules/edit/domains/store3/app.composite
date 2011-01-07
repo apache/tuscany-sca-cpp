@@ -41,7 +41,7 @@
         <service name="Catalog">
             <t:binding.jsonrpc uri="catalog"/>
         </service>
-        <reference name="currencyConverter" target="CurrencyConverter"/>
+        <reference name="currencyConverter" t:align="bottom" target="CurrencyConverter"/>
     </component> 
      
     <component name="ShoppingCart" t:color="magenta">
@@ -54,7 +54,7 @@
     
     <component name="CurrencyConverter" t:color="blue">
         <t:implementation.python script="currency-converter.py"/>
-        <service name="CurrencyConverter">
+        <service name="CurrencyConverter" t:align="top">
             <t:binding.jsonrpc uri="currencyConverter"/>
         </service>        
     </component>     

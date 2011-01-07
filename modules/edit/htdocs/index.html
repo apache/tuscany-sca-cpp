@@ -19,20 +19,28 @@
 <html>
 <head>
 <title>App Edit Tools</title>
+<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/> 
 <link rel="stylesheet" type="text/css" href="/ui.css">
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 </head>
 <body>
+<div id="menu"></div>
+
 <h1>App Edit Tools</h1>
 <p>This module implements simple tools to help you create Tuscany apps.</p>
 
 <h2>App Dashboard</h2>
-<p>Try the <a href="main">App Dashboard</a> to manage your collection of apps.</p>
+<p>Try the <a href="dash">App Dashboard</a> to manage your collection of apps.</p>
 
 <h2>App Editor</h2>
 <p>Try the <a href="edit/?app=store">App Editor</a> to edit an app.</p>
 
+<iframe id="menuFrame" src="menu.html"></iframe>
+
+<script type="text/javascript">
+ui.bindwidget('menuFrame', 'menu');
+</script>
 </body>
 </html>
 

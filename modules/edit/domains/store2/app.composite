@@ -30,7 +30,7 @@
         <service name="Widget">
             <t:binding.http uri="store"/>
         </service>
-        <reference name="catalog" target="Catalog"/>
+        <reference name="catalog" target="Catalog" t:align="bottom"/>
         <reference name="shoppingCart" target="ShoppingCart"/>
         <reference name="shoppingTotal" target="ShoppingCart"/>
     </component>
@@ -38,10 +38,10 @@
     <component name="Catalog" t:color="yellow">
         <t:implementation.python script="fruits-catalog.py"/> 
         <property name="currencyCode">USD</property>
-        <service name="Catalog">
+        <service name="Catalog" t:align="top">
             <t:binding.jsonrpc uri="catalog"/>
         </service>
-        <reference name="currencyConverter" target="CurrencyConverter"/>
+        <reference name="currencyConverter" t:align="bottom" target="CurrencyConverter"/>
     </component> 
      
     <component name="ShoppingCart" t:color="magenta">
@@ -54,7 +54,7 @@
     
     <component name="CurrencyConverter" t:color="blue">
         <t:implementation.python script="currency-converter.py"/>
-        <service name="CurrencyConverter">
+        <service name="CurrencyConverter" t:align="top">
             <t:binding.jsonrpc uri="currencyConverter"/>
         </service>        
     </component>     

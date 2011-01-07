@@ -16,7 +16,7 @@
 #  under the License.
 
 
-moddir = $(prefix)/modules/js
-nobase_dist_mod_DATA = htdocs/*.html htdocs/main/*.html htdocs/edit/*.html htdocs/edit/*.js
-EXTRA_DIST = htdocs/*.html htdocs/main/*.html htdocs/edit/*.html htdocs/edit/*.js
+moddir = $(prefix)/modules/edit
+nobase_dist_mod_DATA = htdocs/*.html htdocs/dash/*.html htdocs/edit/*.html htdocs/edit/*.js htdocs/login/*.html htdocs/logout/*.html
+EXTRA_DIST = htdocs/*.html htdocs/dash/*.html htdocs/edit/*.html htdocs/edit/*.js htdocs/login/*.html htdocs/logout/*.html
 

@@ -19,16 +19,23 @@
 <html>
 <head>
 <title>App Dashboard</title>
+<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/> 
 <link rel="stylesheet" type="text/css" href="/ui.css">
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 </head>
 <body>
+<div id="menu"></div>
+
 <h1>Welcome to your App Dashboard!</h1>
 <div id="dashboard"></div>
+
+<iframe id="menuFrame" src="/menu.html"></iframe>
 <iframe id="dashboardFrame" src="dashboard.html"></iframe>
 
 <script type="text/javascript">
+ui.bindwidget('menuFrame', 'menu');
+
 // Display the dashboard widget
 ui.bindwidget('dashboardFrame', 'dashboard');
 </script>

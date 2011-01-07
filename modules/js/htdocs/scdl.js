@@ -53,17 +53,31 @@ scdl.promote = function(l) {
 };
 
 /**
- * Returns the name of a component, service or reference.
+ * Returns the name of a component, componentType, service or reference.
  */
 scdl.name = function(l) {
     return namedAttributeValue("'name", l);
 };
 
 /**
- * Returns the color of a component.
+ * Returns the color of a component or componentType.
  */
 scdl.color = function(l) {
-    return namedAttributeValue("'color", l);
+    return namedAttributeValue("'t:color", l);
+};
+
+/**
+ * Returns the x position of a component.
+ */
+scdl.x = function(l) {
+    return namedAttributeValue("'t:x", l);
+};
+
+/**
+ * Returns the y position of a component.
+ */
+scdl.y = function(l) {
+    return namedAttributeValue("'t:y", l);
 };
 
 /**
@@ -81,7 +95,7 @@ scdl.implementation = function(l) {
 };
 
 /**
- * Returns the type of an implementation.
+ * Returns the type of a component or componentType implementation.
  */
 scdl.implementationType = function(l) {
     return elementName(l).substring(1);
@@ -98,18 +112,18 @@ scdl.uri = function(l) {
  * Returns the align attribute of a service or reference.
  */
 scdl.align = function(l) {
-    return namedAttributeValue("'align", l);
+    return namedAttributeValue("'t:align", l);
 };
 
 /**
- * Returns a list of services in a component.
+ * Returns a list of services in a component or componentType.
  */
 scdl.services = function(l) {
     return namedElementChildren("'service", l);
 };
 
 /**
- * Returns a list of references in a component.
+ * Returns a list of references in a component or componentType.
  */
 scdl.references = function(l) {
     return namedElementChildren("'reference", l);
@@ -159,7 +173,7 @@ scdl.target = function(l) {
 };
 
 /**
- * Returns a list of properties in a component.
+ * Returns a list of properties in a component or componentType.
  */
 scdl.properties = function(l) {
     return namedElementChildren("'property", l);

@@ -168,9 +168,14 @@ if (graph.supportsVML()) {
             return false;
         };
 
-        graph.textWidthDiv = document.createElement('span');
-        graph.textWidthDiv.style.visibility = 'hidden'
-        div.appendChild(graph.textWidthDiv);
+        graph.comptitlewidthdiv = document.createElement('span');
+        graph.comptitlewidthdiv.style.visibility = 'hidden'
+        graph.comptitlewidthdiv.style.fontWeight = 'bold'
+        div.appendChild(graph.comptitlewidthdiv);
+
+        graph.reftitlewidthdiv = document.createElement('span');
+        graph.reftitlewidthdiv.style.visibility = 'hidden'
+        div.appendChild(graph.reftitlewidthdiv);
 
         return vmlg;
     };
@@ -214,7 +219,7 @@ if (graph.supportsVML()) {
     /**
      * Return an element representing the title of a component.
      */
-    graph.title = function(comp) {
+    graph.comptitle = function(comp) {
         var t = scdl.name(comp);
         var tsvcs = graph.tsvcs(comp);
         var lsvcs = graph.lsvcs(comp);
@@ -222,6 +227,7 @@ if (graph.supportsVML()) {
         title.style.left = '' + (isNil(lsvcs)? 5 : 25);
         title.style.top = '' + (isNil(tsvcs)? 5 : 25);
         title.style.position = 'absolute';
+        title.style.fontWeight = 'bold';
         var tnode = document.createTextNode(t);
         title.appendChild(tnode);
         return title;
@@ -230,11 +236,36 @@ if (graph.supportsVML()) {
     /**
      * Return the width of the title of a component.
      */
-    graph.titlewidth = function(comp) {
+    graph.comptitlewidth = function(comp) {
         var t = scdl.name(comp);
-        graph.textWidthDiv.innerHTML = t;
-        var twidth = graph.textWidthDiv.offsetWidth;
-        graph.textWidthDiv.innerHTML = '';
+        graph.comptitlewidthdiv.innerHTML = t;
+        var twidth = graph.comptitlewidthdiv.offsetWidth;
+        graph.comptitlewidthdiv.innerHTML = '';
+        return twidth;
+    };
+
+    /**
+     * Return an element representing the title of a reference.
+     */
+    graph.reftitle = function(ref) {
+        var t = scdl.name(ref);
+        var title = document.createElement('v:textbox');
+        title.style.left = '' + 25;
+        title.style.top = '' + 25;
+        title.style.position = 'absolute';
+        var tnode = document.createTextNode(t);
+        title.appendChild(tnode);
+        return title;
+    };
+
+    /**
+     * Return the width of the title of a reference.
+     */
+    graph.reftitlewidth = function(ref) {
+        var t = scdl.name(ref);
+        graph.reftitlewidthdiv.innerHTML = t;
+        var twidth = graph.reftitlewidthdiv.offsetWidth;
+        graph.reftitlewidthdiv.innerHTML = '';
         return twidth;
     };
 
@@ -242,7 +273,7 @@ if (graph.supportsVML()) {
      * Return a shape representing a component.
      */
     graph.compshape = function(comp, cassoc, pos) {
-        var title = graph.title(comp);
+        var title = graph.comptitle(comp);
 
         var d = graph.comppath(comp, cassoc).str();
 
@@ -356,11 +387,11 @@ if (graph.supportsSVG()) {
 
         svg.ontouchmove = svg.onmousemove;
 
-        graph.textWidthSvg = document.createElementNS(graph.svgns, 'svg');
-        graph.textWidthSvg.style.visibility = 'hidden';
-        graph.textWidthSvg.style.height = '0px';
-        graph.textWidthSvg.style.width = '0px';
-        div.appendChild(graph.textWidthSvg);
+        graph.titlewidthsvg = document.createElementNS(graph.svgns, 'svg');
+        graph.titlewidthsvg.style.visibility = 'hidden';
+        graph.titlewidthsvg.style.height = '0px';
+        graph.titlewidthsvg.style.width = '0px';
+        div.appendChild(graph.titlewidthsvg);
 
         return svg;
     };
@@ -404,24 +435,48 @@ if (graph.supportsSVG()) {
     /**
      * Return an element representing the title of a component.
      */
-    graph.title = function(comp) {
+    graph.comptitle = function(comp) {
         var t = scdl.name(comp);
         var title = document.createElementNS(graph.svgns, 'text');
         title.setAttribute('text-anchor', 'start');
         title.setAttribute('x', 5);
         title.setAttribute('y', 15);
+        title.style.fontWeight = 'bold';
         title.appendChild(document.createTextNode(t));
-        graph.textWidthSvg.appendChild(title);
         return title;
     };
 
     /**
      * Return the width of the title of a component.
      */
-    graph.titlewidth = function(comp) {
-        var title = graph.title(comp);
+    graph.comptitlewidth = function(comp) {
+        var title = graph.comptitle(comp);
+        graph.titlewidthsvg.appendChild(title);
         var width = title.getBBox().width;
-        graph.textWidthSvg.removeChild(title);
+        graph.titlewidthsvg.removeChild(title);
+        return width;
+    };
+
+    /**
+     * Return an element representing the title of a reference.
+     */
+    graph.reftitle = function(ref) {
+        var t = scdl.name(ref);
+        var title = document.createElementNS(graph.svgns, 'text');
+        title.setAttribute('text-anchor', 'start');
+        title.setAttribute('x', 5);
+        title.setAttribute('y', 15);
+        return title;
+    };
+
+    /**
+     * Return the width of the title of a reference.
+     */
+    graph.reftitlewidth = function(ref) {
+        var title = graph.reftitle(ref);
+        graph.titlewidthsvg.appendChild(title);
+        var width = title.getBBox().width;
+        graph.titlewidthsvg.removeChild(title);
         return width;
     };
 
@@ -429,7 +484,7 @@ if (graph.supportsSVG()) {
      * Return a shape representing a component.
      */
     graph.compshape = function(comp, cassoc, pos) {
-        var title = graph.title(comp);
+        var title = graph.comptitle(comp);
 
         var d = graph.comppath(comp, cassoc).str();
 
@@ -484,26 +539,35 @@ graph.rrefs = function(comp) {
 graph.color = function(comp) {
     var c = scdl.color(comp);
     return c == null? graph.colors.blue : graph.colors[c];
-}
+};
 
 /**
- * Return the height of a reference.
+ * Return the height of a reference on the right side of a component.
  */
-graph.refheight = function(ref, cassoc) {
+graph.rrefheight = function(ref, cassoc) {
     var target = assoc(scdl.target(ref), cassoc);
     if (isNil(target))
         return 60;
-    return graph.compheight(cadr(target), cassoc);
-}
+    return graph.compclosureheight(cadr(target), cassoc);
+};
 
 /**
- * Return the total height of a list of references.
+ * Return the total height of the references on the right side of a component.
  */
-graph.refsheight = function(refs, cassoc) {
+graph.rrefsheight = function(refs, cassoc) {
     if (isNil(refs))
         return 0;
-    return graph.refheight(car(refs), cassoc) + graph.refsheight(cdr(refs), cassoc);
-}
+    return graph.rrefheight(car(refs), cassoc) + graph.rrefsheight(cdr(refs), cassoc);
+};
+
+/**
+ * Return the max height of the references on the bottom side of a component.
+ */
+graph.brefsheight = function(refs, cassoc) {
+    if (isNil(refs))
+        return 0;
+    return Math.max(graph.rrefheight(car(refs), cassoc), graph.brefsheight(cdr(refs), cassoc));
+};
 
 /**
  * Return the height of a component.
@@ -512,48 +576,75 @@ graph.compheight = function(comp, cassoc) {
     var lsvcs = graph.lsvcs(comp);
     var lsvcsh = Math.max(1, length(lsvcs)) * 60 + 20;
     var rrefs = graph.rrefs(comp);
-    var rrefsh = graph.refsheight(rrefs, cassoc) + 20;
+    var rrefsh = graph.rrefsheight(rrefs, cassoc) + 20;
     var height = Math.max(lsvcsh, rrefsh);
     return height;
 };
 
 /**
- * Return the width of a reference.
+ * Return the height of a component and the components wired to its bottom side.
  */
-graph.refwidth = function(ref, cassoc) {
+graph.compclosureheight = function(comp, cassoc) {
+    var brefs = graph.brefs(comp);
+    var height = graph.compheight(comp, cassoc) + graph.brefsheight(brefs, cassoc);
+    return height;
+};
+
+/**
+ * Return the width of a reference on the bottom side of a component.
+ */
+graph.brefwidth = function(ref, cassoc) {
     var target = assoc(scdl.target(ref), cassoc);
     if (isNil(target))
         return 60;
     return graph.compwidth(cadr(target), cassoc);
-}
+};
 
 /**
- * Return the total width of a list of references.
+ * Return the total width of the references on the bottom side of a component.
  */
-graph.refswidth = function(refs, cassoc) {
+graph.brefswidth = function(refs, cassoc) {
     if (isNil(refs))
         return 0;
-    return graph.refwidth(car(refs), cassoc) + graph.refswidth(cdr(refs), cassoc);
-}
+    return graph.brefwidth(car(refs), cassoc) + graph.brefswidth(cdr(refs), cassoc);
+};
+
+/**
+ * Return the max width of the references on the right side of a component.
+ */
+graph.rrefswidth = function(refs, cassoc) {
+    if (isNil(refs))
+        return 0;
+    return Math.max(graph.brefwidth(car(refs), cassoc), graph.rrefswidth(cdr(refs), cassoc));
+};
 
 /**
  * Return the width of a component.
  */
 graph.compwidth = function(comp, cassoc) {
-    var twidth = graph.titlewidth(comp) + 20;
+    var twidth = graph.comptitlewidth(comp) + 20;
     var tsvcs = graph.tsvcs(comp);
     var tsvcsw = Math.max(1, length(tsvcs)) * 60 + 20;
     var brefs = graph.brefs(comp);
-    var brefsw = graph.refswidth(brefs, cassoc) + 20;
+    var brefsw = graph.brefswidth(brefs, cassoc) + 20;
     var width = Math.max(twidth, Math.max(tsvcsw, brefsw));
     return width;
+};
+
+/**
+ * Return the width of a component and all the components wired to its right side.
+ */
+graph.compclosurewidth = function(comp, cassoc) {
+    var rrefs = graph.rrefs(comp);
+    var width = graph.compwidth(comp, cassoc) + graph.rrefswidth(rrefs, cassoc);
+    return height;
 };
 
 /**
  * Return a path representing a reference positioned to the right of a component.
  */
 graph.rrefpath = function(ref, cassoc, path) {
-    var height = graph.refheight(ref, cassoc);
+    var height = graph.rrefheight(ref, cassoc);
     var ypos = path.ypos();
     return path.rline(0,10).rline(0,10).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rline(0,20).rcurve(0,5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,5).line(path.xpos(),ypos + height);
 };
@@ -562,7 +653,7 @@ graph.rrefpath = function(ref, cassoc, path) {
  * Return a path representing a reference positioned at the bottom of a component.
  */
 graph.brefpath = function(ref, cassoc, path) {
-    var width = graph.refwidth(ref, cassoc);
+    var width = graph.brefwidth(ref, cassoc);
     var xpos = path.xpos();
     return path.line(xpos - width + 60,path.ypos()).rline(-10,0).rline(-10,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rline(-20,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).line(xpos - width,path.ypos());
 };
@@ -606,8 +697,8 @@ graph.comppath = function(comp, cassoc) {
     path = path.line(width - 10,path.ypos()).rcurve(10,0,0,10);
     path = renderpath(rrefs, graph.rrefpath, cassoc, path);
 
-    var brefs = graph.brefs(comp);
-    var boffset = 10 + graph.refswidth(brefs, cassoc);
+    var brefs = reverse(graph.brefs(comp));
+    var boffset = 10 + graph.brefswidth(brefs, cassoc);
     path = path.line(path.xpos(),height - 10).rcurve(0,10,-10,0).line(boffset, path.ypos());
     path = renderpath(brefs, graph.brefpath, cassoc, path);
 
@@ -646,10 +737,7 @@ graph.composite = function(compos) {
             }
 
             function rendermove(ref, cassoc, pos) {
-                var target = assoc(scdl.target(ref), cassoc);
-                if (isNil(target))
-                    return pos;
-                return pos.clone().rmove(0, graph.compheight(cadr(target), cassoc));
+                return pos.clone().rmove(0, graph.rrefheight(ref, cassoc));
             }
 
             if (isNil(refs))
@@ -665,17 +753,25 @@ graph.composite = function(compos) {
                 return rendercomp(cadr(target), cassoc, pos);
             }
 
+            function rendermove(ref, cassoc, pos) {
+                return pos.clone().rmove(graph.brefwidth(ref, cassoc), 0);
+            }
+
             if (isNil(refs))
                 return mklist();
             return append(renderbref(car(refs), cassoc, pos), renderbrefs(cdr(refs), cassoc, pos));
         }
 
         var gcomp = graph.compshape(comp, cassoc, pos);
+
         var rrefs = graph.rrefs(comp);
         var rpos = graph.mkpath().rmove(graph.compwidth(comp, cassoc), 0);
         appendg(renderrrefs(rrefs, cassoc, rpos), gcomp);
+
         var brefs = graph.brefs(comp);
-        appendg(renderbrefs(brefs, cassoc, rpos), gcomp);
+        var bpos = graph.mkpath().rmove(0 , graph.compheight(comp, cassoc));
+        appendg(renderbrefs(brefs, cassoc, bpos), gcomp);
+
         return mklist(gcomp);
     }
 
@@ -691,7 +787,7 @@ graph.composite = function(compos) {
             var comp = assoc(scdl.promote(svc), cassoc);
             if (isNil(comp))
                 return pos;
-            return pos.clone().rmove(0, graph.compheight(cadr(comp), cassoc) + 20);
+            return pos.clone().rmove(0, graph.compclosureheight(cadr(comp), cassoc) + 20);
         }
 
         if (isNil(svcs))
