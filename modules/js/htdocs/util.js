@@ -65,14 +65,8 @@ function reverse(l) {
 }
 
 function isNil(v) {
-    if (v == null)
+    if (v == null || typeof v == 'undefined' || (v.constructor == Array && v.length == 0))
         return true;
-    if ('' + v == 'undefined')
-        return true;
-    try {
-        if (isList(v) && v.length == 0)
-            return true;
-    } catch (e) {}
     return false;
 }
 
@@ -89,10 +83,8 @@ function isString(v) {
 }
 
 function isList(v) {
-    try {
-        if (v.constructor == Array)
-            return true;
-    } catch (e) {}
+    if (v != null && typeof v != 'undefined' && v.constructor == Array)
+        return true;
     return false;
 }
 
@@ -102,7 +94,11 @@ function isTaggedList(v, t) {
     return false;
 }
 
+var emptylist = new Array();
+
 function mklist() {
+    if (arguments.length == 0)
+        return emptylist;
     var a = new Array();
     for (i = 0; i < arguments.length; i++)
         a[i] = arguments[i];
@@ -204,5 +200,14 @@ function writeValue(v) {
     if (isNil(v))
         return '()';
     return '(' + writeValue(car(v)) + writeList(cdr(v)) + ')';
+}
+
+/**
+ * Apply a function and memoize its result.
+ */
+function memo(obj, key, f) {
+    if (obj[key])
+        return obj[key];
+    return obj[key] = f();
 }
 

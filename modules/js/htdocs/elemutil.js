@@ -206,17 +206,21 @@ function selector(s) {
  * Return the value of the attribute with the given name.
  */
 function namedAttributeValue(name, l) {
-    var f = filter(function(v) { return isAttribute(v) && attributeName(v) == name; }, l);
-    if (isNil(f))
-        return null;
-    return caddr(car(f));
+    return memo(l, name, function() {
+        var f = filter(function(v) { return isAttribute(v) && attributeName(v) == name; }, l);
+        if (isNil(f))
+            return null;
+        return caddr(car(f));
+    });
 }
 
 /**
  * Return child elements with the given name.
  */
 function namedElementChildren(name, l) {
-    return filter(function(v) { return isElement(v) && elementName(v) == name; }, l);
+    return memo(l, name, function() {
+        return filter(function(v) { return isElement(v) && elementName(v) == name; }, l);
+    });
 }
 
 /**

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+    targetNamespace="http://tuscanyscatours.com/"
+    name="travel">
+
+    <service name="SCAToursUserInterface" promote="SCAToursUserInterface"/>
+
+    <component name="SCAToursUserInterface" t:color="green">
+        <t:implementation.widget location="scatours.html"/>
+        <service name="Widget">
+            <t:binding.http uri="/scatours"/>
+        </service>
+        <reference name="scaToursCatalog" target="SCATours/SCAToursSearch" t:align="bottom">
+            <t:binding.jsonrpc/>
+        </reference> 
+        <!-- Comment out multiple references wired to the same target -->
+        <!--
+        <reference name="scaToursBooking" target="SCATours/SCAToursBooking">
+            <t:binding.jsonrpc/>
+        </reference>
+        <reference name="scaToursCart" target="SCATours/SCAToursCart">
+            <t:binding.jsonrpc/>
+        </reference>                
+        -->
+    </component>   
+    
+    <component name="SCATours">
+        <implementation.java class="com.tuscanyscatours.impl.SCAToursImpl"/>
+        <service name="SCAToursSearch" t:align="top">
+            <t:binding.jsonrpc/>
+        </service>
+        <!-- Comment out multiple services -->
+        <!--
+        <service name="SCAToursBooking">
+            <t:binding.jsonrpc/>
+        </service>
+        <service name="SCAToursCart">
+            <t:binding.jsonrpc/>
+        </service>        
+        -->
+        <reference name="travelCatalogSearch" target="TravelCatalog/TravelCatalogSearch"/>
+        <reference name="tripBooking" target="TripBooking"/>
+        <!-- Comment out multiple references wired to the same target -->
+        <!--
+        <reference name="cartInitialize" target="ShoppingCart/CartInitialize"/>    
+        -->
+        <reference name="cartCheckout" target="ShoppingCart/CartCheckout"/>       
+    </component>    
+   
+    <component name="CreditCardPayment">
+        <implementation.java class="com.tuscanyscatours.payment.creditcard.impl.CreditCardPaymentImpl" />
+        <service name="CreditCardPayment">
+            <interface.wsdl interface="http://www.tuscanyscatours.com/CreditCardPayment/#wsdl.interface(CreditCardPayment)" /> 
+            <binding.ws uri="http://localhost:8082/CreditCardPayment" requires="authentication"/>
+            <binding.sca/>
+        </service>
+    </component>
+    
+    <component name="CurrencyConverter">
+        <implementation.java class="com.tuscanyscatours.currencyconverter.impl.CurrencyConverterImpl" />
+        <service name="CurrencyConverter"/>
+    </component>
+
+    <component name="HotelPartner" t:color="orange">
+        <implementation.java class="com.tuscanyscatours.hotel.impl.HotelImpl"/>
+        <service name="Search">
+            <binding.ws name="searchws" uri="http://localhost:8086/Hotel/Search"/>
+            <!-- t:binding.jsonrpc name="searchjsonrpc"/-->
+            <callback>
+                <binding.ws/>
+            </callback> 
+        </service>
+        <service name="Book"/>
+    </component>  
+    
+    <component name="FlightPartner" t:color="orange">
+        <implementation.java class="com.tuscanyscatours.flight.impl.FlightImpl"/>
+        <service name="Search">
+            <interface.java interface="com.tuscanyscatours.common.Search" 
+                            callbackInterface="com.tuscanyscatours.common.SearchCallback"/>
+            <binding.ws name="searchws" uri="http://localhost:8086/Flight/Search"/>
+            <t:binding.jsonrpc name="searchjsonrpc"/>
+            <callback>
+                <binding.ws/>
+            </callback>            
+        </service>
+        <service name="Book"/>
+    </component> 
+    
+    <component name="CarPartner" t:color="orange">
+        <implementation.java class="com.tuscanyscatours.car.impl.CarImpl"/>
+        <service name="Search">
+            <binding.ws name="searchws" uri="http://localhost:8086/Car/Search"/>
+            <t:binding.jsonrpc name="searchjsonrpc"/>
+            <callback>
+                <binding.ws/>
+            </callback> 
+        </service>
+        <service name="Book"/>        
+    </component>
+
+    <component name="TravelCatalog">
+        <implementation.java class="com.tuscanyscatours.travelcatalog.impl.TravelCatalogImpl"/>
+        <service name="TravelCatalogSearch"/>
+        <!-- Wire to placeholder component representing external endpoint -->
+        <reference name="hotelSearch" target="HotelSearch">
+            <binding.ws uri="http://localhost:8086/Hotel/Search"/>
+            <callback>
+                <binding.ws name="callback"
+                            uri="http://localhost:8084/Hotel/SearchCallback"/>
+            </callback>
+        </reference>
+        <!-- Wire to placeholder component representing external endpoint -->
+        <reference name="flightSearch" target="FlightSearch">
+            <interface.java interface="com.tuscanyscatours.common.Search" 
+                            callbackInterface="com.tuscanyscatours.common.SearchCallback"/>
+            <binding.ws uri="http://localhost:8086/Flight/Search"/>
+            <callback>
+                <binding.ws name="callback"
+                            uri="http://localhost:8084/Flight/SearchCallback"/>
+            </callback>
+        </reference> 
+        <!-- Wire to placeholder component representing external endpoint -->
+        <reference name="carSearch" target="CarSearch">
+            <binding.ws uri="http://localhost:8086/Car/Search"/>
+            <callback>
+                <binding.ws name="callback"
+                            uri="http://localhost:8084/Car/SearchCallback"/>
+            </callback>
+        </reference>    
+        <!-- Wire to placeholder component representing external endpoint -->
+        <reference name="tripSearch" target="TripSearch">
+            <binding.ws uri="http://localhost:8085/Trip/Search"/>
+            <callback>
+                <binding.ws name="callback"
+                            uri="http://localhost:8084/Trip/SearchCallback"/>
+            </callback>
+        </reference>     
+        <reference name="currencyConverter" target="CurrencyConverter">
+        </reference>
+        <property name="quoteCurrencyCode">GBP</property>
+    </component>
+    
+    <component name="TripBooking">
+        <implementation.java class="com.tuscanyscatours.tripbooking.impl.TripBookingImpl"/>
+        <service name="TripBooking"/>
+        <reference name="hotelBook" target="HotelPartner/Book"/>
+        <reference name="flightBook" target="FlightPartner/Book"/>
+        <reference name="carBook" target="CarPartner/Book"/>   
+        <reference name="tripBook" target="TripPartner/Book"/>  
+        <reference name="cartUpdates" target="ShoppingCart/CartUpdates"/>      
+    </component>    
+
+    <component name="TripPartner" t:color="orange">
+        <implementation.java class="com.tuscanyscatours.trip.impl.TripImpl"/>
+        <service name="Search">
+            <binding.ws name="searchws" uri="http://localhost:8085/Trip/Search"/>
+            <t:binding.jsonrpc name="searchjsonrpc"/>
+            <callback>
+                <binding.ws/>
+            </callback> 
+        </service>
+        <service name="Book"/>        
+    </component>
+
+    <component name="ShoppingCart">
+        <implementation.java class="com.tuscanyscatours.shoppingcart.impl.ShoppingCartImpl"/>
+        <reference name="cartStore" target="CartStore" t:align="bottom"/>     
+        <!-- Wire to placeholder component representing external endpoint -->
+        <reference name="payment" target="Payment">
+            <binding.ws uri="http://localhost:8081/Payment" />
+        </reference> 
+    </component>    
+    
+    <component name="CartStore" t:color="yellow">
+        <!-- Add service element to specify alignment -->
+        <service name="CartStore" t:align="top"/>
+        <implementation.java class="com.tuscanyscatours.shoppingcart.impl.CartStoreImpl"/>
+    </component> 
+
+     <component name="Payment">
+        <implementation.spring location="Payment-context.xml"/>
+        <service name="Payment">
+            <binding.ws uri="http://localhost:8081/Payment"/>
+        </service>
+        <!-- Wire to placeholder component representing external endpoint -->
+        <reference name="creditCardPaymentReference" target="CreditCardPayment">
+            <binding.ws uri="http://localhost:8082/CreditCardPayment" requires="authentication"/>
+        </reference>
+        <reference name="emailGateway" target="EmailGateway"/>
+         <reference name="customerRegistry" target="CustomerRegistry"/>
+        <property name="transactionFee">1.23</property>
+    </component>
+        
+    <component name="CustomerRegistry">
+        <implementation.java class="com.tuscanyscatours.customer.impl.CustomerRegistryImpl" />
+    </component>
+            
+    <component name="EmailGateway">
+        <implementation.java class="com.tuscanyscatours.emailgateway.impl.EmailGatewayImpl" />
+    </component>    
+
+    <!-- Add placeholder components representing external endpoints -->
+    <component name="HotelSearch" t:color="red">
+        <service name="HotelSearch"/>
+        <implementation.java class="com.tuscanyscatours.PlaceHolderImpl" />
+    </component>    
+    <component name="FlightSearch" t:color="red">
+        <service name="FlightSearch"/>
+        <implementation.java class="com.tuscanyscatours.PlaceHolderImpl" />
+    </component>    
+    <component name="CarSearch" t:color="red">
+        <service name="CarSearch"/>
+        <implementation.java class="com.tuscanyscatours.PlaceHolderImpl" />
+    </component>    
+    <component name="TripSearch" t:color="red">
+        <service name="TripSearch"/>
+        <implementation.java class="com.tuscanyscatours.PlaceHolderImpl" />
+    </component>    
+
+</composite>

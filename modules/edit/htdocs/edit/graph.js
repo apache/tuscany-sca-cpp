@@ -120,9 +120,9 @@ if (graph.supportsVML()) {
         document.body.appendChild(div);
 
         var vmlg = document.createElement('v:group');
-        vmlg.style.width = 500;
-        vmlg.style.height = 500;
-        vmlg.coordsize = '500,500';
+        vmlg.style.width = 2000;
+        vmlg.style.height = 2000;
+        vmlg.coordsize = '2000,2000';
         div.appendChild(vmlg);
 
         graph.dragging = null;
@@ -278,17 +278,17 @@ if (graph.supportsVML()) {
         var d = graph.comppath(comp, cassoc).str();
 
         var shape = document.createElement('v:shape');
-        shape.style.width = 500;
-        shape.style.height = 500;
-        shape.coordsize = '500,500';
+        shape.style.width = 2000;
+        shape.style.height = 2000;
+        shape.coordsize = '2000,2000';
         shape.path = d;
         shape.fillcolor = graph.color(comp);
         shape.stroked = 'false';
 
         var contour = document.createElement('v:shape');
-        contour.style.width = 500;
-        contour.style.height = 500;
-        contour.coordsize = '500,500';
+        contour.style.width = 2000;
+        contour.style.height = 2000;
+        contour.coordsize = '2000,2000';
         contour.setAttribute('path', d);
         contour.filled = 'false';
         contour.strokecolor = graph.colors.gray;
@@ -301,9 +301,9 @@ if (graph.supportsVML()) {
 
         var g = document.createElement('v:group');
         g.id = scdl.name(comp);
-        g.style.width = 500;
-        g.style.height = 500;
-        g.coordsize = '500,500';
+        g.style.width = 2000;
+        g.style.height = 2000;
+        g.coordsize = '2000,2000';
         g.style.left = pos.xpos();
         g.style.top = pos.ypos();
         g.appendChild(shape);
@@ -514,41 +514,61 @@ if (graph.supportsSVG()) {
  * Return the services and references of a component.
  */
 graph.tsvcs = function(comp) {
-    return filter(function(s) { return scdl.align(s) == 'top'; }, scdl.services(comp));
+    return memo(comp, 'tsvcs', function() {
+        var svcs = scdl.services(comp);
+        var l = filter(function(s) { return scdl.align(s) == 'top'; }, svcs);
+        if (isNil(l))
+            return mklist();
+        return mklist(car(l));
+    });
 };
 
 graph.lsvcs = function(comp) {
-    var svcs = scdl.services(comp);
-    if (isNil(svcs))
-        return mklist("'element","'service","'attribute","'name",scdl.name(comp));
-    var l = filter(function(s) { var a = scdl.align(s); return a == null || a == 'left'; }, scdl.services(comp));
-    return l;
+    return memo(comp, 'lsvcs', function() {
+        var svcs = scdl.services(comp);
+        if (isNil(svcs))
+            return mklist(mklist("'element","'service","'attribute","'name",scdl.name(comp)));
+        var l = filter(function(s) { var a = scdl.align(s); return a == null || a == 'left'; }, svcs);
+        if (isNil(l))
+            return mklist();
+        if (!isNil(graph.tsvcs(comp)))
+            return mklist();
+        return mklist(car(l));
+    });
 };
 
 graph.brefs = function(comp) {
-    return filter(function(r) { return scdl.align(r) == 'bottom'; }, scdl.references(comp));
+    return memo(comp, 'brefs', function() {
+        return filter(function(r) { return scdl.align(r) == 'bottom'; }, scdl.references(comp));
+    });
 };
 
 graph.rrefs = function(comp) {
-    return filter(function(r) { var a = scdl.align(r); return a == null || a == 'right'; }, scdl.references(comp));
+    return memo(comp, 'rrefs', function() {
+        return filter(function(r) { var a = scdl.align(r); return a == null || a == 'right'; }, scdl.references(comp));
+    });
 };
 
 /**
  * Return the color of a component.
  */
 graph.color = function(comp) {
-    var c = scdl.color(comp);
-    return c == null? graph.colors.blue : graph.colors[c];
+    return memo(comp, 'color', function() {
+        var c = scdl.color(comp);
+        return c == null? graph.colors.blue : graph.colors[c];
+    });
 };
 
 /**
  * Return the height of a reference on the right side of a component.
  */
 graph.rrefheight = function(ref, cassoc) {
-    var target = assoc(scdl.target(ref), cassoc);
-    if (isNil(target))
-        return 60;
-    return graph.compclosureheight(cadr(target), cassoc);
+    return memo(ref, 'height', function() {
+        var target = assoc(scdl.target(ref), cassoc);
+        if (isNil(target))
+            return 60;
+        return graph.compclosureheight(cadr(target), cassoc);
+    });
 };
 
 /**
@@ -573,31 +593,37 @@ graph.brefsheight = function(refs, cassoc) {
  * Return the height of a component.
  */
 graph.compheight = function(comp, cassoc) {
-    var lsvcs = graph.lsvcs(comp);
-    var lsvcsh = Math.max(1, length(lsvcs)) * 60 + 20;
-    var rrefs = graph.rrefs(comp);
-    var rrefsh = graph.rrefsheight(rrefs, cassoc) + 20;
-    var height = Math.max(lsvcsh, rrefsh);
-    return height;
+    return memo(comp, 'height', function() {
+        var lsvcs = graph.lsvcs(comp);
+        var lsvcsh = Math.max(1, length(lsvcs)) * 60 + 20;
+        var rrefs = graph.rrefs(comp);
+        var rrefsh = graph.rrefsheight(rrefs, cassoc) + 20;
+        var height = Math.max(lsvcsh, rrefsh);
+        return height;
+    });
 };
 
 /**
  * Return the height of a component and the components wired to its bottom side.
  */
 graph.compclosureheight = function(comp, cassoc) {
-    var brefs = graph.brefs(comp);
-    var height = graph.compheight(comp, cassoc) + graph.brefsheight(brefs, cassoc);
-    return height;
+    return memo(comp, 'closureheight', function() {
+        var brefs = graph.brefs(comp);
+        var height = graph.compheight(comp, cassoc) + graph.brefsheight(brefs, cassoc);
+        return height;
+    });
 };
 
 /**
  * Return the width of a reference on the bottom side of a component.
  */
 graph.brefwidth = function(ref, cassoc) {
-    var target = assoc(scdl.target(ref), cassoc);
-    if (isNil(target))
-        return 60;
-    return graph.compwidth(cadr(target), cassoc);
+    return memo(ref, 'width', function() {
+        var target = assoc(scdl.target(ref), cassoc);
+        if (isNil(target))
+            return 60;
+        return graph.compclosurewidth(cadr(target), cassoc);
+    });
 };
 
 /**
@@ -622,22 +648,26 @@ graph.rrefswidth = function(refs, cassoc) {
  * Return the width of a component.
  */
 graph.compwidth = function(comp, cassoc) {
-    var twidth = graph.comptitlewidth(comp) + 20;
-    var tsvcs = graph.tsvcs(comp);
-    var tsvcsw = Math.max(1, length(tsvcs)) * 60 + 20;
-    var brefs = graph.brefs(comp);
-    var brefsw = graph.brefswidth(brefs, cassoc) + 20;
-    var width = Math.max(twidth, Math.max(tsvcsw, brefsw));
-    return width;
+    return memo(comp, 'width', function() {
+        var twidth = graph.comptitlewidth(comp) + 20;
+        var tsvcs = graph.tsvcs(comp);
+        var tsvcsw = Math.max(1, length(tsvcs)) * 60 + 20;
+        var brefs = graph.brefs(comp);
+        var brefsw = graph.brefswidth(brefs, cassoc) + 20;
+        var width = Math.max(twidth, Math.max(tsvcsw, brefsw));
+        return width;
+    });
 };
 
 /**
  * Return the width of a component and all the components wired to its right side.
  */
 graph.compclosurewidth = function(comp, cassoc) {
-    var rrefs = graph.rrefs(comp);
-    var width = graph.compwidth(comp, cassoc) + graph.rrefswidth(rrefs, cassoc);
-    return height;
+    return memo(comp, 'closurewidth', function() {
+        var rrefs = graph.rrefs(comp);
+        var width = graph.compwidth(comp, cassoc) + graph.rrefswidth(rrefs, cassoc);
+        return width;
+    });
 };
 
 /**
@@ -759,7 +789,7 @@ graph.composite = function(compos) {
 
             if (isNil(refs))
                 return mklist();
-            return append(renderbref(car(refs), cassoc, pos), renderbrefs(cdr(refs), cassoc, pos));
+            return append(renderbref(car(refs), cassoc, pos), renderbrefs(cdr(refs), cassoc, rendermove(car(refs), cassoc, pos)));
         }
 
         var gcomp = graph.compshape(comp, cassoc, pos);
