@@ -95,18 +95,22 @@ const bool free(const buffer&b) {
 class TinyCDB {
 public:
     TinyCDB() : owner(false), fd(-1) {
+        debug("tinycdb::tinycdb");
         st.st_ino = 0;
     }
 
     TinyCDB(const string& name) : owner(true), name(name), fd(-1) {
+        debug(name, "tinycdb::tinycdb::name");
         st.st_ino = 0;
     }
 
     TinyCDB(const TinyCDB& c) : owner(false), name(c.name), fd(c.fd) {
+        debug("tinycdb::tinycdb::copy");
         st.st_ino = c.st.st_ino;
     }
 
     ~TinyCDB() {
+        debug("tinycdb::~tinycdb");
         if (!owner)
             return;
         if (fd == -1)

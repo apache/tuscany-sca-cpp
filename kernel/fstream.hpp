@@ -229,6 +229,7 @@ logfstream cdebug(stderr, "debug");
  * Log a debug message.
  */
 const bool debugLog(const string& msg) {
+    gc_scoped_pool();
     cdebug << msg << endl;
     return true;
 }
@@ -237,6 +238,7 @@ const bool debugLog(const string& msg) {
  * Log a debug message and a value.
  */
 template<typename V> const bool debugLog(const V& v, const string& msg) {
+    gc_scoped_pool();
     cdebug << msg << ": " << v << endl;
     return true;
 }

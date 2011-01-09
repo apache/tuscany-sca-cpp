@@ -45,11 +45,13 @@ namespace chat {
 class XMPPRuntime {
 public:
     XMPPRuntime() {
+        debug("chat::xmppruntime");
         xmpp_initialize();
         log = xmpp_get_default_logger(XMPP_LEVEL_DEBUG);
     }
 
     ~XMPPRuntime() {
+        debug("chat::~xmppruntime");
         xmpp_shutdown();
     }
 
@@ -67,12 +69,15 @@ public:
     XMPPClient(const string& jid, const string& pass, bool owner = true) : owner(owner), ctx(xmpp_ctx_new(NULL, xmppRuntime.log)), conn(xmpp_conn_new(ctx)), connecting(false), connected(false), disconnecting(false) {
         xmpp_conn_set_jid(conn, c_str(jid + "/" + mkuuid()));
         xmpp_conn_set_pass(conn, c_str(pass));
+        debug(jid, "chat::xmppclient::jid");
     }
 
     XMPPClient(const XMPPClient& xc) : owner(false), ctx(xc.ctx), conn(xc.conn), listener(xc.listener),  connecting(xc.connecting), connected(xc.connected), disconnecting(xc.disconnecting) {
+        debug("chat::xmppclient::copy");
     }
 
     ~XMPPClient() {
+        debug("chat::~xmppclient");
         extern const failable<bool> disconnect(XMPPClient& xc);
         if (!owner)
             return;

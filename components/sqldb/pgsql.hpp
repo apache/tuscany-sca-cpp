@@ -55,9 +55,12 @@ const string pgfailure(PGresult* r, PGconn* conn) {
 class PGSql {
 public:
     PGSql() : owner(false) {
+        debug("pgsql::pgsql");
     }
 
     PGSql(const string& conninfo, const string& table) : owner(true), conn(NULL), conninfo(conninfo), table(table) {
+        debug(conninfo, "pgsql::pgsql::conninfo");
+        debug(table, "pgsql::pgsql::table");
         conn = PQconnectdb(c_str(conninfo));
         if (PQstatus(conn) != CONNECTION_OK) {
             mkfailure<bool>(string("Could not connect to postgresql database: ") + PQerrorMessage(conn));
@@ -67,9 +70,11 @@ public:
     }
 
     PGSql(const PGSql& c) : owner(false), conn(c.conn), conninfo(c.conninfo), table(c.table) {
+        debug("pgsql::pgsql::copy");
     }
 
     ~PGSql() {
+        debug("pgsql::~pgsql");
         if (!owner)
             return;
         if (conn == NULL)

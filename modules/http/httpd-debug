@@ -17,7 +17,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Run valgrind to analyze memory usage and track memory leaks
+# Start httpd server
+here=`readlink -f $0`; here=`dirname $here`
+root=`readlink -f $1`
 
-valgrind --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=40 --track-fds=yes $* 2>&1 | tee memgrind.log
-
+httpd=`cat $here/httpd.prefix`
+$httpd/bin/httpd -X -E $root/logs/error_log -d $root -f $root/conf/httpd.conf

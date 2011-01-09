@@ -39,11 +39,16 @@ namespace python {
 class PythonRuntime {
 public:
     PythonRuntime() {
+        debug("python::pythonruntime");
         if (Py_IsInitialized())
             return;
         Py_InitializeEx(0);
         const char* arg0 = "";
         PySys_SetArgv(0, const_cast<char**>(&arg0));
+    }
+
+    ~PythonRuntime() {
+        debug("python::~pythonruntime");
     }
 };
 
@@ -97,11 +102,15 @@ typedef struct {
 PyObject *mkPyLambda(const lambda<value(const list<value>&)>& l);
 
 void pyLambda_dealloc(PyObject* self) {
-    PyMem_DEL(self);
+    debug(self, "python::pylambda_dealloc");
+    PyObject_Del(self);
 }
 
-const string pyRepr(PyObject * o) {
-    return PyString_AsString(PyObject_Repr(o));
+const string pyRepr(PyObject* o) {
+    PyObject* r = PyObject_Repr(o);
+    const string s = PyString_AsString(r);
+    Py_DECREF(r);
+    return s;
 }
 
 PyObject* pyLambda_call(PyObject* self, PyObject* args, unused PyObject* kwds) {
@@ -109,9 +118,7 @@ PyObject* pyLambda_call(PyObject* self, PyObject* args, unused PyObject* kwds) {
     const pyLambda* pyl = (pyLambda*)self;
     const value result = pyl->func(pyTupleToValues(args));
     debug(result, "python::call::result");
-    Py_DECREF(args);
     PyObject *pyr = valueToPyObject(result);
-    Py_INCREF(pyr);
     return pyr;
 }
 
@@ -143,7 +150,6 @@ PyObject* pyLambda_getattr(PyObject *self, PyObject *attrname) {
     const pyLambda* pyl = (pyLambda*)self;
     debug(name, "python::getattr::name");
     PyObject* pyr = mkPyLambda(pyProxy(name, pyl->func));
-    Py_INCREF(pyr);
     return pyr;
 }
 
@@ -169,9 +175,10 @@ PyTypeObject pyLambda_type = {
  */
 PyObject *mkPyLambda(const lambda<value(const list<value>&)>& l) {
     pyLambda* pyl = NULL;
-    pyl = PyObject_NEW(pyLambda, &pyLambda_type);
+    pyl = PyObject_New(pyLambda, &pyLambda_type);
     if (pyl != NULL)
       pyl->func = l;
+    debug(pyl, "python::mkpylambda");
     return (PyObject *)pyl;
 }
 
@@ -181,12 +188,17 @@ PyObject *mkPyLambda(const lambda<value(const list<value>&)>& l) {
 PyObject* valuesToPyListHelper(PyObject* l, const list<value>& v) {
     if (isNil(v))
         return l;
-    PyList_Append(l, valueToPyObject(car(v)));
+    PyObject* pyv = valueToPyObject(car(v));
+    PyList_Append(l, pyv);
+    Py_DECREF(pyv);
     return valuesToPyListHelper(l, cdr(v));
 }
 
 PyObject* valuesToPyTuple(const list<value>& v) {
-    return PyList_AsTuple(valuesToPyListHelper(PyList_New(0), v));
+    PyObject* pyl = valuesToPyListHelper(PyList_New(0), v);
+    PyObject* pyt = PyList_AsTuple(pyl);
+    Py_DECREF(pyl);
+    return pyt;
 }
 
 /**
@@ -242,8 +254,8 @@ struct pyCallable {
     const value operator()(const list<value>& args) const {
         PyObject* pyargs = valuesToPyTuple(args);
         PyObject* result = PyObject_CallObject(func, pyargs);
-        Py_DECREF(pyargs);
         const value v = pyObjectToValue(result);
+        Py_DECREF(pyargs);
         Py_DECREF(result);
         return v;
     }
@@ -309,8 +321,8 @@ const failable<value> evalScript(const value& expr, PyObject* script) {
 
     // Call the function
     PyObject* result = PyObject_CallObject(func, args);
-    Py_DECREF(args);
     Py_DECREF(func);
+    Py_DECREF(args);
     if (result == NULL)
         return mkfailure<value>(string("Function call failed: ") + car<value>(expr) + " : " + lastError());
 

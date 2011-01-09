@@ -264,7 +264,9 @@ int processConnection(conn_rec *conn) {
     if (ap_get_module_config(conn->base_server->module_config, &mod_tuscany_ssltunnel) == NULL)
         return DECLINED;
 
-    gc_scoped_pool(conn->pool);
+    // Create a scoped memory pool
+    gc_scoped_pool pool;
+
     const ServerConf& sc = httpd::serverConf<ServerConf>(conn->base_server, &mod_tuscany_ssltunnel);
     if (length(sc.pass) == 0)
         return DECLINED;
@@ -286,6 +288,9 @@ int handler(request_rec* r) {
     // Only allow HTTPS
     if (strcmp(r->server->server_scheme, "https"))
         return DECLINED;
+
+    // Create a scoped memory pool
+    gc_scoped_pool pool(r->pool);
 
     // Build the target URL
     debug(r->uri, "modssltunnel::handler::uri");

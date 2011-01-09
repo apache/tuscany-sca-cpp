@@ -51,6 +51,7 @@ jobject JNICALL nativeUUID(JNIEnv *env);
 class JavaRuntime {
 public:
     JavaRuntime() {
+        debug("java::javaruntime");
 
         // Get existing JVM
         jsize nvms = 0;
@@ -149,6 +150,10 @@ public:
         uuidnm.signature = const_cast<char*>("()Ljava/lang/String;");
         uuidnm.fnPtr = (void*)nativeUUID;
         env->RegisterNatives(uuidClass, &uuidnm, 1);
+    }
+
+    ~JavaRuntime() {
+        debug("java::~javaruntime");
     }
 
     JavaVM* jvm;

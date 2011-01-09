@@ -45,15 +45,20 @@ namespace filedb {
 class FileDB {
 public:
     FileDB() : owner(false), jscx(*jscontext("")) {
+        debug("filedb::filedb");
     }
 
     FileDB(const string& name, const string& format) : owner(true), name(name), format(format), jscx(*jscontext(format)) {
+        debug(name, "filedb::filedb::name");
+        debug(format, "filedb::filedb::format");
     }
 
     FileDB(const FileDB& c) : owner(false), name(c.name), format(c.format), jscx(c.jscx) {
+        debug("filedb::filedb::copy");
     }
 
     ~FileDB() {
+        debug("filedb::~filedb");
     }
 
 private:

@@ -58,15 +58,19 @@ namespace webservice {
 class Axis2Context {
 public:
     Axis2Context() : env(axutil_env_create_all("axis2.log", AXIS2_LOG_LEVEL_WARNING)), owner(true) {
+        debug("webservice::axis2context");
     }
 
     Axis2Context(const Axis2Context& ax) : env(ax.env), owner(false) {
+        debug("webservice::axis2context::copy");
     }
 
     Axis2Context(const axutil_env_t* env) : env(const_cast<axutil_env_t*>(env)), owner(false) {
+        debug("webservice::axis2context::env");
     }
 
     ~Axis2Context() {
+        debug("webservice::~axis2context");
         if (!owner || env == NULL)
             return;
         axutil_env_free(env);

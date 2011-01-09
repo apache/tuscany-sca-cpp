@@ -55,6 +55,7 @@ class JSRuntime {
 public:
     JSRuntime() {
         // Create JS runtime
+        debug("js::jsruntime");
         rt = JS_NewRuntime(8L * 1024L * 1024L);
         if(rt == NULL)
             cleanup();
@@ -63,6 +64,11 @@ public:
     operator ::JSRuntime*() const {
         return rt;
     }
+
+    ~JSRuntime() {
+        debug("js::~jsruntime");
+    }
+
 private:
     bool cleanup() {
         if(rt != NULL) {
@@ -86,6 +92,7 @@ class JSContext {
 public:
     JSContext() {
         // Create JS context
+        debug("js::jscontext");
         cx = JS_NewContext(jsRuntime, 8192);
         if(cx == NULL)
             return;
@@ -108,6 +115,7 @@ public:
     }
 
     ~JSContext() {
+        debug("js::~jscontext");
         cleanup();
     }
 

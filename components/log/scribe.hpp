@@ -65,18 +65,23 @@ namespace scribe {
 class Scribe {
 public:
     Scribe() : owner(false) {
+        debug("scribe::scribe");
     }
 
     Scribe(const string host, const int port) : owner(true) {
+        debug(host, "scribe::scribe::host");
+        debug(port, "scribe::scribe::port");
         init(host, port);
     }
 
     Scribe(const Scribe& c) : owner(false) {
+        debug("scribe::scribe::copy");
         client = c.client;
         transport = c.transport;
     }
 
     ~Scribe() {
+        debug("scribe::~scribe");
         if (!owner)
             return;
         try {

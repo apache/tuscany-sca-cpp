@@ -394,7 +394,10 @@ static int checkAuthn(request_rec *r) {
     if (atype == NULL || strcasecmp(atype, "Open"))
         return DECLINED;
 
+    // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
+
+    // Get the server configuration
     httpdDebugRequest(r, "modoauth1::checkAuthn::input");
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_oauth1);
 

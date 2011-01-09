@@ -202,6 +202,7 @@ static int checkAuthn(request_rec *r) {
     if (atype == NULL || strcasecmp(atype, "Open"))
         return DECLINED;
 
+    // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
     httpdDebugRequest(r, "modopenauth::checkAuthn::input");
 

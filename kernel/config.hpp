@@ -43,7 +43,7 @@ namespace tuscany
 /**
  * Add string watch members to important classes to help watch them in a debugger.
  */
-#define WANT_MAINTAINER_WATCH
+//#define WANT_MAINTAINER_WATCH
 
 /**
  * Increment / decrement a debug counter.

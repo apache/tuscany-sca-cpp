@@ -628,7 +628,9 @@ int handler(request_rec *r) {
     if(strcmp(r->handler, "mod_tuscany_eval"))
         return DECLINED;
 
+    // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
+
     ScopedRequest sr(r);
     httpdDebugRequest(r, "modeval::handler::input");
 

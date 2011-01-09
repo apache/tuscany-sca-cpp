@@ -52,17 +52,21 @@ namespace queue {
 class QpidConnection {
 public:
     QpidConnection() : owner(true) {
+        debug("queue::qpidonnection");
         c.open("localhost", 5672);
     }
 
     QpidConnection(const bool owner) : owner(owner) {
+        debug("queue::qpidonnection");
         c.open("localhost", 5672);
     }
 
     QpidConnection(const QpidConnection& qc) : owner(false), c(qc.c) {
+        debug("queue::qpidonnection::copy");
     }
 
     ~QpidConnection() {
+        debug("queue::~qpidonnection");
         if (!owner)
             return;
         c.close();
@@ -91,15 +95,19 @@ const failable<bool> close(QpidConnection& qc) {
 class QpidSession {
 public:
     QpidSession(QpidConnection& qc) : owner(true), s(qc.c.newSession()) {
+        debug("queue::qpidsession");
     }
 
     QpidSession(QpidConnection& qc, const bool owner) : owner(owner), s(qc.c.newSession()) {
+        debug("queue::qpidsession");
     }
 
     QpidSession(const QpidSession& qs) : owner(false), s(qs.s) {
+        debug("queue::qpidsession::copy");
     }
 
     ~QpidSession() {
+        debug("queue::~qpidsession");
         if (!owner)
             return;
         s.close();

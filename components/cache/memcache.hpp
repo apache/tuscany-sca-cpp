@@ -49,24 +49,30 @@ namespace memcache {
 class MemCached {
 public:
     MemCached() : owner(false) {
+        debug("memcache::memcached");
     }
 
     MemCached(const string host, const int port) : owner(true) {
+        debug(host, "memcache::memcached::host");
+        debug(port, "memcache::memcached::port");
         apr_pool_create(&pool, NULL);
         apr_memcache_create(pool, 1, 0, &mc);
         addServer(host, port);
     }
 
     MemCached(const list<string>& servers) : owner(true) {
+        debug(servers, "memcache::memcached::servers");
         apr_pool_create(&pool, NULL);
         apr_memcache_create(pool, 1, 0, &mc);
         addServers(servers);
     }
 
     MemCached(const MemCached& c) : owner(false), pool(c.pool), mc(c.mc) {
+        debug("memcache::memcached::copy");
     }
 
     ~MemCached() {
+        debug("memcache::~memcached");
         if (!owner)
             return;
         apr_pool_destroy(pool);

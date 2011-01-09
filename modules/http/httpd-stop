@@ -22,4 +22,4 @@ here=`readlink -f $0`; here=`dirname $here`
 root=`readlink -f $1`
 
 apachectl=`cat $here/httpd-apachectl.prefix`
-$apachectl -k graceful-stop -d $root -f $root/conf/httpd.conf
+$apachectl -k graceful-stop -d $root -f $root/conf/httpd.conf 2>/dev/null

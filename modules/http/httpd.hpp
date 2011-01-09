@@ -631,6 +631,7 @@ const char* debugOptional(const char* s) {
  * Log a header
  */
 int debugHeader(unused void* r, const char* key, const char* value) {
+    gc_scoped_pool();
     cdebug << "  header key: " << key << ", value: " << value << endl;
     return 1;
 }
@@ -639,6 +640,7 @@ int debugHeader(unused void* r, const char* key, const char* value) {
  * Log an environment variable
  */
 int debugEnv(unused void* r, const char* key, const char* value) {
+    gc_scoped_pool();
     cdebug << "  var key: " << key << ", value: " << value << endl;
     return 1;
 }
@@ -647,6 +649,7 @@ int debugEnv(unused void* r, const char* key, const char* value) {
  * Log a note.
  */
 int debugNote(unused void* r, const char* key, const char* value) {
+    gc_scoped_pool();
     cdebug << "  note key: " << key << ", value: " << value << endl;
     return 1;
 }
@@ -655,6 +658,7 @@ int debugNote(unused void* r, const char* key, const char* value) {
  * Log a request.
  */
 const bool debugRequest(request_rec* r, const string& msg) {
+    gc_scoped_pool();
     cdebug << msg << ":" << endl;
     cdebug << "  unparsed uri: " << debugOptional(r->unparsed_uri) << endl;
     cdebug << "  uri: " << debugOptional(r->uri) << endl;

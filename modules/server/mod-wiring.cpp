@@ -310,8 +310,10 @@ int translate(request_rec *r) {
     if (!strncmp(r->uri, "/components/", 12))
         return DECLINED;
 
-    // Get the server configuration
+    // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
+
+    // Get the server configuration
     const ServerConf& sc = httpd::serverConf<ServerConf>(r, &mod_tuscany_wiring);
 
     // Process dynamic virtual host configuration
@@ -346,8 +348,10 @@ int handler(request_rec *r) {
     if (r->status == HTTP_MOVED_TEMPORARILY)
         return OK;
 
-    // Do an internal redirect
+    // Create a scoped memory pool
     gc_scoped_pool pool(r->pool);
+
+    // Do an internal redirect
     httpdDebugRequest(r, "modwiring::handler::input");
 
     debug(r->uri, "modwiring::handler::uri");
