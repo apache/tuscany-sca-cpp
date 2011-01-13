@@ -18,30 +18,10 @@
  */
 
 /**
- * SVG and VML component rendering functions.
+ * SVG and VML composite rendering functions.
  */
 
 var graph = new Object();
-
-/**
- * Detect browser VML support.
- */
-graph.supportsVML = function() {
-    if (typeof graph.supportsVML.supported != 'undefined')
-        return graph.supportsVML.supported;
-    graph.supportsVML.supported = navigator.appName == 'Microsoft Internet Explorer';
-    return graph.supportsVML.supported;
-};
-
-/**
- * Detect browser SVG support.
- */
-graph.supportsSVG = function() {
-    if (typeof graph.supportsSVG.supported != 'undefined')
-        return graph.supportsSVG.supported;
-    graph.supportsSVG.supported = navigator.appName != 'Microsoft Internet Explorer';
-    return graph.supportsSVG.supported;
-};
 
 /**
  * Basic colors
@@ -51,7 +31,7 @@ graph.colors.black = '#000000';
 graph.colors.blue = '#0000ff';
 graph.colors.cyan = '#00ffff';
 graph.colors.gray = '#808080'
-graph.colors.green = '#008000';
+graph.colors.green = '#00ff00';
 graph.colors.magenta = '#ff00ff';
 graph.colors.orange = '#ffa500';
 graph.colors.pink = '#ffc0cb';
@@ -106,7 +86,7 @@ graph.BasePath = function() {
 /**
  * VML rendering.
  */
-if (graph.supportsVML()) {
+if (ui.isIE()) {
 
     graph.vmlns='urn:schemas-microsoft-com:vml';
     document.write('<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />');
@@ -120,9 +100,9 @@ if (graph.supportsVML()) {
         document.body.appendChild(div);
 
         var vmlg = document.createElement('v:group');
-        vmlg.style.width = 2000;
-        vmlg.style.height = 2000;
-        vmlg.coordsize = '2000,2000';
+        vmlg.style.width = 5000;
+        vmlg.style.height = 5000;
+        vmlg.coordsize = '5000,5000';
         div.appendChild(vmlg);
 
         graph.dragging = null;
@@ -130,9 +110,16 @@ if (graph.supportsVML()) {
         function draggable(n) {
             if (n == vmlg)
                 return null;
-            if (n.nodeName == 'group')
+            if (n.nodeName == 'group' && n.id != '')
                 return n;
             return draggable(n.parentNode);
+        }
+
+        function bringtotop(n) {
+            if (n == vmlg)
+                return null;
+            n.parentNode.appendChild(n);
+            return bringtotop(n.parentNode);
         }
 
         vmlg.onmousedown = function() {
@@ -140,7 +127,7 @@ if (graph.supportsVML()) {
             graph.dragging = draggable(window.event.srcElement);
             if (graph.dragging == null)
                 return false;
-            graph.dragging.parentNode.appendChild(graph.dragging);
+            bringtotop(graph.dragging);
             graph.dragX = window.event.clientX;
             graph.dragY = window.event.clientY;
             vmlg.setCapture();
@@ -164,6 +151,13 @@ if (graph.supportsVML()) {
             var newY = origY - (window.event.clientY - graph.dragY);
             graph.dragX = window.event.clientX;
             graph.dragY = window.event.clientY;
+
+            if (graph.dragging.id.substring(0, 8) == 'palette:') {
+                // Clone an element dragged from the palette
+                var clone = graph.compshape(graph.dragging.comp, mklist(), graph.mkpath().move(ui.posn(graph.dragging.style.left), ui.posn(graph.dragging.style.top)));
+                graph.dragging.parentNode.appendChild(clone);
+                graph.dragging = clone;
+            }
             graph.dragging.setAttribute('coordorigin', newX + ' ' + newY);
             return false;
         };
@@ -217,27 +211,36 @@ if (graph.supportsVML()) {
     };
 
     /**
-     * Return an element representing the title of a component.
+     * Return an element representing a title.
      */
-    graph.comptitle = function(comp) {
-        var t = scdl.name(comp);
-        var tsvcs = graph.tsvcs(comp);
-        var lsvcs = graph.lsvcs(comp);
+    graph.mktitle = function(t, bold, pos) {
         var title = document.createElement('v:textbox');
-        title.style.left = '' + (isNil(lsvcs)? 5 : 25);
-        title.style.top = '' + (isNil(tsvcs)? 5 : 25);
+        title.style.left = pos.xpos();
+        title.style.top = pos.ypos();
         title.style.position = 'absolute';
-        title.style.fontWeight = 'bold';
+        if (bold)
+            title.style.fontWeight = 'bold';
         var tnode = document.createTextNode(t);
         title.appendChild(tnode);
         return title;
+        return title;
+    };
+
+    /**
+     * Return an element representing the title of a component.
+     */
+    graph.comptitle = function(comp) {
+        var tsvcs = graph.tsvcs(comp);
+        var lsvcs = graph.lsvcs(comp);
+        var pos = graph.mkpath().move(isNil(lsvcs)? 5 : 25, isNil(tsvcs)? 5 : 25);
+        return graph.mktitle(graph.title(comp), true, pos);
     };
 
     /**
      * Return the width of the title of a component.
      */
     graph.comptitlewidth = function(comp) {
-        var t = scdl.name(comp);
+        var t = graph.title(comp);
         graph.comptitlewidthdiv.innerHTML = t;
         var twidth = graph.comptitlewidthdiv.offsetWidth;
         graph.comptitlewidthdiv.innerHTML = '';
@@ -248,21 +251,14 @@ if (graph.supportsVML()) {
      * Return an element representing the title of a reference.
      */
     graph.reftitle = function(ref) {
-        var t = scdl.name(ref);
-        var title = document.createElement('v:textbox');
-        title.style.left = '' + 25;
-        title.style.top = '' + 25;
-        title.style.position = 'absolute';
-        var tnode = document.createTextNode(t);
-        title.appendChild(tnode);
-        return title;
+        return graph.mktitle(graph.title(ref), false, graph.mkpath().move(25,25));
     };
 
     /**
      * Return the width of the title of a reference.
      */
     graph.reftitlewidth = function(ref) {
-        var t = scdl.name(ref);
+        var t = graph.title(ref);
         graph.reftitlewidthdiv.innerHTML = t;
         var twidth = graph.reftitlewidthdiv.offsetWidth;
         graph.reftitlewidthdiv.innerHTML = '';
@@ -278,17 +274,17 @@ if (graph.supportsVML()) {
         var d = graph.comppath(comp, cassoc).str();
 
         var shape = document.createElement('v:shape');
-        shape.style.width = 2000;
-        shape.style.height = 2000;
-        shape.coordsize = '2000,2000';
+        shape.style.width = 5000;
+        shape.style.height = 5000;
+        shape.coordsize = '5000,5000';
         shape.path = d;
         shape.fillcolor = graph.color(comp);
         shape.stroked = 'false';
 
         var contour = document.createElement('v:shape');
-        contour.style.width = 2000;
-        contour.style.height = 2000;
-        contour.coordsize = '2000,2000';
+        contour.style.width = 5000;
+        contour.style.height = 5000;
+        contour.coordsize = '5000,5000';
         contour.setAttribute('path', d);
         contour.filled = 'false';
         contour.strokecolor = graph.colors.gray;
@@ -301,9 +297,64 @@ if (graph.supportsVML()) {
 
         var g = document.createElement('v:group');
         g.id = scdl.name(comp);
-        g.style.width = 2000;
-        g.style.height = 2000;
-        g.coordsize = '2000,2000';
+        g.style.width = 5000;
+        g.style.height = 5000;
+        g.coordsize = '5000,5000';
+        g.style.left = pos.xpos();
+        g.style.top = pos.ypos();
+        g.appendChild(shape);
+        shape.appendChild(title);
+        g.appendChild(contour)
+
+        // Store the component in the shape
+        g.comp = comp;
+
+        return g;
+    };
+
+    /**
+     * Return a graphical group.
+     */
+    graph.mkgroup = function(pos) {
+        var g = document.createElement('v:group');
+        g.style.left = pos.xpos();
+        g.style.top = pos.ypos();
+        return g;
+    };
+
+    /**
+     * Return a shape representing a button.
+     */
+    graph.mkbutton = function(t, pos) {
+        var title = graph.mktitle(t, true, pos);
+        var d = graph.buttonpath().str();
+
+        var shape = document.createElement('v:shape');
+        shape.style.width = 5000;
+        shape.style.height = 5000;
+        shape.coordsize = '5000,5000';
+        shape.path = d;
+        shape.fillcolor = graph.colors.blue;
+        shape.stroked = 'false';
+
+        var contour = document.createElement('v:shape');
+        contour.style.width = 5000;
+        contour.style.height = 5000;
+        contour.coordsize = '5000,5000';
+        contour.setAttribute('path', d);
+        contour.filled = 'false';
+        contour.strokecolor = graph.colors.gray;
+        contour.strokeweight = '2';
+        contour.style.left = 1;
+        contour.style.top = 1;
+        var stroke = document.createElement('v:stroke');
+        stroke.opacity = '20%';
+        contour.appendChild(stroke);
+
+        var g = document.createElement('v:group');
+        g.style.width = 5000;
+        g.style.height = 5000;
+        g.coordsize = '5000,5000';
         g.style.left = pos.xpos();
         g.style.top = pos.ypos();
         g.appendChild(shape);
@@ -311,13 +362,12 @@ if (graph.supportsVML()) {
         g.appendChild(contour)
         return g;
     };
-}
 
-/**
- * SVG rendering.
- */
-if (graph.supportsSVG()) {
+} else {
 
+    /**
+     * SVG rendering.
+     */
     graph.svgns='http://www.w3.org/2000/svg';
 
     /**
@@ -329,8 +379,8 @@ if (graph.supportsSVG()) {
         document.body.appendChild(div);
 
         var svg = document.createElementNS(graph.svgns, 'svg');
-        svg.style.height = '100%';
-        svg.style.width = '100%';
+        svg.style.height = 5000;
+        svg.style.width = 5000;
         div.appendChild(svg);
 
         graph.dragging = null;
@@ -338,20 +388,27 @@ if (graph.supportsSVG()) {
         function draggable(n) {
             if (n == svg)
                 return null;
-            if (n.nodeName == 'g')
+            if (n.nodeName == 'g' && n.id != '')
                 return n;
             return draggable(n.parentNode);
+        }
+
+        function bringtotop(n) {
+            if (n == svg)
+                return null;
+            n.parentNode.appendChild(n);
+            return bringtotop(n.parentNode);
         }
 
         svg.onmousedown = function(e) {
             if (e.preventDefault)
                 e.preventDefault();
             else
-                e.returnValue= false;
+                e.returnValue = false;
             graph.dragging = draggable(e.target);
             if (graph.dragging == null)
                 return false;
-            graph.dragging.parentNode.appendChild(graph.dragging);
+            bringtotop(graph.dragging);
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
             graph.dragX = pos.clientX;
             graph.dragY = pos.clientY;
@@ -381,6 +438,13 @@ if (graph.supportsSVG()) {
             var newY = curY + (pos.clientY - graph.dragY);
             graph.dragX = pos.clientX;
             graph.dragY = pos.clientY;
+
+            if (graph.dragging.id.substring(0, 8) == 'palette:') {
+                // Clone an element dragged from the palette
+                var clone = graph.compshape(graph.dragging.comp, mklist(), graph.mkpath());
+                graph.dragging.parentNode.appendChild(clone);
+                graph.dragging = clone;
+            }
             graph.dragging.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
             return false;
         };
@@ -389,8 +453,8 @@ if (graph.supportsSVG()) {
 
         graph.titlewidthsvg = document.createElementNS(graph.svgns, 'svg');
         graph.titlewidthsvg.style.visibility = 'hidden';
-        graph.titlewidthsvg.style.height = '0px';
-        graph.titlewidthsvg.style.width = '0px';
+        graph.titlewidthsvg.style.height = 0;
+        graph.titlewidthsvg.style.width = 0;
         div.appendChild(graph.titlewidthsvg);
 
         return svg;
@@ -433,17 +497,24 @@ if (graph.supportsSVG()) {
     };
 
     /**
-     * Return an element representing the title of a component.
+     * Return an element representing a title.
      */
-    graph.comptitle = function(comp) {
-        var t = scdl.name(comp);
+    graph.mktitle = function(t, bold) {
         var title = document.createElementNS(graph.svgns, 'text');
         title.setAttribute('text-anchor', 'start');
         title.setAttribute('x', 5);
         title.setAttribute('y', 15);
-        title.style.fontWeight = 'bold';
+        if (bold)
+            title.style.fontWeight = 'bold';
         title.appendChild(document.createTextNode(t));
         return title;
+    };
+
+    /**
+     * Return an element representing the title of a component.
+     */
+    graph.comptitle = function(comp) {
+        return graph.mktitle(graph.title(comp), true);
     };
 
     /**
@@ -461,12 +532,7 @@ if (graph.supportsSVG()) {
      * Return an element representing the title of a reference.
      */
     graph.reftitle = function(ref) {
-        var t = scdl.name(ref);
-        var title = document.createElementNS(graph.svgns, 'text');
-        title.setAttribute('text-anchor', 'start');
-        title.setAttribute('x', 5);
-        title.setAttribute('y', 15);
-        return title;
+        return graph.mktitle(graph.title(ref), false);
     };
 
     /**
@@ -506,9 +572,57 @@ if (graph.supportsSVG()) {
         g.appendChild(shape);
         g.appendChild(contour);
         g.appendChild(title);
+
+        // Store the component in the shape.
+        g.comp = comp;
+
+        return g;
+    };
+
+    /**
+     * Return a graphical group.
+     */
+    graph.mkgroup = function(pos) {
+        var g = document.createElementNS(graph.svgns, 'g');
+        g.setAttribute('transform', 'translate(' + pos.xpos() + ',' + pos.ypos() + ')');
+        return g;
+    };
+
+    /**
+     * Return a shape representing a button.
+     */
+    graph.mkbutton = function(t, pos) {
+        var title = graph.mktitle(t, true);
+        var d = graph.buttonpath().str();
+
+        var shape = document.createElementNS(graph.svgns, 'path');
+        shape.setAttribute('d', d);
+        shape.setAttribute('fill', graph.colors.blue);
+
+        var contour = document.createElementNS(graph.svgns, 'path');
+        contour.setAttribute('d', d);
+        contour.setAttribute('fill', 'none');
+        contour.setAttribute('stroke', graph.colors.gray);
+        contour.setAttribute('stroke-width', '4');
+        contour.setAttribute('stroke-opacity', '0.20');
+        contour.setAttribute('transform', 'translate(1,1)');
+
+        var g = document.createElementNS(graph.svgns, 'g');
+        g.setAttribute('transform', 'translate(' + pos.xpos() + ',' + pos.ypos() + ')');
+        g.appendChild(shape);
+        g.appendChild(contour);
+        g.appendChild(title);
         return g;
     };
 }
+
+/**
+ * Return the title of a SCDL element.
+ */
+graph.title = function(e) {
+    var d = scdl.documentation(e);
+    return d != null? d : scdl.name(e);
+};
 
 /**
  * Return the services and references of a component.
@@ -707,8 +821,8 @@ graph.tsvcpath = function(svc, cassoc, path) {
 };
 
 /**
-* Return a path representing a component.
-*/
+ * Return a path representing a component.
+ */
 graph.comppath = function(comp, cassoc) {
     var height = graph.compheight(comp, cassoc);
     var width = graph.compwidth(comp, cassoc);
@@ -742,22 +856,39 @@ graph.comppath = function(comp, cassoc) {
 };
 
 /**
+ * Return a path representing a button.
+ */
+graph.buttonpath = function(t) {
+    var height = 60;
+    var width = 120;
+    var path = graph.mkpath().move(10,0);
+    path = path.line(width - 10,path.ypos()).rcurve(10,0,0,10);
+    path = path.line(path.xpos(),height - 10).rcurve(0,10,-10,0).line(10, path.ypos());
+    path = path.line(10,path.ypos()).rcurve(-10,0,0,-10).line(path.xpos(), 10);
+    path = path.line(0,10).rcurve(0,-10,10,0);
+    return path.end();
+};
+
+/**
+ * Append a list of graphical elements to a parent.
+ */
+graph.append = function(nodes, p) {
+    if (isNil(nodes))
+        return p;
+    p.appendChild(car(nodes));
+    return graph.append(cdr(nodes), p);
+};
+
+/**
  * Render a composite.
  */
-graph.composite = function(compos) {
-    var name = scdl.name(compos);
+graph.composite = function(compos, pos) {
+    var name = scdl.name(scdl.composite(compos));
     var comps = scdl.components(compos);
     var cassoc = scdl.nameToElementAssoc(comps);
     var proms = scdl.promotions(compos);
 
     function rendercomp(comp, cassoc, pos) {
-        function appendg(nodes, parent) {
-            if (isNil(nodes))
-                return parent;
-            parent.appendChild(car(nodes));
-            return appendg(cdr(nodes), parent);
-        }
-
         function renderrrefs(refs, cassoc, pos) {
             function renderrref(ref, cassoc, pos) {
                 var target = assoc(scdl.target(ref), cassoc);
@@ -796,36 +927,51 @@ graph.composite = function(compos) {
 
         var rrefs = graph.rrefs(comp);
         var rpos = graph.mkpath().rmove(graph.compwidth(comp, cassoc), 0);
-        appendg(renderrrefs(rrefs, cassoc, rpos), gcomp);
+        graph.append(renderrrefs(rrefs, cassoc, rpos), gcomp);
 
         var brefs = graph.brefs(comp);
         var bpos = graph.mkpath().rmove(0 , graph.compheight(comp, cassoc));
-        appendg(renderbrefs(brefs, cassoc, bpos), gcomp);
+        graph.append(renderbrefs(brefs, cassoc, bpos), gcomp);
 
         return mklist(gcomp);
     }
 
     function renderproms(svcs, cassoc, pos) {
-        function renderprom(svc, cassoc, pos) {
-            var comp = assoc(scdl.promote(svc), cassoc);
-            if (isNil(comp))
+        function promcomp(svc, cassoc) {
+            var c = assoc(scdl.promote(svc), cassoc);
+            if (isNil(c))
                 return mklist();
-            return rendercomp(cadr(comp), cassoc, pos);
+            return cadr(c);
         }
 
-        function rendermove(svc, cassoc, pos) {
-            var comp = assoc(scdl.promote(svc), cassoc);
-            if (isNil(comp))
-                return pos;
-            return pos.clone().rmove(0, graph.compclosureheight(cadr(comp), cassoc) + 20);
+        function comppos(comp, pos) {
+            var x = scdl.x(comp);
+            var y = scdl.y(comp);
+            return graph.mkpath().move(x != null? x : pos.xpos(), y != null? y : pos.ypos());
+        }
+
+        function rendermove(comp, cassoc, pos) {
+            return pos.clone().rmove(0, graph.compclosureheight(comp, cassoc) + 20);
         }
 
         if (isNil(svcs))
             return mklist();
-        return append(renderprom(car(svcs), cassoc, pos), renderproms(cdr(svcs), cassoc, rendermove(car(svcs), cassoc, pos)));
+
+        var comp = promcomp(car(svcs), cassoc);
+        if (isNil(comp))
+            return renderproms(cdr(svcs), cassoc, rendermove(car(svcs), cassoc, pos));
+
+        var cpos = comppos(comp, pos);
+        return append(rendercomp(comp, cassoc, cpos), renderproms(cdr(svcs), cassoc, rendermove(comp, cassoc, cpos)));
     }
 
-    var rcomps = renderproms(proms, cassoc, graph.mkpath().rmove(20,20));
-    return rcomps;
+    var rproms = renderproms(proms, cassoc, pos.clone().rmove(20,20));
+
+    if (name == 'palette')
+        return map(function(r) {
+                r.id = 'palette:' + r.id;
+                return r;
+            }, rproms);
+    return rproms;
 };
 

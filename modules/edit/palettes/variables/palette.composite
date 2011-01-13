@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://variables"
+  name="palette">
+        
+    <service name="number" promote="number"/>
+    <service name="text" promote="text"/>
+    <service name="set" promote="set"/>
+    <service name="list" promote="list"/>
+    <service name="first" promote="first"/>
+    <service name="rest" promote="rest"/>
+
+    <component name="number" t:color="orange">
+        <t:implementation.python script="number.py"/>
+        <service name="number"/>
+    </component>
+    
+    <component name="text" t:color="orange">
+        <t:implementation.python script="text.py"/>
+        <service name="text"/>
+    </component>
+    
+    <component name="set" t:color="orange">
+        <documentation>set variable</documentation>
+        <t:implementation.python script="set.py"/>
+        <service name="set"/>
+        <reference name="value"/>
+        <reference name="variable"/>
+    </component>
+    
+    <component name="list" t:color="orange">
+        <documentation>make a list</documentation>
+        <t:implementation.python script="list_.py"/>
+        <service name="list"/>
+        <reference name="first"/>
+        <reference name="rest"/>
+    </component>
+    
+    <component name="first" t:color="orange">
+        <documentation>first of a list</documentation>
+        <t:implementation.python script="first.py"/>
+        <service name="first"/>
+        <reference name="value"/>
+    </component>
+    
+    <component name="rest" t:color="orange">
+        <documentation>rest of a list</documentation>
+        <t:implementation.python script="rest.py"/>
+        <service name="rest"/>
+        <reference name="value"/>
+    </component>
+    
+</composite>

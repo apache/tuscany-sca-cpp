@@ -1,0 +1,112 @@
+<!--
+    * Licensed to the Apache Software Foundation (ASF) under one
+    * or more contributor license agreements.  See the NOTICE file
+    * distributed with this work for additional information
+    * regarding copyright ownership.  The ASF licenses this file
+    * to you under the Apache License, Version 2.0 (the
+    * "License"); you may not use this file except in compliance
+    * with the License.  You may obtain a copy of the License at
+    * 
+    *   http://www.apache.org/licenses/LICENSE-2.0
+    * 
+    * Unless required by applicable law or agreed to in writing,
+    * software distributed under the License is distributed on an
+    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    * KIND, either express or implied.  See the License for the
+    * specific language governing permissions and limitations
+    * under the License.    
+-->
+<html>
+<head>  
+<link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/elemutil.js"></script>
+<script type="text/javascript" src="/xmlutil.js"></script>
+<script type="text/javascript" src="/atomutil.js"></script>
+<script type="text/javascript" src="/scdl.js"></script>
+<script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/component.js"></script>
+<script type="text/javascript" src="graph.js"></script>
+</head>  
+<body>
+
+<script type="text/javascript">
+var editWidget = sca.component("EditWidget");
+var dashboard = sca.reference(editWidget, "dashboard");
+var palettes = sca.reference(editWidget, "palettes");
+var apps = sca.reference(editWidget, "apps");
+
+/**
+ * Return the current app name.
+ */
+function appname() {
+    return ui.queryParams()['app'];
+}
+
+/**
+ * Return the composite in an ATOM entry.
+ */
+function atomcomposite(doc) {
+    var entry = atom.readATOMEntryDocument(doc);
+    var item = caddr(entry);
+    return cddr(item);
+}
+
+/**
+ * Load and display an app.
+ */
+function getapp(name, g) {
+    if (isNil(name))
+        return;
+    apps.get(name, function(doc) {
+        graph.append(graph.composite(atomcomposite(doc), graph.mkpath().move(300,0)), g);
+    });
+}
+
+/**
+ * Load and display a palette content.
+ */
+
+function getpalette(name, g, bg, palette, gpalettes) {
+    if (isNil(name))
+        return;
+    palettes.get(name, function(doc) {
+        gpalettes[name] = graph.composite(atomcomposite(doc), graph.mkpath().move(150,0));
+        graph.append(gpalettes[name], name == spalette? g : bg);
+    });
+}
+
+/**
+ * Install a palette button and content.
+ */
+function installpalette(name, pos, g, bg, palette, gpalettes) {
+    var b = graph.mkbutton(name, pos);
+    graph.append(mklist(b), g);
+    b.onclick = function() {
+        // Display the selected palette
+        spalette = name;
+        for (var pn in gpalettes)
+            graph.append(gpalettes[pn], pn == spalette? g : bg);
+    }
+    getpalette(name, g, bg, palette, gpalettes);
+}
+
+// Create editor graph area
+var g = graph.mkgraph();
+var bg = graph.mkgroup(graph.mkpath());
+
+// Install the palettes.
+var gpalettes = new Array();
+var spalette = 'variables';
+installpalette('variables', graph.mkpath().move(0,10), g, bg, spalette, gpalettes);
+installpalette('control', graph.mkpath().move(0,80), g, bg, spalette, gpalettes);
+installpalette('operators', graph.mkpath().move(0,150), g, bg, spalette, gpalettes);
+installpalette('social', graph.mkpath().move(0,220), g, bg, spalette, gpalettes);
+installpalette('sensors', graph.mkpath().move(0,290), g, bg, spalette, gpalettes);
+
+// Display the current app
+getapp(appname(), g);
+
+</script>
+</body>
+</html>

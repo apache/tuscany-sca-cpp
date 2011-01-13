@@ -15,34 +15,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Apps collection implementation
+# Palettes collection implementation
 import uuid
 import sys
 from util import *
 
-# Convert an id to an app id
-def appid(id):
-    return ("'" + car(id), "'app.composite")
+# Convert an id to a palette id
+def paletteid(id):
+    return ("'" + car(id), "'palette.composite")
 
-# Post a new app to the apps db
-def post(collection, app, cache):
-    id = appid((str(uuid.uuid1()),))
-    cache.put((id,), app)
-    return id
-
-# Put an app into the apps db
-def put(id, app, cache):
-    cache.put(appid(id), app)
-    return True
-
-# Get an app from the apps db
+# Get a palette from the palettes db
 def get(id, cache):
     if isNil(id):
-        return ("Apps", "apps")
-    return (car(id), car(id), cache.get(appid(id)))
-
-# Delete an app from the apps db
-def delete(id, cache):
-    cache.delete(appid(id))
-    return True
+        return ("Palettes", "palettes")
+    return (car(id), car(id), cache.get(paletteid(id)))
 

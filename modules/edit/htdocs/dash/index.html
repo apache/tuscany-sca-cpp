@@ -30,14 +30,11 @@
 <h1>Welcome to your App Dashboard!</h1>
 <div id="dashboard"></div>
 
-<iframe id="menuFrame" src="/menu.html"></iframe>
-<iframe id="dashboardFrame" src="dashboard.html"></iframe>
-
 <script type="text/javascript">
-ui.bindwidget('menuFrame', 'menu');
+ui.loadwidget('menu', '/menu.html');
 
 // Display the dashboard widget
-ui.bindwidget('dashboardFrame', 'dashboard');
+ui.loadwidget('dashboard', 'dashboard.html');
 </script>
 </body>
 </html>

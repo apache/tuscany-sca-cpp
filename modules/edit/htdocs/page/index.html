@@ -18,6 +18,8 @@
 -->
 <html>
 <head>
+<title>App Page Editor</title>
+<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/> 
 <link rel="stylesheet" type="text/css" href="/ui.css">
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
@@ -25,11 +27,15 @@
 <body>
 <div id="menu"></div>
 
-<script type="text/javascript">
-ui.installwidget();
+<h1>Editing: HTML Page</h1>
+<div id="page"></div>
 
-var mdiv = $('menu'); 
-mdiv.innerHTML = ui.menubar(mklist(ui.menu('Home', '/'), ui.menu('Dashboard', '/dash')), mklist(ui.menu('Sign out', '/logout')));
+<script type="text/javascript">
+ui.loadwidget('menu', '/menu.html');
+
+// Display the page widget
+ui.loadwidget('page', 'page.html');
 </script>
 </body>
 </html>
+

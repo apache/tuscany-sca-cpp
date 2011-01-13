@@ -15,68 +15,68 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Workspace collection implementation
+# Dashboards collection implementation
 import uuid
 import sys
 from util import *
 
-# Convert a particular user email to a workspace id
-def workspaceid(user):
+# Convert a particular user email to a dashboard id
+def dashboardid(user):
     return ("'" + user.id(),)
 
-# Get a workspace from the cache
-def getworkspace(id, cache):
-    workspace = cache.get(id)
-    if isNil(workspace):
+# Get a dashboard from the cache
+def getdashboard(id, cache):
+    dashboard = cache.get(id)
+    if isNil(dashboard):
         return ()
-    return workspace
+    return dashboard
 
-# Post a new app to the user's workspace
+# Post a new app to the user's dashboard
 def post(collection, app, user, cache):
     id = (str(uuid.uuid1()),)
-    workspace = cons((car(app), car(id), caddr(app)), getworkspace(workspaceid(user), cache))
-    cache.put(workspaceid(user), workspace)
+    dashboard = cons((car(app), car(id), caddr(app)), getdashboard(dashboardid(user), cache))
+    cache.put(dashboardid(user), dashboard)
     return id
 
-# Put an app into the user's workspace
+# Put an app into the user's dashboard
 def put(id, app, user, cache):
-    def putapp(app, workspace):
-        if isNil(workspace):
+    def putapp(app, dashboard):
+        if isNil(dashboard):
             return (app,)
-        if cadr(app) == cadr(car(workspace)):
-            return cons(app, cdr(workspace))
-        return cons(car(workspace), putapp(app, cdr(workspace)))
+        if cadr(app) == cadr(car(dashboard)):
+            return cons(app, cdr(dashboard))
+        return cons(car(dashboard), putapp(app, cdr(dashboard)))
 
-    workspace = putapp(app, getworkspace(workspaceid(user), cache))
-    cache.put(workspaceid(user), workspace)
+    dashboard = putapp(app, getdashboard(dashboardid(user), cache))
+    cache.put(dashboardid(user), dashboard)
     return True
 
-# Get apps from the user's workspace
+# Get apps from the user's dashboard
 def get(id, user, cache):
-    def findapp(id, workspace):
-        if isNil(workspace):
+    def findapp(id, dashboard):
+        if isNil(dashboard):
             return None
-        if car(id) == cadr(car(workspace)):
-            return car(workspace)
-        return findapp(id, cdr(workspace))
+        if car(id) == cadr(car(dashboard)):
+            return car(dashboard)
+        return findapp(id, cdr(dashboard))
 
     if isNil(id):
-        return ("Your Apps", user.id()) + getworkspace(workspaceid(user), cache)
-    return findapp(id, getworkspace(workspaceid(user), cache))
+        return ("Your Apps", user.id()) + getdashboard(dashboardid(user), cache)
+    return findapp(id, getdashboard(dashboardid(user), cache))
 
-# Delete apps from the user's workspace
+# Delete apps from the user's dashboard
 def delete(id, user, cache):
     if isNil(id):
-        return cache.delete(workspaceid(user))
+        return cache.delete(dashboardid(user))
 
-    def deleteapp(id, workspace):
-        if isNil(workspace):
+    def deleteapp(id, dashboard):
+        if isNil(dashboard):
             return ()
-        if car(id) == cadr(car(workspace)):
-            return cdr(workspace)
-        return cons(car(workspace), deleteapp(id, cdr(workspace)))
+        if car(id) == cadr(car(dashboard)):
+            return cdr(dashboard)
+        return cons(car(dashboard), deleteapp(id, cdr(dashboard)))
 
-    workspace = deleteapp(id, getworkspace(workspaceid(user), cache))
-    cache.put(workspaceid(user), workspace)
+    dashboard = deleteapp(id, getdashboard(dashboardid(user), cache))
+    cache.put(dashboardid(user), dashboard)
     return True
 

@@ -24,6 +24,16 @@
 var ui = new Object();
 
 /**
+ * Return true if the current browser is Internet Explorer.
+ */
+ui.isIE = function() {
+    if (typeof ui.isIE.detected != 'undefined')
+        return ui.isIE.detected;
+    ui.isIE.detected = navigator.appName == 'Microsoft Internet Explorer';
+    return ui.isIE.detected;
+};
+
+/**
  * Build a menu bar.
  */ 
 ui.menu = function(name, href) {
@@ -222,7 +232,12 @@ ui.queryParams = function() {
  */
 ui.widgets = new Array();
 
-ui.bindwidget = function(f, el) {
+ui.loadwidget = function(el, doc) {
+    var f = el + 'Frame';
+    var div = document.createElement('div');
+    div.id = f + 'Div';
+    div.innerHTML = '<iframe id="' + f + '" class="widgetframe" src="' + doc + '"></iframe>';
+    document.body.appendChild(div);
     window.ui.widgets[f] = el;
     return f;
 };
@@ -243,5 +258,14 @@ ui.installwidget = function() {
         }
     }
     return true;
+};
+
+/**
+ * Convert a CSS position to a numeric position.
+ */
+ui.posn = function(p) {
+    if (p == '')
+        return 0;
+    return Number(p.substr(0, p.length - 2));
 };
 

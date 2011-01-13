@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://social"
+  name="palette">
+        
+    <service name="JSONTwit" promote="JSONTwit"/>
+    <service name="XMLTwit" promote="XMLTwit"/>
+    <service name="RSSTwit" promote="RSSTwit"/>
+    <service name="HTML" promote="HTML"/>
+    <service name="JSONFB" promote="JSONFB"/>
+
+    <component name="JSONTwit" t:color="red">
+        <t:implementation.python script="relay.py"/>
+        <service name="Relay">
+            <t:binding.http uri="jsontwit"/>
+        </service>        
+        <reference name="target">
+            <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.json?screen_name=jsdelfino"/>
+        </reference>
+    </component>
+    
+    <component name="XMLTwit" t:color="green">
+        <t:implementation.python script="relay.py"/>
+        <service name="Relay">
+            <t:binding.http uri="xmltwit"/>
+        </service>        
+        <reference name="target">
+            <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.xml?screen_name=jsdelfino"/>
+        </reference>
+    </component>
+    
+    <component name="RSSTwit" t:color="blue">
+        <t:implementation.python script="relay.py"/>
+        <service name="Relay">
+            <t:binding.http uri="rsstwit"/>
+        </service>        
+        <reference name="target">
+            <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=jsdelfino"/>
+        </reference>
+    </component>
+    
+    <component name="HTML" t:color="yellow">
+        <t:implementation.python script="relay.py"/>
+        <service name="Relay">
+            <t:binding.http uri="html"/>
+        </service>        
+        <reference name="target">
+            <t:binding.http uri="http://people.apache.org/~jsdelfino/"/>
+        </reference>
+    </component>
+    
+    <component name="JSONFB" t:color="orange">
+        <t:implementation.python script="relay.py"/>
+        <service name="Relay">
+            <t:binding.http uri="jsonfb"/>
+        </service>        
+        <reference name="target">
+            <t:binding.http uri="https://graph.facebook.com/100001053301307"/>
+        </reference>
+    </component>
+    
+</composite>

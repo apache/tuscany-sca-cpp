@@ -26,43 +26,24 @@
 <script type="text/javascript" src="/scdl.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 <script type="text/javascript" src="/component.js"></script>
-<script type="text/javascript" src="/edit/graph.js"></script>
+<script type="text/javascript" src="page.js"></script>
 </head>  
 <body>
 
+<div id="page" style="position: absolute; width: 5000px; height: 5000px;">
+
+<input id="palette:button" type="button" value="sample button" style="position: absolute; left:20px; top: 20px;"/>
+<input id="palette:entry" type="text" value="sample value" style="position: absolute; left:20px; top: 60px;"/>
+<span id="palette:text" style="position: absolute; left:20px; top: 100px;">sample text</span>
+
+</div>
+
 <script type="text/javascript">
-var editWidget = sca.component("EditWidget");
-var dashboard = sca.reference(editWidget, "dashboard");
-var apps = sca.reference(editWidget, "apps");
+// Install the widget
+ui.installwidget();
 
-/**
- * Return the current app name.
- */
-function appname() {
-    return ui.queryParams()['app'];
-}
-
-/**
- * Get an app and display it.
- */
-function getapp(name) {
-    if (isNil(name))
-        return;
-    apps.get(name, function(doc) {
-        var entry = atom.readATOMEntryDocument(doc);
-        var item = caddr(entry);
-        var composite = cddr(item);
-        var comps = scdl.components(composite);
-
-        var g = graph.mkgraph();
-        var shapes = graph.composite(composite);
-        for (var s in shapes)
-            g.appendChild(shapes[s]);
-    });
-}
-
-// Display the current app
-getapp(appname());
+// Enable drag&drop on sample UI elements
+page.initpage($('page'));
 
 </script>
 </body>

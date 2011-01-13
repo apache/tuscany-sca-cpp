@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://operators"
+  name="palette">
+        
+    <service name="true" promote="true"/>
+    <service name="false" promote="false"/>
+    <service name="and" promote="and"/>
+    <service name="or" promote="or"/>
+    <service name="not" promote="not"/>
+    <service name="equals" promote="equals"/>
+    <service name="greater" promote="greater"/>
+    <service name="lesser" promote="lesser"/>
+    <service name="multiply" promote="multiply"/>
+    <service name="divide" promote="divide"/>
+    <service name="add" promote="add"/>
+    <service name="subtract" promote="subtract"/>
+
+    <component name="true" t:color="green">
+        <t:implementation.python script="true_.py"/>
+        <service name="true"/>
+    </component>
+    
+    <component name="false" t:color="green">
+        <t:implementation.python script="false_.py"/>
+        <service name="false"/>
+    </component>
+    
+    <component name="and" t:color="green">
+        <t:implementation.python script="and_.py"/>
+        <service name="and"/>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+    <component name="or" t:color="green">
+        <t:implementation.python script="or_.py"/>
+        <service name="or"/>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+    <component name="not" t:color="green">
+        <t:implementation.python script="not_.py"/>
+        <service name="not"/>
+        <reference name="value"/>
+    </component>
+    
+    <component name="equals" t:color="green">
+        <documentation>=</documentation>
+        <t:implementation.python script="equals.py"/>
+        <service name="equals">
+            <documentation>=</documentation>
+        </service>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+    <component name="greater" t:color="green">
+        <documentation>gt</documentation>
+        <t:implementation.python script="greater.py"/>
+        <service name="greater">
+            <documentation>gt</documentation>
+        </service>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+    <component name="lesser" t:color="green">
+        <documentation>lt</documentation>
+        <t:implementation.python script="lesser.py"/>
+        <service name="lesser">
+            <documentation>lt</documentation>
+        </service>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+    <component name="multiply" t:color="green">
+        <documentation>*</documentation>
+        <t:implementation.python script="multiply.py"/>
+        <service name="multiply">
+            <documentation>*</documentation>
+        </service>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+    <component name="divide" t:color="green">
+        <documentation>/</documentation>
+        <t:implementation.python script="divide.py"/>
+        <service name="divide">
+            <documentation>/</documentation>
+        </service>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+    <component name="add" t:color="green">
+        <documentation>+</documentation>
+        <t:implementation.python script="add.py"/>
+        <service name="add">
+            <documentation>+</documentation>
+        </service>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+    <component name="subtract" t:color="green">
+        <documentation>-</documentation>
+        <t:implementation.python script="subtract.py"/>
+        <service name="subtract">
+            <documentation>-</documentation>
+        </service>
+        <reference name="value1"/>
+        <reference name="value2"/>
+    </component>
+    
+</composite>

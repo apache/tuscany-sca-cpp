@@ -39,6 +39,7 @@
     <component name="EditWidget">
         <t:implementation.widget location="/index.html"/>
         <reference name="dashboard" target="Dashboard"/>
+        <reference name="palettes" target="Palettes"/>
         <reference name="apps" target="Apps"/>
     </component>
     
@@ -48,7 +49,7 @@
             <t:binding.http uri="dashboard"/>
         </service>        
         <reference name="user" target="User"/>
-        <reference name="cache" target="WorkspaceCache"/>
+        <reference name="cache" target="DashboardCache"/>
     </component>
     
     <component name="Apps">
@@ -56,46 +57,74 @@
         <service name="Apps">
             <t:binding.http uri="apps"/>
         </service>
-        <reference name="cache" target="DomainCache"/>
+        <reference name="cache" target="AppCache"/>
     </component>
     
-    <component name="WorkspaceCache">
+    <component name="Palettes">
+        <t:implementation.python script="palettes.py"/>
+        <service name="Palettes">
+            <t:binding.http uri="palettes"/>
+        </service>
+        <reference name="cache" target="PaletteCache"/>
+    </component>
+    
+    <component name="DashboardCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
-        <service name="WorkspaceCache">
-            <t:binding.http uri="workspacecache"/>
+        <service name="DashboardCache">
+            <t:binding.http uri="dashboardcache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
-        <reference name="l2reader" target="WorkspaceDB"/>
-        <reference name="l2writer" target="WorkspaceDB"/>
+        <reference name="l2reader" target="DashboardDB"/>
+        <reference name="l2writer" target="DashboardDB"/>
     </component>
 
-    <component name="WorkspaceDB">
+    <component name="DashboardDB">
         <implementation.cpp path="../../components/filedb" library="libfiledb"/>
-        <property name="dbname">workspaces</property>
+        <property name="dbname">dashboards</property>
         <property name="format">scheme</property>
-        <service name="WorkspaceDB">
-            <t:binding.http uri="workspaces"/>
+        <service name="DashboardDB">
+            <t:binding.http uri="dashboarddb"/>
         </service>
     </component>
 
-    <component name="DomainCache">
+    <component name="AppCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
-        <service name="DomainCache">
-            <t:binding.http uri="domaincache"/>
+        <service name="AppCache">
+            <t:binding.http uri="appcache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
-        <reference name="l2reader" target="DomainDB"/>
-        <reference name="l2writer" target="DomainDB"/>
+        <reference name="l2reader" target="AppDB"/>
+        <reference name="l2writer" target="AppDB"/>
     </component>
 
-    <component name="DomainDB">
+    <component name="AppDB">
         <implementation.cpp path="../../components/filedb" library="libfiledb"/>
-        <property name="dbname">domains</property>
+        <property name="dbname">apps</property>
         <property name="format">xml</property>
-        <service name="DomainDB">
-            <t:binding.http uri="domains"/>
+        <service name="AppDB">
+            <t:binding.http uri="appdb"/>
+        </service>
+    </component>
+
+    <component name="PaletteCache">
+        <implementation.cpp path="../../components/cache" library="libdatacache"/>
+        <service name="PaletteCache">
+            <t:binding.http uri="palettecache"/>
+        </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="PaletteDB"/>
+        <reference name="l2writer" target="PaletteDB"/>
+    </component>
+
+    <component name="PaletteDB">
+        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
+        <property name="dbname">palettes</property>
+        <property name="format">xml</property>
+        <service name="PaletteDB">
+            <t:binding.http uri="palettedb"/>
         </service>
     </component>
 

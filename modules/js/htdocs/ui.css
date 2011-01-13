@@ -35,10 +35,14 @@ border-style: solid; border-top-color: #a2bae7; border-bottom-color: #d1d3d4;
 }
 
 td {
-padding-left: 2px; padding-top: 2px; padding-right: 8px; vertical-align: text-top;
+padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: nowrap; vertical-align: text-top;
 }
 
-iframe {
+.tdw {
+padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: normal; vertical-align: text-top;
+}
+
+.widgetframe {
 visibility: hidden; width: 0px; height: 0px;
 }
 
@@ -53,10 +57,6 @@ color: blue;
 
 a:visited {
 color: blue;
-}
-
-.tdw {
-padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: normal; vertical-align: text-top;
 }
 
 .hd1 {

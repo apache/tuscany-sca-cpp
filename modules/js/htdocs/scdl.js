@@ -23,6 +23,16 @@
 var scdl = new Object();
 
 /**
+ * Returns a composite element.
+ */
+scdl.composite = function(l) {
+    var cs = namedElementChildren("'composite", l);
+    if (isNil(cs))
+        return cs;
+    return car(cs);
+};
+
+/**
  * Returns a list of components in a composite.
  */
 scdl.components = function(l) {
@@ -57,6 +67,23 @@ scdl.promote = function(l) {
  */
 scdl.name = function(l) {
     return namedAttributeValue("'name", l);
+};
+
+/**
+ * Returns the description of a component, componentType, service or reference.
+ */
+scdl.documentation = function(l) {
+    var d = namedElementChildren("'documentation", l);
+    if (isNil(d))
+        return null;
+    if (!elementHasValue(car(d)))
+        return null;
+    var v = elementValue(car(d));
+    if (v == 'gt')
+        return '>'
+    if (v == 'lt')
+        return '<';
+    return v;
 };
 
 /**

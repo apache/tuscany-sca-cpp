@@ -27,13 +27,12 @@
 <body>
 <div id="menu"></div>
 
-<h1><span id="titleDiv"></span></h1>
-<div id="editDiv"></div>
+<h1><span id="title"></span></h1>
 
-<iframe id="menuFrame" src="/menu.html"></iframe>
+<div id="graph"></div>
 
 <script type="text/javascript">
-ui.bindwidget('menuFrame', 'menu');
+ui.loadwidget('menu', '/menu.html');
 
 /**
  * Return the current app name.
@@ -48,9 +47,9 @@ function appname() {
 function editapp(name) {
     if (isNil(name))
         return;
-    $('titleDiv').innerHTML = 'Editing: ' + name;
-    $('editDiv').innerHTML =
-        '<iframe id="editFrame" style="visibility: visible; height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="edit.html?' +
+    $('title').innerHTML = 'Editing: ' + name;
+    $('graph').innerHTML =
+        '<iframe id="graphFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="graph.html?' +
         'app=' + name +
         '"></iframe>';
 }
