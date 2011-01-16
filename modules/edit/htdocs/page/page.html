@@ -30,20 +30,78 @@
 </head>  
 <body>
 
-<div id="page" style="position: absolute; width: 5000px; height: 5000px;">
+<div>
+<span style="position: absolute; left: 0px; top: 0px;"><h2>Palette</h2></span>
+<span style="position: absolute; left: 350px; top: 0px;"><h2>Page</h2></span>
+</div>
 
-<input id="palette:button" type="button" value="sample button" style="position: absolute; left:20px; top: 20px;"/>
-<input id="palette:entry" type="text" value="sample value" style="position: absolute; left:20px; top: 60px;"/>
-<span id="palette:text" style="position: absolute; left:20px; top: 100px;">sample text</span>
+<div id="page" style="position: absolute; top: 60px; left: 0px; width: 5000px; height: 5000px;">
+
+<span id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1 style="margin: 0px;">Header1</h1></span>
+<span id="palette:h2" style="position: absolute; left: 0px; top: 40px;"><h2 style="margin: 0px;">Header2</h2></span>
+<span id="palette:button" style="position: absolute; left: 0px; top: 80px;"><input type="button" value="button"/></span>
+<span id="palette:entry" style="position: absolute; left: 0px; top: 120px;"><input type="text" value="field" size="5"/></span>
+<span id="palette:password" style="position: absolute; left: 0px; top: 160px;"><input type="password" value="password" size="5"/></span>
+<span id="palette:checkbox" style="position: absolute; left: 0px; top: 200px;"><input type="checkbox" value="checkbox"/>checkbox</span>
+<span id="palette:select" style="position: absolute; left: 0px; top: 240px;"><select><option value="list">list</option></select></span>
+<span id="palette:link" style="position: absolute; left: 0px; top: 280px;"><a href="">link</a></span>
+<span id="palette:text" style="position: absolute; left: 0px; top: 320px;"><span>text</span></span>
+<span id="palette:img" style="position: absolute; left: 0px; top: 360px;"><img/></span>
 
 </div>
 
-<script type="text/javascript">
-// Install the widget
-ui.installwidget();
+<div id="buffer" style="visibility: hidden; width: 0px; height: 0px">
+</div>
 
-// Enable drag&drop on sample UI elements
-page.initpage($('page'));
+<script type="text/javascript">
+var editWidget = sca.component("EditWidget");
+var pages = sca.reference(editWidget, "pages");
+
+/**
+ * Return the current app name.
+ */
+function appname() {
+    return ui.queryParams()['app'];
+}
+
+/**
+ * Return the page in an ATOM entry.
+ */
+function atompage(doc) {
+    var entry = atom.readATOMEntryDocument(doc);
+    var item = caddr(entry);
+    return cddr(item);
+}
+
+/**
+ * Get and display an app page.
+ */
+function getpage(name, e) {
+    if (isNil(name))
+        return;
+    pages.get(name, function(doc) {
+        // Convert the page to XML
+        var x = writeStrings(writeXML(atompage(doc), false));
+
+        // Prepare page DOM in hidden buffer
+        var buffer = $('buffer');
+        buffer.innerHTML = x;
+
+        // Append page nodes to editor
+        map(function(e) {
+                e.style.left = ui.posn(e.style.left) + 350;
+                pageedit.appendChild(e);
+                return page.cover(e);
+            }, nodeList(buffer.childNodes[0].childNodes));
+    });
+}
+
+// Initialize the page editor
+var pageedit = $('page');
+page.initpage(pageedit);
+
+// Get and display the current app page
+getpage(appname(), pageedit);
 
 </script>
 </body>

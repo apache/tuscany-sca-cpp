@@ -30,9 +30,13 @@
 </head>  
 <body>
 
+<div>
+<span style="position: absolute; left: 0px; top: 0px"><h2>Palette</h2></span>
+<span style="position: absolute; left: 350px; top: 0px"><h2>App</h2></span>
+</div>
+
 <script type="text/javascript">
 var editWidget = sca.component("EditWidget");
-var dashboard = sca.reference(editWidget, "dashboard");
 var palettes = sca.reference(editWidget, "palettes");
 var apps = sca.reference(editWidget, "apps");
 
@@ -53,46 +57,46 @@ function atomcomposite(doc) {
 }
 
 /**
- * Load and display an app.
+ * Get and display an app.
  */
 function getapp(name, g) {
     if (isNil(name))
         return;
     apps.get(name, function(doc) {
-        graph.append(graph.composite(atomcomposite(doc), graph.mkpath().move(300,0)), g);
+        appendNodes(graph.composite(atomcomposite(doc), graph.mkpath().move(350,0)), g);
     });
 }
 
 /**
- * Load and display a palette content.
+ * Get and display a palette of components.
  */
-
 function getpalette(name, g, bg, palette, gpalettes) {
     if (isNil(name))
         return;
     palettes.get(name, function(doc) {
         gpalettes[name] = graph.composite(atomcomposite(doc), graph.mkpath().move(150,0));
-        graph.append(gpalettes[name], name == spalette? g : bg);
+        appendNodes(gpalettes[name], name == spalette? g : bg);
     });
 }
 
 /**
- * Install a palette button and content.
+ * Install a palette, including a button to select the palette, and
+ * the palette content.
  */
 function installpalette(name, pos, g, bg, palette, gpalettes) {
     var b = graph.mkbutton(name, pos);
-    graph.append(mklist(b), g);
+    appendNodes(mklist(b), g);
     b.onclick = function() {
         // Display the selected palette
         spalette = name;
         for (var pn in gpalettes)
-            graph.append(gpalettes[pn], pn == spalette? g : bg);
+            appendNodes(gpalettes[pn], pn == spalette? g : bg);
     }
     getpalette(name, g, bg, palette, gpalettes);
 }
 
 // Create editor graph area
-var g = graph.mkgraph();
+var g = graph.mkgraph(graph.mkpath().move(0,50));
 var bg = graph.mkgroup(graph.mkpath());
 
 // Install the palettes.
@@ -104,7 +108,7 @@ installpalette('operators', graph.mkpath().move(0,150), g, bg, spalette, gpalett
 installpalette('social', graph.mkpath().move(0,220), g, bg, spalette, gpalettes);
 installpalette('sensors', graph.mkpath().move(0,290), g, bg, spalette, gpalettes);
 
-// Display the current app
+// Get and display the current app
 getapp(appname(), g);
 
 </script>

@@ -22,10 +22,28 @@
   targetNamespace="http://control"
   name="palette">
         
+    <service name="page" promote="page"/>
+    <service name="every" promote="every"/>
     <service name="if" promote="if"/>
     <service name="ifelse" promote="ifelse"/>
     <service name="foreach" promote="foreach"/>
 
+    <component name="page" t:color="yellow">
+        <documentation>when page requested</documentation>
+        <t:implementation.python script="page.py"/>
+        <service name="page" t:visible="false"/>
+        <reference name="url"/>
+        <reference name="do" t:align="bottom"/>
+    </component>
+    
+    <component name="every" t:color="yellow">
+        <documentation>every n seconds</documentation>
+        <t:implementation.python script="every.py"/>
+        <service name="every" t:visible="false"/>
+        <reference name="seconds"/>
+        <reference name="do" t:align="bottom"/>
+    </component>
+    
     <component name="if" t:color="yellow">
         <t:implementation.python script="if_.py"/>
         <service name="if" t:align="top"/>

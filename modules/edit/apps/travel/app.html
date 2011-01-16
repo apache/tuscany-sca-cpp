@@ -16,33 +16,9 @@
     * specific language governing permissions and limitations
     * under the License.    
 -->
-<html>
-<head>
-<link rel="stylesheet" type="text/css" href="/ui.css">
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/ui.js"></script>
-</head>
-<body>
-<div id="menu"></div>
+<div id="page">
 
-<script type="text/javascript">
-ui.installwidget();
+<span id="header" style="position:absolute; left: 0px; top: 0px"><h1>Welcome to SCATours Online Travel</h1></span>
+<span id="book" style="position:absolute; left: 0px; top: 60px"><input type="button" value="Book a Trip"/></span>
 
-/**
- * Return the current app name.
- */
-function appname() {
-    return ui.queryParams()['app'];
-}
-
-// Display the menu bar
-var mdiv = $('menu'); 
-var name = appname();
-mdiv.innerHTML = ui.menubar(
-    append(mklist(ui.menu('Home', '/'), ui.menu('Dashboard', '/dash')),
-            isNil(name)? mklist() : mklist(ui.menu('App', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name))),
-    mklist(ui.menu('Sign out', '/logout')));
-
-</script>
-</body>
-</html>
+</div>

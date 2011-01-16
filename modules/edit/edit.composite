@@ -41,6 +41,7 @@
         <reference name="dashboard" target="Dashboard"/>
         <reference name="palettes" target="Palettes"/>
         <reference name="apps" target="Apps"/>
+        <reference name="pages" target="Pages"/>
     </component>
     
     <component name="Dashboard">
@@ -56,6 +57,14 @@
         <t:implementation.python script="apps.py"/>
         <service name="Apps">
             <t:binding.http uri="apps"/>
+        </service>
+        <reference name="cache" target="AppCache"/>
+    </component>
+    
+    <component name="Pages">
+        <t:implementation.python script="pages.py"/>
+        <service name="Pages">
+            <t:binding.http uri="pages"/>
         </service>
         <reference name="cache" target="AppCache"/>
     </component>

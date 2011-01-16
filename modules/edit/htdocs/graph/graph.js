@@ -223,7 +223,6 @@ if (ui.isIE()) {
         var tnode = document.createTextNode(t);
         title.appendChild(tnode);
         return title;
-        return title;
     };
 
     /**
@@ -373,9 +372,12 @@ if (ui.isIE()) {
     /**
      * Make a graph.
      */
-    graph.mkgraph = function() {
+    graph.mkgraph = function(pos) {
         var div = document.createElement('div');
         div.id = 'svgdiv';
+        div.style.position = 'absolute';
+        div.style.left = pos.xpos();
+        div.style.top = pos.ypos();
         document.body.appendChild(div);
 
         var svg = document.createElementNS(graph.svgns, 'svg');
@@ -410,23 +412,25 @@ if (ui.isIE()) {
                 return false;
             bringtotop(graph.dragging);
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
-            graph.dragX = pos.clientX;
-            graph.dragY = pos.clientY;
+            graph.dragX = pos.screenX;
+            graph.dragY = pos.screenY;
             return false;
         };
 
         svg.ontouchstart = svg.onmousedown;
 
-        svg.onmouseup = function(e) {
+        window.onmouseup = function(e) {
             if (graph.dragging == null)
                 return false;
             graph.dragging = null;
             return false;
         };
 
-        svg.ontouchend = svg.onmouseup;
+        window.top.onmouseup = window.onmouseup;
+        window.ontouchend = window.onmouseup;
+        window.top.ontouchend = window.onmouseup;
 
-        svg.onmousemove = function(e) {
+        window.onmousemove = function(e) {
             if (graph.dragging == null)
                 return false;
             var pmatrix = graph.dragging.parentNode.getCTM();
@@ -434,10 +438,16 @@ if (ui.isIE()) {
             var curX = pmatrix != null? (Number(matrix.e) - Number(pmatrix.e)): Number(matrix.e);
             var curY = pmatrix != null? (Number(matrix.f) - Number(pmatrix.f)): Number(matrix.f);
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
-            var newX = curX + (pos.clientX - graph.dragX);
-            var newY = curY + (pos.clientY - graph.dragY);
-            graph.dragX = pos.clientX;
-            graph.dragY = pos.clientY;
+            var newX = curX + (pos.screenX - graph.dragX);
+            var newY = curY + (pos.screenY - graph.dragY);
+            if (newX >= 0)
+                graph.dragX = pos.screenX;
+            else
+                newX = 0;
+            if (newY >= 0)
+                graph.dragY = pos.screenY;
+            else
+                newY = 0;
 
             if (graph.dragging.id.substring(0, 8) == 'palette:') {
                 // Clone an element dragged from the palette
@@ -449,7 +459,9 @@ if (ui.isIE()) {
             return false;
         };
 
-        svg.ontouchmove = svg.onmousemove;
+        window.top.onmousemove = window.onmousemove;
+        window.ontouchmove = window.onmousemove;
+        window.top.ontouchmove = window.onmousemove;
 
         graph.titlewidthsvg = document.createElementNS(graph.svgns, 'svg');
         graph.titlewidthsvg.style.visibility = 'hidden';
@@ -630,7 +642,7 @@ graph.title = function(e) {
 graph.tsvcs = function(comp) {
     return memo(comp, 'tsvcs', function() {
         var svcs = scdl.services(comp);
-        var l = filter(function(s) { return scdl.align(s) == 'top'; }, svcs);
+        var l = filter(function(s) { return scdl.align(s) == 'top' && scdl.visible(s) != 'false'; }, svcs);
         if (isNil(l))
             return mklist();
         return mklist(car(l));
@@ -642,7 +654,11 @@ graph.lsvcs = function(comp) {
         var svcs = scdl.services(comp);
         if (isNil(svcs))
             return mklist(mklist("'element","'service","'attribute","'name",scdl.name(comp)));
-        var l = filter(function(s) { var a = scdl.align(s); return a == null || a == 'left'; }, svcs);
+        var l = filter(function(s) {
+                var a = scdl.align(s);
+                var v = scdl.visible(s);
+                return (a == null || a == 'left') && v != 'false';
+            }, svcs);
         if (isNil(l))
             return mklist();
         if (!isNil(graph.tsvcs(comp)))
@@ -677,10 +693,22 @@ graph.color = function(comp) {
  * Return the height of a reference on the right side of a component.
  */
 graph.rrefheight = function(ref, cassoc) {
-    return memo(ref, 'height', function() {
+    return memo(ref, 'rheight', function() {
         var target = assoc(scdl.target(ref), cassoc);
         if (isNil(target))
             return 60;
+        return graph.compclosureheight(cadr(target), cassoc);
+    });
+};
+
+/**
+ * Return the height of a reference on the bottom side of a component.
+ */
+graph.brefheight = function(ref, cassoc) {
+    return memo(ref, 'bheight', function() {
+        var target = assoc(scdl.target(ref), cassoc);
+        if (isNil(target))
+            return 0;
         return graph.compclosureheight(cadr(target), cassoc);
     });
 };
@@ -700,7 +728,7 @@ graph.rrefsheight = function(refs, cassoc) {
 graph.brefsheight = function(refs, cassoc) {
     if (isNil(refs))
         return 0;
-    return Math.max(graph.rrefheight(car(refs), cassoc), graph.brefsheight(cdr(refs), cassoc));
+    return Math.max(graph.brefheight(car(refs), cassoc), graph.brefsheight(cdr(refs), cassoc));
 };
 
 /**
@@ -870,16 +898,6 @@ graph.buttonpath = function(t) {
 };
 
 /**
- * Append a list of graphical elements to a parent.
- */
-graph.append = function(nodes, p) {
-    if (isNil(nodes))
-        return p;
-    p.appendChild(car(nodes));
-    return graph.append(cdr(nodes), p);
-};
-
-/**
  * Render a composite.
  */
 graph.composite = function(compos, pos) {
@@ -927,11 +945,11 @@ graph.composite = function(compos, pos) {
 
         var rrefs = graph.rrefs(comp);
         var rpos = graph.mkpath().rmove(graph.compwidth(comp, cassoc), 0);
-        graph.append(renderrrefs(rrefs, cassoc, rpos), gcomp);
+        appendNodes(renderrrefs(rrefs, cassoc, rpos), gcomp);
 
         var brefs = graph.brefs(comp);
         var bpos = graph.mkpath().rmove(0 , graph.compheight(comp, cassoc));
-        graph.append(renderbrefs(brefs, cassoc, bpos), gcomp);
+        appendNodes(renderbrefs(brefs, cassoc, bpos), gcomp);
 
         return mklist(gcomp);
     }
@@ -951,7 +969,7 @@ graph.composite = function(compos, pos) {
         }
 
         function rendermove(comp, cassoc, pos) {
-            return pos.clone().rmove(0, graph.compclosureheight(comp, cassoc) + 20);
+            return pos.clone().rmove(0, graph.compclosureheight(comp, cassoc) + 40);
         }
 
         if (isNil(svcs))

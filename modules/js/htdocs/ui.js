@@ -43,6 +43,9 @@ ui.menu = function(name, href) {
 
         this.content = function() {
             function complete(uri) {
+                var q = uri.indexOf('?');
+                if (q != -1)
+                    return complete(uri.substr(0, q));
                 if (uri.match('.*\.html$'))
                     return uri;
                 if (uri.match('.*/$'))
@@ -236,7 +239,7 @@ ui.loadwidget = function(el, doc) {
     var f = el + 'Frame';
     var div = document.createElement('div');
     div.id = f + 'Div';
-    div.innerHTML = '<iframe id="' + f + '" class="widgetframe" src="' + doc + '"></iframe>';
+    div.innerHTML = '<iframe id="' + f + '" class="widgetframe" scrolling="no" frameborder="0" src="' + doc + '"></iframe>';
     document.body.appendChild(div);
     window.ui.widgets[f] = el;
     return f;

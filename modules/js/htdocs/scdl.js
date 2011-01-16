@@ -143,6 +143,13 @@ scdl.align = function(l) {
 };
 
 /**
+ * Returns the visible attribute of a service or reference.
+ */
+scdl.visible = function(l) {
+    return namedAttributeValue("'t:visible", l);
+};
+
+/**
  * Returns a list of services in a component or componentType.
  */
 scdl.services = function(l) {

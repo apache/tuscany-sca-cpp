@@ -19,22 +19,47 @@
 <html>
 <head>
 <title>App Page Editor</title>
-<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/> 
-<link rel="stylesheet" type="text/css" href="/ui.css">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="stylesheet" type="text/css" href="/ui.css"/>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 </head>
 <body>
 <div id="menu"></div>
 
-<h1>Editing: HTML Page</h1>
+<h1><span id="title"></span></h1>
+
 <div id="page"></div>
 
 <script type="text/javascript">
-ui.loadwidget('menu', '/menu.html');
+/**
+ * Return the current app name.
+ */
+function appname() {
+    return ui.queryParams()['app'];
+}
 
-// Display the page widget
-ui.loadwidget('page', 'page.html');
+// Load the menu bar
+ui.loadwidget('menu', '/menu.html?app=' + appname());
+
+/**
+ * Display the page editor for an app.
+ */
+function editapp(name) {
+    if (isNil(name))
+        return;
+    $('title').innerHTML = 'Editing: ' + name;
+    $('page').innerHTML =
+        '<iframe id="pageFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="page.html?' +
+        'app=' + name +
+        '"></iframe>';
+}
+
+// Display the editor for the current app
+editapp(appname());
+
 </script>
 </body>
 </html>

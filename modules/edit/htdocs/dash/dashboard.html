@@ -44,9 +44,9 @@
 </table>
 <br>
 
-<table>
-<tr><td>App name:</td><td><input type="text" id="appName" size="50"/></td></td><td>e.g. mycoolapp</td></tr>
-<tr><td>Title:</td><td><input type="text" id="appTitle" size="50"/></td></td><td>e.g. My really cool app</td></tr>
+<table width="100%">
+<tr><td>App name:</td><td><input type="text" id="appName" size="10"/></td></tr>
+<tr><td>Title:</td><td><input type="text" id="appTitle" size="20"/></td></tr>
 </table>
 <input id="addAppButton" type="button" value="Add"/>
 </form>
@@ -105,6 +105,7 @@ function getapps(sync) {
 $('addAppLink').onclick = function() {
     var div = $('newApp');
     div.style.visibility = div.style.visibility == 'hidden'? 'visible' : 'hidden';
+    $('appName').focus();
     return false;
 };
 

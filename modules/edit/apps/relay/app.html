@@ -16,33 +16,12 @@
     * specific language governing permissions and limitations
     * under the License.    
 -->
-<html>
-<head>
-<link rel="stylesheet" type="text/css" href="/ui.css">
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/ui.js"></script>
-</head>
-<body>
-<div id="menu"></div>
+<div id="page">
 
-<script type="text/javascript">
-ui.installwidget();
+<span id="html" style="position:absolute; left: 0px; top: 0px"><input type="button" value="Sample HTML Request"/></span>
+<span id="jsontwit" style="position:absolute; left: 0px; top: 40px"><input type="button" value="Sample Twitter JSON Request"/></span>
+<span id="xmltwit" style="position:absolute; left: 0px; top: 80px"><input type="button" value="Sample Twitter XML Request"/></span>
+<span id="rsstwit" style="position:absolute; left: 0px; top: 120px"><input type="button" value="Sample Twitter RSS Request"/></span>
+<span id="jsonfb" style="position:absolute; left: 0px; top: 160px"><input type="button" value="Sample Facebook JSON Request"/></span>
 
-/**
- * Return the current app name.
- */
-function appname() {
-    return ui.queryParams()['app'];
-}
-
-// Display the menu bar
-var mdiv = $('menu'); 
-var name = appname();
-mdiv.innerHTML = ui.menubar(
-    append(mklist(ui.menu('Home', '/'), ui.menu('Dashboard', '/dash')),
-            isNil(name)? mklist() : mklist(ui.menu('App', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name))),
-    mklist(ui.menu('Sign out', '/logout')));
-
-</script>
-</body>
-</html>
+</div>

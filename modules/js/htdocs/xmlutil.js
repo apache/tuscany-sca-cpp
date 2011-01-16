@@ -34,6 +34,16 @@ function nodeList(n) {
 }
 
 /**
+ * Append a list of nodes to a parent node.
+ */
+function appendNodes(nodes, p) {
+    if (isNil(nodes))
+        return p;
+    p.appendChild(car(nodes));
+    return appendNodes(cdr(nodes), p);
+};
+
+/**
  * Return the child attributes of an element.
  */
 function childAttributes(e) {
