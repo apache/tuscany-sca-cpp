@@ -59,12 +59,24 @@ a:visited {
 color: blue;
 }
 
-.hd1 {
+h1 {
+font-size: 200%; font-weight: bold;
+vertical-align: middle;
+margin: 0px;
+}
+
+h2 {
 font-size: 150%; font-weight: bold;
+vertical-align: middle;
+margin: 0px;
+}
+
+.hd1 {
+font-size: 200%; font-weight: bold;
 }
 
 .hd2 {
-font-weight: bold;
+font-size: 150%; font-weight: bold;
 }
 
 .imgbutton {

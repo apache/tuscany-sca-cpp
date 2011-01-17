@@ -17,7 +17,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../http/httpd-conf tmp localhost 8090 htdocs
+../http/httpd-conf tmp 10.1.1.62 8090 htdocs
 ../server/server-conf tmp
 ../python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

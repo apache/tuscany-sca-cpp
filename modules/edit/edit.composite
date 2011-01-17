@@ -42,6 +42,7 @@
         <reference name="palettes" target="Palettes"/>
         <reference name="apps" target="Apps"/>
         <reference name="pages" target="Pages"/>
+        <reference name="log" target="Log"/>
     </component>
     
     <component name="Dashboard">
@@ -145,4 +146,11 @@
         <property name="servers">localhost:11211</property>
     </component>
 
+    <component name="Log">
+        <t:implementation.python script="log.py"/>
+        <service name="Log">
+            <t:binding.http uri="log"/>
+        </service>        
+    </component>
+    
 </composite>

@@ -15,8 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# User info service component
+from sys import stderr
 
-moddir = $(prefix)/modules/edit
-nobase_dist_mod_DATA = htdocs/*.html htdocs/dash/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html
-EXTRA_DIST = htdocs/*.html htdocs/dash/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html
+# Log a message
+def log(msg):
+    print >> stderr, msg
 

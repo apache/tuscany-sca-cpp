@@ -378,6 +378,7 @@ if (ui.isIE()) {
         div.style.position = 'absolute';
         div.style.left = pos.xpos();
         div.style.top = pos.ypos();
+        // -webkit-user-select: none;
         document.body.appendChild(div);
 
         var svg = document.createElementNS(graph.svgns, 'svg');
@@ -428,11 +429,19 @@ if (ui.isIE()) {
 
         window.top.onmouseup = window.onmouseup;
         window.ontouchend = window.onmouseup;
+        window.gestureend = window.onmouseup;
+        window.top.gestureend = window.onmouseup;
         window.top.ontouchend = window.onmouseup;
+        window.ontouchcancel = window.onmouseup;
+        window.top.ontouchcancel = window.onmouseup;
 
         window.onmousemove = function(e) {
             if (graph.dragging == null)
                 return false;
+            if (e.preventDefault)
+                e.preventDefault();
+            else
+                e.returnValue = false;
             var pmatrix = graph.dragging.parentNode.getCTM();
             var matrix = graph.dragging.getCTM();
             var curX = pmatrix != null? (Number(matrix.e) - Number(pmatrix.e)): Number(matrix.e);

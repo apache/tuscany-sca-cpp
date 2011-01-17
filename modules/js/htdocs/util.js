@@ -147,7 +147,14 @@ function tokens(path) {
 /**
  * Log a value.
  */
+var rconsole;
+
 function log(v) {
+    if (rconsole) {
+        try {
+            rconsole.log(v);
+        } catch (e) {}
+    }
     try {
         console.log(v);
     } catch (e) {}
@@ -161,7 +168,7 @@ function debug(o) {
     try {
         for (f in o) {
             try {
-                console.log(f + '=' + o[f]);
+                log('debug ' + f + '=' + o[f]);
             } catch (e) {}
         }
     } catch (e) {}

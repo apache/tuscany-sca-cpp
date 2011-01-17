@@ -143,6 +143,8 @@ def application(e, r):
     if m == "GET":
         if fpath.endswith(".html"):
             return fileresult(e, r, "text/html", fpath)
+        if fpath.endswith(".css"):
+            return fileresult(e, r, "text/css", fpath)
         if fpath.endswith(".js"):
             return fileresult(e, r, "application/x-javascript", fpath)
         if fpath.endswith(".png"):
