@@ -31,7 +31,7 @@
 <body>
 
 <table style="position: absolute; top: 0px; left: 0px;" width="100%">
-<tr><th style="width: 338px;">Palette</th><th>Page</th></tr>
+<tr><th style="width: 338px;">Palette</th><th style="padding-top: 0px; padding-bottom: 0px;"><span>Page</span><span style="position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
 </table>
 
 <div id="page" style="position: absolute; top: 60px; left: 0px; width: 5000px; height: 5000px;">
@@ -41,9 +41,9 @@
 <span id="palette:button" style="position: absolute; left: 0px; top: 80px;"><input type="button" value="button"/></span>
 <span id="palette:entry" style="position: absolute; left: 0px; top: 120px;"><input type="text" value="field" size="5"/></span>
 <span id="palette:password" style="position: absolute; left: 0px; top: 160px;"><input type="password" value="password" size="5"/></span>
-<span id="palette:checkbox" style="position: absolute; left: 0px; top: 200px;"><input type="checkbox" value="checkbox"/>checkbox</span>
+<span id="palette:checkbox" style="position: absolute; left: 0px; top: 200px;"><input type="checkbox" value="checkbox"></input><span>checkbox</span></span>
 <span id="palette:select" style="position: absolute; left: 0px; top: 240px;"><select><option value="list">list</option></select></span>
-<span id="palette:link" style="position: absolute; left: 0px; top: 280px;"><a href="">link</a></span>
+<span id="palette:link" style="position: absolute; left: 0px; top: 280px;"><a href="/"><span>link</span></a></span>
 <span id="palette:text" style="position: absolute; left: 0px; top: 320px;"><span>text</span></span>
 <span id="palette:img" style="position: absolute; left: 0px; top: 360px;"><img/></span>
 
@@ -75,32 +75,72 @@ function atompage(doc) {
 /**
  * Get and display an app page.
  */
-function getpage(name, e) {
+function getpage(name, edit) {
     if (isNil(name))
         return;
     pages.get(name, function(doc) {
-        // Convert the page to XML
-        var x = writeStrings(writeXML(atompage(doc), false));
+        // Convert the page to XHTML
+        var xhtml = writeStrings(writeXML(atompage(doc), false));
 
         // Prepare page DOM in hidden buffer
         var buffer = $('buffer');
-        buffer.innerHTML = x;
+        buffer.innerHTML = xhtml;
 
         // Append page nodes to editor
         map(function(e) {
                 e.style.left = ui.posn(e.style.left) + 350;
-                pageedit.appendChild(e);
+                edit.appendChild(e);
                 return page.cover(e);
             }, nodeList(buffer.childNodes[0].childNodes));
     });
 }
 
+/**
+ * Save the current edited page.
+ */
+$('saveButton').onclick = function(e) {
+    // Copy page DOM to hidden buffer
+    var edit = $('page');
+    var buffer = $('buffer');
+    buffer.innerHTML = '<div id="page"></div>'
+    var div = buffer.childNodes[0];
+    div.innerHTML = edit.innerHTML;
+
+    // Remove nodes from palette and editor artifacts, which are
+    // not part of the page, as well as nodes positioned out of
+    // the editing area
+    map(function(e) {
+            if (isNil(e.id) || e.id == '' || e.id.substr(0, 8) == 'palette:') {
+                div.removeChild(e);
+                return e;
+            }
+            var x = ui.posn(e.style.left) - 350;
+            if (x < 0 || ui.posn(e.style.top) < 0) {
+                div.removeChild(e);
+                return e;
+            }
+            e.style.left = x;
+            return e;
+        }, nodeList(div.childNodes));
+
+    // Convert the page to XHTML
+    var lxhtml = readXHTMLElement(div);
+    var xhtml = writeStrings(writeXML(lxhtml, false));
+
+    // Update the page ATOM entry
+    var name = appname();
+    var entry = '<entry xmlns="http://www.w3.org/2005/Atom"><title type="text">' + name + '</title><id>' + name + '</id><content type="application/xml"><item>' +
+        xhtml + '</item></content></entry>';
+
+    pages.put(name, entry, function(e) {});
+};
+
 // Initialize the page editor
-var pageedit = $('page');
-page.initpage(pageedit);
+var edit = $('page');
+page.initpage(edit);
 
 // Get and display the current app page
-getpage(appname(), pageedit);
+getpage(appname(), edit);
 
 </script>
 </body>

@@ -47,7 +47,8 @@ function appendNodes(nodes, p) {
  * Return the child attributes of an element.
  */
 function childAttributes(e) {
-    return filter(function(n) { return n.nodeType == 2; }, nodeList(e.attributes));
+    return filter(function(n) {
+        return n.nodeType == 2; }, nodeList(e.attributes));
 }
 
 /**
@@ -67,17 +68,18 @@ function childText(e) {
 /**
  * Read a list of XML attributes.
  */
-function readAttributes(a) {
+function readAttributes(p, a) {
     if (isNil(a))
         return a;
-    return cons(mklist(attribute, "'" + car(a).nodeName, car(a).nodeValue), readAttributes(cdr(a)));
+    var x = car(a);
+    return cons(mklist(attribute, "'" + x.nodeName, x.nodeValue), readAttributes(p, cdr(a)));
 }
 
 /**
  * Read an XML element.
  */
-function readElement(e) {
-    var l = append(append(mklist(element, "'" + e.nodeName), readAttributes(childAttributes(e))), readElements(childElements(e)));
+function readElement(e, childf) {
+    var l = append(append(mklist(element, "'" + e.nodeName), readAttributes(e, childf(e))), readElements(childElements(e), childf));
     var t = childText(e);
     if (isNil(t))
         return l;
@@ -87,10 +89,10 @@ function readElement(e) {
 /**
  * Read a list of XML elements.
  */
-function readElements(l) {
+function readElements(l, childf) {
     if (isNil(l))
         return l;
-    return cons(readElement(car(l)), readElements(cdr(l)));
+    return cons(readElement(car(l), childf), readElements(cdr(l), childf));
 }
 
 /**
@@ -108,7 +110,7 @@ function isXML(l) {
 function parseXML(l) {
     var s = writeStrings(l);
     if (window.DOMParser) {
-        var p =new DOMParser();
+        var p = new DOMParser();
         return p.parseFromString(s, "text/xml");
     }
     var doc;
@@ -129,7 +131,36 @@ function readXMLDocument(doc) {
     var root = childElements(doc);
     if (isNil(root))
         return mklist();
-    return mklist(readElement(car(root)));
+    return mklist(readElement(car(root), childAttributes));
+}
+
+/**
+ * Read a list of values from an XHTML element.
+ */
+function readXHTMLElement(xhtml) {
+    // Special XHTML attribute filtering on IE
+    function ieChildAttributes(e) {
+        var a = filter(function(n) {
+            // Filter out empty and internal DOM attributes
+            if (n.nodeType != 2 || isNil(n.nodeValue) || n.nodeValue == '')
+                return false;
+            if (n.nodeName == 'contentEditable' || n.nodeName == 'maxLength' || n.nodeName == 'loop' || n.nodeName == 'start')
+                return false;
+            return true;
+        }, nodeList(e.attributes));
+
+        if (e.style.cssText == '')
+            return a;
+
+        // Add style attribute
+        var sa = new Object();
+        sa.nodeName = 'style';
+        sa.nodeValue = e.style.cssText;
+        return cons(sa, a);
+    }
+
+    var childf = (typeof(XMLSerializer) != 'undefined')? childAttributes : ieChildAttributes;
+    return mklist(readElement(xhtml, childf));
 }
 
 /**
@@ -208,16 +239,19 @@ function writeList(l, node, doc) {
 }
 
 /**
+ * Make a new XML document.
+ */
+function mkXMLDocument() { 
+    if (document.implementation && document.implementation.createDocument)
+        return document.implementation.createDocument('', '', null); 
+    return new ActiveXObject("MSXML2.DOMDocument"); 
+}
+
+/**
  * Convert a list of values to a list of strings representing an XML document.
  */
 function writeXML(l, xmlTag) {
-    function mkdoc() { 
-        if (document.implementation && document.implementation.createDocument)
-            return document.implementation.createDocument('', '', null); 
-        return new ActiveXObject("MSXML2.DOMDocument"); 
-    }
-
-    var doc = mkdoc();
+    var doc = mkXMLDocument();
     writeList(l, doc, doc);
     if (!xmlTag)
         return writeXMLDocument(doc);

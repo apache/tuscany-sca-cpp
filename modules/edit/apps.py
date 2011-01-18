@@ -27,12 +27,14 @@ def appid(id):
 # Post a new app to the apps db
 def post(collection, app, cache):
     id = appid((str(uuid.uuid1()),))
-    cache.put((id,), app)
+    comp = caddr(app)
+    cache.put((id,), comp)
     return id
 
 # Put an app into the apps db
 def put(id, app, cache):
-    cache.put(appid(id), app)
+    comp = caddr(app)
+    cache.put(appid(id), comp)
     return True
 
 # Get an app from the apps db

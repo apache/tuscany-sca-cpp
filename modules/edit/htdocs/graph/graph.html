@@ -31,7 +31,7 @@
 <body>
 
 <table style="position: absolute; top: 0px; left: 0px;" width="100%">
-<tr><th style="width: 338px;">Palette</th><th>App</th></tr>
+<tr><th style="width: 338px;">Palette</th><th style="padding-top: 0px; padding-bottom: 0px;"><span>App</span><span style="position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
 </table>
 
 <script type="text/javascript">
@@ -40,7 +40,7 @@ var palettes = sca.reference(editWidget, "palettes");
 var apps = sca.reference(editWidget, "apps");
 
 // Setup remote log
-rconsole = sca.defun(sca.reference(editWidget, "log"), "log");
+//rconsole = sca.defun(sca.reference(editWidget, "log"), "log");
 
 /**
  * Return the current app name.
