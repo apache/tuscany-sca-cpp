@@ -31,7 +31,7 @@
 <body>
 
 <table style="position: absolute; top: 0px; left: 0px;" width="100%">
-<tr><th style="width: 338px;">Palette</th><th style="padding-top: 0px; padding-bottom: 0px;"><span>App</span><span style="position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
+<tr><th style="width: 338px;">Palette</th><th style="padding-top: 0px; padding-bottom: 0px;"><span>Composition</span><span style="position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
 </table>
 
 <script type="text/javascript">
@@ -43,11 +43,14 @@ var apps = sca.reference(editWidget, "apps");
 //rconsole = sca.defun(sca.reference(editWidget, "log"), "log");
 
 /**
- * Return the current app name.
+ * The current app name.
  */
-function appname() {
-    return ui.queryParams()['app'];
-}
+var appname = ui.queryParams()['app'];
+
+/**
+ * The current app composite.
+ */
+var composite;
 
 /**
  * Return the composite in an ATOM entry.
@@ -65,7 +68,8 @@ function getapp(name, g) {
     if (isNil(name))
         return;
     apps.get(name, function(doc) {
-        appendNodes(graph.composite(atomcomposite(doc), graph.mkpath().move(350,0)), g);
+        composite = atomcomposite(doc);
+        graph.edit(composite, graph.composite(composite, graph.mkpath().move(350,0)), g);
     });
 }
 
@@ -77,7 +81,7 @@ function getpalette(name, g, bg, palette, gpalettes) {
         return;
     palettes.get(name, function(doc) {
         gpalettes[name] = graph.composite(atomcomposite(doc), graph.mkpath().move(150,0));
-        appendNodes(gpalettes[name], name == spalette? g : bg);
+        graph.display(gpalettes[name], name == spalette? g : bg);
     });
 }
 
@@ -87,15 +91,30 @@ function getpalette(name, g, bg, palette, gpalettes) {
  */
 function installpalette(name, pos, g, bg, palette, gpalettes) {
     var b = graph.mkbutton(name, pos);
-    appendNodes(mklist(b), g);
+    graph.display(mklist(b), g);
     b.onclick = function() {
+
         // Display the selected palette
         spalette = name;
         for (var pn in gpalettes)
-            appendNodes(gpalettes[pn], pn == spalette? g : bg);
+            graph.display(gpalettes[pn], pn == spalette? g : bg);
     }
     getpalette(name, g, bg, palette, gpalettes);
 }
+
+/**
+ * Save the current edited page.
+ */
+$('saveButton').onclick = function(e) {
+
+    // Update the page ATOM entry
+    var compxml = writeXML(composite, false);
+    var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
+        '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml"><item>' +
+        compxml + '</item></content></entry>';
+    apps.put(appname, entry, function() {
+    });
+};
 
 // Create editor graph area
 var g = graph.mkgraph(graph.mkpath().move(0,50));
@@ -111,7 +130,7 @@ installpalette('social', graph.mkpath().move(0,220), g, bg, spalette, gpalettes)
 installpalette('sensors', graph.mkpath().move(0,290), g, bg, spalette, gpalettes);
 
 // Get and display the current app
-getapp(appname(), g);
+getapp(appname, g);
 
 </script>
 </body>

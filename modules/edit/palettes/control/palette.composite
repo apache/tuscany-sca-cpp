@@ -28,7 +28,7 @@
     <service name="ifelse" promote="ifelse"/>
     <service name="foreach" promote="foreach"/>
 
-    <component name="page" t:color="yellow">
+    <component name="page" t:color="yellow1">
         <documentation>when page requested</documentation>
         <t:implementation.python script="page.py"/>
         <service name="page" t:visible="false"/>
@@ -36,7 +36,7 @@
         <reference name="do" t:align="bottom"/>
     </component>
     
-    <component name="every" t:color="yellow">
+    <component name="every" t:color="yellow1">
         <documentation>every n seconds</documentation>
         <t:implementation.python script="every.py"/>
         <service name="every" t:visible="false"/>
@@ -44,14 +44,14 @@
         <reference name="do" t:align="bottom"/>
     </component>
     
-    <component name="if" t:color="yellow">
+    <component name="if" t:color="yellow1">
         <t:implementation.python script="if_.py"/>
         <service name="if" t:align="top"/>
         <reference name="condition"/>
         <reference name="do" t:align="bottom"/>
     </component>
     
-    <component name="ifelse" t:color="yellow">
+    <component name="ifelse" t:color="yellow1">
         <documentation>if else</documentation>
         <t:implementation.python script="ifelse.py"/>
         <service name="ifelse" t:align="top"/>
@@ -60,7 +60,7 @@
         <reference name="else" t:align="bottom"/>
     </component>
     
-    <component name="foreach" t:color="yellow">
+    <component name="foreach" t:color="yellow1">
         <documentation>for each</documentation>
         <t:implementation.python script="ifelse.py"/>
         <service name="foreach" t:align="top"/>

@@ -18,7 +18,7 @@
 -->
 <html>
 <head>
-<title>App Editor</title>
+<title>App Composition Editor</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -37,14 +37,12 @@
 
 <script type="text/javascript">
 /**
- * Return the current app name.
+ * The current app name.
  */
-function appname() {
-    return ui.queryParams()['app'];
-}
+var appname = ui.queryParams()['app'];
 
 // Load the menu bar
-ui.loadwidget('menu', '/menu.html?app=' + appname());
+ui.loadwidget('menu', '/menu.html?app=' + appname);
 
 /**
  * Display the editor for an app.
@@ -60,7 +58,7 @@ function editapp(name) {
 }
 
 // Display the editor for the current app
-editapp(appname());
+editapp(appname);
 
 </script>
 </body>

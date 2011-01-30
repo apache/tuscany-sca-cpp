@@ -218,3 +218,121 @@ function memo(obj, key, f) {
     return obj[key] = f();
 }
 
+/**
+ * Un-memoize a value.
+ */
+function unmemo(obj, key) {
+    obj[key] = null;
+    return true;
+}
+
+/**
+ * Functions with side effects. Use with moderation.
+ */
+
+/**
+ * Set the car of a list.
+ */
+function setcar(l, v) {
+    l[0] = v;
+    return l;
+}
+
+/**
+ * Set the cadr of a list.
+ */
+function setcadr(l, v) {
+    l[1] = v;
+    return l;
+}
+
+/**
+ * Set the caddr of a list.
+ */
+function setcaddr(l, v) {
+    l[2] = v;
+    return l;
+}
+
+/**
+ * Append the elements of a list to a list.
+ */
+function setappend(a, b) {
+    if (isNil(b))
+        return a;
+    a.push(car(b));
+    return setappend(a, cdr(b));
+}
+
+/**
+ * Set the cdr of a list.
+ */
+function setcdr(a, b) {
+    a.length = 1;
+    return setappend(a, b);
+}
+
+/**
+ * Set the contents of a list.
+ */
+function setlist(a, b) {
+    a.length = 0;
+    return setappend(a, b);
+}
+
+/**
+ * Insert a value at a given position in a list.
+ */
+function insertn$(v, n, l) {
+    function upshift(i) {
+        if (i == n)
+            return true;
+        l[i] = l[i - 1];
+        return upshift(i - 1);
+    }
+
+    upshift(length(l));
+    l[n] = v;
+    return l;
+}
+
+/**
+ * Insert a value at the beginning of a list.
+ */
+function insert$(v, l) {
+    return insertn$(v, 0, l);
+}
+
+/**
+ * Append a list at the end of a list.
+ */
+function append$(a, b) {
+    if (isNil(b))
+        return a;
+    a.push(car(b));
+    return append$(a, cdr(b));
+}
+
+/**
+ * Delete a value from a list.
+ */
+function delete$(v, l) {
+    function dnshift(i, max) {
+        if (i >= max)
+            return true;
+        l[i] = l[i + 1];
+        return dnshift(i + 1, max);
+    }
+
+    dnshift(n, length(l) - 1);
+    l.pop();
+    return l;
+}
+
+/**
+ * Delete a value at the beginning of a list.
+ */
+function delete$(l) {
+    return deleten$(l, 0);
+}
+

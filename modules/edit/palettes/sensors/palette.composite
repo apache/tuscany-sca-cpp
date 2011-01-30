@@ -24,7 +24,7 @@
         
     <service name="location" promote="location"/>
 
-    <component name="location" t:color="magenta">
+    <component name="location" t:color="magenta1">
         <t:implementation.python script="location.py"/>
         <service name="location"/>
     </component>

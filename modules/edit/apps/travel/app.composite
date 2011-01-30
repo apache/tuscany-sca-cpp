@@ -24,7 +24,7 @@
 
     <service name="SCAToursUserInterface" promote="SCAToursUserInterface"/>
 
-    <component name="SCAToursUserInterface" t:color="green">
+    <component name="SCAToursUserInterface" t:color="green1">
         <t:implementation.widget location="scatours.html"/>
         <service name="Widget">
             <t:binding.http uri="/scatours"/>
@@ -80,7 +80,7 @@
         <service name="CurrencyConverter"/>
     </component>
 
-    <component name="HotelPartner" t:color="orange">
+    <component name="HotelPartner" t:color="orange1">
         <implementation.java class="com.tuscanyscatours.hotel.impl.HotelImpl"/>
         <service name="Search">
             <binding.ws name="searchws" uri="http://localhost:8086/Hotel/Search"/>
@@ -92,7 +92,7 @@
         <service name="Book"/>
     </component>  
     
-    <component name="FlightPartner" t:color="orange">
+    <component name="FlightPartner" t:color="orange1">
         <implementation.java class="com.tuscanyscatours.flight.impl.FlightImpl"/>
         <service name="Search">
             <interface.java interface="com.tuscanyscatours.common.Search" 
@@ -106,7 +106,7 @@
         <service name="Book"/>
     </component> 
     
-    <component name="CarPartner" t:color="orange">
+    <component name="CarPartner" t:color="orange1">
         <implementation.java class="com.tuscanyscatours.car.impl.CarImpl"/>
         <service name="Search">
             <binding.ws name="searchws" uri="http://localhost:8086/Car/Search"/>
@@ -170,7 +170,7 @@
         <reference name="cartUpdates" target="ShoppingCart/CartUpdates"/>      
     </component>    
 
-    <component name="TripPartner" t:color="orange">
+    <component name="TripPartner" t:color="orange1">
         <implementation.java class="com.tuscanyscatours.trip.impl.TripImpl"/>
         <service name="Search">
             <binding.ws name="searchws" uri="http://localhost:8085/Trip/Search"/>
@@ -191,7 +191,7 @@
         </reference> 
     </component>    
     
-    <component name="CartStore" t:color="yellow">
+    <component name="CartStore" t:color="yellow1">
         <!-- Add service element to specify alignment -->
         <service name="CartStore" t:align="top"/>
         <implementation.java class="com.tuscanyscatours.shoppingcart.impl.CartStoreImpl"/>
@@ -220,19 +220,19 @@
     </component>    
 
     <!-- Add placeholder components representing external endpoints -->
-    <component name="HotelSearch" t:color="red">
+    <component name="HotelSearch" t:color="red1">
         <service name="HotelSearch"/>
         <implementation.java class="com.tuscanyscatours.PlaceHolderImpl" />
     </component>    
-    <component name="FlightSearch" t:color="red">
+    <component name="FlightSearch" t:color="red1">
         <service name="FlightSearch"/>
         <implementation.java class="com.tuscanyscatours.PlaceHolderImpl" />
     </component>    
-    <component name="CarSearch" t:color="red">
+    <component name="CarSearch" t:color="red1">
         <service name="CarSearch"/>
         <implementation.java class="com.tuscanyscatours.PlaceHolderImpl" />
     </component>    
-    <component name="TripSearch" t:color="red">
+    <component name="TripSearch" t:color="red1">
         <service name="TripSearch"/>
         <implementation.java class="com.tuscanyscatours.PlaceHolderImpl" />
     </component>    

@@ -20,7 +20,7 @@
 /**
  * SCDL parsing functions.
  */
-var scdl = new Object();
+var scdl = {};
 
 /**
  * Returns a composite element.

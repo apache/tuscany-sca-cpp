@@ -17,6 +17,6 @@
 
 
 moddir = $(prefix)/modules/edit
-nobase_dist_mod_DATA = htdocs/*.html htdocs/dash/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html
-EXTRA_DIST = htdocs/*.html htdocs/dash/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html
+nobase_dist_mod_DATA = htdocs/*.html htdocs/dash/*.html htdocs/app/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html
+EXTRA_DIST = htdocs/*.html htdocs/dash/*.html htdocs/app/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html
 

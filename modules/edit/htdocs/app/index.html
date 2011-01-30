@@ -18,31 +18,49 @@
 -->
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="/ui.css">
+<title>App Editor</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="stylesheet" type="text/css" href="/ui.css"/>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 </head>
 <body>
 <div id="menu"></div>
 
+<br/>
+<h1><span id="title"></span></h1>
+</br>
+
+<div id="app"></div>
+
 <script type="text/javascript">
-ui.installwidget();
+/**
+ * The current app name.
+ */
+var appname = ui.queryParams()['app'];
+
+// Load the menu bar
+ui.loadwidget('menu', '/menu.html?app=' + appname);
 
 /**
- * Return the current app name.
+ * Display the page editor for an app.
  */
-function appname() {
-    return ui.queryParams()['app'];
+function editapp(name) {
+    if (isNil(name))
+        return;
+    $('title').innerHTML = 'Editing: ' + name;
+    $('app').innerHTML =
+        '<iframe id="appFrame" style="height: 100%; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="app.html?' +
+        'app=' + name +
+        '"></iframe>';
 }
 
-// Display the menu bar
-var mdiv = $('menu'); 
-var name = appname();
-mdiv.innerHTML = ui.menubar(
-    append(mklist(ui.menu('Home', '/'), ui.menu('Dashboard', '/dash')),
-            (isNil(name) || name == 'undefined')? mklist() : mklist(ui.menu('App', '/app/?app=' + name), ui.menu('Composition', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name))),
-    mklist(ui.menu('Sign out', '/logout')));
+// Display the editor for the current app
+editapp(appname);
 
 </script>
 </body>
 </html>
+

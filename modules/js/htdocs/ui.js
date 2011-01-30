@@ -21,7 +21,7 @@
  * UI utility functions.
  */
 
-var ui = new Object();
+var ui = {};
 
 /**
  * Return true if the current browser is Internet Explorer.
@@ -266,7 +266,7 @@ ui.installwidget = function() {
 /**
  * Convert a CSS position to a numeric position.
  */
-ui.posn = function(p) {
+ui.csspos = function(p) {
     if (p == '')
         return 0;
     return Number(p.substr(0, p.length - 2));

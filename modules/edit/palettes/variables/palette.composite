@@ -29,17 +29,17 @@
     <service name="first" promote="first"/>
     <service name="rest" promote="rest"/>
 
-    <component name="number" t:color="orange">
+    <component name="number" t:color="orange1">
         <t:implementation.python script="number.py"/>
         <service name="number"/>
     </component>
     
-    <component name="text" t:color="orange">
+    <component name="text" t:color="orange1">
         <t:implementation.python script="text.py"/>
         <service name="text"/>
     </component>
     
-    <component name="set" t:color="orange">
+    <component name="set" t:color="orange1">
         <documentation>set variable</documentation>
         <t:implementation.python script="set.py"/>
         <service name="set"/>
@@ -47,7 +47,7 @@
         <reference name="variable"/>
     </component>
     
-    <component name="list" t:color="orange">
+    <component name="list" t:color="orange1">
         <documentation>make a list</documentation>
         <t:implementation.python script="list_.py"/>
         <service name="list"/>
@@ -55,14 +55,14 @@
         <reference name="rest"/>
     </component>
     
-    <component name="first" t:color="orange">
+    <component name="first" t:color="orange1">
         <documentation>first of a list</documentation>
         <t:implementation.python script="first.py"/>
         <service name="first"/>
         <reference name="value"/>
     </component>
     
-    <component name="rest" t:color="orange">
+    <component name="rest" t:color="orange1">
         <documentation>rest of a list</documentation>
         <t:implementation.python script="rest.py"/>
         <service name="rest"/>

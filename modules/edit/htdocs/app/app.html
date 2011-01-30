@@ -1,0 +1,85 @@
+<!--
+    * Licensed to the Apache Software Foundation (ASF) under one
+    * or more contributor license agreements.  See the NOTICE file
+    * distributed with this work for additional information
+    * regarding copyright ownership.  The ASF licenses this file
+    * to you under the Apache License, Version 2.0 (the
+    * "License"); you may not use this file except in compliance
+    * with the License.  You may obtain a copy of the License at
+    * 
+    *   http://www.apache.org/licenses/LICENSE-2.0
+    * 
+    * Unless required by applicable law or agreed to in writing,
+    * software distributed under the License is distributed on an
+    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    * KIND, either express or implied.  See the License for the
+    * specific language governing permissions and limitations
+    * under the License.    
+-->
+<html>
+<head>  
+<link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/elemutil.js"></script>
+<script type="text/javascript" src="/xmlutil.js"></script>
+<script type="text/javascript" src="/atomutil.js"></script>
+<script type="text/javascript" src="/scdl.js"></script>
+<script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/component.js"></script>
+</head>  
+<body>
+
+<table style="position: absolute; top: 0px; left: 0px;" width="100%">
+<tr><th><span>App Listing Information</span><span style="padding-top: 0px; padding-bottom:0px; position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
+</table>
+<br>
+<br>
+
+<div>
+<form id="appForm">
+<table width="100%">
+<tr><tr><td><b>App Title:</b></td></tr>
+<tr><td><input type="text" id="appTitle" size="20"/></td></tr>
+</table>
+</form>
+</div>
+
+<script type="text/javascript">
+
+// Init service references
+var editWidget = sca.component("EditWidget");
+var dashboard = sca.reference(editWidget, "dashboard");
+
+/**
+ * The current app name.
+ */
+var appname = ui.queryParams()['app'];
+
+/**
+ * Get and display an app.
+ */
+function getapp(name) {
+    dashboard.get(name, function(doc) {
+        var entry = atom.readATOMEntryDocument(doc);
+        $('appTitle').value = car(entry);
+    });
+}
+
+/**
+ * Save an app.
+ */
+$('saveButton').onclick = function() {
+    var title = $('appTitle').value;
+    var app = mklist(title, appname, mklist());
+    var entry = atom.writeATOMEntry(app);
+
+    dashboard.put(appname, car(entry));
+    return false;
+};
+
+// Get the current app
+getapp(appname);
+
+</script>
+</body>
+</html>

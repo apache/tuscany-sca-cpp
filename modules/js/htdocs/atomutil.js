@@ -20,7 +20,7 @@
 /**
  * ATOM data conversion functions.
  */
-var atom = new Object();
+var atom = {};
 
 /**
  * Convert a list of elements to a list of values representing an ATOM entry.

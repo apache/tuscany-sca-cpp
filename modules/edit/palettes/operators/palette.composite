@@ -35,37 +35,37 @@
     <service name="add" promote="add"/>
     <service name="subtract" promote="subtract"/>
 
-    <component name="true" t:color="green">
+    <component name="true" t:color="green1">
         <t:implementation.python script="true_.py"/>
         <service name="true"/>
     </component>
     
-    <component name="false" t:color="green">
+    <component name="false" t:color="green1">
         <t:implementation.python script="false_.py"/>
         <service name="false"/>
     </component>
     
-    <component name="and" t:color="green">
+    <component name="and" t:color="green1">
         <t:implementation.python script="and_.py"/>
         <service name="and"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
-    <component name="or" t:color="green">
+    <component name="or" t:color="green1">
         <t:implementation.python script="or_.py"/>
         <service name="or"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
-    <component name="not" t:color="green">
+    <component name="not" t:color="green1">
         <t:implementation.python script="not_.py"/>
         <service name="not"/>
         <reference name="value"/>
     </component>
     
-    <component name="equals" t:color="green">
+    <component name="equals" t:color="green1">
         <documentation>=</documentation>
         <t:implementation.python script="equals.py"/>
         <service name="equals">
@@ -75,7 +75,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="greater" t:color="green">
+    <component name="greater" t:color="green1">
         <documentation>gt</documentation>
         <t:implementation.python script="greater.py"/>
         <service name="greater">
@@ -85,7 +85,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="lesser" t:color="green">
+    <component name="lesser" t:color="green1">
         <documentation>lt</documentation>
         <t:implementation.python script="lesser.py"/>
         <service name="lesser">
@@ -95,7 +95,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="multiply" t:color="green">
+    <component name="multiply" t:color="green1">
         <documentation>*</documentation>
         <t:implementation.python script="multiply.py"/>
         <service name="multiply">
@@ -105,7 +105,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="divide" t:color="green">
+    <component name="divide" t:color="green1">
         <documentation>/</documentation>
         <t:implementation.python script="divide.py"/>
         <service name="divide">
@@ -115,7 +115,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="add" t:color="green">
+    <component name="add" t:color="green1">
         <documentation>+</documentation>
         <t:implementation.python script="add.py"/>
         <service name="add">
@@ -125,7 +125,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="subtract" t:color="green">
+    <component name="subtract" t:color="green1">
         <documentation>-</documentation>
         <t:implementation.python script="subtract.py"/>
         <service name="subtract">

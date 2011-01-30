@@ -28,10 +28,10 @@ font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-si
 }
 
 th {
-font-weight: bold; background-color: #e5ecf9; color: #598edd;
+font-weight: bold; background-color: #96d333; color: #000000;
 text-align: left; padding-left: 2px; padding-right: 8px; padding-top: 2px; padding-bottom: 4px; vertical-align: text-top;
 border-top: 1px; border-bottom: 1px; border-left: 0px; border-right: 0px;
-border-style: solid; border-top-color: #a2bae7; border-bottom-color: #d1d3d4;
+border-style: solid; border-top-color: #96d333; border-bottom-color: #96d333;
 }
 
 td {
@@ -52,11 +52,11 @@ vertical-align: middle;
 }
 
 a:link {
-color: blue;
+color: #96d333;
 }
 
 a:visited {
-color: blue;
+color: #96d333;
 }
 
 h1 {

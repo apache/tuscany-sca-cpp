@@ -34,7 +34,7 @@
 /**
  * Escape a character.
  */
-var JSONClient = new Object();
+var JSONClient = {};
 
 JSONClient.escapeJSONChar = function(c) {
     if(c == "\"" || c == "\\") return "\\" + c;
@@ -450,7 +450,7 @@ if (typeof DOMParser == "undefined") {
  * Public API.
  */
 
-var sca = new Object();
+var sca = {};
 
 /**
  * Return a component.

@@ -203,15 +203,25 @@ function selector(s) {
 }
 
 /**
- * Return the value of the attribute with the given name.
+ * Return the attribute with the given name.
  */
-function namedAttributeValue(name, l) {
+function namedAttribute(name, l) {
     return memo(l, name, function() {
         var f = filter(function(v) { return isAttribute(v) && attributeName(v) == name; }, l);
         if (isNil(f))
             return null;
-        return caddr(car(f));
+        return car(f);
     });
+}
+
+/**
+ * Return the value of the attribute with the given name.
+ */
+function namedAttributeValue(name, l) {
+    var a = namedAttribute(name, l);
+    if (a == null)
+        return null
+    return attributeValue(a);
 }
 
 /**
@@ -231,5 +241,43 @@ function namedElementChild(name, l) {
     if (isNil(f))
         return null;
     return car(f);
+}
+
+/**
+ * Side effect functions. Use with moderation.
+ */
+
+/**
+ * Set the value of the attribute with the given name.
+ */
+function setNamedAttributeValue(name, v, l) {
+    var f = filter(function(v) { return isAttribute(v) && attributeName(v) == name; }, l);
+    if (!isNil(f)) {
+
+        // Un-memoize attribute and change its value
+        unmemo(l, name);
+        car(f)[2] = '' + v;
+        return v;
+    }
+
+    // Insert new attribute
+    insertn$(mklist(attribute, name, '' + v), l, 2);
+    return v;
+}
+
+/**
+ * Set the value of an element.
+ */
+function setElementValue(v, l) {
+    if (elementHasValue(l)) {
+
+        // Change existing element value
+        l[length(l) - 1] = v;
+        return v;
+    }
+
+    // Append element value
+    $append(l, mklist(v));
+    return v;
 }
 
