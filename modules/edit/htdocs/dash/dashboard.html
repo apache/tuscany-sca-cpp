@@ -58,9 +58,6 @@
 </div>
 
 <script type="text/javascript">
-// Install the widget
-ui.installwidget();
-
 // Init service references
 var editWidget = sca.component("EditWidget");
 var dashboard = sca.reference(editWidget, "dashboard");
@@ -86,7 +83,7 @@ function getapps(sync) {
 
             apps += '<tr>';
             //apps += '<td><input name="apps" type="checkbox" value="' + name + '">' + '<a href=\"' + '/app/?app=' + name + '\">' + name + '</a></td>';
-            apps += '<td><a href=\"' + '/app/?app=' + name + '\">' + name + '</a></td>';
+            apps += '<td><a href=\"' + '/app/?app=' + name + '\" target=\"_parent\">' + name + '</a></td>';
             apps += '<td class="tdw">' + title + '</td>';
             apps += '</tr>';
         }

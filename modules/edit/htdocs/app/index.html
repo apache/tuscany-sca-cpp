@@ -51,10 +51,7 @@ function editapp(name) {
     if (isNil(name))
         return;
     $('title').innerHTML = 'Editing: ' + name;
-    $('app').innerHTML =
-        '<iframe id="appFrame" style="height: 100%; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="app.html?' +
-        'app=' + name +
-        '"></iframe>';
+    ui.loadiframe('app', 'app.html?app=' + name);
 }
 
 // Display the editor for the current app

@@ -17,7 +17,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+here=`readlink -f $0`; here=`dirname $here`
+jsprefix=`readlink -f $here/../js`
+
 ../http/httpd-conf tmp localhost 8090 htdocs
+cat >>tmp/conf/httpd.conf <<EOF
+# Override CSS
+Alias /ui.css $jsprefix/htdocs/uiblue.css
+
+EOF
 ../server/server-conf tmp
 ../python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

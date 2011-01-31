@@ -28,10 +28,10 @@ font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-si
 }
 
 th {
-font-weight: bold; background-color: #e5ecf9; color: #598edd;
+font-weight: bold; background-color: #3b5998; color: #ffffff;
 text-align: left; padding-left: 2px; padding-right: 8px; padding-top: 2px; padding-bottom: 4px; vertical-align: text-top;
 border-top: 1px; border-bottom: 1px; border-left: 0px; border-right: 0px;
-border-style: solid; border-top-color: #a2bae7; border-bottom-color: #d1d3d4;
+border-style: solid; border-top-color: #000000; border-bottom-color: #000000;
 }
 
 td {
@@ -57,22 +57,21 @@ vertical-align: middle;
 }
 
 a:link {
-color: blue;
+color: #3b5998;
 }
 
 a:visited {
-color: blue;
+color: #3b5998;
 }
 
 .amenu {
-color: blue;
-text-decoration: underline
+font-weight: bold;
+color: #ffffff;
 }
 
 .smenu {
 font-weight: bold;
-color: blue;
-text-decoration: underline
+color: #ffffff;
 }
 
 h1 {
@@ -101,13 +100,14 @@ cursor: pointer; cursor: hand;
 }
 
 .tbar {
+font-weight: bold; background-color: #3b5998; color: #ffffff;
 margin: 0px;
-padding-top: 0px; padding-left: 0px; padding-right: 0px; padding-bottom: 3px;
-border-bottom: 1px solid #a2bae7;
+padding-top: 4px; padding-left: 2px; padding-right: 8px; padding-bottom: 8px; vertical-align: text-top;
+border-bottom: 1px solid #000000;
 }
 
 .ltbar {
-padding-left: 0px; padding-top: 0px; padding-right: 8px; white-space: nowrap; vertical-align: top;
+padding-left: 0px; padding-top: 0px; padding-right: 16px; white-space: nowrap; vertical-align: top;
 }
 
 .rtbar {

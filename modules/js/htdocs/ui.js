@@ -54,8 +54,8 @@ ui.menu = function(name, href) {
             }
 
             if (complete(this.href) != complete(window.top.location.pathname))
-                return '<a href="' + this.href + '" target="_parent">' + this.name + '</a>';
-            return '<span><b>' + this.name + '</b></span>';
+                return '<a href="' + this.href + '" target="_parent"><span class=amenu>' + this.name + '</span></a>';
+            return '<a href="' + this.href + '" target="_parent"><span class=smenu>' + this.name + '</span></a>';
         };
     }
     return new Menu(name, href);
@@ -261,6 +261,16 @@ ui.installwidget = function() {
         }
     }
     return true;
+};
+
+/**
+ * Load an iframe into an element.
+ */
+ui.loadiframe = function(el, doc) {
+    var f = el + 'Frame';
+    $(el).innerHTML =
+        '<iframe id="' + f + '" class="loadedframe" scrolling="no" frameborder="0" src="' + doc + '"></iframe>';
+    return f;
 };
 
 /**
