@@ -30,9 +30,13 @@
 </head>  
 <body>
 
-<table style="position: absolute; top: 0px; left: 0px;" width="100%">
-<tr><th style="width: 338px;">Palette</th><th style="padding-top: 0px; padding-bottom: 0px;"><span>Composition</span><span style="position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
+<div style="position: absolute; top: 0px; left: 0px; right: 0px;">
+
+<table width="100%">
+<tr><th style="width: 338px;">Components</th><th style="padding-top: 0px; padding-bottom: 0px;"><span id="appname"></span><span style="position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
 </table>
+
+</div>
 
 <script type="text/javascript">
 var editWidget = sca.component("EditWidget");
@@ -46,6 +50,7 @@ var apps = sca.reference(editWidget, "apps");
  * The current app name.
  */
 var appname = ui.queryParams()['app'];
+$('appname').innerHTML = 'Composition: ' + appname;
 
 /**
  * The current app composite.

@@ -52,8 +52,16 @@ function cddr(l) {
     return cdr(cdr(l));
 }
 
+function cdddr(l) {
+    return cdr(cdr(cdr(l)));
+}
+
 function caddr(l) {
     return car(cddr(l));
+}
+
+function cadddr(l) {
+    return car(cdddr(l));
 }
 
 function append(a, b) {
@@ -213,16 +221,18 @@ function writeValue(v) {
  * Apply a function and memoize its result.
  */
 function memo(obj, key, f) {
-    if (obj[key])
-        return obj[key];
-    return obj[key] = f();
+    if (!obj[memo])
+        obj.memo = {};
+    if (obj.memo[key])
+        return obj.memo[key];
+    return obj.memo[key] = f();
 }
 
 /**
- * Un-memoize a value.
+ * Un-memoize store results.
  */
-function unmemo(obj, key) {
-    obj[key] = null;
+function unmemo(obj) {
+    obj.memo = {};
     return true;
 }
 
@@ -276,63 +286,9 @@ function setcdr(a, b) {
  * Set the contents of a list.
  */
 function setlist(a, b) {
+    if (b == a)
+        return b;
     a.length = 0;
     return setappend(a, b);
-}
-
-/**
- * Insert a value at a given position in a list.
- */
-function insertn$(v, n, l) {
-    function upshift(i) {
-        if (i == n)
-            return true;
-        l[i] = l[i - 1];
-        return upshift(i - 1);
-    }
-
-    upshift(length(l));
-    l[n] = v;
-    return l;
-}
-
-/**
- * Insert a value at the beginning of a list.
- */
-function insert$(v, l) {
-    return insertn$(v, 0, l);
-}
-
-/**
- * Append a list at the end of a list.
- */
-function append$(a, b) {
-    if (isNil(b))
-        return a;
-    a.push(car(b));
-    return append$(a, cdr(b));
-}
-
-/**
- * Delete a value from a list.
- */
-function delete$(v, l) {
-    function dnshift(i, max) {
-        if (i >= max)
-            return true;
-        l[i] = l[i + 1];
-        return dnshift(i + 1, max);
-    }
-
-    dnshift(n, length(l) - 1);
-    l.pop();
-    return l;
-}
-
-/**
- * Delete a value at the beginning of a list.
- */
-function delete$(l) {
-    return deleten$(l, 0);
 }
 

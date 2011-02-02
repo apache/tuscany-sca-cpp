@@ -57,21 +57,21 @@ vertical-align: middle;
 }
 
 a:link {
-color: blue;
+color: #598edd;
 }
 
 a:visited {
-color: blue;
+color: #598edd;
 }
 
 .amenu {
-color: blue;
+color: #598edd;
 text-decoration: underline
 }
 
 .smenu {
 font-weight: bold;
-color: blue;
+color: #598edd;
 text-decoration: underline
 }
 

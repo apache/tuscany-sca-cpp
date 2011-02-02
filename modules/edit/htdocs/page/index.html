@@ -29,20 +29,18 @@
 <body>
 <div id="menu"></div>
 
-<br/>
-<h1><span id="title"></span></h1>
-</br>
-
-<div id="page"></div>
-
 <script type="text/javascript">
-/**
- * The current app name.
- */
+
+// Get the app name
 var appname = ui.queryParams()['app'];
 
 // Load the menu bar
 ui.loadwidget('menu', '/menu.html?app=' + appname);
+</script>
+
+<div id="page"></div>
+
+<script type="text/javascript">
 
 /**
  * Display the page editor for an app.
@@ -50,7 +48,6 @@ ui.loadwidget('menu', '/menu.html?app=' + appname);
 function editapp(name) {
     if (isNil(name))
         return;
-    $('title').innerHTML = 'Editing: ' + name;
     $('page').innerHTML =
         '<iframe id="pageFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="page.html?' +
         'app=' + name +

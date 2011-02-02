@@ -29,14 +29,15 @@
 <body>
 <div id="menu"></div>
 
-<br/>
-<h1>Welcome to your App Dashboard!</h1>
-<br/>
+<script type="text/javascript">
+
+// Load the menu bar
+ui.loadwidget('menu', '/menu.html');
+</script>
+
 <div id="dashboard"></div>
 
 <script type="text/javascript">
-// Load the menu bar
-ui.loadwidget('menu', '/menu.html');
 
 // Load the dashboard
 ui.loadiframe('dashboard', 'dashboard.html');

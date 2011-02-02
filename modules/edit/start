@@ -23,7 +23,7 @@ jsprefix=`readlink -f $here/../js`
 ../http/httpd-conf tmp localhost 8090 htdocs
 cat >>tmp/conf/httpd.conf <<EOF
 # Override CSS
-Alias /ui.css $jsprefix/htdocs/uiblue.css
+Alias /ui.css $jsprefix/htdocs/uicyan.css
 
 EOF
 ../server/server-conf tmp

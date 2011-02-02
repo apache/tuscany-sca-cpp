@@ -29,12 +29,21 @@
 <body>
 <div id="menu"></div>
 
+<script type="text/javascript">
+
+// Load the menu bar
+ui.loadwidget('menu', '/menu.html');
+</script>
+
 <br/>
 <h1>App Edit Tools</h1>
+<br/>
+
 <div id="main"></div>
 
 <script type="text/javascript">
-ui.loadwidget('menu', '/menu.html');
+
+// Load the main page
 ui.loadiframe('main', 'main.html');
 </script>
 </body>

@@ -29,19 +29,22 @@
 </head>  
 <body>
 
-<table style="position: absolute; top: 0px; left: 0px;" width="100%">
-<tr><th><span>App Listing Information</span><span style="padding-top: 0px; padding-bottom:0px; position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
+<div style="position: absolute; top: 0px; left: 0px; right: 0px;">
+
+<table width="100%">
+<tr><th><span id="appname"></span><span style="padding-top: 0px; padding-bottom:0px; position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
 </table>
-<br>
 <br>
 
 <div>
 <form id="appForm">
 <table width="100%">
 <tr><tr><td><b>App Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" size="20"/></td></tr>
+<tr><td><input type="text" id="appTitle" size="30"/></td></tr>
 </table>
 </form>
+</div>
+
 </div>
 
 <script type="text/javascript">
@@ -54,6 +57,7 @@ var dashboard = sca.reference(editWidget, "dashboard");
  * The current app name.
  */
 var appname = ui.queryParams()['app'];
+$('appname').innerHTML = 'App: ' + appname;
 
 /**
  * Get and display an app.

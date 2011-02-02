@@ -22,27 +22,25 @@
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<link rel="stylesheet" type="text/css" href="/ui.css">
+<link rel="stylesheet" type="text/css" href="/ui.css"/>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 </head>
 <body>
 <div id="menu"></div>
 
-<br/>
-<h1><span id="title"></span></h1>
-</br/>
-
-<div id="graph"></div>
-
 <script type="text/javascript">
-/**
- * The current app name.
- */
+
+// Get the app name
 var appname = ui.queryParams()['app'];
 
 // Load the menu bar
 ui.loadwidget('menu', '/menu.html?app=' + appname);
+</script>
+
+<div id="graph"></div>
+
+<script type="text/javascript">
 
 /**
  * Display the editor for an app.
@@ -50,7 +48,6 @@ ui.loadwidget('menu', '/menu.html?app=' + appname);
 function editapp(name) {
     if (isNil(name))
         return;
-    $('title').innerHTML = 'Editing: ' + name;
     $('graph').innerHTML =
         '<iframe id="graphFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="graph.html?' +
         'app=' + name +

@@ -143,7 +143,17 @@ if (ui.isIE()) {
             if (graph.dragging == null)
                 return false;
 
-            // Bring it to the top
+            // Clone component from the palette
+            if (graph.dragging.id.substring(0, 8) == 'palette:')
+                graph.dragging = graph.clonepalette(graph.dragging);
+
+            // Cut wire to component
+            if (graph.dragging.parentNode != vmlg) {
+                var compos = scdl.composite(vmlg.compos);
+                setElement(compos, graph.cutwire(graph.dragging, compos, vmlg));
+            }
+
+            // Bring component to the top
             graph.bringtotop(graph.dragging, vmlg);
 
             // Remember mouse position
@@ -161,29 +171,44 @@ if (ui.isIE()) {
                 return false;
 
             if (graph.dragging.parentNode == vmlg && graph.dragging.id.substring(0, 8) != 'palette:') {
-                if (ui.csspos(graph.dragging.style.left) >= 350) {
+                var gpos = graph.relpos(graph.dragging);
+                if (pos.xpos() >= 350) {
 
-                    // Add dragged component to the edited composite
-                    if (!isNil(graph.dragging.comp) && isNil(graph.dragging.compos)) {
+                    // Add new dragged component to the composite
+                    if (isNil(graph.dragging.compos)) {
                         var compos = scdl.composite(vmlg.compos);
-                        setlist(compos, graph.addcomp(graph.dragging.comp, compos));
+                        setElement(compos, graph.addcomp(graph.dragging.comp, compos));
                         graph.dragging.compos = vmlg.compos;
                     }
+
+                    // Update component position
+                    setElement(graph.dragging.comp, graph.movecomp(graph.dragging.comp, graph.abspos(graph.dragging, vmlg)));
+
+                    // Wire component to neighboring reference
+                    if (!isNil(graph.dragging.svcpos)) {
+                        var compos = scdl.composite(vmlg.compos);
+                        setElement(compos, graph.wire(graph.dragging, compos, vmlg));
+                    }
+
                 } else {
 
-                    // Discard top level element dragged out of composite area
+                    // Discard component dragged out of composite
                     vmlg.removeChild(graph.dragging);
-                    if (!isNil(graph.dragging.comp) && !isNil(graph.dragging.compos)) {
+                    if (!isNil(graph.dragging.compos)) {
                         var compos = scdl.composite(vmlg.compos);
-                        setlist(compos, graph.removecomp(graph.dragging.comp, compos));
-                        graph.dragging.compos = vmlg.compos;
+                        setElement(compos, graph.removecomp(graph.dragging.comp, compos));
                     }
                 }
             }
 
-            // Forget current dragged element
+            // Forget current dragged component
             graph.dragging = null;
             vmlg.releaseCapture();
+
+            // Remove and refresh the composite
+            map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { vmlg.removeChild(n); } return n; }, nodeList(vmlg.childNodes));
+            graph.display(graph.composite(vmlg.compos, graph.mkpath().move(350,0)), vmlg);
+
             return false;
         };
 
@@ -195,10 +220,9 @@ if (ui.isIE()) {
                 return false;
 
             // Calculate new position of dragged element
-            var origX = ui.csspos(graph.dragging.style.left);
-            var origY = ui.csspos(graph.dragging.style.top);
-            var newX = origX + (window.event.clientX - graph.dragX);
-            var newY = origY + (window.event.clientY - graph.dragY);
+            var gpos = graph.relpos(graph.dragging);
+            var newX = gpos.xpos() + (window.event.clientX - graph.dragX);
+            var newY = gpos.ypos() + (window.event.clientY - graph.dragY);
             if (newX >= 0)
                 graph.dragX = window.event.clientX;
             else
@@ -208,17 +232,8 @@ if (ui.isIE()) {
             else
                 newY = 0;
 
-            // Clone an element dragged from the palette
-            if (graph.dragging.id.substring(0, 8) == 'palette:')
-                graph.dragging = graph.clonepalette(graph.dragging);
-
             // Move the dragged element
-            graph.dragging.style.left = newX;
-            graph.dragging.style.top = newY;
-
-            // Update dragged component position
-            if (!isNil(graph.dragging.comp))
-                setlist(graph.dragging.comp, graph.movecomp(graph.dragging.comp, graph.mkpath().move(newX, newY)));
+            graph.move(graph.dragging, graph.mkpath().move(newX, newY));
 
             return false;
         };
@@ -328,15 +343,16 @@ if (ui.isIE()) {
     };
 
     /**
-     * Return a shape representing a component.
+     * Return a node representing a component.
      */
-    graph.compshape = function(comp, cassoc, pos) {
+    graph.compnode = function(comp, cassoc, pos) {
 
         // Make the component title element
         var title = graph.comptitle(comp);
 
         // Compute the component shape path
-        var d = graph.comppath(comp, cassoc).str();
+        var path = graph.comppath(comp, cassoc);
+        var d = path.str();
 
         // Create the main component shape
         var shape = document.createElement('v:shape');
@@ -352,7 +368,7 @@ if (ui.isIE()) {
         contour.style.width = 5000;
         contour.style.height = 5000;
         contour.coordsize = '5000,5000';
-        contour.setAttribute('path', d);
+        contour.path = d;
         contour.filled = 'false';
         contour.strokecolor = graph.colors.gray;
         contour.strokeweight = '2';
@@ -374,8 +390,11 @@ if (ui.isIE()) {
         shape.appendChild(title);
         g.appendChild(contour)
 
-        // Store the component in the shape
+        // Store the component and the positions of its services
+        // and references in the component shape
         g.comp = comp;
+        g.refpos = path.refpos;
+        g.svcpos = path.svcpos;
 
         return g;
     };
@@ -391,7 +410,7 @@ if (ui.isIE()) {
     };
 
     /**
-     * Return a shape representing a button.
+     * Return a node representing a button.
      */
     graph.mkbutton = function(t, pos) {
 
@@ -399,14 +418,14 @@ if (ui.isIE()) {
         var title = graph.mktitle(t, true, pos);
 
         // Compute the path of the button shape
-        var d = graph.buttonpath().str();
+        var path = graph.buttonpath().str();
 
         // Create the main button shape
         var shape = document.createElement('v:shape');
         shape.style.width = 5000;
         shape.style.height = 5000;
         shape.coordsize = '5000,5000';
-        shape.path = d;
+        shape.path = path;
         shape.fillcolor = graph.colors.blue1;
         shape.stroked = 'false';
 
@@ -415,7 +434,7 @@ if (ui.isIE()) {
         contour.style.width = 5000;
         contour.style.height = 5000;
         contour.coordsize = '5000,5000';
-        contour.setAttribute('path', d);
+        contour.path = path;
         contour.filled = 'false';
         contour.strokecolor = graph.colors.gray;
         contour.strokeweight = '2';
@@ -436,6 +455,23 @@ if (ui.isIE()) {
         shape.appendChild(title);
         g.appendChild(contour)
         return g;
+    };
+
+    /**
+     * Return the relative position of a node.
+     */
+    graph.relpos = function(e) {
+        var curX = ui.csspos(e.style.left);
+        var curY = ui.csspos(e.style.top);
+        return graph.mkpath().move(curX, curY);
+    };
+
+    /**
+     * Move a node.
+     */
+    graph.move = function(e, pos) {
+        e.style.left = pos.xpos();
+        e.style.top = pos.ypos();
     };
 
 } else {
@@ -488,15 +524,25 @@ if (ui.isIE()) {
             else
                 e.returnValue = false;
 
-            // Find draggable element
+            // Find draggable component
             graph.dragging = draggable(e.target);
             if (graph.dragging == null)
                 return false;
 
-            // Bring it to the top
+            // Clone component from the palette
+            if (graph.dragging.id.substring(0, 8) == 'palette:')
+                graph.dragging = graph.clonepalette(graph.dragging);
+
+            // Cut wire to component
+            if (graph.dragging.parentNode != svg) {
+                var compos = scdl.composite(svg.compos);
+                setElement(compos, graph.cutwire(graph.dragging, compos, svg));
+            }
+
+            // Bring component to the top
             graph.bringtotop(graph.dragging, svg);
 
-            // Remember the mouse position
+            // Remember current mouse position
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
             graph.dragX = pos.screenX;
             graph.dragY = pos.screenY;
@@ -514,31 +560,43 @@ if (ui.isIE()) {
                 return false;
 
             if (graph.dragging.parentNode == svg && graph.dragging.id.substring(0, 8) != 'palette:') {
-                var pmatrix = graph.dragging.parentNode.getCTM();
-                var matrix = graph.dragging.getCTM();
-                var curX = pmatrix != null? (Number(matrix.e) - Number(pmatrix.e)): Number(matrix.e);
-                if (curX >= 350) {
+                var gpos = graph.relpos(graph.dragging);
+                if (gpos.xpos() >= 350) {
 
-                    // Add dragged component to the edited composite
-                    if (!isNil(graph.dragging.comp) && isNil(graph.dragging.compos)) {
+                    // Add new dragged component to the composite
+                    if (isNil(graph.dragging.compos)) {
                         var compos = scdl.composite(svg.compos);
-                        setlist(compos, graph.addcomp(graph.dragging.comp, compos));
+                        setElement(compos, graph.addcomp(graph.dragging.comp, compos));
                         graph.dragging.compos = svg.compos;
                     }
+
+                    // Update component position
+                    setElement(graph.dragging.comp, graph.movecomp(graph.dragging.comp, graph.abspos(graph.dragging, svg)));
+
+                    // Wire component to neighboring reference
+                    if (!isNil(graph.dragging.svcpos)) {
+                        var compos = scdl.composite(svg.compos);
+                        setElement(compos, graph.wire(graph.dragging, compos, svg));
+                    }
+
                 } else {
 
-                    // Discard top level element dragged out of composite area
+                    // Discard component dragged out of composite
                     svg.removeChild(graph.dragging);
-                    if (!isNil(graph.dragging.comp) && !isNil(graph.dragging.compos)) {
+                    if (!isNil(graph.dragging.compos)) {
                         var compos = scdl.composite(svg.compos);
-                        setlist(compos, graph.removecomp(graph.dragging.comp, compos));
-                        graph.dragging.compos = svg.compos;
+                        setElement(compos, graph.removecomp(graph.dragging.comp, compos));
                     }
                 }
             }
 
-            // Forget current dragged element
+            // Forget current dragged component
             graph.dragging = null;
+
+            // Remove and refresh the composite
+            map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { svg.removeChild(n); } return n; }, nodeList(svg.childNodes));
+            graph.display(graph.composite(svg.compos, graph.mkpath().move(350,0)), svg);
+
             return false;
         };
 
@@ -563,13 +621,10 @@ if (ui.isIE()) {
                 e.returnValue = false;
 
             // Calculate new position of dragged element
-            var pmatrix = graph.dragging.parentNode.getCTM();
-            var matrix = graph.dragging.getCTM();
-            var curX = pmatrix != null? (Number(matrix.e) - Number(pmatrix.e)): Number(matrix.e);
-            var curY = pmatrix != null? (Number(matrix.f) - Number(pmatrix.f)): Number(matrix.f);
+            var gpos = graph.relpos(graph.dragging);
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
-            var newX = curX + (pos.screenX - graph.dragX);
-            var newY = curY + (pos.screenY - graph.dragY);
+            var newX = gpos.xpos() + (pos.screenX - graph.dragX);
+            var newY = gpos.ypos() + (pos.screenY - graph.dragY);
             if (newX >= 0)
                 graph.dragX = pos.screenX;
             else
@@ -579,16 +634,8 @@ if (ui.isIE()) {
             else
                 newY = 0;
 
-            // Clone an element dragged from the palette
-            if (graph.dragging.id.substring(0, 8) == 'palette:')
-                graph.dragging = graph.clonepalette(graph.dragging);
-
             // Move the dragged element
-            graph.dragging.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
-
-            // Update dragged component position
-            if (!isNil(graph.dragging.comp))
-                setlist(graph.dragging.comp, graph.movecomp(graph.dragging.comp, graph.mkpath().move(newX, newY)));
+            graph.move(graph.dragging, graph.mkpath().move(newX, newY));
 
             return false;
         };
@@ -610,7 +657,7 @@ if (ui.isIE()) {
     };
 
     /**
-     * Make a shape path.
+     * Make a path.
      */
     graph.mkpath = function() {
         function Path() {
@@ -696,15 +743,16 @@ if (ui.isIE()) {
     };
 
     /**
-     * Return a shape representing a component.
+     * Return a node representing a component.
      */
-    graph.compshape = function(comp, cassoc, pos) {
+    graph.compnode = function(comp, cassoc, pos) {
 
         // Make the component title
         var title = graph.comptitle(comp);
 
         // Compute the path of the component shape
-        var d = graph.comppath(comp, cassoc).str();
+        var path = graph.comppath(comp, cassoc);
+        var d = path.str();
 
         // Create the main component shape
         var shape = document.createElementNS(graph.svgns, 'path');
@@ -728,8 +776,11 @@ if (ui.isIE()) {
         g.appendChild(contour);
         g.appendChild(title);
 
-        // Store the component in the shape.
+        // Store the component and the positions of its services
+        // and references in the component shape
         g.comp = comp;
+        g.refpos = reverse(path.refpos);
+        g.svcpos = reverse(path.svcpos);
 
         return g;
     };
@@ -744,7 +795,7 @@ if (ui.isIE()) {
     };
 
     /**
-     * Return a shape representing a button.
+     * Return a node representing a button.
      */
     graph.mkbutton = function(t, pos) {
 
@@ -752,16 +803,16 @@ if (ui.isIE()) {
         var title = graph.mktitle(t, true);
 
         // Compute the path of the button shape
-        var d = graph.buttonpath().str();
+        var path = graph.buttonpath().str();
 
         // Create the main button shape
         var shape = document.createElementNS(graph.svgns, 'path');
-        shape.setAttribute('d', d);
+        shape.setAttribute('d', path);
         shape.setAttribute('fill', graph.colors.blue1);
 
         // Create an overlay contour shape
         var contour = document.createElementNS(graph.svgns, 'path');
-        contour.setAttribute('d', d);
+        contour.setAttribute('d', path);
         contour.setAttribute('fill', 'none');
         contour.setAttribute('stroke', graph.colors.gray);
         contour.setAttribute('stroke-width', '4');
@@ -776,16 +827,45 @@ if (ui.isIE()) {
         g.appendChild(title);
         return g;
     };
-}
+
+    /**
+     * Return the relative position of a node.
+     */
+    graph.relpos = function(e) {
+        var pmatrix = e.parentNode.getCTM();
+        var matrix = e.getCTM();
+        var curX = pmatrix != null? (Number(matrix.e) - Number(pmatrix.e)): Number(matrix.e);
+        var curY = pmatrix != null? (Number(matrix.f) - Number(pmatrix.f)): Number(matrix.f);
+        return graph.mkpath().move(curX, curY);
+    };
+
+    /**
+     * Move a node.
+     */
+    graph.move = function(e, pos) {
+        e.setAttribute('transform', 'translate(' + pos.xpos() + ',' + pos.ypos() + ')');
+    };
+};
 
 /**
- * Bring an element and its parents to the top.
+ * Return the absolute position of a component node.
+ */
+graph.abspos = function(e, g) {
+    if (e == g)
+        return graph.mkpath();
+    var gpos = graph.relpos(e);
+    var pgpos = graph.abspos(e.parentNode, g);
+    return graph.mkpath().move(gpos.xpos() + pgpos.xpos(), gpos.ypos() + pgpos.ypos());
+};
+
+/**
+ * Bring a component node to the top.
  */
 graph.bringtotop = function(n, g) {
     if (n == g)
         return null;
-    n.parentNode.appendChild(n);
-    return graph.bringtotop(n.parentNode, g);
+    graph.move(n, graph.abspos(n, g));
+    g.appendChild(n);
 }
 
 /**
@@ -797,7 +877,7 @@ graph.title = function(e) {
 };
 
 /**
- * Return the color of a component.
+ * Return the color of a SCDL component.
  */
 graph.color = function(comp) {
     return memo(comp, 'color', function() {
@@ -901,7 +981,7 @@ graph.brefsheight = function(refs, cassoc) {
 };
 
 /**
- * Return the height of a component.
+ * Return the height of a component node.
  */
 graph.compheight = function(comp, cassoc) {
     return memo(comp, 'height', function() {
@@ -986,7 +1066,13 @@ graph.compclosurewidth = function(comp, cassoc) {
  */
 graph.rrefpath = function(ref, cassoc, path) {
     var height = graph.rrefheight(ref, cassoc);
+
+    // Record reference position in the path
+    var xpos = path.xpos();
     var ypos = path.ypos();
+    path.refpos = cons(mklist(ref, graph.mkpath().move(xpos, ypos + 30)), path.refpos);
+
+    // Compute the reference path
     return path.rline(0,10).rline(0,10).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rline(0,20).rcurve(0,5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,5).line(path.xpos(),ypos + height);
 };
 
@@ -995,7 +1081,13 @@ graph.rrefpath = function(ref, cassoc, path) {
  */
 graph.brefpath = function(ref, cassoc, path) {
     var width = graph.brefwidth(ref, cassoc);
+
+    // Record reference position in the path
     var xpos = path.xpos();
+    var ypos = path.ypos();
+    path.refpos = cons(mklist(ref, graph.mkpath().move(xpos - width + 30, ypos)), path.refpos);
+
+    // Compute the reference path
     return path.line(xpos - width + 60,path.ypos()).rline(-10,0).rline(-10,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rline(-20,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).line(xpos - width,path.ypos());
 };
 
@@ -1004,7 +1096,13 @@ graph.brefpath = function(ref, cassoc, path) {
  */
 graph.lsvcpath = function(svc, cassoc, path) {
     var height = 60;
+
+    // Record service position in the path
+    var xpos = path.xpos();
     var ypos = path.ypos();
+    path.svcpos = cons(mklist(svc, graph.mkpath().move(xpos, ypos - 30)), path.svcpos);
+
+    // Compute the service path
     return path.rline(0,-10).rline(0, -10).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rline(0,-20).rcurve(0,-5,5,0).rcurve(5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,-5).line(path.xpos(), ypos - height);
 };
 
@@ -1013,16 +1111,22 @@ graph.lsvcpath = function(svc, cassoc, path) {
  */
 graph.tsvcpath = function(svc, cassoc, path) {
     var width = 60;
+
+    // Record service position in the path
     var xpos = path.xpos();
+    var ypos = path.ypos();
+    path.svcpos = cons(mklist(svc, graph.mkpath().move(xpos + 30, ypos)), path.svcpos);
+
+    // Compute the service path
     return path.rline(10,0).rline(10,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rline(20,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).line(xpos + width,path.ypos());
 };
 
 /**
- * Return a path representing a component.
+ * Return a path representing a component node.
  */
 graph.comppath = function(comp, cassoc) {
 
-    // Calculate the width and height of the component shape
+    // Calculate the width and height of the component node
     var width = graph.compwidth(comp, cassoc);
     var height = graph.compheight(comp, cassoc);
 
@@ -1035,9 +1139,14 @@ graph.comppath = function(comp, cassoc) {
         return renderpath(cdr(x), f, cassoc, f(car(x), cassoc, path));
     }
 
+    var path = graph.mkpath().move(10,0);
+
+    // Store the positions of services and references in the path
+    path.refpos = mklist();
+    path.svcpos = mklist();
+
     // Render the services on the top side of the component
     var tsvcs = graph.tsvcs(comp);
-    var path = graph.mkpath().move(10,0);
     path = renderpath(tsvcs, graph.tsvcpath, cassoc, path);
 
     // Render the references on the right side of the component
@@ -1051,19 +1160,20 @@ graph.comppath = function(comp, cassoc) {
     path = path.line(path.xpos(),height - 10).rcurve(0,10,-10,0).line(boffset, path.ypos());
     path = renderpath(brefs, graph.brefpath, cassoc, path);
 
-    // Render the services on the top side of the component
+    // Render the services on the left side of the component
     var lsvcs = graph.lsvcs(comp);
     var loffset = 10 + (length(lsvcs) * 60);
     path = path.line(10,path.ypos()).rcurve(-10,0,0,-10).line(path.xpos(), loffset);
     path = renderpath(lsvcs, graph.lsvcpath, cassoc, path);
 
-    // Close the component shape path
+    // Close the component node path
     path = path.line(0,10).rcurve(0,-10,10,0);
+
     return path.end();
 };
 
 /**
- * Return a path representing a button.
+ * Return a path representing a button node.
  */
 graph.buttonpath = function(t) {
     var height = 60;
@@ -1077,7 +1187,7 @@ graph.buttonpath = function(t) {
 };
 
 /**
- * Render a composite.
+ * Render a SCDL composite into a list of component nodes.
  */
 graph.composite = function(compos, pos) {
     var name = scdl.name(scdl.composite(compos));
@@ -1093,15 +1203,15 @@ graph.composite = function(compos, pos) {
         /**
          * Render the references on the right side of a component.
          */
-        function renderrrefs(refs, cassoc, pos) {
+        function renderrrefs(refs, cassoc, pos, gcomp) {
 
             /**
              * Render a reference on the right side of a component.
              */
-            function renderrref(ref, cassoc, pos) {
+            function renderrref(ref, cassoc, pos, gcomp) {
                 var target = assoc(scdl.target(ref), cassoc);
                 if (isNil(target))
-                    return mklist();
+                    return null;
 
                 // Render the component target of the reference
                 return rendercomp(cadr(target), cassoc, pos);
@@ -1116,21 +1226,24 @@ graph.composite = function(compos, pos) {
 
             if (isNil(refs))
                 return mklist();
-            return append(renderrref(car(refs), cassoc, pos), renderrrefs(cdr(refs), cassoc, rendermove(car(refs), cassoc, pos)));
+
+            // Return list of (ref, comp rendering) pairs
+            var grefcomp = renderrref(car(refs), cassoc, pos, gcomp);
+            return cons(mklist(car(refs), grefcomp), renderrrefs(cdr(refs), cassoc, rendermove(car(refs), cassoc, pos), gcomp));
         }
 
         /**
          * Render the references on the bottom side of a component.
          */
-        function renderbrefs(refs, cassoc, pos) {
+        function renderbrefs(refs, cassoc, pos, gcomp) {
 
             /**
              * Render a reference on the bottom side of a component.
              */
-            function renderbref(ref, cassoc, pos) {
+            function renderbref(ref, cassoc, pos, gcomp) {
                 var target = assoc(scdl.target(ref), cassoc);
                 if (isNil(target))
-                    return mklist();
+                    return null;
 
                 // Render the component target of the reference
                 return rendercomp(cadr(target), cassoc, pos);
@@ -1145,23 +1258,39 @@ graph.composite = function(compos, pos) {
 
             if (isNil(refs))
                 return mklist();
-            return append(renderbref(car(refs), cassoc, pos), renderbrefs(cdr(refs), cassoc, rendermove(car(refs), cassoc, pos)));
+
+            // Return list of (ref, comp rendering) pairs
+            var grefcomp = renderbref(car(refs), cassoc, pos, gcomp);
+            return cons(mklist(car(refs), grefcomp), renderbrefs(cdr(refs), cassoc, rendermove(car(refs), cassoc, pos), gcomp));
         }
 
         // Compute the component shape
-        var gcomp = graph.compshape(comp, cassoc, pos);
+        var gcomp = graph.compnode(comp, cassoc, pos);
 
-        // Add the shapes of the components wired to its references
-        // as children elements
+        // Render the components wired to the component references
         var rrefs = graph.rrefs(comp);
         var rpos = graph.mkpath().rmove(graph.compwidth(comp, cassoc), 0);
-        appendNodes(renderrrefs(rrefs, cassoc, rpos), gcomp);
+        var grrefs = renderrrefs(rrefs, cassoc, rpos, gcomp);
 
         var brefs = graph.brefs(comp);
         var bpos = graph.mkpath().rmove(0 , graph.compheight(comp, cassoc));
-        appendNodes(renderbrefs(brefs, cassoc, bpos), gcomp);
+        var gbrefs = renderbrefs(brefs, cassoc, bpos, gcomp);
 
-        return mklist(gcomp);
+        // Store list of (ref, pos, component rendering) triplets in the component
+        function refposgcomp(refpos, grefs) {
+            if (isNil(refpos))
+                return mklist();
+
+            // Append component rendering to component
+            var gref = cadr(car(grefs));
+            if (gref != null)
+                appendNodes(mklist(gref), gcomp);
+            return cons(mklist(car(car(refpos)), cadr(car(refpos)), gref), refposgcomp(cdr(refpos), cdr(grefs)));
+        }
+
+        gcomp.refpos = refposgcomp(gcomp.refpos, append(grrefs, gbrefs));
+
+        return gcomp;
     }
 
     /**
@@ -1205,7 +1334,7 @@ graph.composite = function(compos, pos) {
             return renderproms(cdr(svcs), cassoc, rendermove(car(svcs), cassoc, pos));
 
         var cpos = comppos(comp, pos);
-        return append(rendercomp(comp, cassoc, cpos), renderproms(cdr(svcs), cassoc, rendermove(comp, cassoc, cpos)));
+        return cons(rendercomp(comp, cassoc, cpos), renderproms(cdr(svcs), cassoc, rendermove(comp, cassoc, cpos)));
     }
 
     // Render the promoted service components
@@ -1214,69 +1343,171 @@ graph.composite = function(compos, pos) {
     if (name == 'palette') {
 
         // Prefix ids of palette component elements with 'palette:'
-        return map(function(r) {
-                r.id = 'palette:' + r.id;
-                return r;
-            }, rproms);
+        return map(function(r) { r.id = 'palette:' + r.id; return r; }, rproms);
     } else {
 
         // Link app component elements to the containing composite
-        return map(function(r) {
-                r.compos = compos;
-                return r;
-            }, rproms);
+        return map(function(r) { r.compos = compos; return r; }, rproms);
     }
-    return rproms;
 };
 
 /**
- * Clone a palette element and the component associated with it.
+ * Clone a palette component node.
  */
 graph.clones = 0;
 graph.clonepalette = function(e) {
 
-    // Clone the component and give it a unique name
+    // Clone the SCDL component and give it a unique name
     var comp = append(mklist(element, "'component", mklist(attribute, "'name", scdl.name(e.comp) + (++graph.clones))),
                 filter(function(c) { return !(isAttribute(c) && attributeName(c) == "'name")}, elementChildren(e.comp)));
 
-    // Make the component shape element
-    var clone = graph.compshape(comp, mklist(), graph.mkpath());
-    e.parentNode.appendChild(clone);
-    return clone;
+    // Make a component node
+    var gcomp = graph.compnode(comp, mklist(), graph.mkpath());
+    graph.move(gcomp, graph.relpos(e));
+    e.parentNode.appendChild(gcomp);
+
+    return gcomp;
 };
 
 /**
- * Move a component to the given position.
+ * Move a SCDL component to the given position.
  */
 graph.movecomp = function(comp, pos) {
-
-    // Add or set the x and y attributes of the component
     return append(mklist(element, "'component", mklist(attribute, "'t:x", '' + (pos.xpos() - 350)), mklist(attribute, "'t:y", '' + pos.ypos())),
             filter(function(e) { return !(isAttribute(e) && (attributeName(e) == "'t:x" || attributeName(e) == "'t:y")); }, elementChildren(comp)));
 };
 
 /**
- * Add a component to a composite.
+ * Add a component to a SCDL composite.
  */
 graph.addcomp = function(comp, compos) {
     var name = scdl.name(comp);
     var prom = mklist(element, "'service", mklist(attribute, "'name", name), mklist(attribute, "'promote", name));
-    return append(mklist(element, "'composite"), append(elementChildren(compos), mklist(prom, graph.dragging.comp)));
-}
+    return append(mklist(element, "'composite"), append(elementChildren(compos), mklist(prom, comp)));
+};
 
 /**
- * Remove a component from a composite.
+ * Remove a component from a SCDL composite.
  */
 graph.removecomp = function(comp, compos) {
     var name = scdl.name(comp);
     return append(mklist(element, "'composite"),
             filter(function(c) { return !(isElement(c) && scdl.name(c) == name); }, elementChildren(compos)));
+};
+
+/**
+ * Cut the wire to a component node and make that node a
+ * top level component node.
+ */
+graph.cutwire = function(node, compos, g) {
+
+    /**
+     * Find the reference wired to a node and cut its wire.
+     */
+    function cutref(refs, node) {
+        if (isNil(refs))
+            return true;
+        var ref = car(refs);
+        if (caddr(ref) == node) {
+            setlist(ref, mklist(car(ref), cadr(ref), null));
+            setElement(car(ref), append(mklist(element, "'reference"), filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'target"); }, elementChildren(car(ref)))));
+        }
+        return cutref(cdr(refs), node);
+    }
+
+    // Cut any reference wire, if found
+    cutref(node.parentNode.refpos, node);
+
+    // Make the component node a top level node.
+    node.compos = g.compos;
+
+    // Update the SCDL composite, add a promote element for
+    // that component
+    var comp = node.comp;
+    var name = scdl.name(comp);
+    var prom = mklist(element, "'service", mklist(attribute, "'name", name), mklist(attribute, "'promote", name));
+    return append(mklist(element, "'composite"), append(filter(function(c) {return !(isElement(c) && scdl.name(c) == name); }, elementChildren(compos)), mklist(prom, comp)));
+}
+
+
+/**
+ * Wire a component to the closest neighbor reference.
+ */
+graph.wire = function(n, compos, g) {
+
+    // Compute position of the component's service node
+    var spos = cadr(car(n.svcpos));
+    var aspos = graph.abspos(n, g).rmove(spos.xpos(), spos.ypos());
+
+    /**
+     * Find closest unwired reference node among all the references
+     * of all the components.
+     */
+    function closecomprefs(nodes, spos, cref) {
+
+        /**
+         * Find the closest unwired reference node among all the
+         * references of a node.
+         */
+        function closerefs(npos, refs, spos, cref) {
+            if (isNil(refs))
+                return cref;
+            var fdist = cadddr(cref);
+            var ref = car(refs);
+
+            // Skip wired reference
+            if (!isNil(filter(function(n) { return isAttribute(n) && attributeName(n) == "'target"; }, car(ref))))
+                return closerefs(npos, cdr(refs), spos, cref);
+
+            // Compute distance between service node and reference node
+            var rpos = cadr(ref).clone().rmove(npos.xpos(), npos.ypos());
+            var dx = Math.pow(rpos.xpos() - spos.xpos(), 2);
+            var dy = Math.pow(rpos.ypos() - spos.ypos(), 2);
+
+            // Proximity threshold is 40 x 40 pixels
+            var rdist = (dx < 400 && dy < 400)? Math.sqrt(dx + dy) : 25000000;
+
+            // Go through all the references in the component
+            return closerefs(npos, cdr(refs), spos, fdist < rdist? cref : mklist(car(ref), cadr(ref), caddr(ref), rdist));
+        }
+
+        if (isNil(nodes))
+            return cref;
+
+        // Skip non-component nodes
+        var node = car(nodes);
+        if (isNil(node.comp))
+            return closecomprefs(cdr(nodes), spos, cref);
+
+        // Compute the component absolute position
+        var npos = graph.abspos(node, g);
+
+        // Go through all the components and their references
+        return closecomprefs(append(nodeList(node.childNodes), cdr(nodes)), spos, closerefs(npos, node.refpos, spos, cref));
+    }
+
+    // Find closest reference node
+    var cref = closecomprefs(nodeList(g.childNodes), aspos, mklist(null, graph.mkpath(), null, 25000000));
+    if (car(cref) == null)
+        return compos;
+    if (cadddr(cref) == 25000000)
+        return compos;
+
+    // Wire component to that reference, update the SCDL
+    // reference and composite
+    n.compos = null;
+    setElement(car(cref), append(mklist(element, "'reference", mklist(attribute, "'target", scdl.name(n.comp))), elementChildren(car(cref))));
+    var name = scdl.name(n.comp);
+    return append(mklist(element, "'composite"),
+            filter(function(c) { return !(isElement(c) && elementName(c) == "'service" && scdl.name(c) == name); }, elementChildren(compos)));
 }
 
 /**
  * Display a list of graphical nodes.
  */
 graph.display = function(nodes, g) {
+
+    // Append the nodes to the graphical canvas
     appendNodes(nodes, g);
     return nodes;
 };
@@ -1286,7 +1517,11 @@ graph.display = function(nodes, g) {
  * nodes that represent it.
  */
 graph.edit = function(compos, nodes, g) {
+
+    // Store the composite in the graphical canvas
     g.compos = compos;
+
+    // Display the composite nodes
     return graph.display(nodes, g);
 };
 

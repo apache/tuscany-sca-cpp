@@ -248,36 +248,10 @@ function namedElementChild(name, l) {
  */
 
 /**
- * Set the value of the attribute with the given name.
+ * Set the contents of an element.
  */
-function setNamedAttributeValue(name, v, l) {
-    var f = filter(function(v) { return isAttribute(v) && attributeName(v) == name; }, l);
-    if (!isNil(f)) {
-
-        // Un-memoize attribute and change its value
-        unmemo(l, name);
-        car(f)[2] = '' + v;
-        return v;
-    }
-
-    // Insert new attribute
-    insertn$(mklist(attribute, name, '' + v), l, 2);
-    return v;
-}
-
-/**
- * Set the value of an element.
- */
-function setElementValue(v, l) {
-    if (elementHasValue(l)) {
-
-        // Change existing element value
-        l[length(l) - 1] = v;
-        return v;
-    }
-
-    // Append element value
-    $append(l, mklist(v));
-    return v;
+function setElement(l, e) {
+    setlist(l, e);
+    l.memo = {};
 }
 

@@ -28,13 +28,12 @@
 <script type="text/javascript" src="/component.js"></script>
 </head>  
 <body>
-<div id="dashboard">
 
-<form id="appsForm">
+<div style="position: absolute; top: 0px; left: 0px; right: 0px;">
+
 <div id="apps"></div>
 <br/>
 <input type="button" id="createAppButton" value="Create App"/>
-</form>
 
 <div id="newApp" style="visibility: hidden;">
 <form id="newAppForm">
@@ -48,10 +47,12 @@
 <tr><td><b>App Name:</b></td></tr>
 <tr><td><input type="text" id="appName" size="10"/></td></tr>
 <tr><tr><td><b>App Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" size="20"/></td></tr>
-</table>
+<tr><td><input type="text" id="appTitle" size="30"/></td></tr>
+<tr><td>
 <input id="createAppOKButton" type="button" style="font-weight: bold;" value="Create"/>
 <input id="createAppCancelButton" type="button" value="Cancel"/>
+</td></tr>
+</table>
 </form>
 </div>
 
@@ -67,8 +68,7 @@ var dashboard = sca.reference(editWidget, "dashboard");
  */
 function getapps(sync) {
     function display(doc) {
-        var apps = '';
-        apps += '<table width="100%">';
+        var apps = '<table width="100%">';
         apps += '<tr><th>App</th><th>Title</th></tr>';
 
         var entries = cddr(atom.readATOMFeedDocument(doc));
@@ -142,7 +142,7 @@ $('createAppCancelButton').onclick = function() {
  */
 /*
 $('deleteAppLink').onclick = function() {
-    var apps = $('appsForm').apps;
+    var apps = $('apps');
     if (isNil(apps))
         return false;
     if (isNil(apps.length))
