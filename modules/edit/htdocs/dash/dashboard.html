@@ -29,21 +29,22 @@
 </head>  
 <body>
 
-<div style="position: absolute; top: 0px; left: 0px; right: 0px;">
+<div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
 <div id="apps"></div>
 <br/>
 <input type="button" id="createAppButton" value="Create App"/>
+<br/>
+<br/>
 
 <div id="newApp" style="visibility: hidden;">
-<form id="newAppForm">
-<table width="100%">
-<tr><th>Create an App</th></tr>
+<table style="width: 100%;">
+<tr><th class="thl thr">Create an App</th></tr>
 <tr><td></td></tr>
 </table>
-<br>
+<br/>
 
-<table width="100%">
+<table style="width: 100%;">
 <tr><td><b>App Name:</b></td></tr>
 <tr><td><input type="text" id="appName" size="10"/></td></tr>
 <tr><tr><td><b>App Title:</b></td></tr>
@@ -53,12 +54,13 @@
 <input id="createAppCancelButton" type="button" value="Cancel"/>
 </td></tr>
 </table>
-</form>
 </div>
 
 </div>
 
 <script type="text/javascript">
+if (ui.isIE()) $('bodydiv').style.right = -20;
+
 // Init service references
 var editWidget = sca.component("EditWidget");
 var dashboard = sca.reference(editWidget, "dashboard");
@@ -68,8 +70,13 @@ var dashboard = sca.reference(editWidget, "dashboard");
  */
 function getapps(sync) {
     function display(doc) {
-        var apps = '<table width="100%">';
-        apps += '<tr><th>App</th><th>Title</th></tr>';
+        var apps = '<table style="width: 100%;">';
+        apps += '<tr><th class="thl thr">App</th>' +
+            '<th class="thr thl">Title</th>' +
+            '<th class="thr thl" style="padding-top: 4px; padding-bottom: 4px; padding-right: 2px; text-align: right;">' +
+            '<span style="font-weight: normal;">' + 
+            '[<a href="/dashboard">atom</a> <a href="/dashboardcache/joe@localhost">json</a>]' +
+            '</span></th></tr>';
 
         var entries = cddr(atom.readATOMFeedDocument(doc));
         for (var i = 0; i < length(entries); i++) {
@@ -84,7 +91,7 @@ function getapps(sync) {
             apps += '<tr>';
             //apps += '<td><input name="apps" type="checkbox" value="' + name + '">' + '<a href=\"' + '/app/?app=' + name + '\">' + name + '</a></td>';
             apps += '<td><a href=\"' + '/app/?app=' + name + '\" target=\"_parent\">' + name + '</a></td>';
-            apps += '<td class="tdw">' + title + '</td>';
+            apps += '<td class="tdw" colspan="2">' + title + '</td>';
             apps += '</tr>';
         }
         apps += '</table>';
@@ -104,8 +111,7 @@ function getapps(sync) {
  * Display create app form.
  */
 $('createAppButton').onclick = function() {
-    var div = $('newApp');
-    div.style.visibility = 'visible';
+    $('newApp').style.visibility = 'visible';
     $('appName').focus();
     return false;
 };
@@ -130,8 +136,7 @@ $('createAppOKButton').onclick = function() {
  * Cancel creating an app.
  */
 $('createAppCancelButton').onclick = function() {
-    var div = $('newApp');
-    div.style.visibility = 'hidden';
+    $('newApp').style.visibility = 'hidden';
     $('appName').value = '';
     $('appTitle').title = '';
     return false;

@@ -23,19 +23,42 @@ font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-si
 }
 
 table {
-border: 1px; border-collapse: separate;
+border: 0px; border-collapse: collapse; border-color: #a2bae7; border-style: solid;
 font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
+overflow: hidden;
 }
 
 th {
-font-weight: bold; background-color: #e5ecf9; color: #598edd;
-text-align: left; padding-left: 2px; padding-right: 8px; padding-top: 2px; padding-bottom: 4px; vertical-align: text-top;
-border-top: 1px; border-bottom: 1px; border-left: 0px; border-right: 0px;
-border-style: solid; border-top-color: #a2bae7; border-bottom-color: #d1d3d4;
+font-weight: bold; background-color: #e5ecf9; color: #000000;
+text-align: left; padding-left: 2px; padding-right: 8px; padding-top: 2px; padding-bottom: 4px; vertical-align: text-top; white-space: nowrap;
+border-top: 1px; border-bottom: 1px; border-left: 1px; border-right: 1px;
+border-style: solid; border-top-color: #a2bae7; border-bottom-color: #d1d3d4; border-left-color: #a2bae7; border-right-color: #a2bae7;
+overflow: hidden;
+}
+
+.thl {
+border-left: 0px;
+}
+
+.thr {
+border-right: 0px;
+}
+
+.ths {
+padding: 0px;
 }
 
 td {
 padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: nowrap; vertical-align: text-top;
+overflow: hidden;
+}
+
+.tdl {
+border-right: 1px;
+}
+
+.tdr {
+border-left: 1px;
 }
 
 .tdw {
@@ -53,7 +76,12 @@ margin: 0px; padding: 0px;
 
 input {
 vertical-align: middle;
+font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
 -webkit-text-size-adjust: 140%;
+}
+
+textarea {
+font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
 }
 
 a:link {
@@ -103,7 +131,7 @@ cursor: pointer; cursor: hand;
 .tbar {
 margin: 0px;
 padding-top: 0px; padding-left: 0px; padding-right: 0px; padding-bottom: 3px;
-border-bottom: 1px solid #a2bae7;
+border-bottom: 1px solid #a2bae7; border-collapse: separate;
 }
 
 .ltbar {

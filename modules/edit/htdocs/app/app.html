@@ -29,18 +29,31 @@
 </head>  
 <body>
 
-<div style="position: absolute; top: 0px; left: 0px; right: 0px;">
+<div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
-<table width="100%">
-<tr><th><span id="appname"></span><span style="padding-top: 0px; padding-bottom:0px; position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
+<table style="width: 100%;">
+<tr>
+<th class="thl thr">Properties</th>
+
+<th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
+<span id="source" style="font-weight: normal;">[atom]</span>
+<input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/>
+</th>
+</tr>
 </table>
 <br>
 
 <div>
 <form id="appForm">
-<table width="100%">
+<table style="width: 100%;">
 <tr><tr><td><b>App Title:</b></td></tr>
 <tr><td><input type="text" id="appTitle" size="30"/></td></tr>
+<tr><tr><td><b>Category:</b></td></tr>
+<tr><td><input type="text" id="appCategory" size="15" value="Cool Apps"/></td></tr>
+<tr><tr><td><b>Updated:</b></td></tr>
+<tr><td><span id="appUpdated">Feb 4, 2011</span></td></tr>
+<tr><tr><td><b>Description:</b></td></tr>
+<tr><td><textarea id="appDescription" cols="30" rows="5">Enter a short description of your app here</textarea></td></tr>
 </table>
 </form>
 </div>
@@ -48,6 +61,7 @@
 </div>
 
 <script type="text/javascript">
+if (ui.isIE()) $('bodydiv').style.right = -20;
 
 // Init service references
 var editWidget = sca.component("EditWidget");
@@ -57,7 +71,7 @@ var dashboard = sca.reference(editWidget, "dashboard");
  * The current app name.
  */
 var appname = ui.queryParams()['app'];
-$('appname').innerHTML = 'App: ' + appname;
+$('source').innerHTML = '[<a href="/apps/' + appname + '">atom</a>]';
 
 /**
  * Get and display an app.

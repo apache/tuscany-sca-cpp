@@ -19,54 +19,62 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://variables"
+  targetNamespace="http://values"
   name="palette">
         
     <service name="number" promote="number"/>
     <service name="text" promote="text"/>
-    <service name="set" promote="set"/>
+    <service name="nothing" promote="nothing"/>
     <service name="list" promote="list"/>
     <service name="first" promote="first"/>
     <service name="rest" promote="rest"/>
+    <service name="append" promote="append"/>
 
     <component name="number" t:color="orange1">
         <t:implementation.python script="number.py"/>
         <service name="number"/>
+        <property name="property">0</property>
     </component>
     
     <component name="text" t:color="orange1">
         <t:implementation.python script="text.py"/>
         <service name="text"/>
+        <property name="property">abc</property>
     </component>
     
-    <component name="set" t:color="orange1">
-        <documentation>set variable</documentation>
-        <t:implementation.python script="set.py"/>
-        <service name="set"/>
-        <reference name="value"/>
-        <reference name="variable"/>
+    <component name="nothing" t:color="orange1">
+        <t:implementation.python script="text.py"/>
+        <service name="nothing"/>
     </component>
     
     <component name="list" t:color="orange1">
-        <documentation>make a list</documentation>
+        <documentation>list</documentation>
         <t:implementation.python script="list_.py"/>
         <service name="list"/>
-        <reference name="first"/>
         <reference name="rest"/>
+        <property name="property">abc</property>
     </component>
     
     <component name="first" t:color="orange1">
-        <documentation>first of a list</documentation>
+        <documentation>first of list</documentation>
         <t:implementation.python script="first.py"/>
         <service name="first"/>
         <reference name="value"/>
     </component>
     
     <component name="rest" t:color="orange1">
-        <documentation>rest of a list</documentation>
+        <documentation>rest of list</documentation>
         <t:implementation.python script="rest.py"/>
         <service name="rest"/>
         <reference name="value"/>
+    </component>
+    
+    <component name="append" t:color="orange1">
+        <documentation>append lists</documentation>
+        <t:implementation.python script="list_.py"/>
+        <service name="append"/>
+        <reference name="first"/>
+        <reference name="second"/>
     </component>
     
 </composite>

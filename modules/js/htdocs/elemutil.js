@@ -164,7 +164,7 @@ function valueToElement(t) {
         var v = isNil(cdr(t))? mklist() : cadr(t);
         if (!isList(v)) {
             if (n.substring(0, 2) == atsign)
-                return mklist(attribute, n.substring(1), v);
+                return mklist(attribute, "'" + n.substring(2), v);
             return mklist(element, n, v);
         }
         if (isNil(v) || !isSymbol(car(v)))

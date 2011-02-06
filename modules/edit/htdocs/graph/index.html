@@ -38,6 +38,9 @@ var appname = ui.queryParams()['app'];
 ui.loadwidget('menu', '/menu.html?app=' + appname);
 </script>
 
+<h1>App Edit <span id="appNameHeader" style="font-weight: normal;"></span></h1>
+<br/>
+
 <div id="graph"></div>
 
 <script type="text/javascript">
@@ -55,6 +58,8 @@ function editapp(name) {
 }
 
 // Display the editor for the current app
+document.title = 'Composition - ' + appname;
+$('appNameHeader').innerHTML = ' - ' + appname;
 editapp(appname);
 
 </script>

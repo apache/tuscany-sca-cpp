@@ -30,15 +30,31 @@
 </head>  
 <body>
 
-<div style="position: absolute; top: 0px; left: 0px; right: 0px;">
+<div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
-<table width="100%">
-<tr><th style="width: 338px;">Components</th><th style="padding-top: 0px; padding-bottom: 0px;"><span id="appname"></span><span style="position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
+<table style="width: 100%;">
+<tr>
+<th class="thl" style="width: 330px; min-width: 330px;">Palette</th><th class="ths" style="width: 3px; min-width: 3px;"></th>
+
+<th class="thr" style="padding-top: 0px; padding-bottom: 0px;">
+<input id="compName" type="text" value="component name" style="position: relative; width: 200px;"/>
+<input id="propValue" type="text" value="property value" style="position: relative; width: 300px;"/>
+</th>
+
+<th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
+<span id="source" style="font-weight: normal;">[atom json]</span>
+<input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/>
+</th>
+</tr>
+
+<tr style="height: 5000px;"><td class="tdl"></td><th class="ths"></th><td class="tdr" colspan="2"></td></tr>
 </table>
 
 </div>
 
 <script type="text/javascript">
+if (ui.isIE()) $('bodydiv').style.right = -20;
+
 var editWidget = sca.component("EditWidget");
 var palettes = sca.reference(editWidget, "palettes");
 var apps = sca.reference(editWidget, "apps");
@@ -50,7 +66,7 @@ var apps = sca.reference(editWidget, "apps");
  * The current app name.
  */
 var appname = ui.queryParams()['app'];
-$('appname').innerHTML = 'Composition: ' + appname;
+$('source').innerHTML = '[<a href="/apps/' + appname + '">atom</a> <a href="/appcache/' + appname + '/app.composite">json</a>]';
 
 /**
  * The current app composite.
@@ -122,17 +138,17 @@ $('saveButton').onclick = function(e) {
 };
 
 // Create editor graph area
-var g = graph.mkgraph(graph.mkpath().move(0,50));
+var g = graph.mkgraph(graph.mkpath().move(0,40), $('compName'), $('propValue'));
 var bg = graph.mkgroup(graph.mkpath());
 
-// Install the palettes.
+// Install the palettes
 var gpalettes = new Array();
-var spalette = 'variables';
-installpalette('variables', graph.mkpath().move(0,10), g, bg, spalette, gpalettes);
-installpalette('control', graph.mkpath().move(0,80), g, bg, spalette, gpalettes);
-installpalette('operators', graph.mkpath().move(0,150), g, bg, spalette, gpalettes);
-installpalette('social', graph.mkpath().move(0,220), g, bg, spalette, gpalettes);
-installpalette('sensors', graph.mkpath().move(0,290), g, bg, spalette, gpalettes);
+var spalette = 'values';
+installpalette('values', graph.mkpath().move(0,10), g, bg, spalette, gpalettes);
+installpalette('control', graph.mkpath().move(0,60), g, bg, spalette, gpalettes);
+installpalette('operators', graph.mkpath().move(0,110), g, bg, spalette, gpalettes);
+installpalette('social', graph.mkpath().move(0,160), g, bg, spalette, gpalettes);
+installpalette('sensors', graph.mkpath().move(0,210), g, bg, spalette, gpalettes);
 
 // Get and display the current app
 getapp(appname, g);

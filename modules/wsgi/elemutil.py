@@ -120,7 +120,7 @@ def valueToElement(t):
         v = () if isNil(cdr(t)) else cadr(t)
         if not isList(v):
             if n[0:2] == atsign:
-                return (attribute, n[1:], v)
+                return (attribute, "'" + n[2:], v)
             return (element, n, v)
         if isNil(v) or not isSymbol(car(v)):
             return cons(element, cons(n, (valuesToElements(v),)))

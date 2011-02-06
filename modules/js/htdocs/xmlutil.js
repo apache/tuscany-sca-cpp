@@ -47,8 +47,7 @@ function appendNodes(nodes, p) {
  * Return the child attributes of an element.
  */
 function childAttributes(e) {
-    return filter(function(n) {
-        return n.nodeType == 2; }, nodeList(e.attributes));
+    return filter(function(n) { return n.nodeType == 2; }, nodeList(e.attributes));
 }
 
 /**

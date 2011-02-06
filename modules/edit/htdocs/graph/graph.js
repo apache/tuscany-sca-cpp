@@ -31,6 +31,7 @@ graph.colors.black = '#000000';
 graph.colors.blue = '#0000ff';
 graph.colors.cyan = '#00ffff';
 graph.colors.gray = '#808080'
+graph.colors.lightgray = '#dcdcdc'
 graph.colors.green = '#00ff00';
 graph.colors.magenta = '#ff00ff';
 graph.colors.orange = '#ffa500';
@@ -101,7 +102,7 @@ if (ui.isIE()) {
     /**
      * Make a VML graph.
      */
-    graph.mkgraph = function(pos) {
+    graph.mkgraph = function(pos, cname, pvalue) {
 
         // Create div element to host the graph
         var div = document.createElement('div');
@@ -118,8 +119,9 @@ if (ui.isIE()) {
         vmlg.coordsize = '5000,5000';
         div.appendChild(vmlg);
 
-        // Keep track of the current dragged element
+        // Track element dragging and selection
         graph.dragging = null;
+        graph.selected = null;
 
         /**
          * Find the first draggable element in a hierarchy of elements.
@@ -140,18 +142,25 @@ if (ui.isIE()) {
 
             // Find draggable element
             graph.dragging = draggable(window.event.srcElement);
-            if (graph.dragging == null)
+            graph.selected = graph.dragging;
+            if (graph.dragging == null) {
+
+                // Reset current selection
+                cname.value = '';
+                pvalue.value = '';
                 return false;
+            }
 
             // Clone component from the palette
-            if (graph.dragging.id.substring(0, 8) == 'palette:')
-                graph.dragging = graph.clonepalette(graph.dragging);
+            var compos = scdl.composite(vmlg.compos);
+            if (graph.dragging.id.substring(0, 8) == 'palette:') {
+                graph.dragging = graph.clonepalette(graph.dragging, compos);
+                graph.selected = graph.dragging;
+            }
 
             // Cut wire to component
-            if (graph.dragging.parentNode != vmlg) {
-                var compos = scdl.composite(vmlg.compos);
+            if (graph.dragging.parentNode != vmlg)
                 setElement(compos, graph.cutwire(graph.dragging, compos, vmlg));
-            }
 
             // Bring component to the top
             graph.bringtotop(graph.dragging, vmlg);
@@ -160,6 +169,10 @@ if (ui.isIE()) {
             graph.dragX = window.event.clientX;
             graph.dragY = window.event.clientY;
             vmlg.setCapture();
+
+            // Update the component name and property value fields
+            cname.value = graph.selected.id;
+            pvalue.value = graph.property(graph.selected.comp);
             return false;
         };
 
@@ -172,7 +185,11 @@ if (ui.isIE()) {
 
             if (graph.dragging.parentNode == vmlg && graph.dragging.id.substring(0, 8) != 'palette:') {
                 var gpos = graph.relpos(graph.dragging);
-                if (pos.xpos() >= 350) {
+                if (gpos.xpos() >= 330) {
+
+                    // If component close enough to editing area, move it there
+                    if (gpos.xpos() < 350)
+                        graph.move(graph.dragging, graph.mkpath().move(350, gpos.ypos()));
 
                     // Add new dragged component to the composite
                     if (isNil(graph.dragging.compos)) {
@@ -198,6 +215,11 @@ if (ui.isIE()) {
                         var compos = scdl.composite(vmlg.compos);
                         setElement(compos, graph.removecomp(graph.dragging.comp, compos));
                     }
+
+                    // Reset current selection
+                    graph.selected = null;
+                    cname.value = '';
+                    pvalue.value = '';
                 }
             }
 
@@ -205,10 +227,8 @@ if (ui.isIE()) {
             graph.dragging = null;
             vmlg.releaseCapture();
 
-            // Remove and refresh the composite
-            map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { vmlg.removeChild(n); } return n; }, nodeList(vmlg.childNodes));
-            graph.display(graph.composite(vmlg.compos, graph.mkpath().move(350,0)), vmlg);
-
+            // Refresh the composite
+            graph.refresh(vmlg);
             return false;
         };
 
@@ -238,8 +258,38 @@ if (ui.isIE()) {
             return false;
         };
 
+        /**
+         * Handle field on change events.
+         */
+        cname.onchange = function() {
+            if (graph.selected == null)
+                return false;
+
+            // Change component name and refactor references to it
+            var compos = scdl.composite(svg.compos);
+            cname.value = graph.ucid(cname.value, compos);
+            graph.selected.id = cname.value;
+            setElement(compos, graph.renamecomp(graph.selected.comp, compos, cname.value));
+
+            // Refresh the composite
+            graph.refresh(svg);
+            return false;
+        };
+
+        pvalue.onchange = function() {
+            if (graph.selected == null)
+                return false;
+
+            // Change the component property value
+            graph.setproperty(graph.selected.comp, pvalue.value);
+
+            // Refresh the composite
+            graph.refresh(svg);
+            return false;
+        };
+
         // Create hidden spans to help compute the width of
-        // component and reference titles
+        // component, reference and property titles
         graph.comptitlewidthdiv = document.createElement('span');
         graph.comptitlewidthdiv.style.visibility = 'hidden'
         graph.comptitlewidthdiv.style.fontWeight = 'bold'
@@ -248,6 +298,10 @@ if (ui.isIE()) {
         graph.reftitlewidthdiv = document.createElement('span');
         graph.reftitlewidthdiv.style.visibility = 'hidden'
         div.appendChild(graph.reftitlewidthdiv);
+
+        graph.proptitlewidthdiv = document.createElement('span');
+        graph.proptitlewidthdiv.style.visibility = 'hidden'
+        div.appendChild(graph.proptitlewidthdiv);
 
         return vmlg;
     };
@@ -293,9 +347,10 @@ if (ui.isIE()) {
      */
     graph.mktitle = function(t, bold, pos) {
         var title = document.createElement('v:textbox');
+        title.style.position = 'absolute';
         title.style.left = pos.xpos();
         title.style.top = pos.ypos();
-        title.style.position = 'absolute';
+        title.inset = '' + 4 + 'px ' + pos.ypos() + 'px 0px 0px';
         if (bold)
             title.style.fontWeight = 'bold';
         var tnode = document.createTextNode(t);
@@ -325,6 +380,27 @@ if (ui.isIE()) {
     };
 
     /**
+     * Return an element representing the value of a property.
+     */
+    graph.proptitle = function(comp) {
+        var tsvcs = graph.tsvcs(comp);
+        var lsvcs = graph.lsvcs(comp);
+        var pos = graph.mkpath().move(isNil(lsvcs)? 5 : 25, isNil(tsvcs)? 20 : 40);
+        return graph.mktitle(graph.property(comp), false, pos);
+    };
+
+    /**
+     * Return the width of the value of a property.
+     */
+    graph.proptitlewidth = function(comp) {
+        var t = graph.property(comp);
+        graph.proptitlewidthdiv.innerHTML = t;
+        var twidth = graph.proptitlewidthdiv.offsetWidth;
+        graph.proptitlewidthdiv.innerHTML = '';
+        return twidth;
+    };
+
+    /**
      * Return an element representing the title of a reference.
      */
     graph.reftitle = function(ref) {
@@ -347,8 +423,9 @@ if (ui.isIE()) {
      */
     graph.compnode = function(comp, cassoc, pos) {
 
-        // Make the component title element
+        // Make the component and property title elements
         var title = graph.comptitle(comp);
+        var prop = graph.proptitle(comp);
 
         // Compute the component shape path
         var path = graph.comppath(comp, cassoc);
@@ -388,13 +465,14 @@ if (ui.isIE()) {
         g.style.top = pos.ypos();
         g.appendChild(shape);
         shape.appendChild(title);
+        shape.appendChild(prop);
         g.appendChild(contour)
 
         // Store the component and the positions of its services
         // and references in the component shape
         g.comp = comp;
-        g.refpos = path.refpos;
-        g.svcpos = path.svcpos;
+        g.refpos = reverse(path.refpos);
+        g.svcpos = reverse(path.svcpos);
 
         return g;
     };
@@ -426,7 +504,7 @@ if (ui.isIE()) {
         shape.style.height = 5000;
         shape.coordsize = '5000,5000';
         shape.path = path;
-        shape.fillcolor = graph.colors.blue1;
+        shape.fillcolor = graph.colors.lightgray;
         shape.stroked = 'false';
 
         // Create an overlay contour shape
@@ -484,7 +562,7 @@ if (ui.isIE()) {
     /**
      * Make an SVG graph.
      */
-    graph.mkgraph = function(pos) {
+    graph.mkgraph = function(pos, cname, pvalue) {
 
         // Create a div element to host the graph
         var div = document.createElement('div');
@@ -501,8 +579,9 @@ if (ui.isIE()) {
         svg.style.width = 5000;
         div.appendChild(svg);
 
-        // Keep track of current dragged element
+        // Track element dragging and selection
         graph.dragging = null;
+        graph.selected = null;
 
         /**
          * Find the first draggable element in a hierarchy of elements.
@@ -526,18 +605,25 @@ if (ui.isIE()) {
 
             // Find draggable component
             graph.dragging = draggable(e.target);
-            if (graph.dragging == null)
+            graph.selected = graph.dragging;
+            if (graph.dragging == null) {
+
+                // Reset current selection
+                cname.value = '';
+                pvalue.value = '';
                 return false;
+            }
 
             // Clone component from the palette
-            if (graph.dragging.id.substring(0, 8) == 'palette:')
-                graph.dragging = graph.clonepalette(graph.dragging);
+            var compos = scdl.composite(svg.compos);
+            if (graph.dragging.id.substring(0, 8) == 'palette:') {
+                graph.dragging = graph.clonepalette(graph.dragging, compos);
+                graph.selected = graph.dragging;
+            }
 
             // Cut wire to component
-            if (graph.dragging.parentNode != svg) {
-                var compos = scdl.composite(svg.compos);
+            if (graph.dragging.parentNode != svg)
                 setElement(compos, graph.cutwire(graph.dragging, compos, svg));
-            }
 
             // Bring component to the top
             graph.bringtotop(graph.dragging, svg);
@@ -546,6 +632,10 @@ if (ui.isIE()) {
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
             graph.dragX = pos.screenX;
             graph.dragY = pos.screenY;
+
+            // Update the component name and property value fields
+            cname.value = graph.selected.id;
+            pvalue.value = graph.property(graph.selected.comp);
             return false;
         };
 
@@ -561,7 +651,11 @@ if (ui.isIE()) {
 
             if (graph.dragging.parentNode == svg && graph.dragging.id.substring(0, 8) != 'palette:') {
                 var gpos = graph.relpos(graph.dragging);
-                if (gpos.xpos() >= 350) {
+                if (gpos.xpos() >= 330) {
+
+                    // If component close enough to editing area, move it there
+                    if (gpos.xpos() < 350)
+                        graph.move(graph.dragging, graph.mkpath().move(350, gpos.ypos()));
 
                     // Add new dragged component to the composite
                     if (isNil(graph.dragging.compos)) {
@@ -587,16 +681,19 @@ if (ui.isIE()) {
                         var compos = scdl.composite(svg.compos);
                         setElement(compos, graph.removecomp(graph.dragging.comp, compos));
                     }
+
+                    // Reset current selection
+                    graph.selected = null;
+                    cname.value = '';
+                    pvalue.value = '';
                 }
             }
 
             // Forget current dragged component
             graph.dragging = null;
 
-            // Remove and refresh the composite
-            map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { svg.removeChild(n); } return n; }, nodeList(svg.childNodes));
-            graph.display(graph.composite(svg.compos, graph.mkpath().move(350,0)), svg);
-
+            // Refresh the composite
+            graph.refresh(svg);
             return false;
         };
 
@@ -644,6 +741,36 @@ if (ui.isIE()) {
         window.top.onmousemove = window.onmousemove;
         window.ontouchmove = window.onmousemove;
         window.top.ontouchmove = window.onmousemove;
+
+        /**
+         * Handle field on change events.
+         */
+        cname.onchange = function() {
+            if (graph.selected == null)
+                return false;
+
+            // Change component name and refactor references to it
+            var compos = scdl.composite(svg.compos);
+            cname.value = graph.ucid(cname.value, compos);
+            graph.selected.id = cname.value;
+            setElement(compos, graph.renamecomp(graph.selected.comp, compos, cname.value));
+
+            // Refresh the composite
+            graph.refresh(svg);
+            return false;
+        };
+        
+        pvalue.onchange = function() {
+            if (graph.selected == null)
+                return false;
+
+            // Change the component property value
+            graph.setproperty(graph.selected.comp, pvalue.value);
+
+            // Refresh the composite
+            graph.refresh(svg);
+            return false;
+        };
 
         // Create a hidden SVG element to help compute the width
         // of component and reference titles
@@ -743,12 +870,33 @@ if (ui.isIE()) {
     };
 
     /**
+     * Return an element representing the value of a property.
+     */
+    graph.proptitle = function(comp) {
+        var title = graph.mktitle(graph.property(comp), false);
+        title.setAttribute('y', 30);
+        return title;
+    };
+
+    /**
+     * Return the width of the title of a property.
+     */
+    graph.proptitlewidth = function(comp) {
+        var title = graph.proptitle(comp);
+        graph.titlewidthsvg.appendChild(title);
+        var width = title.getBBox().width;
+        graph.titlewidthsvg.removeChild(title);
+        return width;
+    };
+
+    /**
      * Return a node representing a component.
      */
     graph.compnode = function(comp, cassoc, pos) {
 
-        // Make the component title
+        // Make the component and property title elements
         var title = graph.comptitle(comp);
+        var prop = graph.proptitle(comp);
 
         // Compute the path of the component shape
         var path = graph.comppath(comp, cassoc);
@@ -775,6 +923,7 @@ if (ui.isIE()) {
         g.appendChild(shape);
         g.appendChild(contour);
         g.appendChild(title);
+        g.appendChild(prop);
 
         // Store the component and the positions of its services
         // and references in the component shape
@@ -808,7 +957,7 @@ if (ui.isIE()) {
         // Create the main button shape
         var shape = document.createElementNS(graph.svgns, 'path');
         shape.setAttribute('d', path);
-        shape.setAttribute('fill', graph.colors.blue1);
+        shape.setAttribute('fill', graph.colors.lightgray);
 
         // Create an overlay contour shape
         var contour = document.createElementNS(graph.svgns, 'path');
@@ -873,7 +1022,30 @@ graph.bringtotop = function(n, g) {
  */
 graph.title = function(e) {
     var d = scdl.documentation(e);
-    return d != null? d : scdl.name(e);
+    if (d != null)
+        return d;
+    return scdl.name(e);
+};
+
+/**
+ * Return the property value of a SCDL component.
+ */
+graph.property = function(e) {
+    var p = scdl.properties(e);
+    if (isNil(p))
+        return '';
+    return scdl.propertyValue(car(p));
+};
+
+/**
+ * Change the property value of a SCDL component.
+ */
+graph.setproperty = function(e, value) {
+    var p = scdl.properties(e);
+    if (isNil(p))
+        return '';
+    setElement(car(p), mklist(element, "'property", mklist(attribute, "'name", "property"), value));
+    return value;
 };
 
 /**
@@ -1040,7 +1212,7 @@ graph.rrefswidth = function(refs, cassoc) {
  */
 graph.compwidth = function(comp, cassoc) {
     return memo(comp, 'width', function() {
-        var twidth = graph.comptitlewidth(comp) + 20;
+        var twidth = Math.max(graph.comptitlewidth(comp), graph.proptitlewidth(comp)) + 20;
         var tsvcs = graph.tsvcs(comp);
         var tsvcsw = Math.max(1, length(tsvcs)) * 60 + 20;
         var brefs = graph.brefs(comp);
@@ -1176,7 +1348,7 @@ graph.comppath = function(comp, cassoc) {
  * Return a path representing a button node.
  */
 graph.buttonpath = function(t) {
-    var height = 60;
+    var height = 40;
     var width = 120;
     var path = graph.mkpath().move(10,0);
     path = path.line(width - 10,path.ypos()).rcurve(10,0,0,10);
@@ -1352,14 +1524,39 @@ graph.composite = function(compos, pos) {
 };
 
 /**
+ * Return a component unique id.
+ */
+graph.ucid = function(prefix, compos) {
+
+    // Build an assoc list keyed by component name
+    var comps = map(function(c) { return mklist(scdl.name(c), c); }, namedElementChildren("'component", compos));
+
+    /**
+     * Find a free component id.
+     */
+    function ucid(p, id) {
+        if (isNil(assoc(p + id, comps)))
+            return p + id;
+        return ucid(p, id + 1);
+    }
+
+    if (isNil(assoc(prefix, comps)))
+        return prefix;
+
+    return ucid(prefix == ''? 'comp' : prefix, 2);
+};
+
+/**
  * Clone a palette component node.
  */
-graph.clones = 0;
-graph.clonepalette = function(e) {
+graph.clonepalette = function(e, compos) {
 
     // Clone the SCDL component and give it a unique name
-    var comp = append(mklist(element, "'component", mklist(attribute, "'name", scdl.name(e.comp) + (++graph.clones))),
+    var comp = append(mklist(element, "'component", mklist(attribute, "'name", graph.ucid(scdl.name(e.comp), compos))),
                 filter(function(c) { return !(isAttribute(c) && attributeName(c) == "'name")}, elementChildren(e.comp)));
+    var x = '<composite xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1">' + writeXML(mklist(comp), false) + '</composite>';
+    var compos = readXML(mklist(x));
+    comp = car(scdl.components(compos));
 
     // Make a component node
     var gcomp = graph.compnode(comp, mklist(), graph.mkpath());
@@ -1396,6 +1593,41 @@ graph.removecomp = function(comp, compos) {
 };
 
 /**
+ * Rename a component.
+ */
+graph.renamecomp = function(comp, compos, name) {
+
+    /**
+     * Refactor references to a component.
+     */
+    function refactorrefs(refs, oname, nname) {
+        if (isNil(refs))
+            return true;
+        var ref = car(refs);
+        if (scdl.target(ref) != oname)
+            return refactorrefs(cdr(refs), oname, nname);
+
+        // Change the reference's target attribute
+        setElement(ref, append(mklist(element, "'reference"), append(filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'target"); }, elementChildren(ref)), mklist(mklist(attribute, "'target", nname)))));
+
+        return refactorrefs(cdr(refs), oname, nname);
+    }
+
+    // Refactor all the references to the renamed component
+    var oname = scdl.name(comp);
+    map(function(c) { return refactorrefs(scdl.references(c), oname, name); }, namedElementChildren("'component", compos));
+
+    // Rename the SCDL promoted service and component
+    var proms = filter(function(s) { return scdl.name(s) == oname }, scdl.services(compos));
+    if (!isNil(proms)) {
+        setElement(car(proms), mklist(element, "'service", mklist(attribute, "'name", name), mklist(attribute, "'promote", name)));
+    }
+    setElement(comp, append(mklist(element, "'component"), cons(mklist(attribute, "'name", name), filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'name"); }, elementChildren(comp)))));
+
+    return append(mklist(element, "'composite"), elementChildren(compos));
+};
+
+/**
  * Cut the wire to a component node and make that node a
  * top level component node.
  */
@@ -1428,7 +1660,6 @@ graph.cutwire = function(node, compos, g) {
     var prom = mklist(element, "'service", mklist(attribute, "'name", name), mklist(attribute, "'promote", name));
     return append(mklist(element, "'composite"), append(filter(function(c) {return !(isElement(c) && scdl.name(c) == name); }, elementChildren(compos)), mklist(prom, comp)));
 }
-
 
 /**
  * Wire a component to the closest neighbor reference.
@@ -1513,10 +1744,21 @@ graph.display = function(nodes, g) {
 };
 
 /**
+ * Refresh a graph.
+ */
+graph.refresh = function(g) {
+
+    // Remove nodes and redisplay the composite associated with the graph
+    map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
+    graph.display(graph.composite(g.compos, graph.mkpath().move(350,0)), g);
+    return g;
+};
+
+/**
  * Display and enable editing of a composite and the graphical
  * nodes that represent it.
  */
-graph.edit = function(compos, nodes, g) {
+graph.edit = function(compos, nodes, g, cname, pvalue) {
 
     // Store the composite in the graphical canvas
     g.compos = compos;

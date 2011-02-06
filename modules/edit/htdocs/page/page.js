@@ -27,10 +27,11 @@ if (ui.isIE()) {
     /**
      * Init a page editor. IE-specific implementation.
      */
-    page.initpage = function(elem) {
+    page.edit = function(elem, wname, wtext) {
 
-        // Keep track of the current dragged element
+        // Track element dragging and selection
         page.dragging = null;
+        page.selected = null;
 
         /**
          * Handle a mouse down event.
@@ -40,8 +41,20 @@ if (ui.isIE()) {
 
             // Find a draggable element
             page.dragging = page.draggable(window.event.srcElement, elem);
-            if (page.dragging == null)
+            page.selected = page.dragging;
+            if (page.dragging == null) {
+
+                // Reset current selection
+                wname.value = '';
+                wtext.value = '';
                 return false;
+            }
+
+            // Clone element dragged from palette
+            if (page.dragging.id.substring(0, 8) == 'palette:') {
+                page.dragging = page.clone(page.dragging);
+                page.selected = page.dragging;
+            }
 
             // Bring it to the top
             page.bringtotop(page.dragging);
@@ -50,6 +63,10 @@ if (ui.isIE()) {
             page.dragX = window.event.clientX;
             page.dragY = window.event.clientY;
             elem.setCapture();
+
+            // Update the widget name and text fields
+            wname.value = page.selected.id;
+            wtext.value = page.text(page.selected);
             return false;
         };
 
@@ -61,8 +78,21 @@ if (ui.isIE()) {
                 return false;
 
             // Discard element dragged out of page area
-            if (ui.csspos(page.dragging.style.left) < 350 && page.dragging.id.substring(0, 8) != 'palette:')
-                page.dragging.parentNode.removeChild(page.dragging);
+            if (ui.csspos(page.dragging.style.left) < 350 && page.dragging.id.substring(0, 8) != 'palette:') {
+                if (ui.csspos(page.dragging.style.left) >= 330) {
+
+                    // Unless it's close enough to page area, then move it there
+                    page.dragging.style.left = 350;
+                    page.dragging.cover.style.left = 350;
+                } else {
+                    page.dragging.parentNode.removeChild(page.dragging);
+
+                    // Reset current selection
+                    page.selected = null;
+                    wname.value = '';
+                    wtext.value = '';
+                }
+            }
 
             // Forget current dragged element
             page.dragging = null;
@@ -91,16 +121,29 @@ if (ui.isIE()) {
             else
                 newY = 0;
 
-            // Clone element dragged from palette
-            if (page.dragging.id.substring(0, 8) == 'palette:')
-                page.dragging = page.clone(page.dragging);
-
             // Move dragged element
             page.dragging.style.left = newX;
             page.dragging.style.top = newY;
             page.dragging.cover.style.left = newX;
             page.dragging.cover.style.top = newY;
+            return false;
+        };
 
+        /**
+         * Handle field on change events.
+         */
+        wname.onchange = wname.onblur = function() {
+            if (page.selected == null)
+                return false;
+            page.selected.id = wname.value;
+            return false;
+        };
+
+        wtext.onchange = wtext.onblur = function() {
+            if (page.selected == null)
+                return false;
+            page.settext(page.selected, wtext.value);
+            return false;
         };
 
         // Cover child elements with span elements to prevent
@@ -115,8 +158,11 @@ if (ui.isIE()) {
     /**
      * Init a page editor. Generic implementation for all other browsers.
      */
-    page.initpage = function(elem) {
+    page.edit = function(elem, wname, wtext) {
+
+        // Track element dragging and selection
         page.dragging = null;
+        page.selected = null;
 
         /**
          * Handle a mouse down event.
@@ -129,8 +175,20 @@ if (ui.isIE()) {
 
             // Find a draggable element
             page.dragging = page.draggable(e.target, elem);
-            if (page.dragging == null)
+            page.selected = page.dragging;
+            if (page.dragging == null) {
+
+                // Reset current selection
+                wname.value = '';
+                wtext.value = '';
                 return false;
+            }
+
+            // Clone element dragged from palette
+            if (page.dragging.id.substring(0, 8) == 'palette:') {
+                page.dragging = page.clone(page.dragging);
+                page.selected = page.dragging;
+            }
 
             // Bring it to the top
             page.bringtotop(page.dragging);
@@ -139,6 +197,10 @@ if (ui.isIE()) {
             var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
             page.dragX = pos.screenX;
             page.dragY = pos.screenY;
+
+            // Update the widget name and text fields
+            wname.value = page.selected.id;
+            wtext.value = page.text(page.selected);
             return false;
         };
 
@@ -152,9 +214,22 @@ if (ui.isIE()) {
             if (page.dragging == null)
                 return false;
 
-            // Discard element if dragged out of page area
-            if (ui.csspos(page.dragging.style.left) < 350 && page.dragging.id.substring(0, 8) != 'palette:')
-                page.dragging.parentNode.removeChild(page.dragging);
+            // Discard element dragged out of page area
+            if (ui.csspos(page.dragging.style.left) < 350 && page.dragging.id.substring(0, 8) != 'palette:') {
+                if (ui.csspos(page.dragging.style.left) >= 330) {
+
+                    // Unless it's close enough to page area, then move it there
+                    page.dragging.style.left = 350;
+                    page.dragging.cover.style.left = 350;
+                } else {
+                    page.dragging.parentNode.removeChild(page.dragging);
+
+                    // Reset current selection
+                    page.selected = null;
+                    wname.value = '';
+                    wtext.value = '';
+                }
+            }
 
             // Forget dragged element
             page.dragging = null;
@@ -188,11 +263,6 @@ if (ui.isIE()) {
             else
                 newY = 0;
 
-            // Clone element dragged from palette
-            if (page.dragging.id.substring(0, 8) == 'palette:') {
-                page.dragging = page.clone(page.dragging);
-            }
-
             // Move the dragged element
             page.dragging.style.left = newX;
             page.dragging.style.top = newY;
@@ -206,6 +276,23 @@ if (ui.isIE()) {
         window.ontouchmove = window.onmousemove;
         window.top.ontouchmove = window.onmousemove;
 
+        /**
+         * Handle field on change events.
+         */
+        wname.onchange = wname.onblue = function() {
+            if (page.selected == null)
+                return false;
+            page.selected.id = wname.value;
+            return false;
+        };
+
+        wtext.onchange = wtext.onblur = function() {
+            if (page.selected == null)
+                return false;
+            page.settext(page.selected, wtext.value);
+            return false;
+        };
+
         // Cover child elements with span elements to prevent
         // any input events to reach them
         map(page.cover, nodeList(elem.childNodes));
@@ -213,6 +300,51 @@ if (ui.isIE()) {
         return elem;
     };
 }
+
+/**
+ * Return the text of a widget.
+ */
+page.text = function(e) {
+    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text')
+        return e.childNodes[0].innerHTML;
+    if (e.className == 'button' || e.className == 'entry' || e.className == 'password' || e.className == 'checkbox')
+        return e.childNodes[0].value;
+    if (e.className == 'list')
+        return e.childNodes[0].childNodes[0].value;
+    if (e.className == 'link')
+        return e.childNodes[0].childNodes[0].innerHTML;
+    return '';
+};
+
+/**
+ * Set the text of a widget.
+ */
+page.settext = function(e, t) {
+    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text') {
+        e.childNodes[0].innerHTML = t;
+        return t;
+    }
+    if (e.className == 'button' || e.className == 'entry' || e.className == 'password') {
+        e.childNodes[0].value = t;
+        return t;
+    }
+    if (e.className == 'checkbox') {
+        e.childNodes[0].value = t;
+        map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = t; return n; }, nodeList(e.childNodes));
+        return t;
+    }
+    if (e.className == 'list') {
+        e.childNodes[0].childNodes[0].value = t;
+        e.childNodes[0].childNodes[0].innerHTML = t;
+        return t;
+    }
+    if (e.className == 'link') {
+        e.childNodes[0].childNodes[0].href = t;
+        e.childNodes[0].childNodes[0].innerHTML = t;
+        return t;
+    }
+    return '';
+};
 
 /**
  * Find a draggable element in a hierarchy of elements.
@@ -269,7 +401,8 @@ page.clone = function(e) {
         // Skip the palette: prefix
         ne.id = e.id.substr(8);
 
-        // Copy the HTML content
+        // Copy the class and HTML content
+        ne.className = e.className;
         ne.innerHTML = e.innerHTML;
         return ne;
     }

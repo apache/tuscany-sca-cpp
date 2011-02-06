@@ -24,9 +24,10 @@
 </head>  
 <body>
 
-<div style="position: absolute; top: 0px; left: 0px; right: 0px;">
+<div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
-<div>This module implements simple tools to help you create Tuscany apps.</div>
+<div>This module implements simple App editing tools to help you create Tuscany apps.</div>
+<div>The user interface is minimalistic, by design.</div>
 <br/>
 
 <h2>App Dashboard</h2>
@@ -36,12 +37,16 @@
 <p>Try the <a href="app/?app=store" target="_parent">App Editor</a> to edit an app.</p>
 
 <h2>Composition Editor</h2>
-<p>Try the <a href="graph/?app=store" target="_parent">Composition Editor</a> to compose an app.</p>
+<p>Try the <a href="graph/?app=store" target="_parent">Composition Editor</a> to compose the logic of an app.</p>
 
 <h2>Page Editor</h2>
 <p>Try the <a href="page/?app=store" target="_parent">Page Editor</a> to draw an app page.</p>
 
 </div>
+
+<script type="text/javascript">
+if (ui.isIE()) $('bodydiv').style.right = -20;
+</script>
 
 </body>
 </html>

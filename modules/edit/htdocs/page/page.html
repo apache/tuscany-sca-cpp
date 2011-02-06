@@ -30,24 +30,38 @@
 </head>  
 <body>
 
-<div style="position: absolute; top: 0px; left: 0px; right: 0px;">
+<div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
-<table width="100%">
-<tr><th style="width: 338px;">Widgets</th><th style="padding-top: 0px; padding-bottom: 0px;"><span id="appname"></span><span style="position: absolute; top: 2px; right: 8px;"><input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/></span></th></tr>
+<table style="width: 100%;">
+<tr>
+<th class="thl thr" style="width: 330px; min-width: 330px;">Palette</th><th class="ths" style="width: 3px; min-width: 3px;"></th>
+
+<th class="thl thr" style="padding-top: 0px; padding-bottom: 0px;">
+<input id="widgetName" type="text" value="widget name" style="position: relative; width: 150px;"/>
+<input id="widgetText" type="text" value="widget text" style="position: relative; width: 300px;"/>
+</th>
+
+<th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
+<span id="source" style="font-weight: normal;">[atom json]</span>
+<input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/>
+</th>
+</tr>
+
+<tr style="height: 5000px;"><td class="tdl"></td><th class="ths"></th><td class="tdr" colspan="2"></td></tr>
 </table>
 
-<div id="page" style="position: absolute; top: 60px; left: 0px; width: 5000px; height: 5000px;">
+<div id="page" style="position: absolute; top: 40px; left: 0px; width: 5000px; height: 5000px;">
 
-<span id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header1</h1></span>
-<span id="palette:h2" style="position: absolute; left: 0px; top: 40px;"><h2>Header2</h2></span>
-<span id="palette:button" style="position: absolute; left: 0px; top: 80px;"><input type="button" value="button"/></span>
-<span id="palette:entry" style="position: absolute; left: 0px; top: 120px;"><input type="text" value="field" size="5"/></span>
-<span id="palette:password" style="position: absolute; left: 0px; top: 160px;"><input type="password" value="password" size="5"/></span>
-<span id="palette:checkbox" style="position: absolute; left: 0px; top: 200px;"><input type="checkbox" value="checkbox"></input><span>checkbox</span></span>
-<span id="palette:select" style="position: absolute; left: 0px; top: 240px;"><select><option value="list">list</option></select></span>
-<span id="palette:link" style="position: absolute; left: 0px; top: 280px;"><a href="/"><span>link</span></a></span>
-<span id="palette:text" style="position: absolute; left: 0px; top: 320px;"><span>text</span></span>
-<span id="palette:img" style="position: absolute; left: 0px; top: 360px;"><img/></span>
+<span class="h1" id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header1</h1></span>
+<span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 40px;"><h2>Header2</h2></span>
+<span class="button" id="palette:button" style="position: absolute; left: 0px; top: 80px;"><input type="button" value="button"/></span>
+<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 120px;"><input type="text" value="field" size="5"/></span>
+<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 160px;"><input type="password" value="password" size="5"/></span>
+<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 200px;"><input type="checkbox" value="checkbox"></input><span>checkbox</span></span>
+<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 240px;"><select><option value="list">list</option></select></span>
+<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 280px;"><a href="/"><span>link</span></a></span>
+<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 320px;"><span>text</span></span>
+<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 360px;"><img src=""/></span>
 
 </div>
 
@@ -57,6 +71,8 @@
 </div>
 
 <script type="text/javascript">
+if (ui.isIE()) $('bodydiv').style.right = -20;
+
 var editWidget = sca.component("EditWidget");
 var pages = sca.reference(editWidget, "pages");
 
@@ -64,7 +80,7 @@ var pages = sca.reference(editWidget, "pages");
  * The current app name.
  */
 var appname = ui.queryParams()['app'];
-$('appname').innerHTML = 'Page: ' + appname;
+$('source').innerHTML = '[<a href="/pages/' + appname + '">atom</a> <a href="/appcache/' + appname + '/app.html">json</a>]';
 
 /**
  * Return the page in an ATOM entry.
@@ -142,7 +158,7 @@ $('saveButton').onclick = function(e) {
 
 // Initialize the page editor
 var edit = $('page');
-page.initpage(edit);
+page.edit(edit, $('widgetName'), $('widgetText'));
 
 // Get and display the current app page
 getpage(appname, edit);

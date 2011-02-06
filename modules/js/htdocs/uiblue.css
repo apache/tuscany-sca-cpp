@@ -23,7 +23,7 @@ font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-si
 }
 
 table {
-border: 1px; border-collapse: separate;
+border: 0px; border-collapse: collapse; border-color: #000000; border-style: solid;
 font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
 }
 
@@ -34,8 +34,28 @@ border-top: 1px; border-bottom: 1px; border-left: 0px; border-right: 0px;
 border-style: solid; border-top-color: #000000; border-bottom-color: #000000;
 }
 
+.thl {
+border-left: 0px;
+}
+
+.thr {
+border-right: 0px;
+}
+
+.ths {
+padding: 0px;
+}
+
 td {
 padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: nowrap; vertical-align: text-top;
+}
+
+.tdl {
+border-right: 1px;
+}
+
+.tdr {
+border-left: 1px;
 }
 
 .tdw {
@@ -54,6 +74,10 @@ margin: 0px; padding: 0px;
 input {
 vertical-align: middle;
 -webkit-text-size-adjust: 140%;
+}
+
+textarea {
+font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
 }
 
 a:link {
@@ -103,7 +127,7 @@ cursor: pointer; cursor: hand;
 font-weight: bold; background-color: #3b5998; color: #ffffff;
 margin: 0px;
 padding-top: 4px; padding-left: 2px; padding-right: 8px; padding-bottom: 8px; vertical-align: text-top;
-border-bottom: 1px solid #000000;
+border-bottom: 1px solid #000000; border-collapse: separate;
 }
 
 .ltbar {
