@@ -87,7 +87,7 @@ private:
 const string filename(const list<value>& path, const string& root) {
     if (isNil(path))
         return root;
-    string name = root + "/" + scheme::writeValue(car(path));
+    const string name = root + "/" + (isString(car(path))? (string)car(path) : scheme::writeValue(car(path)));
     return filename(cdr(path), name);
 }
 
@@ -103,7 +103,7 @@ const string filename(const value& key, const string& root) {
 const failable<bool> mkdirs(const list<value>& path, const string& root) {
     if (isNil(cdr(path)))
         return true;
-    string dir = root + "/" + scheme::writeValue(car(path));
+    const string dir = root + "/" + (isString(car(path))? (string)car(path) : scheme::writeValue(car(path)));
     mkdir(c_str(dir), S_IRWXU);
     return mkdirs(cdr(path), dir);
 }
@@ -200,7 +200,9 @@ const failable<value> get(const value& key, FileDB& db) {
     debug(key, "filedb::get::key");
     debug(db.name, "filedb::get::dbname");
 
-    ifstream is(filename(key, db.name));
+    const string fn = filename(key, db.name);
+    debug(fn, "filedb::get::filename");
+    ifstream is(fn);
     if (is.fail())
         return mkfailure<value>("Couldn't get file database entry.");
     const failable<value> val = read(is, db.format, db);
