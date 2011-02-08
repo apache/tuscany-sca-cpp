@@ -40,7 +40,7 @@ var mdiv = $('menu');
 var name = appname();
 mdiv.innerHTML = ui.menubar(
     append(mklist(ui.menu('Home', '/'), ui.menu('Dashboard', '/dash')),
-            (isNil(name) || name == 'undefined')? mklist() : mklist(ui.menu('App', '/app/?app=' + name), ui.menu('Composition', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name))),
+            (isNil(name) || name == 'undefined')? mklist() : mklist(ui.menu('Composition', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name), ui.menu('Settings', '/app/?app=' + name))),
     mklist(ui.menu('Sign out', '/logout')));
 
 </script>

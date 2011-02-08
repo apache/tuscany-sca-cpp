@@ -49,6 +49,10 @@
 <tr><td><input type="text" id="appName" size="10"/></td></tr>
 <tr><tr><td><b>App Title:</b></td></tr>
 <tr><td><input type="text" id="appTitle" size="30"/></td></tr>
+<tr><tr><td><b>Category:</b></td></tr>
+<tr><td><input type="text" id="appCategory" size="15" value="Cool Apps"/></td></tr>
+<tr><tr><td><b>Description:</b></td></tr>
+<tr><td><textarea id="appDescription" cols="30" rows="5">Enter a short description of your app here</textarea></td></tr>
 <tr><td>
 <input id="createAppOKButton" type="button" style="font-weight: bold;" value="Create"/>
 <input id="createAppCancelButton" type="button" value="Cancel"/>
@@ -89,8 +93,7 @@ function getapps(sync) {
             title = car(entry);
 
             apps += '<tr>';
-            //apps += '<td><input name="apps" type="checkbox" value="' + name + '">' + '<a href=\"' + '/app/?app=' + name + '\">' + name + '</a></td>';
-            apps += '<td><a href=\"' + '/app/?app=' + name + '\" target=\"_parent\">' + name + '</a></td>';
+            apps += '<td><a href=\"' + '/graph/?app=' + name + '\" target=\"_parent\">' + name + '</a></td>';
             apps += '<td class="tdw" colspan="2">' + title + '</td>';
             apps += '</tr>';
         }
@@ -108,9 +111,21 @@ function getapps(sync) {
 }
 
 /**
+ * Default field values.
+ */
+var deftitle = 'Enter the title of your app here';
+var defcategory = 'Cool Apps';
+var defdate = 'Feb 4, 2011';
+var defdesc = 'Enter a short description of your app here';
+
+/**
  * Display create app form.
  */
 $('createAppButton').onclick = function() {
+    $('appName').value = '';
+    $('appTitle').value = deftitle;
+    $('appCategory').value = defcategory;
+    $('appDescription').value = defdesc;
     $('newApp').style.visibility = 'visible';
     $('appName').focus();
     return false;
@@ -121,14 +136,14 @@ $('createAppButton').onclick = function() {
  */
 $('createAppOKButton').onclick = function() {
     var name = $('appName').value;
+    if (name == '')
+        return false;
     var title = $('appTitle').value;
-    var app = mklist(title, name, mklist());
+    var app = mklist(title != deftitle && title != ''? title : name, name, mklist());
     var entry = atom.writeATOMEntry(app);
     dashboard.put(name, car(entry));
-    $('appName').value = '';
-    $('appTitle').title = '';
     getapps();
-    div.style.visibility = 'visible';
+    div.style.visibility = 'hidden';
     return false;
 };
 
@@ -137,8 +152,6 @@ $('createAppOKButton').onclick = function() {
  */
 $('createAppCancelButton').onclick = function() {
     $('newApp').style.visibility = 'hidden';
-    $('appName').value = '';
-    $('appTitle').title = '';
     return false;
 };
 

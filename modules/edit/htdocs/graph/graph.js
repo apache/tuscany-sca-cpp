@@ -49,6 +49,18 @@ graph.colors.yellow1 = '#fcee21';
 graph.colors.magenta1 = '#c0688a';
 
 /**
+ * Default positions and sizes.
+ */
+var palcx = 250;
+var trashcx = 230;
+var proxcx = 20;
+var proxcy = 20;
+var buttoncx = 80;
+var buttoncy = 40;
+var curvsz = 5;
+var tabsz = 3;
+
+/**
  * Base path class.
  */
 graph.BasePath = function() {
@@ -185,11 +197,11 @@ if (ui.isIE()) {
 
             if (graph.dragging.parentNode == vmlg && graph.dragging.id.substring(0, 8) != 'palette:') {
                 var gpos = graph.relpos(graph.dragging);
-                if (gpos.xpos() >= 330) {
+                if (gpos.xpos() >= trashcx) {
 
                     // If component close enough to editing area, move it there
-                    if (gpos.xpos() < 350)
-                        graph.move(graph.dragging, graph.mkpath().move(350, gpos.ypos()));
+                    if (gpos.xpos() < palcx)
+                        graph.move(graph.dragging, graph.mkpath().move(palcx, gpos.ypos()));
 
                     // Add new dragged component to the composite
                     if (isNil(graph.dragging.compos)) {
@@ -282,6 +294,7 @@ if (ui.isIE()) {
 
             // Change the component property value
             graph.setproperty(graph.selected.comp, pvalue.value);
+            pvalue.value = graph.property(graph.selected.comp);
 
             // Refresh the composite
             graph.refresh(svg);
@@ -364,7 +377,7 @@ if (ui.isIE()) {
     graph.comptitle = function(comp) {
         var tsvcs = graph.tsvcs(comp);
         var lsvcs = graph.lsvcs(comp);
-        var pos = graph.mkpath().move(isNil(lsvcs)? 5 : 25, isNil(tsvcs)? 5 : 25);
+        var pos = graph.mkpath().move(isNil(lsvcs)? tabsz : (tabsz * 5), isNil(tsvcs)? tabsz : (tabsz * 5));
         return graph.mktitle(graph.title(comp), true, pos);
     };
 
@@ -385,7 +398,7 @@ if (ui.isIE()) {
     graph.proptitle = function(comp) {
         var tsvcs = graph.tsvcs(comp);
         var lsvcs = graph.lsvcs(comp);
-        var pos = graph.mkpath().move(isNil(lsvcs)? 5 : 25, isNil(tsvcs)? 20 : 40);
+        var pos = graph.mkpath().move(isNil(lsvcs)? tabsz : (tabsz * 5), isNil(tsvcs)? 15 + tabsz : 15 + (tabsz * 5));
         return graph.mktitle(graph.property(comp), false, pos);
     };
 
@@ -651,11 +664,11 @@ if (ui.isIE()) {
 
             if (graph.dragging.parentNode == svg && graph.dragging.id.substring(0, 8) != 'palette:') {
                 var gpos = graph.relpos(graph.dragging);
-                if (gpos.xpos() >= 330) {
+                if (gpos.xpos() >= trashcx) {
 
                     // If component close enough to editing area, move it there
-                    if (gpos.xpos() < 350)
-                        graph.move(graph.dragging, graph.mkpath().move(350, gpos.ypos()));
+                    if (gpos.xpos() < palcx)
+                        graph.move(graph.dragging, graph.mkpath().move(palcx, gpos.ypos()));
 
                     // Add new dragged component to the composite
                     if (isNil(graph.dragging.compos)) {
@@ -766,6 +779,7 @@ if (ui.isIE()) {
 
             // Change the component property value
             graph.setproperty(graph.selected.comp, pvalue.value);
+            pvalue.value = graph.property(graph.selected.comp);
 
             // Refresh the composite
             graph.refresh(svg);
@@ -1034,6 +1048,8 @@ graph.property = function(e) {
     var p = scdl.properties(e);
     if (isNil(p))
         return '';
+    if (scdl.visible(car(p)) == 'false')
+        return '';
     return scdl.propertyValue(car(p));
 };
 
@@ -1044,7 +1060,10 @@ graph.setproperty = function(e, value) {
     var p = scdl.properties(e);
     if (isNil(p))
         return '';
-    setElement(car(p), mklist(element, "'property", mklist(attribute, "'name", "property"), value));
+    if (scdl.visible(car(p)) == 'false')
+        return '';
+    var name = scdl.name(car(p));
+    setElement(car(p), mklist(element, "'property", mklist(attribute, "'name", name != null? name : "property"), value));
     return value;
 };
 
@@ -1117,7 +1136,7 @@ graph.rrefheight = function(ref, cassoc) {
     return memo(ref, 'rheight', function() {
         var target = assoc(scdl.target(ref), cassoc);
         if (isNil(target))
-            return 60;
+            return tabsz * 10;
         return graph.compclosureheight(cadr(target), cassoc);
     });
 };
@@ -1158,9 +1177,9 @@ graph.brefsheight = function(refs, cassoc) {
 graph.compheight = function(comp, cassoc) {
     return memo(comp, 'height', function() {
         var lsvcs = graph.lsvcs(comp);
-        var lsvcsh = Math.max(1, length(lsvcs)) * 60 + 20;
+        var lsvcsh = Math.max(1, length(lsvcs)) * (tabsz * 10) + (tabsz * 4);
         var rrefs = graph.rrefs(comp);
-        var rrefsh = graph.rrefsheight(rrefs, cassoc) + 20;
+        var rrefsh = graph.rrefsheight(rrefs, cassoc) + (tabsz * 4);
         var height = Math.max(lsvcsh, rrefsh);
         return height;
     });
@@ -1184,7 +1203,7 @@ graph.brefwidth = function(ref, cassoc) {
     return memo(ref, 'width', function() {
         var target = assoc(scdl.target(ref), cassoc);
         if (isNil(target))
-            return 60;
+            return tabsz * 10;
         return graph.compclosurewidth(cadr(target), cassoc);
     });
 };
@@ -1212,11 +1231,11 @@ graph.rrefswidth = function(refs, cassoc) {
  */
 graph.compwidth = function(comp, cassoc) {
     return memo(comp, 'width', function() {
-        var twidth = Math.max(graph.comptitlewidth(comp), graph.proptitlewidth(comp)) + 20;
+        var twidth = Math.max(graph.comptitlewidth(comp), graph.proptitlewidth(comp)) + (tabsz * 8);
         var tsvcs = graph.tsvcs(comp);
-        var tsvcsw = Math.max(1, length(tsvcs)) * 60 + 20;
+        var tsvcsw = Math.max(1, length(tsvcs)) * (tabsz * 10) + (tabsz * 4);
         var brefs = graph.brefs(comp);
-        var brefsw = graph.brefswidth(brefs, cassoc) + 20;
+        var brefsw = graph.brefswidth(brefs, cassoc) + (tabsz * 4);
         var width = Math.max(twidth, Math.max(tsvcsw, brefsw));
         return width;
     });
@@ -1242,10 +1261,11 @@ graph.rrefpath = function(ref, cassoc, path) {
     // Record reference position in the path
     var xpos = path.xpos();
     var ypos = path.ypos();
-    path.refpos = cons(mklist(ref, graph.mkpath().move(xpos, ypos + 30)), path.refpos);
+    //path.refpos = cons(mklist(ref, graph.mkpath().move(xpos, ypos + (tabsz * 6))), path.refpos);
+    path.refpos = cons(mklist(ref, graph.mkpath().move(xpos, ypos + (tabsz * 5))), path.refpos);
 
     // Compute the reference path
-    return path.rline(0,10).rline(0,10).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rline(0,20).rcurve(0,5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,5).line(path.xpos(),ypos + height);
+    return path.rline(0,tabsz).rline(0,tabsz * 2).rcurve(0,tabsz,-tabsz,0).rcurve(-tabsz,0,0,-tabsz).rcurve(0,-tabsz,-tabsz,0).rcurve(-tabsz,0,0,tabsz).rline(0,tabsz * 4).rcurve(0,tabsz,tabsz,0).rcurve(tabsz,0,0,-tabsz).rcurve(0,-tabsz,tabsz,0).rcurve(tabsz,0,0,tabsz).line(path.xpos(),ypos + height);
 };
 
 /**
@@ -1257,40 +1277,40 @@ graph.brefpath = function(ref, cassoc, path) {
     // Record reference position in the path
     var xpos = path.xpos();
     var ypos = path.ypos();
-    path.refpos = cons(mklist(ref, graph.mkpath().move(xpos - width + 30, ypos)), path.refpos);
+    path.refpos = cons(mklist(ref, graph.mkpath().move(xpos - width + tabsz * 5, ypos)), path.refpos);
 
     // Compute the reference path
-    return path.line(xpos - width + 60,path.ypos()).rline(-10,0).rline(-10,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rline(-20,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).line(xpos - width,path.ypos());
+    return path.line(xpos - width + (tabsz * 10),path.ypos()).rline(-tabsz,0).rline(-(tabsz *2),0).rcurve(-tabsz,0,0,-tabsz).rcurve(0,-tabsz,tabsz,0).rcurve(tabsz,0,0,-tabsz).rcurve(0,-tabsz,-tabsz,0).rline(-(tabsz * 4),0).rcurve(-tabsz,0,0,tabsz).rcurve(0,tabsz,tabsz,0).rcurve(tabsz,0,0,tabsz).rcurve(0,tabsz,-tabsz,0).line(xpos - width,path.ypos());
 };
 
 /**
  * Return a path representing a service positioned to the left of a component.
  */
 graph.lsvcpath = function(svc, cassoc, path) {
-    var height = 60;
+    var height = tabsz * 10;
 
     // Record service position in the path
     var xpos = path.xpos();
     var ypos = path.ypos();
-    path.svcpos = cons(mklist(svc, graph.mkpath().move(xpos, ypos - 30)), path.svcpos);
+    path.svcpos = cons(mklist(svc, graph.mkpath().move(xpos, ypos - (tabsz * 6))), path.svcpos);
 
     // Compute the service path
-    return path.rline(0,-10).rline(0, -10).rcurve(0,-5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,-5).rline(0,-20).rcurve(0,-5,5,0).rcurve(5,0,0,5).rcurve(0,5,5,0).rcurve(5,0,0,-5).line(path.xpos(), ypos - height);
+    return path.rline(0,-tabsz).rline(0, -(tabsz * 2)).rcurve(0,-tabsz,-tabsz,0).rcurve(-tabsz,0,0,tabsz).rcurve(0,tabsz,-tabsz,0).rcurve(-tabsz,0,0,-tabsz).rline(0,-(tabsz * 4)).rcurve(0,-tabsz,tabsz,0).rcurve(tabsz,0,0,tabsz).rcurve(0,tabsz,tabsz,0).rcurve(tabsz,0,0,-tabsz).line(path.xpos(), ypos - height);
 };
 
 /**
  * Return a path representing a service positioned at the top of a component.
  */
 graph.tsvcpath = function(svc, cassoc, path) {
-    var width = 60;
+    var width = tabsz * 10;
 
     // Record service position in the path
     var xpos = path.xpos();
     var ypos = path.ypos();
-    path.svcpos = cons(mklist(svc, graph.mkpath().move(xpos + 30, ypos)), path.svcpos);
+    path.svcpos = cons(mklist(svc, graph.mkpath().move(xpos + (tabsz * 5), ypos)), path.svcpos);
 
     // Compute the service path
-    return path.rline(10,0).rline(10,0).rcurve(5,0,0,-5).rcurve(0,-5,-5,0).rcurve(-5,0,0,-5).rcurve(0,-5,5,0).rline(20,0).rcurve(5,0,0,5).rcurve(0,5,-5,0).rcurve(-5,0,0,5).rcurve(0,5,5,0).line(xpos + width,path.ypos());
+    return path.rline(tabsz,0).rline(tabsz * 2,0).rcurve(tabsz,0,0,-tabsz).rcurve(0,-tabsz,-tabsz,0).rcurve(-tabsz,0,0,-tabsz).rcurve(0,-tabsz,tabsz,0).rline(tabsz * 4,0).rcurve(tabsz,0,0,tabsz).rcurve(0,tabsz,-tabsz,0).rcurve(-tabsz,0,0,tabsz).rcurve(0,tabsz,tabsz,0).line(xpos + width,path.ypos());
 };
 
 /**
@@ -1311,7 +1331,7 @@ graph.comppath = function(comp, cassoc) {
         return renderpath(cdr(x), f, cassoc, f(car(x), cassoc, path));
     }
 
-    var path = graph.mkpath().move(10,0);
+    var path = graph.mkpath().move(curvsz,0);
 
     // Store the positions of services and references in the path
     path.refpos = mklist();
@@ -1323,23 +1343,23 @@ graph.comppath = function(comp, cassoc) {
 
     // Render the references on the right side of the component
     var rrefs = graph.rrefs(comp);
-    path = path.line(width - 10,path.ypos()).rcurve(10,0,0,10);
+    path = path.line(width - curvsz,path.ypos()).rcurve(curvsz,0,0,curvsz);
     path = renderpath(rrefs, graph.rrefpath, cassoc, path);
 
     // Render the references on the bottom side of the component
     var brefs = reverse(graph.brefs(comp));
-    var boffset = 10 + graph.brefswidth(brefs, cassoc);
-    path = path.line(path.xpos(),height - 10).rcurve(0,10,-10,0).line(boffset, path.ypos());
+    var boffset = curvsz + graph.brefswidth(brefs, cassoc);
+    path = path.line(path.xpos(),height - curvsz).rcurve(0,curvsz,curvsz * -1,0).line(boffset, path.ypos());
     path = renderpath(brefs, graph.brefpath, cassoc, path);
 
     // Render the services on the left side of the component
     var lsvcs = graph.lsvcs(comp);
-    var loffset = 10 + (length(lsvcs) * 60);
-    path = path.line(10,path.ypos()).rcurve(-10,0,0,-10).line(path.xpos(), loffset);
+    var loffset = curvsz + (length(lsvcs) * (tabsz * 10));
+    path = path.line(curvsz,path.ypos()).rcurve(curvsz * -1,0,0,curvsz * -1).line(path.xpos(), loffset);
     path = renderpath(lsvcs, graph.lsvcpath, cassoc, path);
 
     // Close the component node path
-    path = path.line(0,10).rcurve(0,-10,10,0);
+    path = path.line(0,curvsz).rcurve(0,curvsz * -1,curvsz,0);
 
     return path.end();
 };
@@ -1348,13 +1368,11 @@ graph.comppath = function(comp, cassoc) {
  * Return a path representing a button node.
  */
 graph.buttonpath = function(t) {
-    var height = 40;
-    var width = 120;
-    var path = graph.mkpath().move(10,0);
-    path = path.line(width - 10,path.ypos()).rcurve(10,0,0,10);
-    path = path.line(path.xpos(),height - 10).rcurve(0,10,-10,0).line(10, path.ypos());
-    path = path.line(10,path.ypos()).rcurve(-10,0,0,-10).line(path.xpos(), 10);
-    path = path.line(0,10).rcurve(0,-10,10,0);
+    var path = graph.mkpath().move(curvsz,0);
+    path = path.line(buttoncx - curvsz,path.ypos()).rcurve(curvsz,0,0,curvsz);
+    path = path.line(path.xpos(),buttoncy - curvsz).rcurve(0,curvsz,-curvsz,0).line(curvsz, path.ypos());
+    path = path.line(curvsz,path.ypos()).rcurve(-curvsz,0,0,-curvsz).line(path.xpos(), curvsz);
+    path = path.line(0,curvsz).rcurve(0,-curvsz,curvsz,0);
     return path.end();
 };
 
@@ -1486,14 +1504,16 @@ graph.composite = function(compos, pos) {
         function comppos(comp, pos) {
             var x = scdl.x(comp);
             var y = scdl.y(comp);
-            return graph.mkpath().move(x != null? Number(x) + 350 : pos.xpos(), y != null? Number(y) : pos.ypos());
+            return graph.mkpath().move(
+                    x != null? Number(x) + palcx : pos.xpos(),
+                    y != null? Number(y) : (isNil(graph.tsvcs(comp))? pos.ypos() : pos.ypos() + (tabsz * 4)));
         }
 
         /**
          * Move the rendering cursor down below a component.
          */
         function rendermove(comp, cassoc, pos) {
-            return pos.clone().rmove(0, graph.compclosureheight(comp, cassoc) + 40);
+            return pos.clone().rmove(0, graph.compclosureheight(comp, cassoc) + (tabsz * 2));
         }
 
         if (isNil(svcs))
@@ -1570,7 +1590,7 @@ graph.clonepalette = function(e, compos) {
  * Move a SCDL component to the given position.
  */
 graph.movecomp = function(comp, pos) {
-    return append(mklist(element, "'component", mklist(attribute, "'t:x", '' + (pos.xpos() - 350)), mklist(attribute, "'t:y", '' + pos.ypos())),
+    return append(mklist(element, "'component", mklist(attribute, "'t:x", '' + (pos.xpos() - palcx)), mklist(attribute, "'t:y", '' + pos.ypos())),
             filter(function(e) { return !(isAttribute(e) && (attributeName(e) == "'t:x" || attributeName(e) == "'t:y")); }, elementChildren(comp)));
 };
 
@@ -1608,7 +1628,9 @@ graph.renamecomp = function(comp, compos, name) {
             return refactorrefs(cdr(refs), oname, nname);
 
         // Change the reference's target attribute
-        setElement(ref, append(mklist(element, "'reference"), append(filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'target"); }, elementChildren(ref)), mklist(mklist(attribute, "'target", nname)))));
+        setElement(ref, append(mklist(element, "'reference"),
+            append(filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'target"); }, elementChildren(ref)),
+                mklist(mklist(attribute, "'target", nname)))));
 
         return refactorrefs(cdr(refs), oname, nname);
     }
@@ -1619,10 +1641,11 @@ graph.renamecomp = function(comp, compos, name) {
 
     // Rename the SCDL promoted service and component
     var proms = filter(function(s) { return scdl.name(s) == oname }, scdl.services(compos));
-    if (!isNil(proms)) {
+    if (!isNil(proms))
         setElement(car(proms), mklist(element, "'service", mklist(attribute, "'name", name), mklist(attribute, "'promote", name)));
-    }
-    setElement(comp, append(mklist(element, "'component"), cons(mklist(attribute, "'name", name), filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'name"); }, elementChildren(comp)))));
+    setElement(comp, append(mklist(element, "'component"),
+        cons(mklist(attribute, "'name", name),
+            filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'name"); }, elementChildren(comp)))));
 
     return append(mklist(element, "'composite"), elementChildren(compos));
 };
@@ -1642,7 +1665,9 @@ graph.cutwire = function(node, compos, g) {
         var ref = car(refs);
         if (caddr(ref) == node) {
             setlist(ref, mklist(car(ref), cadr(ref), null));
-            setElement(car(ref), append(mklist(element, "'reference"), filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'target"); }, elementChildren(car(ref)))));
+            setElement(car(ref),
+                append(mklist(element, "'reference"),
+                    filter(function(e) { return !(isAttribute(e) && attributeName(e) == "'target"); }, elementChildren(car(ref)))));
         }
         return cutref(cdr(refs), node);
     }
@@ -1658,7 +1683,8 @@ graph.cutwire = function(node, compos, g) {
     var comp = node.comp;
     var name = scdl.name(comp);
     var prom = mklist(element, "'service", mklist(attribute, "'name", name), mklist(attribute, "'promote", name));
-    return append(mklist(element, "'composite"), append(filter(function(c) {return !(isElement(c) && scdl.name(c) == name); }, elementChildren(compos)), mklist(prom, comp)));
+    return append(mklist(element, "'composite"),
+            append(filter(function(c) { return !(isElement(c) && scdl.name(c) == name); }, elementChildren(compos)), mklist(prom, comp)));
 }
 
 /**
@@ -1695,8 +1721,8 @@ graph.wire = function(n, compos, g) {
             var dx = Math.pow(rpos.xpos() - spos.xpos(), 2);
             var dy = Math.pow(rpos.ypos() - spos.ypos(), 2);
 
-            // Proximity threshold is 40 x 40 pixels
-            var rdist = (dx < 400 && dy < 400)? Math.sqrt(dx + dy) : 25000000;
+            // Check for proximity threshold
+            var rdist = (dx < (proxcx * proxcx) && dy < (proxcy * proxcy))? Math.sqrt(dx + dy) : 25000000;
 
             // Go through all the references in the component
             return closerefs(npos, cdr(refs), spos, fdist < rdist? cref : mklist(car(ref), cadr(ref), caddr(ref), rdist));
@@ -1750,7 +1776,7 @@ graph.refresh = function(g) {
 
     // Remove nodes and redisplay the composite associated with the graph
     map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
-    graph.display(graph.composite(g.compos, graph.mkpath().move(350,0)), g);
+    graph.display(graph.composite(g.compos, graph.mkpath().move(palcx,0)), g);
     return g;
 };
 

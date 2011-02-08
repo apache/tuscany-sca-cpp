@@ -22,27 +22,20 @@
   targetNamespace="http://operators"
   name="palette">
         
-    <service name="true" promote="true"/>
-    <service name="false" promote="false"/>
+    <service name="if" promote="if"/>
     <service name="and" promote="and"/>
     <service name="or" promote="or"/>
     <service name="not" promote="not"/>
     <service name="equals" promote="equals"/>
     <service name="greater" promote="greater"/>
     <service name="lesser" promote="lesser"/>
-    <service name="multiply" promote="multiply"/>
-    <service name="divide" promote="divide"/>
-    <service name="add" promote="add"/>
-    <service name="subtract" promote="subtract"/>
 
-    <component name="true" t:color="green1">
-        <t:implementation.python script="true_.py"/>
-        <service name="true"/>
-    </component>
-    
-    <component name="false" t:color="green1">
-        <t:implementation.python script="false_.py"/>
-        <service name="false"/>
+    <component name="if" t:color="green1">
+        <t:implementation.python script="if_.py"/>
+        <service name="if"/>
+        <reference name="condition"/>
+        <reference name="then"/>
+        <reference name="else"/>
     </component>
     
     <component name="and" t:color="green1">
@@ -90,46 +83,6 @@
         <t:implementation.python script="lesser.py"/>
         <service name="lesser">
             <documentation>lt</documentation>
-        </service>
-        <reference name="value1"/>
-        <reference name="value2"/>
-    </component>
-    
-    <component name="multiply" t:color="green1">
-        <documentation>*</documentation>
-        <t:implementation.python script="multiply.py"/>
-        <service name="multiply">
-            <documentation>*</documentation>
-        </service>
-        <reference name="value1"/>
-        <reference name="value2"/>
-    </component>
-    
-    <component name="divide" t:color="green1">
-        <documentation>/</documentation>
-        <t:implementation.python script="divide.py"/>
-        <service name="divide">
-            <documentation>/</documentation>
-        </service>
-        <reference name="value1"/>
-        <reference name="value2"/>
-    </component>
-    
-    <component name="add" t:color="green1">
-        <documentation>+</documentation>
-        <t:implementation.python script="add.py"/>
-        <service name="add">
-            <documentation>+</documentation>
-        </service>
-        <reference name="value1"/>
-        <reference name="value2"/>
-    </component>
-    
-    <component name="subtract" t:color="green1">
-        <documentation>-</documentation>
-        <t:implementation.python script="subtract.py"/>
-        <service name="subtract">
-            <documentation>-</documentation>
         </service>
         <reference name="value1"/>
         <reference name="value2"/>

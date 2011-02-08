@@ -22,6 +22,12 @@
  */
 var page = {};
 
+/**
+ * Default positions and sizes.
+ */
+var palcx = 250;
+var trashcx = 230;
+
 if (ui.isIE()) {
 
     /**
@@ -78,12 +84,12 @@ if (ui.isIE()) {
                 return false;
 
             // Discard element dragged out of page area
-            if (ui.csspos(page.dragging.style.left) < 350 && page.dragging.id.substring(0, 8) != 'palette:') {
-                if (ui.csspos(page.dragging.style.left) >= 330) {
+            if (ui.csspos(page.dragging.style.left) < palcx && page.dragging.id.substring(0, 8) != 'palette:') {
+                if (ui.csspos(page.dragging.style.left) >= trashcx) {
 
                     // Unless it's close enough to page area, then move it there
-                    page.dragging.style.left = 350;
-                    page.dragging.cover.style.left = 350;
+                    page.dragging.style.left = palcx;
+                    page.dragging.cover.style.left = palcx;
                 } else {
                     page.dragging.parentNode.removeChild(page.dragging);
 
@@ -215,12 +221,12 @@ if (ui.isIE()) {
                 return false;
 
             // Discard element dragged out of page area
-            if (ui.csspos(page.dragging.style.left) < 350 && page.dragging.id.substring(0, 8) != 'palette:') {
-                if (ui.csspos(page.dragging.style.left) >= 330) {
+            if (ui.csspos(page.dragging.style.left) < palcx && page.dragging.id.substring(0, 8) != 'palette:') {
+                if (ui.csspos(page.dragging.style.left) >= trashcx) {
 
                     // Unless it's close enough to page area, then move it there
-                    page.dragging.style.left = 350;
-                    page.dragging.cover.style.left = 350;
+                    page.dragging.style.left = palcx;
+                    page.dragging.cover.style.left = palcx;
                 } else {
                     page.dragging.parentNode.removeChild(page.dragging);
 

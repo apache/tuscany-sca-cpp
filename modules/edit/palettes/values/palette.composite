@@ -25,10 +25,8 @@
     <service name="number" promote="number"/>
     <service name="text" promote="text"/>
     <service name="nothing" promote="nothing"/>
-    <service name="list" promote="list"/>
-    <service name="first" promote="first"/>
-    <service name="rest" promote="rest"/>
-    <service name="append" promote="append"/>
+    <service name="true" promote="true"/>
+    <service name="false" promote="false"/>
 
     <component name="number" t:color="orange1">
         <t:implementation.python script="number.py"/>
@@ -47,34 +45,14 @@
         <service name="nothing"/>
     </component>
     
-    <component name="list" t:color="orange1">
-        <documentation>list</documentation>
-        <t:implementation.python script="list_.py"/>
-        <service name="list"/>
-        <reference name="rest"/>
-        <property name="property">abc</property>
+    <component name="true" t:color="orange1">
+        <t:implementation.python script="true_.py"/>
+        <service name="true"/>
     </component>
     
-    <component name="first" t:color="orange1">
-        <documentation>first of list</documentation>
-        <t:implementation.python script="first.py"/>
-        <service name="first"/>
-        <reference name="value"/>
-    </component>
-    
-    <component name="rest" t:color="orange1">
-        <documentation>rest of list</documentation>
-        <t:implementation.python script="rest.py"/>
-        <service name="rest"/>
-        <reference name="value"/>
-    </component>
-    
-    <component name="append" t:color="orange1">
-        <documentation>append lists</documentation>
-        <t:implementation.python script="list_.py"/>
-        <service name="append"/>
-        <reference name="first"/>
-        <reference name="second"/>
+    <component name="false" t:color="orange1">
+        <t:implementation.python script="false_.py"/>
+        <service name="false"/>
     </component>
     
 </composite>

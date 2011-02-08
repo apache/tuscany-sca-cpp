@@ -22,60 +22,69 @@
   targetNamespace="http://social"
   name="palette">
         
-    <service name="JSONTwit" promote="JSONTwit"/>
-    <service name="XMLTwit" promote="XMLTwit"/>
-    <service name="RSSTwit" promote="RSSTwit"/>
-    <service name="HTML" promote="HTML"/>
-    <service name="JSONFB" promote="JSONFB"/>
+    <service name="fbprofile" promote="fbprofile"/>
+    <service name="fbalbum" promote="fbalbum"/>
+    <service name="fbfriends" promote="fbfriends"/>
+    <service name="fbgroup" promote="fbgroup"/>
+    <service name="twprofile" promote="twprofile"/>
+    <service name="twfriends" promote="twfriends"/>
+    <service name="twstatus" promote="twstatus"/>
+    <service name="twtimeline" promote="twtimeline"/>
 
-    <component name="JSONTwit" t:color="blue1">
-        <t:implementation.python script="relay.py"/>
-        <service name="Relay">
-            <t:binding.http uri="jsontwit"/>
-        </service>        
-        <reference name="target">
-            <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.json?screen_name=jsdelfino"/>
-        </reference>
+    <component name="fbprofile" t:color="blue1">
+        <documentation>facebook profile</documentation>
+        <t:implementation.python script="fbprofile.py"/>
+        <service name="fbprofile"/>
+        <reference name="id"/>
     </component>
     
-    <component name="XMLTwit" t:color="blue1">
-        <t:implementation.python script="relay.py"/>
-        <service name="Relay">
-            <t:binding.http uri="xmltwit"/>
-        </service>        
-        <reference name="target">
-            <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.xml?screen_name=jsdelfino"/>
-        </reference>
+    <component name="fbalbum" t:color="blue1">
+        <documentation>facebook album</documentation>
+        <t:implementation.python script="fbalbum.py"/>
+        <service name="fbalbum"/>
+        <reference name="id"/>
     </component>
     
-    <component name="RSSTwit" t:color="blue1">
-        <t:implementation.python script="relay.py"/>
-        <service name="Relay">
-            <t:binding.http uri="rsstwit"/>
-        </service>        
-        <reference name="target">
-            <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.rss?screen_name=jsdelfino"/>
-        </reference>
+    <component name="fbfriends" t:color="blue1">
+        <documentation>facebook friends</documentation>
+        <t:implementation.python script="fbfriends.py"/>
+        <service name="fbfriends"/>
+        <reference name="id"/>
     </component>
     
-    <component name="HTML" t:color="blue1">
-        <t:implementation.python script="relay.py"/>
-        <service name="Relay">
-            <t:binding.http uri="html"/>
-        </service>        
-        <reference name="target">
-            <t:binding.http uri="http://people.apache.org/~jsdelfino/"/>
-        </reference>
+    <component name="fbgroup" t:color="blue1">
+        <documentation>facebook group</documentation>
+        <t:implementation.python script="fbgroup.py"/>
+        <service name="fbgroup"/>
+        <reference name="id"/>
     </component>
     
-    <component name="JSONFB" t:color="blue1">
-        <t:implementation.python script="relay.py"/>
-        <service name="Relay">
-            <t:binding.http uri="jsonfb"/>
-        </service>        
-        <reference name="target">
-            <t:binding.http uri="https://graph.facebook.com/100001053301307"/>
-        </reference>
+    <component name="twprofile" t:color="blue1">
+        <documentation>twitter profile</documentation>
+        <t:implementation.python script="twprofile.py"/>
+        <service name="twprofile"/>
+        <reference name="id"/>
+    </component>
+    
+    <component name="twfriends" t:color="blue1">
+        <documentation>twitter friends</documentation>
+        <t:implementation.python script="twfriends.py"/>
+        <service name="twfriends"/>
+        <reference name="id"/>
+    </component>
+    
+    <component name="twstatus" t:color="blue1">
+        <documentation>twitter status</documentation>
+        <t:implementation.python script="twstatus.py"/>
+        <service name="twstatus"/>
+        <reference name="id"/>
+    </component>
+    
+    <component name="twtimeline" t:color="blue1">
+        <documentation>twitter timeline</documentation>
+        <t:implementation.python script="twtimeline.py"/>
+        <service name="twtimeline"/>
+        <reference name="id"/>
     </component>
     
 </composite>

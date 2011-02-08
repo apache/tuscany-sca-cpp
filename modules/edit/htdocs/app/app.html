@@ -33,7 +33,7 @@
 
 <table style="width: 100%;">
 <tr>
-<th class="thl thr">Properties</th>
+<th class="thl thr">Settings</th>
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
 <span id="source" style="font-weight: normal;">[atom]</span>
@@ -49,11 +49,11 @@
 <tr><tr><td><b>App Title:</b></td></tr>
 <tr><td><input type="text" id="appTitle" size="30"/></td></tr>
 <tr><tr><td><b>Category:</b></td></tr>
-<tr><td><input type="text" id="appCategory" size="15" value="Cool Apps"/></td></tr>
+<tr><td><input type="text" id="appCategory" size="15"/></td></tr>
 <tr><tr><td><b>Updated:</b></td></tr>
-<tr><td><span id="appUpdated">Feb 4, 2011</span></td></tr>
+<tr><td><span id="appUpdated"></span></td></tr>
 <tr><tr><td><b>Description:</b></td></tr>
-<tr><td><textarea id="appDescription" cols="30" rows="5">Enter a short description of your app here</textarea></td></tr>
+<tr><td><textarea id="appDescription" cols="30" rows="5"></textarea></td></tr>
 </table>
 </form>
 </div>
@@ -74,12 +74,23 @@ var appname = ui.queryParams()['app'];
 $('source').innerHTML = '[<a href="/apps/' + appname + '">atom</a>]';
 
 /**
+ * Default field values.
+ */
+var deftitle = 'Enter the title of your app here';
+var defcategory = 'Cool Apps';
+var defdate = 'Feb 4, 2011';
+var defdesc = 'Enter a short description of your app here';
+
+/**
  * Get and display an app.
  */
 function getapp(name) {
     dashboard.get(name, function(doc) {
-        var entry = atom.readATOMEntryDocument(doc);
-        $('appTitle').value = car(entry);
+        var entry = doc != null? atom.readATOMEntryDocument(doc) : mklist('', name);
+        $('appTitle').value = car(entry) != ''? car(entry) : deftitle;
+        $('appCategory').value = defcategory;
+        $('appUpdated').innerHTML = defdate;
+        $('appDescription').innerHTML = defdesc;
     });
 }
 
@@ -88,9 +99,8 @@ function getapp(name) {
  */
 $('saveButton').onclick = function() {
     var title = $('appTitle').value;
-    var app = mklist(title, appname, mklist());
+    var app = mklist(title != deftitle && title != ''? title : appname, appname, mklist());
     var entry = atom.writeATOMEntry(app);
-
     dashboard.put(appname, car(entry));
     return false;
 };

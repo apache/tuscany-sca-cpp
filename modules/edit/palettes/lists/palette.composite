@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://lists"
+  name="palette">
+        
+    <service name="list" promote="list"/>
+    <service name="first" promote="first"/>
+    <service name="rest" promote="rest"/>
+    <service name="foreach" promote="foreach"/>
+    <service name="append" promote="append"/>
+    <service name="reverse" promote="reverse"/>
+
+    <component name="list" t:color="yellow1">
+        <documentation>list</documentation>
+        <t:implementation.python script="list_.py"/>
+        <service name="list"/>
+        <reference name="rest"/>
+        <property name="property">abc</property>
+    </component>
+    
+    <component name="first" t:color="yellow1">
+        <documentation>first</documentation>
+        <t:implementation.python script="first.py"/>
+        <service name="first"/>
+        <reference name="value"/>
+    </component>
+    
+    <component name="rest" t:color="yellow1">
+        <documentation>rest</documentation>
+        <t:implementation.python script="rest.py"/>
+        <service name="rest"/>
+        <reference name="value"/>
+    </component>
+    
+    <component name="foreach" t:color="yellow1">
+        <documentation>foreach</documentation>
+        <t:implementation.python script="ifelse.py"/>
+        <service name="foreach"/>
+        <reference name="list"/>
+        <reference name="apply"/>
+    </component>
+    
+    <component name="reverse" t:color="yellow1">
+        <documentation>reverse</documentation>
+        <t:implementation.python script="reverse.py"/>
+        <service name="reverse"/>
+        <reference name="value"/>
+    </component>
+    
+    <component name="append" t:color="yellow1">
+        <documentation>append</documentation>
+        <t:implementation.python script="list_.py"/>
+        <service name="append"/>
+        <reference name="first"/>
+        <reference name="second"/>
+    </component>
+    
+</composite>

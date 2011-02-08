@@ -34,7 +34,7 @@
 
 <table style="width: 100%;">
 <tr>
-<th class="thl thr" style="width: 330px; min-width: 330px;">Palette</th><th class="ths" style="width: 3px; min-width: 3px;"></th>
+<th class="thl thr" style="width: 230px; min-width: 230px;">Palette</th><th class="ths" style="width: 3px; min-width: 3px;"></th>
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px;">
 <input id="widgetName" type="text" value="widget name" style="position: relative; width: 150px;"/>
@@ -99,16 +99,21 @@ function getpage(name, edit) {
         return;
     pages.get(name, function(doc) {
 
-        // Convert the page to XHTML
-        var xhtml = writeStrings(writeXML(atompage(doc), false));
-
-        // Prepare page DOM in hidden buffer
+        // Convert the page to XHTML and place it in a hidden buffer
         var buffer = $('buffer');
-        buffer.innerHTML = xhtml;
+        var el = atompage(doc);
+        if (isNil(el)) {
+
+            // Create a default empty page if necessary
+            buffer.innerHTML = '<div id="page"></div>';
+        } else {
+            var xhtml = writeStrings(writeXML(atompage(doc), false));
+            buffer.innerHTML = xhtml;
+        }
 
         // Append page nodes to editor
         map(function(e) {
-                e.style.left = ui.csspos(e.style.left) + 350;
+                e.style.left = ui.csspos(e.style.left) + 250;
                 edit.appendChild(e);
                 return page.cover(e);
             }, nodeList(buffer.childNodes[0].childNodes));
@@ -135,7 +140,7 @@ $('saveButton').onclick = function(e) {
                 div.removeChild(e);
                 return e;
             }
-            var x = ui.csspos(e.style.left) - 350;
+            var x = ui.csspos(e.style.left) - 250;
             if (x < 0 || ui.csspos(e.style.top) < 0) {
                 div.removeChild(e);
                 return e;

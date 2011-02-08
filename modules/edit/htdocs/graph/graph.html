@@ -34,7 +34,7 @@
 
 <table style="width: 100%;">
 <tr>
-<th class="thl" style="width: 330px; min-width: 330px;">Palette</th><th class="ths" style="width: 3px; min-width: 3px;"></th>
+<th class="thl" style="width: 230px; min-width: 230px;">Palette</th><th class="ths" style="width: 3px; min-width: 3px;"></th>
 
 <th class="thr" style="padding-top: 0px; padding-bottom: 0px;">
 <input id="compName" type="text" value="component name" style="position: relative; width: 200px;"/>
@@ -90,7 +90,16 @@ function getapp(name, g) {
         return;
     apps.get(name, function(doc) {
         composite = atomcomposite(doc);
-        graph.edit(composite, graph.composite(composite, graph.mkpath().move(350,0)), g);
+        if (isNil(composite)) {
+
+            // Create a default empty composite if necessary
+            var x = '<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"' +
+                'targetNamespace="http://' + name + '" ' +
+                'name="' + name + '">' +
+                '</composite>';
+            composite = readXML(mklist(x));
+        }
+        graph.edit(composite, graph.composite(composite, graph.mkpath().move(palcx,0)), g);
     });
 }
 
@@ -101,7 +110,7 @@ function getpalette(name, g, bg, palette, gpalettes) {
     if (isNil(name))
         return;
     palettes.get(name, function(doc) {
-        gpalettes[name] = graph.composite(atomcomposite(doc), graph.mkpath().move(150,0));
+        gpalettes[name] = graph.composite(atomcomposite(doc), graph.mkpath().move(85,0));
         graph.display(gpalettes[name], name == spalette? g : bg);
     });
 }
@@ -143,12 +152,16 @@ var bg = graph.mkgroup(graph.mkpath());
 
 // Install the palettes
 var gpalettes = new Array();
-var spalette = 'values';
-installpalette('values', graph.mkpath().move(0,10), g, bg, spalette, gpalettes);
-installpalette('control', graph.mkpath().move(0,60), g, bg, spalette, gpalettes);
-installpalette('operators', graph.mkpath().move(0,110), g, bg, spalette, gpalettes);
-installpalette('social', graph.mkpath().move(0,160), g, bg, spalette, gpalettes);
-installpalette('sensors', graph.mkpath().move(0,210), g, bg, spalette, gpalettes);
+var spalette = 'events';
+var pos = graph.mkpath();
+installpalette('events', pos.rmove(0,10), g, bg, spalette, gpalettes);
+installpalette('values', pos.rmove(0,50), g, bg, spalette, gpalettes);
+installpalette('url', pos.rmove(0, 50), g, bg, spalette, gpalettes);
+installpalette('lists', pos.rmove(0, 50), g, bg, spalette, gpalettes);
+installpalette('operators', pos.rmove(0, 50), g, bg, spalette, gpalettes);
+installpalette('math', pos.rmove(0, 50), g, bg, spalette, gpalettes);
+installpalette('social', pos.rmove(0, 50), g, bg, spalette, gpalettes);
+installpalette('sensors', pos.rmove(0, 50), g, bg, spalette, gpalettes);
 
 // Get and display the current app
 getapp(appname, g);
