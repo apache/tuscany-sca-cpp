@@ -22,23 +22,28 @@
   targetNamespace="http://events"
   name="palette">
         
-    <service name="page" promote="page"/>
+    <service name="opened" promote="opened"/>
+    <service name="clicked" promote="clicked"/>
     <service name="every" promote="every"/>
 
-    <component name="page" t:color="green1">
-        <documentation>page</documentation>
-        <t:implementation.python script="page.py"/>
-        <service name="page" t:visible="false"/>
-        <property name="property">/mypage.html</property>
-        <reference name="value"/>
+    <component name="opened" t:title="when page opened" t:color="green1">
+        <t:implementation.python script="opened.py"/>
+        <service name="opened" t:visible="false"/>
+        <reference name="content"/>
     </component>
     
-    <component name="every" t:color="green1">
-        <documentation>every</documentation>
+    <component name="clicked" t:title="when clicked" t:color="green1">
+        <t:implementation.python script="clicked.py"/>
+        <service name="clicked" t:visible="false"/>
+        <property name="property">button</property>
+        <reference name="content"/>
+    </component>
+    
+    <component name="every" t:title="every n secs" t:color="green1">
         <t:implementation.python script="every.py"/>
         <service name="every" t:visible="false"/>
         <property name="property">60</property>
-        <reference name="value"/>
+        <reference name="content"/>
     </component>
     
 </composite>

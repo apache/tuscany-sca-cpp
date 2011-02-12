@@ -54,11 +54,11 @@ overflow: hidden;
 }
 
 .tdl {
-border-right: 1px;
+border-right: 1px; border-style: solid; border-color: #a2bae7;
 }
 
 .tdr {
-border-left: 1px;
+border-left: 1px; border-style: solid; border-color: #a2bae7;
 }
 
 .tdw {

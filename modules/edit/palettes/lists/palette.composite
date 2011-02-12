@@ -25,53 +25,104 @@
     <service name="list" promote="list"/>
     <service name="first" promote="first"/>
     <service name="rest" promote="rest"/>
+    <service name="empty" promote="empty"/>
+    <service name="itemnb" promote="itemnb"/>
+    <service name="find" promote="find"/>
     <service name="foreach" promote="foreach"/>
+    <service name="item" promote="item"/>
+    <service name="filter" promote="filter"/>
+    <service name="reduce" promote="reduce"/>
+    <service name="range" promote="range"/>
     <service name="append" promote="append"/>
     <service name="reverse" promote="reverse"/>
 
-    <component name="list" t:color="yellow1">
-        <documentation>list</documentation>
+    <component name="list" t:title="make list" t:color="yellow1">
         <t:implementation.python script="list_.py"/>
         <service name="list"/>
+        <reference name="first"/>
         <reference name="rest"/>
-        <property name="property">abc</property>
     </component>
     
-    <component name="first" t:color="yellow1">
-        <documentation>first</documentation>
+    <component name="first" t:title="first item" t:color="yellow1">
         <t:implementation.python script="first.py"/>
         <service name="first"/>
-        <reference name="value"/>
+        <reference name="list"/>
     </component>
     
-    <component name="rest" t:color="yellow1">
-        <documentation>rest</documentation>
+    <component name="rest" t:title="rest of list" t:color="yellow1">
         <t:implementation.python script="rest.py"/>
         <service name="rest"/>
-        <reference name="value"/>
-    </component>
-    
-    <component name="foreach" t:color="yellow1">
-        <documentation>foreach</documentation>
-        <t:implementation.python script="ifelse.py"/>
-        <service name="foreach"/>
         <reference name="list"/>
-        <reference name="apply"/>
     </component>
     
-    <component name="reverse" t:color="yellow1">
-        <documentation>reverse</documentation>
-        <t:implementation.python script="reverse.py"/>
-        <service name="reverse"/>
-        <reference name="value"/>
+    <component name="empty" t:title="empty list" t:color="yellow1">
+        <t:implementation.python script="empty.py"/>
+        <service name="empty"/>
     </component>
     
-    <component name="append" t:color="yellow1">
-        <documentation>append</documentation>
-        <t:implementation.python script="list_.py"/>
+    <component name="itemnb" t:title="item number" t:color="yellow1">
+        <t:implementation.python script="itemnb.py"/>
+        <service name="itemnb"/>
+        <reference name="index"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="find" t:title="find by name" t:color="yellow1">
+        <t:implementation.python script="find.py"/>
+        <service name="find"/>
+        <reference name="name"/>
+        <reference name="assoc"/>
+    </component>
+    
+    <component name="foreach" t:title="foreach" t:color="yellow1">
+        <t:implementation.python script="foreach.py"/>
+        <service name="foreach"/>
+        <reference name="item"/>
+        <reference name="transform"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="item" t:color="yellow1">
+        <t:implementation.python script="item.py"/>
+        <service name="item"/>
+        <property name="property"></property>
+    </component>
+    
+    <component name="filter" t:title="filter" t:color="yellow1">
+        <t:implementation.python script="filter_.py"/>
+        <service name="filter"/>
+        <reference name="item"/>
+        <reference name="condition"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="reduce" t:title="reduce" t:color="yellow1">
+        <t:implementation.python script="reduce.py"/>
+        <service name="reduce"/>
+        <reference name="transform"/>
+        <reference name="initial"/>
+        <reference name="item"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="range" t:title="range" t:color="yellow1">
+        <t:implementation.python script="range.py"/>
+        <service name="range"/>
+        <reference name="first"/>
+        <reference name="last"/>
+    </component>
+    
+    <component name="append" t:title="append" t:color="yellow1">
+        <t:implementation.python script="append.py"/>
         <service name="append"/>
         <reference name="first"/>
         <reference name="second"/>
+    </component>
+    
+    <component name="reverse" t:title="reverse" t:color="yellow1">
+        <t:implementation.python script="reverse.py"/>
+        <service name="reverse"/>
+        <reference name="list"/>
     </component>
     
 </composite>

@@ -27,8 +27,7 @@
     <service name="add" promote="add"/>
     <service name="subtract" promote="subtract"/>
 
-    <component name="multiply" t:color="green1">
-        <documentation>*</documentation>
+    <component name="multiply" t:title="*" t:color="magenta1">
         <t:implementation.python script="multiply.py"/>
         <service name="multiply">
             <documentation>*</documentation>
@@ -37,8 +36,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="divide" t:color="green1">
-        <documentation>/</documentation>
+    <component name="divide" t:title="/" t:color="magenta1">
         <t:implementation.python script="divide.py"/>
         <service name="divide">
             <documentation>/</documentation>
@@ -47,8 +45,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="add" t:color="green1">
-        <documentation>+</documentation>
+    <component name="add" t:title="+" t:color="magenta1">
         <t:implementation.python script="add.py"/>
         <service name="add">
             <documentation>+</documentation>
@@ -57,8 +54,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="subtract" t:color="green1">
-        <documentation>-</documentation>
+    <component name="subtract" t:title="-" t:color="magenta1">
         <t:implementation.python script="subtract.py"/>
         <service name="subtract">
             <documentation>-</documentation>

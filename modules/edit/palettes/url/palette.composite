@@ -29,46 +29,40 @@
     <service name="realm" promote="realm"/>
     <service name="email" promote="email"/>
 
-    <component name="host" t:color="orange1">
-        <documentation>host</documentation>
+    <component name="host" t:title="host" t:color="green1">
         <t:implementation.python script="host.py"/>
         <service name="host"/>
-        <property name="host" t:visible="false"></property>
+        <property name="host"></property>
     </component>
     
-    <component name="path" t:color="orange1">
-        <documentation>path</documentation>
+    <component name="path" t:title="path" t:color="green1">
         <t:implementation.python script="path.py"/>
         <service name="path"/>
-        <property name="path" t:visible="false"></property>
+        <property name="path"></property>
     </component>
     
-    <component name="params" t:color="orange1">
-        <documentation>?params</documentation>
+    <component name="params" t:title="?params" t:color="green1">
         <t:implementation.python script="params.py"/>
         <service name="params"/>
-        <property name="params" t:visible="false"></property>
+        <property name="params"></property>
     </component>
     
-    <component name="user" t:color="orange1">
-        <documentation>user</documentation>
+    <component name="user" t:title="user" t:color="green1">
         <t:implementation.python script="user.py"/>
         <service name="user"/>
-        <property name="user" t:visible="false"></property>
+        <property name="user"></property>
     </component>
     
-    <component name="realm" t:color="orange1">
-        <documentation>realm</documentation>
+    <component name="realm" t:title="realm" t:color="green1">
         <t:implementation.python script="realm.py"/>
         <service name="realm"/>
-        <property name="realm" t:visible="false"></property>
+        <property name="realm"></property>
     </component>
     
-    <component name="email" t:color="orange1">
-        <documentation>email</documentation>
+    <component name="email" t:title="email" t:color="green1">
         <t:implementation.python script="email.py"/>
         <service name="email"/>
-        <property name="email" t:visible="false"></property>
+        <property name="email"></property>
     </component>
     
 </composite>

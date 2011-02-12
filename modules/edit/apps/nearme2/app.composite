@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://nearme2" name="nearme2">
+  <service name="every" promote="every"/>
+  <component t:x="0" t:y="25" name="every" t:title="every n secs" t:color="green1">
+    <t:implementation.python script="every.py"/>
+    <service name="every" t:visible="false"/>
+    <property>60</property>
+    <reference target="gtalksend" name="content"/>
+  </component>
+  <component t:x="100" t:y="25" name="gtalksend" t:title="send gtalk" t:color="blue1">
+    <t:implementation.python script="gtalksend.py"/>
+    <service name="gtalksend"/>
+    <reference target="filter" name="jid"/>
+    <reference target="user" name="to"/>
+    <reference target="text" name="msg"/>
+  </component>
+  <component t:x="184" t:y="54" name="user" t:title="user" t:color="green1">
+    <t:implementation.python script="user.py"/>
+    <service name="user"/>
+    <property name="user"/>
+  </component>
+  <component t:x="183" t:y="97" name="text" t:title="text" t:color="orange1">
+    <t:implementation.python script="text.py"/>
+    <service name="text"/>
+    <property>Hey I'm here!</property>
+  </component>
+  <component t:x="184" t:y="24" name="filter" t:title="filter" t:color="yellow1">
+    <t:implementation.python script="filter_.py"/>
+    <service name="filter"/>
+    <reference target="fbfriend" name="item"/>
+    <reference target="lesser" name="condition"/>
+    <reference target="fbfriends" name="list"/>
+  </component>
+  <component t:x="234" t:y="25" name="fbfriend" t:color="yellow1">
+    <t:implementation.python script="item.py"/>
+    <service name="item"/>
+    <property name="property"/>
+  </component>
+  <component t:x="233" t:y="97" name="fbfriends" t:title="facebook friends" t:color="blue1">
+    <t:implementation.python script="fbfriends.py"/>
+    <service name="fbfriends"/>
+    <reference target="find" name="id"/>
+  </component>
+  <component t:x="352" t:y="96" name="find" t:title="find by name" t:color="yellow1">
+    <t:implementation.python script="find.py"/>
+    <service name="find"/>
+    <reference target="name" name="name"/>
+    <reference target="params" name="assoc"/>
+  </component>
+  <component t:x="453" t:y="97" name="name" t:title="name" t:color="orange1">
+    <t:implementation.python script="name.py"/>
+    <service name="name"/>
+    <property>fbid</property>
+  </component>
+  <component t:x="453" t:y="138" name="params" t:title="?params" t:color="green1">
+    <t:implementation.python script="params.py"/>
+    <service name="params"/>
+    <property>fbid=1234567</property>
+  </component>
+  <component t:x="235" t:y="67" name="lesser" t:title="lt" t:color="magenta1">
+    <t:implementation.python script="lesser.py"/>
+    <service name="lesser"/>
+    <reference target="subtract" name="value1"/>
+    <reference target="mile" name="value2"/>
+  </component>
+  <component t:x="274" t:y="97" name="mile" t:title="number" t:color="orange1">
+    <t:implementation.python script="number.py"/>
+    <service name="number"/>
+    <property>1</property>
+  </component>
+  <component t:x="274" t:y="67" name="subtract" t:title="-" t:color="magenta1">
+    <t:implementation.python script="subtract.py"/>
+    <service name="subtract">
+      <documentation>-</documentation>
+    </service>
+    <reference target="location" name="value1"/>
+    <reference target="location2" name="value2"/>
+  </component>
+  <component t:x="316" t:y="68" name="location" t:title="location" t:color="red1">
+    <t:implementation.python script="location.py"/>
+    <service name="location"/>
+    <reference target="find2" name="user"/>
+  </component>
+  <component t:x="316" t:y="122" name="location2" t:title="location" t:color="red1">
+    <t:implementation.python script="location.py"/>
+    <service name="location"/>
+    <reference target="user2" name="user"/>
+  </component>
+  <component t:x="386" t:y="118" name="user2" t:title="user" t:color="green1">
+    <t:implementation.python script="user.py"/>
+    <service name="user"/>
+    <property name="user"/>
+  </component>
+  <component t:x="386" t:y="69" name="find2" t:title="find by name" t:color="yellow1">
+    <t:implementation.python script="find.py"/>
+    <service name="find"/>
+    <reference target="name2" name="name"/>
+    <reference target="fbfriend" name="assoc"/>
+  </component>
+  <component t:x="484" t:y="68" name="name2" t:title="name" t:color="orange1">
+    <t:implementation.python script="name.py"/>
+    <service name="name"/>
+    <property>id</property>
+  </component>
+</composite>

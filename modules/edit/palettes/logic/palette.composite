@@ -19,7 +19,7 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://operators"
+  targetNamespace="http://logic"
   name="palette">
         
     <service name="if" promote="if"/>
@@ -30,7 +30,7 @@
     <service name="greater" promote="greater"/>
     <service name="lesser" promote="lesser"/>
 
-    <component name="if" t:color="green1">
+    <component name="if" t:title="if" t:color="magenta1">
         <t:implementation.python script="if_.py"/>
         <service name="if"/>
         <reference name="condition"/>
@@ -38,52 +38,43 @@
         <reference name="else"/>
     </component>
     
-    <component name="and" t:color="green1">
+    <component name="and" t:title="and" t:color="magenta1">
         <t:implementation.python script="and_.py"/>
         <service name="and"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
-    <component name="or" t:color="green1">
+    <component name="or" t:title="or" t:color="magenta1">
         <t:implementation.python script="or_.py"/>
         <service name="or"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
-    <component name="not" t:color="green1">
+    <component name="not" t:title="not" t:color="magenta1">
         <t:implementation.python script="not_.py"/>
         <service name="not"/>
         <reference name="value"/>
     </component>
     
-    <component name="equals" t:color="green1">
-        <documentation>=</documentation>
+    <component name="equals" t:title="=" t:color="magenta1">
         <t:implementation.python script="equals.py"/>
-        <service name="equals">
-            <documentation>=</documentation>
-        </service>
+        <service name="equals"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
-    <component name="greater" t:color="green1">
-        <documentation>gt</documentation>
+    <component name="greater" t:title="gt" t:color="magenta1">
         <t:implementation.python script="greater.py"/>
-        <service name="greater">
-            <documentation>gt</documentation>
-        </service>
+        <service name="greater"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
-    <component name="lesser" t:color="green1">
-        <documentation>lt</documentation>
+    <component name="lesser" t:title="lt" t:color="magenta1">
         <t:implementation.python script="lesser.py"/>
-        <service name="lesser">
-            <documentation>lt</documentation>
-        </service>
+        <service name="lesser"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>

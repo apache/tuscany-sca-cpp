@@ -79,11 +79,14 @@ scdl.documentation = function(l) {
     if (!elementHasValue(car(d)))
         return null;
     var v = elementValue(car(d));
-    if (v == 'gt')
-        return '>'
-    if (v == 'lt')
-        return '<';
     return v;
+};
+
+/**
+ * Returns the title of a component or componentType.
+ */
+scdl.title = function(l) {
+    return namedAttributeValue("'t:title", l);
 };
 
 /**
@@ -217,6 +220,8 @@ scdl.properties = function(l) {
  * Returns the value of a property.
  */
 scdl.propertyValue = function(l) {
+    if (!elementHasValue(l))
+        return '';
     return elementValue(l);
 };
 

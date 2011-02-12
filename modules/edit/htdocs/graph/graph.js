@@ -55,9 +55,9 @@ var palcx = 250;
 var trashcx = 230;
 var proxcx = 20;
 var proxcy = 20;
-var buttoncx = 80;
+var buttoncx = 70;
 var buttoncy = 40;
-var curvsz = 5;
+var curvsz = 6;
 var tabsz = 3;
 
 /**
@@ -361,9 +361,9 @@ if (ui.isIE()) {
     graph.mktitle = function(t, bold, pos) {
         var title = document.createElement('v:textbox');
         title.style.position = 'absolute';
-        title.style.left = pos.xpos();
+        title.style.left = pos.xpos() + 2;
         title.style.top = pos.ypos();
-        title.inset = '' + 4 + 'px ' + pos.ypos() + 'px 0px 0px';
+        title.inset = '' + 6 + 'px ' + pos.ypos() + 'px 0px 0px';
         if (bold)
             title.style.fontWeight = 'bold';
         var tnode = document.createTextNode(t);
@@ -378,7 +378,7 @@ if (ui.isIE()) {
         var tsvcs = graph.tsvcs(comp);
         var lsvcs = graph.lsvcs(comp);
         var pos = graph.mkpath().move(isNil(lsvcs)? tabsz : (tabsz * 5), isNil(tsvcs)? tabsz : (tabsz * 5));
-        return graph.mktitle(graph.title(comp), true, pos);
+        return graph.mktitle(graph.title(comp), false, pos);
     };
 
     /**
@@ -399,7 +399,7 @@ if (ui.isIE()) {
         var tsvcs = graph.tsvcs(comp);
         var lsvcs = graph.lsvcs(comp);
         var pos = graph.mkpath().move(isNil(lsvcs)? tabsz : (tabsz * 5), isNil(tsvcs)? 15 + tabsz : 15 + (tabsz * 5));
-        return graph.mktitle(graph.property(comp), false, pos);
+        return graph.mktitle(graph.property(comp), true, pos);
     };
 
     /**
@@ -461,7 +461,7 @@ if (ui.isIE()) {
         contour.path = d;
         contour.filled = 'false';
         contour.strokecolor = graph.colors.gray;
-        contour.strokeweight = '2';
+        contour.strokeweight = '1';
         contour.style.left = 1;
         contour.style.top = 1;
         var stroke = document.createElement('v:stroke');
@@ -506,7 +506,7 @@ if (ui.isIE()) {
     graph.mkbutton = function(t, pos) {
 
         // Make the title element
-        var title = graph.mktitle(t, true, pos);
+        var title = graph.mktitle(t, true, graph.mkpath().move(4,4));
 
         // Compute the path of the button shape
         var path = graph.buttonpath().str();
@@ -528,7 +528,7 @@ if (ui.isIE()) {
         contour.path = path;
         contour.filled = 'false';
         contour.strokecolor = graph.colors.gray;
-        contour.strokeweight = '2';
+        contour.strokeweight = '1';
         contour.style.left = 1;
         contour.style.top = 1;
         var stroke = document.createElement('v:stroke');
@@ -851,7 +851,7 @@ if (ui.isIE()) {
      * Return an element representing the title of a component.
      */
     graph.comptitle = function(comp) {
-        return graph.mktitle(graph.title(comp), true);
+        return graph.mktitle(graph.title(comp), false);
     };
 
     /**
@@ -887,7 +887,7 @@ if (ui.isIE()) {
      * Return an element representing the value of a property.
      */
     graph.proptitle = function(comp) {
-        var title = graph.mktitle(graph.property(comp), false);
+        var title = graph.mktitle(graph.property(comp), true);
         title.setAttribute('y', 30);
         return title;
     };
@@ -926,7 +926,7 @@ if (ui.isIE()) {
         contour.setAttribute('d', d);
         contour.setAttribute('fill', 'none');
         contour.setAttribute('stroke', graph.colors.gray);
-        contour.setAttribute('stroke-width', '4');
+        contour.setAttribute('stroke-width', '3');
         contour.setAttribute('stroke-opacity', '0.20');
         contour.setAttribute('transform', 'translate(1,1)');
 
@@ -978,7 +978,7 @@ if (ui.isIE()) {
         contour.setAttribute('d', path);
         contour.setAttribute('fill', 'none');
         contour.setAttribute('stroke', graph.colors.gray);
-        contour.setAttribute('stroke-width', '4');
+        contour.setAttribute('stroke-width', '3');
         contour.setAttribute('stroke-opacity', '0.20');
         contour.setAttribute('transform', 'translate(1,1)');
 
@@ -1035,9 +1035,14 @@ graph.bringtotop = function(n, g) {
  * Return the title of a SCDL element.
  */
 graph.title = function(e) {
-    var d = scdl.documentation(e);
-    if (d != null)
-        return d;
+    var t = scdl.title(e);
+    if (t != null) {
+        if (t == 'gt')
+            return '>'
+        if (t == 'lt')
+            return '<';
+        return t;
+    }
     return scdl.name(e);
 };
 
@@ -1181,6 +1186,8 @@ graph.compheight = function(comp, cassoc) {
         var rrefs = graph.rrefs(comp);
         var rrefsh = graph.rrefsheight(rrefs, cassoc) + (tabsz * 4);
         var height = Math.max(lsvcsh, rrefsh);
+        if (!isNil(graph.brefs(comp)))
+            height = Math.max(height, (tabsz * 10) + (tabsz * 4) + (tabsz * 2));
         return height;
     });
 };
@@ -1530,7 +1537,7 @@ graph.composite = function(compos, pos) {
     }
 
     // Render the promoted service components
-    var rproms = renderproms(proms, cassoc, pos.clone().rmove(20,20));
+    var rproms = renderproms(proms, cassoc, pos.clone().rmove(tabsz * 4, tabsz * 4));
 
     if (name == 'palette') {
 

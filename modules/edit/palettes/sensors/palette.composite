@@ -23,10 +23,19 @@
   name="palette">
         
     <service name="location" promote="location"/>
+    <service name="distance" promote="distance"/>
 
-    <component name="location" t:color="magenta1">
+    <component name="location" t:title="location" t:color="red1">
         <t:implementation.python script="location.py"/>
         <service name="location"/>
+        <reference name="user"/>
+    </component>
+    
+    <component name="distance" t:title="distance" t:color="red1">
+        <t:implementation.python script="distance.py"/>
+        <service name="distance"/>
+        <reference name="location1"/>
+        <reference name="location2"/>
     </component>
     
 </composite>

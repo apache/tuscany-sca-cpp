@@ -10,7 +10,7 @@
  * 
  *   http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing,
+ * Unless requiblue by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
@@ -30,61 +30,78 @@
     <service name="twfriends" promote="twfriends"/>
     <service name="twstatus" promote="twstatus"/>
     <service name="twtimeline" promote="twtimeline"/>
+    <service name="gtalksend" promote="gtalksend"/>
+    <service name="gtalkreceive" promote="gtalkreceive"/>
+    <service name="smssend" promote="smssend"/>
 
-    <component name="fbprofile" t:color="blue1">
-        <documentation>facebook profile</documentation>
+    <component name="fbprofile" t:title="facebook profile" t:color="blue1">
         <t:implementation.python script="fbprofile.py"/>
         <service name="fbprofile"/>
         <reference name="id"/>
     </component>
     
-    <component name="fbalbum" t:color="blue1">
-        <documentation>facebook album</documentation>
+    <component name="fbalbum" t:title="facebook album" t:color="blue1">
         <t:implementation.python script="fbalbum.py"/>
         <service name="fbalbum"/>
         <reference name="id"/>
     </component>
     
-    <component name="fbfriends" t:color="blue1">
-        <documentation>facebook friends</documentation>
+    <component name="fbfriends" t:title="facebook friends" t:color="blue1">
         <t:implementation.python script="fbfriends.py"/>
         <service name="fbfriends"/>
         <reference name="id"/>
     </component>
     
-    <component name="fbgroup" t:color="blue1">
-        <documentation>facebook group</documentation>
+    <component name="fbgroup" t:title="facebook group" t:color="blue1">
         <t:implementation.python script="fbgroup.py"/>
         <service name="fbgroup"/>
         <reference name="id"/>
     </component>
     
-    <component name="twprofile" t:color="blue1">
-        <documentation>twitter profile</documentation>
+    <component name="twprofile" t:title="twitter profile" t:color="blue1">
         <t:implementation.python script="twprofile.py"/>
         <service name="twprofile"/>
         <reference name="id"/>
     </component>
     
-    <component name="twfriends" t:color="blue1">
-        <documentation>twitter friends</documentation>
+    <component name="twfriends" t:title="twitter friends" t:color="blue1">
         <t:implementation.python script="twfriends.py"/>
         <service name="twfriends"/>
         <reference name="id"/>
     </component>
     
-    <component name="twstatus" t:color="blue1">
-        <documentation>twitter status</documentation>
+    <component name="twstatus" t:title="twitter status" t:color="blue1">
         <t:implementation.python script="twstatus.py"/>
         <service name="twstatus"/>
         <reference name="id"/>
     </component>
     
-    <component name="twtimeline" t:color="blue1">
-        <documentation>twitter timeline</documentation>
+    <component name="twtimeline" t:title="twitter timeline" t:color="blue1">
         <t:implementation.python script="twtimeline.py"/>
         <service name="twtimeline"/>
         <reference name="id"/>
+    </component>
+    
+    <component name="gtalksend" t:title="send gtalk" t:color="blue1">
+        <t:implementation.python script="gtalksend.py"/>
+        <service name="gtalksend"/>
+        <reference name="jid"/>
+        <reference name="to"/>
+        <reference name="msg"/>
+    </component>
+    
+    <component name="gtalkreceive" t:title="when gtalk received" t:color="blue1">
+        <t:implementation.python script="gtalkreceive.py"/>
+        <service name="gtalkreceive"/>
+        <reference name="jid"/>
+    </component>
+    
+    <component name="smssend" t:title="send sms" t:color="blue1">
+        <t:implementation.python script="smssend.py"/>
+        <service name="smssend"/>
+        <reference name="user"/>
+        <reference name="to"/>
+        <reference name="msg"/>
     </component>
     
 </composite>
