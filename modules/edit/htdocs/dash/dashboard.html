@@ -37,9 +37,9 @@
 <br/>
 <br/>
 
-<div id="newApp" style="visibility: hidden;">
+<div id="newApp" style="visibility: hidden; height: 100%;">
 <table style="width: 100%;">
-<tr><th class="thl thr">Create an App</th></tr>
+<tr><th id="newAppHeader" class="thl thr" style="border-style: none;">Create an App</th></tr>
 <tr><td></td></tr>
 </table>
 <br/>
@@ -58,6 +58,8 @@
 <input id="createAppCancelButton" type="button" value="Cancel"/>
 </td></tr>
 </table>
+<br/>
+<br/>
 </div>
 
 </div>
@@ -126,6 +128,7 @@ $('createAppButton').onclick = function() {
     $('appTitle').value = deftitle;
     $('appCategory').value = defcategory;
     $('appDescription').value = defdesc;
+    $('newAppHeader').style.borderStyle = 'solid';
     $('newApp').style.visibility = 'visible';
     $('appName').focus();
     return false;

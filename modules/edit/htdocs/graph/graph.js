@@ -305,7 +305,6 @@ if (ui.isIE()) {
         // component, reference and property titles
         graph.comptitlewidthdiv = document.createElement('span');
         graph.comptitlewidthdiv.style.visibility = 'hidden'
-        graph.comptitlewidthdiv.style.fontWeight = 'bold'
         div.appendChild(graph.comptitlewidthdiv);
 
         graph.reftitlewidthdiv = document.createElement('span');
@@ -314,6 +313,7 @@ if (ui.isIE()) {
 
         graph.proptitlewidthdiv = document.createElement('span');
         graph.proptitlewidthdiv.style.visibility = 'hidden'
+        graph.proptitlewidthdiv.style.fontWeight = 'bold'
         div.appendChild(graph.proptitlewidthdiv);
 
         return vmlg;

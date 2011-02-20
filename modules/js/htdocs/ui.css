@@ -49,16 +49,16 @@ padding: 0px;
 }
 
 td {
-padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: nowrap; vertical-align: text-top;
+padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: nowrap; vertical-align: text-top; border: 0px;
 overflow: hidden;
 }
 
 .tdl {
-border-right: 1px;
+border-right: 1px; border-style: solid; border-color: #a2bae7;
 }
 
 .tdr {
-border-left: 1px;
+border-left: 1px; border-style: solid; border-color: #a2bae7;
 }
 
 .tdw {
@@ -86,21 +86,23 @@ font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-si
 
 a:link {
 color: #598edd;
+text-decoration: none
 }
 
 a:visited {
 color: #598edd;
+text-decoration: none
 }
 
 .amenu {
 color: #598edd;
-text-decoration: underline
+text-decoration: none
 }
 
 .smenu {
 font-weight: bold;
-color: #598edd;
-text-decoration: underline
+color: #000000;
+text-decoration: none
 }
 
 h1 {
