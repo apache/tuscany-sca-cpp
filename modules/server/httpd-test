@@ -69,6 +69,13 @@ if [ "$rc" = "0" ]; then
     rc=$?
 fi
 
+# Test built-in properties
+if [ "$rc" = "0" ]; then
+    $curl_prefix/bin/curl 'http://localhost:8090/properties?id=1&method=print' >tmp/json-properties.txt 2>/dev/null
+    diff tmp/json-properties.txt htdocs/test/json-properties.txt
+    rc=$?
+fi
+
 # Cleanup
 ../http/httpd-stop tmp
 sleep 2

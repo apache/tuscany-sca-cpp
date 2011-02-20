@@ -368,7 +368,29 @@ struct hostPropProxy {
     hostPropProxy(const value& v) : v(v) {
     }
     const value operator()(unused const list<value>& params) const {
-        return httpd::hostName(currentRequest, v);
+        const value r = httpd::hostName(currentRequest, v);
+        debug(r, "modeval::hostPropProxy::value");
+        return r;
+    }
+};
+
+struct pathPropProxy {
+    pathPropProxy(unused const value& v) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        const value v = pathValues(currentRequest->uri);
+        debug(v, "modeval::pathPropProxy::value");
+        return v;
+    }
+};
+
+struct queryPropProxy {
+    queryPropProxy(unused const value& v) {
+    }
+    const value operator()(unused const list<value>& params) const {
+        const value v = httpd::queryArgs(currentRequest);
+        debug(v, "modeval::queryPropProxy::value");
+        return v;
     }
 };
 
@@ -399,6 +421,10 @@ struct userPropProxy {
 const value mkpropProxy(const value& prop) {
     if (scdl::name(prop) == "host")
         return lambda<value(const list<value>&)>(hostPropProxy(elementValue(prop)));
+    if (scdl::name(prop) == "path")
+        return lambda<value(const list<value>&)>(pathPropProxy(elementValue(prop)));
+    if (scdl::name(prop) == "query")
+        return lambda<value(const list<value>&)>(queryPropProxy(elementValue(prop)));
     if (scdl::name(prop) == "user")
         return lambda<value(const list<value>&)>(userPropProxy(elementValue(prop)));
     if (scdl::name(prop) == "realm")

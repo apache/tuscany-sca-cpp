@@ -29,6 +29,16 @@
         </service>
     </component>     
 
+    <component name="property-test">
+        <t:implementation.scheme script="property-test.scm"/>
+        <service name="properties">
+            <t:binding.http uri="properties"/>
+        </service>
+        <property name="host"></property>
+        <property name="path"></property>
+        <property name="query"></property>
+    </component>
+
     <component name="cpp-test">
         <implementation.cpp path="." library="libimpl-test"/>
         <service name="cpp">
