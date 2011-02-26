@@ -18,7 +18,7 @@
 #  under the License.
 
 ../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
-../../modules/http/vhost-conf tmp
+../../modules/http/vhost-conf tmp domains htdocs
 ../../modules/server/server-conf tmp
 ../../modules/python/python-conf tmp
 cat >>tmp/conf/httpd.conf <<EOF

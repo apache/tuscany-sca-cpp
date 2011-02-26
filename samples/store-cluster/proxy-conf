@@ -24,7 +24,7 @@ set -x
 
 # Configure a proxy balancer
 ../../modules/http/httpd-conf $root sca-store.com $port/80 $root/htdocs
-../../modules/http/vhost-conf $root
+../../modules/http/vhost-conf $root $root/domains htdocs
 ../../modules/http/proxy-conf $root
 ../../modules/http/httpd-event-conf $root
 

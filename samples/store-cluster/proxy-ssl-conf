@@ -25,7 +25,7 @@ set -x
 
 # Configure an SSL-enabled proxy balancer
 ../../modules/http/httpd-conf $root sca-store.com $port $root/htdocs
-../../modules/http/vhost-conf $root
+../../modules/http/vhost-conf $root $root/domains htdocs
 ../../modules/http/proxy-conf $root
 ../../modules/http/httpd-event-conf $root
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x

@@ -25,7 +25,7 @@ set -x
 
 # Configure an SSL-enabled app server
 ../../modules/http/httpd-conf $root sca-store.com $port htdocs
-../../modules/http/vhost-conf $root
+../../modules/http/vhost-conf $root domains htdocs
 
 tar -C tmp/ssl -c `../../modules/http/ssl-cert-find tmp/ssl` | tar -C $root -x
 ../../modules/http/httpd-ssl-conf $root $sslport

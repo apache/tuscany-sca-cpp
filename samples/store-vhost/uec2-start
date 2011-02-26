@@ -33,7 +33,7 @@ sudo ../../ubuntu/ip-redirect-all 443 8453
 ../../modules/http/ssl-cert-conf tmp $host server
 ../../modules/http/ssl-cert-conf tmp "*.$host" vhost
 ../../modules/http/httpd-conf tmp $host 8090/80 htdocs
-../../modules/http/vhost-conf tmp
+../../modules/http/vhost-conf tmp domains htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453/443
 ../../modules/http/vhost-ssl-conf tmp
 ../../modules/server/server-conf tmp
