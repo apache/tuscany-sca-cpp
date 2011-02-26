@@ -25,7 +25,7 @@
     <component name="User">
         <t:implementation.python script="user.py"/>
         <property name="user">?</property>
-        <property name="email">joe@localhost</property>
+        <property name="email">?</property>
         <property name="nickname">?</property>
         <property name="fullname">?</property>
         <property name="firstname">?</property>
@@ -34,6 +34,11 @@
         <service name="User">
             <t:binding.http uri="user"/>
         </service>
+    </component>
+    
+    <component name="MenuWidget">
+        <t:implementation.widget location="/menu.html"/>
+        <reference name="user" target="User"/>
     </component>
     
     <component name="EditWidget">

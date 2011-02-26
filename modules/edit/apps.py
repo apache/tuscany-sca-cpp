@@ -18,23 +18,37 @@
 # Apps collection implementation
 import uuid
 import sys
+import os
 from util import *
 
 # Convert an id to an app id
 def appid(id):
     return ("'" + car(id), "'app.composite")
 
+# Link implementation resources into an app
+def mkapplink(id):
+    try:
+        os.symlink('../../../../../nuvem/nuvem-parallel/nuvem', 'apps/' + car(id) + '/nuvem')
+        os.mkdir('apps/' + car(id) + '/htdocs')
+        os.symlink('../../../htdocs/login', 'apps/' + car(id) + '/htdocs/login');
+        os.symlink('../../../htdocs/logout', 'apps/' + car(id) + '/htdocs/logout');
+    except:
+        pass
+    return True
+
 # Post a new app to the apps db
 def post(collection, app, cache):
     id = appid((str(uuid.uuid1()),))
     comp = caddr(app)
     cache.put((id,), comp)
+    mkapplink((id,))
     return id
 
 # Put an app into the apps db
 def put(id, app, cache):
     comp = caddr(app)
     cache.put(appid(id), comp)
+    mkapplink(id)
     return True
 
 # Get an app from the apps db

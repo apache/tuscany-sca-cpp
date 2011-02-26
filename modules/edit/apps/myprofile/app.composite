@@ -18,47 +18,47 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://me360" name="me360">
-  <component t:x="240" t:y="57" name="text" t:title="text" t:color="orange1">
-    <t:implementation.python script="text.py"/>
-    <service name="text"/>
-    <property>12345678</property>
-  </component>
-  <service name="opened" promote="opened"/>
-  <component t:x="3" t:y="2" name="opened" t:title="when page opened" t:color="green1">
-    <t:implementation.python script="opened.py"/>
-    <service name="opened" t:visible="false"/>
-    <reference target="assoc2" name="content"/>
-  </component>
-  <component t:x="135" t:y="2" name="assoc2" t:title="assoc" t:color="orange1">
-    <t:implementation.python script="assoc.py"/>
-    <service name="assoc"/>
-    <reference target="name2" name="name"/>
-    <reference target="append" name="value"/>
-  </component>
-  <component t:x="225" t:y="52" name="append" t:title="append" t:color="yellow1">
-    <t:implementation.python script="append.py"/>
-    <service name="append"/>
-    <reference target="fbprofile" name="first"/>
-    <reference target="twprofile" name="second"/>
-  </component>
-  <component t:x="297" t:y="53" name="fbprofile" t:title="facebook profile" t:color="blue1">
-    <t:implementation.python script="fbprofile.py"/>
-    <service name="fbprofile"/>
-    <reference target="text" name="id"/>
-  </component>
-  <component t:x="293" t:y="105" name="twprofile" t:title="twitter profile" t:color="blue1">
-    <t:implementation.python script="twprofile.py"/>
-    <service name="twprofile"/>
-    <reference target="text2" name="id"/>
-  </component>
-  <component t:x="219" t:y="0" name="name2" t:title="name" t:color="orange1">
-    <t:implementation.python script="name.py"/>
-    <service name="name"/>
-    <property>profiles</property>
-  </component>
-  <component t:x="358" t:y="98" name="text2" t:title="text" t:color="orange1">
-    <t:implementation.python script="text.py"/>
-    <service name="text"/>
-    <property>joe</property>
-  </component>
+ <component t:x="240" t:y="57" name="text" t:title="text" t:color="orange1">
+  <t:implementation.python script="text.py"/>
+  <service name="text"/>
+  <property>12345678</property>
+ </component>
+ <service name="opened" promote="opened"/>
+ <component t:x="3" t:y="2" name="opened" t:title="when page opened" t:color="green1">
+  <t:implementation.python script="opened.py"/>
+  <service name="opened" t:visible="false"/>
+  <reference target="assoc2" name="content"/>
+ </component>
+ <component t:x="135" t:y="2" name="assoc2" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name2" name="name"/>
+  <reference target="append" name="value"/>
+ </component>
+ <component t:x="225" t:y="52" name="append" t:title="append" t:color="yellow1">
+  <t:implementation.python script="append.py"/>
+  <service name="append"/>
+  <reference target="fbprofile" name="first"/>
+  <reference target="twprofile" name="second"/>
+ </component>
+ <component t:x="297" t:y="53" name="fbprofile" t:title="facebook profile" t:color="blue1">
+  <t:implementation.python script="fbprofile.py"/>
+  <service name="fbprofile"/>
+  <reference target="text" name="id"/>
+ </component>
+ <component t:x="293" t:y="105" name="twprofile" t:title="twitter profile" t:color="blue1">
+  <t:implementation.python script="twprofile.py"/>
+  <service name="twprofile"/>
+  <reference target="text2" name="id"/>
+ </component>
+ <component t:x="219" t:y="0" name="name2" t:title="name" t:color="orange1">
+  <t:implementation.python script="name.py"/>
+  <service name="name"/>
+  <property>profiles</property>
+ </component>
+ <component t:x="358" t:y="98" name="text2" t:title="text" t:color="orange1">
+  <t:implementation.python script="text.py"/>
+  <service name="text"/>
+  <property>joe</property>
+ </component>
 </composite>

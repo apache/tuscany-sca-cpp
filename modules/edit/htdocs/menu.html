@@ -21,12 +21,28 @@
 <link rel="stylesheet" type="text/css" href="/ui.css">
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/component.js"></script>
 </head>
 <body>
 <div id="menu"></div>
 
 <script type="text/javascript">
 ui.installwidget();
+
+var menuWidget = sca.component("MenuWidget");
+var user = sca.defun(sca.reference(menuWidget, "user"), "id");
+
+/**
+ * Display the current signed in user.
+ */
+function userMenu() {
+    function UserMenu() {
+        this.content = function() {
+            return '<span><b>' + user.id() + '</b></span>';
+        };
+    }
+    return new UserMenu();
+}
 
 /**
  * Return the current app name.
@@ -41,7 +57,7 @@ var name = appname();
 mdiv.innerHTML = ui.menubar(
     append(mklist(ui.menu('Home', '/'), ui.menu('Dashboard', '/dash')),
             (isNil(name) || name == 'undefined')? mklist() : mklist(ui.menu('Composition', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name), ui.menu('Settings', '/app/?app=' + name))),
-    mklist(ui.menu('Sign out', '/logout')));
+    mklist(userMenu(), ui.menu('Sign out', '/logout')));
 
 </script>
 </body>

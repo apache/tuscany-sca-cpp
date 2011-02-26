@@ -22,25 +22,27 @@
   targetNamespace="http://events"
   name="palette">
         
-    <service name="opened" promote="opened"/>
-    <service name="clicked" promote="clicked"/>
+    <service name="page" promote="page"/>
+    <service name="button" promote="button"/>
     <service name="every" promote="every"/>
 
-    <component name="opened" t:title="when page opened" t:color="green1">
-        <t:implementation.python script="opened.py"/>
-        <service name="opened" t:visible="false"/>
+    <component name="page" t:title="when page opened" t:color="green1">
+        <t:implementation.python script="nuvem/page.py"/>
+        <service name="page" t:visible="false">
+            <t:binding.http uri="index.html"/>
+        </service>
         <reference name="content"/>
     </component>
     
-    <component name="clicked" t:title="when clicked" t:color="green1">
-        <t:implementation.python script="clicked.py"/>
-        <service name="clicked" t:visible="false"/>
+    <component name="button" t:title="when clicked" t:color="green1">
+        <t:implementation.python script="nuvem/button.py"/>
+        <service name="button" t:visible="false"/>
         <property name="property">button</property>
         <reference name="content"/>
     </component>
     
     <component name="every" t:title="every n secs" t:color="green1">
-        <t:implementation.python script="every.py"/>
+        <t:implementation.python script="nuvem/every.py"/>
         <service name="every" t:visible="false"/>
         <property name="property">60</property>
         <reference name="content"/>

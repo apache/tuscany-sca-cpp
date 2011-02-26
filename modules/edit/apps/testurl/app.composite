@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testurl" name="testurl">
+ <service name="host" promote="host"/>
+ <component t:x="29" t:y="14" name="host" t:title="host" t:color="green1">
+  <t:implementation.python script="nuvem/host.py"/>
+  <service name="host"/>
+  <property name="host"/>
+ </component>
+ <service name="path" promote="path"/>
+ <component t:x="29" t:y="80" name="path" t:title="path" t:color="green1">
+  <t:implementation.python script="nuvem/path.py"/>
+  <service name="path"/>
+  <property name="path"/>
+ </component>
+ <service name="params" promote="params"/>
+ <component t:x="28" t:y="141" name="params" t:title="?params" t:color="green1">
+  <t:implementation.python script="nuvem/params.py"/>
+  <service name="params"/>
+  <property name="params"/>
+ </component>
+ <service name="user" promote="user"/>
+ <component t:x="25" t:y="205" name="user" t:title="user" t:color="green1">
+  <t:implementation.python script="nuvem/user.py"/>
+  <service name="user"/>
+  <property name="user"/>
+ </component>
+ <service name="realm" promote="realm"/>
+ <component t:x="22" t:y="265" name="realm" t:title="realm" t:color="green1">
+  <t:implementation.python script="nuvem/realm.py"/>
+  <service name="realm"/>
+  <property name="realm"/>
+ </component>
+ <service name="email" promote="email"/>
+ <component t:x="26" t:y="328" name="email" t:title="email" t:color="green1">
+  <t:implementation.python script="nuvem/email.py"/>
+  <service name="email"/>
+  <property name="email"/>
+ </component>
+</composite>

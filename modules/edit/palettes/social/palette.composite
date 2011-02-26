@@ -35,55 +35,64 @@
     <service name="smssend" promote="smssend"/>
 
     <component name="fbprofile" t:title="facebook profile" t:color="blue1">
-        <t:implementation.python script="fbprofile.py"/>
+        <t:implementation.python script="nuvem/fbprofile.py"/>
         <service name="fbprofile"/>
         <reference name="id"/>
+        <reference name="fb" t:visible="false">
+            <t:binding.http uri="https://graph.facebook.com"/>
+        </reference>
     </component>
     
     <component name="fbalbum" t:title="facebook album" t:color="blue1">
-        <t:implementation.python script="fbalbum.py"/>
+        <t:implementation.python script="nuvem/fbalbum.py"/>
         <service name="fbalbum"/>
         <reference name="id"/>
     </component>
     
     <component name="fbfriends" t:title="facebook friends" t:color="blue1">
-        <t:implementation.python script="fbfriends.py"/>
+        <t:implementation.python script="nuvem/fbfriends.py"/>
         <service name="fbfriends"/>
         <reference name="id"/>
     </component>
     
     <component name="fbgroup" t:title="facebook group" t:color="blue1">
-        <t:implementation.python script="fbgroup.py"/>
+        <t:implementation.python script="nuvem/fbgroup.py"/>
         <service name="fbgroup"/>
         <reference name="id"/>
     </component>
     
     <component name="twprofile" t:title="twitter profile" t:color="blue1">
-        <t:implementation.python script="twprofile.py"/>
+        <t:implementation.python script="nuvem/twprofile.py"/>
         <service name="twprofile"/>
         <reference name="id"/>
+        <reference name="tw" t:visible="false">
+            <t:binding.http uri="http://api.twitter.com/1/users/show.json"/>
+        </reference>
     </component>
     
     <component name="twfriends" t:title="twitter friends" t:color="blue1">
-        <t:implementation.python script="twfriends.py"/>
+        <t:implementation.python script="nuvem/twfriends.py"/>
         <service name="twfriends"/>
         <reference name="id"/>
     </component>
     
     <component name="twstatus" t:title="twitter status" t:color="blue1">
-        <t:implementation.python script="twstatus.py"/>
+        <t:implementation.python script="nuvem/twstatus.py"/>
         <service name="twstatus"/>
         <reference name="id"/>
     </component>
     
     <component name="twtimeline" t:title="twitter timeline" t:color="blue1">
-        <t:implementation.python script="twtimeline.py"/>
+        <t:implementation.python script="nuvem/twtimeline.py"/>
         <service name="twtimeline"/>
         <reference name="id"/>
+        <reference name="tw" t:visible="false">
+            <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.json"/>
+        </reference>
     </component>
     
     <component name="gtalksend" t:title="send gtalk" t:color="blue1">
-        <t:implementation.python script="gtalksend.py"/>
+        <t:implementation.python script="nuvem/gtalksend.py"/>
         <service name="gtalksend"/>
         <reference name="jid"/>
         <reference name="to"/>
@@ -91,13 +100,13 @@
     </component>
     
     <component name="gtalkreceive" t:title="when gtalk received" t:color="blue1">
-        <t:implementation.python script="gtalkreceive.py"/>
+        <t:implementation.python script="nuvem/gtalkreceive.py"/>
         <service name="gtalkreceive"/>
         <reference name="jid"/>
     </component>
     
     <component name="smssend" t:title="send sms" t:color="blue1">
-        <t:implementation.python script="smssend.py"/>
+        <t:implementation.python script="nuvem/smssend.py"/>
         <service name="smssend"/>
         <reference name="user"/>
         <reference name="to"/>

@@ -56,7 +56,7 @@ var trashcx = 230;
 var proxcx = 20;
 var proxcy = 20;
 var buttoncx = 70;
-var buttoncy = 40;
+var buttoncy = 30;
 var curvsz = 6;
 var tabsz = 3;
 
@@ -114,7 +114,7 @@ if (ui.isIE()) {
     /**
      * Make a VML graph.
      */
-    graph.mkgraph = function(pos, cname, pvalue) {
+    graph.mkgraph = function(pos, cname, pvalue, cvalue) {
 
         // Create div element to host the graph
         var div = document.createElement('div');
@@ -160,6 +160,7 @@ if (ui.isIE()) {
                 // Reset current selection
                 cname.value = '';
                 pvalue.value = '';
+                cvalue.innerHTML = '';
                 return false;
             }
 
@@ -185,6 +186,7 @@ if (ui.isIE()) {
             // Update the component name and property value fields
             cname.value = graph.selected.id;
             pvalue.value = graph.property(graph.selected.comp);
+            cvalue.innerHTML = graph.compvaluelink(vmlg.appname, graph.selected.id);
             return false;
         };
 
@@ -232,6 +234,7 @@ if (ui.isIE()) {
                     graph.selected = null;
                     cname.value = '';
                     pvalue.value = '';
+                    cvalue.innerHTML = '';
                 }
             }
 
@@ -281,6 +284,7 @@ if (ui.isIE()) {
             var compos = scdl.composite(svg.compos);
             cname.value = graph.ucid(cname.value, compos);
             graph.selected.id = cname.value;
+            cvalue.innerHTML = graph.compvaluelink(svg.appname, graph.selected.id);
             setElement(compos, graph.renamecomp(graph.selected.comp, compos, cname.value));
 
             // Refresh the composite
@@ -575,7 +579,7 @@ if (ui.isIE()) {
     /**
      * Make an SVG graph.
      */
-    graph.mkgraph = function(pos, cname, pvalue) {
+    graph.mkgraph = function(pos, cname, pvalue, cvalue) {
 
         // Create a div element to host the graph
         var div = document.createElement('div');
@@ -624,6 +628,7 @@ if (ui.isIE()) {
                 // Reset current selection
                 cname.value = '';
                 pvalue.value = '';
+                cvalue.innerHTML ='';
                 return false;
             }
 
@@ -649,6 +654,7 @@ if (ui.isIE()) {
             // Update the component name and property value fields
             cname.value = graph.selected.id;
             pvalue.value = graph.property(graph.selected.comp);
+            cvalue.innerHTML = graph.compvaluelink(svg.appname, graph.selected.id);
             return false;
         };
 
@@ -699,6 +705,7 @@ if (ui.isIE()) {
                     graph.selected = null;
                     cname.value = '';
                     pvalue.value = '';
+                    cvalue.innerHTML = '';
                 }
             }
 
@@ -766,6 +773,7 @@ if (ui.isIE()) {
             var compos = scdl.composite(svg.compos);
             cname.value = graph.ucid(cname.value, compos);
             graph.selected.id = cname.value;
+            cvalue.innerHTML = graph.compvaluelink(svg.appname, graph.selected.id);
             setElement(compos, graph.renamecomp(graph.selected.comp, compos, cname.value));
 
             // Refresh the composite
@@ -1121,7 +1129,7 @@ graph.lsvcs = function(comp) {
  */
 graph.brefs = function(comp) {
     return memo(comp, 'brefs', function() {
-        return filter(function(r) { return scdl.align(r) == 'bottom'; }, scdl.references(comp));
+        return filter(function(r) { return scdl.align(r) == 'bottom' && scdl.visible(r) != 'false'; }, scdl.references(comp));
     });
 };
 
@@ -1130,7 +1138,11 @@ graph.brefs = function(comp) {
  */
 graph.rrefs = function(comp) {
     return memo(comp, 'rrefs', function() {
-        return filter(function(r) { var a = scdl.align(r); return a == null || a == 'right'; }, scdl.references(comp));
+        return filter(function(r) {
+            var a = scdl.align(r);
+            var v = scdl.visible(r);
+            return (a == null || a == 'right') && v != 'false';
+        }, scdl.references(comp));
     });
 };
 
@@ -1791,12 +1803,25 @@ graph.refresh = function(g) {
  * Display and enable editing of a composite and the graphical
  * nodes that represent it.
  */
-graph.edit = function(compos, nodes, g, cname, pvalue) {
+graph.edit = function(appname, compos, nodes, g) {
 
-    // Store the composite in the graphical canvas
+    // Store the appname and composite in the graphical canvas
+    g.appname = appname;
     g.compos = compos;
 
     // Display the composite nodes
     return graph.display(nodes, g);
+};
+
+/**
+ * Return the link to a component value.
+ */
+graph.compvaluelink = function(appname, cname) {
+    var scheme = 'http';
+    var domain = "sca-store.com";
+    var port = '8090';
+    var link = scheme + '://' + appname + '.' + domain + ':' + port + '/components/' + cname;
+    return '<a href="' + link + '">' + link + '</a>';
+
 };
 

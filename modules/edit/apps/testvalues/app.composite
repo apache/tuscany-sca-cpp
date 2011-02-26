@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testvalues" name="testvalues">
+ <service name="text" promote="text"/>
+ <component t:x="7" t:y="14" name="text" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>xyz</property>
+ </component>
+ <service name="name" promote="name"/>
+ <component t:x="5" t:y="71" name="name" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>abc</property>
+ </component>
+ <service name="true" promote="true"/>
+ <component t:x="5" t:y="140" name="true" t:title="true" t:color="orange1">
+  <t:implementation.python script="nuvem/true_.py"/>
+  <service name="true"/>
+ </component>
+ <service name="false" promote="false"/>
+ <component t:x="6" t:y="205" name="false" t:title="false" t:color="orange1">
+  <t:implementation.python script="nuvem/false_.py"/>
+  <service name="false"/>
+ </component>
+ <service name="nothing" promote="nothing"/>
+ <component t:x="4" t:y="263" name="nothing" t:title="nothing" t:color="orange1">
+  <t:implementation.python script="nuvem/nothing.py"/>
+  <service name="nothing"/>
+ </component>
+ <component t:x="190" t:y="250" name="list" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="number2" name="first"/>
+  <reference target="list2" name="rest"/>
+ </component>
+ <component t:x="286" t:y="213" name="list2" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="number3" name="first"/>
+  <reference name="rest"/>
+ </component>
+ <component t:x="285" t:y="170" name="number2" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>123</property>
+ </component>
+ <component t:x="359" t:y="214" name="number3" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>456</property>
+ </component>
+ <service name="find" promote="find"/>
+ <component t:x="728" t:y="9" name="find" t:title="find by name" t:color="yellow1">
+  <t:implementation.python script="nuvem/find.py"/>
+  <service name="find"/>
+  <reference target="name3" name="name"/>
+  <reference target="list3" name="assoc"/>
+ </component>
+ <component t:x="283" t:y="351" name="name3" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>d</property>
+ </component>
+ <component t:x="281" t:y="390" name="list3" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="assoc2" name="first"/>
+  <reference target="list4" name="rest"/>
+ </component>
+ <component t:x="360" t:y="392" name="assoc2" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name4" name="name"/>
+  <reference target="text3" name="value"/>
+ </component>
+ <component t:x="420" t:y="390" name="name4" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>a</property>
+ </component>
+ <component t:x="421" t:y="436" name="text3" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>abc</property>
+ </component>
+ <component t:x="358" t:y="487" name="list4" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="assoc3" name="first"/>
+  <reference name="rest"/>
+ </component>
+ <component t:x="433" t:y="485" name="assoc3" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name5" name="name"/>
+  <reference target="text4" name="value"/>
+ </component>
+ <component t:x="495" t:y="486" name="name5" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>d</property>
+ </component>
+ <component t:x="787" t:y="217" name="text4" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>def</property>
+ </component>
+ <component t:x="433" t:y="37" name="range" t:title="range" t:color="yellow1">
+  <t:implementation.python script="nuvem/range_.py"/>
+  <service name="range"/>
+  <reference target="number4" name="first"/>
+  <reference target="number5" name="last"/>
+ </component>
+ <component t:x="378" t:y="48" name="number4" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>0</property>
+ </component>
+ <component t:x="378" t:y="90" name="number5" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>10</property>
+ </component>
+ <service name="first" promote="first"/>
+ <component t:x="93" t:y="10" name="first" t:title="first item" t:color="yellow1">
+  <t:implementation.python script="nuvem/first.py"/>
+  <service name="first"/>
+  <reference target="list" name="list"/>
+ </component>
+ <service name="rest" promote="rest"/>
+ <component t:x="408" t:y="6" name="rest" t:title="rest of list" t:color="yellow1">
+  <t:implementation.python script="nuvem/rest.py"/>
+  <service name="rest"/>
+  <reference target="list5" name="list"/>
+ </component>
+ <component t:x="210" t:y="210" name="list5" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="number" name="first"/>
+  <reference target="list6" name="rest"/>
+ </component>
+ <component t:x="286" t:y="251" name="list6" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="number7" name="first"/>
+  <reference name="rest"/>
+ </component>
+ <component t:x="284" t:y="207" name="number" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>12</property>
+ </component>
+ <component t:x="361" t:y="249" name="number7" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>34</property>
+ </component>
+ <service name="empty" promote="empty"/>
+ <component t:x="5" t:y="320" name="empty" t:title="empty list" t:color="yellow1">
+  <t:implementation.python script="nuvem/empty.py"/>
+  <service name="empty"/>
+ </component>
+ <service name="itemnb" promote="itemnb"/>
+ <component t:x="97" t:y="184" name="itemnb" t:title="item number" t:color="yellow1">
+  <t:implementation.python script="nuvem/itemnb.py"/>
+  <service name="itemnb"/>
+  <reference target="number8" name="index"/>
+  <reference target="foreach" name="list"/>
+ </component>
+ <component t:x="208" t:y="187" name="number8" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>3</property>
+ </component>
+ <component t:x="228" t:y="324" name="multiply" t:title="*" t:color="magenta1">
+  <t:implementation.python script="nuvem/multiply.py"/>
+  <service name="multiply">
+   <documentation>*</documentation>
+  </service>
+  <reference target="valueof" name="value1"/>
+  <reference target="number6" name="value2"/>
+ </component>
+ <component t:x="228" t:y="358" name="reverse" t:title="reverse" t:color="yellow1">
+  <t:implementation.python script="nuvem/reverse.py"/>
+  <service name="reverse"/>
+  <reference target="range" name="list"/>
+ </component>
+ <component t:x="225" t:y="293" name="name2" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>nb</property>
+ </component>
+ <service name="reduce" promote="reduce"/>
+ <component t:x="486" t:y="191" name="reduce" t:title="reduce" t:color="yellow1">
+  <t:implementation.python script="nuvem/reduce_.py"/>
+  <service name="reduce"/>
+  <reference target="name6" name="item"/>
+  <reference target="name7" name="accum"/>
+  <reference target="add" name="transform"/>
+  <reference target="range2" name="list"/>
+ </component>
+ <component t:x="449" t:y="259" name="name6" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>sum</property>
+ </component>
+ <component t:x="442" t:y="299" name="name7" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>i</property>
+ </component>
+ <component t:x="444" t:y="341" name="add" t:title="+" t:color="magenta1">
+  <t:implementation.python script="nuvem/add.py"/>
+  <service name="add">
+   <documentation>+</documentation>
+  </service>
+  <reference target="valueof2" name="value1"/>
+  <reference target="valueof3" name="value2"/>
+ </component>
+ <component t:x="444" t:y="437" name="range2" t:title="range" t:color="yellow1">
+  <t:implementation.python script="nuvem/range_.py"/>
+  <service name="range"/>
+  <reference target="number9" name="first"/>
+  <reference target="number10" name="last"/>
+ </component>
+ <component t:x="498" t:y="437" name="number9" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>0</property>
+ </component>
+ <component t:x="547" t:y="403" name="number10" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>10</property>
+ </component>
+ <component t:x="226" t:y="373" name="number6" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>2</property>
+ </component>
+ <component t:x="226" t:y="331" name="valueof" t:title="value of" t:color="orange1">
+  <t:implementation.python script="nuvem/valueof.py"/>
+  <service name="valueof"/>
+  <property>nb</property>
+ </component>
+ <component t:x="533" t:y="265" name="valueof2" t:title="value of" t:color="orange1">
+  <t:implementation.python script="nuvem/valueof.py"/>
+  <service name="valueof"/>
+  <property>sum</property>
+ </component>
+ <component t:x="533" t:y="307" name="valueof3" t:title="value of" t:color="orange1">
+  <t:implementation.python script="nuvem/valueof.py"/>
+  <service name="valueof"/>
+  <property>i</property>
+ </component>
+ <component t:x="193" t:y="226" name="foreach" t:title="foreach" t:color="yellow1">
+  <t:implementation.python script="nuvem/map_.py"/>
+  <service name="foreach"/>
+  <reference target="name2" name="item"/>
+  <reference target="multiply" name="transform"/>
+  <reference target="reverse" name="list"/>
+ </component>
+</composite>

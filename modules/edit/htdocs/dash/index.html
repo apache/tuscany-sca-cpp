@@ -43,7 +43,9 @@ ui.loadwidget('menu', '/menu.html');
 <script type="text/javascript">
 
 // Load the dashboard
-ui.loadiframe('dashboard', 'dashboard.html');
+$('dashboard').innerHTML =
+    '<iframe id="dashboardFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="dashboard.html"></iframe>';
+
 </script>
 </body>
 </html>

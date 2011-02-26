@@ -30,37 +30,37 @@
     <service name="email" promote="email"/>
 
     <component name="host" t:title="host" t:color="green1">
-        <t:implementation.python script="host.py"/>
+        <t:implementation.python script="nuvem/host.py"/>
         <service name="host"/>
         <property name="host"></property>
     </component>
     
     <component name="path" t:title="path" t:color="green1">
-        <t:implementation.python script="path.py"/>
+        <t:implementation.python script="nuvem/path.py"/>
         <service name="path"/>
         <property name="path"></property>
     </component>
     
     <component name="params" t:title="?params" t:color="green1">
-        <t:implementation.python script="params.py"/>
+        <t:implementation.python script="nuvem/params.py"/>
         <service name="params"/>
-        <property name="params"></property>
+        <property name="query"></property>
     </component>
     
     <component name="user" t:title="user" t:color="green1">
-        <t:implementation.python script="user.py"/>
+        <t:implementation.python script="nuvem/user.py"/>
         <service name="user"/>
         <property name="user"></property>
     </component>
     
     <component name="realm" t:title="realm" t:color="green1">
-        <t:implementation.python script="realm.py"/>
+        <t:implementation.python script="nuvem/realm.py"/>
         <service name="realm"/>
         <property name="realm"></property>
     </component>
     
     <component name="email" t:title="email" t:color="green1">
-        <t:implementation.python script="email.py"/>
+        <t:implementation.python script="nuvem/email.py"/>
         <service name="email"/>
         <property name="email"></property>
     </component>

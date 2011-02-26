@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testsocial" name="testsocial">
+ <component t:x="317" t:y="44" name="text" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>100001053301307</property>
+ </component>
+ <component t:x="166" t:y="52" name="fbprofile" t:title="facebook profile" t:color="blue1">
+  <t:implementation.python script="nuvem/fbprofile.py"/>
+  <service name="fbprofile"/>
+  <reference target="text" name="id"/>
+  <reference name="fb" t:visible="false">
+   <t:binding.http uri="https://graph.facebook.com"/>
+  </reference>
+ </component>
+ <component t:x="111" t:y="18" name="assoc" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name" name="name"/>
+  <reference target="fbprofile" name="value"/>
+ </component>
+ <component t:x="187" t:y="155" name="assoc2" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name2" name="name"/>
+  <reference target="twprofile" name="value"/>
+ </component>
+ <component t:x="169" t:y="17" name="name" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>facebook</property>
+ </component>
+ <component t:x="68" t:y="350" name="list" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="assoc" name="first"/>
+  <reference target="list2" name="rest"/>
+ </component>
+ <component t:x="66" t:y="14" name="name3" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>me360</property>
+ </component>
+ <component t:x="131" t:y="12" name="me360" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name3" name="name"/>
+  <reference target="list" name="value"/>
+ </component>
+ <service name="page" promote="page"/>
+ <component t:x="0" t:y="12" name="page" t:title="when page opened" t:color="green1">
+  <t:implementation.python script="nuvem/page.py"/>
+  <service name="page" t:visible="false">
+   <t:binding.http uri="index.html"/>
+  </service>
+  <reference target="me360" name="content"/>
+ </component>
+ <component t:x="269" t:y="163" name="list2" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="assoc2" name="first"/>
+  <reference name="rest"/>
+ </component>
+ <component t:x="404" t:y="162" name="name2" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>twitter</property>
+ </component>
+ <component t:x="505" t:y="204" name="text3" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>jsdelfino</property>
+ </component>
+ <component t:x="410" t:y="205" name="twprofile" t:title="twitter profile" t:color="blue1">
+  <t:implementation.python script="nuvem/twprofile.py"/>
+  <service name="twprofile"/>
+  <reference target="text3" name="id"/>
+  <reference name="tw" t:visible="false">
+   <t:binding.http uri="http://api.twitter.com/1/users/show.json"/>
+  </reference>
+ </component>
+</composite>

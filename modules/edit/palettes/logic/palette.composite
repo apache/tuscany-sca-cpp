@@ -31,7 +31,7 @@
     <service name="lesser" promote="lesser"/>
 
     <component name="if" t:title="if" t:color="magenta1">
-        <t:implementation.python script="if_.py"/>
+        <t:implementation.python script="nuvem/if_.py"/>
         <service name="if"/>
         <reference name="condition"/>
         <reference name="then"/>
@@ -39,41 +39,41 @@
     </component>
     
     <component name="and" t:title="and" t:color="magenta1">
-        <t:implementation.python script="and_.py"/>
+        <t:implementation.python script="nuvem/and_.py"/>
         <service name="and"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
     <component name="or" t:title="or" t:color="magenta1">
-        <t:implementation.python script="or_.py"/>
+        <t:implementation.python script="nuvem/or_.py"/>
         <service name="or"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
     <component name="not" t:title="not" t:color="magenta1">
-        <t:implementation.python script="not_.py"/>
+        <t:implementation.python script="nuvem/not_.py"/>
         <service name="not"/>
         <reference name="value"/>
     </component>
     
     <component name="equals" t:title="=" t:color="magenta1">
-        <t:implementation.python script="equals.py"/>
+        <t:implementation.python script="nuvem/equals.py"/>
         <service name="equals"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
     <component name="greater" t:title="gt" t:color="magenta1">
-        <t:implementation.python script="greater.py"/>
+        <t:implementation.python script="nuvem/greater.py"/>
         <service name="greater"/>
         <reference name="value1"/>
         <reference name="value2"/>
     </component>
     
     <component name="lesser" t:title="lt" t:color="magenta1">
-        <t:implementation.python script="lesser.py"/>
+        <t:implementation.python script="nuvem/lesser.py"/>
         <service name="lesser"/>
         <reference name="value1"/>
         <reference name="value2"/>

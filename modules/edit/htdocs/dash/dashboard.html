@@ -146,7 +146,7 @@ $('createAppOKButton').onclick = function() {
     var entry = atom.writeATOMEntry(app);
     dashboard.put(name, car(entry));
     getapps();
-    div.style.visibility = 'hidden';
+    $('newApp').style.visibility = 'hidden';
     return false;
 };
 

@@ -25,48 +25,55 @@
     <service name="text" promote="text"/>
     <service name="number" promote="number"/>
     <service name="name" promote="name"/>
+    <service name="valueof" promote="valueof"/>
     <service name="assoc" promote="assoc"/>
     <service name="nothing" promote="nothing"/>
     <service name="true" promote="true"/>
     <service name="false" promote="false"/>
 
     <component name="text" t:title="text" t:color="orange1">
-        <t:implementation.python script="text.py"/>
+        <t:implementation.python script="nuvem/text.py"/>
         <service name="text"/>
         <property name="property">abc</property>
     </component>
     
     <component name="number" t:title="number" t:color="orange1">
-        <t:implementation.python script="number.py"/>
+        <t:implementation.python script="nuvem/number.py"/>
         <service name="number"/>
         <property name="property">0</property>
     </component>
     
     <component name="name" t:title="name" t:color="orange1">
-        <t:implementation.python script="name.py"/>
+        <t:implementation.python script="nuvem/name.py"/>
         <service name="name"/>
         <property name="property">name</property>
     </component>
     
+    <component name="valueof" t:title="value of" t:color="orange1">
+        <t:implementation.python script="nuvem/valueof.py"/>
+        <service name="valueof"/>
+        <property name="name">name</property>
+    </component>
+    
     <component name="assoc" t:title="assoc" t:color="orange1">
-        <t:implementation.python script="assoc.py"/>
+        <t:implementation.python script="nuvem/assoc.py"/>
         <service name="assoc"/>
         <reference name="name"/>
         <reference name="value"/>
     </component>
     
     <component name="nothing" t:title="nothing" t:color="orange1">
-        <t:implementation.python script="text.py"/>
+        <t:implementation.python script="nuvem/nothing.py"/>
         <service name="nothing"/>
     </component>
     
     <component name="true" t:title="true" t:color="orange1">
-        <t:implementation.python script="true_.py"/>
+        <t:implementation.python script="nuvem/true_.py"/>
         <service name="true"/>
     </component>
     
     <component name="false" t:title="false" t:color="orange1">
-        <t:implementation.python script="false_.py"/>
+        <t:implementation.python script="nuvem/false_.py"/>
         <service name="false"/>
     </component>
     

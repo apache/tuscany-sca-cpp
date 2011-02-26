@@ -23,5 +23,6 @@ def id(user, email, nick, full, first, last, realm):
         return email.eval()
     if nick.eval() != '?':
         return nick.eval() + '@' + realm.eval()
-    return user.eval() + '@' + realm.eval()
-
+    if user.eval() != '?':
+        return user.eval() + '@' + realm.eval()
+    return 'joe@localhost'

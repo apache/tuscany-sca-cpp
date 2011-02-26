@@ -30,28 +30,28 @@
     <service name="uppercase" promote="uppercase"/>
 
     <component name="contains" t:title="contains" t:color="magenta1">
-        <t:implementation.python script="contains.py"/>
+        <t:implementation.python script="nuvem/contains.py"/>
         <service name="contains"/>
         <reference name="search"/>
         <reference name="string"/>
     </component>
     
     <component name="split" t:title="split" t:color="magenta1">
-        <t:implementation.python script="split.py"/>
+        <t:implementation.python script="nuvem/split.py"/>
         <service name="split"/>
         <reference name="separator"/>
         <reference name="string"/>
     </component>
     
     <component name="join" t:title="join" t:color="magenta1">
-        <t:implementation.python script="join.py"/>
+        <t:implementation.python script="nuvem/join.py"/>
         <service name="join"/>
         <reference name="separator"/>
         <reference name="list"/>
     </component>
     
     <component name="replace" t:title="replace" t:color="magenta1">
-        <t:implementation.python script="replace.py"/>
+        <t:implementation.python script="nuvem/replace.py"/>
         <service name="replace"/>
         <reference name="from"/>
         <reference name="to"/>
@@ -59,13 +59,13 @@
     </component>
     
     <component name="lowercase" t:title="lowercase" t:color="magenta1">
-        <t:implementation.python script="lowercase.py"/>
+        <t:implementation.python script="nuvem/lowercase.py"/>
         <service name="lowercase"/>
         <reference name="string"/>
     </component>
     
     <component name="uppercase" t:title="uppercase" t:color="magenta1">
-        <t:implementation.python script="uppercase.py"/>
+        <t:implementation.python script="nuvem/uppercase.py"/>
         <service name="uppercase"/>
         <reference name="string"/>
     </component>

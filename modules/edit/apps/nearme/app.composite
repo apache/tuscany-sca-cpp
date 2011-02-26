@@ -18,105 +18,105 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://nearme" name="nearme">
-  <component t:x="234" t:y="25" name="fbfriend" t:color="yellow1">
-    <t:implementation.python script="item.py"/>
-    <service name="item"/>
-    <property name="property"/>
-  </component>
-  <component t:x="233" t:y="97" name="fbfriends" t:title="facebook friends" t:color="blue1">
-    <t:implementation.python script="fbfriends.py"/>
-    <service name="fbfriends"/>
-    <reference target="find" name="id"/>
-  </component>
-  <component t:x="352" t:y="96" name="find" t:title="find by name" t:color="yellow1">
-    <t:implementation.python script="find.py"/>
-    <service name="find"/>
-    <reference target="name" name="name"/>
-    <reference target="params" name="assoc"/>
-  </component>
-  <component t:x="453" t:y="97" name="name" t:title="name" t:color="orange1">
-    <t:implementation.python script="name.py"/>
-    <service name="name"/>
-    <property>fbid</property>
-  </component>
-  <component t:x="453" t:y="138" name="params" t:title="?params" t:color="green1">
-    <t:implementation.python script="params.py"/>
-    <service name="params"/>
-    <property>fbid=1234567</property>
-  </component>
-  <component t:x="274" t:y="97" name="mile" t:title="number" t:color="orange1">
-    <t:implementation.python script="number.py"/>
-    <service name="number"/>
-    <property>1</property>
-  </component>
-  <component t:x="484" t:y="68" name="name2" t:title="name" t:color="orange1">
-    <t:implementation.python script="name.py"/>
-    <service name="name"/>
-    <property>id</property>
-  </component>
-  <component t:x="226" t:y="29" name="lesser" t:title="lt" t:color="magenta1">
-    <t:implementation.python script="lesser.py"/>
-    <service name="lesser"/>
-    <reference target="distance" name="value1"/>
-    <reference target="mile" name="value2"/>
-  </component>
-  <component t:x="378" t:y="25" name="text2" t:title="text" t:color="orange1">
-    <t:implementation.python script="text.py"/>
-    <service name="text"/>
-    <property>jane</property>
-  </component>
-  <component t:x="227" t:y="240" name="nothing" t:title="nothing" t:color="orange1">
-    <t:implementation.python script="text.py"/>
-    <service name="nothing"/>
-  </component>
-  <component t:x="132" t:y="31" name="if" t:title="if" t:color="magenta1">
-    <t:implementation.python script="if_.py"/>
-    <service name="if"/>
-    <reference target="lesser" name="condition"/>
-    <reference target="assoc" name="then"/>
-    <reference target="nothing" name="else"/>
-  </component>
-  <component t:x="600" t:y="113" name="text" t:title="text" t:color="orange1">
-    <t:implementation.python script="text.py"/>
-    <service name="text"/>
-    <property>joe</property>
-  </component>
-  <service name="opened" promote="opened"/>
-  <component t:x="0" t:y="22" name="opened" t:title="when page opened" t:color="green1">
-    <t:implementation.python script="opened.py"/>
-    <service name="opened" t:visible="false"/>
-    <reference target="if" name="content"/>
-  </component>
-  <component t:x="175" t:y="198" name="assoc" t:title="assoc" t:color="orange1">
-    <t:implementation.python script="assoc.py"/>
-    <service name="assoc"/>
-    <reference target="name3" name="name"/>
-    <reference target="text3" name="value"/>
-  </component>
-  <component t:x="331" t:y="383" name="text3" t:title="text" t:color="orange1">
-    <t:implementation.python script="text.py"/>
-    <service name="text"/>
-    <property>jane</property>
-  </component>
-  <component t:x="218" t:y="195" name="name3" t:title="name" t:color="orange1">
-    <t:implementation.python script="name.py"/>
-    <service name="name"/>
-    <property>near</property>
-  </component>
-  <component t:x="216" t:y="23" name="distance" t:title="distance" t:color="red1">
-    <t:implementation.python script="distance.py"/>
-    <service name="distance"/>
-    <reference target="location" name="location1"/>
-    <reference target="location2" name="location2"/>
-  </component>
-  <component t:x="430" t:y="178" name="location" t:title="location" t:color="red1">
-    <t:implementation.python script="location.py"/>
-    <service name="location"/>
-    <reference target="text2" name="user"/>
-  </component>
-  <component t:x="429" t:y="234" name="location2" t:title="location" t:color="red1">
-    <t:implementation.python script="location.py"/>
-    <service name="location"/>
-    <reference target="text" name="user"/>
-  </component>
+ <component t:x="234" t:y="25" name="fbfriend" t:color="yellow1">
+  <t:implementation.python script="item.py"/>
+  <service name="item"/>
+  <property name="property"/>
+ </component>
+ <component t:x="233" t:y="97" name="fbfriends" t:title="facebook friends" t:color="blue1">
+  <t:implementation.python script="fbfriends.py"/>
+  <service name="fbfriends"/>
+  <reference target="find" name="id"/>
+ </component>
+ <component t:x="352" t:y="96" name="find" t:title="find by name" t:color="yellow1">
+  <t:implementation.python script="find.py"/>
+  <service name="find"/>
+  <reference target="name" name="name"/>
+  <reference target="params" name="assoc"/>
+ </component>
+ <component t:x="453" t:y="97" name="name" t:title="name" t:color="orange1">
+  <t:implementation.python script="name.py"/>
+  <service name="name"/>
+  <property>fbid</property>
+ </component>
+ <component t:x="453" t:y="138" name="params" t:title="?params" t:color="green1">
+  <t:implementation.python script="params.py"/>
+  <service name="params"/>
+  <property>fbid=1234567</property>
+ </component>
+ <component t:x="274" t:y="97" name="mile" t:title="number" t:color="orange1">
+  <t:implementation.python script="number.py"/>
+  <service name="number"/>
+  <property>1</property>
+ </component>
+ <component t:x="484" t:y="68" name="name2" t:title="name" t:color="orange1">
+  <t:implementation.python script="name.py"/>
+  <service name="name"/>
+  <property>id</property>
+ </component>
+ <component t:x="226" t:y="29" name="lesser" t:title="lt" t:color="magenta1">
+  <t:implementation.python script="lesser.py"/>
+  <service name="lesser"/>
+  <reference target="distance" name="value1"/>
+  <reference target="mile" name="value2"/>
+ </component>
+ <component t:x="378" t:y="25" name="text2" t:title="text" t:color="orange1">
+  <t:implementation.python script="text.py"/>
+  <service name="text"/>
+  <property>jane</property>
+ </component>
+ <component t:x="227" t:y="240" name="nothing" t:title="nothing" t:color="orange1">
+  <t:implementation.python script="text.py"/>
+  <service name="nothing"/>
+ </component>
+ <component t:x="132" t:y="31" name="if" t:title="if" t:color="magenta1">
+  <t:implementation.python script="if_.py"/>
+  <service name="if"/>
+  <reference target="lesser" name="condition"/>
+  <reference target="assoc" name="then"/>
+  <reference target="nothing" name="else"/>
+ </component>
+ <component t:x="600" t:y="113" name="text" t:title="text" t:color="orange1">
+  <t:implementation.python script="text.py"/>
+  <service name="text"/>
+  <property>joe</property>
+ </component>
+ <service name="opened" promote="opened"/>
+ <component t:x="0" t:y="22" name="opened" t:title="when page opened" t:color="green1">
+  <t:implementation.python script="opened.py"/>
+  <service name="opened" t:visible="false"/>
+  <reference target="if" name="content"/>
+ </component>
+ <component t:x="175" t:y="198" name="assoc" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name3" name="name"/>
+  <reference target="text3" name="value"/>
+ </component>
+ <component t:x="331" t:y="383" name="text3" t:title="text" t:color="orange1">
+  <t:implementation.python script="text.py"/>
+  <service name="text"/>
+  <property>jane</property>
+ </component>
+ <component t:x="218" t:y="195" name="name3" t:title="name" t:color="orange1">
+  <t:implementation.python script="name.py"/>
+  <service name="name"/>
+  <property>near</property>
+ </component>
+ <component t:x="216" t:y="23" name="distance" t:title="distance" t:color="red1">
+  <t:implementation.python script="distance.py"/>
+  <service name="distance"/>
+  <reference target="location" name="location1"/>
+  <reference target="location2" name="location2"/>
+ </component>
+ <component t:x="430" t:y="178" name="location" t:title="location" t:color="red1">
+  <t:implementation.python script="location.py"/>
+  <service name="location"/>
+  <reference target="text2" name="user"/>
+ </component>
+ <component t:x="429" t:y="234" name="location2" t:title="location" t:color="red1">
+  <t:implementation.python script="location.py"/>
+  <service name="location"/>
+  <reference target="text" name="user"/>
+ </component>
 </composite>

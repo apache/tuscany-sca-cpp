@@ -17,24 +17,63 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# For this module to work, add the app domains to your /etc/hosts as follows:
+# 127.0.0.1 sca-store.com joe.sca-store.com jane.sca-store.com myprofile.sca-store.com myprofile2.sca-store.com nearme.sca-store.com nearme2.sca-store.com testvalues.sca-store.com testurl.sca-store.com testsocial.sca-store.com testlogic.sca-store.com testtext.sca-store.com
+
 here=`readlink -f $0`; here=`dirname $here`
 jsprefix=`readlink -f $here/../js`
 
-../http/httpd-conf tmp localhost 8090 htdocs
-cat >>tmp/conf/httpd.conf <<EOF
-# Override CSS
-Alias /ui.css $jsprefix/htdocs/uicyan.css
+# Configure server with virtual hosting
+../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
+../../modules/http/vhost-conf tmp apps htdocs
+
+# Configure authentication
+../../modules/http/open-auth-conf tmp
+../../modules/http/passwd-auth-conf tmp joe joe
+../../modules/http/passwd-auth-conf tmp jane jane
+cat >>tmp/conf/dvhost.conf <<EOF
+# Grant access to apps
+<Location />
+AuthType None
+Require all granted
+</Location>
 
 EOF
+
+# Configure Python component support
 ../server/server-conf tmp
 ../python/python-conf tmp
+
+# Configure app home pages
+cat >>tmp/conf/dvhost.conf <<EOF
+# Redirect to app home page
+RewriteEngine On
+RewriteRule ^/$ /index.html [R]
+
+EOF
+
+# Configure SCA contributions
 cat >>tmp/conf/httpd.conf <<EOF
 # Configure SCA Composite
 SCAContribution `pwd`/
 SCAComposite edit.composite
 
+# Configure SCA Composite for mass dynamic virtual Hosting
+SCAVirtualContribution `pwd`/apps/
+SCAVirtualComposite app.composite
+
 EOF
 
+# Configure look and feel
+cat >>tmp/conf/httpd.conf <<EOF
+# Override CSS
+Alias /ui.css $jsprefix/htdocs/uicyan.css
+
+EOF
+
+# Start memcached
 ../../components/cache/memcached-start 11211
+
+# Start server
 ../http/httpd-start tmp
 

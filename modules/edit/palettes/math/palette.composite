@@ -28,7 +28,7 @@
     <service name="subtract" promote="subtract"/>
 
     <component name="multiply" t:title="*" t:color="magenta1">
-        <t:implementation.python script="multiply.py"/>
+        <t:implementation.python script="nuvem/multiply.py"/>
         <service name="multiply">
             <documentation>*</documentation>
         </service>
@@ -37,7 +37,7 @@
     </component>
     
     <component name="divide" t:title="/" t:color="magenta1">
-        <t:implementation.python script="divide.py"/>
+        <t:implementation.python script="nuvem/divide.py"/>
         <service name="divide">
             <documentation>/</documentation>
         </service>
@@ -46,7 +46,7 @@
     </component>
     
     <component name="add" t:title="+" t:color="magenta1">
-        <t:implementation.python script="add.py"/>
+        <t:implementation.python script="nuvem/add.py"/>
         <service name="add">
             <documentation>+</documentation>
         </service>
@@ -55,7 +55,7 @@
     </component>
     
     <component name="subtract" t:title="-" t:color="magenta1">
-        <t:implementation.python script="subtract.py"/>
+        <t:implementation.python script="nuvem/subtract.py"/>
         <service name="subtract">
             <documentation>-</documentation>
         </service>

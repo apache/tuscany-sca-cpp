@@ -17,21 +17,62 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-../../modules/http/ssl-ca-conf tmp localhost
-../../modules/http/ssl-cert-conf tmp localhost
-../http/httpd-conf tmp localhost 8090 htdocs
+# For this module to work, add the app domains to your /etc/hosts as follows:
+# 127.0.0.1 sca-store.com joe.sca-store.com jane.sca-store.com myprofile.sca-store.com myprofile2.sca-store.com nearme.sca-store.com nearme2.sca-store.com testvalues.sca-store.com testurl.sca-store.com testsocial.sca-store.com testlogic.sca-store.com testtext.sca-store.com
+
+here=`readlink -f $0`; here=`dirname $here`
+jsprefix=`readlink -f $here/../js`
+
+# Create SSL certificates
+../../modules/http/ssl-ca-conf tmp sca-store.com
+../../modules/http/ssl-cert-conf tmp sca-store.com server
+../../modules/http/ssl-cert-conf tmp *.sca-store.com vhost
+
+# Configure server with virtual hosting
+../../modules/http/httpd-conf tmp sca-store.com 8090 htdocs
+../../modules/http/vhost-conf tmp apps htdocs
 ../../modules/http/httpd-ssl-conf tmp 8453
+../../modules/http/vhost-ssl-conf tmp
+
+# Configure authentication
 ../../modules/http/open-auth-conf tmp
-../../modules/http/passwd-auth-conf tmp foo foo
-../server/server-conf tmp
-../python/python-conf tmp
+../../modules/http/passwd-auth-conf tmp joe joe
+../../modules/http/passwd-auth-conf tmp jane jane
+
+# Configure Python component support
+../../modules/server/server-conf tmp
+../../modules/python/python-conf tmp
+
+# Configure app home pages
+cat >>tmp/conf/dvhost.conf <<EOF
+# Redirect to app home page
+RewriteEngine On
+RewriteRule ^/$ /index.html [R]
+
+EOF
+
+# Configure SCA contributions
 cat >>tmp/conf/httpd.conf <<EOF
 # Configure SCA Composite
 SCAContribution `pwd`/
 SCAComposite edit.composite
 
+# Configure SCA Composite for mass dynamic virtual Hosting
+SCAVirtualContribution `pwd`/apps/
+SCAVirtualComposite app.composite
+
 EOF
 
-../../components/cache/memcached-start 11211
-../http/httpd-start tmp
+# Configure look and feel
+cat >>tmp/conf/httpd.conf <<EOF
+# Override CSS
+Alias /ui.css $jsprefix/htdocs/uicyan.css
+
+EOF
+
+# Start memcached
+../../components/cache/memcached-start
+
+# Start server
+../../modules/http/httpd-start tmp
 

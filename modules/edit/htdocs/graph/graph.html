@@ -39,6 +39,7 @@
 <th class="thr" style="padding-left: 4px; padding-top: 0px; padding-bottom: 0px;">
 <input id="compName" type="text" value="component name" style="position: relative; width: 200px;"/>
 <input id="propValue" type="text" value="property value" style="position: relative; width: 300px;"/>
+<span id="compValue" style="position: relative"></span>
 </th>
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
@@ -99,7 +100,7 @@ function getapp(name, g) {
                 '</composite>';
             composite = readXML(mklist(x));
         }
-        graph.edit(composite, graph.composite(composite, graph.mkpath().move(palcx,0)), g);
+        graph.edit(name, composite, graph.composite(composite, graph.mkpath().move(palcx,0)), g);
     });
 }
 
@@ -147,7 +148,7 @@ $('saveButton').onclick = function(e) {
 };
 
 // Create editor graph area
-var g = graph.mkgraph(graph.mkpath().move(0,40), $('compName'), $('propValue'));
+var g = graph.mkgraph(graph.mkpath().move(0,40), $('compName'), $('propValue'), $('compValue'));
 var bg = graph.mkgroup(graph.mkpath());
 
 // Install the palettes
@@ -155,14 +156,14 @@ var gpalettes = new Array();
 var spalette = 'events';
 var pos = graph.mkpath();
 installpalette('events', pos.rmove(0,0), g, bg, spalette, gpalettes);
-installpalette('values', pos.rmove(0,50), g, bg, spalette, gpalettes);
-installpalette('url', pos.rmove(0, 50), g, bg, spalette, gpalettes);
-installpalette('lists', pos.rmove(0, 50), g, bg, spalette, gpalettes);
-installpalette('text', pos.rmove(0, 50), g, bg, spalette, gpalettes);
-installpalette('logic', pos.rmove(0, 50), g, bg, spalette, gpalettes);
-installpalette('math', pos.rmove(0, 50), g, bg, spalette, gpalettes);
-installpalette('social', pos.rmove(0, 50), g, bg, spalette, gpalettes);
-installpalette('sensors', pos.rmove(0, 50), g, bg, spalette, gpalettes);
+installpalette('values', pos.rmove(0,40), g, bg, spalette, gpalettes);
+installpalette('url', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('lists', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('text', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('logic', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('math', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('social', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('sensors', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 
 // Get and display the current app
 getapp(appname, g);
