@@ -87,7 +87,7 @@ const string cookie(const string& sid) {
  */
 const failable<int> login(const string& page, request_rec* r) {
     const list<list<value> > largs = mklist<list<value> >(mklist<value>("openauth_referrer", httpd::escape(httpd::url(r->uri, r))));
-    const string loc = httpd::url(page, r) + string("?") + httpd::queryString(largs);
+    const string loc = httpd::url(page, r) + string("?") + http::queryString(largs);
     debug(loc, "openauth::login::uri");
     return httpd::externalRedirect(loc, r);
 }

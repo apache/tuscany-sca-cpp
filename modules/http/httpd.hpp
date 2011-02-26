@@ -283,24 +283,6 @@ const list<list<value> > queryArgs(const request_rec* r) {
 }
 
 /**
- * Converts a list of key value pairs to a query string.
- */
-ostringstream& queryString(const list<list<value> > args, ostringstream& os) {
-    if (isNil(args))
-        return os;
-    debug(car(args), "httpd::queryString::arg");
-    os << car(car(args)) << "=" << c_str(cadr(car(args)));
-    if (!isNil(cdr(args)))
-        os << "&";
-    return queryString(cdr(args), os);
-}
-
-const string queryString(const list<list<value> > args) {
-    ostringstream os;
-    return str(queryString(args, os));
-}
-
-/**
  * Converts the args received in a POST to a list of key value pairs.
  */
 const list<list<value> > postArgs(const list<value>& a) {

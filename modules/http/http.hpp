@@ -620,6 +620,39 @@ const failable<size_t> recv(char* c, const size_t l, const CURLSession& cs) {
     return recv(c, l, cs);
 }
 
+
+/**
+ * Filter path segment in a list of arguments.
+ */
+const bool filterPath(const value& arg) {
+    return isString(arg);
+}
+
+/**
+ * Filter query string arguments in a list of arguments.
+ */
+const bool filterQuery(const value& arg) {
+    return isList(arg);
+}
+
+/**
+ * Converts a list of key value pairs to a query string.
+ */
+ostringstream& queryString(const list<list<value> > args, ostringstream& os) {
+    if (isNil(args))
+        return os;
+    debug(car(args), "http::queryString::arg");
+    os << car(car(args)) << "=" << c_str(cadr(car(args)));
+    if (!isNil(cdr(args)))
+        os << "&";
+    return queryString(cdr(args), os);
+}
+
+const string queryString(const list<list<value> > args) {
+    ostringstream os;
+    return str(queryString(args, os));
+}
+
 /**
  * HTTP client proxy function.
  */
@@ -630,7 +663,13 @@ struct proxy {
     const value operator()(const list<value>& args) const {
         const value fun = car(args);
         if (fun == "get") {
-            const failable<value> val = get(uri + path(cadr(args)), cs);
+            const list<value> lp = filter<value>(filterPath, cadr(args));
+            debug(lp, "http::queryString::arg");
+            const list<value> lq = filter<value>(filterQuery, cadr(args));
+            debug(lq, "http::get::query");
+            const value p = path(lp);
+            const value q = queryString(lq);
+            const failable<value> val = get(uri + p + (q != ""? string("?") + q : string("")), cs);
             return content(val);
         }
         if (fun == "post") {

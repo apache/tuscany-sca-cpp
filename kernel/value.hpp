@@ -240,7 +240,7 @@ public:
             return true;
         switch(type) {
         case value::Undefined:
-            return true;
+            return v.type == value::Undefined;
         case value::List:
             return v.type == value::List && lst()() == v.lst()();
         case value::Lambda:

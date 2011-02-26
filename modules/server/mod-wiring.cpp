@@ -107,7 +107,7 @@ int translateReference(const ServerConf& sc, request_rec *r) {
         if (useModProxy) {
             // Build proxy URI
             // current request's protocol scheme, reference target uri and request path info
-            string turi = httpd::scheme(r) + substr(target, find(target, "://")) + path(pathInfo);
+            string turi = httpd::scheme(r) + substr(target, find(target, "://")) + path(pathInfo) + (r->args != NULL? string("?") + r->args : string(""));
             r->filename = apr_pstrdup(r->pool, c_str(string("proxy:") + turi));
             debug(r->filename, "modwiring::translateReference::filename");
             r->proxyreq = PROXYREQ_REVERSE;
@@ -124,7 +124,7 @@ int translateReference(const ServerConf& sc, request_rec *r) {
     // Route to a relative target URI using a local internal redirect
     // /components/, target component name and request path info
     const value tname = substr(target, 0, find(target, '/'));
-    const string tpath = path(cons(tname, pathInfo));
+    const string tpath = path(cons(tname, pathInfo)) + (r->args != NULL? string("?") + r->args : string(""));
     r->filename = apr_pstrdup(r->pool, c_str(string("/redirect:/components") + tpath));
     debug(r->filename, "modwiring::translateReference::filename");
     r->handler = "mod_tuscany_wiring";

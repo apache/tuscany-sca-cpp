@@ -110,7 +110,7 @@ template<typename R> const failable<R> writeJSON(const lambda<R(const string&, c
         val = OBJECT_TO_JSVAL(valuesToJSProperties(JS_NewObject(cx, NULL, NULL, NULL), l, cx));
 
     WriteContext<R> wcx(reduce, initial, cx);
-    if (!JS_Stringify(cx, &val, NULL, JSVAL_NULL, writeCallback<R>, &wcx))
+    if (!JS_Stringify(cx, &val, NULL, INT_TO_JSVAL(1), writeCallback<R>, &wcx))
         return mkfailure<R>("JS_Stringify failed");
     return wcx.accum;
 }

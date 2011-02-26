@@ -36,6 +36,35 @@ ostream* jsonWriter(const string& s, ostream* os) {
     return os;
 }
 
+const string jscustomer("{\n"
+    " \"customer\":{\n"
+    "  \"@name\":\"jdoe\",\n"
+    "  \"address\":{\n"
+    "   \"@city\":\"san francisco\",\n"
+    "   \"@state\":\"ca\"\n"
+    "  },\n"
+    "  \"account\":{\n"
+    "   \"id\":\"1234\",\n"
+    "   \"@balance\":1000\n"
+    "  }\n"
+    " }\n"
+    "}");
+
+const string jsphones("{\n"
+    " \"phones\":[\"408-1234\",\n"
+    "  \"650-1234\"\n"
+    " ],\n"
+    " \"lastName\":\"test\\u0009tab\",\n"
+    " \"@firstName\":\"test1\"\n"
+    "}");
+
+const string jsecho("{\n"
+    " \"ns1:echoString\":{\n"
+    "  \"@xmlns:ns1\":\"http://ws.apache.org/axis2/services/echo\",\n"
+    "  \"text\":\"Hello World!\"\n"
+    " }\n"
+    "}");
+
 bool testJSON() {
     const js::JSContext cx;
 
@@ -47,7 +76,7 @@ bool testJSON() {
 
         ostringstream os;
         writeJSON<ostream*>(jsonWriter, &os, c, cx);
-        assert(str(os) == "{\"customer\":{\"@name\":\"jdoe\",\"address\":{\"@city\":\"san francisco\",\"@state\":\"ca\"},\"account\":{\"id\":\"1234\",\"@balance\":1000}}}");
+        assert(str(os) == jscustomer);
     }
     {
         const list<value> phones = mklist<value> (string("408-1234"), string("650-1234"));
@@ -55,7 +84,7 @@ bool testJSON() {
 
         ostringstream os;
         writeJSON<ostream*>(jsonWriter, &os, l, cx);
-        assert(str(os) == "{\"phones\":[\"408-1234\",\"650-1234\"],\"lastName\":\"test\\u0009tab\",\"@firstName\":\"test1\"}");
+        assert(str(os) == jsphones);
 
         istringstream is(str(os));
         const list<string> il = streamList(is);
@@ -70,7 +99,7 @@ bool testJSON() {
         const list<value> l = mklist<value>(list<value>() + "ns1:echoString" + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo")) + (list<value>() + "text" + string("Hello World!")));
         ostringstream wos;
         write(content(writeJSON(valuesToElements(l), cx)), wos);
-        assert(str(wos) == "{\"ns1:echoString\":{\"@xmlns:ns1\":\"http://ws.apache.org/axis2/services/echo\",\"text\":\"Hello World!\"}}");
+        assert(str(wos) == jsecho);
 
         istringstream is(str(wos));
         const list<string> il = streamList(is);
@@ -79,6 +108,86 @@ bool testJSON() {
     }
     return true;
 }
+
+const string jsitem("{\n"
+    " \"id\":3,\n"
+    " \"result\":[{\n"
+    "   \"price\":\"$2.99\",\n"
+    "   \"name\":\"Apple\"\n"
+    "  },\n"
+    "  {\n"
+    "   \"price\":\"$3.55\",\n"
+    "   \"name\":\"Orange\"\n"
+    "  },\n"
+    "  {\n"
+    "   \"price\":\"$1.55\",\n"
+    "   \"name\":\"Pear\"\n"
+    "  }\n"
+    " ]\n"
+    "}");
+
+const string jsresult("{\n"
+    " \"id\":1,\n"
+    " \"result\":[\"Service.get\",\n"
+    "  \"Service.getTotal\"\n"
+    " ]\n"
+    "}");
+
+const string jsfeed("{\n"
+    " \"id\":1,\n"
+    " \"result\":[\"Sample Feed\",\n"
+    "  \"123456789\",\n"
+    "  [\"Item\",\n"
+    "   \"111\",\n"
+    "   {\n"
+    "    \"name\":\"Apple\",\n"
+    "    \"currencyCode\":\"USD\",\n"
+    "    \"currencySymbol\":\"$\",\n"
+    "    \"price\":2.99\n"
+    "   }\n"
+    "  ],\n"
+    "  [\"Item\",\n"
+    "   \"222\",\n"
+    "   {\n"
+    "    \"name\":\"Orange\",\n"
+    "    \"currencyCode\":\"USD\",\n"
+    "    \"currencySymbol\":\"$\",\n"
+    "    \"price\":3.55\n"
+    "   }\n"
+    "  ],\n"
+    "  [\"Item\",\n"
+    "   \"333\",\n"
+    "   {\n"
+    "    \"name\":\"Pear\",\n"
+    "    \"currencyCode\":\"USD\",\n"
+    "    \"currencySymbol\":\"$\",\n"
+    "    \"price\":1.55\n"
+    "   }\n"
+    "  ]\n"
+    " ]\n"
+    "}");
+
+const string jsechoreq("{\n"
+    " \"id\":1,\n"
+    " \"method\":\"echo\",\n"
+    " \"params\":[{\n"
+    "   \"ns1:echoString\":{\n"
+    "    \"@xmlns:ns1\":\"http://ws.apache.org/axis2/services/echo\",\n"
+    "    \"text\":\"Hello World!\"\n"
+    "   }\n"
+    "  }\n"
+    " ]\n"
+    "}");
+
+const string jsechores("{\n"
+    " \"id\":1,\n"
+    " \"result\":{\n"
+    "  \"ns1:echoString\":{\n"
+    "   \"@xmlns:ns1\":\"http://ws.apache.org/axis2/c/samples\",\n"
+    "   \"text\":\"Hello World!\"\n"
+    "  }\n"
+    " }\n"
+    "}");
 
 bool testJSONRPC() {
     js::JSContext cx;
@@ -91,18 +200,16 @@ bool testJSONRPC() {
         assert(assoc<value>("params", v) == mklist<value>("params", list<value>()));
     }
     {
-        const string i("{\"id\":3,\"result\":[{\"price\":\"$2.99\",\"name\":\"Apple\"},{\"price\":\"$3.55\",\"name\":\"Orange\"},{\"price\":\"$1.55\",\"name\":\"Pear\"}]}");
-        const list<value> e = content(readJSON(mklist(i), cx));
-        const string i2("{\"id\":3,\"result\":{\"0\":{\"price\":\"$2.99\",\"name\":\"Apple\"},\"1\":{\"price\":\"$3.55\",\"name\":\"Orange\"},\"2\":{\"price\":\"$1.55\",\"name\":\"Pear\"}}}");
-        const list<value> e2 = content(readJSON(mklist(i), cx));
+        const string i2 = "{\"id\":3,\"result\":{\"0\":{\"price\":\"$2.99\",\"name\":\"Apple\"},\"1\":{\"price\":\"$3.55\",\"name\":\"Orange\"},\"2\":{\"price\":\"$1.55\",\"name\":\"Pear\"}}}";
+        const list<value> e = content(readJSON(mklist(jsitem), cx));
+        const list<value> e2 = content(readJSON(mklist(i2), cx));
         assert(e == e2);
     }
     {
-        const string i("{\"id\":3,\"result\":[{\"price\":\"$2.99\",\"name\":\"Apple\"},{\"price\":\"$3.55\",\"name\":\"Orange\"},{\"price\":\"$1.55\",\"name\":\"Pear\"}]}");
-        const list<value> e = content(readJSON(mklist(i), cx));
+        const list<value> e = content(readJSON(mklist(jsitem), cx));
         ostringstream os;
         write(content(writeJSON(e, cx)), os);
-        assert(str(os) == i);
+        assert(str(os) == jsitem);
         const list<value> v = elementsToValues(e);
         const list<value> r = valuesToElements(v);
         assert(r == e);
@@ -112,23 +219,22 @@ bool testJSONRPC() {
         const list<value> e = valuesToElements(r);
         ostringstream os;
         write(content(writeJSON(e, cx)), os);
-        assert(str(os) == "{\"id\":1,\"result\":[\"Service.get\",\"Service.getTotal\"]}");
+        assert(str(os) == jsresult);
     }
     {
-        const string f("{\"id\":1,\"result\":[\"Sample Feed\",\"123456789\",[\"Item\",\"111\",{\"name\":\"Apple\",\"currencyCode\":\"USD\",\"currencySymbol\":\"$\",\"price\":2.99}],[\"Item\",\"222\",{\"name\":\"Orange\",\"currencyCode\":\"USD\",\"currencySymbol\":\"$\",\"price\":3.55}],[\"Item\",\"333\",{\"name\":\"Pear\",\"currencyCode\":\"USD\",\"currencySymbol\":\"$\",\"price\":1.55}]]}");
-        const list<value> r = content(readJSON(mklist(f), cx));
+        const list<value> r = content(readJSON(mklist(jsfeed), cx));
         const list<value> v = elementsToValues(r);
         const list<value> e = valuesToElements(v);
         ostringstream os;
         write(content(writeJSON(e, cx)), os);
-        assert(str(os) == f);
+        assert(str(os) == jsfeed);
     }
     {
         const list<value> arg = mklist<value>(list<value>() + "ns1:echoString" + (list<value>() + "@xmlns:ns1" + string("http://ws.apache.org/axis2/services/echo")) + (list<value>() + "text" + string("Hello World!")));
         const failable<list<string> > r = jsonRequest(1, "echo", mklist<value>(arg), cx);
         ostringstream os;
         write(content(r), os);
-        assert(str(os) == "{\"id\":1,\"method\":\"echo\",\"params\":[{\"ns1:echoString\":{\"@xmlns:ns1\":\"http://ws.apache.org/axis2/services/echo\",\"text\":\"Hello World!\"}}]}");
+        assert(str(os) == jsechoreq);
 
         istringstream is(str(os));
         const list<string> il = streamList(is);
@@ -140,7 +246,7 @@ bool testJSONRPC() {
         const failable<list<string> > r = jsonResult(1, res, cx);
         ostringstream os;
         write(content(r), os);
-        assert(str(os) == "{\"id\":1,\"result\":{\"ns1:echoString\":{\"@xmlns:ns1\":\"http://ws.apache.org/axis2/c/samples\",\"text\":\"Hello World!\"}}}");
+        assert(str(os) == jsechores);
 
         istringstream is(str(os));
         const list<string> il = streamList(is);

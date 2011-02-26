@@ -45,6 +45,10 @@ const string customerElement =
 "<account><id>4567</id><balance>3000</balance></account>"
 "</customer>";
 
+const string echo("<ns1:echoString xmlns:ns1=\"http://ws.apache.org/axis2/services/echo\">\n"
+        " <text>Hello World!</text>\n"
+        "</ns1:echoString>");
+
 bool testAxiom() {
     const Axis2Context ax;
     {
@@ -63,7 +67,7 @@ bool testAxiom() {
         assert(hasContent(n));
         const failable<const string> x = axiomNodeToString(content(n), ax);
         assert(hasContent(x));
-        assert(content(x) == "<ns1:echoString xmlns:ns1=\"http://ws.apache.org/axis2/services/echo\"><text>Hello World!</text></ns1:echoString>");
+        assert(content(x) == echo);
         const failable<const list<value> > l = axiomNodeToValues(content(n), ax);
         assert(hasContent(l));
         assert(l == arg);

@@ -193,7 +193,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
 
     // Build the redirect URI
     const list<list<value> > redirargs = mklist<list<value> >(mklist<value>("mod_oauth1_step", "access_token"), tok, cid, info);
-    const string redir = httpd::url(r->uri, r) + string("?") + httpd::queryString(redirargs);
+    const string redir = httpd::url(r->uri, r) + string("?") + http::queryString(redirargs);
     debug(redir, "modoauth1::authorize::redir");
 
     // Lookup client app configuration
@@ -203,7 +203,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
     list<value> appkey = cadr(app);
 
     // Build and sign the request token URI
-    const string requri = httpd::unescape(cadr(req)) + string("&") + httpd::queryString(mklist<list<value> >(mklist<value>("oauth_callback", httpd::escape(redir))));
+    const string requri = httpd::unescape(cadr(req)) + string("&") + http::queryString(mklist<list<value> >(mklist<value>("oauth_callback", httpd::escape(redir))));
     const list<string> srequri = sign("POST", requri, appkey, "", "");
     debug(srequri, "modoauth1::authorize::srequri");
 
@@ -236,7 +236,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
         return mkfailure<int>(reason(prc));
 
     // Redirect to the authorize URI
-    const string authuri = httpd::unescape(cadr(auth)) + string("?") + httpd::queryString(mklist<list<value> >(tv));
+    const string authuri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(mklist<list<value> >(tv));
     debug(authuri, "modoauth1::authorize::authuri");
     return httpd::externalRedirect(authuri, r);
 }
@@ -325,7 +325,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
         return mkfailure<int>(reason(sv));
 
     // Build and sign access token request URI
-    const string tokuri = httpd::unescape(cadr(tok)) + string("?") + httpd::queryString(mklist<list<value> >(vv));
+    const string tokuri = httpd::unescape(cadr(tok)) + string("?") + http::queryString(mklist<list<value> >(vv));
     const list<string> stokuri = sign("POST", tokuri, appkey, cadr(tv), content(sv));
     debug(stokuri, "modoauth1::access_token::stokuri");
 

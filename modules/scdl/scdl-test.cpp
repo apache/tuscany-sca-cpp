@@ -47,8 +47,8 @@ bool testComponents() {
     const value store = car(c);
     assert(name(store) == string("Store"));
     const value impl = implementation(store);
-    assert(uri(impl) == string("store.html"));
     assert(implementationType(impl) == "t:implementation.scheme");
+    assert(attributeValue("script", impl) == string("store.scm"));
 
     const value catalog = named(string("Catalog"), c);
     assert(name(catalog) == string("Catalog"));

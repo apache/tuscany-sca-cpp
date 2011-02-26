@@ -125,24 +125,43 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
 
     // Evaluate the GET expression
     const list<value> path(pathValues(r->uri));
-    const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(cddr(path)))));
+    const list<value> params(append<value>(cddr(path), mkvalues(args)));
+    const failable<value> val = failableResult(impl(cons<value>("get", mklist<value>(params))));
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
     const value c = content(val);
 
+    // Write a simple value as a JSON value
+    if (!isList(c)) {
+        js::JSContext cx;
+        return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("value", c))), cx), "application/json", r);
+    }
+
+    // Write an empty list as a JSON empty value
+    if (isNil(c)) {
+        js::JSContext cx;
+        return httpd::writeResult(json::writeJSON(list<value>(), cx), "application/json", r);
+    }
+
+    // Write an assoc value as a JSON result
+    if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
+        js::JSContext cx;
+        return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(c)), cx), "application/json", r);
+    }
+
     // Write content-type / content-list pair
-    if (isString(car<value>(c)) && isList(cadr<value>(c)))
+    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
         return httpd::writeResult(convertValues<string>(cadr<value>(c)), car<value>(c), r);
 
-    // Write ATOM feed or entry
-    if (isString(car<value>(c)) && isString(cadr<value>(c))) {
+    // Write an ATOM feed or entry
+    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isString(cadr<value>(c))) {
         if (isNil(cddr(path)))
             return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(c)), "application/atom+xml", r);
         else
             return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(c)), "application/atom+xml", r);
     }
 
-    // Write JSON value
+    // Write any other compound value as a JSON value
     js::JSContext cx;
     return httpd::writeResult(json::writeJSON(valuesToElements(c), cx), "application/json", r);
 }
@@ -419,27 +438,29 @@ struct userPropProxy {
 };
 
 const value mkpropProxy(const value& prop) {
-    if (scdl::name(prop) == "host")
-        return lambda<value(const list<value>&)>(hostPropProxy(elementValue(prop)));
-    if (scdl::name(prop) == "path")
-        return lambda<value(const list<value>&)>(pathPropProxy(elementValue(prop)));
-    if (scdl::name(prop) == "query")
-        return lambda<value(const list<value>&)>(queryPropProxy(elementValue(prop)));
-    if (scdl::name(prop) == "user")
-        return lambda<value(const list<value>&)>(userPropProxy(elementValue(prop)));
-    if (scdl::name(prop) == "realm")
-        return lambda<value(const list<value>&)>(envPropProxy("REALM", elementValue(prop)));
-    if (scdl::name(prop) == "email")
-        return lambda<value(const list<value>&)>(envPropProxy("EMAIL", elementValue(prop)));
-    if (scdl::name(prop) == "nickname")
-        return lambda<value(const list<value>&)>(envPropProxy("NICKNAME", elementValue(prop)));
-    if (scdl::name(prop) == "fullname")
-        return lambda<value(const list<value>&)>(envPropProxy("FULLNAME", elementValue(prop)));
-    if (scdl::name(prop) == "firstname")
-        return lambda<value(const list<value>&)>(envPropProxy("FIRSTNAME", elementValue(prop)));
-    if (scdl::name(prop) == "lastname")
-        return lambda<value(const list<value>&)>(envPropProxy("LASTNAME", elementValue(prop)));
-    return lambda<value(const list<value>&)>(propProxy(elementValue(prop)));
+    const value n = scdl::name(prop);
+    const value v = elementHasValue(prop)? elementValue(prop):value(string(""));
+    if (n == "host")
+        return lambda<value(const list<value>&)>(hostPropProxy(v));
+    if (n == "path")
+        return lambda<value(const list<value>&)>(pathPropProxy(v));
+    if (n == "query")
+        return lambda<value(const list<value>&)>(queryPropProxy(v));
+    if (n == "user")
+        return lambda<value(const list<value>&)>(userPropProxy(v));
+    if (n == "realm")
+        return lambda<value(const list<value>&)>(envPropProxy("REALM", v));
+    if (n == "email")
+        return lambda<value(const list<value>&)>(envPropProxy("EMAIL", v));
+    if (n == "nickname")
+        return lambda<value(const list<value>&)>(envPropProxy("NICKNAME", v));
+    if (n == "fullname")
+        return lambda<value(const list<value>&)>(envPropProxy("FULLNAME", v));
+    if (n == "firstname")
+        return lambda<value(const list<value>&)>(envPropProxy("FIRSTNAME", v));
+    if (n == "lastname")
+        return lambda<value(const list<value>&)>(envPropProxy("LASTNAME", v));
+    return lambda<value(const list<value>&)>(propProxy(v));
 }
 
 const list<value> propProxies(const list<value>& props) {
@@ -675,8 +696,10 @@ int handler(request_rec *r) {
     // Get the component implementation lambda
     const list<value> path(pathValues(r->uri));
     const list<value> impl(assoctree<value>(cadr(path), usevh? vhc.vsc.implTree : sc.implTree));
-    if (isNil(impl))
-        return httpd::reportStatus(mkfailure<int>(string("Couldn't find component implementation: ") + cadr(path)));
+    if (isNil(impl)) {
+        mkfailure<int>(string("Couldn't find component implementation: ") + cadr(path));
+        return HTTP_NOT_FOUND;
+    }
 
     // Handle HTTP method
     const lambda<value(const list<value>&)> l(cadr<value>(impl));

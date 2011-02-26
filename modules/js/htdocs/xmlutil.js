@@ -61,7 +61,10 @@ function childElements(e) {
  * Return the child text nodes of an element.
  */
 function childText(e) {
-    return filter(function(n) { return n.nodeType == 3; }, nodeList(e.childNodes));
+    function trim(s) {
+        return s.replace(/^\s*/, '').replace(/\s*$/, '');
+    }
+    return filter(function(n) { return n.nodeType == 3 && trim(n.nodeValue) != ''; }, nodeList(e.childNodes));
 }
 
 /**

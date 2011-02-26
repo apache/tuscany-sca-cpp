@@ -347,6 +347,7 @@ template<typename R> const failable<R> writeXML(const lambda<R(const string&, co
     xmlTextWriterPtr xml = xmlNewTextWriter(out);
     if (xml == NULL)
         return mkfailure<R>("xmlNewTextWriter failed");
+    xmlTextWriterSetIndent(xml, 1);
 
     const failable<bool> w = write(l, xml, xmlTag);
     xmlFreeTextWriter(xml);

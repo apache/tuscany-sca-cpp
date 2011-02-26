@@ -141,7 +141,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
 
     // Build the redirect URI
     const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth2_step", "access_token"), tok, cid, info);
-    const string redir = httpd::url(r->uri, r) + string("?") + httpd::queryString(rargs);
+    const string redir = httpd::url(r->uri, r) + string("?") + http::queryString(rargs);
     debug(redir, "modoauth2::authorize::redir");
 
     // Lookup client app configuration
@@ -152,7 +152,7 @@ const failable<int> authorize(const list<list<value> >& args, request_rec* r, co
 
     // Redirect to the authorize URI
     const list<list<value> > aargs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("scope", "email"), mklist<value>("redirect_uri", httpd::escape(redir)));
-    const string uri = httpd::unescape(cadr(auth)) + string("?") + httpd::queryString(aargs);
+    const string uri = httpd::unescape(cadr(auth)) + string("?") + http::queryString(aargs);
     debug(uri, "modoauth2::authorize::uri");
     return httpd::externalRedirect(uri, r);
 }
@@ -192,12 +192,12 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
 
     // Build the redirect URI
     const list<list<value> > rargs = mklist<list<value> >(mklist<value>("mod_oauth2_step", "access_token"), tok, cid, info);
-    const string redir = httpd::url(r->uri, r) + string("?") + httpd::queryString(rargs);
+    const string redir = httpd::url(r->uri, r) + string("?") + http::queryString(rargs);
     debug(redir, "modoauth2::access_token::redir");
 
     // Request access token
     const list<list<value> > targs = mklist<list<value> >(mklist<value>("client_id", car(appkey)), mklist<value>("redirect_uri", httpd::escape(redir)), mklist<value>("client_secret", cadr(appkey)), code);
-    const string turi = httpd::unescape(cadr(tok)) + string("?") + httpd::queryString(targs);
+    const string turi = httpd::unescape(cadr(tok)) + string("?") + http::queryString(targs);
     debug(turi, "modoauth2::access_token::tokenuri");
     const failable<value> tr = http::get(turi, sc.cs);
     if (!hasContent(tr))
@@ -211,7 +211,7 @@ const failable<int> access_token(const list<list<value> >& args, request_rec* r,
     // Request user info
     // TODO Make this step configurable
     const list<list<value> > iargs = mklist<list<value> >(tv);
-    const string iuri = httpd::unescape(cadr(info)) + string("?") + httpd::queryString(iargs);
+    const string iuri = httpd::unescape(cadr(info)) + string("?") + http::queryString(iargs);
     debug(iuri, "modoauth2::access_token::infouri");
     const failable<value> profres = http::get(iuri, sc.cs);
     if (!hasContent(profres))
