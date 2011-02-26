@@ -102,7 +102,7 @@ Libstrophe (http://code.stanziq.com/strophe/)
 build it from source at git://github.com/jsdelfino/libstrophe.git
 
 SQL Database:
-postgresql-9.0.1 (http://www.postgresql.org/)
+postgresql-9.0.3 (http://www.postgresql.org/)
 
 Logging:
 Facebook Scribe 2.2 (http://github.com/facebook/scribe/downloads)
@@ -184,7 +184,7 @@ dependencies installed under $HOME:
 --enable-queue --with-qpidc=$HOME/qpidc-0.6-bin \
 --enable-chat --with-libstrophe=$HOME/libstrophe-bin \
 --with-vysper=$HOME/vysper-0.5 \
---enable-sqldb --with-pgsql=$HOME/postgresql-9.0.1-bin \
+--enable-sqldb --with-pgsql=$HOME/postgresql-9.0.3-bin \
 --enable-log --with-thrift=$HOME/thrift-0.2.0-bin \
 --with-scribe=$HOME/scribe-2.2-bin \
 --enable-openid --with-mod-auth-openid=$HOME/mod-auth-openid-bin \
