@@ -19,23 +19,33 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://sensors"
+  targetNamespace="http://event"
   name="palette">
         
-    <service name="location" promote="location"/>
-    <service name="distance" promote="distance"/>
+    <service name="page" promote="page"/>
+    <service name="button" promote="button"/>
+    <service name="every" promote="every"/>
 
-    <component name="location" t:title="location" t:color="red1">
-        <t:implementation.python script="location.py"/>
-        <service name="location"/>
-        <reference name="user"/>
+    <component name="page" t:title="when page opened" t:color="green1">
+        <t:implementation.python script="nuvem/page.py"/>
+        <service name="page" t:visible="false">
+            <t:binding.http uri="index.html"/>
+        </service>
+        <reference name="content"/>
     </component>
     
-    <component name="distance" t:title="distance" t:color="red1">
-        <t:implementation.python script="distance.py"/>
-        <service name="distance"/>
-        <reference name="location1"/>
-        <reference name="location2"/>
+    <component name="button" t:title="when clicked" t:color="green1">
+        <t:implementation.python script="nuvem/button.py"/>
+        <service name="button" t:visible="false"/>
+        <property name="property">button</property>
+        <reference name="content"/>
+    </component>
+    
+    <component name="every" t:title="every n secs" t:color="green1">
+        <t:implementation.python script="nuvem/every.py"/>
+        <service name="every" t:visible="false"/>
+        <property name="property">60</property>
+        <reference name="content"/>
     </component>
     
 </composite>

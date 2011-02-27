@@ -30,9 +30,6 @@
     <service name="twfriends" promote="twfriends"/>
     <service name="twstatus" promote="twstatus"/>
     <service name="twtimeline" promote="twtimeline"/>
-    <service name="gtalksend" promote="gtalksend"/>
-    <service name="gtalkreceive" promote="gtalkreceive"/>
-    <service name="smssend" promote="smssend"/>
 
     <component name="fbprofile" t:title="facebook profile" t:color="blue1">
         <t:implementation.python script="nuvem/fbprofile.py"/>
@@ -89,28 +86,6 @@
         <reference name="tw" t:visible="false">
             <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.json"/>
         </reference>
-    </component>
-    
-    <component name="gtalksend" t:title="send gtalk" t:color="blue1">
-        <t:implementation.python script="nuvem/gtalksend.py"/>
-        <service name="gtalksend"/>
-        <reference name="jid"/>
-        <reference name="to"/>
-        <reference name="msg"/>
-    </component>
-    
-    <component name="gtalkreceive" t:title="when gtalk received" t:color="blue1">
-        <t:implementation.python script="nuvem/gtalkreceive.py"/>
-        <service name="gtalkreceive"/>
-        <reference name="jid"/>
-    </component>
-    
-    <component name="smssend" t:title="send sms" t:color="blue1">
-        <t:implementation.python script="nuvem/smssend.py"/>
-        <service name="smssend"/>
-        <reference name="user"/>
-        <reference name="to"/>
-        <reference name="msg"/>
     </component>
     
 </composite>

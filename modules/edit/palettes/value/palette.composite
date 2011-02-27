@@ -19,7 +19,7 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://values"
+  targetNamespace="http://value"
   name="palette">
         
     <service name="text" promote="text"/>

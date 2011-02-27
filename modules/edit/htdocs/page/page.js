@@ -33,11 +33,14 @@ if (ui.isIE()) {
     /**
      * Init a page editor. IE-specific implementation.
      */
-    page.edit = function(elem, wname, wtext) {
+    page.edit = function(elem, wname, wtext, onchange) {
 
         // Track element dragging and selection
         page.dragging = null;
         page.selected = null;
+
+        // Trigger page change events
+        page.onpagechange = onchange;
 
         /**
          * Handle a mouse down event.
@@ -103,6 +106,9 @@ if (ui.isIE()) {
             // Forget current dragged element
             page.dragging = null;
             elem.releaseCapture();
+            
+            // Trigger page change event
+            page.onpagechange();
             return false;
         };
 
@@ -142,6 +148,9 @@ if (ui.isIE()) {
             if (page.selected == null)
                 return false;
             page.selected.id = wname.value;
+
+            // Trigger page change event
+            page.onpagechange();
             return false;
         };
 
@@ -149,6 +158,9 @@ if (ui.isIE()) {
             if (page.selected == null)
                 return false;
             page.settext(page.selected, wtext.value);
+
+            // Trigger page change event
+            page.onpagechange();
             return false;
         };
 
@@ -164,11 +176,14 @@ if (ui.isIE()) {
     /**
      * Init a page editor. Generic implementation for all other browsers.
      */
-    page.edit = function(elem, wname, wtext) {
+    page.edit = function(elem, wname, wtext, onchange) {
 
         // Track element dragging and selection
         page.dragging = null;
         page.selected = null;
+
+        // Trigger page change events
+        page.onpagechange = onchange;
 
         /**
          * Handle a mouse down event.
@@ -239,6 +254,9 @@ if (ui.isIE()) {
 
             // Forget dragged element
             page.dragging = null;
+
+            // Trigger page change event
+            page.onpagechange();
             return false;
         };
 
@@ -289,6 +307,9 @@ if (ui.isIE()) {
             if (page.selected == null)
                 return false;
             page.selected.id = wname.value;
+
+            // Trigger page change event
+            page.onpagechange();
             return false;
         };
 
@@ -296,6 +317,9 @@ if (ui.isIE()) {
             if (page.selected == null)
                 return false;
             page.settext(page.selected, wtext.value);
+
+            // Trigger page change event
+            page.onpagechange();
             return false;
         };
 

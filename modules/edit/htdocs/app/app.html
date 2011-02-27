@@ -37,7 +37,7 @@
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
 <span id="source" style="font-weight: normal;">[atom]</span>
-<input type="button" id="saveButton" style="font-weight: bold;" Value="Save"/>
+<input type="button" id="saveButton" style="font-weight: bold;" Value="Saved"/>
 </th>
 </tr>
 </table>
@@ -74,6 +74,12 @@ var appname = ui.queryParams()['app'];
 $('source').innerHTML = '[<a href="/apps/' + appname + '">atom</a>]';
 
 /**
+ * The current app entry and corresponding saved XML content.
+ */
+var appentry;
+var savedappentryxml = '';
+
+/**
  * Default field values.
  */
 var deftitle = 'Enter the title of your app here';
@@ -86,24 +92,60 @@ var defdesc = 'Enter a short description of your app here';
  */
 function getapp(name) {
     dashboard.get(name, function(doc) {
-        var entry = doc != null? atom.readATOMEntryDocument(doc) : mklist('', name);
-        $('appTitle').value = car(entry) != ''? car(entry) : deftitle;
+        appentry = doc != null? atom.readATOMEntryDocument(doc) : mklist('', name);
+        $('appTitle').value = car(appentry) != ''? car(appentry) : deftitle;
         $('appCategory').value = defcategory;
         $('appUpdated').innerHTML = defdate;
         $('appDescription').innerHTML = defdesc;
+        savedappentryxml = car(atom.writeATOMEntry(appentry));
     });
 }
 
 /**
- * Save an app.
+ * Handle save button click event.
  */
 $('saveButton').onclick = function() {
-    var title = $('appTitle').value;
-    var app = mklist(title != deftitle && title != ''? title : appname, appname, mklist());
-    var entry = atom.writeATOMEntry(app);
-    dashboard.put(appname, car(entry));
-    return false;
+    return save();
 };
+
+/**
+ * Save the current app.
+ */
+function save() {
+    $('saveButton').value = 'Saving';
+    var title = $('appTitle').value;
+    appentry = mklist(title != deftitle && title != ''? title : appname, appname, mklist());
+    savedappentryxml = car(atom.writeATOMEntry(appentry));
+    dashboard.put(appname, savedappentryxml, function() {
+        if (savedappentryxml == car(atom.writeATOMEntry(appentry)))
+            $('saveButton').value = 'Saved';
+        return true;
+    });
+    return true;
+}
+
+/**
+ * Handle a change event
+ */
+function onappchange() {
+    var title = $('appTitle').value;
+    appentry = mklist(title != deftitle && title != ''? title : appname, appname, mklist());
+    if (savedappentryxml == car(atom.writeATOMEntry(appentry)))
+        return false;
+    $('saveButton').value = 'Save now';
+
+    // Autosave after 3 seconds
+    setTimeout(function() {
+        if (savedappentryxml == car(atom.writeATOMEntry(appentry)))
+            return false;
+        return save();
+    }, 3000);
+    return true;
+}
+
+$('appTitle').onchange = onappchange;
+$('appCategory').onchange = onappchange;
+$('appDescription').onchange = onappchange;
 
 // Get the current app
 getapp(appname);

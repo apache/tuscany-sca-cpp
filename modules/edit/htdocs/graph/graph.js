@@ -58,7 +58,7 @@ var proxcy = 20;
 var buttoncx = 70;
 var buttoncy = 30;
 var curvsz = 6;
-var tabsz = 3;
+var tabsz = 2;
 
 /**
  * Base path class.
@@ -236,6 +236,9 @@ if (ui.isIE()) {
                     pvalue.value = '';
                     cvalue.innerHTML = '';
                 }
+
+                // Trigger composite change event
+                vmlg.oncomposchange();
             }
 
             // Forget current dragged component
@@ -281,14 +284,17 @@ if (ui.isIE()) {
                 return false;
 
             // Change component name and refactor references to it
-            var compos = scdl.composite(svg.compos);
+            var compos = scdl.composite(vmlg.compos);
             cname.value = graph.ucid(cname.value, compos);
             graph.selected.id = cname.value;
-            cvalue.innerHTML = graph.compvaluelink(svg.appname, graph.selected.id);
+            cvalue.innerHTML = graph.compvaluelink(vmlg.appname, graph.selected.id);
             setElement(compos, graph.renamecomp(graph.selected.comp, compos, cname.value));
 
             // Refresh the composite
-            graph.refresh(svg);
+            graph.refresh(vmlg);
+
+            // Trigger composite change event
+            vmlg.oncomposchange();
             return false;
         };
 
@@ -301,7 +307,10 @@ if (ui.isIE()) {
             pvalue.value = graph.property(graph.selected.comp);
 
             // Refresh the composite
-            graph.refresh(svg);
+            graph.refresh(vmlg);
+
+            // Trigger composite change event
+            vmlg.oncomposchange();
             return false;
         };
 
@@ -391,7 +400,7 @@ if (ui.isIE()) {
     graph.comptitlewidth = function(comp) {
         var t = graph.title(comp);
         graph.comptitlewidthdiv.innerHTML = t;
-        var twidth = graph.comptitlewidthdiv.offsetWidth;
+        var twidth = graph.comptitlewidthdiv.offsetWidth + 4;
         graph.comptitlewidthdiv.innerHTML = '';
         return twidth;
     };
@@ -412,7 +421,7 @@ if (ui.isIE()) {
     graph.proptitlewidth = function(comp) {
         var t = graph.property(comp);
         graph.proptitlewidthdiv.innerHTML = t;
-        var twidth = graph.proptitlewidthdiv.offsetWidth;
+        var twidth = graph.proptitlewidthdiv.offsetWidth + 4;
         graph.proptitlewidthdiv.innerHTML = '';
         return twidth;
     };
@@ -714,6 +723,9 @@ if (ui.isIE()) {
 
             // Refresh the composite
             graph.refresh(svg);
+
+            // Trigger composite change event
+            svg.oncomposchange();
             return false;
         };
 
@@ -778,6 +790,9 @@ if (ui.isIE()) {
 
             // Refresh the composite
             graph.refresh(svg);
+
+            // Trigger composite change event
+            svg.oncomposchange();
             return false;
         };
         
@@ -791,6 +806,9 @@ if (ui.isIE()) {
 
             // Refresh the composite
             graph.refresh(svg);
+
+            // Trigger composite change event
+            svg.oncomposchange();
             return false;
         };
 
@@ -868,7 +886,7 @@ if (ui.isIE()) {
     graph.comptitlewidth = function(comp) {
         var title = graph.comptitle(comp);
         graph.titlewidthsvg.appendChild(title);
-        var width = title.getBBox().width;
+        var width = title.getBBox().width + 4;
         graph.titlewidthsvg.removeChild(title);
         return width;
     };
@@ -906,7 +924,7 @@ if (ui.isIE()) {
     graph.proptitlewidth = function(comp) {
         var title = graph.proptitle(comp);
         graph.titlewidthsvg.appendChild(title);
-        var width = title.getBBox().width;
+        var width = title.getBBox().width + 4;
         graph.titlewidthsvg.removeChild(title);
         return width;
     };
@@ -1200,6 +1218,8 @@ graph.compheight = function(comp, cassoc) {
         var height = Math.max(lsvcsh, rrefsh);
         if (!isNil(graph.brefs(comp)))
             height = Math.max(height, (tabsz * 10) + (tabsz * 4) + (tabsz * 2));
+        if (graph.property(comp) != '')
+            height = Math.max(40, height);
         return height;
     });
 };
@@ -1532,7 +1552,7 @@ graph.composite = function(compos, pos) {
          * Move the rendering cursor down below a component.
          */
         function rendermove(comp, cassoc, pos) {
-            return pos.clone().rmove(0, graph.compclosureheight(comp, cassoc) + (tabsz * 2));
+            return pos.clone().rmove(0, graph.compclosureheight(comp, cassoc) + Math.max((tabsz * 2), 8));
         }
 
         if (isNil(svcs))
@@ -1803,11 +1823,12 @@ graph.refresh = function(g) {
  * Display and enable editing of a composite and the graphical
  * nodes that represent it.
  */
-graph.edit = function(appname, compos, nodes, g) {
+graph.edit = function(appname, compos, nodes, onchange, g) {
 
     // Store the appname and composite in the graphical canvas
     g.appname = appname;
     g.compos = compos;
+    g.oncomposchange = onchange;
 
     // Display the composite nodes
     return graph.display(nodes, g);

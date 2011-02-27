@@ -19,33 +19,29 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://events"
+  targetNamespace="http://sensor"
   name="palette">
         
-    <service name="page" promote="page"/>
-    <service name="button" promote="button"/>
-    <service name="every" promote="every"/>
+    <service name="googlesearch" promote="googlesearch"/>
+    <service name="yahoosearch" promote="yahoosearch"/>
+    <service name="bingsearch" promote="bingsearch"/>
 
-    <component name="page" t:title="when page opened" t:color="green1">
-        <t:implementation.python script="nuvem/page.py"/>
-        <service name="page" t:visible="false">
-            <t:binding.http uri="index.html"/>
-        </service>
-        <reference name="content"/>
+    <component name="googlesearch" t:title="google search" t:color="red1">
+        <t:implementation.python script="nuvem/googlesearch.py"/>
+        <service name="googlesearch"/>
+        <reference name="query"/>
     </component>
     
-    <component name="button" t:title="when clicked" t:color="green1">
-        <t:implementation.python script="nuvem/button.py"/>
-        <service name="button" t:visible="false"/>
-        <property name="property">button</property>
-        <reference name="content"/>
+    <component name="yahoosearch" t:title="yahoo search" t:color="red1">
+        <t:implementation.python script="nuvem/yahoosearch.py"/>
+        <service name="yahoosearch"/>
+        <reference name="query"/>
     </component>
     
-    <component name="every" t:title="every n secs" t:color="green1">
-        <t:implementation.python script="nuvem/every.py"/>
-        <service name="every" t:visible="false"/>
-        <property name="property">60</property>
-        <reference name="content"/>
+    <component name="bingsearch" t:title="bing search" t:color="red1">
+        <t:implementation.python script="nuvem/bingsearch.py"/>
+        <service name="bingsearch"/>
+        <reference name="query"/>
     </component>
     
 </composite>

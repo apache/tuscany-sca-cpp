@@ -112,4 +112,6 @@ json-value
 value-json
 element-value
 value-element
+modules/edit/apps/*/htdocs
+modules/edit/apps/*/nuvem
 
