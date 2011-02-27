@@ -1838,10 +1838,12 @@ graph.edit = function(appname, compos, nodes, onchange, g) {
  * Return the link to a component value.
  */
 graph.compvaluelink = function(appname, cname) {
-    var scheme = 'http';
-    var domain = "sca-store.com";
-    var port = '8090';
-    var link = scheme + '://' + appname + '.' + domain + ':' + port + '/components/' + cname;
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/components/' + cname;
     return '<a href="' + link + '">' + link + '</a>';
 
 };

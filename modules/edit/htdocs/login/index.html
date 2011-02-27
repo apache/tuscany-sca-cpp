@@ -29,9 +29,37 @@
 <br/>
 
 <script type="text/javascript">
+function queryParams() {
+    qp = new Array();
+    qs = window.location.search.substring(1).split('&');
+    for (i = 0; i < qs.length; i++) {
+        e = qs[i].indexOf('=');
+        if (e > 0)
+            qp[qs[i].substring(0, e)] = unescape(qs[i].substring(e + 1));
+    }
+    return qp;
+}
+
+function oauthReferrer() {
+    r = queryParams()['openauth_referrer'];
+    if (typeof(r) == 'undefined')
+        return r;
+    s = r.indexOf('//');
+    if (s > 0)
+        r = r.substring(s + 2);
+    s = r.indexOf('/');
+    if (s > 0)
+        r = r.substring(s);
+    return r;
+}
+
+if (typeof(oauthReferrer()) == 'undefined') {
+    document.location = '/';
+}
+
 function submitFormSignin() {
     document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
-    document.formSignin.httpd_location.value = '/';
+    document.formSignin.httpd_location.value = oauthReferrer();
     document.formSignin.submit();
 }
 </script>
