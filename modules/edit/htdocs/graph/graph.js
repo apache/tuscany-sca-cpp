@@ -1841,7 +1841,7 @@ graph.compvaluelink = function(appname, cname) {
     var protocol = window.location.protocol;
     var host = window.location.hostname;
     var port = ':' + window.location.port;
-    if (port == ':80' || port == ':443')
+    if (port == ':80' || port == ':443' || port == ':')
         port = '';
     var link = protocol + '//' + appname + '.' + host + port + '/components/' + cname;
     return '<a href="' + link + '">' + link + '</a>';
