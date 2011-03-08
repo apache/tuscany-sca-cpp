@@ -218,7 +218,7 @@ if (ui.isIE()) {
                     // Wire component to neighboring reference
                     if (!isNil(graph.dragging.svcpos)) {
                         var compos = scdl.composite(vmlg.compos);
-                        setElement(compos, graph.wire(graph.dragging, compos, vmlg));
+                        setElement(compos, grah.clonerefs(graph.wire(graph.dragging, compos, vmlg)));
                     }
 
                 } else {
@@ -227,7 +227,7 @@ if (ui.isIE()) {
                     vmlg.removeChild(graph.dragging);
                     if (!isNil(graph.dragging.compos)) {
                         var compos = scdl.composite(vmlg.compos);
-                        setElement(compos, graph.removecomp(graph.dragging.comp, compos));
+                        setElement(compos, graph.clonerefs(graph.gcollect(graph.removecomp(graph.dragging.comp, compos))));
                     }
 
                     // Reset current selection
@@ -698,7 +698,7 @@ if (ui.isIE()) {
                     // Wire component to neighboring reference
                     if (!isNil(graph.dragging.svcpos)) {
                         var compos = scdl.composite(svg.compos);
-                        setElement(compos, graph.wire(graph.dragging, compos, svg));
+                        setElement(compos, graph.clonerefs(graph.wire(graph.dragging, compos, svg)));
                     }
 
                 } else {
@@ -707,7 +707,7 @@ if (ui.isIE()) {
                     svg.removeChild(graph.dragging);
                     if (!isNil(graph.dragging.compos)) {
                         var compos = scdl.composite(svg.compos);
-                        setElement(compos, graph.removecomp(graph.dragging.comp, compos));
+                        setElement(compos, graph.clonerefs(graph.gcollect(graph.removecomp(graph.dragging.comp, compos))));
                     }
 
                     // Reset current selection
@@ -1652,6 +1652,52 @@ graph.removecomp = function(comp, compos) {
 };
 
 /**
+ * Garbage collect components not referenced or promoted.
+ */
+graph.gcollect = function(compos) {
+
+    // List the promoted components
+    var proms = map(function(s) { return mklist(scdl.promote(s), true); }, scdl.promotions(mklist(compos)));
+
+    // List the referenced components
+    var refs = reduce(function(a, comp) {
+                return append(a,
+                    map(function(ref) { return mklist(scdl.target(ref), true); }, filter(function(ref) { return scdl.target(ref) != null; }, scdl.references(comp))));
+            }, mklist(), scdl.components(mklist(compos)));
+
+    // Filter out the unused components
+    var used = append(proms, refs);
+    return append(mklist(element, "'composite"),
+            filter(function(c) { return !(isElement(c) && elementName(c) == "'component" && isNil(assoc(scdl.name(c), used))); }, elementChildren(compos)));
+}
+
+/**
+ * Clone and cleanup clonable references.
+ */
+graph.clonerefs = function(compos) {
+    return append(mklist(element, "'composite"),
+            map(function(c) {
+                if (elementName(c) != "'component")
+                    return c;
+
+                // If the references are clonable
+                var refs = scdl.references(c);
+                if (isNil(refs))
+                    return c;
+                if (scdl.clonable(car(refs)) != 'true')
+                    return c;
+                    
+                // Filter out the unwired references and add a fresh unwired
+                // reference at the end of the list
+                var cc = append(
+                    filter(function(e) { return !(elementName(e) == "'reference" && scdl.target(e) == null); }, elementChildren(c)),
+                    mklist(mklist(element, "'reference", mklist(attribute, "'name", scdl.name(car(refs))), mklist(attribute, "'t:clonable", "true"))));
+                return append(mklist(element, "'component"), cc);
+            
+            }, elementChildren(compos)));
+}
+
+/**
  * Rename a component.
  */
 graph.renamecomp = function(comp, compos, name) {
@@ -1789,8 +1835,8 @@ graph.wire = function(n, compos, g) {
     if (cadddr(cref) == 25000000)
         return compos;
 
-    // Wire component to that reference, update the SCDL
-    // reference and composite
+    // Wire component to that reference, un-promote it, and
+    // update the SCDL reference and composite
     n.compos = null;
     setElement(car(cref), append(mklist(element, "'reference", mklist(attribute, "'target", scdl.name(n.comp))), elementChildren(car(cref))));
     var name = scdl.name(n.comp);

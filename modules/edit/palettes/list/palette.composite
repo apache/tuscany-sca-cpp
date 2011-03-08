@@ -26,16 +26,15 @@
     <service name="first" promote="first"/>
     <service name="rest" promote="rest"/>
     <service name="empty" promote="empty"/>
+    <service name="append" promote="append"/>
     <service name="itemnb" promote="itemnb"/>
     <service name="find" promote="find"/>
     <service name="range" promote="range"/>
-    <service name="append" promote="append"/>
 
     <component name="list" t:title="make list" t:color="yellow1">
         <t:implementation.python script="nuvem/list_.py"/>
         <service name="list"/>
-        <reference name="first"/>
-        <reference name="rest"/>
+        <reference name="item" t:clonable="true"/>
     </component>
     
     <component name="first" t:title="first item" t:color="yellow1">
@@ -53,6 +52,13 @@
     <component name="empty" t:title="empty list" t:color="yellow1">
         <t:implementation.python script="nuvem/empty.py"/>
         <service name="empty"/>
+    </component>
+    
+    <component name="append" t:title="append" t:color="yellow1">
+        <t:implementation.python script="nuvem/append.py"/>
+        <service name="append"/>
+        <reference name="first"/>
+        <reference name="second"/>
     </component>
     
     <component name="itemnb" t:title="item number" t:color="yellow1">
@@ -74,13 +80,6 @@
         <service name="range"/>
         <reference name="first"/>
         <reference name="last"/>
-    </component>
-    
-    <component name="append" t:title="append" t:color="yellow1">
-        <t:implementation.python script="nuvem/append.py"/>
-        <service name="append"/>
-        <reference name="first"/>
-        <reference name="second"/>
     </component>
     
 </composite>

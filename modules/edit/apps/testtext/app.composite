@@ -37,7 +37,7 @@
   <t:implementation.python script="nuvem/join.py"/>
   <service name="join"/>
   <reference target="text6" name="separator"/>
-  <reference target="list" name="list"/>
+  <reference target="list2" name="list"/>
  </component>
  <service name="replace" promote="replace"/>
  <component t:x="310" t:y="21" name="replace" t:title="replace" t:color="magenta1">
@@ -84,28 +84,6 @@
   <service name="text"/>
   <property>y</property>
  </component>
- <component t:x="88" t:y="256" name="list" t:title="make list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text7" name="first"/>
-  <reference target="list2" name="rest"/>
- </component>
- <component t:x="165" t:y="288" name="list2" t:title="make list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text8" name="first"/>
-  <reference name="rest"/>
- </component>
- <component t:x="165" t:y="262" name="text7" t:title="text" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abc</property>
- </component>
- <component t:x="244" t:y="302" name="text8" t:title="text" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>def</property>
- </component>
  <component t:x="107" t:y="56" name="text9" t:title="text" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
@@ -130,5 +108,22 @@
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>abcxdefxghi</property>
+ </component>
+ <component t:x="583" t:y="60" name="list2" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="text7" name="item" t:clonable="true"/>
+  <reference target="text8" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
+ </component>
+ <component t:x="662" t:y="61" name="text7" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>abc</property>
+ </component>
+ <component t:x="655" t:y="98" name="text8" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>def</property>
  </component>
 </composite>

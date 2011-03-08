@@ -153,6 +153,13 @@ scdl.visible = function(l) {
 };
 
 /**
+ * Returns the clonable attribute of a reference.
+ */
+scdl.clonable = function(l) {
+    return namedAttributeValue("'t:clonable", l);
+};
+
+/**
  * Returns a list of services in a component or componentType.
  */
 scdl.services = function(l) {

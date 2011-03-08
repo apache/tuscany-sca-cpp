@@ -31,28 +31,10 @@
    <t:binding.http uri="https://graph.facebook.com"/>
   </reference>
  </component>
- <component t:x="111" t:y="18" name="assoc" t:title="assoc" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="assoc"/>
-  <reference target="name" name="name"/>
-  <reference target="fbprofile" name="value"/>
- </component>
- <component t:x="187" t:y="155" name="assoc2" t:title="assoc" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="assoc"/>
-  <reference target="name2" name="name"/>
-  <reference target="twprofile" name="value"/>
- </component>
  <component t:x="169" t:y="17" name="name" t:title="name" t:color="orange1">
   <t:implementation.python script="nuvem/name.py"/>
   <service name="name"/>
   <property>facebook</property>
- </component>
- <component t:x="68" t:y="350" name="list" t:title="make list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="assoc" name="first"/>
-  <reference target="list2" name="rest"/>
  </component>
  <component t:x="66" t:y="14" name="name3" t:title="name" t:color="orange1">
   <t:implementation.python script="nuvem/name.py"/>
@@ -63,7 +45,7 @@
   <t:implementation.python script="nuvem/assoc.py"/>
   <service name="assoc"/>
   <reference target="name3" name="name"/>
-  <reference target="list" name="value"/>
+  <reference target="list3" name="value"/>
  </component>
  <service name="page" promote="page"/>
  <component t:x="0" t:y="12" name="page" t:title="when page opened" t:color="green1">
@@ -72,12 +54,6 @@
    <t:binding.http uri="index.html"/>
   </service>
   <reference target="me360" name="content"/>
- </component>
- <component t:x="269" t:y="163" name="list2" t:title="make list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="assoc2" name="first"/>
-  <reference name="rest"/>
  </component>
  <component t:x="404" t:y="162" name="name2" t:title="name" t:color="orange1">
   <t:implementation.python script="nuvem/name.py"/>
@@ -96,5 +72,24 @@
   <reference name="tw" t:visible="false">
    <t:binding.http uri="http://api.twitter.com/1/users/show.json"/>
   </reference>
+ </component>
+ <component t:x="184" t:y="58" name="list3" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="assoc" name="item" t:clonable="true"/>
+  <reference target="assoc2" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
+ </component>
+ <component t:x="260" t:y="57" name="assoc" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name" name="name"/>
+  <reference target="fbprofile" name="value"/>
+ </component>
+ <component t:x="262" t:y="152" name="assoc2" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name2" name="name"/>
+  <reference target="twprofile" name="value"/>
  </component>
 </composite>

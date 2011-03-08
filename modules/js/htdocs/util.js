@@ -129,7 +129,7 @@ function assoc(k, l) {
 }
 
 /**
- * Map and filter functions.
+ * Map, filter and reduce functions.
  */
 function map(f, l) {
     if (isNil(l))
@@ -143,6 +143,12 @@ function filter(f, l) {
     if (f(car(l)))
         return cons(car(l), filter(f, cdr(l)));
     return filter(f, cdr(l));
+}
+
+function reduce(f, i, l) {
+    if (isNil(l))
+        return i;
+    return reduce(f, f(i, car(l)), cdr(l));
 }
 
 /**

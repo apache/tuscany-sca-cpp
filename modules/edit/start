@@ -71,6 +71,9 @@ Alias /ui.css $jsprefix/htdocs/uicyan.css
 
 EOF
 
+# Create app links and sub-directories if needed
+./mkapplinks
+
 # Start memcached
 ../../components/cache/memcached-start 11211
 
