@@ -117,11 +117,36 @@ public class IterableUtil {
     }
 
     /**
+     * Return the cdr of the cdr of the cdr of a list.
+     */
+    public static <T> Iterable<T> cdddr(final Object l) {
+        return cdr(cdr(cdr(l)));
+    }
+
+    /**
      * Return the car of the cdr of the cdr of a list.
      */
     @SuppressWarnings("unchecked")
     public static <T> T caddr(final Object l) {
         return (T)car(cddr(l));
+    }
+
+    /**
+     * Return the car of the cdr of the cdr of the cdr of a list.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T cadddr(final Object l) {
+        return (T)car(cdddr(l));
+    }
+
+    /**
+     * Appends a list and another list.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Iterable<T> append(final Object a, final Object b) {
+        if (isNil(a))
+            return (Iterable<T>)b;
+        return cons(car(a), append(cdr(a), b));
     }
 
     /**
@@ -352,6 +377,11 @@ public class IterableUtil {
             assert car(al) == Integer.valueOf(1);
             assert cadr(al) == Integer.valueOf(2);
             assert caddr(al) == Integer.valueOf(3);
+
+            final Iterable<Object> a = list(0, 1, 2);
+            final Iterable<Object> b = list(3, 4);
+            final Iterable<Object> ab = append(a, b);
+            assert ab.toString().equals("[0, 1, 2, 3, 4]");
             return true;
         }
     }

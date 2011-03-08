@@ -22,8 +22,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
-<title>Store</title>
+<title>Joe's Store</title>
 
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/elemutil.js"></script>
+<script type="text/javascript" src="/xmlutil.js"></script>
+<script type="text/javascript" src="/atomutil.js"></script>
 <script type="text/javascript" src="/component.js"></script>
 
 <script type="text/javascript">
@@ -50,8 +54,9 @@ function catalog_itemsResponse(items, exception) {
 
 }
 
-function shoppingCart_getResponse(feed) {
-    if (feed != null) {
+function shoppingCart_getResponse(doc) {
+    if (doc != null) {
+        var feed = parseXML([doc]);
         var entries = feed.getElementsByTagName("entry"); 
         var list = "";
         for (var i=0; i<entries.length; i++) {

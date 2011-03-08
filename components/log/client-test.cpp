@@ -41,10 +41,13 @@ const string uri("http://localhost:8090/log");
 bool testLog() {
     http::CURLSession cs("", "", "");
 
-    const list<value> i = list<value>()
+    const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99"));
-    const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+            + (list<value>() + "price" + string("$2.99")));
+    const list<value> a = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
 
     const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
@@ -66,10 +69,13 @@ struct logLoop {
 };
 
 bool testLogPerf() {
-    const list<value> i = list<value>()
+    const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99"));
-    const value a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+            + (list<value>() + "price" + string("$2.99")));
+    const list<value> a = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
 
     http::CURLSession cs("", "", "");
     const failable<value> id = http::post(a, uri, cs);

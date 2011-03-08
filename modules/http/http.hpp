@@ -407,19 +407,19 @@ const failable<value> get(const string& url, const CURLSession& cs) {
 
     if (atom::isATOMEntry(ls)) {
         // Read an ATOM entry
-        const value val(atom::entryValue(content(atom::readATOMEntry(ls))));
+        const value val(elementsToValues(content(atom::readATOMEntry(ls))));
         debug(val, "http::get::result");
         return val;
     }
     if (contains(ct, "application/atom+xml") || atom::isATOMFeed(ls)) {
         // Read an ATOM feed
-        const value val(atom::feedValues(content(atom::readATOMFeed(ls))));
+        const value val(elementsToValues(content(atom::readATOMFeed(ls))));
         debug(val, "http::get::result");
         return val;
     }
     if (contains(ct, "application/rss+xml") || rss::isRSSFeed(ls)) {
         // Read an RSS feed
-        const value val(rss::feedValues(content(rss::readRSSFeed(ls))));
+        const value val(elementsToValues(content(rss::readRSSFeed(ls))));
         debug(val, "http::get::result");
         return val;
     }
@@ -449,7 +449,7 @@ const failable<value> get(const string& url, const CURLSession& cs) {
 const failable<value> post(const value& val, const string& url, const CURLSession& cs) {
 
     // Convert value to an ATOM entry
-    const failable<list<string> > entry = atom::writeATOMEntry(atom::entryValuesToElements(val));
+    const failable<list<string> > entry = atom::writeATOMEntry(valuesToElements(val));
     if (!hasContent(entry))
         return mkfailure<value>(reason(entry));
     debug(url, "http::post::url");
@@ -474,7 +474,7 @@ const failable<value> post(const value& val, const string& url, const CURLSessio
 const failable<value> put(const value& val, const string& url, const CURLSession& cs) {
 
     // Convert value to an ATOM entry
-    const failable<list<string> > entry = atom::writeATOMEntry(atom::entryValuesToElements(val));
+    const failable<list<string> > entry = atom::writeATOMEntry(valuesToElements(val));
     if (!hasContent(entry))
         return mkfailure<value>(reason(entry));
     debug(url, "http::put::url");

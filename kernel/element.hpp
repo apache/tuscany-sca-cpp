@@ -95,7 +95,7 @@ const list<value> elementChildren(const list<value>& l) {
 /**
  * Returns true if an element has a value.
  */
-const value elementHasValue(const list<value>& l) {
+const bool elementHasValue(const list<value>& l) {
     const list<value> r = reverse(l);
     if (isSymbol(car(r)))
         return false;

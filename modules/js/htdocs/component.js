@@ -174,9 +174,8 @@ HTTPBindingClient.jsonResult = function(http) {
         HTTPBindingClient.charset = httpCharset(http);
 
     // Unmarshall the JSON response
-    var data = http.responseText;
     var obj;
-    eval("obj = " + data);
+    eval("obj = " + http.responseText);
     if(obj.error)
         throw new HTTPBindingClient.Exception(obj.error.code, obj.error.msg);
     var res = obj.result;
@@ -224,15 +223,6 @@ HTTPBindingClient.prototype.jsonApply = function(req) {
 };
 
 /**
- * Return the XML Document result from an XMLHTTPRequest.
- */
-HTTPBindingClient.xmlResult = function(http) {
-    if(!http.responseXML || http.responseXML.childNodes.length == 0)
-        return (new DOMParser()).parseFromString(http.responseText, "text/xml");
-    return http.responseXML;
-}
-
-/**
  * REST ATOMPub GET method.
  */
 HTTPBindingClient.prototype.get = function(id, cb) {
@@ -246,15 +236,9 @@ HTTPBindingClient.prototype.get = function(id, cb) {
         http.onreadystatechange = function() {
             if (http.readyState == 4) {
                 // Pass the result or exception
-                if (http.status == 200) {
-                    var res = null;
-                    try {
-                        res = HTTPBindingClient.xmlResult(http);
-                    } catch (e) {
-                        cb(null, e);
-                    }
-                    cb(res);
-                } else
+                if (http.status == 200)
+                    cb(http.responseText);
+                else
                     cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
             }
         };
@@ -267,7 +251,7 @@ HTTPBindingClient.prototype.get = function(id, cb) {
     // Send the request and return the result or exception
     http.send(null);
     if (http.status == 200)
-        return HTTPBindingClient.xmlResult(http);
+        return http.responseText;
     throw new HTTPBindingClient.Exception(http.status, http.statusText);
 };
 
@@ -286,15 +270,9 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
         http.onreadystatechange = function() {
             // Pass the result or exception
             if (http.readyState == 4) {
-                if (http.status == 201) {
-                    var res = null;
-                    try {
-                        res = HTTPBindingClient.xmlResult(http);
-                    } catch (e) {
-                        cb(null, e);
-                    }
-                    cb(res);
-                } else
+                if (http.status == 201)
+                    cb(http.responseText);
+                else
                     cb(null, new HTTPBindingClient.Exception(http.status, http.statusText));
             }
         };
@@ -306,7 +284,7 @@ HTTPBindingClient.prototype.post = function (entry, cb) {
     // Send the request and return the result or exception
     http.send(entry);
     if (http.status == 201)
-        return HTTPBindingClient.xmlResult(http);
+        return http.responseText;
     throw new HTTPBindingClient.Exception(http.status, http.statusText);
 };
 
@@ -421,30 +399,6 @@ HTTPBindingClient.getHTTPRequest = function() {
     HTTPBindingClient.httpFactory = null;
     throw new HTTPBindingClient.Exception(0, "Can't create XMLHttpRequest object");
 };
-
-/**
- * DOM parser wrapper.
- */
-if (typeof DOMParser == "undefined") {
-    DOMParser = function() {}
-    
-    DOMParser.prototype.parseFromString = function (str, contentType) {
-        if (typeof ActiveXObject != "undefined") {
-            var d = new ActiveXObject("MSXML.DomDocument");
-            d.loadXML(str);
-            return d;
-        } else if (typeof XMLHttpRequest != "undefined") {
-            var req = new XMLHttpRequest;
-            req.open("GET", "data:" + (contentType || "application/xml") +
-                            ";charset=utf-8," + encodeURIComponent(str), false);
-            if (req.overrideMimeType) {
-                req.overrideMimeType(contentType);
-            }
-            req.send(null);
-            return req.responseXML;
-        }
-    }
-}
 
 /**
  * Public API.

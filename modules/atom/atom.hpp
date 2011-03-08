@@ -36,24 +36,33 @@ namespace tuscany {
 namespace atom {
 
 /**
- * Convert a list of elements to a list of values representing an ATOM entry.
+ * Tags used to tag feed and entry elements.
  */
-const list<value> entryElementsToValues(const list<value>& e) {
+const value feed("feed");
+const value entry("entry");
+
+/**
+ * Convert a list of elements to a list of element values representing an ATOM entry.
+ */
+const list<value> entryElementValues(const list<value>& e) {
     const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), e);
     const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
     const list<value> li = filter<value>(selector(mklist<value>(element, "id")), e);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> lc = filter<value>(selector(mklist<value>(element, "content")), e);
-    return mklist<value>(t, i, isNil(lc)? (value)list<value>() : elementValue(car(lc)));
+    return append<value>(list<value>() + element + entry 
+                + value(list<value>() + element + value("title") + t)
+                + value(list<value>() + element + value("id") + i),
+                isNil(lc)? list<value>() : mklist<value>(value(list<value>() + element + value("content") + elementValue(car(lc)))));
 }
 
 /**
- * Convert a list of elements to a list of values representing ATOM entries.
+ * Convert a list of elements to a list of element values representing ATOM entries.
  */
-const list<value> entriesElementsToValues(const list<value>& e) {
+const list<value> entriesElementValues(const list<value>& e) {
     if (isNil(e))
         return e;
-    return cons<value>(entryElementsToValues(car(e)), entriesElementsToValues(cdr(e)));
+    return cons<value>(entryElementValues(car(e)), entriesElementValues(cdr(e)));
 }
 
 /**
@@ -81,15 +90,7 @@ const failable<list<value> > readATOMEntry(const list<string>& ilist) {
     const list<value> e = readXML(ilist);
     if (isNil(e))
         return mkfailure<list<value> >("Empty entry");
-    return entryElementsToValues(car(e));
-}
-
-/**
- * Convert a list of values representing an ATOM entry to a value.
- */
-const value entryValue(const list<value>& e) {
-    const list<value> v = elementsToValues(mklist<value>(caddr(e)));
-    return cons(car(e), mklist<value>(cadr(e), isList(car(v))? (isNil((list<value>)car(v))? car(v) : (value)cdr<value>(car(v))) : car(v)));
+    return mklist<value>(entryElementValues(car(e)));
 }
 
 /**
@@ -101,42 +102,34 @@ const failable<list<value> > readATOMFeed(const list<string>& ilist) {
         return mkfailure<list<value> >("Empty feed");
     const list<value> t = filter<value>(selector(mklist<value>(element, "title")), car(f));
     const list<value> i = filter<value>(selector(mklist<value>(element, "id")), car(f));
-    const list<value> e = filter<value>(selector(mklist<value>(element, "entry")), car(f));
-    if (isNil(e))
-        return mklist<value>(elementValue(car(t)), elementValue(car(i)));
-    return cons<value>(elementValue(car(t)), cons(elementValue(car(i)), entriesElementsToValues(e)));
+    const list<value> e = filter<value>(selector(mklist<value>(element, entry)), car(f));
+    return mklist<value>(append<value>(list<value>() + element + feed 
+                + value(list<value>() + element + value("title") + elementValue(car(t)))
+                + value(list<value>() + element + value("id") + elementValue(car(i))),
+                entriesElementValues(e)));
 }
 
 /**
- * Convert an ATOM feed containing elements to an ATOM feed containing values.
- */
-const list<value> feedValuesLoop(const list<value> e) {
-    if (isNil(e))
-        return e;
-    return cons<value>(entryValue(car(e)), feedValuesLoop(cdr(e)));
-}
-
-const list<value> feedValues(const list<value>& e) {
-    return cons(car<value>(e), cons<value>(cadr<value>(e), feedValuesLoop(cddr<value>(e))));
-}
-
-/**
- * Convert a list of values representing an ATOM entry to a list of elements.
- * The first two values in the list are the entry title and id.
+ * Convert a list of element values representing an ATOM entry to a list of elements.
  */
 const list<value> entryElement(const list<value>& l) {
+    const value title = elementValue(elementChild("title", l));
+    const value id = elementValue(elementChild("id", l));
+    const value content = elementChild("content", l);
+    const bool text = isNil(content)? false : elementHasValue(content);
     return list<value>()
-        + element + "entry" + (list<value>() + attribute + "xmlns" + "http://www.w3.org/2005/Atom")
-        + (list<value>() + element + "title" + (list<value>() + attribute + "type" + "text") + car(l))
-        + (list<value>() + element + "id" + cadr(l))
-        + (isNil(cddr(l))?
+        + element + entry + (list<value>() + attribute + "xmlns" + "http://www.w3.org/2005/Atom")
+        + (list<value>() + element + "title" + (list<value>() + attribute + "type" + "text") + title)
+        + (list<value>() + element + "id" + id)
+        + (isNil(content)?
             list<value>() :
-            list<value>() + element + "content" + (list<value>() + attribute + "type" + (isList(caddr(l))? "application/xml" : "text")) + caddr(l))
-        + (list<value>() + element + "link" + (list<value>() + attribute + "href" + cadr(l)));
+            append<value>(list<value>() + element + "content" + (list<value>() + attribute + "type" + (text? "text" : "application/xml")),
+                text? mklist<value>(elementValue(content)) : elementChildren(content)))
+        + (list<value>() + element + "link" + (list<value>() + attribute + "href" + id));
 }
 
 /**
- * Convert a list of values representing ATOM entries to a list of elements.
+ * Convert a list of element values representing ATOM entries to a list of elements.
  */
 const list<value> entriesElements(const list<value>& l) {
     if (isNil(l))
@@ -145,10 +138,10 @@ const list<value> entriesElements(const list<value>& l) {
 }
 
 /**
- * Convert a list of values representing an ATOM entry to an ATOM entry.
- * The first two values in the list are the entry id and title.
+ * Convert a list of element values representing an ATOM entry to an ATOM entry.
  */
-template<typename R> const failable<R> writeATOMEntry(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R> writeATOMEntry(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
+    const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
     return writeXML<R>(reduce, initial, mklist<value>(entryElement(l)));
 }
 
@@ -160,51 +153,43 @@ const failable<list<string> > writeATOMEntry(const list<value>& l) {
 }
 
 /**
- * Convert a list of values representing an ATOM feed to an ATOM feed.
- * The first two values in the list are the feed id and title.
+ * Convert a list of element values representing an ATOM feed to an ATOM feed.
  */
-template<typename R> const failable<R> writeATOMFeed(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R> writeATOMFeed(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
+    const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
+    const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), l);
+    const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
+    const list<value> li = filter<value>(selector(mklist<value>(element, "id")), l);
+    const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> f = list<value>()
-        + element + "feed" + (list<value>() + attribute + "xmlns" + "http://www.w3.org/2005/Atom")
-        + (list<value>() + element + "title" + (list<value>() + attribute + "type" + "text") + car(l))
-        + (list<value>() + element + "id" + cadr(l));
-    if (isNil(cddr(l)))
+        + element + feed + (list<value>() + attribute + "xmlns" + "http://www.w3.org/2005/Atom")
+        + (list<value>() + element + "title" + (list<value>() + attribute + "type" + "text") + t)
+        + (list<value>() + element + "id" + i);
+
+    // Write ATOM entries
+    const list<value> le = filter<value>(selector(mklist<value>(element, entry)), l);
+    if (isNil(le))
         return writeXML<R>(reduce, initial, mklist<value>(f));
-    const list<value> fe = append(f, entriesElements(cddr(l)));
+
+    // Write a single ATOM entry element with a list of values
+    if (!isNil(le) && !isNil(car(le)) && isList(car<value>(caddr<value>(car(le))))) {
+        const list<value> fe = append(f, entriesElements(caddr<value>(car(le))));
+        return writeXML<R>(reduce, initial, mklist<value>(fe));
+    }
+
+    // Write separate ATOM entry elements
+    const list<value> fe = append(f, entriesElements(le));
     return writeXML<R>(reduce, initial, mklist<value>(fe));
 }
 
 /**
- * Convert a list of values representing an ATOM feed to a list of strings.
- * The first two values in the list are the feed id and title.
+ * Convert a list of element values representing an ATOM feed to a list of strings.
  */
 const failable<list<string> > writeATOMFeed(const list<value>& l) {
     const failable<list<string> > ls = writeATOMFeed<list<string>>(rcons<string>, list<string>(), l);
     if (!hasContent(ls))
         return ls;
     return reverse(list<string>(content(ls)));
-}
-
-/**
- * Convert an ATOM entry containing a value to an ATOM entry containing an item element.
- */
-const list<value> entryValuesToElements(const list<value> val) {
-    if (isList(caddr(val)))
-        return cons(car(val), cons(cadr(val), valuesToElements(mklist<value>(cons<value>("item", (list<value>)caddr(val))))));
-    return cons(car(val), cons(cadr(val), valuesToElements(mklist<value>(mklist<value>("item", caddr(val))))));
-}
-
-/**
- * Convert an ATOM feed containing values to an ATOM feed containing elements.
- */
-const list<value> feedValuesToElementsLoop(const list<value> val) {
-    if (isNil(val))
-        return val;
-    return cons<value>(entryValuesToElements(car(val)), feedValuesToElementsLoop(cdr(val)));
-}
-
-const list<value> feedValuesToElements(const list<value>& val) {
-    return cons(car<value>(val), cons<value>(cadr<value>(val), feedValuesToElementsLoop(cddr<value>(val))));
 }
 
 }

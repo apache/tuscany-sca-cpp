@@ -25,22 +25,23 @@ var atom = {};
 /**
  * Convert a list of elements to a list of values representing an ATOM entry.
  */
-atom.entryElementsToValues = function(e) {
+atom.entryElementValues = function(e) {
     var lt = filter(selector(mklist(element, "'title")), e);
     var t = isNil(lt)? '' : elementValue(car(lt));
     var li = filter(selector(mklist(element, "'id")), e);
     var i = isNil(li)? '' : elementValue(car(li));
     var lc = filter(selector(mklist(element, "'content")), e);
-    return mklist(t, i, elementValue(car(lc)));
+    return append(mklist(element, "'entry", mklist(element, "'title", t), mklist(element, "'id", i)),
+            isNil(lc)? mklist() : mklist(mklist(element, "'content", elementValue(car(lc)))))
 };
 
 /**
  * Convert a list of elements to a list of values representing ATOM entries.
  */
-atom.entriesElementsToValues = function(e) {
+atom.entriesElementValues = function(e) {
     if (isNil(e))
         return e;
-    return cons(atom.entryElementsToValues(car(e)), atom.entriesElementsToValues(cdr(e)));
+    return cons(atom.entryElementValues(car(e)), atom.entriesElementValues(cdr(e)));
 };
 
 /**
@@ -59,7 +60,7 @@ atom.readATOMEntryDocument = function(doc) {
     var e = readXMLDocument(doc);
     if (isNil(e))
         return mklist();
-    return atom.entryElementsToValues(car(e));
+    return mklist(atom.entryElementValues(car(e)));
 };
 
 /**
@@ -67,14 +68,6 @@ atom.readATOMEntryDocument = function(doc) {
  */
 atom.readATOMEntry = function(l) {
     return atom.readATOMEntryDocument(parseXML(l));
-};
-
-/**
- * Convert a list of values representy an ATOM entry to a value.
- */
-atom.entryValue = function(e) {
-    var v = elementsToValues(mklist(caddr(e)));
-    return cons(car(e), (cadr(e), cdr(car(v))));
 };
 
 /**
@@ -96,40 +89,32 @@ atom.readATOMFeedDocument = function(doc) {
     var t = filter(selector(mklist(element, "'title")), car(f));
     var i = filter(selector(mklist(element, "'id")), car(f));
     var e = filter(selector(mklist(element, "'entry")), car(f));
-    if (isNil(e))
-        return mklist(elementValue(car(t)), elementValue(car(i)));
-    return cons(elementValue(car(t)), cons(elementValue(car(i)), atom.entriesElementsToValues(e)));
+    return mklist(append(
+                mklist(element, "'feed", mklist(element, "'title", elementValue(car(t))), mklist(element, "'id", elementValue(car(i)))),
+                atom.entriesElementValues(e)));
 };
 
 /**
  * Convert a list of strings to a list of values representing an ATOM feed.
  */
 atom.readATOMFeed = function(l) {
-    return atom.readAtomFeedDocument(parseXML(l));
-};
-
-/**
- * Convert an ATOM feed containing elements to an ATOM feed containing values.
- */
-atom.feedValues = function(e) {
-    function feedValuesLoop(e) {
-        if (isNil(e))
-            return e;
-        return cons(entryValue(car(e)), feedValuesLoop(cdr(e)));
-    }
-
-    return cons(car(e), cons(cadr(e), feedValuesLoop(cddr(e))));
+    return atom.readATOMFeedDocument(parseXML(l));
 };
 
 /**
  * Convert a list of values representy an ATOM entry to a list of elements.
  */
 atom.entryElement = function(l) {
-    return mklist(element, "'entry", mklist(attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
-            mklist(element, "'title", mklist(attribute, "'type", "text"), car(l)),
-            mklist(element, "'id", cadr(l)),
-            mklist(element, "'content", mklist(attribute, "'type", (isList(caddr(l))? "application/xml" : "text")), caddr(l)),
-            mklist(element, "'link", mklist(attribute, "'href", cadr(l))));
+    var title = elementValue(namedElementChild("'title", l));
+    var id = elementValue(namedElementChild("'id", l));
+    var content = namedElementChild("'content", l);
+    var text = isNil(content)? false : elementHasValue(content);
+    return append(append(
+            mklist(element, "'entry", mklist(attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
+            mklist(element, "'title", mklist(attribute, "'type", "text"), title), mklist(element, "'id", id)),
+            isNil(content)? mklist() :
+                append(mklist(element, "'content", mklist(attribute, "'type", text? "text" : "application/xml")), text? mklist(elementValue(content)) : elementChildren(content))),
+            mklist(element, "'link", mklist(attribute, "'href", id)));
 };
 
 /**
@@ -144,42 +129,37 @@ atom.entriesElements = function(l) {
 /**
  * Convert a list of values representing an ATOM entry to an ATOM entry.
  */
-atom.writeATOMEntry = function(l) {
+atom.writeATOMEntry = function(ll) {
+    var l = isNil(ll)? ll : car(ll);
     return writeXML(mklist(atom.entryElement(l)), true);
 };
 
 /**
  * Convert a list of values representing an ATOM feed to an ATOM feed.
  */
-atom.writeATOMFeed = function(l) {
+atom.writeATOMFeed = function(ll) {
+    var l = isNil(ll)? ll : car(ll);
+    var lt = filter(selector(mklist(element, "'title")), l);
+    var t = isNil(lt)? '' : elementValue(car(lt));
+    var li = filter(selector(mklist(element, "'id")), l);
+    var i = isNil(li)? '' : elementValue(car(li));
     var f = mklist(element, "'feed", mklist(attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
             mklist(element, "'title", mklist(attribute, "'type", "text"), car(l)),
             mklist(element, "'id", cadr(l)));
-    if (isNil(cddr(l)))
+
+    // Write ATOM entries
+    var le = filter(selector(mklist(element, "'entry")), l);
+    if (isNil(le))
         return writeXML(mklist(f), true);
-    var fe = append(f, atom.entriesElements(cddr(l)));
-    return writeXML(mklist(fe), true);
-};
 
-/**
- * Convert an ATOM entry containing a value to an ATOM entry containing an item element.
- */
-atom.entryValuesToElements = function(v) {
-    if (isList(caddr(v)))
-        return cons(car(v), cons(cadr(v), valuesToElements(mklist(cons("'item", caddr(v))))));
-    return cons(car(v), cons(cadr(v), valuesToElements(mklist(mklist("'item", caddr(v))))));
-};
-
-/**
- * Convert an ATOM feed containing values to an ATOM feed containing elements.
- */
-atom.feedValuesToElements = function(v) {
-    function feedValuesToElementsLoop(v) {
-        if (isNil(v))
-            return v;
-        return cons(atom.entryValuesToElements(car(v)), feedValuesToElementsLoop(cdr(v)));
+    // Write a single ATOM entry element with a list of values
+    if (!isNil(le) && !isNil(car(le)) && isList(car(caddr(car(le))))) {
+        var fe = append(f, atom.entriesElements(caddr(car(le))));
+        return writeXML(mklist(fe), true);
     }
 
-    return cons(car(v), cons(cadr(v), feedValuesToElementsLoop(cddr(v))));
+    // Write separate ATOM entry elements
+    var fe = append(f, atom.entriesElements(le));
+    return writeXML(mklist(fe), true);
 };
 

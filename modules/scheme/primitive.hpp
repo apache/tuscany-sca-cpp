@@ -145,24 +145,28 @@ const value uuidProc(unused const list<value>& args) {
     return mkuuid();
 }
 
-const value cadrProc(unused const list<value>& args) {
+const value cadrProc(const list<value>& args) {
     return cadr((list<value> )car(args));
 }
 
-const value caddrProc(unused const list<value>& args) {
+const value caddrProc(const list<value>& args) {
     return caddr((list<value> )car(args));
 }
 
-const value cadddrProc(unused const list<value>& args) {
+const value cadddrProc(const list<value>& args) {
     return cadddr((list<value> )car(args));
 }
 
-const value cddrProc(unused const list<value>& args) {
+const value cddrProc(const list<value>& args) {
     return cddr((list<value> )car(args));
 }
 
-const value cdddrProc(unused const list<value>& args) {
+const value cdddrProc(const list<value>& args) {
     return cdddr((list<value> )car(args));
+}
+
+const value appendProc(const list<value>& args) {
+    return append((list<value> )car(args), (list<value>)cadr(args));
 }
 
 const value startProc(unused const list<value>& args) {
@@ -222,6 +226,7 @@ const list<value> primitiveProcedureNames() {
     + "cadddr"
     + "cddr"
     + "cdddr"
+    + "append"
     + "display"
     + "log"
     + "uuid"
@@ -247,6 +252,7 @@ const list<value> primitiveProcedureObjects() {
     + primitiveProcedure(cadddrProc)
     + primitiveProcedure(cddrProc)
     + primitiveProcedure(cdddrProc)
+    + primitiveProcedure(appendProc)
     + primitiveProcedure(displayProc)
     + primitiveProcedure(logProc)
     + primitiveProcedure(uuidProc)

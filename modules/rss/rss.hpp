@@ -36,24 +36,33 @@ namespace tuscany {
 namespace rss {
 
 /**
- * Convert a list of elements to a list of values representing an RSS entry.
+ * Tags used to tag feed and entry elements.
  */
-const list<value> entryElementsToValues(const list<value>& e) {
+const value feed("feed");
+const value entry("entry");
+
+/**
+ * Convert a list of elements to a list of element values representing an RSS entry.
+ */
+const list<value> entryElementValues(const list<value>& e) {
     const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), e);
     const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
     const list<value> li = filter<value>(selector(mklist<value>(element, "link")), e);
     const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> ld = filter<value>(selector(mklist<value>(element, "description")), e);
-    return mklist<value>(t, i, isNil(ld)? (value)list<value>() : elementValue(car(ld)));
+    return append<value>(list<value>() + element + entry 
+                + value(list<value>() + element + value("title") + t)
+                + value(list<value>() + element + value("id") + i),
+                isNil(ld)? list<value>() : mklist<value>(value(list<value>() + element + value("content") + elementValue(car(ld)))));
 }
 
 /**
- * Convert a list of elements to a list of values representing RSS entries.
+ * Convert a list of elements to a list of element values representing ATOM entries.
  */
-const list<value> entriesElementsToValues(const list<value>& e) {
+const list<value> entriesElementValues(const list<value>& e) {
     if (isNil(e))
         return e;
-    return cons<value>(entryElementsToValues(car(e)), entriesElementsToValues(cdr(e)));
+    return cons<value>(entryElementValues(car(e)), entriesElementValues(cdr(e)));
 }
 
 /**
@@ -72,15 +81,7 @@ const failable<list<value> > readRSSEntry(const list<string>& ilist) {
     const list<value> e = readXML(ilist);
     if (isNil(e))
         return mkfailure<list<value> >("Empty entry");
-    return entryElementsToValues(car(e));
-}
-
-/**
- * Convert a list of values representing an RSS entry to a value.
- */
-const value entryValue(const list<value>& e) {
-    const list<value> v = elementsToValues(mklist<value>(caddr(e)));
-    return cons(car(e), mklist<value>(cadr(e), isList(car(v))? (isNil((list<value>)car(v))? car(v) : (value)cdr<value>(car(v))) : car(v)));
+    return mklist<value>(entryElementValues(car(e)));
 }
 
 /**
@@ -94,34 +95,28 @@ const failable<list<value> > readRSSFeed(const list<string>& ilist) {
     const list<value> t = filter<value>(selector(mklist<value>(element, "title")), car(c));
     const list<value> i = filter<value>(selector(mklist<value>(element, "link")), car(c));
     const list<value> e = filter<value>(selector(mklist<value>(element, "item")), car(c));
-    if (isNil(e))
-        return mklist<value>(elementValue(car(t)), elementValue(car(i)));
-    return cons<value>(elementValue(car(t)), cons(elementValue(car(i)), entriesElementsToValues(e)));
+    return mklist<value>(append<value>(list<value>() + element + feed 
+                + value(list<value>() + element + value("title") + elementValue(car(t)))
+                + value(list<value>() + element + value("id") + elementValue(car(i))),
+                entriesElementValues(e)));
 }
 
 /**
- * Convert an RSS feed containing elements to an RSS feed containing values.
- */
-const list<value> feedValuesLoop(const list<value> e) {
-    if (isNil(e))
-        return e;
-    return cons<value>(entryValue(car(e)), feedValuesLoop(cdr(e)));
-}
-
-const list<value> feedValues(const list<value>& e) {
-    return cons(car<value>(e), cons<value>(cadr<value>(e), feedValuesLoop(cddr<value>(e))));
-}
-
-/**
- * Convert a list of values representing an RSS entry to a list of elements.
- * The first two values in the list are the entry title and id.
+ * Convert a list of element values representing an RSS entry to a list of elements.
  */
 const list<value> entryElement(const list<value>& l) {
-    return list<value>()
+    const value title = elementValue(elementChild("title", l));
+    const value id = elementValue(elementChild("id", l));
+    const value content = elementChild("content", l);
+    const bool text = isNil(content)? false : elementHasValue(content);
+    return append<value>(list<value>()
         + element + "item"
-        + (list<value>() + element + "title" + car(l))
-        + (list<value>() + element + "link" + cadr(l))
-        + (isNil(cddr(l))? list<value>() : list<value>() + element + "description" + caddr(l));
+        + (list<value>() + element + "title" + title)
+        + (list<value>() + element + "link" + id),
+        isNil(content)?
+            list<value>() :
+            mklist<value>(append<value>(list<value>() + element + "description",
+                text? mklist<value>(elementValue(content)) : elementChildren(content))));
 }
 
 /**
@@ -137,7 +132,8 @@ const list<value> entriesElements(const list<value>& l) {
  * Convert a list of values representing an RSS entry to an RSS entry.
  * The first two values in the list are the entry id and title.
  */
-template<typename R> const failable<R> writeRSSEntry(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R> writeRSSEntry(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
+    const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
     return writeXML<R>(reduce, initial, mklist<value>(entryElement(l)));
 }
 
@@ -152,12 +148,37 @@ const failable<list<string> > writeRSSEntry(const list<value>& l) {
  * Convert a list of values representing an RSS feed to an RSS feed.
  * The first two values in the list are the feed id and title.
  */
-template<typename R> const failable<R> writeRSSFeed(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& l) {
+template<typename R> const failable<R> writeRSSFeed(const lambda<R(const string&, const R)>& reduce, const R& initial, const list<value>& ll) {
+    const list<value> l = isNil(ll)? ll : (list<value>)car(ll);
+    const list<value> lt = filter<value>(selector(mklist<value>(element, "title")), l);
+    const value t = isNil(lt)? value(emptyString) : elementValue(car(lt));
+    const list<value> li = filter<value>(selector(mklist<value>(element, "id")), l);
+    const value i = isNil(li)? value(emptyString) : elementValue(car(li));
     const list<value> c = list<value>()
-        + (list<value>() + element + "title" + car(l))
-        + (list<value>() + element + "link" + cadr(l))
-        + (list<value>() + element + "description" + car(l));
-    const list<value> ce = isNil(cddr(l))? c : append(c, entriesElements(cddr(l)));
+        + (list<value>() + element + "title" + t)
+        + (list<value>() + element + "link" + i)
+        + (list<value>() + element + "description" + t);
+
+    // Write RSS entries
+    const list<value> le = filter<value>(selector(mklist<value>(element, entry)), l);
+    if (isNil(le)) {
+        const list<value> fe = list<value>()
+            + element + "rss" + (list<value>() + attribute + "version" + "2.0")
+            + append(list<value>() + element + "channel", c);
+        return writeXML<R>(reduce, initial, mklist<value>(fe));
+    }
+
+    // Write a single RSS entry element with a list of values
+    if (!isNil(le) && !isNil(car(le)) && isList(car<value>(caddr<value>(car(le))))) {
+        const list<value> ce = append(c, entriesElements(caddr<value>(car(le))));
+        const list<value> fe = list<value>()
+            + element + "rss" + (list<value>() + attribute + "version" + "2.0")
+            + append(list<value>() + element + "channel", ce);
+        return writeXML<R>(reduce, initial, mklist<value>(fe));
+    }
+
+    // Write separate RSS entry elements
+    const list<value> ce = append(c, entriesElements(le));
     const list<value> fe = list<value>()
         + element + "rss" + (list<value>() + attribute + "version" + "2.0")
         + append(list<value>() + element + "channel", ce);
@@ -173,26 +194,6 @@ const failable<list<string> > writeRSSFeed(const list<value>& l) {
     if (!hasContent(ls))
         return ls;
     return reverse(list<string>(content(ls)));
-}
-
-/**
- * Convert an RSS entry containing a value to an RSS entry containing an item element.
- */
-const list<value> entryValuesToElements(const list<value> val) {
-    return cons(car(val), cons(cadr(val), valuesToElements(mklist<value>(cons<value>("item", (list<value>)caddr(val))))));
-}
-
-/**
- * Convert an RSS feed containing values to an RSS feed containing elements.
- */
-const list<value> feedValuesToElementsLoop(const list<value> val) {
-    if (isNil(val))
-        return val;
-    return cons<value>(entryValuesToElements(car(val)), feedValuesToElementsLoop(cdr(val)));
-}
-
-const list<value> feedValuesToElements(const list<value>& val) {
-    return cons(car<value>(val), cons<value>(cadr<value>(val), feedValuesToElementsLoop(cddr<value>(val))));
 }
 
 }

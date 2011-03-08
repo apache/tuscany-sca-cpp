@@ -79,20 +79,14 @@ function getapps(sync) {
         var apps = '<table style="width: 100%;">';
         apps += '<tr><th class="thl thr">App</th>' +
             '<th class="thr thl">Title</th>' +
-            '<th class="thr thl" style="padding-top: 4px; padding-bottom: 4px; padding-right: 2px; text-align: right;">' +
-            '<span style="font-weight: normal;">' + 
-            '[<a href="/dashboard">atom</a> <a href="/dashboardcache/joe@localhost">json</a>]' +
-            '</span></th></tr>';
+            '<th class="thr thl" style="padding-top: 4px; padding-bottom: 4px; padding-right: 2px; text-align: right;"></th></tr>';
 
-        var entries = cddr(atom.readATOMFeedDocument(doc));
+        var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
+        var entries = cadr(assoc("'entry", cdr(feed)));
         for (var i = 0; i < length(entries); i++) {
             var entry = entries[i];
-            var item = caddr(entry);
-            var composite = cddr(item);
-            var comps = scdl.components(composite);
-
-            name = cadr(entry);
-            title = car(entry);
+            title = cadr(assoc("'title", entry))
+            name = cadr(assoc("'id", entry))
 
             apps += '<tr>';
             apps += '<td><a href=\"' + '/graph/?app=' + name + '\" target=\"_parent\">' + name + '</a></td>';
@@ -142,8 +136,8 @@ $('createAppOKButton').onclick = function() {
     if (name == '')
         return false;
     var title = $('appTitle').value;
-    var app = mklist(title != deftitle && title != ''? title : name, name, mklist());
-    var entry = atom.writeATOMEntry(app);
+    var app = mklist(mklist("'entry", mklist("'title", title != deftitle && title != ''? title : name), mklist("'id", name)));
+    var entry = atom.writeATOMEntry(valuesToElements(app));
     dashboard.put(name, car(entry));
     getapps();
     $('newApp').style.visibility = 'hidden';

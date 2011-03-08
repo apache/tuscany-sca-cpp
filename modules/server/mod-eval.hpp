@@ -143,27 +143,34 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
         return httpd::writeResult(json::writeJSON(list<value>(), cx), "application/json", r);
     }
 
+    // Write content-type / content-list pair
+    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
+        return httpd::writeResult(convertValues<string>(cadr<value>(c)), car<value>(c), r);
+
     // Write an assoc value as a JSON result
     if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
         js::JSContext cx;
         return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(c)), cx), "application/json", r);
     }
 
-    // Write content-type / content-list pair
-    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isList(cadr<value>(c)))
-        return httpd::writeResult(convertValues<string>(cadr<value>(c)), car<value>(c), r);
+    // Convert list of values to element values
+    const list<value> e = valuesToElements(c);
+    debug(e, "modeval::get::elements");
 
     // Write an ATOM feed or entry
-    if (isString(car<value>(c)) && !isNil(cdr<value>(c)) && isString(cadr<value>(c))) {
-        if (isNil(cddr(path)))
-            return httpd::writeResult(atom::writeATOMFeed(atom::feedValuesToElements(c)), "application/atom+xml", r);
-        else
-            return httpd::writeResult(atom::writeATOMEntry(atom::entryValuesToElements(c)), "application/atom+xml", r);
+    if (isList(car<value>(e)) && !isNil(car<value>(e))) {
+        const list<value> el = car<value>(e);
+        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el))) {
+            if (cadr<value>(el) == atom::feed)
+                return httpd::writeResult(atom::writeATOMFeed(e), "application/atom+xml", r);
+            if (cadr<value>(el) == atom::entry)
+                return httpd::writeResult(atom::writeATOMEntry(e), "application/atom+xml", r);
+        }
     }
 
     // Write any other compound value as a JSON value
     js::JSContext cx;
-    return httpd::writeResult(json::writeJSON(valuesToElements(c), cx), "application/json", r);
+    return httpd::writeResult(json::writeJSON(e, cx), "application/json", r);
 }
 
 /**
@@ -210,7 +217,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
             return rc;
         const list<string> ls = httpd::read(r);
         debug(ls, "modeval::post::input");
-        const value entry = atom::entryValue(content(atom::readATOMEntry(ls)));
+        const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
 
         // Evaluate the POST expression
         const failable<value> val = failableResult(impl(cons<value>("post", mklist<value>(cddr(path), entry))));
@@ -245,7 +252,7 @@ const failable<int> put(request_rec* r, const lambda<value(const list<value>&)>&
         return rc;
     const list<string> ls = httpd::read(r);
     debug(ls, "modeval::put::input");
-    const value entry = atom::entryValue(content(atom::readATOMEntry(ls)));
+    const value entry = elementsToValues(content(atom::readATOMEntry(ls)));
 
     // Evaluate the PUT expression and update the corresponding resource
     const failable<value> val = failableResult(impl(cons<value>("put", mklist<value>(cddr(path), entry))));

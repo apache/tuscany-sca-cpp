@@ -33,7 +33,7 @@ namespace tuscany {
 namespace scheme {
 
 int xmlValue() {
-    const value v = elementsToValues(readXML(streamList(cin)));
+    const value v = readXML(streamList(cin));
     cout << writeValue(v);
     return 0;
 }

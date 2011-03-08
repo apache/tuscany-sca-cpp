@@ -24,13 +24,13 @@ def echo(x):
 
 def get(id):
     if id == ():
-        return ("Sample Feed", "123456789",
-            ("Item", "111", (("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99))),
-            ("Item", "222", (("'name", "Orange"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 3.55))),
-            ("Item", "333", (("'name", "Pear"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 1.55))))
-        
-    entry = (("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99))
-    return ("Item", id[0], entry)
+        return (("'feed", ("'title", "Sample Feed"), ("'id", "123456789"), ("'entry", 
+            ((("'title", "Item"), ("'id", "111"), ("'content", ("'item", ("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99)))),
+             (("'title", "Item"), ("'id", "222"), ("'content", ("'item", ("'name", "Orange"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 3.55)))),
+             (("'title", "Item"), ("'id", "333"), ("'content", ("'item", ("'name", "Pear"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 1.55))))))),)
+
+    content = ("'content", ("'item", ("'name", "Apple"), ("'currencyCode", "USD"), ("'currencySymbol", "$"), ("'price", 2.99)))
+    return (("'entry", ("'title", "Item"), ("'id", id[0]), content),)
 
 def post(collection, item):
     return ("123456789",)

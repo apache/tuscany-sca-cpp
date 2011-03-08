@@ -55,7 +55,7 @@ const list<value> getcart(const value& id, const lambda<value(const list<value>&
  */
 const failable<value> post(unused const list<value>& collection, const value& item, const lambda<value(const list<value>&)> cache) {
     const value id(mkuuid());
-    const list<value> newItem(mklist<value>(car<value>(item), id, caddr<value>(item)));
+    const list<value> newItem(mklist<value>("entry", cadr<value>(car<value>(item)), mklist<value>("id", id), cadddr<value>(car<value>(item))));
     const list<value> cart(cons<value>(newItem, getcart(cartId, cache)));
     cache(mklist<value>("put", mklist<value>(cartId), cart));
     return value(mklist<value>(id));
@@ -66,9 +66,9 @@ const failable<value> post(unused const list<value>& collection, const value& it
  */
 const value find(const value& id, const list<value>& cart) {
     if (isNil(cart))
-        return cons<value>(string("Item"), mklist<value>("0", list<value>()));
-    if (id == cadr<value>(car(cart)))
-        return car(cart);
+        return mklist<value>(mklist<value>("entry", mklist<value>("title", string("Item")), mklist<value>("id", "0")));
+    if (id == cadr<value>(caddr<value>(car(cart))))
+        return mklist<value>(car(cart));
     return find(id, cdr(cart));
 }
 
@@ -77,7 +77,7 @@ const value find(const value& id, const list<value>& cart) {
  */
 const failable<value> get(const list<value>& id, const lambda<value(const list<value>&)> cache) {
     if (isNil(id))
-        return value(append(mklist<value>(string("Your Cart"), cartId), getcart(cartId, cache)));
+        return value(mklist<value>(append(mklist<value>("feed", mklist<value>("title", string("Your Cart")), mklist<value>("id", cartId)), getcart(cartId, cache))));
     return find(car(id), getcart(cartId, cache));
 }
 
@@ -94,7 +94,7 @@ const failable<value> del(const list<value>& id, unused const lambda<value(const
  * Return the price of an item.
  */
 const double price(const list<value>& item) {
-    return cadr<value>(assoc<value>("price", caddr(item)));
+    return cadr<value>(assoc<value>("price", cdr<value>(cadr<value>(cadddr(item)))));
 }
 
 /**

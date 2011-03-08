@@ -47,7 +47,7 @@ public class ShoppingCartImpl {
      */
     public Iterable<String> post(final Iterable<String> collection, final Iterable<?> item, final Service cache) {
         final String id = uuid();
-        final Iterable<?> newItem = list(car(item), id, caddr(item));
+        final Iterable<?> newItem = list("'entry", cadr(car(item)), list("'id", id), cadddr(car(item)));
         final Iterable<?> cart = cons(newItem, this.getcart(cartId, cache));
         final Iterable<String> iid = list(cartId);
         cache.put(iid, cart);
@@ -59,9 +59,9 @@ public class ShoppingCartImpl {
      */
     Iterable<?> find(final String id, final Iterable<?> cart) {
         if(isNil(cart))
-            return cons("Item", list("0", list()));
-        if(id.equals(cadr(car(cart))))
-            return car(cart);
+            return list(list("'entry", list("'title", "Item"), list("'id", "0")));
+        if(id.equals(cadr(caddr(car(cart)))))
+            return list(car(cart));
         return this.find(id, cdr(cart));
     }
 
@@ -70,7 +70,7 @@ public class ShoppingCartImpl {
      */
     public Iterable<?> get(final Iterable<String> id, final Service cache) {
         if(isNil(id))
-            return cons("Your Cart", cons(cartId, this.getcart(cartId, cache)));
+            return list(append(list("'feed", list("'title", "Your Cart"), list("'id", cartId)), this.getcart(cartId, cache)));
         return this.find((String)car(id), this.getcart(cartId, cache));
     }
 
@@ -89,7 +89,8 @@ public class ShoppingCartImpl {
      * Return the price of an item.
      */
     Double price(final Iterable<?> item) {
-        return Double.valueOf((String)cadr(assoc("'price", caddr(item))));
+        System.err.println("price!! " + cadr(cadddr(item)));
+        return Double.valueOf((String)cadr(assoc("'price", cdr(cadr(cadddr(item))))));
     }
 
     /**

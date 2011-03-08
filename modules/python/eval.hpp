@@ -66,17 +66,12 @@ const string lastError() {
             PyObject* sval = PyObject_Str(val);    
             string msg = string() + PyString_AsString(stype) + " : " + PyString_AsString(sval);
             Py_DECREF(stype);
-            Py_DECREF(sval);                                    
-            Py_DECREF(type);
-            Py_DECREF(val);
-            Py_XDECREF(trace);
+            Py_DECREF(sval);
+            PyErr_Restore(type, val, trace);
             PyErr_Print();
             return msg;
         }
-        PyErr_Print();
-        Py_XDECREF(type);
-        Py_XDECREF(val);
-        Py_XDECREF(trace);
+        PyErr_Restore(type, val, trace);
         PyErr_Print();
         return "Unknown Python error";
     }

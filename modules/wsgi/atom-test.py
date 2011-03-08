@@ -71,7 +71,7 @@ completedEntry = \
 
 def testEntry():
     i = (element, "'item", (element, "'name", "Apple"), (element, "'price", "$2.99"))
-    a = ("item", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b", i)
+    a = ((element, "'entry", (element, "'title", "item"), (element, "'id", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), (element, "'content", i)),)
     s = writeATOMEntry(a);
     assert car(s) == itemEntry
 
@@ -123,41 +123,29 @@ itemFeed = \
     "</feed>\n"
 
 def testFeed():
-    s = writeATOMFeed(("Feed", "1234"))
+    a = ((element, "'feed", (element, "'title", "Feed"), (element, "'id", "1234")),)
+    s = writeATOMFeed(a)
     assert car(s) == emptyFeed
 
     a2 = readATOMFeed((emptyFeed,))
     s2 = writeATOMFeed(a2)
     assert car(s2) == emptyFeed
 
-    i3 = (("item", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b",
-            (element, "'item", (element, "'name", "Apple"), (element, "'price", "$2.99"))),
-          ("item", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c",
-            (element, "'item", (element, "'name", "Orange"), (element, "'price", "$3.55"))))
-    a3 = cons("Feed", cons("1234", i3))
+    i3 = ((element, "'entry", (element, "'title", "item"), (element, "'id", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"),
+            (element, "'content", (element, "'item", (element, "'name", "Apple"), (element, "'price", "$2.99")))),
+          (element, "'entry", (element, "'title", "item"), (element, "'id", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"),
+            (element, "'content", (element, "'item", (element, "'name", "Orange"), (element, "'price", "$3.55")))))
+    a3 = (append((element, "'feed", (element, "'title", "Feed"), (element, "'id", "1234")), i3),)
     s3 = writeATOMFeed(a3)
     assert car(s3) == itemFeed
 
-    i4 = (("item", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b",
-            valueToElement(("'item", ("'name", "Apple"), ("'price", "$2.99")))),
-          ("item", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c",
-            valueToElement(("'item", ("'name", "Orange"), ("'price", "$3.55")))))
-    a4 = cons("Feed", cons("1234", i4))
-    s4 = writeATOMFeed(a4)
+    a4 = readATOMFeed((itemFeed,));
+    s4 = writeATOMFeed(a4);
     assert car(s4) == itemFeed
 
-    a5 = readATOMFeed((itemFeed,));
-    s5 = writeATOMFeed(a5);
+    a5 = elementsToValues(readATOMFeed((itemFeed,)));
+    s5 = writeATOMFeed(valuesToElements(a5));
     assert car(s5) == itemFeed
-
-    i6 = (("item", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b",
-            (("'name", "Apple"), ("'price", "$2.99"))),
-          ("item", "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c",
-            (("'name", "Orange"), ("'price", "$3.55"))))
-    a6 = cons("Feed", cons("1234", i6))
-    s6 = writeATOMFeed(feedValuesToElements(a6))
-    assert car(s6) == itemFeed
-
     return True
 
 if __name__ == "__main__":

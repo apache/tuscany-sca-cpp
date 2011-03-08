@@ -132,10 +132,13 @@ const bool testEvalPerf() {
 
 bool testPost() {
     gc_scoped_pool pool;
-    const list<value> i = list<value>()
+    const list<value> i = list<value>() + "content" + (list<value>() + "item"
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99"));
-    const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+            + (list<value>() + "price" + string("$2.99")));
+    const list<value> a = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
     http::CURLSession ch("", "", "");
     const failable<value> id = http::post(a, testURI, ch);
     assert(hasContent(id));
@@ -173,20 +176,26 @@ const bool testPostPerf() {
     gc_scoped_pool pool;
     http::CURLSession ch("", "", "");
     {
-        const list<value> i = list<value>()
+        const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99"));
-        const list<value> val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+            + (list<value>() + "price" + string("$2.99")));
+        const list<value> val = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
         const lambda<bool()> pl = postLoop(testURI, val, ch);
         cout << "ATOMPub POST small test " << time(pl, 5, 200) << " ms" << endl;
     }
     if (testBlobs) {
-        const list<value> i = list<value>()
+        const list<value> i = list<value>() + "content" + (list<value>() + "item"
             + (list<value>() + "name" + string("Apple"))
             + (list<value>() + "blob1" + blob)
             + (list<value>() + "blob2" + blob)
-            + (list<value>() + "price" + string("$2.99"));
-        const list<value> val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+            + (list<value>() + "price" + string("$2.99")));
+        const list<value> val = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
         const lambda<bool()> pl = postBlobLoop(testURI, val, ch);
         cout << "ATOMPub POST blob test  " << time(pl, 5, 200) << " ms" << endl;
     }
@@ -234,10 +243,13 @@ const bool testPostThreadPerf() {
     const int count = 50;
     const int threads = 10;
 
-    const list<value> i = list<value>()
-        + (list<value>() + "name" + string("Apple"))
-        + (list<value>() + "price" + string("$2.99"));
-    const value val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+    const list<value> i = list<value>() + "content" + (list<value>() + "item"
+            + (list<value>() + "name" + string("Apple"))
+            + (list<value>() + "price" + string("$2.99")));
+    const value val = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
 
     const lambda<bool()> pl= curry(lambda<bool(const string, const int, const value)>(postThread), testURI, count, val);
     const lambda<bool()> ptl = postThreadLoop(pl, threads);
@@ -294,10 +306,13 @@ const bool testPostForkPerf() {
     const int count = 50;
     const int procs = 10;
 
-    const list<value> i = list<value>()
-        + (list<value>() + "name" + string("Apple"))
-        + (list<value>() + "price" + string("$2.99"));
-    const value val = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+    const list<value> i = list<value>() + "content" + (list<value>() + "item"
+            + (list<value>() + "name" + string("Apple"))
+            + (list<value>() + "price" + string("$2.99")));
+    const list<value> val = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
 
     const lambda<bool()> pl= curry(lambda<bool(const string, const int, const value)>(postProc), testURI, count, val);
     const lambda<bool()> ptl = postForkLoop(pl, procs);
@@ -311,10 +326,13 @@ const bool testPostForkPerf() {
 
 const bool testPut() {
     gc_scoped_pool pool;
-    const list<value> i = list<value>()
+    const list<value> i = list<value>() + "content" + (list<value>() + "item"
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99"));
-    const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+            + (list<value>() + "price" + string("$2.99")));
+    const list<value> a = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
     http::CURLSession ch("", "", "");
     value rc = content(http::put(a, testURI + "/111", ch));
     assert(rc == value(true));

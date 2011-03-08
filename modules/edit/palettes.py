@@ -27,6 +27,6 @@ def paletteid(id):
 # Get a palette from the palettes db
 def get(id, cache):
     if isNil(id):
-        return ("Palettes", "palettes")
-    return (car(id), car(id), cache.get(paletteid(id)))
+        return (("'feed", ("'title", "Palettes"), ("'id", "palettes")),)
+    return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(cache.get(paletteid(id))))),)
 

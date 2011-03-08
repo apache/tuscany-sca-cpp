@@ -39,14 +39,14 @@ def mkapplink(id):
 # Post a new app to the apps db
 def post(collection, app, cache):
     id = appid((str(uuid.uuid1()),))
-    comp = caddr(app)
+    comp = cdr(cadddr(car(app)))
     cache.put((id,), comp)
     mkapplink((id,))
     return id
 
 # Put an app into the apps db
 def put(id, app, cache):
-    comp = caddr(app)
+    comp = cdr(cadddr(car(app)))
     cache.put(appid(id), comp)
     mkapplink(id)
     return True
@@ -54,8 +54,11 @@ def put(id, app, cache):
 # Get an app from the apps db
 def get(id, cache):
     if isNil(id):
-        return ("Apps", "apps")
-    return (car(id), car(id), cache.get(appid(id)))
+        return (("'feed", ("'title", "Apps"), ("'id", "apps")),)
+    app = cache.get(appid(id));
+    if (isNil(app) or app is None):
+        return (("'entry", ("'title", car(id)), ("'id", car(id))),)
+    return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(app))),)
 
 # Delete an app from the apps db
 def delete(id, cache):

@@ -23,12 +23,12 @@
 
 (define (get id)
   (if (nul id)
-    '("Sample Feed" "123456789"
-      ("Item" "111" ((name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99)))
-      ("Item" "222" ((name "Orange") (currencyCode "USD") (currencySymbol "$") (price 3.55)))
-      ("Item" "333" ((name "Pear") (currencyCode "USD") (currencySymbol "$") (price 1.55))))
+    '((feed (title "Sample Feed") (id "123456789") (entry
+       (((title "Item") (id "111") (content (item (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))
+        ((title "Item") (id "222") (content (item (name "Orange") (currencyCode "USD") (currencySymbol "$") (price 3.55))))
+        ((title "Item") (id "333") (content (item (name "Pear") (currencyCode "USD") (currencySymbol "$") (price 1.55))))))))
     
-    (list "Item" (car id) '((name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))
+    (list (list 'entry '(title "Item") (list 'id (car id)) '(content (item (name "Apple") (currencyCode "USD") (currencySymbol "$") (price 2.99))))))
 )
 
 (define (post collection item)

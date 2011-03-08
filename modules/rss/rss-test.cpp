@@ -88,19 +88,27 @@ bool testEntry() {
         const list<value> i = list<value>() + element + value("item")
                 + value(list<value>() + element + value("name") + value(string("Apple")))
                 + value(list<value>() + element + value("price") + value(string("$2.99")));
-        const list<value> a = mklist<value>(string("fruit"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+        const list<value> a = list<value>() + (list<value>() + element + value("entry")
+                + value(list<value>() + element + value("title") + value(string("fruit")))
+                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(list<value>() + element + value("content") + value(i)));
         ostringstream os;
         writeRSSEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemEntry);
     }
     {
-        const list<value> a = mklist<value>(string("fruit"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), "Apple");
+        const list<value> a = list<value>() + (list<value>() + element + value("entry")
+                + value(list<value>() + element + value("title") + value(string("fruit")))
+                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(list<value>() + element + value("content") + value(string("Apple"))));
         ostringstream os;
         writeRSSEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemTextEntry);
     }
     {
-        const list<value> a = mklist<value>(string("fruit"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), list<value>());
+        const list<value> a = list<value>() + (list<value>() + element + value("entry")
+                + value(list<value>() + element + value("title") + value(string("fruit")))
+                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))));
         ostringstream os;
         writeRSSEntry<ostream*>(writer, &os, a);
         assert(str(os) == itemNoDescriptionEntry);
@@ -172,8 +180,11 @@ const string itemFeed("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 
 bool testFeed() {
     {
+        const list<value> a = list<value>() + (list<value>() + element + value("feed")
+                + value(list<value>() + element + value("title") + value(string("Feed")))
+                + value(list<value>() + element + value("id") + value(string("1234"))));
         ostringstream os;
-        writeRSSFeed<ostream*>(writer, &os, mklist<value>("Feed", "1234"));
+        writeRSSFeed<ostream*>(writer, &os, a);
         assert(str(os) == emptyFeed);
     }
     {
@@ -183,31 +194,29 @@ bool testFeed() {
         assert(str(os) == emptyFeed);
     }
     {
-        const list<value> i = list<value>()
-                + (list<value>() + "fruit" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                    + (list<value>() + element + "item"
+        const list<value> i1 = list<value>() + element + "item"
                         + (list<value>() + element + "name" + "Apple")
-                        + (list<value>() + element + "price" + "$2.99")))
-                + (list<value>() + "fruit" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                    + (list<value>() + element + "item"
+                        + (list<value>() + element + "price" + "$2.99");
+
+        const list<value> i2 = list<value>() + element + "item"
                         + (list<value>() + element + "name" + "Orange")
-                        + (list<value>() + element + "price" + "$3.55")));
-        const list<value> a = cons<value>("Feed", cons<value>("1234", i));
-        ostringstream os;
-        writeRSSFeed<ostream*>(writer, &os, a);
-        assert(str(os) == itemFeed);
-    }
-    {
+                        + (list<value>() + element + "price" + "$3.55");
+
         const list<value> i = list<value>()
-                + (list<value>() + "fruit" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                    + valueToElement(list<value>() + "item"
-                        + (list<value>() + "name" + "Apple")
-                        + (list<value>() + "price" + "$2.99")))
-                + (list<value>() + "fruit" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                    + valueToElement(list<value>() + "item"
-                        + (list<value>() + "name" + "Orange")
-                        + (list<value>() + "price" + "$3.55")));
-        const list<value> a = cons<value>("Feed", cons<value>("1234", i));
+            + value(list<value>() + element + value("entry")
+                + value(list<value>() + element + value("title") + value(string("fruit")))
+                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b")))
+                + value(list<value>() + element + value("content") + value(i1)))
+            + value(list<value>() + element + value("entry")
+                + value(list<value>() + element + value("title") + value(string("fruit")))
+                + value(list<value>() + element + value("id") + value(string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c")))
+                + value(list<value>() + element + value("content") + value(i2)));
+        
+        const list<value> a = list<value>() + (append<value>(list<value>() + element + value("feed")
+                + value(list<value>() + element + value("title") + value(string("Feed")))
+                + value(list<value>() + element + value("id") + value("1234")),
+                i));
+
         ostringstream os;
         writeRSSFeed<ostream*>(writer, &os, a);
         assert(str(os) == itemFeed);
@@ -216,6 +225,12 @@ bool testFeed() {
         const list<value> a = content(readRSSFeed(mklist(itemFeed)));
         ostringstream os;
         writeRSSFeed<ostream*>(writer, &os, a);
+        assert(str(os) == itemFeed);
+    }
+    {
+        const list<value> a = elementsToValues(content(readRSSFeed(mklist(itemFeed))));
+        ostringstream os;
+        writeRSSFeed<ostream*>(writer, &os, valuesToElements(a));
         assert(str(os) == itemFeed);
     }
     return true;

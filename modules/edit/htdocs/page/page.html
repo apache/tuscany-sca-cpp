@@ -42,7 +42,6 @@
 </th>
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
-<span id="source" style="font-weight: normal;">[atom json]</span>
 <input type="button" id="saveButton" style="font-weight: bold;" Value="Saved"/>
 </th>
 </tr>
@@ -80,15 +79,18 @@ var pages = sca.reference(editWidget, "pages");
  * The current app name.
  */
 var appname = ui.queryParams()['app'];
-$('source').innerHTML = '[<a href="/pages/' + appname + '">atom</a> <a href="/appcache/' + appname + '/app.html">json</a>]';
 
 /**
  * Return the page in an ATOM entry.
  */
 function atompage(doc) {
-    var entry = atom.readATOMEntryDocument(doc);
-    var item = caddr(entry);
-    return cddr(item);
+    var entry = atom.readATOMEntry(mklist(doc));
+    if (isNil(entry))
+        return mklist();
+    var content = namedElementChild("'content", car(entry));
+    if (content == null)
+        return mklist();
+    return elementChildren(content);
 }
 
 /**
@@ -180,8 +182,8 @@ function save() {
 
     // Update the page ATOM entry
     var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
-        '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml"><item>' +
-        savedpagexhtml + '</item></content></entry>';
+        '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
+        savedpagexhtml + '</content></entry>';
 
     pages.put(appname, entry, function(e) {
         if (savedpagexhtml == pagexhtml())

@@ -45,10 +45,13 @@ const value pass2("sca2");
 const value jid3("sca3@localhost");
 const value pass3("sca3");
 
-const list<value> item = list<value>()
-        + (list<value>() + "name" + string("Apple"))
-        + (list<value>() + "price" + string("$2.99"));
-const list<value> entry = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), item);
+const list<value> item = list<value>() + "content" + (list<value>() + "item" 
+    + (list<value>() + "name" + string("Apple"))
+    + (list<value>() + "price" + string("$2.99")));
+const list<value> entry = list<value>() + (list<value>() + "entry" 
+    + (list<value>() + "title" + string("item"))
+    + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+    + item);
 
 worker w(2);
 bool received;

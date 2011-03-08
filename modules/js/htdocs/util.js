@@ -52,12 +52,12 @@ function cddr(l) {
     return cdr(cdr(l));
 }
 
-function cdddr(l) {
-    return cdr(cdr(cdr(l)));
-}
-
 function caddr(l) {
     return car(cddr(l));
+}
+
+function cdddr(l) {
+    return cdr(cdr(cdr(l)));
 }
 
 function cadddr(l) {
@@ -164,13 +164,22 @@ function tokens(path) {
 var rconsole;
 
 function log(v) {
-    if (rconsole) {
-        try {
-            rconsole.log(v);
-        } catch (e) {}
-    }
     try {
-        console.log(v);
+        var s = '';
+        for (i = 0; i < arguments.length; i++) {
+            s = s + writeValue(arguments[i]);
+            if (i < arguments.length)
+                s = s + ' ';
+        }
+
+        if (rconsole) {
+            try {
+                rconsole.log(s);
+            } catch (e) {}
+        }
+        try {
+            console.log(s);
+        } catch (e) {}
     } catch (e) {}
     return true;
 }

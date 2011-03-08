@@ -179,18 +179,32 @@ def application(e, r):
     if m == "GET":
         v = comp("get", id)
         
+        # Write a simple value as a JSON value
+        if not isList(v):
+            return result(e, r, 200, (("Content-type", "application/json"),), writeJSON(valuesToElements((("'value", v),))))
+
+        # Write an empty list as a JSON empty value
+        if not isList(v):
+            return result(e, r, 200, (("Content-type", "application/json"),), writeJSON(()))
+
         # Write content-type / content-list pair
-        if isString(car(v)) and isList(cadr(v)):
+        if isString(car(v)) and not isNil(cdr(v)) and isList(cadr(v)):
             return result(e, r, 200, (("Content-type", car(v)),), cadr(v))
         
-        # Write an ATOM feed or entry
-        if isString(car(v)) and isString(cadr(v)):
-            if isNil(id):
-                return result(e, r, 200, (("Content-type", "application/atom+xml"),), writeATOMFeed(feedValuesToElements(v)))
-            return result(e, r, 200, (("Content-type", "application/atom+xml"),), writeATOMEntry(entryValuesToElements(v)))
+        # Convert list of values to element values
+        ve = valuesToElements(v)
+
+        # Write an assoc result as a JSON value
+        if isList(car(ve)) and not isNil(car(ve)):
+            el = car(ve)
+            if isSymbol(car(el)) and car(el) == element and not isNil(cdr(el)) and isSymbol(cadr(el)):
+                if cadr(el) == "'feed":
+                    return result(e, r, 200, (("Content-type", "application/atom+xml"),), writeATOMFeed(ve))
+                if cadr(el) == "'entry":
+                    return result(e, r, 200, (("Content-type", "application/atom+xml"),), writeATOMEntry(ve))
 
         # Write a JSON value
-        return result(e, r, 200, (("Content-type", "application/json"),), writeJSON(valuesToElements(v)))
+        return result(e, r, 200, (("Content-type", "application/json"),), writeJSON(ve))
 
     if m == "POST":
         ct = requestContentType(e)
@@ -208,7 +222,7 @@ def application(e, r):
 
         # Handle an ATOM entry POST
         if contains(ct, "application/atom+xml"):
-            ae = entryValue(readATOMEntry(requestBody(e)))
+            ae = elementsToValues(readATOMEntry(requestBody(e)))
             v = comp("post", id, ae)
             if isNil(v):
                 return failure(e, r, 500)
@@ -217,7 +231,7 @@ def application(e, r):
     
     if m == "PUT":
         # Handle an ATOM entry PUT
-        ae = entryValue(readATOMEntry(requestBody(e)))
+        ae = elementsToValues(readATOMEntry(requestBody(e)))
         v = comp("put", id, ae)
         if v == False:
             return failure(e, r, 404)

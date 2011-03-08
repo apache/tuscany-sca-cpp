@@ -22,31 +22,27 @@ from elemutil import *
 from xmlutil import *
 
 # Convert a list of elements to a list of values representing an ATOM entry
-def entryElementsToValues(e):
+def entryElementValues(e):
     lt = filter(selector((element, "'title")), e)
     t = "" if isNil(lt) else elementValue(car(lt))
     li = filter(selector((element, "'id")), e)
     i = "" if isNil(li) else elementValue(car(li))
     lc = filter(selector((element, "'content")), e)
-    return (t, i, elementValue(car(lc)))
+    return append((element, "'entry", (element, "'title", t), (element, "'id", i)),
+            () if isNil(lc) else ((element, "'content", elementValue(car(lc))),))
 
 # Convert a list of elements to a list of values representing ATOM entries
-def entriesElementsToValues(e):
+def entriesElementValues(e):
     if isNil(e):
         return e
-    return cons(entryElementsToValues(car(e)), entriesElementsToValues(cdr(e)))
+    return cons(entryElementValues(car(e)), entriesElementValues(cdr(e)))
 
 # Convert a list of strings to a list of values representing an ATOM entry
 def readATOMEntry(l):
     e = readXML(l)
     if isNil(e):
         return ()
-    return entryElementsToValues(car(e))
-
-# Convert a list of values representing an ATOM entry to a value
-def entryValue(e):
-    v = elementsToValues((caddr(e),))
-    return cons(car(e), (cadr(e), cdr(car(v))))
+    return (entryElementValues(car(e)),)
 
 # Return true if a list of strings represents an ATOM feed
 def isATOMFeed(l):
@@ -68,26 +64,23 @@ def readATOMFeed(l):
     t = filter(selector((element, "'title")), car(f))
     i = filter(selector((element, "'id")), car(f))
     e = filter(selector((element, "'entry")), car(f))
-    if isNil(e):
-        return (elementValue(car(t)), elementValue(car(i)))
-    return cons(elementValue(car(t)), cons(elementValue(car(i)), entriesElementsToValues(e)))
-
-# Convert an ATOM feed containing elements to an ATOM feed containing values
-def feedValuesLoop(e):
-    if (isNil(e)):
-        return e
-    return cons(entryValue(car(e)), feedValuesLoop(cdr(e)))
-
-def feedValues(e):
-    return cons(car(e), cons(cadr(e), feedValuesLoop(cddr(e))))
+    return (append(
+                (element, "'feed", (element, "'title", elementValue(car(t))), (element, "'id", elementValue(car(i)))),
+                entriesElementValues(e)),)
 
 # Convert a list of values representy an ATOM entry to a list of elements
 def entryElement(l):
-    return (element, "'entry", (attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
-            (element, "'title", (attribute, "'type", "text"), car(l)),
-            (element, "'id", cadr(l)),
-            (element, "'content", (attribute, "'type", ("application/xml" if isList(caddr(l)) else "text")), caddr(l)),
-            (element, "'link", (attribute, "'href", cadr(l))))
+    title = elementValue(namedElementChild("'title", l))
+    id = elementValue(namedElementChild("'id", l))
+    content = namedElementChild("'content", l)
+    text = False if isNil(content) else elementHasValue(content)
+    return append(append(
+            (element, "'entry", (attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
+             (element, "'title", (attribute, "'type", "text"), title),
+             (element, "'id", id)),
+            () if isNil(content) else (append(
+                (element, "'content", (attribute, "'type", "text" if text else "application/xml")), (elementValue(content),) if text else elementChildren(content)),)),
+            ((element, "'link", (attribute, "'href", id)),))
 
 # Convert a list of values representing ATOM entries to a list of elements
 def entriesElements(l):
@@ -96,31 +89,32 @@ def entriesElements(l):
     return cons(entryElement(car(l)), entriesElements(cdr(l)))
 
 # Convert a list of values representing an ATOM entry to an ATOM entry
-def writeATOMEntry(l):
+def writeATOMEntry(ll):
+    l = ll if isNil(ll) else car(ll)
     return writeXML((entryElement(l),), True)
 
 # Convert a list of values representing an ATOM feed to an ATOM feed
-def writeATOMFeed(l):
+def writeATOMFeed(ll):
+    l = ll if isNil(ll) else car(ll)
+    lt = filter(selector((element, "'title")), l)
+    t = '' if isNil(lt) else elementValue(car(lt))
+    li = filter(selector((element, "'id")), l)
+    i = '' if isNil(li) else elementValue(car(li))
     f = (element, "'feed", (attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
-            (element, "'title", (attribute, "'type", "text"), car(l)),
-            (element, "'id", cadr(l)))
-    if isNil(cddr(l)):
+            (element, "'title", (attribute, "'type", "text"), t),
+            (element, "'id", i))
+
+    # Write ATOM entries
+    le = filter(selector((element, "'entry")), l)
+    if isNil(le):
         return writeXML((f,), True)
-    fe = append(f, entriesElements(cddr(l)))
+
+    # Write a single ATOM entry element with a list of values
+    if not isNil(le) and not isNil(car(le)) and isList(car(caddr(car(le)))):
+        fe = append(f, entriesElements(caddr(car(le))))
+        return writeXML((fe,), True)
+
+    # Write separate ATOM entry elements
+    fe = append(f, entriesElements(le))
     return writeXML((fe,), True)
-
-# Convert an ATOM entry containing a value to an ATOM entry containing an item element
-def entryValuesToElements(v):
-    if isList(caddr(v)):
-        return cons(car(v), cons(cadr(v), valuesToElements((cons("'item", caddr(v)),))))
-    return cons(car(v), cons(cadr(v), valuesToElements((("'item", caddr(v)),))))
-
-# Convert an ATOM feed containing values to an ATOM feed containing elements
-def feedValuesToElementsLoop(v):
-    if isNil(v):
-        return v
-    return cons(entryValuesToElements(car(v)), feedValuesToElementsLoop(cdr(v)))
-
-def feedValuesToElements(v):
-    return cons(car(v), cons(cadr(v), feedValuesToElementsLoop(cddr(v))))
 

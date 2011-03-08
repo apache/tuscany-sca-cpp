@@ -39,8 +39,7 @@ int jsonValue() {
         cerr << reason(lv);
         return 1;
     }
-    const value v = elementsToValues(content(lv));
-    cout << writeValue(v);
+    cout << writeValue(content(lv));
     return 0;
 }
 

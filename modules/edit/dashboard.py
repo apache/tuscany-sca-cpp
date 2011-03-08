@@ -34,7 +34,8 @@ def getdashboard(id, cache):
 # Post a new app to the user's dashboard
 def post(collection, app, user, cache):
     id = (str(uuid.uuid1()),)
-    dashboard = cons((car(app), car(id), caddr(app)), getdashboard(dashboardid(user), cache))
+    newapp = list("'entry", cadr(car(app)), list("'id", id), cadddr(car(app)))
+    dashboard = cons(newapp, getdashboard(dashboardid(user), cache))
     cache.put(dashboardid(user), dashboard)
     return id
 
@@ -42,9 +43,9 @@ def post(collection, app, user, cache):
 def put(id, app, user, cache):
     def putapp(app, dashboard):
         if isNil(dashboard):
-            return (app,)
-        if cadr(app) == cadr(car(dashboard)):
-            return cons(app, cdr(dashboard))
+            return app
+        if cadr(caddr(car(app))) == cadr(caddr(car(dashboard))):
+            return cons(car(app), cdr(dashboard))
         return cons(car(dashboard), putapp(app, cdr(dashboard)))
 
     dashboard = putapp(app, getdashboard(dashboardid(user), cache))
@@ -56,12 +57,12 @@ def get(id, user, cache):
     def findapp(id, dashboard):
         if isNil(dashboard):
             return None
-        if car(id) == cadr(car(dashboard)):
-            return car(dashboard)
+        if car(id) == cadr(caddr(car(dashboard))):
+            return (car(dashboard),)
         return findapp(id, cdr(dashboard))
 
     if isNil(id):
-        return ("Your Apps", user.id()) + getdashboard(dashboardid(user), cache)
+        return ((("'feed", ("'title", "Your Apps"), ("'id", user.id())) + getdashboard(dashboardid(user), cache)),)
     return findapp(id, getdashboard(dashboardid(user), cache))
 
 # Delete apps from the user's dashboard
@@ -72,7 +73,7 @@ def delete(id, user, cache):
     def deleteapp(id, dashboard):
         if isNil(dashboard):
             return ()
-        if car(id) == cadr(car(dashboard)):
+        if car(id) == cadr(caddr(car(dashboard))):
             return cdr(dashboard)
         return cons(car(dashboard), deleteapp(id, cdr(dashboard)))
 

@@ -28,21 +28,24 @@ def appid(id):
 # Post a new app page to the apps db
 def post(collection, app, cache):
     id = appid((str(uuid.uuid1()),))
-    xhtml = caddr(app);
+    xhtml = cdr(cadddr(car(app)))
     cache.put((id,), xhtml)
     return id
 
 # Put an app page into the apps db
 def put(id, app, cache):
-    xhtml = caddr(app);
+    xhtml = cdr(cadddr(car(app)))
     cache.put(appid(id), xhtml)
     return True
 
 # Get an app page from the apps db
 def get(id, cache):
     if isNil(id):
-        return ("Pages", "pages")
-    return (car(id), car(id), cache.get(appid(id)))
+        return (("'feed", ("'title", "Pages"), ("'id", "pages")),)
+    xhtml = cache.get(appid(id))
+    if (isNil(xhtml) or xhtml is None):
+        return (("'entry", ("'title", car(id)), ("'id", car(id))),)
+    return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(xhtml))),)
 
 # Delete an app page from the apps db
 def delete(id, cache):

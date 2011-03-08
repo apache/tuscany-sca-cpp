@@ -33,7 +33,7 @@ namespace tuscany {
 namespace scheme {
 
 int valueXML() {
-    failable<list<string> > s = writeXML(valuesToElements(readValue(cin)));
+    failable<list<string> > s = writeXML(readValue(cin));
     if (!hasContent(s)) {
         cerr << reason(s);
         return 1;

@@ -43,6 +43,12 @@ def cddr(l):
 def caddr(l):
     return car(cddr(l))
 
+def cdddr(l):
+    return cdr(cdr(cdr(l)))
+
+def cadddr(l):
+    return car(cdddr(l))
+
 def append(a, b):
     return a + b
 

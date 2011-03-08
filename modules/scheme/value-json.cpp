@@ -34,7 +34,7 @@ namespace scheme {
 
 int valueJSON() {
     const js::JSContext cx;
-    failable<list<string> > s = json::writeJSON(valuesToElements(readValue(cin)), cx);
+    failable<list<string> > s = json::writeJSON(readValue(cin), cx);
     if (!hasContent(s)) {
         cerr << reason(s);
         return 1;

@@ -43,10 +43,13 @@ const string memocacheuri("http://localhost:8090/memocache");
 bool testCache(const string& uri) {
     http::CURLSession cs("", "", "");
 
-    const list<value> i = list<value>()
+    const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$2.99"));
-    const list<value> a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+            + (list<value>() + "price" + string("$2.99")));
+    const list<value> a = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
 
     const failable<value> id = http::post(a, uri, cs);
     assert(hasContent(id));
@@ -58,10 +61,13 @@ bool testCache(const string& uri) {
         assert(content(val) == a);
     }
 
-    const list<value> j = list<value>()
+    const list<value> j = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$3.55"));
-    const list<value> b = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), j);
+            + (list<value>() + "price" + string("$3.55")));
+    const list<value> b = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + j);
 
     {
         const failable<value> r = http::put(b, uri + p, cs);
@@ -123,10 +129,13 @@ struct getLoop {
 };
 
 bool testGetPerf() {
-    const list<value> i = list<value>()
+    const list<value> i = list<value>() + "content" + (list<value>() + "item" 
             + (list<value>() + "name" + string("Apple"))
-            + (list<value>() + "price" + string("$4.55"));
-    const value a = mklist<value>(string("item"), string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"), i);
+            + (list<value>() + "price" + string("$4.55")));
+    const list<value> a = list<value>() + (list<value>() + "entry" 
+            + (list<value>() + "title" + string("item"))
+            + (list<value>() + "id" + string("cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"))
+            + i);
 
     http::CURLSession cs("", "", "");
     const failable<value> id = http::post(a, memcacheuri, cs);

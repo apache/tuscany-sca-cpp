@@ -29,12 +29,16 @@ public class ServerImpl {
 
     public Iterable<?> get(final Iterable<String> id) {
         if (isNil(id))
-            return list("Sample Feed", "123456789",
-                    list("Item", "111", list(list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99))),
-                    list("Item", "222", list(list("'name", "Orange"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 3.55))),
-                    list("Item", "333", list(list("'name", "Pear"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 1.55))));
-        final Iterable<?> entry = list(list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99));
-        return list("Item", car(id), entry);
+            return list(list("'feed", list("'title", "Sample Feed"), list("'id", "123456789"), list("'entry", list(
+                    list(list("'title", "Item"), list("'id", "111"),
+                        list("'content", list("'item", list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99)))),
+                    list(list("'title", "Item"), list("'id", "222"),
+                        list("'content", list("'item", list("'name", "Orange"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 3.55)))),
+                    list(list("'title", "Item"), list("'id", "333"),
+                        list("'content", list("'item", list("'name", "Pear"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 1.55))))))));
+
+        final Iterable<?> content = list("'content", list("'item", list("'name", "Apple"), list("'currencyCode", "USD"), list("'currencySymbol", "$"), list("'price", 2.99)));
+        return list(list("'entry", list("'title", "Item"), list("'id", car(id)), content));
     }
 
     public Iterable<String> post(final Iterable<String> collection, final Iterable<?> item) {

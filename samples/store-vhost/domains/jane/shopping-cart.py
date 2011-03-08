@@ -32,7 +32,7 @@ def getcart(id, cache):
 # Post a new item to the cart, create a new cart if necessary
 def post(collection, item, cache):
     id = str(uuid.uuid1())
-    cart = ((item[0], id, item[2]),) + getcart(cartId, cache)
+    cart = (("'entry", item[0][1], ("'id", id), item[0][3]),) + getcart(cartId, cache)
     cache.put((cartId,), cart)
     return (id,)
 
@@ -40,16 +40,16 @@ def post(collection, item, cache):
 # Find an item in the cart
 def find(id, cart):
     if cart == ():
-        return ("Item", "0", ())
-    elif id == cart[0][1]:
-        return cart[0]
+        return (("'entry", ("'title", "Item"), ("'id", 0)),)
+    elif id == cart[0][2][1]:
+        return (cart[0],)
     else:
         return find(id, cart[1:])
 
 # Get items from the cart
 def get(id, cache):
     if id == ():
-        return ("Your Cart", cartId) + getcart(cartId, cache)
+        return ((("'feed", ("'title", "Your Cart"), ("'id", cartId)) + getcart(cartId, cache)),)
     return find(id[0], getcart(cartId, cache))
 
 # Delete items from the  cart
@@ -60,7 +60,7 @@ def delete(id, cache):
 
 # Return the price of an item
 def price(item):
-    return float(filter(lambda x: x[0] == "'price", item[2])[0][1])
+    return float(filter(lambda x: x[0] == "'price", item[3][1][1:])[0][1])
 
 # Sum the prices of a list of items
 def sum(items):

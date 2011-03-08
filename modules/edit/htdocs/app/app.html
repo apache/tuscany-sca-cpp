@@ -36,7 +36,6 @@
 <th class="thl thr">Settings</th>
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
-<span id="source" style="font-weight: normal;">[atom]</span>
 <input type="button" id="saveButton" style="font-weight: bold;" Value="Saved"/>
 </th>
 </tr>
@@ -71,7 +70,6 @@ var dashboard = sca.reference(editWidget, "dashboard");
  * The current app name.
  */
 var appname = ui.queryParams()['app'];
-$('source').innerHTML = '[<a href="/apps/' + appname + '">atom</a>]';
 
 /**
  * The current app entry and corresponding saved XML content.
@@ -92,12 +90,13 @@ var defdesc = 'Enter a short description of your app here';
  */
 function getapp(name) {
     dashboard.get(name, function(doc) {
-        appentry = doc != null? atom.readATOMEntryDocument(doc) : mklist('', name);
-        $('appTitle').value = car(appentry) != ''? car(appentry) : deftitle;
+        appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
+        var title = cadr(assoc("'title", cdr(appentry)));
+        $('appTitle').value = title != ''? title : deftitle;
         $('appCategory').value = defcategory;
         $('appUpdated').innerHTML = defdate;
         $('appDescription').innerHTML = defdesc;
-        savedappentryxml = car(atom.writeATOMEntry(appentry));
+        savedappentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
     });
 }
 
@@ -114,10 +113,10 @@ $('saveButton').onclick = function() {
 function save() {
     $('saveButton').value = 'Saving';
     var title = $('appTitle').value;
-    appentry = mklist(title != deftitle && title != ''? title : appname, appname, mklist());
-    savedappentryxml = car(atom.writeATOMEntry(appentry));
+    var appentry = mklist("'entry", mklist("'title", title != deftitle && title != ''? title : appname), mklist("'id", appname));
+    savedappentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
     dashboard.put(appname, savedappentryxml, function() {
-        if (savedappentryxml == car(atom.writeATOMEntry(appentry)))
+        if (savedappentryxml == car(atom.writeATOMEntry(valuesToElements(mklist(appentry)))))
             $('saveButton').value = 'Saved';
         return true;
     });
@@ -129,14 +128,14 @@ function save() {
  */
 function onappchange() {
     var title = $('appTitle').value;
-    appentry = mklist(title != deftitle && title != ''? title : appname, appname, mklist());
-    if (savedappentryxml == car(atom.writeATOMEntry(appentry)))
+    var appentry = mklist("'entry", mklist("'title", title != deftitle && title != ''? title : appname), mklist("'id", appname));
+    if (savedappentryxml == car(atom.writeATOMEntry(valuesToElements(mklist(appentry)))))
         return false;
     $('saveButton').value = 'Save now';
 
     // Autosave after 3 seconds
     setTimeout(function() {
-        if (savedappentryxml == car(atom.writeATOMEntry(appentry)))
+        if (savedappentryxml == car(atom.writeATOMEntry(valuesToElements(mklist(appentry)))))
             return false;
         return save();
     }, 3000);
