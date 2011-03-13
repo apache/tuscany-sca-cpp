@@ -72,6 +72,13 @@ function reverse(l) {
     return l.slice(0).reverse();
 }
 
+function range(a, b) {
+    var l = new Array();
+    for (var x = a; x < b; x++)
+        l.push(x);
+    return l;
+}
+
 function isNil(v) {
     if (v == null || typeof v == 'undefined' || (v.constructor == Array && v.length == 0))
         return true;
@@ -85,7 +92,7 @@ function isSymbol(v) {
 }
 
 function isString(v) {
-    if (typeof v == 'string')
+    if (typeof v == 'string' && v.slice(0, 1) != "'")
         return true;
     return false;
 }
@@ -199,6 +206,21 @@ function debug(o) {
 }
 
 /**
+ * Simple assert function.
+ */
+function AssertException() {
+}
+
+AssertException.prototype.toString = function () {
+    return 'AssertException';
+};
+
+function assert(exp) {
+    if (!exp)
+        throw new AssertException();
+}
+
+/**
  * Write a list of strings.
  */
 function writeStrings(l) {
@@ -249,6 +271,16 @@ function memo(obj, key, f) {
 function unmemo(obj) {
     obj.memo = {};
     return true;
+}
+
+/**
+ * Returns a list of the properties of an object.
+ */
+function properties(o) {
+    var a = new Array();
+    for (p in o)
+        a.push(p);
+    return a;
 }
 
 /**

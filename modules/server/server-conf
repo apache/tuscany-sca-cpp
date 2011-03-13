@@ -61,6 +61,7 @@ Alias /util.js $jsprefix/htdocs/util.js
 Alias /elemutil.js $jsprefix/htdocs/elemutil.js
 Alias /xmlutil.js $jsprefix/htdocs/xmlutil.js
 Alias /atomutil.js $jsprefix/htdocs/atomutil.js
+Alias /jsonutil.js $jsprefix/htdocs/jsonutil.js
 Alias /ui.js $jsprefix/htdocs/ui.js
 Alias /ui.css $jsprefix/htdocs/ui.css
 Alias /scdl.js $jsprefix/htdocs/scdl.js
@@ -82,6 +83,10 @@ AuthType None
 Require all granted
 </Location>
 <Location /atomutil.js>
+AuthType None
+Require all granted
+</Location>
+<Location /jsonutil.js>
 AuthType None
 Require all granted
 </Location>

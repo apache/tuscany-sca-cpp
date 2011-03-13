@@ -31,11 +31,11 @@
  * Client component wiring API, supporting JSON and ATOM bindings.
  */
 
+var JSONClient = {};
+
 /**
  * Escape a character.
  */
-var JSONClient = {};
-
 JSONClient.escapeJSONChar = function(c) {
     if(c == "\"" || c == "\\") return "\\" + c;
     if (c == "\b") return "\\b";

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 #  Licensed to the Apache Software Foundation (ASF) under one
 #  or more contributor license agreements.  See the NOTICE file
 #  distributed with this work for additional information
@@ -15,19 +17,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-incl_HEADERS = *.hpp
-incldir = $(prefix)/include/modules/js
+# Run Javascript util test cases
+here=`readlink -f $0`; here=`dirname $here`
 
-moddir = $(prefix)/modules/js
-nobase_dist_mod_DATA = htdocs/*.js htdocs/*.css
-EXTRA_DIST = htdocs/*.js htdocs/*.css
+echo "Testing..."
+cat htdocs/util.js htdocs/elemutil.js htdocs/jsonutil.js json-test.js | ./js-eval 2>/dev/null 1>&2
+rc=$?
+if [ "$rc" = "0" ]; then
+    echo "OK"
+fi
 
-js_test_SOURCES = js-test.cpp
-js_test_LDFLAGS = -lmozjs 
-
-js_eval_SOURCES = js-eval.cpp
-js_eval_LDFLAGS = -lmozjs 
-
-noinst_PROGRAMS = js-test js-eval
-dist_noinst_SCRIPTS = util-test
-TESTS = js-test util-test
+return $rc
