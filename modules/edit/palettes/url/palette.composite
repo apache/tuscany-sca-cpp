@@ -26,8 +26,8 @@
     <service name="path" promote="path"/>
     <service name="params" promote="params"/>
     <service name="user" promote="user"/>
-    <service name="realm" promote="realm"/>
     <service name="email" promote="email"/>
+    <service name="get" promote="get"/>
 
     <component name="host" t:title="host" t:color="green1">
         <t:implementation.python script="nuvem/host.py"/>
@@ -53,16 +53,16 @@
         <property name="user"></property>
     </component>
     
-    <component name="realm" t:title="realm" t:color="green1">
-        <t:implementation.python script="nuvem/realm.py"/>
-        <service name="realm"/>
-        <property name="realm"></property>
-    </component>
-    
     <component name="email" t:title="email" t:color="green1">
         <t:implementation.python script="nuvem/email.py"/>
         <service name="email"/>
         <property name="email"></property>
+    </component>
+    
+    <component name="get" t:title="http get" t:color="green1">
+        <implementation.cpp path="lib/http" library="libhttpget"/>
+        <service name="get"/>
+        <reference name="url"/>
     </component>
     
 </composite>

@@ -907,6 +907,7 @@ AC_CONFIG_FILES([Makefile
                  components/chat/Makefile
                  components/nosqldb/Makefile
                  components/filedb/Makefile
+                 components/http/Makefile
                  components/queue/Makefile
                  components/sqldb/Makefile
                  components/webservice/Makefile

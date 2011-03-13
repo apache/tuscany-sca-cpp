@@ -24,6 +24,12 @@ for n in `ls apps | awk '{ printf "apps/%s/nuvem\n", $1 }'`; do
     fi
 done
 
+for n in `ls apps | awk '{ printf "apps/%s/lib\n", $1 }'`; do
+    if [ ! -e "$n" ]; then
+        ln -s ../../../../components "$n"
+    fi
+done
+
 for n in `ls apps | awk '{ printf "apps/%s/htdocs\n", $1 }'`; do
     if [ ! -e "$n" ]; then
         mkdir "$n"

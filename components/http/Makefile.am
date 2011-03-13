@@ -15,28 +15,22 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-incl_HEADERS = *.hpp
-incldir = $(prefix)/include/components/filedb
+compdir=$(prefix)/components/http
 
-compdir=$(prefix)/components/filedb
+EXTRA_DIST = http.composite httpget.componentType *.scm
 
-EXTRA_DIST = filedb.composite filedb.componentType
+comp_LTLIBRARIES = libhttpget.la
+noinst_DATA = libhttpget.so
 
-comp_LTLIBRARIES = libfiledb.la
-noinst_DATA = libfiledb.so
-
-libfiledb_la_SOURCES = filedb.cpp
-libfiledb_la_LDFLAGS = -lxml2 -lmozjs
-libfiledb.so:
-	ln -s .libs/libfiledb.so
-
-file_test_SOURCES = file-test.cpp
-file_test_LDFLAGS = -lxml2 -lmozjs
+libhttpget_la_SOURCES = httpget.cpp
+libhttpget_la_LDFLAGS = -lxml2 -lmozjs -curl
+libhttpget.so:
+	ln -s .libs/libhttpget.so
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
 
-dist_noinst_SCRIPTS = filedb-test server-test
-noinst_PROGRAMS = file-test client-test
-TESTS = filedb-test server-test
+dist_noinst_SCRIPTS = server-test
+noinst_PROGRAMS = client-test
+TESTS = server-test
 

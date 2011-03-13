@@ -12,13 +12,15 @@ implemented using OpenID and OAuth.
 Several useful SCA components are provided on top of the SCA runtime, which
 can be used to help assemble distributed SCA composite applications:
 
-Cache: Key/value memory cache, using Memcached;
+Cache: key/value memory cache, using Memcached;
 Chat: XMPP chat, using Apache Vysper and Libstrophe;
-Log: distributed logger, using Facebook Scribe.
-Nosqldb: Key/value 'NoSQL' persistent store, using TinyCDB;
+Filedb: key/value 'NoSQL' persistent store, using plain files;
+Http: HTTP client, using Libcurl;
+Log: distributed logger, using Facebook Scribe;
+Nosqldb: key/value 'NoSQL' persistent store, using TinyCDB;
 Queue: AMQP queuing, using Apache Qpid/C;
 Sqldb: SQL database, using PostgreSQL;
-Webservice: Web service gateway, using Apache Axis2/C;
+Webservice: Web service gateway, using Apache Axis2/C.
 
 These components present a simple ATOMPub REST interface, allowing you to send
 a message to a queue, a chat connection, or add an entry to a cache or a
@@ -55,13 +57,15 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |-- kernel               SCA runtime kernel
  |   |
  |   |-- modules              Modules that plug into the runtime
- |   |   |-- atom             AtomPub encoding
+ |   |   |-- atom             AtomPub data encoding
+ |   |   |-- edit             Composite app editor
  |   |   |-- http             HTTP protocol
  |   |   |-- java             Support for Java components
- |   |   |-- json             JSON-RPC encoding
+ |   |   |-- json             JSON data encoding
  |   |   |-- oauth            User signin using OAuth
  |   |   |-- openid           User signin using OpenID
  |   |   |-- python           Support for Python components
+ |   |   |-- rss              RSS data encoding
  |   |   |-- scheme           Support for Scheme components
  |   |   |-- server           Apache HTTPD server integration
  |   |   |-- wsgi             Python WSGI server integration
@@ -69,6 +73,8 @@ Here's a rough guide to the Tuscany SCA source tree:
  |   |-- components           Useful SCA components
  |   |   |-- cache            Memcached key/value cache
  |   |   |-- chat             XMPP chat
+ |   |   |-- filedb           Plain file NoSQL database
+ |   |   |-- http             HTTP client
  |   |   |-- log              Scribe logger
  |   |   |-- nosqldb          TinyCDB NoSQL database
  |   |   |-- queue            AMQP message queue

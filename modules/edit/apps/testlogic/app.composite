@@ -26,15 +26,10 @@
   <reference target="text" name="then"/>
   <reference target="text2" name="else"/>
  </component>
- <component t:x="123" t:y="21" name="item" t:title="item" t:color="yellow1">
-  <t:implementation.python script="nuvem/item.py"/>
-  <service name="item"/>
-  <property>item</property>
- </component>
  <component t:x="75" t:y="24" name="greater" t:title="gt" t:color="magenta1">
   <t:implementation.python script="nuvem/greater.py"/>
   <service name="greater"/>
-  <reference target="item" name="value1"/>
+  <reference target="number2" name="value1"/>
   <reference target="number" name="value2"/>
  </component>
  <component t:x="118" t:y="66" name="number" t:title="number" t:color="orange1">
@@ -51,5 +46,10 @@
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>not greater than 5</property>
+ </component>
+ <component t:x="88" t:y="25" name="number2" t:title="number" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>3</property>
  </component>
 </composite>

@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-SUBDIRS = cache chat log nosqldb filedb queue sqldb webservice
+SUBDIRS = cache chat http log nosqldb filedb queue sqldb webservice
 
