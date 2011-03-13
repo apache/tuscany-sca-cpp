@@ -292,12 +292,20 @@ int translate(request_rec *r) {
 }
 
 /**
- * Make an HTTP proxy lambda.
+ * Make an HTTP proxy lambda to a component reference.
  */
 const value mkhttpProxy(const ServerConf& sc, const string& ref, const string& base) {
     const string uri = base + ref;
     debug(uri, "modeval::mkhttpProxy::uri");
     return lambda<value(const list<value>&)>(http::proxy(uri, sc.ca, sc.cert, sc.key, sc.p));
+}
+
+/**
+ * Make an HTTP proxy lambda to an absolute URI
+ */
+const value mkhttpProxy(const ServerConf& sc, const string& uri) {
+    debug(uri, "modeval::mkhttpProxy::uri");
+    return lambda<value(const list<value>&)>(http::proxy(uri, "", "", "", sc.p));
 }
 
 /**
@@ -345,8 +353,10 @@ const value mkrefProxy(const ServerConf& sc, const value& ref, const string& bas
     debug(target, "modeval::mkrefProxy::target");
 
     // Use an HTTP proxy or an internal proxy to the component implementation
-    if (isNil(target) || httpd::isAbsolute(target))
+    if (isNil(target))
         return mkhttpProxy(sc, scdl::name(ref), base);
+    if (httpd::isAbsolute(target))
+        return mkhttpProxy(sc, target);
     return mkimplProxy(sc, car(pathValues(target)));
 }
 
@@ -507,7 +517,7 @@ const value evalComponent(ServerConf& sc, const value& comp) {
     base << sc.wiringServerName << "/references/" << string(scdl::name(comp)) << "/";
     const list<value> rpx(refProxies(sc, scdl::references(comp), str(base)));
 
-    // Convert component proxies to configured proxy lambdas
+    // Convert component properties to configured proxy lambdas
     const list<value> ppx(propProxies(scdl::properties(comp)));
 
     // Evaluate the component implementation and convert it to an applicable lambda function

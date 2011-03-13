@@ -29,6 +29,7 @@ def appid(id):
 def mkapplink(id):
     try:
         os.symlink('../../../../../nuvem/nuvem-parallel/nuvem', 'apps/' + car(id) + '/nuvem')
+        os.symlink('../../../../components', 'apps/' + car(id) + '/lib')
         os.mkdir('apps/' + car(id) + '/htdocs')
         os.symlink('../../../htdocs/login', 'apps/' + car(id) + '/htdocs/login');
         os.symlink('../../../htdocs/logout', 'apps/' + car(id) + '/htdocs/logout');
