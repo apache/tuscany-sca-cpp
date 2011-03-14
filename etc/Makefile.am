@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-EXTRA_DIST = git-exclude svn-config svn-ignore
+EXTRA_DIST = svn-config svn-ignore
 
 dist_noinst_SCRIPTS = httpd-ipcrm memgrind
 

@@ -15,8 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+if WANT_PYTHON
 
 moddir = $(prefix)/modules/edit
-nobase_dist_mod_DATA = htdocs/*.html htdocs/dash/*.html htdocs/app/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html palettes/*/palette.composite apps/*/app.composite apps/*/app.html
-EXTRA_DIST = htdocs/*.html htdocs/dash/*.html htdocs/app/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html palettes/*/palette.composite apps/*/app.composite apps/*/app.html
+dist_mod_SCRIPTS = start stop ssl-start mkapplinks
 
+nobase_dist_mod_DATA = edit.composite *.py htdocs/*.html htdocs/dash/*.html htdocs/app/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html palettes/*/palette.composite apps/*/app.composite apps/*/app.html dashboards/*
+EXTRA_DIST = edit.composite *.py htdocs/*.html htdocs/dash/*.html htdocs/app/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html palettes/*/palette.composite apps/*/app.composite apps/*/app.html dashboards/*
+
+endif

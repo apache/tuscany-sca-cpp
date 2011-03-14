@@ -40,7 +40,7 @@ prefixdir=$(prefix)/modules/wsgi
 gae.prefix: $(top_builddir)/config.status
 	echo ${GAE_PREFIX} >gae.prefix
 
-EXTRA_DIST = domain-test.composite *.py htdocs/*.xml htdocs/*.txt htdocs/*.html
+EXTRA_DIST = domain-test.composite *.py htdocs/test/*.xml htdocs/test/*.txt htdocs/*.html
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs
