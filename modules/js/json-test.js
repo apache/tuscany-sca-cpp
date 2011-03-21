@@ -35,7 +35,7 @@ function testJSON() {
 
     var r = json.readJSON(s2);
     var w = json.writeJSON(r);
-    assert(car(w) == "{\"@firstName\": \"test1\", \"lastName\": \"test\\ttab\", \"phones\": [\"408-1234\", \"650-1234\"]}");
+    assert(car(w) == "{\"phones\": [\"408-1234\", \"650-1234\"], \"lastName\": \"test\\ttab\", \"@firstName\": \"test1\"}");
 
     var l4 = mklist(mklist("'ns1:echoString", mklist("'@xmlns:ns1", "http://ws.apache.org/axis2/services/echo"), mklist("'text", "Hello World!")));
     var s4 = json.writeJSON(valuesToElements(l4));
@@ -43,7 +43,7 @@ function testJSON() {
 
     var r5 = elementsToValues(json.readJSON(s4));
     var s5 = json.writeJSON(valuesToElements(r5));
-    assert(car(s5) == "{\"ns1:echoString\": {\"text\": \"Hello World!\", \"@xmlns:ns1\": \"http://ws.apache.org/axis2/services/echo\"}}");
+    assert(car(s5) == "{\"ns1:echoString\": {\"@xmlns:ns1\": \"http://ws.apache.org/axis2/services/echo\", \"text\": \"Hello World!\"}}");
     return true;
 }
 

@@ -44,6 +44,9 @@ void reportError(unused ::JSContext *cx, const char *message, JSErrorReport *rep
 #ifdef WANT_MAINTAINER_MODE
     cdebug << (const char*)(report->filename? report->filename : "<no filename>") << ":"
             << (int)report->lineno << ":" << message << endl;
+#else
+    cerr << (const char*)(report->filename? report->filename : "<no filename>") << ":"
+            << (int)report->lineno << ":" << message << endl;
 #endif
 }
 
