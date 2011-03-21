@@ -35,7 +35,7 @@ cat >>$root/conf/auth.conf <<EOF
 AuthType Open
 AuthName "$host"
 Session On
-SessionCookieName TuscanyOpenAuth path=/;secure=TRUE
+SessionCookieName TuscanyOpenAuth domain=.$host;path=/;secure=TRUE
 SessionCryptoPassphrase $pw
 AuthOpenAuth On
 AuthOpenAuthLoginPage /login
