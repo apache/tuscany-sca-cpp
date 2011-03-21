@@ -188,11 +188,6 @@
   <reference target="valueof" name="value1"/>
   <reference target="number6" name="value2"/>
  </component>
- <component t:x="254" t:y="287" name="reverse" t:title="reverse" t:color="yellow1">
-  <t:implementation.python script="nuvem/reverse.py"/>
-  <service name="reverse"/>
-  <reference target="range" name="list"/>
- </component>
  <component t:x="280" t:y="264" name="valueof" t:title="value of" t:color="orange1">
   <t:implementation.python script="nuvem/valueof.py"/>
   <service name="valueof"/>
@@ -262,5 +257,10 @@
   <reference target="name2" name="item"/>
   <reference target="multiply" name="transform"/>
   <reference target="reverse" name="list"/>
+ </component>
+ <component t:x="252" t:y="352" name="reverse" t:title="reverse" t:color="yellow1">
+  <t:implementation.python script="nuvem/reverse.py"/>
+  <service name="reverse"/>
+  <reference target="range" name="list"/>
  </component>
 </composite>

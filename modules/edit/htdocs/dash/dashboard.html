@@ -33,13 +33,13 @@
 
 <div id="apps"></div>
 <br/>
-<input type="button" id="createAppButton" value="Create App"/>
+<input type="button" id="createAppButton" value="Create App" title="Create a new app"/>
 <br/>
 <br/>
 
 <div id="newApp" style="visibility: hidden; height: 100%;">
 <table style="width: 100%;">
-<tr><th id="newAppHeader" class="thl thr" style="border-style: none;">Create an App</th></tr>
+<tr><th id="newAppHeader" class="thl thr" style="padding-top: 4px; padding-bottom:4px; border-style: none;">Create an App</th></tr>
 <tr><td></td></tr>
 </table>
 <br/>
@@ -48,13 +48,13 @@
 <tr><td><b>App Name:</b></td></tr>
 <tr><td><input type="text" id="appName" size="10"/></td></tr>
 <tr><tr><td><b>App Title:</b></td></tr>
-<tr><td><input type="text" id="appTitle" size="30"/></td></tr>
+<tr><td><input type="text" id="appTitle" size="80"/></td></tr>
 <tr><tr><td><b>Category:</b></td></tr>
 <tr><td><input type="text" id="appCategory" size="15" value="Cool Apps"/></td></tr>
 <tr><tr><td><b>Description:</b></td></tr>
-<tr><td><textarea id="appDescription" cols="30" rows="5">Enter a short description of your app here</textarea></td></tr>
+<tr><td><textarea id="appDescription" cols="80" rows="5">Enter a short description of your app here</textarea></td></tr>
 <tr><td>
-<input id="createAppOKButton" type="button" style="font-weight: bold;" value="Create"/>
+<input id="createAppOKButton" type="submit" style="font-weight: bold;" value="Create" title="Create the app"/>
 <input id="createAppCancelButton" type="button" value="Cancel"/>
 </td></tr>
 </table>
@@ -77,9 +77,9 @@ var dashboard = sca.reference(editWidget, "dashboard");
 function getapps(sync) {
     function display(doc) {
         var apps = '<table style="width: 100%;">';
-        apps += '<tr><th class="thl thr">App</th>' +
-            '<th class="thr thl">Title</th>' +
-            '<th class="thr thl" style="padding-top: 4px; padding-bottom: 4px; padding-right: 2px; text-align: right;"></th></tr>';
+        apps += '<tr><th class="thl thr" style="width: 225px; min-width: 225px; padding-top: 4px; padding-right: 4px;">App</th>' +
+            '<th class="thr thl" style="width: 100%;">Title</th>' +
+            '<th class="thl thr" style="width: 30px;">Sharing</th></tr>';
 
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
         var entries = cadr(assoc("'entry", cdr(feed)));
@@ -87,10 +87,14 @@ function getapps(sync) {
             var entry = entries[i];
             title = cadr(assoc("'title", entry))
             name = cadr(assoc("'id", entry))
+            hreflink = '<a href=\"' + '/graph/?app=' + name + '\" target=\"_parent\">';
+            sharing = 'Shared with everybody';
 
-            apps += '<tr>';
-            apps += '<td><a href=\"' + '/graph/?app=' + name + '\" target=\"_parent\">' + name + '</a></td>';
-            apps += '<td class="tdw" colspan="2">' + title + '</td>';
+            apps += '<tr class="trb"><td>';
+            apps += hreflink + '<img src="/public/app.png" style="width: 50px; height: 50px; margin-right: 10px; vertical-align: middle;"></img>' + '</a>';
+            apps += '&nbsp;' + hreflink + name + '</a></td>';
+            apps += '<td class="tdw">' + title + '</td>';
+            apps += '<td>' + sharing + '</td>';
             apps += '</tr>';
         }
         apps += '</table>';

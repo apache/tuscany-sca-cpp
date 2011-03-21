@@ -102,9 +102,9 @@ JSONClient.toJSON = function(o) {
 /**
  * Construct an HTTPBindingClient.
  */
-function HTTPBindingClient(cname, uri, objectID) {
-    this.uri = "/references/" + cname + "/" + uri;
-    this.objectID = objectID;
+function HTTPBindingClient(name, uri) {
+    this.name = name;
+    this.uri = uri;
     this.apply = this.createApplyMethod();
 }
 
@@ -407,21 +407,17 @@ HTTPBindingClient.getHTTPRequest = function() {
 var sca = {};
 
 /**
- * Return a component.
+ * Return a component proxy.
  */
 sca.component = function(name) {
-    function ClientComponent(name) {
-        this.name = name;
-    }
-
-    return new ClientComponent(name);
+    return new HTTPBindingClient(name, '/components/' + name);
 };
 
 /**
  * Return a reference proxy.
  */
-sca.reference = function(comp, name) {
-    return new HTTPBindingClient(comp.name, name);
+sca.reference = function(comp, rname) {
+    return new HTTPBindingClient(comp.name + '/' + rname, "/references/" + comp.name + "/" + rname);
 };
 
 /**

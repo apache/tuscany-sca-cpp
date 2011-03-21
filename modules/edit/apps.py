@@ -33,6 +33,10 @@ def mkapplink(id):
         os.mkdir('apps/' + car(id) + '/htdocs')
         os.symlink('../../../htdocs/login', 'apps/' + car(id) + '/htdocs/login');
         os.symlink('../../../htdocs/logout', 'apps/' + car(id) + '/htdocs/logout');
+        os.symlink('../../../htdocs/public', 'apps/' + car(id) + '/htdocs/public');
+        os.symlink('../../../htdocs/data', 'apps/' + car(id) + '/htdocs/data');
+        os.symlink('../../../htdocs/app/index.html', 'apps/' + car(id) + '/htdocs/index.html');
+        os.symlink('../app.html', 'apps/' + car(id) + '/htdocs/app.html');
     except:
         pass
     return True

@@ -37,18 +37,24 @@
 <th class="thl" style="width: 225px; min-width: 225px;">Palette</th>
 
 <th class="thr" style="padding-left: 4px; padding-top: 0px; padding-bottom: 0px;">
-<input id="compName" type="text" value="component name" style="position: relative; width: 200px;"/>
-<input id="propValue" type="text" value="property value" style="position: relative; width: 300px;"/>
-<span id="compValue" style="position: relative"></span>
+<input id="compName" type="text" value="component name" title="Component name" style="position: relative; width: 200px;"/>
+<input id="propValue" type="text" value="property value" title="Component property value" style="position: relative; width: 300px;"/>
+<input type="button" id="autoplayButton" title="Turn autoplay on/off" style="font-weight: bold;" Value="Autoplay is on"/>
+<span id="compValue" style="position: relative; font-weight: normal;"></span><br/>
 </th>
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
-<input type="button" id="saveButton" style="font-weight: bold;" Value="Saved"/>
+<input type="button" id="saveButton" title="Save the app" style="font-weight: bold;" Value="Saved"/>
 </th>
 </tr>
 
-<tr style="height: 5000px;"><td class="tdl"></td><td class="tdr" colspan="2"></td></tr>
+<tr style="height: 5000px;"><td class="tdl"></td><td class="tdr" colspan="2">
+</td></tr>
 </table>
+
+<div style="position:absolute; top: 40px; left: 240px; right: 0px; height: 5000px;">
+<iframe id="dataFrame" class="databg" style="position: relative; height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0"></iframe>
+</div>
 
 </div>
 
@@ -63,9 +69,10 @@ var apps = sca.reference(editWidget, "apps");
 //rconsole = sca.defun(sca.reference(editWidget, "log"), "log");
 
 /**
- * The current app name.
+ * The current app and component names.
  */
 var appname = ui.queryParams()['app'];
+var compname = '';
 
 /**
  * The current app composite and corresponding saved XML content.
@@ -103,7 +110,7 @@ function getapp(name, g) {
                 '</composite>';
             composite = readXML(mklist(x));
         }
-        graph.edit(name, composite, graph.composite(composite, graph.mkpath().move(palcx,0)), oncomposchange, g);
+        graph.edit(name, composite, graph.composite(composite, graph.mkpath().move(palcx,0)), oncomposchange, oncompselect, g);
 
         // Track the saved composite XML
         savedcomposxml = car(writeXML(composite, false));
@@ -164,7 +171,7 @@ function save() {
 }
 
 /**
- * Handle a composite change event
+ * Handle a composite change event.
  */
 function oncomposchange() {
     if (savedcomposxml == car(writeXML(composite, false)))
@@ -180,8 +187,72 @@ function oncomposchange() {
     return true;
 }
 
+/**
+ * Return the link to a component value.
+ */
+function compvaluelink(appname, cname) {
+    if (cname == '' || isNil(cname))
+        return '';
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/data/?component=' + cname;
+    return link;
+}
+
+/**
+ * Track whether we're always showing the result data of the selected component.
+ */
+var autoplay = true;
+
+/**
+ * Show the result data of a component.
+ */
+function showData(cname) {
+    var rframe = $('dataFrame');
+    if (cname == '') {
+        rframe.src = '';
+        return true;
+    }
+    rframe.src = compvaluelink(appname, cname);
+    return true;
+}
+
+/**
+ * Handle a component select event.
+ */
+function oncompselect(appname, cname) {
+    if (cname == compname)
+        return true;
+    compname = cname;
+    var link = compvaluelink(appname, cname);
+    $('compValue').innerHTML = link != ''? '<a href="' + link + '" target="_blank">' + 'Results' + '</a>' : '';
+
+    if (autoplay)
+        return showData(cname);
+    return true;
+}
+
+/**
+ * Handle autoplay on/off click event.
+ */
+$('autoplayButton').onclick = function(e) {
+    if (autoplay) {
+        autoplay = false;
+        showData('');
+        $('autoplayButton').value = 'Autoplay is off';
+        return true;
+    }
+    autoplay = true;
+    showData(compname);
+    $('autoplayButton').value = 'Autoplay is on';
+    return true;
+};
+
 // Create editor graph area
-var g = graph.mkgraph(graph.mkpath().move(0,40), $('compName'), $('propValue'), $('compValue'));
+var g = graph.mkgraph(graph.mkpath().move(0,40), $('compName'), $('propValue'));
 var bg = graph.mkgroup(graph.mkpath());
 
 // Install the palettes

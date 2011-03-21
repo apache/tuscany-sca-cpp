@@ -1,0 +1,89 @@
+<!--
+    * Licensed to the Apache Software Foundation (ASF) under one
+    * or more contributor license agreements.  See the NOTICE file
+    * distributed with this work for additional information
+    * regarding copyright ownership.  The ASF licenses this file
+    * to you under the Apache License, Version 2.0 (the
+    * "License"); you may not use this file except in compliance
+    * with the License.  You may obtain a copy of the License at
+    * 
+    *   http://www.apache.org/licenses/LICENSE-2.0
+    * 
+    * Unless required by applicable law or agreed to in writing,
+    * software distributed under the License is distributed on an
+    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    * KIND, either express or implied.  See the License for the
+    * specific language governing permissions and limitations
+    * under the License.    
+-->
+<html>
+<head>  
+<title>Results</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/elemutil.js"></script>
+<script type="text/javascript" src="/xmlutil.js"></script>
+<script type="text/javascript" src="/atomutil.js"></script>
+<script type="text/javascript" src="/jsonutil.js"></script>
+<script type="text/javascript" src="/scdl.js"></script>
+<script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/component.js"></script>
+</head>  
+<body>
+
+<div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
+
+</div>
+
+<script type="text/javascript">
+if (ui.isIE()) $('bodydiv').style.right = -20;
+
+/**
+ * The current component.
+ */
+var cname = ui.queryParams()['component'];
+var comp = sca.component(cname);
+
+/**
+ * Display an HTML element.
+ */
+function display(e) {
+    $('bodydiv').innerHTML = e;
+    return true;
+}
+
+/**
+ * Wrap a document in an HTML table.
+ */
+function mkdoctable(doc) {
+    var tr = '<tr><td class="datatdl">' + 'value' + '</td>' + '<td class="datatdr">' + doc + '</td></tr>';
+    return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + tr + '</table>';
+}
+
+/**
+ * Get and display the contents of the current component.
+ */
+function getdata() {
+    comp.get('', function(doc) {
+
+        if (json.isJSON(mklist(doc)))
+            return display(ui.datatable(json.readJSON(mklist(doc))));
+
+        if (atom.isATOMEntry(mklist(doc)))
+            return display(ui.datatable(atom.readATOMEntry(mklist(doc))));
+
+        if (atom.isATOMFeed(mklist(doc)))
+            return display(ui.datatable(atom.readATOMFeed(mklist(doc))));
+
+        return display(mkdoctable(doc));
+    });
+}
+
+getdata();
+
+</script>
+</body>
+</html>

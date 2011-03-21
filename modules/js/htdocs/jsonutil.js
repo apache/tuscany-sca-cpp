@@ -80,7 +80,7 @@ json.jsValToValue = function(jsv) {
     if (isList(jsv))
         return json.jsPropertiesToValues(mklist(), jsv, reverse(range(0, jsv.length)));
     if (typeof jsv == 'object')
-        return json.jsPropertiesToValues(mklist(), jsv, properties(jsv));
+        return json.jsPropertiesToValues(mklist(), jsv, reverse(properties(jsv)));
     if (typeof jsv == 'string')
         return '' + jsv;
     return jsv;

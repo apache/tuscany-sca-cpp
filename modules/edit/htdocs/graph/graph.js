@@ -114,7 +114,7 @@ if (ui.isIE()) {
     /**
      * Make a VML graph.
      */
-    graph.mkgraph = function(pos, cname, pvalue, cvalue) {
+    graph.mkgraph = function(pos, cname, pvalue) {
 
         // Create div element to host the graph
         var div = document.createElement('div');
@@ -160,7 +160,9 @@ if (ui.isIE()) {
                 // Reset current selection
                 cname.value = '';
                 pvalue.value = '';
-                cvalue.innerHTML = '';
+
+                // Trigger component select event
+                vmlg.oncompselect('');
                 return false;
             }
 
@@ -186,7 +188,9 @@ if (ui.isIE()) {
             // Update the component name and property value fields
             cname.value = graph.selected.id;
             pvalue.value = graph.property(graph.selected.comp);
-            cvalue.innerHTML = graph.compvaluelink(vmlg.appname, graph.selected.id);
+
+            // Trigger component select event
+            vmlg.oncompselect(vmlg.appname, graph.selected.id);
             return false;
         };
 
@@ -234,7 +238,9 @@ if (ui.isIE()) {
                     graph.selected = null;
                     cname.value = '';
                     pvalue.value = '';
-                    cvalue.innerHTML = '';
+
+                    // Trigger component select event
+                    vmlg.oncompselect('');
                 }
 
                 // Trigger composite change event
@@ -287,8 +293,10 @@ if (ui.isIE()) {
             var compos = scdl.composite(vmlg.compos);
             cname.value = graph.ucid(cname.value, compos);
             graph.selected.id = cname.value;
-            cvalue.innerHTML = graph.compvaluelink(vmlg.appname, graph.selected.id);
             setElement(compos, graph.renamecomp(graph.selected.comp, compos, cname.value));
+
+            // Trigger component select event
+            vmlg.oncompselect(vmlg.appname, graph.selected.id);
 
             // Refresh the composite
             graph.refresh(vmlg);
@@ -588,7 +596,7 @@ if (ui.isIE()) {
     /**
      * Make an SVG graph.
      */
-    graph.mkgraph = function(pos, cname, pvalue, cvalue) {
+    graph.mkgraph = function(pos, cname, pvalue) {
 
         // Create a div element to host the graph
         var div = document.createElement('div');
@@ -637,7 +645,9 @@ if (ui.isIE()) {
                 // Reset current selection
                 cname.value = '';
                 pvalue.value = '';
-                cvalue.innerHTML ='';
+
+                // Trigger component select event
+                svg.oncompselect('');
                 return false;
             }
 
@@ -663,7 +673,9 @@ if (ui.isIE()) {
             // Update the component name and property value fields
             cname.value = graph.selected.id;
             pvalue.value = graph.property(graph.selected.comp);
-            cvalue.innerHTML = graph.compvaluelink(svg.appname, graph.selected.id);
+            
+            // Trigger component select event
+            svg.oncompselect(svg.appname, graph.selected.id);
             return false;
         };
 
@@ -714,7 +726,9 @@ if (ui.isIE()) {
                     graph.selected = null;
                     cname.value = '';
                     pvalue.value = '';
-                    cvalue.innerHTML = '';
+
+                    // Trigger component select event
+                    svg.oncompselect('');
                 }
             }
 
@@ -785,8 +799,10 @@ if (ui.isIE()) {
             var compos = scdl.composite(svg.compos);
             cname.value = graph.ucid(cname.value, compos);
             graph.selected.id = cname.value;
-            cvalue.innerHTML = graph.compvaluelink(svg.appname, graph.selected.id);
             setElement(compos, graph.renamecomp(graph.selected.comp, compos, cname.value));
+
+            // Trigger component select event
+            svg.oncompselect(svg.appname, graph.selected.id);
 
             // Refresh the composite
             graph.refresh(svg);
@@ -946,6 +962,7 @@ if (ui.isIE()) {
         var shape = document.createElementNS(graph.svgns, 'path');
         shape.setAttribute('d', d);
         shape.setAttribute('fill', graph.color(comp));
+        shape.setAttribute('fill-opacity', '0.60');
 
         // Create an overlay contour shape
         var contour = document.createElementNS(graph.svgns, 'path');
@@ -998,6 +1015,7 @@ if (ui.isIE()) {
         var shape = document.createElementNS(graph.svgns, 'path');
         shape.setAttribute('d', path);
         shape.setAttribute('fill', graph.colors.lightgray);
+        shape.setAttribute('fill-opacity', '0.60');
 
         // Create an overlay contour shape
         var contour = document.createElementNS(graph.svgns, 'path');
@@ -1855,6 +1873,16 @@ graph.display = function(nodes, g) {
 };
 
 /**
+ * Hide a graph.
+ */
+graph.hide = function(g) {
+
+    // Remove nodes from the graph
+    map(function(n) { if (!isNil(n.comp) && n.id.substr(0, 8) != 'palette:') { g.removeChild(n); } return n; }, nodeList(g.childNodes));
+    return g;
+};
+
+/**
  * Refresh a graph.
  */
 graph.refresh = function(g) {
@@ -1869,28 +1897,17 @@ graph.refresh = function(g) {
  * Display and enable editing of a composite and the graphical
  * nodes that represent it.
  */
-graph.edit = function(appname, compos, nodes, onchange, g) {
+graph.edit = function(appname, compos, nodes, onchange, onselect, g) {
 
     // Store the appname and composite in the graphical canvas
     g.appname = appname;
     g.compos = compos;
+
+    // Store event listeners
     g.oncomposchange = onchange;
+    g.oncompselect = onselect;
 
     // Display the composite nodes
     return graph.display(nodes, g);
-};
-
-/**
- * Return the link to a component value.
- */
-graph.compvaluelink = function(appname, cname) {
-    var protocol = window.location.protocol;
-    var host = window.location.hostname;
-    var port = ':' + window.location.port;
-    if (port == ':80' || port == ':443' || port == ':')
-        port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/components/' + cname;
-    return '<a href="' + link + '">' + link + '</a>';
-
 };
 

@@ -22,16 +22,32 @@ white-space: margin: 0px;
 font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
 }
 
+.delayed {
+visibility: hidden;
+}
+
 table {
 border: 0px; border-collapse: collapse; border-color: #a2bae7; border-style: solid;
 font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
-overflow: hidden;
+overflow: visible;
+}
+
+.trb {
+border-bottom: 1px; border-bottom-style: solid; border-color: #dcdcdc;
 }
 
 th {
 font-weight: bold; background-color: #e5ecf9; color: #000000;
 text-align: left; padding-left: 2px; padding-right: 8px; padding-top: 2px; padding-bottom: 4px; vertical-align: text-top; white-space: nowrap;
 border-top: 1px; border-bottom: 1px; border-left: 1px; border-right: 1px;
+border-style: solid; border-top-color: #a2bae7; border-bottom-color: #d1d3d4; border-left-color: #a2bae7; border-right-color: #a2bae7;
+overflow: hidden;
+}
+
+.section {
+font-weight: bold; background-color: #e5ecf9; color: #000000;
+text-align: left; padding-left: 2px; padding-right: 8px; padding-top: 2px; padding-bottom: 4px; vertical-align: text-top; white-space: nowrap;
+border-top: 1px; border-bottom: 1px; border-left: 0px; border-right: 0px;
 border-style: solid; border-top-color: #a2bae7; border-bottom-color: #d1d3d4; border-left-color: #a2bae7; border-right-color: #a2bae7;
 overflow: hidden;
 }
@@ -50,11 +66,10 @@ padding: 0px;
 
 td {
 padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: nowrap; vertical-align: text-top; border: 0px;
-overflow: hidden;
 }
 
 .tdl {
-border-right: 1px; border-style: solid; border-color: #a2bae7;
+border-right: 1px; border-style: solid; border-color: #a2bae7; width: 10px;
 }
 
 .tdr {
@@ -63,6 +78,25 @@ border-left: 1px; border-style: solid; border-color: #a2bae7;
 
 .tdw {
 padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: normal; vertical-align: text-top;
+}
+
+.datatdl {
+border-right: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc; width: 10px;
+}
+
+.datatdr {
+border-left: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc;
+}
+
+.datatable {
+border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc;
+overflow: visible;
+}
+
+.databg {
+opacity: .6;  
+-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+filter: alpha(opacity=60);
 }
 
 .widgetframe {
@@ -123,6 +157,10 @@ font-size: 200%; font-weight: bold;
 
 .hd2 {
 font-size: 150%; font-weight: bold;
+}
+
+img {
+border: 0px;
 }
 
 .imgbutton {

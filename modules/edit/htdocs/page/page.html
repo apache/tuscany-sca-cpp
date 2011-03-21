@@ -34,15 +34,15 @@
 
 <table style="width: 100%;">
 <tr>
-<th class="thl" style="width: 225px; min-width: 225px;">Palette</th>
+<th class="thl" style="width: 225px; min-width: 225px; padding-top: 4px; padding-bottom: 4px;">Palette</th>
 
 <th class="thr" style="padding-left: 4px; padding-top: 0px; padding-bottom: 0px;">
-<input id="widgetName" type="text" value="widget name" style="position: relative; width: 200px;"/>
-<input id="widgetText" type="text" value="widget text" style="position: relative; width: 300px;"/>
+<input id="widgetName" type="text" value="widget name" title="Widget name" style="position: relative; width: 200px;"/>
+<input id="widgetText" type="text" value="widget text" title="Widget text" style="position: relative; width: 300px;"/>
 </th>
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
-<input type="button" id="saveButton" style="font-weight: bold;" Value="Saved"/>
+<input type="button" id="saveButton" title="Save the page" style="font-weight: bold;" Value="Saved"/>
 </th>
 </tr>
 
@@ -53,14 +53,18 @@
 
 <span class="h1" id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header1</h1></span>
 <span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 40px;"><h2>Header2</h2></span>
-<span class="button" id="palette:button" style="position: absolute; left: 0px; top: 80px;"><input type="button" value="button"/></span>
-<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 120px;"><input type="text" value="field" size="5"/></span>
-<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 160px;"><input type="password" value="password" size="5"/></span>
-<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 200px;"><input type="checkbox" value="checkbox"/><span>checkbox</span></span>
-<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 240px;"><select><option value="list">list</option></select></span>
-<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 280px;"><a href="/"><span>link</span></a></span>
-<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 320px;"><span>text</span></span>
-<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 360px;"><img src=""/></span>
+<span class="section" id="palette:section" style="position: absolute; left: 0px; top: 80px;"><span class="section">section</span></span>
+<span class="button" id="palette:button" style="position: absolute; left: 0px; top: 120px;"><input type="button" value="button"/></span>
+<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 160px;"><input type="text" value="field" size="5"/></span>
+<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 200px;"><input type="password" value="password" size="5"/></span>
+<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 240px;"><input type="checkbox" value="checkbox"/><span>checkbox</span></span>
+<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 280px;"><select><option value="list">list</option></select></span>
+<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 320px;">
+<table class="datatable"><tr><td class="datatdl">name</td><td class="datatdr">value</td></tr><tr><td class="datatdl">name</td><td class="datatdr">value</td></tr></table>
+</span>
+<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 380px;"><a href="/"><span>link</span></a></span>
+<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 420px;"><span>text</span></span>
+<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 460px;"><img src=""/></span>
 
 </div>
 

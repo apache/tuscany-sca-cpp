@@ -18,7 +18,7 @@
 -->
 <html>
 <head>
-<title>App Dashboard</title>
+<title>App Settings</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -31,20 +31,33 @@
 
 <script type="text/javascript">
 
+// Get the app name
+var appname = ui.queryParams()['app'];
+
 // Load the menu bar
-ui.loadwidget('menu', '/menu.html', ui.showbody);
+ui.loadwidget('menu', '/menu.html?app=' + appname, ui.showbody);
 </script>
 
-<h1>App Edit</h1>
+<h1>App Edit <span id="appNameHeader" style="font-weight: normal;"></span></h1>
 <br/>
 
-<div id="dashboard"></div>
+<div id="props"></div>
 
 <script type="text/javascript">
 
-// Load the dashboard
-$('dashboard').innerHTML =
-    '<iframe id="dashboardFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="dashboard.html"></iframe>';
+/**
+ * Display the properties editor for an app.
+ */
+function editapp(name) {
+    if (isNil(name))
+        return;
+    ui.loadiframe('props', 'props.html?app=' + name);
+}
+
+// Display the editor for the current app
+document.title = 'App - ' + appname;
+$('appNameHeader').innerHTML = ' - ' + appname;
+editapp(appname);
 
 </script>
 </body>

@@ -23,19 +23,26 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/ui.js"></script>
 </head>
 <body>
 <h1>Sign out</h1>
 <br/>
 
 <form name="signout" action="/login" method="GET">
+<input type="submit" onclick="submitSignout()" id="signOut" value="Sign out"/>
+</form>
+
 <script type="text/javascript">
 function submitSignout() {
     document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
     document.signout.submit();
     return true;
 }
+
+$('signOut').focus();
 </script>
-<input type="button" onclick="submitSignout()" value="Sign out"/>
-</form>
-</body></html>
+
+</body>
+</html>

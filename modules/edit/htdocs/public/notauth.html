@@ -18,8 +18,8 @@
 -->
 <html>
 <head>
-<title>App Dashboard</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<title>App Edit - Sorry</title>
+<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
@@ -37,16 +37,20 @@ ui.loadwidget('menu', '/menu.html', ui.showbody);
 
 <h1>App Edit</h1>
 <br/>
+<div class="hd1">Sorry, you're not authorized to view this page.</div>
 
-<div id="dashboard"></div>
-
+<form name="signout" action="/public/notauth.html" method="GET">
 <script type="text/javascript">
+function submitSignout() {
+    document.cookie = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';path=/;secure=TRUE';
+    document.signout.submit();
+    return true;
+}
 
-// Load the dashboard
-$('dashboard').innerHTML =
-    '<iframe id="dashboardFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="dashboard.html"></iframe>';
-
+if (window.top.location.pathname != '/public/notauth.html')
+    submitSignout();
 </script>
+</form>
+
 </body>
 </html>
-

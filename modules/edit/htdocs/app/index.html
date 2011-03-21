@@ -18,46 +18,132 @@
 -->
 <html>
 <head>
-<title>App Settings</title>
+<title>App</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
 <script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/elemutil.js"></script>
+<script type="text/javascript" src="/xmlutil.js"></script>
+<script type="text/javascript" src="/atomutil.js"></script>
+<script type="text/javascript" src="/jsonutil.js"></script>
+<script type="text/javascript" src="/scdl.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/component.js"></script>
 </head>
-<body>
-<div id="menu"></div>
-
-<script type="text/javascript">
-
-// Get the app name
-var appname = ui.queryParams()['app'];
-
-// Load the menu bar
-ui.loadwidget('menu', '/menu.html?app=' + appname);
-</script>
-
-<h1>App Edit <span id="appNameHeader" style="font-weight: normal;"></span></h1>
-<br/>
-
+<body class="delayed">
 <div id="app"></div>
+<span id="appFrame"></span>
 
 <script type="text/javascript">
+if (ui.isIE()) $('bodydiv').style.right = -20;
 
 /**
- * Display the page editor for an app.
+ * The main page component.
  */
-function editapp(name) {
-    if (isNil(name))
-        return;
-    ui.loadiframe('app', 'app.html?app=' + name);
+var comp = sca.component('page');
+
+/**
+ * Returns the text value of a data element.
+ */
+function datatext(dv) {
+    return elementHasValue(dv)? elementValue(dv) : '';
 }
 
-// Display the editor for the current app
-document.title = 'App - ' + appname;
-$('appNameHeader').innerHTML = ' - ' + appname;
-editapp(appname);
+/**
+ * Set a data value into a widget.
+ */
+function setwidgetvalue(e, dv) {
+    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
+        car(childElements(e)).innerHTML = datatext(dv);
+        return t;
+    }
+    if (e.className == 'button' || e.className == 'entry' || e.className == 'password') {
+        car(childElements(e)).value = datatext(dv);
+        return t;
+    }
+    if (e.className == 'checkbox') {
+        var t = datatext(dv);
+        car(childElements(e)).value = t;
+        map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = t; return n; }, nodeList(e.childNodes));
+        return t;
+    }
+    if (e.className == 'list') {
+        var t = datatext(dv);
+        var ce = car(childElements(car(childElements(e))));
+        ce.value = t;
+        ce.innerHTML = t;
+        return t;
+    }
+    if (e.className == 'link') {
+        var t = datatext(dv);
+        var ce = car(childElements(car(childElements(e))));
+        ce.href = t;
+        ce.innerHTML = t;
+        return t;
+    }
+    if (e.className == 'table') {
+        var t = ui.datatable(mklist(dv));
+        car(childElements(e)).innerHTML = t;
+        return t;
+    }
+    return '';
+};
+
+/**
+ * Display data on the app page.
+ */
+function display(l) {
+    if (isNil(l))
+        return false;
+    var v = car(l);
+
+    // For each widget in the app page, look for a data element with the widget id
+    // then set the data value into the widget
+    function datavalue(id) {
+        var dv = namedElementChild("'" + id, v);
+        return dv;
+    }
+
+    function updatewidget(e) {
+        var dv = datavalue(e.id);
+        if (dv == null || isNil(dv))
+            return e;
+        setwidgetvalue(e, dv);
+        return e;
+    }
+
+    var e = map(updatewidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
+
+    // Make the page visible
+    ui.showbody();
+    return true;
+}
+
+/**
+ * Get the contents of the main page component.
+ */
+function getdata() {
+    $('app').innerHTML = $('appFrame').contentDocument.body.innerHTML;
+
+    var doc = comp.get('', function(doc) {
+
+        if (json.isJSON(mklist(doc)))
+            return display(json.readJSON(mklist(doc)));
+
+        if (atom.isATOMEntry(mklist(doc)))
+            return display(atom.readATOMEntry(mklist(doc)));
+
+        if (atom.isATOMFeed(mklist(doc)))
+            return display(atom.readATOMFeed(mklist(doc)));
+
+        return display(doc);
+    });
+}
+
+// Load the app frame
+$('app').innerHTML = '<iframe id="appFrame" class="widgetFrame" src="app.html" onload="getdata()"></iframe>';
 
 </script>
 </body>

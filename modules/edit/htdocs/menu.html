@@ -55,9 +55,9 @@ function appname() {
 var mdiv = $('menu'); 
 var name = appname();
 mdiv.innerHTML = ui.menubar(
-    append(mklist(ui.menu('Home', '/'), ui.menu('Dashboard', '/dash')),
-            (isNil(name) || name == 'undefined')? mklist() : mklist(ui.menu('Composition', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name), ui.menu('Settings', '/app/?app=' + name))),
-    mklist(userMenu(), ui.menu('Sign out', '/logout')));
+    append(mklist(ui.menu('Home', '/'), ui.menu('Store', '/store'), ui.menu('Dashboard', '/dash')),
+            (isNil(name) || name == 'undefined')? mklist() : mklist(ui.menu('Composition', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name), ui.menu('Settings', '/props/?app=' + name))),
+    mklist(userMenu(), ui.menu('Account', '/account'), ui.menu('Sign out', '/logout')));
 
 </script>
 </body>

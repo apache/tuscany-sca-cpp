@@ -28,6 +28,8 @@
     <service name="replace" promote="replace"/>
     <service name="lowercase" promote="lowercase"/>
     <service name="uppercase" promote="uppercase"/>
+    <service name="format" promote="format"/>
+    <service name="parse" promote="parse"/>
 
     <component name="contains" t:title="contains" t:color="magenta1">
         <t:implementation.python script="nuvem/contains.py"/>
@@ -67,6 +69,20 @@
     <component name="uppercase" t:title="uppercase" t:color="magenta1">
         <t:implementation.python script="nuvem/uppercase.py"/>
         <service name="uppercase"/>
+        <reference name="string"/>
+    </component>
+    
+    <component name="format" t:title="format" t:color="magenta1">
+        <t:implementation.python script="nuvem/format_.py"/>
+        <service name="format"/>
+        <reference name="pattern"/>
+        <reference name="values"/>
+    </component>
+    
+    <component name="parse" t:title="parse" t:color="magenta1">
+        <t:implementation.python script="nuvem/parse.py"/>
+        <service name="parse"/>
+        <reference name="regexp"/>
         <reference name="string"/>
     </component>
     

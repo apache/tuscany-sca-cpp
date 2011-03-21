@@ -43,6 +43,15 @@ jsprefix=`readlink -f $here/../js`
 ../../modules/server/server-conf tmp
 ../../modules/python/python-conf tmp
 
+# Configure error pages
+cat >>tmp/conf/svhost-ssl.conf <<EOF
+# Error pages
+ErrorDocument 404 /public/notfound.html
+ErrorDocument 401 /public/notauth.html
+ErrorDocument 500 /public/oops.html
+
+EOF
+
 # Configure app home pages
 cat >>tmp/conf/dvhost.conf <<EOF
 # Redirect to app home page

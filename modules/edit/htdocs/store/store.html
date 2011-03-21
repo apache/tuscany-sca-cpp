@@ -1,0 +1,111 @@
+<!--
+    * Licensed to the Apache Software Foundation (ASF) under one
+    * or more contributor license agreements.  See the NOTICE file
+    * distributed with this work for additional information
+    * regarding copyright ownership.  The ASF licenses this file
+    * to you under the Apache License, Version 2.0 (the
+    * "License"); you may not use this file except in compliance
+    * with the License.  You may obtain a copy of the License at
+    * 
+    *   http://www.apache.org/licenses/LICENSE-2.0
+    * 
+    * Unless required by applicable law or agreed to in writing,
+    * software distributed under the License is distributed on an
+    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    * KIND, either express or implied.  See the License for the
+    * specific language governing permissions and limitations
+    * under the License.    
+-->
+<html>
+<head>  
+<link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/elemutil.js"></script>
+<script type="text/javascript" src="/xmlutil.js"></script>
+<script type="text/javascript" src="/atomutil.js"></script>
+<script type="text/javascript" src="/scdl.js"></script>
+<script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/component.js"></script>
+</head>  
+<body>
+
+<div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
+
+<table style="width: 100%;">
+<tr>
+<th class="thl thr" style="padding-top: 4px; padding-bottom: 4px;">Cool Apps</th>
+</tr>
+</table>
+
+<div id="apps"></div>
+<br/>
+
+<script type="text/javascript">
+if (ui.isIE()) $('bodydiv').style.right = -20;
+
+// Init service references
+var editWidget = sca.component("EditWidget");
+var store = sca.reference(editWidget, "store");
+
+/**
+ * Return the link to an app.
+ */
+function applink(appname) {
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/index.html';
+    return link;
+}
+
+/**
+ * Get and display list of apps.
+ */
+function getapps(sync) {
+    function display(doc) {
+        var apps = '<div>';
+        var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
+        var entries = cadr(assoc("'entry", cdr(feed)));
+        for (var i = 0; i < length(entries); i++) {
+            var entry = entries[i];
+            title = cadr(assoc("'title", entry))
+            name = cadr(assoc("'id", entry))
+            author = 'joe@localhost';
+            hreflink = '<a href=\"' + applink(name) + '\" target=\"_parent\">';
+
+            apps += '<div class="box" style="width: 250px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 5px; padding: 10px; vertical-align: top;">'
+            apps += '<table><tr>';
+            apps += '<td>';
+            apps += '<div>' + hreflink + '<img src="/public/app.png" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>' + '</a></div>';
+            apps += '<div><input type="button" id="cloneApp" value="Clone" title="Clone this app"></div>';
+            apps += '</td>';
+            apps += '<td class="tdw">';
+            apps += '<div style="font-weight: bold">' + hreflink + name + '</a></div>';
+            apps += '<div>' + 'by&nbsp;' + '<span style="font-weight: bold;">' + author + '</span></div>';
+            apps += '<br/>';
+            apps += '<div>' + title + '</div>';
+            apps += '</td>';
+            apps += '</tr></table>';
+            apps += '</div>';
+        }
+        apps += '</div>';
+        $('apps').innerHTML = apps;
+    }
+
+    if (sync) {
+        display(store.get('coolapps'));
+    } else {
+        store.get('coolapps', function(doc) {
+            display(doc);
+        });
+    }
+}
+
+// Get and display the list of apps
+getapps(true);
+
+</script>
+</body>
+</html>

@@ -233,16 +233,25 @@ ui.queryParams = function() {
 /**
  * Bind a widget iframe to an element.
  */
-ui.widgets = new Array();
+ui.widgets = {};
+ui.onload = {};
 
-ui.loadwidget = function(el, doc) {
+ui.loadwidget = function(el, doc, cb) {
     var f = el + 'Frame';
+    window.ui.widgets[f] = el;
+    window.ui.onload[f] = cb;
     var div = document.createElement('div');
     div.id = f + 'Div';
-    div.innerHTML = '<iframe id="' + f + '" class="widgetframe" scrolling="no" frameborder="0" src="' + doc + '"></iframe>';
+    div.innerHTML = '<iframe id="' + f + '" class="widgetframe" scrolling="no" frameborder="0" src="' + doc + '" onload="window.ui.onload[this.id]()"></iframe>';
     document.body.appendChild(div);
-    window.ui.widgets[f] = el;
     return f;
+};
+
+/**
+ * Show the current document body.
+ */
+ui.showbody = function() {
+    document.body.style.visibility = 'visible';
 };
 
 /**
@@ -281,4 +290,44 @@ ui.csspos = function(p) {
         return 0;
     return Number(p.substr(0, p.length - 2));
 };
+
+/**
+ * Convert a list of elements to an HTML table.
+ */
+ui.datatable = function(l) {
+    log('datatable', writeValue(l));
+
+    function indent(i) {
+        if (i == 0)
+            return '';
+        return '&nbsp;&nbsp;' + indent(i - 1);
+    }
+
+    function rows(l, i) {
+        if (isNil(l))
+            return '';
+        var e = car(l);
+
+        if (!isList(e))
+            return rows(expandElementValues("'value", l), i);
+
+        if (elementHasValue(e)) {
+            var v = elementValue(e);
+            if (!isList(v)) {
+                return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
+                    '<td class="datatdr">' + v + '</td></tr>' +
+                    rows(cdr(l), i);
+            }
+
+            return rows(expandElementValues(elementName(e), v), i) + rows(cdr(l), i);
+        }
+
+        return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
+            '<td class="datatdr">' + '</td></tr>' +
+            rows(elementChildren(e), i + 1) +
+            rows(cdr(l), i);
+    }
+
+    return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
+}
 

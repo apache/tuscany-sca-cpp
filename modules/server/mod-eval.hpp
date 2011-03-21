@@ -134,6 +134,8 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     // Write a simple value as a JSON value
     if (!isList(c)) {
         js::JSContext cx;
+        if (isSymbol(c))
+            return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("name", value(string(c))))), cx), "application/json", r);
         return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("value", c))), cx), "application/json", r);
     }
 

@@ -25,7 +25,9 @@
  * Scheme-like lists.
  */
 function cons(car, cdr) {
-    return new Array(car).concat(cdr);
+    var a = new Array();
+    a.push(car);
+    return a.concat(cdr);
 }
 
 function car(l) {

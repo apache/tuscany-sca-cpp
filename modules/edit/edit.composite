@@ -44,6 +44,7 @@
     <component name="EditWidget">
         <t:implementation.widget location="/index.html"/>
         <reference name="dashboard" target="Dashboard"/>
+        <reference name="store" target="AppStore"/>
         <reference name="palettes" target="Palettes"/>
         <reference name="apps" target="Apps"/>
         <reference name="pages" target="Pages"/>
@@ -57,6 +58,14 @@
         </service>        
         <reference name="user" target="User"/>
         <reference name="cache" target="DashboardCache"/>
+    </component>
+    
+    <component name="AppStore">
+        <t:implementation.python script="store.py"/>
+        <service name="AppStore">
+            <t:binding.http uri="appstore"/>
+        </service>        
+        <reference name="cache" target="StoreCache"/>
     </component>
     
     <component name="Apps">
@@ -100,6 +109,26 @@
         <property name="format">scheme</property>
         <service name="DashboardDB">
             <t:binding.http uri="dashboarddb"/>
+        </service>
+    </component>
+
+    <component name="StoreCache">
+        <implementation.cpp path="../../components/cache" library="libdatacache"/>
+        <service name="StoreCache">
+            <t:binding.http uri="storecache"/>
+        </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="StoreDB"/>
+        <reference name="l2writer" target="StoreDB"/>
+    </component>
+
+    <component name="StoreDB">
+        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
+        <property name="dbname">store</property>
+        <property name="format">scheme</property>
+        <service name="StoreDB">
+            <t:binding.http uri="storedb"/>
         </service>
     </component>
 

@@ -23,10 +23,21 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
+<script type="text/javascript" src="/util.js"></script>
+<script type="text/javascript" src="/ui.js"></script>
 </head>
 <body>
 <h1>Sign in</h1>
 <br/>
+
+<form name="formSignin" method="POST" action="/login/dologin">
+<table border="0">
+<tr><td>Username:</td><td><input type="text" id="httpd_username" name="httpd_username" value=""/></td></tr>
+<tr><td>Password:</td><td><input type="password" name="httpd_password" value=""/></td></tr>
+<tr><td><input type="submit" onclick="submitFormSignin()" value="Sign in"/></td><td></td></tr>
+</table>
+<input type="hidden" name="httpd_location" value="/"/>
+</form>
 
 <script type="text/javascript">
 function queryParams() {
@@ -62,16 +73,9 @@ function submitFormSignin() {
     document.formSignin.httpd_location.value = oauthReferrer();
     document.formSignin.submit();
 }
-</script>
 
-<form name="formSignin" method="POST" action="/login/dologin">
-<table border="0">
-<tr><td>Username:</td><td><input type="text" name="httpd_username" value=""/></td></tr>
-<tr><td>Password:</td><td><input type="password" name="httpd_password" value=""/></td></tr>
-<tr><td><input type="button" onclick="submitFormSignin()" value="Sign in"/></td><td></td></tr>
-</table>
-<input type="hidden" name="httpd_location" value="/"/>
-</form>
+$('httpd_username').focus();
+</script>
 
 </body>
 </html>

@@ -28,9 +28,7 @@
 
     <component name="page" t:title="when page opened" t:color="green1">
         <t:implementation.python script="nuvem/page.py"/>
-        <service name="page" t:visible="false">
-            <t:binding.http uri="index.html"/>
-        </service>
+        <service name="page" t:visible="false"/>
         <reference name="content"/>
     </component>
     

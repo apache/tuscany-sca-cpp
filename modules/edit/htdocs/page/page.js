@@ -335,14 +335,16 @@ if (ui.isIE()) {
  * Return the text of a widget.
  */
 page.text = function(e) {
-    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text')
-        return e.childNodes[0].innerHTML;
+    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section')
+        return car(childElements(e)).innerHTML;
     if (e.className == 'button' || e.className == 'entry' || e.className == 'password' || e.className == 'checkbox')
-        return e.childNodes[0].value;
+        return car(childElements(e)).value;
     if (e.className == 'list')
-        return e.childNodes[0].childNodes[0].value;
+        return car(childElements(car(childElements(e)))).value;
     if (e.className == 'link')
-        return e.childNodes[0].childNodes[0].innerHTML;
+        return car(childElements(car(childElements(e)))).innerHTML;
+    if (e.className == 'table')
+        return '';
     return '';
 };
 
@@ -350,28 +352,33 @@ page.text = function(e) {
  * Set the text of a widget.
  */
 page.settext = function(e, t) {
-    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text') {
-        e.childNodes[0].innerHTML = t;
+    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
+        car(childElements(e)).innerHTML = t;
         return t;
     }
     if (e.className == 'button' || e.className == 'entry' || e.className == 'password') {
-        e.childNodes[0].value = t;
+        car(childElements(e)).value = t;
         return t;
     }
     if (e.className == 'checkbox') {
-        e.childNodes[0].value = t;
+        car(childElements(e)).value = t;
         map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = t; return n; }, nodeList(e.childNodes));
         return t;
     }
     if (e.className == 'list') {
-        e.childNodes[0].childNodes[0].value = t;
-        e.childNodes[0].childNodes[0].innerHTML = t;
+        var ce = car(childElements(car(childElements(e))));
+        ce.value = t;
+        ce.innerHTML = t;
         return t;
     }
     if (e.className == 'link') {
-        e.childNodes[0].childNodes[0].href = t;
-        e.childNodes[0].childNodes[0].innerHTML = t;
+        var ce = car(childElements(car(childElements(e))));
+        ce.href = t;
+        ce.innerHTML = t;
         return t;
+    }
+    if (e.className == 'table') {
+        return '';
     }
     return '';
 };
