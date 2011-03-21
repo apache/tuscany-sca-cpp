@@ -110,7 +110,7 @@ if test "${want_maintainer_mode}" = "true"; then
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], true)
   AC_DEFINE([WANT_MAINTAINER_MODE], 1, [compile with debugging and compile-time warnings])
 else
-  cxxflags="${cxxflags} -O3 -std=c++0x -fmessage-length=0"
+  cxxflags="${cxxflags} -g -O2 -std=c++0x -fmessage-length=0"
   AM_CONDITIONAL([WANT_MAINTAINER_MODE], false)
 fi
 
