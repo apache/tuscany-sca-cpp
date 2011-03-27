@@ -109,6 +109,10 @@ Require all granted
 AuthType None
 Require all granted
 </Location>
+<Location /robots.txt>
+AuthType None
+Require all granted
+</Location>
 
 # Listen on HTTP port
 Listen $listen

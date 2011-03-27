@@ -27,7 +27,7 @@
 <script type="text/javascript" src="/ui.js"></script>
 <script type="text/javascript" src="/component.js"></script>
 </head>  
-<body>
+<body class="delayed">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
@@ -45,6 +45,8 @@
 <div>
 <form id="appForm">
 <table style="width: 100%;">
+<tr><tr><td><b>App Icon:</b></td></tr>
+<tr><td><img src="/public/app.png" style="width: 50px; height: 50px;"></td></tr>
 <tr><tr><td><b>App Title:</b></td></tr>
 <tr><td><input type="text" id="appTitle" size="80"/></td></tr>
 <tr><tr><td><b>Category:</b></td></tr>
@@ -97,6 +99,9 @@ function getapp(name) {
         $('appUpdated').innerHTML = defdate;
         $('appDescription').innerHTML = defdesc;
         savedappentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+
+        // Show the page
+        ui.showbody();
     });
 }
 

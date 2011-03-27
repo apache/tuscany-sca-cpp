@@ -22,14 +22,14 @@
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 </head>  
-<body>
+<body class="delayed">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
 <div style="margin-left: auto; margin-right: auto; text-align: center;">
 <br/><br/><br/>
 
-<a href="dash" target="_parent"><img src="home.png" style="width: 426px; height: 145px;"></img></a>
+<a href="dash" target="_parent"><img src="home.png" style="width: 426px; height: 145px;"/></a>
 
 <br/><br/>
 
@@ -38,12 +38,17 @@
 <br/><br/><br/>
 <div>This module implements a simple App store to help you create and share Tuscany apps.</div>
 <div>The user interface is minimalistic, by design.</div>
+<br/>
+<div>Works with Safari, Chrome and Firefox. Doesn't work with IE.</div>
 </div>
 
 </div>
 
 <script type="text/javascript">
 if (ui.isIE()) $('bodydiv').style.right = -20;
+
+ui.showbody();
+
 </script>
 
 </body>

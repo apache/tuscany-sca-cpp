@@ -18,39 +18,15 @@
 -->
 <html>
 <head>
-<title>Home</title>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<title>frame</title>
+<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript">
-document.title = domaintitle(window.location.hostname);
-</script>
-<script type="text/javascript" src="/ui.js"></script>
 </head>
-<body class="delayed">
-<div id="menu"></div>
+<body style="margin:3px; padding: 0px; background-color: #dcdcdc;">
 
-<h1 id="h1"></h1>
-<br/>
-
-<div id="main"></div>
-
-<script type="text/javascript">
-
-// Load the menu bar
-ui.loadwidget('menu', '/menu.html', ui.showbody);
-
-$('h1').innerHTML = domaintitle(window.location.hostname);
-
-// Load the main page
-ui.loadiframe('main', 'main.html');
-
-ui.showbody();
-</script>
+<div>frame ...</div>
 
 </body>
 </html>
-

@@ -28,7 +28,7 @@
 <script type="text/javascript" src="/component.js"></script>
 <script type="text/javascript" src="page.js"></script>
 </head>  
-<body>
+<body class="delayed">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
@@ -52,19 +52,20 @@
 <div id="page" style="position: absolute; top: 40px; left: 0px; width: 5000px; height: 5000px;">
 
 <span class="h1" id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header1</h1></span>
-<span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 40px;"><h2>Header2</h2></span>
-<span class="section" id="palette:section" style="position: absolute; left: 0px; top: 80px;"><span class="section">section</span></span>
-<span class="button" id="palette:button" style="position: absolute; left: 0px; top: 120px;"><input type="button" value="button"/></span>
-<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 160px;"><input type="text" value="field" size="5"/></span>
-<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 200px;"><input type="password" value="password" size="5"/></span>
-<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 240px;"><input type="checkbox" value="checkbox"/><span>checkbox</span></span>
-<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 280px;"><select><option value="list">list</option></select></span>
-<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 320px;">
-<table class="datatable"><tr><td class="datatdl">name</td><td class="datatdr">value</td></tr><tr><td class="datatdl">name</td><td class="datatdr">value</td></tr></table>
+<span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 35px;"><h2>Header2</h2></span>
+<span class="section" id="palette:section" style="position: absolute; left: 0px; top: 70px;"><span class="section">section</span></span>
+<span class="button" id="palette:button" style="position: absolute; left: 0px; top: 100px;"><input type="button" value="button"/></span>
+<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 130px;"><input type="text" value="field" size="10"/></span>
+<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 160px;"><input type="password" value="password" size="10"/></span>
+<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 190px;"><input type="checkbox" value="checkbox"/><span>checkbox</span></span>
+<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 220px;"><select><option value="list">list</option></select></span>
+<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 250px;">
+<table class="datatable"><tr><td class="datatdl">table</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>
 </span>
-<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 380px;"><a href="/"><span>link</span></a></span>
-<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 420px;"><span>text</span></span>
-<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 460px;"><img src=""/></span>
+<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 300px;"><a href="/"><span>link</span></a></span>
+<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 330px;"><span>text</span></span>
+<span class="iframe" id="palette:iframe" style="position: absolute; left: 0px; top: 360px;"><a href="/public/iframe.html"><span class="fakeframe"><span>frame ...</span></span></a></span>
+<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 390px;"><img src="/public/img.png"/></span>
 
 </div>
 
@@ -129,6 +130,9 @@ function getpage(name, edit) {
             }, nodeList(buffer.childNodes[0].childNodes));
 
         savedpagexhtml = pagexhtml();
+
+        // Show the page
+        ui.showbody();
     });
 }
 

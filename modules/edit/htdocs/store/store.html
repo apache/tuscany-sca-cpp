@@ -27,15 +27,11 @@
 <script type="text/javascript" src="/ui.js"></script>
 <script type="text/javascript" src="/component.js"></script>
 </head>  
-<body>
+<body class="delayed">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
-<table style="width: 100%;">
-<tr>
-<th class="thl thr" style="padding-top: 4px; padding-bottom: 4px;">Cool Apps</th>
-</tr>
-</table>
+<div id="catmenu"></div>
 
 <div id="apps"></div>
 <br/>
@@ -43,7 +39,39 @@
 <script type="text/javascript">
 if (ui.isIE()) $('bodydiv').style.right = -20;
 
-// Init service references
+/**
+ * The current app category.
+ */
+var category = ui.queryParams()['category'];
+if (isNil(category))
+    category = 'new';
+
+/**
+ * Build store menu bar
+ */
+function catmenu() {
+    function catmenuitem(name, cat) {
+        var c = cat == category? "smenu" : "amenu";
+        return '<th class="thl thr" style="width: 30px; padding-top: 4px; padding-bottom: 4px; padding-right: 10px;">'
+                + '<a href="/store/?category=' + cat + '" target="_parent"><span class="' + c + '">' + name + '</span></a></th>';
+    }
+
+    var m = '<table style="width: 100%;"><tr>';
+    m += catmenuitem('New Apps', 'new');
+    m += catmenuitem('Top Charts', 'top');
+    m += catmenuitem('Featured', 'featured');
+    m += catmenuitem('Services', 'services');
+    m += catmenuitem('Tests', 'tests');
+    m += '<th class="thl thr" style="width: 100%;"></th></tr></table>';
+    return m;
+}
+
+// Build store menu bar
+$('catmenu').innerHTML = catmenu();
+
+/**
+ * Service references.
+ */
 var editWidget = sca.component("EditWidget");
 var store = sca.reference(editWidget, "store");
 
@@ -56,14 +84,14 @@ function applink(appname) {
     var port = ':' + window.location.port;
     if (port == ':80' || port == ':443' || port == ':')
         port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/index.html';
+    var link = protocol + '//' + appname + '.' + host + port + '/';
     return link;
 }
 
 /**
  * Get and display list of apps.
  */
-function getapps(sync) {
+function getapps(category, sync) {
     function display(doc) {
         var apps = '<div>';
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
@@ -73,7 +101,7 @@ function getapps(sync) {
             title = cadr(assoc("'title", entry))
             name = cadr(assoc("'id", entry))
             author = 'joe@localhost';
-            hreflink = '<a href=\"' + applink(name) + '\" target=\"_parent\">';
+            hreflink = '<a href=\"' + applink(name) + '\" target=\"' + name + '\">';
 
             apps += '<div class="box" style="width: 250px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 5px; padding: 10px; vertical-align: top;">'
             apps += '<table><tr>';
@@ -92,19 +120,22 @@ function getapps(sync) {
         }
         apps += '</div>';
         $('apps').innerHTML = apps;
+
+        // Show the page
+        ui.showbody();
     }
 
     if (sync) {
-        display(store.get('coolapps'));
+        display(store.get(category));
     } else {
-        store.get('coolapps', function(doc) {
+        store.get(category, function(doc) {
             display(doc);
         });
     }
 }
 
 // Get and display the list of apps
-getapps(true);
+getapps(category, true);
 
 </script>
 </body>

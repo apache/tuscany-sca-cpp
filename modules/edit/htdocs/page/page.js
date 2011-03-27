@@ -337,12 +337,23 @@ if (ui.isIE()) {
 page.text = function(e) {
     if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section')
         return car(childElements(e)).innerHTML;
-    if (e.className == 'button' || e.className == 'entry' || e.className == 'password' || e.className == 'checkbox')
+    if (e.className == 'button' || e.className == 'checkbox')
         return car(childElements(e)).value;
+    if (e.className == 'entry' || e.className == 'password')
+        return car(childElements(e)).defaultValue;
     if (e.className == 'list')
         return car(childElements(car(childElements(e)))).value;
-    if (e.className == 'link')
-        return car(childElements(car(childElements(e)))).innerHTML;
+    if (e.className == 'link') {
+        var hr = car(childElements(e)).href;
+        var t = car(childElements(car(childElements(e)))).innerHTML;
+        return hr == t? hr : hr + ',' + t;
+    }
+    if (e.className == 'img') {
+        var src = car(childElements(e)).src;
+        return src == window.location.href? '' : src;
+    }
+    if (e.className == 'iframe')
+        return car(childElements(e)).href;
     if (e.className == 'table')
         return '';
     return '';
@@ -357,7 +368,7 @@ page.settext = function(e, t) {
         return t;
     }
     if (e.className == 'button' || e.className == 'entry' || e.className == 'password') {
-        car(childElements(e)).value = t;
+        car(childElements(e)).defaultValue = t;
         return t;
     }
     if (e.className == 'checkbox') {
@@ -371,14 +382,23 @@ page.settext = function(e, t) {
         ce.innerHTML = t;
         return t;
     }
-    if (e.className == 'link') {
-        var ce = car(childElements(car(childElements(e))));
-        ce.href = t;
-        ce.innerHTML = t;
-        return t;
-    }
     if (e.className == 'table') {
         return '';
+    }
+    if (e.className == 'link') {
+        var l = t.split(',');
+        var ce = car(childElements(e));
+        ce.href = car(l);
+        car(childElements(ce)).innerHTML = isNil(cdr(l))? car(l) : cadr(l);
+        return t;
+    }
+    if (e.className == 'img') {
+        car(childElements(e)).src = t;
+        return t;
+    }
+    if (e.className == 'iframe') {
+        car(childElements(e)).href = t;
+        return t;
     }
     return '';
 };

@@ -18,7 +18,7 @@
 -->
 <html>
 <head>
-<title>App Edit - Page not found</title>
+<title>Page not found</title>
 <meta name="viewport" content="width=device-width user-scalable=no initial-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -29,16 +29,22 @@
 <body class="delayed">
 <div id="menu"></div>
 
+<h1 id="h1"></h1>
+<br/>
+
+<div class="hd1">Sorry, that page was not found.</div>
+<div>You may have clicked an expired link or mistyped the address.</div>
+
 <script type="text/javascript">
 
 // Load the menu bar
-ui.loadwidget('menu', '/menu.html', ui.showbody);
-</script>
+if (!issubdomain(window.location.hostname))
+    ui.loadwidget('menu', '/menu.html', ui.showbody);
 
-<h1>App Edit</h1>
-<br/>
-<div class="hd1">Sorry, that page was not found.</div>
-<div>You may have clicked an expired link or mistyped the address.</div>
+$('h1').innerHTML = domaintitle(window.location.hostname);
+
+ui.showbody();
+</script>
 
 </body>
 </html>

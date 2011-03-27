@@ -22,6 +22,10 @@
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<script type="text/javascript">
+document.title = window.location.hostname.split('.')[0];
+</script>
+<link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/elemutil.js"></script>
@@ -33,34 +37,83 @@
 <script type="text/javascript" src="/component.js"></script>
 </head>
 <body class="delayed">
+
+<div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
+
 <div id="app"></div>
+
 <span id="appFrame"></span>
+
+</div>
 
 <script type="text/javascript">
 if (ui.isIE()) $('bodydiv').style.right = -20;
 
 /**
- * The main page component.
+ * Page, every and location components.
  */
-var comp = sca.component('page');
+var pagecomp = sca.httpclient('page', '/page');
+var everycomp = sca.httpclient('every', '/every');
+var locationcomp = sca.httpclient('location', '/location');
 
 /**
- * Returns the text value of a data element.
+ * Find a named value in a tree of elements.
  */
-function datatext(dv) {
-    return elementHasValue(dv)? elementValue(dv) : '';
+function datavalue(l, id) {
+    if (isNil(l))
+        return null;
+    var e = car(l);
+    if (id == elementName(e))
+        return e;
+    if (!elementHasValue(e)) {
+        var v = datavalue(elementChildren(e), id);
+        if (v != null)
+            return v;
+    }
+    return datavalue(cdr(l), id);
 }
+
+/**
+ * Return the value of an input element.
+ */
+function inputvalue(e) {
+    if (e.className == 'entry' || e.className == 'password') {
+        return car(childElements(e)).value;
+    }
+    if (e.className == 'button') {
+        return car(childElements(e)).value;
+    }
+    if (e.className == 'checkbox') {
+        return car(childElements(e)).value;
+    }
+    if (e.className == 'list') {
+        return car(childElements(car(childElements(e)))).value;
+    }
+    return null;
+};
 
 /**
  * Set a data value into a widget.
  */
 function setwidgetvalue(e, dv) {
+
+    function datatext(dv) {
+        return elementHasValue(dv)? elementValue(dv) : '';
+    }
+
     if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
-        car(childElements(e)).innerHTML = datatext(dv);
+        var t = datatext(dv);
+        car(childElements(e)).innerHTML = t;
         return t;
     }
-    if (e.className == 'button' || e.className == 'entry' || e.className == 'password') {
-        car(childElements(e)).value = datatext(dv);
+    if (e.className == 'entry' || e.className == 'password') {
+        var t = datatext(dv);
+        car(childElements(e)).defaultValue = t;
+        return t;
+    }
+    if (e.className == 'button') {
+        var t = datatext(dv);
+        car(childElements(e)).value = t;
         return t;
     }
     if (e.className == 'checkbox') {
@@ -76,16 +129,26 @@ function setwidgetvalue(e, dv) {
         ce.innerHTML = t;
         return t;
     }
-    if (e.className == 'link') {
-        var t = datatext(dv);
-        var ce = car(childElements(car(childElements(e))));
-        ce.href = t;
-        ce.innerHTML = t;
+    if (e.className == 'table') {
+        var t = ui.datatable(elementChildren(dv));
+        car(childElements(e)).innerHTML = t;
         return t;
     }
-    if (e.className == 'table') {
-        var t = ui.datatable(mklist(dv));
-        car(childElements(e)).innerHTML = t;
+    if (e.className == 'link') {
+        var t = datatext(dv);
+        var ce = car(childElements(e));
+        ce.href = isList(t)? car(t) : t;
+        car(childElements(ce)).innerHTML = isList(t)? cadr(t) : t;
+        return t;
+    }
+    if (e.className == 'img') {
+        var t = datatext(dv);
+        car(childElements(e)).src = t;
+        return t;
+    }
+    if (e.className == 'iframe') {
+        var t = datatext(dv);
+        car(childElements(e)).src = t;
         return t;
     }
     return '';
@@ -94,56 +157,201 @@ function setwidgetvalue(e, dv) {
 /**
  * Display data on the app page.
  */
-function display(l) {
-    if (isNil(l))
-        return false;
-    var v = car(l);
+function displaydata(l) {
 
-    // For each widget in the app page, look for a data element with the widget id
-    // then set the data value into the widget
-    function datavalue(id) {
-        var dv = namedElementChild("'" + id, v);
-        return dv;
-    }
-
+    // Update the widgets values
     function updatewidget(e) {
-        var dv = datavalue(e.id);
+        var dv = datavalue(l, "'" + e.id);
         if (dv == null || isNil(dv))
             return e;
         setwidgetvalue(e, dv);
         return e;
     }
 
-    var e = map(updatewidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
-
-    // Make the page visible
-    ui.showbody();
+    map(updatewidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
     return true;
 }
 
 /**
- * Get the contents of the main page component.
+ * Display data from a document on the app page.
  */
-function getdata() {
-    $('app').innerHTML = $('appFrame').contentDocument.body.innerHTML;
+function displaydoc(doc) {
+    if (isNil(doc))
+        return true;
 
-    var doc = comp.get('', function(doc) {
+    if (json.isJSON(mklist(doc)))
+        return displaydata(json.readJSON(mklist(doc)));
 
-        if (json.isJSON(mklist(doc)))
-            return display(json.readJSON(mklist(doc)));
+    if (atom.isATOMEntry(mklist(doc)))
+        return displaydata(atom.readATOMEntry(mklist(doc)));
 
-        if (atom.isATOMEntry(mklist(doc)))
-            return display(atom.readATOMEntry(mklist(doc)));
+    if (atom.isATOMFeed(mklist(doc)))
+        return displaydata(atom.readATOMFeed(mklist(doc)));
 
-        if (atom.isATOMFeed(mklist(doc)))
-            return display(atom.readATOMFeed(mklist(doc)));
+    return displaydata(doc);
+}
 
-        return display(doc);
+/**
+ * Bind a handler to a widget.
+ */
+function bindwidgethandler(e) {
+    if (e.className == 'button') {
+        var b = car(childElements(e));
+        b.onclick = function() { return buttonClickHandler(e.id); };
+        return e;
+    }
+    if (e.className == 'button' || e.className == 'entry' || e.className == 'password' || e.className == 'checkbox') {
+        car(childElements(e)).name = e.id;
+        return e;
+    }
+    if (e.className == 'list') {
+        var ce = car(childElements(car(childElements(e))));
+        ce.name = e.id;
+        return e;
+    }
+    return e;
+}
+
+/**
+ * Initial fixup of a widget.
+ */
+function fixupwidget(e) {
+    if (e.className == 'iframe') {
+        var f = car(childElements(e));
+        e.innerHTML = '<iframe src="' + f.href + '" frameborder="no" scrolling="no"></iframe>';
+        return e;
+    }
+    return e;
+}
+
+/**
+ * Get app data from the main app page component.
+ */
+function getpagedata() {
+
+    // Display component data on the page
+    function displaypage(doc) {
+        if (!isNil(doc))
+            displaydoc(doc);
+
+        // Reveal the page
+        ui.showbody();
+        return true;
+    }
+
+    // Eval a component init script
+    function evalcompinit(doc) {
+        if (isNil(doc))
+            return true;
+        var js = car(json.readJSON(mklist(doc)));
+        if (!elementHasValue(js))
+            return true;
+        eval(elementValue(js));
+        return true;
+    }
+
+    // Initial setup of a widget
+    function setupwidget(e) {
+        fixupwidget(e);
+        bindwidgethandler(e);
+    }
+
+    // Get the component app data
+    var doc = pagecomp.get(window.location.search, function(doc) {
+        $('app').innerHTML = $('appFrame').contentDocument.body.innerHTML;
+
+        // Initial setup of the widgets
+        map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
+
+        // Display data on the page
+        displaypage(doc);
+
+        // Get and eval the optional timer and location watch setup scripts
+        everycomp.get('setup', evalcompinit);
+        locationcomp.get('setup', evalcompinit);
+        return true;
     });
+
+    return true;
+}
+
+/**
+ * Get app data from a component.
+ */
+function getcompdata(comp, qs) {
+    var doc = comp.get(qs, function(doc) {
+        return displaydoc(doc);
+    });
+    return true;
+}
+
+/**
+ * Build a query string from the values of the page's input fields.
+ */
+function compquery() {
+    function queryarg(e) {
+        return e.id + '=' + inputvalue(e);
+    }
+
+    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
+
+    // Append current location properties if known
+    if (!isNil(geoposition)) {
+        var g = geoposition;
+        args = append(args, mklist('latitude=' + g.coords.latitude, 'longitude=' + g.coords.longitude, 'altitude=' + g.coords.altitude,
+                        'accuracy=' + g.coords.accuracy, 'altitudeAccuracy=' + g.coords.altitudeAccuracy, 'heading=' + g.coords.heading,
+                        'speed=' + g.coords.speed));
+    }
+
+    return '?' + args.join('&');
+}
+
+/**
+ * Handle a button click event.
+ */
+function buttonClickHandler(id) {
+    return getcompdata(sca.component(id), compquery());
+}
+
+/**
+ * Handle a timer interval event.
+ */
+function intervalHandler() {
+    return getcompdata(everycomp, compquery());
+}
+
+/**
+ * Setup an interval timer.
+ */
+function setupIntervalHandler(sec) {
+    return setInterval(intervalHandler, sec);
+}
+
+/**
+ * Handle a location watch event.
+ */
+var geoposition;
+
+function locationHandler(pos) {
+    geoposition = pos;
+    return getcompdata(locationcomp, compquery());
+}
+
+function locationErrorHandler(e) {
+    return true;
+}
+
+/**
+ * Setup a location watch handler.
+ */
+function setupLocationHandler() {
+    navigator.geolocation.getCurrentPosition(locationHandler, locationErrorHandler);
+    navigator.geolocation.watchPosition(locationHandler, locationErrorHandler);
+    return true;
 }
 
 // Load the app frame
-$('app').innerHTML = '<iframe id="appFrame" class="widgetFrame" src="app.html" onload="getdata()"></iframe>';
+$('app').innerHTML = '<iframe id="appFrame" class="widgetFrame" src="app.html" onload="getpagedata()"></iframe>';
 
 </script>
 </body>

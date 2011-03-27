@@ -408,7 +408,7 @@ if (ui.isIE()) {
     graph.comptitlewidth = function(comp) {
         var t = graph.title(comp);
         graph.comptitlewidthdiv.innerHTML = t;
-        var twidth = graph.comptitlewidthdiv.offsetWidth + 4;
+        var twidth = graph.comptitlewidthdiv.offsetWidth + 2;
         graph.comptitlewidthdiv.innerHTML = '';
         return twidth;
     };
@@ -419,7 +419,7 @@ if (ui.isIE()) {
     graph.proptitle = function(comp) {
         var tsvcs = graph.tsvcs(comp);
         var lsvcs = graph.lsvcs(comp);
-        var pos = graph.mkpath().move(isNil(lsvcs)? tabsz : (tabsz * 5), isNil(tsvcs)? 15 + tabsz : 15 + (tabsz * 5));
+        var pos = graph.mkpath().move(graph.comptitlewidth(comp) + 7 + (isNil(lsvcs)? tabsz : (tabsz * 5)), isNil(tsvcs)? tabsz : (tabsz * 5));
         return graph.mktitle(graph.property(comp), true, pos);
     };
 
@@ -429,7 +429,7 @@ if (ui.isIE()) {
     graph.proptitlewidth = function(comp) {
         var t = graph.property(comp);
         graph.proptitlewidthdiv.innerHTML = t;
-        var twidth = graph.proptitlewidthdiv.offsetWidth + 4;
+        var twidth = graph.proptitlewidthdiv.offsetWidth + 2;
         graph.proptitlewidthdiv.innerHTML = '';
         return twidth;
     };
@@ -902,7 +902,7 @@ if (ui.isIE()) {
     graph.comptitlewidth = function(comp) {
         var title = graph.comptitle(comp);
         graph.titlewidthsvg.appendChild(title);
-        var width = title.getBBox().width + 4;
+        var width = title.getBBox().width + 2;
         graph.titlewidthsvg.removeChild(title);
         return width;
     };
@@ -930,7 +930,7 @@ if (ui.isIE()) {
      */
     graph.proptitle = function(comp) {
         var title = graph.mktitle(graph.property(comp), true);
-        title.setAttribute('y', 30);
+        title.setAttribute('x', graph.comptitlewidth(comp) + 7);
         return title;
     };
 
@@ -940,7 +940,7 @@ if (ui.isIE()) {
     graph.proptitlewidth = function(comp) {
         var title = graph.proptitle(comp);
         graph.titlewidthsvg.appendChild(title);
-        var width = title.getBBox().width + 4;
+        var width = title.getBBox().width + 2;
         graph.titlewidthsvg.removeChild(title);
         return width;
     };
@@ -1085,7 +1085,9 @@ graph.title = function(e) {
             return '>'
         if (t == 'lt')
             return '<';
-        return t;
+        if (t.indexOf('{') == -1)
+            return t;
+        return t.replace('{compname}', scdl.name(e));
     }
     return scdl.name(e);
 };
@@ -1236,8 +1238,6 @@ graph.compheight = function(comp, cassoc) {
         var height = Math.max(lsvcsh, rrefsh);
         if (!isNil(graph.brefs(comp)))
             height = Math.max(height, (tabsz * 10) + (tabsz * 4) + (tabsz * 2));
-        if (graph.property(comp) != '')
-            height = Math.max(40, height);
         return height;
     });
 };
@@ -1288,7 +1288,7 @@ graph.rrefswidth = function(refs, cassoc) {
  */
 graph.compwidth = function(comp, cassoc) {
     return memo(comp, 'width', function() {
-        var twidth = Math.max(graph.comptitlewidth(comp), graph.proptitlewidth(comp)) + (tabsz * 8);
+        var twidth = graph.comptitlewidth(comp) + graph.proptitlewidth(comp) + (tabsz * 8);
         var tsvcs = graph.tsvcs(comp);
         var tsvcsw = Math.max(1, length(tsvcs)) * (tabsz * 10) + (tabsz * 4);
         var brefs = graph.brefs(comp);

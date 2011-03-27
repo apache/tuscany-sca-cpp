@@ -27,7 +27,7 @@
 <script type="text/javascript" src="/ui.js"></script>
 <script type="text/javascript" src="/component.js"></script>
 </head>  
-<body>
+<body class="delayed">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
@@ -46,7 +46,7 @@
 
 <table style="width: 100%;">
 <tr><td><b>App Name:</b></td></tr>
-<tr><td><input type="text" id="appName" size="10"/></td></tr>
+<tr><td><input type="text" id="appName" size="10"/>&nbsp;<span id="appDomain"></span></td></tr>
 <tr><tr><td><b>App Title:</b></td></tr>
 <tr><td><input type="text" id="appTitle" size="80"/></td></tr>
 <tr><tr><td><b>Category:</b></td></tr>
@@ -72,33 +72,58 @@ var editWidget = sca.component("EditWidget");
 var dashboard = sca.reference(editWidget, "dashboard");
 
 /**
+ * Return the link to an app.
+ */
+function applink(appname) {
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/';
+    return link;
+}
+
+/**
  * Get and display list of apps.
  */
 function getapps(sync) {
     function display(doc) {
         var apps = '<table style="width: 100%;">';
-        apps += '<tr><th class="thl thr" style="width: 225px; min-width: 225px; padding-top: 4px; padding-right: 4px;">App</th>' +
+        apps += '<tr><th class="thl thr" style="width: 20px; padding-top: 4px; padding-right: 4px;">App</th>' +
+            '<th class="thr thl" style="width: 20px;">Domain</th>' +
+            '<th class="thr thl">Category</th>' +
             '<th class="thr thl" style="width: 100%;">Title</th>' +
-            '<th class="thl thr" style="width: 30px;">Sharing</th></tr>';
+            '<th class="thr thl">Updated</th>' +
+            '<th class="thl thr">Sharing</th></tr>';
 
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
         var entries = cadr(assoc("'entry", cdr(feed)));
         for (var i = 0; i < length(entries); i++) {
             var entry = entries[i];
-            title = cadr(assoc("'title", entry))
-            name = cadr(assoc("'id", entry))
-            hreflink = '<a href=\"' + '/graph/?app=' + name + '\" target=\"_parent\">';
-            sharing = 'Shared with everybody';
+            var title = cadr(assoc("'title", entry))
+            var name = cadr(assoc("'id", entry))
+            var editlink = '<a href=\"' + '/graph/?app=' + name + '\" target=\"_parent\">';
+            var domainlink = '<a href=\"' + applink(name) + '\" target=\"_' + name + '\">' + name + '.' + window.location.hostname + '</a>';
+            var category = 'coolapps';
+            var updated = 'Feb 4, 2011';
+            var sharing = 'Public';
 
             apps += '<tr class="trb"><td>';
-            apps += hreflink + '<img src="/public/app.png" style="width: 50px; height: 50px; margin-right: 10px; vertical-align: middle;"></img>' + '</a>';
-            apps += '&nbsp;' + hreflink + name + '</a></td>';
+            apps += editlink + '<img src="/public/app.png" style="width: 50px; height: 50px; margin-right: 10px; vertical-align: middle;"></img>' + '</a>';
+            apps += '&nbsp;' + editlink + name + '</a></td>';
+            apps += '<td>' + domainlink + '</td>';
+            apps += '<td>' + category + '</td>';
             apps += '<td class="tdw">' + title + '</td>';
+            apps += '<td>' + updated + '</td>';
             apps += '<td>' + sharing + '</td>';
             apps += '</tr>';
         }
         apps += '</table>';
         $('apps').innerHTML = apps;
+
+        // Show the page
+        ui.showbody();
     }
 
     if (sync) {
@@ -123,6 +148,7 @@ var defdesc = 'Enter a short description of your app here';
  */
 $('createAppButton').onclick = function() {
     $('appName').value = '';
+    $('appDomain').innerHTML = '.' + window.location.hostname;
     $('appTitle').value = deftitle;
     $('appCategory').value = defcategory;
     $('appDescription').value = defdesc;

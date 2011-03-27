@@ -286,6 +286,43 @@ function properties(o) {
 }
 
 /**
+ * Convert a host name to a domain name.
+ */
+function domainname(host) {
+    var h = reverse(host.split('.'));
+    return reverse(mklist(car(h), cadr(h))).join('.');
+}
+
+/**
+ * Return true if a host name is a subdomain.
+ */
+function issubdomain(host) {
+    return host.split('.').length > 2;
+}
+
+/**
+ * Convert a host name to a domain name title.
+ */
+function domaintitle(host) {
+    var h = reverse(host.split('.'));
+    var d = isNil(cdr(h))? car(h) : cadr(h);
+    return d.substr(0, 1).toUpperCase() + d.substr(1);
+}
+
+/**
+ * Format a string like Python format.
+ */
+function format() {
+    var i = 0;
+    var s = '';
+    for (a in arguments) {
+        s = i == 0? arguments[a] : s.replace('{' + a + '}', arguments[a]);
+        i++;
+    }
+    return s;
+}
+
+/**
  * Functions with side effects. Use with moderation.
  */
 

@@ -18,16 +18,22 @@
 -->
 <html>
 <head>
-<title>App Settings</title>
+<title>Settings</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 </head>
 <body class="delayed">
 <div id="menu"></div>
+
+<h1><span id="h1"></span> <span id="appNameHeader" style="font-weight: normal;"></span></h1>
+<br/>
+
+<div id="props"></div>
 
 <script type="text/javascript">
 
@@ -36,14 +42,10 @@ var appname = ui.queryParams()['app'];
 
 // Load the menu bar
 ui.loadwidget('menu', '/menu.html?app=' + appname, ui.showbody);
-</script>
 
-<h1>App Edit <span id="appNameHeader" style="font-weight: normal;"></span></h1>
-<br/>
-
-<div id="props"></div>
-
-<script type="text/javascript">
+document.title = 'Settings - ' + appname;
+$('h1').innerHTML = domaintitle(window.location.hostname);
+$('appNameHeader').innerHTML = ' - ' + appname;
 
 /**
  * Display the properties editor for an app.
@@ -55,11 +57,11 @@ function editapp(name) {
 }
 
 // Display the editor for the current app
-document.title = 'App - ' + appname;
-$('appNameHeader').innerHTML = ' - ' + appname;
 editapp(appname);
 
+ui.showbody();
 </script>
+
 </body>
 </html>
 

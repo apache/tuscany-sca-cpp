@@ -36,6 +36,8 @@ def mkapplink(id):
         os.symlink('../../../htdocs/public', 'apps/' + car(id) + '/htdocs/public');
         os.symlink('../../../htdocs/data', 'apps/' + car(id) + '/htdocs/data');
         os.symlink('../../../htdocs/app/index.html', 'apps/' + car(id) + '/htdocs/index.html');
+        os.symlink('../../../htdocs/robots.txt', 'apps/' + car(id) + '/htdocs/robots.txt');
+        os.symlink('../../../htdocs/favicon.ico', 'apps/' + car(id) + '/htdocs/favicon.ico');
         os.symlink('../app.html', 'apps/' + car(id) + '/htdocs/app.html');
     except:
         pass

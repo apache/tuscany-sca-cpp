@@ -20,6 +20,7 @@
 body {
 white-space: margin: 0px;
 font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
+-webkit-text-size-adjust: none;
 }
 
 .delayed {
@@ -81,11 +82,11 @@ padding-left: 2px; padding-top: 2px; padding-right: 8px; white-space: normal; ve
 }
 
 .datatdl {
-border-right: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc; width: 10px;
+border-right: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc; width: 10px; vertical-align: top;
 }
 
 .datatdr {
-border-left: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc;
+border-left: 1px; border-top: 1px; border-bottom: 1px; border-style: solid; border-color: #dcdcdc; vertical-align: top;
 }
 
 .datatable {
@@ -99,19 +100,26 @@ opacity: .6;
 filter: alpha(opacity=60);
 }
 
+iframe {
+border: 0px; margin: 0px; padding: 0px;
+}
+
 .widgetframe {
 visibility: hidden; width: 0px; height: 0px; border: 0px;
 }
 
 .loadedframe {
-width: 100%; height: 100%; border: 0px;
-margin: 0px; padding: 0px;
+width: 100%; height: 100%;
+}
+
+.fakeframe {
+padding: 3px; background-color: #dcdcdc; color: #000000;
 }
 
 input {
 vertical-align: middle;
 font-family: arial,sans-serif; font-style: normal; font-variant: normal; font-size: 13px;
--webkit-text-size-adjust: 140%;
+-webkit-text-size-adjust: 100%;
 }
 
 textarea {

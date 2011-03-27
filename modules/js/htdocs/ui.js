@@ -36,10 +36,11 @@ ui.isIE = function() {
 /**
  * Build a menu bar.
  */ 
-ui.menu = function(name, href) {
-    function Menu(n, h) {
+ui.menu = function(name, href, target) {
+    function Menu(n, h, t) {
         this.name = n;
         this.href = h;
+        this.target = isNil(t)? '_parent' : t;
 
         this.content = function() {
             function complete(uri) {
@@ -54,11 +55,11 @@ ui.menu = function(name, href) {
             }
 
             if (complete(this.href) != complete(window.top.location.pathname))
-                return '<a href="' + this.href + '" target="_parent"><span class=amenu>' + this.name + '</span></a>';
-            return '<a href="' + this.href + '" target="_parent"><span class=smenu>' + this.name + '</span></a>';
+                return '<a href="' + this.href + '" target="' + this.target + '"><span class=amenu>' + this.name + '</span></a>';
+            return '<a href="' + this.href + '" target="' + this.target + '"><span class=smenu>' + this.name + '</span></a>';
         };
     }
-    return new Menu(name, href);
+    return new Menu(name, href, target);
 };
 
 ui.menubar = function(left, right) {
@@ -295,7 +296,6 @@ ui.csspos = function(p) {
  * Convert a list of elements to an HTML table.
  */
 ui.datatable = function(l) {
-    log('datatable', writeValue(l));
 
     function indent(i) {
         if (i == 0)
@@ -308,22 +308,29 @@ ui.datatable = function(l) {
             return '';
         var e = car(l);
 
+        // Convert a list of simple values into a list of name value pairs
         if (!isList(e))
             return rows(expandElementValues("'value", l), i);
 
+        // Convert a list of complex values into a list of name value pairs
+        if (isList(car(e)))
+            return rows(expandElementValues("'value", l), i);
+
+        // Generate table row for a simple element value
         if (elementHasValue(e)) {
             var v = elementValue(e);
             if (!isList(v)) {
                 return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
-                    '<td class="datatdr">' + v + '</td></tr>' +
+                    '<td class="datatdr tdw">' + v + '</td></tr>' +
                     rows(cdr(l), i);
             }
 
             return rows(expandElementValues(elementName(e), v), i) + rows(cdr(l), i);
         }
 
+        // Generate table row for an element with children
         return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
-            '<td class="datatdr">' + '</td></tr>' +
+            '<td class="datatdr tdw">' + '</td></tr>' +
             rows(elementChildren(e), i + 1) +
             rows(cdr(l), i);
     }

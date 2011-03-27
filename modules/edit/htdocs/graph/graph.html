@@ -28,7 +28,7 @@
 <script type="text/javascript" src="/component.js"></script>
 <script type="text/javascript" src="graph.js"></script>
 </head>  
-<body>
+<body class="delayed">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
@@ -39,8 +39,9 @@
 <th class="thr" style="padding-left: 4px; padding-top: 0px; padding-bottom: 0px;">
 <input id="compName" type="text" value="component name" title="Component name" style="position: relative; width: 200px;"/>
 <input id="propValue" type="text" value="property value" title="Component property value" style="position: relative; width: 300px;"/>
-<input type="button" id="autoplayButton" title="Turn autoplay on/off" style="font-weight: bold;" Value="Autoplay is on"/>
-<span id="compValue" style="position: relative; font-weight: normal;"></span><br/>
+<input type="button" id="autoplayButton" title="Turn preview on/off" style="font-weight: bold;" Value="Preview is on"/>
+<span id="compValue" style="position: relative; font-weight: normal;"></span>
+<span id="compDebug" style="position: relative; font-weight: normal;"></span>
 </th>
 
 <th class="thl thr" style="padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">
@@ -114,6 +115,9 @@ function getapp(name, g) {
 
         // Track the saved composite XML
         savedcomposxml = car(writeXML(composite, false));
+
+        // Show the page
+        ui.showbody();
     });
 }
 
@@ -203,6 +207,21 @@ function compvaluelink(appname, cname) {
 }
 
 /**
+ * Return the link to a component raw data.
+ */
+function compdebuglink(appname, cname) {
+    if (cname == '' || isNil(cname))
+        return '';
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/components/' + cname;
+    return link;
+}
+
+/**
  * Track whether we're always showing the result data of the selected component.
  */
 var autoplay = true;
@@ -228,11 +247,28 @@ function oncompselect(appname, cname) {
         return true;
     compname = cname;
     var link = compvaluelink(appname, cname);
-    $('compValue').innerHTML = link != ''? '<a href="' + link + '" target="_blank">' + 'Results' + '</a>' : '';
+    $('compValue').innerHTML = link != ''? '<input type="button" id="playButton" title="View the component value" style="font-weight: bold;" value="View" onclick="playcomp()"/>' : '';
+    $('compDebug').innerHTML = link != ''? '<input type="button" id="debugButton" title="View the component raw data" style="font-weight: bold;" value="URL" onclick="debugcomp()"/>' : '';
 
     if (autoplay)
         return showData(cname);
     return true;
+}
+
+/**
+ * Play the current component.
+ */
+function playcomp() {
+    var link = compvaluelink(appname, compname);
+    return window.open(link, '_' + appname + '_' + compname);
+}
+
+/**
+ * Debug the current component.
+ */
+function debugcomp() {
+    var link = compdebuglink(appname, compname);
+    return window.open(link, '_' + appname + '_' + compname);
 }
 
 /**
@@ -242,14 +278,17 @@ $('autoplayButton').onclick = function(e) {
     if (autoplay) {
         autoplay = false;
         showData('');
-        $('autoplayButton').value = 'Autoplay is off';
+        $('autoplayButton').value = 'Autorun is off';
         return true;
     }
     autoplay = true;
     showData(compname);
-    $('autoplayButton').value = 'Autoplay is on';
+    $('autoplayButton').value = 'Autorun is on';
     return true;
 };
+
+// Init the play app button
+
 
 // Create editor graph area
 var g = graph.mkgraph(graph.mkpath().move(0,40), $('compName'), $('propValue'));
@@ -261,16 +300,16 @@ var spalette = 'event';
 var pos = graph.mkpath();
 installpalette('event', pos.rmove(0,0), g, bg, spalette, gpalettes);
 installpalette('value', pos.rmove(0,40), g, bg, spalette, gpalettes);
-installpalette('url', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('list', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('transform', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('text', pos.rmove(0, 40), g, bg, spalette, gpalettes);
-installpalette('logic', pos.rmove(0, 40), g, bg, spalette, gpalettes);
-installpalette('math', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('http', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('talk', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('social', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('search', pos.rmove(0, 40), g, bg, spalette, gpalettes);
-installpalette('sensor', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('logic', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('math', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('python', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 
 // Get and display the current app
 getapp(appname, g);

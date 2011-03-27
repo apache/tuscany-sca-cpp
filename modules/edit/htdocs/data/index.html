@@ -17,11 +17,16 @@
     * under the License.    
 -->
 <html>
-<head>  
-<title>Results</title>
+<head>
+<title>View</title>
+<script type="text/javascript">
+var cn = window.location.search.substring(1).split('=')[1];
+document.title = 'View - ' + window.location.hostname.split('.')[0] + '/' + cn;
+</script>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui.css">
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/elemutil.js"></script>
@@ -32,7 +37,7 @@
 <script type="text/javascript" src="/ui.js"></script>
 <script type="text/javascript" src="/component.js"></script>
 </head>  
-<body>
+<body class="delayed">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
@@ -52,7 +57,16 @@ var comp = sca.component(cname);
  */
 function display(e) {
     $('bodydiv').innerHTML = e;
+
+    ui.showbody();
     return true;
+}
+
+/**
+ * Convert data to an HTML table.
+ */
+function datatable(e) {
+    return ui.datatable(e);
 }
 
 /**
@@ -70,15 +84,15 @@ function getdata() {
     comp.get('', function(doc) {
 
         if (json.isJSON(mklist(doc)))
-            return display(ui.datatable(json.readJSON(mklist(doc))));
+            return display(datatable(json.readJSON(mklist(doc))));
 
         if (atom.isATOMEntry(mklist(doc)))
-            return display(ui.datatable(atom.readATOMEntry(mklist(doc))));
+            return display(datatable(atom.readATOMEntry(mklist(doc))));
 
         if (atom.isATOMFeed(mklist(doc)))
-            return display(ui.datatable(atom.readATOMFeed(mklist(doc))));
+            return display(datatable(atom.readATOMFeed(mklist(doc))));
 
-        return display(mkdoctable(doc));
+        return display(mkdoctable('<iframe style="width: 100%; height: 5000px;" scrolling="no" frameborder="0" src="' + comp.uri + '"/>'));
     });
 }
 

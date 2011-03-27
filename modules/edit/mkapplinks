@@ -38,6 +38,8 @@ for n in `ls apps | awk '{ printf "apps/%s/htdocs\n", $1 }'`; do
         ln -s ../../../htdocs/public "$n/public"
         ln -s ../../../htdocs/data "$n/data"
         ln -s ../../../htdocs/app/index.html "$n/index.html"
+        ln -s ../../../htdocs/robots.txt "$n/robots.txt"
+        ln -s ../../../htdocs/favicon.ico "$n/favicon.ico"
         ln -s ../app.html "$n/app.html"
     fi
 done

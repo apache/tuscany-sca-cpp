@@ -407,6 +407,13 @@ HTTPBindingClient.getHTTPRequest = function() {
 var sca = {};
 
 /**
+ * Return an HTTP client proxy.
+ */
+sca.httpclient = function(name, uri) {
+    return new HTTPBindingClient(name, uri);
+};
+
+/**
  * Return a component proxy.
  */
 sca.component = function(name) {
