@@ -140,7 +140,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     }
 
     // Write an empty list as a JSON empty value
-    if (isNil(c)) {
+    if (isNil((list<value>)c)) {
         js::JSContext cx;
         return httpd::writeResult(json::writeJSON(list<value>(), cx), "application/json", r);
     }

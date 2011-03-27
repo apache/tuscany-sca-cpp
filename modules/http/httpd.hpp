@@ -344,7 +344,7 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
         return OK;
     }
     ap_set_content_type(r, apr_pstrdup(r->pool, c_str(ct)));
-    ap_rputs(c_str(ob), r);
+    ap_rwrite(c_str(ob), (int)length(ob), r);
     return OK;
 }
 
