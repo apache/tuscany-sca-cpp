@@ -29,8 +29,6 @@
     <service name="equals" promote="equals"/>
     <service name="greater" promote="greater"/>
     <service name="lesser" promote="lesser"/>
-    <service name="eval" promote="eval"/>
-    <service name="exec" promote="exec"/>
 
     <component name="if" t:title="if" t:color="magenta1">
         <t:implementation.python script="nuvem/if_.py"/>
@@ -79,20 +77,6 @@
         <service name="lesser"/>
         <reference name="value1"/>
         <reference name="value2"/>
-    </component>
-    
-    <component name="eval" t:title="py expr" t:color="magenta1">
-        <t:implementation.python script="nuvem/eval_.py"/>
-        <service name="eval"/>
-        <reference name="py"/>
-        <reference name="ref"/>
-    </component>
-    
-    <component name="exec" t:title="py script" t:color="magenta1">
-        <t:implementation.python script="nuvem/exec_.py"/>
-        <service name="exec"/>
-        <reference name="py"/>
-        <reference name="ref"/>
     </component>
     
 </composite>

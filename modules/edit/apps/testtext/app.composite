@@ -127,14 +127,14 @@
   <property>def</property>
  </component>
  <service name="format" promote="format"/>
- <component t:x="225" t:y="192" name="format" t:title="format" t:color="magenta1">
+ <component t:x="229" t:y="174" name="format" t:title="format" t:color="magenta1">
   <t:implementation.python script="nuvem/format_.py"/>
   <service name="format"/>
   <reference target="text13" name="pattern"/>
   <reference target="list" name="values"/>
  </component>
  <service name="format2" promote="format2"/>
- <component t:x="493" t:y="207" name="format2" t:title="format" t:color="magenta1">
+ <component t:x="492" t:y="189" name="format2" t:title="format" t:color="magenta1">
   <t:implementation.python script="nuvem/format_.py"/>
   <service name="format"/>
   <reference target="text14" name="pattern"/>
@@ -207,7 +207,7 @@
   <property>fox</property>
  </component>
  <service name="parse" promote="parse"/>
- <component t:x="37" t:y="388" name="parse" t:title="parse" t:color="magenta1">
+ <component t:x="35" t:y="378" name="parse" t:title="parse" t:color="magenta1">
   <t:implementation.python script="nuvem/parse.py"/>
   <service name="parse"/>
   <reference target="text19" name="regexp"/>

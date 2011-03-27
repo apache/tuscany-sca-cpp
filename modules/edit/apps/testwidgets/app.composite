@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testwidgets" name="testwidgets">
+ <service name="page" promote="page"/>
+ <component t:x="208" t:y="0" name="page" t:title="when page opens" t:color="green1">
+  <t:implementation.python script="nuvem/page.py"/>
+  <service name="page" t:visible="false">
+   <t:binding.http uri="page"/>
+  </service>
+  <reference target="assoc8" name="content"/>
+ </component>
+ <component t:x="516" t:y="121" name="assoc" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name" name="name"/>
+  <reference target="text" name="value"/>
+ </component>
+ <component t:x="571" t:y="121" name="name" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>testh1</property>
+ </component>
+ <component t:x="571" t:y="161" name="text" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>test header 1</property>
+ </component>
+ <component t:x="506" t:y="176" name="name3" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>testentry</property>
+ </component>
+ <component t:x="506" t:y="216" name="text3" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>test entry field</property>
+ </component>
+ <component t:x="458" t:y="392" name="text5" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>test checkbox</property>
+ </component>
+ <component t:x="459" t:y="263" name="name2" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>testbutton</property>
+ </component>
+ <component t:x="458" t:y="302" name="text2" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>test button</property>
+ </component>
+ <component t:x="458" t:y="352" name="name4" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>testlink</property>
+ </component>
+ <component t:x="464" t:y="444" name="name5" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>testimg</property>
+ </component>
+ <component t:x="458" t:y="480" name="text6" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://tuscany.apache.org/images/TuscanyLogo.jpg</property>
+ </component>
+ <component t:x="405" t:y="268" name="assoc3" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name3" name="name"/>
+  <reference target="text3" name="value"/>
+ </component>
+ <component t:x="407" t:y="355" name="assoc5" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name7" name="name"/>
+  <reference target="text5" name="value"/>
+ </component>
+ <component t:x="409" t:y="178" name="assoc6" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name2" name="name"/>
+  <reference target="text2" name="value"/>
+ </component>
+ <component t:x="407" t:y="445" name="assoc2" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name4" name="name"/>
+  <reference target="text4" name="value"/>
+ </component>
+ <component t:x="461" t:y="87" name="name6" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>testsection</property>
+ </component>
+ <component t:x="458" t:y="128" name="text7" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>test section</property>
+ </component>
+ <component t:x="458" t:y="352" name="name7" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>testcheckbox</property>
+ </component>
+ <component t:x="385" t:y="0" name="name8" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>test</property>
+ </component>
+ <component t:x="460" t:y="660" name="assoc4" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name5" name="name"/>
+  <reference target="text6" name="value"/>
+ </component>
+ <component t:x="460" t:y="569" name="assoc9" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name9" name="name"/>
+  <reference target="text8" name="value"/>
+ </component>
+ <component t:x="102" t:y="92" name="name9" t:title="name" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>testtext</property>
+ </component>
+ <component t:x="105" t:y="132" name="text8" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>test text</property>
+ </component>
+ <component t:x="458" t:y="128" name="assoc7" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name6" name="name"/>
+  <reference target="text7" name="value"/>
+ </component>
+ <component t:x="330" t:y="0" name="assoc8" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference target="name8" name="name"/>
+  <reference target="list" name="value"/>
+ </component>
+ <component t:x="385" t:y="40" name="list" t:title="make list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="assoc" name="item" t:clonable="true"/>
+  <reference target="assoc7" name="item" t:clonable="true"/>
+  <reference target="assoc6" name="item" t:clonable="true"/>
+  <reference target="assoc3" name="item" t:clonable="true"/>
+  <reference target="assoc5" name="item" t:clonable="true"/>
+  <reference target="assoc2" name="item" t:clonable="true"/>
+  <reference target="assoc9" name="item" t:clonable="true"/>
+  <reference target="assoc4" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
+ </component>
+ <component t:x="513" t:y="520" name="text4" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://tuscany.apache.org</property>
+ </component>
+</composite>

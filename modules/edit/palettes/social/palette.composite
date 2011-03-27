@@ -23,12 +23,12 @@
   name="palette">
         
     <service name="fbprofile" promote="fbprofile"/>
-    <service name="fbalbum" promote="fbalbum"/>
+    <service name="fbalbums" promote="fbalbums"/>
     <service name="fbfriends" promote="fbfriends"/>
-    <service name="fbgroup" promote="fbgroup"/>
+    <service name="fbgroups" promote="fbgroups"/>
     <service name="twprofile" promote="twprofile"/>
     <service name="twfriends" promote="twfriends"/>
-    <service name="twstatus" promote="twstatus"/>
+    <service name="twfollowers" promote="twfollowers"/>
     <service name="twtimeline" promote="twtimeline"/>
 
     <component name="fbprofile" t:title="facebook profile" t:color="blue1">
@@ -40,22 +40,31 @@
         </reference>
     </component>
     
-    <component name="fbalbum" t:title="facebook album" t:color="blue1">
-        <t:implementation.python script="nuvem/fbalbum.py"/>
-        <service name="fbalbum"/>
+    <component name="fbalbums" t:title="facebook albums" t:color="blue1">
+        <t:implementation.python script="nuvem/fbalbums.py"/>
+        <service name="fbalbums"/>
         <reference name="id"/>
+        <reference name="fb" t:visible="false">
+            <t:binding.http uri="https://graph.facebook.com"/>
+        </reference>
     </component>
     
     <component name="fbfriends" t:title="facebook friends" t:color="blue1">
         <t:implementation.python script="nuvem/fbfriends.py"/>
         <service name="fbfriends"/>
         <reference name="id"/>
+        <reference name="fb" t:visible="false">
+            <t:binding.http uri="https://graph.facebook.com"/>
+        </reference>
     </component>
     
-    <component name="fbgroup" t:title="facebook group" t:color="blue1">
-        <t:implementation.python script="nuvem/fbgroup.py"/>
-        <service name="fbgroup"/>
+    <component name="fbgroups" t:title="facebook groups" t:color="blue1">
+        <t:implementation.python script="nuvem/fbgroups.py"/>
+        <service name="fbgroups"/>
         <reference name="id"/>
+        <reference name="fb" t:visible="false">
+            <t:binding.http uri="https://graph.facebook.com"/>
+        </reference>
     </component>
     
     <component name="twprofile" t:title="twitter profile" t:color="blue1">
@@ -71,12 +80,18 @@
         <t:implementation.python script="nuvem/twfriends.py"/>
         <service name="twfriends"/>
         <reference name="id"/>
+        <reference name="tw" t:visible="false">
+            <t:binding.http uri="http://api.twitter.com/1/statuses/friends.json"/>
+        </reference>
     </component>
     
-    <component name="twstatus" t:title="twitter status" t:color="blue1">
-        <t:implementation.python script="nuvem/twstatus.py"/>
-        <service name="twstatus"/>
+    <component name="twfollowers" t:title="twitter followers" t:color="blue1">
+        <t:implementation.python script="nuvem/twfollowers.py"/>
+        <service name="twfollowers"/>
         <reference name="id"/>
+        <reference name="tw" t:visible="false">
+            <t:binding.http uri="http://api.twitter.com/1/statuses/followers.json"/>
+        </reference>
     </component>
     
     <component name="twtimeline" t:title="twitter timeline" t:color="blue1">

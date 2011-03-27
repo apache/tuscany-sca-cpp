@@ -19,7 +19,7 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://url"
+  targetNamespace="http://http"
   name="palette">
         
     <service name="host" promote="host"/>
@@ -28,40 +28,63 @@
     <service name="user" promote="user"/>
     <service name="email" promote="email"/>
     <service name="get" promote="get"/>
+    <service name="post" promote="post"/>
+    <service name="put" promote="put"/>
+    <service name="delete" promote="delete"/>
 
     <component name="host" t:title="host" t:color="green1">
         <t:implementation.python script="nuvem/host.py"/>
         <service name="host"/>
-        <property name="host"></property>
+        <property name="host" t:visible="false"></property>
     </component>
     
     <component name="path" t:title="path" t:color="green1">
         <t:implementation.python script="nuvem/path.py"/>
         <service name="path"/>
-        <property name="path"></property>
+        <property name="path" t:visible="false"></property>
     </component>
     
     <component name="params" t:title="?params" t:color="green1">
         <t:implementation.python script="nuvem/params.py"/>
         <service name="params"/>
-        <property name="query"></property>
+        <property name="query" t:visible="false"></property>
     </component>
     
     <component name="user" t:title="user" t:color="green1">
         <t:implementation.python script="nuvem/user.py"/>
         <service name="user"/>
-        <property name="user"></property>
+        <property name="user" t:visible="false"></property>
     </component>
     
     <component name="email" t:title="email" t:color="green1">
         <t:implementation.python script="nuvem/email.py"/>
         <service name="email"/>
-        <property name="email"></property>
+        <property name="email" t:visible="false"></property>
     </component>
     
     <component name="get" t:title="http get" t:color="green1">
         <implementation.cpp path="lib/http" library="libhttpget"/>
         <service name="get"/>
+        <reference name="url"/>
+    </component>
+    
+    <component name="post" t:title="http post **" t:color="green1">
+        <implementation.cpp path="lib/http" library="libhttppost"/>
+        <service name="post"/>
+        <reference name="url"/>
+        <reference name="content"/>
+    </component>
+    
+    <component name="put" t:title="http put **" t:color="green1">
+        <implementation.cpp path="lib/http" library="libhttpput"/>
+        <service name="put"/>
+        <reference name="url"/>
+        <reference name="content"/>
+    </component>
+    
+    <component name="delete" t:title="http delete **" t:color="green1">
+        <implementation.cpp path="lib/http" library="libhttpdelete"/>
+        <service name="delete"/>
         <reference name="url"/>
     </component>
     

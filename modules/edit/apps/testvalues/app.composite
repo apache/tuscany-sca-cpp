@@ -18,20 +18,14 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testvalues" name="testvalues">
- <service name="text" promote="text"/>
- <component t:x="7" t:y="14" name="text" t:title="text" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>xyz</property>
- </component>
  <service name="name" promote="name"/>
- <component t:x="5" t:y="71" name="name" t:title="name" t:color="orange1">
+ <component t:x="8" t:y="91" name="name" t:title="name" t:color="orange1">
   <t:implementation.python script="nuvem/name.py"/>
   <service name="name"/>
   <property>abc</property>
  </component>
  <service name="true" promote="true"/>
- <component t:x="5" t:y="140" name="true" t:title="true" t:color="orange1">
+ <component t:x="11" t:y="152" name="true" t:title="true" t:color="orange1">
   <t:implementation.python script="nuvem/true_.py"/>
   <service name="true"/>
  </component>
@@ -41,7 +35,7 @@
   <service name="false"/>
  </component>
  <service name="find" promote="find"/>
- <component t:x="728" t:y="9" name="find" t:title="find by name" t:color="yellow1">
+ <component t:x="740" t:y="32" name="find" t:title="find by name" t:color="yellow1">
   <t:implementation.python script="nuvem/find.py"/>
   <service name="find"/>
   <reference target="name3" name="name"/>
@@ -89,13 +83,13 @@
   <property>10</property>
  </component>
  <service name="first" promote="first"/>
- <component t:x="93" t:y="10" name="first" t:title="first item" t:color="yellow1">
+ <component t:x="212" t:y="49" name="first" t:title="first item" t:color="yellow1">
   <t:implementation.python script="nuvem/first.py"/>
   <service name="first"/>
   <reference target="list7" name="list"/>
  </component>
  <service name="rest" promote="rest"/>
- <component t:x="408" t:y="6" name="rest" t:title="rest of list" t:color="yellow1">
+ <component t:x="475" t:y="41" name="rest" t:title="rest of list" t:color="yellow1">
   <t:implementation.python script="nuvem/rest.py"/>
   <service name="rest"/>
   <reference target="list" name="list"/>
@@ -106,7 +100,7 @@
   <service name="empty"/>
  </component>
  <service name="itemnb" promote="itemnb"/>
- <component t:x="97" t:y="184" name="itemnb" t:title="item number" t:color="yellow1">
+ <component t:x="121" t:y="178" name="itemnb" t:title="item number" t:color="yellow1">
   <t:implementation.python script="nuvem/itemnb.py"/>
   <service name="itemnb"/>
   <reference target="number8" name="index"/>
@@ -251,16 +245,29 @@
   <reference target="assoc3" name="item" t:clonable="true"/>
   <reference name="item" t:clonable="true"/>
  </component>
+ <component t:x="252" t:y="352" name="reverse" t:title="reverse" t:color="yellow1">
+  <t:implementation.python script="nuvem/reverse.py"/>
+  <service name="reverse"/>
+  <reference target="range" name="list"/>
+ </component>
+ <service name="page" promote="page"/>
+ <component t:x="0" t:y="26" name="page" t:title="when page opened" t:color="green1">
+  <t:implementation.python script="nuvem/page.py"/>
+  <service name="page" t:visible="false">
+   <t:binding.http uri="page"/>
+  </service>
+  <reference target="text" name="content"/>
+ </component>
+ <component t:x="128" t:y="26" name="text" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>xyz</property>
+ </component>
  <component t:x="189" t:y="224" name="foreach" t:title="foreach" t:color="yellow1">
   <t:implementation.python script="nuvem/map_.py"/>
   <service name="foreach"/>
   <reference target="name2" name="item"/>
   <reference target="multiply" name="transform"/>
   <reference target="reverse" name="list"/>
- </component>
- <component t:x="252" t:y="352" name="reverse" t:title="reverse" t:color="yellow1">
-  <t:implementation.python script="nuvem/reverse.py"/>
-  <service name="reverse"/>
-  <reference target="range" name="list"/>
  </component>
 </composite>

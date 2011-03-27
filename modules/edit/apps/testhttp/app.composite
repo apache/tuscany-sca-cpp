@@ -17,17 +17,12 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testget" name="testget">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testhttp" name="testhttp">
  <service name="get" promote="get"/>
  <component t:x="25" t:y="25" name="get" t:title="http get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text" name="url"/>
- </component>
- <component t:x="89" t:y="25" name="text" t:title="text" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>http://www.google.com</property>
  </component>
  <service name="get2" promote="get2"/>
  <component t:x="24" t:y="91" name="get2" t:title="http get" t:color="green1">
@@ -61,5 +56,32 @@
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>http://feedproxy.google.com/TechCrunch</property>
+ </component>
+ <component t:x="93" t:y="25" name="text" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://www.google.com</property>
+ </component>
+ <service name="get5" promote="get5"/>
+ <component t:x="26" t:y="335" name="get5" t:title="http get" t:color="green1">
+  <implementation.cpp path="lib/http" library="libhttpget"/>
+  <service name="get"/>
+  <reference target="text5" name="url"/>
+ </component>
+ <component t:x="95" t:y="331" name="text5" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>cnn.com</property>
+ </component>
+ <service name="get6" promote="get6"/>
+ <component t:x="25" t:y="396" name="get6" t:title="http get" t:color="green1">
+  <implementation.cpp path="lib/http" library="libhttpget"/>
+  <service name="get"/>
+  <reference target="text6" name="url"/>
+ </component>
+ <component t:x="95" t:y="395" name="text6" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>https://chart.googleapis.com/chart?cht=p3&amp;chs=250x100&amp;chd=t:60,40&amp;chl=Hello|World</property>
  </component>
 </composite>

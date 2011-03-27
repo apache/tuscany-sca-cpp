@@ -17,8 +17,26 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<DIV id="page">
- <SPAN id="value" class="h2" style="position: absolute; top: 17px; left: 4px; ">
-  <H2>Header2</H2>
- </SPAN>
-</DIV>
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://python"
+  name="palette">
+        
+    <service name="eval" promote="eval"/>
+    <service name="exec" promote="exec"/>
+
+    <component name="eval" t:title="py expr" t:color="magenta1">
+        <t:implementation.python script="nuvem/eval_.py"/>
+        <service name="eval"/>
+        <reference name="py"/>
+        <reference name="ref"/>
+    </component>
+    
+    <component name="exec" t:title="py script" t:color="magenta1">
+        <t:implementation.python script="nuvem/exec_.py"/>
+        <service name="exec"/>
+        <reference name="py"/>
+        <reference name="ref"/>
+    </component>
+    
+</composite>

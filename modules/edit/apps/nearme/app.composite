@@ -82,7 +82,7 @@
   <property>joe</property>
  </component>
  <service name="opened" promote="opened"/>
- <component t:x="0" t:y="22" name="opened" t:title="when page opened" t:color="green1">
+ <component t:x="205" t:y="84" name="opened" t:title="when page opened" t:color="green1">
   <t:implementation.python script="opened.py"/>
   <service name="opened" t:visible="false"/>
   <reference target="if" name="content"/>
@@ -109,12 +109,12 @@
   <reference target="location" name="location1"/>
   <reference target="location2" name="location2"/>
  </component>
- <component t:x="430" t:y="178" name="location" t:title="location" t:color="red1">
+ <component t:x="473" t:y="84" name="location" t:title="location" t:color="red1">
   <t:implementation.python script="location.py"/>
   <service name="location"/>
   <reference target="text2" name="user"/>
  </component>
- <component t:x="429" t:y="234" name="location2" t:title="location" t:color="red1">
+ <component t:x="473" t:y="120" name="location2" t:title="location" t:color="red1">
   <t:implementation.python script="location.py"/>
   <service name="location"/>
   <reference target="text" name="user"/>

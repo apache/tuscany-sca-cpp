@@ -26,8 +26,9 @@
     <service name="divide" promote="divide"/>
     <service name="add" promote="add"/>
     <service name="subtract" promote="subtract"/>
+    <service name="distance" promote="distance"/>
 
-    <component name="multiply" t:title="*" t:color="magenta1">
+    <component name="multiply" t:title="multiply" t:color="magenta1">
         <t:implementation.python script="nuvem/multiply.py"/>
         <service name="multiply">
             <documentation>*</documentation>
@@ -36,7 +37,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="divide" t:title="/" t:color="magenta1">
+    <component name="divide" t:title="divide" t:color="magenta1">
         <t:implementation.python script="nuvem/divide.py"/>
         <service name="divide">
             <documentation>/</documentation>
@@ -45,7 +46,7 @@
         <reference name="value2"/>
     </component>
     
-    <component name="add" t:title="+" t:color="magenta1">
+    <component name="add" t:title="add" t:color="magenta1">
         <t:implementation.python script="nuvem/add.py"/>
         <service name="add">
             <documentation>+</documentation>
@@ -54,13 +55,20 @@
         <reference name="value2"/>
     </component>
     
-    <component name="subtract" t:title="-" t:color="magenta1">
+    <component name="subtract" t:title="subtract" t:color="magenta1">
         <t:implementation.python script="nuvem/subtract.py"/>
         <service name="subtract">
             <documentation>-</documentation>
         </service>
         <reference name="value1"/>
         <reference name="value2"/>
+    </component>
+    
+    <component name="distance" t:title="distance **" t:color="magenta1">
+        <t:implementation.python script="nuvem/distance.py"/>
+        <service name="distance"/>
+        <reference name="location1"/>
+        <reference name="location2"/>
     </component>
     
 </composite>

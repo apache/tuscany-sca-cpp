@@ -17,4 +17,28 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://test" name="test"/>
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://test" name="test">
+ <service name="every" promote="every"/>
+ <component t:x="42" t:y="30" name="every" t:title="every n milliseconds" t:color="green1">
+  <t:implementation.python script="nuvem/every.py"/>
+  <service name="every" t:visible="false">
+   <t:binding.http uri="every"/>
+  </service>
+  <reference name="n"/>
+  <reference name="content"/>
+ </component>
+ <service name="assoc" promote="assoc"/>
+ <component t:x="207" t:y="48" name="assoc" t:title="assoc" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="assoc"/>
+  <reference name="name"/>
+  <reference name="value"/>
+ </component>
+ <service name="itemnb" promote="itemnb"/>
+ <component t:x="104" t:y="95" name="itemnb" t:title="item number" t:color="yellow1">
+  <t:implementation.python script="nuvem/itemnb.py"/>
+  <service name="itemnb"/>
+  <reference name="index"/>
+  <reference name="list"/>
+ </component>
+</composite>
