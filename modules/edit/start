@@ -46,6 +46,11 @@ cat >>tmp/conf/dvhost.conf <<EOF
 RewriteEngine On
 RewriteRule ^/$ /index.html [R]
 
+# Error pages
+ErrorDocument 404 /public/notfound.html
+ErrorDocument 401 /public/notauth.html
+ErrorDocument 500 /public/oops.html
+
 EOF
 
 # Configure SCA contributions
@@ -63,7 +68,7 @@ EOF
 # Configure look and feel
 cat >>tmp/conf/httpd.conf <<EOF
 # Override CSS
-Alias /ui.css $jsprefix/htdocs/uicyan.css
+#Alias /ui.css $jsprefix/htdocs/uicyan.css
 
 EOF
 

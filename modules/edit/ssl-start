@@ -53,10 +53,15 @@ ErrorDocument 500 /public/oops.html
 EOF
 
 # Configure app home pages
-cat >>tmp/conf/dvhost.conf <<EOF
+cat >>tmp/conf/dvhost-ssl.conf <<EOF
 # Redirect to app home page
 RewriteEngine On
 RewriteRule ^/$ /index.html [R]
+
+# Error pages
+ErrorDocument 404 /public/notfound.html
+ErrorDocument 401 /public/notauth.html
+ErrorDocument 500 /public/oops.html
 
 EOF
 
@@ -75,7 +80,7 @@ EOF
 # Configure look and feel
 cat >>tmp/conf/httpd.conf <<EOF
 # Override CSS
-Alias /ui.css $jsprefix/htdocs/uicyan.css
+#Alias /ui.css $jsprefix/htdocs/uicyan.css
 
 EOF
 
