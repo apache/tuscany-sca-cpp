@@ -22,7 +22,7 @@
 <title>Sign in</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
 <script type="text/javascript" src="/util.js"></script>
@@ -32,7 +32,7 @@
 <h1>Sign in</h1>
 <br/>
 
-<form name="formSignin" method="POST" action="/login/dologin">
+<form name="formSignin" method="POST" action="/login/dologin/">
 <table border="0">
 <tr><td>Username:</td><td><input type="text" id="httpd_username" name="httpd_username" value=""/></td></tr>
 <tr><td>Password:</td><td><input type="password" name="httpd_password" value=""/></td></tr>
@@ -56,7 +56,7 @@ function queryParams() {
 function oauthReferrer() {
     r = queryParams()['openauth_referrer'];
     if (typeof(r) == 'undefined')
-        return r;
+        return '/';
     s = r.indexOf('//');
     if (s > 0)
         r = r.substring(s + 2);
@@ -64,10 +64,6 @@ function oauthReferrer() {
     if (s > 0)
         r = r.substring(s);
     return r;
-}
-
-if (typeof(oauthReferrer()) == 'undefined') {
-    document.location = '/';
 }
 
 function submitFormSignin() {

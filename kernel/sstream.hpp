@@ -184,16 +184,16 @@ private:
  */
 const list<string> tokenize(const char* sep, const string& str) {
     struct nested {
-        static const list<string> tokenize(const char* sep, const string& str, const size_t start = 0) {
+        static const list<string> tokenize(const char* sep, const size_t slen, const string& str, const size_t start) {
             if (start >= length(str))
                 return list<string>();
             const size_t i = find(str, sep, start);
             if (i == length(str))
                 return mklist(string(substr(str, start)));
-            return cons(string(substr(str, start, i - start)), tokenize(sep, str, i + 1));
+            return cons(string(substr(str, start, i - start)), tokenize(sep, slen, str, i + slen));
         }
     };
-    return nested::tokenize(sep, str, 0);
+    return nested::tokenize(sep, strlen(sep), str, 0);
 }
 
 /**

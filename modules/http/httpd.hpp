@@ -326,10 +326,10 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
     ostringstream os;
     write(content(ls), os);
     const string ob(str(os));
-    debug(ob, "httpd::writeResult");
 
     // Make sure browsers come back and check for updated dynamic content
     apr_table_setn(r->headers_out, "Expires", "Tue, 01 Jan 1980 00:00:00 GMT");
+    apr_table_setn(r->headers_out, "Cache-Control", "must-revalidate");
 
     // Compute and return an Etag for the returned content
     const string etag(ap_md5(r->pool, (const unsigned char*)c_str(ob)));
@@ -339,10 +339,14 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
     const char* match = apr_table_get(r->headers_in, "If-None-Match");
     apr_table_setn(r->headers_out, "ETag", apr_pstrdup(r->pool, c_str(etag)));
     if (match != NULL  && etag == match) {
-
         r->status = HTTP_NOT_MODIFIED;
+        debug(r->status, "httpd::writeResult::status");
         return OK;
     }
+
+    debug(r->status, "httpd::writeResult::status");
+    debug(ct, "httpd::writeResult::contentType");
+    debug(ob, "httpd::writeResult::content");
     ap_set_content_type(r, apr_pstrdup(r->pool, c_str(ct)));
     ap_rwrite(c_str(ob), (int)length(ob), r);
     return OK;

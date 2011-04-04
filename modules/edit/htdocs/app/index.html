@@ -21,7 +21,7 @@
 <title>App</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <script type="text/javascript">
 document.title = window.location.hostname.split('.')[0];
 </script>
@@ -63,8 +63,24 @@ function datavalue(l, id) {
     if (isNil(l))
         return null;
     var e = car(l);
-    if (id == elementName(e))
-        return e;
+
+    // Element matches id segment
+    if (car(id) == elementName(e)) {
+        log('match', car(id));
+
+        // Found element matching the whole id path
+        if (isNil(cdr(id)))
+            return e;
+
+        // Search for next id segments in child elements
+        if (!elementHasValue(e)) {
+            var v = datavalue(elementChildren(e), cdr(id));
+            if (v != null)
+                return v;
+        }
+    }
+
+    // Search for id through the whole element tree
     if (!elementHasValue(e)) {
         var v = datavalue(elementChildren(e), id);
         if (v != null)
@@ -161,7 +177,7 @@ function displaydata(l) {
 
     // Update the widgets values
     function updatewidget(e) {
-        var dv = datavalue(l, "'" + e.id);
+        var dv = datavalue(l, map(function(t) { return "'" + t; }, e.id.split('.')));
         if (dv == null || isNil(dv))
             return e;
         setwidgetvalue(e, dv);
@@ -221,6 +237,14 @@ function fixupwidget(e) {
         e.innerHTML = '<iframe src="' + f.href + '" frameborder="no" scrolling="no"></iframe>';
         return e;
     }
+    if (e.className == 'section') {
+        e.style.width = '100%';
+        return e;
+    }
+    if (e.className == 'table') {
+        car(childElements(e)).style.width = '100%';
+        return e;
+    }
     return e;
 }
 
@@ -228,50 +252,61 @@ function fixupwidget(e) {
  * Get app data from the main app page component.
  */
 function getpagedata() {
+    try {
 
-    // Display component data on the page
-    function displaypage(doc) {
-        if (!isNil(doc))
-            displaydoc(doc);
+        // Display component data on the page
+        function displaypage(doc) {
+            if (!isNil(doc))
+                displaydoc(doc);
 
-        // Reveal the page
-        ui.showbody();
-        return true;
-    }
-
-    // Eval a component init script
-    function evalcompinit(doc) {
-        if (isNil(doc))
+            // Reveal the page
+            ui.showbody();
             return true;
-        var js = car(json.readJSON(mklist(doc)));
-        if (!elementHasValue(js))
+        }
+
+        // Eval a component init script
+        function evalcompinit(doc) {
+            log('comp init', doc);
+            if (isNil(doc))
+                return true;
+            var js = car(json.readJSON(mklist(doc)));
+            if (!elementHasValue(js))
+                return true;
+            eval(elementValue(js));
             return true;
-        eval(elementValue(js));
-        return true;
+        }
+
+        // Initial setup of a widget
+        function setupwidget(e) {
+            fixupwidget(e);
+            bindwidgethandler(e);
+        }
+
+        // Get the component app data
+        var doc = pagecomp.get(window.location.search, function(doc) {
+            log('page return', doc);
+            try {
+                $('app').innerHTML = $('appFrame').contentDocument.body.innerHTML;
+
+                // Initial setup of the widgets
+                map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
+
+                // Display data on the page
+                displaypage(doc);
+
+                // Get and eval the optional timer and location watch setup scripts
+                everycomp.get('setup', evalcompinit);
+                locationcomp.get('setup', evalcompinit);
+                return true;
+
+            } catch(e) {
+                log('exception on pagecomp.get()', e);
+            }
+        });
+
+    } catch(e) {
+        log('exception in getpagedata()', e);
     }
-
-    // Initial setup of a widget
-    function setupwidget(e) {
-        fixupwidget(e);
-        bindwidgethandler(e);
-    }
-
-    // Get the component app data
-    var doc = pagecomp.get(window.location.search, function(doc) {
-        $('app').innerHTML = $('appFrame').contentDocument.body.innerHTML;
-
-        // Initial setup of the widgets
-        map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
-
-        // Display data on the page
-        displaypage(doc);
-
-        // Get and eval the optional timer and location watch setup scripts
-        everycomp.get('setup', evalcompinit);
-        locationcomp.get('setup', evalcompinit);
-        return true;
-    });
-
     return true;
 }
 
@@ -280,6 +315,7 @@ function getpagedata() {
  */
 function getcompdata(comp, qs) {
     var doc = comp.get(qs, function(doc) {
+        log('comp data', doc);
         return displaydoc(doc);
     });
     return true;
@@ -310,21 +346,33 @@ function compquery() {
  * Handle a button click event.
  */
 function buttonClickHandler(id) {
-    return getcompdata(sca.component(id), compquery());
+    try {
+        return getcompdata(sca.component(id), compquery());
+    } catch(e) {
+        log('exception in buttonClickHandler()', e);
+    }
 }
 
 /**
  * Handle a timer interval event.
  */
 function intervalHandler() {
-    return getcompdata(everycomp, compquery());
+    try {
+        return getcompdata(everycomp, compquery());
+    } catch(e) {
+        log('exception in intervalHandler()', e);
+    }
 }
 
 /**
  * Setup an interval timer.
  */
 function setupIntervalHandler(sec) {
-    return setInterval(intervalHandler, sec);
+    try {
+        return setInterval(intervalHandler, sec);
+    } catch(e) {
+        log('exception in setupIntervalHandler()', e);
+    }
 }
 
 /**
@@ -333,11 +381,17 @@ function setupIntervalHandler(sec) {
 var geoposition;
 
 function locationHandler(pos) {
-    geoposition = pos;
-    return getcompdata(locationcomp, compquery());
+    log('location pos', pos);
+    try {
+        geoposition = pos;
+        return getcompdata(locationcomp, compquery());
+    } catch(e) {
+        log('exception in locationHandler()', e);
+    }
 }
 
 function locationErrorHandler(e) {
+    log('location error', e);
     return true;
 }
 
@@ -345,8 +399,13 @@ function locationErrorHandler(e) {
  * Setup a location watch handler.
  */
 function setupLocationHandler() {
-    navigator.geolocation.getCurrentPosition(locationHandler, locationErrorHandler);
-    navigator.geolocation.watchPosition(locationHandler, locationErrorHandler);
+    log('setup location');
+    try {
+        navigator.geolocation.getCurrentPosition(locationHandler, locationErrorHandler);
+        navigator.geolocation.watchPosition(locationHandler, locationErrorHandler);
+    } catch(e) {
+        log('exception in setupLocationHandler()', e);
+    }
     return true;
 }
 

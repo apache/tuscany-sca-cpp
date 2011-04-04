@@ -90,6 +90,8 @@ int translateReference(const ServerConf& sc, request_rec *r) {
 
     // Find the requested component
     const list<value> rpath(pathValues(r->uri));
+    if (isNil(cdr(rpath)))
+        return HTTP_NOT_FOUND;
     const list<value> comp(assoctree(cadr(rpath), sc.references));
     if (isNil(comp))
         return HTTP_NOT_FOUND;

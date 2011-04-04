@@ -120,7 +120,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
 
         // Return JSON result
         js::JSContext cx;
-        return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc", r);
+        return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc; charset=utf-8", r);
     }
 
     // Evaluate the GET expression
@@ -135,14 +135,14 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     if (!isList(c)) {
         js::JSContext cx;
         if (isSymbol(c))
-            return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("name", value(string(c))))), cx), "application/json", r);
-        return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("value", c))), cx), "application/json", r);
+            return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("name", value(string(c))))), cx), "application/json; charset=utf-8", r);
+        return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("value", c))), cx), "application/json; charset=utf-8", r);
     }
 
     // Write an empty list as a JSON empty value
     if (isNil((list<value>)c)) {
         js::JSContext cx;
-        return httpd::writeResult(json::writeJSON(list<value>(), cx), "application/json", r);
+        return httpd::writeResult(json::writeJSON(list<value>(), cx), "application/json; charset=utf-8", r);
     }
 
     // Write content-type / content-list pair
@@ -152,7 +152,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     // Write an assoc value as a JSON result
     if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
         js::JSContext cx;
-        return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(c)), cx), "application/json", r);
+        return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(c)), cx), "application/json; charset=utf-8", r);
     }
 
     // Convert list of values to element values
@@ -164,15 +164,15 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
         const list<value> el = car<value>(e);
         if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el))) {
             if (cadr<value>(el) == atom::feed)
-                return httpd::writeResult(atom::writeATOMFeed(e), "application/atom+xml", r);
+                return httpd::writeResult(atom::writeATOMFeed(e), "application/atom+xml; charset=utf-8", r);
             if (cadr<value>(el) == atom::entry)
-                return httpd::writeResult(atom::writeATOMEntry(e), "application/atom+xml", r);
+                return httpd::writeResult(atom::writeATOMEntry(e), "application/atom+xml; charset=utf-8", r);
         }
     }
 
     // Write any other compound value as a JSON value
     js::JSContext cx;
-    return httpd::writeResult(json::writeJSON(e, cx), "application/json", r);
+    return httpd::writeResult(json::writeJSON(e, cx), "application/json; charset=utf-8", r);
 }
 
 /**
@@ -206,7 +206,7 @@ const failable<int> post(request_rec* r, const lambda<value(const list<value>&)>
             return mkfailure<int>(reason(val));
 
         // Return JSON result
-        return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc", r);
+        return httpd::writeResult(json::jsonResult(id, content(val), cx), "application/json-rpc; charset=utf-8", r);
     }
 
     // Evaluate an ATOM POST request and return the location of the corresponding created resource
@@ -714,6 +714,8 @@ int handler(request_rec *r) {
 
     // Get the component implementation lambda
     const list<value> path(pathValues(r->uri));
+    if (isNil(cdr(path)))
+        return HTTP_NOT_FOUND;
     const list<value> impl(assoctree<value>(cadr(path), usevh? vhc.vsc.implTree : sc.implTree));
     if (isNil(impl)) {
         mkfailure<int>(string("Couldn't find component implementation: ") + cadr(path));

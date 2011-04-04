@@ -285,6 +285,55 @@ static int checkAuthn(request_rec *r) {
 }
 
 /**
+ * Fixup cache control.
+ */
+bool filterCacheControl(const string& tok) {
+    return tok != "no-cache";
+}
+
+static apr_status_t outputFilter(ap_filter_t * f, apr_bucket_brigade * in) {
+    request_rec *r = f->r->main;
+    if (!r)
+        r = f->r;
+    for (; r != NULL; r = r->next) {
+        if (r->status != HTTP_OK && r->status != HTTP_NOT_MODIFIED) {
+
+            // Don't cache errors and redirects
+            debug("no-cache", "modopenauth::outputFilter::nokCacheControl");
+            apr_table_set(r->headers_out, "Cache-Control", "no-cache");
+            continue;
+        }
+
+        // Cache OK content
+        const char* cc = apr_table_get(r->headers_out, "Cache-Control");
+        if (cc == NULL) {
+            debug("modopenauth::outputFilter::noCacheControl");
+            continue;
+        }
+        debug(cc, "modopenauth::outputFilter::cacheControl");
+        const string ncc = join(", ", filter<string>(filterCacheControl, tokenize(", ", cc)));
+        if (length(ncc) == 0) {
+            debug("modopenauth::outputFilter::noCacheControl");
+            apr_table_unset(r->headers_out, "Cache-Control");
+            continue;
+        }
+
+        debug(ncc, "modopenauth::outputFilter::okCacheControl");
+        apr_table_set(r->headers_out, "Cache-Control", c_str(ncc));
+    }
+
+    ap_remove_output_filter(f);
+    return ap_pass_brigade(f->next, in);
+}
+
+/**
+ * Insert our cache control output filter.
+ */
+static void insertOutputFilter(request_rec * r) {
+    ap_add_output_filter("mod_openauth", NULL, r, r->connection);
+}
+
+/**
  * Process the module configuration.
  */
 int postConfigMerge(ServerConf& mainsc, server_rec* s) {
@@ -349,6 +398,8 @@ void registerHooks(unused apr_pool_t *p) {
     ap_hook_post_config(postConfig, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init(childInit, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_check_authn(checkAuthn, NULL, NULL, APR_HOOK_MIDDLE, AP_AUTH_INTERNAL_PER_CONF);
+    ap_register_output_filter("mod_openauth", outputFilter, NULL, AP_FTYPE_CONTENT_SET);
+    ap_hook_insert_filter(insertOutputFilter, NULL, NULL, APR_HOOK_LAST);
 }
 
 }

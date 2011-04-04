@@ -25,7 +25,7 @@ document.title = 'View - ' + window.location.hostname.split('.')[0] + '/' + cn;
 </script>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui.css">
 <script type="text/javascript" src="/util.js"></script>
@@ -81,7 +81,9 @@ function mkdoctable(doc) {
  * Get and display the contents of the current component.
  */
 function getdata() {
+    log('comp', comp.uri);
     comp.get('', function(doc) {
+        log('doc', doc);
 
         if (json.isJSON(mklist(doc)))
             return display(datatable(json.readJSON(mklist(doc))));

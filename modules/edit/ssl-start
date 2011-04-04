@@ -54,19 +54,35 @@ EOF
 
 # Configure app home pages
 cat >>tmp/conf/dvhost-ssl.conf <<EOF
-# Redirect to app home page
-RewriteEngine On
-RewriteRule ^/$ /index.html [R]
-
-# Error pages
+# App error pages
 ErrorDocument 404 /public/notfound.html
 ErrorDocument 401 /public/notauth.html
 ErrorDocument 500 /public/oops.html
+
+# Redirect www to main home page
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
+RewriteCond %{SERVER_PORT} !^443$
+RewriteRule .* https://sca-store.com:%{SERVER_PORT}%{REQUEST_URI} [L,R]
+RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
+RewriteRule .* https://sca-store.com%{REQUEST_URI} [L,R]
+
+EOF
+
+cat >>tmp/conf/dvhost.conf <<EOF
+# Redirect www to main home page
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
+RewriteCond %{SERVER_PORT} !^80$
+RewriteRule .* http://sca-store.com:%{SERVER_PORT}%{REQUEST_URI} [L,R]
+RewriteCond %{HTTP_HOST} ^www\.sca-store\.com [NC]
+RewriteRule .* http://sca-store.com%{REQUEST_URI} [L,R]
 
 EOF
 
 # Configure SCA contributions
 cat >>tmp/conf/httpd.conf <<EOF
+
 # Configure SCA Composite
 SCAContribution `pwd`/
 SCAComposite edit.composite
@@ -86,6 +102,9 @@ EOF
 
 # Create app links and sub-directories if needed
 ./mkapplinks
+
+# Create application database directories
+mkdir -p tmp/appdata/filedb
 
 # Start memcached
 ../../components/cache/memcached-start

@@ -101,12 +101,12 @@ function getapps(category, sync) {
             title = cadr(assoc("'title", entry))
             name = cadr(assoc("'id", entry))
             author = 'joe@localhost';
-            hreflink = '<a href=\"' + applink(name) + '\" target=\"' + name + '\">';
+            hreflink = '<a href=\"' + applink(name) + '\" target=\"' + '_blank' + '\">';
 
             apps += '<div class="box" style="width: 250px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 5px; padding: 10px; vertical-align: top;">'
             apps += '<table><tr>';
             apps += '<td>';
-            apps += '<div>' + hreflink + '<img src="/public/app.png" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>' + '</a></div>';
+            apps += '<div>' + hreflink + '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>' + '</a></div>';
             apps += '<div><input type="button" id="cloneApp" value="Clone" title="Clone this app"></div>';
             apps += '</td>';
             apps += '<td class="tdw">';

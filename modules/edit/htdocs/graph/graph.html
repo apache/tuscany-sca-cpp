@@ -161,6 +161,7 @@ $('saveButton').onclick = function(e) {
  * Save the current composite.
  */
 function save() {
+    log('saving');
     $('saveButton').value = 'Saving';
     savedcomposxml = car(writeXML(composite, false));
     var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
@@ -184,6 +185,8 @@ function oncomposchange() {
 
     // Autosave after 3 seconds
     setTimeout(function() {
+        log('savedcomposxml', savedcomposxml);
+        log('newddcomposxml', car(writeXML(composite, false)));
         if (savedcomposxml == car(writeXML(composite, false)))
             return false;
         return save();
@@ -307,6 +310,7 @@ installpalette('http', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('talk', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('social', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('search', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('database', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('logic', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('math', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('python', pos.rmove(0, 40), g, bg, spalette, gpalettes);

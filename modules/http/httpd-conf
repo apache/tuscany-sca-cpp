@@ -75,8 +75,16 @@ CustomLog $root/logs/access_log combined
 CookieTracking on
 CookieName TuscanyVisitorId
 
-# Configure Mime types
+# Configure Mime types and default charsets
 TypesConfig $here/conf/mime.types
+AddDefaultCharset utf-8
+AddCharset utf-8 .js .css
+
+# Configure cache control
+SetEnvIf Request_URI "^/app.html$" must-revalidate
+Header onsuccess merge Cache-Control public
+Header onsuccess merge Cache-Control max-age=31536000
+Header onsuccess merge Cache-Control must-revalidate env=must-revalidate
 
 # Set default document root
 DocumentRoot $htdocs
@@ -112,6 +120,16 @@ Require all granted
 <Location /robots.txt>
 AuthType None
 Require all granted
+</Location>
+
+# Enable compression
+<Location />
+SetOutputFilter DEFLATE
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
+SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+Header append Vary User-Agent env=!dont-vary
 </Location>
 
 # Listen on HTTP port
@@ -158,6 +176,7 @@ cat >$root/conf/modules.conf <<EOF
 # Load a minimal set of modules, the load order is important
 # (e.g. load mod_headers before mod_rewrite, so its hooks execute
 # after mod_rewrite's hooks)
+LoadModule headers_module ${modules_prefix}/modules/mod_headers.so
 LoadModule alias_module ${modules_prefix}/modules/mod_alias.so
 LoadModule authn_file_module ${modules_prefix}/modules/mod_authn_file.so
 LoadModule authn_core_module ${modules_prefix}/modules/mod_authn_core.so
@@ -176,7 +195,6 @@ LoadModule proxy_connect_module ${modules_prefix}/modules/mod_proxy_connect.so
 LoadModule proxy_http_module ${modules_prefix}/modules/mod_proxy_http.so
 LoadModule proxy_balancer_module ${modules_prefix}/modules/mod_proxy_balancer.so
 LoadModule lbmethod_byrequests_module ${modules_prefix}/modules/mod_lbmethod_byrequests.so
-LoadModule headers_module ${modules_prefix}/modules/mod_headers.so
 LoadModule ssl_module ${modules_prefix}/modules/mod_ssl.so
 LoadModule socache_shmcb_module ${modules_prefix}/modules/mod_socache_shmcb.so
 LoadModule rewrite_module ${modules_prefix}/modules/mod_rewrite.so
