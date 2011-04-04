@@ -207,8 +207,10 @@ PyObject* valueToPyObject(const value& v) {
         return mkPyLambda(v);
     case value::Symbol:
         return PyString_FromString(c_str(string("'") + v));
-    case value::String:
-        return PyString_FromString(c_str(v));
+    case value::String: {
+        const string s = (string)v;
+        return PyString_FromStringAndSize(c_str(s), length(s));
+    }
     case value::Number:
         return PyFloat_FromDouble((double)v);
     case value::Bool:
@@ -261,10 +263,12 @@ struct pyCallable {
  */
 const value pyObjectToValue(PyObject *o) {
     if (PyString_Check(o)) {
-        const char* s = PyString_AsString(o);
-        if (*s == '\'')
+        char* s = NULL;
+        Py_ssize_t l = 0;
+        PyString_AsStringAndSize(o, &s, &l);
+        if (l != 0 && *s == '\'')
             return value(s + 1);
-        return value(string(s));
+        return value(string(s, l));
     }
     if (PyBool_Check(o))
         return value(o == Py_True);
