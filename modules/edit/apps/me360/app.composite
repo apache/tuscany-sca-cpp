@@ -28,7 +28,7 @@
   <service name="get"/>
   <reference target="format" name="url"/>
  </component>
- <component t:x="635" t:y="232" name="list" t:title="make list" t:color="yellow1">
+ <component t:x="635" t:y="232" name="list" t:title="list" t:color="yellow1">
   <t:implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="text4" name="item" t:clonable="true"/>
@@ -46,7 +46,7 @@
   <service name="page" t:visible="false">
    <t:binding.http uri="page"/>
   </service>
-  <reference target="assoc4" name="content"/>
+  <reference target="pair4" name="content"/>
  </component>
  <component t:x="393" t:y="86" name="name" t:title="name" t:color="orange1">
   <t:implementation.python script="nuvem/name.py"/>
@@ -84,35 +84,35 @@
   <service name="name"/>
   <property>buzzprofile</property>
  </component>
- <component t:x="392" t:y="44" name="assoc" t:title="assoc" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="assoc"/>
+ <component t:x="392" t:y="44" name="pair" t:title="pair" t:color="yellow1">
+  <t:implementation.python script="nuvem/pair.py"/>
+  <service name="pair"/>
   <reference target="name" name="name"/>
   <reference target="fbprofile" name="value"/>
  </component>
- <component t:x="315" t:y="44" name="list2" t:title="make list" t:color="yellow1">
+ <component t:x="315" t:y="44" name="list2" t:title="list" t:color="yellow1">
   <t:implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
-  <reference target="assoc" name="item" t:clonable="true"/>
-  <reference target="assoc2" name="item" t:clonable="true"/>
+  <reference target="pair" name="item" t:clonable="true"/>
+  <reference target="pair2" name="item" t:clonable="true"/>
   <reference name="item" t:clonable="true"/>
  </component>
- <component t:x="256" t:y="16" name="assoc4" t:title="assoc" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="assoc"/>
+ <component t:x="256" t:y="16" name="pair4" t:title="pair" t:color="yellow1">
+  <t:implementation.python script="nuvem/pair.py"/>
+  <service name="pair"/>
   <reference target="name4" name="name"/>
   <reference target="list2" name="value"/>
  </component>
- <component t:x="392" t:y="116" name="assoc2" t:title="assoc" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="assoc"/>
+ <component t:x="392" t:y="116" name="pair2" t:title="pair" t:color="yellow1">
+  <t:implementation.python script="nuvem/pair.py"/>
+  <service name="pair"/>
   <reference target="name2" name="name"/>
   <reference target="twprofile" name="value"/>
  </component>
- <service name="assoc3" promote="assoc3"/>
- <component t:x="173" t:y="275" name="assoc3" t:title="assoc" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="assoc"/>
+ <service name="pair3" promote="pair3"/>
+ <component t:x="173" t:y="275" name="pair3" t:title="pair" t:color="yellow1">
+  <t:implementation.python script="nuvem/pair.py"/>
+  <service name="pair"/>
   <reference target="name3" name="name"/>
   <reference target="get" name="value"/>
  </component>

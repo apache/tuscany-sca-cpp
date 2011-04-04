@@ -23,7 +23,7 @@
   name="palette">
         
     <service name="page" promote="page"/>
-    <service name="button" promote="button"/>
+    <service name="widget" promote="widget"/>
     <service name="every" promote="every"/>
     <service name="location" promote="location"/>
 
@@ -35,9 +35,9 @@
         <reference name="content"/>
     </component>
     
-    <component name="button" t:title="on {compname} click" t:color="green1">
-        <t:implementation.python script="nuvem/button.py"/>
-        <service name="button" t:visible="false"/>
+    <component name="widget" t:title="on {compname} widget" t:color="green1">
+        <t:implementation.python script="nuvem/widget.py"/>
+        <service name="widget" t:visible="false"/>
         <reference name="content"/>
     </component>
     

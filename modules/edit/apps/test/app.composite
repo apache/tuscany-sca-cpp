@@ -27,10 +27,10 @@
   <reference name="n"/>
   <reference name="content"/>
  </component>
- <service name="assoc" promote="assoc"/>
- <component t:x="207" t:y="48" name="assoc" t:title="assoc" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="assoc"/>
+ <service name="pair" promote="pair"/>
+ <component t:x="207" t:y="48" name="pair" t:title="pair" t:color="yellow1">
+  <t:implementation.python script="nuvem/pair.py"/>
+  <service name="pair"/>
   <reference name="name"/>
   <reference name="value"/>
  </component>

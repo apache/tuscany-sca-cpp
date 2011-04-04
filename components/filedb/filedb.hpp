@@ -165,7 +165,9 @@ const failable<bool> post(const value& key, const value& val, FileDB& db) {
 
     if (isList(key))
         mkdirs(key, db.name);
-    ofstream os(filename(key, db.name));
+    const string fn = filename(key, db.name);
+    debug(fn, "filedb::post::filename");
+    ofstream os(fn);
     if (os.fail())
         return mkfailure<bool>("Couldn't post file database entry.");
     const failable<bool> r = write(val, os, db.format, db);
@@ -184,7 +186,9 @@ const failable<bool> put(const value& key, const value& val, FileDB& db) {
 
     if (isList(key))
         mkdirs(key, db.name);
-    ofstream os(filename(key, db.name));
+    const string fn = filename(key, db.name);
+    debug(fn, "filedb::put::filename");
+    ofstream os(fn);
     if (os.fail())
         return mkfailure<bool>("Couldn't put file database entry.");
     const failable<bool> r = write(val, os, db.format, db);
@@ -218,7 +222,9 @@ const failable<bool> del(const value& key, FileDB& db) {
     debug(key, "filedb::delete::key");
     debug(db.name, "filedb::delete::dbname");
 
-    const int rc = unlink(c_str(filename(key, db.name)));
+    const string fn = filename(key, db.name);
+    debug(fn, "filedb::del::filename");
+    const int rc = unlink(c_str(fn));
     if (rc == -1)
         return mkfailure<bool>("Couldn't delete file database entry.");
 

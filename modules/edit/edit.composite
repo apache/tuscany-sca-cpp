@@ -172,6 +172,26 @@
         </service>
     </component>
 
+    <component name="AppDataFileCache">
+        <implementation.cpp path="../../components/cache" library="libdatacache"/>
+        <service name="AppDataFileCache">
+            <t:binding.http uri="appdatafilecache"/>
+        </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="AppDataFileDB"/>
+        <reference name="l2writer" target="AppDataFileDB"/>
+    </component>
+
+    <component name="AppDataFileDB">
+        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
+        <property name="dbname">tmp/appdata/filedb</property>
+        <property name="format">scheme</property>
+        <service name="AppDataFileDB">
+            <t:binding.http uri="appdatafiledb"/>
+        </service>
+    </component>
+
     <component name="Memcache">
         <implementation.cpp path="../../components/cache" library="libmemcache"/>
         <service name="Memcache">

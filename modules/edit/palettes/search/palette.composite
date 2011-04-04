@@ -25,14 +25,17 @@
     <service name="googlesearch" promote="googlesearch"/>
     <service name="yahoosearch" promote="yahoosearch"/>
     <service name="bingsearch" promote="bingsearch"/>
-    <service name="geomap" promote="geomap"/>
+    <service name="googlemap" promote="googlemap"/>
     <service name="weather" promote="weather"/>
     <service name="traffic" promote="traffic"/>
 
-    <component name="googlesearch" t:title="google search **" t:color="red1">
-        <t:implementation.python script="nuvem/googlesearch.py"/>
+    <component name="googlesearch" t:title="google search" t:color="red1">
+        <t:implementation.python script="nuvem/gsearch.py"/>
         <service name="googlesearch"/>
         <reference name="query"/>
+        <reference name="s" t:visible="false">
+            <t:binding.http uri="http://ajax.googleapis.com/ajax/services/search/web"/>
+        </reference>
     </component>
     
     <component name="yahoosearch" t:title="yahoo search **" t:color="red1">
@@ -47,16 +50,22 @@
         <reference name="query"/>
     </component>
     
-    <component name="geomap" t:title="map **" t:color="red1">
-        <t:implementation.python script="nuvem/geomap.py"/>
-        <service name="geomap"/>
-        <reference name="location"/>
+    <component name="googlemap" t:title="google map" t:color="red1">
+        <t:implementation.python script="nuvem/gmap.py"/>
+        <service name="googlemap"/>
+        <reference name="locations"/>
+        <reference name="s" t:visible="false">
+            <t:binding.http uri="http://maps.google.com/maps/api/staticmap"/>
+        </reference>
     </component>
     
-    <component name="weather" t:title="weather **" t:color="red1">
-        <t:implementation.python script="nuvem/weather.py"/>
+    <component name="weather" t:title="weather" t:color="red1">
+        <t:implementation.python script="nuvem/gweather.py"/>
         <service name="weather"/>
-        <reference name="location"/>
+        <reference name="zip"/>
+        <reference name="ws" t:visible="false">
+            <t:binding.http uri="http://www.google.com/ig/api"/>
+        </reference>
     </component>
     
     <component name="traffic" t:title="traffic **" t:color="red1">

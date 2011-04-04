@@ -22,6 +22,7 @@
   targetNamespace="http://list"
   name="palette">
         
+    <service name="pair" promote="pair"/>
     <service name="list" promote="list"/>
     <service name="first" promote="first"/>
     <service name="rest" promote="rest"/>
@@ -31,7 +32,14 @@
     <service name="find" promote="find"/>
     <service name="range" promote="range"/>
 
-    <component name="list" t:title="make list" t:color="yellow1">
+    <component name="pair" t:title="pair" t:color="yellow1">
+        <t:implementation.python script="nuvem/pair.py"/>
+        <service name="pair"/>
+        <reference name="name"/>
+        <reference name="value"/>
+    </component>
+    
+    <component name="list" t:title="list" t:color="yellow1">
         <t:implementation.python script="nuvem/list_.py"/>
         <service name="list"/>
         <reference name="item" t:clonable="true"/>

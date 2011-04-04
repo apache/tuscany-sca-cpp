@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testdb" name="testdb">
+ <component t:x="405" t:y="143" name="text3" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>testkey</property>
+ </component>
+ <component t:x="177" t:y="36" name="text" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>testkey</property>
+ </component>
+ <component t:x="102" t:y="35" name="list" t:title="list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="text" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
+ </component>
+ <component t:x="103" t:y="91" name="text2" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>testvalue</property>
+ </component>
+ <component t:x="105" t:y="8" name="filedb" t:title="File database" t:color="green1">
+  <t:implementation.python script="nuvem/filedb.py"/>
+  <service name="filedb"/>
+  <reference name="db" target="AppDataFileCache" t:visible="false"/>
+  <property name="host" t:visible="false"/>
+ </component>
+ <service name="put" promote="put"/>
+ <component t:x="59" t:y="63" name="put" t:title="put" t:color="green1">
+  <t:implementation.python script="nuvem/put.py"/>
+  <service name="put"/>
+  <reference target="filedb" name="collection"/>
+  <reference target="list" name="id"/>
+  <reference target="text2" name="value"/>
+ </component>
+ <component t:x="311" t:y="186" name="list2" t:title="list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="text3" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
+ </component>
+ <service name="get" promote="get"/>
+ <component t:x="300" t:y="61" name="get" t:title="get" t:color="green1">
+  <t:implementation.python script="nuvem/get.py"/>
+  <service name="get"/>
+  <reference target="filedb3" name="collection"/>
+  <reference target="list2" name="id"/>
+ </component>
+ <component t:x="311" t:y="155" name="filedb3" t:title="File database" t:color="green1">
+  <t:implementation.python script="nuvem/filedb.py"/>
+  <service name="filedb"/>
+  <reference name="db" target="AppDataFileCache" t:visible="false"/>
+  <property name="host" t:visible="false"/>
+ </component>
+ <service name="delete" promote="delete"/>
+ <component t:x="58" t:y="221" name="delete" t:title="delete" t:color="green1">
+  <t:implementation.python script="nuvem/delete.py"/>
+  <service name="delete"/>
+  <reference target="filedb2" name="collection"/>
+  <reference target="list3" name="id"/>
+ </component>
+ <component t:x="113" t:y="223" name="filedb2" t:title="File database" t:color="green1">
+  <t:implementation.python script="nuvem/filedb.py"/>
+  <service name="filedb"/>
+  <reference name="db" target="AppDataFileCache" t:visible="false"/>
+  <property name="host" t:visible="false"/>
+ </component>
+ <component t:x="111" t:y="243" name="list3" t:title="list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="text4" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
+ </component>
+ <component t:x="187" t:y="249" name="text4" t:title="text" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>testkey</property>
+ </component>
+</composite>

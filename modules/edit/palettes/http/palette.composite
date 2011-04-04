@@ -25,6 +25,7 @@
     <service name="host" promote="host"/>
     <service name="path" promote="path"/>
     <service name="params" promote="params"/>
+    <service name="param" promote="param"/>
     <service name="user" promote="user"/>
     <service name="email" promote="email"/>
     <service name="get" promote="get"/>
@@ -47,6 +48,13 @@
     <component name="params" t:title="?params" t:color="green1">
         <t:implementation.python script="nuvem/params.py"/>
         <service name="params"/>
+        <property name="query" t:visible="false"></property>
+    </component>
+    
+    <component name="param" t:title="?param" t:color="green1">
+        <t:implementation.python script="nuvem/param.py"/>
+        <service name="param"/>
+        <reference name="name"/>
         <property name="query" t:visible="false"></property>
     </component>
     
