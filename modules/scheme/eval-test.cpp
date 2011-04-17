@@ -72,20 +72,30 @@ bool testRead() {
 }
 
 bool testWrite() {
-    const list<value> i = list<value>()
-            + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
-                + (list<value>() + "item"
-                    + (list<value>() + "name" + "Apple")
-                    + (list<value>() + "price" + "$2.99")))
-            + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
-                + (list<value>() + "item"
-                    + (list<value>() + "name" + "Orange")
-                    + (list<value>() + "price" + "$3.55")));
-    const list<value> a = cons<value>("Feed", cons<value>("feed-1234", i));
-    ostringstream os;
-    writeValue(a, os);
-    istringstream is(str(os));
-    assert(readValue(is) == a);
+    {
+        const list<value> i = list<value>()
+                + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83b"
+                    + (list<value>() + "item"
+                        + (list<value>() + "name" + "Apple")
+                        + (list<value>() + "price" + "$2.99")))
+                + (list<value>() + "item" + "cart-53d67a61-aa5e-4e5e-8401-39edeba8b83c"
+                    + (list<value>() + "item"
+                        + (list<value>() + "name" + "Orange")
+                        + (list<value>() + "price" + "$3.55")));
+        const list<value> a = cons<value>("Feed", cons<value>("feed-1234", i));
+        ostringstream os;
+        writeValue(a, os);
+        istringstream is(str(os));
+        assert(readValue(is) == a);
+    }
+    {
+        const list<value> i = mklist<value>("x", value());
+        const list<value> a = mklist<value>(i);
+        ostringstream os;
+        writeValue(a, os);
+        istringstream is(str(os));
+        assert(readValue(is) == a);
+    }
     return true;
 }
 

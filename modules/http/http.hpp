@@ -30,6 +30,8 @@
 #include <curl/curl.h>
 #include <curl/types.h>
 #include <curl/easy.h>
+#include <apr.h>
+#include <apr_lib.h>
 #include <apr_network_io.h>
 #include <apr_portable.h>
 #include <apr_poll.h>
@@ -93,6 +95,7 @@ private:
 
     friend CURL* handle(const CURLSession& cs);
     friend apr_socket_t* sock(const CURLSession& cs);
+    friend const failable<CURL*> setup(const string& url, const CURLSession& cs);
     friend const failable<bool> connect(const string& url, CURLSession& cs);
     friend const failable<bool> send(const char* c, const size_t l, const CURLSession& cs);
     friend const failable<size_t> recv(char* c, const size_t l, const CURLSession& cs);
@@ -143,6 +146,45 @@ const string apreason(apr_status_t rc) {
 }
 
 /**
+ * Escape a URI or a query argument.
+ */
+const char escape_c2x[] = "0123456789ABCDEF";
+
+const string escape(const string& unesc, const char* reserv) {
+    char* copy = (char*)apr_palloc(gc_current_pool(), 3 * length(unesc) + 3);
+    const unsigned char* s = (const unsigned char *)c_str(unesc);
+    unsigned char* d = (unsigned char*)copy;
+    unsigned c;
+    while ((c = *s)) {
+        if (!apr_isalnum(c) && !strchr(reserv, c)) {
+            *d++ = '%';
+            *d++ = escape_c2x[c >> 4];
+            *d++ = escape_c2x[c & 0xf];
+        }
+        else {
+            *d++ = (unsigned char)c;
+        }
+        ++s;
+    }
+    *d = '\0';
+    return copy;
+}
+
+const string escapeURI(const string& uri) {
+    debug(uri, "http::escapeURI::uri");
+    const string e = escape(uri, "?$-_.+!*'(),:@&=/~%");
+    debug(e, "http::escapeURI::result");
+    return e;
+}
+
+const string escapeArg(const string& arg) {
+    debug(arg, "http::escapeArg::arg");
+    const string e = escape(arg, "-_.~");
+    debug(e, "http::escapeArg::result");
+    return e;
+}
+
+/**
  * Setup a CURL session
  */
 const failable<CURL*> setup(const string& url, const CURLSession& cs) {
@@ -177,7 +219,7 @@ const failable<CURL*> setup(const string& url, const CURLSession& cs) {
     }
 
     // Set target URL
-    curl_easy_setopt(ch, CURLOPT_URL, c_str(url));
+    curl_easy_setopt(ch, CURLOPT_URL, c_str(escapeURI(url)));
 
     return ch;
 }
@@ -430,6 +472,22 @@ const failable<value> get(const string& url, const CURLSession& cs) {
         debug(val, "http::get::result");
         return val;
     }
+    if (contains(ct, "application/x-javascript")) {
+        // Read a JSON document enclosed in a javascript function call
+        // Extract the JSON out of the enclosing parenthesis
+        ostringstream os;
+        write(ls, os);
+        const string s = str(os);
+        const size_t fp = find(s, '(');
+        const size_t lp = find_last(s, ')');
+        const list<string> jls = mklist<string>(substr(s, fp + 1, lp - (fp + 1)));
+        debug(jls, "http::get::javascript::content");
+
+        js::JSContext cx;
+        const value val(json::jsonValues(content(json::readJSON(jls, cx))));
+        debug(val, "http::get::result");
+        return val;
+    }
     if (contains(ct, "text/xml") || contains(ct, "application/xml") || isXML(ls)) {
         // Read an XML document
         const value val(elementsToValues(readXML(ls)));
@@ -620,21 +678,6 @@ const failable<size_t> recv(char* c, const size_t l, const CURLSession& cs) {
     return recv(c, l, cs);
 }
 
-
-/**
- * Filter path segment in a list of arguments.
- */
-const bool filterPath(const value& arg) {
-    return isString(arg);
-}
-
-/**
- * Filter query string arguments in a list of arguments.
- */
-const bool filterQuery(const value& arg) {
-    return isList(arg);
-}
-
 /**
  * Converts a list of key value pairs to a query string.
  */
@@ -654,6 +697,28 @@ const string queryString(const list<list<value> > args) {
 }
 
 /**
+ * Filter path segment in a list of arguments.
+ */
+const bool filterPath(const value& arg) {
+    return isString(arg);
+}
+
+/**
+ * Filter query string arguments in a list of arguments.
+ */
+const bool filterQuery(const value& arg) {
+    return isList(arg);
+}
+
+/**
+ * Escape a query string argument.
+ */
+const value escapeQuery(const value& arg) {
+    return arg;
+    //return mklist<value>(car<value>(arg), escapeArg(cadr<value>(arg)));
+}
+
+/**
  * HTTP client proxy function.
  */
 struct proxy {
@@ -665,8 +730,7 @@ struct proxy {
         if (fun == "get") {
             const list<value> lp = filter<value>(filterPath, cadr(args));
             debug(lp, "http::queryString::arg");
-            const list<value> lq = filter<value>(filterQuery, cadr(args));
-            debug(lq, "http::get::query");
+            const list<value> lq = map<value, value>(escapeQuery, filter<value>(filterQuery, cadr(args)));
             const value p = path(lp);
             const value q = queryString(lq);
             const failable<value> val = get(uri + p + (q != ""? string("?") + q : string("")), cs);

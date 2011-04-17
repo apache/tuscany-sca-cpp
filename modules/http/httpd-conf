@@ -82,9 +82,9 @@ AddCharset utf-8 .js .css
 
 # Configure cache control
 SetEnvIf Request_URI "^/app.html$" must-revalidate
-Header onsuccess merge Cache-Control public
-Header onsuccess merge Cache-Control max-age=31536000
-Header onsuccess merge Cache-Control must-revalidate env=must-revalidate
+Header onsuccess set Cache-Control "max-age=86400" env=!must-revalidate
+Header set Cache-Control "must-revalidate, max-age=0" env=must-revalidate
+Header set Expires "Tue, 01 Jan 1980 00:00:00 GMT" env=must-revalidate
 
 # Set default document root
 DocumentRoot $htdocs

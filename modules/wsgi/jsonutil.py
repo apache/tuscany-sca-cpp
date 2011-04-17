@@ -57,6 +57,8 @@ def jsPropertiesToValues(propertiesSoFar, o, i):
 
 # Converts a JSON val to a value
 def jsValToValue(jsv):
+    if jsv is None:
+        return None
     if isinstance(jsv, dict):
         return jsPropertiesToValues((), jsv, tuple(jsv.keys()))
     if isList(jsv):

@@ -95,10 +95,10 @@ class value {
 public:
 
     enum ValueType {
-        Undefined, Symbol, String, List, Number, Bool, Lambda, Ptr
+        Nil, Symbol, String, List, Number, Bool, Lambda, Ptr
     };
 
-    value() : type(value::Undefined) {
+    value() : type(value::Nil) {
         debug_inc(countValues);
         debug_inc(countEValues);
         debug_watchValue();
@@ -239,8 +239,8 @@ public:
         if(this == &v)
             return true;
         switch(type) {
-        case value::Undefined:
-            return v.type == value::Undefined;
+        case value::Nil:
+            return v.type == value::Nil;
         case value::List:
             return v.type == value::List && lst()() == v.lst()();
         case value::Lambda:
@@ -448,6 +448,18 @@ const string watchValue(const value& v) {
 #endif
 
 /**
+ * Write an escaped string value to a stream.
+ */
+ostream& escvwrite(const char* s, ostream& out) {
+    if (*s == '\0')
+        return out;
+    if (*s == '\\' || *s == '"')
+        out << '\\';
+    out << *s;
+    return escvwrite(s + 1, out);
+}
+
+/**
  * Write a value to a stream.
  */
 ostream& operator<<(ostream& out, const value& v) {
@@ -459,7 +471,9 @@ ostream& operator<<(ostream& out, const value& v) {
     case value::Symbol:
         return out << v.str()();
     case value::String:
-        return out << '\"' << v.str()() << '\"';
+        out << '\"';
+        escvwrite(c_str(v.str()()), out);
+        return out << '\"';
     case value::Number:
         return out << v.num()();
     case value::Bool:
@@ -474,7 +488,7 @@ ostream& operator<<(ostream& out, const value& v) {
         return out << "gc_ptr::" << p;
     }
     default:
-        return out << "undefined";
+        return out << "nil";
     }
 }
 
@@ -489,7 +503,7 @@ const value::ValueType type(const value& v) {
  * Returns true if a value is nil.
  */
 const bool isNil(const value& v) {
-    return type(v) == value::Undefined;
+    return type(v) == value::Nil;
 }
 
 /**

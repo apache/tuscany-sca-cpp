@@ -77,6 +77,8 @@ json.jsPropertiesToValues = function(propertiesSoFar, o, i) {
  * Converts a JSON val to a value.
  */
 json.jsValToValue = function(jsv) {
+    if (jsv == null)
+        return null;
     if (isList(jsv))
         return json.jsPropertiesToValues(mklist(), jsv, reverse(range(0, jsv.length)));
     if (typeof jsv == 'object')

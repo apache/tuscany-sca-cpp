@@ -36,6 +36,23 @@
 namespace tuscany
 {
 
+#ifdef WANT_MAINTAINER_MODE
+
+/**
+ * Force a core dump on assertion violation.
+ */
+bool assertOrFail(const bool expr) {
+    if (!expr)
+        *(char*)NULL = '\0';
+    return true;
+}
+
+#else
+
+#define assertOrFail(expr)
+
+#endif
+
 /**
  * Pointer to a value.
  */
@@ -117,7 +134,7 @@ private:
 apr_pool_t* mkpool() {
     apr_pool_t* p = NULL;
     apr_pool_create(&p, NULL);
-    assert(p != NULL);
+    assertOrFail(p != NULL);
     return p;
 }
 
@@ -164,7 +181,7 @@ apr_pool_t* gc_current_pool() {
 
     // Create a parent pool for the current thread
     apr_pool_create(&apr_pool, NULL);
-    assert(apr_pool != NULL);
+    assertOrFail(apr_pool != NULL);
     gc_pool_stack = apr_pool;
     return apr_pool;
 }
@@ -196,7 +213,7 @@ public:
 
     gc_scoped_pool() : gc_pool(NULL), prev(gc_current_pool()), owner(true) {
         apr_pool_create(&apr_pool, NULL);
-        assert(apr_pool != NULL);
+        assertOrFail(apr_pool != NULL);
         gc_push_pool(apr_pool);
     }
 
@@ -230,7 +247,7 @@ template<typename T> apr_status_t gc_pool_cleanup(void* v) {
 
 template<typename T> T* gc_new(apr_pool_t* p) {
     void* gc_new_ptr = apr_palloc(p, sizeof(T));
-    assert(gc_new_ptr != NULL);
+    assertOrFail(gc_new_ptr != NULL);
     apr_pool_cleanup_register(p, gc_new_ptr, gc_pool_cleanup<T>, apr_pool_cleanup_null) ;
     return static_cast<T*>(gc_new_ptr);
 }
@@ -254,7 +271,7 @@ template<typename T> apr_status_t gc_pool_acleanup(void* v) {
 
 template<typename T> T* gc_anew(apr_pool_t* p, size_t n) {
     size_t* gc_anew_ptr = static_cast<size_t*>(apr_palloc(p, sizeof(size_t) + sizeof(T[n])));
-    assert(gc_anew_ptr != NULL);
+    assertOrFail(gc_anew_ptr != NULL);
     *gc_anew_ptr = n;
     apr_pool_cleanup_register(p, gc_anew_ptr, gc_pool_acleanup<T>, apr_pool_cleanup_null) ;
     return (T*)(gc_anew_ptr + 1);
@@ -273,7 +290,7 @@ template<typename T> T* gc_anew(size_t n) {
  */
 char* gc_cnew(apr_pool_t* p, size_t n) {
     char* gc_cnew_ptr = static_cast<char*>(apr_palloc(p, n));
-    assert(gc_cnew_ptr != NULL);
+    assertOrFail(gc_cnew_ptr != NULL);
     return gc_cnew_ptr;
 }
 

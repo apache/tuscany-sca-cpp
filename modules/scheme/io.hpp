@@ -88,14 +88,14 @@ const bool isQuote(const value& token) {
     return token == quoteSymbol;
 }
 
-const value skipComment(istream& in);
+const failable<value> skipComment(istream& in);
 const value readQuoted(istream& in);
 const value readIdentifier(const char chr, istream& in);
 const value readString(istream& in);
 const value readNumber(const char chr, istream& in);
 const value readValue(istream& in);
 
-const value readToken(istream& in) {
+const failable<value> readToken(istream& in) {
     const char firstChar = readChar(in);
     if(isWhitespace(firstChar))
         return readToken(in);
@@ -114,12 +114,12 @@ const value readToken(istream& in) {
     if(isDigit(firstChar))
         return readNumber(firstChar, in);
     if(firstChar == -1)
-        return value();
+        return mkfailure<value>();
     logStream() << "Illegal lexical syntax '" << firstChar << "'" << endl;
     return readToken(in);
 }
 
-const value skipComment(istream& in) {
+const failable<value> skipComment(istream& in) {
     const char nextChar = readChar(in);
     if (nextChar == '\n')
         return readToken(in);
@@ -131,8 +131,11 @@ const value readQuoted(istream& in) {
 }
 
 const list<value> readList(const list<value>& listSoFar, istream& in) {
-    const value token = readToken(in);
-    if(isNil(token) || isRightParenthesis(token))
+    const failable<value> ftoken = readToken(in);
+    if (!hasContent(ftoken))
+        return reverse(listSoFar);
+    const value token = content(ftoken);
+    if(isRightParenthesis(token))
         return reverse(listSoFar);
     if(isLeftParenthesis(token))
         return readList(cons(value(readList(list<value> (), in)), listSoFar), in);
@@ -159,14 +162,22 @@ const value readIdentifier(const char chr, istream& in) {
         return value((bool)false);
     if (val == "true")
         return value((bool)true);
+    if (val == "nil")
+        return value();
     return val;
 }
 
 const list<char> readStringHelper(const list<char>& listSoFar, istream& in) {
     const char nextChar = readChar(in);
-    if(nextChar != -1 && nextChar != '"')
-        return readStringHelper(cons(nextChar, listSoFar), in);
-    return reverse(listSoFar);
+    if(nextChar == -1 || nextChar == '"')
+        return reverse(listSoFar);
+    if (nextChar == '\\') {
+        const char escapedChar = readChar(in);
+        if (escapedChar == -1)
+            return reverse(listSoFar);
+        return readStringHelper(cons(escapedChar, listSoFar), in);
+    }
+    return readStringHelper(cons(nextChar, listSoFar), in);
 }
 
 const value readString(istream& in) {
@@ -185,17 +196,23 @@ const value readNumber(const char chr, istream& in) {
 }
 
 const value readValue(istream& in) {
-    const value nextToken = readToken(in);
+    const failable<value> fnextToken = readToken(in);
+    if (!hasContent(fnextToken))
+        return value();
+    const value nextToken = content(fnextToken);
     if(isLeftParenthesis(nextToken))
-        return readList(list<value> (), in);
+        return readList(list<value>(), in);
     return nextToken;
 }
 
 const value readValue(const string s) {
     istringstream in(s);
-    const value nextToken = readToken(in);
+    const failable<value> fnextToken = readToken(in);
+    if (!hasContent(fnextToken))
+        return value();
+    const value nextToken = content(fnextToken);
     if(isLeftParenthesis(nextToken))
-        return readList(list<value> (), in);
+        return readList(list<value>(), in);
     return nextToken;
 }
 

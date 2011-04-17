@@ -118,8 +118,11 @@ const value definitionVariable(const value& exp) {
 
 const value definitionValue(const value& exp) {
     const list<value> exps(exp);
-    if(isSymbol(car(cdr(exps))))
+    if(isSymbol(car(cdr(exps)))) {
+        if (isNil(cdr(cdr(exps))))
+            return value();
         return car(cdr(cdr(exps)));
+    }
     const list<value> lexps(car(cdr(exps)));
     return makeLambda(cdr(lexps), cdr(cdr(exps)));
 }

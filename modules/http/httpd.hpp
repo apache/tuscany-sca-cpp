@@ -252,6 +252,20 @@ const string unescape(const string& uri) {
 }
 
 /**
+ * Unescape a list of key of value pairs representing query args.
+ */
+const list<value> unescapeArg(const list<value> a) {
+    return mklist<value>(car(a), unescape(cadr(a)));
+}
+
+const list<list<value> > unescapeArgs(const list<list<value> > args) {
+    debug(args, "httpd::unescape::args");
+    const list<list<value> > uargs = map<list<value>, list<value>>(unescapeArg, args);
+    debug(uargs, "httpd::unescape::result");
+    return uargs;
+}
+
+/**
  * Returns a list of key value pairs from the args in a query string.
  */
 const list<value> queryArg(const string& s) {
@@ -328,11 +342,11 @@ const failable<int> writeResult(const failable<list<string> >& ls, const string&
     const string ob(str(os));
 
     // Make sure browsers come back and check for updated dynamic content
-    apr_table_setn(r->headers_out, "Expires", "Tue, 01 Jan 1980 00:00:00 GMT");
-    apr_table_setn(r->headers_out, "Cache-Control", "must-revalidate");
+    // The actual header setup is configured in httpd-conf, based on the must-revalidate env variable
+    apr_table_set(r->subprocess_env, apr_pstrdup(r->pool, "must-revalidate"), apr_pstrdup(r->pool, "true"));
 
     // Compute and return an Etag for the returned content
-    const string etag(ap_md5(r->pool, (const unsigned char*)c_str(ob)));
+    const string etag(ap_md5_binary(r->pool, (const unsigned char*)c_str(ob), (int)length(ob)));
 
     // Check for an If-None-Match header and just return a 304 not-modified status
     // if the Etag matches the Etag presented by the client, to save bandwith

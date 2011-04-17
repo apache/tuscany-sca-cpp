@@ -301,7 +301,7 @@ template<typename T> const list<T> mklist(const T& a, const T& b, const T& c, co
  */
 template<typename T> const T car(const list<T>& p) {
     // Abort if trying to access the car of a nil list
-    assert(!isNil(p.cdr));
+    assertOrFail(!isNil(p.cdr));
     return p.car;
 }
 

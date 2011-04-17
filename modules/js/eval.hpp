@@ -177,9 +177,10 @@ const list<value> jsPropertiesToValues(const list<value>& propertiesSoFar, JSObj
     jsval idv;
     JS_IdToValue(cx, id, &idv);
     if(JSVAL_IS_STRING(idv)) {
-        if (isNil(val) && !isList(val))
-            return jsPropertiesToValues(propertiesSoFar, o, i, cx);
         const string name = JS_GetStringBytes(JSVAL_TO_STRING(idv));
+        if (isNil(val) && !isList(val))
+            return jsPropertiesToValues(cons<value> (mklist<value> (element, c_str(name), val), propertiesSoFar), o, i, cx);
+            //return jsPropertiesToValues(propertiesSoFar, o, i, cx);
         if (substr(name, 0, 1) == atsign)
             return jsPropertiesToValues(cons<value>(mklist<value>(attribute, c_str(substr(name, 1)), val), propertiesSoFar), o, i, cx);
         if (isList(val) && !isJSArray(val))
@@ -256,6 +257,9 @@ const jsval valueToJSVal(const value& val, const js::JSContext& cx) {
         if (isJSArray(val))
             return OBJECT_TO_JSVAL(valuesToJSElements(JS_NewArrayObject(cx, 0, NULL), val, 0, cx));
         return OBJECT_TO_JSVAL(valuesToJSProperties(JS_NewObject(cx, NULL, NULL, NULL), val, cx));
+    }
+    case value::Nil: {
+        return JSVAL_NULL;
     }
     default: {
         return JSVAL_VOID;
