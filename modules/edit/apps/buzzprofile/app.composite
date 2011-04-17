@@ -19,13 +19,13 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://buzzprofile" name="buzzprofile">
  <service name="example" promote="example"/>
- <component t:x="107" t:y="131" name="example" t:title="http get" t:color="green1">
+ <component t:x="107" t:y="131" name="example" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text2" name="url"/>
  </component>
  <service name="profile" promote="profile"/>
- <component t:x="106" t:y="36" name="profile" t:title="http get" t:color="green1">
+ <component t:x="106" t:y="36" name="profile" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="format" name="url"/>
@@ -41,12 +41,12 @@
   <service name="path"/>
   <property name="path" t:visible="false"/>
  </component>
- <component t:x="175" t:y="131" name="text2" t:title="text" t:color="orange1">
+ <component t:x="175" t:y="131" name="text2" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>https://buzzprofile.sca-store.com:8453/components/profile/jsdelfino</property>
  </component>
- <component t:x="235" t:y="36" name="text" t:title="text" t:color="orange1">
+ <component t:x="235" t:y="36" name="text" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>https://www.googleapis.com/buzz/v1/people/{0}/@self?alt=json</property>

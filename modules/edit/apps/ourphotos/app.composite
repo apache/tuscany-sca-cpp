@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://ourphotos" name="ourphotos">
+ <component t:x="191" t:y="433" name="text7" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>61049883@N06</property>
+ </component>
+ <component t:x="820" t:y="140" name="text5" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>jsdelfino</property>
+ </component>
+ <component t:x="190" t:y="69" name="list" t:title="list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="valueof2" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
+ </component>
+ <component t:x="430" t:y="52" name="name5" t:title="" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>image</property>
+ </component>
+ <component t:x="524" t:y="108" name="valueof2" t:title="valueof" t:color="orange1">
+  <t:implementation.python script="nuvem/valueof.py"/>
+  <service name="valueof"/>
+  <property>image</property>
+ </component>
+ <component t:x="659" t:y="141" name="shuffle" t:title="shuffle" t:color="yellow1">
+  <t:implementation.python script="nuvem/shuffle_.py"/>
+  <service name="shuffle"/>
+  <reference target="append" name="list"/>
+ </component>
+ <component t:x="565" t:y="373" name="append" t:title="+" t:color="yellow1">
+  <t:implementation.python script="nuvem/append.py"/>
+  <service name="append"/>
+  <reference target="values" name="first"/>
+  <reference target="values2" name="second"/>
+ </component>
+ <component t:x="438" t:y="31" name="foreach2" t:title="foreach" t:color="yellow1">
+  <t:implementation.python script="nuvem/map_.py"/>
+  <service name="foreach"/>
+  <reference target="name5" name="item"/>
+  <reference target="format" name="transform"/>
+  <reference target="shuffle" name="list"/>
+ </component>
+ <component t:x="501" t:y="59" name="format" t:title="format" t:color="magenta1">
+  <t:implementation.python script="nuvem/format_.py"/>
+  <service name="format"/>
+  <reference target="text2" name="pattern"/>
+  <reference target="list" name="values"/>
+ </component>
+ <component t:x="318" t:y="26" name="property" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="foreach2" name="value"/>
+  <property>images</property>
+ </component>
+ <service name="appstart" promote="appstart"/>
+ <component t:x="193" t:y="37" name="appstart" t:title="start" t:color="green1">
+  <t:implementation.python script="nuvem/appstart.py"/>
+  <service name="appstart" t:visible="false">
+   <t:binding.http uri="appstart"/>
+  </service>
+  <reference target="property" name="content"/>
+ </component>
+ <component t:x="553" t:y="52" name="text2" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>&lt;img src=&quot;{0}&quot; width=&quot;320&quot;/&gt;</property>
+ </component>
+ <component t:x="586" t:y="148" name="name3" t:title="" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>src</property>
+ </component>
+ <component t:x="590" t:y="175" name="picalbum" t:title="picasa album" t:color="blue1">
+  <t:implementation.python script="nuvem/picalbum.py"/>
+  <service name="picalbum"/>
+  <reference target="text5" name="id"/>
+  <reference name="pic" t:visible="false">
+   <t:binding.http uri="https://picasaweb.google.com/data/feed/api/user"/>
+  </reference>
+ </component>
+ <component t:x="605" t:y="240" name="name4" t:title="" t:color="orange1">
+  <t:implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>m</property>
+ </component>
+ <component t:x="606" t:y="265" name="flkalbum" t:title="flicker album" t:color="blue1">
+  <t:implementation.python script="nuvem/flkalbum.py"/>
+  <service name="flkalbum"/>
+  <reference target="text7" name="id"/>
+  <reference name="flk" t:visible="false">
+   <t:binding.http uri="http://api.flickr.com/services/feeds/photos_public.gne"/>
+  </reference>
+ </component>
+ <component t:x="497" t:y="147" name="values" t:title="values" t:color="yellow1">
+  <t:implementation.python script="nuvem/values.py"/>
+  <service name="values"/>
+  <reference target="search" name="list"/>
+ </component>
+ <component t:x="486" t:y="228" name="values2" t:title="values" t:color="yellow1">
+  <t:implementation.python script="nuvem/values.py"/>
+  <service name="values"/>
+  <reference target="search2" name="list"/>
+ </component>
+ <component t:x="542" t:y="223" name="search2" t:title="search" t:color="yellow1">
+  <t:implementation.python script="nuvem/search.py"/>
+  <service name="search"/>
+  <reference target="name4" name="path"/>
+  <reference target="flkalbum" name="list"/>
+ </component>
+ <component t:x="540" t:y="144" name="search" t:title="search" t:color="yellow1">
+  <t:implementation.python script="nuvem/search.py"/>
+  <service name="search"/>
+  <reference target="name3" name="path"/>
+  <reference target="picalbum" name="list"/>
+ </component>
+</composite>

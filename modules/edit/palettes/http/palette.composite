@@ -28,6 +28,7 @@
     <service name="param" promote="param"/>
     <service name="user" promote="user"/>
     <service name="email" promote="email"/>
+    <service name="url" promote="url"/>
     <service name="get" promote="get"/>
     <service name="post" promote="post"/>
     <service name="put" promote="put"/>
@@ -54,7 +55,7 @@
     <component name="param" t:title="?param" t:color="green1">
         <t:implementation.python script="nuvem/param.py"/>
         <service name="param"/>
-        <reference name="name"/>
+        <property name="name">x</property>
         <property name="query" t:visible="false"></property>
     </component>
     
@@ -70,27 +71,34 @@
         <property name="email" t:visible="false"></property>
     </component>
     
-    <component name="get" t:title="http get" t:color="green1">
+    <component name="url" t:title="url" t:color="green1">
+        <t:implementation.python script="nuvem/url.py"/>
+        <service name="url"/>
+        <reference name="address"/>
+        <reference name="args"/>
+    </component>
+    
+    <component name="get" t:title="get" t:color="green1">
         <implementation.cpp path="lib/http" library="libhttpget"/>
         <service name="get"/>
         <reference name="url"/>
     </component>
     
-    <component name="post" t:title="http post **" t:color="green1">
+    <component name="post" t:title="post **" t:color="green1">
         <implementation.cpp path="lib/http" library="libhttppost"/>
         <service name="post"/>
         <reference name="url"/>
         <reference name="content"/>
     </component>
     
-    <component name="put" t:title="http put **" t:color="green1">
+    <component name="put" t:title="put **" t:color="green1">
         <implementation.cpp path="lib/http" library="libhttpput"/>
         <service name="put"/>
         <reference name="url"/>
         <reference name="content"/>
     </component>
     
-    <component name="delete" t:title="http delete **" t:color="green1">
+    <component name="delete" t:title="delete" t:color="green1">
         <implementation.cpp path="lib/http" library="libhttpdelete"/>
         <service name="delete"/>
         <reference name="url"/>

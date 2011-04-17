@@ -26,10 +26,11 @@
     <service name="yahoosearch" promote="yahoosearch"/>
     <service name="bingsearch" promote="bingsearch"/>
     <service name="googlemap" promote="googlemap"/>
+    <service name="googleimages" promote="googleimages"/>
     <service name="weather" promote="weather"/>
     <service name="traffic" promote="traffic"/>
 
-    <component name="googlesearch" t:title="google search" t:color="red1">
+    <component name="googlesearch" t:title="google" t:color="red1">
         <t:implementation.python script="nuvem/gsearch.py"/>
         <service name="googlesearch"/>
         <reference name="query"/>
@@ -38,16 +39,22 @@
         </reference>
     </component>
     
-    <component name="yahoosearch" t:title="yahoo search **" t:color="red1">
-        <t:implementation.python script="nuvem/yahoosearch.py"/>
+    <component name="yahoosearch" t:title="yahoo" t:color="red1">
+        <t:implementation.python script="nuvem/ysearch.py"/>
         <service name="yahoosearch"/>
         <reference name="query"/>
+        <reference name="s" t:visible="false">
+            <t:binding.http uri="http://search.yahooapis.com/WebSearchService/V1/webSearch"/>
+        </reference>
     </component>
     
-    <component name="bingsearch" t:title="bing search **" t:color="red1">
-        <t:implementation.python script="nuvem/bingsearch.py"/>
+    <component name="bingsearch" t:title="bing" t:color="red1">
+        <t:implementation.python script="nuvem/bsearch.py"/>
         <service name="bingsearch"/>
         <reference name="query"/>
+        <reference name="s" t:visible="false">
+            <t:binding.http uri="http://www.bing.com/search"/>
+        </reference>
     </component>
     
     <component name="googlemap" t:title="google map" t:color="red1">
@@ -56,6 +63,15 @@
         <reference name="locations"/>
         <reference name="s" t:visible="false">
             <t:binding.http uri="http://maps.google.com/maps/api/staticmap"/>
+        </reference>
+    </component>
+    
+    <component name="googleimages" t:title="google images" t:color="red1">
+        <t:implementation.python script="nuvem/gimages.py"/>
+        <service name="googleimages"/>
+        <reference name="query"/>
+        <reference name="s" t:visible="false">
+            <t:binding.http uri="https://ajax.googleapis.com/ajax/services/search/images"/>
         </reference>
     </component>
     

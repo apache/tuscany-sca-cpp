@@ -22,37 +22,40 @@
   targetNamespace="http://talk"
   name="palette">
         
-    <service name="call" promote="call"/>
-    <service name="smssend" promote="smssend"/>
-    <service name="gtalksend" promote="gtalksend"/>
-    <service name="gtalkreceive" promote="gtalkreceive"/>
+    <service name="voicecall" promote="voicecall"/>
+    <service name="sendsms" promote="sendsms"/>
+    <service name="sendgtalk" promote="sendgtalk"/>
+    <service name="sendemail" promote="sendemail"/>
 
-    <component name="call" t:title="place call **" t:color="blue1">
-        <t:implementation.python script="nuvem/call.py"/>
-        <service name="call"/>
+    <component name="voicecall" t:title="voice **" t:color="blue1">
+        <t:implementation.python script="nuvem/voicecall.py"/>
+        <service name="voicecall"/>
         <reference name="to"/>
     </component>
     
-    <component name="smssend" t:title="send sms **" t:color="blue1">
-        <t:implementation.python script="nuvem/smssend.py"/>
-        <service name="smssend"/>
+    <component name="sendsms" t:title="sms **" t:color="blue1">
+        <t:implementation.python script="nuvem/sendsms.py"/>
+        <service name="sendsms"/>
         <reference name="user"/>
         <reference name="to"/>
         <reference name="msg"/>
     </component>
     
-    <component name="gtalksend" t:title="send gtalk **" t:color="blue1">
-        <t:implementation.python script="nuvem/gtalksend.py"/>
-        <service name="gtalksend"/>
+    <component name="sendgtalk" t:title="gtalk" t:color="blue1">
+        <implementation.cpp path="lib/chat" library="libchat-sender2"/>
+        <service name="sendgtalk"/>
         <reference name="jid"/>
+        <reference name="pass"/>
         <reference name="to"/>
         <reference name="msg"/>
     </component>
     
-    <component name="gtalkreceive" t:title="gtalk received **" t:color="blue1">
-        <t:implementation.python script="nuvem/gtalkreceive.py"/>
-        <service name="gtalkreceive"/>
-        <reference name="jid"/>
+    <component name="sendemail" t:title="email **" t:color="blue1">
+        <t:implementation.python script="nuvem/sendemail.py"/>
+        <service name="sendemail"/>
+        <reference name="from"/>
+        <reference name="to"/>
+        <reference name="msg"/>
     </component>
     
 </composite>

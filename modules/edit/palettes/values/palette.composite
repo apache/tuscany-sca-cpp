@@ -19,45 +19,48 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://value"
+  targetNamespace="http://values"
   name="palette">
         
+    <service name="property" promote="property"/>
     <service name="text" promote="text"/>
     <service name="number" promote="number"/>
     <service name="name" promote="name"/>
     <service name="valueof" promote="valueof"/>
-    <service name="nothing" promote="nothing"/>
     <service name="true" promote="true"/>
     <service name="false" promote="false"/>
+    <service name="nothing" promote="nothing"/>
     <service name="now" promote="now"/>
 
-    <component name="text" t:title="text" t:color="orange1">
+    <component name="property" t:title="{propval} :" t:color="orange1">
+        <t:implementation.python script="nuvem/assoc.py"/>
+        <service name="property"/>
+        <reference name="value"/>
+        <property name="property">name</property>
+    </component>
+    
+    <component name="text" t:title=" '{propval}'" t:color="orange1">
         <t:implementation.python script="nuvem/text.py"/>
         <service name="text"/>
-        <property name="property">abc</property>
+        <property name="property">text</property>
     </component>
     
-    <component name="number" t:title="number" t:color="orange1">
+    <component name="number" t:title="#" t:color="orange1">
         <t:implementation.python script="nuvem/number.py"/>
         <service name="number"/>
-        <property name="property">0</property>
+        <property name="property">123</property>
     </component>
     
-    <component name="name" t:title="name" t:color="orange1">
+    <component name="name" t:title="" t:color="orange1">
         <t:implementation.python script="nuvem/name.py"/>
         <service name="name"/>
         <property name="property">name</property>
     </component>
     
-    <component name="valueof" t:title="value of" t:color="orange1">
+    <component name="valueof" t:title="valueof" t:color="orange1">
         <t:implementation.python script="nuvem/valueof.py"/>
         <service name="valueof"/>
         <property name="name">name</property>
-    </component>
-    
-    <component name="nothing" t:title="nothing" t:color="orange1">
-        <t:implementation.python script="nuvem/nothing.py"/>
-        <service name="nothing"/>
     </component>
     
     <component name="true" t:title="true" t:color="orange1">
@@ -70,9 +73,15 @@
         <service name="false"/>
     </component>
     
+    <component name="nothing" t:title="nothing" t:color="orange1">
+        <t:implementation.python script="nuvem/nothing.py"/>
+        <service name="nothing"/>
+    </component>
+    
     <component name="now" t:title="now" t:color="orange1">
         <t:implementation.python script="nuvem/now.py"/>
         <service name="now"/>
+        <reference name="format"/>
     </component>
     
 </composite>

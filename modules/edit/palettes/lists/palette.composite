@@ -19,17 +19,23 @@
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
   xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://list"
+  targetNamespace="http://lists"
   name="palette">
         
     <service name="pair" promote="pair"/>
     <service name="list" promote="list"/>
     <service name="first" promote="first"/>
     <service name="rest" promote="rest"/>
+    <service name="second" promote="second"/>
+    <service name="last" promote="last"/>
     <service name="empty" promote="empty"/>
+    <service name="insert" promote="insert"/>
     <service name="append" promote="append"/>
     <service name="itemnb" promote="itemnb"/>
-    <service name="find" promote="find"/>
+    <service name="lookup" promote="lookup"/>
+    <service name="search" promote="search"/>
+    <service name="names" promote="names"/>
+    <service name="values" promote="values"/>
     <service name="range" promote="range"/>
 
     <component name="pair" t:title="pair" t:color="yellow1">
@@ -45,42 +51,80 @@
         <reference name="item" t:clonable="true"/>
     </component>
     
-    <component name="first" t:title="first item" t:color="yellow1">
+    <component name="first" t:title="first" t:color="yellow1">
         <t:implementation.python script="nuvem/first.py"/>
         <service name="first"/>
         <reference name="list"/>
     </component>
     
-    <component name="rest" t:title="rest of list" t:color="yellow1">
+    <component name="rest" t:title="rest" t:color="yellow1">
         <t:implementation.python script="nuvem/rest.py"/>
         <service name="rest"/>
         <reference name="list"/>
     </component>
     
-    <component name="empty" t:title="empty list" t:color="yellow1">
+    <component name="second" t:title="second" t:color="yellow1">
+        <t:implementation.python script="nuvem/second.py"/>
+        <service name="second"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="last" t:title="last" t:color="yellow1">
+        <t:implementation.python script="nuvem/last.py"/>
+        <service name="last"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="empty" t:title="empty" t:color="yellow1">
         <t:implementation.python script="nuvem/empty.py"/>
         <service name="empty"/>
     </component>
     
-    <component name="append" t:title="append" t:color="yellow1">
+    <component name="insert" t:title="insert" t:color="yellow1">
+        <t:implementation.python script="nuvem/insert.py"/>
+        <service name="insert"/>
+        <reference name="value"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="append" t:title="+" t:color="yellow1">
         <t:implementation.python script="nuvem/append.py"/>
         <service name="append"/>
         <reference name="first"/>
         <reference name="second"/>
     </component>
     
-    <component name="itemnb" t:title="item number" t:color="yellow1">
+    <component name="itemnb" t:title="item #" t:color="yellow1">
         <t:implementation.python script="nuvem/itemnb.py"/>
         <service name="itemnb"/>
         <reference name="index"/>
         <reference name="list"/>
     </component>
     
-    <component name="find" t:title="find by name" t:color="yellow1">
-        <t:implementation.python script="nuvem/find.py"/>
-        <service name="find"/>
+    <component name="lookup" t:title="lookup" t:color="yellow1">
+        <t:implementation.python script="nuvem/lookup.py"/>
+        <service name="lookup"/>
         <reference name="name"/>
-        <reference name="assoc"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="search" t:title="search" t:color="yellow1">
+        <t:implementation.python script="nuvem/search.py"/>
+        <service name="search"/>
+        <reference name="path"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="names" t:title="names" t:color="yellow1">
+        <t:implementation.python script="nuvem/names.py"/>
+        <service name="names"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="values" t:title="values" t:color="yellow1">
+        <t:implementation.python script="nuvem/values.py"/>
+        <service name="values"/>
+        <reference name="list"/>
     </component>
     
     <component name="range" t:title="range" t:color="yellow1">

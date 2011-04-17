@@ -26,6 +26,7 @@
     <service name="filter" promote="filter"/>
     <service name="reduce" promote="reduce"/>
     <service name="reverse" promote="reverse"/>
+    <service name="shuffle" promote="shuffle"/>
 
     <component name="foreach" t:title="foreach" t:color="yellow1">
         <t:implementation.python script="nuvem/map_.py"/>
@@ -49,12 +50,19 @@
         <reference name="item"/>
         <reference name="accum"/>
         <reference name="transform"/>
+        <reference name="init"/>
         <reference name="list"/>
     </component>
     
     <component name="reverse" t:title="reverse" t:color="yellow1">
         <t:implementation.python script="nuvem/reverse.py"/>
         <service name="reverse"/>
+        <reference name="list"/>
+    </component>
+    
+    <component name="shuffle" t:title="shuffle" t:color="yellow1">
+        <t:implementation.python script="nuvem/shuffle_.py"/>
+        <service name="shuffle"/>
         <reference name="list"/>
     </component>
     

@@ -18,27 +18,28 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://test" name="test">
- <service name="every" promote="every"/>
- <component t:x="42" t:y="30" name="every" t:title="every n milliseconds" t:color="green1">
-  <t:implementation.python script="nuvem/every.py"/>
-  <service name="every" t:visible="false">
-   <t:binding.http uri="every"/>
-  </service>
-  <reference name="n"/>
-  <reference name="content"/>
+ <service name="text3" promote="text3"/>
+ <component t:x="48" t:y="35" name="text3" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>Hello World</property>
  </component>
- <service name="pair" promote="pair"/>
- <component t:x="207" t:y="48" name="pair" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference name="name"/>
-  <reference name="value"/>
+ <service name="fbprofile" promote="fbprofile"/>
+ <component t:x="404" t:y="163" name="fbprofile" t:title="facebook profile" t:color="blue1">
+  <t:implementation.python script="nuvem/fbprofile.py"/>
+  <service name="fbprofile"/>
+  <reference name="id"/>
+  <reference name="fb" t:visible="false">
+   <t:binding.http uri="https://graph.facebook.com"/>
+  </reference>
  </component>
- <service name="itemnb" promote="itemnb"/>
- <component t:x="104" t:y="95" name="itemnb" t:title="item number" t:color="yellow1">
-  <t:implementation.python script="nuvem/itemnb.py"/>
-  <service name="itemnb"/>
-  <reference name="index"/>
-  <reference name="list"/>
+ <service name="twprofile" promote="twprofile"/>
+ <component t:x="402" t:y="216" name="twprofile" t:title="twitter profile" t:color="blue1">
+  <t:implementation.python script="nuvem/twprofile.py"/>
+  <service name="twprofile"/>
+  <reference name="id"/>
+  <reference name="tw" t:visible="false">
+   <t:binding.http uri="http://api.twitter.com/1/users/show.json"/>
+  </reference>
  </component>
 </composite>

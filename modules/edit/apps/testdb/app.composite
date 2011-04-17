@@ -18,12 +18,7 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testdb" name="testdb">
- <component t:x="405" t:y="143" name="text3" t:title="text" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>testkey</property>
- </component>
- <component t:x="177" t:y="36" name="text" t:title="text" t:color="orange1">
+ <component t:x="177" t:y="36" name="text" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>testkey</property>
@@ -34,19 +29,19 @@
   <reference target="text" name="item" t:clonable="true"/>
   <reference name="item" t:clonable="true"/>
  </component>
- <component t:x="103" t:y="91" name="text2" t:title="text" t:color="orange1">
+ <component t:x="103" t:y="91" name="text2" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>testvalue</property>
  </component>
- <component t:x="105" t:y="8" name="filedb" t:title="File database" t:color="green1">
+ <component t:x="105" t:y="8" name="filedb" t:title="file" t:color="red1">
   <t:implementation.python script="nuvem/filedb.py"/>
   <service name="filedb"/>
   <reference name="db" target="AppDataFileCache" t:visible="false"/>
   <property name="host" t:visible="false"/>
  </component>
  <service name="put" promote="put"/>
- <component t:x="59" t:y="63" name="put" t:title="put" t:color="green1">
+ <component t:x="72" t:y="38" name="put" t:title="put" t:color="red1">
   <t:implementation.python script="nuvem/put.py"/>
   <service name="put"/>
   <reference target="filedb" name="collection"/>
@@ -60,26 +55,26 @@
   <reference name="item" t:clonable="true"/>
  </component>
  <service name="get" promote="get"/>
- <component t:x="300" t:y="61" name="get" t:title="get" t:color="green1">
+ <component t:x="263" t:y="42" name="get" t:title="get" t:color="red1">
   <t:implementation.python script="nuvem/get.py"/>
   <service name="get"/>
   <reference target="filedb3" name="collection"/>
   <reference target="list2" name="id"/>
  </component>
- <component t:x="311" t:y="155" name="filedb3" t:title="File database" t:color="green1">
+ <component t:x="311" t:y="155" name="filedb3" t:title="file" t:color="red1">
   <t:implementation.python script="nuvem/filedb.py"/>
   <service name="filedb"/>
   <reference name="db" target="AppDataFileCache" t:visible="false"/>
   <property name="host" t:visible="false"/>
  </component>
  <service name="delete" promote="delete"/>
- <component t:x="58" t:y="221" name="delete" t:title="delete" t:color="green1">
+ <component t:x="457" t:y="44" name="delete" t:title="delete" t:color="red1">
   <t:implementation.python script="nuvem/delete.py"/>
   <service name="delete"/>
   <reference target="filedb2" name="collection"/>
   <reference target="list3" name="id"/>
  </component>
- <component t:x="113" t:y="223" name="filedb2" t:title="File database" t:color="green1">
+ <component t:x="113" t:y="223" name="filedb2" t:title="file" t:color="red1">
   <t:implementation.python script="nuvem/filedb.py"/>
   <service name="filedb"/>
   <reference name="db" target="AppDataFileCache" t:visible="false"/>
@@ -91,7 +86,12 @@
   <reference target="text4" name="item" t:clonable="true"/>
   <reference name="item" t:clonable="true"/>
  </component>
- <component t:x="187" t:y="249" name="text4" t:title="text" t:color="orange1">
+ <component t:x="187" t:y="249" name="text4" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>testkey</property>
+ </component>
+ <component t:x="342" t:y="70" name="text3" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>testkey</property>

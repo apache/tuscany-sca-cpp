@@ -30,6 +30,9 @@
     <service name="twfriends" promote="twfriends"/>
     <service name="twfollowers" promote="twfollowers"/>
     <service name="twtimeline" promote="twtimeline"/>
+    <service name="bzprofile" promote="bzprofile"/>
+    <service name="picalbum" promote="picalbum"/>
+    <service name="flkalbum" promote="flkalbum"/>
 
     <component name="fbprofile" t:title="facebook profile" t:color="blue1">
         <t:implementation.python script="nuvem/fbprofile.py"/>
@@ -100,6 +103,33 @@
         <reference name="id"/>
         <reference name="tw" t:visible="false">
             <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.json"/>
+        </reference>
+    </component>
+    
+    <component name="bzprofile" t:title="buzz profile" t:color="blue1">
+        <t:implementation.python script="nuvem/bzprofile.py"/>
+        <service name="bzprofile"/>
+        <reference name="id"/>
+        <reference name="bz" t:visible="false">
+            <t:binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
+        </reference>
+    </component>
+    
+    <component name="picalbum" t:title="picasa album" t:color="blue1">
+        <t:implementation.python script="nuvem/picalbum.py"/>
+        <service name="picalbum"/>
+        <reference name="id"/>
+        <reference name="pic" t:visible="false">
+            <t:binding.http uri="https://picasaweb.google.com/data/feed/api/user"/>
+        </reference>
+    </component>
+    
+    <component name="flkalbum" t:title="flicker album" t:color="blue1">
+        <t:implementation.python script="nuvem/flkalbum.py"/>
+        <service name="flkalbum"/>
+        <reference name="id"/>
+        <reference name="flk" t:visible="false">
+            <t:binding.http uri="http://api.flickr.com/services/feeds/photos_public.gne"/>
         </reference>
     </component>
     

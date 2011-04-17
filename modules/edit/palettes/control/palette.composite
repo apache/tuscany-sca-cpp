@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
+  targetNamespace="http://control"
+  name="palette">
+        
+    <service name="appstart" promote="appstart"/>
+    <service name="appstop" promote="appstop"/>
+    <service name="service" promote="service"/>
+    <service name="every" promote="every"/>
+    <service name="geolocation" promote="geolocation"/>
+    <service name="call" promote="call"/>
+
+    <component name="appstart" t:title="start" t:color="green1">
+        <t:implementation.python script="nuvem/appstart.py"/>
+        <service name="appstart" t:visible="false">
+            <t:binding.http uri="appstart"/>
+        </service>
+        <reference name="content"/>
+    </component>
+    
+    <component name="appstop" t:title="stop" t:color="green1">
+        <t:implementation.python script="nuvem/appstop.py"/>
+        <service name="appstop" t:visible="false">
+            <t:binding.http uri="appstop"/>
+        </service>
+        <reference name="content"/>
+    </component>
+    
+    <component name="service" t:title="{compname}" t:color="green1">
+        <t:implementation.python script="nuvem/service.py"/>
+        <service name="service" t:visible="false"/>
+        <reference name="content"/>
+    </component>
+    
+    <component name="every" t:title="timer" t:color="green1">
+        <t:implementation.python script="nuvem/every.py"/>
+        <service name="every" t:visible="false">
+            <t:binding.http uri="every"/>
+        </service>
+        <reference name="n"/>
+        <reference name="content"/>
+    </component>
+    
+    <component name="geolocation" t:title="location" t:color="green1">
+        <t:implementation.python script="nuvem/geolocation.py"/>
+        <service name="geolocation" t:visible="false">
+            <t:binding.http uri="geolocation"/>
+        </service>
+        <reference name="content"/>
+    </component>
+    
+    <component name="call" t:title="call" t:color="green1">
+        <t:implementation.python script="nuvem/call.py"/>
+        <service name="call"/>
+        <reference name="name"/>
+        <reference name="proxy" wiredByImpl="true" t:visible="false"/>
+    </component>
+    
+</composite>

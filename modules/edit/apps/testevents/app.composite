@@ -18,177 +18,154 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testevents" name="testevents">
- <service name="page" promote="page"/>
- <component t:x="43" t:y="10" name="page" t:title="when page opens" t:color="green1">
-  <t:implementation.python script="nuvem/page.py"/>
-  <service name="page" t:visible="false">
-   <t:binding.http uri="page"/>
-  </service>
-  <reference target="pair" name="content"/>
- </component>
- <service name="testbutton1" promote="testbutton1"/>
- <component t:x="42" t:y="127" name="testbutton1" t:title="on {compname} widget" t:color="green1">
-  <t:implementation.python script="nuvem/widget.py"/>
-  <service name="widget" t:visible="false"/>
-  <reference target="pair5" name="content"/>
- </component>
- <component t:x="167" t:y="12" name="pair" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="name" name="name"/>
-  <reference target="text" name="value"/>
- </component>
- <component t:x="311" t:y="76" name="text" t:title="text" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>page opened</property>
- </component>
- <component t:x="293" t:y="48" name="name" t:title="name" t:color="orange1">
-  <t:implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>status</property>
- </component>
- <component t:x="245" t:y="133" name="name2" t:title="name" t:color="orange1">
-  <t:implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>status</property>
- </component>
- <service name="testbutton2" promote="testbutton2"/>
- <component t:x="409" t:y="9" name="testbutton2" t:title="on {compname} widget" t:color="green1">
-  <t:implementation.python script="nuvem/widget.py"/>
-  <service name="widget" t:visible="false"/>
-  <reference target="pair3" name="content"/>
- </component>
- <component t:x="591" t:y="130" name="pair3" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="name3" name="name"/>
-  <reference target="text3" name="value"/>
- </component>
- <component t:x="654" t:y="125" name="name3" t:title="name" t:color="orange1">
-  <t:implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>status</property>
- </component>
- <component t:x="269" t:y="132" name="pair2" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="name2" name="name"/>
-  <reference target="text2" name="value"/>
- </component>
- <component t:x="319" t:y="204" name="name5" t:title="name" t:color="orange1">
-  <t:implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>testtext</property>
- </component>
- <component t:x="251" t:y="116" name="name6" t:title="name" t:color="orange1">
-  <t:implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>data</property>
- </component>
- <component t:x="245" t:y="167" name="list" t:title="list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="pair2" name="item" t:clonable="true"/>
-  <reference target="pair4" name="item" t:clonable="true"/>
-  <reference name="item" t:clonable="true"/>
- </component>
- <component t:x="190" t:y="127" name="pair5" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="name6" name="name"/>
-  <reference target="list" name="value"/>
- </component>
- <component t:x="321" t:y="256" name="pair4" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="name5" name="name"/>
-  <reference target="param" name="value"/>
- </component>
- <component t:x="373" t:y="207" name="text2" t:title="text" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>ok button clicked</property>
- </component>
- <component t:x="871" t:y="58" name="text3" t:title="text" t:color="orange1">
+ <component t:x="888" t:y="14" name="text3" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>cancel button clicked</property>
  </component>
- <service name="location" promote="location"/>
- <component t:x="603" t:y="295" name="location" t:title="on location change" t:color="green1">
-  <t:implementation.python script="nuvem/location.py"/>
-  <service name="location" t:visible="false">
-   <t:binding.http uri="location"/>
-  </service>
-  <reference target="pair6" name="content"/>
- </component>
- <component t:x="756" t:y="287" name="pair6" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="name7" name="name"/>
-  <reference target="params2" name="value"/>
- </component>
- <component t:x="808" t:y="288" name="name7" t:title="name" t:color="orange1">
-  <t:implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>data</property>
- </component>
- <component t:x="806" t:y="331" name="params2" t:title="?params" t:color="green1">
-  <t:implementation.python script="nuvem/params.py"/>
-  <service name="params"/>
-  <property name="query" t:visible="false"/>
- </component>
- <component t:x="783" t:y="255" name="pair8" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="name9" name="name"/>
-  <reference target="text4" name="value"/>
- </component>
- <component t:x="758" t:y="243" name="text4" t:title="text" t:color="orange1">
+ <component t:x="844" t:y="132" name="text4" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>timer fired</property>
  </component>
- <component t:x="674" t:y="126" name="number" t:title="number" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
-  <service name="number"/>
-  <property>3000</property>
+ <component t:x="359" t:y="75" name="text" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>page opens</property>
  </component>
- <component t:x="675" t:y="146" name="pair7" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="name8" name="name"/>
-  <reference target="pair8" name="value"/>
+ <component t:x="228" t:y="197" name="property4" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="text2" name="value"/>
+  <property>status</property>
  </component>
- <service name="every" promote="every"/>
- <component t:x="601" t:y="103" name="every" t:title="every n milliseconds" t:color="green1">
+ <component t:x="371" t:y="408" name="text2" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>ok button clicked</property>
+ </component>
+ <component t:x="229" t:y="156" name="property5" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="param" name="value"/>
+  <property>testtext</property>
+ </component>
+ <component t:x="619" t:y="371" name="params2" t:title="?params" t:color="green1">
+  <t:implementation.python script="nuvem/params.py"/>
+  <service name="params"/>
+  <property name="query" t:visible="false"/>
+ </component>
+ <component t:x="307" t:y="147" name="param" t:title="?param" t:color="green1">
+  <t:implementation.python script="nuvem/param.py"/>
+  <service name="param"/>
+  <property>testfield</property>
+  <property name="query" t:visible="false"/>
+ </component>
+ <service name="every3" promote="every3"/>
+ <component t:x="62" t:y="91" name="every3" t:title="every" t:color="green1">
   <t:implementation.python script="nuvem/every.py"/>
   <service name="every" t:visible="false">
    <t:binding.http uri="every"/>
   </service>
   <reference target="number" name="n"/>
-  <reference target="pair7" name="content"/>
+  <reference target="property2" name="content"/>
  </component>
- <component t:x="733" t:y="164" name="name8" t:title="name" t:color="orange1">
-  <t:implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
-  <property>data</property>
+ <component t:x="601" t:y="122" name="number" t:title="#" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>3000</property>
  </component>
- <component t:x="788" t:y="204" name="name9" t:title="name" t:color="orange1">
-  <t:implementation.python script="nuvem/name.py"/>
-  <service name="name"/>
+ <component t:x="602" t:y="148" name="property2" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="text4" name="value"/>
   <property>status</property>
  </component>
- <component t:x="360" t:y="250" name="name4" t:title="name" t:color="orange1">
+ <component t:x="598" t:y="227" name="property6" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="params2" name="value"/>
+  <property>location</property>
+ </component>
+ <service name="geolocation" promote="geolocation"/>
+ <component t:x="61" t:y="178" name="geolocation" t:title="location" t:color="green1">
+  <t:implementation.python script="nuvem/geolocation.py"/>
+  <service name="geolocation" t:visible="false">
+   <t:binding.http uri="geolocation"/>
+  </service>
+  <reference target="property6" name="content"/>
+ </component>
+ <component t:x="159" t:y="42" name="property3" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="text" name="value"/>
+  <property>status</property>
+ </component>
+ <service name="appstart" promote="appstart"/>
+ <component t:x="63" t:y="31" name="appstart" t:title="start" t:color="green1">
+  <t:implementation.python script="nuvem/appstart.py"/>
+  <service name="appstart" t:visible="false">
+   <t:binding.http uri="appstart"/>
+  </service>
+  <reference target="property3" name="content"/>
+ </component>
+ <component t:x="172" t:y="141" name="list" t:title="list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="property5" name="item" t:clonable="true"/>
+  <reference target="property4" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
+ </component>
+ <service name="testbutton1" promote="testbutton1"/>
+ <component t:x="364" t:y="102" name="testbutton1" t:title="{compname}" t:color="green1">
+  <t:implementation.python script="nuvem/service.py"/>
+  <service name="service" t:visible="false"/>
+  <reference target="list" name="content"/>
+ </component>
+ <service name="testbutton2" promote="testbutton2"/>
+ <component t:x="362" t:y="35" name="testbutton2" t:title="{compname}" t:color="green1">
+  <t:implementation.python script="nuvem/service.py"/>
+  <service name="service" t:visible="false"/>
+  <reference target="prop2" name="content"/>
+ </component>
+ <component t:x="602" t:y="52" name="prop2" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="text3" name="value"/>
+  <property>status</property>
+ </component>
+ <component t:x="455" t:y="315" name="abc" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>abc</property>
+ </component>
+ <service name="compabc" promote="compabc"/>
+ <component t:x="236" t:y="248" name="compabc" t:title="{compname}" t:color="green1">
+  <t:implementation.python script="nuvem/service.py"/>
+  <service name="service" t:visible="false"/>
+  <reference target="abc" name="content"/>
+ </component>
+ <service name="compxyz" promote="compxyz"/>
+ <component t:x="236" t:y="299" name="compxyz" t:title="{compname}" t:color="green1">
+  <t:implementation.python script="nuvem/service.py"/>
+  <service name="service" t:visible="false"/>
+  <reference name="content" target="text12"/>
+ </component>
+ <component name="text12" t:x="428" t:y="366" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>xyz</property>
+ </component>
+ <service name="call2" promote="call2"/>
+ <component t:x="69" t:y="248" name="call2" t:title="call" t:color="green1">
+  <t:implementation.python script="nuvem/call.py"/>
+  <service name="call"/>
+  <reference target="name" name="name"/>
+  <reference name="proxy" wiredByImpl="true" t:visible="false"/>
+ </component>
+ <component t:x="184" t:y="316" name="name" t:title="" t:color="orange1">
   <t:implementation.python script="nuvem/name.py"/>
   <service name="name"/>
-  <property>testfield</property>
- </component>
- <component t:x="301" t:y="247" name="param" t:title="?param" t:color="green1">
-  <t:implementation.python script="nuvem/param.py"/>
-  <service name="param"/>
-  <reference target="name4" name="name"/>
-  <property name="query" t:visible="false"/>
+  <property>compxyz</property>
  </component>
 </composite>

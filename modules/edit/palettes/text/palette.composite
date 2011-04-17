@@ -60,13 +60,13 @@
         <reference name="string"/>
     </component>
     
-    <component name="lowercase" t:title="lowercase" t:color="magenta1">
+    <component name="lowercase" t:title="lower" t:color="magenta1">
         <t:implementation.python script="nuvem/lowercase.py"/>
         <service name="lowercase"/>
         <reference name="string"/>
     </component>
     
-    <component name="uppercase" t:title="uppercase" t:color="magenta1">
+    <component name="uppercase" t:title="upper" t:color="magenta1">
         <t:implementation.python script="nuvem/uppercase.py"/>
         <service name="uppercase"/>
         <reference name="string"/>
