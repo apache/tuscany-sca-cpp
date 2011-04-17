@@ -31,6 +31,7 @@ def mkapplink(id):
         os.symlink('../../../../../nuvem/nuvem-parallel/nuvem', 'apps/' + car(id) + '/nuvem')
         os.symlink('../../../../components', 'apps/' + car(id) + '/lib')
         os.mkdir('apps/' + car(id) + '/htdocs')
+        os.symlink('../../../htdocs/cache-manifest.cmf', 'apps/' + car(id) + '/htdocs/cache-manifest.cmf');
         os.symlink('../../../htdocs/login', 'apps/' + car(id) + '/htdocs/login');
         os.symlink('../../../htdocs/logout', 'apps/' + car(id) + '/htdocs/logout');
         os.symlink('../../../htdocs/public', 'apps/' + car(id) + '/htdocs/public');

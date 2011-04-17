@@ -38,6 +38,8 @@ if (ui.isIE()) {
         // Track element dragging and selection
         page.dragging = null;
         page.selected = null;
+        wname.disabled = true;
+        wtext.disabled = true;
 
         // Trigger page change events
         page.onpagechange = onchange;
@@ -55,7 +57,9 @@ if (ui.isIE()) {
 
                 // Reset current selection
                 wname.value = '';
+                wname.disabled = true;
                 wtext.value = '';
+                wtext.disabled = true;
                 return false;
             }
 
@@ -75,7 +79,9 @@ if (ui.isIE()) {
 
             // Update the widget name and text fields
             wname.value = page.selected.id;
+            wname.disabled = false;
             wtext.value = page.text(page.selected);
+            wtext.disabled = !page.hastext(page.selected);
             return false;
         };
 
@@ -85,6 +91,17 @@ if (ui.isIE()) {
         elem.onmouseup = function() {
             if (page.dragging == null)
                 return false;
+
+            // Snap to grid
+            var newX = page.gridsnap(ui.csspos(page.dragging.style.left));
+            var newY = page.gridsnap(ui.csspos(page.dragging.style.top));
+            page.dragging.style.left = newX;
+            page.dragging.style.top = newY;
+            page.dragging.cover.style.left = newX;
+            page.dragging.cover.style.top = newY;
+
+            // Fixup widget style
+            page.fixupwidget(page.dragging);
 
             // Discard element dragged out of page area
             if (ui.csspos(page.dragging.style.left) < palcx && page.dragging.id.substring(0, 8) != 'palette:') {
@@ -99,7 +116,9 @@ if (ui.isIE()) {
                     // Reset current selection
                     page.selected = null;
                     wname.value = '';
+                    wname.disabled = true;
                     wtext.value = '';
+                    wtext.disabled = true;
                 }
             }
 
@@ -108,7 +127,7 @@ if (ui.isIE()) {
             elem.releaseCapture();
             
             // Trigger page change event
-            page.onpagechange();
+            page.onpagechange(false);
             return false;
         };
 
@@ -150,7 +169,7 @@ if (ui.isIE()) {
             page.selected.id = wname.value;
 
             // Trigger page change event
-            page.onpagechange();
+            page.onpagechange(true);
             return false;
         };
 
@@ -160,7 +179,7 @@ if (ui.isIE()) {
             page.settext(page.selected, wtext.value);
 
             // Trigger page change event
-            page.onpagechange();
+            page.onpagechange(true);
             return false;
         };
 
@@ -181,6 +200,8 @@ if (ui.isIE()) {
         // Track element dragging and selection
         page.dragging = null;
         page.selected = null;
+        wname.disabled = true;
+        wtext.disabled = true;
 
         // Trigger page change events
         page.onpagechange = onchange;
@@ -201,7 +222,9 @@ if (ui.isIE()) {
 
                 // Reset current selection
                 wname.value = '';
+                wname.disabled = true;
                 wtext.value = '';
+                wtext.disabled = true;
                 return false;
             }
 
@@ -221,7 +244,9 @@ if (ui.isIE()) {
 
             // Update the widget name and text fields
             wname.value = page.selected.id;
+            wname.disabled = false;
             wtext.value = page.text(page.selected);
+            wtext.disabled = !page.hastext(page.selected);
             return false;
         };
 
@@ -234,6 +259,17 @@ if (ui.isIE()) {
         window.onmouseup = function(e) {
             if (page.dragging == null)
                 return false;
+
+            // Snap to grid
+            var newX = page.gridsnap(ui.csspos(page.dragging.style.left));
+            var newY = page.gridsnap(ui.csspos(page.dragging.style.top));
+            page.dragging.style.left = newX;
+            page.dragging.style.top = newY;
+            page.dragging.cover.style.left = newX;
+            page.dragging.cover.style.top = newY;
+
+            // Fixup widget style
+            page.fixupwidget(page.dragging);
 
             // Discard element dragged out of page area
             if (ui.csspos(page.dragging.style.left) < palcx && page.dragging.id.substring(0, 8) != 'palette:') {
@@ -248,7 +284,9 @@ if (ui.isIE()) {
                     // Reset current selection
                     page.selected = null;
                     wname.value = '';
+                    wname.disabled = true;
                     wtext.value = '';
+                    wtext.disabled = true;
                 }
             }
 
@@ -256,7 +294,7 @@ if (ui.isIE()) {
             page.dragging = null;
 
             // Trigger page change event
-            page.onpagechange();
+            page.onpagechange(false);
             return false;
         };
 
@@ -309,7 +347,7 @@ if (ui.isIE()) {
             page.selected.id = wname.value;
 
             // Trigger page change event
-            page.onpagechange();
+            page.onpagechange(true);
             return false;
         };
 
@@ -319,7 +357,7 @@ if (ui.isIE()) {
             page.settext(page.selected, wtext.value);
 
             // Trigger page change event
-            page.onpagechange();
+            page.onpagechange(true);
             return false;
         };
 
@@ -341,7 +379,7 @@ page.text = function(e) {
         return car(childElements(e)).value;
     if (e.className == 'entry' || e.className == 'password')
         return car(childElements(e)).defaultValue;
-    if (e.className == 'list')
+    if (e.className == 'select')
         return car(childElements(car(childElements(e)))).value;
     if (e.className == 'link') {
         var hr = car(childElements(e)).href;
@@ -354,9 +392,36 @@ page.text = function(e) {
     }
     if (e.className == 'iframe')
         return car(childElements(e)).href;
+    if (e.className == 'list')
+        return '';
     if (e.className == 'table')
         return '';
     return '';
+};
+
+/**
+ * Return true if a widget has editable text.
+ */
+page.hastext = function(e) {
+    if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section')
+        return true;
+    if (e.className == 'button' || e.className == 'checkbox')
+        return true;
+    if (e.className == 'entry' || e.className == 'password')
+        return true;
+    if (e.className == 'select')
+        return false;
+    if (e.className == 'link')
+        return true;
+    if (e.className == 'img')
+        return true;
+    if (e.className == 'iframe')
+        return true;
+    if (e.className == 'list')
+        return false;
+    if (e.className == 'table')
+        return false;
+    return false;
 };
 
 /**
@@ -376,11 +441,14 @@ page.settext = function(e, t) {
         map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = t; return n; }, nodeList(e.childNodes));
         return t;
     }
-    if (e.className == 'list') {
+    if (e.className == 'select') {
         var ce = car(childElements(car(childElements(e))));
         ce.value = t;
         ce.innerHTML = t;
         return t;
+    }
+    if (e.className == 'list') {
+        return '';
     }
     if (e.className == 'table') {
         return '';
@@ -404,6 +472,30 @@ page.settext = function(e, t) {
 };
 
 /**
+ * Initial fixup of a widget.
+ */
+page.fixupwidget = function(e) {
+    if (e.className == 'iframe') {
+        var f = car(childElements(e));
+        //e.innerHTML = '<iframe src="' + f.href + '" frameborder="no" scrolling="no"></iframe>';
+        return e;
+    }
+    if (e.className == 'section') {
+        e.style.width = '100%';
+        return e;
+    }
+    if (e.className == 'list') {
+        car(childElements(e)).style.width = '100%';
+        return e;
+    }
+    if (e.className == 'table') {
+        car(childElements(e)).style.width = '100%';
+        return e;
+    }
+    return e;
+}
+
+/**
  * Find a draggable element in a hierarchy of elements.
  */
 page.draggable = function(n, e) {
@@ -414,6 +506,13 @@ page.draggable = function(n, e) {
     if (n.covered)
         return n.covered;
     return page.draggable(n.parentNode, e);
+}
+
+/**
+ * Align a pos along a 9pixel grid.
+ */
+page.gridsnap = function(x) {
+    return Math.round(x / 9) * 9;
 }
 
 /**

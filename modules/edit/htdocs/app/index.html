@@ -1,22 +1,22 @@
 <!--
-    * Licensed to the Apache Software Foundation (ASF) under one
-    * or more contributor license agreements.  See the NOTICE file
-    * distributed with this work for additional information
-    * regarding copyright ownership.  The ASF licenses this file
-    * to you under the Apache License, Version 2.0 (the
-    * "License"); you may not use this file except in compliance
-    * with the License.  You may obtain a copy of the License at
-    * 
-    *   http://www.apache.org/licenses/LICENSE-2.0
-    * 
-    * Unless required by applicable law or agreed to in writing,
-    * software distributed under the License is distributed on an
-    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    * KIND, either express or implied.  See the License for the
-    * specific language governing permissions and limitations
-    * under the License.    
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
 -->
-<html>
+<html manifest="cache-manifest.cmf">
 <head>
 <title>App</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -27,6 +27,7 @@ document.title = window.location.hostname.split('.')[0];
 </script>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
+<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/elemutil.js"></script>
 <script type="text/javascript" src="/xmlutil.js"></script>
@@ -52,9 +53,10 @@ if (ui.isIE()) $('bodydiv').style.right = -20;
 /**
  * Page, every and location components.
  */
-var pagecomp = sca.httpclient('page', '/page');
+var appstartcomp = sca.httpclient('appstart', '/appstart');
+var appstopcomp = sca.httpclient('appstop', '/appstop');
 var everycomp = sca.httpclient('every', '/every');
-var locationcomp = sca.httpclient('location', '/location');
+var geolocationcomp = sca.httpclient('geolocation', '/geolocation');
 
 /**
  * Find a named value in a tree of elements.
@@ -66,7 +68,6 @@ function datavalue(l, id) {
 
     // Element matches id segment
     if (car(id) == elementName(e)) {
-        log('match', car(id));
 
         // Found element matching the whole id path
         if (isNil(cdr(id)))
@@ -100,9 +101,11 @@ function inputvalue(e) {
         return car(childElements(e)).value;
     }
     if (e.className == 'checkbox') {
+        if (!car(childElements(e)).checked)
+            return null;
         return car(childElements(e)).value;
     }
-    if (e.className == 'list') {
+    if (e.className == 'select') {
         return car(childElements(car(childElements(e)))).value;
     }
     return null;
@@ -114,7 +117,10 @@ function inputvalue(e) {
 function setwidgetvalue(e, dv) {
 
     function datatext(dv) {
-        return elementHasValue(dv)? elementValue(dv) : '';
+        if (!elementHasValue(dv))
+            return '';
+        var t = elementValue(dv);
+        return t == null? '' : t;
     }
 
     if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
@@ -138,15 +144,20 @@ function setwidgetvalue(e, dv) {
         map(function(n) { if (n.nodeName == "SPAN") n.innerHTML = t; return n; }, nodeList(e.childNodes));
         return t;
     }
-    if (e.className == 'list') {
+    if (e.className == 'select') {
         var t = datatext(dv);
         var ce = car(childElements(car(childElements(e))));
         ce.value = t;
         ce.innerHTML = t;
         return t;
     }
+    if (e.className == 'list') {
+        var t = ui.datalist(mklist(dv));
+        car(childElements(e)).innerHTML = t;
+        return t;
+    }
     if (e.className == 'table') {
-        var t = ui.datatable(elementChildren(dv));
+        var t = ui.datatable(mklist(dv));
         car(childElements(e)).innerHTML = t;
         return t;
     }
@@ -159,7 +170,8 @@ function setwidgetvalue(e, dv) {
     }
     if (e.className == 'img') {
         var t = datatext(dv);
-        car(childElements(e)).src = t;
+        var img = car(childElements(e));
+        img.setAttribute('src', t);
         return t;
     }
     if (e.className == 'iframe') {
@@ -220,7 +232,7 @@ function bindwidgethandler(e) {
         car(childElements(e)).name = e.id;
         return e;
     }
-    if (e.className == 'list') {
+    if (e.className == 'select') {
         var ce = car(childElements(car(childElements(e))));
         ce.name = e.id;
         return e;
@@ -241,7 +253,13 @@ function fixupwidget(e) {
         e.style.width = '100%';
         return e;
     }
+    if (e.className == 'list') {
+        car(childElements(e)).innerHTML = '';
+        car(childElements(e)).style.width = '100%';
+        return e;
+    }
     if (e.className == 'table') {
+        car(childElements(e)).innerHTML = '';
         car(childElements(e)).style.width = '100%';
         return e;
     }
@@ -266,7 +284,6 @@ function getpagedata() {
 
         // Eval a component init script
         function evalcompinit(doc) {
-            log('comp init', doc);
             if (isNil(doc))
                 return true;
             var js = car(json.readJSON(mklist(doc)));
@@ -283,8 +300,7 @@ function getpagedata() {
         }
 
         // Get the component app data
-        var doc = pagecomp.get(window.location.search, function(doc) {
-            log('page return', doc);
+        var doc = appstartcomp.get(window.location.search, function(doc) {
             try {
                 $('app').innerHTML = $('appFrame').contentDocument.body.innerHTML;
 
@@ -296,11 +312,11 @@ function getpagedata() {
 
                 // Get and eval the optional timer and location watch setup scripts
                 everycomp.get('setup', evalcompinit);
-                locationcomp.get('setup', evalcompinit);
+                geolocationcomp.get('setup', evalcompinit);
                 return true;
 
             } catch(e) {
-                log('exception on pagecomp.get()', e);
+                log('exception on appstartcomp.get()', e);
             }
         });
 
@@ -315,7 +331,6 @@ function getpagedata() {
  */
 function getcompdata(comp, qs) {
     var doc = comp.get(qs, function(doc) {
-        log('comp data', doc);
         return displaydoc(doc);
     });
     return true;
@@ -329,7 +344,11 @@ function compquery() {
         return e.id + '=' + inputvalue(e);
     }
 
-    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
+    function childrenList(n) {
+        return append(nodeList(n.childNodes), reduce(append, mklist(), map(childrenList, nodeList(n.childNodes))));
+    }
+
+    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, childrenList(ui.elementByID($('app'), 'page'))));
 
     // Append current location properties if known
     if (!isNil(geoposition)) {
@@ -367,9 +386,9 @@ function intervalHandler() {
 /**
  * Setup an interval timer.
  */
-function setupIntervalHandler(sec) {
+function setupIntervalHandler(msec) {
     try {
-        return setInterval(intervalHandler, sec);
+        return setInterval(intervalHandler, msec);
     } catch(e) {
         log('exception in setupIntervalHandler()', e);
     }
@@ -378,20 +397,26 @@ function setupIntervalHandler(sec) {
 /**
  * Handle a location watch event.
  */
-var geoposition;
+var locationWatch = null;
+var geoposition = null;
 
 function locationHandler(pos) {
-    log('location pos', pos);
     try {
         geoposition = pos;
-        return getcompdata(locationcomp, compquery());
+        return getcompdata(geolocationcomp, compquery());
     } catch(e) {
-        log('exception in locationHandler()', e);
+        locationErrorHandler(e);
     }
 }
 
 function locationErrorHandler(e) {
     log('location error', e);
+    if (!isNil(locationWatch)) {
+        try {
+            navigator.geolocation.clearWatch(locationWatch);
+        } catch(e) {}
+        locationWatch = null;
+    }
     return true;
 }
 
@@ -399,13 +424,18 @@ function locationErrorHandler(e) {
  * Setup a location watch handler.
  */
 function setupLocationHandler() {
-    log('setup location');
-    try {
-        navigator.geolocation.getCurrentPosition(locationHandler, locationErrorHandler);
-        navigator.geolocation.watchPosition(locationHandler, locationErrorHandler);
-    } catch(e) {
-        log('exception in setupLocationHandler()', e);
+    function installLocationHandler() {
+        if (!isNil(locationWatch))
+            return true;
+        try {
+            locationWatch = navigator.geolocation.watchPosition(locationHandler, locationErrorHandler);
+        } catch(e) {
+            log('exception in installLocationHandler()', e);
+        }
     }
+
+    installLocationHandler();
+    setInterval(installLocationHandler, 10000);
     return true;
 }
 

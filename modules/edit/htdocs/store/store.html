@@ -1,24 +1,25 @@
 <!--
-    * Licensed to the Apache Software Foundation (ASF) under one
-    * or more contributor license agreements.  See the NOTICE file
-    * distributed with this work for additional information
-    * regarding copyright ownership.  The ASF licenses this file
-    * to you under the Apache License, Version 2.0 (the
-    * "License"); you may not use this file except in compliance
-    * with the License.  You may obtain a copy of the License at
-    * 
-    *   http://www.apache.org/licenses/LICENSE-2.0
-    * 
-    * Unless required by applicable law or agreed to in writing,
-    * software distributed under the License is distributed on an
-    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    * KIND, either express or implied.  See the License for the
-    * specific language governing permissions and limitations
-    * under the License.    
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
 -->
 <html>
 <head>  
 <link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/elemutil.js"></script>
 <script type="text/javascript" src="/xmlutil.js"></script>
@@ -44,24 +45,24 @@ if (ui.isIE()) $('bodydiv').style.right = -20;
  */
 var category = ui.queryParams()['category'];
 if (isNil(category))
-    category = 'new';
+    category = 'myapps';
+log('category', category);
 
 /**
  * Build store menu bar
  */
 function catmenu() {
     function catmenuitem(name, cat) {
-        var c = cat == category? "smenu" : "amenu";
+        var c = cat == category? 'smenu' : 'amenu';
         return '<th class="thl thr" style="width: 30px; padding-top: 4px; padding-bottom: 4px; padding-right: 10px;">'
-                + '<a href="/store/?category=' + cat + '" target="_parent"><span class="' + c + '">' + name + '</span></a></th>';
+                + ui.ahref('/store/?category=' + cat, '_parent', '<span class="' + c + '">' + name + '</span>') + '</th>';
     }
 
     var m = '<table style="width: 100%;"><tr>';
+    m += catmenuitem('My Apps', 'myapps');
     m += catmenuitem('New Apps', 'new');
     m += catmenuitem('Top Charts', 'top');
     m += catmenuitem('Featured', 'featured');
-    m += catmenuitem('Services', 'services');
-    m += catmenuitem('Tests', 'tests');
     m += '<th class="thl thr" style="width: 100%;"></th></tr></table>';
     return m;
 }
@@ -74,6 +75,7 @@ $('catmenu').innerHTML = catmenu();
  */
 var editWidget = sca.component("EditWidget");
 var store = sca.reference(editWidget, "store");
+var dashboard = sca.reference(editWidget, "dashboard");
 
 /**
  * Return the link to an app.
@@ -89,31 +91,49 @@ function applink(appname) {
 }
 
 /**
+ * Edit an app.
+ */
+function editApp(appname) {
+    return window.open('/page?app=' + appname, '_parent');
+}
+
+/**
+ * Clone an app.
+ */
+function cloneApp(appname) {
+    return window.open('/public/notyet.html', '_parent');
+}
+
+/**
  * Get and display list of apps.
  */
-function getapps(category, sync) {
+function getapps(category) {
     function display(doc) {
         var apps = '<div>';
         var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
         var entries = cadr(assoc("'entry", cdr(feed)));
         for (var i = 0; i < length(entries); i++) {
             var entry = entries[i];
-            title = cadr(assoc("'title", entry))
-            name = cadr(assoc("'id", entry))
-            author = 'joe@localhost';
-            hreflink = '<a href=\"' + applink(name) + '\" target=\"' + '_blank' + '\">';
+            var title = cadr(assoc("'title", entry))
+            var name = cadr(assoc("'id", entry))
+            var author = 'joe@localhost';
+            var clone = isNil(config.clone)? 'Clone' : config.clone;
 
             apps += '<div class="box" style="width: 250px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 5px; padding: 10px; vertical-align: top;">'
             apps += '<table><tr>';
             apps += '<td>';
-            apps += '<div>' + hreflink + '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>' + '</a></div>';
-            apps += '<div><input type="button" id="cloneApp" value="Clone" title="Clone this app"></div>';
+            apps += '<div>' + ui.ahref(applink(name), '_blank', '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>') + '</div>';
+            apps += '<div><input type="button" id="cloneApp" value="' + clone + '" title="' + clone + ' this app" onclick="cloneApp(\'' + name + '\');"></div>';
+            if (category == 'myapps')
+                apps += '<div><input type="button" id="editApp" value="Edit" title="Edit this app" onclick="editApp(\'' + name + '\');"></div>';
             apps += '</td>';
             apps += '<td class="tdw">';
-            apps += '<div style="font-weight: bold">' + hreflink + name + '</a></div>';
+            apps += '<div style="font-weight: bold">' + ui.ahref(applink(name), '_blank', name) + '</div>';
             apps += '<div>' + 'by&nbsp;' + '<span style="font-weight: bold;">' + author + '</span></div>';
+            apps += '<div>Feb 4, 2011</div>';
             apps += '<br/>';
             apps += '<div>' + title + '</div>';
+            apps += '<br/>';
             apps += '</td>';
             apps += '</tr></table>';
             apps += '</div>';
@@ -125,17 +145,20 @@ function getapps(category, sync) {
         ui.showbody();
     }
 
-    if (sync) {
-        display(store.get(category));
-    } else {
-        store.get(category, function(doc) {
+    if (category == 'myapps') {
+        dashboard.get('', function(doc) {
             display(doc);
         });
+        return true;
     }
+    store.get(category, function(doc) {
+        display(doc);
+    });
+    return true;
 }
 
 // Get and display the list of apps
-getapps(category, true);
+getapps(category);
 
 </script>
 </body>

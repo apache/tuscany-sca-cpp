@@ -1,24 +1,25 @@
 <!--
-    * Licensed to the Apache Software Foundation (ASF) under one
-    * or more contributor license agreements.  See the NOTICE file
-    * distributed with this work for additional information
-    * regarding copyright ownership.  The ASF licenses this file
-    * to you under the Apache License, Version 2.0 (the
-    * "License"); you may not use this file except in compliance
-    * with the License.  You may obtain a copy of the License at
-    * 
-    *   http://www.apache.org/licenses/LICENSE-2.0
-    * 
-    * Unless required by applicable law or agreed to in writing,
-    * software distributed under the License is distributed on an
-    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    * KIND, either express or implied.  See the License for the
-    * specific language governing permissions and limitations
-    * under the License.    
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
 -->
 <html>
 <head>  
 <link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/elemutil.js"></script>
 <script type="text/javascript" src="/xmlutil.js"></script>
@@ -49,28 +50,36 @@
 <tr style="height: 5000px;"><td class="tdl"></td><td class="tdr" colspan="2"></td></tr>
 </table>
 
+<div id="bigscreen" style="position: absolute; left: 250px; top: 40px; right: 0px; bottom: 0px; border:1px; border-style: solid; border-color: #a2bae7; background: url(/public/grid72.png);"></div>
+<div id="iosportraitscreen" class="guide" style="position: absolute; left: 250px; top: 40px; width: 320px; height: 460px;"></div>
+<div id="ioslandscapescreen" class="guide" style="position: absolute; left: 250px; top: 40px; width: 480px; height: 300px;"></div>
+<div id="ipadportraitscreen" class="guide" style="position: absolute; left: 250px; top: 40px; width: 768px; height: 911px;"></div>
+<div id="ipadlandscapescreen" class="guide" style="position: absolute; left: 250px; top: 40px; width: 1024px; height: 655px;"></div>
+
 <div id="page" style="position: absolute; top: 40px; left: 0px; width: 5000px; height: 5000px;">
 
 <span class="h1" id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header1</h1></span>
 <span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 35px;"><h2>Header2</h2></span>
 <span class="section" id="palette:section" style="position: absolute; left: 0px; top: 70px; width: 200px;"><span class="section">section</span></span>
 <span class="button" id="palette:button" style="position: absolute; left: 0px; top: 100px;"><input type="button" value="button"/></span>
-<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 130px;"><input type="text" value="field" size="20"/></span>
+<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 130px;"><input type="text" value="field" size="20" autocapitalize="off"/></span>
 <span class="password" id="palette:password" style="position: absolute; left: 0px; top: 160px;"><input type="password" value="password" size="20"/></span>
 <span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 190px;"><input type="checkbox" value="checkbox"/><span>checkbox</span></span>
-<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 220px;"><select><option value="list">list</option></select></span>
-<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 250px; width: 200px;">
+<span class="select" id="palette:select" style="position: absolute; left: 0px; top: 220px;"><select><option value="select">select</option></select></span>
+<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 250px; width: 200px;">
+<table class="datatable" style="width: 200px;"><tr><td class="datatd">list</td></tr><tr><td class="datatd">...</td></tr></table>
+</span>
+<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 300px; width: 200px;">
 <table class="datatable" style="width: 200px;"><tr><td class="datatdl">table</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>
 </span>
-<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 300px;"><a href="/"><span>link</span></a></span>
-<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 330px;"><span>text</span></span>
-<span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 360px; width: 200px;"><a href="/public/iframe.html"><span class="fakeframe"><span>frame ...</span></span></a></span>
-<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 390px;"><img src="/public/img.png"/></span>
+<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 350px;"><a href="/"><span>link</span></a></span>
+<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 380px;"><span>text</span></span>
+<span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 410px; width: 200px;"><a href="/public/iframe.html"><span class="fakeframe"><span>frame ...</span></span></a></span>
+<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 430px;"><img src="/public/img.png"/></span>
 
 </div>
 
-<div id="buffer" style="visibility: hidden; width: 0px; height: 0px">
-</div>
+<div id="buffer" style="visibility: hidden; width: 0px; height: 0px"></div>
 
 </div>
 
@@ -114,17 +123,17 @@ function getpage(name, edit) {
         // Convert the page to XHTML and place it in a hidden buffer
         var buffer = $('buffer');
         var el = atompage(doc);
-        if (isNil(el)) {
 
-            // Create a default empty page if necessary
+        // Create a default empty page if necessary
+        if (isNil(el))
             buffer.innerHTML = '<DIV id="page">\n</DIV>\n';
-        } else {
+        else
             buffer.innerHTML = writeStrings(writeXML(atompage(doc), false));
-        }
 
         // Append page nodes to editor
         map(function(e) {
-                e.style.left = ui.csspos(e.style.left) + 250;
+                if (!isNil(e.style))
+                    e.style.left = ui.csspos(e.style.left) + 250;
                 edit.appendChild(e);
                 return page.cover(e);
             }, nodeList(buffer.childNodes[0].childNodes));
@@ -204,12 +213,16 @@ function save() {
 /**
  * Handle a page change event
  */
-function onpagechange() {
+function onpagechange(prop) {
     if (savedpagexhtml == pagexhtml())
         return false;
     $('saveButton').value = 'Save now';
 
-    // Autosave after 3 seconds
+    // Save property changes right away
+    if (prop)
+        return save();
+
+    // Autosave other changes after 3 seconds
     setTimeout(function() {
         if (savedpagexhtml == pagexhtml())
             return false;

@@ -47,6 +47,8 @@ graph.colors.blue1 = '#00c3c9';
 graph.colors.red1 = '#d03f41';
 graph.colors.yellow1 = '#fcee21';
 graph.colors.magenta1 = '#c0688a';
+graph.colors.cyan1 = '#d5dcf9';
+graph.colors.lightgray1 = '#dcdcdc'
 
 /**
  * Default positions and sizes.
@@ -55,10 +57,11 @@ var palcx = 250;
 var trashcx = 230;
 var proxcx = 20;
 var proxcy = 20;
-var buttoncx = 70;
+var buttoncx = 65;
 var buttoncy = 30;
 var curvsz = 6;
 var tabsz = 2;
+var fontsz = '';
 
 /**
  * Base path class.
@@ -134,6 +137,8 @@ if (ui.isIE()) {
         // Track element dragging and selection
         graph.dragging = null;
         graph.selected = null;
+        cname.disabled = true;
+        pvalue.disabled = true;
 
         /**
          * Find the first draggable element in a hierarchy of elements.
@@ -159,7 +164,9 @@ if (ui.isIE()) {
 
                 // Reset current selection
                 cname.value = '';
+                cname.disabled = true;
                 pvalue.value = '';
+                pvalue.disabled = true;
 
                 // Trigger component select event
                 vmlg.oncompselect('');
@@ -187,7 +194,9 @@ if (ui.isIE()) {
 
             // Update the component name and property value fields
             cname.value = graph.selected.id;
+            cname.disabled = false;
             pvalue.value = graph.property(graph.selected.comp);
+            pvalue.disabled = !graph.hasproperty(graph.selected.comp);
 
             // Trigger component select event
             vmlg.oncompselect(vmlg.appname, graph.selected.id);
@@ -237,14 +246,16 @@ if (ui.isIE()) {
                     // Reset current selection
                     graph.selected = null;
                     cname.value = '';
+                    cname.disabled = true;
                     pvalue.value = '';
+                    pvalue.disabled = true;
 
                     // Trigger component select event
                     vmlg.oncompselect('');
                 }
 
                 // Trigger composite change event
-                vmlg.oncomposchange();
+                vmlg.oncomposchange(false);
             }
 
             // Forget current dragged component
@@ -292,6 +303,7 @@ if (ui.isIE()) {
             // Change component name and refactor references to it
             var compos = scdl.composite(vmlg.compos);
             cname.value = graph.ucid(cname.value, compos);
+            cname.disabled = false;
             graph.selected.id = cname.value;
             setElement(compos, graph.renamecomp(graph.selected.comp, compos, cname.value));
 
@@ -302,7 +314,7 @@ if (ui.isIE()) {
             graph.refresh(vmlg);
 
             // Trigger composite change event
-            vmlg.oncomposchange();
+            vmlg.oncomposchange(true);
             return false;
         };
 
@@ -313,12 +325,13 @@ if (ui.isIE()) {
             // Change the component property value
             graph.setproperty(graph.selected.comp, pvalue.value);
             pvalue.value = graph.property(graph.selected.comp);
+            pvalue.disabled = !graph.hasproperty(graph.selected.comp);
 
             // Refresh the composite
             graph.refresh(vmlg);
 
             // Trigger composite change event
-            vmlg.oncomposchange();
+            vmlg.oncomposchange(true);
             return false;
         };
 
@@ -326,15 +339,20 @@ if (ui.isIE()) {
         // component, reference and property titles
         graph.comptitlewidthdiv = document.createElement('span');
         graph.comptitlewidthdiv.style.visibility = 'hidden'
+        if (fontsz != '')
+            graph.comptitlewidthdiv.style.fontSize = fontsz;
         div.appendChild(graph.comptitlewidthdiv);
 
         graph.reftitlewidthdiv = document.createElement('span');
         graph.reftitlewidthdiv.style.visibility = 'hidden'
+        if (fontsz != '')
+            graph.comptitlewidthdiv.style.fontSize = fontsz;
         div.appendChild(graph.reftitlewidthdiv);
 
         graph.proptitlewidthdiv = document.createElement('span');
         graph.proptitlewidthdiv.style.visibility = 'hidden'
-        graph.proptitlewidthdiv.style.fontWeight = 'bold'
+        if (fontsz != '')
+            graph.comptitlewidthdiv.style.fontSize = fontsz;
         div.appendChild(graph.proptitlewidthdiv);
 
         return vmlg;
@@ -379,14 +397,16 @@ if (ui.isIE()) {
     /**
      * Return an element representing a title.
      */
-    graph.mktitle = function(t, bold, pos) {
+    graph.mktitle = function(t, style, pos) {
         var title = document.createElement('v:textbox');
         title.style.position = 'absolute';
         title.style.left = pos.xpos() + 2;
         title.style.top = pos.ypos();
         title.inset = '' + 6 + 'px ' + pos.ypos() + 'px 0px 0px';
-        if (bold)
-            title.style.fontWeight = 'bold';
+        if (style != '')
+            title.style.cssText = style;
+        if (fontsz != '')
+            title.style.fontSize = fontsz;
         var tnode = document.createTextNode(t);
         title.appendChild(tnode);
         return title;
@@ -399,7 +419,7 @@ if (ui.isIE()) {
         var tsvcs = graph.tsvcs(comp);
         var lsvcs = graph.lsvcs(comp);
         var pos = graph.mkpath().move(isNil(lsvcs)? tabsz : (tabsz * 5), isNil(tsvcs)? tabsz : (tabsz * 5));
-        return graph.mktitle(graph.title(comp), false, pos);
+        return graph.mktitle(graph.title(comp), graph.compstyle(comp), pos);
     };
 
     /**
@@ -420,16 +440,16 @@ if (ui.isIE()) {
         var tsvcs = graph.tsvcs(comp);
         var lsvcs = graph.lsvcs(comp);
         var pos = graph.mkpath().move(graph.comptitlewidth(comp) + 7 + (isNil(lsvcs)? tabsz : (tabsz * 5)), isNil(tsvcs)? tabsz : (tabsz * 5));
-        return graph.mktitle(graph.property(comp), true, pos);
+        return graph.mktitle(graph.propertytitle(comp), graph.propstyle(comp), pos);
     };
 
     /**
      * Return the width of the value of a property.
      */
     graph.proptitlewidth = function(comp) {
-        var t = graph.property(comp);
+        var t = graph.proptitle(comp);
         graph.proptitlewidthdiv.innerHTML = t;
-        var twidth = graph.proptitlewidthdiv.offsetWidth + 2;
+        var twidth = graph.proptitlewidthdiv.offsetWidth + 4;
         graph.proptitlewidthdiv.innerHTML = '';
         return twidth;
     };
@@ -438,7 +458,7 @@ if (ui.isIE()) {
      * Return an element representing the title of a reference.
      */
     graph.reftitle = function(ref) {
-        return graph.mktitle(graph.title(ref), false, graph.mkpath().move(25,25));
+        return graph.mktitle(graph.title(ref), graph.refstyle(ref), graph.mkpath().move(25,25));
     };
 
     /**
@@ -527,7 +547,7 @@ if (ui.isIE()) {
     graph.mkbutton = function(t, pos) {
 
         // Make the title element
-        var title = graph.mktitle(t, true, graph.mkpath().move(4,4));
+        var title = graph.mktitle(t, '', graph.mkpath().move(4,4));
 
         // Compute the path of the button shape
         var path = graph.buttonpath().str();
@@ -616,6 +636,8 @@ if (ui.isIE()) {
         // Track element dragging and selection
         graph.dragging = null;
         graph.selected = null;
+        cname.disabled = true;
+        pvalue.disabled = true;
 
         /**
          * Find the first draggable element in a hierarchy of elements.
@@ -644,7 +666,9 @@ if (ui.isIE()) {
 
                 // Reset current selection
                 cname.value = '';
+                cname.disabled = true;
                 pvalue.value = '';
+                pvalue.disabled = true;
 
                 // Trigger component select event
                 svg.oncompselect('');
@@ -672,7 +696,9 @@ if (ui.isIE()) {
 
             // Update the component name and property value fields
             cname.value = graph.selected.id;
+            cname.disabled = false;
             pvalue.value = graph.property(graph.selected.comp);
+            pvalue.disabled = !graph.hasproperty(graph.selected.comp);
             
             // Trigger component select event
             svg.oncompselect(svg.appname, graph.selected.id);
@@ -725,7 +751,9 @@ if (ui.isIE()) {
                     // Reset current selection
                     graph.selected = null;
                     cname.value = '';
+                    cname.disabled = true;
                     pvalue.value = '';
+                    pvalue.disabled = true;
 
                     // Trigger component select event
                     svg.oncompselect('');
@@ -739,7 +767,7 @@ if (ui.isIE()) {
             graph.refresh(svg);
 
             // Trigger composite change event
-            svg.oncomposchange();
+            svg.oncomposchange(false);
             return false;
         };
 
@@ -808,7 +836,7 @@ if (ui.isIE()) {
             graph.refresh(svg);
 
             // Trigger composite change event
-            svg.oncomposchange();
+            svg.oncomposchange(true);
             return false;
         };
         
@@ -819,12 +847,13 @@ if (ui.isIE()) {
             // Change the component property value
             graph.setproperty(graph.selected.comp, pvalue.value);
             pvalue.value = graph.property(graph.selected.comp);
+            pvalue.disabled = !graph.hasproperty(graph.selected.comp);
 
             // Refresh the composite
             graph.refresh(svg);
 
             // Trigger composite change event
-            svg.oncomposchange();
+            svg.oncomposchange(true);
             return false;
         };
 
@@ -878,13 +907,15 @@ if (ui.isIE()) {
     /**
      * Return an element representing a title.
      */
-    graph.mktitle = function(t, bold) {
+    graph.mktitle = function(t, style) {
         var title = document.createElementNS(graph.svgns, 'text');
-        title.setAttribute('text-anchor', 'start');
         title.setAttribute('x', 5);
         title.setAttribute('y', 15);
-        if (bold)
-            title.style.fontWeight = 'bold';
+        title.setAttribute('text-anchor', 'start');
+        if (style != '')
+            title.style.cssText = style;
+        if (fontsz != '')
+            title.style.fontSize = fontsz;
         title.appendChild(document.createTextNode(t));
         return title;
     };
@@ -893,7 +924,7 @@ if (ui.isIE()) {
      * Return an element representing the title of a component.
      */
     graph.comptitle = function(comp) {
-        return graph.mktitle(graph.title(comp), false);
+        return graph.mktitle(graph.title(comp), graph.compstyle(comp));
     };
 
     /**
@@ -911,7 +942,7 @@ if (ui.isIE()) {
      * Return an element representing the title of a reference.
      */
     graph.reftitle = function(ref) {
-        return graph.mktitle(graph.title(ref), false);
+        return graph.mktitle(graph.title(ref), graph.refstyle(ref));
     };
 
     /**
@@ -929,7 +960,7 @@ if (ui.isIE()) {
      * Return an element representing the value of a property.
      */
     graph.proptitle = function(comp) {
-        var title = graph.mktitle(graph.property(comp), true);
+        var title = graph.mktitle(graph.propertytitle(comp), graph.propstyle(comp));
         title.setAttribute('x', graph.comptitlewidth(comp) + 7);
         return title;
     };
@@ -940,7 +971,7 @@ if (ui.isIE()) {
     graph.proptitlewidth = function(comp) {
         var title = graph.proptitle(comp);
         graph.titlewidthsvg.appendChild(title);
-        var width = title.getBBox().width + 2;
+        var width = title.getBBox().width + 4;
         graph.titlewidthsvg.removeChild(title);
         return width;
     };
@@ -1006,7 +1037,7 @@ if (ui.isIE()) {
     graph.mkbutton = function(t, pos) {
 
         // Make the button title
-        var title = graph.mktitle(t, true);
+        var title = graph.mktitle(t, '');
 
         // Compute the path of the button shape
         var path = graph.buttonpath().str();
@@ -1085,11 +1116,21 @@ graph.title = function(e) {
             return '>'
         if (t == 'lt')
             return '<';
-        if (t.indexOf('{') == -1)
+        if (t.indexOf('{propval}') != -1)
+            return '';
+        if (t.indexOf('{compname}') == -1)
             return t;
         return t.replace('{compname}', scdl.name(e));
     }
     return scdl.name(e);
+};
+
+/**
+ * Return the display style of an SCDL component or reference.
+ */
+graph.compstyle = graph.refstyle = function(e) {
+    var s = scdl.style(e);
+    return isNil(s)? '' : s;
 };
 
 /**
@@ -1101,7 +1142,44 @@ graph.property = function(e) {
         return '';
     if (scdl.visible(car(p)) == 'false')
         return '';
-    return scdl.propertyValue(car(p));
+    var pv = scdl.propertyValue(car(p));
+    return pv;
+};
+
+/**
+ * Return the title of a property of a SCDL component.
+ */
+graph.propertytitle = function(e) {
+    var pv = graph.property(e);
+    var t = scdl.title(e);
+    if (t.indexOf('{propval}') == -1)
+        return pv;
+    return t[0] == ' '? t.substr(1).replace('{propval}', pv) : t.replace('{propval}', pv);
+};
+
+/**
+ * Return true if a SCDL component has a property.
+ */
+graph.hasproperty = function(e) {
+    var p = scdl.properties(e);
+    if (isNil(p))
+        return false;
+    if (scdl.visible(car(p)) == 'false')
+        return false;
+    return true;
+};
+
+/**
+ * Return the display style of the property of an SCDL component.
+ */
+graph.propstyle = function(e) {
+    var p = scdl.properties(e);
+    if (isNil(p))
+        return '';
+    if (scdl.visible(car(p)) == 'false')
+        return '';
+    var s = scdl.style(car(p));
+    return isNil(s)? '' : s;
 };
 
 /**

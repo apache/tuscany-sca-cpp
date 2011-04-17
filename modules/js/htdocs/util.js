@@ -208,6 +208,13 @@ function debug(o) {
 }
 
 /**
+ * External build configuration.
+ */
+var config;
+if (isNil(config))
+    config = {}
+
+/**
  * Simple assert function.
  */
 function AssertException() {
@@ -301,9 +308,22 @@ function issubdomain(host) {
 }
 
 /**
- * Convert a host name to a domain name title.
+ * Convert a host name to a home page title.
  */
-function domaintitle(host) {
+function hometitle(host) {
+    if (!isNil(config.hometitle))
+        return config.hometitle;
+    var h = reverse(host.split('.'));
+    var d = isNil(cdr(h))? car(h) : cadr(h);
+    return d.substr(0, 1).toUpperCase() + d.substr(1);
+}
+
+/**
+ * Convert a host name to a window title.
+ */
+function windowtitle(host) {
+    if (!isNil(config.windowtitle))
+        return config.windowtitle;
     var h = reverse(host.split('.'));
     var d = isNil(cdr(h))? car(h) : cadr(h);
     return d.substr(0, 1).toUpperCase() + d.substr(1);

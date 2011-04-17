@@ -1,24 +1,25 @@
 <!--
-    * Licensed to the Apache Software Foundation (ASF) under one
-    * or more contributor license agreements.  See the NOTICE file
-    * distributed with this work for additional information
-    * regarding copyright ownership.  The ASF licenses this file
-    * to you under the Apache License, Version 2.0 (the
-    * "License"); you may not use this file except in compliance
-    * with the License.  You may obtain a copy of the License at
-    * 
-    *   http://www.apache.org/licenses/LICENSE-2.0
-    * 
-    * Unless required by applicable law or agreed to in writing,
-    * software distributed under the License is distributed on an
-    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    * KIND, either express or implied.  See the License for the
-    * specific language governing permissions and limitations
-    * under the License.    
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
 -->
 <html>
 <head>  
 <link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/elemutil.js"></script>
 <script type="text/javascript" src="/xmlutil.js"></script>
@@ -161,7 +162,6 @@ $('saveButton').onclick = function(e) {
  * Save the current composite.
  */
 function save() {
-    log('saving');
     $('saveButton').value = 'Saving';
     savedcomposxml = car(writeXML(composite, false));
     var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
@@ -178,15 +178,18 @@ function save() {
 /**
  * Handle a composite change event.
  */
-function oncomposchange() {
+function oncomposchange(prop) {
     if (savedcomposxml == car(writeXML(composite, false)))
         return false;
     $('saveButton').value = 'Save now';
 
-    // Autosave after 3 seconds
+    // Save property changes right away
+    if (prop)
+        return save();
+
+    // Autosave other changes after 3 seconds
+    $('saveButton').value = 'Save now';
     setTimeout(function() {
-        log('savedcomposxml', savedcomposxml);
-        log('newddcomposxml', car(writeXML(composite, false)));
         if (savedcomposxml == car(writeXML(composite, false)))
             return false;
         return save();
@@ -281,12 +284,12 @@ $('autoplayButton').onclick = function(e) {
     if (autoplay) {
         autoplay = false;
         showData('');
-        $('autoplayButton').value = 'Autorun is off';
+        $('autoplayButton').value = 'Preview is off';
         return true;
     }
     autoplay = true;
     showData(compname);
-    $('autoplayButton').value = 'Autorun is on';
+    $('autoplayButton').value = 'Preview is on';
     return true;
 };
 
@@ -299,11 +302,11 @@ var bg = graph.mkgroup(graph.mkpath());
 
 // Install the palettes
 var gpalettes = new Array();
-var spalette = 'event';
+var spalette = 'control';
 var pos = graph.mkpath();
-installpalette('event', pos.rmove(0,0), g, bg, spalette, gpalettes);
-installpalette('value', pos.rmove(0,40), g, bg, spalette, gpalettes);
-installpalette('list', pos.rmove(0, 40), g, bg, spalette, gpalettes);
+installpalette('control', pos.rmove(0,0), g, bg, spalette, gpalettes);
+installpalette('values', pos.rmove(0,40), g, bg, spalette, gpalettes);
+installpalette('lists', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('transform', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('text', pos.rmove(0, 40), g, bg, spalette, gpalettes);
 installpalette('http', pos.rmove(0, 40), g, bg, spalette, gpalettes);

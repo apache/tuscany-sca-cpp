@@ -1,51 +1,66 @@
 <!--
-    * Licensed to the Apache Software Foundation (ASF) under one
-    * or more contributor license agreements.  See the NOTICE file
-    * distributed with this work for additional information
-    * regarding copyright ownership.  The ASF licenses this file
-    * to you under the Apache License, Version 2.0 (the
-    * "License"); you may not use this file except in compliance
-    * with the License.  You may obtain a copy of the License at
-    * 
-    *   http://www.apache.org/licenses/LICENSE-2.0
-    * 
-    * Unless required by applicable law or agreed to in writing,
-    * software distributed under the License is distributed on an
-    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    * KIND, either express or implied.  See the License for the
-    * specific language governing permissions and limitations
-    * under the License.    
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
 -->
 <html>
 <head>
-<title>Settings</title>
+<title>Stats</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
 <link rel="stylesheet" type="text/css" href="/ui.css"/>
+<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 </head>
 <body class="delayed">
 <div id="menu"></div>
 
-<h1><span id="h1"></span> <span id="appNameHeader" style="font-weight: normal;"></span></h1>
+<h1><span id="h1"></span><span id="appNameHeader"></span></h1>
 <br/>
 
 <div id="props"></div>
 
 <script type="text/javascript">
 
+/**
+ * Return the link to an app.
+ */
+function applink(appname) {
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/';
+    return link;
+}
+
 // Get the app name
 var appname = ui.queryParams()['app'];
 
+// Update the window title
+document.title = windowtitle(window.location.hostname) + ' - Stats - ' + appname;
+$('h1').innerHTML = hometitle(window.location.hostname);
+$('appNameHeader').innerHTML = ' - <a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
+
 // Load the menu bar
 ui.loadwidget('menu', '/menu.html?app=' + appname, ui.showbody);
-
-document.title = 'Settings - ' + appname;
-$('h1').innerHTML = domaintitle(window.location.hostname);
-$('appNameHeader').innerHTML = ' - ' + appname;
 
 /**
  * Display the properties editor for an app.

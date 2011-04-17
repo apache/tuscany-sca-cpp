@@ -55,6 +55,7 @@ m4/
 config.guess
 config.sub
 config.status
+config.js
 depcomp
 install-sh
 ltmain.sh
@@ -125,6 +126,7 @@ scribe-cat
 js-test
 js-eval
 file-test
+test-start
 xml-value
 value-xml
 json-value

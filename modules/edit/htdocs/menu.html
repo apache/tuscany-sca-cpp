@@ -1,24 +1,25 @@
 <!--
-    * Licensed to the Apache Software Foundation (ASF) under one
-    * or more contributor license agreements.  See the NOTICE file
-    * distributed with this work for additional information
-    * regarding copyright ownership.  The ASF licenses this file
-    * to you under the Apache License, Version 2.0 (the
-    * "License"); you may not use this file except in compliance
-    * with the License.  You may obtain a copy of the License at
-    * 
-    *   http://www.apache.org/licenses/LICENSE-2.0
-    * 
-    * Unless required by applicable law or agreed to in writing,
-    * software distributed under the License is distributed on an
-    * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    * KIND, either express or implied.  See the License for the
-    * specific language governing permissions and limitations
-    * under the License.    
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
 -->
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="/ui.css">
+<script type="text/javascript" src="/config.js"></script>
 <script type="text/javascript" src="/util.js"></script>
 <script type="text/javascript" src="/ui.js"></script>
 <script type="text/javascript" src="/component.js"></script>
@@ -38,7 +39,8 @@ var user = sca.defun(sca.reference(menuWidget, "user"), "id");
 function userMenu() {
     function UserMenu() {
         this.content = function() {
-            return '<span><b>' + user.id() + '</b></span>';
+            u = user.id()
+            return '<span>' + u + '</span>';
         };
     }
     return new UserMenu();
@@ -51,26 +53,18 @@ function appname() {
     return ui.queryParams()['app'];
 }
 
-/**
- * Return the link to an app.
- */
-function applink(appname) {
-    var protocol = window.location.protocol;
-    var host = window.location.hostname;
-    var port = ':' + window.location.port;
-    if (port == ':80' || port == ':443' || port == ':')
-        port = '';
-    var link = protocol + '//' + appname + '.' + host + port + '/';
-    return link;
-}
-
 // Display the menu bar
 var mdiv = $('menu'); 
 var name = appname();
+
 mdiv.innerHTML = ui.menubar(
-    append(mklist(ui.menu('Home', '/'), ui.menu('Store', '/store/'), ui.menu('Dashboard', '/dash/')),
-            (isNil(name) || name == 'undefined')? mklist() : mklist(ui.menu('Composition', '/graph/?app=' + name), ui.menu('Page', '/page/?app=' + name), ui.menu('Settings', '/props/?app=' + name), ui.menu(name + '.' + window.location.hostname, applink(name), '_blank'))),
-    mklist(userMenu(), ui.menu('Account', '/account/'), ui.menu('Sign out', '/logout/')));
+    append(mklist(ui.menu('Home', '/'), ui.menu('Store', '/store/')),
+            (isNil(name) || name == 'undefined')?
+                mklist() :
+                mklist(ui.menu('Page', '/page/?app=' + name),
+                ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/graph/?app=' + name),
+                ui.menu('Stats', '/props/?app=' + name))),
+    mklist(ui.menu('Account', '/public/notyet.html'), ui.menu('Sign out', '/logout/')));
 
 </script>
 </body>

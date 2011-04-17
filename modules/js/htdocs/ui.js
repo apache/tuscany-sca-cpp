@@ -34,6 +34,20 @@ ui.isIE = function() {
 };
 
 /**
+ * Build a portable href attribute.
+ */
+ui.href = function(loc, target) {
+    return 'javascript:window.open(\'' + loc + '\', \'' + target + '\');';
+};
+
+/**
+ * Build a portable <a href> tag.
+ */
+ui.ahref = function(loc, target, html) {
+    return '<a href="' + ui.href(loc, target) + '">' + html + '</a>';
+};
+
+/**
  * Build a menu bar.
  */ 
 ui.menu = function(name, href, target) {
@@ -55,23 +69,23 @@ ui.menu = function(name, href, target) {
             }
 
             if (complete(this.href) != complete(window.top.location.pathname))
-                return '<a href="' + this.href + '" target="' + this.target + '"><span class=amenu>' + this.name + '</span></a>';
-            return '<a href="' + this.href + '" target="' + this.target + '"><span class=smenu>' + this.name + '</span></a>';
+                return ui.ahref(this.href, this.target, '<span class="amenu">' + this.name + '</span>');
+            return ui.ahref(this.href, this.target, '<span class="smenu">' + this.name + '</span>');
         };
     }
     return new Menu(name, href, target);
 };
 
 ui.menubar = function(left, right) {
-    var bar = '<table cellpadding="0" cellspacing="0" width="100%" class=tbar><tr>' +
-    '<td class=ltbar><table border="0" cellspacing="0" cellpadding="0"><tr>';
+    var bar = '<table cellpadding="0" cellspacing="0" width="100%" class="tbar"><tr>' +
+    '<td class="dtbar"><table border="0" cellspacing="0" cellpadding="0"><tr>';
     for (i in left)
-        bar = bar + '<td class=ltbar>' + left[i].content() + '</td>'
+        bar = bar + '<td class="ltbar">' + left[i].content() + '</td>'
 
     bar = bar + '</tr></table></td>' +
-    '<td class=rtbar><table border="0" cellpadding="0" cellspacing="0" align="right"><tr>';
+    '<td class="dtbar"><table border="0" cellpadding="0" cellspacing="0" align="right"><tr>';
     for (i in right)
-        bar = bar + '<td class=rtbar>' + right[i].content() + '</td>'
+        bar = bar + '<td class="' + (i == 0? 'dtbar' : 'rtbar') + '">' + right[i].content() + '</td>'
 
     bar = bar + '</tr></table></td></tr></table>';
     return bar;
@@ -135,7 +149,7 @@ ui.suggest = function(input, suggestFunction) {
             if (values[i].indexOf(this.value) == -1)
                 continue;
             if (items.length == 0)
-                items += '<table class=suggestTable>';
+                items += '<table class="suggestTable">';
             items += '<tr><td class="suggestItem" ' +
             'onmouseover="ui.hilightSuggestion(this, true)" onmouseout="ui.hilightSuggestion(this, false)" ' +
             'onmousedown="ui.selectSuggestion(this, \'' + values[i] + '\')">' + values[i] + '</td></tr>';
@@ -321,7 +335,7 @@ ui.datatable = function(l) {
             var v = elementValue(e);
             if (!isList(v)) {
                 return '<tr><td class="datatdl">' + indent(i) + elementName(e).slice(1) + '</td>' +
-                    '<td class="datatdr tdw">' + v + '</td></tr>' +
+                    '<td class="datatdr tdw">' + (v != null? v : '') + '</td></tr>' +
                     rows(cdr(l), i);
             }
 
@@ -333,6 +347,42 @@ ui.datatable = function(l) {
             '<td class="datatdr tdw">' + '</td></tr>' +
             rows(elementChildren(e), i + 1) +
             rows(cdr(l), i);
+    }
+
+    return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';
+}
+
+/**
+ * Convert a list of elements to an HTML single column table.
+ */
+ui.datalist = function(l) {
+
+    function rows(l, i) {
+        if (isNil(l))
+            return '';
+        var e = car(l);
+
+        // Convert a list of simple values into a list of name value pairs
+        if (!isList(e))
+            return rows(expandElementValues("'value", l), i);
+
+        // Convert a list of complex values into a list of name value pairs
+        if (isList(car(e)))
+            return rows(expandElementValues("'value", l), i);
+
+        // Generate table row for a simple element value
+        if (elementHasValue(e)) {
+            var v = elementValue(e);
+            if (!isList(v)) {
+                return '<tr><td class="datatd tdw">' + (v != null? v : '') + '</td></tr>' +
+                    rows(cdr(l), i);
+            }
+
+            return rows(expandElementValues(elementName(e), v), i) + rows(cdr(l), i);
+        }
+
+        // Generate rows for an element's children
+        return rows(elementChildren(e), i + 1) + rows(cdr(l), i);
     }
 
     return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + rows(l, 0) + '</table>';

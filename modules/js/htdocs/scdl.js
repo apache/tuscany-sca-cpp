@@ -90,6 +90,13 @@ scdl.title = function(l) {
 };
 
 /**
+ * Returns the display style of a component, componentType, reference or property.
+ */
+scdl.style = function(l) {
+    return namedAttributeValue("'t:style", l);
+};
+
+/**
  * Returns the color of a component or componentType.
  */
 scdl.color = function(l) {
