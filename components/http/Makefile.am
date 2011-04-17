@@ -17,15 +17,20 @@
 
 compdir=$(prefix)/components/http
 
-EXTRA_DIST = http.composite httpget.componentType *.scm
+EXTRA_DIST = http.composite httpget.componentType httpdelete.componentType *.scm
 
-comp_LTLIBRARIES = libhttpget.la
-noinst_DATA = libhttpget.so
+comp_LTLIBRARIES = libhttpget.la libhttpdelete.la
+noinst_DATA = libhttpget.so libhttpdelete.so
 
 libhttpget_la_SOURCES = httpget.cpp
 libhttpget_la_LDFLAGS = -lxml2 -lmozjs -curl
 libhttpget.so:
 	ln -s .libs/libhttpget.so
+
+libhttpdelete_la_SOURCES = httpdelete.cpp
+libhttpdelete_la_LDFLAGS = -lxml2 -lmozjs -curl
+libhttpdelete.so:
+	ln -s .libs/libhttpdelete.so
 
 client_test_SOURCES = client-test.cpp
 client_test_LDFLAGS = -lxml2 -lcurl -lmozjs

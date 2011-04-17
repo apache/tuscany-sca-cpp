@@ -136,4 +136,5 @@ value-element
 modules/edit/apps/*/htdocs
 modules/edit/apps/*/nuvem
 modules/edit/apps/*/lib
+chat-send
 

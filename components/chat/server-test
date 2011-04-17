@@ -26,6 +26,8 @@ SCAContribution `pwd`/
 SCAComposite chat.composite
 EOF
 
+./vysper-start
+sleep 3
 ../../modules/http/httpd-start tmp
 sleep 2
 
@@ -35,5 +37,7 @@ rc=$?
 
 # Cleanup
 ../../modules/http/httpd-stop tmp
+sleep 1
+./vysper-stop
 sleep 1
 return $rc
