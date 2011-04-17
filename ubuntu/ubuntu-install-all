@@ -171,7 +171,7 @@ sudo apt-get -y install libboost-dev libboost-program-options-dev libboost-files
 if [ "$?" != "0" ]; then
     exit $?
 fi
-wget http://www.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
+wget http://archive.apache.org/dist/qpid/0.6/qpid-cpp-0.6.tar.gz
 tar xzf qpid-cpp-0.6.tar.gz
 cd qpidc-0.6
 ./configure --prefix=$build/qpidc-0.6-bin
@@ -199,7 +199,7 @@ sudo apt-get -y install openjdk-6-jdk
 if [ "$?" != "0" ]; then
     exit $?
 fi
-wget http://www.apache.org/dist/mina/vysper/0.6/vysper-0.6-bin.tar.gz
+wget http://archive.apache.org/dist/mina/vysper/0.6/vysper-0.6-bin.tar.gz
 tar xzf vysper-0.6-bin.tar.gz
 if [ "$?" != "0" ]; then
     exit $?
