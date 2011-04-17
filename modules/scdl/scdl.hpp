@@ -120,6 +120,13 @@ const value uri(const value& l) {
 }
 
 /**
+ * Returns true if a reference is declared as wired by impl.
+ */
+const bool wiredByImpl(const value& l) {
+    return attributeValue("wiredByImpl", l) == string("true");
+}
+
+/**
  * Returns a list of services in a component.
  */
 const list<value> services(const value& l) {

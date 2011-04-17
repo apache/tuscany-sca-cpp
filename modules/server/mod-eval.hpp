@@ -34,6 +34,7 @@
 #include "value.hpp"
 #include "element.hpp"
 #include "monad.hpp"
+#include "../scheme/io.hpp"
 #include "../atom/atom.hpp"
 #include "../json/json.hpp"
 #include "../scdl/scdl.hpp"
@@ -130,18 +131,32 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     if (!hasContent(val))
         return mkfailure<int>(reason(val));
     const value c = content(val);
+    debug(c, "modeval::get::content");
+
+    // Check if the client requested a specific format
+    const list<value> fmt = assoc<value>("format", args);
+
+    // Write as a scheme value if requested by the client
+    if (!isNil(fmt) && cadr(fmt) == "scheme")
+        return httpd::writeResult(mklist<string>(scheme::writeValue(c)), "text/plain; charset=utf-8", r);
 
     // Write a simple value as a JSON value
     if (!isList(c)) {
         js::JSContext cx;
-        if (isSymbol(c))
-            return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("name", value(string(c))))), cx), "application/json; charset=utf-8", r);
-        return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(mklist<value>("value", c))), cx), "application/json; charset=utf-8", r);
+        if (isSymbol(c)) {
+            const list<value> lc = mklist<value>(mklist<value>("name", value(string(c))));
+            debug(lc, "modeval::get::symbol");
+            return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
+        }
+        const list<value> lc = mklist<value>(mklist<value>("value", c));
+        debug(lc, "modeval::get::value");
+        return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
     }
 
     // Write an empty list as a JSON empty value
     if (isNil((list<value>)c)) {
         js::JSContext cx;
+        debug(list<value>(), "modeval::get::empty");
         return httpd::writeResult(json::writeJSON(list<value>(), cx), "application/json; charset=utf-8", r);
     }
 
@@ -152,7 +167,16 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     // Write an assoc value as a JSON result
     if (isSymbol(car<value>(c)) && !isNil(cdr<value>(c))) {
         js::JSContext cx;
-        return httpd::writeResult(json::writeJSON(valuesToElements(mklist<value>(c)), cx), "application/json; charset=utf-8", r);
+        const list<value> lc = mklist<value>(c);
+        debug(lc, "modeval::get::assoc");
+        debug(valuesToElements(lc), "modeval::get::assoc::element");
+        return httpd::writeResult(json::writeJSON(valuesToElements(lc), cx), "application/json; charset=utf-8", r);
+    }
+
+    // Write value as JSON if requested by the client
+    if (!isNil(fmt) && cadr(fmt) == "json") {
+        js::JSContext cx;
+        return httpd::writeResult(json::writeJSON(valuesToElements(c), cx), "application/json; charset=utf-8", r);
     }
 
     // Convert list of values to element values
@@ -162,7 +186,7 @@ const failable<int> get(request_rec* r, const lambda<value(const list<value>&)>&
     // Write an ATOM feed or entry
     if (isList(car<value>(e)) && !isNil(car<value>(e))) {
         const list<value> el = car<value>(e);
-        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el))) {
+        if (isSymbol(car<value>(el)) && car<value>(el) == element && !isNil(cdr<value>(el)) && isSymbol(cadr<value>(el)) && elementHasChildren(el) && !elementHasValue(el)) {
             if (cadr<value>(el) == atom::feed)
                 return httpd::writeResult(atom::writeATOMFeed(e), "application/atom+xml; charset=utf-8", r);
             if (cadr<value>(el) == atom::entry)
@@ -319,17 +343,26 @@ public:
     }
 
     const value operator()(const list<value>& params) const {
+        debug(name, "modeval::implProxy::name");
         debug(params, "modeval::implProxy::input");
 
+        // If no component name was configured, use the first param as component name
+        const value cname = isNil(name)? cadr(params) : name;
+        const list<value> aparams = isNil(name)? cons<value>(car(params), cddr(params)) : params;
+        if (isNil(name)) {
+            debug(cname, "modeval::implProxy::wiredByImpl::name");
+            debug(aparams, "modeval::implProxy::wiredByImpl::input");
+        }
+
         // Lookup the component implementation
-        const list<value> impl(assoctree<value>(name, sc.implTree));
+        const list<value> impl(assoctree<value>(cname, sc.implTree));
         if (isNil(impl))
-            return mkfailure<value>(string("Couldn't find component implementation: ") + name);
+            return mkfailure<value>(string("Couldn't find component implementation: ") + cname);
 
         // Call its lambda function
         const lambda<value(const list<value>&)> l(cadr<value>(impl));
-        const value func = c_str(car(params));
-        const failable<value> val = failableResult(l(cons(func, cdr(params))));
+        const value func = c_str(car(aparams));
+        const failable<value> val = failableResult(l(cons(func, cdr(aparams))));
         debug(val, "modeval::implProxy::result");
         if (!hasContent(val))
             return value();
@@ -351,10 +384,14 @@ const value mkimplProxy(const ServerConf& sc, const value& name) {
  */
 const value mkrefProxy(const ServerConf& sc, const value& ref, const string& base) {
     const value target = scdl::target(ref);
+    const bool wbyimpl = scdl::wiredByImpl(ref);
     debug(ref, "modeval::mkrefProxy::ref");
     debug(target, "modeval::mkrefProxy::target");
+    debug(wbyimpl, "modeval::mkrefProxy::wiredByImpl");
 
     // Use an HTTP proxy or an internal proxy to the component implementation
+    if (wbyimpl)
+        return mkimplProxy(sc, value());
     if (isNil(target))
         return mkhttpProxy(sc, scdl::name(ref), base);
     if (httpd::isAbsolute(target))
@@ -426,7 +463,7 @@ struct queryPropProxy {
     queryPropProxy(unused const value& v) {
     }
     const value operator()(unused const list<value>& params) const {
-        const value v = httpd::queryArgs(currentRequest);
+        const value v = httpd::unescapeArgs(httpd::queryArgs(currentRequest));
         debug(v, "modeval::queryPropProxy::value");
         return v;
     }
