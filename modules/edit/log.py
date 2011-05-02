@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# User info service component
+# Log service component
 from sys import stderr
 
 # Log a message

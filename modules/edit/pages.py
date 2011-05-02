@@ -16,21 +16,11 @@
 #  under the License.
 
 # App pages collection implementation
-import uuid
-import sys
-from sys import stderr
 from util import *
 
 # Convert an id to an app id
 def appid(id):
-    return ("'" + car(id), "'app.html")
-
-# Post a new app page to the apps db
-def post(collection, app, cache):
-    id = appid((str(uuid.uuid1()),))
-    xhtml = cdr(cadddr(car(app)))
-    cache.put((id,), xhtml)
-    return id
+    return ("'" + car(id), "'htdocs", "'app.html")
 
 # Put an app page into the apps db
 def put(id, app, cache):

@@ -16,8 +16,6 @@
 #  under the License.
 
 # Palettes collection implementation
-import uuid
-import sys
 from util import *
 
 # Convert an id to a palette id

@@ -44,9 +44,10 @@
     <component name="EditWidget">
         <t:implementation.widget location="/index.html"/>
         <reference name="dashboard" target="Dashboard"/>
+        <reference name="apps" target="Apps"/>
         <reference name="store" target="AppStore"/>
         <reference name="palettes" target="Palettes"/>
-        <reference name="apps" target="Apps"/>
+        <reference name="composites" target="Composites"/>
         <reference name="pages" target="Pages"/>
         <reference name="log" target="Log"/>
     </component>
@@ -58,6 +59,7 @@
         </service>        
         <reference name="user" target="User"/>
         <reference name="cache" target="DashboardCache"/>
+        <reference name="apps" target="Apps"/>
     </component>
     
     <component name="AppStore">
@@ -74,6 +76,17 @@
             <t:binding.http uri="apps"/>
         </service>
         <reference name="cache" target="AppCache"/>
+        <reference name="store" target="AppStore"/>
+        <reference name="composites" target="Composites"/>
+        <reference name="pages" target="Pages"/>
+    </component>
+    
+    <component name="Composites">
+        <t:implementation.python script="composites.py"/>
+        <service name="Composites">
+            <t:binding.http uri="composites"/>
+        </service>
+        <reference name="cache" target="AppDocCache"/>
     </component>
     
     <component name="Pages">
@@ -81,7 +94,7 @@
         <service name="Pages">
             <t:binding.http uri="pages"/>
         </service>
-        <reference name="cache" target="AppCache"/>
+        <reference name="cache" target="AppDocCache"/>
     </component>
     
     <component name="Palettes">
@@ -89,7 +102,7 @@
         <service name="Palettes">
             <t:binding.http uri="palettes"/>
         </service>
-        <reference name="cache" target="PaletteCache"/>
+        <reference name="cache" target="PaletteDocCache"/>
     </component>
     
     <component name="DashboardCache">
@@ -146,29 +159,49 @@
     <component name="AppDB">
         <implementation.cpp path="../../components/filedb" library="libfiledb"/>
         <property name="dbname">apps</property>
-        <property name="format">xml</property>
+        <property name="format">scheme</property>
         <service name="AppDB">
             <t:binding.http uri="appdb"/>
         </service>
     </component>
 
-    <component name="PaletteCache">
+    <component name="AppDocCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
-        <service name="PaletteCache">
-            <t:binding.http uri="palettecache"/>
+        <service name="AppDocCache">
+            <t:binding.http uri="appdoccache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
-        <reference name="l2reader" target="PaletteDB"/>
-        <reference name="l2writer" target="PaletteDB"/>
+        <reference name="l2reader" target="AppDocDB"/>
+        <reference name="l2writer" target="AppDocDB"/>
     </component>
 
-    <component name="PaletteDB">
+    <component name="AppDocDB">
+        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
+        <property name="dbname">apps</property>
+        <property name="format">xml</property>
+        <service name="AppDocDB">
+            <t:binding.http uri="appdocdb"/>
+        </service>
+    </component>
+
+    <component name="PaletteDocCache">
+        <implementation.cpp path="../../components/cache" library="libdatacache"/>
+        <service name="PaletteDocCache">
+            <t:binding.http uri="palettedoccache"/>
+        </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="PaletteDocDB"/>
+        <reference name="l2writer" target="PaletteDocDB"/>
+    </component>
+
+    <component name="PaletteDocDB">
         <implementation.cpp path="../../components/filedb" library="libfiledb"/>
         <property name="dbname">palettes</property>
         <property name="format">xml</property>
-        <service name="PaletteDB">
-            <t:binding.http uri="palettedb"/>
+        <service name="PaletteDocDB">
+            <t:binding.http uri="palettedocdb"/>
         </service>
     </component>
 

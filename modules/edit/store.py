@@ -16,8 +16,6 @@
 #  under the License.
 
 # stores collection implementation
-import uuid
-import sys
 from util import *
 
 # Convert a particular store tag to a store id
@@ -30,15 +28,6 @@ def getstore(id, cache):
     if isNil(store):
         return ()
     return store
-
-# Post a new app to a store
-def post(collection, app, cache):
-    tag = car(collection)
-    id = (str(uuid.uuid1()),)
-    newapp = list("'entry", cadr(car(app)), list("'id", id), cadddr(car(app)))
-    store = cons(newapp, getstore(storeid(tag), cache))
-    cache.put(storeid(tag), store)
-    return id
 
 # Put an app into a store
 def put(key, app, cache):

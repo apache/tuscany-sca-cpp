@@ -15,55 +15,30 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# App collection implementation
-import os
+# App composites collection implementation
 from util import *
 
 # Convert an id to an app id
 def appid(id):
-    return ("'" + car(id), "'app.stats")
-
-# Link implementation resources into an app
-def mkapplink(id):
-    try:
-        os.symlink('../../../../../nuvem/nuvem-parallel/nuvem', 'apps/' + car(id) + '/nuvem')
-        os.symlink('../../../../components', 'apps/' + car(id) + '/lib')
-        os.mkdir('apps/' + car(id) + '/htdocs')
-    except:
-        pass
-    return True
+    return ("'" + car(id), "'app.composite")
 
 # Put an app into the apps db
-def put(id, app, cache, store, composites, pages):
-    eid = cadr(caddr(car(app)))
-    appentry = (("'entry", cadr(car(app)), ("'id", car(id))),)
-
-    # Update app in apps db
-    if car(id) == eid:
-        cache.put(appid(id), appentry)
-        mkapplink(id)
-        return True
-
-    # Clone an app's composite and page
-    cache.put(appid(id), appentry)
-    mkapplink(id)
-    composites.put(id, composites.get((eid,)))
-    pages.put(id, pages.get((eid,)))
+def put(id, app, cache):
+    comp = cdr(cadddr(car(app)))
+    cache.put(appid(id), comp)
     return True
 
 # Get an app from the apps db
-def get(id, cache, store, composites, pages):
+def get(id, cache):
     if isNil(id):
-        return (("'feed", ("'title", "Apps"), ("'id", "apps")),)
+        return (("'feed", ("'title", "Composites"), ("'id", "composites")),)
     app = cache.get(appid(id));
     if (isNil(app) or app is None):
         return (("'entry", ("'title", car(id)), ("'id", car(id))),)
-    return app
+    return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(app))),)
 
 # Delete an app from the apps db
-def delete(id, cache, store, composites, pages):
+def delete(id, cache):
     cache.delete(appid(id))
-    composites.delete(id)
-    pages.delete(id)
     return True
 

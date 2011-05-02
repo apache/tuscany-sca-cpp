@@ -16,8 +16,6 @@
 #  under the License.
 
 # Dashboards collection implementation
-import uuid
-import sys
 from util import *
 
 # Convert a particular user email to a dashboard id
@@ -31,16 +29,8 @@ def getdashboard(id, cache):
         return ()
     return dashboard
 
-# Post a new app to the user's dashboard
-def post(collection, app, user, cache):
-    id = (str(uuid.uuid1()),)
-    newapp = list("'entry", cadr(car(app)), list("'id", id), cadddr(car(app)))
-    dashboard = cons(newapp, getdashboard(dashboardid(user), cache))
-    cache.put(dashboardid(user), dashboard)
-    return id
-
 # Put an app into the user's dashboard
-def put(id, app, user, cache):
+def put(id, app, user, cache, apps):
     def putapp(app, dashboard):
         if isNil(dashboard):
             return app
@@ -48,12 +38,16 @@ def put(id, app, user, cache):
             return cons(car(app), cdr(dashboard))
         return cons(car(dashboard), putapp(app, cdr(dashboard)))
 
-    dashboard = putapp(app, getdashboard(dashboardid(user), cache))
+    appentry = (("'entry", cadr(car(app)), ("'id", car(id))),)
+    dashboard = putapp(appentry, getdashboard(dashboardid(user), cache))
     cache.put(dashboardid(user), dashboard)
+
+    # Update app in app repository
+    apps.put(id, app);
     return True
 
 # Get apps from the user's dashboard
-def get(id, user, cache):
+def get(id, user, cache, apps):
     def findapp(id, dashboard):
         if isNil(dashboard):
             return None
@@ -66,7 +60,7 @@ def get(id, user, cache):
     return findapp(id, getdashboard(dashboardid(user), cache))
 
 # Delete apps from the user's dashboard
-def delete(id, user, cache):
+def delete(id, user, cache, apps):
     if isNil(id):
         return cache.delete(dashboardid(user))
 
@@ -79,5 +73,8 @@ def delete(id, user, cache):
 
     dashboard = deleteapp(id, getdashboard(dashboardid(user), cache))
     cache.put(dashboardid(user), dashboard)
+
+    # Delete app from app repository
+    apps.delete(id);
     return True
 
