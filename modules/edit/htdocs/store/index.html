@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,37 +24,162 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui.css"/>
+<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/config.js"></script>
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/ui.js"></script>
-<script type="text/javascript">
-document.title = windowtitle(window.location.hostname) + ' - Store';
-</script>
+<script type="text/javascript" src="/all-min.js"></script>
+<script type="text/javascript" src="/menu.js"></script>
 </head>
-<body class="delayed">
+<body class="delayed" onorientationchange="ui.reload();">
+<div id="bodydiv" class="devicewidth">
+
 <div id="menu"></div>
 
-<h1 id="h1"></h1>
-<br/>
+<table style="width: 100%;">
+<tr><td><h1><span id="h1"></span></h1></td></tr>
+</table>
 
-<div id="store"></div>
+<div id="catmenu"></div>
+
+<div id="apps"></div>
+
+</div>
 
 <script type="text/javascript">
-
-// Load the menu bar
-ui.loadwidget('menu', '/menu.html', ui.showbody);
-
+// Set page titles
+document.title = windowtitle(window.location.hostname) + ' - Store';
 $('h1').innerHTML = hometitle(window.location.hostname);
+
+// Display the menu bar
+displaymenu();
 
 // Get the store category
 var category = ui.queryParams()['category'];
 if (isNil(category))
     category = 'myapps';
 
-// Load the store
-$('store').innerHTML =
-    '<iframe id="storeFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="store.html?category=' + category + '"></iframe>';
+/**
+ * Build store menu bar
+ */
+function catmenu() {
+    function catmenuitem(name, cat) {
+        var c = cat == category? 'smenu' : 'amenu';
+        return '<th class="thl thr" style="width: 10px; padding-top: 4px; padding-bottom: 4px; padding-right: 6px;">'
+                + ui.ahref('/store/?category=' + cat, '_self', '<span class="' + c + '">' + name + '</span>') + '</th>';
+    }
+
+    var m = '<table style="width: 100%;"><tr>';
+    m += catmenuitem('My Apps', 'myapps');
+    m += catmenuitem('New', 'new');
+    m += catmenuitem('Top', 'top');
+    m += catmenuitem('Featured', 'featured');
+    m += catmenuitem('All', 'all');
+    if (category == 'myapps') {
+        m += '<th class="thl thr" style="width: 100%; padding-top: 0px; padding-bottom: 0px; padding-right: 0px; text-align: right;">';
+        m += '<input type="button" class="greenbutton" id="createApp" title="Create a new app" style="font-weight: bold; margin-top: 0px; margin-bottom: 0px; height: 24px;" Value="New App"/>';
+        m += '</th></tr></table>';
+        return m;
+    }
+    m += '<th class="thl thr" style="width: 100%;"></th></tr></table>';
+    return m;
+}
+
+// Build store menu bar
+$('catmenu').innerHTML = catmenu();
+
+// Show the page
+ui.showbody();
+
+/**
+ * Service references.
+ */
+var editWidget = sca.component("EditWidget");
+var store = sca.reference(editWidget, "store");
+var dashboard = sca.reference(editWidget, "dashboard");
+
+/**
+ * Return the link to an app.
+ */
+function applink(appname) {
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/';
+    return link;
+}
+
+/**
+ * Edit an app.
+ */
+function editApp(appname) {
+    return window.open('/page/?app=' + appname, '_self');
+}
+
+/**
+ * Create an app.
+ */
+if (category == 'myapps') {
+    $('createApp').onclick = function() {
+        return window.open('/create/', '_self');
+    }
+}
+
+/**
+ * Clone an app.
+ */
+function cloneApp(appname) {
+    return window.open('/clone/?app=' + appname, '_self');
+}
+
+/**
+ * Get and display list of apps.
+ */
+function getapps(category) {
+    function display(doc) {
+        var apps = '<div>';
+        var feed = car(elementsToValues(atom.readATOMFeed(mklist(doc))));
+        var entries = cadr(assoc("'entry", cdr(feed)));
+        for (var i = 0; i < length(entries); i++) {
+            var entry = entries[i];
+            var title = cadr(assoc("'title", entry))
+            var name = cadr(assoc("'id", entry))
+            var author = 'joe';
+            var clone = isNil(config.clone)? 'Clone' : config.clone;
+
+            apps += '<div class="box" style="width: 285px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 5px; padding: 10px; vertical-align: top;">'
+            apps += '<table><tr>';
+            apps += '<td>';
+            apps += '<div>' + ui.ahref(applink(name), '_blank', '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>') + '</div>';
+            apps += '<div><input type="button" class="greenbutton" id="cloneApp" value="' + clone + '" title="' + clone + ' this app" onclick="cloneApp(\'' + name + '\');"></div>';
+            if (category == 'myapps')
+                apps += '<div><input type="button" id="editApp" class="bluebutton" value="Edit" title="Edit this app" onclick="editApp(\'' + name + '\');"></div>';
+            apps += '</td>';
+            apps += '<td class="tdw">';
+            apps += '<div style="font-weight: bold">' + ui.ahref(applink(name), '_blank', name) + '</div>';
+            if (category == 'myapps')
+                apps += '<div style="color: #808080;">Shared</div>';
+            else
+                apps += '<div>' + 'by&nbsp;' + '<span style="font-weight: bold;">' + author + '</span></div>';
+            apps += '<div>Feb 4, 2011</div>';
+            apps += '<br/>';
+            apps += '<div>' + title + '</div>';
+            apps += '<br/>';
+            apps += '</td>';
+            apps += '</tr></table>';
+            apps += '</div>';
+        }
+        apps += '</div>';
+        $('apps').innerHTML = apps;
+    }
+
+    if (category == 'myapps')
+        return dashboard.get('', display);
+    return store.get(category, display);
+}
+
+// Get and display the list of apps
+getapps(category);
 
 </script>
 

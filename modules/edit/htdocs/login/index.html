@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,20 +24,19 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui.css"/>
-<script type="text/javascript" src="/config.js"></script>
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/ui.js"></script>
+<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
+<script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body>
+<body onorientationchange="ui.reload();">
 <h1>Sign in</h1>
-<br/>
 
-<form name="formSignin" method="POST" action="/login/dologin/">
+<form name="formSignin" onsubmit="submitSignin();" method="POST" action="/login/dologin/">
 <table border="0">
-<tr><td>Username:</td><td><input type="text" id="httpd_username" name="httpd_username" value=""/></td></tr>
-<tr><td>Password:</td><td><input type="password" name="httpd_password" value=""/></td></tr>
-<tr><td><input type="submit" onclick="submitFormSignin()" value="Sign in"/></td><td></td></tr>
+<tr><td><b>Username:</b></td></tr>
+<tr><td><input type="text" id="httpd_username" name="httpd_username" value="" size="15" placeholder="Enter your user name" style="width: 300px;"/></td></tr>
+<tr><td><b>Password:</b></td></tr>
+<tr><td><input type="password" name="httpd_password" value="" size="15" placeholder="Enter your password" style="width: 300px;"/></td></tr>
+<tr><td><input type="submit" value="Sign in" class="greenbutton" style="font-weight: bold;"/></td><td></td></tr>
 </table>
 <input type="hidden" name="httpd_location" value="/"/>
 </form>
@@ -66,14 +66,13 @@ function oauthReferrer() {
     return r;
 }
 
-function submitFormSignin() {
+function submitSignin() {
     var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
     document.cookie = reset;
     document.formSignin.httpd_location.value = oauthReferrer();
     document.formSignin.submit();
 }
 
-$('httpd_username').focus();
 </script>
 
 </body>

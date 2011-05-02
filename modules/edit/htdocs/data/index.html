@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -27,18 +28,11 @@ document.title = 'View - ' + window.location.hostname.split('.')[0] + '/' + cn;
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui.css">
+<link rel="stylesheet" type="text/css" href="/ui-min.css">
 <script type="text/javascript" src="/config.js"></script>
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/elemutil.js"></script>
-<script type="text/javascript" src="/xmlutil.js"></script>
-<script type="text/javascript" src="/atomutil.js"></script>
-<script type="text/javascript" src="/jsonutil.js"></script>
-<script type="text/javascript" src="/scdl.js"></script>
-<script type="text/javascript" src="/ui.js"></script>
-<script type="text/javascript" src="/component.js"></script>
+<script type="text/javascript" src="/all-min.js"></script>
 </head>  
-<body class="delayed">
+<body class="delayed" onorientationchange="ui.reload();">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
 
@@ -75,15 +69,14 @@ function datatable(e) {
  */
 function mkdoctable(doc) {
     var tr = '<tr><td class="datatdl">' + 'value' + '</td>' + '<td class="datatdr">' + doc + '</td></tr>';
-    return '<table class="datatable ' + (window.name == 'dataFrame'? ' databg' : '') + '" style="width: 100%;">' + tr + '</table>';
+    return '<table class="datatable ' + (window.name == 'previewFrame'? ' databg' : '') + '" style="width: 100%;">' + tr + '</table>';
 }
 
 /**
  * Get and display the contents of the current component.
  */
 function getdata() {
-    comp.get('', function(doc) {
-
+    return comp.get('', function(doc) {
         if (json.isJSON(mklist(doc)))
             return display(datatable(json.readJSON(mklist(doc))));
 

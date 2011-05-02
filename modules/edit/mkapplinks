@@ -30,18 +30,3 @@ for n in `ls apps | awk '{ printf "apps/%s/lib\n", $1 }'`; do
     fi
 done
 
-for n in `ls apps | awk '{ printf "apps/%s/htdocs\n", $1 }'`; do
-    if [ ! -e "$n" ]; then
-        mkdir "$n"
-        ln -s ../../../htdocs/cache-manifest.cmf "$n/cache-manifest.cmf"
-        ln -s ../../../htdocs/login "$n/login"
-        ln -s ../../../htdocs/logout "$n/logout"
-        ln -s ../../../htdocs/public "$n/public"
-        ln -s ../../../htdocs/data "$n/data"
-        ln -s ../../../htdocs/app/index.html "$n/index.html"
-        ln -s ../../../htdocs/robots.txt "$n/robots.txt"
-        ln -s ../../../htdocs/favicon.ico "$n/favicon.ico"
-        ln -s ../app.html "$n/app.html"
-    fi
-done
-

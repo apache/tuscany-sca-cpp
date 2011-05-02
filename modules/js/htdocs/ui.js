@@ -34,17 +34,12 @@ ui.isIE = function() {
 };
 
 /**
- * Build a portable href attribute.
- */
-ui.href = function(loc, target) {
-    return 'javascript:window.open(\'' + loc + '\', \'' + target + '\');';
-};
-
-/**
  * Build a portable <a href> tag.
  */
 ui.ahref = function(loc, target, html) {
-    return '<a href="' + ui.href(loc, target) + '">' + html + '</a>';
+    if (target == '_blank')
+        return '<a href="' + loc + '" target="_blank">' + html + '</a>';
+    return '<a href="javascript:void(0)" onclick="window.open(\'' + loc + '\', \'' + target + '\');">' + html + '</a>';
 };
 
 /**
@@ -270,6 +265,14 @@ ui.showbody = function() {
 };
 
 /**
+ * Reload the current page.
+ */
+ui.reload = function() {
+    window.open(window.location, '_self');
+    return true;
+};
+
+/**
  * Install a widget into the element bound to its iframe.
  */
 ui.installwidget = function() {
@@ -300,10 +303,17 @@ ui.loadiframe = function(el, doc) {
 /**
  * Convert a CSS position to a numeric position.
  */
-ui.csspos = function(p) {
+ui.numpos = function(p) {
     if (p == '')
         return 0;
     return Number(p.substr(0, p.length - 2));
+};
+
+/**
+ * Convert a numeric position to a CSS pixel position.
+ */
+ui.pixpos = function(p) {
+    return p + 'px';
 };
 
 /**

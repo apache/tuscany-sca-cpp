@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,25 +19,50 @@
 -->
 <html>
 <head>
-<title>App</title>
+<title></title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui.css"/>
+<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/config.js"></script>
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/all-min.js"></script>
+<script type="text/javascript" src="/menu.js"></script>
+<script type="text/javascript" src="graph.js"></script>
 </head>
-<body class="delayed">
+<body class="delayed" onorientationchange="ui.reload();">
+<div id="bodydiv" class="devicewidth">
+
 <div id="menu"></div>
 
-<h1><span id="h1"></span><span id="appNameHeader"></span></h1>
-<br/>
+<table style="width: 100%;">
+<tr>
+<td><h1><span id="h1"></span><span id="appNameHeader"></span></h1></td>
+<td style="vertical-align: middle; text-align: right;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+</tr>
+</table>
 
-<div id="graph"></div>
+<table style="width: 100%;">
+<tr>
+<th class="thr thl" style="padding-left: 2px; padding-right: 2px;">
+<input id="compValue" type="text" value="" title="Component value" placeholder="Name" style="position: relative; width: 170px;"/>
+<span id="deleteComponentButton" title="Delete a component" class="redbutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">-</span>
+<span id="addComponentButton" title="Add a component" class="greenbutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">+</span>
+<span id="playComponentButton" title="View component value" class="bluebutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
+</th>
+</tr>
+</table>
+
+<div id="dataDiv" style="position:absolute; top: 95px; left: 0px; right: 0px; height: 5000px; visibility: hidden">
+</div>
+
+</div>
 
 <script type="text/javascript">
+// Get the app name
+var appname = ui.queryParams()['app'];
+if (isNil(appname))
+    window.open('/', '_self');
 
 /**
  * Return the link to an app.
@@ -51,31 +77,275 @@ function applink(appname) {
     return link;
 }
 
-// Get the app name
-var appname = ui.queryParams()['app'];
-
-// Update the window title
+// Set page titles
 document.title = windowtitle(window.location.hostname) + ' - ' + (isNil(config.compose)? 'Composition' : config.compose) + ' - ' + appname;
 $('h1').innerHTML = hometitle(window.location.hostname);
 $('appNameHeader').innerHTML = ' - <a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
 
 // Load the menu bar
-ui.loadwidget('menu', '/menu.html?app=' + appname, ui.showbody);
+displaymenu();
+
+// Show the page
+ui.showbody();
+
+// Init componnent references
+var editWidget = sca.component("EditWidget");
+var palettes = sca.reference(editWidget, "palettes");
+var composites = sca.reference(editWidget, "composites");
+
+// Setup remote log
+//rconsole = sca.defun(sca.reference(editWidget, "log"), "log");
 
 /**
- * Display the editor for an app.
+ * The current app composite, corresponding saved XML content and component name.
  */
-function editapp(name) {
-    if (isNil(name))
-        return;
-    $('graph').innerHTML =
-        '<iframe id="graphFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="graph.html?' +
-        'app=' + name +
-        '"></iframe>';
+var savedcomposxml = '';
+var composite;
+var compname = '';
+
+/**
+ * Track the composition graph and whether it's visible or not.
+ */
+var g;
+var gdiv;
+var bg;
+var gvisible = true;
+
+// Track the palettes
+var gpalettes = new Array();
+var spalette = 'control';
+
+/**
+ * Return the composite in an ATOM entry.
+ */
+function atomcomposite(doc) {
+    var entry = atom.readATOMEntry(mklist(doc));
+    if (isNil(entry))
+        return mklist();
+    var content = namedElementChild("'content", car(entry));
+    if (content == null)
+        return mklist();
+    return elementChildren(content);
 }
 
-// Display the editor for the current app
-editapp(appname);
+/**
+ * Get and display an app.
+ */
+function getapp(name, g) {
+    if (isNil(name))
+        return false;
+    return composites.get(name, function(doc) {
+        composite = atomcomposite(doc);
+        if (isNil(composite)) {
+
+            // Create a default empty composite if necessary
+            var x = '<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"' +
+                'targetNamespace="http://app" name="app"></composite>';
+            composite = readXML(mklist(x));
+        }
+        graph.edit(name, composite, graph.composite(composite, graph.mkpath().move(palcx,0)), oncomposchange, oncompselect, g);
+
+        // Track the saved composite XML
+        savedcomposxml = car(writeXML(composite, false));
+        return true;
+    });
+}
+
+/**
+ * Display a palette. Get it from the server if needed.
+ */
+function displaypalette(name, g, palette, gpalettes) {
+    if (isNil(name))
+        return;
+    if (isNil(gpalettes[name])) {
+
+        // Get the palette from the server
+        var doc = palettes.get(name);
+        gpalettes[name] = graph.composite(atomcomposite(doc), graph.mkpath().move(80,0));
+    }
+    graph.display(gpalettes[name], g);
+    return true;
+}
+
+/**
+ * Install a palette, including a button to select the palette, and
+ * the palette content.
+ */
+function installpalette(name, pos, g, bg, palette, gpalettes) {
+    var b = graph.mkbutton(name, pos);
+    graph.display(mklist(b), g);
+    b.onclick = function(e) {
+
+        // Swap the selected palette
+        displaypalette(spalette, bg, palette, gpalettes);
+        spalette = name;
+        return displaypalette(spalette, g, palette, gpalettes);
+    };
+
+    if (name != spalette) {
+
+        // Will get the palette from the server later if needed
+        gpalettes[name] = null;
+        return true;
+    }
+
+    // Display the selected palette
+    return displaypalette(name, g, palette, gpalettes);
+}
+
+/**
+ * Save the current composite.
+ */
+function save(savexml) {
+    $('saveStatus').innerHTML = 'Saving';
+    savedcomposxml = savexml;
+    var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
+        '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
+        savedcomposxml + '</content></entry>';
+    composites.put(appname, entry);
+    $('saveStatus').innerHTML = 'Saved';
+    return true;
+}
+
+/**
+ * Handle a composite change event.
+ */
+function oncomposchange(prop) {
+    var newxml = car(writeXML(composite, false));
+    if (savedcomposxml == newxml)
+        return false;
+    $('saveStatus').innerHTML = 'Modified';
+
+    // Save property changes right away
+    if (prop)
+        return save(newxml);
+
+    // Autosave other changes after 3 seconds
+    $('saveStatus').innerHTML = 'Modified';
+    setTimeout(function() {
+        var savexml = car(writeXML(composite, false));
+        if (savedcomposxml == savexml) {
+            $('saveStatus').innerHTML = 'Saved';
+            return false;
+        }
+        return save(savexml);
+    }, 1000);
+    return true;
+}
+
+/**
+ * Return the link to a component value.
+ */
+function compvaluelink(appname, cname) {
+    if (cname == '' || isNil(cname))
+        return '';
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/data/?component=' + cname;
+    return link;
+}
+
+/**
+ * Return the link to a component raw data.
+ */
+function compdebuglink(appname, cname) {
+    if (cname == '' || isNil(cname))
+        return '';
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/components/' + cname;
+    return link;
+}
+
+/**
+ * Handle a component select event.
+ */
+function oncompselect(cname) {
+    if (cname == compname)
+        return true;
+    compname = cname;
+    var link = compvaluelink(appname, cname);
+
+    function updateButton(b, v) {
+        b.style.color = v? '#000000' : '#808080';
+    }
+
+    updateButton($('deleteComponentButton'), link != '');
+    updateButton($('playComponentButton'), link != '');
+    return true;
+}
+
+/**
+ * Show the result data of a component.
+ */
+function showdata(cname) {
+    if (!gvisible)
+        return true;
+    gvisible = false;
+    $('playComponentButton').innerHTML = '&lt;';
+    gdiv.style.visibility = 'hidden'
+    var rdiv = $('dataDiv');
+    rdiv.style.visibility = 'visible';
+    rdiv.innerHTML = '<iframe id="dataFrame" style="position: relative; height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="' +
+                        compvaluelink(appname, cname) + '"></iframe>';
+    return true;
+}
+
+/**
+ * Show the composition graph.
+ */
+function showgraph() {
+    if (gvisible)
+        return true;
+    gvisible = true;
+    $('playComponentButton').innerHTML = '&gt;';
+    var rdiv = $('dataDiv');
+    rdiv.style.visibility = 'hidden';
+    rdiv.innerHTML = '';
+    gdiv.style.visibility = 'visible'
+    return true;
+}
+
+/**
+ * Play the current component.
+ */
+$('playComponentButton').onclick = function() {
+    if (compname == '')
+        return false;
+    if (!gvisible)
+        return showgraph();
+    return showdata(compname);
+}
+
+// Create editor graph area
+g = graph.mkgraph(graph.mkpath().move(-2500,95), $('compValue'), $('addComponentButton'), $('deleteComponentButton'));
+gdiv = g.parentNode;
+bg = graph.mkgroup(graph.mkpath());
+
+// Install the palettes
+var pos = graph.mkpath();
+installpalette('control', pos.rmove(5,0), g, bg, spalette, gpalettes);
+installpalette('values', pos.rmove(0,35), g, bg, spalette, gpalettes);
+installpalette('lists', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('transform', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('text', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('http', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('talk', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('social', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('search', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('database', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('logic', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('math', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+installpalette('python', pos.rmove(0, 35), g, bg, spalette, gpalettes);
+
+// Get and display the current app
+getapp(appname, g);
 
 </script>
 

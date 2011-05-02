@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,20 +24,77 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui.css"/>
+<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/config.js"></script>
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/ui.js"></script>
+<script type="text/javascript" src="/all-min.js"></script>
+<script type="text/javascript" src="/menu.js"></script>
+<script type="text/javascript" src="page.js"></script>
 </head>
-<body class="delayed">
+<body class="delayed" onorientationchange="ui.reload();">
+<div id="bodydiv" class="devicewidth">
+
 <div id="menu"></div>
 
-<h1><span id="h1"></span><span id="appNameHeader"></span></h1>
-<br/>
+<table style="width: 100%;">
+<tr>
+<td><h1><span id="h1"></span><span id="appNameHeader"></span></h1></td>
+<td style="vertical-align: middle; text-align: right;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+</tr>
+</table>
 
-<div id="page"></div>
+<table style="width: 100%;">
+<tr>
+<th class="thr thl" style="padding-left: 2px; padding-right: 2px;">
+<input id="widgetName" type="text" value="" title="Widget name" placeholder="Name" style="position: relative; width: 65px;"/>
+<input id="widgetText" type="text" value="" title="Widget text" placeholder="Text" style="position: relative; width: 120px;"/>
+<span id="deleteWidgetButton" title="Delete a Widget" class="redbutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">-</span>
+<span id="addWidgetButton" title="Add a Widget" class="greenbutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">+</span>
+<!--
+<span id="playWidgetButton" title="View" class="bluebutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
+-->
+</th>
+</tr>
+</table>
+
+<div id="page" style="position: absolute; top: 95px; left: -2500px; right: 0px; height: 5000px;">
+
+<div style="position: absolute; left: 2500px; top: 0px; right: 0px; height: 5000px; border:1px; border-style: solid; border-color: #a2bae7; background: url(/public/grid72.png);"></div>
+<div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 320px; height: 460px;"></div>
+<div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 480px; height: 300px;"></div>
+<div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 768px; height: 911px;"></div>
+<div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 1024px; height: 655px;"></div>
+
+<span class="h1" id="palette:h1" style="position: absolute; left: 0px; top: 0px;"><h1>Header1</h1></span>
+<span class="h2" id="palette:h2" style="position: absolute; left: 0px; top: 30px;"><h2>Header2</h2></span>
+<span class="section" id="palette:section" style="position: absolute; left: 0px; top: 60px; width: 200px;"><span class="section">section</span></span>
+<span class="button" id="palette:button" style="position: absolute; left: 0px; top: 90px;"><input type="button" value="button" class="graybutton"/></span>
+<span class="entry" id="palette:entry" style="position: absolute; left: 0px; top: 120px;"><input type="text" value="field" size="20" autocapitalize="off"/></span>
+<span class="password" id="palette:password" style="position: absolute; left: 0px; top: 150px;"><input type="password" value="password" size="20"/></span>
+<span class="checkbox" id="palette:checkbox" style="position: absolute; left: 0px; top: 180px;"><input type="checkbox" value="checkbox"/><span>checkbox</span></span>
+<span class="select" id="palette:select" style="position: absolute; left: 0px; top: 210px;"><select><option value="select">select</option></select></span>
+<span class="list" id="palette:list" style="position: absolute; left: 0px; top: 240px; width: 200px;">
+<table class="datatable" style="width: 200px;"><tr><td class="datatd">list</td></tr><tr><td class="datatd">...</td></tr></table>
+</span>
+<span class="table" id="palette:table" style="position: absolute; left: 0px; top: 290px; width: 200px;">
+<table class="datatable" style="width: 200px;"><tr><td class="datatdl">table</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>
+</span>
+<span class="link" id="palette:link" style="position: absolute; left: 0px; top: 340px;"><a href="/"><span>link</span></a></span>
+<span class="text" id="palette:text" style="position: absolute; left: 0px; top: 370px;"><span>text</span></span>
+<span class="iframe fakeframe" id="palette:iframe" style="position: absolute; left: 0px; top: 400px; width: 200px;"><a href="/public/iframe.html"><span class="fakeframe"><span>frame ...</span></span></a></span>
+<span class="img" id="palette:img" style="position: absolute; left: 0px; top: 430px;"><img src="/public/img.png"/></span>
+
+</div>
+
+<div id="buffer" style="visibility: hidden; position: absolute; top: 0px; left: 0px; width: 0px; height: 0px"></div>
+
+</div>
 
 <script type="text/javascript">
+
+// Get the app name
+var appname = ui.queryParams()['app'];
+if (isNil(appname))
+    window.open('/', '_self');
 
 /**
  * Return the link to an app.
@@ -51,30 +109,229 @@ function applink(appname) {
     return link;
 }
 
-// Get the app name
-var appname = ui.queryParams()['app'];
-
-// Update the window title
+// Set page titles
 document.title = windowtitle(window.location.hostname) + ' - Page - ' + appname;
 $('h1').innerHTML = hometitle(window.location.hostname);
 $('appNameHeader').innerHTML = ' - <a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
 
 // Load the menu bar
-ui.loadwidget('menu', '/menu.html?app=' + appname, ui.showbody);
+displaymenu();
+
+// Show the page
+ui.showbody();
+
+// Init component references
+var editWidget = sca.component("EditWidget");
+var pages = sca.reference(editWidget, "pages");
 
 /**
- * Display the page editor for an app.
+ * Return the page in an ATOM entry.
  */
-function editapp(name) {
-    if (isNil(name))
-        return;
-    $('page').innerHTML =
-        '<iframe id="pageFrame" style="height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="page.html?' +
-        'app=' + name +
-        '"></iframe>';
+function atompage(doc) {
+    var entry = atom.readATOMEntry(mklist(doc));
+    if (isNil(entry))
+        return mklist();
+    var content = namedElementChild("'content", car(entry));
+    if (content == null)
+        return mklist();
+    return elementChildren(content);
 }
 
-editapp(appname);
+/**
+ * Track the current widget and page saved XHTML content.
+ */
+var widgetname = '';
+var savedpagexhtml = '';
+
+/**
+ * Get and display an app page.
+ */
+function getpage(name, edit) {
+    if (isNil(name))
+        return false;
+    return pages.get(name, function(doc) {
+
+        // Convert the page to XHTML and place it in a hidden buffer
+        var buffer = $('buffer');
+        var el = atompage(doc);
+
+        // Create a default empty page if necessary
+        if (isNil(el))
+            buffer.innerHTML = '<DIV id="page">\n</DIV>\n';
+        else
+            buffer.innerHTML = writeStrings(writeXML(atompage(doc), false));
+
+        // Append page nodes to editor
+        map(function(e) {
+                edit.appendChild(e);
+                if (!isNil(e.style))
+                    e.style.left = ui.pixpos(ui.numpos(e.style.left) + 2500);
+                return page.cover(e);
+            }, nodeList(buffer.childNodes[0].childNodes));
+
+        savedpagexhtml = pagexhtml();
+        return true;
+    });
+}
+
+/**
+ * Handle add widget button click event.
+ */
+$('addWidgetButton').onclick = function(e) {
+    // Show the widget palette
+    $('page').style.left = ui.pixpos(0);
+};
+
+/**
+ * Return the current page XHTML content.
+ */
+function pagexhtml() {
+
+    // Copy page DOM to hidden buffer
+    var edit = $('page');
+    var buffer = $('buffer');
+    buffer.innerHTML = '<DIV id="page">\n</DIV>\n'
+    var div = buffer.childNodes[0];
+    div.innerHTML = edit.innerHTML;
+
+    // Filter out palette and editor artifacts, which are not
+    // part of the page, as well as nodes positioned out the
+    // editing area
+    var fnodes = filter(function(e) {
+        if (isNil(e.id) || e.id == '' || e.id.substr(0, 8) == 'palette:')
+            return false;
+        var x = ui.numpos(e.style.left) - 2500;
+        if (x < 0 || ui.numpos(e.style.top) < 0)
+            return false;
+        return true;
+    }, nodeList(div.childNodes));
+
+    // Reposition nodes
+    map(function(e) {
+        var x = ui.numpos(e.style.left) - 2500;
+        e.style.left = ui.pixpos(x);
+        return e;
+    }, fnodes);
+
+    // Sort them by position
+    var snodes = fnodes.sort(function(a, b) {
+        var ay = ui.numpos(a.style.top);
+        var by = ui.numpos(b.style.top);
+        if (ay < by) return -1;
+        if (ay > by) return 1;
+        var ax = ui.numpos(a.style.left);
+        var bx = ui.numpos(b.style.left);
+        if (ax < bx) return -1;
+        if (ax > bx) return 1;
+        return 0;
+    });
+
+    // Append them back to the div in order
+    div.innerHTML = '';
+    map(function(e) {
+        div.appendChild(e);
+        return e;
+    }, snodes);
+
+    // Convert the page to XHTML
+    var lxhtml = readXHTMLElement(div);
+    var xhtml = writeStrings(writeXML(lxhtml, false));
+    return xhtml;
+}
+
+/**
+ * Save the current page.
+ */
+function save() {
+    $('saveStatus').innerHTML = 'Saving';
+
+    // Get the current page XHTML content
+    savedpagexhtml = pagexhtml();
+
+    // Update the page ATOM entry
+    var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
+        '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
+        savedpagexhtml + '</content></entry>';
+
+    pages.put(appname, entry);
+    if (savedpagexhtml == pagexhtml())
+        $('saveStatus').innerHTML = 'Saved';
+    return true;
+};
+
+/**
+ * Handle a page change event
+ */
+function onpagechange(prop) {
+    if (savedpagexhtml == pagexhtml())
+        return false;
+    $('saveStatus').innerHTML = 'Modified';
+
+    // Save property changes right away
+    if (prop)
+        return save();
+
+    // Autosave other changes after 3 seconds
+    setTimeout(function() {
+        if (savedpagexhtml == pagexhtml())
+            return false;
+        return save();
+    }, 1000);
+    return true;
+}
+
+/**
+ * Return the link to a component value.
+ */
+function compvaluelink(appname, cname) {
+    if (cname == '' || isNil(cname))
+        return '';
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/data/?component=' + cname;
+    return link;
+}
+
+/**
+ * Handle a widget select event.
+ */
+function onwidgetselect(wname) {
+    if (wname == widgetname)
+        return true;
+    widgetname = wname;
+    var link = compvaluelink(appname, wname);
+
+    function updateButton(b, v) {
+        b.style.color = v? '#000000' : '#808080';
+    }
+
+    updateButton($('deleteWidgetButton'), link != '');
+    //updateButton($('playWidgetButton'), link != '');
+
+    return true;
+}
+
+/**
+ * Play the component associated with the current widget.
+ */
+/*
+$('playWidgetButton').onclick = function() {
+    var link = compvaluelink(appname, widgetname);
+    if (link == '')
+        return;
+    return window.open(link, '_' + appname + '_' + widgetname);
+}
+*/
+
+// Initialize the page editor
+var edit = $('page');
+page.edit(edit, $('widgetName'), $('widgetText'), $('addWidgetButton'), $('deleteWidgetButton'), onpagechange, onwidgetselect);
+
+// Get and display the current app page
+getpage(appname, edit);
 
 </script>
 </body>

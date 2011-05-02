@@ -1,37 +1,24 @@
-CACHE-MANIFEST
+CACHE MANIFEST
 
 # Common resources
-atomutil.js
-component.js
-elemutil.js
-jsconfig.js
-jsonutil.js
-scdl.js
-ui.css
-ui.js
-util.js
-xmlutil.js
+all-min.js
+config.js
+ui-min.css
 
 # App resources
 app/index.html
-dash/dashboard.html
-dash/index.html
+clone/index.html
+data/index.html
+create/index.html
 data/index.html
 favicon.ico
-graph/graph.html
 graph/graph.js
 graph/index.html
 home.png
 index.html
-login/index.html
-logout/index.html
-main.html
-menu.html
+menu.js
 page/index.html
-page/page.html
 page/page.js
-props/index.html
-props/props.html
 public/app.png
 public/grid72.png
 public/iframe.html
@@ -42,6 +29,9 @@ public/notyet.html
 public/oops.html
 public/touchicon.png
 robots.txt
+stats/index.html
 store/index.html
-store/store.html
+
+NETWORK:
+*
 

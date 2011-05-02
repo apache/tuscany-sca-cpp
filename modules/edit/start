@@ -69,15 +69,24 @@ SCAVirtualComposite app.composite
 
 EOF
 
-# Configure look and feel
-cat >>tmp/conf/httpd.conf <<EOF
-# Override CSS
-#Alias /ui.css $jsprefix/htdocs/uicyan.css
-
-EOF
-
 # Create app links and sub-directories if needed
 ./mkapplinks
+
+# Configure app aliases
+cat >>tmp/conf/dvhost.conf <<EOF
+# Configure aliases
+Alias /cache-manifest.cmf $here/htdocs/app/cache-manifest.cmf
+Alias /data $here/htdocs/data
+Alias /favicon.ico $here/htdocs/favicon.ico
+Alias /login $here/htdocs/login
+Alias /logout $here/htdocs/logout
+Alias /public $here/htdocs/public
+Alias /robots.txt $here/htdocs/robots.txt
+Alias /index.html $here/htdocs/app/index.html
+Alias /menu.js $here/htdocs/menu.js
+Alias /config.js $here/htdocs/config.js
+
+EOF
 
 # Create application database directories
 mkdir -p tmp/appdata/filedb

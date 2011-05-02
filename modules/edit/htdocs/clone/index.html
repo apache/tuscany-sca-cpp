@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<html>
+<head>
+<title></title>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="/public/touchicon.png"/>
+<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
+<script type="text/javascript" src="/config.js"></script>
+<script type="text/javascript" src="/all-min.js"></script>
+<script type="text/javascript" src="/menu.js"></script>
+</head>
+<body class="delayed" onorientationchange="ui.reload();">
+<div id="bodydiv" class="devicewidth">
+
+<div id="menu"></div>
+
+<table style="width: 100%;">
+<tr>
+<td><h1><span id="h1"></span><span id="appNameHeader"></span></h1></td>
+</tr>
+</table>
+
+<table style="width: 100%;">
+<tr>
+<th id="th" class="thl thr" style="padding-top: 4px; padding-bottom:4px;">Clone this App</th>
+</tr>
+</table>
+
+<form id="cloneAppForm" style="position: absolute; top: 90px; left: 0px;">
+<table style="width: 100%;">
+<tr><td><b>New App Name:</b></td></tr>
+<tr><td><input type="text" id="appName" size="15" placeholder="Your app name"/>&nbsp;<span id="appDomain"></span></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
+<tr><td><img src="/public/app.png" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>Sharing:</b></td></tr>
+<tr><td><input type="checkbox" value="shared"/><span>Shared</span></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>App Title:</b></td></tr>
+<tr><td><input type="text" id="appTitle" size="30" placeholder="Enter the title of your app" style="width: 300px;"/></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
+<tr><td><textarea id="appDescription" cols="40" rows="3" placeholder="Enter a short description of your app" style="width: 300px;"></textarea></td></tr>
+<tr><td>
+<input id="cloneAppOKButton" type="submit" class="greenbutton" style="font-weight: bold;" value="Clone" title="Clone the app"/>
+<input id="cloneAppCancelButton" type="button" class="redbutton" value="Cancel"/>
+</td></tr>
+</table>
+</form>
+
+</div>
+
+<script type="text/javascript">
+// Get the app name
+var appname = ui.queryParams()['app'];
+if (isNil(appname))
+    window.open('/', '_self');
+
+/**
+ * Return the link to an app.
+ */
+function applink(appname) {
+    var protocol = window.location.protocol;
+    var host = window.location.hostname;
+    var port = ':' + window.location.port;
+    if (port == ':80' || port == ':443' || port == ':')
+        port = '';
+    var link = protocol + '//' + appname + '.' + host + port + '/';
+    return link;
+}
+
+// Set page titles
+var tclone = isNil(config.clone)? 'Clone' : config.clone;
+document.title = windowtitle(window.location.hostname) + ' - ' + tclone + ' - ' + appname;
+$('h1').innerHTML = hometitle(window.location.hostname);
+$('appNameHeader').innerHTML = ' - <a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
+$('th').innerHTML = tclone + ' this App';
+$('cloneAppOKButton').value = tclone;
+$('cloneAppOKButton').title = tclone + ' the app';
+
+// Load the menu bar
+displaymenu();
+
+// Init form
+$('appDomain').innerHTML = '.' + window.location.hostname;
+
+// Show the page
+ui.showbody();
+
+// Init service references
+var editWidget = sca.component("EditWidget");
+var dashboard = sca.reference(editWidget, "dashboard");
+var apps = sca.reference(editWidget, "apps");
+
+/**
+ * The current app entry and corresponding saved XML content.
+ */
+var appentry;
+var savedappentryxml = '';
+
+/**
+ * Get and display an app.
+ */
+function getapp(name) {
+    if (isNil(name))
+        return false;
+    return apps.get(name, function(doc) {
+        appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
+        var title = cadr(assoc("'title", cdr(appentry)));
+        $('appTitle').value = title;
+        $('appDescription').innerHTML = '';
+        savedappentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(appentry))));
+        return true;
+    });
+}
+
+/**
+ * Clone an app.
+ */
+$('cloneAppForm').onsubmit = function() {
+    var name = $('appName').value;
+    if (name == '')
+        return false;
+    var title = $('appTitle').value;
+    var app = mklist(mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", appname)));
+    var entry = atom.writeATOMEntry(valuesToElements(app));
+    dashboard.put(name, car(entry));
+    window.open('/store/', '_self');
+    return false;
+};
+
+/**
+ * Cancel cloning an app.
+ */
+$('cloneAppCancelButton').onclick = function() {
+    return window.open('/store/', '_self');
+};
+
+// Get the current app
+getapp(appname);
+
+</script>
+
+</body>
+</html>
+

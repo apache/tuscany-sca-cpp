@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,17 +24,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 <link rel="apple-touch-icon" href="/public/touchicon.png"/>
-<link rel="stylesheet" type="text/css" href="/ui.css"/>
-<script type="text/javascript" src="/config.js"></script>
-<script type="text/javascript" src="/util.js"></script>
-<script type="text/javascript" src="/ui.js"></script>
+<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
+<script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body>
+<body onorientationchange="ui.reload();">
 <h1>Sign out</h1>
-<br/>
 
-<form name="signout" action="/" method="GET">
-<input type="submit" onclick="submitSignout()" id="signOut" value="Sign out"/>
+<form name="signout" onsubmit="submitSignout();" action="/" method="GET">
+<input type="submit" id="signOut" value="Sign out" class="greenbutton" style="font-weight: bold"/>
 </form>
 
 <script type="text/javascript">
@@ -44,7 +42,6 @@ function submitSignout() {
     return true;
 }
 
-$('signOut').focus();
 </script>
 
 </body>

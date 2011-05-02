@@ -1,26 +1,16 @@
-CACHE-MANIFEST
+CACHE MANIFEST
 
 # Common resources
-atomutil.js
-component.js
-elemutil.js
-jsconfig.js
-jsonutil.js
-scdl.js
-ui.css
-ui.js
-util.js
-xmlutil.js
+all-min.js
+config.js
+ui-min.css
 
 # App resources
 app.html
 data/index.html
-index.html
 favicon.ico
-login/index.html
-logout/index.html
+index.html
 public/app.png
-public/grid72.png
 public/iframe.html
 public/img.png
 public/notauth.html
@@ -29,4 +19,7 @@ public/notyet.html
 public/oops.html
 public/touchicon.png
 robots.txt
+
+NETWORK:
+*
 
