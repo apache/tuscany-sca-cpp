@@ -21,18 +21,22 @@ here=`readlink -f $0`; here=`dirname $here`
 . $here/uec2-setenv
 
 # Here are the AMI IDs you can use in the different EC2 regions:
-# Ubuntu 10.10 64-bit (elastic block storage)
-# US east 1 - ami-548c783d
-# US west 1 - ami-ca1f4f8f
-# EU west 1 - ami-405c6934
-# AP s.east - ami-68136d3a
+
+# Ubuntu 10.10 32-bit instance storage, suitable for small instances
+# AP s.east - ami-7c423c2e
+# EU west 1 - ami-339ca947
+# US east 1 - ami-a6f504cf
+# US west 1 - ami-957e2ed0
+
 # More AMI IDs at http://uec-images.ubuntu.com
 
 # Here are some of the instance types you can use:
 # t1.micro
+# m1.small
 # m1.large
 
 #ec2-run-instances "ami-ca1f4f8f" -t m1.large -k ec2-keypair --region us-west-1
 #ec2-run-instances "ami-ca1f4f8f" -t t1.micro -k ec2-keypair --region us-west-1
-ec2-run-instances "ami-ca1f4f8f" -t t1.micro -k ec2-keypair --region us-west-1
+#ec2-run-instances "ami-ca1f4f8f" -t t1.micro -k ec2-keypair --region us-west-1
+ec2-run-instances "ami-957e2ed0" -t m1.small -k ec2-keypair --region us-west-1
 
