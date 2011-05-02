@@ -17,57 +17,29 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testsearch" name="testsearch">
- <service name="googlesearch" promote="googlesearch"/>
- <component t:x="91" t:y="20" name="googlesearch" t:title="google" t:color="red1">
-  <t:implementation.python script="nuvem/gsearch.py"/>
-  <service name="googlesearch"/>
-  <reference target="text" name="query"/>
-  <reference name="s" t:visible="false">
-   <t:binding.http uri="http://ajax.googleapis.com/ajax/services/search/web"/>
-  </reference>
- </component>
- <service name="weather" promote="weather"/>
- <component t:x="92" t:y="70" name="weather" t:title="weather" t:color="red1">
-  <t:implementation.python script="nuvem/gweather.py"/>
-  <service name="weather"/>
-  <reference target="number" name="zip"/>
-  <reference name="ws" t:visible="false">
-   <t:binding.http uri="http://www.google.com/ig/api"/>
-  </reference>
- </component>
- <component t:x="141" t:y="95" name="number" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
-  <service name="number"/>
-  <property>94070</property>
- </component>
- <service name="weather2" promote="weather2"/>
- <component t:x="333" t:y="73" name="weather2" t:title="weather" t:color="red1">
-  <t:implementation.python script="nuvem/gweather.py"/>
-  <service name="weather"/>
-  <reference target="text2" name="zip"/>
-  <reference name="ws" t:visible="false">
-   <t:binding.http uri="http://www.google.com/ig/api"/>
-  </reference>
- </component>
- <component t:x="141" t:y="162" name="text2" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>94070</property>
- </component>
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" name="app" targetNamespace="http://app">
+ <service name="bingsearch" promote="bingsearch"/>
  <service name="get" promote="get"/>
- <component t:x="43" t:y="348" name="get" t:title="get" t:color="green1">
+ <service name="googlemap" promote="googlemap"/>
+ <service name="googlemap2" promote="googlemap2"/>
+ <service name="googlesearch" promote="googlesearch"/>
+ <service name="weather" promote="weather"/>
+ <service name="weather2" promote="weather2"/>
+ <service name="yahoosearch" promote="yahoosearch"/>
+ <component t:x="336" t:y="48" name="bingsearch" t:title="bing" t:color="red1">
+  <t:implementation.python script="nuvem/bsearch.py"/>
+  <service name="bingsearch"/>
+  <reference target="text10" name="query"/>
+  <reference name="s" t:visible="false">
+   <t:binding.http uri="http://www.bing.com/search"/>
+  </reference>
+ </component>
+ <component t:x="20" t:y="300" name="get" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text3" name="url"/>
  </component>
- <component t:x="141" t:y="234" name="text3" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>http://maps.google.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&amp;zoom=14&amp;size=512x512&amp;maptype=roadmap%20&amp;markers=color:blue|label:S|40.702147,-74.015794&amp;markers=color:green|label:G|40.711614,-74.012318%20&amp;markers=color:red|color:red|label:C|40.718217,-73.998284&amp;sensor=false</property>
- </component>
- <service name="googlemap" promote="googlemap"/>
- <component t:x="492" t:y="143" name="googlemap" t:title="google map" t:color="red1">
+ <component t:x="347" t:y="106" name="googlemap" t:title="google map" t:color="red1">
   <t:implementation.python script="nuvem/gmap.py"/>
   <service name="googlemap"/>
   <reference target="list2" name="locations"/>
@@ -75,8 +47,7 @@
    <t:binding.http uri="http://maps.google.com/maps/api/staticmap"/>
   </reference>
  </component>
- <service name="googlemap2" promote="googlemap2"/>
- <component t:x="90" t:y="144" name="googlemap2" t:title="google map" t:color="red1">
+ <component t:x="15" t:y="96" name="googlemap2" t:title="google map" t:color="red1">
   <t:implementation.python script="nuvem/gmap.py"/>
   <service name="googlemap"/>
   <reference target="list3" name="locations"/>
@@ -84,39 +55,15 @@
    <t:binding.http uri="http://maps.google.com/maps/api/staticmap"/>
   </reference>
  </component>
- <component t:x="300" t:y="391" name="number3" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
-  <service name="number"/>
-  <property>-122.260526</property>
+ <component t:x="18" t:y="0" name="googlesearch" t:title="google" t:color="red1">
+  <t:implementation.python script="nuvem/gsearch.py"/>
+  <service name="googlesearch"/>
+  <reference target="text" name="query"/>
+  <reference name="s" t:visible="false">
+   <t:binding.http uri="http://ajax.googleapis.com/ajax/services/search/web"/>
+  </reference>
  </component>
- <component t:x="303" t:y="659" name="text8" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>green</property>
- </component>
- <component t:x="300" t:y="335" name="text4" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>green</property>
- </component>
- <component t:x="300" t:y="363" name="number2" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
-  <service name="number"/>
-  <property>37.507156</property>
- </component>
- <component t:x="164" t:y="307" name="list2" t:title="list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="property" name="item" t:clonable="true"/>
-  <reference name="item" t:clonable="true"/>
- </component>
- <component t:x="202" t:y="308" name="property" t:title="{propval} :" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="property"/>
-  <reference target="list" name="value"/>
-  <property>A</property>
- </component>
- <component t:x="640" t:y="423" name="list" t:title="list" t:color="yellow1">
+ <component name="list" t:title="list" t:color="yellow1">
   <t:implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="text4" name="item" t:clonable="true"/>
@@ -124,83 +71,136 @@
   <reference target="number3" name="item" t:clonable="true"/>
   <reference name="item" t:clonable="true"/>
  </component>
- <component t:x="208" t:y="532" name="property2" t:title="{propval} :" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="property"/>
-  <reference target="pair4" name="value"/>
-  <property>A</property>
+ <component name="list2" t:title="list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="property" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
  </component>
- <component t:x="512" t:y="485" name="pair4" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="text7" name="name"/>
-  <reference target="text5" name="value"/>
- </component>
- <component t:x="208" t:y="604" name="property3" t:title="{propval} :" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="property"/>
-  <reference target="pair5" name="value"/>
-  <property>B</property>
- </component>
- <component t:x="527" t:y="579" name="pair5" t:title="pair" t:color="yellow1">
-  <t:implementation.python script="nuvem/pair.py"/>
-  <service name="pair"/>
-  <reference target="text8" name="name"/>
-  <reference target="text6" name="value"/>
- </component>
- <component t:x="315" t:y="212" name="text7" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>yellow</property>
- </component>
- <component t:x="315" t:y="240" name="text5" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>San Francisco, CA</property>
- </component>
- <component t:x="315" t:y="312" name="text6" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>San Carlos, CA</property>
- </component>
- <component t:x="161" t:y="212" name="list3" t:title="list" t:color="yellow1">
+ <component name="list3" t:title="list" t:color="yellow1">
   <t:implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="property2" name="item" t:clonable="true"/>
   <reference target="property3" name="item" t:clonable="true"/>
   <reference name="item" t:clonable="true"/>
  </component>
- <service name="yahoosearch" promote="yahoosearch"/>
- <component t:x="333" t:y="22" name="yahoosearch" t:title="yahoo" t:color="red1">
+ <component name="number" t:title="#" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>94070</property>
+ </component>
+ <component name="number2" t:title="#" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>37.507156</property>
+ </component>
+ <component name="number3" t:title="#" t:color="orange1">
+  <t:implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>-122.260526</property>
+ </component>
+ <component name="pair4" t:title="pair" t:color="yellow1">
+  <t:implementation.python script="nuvem/pair.py"/>
+  <service name="pair"/>
+  <reference target="text7" name="name"/>
+  <reference target="text5" name="value"/>
+ </component>
+ <component name="pair5" t:title="pair" t:color="yellow1">
+  <t:implementation.python script="nuvem/pair.py"/>
+  <service name="pair"/>
+  <reference target="text8" name="name"/>
+  <reference target="text6" name="value"/>
+ </component>
+ <component name="property" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="list" name="value"/>
+  <property>A</property>
+ </component>
+ <component name="property2" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="pair4" name="value"/>
+  <property>A</property>
+ </component>
+ <component name="property3" t:title="{propval} :" t:color="orange1">
+  <t:implementation.python script="nuvem/assoc.py"/>
+  <service name="property"/>
+  <reference target="pair5" name="value"/>
+  <property>B</property>
+ </component>
+ <component name="text" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>apache tuscany</property>
+ </component>
+ <component name="text10" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>apache tuscany</property>
+ </component>
+ <component name="text2" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>94070</property>
+ </component>
+ <component name="text3" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://maps.google.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&amp;zoom=14&amp;size=512x512&amp;maptype=roadmap%20&amp;markers=color:blue|label:S|40.702147,-74.015794&amp;markers=color:green|label:G|40.711614,-74.012318%20&amp;markers=color:red|color:red|label:C|40.718217,-73.998284&amp;sensor=false</property>
+ </component>
+ <component name="text4" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>green</property>
+ </component>
+ <component name="text5" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>San Francisco, CA</property>
+ </component>
+ <component name="text6" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>San Carlos, CA</property>
+ </component>
+ <component name="text7" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>yellow</property>
+ </component>
+ <component name="text8" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>green</property>
+ </component>
+ <component name="text9" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>apache tuscany</property>
+ </component>
+ <component t:x="18" t:y="49" name="weather" t:title="weather" t:color="red1">
+  <t:implementation.python script="nuvem/gweather.py"/>
+  <service name="weather"/>
+  <reference target="number" name="zip"/>
+  <reference name="ws" t:visible="false">
+   <t:binding.http uri="http://www.google.com/ig/api"/>
+  </reference>
+ </component>
+ <component t:x="190" t:y="51" name="weather2" t:title="weather" t:color="red1">
+  <t:implementation.python script="nuvem/gweather.py"/>
+  <service name="weather"/>
+  <reference target="text2" name="zip"/>
+  <reference name="ws" t:visible="false">
+   <t:binding.http uri="http://www.google.com/ig/api"/>
+  </reference>
+ </component>
+ <component t:x="204" t:y="5" name="yahoosearch" t:title="yahoo" t:color="red1">
   <t:implementation.python script="nuvem/ysearch.py"/>
   <service name="yahoosearch"/>
   <reference target="text9" name="query"/>
   <reference name="s" t:visible="false">
    <t:binding.http uri="http://search.yahooapis.com/WebSearchService/V1/webSearch"/>
-  </reference>
- </component>
- <component t:x="682" t:y="231" name="text9" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>apache tuscany</property>
- </component>
- <component t:x="173" t:y="31" name="text" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>apache tuscany</property>
- </component>
- <component t:x="774" t:y="54" name="text10" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>apache tuscany</property>
- </component>
- <service name="bingsearch" promote="bingsearch"/>
- <component t:x="569" t:y="22" name="bingsearch" t:title="bing" t:color="red1">
-  <t:implementation.python script="nuvem/bsearch.py"/>
-  <service name="bingsearch"/>
-  <reference target="text10" name="query"/>
-  <reference name="s" t:visible="false">
-   <t:binding.http uri="http://www.bing.com/search"/>
   </reference>
  </component>
 </composite>

@@ -17,29 +17,11 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://test" name="test">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" name="app" targetNamespace="http://app">
  <service name="text3" promote="text3"/>
- <component t:x="48" t:y="35" name="text3" t:title=" '{propval}'" t:color="orange1">
+ <component t:x="27" t:y="12" name="text3" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>Hello World</property>
- </component>
- <service name="fbprofile" promote="fbprofile"/>
- <component t:x="404" t:y="163" name="fbprofile" t:title="facebook profile" t:color="blue1">
-  <t:implementation.python script="nuvem/fbprofile.py"/>
-  <service name="fbprofile"/>
-  <reference name="id"/>
-  <reference name="fb" t:visible="false">
-   <t:binding.http uri="https://graph.facebook.com"/>
-  </reference>
- </component>
- <service name="twprofile" promote="twprofile"/>
- <component t:x="402" t:y="216" name="twprofile" t:title="twitter profile" t:color="blue1">
-  <t:implementation.python script="nuvem/twprofile.py"/>
-  <service name="twprofile"/>
-  <reference name="id"/>
-  <reference name="tw" t:visible="false">
-   <t:binding.http uri="http://api.twitter.com/1/users/show.json"/>
-  </reference>
  </component>
 </composite>

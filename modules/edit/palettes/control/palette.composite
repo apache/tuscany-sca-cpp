@@ -22,25 +22,25 @@
   targetNamespace="http://control"
   name="palette">
         
-    <service name="appstart" promote="appstart"/>
-    <service name="appstop" promote="appstop"/>
+    <service name="start" promote="start"/>
+    <service name="stop" promote="stop"/>
     <service name="service" promote="service"/>
-    <service name="every" promote="every"/>
+    <service name="timer" promote="timer"/>
     <service name="geolocation" promote="geolocation"/>
     <service name="call" promote="call"/>
 
-    <component name="appstart" t:title="start" t:color="green1">
-        <t:implementation.python script="nuvem/appstart.py"/>
-        <service name="appstart" t:visible="false">
-            <t:binding.http uri="appstart"/>
+    <component name="start" t:title="start" t:color="green1">
+        <t:implementation.python script="nuvem/start.py"/>
+        <service name="start" t:visible="false">
+            <t:binding.http uri="start"/>
         </service>
         <reference name="content"/>
     </component>
     
-    <component name="appstop" t:title="stop" t:color="green1">
-        <t:implementation.python script="nuvem/appstop.py"/>
-        <service name="appstop" t:visible="false">
-            <t:binding.http uri="appstop"/>
+    <component name="stop" t:title="stop" t:color="green1">
+        <t:implementation.python script="nuvem/stop.py"/>
+        <service name="stop" t:visible="false">
+            <t:binding.http uri="stop"/>
         </service>
         <reference name="content"/>
     </component>
@@ -51,10 +51,10 @@
         <reference name="content"/>
     </component>
     
-    <component name="every" t:title="timer" t:color="green1">
-        <t:implementation.python script="nuvem/every.py"/>
-        <service name="every" t:visible="false">
-            <t:binding.http uri="every"/>
+    <component name="timer" t:title="timer" t:color="green1">
+        <t:implementation.python script="nuvem/timer.py"/>
+        <service name="timer" t:visible="false">
+            <t:binding.http uri="timer"/>
         </service>
         <reference name="n"/>
         <reference name="content"/>

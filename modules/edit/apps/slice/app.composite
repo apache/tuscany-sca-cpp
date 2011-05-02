@@ -17,23 +17,23 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://slice" name="slice">
- <component t:x="271" t:y="21" name="number" t:title="#" t:color="orange1">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" name="app" targetNamespace="http://app">
+ <service name="start" promote="start"/>
+ <component name="number" t:title="#" t:color="orange1">
   <t:implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>0</property>
  </component>
- <component t:x="246" t:y="25" name="property" t:title="{propval} :" t:color="orange1">
+ <component name="property" t:title="{propval} :" t:color="orange1">
   <t:implementation.python script="nuvem/assoc.py"/>
   <service name="property"/>
   <reference target="number" name="value"/>
   <property>slice</property>
  </component>
- <service name="appstart" promote="appstart"/>
- <component t:x="129" t:y="23" name="appstart" t:title="start" t:color="green1">
-  <t:implementation.python script="nuvem/appstart.py"/>
-  <service name="appstart" t:visible="false">
-   <t:binding.http uri="appstart"/>
+ <component t:x="17" t:y="9" name="start" t:title="start" t:color="green1">
+  <t:implementation.python script="nuvem/start.py"/>
+  <service name="start" t:visible="false">
+   <t:binding.http uri="start"/>
   </service>
   <reference target="property" name="content"/>
  </component>

@@ -17,200 +17,200 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testtext" name="testtext">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" name="app" targetNamespace="http://app">
  <service name="contains" promote="contains"/>
- <component t:x="34" t:y="33" name="contains" t:title="contains" t:color="magenta1">
+ <service name="format" promote="format"/>
+ <service name="format2" promote="format2"/>
+ <service name="join" promote="join"/>
+ <service name="lowercase" promote="lowercase"/>
+ <service name="parse" promote="parse"/>
+ <service name="replace" promote="replace"/>
+ <service name="split" promote="split"/>
+ <service name="uppercase" promote="uppercase"/>
+ <component t:x="19" t:y="7" name="contains" t:title="contains" t:color="magenta1">
   <t:implementation.python script="nuvem/contains.py"/>
   <service name="contains"/>
   <reference target="text10" name="search"/>
   <reference target="text9" name="string"/>
  </component>
- <service name="split" promote="split"/>
- <component t:x="34" t:y="140" name="split" t:title="split" t:color="magenta1">
-  <t:implementation.python script="nuvem/split.py"/>
-  <service name="split"/>
-  <reference target="text11" name="separator"/>
-  <reference target="text12" name="string"/>
- </component>
- <service name="join" promote="join"/>
- <component t:x="420" t:y="25" name="join" t:title="join" t:color="magenta1">
-  <t:implementation.python script="nuvem/join.py"/>
-  <service name="join"/>
-  <reference target="text6" name="separator"/>
-  <reference target="list2" name="list"/>
- </component>
- <service name="replace" promote="replace"/>
- <component t:x="204" t:y="27" name="replace" t:title="replace" t:color="magenta1">
-  <t:implementation.python script="nuvem/replace.py"/>
-  <service name="replace"/>
-  <reference target="text4" name="from"/>
-  <reference target="text5" name="to"/>
-  <reference target="text3" name="string"/>
- </component>
- <service name="lowercase" promote="lowercase"/>
- <component t:x="34" t:y="297" name="lowercase" t:title="lower" t:color="magenta1">
-  <t:implementation.python script="nuvem/lowercase.py"/>
-  <service name="lowercase"/>
-  <reference target="text2" name="string"/>
- </component>
- <service name="uppercase" promote="uppercase"/>
- <component t:x="35" t:y="236" name="uppercase" t:title="upper" t:color="magenta1">
-  <t:implementation.python script="nuvem/uppercase.py"/>
-  <service name="uppercase"/>
-  <reference target="text" name="string"/>
- </component>
- <component t:x="391" t:y="223" name="text" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abc</property>
- </component>
- <component t:x="391" t:y="150" name="text2" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>ABC</property>
- </component>
- <component t:x="376" t:y="81" name="text3" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abcxdefxghi</property>
- </component>
- <component t:x="377" t:y="20" name="text4" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>x</property>
- </component>
- <component t:x="376" t:y="63" name="text5" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>y</property>
- </component>
- <component t:x="107" t:y="56" name="text9" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abcdef</property>
- </component>
- <component t:x="107" t:y="14" name="text10" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>cd</property>
- </component>
- <component t:x="587" t:y="20" name="text6" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>x</property>
- </component>
- <component t:x="85" t:y="156" name="text11" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>x</property>
- </component>
- <component t:x="89" t:y="193" name="text12" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abcxdefxghi</property>
- </component>
- <component t:x="583" t:y="60" name="list2" t:title="list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text7" name="item" t:clonable="true"/>
-  <reference target="text8" name="item" t:clonable="true"/>
-  <reference name="item" t:clonable="true"/>
- </component>
- <component t:x="662" t:y="61" name="text7" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>abc</property>
- </component>
- <component t:x="655" t:y="98" name="text8" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>def</property>
- </component>
- <service name="format" promote="format"/>
- <component t:x="220" t:y="170" name="format" t:title="format" t:color="magenta1">
+ <component t:x="176" t:y="115" name="format" t:title="format" t:color="magenta1">
   <t:implementation.python script="nuvem/format_.py"/>
   <service name="format"/>
   <reference target="text13" name="pattern"/>
   <reference target="list" name="values"/>
  </component>
- <service name="format2" promote="format2"/>
- <component t:x="444" t:y="164" name="format2" t:title="format" t:color="magenta1">
+ <component t:x="369" t:y="141" name="format2" t:title="format" t:color="magenta1">
   <t:implementation.python script="nuvem/format_.py"/>
   <service name="format"/>
   <reference target="text14" name="pattern"/>
   <reference target="list3" name="values"/>
  </component>
- <component t:x="365" t:y="194" name="text13" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>The {0} brown {1}</property>
+ <component t:x="361" t:y="8" name="join" t:title="join" t:color="magenta1">
+  <t:implementation.python script="nuvem/join.py"/>
+  <service name="join"/>
+  <reference target="text6" name="separator"/>
+  <reference target="list2" name="list"/>
  </component>
- <component t:x="369" t:y="238" name="list" t:title="list" t:color="yellow1">
+ <component name="list" t:title="list" t:color="yellow1">
   <t:implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="text15" name="item" t:clonable="true"/>
   <reference target="text16" name="item" t:clonable="true"/>
   <reference name="item" t:clonable="true"/>
  </component>
- <component t:x="444" t:y="236" name="text15" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>quick</property>
+ <component name="list2" t:title="list" t:color="yellow1">
+  <t:implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="text7" name="item" t:clonable="true"/>
+  <reference target="text8" name="item" t:clonable="true"/>
+  <reference name="item" t:clonable="true"/>
  </component>
- <component t:x="438" t:y="274" name="text16" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>fox</property>
- </component>
- <component t:x="599" t:y="198" name="text14" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>The {a} brown {b}</property>
- </component>
- <component t:x="603" t:y="239" name="list3" t:title="list" t:color="yellow1">
+ <component name="list3" t:title="list" t:color="yellow1">
   <t:implementation.python script="nuvem/list_.py"/>
   <service name="list"/>
   <reference target="property" name="item" t:clonable="true"/>
   <reference target="property2" name="item" t:clonable="true"/>
   <reference name="item" t:clonable="true"/>
  </component>
- <service name="parse" promote="parse"/>
- <component t:x="218" t:y="325" name="parse" t:title="parse" t:color="magenta1">
+ <component t:x="20" t:y="226" name="lowercase" t:title="lower" t:color="magenta1">
+  <t:implementation.python script="nuvem/lowercase.py"/>
+  <service name="lowercase"/>
+  <reference target="text2" name="string"/>
+ </component>
+ <component t:x="142" t:y="252" name="parse" t:title="parse" t:color="magenta1">
   <t:implementation.python script="nuvem/parse.py"/>
   <service name="parse"/>
   <reference target="text19" name="regexp"/>
   <reference target="text20" name="string"/>
  </component>
- <component t:x="89" t:y="428" name="text20" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>city San Francisco state CA</property>
- </component>
- <component t:x="89" t:y="388" name="text19" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>city (.*) state (.*)</property>
- </component>
- <component t:x="589" t:y="215" name="property" t:title="{propval} :" t:color="orange1">
+ <component name="property" t:title="{propval} :" t:color="orange1">
   <t:implementation.python script="nuvem/assoc.py"/>
   <service name="property"/>
   <reference target="text17" name="value"/>
   <property>a</property>
  </component>
- <component t:x="840" t:y="241" name="text17" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>quick</property>
- </component>
- <component t:x="586" t:y="254" name="property2" t:title="{propval} :" t:color="orange1">
+ <component name="property2" t:title="{propval} :" t:color="orange1">
   <t:implementation.python script="nuvem/assoc.py"/>
   <service name="property"/>
   <reference target="text18" name="value"/>
   <property>b</property>
  </component>
- <component t:x="837" t:y="299" name="text18" t:title=" '{propval}'" t:color="orange1">
+ <component t:x="175" t:y="6" name="replace" t:title="replace" t:color="magenta1">
+  <t:implementation.python script="nuvem/replace.py"/>
+  <service name="replace"/>
+  <reference target="text4" name="from"/>
+  <reference target="text5" name="to"/>
+  <reference target="text3" name="string"/>
+ </component>
+ <component t:x="23" t:y="89" name="split" t:title="split" t:color="magenta1">
+  <t:implementation.python script="nuvem/split.py"/>
+  <service name="split"/>
+  <reference target="text11" name="separator"/>
+  <reference target="text12" name="string"/>
+ </component>
+ <component name="text" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>abc</property>
+ </component>
+ <component name="text10" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>cd</property>
+ </component>
+ <component name="text11" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>x</property>
+ </component>
+ <component name="text12" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>abcxdefxghi</property>
+ </component>
+ <component name="text13" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>The {0} brown {1}</property>
+ </component>
+ <component name="text14" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>The {a} brown {b}</property>
+ </component>
+ <component name="text15" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>quick</property>
+ </component>
+ <component name="text16" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>fox</property>
+ </component>
+ <component name="text17" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>quick</property>
+ </component>
+ <component name="text18" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>fox</property>
+ </component>
+ <component name="text19" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>city (.*) state (.*)</property>
+ </component>
+ <component name="text2" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>ABC</property>
+ </component>
+ <component name="text20" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>city San Francisco state CA</property>
+ </component>
+ <component name="text3" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>abcxdefxghi</property>
+ </component>
+ <component name="text4" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>x</property>
+ </component>
+ <component name="text5" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>y</property>
+ </component>
+ <component name="text6" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>x</property>
+ </component>
+ <component name="text7" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>abc</property>
+ </component>
+ <component name="text8" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>def</property>
+ </component>
+ <component name="text9" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>abcdef</property>
+ </component>
+ <component t:x="20" t:y="172" name="uppercase" t:title="upper" t:color="magenta1">
+  <t:implementation.python script="nuvem/uppercase.py"/>
+  <service name="uppercase"/>
+  <reference target="text" name="string"/>
  </component>
 </composite>

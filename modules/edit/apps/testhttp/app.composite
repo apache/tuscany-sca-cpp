@@ -17,114 +17,114 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" targetNamespace="http://testhttp" name="testhttp">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" name="app" targetNamespace="http://app">
  <service name="get" promote="get"/>
- <component t:x="25" t:y="25" name="get" t:title="get" t:color="green1">
+ <service name="get2" promote="get2"/>
+ <service name="get3" promote="get3"/>
+ <service name="get4" promote="get4"/>
+ <service name="get5" promote="get5"/>
+ <service name="get6" promote="get6"/>
+ <service name="parse" promote="parse"/>
+ <component name="first" t:title="first" t:color="yellow1">
+  <t:implementation.python script="nuvem/first.py"/>
+  <service name="first"/>
+  <reference target="rest" name="list"/>
+ </component>
+ <component t:x="20" t:y="8" name="get" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text" name="url"/>
  </component>
- <service name="get2" promote="get2"/>
- <component t:x="24" t:y="83" name="get2" t:title="get" t:color="green1">
+ <component t:x="18" t:y="61" name="get2" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text2" name="url"/>
  </component>
- <service name="get3" promote="get3"/>
- <component t:x="23" t:y="146" name="get3" t:title="get" t:color="green1">
+ <component t:x="14" t:y="112" name="get3" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text3" name="url"/>
  </component>
- <component t:x="87" t:y="175" name="text3" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php?whichClient=NDFDgen&amp;lat=38.99&amp;lon=-77.01&amp;listLatLon=&amp;lat1=&amp;lon1=&amp;lat2=&amp;lon2=&amp;resolutionSub=&amp;listLat1=&amp;listLon1=&amp;listLat2=&amp;listLon2=&amp;resolutionList=&amp;endPoint1Lat=&amp;endPoint1Lon=&amp;endPoint2Lat=&amp;endPoint2Lon=&amp;listEndPoint1Lat=&amp;listEndPoint1Lon=&amp;listEndPoint2Lat=&amp;listEndPoint2Lon=&amp;zipCodeList=&amp;listZipCodeList=&amp;centerPointLat=&amp;centerPointLon=&amp;distanceLat=&amp;distanceLon=&amp;resolutionSquare=&amp;listCenterPointLat=&amp;listCenterPointLon=&amp;listDistanceLat=&amp;listDistanceLon=&amp;listResolutionSquare=&amp;citiesLevel=&amp;listCitiesLevel=&amp;sector=&amp;gmlListLatLon=&amp;featureType=&amp;requestedTime=&amp;startTime=&amp;endTime=&amp;compType=&amp;propertyName=&amp;product=time-series&amp;begin=2004-01-01T00%3A00%3A00&amp;end=2015-03-10T00%3A00%3A00&amp;maxt=maxt&amp;Submit=Submit</property>
- </component>
- <component t:x="88" t:y="91" name="text2" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>http://maps.googleapis.com/maps/api/directions/json?origin=Boston,MA&amp;destination=Concord,MA&amp;waypoints=Charlestown,MA|Lexington,MA&amp;sensor=false</property>
- </component>
- <service name="get4" promote="get4"/>
- <component t:x="25" t:y="210" name="get4" t:title="get" t:color="green1">
+ <component t:x="17" t:y="166" name="get4" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text4" name="url"/>
  </component>
- <component t:x="90" t:y="267" name="text4" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>http://feedproxy.google.com/TechCrunch</property>
- </component>
- <component t:x="93" t:y="25" name="text" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>http://www.google.com</property>
- </component>
- <service name="get5" promote="get5"/>
- <component t:x="26" t:y="274" name="get5" t:title="get" t:color="green1">
+ <component t:x="19" t:y="218" name="get5" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text5" name="url"/>
  </component>
- <component t:x="95" t:y="331" name="text5" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>cnn.com</property>
- </component>
- <service name="get6" promote="get6"/>
- <component t:x="26" t:y="335" name="get6" t:title="get" t:color="green1">
+ <component t:x="19" t:y="271" name="get6" t:title="get" t:color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text6" name="url"/>
  </component>
- <component t:x="95" t:y="395" name="text6" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>https://chart.googleapis.com/chart?cht=p3&amp;chs=250x100&amp;chd=t:60,40&amp;chl=Hello|World</property>
+ <component name="get7" t:title="get" t:color="green1">
+  <implementation.cpp path="lib/http" library="libhttpget"/>
+  <service name="get"/>
+  <reference target="text7" name="url"/>
  </component>
- <service name="parse" promote="parse"/>
- <component t:x="529" t:y="192" name="parse" t:title="parse" t:color="magenta1">
+ <component name="join" t:title="join" t:color="magenta1">
+  <t:implementation.python script="nuvem/join.py"/>
+  <service name="join"/>
+  <reference target="text9" name="separator"/>
+  <reference target="first" name="list"/>
+ </component>
+ <component t:x="19" t:y="329" name="parse" t:title="parse" t:color="magenta1">
   <t:implementation.python script="nuvem/parse.py"/>
   <service name="parse"/>
   <reference target="text8" name="regexp"/>
   <reference target="join" name="string"/>
  </component>
- <component t:x="832" t:y="249" name="rest" t:title="rest" t:color="yellow1">
+ <component name="rest" t:title="rest" t:color="yellow1">
   <t:implementation.python script="nuvem/rest.py"/>
   <service name="rest"/>
   <reference target="get7" name="list"/>
  </component>
- <component t:x="868" t:y="311" name="get7" t:title="get" t:color="green1">
-  <implementation.cpp path="lib/http" library="libhttpget"/>
-  <service name="get"/>
-  <reference target="text7" name="url"/>
+ <component name="text" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://www.google.com</property>
  </component>
- <component t:x="795" t:y="269" name="text7" t:title=" '{propval}'" t:color="orange1">
+ <component name="text2" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://maps.googleapis.com/maps/api/directions/json?origin=Boston,MA&amp;destination=Concord,MA&amp;waypoints=Charlestown,MA|Lexington,MA&amp;sensor=false</property>
+ </component>
+ <component name="text3" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php?whichClient=NDFDgen&amp;lat=38.99&amp;lon=-77.01&amp;listLatLon=&amp;lat1=&amp;lon1=&amp;lat2=&amp;lon2=&amp;resolutionSub=&amp;listLat1=&amp;listLon1=&amp;listLat2=&amp;listLon2=&amp;resolutionList=&amp;endPoint1Lat=&amp;endPoint1Lon=&amp;endPoint2Lat=&amp;endPoint2Lon=&amp;listEndPoint1Lat=&amp;listEndPoint1Lon=&amp;listEndPoint2Lat=&amp;listEndPoint2Lon=&amp;zipCodeList=&amp;listZipCodeList=&amp;centerPointLat=&amp;centerPointLon=&amp;distanceLat=&amp;distanceLon=&amp;resolutionSquare=&amp;listCenterPointLat=&amp;listCenterPointLon=&amp;listDistanceLat=&amp;listDistanceLon=&amp;listResolutionSquare=&amp;citiesLevel=&amp;listCitiesLevel=&amp;sector=&amp;gmlListLatLon=&amp;featureType=&amp;requestedTime=&amp;startTime=&amp;endTime=&amp;compType=&amp;propertyName=&amp;product=time-series&amp;begin=2004-01-01T00%3A00%3A00&amp;end=2015-03-10T00%3A00%3A00&amp;maxt=maxt&amp;Submit=Submit</property>
+ </component>
+ <component name="text4" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>http://feedproxy.google.com/TechCrunch</property>
+ </component>
+ <component name="text5" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>cnn.com</property>
  </component>
- <component t:x="553" t:y="292" name="first" t:title="first" t:color="yellow1">
-  <t:implementation.python script="nuvem/first.py"/>
-  <service name="first"/>
-  <reference target="rest" name="list"/>
- </component>
- <component t:x="812" t:y="334" name="text9" t:title=" '{propval}'" t:color="orange1">
+ <component name="text6" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
-  <property name="property"/>
+  <property>https://chart.googleapis.com/chart?cht=p3&amp;chs=250x100&amp;chd=t:60,40&amp;chl=Hello|World</property>
  </component>
- <component t:x="617" t:y="226" name="text8" t:title=" '{propval}'" t:color="orange1">
+ <component name="text7" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>cnn.com</property>
+ </component>
+ <component name="text8" t:title=" '{propval}'" t:color="orange1">
   <t:implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>(CNN)</property>
  </component>
- <component t:x="617" t:y="254" name="join" t:title="join" t:color="magenta1">
-  <t:implementation.python script="nuvem/join.py"/>
-  <service name="join"/>
-  <reference target="text9" name="separator"/>
-  <reference target="first" name="list"/>
+ <component name="text9" t:title=" '{propval}'" t:color="orange1">
+  <t:implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property name="property"/>
  </component>
 </composite>
