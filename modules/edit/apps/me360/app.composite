@@ -17,111 +17,94 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" name="app" targetNamespace="http://app">
- <service name="buzz" promote="buzz"/>
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
  <service name="start" promote="start"/>
- <component t:x="15" t:y="218" name="buzz" t:title="{compname}" t:color="green1">
-  <t:implementation.python script="nuvem/service.py"/>
-  <service name="service" t:visible="false"/>
-  <reference target="get" name="content"/>
- </component>
- <component name="bzprofile" t:title="buzz profile" t:color="blue1">
-  <t:implementation.python script="nuvem/bzprofile.py"/>
+ <component name="bzprofile" title="buzz profile" color="blue1">
+  <implementation.python script="nuvem/bzprofile.py"/>
   <service name="bzprofile"/>
   <reference target="text4" name="id"/>
-  <reference name="bz" t:visible="false">
-   <t:binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
+  <reference name="bz" visible="false">
+   <binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
   </reference>
  </component>
- <component name="fbprofile" t:title="facebook profile" t:color="blue1">
-  <t:implementation.python script="nuvem/fbprofile.py"/>
+ <component name="fbprofile" title="facebook profile" color="blue1">
+  <implementation.python script="nuvem/fbprofile.py"/>
   <service name="fbprofile"/>
   <reference target="text" name="id"/>
-  <reference name="fb" t:visible="false">
-   <t:binding.http uri="https://graph.facebook.com"/>
+  <reference name="fb" visible="false">
+   <binding.http uri="https://graph.facebook.com"/>
   </reference>
  </component>
- <component name="format" t:title="format" t:color="magenta1">
-  <t:implementation.python script="nuvem/format_.py"/>
-  <service name="format"/>
-  <reference target="text3" name="pattern"/>
-  <reference target="list" name="values"/>
- </component>
- <component name="get" t:title="get" t:color="green1">
-  <implementation.cpp path="lib/http" library="libhttpget"/>
-  <service name="get"/>
-  <reference target="format" name="url"/>
- </component>
- <component name="list" t:title="list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="text5" name="item" t:clonable="true"/>
-  <reference name="item" t:clonable="true"/>
- </component>
- <component name="list2" t:title="list" t:color="yellow1">
-  <t:implementation.python script="nuvem/list_.py"/>
-  <service name="list"/>
-  <reference target="property" name="item" t:clonable="true"/>
-  <reference target="property2" name="item" t:clonable="true"/>
-  <reference target="property3" name="item" t:clonable="true"/>
-  <reference name="item" t:clonable="true"/>
- </component>
- <component name="property" t:title="{propval} :" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="property"/>
+ <component name="item" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
   <reference target="fbprofile" name="value"/>
   <property>fbprofile</property>
  </component>
- <component name="property2" t:title="{propval} :" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="property"/>
+ <component name="item2" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
   <reference target="twprofile" name="value"/>
   <property>twitprofile</property>
  </component>
- <component name="property3" t:title="{propval} :" t:color="orange1">
-  <t:implementation.python script="nuvem/assoc.py"/>
-  <service name="property"/>
+ <component name="item3" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
   <reference target="bzprofile" name="value"/>
   <property>buzzprofile</property>
  </component>
- <component t:x="15" t:y="32" name="start" t:title="start" t:color="green1">
-  <t:implementation.python script="nuvem/start.py"/>
-  <service name="start" t:visible="false">
-   <t:binding.http uri="start"/>
+ <component name="list" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="text5" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="list2" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="item" name="item" clonable="true"/>
+  <reference target="item2" name="item" clonable="true"/>
+  <reference target="item3" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component x="15" y="32" name="start" title="start" color="green1">
+  <implementation.python script="nuvem/start.py"/>
+  <service name="start" visible="false">
+   <binding.http uri="start"/>
   </service>
   <reference target="list2" name="content"/>
  </component>
- <component name="text" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
-  <service name="text"/>
-  <property>100001053301307</property>
- </component>
- <component name="text2" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>jsdelfino</property>
  </component>
- <component name="text3" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text2" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>jsdelfino</property>
+ </component>
+ <component name="text3" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>https://www.googleapis.com/buzz/v1/people/{0}/@self?alt=json</property>
  </component>
- <component name="text4" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text4" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>jsdelfino</property>
  </component>
- <component name="text5" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text5" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>jsdelfino</property>
  </component>
- <component name="twprofile" t:title="twitter profile" t:color="blue1">
-  <t:implementation.python script="nuvem/twprofile.py"/>
+ <component name="twprofile" title="twitter profile" color="blue1">
+  <implementation.python script="nuvem/twprofile.py"/>
   <service name="twprofile"/>
   <reference target="text2" name="id"/>
-  <reference name="tw" t:visible="false">
-   <t:binding.http uri="http://api.twitter.com/1/users/show.json"/>
+  <reference name="tw" visible="false">
+   <binding.http uri="http://api.twitter.com/1/users/show.json"/>
   </reference>
  </component>
 </composite>

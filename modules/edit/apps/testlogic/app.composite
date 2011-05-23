@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" name="app" targetNamespace="http://app">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
  <service name="cos" promote="cos"/>
  <service name="eval" promote="eval"/>
  <service name="eval2" promote="eval2"/>
@@ -26,124 +26,124 @@
  <service name="if" promote="if"/>
  <service name="random" promote="random"/>
  <service name="sin" promote="sin"/>
- <component t:x="20" t:y="251" name="cos" t:title="cos" t:color="magenta1">
-  <t:implementation.python script="nuvem/cos_.py"/>
+ <component x="20" y="251" name="cos" title="cos" color="magenta1">
+  <implementation.python script="nuvem/cos_.py"/>
   <service name="cos"/>
   <reference target="number7" name="x"/>
  </component>
- <component t:x="170" t:y="11" name="eval" t:title="expr" t:color="magenta1">
-  <t:implementation.python script="nuvem/eval_.py"/>
+ <component x="170" y="11" name="eval" title="expr" color="magenta1">
+  <implementation.python script="nuvem/eval_.py"/>
   <service name="eval"/>
   <reference target="text3" name="py"/>
   <reference name="ref"/>
  </component>
- <component t:x="180" t:y="85" name="eval2" t:title="expr" t:color="magenta1">
-  <t:implementation.python script="nuvem/eval_.py"/>
+ <component x="180" y="85" name="eval2" title="expr" color="magenta1">
+  <implementation.python script="nuvem/eval_.py"/>
   <service name="eval"/>
   <reference target="text4" name="py"/>
   <reference target="number3" name="ref"/>
  </component>
- <component t:x="156" t:y="267" name="exec" t:title="script" t:color="magenta1">
-  <t:implementation.python script="nuvem/exec_.py"/>
+ <component x="156" y="267" name="exec" title="script" color="magenta1">
+  <implementation.python script="nuvem/exec_.py"/>
   <service name="exec"/>
   <reference target="get" name="py"/>
   <reference target="number4" name="ref"/>
  </component>
- <component t:x="160" t:y="172" name="exec2" t:title="script" t:color="magenta1">
-  <t:implementation.python script="nuvem/exec_.py"/>
+ <component x="160" y="172" name="exec2" title="script" color="magenta1">
+  <implementation.python script="nuvem/exec_.py"/>
   <service name="exec"/>
   <reference target="text6" name="py"/>
   <reference target="number5" name="ref"/>
  </component>
- <component name="get" t:title="get" t:color="green1">
+ <component name="get" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text5" name="url"/>
  </component>
- <component name="greater" t:title="gt" t:color="magenta1">
-  <t:implementation.python script="nuvem/greater.py"/>
+ <component name="greater" title="gt" color="magenta1">
+  <implementation.python script="nuvem/greater.py"/>
   <service name="greater"/>
   <reference target="number2" name="value1"/>
   <reference target="number" name="value2"/>
  </component>
- <component t:x="19" t:y="9" name="if" t:title="if" t:color="magenta1">
-  <t:implementation.python script="nuvem/if_.py"/>
+ <component x="19" y="9" name="if" title="if" color="magenta1">
+  <implementation.python script="nuvem/if_.py"/>
   <service name="if"/>
   <reference target="greater" name="condition"/>
   <reference target="text" name="then"/>
   <reference target="text2" name="else"/>
  </component>
- <component name="number" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
+ <component name="number" title="#" color="orange1">
+  <implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>5</property>
  </component>
- <component name="number2" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
+ <component name="number2" title="#" color="orange1">
+  <implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>3</property>
  </component>
- <component name="number3" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
+ <component name="number3" title="#" color="orange1">
+  <implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>5</property>
  </component>
- <component name="number4" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
+ <component name="number4" title="#" color="orange1">
+  <implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>5</property>
  </component>
- <component name="number5" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
+ <component name="number5" title="#" color="orange1">
+  <implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>5</property>
  </component>
- <component name="number6" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
+ <component name="number6" title="#" color="orange1">
+  <implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>0.5</property>
  </component>
- <component name="number7" t:title="#" t:color="orange1">
-  <t:implementation.python script="nuvem/number.py"/>
+ <component name="number7" title="#" color="orange1">
+  <implementation.python script="nuvem/number.py"/>
   <service name="number"/>
   <property>0.5</property>
  </component>
- <component t:x="24" t:y="158" name="random" t:title="rand" t:color="magenta1">
-  <t:implementation.python script="nuvem/random_.py"/>
+ <component x="24" y="158" name="random" title="rand" color="magenta1">
+  <implementation.python script="nuvem/random_.py"/>
   <service name="random"/>
  </component>
- <component t:x="21" t:y="198" name="sin" t:title="sin" t:color="magenta1">
-  <t:implementation.python script="nuvem/sin_.py"/>
+ <component x="21" y="198" name="sin" title="sin" color="magenta1">
+  <implementation.python script="nuvem/sin_.py"/>
   <service name="sin"/>
   <reference target="number6" name="x"/>
  </component>
- <component name="text" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>greater than 5</property>
  </component>
- <component name="text2" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text2" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>not greater than 5</property>
  </component>
- <component name="text3" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text3" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>3.14116 * 5 * 5</property>
  </component>
- <component name="text4" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text4" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>3.14116 * ref.get(r) * ref.get(r)</property>
  </component>
- <component name="text5" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text5" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>http://people.apache.org/~jsdelfino/tuscany/test/surface.py</property>
  </component>
- <component name="text6" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text6" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>val = 3.14116 * ref.get(r) * ref.get(r)</property>
  </component>

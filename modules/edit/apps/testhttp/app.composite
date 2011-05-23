@@ -17,7 +17,8 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1" name="app" targetNamespace="http://app">
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="app" targetNamespace="http://app">
+ <service name="call" promote="call"/>
  <service name="get" promote="get"/>
  <service name="get2" promote="get2"/>
  <service name="get3" promote="get3"/>
@@ -25,106 +26,153 @@
  <service name="get5" promote="get5"/>
  <service name="get6" promote="get6"/>
  <service name="parse" promote="parse"/>
- <component name="first" t:title="first" t:color="yellow1">
-  <t:implementation.python script="nuvem/first.py"/>
+ <service name="item" promote="property"/>
+ <component x="36" y="287" name="call" title="call" color="green1">
+  <implementation.python script="nuvem/call.py"/>
+  <service name="call"/>
+  <reference target="name" name="name"/>
+  <reference name="proxy" wiredByImpl="true" visible="false"/>
+ </component>
+ <component name="first" title="first" color="yellow1">
+  <implementation.python script="nuvem/first.py"/>
   <service name="first"/>
   <reference target="rest" name="list"/>
  </component>
- <component t:x="20" t:y="8" name="get" t:title="get" t:color="green1">
+ <component x="20" y="8" name="get" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text" name="url"/>
  </component>
- <component t:x="18" t:y="61" name="get2" t:title="get" t:color="green1">
+ <component x="18" y="61" name="get2" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text2" name="url"/>
  </component>
- <component t:x="14" t:y="112" name="get3" t:title="get" t:color="green1">
+ <component x="14" y="112" name="get3" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text3" name="url"/>
  </component>
- <component t:x="17" t:y="166" name="get4" t:title="get" t:color="green1">
+ <component x="19" y="170" name="get4" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text4" name="url"/>
  </component>
- <component t:x="19" t:y="218" name="get5" t:title="get" t:color="green1">
+ <component x="241" y="6" name="get5" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text5" name="url"/>
  </component>
- <component t:x="19" t:y="271" name="get6" t:title="get" t:color="green1">
+ <component x="16" y="227" name="get6" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text6" name="url"/>
  </component>
- <component name="get7" t:title="get" t:color="green1">
+ <component name="get7" title="get" color="green1">
   <implementation.cpp path="lib/http" library="libhttpget"/>
   <service name="get"/>
   <reference target="text7" name="url"/>
  </component>
- <component name="join" t:title="join" t:color="magenta1">
-  <t:implementation.python script="nuvem/join.py"/>
+ <component name="join" title="join" color="magenta1">
+  <implementation.python script="nuvem/join.py"/>
   <service name="join"/>
   <reference target="text9" name="separator"/>
   <reference target="first" name="list"/>
  </component>
- <component t:x="19" t:y="329" name="parse" t:title="parse" t:color="magenta1">
-  <t:implementation.python script="nuvem/parse.py"/>
+ <component name="list" title="list" color="yellow1">
+  <implementation.python script="nuvem/list_.py"/>
+  <service name="list"/>
+  <reference target="item2" name="item" clonable="true"/>
+  <reference target="item3" name="item" clonable="true"/>
+  <reference name="item" clonable="true"/>
+ </component>
+ <component name="name" title="" color="orange1">
+  <implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>https://testhttp.sca-store.com:8453/components/property</property>
+ </component>
+ <component name="params" title="?params" color="green1">
+  <implementation.python script="nuvem/params.py"/>
+  <service name="params"/>
+  <property name="query" visible="false"/>
+ </component>
+ <component x="597" y="167" name="parse" title="parse" color="magenta1">
+  <implementation.python script="nuvem/parse.py"/>
   <service name="parse"/>
   <reference target="text8" name="regexp"/>
   <reference target="join" name="string"/>
  </component>
- <component name="rest" t:title="rest" t:color="yellow1">
-  <t:implementation.python script="nuvem/rest.py"/>
+ <component x="74" y="343" name="property" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="list" name="value"/>
+  <property>test</property>
+ </component>
+ <component name="item2" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="user" name="value"/>
+  <property>user</property>
+ </component>
+ <component name="item3" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference target="params" name="value"/>
+  <property>name</property>
+ </component>
+ <component name="rest" title="rest" color="yellow1">
+  <implementation.python script="nuvem/rest.py"/>
   <service name="rest"/>
   <reference target="get7" name="list"/>
  </component>
- <component name="text" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>http://www.google.com</property>
  </component>
- <component name="text2" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text2" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>http://maps.googleapis.com/maps/api/directions/json?origin=Boston,MA&amp;destination=Concord,MA&amp;waypoints=Charlestown,MA|Lexington,MA&amp;sensor=false</property>
  </component>
- <component name="text3" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text3" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php?whichClient=NDFDgen&amp;lat=38.99&amp;lon=-77.01&amp;listLatLon=&amp;lat1=&amp;lon1=&amp;lat2=&amp;lon2=&amp;resolutionSub=&amp;listLat1=&amp;listLon1=&amp;listLat2=&amp;listLon2=&amp;resolutionList=&amp;endPoint1Lat=&amp;endPoint1Lon=&amp;endPoint2Lat=&amp;endPoint2Lon=&amp;listEndPoint1Lat=&amp;listEndPoint1Lon=&amp;listEndPoint2Lat=&amp;listEndPoint2Lon=&amp;zipCodeList=&amp;listZipCodeList=&amp;centerPointLat=&amp;centerPointLon=&amp;distanceLat=&amp;distanceLon=&amp;resolutionSquare=&amp;listCenterPointLat=&amp;listCenterPointLon=&amp;listDistanceLat=&amp;listDistanceLon=&amp;listResolutionSquare=&amp;citiesLevel=&amp;listCitiesLevel=&amp;sector=&amp;gmlListLatLon=&amp;featureType=&amp;requestedTime=&amp;startTime=&amp;endTime=&amp;compType=&amp;propertyName=&amp;product=time-series&amp;begin=2004-01-01T00%3A00%3A00&amp;end=2015-03-10T00%3A00%3A00&amp;maxt=maxt&amp;Submit=Submit</property>
  </component>
- <component name="text4" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text4" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>http://feedproxy.google.com/TechCrunch</property>
  </component>
- <component name="text5" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text5" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>cnn.com</property>
  </component>
- <component name="text6" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text6" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
-  <property>https://chart.googleapis.com/chart?cht=p3&amp;chs=250x100&amp;chd=t:60,40&amp;chl=Hello|World</property>
+  <property>https://chart.googleapis.com/chart?cht=p3&amp;chs=250x100&amp;chd=60,40&amp;chl=Hello|World</property>
  </component>
- <component name="text7" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text7" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>cnn.com</property>
  </component>
- <component name="text8" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text8" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property>(CNN)</property>
  </component>
- <component name="text9" t:title=" '{propval}'" t:color="orange1">
-  <t:implementation.python script="nuvem/text.py"/>
+ <component name="text9" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
   <service name="text"/>
   <property name="property"/>
+ </component>
+ <component name="user" title="user" color="green1">
+  <implementation.python script="nuvem/user.py"/>
+  <service name="user"/>
+  <property name="user" visible="false"/>
  </component>
 </composite>

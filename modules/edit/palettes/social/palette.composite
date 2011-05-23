@@ -1,136 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless requiblue by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.    
--->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://social"
-  name="palette">
-        
-    <service name="fbprofile" promote="fbprofile"/>
-    <service name="fbalbums" promote="fbalbums"/>
-    <service name="fbfriends" promote="fbfriends"/>
-    <service name="fbgroups" promote="fbgroups"/>
-    <service name="twprofile" promote="twprofile"/>
-    <service name="twfriends" promote="twfriends"/>
-    <service name="twfollowers" promote="twfollowers"/>
-    <service name="twtimeline" promote="twtimeline"/>
-    <service name="bzprofile" promote="bzprofile"/>
-    <service name="picalbum" promote="picalbum"/>
-    <service name="flkalbum" promote="flkalbum"/>
-
-    <component name="fbprofile" t:title="facebook profile" t:color="blue1">
-        <t:implementation.python script="nuvem/fbprofile.py"/>
-        <service name="fbprofile"/>
-        <reference name="id"/>
-        <reference name="fb" t:visible="false">
-            <t:binding.http uri="https://graph.facebook.com"/>
-        </reference>
-    </component>
-    
-    <component name="fbalbums" t:title="facebook albums" t:color="blue1">
-        <t:implementation.python script="nuvem/fbalbums.py"/>
-        <service name="fbalbums"/>
-        <reference name="id"/>
-        <reference name="fb" t:visible="false">
-            <t:binding.http uri="https://graph.facebook.com"/>
-        </reference>
-    </component>
-    
-    <component name="fbfriends" t:title="facebook friends" t:color="blue1">
-        <t:implementation.python script="nuvem/fbfriends.py"/>
-        <service name="fbfriends"/>
-        <reference name="id"/>
-        <reference name="fb" t:visible="false">
-            <t:binding.http uri="https://graph.facebook.com"/>
-        </reference>
-    </component>
-    
-    <component name="fbgroups" t:title="facebook groups" t:color="blue1">
-        <t:implementation.python script="nuvem/fbgroups.py"/>
-        <service name="fbgroups"/>
-        <reference name="id"/>
-        <reference name="fb" t:visible="false">
-            <t:binding.http uri="https://graph.facebook.com"/>
-        </reference>
-    </component>
-    
-    <component name="twprofile" t:title="twitter profile" t:color="blue1">
-        <t:implementation.python script="nuvem/twprofile.py"/>
-        <service name="twprofile"/>
-        <reference name="id"/>
-        <reference name="tw" t:visible="false">
-            <t:binding.http uri="http://api.twitter.com/1/users/show.json"/>
-        </reference>
-    </component>
-    
-    <component name="twfriends" t:title="twitter friends" t:color="blue1">
-        <t:implementation.python script="nuvem/twfriends.py"/>
-        <service name="twfriends"/>
-        <reference name="id"/>
-        <reference name="tw" t:visible="false">
-            <t:binding.http uri="http://api.twitter.com/1/statuses/friends.json"/>
-        </reference>
-    </component>
-    
-    <component name="twfollowers" t:title="twitter followers" t:color="blue1">
-        <t:implementation.python script="nuvem/twfollowers.py"/>
-        <service name="twfollowers"/>
-        <reference name="id"/>
-        <reference name="tw" t:visible="false">
-            <t:binding.http uri="http://api.twitter.com/1/statuses/followers.json"/>
-        </reference>
-    </component>
-    
-    <component name="twtimeline" t:title="twitter timeline" t:color="blue1">
-        <t:implementation.python script="nuvem/twtimeline.py"/>
-        <service name="twtimeline"/>
-        <reference name="id"/>
-        <reference name="tw" t:visible="false">
-            <t:binding.http uri="http://api.twitter.com/1/statuses/user_timeline.json"/>
-        </reference>
-    </component>
-    
-    <component name="bzprofile" t:title="buzz profile" t:color="blue1">
-        <t:implementation.python script="nuvem/bzprofile.py"/>
-        <service name="bzprofile"/>
-        <reference name="id"/>
-        <reference name="bz" t:visible="false">
-            <t:binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
-        </reference>
-    </component>
-    
-    <component name="picalbum" t:title="picasa album" t:color="blue1">
-        <t:implementation.python script="nuvem/picalbum.py"/>
-        <service name="picalbum"/>
-        <reference name="id"/>
-        <reference name="pic" t:visible="false">
-            <t:binding.http uri="https://picasaweb.google.com/data/feed/api/user"/>
-        </reference>
-    </component>
-    
-    <component name="flkalbum" t:title="flicker album" t:color="blue1">
-        <t:implementation.python script="nuvem/flkalbum.py"/>
-        <service name="flkalbum"/>
-        <reference name="id"/>
-        <reference name="flk" t:visible="false">
-            <t:binding.http uri="http://api.flickr.com/services/feeds/photos_public.gne"/>
-        </reference>
-    </component>
-    
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
+ <service name="bzprofile" promote="bzprofile"/>
+ <service name="fbalbums" promote="fbalbums"/>
+ <service name="fbfriends" promote="fbfriends"/>
+ <service name="fbgroups" promote="fbgroups"/>
+ <service name="fbprofile" promote="fbprofile"/>
+ <service name="flkalbum" promote="flkalbum"/>
+ <service name="picalbum" promote="picalbum"/>
+ <service name="twfollowers" promote="twfollowers"/>
+ <service name="twfriends" promote="twfriends"/>
+ <service name="twprofile" promote="twprofile"/>
+ <service name="twtimeline" promote="twtimeline"/>
+ <component x="90" y="320" name="bzprofile" title="buzz profile" color="blue1">
+  <implementation.python script="nuvem/bzprofile.py"/>
+  <service name="bzprofile"/>
+  <reference name="id"/>
+  <reference name="bz" visible="false">
+   <binding.http uri="https://www.googleapis.com/buzz/v1/people"/>
+  </reference>
+ </component>
+ <component x="90" y="230" name="fbalbums" title="facebook albums" color="blue1">
+  <implementation.python script="nuvem/fbalbums.py"/>
+  <service name="fbalbums"/>
+  <reference name="id"/>
+  <reference name="fb" visible="false">
+   <binding.http uri="https://graph.facebook.com"/>
+  </reference>
+ </component>
+ <component x="90" y="50" name="fbfriends" title="facebook friends" color="blue1">
+  <implementation.python script="nuvem/fbfriends.py"/>
+  <service name="fbfriends"/>
+  <reference name="id"/>
+  <reference name="fb" visible="false">
+   <binding.http uri="https://graph.facebook.com"/>
+  </reference>
+ </component>
+ <component x="90" y="90" name="fbgroups" title="facebook groups" color="blue1">
+  <implementation.python script="nuvem/fbgroups.py"/>
+  <service name="fbgroups"/>
+  <reference name="id"/>
+  <reference name="fb" visible="false">
+   <binding.http uri="https://graph.facebook.com"/>
+  </reference>
+ </component>
+ <component x="90" y="10" name="fbprofile" title="facebook profile" color="blue1">
+  <implementation.python script="nuvem/fbprofile.py"/>
+  <service name="fbprofile"/>
+  <reference name="id"/>
+  <reference name="fb" visible="false">
+   <binding.http uri="https://graph.facebook.com"/>
+  </reference>
+ </component>
+ <component x="90" y="270" name="flkalbum" title="flicker album" color="blue1">
+  <implementation.python script="nuvem/flkalbum.py"/>
+  <service name="flkalbum"/>
+  <reference name="id"/>
+  <reference name="flk" visible="false">
+   <binding.http uri="http://api.flickr.com/services/feeds/photos_public.gne"/>
+  </reference>
+ </component>
+ <component x="220" y="230" name="picalbum" title="picasa album" color="blue1">
+  <implementation.python script="nuvem/picalbum.py"/>
+  <service name="picalbum"/>
+  <reference name="id"/>
+  <reference name="pic" visible="false">
+   <binding.http uri="https://picasaweb.google.com/data/feed/api/user"/>
+  </reference>
+ </component>
+ <component x="90" y="180" name="twfollowers" title="twitter followers" color="blue1">
+  <implementation.python script="nuvem/twfollowers.py"/>
+  <service name="twfollowers"/>
+  <reference name="id"/>
+  <reference name="tw" visible="false">
+   <binding.http uri="http://api.twitter.com/1/statuses/followers.json"/>
+  </reference>
+ </component>
+ <component x="210" y="180" name="twfriends" title="twitter friends" color="blue1">
+  <implementation.python script="nuvem/twfriends.py"/>
+  <service name="twfriends"/>
+  <reference name="id"/>
+  <reference name="tw" visible="false">
+   <binding.http uri="http://api.twitter.com/1/statuses/friends.json"/>
+  </reference>
+ </component>
+ <component x="90" y="140" name="twprofile" title="twitter profile" color="blue1">
+  <implementation.python script="nuvem/twprofile.py"/>
+  <service name="twprofile"/>
+  <reference name="id"/>
+  <reference name="tw" visible="false">
+   <binding.http uri="http://api.twitter.com/1/users/show.json"/>
+  </reference>
+ </component>
+ <component x="200" y="140" name="twtimeline" title="twitter timeline" color="blue1">
+  <implementation.python script="nuvem/twtimeline.py"/>
+  <service name="twtimeline"/>
+  <reference name="id"/>
+  <reference name="tw" visible="false">
+   <binding.http uri="http://api.twitter.com/1/statuses/user_timeline.json"/>
+  </reference>
+ </component>
 </composite>

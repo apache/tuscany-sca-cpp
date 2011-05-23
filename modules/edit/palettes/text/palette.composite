@@ -1,89 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.    
--->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://text"
-  name="palette">
-        
-    <service name="contains" promote="contains"/>
-    <service name="split" promote="split"/>
-    <service name="join" promote="join"/>
-    <service name="replace" promote="replace"/>
-    <service name="lowercase" promote="lowercase"/>
-    <service name="uppercase" promote="uppercase"/>
-    <service name="format" promote="format"/>
-    <service name="parse" promote="parse"/>
-
-    <component name="contains" t:title="contains" t:color="magenta1">
-        <t:implementation.python script="nuvem/contains.py"/>
-        <service name="contains"/>
-        <reference name="search"/>
-        <reference name="string"/>
-    </component>
-    
-    <component name="split" t:title="split" t:color="magenta1">
-        <t:implementation.python script="nuvem/split.py"/>
-        <service name="split"/>
-        <reference name="separator"/>
-        <reference name="string"/>
-    </component>
-    
-    <component name="join" t:title="join" t:color="magenta1">
-        <t:implementation.python script="nuvem/join.py"/>
-        <service name="join"/>
-        <reference name="separator"/>
-        <reference name="list"/>
-    </component>
-    
-    <component name="replace" t:title="replace" t:color="magenta1">
-        <t:implementation.python script="nuvem/replace.py"/>
-        <service name="replace"/>
-        <reference name="from"/>
-        <reference name="to"/>
-        <reference name="string"/>
-    </component>
-    
-    <component name="lowercase" t:title="lower" t:color="magenta1">
-        <t:implementation.python script="nuvem/lowercase.py"/>
-        <service name="lowercase"/>
-        <reference name="string"/>
-    </component>
-    
-    <component name="uppercase" t:title="upper" t:color="magenta1">
-        <t:implementation.python script="nuvem/uppercase.py"/>
-        <service name="uppercase"/>
-        <reference name="string"/>
-    </component>
-    
-    <component name="format" t:title="format" t:color="magenta1">
-        <t:implementation.python script="nuvem/format_.py"/>
-        <service name="format"/>
-        <reference name="pattern"/>
-        <reference name="values"/>
-    </component>
-    
-    <component name="parse" t:title="parse" t:color="magenta1">
-        <t:implementation.python script="nuvem/parse.py"/>
-        <service name="parse"/>
-        <reference name="regexp"/>
-        <reference name="string"/>
-    </component>
-    
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
+ <service name="contains" promote="contains"/>
+ <service name="format" promote="format"/>
+ <service name="join" promote="join"/>
+ <service name="lowercase" promote="lowercase"/>
+ <service name="parse" promote="parse"/>
+ <service name="replace" promote="replace"/>
+ <service name="split" promote="split"/>
+ <service name="uppercase" promote="uppercase"/>
+ <component x="90" y="10" name="contains" title="contains" color="magenta1">
+  <implementation.python script="nuvem/contains.py"/>
+  <service name="contains"/>
+  <reference name="search"/>
+  <reference name="string"/>
+ </component>
+ <component x="90" y="90" name="format" title="format" color="magenta1">
+  <implementation.python script="nuvem/format_.py"/>
+  <service name="format"/>
+  <reference name="pattern"/>
+  <reference name="values"/>
+ </component>
+ <component x="160" y="160" name="join" title="join" color="magenta1">
+  <implementation.python script="nuvem/join.py"/>
+  <service name="join"/>
+  <reference name="separator"/>
+  <reference name="list"/>
+ </component>
+ <component x="90" y="230" name="lowercase" title="lower" color="magenta1">
+  <implementation.python script="nuvem/lowercase.py"/>
+  <service name="lowercase"/>
+  <reference name="string"/>
+ </component>
+ <component x="170" y="90" name="parse" title="parse" color="magenta1">
+  <implementation.python script="nuvem/parse.py"/>
+  <service name="parse"/>
+  <reference name="regexp"/>
+  <reference name="string"/>
+ </component>
+ <component x="180" y="10" name="replace" title="replace" color="magenta1">
+  <implementation.python script="nuvem/replace.py"/>
+  <service name="replace"/>
+  <reference name="from"/>
+  <reference name="to"/>
+  <reference name="string"/>
+ </component>
+ <component x="90" y="160" name="split" title="split" color="magenta1">
+  <implementation.python script="nuvem/split.py"/>
+  <service name="split"/>
+  <reference name="separator"/>
+  <reference name="string"/>
+ </component>
+ <component x="170" y="230" name="uppercase" title="upper" color="magenta1">
+  <implementation.python script="nuvem/uppercase.py"/>
+  <service name="uppercase"/>
+  <reference name="string"/>
+ </component>
 </composite>

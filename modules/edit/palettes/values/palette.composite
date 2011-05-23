@@ -1,87 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.    
--->
-<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
-  targetNamespace="http://values"
-  name="palette">
-        
-    <service name="property" promote="property"/>
-    <service name="text" promote="text"/>
-    <service name="number" promote="number"/>
-    <service name="name" promote="name"/>
-    <service name="valueof" promote="valueof"/>
-    <service name="true" promote="true"/>
-    <service name="false" promote="false"/>
-    <service name="nothing" promote="nothing"/>
-    <service name="now" promote="now"/>
-
-    <component name="property" t:title="{propval} :" t:color="orange1">
-        <t:implementation.python script="nuvem/assoc.py"/>
-        <service name="property"/>
-        <reference name="value"/>
-        <property name="property">name</property>
-    </component>
-    
-    <component name="text" t:title=" '{propval}'" t:color="orange1">
-        <t:implementation.python script="nuvem/text.py"/>
-        <service name="text"/>
-        <property name="property">text</property>
-    </component>
-    
-    <component name="number" t:title="#" t:color="orange1">
-        <t:implementation.python script="nuvem/number.py"/>
-        <service name="number"/>
-        <property name="property">123</property>
-    </component>
-    
-    <component name="name" t:title="" t:color="orange1">
-        <t:implementation.python script="nuvem/name.py"/>
-        <service name="name"/>
-        <property name="property">name</property>
-    </component>
-    
-    <component name="valueof" t:title="valueof" t:color="orange1">
-        <t:implementation.python script="nuvem/valueof.py"/>
-        <service name="valueof"/>
-        <property name="name">name</property>
-    </component>
-    
-    <component name="true" t:title="true" t:color="orange1">
-        <t:implementation.python script="nuvem/true_.py"/>
-        <service name="true"/>
-    </component>
-    
-    <component name="false" t:title="false" t:color="orange1">
-        <t:implementation.python script="nuvem/false_.py"/>
-        <service name="false"/>
-    </component>
-    
-    <component name="nothing" t:title="nothing" t:color="orange1">
-        <t:implementation.python script="nuvem/nothing.py"/>
-        <service name="nothing"/>
-    </component>
-    
-    <component name="now" t:title="now" t:color="orange1">
-        <t:implementation.python script="nuvem/now.py"/>
-        <service name="now"/>
-        <reference name="format"/>
-    </component>
-    
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="palette" targetNamespace="http://palette">
+ <service name="comment" promote="comment"/>
+ <service name="false" promote="false"/>
+ <service name="item" promote="item"/>
+ <service name="name" promote="name"/>
+ <service name="nothing" promote="nothing"/>
+ <service name="now" promote="now"/>
+ <service name="number" promote="number"/>
+ <service name="text" promote="text"/>
+ <service name="true" promote="true"/>
+ <service name="valueof" promote="valueof"/>
+ <component x="160" y="160" name="comment" title="{propval}" color="white">
+  <implementation.python script="nuvem/comment.py"/>
+  <service name="comment" visible="false"/>
+  <property>comment</property>
+ </component>
+ <component x="160" y="110" name="false" title="false" color="orange1">
+  <implementation.python script="nuvem/false_.py"/>
+  <service name="false"/>
+ </component>
+ <component x="90" y="60" name="item" title="{propval} :" color="orange1">
+  <implementation.python script="nuvem/item.py"/>
+  <service name="item"/>
+  <reference name="value"/>
+  <property>name</property>
+ </component>
+ <component x="230" y="10" name="name" title="" color="orange1">
+  <implementation.python script="nuvem/name.py"/>
+  <service name="name"/>
+  <property>name</property>
+ </component>
+ <component x="230" y="110" name="nothing" title="nothing" color="orange1">
+  <implementation.python script="nuvem/nothing.py"/>
+  <service name="nothing"/>
+ </component>
+ <component x="90" y="160" name="now" title="now" color="orange1">
+  <implementation.python script="nuvem/now.py"/>
+  <service name="now"/>
+  <reference name="format"/>
+ </component>
+ <component x="160" y="10" name="number" title="#" color="orange1">
+  <implementation.python script="nuvem/number.py"/>
+  <service name="number"/>
+  <property>123</property>
+ </component>
+ <component x="90" y="10" name="text" title=" '{propval}'" color="orange1">
+  <implementation.python script="nuvem/text.py"/>
+  <service name="text"/>
+  <property>text</property>
+ </component>
+ <component x="90" y="110" name="true" title="true" color="orange1">
+  <implementation.python script="nuvem/true_.py"/>
+  <service name="true"/>
+ </component>
+ <component x="170" y="60" name="valueof" title="valueof" color="orange1">
+  <implementation.python script="nuvem/valueof.py"/>
+  <service name="valueof"/>
+  <property>name</property>
+ </component>
 </composite>
