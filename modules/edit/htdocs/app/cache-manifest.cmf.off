@@ -7,21 +7,10 @@ CACHE MANIFEST
 
 # App resources
 /
-/account/
-/app/
-/clone/
-/data/
-/create/
-/data/
+/app.html
+/data/index.html
 /favicon.ico
-/graph/graph.js
-/graph/
-/home.png
-/menu.js
-/page/
-/page/page.js
 /public/app.png
-/public/grid72.png
 /public/iframe.html
 /public/img.png
 /public/notauth.html
@@ -30,8 +19,6 @@ CACHE MANIFEST
 /public/oops.html
 /public/touchicon.png
 /robots.txt
-/stats/
-/store/
 
 NETWORK:
 *

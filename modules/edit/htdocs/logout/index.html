@@ -27,14 +27,22 @@
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body onorientationchange="ui.reload();">
+<body class="delayed" onorientationchange="ui.reload();">
+<div id="bodydiv" class="devicewidth">
+
 <h1>Sign out</h1>
 
 <form name="signout" onsubmit="submitSignout();" action="/" method="GET">
 <input type="submit" id="signOut" value="Sign out" class="greenbutton" style="font-weight: bold"/>
 </form>
 
+</div>
+
 <script type="text/javascript">
+
+// Show the page
+ui.showbody();
+
 function submitSignout() {
     var reset = 'TuscanyOpenAuth=;expires=' + new Date(1970,01,01).toGMTString() + ';domain=.' + domainname(window.location.hostname) + ';path=/;secure=TRUE';
     document.cookie = reset;

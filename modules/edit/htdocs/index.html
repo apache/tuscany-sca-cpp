@@ -37,20 +37,18 @@
 <table style="width: 100%;">
 <tr><td><h1><span id="h1"></span></h1></td></tr>
 </table>
-<br/>
 
 <div style="margin-left: auto; margin-right: auto; text-align: center;">
 
-<h1><span id="maintitle"><span></h1>
-<br/><br/><br/><br/>
+<div id="maintitle" style="font-size: 150%;"></div>
 
-<div id="maindiagram"></div>
-<br/><br/><br/><br/>
+<div id="maindiagram"><div id="diagram" style="width: 320px; height: 280px; background: url(home.png); padding: 0px; margin: 0px auto;"></div></div>
+<br/>
 
 <input type="button" class="greenbutton" style="font-size: 150%; font-weight: bold; font-style: italic; padding: 10px;" id="getstarted" title="Get Started" value="Get Started"/>
 
-<br/><br/><br/>
-<div>Safari, Chrome, Firefox only for now.</div>
+<br/><br/>
+<div>Requires Safari 5+, Chrome 11+, Firefox 4+, IE 9+</div>
 
 </div>
 
@@ -65,13 +63,23 @@ $('h1').innerHTML = hometitle(window.location.hostname);
 displaymenu();
 
 $('maintitle').innerHTML = isNil(config.maintitle)? 'Simple App Builder' : config.maintitle;
-$('maindiagram').innerHTML = isNil(config.maindiagram)? '&lt;&lt insert diagram here &gt;&gt;' : config.maindiagram;
 $('getstarted').onclick = function() {
     return window.open('/store/', '_self');
 };
 
+// Display the main diagram
+var diagram = $('diagram');
+var bgpos = 0;
+setInterval(function() {
+    bgpos = bgpos -280;
+    if (bgpos == -2800)
+        bgpos = 0;
+    diagram.style.backgroundPosition = '0px ' + ui.pixpos(bgpos);
+}, 2000);
+
 // Show the page
 ui.showbody();
+
 </script>
 
 </body>

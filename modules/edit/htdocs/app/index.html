@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.    
 -->
-<html manifest="/cache-manifest.cmf">
+<html>
 <head>
 <title>App</title>
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
@@ -37,20 +37,25 @@ document.title = window.location.hostname.split('.')[0];
 
 <div id="app"></div>
 
-<span id="appFrame"></span>
+<span id="appbuffer"></span>
+<span id="appebuffer"></span>
 
 </div>
 
 <script type="text/javascript">
-if (ui.isIE()) $('bodydiv').style.right = -20;
 
 /**
- * Start, stop, timer and geolocation components.
+ * The main app div.
+ */
+var appdiv = $('app');
+
+/**
+ * Start, stop, timer and location components.
  */
 var startcomp = sca.httpclient('start', '/start');
 var stopcomp = sca.httpclient('stop', '/stop');
 var timercomp = sca.httpclient('timer', '/timer');
-var geolocationcomp = sca.httpclient('geolocation', '/geolocation');
+var locationcomp = sca.httpclient('location', '/location');
 
 /**
  * Find a named value in a tree of elements.
@@ -146,13 +151,13 @@ function setwidgetvalue(e, dv) {
         return t;
     }
     if (e.className == 'list') {
-        var t = ui.datalist(mklist(dv));
-        car(childElements(e)).innerHTML = t;
+        var t = ui.datalist(isNil(dv)? mklist() : mklist(dv));
+        e.innerHTML = t;
         return t;
     }
     if (e.className == 'table') {
-        var t = ui.datatable(mklist(dv));
-        car(childElements(e)).innerHTML = t;
+        var t = ui.datatable(isNil(dv)? mklist() : mklist(dv));
+        e.innerHTML = t;
         return t;
     }
     if (e.className == 'link') {
@@ -190,7 +195,7 @@ function displaydata(l) {
         return e;
     }
 
-    map(updatewidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
+    map(updatewidget, filter(function(e) { return !isNil(e.id) && e.id.substring(0, 5) != 'page:'; }, nodeList(ui.elementByID(appdiv, 'page').childNodes)));
     return true;
 }
 
@@ -219,10 +224,11 @@ function displaydoc(doc) {
 function bindwidgethandler(e) {
     if (e.className == 'button') {
         var b = car(childElements(e));
-        b.onclick = function() { return buttonClickHandler(e.id); };
+        b.name = e.id;
+        b.onclick = function() { return buttonClickHandler(b.value); };
         return e;
     }
-    if (e.className == 'button' || e.className == 'entry' || e.className == 'password' || e.className == 'checkbox') {
+    if (e.className == 'entry' || e.className == 'password' || e.className == 'checkbox') {
         car(childElements(e)).name = e.id;
         return e;
     }
@@ -263,6 +269,15 @@ function fixupwidget(e) {
 }
 
 /**
+ * Set initial value of a widget.
+ */
+function initwidget(e) {
+    if (!isNil(e.id) && e.id.substring(0, 5) != 'page:')
+        setwidgetvalue(e, mklist());
+    return e;
+}
+
+/**
  * Get app data from the main app page component.
  */
 function getpagedata() {
@@ -291,6 +306,7 @@ function getpagedata() {
 
         // Initial setup of a widget
         function setupwidget(e) {
+            initwidget(e);
             fixupwidget(e);
             bindwidgethandler(e);
         }
@@ -298,17 +314,24 @@ function getpagedata() {
         // Get the component app data
         var doc = startcomp.get(window.location.search);
         try {
-            $('app').innerHTML = $('appFrame').contentDocument.body.innerHTML;
+            var appFrame = $('appFrame');
+            if (!isNil(appFrame.contentDocument.body)) {
+                appdiv.innerHTML = appFrame.contentDocument.body.innerHTML;
+            } else {
+                $('appebuffer').appendChild(appFrame.contentDocument.documentElement);
+                appdiv.innerHTML = appebuffer.innerHTML;
+                appebuffer.innerHTML = '';
+            }
 
             // Initial setup of the widgets
-            map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID($('app'), 'page').childNodes)));
+            map(setupwidget, filter(function(e) { return !isNil(e.id); }, nodeList(ui.elementByID(appdiv, 'page').childNodes)));
 
             // Display data on the page
             displaypage(doc);
 
             // Get and eval the optional timer and location watch setup scripts
             evalcompinit(timercomp.get('setup'));
-            evalcompinit(geolocationcomp.get('setup'));
+            evalcompinit(locationcomp.get('setup'));
             return true;
 
         } catch(e) {
@@ -339,7 +362,7 @@ function compquery() {
         return append(nodeList(n.childNodes), reduce(append, mklist(), map(childrenList, nodeList(n.childNodes))));
     }
 
-    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, childrenList(ui.elementByID($('app'), 'page'))));
+    var args = map(queryarg, filter(function(e) { return !isNil(e.id) && !isNil(inputvalue(e)); }, childrenList(ui.elementByID(appdiv, 'page'))));
 
     // Append current location properties if known
     if (!isNil(geoposition)) {
@@ -378,6 +401,7 @@ function intervalHandler() {
  * Setup an interval timer.
  */
 function setupIntervalHandler(msec) {
+    intervalHandler();
     try {
         return setInterval(intervalHandler, msec);
     } catch(e) {
@@ -394,7 +418,7 @@ var geoposition = null;
 function locationHandler(pos) {
     try {
         geoposition = pos;
-        return getcompdata(geolocationcomp, compquery());
+        return getcompdata(locationcomp, compquery());
     } catch(e) {
         locationErrorHandler(e);
     }
@@ -431,7 +455,7 @@ function setupLocationHandler() {
 }
 
 // Load the app frame
-$('app').innerHTML = '<iframe id="appFrame" class="widgetFrame" src="app.html" onload="getpagedata()"></iframe>';
+$('appbuffer').innerHTML = '<iframe id="appFrame" class="widgetframe" src="app.html" onload="getpagedata()"></iframe>';
 
 </script>
 </body>

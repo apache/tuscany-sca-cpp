@@ -47,7 +47,7 @@
 <form id="createAppForm" style="position: absolute; top: 90px; left: 0px;">
 <table style="width: 100%;">
 <tr><td><b>App Name:</b></td></tr>
-<tr><td><input type="text" id="appName" size="15" placeholder="Your app name"/>&nbsp;<span id="appDomain"></span></td></tr>
+<tr><td><input type="text" id="appName" size="15" autocapitalize="off" placeholder="Your app name"/>&nbsp;<span id="appDomain"></span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
 <tr><td><img src="/public/app.png" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Sharing:</b></td></tr>
@@ -81,7 +81,8 @@ ui.showbody();
 
 // Init service references
 var editWidget = sca.component("EditWidget");
-var dashboard = sca.reference(editWidget, "dashboard");
+var dashboards = sca.reference(editWidget, "dashboards");
+var apps = sca.reference(editWidget, "apps");
 
 /**
  * Create an app.
@@ -90,11 +91,15 @@ $('createAppForm').onsubmit = function() {
     var name = $('appName').value;
     if (name == '')
         return false;
+
+    // Clone the '.new' app template
     var title = $('appTitle').value;
-    var app = mklist(mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", name)));
+    var app = mklist(mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", 'new')));
     var entry = atom.writeATOMEntry(valuesToElements(app));
-    dashboard.put(name, car(entry));
-    window.open('/store/', '_self');
+    dashboards.put(name, car(entry));
+
+    // Open it in the page editor
+    window.open('/page/?app=' + name, '_self');
     return false;
 };
 

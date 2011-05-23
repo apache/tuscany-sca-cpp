@@ -35,23 +35,25 @@ document.title = 'View - ' + window.location.hostname.split('.')[0] + '/' + cn;
 <body class="delayed" onorientationchange="ui.reload();">
 
 <div id="bodydiv" style="position: absolute; top: 0px; left: 0px; right: 0px;">
-
+<div id="compLinkHeader" style="margin-top: 4px; margin-bottom: 4px;"></div>
+<div id="datadiv" style="position: relative; left: 0px; right: 0px;">
 </div>
 
 <script type="text/javascript">
-if (ui.isIE()) $('bodydiv').style.right = -20;
+
+// Get the component name
+var cname = ui.queryParams()['component'];
 
 /**
  * The current component.
  */
-var cname = ui.queryParams()['component'];
 var comp = sca.component(cname);
 
 /**
  * Display an HTML element.
  */
 function display(e) {
-    $('bodydiv').innerHTML = e;
+    $('datadiv').innerHTML = e;
 
     ui.showbody();
     return true;

@@ -27,13 +27,15 @@
 <link rel="stylesheet" type="text/css" href="/ui-min.css"/>
 <script type="text/javascript" src="/all-min.js"></script>
 </head>
-<body onorientationchange="ui.reload();">
+<body class="delayed" onorientationchange="ui.reload();">
+<div id="bodydiv" class="devicewidth">
+
 <h1>Sign in</h1>
 
 <form name="formSignin" onsubmit="submitSignin();" method="POST" action="/login/dologin/">
 <table border="0">
 <tr><td><b>Username:</b></td></tr>
-<tr><td><input type="text" id="httpd_username" name="httpd_username" value="" size="15" placeholder="Enter your user name" style="width: 300px;"/></td></tr>
+<tr><td><input type="text" id="httpd_username" name="httpd_username" value="" size="15" autocapitalize="off" placeholder="Enter your user name" style="width: 300px;"/></td></tr>
 <tr><td><b>Password:</b></td></tr>
 <tr><td><input type="password" name="httpd_password" value="" size="15" placeholder="Enter your password" style="width: 300px;"/></td></tr>
 <tr><td><input type="submit" value="Sign in" class="greenbutton" style="font-weight: bold;"/></td><td></td></tr>
@@ -41,7 +43,13 @@
 <input type="hidden" name="httpd_location" value="/"/>
 </form>
 
+</div>
+
 <script type="text/javascript">
+
+// Show the page
+ui.showbody();
+
 function queryParams() {
     qp = new Array();
     qs = window.location.search.substring(1).split('&');

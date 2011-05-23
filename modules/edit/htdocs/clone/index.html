@@ -36,7 +36,7 @@
 
 <table style="width: 100%;">
 <tr>
-<td><h1><span id="h1"></span><span id="appNameHeader"></span></h1></td>
+<td><h2><span id="h1"></span><span id="appNameHeader"></span></h2></td>
 </tr>
 </table>
 
@@ -49,7 +49,7 @@
 <form id="cloneAppForm" style="position: absolute; top: 90px; left: 0px;">
 <table style="width: 100%;">
 <tr><td><b>New App Name:</b></td></tr>
-<tr><td><input type="text" id="appName" size="15" placeholder="Your app name"/>&nbsp;<span id="appDomain"></span></td></tr>
+<tr><td><input type="text" id="appName" size="15" autocapitalize="off" placeholder="Your app name"/>&nbsp;<span id="appDomain"></span></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>App Icon:</b></td></tr>
 <tr><td><img src="/public/app.png" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
 <tr><tr><td style="padding-top: 6px;"><b>Sharing:</b></td></tr>
@@ -89,11 +89,11 @@ function applink(appname) {
 // Set page titles
 var tclone = isNil(config.clone)? 'Clone' : config.clone;
 document.title = windowtitle(window.location.hostname) + ' - ' + tclone + ' - ' + appname;
-$('h1').innerHTML = hometitle(window.location.hostname);
-$('appNameHeader').innerHTML = ' - <a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
+//$('h1').innerHTML = hometitle(window.location.hostname);
+$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '.' + window.location.hostname + '</a>';
 $('th').innerHTML = tclone + ' this App';
 $('cloneAppOKButton').value = tclone;
-$('cloneAppOKButton').title = tclone + ' the app';
+$('cloneAppOKButton').title = tclone + ' this app';
 
 // Load the menu bar
 displaymenu();
@@ -106,7 +106,7 @@ ui.showbody();
 
 // Init service references
 var editWidget = sca.component("EditWidget");
-var dashboard = sca.reference(editWidget, "dashboard");
+var dashboards = sca.reference(editWidget, "dashboards");
 var apps = sca.reference(editWidget, "apps");
 
 /**
@@ -138,11 +138,15 @@ $('cloneAppForm').onsubmit = function() {
     var name = $('appName').value;
     if (name == '')
         return false;
+
+    // Clone the app
     var title = $('appTitle').value;
     var app = mklist(mklist("'entry", mklist("'title", title != ''? title : name), mklist("'id", appname)));
     var entry = atom.writeATOMEntry(valuesToElements(app));
-    dashboard.put(name, car(entry));
-    window.open('/store/', '_self');
+    dashboards.put(name, car(entry));
+
+    // Open it in the page editor
+    window.open('/page/?app=' + name, '_self');
     return false;
 };
 
@@ -150,7 +154,7 @@ $('cloneAppForm').onsubmit = function() {
  * Cancel cloning an app.
  */
 $('cloneAppCancelButton').onclick = function() {
-    return window.open('/store/', '_self');
+    window.open('/stats/?app=' + appname, '_self');
 };
 
 // Get the current app

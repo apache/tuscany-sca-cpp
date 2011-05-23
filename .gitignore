@@ -57,6 +57,7 @@ config.sub
 config.status
 config.js
 all.js
+intro*.png
 depcomp
 install-sh
 ltmain.sh

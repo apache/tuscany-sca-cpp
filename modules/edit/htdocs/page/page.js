@@ -26,18 +26,16 @@ var page = {};
  * Default positions and sizes.
  */
 var palcx = 2500;
-var trashcx = 2480;
 
 /**
  * Init a page editor. Works with all browsers except IE.
  */
-page.edit = function(elem, wname, wtext, wadd, wdelete, onchange, onselect) {
+page.edit = function(elem, wvalue, wadd, wdelete, onchange, onselect) {
 
     // Track element dragging and selection
     page.dragging = null;
     page.selected = null;
-    wname.disabled = true;
-    wtext.disabled = true;
+    wvalue.disabled = true;
     wdelete.disabled = true;
 
     // Trigger widget select and page change events
@@ -49,58 +47,21 @@ page.edit = function(elem, wname, wtext, wadd, wdelete, onchange, onselect) {
      */
     elem.onmousedown = function(e) {
 
+        // On mouse controlled devices, engage the click component selection
+        // logic right away
+        if (typeof e.touches == 'undefined')
+            elem.onclick(e);
+
         // Find a draggable element
-        page.dragging = page.draggable(e.target, elem);
-        page.selected = page.dragging;
-        if (page.dragging == null) {
-
-            // Reset current selection
-            wname.value = '';
-            wname.disabled = true;
-            wtext.value = '';
-            wtext.disabled = true;
-            wdelete.disabled = true;
-
-            // Trigger widget select event
-            page.onwidgetselect('');
+        var dragging = page.draggable(e.target, elem);
+        if (dragging == null || dragging != page.selected)
             return true;
-        }
-
-        // Clone element dragged from palette
-        if (page.dragging.id.substring(0, 8) == 'palette:') {
-            page.dragging = page.clone(page.dragging);
-            page.selected = page.dragging;
-
-            // Move into the editing area and hide the palette
-            page.selected.style.left = ui.pixpos(ui.numpos(page.selected.style.left) + palcx);
-            elem.style.left = ui.pixpos(palcx * -1);
-        
-            // Bring it to the top
-            page.bringtotop(page.dragging);
-
-            // Trigger page change event
-            page.onpagechange(true);
-
-        } else {
-
-            // Bring it to the top
-            page.bringtotop(page.dragging);
-        }
+        page.dragging = dragging;
 
         // Remember mouse position
         var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
         page.dragX = pos.screenX;
         page.dragY = pos.screenY;
-
-        // Update the widget name and text fields
-        wname.value = page.selected.id;
-        wname.disabled = false;
-        wtext.value = page.text(page.selected);
-        wtext.disabled = !page.hastext(page.selected);
-        wdelete.disabled = false;
-
-        // Trigger widget select event
-        page.onwidgetselect(page.selected.id);
 
         if (e.preventDefault)
             e.preventDefault();
@@ -130,29 +91,6 @@ page.edit = function(elem, wname, wtext, wadd, wdelete, onchange, onselect) {
         // Fixup widget style
         page.fixupwidget(page.dragging);
 
-        // Discard element dragged out of page area
-        if (ui.numpos(page.dragging.style.left) < palcx && page.dragging.id.substring(0, 8) != 'palette:') {
-            if (ui.numpos(page.dragging.style.left) >= trashcx) {
-
-                // Unless it's close enough to page area, then move it there
-                page.dragging.style.left = ui.pixpos(palcx);
-                page.dragging.cover.style.left = ui.pixpos(palcx);
-            } else {
-                page.dragging.parentNode.removeChild(page.dragging);
-
-                // Reset current selection
-                page.selected = null;
-                wname.value = '';
-                wname.disabled = true;
-                wtext.value = '';
-                wtext.disabled = true;
-                wdelete.disabled = true;
-
-                // Trigger widget select event
-                page.onwidgetselect('');
-            }
-        }
-
         // Forget dragged element
         page.dragging = null;
 
@@ -171,16 +109,20 @@ page.edit = function(elem, wname, wtext, wadd, wdelete, onchange, onselect) {
         if (page.dragging == null)
             return true;
 
+        // Get the mouse position
+        var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
+        if (pos.screenX == page.dragX && pos.screenY == page.dragY)
+            return true;
+
         // Compute position of dragged element
         var curX = ui.numpos(page.dragging.style.left);
         var curY = ui.numpos(page.dragging.style.top);
-        var pos = typeof e.touches != "undefined" ? e.touches[0] : e;
         var newX = curX + (pos.screenX - page.dragX);
         var newY = curY + (pos.screenY - page.dragY);
-        if (newX >= 0)
+        if (newX >= palcx)
             page.dragX = pos.screenX;
         else
-            newX = 0;
+            newX = palcx;
         if (newY >= 0)
             page.dragY = pos.screenY;
         else
@@ -201,32 +143,70 @@ page.edit = function(elem, wname, wtext, wadd, wdelete, onchange, onselect) {
      * Handle a mouse click event.
      */
     elem.onclick = function(e) {
-        if (page.dragging == null) {
+
+        // Find selected element
+        var selected = page.draggable(e.target, elem);
+        if (selected == null) {
+            if (page.selected != null) {
+
+                // Reset current selection
+                page.widgetselect(page.selected, false, wvalue, wdelete);
+                page.selected = null;
+
+                // Trigger widget select event
+                page.onwidgetselect(null);
+            }
 
             // Dismiss the palette
             if (ui.numpos(elem.style.left) != (palcx * -1))
                 elem.style.left = ui.pixpos(palcx * -1);
+
+            return true;
         }
+
+        // Deselect the previously selected element
+        page.widgetselect(page.selected, false, wvalue, wdelete);
+
+        // Clone element dragged from palette
+        if (selected.id.substring(0, 8) == 'palette:') {
+            page.selected = page.clone(selected);
+
+            // Move into the editing area and hide the palette
+            page.selected.style.left = ui.pixpos(ui.numpos(page.selected.style.left) + palcx);
+            page.selected.cover.style.left = ui.pixpos(ui.numpos(page.selected.cover.style.left) + palcx);
+            elem.style.left = ui.pixpos(palcx * -1);
+        
+            // Bring it to the top
+            page.bringtotop(page.selected);
+
+            // Trigger page change event
+            page.onpagechange(true);
+
+        } else {
+
+            // Bring selected element to the top
+            page.selected = selected;
+            page.bringtotop(page.selected);
+        }
+
+        // Select the element
+        page.widgetselect(page.selected, true, wvalue, wdelete);
+
+        // Trigger widget select event
+        page.onwidgetselect(page.selected);
+
         return true;
     };
 
     /**
      * Handle field on change events.
      */
-    wname.onchange = wname.onblur = function() {
+    wvalue.onchange = wvalue.onblur = function() {
         if (page.selected == null)
             return false;
-        page.selected.id = wname.value;
-
-        // Trigger page change event
-        page.onpagechange(true);
-        return false;
-    };
-
-    wtext.onchange = wtext.onblur = function() {
-        if (page.selected == null)
-            return false;
-        page.settext(page.selected, wtext.value);
+        page.settext(page.selected, wvalue.value);
+        page.selected.cover.style.width = ui.pixpos(page.selected.clientWidth + 4);
+        page.selected.cover.style.height = ui.pixpos(page.selected.clientHeight + 4);
 
         // Trigger page change event
         page.onpagechange(true);
@@ -246,19 +226,16 @@ page.edit = function(elem, wname, wtext, wadd, wdelete, onchange, onselect) {
         if (page.selected == null)
             return false;
 
+        // Reset current selection
+        page.widgetselect(page.selected, false, wvalue, wdelete);
+
         // Remove selected widget
         page.selected.parentNode.removeChild(page.selected);
-
-        // Reset current selection
+        page.selected.cover.parentNode.removeChild(page.selected.cover);
         page.selected = null;
-        wname.value = '';
-        wname.disabled = true;
-        wtext.value = '';
-        wtext.disabled = true;
-        wdelete.disabled = true;
 
         // Trigger widget select event
-        page.onwidgetselect('');
+        page.onwidgetselect(null);
 
         // Trigger page change event
         page.onpagechange(true);
@@ -276,6 +253,11 @@ page.edit = function(elem, wname, wtext, wadd, wdelete, onchange, onselect) {
  * Return the text of a widget.
  */
 page.text = function(e) {
+    var formula = e.id;
+    if (formula.substring(0, 5) != 'page:') {
+        return '=' + formula;
+    }
+
     if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section')
         return car(childElements(e)).innerHTML;
     if (e.className == 'button' || e.className == 'checkbox')
@@ -331,6 +313,9 @@ page.hastext = function(e) {
  * Set the text of a widget.
  */
 page.settext = function(e, t) {
+    var formula = t.length > 1 && t.substring(0, 1) == '=';
+    e.id = formula? t.substring(1) : 'page:' + e.className;
+
     if (e.className == 'h1' || e.className == 'h2' || e.className == 'text' || e.className == 'section') {
         car(childElements(e)).innerHTML = t;
         return t;
@@ -351,10 +336,12 @@ page.settext = function(e, t) {
         return t;
     }
     if (e.className == 'list') {
+        e.innerHTML = '<table class="datatable" style="width: 100%;;"><tr><td class="datatd">' + t + '</td></tr><tr><td class="datatd">...</td></tr></table>';
         return '';
     }
     if (e.className == 'table') {
-        return '';
+        e.innerHTML = '<table class="datatable" style="width: 100%;"><tr><td class="datatdl">' + t + '</td><td class="datatdr">...</td></tr><tr><td class="datatdl">...</td><td class="datatdr">...</td></tr></table>';
+        return t;
     }
     if (e.className == 'link') {
         var l = t.split(',');
@@ -364,11 +351,11 @@ page.settext = function(e, t) {
         return t;
     }
     if (e.className == 'img') {
-        car(childElements(e)).src = t;
+        car(childElements(e)).src = formula? '/public/img.png' : t;
         return t;
     }
     if (e.className == 'iframe') {
-        car(childElements(e)).href = t;
+        car(childElements(e)).href = formula? '/public/iframe.html' : t;
         return t;
     }
     return '';
@@ -388,10 +375,12 @@ page.fixupwidget = function(e) {
         return e;
     }
     if (e.className == 'list') {
+        e.style.width = '100%';
         car(childElements(e)).style.width = '100%';
         return e;
     }
     if (e.className == 'table') {
+        e.style.width = '100%';
         car(childElements(e)).style.width = '100%';
         return e;
     }
@@ -427,19 +416,51 @@ page.bringtotop = function(n) {
 }
 
 /**
+ * Draw widget selection.
+ */
+page.widgetselect = function(n, s, wvalue, wdelete) {
+    if (isNil(n) || !s) {
+        // Clear the widget value field
+        wvalue.value = '';
+        wvalue.disabled = true;
+        wdelete.disabled = true;
+
+        // Clear the widget outline
+        if (!isNil(n))
+            n.cover.style.borderWidth = '0px';
+    }
+    if (isNil(n))
+        return true;
+
+    // Update the widget value field
+    wvalue.value = page.text(n);
+    wvalue.disabled = false;
+    wdelete.disabled = false;
+
+    // Outline the widget
+    n.cover.style.borderWidth = s? '2px' : '0px';
+    return true;
+};
+
+/**
  * Cover a page element with a <span> element to prevent
  * any input events to reach it.
  */
 page.cover = function(e) {
     if (e.id == '' || isNil(e.style))
         return e;
-    var cover = document.createElement('span');
+    var cover = document.createElement('div');
     cover.style.position = 'absolute';
-    cover.style.left = ui.pixpos(ui.numpos(e.style.left) - 5);
-    cover.style.top = ui.pixpos(ui.numpos(e.style.top) - 5);
-    cover.style.width = e.clientWidth + 10;
-    cover.style.height = e.clientHeight + 10;
-    cover.style.visibility = 'visible';
+    cover.style.left = ui.pixpos(ui.numpos(e.style.left) - 2);
+    cover.style.top = ui.pixpos(ui.numpos(e.style.top) - 2);
+    cover.style.width = ui.pixpos(e.clientWidth + 4);
+    cover.style.height = ui.pixpos(e.clientHeight + 4);
+    cover.style.visibility = 'inherit';
+    cover.style.borderStyle = 'solid';
+    cover.style.borderWidth = '0px';
+    cover.style.borderColor = '#598edd';
+    cover.style.padding = '0px';
+    cover.style.margin = '0px';
     cover.covered = e;
     e.cover = cover;
     e.parentNode.appendChild(cover);
@@ -458,11 +479,15 @@ page.clone = function(e) {
         var ne = document.createElement('span');
 
         // Skip the palette: prefix
-        ne.id = e.id.substr(8);
+        ne.id = 'page:' + e.id.substr(8);
 
         // Copy the class and HTML content
         ne.className = e.className;
         ne.innerHTML = e.innerHTML;
+
+        // Fixup the widget style
+        page.fixupwidget(ne);
+
         return ne;
     }
 

@@ -94,7 +94,7 @@ ui.showbody();
  */
 var editWidget = sca.component("EditWidget");
 var store = sca.reference(editWidget, "store");
-var dashboard = sca.reference(editWidget, "dashboard");
+var dashboards = sca.reference(editWidget, "dashboards");
 
 /**
  * Return the link to an app.
@@ -117,19 +117,19 @@ function editApp(appname) {
 }
 
 /**
+ * View an app.
+ */
+function viewApp(appname) {
+    return window.open('/stats/?app=' + appname, '_self');
+}
+
+/**
  * Create an app.
  */
 if (category == 'myapps') {
     $('createApp').onclick = function() {
         return window.open('/create/', '_self');
     }
-}
-
-/**
- * Clone an app.
- */
-function cloneApp(appname) {
-    return window.open('/clone/?app=' + appname, '_self');
 }
 
 /**
@@ -150,10 +150,7 @@ function getapps(category) {
             apps += '<div class="box" style="width: 285px; display: inline-block; border: 1px; border-style: solid; border-color: #dcdcdc; border-collapse: collapse; margin: 5px; padding: 10px; vertical-align: top;">'
             apps += '<table><tr>';
             apps += '<td>';
-            apps += '<div>' + ui.ahref(applink(name), '_blank', '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>') + '</div>';
-            apps += '<div><input type="button" class="greenbutton" id="cloneApp" value="' + clone + '" title="' + clone + ' this app" onclick="cloneApp(\'' + name + '\');"></div>';
-            if (category == 'myapps')
-                apps += '<div><input type="button" id="editApp" class="bluebutton" value="Edit" title="Edit this app" onclick="editApp(\'' + name + '\');"></div>';
+            apps += '<div>' + ui.ahref('/stats/?app=' + name, '_self', '<img src="/public/app.png" width="50" height="50" style="height: 50px; width: 50px; vertical-align: top; margin-right: 10px; margin-bottom: 5px;"></img>') + '</div>';
             apps += '</td>';
             apps += '<td class="tdw">';
             apps += '<div style="font-weight: bold">' + ui.ahref(applink(name), '_blank', name) + '</div>';
@@ -164,7 +161,6 @@ function getapps(category) {
             apps += '<div>Feb 4, 2011</div>';
             apps += '<br/>';
             apps += '<div>' + title + '</div>';
-            apps += '<br/>';
             apps += '</td>';
             apps += '</tr></table>';
             apps += '</div>';
@@ -174,7 +170,7 @@ function getapps(category) {
     }
 
     if (category == 'myapps')
-        return dashboard.get('', display);
+        return dashboards.get('', display);
     return store.get(category, display);
 }
 

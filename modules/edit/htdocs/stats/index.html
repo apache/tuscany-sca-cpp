@@ -36,14 +36,18 @@
 
 <table style="width: 100%;">
 <tr>
-<td><h1><span id="h1"></span><span id="appNameHeader"></span></h1></td>
+<td><h2><span id="h1"></span><span id="appNameHeader"></span></h2></td>
 <td style="vertical-align: middle; text-align: right;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
 </tr>
 </table>
 
 <table style="width: 100%;">
 <tr>
-<th class="thl thr" style="padding-top: 4px; padding-bottom: 4px;">Stats</th>
+<th class="thl thr" style="padding-top: 4px; padding-bottom: 4px; padding-left: 2px; padding-right: 2px; ">Stats</th>
+
+<th class="thl thr" style="width: 100%; text-align: right; padding-right: 2px; padding-top: 0px; padding-bottom: 0px;">
+<input type="button" class="greenbutton" style="font-weight: bold; margin-top: 0px; margin-bottom: 0px; height: 24px;" id="cloneApp" value="Clone" title="Clone this app"/>
+</th>
 </tr>
 </table>
 
@@ -85,8 +89,11 @@ function applink(appname) {
 
 // Set page titles
 document.title = windowtitle(window.location.hostname) + ' - Stats - ' + appname;
-$('h1').innerHTML = hometitle(window.location.hostname);
-$('appNameHeader').innerHTML = ' - <a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
+//$('h1').innerHTML = hometitle(window.location.hostname);
+$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '.' + window.location.hostname + '</a>';
+var tclone = isNil(config.clone)? 'Clone' : config.clone;
+$('cloneApp').value = tclone;
+$('cloneApp').title = tclone + ' this app';
 
 // Load the menu bar
 displaymenu();
@@ -96,7 +103,7 @@ ui.showbody();
 
 // Init service references
 var editWidget = sca.component("EditWidget");
-var dashboard = sca.reference(editWidget, "dashboard");
+var dashboards = sca.reference(editWidget, "dashboards");
 
 /**
  * The current app entry and corresponding saved XML content.
@@ -110,7 +117,7 @@ var savedappentryxml = '';
 function getapp(name) {
     if (isNil(name))
         return false;
-    return dashboard.get(name, function(doc) {
+    return dashboards.get(name, function(doc) {
         appentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
         var title = cadr(assoc("'title", cdr(appentry)));
         $('appTitle').value = title;
@@ -127,7 +134,7 @@ function getapp(name) {
 function save(entryxml) {
     $('saveStatus').innerHTML = 'Saving';
     savedappentryxml = entryxml;
-    dashboard.put(appname, savedappentryxml);
+    dashboards.put(appname, savedappentryxml);
     $('saveStatus').innerHTML = 'Saved';
     return true;
 }
@@ -155,6 +162,13 @@ $('appForm').onsubmit = function() {
     onappchange();
     return false;
 };
+
+/**
+ * Handle Clone button event.
+ */
+$('cloneApp').onclick = function() {
+    return window.open('/clone/?app=' + appname, '_self');
+}
 
 // Get the current app
 getapp(appname);

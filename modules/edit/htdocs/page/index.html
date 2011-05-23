@@ -37,26 +37,28 @@
 
 <table style="width: 100%;">
 <tr>
-<td><h1><span id="h1"></span><span id="appNameHeader"></span></h1></td>
-<td style="vertical-align: middle; text-align: right;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+<td><h2><span id="h1"></span><span id="appNameHeader"></span></h2></td>
+<td style="vertical-align: middle; text-align: right; padding-right: 2px;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
 </tr>
 </table>
 
 <table style="width: 100%;">
 <tr>
-<th class="thr thl" style="padding-left: 2px; padding-right: 2px;">
-<input id="widgetName" type="text" value="" title="Widget name" placeholder="Name" style="position: relative; width: 65px;"/>
-<input id="widgetText" type="text" value="" title="Widget text" placeholder="Text" style="position: relative; width: 120px;"/>
+<th class="thr thl" style="padding-left: 2px; padding-right: 2px; width: 100%;">
+<input id="widgetValue" type="text" value="" title="Widget value" autocapitalize="off" placeholder="Value" style="position: relative; width: 100%;"/>
+</th>
+
+<th class="thl thr" style="text-align: right; padding-right: 2px;">
 <span id="deleteWidgetButton" title="Delete a Widget" class="redbutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">-</span>
+
 <span id="addWidgetButton" title="Add a Widget" class="greenbutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">+</span>
-<!--
-<span id="playWidgetButton" title="View" class="bluebutton" style="font-weight: bold; font-size: 16px; color: #808080; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
--->
+
+<span id="playPageButton" title="View page" class="bluebutton" style="font-weight: bold; font-size: 16px; display: inline-block; width: 24px; height: 20px; padding-top: 0px; padding-bottom: 0px; vertical-align: middle; text-align: center; margin-left: 0px; margin-right: 0px;">&gt;</span>
 </th>
 </tr>
 </table>
 
-<div id="page" style="position: absolute; top: 95px; left: -2500px; right: 0px; height: 5000px;">
+<div id="editdiv" style="position: absolute; top: 95px; left: -2500px; right: 0px; height: 5000px;">
 
 <div style="position: absolute; left: 2500px; top: 0px; right: 0px; height: 5000px; border:1px; border-style: solid; border-color: #a2bae7; background: url(/public/grid72.png);"></div>
 <div class="guide" style="position: absolute; left: 2500px; top: 0px; width: 320px; height: 460px;"></div>
@@ -85,6 +87,8 @@
 
 </div>
 
+<div id="playdiv" style="visibility: hidden; position: absolute; top: 95px; left: 0px; right: 0px; height: 5000px;"></div>
+
 <div id="buffer" style="visibility: hidden; position: absolute; top: 0px; left: 0px; width: 0px; height: 0px"></div>
 
 </div>
@@ -111,11 +115,34 @@ function applink(appname) {
 
 // Set page titles
 document.title = windowtitle(window.location.hostname) + ' - Page - ' + appname;
-$('h1').innerHTML = hometitle(window.location.hostname);
-$('appNameHeader').innerHTML = ' - <a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '</a>';
+//$('h1').innerHTML = hometitle(window.location.hostname);
+$('appNameHeader').innerHTML = '<a href=\"' + applink(appname) + '\" target=\"' + '_blank' + '\">' + appname + '.' + window.location.hostname + '</a>';
 
 // Load the menu bar
 displaymenu();
+
+/**
+ * Page editor area, widget value field, add, delete and play page buttons.
+ */
+var ediv = $('editdiv');
+var evisible = true;
+var pdiv = $('playdiv');
+var wvalue = $('widgetValue');
+var wadd = $('addWidgetButton');
+var wdelete = $('deleteWidgetButton');
+var pplay = $('playPageButton');
+
+/**
+ * Adjust fields sizes.
+ */
+function resizeFields() {
+    wvalue.style.width = '0px';
+    wvalue.style.width = ui.pixpos(wvalue.parentNode.clientWidth - 18);
+    return true;
+}
+
+resizeFields();
+window.onresize = resizeFields;
 
 // Show the page
 ui.showbody();
@@ -138,15 +165,19 @@ function atompage(doc) {
 }
 
 /**
- * Track the current widget and page saved XHTML content.
+ * Track the current page saved XHTML content.
  */
-var widgetname = '';
 var savedpagexhtml = '';
+
+/**
+ * Track the current widget.
+ */
+var widget = null;
 
 /**
  * Get and display an app page.
  */
-function getpage(name, edit) {
+function getpage(name, ediv) {
     if (isNil(name))
         return false;
     return pages.get(name, function(doc) {
@@ -157,19 +188,19 @@ function getpage(name, edit) {
 
         // Create a default empty page if necessary
         if (isNil(el))
-            buffer.innerHTML = '<DIV id="page">\n</DIV>\n';
+            buffer.innerHTML = '<div id="page"></div>';
         else
             buffer.innerHTML = writeStrings(writeXML(atompage(doc), false));
 
         // Append page nodes to editor
         map(function(e) {
-                edit.appendChild(e);
+                ediv.appendChild(e);
                 if (!isNil(e.style))
                     e.style.left = ui.pixpos(ui.numpos(e.style.left) + 2500);
                 return page.cover(e);
             }, nodeList(buffer.childNodes[0].childNodes));
 
-        savedpagexhtml = pagexhtml();
+        savedpagexhtml = pagexhtml(ediv);
         return true;
     });
 }
@@ -177,22 +208,28 @@ function getpage(name, edit) {
 /**
  * Handle add widget button click event.
  */
-$('addWidgetButton').onclick = function(e) {
+wadd.onclick = function(e) {
     // Show the widget palette
-    $('page').style.left = ui.pixpos(0);
+    ediv.style.left = ui.pixpos(0);
 };
 
 /**
  * Return the current page XHTML content.
  */
-function pagexhtml() {
+function pagexhtml(ediv) {
 
     // Copy page DOM to hidden buffer
-    var edit = $('page');
     var buffer = $('buffer');
-    buffer.innerHTML = '<DIV id="page">\n</DIV>\n'
+    buffer.innerHTML = '<div id="page"></div>'
     var div = buffer.childNodes[0];
-    div.innerHTML = edit.innerHTML;
+
+    // Capture the nodes inside the page div
+    div.innerHTML = ediv.innerHTML;
+    var nodes = nodeList(div.childNodes);
+    map(function(e) {
+        div.removeChild(e);
+        return e;
+    }, nodes);
 
     // Filter out palette and editor artifacts, which are not
     // part of the page, as well as nodes positioned out the
@@ -204,7 +241,7 @@ function pagexhtml() {
         if (x < 0 || ui.numpos(e.style.top) < 0)
             return false;
         return true;
-    }, nodeList(div.childNodes));
+    }, nodes);
 
     // Reposition nodes
     map(function(e) {
@@ -226,8 +263,7 @@ function pagexhtml() {
         return 0;
     });
 
-    // Append them back to the div in order
-    div.innerHTML = '';
+    // Append the sorted nodes back to the div in order
     map(function(e) {
         div.appendChild(e);
         return e;
@@ -242,20 +278,20 @@ function pagexhtml() {
 /**
  * Save the current page.
  */
-function save() {
+function save(newxml) {
     $('saveStatus').innerHTML = 'Saving';
 
     // Get the current page XHTML content
-    savedpagexhtml = pagexhtml();
+    savedpagexhtml = newxml;
 
     // Update the page ATOM entry
     var entry = '<entry xmlns="http://www.w3.org/2005/Atom">' +
         '<title type="text">' + appname + '</title><id>' + appname + '</id><content type="application/xml">' +
-        savedpagexhtml + '</content></entry>';
+        newxml + '</content></entry>';
 
-    pages.put(appname, entry);
-    if (savedpagexhtml == pagexhtml())
+    pages.put(appname, entry, function(r) {
         $('saveStatus').innerHTML = 'Saved';
+    });
     return true;
 };
 
@@ -263,19 +299,22 @@ function save() {
  * Handle a page change event
  */
 function onpagechange(prop) {
-    if (savedpagexhtml == pagexhtml())
+    var newxml = pagexhtml(ediv);
+    if (savedpagexhtml == newxml)
         return false;
     $('saveStatus').innerHTML = 'Modified';
 
     // Save property changes right away
     if (prop)
-        return save();
+        return save(newxml);
 
-    // Autosave other changes after 3 seconds
+    // Autosave other changes after 1 second
     setTimeout(function() {
-        if (savedpagexhtml == pagexhtml())
+        if (savedpagexhtml == newxml) {
+            $('saveStatus').innerHTML = 'Saved';
             return false;
-        return save();
+        }
+        return save(newxml);
     }, 1000);
     return true;
 }
@@ -298,40 +337,68 @@ function compvaluelink(appname, cname) {
 /**
  * Handle a widget select event.
  */
-function onwidgetselect(wname) {
-    if (wname == widgetname)
+function onwidgetselect(w) {
+    if (w == widget)
         return true;
-    widgetname = wname;
-    var link = compvaluelink(appname, wname);
+    widget = w;
+    var link = compvaluelink(appname, isNil(w)? '' : w.id);
 
     function updateButton(b, v) {
         b.style.color = v? '#000000' : '#808080';
     }
 
-    updateButton($('deleteWidgetButton'), link != '');
-    //updateButton($('playWidgetButton'), link != '');
-
+    updateButton(wdelete, link != '');
     return true;
 }
 
 /**
- * Play the component associated with the current widget.
+ * Play page in a frame.
  */
-/*
-$('playWidgetButton').onclick = function() {
-    var link = compvaluelink(appname, widgetname);
-    if (link == '')
-        return;
-    return window.open(link, '_' + appname + '_' + widgetname);
+function playpage() {
+    if (!evisible)
+        return true;
+    page.widgetselect(widget, false, wvalue, wdelete);
+    page.selected = null;
+    wvalue.value = applink(appname);
+    pplay.innerHTML = '&lt;';
+    ediv.style.visibility = 'hidden'
+    evisible = false;
+    pdiv.style.visibility = 'visible';
+    pdiv.innerHTML = '<iframe id="appFrame" style="position: relative; height: 5000px; width: 100%; border: 0px;" scrolling="no" frameborder="0" src="' +
+                        applink(appname) + '"></iframe>';
+    return true;
 }
-*/
+
+/**
+ * Show the page editor.
+ */
+function showedit() {
+    if (evisible)
+        return true;
+    pplay.innerHTML = '&gt;';
+    pdiv.style.visibility = 'hidden';
+    pdiv.innerHTML = '';
+    ediv.style.visibility = 'visible'
+    evisible = true;
+    page.widgetselect(widget, true, wvalue, wdelete);
+    page.selected = widget;
+    return true;
+}
+
+/**
+ * Handle play page button event.
+ */
+pplay.onclick = function() {
+    if (!evisible)
+        return showedit();
+    return playpage();
+}
 
 // Initialize the page editor
-var edit = $('page');
-page.edit(edit, $('widgetName'), $('widgetText'), $('addWidgetButton'), $('deleteWidgetButton'), onpagechange, onwidgetselect);
+page.edit(ediv, wvalue, wadd, wdelete, onpagechange, onwidgetselect);
 
 // Get and display the current app page
-getpage(appname, edit);
+getpage(appname, ediv);
 
 </script>
 </body>
