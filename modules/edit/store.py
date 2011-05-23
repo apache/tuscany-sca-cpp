@@ -20,7 +20,7 @@ from util import *
 
 # Convert a particular store tag to a store id
 def storeid(tag):
-    return ("'" + tag,)
+    return ("'" + tag, "'store.apps")
 
 # Get a store from the cache
 def getstore(id, cache):

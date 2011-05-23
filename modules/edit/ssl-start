@@ -18,7 +18,7 @@
 #  under the License.
 
 # For this module to work, add the app domains to your /etc/hosts as follows:
-# 127.0.0.1 sca-store.com joe.sca-store.com jane.sca-store.com myprofile.sca-store.com myprofile2.sca-store.com nearme.sca-store.com nearme2.sca-store.com testvalues.sca-store.com testurl.sca-store.com testsocial.sca-store.com testlogic.sca-store.com testtext.sca-store.com
+# 127.0.0.1 sca-store.com abc.sca-store.com xyz.sca-store.com ...
 
 here=`readlink -f $0`; here=`dirname $here`
 jsprefix=`readlink -f $here/../js`
@@ -36,7 +36,7 @@ jsprefix=`readlink -f $here/../js`
 
 # Configure authentication
 ../../modules/http/open-auth-conf tmp
-../../modules/http/passwd-auth-conf tmp joe joe
+../../modules/http/passwd-auth-conf tmp john john
 ../../modules/http/passwd-auth-conf tmp jane jane
 
 # Configure Python component support
@@ -90,6 +90,13 @@ SCAComposite edit.composite
 # Configure SCA Composite for mass dynamic virtual Hosting
 SCAVirtualContribution `pwd`/apps/
 SCAVirtualComposite app.composite
+
+EOF
+
+# Configure main aliases
+cat >>tmp/conf/httpd.conf <<EOF
+
+Alias /home.png $here/htdocs/home.png
 
 EOF
 

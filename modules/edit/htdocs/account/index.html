@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+-->
+<html>
+<head>
+<title>Account</title>
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/> 
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<link rel="apple-touch-icon" href="/public/touchicon.png"/>
+<link rel="stylesheet" type="text/css" href="/ui-min.css"/>
+<script type="text/javascript" src="/config.js"></script>
+<script type="text/javascript" src="/all-min.js"></script>
+<script type="text/javascript" src="/menu.js"></script>
+</head>
+<body class="delayed" onorientationchange="ui.reload();">
+<div id="bodydiv" class="devicewidth">
+
+<div id="menu"></div>
+
+<table style="width: 100%;">
+<tr>
+<td><h2><span id="h1"></span><span id="userNameHeader"></span></h2></td>
+<td style="vertical-align: middle; text-align: right;"><span id="saveStatus" style="font-weight: bold; color: #808080;">Saved</span></td>
+</tr>
+</table>
+
+<table style="width: 100%;">
+<tr>
+<th class="thl thr" style="padding-top: 4px; padding-bottom: 4px; padding-left: 2px; padding-right: 2px; ">Account</th>
+</tr>
+</table>
+
+<form id="userForm" style="position: absolute; top: 90px; left: 0px; width: 100%">
+<table style="width: 100%;">
+<tr><tr><td><b>Photo:</b></td></tr>
+<tr><td><img src="/public/app.png" style="width: 50px; height: 50px; vertical-align: top;"></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>Name:</b></td></tr>
+<tr><td><input type="text" id="userTitle" size="30" placeholder="Enter your name" style="width: 300px;"/></td></tr>
+<tr><tr><td style="padding-top: 6px;"><b>Description:</b></td></tr>
+<tr><td><textarea id="userDescription" cols="40" rows="3" placeholder="Enter a short description of yourself" style="width: 300px;"></textarea></td></tr>
+</table>
+
+<br/>
+<table style="width: 100%;">
+<tr>
+<th class="thl thr" style="padding-top: 4px; padding-bottom: 4px; padding-left: 2px; padding-right: 2px; ">Key chain</th>
+</tr>
+</table>
+
+<table>
+<tr><td style="padding-right: 2px;"><input type="text" id="name1" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value1" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name2" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value2" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name3" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value3" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name4" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value4" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+<tr><td style="padding-right: 2px;"><input type="text" id="name5" size="10" placeholder="Key name" style="width: 80px;"/></td><td><input type="text" id="value5" size="2048" placeholder="Key value" style="width: 200px;"/></td></tr>
+</table>
+</form>
+
+</div>
+
+<script type="text/javascript">
+// Init service references
+var editWidget = sca.component("EditWidget");
+var user= sca.defun(sca.reference(editWidget, "user"), "id");
+var accounts = sca.reference(editWidget, "accounts");
+
+// Get the user name
+var username = user.id()
+
+// Set page titles
+document.title = windowtitle(window.location.hostname) + ' - Account - ' + username;
+$('userNameHeader').innerHTML = username;
+
+// Load the menu bar
+displaymenu();
+
+// Show the page
+ui.showbody();
+
+/**
+ * The current account entry and corresponding saved XML content.
+ */
+var accountentry;
+var savedaccountentryxml = '';
+
+/**
+ * Get and display the user's account.
+ */
+function getaccount(name) {
+    return accounts.get(name, function(doc) {
+        accountentry = doc != null? car(elementsToValues(atom.readATOMEntry(mklist(doc)))) : mklist("'entry", mklist("'title", ''), mklist("'id", name));
+        var title = cadr(assoc("'title", cdr(accountentry)));
+        $('userTitle').value = title;
+
+        var content = cadr(assoc("'content", cdr(accountentry)));
+        var acct = isNil(content)? mklist() : cdr(content);
+
+        var desc = assoc("'description", acct);
+        $('userDescription').innerHTML = isNil(desc) || isNil(cdr(desc))? '' : cadr(desc);
+
+        var keys = assoc("'keys", acct);
+        reduce(function(i, key) {
+                var kn = assoc("'@name", key);
+                var kv = assoc("'@value", key);
+                $('name' + i).value = isNil(kn)? '' : cadr(kn);
+                $('value' + i).value = isNil(kv)? '' : cadr(kv);
+                return i + 1;
+            }, 1, isNil(keys)? mklist() : cadr(cadr(keys)));
+
+        savedaccountentryxml = car(atom.writeATOMEntry(valuesToElements(mklist(accountentry))));
+        return true;
+    });
+}
+
+/**
+ * Save the user's account.
+ */
+function save(entryxml) {
+    $('saveStatus').innerHTML = 'Saving';
+    savedaccountentryxml = entryxml;
+    accounts.put(username, savedaccountentryxml);
+    $('saveStatus').innerHTML = 'Saved';
+    return true;
+}
+
+/**
+ * Handle a change event
+ */
+function onaccountchange() {
+    var title = $('userTitle').value;
+    var desc = $('userDescription').value;
+    var keys = map(function(i) {
+        var kn = $('name' + i).value;
+        var kv = $('value' + i).value;
+        return mklist("'key", mklist("'@name", kn), mklist("'@value", kv));
+    }, range(1, 6));
+
+    var accountentry = mklist("'entry", mklist("'title", title != ''? title : username), mklist("'id", username),
+                        mklist("'content", mklist("'account", mklist("'description", desc), cons("'keys", keys))));
+    var entryxml = car(atom.writeATOMEntry(valuesToElements(mklist(accountentry))));
+    if (savedaccountentryxml == entryxml)
+        return false;
+
+    $('saveStatus').innerHTML = 'Modified';
+    return save(entryxml);
+}
+
+$('userTitle').onchange = onaccountchange;
+$('userDescription').onchange = onaccountchange;
+map(function(i) {
+    $('name' + i).onchange = onaccountchange;
+    $('value' + i).onchange = onaccountchange;
+    return true;
+}, range(1, 6));
+
+/**
+ * Handle a form submit event.
+ */
+$('userForm').onsubmit = function() {
+    onaccountchange();
+    return false;
+};
+
+// Get the user's account
+getaccount(username);
+
+</script>
+
+</body>
+</html>
+

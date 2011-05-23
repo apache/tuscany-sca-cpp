@@ -111,10 +111,11 @@ atom.entryElement = function(l) {
     var text = isNil(content)? false : elementHasValue(content);
     return append(append(
             mklist(element, "'entry", mklist(attribute, "'xmlns", "http://www.w3.org/2005/Atom"),
-            mklist(element, "'title", mklist(attribute, "'type", "text"), title), mklist(element, "'id", id)),
-            isNil(content)? mklist() :
-                append(mklist(element, "'content", mklist(attribute, "'type", text? "text" : "application/xml")), text? mklist(elementValue(content)) : elementChildren(content))),
-            mklist(element, "'link", mklist(attribute, "'href", id)));
+                mklist(element, "'title", mklist(attribute, "'type", "text"), title), mklist(element, "'id", id)),
+                isNil(content)? mklist() :
+                mklist(append(mklist(element, "'content", mklist(attribute, "'type", text? "text" : "application/xml")),
+                                text? mklist(elementValue(content)) : elementChildren(content)))),
+                mklist(mklist(element, "'link", mklist(attribute, "'href", id))));
 };
 
 /**

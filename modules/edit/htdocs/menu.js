@@ -17,8 +17,8 @@
  * under the License.    
  */
 
-var menuWidget = sca.component("MenuWidget");
-var userService = sca.defun(sca.reference(menuWidget, "user"), "id");
+var editWidget = sca.component("EditWidget");
+var user= sca.defun(sca.reference(editWidget, "user"), "id");
 
 /**
  * Display the current signed in user.
@@ -26,7 +26,7 @@ var userService = sca.defun(sca.reference(menuWidget, "user"), "id");
 function userMenu() {
     function UserMenu() {
         this.content = function() {
-            u = userService.id()
+            var u = user.id()
             return '<span>' + u + '</span>';
         };
     }
@@ -44,9 +44,10 @@ function displaymenu() {
         append(mklist(ui.menu('Home', '/'), ui.menu('Store', '/store/')),
                 (isNil(name) || name == 'undefined')?
                     mklist() :
-                    mklist(ui.menu('Page', '/page/?app=' + name),
-                    ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/graph/?app=' + name),
-                    ui.menu('Stats', '/stats/?app=' + name))),
-        mklist(ui.menu('Account', '/public/notyet.html'), ui.menu('Sign out', '/logout/')));
+                    mklist(
+                        ui.menu('Stats', '/stats/?app=' + name),
+                        ui.menu('Page', '/page/?app=' + name),
+                        ui.menu(isNil(config.compose)? 'Composition' : config.compose, '/graph/?app=' + name))),
+        mklist(ui.menu('Account', '/account/'), ui.menu('Sign out', '/logout/')));
 }
 

@@ -18,9 +18,9 @@
 # Dashboards collection implementation
 from util import *
 
-# Convert a particular user email to a dashboard id
+# Convert a particular user id to a dashboard id
 def dashboardid(user):
-    return ("'" + user.id(),)
+    return ("'" + user.id(), "'user.apps")
 
 # Get a dashboard from the cache
 def getdashboard(id, cache):

@@ -18,12 +18,11 @@
  * under the License.    
 -->
 <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-  xmlns:t="http://tuscany.apache.org/xmlns/sca/1.1"
   targetNamespace="http://edit"
   name="edit">
         
     <component name="User">
-        <t:implementation.python script="user.py"/>
+        <implementation.python script="user.py"/>
         <property name="user">?</property>
         <property name="email">?</property>
         <property name="nickname">?</property>
@@ -32,18 +31,15 @@
         <property name="lastname">?</property>
         <property name="realm">?</property>
         <service name="User">
-            <t:binding.http uri="user"/>
+            <binding.http uri="user"/>
         </service>
     </component>
     
-    <component name="MenuWidget">
-        <t:implementation.widget location="/menu.html"/>
-        <reference name="user" target="User"/>
-    </component>
-    
     <component name="EditWidget">
-        <t:implementation.widget location="/index.html"/>
-        <reference name="dashboard" target="Dashboard"/>
+        <implementation.widget location="/index.html"/>
+        <reference name="user" target="User"/>
+        <reference name="accounts" target="Accounts"/>
+        <reference name="dashboards" target="Dashboards"/>
         <reference name="apps" target="Apps"/>
         <reference name="store" target="AppStore"/>
         <reference name="palettes" target="Palettes"/>
@@ -52,10 +48,19 @@
         <reference name="log" target="Log"/>
     </component>
     
-    <component name="Dashboard">
-        <t:implementation.python script="dashboard.py"/>
-        <service name="Dashboard">
-            <t:binding.http uri="dashboard"/>
+    <component name="Accounts">
+        <implementation.python script="accounts.py"/>
+        <service name="Accounts">
+            <binding.http uri="accounts"/>
+        </service>
+        <reference name="user" target="User"/>
+        <reference name="cache" target="AccountCache"/>
+    </component>
+    
+    <component name="Dashboards">
+        <implementation.python script="dashboards.py"/>
+        <service name="Dashboards">
+            <binding.http uri="dashboards"/>
         </service>        
         <reference name="user" target="User"/>
         <reference name="cache" target="DashboardCache"/>
@@ -63,17 +68,17 @@
     </component>
     
     <component name="AppStore">
-        <t:implementation.python script="store.py"/>
+        <implementation.python script="store.py"/>
         <service name="AppStore">
-            <t:binding.http uri="appstore"/>
+            <binding.http uri="appstore"/>
         </service>        
         <reference name="cache" target="StoreCache"/>
     </component>
     
     <component name="Apps">
-        <t:implementation.python script="apps.py"/>
+        <implementation.python script="apps.py"/>
         <service name="Apps">
-            <t:binding.http uri="apps"/>
+            <binding.http uri="apps"/>
         </service>
         <reference name="cache" target="AppCache"/>
         <reference name="store" target="AppStore"/>
@@ -82,33 +87,53 @@
     </component>
     
     <component name="Composites">
-        <t:implementation.python script="composites.py"/>
+        <implementation.python script="composites.py"/>
         <service name="Composites">
-            <t:binding.http uri="composites"/>
+            <binding.http uri="composites"/>
         </service>
         <reference name="cache" target="AppDocCache"/>
     </component>
     
     <component name="Pages">
-        <t:implementation.python script="pages.py"/>
+        <implementation.python script="pages.py"/>
         <service name="Pages">
-            <t:binding.http uri="pages"/>
+            <binding.http uri="pages"/>
         </service>
         <reference name="cache" target="AppDocCache"/>
     </component>
     
     <component name="Palettes">
-        <t:implementation.python script="palettes.py"/>
+        <implementation.python script="palettes.py"/>
         <service name="Palettes">
-            <t:binding.http uri="palettes"/>
+            <binding.http uri="palettes"/>
         </service>
         <reference name="cache" target="PaletteDocCache"/>
     </component>
     
+    <component name="AccountCache">
+        <implementation.cpp path="../../components/cache" library="libdatacache"/>
+        <service name="AccountCache">
+            <binding.http uri="accountcache"/>
+        </service>
+        <reference name="l1reader" target="Memcache"/>
+        <reference name="l1writer" target="Memcache"/>
+        <reference name="l2reader" target="AccountDB"/>
+        <reference name="l2writer" target="AccountDB"/>
+    </component>
+
+    <component name="AccountDB">
+        <implementation.cpp path="../../components/filedb" library="libfiledb"/>
+        <property name="dbname">accounts</property>
+        <property name="format">scheme</property>
+        <service name="AccountDB">
+            <binding.http uri="accountdb"/>
+        </service>
+    </component>
+
     <component name="DashboardCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
         <service name="DashboardCache">
-            <t:binding.http uri="dashboardcache"/>
+            <binding.http uri="dashboardcache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
@@ -121,14 +146,14 @@
         <property name="dbname">dashboards</property>
         <property name="format">scheme</property>
         <service name="DashboardDB">
-            <t:binding.http uri="dashboarddb"/>
+            <binding.http uri="dashboarddb"/>
         </service>
     </component>
 
     <component name="StoreCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
         <service name="StoreCache">
-            <t:binding.http uri="storecache"/>
+            <binding.http uri="storecache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
@@ -141,14 +166,14 @@
         <property name="dbname">store</property>
         <property name="format">scheme</property>
         <service name="StoreDB">
-            <t:binding.http uri="storedb"/>
+            <binding.http uri="storedb"/>
         </service>
     </component>
 
     <component name="AppCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
         <service name="AppCache">
-            <t:binding.http uri="appcache"/>
+            <binding.http uri="appcache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
@@ -161,14 +186,14 @@
         <property name="dbname">apps</property>
         <property name="format">scheme</property>
         <service name="AppDB">
-            <t:binding.http uri="appdb"/>
+            <binding.http uri="appdb"/>
         </service>
     </component>
 
     <component name="AppDocCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
         <service name="AppDocCache">
-            <t:binding.http uri="appdoccache"/>
+            <binding.http uri="appdoccache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
@@ -181,14 +206,14 @@
         <property name="dbname">apps</property>
         <property name="format">xml</property>
         <service name="AppDocDB">
-            <t:binding.http uri="appdocdb"/>
+            <binding.http uri="appdocdb"/>
         </service>
     </component>
 
     <component name="PaletteDocCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
         <service name="PaletteDocCache">
-            <t:binding.http uri="palettedoccache"/>
+            <binding.http uri="palettedoccache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
@@ -201,14 +226,14 @@
         <property name="dbname">palettes</property>
         <property name="format">xml</property>
         <service name="PaletteDocDB">
-            <t:binding.http uri="palettedocdb"/>
+            <binding.http uri="palettedocdb"/>
         </service>
     </component>
 
     <component name="AppDataFileCache">
         <implementation.cpp path="../../components/cache" library="libdatacache"/>
         <service name="AppDataFileCache">
-            <t:binding.http uri="appdatafilecache"/>
+            <binding.http uri="appdatafilecache"/>
         </service>
         <reference name="l1reader" target="Memcache"/>
         <reference name="l1writer" target="Memcache"/>
@@ -221,22 +246,22 @@
         <property name="dbname">tmp/appdata/filedb</property>
         <property name="format">scheme</property>
         <service name="AppDataFileDB">
-            <t:binding.http uri="appdatafiledb"/>
+            <binding.http uri="appdatafiledb"/>
         </service>
     </component>
 
     <component name="Memcache">
         <implementation.cpp path="../../components/cache" library="libmemcache"/>
         <service name="Memcache">
-            <t:binding.http uri="memcache"/>
+            <binding.http uri="memcache"/>
         </service>
         <property name="servers">localhost:11211</property>
     </component>
 
     <component name="Log">
-        <t:implementation.python script="log.py"/>
+        <implementation.python script="log.py"/>
         <service name="Log">
-            <t:binding.http uri="log"/>
+            <binding.http uri="log"/>
         </service>        
     </component>
     

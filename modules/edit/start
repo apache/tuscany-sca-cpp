@@ -18,7 +18,7 @@
 #  under the License.
 
 # For this module to work, add the app domains to your /etc/hosts as follows:
-# 127.0.0.1 sca-store.com joe.sca-store.com jane.sca-store.com myprofile.sca-store.com myprofile2.sca-store.com nearme.sca-store.com nearme2.sca-store.com testvalues.sca-store.com testurl.sca-store.com testsocial.sca-store.com testlogic.sca-store.com testtext.sca-store.com
+# 127.0.0.1 sca-store.com abc.sca-store.com xyz.sca-store.com ...
 
 here=`readlink -f $0`; here=`dirname $here`
 jsprefix=`readlink -f $here/../js`

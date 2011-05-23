@@ -15,22 +15,21 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-# Palettes collection implementation
+# Accounts collection implementation
 from util import *
 
-# Convert an id to a palette id
-def paletteid(id):
-    return ("'" + car(id), "'palette.composite")
+# Convert a particular user id to an account id
+def accountid(user):
+    return ("'" + user.id(), "'user.account")
 
-# Put a palette into the palettes db
-def put(id, palette, cache):
-    comp = cdr(cadddr(car(palette)))
-    cache.put(paletteid(id), comp)
-    return True
+# Get the user's account
+def get(id, user, cache):
+    account = cache.get(accountid(user))
+    if isNil(account):
+        return ()
+    return account
 
-# Get a palette from the palettes db
-def get(id, cache):
-    if isNil(id):
-        return (("'feed", ("'title", "Palettes"), ("'id", "palettes")),)
-    return (("'entry", ("'title", car(id)), ("'id", car(id)), ("'content", car(cache.get(paletteid(id))))),)
+# Update the user's account
+def put(id, account, user, cache):
+    return cache.put(accountid(user), account)
 
