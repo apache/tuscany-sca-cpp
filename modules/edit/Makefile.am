@@ -20,7 +20,7 @@ if WANT_PYTHON
 moddir = $(prefix)/modules/edit
 dist_mod_SCRIPTS = start stop ssl-start mkapplinks
 
-nobase_dist_mod_DATA = edit.composite *.py htdocs/*.html htdocs/*.js htdocs/create/*.html htdocs/data/*.html htdocs/app/*.html htdocs/store/*.html htdocs/stats/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html palettes/*/palette.composite apps/*/app.composite apps/*/htdocs/app.html dashboards/* store/*
-EXTRA_DIST = edit.composite *.py htdocs/*.html htdocs/*.js htdocs/create/*.html htdocs/data/*.html htdocs/app/*.html htdocs/store/*.html htdocs/stats/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html palettes/*/palette.composite apps/*/app.composite apps/*/htdocs/app.html dashboards/* store/*
+nobase_dist_mod_DATA = edit.composite *.py htdocs/*.html htdocs/*.js htdocs/*.cmf htdocs/*.ico htdocs/*.png htdocs/*.txt htdocs/account/*.html htdocs/create/*.html htdocs/data/*.html htdocs/app/*.html htdocs/store/*.html htdocs/stats/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html palettes/*/palette.composite apps/*/app.composite apps/*/htdocs/app.html dashboards/*/user.apps store/*/store.apps
+EXTRA_DIST = edit.composite *.py htdocs/*.html htdocs/*.js htdocs/*.cmf htdocs/*.ico htdocs/*.png htdocs/*.txt htdocs/account/*.html htdocs/create/*.html htdocs/data/*.html htdocs/app/*.html htdocs/store/*.html htdocs/stats/*.html htdocs/graph/*.html htdocs/graph/*.js htdocs/page/*.html htdocs/page/*.js htdocs/login/*.html htdocs/logout/*.html palettes/*/palette.composite apps/*/app.composite apps/*/htdocs/app.html dashboards/*/user.apps store/*/store.apps
 
 endif
