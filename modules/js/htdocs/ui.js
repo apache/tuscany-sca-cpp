@@ -24,16 +24,6 @@
 var ui = {};
 
 /**
- * Return true if the current browser is Internet Explorer.
- */
-ui.isIE = function() {
-    if (typeof ui.isIE.detected != 'undefined')
-        return ui.isIE.detected;
-    ui.isIE.detected = navigator.appName == 'Microsoft Internet Explorer';
-    return ui.isIE.detected;
-};
-
-/**
  * Build a portable <a href> tag.
  */
 ui.ahref = function(loc, target, html) {

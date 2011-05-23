@@ -111,19 +111,8 @@ function isXML(l) {
  */
 function parseXML(l) {
     var s = writeStrings(l);
-    if (window.DOMParser) {
-        var p = new DOMParser();
-        return p.parseFromString(s, "text/xml");
-    }
-    var doc;
-    try {
-        doc = new ActiveXObject("MSXML2.DOMDocument");
-    } catch (e) {
-        doc = new ActiveXObject("Microsoft.XMLDOM");
-    }
-    doc.async = 'false';
-    doc.loadXML(s); 
-    return doc;
+    var p = new DOMParser();
+    return p.parseFromString(s, "text/xml");
 }
 
 /**
@@ -196,7 +185,12 @@ function writeList(l, node, doc) {
 
     var token = car(l);
     if (isTaggedList(token, attribute)) {
-        node.setAttribute(attributeName(token).substring(1), '' + attributeValue(token));
+        if (isIE()) {
+            var aname = attributeName(token).substring(1);
+            if (aname != 'xmlns')
+                node.setAttribute(aname, '' + attributeValue(token));
+        } else
+            node.setAttribute(attributeName(token).substring(1), '' + attributeValue(token));
 
     } else if (isTaggedList(token, element)) {
 
@@ -213,7 +207,9 @@ function writeList(l, node, doc) {
             }
 
             var ns = xmlns(elementChildren(tok));
-            if (ns == null || !doc.createElementNS)
+            if (isIE())
+                return doc.createElementNS(ns != null? ns : node.namespaceURI, elementName(tok).substring(1));
+            if (ns == null)
                 return doc.createElement(elementName(tok).substring(1));
             return doc.createElementNS(ns, elementName(tok).substring(1));
         }
@@ -244,9 +240,7 @@ function writeList(l, node, doc) {
  * Make a new XML document.
  */
 function mkXMLDocument() { 
-    if (document.implementation && document.implementation.createDocument)
-        return document.implementation.createDocument('', '', null); 
-    return new ActiveXObject("MSXML2.DOMDocument"); 
+    return document.implementation.createDocument('', '', null); 
 }
 
 /**

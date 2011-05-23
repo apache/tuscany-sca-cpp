@@ -208,6 +208,16 @@ function debug(o) {
 }
 
 /**
+ * Return true if the current browser is Internet Explorer.
+ */
+function isIE() {
+    if (typeof isIE.detected != 'undefined')
+        return isIE.detected;
+    isIE.detected = navigator.appName == 'Microsoft Internet Explorer';
+    return isIE.detected;
+};
+
+/**
  * External build configuration.
  */
 var config;
@@ -267,15 +277,17 @@ function writeValue(v) {
  * Apply a function and memoize its result.
  */
 function memo(obj, key, f) {
-    if (!obj[memo])
+    if (!('memo' in obj)) {
         obj.memo = {};
-    if (obj.memo[key])
+        return obj.memo[key] = f();
+    }
+    if (key in obj.memo)
         return obj.memo[key];
     return obj.memo[key] = f();
 }
 
 /**
- * Un-memoize store results.
+ * Un-memoize stored results.
  */
 function unmemo(obj) {
     obj.memo = {};
